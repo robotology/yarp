@@ -67,12 +67,12 @@ bool PumaCalibrator::open(yarp::os::Searchable& config)
 
     xtmp = p.findGroup("CALIBRATION").findGroup("Speed1");
     ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++)
+    for (int i = 1; i < xtmp.size(); i++)
         speed1[i-1] = xtmp.get(i).asDouble();
 
-	xtmp = p.findGroup("CALIBRATION").findGroup("accs");
+    xtmp = p.findGroup("CALIBRATION").findGroup("accs");
     ACE_ASSERT (xtmp.size() == nj+1);
-    for (i = 1; i < xtmp.size(); i++)
+    for (int i = 1; i < xtmp.size(); i++)
         accs[i-1] = (unsigned char) xtmp.get(i).asDouble();
 
     return true;
@@ -94,11 +94,11 @@ bool PumaCalibrator::close ()
 bool PumaCalibrator::calibrate(DeviceDriver *dd)
 {
     fprintf(stderr, "Calling PumaCalibrator::calibrate\n");
-    iCalibrate	= dynamic_cast<IControlCalibration *>(dd);
-    iAmps		= dynamic_cast<IAmplifierControl *>(dd);
-    iEncoders	= dynamic_cast<IEncoders *>(dd);
-    iPosition	= dynamic_cast<IPositionControl *>(dd);
-    iPids		= dynamic_cast<IPidControl *>(dd);
+    iCalibrate    = dynamic_cast<IControlCalibration *>(dd);
+    iAmps        = dynamic_cast<IAmplifierControl *>(dd);
+    iEncoders    = dynamic_cast<IEncoders *>(dd);
+    iPosition    = dynamic_cast<IPositionControl *>(dd);
+    iPids        = dynamic_cast<IPidControl *>(dd);
 
     if (!(iCalibrate&&iAmps&&iPosition&&iPids))
         return false;
@@ -111,7 +111,7 @@ bool PumaCalibrator::calibrate(DeviceDriver *dd)
         return false;
 
     int k;
-    for (k = 0; k < nj; k++) 
+    for (k = 0; k < nj; k++)
     {
         iAmps->enableAmp(k);
     }
@@ -119,7 +119,7 @@ bool PumaCalibrator::calibrate(DeviceDriver *dd)
     ret = true;
     for(k=nj;k>0;k--)
     {
-		bool x = calibrateJoint(k-1);
+        bool x = calibrateJoint(k-1);
         ret = ret && x;
 
     }
@@ -129,10 +129,8 @@ bool PumaCalibrator::calibrate(DeviceDriver *dd)
 
 bool PumaCalibrator::calibrateJoint(int joint)
 {
-    const int timeout = 20;
-
-	double myzero=0.0;
-	//second value has to be checked
+    double myzero=0.0;
+    //second value has to be checked
     iCalibrate->calibrate(joint,myzero);
 
 
@@ -161,13 +159,14 @@ void PumaCalibrator::goToZero(int j)
     }
 }
 
-
-
 bool PumaCalibrator::park(DeviceDriver *dd, bool wait)
 {
-	int nj=0;
+    int nj=0;
     bool ret=iEncoders->getAxes(&nj);
-	int timeout = 0;
+    if (!ret)
+        return false;
+
+    int timeout = 0;
     fprintf(stderr, "ARMCALIB::Calling iCubHeadCalibrator::park()");
     iPosition->setRefSpeeds(speed1);
     iPosition->positionMove(PositionZero);
@@ -180,35 +179,36 @@ bool PumaCalibrator::park(DeviceDriver *dd, bool wait)
             iPosition->checkMotionDone(&done);
             fprintf(stderr, ".");
             Time::delay(0.5);
-			timeout++;
+            timeout++;
         }
-		if(!done)
-		{
-			for(int j=0; j < nj; j++)
-			{
-				iPosition->checkMotionDone(j, &done);
-				if (iPosition->checkMotionDone(j, &done))
-				{
-					if (!done)
-						fprintf(stderr, "iCubArmCalibrator::park() : joint %d not in position ", j);
-				}
-				else
-					fprintf(stderr, "iCubArmCalibrator::park() : joint %d did not answer ", j);
-			}
-		}
+        if(!done)
+        {
+            for(int j=0; j < nj; j++)
+            {
+                iPosition->checkMotionDone(j, &done);
+                if (iPosition->checkMotionDone(j, &done))
+                {
+                    if (!done)
+                        fprintf(stderr, "iCubArmCalibrator::park() : joint %d not in position ", j);
+                }
+                else
+                    fprintf(stderr, "iCubArmCalibrator::park() : joint %d did not answer ", j);
+            }
+        }
     }
 
     fprintf(stderr, "ARMCALIB::done!\n");
     return true;
 }
 
-	 bool PumaCalibrator::quitCalibrate()
-	 {
-		 printf("\n not yet implemented for puma!");
-		 return false;
-	 }
-	 bool PumaCalibrator::quitPark()
-	 {
-		 printf("\n not yet implemented for puma!");
-		 return false;
-	 }
+bool PumaCalibrator::quitCalibrate()
+{
+    printf("\n not yet implemented for puma!");
+    return false;
+}
+
+bool PumaCalibrator::quitPark()
+{
+    printf("\n not yet implemented for puma!");
+    return false;
+}

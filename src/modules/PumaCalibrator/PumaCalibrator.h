@@ -35,13 +35,13 @@ namespace yarp {
 }
 
 /**
- * \file PumaCalibrator.h 
+ * \file PumaCalibrator.h
  * A device driver to implement the calibration of the  Puma Robot Arm
  */
 
 /**
  * @ingroup dev_impl_motor
- * 
+ *
  * A calibrator interface implementation for the Puma Robot Arm
  */
 class yarp::dev::PumaCalibrator : public ICalibrator, public DeviceDriver
@@ -51,7 +51,7 @@ public:
      * Default constructor.
      */
     PumaCalibrator();
-    
+
     /**
      * Destructor.
      */
@@ -71,33 +71,33 @@ public:
      * parameters.
      * @return true/false on success/failure.
      */
-	bool open (yarp::os::Searchable& config);
+    bool open (yarp::os::Searchable& config);
 
     /**
      * Close the device driver.
      * @return true/false on success/failure.
      */
-	bool close ();
+    bool close ();
 
-	 bool park(DeviceDriver *dd, bool wait=true);
-	  bool quitCalibrate();
-	  bool quitPark();
+     bool park(DeviceDriver *dd, bool wait=true);
+      bool quitCalibrate();
+      bool quitPark();
 
 private:
     bool calibrateJoint(int j);
     void goToZero(int j);
 
     IControlCalibration *iCalibrate;
-    IAmplifierControl	*iAmps;
-    IPidControl			*iPids;
-    IEncoders			*iEncoders;
-    IPositionControl	*iPosition;
+    IAmplifierControl   *iAmps;
+    IPidControl         *iPids;
+    IEncoders           *iEncoders;
+    IPositionControl    *iPosition;
     unsigned char *type;
-	double *speed1;
-	double *accs;
-	double *PositionZero;
-	double *pos;
-	double *vel;
-	
+    double *speed1;
+    double *accs;
+    double *PositionZero;
+    double *pos;
+    double *vel;
+
 };
 #endif
