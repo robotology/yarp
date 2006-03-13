@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.tool.template,v 1.1 2006-03-13 12:53:43 eshuy Exp $
+# $Id: Makefile.tool.template,v 1.2 2006-03-13 14:05:50 eshuy Exp $
 #
 
 EXECDIR = ../bin/$(OS)
@@ -65,4 +65,7 @@ subinstall :
 
 depend:
 	makedepend -Y $(INCS) -p$(GENDIR)/ *.cpp
+
+deb:
+	@echo no deb packaging needed here
 

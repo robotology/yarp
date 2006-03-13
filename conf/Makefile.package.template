@@ -1,0 +1,8 @@
+
+deb:
+	make assem
+	mkdir -p $(YARP_ROOT)/package
+	cp -f *.deb $(YARP_ROOT)/package
+
+clean:
+	rm -rf *.deb

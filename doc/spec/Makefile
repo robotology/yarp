@@ -1,3 +1,9 @@
+
+ifndef  YARP_ROOT
+YARP_ROOT = ../..
+endif
+
+
 ############################################################################
 # slightly more user-friendly interface to a crufty latex makefile
 
@@ -247,4 +253,10 @@ u: update
 
 clean:
 	rm -f $(MAIN).dvi $(MAIN).ps $(MAIN).pdf $(NAME).pdf
+
+
+include $(YARP_ROOT)/conf/Makefile.dummy.template
+
+
+
 

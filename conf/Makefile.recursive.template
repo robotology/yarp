@@ -2,11 +2,15 @@
 # Recursive compilation Makefile.
 #
 
-SUBDIRS = $(wildcard libYARP_*) $(wildcard src*) $(wildcard yarp-*)
+SUBDIRS = $(wildcard libYARP_*) $(wildcard src*)  $(wildcard debian)
 
 default:
 	@for d in $(SUBDIRS) ; do \
 		test -d $$d && ( cd $$d ; $(MAKE) ) ; done
+
+deb:
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) deb ) ; done
 
 clean:
 	@for d in $(SUBDIRS) ; do \

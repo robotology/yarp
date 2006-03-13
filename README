@@ -4,7 +4,28 @@ Hello, good evening, and welcome to YARP2.
 
 This is a new version of YARP.
 
-It is currently lacking install documentation, so if you need that, 
-you're probably better off not using this version of YARP.
+===============================================================================
+
+COMPILATION and INSTALLATION
+----------------------------
+
+If you are on a debian linux system, type:
+
+  make
+
+If that works, type:
+
+  make deb
+
+There should now be installable packages in a directory called "package".
+Install using:
+
+  dpkg -i <package filename>
+
+The packages can be deinstalled using standard debian package management.
+
+Apart from that, we are currently lacking install documentation.  So
+if you need that, you're probably better off not using this version of
+YARP.
 
 

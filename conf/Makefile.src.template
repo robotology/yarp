@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.src.template,v 1.1 2006-03-13 12:53:43 eshuy Exp $
+# $Id: Makefile.src.template,v 1.2 2006-03-13 14:05:50 eshuy Exp $
 #
 
 include $(YARP_ROOT)/conf/Makefile.template
@@ -68,6 +68,9 @@ subclean :
 subinstall :
 	@for d in $(SUBDIRS) ; do \
 		( cd $$d ; $(MAKE) $(MAKEFLAGS) install ) ; done
+
+deb:
+	@echo no deb packaging needed here
 
 depend:
 	makedepend -Y -I. $(INCS) -p$(GENDIR)/ *.cpp
