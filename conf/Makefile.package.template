@@ -1,4 +1,7 @@
 
+default:
+	@echo this directory is just for packaging, skipping
+
 deb:
 	make assem
 	mkdir -p $(YARP_ROOT)/package
