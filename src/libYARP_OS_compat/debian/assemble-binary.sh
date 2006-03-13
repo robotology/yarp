@@ -13,10 +13,10 @@ echo "  adding library .a"
 mkdir -p tmp/usr/lib
 find ../lib -iname "*.a" -exec cp {} tmp/usr/lib \;
 
-#echo "  adding user header files .h"
+echo "  adding user header files .h"
 
-#mkdir -p tmp/usr/include/yarp/os
-#find ../include/yarp/os -iname "*.h" -exec cp {} tmp/usr/include/yarp/os \;
+mkdir -p tmp/usr/include/yarp
+find ../include/yarp -iname "*.h" -exec cp {} tmp/usr/include/yarp \;
 
 #echo "  adding standard companion"
 
