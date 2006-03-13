@@ -1,0 +1,37 @@
+#
+# Template to be included by all YARP makefiles.
+# $Id: Makefile.template,v 1.1 2006-03-13 12:53:43 eshuy Exp $
+#
+
+ifeq ($(shell uname),Linux)
+
+	OS = linux
+	EXTRA_OPTS = $(YARP_DEBUG) -fexceptions -pipe -Wpointer-arith -Wno-uninitialized 
+	CC = g++
+	CC1 = gcc
+	CDEFS = $(EXTRA_OPTS) -D__LINUX__ -DYARP_OS_CONFIG=LINUX -I/usr/include/g++/ -I$(YARP_ROOT)/include/
+# got this from ACE compile.	
+	CDEFS += -DACE_NDEBUG -DACE_USE_RCSID=0
+	CDEFS += -DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_AS_STATIC_LIBS 
+	CFAST = -O3
+	LIBADD = -lpthread -ldl
+
+else
+    ifeq ($(shell uname),Darwin)
+
+        OS = darwin
+        EXTRA_OPTS = $(YARP_DEBUG)  -pipe -Wpointer-arith -Wno-long-double -mcpu=G3 -mtune=G4 
+        CC = g++
+        CC1 = gcc
+        CDEFS = $(EXTRA_OPTS) -D__DARWIN__ -DYARP_OS_CONFIG=DARWIN -I/usr/include/gcc/darwin/default/c++/ -I$(YARP_ROOT)/include/
+        # got this from ACE compile.
+        CDEFS += -DACE_NDEBUG -DACE_USE_RCSID=0
+        CDEFS += -DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_AS_STATIC_LIBS
+        CFAST = -O2
+        LIBADD = -lpthread -ldl
+	ARFLAGS = -sr
+  endif
+endif
+
+
+SYSDIR = $(OS)

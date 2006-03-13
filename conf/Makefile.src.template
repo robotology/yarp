@@ -1,0 +1,74 @@
+#
+# $Id: Makefile.src.template,v 1.1 2006-03-13 12:53:43 eshuy Exp $
+#
+
+include $(YARP_ROOT)/conf/Makefile.template
+
+TARGETS = $(patsubst %.cpp, $(GENDIR)/%.o, $(wildcard *.cpp)) $(patsubst %.c, $(GENDIR)/%.o, $(wildcard *.c))
+
+CFLAGS = -D_REENTRANT -Wall $(CFAST) $(INCS) $(CDEFS)
+
+SUBDIRS =
+
+CODELIB = $(MYCODELIB).a
+
+INCS = $(MYINCS) $(YARPSYSINC)
+
+GENDIR = ../obj/$(OS)
+
+LIBGENDIR = ../lib/$(OS)
+
+VPATH += $(GENDIR)
+
+default: $(LIBGENDIR)/$(CODELIB)
+#	echo $(MYCODELIB)
+
+all: target
+
+target: $(TARGETS) $(LIBGENDIR)/$(CODELIB) subtarget
+
+w:
+	@echo -n
+
+$(GENDIR)/%.o: %.cpp
+	mkdir -p $(GENDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(GENDIR)/%.o: %.c
+	mkdir -p $(GENDIR)
+	$(CC1) $(CFLAGS) -c $< -o $@
+
+
+$(LIBGENDIR)/$(CODELIB): $(TARGETS)
+	mkdir -p $(LIBGENDIR)
+	@echo Making $(CODELIB) for $(TARGETS)
+	$(AR) $(ARFLAGS) $(LIBGENDIR)/$(CODELIB) $(TARGETS)
+
+clean: subclean
+	rm -f $(TARGETS) $(EXEC_TARGETS) $(CODE_LIB) $(LIBGENDIR)/$(CODELIB)
+	rm -f *.o
+
+topinstall: 
+	mkdir -p $(YARP_ROOT)/lib/$(OS)
+	mkdir -p $(YARP_ROOT)/include/yarp
+	$(CP) $< $(YARP_ROOT)/lib/$(OS)
+	$(CP) -f ../include/yarp/*.h $(YARP_ROOT)/include/yarp
+
+install: target subinstall
+	@echo Doing nothing as yet
+
+subtarget :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) target ) ; done
+
+subclean :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) clean ) ; done
+
+subinstall :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) install ) ; done
+
+depend:
+	makedepend -Y -I. $(INCS) -p$(GENDIR)/ *.cpp
+

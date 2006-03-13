@@ -1,0 +1,19 @@
+#
+# Recursive compilation Makefile.
+#
+
+SUBDIRS = $(wildcard libYARP_*) $(wildcard src*) $(wildcard yarp-*)
+
+default:
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) ) ; done
+
+clean:
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) clean ) ; done
+
+
+# some common targets
+dox:
+	doxygen
+

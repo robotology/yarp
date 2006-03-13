@@ -1,0 +1,68 @@
+#
+# $Id: Makefile.tool.template,v 1.1 2006-03-13 12:53:43 eshuy Exp $
+#
+
+EXECDIR = ../bin/$(OS)
+EXEC_TARGET = $(EXECDIR)/$(notdir $(PWD))
+
+include $(YARP_ROOT)/conf/Makefile.template
+
+TARGETS = $(patsubst %.cpp, $(GENDIR)/%.o, $(wildcard *.cpp)) $(patsubst %.c, $(GENDIR)/%.o, $(wildcard *.c))
+
+INCS = $(MYINCS) -I$(YARP_ROOT)/include/$(OS) -I$(YARP_ROOT)/include -I.
+
+CFLAGS = $(CFAST) $(INCS) $(CDEFS) 
+
+SUBDIRS =
+
+GENDIR = obj/$(OS)
+
+VPATH += $(GENDIR)
+
+default: topinstall
+
+all: target
+
+target: $(TARGETS) $(EXEC_TARGET)
+
+w:
+	@echo -n
+
+$(EXEC_TARGET): $(TARGETS)
+	 mkdir -p $(EXECDIR)
+	 $(CC) $(CFLAGS) $^ -o $@ -L$(YARP_ROOT)/lib/$(OS) $(MYLIBS) -lYARP_OS -lACE $(LIBADD)
+
+# install to top dir
+topinstall: $(EXEC_TARGET)
+
+
+$(GENDIR)/%.o: %.cpp
+	mkdir -p $(GENDIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(GENDIR)/%.o: %.c
+	mkdir -p $(GENDIR)
+	$(CC1) $(CFLAGS) -c $< -o $@
+
+clean: subclean
+	rm -f $(TARGETS) $(EXEC_TARGETS)
+	rm -f *.o
+
+install: target subinstall
+	@echo Doing nothing as yet
+
+subtarget :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) target ) ; done
+
+subclean :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) clean ) ; done
+
+subinstall :
+	@for d in $(SUBDIRS) ; do \
+		( cd $$d ; $(MAKE) $(MAKEFLAGS) install ) ; done
+
+depend:
+	makedepend -Y $(INCS) -p$(GENDIR)/ *.cpp
+
