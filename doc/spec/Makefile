@@ -11,14 +11,15 @@ NAME = yarp-protocol-2-0
 
 BMAIN = $(MAIN)
 
-default:
+default: $(NAME).pdf
+
+$(NAME).pdf: $(MAIN).pdf
 	make clean
 	make $(MAIN).pdf
 	make clean
 	make $(MAIN).pdf
 	make clean
 	make $(MAIN).pdf
-	xpdf $(MAIN).pdf
 
 # generate and view dvi file
 dvi:
