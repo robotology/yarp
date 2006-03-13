@@ -30,7 +30,7 @@ find tmp
 
 echo "making package"
 
-dpkg --build tmp libyarp-os-compat.deb
+dpkg --build tmp libyarp-os-compat-dev.deb
 
 echo "cleaning up"
 

@@ -1,4 +1,4 @@
-Package: libyarp-os-compat
+Package: libyarp-os-compat-dev
 Version: 2.0
 Section: libdevel
 Priority: optional
@@ -6,7 +6,7 @@ Architecture: all
 Essential: no
 Depends: libyarp-os, libace-dev | libace-dev-fake
 Maintainer: Paul Fitzpatrick [paulfitz@alum.mit.edu]
-Provides: libyarp-os-compat
+Provides: libyarp-os-compat-dev
 Description: OS interface for the yarp robot platform version 1
  Compatability layer for early version of libyarp-os
  .
