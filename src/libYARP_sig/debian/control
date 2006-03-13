@@ -1,0 +1,11 @@
+Package: libyarp-sig-dev
+Version: 2.0
+Section: libdevel
+Priority: optional
+Architecture: all
+Essential: no
+Depends: libyarp-os
+Maintainer: Paul Fitzpatrick [paulfitz@alum.mit.edu]
+Provides: libyarp-sig-dev
+Description: signal processing interface for the yarp robot platform
+ .
