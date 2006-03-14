@@ -56,7 +56,7 @@ YARP.
 DOCUMENTATION
 -------------
 
-If you are on a debian linux system, type:
+If you are on a debian linux system, make sure you have "doxygen" and type:
 
   make dox
 
