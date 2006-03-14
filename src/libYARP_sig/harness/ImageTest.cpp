@@ -24,6 +24,22 @@ public:
     image.resize(256,128);
     checkEqual(image.width(),256,"check width");
     checkEqual(image.height(),128,"check height");
+    ImageOf<PixelInt> iint;
+    iint.resize(256,128);
+    long int total = 0;
+    for (int x=0; x<iint.width(); x++) {
+      for (int y=0; y<iint.height(); y++) {
+	int v = (x+y)%65537;
+	iint.pixel(x,y) = v;
+	total += v;
+      }
+    }
+    for (int x=0; x<iint.width(); x++) {
+      for (int y=0; y<iint.height(); y++) {
+	total -= iint.pixel(x,y);
+      }
+    }
+    checkEqual(total,0,"assignment check");
   }
 
   virtual void runTests() {

@@ -29,13 +29,17 @@ public:
   inline int height() const { return imgHeight; }
 
   // these two properties vary by type - see ImageOf class
-  virtual int pixelSize() const;
-  virtual int pixelCode() const;
+  virtual int getPixelSize() const;
+  virtual int getPixelCode() const;
 
   inline int rowSize() const { return imgRowSize; }
 
   inline char *getPixelAddress(int x, int y) const {
     return data[y] + x*imgPixelSize;
+  }
+
+  inline bool isPixel(int x, int y) const {
+    return (x>=0 && y>=0 && x<imgWidth && y<imgHeight);
   }
 
   void zero();
@@ -139,16 +143,23 @@ namespace yarp {
 template <class T>
 class yarp::sig::ImageOf : public Image
 {
+private:
+  T nullPixel;
 public:
-  virtual int pixelSize() const {
+  virtual int getPixelSize() const {
     return sizeof(T);
   }
 
-  virtual int pixelCode() const {
+  virtual int getPixelCode() const {
     return -sizeof(T);
   }
 
-  inline T& pixel(int x, int y) const {
+  inline T& pixel(int x, int y) {
+    return *((T *)(getPixelAddress(x,y)));
+  }
+
+  inline T& safePixel(int x, int y) {
+    if (!isPixel(x,y)) { return nullPixel; }
     return *((T *)(getPixelAddress(x,y)));
   }
 };
@@ -160,57 +171,39 @@ namespace yarp {
 template<> \
 class ImageOf<T> : public Image \
 { \
-  virtual int pixelSize() const { \
+private: \
+  T nullPixel; \
+public: \
+\
+  virtual int getPixelSize() const { \
     return sizeof(T); \
   } \
 \
-  virtual int pixelCode() const { \
+  virtual int getPixelCode() const { \
     return tag; \
   } \
 \
-  inline T& pixel(int x, int y) const { \
+  inline T& pixel(int x, int y) { \
+    return *((T *)(getPixelAddress(x,y))); \
+  } \
+\
+  inline T& safePixel(int x, int y) { \
+    if (!isPixel(x,y)) { return nullPixel; } \
     return *((T *)(getPixelAddress(x,y))); \
   } \
 };
 
 
-/*
-template<class T>
-inline int yarp::sig::ImageOf<T>::pixelCode() const
-{ return -((int)sizeof(T)); }
-
-#define __YARPIMAGE_ASSOCIATE_TAG(tag,T) template<> inline int yarp::sig::ImageOf<T>::pixelCode() const { return tag; }
-*/
-
-
-#ifdef GENERATE_YARP_EXPANSION_OF_IMAGE_SUBCLASSES_FOR_CPP
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO,PixelMono)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB,PixelRgb)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV,PixelHsv)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_BGR,PixelBgr)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_SIGNED,PixelMonoSigned)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_SIGNED,PixelRgbSigned)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_FLOAT,PixelFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_FLOAT,PixelRgbFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV_FLOAT,PixelHsvFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,PixelInt)
-#else
-
-  // insert expansion, so that there are doxygen classes for the user to see
-
-template<> class ImageOf<PixelMono> : public Image { virtual int pixelSize() const { return sizeof(PixelMono); } virtual int pixelCode() const { return YARP_PIXEL_MONO; } inline PixelMono& pixel(int x, int y) const { return *((PixelMono *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelRgb> : public Image { virtual int pixelSize() const { return sizeof(PixelRgb); } virtual int pixelCode() const { return YARP_PIXEL_RGB; } inline PixelRgb& pixel(int x, int y) const { return *((PixelRgb *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelHsv> : public Image { virtual int pixelSize() const { return sizeof(PixelHsv); } virtual int pixelCode() const { return YARP_PIXEL_HSV; } inline PixelHsv& pixel(int x, int y) const { return *((PixelHsv *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelBgr> : public Image { virtual int pixelSize() const { return sizeof(PixelBgr); } virtual int pixelCode() const { return YARP_PIXEL_BGR; } inline PixelBgr& pixel(int x, int y) const { return *((PixelBgr *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelMonoSigned> : public Image { virtual int pixelSize() const { return sizeof(PixelMonoSigned); } virtual int pixelCode() const { return YARP_PIXEL_MONO_SIGNED; } inline PixelMonoSigned& pixel(int x, int y) const { return *((PixelMonoSigned *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelRgbSigned> : public Image { virtual int pixelSize() const { return sizeof(PixelRgbSigned); } virtual int pixelCode() const { return YARP_PIXEL_RGB_SIGNED; } inline PixelRgbSigned& pixel(int x, int y) const { return *((PixelRgbSigned *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelFloat> : public Image { virtual int pixelSize() const { return sizeof(PixelFloat); } virtual int pixelCode() const { return YARP_PIXEL_MONO_FLOAT; } inline PixelFloat& pixel(int x, int y) const { return *((PixelFloat *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelRgbFloat> : public Image { virtual int pixelSize() const { return sizeof(PixelRgbFloat); } virtual int pixelCode() const { return YARP_PIXEL_RGB_FLOAT; } inline PixelRgbFloat& pixel(int x, int y) const { return *((PixelRgbFloat *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelHsvFloat> : public Image { virtual int pixelSize() const { return sizeof(PixelHsvFloat); } virtual int pixelCode() const { return YARP_PIXEL_HSV_FLOAT; } inline PixelHsvFloat& pixel(int x, int y) const { return *((PixelHsvFloat *)(getPixelAddress(x,y))); } };
-template<> class ImageOf<PixelInt> : public Image { virtual int pixelSize() const { return sizeof(PixelInt); } virtual int pixelCode() const { return YARP_PIXEL_INT; } inline PixelInt& pixel(int x, int y) const { return *((PixelInt *)(getPixelAddress(x,y))); } };
-
-#endif
-
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO,PixelMono)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB,PixelRgb)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV,PixelHsv)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_BGR,PixelBgr)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_SIGNED,PixelMonoSigned)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_SIGNED,PixelRgbSigned)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_FLOAT,PixelFloat)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_FLOAT,PixelRgbFloat)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV_FLOAT,PixelHsvFloat)
+  __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,PixelInt)
 
   }
 }

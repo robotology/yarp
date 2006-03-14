@@ -539,7 +539,6 @@ Image::Image() {
   imgWidth = imgHeight = 0;
   imgPixelSize = imgRowSize = 0;
   imgPixelCode = 0;
-  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
   implementation = new ImageStorage(*this);
   ACE_ASSERT(implementation!=NULL);
 }
@@ -553,12 +552,12 @@ Image::~Image() {
 }
 
 
-int Image::pixelSize() const {
+int Image::getPixelSize() const {
   return imgPixelSize;
 }
 
 
-int Image::pixelCode() const {
+int Image::getPixelCode() const {
   return imgPixelCode;
 }
 
@@ -568,6 +567,11 @@ void Image::zero() {
 
 
 void Image::resize(int imgWidth, int imgHeight) {
+  int code = getPixelCode();
+  if (code!=imgPixelCode) { imgPixelCode = code; }
+  int size = getPixelSize();
+  if (size!=imgPixelSize) { imgPixelSize = size; }
+
   ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
 					  imgPixelCode,
 					  imgPixelSize,
