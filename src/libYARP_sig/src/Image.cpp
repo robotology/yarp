@@ -1,4 +1,10 @@
 
+/*
+  This file is in a pretty hacky state.  Sorry! -paulfitz
+
+ */
+
+
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
@@ -609,9 +615,22 @@ void Image::synchronize() {
 }
 
 
-void *Image::getRawImage() {
-  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+char *Image::getRawImage() {
+  ImageStorage *impl = (ImageStorage*)implementation;
+  ACE_ASSERT(impl!=NULL);
+  if (impl->pImage!=NULL) {
+    return impl->pImage->imageData;
+  }
   return NULL;
+}
+
+int Image::getRawImageSize() {
+  ImageStorage *impl = (ImageStorage*)implementation;
+  ACE_ASSERT(impl!=NULL);
+  if (impl->pImage!=NULL) {
+    return impl->pImage->imageSize;
+  }
+  return 0;
 }
 
 void *Image::getIplImage() {
@@ -621,6 +640,66 @@ void *Image::getIplImage() {
 
 void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
   fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+}
+
+
+
+
+
+#include <yarp/os/NetInt32.h>
+#include <yarp/os/begin_pack_for_net.h>
+
+class YARPImagePortContentHeader
+{
+public:
+  yarp::os::NetInt32 len;
+  yarp::os::NetInt32 w;
+  yarp::os::NetInt32 id;
+  yarp::os::NetInt32 h;
+  yarp::os::NetInt32 depth;
+  double timestamp;
+} PACKED_FOR_NET;
+
+#include <yarp/os/end_pack_for_net.h>
+
+
+bool Image::read(ConnectionReader& connection) {
+  YARPImagePortContentHeader header;
+
+  connection.expectBlock((char*)&header,sizeof(header));
+
+  imgPixelCode = header.id;
+
+  // make sure we're not trying to read into an incompatible image type
+  ACE_ASSERT(getPixelCode()==header.id);
+
+  resize(header.w,header.h);
+
+  char *mem = getRawImage();
+  ACE_ASSERT(mem!=NULL);
+  ACE_ASSERT(getRawImageSize()==header.len);
+  connection.expectBlock(getRawImage(),getRawImageSize());
+
+  return true;
+}
+
+
+bool Image::write(ConnectionWriter& connection) {
+  YARPImagePortContentHeader header;
+  header.h = height();
+  header.w = width();
+  header.depth = getPixelSize();
+  header.id = getPixelCode();
+  header.len = getRawImageSize();
+  header.timestamp = 0;
+  connection.appendBlock((char*)&header,sizeof(header));
+  char *mem = getRawImage();
+  ACE_ASSERT(mem!=NULL);
+
+  // Note use of external block.  Implies care needed about ownership.
+  connection.appendExternalBlock(mem,header.len);
+
+  return true;
 }
 
 

@@ -1,6 +1,8 @@
 #ifndef _YARP2_IMAGE_
 #define _YARP2_IMAGE_
 
+#include <yarp/os/Portable.h>
+
 namespace yarp {
   namespace sig {
     class Image;
@@ -17,7 +19,7 @@ namespace yarp {
  * libraries such as OpenCV.
  *
  */
-class yarp::sig::Image {
+class yarp::sig::Image : public yarp::os::Portable {
 
 public:
 
@@ -28,7 +30,6 @@ public:
   inline int width() const { return imgWidth; }
   inline int height() const { return imgHeight; }
 
-  // these two properties vary by type - see ImageOf class
   virtual int getPixelSize() const;
   virtual int getPixelCode() const;
 
@@ -50,17 +51,27 @@ public:
 
   void resize(int imgWidth, int imgHeight);
 
-  void *getRawImage();
+  char *getRawImage();
+
+  int getRawImageSize();
 
   /**
+   * not yet implemented.
    * Returns IPL view of image, if possible.
    * Not possible if the image is the wrong size, with no padding.
    * @return pointer to an IplImage structure
    */
   void *getIplImage();
 
-  // make sure to set all necessary properties first
+  /**
+   * not yet implemented.
+   * make sure to set all necessary properties first.
+   */
   void wrapRawImage(void *buf, int imgWidth, int imgHeight);
+
+
+  virtual bool read(ConnectionReader& connection);
+  virtual bool write(ConnectionWriter& connection);
 
 private:
   int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode;
