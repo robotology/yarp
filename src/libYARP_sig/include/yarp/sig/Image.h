@@ -40,20 +40,30 @@ public:
 
   void zero();
 
-  void setSize(int width, int height);
+  void setPixelCode(int imgPixelCode);
+  void setPixelSize(int imgPixelSize);
+  void setRowSize(int imgRowSize);
+
+  void resize(int imgWidth, int imgHeight);
 
   void *getRawImage();
 
+  /**
+   * Returns IPL view of image, if possible.
+   * Not possible if the image is the wrong size, with no padding.
+   * @return pointer to an IplImage structure
+   */
   void *getIplImage();
 
-  void wrapRawImage(void *buf, int imgPixelCode, 
-		    int imgWidth, int imgHeight, 
-		    int imgPixelSize, int imgRowSize);
+  // make sure to set all necessary properties first
+  void wrapRawImage(void *buf, int imgWidth, int imgHeight);
 
 private:
-  int imgWidth, imgHeight, imgPixelSize, imgRowSize;
+  int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode;
   char **data;
   void *implementation;
+
+  void synchronize();
 };
 
 
