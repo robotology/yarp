@@ -258,7 +258,8 @@ clean:
 	rm -f $(MAIN).dvi $(MAIN).ps $(MAIN).pdf $(NAME).pdf
 
 
-include $(YARP_ROOT)/conf/Makefile.dummy.template
+deb:
+	@no deb packages here
 
 
 
