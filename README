@@ -9,6 +9,21 @@ your patience.
 
 ===============================================================================
 
+STATUS
+------
+
+YARP2 is usable by brave developers.  Watch out for the following:
+
++ compared to YARP1, there are a lot of missing parts.  The library
+  in src/libYARP_OS_compat will help if you want to mingle new and old.
+
++ yarp::sig::Image is a stub - it has a very bare minimum of functionality.
+
+For help, and to complain, email paulfitz@liralab.it
+
+
+===============================================================================
+
 COMPILATION and INSTALLATION
 ----------------------------
 
