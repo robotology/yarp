@@ -18,6 +18,10 @@ YARP2 is usable by brave developers.  Watch out for the following:
   in src/libYARP_OS_compat will help if you want to mingle new and old.
 
 + yarp::sig::Image is a stub - it has a very bare minimum of functionality.
+  You can still use YARPImage; the classes are network compatible.
+
++ yarp::os::Bottle doesn't have everything that YARPBottle had.  You can
+  still use YARPBottle; the classes are network compatible.
 
 For help, and to complain, email paulfitz@liralab.it
 

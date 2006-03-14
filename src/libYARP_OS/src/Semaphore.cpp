@@ -30,6 +30,3 @@ void Semaphore::post() {
   ((SemaphoreImpl*)implementation)->post();
 }
 
-int Semaphore::count() {
-  ((SemaphoreImpl*)implementation)->count();
-}

@@ -90,9 +90,14 @@ public:
   static Contact unregisterContact(const Contact& contact);
 
 
-  //static void setLocalSupport(bool flag);
-
-  //static void setGlobalSupport(bool flag);
+  /**
+   * Chooses whether communication is process-local.
+   * Call this with flag=true to avoid ever consulting an
+   * external nameserver.
+   * @param flag true if communication should be local to the calling process.
+   * @return prior state of this flag.
+   */
+  static bool setLocalMode(bool flag);
 };
 
 #endif

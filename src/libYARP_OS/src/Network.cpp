@@ -58,3 +58,10 @@ Contact Network::unregisterContact(const Contact& contact) {
    return address.toContact();
 }
 
+bool Network::setLocalMode(bool flag) {
+  NameClient& nic = NameClient::getNameClient();
+  bool state = nic.isFakeMode();
+  nic.setFakeMode(flag);
+  return state;
+}
+

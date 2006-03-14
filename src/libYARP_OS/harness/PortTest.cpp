@@ -136,6 +136,9 @@ public:
     Bottle *result = buf.read();
 
     for (int j=0; j<3; j++) {
+      if (j!=0) {
+	result = buf.read();
+      }
       checkTrue(result!=NULL,"got something check");
       if (result!=NULL) {
 	checkEqual(bot1.size(),result->size(),"size check");
@@ -197,6 +200,7 @@ public:
     output.write(tester);
     Time::delay(0.1);
     tester.finalCheck();
+    Time::delay(0.1);
     output.close();
     input.close();    
   }
