@@ -17,7 +17,10 @@ NAME = yarp-protocol-2-0
 
 BMAIN = $(MAIN)
 
-default: $(NAME).pdf
+default:
+	@echo if you really want to make documentation, type make dox
+
+dox: $(NAME).pdf
 
 $(NAME).pdf: $(MAIN).pdf
 	make clean

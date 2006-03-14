@@ -12,12 +12,19 @@ deb:
 	@for d in $(SUBDIRS) ; do \
 		test -d $$d && ( cd $$d ; $(MAKE) deb ) ; done
 
+dox: subdox subuserdox
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) dox ) ; done
+
 clean:
 	@for d in $(SUBDIRS) ; do \
 		test -d $$d && ( cd $$d ; $(MAKE) clean ) ; done
 
 
 # some common targets
-dox:
-	doxygen
+subdox:
+	@test -e Doxyfile && ( mkdir -p doc; doxygen ) || echo -n
+
+subuserdox:
+	@test -e Doxyfile.part && ( mkdir -p doc; doxygen Doxyfile.part ) || echo -n
 

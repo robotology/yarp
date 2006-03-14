@@ -9,6 +9,8 @@
 
 #include <ace/OS_NS_stdlib.h>
 
+#include <yarp/os/NetInt32.h>
+
 namespace yarp {
   class NetType;
 }
@@ -44,55 +46,7 @@ public:
 
   static int NetType::toInt(String x);
 
-  /**
-   * Definition of the NetInt32 type
-   */
-#ifdef WIN32
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef _WIN32
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef WINDOW2
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef __WIN__
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef __WINDOWS__
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef WINDOWS
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
-
-#ifdef __LINUX__
-  typedef int32_t NetInt32;
-#else
-#  ifdef YARP2_WINDOWS
-     typedef __int32 NetInt32;
-#  else
-#    error "need to define NetInt32 for this OS; see yarp/NetType.h"
-#  endif
-#endif
-
+  typedef yarp::os::NetInt32 NetInt32;
 };
 
 #endif

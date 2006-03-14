@@ -32,3 +32,16 @@ if you need that, you're probably better off not using this version of
 YARP.
 
 
+===============================================================================
+
+DOCUMENTATION
+-------------
+
+If you are on a debian linux system, type:
+
+  make dox
+
+You should be able to browse library documentation from:
+
+  doc/index.html
+

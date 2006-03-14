@@ -51,6 +51,7 @@ public:
    */
   void post();
 
+
 private:
   void *implementation;
 };
