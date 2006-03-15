@@ -82,6 +82,8 @@ private:
 };
 
 
+#ifndef YARPImage_INC // old YARP header file that we should be compat with
+#ifndef YARP_IMAGE_HEADER_CONTROL // interlocking with compatibility library
 
 // the image types partially reflect the IPL image types.
 // IPL allows 16/32bpp images. Should we constrain our lib to 8bpp.
@@ -103,6 +105,9 @@ enum __PixelTypesEnum
 	// negative ids reserved for pixels of undeclared type but known size
 	// in bytes
 };
+
+#endif
+#endif
 
 #include <yarp/os/begin_pack_for_net.h>
 
@@ -222,5 +227,8 @@ public: \
 #undef __YARPIMAGE_ASSOCIATE_TAG
 
 
+#ifndef YARP_IMAGE_HEADER_CONTROL
+#define YARP_IMAGE_HEADER_CONTROL
+#endif
 
 #endif

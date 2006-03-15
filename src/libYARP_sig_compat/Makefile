@@ -4,6 +4,8 @@ endif
 
 include $(YARP_ROOT)/conf/Makefile.recursive.template
 
+SUBDIRS += harness
+
 userdox:
 	mkdir -p doc
 	doxygen Doxyfile.part

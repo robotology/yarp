@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: YARPImage.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPImage.h,v 1.2 2006-03-15 10:05:04 eshuy Exp $
 ///
 ///
 
@@ -86,6 +86,7 @@
 
 #endif /// __cplusplus
 
+#ifndef YARP_IMAGE_HEADER_CONTROL
 
 // the image types partially reflect the IPL image types.
 // IPL allows 16/32bpp images. Should we constrain our lib to 8bpp.
@@ -107,6 +108,8 @@ enum __PixelTypesEnum
 	// negative ids reserved for pixels of undeclared type but known size
 	// in bytes
 };
+
+#endif // YARP_IMAGE_HEADER_CONTROL
 
 //
 //
@@ -701,6 +704,10 @@ __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,YarpPixelInt)
 #include <yarp/YARPImagePort.h>
 
 #endif	// of __cplusplus: this is required for Matlab code!
+
+#ifndef YARP_IMAGE_HEADER_CONTROL
+#define YARP_IMAGE_HEADER_CONTROL
+#endif
 
 #endif
 
