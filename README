@@ -1,11 +1,15 @@
 
+===============================================================================
+
+INTRODUCTION
+------------
+
 This is YARP2, a new version of the YARP robot library set.
 
-License and copyright information is in COPYING.
+It helps do stuff with robots (or avoid doing stuff with robots by 
+spending your time writing libraries).
 
-YARP2 is under development.  During this process, it will be relatively
-difficult to use under Microsoft Windows with Visual Studio.  We ask 
-your patience.
+License and copyright information is in COPYING.
 
 ===============================================================================
 
