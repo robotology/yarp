@@ -657,7 +657,9 @@ public:
   yarp::os::NetInt32 id;
   yarp::os::NetInt32 h;
   yarp::os::NetInt32 depth;
-  double timestamp;
+  yarp::os::NetInt32 ext1;
+  yarp::os::NetInt32 ext2;
+  //double timestamp;
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
@@ -691,7 +693,9 @@ bool Image::write(ConnectionWriter& connection) {
   header.depth = getPixelSize();
   header.id = getPixelCode();
   header.len = getRawImageSize();
-  header.timestamp = 0;
+  //header.timestamp = 0;
+  header.ext1 = 0;
+  header.ext2 = 0;
   connection.appendBlock((char*)&header,sizeof(header));
   char *mem = getRawImage();
   ACE_ASSERT(mem!=NULL);

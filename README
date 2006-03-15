@@ -23,6 +23,11 @@ YARP2 is usable by brave developers.  Watch out for the following:
 + yarp::os::Bottle doesn't have everything that YARPBottle had.  You can
   still use YARPBottle; the classes are network compatible.
 
++ libYARP_OS - fairly complete
++ libYARP_OS_compat - fairly complete
++ libYARP_sig - a stub
++ libYARP_sig_compat - a stub
+
 For help, and to complain, email paulfitz@liralab.it
 
 

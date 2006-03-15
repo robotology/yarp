@@ -1,0 +1,11 @@
+Package: libyarp-sig-compat-dev
+Version: 2.0
+Section: libdevel
+Priority: optional
+Architecture: all
+Essential: no
+Depends: libyarp-os-compat
+Maintainer: Paul Fitzpatrick [paulfitz@alum.mit.edu]
+Provides: libyarp-sig-compat-dev
+Description: older signal processing interface for the yarp robot platform
+ .
