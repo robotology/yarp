@@ -17,6 +17,7 @@ echo "  adding user header files .h"
 
 mkdir -p tmp/usr/include/yarp
 find ../include/yarp -iname "*.h" -exec cp {} tmp/usr/include/yarp \;
+find ../include/yarp -iname "*.inl" -exec cp {} tmp/usr/include/yarp \;
 
 #echo "  adding standard companion"
 
