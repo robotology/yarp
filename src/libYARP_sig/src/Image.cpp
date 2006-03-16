@@ -665,7 +665,7 @@ public:
 #include <yarp/os/end_pack_for_net.h>
 
 
-bool Image::read(ConnectionReader& connection) {
+bool Image::read(yarp::os::ConnectionReader& connection) {
   YARPImagePortContentHeader header;
 
   connection.expectBlock((char*)&header,sizeof(header));
@@ -686,7 +686,7 @@ bool Image::read(ConnectionReader& connection) {
 }
 
 
-bool Image::write(ConnectionWriter& connection) {
+bool Image::write(yarp::os::ConnectionWriter& connection) {
   YARPImagePortContentHeader header;
   header.h = height();
   header.w = width();

@@ -65,7 +65,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "..\obj\winnt\debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../include" /I "../../../include" /I "../../../include/winnt" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../include" /I "../../../include" /I "../../../include/winnt" /I "$(ACE_INCLUDE)" /I "$(ACE_INCLUDE)/winnt" /I "../../libYARP_OS/include" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
@@ -87,187 +87,11 @@ LIB32=link.exe -lib
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\Address.cpp
+SOURCE=.\Image.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\Bottle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\BottleImpl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Carriers.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Companion.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ConstString.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Contact.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\DgramTwoWayStream.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Dispatcher.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Election.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FakeFace.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FallbackNameClient.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\FallbackNameServer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Logger.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\McastCarrier.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Name.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NameClient.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NameConfig.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NameServer.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\NetType.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Network.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Port.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PortCommand.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PortCore.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PortCoreInputUnit.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\PortCoreOuputUnit.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Protocol.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Semaphore.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ShmemTwoWayStream.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\SocketTwoWayStream.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\StreamConnectionReader.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\TcpFace.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Thread.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\ThreadImpl.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\Time.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\UnitTest.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARP1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPBottle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPConfigFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPParseParameters.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPPort.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPRefCount.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPScheduler.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPSemaphore.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPThread.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPTime.cpp
+SOURCE=.\IplImage.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
