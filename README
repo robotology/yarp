@@ -59,6 +59,11 @@ Apart from that, we are currently lacking install documentation.  So
 if you need that, you're probably better off not using this version of
 YARP.
 
+There are some project files for windows.  They assume that you have two 
+environment variables set:
+  ACE_INCLUDE
+  ACE_LIB
+pointing to include files and library files for ACE.
 
 ===============================================================================
 
