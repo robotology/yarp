@@ -4,7 +4,7 @@ Section: libdevel
 Priority: optional
 Architecture: all
 Essential: no
-Depends: libyarp-os-compat
+Depends: libyarp-os-compat-dev
 Maintainer: Paul Fitzpatrick [paulfitz@alum.mit.edu]
 Provides: libyarp-sig-compat-dev
 Description: older signal processing interface for the yarp robot platform

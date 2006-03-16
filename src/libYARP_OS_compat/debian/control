@@ -4,7 +4,7 @@ Section: libdevel
 Priority: optional
 Architecture: all
 Essential: no
-Depends: libyarp-os, libace-dev | libace-dev-fake
+Depends: libyarp-os-dev, libace-dev | libace-dev-fake
 Maintainer: Paul Fitzpatrick [paulfitz@alum.mit.edu]
 Provides: libyarp-os-compat-dev
 Description: OS interface for the yarp robot platform version 1
