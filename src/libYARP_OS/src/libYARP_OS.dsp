@@ -65,7 +65,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "..\obj\winnt\debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /YX /FD /GZ /c
-# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../include" /I "../../../include" /I "../../../include/winnt" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
+# ADD CPP /nologo /MDd /W3 /Gm /GX /ZI /Od /I "../include" /I "../../../include" /I "../../../include/winnt" /I "$(ACE_INCLUDE)" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FD /GZ /c
 # SUBTRACT CPP /YX
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
 # ADD RSC /l 0x409 /d "_DEBUG"
@@ -228,46 +228,6 @@ SOURCE=.\Time.cpp
 # Begin Source File
 
 SOURCE=.\UnitTest.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARP1.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPBottle.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPConfigFile.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPParseParameters.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPPort.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPRefCount.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPScheduler.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPSemaphore.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPThread.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=.\YARPTime.cpp
 # End Source File
 # End Group
 # Begin Group "Header Files"
