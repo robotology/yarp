@@ -20,6 +20,7 @@ void Logger::show(int level, const String& txt) {
   if (parent == NULL) {
     if (level>=low) {
       ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
+	  ACE_OS::fflush(stderr);
     }
   } else {
     String more(prefix);

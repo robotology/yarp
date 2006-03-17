@@ -191,6 +191,10 @@ SOURCE=.\PortCoreOuputUnit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\PortReaderBuffer.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\Protocol.cpp
 # End Source File
 # Begin Source File

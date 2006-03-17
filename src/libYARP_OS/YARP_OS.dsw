@@ -3,7 +3,7 @@ Microsoft Developer Studio Workspace File, Format Version 6.00
 
 ###############################################################################
 
-Project: "harness"=.\test\harness.dsp - Package Owner=<4>
+Project: "harness"=.\harness\harness.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -27,7 +27,7 @@ Package=<4>
 
 ###############################################################################
 
-Project: "libYARP_OS_test"=".\src-test\libYARP_OS_test.dsp" - Package Owner=<4>
+Project: "yarp"=.\yarp\yarp.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
