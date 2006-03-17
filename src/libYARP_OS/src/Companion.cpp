@@ -384,12 +384,14 @@ public:
       int code = bot.getInt(0);
       if (code!=1) {
 	ACE_OS::printf("%s\n", bot.getString(1).c_str());
+	ACE_OS::fflush(stdout);
       }
       if (code==1) {
 	done.post();
       }
     } else {
       ACE_OS::printf("%s\n", bot.toString().c_str());
+      ACE_OS::fflush(stdout);
     }
     return true;
   }
