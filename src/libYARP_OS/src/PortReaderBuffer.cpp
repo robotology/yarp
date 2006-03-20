@@ -22,10 +22,11 @@ private:
 
 public:
   SemaphoreImpl contentSema;
+  SemaphoreImpl consumeSema;
   SemaphoreImpl stateSema;
 
   PortReaderBufferBaseHelper(PortReaderBufferBase& owner) : 
-    owner(owner), contentSema(0), stateSema(1) {
+    owner(owner), contentSema(0), consumeSema(0), stateSema(1) {
     autoRelease = true;
     prev = NULL;
   }
@@ -50,7 +51,10 @@ public:
   PortReader *get() {
     PortReader *result = getAvail();
     if (result == NULL) {
-      result = add();
+      unsigned int maxBuf = owner.getMaxBuffer();
+      if (maxBuf==0 || content.size()<maxBuf) {
+	result = add();
+      }
     }
     return result;
   }
@@ -140,14 +144,23 @@ PortReader *PortReaderBufferBase::readBase() {
   HELPER(implementation).stateSema.wait();
   PortReader *reader = HELPER(implementation).getContent(false);
   HELPER(implementation).stateSema.post();
+  if (reader!=NULL) {
+    HELPER(implementation).consumeSema.post();
+  }
   return reader;
 }
 
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
-  HELPER(implementation).stateSema.wait();
-  PortReader *reader = HELPER(implementation).get();
-  HELPER(implementation).stateSema.post();
+  PortReader *reader = NULL;
+  while (reader==NULL) {
+    HELPER(implementation).stateSema.wait();
+    reader = HELPER(implementation).get();
+    HELPER(implementation).stateSema.post();
+    if (reader==NULL) {
+      HELPER(implementation).consumeSema.wait();
+    }
+  }
   bool ok = reader->read(connection);
   HELPER(implementation).stateSema.wait();
   HELPER(implementation).configure(reader,false,true);

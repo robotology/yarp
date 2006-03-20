@@ -23,8 +23,9 @@ public:
 
 class yarp::PortReaderBufferBase {
 public:
-  PortReaderBufferBase(PortReaderBufferBaseCreator& creator) : 
-    creator(creator) {
+  PortReaderBufferBase(PortReaderBufferBaseCreator& creator, 
+		       unsigned int maxBuffer) : 
+    creator(creator), maxBuffer(maxBuffer) {
     init();
   }
 
@@ -44,10 +45,15 @@ public:
 
   yarp::os::PortReader *readBase();
 
+  unsigned int getMaxBuffer() {
+    return maxBuffer;
+  }
+
 protected:
   void init();
 
   PortReaderBufferBaseCreator& creator;
+  unsigned int maxBuffer;
   void *implementation;
 };
 
@@ -67,8 +73,10 @@ public:
 
   /**
    * Constructor.
+   * @param maxBuffer Maximum number of buffers permitted (0 = no limit)
    */
-  PortReaderBuffer() : implementation(*this) {
+  PortReaderBuffer(unsigned int maxBuffer = 0) : 
+    implementation(*this,maxBuffer) {
   }
 
   /**
@@ -99,6 +107,7 @@ public:
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
   /**
    * Reads objects from a network connection.
    * This method is called by a port when data is received.
@@ -108,9 +117,16 @@ public:
   virtual bool read(ConnectionReader& connection) {
     return implementation.read(connection);
   }
+
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+
+
+
   /**
    * Factory method.  New instances are created as needed to store incoming
-   * data.
+   * data.  By default, this just uses the default contructor - override
+   * this if you need to do something fancier (such as allocating
+   * a shared memory space).
    *
    * @return new instance of the templated type.
    */
@@ -118,7 +134,6 @@ public:
     return new T;
   }
 
-#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 private:
   yarp::PortReaderBufferBase implementation;
