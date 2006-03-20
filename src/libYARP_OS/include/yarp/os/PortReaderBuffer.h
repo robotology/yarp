@@ -27,6 +27,7 @@ public:
 		       unsigned int maxBuffer) : 
     creator(creator), maxBuffer(maxBuffer) {
     init();
+    allowReuse = true;
   }
 
   virtual ~PortReaderBufferBase();
@@ -43,6 +44,10 @@ public:
 
   void setAutoRelease(bool flag = true);
 
+  void setAllowReuse(bool flag = true) {
+    allowReuse = flag;
+  }
+
   yarp::os::PortReader *readBase();
 
   unsigned int getMaxBuffer() {
@@ -54,6 +59,7 @@ protected:
 
   PortReaderBufferBaseCreator& creator;
   unsigned int maxBuffer;
+  bool allowReuse;
   void *implementation;
 };
 

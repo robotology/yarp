@@ -54,6 +54,9 @@ public:
       unsigned int maxBuf = owner.getMaxBuffer();
       if (maxBuf==0 || content.size()<maxBuf) {
 	result = add();
+      } else {
+	// ok, can't get free, clean space.
+	// here would be a good place to do buffer reuse.
       }
     }
     return result;
