@@ -10,7 +10,7 @@
 
 
 ///
-/// $Id: YARPPort.cpp,v 1.1 2006-03-13 12:52:42 eshuy Exp $
+/// $Id: YARPPort.cpp,v 1.2 2006-03-20 15:43:49 eshuy Exp $
 //
 /// Based on: Id: YARPPort.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
@@ -32,6 +32,7 @@
 #include <yarp/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/PortReaderBuffer.h>
 using namespace yarp;
 using namespace yarp::os;
 
@@ -99,15 +100,30 @@ public:
 class ReadableContent : public Readable {
 private:
   YARPPortContent& content;
+  int own;
 public:
-  ReadableContent(YARPPortContent& content) : content(content) {}
+  ReadableContent(YARPPortContent& content) : content(content) {
+    own = 0;
+  }
 
-  virtual ~ReadableContent() {}
+  ReadableContent(YARPPortContent *content) : content(*content) {
+    own = 1;
+  }
+
+  virtual ~ReadableContent() {
+    if (own) {
+      delete &content;
+    }
+  }
 
   virtual bool read(ConnectionReader& reader) {
     ConnectionReader_to_YARPPortReader delegate(reader);
     int result = content.Read(delegate);
     return (result!=0);
+  }
+
+  YARPPortContent& getYarpPortContent() {
+    return content;
   }
 };
 
@@ -115,14 +131,18 @@ public:
 /**
  * PortData is a simple convenient container for the generic Port class.
  */
-class PortData : public Readable
+class PortData : public Readable, public PortReaderBufferBaseCreator
 {
 public:
   PortCore core;
   Semaphore incoming;
+  int service_type;
 
   PortData() : incoming(0) {
     ypc = NULL;
+    service_type = YARPInputPort::TRIPLE_BUFFERS;
+    buffer = NULL;
+    currentBuffer = NULL;
   }
 
   virtual ~PortData() {
@@ -130,6 +150,17 @@ public:
       delete ypc;
       ypc = NULL;
     }
+    if (buffer!=NULL) {
+      delete buffer;
+      buffer = NULL;
+    }
+  }
+
+  virtual PortReader *create() {
+    if (in_owner!=NULL) {
+      return new ReadableContent(in_owner->CreateContent());
+    }
+    return NULL;
   }
 
   /** The owner, if input port. */
@@ -139,6 +170,9 @@ public:
   YARPOutputPort *out_owner;
 
   YARPPortContent *ypc;
+
+  PortReaderBufferBase *buffer;
+  ReadableContent *currentBuffer;
   
   /** The OnRead() callback function. */
   virtual void OnRead() { if (in_owner!=NULL) in_owner->OnRead(); }
@@ -192,34 +226,33 @@ public:
   }
 
   int Read(bool wait) {
-    //ACE_OS::printf("reading!\n");
+    currentBuffer = NULL;
     if (wait) {
-      incoming.wait();
-      //ACE_OS::printf("got something!\n");
-      return 1;
-    } else {
-      int result = incoming.check();
-      if (result) {
-	while (incoming.check()) {
-	  // blow away back log
-	}
+      if (buffer!=NULL) {
+	currentBuffer = (ReadableContent *)buffer->readBase();
       }
-      //ACE_OS::printf("got %d!\n", result);
-      return result;
-    }
-    return 1;
+      //printf("have a current buffer\n");
+      return (currentBuffer!=NULL);
+    } 
+    return buffer->check();
   }
 
   virtual bool read(ConnectionReader& reader) {
-    //ACE_OS::printf("got some data!\n");
-    bool result = false;
-    if (ypc!=NULL) {
-      //ACE_OS::printf("there is some content too so can read\n");
-      ReadableContent rc(*ypc);
-      result = rc.read(reader);
-      incoming.post();
+    if (buffer!=NULL) {
+      buffer->read(reader);
+      OnRead();
+    } else {
+      ACE_OS::printf("an unexpected handler received data\n");
     }
-    return result;
+
+    return true;
+  }
+
+  YARPPortContent *getYarpPortContent() {
+    if (currentBuffer!=NULL) {
+      return &(currentBuffer->getYarpPortContent());
+    }
+    return NULL;
   }
 };
 
@@ -298,6 +331,13 @@ int YARPPort::Connect(const char *src_name, const char *dest_name)
 
 YARPPortContent& YARPPort::Content()
 {
+  YARPPortContent *con = PD.getYarpPortContent();
+  //printf("scanning for new content.........\n");
+  if (con!=NULL) {
+    //printf("new content\n");
+    content = con;
+    return *con;
+  }
   if (PD.ypc==NULL) {
     PD.ypc = CreateContent();
   }
@@ -337,8 +377,16 @@ int YARPPort::GetRequireAck()
 
 YARPInputPort::YARPInputPort(int n_service_type, int n_protocol_type)
 {
-  //PD.service_type = n_service_type;
+  PD.service_type = n_service_type;
   //PD.protocol_type = n_protocol_type;
+  int ct = 0;
+  if (n_service_type==YARPInputPort::NO_BUFFERS) {
+    ct = 1;
+  } else {
+    // we don't bother implementing limits too carefully
+    ct = 3;
+  }
+  PD.buffer = new PortReaderBufferBase(PD,ct);
   PD.in_owner = this;
 }
 
@@ -350,18 +398,6 @@ YARPInputPort::~YARPInputPort()
 
 int YARPInputPort::Register(const char *name, const char *net_name /* = YARP_DEFAULT_NET */)
 {
-  /*
-	int service_type = PD.service_type;
-	PD.TakeReceiverIncoming(new YARPSendable(CreateContent()));
-	if (service_type == DOUBLE_BUFFERS || service_type == TRIPLE_BUFFERS)
-	{
-		PD.TakeReceiverLatest(new YARPSendable(CreateContent()));
-	}
-	if (service_type == TRIPLE_BUFFERS)
-	{
-		PD.TakeReceiverAccess(new YARPSendable(CreateContent()));
-	}
-  */
 	return YARPPort::Register(name, net_name);
 }
 
@@ -369,7 +405,9 @@ int YARPInputPort::Register(const char *name, const char *net_name /* = YARP_DEF
 bool YARPInputPort::Read(bool wait)
 {
   Content();
-  return PD.Read(wait);
+  bool result = PD.Read(wait);
+  Content();
+  return result;
 }
 
 
@@ -405,14 +443,18 @@ void YARPOutputPort::Write(bool wait)
 
 void YARPOutputPort::SetAllowShmem(int flag)
 {
-  ACE_OS::printf("%s:%d -- shared memory not implemented\n",__FILE__,__LINE__);
-  //PD.SetAllowShmem(flag);
+  if (flag) {
+    ACE_OS::printf("%s:%d -- shared memory implemention is currently partial\n",
+		   __FILE__,__LINE__);
+    //PD.SetAllowShmem(flag);
+  }
 }
 
 
 int YARPOutputPort::GetAllowShmem(void)
 {
-  ACE_OS::printf("%s:%d -- shared memory not implemented\n",__FILE__,__LINE__);
+  ACE_OS::printf("%s:%d -- shared memory implemention is currently partial\n",
+		 __FILE__,__LINE__);
   //return PD.GetAllowShmem();
   return 0;
 }

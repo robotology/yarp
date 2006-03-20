@@ -45,6 +45,18 @@ public:
     out.Write();
     checkEqual(in.Read()!=0,true,"read something");
     checkEqual((int)(in.Content()),15,"got right value at input port");
+
+    report(0,"mking sure buffering is present...");
+    out.Content() = 5;
+    out.Write();
+    YARPTime::DelayInSeconds(0.1);
+    out.Content() = 10;
+    out.Write();
+    YARPTime::DelayInSeconds(0.1);
+    checkEqual(in.Read()!=0,true,"read something");
+    checkEqual((int)(in.Content()),5,"got right value at input port");
+    checkEqual(in.Read()!=0,true,"read something");
+    checkEqual((int)(in.Content()),10,"got right value at input port");
   }
 
   virtual void testTime() {
