@@ -3,6 +3,8 @@
 
 #include <ace/Synch.h>
 
+#include <yarp/Logger.h>
+
 namespace yarp {
   class SemaphoreImpl;
 }
@@ -19,7 +21,11 @@ public:
 
   // blocking wait
   void wait() {
-    sema.acquire();
+    int result = sema.acquire();
+    while (result == -1) {
+      YARP_DEBUG(Logger::get(), "semaphore wait failed - could be gdb attaching");
+      result = sema.acquire();
+    }
   }
 
   // polling wait

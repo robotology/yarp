@@ -434,15 +434,24 @@ String NameServer::terminate(const String& str) {
 
 
 String NameServer::apply(const String& txt, const Address& remote) {
-  SplitString ss(txt.c_str());
   String result = "no command given";
-  if (ss.size()>=2) {
-    String key = ss.get(1);
-    YARP_DEBUG(Logger::get(),String("dispatching to ") + key);
-    ss.set(1,remote.getName().c_str());
-    result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
-				 (char **)(ss.get()+1));
+  mutex.wait();
+  try {
+    SplitString ss(txt.c_str());
+    if (ss.size()>=2) {
+      String key = ss.get(1);
+      YARP_DEBUG(Logger::get(),String("dispatching to ") + key);
+      ss.set(1,remote.getName().c_str());
+      result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
+				   (char **)(ss.get()+1));
+    }
+  } catch (IOException e) {
+      YARP_DEBUG(Logger::get(),String("name server sees exception ") + 
+		 e.toString());
+      mutex.post();
+      throw e;
   }
+  mutex.post();
   return result;
 }
 
@@ -453,6 +462,7 @@ String NameServer::apply(const String& txt, const Address& remote) {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class MainNameServer : public NameServer, public Readable {
+
 public:
   virtual bool read(ConnectionReader& reader) {
     ManagedBytes header(12);

@@ -58,22 +58,27 @@ private:
 	mutex.wait();
 	done = finished;
 	mutex.post();
+	owner.state.wait();
 	//ACE_OS::printf("burp\n");
+	owner.gotCount++;
+	owner.state.post();
+      }
+      while (owner.sema.check()) {
 	owner.state.wait();
 	owner.gotCount++;
 	owner.state.post();
       }
-      //ACE_OS::printf("burped out\n");
+      //ACE_OS::printf("done\n");
     }
     
     virtual void close() {
       mutex.wait();
       finished = true;
-      mutex.post();
       owner.state.wait();
       owner.expectCount++;
       owner.state.post();
       owner.sema.post();
+      mutex.post();
     }
 
   private:

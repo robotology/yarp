@@ -7,6 +7,7 @@
 #include <yarp/Dispatcher.h>
 #include <yarp/NetType.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Semaphore.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Vector_T.h>
@@ -22,7 +23,7 @@ namespace yarp {
 class yarp::NameServer {
 public:
 
-  NameServer() : nameMap(17), hostMap(17) {
+  NameServer() : nameMap(17), hostMap(17), mutex(1) {
     setup();
   }
 
@@ -335,6 +336,8 @@ protected:
   String textify(const Address& addr);
   String terminate(const String& str);
 
+private:
+  yarp::os::Semaphore mutex;
 
 };
 
