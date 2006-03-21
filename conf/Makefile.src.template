@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.src.template,v 1.3 2006-03-14 12:58:17 eshuy Exp $
+# $Id: Makefile.src.template,v 1.4 2006-03-21 11:31:51 eshuy Exp $
 #
 
 include $(YARP_ROOT)/conf/Makefile.template
@@ -25,7 +25,11 @@ default: $(LIBGENDIR)/$(CODELIB)
 
 all: target
 
+ifeq ($(OS),winnt)
+target: msdev
+else
 target: $(TARGETS) $(LIBGENDIR)/$(CODELIB) subtarget
+endif
 
 w:
 	@echo -n
@@ -74,5 +78,8 @@ subinstall :
 
 depend:
 	makedepend -Y -I. $(INCS) -p$(GENDIR)/ *.cpp
+
+msdev:
+	msdev $(wildcard *.dsw) /MAKE
 
 include $(YARP_ROOT)/conf/Makefile.dummy.template
