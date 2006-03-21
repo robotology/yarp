@@ -152,7 +152,8 @@ public:
   }
 
   void testUdp() {
-    report(0,"checking udp");
+    report(0,"checking udp (test is a bit unfair)");
+
     Bottle bot1;
     PortReaderBuffer<Bottle> buf;
 
@@ -170,17 +171,11 @@ public:
     output.addOutput(Contact::byName("/in").addCarrier("udp"));
     Time::delay(0.2);
 
-    report(0,"writing...");
-    output.write(bot1);
-    output.write(bot1);
-    output.write(bot1);
-    report(0,"reading...");
-    Bottle *result = buf.read();
+    report(0,"writing/reading three times...");
 
     for (int j=0; j<3; j++) {
-      if (j!=0) {
-	result = buf.read();
-      }
+      output.write(bot1);
+      Bottle *result = buf.read();
       checkTrue(result!=NULL,"got something check");
       if (result!=NULL) {
 	checkEqual(bot1.size(),result->size(),"size check");
@@ -252,9 +247,9 @@ public:
     nic.setFakeMode(true);
     testOpen();
     testBuffer();
-    //testPair();
+    testPair();
     testReply();
-    //testUdp();
+    testUdp();
     nic.setFakeMode(false);
   }
 };

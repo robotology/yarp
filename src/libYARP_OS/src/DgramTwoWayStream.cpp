@@ -9,6 +9,10 @@
 
 using namespace yarp;
 
+#define READ_SIZE 65536
+#define WRITE_SIZE 65500
+
+
 void DgramTwoWayStream::open(const Address& remote) {
   Address local;
   ACE_INET_Addr anywhere((u_short)0, INADDR_ANY);
@@ -40,8 +44,8 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
 	     " to " + remote.toString());
 
 
-  readBuffer.allocate(512);
-  writeBuffer.allocate(512);
+  readBuffer.allocate(READ_SIZE);
+  writeBuffer.allocate(WRITE_SIZE);
   readAt = 0;
   readAvail = 0;
   writeAvail = 0;
@@ -75,8 +79,8 @@ void DgramTwoWayStream::join(const Address& group, bool sender) {
   localHandle.set(localAddress.getPort(),localAddress.getName().c_str());
   remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
 
-  readBuffer.allocate(512);
-  writeBuffer.allocate(512);
+  readBuffer.allocate(READ_SIZE);
+  writeBuffer.allocate(WRITE_SIZE);
   readAt = 0;
   readAvail = 0;
   writeAvail = 0;
@@ -136,10 +140,12 @@ int DgramTwoWayStream::read(const Bytes& b) {
     readAt = 0;
     ACE_INET_Addr dummy((u_short)0, INADDR_ANY);
     YARP_ASSERT(dgram!=NULL);
-    YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
+    //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
     int result =
       dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
-    YARP_DEBUG(Logger::get(),String("DGRAM Got something! ") + NetType::toString(result));
+    YARP_DEBUG(Logger::get(),
+	       String("DGRAM Got ") + NetType::toString(result) +
+	       " bytes");
     if (closed||result<0) {
       happy = false;
       return result;
@@ -193,12 +199,14 @@ void DgramTwoWayStream::write(const Bytes& b) {
 void DgramTwoWayStream::flush() {
   while (writeAvail>0) {
     int writeAt = 0;
-    YARP_DEBUG(Logger::get(),"DGRAM writing");
     YARP_ASSERT(dgram!=NULL);
     int len = 0;
 
     len = dgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt,
 		      remoteHandle);
+    YARP_DEBUG(Logger::get(),
+	       String("DGRAM wrote ") +
+	       NetType::toString(len) + " bytes");
 
     if (len<0) {
       happy = false;

@@ -51,6 +51,8 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
 int Companion::main(int argc, char *argv[]) {
 
+  try {
+
   // eliminate 0th arg, the program name
   argc--;
   argv++;
@@ -86,6 +88,12 @@ int Companion::main(int argc, char *argv[]) {
   argv++;
 
   return getInstance().dispatch(cmd,argc,argv);
+
+  } catch (IOException e) {
+    YARP_ERROR(Logger::get(),
+	       String("exception: ") + e.toString());
+    return 1;
+  }
 }
 
 

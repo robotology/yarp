@@ -3,6 +3,7 @@
 
 #include <yarp/Carrier.h>
 #include <yarp/Logger.h>
+#include <yarp/String.h>
 #include <yarp/TwoWayStream.h>
 #include <yarp/Carriers.h>
 #include <yarp/BufferedConnectionWriter.h>
@@ -214,10 +215,16 @@ public:
   void defaultSendAck();
 
   void interrupt() {
-    if (pendingAck) {
-      sendAck();
+    try {
+      if (pendingAck) {
+	sendAck();
+      }
+      shift.getInputStream().interrupt();
+    } catch (IOException e) {
+      YARP_DEBUG(Logger::get(),
+		 String("yarp::Protocol::interrupt exception: ") + 
+		 e.toString());
     }
-    shift.getInputStream().interrupt();
   }
 
   void close() {
