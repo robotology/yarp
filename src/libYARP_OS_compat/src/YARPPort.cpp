@@ -10,7 +10,7 @@
 
 
 ///
-/// $Id: YARPPort.cpp,v 1.2 2006-03-20 15:43:49 eshuy Exp $
+/// $Id: YARPPort.cpp,v 1.3 2006-04-05 12:36:35 eshuy Exp $
 //
 /// Based on: Id: YARPPort.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
@@ -382,8 +382,9 @@ YARPInputPort::YARPInputPort(int n_service_type, int n_protocol_type)
   int ct = 0;
   if (n_service_type==YARPInputPort::NO_BUFFERS) {
     ct = 1;
+  } else if (n_service_type==YARPInputPort::DOUBLE_BUFFERS) {
+    ct = 2;
   } else {
-    // we don't bother implementing limits too carefully
     ct = 3;
   }
   PD.buffer = new PortReaderBufferBase(PD,ct);
