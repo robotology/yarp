@@ -453,12 +453,12 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 
     while (!(cin.bad()||cin.eof())) {
       // make sure this works on windows
-      char buf[25600];
+      char buf[25600] = "\0";
       cin.getline(buf,sizeof(buf),'\n');
       // TODO: add longer strings together
       
       if (!(cin.bad()||cin.eof())) {
-	if (buf[0]<32) {
+	if (buf[0]<32 && buf[0]!='\n' && buf[0]!='\r' && buf[0]!='\0') {
 	  break;  // for example, horrible windows ^D
 	}
 	BottleImpl bot;
