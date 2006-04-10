@@ -44,7 +44,9 @@ public:
 
   static String toString(int x);
 
-  static int NetType::toInt(String x);
+  static int toInt(String x);
+
+  static unsigned long int getCrc(char *buf, int len);
 
   typedef yarp::os::NetInt32 NetInt32;
 };

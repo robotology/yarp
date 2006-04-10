@@ -26,6 +26,7 @@ extern yarp::UnitTest& getPortCoreTest();
 extern yarp::UnitTest& getElectionTest();
 extern yarp::UnitTest& getNameConfigTest();
 extern yarp::UnitTest& getPortTest();
+extern yarp::UnitTest& getNetTypeTest();
 
 class yarp::TestList {
 public:
@@ -48,6 +49,7 @@ public:
     root.add(getElectionTest());
     root.add(getNameConfigTest());
     root.add(getPortTest());
+    root.add(getNetTypeTest());
   }
 };
 
