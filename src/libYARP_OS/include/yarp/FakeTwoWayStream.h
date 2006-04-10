@@ -73,6 +73,10 @@ public:
   virtual void reset() {
   }
 
+  virtual void beginPacket() { }
+
+  virtual void endPacket() { }
+
 private:
 
   class ActiveStringOutputStream : public StringOutputStream {

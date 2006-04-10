@@ -89,6 +89,18 @@ public:
     }
   }
 
+  virtual void beginPacket() {
+    if (stream!=NULL) {
+      stream->beginPacket();
+    }
+  }
+
+  virtual void endPacket() { 
+    if (stream!=NULL) {
+      stream->endPacket();
+    }
+  }
+
 private:
   TwoWayStream *stream;
 };

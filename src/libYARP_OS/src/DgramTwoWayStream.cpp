@@ -9,27 +9,43 @@
 
 using namespace yarp;
 
-#define READ_SIZE 65536
-#define WRITE_SIZE 65500
+#define CRC_SIZE 8
+#define READ_SIZE (65536-CRC_SIZE)
+#define WRITE_SIZE (65500-CRC_SIZE)
 
-#define CRC_SIZE 4
 
 
-static bool checkCrc(char *buf, int length, int crcLength) {
+static bool checkCrc(char *buf, int length, int crcLength, int pct) {
   unsigned long alt = NetType::getCrc(buf+crcLength,length-crcLength);
   Bytes b(buf,4);
+  Bytes b2(buf+4,4);
   unsigned long curr = (unsigned long)NetType::netInt(b);
-  //YARP_ERROR(Logger::get(), String("crc sbould be ") + NetType::toString(alt));
-  //YARP_ERROR(Logger::get(), String("crc read as ") + NetType::toString(curr));
-  return alt == curr;
+  int altPct = NetType::netInt(b2);
+  bool ok = (alt == curr && pct==altPct);
+  if (!ok) {
+    if (alt!=curr) {
+      YARP_DEBUG(Logger::get(), "crc mismatch");
+    }
+    if (pct!=altPct) {
+      YARP_DEBUG(Logger::get(), "packet code broken");
+    }
+    //YARP_ERROR(Logger::get(), String("crc read as ") + NetType::toString(curr));
+    //YARP_ERROR(Logger::get(), String("crc count is ") + NetType::toString(altPct));
+    //YARP_ERROR(Logger::get(), String("local count ") + NetType::toString(pct));
+  }
+  return ok;
 }
 
 
-static void addCrc(char *buf, int length, int crcLength) {
+static void addCrc(char *buf, int length, int crcLength, int pct) {
   unsigned long alt = NetType::getCrc(buf+crcLength,length-crcLength);
   Bytes b(buf,4);
+  Bytes b2(buf+4,4);
   NetType::netInt((NetType::NetInt32)alt,b);
+  NetType::netInt((NetType::NetInt32)pct,b2);
+  //YARP_ERROR(Logger::get(), String("msg len ") + NetType::toString(length));
   //YARP_ERROR(Logger::get(), String("crc set to ") + NetType::toString(alt));
+  //YARP_ERROR(Logger::get(), String("crc ct to ") + NetType::toString(pct));
 }
 
 
@@ -74,6 +90,7 @@ void DgramTwoWayStream::allocate() {
   readAvail = 0;
   writeAvail = CRC_SIZE;
   happy = true;
+  pct = 0;
 }
 
 
@@ -171,8 +188,9 @@ int DgramTwoWayStream::read(const Bytes& b) {
     }
     readAvail = result;
 
-    // deal with CRC by ignoring it for now
-    bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE);
+    // deal with CRC
+    bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct);
+    pct++;
     if (!crcOk) {
       YARP_ERROR(Logger::get(),"CRC failure");
       readAt = 0;
@@ -228,7 +246,11 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
 void DgramTwoWayStream::flush() {
   // should set CRC
-  addCrc(writeBuffer.get(),writeAvail,CRC_SIZE);
+  if (writeAvail<=CRC_SIZE) {
+    return;
+  }
+  addCrc(writeBuffer.get(),writeAvail,CRC_SIZE,pct);
+  pct++;
 
   while (writeAvail>0) {
     int writeAt = 0;
@@ -270,7 +292,17 @@ void DgramTwoWayStream::reset() {
   readAt = 0;
   readAvail = 0;
   writeAvail = CRC_SIZE;
+  pct = 0;
 }
 
 
+void DgramTwoWayStream::beginPacket() {
+  //YARP_ERROR(Logger::get(),String("Packet begins: ")+(reader?"reader":"writer"));
+  pct = 0;
+}
+
+void DgramTwoWayStream::endPacket() {
+  //YARP_ERROR(Logger::get(),String("Packet ends: ")+(reader?"reader":"writer"));
+  pct = 0;
+}
 

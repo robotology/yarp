@@ -93,6 +93,10 @@ public:
   virtual void reset() {
   }
 
+  virtual void beginPacket() { }
+
+  virtual void endPacket() { }
+
 private:
   ACE_SOCK_Stream stream;
   Address localAddress, remoteAddress;

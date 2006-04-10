@@ -176,6 +176,7 @@ public:
     pendingAck = true;
     messageLen = 0;
     YARP_ASSERT(delegate!=NULL);
+    getStreams().beginPacket();
     delegate->expectIndex(*this);
     reader.reset(is(),&getStreams(),messageLen,delegate->isTextMode());
   }
@@ -210,6 +211,7 @@ public:
     if (delegate->requireAck()) {
       delegate->sendAck(*this);
     }
+    getStreams().endPacket();
   }
 
   void defaultSendAck();
@@ -319,7 +321,9 @@ public:
     this->writer = &writer;
     if (isActive()) {
       YARP_ASSERT(delegate!=NULL);
+      getStreams().beginPacket();
       delegate->write(*this,writer);
+      getStreams().endPacket();
       PortReader *reply = writer.getReplyHandler();
       if (reply!=NULL) {
 	reader.reset(is(),&getStreams(),messageLen,delegate->isTextMode());

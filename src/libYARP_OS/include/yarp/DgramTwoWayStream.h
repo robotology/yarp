@@ -64,6 +64,10 @@ public:
 
   virtual void reset();
 
+  virtual void beginPacket();
+
+  virtual void endPacket();
+
 private:
 
   bool closed, reader, writer;
@@ -71,7 +75,7 @@ private:
   ACE_INET_Addr localHandle, remoteHandle;
   Address localAddress, remoteAddress;
   ManagedBytes readBuffer, writeBuffer;
-  int readAt, readAvail, writeAvail;
+  int readAt, readAvail, writeAvail, pct;
   bool happy;
 
   void allocate();

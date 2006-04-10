@@ -17,6 +17,12 @@ public:
 
   virtual ~OutputStream() { }
 
+  // These should be called at the beginning and end of logical packets.
+  // Streams are encouraged to handle errors and atomicity at the level of 
+  // logical packets
+  //virtual void beginPacket() {}
+  //virtual void endPacket() {}
+
   virtual void write(char ch) { // throws
     write(Bytes(&ch,1));
   }
