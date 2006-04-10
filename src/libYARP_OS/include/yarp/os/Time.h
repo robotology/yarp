@@ -24,6 +24,22 @@ public:
    * @return the system time in seconds
    */
   static double now();
+
+  /**
+   * The calling thread releases its remaining quantum upon calling
+   * this function.
+   */
+  static void yield();
+
+  /**
+   * For OS where it makes sense sets the scheduler to be called more often.
+   * This sets the scheduler to be run to the maximum possible rate based
+   * on the capability of the hardware.
+   * Specifically, on Microsoft Windows, high resolution scheduling is
+   * used.
+   */  
+  static void turboBoost();
+
 };
 
 #endif

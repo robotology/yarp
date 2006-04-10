@@ -20,3 +20,18 @@ double Time::now() {
   return double(timev.sec()) + timev.usec() * 1e-6; 
 }
 
+
+void Time::turboBoost() {
+#ifdef ACE_WIN32
+  // only does something on Microsoft Windows
+  TIMECAPS tm;
+  timeGetDevCaps(&tm, sizeof(TIMECAPS));
+  timeBeginPeriod(1);
+#endif
+}
+
+void Time::yield() {
+  ACE_Time_Value tv(0);
+  ACE_OS::sleep(tv);
+}
+
