@@ -12,6 +12,26 @@ using namespace yarp;
 #define READ_SIZE 65536
 #define WRITE_SIZE 65500
 
+#define CRC_SIZE 4
+
+
+static bool checkCrc(char *buf, int length, int crcLength) {
+  unsigned long alt = NetType::getCrc(buf+crcLength,length-crcLength);
+  Bytes b(buf,4);
+  unsigned long curr = (unsigned long)NetType::netInt(b);
+  //YARP_ERROR(Logger::get(), String("crc sbould be ") + NetType::toString(alt));
+  //YARP_ERROR(Logger::get(), String("crc read as ") + NetType::toString(curr));
+  return alt == curr;
+}
+
+
+static void addCrc(char *buf, int length, int crcLength) {
+  unsigned long alt = NetType::getCrc(buf+crcLength,length-crcLength);
+  Bytes b(buf,4);
+  NetType::netInt((NetType::NetInt32)alt,b);
+  //YARP_ERROR(Logger::get(), String("crc set to ") + NetType::toString(alt));
+}
+
 
 void DgramTwoWayStream::open(const Address& remote) {
   Address local;
@@ -44,11 +64,15 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
 	     " to " + remote.toString());
 
 
-  readBuffer.allocate(READ_SIZE);
-  writeBuffer.allocate(WRITE_SIZE);
+  allocate();
+}
+
+void DgramTwoWayStream::allocate() {
+  readBuffer.allocate(READ_SIZE+CRC_SIZE);
+  writeBuffer.allocate(WRITE_SIZE+CRC_SIZE);
   readAt = 0;
   readAvail = 0;
-  writeAvail = 0;
+  writeAvail = CRC_SIZE;
   happy = true;
 }
 
@@ -79,12 +103,7 @@ void DgramTwoWayStream::join(const Address& group, bool sender) {
   localHandle.set(localAddress.getPort(),localAddress.getName().c_str());
   remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
 
-  readBuffer.allocate(READ_SIZE);
-  writeBuffer.allocate(WRITE_SIZE);
-  readAt = 0;
-  readAvail = 0;
-  writeAvail = 0;
-  happy = true;
+  allocate();
 }
 
 DgramTwoWayStream::~DgramTwoWayStream() {
@@ -151,6 +170,17 @@ int DgramTwoWayStream::read(const Bytes& b) {
       return result;
     }
     readAvail = result;
+
+    // deal with CRC by ignoring it for now
+    bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE);
+    if (!crcOk) {
+      YARP_ERROR(Logger::get(),"CRC failure");
+      readAt = 0;
+      readAvail = 0;
+    } else {
+      readAt += CRC_SIZE;
+      readAvail -= CRC_SIZE;
+    }
   }
 
   // if stuff is available, take it
@@ -197,6 +227,9 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
 
 void DgramTwoWayStream::flush() {
+  // should set CRC
+  addCrc(writeBuffer.get(),writeAvail,CRC_SIZE);
+
   while (writeAvail>0) {
     int writeAt = 0;
     YARP_ASSERT(dgram!=NULL);
@@ -214,7 +247,17 @@ void DgramTwoWayStream::flush() {
     }
     writeAt += len;
     writeAvail -= len;
+
+    if (writeAvail!=0) {
+      // well, we have a problem
+      // checksums will cause dumping
+      YARP_DEBUG(Logger::get(), "dgram/mcast send behaving badly");
+    }
   }
+  // finally: writeAvail should be 0
+
+  // make space for CRC
+  writeAvail = CRC_SIZE;
 }
 
 
@@ -226,7 +269,7 @@ bool DgramTwoWayStream::isOk() {
 void DgramTwoWayStream::reset() {
   readAt = 0;
   readAvail = 0;
-  writeAvail = 0;
+  writeAvail = CRC_SIZE;
 }
 
 
