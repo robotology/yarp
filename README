@@ -80,7 +80,7 @@ have a configure file, try:
   libtoolize
   autoheader
   aclocal && automake -ac
-  libtoolize
+  libtoolize --force
   autoheader
   aclocal && automake -ac
   autoconf
