@@ -32,7 +32,7 @@ YARP2 is usable by brave developers.  Watch out for the following:
 + libYARP_sig - a stub
 + libYARP_sig_compat - a stub
 
-For help, and to complain, email paulfitz@liralab.it
+For help, and to complain, email paulfitz@alum.mit.edu
 
 
 ===============================================================================
@@ -64,6 +64,31 @@ environment variables set:
   ACE_INCLUDE
   ACE_LIB
 pointing to include files and library files for ACE.
+
+===============================================================================
+
+AUTOCONFISCATION
+----------------
+
+Currently, we use non-autoconf-based makefiles.
+
+But autoconf+automake support is starting to be put together.  If you
+checked out from CVS and have a configure.ac file but would like to
+have a configure file, try:
+
+  libtoolize
+  autoheader
+  aclocal && automake -ac
+  autoconf
+
+You should now have a configure file.
+Try:
+
+  ./configure
+
+All going well, you have some new Makefiles.  Try:
+
+  make
 
 ===============================================================================
 
