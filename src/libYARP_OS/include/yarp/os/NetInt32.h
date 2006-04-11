@@ -44,6 +44,20 @@ namespace yarp {
 #endif
 
 #ifdef __LINUX__
+#ifndef YARP2_LINUX
+#define YARP2_LINUX
+#endif
+#endif
+
+#ifdef __linux__
+#ifndef YARP2_LINUX
+#define YARP2_LINUX
+#endif
+#endif
+
+
+
+#ifdef YARP2_LINUX
     typedef int NetInt32;
     //typedef int32_t NetInt32;
 #else

@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.1 2006-03-14 12:58:17 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.2 2006-04-11 16:51:59 eshuy Exp $
 ///
 
 /**
@@ -33,6 +33,11 @@
 #ifdef __LINUX__
 #pragma pack(1)
 #define YARP_PACKING_CONSIDERED
+#else
+#ifdef __linux__
+#pragma pack(1)
+#define YARP_PACKING_CONSIDERED
+#endif
 #endif
 
 #ifdef __DARWIN__
