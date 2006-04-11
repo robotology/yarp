@@ -96,6 +96,19 @@ All going well, you have some new Makefiles.  Try:
 
 ===============================================================================
 
+CMAKE
+-----
+
+Currently, we use non-cmake-based makefiles.
+
+But cmake support is starting to be put together.  If you
+checked out from CVS and have only a CMakeLists.txt file but would like to
+have a makefile or visual studio project, try installing "cmake" and
+then running it and following its hints.
+
+
+===============================================================================
+
 DOCUMENTATION
 -------------
 
