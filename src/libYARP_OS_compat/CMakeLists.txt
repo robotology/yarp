@@ -9,7 +9,11 @@ ADD_LIBRARY(YARP_OS_compat ${libcode})
 
 FIND_LIBRARY(YARP_OS YARP_OS ../libYARP_OS)
 
-LINK_LIBRARIES(YARP_OS_compat ${YARP_OS} ACE)
+IF(YARP_OS)
+	LINK_LIBRARIES(YARP_OS_compat ${YARP_OS} ACE)
+ENDIF(YARP_OS)
+
+LINK_LIBRARIES(YARP_OS_compat ACE)
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness.exe ${harnesscode})
