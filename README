@@ -42,6 +42,12 @@ COMPILATION and INSTALLATION
 
 If you are on a debian linux system, type:
 
+  # get hand-crafted makefiles
+  # see sections below for alternative makefile sources
+  make -f Makefile.man maker
+
+If that works, type:
+
   make
 
 If that works, type:
