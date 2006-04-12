@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.tool.template,v 1.3 2006-03-14 12:58:17 eshuy Exp $
+# $Id: Makefile.tool.template,v 1.4 2006-04-12 10:17:08 eshuy Exp $
 #
 
 EXECDIR = ../bin/$(OS)
@@ -70,3 +70,8 @@ depend:
 #	@echo no deb packaging needed here
 
 include $(YARP_ROOT)/conf/Makefile.dummy.template
+
+maker:
+	cp Makefile.man Makefile
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done

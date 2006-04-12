@@ -27,8 +27,8 @@ namespace yarp {
     virtual String toString() = 0;
     virtual void fromString(const String& src) = 0;
     virtual int getCode() = 0;
-    virtual void readBlock(ConnectionReader& reader) = 0;
-    virtual void writeBlock(ConnectionWriter& writer) = 0;
+    virtual bool read(ConnectionReader& reader) = 0;
+    virtual bool write(ConnectionWriter& writer) = 0;
     virtual Storable *create() = 0;
 
     virtual int asInt() { return 0; }
@@ -45,8 +45,8 @@ namespace yarp {
     virtual String toString();
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
-    virtual void readBlock(ConnectionReader& reader);
-    virtual void writeBlock(ConnectionWriter& writer);
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
     virtual Storable *create() { return new StoreInt(0); }
     virtual int asInt() { return x; }
     virtual double asDouble() { return x; }
@@ -62,8 +62,8 @@ namespace yarp {
     virtual String toString();
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
-    virtual void readBlock(ConnectionReader& reader);
-    virtual void writeBlock(ConnectionWriter& writer);
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
     virtual Storable *create() { return new StoreString(String("")); }
     virtual String asString() { return x; }
     static const int code;
@@ -78,8 +78,8 @@ namespace yarp {
     virtual String toString();
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
-    virtual void readBlock(ConnectionReader& reader);
-    virtual void writeBlock(ConnectionWriter& writer);
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
     virtual Storable *create() { return new StoreDouble(0); }
     virtual int asInt() { return (int)x; }
     virtual double asDouble() { return x; }
@@ -135,13 +135,14 @@ public:
   String toString();
   int size();
 
-  void fromBytes(const Bytes& data);
+  bool fromBytes(const Bytes& data);
   void toBytes(const Bytes& data);
 
-  void writeBlock(ConnectionWriter& writer);
+  virtual bool write(ConnectionWriter& writer);
 
-  void readBlock(ConnectionReader& reader);
+  virtual bool read(ConnectionReader& reader);
 
+  /*
   virtual bool write(ConnectionWriter& writer) {
     writeBlock(writer);
     return true;
@@ -151,6 +152,7 @@ public:
     readBlock(reader);
     return true;
   }
+  */
 
 
   const char *getBytes();
@@ -180,8 +182,8 @@ private:
     virtual String toString();
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
-    virtual void readBlock(ConnectionReader& reader);
-    virtual void writeBlock(ConnectionWriter& writer);
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
     virtual Storable *create() { return new StoreList(); }
     static const int code;
   };

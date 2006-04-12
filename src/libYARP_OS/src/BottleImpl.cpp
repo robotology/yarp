@@ -130,7 +130,7 @@ int BottleImpl::size() {
   return content.size();
 }
 
-void BottleImpl::fromBytes(const Bytes& data) {
+bool BottleImpl::fromBytes(const Bytes& data) {
   String wrapper;
   wrapper.set(data.get(),data.length(),0);
   StringInputStream sis;
@@ -163,12 +163,14 @@ void BottleImpl::fromBytes(const Bytes& data) {
 	YARP_ERROR(Logger::get(), "BottleImpl reader failed");
 	throw IOException("BottleImpl reader failed - unrecognized format?");
       }
-      storable->readBlock(reader);
+      storable->read(reader);
       add(storable);
     }
   } catch (IOException e) {
     YARP_DEBUG(Logger::get(), e.toString() + " bottle reader stopped");
+    return false;
   }
+  return true;
 }
 
 void BottleImpl::toBytes(const Bytes& data) {
@@ -188,38 +190,52 @@ int BottleImpl::byteCount() {
   return data.size();
 }
 
-void BottleImpl::writeBlock(ConnectionWriter& writer) {
-  // could simplify this if knew lengths of blocks up front
-  if (writer.isTextMode()) {
-    //writer.appendLine(toString());
-    writer.appendString(toString().c_str(),'\n');
-  } else {
-    String name = "YARP2";
-    writer.appendInt(name.length()+1);
-    writer.appendString(name.c_str(),'\0');
-    synch();
-    writer.appendInt(byteCount());
-    //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
-    writer.appendBlock((char*)getBytes(),byteCount());
+bool BottleImpl::write(ConnectionWriter& writer) {
+  try {
+    // could simplify this if knew lengths of blocks up front
+    if (writer.isTextMode()) {
+      //writer.appendLine(toString());
+      writer.appendString(toString().c_str(),'\n');
+    } else {
+      String name = "YARP2";
+      writer.appendInt(name.length()+1);
+      writer.appendString(name.c_str(),'\0');
+      synch();
+      writer.appendInt(byteCount());
+      //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
+      writer.appendBlock((char*)getBytes(),byteCount());
+    }
+  } catch (IOException e) {
+    YARP_DEBUG(Logger::get(), String("Bottle write exception: ")+e.toString());
+    return false;
   }
+  return true;
 }
 
 
-void BottleImpl::readBlock(ConnectionReader& reader) {
-  if (reader.isTextMode()) {
-    String str = reader.expectText().c_str();
-    fromString(str);
-  } else {
-    int len = reader.expectInt();
-    //String name = reader.expectString(len);
-    String buf((size_t)len);
-    reader.expectBlock((const char *)buf.c_str(),len);
-    String name = buf.c_str();
-    int bct = reader.expectInt();
-    ManagedBytes b(bct);
-    reader.expectBlock(b.get(),b.length());
-    fromBytes(b.bytes());
+bool BottleImpl::read(ConnectionReader& reader) {
+  bool result = false;
+  try {
+    if (reader.isTextMode()) {
+      String str = reader.expectText().c_str();
+      fromString(str);
+      result = true;
+    } else {
+      int len = reader.expectInt();
+      //String name = reader.expectString(len);
+      String buf((size_t)len);
+      reader.expectBlock((const char *)buf.c_str(),len);
+      String name = buf.c_str();
+      int bct = reader.expectInt();
+      ManagedBytes b(bct);
+      reader.expectBlock(b.get(),b.length());
+      result = fromBytes(b.bytes());
+    }
+  } catch (IOException e) {
+    YARP_DEBUG(Logger::get(), String("Bottle read exception: ")+e.toString());
+    // leave result false
   }
+  return result;
 }
 
 
@@ -231,7 +247,7 @@ void BottleImpl::synch() {
     for (unsigned int i=0; i<content.size(); i++) {
       Storable *s = content[i];
       writer.appendInt(s->getCode());
-      s->writeBlock(writer);
+      s->write(writer);
     }
     //buf.write(sos);
     String str = writer.toString();
@@ -256,12 +272,14 @@ void StoreInt::fromString(const String& src) {
   x = ACE_OS::atoi(src.c_str());
 }
 
-void StoreInt::readBlock(ConnectionReader& reader) {
+bool StoreInt::read(ConnectionReader& reader) {
   x = reader.expectInt();
+  return true;
 }
 
-void StoreInt::writeBlock(ConnectionWriter& writer) {
+bool StoreInt::write(ConnectionWriter& writer) {
   writer.appendInt(x);
+  return true;
 }
 
 
@@ -282,13 +300,15 @@ void StoreDouble::fromString(const String& src) {
   x = ACE_OS::strtod(src.c_str(),NULL);
 }
 
-void StoreDouble::readBlock(ConnectionReader& reader) {
+bool StoreDouble::read(ConnectionReader& reader) {
   reader.expectBlock((const char*)&x,sizeof(x));
+  return true;
 }
 
-void StoreDouble::writeBlock(ConnectionWriter& writer) {
+bool StoreDouble::write(ConnectionWriter& writer) {
   //writer.appendBlockCopy(Bytes((char*)&x,sizeof(x)));
   writer.appendBlock((char*)&x,sizeof(x));
+  return true;
 }
 
 
@@ -344,17 +364,19 @@ void StoreString::fromString(const String& src) {
 }
 
 
-void StoreString::readBlock(ConnectionReader& reader) {
+bool StoreString::read(ConnectionReader& reader) {
   int len = reader.expectInt();
   String buf((size_t)len);
   reader.expectBlock((const char *)buf.c_str(),len);
   x = buf.c_str();
   //x = reader.expectString(len);
+  return true;
 }
 
-void StoreString::writeBlock(ConnectionWriter& writer) {
+bool StoreString::write(ConnectionWriter& writer) {
   writer.appendInt(x.length()+1);
   writer.appendString(x.c_str(),'\0');
+  return true;
 }
 
 
@@ -375,14 +397,16 @@ void StoreList::fromString(const String& src) {
   }
 }
 
-void StoreList::readBlock(ConnectionReader& reader) {
+bool StoreList::read(ConnectionReader& reader) {
   // not using the most efficient representation
   content.read(reader);
+  return true;
 }
 
-void StoreList::writeBlock(ConnectionWriter& writer) {
+bool StoreList::write(ConnectionWriter& writer) {
   // not using the most efficient representation
   content.write(writer);
+  return true;
 }
 
 

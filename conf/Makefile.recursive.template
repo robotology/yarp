@@ -28,3 +28,8 @@ subdox:
 subuserdox:
 	@test -e Doxyfile.part && ( mkdir -p doc; doxygen Doxyfile.part ) || echo -n
 
+maker:
+	cp Makefile.man Makefile
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done
+

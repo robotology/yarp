@@ -12,3 +12,8 @@ dox:
 
 clean:
 	rm -rf *.deb
+
+maker:
+	cp Makefile.man Makefile
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done

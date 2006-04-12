@@ -189,6 +189,48 @@ public:
   }
 
 
+  void testHeavy() {
+    report(0,"checking heavy udp");
+
+    Bottle bot1;
+    PortReaderBuffer<Bottle> buf;
+
+    bot1.fromString("1 2 3");
+    for (int i=0; i<100000; i++) {
+      bot1.addInt(i);
+    }
+
+    Port input, output;
+    input.open("/in");
+    output.open("/out");
+
+    input.setReader(buf);
+
+    output.addOutput(Contact::byName("/in").addCarrier("udp"));
+    Time::delay(0.2);
+
+
+    for (int j=0; j<3; j++) {
+      report(0,"writing/reading three times...");
+      output.write(bot1);
+    }
+
+    report(0,"checking for whatever got through...");
+    while (buf.check()) {
+      Bottle *result = buf.read();
+      checkTrue(result!=NULL,"got something check");
+      if (result!=NULL) {
+	checkEqual(bot1.size(),result->size(),"size check");
+	YARP_INFO(Logger::get(),String("size is in fact ") + 
+		  NetType::toString(result->size()));
+      }
+    }
+
+    output.close();
+    input.close();
+  }
+
+
   void testPair() {
     report(0,"checking paired send/receive");
     PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
@@ -250,6 +292,7 @@ public:
     testPair();
     testReply();
     testUdp();
+    testHeavy();
     nic.setFakeMode(false);
   }
 };

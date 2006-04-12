@@ -75,7 +75,7 @@ public:
 
     try {
       BufferedConnectionWriter bbw(true);
-      bot.writeBlock(bbw);
+      bot.write(bbw);
       
       String s;
       StringInputStream sis;
@@ -86,7 +86,7 @@ public:
       sbr.reset(sis,NULL,s.length(),true);
       
       BottleImpl bot2;
-      bot2.readBlock(sbr);
+      bot2.read(sbr);
       checkEqual(bot2.toString(),bot.toString(),"to/from stream");
     } catch (IOException e) {
       report(1,e.toString() + " <<< exception thrown");

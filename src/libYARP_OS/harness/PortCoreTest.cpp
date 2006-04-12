@@ -21,7 +21,7 @@ public:
   bool read(ConnectionReader& reader) {
     receives++;
     BottleImpl bot;
-    bot.readBlock(reader);
+    bot.read(reader);
     if (expectation==String("")) {
       report(1,"got unexpected input");
       return false;

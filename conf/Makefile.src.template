@@ -1,5 +1,5 @@
 #
-# $Id: Makefile.src.template,v 1.4 2006-03-21 11:31:51 eshuy Exp $
+# $Id: Makefile.src.template,v 1.5 2006-04-12 10:17:08 eshuy Exp $
 #
 
 include $(YARP_ROOT)/conf/Makefile.template
@@ -83,3 +83,8 @@ msdev:
 	msdev $(wildcard *.dsw) /MAKE
 
 include $(YARP_ROOT)/conf/Makefile.dummy.template
+
+maker:
+	cp Makefile.man Makefile
+	@for d in $(SUBDIRS) ; do \
+		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done

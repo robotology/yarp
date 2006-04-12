@@ -254,7 +254,7 @@ public:
   BottleImpl bot;
   bool got;
   virtual bool read(yarp::os::ConnectionReader& reader) {
-    bot.readBlock(reader);
+    bot.read(reader);
     got = true;
     return true;
   }
@@ -387,7 +387,7 @@ public:
 
   virtual bool read(ConnectionReader& reader) {
     BottleImpl bot;
-    bot.readBlock(reader);
+    bot.read(reader);
     if (bot.size()==2 && bot.isInt(0) && bot.isString(1)) {
       int code = bot.getInt(0);
       if (code!=1) {
