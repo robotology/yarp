@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: YARPImageUtils.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPImageUtils.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
 ///
 ///
 
@@ -85,7 +85,9 @@
 
 #include <yarp/YARPImage.h>
 
-//
+/**
+ * Legacy namespace for general image utilities.
+ */
 namespace YARPImageUtils 
 {
 	void GetRed (const YARPImageOf<YarpPixelRGB>& in, YARPImageOf<YarpPixelMono>& out);

@@ -4,6 +4,9 @@
 #include <yarp/os/Portable.h>
 
 namespace yarp {
+  /**
+   * Signal processing.
+   */
   namespace sig {
     class Image;
     template <class T> class ImageOf;

@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: YARPSimpleOperations.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPSimpleOperations.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
 ///
 ///
 
@@ -89,6 +89,9 @@
 const double __crossLength = 2.0;
 const double __crossThickness = 1.0;
 
+/**
+ * Legacy namespace for general image operations.
+ */
 namespace YARPSimpleOperations
 {
 

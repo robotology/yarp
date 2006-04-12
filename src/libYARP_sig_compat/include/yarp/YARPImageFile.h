@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: YARPImageFile.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPImageFile.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
 ///
 ///
 
@@ -85,6 +85,9 @@ pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
 
 #include <yarp/YARPImage.h>
 
+/**
+ * Legacy namespace for image file operations.
+ */
 namespace YARPImageFile
 {
 	enum

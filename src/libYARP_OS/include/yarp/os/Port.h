@@ -5,7 +5,14 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
 
+/**
+ * The main, catch-all namespace for YARP.
+ */
 namespace yarp {
+  /**
+   * An interface to the operating system.
+   * It includes Port-based communication.
+   */
   namespace os {
     class Port;
   }

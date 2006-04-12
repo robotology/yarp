@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: YARPParseParameters.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPParseParameters.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
 ///
 /// Simple parser facility for program arguments. July 2003 -- by nat
 /// usage: -switch parameter
@@ -78,8 +78,7 @@
 #include <yarp/YARPString.h>
 
 /**
- * This is a namespace containing the functions that do different type
- * of parsing.
+ * Legacy namespace for functions for parsing parameters.
  */
 namespace YARPParseParameters
 {
