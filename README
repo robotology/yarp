@@ -11,6 +11,19 @@ spending your time writing libraries).
 
 License and copyright information is in COPYING.
 
+===============================================================================
+
+QUICKSTART
+----------
+
+There are a few different ways to compile YARP2 (see below).
+Probably the easiest right now is using "cmake" (see www.cmake.org).
+
+In linux, in this directory, type:
+
+  cmake .
+  make
+  make test
 
 ===============================================================================
 
