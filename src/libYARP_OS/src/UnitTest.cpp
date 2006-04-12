@@ -90,12 +90,13 @@ void UnitTest::runSubTests(int argc, char *argv[]) {
 }
 
 
-void UnitTest::run() {
+int UnitTest::run() {
   run(0,NULL);
+  return hasProblem;
 }
 
 
-void UnitTest::run(int argc, char *argv[]) {
+int UnitTest::run(int argc, char *argv[]) {
   try {
     //report(0,String("starting tests for " + getName()));
     bool ran = false;
@@ -129,6 +130,7 @@ void UnitTest::run(int argc, char *argv[]) {
   } catch (IOException e) {
     report(1,String("exception thrown ") + e.toString());
   }
+  return hasProblem;
 }
 
 

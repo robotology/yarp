@@ -27,3 +27,10 @@ LINK_LIBRARIES(YARP_sig_compat ACE)
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness.exe ${harnesscode})
+
+# add in our tests
+FOREACH(X ${harnesscode})
+	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
+	  ADD_TEST(YARP_sig_compat::${XN} harness.exe regression ${XN})
+ENDFOREACH(X $(harnesscode))
+

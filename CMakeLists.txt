@@ -1,1 +1,2 @@
+ENABLE_TESTING()
 SUBDIRS(src)

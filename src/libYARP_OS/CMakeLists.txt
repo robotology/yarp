@@ -15,3 +15,10 @@ ADD_EXECUTABLE(yarp.exe yarp/yarp.cpp)
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness.exe ${harnesscode})
+
+# add in our tests
+FOREACH(X ${harnesscode})
+	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
+	  ADD_TEST(YARP_OS::${XN} harness.exe regression ${XN})
+ENDFOREACH(X $(harnesscode))
+

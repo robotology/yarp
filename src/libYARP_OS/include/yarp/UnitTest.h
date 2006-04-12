@@ -34,9 +34,9 @@ public:
   void add(UnitTest& unit);
   void clear();
 
-  virtual void run();
+  virtual int run();
 
-  virtual void run(int argc, char *argv[]);
+  virtual int run(int argc, char *argv[]);
 
   virtual void runTests() {
   }
