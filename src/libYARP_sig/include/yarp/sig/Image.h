@@ -53,6 +53,15 @@ public:
    */
   const Image& operator=(const Image& alt);
 
+
+  /**
+   * Copy operator.
+   * Clones the content of another image.
+   * @param alt the image to clone
+   */
+  bool copy(const Image& alt);
+
+
   /**
    * Gets width of image in pixels.
    * @return the width of the image in pixels (0 if no image present)
@@ -169,8 +178,6 @@ private:
   void copyPixels(const char *src, int id1, 
 		  char *dest, int id2, int w, int h,
 		  int imageSize, int rowSize);
-
-  bool copy(const Image& alt);
 };
 
 

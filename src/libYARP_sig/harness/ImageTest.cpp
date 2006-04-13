@@ -22,7 +22,7 @@ class ImageTest : public UnitTest {
 public:
   virtual String getName() { return "ImageTest"; }
 
-  virtual void testCreate() {
+  void testCreate() {
     report(0,"testing image creation...");
     FlexImage image;
     image.setPixelCode(YARP_PIXEL_RGB);
@@ -47,7 +47,7 @@ public:
     checkEqual(total,0,"pixel assignment check");
   }
 
-  virtual void testCopy() {
+  void testCopy() {
     report(0,"testing image copying...");
 
     ImageOf<PixelRgb> img1;
@@ -62,7 +62,7 @@ public:
     }
 
     ImageOf<PixelRgb> result;
-    result = img1;
+    result.copy(img1);
 
     checkEqual(img1.width(),result.width(),"width check");
     checkEqual(img1.height(),result.height(),"height check");
@@ -84,7 +84,45 @@ public:
     }
   }
 
-  virtual void testTransmit() {
+
+  void testCast() {
+    report(0,"testing image casting...");
+
+    ImageOf<PixelRgb> img1;
+    img1.resize(128,64);
+    for (int x=0; x<img1.width(); x++) {
+      for (int y=0; y<img1.height(); y++) {
+	PixelRgb& pixel = img1.pixel(x,y);
+	unsigned char v = x%30;
+	pixel.r = v;
+	pixel.g = v;
+	pixel.b = v;
+      }
+    }
+
+    ImageOf<PixelMono> result;
+    result.copy(img1);
+
+    checkEqual(img1.width(),result.width(),"width check");
+    checkEqual(img1.height(),result.height(),"height check");
+
+    if (img1.width()==result.width() &&
+	img1.height()==result.height()) {
+      int mismatch = 0;
+      for (int x=0; x<img1.width(); x++) {
+	for (int y=0; y<img1.height(); y++) {
+	  PixelRgb& pix0 = img1.pixel(x,y);
+	  PixelMono& pix1 = result.pixel(x,y);
+	  if (pix0.r>pix1+1 || pix0.r<pix1-1) {
+	    mismatch++;
+	  }
+	}
+      }
+      checkTrue(mismatch==0,"pixel match check");
+    }
+  }
+
+  void testTransmit() {
     report(0,"testing image transmission...");
 
     ImageOf<PixelRgb> img1;
@@ -144,6 +182,7 @@ public:
   virtual void runTests() {
     testCreate();
     testCopy();
+    testCast();
     bool netMode = Network::setLocalMode(true);
     testTransmit();
     Network::setLocalMode(netMode);
