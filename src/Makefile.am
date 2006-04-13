@@ -1,1 +1,1 @@
-SUBDIRS = libYARP_OS
+SUBDIRS = libYARP_OS libYARP_sig
