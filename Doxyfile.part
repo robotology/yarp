@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = YARP
 PROJECT_NUMBER         = 
-OUTPUT_DIRECTORY       = doc/api-all
+OUTPUT_DIRECTORY       = doc/api
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -67,7 +67,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = 
+INPUT                  = src/libYARP_OS src/libYARP_sig
 FILE_PATTERNS          = *.h *.cpp
 RECURSIVE              = YES
 EXCLUDE                = 

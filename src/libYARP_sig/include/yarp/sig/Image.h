@@ -16,13 +16,11 @@ namespace yarp {
 
 
 /**
- *
  * Base class for storing images.
- * You actually want to use ImageOf<T> or FlexImage.
+ * You actually want to use ImageOf or FlexImage.
  * This is a minimal class, designed to be as interoperable as possible
  * with other image classes in other libraries, particularly IPL-derived
  * libraries such as OpenCV.
- *
  */
 class yarp::sig::Image : public yarp::os::Portable {
 
@@ -181,6 +179,10 @@ private:
 };
 
 
+/**
+ * Image class with user control of representation details.
+ * Can be necessary when interfacing with other image types.
+ */
 class yarp::sig::FlexImage : public yarp::sig::Image {
 public:
 
@@ -236,10 +238,19 @@ enum __PixelTypesEnum
 namespace yarp {
   namespace sig {
 
+    /**
+     * Monochrome pixel type.
+     */
     typedef unsigned char PixelMono;
 
+    /**
+     * 32-bit integer pixel type.
+     */
     typedef yarp::os::NetInt32 PixelInt;
 
+    /**
+     * Packed RGB pixel type.
+     */
     struct PixelRgb
     { 
       unsigned char r,g,b; 
@@ -247,21 +258,47 @@ namespace yarp {
       PixelRgb() { r = g = b = 0; }
       PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
       { r = n_r;  g = n_g;  b = n_b; }
-    } PACKED_FOR_NET;
+    } /** \cond */ PACKED_FOR_NET /** \endcond */;
     
+    /**
+     * Packed RGB pixel type, with pixels stored in reverse order.
+     */
     struct PixelBgr
     { 
       unsigned char b,g,r; 
       PixelBgr() { b = g = r = 0; }
       PixelBgr(unsigned char n_r, unsigned char n_g, unsigned char n_b)
       { r = n_r;  g = n_g;  b = n_b; }
-    } PACKED_FOR_NET;
+    } /** \cond */ PACKED_FOR_NET /** \endcond */;
     
+    /**
+     * Packed HSV (hue/saturation/value pixel type.
+     */
     typedef struct { unsigned char h,s,v; } PixelHsv;
+
+    /**
+     * Signed byte pixel type.
+     */
     typedef char PixelMonoSigned;
+
+    /**
+     * Signed, packed RGB pixel type.
+     */
     typedef struct { char r,g,b; } PixelRgbSigned;
+
+    /**
+     * Floating point pixel type.
+     */
     typedef float PixelFloat;
+
+    /**
+     * Floating point RGB pixel type.
+     */
     typedef struct { float r,g,b; } PixelRgbFloat;
+
+    /**
+     * Floating point HSV pixel type.
+     */
     typedef struct { float h,s,v; } PixelHsvFloat;
 
 #include <yarp/os/end_pack_for_net.h>
@@ -274,7 +311,13 @@ namespace yarp {
  * Typed image class.
  *
  * This is a wrapper over YARPGenericImage providing type security for
- * pixel access.
+ * pixel access.  "T" can be any of sig::PixelMono, sig::PixelRgb, 
+ * sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned, sig::PixelRgbSigned, 
+ * sig::PixelFloat, sig::PixelRgbFloat, sig::PixelHsvFloat, 
+ * sig::PixelInt.
+ * If ImageOf::copy is called for two such images, a reasonable casting
+ * operation will occur if the pixel types are different.
+ *
  */
 template <class T>
 class yarp::sig::ImageOf : public Image
@@ -350,5 +393,6 @@ public: \
 #ifndef YARP_IMAGE_HEADER_CONTROL
 #define YARP_IMAGE_HEADER_CONTROL
 #endif
+
 
 #endif
