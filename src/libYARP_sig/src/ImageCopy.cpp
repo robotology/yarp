@@ -26,8 +26,8 @@ typedef PixelHsvFloat Def_YARP_PIXEL_HSV_FLOAT;
 typedef PixelInt Def_YARP_PIXEL_INT;
 
 #define VALID_PIXEL(x) ((x>255)?255:((x<0)?0:x))
-#define SPECIAL_COPY_BEGIN void YARPDummyCopyPixel() {
-#define SPECIAL_COPY(id1,id2) } inline void CopyPixel(const Def_##id1 *src, Def_##id2 *dest) {
+#define SPECIAL_COPY_BEGIN static void YARPDummyCopyPixel() {
+#define SPECIAL_COPY(id1,id2) } static inline void CopyPixel(const Def_##id1 *src, Def_##id2 *dest) {
 #define SPECIAL_COPY_END }
 
 static int implemented_yet = 1;
