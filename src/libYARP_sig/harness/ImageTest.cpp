@@ -1,8 +1,7 @@
 
 /**
  *
- * This is a special set of tests, to see how well we support
- * the "Classic" YARP interface
+ * Tests for images
  *
  */
 
@@ -11,6 +10,7 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
+#include <yarp/NetType.h>
 
 #include "TestList.h"
 
@@ -122,6 +122,43 @@ public:
     }
   }
 
+
+#define EXT_WIDTH (128)
+#define EXT_HEIGHT (64)
+
+  void testExternal() {
+    report(0, "testing external image...");
+    unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
+
+    {
+      for (int x=0; x<EXT_WIDTH; x++) {
+	for (int y=0; y<EXT_HEIGHT; y++) {
+	  buf[y][x] = 20;
+	}
+      }
+    }
+
+    ImageOf<PixelMono> img1;
+
+    img1.setExternal(&buf[0][0],EXT_WIDTH,EXT_HEIGHT);
+
+    checkEqual(img1.width(),EXT_WIDTH,"width check");
+    checkEqual(img1.height(),EXT_HEIGHT,"height check");
+
+    int mismatch = 0;
+    for (int x=0; x<img1.width(); x++) {
+      for (int y=0; y<img1.height(); y++) {
+	img1.pixel(x,y) = 5;
+	if (buf[y][x]!=5) {
+	  mismatch++;
+	  //report(1,String("expected 5, got ") + NetType::toString(buf[y][x]));
+	}
+      }
+    }
+    checkEqual(mismatch,0,"delta check");
+  }
+
+
   void testTransmit() {
     report(0,"testing image transmission...");
 
@@ -183,6 +220,7 @@ public:
     testCreate();
     testCopy();
     testCast();
+    testExternal();
     bool netMode = Network::setLocalMode(true);
     testTransmit();
     Network::setLocalMode(netMode);

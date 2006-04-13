@@ -124,6 +124,8 @@ public:
    */
   void resize(int imgWidth, int imgHeight);
 
+  void setExternal(void *data, int imgWidth, int imgHeight);
+
   char *getRawImage() const;
 
   int getRawImageSize() const;

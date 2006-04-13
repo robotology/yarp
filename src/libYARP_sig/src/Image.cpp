@@ -106,7 +106,6 @@ protected:
   void _alloc_complete(int x, int y, int pixel_type);
   void _free_complete();
   
-  void _alloc_complete_extern(void *buf, int x, int y, int pixel_type);
   
   // computes the # of padding bytes. These are always at the end of the row.
   int _pad_bytes (int linesize, int align) const;
@@ -130,6 +129,8 @@ public:
 
   void resize(int x, int y, int pixel_type, 
 	      int pixel_size, int row_size);
+
+  void _alloc_complete_extern(void *buf, int x, int y, int pixel_type);
 
 };
 
@@ -527,6 +528,17 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 	type_id = pixel_type;
 }
 
+void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type)
+{
+	_make_independent();
+	_free_complete();
+	_set_ipl_header(x, y, pixel_type);
+	Data = NULL;
+	_alloc_extern (buf);
+	_alloc_data ();
+	is_owner = 0;
+}
+
 
 
 // LATER: implement for LINUX.
@@ -619,6 +631,8 @@ void Image::synchronize() {
     data = NULL;
     imgWidth = imgHeight = 0;
   }
+  imgPixelSize = getPixelSize();
+  imgPixelCode = getPixelCode();
 }
 
 
@@ -746,3 +760,14 @@ bool Image::copy(const Image& alt) {
   ok = true;
   return ok;
 }
+
+
+void Image::setExternal(void *data, int imgWidth, int imgHeight) {
+  ((ImageStorage*)implementation)->_alloc_complete_extern(data,
+							  imgWidth,
+							  imgHeight,
+							  getPixelCode());
+  synchronize();
+}
+
+
