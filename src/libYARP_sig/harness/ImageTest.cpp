@@ -151,7 +151,6 @@ public:
 	img1.pixel(x,y) = 5;
 	if (buf[y][x]!=5) {
 	  mismatch++;
-	  //report(1,String("expected 5, got ") + NetType::toString(buf[y][x]));
 	}
       }
     }
@@ -216,14 +215,40 @@ public:
    input.close();
   }
 
+
+  void testPadding() {
+    report(0,"checking image padding...");
+    ImageOf<PixelMono> img1;
+    img1.resize(13,5);
+    checkEqual(img1.getQuantum(),8,"ipl compatible quantum");
+    checkEqual(img1.getRowSize(),16,"ipl compatible row size");
+    checkEqual(img1.width(),13,"good real row width");
+
+    unsigned char buf2[13][5];
+    ImageOf<PixelMono> img2;
+    img2.setExternal(&buf2[0][0],13,5);
+    checkEqual(img2.getQuantum(),1,"natural external quantum");
+    checkEqual(img2.getRowSize(),13,"natural external row size");
+    checkEqual(img2.width(),13,"natural external row width");
+
+    unsigned char buf3[16][5];
+    ImageOf<PixelMono> img3;
+    img3.setQuantum(8);
+    img3.setExternal(&buf3[0][0],13,5);
+    checkEqual(img3.getQuantum(),8,"forced external quantum");
+    checkEqual(img3.getRowSize(),16,"forced external row size");
+    checkEqual(img3.width(),13,"normal external row width");
+  }
+
   virtual void runTests() {
     testCreate();
-    testCopy();
-    testCast();
-    testExternal();
     bool netMode = Network::setLocalMode(true);
     testTransmit();
     Network::setLocalMode(netMode);
+    testCopy();
+    testCast();
+    testExternal();
+    testPadding();
   }
 };
 

@@ -81,6 +81,8 @@ class ImageStorage {
 public:
   IplImage* pImage;
   char **Data;       // this is not IPL. it's char to maintain IPL compatibility  
+  int quantum;
+
 protected:
   Image& owner;
 
@@ -101,7 +103,7 @@ protected:
   void _free_data (void);
   
   void _make_independent(); 
-  void _set_ipl_header(int x, int y, int pixel_type);
+  void _set_ipl_header(int x, int y, int pixel_type, int quantum = 0);
   void _free_ipl_header();
   void _alloc_complete(int x, int y, int pixel_type);
   void _free_complete();
@@ -121,6 +123,7 @@ public:
     pImage = NULL;
     Data = NULL;
     is_owner = 0;
+    quantum = 0;
   }
 
   ~ImageStorage() {
@@ -128,15 +131,16 @@ public:
   }
 
   void resize(int x, int y, int pixel_type, 
-	      int pixel_size, int row_size);
+	      int pixel_size, int quantum);
 
-  void _alloc_complete_extern(void *buf, int x, int y, int pixel_type);
+  void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
+			      int quantum);
 
 };
 
 
 void ImageStorage::resize(int x, int y, int pixel_type, 
-			  int pixel_size, int row_size) {
+			  int pixel_size, int quantum) {
   int need_recreation = 1;
   /*
   if (pImage != NULL) {
@@ -149,6 +153,9 @@ void ImageStorage::resize(int x, int y, int pixel_type,
     }
   }
   */
+
+  YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
+  this->quantum = quantum = YARP_IMAGE_ALIGN;
 
   if (need_recreation) {
     _free_complete();
@@ -315,8 +322,11 @@ void ImageStorage::_make_independent()
 }
 
 
-void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
+void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
 {
+  if (quantum==0) {
+    quantum = IPL_ALIGN_QWORD;
+  }
   int implemented_yet = 1;
 	// used to allocate the ipl header.
 	switch (pixel_type)
@@ -330,7 +340,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"GRAY",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -350,7 +360,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"RGB",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -368,7 +378,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"HSV",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -386,7 +396,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"BGR",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -404,7 +414,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"GRAY",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -426,7 +436,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					  "GRAY",
 					  IPL_DATA_ORDER_PIXEL,
 					  IPL_ORIGIN_BL,
-					  IPL_ALIGN_QWORD,
+					  quantum,
 					  x,
 					  y,
 					  NULL,
@@ -444,7 +454,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"RGB",
 					IPL_DATA_ORDER_PIXEL,	 
 					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
+					quantum,		
 					x,
 					y,
 					NULL,
@@ -467,7 +477,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					  "GRAY",
 					  IPL_DATA_ORDER_PIXEL,
 					  IPL_ORIGIN_BL,
-					  IPL_ALIGN_QWORD,
+					  quantum,
 					  x,
 					  y,
 					  NULL,
@@ -491,7 +501,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"GRAY",
 					IPL_DATA_ORDER_PIXEL,
 					IPL_ORIGIN_BL,
-					IPL_ALIGN_QWORD,
+					quantum,
 					x,
 					y,
 					NULL,
@@ -509,7 +519,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 					"GRAY",
 					IPL_DATA_ORDER_PIXEL,
 					IPL_ORIGIN_BL,
-					IPL_ALIGN_QWORD,
+					quantum,
 					x,
 					y,
 					NULL,
@@ -526,13 +536,19 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type)
 	}
 
 	type_id = pixel_type;
+	this->quantum = quantum;
 }
 
-void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type)
+void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum)
 {
+  if (quantum==0) {
+    quantum = 1;
+  }
+  this->quantum = quantum;
+
 	_make_independent();
 	_free_complete();
-	_set_ipl_header(x, y, pixel_type);
+	_set_ipl_header(x, y, pixel_type, quantum);
 	Data = NULL;
 	_alloc_extern (buf);
 	_alloc_data ();
@@ -564,6 +580,7 @@ void Image::initialize() {
   imgWidth = imgHeight = 0;
   imgPixelSize = imgRowSize = 0;
   imgPixelCode = 0;
+  imgQuantum = 0;
   implementation = new ImageStorage(*this);
   ACE_ASSERT(implementation!=NULL);
 }
@@ -600,7 +617,7 @@ void Image::resize(int imgWidth, int imgHeight) {
   ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
 					  imgPixelCode,
 					  imgPixelSize,
-					  imgRowSize);
+					  imgQuantum);
   synchronize();
 }
 
@@ -615,8 +632,8 @@ void Image::setPixelSize(int imgPixelSize) {
 }
 
 
-void Image::setRowSize(int imgRowSize) {
-  this->imgRowSize = imgRowSize;
+void Image::setQuantum(int imgQuantum) {
+  this->imgQuantum = imgQuantum;
 }
 
 
@@ -627,6 +644,8 @@ void Image::synchronize() {
     imgWidth = impl->pImage->width;
     imgHeight = impl->pImage->height;
     data = impl->Data;
+    imgQuantum = impl->quantum;
+    imgRowSize = impl->pImage->widthStep;
   } else {
     data = NULL;
     imgWidth = imgHeight = 0;
@@ -750,23 +769,27 @@ bool Image::copy(const Image& alt) {
   YARP_ASSERT(height()==alt.height());
   if (getPixelCode()==alt.getPixelCode()) {
     YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
-    YARP_ASSERT(rowSize()==alt.rowSize());
+    YARP_ASSERT(getQuantum()==alt.getQuantum());
   }
   YARP_ASSERT(height()==alt.height());
   copyPixels(alt.getRawImage(),alt.getPixelCode(),
 	     getRawImage(),getPixelCode(),
 	     width(),height(),
-	     getRawImageSize(),rowSize());
+	     getRawImageSize(),getQuantum());
   ok = true;
   return ok;
 }
 
 
 void Image::setExternal(void *data, int imgWidth, int imgHeight) {
+  if (imgQuantum==0) {
+    imgQuantum = 1;
+  }
   ((ImageStorage*)implementation)->_alloc_complete_extern(data,
 							  imgWidth,
 							  imgHeight,
-							  getPixelCode());
+							  getPixelCode(),
+							  imgQuantum);
   synchronize();
 }
 

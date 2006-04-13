@@ -286,7 +286,7 @@ static void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const char *src, int id1, 
 		       char *dest, int id2, int w, int h,
-		       int imageSize, int rowSize)
+		       int imageSize, int quantum)
 {
   if (id1==id2) {
     memcpy(dest,src,imageSize);

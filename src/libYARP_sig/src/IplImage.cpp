@@ -61,7 +61,7 @@
 ///
 
 ///
-/// $Id: IplImage.cpp,v 1.1 2006-03-14 12:07:27 eshuy Exp $
+/// $Id: IplImage.cpp,v 1.2 2006-04-13 15:21:51 eshuy Exp $
 ///
 ///
 
@@ -882,9 +882,9 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
 	r->dataOrder = dataOrder;	// IPL_DATA_ORDER_PIXEL, IPL_DATA_ORDER_PLANE
 	r->origin = origin;
 	
-	assert (align == IPL_ALIGN_QWORD);	/// don't want to be bothered w/ alignment beside the 
+	//assert (align == IPL_ALIGN_QWORD);	/// don't want to be bothered w/ alignment beside the 
 										/// the 8 bytes stuff.
-	assert (align == YARP_IMAGE_ALIGN);
+	//assert (align == YARP_IMAGE_ALIGN);
 
 	r->align = align;
 	r->width = width;
@@ -895,7 +895,7 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
 
 	r->tileInfo = NULL;
 	const int linew = width * (depth & IPL_DEPTH_MASK) / 8 * nChannels;
-	r->widthStep = linew + PAD_BYTES(linew, YARP_IMAGE_ALIGN);
+	r->widthStep = linew + PAD_BYTES(linew, align);
 
 	r->imageSize = r->widthStep * height;
 	r->imageData = NULL;

@@ -90,7 +90,14 @@ public:
    * Size of the underlying image buffer rows.
    * @return size of the underlying image buffer rows in bytes.
    */
-  inline int rowSize() const { return imgRowSize; }
+  inline int getRowSize() const { return imgRowSize; }
+
+
+  /**
+   * The size of a row is constrained to be a multiple of the "quantum".
+   * @return size of the current quantum (0 means no constraint)
+   */
+  inline int getQuantum() const { return imgQuantum; }
 
   /**
    * Get address of a pixel in memory.
@@ -157,6 +164,7 @@ public:
    */
   virtual bool write(ConnectionWriter& connection);
 
+  void setQuantum(int imgQuantum);
 
 protected:
 
@@ -164,11 +172,9 @@ protected:
 
   void setPixelSize(int imgPixelSize);
 
-  void setRowSize(int imgRowSize);
-
 
 private:
-  int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode;
+  int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode, imgQuantum;
   char **data;
   void *implementation;
 
@@ -177,7 +183,7 @@ private:
 
   void copyPixels(const char *src, int id1, 
 		  char *dest, int id2, int w, int h,
-		  int imageSize, int rowSize);
+		  int imageSize, int quantum);
 };
 
 
@@ -196,8 +202,8 @@ public:
     Image::setPixelSize(imgPixelSize);
   }
 
-  void setRowSize(int imgRowSize) {
-    Image::setRowSize(imgRowSize);
+  void setQuantum(int imgQuantum) {
+    Image::setQuantum(imgQuantum);
   }
 
 private:
