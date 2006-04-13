@@ -61,16 +61,16 @@
 ///
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.2 2006-04-13 15:43:14 eshuy Exp $
 ///
 
 /**
- * \file begin_pack_for_net.h Starts 1 byte packing for structs/classes.
+ * \file yarp/os/begin_pack_for_net.h Starts 1 byte packing for structs/classes.
  * Instructs the compiler that the following structure/class has to be
  * packed with 1 byte boundary.  This is conditionally generated depending
  * on the compiler and architecture. It assures interoperability of network 
  * communication between compilers.
- * @see end_pack_for_net.h
+ * @see yarp/os/end_pack_for_net.h
  */
 #include <yarp/YARPConfig.h>
 

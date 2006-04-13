@@ -61,14 +61,14 @@
 ///
 
 ///
-/// $Id: end_pack_for_net.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: end_pack_for_net.h,v 1.2 2006-04-13 15:43:14 eshuy Exp $
 ///
 ///
 
 /**
- * \file end_pack_for_net.h Ends 1 byte packing for structs/classes.
+ * \file yarp/end_pack_for_net.h Ends 1 byte packing for structs/classes.
  * Instructs the compiler that the default packing can be reinstated.
- * @see begin_pack_for_net.h
+ * @see yarp/begin_pack_for_net.h
  */
 
 #include <yarp/YARPConfig.h>
