@@ -170,12 +170,12 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     HELPER(implementation).configure(reader,false,true);
     HELPER(implementation).stateSema.post();
     HELPER(implementation).contentSema.post();
-    YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
+    //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
   } else {
     HELPER(implementation).stateSema.wait();
     HELPER(implementation).configure(reader,true,false);
     HELPER(implementation).stateSema.post();
-    YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
+    //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
   }
   return ok;
 }
