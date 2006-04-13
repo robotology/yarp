@@ -5,19 +5,22 @@
  */
 
 
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_stdio.h>
-
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
+#include <yarp/Logger.h>
 
 #include <assert.h>
 
+#include <ace/OS_NS_stdlib.h>
+#include <ace/OS_NS_stdio.h>
+
+
+using namespace yarp;
 using namespace yarp::sig;
 
 #define DBGPF1 if (0)
 
-#define ACE_ASSERT assert
+//#define ACE_ASSERT assert
 
 #include <iostream>
 using namespace std;
@@ -540,6 +543,10 @@ int ImageStorage::_pad_bytes (int linesize, int align) const
 
 
 Image::Image() {
+  initialize();
+}
+
+void Image::initialize() {
   implementation = NULL;
   data = NULL;
   imgWidth = imgHeight = 0;
@@ -615,7 +622,7 @@ void Image::synchronize() {
 }
 
 
-char *Image::getRawImage() {
+char *Image::getRawImage() const {
   ImageStorage *impl = (ImageStorage*)implementation;
   ACE_ASSERT(impl!=NULL);
   if (impl->pImage!=NULL) {
@@ -624,7 +631,7 @@ char *Image::getRawImage() {
   return NULL;
 }
 
-int Image::getRawImageSize() {
+int Image::getRawImageSize() const {
   ImageStorage *impl = (ImageStorage*)implementation;
   ACE_ASSERT(impl!=NULL);
   if (impl->pImage!=NULL) {
@@ -707,3 +714,35 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
 }
 
 
+Image::Image(const Image& alt) {
+  initialize();
+  copy(alt);
+}
+
+
+const Image& Image::operator=(const Image& alt) {
+  copy(alt);
+}
+
+
+bool Image::copy(const Image& alt) {
+  bool ok = false;
+  int myCode = getPixelCode();
+  if (myCode==0) {
+    setPixelCode(alt.getPixelCode());
+  }
+  resize(alt.width(),alt.height());
+  YARP_ASSERT(width()==alt.width());
+  YARP_ASSERT(height()==alt.height());
+  if (getPixelCode()==alt.getPixelCode()) {
+    YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
+    YARP_ASSERT(rowSize()==alt.rowSize());
+  }
+  YARP_ASSERT(height()==alt.height());
+  copyPixels(alt.getRawImage(),alt.getPixelCode(),
+	     getRawImage(),getPixelCode(),
+	     width(),height(),
+	     getRawImageSize(),rowSize());
+  ok = true;
+  return ok;
+}

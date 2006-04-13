@@ -24,7 +24,7 @@ public:
 
   virtual void testCreate() {
     report(0,"testing image creation...");
-    Image image;
+    FlexImage image;
     image.setPixelCode(YARP_PIXEL_RGB);
     image.resize(256,128);
     checkEqual(image.width(),256,"check width");
@@ -44,7 +44,44 @@ public:
 	total -= iint.pixel(x,y);
       }
     }
-    checkEqual(total,0,"assignment check");
+    checkEqual(total,0,"pixel assignment check");
+  }
+
+  virtual void testCopy() {
+    report(0,"testing image copying...");
+
+    ImageOf<PixelRgb> img1;
+    img1.resize(128,64);
+    for (int x=0; x<img1.width(); x++) {
+      for (int y=0; y<img1.height(); y++) {
+	PixelRgb& pixel = img1.pixel(x,y);
+	pixel.r = x;
+	pixel.g = y;
+	pixel.b = 42;
+      }
+    }
+
+    ImageOf<PixelRgb> result;
+    result = img1;
+
+    checkEqual(img1.width(),result.width(),"width check");
+    checkEqual(img1.height(),result.height(),"height check");
+    if (img1.width()==result.width() &&
+	img1.height()==result.height()) {
+      int mismatch = 0;
+      for (int x=0; x<img1.width(); x++) {
+	for (int y=0; y<img1.height(); y++) {
+	  PixelRgb& pix0 = img1.pixel(x,y);
+	  PixelRgb& pix1 = result.pixel(x,y);
+	  if (pix0.r!=pix1.r ||
+	      pix0.g!=pix1.g ||
+	      pix0.b!=pix1.b) {
+	    mismatch++;
+	  }
+	}
+      }
+      checkTrue(mismatch==0,"pixel match check");
+    }
   }
 
   virtual void testTransmit() {
@@ -61,7 +98,7 @@ public:
       }
     }
 
-    PortReaderBuffer<ImageOf<PixelRgb> > buf;
+    PortReaderBuffer< ImageOf<PixelRgb> > buf;
 
     Port input, output;
     input.open("/in");
@@ -106,6 +143,7 @@ public:
 
   virtual void runTests() {
     testCreate();
+    testCopy();
     bool netMode = Network::setLocalMode(true);
     testTransmit();
     Network::setLocalMode(netMode);

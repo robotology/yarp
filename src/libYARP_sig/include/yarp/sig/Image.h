@@ -9,6 +9,7 @@ namespace yarp {
    */
   namespace sig {
     class Image;
+    class FlexImage;
     template <class T> class ImageOf;
   }
 }
@@ -16,7 +17,8 @@ namespace yarp {
 
 /**
  *
- * Class for storing images.  
+ * Base class for storing images.
+ * You actually want to use ImageOf<T> or FlexImage.
  * This is a minimal class, designed to be as interoperable as possible
  * with other image classes in other libraries, particularly IPL-derived
  * libraries such as OpenCV.
@@ -26,37 +28,98 @@ class yarp::sig::Image : public yarp::os::Portable {
 
 public:
 
+  /**
+   * Default constructor.  
+   * Creates an empty image.
+   */
   Image();
 
+  /**
+   * Copy constructor.  
+   * Clones the content of another image.
+   * @param alt the image to clone
+   */
+  Image(const Image& alt);
+
+  /**
+   * Destructor.
+   */
   virtual ~Image();
 
+  /**
+   * Assignment operator.
+   * Clones the content of another image.
+   * @param alt the image to clone
+   */
+  const Image& operator=(const Image& alt);
+
+  /**
+   * Gets width of image in pixels.
+   * @return the width of the image in pixels (0 if no image present)
+   */
   inline int width() const { return imgWidth; }
+
+  /**
+   * Gets height of image in pixels.
+   * @return the height of the image in pixels (0 if no image present)
+   */
   inline int height() const { return imgHeight; }
 
+  /**
+   * Gets pixel size in memory in bytes.
+   * @return the size of the pixels stored in the image, in bytes
+   */
   virtual int getPixelSize() const;
+
+  /**
+   * Gets pixel type identifier.
+   * Images have an associated type identifier to
+   * permit automatic casting between different image types.
+   * @return the image type identifier
+   */
   virtual int getPixelCode() const;
 
+  /**
+   * Size of the underlying image buffer rows.
+   * @return size of the underlying image buffer rows in bytes.
+   */
   inline int rowSize() const { return imgRowSize; }
 
+  /**
+   * Get address of a pixel in memory.
+   * @param x x coordinate
+   * @param y y coordinate
+   * @return address of pixel in memory
+   */
   inline char *getPixelAddress(int x, int y) const {
     return data[y] + x*imgPixelSize;
   }
 
+  /**
+   * Check whether a coordinate lies within the image
+   * @param x x coordinate
+   * @param y y coordinate
+   * @return true iff there is a pixel at the given coordinate
+   */
   inline bool isPixel(int x, int y) const {
     return (x>=0 && y>=0 && x<imgWidth && y<imgHeight);
   }
 
+  /**
+   * Set all pixels to 0.
+   */
   void zero();
 
-  void setPixelCode(int imgPixelCode);
-  void setPixelSize(int imgPixelSize);
-  void setRowSize(int imgRowSize);
-
+  /**
+   * Change the size of the image.
+   * @param imgWidth the desired width (the number of possible x values)
+   * @param imgHeight the desired width (the number of possible y values)
+   */
   void resize(int imgWidth, int imgHeight);
 
-  char *getRawImage();
+  char *getRawImage() const;
 
-  int getRawImageSize();
+  int getRawImageSize() const;
 
   /**
    * not yet implemented.
@@ -73,8 +136,27 @@ public:
   void wrapRawImage(void *buf, int imgWidth, int imgHeight);
 
 
+  /**
+   * Read image from a connection.
+   * return true iff image was read correctly
+   */
   virtual bool read(ConnectionReader& connection);
+
+  /**
+   * Write image to a connection.
+   * return true iff image was written correctly
+   */
   virtual bool write(ConnectionWriter& connection);
+
+
+protected:
+
+  void setPixelCode(int imgPixelCode);
+
+  void setPixelSize(int imgPixelSize);
+
+  void setRowSize(int imgRowSize);
+
 
 private:
   int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode;
@@ -82,7 +164,35 @@ private:
   void *implementation;
 
   void synchronize();
+  void initialize();
+
+  void copyPixels(const char *src, int id1, 
+		  char *dest, int id2, int w, int h,
+		  int imageSize, int rowSize);
+
+  bool copy(const Image& alt);
 };
+
+
+class yarp::sig::FlexImage : public yarp::sig::Image {
+public:
+
+  void setPixelCode(int imgPixelCode) {
+    Image::setPixelCode(imgPixelCode);
+  }
+
+  void setPixelSize(int imgPixelSize) {
+    Image::setPixelSize(imgPixelSize);
+  }
+
+  void setRowSize(int imgRowSize) {
+    Image::setRowSize(imgRowSize);
+  }
+
+private:
+};
+
+
 
 
 #ifndef YARPImage_INC // old YARP header file that we should be compat with
