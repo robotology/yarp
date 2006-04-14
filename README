@@ -97,13 +97,7 @@ checked out from CVS and have a configure.ac file but would like to
 have a configure file, try:
 
   # debian packages: libtool autoconf automake1.8 (version num arbitrary)
-  libtoolize
-  autoheader
-  aclocal && automake -ac
-  libtoolize --force
-  autoheader
-  aclocal && automake -ac
-  autoconf
+  ./bootstrap
 
 You should now have a configure file.
 Try:
