@@ -64,19 +64,26 @@ AC_CHECK_FUNCS([gettimeofday memset mkdir sqrt strstr])
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/libYARP_OS/Makefile
-                 src/libYARP_OS/src/Makefile
-                 src/libYARP_OS/yarp/Makefile
-                 src/libYARP_OS/harness/Makefile
                  src/libYARP_OS/include/Makefile
                  src/libYARP_OS/include/yarp/Makefile
                  src/libYARP_OS/include/yarp/os/Makefile
+                 src/libYARP_OS/src/Makefile
+                 src/libYARP_OS/yarp/Makefile
+                 src/libYARP_OS/harness/Makefile
                  src/libYARP_sig/Makefile
+                 src/libYARP_sig/include/Makefile
+                 src/libYARP_sig/include/yarp/Makefile
+                 src/libYARP_sig/include/yarp/sig/Makefile
                  src/libYARP_sig/src/Makefile
                  src/libYARP_sig/harness/Makefile
                  src/libYARP_OS_compat/Makefile
+                 src/libYARP_OS_compat/include/Makefile
+                 src/libYARP_OS_compat/include/yarp/Makefile
                  src/libYARP_OS_compat/src/Makefile
                  src/libYARP_OS_compat/harness/Makefile
                  src/libYARP_sig_compat/Makefile
+                 src/libYARP_sig_compat/include/Makefile
+                 src/libYARP_sig_compat/include/yarp/Makefile
                  src/libYARP_sig_compat/src/Makefile
                  src/libYARP_sig_compat/harness/Makefile])
 AC_OUTPUT

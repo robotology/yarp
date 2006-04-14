@@ -1,2 +1,2 @@
 
-SUBDIRS = src harness
+SUBDIRS = include src harness

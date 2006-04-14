@@ -1,5 +1,9 @@
 
-bin_PROGRAMS = harness
+TESTS = harness
+check_PROGRAMS = harness
+
+check-local: harness
+	./harness regression
 
 harness_SOURCES = \
 TestList.h \
