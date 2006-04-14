@@ -192,9 +192,10 @@ int DgramTwoWayStream::read(const Bytes& b) {
     bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct);
     pct++;
     if (!crcOk) {
-      YARP_ERROR(Logger::get(),"CRC failure");
+      YARP_DEBUG(Logger::get(),"CRC failure");
       readAt = 0;
       readAvail = 0;
+      throw IOException("CRC failure");
     } else {
       readAt += CRC_SIZE;
       readAvail -= CRC_SIZE;
