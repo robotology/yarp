@@ -134,6 +134,8 @@ DOCUMENTATION
 
 If you are on a debian linux system, make sure you have "doxygen" and type:
 
+  # get hand-crafted makefiles
+  make -f Makefile.man maker
   make dox
 
 You should be able to browse library documentation from:
