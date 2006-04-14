@@ -2,6 +2,7 @@
 bin_PROGRAMS = harness
 
 harness_SOURCES = \
+TestList.h \
 harness.cpp  ImageTest.cpp
 
 

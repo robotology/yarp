@@ -10,7 +10,8 @@ harness.cpp                       StringInputStreamTest.cpp \
 NameConfigTest.cpp                StringOutputStreamTest.cpp \
 NameServerTest.cpp                StringTest.cpp \
 NetTypeTest.cpp                   ThreadTest.cpp \
-PortCommandTest.cpp               TimeTest.cpp
+PortCommandTest.cpp               TimeTest.cpp \
+TestList.h
 
 
 harness_DEPENDENCIES = $(top_builddir)/src/libYARP_OS/src/libYARP_OS.la
