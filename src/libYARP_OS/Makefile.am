@@ -1,2 +1,2 @@
 
-SUBDIRS = src yarp harness
+SUBDIRS = include src yarp harness

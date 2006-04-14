@@ -67,6 +67,9 @@ AC_CONFIG_FILES([Makefile
                  src/libYARP_OS/src/Makefile
                  src/libYARP_OS/yarp/Makefile
                  src/libYARP_OS/harness/Makefile
+                 src/libYARP_OS/include/Makefile
+                 src/libYARP_OS/include/yarp/Makefile
+                 src/libYARP_OS/include/yarp/os/Makefile
                  src/libYARP_sig/Makefile
                  src/libYARP_sig/src/Makefile
                  src/libYARP_sig/harness/Makefile
