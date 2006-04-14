@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# just an example; replace username "eshuy" to yours
+# run from $YARP_ROOT/src/libYARP_OS2/
+# as "./scripts/update-web"
+
+echo Updating Sourceforge website from local system
+
+target="yarp0.sourceforge.net"
+
+cd doc && rsync --rsh="ssh -x -l eshuy" --modify-window=2 -lauvzP . $target:www/specs/dox
+
