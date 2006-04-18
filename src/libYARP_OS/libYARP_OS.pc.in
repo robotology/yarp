@@ -1,0 +1,10 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: YARP_OS
+Description: YARP OS library
+Version: @VERSION@
+Libs: -L${libdir} -lACE
+Cflags: -I${includedir}
