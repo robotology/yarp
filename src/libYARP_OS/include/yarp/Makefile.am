@@ -11,7 +11,7 @@ Bytes.h                     NameClient.h          ShmemTwoWayStream.h \
 Carrier.h                   NameConfig.h          SizedWriter.h \
 Carriers.h                  Name.h                SocketTwoWayStream.h \
 Companion.h                 NameServer.h          SplitString.h \
-config.h                    NetType.h             StreamConnectionReader.h \
+                    NetType.h             StreamConnectionReader.h \
 DgramTwoWayStream.h         OutputProtocol.h      String.h \
 Dispatcher.h                OutputStream.h        StringInputStream.h \
 Election.h                  PortCommand.h         StringOutputStream.h \
