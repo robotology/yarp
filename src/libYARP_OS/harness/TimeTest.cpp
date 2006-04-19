@@ -1,4 +1,6 @@
 #include <yarp/os/Time.h>
+#include <yarp/NetType.h>
+#include <yarp/String.h>
 
 #include "TestList.h"
 
@@ -10,14 +12,17 @@ public:
 
   void testDelay() {
     report(0,"testing delay (there will be a short pause)...");
-    double target = 0.5;
+    double target = 0.75;
     double t1 = Time::now();
     Time::delay(target);
     double t2 = Time::now();
     double dt = t2-t1-target;
-    double limit = 0.1; // don't be too picky, there is a lot of undefined slop
+    double limit = 0.3; // don't be too picky, there is a lot of undefined slop
     bool inLimits = (-limit<dt)&&(dt<limit);
-    checkEqual(true,inLimits,"delay for 0.5 seconds");
+    report(0,yarp::String("delay was late(+) or early(-) by ") +
+			 yarp::NetType::toString((int)(dt*1000)) +
+			 " ms");
+    checkEqual(true,inLimits,"delay for 0.75 seconds");
   }
 
   virtual void runTests() {
