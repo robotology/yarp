@@ -30,17 +30,21 @@ AC_STRUCT_TM
 
 AC_C_BIGENDIAN
 
-AC_CHECK_TYPE([int32_t],
-	      [AC_DEFINE([YARP_HAS_INT32_T], 1,
-			 [Define to 1 if the system has the type `int32_t'.])],
-	      [],
-	      [
-#ifndef YARP_LACKS_STDINT_H
-#include <stdint.h>
-#endif
-#ifndef YARP_LACKS_INTTYPES_H
-#include <inttypes.h>
-#endif])
+AC_CHECK_SIZEOF(short)
+AC_CHECK_SIZEOF(int)
+AC_CHECK_SIZEOF(long)
+
+#AC_CHECK_TYPE([int32_t],
+#	      [AC_DEFINE([YARP_HAS_INT32_T], 1,
+#			 [Define to 1 if the system has the type `int32_t'.])],
+#	      [],
+#	      [
+##ifndef YARP_LACKS_STDINT_H
+##include <stdint.h>
+##endif
+##ifndef YARP_LACKS_INTTYPES_H
+##include <inttypes.h>
+##endif])
 
 
 # Checks for library functions.

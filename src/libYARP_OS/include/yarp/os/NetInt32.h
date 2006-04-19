@@ -71,9 +71,16 @@ namespace yarp {
 #undef  PACKAGE_TARNAME
 #undef  PACKAGE_VERSION
 #    include <yarp/conf/yarp-config.h>
-#    if YARP_HAS_INT32_T && !(WORDS_BIGENDIAN)
-#include <stdint.h>
-       typedef int32_t NetInt32;
+#    if !(WORDS_BIGENDIAN)
+#if SIZEOF_INT == 4
+       typedef int NetInt32;
+#else
+#if SIZEOF_SHORT == 4
+	   typedef short NetInt32;
+#else
+#      error "could not choose NetInt32 type; see yarp/os/NetInt32.h"
+#endif
+#endif
 #    else
 #      error "need to define NetInt32 for this OS; see yarp/os/NetInt32.h"
 #    endif
