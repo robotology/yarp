@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.2 2006-04-11 16:51:59 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.3 2006-04-19 09:57:23 eshuy Exp $
 ///
 
 /**
@@ -58,7 +58,9 @@
 #endif
 
 #ifndef YARP_PACKING_CONSIDERED
-#error "Platform not known, please update begin_pack_for_net.h"
+//#warning "Platform not known, guessing, please update begin_pack_for_net.h"
+#pragma pack(1)
+#define YARP_PACKING_CONSIDERED
 #endif
 
 #ifndef PACKED_FOR_NET

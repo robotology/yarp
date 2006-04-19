@@ -16,16 +16,6 @@ AC_PROG_LIBTOOL
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lACE':
 AC_CHECK_LIB([ACE], [main])
-# FIXME: Replace `main' with a function in `-lYARP_OS':
-#AC_CHECK_LIB([YARP_OS], [main])
-# FIXME: Replace `main' with a function in `-lYARP_OS2':
-#AC_CHECK_LIB([YARP_OS2], [main])
-# FIXME: Replace `main' with a function in `-lYARP_OS_compat':
-#AC_CHECK_LIB([YARP_OS_compat], [main])
-# FIXME: Replace `main' with a function in `-lYARP_sig':
-#AC_CHECK_LIB([YARP_sig], [main])
-# FIXME: Replace `main' with a function in `-lYARP_sig_compat':
-#AC_CHECK_LIB([YARP_sig_compat], [main])
 
 # Checks for header files.
 AC_HEADER_STDC
@@ -40,9 +30,9 @@ AC_STRUCT_TM
 
 AC_C_BIGENDIAN
 
-AC_CHECK_TYPE([uint32_t],
-	      [AC_DEFINE([YARP_HAS_UINT32_T], 1,
-			 [Define to 1 if the system has the type `uint32_t'.])],
+AC_CHECK_TYPE([int32_t],
+	      [AC_DEFINE([YARP_HAS_INT32_T], 1,
+			 [Define to 1 if the system has the type `int32_t'.])],
 	      [],
 	      [
 #ifndef YARP_LACKS_STDINT_H

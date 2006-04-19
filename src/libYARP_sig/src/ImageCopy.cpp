@@ -1,7 +1,7 @@
 
+#include <yarp/Logger.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
-#include <yarp/Logger.h>
 
 using namespace yarp;
 using namespace yarp::sig;
