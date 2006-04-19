@@ -12,5 +12,4 @@ yarp_LDADD = $(yarp_DEPENDENCIES)
 INCLUDES = -I$(srcdir)/../include
 
 yarp.1: yarp.sgml
-	docbook-to-man yarp.sgml > $@
-
+	( docbook-to-man yarp.sgml > $@ ) | ( echo "no man pages on this platform" > $@ )
