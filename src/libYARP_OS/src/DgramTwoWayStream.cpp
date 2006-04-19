@@ -51,7 +51,7 @@ static void addCrc(char *buf, int length, int crcLength, int pct) {
 
 void DgramTwoWayStream::open(const Address& remote) {
   Address local;
-  ACE_INET_Addr anywhere((u_short)0, INADDR_ANY);
+  ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
   local = Address(anywhere.get_host_addr(),
 		  anywhere.get_port_number());
   open(local,remote);
@@ -61,7 +61,7 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
   localAddress = local;
   remoteAddress = remote;
 
-  localHandle = ACE_INET_Addr(localAddress.getPort(),INADDR_ANY);
+  localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),(ACE_UINT32)INADDR_ANY);
   if (remote.isValid()) {
     remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
   }
@@ -174,7 +174,7 @@ int DgramTwoWayStream::read(const Bytes& b) {
   // if nothing is available, try to grab stuff
   if (readAvail==0) {
     readAt = 0;
-    ACE_INET_Addr dummy((u_short)0, INADDR_ANY);
+    ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
     YARP_ASSERT(dgram!=NULL);
     //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
     int result =

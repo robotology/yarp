@@ -8,7 +8,7 @@
 
 using namespace yarp;
 
-static Logger log("TcpFace", Logger::get());
+static Logger tcpFaceLog("TcpFace", Logger::get());
 
 
 TcpFace::~TcpFace() {
@@ -17,7 +17,7 @@ TcpFace::~TcpFace() {
 
 
 void TcpFace::open(const Address& address) {
-  YARP_DEBUG(log,String("TcpFace opening for address ") + address.toString());
+  YARP_DEBUG(tcpFaceLog,String("TcpFace opening for address ") + address.toString());
 
   this->address = address;
   ACE_INET_Addr	serverAddr(address.getPort());

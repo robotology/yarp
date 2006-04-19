@@ -6,7 +6,7 @@
 
 using namespace yarp;
 
-static Logger log("FakeFace", Logger::get());
+static Logger fakeFaceLog("FakeFace", Logger::get());
 
 void FakeFace::open(const Address& address) {
   // happy to open without fuss
@@ -16,7 +16,7 @@ void FakeFace::close() {
 }
 
 InputProtocol *FakeFace::read() {
-  log.fail("not yet implemented");
+  fakeFaceLog.fail("not yet implemented");
   return NULL;
 }
 

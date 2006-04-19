@@ -13,7 +13,7 @@
 using namespace yarp;
 
 
-static Logger log("Carriers", Logger::get());
+static Logger carriersLog("Carriers", Logger::get());
 
 Carriers yarp::Carriers::instance;
 
@@ -70,7 +70,7 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 Face *Carriers::listen(const Address& address) {
   // for now, only TcpFace exists - otherwise would need to manage 
   // multiple possibilities
-  YARP_DEBUG(log,"listen called");
+  YARP_DEBUG(carriersLog,"listen called");
   Face *face = NULL;
   if (address.getCarrierName() == String("fake")) {
     face = new FakeFace();
