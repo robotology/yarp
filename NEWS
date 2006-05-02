@@ -1,0 +1,37 @@
+
+===============================================================================
+
+INTRODUCTION
+------------
+
+This is YARP2, a new version of the YARP robot library set.
+
+It helps do stuff with robots (or avoid doing stuff with robots by 
+spending your time writing libraries).
+
+License and copyright information is in COPYING.
+
+===============================================================================
+
+STATUS
+------
+
+YARP2 is usable by brave developers.  Watch out for the following:
+
++ compared to YARP1, there are a lot of missing parts.  The library
+  in src/libYARP_OS_compat will help if you want to mingle new and old.
+
++ yarp::sig::Image is a stub - it has a very bare minimum of functionality.
+  You can still use YARPImage; the classes are network compatible.
+
++ yarp::os::Bottle doesn't have everything that YARPBottle had.  You can
+  still use YARPBottle; the classes are network compatible.
+
++ libYARP_OS - fairly complete
++ libYARP_OS_compat - fairly complete
++ libYARP_sig - a stub
++ libYARP_sig_compat - a stub
+
+For help, and to complain, email paulfitz@alum.mit.edu
+
+
