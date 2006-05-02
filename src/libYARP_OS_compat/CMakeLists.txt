@@ -12,9 +12,11 @@ LINK_LIBRARIES(YARP_OS_compat YARP_OS ACE)
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_os_compat ${harnesscode})
 
+GET_TARGET_PROPERTY(EXEC harness_os_compat LOCATION)
+
 # add in our tests
 FOREACH(X ${harnesscode})
 	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
-	  ADD_TEST(YARP_OS_compat::${XN} harness_os_compat regression ${XN})
+	  ADD_TEST(YARP_OS_compat::${XN} ${EXEC} regression ${XN})
 ENDFOREACH(X $(harnesscode))
 
