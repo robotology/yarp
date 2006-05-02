@@ -1,26 +1,112 @@
 
-QUICKSTART
-----------
-
-There are a few different ways to compile YARP2 (see below).
-Probably the easiest right now is using "cmake" (see www.cmake.org).
-
-In linux, in this directory, type:
-
-  cmake .
-  make
-  make test
-
+Welcome to YARP2.
+License and copyright information is in COPYING.
+For a brief introduction and project status see NEWS.
 
 ===============================================================================
 
 COMPILATION and INSTALLATION
 ----------------------------
 
-If you are on a debian linux system, type:
+There are a few different ways to compile YARP2.
 
-  # get hand-crafted makefiles
-  # see sections below for alternative makefile sources
+See if there is a file called "QUICKSTART".  If so, then you have a 
+distribution of YARP tailored to your specific operating system,
+and the instructions in this file will give the fastest way
+to get going.
+
+We now describe two general methods for compiling YARP2: "cmake" and
+"autoconf".
+
+If you are using some version of Microsoft Windows, we recommend cmake
+(see CMAKE section below).
+
+If you are using some version of Linux, you can use cmake or 
+autoconf (see AUTOCONF section below).
+
+In all other cases, we recommend autoconf.
+
+YARP2 depends on ACE.  Make sure you install ACE before following
+any of the steps below.  See:
+  http://www.cs.wustl.edu/~schmidt/ACE.html
+for download and installation instructions.
+
+On Microsoft Windows, please set the ACE_ROOT environment variable
+to the location of your ACE install (a directory called "ACE_wrappers").
+
+
+===============================================================================
+
+CMAKE
+-----
+
+Cmake (www.cmake.org) can create developer studio projects, makefiles,
+or other build files for a number of operating systems and tool sets.
+
+Download cmake from www.cmake.org or install it as a package if available
+for your system.
+
+In Linux, in the YARP2 directory, type:
+
+  cmake .
+  make
+  make test
+
+In Microsoft Windows, run cmake, answer "Where is the source code" by
+browsing to the YARP2 directory.
+
+Answer "Where to build the binaries" with whatever you like.
+
+Then hit the "Configure" button.  You'll be prompted for the Generator
+you want (e.g. "NMake Makefiles", "Visual Studio 6", ...).  Pick
+the build tool you are comfortable with.
+
+If applicable for your chosen generator, make sure that
+"CMAKE_BUILD_TYPE" is set to "Release" (as opposed to Debug) if that
+is how you compiled ACE.
+
+Make sure that the "ACE_INCLUDE_DIR" and "ACE_LIBRARY" values are
+set correctly to where you installed ACE, fixing them manually if 
+necessary.
+
+Hit the "Configure" button again if needed, then "OK".
+
+In the directory you gave as "Where to build the binaries" should be
+everything you need to compile, by opening a workspace, or running nmake,
+etc.
+
+===============================================================================
+
+AUTOCONF
+--------
+
+This method requires the autoconf, automake, and libtool tools (e.g.
+debian packages libtool autoconf automake1.8).
+
+If you checked out from CVS and have a configure.ac file but would
+like to produce a configure file, try:
+
+  ./bootstrap
+
+You should now have a configure file.
+Try:
+
+  ./configure
+
+All going well, you have some new Makefiles.  Try:
+
+  make
+  make check
+
+
+===============================================================================
+
+hand-crafted Makefiles
+----------------------------
+
+If you are on a debian linux system, there are some old hand-crafted
+Makefiles lying around.  To get them, type:
+
   make -f Makefile.man maker
 
 If that works, type:
@@ -38,61 +124,9 @@ Install using:
 
 The packages can be deinstalled using standard debian package management.
 
-Apart from that, we are currently lacking install documentation.  So
-if you need that, you're probably better off not using this version of
-YARP.
 
-There are some project files for windows.  They assume that you have two 
-environment variables set:
-  ACE_INCLUDE
-  ACE_LIB
-pointing to include files and library files for ACE.
+You can make documentation if you have "doxygen":
 
-===============================================================================
-
-AUTOCONFISCATION
-----------------
-
-Currently, we use non-autoconf-based makefiles.
-
-But autoconf+automake support is starting to be put together.  If you
-checked out from CVS and have a configure.ac file but would like to
-have a configure file, try:
-
-  # debian packages: libtool autoconf automake1.8 (version num arbitrary)
-  ./bootstrap
-
-You should now have a configure file.
-Try:
-
-  ./configure
-
-All going well, you have some new Makefiles.  Try:
-
-  make
-
-===============================================================================
-
-CMAKE
------
-
-Currently, we use non-cmake-based makefiles.
-
-But cmake support is starting to be put together.  If you
-checked out from CVS and have only a CMakeLists.txt file but would like to
-have a makefile or visual studio project, try installing "cmake" and
-then running it and following its hints.
-
-
-===============================================================================
-
-DOCUMENTATION
--------------
-
-If you are on a debian linux system, make sure you have "doxygen" and type:
-
-  # get hand-crafted makefiles
-  make -f Makefile.man maker
   make dox
 
 You should be able to browse library documentation from:
