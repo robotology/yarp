@@ -755,6 +755,7 @@ Image::Image(const Image& alt) {
 
 const Image& Image::operator=(const Image& alt) {
   copy(alt);
+  return *this;
 }
 
 

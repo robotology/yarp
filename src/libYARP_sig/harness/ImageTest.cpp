@@ -39,9 +39,9 @@ public:
 	total += v;
       }
     }
-    for (int x=0; x<iint.width(); x++) {
-      for (int y=0; y<iint.height(); y++) {
-	total -= iint.pixel(x,y);
+    for (int x2=0; x2<iint.width(); x2++) {
+      for (int y2=0; y2<iint.height(); y2++) {
+	total -= iint.pixel(x2,y2);
       }
     }
     checkEqual(total,0,"pixel assignment check");

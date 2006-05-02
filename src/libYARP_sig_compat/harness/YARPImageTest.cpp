@@ -34,9 +34,9 @@ public:
 	total += v;
       }
     }
-    for (int x=0; x<image.GetWidth(); x++) {
-      for (int y=0; y<image.GetHeight(); y++) {
-	total -= image(x,y).r;
+    for (int x2=0; x2<image.GetWidth(); x2++) {
+      for (int y2=0; y2<image.GetHeight(); y2++) {
+	total -= image(x2,y2).r;
       }
     }
     checkEqual(total,0,"assignment check");

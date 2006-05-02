@@ -1,6 +1,6 @@
 PROJECT(libYARP_OS_compat)
 
-INCLUDE_DIRECTORIES(include ../libYARP_OS/include ${ACE_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(include ../libYARP_OS/include src/libYARP_OS_compat/include src/libYARP_OS/include ${ACE_INCLUDE_DIR})
 
 # We just intend to use cmake to create visual studio project files -
 # so ok not to manually include list of source code
