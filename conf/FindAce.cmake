@@ -1,7 +1,7 @@
 
-FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h /usr/include /usr/local/include $ENV{ACE_ROOT} $ENV{YARP_ROOT}/include)
+FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h /usr/include /usr/local/include $ENV{ACE_ROOT})
 
-FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} $ENV{YARP_ROOT}/lib/winnt)
+FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT})
 
 IF (ACE_INCLUDE_DIR AND ACE_LIBRARY)
 	SET(ACE_FOUND TRUE)
