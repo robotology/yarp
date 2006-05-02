@@ -1,7 +1,7 @@
 
-FIND_PATH(ACE_INCLUDE_DIR ACE.h /usr/include/ace /usr/local/include/ace $ENV{ACE_ROOT}/ace $ENV{ACE_ROOT})
+FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h /usr/include /usr/local/include $ENV{ACE_ROOT})
 
-FIND_LIBRARY(ACE_LIBRARY NAMES ACE PATH /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT})
+FIND_LIBRARY(ACE_LIBRARY NAMES ACE PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT})
 
 IF (ACE_INCLUDE_DIR AND ACE_LIBRARY)
 	SET(ACE_FOUND TRUE)
