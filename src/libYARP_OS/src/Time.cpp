@@ -3,6 +3,11 @@
 
 #include <ace/OS.h>
 
+#ifdef ACE_WIN32
+// for WIN32 MM functions
+#include <mmsystem.h>
+#endif
+
 using namespace yarp::os;
 
 /// WARNING: actual precision under WIN32 depends on setting scheduler 

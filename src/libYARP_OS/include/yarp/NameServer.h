@@ -13,6 +13,11 @@
 #include <ace/Vector_T.h>
 #include <ace/Null_Mutex.h>
 
+// ACE headers may fiddle with main
+#ifdef main
+#undef main
+#endif
+
 namespace yarp {
   class NameServer;
 }

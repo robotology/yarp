@@ -9,6 +9,13 @@
 #include <ace/Vector_T.h>
 #include <ace/OS_NS_stdio.h>
 
+// ACE headers may fiddle with main 
+#ifdef main
+#undef main
+#endif
+
+
+
 namespace yarp {
   class Companion;
 }
@@ -29,6 +36,7 @@ public:
    * @param argv Command line arguments
    * @return 0 on success, non-zero on failure
    */
+
   static int main(int argc, char *argv[]);
 
   /**
