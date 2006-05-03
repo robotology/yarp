@@ -71,13 +71,17 @@ Then hit the "Configure" button.  You'll be prompted for the Generator
 you want (e.g. "NMake Makefiles", "Visual Studio 6", ...).  Pick
 the build tool you are comfortable with.
 
+A bunch of options will show up in red.  DON'T PANIC.  They may
+all be correct.  If you don't understand them, you can try just 
+hitting the "Configure" button to accept them.
+
 If applicable for your chosen generator, make sure that
 "CMAKE_BUILD_TYPE" is set to "Release" (as opposed to Debug) if that
 is how you compiled ACE.
 
-Make sure that the "ACE_INCLUDE_DIR" and "ACE_LIBRARY" values are
-set correctly to where you installed ACE, fixing them manually if 
-necessary.
+Make sure that the "ACE_INCLUDE_DIR" and "ACE_LIBRARY" values are set
+to something related to where your installed ACE, fixing them manually
+if necessary.
 
 Hit the "Configure" button again if needed, then "OK".
 
