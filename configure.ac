@@ -13,10 +13,6 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_LIBTOOL
 
-# Checks for libraries.
-# FIXME: Replace `main' with a function in `-lACE':
-AC_CHECK_LIB([ACE], [main])
-
 # Checks for header files.
 AC_HEADER_STDC
 AC_CHECK_HEADERS([stdint.h stdlib.h string.h])
@@ -30,9 +26,14 @@ AC_STRUCT_TM
 
 AC_C_BIGENDIAN
 
-AC_CHECK_SIZEOF(short)
+AC_CHECK_SIZEOF(short int)
 AC_CHECK_SIZEOF(int)
-AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long int)
+
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-lACE':
+AC_CHECK_LIB([ACE], [main])
+
 
 #AC_CHECK_TYPE([int32_t],
 #	      [AC_DEFINE([YARP_HAS_INT32_T], 1,
