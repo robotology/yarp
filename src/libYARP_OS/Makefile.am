@@ -11,3 +11,5 @@ libYARP_OS.pc: ${top_builddir}/config.status ${srcdir}/libYARP_OS.pc.in
 EXTRA_DIST = \
   libYARP_OS.pc.in
 
+DISTCLEANFILES = libYARP_OS.pc config.log
+

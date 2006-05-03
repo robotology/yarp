@@ -12,3 +12,5 @@ libYARP_sig.pc: ${top_builddir}/config.status ${srcdir}/libYARP_sig.pc.in
 EXTRA_DIST = \
   libYARP_sig.pc.in
 
+DISTCLEANFILES = libYARP_sig.pc config.log
+

@@ -85,6 +85,10 @@ In the directory you gave as "Where to build the binaries" should be
 everything you need to compile, by opening a workspace, or running nmake,
 etc.
 
+After compilation, executables are in the "bin" directory and libraries are
+in the "lib" directory.
+
+
 ===============================================================================
 
 AUTOCONF
@@ -107,6 +111,22 @@ All going well, you have some new Makefiles.  Try:
 
   make
   make check
+
+A man page will be generated for the "yarp" executable if the 
+"docbook-to-man" program is installed on your system at compile-time.
+
+If you do a:
+
+  make install
+
+Executables and libraries are installed on your system (use the --prefix=
+option to configure to control where).
+
+"yarp" is the main executable
+
+A man page will be generated for the "yarp" executable if the 
+"docbook-to-man" program is installed on your system at compile-time.
+
 
 
 ===============================================================================
