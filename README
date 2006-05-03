@@ -36,7 +36,7 @@ YARP2 depends on the ACE communications library.  Make sure you install
 ACE before following any of the steps below.  See:
   http://www.cs.wustl.edu/~schmidt/ACE.html
 for download and installation instructions.  Some linux distributions
-have binary packages for ACE (e.g. debian has "libyarp-dev").
+have binary packages for ACE (e.g. debian has "libace-dev").
 
 On Microsoft Windows, please set the ACE_ROOT environment variable to
 the location of your ACE install (a directory called "ACE_wrappers").

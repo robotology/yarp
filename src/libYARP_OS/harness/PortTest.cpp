@@ -301,8 +301,8 @@ public:
     testBuffer();
     testPair();
     testReply();
-    testUdp();
-    testHeavy();
+    //    testUdp();
+    //    testHeavy();
 
     nic.setFakeMode(false);
   }
