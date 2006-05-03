@@ -8,5 +8,11 @@ echo Updating Sourceforge website from local system
 
 target="yarp0.sourceforge.net"
 
+if [ -e yarp-2.0.tar.gz ]; then
+    cp yarp-2.0.tar.gz doc
+else
+    echo NO YARP install tar found
+fi
+
 cd doc && rsync --rsh="ssh -x -l eshuy" --modify-window=2 -lauvzP . $target:www/specs/dox
 
