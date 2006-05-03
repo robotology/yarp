@@ -152,7 +152,7 @@ public:
   }
 
   void testUdp() {
-    report(0,"checking udp (test is a bit unfair)");
+    report(0,"checking udp");
 
     Bottle bot1;
     PortReaderBuffer<Bottle> buf;
@@ -173,8 +173,10 @@ public:
 
     report(0,"writing/reading three times...");
 
-    for (int j=0; j<3; j++) {
-      output.write(bot1);
+    report(0,"checking for whatever got through...");
+    int ct = 0;
+    while (buf.check()) {
+      ct++;
       Bottle *result = buf.read();
       checkTrue(result!=NULL,"got something check");
       if (result!=NULL) {
@@ -182,6 +184,9 @@ public:
 	YARP_INFO(Logger::get(),String("size is in fact ") + 
 		  NetType::toString(result->size()));
       }
+    }
+    if (ct==0) {
+      report(0,"NOTHING got through - possible but sad");
     }
 
     output.close();
@@ -216,7 +221,9 @@ public:
     }
 
     report(0,"checking for whatever got through...");
+    int ct = 0;
     while (buf.check()) {
+      ct++;
       Bottle *result = buf.read();
       checkTrue(result!=NULL,"got something check");
       if (result!=NULL) {
@@ -224,6 +231,9 @@ public:
 	YARP_INFO(Logger::get(),String("size is in fact ") + 
 		  NetType::toString(result->size()));
       }
+    }
+    if (ct==0) {
+      report(0,"NOTHING got through - possible but sad");
     }
 
     output.close();
@@ -293,6 +303,7 @@ public:
     testReply();
     testUdp();
     testHeavy();
+
     nic.setFakeMode(false);
   }
 };
