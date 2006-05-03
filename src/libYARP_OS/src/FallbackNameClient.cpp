@@ -16,10 +16,14 @@ void FallbackNameClient::run() {
   send.join(call,true);
   listen.join(call,false);
   String msg = "NAME_SERVER query root";
+  send.beginPacket();
   send.writeLine(msg);
   send.flush();
+  send.endPacket();
   for (int i=0; i<5; i++) {
+    listen.beginPacket();
     String txt = NetType::readLine(listen);
+    listen.endPacket();
     if (closed) return;
     YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
     if (txt.strstr("registration ")==0) {
