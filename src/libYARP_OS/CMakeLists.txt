@@ -7,10 +7,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_OS/include include ${ACE_INC
 # so ok not to manually include list of source code
 AUX_SOURCE_DIRECTORY(src libcode)
 
-LINK_LIBRARIES(${ACE_LIBRARY})
-IF (WIN32 AND NOT CYGWIN)
-  LINK_LIBRARIES(winmm)
-ENDIF (WIN32 AND NOT CYGWIN)
+INCLUDE(YarpReqLib)
 
 ADD_LIBRARY(YARP_OS ${libcode})
 

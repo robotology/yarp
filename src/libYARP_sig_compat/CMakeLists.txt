@@ -5,13 +5,16 @@ INCLUDE_DIRECTORIES(include ../libYARP_OS/include ../libYARP_OS_compat/include .
 # We just intend to use cmake to create visual studio project files -
 # so ok not to manually include list of source code
 AUX_SOURCE_DIRECTORY(src libcode)
+
+INCLUDE(YarpReqLib)
+
 ADD_LIBRARY(YARP_sig_compat ${libcode})
 
-FIND_LIBRARY(YARP_OS YARP_OS ../libYARP_OS)
-FIND_LIBRARY(YARP_OS_compat YARP_OS_compat ../libYARP_OS_compat)
-FIND_LIBRARY(YARP_sig YARP_sig ../libYARP_sig)
+#FIND_LIBRARY(YARP_OS YARP_OS ../libYARP_OS)
+#FIND_LIBRARY(YARP_OS_compat YARP_OS_compat ../libYARP_OS_compat)
+#FIND_LIBRARY(YARP_sig YARP_sig ../libYARP_sig)
 
-LINK_LIBRARIES(YARP_sig_compat YARP_OS YARP_OS_compat YARP_sig ACE)
+LINK_LIBRARIES(YARP_sig_compat YARP_OS YARP_OS_compat YARP_sig)
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_sig_compat ${harnesscode})
