@@ -1,9 +1,9 @@
 
 #ADD_DEFINITIONS(-DWIN32 -D_MBCS)
 
-# on windows, we have to match the config that ace was build with.  tricky!
+# on windows, we have to tell ace how it was compiled
 IF (WIN32 AND NOT CYGWIN)
-   ADD_DEFINITIONS(-DNDEBUG -DWIN32 -D_WINDOWS -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF)
+   ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
@@ -12,6 +12,7 @@ SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
 # more msvc problems...
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/lib/Debug ${CMAKE_BINARY_DIR}/lib/Release)
 
+# again, can't do this on windows without a lot of mess
 #SET(BUILD_SHARED_LIBS ON)
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
