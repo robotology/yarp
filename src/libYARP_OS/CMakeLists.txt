@@ -1,7 +1,7 @@
 PROJECT(libYARP_OS)
 
 # need to give explicit path to include for some build systems
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_OS/include include ${ACE_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_OS/include include ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
 
 # We just intend to use cmake to create visual studio project files -
 # so ok not to manually include list of source code
