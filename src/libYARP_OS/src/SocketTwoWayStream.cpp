@@ -6,6 +6,9 @@
 using namespace yarp;
 
 int SocketTwoWayStream::open(const Address& address) {
+  if (address.getPort()==-1) {
+    return -1;
+  }
   ACE_SOCK_Connector connector;
   ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
   int result = connector.connect(stream,addr);

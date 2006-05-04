@@ -29,10 +29,12 @@ static bool checkCrc(char *buf, int length, int crcLength, int pct) {
     if (pct!=altPct) {
       YARP_DEBUG(Logger::get(), "packet code broken");
     }
-    //YARP_ERROR(Logger::get(), String("crc read as ") + NetType::toString(curr));
-    //YARP_ERROR(Logger::get(), String("crc count is ") + NetType::toString(altPct));
-    //YARP_ERROR(Logger::get(), String("local count ") + NetType::toString(pct));
   }
+  //YARP_ERROR(Logger::get(), String("check crc read as ") + NetType::toString(curr));
+  //YARP_ERROR(Logger::get(), String("check crc count is ") + NetType::toString(altPct));
+  //YARP_ERROR(Logger::get(), String("check local count ") + NetType::toString(pct));
+  //YARP_ERROR(Logger::get(), String("check remote count ") + NetType::toString(altPct));
+
   return ok;
 }
 
@@ -139,6 +141,10 @@ void DgramTwoWayStream::interrupt() {
 	for (int i=0; i<empty.length(); i++) {
 	  empty.get()[i] = 0;
 	}
+
+	// don't want this message getting into a valid packet
+	tmp.pct = -1;
+
 	tmp.write(empty.bytes());
 	tmp.flush();
 	tmp.close();
@@ -193,8 +199,9 @@ int DgramTwoWayStream::read(const Bytes& b) {
     pct++;
     if (!crcOk) {
       YARP_DEBUG(Logger::get(),"CRC failure");
-      readAt = 0;
-      readAvail = 0;
+      //readAt = 0;
+      //readAvail = 0;
+      reset();
       throw IOException("CRC failure");
     } else {
       readAt += CRC_SIZE;

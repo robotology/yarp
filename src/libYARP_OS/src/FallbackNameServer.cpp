@@ -40,6 +40,7 @@ void FallbackNameServer::run() {
 	}
       } catch (IOException e) {
 	YARP_DEBUG(Logger::get(),e.toString() + " <<< fallback exception");
+	listen.endPacket();
       }
     }
   } catch (IOException e) {
