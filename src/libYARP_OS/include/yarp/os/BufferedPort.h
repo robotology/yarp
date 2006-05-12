@@ -33,7 +33,7 @@ public:
 
   // documentation provided in Contactable
   virtual bool open(const char *name) {
-    port.open(name);
+    return port.open(name);
   }
 
   // documentation provided in Contactable
@@ -43,7 +43,7 @@ public:
 
   // documentation provided in Contactable
   virtual bool addOutput(const char *name) {
-    port.addOutput(name);
+    return port.addOutput(name);
   }
 
   // documentation provided in Contactable
