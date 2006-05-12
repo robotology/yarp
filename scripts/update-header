@@ -1,0 +1,42 @@
+#!/usr/bin/perl -w
+
+my $mode = "// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-";
+my $signature = quotemeta("-*- mode");
+
+sub IndentCmd { 
+    my $fname = shift;
+    #my $indent = "indent --braces-on-if-line --braces-on-struct-decl-line --leave-optional-blank-lines --tab-size 4 --no-tabs --indent-level 4";
+    return "emacs --batch $fname --eval \"(progn (indent-region (point-min) (point-max) nil) (save-buffer))\"";
+}
+
+my $fname = $ARGV[0];
+
+print "$fname\n";
+
+my $txt = "";
+open(FIN,"<$fname");
+while (<FIN>) {
+    $txt .= $_;
+}
+close(FIN);
+
+my $delta = 0;
+
+if ($txt =~ /(\/\/.*$signature.*)/) {
+    my $src = quotemeta($1);
+    my $dest = $mode;
+    $txt =~ s/$src/$dest/;
+    $delta = 1;
+} else {
+    $txt = $mode . "\n" . $txt;
+    $delta = 1;
+}
+
+if ($delta) {
+    open(FOUT,">$fname");
+    print FOUT $txt;
+    close(FOUT);
+    system IndentCmd($fname);
+}
+
+

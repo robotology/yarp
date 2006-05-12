@@ -1,0 +1,12 @@
+#!/bin/sh
+
+echo Fixer for the eternal cross-editor formatting issue.
+echo Make sure you run this as "./scripts/update-headers"
+
+for f in `find . -iname "*.h"; find . -iname "*.cpp"; find . -iname "*.c"`; do
+    ./scripts/update-header $f
+done
+
+
+
+
