@@ -161,7 +161,7 @@ The packages can be deinstalled using standard debian package management.
 
 You can make documentation if you have "doxygen":
 
-  make -f Makefile.am dox
+  make -f Makefile.man dox
 
 You should be able to browse library documentation from:
 
