@@ -19,13 +19,17 @@ public:
   // specifically for managing input connections
 
   PortCoreOutputUnit(PortCore& owner, OutputProtocol *op) : 
-    PortCoreUnit(owner), op(op), phase(1) {
+    PortCoreUnit(owner), op(op), phase(1), activate(0) {
 
     YARP_ASSERT(op!=NULL);
     closing = false;
     finished = false;
     running = false;
+    threaded = false;
+    sending = false;
     name = owner.getName();
+    cachedWriter = NULL;
+    cachedTracker = NULL;
   }
 
   virtual ~PortCoreOutputUnit() {
@@ -57,13 +61,25 @@ public:
 
   virtual Route getRoute();
 
-  virtual void send(Writable& writer);
+  virtual void *send(Writable& writer, 
+		     void *tracker,
+		     bool waitAfter,
+		     bool waitBefore);
+
+  virtual void *takeTracker();
+
+  virtual bool isBusy();
 
 private:
   OutputProtocol *op;
-  bool closing, finished, running;
+  bool closing, finished, running, threaded, sending;
   String name;
-  SemaphoreImpl phase;
+  SemaphoreImpl phase, activate;
+  Writable *cachedWriter;
+  void *cachedTracker;
+
+  void sendHelper();
+
 
   void closeMain();
 };

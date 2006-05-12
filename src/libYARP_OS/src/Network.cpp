@@ -1,3 +1,5 @@
+#include <ace/ACE.h>
+
 
 #include <yarp/os/Network.h>
 
@@ -23,6 +25,14 @@ int Network::main(int argc, char *argv[]) {
   return Companion::main(argc,argv);
 }
 
+
+void Network::init() {
+  ACE::init();
+}
+
+void Network::fini() {
+  ACE::fini();
+}
 
 Contact Network::queryName(const char *name) {
    NameClient& nic = NameClient::getNameClient();

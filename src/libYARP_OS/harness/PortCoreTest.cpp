@@ -116,9 +116,63 @@ public:
   }
 
 
+  void testBackground() {
+    report(0,"background transmission check (needs ports 9997, 9998, 9999)...");
+
+    expectation = "";
+    receives = 0;
+
+    NameClient& nic = NameClient::getNameClient();
+    nic.setFakeMode(true);
+
+    Address write = nic.registerName("/write",Address("localhost",9999,"tcp"));
+    Address read = nic.registerName("/read",Address("localhost",9998,"tcp"));
+    Address fake = Address("localhost",9997,"tcp");
+
+    checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
+    checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
+
+    try {
+      PortCore sender;
+
+      sender.setWaitBeforeSend(false);
+      sender.setWaitAfterSend(false);
+
+      PortCore receiver;
+      receiver.setReadHandler(*this);
+      sender.listen(write);
+      receiver.listen(read);
+      sender.start();
+      receiver.start();
+      Time::delay(1);
+      BottleImpl bot;
+      bot.addInt(0);
+      bot.addString("Hello world");
+      report(0,"sending bottle, should received nothing");
+      expectation = "";
+      sender.send(bot);
+      Time::delay(0.3);
+      checkEqual(receives,0,"nothing received");
+      Companion::connect("/write", "/read");
+      Time::delay(0.3);
+      report(0,"sending bottle, should receive it this time");
+      expectation = bot.toString();
+      sender.send(bot);
+      Time::delay(0.3);
+      checkEqual(receives,1,"something received");
+      sender.close();
+      receiver.close();
+    } catch (IOException e) {
+      report(1,e.toString() + " <<< testBottle got exception");
+    }
+    nic.setFakeMode(false);
+  }
+
+
   virtual void runTests() {
     testStartStop();
     testBottle();
+    testBackground();
   }
 };
 

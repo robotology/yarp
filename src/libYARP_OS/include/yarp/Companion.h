@@ -93,6 +93,8 @@ private:
 
   int cmdWhere(int argc, char *argv[]);
 
+  int cmdConf(int argc, char *argv[]);
+
   int cmdHelp(int argc, char *argv[]);
 
   int cmdConnect(int argc, char *argv[]);
@@ -137,12 +139,19 @@ private:
 
   ACE_Hash_Map_Manager<String,Entry,ACE_Null_Mutex> action;
   ACE_Vector<String> names;
+  ACE_Vector<String> tips;
 
-  void add(const char *name, int (Companion::*fn)(int argc, char *argv[])) {
+  void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
+	   const char *tip = NULL) {
     Entry e(name,fn);
     action.bind(String(name),e);
     // maintain a record of order of keys
     names.push_back(String(name));
+    if (tip!=NULL) {
+      tips.push_back(String(tip));
+    } else {
+      tips.push_back(String(""));
+    }
   }
 };
 

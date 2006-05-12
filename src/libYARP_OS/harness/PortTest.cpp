@@ -4,9 +4,13 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/PortablePair.h>
+#include <yarp/os/BinPortable.h>
 #include <yarp/Logger.h>
 #include <yarp/NetType.h>
+
+#include <yarp/os/BufferedPort.h>
 
 #include "TestList.h"
 
@@ -16,6 +20,7 @@ using yarp::String;
 using yarp::NetType;
 using yarp::Logger;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class ServiceProvider : public PortReader {
 public:
@@ -67,6 +72,8 @@ public:
   }
 };
 
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+
 
 class PortTest : public yarp::UnitTest {
 public:
@@ -83,7 +90,7 @@ public:
     Contact conOut = out.where();
 
     out.addOutput(Contact::byName("/in").addCarrier("udp"));
-    Time::delay(0.2);
+    //Time::delay(0.2);
 
     checkEqual(conIn.getName().c_str(),"/in","name is recorded");
 
@@ -108,8 +115,8 @@ public:
   }
 
 
-  void testBuffer() {
-    report(0,"checking buffering");
+  void testReadBuffer() {
+    report(0,"checking read buffering");
     Bottle bot1;
     PortReaderBuffer<Bottle> buf;
 
@@ -126,7 +133,7 @@ public:
     //buf.attach(input); // this is an alternative
 
     output.addOutput(Contact::byName("/in").addCarrier("tcp"));
-    Time::delay(0.2);
+    //Time::delay(0.2);
 
     report(0,"writing...");
     output.write(bot1);
@@ -169,7 +176,7 @@ public:
     input.setReader(buf);
 
     output.addOutput(Contact::byName("/in").addCarrier("udp"));
-    Time::delay(0.2);
+    //Time::delay(0.2);
 
     report(0,"writing/reading three times...");
 
@@ -212,7 +219,7 @@ public:
     input.setReader(buf);
 
     output.addOutput(Contact::byName("/in").addCarrier("udp"));
-    Time::delay(0.2);
+    //Time::delay(0.2);
 
 
     for (int j=0; j<3; j++) {
@@ -252,7 +259,7 @@ public:
     input.setReader(buf);
 
     output.addOutput(Contact::byName("/in").addCarrier("tcp"));
-    Time::delay(0.2);
+    //Time::delay(0.2);
 
 
     PortablePair<Bottle,Bottle> bot1;
@@ -294,15 +301,113 @@ public:
     input.close();    
   }
 
+
+  virtual void testBackground() {
+    report(0,"test communication in background mode");
+
+    Port input, output;
+    input.open("/in");
+    output.open("/out");
+    output.enableBackgroundWrite(true);
+
+    BinPortable<int> bin, bout;
+    bout.content() = 42;
+    bin.content() = 20;
+
+    output.addOutput("/in");
+
+    report(0,"writing...");
+    output.write(bout);
+    report(0,"reading...");
+    input.read(bin);
+
+    checkEqual(bout.content(),bin.content(),"successful transmit");
+
+    while (output.isWriting()) {
+      report(0,"waiting for port to stabilize");
+      Time::delay(0.2);
+    }
+
+    bout.content() = 88;
+
+    report(0,"writing...");
+    output.write(bout);
+    report(0,"reading...");
+    input.read(bin);
+
+    checkEqual(bout.content(),bin.content(),"successful transmit");
+
+    output.close();
+    input.close();
+  }
+
+  void testWriteBuffer() {
+    report(0,"testing write buffering");
+
+    Port input, output, altInput;
+    input.open("/in");
+    altInput.open("/in2");
+    output.open("/out");
+    output.addOutput("/in");
+
+    report(0,"beginning...");
+
+    BinPortable<int> bin;
+    PortWriterBuffer<BinPortable<int> > binOut;
+    binOut.attach(output);
+
+    int val1 = 15;
+    int val2 = 30;
+
+    BinPortable<int>& active = binOut.get();
+    active.content() = val1;
+    binOut.write();
+
+    output.addOutput("/in2");
+    BinPortable<int>& active2 = binOut.get();
+    active2.content() = val2;
+    binOut.write();
+
+    input.read(bin);
+    checkEqual(val1,bin.content(),"successful transmit");
+
+    altInput.read(bin);
+    checkEqual(val2,bin.content(),"successful transmit");
+
+    while (output.isWriting()) {
+      report(0,"waiting for port to stabilize");
+      Time::delay(0.2);
+    }
+  }
+
+  void testBufferedPort() {
+    report(0,"checking buffered port");
+    BufferedPort<BinPortable<int> > output, input;
+    output.open("/out");
+    input.open("/in");
+    output.addOutput("/in");
+    report(0,"preparing...");
+    BinPortable<int>& datum = output.prepare();
+    datum.content() = 999;
+    report(0,"writing...");
+    output.write();
+    report(0,"reading...");
+    BinPortable<int> *bin = input.read();
+    checkEqual(bin->content(),999,"good send");
+  }
+
   virtual void runTests() {
     yarp::NameClient& nic = yarp::NameClient::getNameClient();
     nic.setFakeMode(true);
     testOpen();
-    testBuffer();
+    testReadBuffer();
     testPair();
     testReply();
     //    testUdp();
     //    testHeavy();
+    testBackground();
+    testWriteBuffer();
+    testBufferedPort();
 
     nic.setFakeMode(false);
   }

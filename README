@@ -139,17 +139,17 @@ hand-crafted Makefiles
 ----------------------------
 
 If you are on a debian linux system, there are some old hand-crafted
-Makefiles lying around.  To get them, type:
+Makefiles lying around.  To use them, type:
 
-  make -f Makefile.man maker
+  make -f Makefile.man [TARGET]
 
-If that works, type:
+For example, to compile everything:
 
-  make
+  make -f Makefile.man
 
-If that works, type:
+To make debian packages:
 
-  make deb
+  make -f Makefile.man deb
 
 There should now be installable packages in a directory called "package".
 Install using:
@@ -161,7 +161,7 @@ The packages can be deinstalled using standard debian package management.
 
 You can make documentation if you have "doxygen":
 
-  make dox
+  make -f Makefile.am dox
 
 You should be able to browse library documentation from:
 

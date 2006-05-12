@@ -27,9 +27,12 @@ Address NameServer::unregisterName(const String& name) {
   Address prev = queryName(name);
   if (prev.isValid()) {
     if (prev.getPort()!=-1) {
-      HostRecord& host = getHostRecord(prev.getName());
-      host.release(prev.getPort());
-      NameRecord& rec = getNameRecord(name);
+      NameRecord& rec = getNameRecord(prev.getRegName());
+      if (rec.isReusablePort()) {
+	HostRecord& host = getHostRecord(prev.getName());
+	host.release(prev.getPort());
+      }
+      //NameRecord& rec = getNameRecord(name);
       rec.clear();
       tmpNames.release(name);
     }
@@ -43,6 +46,8 @@ Address NameServer::unregisterName(const String& name) {
 Address NameServer::registerName(const String& name, 
 				 const Address& address,
 				 const String& remote) {
+  bool reusablePort = false;
+
   YARP_DEBUG(Logger::get(),"in registerName...");
 
   if (name!="...") {
@@ -82,6 +87,7 @@ Address NameServer::registerName(const String& name,
   int port = suggestion.getPort();
   if (port == 0) {
     port = getHostRecord(machine).get();
+    reusablePort = true;
   }
 
   suggestion = Address(machine,port,carrier,portName);
@@ -90,7 +96,7 @@ Address NameServer::registerName(const String& name,
 	     suggestion.toString());
   
   NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
-  nameRecord.setAddress(suggestion);
+  nameRecord.setAddress(suggestion,reusablePort);
 
   return nameRecord.getAddress();
 }
@@ -220,6 +226,11 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
   Address address = registerName(portName,
 				 Address(machine,port,carrier,portName),
 				 remote);
+
+  YARP_DEBUG(Logger::get(), 
+	     String("name server register address -- ") +
+	     address.toString());
+  
   return terminate(textify(address));
 }
 
@@ -257,7 +268,7 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
   argv++;
 
   if (argc<2) {
-    return "need at least two arguments: the source port and the target port\n(followed by an optional list of carriers in decreasing order of desirability)";
+    return terminate("need at least two arguments: the source port and the target port\n(followed by an optional list of carriers in decreasing order of desirability)");
   }
   String src = argv[0];
   String dest = argv[1];
@@ -444,6 +455,8 @@ String NameServer::apply(const String& txt, const Address& remote) {
       ss.set(1,remote.getName().c_str());
       result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
 				   (char **)(ss.get()+1));
+      YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
+      YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
     }
   } catch (IOException e) {
       YARP_DEBUG(Logger::get(),String("name server sees exception ") + 
@@ -507,8 +520,22 @@ public:
 	//os->writeLine(result);
 	//os->flush();
 	//os->close();
+
+	/*
+    // This change is just to make Microsoft Telnet happy
+    String tmp;
+    for (int i=0; i<result.length(); i++) {
+        if (result[i]=='\n') {
+            tmp += '\r';
+        }
+        tmp += result[i];
+    }
+    tmp += '\r';
+	os->appendString(tmp.c_str(),'\n');
+	*/
 	os->appendString(result.c_str(),'\n');
-	YARP_DEBUG(Logger::get(),String("name server reply is ") + result);
+	
+    YARP_DEBUG(Logger::get(),String("name server reply is ") + result);
 	String resultSparse = result;
 	int end = resultSparse.find("\n*** end of message");
 	if (end>=0) {

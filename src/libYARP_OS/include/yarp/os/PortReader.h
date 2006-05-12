@@ -12,7 +12,7 @@ namespace yarp {
 
 /**
  * Interface implemented by all objects that can read themselves from
- * the network.
+ * the network, such as Bottle objects.
  * @see Port, PortWriter
  */
 class yarp::os::PortReader {

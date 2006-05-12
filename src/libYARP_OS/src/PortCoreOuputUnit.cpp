@@ -15,9 +15,18 @@
 
 using namespace yarp;
 
+
 bool PortCoreOutputUnit::start() {
 
   phase.wait();
+
+  if (!threaded) {
+    running = false;
+    sending = false;
+    runSimulation();
+    phase.post();
+    return true;
+  }
 
   bool result = PortCoreUnit::start();
   if (result) {
@@ -33,13 +42,30 @@ bool PortCoreOutputUnit::start() {
 
 void PortCoreOutputUnit::run() {
   running = true;
-  phase.post();
+  sending = false;
 
-  runSimulation();
+  // By default, we don't start up a thread for outputs.
 
-  // it would be nice to get my entry removed from the port immediately,
-  // but it would be a bit dodgy to delete this object and join this
-  // thread within and from themselves
+  if (!threaded) {
+    runSimulation();
+    phase.post();
+  } else {
+    phase.post();
+    while (!closing) {
+      activate.wait();
+      if (!closing) {
+	if (sending) {
+	  YARP_DEBUG(Logger::get(), "write something in background");
+	  sendHelper();
+	}
+      }
+      sending = false;
+      YARP_DEBUG(Logger::get(), "wrote something in background");
+    }
+    YARP_DEBUG(Logger::get(),
+	       "PortCoreOutputUnit thread closing");
+    sending = false;
+  }
 }
 
 
@@ -58,23 +84,6 @@ void PortCoreOutputUnit::runSimulation() {
   // no thread component at the moment
   running = false;
   return;
-
-  /*
-  // simulation
-  running = true;
-  while (true) {
-    ACE_OS::printf("tick\n");
-    Time::delay(0.3);
-    if (closing||isDoomed()) {
-      break;
-    }
-  }
-
-  ACE_OS::printf("stopping\n");
-
-  running = false;
-  finished = true;
-  */
 }
 
 
@@ -88,6 +97,8 @@ void PortCoreOutputUnit::closeMain() {
     }
     */
     closing = true;
+    phase.post();
+    activate.post();
     join();
   }
 
@@ -132,13 +143,14 @@ Route PortCoreOutputUnit::getRoute() {
   return PortCoreUnit::getRoute();
 }
 
-void PortCoreOutputUnit::send(Writable& writer) {
+void PortCoreOutputUnit::sendHelper() {
   try {
     if (op!=NULL) {
       PortCommand pc('d',"");
       BufferedConnectionWriter buf(op->isTextMode());
       pc.writeBlock(buf);
-      bool ok = writer.write(buf);
+      YARP_ASSERT(cachedWriter!=NULL);
+      bool ok = cachedWriter->write(buf);
       if (!ok) {
 	throw IOException("writer failed");
       }
@@ -151,6 +163,57 @@ void PortCoreOutputUnit::send(Writable& writer) {
   }
 }
 
+void *PortCoreOutputUnit::send(Writable& writer, 
+			       void *tracker,
+			       bool waitAfter,
+			       bool waitBefore) {
+  if (!waitBefore || !waitAfter) {
+    if (running == false) {
+      // we must have a thread if we're going to be skipping waits
+      threaded = true;
+      YARP_DEBUG(Logger::get(),"starting a thread for output");
+      start();
+      YARP_DEBUG(Logger::get(),"started a thread for output");
+    }
+  }
+
+  if ((!waitBefore)&&waitAfter) {
+    YARP_ERROR(Logger::get(), "chosen port wait combination not yet implemented");
+  }
+  if (!sending) {
+    void *nextTracker = tracker;
+    tracker = cachedTracker;
+    sending = true;
+    cachedWriter = &writer;
+    cachedTracker = nextTracker;
+    if (waitAfter==true) {
+      sendHelper();
+      sending = false;
+    } else {
+      activate.post();
+    }
+  } else {
+    YARP_DEBUG(Logger::get(), 
+	       "skipping connection tagged as sending something");
+  }
+
+  // return tracker that we no longer need
+  return tracker;
+}
+
+
+void *PortCoreOutputUnit::takeTracker() {
+  void *tracker = NULL;
+  if (!sending) {
+    tracker = cachedTracker;
+    cachedTracker = NULL;
+  }
+  return tracker;
+}
+
+bool PortCoreOutputUnit::isBusy() {
+  return sending;
+}
 
 
 

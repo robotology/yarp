@@ -14,6 +14,8 @@ Logger& Logger::get() {
 
 
 void Logger::show(int level, const String& txt) {
+  int inLevel = level;
+  //ACE_OS::fprintf(stderr,"level %d txt %s\n", level, txt.c_str());
   if (verbose>0) {
     level = 10000;
   }
@@ -26,7 +28,7 @@ void Logger::show(int level, const String& txt) {
     String more(prefix);
     more += ": ";
     more += txt;
-    parent->show(level,more);
+    parent->show(inLevel,more);
   }
 }
 

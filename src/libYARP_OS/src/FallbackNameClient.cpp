@@ -61,7 +61,7 @@ Address FallbackNameClient::seek() {
     FallbackNameClient seeker;
 
     YARP_INFO(Logger::get(),
-	      String("Broadcast search for name server try ") + 
+	      String("Polling for name server (using multicast), try ") + 
 	      NetType::toString(k+1) + 
 	      String(" of max ") + 
 	      NetType::toString(tries));
@@ -86,7 +86,7 @@ Address FallbackNameClient::seek() {
       }
     }
     ACE_OS::fprintf(stderr,"\n");
-    YARP_INFO(Logger::get(),"No response to broadcast search");
+    YARP_INFO(Logger::get(),"No response to search for server");
     try {
       seeker.close();
       seeker.join();

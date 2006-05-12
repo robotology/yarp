@@ -8,7 +8,9 @@
 #include <yarp/PortManager.h>
 #include <yarp/Readable.h>
 #include <yarp/Writable.h>
+#include <yarp/PortCorePacket.h>
 
+#include <ace/Vector_T.h>
 
 namespace yarp {
   class PortCore;
@@ -26,7 +28,7 @@ namespace yarp {
 class yarp::PortCore : public ThreadImpl, public PortManager, public Readable {
 public:
 
-  PortCore() {
+  PortCore() : stateMutex(1), log("port",Logger::get()) {
     // dormant phase
     listening = false;
     running = false;
@@ -34,6 +36,7 @@ public:
     closing = false;
     finished = false;
     autoHandshake = true;
+    waitBeforeSend = waitAfterSend = true;
     events = 0;
     face = NULL;
     reader = NULL;
@@ -44,10 +47,20 @@ public:
   // configure core
   bool listen(const Address& address);
 
+  bool isWriting();
+
   void setReadHandler(Readable& reader);
 
   void setAutoHandshake(bool autoHandshake) {
     this->autoHandshake = autoHandshake;
+  }
+
+  void setWaitBeforeSend(bool waitBeforeSend) {
+    this->waitBeforeSend = waitBeforeSend;
+  }
+
+  void setWaitAfterSend(bool waitAfterSend) {
+    this->waitAfterSend = waitAfterSend;
   }
 
   virtual bool read(ConnectionReader& reader) {
@@ -110,12 +123,15 @@ private:
 
   // main internal PortCore state and operations
   SemaphoreImpl stateMutex;
+  Logger log;
   Face *face;
   String name;
   Address address;
   Readable *reader;
   bool listening, running, starting, closing, finished, autoHandshake;
+  bool waitBeforeSend, waitAfterSend;
   int events;
+  PortCorePackets packets;
 
   void closeMain();
 };

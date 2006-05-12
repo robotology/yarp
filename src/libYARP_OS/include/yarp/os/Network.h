@@ -40,6 +40,24 @@ public:
 
 
   /**
+   * Initialization.  On some operating systems, there are certain
+   * start-up tasks that need to be performed, and this method does
+   * them.  It is a good idea to call this method near the start of
+   * your program, and to call Network::fini towards the end.
+   */
+  static void init();
+
+
+  /**
+   * Deinitialization.  On some operating systems, there are certain
+   * shut-down tasks that need to be performed, and this method does
+   * them.  It is a good idea to call Netork::init near the start of
+   * your program, and to call this method towards the end.
+   */
+  static void fini();
+
+
+  /**
    * Find out information about a registered name.
    * This communicates with the name server to find out
    * what is known about how to contact the entity with the given name

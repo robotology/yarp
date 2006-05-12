@@ -11,7 +11,7 @@ namespace yarp {
 
 /**
  * Interface implemented by all objects that can write themselves to
- * the network.
+ * the network, such as Bottle objects.
  * @see Port, PortReader
  */
 class yarp::os::PortWriter {

@@ -2,23 +2,26 @@
 # Recursive compilation Makefile.
 #
 
+# Makefiles are no longer called "Makefile" but "Makefile.man"
+MAKER = -f Makefile.man
+
 SUBDIRS = $(wildcard libYARP_*) $(wildcard src*)  $(wildcard debian)
 
 default:
 	@for d in $(SUBDIRS) ; do \
-		test -d $$d && ( cd $$d ; $(MAKE) ) ; done
+		test -d $$d && ( cd $$d ; $(MAKE) $(MAKER) ) ; done
 
 deb:
 	@for d in $(SUBDIRS) ; do \
-		test -d $$d && ( cd $$d ; $(MAKE) deb ) ; done
+		test -d $$d && ( cd $$d ; $(MAKE) $(MAKER) deb ) ; done
 
 dox: subdox subuserdox
 	@for d in $(SUBDIRS) ; do \
-		test -d $$d && ( cd $$d ; $(MAKE) dox ) ; done
+		test -d $$d && ( cd $$d ; $(MAKE) $(MAKER) dox ) ; done
 
 clean:
 	@for d in $(SUBDIRS) ; do \
-		test -d $$d && ( cd $$d ; $(MAKE) clean ) ; done
+		test -d $$d && ( cd $$d ; $(MAKE) $(MAKER) clean ) ; done
 
 
 # some common targets
@@ -28,8 +31,8 @@ subdox:
 subuserdox:
 	@test -e Doxyfile.part && ( mkdir -p doc; doxygen Doxyfile.part ) || echo -n
 
-maker:
-	cp Makefile.man Makefile
-	@for d in $(SUBDIRS) ; do \
-		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done
+#maker:
+#	cp Makefile.man Makefile
+#	@for d in $(SUBDIRS) ; do \
+#		test -d $$d && ( cd $$d ; $(MAKE) -f Makefile.man maker ) ; done
 

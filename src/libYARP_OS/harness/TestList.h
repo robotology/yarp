@@ -22,11 +22,11 @@ extern yarp::UnitTest& getBufferedConnectionWriterTest();
 extern yarp::UnitTest& getProtocolTest();
 extern yarp::UnitTest& getNameServerTest();
 extern yarp::UnitTest& getPortCoreTest();
-//extern yarp::UnitTest& getHeaderCompatibilityTest();
 extern yarp::UnitTest& getElectionTest();
 extern yarp::UnitTest& getNameConfigTest();
 extern yarp::UnitTest& getPortTest();
 extern yarp::UnitTest& getNetTypeTest();
+extern yarp::UnitTest& getBinPortableTest();
 
 class yarp::TestList {
 public:
@@ -45,11 +45,11 @@ public:
     root.add(getProtocolTest());
     root.add(getNameServerTest());
     root.add(getPortCoreTest());
-    //root.add(getHeaderCompatibilityTest());
     root.add(getElectionTest());
     root.add(getNameConfigTest());
     root.add(getPortTest());
     root.add(getNetTypeTest());
+    root.add(getBinPortableTest());
   }
 };
 

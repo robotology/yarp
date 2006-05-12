@@ -43,12 +43,14 @@
  * @subsection example_sender A program for sending a message
  * \code
   // source for sender.cpp
+  #include <yarp/os/Network.h>
   #include <yarp/os/Port.h>
   #include <yarp/os/Bottle.h>
   #include <yarp/os/Time.h>
   #include <stdio.h>
   using namespace yarp::os;
   int main() {
+    Network::init();
     Bottle bot1; 
     bot1.addString("testing"); // a simple message
     Port output;
@@ -60,6 +62,7 @@
       Time::delay(1);
     }
     output.close();
+    Network::fini();
     return 0;
   }
  * \endcode
@@ -68,17 +71,20 @@
  *
  * \code
   // source for receiver.cpp
+  #include <yarp/os/Network.h>
   #include <yarp/os/Port.h>
   #include <yarp/os/Bottle.h>
   #include <stdio.h>
   using namespace yarp::os;
   int main() {
+    Network::init();
     Bottle bot2;
     Port input;
     input.open("/in");
     input.read(bot2);
     printf("Got message: %s\n", bot2.toString().c_str());
     input.close();
+    Network::fini();
     return 0;
   }
  * \endcode
@@ -92,8 +98,8 @@
  *
  * If you're on a UNIX machine, you can compile with:
  * \code
-  g++ receiver.cpp -o receiver -lACE -lYARP_OS2
-  g++ sender.cpp -o sender -lACE -lYARP_OS2
+  g++ receiver.cpp -o receiver -lACE -lYARP_OS
+  g++ sender.cpp -o sender -lACE -lYARP_OS
  * \endcode
  *
  * On windows, you'll need to set up projects and set up include
@@ -101,7 +107,7 @@
  *
  * @subsection example_running Running the examples
  *
- * On UNIX, on three separate consoles, do:
+ * On UNIX, on four separate consoles, do:
  * \code
   yarp server
   ./sender

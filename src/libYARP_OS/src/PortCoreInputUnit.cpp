@@ -141,8 +141,6 @@ void PortCoreInputUnit::run() {
   } catch (IOException e) {
     /* ok, ports die - it is their nature */
     YARP_DEBUG(Logger::get(),e.toString() + " <<< PortCoreInputUnit exception");
-    ACE_DEBUG((LM_DEBUG,"PortCoreInputUnit got exception: %s\n",
-	       e.toString().c_str()));
   }
 
   
@@ -195,9 +193,9 @@ void PortCoreInputUnit::closeMain() {
   if (running) {
     // give a kick (unfortunately unavoidable)
     if (ip!=NULL) {
-      YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
+      //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
       ip->interrupt();
-      YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
+      //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
     }
     closing = true;
     join();

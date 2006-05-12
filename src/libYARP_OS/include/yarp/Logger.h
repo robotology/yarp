@@ -90,6 +90,10 @@ public:
     this->verbose = verbose;
   }
 
+  void setPrefix(const char *prefix) {
+    this->prefix = prefix;
+  }
+
 private:
   void show(int level, const String& txt);
   void exit(int result);

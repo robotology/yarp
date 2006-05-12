@@ -234,7 +234,7 @@ public:
   }
 
   void closeHelper() {
-    YARP_DEBUG(Logger::get(),"Protocol object closing");
+    //YARP_DEBUG(Logger::get(),"Protocol object closing");
     try {
       if (pendingAck) {
 	sendAck();
@@ -248,7 +248,7 @@ public:
       delete delegate;
       delegate = NULL;
     }
-    YARP_DEBUG(Logger::get(),"Protocol object closed");
+    //YARP_DEBUG(Logger::get(),"Protocol object closed");
   }
 
   TwoWayStream& getStreams() {

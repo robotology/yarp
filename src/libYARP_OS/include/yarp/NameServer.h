@@ -134,7 +134,10 @@ private:
     }
 
     int get() {
-      return ReusableRecord<int>::getFree();
+      int result = ReusableRecord<int>::getFree();
+      //YARP_DEBUG(Logger::get(), String("host record says ") +
+      //NetType::toString(result) + " is free");
+      return result;
     }
 
     virtual int fresh() {
@@ -223,21 +226,30 @@ private:
   class NameRecord {
   private:
     Address address;
+    bool reusablePort;
     ACE_Hash_Map_Manager<String,PropertyRecord,ACE_Null_Mutex> propMap;
   public:
     NameRecord() : propMap(5) {
+      reusablePort = false;
     }
 
     NameRecord(const NameRecord& alt) : propMap(5) {
+      reusablePort = false;
+    }
+
+    bool isReusablePort() {
+      return reusablePort;
     }
 
     void clear() {
       propMap.unbind_all();
       address = Address();
+      reusablePort = false;
     }
 
-    void setAddress(const Address& address) {
+    void setAddress(const Address& address, bool reusablePort=false) {
       this->address = address;
+      this->reusablePort = reusablePort;
     }
 
     Address getAddress() {

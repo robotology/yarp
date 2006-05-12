@@ -86,20 +86,22 @@ bool Port::open(const char *name) {
 
 
 bool Port::open(const Contact& contact, bool registerName) {
+
   bool success = true;
   Address caddress(contact.getHost().c_str(),
 		   contact.getPort(),
 		   contact.getCarrier().c_str(),
 		   contact.getName().c_str());
+  Address address = caddress;
   try {
     PortCoreAdapter& core = HELPER(implementation);
     core.setReadHandler(core);
     NameClient& nic = NameClient::getNameClient();
-    Address address = caddress;
     if (registerName) {
       address = nic.registerName(contact.getName().c_str(),caddress);
     }
     success = address.isValid();
+
     if (success) {
       success = core.listen(address);
       if (success) {
@@ -108,7 +110,8 @@ bool Port::open(const Contact& contact, bool registerName) {
     }
   } catch (IOException e) {
     success = false;
-    YARP_DEBUG(Logger::get(),e.toString() + " <<< Port::register failed");
+    //YARP_DEBUG(Logger::get(),e.toString() + " <<< Port::register failed");
+    YARP_ERROR(Logger::get(),String("port ") + contact.getName().c_str() + String(" failed to open: ") + e.toString() + " (" + address.toString() + ")");
   }
   if (!success) {
     close();
@@ -156,7 +159,7 @@ bool Port::write(PortWriter& writer) {
   try {
     //WritableAdapter adapter(writer);
     core.send(writer);
-    writer.onCompletion();
+    //writer.onCompletion();
     result = true;
   } catch (IOException e) {
     YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
@@ -185,4 +188,18 @@ void Port::setReader(PortReader& reader) {
   PortCoreAdapter& core = HELPER(implementation);
   core.configReader(reader);
 }
+
+
+void Port::enableBackgroundWrite(bool backgroundFlag) {
+  PortCoreAdapter& core = HELPER(implementation);
+  core.setWaitAfterSend(!backgroundFlag);
+}
+
+
+bool Port::isWriting() {
+  PortCoreAdapter& core = HELPER(implementation);
+  return core.isWriting();
+}
+
+
 

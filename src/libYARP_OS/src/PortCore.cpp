@@ -36,7 +36,7 @@ bool PortCore::listen(const Address& address) {
   YTRACE("PortCore::listen");
 
   if (!address.isValid()) {
-    YARP_ERROR(Logger::get(), "Port does not have a valid address");
+    YARP_ERROR(log, "Port does not have a valid address");
     return false;
   }
 
@@ -70,6 +70,11 @@ bool PortCore::listen(const Address& address) {
     listening = true;
     success = true;
   }
+
+  if (success) {
+    log.setPrefix(address.getRegName().c_str());
+  }
+
   stateMutex.post();
 
   // we have either entered listening phase (face=valid, listening=true)
@@ -110,7 +115,7 @@ void PortCore::run() {
     InputProtocol *ip = NULL;
     try {
       ip = face->read();
-      YARP_DEBUG(Logger::get(),"PortCore got something");
+      YARP_DEBUG(log,"PortCore got something");
     } catch (IOException e) {
       YMSG(("read failed: %s\n",e.toString().c_str()));
     }
@@ -271,12 +276,12 @@ void PortCore::closeUnits() {
   for (unsigned int i=0; i<units.size(); i++) {
     PortCoreUnit *unit = units[i];
     if (unit!=NULL) {
-      YARP_DEBUG(Logger::get(),"closing a unit");
+      YARP_DEBUG(log,"closing a unit");
       unit->close();
-      YARP_DEBUG(Logger::get(),"joining a unit");
+      YARP_DEBUG(log,"joining a unit");
       unit->join();
       delete unit;
-      YARP_DEBUG(Logger::get(),"deleting a unit");
+      YARP_DEBUG(log,"deleting a unit");
       units[i] = NULL;
     }
   }
@@ -291,10 +296,10 @@ void PortCore::reapUnits() {
       PortCoreUnit *unit = units[i];
       if (unit!=NULL) {
 	if (unit->isDoomed()&&!unit->isFinished()) {	
-	  YARP_DEBUG(Logger::get(),"REAPING a unit");
+	  YARP_DEBUG(log,"REAPING a unit");
 	  unit->close();
 	  unit->join();
-	  YARP_DEBUG(Logger::get(),"done REAPING a unit");
+	  YARP_DEBUG(log,"done REAPING a unit");
 	}
       }
     }
@@ -304,25 +309,25 @@ void PortCore::reapUnits() {
 }
 
 void PortCore::cleanUnits() {
-  YARP_DEBUG(Logger::get(),"CLEANING scan");
+  YARP_DEBUG(log,"CLEANING scan");
   stateMutex.wait();
   if (!finished) {
     
     for (unsigned int i=0; i<units.size(); i++) {
       PortCoreUnit *unit = units[i];
       if (unit!=NULL) {
-	YARP_DEBUG(Logger::get(),String("checking ") + unit->getRoute().toString());
+	YARP_DEBUG(log,String("checking ") + unit->getRoute().toString());
 	if (unit->isFinished()) {
-	  YARP_DEBUG(Logger::get(),"CLEANING a unit");
+	  YARP_DEBUG(log,"CLEANING a unit");
 	  try {
 	    unit->close();
 	    unit->join();
 	  } catch (IOException e) {
-	    YARP_DEBUG(Logger::get(),e.toString() + " <<< cleanUnits error");
+	    YARP_DEBUG(log,e.toString() + " <<< cleanUnits error");
 	  }
 	  delete unit;
 	  units[i] = NULL;
-	  YARP_DEBUG(Logger::get(),"done CLEANING a unit");
+	  YARP_DEBUG(log,"done CLEANING a unit");
 	}
       }
     }
@@ -342,7 +347,7 @@ void PortCore::cleanUnits() {
     //YMSG(("cleanUnits: there are now %d units\n", units.size()));
   }
   stateMutex.post();
-  YARP_DEBUG(Logger::get(),"CLEANING scan done");
+  YARP_DEBUG(log,"CLEANING scan done");
 }
 
 
@@ -402,7 +407,7 @@ bool PortCore::removeUnit(const Route& route) {
 	}
 	
 	if (ok) {
-	  YARP_DEBUG(Logger::get(), String("removing unit ") + alt.toString());
+	  YARP_DEBUG(log, String("removing unit ") + alt.toString());
 	  unit->setDoomed();
 	  needReap = true;
 	}
@@ -410,9 +415,9 @@ bool PortCore::removeUnit(const Route& route) {
     }
   }
   stateMutex.post();
-  YARP_DEBUG(Logger::get(),"should I reap?");
+  YARP_DEBUG(log,"should I reap?");
   if (needReap) {
-    YARP_DEBUG(Logger::get(),"reaping...");
+    YARP_DEBUG(log,"reaping...");
     // death will happen in due course; we can speed it up a bit
     // by waking up the grim reaper
     try {
@@ -576,21 +581,76 @@ void PortCore::send(Writable& writer) {
   // may need to be two caches.
 
   // for now, just doing a sequential send with no caching.
+  YMSG(("------- send in real\n"));
 
   stateMutex.wait();
-  // the whole darned port is blocked on this operation
+
+  YMSG(("------- send in\n"));
+  // The whole darned port is blocked on this operation.
+  // How long the operation lasts will depend on these flags:
+  //   waitAfterSend and waitBeforeSend,
+  // set by setWaitAfterSend() and setWaitBeforeSend()
+  if (!finished) {
+    PortCorePacket *packet = packets.getFreePacket();
+    packet->setContent(&writer);
+    YARP_ASSERT(packet!=NULL);
+    for (unsigned int i=0; i<units.size(); i++) {
+      PortCoreUnit *unit = units[i];
+      if (unit!=NULL) {
+	if (unit->isOutput() && !unit->isFinished()) {
+	  YMSG(("------- -- inc\n"));
+	  packet->inc();
+	  YMSG(("------- -- presend\n"));
+	  void *out = unit->send(writer,(void *)packet,
+				 waitAfterSend,waitBeforeSend);
+	  YMSG(("------- -- send\n"));
+	  if (out!=NULL) {
+	    ((PortCorePacket *)out)->dec();
+	    packets.checkPacket((PortCorePacket *)out);
+	  }
+	  YMSG(("------- -- dec\n"));
+	}
+      }
+    }
+    packet->dec();
+    packets.checkPacket(packet);
+  }
+  //writer.onCompletion();
+  YMSG(("------- send out\n"));
+  stateMutex.post();
+  YMSG(("------- send out real\n"));
+
+}
+
+
+
+bool PortCore::isWriting() {
+  bool writing = false;
+
+  stateMutex.wait();
+
   if (!finished) {
     for (unsigned int i=0; i<units.size(); i++) {
       PortCoreUnit *unit = units[i];
       if (unit!=NULL) {
 	if (unit->isOutput() && !unit->isFinished()) {
-	  unit->send(writer);
+	  if (unit->isBusy()) {
+	    writing = true;
+	  } else {
+	    void *tracker = unit->takeTracker();
+	    if (tracker!=NULL) {
+	      //YARP_INFO(log,"tracker returned...");
+	      ((PortCorePacket *)tracker)->dec();
+	      packets.checkPacket((PortCorePacket *)tracker);
+	    }
+	  }
 	}
       }
     }
   }
+
   stateMutex.post();
+
+  return writing;
 }
-
-
 

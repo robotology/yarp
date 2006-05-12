@@ -10,6 +10,7 @@
 #include <yarp/BottleImpl.h>
 #include <yarp/os/Time.h>
 #include <yarp/NameServer.h>
+#include <yarp/NameConfig.h>
 
 // just for "write", which needs to read from standard input
 #include <iostream>
@@ -22,17 +23,30 @@ using namespace yarp::os;
 Companion Companion::instance;
 
 Companion::Companion() {
-  add("help",       &Companion::cmdHelp);
-  add("version",    &Companion::cmdVersion);
-  add("where",      &Companion::cmdWhere);
-  add("name",       &Companion::cmdName);
-  add("connect",    &Companion::cmdConnect);
-  add("disconnect", &Companion::cmdDisconnect);
-  add("read",       &Companion::cmdRead);
-  add("write",      &Companion::cmdWrite);
-  add("regression", &Companion::cmdRegression);
-  add("server",     &Companion::cmdServer);
-  add("check",      &Companion::cmdCheck);
+  add("help",       &Companion::cmdHelp,
+      "get this list");
+  add("version",    &Companion::cmdVersion,
+      "get version information");
+  add("where",      &Companion::cmdWhere,
+      "report where the yarp name server is running");
+  add("conf",       &Companion::cmdConf,
+      "report what configuration file is being used");
+  add("name",       &Companion::cmdName,
+      "send commands to the yarp name server");
+  add("connect",    &Companion::cmdConnect,
+      "create a connection between two ports");
+  add("disconnect", &Companion::cmdDisconnect,
+      "remove a connection between two ports");
+  add("read",       &Companion::cmdRead,
+      "read from the network and print to standard output");
+  add("write",      &Companion::cmdWrite,
+      "write to the network from standard input");
+  add("regression", &Companion::cmdRegression,
+      "run regression tests, if linked");
+  add("server",     &Companion::cmdServer,
+      "run yarp name server");
+  add("check",      &Companion::cmdCheck,
+      "run a simple sanity check to see if yarp is working");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -50,6 +64,8 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
 
 int Companion::main(int argc, char *argv[]) {
+
+    ACE::init();
 
   try {
 
@@ -92,8 +108,10 @@ int Companion::main(int argc, char *argv[]) {
   } catch (IOException e) {
     YARP_ERROR(Logger::get(),
 	       String("exception: ") + e.toString());
+    ACE::fini();
     return 1;
   }
+  ACE::fini();
 }
 
 
@@ -110,6 +128,13 @@ int Companion::cmdName(int argc, char *argv[]) {
   return 0;
 }
 
+int Companion::cmdConf(int argc, char *argv[]) {
+  NameConfig nc;
+  ACE_OS::printf("configuration file: %s\n",nc.getConfigFileName().c_str());
+  return 0;
+}
+
+
 int Companion::cmdWhere(int argc, char *argv[]) {
   NameClient& nic = NameClient::getNameClient();
   Address address = nic.queryName("root");
@@ -124,10 +149,15 @@ int Companion::cmdWhere(int argc, char *argv[]) {
 }
 
 int Companion::cmdHelp(int argc, char *argv[]) {
-  ACE_OS::printf("Here are ways to use this program:\n");
+  ACE_OS::printf("Here are arguments you can give this program:\n");
   for (unsigned i=0; i<names.size(); i++) {
-    const String& name = names[i];
-    ACE_OS::printf("  <this program> %s\n", name.c_str());
+    String name = names[i];
+    const String& tip = tips[i];
+    while (name.length()<12) {
+      name += " ";
+    }
+    ACE_OS::printf("%s ", name.c_str());
+    ACE_OS::printf("%s\n", tip.c_str());
   }
   return 0;
 }

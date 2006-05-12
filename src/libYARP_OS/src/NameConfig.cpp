@@ -14,6 +14,11 @@ using namespace std;
 
 using namespace yarp;
 
+//#define CONF_FILENAME "namer.conf"
+
+#define CONF_FILENAME "yarp.conf"
+
+
 String NameConfig::getEnv(const String& key) {
   const char *result = ACE_OS::getenv(key.c_str());
   if (result == NULL) {
@@ -35,17 +40,16 @@ bool NameConfig::fromString(const String& txt) {
 
 
 String NameConfig::getConfigFileName() {
-  String root = getEnv("YARP_ROOT");
+  String root = getEnv("YARP_CONF");
   String home = getEnv("HOME");
   String conf = "";
   if (root!="") {
     //conf = new File(new File(root,"conf"),"namer.conf");
-    conf = root + "/conf/namer.conf"; // how to do this in a portable way?
+    conf = root + "/conf/" + CONF_FILENAME;
   } else if (home!="") {
-    //conf = new File(new File(new File(home,".yarp"),"conf"),"namer.conf");
-    conf = home + "/.yarp/conf/namer.conf";
+    conf = home + "/.yarp/conf/" + CONF_FILENAME;
   } else {
-    YARP_ERROR(Logger::get(),"Cannot decide where configuration file is - set YARP_ROOT or HOME");
+    YARP_ERROR(Logger::get(),"Cannot decide where configuration file is - set YARP_CONF or HOME");
     ACE_OS::exit(1);
   }
   YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);

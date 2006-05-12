@@ -47,8 +47,20 @@ public:
     doomed = flag;
   }
 
-  virtual void send(Writable& writer) {
+  virtual void *send(Writable& writer, 
+		     void *tracker,
+		     bool waitAfter = true,
+		     bool waitBefore = true) {
     // do nothing
+    return tracker;
+  }
+
+  virtual void *takeTracker() {
+    return NULL;
+  }
+
+  virtual bool isBusy() {
+    return false;
   }
 
 protected:
