@@ -8,11 +8,16 @@ FOREACH(X ${NEED_LIBS})
 ENDFOREACH(X ${NEED_LIBS})
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/lib${name}/include)
 
-AUX_SOURCE_DIRECTORY(src libcode)
+#AUX_SOURCE_DIRECTORY(src libcode)
+FILE(GLOB_RECURSE folder_source src/*.cpp)
+SET(libcode ${folder_source})
+FILE(GLOB_RECURSE folder_header include/*.h)
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 INCLUDE(YarpReqLib)
 
-ADD_LIBRARY(${name} ${libcode})
+ADD_LIBRARY(${name} ${libcode} ${folder_header})
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
