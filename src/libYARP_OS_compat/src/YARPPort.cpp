@@ -10,7 +10,7 @@
 
 
 ///
-/// $Id: YARPPort.cpp,v 1.3 2006-04-05 12:36:35 eshuy Exp $
+/// $Id: YARPPort.cpp,v 1.4 2006-05-12 16:49:23 eshuy Exp $
 //
 /// Based on: Id: YARPPort.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
@@ -33,12 +33,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/PortReaderBuffer.h>
-using namespace yarp;
-using namespace yarp::os;
-
 
 #define DEBUG_H_INC
 #include <yarp/YARPPort.h>
+
+using namespace yarp;
+using namespace yarp::os;
 
 
 #ifdef __WIN32__
