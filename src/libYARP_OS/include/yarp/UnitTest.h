@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_UNITTEST_
 #define _YARP2_UNITTEST_
 
@@ -6,7 +7,7 @@
 #include <ace/Vector_T.h>
 
 namespace yarp {
-  class UnitTest;
+    class UnitTest;
 }
 
 /**
@@ -15,58 +16,58 @@ namespace yarp {
  */
 class yarp::UnitTest {
 public:
-  UnitTest();
+    UnitTest();
 
-  UnitTest(UnitTest *parent);
+    UnitTest(UnitTest *parent);
 
-  virtual ~UnitTest() {
-    clear();
-  }
+    virtual ~UnitTest() {
+        clear();
+    }
 
-  void report(int severity, const String& problem);
+    void report(int severity, const String& problem);
 
-  virtual String getName() = 0;
+    virtual String getName() = 0;
 
-  static void startTestSystem();
-  static UnitTest& getRoot();
-  static void stopTestSystem();
+    static void startTestSystem();
+    static UnitTest& getRoot();
+    static void stopTestSystem();
 
-  void add(UnitTest& unit);
-  void clear();
+    void add(UnitTest& unit);
+    void clear();
 
-  virtual int run();
+    virtual int run();
 
-  virtual int run(int argc, char *argv[]);
+    virtual int run(int argc, char *argv[]);
 
-  virtual void runTests() {
-  }
+    virtual void runTests() {
+    }
 
-  virtual void runSubTests(int argc, char *argv[]);
+    virtual void runSubTests(int argc, char *argv[]);
 
 
-  bool checkEqualImpl(int x, int y, 
-		      const char *desc,
-		      const char *txt1,
-		      const char *txt2,
-		      const char *fname,
-		      int fline);
+    bool checkEqualImpl(int x, int y, 
+                        const char *desc,
+                        const char *txt1,
+                        const char *txt2,
+                        const char *fname,
+                        int fline);
 
-  bool checkEqualImpl(const String& x, const String& y,
-		      const char *desc,
-		      const char *txt1,
-		      const char *txt2,
-		      const char *fname,
-		      int fline);
+    bool checkEqualImpl(const String& x, const String& y,
+                        const char *desc,
+                        const char *txt1,
+                        const char *txt2,
+                        const char *fname,
+                        int fline);
 
-  String humanize(const String& txt);
+    String humanize(const String& txt);
 
 private:
-  ACE_Vector<UnitTest *> subTests;
-  bool hasProblem;
-  UnitTest *parent;
-  static UnitTest *theRoot;
+    ACE_Vector<UnitTest *> subTests;
+    bool hasProblem;
+    UnitTest *parent;
+    static UnitTest *theRoot;
 
-  void count(int severity);
+    void count(int severity);
 };
 
 // add info 

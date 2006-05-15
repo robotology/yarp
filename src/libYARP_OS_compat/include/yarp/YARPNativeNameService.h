@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,12 +62,12 @@
 ///
 
 ///
-/// $Id: YARPNativeNameService.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNativeNameService.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Tue May 22 15:34:43 EDT 2001
- */
+  paulfitz Tue May 22 15:34:43 EDT 2001
+*/
 
 #ifndef YARPNativeNameService_INC
 #define YARPNativeNameService_INC

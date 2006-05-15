@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_PORTCOREUNIT_
 #define _YARP2_PORTCOREUNIT_
 
@@ -5,7 +6,7 @@
 #include <yarp/ThreadImpl.h>
 
 namespace yarp {
-  class PortCoreUnit;
+    class PortCoreUnit;
 }
 
 /**
@@ -16,59 +17,59 @@ namespace yarp {
 
 class yarp::PortCoreUnit : public ThreadImpl {
 public:
-  PortCoreUnit(PortCore& owner) : owner(owner) {
-    doomed = false;
-  }
+    PortCoreUnit(PortCore& owner) : owner(owner) {
+        doomed = false;
+    }
 
-  virtual ~PortCoreUnit() {
-  }
+    virtual ~PortCoreUnit() {
+    }
 
-  virtual bool isInput() {
-    return false;
-  }
+    virtual bool isInput() {
+        return false;
+    }
 
-  virtual bool isOutput() {
-    return false;
-  }
+    virtual bool isOutput() {
+        return false;
+    }
 
-  virtual bool isFinished() {
-    return false;
-  }
+    virtual bool isFinished() {
+        return false;
+    }
 
-  virtual Route getRoute() {
-    return Route("null","null","null");
-  }
+    virtual Route getRoute() {
+        return Route("null","null","null");
+    }
 
-  bool isDoomed() {
-    return doomed;
-  }
+    bool isDoomed() {
+        return doomed;
+    }
 
-  void setDoomed(bool flag = true) {
-    doomed = flag;
-  }
+    void setDoomed(bool flag = true) {
+        doomed = flag;
+    }
 
-  virtual void *send(Writable& writer, 
-		     void *tracker,
-		     bool waitAfter = true,
-		     bool waitBefore = true) {
-    // do nothing
-    return tracker;
-  }
+    virtual void *send(Writable& writer, 
+                       void *tracker,
+                       bool waitAfter = true,
+                       bool waitBefore = true) {
+        // do nothing
+        return tracker;
+    }
 
-  virtual void *takeTracker() {
-    return NULL;
-  }
+    virtual void *takeTracker() {
+        return NULL;
+    }
 
-  virtual bool isBusy() {
-    return false;
-  }
+    virtual bool isBusy() {
+        return false;
+    }
 
 protected:
-  PortCore& getOwner() { return owner; }
+    PortCore& getOwner() { return owner; }
 
 private:
-  PortCore& owner;
-  bool doomed;
+    PortCore& owner;
+    bool doomed;
 };
 
 #endif

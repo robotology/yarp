@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_PORTCOREOUTPUTUNIT_
 #define _YARP2_PORTCOREOUTPUTUNIT_
 
@@ -7,7 +8,7 @@
 #include <yarp/OutputProtocol.h>
 
 namespace yarp {
-  class PortCoreOutputUnit;
+    class PortCoreOutputUnit;
 }
 
 /**
@@ -16,72 +17,72 @@ namespace yarp {
  */
 class yarp::PortCoreOutputUnit : public PortCoreUnit {
 public:
-  // specifically for managing input connections
+    // specifically for managing input connections
 
-  PortCoreOutputUnit(PortCore& owner, OutputProtocol *op) : 
-    PortCoreUnit(owner), op(op), phase(1), activate(0) {
+    PortCoreOutputUnit(PortCore& owner, OutputProtocol *op) : 
+        PortCoreUnit(owner), op(op), phase(1), activate(0) {
 
-    YARP_ASSERT(op!=NULL);
-    closing = false;
-    finished = false;
-    running = false;
-    threaded = false;
-    sending = false;
-    name = owner.getName();
-    cachedWriter = NULL;
-    cachedTracker = NULL;
-  }
+        YARP_ASSERT(op!=NULL);
+        closing = false;
+        finished = false;
+        running = false;
+        threaded = false;
+        sending = false;
+        name = owner.getName();
+        cachedWriter = NULL;
+        cachedTracker = NULL;
+    }
 
-  virtual ~PortCoreOutputUnit() {
-    closeMain();
-  }
+    virtual ~PortCoreOutputUnit() {
+        closeMain();
+    }
 
-  virtual bool start();
+    virtual bool start();
 
-  virtual void run();
+    virtual void run();
 
-  virtual bool isOutput() {
-    return true;
-  }
+    virtual bool isOutput() {
+        return true;
+    }
 
-  // just for testing
-  virtual void runSimulation();
+    // just for testing
+    virtual void runSimulation();
 
-  virtual void close() {
-    closeMain();
-  }
+    virtual void close() {
+        closeMain();
+    }
 
-  virtual bool isFinished() {
-    return finished;
-  }
+    virtual bool isFinished() {
+        return finished;
+    }
 
-  const String& getName() {
-    return name;
-  }
+    const String& getName() {
+        return name;
+    }
 
-  virtual Route getRoute();
+    virtual Route getRoute();
 
-  virtual void *send(Writable& writer, 
-		     void *tracker,
-		     bool waitAfter,
-		     bool waitBefore);
+    virtual void *send(Writable& writer, 
+                       void *tracker,
+                       bool waitAfter,
+                       bool waitBefore);
 
-  virtual void *takeTracker();
+    virtual void *takeTracker();
 
-  virtual bool isBusy();
+    virtual bool isBusy();
 
 private:
-  OutputProtocol *op;
-  bool closing, finished, running, threaded, sending;
-  String name;
-  SemaphoreImpl phase, activate;
-  Writable *cachedWriter;
-  void *cachedTracker;
+    OutputProtocol *op;
+    bool closing, finished, running, threaded, sending;
+    String name;
+    SemaphoreImpl phase, activate;
+    Writable *cachedWriter;
+    void *cachedTracker;
 
-  void sendHelper();
+    void sendHelper();
 
 
-  void closeMain();
+    void closeMain();
 };
 
 #endif

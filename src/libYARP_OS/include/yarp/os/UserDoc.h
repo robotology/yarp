@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_USERDOC_
 #define _YARP2_USERDOC_
 
@@ -42,51 +43,51 @@
  *
  * @subsection example_sender A program for sending a message
  * \code
-  // source for sender.cpp
-  #include <yarp/os/Network.h>
-  #include <yarp/os/Port.h>
-  #include <yarp/os/Bottle.h>
-  #include <yarp/os/Time.h>
-  #include <stdio.h>
-  using namespace yarp::os;
-  int main() {
-    Network::init();
-    Bottle bot1; 
-    bot1.addString("testing"); // a simple message
-    Port output;
-    output.open("/out");
-    for (int i=0; i<100; i++) {
-      output.write(bot1);
-      printf("Sent message: %s\n", bot1.toString().c_str());
-      bot1.addInt(i); // change the message for next time
-      Time::delay(1);
-    }
-    output.close();
-    Network::fini();
-    return 0;
-  }
+ // source for sender.cpp
+ #include <yarp/os/Network.h>
+ #include <yarp/os/Port.h>
+ #include <yarp/os/Bottle.h>
+ #include <yarp/os/Time.h>
+ #include <stdio.h>
+ using namespace yarp::os;
+ int main() {
+ Network::init();
+ Bottle bot1; 
+ bot1.addString("testing"); // a simple message
+ Port output;
+ output.open("/out");
+ for (int i=0; i<100; i++) {
+ output.write(bot1);
+ printf("Sent message: %s\n", bot1.toString().c_str());
+ bot1.addInt(i); // change the message for next time
+ Time::delay(1);
+ }
+ output.close();
+ Network::fini();
+ return 0;
+ }
  * \endcode
  *
  * @subsection example_receiver A program for receiving a message
  *
  * \code
-  // source for receiver.cpp
-  #include <yarp/os/Network.h>
-  #include <yarp/os/Port.h>
-  #include <yarp/os/Bottle.h>
-  #include <stdio.h>
-  using namespace yarp::os;
-  int main() {
-    Network::init();
-    Bottle bot2;
-    Port input;
-    input.open("/in");
-    input.read(bot2);
-    printf("Got message: %s\n", bot2.toString().c_str());
-    input.close();
-    Network::fini();
-    return 0;
-  }
+ // source for receiver.cpp
+ #include <yarp/os/Network.h>
+ #include <yarp/os/Port.h>
+ #include <yarp/os/Bottle.h>
+ #include <stdio.h>
+ using namespace yarp::os;
+ int main() {
+ Network::init();
+ Bottle bot2;
+ Port input;
+ input.open("/in");
+ input.read(bot2);
+ printf("Got message: %s\n", bot2.toString().c_str());
+ input.close();
+ Network::fini();
+ return 0;
+ }
  * \endcode
  *
  * @subsection example_compiling Compiling the examples
@@ -98,8 +99,8 @@
  *
  * If you're on a UNIX machine, you can compile with:
  * \code
-  g++ receiver.cpp -o receiver -lACE -lYARP_OS
-  g++ sender.cpp -o sender -lACE -lYARP_OS
+ g++ receiver.cpp -o receiver -lACE -lYARP_OS
+ g++ sender.cpp -o sender -lACE -lYARP_OS
  * \endcode
  *
  * On windows, you'll need to set up projects and set up include
@@ -109,10 +110,10 @@
  *
  * On UNIX, on four separate consoles, do:
  * \code
-  yarp server
-  ./sender
-  ./receiver
-  yarp connect /out /in
+ yarp server
+ ./sender
+ ./receiver
+ yarp connect /out /in
  * \endcode
  *
  * (You may have to give a path to wherever yarp is compiled if it is

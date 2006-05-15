@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImage.h,v 1.2 2006-03-15 10:05:04 eshuy Exp $
+/// $Id: YARPImage.h,v 1.3 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -93,21 +94,21 @@
 // There must be a pixel type for every ImageType entry.
 // this enumeration is also required in C code.
 enum __PixelTypesEnum
-{	 
-	YARP_PIXEL_INVALID = 0,
-	YARP_PIXEL_MONO,
-	YARP_PIXEL_RGB,
-	YARP_PIXEL_HSV,
-	YARP_PIXEL_BGR,  // external libraries sometimes want flipped order
-	YARP_PIXEL_MONO_SIGNED,
-	YARP_PIXEL_RGB_SIGNED,
-	YARP_PIXEL_MONO_FLOAT,
-	YARP_PIXEL_RGB_FLOAT,
-	YARP_PIXEL_HSV_FLOAT,
-	YARP_PIXEL_INT,
-	// negative ids reserved for pixels of undeclared type but known size
-	// in bytes
-};
+    {	 
+        YARP_PIXEL_INVALID = 0,
+        YARP_PIXEL_MONO,
+        YARP_PIXEL_RGB,
+        YARP_PIXEL_HSV,
+        YARP_PIXEL_BGR,  // external libraries sometimes want flipped order
+        YARP_PIXEL_MONO_SIGNED,
+        YARP_PIXEL_RGB_SIGNED,
+        YARP_PIXEL_MONO_FLOAT,
+        YARP_PIXEL_RGB_FLOAT,
+        YARP_PIXEL_HSV_FLOAT,
+        YARP_PIXEL_INT,
+        // negative ids reserved for pixels of undeclared type but known size
+        // in bytes
+    };
 
 #endif // YARP_IMAGE_HEADER_CONTROL
 
@@ -128,18 +129,18 @@ typedef NetInt32 YarpPixelInt;
 
 struct YarpPixelRGB
 { 
-  unsigned char r,g,b; 
+    unsigned char r,g,b; 
   
-  YarpPixelRGB() { r = g = b = 0; }
-  YarpPixelRGB(unsigned char n_r, unsigned char n_g, unsigned char n_b)
+    YarpPixelRGB() { r = g = b = 0; }
+    YarpPixelRGB(unsigned char n_r, unsigned char n_g, unsigned char n_b)
     { r = n_r;  g = n_g;  b = n_b; }
 } PACKED_FOR_NET;
 
 struct YarpPixelBGR
 { 
-  unsigned char b,g,r; 
-  YarpPixelBGR() { b = g = r = 0; }
-  YarpPixelBGR(unsigned char n_r, unsigned char n_g, unsigned char n_b)
+    unsigned char b,g,r; 
+    YarpPixelBGR() { b = g = r = 0; }
+    YarpPixelBGR(unsigned char n_r, unsigned char n_g, unsigned char n_b)
     { r = n_r;  g = n_g;  b = n_b; }
 } PACKED_FOR_NET;
 
@@ -520,7 +521,7 @@ public:
 	 * @param src the reference image
 	 */
 	void BiggerThan(YARPGenericImage& src) {
-	  SatisfySize(src,*this);
+        SatisfySize(src,*this);
 	}
 };
 
@@ -623,9 +624,9 @@ public:
 	{
 		ACE_ASSERT(Data!=NULL && pImage != NULL);
 		ACE_ASSERT(x >= 0 && 
-			 x < pImage->width &&
-			 y >= 0 &&
-			 y < pImage->height);
+                   x < pImage->width &&
+                   y >= 0 &&
+                   y < pImage->height);
 		return Pixel(x,y);
 	}
 
@@ -664,7 +665,7 @@ public:
 			x < pImage->width &&
 			y >= 0 &&
 			y < pImage->height)  
-		  return true;
+            return true;
 		return false;
 	}
 
@@ -689,15 +690,15 @@ inline int YARPImageOf<T>::GetID() const
 #define __YARPIMAGE_ASSOCIATE_TAG(tag,T) template<> inline int YARPImageOf<T>::GetID() const { return tag; }
 
 __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO,YarpPixelMono)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB,YarpPixelRGB)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV,YarpPixelHSV)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_BGR,YarpPixelBGR)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_SIGNED,YarpPixelMonoSigned)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_SIGNED,YarpPixelRGBSigned)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_FLOAT,YarpPixelFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_FLOAT,YarpPixelRGBFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV_FLOAT,YarpPixelHSVFloat)
-__YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,YarpPixelInt)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB,YarpPixelRGB)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV,YarpPixelHSV)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_BGR,YarpPixelBGR)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_SIGNED,YarpPixelMonoSigned)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_SIGNED,YarpPixelRGBSigned)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_FLOAT,YarpPixelFloat)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_FLOAT,YarpPixelRGBFloat)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV_FLOAT,YarpPixelHSVFloat)
+    __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,YarpPixelInt)
 
 #undef __YARPIMAGE_ASSOCIATE_TAG
 
@@ -713,3 +714,4 @@ __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,YarpPixelInt)
 
 
 
+    

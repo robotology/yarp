@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -56,7 +57,7 @@
 ///
 
 ///
-/// $Id: YARPList.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPList.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -194,7 +195,7 @@ public:
 	 * Erases the element pointed by the iterator.
 	 * @param it is the iterator pointing to the element to be removed.
 	 & @return negative on failure.
-	 */
+    */
 	int erase(iterator &it)	{ return it.remove(); }
 
 	/**
@@ -215,7 +216,7 @@ template <class T> class YARPVector;
  * simpler iterator for vector (simpler than ACE version).
  * not safe after resize, need at least a call to go_head().
  * not safe iterator anyway...
-*/
+ */
 template <class T>
 class YARPVectorIterator 
 {

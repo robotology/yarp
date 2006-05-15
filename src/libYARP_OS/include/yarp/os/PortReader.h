@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_PORTREADER_
 #define _YARP2_PORTREADER_
 
@@ -5,9 +6,9 @@
 #include <yarp/os/ConnectionReader.h>
 
 namespace yarp {
-  namespace os {
-    class PortReader;
-  }
+    namespace os {
+        class PortReader;
+    }
 }
 
 /**
@@ -18,18 +19,18 @@ namespace yarp {
 class yarp::os::PortReader {
 public:
 
-  /**
-   * Destructor.
-   */
-  virtual ~PortReader() {}
+    /**
+     * Destructor.
+     */
+    virtual ~PortReader() {}
 
-  /**
-   * Read this object from a network connection.
-   * Override this for your particular class.
-   * @param connection an interface to the network connection for reading
-   * @return true iff the object is successfully read
-   */
-  virtual bool read(ConnectionReader& connection) = 0;
+    /**
+     * Read this object from a network connection.
+     * Override this for your particular class.
+     * @param connection an interface to the network connection for reading
+     * @return true iff the object is successfully read
+     */
+    virtual bool read(ConnectionReader& connection) = 0;
 
 };
 

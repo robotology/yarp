@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/Logger.h>
 #include <yarp/NameClient.h>
@@ -6,10 +7,10 @@
 #include <yarp/os/Network.h>
 
 int main(int argc, char *argv[]) {
-  // call the yarp standard companion
-  ACE::init();
-  int result = yarp::os::Network::main(argc,argv);
-  ACE::fini();
-  return result;
+    // call the yarp standard companion
+    ACE::init();
+    int result = yarp::os::Network::main(argc,argv);
+    ACE::fini();
+    return result;
 }
 

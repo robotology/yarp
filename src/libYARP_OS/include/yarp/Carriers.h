@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_CARRIERS_
 #define _YARP2_CARRIERS_
 
@@ -11,7 +12,7 @@
 #include <ace/Vector_T.h>
 
 namespace yarp {
-  class Carriers;
+    class Carriers;
 }
 
 /**
@@ -19,26 +20,26 @@ namespace yarp {
  */
 class yarp::Carriers {
 public:
-  static Carrier *chooseCarrier(const String& name);
-  static Carrier *chooseCarrier(const Bytes& bytes);
+    static Carrier *chooseCarrier(const String& name);
+    static Carrier *chooseCarrier(const Bytes& bytes);
 
-  static Face *listen(const Address& address); // throws IOException
-  static OutputProtocol *connect(const Address& address); // throws IOException
+    static Face *listen(const Address& address); // throws IOException
+    static OutputProtocol *connect(const Address& address); // throws IOException
 
-  // msvc seems to want the destructor public, even for static private instance
-  virtual ~Carriers();
+    // msvc seems to want the destructor public, even for static private instance
+    virtual ~Carriers();
 
 private:
-  ACE_Vector<Carrier *> delegates;
+    ACE_Vector<Carrier *> delegates;
 
-  Carriers();
+    Carriers();
   
-  static Carriers instance;
-  static Carriers& getInstance() {
-    return instance;
-  }
+    static Carriers instance;
+    static Carriers& getInstance() {
+        return instance;
+    }
 
-  Carrier *chooseCarrier(const String * name, const Bytes * bytes);  
+    Carrier *chooseCarrier(const String * name, const Bytes * bytes);  
 };
 
 

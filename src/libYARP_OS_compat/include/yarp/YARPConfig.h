@@ -1,8 +1,9 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 
 //
 
-// $Id: YARPConfig.h,v 1.2 2006-03-17 16:01:00 eshuy Exp $
+// $Id: YARPConfig.h,v 1.3 2006-05-15 15:57:58 eshuy Exp $
 
 // YARP config file (template).
 

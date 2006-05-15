@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImagePort.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPImagePort.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -83,16 +84,16 @@
 //YARPOutputPortOf<YARPGenericImage> = YARPBasicOutputPort<YARPImagePortContent>
 
 /*
-class YARPInputPortOf<YARPGenericImage> : public YARPBasicInputPort<YARPImagePortContent>
-{
-public:
-};
+  class YARPInputPortOf<YARPGenericImage> : public YARPBasicInputPort<YARPImagePortContent>
+  {
+  public:
+  };
 
 
-class YARPOutputPortOf<YARPGenericImage> : public YARPBasicOutputPort<YARPImagePortContent>
-{
-public:
-};
+  class YARPOutputPortOf<YARPGenericImage> : public YARPBasicOutputPort<YARPImagePortContent>
+  {
+  public:
+  };
 */
 
 #endif

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPFilters.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPFilters.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -129,133 +130,133 @@ public:
 
 
 /*
-template <class T>
-void YARPFilterOf<T>::AddBorderLP(YARPImageOf<T>& id, const YARPImageOf<T>& is, int kLR, int kUD)
-{
-	int nAng = is.GetHeight();
-	int nEcc = is.GetWidth();
+  template <class T>
+  void YARPFilterOf<T>::AddBorderLP(YARPImageOf<T>& id, const YARPImageOf<T>& is, int kLR, int kUD)
+  {
+  int nAng = is.GetHeight();
+  int nEcc = is.GetWidth();
 	
-	unsigned char **dst = (unsigned char **) id.GetArray();
-	unsigned char **src = (unsigned char **) is.GetArray();
+  unsigned char **dst = (unsigned char **) id.GetArray();
+  unsigned char **src = (unsigned char **) is.GetArray();
 	
-	ACE_ASSERT((nAng%2) == 0);
+  ACE_ASSERT((nAng%2) == 0);
 	
-	const int d = sizeof(T);
+  const int d = sizeof(T);
 
-	// optimize most common formats.
-	switch (d)
-	{
-	case 1:
-		{
-			// left border
-			int r, c;
-			for (c = 0; c < kLR ; c++)
-			{
-				for (r = 0; r < (nAng/2); r++)
-					dst[kUD+nAng/2+r][(kLR-1-c)] = src[r][c];
+  // optimize most common formats.
+  switch (d)
+  {
+  case 1:
+  {
+  // left border
+  int r, c;
+  for (c = 0; c < kLR ; c++)
+  {
+  for (r = 0; r < (nAng/2); r++)
+  dst[kUD+nAng/2+r][(kLR-1-c)] = src[r][c];
 
-				for (r = nAng/2; r < nAng; r++)
-					dst[r-nAng/2+kUD][(kLR-1-c)] = src[r][c];
-			}
+  for (r = nAng/2; r < nAng; r++)
+  dst[r-nAng/2+kUD][(kLR-1-c)] = src[r][c];
+  }
 
-			// top & bottom borders.	
-			for (c = 0; c < nEcc+kLR; c++)
-			{
-				for (r = 0; r < kUD; r++)
-					dst[kUD+nAng+r][c] = dst[r+kUD][c];
+  // top & bottom borders.	
+  for (c = 0; c < nEcc+kLR; c++)
+  {
+  for (r = 0; r < kUD; r++)
+  dst[kUD+nAng+r][c] = dst[r+kUD][c];
 
-				int t;
-				for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
-					dst[t][c*d] = dst[r][c*d];
-			} 
-		}
-		break;
+  int t;
+  for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
+  dst[t][c*d] = dst[r][c*d];
+  } 
+  }
+  break;
 
-	case 3:
-		{
-			// left border
-			int r, c;
-			for (c = 0; c < kLR ; c++)
-			{
-				for (r = 0; r < (nAng/2); r++)
-				{
-					dst[kUD+nAng/2+r][(kLR-1-c)*3] = src[r][c*3];
-					dst[kUD+nAng/2+r][(kLR-1-c)*3+1] = src[r][c*3+1];
-					dst[kUD+nAng/2+r][(kLR-1-c)*3+2] = src[r][c*3+2];
-				}
+  case 3:
+  {
+  // left border
+  int r, c;
+  for (c = 0; c < kLR ; c++)
+  {
+  for (r = 0; r < (nAng/2); r++)
+  {
+  dst[kUD+nAng/2+r][(kLR-1-c)*3] = src[r][c*3];
+  dst[kUD+nAng/2+r][(kLR-1-c)*3+1] = src[r][c*3+1];
+  dst[kUD+nAng/2+r][(kLR-1-c)*3+2] = src[r][c*3+2];
+  }
 
-				for (r = nAng/2; r < nAng; r++)
-				{
-					dst[r-nAng/2+kUD][(kLR-1-c)*3] = src[r][c*3];
-					dst[r-nAng/2+kUD][(kLR-1-c)*3+1] = src[r][c*3+1];
-					dst[r-nAng/2+kUD][(kLR-1-c)*3+2] = src[r][c*3+2];
-				}
-			}
+  for (r = nAng/2; r < nAng; r++)
+  {
+  dst[r-nAng/2+kUD][(kLR-1-c)*3] = src[r][c*3];
+  dst[r-nAng/2+kUD][(kLR-1-c)*3+1] = src[r][c*3+1];
+  dst[r-nAng/2+kUD][(kLR-1-c)*3+2] = src[r][c*3+2];
+  }
+  }
 
-			// top & bottom borders.	
-			for (c=0; c<nEcc+kLR; c++)
-			{
-				for (r = 0; r < kUD; r++)
-				{
-					dst[kUD+nAng+r][c*3] = dst[r+kUD][c*3];
-					dst[kUD+nAng+r][c*3+1] = dst[r+kUD][c*3+1];
-					dst[kUD+nAng+r][c*3+2] = dst[r+kUD][c*3+2];
-				}
+  // top & bottom borders.	
+  for (c=0; c<nEcc+kLR; c++)
+  {
+  for (r = 0; r < kUD; r++)
+  {
+  dst[kUD+nAng+r][c*3] = dst[r+kUD][c*3];
+  dst[kUD+nAng+r][c*3+1] = dst[r+kUD][c*3+1];
+  dst[kUD+nAng+r][c*3+2] = dst[r+kUD][c*3+2];
+  }
 
-				int t;
-				for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
-				{
-					dst[t][c*3] = dst[r][c*3];
-					dst[t][c*3+1] = dst[r][c*3+1];
-					dst[t][c*3+2] = dst[r][c*3+2];
-				}
-			} 
-		}
-		break;
+  int t;
+  for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
+  {
+  dst[t][c*3] = dst[r][c*3];
+  dst[t][c*3+1] = dst[r][c*3+1];
+  dst[t][c*3+2] = dst[r][c*3+2];
+  }
+  } 
+  }
+  break;
 
-	default:
-		{
-			// left border
-			int r, c;
-			for (c = 0; c < kLR ; c++)
-			{
-				for (r = 0; r < (nAng/2); r++)
-				{
-					memcpy (&dst[kUD+nAng/2+r][(kLR-1-c)*d], 
-							&src[r][c*d],
-							d);
-				}
+  default:
+  {
+  // left border
+  int r, c;
+  for (c = 0; c < kLR ; c++)
+  {
+  for (r = 0; r < (nAng/2); r++)
+  {
+  memcpy (&dst[kUD+nAng/2+r][(kLR-1-c)*d], 
+  &src[r][c*d],
+  d);
+  }
 
-				for (r = nAng/2; r < nAng; r++)
-				{
-					memcpy (&dst[r-nAng/2+kUD][(kLR-1-c)*d],
-							&src[r][c*d],
-							d);
-				}
-			}
+  for (r = nAng/2; r < nAng; r++)
+  {
+  memcpy (&dst[r-nAng/2+kUD][(kLR-1-c)*d],
+  &src[r][c*d],
+  d);
+  }
+  }
 
-			// top & bottom borders.	
-			for (c=0; c<nEcc+kLR; c++)
-			{
-				for (r = 0; r < kUD; r++)
-				{
-					memcpy (&dst[kUD+nAng+r][c*d],
-							&dst[r+kUD][c*d],
-							d);
-				}
+  // top & bottom borders.	
+  for (c=0; c<nEcc+kLR; c++)
+  {
+  for (r = 0; r < kUD; r++)
+  {
+  memcpy (&dst[kUD+nAng+r][c*d],
+  &dst[r+kUD][c*d],
+  d);
+  }
 
-				int t;
-				for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
-				{
-					memcpy (&dst[t][c*d],
-							&dst[r][c*d],
-							d);
-				}
-			} 
-		}
-		break;
-	}
-}
+  int t;
+  for (t = 0, r = nAng; r < nAng + kUD; t++, r++)
+  {
+  memcpy (&dst[t][c*d],
+  &dst[r][c*d],
+  d);
+  }
+  } 
+  }
+  break;
+  }
+  }
 */
 
 #endif

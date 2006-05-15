@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPSimpleOperations.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
+/// $Id: YARPSimpleOperations.h,v 1.3 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -110,57 +111,57 @@ namespace YARPSimpleOperations
 	// decimate or shrinks an image
 	// scaleX/scaleY is the actor by which the input image is shrunken (>= 1)
 	template <class T>
-		void Decimate (const YARPImageOf<T> &in, YARPImageOf<T> &out, double scaleX, double scaleY, int interpolate = IPL_INTER_NN)
-		{
-			ACE_ASSERT (in.GetIplPointer() != NULL && out.GetIplPointer() != NULL);
-			ACE_ASSERT ( (scaleX >= 1) && (scaleY >= 1) );
-			ACE_ASSERT (in.GetWidth() == (int ) out.GetWidth()*scaleX);
-			ACE_ASSERT (in.GetHeight() == (int ) out.GetHeight()*scaleY);
+    void Decimate (const YARPImageOf<T> &in, YARPImageOf<T> &out, double scaleX, double scaleY, int interpolate = IPL_INTER_NN)
+    {
+        ACE_ASSERT (in.GetIplPointer() != NULL && out.GetIplPointer() != NULL);
+        ACE_ASSERT ( (scaleX >= 1) && (scaleY >= 1) );
+        ACE_ASSERT (in.GetWidth() == (int ) out.GetWidth()*scaleX);
+        ACE_ASSERT (in.GetHeight() == (int ) out.GetHeight()*scaleY);
 			
-			iplDecimate(in, out, 1, (int)scaleX, 1, (int)scaleY, interpolate);
-		}
+        iplDecimate(in, out, 1, (int)scaleX, 1, (int)scaleY, interpolate);
+    }
 
 	template <class T>
-		void DrawLine (YARPImageOf<T>& dest, int xstart, int ystart, int xend, int yend, const T& pixel)
-		{
-			const int width = dest.GetWidth();
-			const int height = dest.GetHeight();
+    void DrawLine (YARPImageOf<T>& dest, int xstart, int ystart, int xend, int yend, const T& pixel)
+    {
+        const int width = dest.GetWidth();
+        const int height = dest.GetHeight();
 
-			for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 2; i++)
 			{
 				if(xstart +i < width)
-				{
-					for(int j=0; j<2; j++)
-						if(ystart +j < height)
-							dest.Pixel(xstart +i, ystart +j) = pixel;
-				}
+                    {
+                        for(int j=0; j<2; j++)
+                            if(ystart +j < height)
+                                dest.Pixel(xstart +i, ystart +j) = pixel;
+                    }
 			}
 
-			const int dx = xend - xstart;
-			const int dy = yend - ystart;
-			int d = 2 * dy - dx;
-			const int incrE = 2 * dy;
-			const int incrNE = 2 * (dy - dx);
+        const int dx = xend - xstart;
+        const int dy = yend - ystart;
+        int d = 2 * dy - dx;
+        const int incrE = 2 * dy;
+        const int incrNE = 2 * (dy - dx);
 
-			while(xstart < xend)
+        while(xstart < xend)
 			{
 				if (d <= 0)
-				{
-					d += incrE;
-					xstart++;
-				}
+                    {
+                        d += incrE;
+                        xstart++;
+                    }
 				else
-				{
-					d += incrNE;
-					xstart++;
-					ystart++;
-				}
+                    {
+                        d += incrNE;
+                        xstart++;
+                        ystart++;
+                    }
 				dest.Pixel(xstart, ystart) = pixel;
 			} 
-		}
+    }
 
 	template <class T>
-		void  DrawCross(YARPImageOf<T> &img, double dx, double dy, const T &pixel, int length = 2, int thick = 1)
+    void  DrawCross(YARPImageOf<T> &img, double dx, double dy, const T &pixel, int length = 2, int thick = 1)
 	{
 		int x = (int) (dx + 0.5);
 		int y = (int) (dy + 0.5);
@@ -168,12 +169,12 @@ namespace YARPSimpleOperations
 		int i,j,t;
 		
 		for(t = -thick; t <= thick; t++)
-		{
-			for(i = -length; i <= length; i++)
-				img.SafePixel(x+i,y+t) = pixel;
-			for (j = -length; j <= length; j++)
-				img.SafePixel(x+t,y+j) = pixel;
-		}
+            {
+                for(i = -length; i <= length; i++)
+                    img.SafePixel(x+i,y+t) = pixel;
+                for (j = -length; j <= length; j++)
+                    img.SafePixel(x+t,y+j) = pixel;
+            }
 	}
 	
 	inline int ComputePadding (int linesize, int align)

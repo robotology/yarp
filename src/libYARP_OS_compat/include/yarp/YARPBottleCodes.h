@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-///  $Id: YARPBottleCodes.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+///  $Id: YARPBottleCodes.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -78,16 +79,16 @@
  * Bottle types, these are the types that can be added to bottles.
  */
 enum __YBTypeCodes 
-{
-	YBTypeChar = 0,
-	YBTypeInt = 1,
-	YBTypeDouble = 2,
-	YBTypeYVector = 3,
-	YBTypeVocab = 4,
-	YBTypeString = 5,
-	YBTypeDoubleVector = 6,
-	YBTypeIntVector = 7,
-};
+    {
+        YBTypeChar = 0,
+        YBTypeInt = 1,
+        YBTypeDouble = 2,
+        YBTypeYVector = 3,
+        YBTypeVocab = 4,
+        YBTypeString = 5,
+        YBTypeDoubleVector = 6,
+        YBTypeIntVector = 7,
+    };
 
 // who's including from C anyway? Matlab libraries (mex) are including from C!
 #ifdef __cplusplus

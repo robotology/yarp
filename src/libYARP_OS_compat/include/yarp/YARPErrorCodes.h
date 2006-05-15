@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,7 +53,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPErrorCodes.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPErrorCodes.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -73,17 +74,17 @@
  * Generic YARP library error codes.
  */
 enum YARPErrorCodes
-{
-  /**
-   * A YARP function succeeded.
-   */
-	YARP_OK = 0,
+    {
+        /**
+         * A YARP function succeeded.
+         */
+        YARP_OK = 0,
 
-  /**
-   * A YARP function failed.
-   */
-	YARP_FAIL = -1,
-};
+        /**
+         * A YARP function failed.
+         */
+        YARP_FAIL = -1,
+    };
 
 
 #endif

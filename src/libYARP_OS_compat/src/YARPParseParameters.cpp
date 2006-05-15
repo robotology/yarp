@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-///  $Id: YARPParseParameters.cpp,v 1.1 2006-03-13 12:52:42 eshuy Exp $
+///  $Id: YARPParseParameters.cpp,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -72,48 +73,48 @@
 bool YARPParseParameters::parse (int argc, char *argv[], const YARPString &key, YARPString &out)
 {
 	for (int i = 1; i < argc; i++)
-	{
-		if (argv[i][0] == '-')
-		{
-			// found parameter, check key
-			if (key == YARPString(argv[i]+1)) 
-			{
-				// found key
-				i++;
+        {
+            if (argv[i][0] == '-')
+                {
+                    // found parameter, check key
+                    if (key == YARPString(argv[i]+1)) 
+                        {
+                            // found key
+                            i++;
 		
-				if (i==argc)
-					return false;
-				else if ( (argv[i][0] == '-') && (!isdigit(argv[i][1])))
-					return false;
-				else if (key == YARPString("name"))	// exception, "name"
-				{
-					// append "/"
-					out = "/";	
-					out.append(YARPString(argv[i]));
-					return true;
-				}
-				else
-				{
-					out = YARPString (argv[i]);
-					return true;
-				}
-			}
-		}
-	}
+                            if (i==argc)
+                                return false;
+                            else if ( (argv[i][0] == '-') && (!isdigit(argv[i][1])))
+                                return false;
+                            else if (key == YARPString("name"))	// exception, "name"
+                                {
+                                    // append "/"
+                                    out = "/";	
+                                    out.append(YARPString(argv[i]));
+                                    return true;
+                                }
+                            else
+                                {
+                                    out = YARPString (argv[i]);
+                                    return true;
+                                }
+                        }
+                }
+        }
 	return false; 
 }
 
 bool YARPParseParameters::parse (int argc, char *argv[], const YARPString &key)
 {
 	for (int i = 1; i < argc; i++)
-	{
-		if (argv[i][0] == '-')
-		{
-			// found parameter, check key
-			if (key == YARPString(argv[i]+1))
-				return true;
-		}
-	}
+        {
+            if (argv[i][0] == '-')
+                {
+                    // found parameter, check key
+                    if (key == YARPString(argv[i]+1))
+                        return true;
+                }
+        }
 	return false; 
 }
 
@@ -121,10 +122,10 @@ bool YARPParseParameters::parse (int argc, char *argv[], const YARPString &key, 
 {
 	YARPString dummy;
 	if (YARPParseParameters::parse(argc, argv, key, dummy))
-	{
-		*out = atoi(dummy.c_str());
-		return true;
-	}
+        {
+            *out = atoi(dummy.c_str());
+            return true;
+        }
 	else
 		return false;
 
@@ -134,10 +135,10 @@ bool YARPParseParameters::parse (int argc, char *argv[], const YARPString &key, 
 {
 	YARPString dummy;
 	if (YARPParseParameters::parse(argc, argv, key, dummy))
-	{
-		*out = atof(dummy.c_str());
-		return true;
-	}
+        {
+            *out = atof(dummy.c_str());
+            return true;
+        }
 	else
 		return false;
 
@@ -147,10 +148,10 @@ bool YARPParseParameters::parse (int argc, char *argv[], const YARPString &key, 
 {
 	YARPString dummy;
 	if (YARPParseParameters::parse(argc, argv, key, dummy))
-	{
-		ACE_OS::strcpy(out, dummy.c_str());
-		return true;
-	}
+        {
+            ACE_OS::strcpy(out, dummy.c_str());
+            return true;
+        }
 	else
 		return false;
 

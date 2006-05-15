@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -129,7 +130,7 @@ typedef unsigned char uchar;
 
 
 /****************************************************************************************\
-*                                  Image type (IplImage)                                 *
+ *                                  Image type (IplImage)                                 *
 \****************************************************************************************/
 
 #ifndef HAVE_IPL
@@ -263,51 +264,51 @@ IplConvKernelFP;
 int _iplCalcPadding (int lineSize, int align);
 
 /**
-* Definition for functions implemented within YARP_sig.
-*/
+ * Definition for functions implemented within YARP_sig.
+ */
 #define IPLAPIIMPL(type,name,arg) extern type name arg
 
 
 IPLAPIIMPL(IplConvKernel*, 
-	   iplCreateConvKernel,(int nCols, int nRows,
-				int anchorX, int anchorY, 
-				int* values, int nShiftR));
+           iplCreateConvKernel,(int nCols, int nRows,
+                                int anchorX, int anchorY, 
+                                int* values, int nShiftR));
 
 IPLAPIIMPL(IplConvKernelFP*,
-	   iplCreateConvKernelFP,(int nCols, int nRows,
-				  int anchorX, int anchorY, float* values));
+           iplCreateConvKernelFP,(int nCols, int nRows,
+                                  int anchorX, int anchorY, float* values));
 
 IPLAPIIMPL(void,iplGetConvKernel,
-	   (IplConvKernel* kernel, int* nCols, int* nRows,
-	    int* anchorX, int* anchorY, int** values, int *nShiftR));
+           (IplConvKernel* kernel, int* nCols, int* nRows,
+            int* anchorX, int* anchorY, int** values, int *nShiftR));
 
 
 IPLAPIIMPL(void,iplGetConvKernelFP,
-	   (IplConvKernelFP* kernel,int* nCols, int* nRows,
-	    int* anchorX, int* anchorY, float** values));
+           (IplConvKernelFP* kernel,int* nCols, int* nRows,
+            int* anchorX, int* anchorY, float** values));
 
 IPLAPIIMPL(void, iplDeleteConvKernel,(IplConvKernel* kernel));
 
 IPLAPIIMPL(void, iplDeleteConvKernelFP,(IplConvKernelFP* kernel));
 
 IPLAPIIMPL(void, iplConvolve2D,
-	   (IplImage* srcImage, IplImage* dstImage,
-	    IplConvKernel** kernel, int nKernels, int combineMethod));
+           (IplImage* srcImage, IplImage* dstImage,
+            IplConvKernel** kernel, int nKernels, int combineMethod));
 
 IPLAPIIMPL(void, iplConvolve2DFP,
-	   (IplImage* srcImage, IplImage* dstImage,
-	    IplConvKernelFP** kernel, int nKernels, int combineMethod));
+           (IplImage* srcImage, IplImage* dstImage,
+            IplConvKernelFP** kernel, int nKernels, int combineMethod));
 
 IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
-				     IplImage* dstImage,
-				     IplConvKernelFP* xKernel,
-				     IplConvKernelFP* yKernel));
+                                     IplImage* dstImage,
+                                     IplConvKernelFP* xKernel,
+                                     IplConvKernelFP* yKernel));
 
 //IPLAPIIMPL(IPLStatus, iplFixedFilter,(IplImage* srcImage, IplImage* dstImage,
 //			      IplFilter filter));
 
 IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
-				   IplConvKernel* xKernel, IplConvKernel* yKernel));
+                                   IplConvKernel* xKernel, IplConvKernel* yKernel));
 
 IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue));
 
@@ -317,11 +318,11 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image));
 
 IPLAPIIMPL(IplImage*, iplCreateImageHeader,
-               (int   nChannels,  int     alphaChannel, int     depth,
-                char* colorModel, char*   channelSeq,   int     dataOrder,
-                int   origin,     int     align,
-                int   width,      int   height, IplROI* roi, IplImage* maskROI,
-                void* imageId,    IplTileInfo* tileInfo));
+           (int   nChannels,  int     alphaChannel, int     depth,
+            char* colorModel, char*   channelSeq,   int     dataOrder,
+            int   origin,     int     align,
+            int   width,      int   height, IplROI* roi, IplImage* maskROI,
+            void* imageId,    IplTileInfo* tileInfo));
 
 IPLAPIIMPL(IplImage*, iplCloneImage, ( const IplImage* img ) );
 
@@ -340,16 +341,16 @@ IPLAPIIMPL(void, iplSetFP, (IplImage* image, float fillValue));
 IPLAPIIMPL(void, iplAddS,(IplImage* srcImage, IplImage* dstImage, int value));
 
 IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
-			 IplImage* dstImage));
+                         IplImage* dstImage));
 
 IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
-			      IplImage* dstImage));
+                              IplImage* dstImage));
 
 IPLAPIIMPL(void, iplSubtractS,(IplImage* srcImage, IplImage* dstImage, int value,
-			       bool flip));
+                               bool flip));
 
 IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
-				 float value));
+                                 float value));
 
 IPLAPIIMPL(void, iplAbs,(IplImage* srcImage, IplImage* dstImage));
 
@@ -358,7 +359,7 @@ IPLAPIIMPL(void, iplThreshold, (IplImage* srcImage, IplImage* dstImage, int thre
 IPLAPIIMPL(void, iplColorToGray,(IplImage* srcImage, IplImage* dstImage));
 
 IPLAPIIMPL(IplROI *,iplCreateROI,(int coi,    int xOffset, int   yOffset,
-				  int width, int height ));
+                                  int width, int height ));
 
 
 IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage));

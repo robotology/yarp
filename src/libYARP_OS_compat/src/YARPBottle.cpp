@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
  *
@@ -74,7 +75,7 @@
 ///
 
 ///
-///  $Id: YARPBottle.cpp,v 1.1 2006-03-13 12:52:42 eshuy Exp $
+///  $Id: YARPBottle.cpp,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -98,93 +99,93 @@ void YARPBottle::dump()
 	printf ("Seq length: %d\n", text.size());
 	YARPVector<char>::iterator it(text);
 	while (!it.done())
-	{
-		printf("%d\n", *it);
-		it++;
-	}
+        {
+            printf("%d\n", *it);
+            it++;
+        }
 }
 
 void YARPBottle::display()
 {
-  ACE_OS::printf("%s: ", id.c_str());
-  rewind();
-  int first = 1;
-  while (more())
-    {
-      char *str;
-      int ch = readRawInt();
-      _moveOn(sizeof(enum __YBTypeCodes));
-      if (!first)
-	{
-	  printf(" ");
-	}
-      first = 0;
-      switch(ch)
-	{
-	case YBTypeInt:
-	  printf("%d", (int)readRawInt());
-	  _moveOn(sizeof(NetInt32));
-	  break;
-	case YBTypeVocab:
-	  str = (char *) readRawText();
-	  printf("<%s>", str);
-	  _moveOn(ACE_OS::strlen(str)+1+sizeof(int));
-	  break;
-	case YBTypeDouble:
-	  printf("%g", readRawFloat());
-	  _moveOn(sizeof(double));
-	  break;
-	case YBTypeString:
-	  str = (char *) readRawText();
-	  printf("(%s)", str);
-	  _moveOn(ACE_OS::strlen(str)+1+sizeof(int));
-	  break;
-	case YBTypeDoubleVector:
-	  {
-	    int l = readRawInt();
-	    _moveOn(sizeof(int));
+    ACE_OS::printf("%s: ", id.c_str());
+    rewind();
+    int first = 1;
+    while (more())
+        {
+            char *str;
+            int ch = readRawInt();
+            _moveOn(sizeof(enum __YBTypeCodes));
+            if (!first)
+                {
+                    printf(" ");
+                }
+            first = 0;
+            switch(ch)
+                {
+                case YBTypeInt:
+                    printf("%d", (int)readRawInt());
+                    _moveOn(sizeof(NetInt32));
+                    break;
+                case YBTypeVocab:
+                    str = (char *) readRawText();
+                    printf("<%s>", str);
+                    _moveOn(ACE_OS::strlen(str)+1+sizeof(int));
+                    break;
+                case YBTypeDouble:
+                    printf("%g", readRawFloat());
+                    _moveOn(sizeof(double));
+                    break;
+                case YBTypeString:
+                    str = (char *) readRawText();
+                    printf("(%s)", str);
+                    _moveOn(ACE_OS::strlen(str)+1+sizeof(int));
+                    break;
+                case YBTypeDoubleVector:
+                    {
+                        int l = readRawInt();
+                        _moveOn(sizeof(int));
 
-	    printf("<%g", readRawFloat());
-	    _moveOn(sizeof(double));
-	    if (l>1)
-	      {
-		for(int i = 0; i < l-2; i++)
-		  {
-		    printf("\t%g", readRawFloat());
-		    _moveOn(sizeof(double));
-		  }
-		printf("\t%g", readRawFloat());
-		_moveOn(sizeof(double));
-	      }
-	    printf(">");
-	  }
-	  break;
-	case YBTypeIntVector:
-          {
-            int l = readRawInt();
-            _moveOn(sizeof(int));
+                        printf("<%g", readRawFloat());
+                        _moveOn(sizeof(double));
+                        if (l>1)
+                            {
+                                for(int i = 0; i < l-2; i++)
+                                    {
+                                        printf("\t%g", readRawFloat());
+                                        _moveOn(sizeof(double));
+                                    }
+                                printf("\t%g", readRawFloat());
+                                _moveOn(sizeof(double));
+                            }
+                        printf(">");
+                    }
+                    break;
+                case YBTypeIntVector:
+                    {
+                        int l = readRawInt();
+                        _moveOn(sizeof(int));
 
-            printf("<%d", readRawInt());
-            _moveOn(sizeof(int));
-            if (l>1)
-              {
-                for(int i = 0; i < l-2; i++)
-                  {
-                    printf("\t%d", readRawInt());
-                    _moveOn(sizeof(int));
-                  }
-                printf("\t%d", readRawInt());
-                _moveOn(sizeof(int));
-              }
-            printf(">");
-          }
-          break;	
-	default:
-	  printf("???");
-	  break;
-	}
-    }
-  printf("\n");
-  rewind();
+                        printf("<%d", readRawInt());
+                        _moveOn(sizeof(int));
+                        if (l>1)
+                            {
+                                for(int i = 0; i < l-2; i++)
+                                    {
+                                        printf("\t%d", readRawInt());
+                                        _moveOn(sizeof(int));
+                                    }
+                                printf("\t%d", readRawInt());
+                                _moveOn(sizeof(int));
+                            }
+                        printf(">");
+                    }
+                    break;	
+                default:
+                    printf("???");
+                    break;
+                }
+        }
+    printf("\n");
+    rewind();
 }
 

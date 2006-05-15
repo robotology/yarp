@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,11 +53,11 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPRefCount.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPRefCount.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Mon May 21 16:51:13 EDT 2001
+  paulfitz Mon May 21 16:51:13 EDT 2001
 */
 
 #ifndef YARPRefCounted_INC
@@ -150,9 +151,9 @@ public:
 	virtual ~YARPRefCountedBuffer()
 	{
 		if (memory!=NULL && owned)
-		{
-			delete[] memory;
-		}
+            {
+                delete[] memory;
+            }
 		memory = NULL;
 	}  
 
@@ -213,12 +214,12 @@ public:
 	}
 
 	/*
-	void Switch(CountedPtr<T>& peer)
-	{
-		T *tmp = ptr;
-		ptr = peer.ptr;
-		peer.ptr = tmp;
-	}
+      void Switch(CountedPtr<T>& peer)
+      {
+      T *tmp = ptr;
+      ptr = peer.ptr;
+      peer.ptr = tmp;
+      }
 	*/
 
 	void MakeIndependent()
@@ -226,13 +227,13 @@ public:
 		int needed;
 		T *nptr;
 		if (ptr!=NULL)
-		{
-			nptr = (T*)ptr->Clone(false);
-			if (nptr!=NULL)
-			{
-				Take(nptr);
-			}
-		}
+            {
+                nptr = (T*)ptr->Clone(false);
+                if (nptr!=NULL)
+                    {
+                        Take(nptr);
+                    }
+            }
 	}
 };
 

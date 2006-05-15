@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_SIZEDWRITER_
 #define _YARP2_SIZEDWRITER_
 
@@ -5,8 +6,8 @@
 #include <yarp/os/PortReader.h>
 
 namespace yarp {
-  class SizedWriter;
-  using os::PortReader;
+    class SizedWriter;
+    using os::PortReader;
 }
 
 /**
@@ -19,17 +20,17 @@ namespace yarp {
  */
 class yarp::SizedWriter {
 public:
-  virtual ~SizedWriter() {}
+    virtual ~SizedWriter() {}
 
-  virtual void write(OutputStream& os) = 0;
+    virtual void write(OutputStream& os) = 0;
 
-  virtual int length() = 0;
+    virtual int length() = 0;
 
-  virtual int length(int index) = 0;
+    virtual int length(int index) = 0;
 
-  virtual const char *data(int index) = 0;
+    virtual const char *data(int index) = 0;
 
-  virtual PortReader *getReplyHandler() = 0;
+    virtual PortReader *getReplyHandler() = 0;
 };
 
 #endif

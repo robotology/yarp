@@ -1,10 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_CONSTSTRING_
 #define _YARP2_CONSTSTRING_
 
 namespace yarp {
-  namespace os {
-    class ConstString;
-  }
+    namespace os {
+        class ConstString;
+    }
 }
 
 /**
@@ -15,36 +16,36 @@ namespace yarp {
 class yarp::os::ConstString {
 public:
   
-  /**
-   * Constructor.  Creates an empty string.
-   */
-  ConstString();
+    /**
+     * Constructor.  Creates an empty string.
+     */
+    ConstString();
 
-  /**
-   * Constructor.  Stores a copy of the specified string.
-   * @param str the string to copy
-   */
-  ConstString(const char *str);
+    /**
+     * Constructor.  Stores a copy of the specified string.
+     * @param str the string to copy
+     */
+    ConstString(const char *str);
 
-  /**
-   * Destructor.
-   */
-  ~ConstString();
+    /**
+     * Destructor.
+     */
+    ~ConstString();
 
-  /**
-   * Copy constructor.
-   */
-  ConstString(const ConstString& alt);
+    /**
+     * Copy constructor.
+     */
+    ConstString(const ConstString& alt);
   
-  /**
-   * Accesses the character sequence stored in this object.
-   */
-  const char *c_str() const;
+    /**
+     * Accesses the character sequence stored in this object.
+     */
+    const char *c_str() const;
 
 private:
-  const ConstString& operator = (const ConstString& alt);
+    const ConstString& operator = (const ConstString& alt);
 
-  void *implementation;
+    void *implementation;
 };
 
 #endif

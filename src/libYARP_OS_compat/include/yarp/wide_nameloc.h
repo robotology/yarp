@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: wide_nameloc.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: wide_nameloc.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -100,15 +101,15 @@ const char __ipNotFound[] = {"0.0.0.0"};
  * These are the allowed commands when talking to the name server.
  */
 enum __YARP_NameSeverCommands
-{
-	YARPNSRegister = 0,
-	YARPNSRelease = 1,
-	YARPNSQuery = 2,
-	YARPNSRpl = 3,
-	YARPNSDumpRqs = 4,
-	YARPNSDumpRpl = 5,
-	YARPNSNicQuery = 6
-};
+    {
+        YARPNSRegister = 0,
+        YARPNSRelease = 1,
+        YARPNSQuery = 2,
+        YARPNSRpl = 3,
+        YARPNSDumpRqs = 4,
+        YARPNSDumpRpl = 5,
+        YARPNSNicQuery = 6
+    };
 
 
 #include <yarp/begin_pack_for_net.h>

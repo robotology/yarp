@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/Logger.h>
@@ -7,26 +8,26 @@ using namespace yarp;
 using namespace yarp::os;
 
 Semaphore::Semaphore(int initialCount) {
-  implementation = new SemaphoreImpl(initialCount);
-  YARP_ASSERT(implementation!=NULL);
+    implementation = new SemaphoreImpl(initialCount);
+    YARP_ASSERT(implementation!=NULL);
 }
 
 Semaphore::~Semaphore() {
-  if (implementation!=NULL) {
-    delete ((SemaphoreImpl*)implementation);
-    implementation = NULL;
-  }
+    if (implementation!=NULL) {
+        delete ((SemaphoreImpl*)implementation);
+        implementation = NULL;
+    }
 }
 
 void Semaphore::wait() {
-  ((SemaphoreImpl*)implementation)->wait();
+    ((SemaphoreImpl*)implementation)->wait();
 }
 
 bool Semaphore::check() {
-  return ((SemaphoreImpl*)implementation)->check();
+    return ((SemaphoreImpl*)implementation)->check();
 }
 
 void Semaphore::post() {
-  ((SemaphoreImpl*)implementation)->post();
+    ((SemaphoreImpl*)implementation)->post();
 }
 

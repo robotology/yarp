@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPSoundPortContent.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPSoundPortContent.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -87,8 +88,8 @@
 class YARPSoundPortContentHeader
 {
 public:
-  NetInt32 len;
-  ///double timestamp;
+    NetInt32 len;
+    ///double timestamp;
 } PACKED_FOR_NET;
 
 #include <yarp/end_pack_for_net.h>
@@ -109,20 +110,20 @@ public:
 	virtual int Read(YARPPortReader& reader)
 	{
 		if (reader.Read((char*)(&header), sizeof(header)))
-		{
-			ACE_ASSERT (header.len > 0);
+            {
+                ACE_ASSERT (header.len > 0);
 
-			if (_size != header.len)
-			{
-				Resize (header.len);
-			}
+                if (_size != header.len)
+                    {
+                        Resize (header.len);
+                    }
 
-			char *mem = (char *)_buffer;
-			ACE_ASSERT (mem != NULL);
+                char *mem = (char *)_buffer;
+                ACE_ASSERT (mem != NULL);
 			
-			reader.Read(mem, header.len);
-			//timestamp = header.timestamp;
-		}
+                reader.Read(mem, header.len);
+                //timestamp = header.timestamp;
+            }
 
 		return 1;
 	}

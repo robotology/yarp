@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -62,11 +63,11 @@
 
 
 ///
-/// $Id: YARPPortContent.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPPortContent.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Sat May 26 22:27:07 EDT 2001
+  paulfitz Sat May 26 22:27:07 EDT 2001
 */
 #ifndef YARPPortContent_INC
 #define YARPPortContent_INC
@@ -88,13 +89,13 @@
 class YARPPortReader
 {
 public:
-  /**
-   * Read a block of data from a port.
-   *
-   * @param buffer address of block of memory to read into.
-   * @param length size of block of memory available.
-   * @return true on success
-   */
+    /**
+     * Read a block of data from a port.
+     *
+     * @param buffer address of block of memory to read into.
+     * @param length size of block of memory available.
+     * @return true on success
+     */
 	virtual int Read(char *buffer, int length) = 0;
 };
 
@@ -104,13 +105,13 @@ public:
 class YARPPortWriter
 {
 public:
-  /**
-   * Write a block of data to a port.
-   *
-   * @param buffer address of block of memory to read from.
-   * @param length size of block of memory.
-   * @return true on success
-   */
+    /**
+     * Write a block of data to a port.
+     *
+     * @param buffer address of block of memory to read from.
+     * @param length size of block of memory.
+     * @return true on success
+     */
 	virtual int Write(char *buffer, int length) = 0;
 };
 
@@ -184,16 +185,16 @@ template <class T>
 class YARPPortContentOf : public YARPPortContent
 {
 public:
-  /**
-   * An instance of the simple content.
-   */
+    /**
+     * An instance of the simple content.
+     */
 	T datum;
 
-  /**
-   * Access an instance of the simple content.
-   *
-   * @return a reference to an instance of the simple content.
-   */
+    /**
+     * Access an instance of the simple content.
+     *
+     * @return a reference to an instance of the simple content.
+     */
 	T& Content() { return datum; }
 
 	virtual ~YARPPortContentOf<T> () { /*ACE_DEBUG ((LM_DEBUG, "destroying a YARPPortContentOf\n"));*/ }

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
 ///
@@ -9,7 +10,7 @@
 ///
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.3 2006-04-19 09:57:23 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.4 2006-05-15 15:57:58 eshuy Exp $
 ///
 
 /**

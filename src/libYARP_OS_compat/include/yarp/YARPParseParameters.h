@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPParseParameters.h,v 1.3 2006-04-13 15:43:14 eshuy Exp $
+/// $Id: YARPParseParameters.h,v 1.4 2006-05-15 15:57:58 eshuy Exp $
 ///
 /// Simple parser facility for program arguments. July 2003 -- by nat
 /// usage: -switch parameter

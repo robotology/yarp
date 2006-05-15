@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,12 +53,12 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-///	$Id: YARPSemaphore.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+///	$Id: YARPSemaphore.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Mon May 21 13:35:42 EDT 2001
- */
+  paulfitz Mon May 21 13:35:42 EDT 2001
+*/
 
 #ifndef YARPSemaphore_INC
 #define YARPSemaphore_INC
@@ -166,14 +167,14 @@ public:
 	int Wait(int blocking = 1)
 	{
 		if (blocking) 
-		{ 
-			BlockingWait(); 
-			return 1; 
-		}
+            { 
+                BlockingWait(); 
+                return 1; 
+            }
 		else
-		{ 
-			return PollingWait(); 
-		} 
+            { 
+                return PollingWait(); 
+            } 
 	}
 
 	/**
@@ -255,39 +256,39 @@ public:
 	~YARPEvent () {}
 
 	/**
-	* If MANUAL reset
-	*    sleep till the event becomes signaled
-	*    event remains signaled after Wait() completes.
-	* If AUTO reset
-	*    sleep till the event becomes signaled
-	*    event resets Wait() completes.
-	*/
+     * If MANUAL reset
+     *    sleep till the event becomes signaled
+     *    event remains signaled after Wait() completes.
+     * If AUTO reset
+     *    sleep till the event becomes signaled
+     *    event resets Wait() completes.
+     */
 	inline int Wait (void) { return wait(); }
 
 	/**
-	* If MANUAL reset
-	*    wake up all waiting threads
-	*    set to signaled state.
-	* If AUTO reset
-	*    if no thread is waiting, set to signaled state
-	*    if thread(s) are waiting, wake up one waiting thread and
-	*    reset event.
-	*/
+     * If MANUAL reset
+     *    wake up all waiting threads
+     *    set to signaled state.
+     * If AUTO reset
+     *    if no thread is waiting, set to signaled state
+     *    if thread(s) are waiting, wake up one waiting thread and
+     *    reset event.
+     */
 	inline int Signal (void) { return signal(); }
 
 	/**
-	* If MANUAL reset
-	*    wakeup all waiting threads and
-	*    reset event.
-	* If AUTO reset
-	*    wakeup one waiting thread (if present) and
-	*    reset event.
-	*/
+     * If MANUAL reset
+     *    wakeup all waiting threads and
+     *    reset event.
+     * If AUTO reset
+     *    wakeup one waiting thread (if present) and
+     *    reset event.
+     */
 	inline int Pulse (void) { return pulse(); }
 
 	/**
-	* Resets the event object.
-	*/
+     * Resets the event object.
+     */
 	inline int Reset (void) { return reset(); }
 };
 

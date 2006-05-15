@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImage.cpp,v 1.1 2006-03-15 09:33:51 eshuy Exp $
+/// $Id: YARPImage.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -78,9 +79,9 @@ void SatisfySize(YARPGenericImage& src, YARPGenericImage& dest)
 {
 	if (dest.GetHeight()!=src.GetHeight() ||
 		dest.GetWidth() !=src.GetWidth())
-	{
-		dest.Resize(src.GetWidth(),src.GetHeight());
-    }
+        {
+            dest.Resize(src.GetWidth(),src.GetHeight());
+        }
 }
 
 
@@ -112,217 +113,217 @@ static int implemented_yet = 1;
 SPECIAL_COPY_BEGIN
 
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_RGB)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_BGR)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_HSV)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_RGB_SIGNED)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_RGB_FLOAT)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_HSV_FLOAT)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_MONO_SIGNED)
-  *dest = *src >> 1;
+    *dest = *src >> 1;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_INT)
-  *dest = *src;
+    *dest = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO,YARP_PIXEL_MONO_FLOAT)
-  *dest = *src;
+    *dest = *src;
 
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_MONO)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_INT)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_HSV)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_MONO_SIGNED)
-  *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_RGB_SIGNED)
-  dest->r = src->r; dest->g = src->g; dest->b = src->b;
+    dest->r = src->r; dest->g = src->g; dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_MONO_FLOAT)
-  *dest = ((src->r + src->g + src->b)/3.0f);
+    *dest = ((src->r + src->g + src->b)/3.0f);
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_RGB_FLOAT)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_BGR)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB,YARP_PIXEL_HSV_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_MONO)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_RGB)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_BGR)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_MONO_SIGNED)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_RGB_SIGNED)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_MONO_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_RGB_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_HSV_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_MONO)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_INT)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_HSV)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_MONO_SIGNED)
-  *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_RGB_SIGNED)
-  dest->r = src->r; dest->g = src->g; dest->b = src->b;
+    dest->r = src->r; dest->g = src->g; dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_MONO_FLOAT)
-  *dest = ((src->r + src->g + src->b)/3.0f);
+    *dest = ((src->r + src->g + src->b)/3.0f);
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_RGB_FLOAT)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_RGB)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_HSV_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_BGR)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_HSV)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_SIGNED)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_FLOAT)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_HSV_FLOAT)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_MONO)
-  *dest = *src + 128;
+    *dest = *src + 128;
 SPECIAL_COPY(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_INT)
-  *dest = *src;
+    *dest = *src;
 
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_INT)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_HSV)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO_SIGNED)
-  *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_BGR)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO_FLOAT)
-  *dest = ((src->r + src->g + src->b)/3.0f);
+    *dest = ((src->r + src->g + src->b)/3.0f);
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB_FLOAT)
-  dest->r = src->r;
-  dest->g = src->g;
-  dest->b = src->b;
+    dest->r = src->r;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_HSV_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_MONO)
-  *dest = (unsigned char)*src;
+    *dest = (unsigned char)*src;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_INT)
-  *dest = (unsigned char)*src;
+    *dest = (unsigned char)*src;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_MONO_SIGNED)
-  *dest = (char)*src;
+    *dest = (char)*src;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB)
-  dest->r = dest->g = dest->b = (unsigned char)(*src);
+    dest->r = dest->g = dest->b = (unsigned char)(*src);
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_BGR)
-  dest->r = dest->g = dest->b = (unsigned char)(*src);
+    dest->r = dest->g = dest->b = (unsigned char)(*src);
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_HSV)
-  dest->v = (unsigned char)*src;
-  dest->h = dest->s = 0;
+    dest->v = (unsigned char)*src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB_SIGNED)
-  dest->r = dest->g = dest->b = (signed char) *src;
+    dest->r = dest->g = dest->b = (signed char) *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB_FLOAT)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_HSV_FLOAT)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_MONO)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_INT)
-  *dest = (unsigned char)((src->r + src->g + src->b)/3);
+    *dest = (unsigned char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_HSV)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_MONO_SIGNED)
-  *dest = (char)((src->r + src->g + src->b)/3);
+    *dest = (char)((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_RGB)
-  dest->r = (unsigned char) src->r;
-  dest->g = (unsigned char) src->g;
-  dest->b = (unsigned char) src->b;
+    dest->r = (unsigned char) src->r;
+dest->g = (unsigned char) src->g;
+dest->b = (unsigned char) src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_BGR)
-  dest->r = (unsigned char) src->r;
-  dest->g = (unsigned char) src->g;
-  dest->b = (unsigned char) src->b;
+    dest->r = (unsigned char) src->r;
+dest->g = (unsigned char) src->g;
+dest->b = (unsigned char) src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_MONO_FLOAT)
-  *dest = ((src->r + src->g + src->b)/3);
+    *dest = ((src->r + src->g + src->b)/3);
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_RGB_SIGNED)
-  dest->r = (signed char) src->r;
-  dest->g = (signed char) src->g;
-  dest->b = (signed char) src->b;
+    dest->r = (signed char) src->r;
+dest->g = (signed char) src->g;
+dest->b = (signed char) src->b;
 SPECIAL_COPY(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_HSV_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_MONO)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_RGB)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_BGR)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_MONO_SIGNED)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_RGB_SIGNED)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_MONO_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_RGB_FLOAT)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_HSV)
-  ACE_ASSERT(implemented_yet == 0);
+    ACE_ASSERT(implemented_yet == 0);
 
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_BGR)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_HSV)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_SIGNED)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_FLOAT)
-  dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_HSV_FLOAT)
-  dest->v = *src;
-  dest->h = dest->s = 0;
+    dest->v = *src;
+dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_MONO_SIGNED)
-  *dest = *src >> 1;
+    *dest = *src >> 1;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_MONO)
-  *dest = *src;
+    *dest = *src;
 
 SPECIAL_COPY_END
 
@@ -341,17 +342,17 @@ void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 	const int p2 = PAD_BYTES (w * sizeof(T2), YarpImageAlign);
 
 	for (int i=0; i<h; i++)
-	{
-		for (int j = 0; j < w; j++)
-		{
-			CopyPixel(src,dest);
-			src++;
-			dest++;
-		}
+        {
+            for (int j = 0; j < w; j++)
+                {
+                    CopyPixel(src,dest);
+                    src++;
+                    dest++;
+                }
 
-		src = (const T1*)(((char *)src) + p1);
-		dest = (T2*)(((char *)dest) + p2);
-	}
+            src = (const T1*)(((char *)src) + p1);
+            dest = (T2*)(((char *)dest) + p2);
+        }
 }
 
 
@@ -362,106 +363,106 @@ void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void YARPPixelCopier(const char *src, int id1, 
-		 char *dest, int id2, int w, int h)
+                     char *dest, int id2, int w, int h)
 {
-  switch(HASH(id1,id2))
-    {
-      // Macros rely on len, x1, x2 variable names
+    switch(HASH(id1,id2))
+        {
+            // Macros rely on len, x1, x2 variable names
 
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_BGR);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_BGR);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_BGR);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_BGR);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_BGR);
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_BGR);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_SIGNED);
-      MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_SIGNED);
+            MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_HSV_FLOAT);
 
 
-      MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB_FLOAT);
-      MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_HSV_FLOAT);
 
-      MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_INT);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_INT);
 
-    default:
-		ACE_OS::printf("*** Tried to copy type %d to %d\n", id1, id2);
-		ACE_OS::exit(1);
-    }
+        default:
+            ACE_OS::printf("*** Tried to copy type %d to %d\n", id1, id2);
+            ACE_OS::exit(1);
+        }
 }
 
 static int _GetPixelSize(int pixel_type)
 {
-  int result = 0;
-  switch (pixel_type)
-    {
-    case YARP_PIXEL_MONO:
-      result = sizeof(YarpPixelMono);
-      break;
-    case YARP_PIXEL_RGB:
-      result = sizeof(YarpPixelRGB);
-      break;
-    case YARP_PIXEL_HSV:
-      result = sizeof(YarpPixelHSV);
-      break;
-    case YARP_PIXEL_BGR:
-      result = sizeof(YarpPixelBGR);
-      break;
-    case YARP_PIXEL_MONO_SIGNED:
-      result = sizeof(YarpPixelMonoSigned);
-      break;
-    case YARP_PIXEL_RGB_SIGNED:
-      result = sizeof(YarpPixelRGBSigned);
-      break;
-    case YARP_PIXEL_MONO_FLOAT:
-      result = sizeof(YarpPixelFloat);
-      break;
-    case YARP_PIXEL_RGB_FLOAT:
-      result = sizeof(YarpPixelRGBFloat);
-      break;
-    case YARP_PIXEL_HSV_FLOAT:
-      result = sizeof(YarpPixelHSVFloat);
-      break;
-    default:
-      // only other acceptable possibility is that the size is being supplied
-      // for an unknown type
-      //ACE_ASSERT (pixel_type<0);
-      result = -pixel_type;
-      break;
-    }
-  //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
-  return result;
+    int result = 0;
+    switch (pixel_type)
+        {
+        case YARP_PIXEL_MONO:
+            result = sizeof(YarpPixelMono);
+            break;
+        case YARP_PIXEL_RGB:
+            result = sizeof(YarpPixelRGB);
+            break;
+        case YARP_PIXEL_HSV:
+            result = sizeof(YarpPixelHSV);
+            break;
+        case YARP_PIXEL_BGR:
+            result = sizeof(YarpPixelBGR);
+            break;
+        case YARP_PIXEL_MONO_SIGNED:
+            result = sizeof(YarpPixelMonoSigned);
+            break;
+        case YARP_PIXEL_RGB_SIGNED:
+            result = sizeof(YarpPixelRGBSigned);
+            break;
+        case YARP_PIXEL_MONO_FLOAT:
+            result = sizeof(YarpPixelFloat);
+            break;
+        case YARP_PIXEL_RGB_FLOAT:
+            result = sizeof(YarpPixelRGBFloat);
+            break;
+        case YARP_PIXEL_HSV_FLOAT:
+            result = sizeof(YarpPixelHSVFloat);
+            break;
+        default:
+            // only other acceptable possibility is that the size is being supplied
+            // for an unknown type
+            //ACE_ASSERT (pixel_type<0);
+            result = -pixel_type;
+            break;
+        }
+    //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
+    return result;
 }
 
 int YARPGenericImage::GetPixelSize() const
@@ -520,11 +521,11 @@ void YARPGenericImage::Crop (YARPGenericImage& id, int startX, int startY)
 
 	const int nrows = id.GetHeight();
 	for (int i = 0; i < nrows; i++)
-	{
-		memcpy (dst, src, dAlignLineSize);
-		dst += dAlignLineSize;
-		src += sAlignLineSize;
-	}
+        {
+            memcpy (dst, src, dAlignLineSize);
+            dst += dAlignLineSize;
+            src += sAlignLineSize;
+        }
 }
 
 void YARPGenericImage::Paste (YARPGenericImage& is, int startX, int startY)
@@ -543,11 +544,11 @@ void YARPGenericImage::Paste (YARPGenericImage& is, int startX, int startY)
 
 	const int nrows = is.GetHeight();
 	for (int i = 0; i < nrows; i++)
-	{
-		memcpy (dst, src, sAlignLineSize);
-		dst += dAlignLineSize;
-		src += sAlignLineSize;
-	}
+        {
+            memcpy (dst, src, sAlignLineSize);
+            dst += dAlignLineSize;
+            src += sAlignLineSize;
+        }
 }
 
 // allocates an empty image.
@@ -560,7 +561,7 @@ void YARPGenericImage::_alloc (void)
 			_free(); // was iplDeallocateImage(pImage); but that won't work with refs
 	
 	if ( (type_id == YARP_PIXEL_MONO_FLOAT) || (type_id == YARP_PIXEL_RGB_FLOAT) ||
-		(type_id == YARP_PIXEL_HSV_FLOAT) )
+         (type_id == YARP_PIXEL_HSV_FLOAT) )
 		iplAllocateImageFP(pImage, 0, 0);
 	else
 		iplAllocateImage (pImage, 0, 0);
@@ -593,13 +594,13 @@ void YARPGenericImage::_alloc_data (void)
 
 	ACE_ASSERT(Data==NULL);
 	/*
-	if (Data != NULL)
-	{
+      if (Data != NULL)
+      {
 	  DBGPF1 printf("HIT Deleting Data\n"), fflush(stdout);
 	  //delete[] Data; //HIT2
 	  free(Data);
 	  Data = NULL;
-	}
+      }
 	*/
 
 	DBGPF1 ACE_OS::printf("alloc_data1b\n"), fflush(stdout);
@@ -629,10 +630,10 @@ void YARPGenericImage::_alloc_data (void)
     char * DataArea = pImage->imageData;
     
 	for (int r = 0; r < height; r++)
-	{
-		Data[r] = DataArea;
-		DataArea += pImage->widthStep;
-	}
+        {
+            Data[r] = DataArea;
+            DataArea += pImage->widthStep;
+        }
 	DBGPF1 ACE_OS::printf("alloc_data4\n");
 }
 
@@ -641,63 +642,63 @@ void YARPGenericImage::_free (void)
 	//	ACE_ASSERT (pImage != NULL);
 	if (pImage != NULL)
 		if (pImage->imageData != NULL)
-		{
-			int zero_count = 1;
-			if (buffer_references != NULL)
-			{
-				DBGPF1 if (buffer_references!=NULL) cout << "HIT B Buffer references " << buffer_references->GetReferenceCount() << endl;
-				buffer_references->RemoveRef();
-				int ref = buffer_references->GetReferenceCount();
-				DBGPF1 if (buffer_references!=NULL) cout << "HIT C Buffer references " << buffer_references->GetReferenceCount() << endl;
-				if (ref<=0)
-				{
-					DBGPF1 cout << "HIT deleting buffer_references" << endl;
-					delete buffer_references;
-				}
-				else
-				{
-					zero_count = 0;
-				}
-				buffer_references = NULL;
-			}
+            {
+                int zero_count = 1;
+                if (buffer_references != NULL)
+                    {
+                        DBGPF1 if (buffer_references!=NULL) cout << "HIT B Buffer references " << buffer_references->GetReferenceCount() << endl;
+                        buffer_references->RemoveRef();
+                        int ref = buffer_references->GetReferenceCount();
+                        DBGPF1 if (buffer_references!=NULL) cout << "HIT C Buffer references " << buffer_references->GetReferenceCount() << endl;
+                        if (ref<=0)
+                            {
+                                DBGPF1 cout << "HIT deleting buffer_references" << endl;
+                                delete buffer_references;
+                            }
+                        else
+                            {
+                                zero_count = 0;
+                            }
+                        buffer_references = NULL;
+                    }
 
-			if (zero_count)
-			{
-				//cout << "HIT maybe deleting ipl image" << endl;
-				if (is_owner)
-				{
-					DBGPF1 cout << "HIT really truly deleting ipl image" << endl;
-					iplDeallocateImage (pImage);
-					if (Data!=NULL)
-					{
-						delete[] Data;
-					}
-				}
-				else
-				{
-					if (Data!=NULL)
-					{
-						delete[] Data;
-					}
-				}
-			}
+                if (zero_count)
+                    {
+                        //cout << "HIT maybe deleting ipl image" << endl;
+                        if (is_owner)
+                            {
+                                DBGPF1 cout << "HIT really truly deleting ipl image" << endl;
+                                iplDeallocateImage (pImage);
+                                if (Data!=NULL)
+                                    {
+                                        delete[] Data;
+                                    }
+                            }
+                        else
+                            {
+                                if (Data!=NULL)
+                                    {
+                                        delete[] Data;
+                                    }
+                            }
+                    }
 
-		is_owner = 1;
-		Data = NULL;
-		pImage->imageData = NULL;
-	}
+                is_owner = 1;
+                Data = NULL;
+                pImage->imageData = NULL;
+            }
 }
 
 void YARPGenericImage::_free_data (void)
 {
 	ACE_ASSERT(Data==NULL); // Now always free Data at same time
-				  // as image buffer, for correct refcounting
+    // as image buffer, for correct refcounting
 	/*
-	if (Data != NULL)
-	{
-		delete[] Data;
-	}
-	Data = NULL;
+      if (Data != NULL)
+      {
+      delete[] Data;
+      }
+      Data = NULL;
 	*/
 }
 
@@ -711,210 +712,210 @@ void YARPGenericImage::_set_ipl_header(int x, int y, int pixel_type)
 {
 	// used to allocate the ipl header.
 	switch (pixel_type)
-	{
-	case YARP_PIXEL_MONO:
-		pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_8U,			
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		DBGPF1 ACE_OS::printf("Set pImage to %ld\n", (long int) pImage);
-		DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
-		break;
+        {
+        case YARP_PIXEL_MONO:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            DBGPF1 ACE_OS::printf("Set pImage to %ld\n", (long int) pImage);
+            DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
+            break;
 
-	case YARP_PIXEL_RGB:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"RGB",
-					"RGB",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_RGB:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "RGB",
+                                          "RGB",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_HSV:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"HSV",
-					"HSV",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_HSV:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "HSV",
+                                          "HSV",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_BGR:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"RGB",
-					"BGR",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_BGR:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "RGB",
+                                          "BGR",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_MONO_SIGNED:
-		pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_8S,			
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_MONO_SIGNED:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_8S,			
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_RGB_SIGNED:
-		ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_RGB_SIGNED:
+            ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_MONO_FLOAT:
-             	  pImage = iplCreateImageHeader(
-					  1,
-					  0,
-					  IPL_DEPTH_32F,
-					  "GRAY",
-					  "GRAY",
-					  IPL_DATA_ORDER_PIXEL,
-					  IPL_ORIGIN_BL,
-					  IPL_ALIGN_QWORD,
-					  x,
-					  y,
-					  NULL,
-					  NULL,
-					  NULL,
-					  NULL);
-		break;
+        case YARP_PIXEL_MONO_FLOAT:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32F,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          IPL_ALIGN_QWORD,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_RGB_FLOAT:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_32F,			
-					"RGB",
-					"RGB",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					IPL_ALIGN_QWORD,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		//ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_RGB_FLOAT:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_32F,			
+                                          "RGB",
+                                          "RGB",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          IPL_ALIGN_QWORD,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            //ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_HSV_FLOAT:
-		ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_HSV_FLOAT:
+            ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_INT:
-             	  pImage = iplCreateImageHeader(
-					  1,
-					  0,
-					  IPL_DEPTH_32S,
-					  "GRAY",
-					  "GRAY",
-					  IPL_DATA_ORDER_PIXEL,
-					  IPL_ORIGIN_BL,
-					  IPL_ALIGN_QWORD,
-					  x,
-					  y,
-					  NULL,
-					  NULL,
-					  NULL,
-					  NULL);
-		break;
+        case YARP_PIXEL_INT:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          IPL_ALIGN_QWORD,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_INVALID:
-		// not a type!
-		ACE_OS::printf ("*** Trying to allocate an invalid pixel type image\n");
-		ACE_OS::exit(1);
-		break;
+        case YARP_PIXEL_INVALID:
+            // not a type!
+            ACE_OS::printf ("*** Trying to allocate an invalid pixel type image\n");
+            ACE_OS::exit(1);
+            break;
 	  
-	case -2:
-	  pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_16S,
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,
-					IPL_ORIGIN_BL,
-					IPL_ALIGN_QWORD,
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-	  break;
+        case -2:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_16S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          IPL_ALIGN_QWORD,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case -4:
-	  pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_32S,
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,
-					IPL_ORIGIN_BL,
-					IPL_ALIGN_QWORD,
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-	  break;
+        case -4:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          IPL_ALIGN_QWORD,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	default:
-		// unknown pixel type. Should revert to a non-IPL mode... how?
-		// LATER: implement this.
-		ACE_ASSERT (implemented_yet == 0);
-		break;
-	}
+        default:
+            // unknown pixel type. Should revert to a non-IPL mode... how?
+            // LATER: implement this.
+            ACE_ASSERT (implemented_yet == 0);
+            break;
+        }
 
 	type_id = pixel_type;
 }
@@ -922,9 +923,9 @@ void YARPGenericImage::_set_ipl_header(int x, int y, int pixel_type)
 void YARPGenericImage::_free_ipl_header()
 {
 	if (pImage!=NULL)
-	{
-		iplDeallocate (pImage, IPL_IMAGE_HEADER);
-	}
+        {
+            iplDeallocate (pImage, IPL_IMAGE_HEADER);
+        }
 	pImage = NULL;
 }
 
@@ -970,36 +971,36 @@ void YARPGenericImage::Clear()
 }
 
 /*void YARPGenericImage::Zero ()
-{
-	ACE_ASSERT (pImage != NULL);
-	memset (pImage->imageData, 0, pImage->imageSize);
-}*/
+  {
+  ACE_ASSERT (pImage != NULL);
+  memset (pImage->imageData, 0, pImage->imageSize);
+  }*/
 
 void YARPGenericImage::Resize(int x, int y, int pixel_type)
 {
 	int need_recreation = 1;
 	if (pImage != NULL)
-	{
-		if (x == pImage->width && y == pImage->height)
-		{
-			/*if (x == pImage->width && y == pImage->height &&
-				pImage->imageSize == x * y * _GetPixelSize(pixel_type) &&
-				pImage->imageData != NULL && Data != NULL)
-			{*/
-			if (pImage->imageSize == (x+GetPadding()) * y * _GetPixelSize(pixel_type) &&
-				pImage->imageData != NULL && Data != NULL)
-			{
-				need_recreation = 0;
-			}
-		}
-	}
+        {
+            if (x == pImage->width && y == pImage->height)
+                {
+                    /*if (x == pImage->width && y == pImage->height &&
+                      pImage->imageSize == x * y * _GetPixelSize(pixel_type) &&
+                      pImage->imageData != NULL && Data != NULL)
+                      {*/
+                    if (pImage->imageSize == (x+GetPadding()) * y * _GetPixelSize(pixel_type) &&
+                        pImage->imageData != NULL && Data != NULL)
+                        {
+                            need_recreation = 0;
+                        }
+                }
+        }
 
 	if (need_recreation)
-	{
-		_free_complete();
-		DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
-		_alloc_complete (x, y, pixel_type);
-	}
+        {
+            _free_complete();
+            DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
+            _alloc_complete (x, y, pixel_type);
+        }
 }
 
 void YARPGenericImage::Refer(YARPGenericImage& src)
@@ -1010,20 +1011,20 @@ void YARPGenericImage::Refer(YARPGenericImage& src)
 	int other_id = src.GetID();
 
 	if (Data == NULL && my_id == YARP_PIXEL_INVALID)
-	{
-		SetID (other_id);
-		my_id = GetID();
-	}
+        {
+            SetID (other_id);
+            my_id = GetID();
+        }
 
 	if (my_id != other_id)
-	{
-		ACE_OS::printf("*** Tried to Refer() to an incompatible image type.\n");
-		ACE_OS::printf("*** Please copy instead, using CastCopy().\n");
-		///ACE_OS::exit(1);
+        {
+            ACE_OS::printf("*** Tried to Refer() to an incompatible image type.\n");
+            ACE_OS::printf("*** Please copy instead, using CastCopy().\n");
+            ///ACE_OS::exit(1);
 
-		SetID (other_id);
-		my_id = GetID();
-	}
+            SetID (other_id);
+            my_id = GetID();
+        }
 
 	DBGPF1 cout << "HIT Starting refer" << endl;
 	_make_independent();
@@ -1036,10 +1037,10 @@ void YARPGenericImage::Refer(YARPGenericImage& src)
 	DBGPF1 if (buffer_references!=NULL) cout << "HIT Y Buffer references " << buffer_references->GetReferenceCount() << endl;
 	
 	DBGPF1 cout << "HIT step 3 // " 
-	<< src.GetWidth() << " "
-	<< src.GetHeight() << " "
-	<< src.GetID() << " "
-	<< endl;
+                << src.GetWidth() << " "
+                << src.GetHeight() << " "
+                << src.GetID() << " "
+                << endl;
 
 	_set_ipl_header(src.GetWidth(), src.GetHeight(), src.GetID());
 	DBGPF1 cout << "HIT step 4" << endl;
@@ -1063,28 +1064,28 @@ void YARPGenericImage::PeerCopy(const YARPGenericImage& img)
 	int other_id = img.GetID();
 
 	if (Data == NULL && my_id == YARP_PIXEL_INVALID)
-	{
-		SetID (other_id);
-		my_id = GetID();
-	}
+        {
+            SetID (other_id);
+            my_id = GetID();
+        }
 
 	if (my_id != other_id)
-	{
-		ACE_OS::printf("*** Tried to copy between incompatible image types.\n");
-		ACE_OS::printf("*** Please use CastCopy() to do this.\n");
-		ACE_OS::exit(1);
-	}
+        {
+            ACE_OS::printf("*** Tried to copy between incompatible image types.\n");
+            ACE_OS::printf("*** Please use CastCopy() to do this.\n");
+            ACE_OS::exit(1);
+        }
 
 	Resize(img.pImage->width, img.pImage->height, my_id);
 
 	if (pImage != NULL && img.pImage != NULL)
-	{
-		if (pImage->imageData != NULL && img.pImage->imageData != NULL)
-		{
-			ACE_ASSERT(pImage->imageSize == img.pImage->imageSize);
-			memcpy(pImage->imageData, img.pImage->imageData, pImage->imageSize);
-		}
-	}
+        {
+            if (pImage->imageData != NULL && img.pImage->imageData != NULL)
+                {
+                    ACE_ASSERT(pImage->imageSize == img.pImage->imageSize);
+                    memcpy(pImage->imageData, img.pImage->imageData, pImage->imageSize);
+                }
+        }
 }
 
 void YARPGenericImage::CastCopy(const YARPGenericImage& img)
@@ -1094,37 +1095,37 @@ void YARPGenericImage::CastCopy(const YARPGenericImage& img)
 	Resize(img.pImage->width, img.pImage->height, my_id);
 
 	if (my_id == YARP_PIXEL_INVALID || other_id == YARP_PIXEL_INVALID || my_id != other_id)
-	{
-		const char *src = img.GetRawBuffer();
-		char *dest = GetRawBuffer();
-		///const int len = pImage->height * pImage->width;
-		ACE_ASSERT(src!=NULL && dest!=NULL);
-		YARPPixelCopier (src, other_id, dest, my_id, pImage->width, pImage->height);
-	}
+        {
+            const char *src = img.GetRawBuffer();
+            char *dest = GetRawBuffer();
+            ///const int len = pImage->height * pImage->width;
+            ACE_ASSERT(src!=NULL && dest!=NULL);
+            YARPPixelCopier (src, other_id, dest, my_id, pImage->width, pImage->height);
+        }
 	else
-	{
-		PeerCopy (img);
-	}
+        {
+            PeerCopy (img);
+        }
 }
 
 void YARPGenericImage::ReferOrCopy(YARPGenericImage& image)
 {
 	if (image.GetID() == GetID())
-	{
-		Refer(image);
-	}
+        {
+            Refer(image);
+        }
 	else
-	{
-		CastCopy(image);
-	}
+        {
+            CastCopy(image);
+        }
 }
 
 void YARPGenericImage::ScaledCopy(const YARPGenericImage& img, int nx, int ny)
 {
 	if (GetWidth()!=nx || GetHeight()!=ny || GetID() != img.GetID())
-	{
-		Resize(nx, ny, img.GetID());
-	}
+        {
+            Resize(nx, ny, img.GetID());
+        }
 	ScaledCopy(img);
 }
 
@@ -1151,13 +1152,13 @@ void YARPGenericImage::ScaledCopy(const YARPGenericImage& img)
 	dj = ((float)w)/nw;
 
 	for (i=0; i<nh; i++)
-	{
-		i0 = (int)(di*i);
-		for (j=0; j<nw; j++)
-		{
-			j0 = (int)(dj*j);
-			memcpy(RawPixel(j,i),img.RawPixel(j0,i0),d);
-		}
-	}
+        {
+            i0 = (int)(di*i);
+            for (j=0; j<nw; j++)
+                {
+                    j0 = (int)(dj*j);
+                    memcpy(RawPixel(j,i),img.RawPixel(j0,i0),d);
+                }
+        }
 }
  

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: YARPMatrix.cpp,v 1.1 2006-03-15 09:33:51 eshuy Exp $
+/// $Id: YARPMatrix.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -123,24 +124,24 @@ static void VisGaussJordanSolveDMatrix(YMatrix& A);
 ////////////////////////////////////////////////////////////////////////////
 void YVector::Resize(int length, const double *storage)
 {
-  if(m_length!=length || m_data==NULL)
-    {
-      m_length = length;
+    if(m_length!=length || m_data==NULL)
+        {
+            m_length = length;
 
-      if (m_data != NULL)
-	delete[] m_data;
+            if (m_data != NULL)
+                delete[] m_data;
 
-      m_data = new double[m_length];
-    }
+            m_data = new double[m_length];
+        }
 
-  if (storage != 0)
-    {
-      memcpy (m_data, storage, sizeof(double) * m_length);
-    }
-  else
-    {
-      memset (m_data, 0, sizeof(double) * m_length);
-    }
+    if (storage != 0)
+        {
+            memcpy (m_data, storage, sizeof(double) * m_length);
+        }
+    else
+        {
+            memset (m_data, 0, sizeof(double) * m_length);
+        }
 }
 
 YVector::YVector(int length, const double *storage) :  m_length(0), m_data(0)
@@ -149,7 +150,7 @@ YVector::YVector(int length, const double *storage) :  m_length(0), m_data(0)
 }
 
 YVector::YVector(void)
-  : m_length(0), m_data(0)
+    : m_length(0), m_data(0)
 {
 }
 
@@ -187,38 +188,38 @@ YVector::~YVector ()
 void YMatrix::Resize(int rows, int cols, const double *storage)
 {
 	if (m_nRows != rows || m_nCols != cols)
-	{
-		// deallocate the array of ptrs to rows.
-		// if dims are the same do not deallocate.
-		if (m_data != NULL)
-		{
-			delete[] m_data[0];
-			delete[] m_data;
+        {
+            // deallocate the array of ptrs to rows.
+            // if dims are the same do not deallocate.
+            if (m_data != NULL)
+                {
+                    delete[] m_data[0];
+                    delete[] m_data;
 
-			m_data = new double *[rows];
-			m_data[0] = new double[rows * cols];
-			for (int i = 1; i < rows; i++)
-			{
-				m_data[i] = m_data[i-1] + cols;
-			}
+                    m_data = new double *[rows];
+                    m_data[0] = new double[rows * cols];
+                    for (int i = 1; i < rows; i++)
+                        {
+                            m_data[i] = m_data[i-1] + cols;
+                        }
 
-			m_nRows = rows;
-			m_nCols = cols;
-		}
-		else
-		{
-			// allocate.
-			m_data = new double *[rows];
-			m_data[0] = new double[rows * cols];
-			for (int i = 1; i < rows; i++)
-			{
-				m_data[i] = m_data[i-1] + cols;
-			}
+                    m_nRows = rows;
+                    m_nCols = cols;
+                }
+            else
+                {
+                    // allocate.
+                    m_data = new double *[rows];
+                    m_data[0] = new double[rows * cols];
+                    for (int i = 1; i < rows; i++)
+                        {
+                            m_data[i] = m_data[i-1] + cols;
+                        }
 
-			m_nRows = rows;
-			m_nCols = cols;
-		}
-	}
+                    m_nRows = rows;
+                    m_nCols = cols;
+                }
+        }
 
 	if (storage != 0)
 		memcpy (m_data[0], storage, sizeof(double) * rows * cols);
@@ -244,10 +245,10 @@ YMatrix::YMatrix(const YMatrix &refmatrix) : m_nRows(0), m_nCols(0), m_data(0)
 YMatrix::~YMatrix ()
 {
 	if (m_data != NULL)
-	{
-		delete[] m_data[0];
-		delete[] m_data;
-	}
+        {
+            delete[] m_data[0];
+            delete[] m_data;
+        }
 }
 
 //
@@ -366,13 +367,13 @@ YMatrix& YMatrix::operator=(double value)
 bool YVector::operator==(const YVector& refvector) const
 {
     if (Length() == refvector.Length())
-	{
-		if (Length() == 0)
-			return true;
+        {
+            if (Length() == 0)
+                return true;
 
-		if (memcmp(m_data, refvector.m_data, Length() * sizeof(double)) == 0)
-			return true;
-	}
+            if (memcmp(m_data, refvector.m_data, Length() * sizeof(double)) == 0)
+                return true;
+        }
 
     return false; 
 }
@@ -380,20 +381,20 @@ bool YVector::operator==(const YVector& refvector) const
 bool YMatrix::operator==(const YMatrix& refmatrix) const
 {
     if ((NRows() == refmatrix.NRows())
-			&& (NCols() == refmatrix.NCols()))
-	{
-		if ((NRows() == 0) || (NCols() == 0))
-			return true;
+        && (NCols() == refmatrix.NCols()))
+        {
+            if ((NRows() == 0) || (NCols() == 0))
+                return true;
 
-		int cbRow = NCols()  * sizeof(double);
-		for (int iRow = 0; iRow < NRows(); ++iRow)
-		{
-			if (memcmp(m_data[iRow], refmatrix.m_data[iRow], cbRow) != 0)
-				return false;
-		}
+            int cbRow = NCols()  * sizeof(double);
+            for (int iRow = 0; iRow < NRows(); ++iRow)
+                {
+                    if (memcmp(m_data[iRow], refmatrix.m_data[iRow], cbRow) != 0)
+                        return false;
+                }
 		
-		return true;
-	}
+            return true;
+        }
 
 
     return false; 
@@ -425,9 +426,9 @@ bool YVector::operator==(double dbl) const
 
 	bool retflag=true;
 	for (int i=0;i<n;i++)
-	{
-		retflag &= ((*this)[i] == dbl);
-	}
+        {
+            retflag &= ((*this)[i] == dbl);
+        }
 
     return retflag; 
 }
@@ -450,13 +451,13 @@ bool YMatrix::operator==(double dbl) const
 bool YVector::operator<(const YVector& refvector) const
 {
     if (Length() == refvector.Length())
-	{
-		if (Length() == 0)
-			return false;
+        {
+            if (Length() == 0)
+                return false;
 
-		return (memcmp(m_data, refvector.m_data,
-				Length() * sizeof(double)) < 0);
-	}
+            return (memcmp(m_data, refvector.m_data,
+                           Length() * sizeof(double)) < 0);
+        }
 
     return (Length() < refvector.Length()); 
 }
@@ -464,25 +465,25 @@ bool YVector::operator<(const YVector& refvector) const
 bool YMatrix::operator<(const YMatrix& refmatrix) const
 {
     if (NRows() == refmatrix.NRows())
-	{
-		if (NCols() == refmatrix.NCols())
-		{
-			if ((NRows() == 0) || (NCols() == 0))
-				return false;
+        {
+            if (NCols() == refmatrix.NCols())
+                {
+                    if ((NRows() == 0) || (NCols() == 0))
+                        return false;
 
-			int cbRow = NCols()  * sizeof(double);
-			for (int iRow = 0; iRow < NRows(); ++iRow)
-			{
-				int wCmp = memcmp(m_data[iRow], refmatrix.m_data[iRow], cbRow);
-				if (wCmp != 0)
-					return (wCmp < 0);
-			}
+                    int cbRow = NCols()  * sizeof(double);
+                    for (int iRow = 0; iRow < NRows(); ++iRow)
+                        {
+                            int wCmp = memcmp(m_data[iRow], refmatrix.m_data[iRow], cbRow);
+                            if (wCmp != 0)
+                                return (wCmp < 0);
+                        }
 			
-			return false;
-		}
+                    return false;
+                }
     
-		return (NCols() < refmatrix.NCols()); 
-	}
+            return (NCols() < refmatrix.NCols()); 
+        }
 
     return (NRows() < refmatrix.NRows()); 
 }
@@ -796,7 +797,7 @@ YVector& YVector::sin(void)
 YMatrix& YMatrix::operator+=(const YMatrix& refmatrix)
 {
 	assert((NRows() == refmatrix.NRows())
-			&& (NCols() == refmatrix.NCols()));
+           && (NCols() == refmatrix.NCols()));
 
     for (int i = 0; i < NRows(); i++)
         for (int j = 0; j < NCols(); j++)
@@ -808,7 +809,7 @@ YMatrix& YMatrix::operator+=(const YMatrix& refmatrix)
 YMatrix& YMatrix::operator-=(const YMatrix& refmatrix)
 {
 	assert((NRows() == refmatrix.NRows())
-			&& (NCols() == refmatrix.NCols()));
+           && (NCols() == refmatrix.NCols()));
 
     for (int i = 0; i < NRows(); i++)
         for (int j = 0; j < NCols(); j++)
@@ -962,7 +963,7 @@ YVector YMatrix::operator*(const YVector& refvector) const
     YVector vectorRet(NRows());
 
     assert(NRows() == vectorRet.Length()
-			&& NCols() == refvector.Length());
+           && NCols() == refvector.Length());
 
     for (int i = 0; i < NRows(); i++) {
         double sum = 0.0;
@@ -1006,7 +1007,7 @@ YMatrix YMatrix::Inverted(void) const
 #ifdef VIS_USE_IMSL
 
     VisIMSL_dlinrg(NRows(), (*this)[0], NRows(),
-			matrixInverse[0], NRows());
+                   matrixInverse[0], NRows());
 
 #else // VIS_USE_IMSL
 
@@ -1099,7 +1100,7 @@ VisMatrixExport YMatrix VISAPI VisDMatrixSqrtInverse(const YMatrix& A)
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport void VISAPI VisDMatrixSqrtInverse(const YMatrix& A,
-		YMatrix &AsqrtInv)
+                                                  YMatrix &AsqrtInv)
 {
 #ifdef VIS_USE_IMSL
 
@@ -1171,7 +1172,7 @@ VisMatrixExport void VISAPI VisDMatrixSqrtInverse(const YMatrix& A,
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport YVector VISAPI VisDMatrixSolve(const YMatrix& A,
-		const YVector& b)
+                                               const YVector& b)
 {
     YVector result(b.Length());
     VisDMatrixSolve(A, b, result);
@@ -1201,7 +1202,7 @@ VisMatrixExport YVector VISAPI VisDMatrixSolve(const YMatrix& A,
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport void VISAPI VisDMatrixSolve(const YMatrix& A,
-		const YVector& b, YVector& x)
+                                            const YVector& b, YVector& x)
 {
     assert(A.NRows() == A.NCols() && A.NRows() > 0);
     assert(A.NRows() == b.Length());
@@ -1251,7 +1252,7 @@ VisMatrixExport void VISAPI VisDMatrixSolve(const YMatrix& A,
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport YVector VISAPI VisDMatrixSolveSPD(const YMatrix& A,
-		const YVector& b)
+                                                  const YVector& b)
 {
     YVector result(b.Length());
     VisDMatrixSolveSPD(A, b, result);
@@ -1285,7 +1286,7 @@ VisMatrixExport YVector VISAPI VisDMatrixSolveSPD(const YMatrix& A,
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport void VISAPI VisDMatrixSolveSPD(const YMatrix& A,
-		const YVector& b, YVector& x, int n)
+                                               const YVector& b, YVector& x, int n)
 {
     if (n < 1)      // optionally solve a sub-system (faster)
         n = A.NRows();
@@ -1360,7 +1361,7 @@ VisMatrixExport void VISAPI VisDMatrixSolveSPD(const YMatrix& A,
 //  
 ////////////////////////////////////////////////////////////////////////////
 VisMatrixExport YMatrix VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YMatrix& B)
+                                                      const YMatrix& B)
 {
     YMatrix result(B.NRows(), B.NCols());
     VisDMatrixLeastSquares(A, B, result);
@@ -1368,7 +1369,7 @@ VisMatrixExport YMatrix VISAPI VisDMatrixLeastSquares(const YMatrix& A,
 }
 
 VisMatrixExport void VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YMatrix& B, YMatrix& X)
+                                                   const YMatrix& B, YMatrix& X)
 {
     assert(A.NRows() == B.NRows() && A.NRows() > 0);
 
@@ -1429,7 +1430,7 @@ VisMatrixExport void VISAPI VisDMatrixLeastSquares(const YMatrix& A,
 }
 
 VisMatrixExport YVector VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YVector& b)
+                                                      const YVector& b)
 {
     YVector result(A.NCols());
     VisDMatrixLeastSquares(A, b, result);
@@ -1437,7 +1438,7 @@ VisMatrixExport YVector VISAPI VisDMatrixLeastSquares(const YMatrix& A,
 }
 
 VisMatrixExport void VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YVector& b, YVector& x)
+                                                   const YVector& b, YVector& x)
 {
     YMatrix B(b.Length(), 1, (double *) &b[0]);
     YMatrix X(x.Length(), 1, &x[0]);
@@ -1476,8 +1477,8 @@ static void VisGaussJordanSolveDMatrix(YMatrix& A)
                     break;
             if (j >= n)       // if failed, matrix is singular
 				assert (0);
-                //throw CVisError("matrix is singular", eviserrorOpFailed,
-                //         "VisGaussJordanSolveDMatrix()", __FILE__, __LINE__);
+            //throw CVisError("matrix is singular", eviserrorOpFailed,
+            //         "VisGaussJordanSolveDMatrix()", __FILE__, __LINE__);
             for (k = i; k < m; k++)
                 A[i][k] += A[j][k];
         }
@@ -1512,7 +1513,7 @@ static void VisGaussJordanSolveDMatrix(YMatrix& A)
 
 // QR factorization related functions
 VisMatrixExport YVector VISAPI VisDMatrixSolveQR(const YMatrix& A,
-		const YVector& b)
+                                                 const YVector& b)
 {
     int nr = A.NRows(); 
     int nc = A.NCols(); 
@@ -1529,7 +1530,7 @@ VisMatrixExport YVector VISAPI VisDMatrixSolveQR(const YMatrix& A,
 // This is why transpose of A is used 
 // unlike SPD solver, QR solver doesn't require A to be square
 VisMatrixExport void VISAPI VisDMatrixSolveQR(const YMatrix& A,
-		const YVector& b, YVector& x)
+                                              const YVector& b, YVector& x)
 {
     int nr = A.NRows(); 
     int nc = A.NCols(); 
@@ -1584,8 +1585,8 @@ VisMatrixExport void VISAPI VisDMatrixSolveQR(const YMatrix& A,
 ////////////////////////////////////////////////////////////////////////////
 
 VisMatrixExport void VISAPI VisDMatrixSVD(const YMatrix& A, YVector& s, 
-                  YMatrix& U, YMatrix& V,
-                  int compute_left, int compute_right)
+                                          YMatrix& U, YMatrix& V,
+                                          int compute_left, int compute_right)
 {
 #ifdef VIS_USE_IMSL
     long nr = A.NRows(); 
@@ -1633,8 +1634,8 @@ VisMatrixExport void VISAPI VisDMatrixSVD(const YMatrix& A, YVector& s,
 	UNUSED (compute_right);
     //throw CVisError(
 	//		"Singular value decomposition only works with IMSL for now",
-      //              eviserrorOpFailed, "VisDMatrixSVD",
-      //              "VisDMatrix.cpp", __LINE__);
+    //              eviserrorOpFailed, "VisDMatrixSVD",
+    //              "VisDMatrix.cpp", __LINE__);
 #endif // VIS_USE_IMSL
 }
 
@@ -1787,7 +1788,7 @@ VisMatrixExport void VISAPI VisMaxEigenValue(YMatrix& A, YVector& x)
 }
 
 VisMatrixExport double VISAPI VisMinMaxEigenValue(YMatrix& A, YVector& x,
-		bool fMin)
+                                                  bool fMin)
 {
 	int n = A.NRows();
     double e = 0.0; 
@@ -1803,8 +1804,8 @@ VisMatrixExport double VISAPI VisMinMaxEigenValue(YMatrix& A, YVector& x,
 	UNUSED (fMin);
 
     //throw CVisError("Eigenvalues only work with IMSL for now",
-      ///              eviserrorOpFailed, "VisMinMaxEigenValue",
-         //           "VisDMatrix.cpp", __LINE__);
+    ///              eviserrorOpFailed, "VisMinMaxEigenValue",
+    //           "VisDMatrix.cpp", __LINE__);
 #endif // VIS_USE_IMSL
 
     return e; 
@@ -1815,7 +1816,7 @@ VisMatrixExport double VISAPI VisMinMaxEigenValue(YMatrix& A, YVector& x,
 // current implementation assumes rank(A) = n and rank(B) = p -> user's
 // responsibility
 VisMatrixExport void VISAPI VisDMatrixEQConstrainedLS(YMatrix& A, YVector& b,
-		YMatrix& C, YVector& d, YVector& x)
+                                                      YMatrix& C, YVector& d, YVector& x)
 {
 #ifdef VIS_USE_IMSL
     int m = A.NRows(); 
@@ -1847,12 +1848,12 @@ VisMatrixExport void VISAPI VisDMatrixEQConstrainedLS(YMatrix& A, YVector& b,
     // copy RT from QRTrans
     // Not necessary to create RT, but for clarity
     for (i = 0; i < p; i++) 
-    {
-        for (j = 0; j < p; j++)
         {
-            RT[i][j] = QRTrans[i][j];
+            for (j = 0; j < p; j++)
+                {
+                    RT[i][j] = QRTrans[i][j];
+                }
         }
-    }
 
 	Q = QTrans.Transposed();
 
@@ -1868,28 +1869,28 @@ VisMatrixExport void VISAPI VisDMatrixEQConstrainedLS(YMatrix& A, YVector& b,
     YMatrix A2(m, n-p); 
 
     for (i = 0; i < m; i++)
-    {
-        for (j = 0; j < p; j++)
         {
-            A1[i][j] = AQ[i][j]; 
+            for (j = 0; j < p; j++)
+                {
+                    A1[i][j] = AQ[i][j]; 
+                }
+            for (j = p; j < n; j++)
+                {
+                    A2[i][j-p] = AQ[i][j]; 
+                }
         }
-        for (j = p; j < n; j++)
-        {
-            A2[i][j-p] = AQ[i][j]; 
-        }
-    }
 
     // solve x1; RT is a lower triangular matrix
     // or we can call IMSL to solve it
     for (i = 0; i < p; i++)
-    {
-        double sum = 0; 
-        for (j = 0; j < i; j++)
         {
-            sum += RT[i][j] * x1[j]; 
+            double sum = 0; 
+            for (j = 0; j < i; j++)
+                {
+                    sum += RT[i][j] * x1[j]; 
+                }
+            x1[i] = (dPermu[i] - sum)/RT[i][i]; 
         }
-        x1[i] = (dPermu[i] - sum)/RT[i][i]; 
-    }
 
     // solve x2; unconstrained LS
     YVector b1 = A1 * x1; 
@@ -1916,8 +1917,8 @@ VisMatrixExport void VISAPI VisDMatrixEQConstrainedLS(YMatrix& A, YVector& b,
 	UNUSED (x);
 	
     //throw CVisError("Constrained least squares only works with IMSL for now",
-      //              eviserrorOpFailed, "VisDMatrixEQConstrainedLS",
-        //            "VisDMatrix.cpp", __LINE__);
+    //              eviserrorOpFailed, "VisDMatrixEQConstrainedLS",
+    //            "VisDMatrix.cpp", __LINE__);
 #endif // VIS_USE_IMSL
 }
 
@@ -1951,7 +1952,7 @@ bool YMatrix::s_fVerboseOutput = true;
 #ifndef __QNX__
 VisMatrixExport std::ostream& VISAPI operator<<(std::ostream& os, const YVector& v)
 #else
-VisMatrixExport ostream& VISAPI operator<<(ostream& os, const YVector& v)
+    VisMatrixExport ostream& VISAPI operator<<(ostream& os, const YVector& v)
 #endif
 {
     if (YVector::s_fVerboseOutput)
@@ -1993,17 +1994,17 @@ VisMatrixExport ostream& VISAPI operator<<(ostream& os, const YVector& v)
 #ifndef __QNX__
 VisMatrixExport std::ostream& VISAPI operator<<(std::ostream& os, const YMatrix& mat)
 #else
-VisMatrixExport ostream& VISAPI operator<<(ostream& os, const YMatrix& mat)
+    VisMatrixExport ostream& VISAPI operator<<(ostream& os, const YMatrix& mat)
 #endif
 {
 #ifndef __QNX__
     if (YMatrix::s_fVerboseOutput)
         os << "# YMatrix<" << mat.NRows() << "," << 
-                              mat.NCols() << "> =" << std::endl;
+            mat.NCols() << "> =" << std::endl;
 #else
     if (YMatrix::s_fVerboseOutput)
         os << "# YMatrix<" << mat.NRows() << "," << 
-                              mat.NCols() << "> =" << endl;
+            mat.NCols() << "> =" << endl;
 #endif
     for (int i = 0; i < mat.NRows(); i++) {
         os << ((i == 0) ? "{{" :  " {");
@@ -2043,36 +2044,36 @@ const char *YVector::ReadWriteField(CVisSDStream& s, int field_id)
 {
 #ifdef VIS_INCLUDE_SDSTREAM
     switch (FieldType(field_id))
-	{
-    case eftName:
-        return "class YVector {";
+        {
+        case eftName:
+            return "class YVector {";
 
-    case eftLength:
-		if (s.Status() == CVisSDStream::Read)
-		{
-			int lengthNew = m_length;
-			s << lengthNew;
-			assert(lengthNew >= 0);
-			if (lengthNew != m_length)
-				Resize(lengthNew);
-		}
-		else
-		{
-			s << m_length;
-		}
-		return "int m_length;             // number of elements";
+        case eftLength:
+            if (s.Status() == CVisSDStream::Read)
+                {
+                    int lengthNew = m_length;
+                    s << lengthNew;
+                    assert(lengthNew >= 0);
+                    if (lengthNew != m_length)
+                        Resize(lengthNew);
+                }
+            else
+                {
+                    s << m_length;
+                }
+            return "int m_length;             // number of elements";
 
-    case eftData:
-		s.OpenParen();
-		for (int i = 0; i < m_length; i++)
-		{
-			s << m_data[i];
-			if (i < m_length - 1)
-				s.Comma();
-		}
-		s.CloseParen();
-        return "double m_data[m_length];  // elements";
-    }
+        case eftData:
+            s.OpenParen();
+            for (int i = 0; i < m_length; i++)
+                {
+                    s << m_data[i];
+                    if (i < m_length - 1)
+                        s.Comma();
+                }
+            s.CloseParen();
+            return "double m_data[m_length];  // elements";
+        }
 
     return 0;
 #else
@@ -2086,50 +2087,50 @@ const char *YMatrix::ReadWriteField(CVisSDStream& s, int field_id)
 {
 #ifdef VIS_INCLUDE_SDSTREAM
     switch (FieldType(field_id))
-	{
-    case eftName:
-        return "class YMatrix {";
+        {
+        case eftName:
+            return "class YMatrix {";
 
-    case eftDims:
-		s.OpenParen();
-		if (s.Status() == CVisSDStream::Read)
-		{
-			int nRowsNew = m_nRows;
-			int nColsNew = m_nCols;
-			s << nRowsNew;
-			s.Comma();
-			s << nColsNew;
-			assert((nRowsNew >= 0) && (nColsNew >= 0));
-			if ((nRowsNew != m_nRows) || (nColsNew != m_nCols))
-				Resize(nRowsNew, nColsNew);
-		}
-		else
-		{
-			s << m_nRows;
-			s.Comma();
-			s << m_nCols;
-		}
-		s.CloseParen();
-		return "int m_nRows, m_nCols;     // dimensions";
+        case eftDims:
+            s.OpenParen();
+            if (s.Status() == CVisSDStream::Read)
+                {
+                    int nRowsNew = m_nRows;
+                    int nColsNew = m_nCols;
+                    s << nRowsNew;
+                    s.Comma();
+                    s << nColsNew;
+                    assert((nRowsNew >= 0) && (nColsNew >= 0));
+                    if ((nRowsNew != m_nRows) || (nColsNew != m_nCols))
+                        Resize(nRowsNew, nColsNew);
+                }
+            else
+                {
+                    s << m_nRows;
+                    s.Comma();
+                    s << m_nCols;
+                }
+            s.CloseParen();
+            return "int m_nRows, m_nCols;     // dimensions";
 
-    case eftData:
-		s.NewLine();
-		s.OpenParen();
-		for (int r = 0; r < m_nRows; r++) {
-			s.OpenParen();
-			for (int c = 0; c < m_nCols; c++) {
-				s << (*this)[r][c];
-				if (c < m_nCols - 1)
-					s.Comma();
-			}
-			s.CloseParen();
-			if (r < m_nRows - 1)
-				s.Comma(), s.NewLine();
-		}
-		s.CloseParen();
-		s.NewLine();
-        return "double m_data[m_nRows][m_nCols];  // elements";
-    }
+        case eftData:
+            s.NewLine();
+            s.OpenParen();
+            for (int r = 0; r < m_nRows; r++) {
+                s.OpenParen();
+                for (int c = 0; c < m_nCols; c++) {
+                    s << (*this)[r][c];
+                    if (c < m_nCols - 1)
+                        s.Comma();
+                }
+                s.CloseParen();
+                if (r < m_nRows - 1)
+                    s.Comma(), s.NewLine();
+            }
+            s.CloseParen();
+            s.NewLine();
+            return "double m_data[m_nRows][m_nCols];  // elements";
+        }
 
     return 0;
 #else

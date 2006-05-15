@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPBottleContent.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPBottleContent.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -108,19 +109,19 @@ public:
 	 */
 	virtual int Read(YARPPortReader& reader)
     {
-	  // read id
-	  reader.Read((char*)(&id.length), sizeof(id.length));
-	  reader.Read(id.text, id.length);
-	  // read id
-	  reader.Read((char*)(&len),sizeof(len));
+        // read id
+        reader.Read((char*)(&id.length), sizeof(id.length));
+        reader.Read(id.text, id.length);
+        // read id
+        reader.Read((char*)(&len),sizeof(len));
 
-	  text.reserve(len);
-      text.resize(len);
+        text.reserve(len);
+        text.resize(len);
 
-	  top = len;
-      int result = reader.Read((char*)(&text[0]),len);
-	  rewind();
-      return result;
+        top = len;
+        int result = reader.Read((char*)(&text[0]),len);
+        rewind();
+        return result;
     }
   
 	/**
@@ -132,13 +133,13 @@ public:
 	 */
 	virtual int Write(YARPPortWriter& writer)
     {
-	  writer.Write((char*)(&id.length),sizeof(id.length));
-	  writer.Write((char*) id.text, id.length);
-	  len = top; 
+        writer.Write((char*)(&id.length),sizeof(id.length));
+        writer.Write((char*) id.text, id.length);
+        len = top; 
       
-      writer.Write((char*)(&len),sizeof(len));
-      int r = writer.Write((char*)(&text[0]),len);
-      return r;
+        writer.Write((char*)(&len),sizeof(len));
+        int r = writer.Write((char*)(&text[0]),len);
+        return r;
     }
   
 	/**

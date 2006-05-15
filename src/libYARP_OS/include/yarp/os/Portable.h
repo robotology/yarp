@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_OS_PORTABLE_
 #define _YARP2_OS_PORTABLE_
 
@@ -5,9 +6,9 @@
 #include <yarp/os/PortWriter.h>
 
 namespace yarp {
-  namespace os {
-    class Portable;
-  }
+    namespace os {
+        class Portable;
+    }
 }
 
 /**

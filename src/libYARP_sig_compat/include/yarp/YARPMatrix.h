@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: YARPMatrix.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPMatrix.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -190,7 +191,7 @@ public:
     inline double * data(void) { return m_data; }
     inline const double * data(void) const {return m_data; }
 
- private:
+private:
     int m_length;       // number of elements
     double *m_data;     // pointer to data
     //CVisMemBlockOf<double> m_memblockStorage;  // reference counted storage
@@ -205,82 +206,82 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 class YMatrix
 {
- public:
-  // Constructors (default destructor and copy constructor)
-  YMatrix(void);
-  YMatrix(int rows, int cols, const double *storage = 0);
-  YMatrix(const YMatrix &mat);
-  virtual ~YMatrix ();
+public:
+    // Constructors (default destructor and copy constructor)
+    YMatrix(void);
+    YMatrix(int rows, int cols, const double *storage = 0);
+    YMatrix(const YMatrix &mat);
+    virtual ~YMatrix ();
 
-  // Matrix shape
-  int NRows(void) const { return m_nRows; }
-  int NCols(void) const { return m_nCols; }
-  void Resize(int rows, int cols, const double *storage = 0);
+    // Matrix shape
+    int NRows(void) const { return m_nRows; }
+    int NCols(void) const { return m_nCols; }
+    void Resize(int rows, int cols, const double *storage = 0);
 
-  // Element access
-  double *operator[](int i) { return m_data[i]; }
-  const double *operator[](int i) const { return m_data[i]; }
+    // Element access
+    double *operator[](int i) { return m_data[i]; }
+    const double *operator[](int i) const { return m_data[i]; }
 
-  double& operator()(int i,int j) { return m_data[--i][--j]; }
-  const double& operator()(int i,int j) const { return m_data[--i][--j]; }
+    double& operator()(int i,int j) { return m_data[--i][--j]; }
+    const double& operator()(int i,int j) const { return m_data[--i][--j]; }
 
-  // Assignment
-  YMatrix& operator=(const YMatrix &mat);
-  YMatrix& operator=(double value);
+    // Assignment
+    YMatrix& operator=(const YMatrix &mat);
+    YMatrix& operator=(double value);
 
-  // We define operator < so that this class can be used in STL containers.
-  bool operator==(const YMatrix& refmatrix) const;
-  bool operator!=(const YMatrix& refmatrix) const;
-  bool operator==(double dbl) const;
-  bool operator!=(double dbl) const;
-  bool operator<(const YMatrix& refmatrix) const;
+    // We define operator < so that this class can be used in STL containers.
+    bool operator==(const YMatrix& refmatrix) const;
+    bool operator!=(const YMatrix& refmatrix) const;
+    bool operator==(double dbl) const;
+    bool operator!=(double dbl) const;
+    bool operator<(const YMatrix& refmatrix) const;
 
-  YMatrix operator+(double dbl) const;
-  YMatrix operator-(double dbl) const;
-  YMatrix operator+(const YMatrix& A) const;
+    YMatrix operator+(double dbl) const;
+    YMatrix operator-(double dbl) const;
+    YMatrix operator+(const YMatrix& A) const;
 
-  YMatrix operator-(void) const;
-  YMatrix operator-(const YMatrix& A) const;
+    YMatrix operator-(void) const;
+    YMatrix operator-(const YMatrix& A) const;
 
-  YMatrix operator*(double dbl) const;
-  YMatrix operator*(const YMatrix& refmatrix) const;
-  YVector operator*(const YVector& refvector) const;
+    YMatrix operator*(double dbl) const;
+    YMatrix operator*(const YMatrix& refmatrix) const;
+    YVector operator*(const YVector& refvector) const;
 
-  YMatrix operator/(double dbl) const;
+    YMatrix operator/(double dbl) const;
     
-  YMatrix& operator+=(const YMatrix& A);
-  YMatrix& operator-=(const YMatrix& A);
-  YMatrix& operator+=(double dbl);
-  YMatrix& operator-=(double dbl);
-  YMatrix& operator*=(double dbl);
-  YMatrix& operator*=(const YMatrix& A);
-  YMatrix& operator/=(double dbl);
+    YMatrix& operator+=(const YMatrix& A);
+    YMatrix& operator-=(const YMatrix& A);
+    YMatrix& operator+=(double dbl);
+    YMatrix& operator-=(double dbl);
+    YMatrix& operator*=(double dbl);
+    YMatrix& operator*=(const YMatrix& A);
+    YMatrix& operator/=(double dbl);
 	
-  bool IsSymmetric(void) const;
+    bool IsSymmetric(void) const;
 
-  YMatrix Inverted(void) const;
-  YMatrix& Invert(void);
+    YMatrix Inverted(void) const;
+    YMatrix& Invert(void);
 
-  YMatrix Transposed(void) const;
-  YMatrix& Transpose(void);
+    YMatrix Transposed(void) const;
+    YMatrix& Transpose(void);
 
-  // Self-describing input/output format
-  //enum FieldType { eftName, eftDims, eftData, eftEnd};
-  //const char *ReadWriteField(CVisSDStream& s, int field_id);
+    // Self-describing input/output format
+    //enum FieldType { eftName, eftDims, eftData, eftEnd};
+    //const char *ReadWriteField(CVisSDStream& s, int field_id);
     
-  // Flag used with the std::ostream file I/O methods.
-  // This may not be supported in future releases.
-  static bool s_fVerboseOutput; // print out dimensions on output
+    // Flag used with the std::ostream file I/O methods.
+    // This may not be supported in future releases.
+    static bool s_fVerboseOutput; // print out dimensions on output
 
-  inline double ** data(void) { return m_data; }
-  inline const double ** data(void) const { return (const double **) m_data; };
+    inline double ** data(void) { return m_data; }
+    inline const double ** data(void) const { return (const double **) m_data; };
 
- private:
-  int m_nRows;        // number of rows in matrix
-  int m_nCols;        // number of columns in matrix
-  double **m_data;    // Iliffe vector (array of pointers to data)
-  //CVisMemBlockOf<double> m_memblockStorage;  // reference counted storage
-  //CVisMemBlockOf<double *> m_memblockIliffe;   // Iliffe vector r. c. storage
+private:
+    int m_nRows;        // number of rows in matrix
+    int m_nCols;        // number of columns in matrix
+    double **m_data;    // Iliffe vector (array of pointers to data)
+    //CVisMemBlockOf<double> m_memblockStorage;  // reference counted storage
+    //CVisMemBlockOf<double *> m_memblockIliffe;   // Iliffe vector r. c. storage
 };
 
 
@@ -308,47 +309,47 @@ VisMatrixExport YVector VISAPI sin(const YVector& A);
 
 VisMatrixExport YMatrix VISAPI VisDMatrixSqrtInverse(const YMatrix& A);
 VisMatrixExport void VISAPI VisDMatrixSqrtInverse(const YMatrix& A,
-		YMatrix &AsqrtInv);
+                                                  YMatrix &AsqrtInv);
 
 VisMatrixExport YVector VISAPI VisDMatrixSolve(const YMatrix& A,
-		const YVector& b);
+                                               const YVector& b);
 VisMatrixExport void VISAPI VisDMatrixSolve(const YMatrix& A,
-		const YVector& b, YVector& x);
+                                            const YVector& b, YVector& x);
 
 
 
 // A is symmetric positive definite
 VisMatrixExport YVector VISAPI VisDMatrixSolveSPD(const YMatrix& A,
-		const YVector& b);
+                                                  const YVector& b);
 VisMatrixExport void VISAPI VisDMatrixSolveSPD(const YMatrix& A,
-		const YVector& b, YVector& x, int n = -1);
+                                               const YVector& b, YVector& x, int n = -1);
 
 VisMatrixExport YMatrix VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YMatrix& B);
+                                                      const YMatrix& B);
 VisMatrixExport void VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YMatrix& B,
-                           YMatrix& X);
+                                                   const YMatrix& B,
+                                                   YMatrix& X);
 VisMatrixExport YVector VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YVector& b);
+                                                      const YVector& b);
 VisMatrixExport void VISAPI VisDMatrixLeastSquares(const YMatrix& A,
-		const YVector& b,
-                           YVector& x);
+                                                   const YVector& b,
+                                                   YVector& x);
 
 
 
 // QR factorization related functions
 VisMatrixExport YVector VISAPI VisDMatrixSolveQR(const YMatrix& A,
-		const YVector& b);
+                                                 const YVector& b);
 VisMatrixExport void VISAPI VisDMatrixSolveQR(const YMatrix& A,
-		const YVector& b, YVector& x);
+                                              const YVector& b, YVector& x);
 VisMatrixExport void VISAPI VisDMatrixEQConstrainedLS(YMatrix& A,
-		YVector& b, YMatrix& C, YVector& d, YVector& x); 
+                                                      YVector& b, YMatrix& C, YVector& d, YVector& x); 
 
 
 // Singular Value Decomposition (SVD)
 VisMatrixExport void VISAPI VisDMatrixSVD(const YMatrix& A, YVector& s, 
-		YMatrix& U, YMatrix& V, int compute_left = 1,
-		int compute_right = 1);
+                                          YMatrix& U, YMatrix& V, int compute_left = 1,
+                                          int compute_right = 1);
 
 /**
  * SVD decomposition.
@@ -373,12 +374,12 @@ void SvdSolve(const YMatrix& u,
  
 VisMatrixExport void VISAPI VisDMatrixSVD(YMatrix& a, YVector& w, YMatrix& v);
 VisMatrixExport void VISAPI VisDMatrixSVD(const YMatrix& a, 
-					  YMatrix& u, 
-					  YVector& w, 
-					  YMatrix& v);
+                                          YMatrix& u, 
+                                          YVector& w, 
+                                          YMatrix& v);
 VisMatrixExport void VISAPI VisDMatrixSVD(const YMatrix& a,
-					  const YVector& b,
-					  YVector& x);
+                                          const YVector& b,
+                                          YVector& x);
 //
 // LU decomposition.
 //
@@ -387,8 +388,8 @@ void LuSolve(YMatrix& a, YVector& indx, YVector& b);
 
 VisMatrixExport void VISAPI VisDMatrixLU(YMatrix& a, YVector& indx, double& d);
 VisMatrixExport void VISAPI VisDMatrixLU(const YMatrix& a,
-					 const YVector& b,
-					 YVector& x);
+                                         const YVector& b,
+                                         YVector& x);
 
 // LATER:  Variations that don't find the eigenvector.
 VisMatrixExport void VISAPI VisMinEigenValue(YMatrix& A, YVector& x);
@@ -396,7 +397,7 @@ VisMatrixExport void VISAPI VisMaxEigenValue(YMatrix& A, YVector& x);
 
 // min = 1 -> minimum eigenvalue problem; min = 0 -> maximum eigenvalue
 VisMatrixExport double VISAPI VisMinMaxEigenValue(YMatrix& A, YVector& x,
-		bool fMin); 
+                                                  bool fMin); 
 
 
 

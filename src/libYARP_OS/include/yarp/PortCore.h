@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_PORTCORE_
 #define _YARP2_PORTCORE_
 
@@ -13,8 +14,8 @@
 #include <ace/Vector_T.h>
 
 namespace yarp {
-  class PortCore;
-  class PortCoreUnit;
+    class PortCore;
+    class PortCoreUnit;
 }
 
 /**
@@ -28,112 +29,112 @@ namespace yarp {
 class yarp::PortCore : public ThreadImpl, public PortManager, public Readable {
 public:
 
-  PortCore() : stateMutex(1), log("port",Logger::get()) {
-    // dormant phase
-    listening = false;
-    running = false;
-    starting = false;
-    closing = false;
-    finished = false;
-    autoHandshake = true;
-    waitBeforeSend = waitAfterSend = true;
-    events = 0;
-    face = NULL;
-    reader = NULL;
-  }
+    PortCore() : stateMutex(1), log("port",Logger::get()) {
+        // dormant phase
+        listening = false;
+        running = false;
+        starting = false;
+        closing = false;
+        finished = false;
+        autoHandshake = true;
+        waitBeforeSend = waitAfterSend = true;
+        events = 0;
+        face = NULL;
+        reader = NULL;
+    }
 
-  virtual ~PortCore();
+    virtual ~PortCore();
 
-  // configure core
-  bool listen(const Address& address);
+    // configure core
+    bool listen(const Address& address);
 
-  bool isWriting();
+    bool isWriting();
 
-  void setReadHandler(Readable& reader);
+    void setReadHandler(Readable& reader);
 
-  void setAutoHandshake(bool autoHandshake) {
-    this->autoHandshake = autoHandshake;
-  }
+    void setAutoHandshake(bool autoHandshake) {
+        this->autoHandshake = autoHandshake;
+    }
 
-  void setWaitBeforeSend(bool waitBeforeSend) {
-    this->waitBeforeSend = waitBeforeSend;
-  }
+    void setWaitBeforeSend(bool waitBeforeSend) {
+        this->waitBeforeSend = waitBeforeSend;
+    }
 
-  void setWaitAfterSend(bool waitAfterSend) {
-    this->waitAfterSend = waitAfterSend;
-  }
+    void setWaitAfterSend(bool waitAfterSend) {
+        this->waitAfterSend = waitAfterSend;
+    }
 
-  virtual bool read(ConnectionReader& reader) {
-    // does nothing by default
-    return true;
-  }
+    virtual bool read(ConnectionReader& reader) {
+        // does nothing by default
+        return true;
+    }
 
-  // start up core
-  virtual bool start();
+    // start up core
+    virtual bool start();
 
-  // use port as output
-  void send(Writable& writer);
+    // use port as output
+    void send(Writable& writer);
 
-  // shut down and deconfigure core
-  virtual void close();
+    // shut down and deconfigure core
+    virtual void close();
 
-  // main manager thread
-  virtual void run();
+    // main manager thread
+    virtual void run();
 
-  // useful for stress-testing
-  int getEventCount();
+    // useful for stress-testing
+    int getEventCount();
 
-  const Address& getAddress() const {
-    return address;
-  }
+    const Address& getAddress() const {
+        return address;
+    }
 
 public:
 
-  // PortManager interface, exposed to inputs
+    // PortManager interface, exposed to inputs
 
-  virtual void addOutput(const String& dest, void *id, OutputStream *os);
-  virtual void removeOutput(const String& dest, void *id, OutputStream *os);
-  virtual void removeInput(const String& dest, void *id, OutputStream *os);
-  virtual void describe(void *id, OutputStream *os);
-  virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os);
-
-private:
-
-  // internal maintenance of sub units
-
-  ACE_Vector<PortCoreUnit *> units;
-
-  // only called in "finished" phase
-  void closeUnits();
-
-  // called anytime, garbage collects terminated units
-  void cleanUnits();
-
-  // only called by the manager
-  void reapUnits();
-
-  // only called in "running" phase
-  void addInput(InputProtocol *ip);
-
-  void addOutput(OutputProtocol *op);
-
-  bool removeUnit(const Route& route);
+    virtual void addOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeInput(const String& dest, void *id, OutputStream *os);
+    virtual void describe(void *id, OutputStream *os);
+    virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
 private:
 
-  // main internal PortCore state and operations
-  SemaphoreImpl stateMutex;
-  Logger log;
-  Face *face;
-  String name;
-  Address address;
-  Readable *reader;
-  bool listening, running, starting, closing, finished, autoHandshake;
-  bool waitBeforeSend, waitAfterSend;
-  int events;
-  PortCorePackets packets;
+    // internal maintenance of sub units
 
-  void closeMain();
+    ACE_Vector<PortCoreUnit *> units;
+
+    // only called in "finished" phase
+    void closeUnits();
+
+    // called anytime, garbage collects terminated units
+    void cleanUnits();
+
+    // only called by the manager
+    void reapUnits();
+
+    // only called in "running" phase
+    void addInput(InputProtocol *ip);
+
+    void addOutput(OutputProtocol *op);
+
+    bool removeUnit(const Route& route);
+
+private:
+
+    // main internal PortCore state and operations
+    SemaphoreImpl stateMutex;
+    Logger log;
+    Face *face;
+    String name;
+    Address address;
+    Readable *reader;
+    bool listening, running, starting, closing, finished, autoHandshake;
+    bool waitBeforeSend, waitAfterSend;
+    int events;
+    PortCorePackets packets;
+
+    void closeMain();
 };
 
 #endif

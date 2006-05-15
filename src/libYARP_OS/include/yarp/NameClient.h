@@ -1,11 +1,12 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_NAMECLIENT_
 #define _YARP2_NAMECLIENT_
 
 #include <yarp/Address.h>
 
 namespace yarp {
-  class NameClient;
-  class NameServer;
+    class NameClient;
+    class NameServer;
 }
 
 /**
@@ -15,104 +16,104 @@ namespace yarp {
 class yarp::NameClient {
 public:
   
-  /**
-   * Get an instance of the name client.
-   * return the name client
-   */
-  static NameClient& getNameClient() {
-    if (instance==NULL) {
-      instance = new NameClient();
+    /**
+     * Get an instance of the name client.
+     * return the name client
+     */
+    static NameClient& getNameClient() {
+        if (instance==NULL) {
+            instance = new NameClient();
+        }
+        return *instance;
     }
-    return *instance;
-  }
 
-  // for memory management testing
-  static void removeNameClient() {
-    if (instance!=NULL) {
-      delete instance;
-      instance = NULL;
+    // for memory management testing
+    static void removeNameClient() {
+        if (instance!=NULL) {
+            delete instance;
+            instance = NULL;
+        }
     }
-  }
 
 
-  /**
-   * The address of the name server.
-   * @return the address of the name server
-   */
-  Address getAddress() {
-    return address;
-  }
+    /**
+     * The address of the name server.
+     * @return the address of the name server
+     */
+    Address getAddress() {
+        return address;
+    }
 
-  String getNamePart(const String& name) {
-    return name;
-  }
+    String getNamePart(const String& name) {
+        return name;
+    }
 
-  /**
-   * Look up the address of a named port.
-   * @param name the name of the port
-   * @return the address associated with the port
-   */
-  Address queryName(const String& name);
+    /**
+     * Look up the address of a named port.
+     * @param name the name of the port
+     * @return the address associated with the port
+     */
+    Address queryName(const String& name);
 
-  /**
-   * Register a port with a given name.
-   * @param name the name of the port
-   * @return the address associated with the port
-   */
-  Address registerName(const String& name);
+    /**
+     * Register a port with a given name.
+     * @param name the name of the port
+     * @return the address associated with the port
+     */
+    Address registerName(const String& name);
 
-  /**
-   * Register a port with a given name and a partial address.
-   * @param name the name of the port
-   * @param address a partially completed address
-   * @return the address associated with the port
-   */
-  Address registerName(const String& name, const Address& address);
+    /**
+     * Register a port with a given name and a partial address.
+     * @param name the name of the port
+     * @param address a partially completed address
+     * @return the address associated with the port
+     */
+    Address registerName(const String& name, const Address& address);
 
-  /**
-   * Register disassociation of name from port.
-   * @param name the name to remove
-   * @return the new result of queries for that name (should be empty)
-   */
-  Address unregisterName(const String& name);
+    /**
+     * Register disassociation of name from port.
+     * @param name the name to remove
+     * @return the new result of queries for that name (should be empty)
+     */
+    Address unregisterName(const String& name);
 
-  Address probe(const String& cmd) {
-    String result = send(cmd);
-    return extractAddress(result);
-  }
+    Address probe(const String& cmd) {
+        String result = send(cmd);
+        return extractAddress(result);
+    }
 
-  static Address extractAddress(const String& txt);
+    static Address extractAddress(const String& txt);
 
-  String send(const String& cmd, bool multi = true);
+    String send(const String& cmd, bool multi = true);
 
-  void setFakeMode(bool fake = true) {
-    this->fake = fake;
-  }
+    void setFakeMode(bool fake = true) {
+        this->fake = fake;
+    }
 
-  bool isFakeMode() {
-    return fake;
-  }
+    bool isFakeMode() {
+        return fake;
+    }
 
-  virtual ~NameClient();
+    virtual ~NameClient();
 
 
 private:
-  NameClient();
+    NameClient();
 
-  NameClient(const NameClient& nic) {
-    // make sure no-one tries to do this accidentally
-  }
+    NameClient(const NameClient& nic) {
+        // make sure no-one tries to do this accidentally
+    }
 
-  NameServer& getServer();
+    NameServer& getServer();
 
 
-  Address address;
-  String host;
-  String process;
-  bool fake;
-  NameServer *fakeServer;
+    Address address;
+    String host;
+    String process;
+    bool fake;
+    NameServer *fakeServer;
 
-  static NameClient *instance;
+    static NameClient *instance;
 };
 
 #endif

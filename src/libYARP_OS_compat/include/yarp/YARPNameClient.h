@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPNameClient.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNameClient.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -100,7 +101,7 @@
 
 
 #ifndef SIZE_BUF
-	#define SIZE_BUF 4096
+#define SIZE_BUF 4096
 #endif
 
 /**
@@ -244,8 +245,8 @@ public:
 
 	int _handle_reply(YARPString &out);
 
-  int check(const char *name, const char *key, 
-	    const char *value);
+    int check(const char *name, const char *key, 
+              const char *value);
 
 private:
 	// connect to server
@@ -266,7 +267,7 @@ private:
 	ACE_INET_Addr remote_addr_;
 	ACE_SOCK_Connector connector_;
 	YARPSemaphore mutex_;
-        YARPNameClient2 alt_client;
+    YARPNameClient2 alt_client;
 	
 	char *data_buf_;
 	char *reply_buf_;

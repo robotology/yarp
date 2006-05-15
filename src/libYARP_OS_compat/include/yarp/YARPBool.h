@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,12 +53,12 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPBool.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPBool.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Mon May 21 13:35:42 EDT 2001
- */
+  paulfitz Mon May 21 13:35:42 EDT 2001
+*/
 
 #ifndef YARPBool_INC
 #define YARPBool_INC

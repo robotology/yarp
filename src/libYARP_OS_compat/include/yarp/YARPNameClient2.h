@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #if !defined __NAME_CLIENT2__
 #define __NAME_CLIENT2__
@@ -21,36 +22,36 @@
 
 class YARPNameClient2 {
 public:
-  YARPNameClient2();
+    YARPNameClient2();
 
-  int isActive() {
-    return active;
-  }
+    int isActive() {
+        return active;
+    }
 
-  void activate(ACE_INET_Addr& nserver) {
-    active = 1;
-    server = nserver;
-  }
+    void activate(ACE_INET_Addr& nserver) {
+        active = 1;
+        server = nserver;
+    }
 
-  int registerName(const char *name, const char *ip, const char *type,
-		   ACE_INET_Addr& addr);
+    int registerName(const char *name, const char *ip, const char *type,
+                     ACE_INET_Addr& addr);
 
-  int queryName(const char *name, ACE_INET_Addr& addr, int *type);
+    int queryName(const char *name, ACE_INET_Addr& addr, int *type);
 
-  int check(const char *name, const char *key, const char *value);
+    int check(const char *name, const char *key, const char *value);
 
 
 private:
-  int active;
-  ACE_INET_Addr server;
+    int active;
+    ACE_INET_Addr server;
 
-  YARPString send(const YARPString& cmd, int multiline=0);
+    YARPString send(const YARPString& cmd, int multiline=0);
 
-  char current[MAX_TELNET_BUFFER];
-  int at, len;
+    char current[MAX_TELNET_BUFFER];
+    int at, len;
 
-  const char *receive(ACE_SOCK_Stream& is);
-  int receive(ACE_SOCK_Stream& is, char *data, int len, double timeout=0);
+    const char *receive(ACE_SOCK_Stream& is);
+    int receive(ACE_SOCK_Stream& is, char *data, int len, double timeout=0);
 };
 
 #endif

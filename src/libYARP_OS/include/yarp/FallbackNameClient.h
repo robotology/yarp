@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_FALLBACKNAMECLIENT_
 #define _YARP2_FALLBACKNAMECLIENT_
 
@@ -6,7 +7,7 @@
 #include <yarp/DgramTwoWayStream.h>
 
 namespace yarp {
-  class FallbackNameClient;
+    class FallbackNameClient;
 }
 
 /**
@@ -15,21 +16,21 @@ namespace yarp {
  */
 class yarp::FallbackNameClient : public ThreadImpl {
 public:
-  FallbackNameClient() {
-    closed = false;
-  }
+    FallbackNameClient() {
+        closed = false;
+    }
 
-  virtual void run();
-  virtual void close();
+    virtual void run();
+    virtual void close();
 
-  Address getAddress();
+    Address getAddress();
 
-  static Address seek();
+    static Address seek();
 
 private:
-  Address address;
-  DgramTwoWayStream listen;
-  bool closed;
+    Address address;
+    DgramTwoWayStream listen;
+    bool closed;
 };
 
 #endif

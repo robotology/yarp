@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/UnitTest.h>
 #include <yarp/Logger.h>
@@ -13,13 +14,13 @@ UnitTest *UnitTest::theRoot = NULL;
 
 class RootUnitTest : public UnitTest {
 public:
-  RootUnitTest(UnitTest *parent) : UnitTest(parent) {
-    // no parent
-  }
+    RootUnitTest(UnitTest *parent) : UnitTest(parent) {
+        // no parent
+    }
 
-  virtual String getName() {
-    return "root";
-  }
+    virtual String getName() {
+        return "root";
+    }
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -27,186 +28,186 @@ public:
 
 
 UnitTest::UnitTest() {
-  parent = &UnitTest::getRoot();
-  /*
+    parent = &UnitTest::getRoot();
+    /*
     // turn automation off, so order of test cases can be chosen
     // by user
-  if (parent!=NULL) {
+    if (parent!=NULL) {
     parent->add(*this);
-  }
-  */
-  hasProblem = false;
+    }
+    */
+    hasProblem = false;
 }
 
 UnitTest::UnitTest(UnitTest *parent) {
-  this->parent = parent;
-  if (parent!=NULL) {
-    parent->add(*this);
-  }
-  hasProblem = false;
+    this->parent = parent;
+    if (parent!=NULL) {
+        parent->add(*this);
+    }
+    hasProblem = false;
 }
 
 void UnitTest::add(UnitTest& unit) {
-  for (unsigned int i=0; i<subTests.size(); i++) {
-    if (subTests[i]==&unit) {
-      return; // already present, no need to add
+    for (unsigned int i=0; i<subTests.size(); i++) {
+        if (subTests[i]==&unit) {
+            return; // already present, no need to add
+        }
     }
-  }
-  subTests.push_back(&unit);
+    subTests.push_back(&unit);
 }
 
 void UnitTest::clear() {
-  subTests.clear();
+    subTests.clear();
 }
 
 void UnitTest::report(int severity, const String& problem) {
-  if (parent!=NULL) {
-    parent->report(severity, getName() + ": " + problem);
-  } else {
-    ACE_OS::printf("%d | %s\n", severity, problem.c_str());
-  }
-  count(severity);
+    if (parent!=NULL) {
+        parent->report(severity, getName() + ": " + problem);
+    } else {
+        ACE_OS::printf("%d | %s\n", severity, problem.c_str());
+    }
+    count(severity);
 }
 
 void UnitTest::count(int severity) {
-  if (severity>0) {
-    // could do something more sophisticated with the reports than this...
-    hasProblem = true;
-  }
+    if (severity>0) {
+        // could do something more sophisticated with the reports than this...
+        hasProblem = true;
+    }
 }
 
 
 void UnitTest::runSubTests(int argc, char *argv[]) {
-  //char buf[256];
-  //sprintf(buf,"size is %d", subTests.size());
-  //report(0,buf);
-  for (unsigned int i=0; i<subTests.size(); i++) {
-    try {
-      subTests[i]->run(argc,argv);
-    } catch (IOException e) {
-      report(1,String("exception thrown ") + e.toString());
+    //char buf[256];
+    //sprintf(buf,"size is %d", subTests.size());
+    //report(0,buf);
+    for (unsigned int i=0; i<subTests.size(); i++) {
+        try {
+            subTests[i]->run(argc,argv);
+        } catch (IOException e) {
+            report(1,String("exception thrown ") + e.toString());
+        }
     }
-  }
 }
 
 
 int UnitTest::run() {
-  run(0,NULL);
-  return hasProblem;
+    run(0,NULL);
+    return hasProblem;
 }
 
 
 int UnitTest::run(int argc, char *argv[]) {
-  try {
-    //report(0,String("starting tests for " + getName()));
-    bool ran = false;
-    if (argc==0) {
-      runTests();
-      ran = true;
-    } else {
-      String name = getName();
-      bool onList = false;
-      for (int i=0; i<argc; i++) {
-	if (name == String(argv[i])) {
-	  onList = true;
-	  break;
-	}
-      }
-      if (onList) {
-	runTests();
-	ran = true;
-      }
+    try {
+        //report(0,String("starting tests for " + getName()));
+        bool ran = false;
+        if (argc==0) {
+            runTests();
+            ran = true;
+        } else {
+            String name = getName();
+            bool onList = false;
+            for (int i=0; i<argc; i++) {
+                if (name == String(argv[i])) {
+                    onList = true;
+                    break;
+                }
+            }
+            if (onList) {
+                runTests();
+                ran = true;
+            }
+        }
+        runSubTests(argc,argv);
+        //report(0,String("ending tests for " + getName()));
+        if (hasProblem) {
+            report(0,"A PROBLEM WAS ENCOUNTERED");
+        } 
+        else {
+            if (ran) {
+                report(0,"no problems reported");
+            }
+        }
+    } catch (IOException e) {
+        report(1,String("exception thrown ") + e.toString());
     }
-    runSubTests(argc,argv);
-    //report(0,String("ending tests for " + getName()));
-    if (hasProblem) {
-      report(0,"A PROBLEM WAS ENCOUNTERED");
-    } 
-    else {
-      if (ran) {
-	report(0,"no problems reported");
-      }
-    }
-  } catch (IOException e) {
-    report(1,String("exception thrown ") + e.toString());
-  }
-  return hasProblem;
+    return hasProblem;
 }
 
 
 
 void UnitTest::startTestSystem() {
-  if (theRoot==NULL) {
-    theRoot = new RootUnitTest(NULL);
-  }
+    if (theRoot==NULL) {
+        theRoot = new RootUnitTest(NULL);
+    }
 }
 
 // system starts on first call, probably from a static object - this
 // is to avoid link order dependency problems
 UnitTest& UnitTest::getRoot() {
-  startTestSystem();
-  YARP_ASSERT(theRoot!=NULL);
-  return *theRoot;
+    startTestSystem();
+    YARP_ASSERT(theRoot!=NULL);
+    return *theRoot;
 }
 
 // this is the important one to call
 void UnitTest::stopTestSystem() {
-  if (theRoot!=NULL) {
-    delete theRoot;
-    theRoot = NULL;
-  }
+    if (theRoot!=NULL) {
+        delete theRoot;
+        theRoot = NULL;
+    }
 }
 
 
 bool UnitTest::checkEqualImpl(int x, int y, 
-			      const char *desc,
-			      const char *txt1,
-			      const char *txt2,
-			      const char *fname,
-			      int fline) {
-  char buf[1000];
-  ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
-		  fname, fline, desc, txt1, x, txt2, y);
-  if (x==y) {
-    report(0,String("[") + desc + "] passed ok");
-  } else {
-    report(1,String("FAILURE ") + buf);
-  }
-  return x==y;
+                              const char *desc,
+                              const char *txt1,
+                              const char *txt2,
+                              const char *fname,
+                              int fline) {
+    char buf[1000];
+    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
+                    fname, fline, desc, txt1, x, txt2, y);
+    if (x==y) {
+        report(0,String("[") + desc + "] passed ok");
+    } else {
+        report(1,String("FAILURE ") + buf);
+    }
+    return x==y;
 }
 
 bool UnitTest::checkEqualImpl(const String& x, const String& y,
-			      const char *desc,
-			      const char *txt1,
-			      const char *txt2,
-			      const char *fname,
-			      int fline) {
-  char buf[1000];
-  ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%s) == %s (%s)",
-		  fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
-  bool ok = (x==y);
-  if (ok) {
-    report(0,String("[") + desc + "] passed ok");
-  } else {
-    report(1,String("FAILURE ") + buf);
-  }
-  return ok;
+                              const char *desc,
+                              const char *txt1,
+                              const char *txt2,
+                              const char *fname,
+                              int fline) {
+    char buf[1000];
+    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%s) == %s (%s)",
+                    fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
+    bool ok = (x==y);
+    if (ok) {
+        report(0,String("[") + desc + "] passed ok");
+    } else {
+        report(1,String("FAILURE ") + buf);
+    }
+    return ok;
 }
 
 
 String UnitTest::humanize(const String& txt) {
-  String result("");
-  for (unsigned int i=0; i<txt.length(); i++) {
-    char ch = txt[i];
-    if (ch == '\n') {
-      result += "\\n";
-    } else if (ch == '\0') {
-      result += "\\0";
-    } else {
-      result += ch;
+    String result("");
+    for (unsigned int i=0; i<txt.length(); i++) {
+        char ch = txt[i];
+        if (ch == '\n') {
+            result += "\\n";
+        } else if (ch == '\0') {
+            result += "\\0";
+        } else {
+            result += ch;
+        }
     }
-  }
-  return result;
+    return result;
 }
 
 

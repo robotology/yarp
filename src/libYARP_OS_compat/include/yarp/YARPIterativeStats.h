@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,7 +53,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPIterativeStats.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPIterativeStats.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -92,18 +93,18 @@ public:
 		n_elem++;
 
 		if (n_elem == 1)
-		{
-			mean = new_elem;
-			sum_square = new_elem*new_elem;
-		    var = 0.0;
-		}
+            {
+                mean = new_elem;
+                sum_square = new_elem*new_elem;
+                var = 0.0;
+            }
 		else
-		{
-			mean = (mean*(n_elem-1) + new_elem)/(n_elem);
+            {
+                mean = (mean*(n_elem-1) + new_elem)/(n_elem);
 			
-			sum_square = sum_square + new_elem * new_elem;
-			var = (sum_square - n_elem * mean * mean)/(n_elem-1);
-		}
+                sum_square = sum_square + new_elem * new_elem;
+                var = (sum_square - n_elem * mean * mean)/(n_elem-1);
+            }
 	}
 
 	IterativeStats& operator +=(double new_elem) { add_point(new_elem); return *this; }

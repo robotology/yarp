@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,12 +62,12 @@
 ///
 
 ///
-/// $Id: YARPNameID.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNameID.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Tue May 22 15:34:43 EDT 2001
- */
+  paulfitz Tue May 22 15:34:43 EDT 2001
+*/
 
 #ifndef YARPNameID_INC
 #define YARPNameID_INC
@@ -417,7 +418,7 @@ protected:
 	/** The INET address of the socket. */
 	ACE_INET_Addr _address;
 	/** The interface name of the NIC, this is used by MCAST to determine
-	 on which network send messages to. */
+        on which network send messages to. */
 	YARPString _ifname;
 	/** The number of IP ports associated with this endpoint */
 	int _nports;
@@ -474,9 +475,9 @@ public:
 		_ports = NULL;
 
 		if (other._nports > 0 && other._ports != NULL)
-		{
-			setPorts (other._ports, other._nports);
-		}
+            {
+                setPorts (other._ports, other._nports);
+            }
 	}
 
 	/**
@@ -582,22 +583,22 @@ public:
 	YARPUniqueNameSock& operator= (const YARPUniqueNameSock& other)
 	{
 		if (_nports != other._nports)
-		{
-			delete[] _ports;
-			_nports = other._nports;
-			if (_nports > 0)
-			{
-				_ports = new int[_nports];
-				ACE_ASSERT (_ports != NULL);
-			}
-			else
-				_ports = NULL;
-		}
+            {
+                delete[] _ports;
+                _nports = other._nports;
+                if (_nports > 0)
+                    {
+                        _ports = new int[_nports];
+                        ACE_ASSERT (_ports != NULL);
+                    }
+                else
+                    _ports = NULL;
+            }
 
 		if (_nports > 0)
-		{
-			memcpy (_ports, other._ports, sizeof(int) * _nports);
-		}
+            {
+                memcpy (_ports, other._ports, sizeof(int) * _nports);
+            }
 
 		_address = other._address;
 		_ifname = other._ifname;

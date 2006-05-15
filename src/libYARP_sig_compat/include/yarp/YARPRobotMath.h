@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: YARPRobotMath.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPRobotMath.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -199,7 +200,7 @@ public:
     void operator=(double f) { YVector::operator=(f); }
     void operator=(const YDiff& m) { operator=((const YVector&)m); }
 
-// se t va da B->C allora l'uscita e' YDiff in C
+    // se t va da B->C allora l'uscita e' YDiff in C
 	inline YDiff& TransYDiff(const YHmgTrsf& t);
 };
 

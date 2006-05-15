@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: cvbase.cpp,v 1.1 2006-03-15 09:33:52 eshuy Exp $
+/// $Id: cvbase.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -127,18 +128,18 @@ void FreeAligned (T* ptr)
 ///
 
 /*
-typedef struct _IplConvKernel {
-    int           nCols;
-    int           nRows;
-    int           anchorX;
-    int           anchorY;
-    int          *values;
-    int           nShiftR;
-} IplConvKernel;
+  typedef struct _IplConvKernel {
+  int           nCols;
+  int           nRows;
+  int           anchorX;
+  int           anchorY;
+  int          *values;
+  int           nShiftR;
+  } IplConvKernel;
 */
 
 IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
-                       int anchorX, int anchorY, int* values, int nShiftR))
+                                                int anchorX, int anchorY, int* values, int nShiftR))
 {
 	IplConvKernel *ret = new IplConvKernel;
 	assert (ret != NULL);
@@ -156,17 +157,17 @@ IPLAPIIMPL(IplConvKernel*, iplCreateConvKernel,(int nCols, int nRows,
 }
 
 /*
-typedef struct _IplConvKernelFP {
-    int           nCols;
-    int           nRows;
-    int           anchorX;
-    int           anchorY;
-    float        *values;
-} IplConvKernelFP;
+  typedef struct _IplConvKernelFP {
+  int           nCols;
+  int           nRows;
+  int           anchorX;
+  int           anchorY;
+  float        *values;
+  } IplConvKernelFP;
 */
 
 IPLAPIIMPL(IplConvKernelFP*, iplCreateConvKernelFP,(int nCols, int nRows,
-                       int anchorX, int anchorY, float* values))
+                                                    int anchorX, int anchorY, float* values))
 {
 	IplConvKernelFP *ret = new IplConvKernelFP;
 	assert (ret != NULL);
@@ -183,7 +184,7 @@ IPLAPIIMPL(IplConvKernelFP*, iplCreateConvKernelFP,(int nCols, int nRows,
 }
 
 IPLAPIIMPL(void,iplGetConvKernel,(IplConvKernel* kernel, int* nCols, int* nRows,
-                      int* anchorX, int* anchorY, int** values, int *nShiftR))
+                                  int* anchorX, int* anchorY, int** values, int *nShiftR))
 {
 	assert (kernel != NULL);
 	assert (kernel->values != NULL);
@@ -197,7 +198,7 @@ IPLAPIIMPL(void,iplGetConvKernel,(IplConvKernel* kernel, int* nCols, int* nRows,
 }
 
 IPLAPIIMPL(void,iplGetConvKernelFP,(IplConvKernelFP* kernel,int* nCols, int* nRows,
-                      int* anchorX, int* anchorY, float** values))
+                                    int* anchorX, int* anchorY, float** values))
 {
 	assert (kernel != NULL);
 	assert (kernel->values != NULL);
@@ -230,7 +231,7 @@ IPLAPIIMPL(void, iplDeleteConvKernelFP,(IplConvKernelFP* kernel))
 // implemented for mono img. only.
 // TODO: in place stuff.
 IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
-                IplConvKernel** kernel, int nKernels, int combineMethod))
+                                IplConvKernel** kernel, int nKernels, int combineMethod))
 {
 	static char *__tmp_res = NULL;
 	static int __tmp_size = -1;
@@ -259,84 +260,84 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
 	assert (srcImage->nChannels == 1);	// Mono images only.
 
 	if (__tmp_res == NULL)
-	{
-		__tmp_size = dstImage->imageSize;
-		///__tmp_res = new char[dstImage->imageSize];
-		__tmp_res = AllocAligned<char> (dstImage->imageSize);
-		assert (__tmp_res != NULL);
-	}
+        {
+            __tmp_size = dstImage->imageSize;
+            ///__tmp_res = new char[dstImage->imageSize];
+            __tmp_res = AllocAligned<char> (dstImage->imageSize);
+            assert (__tmp_res != NULL);
+        }
 	else
-	{
-		if (__tmp_size < dstImage->imageSize)
-		{
-			// new size.
-			FreeAligned<char> (__tmp_res);
-			///delete[] __tmp_res;
-			__tmp_size = dstImage->imageSize;
-			///__tmp_res = new char[dstImage->imageSize];
-			__tmp_res = AllocAligned<char> (dstImage->imageSize);
-			assert (__tmp_res != NULL);
-		}
-	}
+        {
+            if (__tmp_size < dstImage->imageSize)
+                {
+                    // new size.
+                    FreeAligned<char> (__tmp_res);
+                    ///delete[] __tmp_res;
+                    __tmp_size = dstImage->imageSize;
+                    ///__tmp_res = new char[dstImage->imageSize];
+                    __tmp_res = AllocAligned<char> (dstImage->imageSize);
+                    assert (__tmp_res != NULL);
+                }
+        }
 	
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			int tmp;
-			for (int i = bordery; i <  h - bordery; i++)
-			{
-				for (int j = borderx; j < w - borderx; j++)
-				{
-					tmp = 0;
-					for (int k = 0; k < krows; k++)
-						for (int l = 0; l < kcols; l++)
-						{
-							tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx] 
-								* values[ksize - k * kcols - l - 1];
-						}
-					tmp >>= ktmp->nShiftR;
-					if (tmp > 255)
-						tmp = 255;
-					else
-					if (tmp < 0)
-						tmp = 0;
-					__tmp_res[i * w + j] = char(tmp);
-				}
-			}
+        {
+        case IPL_DEPTH_8U:
+            {
+                int tmp;
+                for (int i = bordery; i <  h - bordery; i++)
+                    {
+                        for (int j = borderx; j < w - borderx; j++)
+                            {
+                                tmp = 0;
+                                for (int k = 0; k < krows; k++)
+                                    for (int l = 0; l < kcols; l++)
+                                        {
+                                            tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx] 
+                                                * values[ksize - k * kcols - l - 1];
+                                        }
+                                tmp >>= ktmp->nShiftR;
+                                if (tmp > 255)
+                                    tmp = 255;
+                                else
+                                    if (tmp < 0)
+                                        tmp = 0;
+                                __tmp_res[i * w + j] = char(tmp);
+                            }
+                    }
 
-			memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
-		}
-		break;
+                memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			int tmp;
-			for (int i = bordery; i <  h - bordery; i++)
-			{
-				for (int j = borderx; j < w - borderx; j++)
-				{
-					tmp = 0;
-					for (int k = 0; k < krows; k++)
-						for (int l = 0; l < kcols; l++)
-						{
-							tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx] 
-								* values[ksize - k * kcols - l - 1];
-						}
-					tmp >>= ktmp->nShiftR;
-					if (tmp > 127)
-						tmp = 127;
-					else
-					if (tmp < -128)
-						tmp = -128;
-					__tmp_res[i * w + j] = char(tmp);
-				}
-			}
+        case IPL_DEPTH_8S:
+            {
+                int tmp;
+                for (int i = bordery; i <  h - bordery; i++)
+                    {
+                        for (int j = borderx; j < w - borderx; j++)
+                            {
+                                tmp = 0;
+                                for (int k = 0; k < krows; k++)
+                                    for (int l = 0; l < kcols; l++)
+                                        {
+                                            tmp += srcImage->imageData[(i + k - bordery) * w + j + l - borderx] 
+                                                * values[ksize - k * kcols - l - 1];
+                                        }
+                                tmp >>= ktmp->nShiftR;
+                                if (tmp > 127)
+                                    tmp = 127;
+                                else
+                                    if (tmp < -128)
+                                        tmp = -128;
+                                __tmp_res[i * w + j] = char(tmp);
+                            }
+                    }
 
-			memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
-		}
-		break;
-	}
+                memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
+            }
+            break;
+        }
 }
 
 // Implemented for mono images only.
@@ -344,7 +345,7 @@ IPLAPIIMPL(void, iplConvolve2D,(IplImage* srcImage, IplImage* dstImage,
 // TODO: allow inplace operation.
 // combineMethod is not used because only 1 kernel is allowed.
 IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
-                IplConvKernelFP** kernel, int nKernels, int combineMethod))
+                                  IplConvKernelFP** kernel, int nKernels, int combineMethod))
 {
 	// INPLACE: the first time it need to allocate the wk array.
 	// I do not really like this solution, it would be much better to
@@ -378,91 +379,91 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
 	assert (srcImage->depth == IPL_DEPTH_32F);
 
 	if (__tmp_res == NULL)
-	{
-		__tmp_size = dstImage->imageSize / sizeof(float);
-		///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
-		__tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-		assert (__tmp_res != NULL);
-	}
+        {
+            __tmp_size = dstImage->imageSize / sizeof(float);
+            ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
+            __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
+            assert (__tmp_res != NULL);
+        }
 	else
-	{
-		if (__tmp_size < (int)(dstImage->imageSize / sizeof(float)))
-		{
-			// new size.
-			///delete[] __tmp_res;
-			FreeAligned<float> (__tmp_res);
-			__tmp_size = dstImage->imageSize / sizeof(float);
-			///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
-			__tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-			assert (__tmp_res != NULL);
-		}
-	}
+        {
+            if (__tmp_size < (int)(dstImage->imageSize / sizeof(float)))
+                {
+                    // new size.
+                    ///delete[] __tmp_res;
+                    FreeAligned<float> (__tmp_res);
+                    __tmp_size = dstImage->imageSize / sizeof(float);
+                    ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
+                    __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
+                    assert (__tmp_res != NULL);
+                }
+        }
 
 	if (srcImage != dstImage)
-	{
-		float tmp;
-		float *source = (float *)srcImage->imageData;
-		float *dest = (float *)dstImage->imageData;
-		for (int i = bordery; i <  h - bordery; i++)
-		{
-			for (int j = borderx; j < w - borderx; j++)
-			{
-				tmp = 0;
-				for (int k = 0; k < krows; k++)
-					for (int l = 0; l < kcols; l++)
-					{
-						tmp += source[(i + k - bordery) * w + j + l - borderx] 
-							* values[ksize - k * kcols - l - 1];
-					}
-				dest[i * w + j] = tmp;
-			}
-		}
-	}
+        {
+            float tmp;
+            float *source = (float *)srcImage->imageData;
+            float *dest = (float *)dstImage->imageData;
+            for (int i = bordery; i <  h - bordery; i++)
+                {
+                    for (int j = borderx; j < w - borderx; j++)
+                        {
+                            tmp = 0;
+                            for (int k = 0; k < krows; k++)
+                                for (int l = 0; l < kcols; l++)
+                                    {
+                                        tmp += source[(i + k - bordery) * w + j + l - borderx] 
+                                            * values[ksize - k * kcols - l - 1];
+                                    }
+                            dest[i * w + j] = tmp;
+                        }
+                }
+        }
 	else
-	{
-		// inplace.
-		float tmp;
-		float *source = (float *)srcImage->imageData;
-		float *dest = (float *)dstImage->imageData;
-		for (int i = bordery; i <  h - bordery; i++)
-		{
-			for (int j = borderx; j < w - borderx; j++)
-			{
-				tmp = 0;
-				for (int k = 0; k < krows; k++)
-					for (int l = 0; l < kcols; l++)
-					{
-						tmp += source[(i + k - bordery) * w + j + l - borderx] 
-							* values[ksize - k * kcols - l - 1];
-					}
-				__tmp_res[i * w + j] = tmp;
-			}
-		}
+        {
+            // inplace.
+            float tmp;
+            float *source = (float *)srcImage->imageData;
+            float *dest = (float *)dstImage->imageData;
+            for (int i = bordery; i <  h - bordery; i++)
+                {
+                    for (int j = borderx; j < w - borderx; j++)
+                        {
+                            tmp = 0;
+                            for (int k = 0; k < krows; k++)
+                                for (int l = 0; l < kcols; l++)
+                                    {
+                                        tmp += source[(i + k - bordery) * w + j + l - borderx] 
+                                            * values[ksize - k * kcols - l - 1];
+                                    }
+                            __tmp_res[i * w + j] = tmp;
+                        }
+                }
 
-		memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
-	}
+            memcpy (dstImage->imageData, __tmp_res, dstImage->imageSize);
+        }
 }
 
 // TODO: inplace operation.
 IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
-                          IplImage* dstImage,
-                          IplConvKernelFP* xKernel,
-                          IplConvKernelFP* yKernel))
+                                     IplImage* dstImage,
+                                     IplConvKernelFP* xKernel,
+                                     IplConvKernelFP* yKernel))
 {
 	// here too I need memory to support inplace operations.
 	static float *__tmp_res = NULL;
 	static int __tmp_size = -1;
 
 	if (xKernel != NULL)
-	{
-		assert (xKernel->nRows == 1);
-		assert ((xKernel->nCols % 2) != 0);
-	}
+        {
+            assert (xKernel->nRows == 1);
+            assert ((xKernel->nCols % 2) != 0);
+        }
 	if (yKernel != NULL)
-	{
-		assert (yKernel->nCols == 1);
-		assert ((yKernel->nRows % 2) != 0);
-	}
+        {
+            assert (yKernel->nCols == 1);
+            assert ((yKernel->nRows % 2) != 0);
+        }
 
 	// do not consider anchor, borders are not set, and assumes
 	// that the kernel has odd dimensions (x only).
@@ -481,96 +482,96 @@ IPLAPIIMPL(void, iplConvolveSep2DFP,(IplImage* srcImage,
 	assert (srcImage->depth == IPL_DEPTH_32F);
 
 	if (__tmp_res == NULL)
-	{
-		__tmp_size = dstImage->imageSize / sizeof(float);
-		///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
-		__tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-		assert (__tmp_res != NULL);
-	}
+        {
+            __tmp_size = dstImage->imageSize / sizeof(float);
+            ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
+            __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
+            assert (__tmp_res != NULL);
+        }
 	else
-	{
-		if (__tmp_size < int(dstImage->imageSize / sizeof(float)))
-		{
-			// new size.
-			///delete[] __tmp_res;
-			FreeAligned<float> (__tmp_res);
-			__tmp_size = dstImage->imageSize / sizeof(float);
-			///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
-			__tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
-			assert (__tmp_res != NULL);
-		}
-	}
+        {
+            if (__tmp_size < int(dstImage->imageSize / sizeof(float)))
+                {
+                    // new size.
+                    ///delete[] __tmp_res;
+                    FreeAligned<float> (__tmp_res);
+                    __tmp_size = dstImage->imageSize / sizeof(float);
+                    ///__tmp_res = new float[dstImage->imageSize / sizeof(float)];
+                    __tmp_res = AllocAligned<float> (dstImage->imageSize / sizeof(float));
+                    assert (__tmp_res != NULL);
+                }
+        }
 
 	// inplace.
 	float *src = (float *)srcImage->imageData;
 	float *dst = (float *)dstImage->imageData;
 	if (xKernel != NULL)
-	{
-		// apply x kernel.
-		float tmp;
-		for (int i = 0; i <  h; i++)
-		{
-			for (int j = borderx; j < w - borderx; j++)
-			{
-				tmp = 0;
-				for (int k = 0; k < xksize; k++)
-					{
-						tmp += src[i * w + j + k - borderx] 
-							* xvalues[xksize - k - 1];
-					}
-				__tmp_res[i * w + j] = tmp;
-			}
-		}
-	}
+        {
+            // apply x kernel.
+            float tmp;
+            for (int i = 0; i <  h; i++)
+                {
+                    for (int j = borderx; j < w - borderx; j++)
+                        {
+                            tmp = 0;
+                            for (int k = 0; k < xksize; k++)
+                                {
+                                    tmp += src[i * w + j + k - borderx] 
+                                        * xvalues[xksize - k - 1];
+                                }
+                            __tmp_res[i * w + j] = tmp;
+                        }
+                }
+        }
 
 	if (yKernel != NULL)
-	{
-		// apply y kernel.
-		float tmp;
-		for (int i = bordery; i <  h - bordery; i++)
-		{
-			// can save borderx (if applied)!
-			for (int j = borderx; j < w - borderx; j++)
-			{
-				tmp = 0;
-				for (int k = 0; k < yksize; k++)
-					{
-						tmp += __tmp_res[(i + k - bordery) * w + j] 
-							* yvalues[yksize - k - 1];
-					}
-				dst[i * w + j] = tmp;
-			}
-		}
-	}
+        {
+            // apply y kernel.
+            float tmp;
+            for (int i = bordery; i <  h - bordery; i++)
+                {
+                    // can save borderx (if applied)!
+                    for (int j = borderx; j < w - borderx; j++)
+                        {
+                            tmp = 0;
+                            for (int k = 0; k < yksize; k++)
+                                {
+                                    tmp += __tmp_res[(i + k - bordery) * w + j] 
+                                        * yvalues[yksize - k - 1];
+                                }
+                            dst[i * w + j] = tmp;
+                        }
+                }
+        }
 }
 
 /*
-IPLAPIIMPL(IPLStatus, iplFixedFilter,(IplImage* srcImage, IplImage* dstImage,
-                                  IplFilter filter))
-{
-	// NOT IMPLEMENTED YET.
-	assert (implemented_yet == 0);
-	return -1;
-}
+  IPLAPIIMPL(IPLStatus, iplFixedFilter,(IplImage* srcImage, IplImage* dstImage,
+  IplFilter filter))
+  {
+  // NOT IMPLEMENTED YET.
+  assert (implemented_yet == 0);
+  return -1;
+  }
 */
 
 IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
-                      IplConvKernel* xKernel, IplConvKernel* yKernel))
+                                   IplConvKernel* xKernel, IplConvKernel* yKernel))
 {
 	// in place stuff.
 	static char *__tmp_res = NULL;
 	static int __tmp_size = -1;
 
 	if (xKernel != NULL)
-	{
-		assert (xKernel->nRows == 1);
-		assert ((xKernel->nCols % 2) != 0);
-	}
+        {
+            assert (xKernel->nRows == 1);
+            assert ((xKernel->nCols % 2) != 0);
+        }
 	if (yKernel != NULL)
-	{
-		assert (yKernel->nCols == 1);
-		assert ((yKernel->nRows % 2) != 0);
-	}
+        {
+            assert (yKernel->nCols == 1);
+            assert ((yKernel->nRows % 2) != 0);
+        }
 
 	// do not consider anchor, borders are not set, and assumes
 	// that the kernel has odd dimensions (x only).
@@ -588,134 +589,134 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
 	assert (srcImage->nChannels == 1);	// Mono images only.
 
 	if (__tmp_res == NULL)
-	{
-		__tmp_size = dstImage->imageSize;
-		///__tmp_res = new char[dstImage->imageSize];
-		__tmp_res = AllocAligned<char> (dstImage->imageSize);
-		assert (__tmp_res != NULL);
-	}
+        {
+            __tmp_size = dstImage->imageSize;
+            ///__tmp_res = new char[dstImage->imageSize];
+            __tmp_res = AllocAligned<char> (dstImage->imageSize);
+            assert (__tmp_res != NULL);
+        }
 	else
-	{
-		if (__tmp_size < dstImage->imageSize)
-		{
-			// new size.
-			FreeAligned<char> (__tmp_res);
-			///delete[] __tmp_res;
-			__tmp_size = dstImage->imageSize;
-			///__tmp_res = new char[dstImage->imageSize];
-			__tmp_res = AllocAligned<char> (dstImage->imageSize);
-			assert (__tmp_res != NULL);
-		}
-	}
+        {
+            if (__tmp_size < dstImage->imageSize)
+                {
+                    // new size.
+                    FreeAligned<char> (__tmp_res);
+                    ///delete[] __tmp_res;
+                    __tmp_size = dstImage->imageSize;
+                    ///__tmp_res = new char[dstImage->imageSize];
+                    __tmp_res = AllocAligned<char> (dstImage->imageSize);
+                    assert (__tmp_res != NULL);
+                }
+        }
 	
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			if (xKernel != NULL)
-			{
-				// apply x kernel.
-				int tmp;
-				for (int i = 0; i <  h; i++)
-				{
-					for (int j = borderx; j < w - borderx; j++)
-					{
-						tmp = 0;
-						for (int k = 0; k < xksize; k++)
-							{
-								tmp += srcImage->imageData[i * w + j + k - borderx] 
-									* xvalues[xksize - k - 1];
-							}
-						tmp >>= xKernel->nShiftR;
-						if (tmp > 255)
-							tmp = 255;
-						else
-						if (tmp < 0)
-							tmp = 0;
-						__tmp_res[i * w + j] = char(tmp);
-					}
-				}
-			}
+        {
+        case IPL_DEPTH_8U:
+            {
+                if (xKernel != NULL)
+                    {
+                        // apply x kernel.
+                        int tmp;
+                        for (int i = 0; i <  h; i++)
+                            {
+                                for (int j = borderx; j < w - borderx; j++)
+                                    {
+                                        tmp = 0;
+                                        for (int k = 0; k < xksize; k++)
+                                            {
+                                                tmp += srcImage->imageData[i * w + j + k - borderx] 
+                                                    * xvalues[xksize - k - 1];
+                                            }
+                                        tmp >>= xKernel->nShiftR;
+                                        if (tmp > 255)
+                                            tmp = 255;
+                                        else
+                                            if (tmp < 0)
+                                                tmp = 0;
+                                        __tmp_res[i * w + j] = char(tmp);
+                                    }
+                            }
+                    }
 
-			if (yKernel != NULL)
-			{
-				// apply y kernel.
-				int tmp;
-				for (int i = bordery; i <  h - bordery; i++)
-				{
-					// can save borderx (if applied)!
-					for (int j = borderx; j < w - borderx; j++)
-					{
-						tmp = 0;
-						for (int k = 0; k < yksize; k++)
-							{
-								tmp += __tmp_res[(i + k - bordery) * w + j] 
-									* yvalues[yksize - k - 1];
-							}
-						tmp >>= yKernel->nShiftR;
-						if (tmp > 255)
-							tmp = 255;
-						else
-						if (tmp < 0)
-							tmp = 0;
-						dstImage->imageData[i * w + j] = char(tmp);
-					}
-				}
-			}
-		}
-		break;
+                if (yKernel != NULL)
+                    {
+                        // apply y kernel.
+                        int tmp;
+                        for (int i = bordery; i <  h - bordery; i++)
+                            {
+                                // can save borderx (if applied)!
+                                for (int j = borderx; j < w - borderx; j++)
+                                    {
+                                        tmp = 0;
+                                        for (int k = 0; k < yksize; k++)
+                                            {
+                                                tmp += __tmp_res[(i + k - bordery) * w + j] 
+                                                    * yvalues[yksize - k - 1];
+                                            }
+                                        tmp >>= yKernel->nShiftR;
+                                        if (tmp > 255)
+                                            tmp = 255;
+                                        else
+                                            if (tmp < 0)
+                                                tmp = 0;
+                                        dstImage->imageData[i * w + j] = char(tmp);
+                                    }
+                            }
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			if (xKernel != NULL)
-			{
-				int tmp;
-				for (int i = 0; i <  h; i++)
-				{
-					for (int j = borderx; j < w - borderx; j++)
-					{
-						tmp = 0;
-						for (int k = 0; k < xksize; k++)
-							{
-								tmp += srcImage->imageData[i * w + j + k - borderx] 
-									* xvalues[xksize - k - 1];
-							}
-						tmp >>= xKernel->nShiftR;
-						if (tmp > 127)
-							tmp = 127;
-						else
-						if (tmp < -128)
-							tmp = -128;
-						__tmp_res[i * w + j] = char(tmp);
-					}
-				}
-			}
+        case IPL_DEPTH_8S:
+            {
+                if (xKernel != NULL)
+                    {
+                        int tmp;
+                        for (int i = 0; i <  h; i++)
+                            {
+                                for (int j = borderx; j < w - borderx; j++)
+                                    {
+                                        tmp = 0;
+                                        for (int k = 0; k < xksize; k++)
+                                            {
+                                                tmp += srcImage->imageData[i * w + j + k - borderx] 
+                                                    * xvalues[xksize - k - 1];
+                                            }
+                                        tmp >>= xKernel->nShiftR;
+                                        if (tmp > 127)
+                                            tmp = 127;
+                                        else
+                                            if (tmp < -128)
+                                                tmp = -128;
+                                        __tmp_res[i * w + j] = char(tmp);
+                                    }
+                            }
+                    }
 
-			if (yKernel != NULL)
-			{
-				int tmp;
-				for (int i = bordery; i <  h - bordery; i++)
-				{
-					for (int j = borderx; j < w - borderx; j++)
-					{
-						tmp = 0;
-						for (int k = 0; k < yksize; k++)
-							{
-								tmp += __tmp_res[(i + k - bordery) * w + j] 
-									* yvalues[yksize - k - 1];
-							}
-						tmp >>= yKernel->nShiftR;
-						if (tmp > 127)
-							tmp = 127;
-						else
-						if (tmp < -128)
-							tmp = -128;
-						dstImage->imageData[i * w + j] = char(tmp);
-					}
-				}
-			}
-		}
-	}
+                if (yKernel != NULL)
+                    {
+                        int tmp;
+                        for (int i = bordery; i <  h - bordery; i++)
+                            {
+                                for (int j = borderx; j < w - borderx; j++)
+                                    {
+                                        tmp = 0;
+                                        for (int k = 0; k < yksize; k++)
+                                            {
+                                                tmp += __tmp_res[(i + k - bordery) * w + j] 
+                                                    * yvalues[yksize - k - 1];
+                                            }
+                                        tmp >>= yKernel->nShiftR;
+                                        if (tmp > 127)
+                                            tmp = 127;
+                                        else
+                                            if (tmp < -128)
+                                                tmp = -128;
+                                        dstImage->imageData[i * w + j] = char(tmp);
+                                    }
+                            }
+                    }
+            }
+        }
 }
 
 // TODO: manage IPL ROI and tiling.
@@ -736,27 +737,27 @@ IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
 		image->imageDataOrigin = image->imageData;
 
 	if (doFill)
-	{
-		// this of course is only valid for depth == 8.
-		switch (image->depth)
-		{
-		case IPL_DEPTH_8U:
-		case IPL_DEPTH_8S:
-			memset (image->imageData, fillValue, image->imageSize);
-			break;
+        {
+            // this of course is only valid for depth == 8.
+            switch (image->depth)
+                {
+                case IPL_DEPTH_8U:
+                case IPL_DEPTH_8S:
+                    memset (image->imageData, fillValue, image->imageSize);
+                    break;
 
-		default:
-			assert (1 == 0);
-			break;
-		}
-	}
+                default:
+                    assert (1 == 0);
+                    break;
+                }
+        }
 }
 
 IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValue))
 {
 	assert (image->depth == IPL_DEPTH_32F);
 	assert (image->dataOrder == IPL_DATA_ORDER_PIXEL);
-///	assert (image->widthStep == image->width * (image->depth & IPL_DEPTH_MASK) / 8 * image->nChannels);
+    ///	assert (image->widthStep == image->width * (image->depth & IPL_DEPTH_MASK) / 8 * image->nChannels);
 	assert (image->imageSize == image->widthStep * image->height);
 
 	image->imageData = AllocAligned<char> (image->imageSize);
@@ -768,25 +769,25 @@ IPLAPIIMPL(void, iplAllocateImageFP,(IplImage* image, int doFill, float fillValu
 		image->imageDataOrigin = image->imageData;
 
 	if (doFill)
-	{
-		if (fillValue == 0)
-		{
-			// assume IEEE float
-			memset (image->imageData, 0, image->imageSize);
-		}
-		else
-		{
-			assert (PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
+        {
+            if (fillValue == 0)
+                {
+                    // assume IEEE float
+                    memset (image->imageData, 0, image->imageSize);
+                }
+            else
+                {
+                    assert (PAD_BYTES (image->widthStep, YARP_IMAGE_ALIGN) == 0);
 
-			// time consuming
-			float *tmp = (float *)image->imageData;
-			const int limit = image->imageSize / sizeof(float);
-			for (int i = 0; i < limit; i++)
-			{
-				*tmp++ = float(fillValue);
-			}
-		}
-	}
+                    // time consuming
+                    float *tmp = (float *)image->imageData;
+                    const int limit = image->imageSize / sizeof(float);
+                    for (int i = 0; i < limit; i++)
+                        {
+                            *tmp++ = float(fillValue);
+                        }
+                }
+        }
 }
 
 IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
@@ -840,26 +841,26 @@ IPLAPIIMPL(void, iplDeallocateImage,(IplImage* image))
 */
 
 IPLAPIIMPL(IplImage*, iplCreateImageHeader,
-               (int   nChannels,  int     alphaChannel, int     depth,
-                char* colorModel, char*   channelSeq,   int     dataOrder,
-                int   origin,     int     align,
-                int   width,      int   height, IplROI* roi, IplImage* maskROI,
-                void* imageId,    IplTileInfo* tileInfo))
+           (int   nChannels,  int     alphaChannel, int     depth,
+            char* colorModel, char*   channelSeq,   int     dataOrder,
+            int   origin,     int     align,
+            int   width,      int   height, IplROI* roi, IplImage* maskROI,
+            void* imageId,    IplTileInfo* tileInfo))
 {
 	switch (depth)
-	{
-	default:
-	case IPL_DEPTH_1U:
-		return NULL;
+        {
+        default:
+        case IPL_DEPTH_1U:
+            return NULL;
 
-    case IPL_DEPTH_8U:
-    case IPL_DEPTH_8S:
-    case IPL_DEPTH_32F:
-    case IPL_DEPTH_16U:
-	case IPL_DEPTH_16S:
-    case IPL_DEPTH_32S:
-		break;
-	}
+        case IPL_DEPTH_8U:
+        case IPL_DEPTH_8S:
+        case IPL_DEPTH_32F:
+        case IPL_DEPTH_16U:
+        case IPL_DEPTH_16S:
+        case IPL_DEPTH_32S:
+            break;
+        }
 
 	IplImage *r = NULL;
 	r = new IplImage;
@@ -909,30 +910,30 @@ IPLAPIIMPL(IplImage*, iplCreateImageHeader,
 IPLAPIIMPL(IplImage*, iplCloneImage, ( const IplImage* img ) )
 {
 	IplImage *ret = iplCreateImageHeader (
-		img->nChannels, img->alphaChannel, img->depth, (char *)img->colorModel, (char *)img->channelSeq,
-		img->dataOrder, img->origin, img->align, img->width, img->height, NULL, NULL,
-		img->imageId, NULL);
+                                          img->nChannels, img->alphaChannel, img->depth, (char *)img->colorModel, (char *)img->channelSeq,
+                                          img->dataOrder, img->origin, img->align, img->width, img->height, NULL, NULL,
+                                          img->imageId, NULL);
 
 	if (img->imageData != NULL)
-	{
-		switch (img->depth)
-		{
-		case IPL_DEPTH_8U:
-		case IPL_DEPTH_8S:
-			iplAllocateImage (ret, 0, 0);
-			break;
+        {
+            switch (img->depth)
+                {
+                case IPL_DEPTH_8U:
+                case IPL_DEPTH_8S:
+                    iplAllocateImage (ret, 0, 0);
+                    break;
 
-		case IPL_DEPTH_32F:
-			iplAllocateImageFP (ret, 0, 0.0);
-			break;
+                case IPL_DEPTH_32F:
+                    iplAllocateImageFP (ret, 0, 0.0);
+                    break;
 
-		default:
-			assert (1 == 0);
-			break;
-		}
+                default:
+                    assert (1 == 0);
+                    break;
+                }
 
-		memcpy (ret->imageData, img->imageData, img->imageSize);
-	}
+            memcpy (ret->imageData, img->imageData, img->imageSize);
+        }
 
 	return ret;
 }
@@ -950,10 +951,10 @@ IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image))
 
 	assert (image->nSize == sizeof(IplImage));
 	if (image->imageData != NULL)
-	{
-		FreeAligned<char> (image->imageData);
-		///delete[] image->imageData;
-	}
+        {
+            FreeAligned<char> (image->imageData);
+            ///delete[] image->imageData;
+        }
 
 	delete image;
 }
@@ -961,33 +962,33 @@ IPLAPIIMPL(void, iplDeallocateHeader,(IplImage* image))
 IPLAPIIMPL(void, iplDeallocate,(IplImage* image, int flag))
 {
 	switch (flag)
-	{
-	case IPL_IMAGE_ALL_WITHOUT_MASK:
-	case IPL_IMAGE_ALL:
-	case IPL_IMAGE_HEADER:
-		iplDeallocateHeader (image);
-		break;
+        {
+        case IPL_IMAGE_ALL_WITHOUT_MASK:
+        case IPL_IMAGE_ALL:
+        case IPL_IMAGE_HEADER:
+            iplDeallocateHeader (image);
+            break;
 
-	case IPL_IMAGE_DATA:
-		iplDeallocateImage (image);
-		break;
+        case IPL_IMAGE_DATA:
+            iplDeallocateImage (image);
+            break;
 
-	case IPL_IMAGE_ROI:
-	case IPL_IMAGE_TILE:
-	case IPL_IMAGE_MASK:
-		// NOT IMPLEMENTED.
-		break;
-	}
+        case IPL_IMAGE_ROI:
+        case IPL_IMAGE_TILE:
+        case IPL_IMAGE_MASK:
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void,iplSetBorderMode,(IplImage *src,int mode,int border,int constVal))
 {
 	for (int i = 0; i < 4; i++)
 		if ((border >> i) & 0x1)
-		{
-			src->BorderMode[i] = mode;
-			src->BorderConst[i] = constVal;
-		}
+            {
+                src->BorderMode[i] = mode;
+                src->BorderConst[i] = constVal;
+            }
 }
 
 // this is ok only for 8 bits pixel/planes images. RGB and HSV are ok too.
@@ -1017,58 +1018,58 @@ IPLAPIIMPL(void, iplAddS,(IplImage* srcImage, IplImage* dstImage, int value))
 
 	// assume images have the same size and 8 bits/pixel/planes.
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			const int size = srcImage->imageSize;
-			unsigned char * src = (unsigned char *)srcImage->imageData;
-			unsigned char * dst = (unsigned char *)dstImage->imageData;
+        {
+        case IPL_DEPTH_8U:
+            {
+                const int size = srcImage->imageSize;
+                unsigned char * src = (unsigned char *)srcImage->imageData;
+                unsigned char * dst = (unsigned char *)dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src++ + value;
-				if (tmp < 0) 
-					tmp = 0;
-				else
-				if (tmp > 255)
-					tmp = 255;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src++ + value;
+                        if (tmp < 0) 
+                            tmp = 0;
+                        else
+                            if (tmp > 255)
+                                tmp = 255;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImage->imageSize;
-			char * src = srcImage->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImage->imageSize;
+                char * src = srcImage->imageData;
+                char * dst = dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src++ + value;
-				if (tmp < -128) 
-					tmp = -128;
-				else
-				if (tmp > 127)
-					tmp = 127;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src++ + value;
+                        if (tmp < -128) 
+                            tmp = -128;
+                        else
+                            if (tmp > 127)
+                                tmp = 127;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
-                             IplImage* dstImage))
+                         IplImage* dstImage))
 {
 	assert (compareHeader (srcImageA, srcImageB));
 	assert (compareHeader (srcImageB, dstImage));
@@ -1078,207 +1079,207 @@ IPLAPIIMPL(void, iplAdd,(IplImage* srcImageA, IplImage* srcImageB,
 
 	// assume images have the same size and 8 bits/pixel/planes.
 	switch (srcImageA->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			const int size = srcImageA->imageSize;
-			unsigned char * src1 = (unsigned char *)srcImageA->imageData;
-			unsigned char * src2 = (unsigned char *)srcImageB->imageData;
-			unsigned char * dst = (unsigned char *)dstImage->imageData;
+        {
+        case IPL_DEPTH_8U:
+            {
+                const int size = srcImageA->imageSize;
+                unsigned char * src1 = (unsigned char *)srcImageA->imageData;
+                unsigned char * src2 = (unsigned char *)srcImageB->imageData;
+                unsigned char * dst = (unsigned char *)dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src1++ + *src2++;
-				if (tmp > 255)
-					tmp = 255;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src1++ + *src2++;
+                        if (tmp > 255)
+                            tmp = 255;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImageA->imageSize;
-			char * src1 = srcImageA->imageData;
-			char * src2 = srcImageB->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImageA->imageSize;
+                char * src1 = srcImageA->imageData;
+                char * src2 = srcImageB->imageData;
+                char * dst = dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src1++ + *src2++;
-				if (tmp < -128) 
-					tmp = -128;
-				else
-				if (tmp > 127)
-					tmp = 127;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src1++ + *src2++;
+                        if (tmp < -128) 
+                            tmp = -128;
+                        else
+                            if (tmp > 127)
+                                tmp = 127;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_32F:
-		{
-			const int size = srcImageA->imageSize / sizeof(float);
-			float * src1 = (float *)srcImageA->imageData;
-			float * src2 = (float *)srcImageB->imageData;
-			float * dst = (float *)dstImage->imageData;
+        case IPL_DEPTH_32F:
+            {
+                const int size = srcImageA->imageSize / sizeof(float);
+                float * src1 = (float *)srcImageA->imageData;
+                float * src2 = (float *)srcImageB->imageData;
+                float * dst = (float *)dstImage->imageData;
 
-			for (int i = 0; i < size; i++)
-			{
-				*dst++ = *src1++ + *src2++;
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        *dst++ = *src1++ + *src2++;
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void, iplSubtract,(IplImage* srcImageA, IplImage* srcImageB,
-                          IplImage* dstImage))
+                              IplImage* dstImage))
 {
 	assert (compareHeader (srcImageA, srcImageB));
 	assert (compareHeader (srcImageB, dstImage));
 	
 	// assume images have the same size and 8 bits/pixel/planes.
 	switch (srcImageA->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			const int size = srcImageA->imageSize;
-			unsigned char * src1 = (unsigned char *)srcImageA->imageData;
-			unsigned char * src2 = (unsigned char *)srcImageB->imageData;
-			unsigned char * dst = (unsigned char *)dstImage->imageData;
+        {
+        case IPL_DEPTH_8U:
+            {
+                const int size = srcImageA->imageSize;
+                unsigned char * src1 = (unsigned char *)srcImageA->imageData;
+                unsigned char * src2 = (unsigned char *)srcImageB->imageData;
+                unsigned char * dst = (unsigned char *)dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src1++ - *src2++;
-				if (tmp < 0)
-					tmp = 0;
-				if (tmp > 255)
-					tmp = 255;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src1++ - *src2++;
+                        if (tmp < 0)
+                            tmp = 0;
+                        if (tmp > 255)
+                            tmp = 255;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImageA->imageSize;
-			char * src1 = srcImageA->imageData;
-			char * src2 = srcImageB->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImageA->imageSize;
+                char * src1 = srcImageA->imageData;
+                char * src2 = srcImageB->imageData;
+                char * dst = dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				tmp = *src1++ - *src2++;
-				if (tmp < -128) 
-					tmp = -128;
-				else
-				if (tmp > 127)
-					tmp = 127;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        tmp = *src1++ - *src2++;
+                        if (tmp < -128) 
+                            tmp = -128;
+                        else
+                            if (tmp > 127)
+                                tmp = 127;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_32F:
-		{
-			const int size = srcImageA->imageSize / sizeof(float);
-			float * src1 = (float *)srcImageA->imageData;
-			float * src2 = (float *)srcImageB->imageData;
-			float * dst = (float *)dstImage->imageData;
+        case IPL_DEPTH_32F:
+            {
+                const int size = srcImageA->imageSize / sizeof(float);
+                float * src1 = (float *)srcImageA->imageData;
+                float * src2 = (float *)srcImageB->imageData;
+                float * dst = (float *)dstImage->imageData;
 			
-			for (int i = 0; i < size; i++)
-			{
-				*dst++ = *src1++ - *src2++;
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        *dst++ = *src1++ - *src2++;
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void, iplSubtractS,(IplImage* srcImage, IplImage* dstImage, int value,
-                                                                  bool flip))
+                               bool flip))
 {
 	// assume images have the same size and 8 bits/pixel/planes.
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			const int size = srcImage->imageSize;
-			unsigned char * src = (unsigned char *)srcImage->imageData;
-			unsigned char * dst = (unsigned char *)dstImage->imageData;
+        {
+        case IPL_DEPTH_8U:
+            {
+                const int size = srcImage->imageSize;
+                unsigned char * src = (unsigned char *)srcImage->imageData;
+                unsigned char * dst = (unsigned char *)dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				if (flip)
-					tmp = value - *src++;
-				else
-					tmp = *src++ - value;
+                for (int i = 0; i < size; i++)
+                    {
+                        if (flip)
+                            tmp = value - *src++;
+                        else
+                            tmp = *src++ - value;
 
-				if (tmp < 0) 
-					tmp = 0;
-				else
-				if (tmp > 255)
-					tmp = 255;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                        if (tmp < 0) 
+                            tmp = 0;
+                        else
+                            if (tmp > 255)
+                                tmp = 255;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImage->imageSize;
-			char * src = srcImage->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImage->imageSize;
+                char * src = srcImage->imageData;
+                char * dst = dstImage->imageData;
 			
-			short tmp;
+                short tmp;
 
-			for (int i = 0; i < size; i++)
-			{
-				if (flip)
-					tmp = value - *src++;
-				else
-					tmp = *src++ - value;
+                for (int i = 0; i < size; i++)
+                    {
+                        if (flip)
+                            tmp = value - *src++;
+                        else
+                            tmp = *src++ - value;
 
-				if (tmp < -128) 
-					tmp = -128;
-				else
-				if (tmp > 127)
-					tmp = 127;
-				*dst++ = char(tmp);
-			}
-		}
-		break;
+                        if (tmp < -128) 
+                            tmp = -128;
+                        else
+                            if (tmp > 127)
+                                tmp = 127;
+                        *dst++ = char(tmp);
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
-                                                                 float value))
+                                 float value))
 {
 	assert (compareHeader (srcImage, dstImage));
 	assert (srcImage->depth == IPL_DEPTH_32F);
@@ -1288,85 +1289,85 @@ IPLAPIIMPL(void, iplMultiplySFP,(IplImage* srcImage, IplImage* dstImage,
 	float * dst = (float *)dstImage->imageData;
 	
 	for (int i = 0; i < size; i++)
-	{
-		*dst++ = *src1++ * value;
-	}
+        {
+            *dst++ = *src1++ * value;
+        }
 }
 
 IPLAPIIMPL(void, iplAbs,(IplImage* srcImage, IplImage* dstImage))
 {
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			memcpy (dstImage->imageData, srcImage->imageData, dstImage->imageSize);
-		}
-		break;
+        {
+        case IPL_DEPTH_8U:
+            {
+                memcpy (dstImage->imageData, srcImage->imageData, dstImage->imageSize);
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImage->imageSize;
-			char * src = srcImage->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImage->imageSize;
+                char * src = srcImage->imageData;
+                char * dst = dstImage->imageData;
 			
-			for (int i = 0; i < size; i++)
-			{
-				if (*src < 0)
-					*dst++ = -*src++;
-				else
-					*dst++ = *src++;
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        if (*src < 0)
+                            *dst++ = -*src++;
+                        else
+                            *dst++ = *src++;
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 IPLAPIIMPL(void, iplThreshold, (IplImage* srcImage, IplImage* dstImage, int threshold))
 {
 	switch (srcImage->depth)
-	{
-	case IPL_DEPTH_8U:
-		{
-			const int size = srcImage->imageSize;
-			unsigned char * src = (unsigned char *)srcImage->imageData;
-			unsigned char * dst = (unsigned char *)dstImage->imageData;
+        {
+        case IPL_DEPTH_8U:
+            {
+                const int size = srcImage->imageSize;
+                unsigned char * src = (unsigned char *)srcImage->imageData;
+                unsigned char * dst = (unsigned char *)dstImage->imageData;
 
-			for (int i = 0; i < size; i++)
-			{
-				if (*src++ < threshold)
-					*dst++ = 0;
-				else
-					*dst++ = 255;
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        if (*src++ < threshold)
+                            *dst++ = 0;
+                        else
+                            *dst++ = 255;
+                    }
+            }
+            break;
 
-	case IPL_DEPTH_8S:
-		{
-			const int size = srcImage->imageSize;
-			char * src = srcImage->imageData;
-			char * dst = dstImage->imageData;
+        case IPL_DEPTH_8S:
+            {
+                const int size = srcImage->imageSize;
+                char * src = srcImage->imageData;
+                char * dst = dstImage->imageData;
 			
-			for (int i = 0; i < size; i++)
-			{
-				if (*src++ < threshold)
-					*dst++ = -128;
-				else
-					*dst++ = 127;
-			}
-		}
-		break;
+                for (int i = 0; i < size; i++)
+                    {
+                        if (*src++ < threshold)
+                            *dst++ = -128;
+                        else
+                            *dst++ = 127;
+                    }
+            }
+            break;
 
-	default:
-		assert (1 == 0);
-		// NOT IMPLEMENTED.
-		break;
-	}
+        default:
+            assert (1 == 0);
+            // NOT IMPLEMENTED.
+            break;
+        }
 }
 
 // TODO: HSV to Gray!
@@ -1384,18 +1385,18 @@ IPLAPIIMPL(void, iplColorToGray,(IplImage* srcImage, IplImage* dstImage))
 	const int w = dstImage->width;
 	const int size = w * h;
 	for (int i = 0; i < size; i++)
-	{
-		short tmp = *sdata++;
-		tmp += *sdata++;
-		tmp += *sdata++;
-		tmp /= 3;
+        {
+            short tmp = *sdata++;
+            tmp += *sdata++;
+            tmp += *sdata++;
+            tmp /= 3;
 
-		*dst++ = char(tmp);
-	}
+            *dst++ = char(tmp);
+        }
 }
 
 IPLAPIIMPL(IplROI *,iplCreateROI,(int coi,    int xOffset, int   yOffset,
-                              int width, int height ))
+                                  int width, int height ))
 {
 	// NOT IMPLEMENTED YET.
 	assert (implemented_yet == 0);
@@ -1403,8 +1404,8 @@ IPLAPIIMPL(IplROI *,iplCreateROI,(int coi,    int xOffset, int   yOffset,
 }
 
 IPLAPIIMPL(void, iplSetROI,(IplROI*   roi,      int coi,
-                        int       xOffset,  int yOffset,
-                        int width,          int height))
+                            int       xOffset,  int yOffset,
+                            int width,          int height))
 {
 	assert (implemented_yet == 0);
 }
@@ -1429,84 +1430,84 @@ IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
 	const int size = width * height; // # of pixels.
 
 	for (int i = 0; i < size; i++)
-	{
-		blue = *sdata++ / 255.0;
-		green = *sdata++ / 255.0;
-		red = *sdata++ / 255.0;
+        {
+            blue = *sdata++ / 255.0;
+            green = *sdata++ / 255.0;
+            red = *sdata++ / 255.0;
 
-		if (red > green && red > blue) 
-		{
-			max = red;
-			if (green > blue)
-				min = blue;
-			else
-				min = green;
-		}
-		else
-		if (green > red && green > blue)
-		{
-			max = green;
-			if (red > blue)
-				min = blue;
-			else
-				min = red;
-		}
-		else
-		{
-			max = blue;
-			if (red > green)
-				min = green;
-			else
-				min = red;
-		}
+            if (red > green && red > blue) 
+                {
+                    max = red;
+                    if (green > blue)
+                        min = blue;
+                    else
+                        min = green;
+                }
+            else
+                if (green > red && green > blue)
+                    {
+                        max = green;
+                        if (red > blue)
+                            min = blue;
+                        else
+                            min = red;
+                    }
+                else
+                    {
+                        max = blue;
+                        if (red > green)
+                            min = green;
+                        else
+                            min = red;
+                    }
 
-		// value
-		*ddata2 = (unsigned char)(255.0 * max);
-		ddata2 += 3;
+            // value
+            *ddata2 = (unsigned char)(255.0 * max);
+            ddata2 += 3;
 
-		// saturation
-		if (max != 0.0)
-		{
-			sat = *ddata1 = (unsigned char)(255 * (max - min) / max);
-		}
-		else
-			sat = *ddata1 = 0;
-		ddata1 += 3;
+            // saturation
+            if (max != 0.0)
+                {
+                    sat = *ddata1 = (unsigned char)(255 * (max - min) / max);
+                }
+            else
+                sat = *ddata1 = 0;
+            ddata1 += 3;
 
-		// hue
-		if (sat == 0)
-			*ddata0 = 0;
-		else
-		{
-			double rc = (max - red) / (max - min);
-			double gc = (max - green) / (max - min);
-			double bc = (max - blue) / (max - min);
-			if (red == max)
-				hue = bc - gc;
-			else
-			if (green == max)
-				hue = 2 + rc - bc;
-			else
-			if (blue == max)
-				hue = 4 + gc - rc;
+            // hue
+            if (sat == 0)
+                *ddata0 = 0;
+            else
+                {
+                    double rc = (max - red) / (max - min);
+                    double gc = (max - green) / (max - min);
+                    double bc = (max - blue) / (max - min);
+                    if (red == max)
+                        hue = bc - gc;
+                    else
+                        if (green == max)
+                            hue = 2 + rc - bc;
+                        else
+                            if (blue == max)
+                                hue = 4 + gc - rc;
 
-			hue *= 60.0;
-			if (hue < 0.0)
-				hue += 360.0;
+                    hue *= 60.0;
+                    if (hue < 0.0)
+                        hue += 360.0;
 		
-			assert (hue >= 0.0 && hue < 360.0);
-			// IPL 2.5 compatibility. Scaling to 0-255
-			// there's a little chance that the value rounds to 256.0!
-			// need clipping rather than truncation.
-			hue = (hue / 360.0 * 256.0);
-			if (hue == 256.0)
-				hue = 255.0;
+                    assert (hue >= 0.0 && hue < 360.0);
+                    // IPL 2.5 compatibility. Scaling to 0-255
+                    // there's a little chance that the value rounds to 256.0!
+                    // need clipping rather than truncation.
+                    hue = (hue / 360.0 * 256.0);
+                    if (hue == 256.0)
+                        hue = 255.0;
 
-			*ddata0 = (unsigned char)(hue);
-		}
+                    *ddata0 = (unsigned char)(hue);
+                }
 
-		ddata0 += 3;
-	}
+            ddata0 += 3;
+        }
 }
 
 IPLAPIIMPL(void, iplHSV2RGB,(IplImage* hsvImage, IplImage* rgbImage))
@@ -1516,7 +1517,7 @@ IPLAPIIMPL(void, iplHSV2RGB,(IplImage* hsvImage, IplImage* rgbImage))
 }
 
 IPLAPIIMPL(void, iplXorS,(IplImage* srcImage, IplImage* dstImage,
-                             unsigned int value))
+                          unsigned int value))
 {
 	// NOT IMPLEMENTED YET.s
 	assert (1 == 0);

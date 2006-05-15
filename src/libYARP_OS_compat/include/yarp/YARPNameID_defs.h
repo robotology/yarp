@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPNameID_defs.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNameID_defs.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -85,62 +86,62 @@
  * All possible protocols in a port.
  */
 enum YARPProtocols
-{
-	/**
-	* The port is not connected or it reported a serious network error.
-	*/
-	YARP_NO_SERVICE_AVAILABLE = -1,
+    {
+        /**
+         * The port is not connected or it reported a serious network error.
+         */
+        YARP_NO_SERVICE_AVAILABLE = -1,
 
-	/**
-	* The UDP protocol, a connectionless efficient protocol, The maximum
-	* message size is limited to 64Kbytes.
-	*/
-	YARP_UDP = 0,
+        /**
+         * The UDP protocol, a connectionless efficient protocol, The maximum
+         * message size is limited to 64Kbytes.
+         */
+        YARP_UDP = 0,
 
-	/**
-	* TCP protocol, 
-	* Reliable connection-oriented, There's no limit on the 
-	* message size.
-	*/
-	YARP_TCP = 1,
+        /**
+         * TCP protocol, 
+         * Reliable connection-oriented, There's no limit on the 
+         * message size.
+         */
+        YARP_TCP = 1,
 
-	/**
-	* MCAST protocol,
-	* Like UDP but the same message is automatically dispatched
-	* to multiple targets (network efficient).
-	*/
-	YARP_MCAST = 2,
+        /**
+         * MCAST protocol,
+         * Like UDP but the same message is automatically dispatched
+         * to multiple targets (network efficient).
+         */
+        YARP_MCAST = 2,
 
-	/**
-	* QNET is the proprietary QNX version 6 network protocol, Very efficient but
-	* doesn't mix with the IP based protocols.
-	*/
-	YARP_QNET = 3,
+        /**
+         * QNET is the proprietary QNX version 6 network protocol, Very efficient but
+         * doesn't mix with the IP based protocols.
+         */
+        YARP_QNET = 3,
 
-	/**
-	* QNX4 protocol is deprecated and no longer supported/implemented.
-	*/
-	YARP_QNX4 = 4,
+        /**
+         * QNX4 protocol is deprecated and no longer supported/implemented.
+         */
+        YARP_QNX4 = 4,
 
-	/**
-	* SHMEM protocol will activate automatically if both ends of a connection
-	* are on the same machine and network, It is connection oriented and
-	* doesn't have any limit on the size of the messages.
-	*/
-	YARP_SHMEM = 5,
+        /**
+         * SHMEM protocol will activate automatically if both ends of a connection
+         * are on the same machine and network, It is connection oriented and
+         * doesn't have any limit on the size of the messages.
+         */
+        YARP_SHMEM = 5,
 
-	/**
-	* The port is an input port with multiple protocol abilities.
-	*/
-	YARP_MULTI = 6,
+        /**
+         * The port is an input port with multiple protocol abilities.
+         */
+        YARP_MULTI = 6,
 
-	YARP_PROTOCOL_MASK = 15,
+        YARP_PROTOCOL_MASK = 15,
 
-	/**
-	 * Protocols TCP and SHMEM may or may not request acknowledgements.
-	 */
-	YARP_REQUIRE_ACK = 128,
-};
+        /**
+         * Protocols TCP and SHMEM may or may not request acknowledgements.
+         */
+        YARP_REQUIRE_ACK = 128,
+    };
 
 const char __udpString[] = "UDP";
 const char __tcpString[] = "TCP";

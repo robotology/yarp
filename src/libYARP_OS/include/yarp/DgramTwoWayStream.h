@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_DGRAMTWOWAYSTREAM_
 #define _YARP2_DGRAMTWOWAYSTREAM_
 
@@ -8,7 +9,7 @@
 #include <ace/SOCK_Dgram.h>
 
 namespace yarp {
-  class DgramTwoWayStream;
+    class DgramTwoWayStream;
 }
 
 /**
@@ -18,67 +19,67 @@ namespace yarp {
 class yarp::DgramTwoWayStream : public TwoWayStream, public InputStream, public OutputStream {
 
 public:
-  DgramTwoWayStream() {
-    closed = false;
-    reader = false;
-    writer = false;
-    dgram = NULL;
-    happy = false;
-  }
+    DgramTwoWayStream() {
+        closed = false;
+        reader = false;
+        writer = false;
+        dgram = NULL;
+        happy = false;
+    }
 
-  virtual void open(const Address& remote);
+    virtual void open(const Address& remote);
 
-  virtual void open(const Address& local, const Address& remote);
+    virtual void open(const Address& local, const Address& remote);
 
-  virtual void join(const Address& group, bool sender);
+    virtual void join(const Address& group, bool sender);
 
-  virtual ~DgramTwoWayStream();
+    virtual ~DgramTwoWayStream();
 
-  virtual InputStream& getInputStream() {
-    return *this;
-  }
+    virtual InputStream& getInputStream() {
+        return *this;
+    }
 
-  virtual OutputStream& getOutputStream() {
-    return *this;
-  }
+    virtual OutputStream& getOutputStream() {
+        return *this;
+    }
 
-  virtual const Address& getLocalAddress() {
-    return localAddress;
-  }
+    virtual const Address& getLocalAddress() {
+        return localAddress;
+    }
 
-  virtual const Address& getRemoteAddress() {
-    return remoteAddress;
-  }
+    virtual const Address& getRemoteAddress() {
+        return remoteAddress;
+    }
 
-  virtual void interrupt();
+    virtual void interrupt();
 
-  virtual void close();
+    virtual void close();
 
-  virtual int read(const Bytes& b);
+    virtual int read(const Bytes& b);
 
-  virtual void write(const Bytes& b);
+    virtual void write(const Bytes& b);
 
-  virtual void flush();
+    virtual void flush();
 
-  virtual bool isOk();
+    virtual bool isOk();
 
-  virtual void reset();
+    virtual void reset();
 
-  virtual void beginPacket();
+    virtual void beginPacket();
 
-  virtual void endPacket();
+    virtual void endPacket();
 
 private:
 
-  bool closed, reader, writer;
-  ACE_SOCK_Dgram *dgram;
-  ACE_INET_Addr localHandle, remoteHandle;
-  Address localAddress, remoteAddress;
-  ManagedBytes readBuffer, writeBuffer;
-  int readAt, readAvail, writeAvail, pct;
-  bool happy;
+    bool closed, reader, writer;
+    ACE_SOCK_Dgram *dgram;
+    ACE_INET_Addr localHandle, remoteHandle;
+    Address localAddress, remoteAddress;
+    ManagedBytes readBuffer, writeBuffer;
+    int readAt, readAvail, writeAvail, pct;
+    bool happy;
 
-  void allocate();
+    void allocate();
 };
 
 #endif

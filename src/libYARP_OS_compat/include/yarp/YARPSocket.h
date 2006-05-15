@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -35,7 +36,7 @@
 ///
 
 ///
-/// $Id: YARPSocket.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPSocket.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -72,32 +73,32 @@
  * Identifies the socket type.
  */
 enum
-{
-	/**
-	 * An invalid socket class.
-	 */
-	YARP_NO_SOCKET = 0,
+    {
+        /**
+         * An invalid socket class.
+         */
+        YARP_NO_SOCKET = 0,
 
-	/**
-	 * The socket class incapsulates an input channel.
-	 */
-	YARP_I_SOCKET = 1,
+        /**
+         * The socket class incapsulates an input channel.
+         */
+        YARP_I_SOCKET = 1,
 
-	/**
-	 * The socket class incapsulates an output channel.
-	 */
-	YARP_O_SOCKET = 2,
+        /**
+         * The socket class incapsulates an output channel.
+         */
+        YARP_O_SOCKET = 2,
 
-	/**
-	 * The masks to &'ing when reading the socket type bits.
-	 */
-	YARP_X_SOCKET_MASK = 3,
+        /**
+         * The masks to &'ing when reading the socket type bits.
+         */
+        YARP_X_SOCKET_MASK = 3,
 
-	/**
-	 * Require acknowledge flag for messages (YARP reply messages flag).
-	 */
-	YARP_SOCK_REQUIRE_ACK = 128,
-};
+        /**
+         * Require acknowledge flag for messages (YARP reply messages flag).
+         */
+        YARP_SOCK_REQUIRE_ACK = 128,
+    };
 
 /**
  * Base class of all socket communication classes. 

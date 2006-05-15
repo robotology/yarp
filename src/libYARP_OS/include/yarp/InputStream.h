@@ -1,10 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_INPUTSTREAM_
 #define _YARP2_INPUTSTREAM_
 
 #include <yarp/Bytes.h>
 
 namespace yarp {
-  class InputStream;
+    class InputStream;
 }
 
 /**
@@ -13,38 +14,38 @@ namespace yarp {
  */
 class yarp::InputStream {
 public:
-  InputStream() {
-  }
-  
-  virtual ~InputStream() { }
-
-  virtual void check() {}
-
-  virtual int read() { // throws
-    unsigned char result;
-    int ct = read(Bytes((char*)&result,1));
-    if (ct<1) {
-      return -1;
+    InputStream() {
     }
-    return result;
-  }
+  
+    virtual ~InputStream() { }
 
-  virtual int read(const Bytes& b, int offset, int len) { // throws
-    return read(Bytes(b.get()+offset,len));
-  }
+    virtual void check() {}
 
-  virtual int read(const Bytes& b) = 0;
+    virtual int read() { // throws
+        unsigned char result;
+        int ct = read(Bytes((char*)&result,1));
+        if (ct<1) {
+            return -1;
+        }
+        return result;
+    }
 
-  virtual void close() = 0;
+    virtual int read(const Bytes& b, int offset, int len) { // throws
+        return read(Bytes(b.get()+offset,len));
+    }
 
-  virtual void interrupt() {
-  }
+    virtual int read(const Bytes& b) = 0;
 
-  // These should be called at the beginning and end of logical packets.
-  // Streams are encouraged to handle errors and atomicity at the level of 
-  // logical packets
-  //virtual void beginPacket() = 0;
-  //virtual void endPacket() = 0;
+    virtual void close() = 0;
+
+    virtual void interrupt() {
+    }
+
+    // These should be called at the beginning and end of logical packets.
+    // Streams are encouraged to handle errors and atomicity at the level of 
+    // logical packets
+    //virtual void beginPacket() = 0;
+    //virtual void endPacket() = 0;
 
 };
 

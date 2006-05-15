@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_ELECTION_
 #define _YARP2_ELECTION_
 
@@ -7,8 +8,8 @@
 #include <ace/Null_Mutex.h>
 
 namespace yarp {
-  class Election;
-  template <class T> class ElectionOf;
+    class Election;
+    template <class T> class ElectionOf;
 }
 
 /**
@@ -18,50 +19,50 @@ namespace yarp {
  */
 class yarp::Election {
 private:
-  typedef void *voidPtr;
+    typedef void *voidPtr;
 
-  class PeerRecord {
-  protected:
-    ACE_Hash_Map_Manager<void *,bool,ACE_Null_Mutex> peerSet;
+    class PeerRecord {
+    protected:
+        ACE_Hash_Map_Manager<void *,bool,ACE_Null_Mutex> peerSet;
 
-  public:
-    PeerRecord() {
-    }
+    public:
+        PeerRecord() {
+        }
 
-    PeerRecord(const PeerRecord& alt) {
-    }
+        PeerRecord(const PeerRecord& alt) {
+        }
 
-    void add(void *entity) {
-      peerSet.bind(entity,true);
-    }
+        void add(void *entity) {
+            peerSet.bind(entity,true);
+        }
 
-    void remove(void *entity) {
-      peerSet.unbind(entity);
-    }
+        void remove(void *entity) {
+            peerSet.unbind(entity);
+        }
 
-    void *getFirst() {
-      if (peerSet.begin()!=peerSet.end()) {
-	return (*(peerSet.begin())).ext_id_;
-      }
-      return NULL;
-    }
-  };
+        void *getFirst() {
+            if (peerSet.begin()!=peerSet.end()) {
+                return (*(peerSet.begin())).ext_id_;
+            }
+            return NULL;
+        }
+    };
 
 
-  ACE_Hash_Map_Manager<String,PeerRecord,ACE_Null_Mutex> nameMap;
-  long ct;
+    ACE_Hash_Map_Manager<String,PeerRecord,ACE_Null_Mutex> nameMap;
+    long ct;
 
-  PeerRecord *getRecord(const String& key, bool create = false);
+    PeerRecord *getRecord(const String& key, bool create = false);
 
  
 public:
-  Election();
-  virtual ~Election();
+    Election();
+    virtual ~Election();
 
-  void add(const String& key, void *entity);
-  void remove(const String& key, void *entity);
-  void *getElect(const String& key);
-  long getEventCount();
+    void add(const String& key, void *entity);
+    void remove(const String& key, void *entity);
+    void *getElect(const String& key);
+    long getEventCount();
 };
 
 /**
@@ -70,17 +71,17 @@ public:
 template <class T>
 class yarp::ElectionOf : protected Election {
 public:
-  void add(const String& key, T *entity) {
-    Election::add(key, entity);
-  }
+    void add(const String& key, T *entity) {
+        Election::add(key, entity);
+    }
 
-  void remove(const String& key, T *entity) {
-    Election::remove(key, entity);
-  }
+    void remove(const String& key, T *entity) {
+        Election::remove(key, entity);
+    }
 
-  T *getElect(const String& key) {
-    return (T *)Election::getElect(key);
-  }
+    T *getElect(const String& key) {
+        return (T *)Election::getElect(key);
+    }
 
 };
 

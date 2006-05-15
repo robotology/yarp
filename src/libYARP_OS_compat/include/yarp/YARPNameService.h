@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,12 +62,12 @@
 ///
 
 ///
-/// $Id: YARPNameService.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNameService.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /*
-	paulfitz Tue May 22 15:34:43 EDT 2001
- */
+  paulfitz Tue May 22 15:34:43 EDT 2001
+*/
 
 #ifndef YARPNameService_INC
 #define YARPNameService_INC
@@ -183,9 +184,9 @@ public:
 	 */
 	static bool VerifyLocal (const char *rem_ip, const char *loc_ip, const char *network_name);
 
-  static int CheckProperty(const char *name,
-			   const char *key,
-			   const char *value);
+    static int CheckProperty(const char *name,
+                             const char *key,
+                             const char *value);
 
 };
 

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_STRINGOUTPUTSTREAM_
 #define _YARP2_STRINGOUTPUTSTREAM_
 
@@ -5,7 +6,7 @@
 #include <yarp/String.h>
 
 namespace yarp {
-  class StringOutputStream;
+    class StringOutputStream;
 }
 
 /**
@@ -13,28 +14,28 @@ namespace yarp {
  */
 class yarp::StringOutputStream : public OutputStream {
 public:
-  using OutputStream::write;
+    using OutputStream::write;
 
-  StringOutputStream() { }
-
-
-  String toString() {
-    return data;
-  }
+    StringOutputStream() { }
 
 
-  virtual void write(const Bytes& b) { // throws
-    //ACE_DEBUG((LM_DEBUG,"StringOutputStream::write"));
-    for (int i=0; i<b.length(); i++) {
-      data += b.get()[i];
+    String toString() {
+        return data;
     }
-  }
 
-  virtual void close() {
-  }
+
+    virtual void write(const Bytes& b) { // throws
+        //ACE_DEBUG((LM_DEBUG,"StringOutputStream::write"));
+        for (int i=0; i<b.length(); i++) {
+            data += b.get()[i];
+        }
+    }
+
+    virtual void close() {
+    }
 
 private:
-  String data;
+    String data;
 };
 
 #endif

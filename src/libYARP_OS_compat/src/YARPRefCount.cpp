@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPRefCount.cpp,v 1.1 2006-03-13 12:52:42 eshuy Exp $
+/// $Id: YARPRefCount.cpp,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -86,9 +87,9 @@ PYARPRefCount AddYarpRefCount(PYARPRefCount& ref)
 	PYARPRefCount result = NULL;
 	YR_WAIT;
 	if (ref==NULL)
-	{
-		ref = new YARPRefCount;
-	}
+        {
+            ref = new YARPRefCount;
+        }
 
 	ACE_ASSERT (ref!=NULL);
 	
@@ -127,13 +128,13 @@ void YARPRefCount::RemoveRef()
 	ACE_ASSERT (ref_count>0);
 	ref_count--;
 	if (ref_count==0)
-	{
-		YR_POST;
-		Destroy();
-	}
+        {
+            YR_POST;
+            Destroy();
+        }
 	else
-	{
-		YR_POST;
-	}
+        {
+            YR_POST;
+        }
 }
 

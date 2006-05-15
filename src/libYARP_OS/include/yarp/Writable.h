@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_WRITABLE_
 #define _YARP2_WRITABLE_
 
@@ -8,7 +9,7 @@
 // this typedef will be removed soon - it used be a separate class
 
 namespace yarp {
-  typedef yarp::os::PortWriter Writable;
+    typedef yarp::os::PortWriter Writable;
 }
 
 

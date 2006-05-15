@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 ///////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPBottle.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPBottle.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 /// This code is based on the old YARPBottle class.
@@ -111,7 +112,7 @@ class YARPBottle
 		 */
 		BottleId()
 		{
-		//	text.resize(__maxBottleID);
+            //	text.resize(__maxBottleID);
 		}
 
 		/**
@@ -214,12 +215,12 @@ public:
 	 */
 	YARPBottle& operator = (const YARPBottle& bottle)
 	{
-	  id.set(bottle.id.text);
-      top = bottle.top;
-	  text = bottle.text;
-	  lastReadSeq = bottle.lastReadSeq;
-	  index = bottle.index;
-	  return *this;
+        id.set(bottle.id.text);
+        top = bottle.top;
+        text = bottle.text;
+        lastReadSeq = bottle.lastReadSeq;
+        index = bottle.index;
+        return *this;
 	}
    
 	/**
@@ -270,7 +271,7 @@ public:
 	 * @param result is the integer to add to the buffer.
 	 */
 	void writeInt(NetInt32 result)
-		{ writeRawInt(YBTypeInt);  writeRawInt(result); }
+    { writeRawInt(YBTypeInt);  writeRawInt(result); }
 
 	/**
 	 * Writes a double precision value to the buffer. 
@@ -278,7 +279,7 @@ public:
 	 * @param result is the value to add to the buffer.
 	 */
 	void writeFloat(double result)
-		{ writeRawInt(YBTypeDouble);  writeRawFloat(result); }
+    { writeRawInt(YBTypeDouble);  writeRawFloat(result); }
 
 	/**
 	 * Writes a vector of double precision values to the buffer.
@@ -287,28 +288,28 @@ public:
 	 * @param n is the length of the vector.
 	 */
 	void writeDoubleVector(double *v, int n)
-	  {
+    {
 	    writeRawInt(YBTypeDoubleVector);
 	    writeRawInt(n);
 	    int i;
 	    for(i=0; i<n; i++)
-	      writeRawFloat(v[i]);
-	  }
+            writeRawFloat(v[i]);
+    }
 	
-        /**                                                                                    
-         * Writes a vector of integers to the buffer.                           
-         * Consecurive writes add data in the buffer.                                          
-         * @param *v is the pointer to the vector of values.                                   
-         * @param n is the length of the vector.                                               
-         */
-        void writeIntVector(int *v, int n)
-          {
-            writeRawInt(YBTypeIntVector);
-            writeRawInt(n);
-            int i;
-            for(i=0; i<n; i++)
-              writeRawInt(v[i]);
-          }
+    /**                                                                                    
+     * Writes a vector of integers to the buffer.                           
+     * Consecurive writes add data in the buffer.                                          
+     * @param *v is the pointer to the vector of values.                                   
+     * @param n is the length of the vector.                                               
+     */
+    void writeIntVector(int *v, int n)
+    {
+        writeRawInt(YBTypeIntVector);
+        writeRawInt(n);
+        int i;
+        for(i=0; i<n; i++)
+            writeRawInt(v[i]);
+    }
 
 	/**
 	 * Writes a string (zero terminated) into the buffer. 
@@ -316,7 +317,7 @@ public:
 	 * @param result is the string to add to the buffer.
 	 */
 	void writeText(const char *result)
-		{ writeRawInt(YBTypeString);  writeRawText(result); }
+    { writeRawInt(YBTypeString);  writeRawText(result); }
 
 	/**
 	 * Writes a YBVocab into the buffer.
@@ -434,10 +435,10 @@ public:
 	bool readInt(int *v)
 	{
 		if (tryReadInt(v))
-		{
-			moveOn();
-			return true;
-		}
+            {
+                moveOn();
+                return true;
+            }
 		else
 			return false;
 	}
@@ -448,9 +449,9 @@ public:
 	 * not discriminative of a failure.
 	 */
 	int readInt() {
-	  int v = 0;
-	  readInt(&v);
-	  return v;
+        int v = 0;
+        readInt(&v);
+        return v;
 	}
 	
 	/**
@@ -461,51 +462,51 @@ public:
 	 * position, false otherwise.
 	 */
 	bool readDoubleVector(double *v, int n)
-	  {
+    {
 	    int oldIndex = index;
 	    lastReadSeq = 0;
 	    if (!assertType(YBTypeDoubleVector))
-	      return false;
+            return false;
 	    index += sizeof(YBTypeDoubleVector);
 	    int tmpI = readRawInt();
 	    index += sizeof(int);
 	    if (n!=tmpI)
-	      {
-		index = oldIndex;
-		return false;
-	      }
+            {
+                index = oldIndex;
+                return false;
+            }
 	    tmpI = n*sizeof(double);
 	    ACE_OS::memcpy((char *) v, readRawBlock(tmpI), tmpI);
 	    index+=tmpI;
 	    return true;
-	  }
+    }
 
 	/**                                                                                          
-         * Reads a vector of integers from the bottle.                        
-         * @param v is a pointer to the vector that will be filled.                                  
-         * @param n is the expected size of the vector.                                              
-         * @return true if the bottle contains a vector of size n at the current                     
-         * position, false otherwise.                                                                
-         */
-        bool readIntVector(int *v, int n)
-          {
-            int oldIndex = index;
-            lastReadSeq = 0;
-            if (!assertType(YBTypeIntVector))
-              return false;
-            index += sizeof(YBTypeIntVector);
-            int tmpI = readRawInt();
-            index += sizeof(int);
-            if (n!=tmpI)
-              {
+     * Reads a vector of integers from the bottle.                        
+     * @param v is a pointer to the vector that will be filled.                                  
+     * @param n is the expected size of the vector.                                              
+     * @return true if the bottle contains a vector of size n at the current                     
+     * position, false otherwise.                                                                
+     */
+    bool readIntVector(int *v, int n)
+    {
+        int oldIndex = index;
+        lastReadSeq = 0;
+        if (!assertType(YBTypeIntVector))
+            return false;
+        index += sizeof(YBTypeIntVector);
+        int tmpI = readRawInt();
+        index += sizeof(int);
+        if (n!=tmpI)
+            {
                 index = oldIndex;
                 return false;
-              }
-            tmpI = n*sizeof(int);
+            }
+        tmpI = n*sizeof(int);
 	    ACE_OS::memcpy((char *) v, readRawBlock(tmpI), tmpI);
-            index+=tmpI;
-            return true;
-          }
+        index+=tmpI;
+        return true;
+    }
 
 	/**
 	 * Reads a double precision floating point value from the bottle. 
@@ -518,10 +519,10 @@ public:
 	bool readFloat(double *v)
 	{
 		if (tryReadFloat(v))
-		{
-			moveOn();
-			return true;
-		}
+            {
+                moveOn();
+                return true;
+            }
 		else
 			return false;
 	}
@@ -537,10 +538,10 @@ public:
 	bool readText(char *s)
 	{
 		if (tryReadText(s))
-		{
-			moveOn();
-			return true;
-		}
+            {
+                moveOn();
+                return true;
+            }
 		else
 			return false;
 	}
@@ -552,11 +553,11 @@ public:
 	 */
 	const char *readText()
 	{
-	  const char *addr = tryReadText();
-	  if (addr!=NULL) {
-	    moveOn();
-	  }
-	  return addr;
+        const char *addr = tryReadText();
+        if (addr!=NULL) {
+            moveOn();
+        }
+        return addr;
 	}
 
 	/**
@@ -580,7 +581,7 @@ public:
 	 */
 	int more() const
 	{
-	  return (index<top-1);
+        return (index<top-1);
 	}
 
 	/**
@@ -683,7 +684,7 @@ protected:
 	
 	void readRawText(char *s)
     {
-      //printf("*** please supply a buffer size to YARPBottle::readRawText and related fns\n");
+        //printf("*** please supply a buffer size to YARPBottle::readRawText and related fns\n");
 		NetInt32 len = readRawInt();
 		index += sizeof(int);
 		ACE_OS::memcpy(s, readRawBlock(len), len);

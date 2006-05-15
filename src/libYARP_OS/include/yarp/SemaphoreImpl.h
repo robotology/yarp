@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_SEMAPHOREIMPL_
 #define _YARP2_SEMAPHOREIMPL_
 
@@ -6,7 +7,7 @@
 #include <yarp/Logger.h>
 
 namespace yarp {
-  class SemaphoreImpl;
+    class SemaphoreImpl;
 }
 
 /**
@@ -14,32 +15,32 @@ namespace yarp {
  */
 class yarp::SemaphoreImpl {
 public:
-  SemaphoreImpl(int initialCount = 1) : sema(initialCount) {
-  }
-
-  virtual ~SemaphoreImpl() {}
-
-  // blocking wait
-  void wait() {
-    int result = sema.acquire();
-    while (result == -1) {
-      YARP_DEBUG(Logger::get(), "semaphore wait failed - could be gdb attaching");
-      result = sema.acquire();
+    SemaphoreImpl(int initialCount = 1) : sema(initialCount) {
     }
-  }
 
-  // polling wait
-  bool check() {
-    return (sema.tryacquire()<0)?0:1;
-  }
+    virtual ~SemaphoreImpl() {}
 
-  // increment
-  void post() {
-    sema.release();
-  }
+    // blocking wait
+    void wait() {
+        int result = sema.acquire();
+        while (result == -1) {
+            YARP_DEBUG(Logger::get(), "semaphore wait failed - could be gdb attaching");
+            result = sema.acquire();
+        }
+    }
+
+    // polling wait
+    bool check() {
+        return (sema.tryacquire()<0)?0:1;
+    }
+
+    // increment
+    void post() {
+        sema.release();
+    }
 
 private:
-  ACE_Semaphore sema;
+    ACE_Semaphore sema;
 };
 
 #endif

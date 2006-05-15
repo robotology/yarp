@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,16 +62,16 @@
 ///
 
 ///
-/// $Id: YARPImageFile.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
+/// $Id: YARPImageFile.h,v 1.3 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
 /*
-paulfitz Wed May 30 18:35:14 EDT 2001
+  paulfitz Wed May 30 18:35:14 EDT 2001
 */
 
 /*
-pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
+  pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
 */
 
 #ifndef YARPImageFile_INC
@@ -91,13 +92,13 @@ pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
 namespace YARPImageFile
 {
 	enum
-	{
-		FORMAT_NULL,
-		FORMAT_ANY,
-		FORMAT_PGM,
-		FORMAT_PPM,
-		FORMAT_NUMERIC,
-	};
+        {
+            FORMAT_NULL,
+            FORMAT_ANY,
+            FORMAT_PGM,
+            FORMAT_PPM,
+            FORMAT_NUMERIC,
+        };
 
 	int Read(const char *src, YARPGenericImage& dest, int format=FORMAT_ANY);
 	int Write(const char *dest, YARPGenericImage& src, int format=FORMAT_ANY);

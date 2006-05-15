@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_FALLBACKNAMESERVER_
 #define _YARP2_FALLBACKNAMESERVER_
 
@@ -6,8 +7,8 @@
 #include <yarp/DgramTwoWayStream.h>
 
 namespace yarp {
-  class FallbackNameServer;
-  class NameServer;
+    class FallbackNameServer;
+    class NameServer;
 }
 
 /**
@@ -16,22 +17,22 @@ namespace yarp {
  */
 class yarp::FallbackNameServer : public ThreadImpl {
 public:
-  FallbackNameServer(NameServer& owner) : owner(owner) {
-    closed = false;
-  }
+    FallbackNameServer(NameServer& owner) : owner(owner) {
+        closed = false;
+    }
 
-  virtual void run();
-  virtual void close();
+    virtual void run();
+    virtual void close();
 
-  static const Address& getAddress() {
-    return mcastLastResort;
-  }
+    static const Address& getAddress() {
+        return mcastLastResort;
+    }
 
 private:
-  NameServer& owner;
-  static const Address mcastLastResort;
-  DgramTwoWayStream listen;
-  bool closed;
+    NameServer& owner;
+    static const Address mcastLastResort;
+    DgramTwoWayStream listen;
+    bool closed;
 };
 
 #endif

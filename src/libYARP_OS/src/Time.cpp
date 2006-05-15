@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/os/Time.h>
 
@@ -14,29 +15,29 @@ using namespace yarp::os;
 /// by means of MM functions.
 ///
 void Time::delay(double seconds) {
-  ACE_Time_Value tv;
-  tv.sec (long(seconds));
-  tv.usec (long((seconds-int(seconds)) * 1e6));
-  ACE_OS::sleep(tv);
+    ACE_Time_Value tv;
+    tv.sec (long(seconds));
+    tv.usec (long((seconds-int(seconds)) * 1e6));
+    ACE_OS::sleep(tv);
 }
 
 double Time::now() {
-  ACE_Time_Value timev = ACE_OS::gettimeofday ();
-  return double(timev.sec()) + timev.usec() * 1e-6; 
+    ACE_Time_Value timev = ACE_OS::gettimeofday ();
+    return double(timev.sec()) + timev.usec() * 1e-6; 
 }
 
 
 void Time::turboBoost() {
 #ifdef ACE_WIN32
-  // only does something on Microsoft Windows
-  TIMECAPS tm;
-  timeGetDevCaps(&tm, sizeof(TIMECAPS));
-  timeBeginPeriod(1);
+    // only does something on Microsoft Windows
+    TIMECAPS tm;
+    timeGetDevCaps(&tm, sizeof(TIMECAPS));
+    timeBeginPeriod(1);
 #endif
 }
 
 void Time::yield() {
-  ACE_Time_Value tv(0);
-  ACE_OS::sleep(tv);
+    ACE_Time_Value tv(0);
+    ACE_OS::sleep(tv);
 }
 

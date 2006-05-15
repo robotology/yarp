@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_THREADIMPL_
 #define _YARP2_THREADIMPL_
 
@@ -8,7 +9,7 @@
 
 
 namespace yarp {
-  class ThreadImpl;
+    class ThreadImpl;
 }
 
 /**
@@ -16,44 +17,44 @@ namespace yarp {
  */
 class yarp::ThreadImpl : public Runnable {
 public:
-  ThreadImpl();
-  ThreadImpl(Runnable *target);
+    ThreadImpl();
+    ThreadImpl(Runnable *target);
 
-  virtual ~ThreadImpl();
+    virtual ~ThreadImpl();
 
-  int join(double seconds = -1);
-  virtual void run();
-  virtual void close();
+    int join(double seconds = -1);
+    virtual void run();
+    virtual void close();
 
-  // should throw if no success
-  virtual bool start();
+    // should throw if no success
+    virtual bool start();
 
-  bool isClosing();
+    bool isClosing();
 
-  virtual void beforeStart();
-  virtual void afterStart(bool success);
+    virtual void beforeStart();
+    virtual void afterStart(bool success);
 
-  // call before start
-  void setOptions(int stackSize = 0);
+    // call before start
+    void setOptions(int stackSize = 0);
 
-  static int getCount();
+    static int getCount();
 
-  // won't be public for long...
-  static void changeCount(int delta);
+    // won't be public for long...
+    static void changeCount(int delta);
 
-  // get a unique key
-  long int getKey();
+    // get a unique key
+    long int getKey();
 
 private:
-  int stackSize;
-  ACE_hthread_t hid;
-  ACE_thread_t id;
-  bool active;
-  bool closing;
-  Runnable *delegate;
+    int stackSize;
+    ACE_hthread_t hid;
+    ACE_thread_t id;
+    bool active;
+    bool closing;
+    Runnable *delegate;
 
-  static int threadCount;
-  static SemaphoreImpl threadMutex;
+    static int threadCount;
+    static SemaphoreImpl threadMutex;
 };
 
 #endif

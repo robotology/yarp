@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_PORTCOREINPUTUNIT_
 #define _YARP2_PORTCOREINPUTUNIT_
 
@@ -7,7 +8,7 @@
 #include <yarp/InputProtocol.h>
 
 namespace yarp {
-  class PortCoreInputUnit;
+    class PortCoreInputUnit;
 }
 
 /**
@@ -16,57 +17,57 @@ namespace yarp {
  */
 class yarp::PortCoreInputUnit : public PortCoreUnit {
 public:
-  // specifically for managing input connections
+    // specifically for managing input connections
 
-  PortCoreInputUnit(PortCore& owner, InputProtocol *ip, 
-		    bool autoHandshake) : 
-    PortCoreUnit(owner), ip(ip), phase(1), autoHandshake(autoHandshake) {
+    PortCoreInputUnit(PortCore& owner, InputProtocol *ip, 
+                      bool autoHandshake) : 
+        PortCoreUnit(owner), ip(ip), phase(1), autoHandshake(autoHandshake) {
 
-    YARP_ASSERT(ip!=NULL);
-    closing = false;
-    finished = false;
-    running = false;
-    name = owner.getName();
-  }
+        YARP_ASSERT(ip!=NULL);
+        closing = false;
+        finished = false;
+        running = false;
+        name = owner.getName();
+    }
 
-  virtual ~PortCoreInputUnit() {
-    closeMain();
-  }
+    virtual ~PortCoreInputUnit() {
+        closeMain();
+    }
 
-  virtual bool start();
+    virtual bool start();
 
-  virtual void run();
+    virtual void run();
 
-  virtual bool isInput() {
-    return true;
-  }
+    virtual bool isInput() {
+        return true;
+    }
 
-  // just for testing
-  virtual void runSimulation();
+    // just for testing
+    virtual void runSimulation();
 
-  virtual void close() {
-    closeMain();
-  }
+    virtual void close() {
+        closeMain();
+    }
 
-  virtual bool isFinished() {
-    return finished;
-  }
+    virtual bool isFinished() {
+        return finished;
+    }
 
-  const String& getName() {
-    return name;
-  }
+    const String& getName() {
+        return name;
+    }
 
-  virtual Route getRoute();
+    virtual Route getRoute();
 
 
 private:
-  InputProtocol *ip;
-  SemaphoreImpl phase;
-  bool autoHandshake;
-  bool closing, finished, running;
-  String name;
+    InputProtocol *ip;
+    SemaphoreImpl phase;
+    bool autoHandshake;
+    bool closing, finished, running;
+    String name;
 
-  void closeMain();
+    void closeMain();
 };
 
 #endif

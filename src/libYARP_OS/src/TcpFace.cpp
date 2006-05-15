@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/TcpFace.h>
 #include <yarp/Logger.h>
@@ -12,49 +13,49 @@ static Logger tcpFaceLog("TcpFace", Logger::get());
 
 
 TcpFace::~TcpFace() {
-  closeFace();
+    closeFace();
 }
 
 
 void TcpFace::open(const Address& address) {
-  YARP_DEBUG(tcpFaceLog,String("TcpFace opening for address ") + address.toString());
+    YARP_DEBUG(tcpFaceLog,String("TcpFace opening for address ") + address.toString());
 
-  this->address = address;
-  ACE_INET_Addr	serverAddr(address.getPort());
-  int result = peerAcceptor.open(serverAddr,1);
-  if (result==-1) {
-    throw IOException("cannot listen on specified tcp address");
-  }
+    this->address = address;
+    ACE_INET_Addr	serverAddr(address.getPort());
+    int result = peerAcceptor.open(serverAddr,1);
+    if (result==-1) {
+        throw IOException("cannot listen on specified tcp address");
+    }
 }
 
 void TcpFace::close() {
-  closeFace();
+    closeFace();
 }
 
 void TcpFace::closeFace() {
-  peerAcceptor.close();
+    peerAcceptor.close();
 
-  /*
-  if (!closed) {
-    closed = true;
-    OutputProtocol *op = NULL;
-    try {
+    /*
+      if (!closed) {
+      closed = true;
+      OutputProtocol *op = NULL;
+      try {
       op = write(address);
       //ACE_OS::printf("write done, gave %ld\n", (long int)op);
       if (op!=NULL) {
-	op->close();
+      op->close();
       }
-    } catch (IOException e) {
+      } catch (IOException e) {
       // no problem
       ACE_OS::printf("exception during write\n");
-    }
-    if (op!=NULL) {
+      }
+      if (op!=NULL) {
       delete op;
       op = NULL;
-    }
-    peerAcceptor.close();
-  }
-  */
+      }
+      peerAcceptor.close();
+      }
+    */
 }
 
 
@@ -63,33 +64,33 @@ void TcpFace::closeFace() {
  */
 InputProtocol *TcpFace::read() {
 
-  SocketTwoWayStream *stream  = new SocketTwoWayStream();
-  YARP_ASSERT(stream!=NULL);
+    SocketTwoWayStream *stream  = new SocketTwoWayStream();
+    YARP_ASSERT(stream!=NULL);
 
-  try {
-    stream->open(peerAcceptor);
-  } catch (IOException e) {
-    ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
-    stream->close();
-    delete stream;
-    stream = NULL;
-  }
+    try {
+        stream->open(peerAcceptor);
+    } catch (IOException e) {
+        ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
+        stream->close();
+        delete stream;
+        stream = NULL;
+    }
 
-  if (stream!=NULL) {
-    return new Protocol(stream);
-  }
-  return NULL;
+    if (stream!=NULL) {
+        return new Protocol(stream);
+    }
+    return NULL;
 }
 
 
 OutputProtocol *TcpFace::write(const Address& address) {
-  SocketTwoWayStream *stream  = new SocketTwoWayStream();
-  int result = stream->open(address);
-  if (result==-1) {
-    stream->close();
-    delete stream;
-    return NULL;
-  }
-  return new Protocol(stream);
+    SocketTwoWayStream *stream  = new SocketTwoWayStream();
+    int result = stream->open(address);
+    if (result==-1) {
+        stream->close();
+        delete stream;
+        return NULL;
+    }
+    return new Protocol(stream);
 }
 

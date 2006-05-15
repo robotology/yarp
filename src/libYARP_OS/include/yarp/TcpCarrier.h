@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_TCPCARRIER_
 #define _YARP2_TCPCARRIER_
 
@@ -6,7 +7,7 @@
 #include <ace/OS_NS_stdio.h>
 
 namespace yarp {
-  class TcpCarrier;
+    class TcpCarrier;
 }
 
 /**
@@ -15,54 +16,54 @@ namespace yarp {
 class yarp::TcpCarrier : public AbstractCarrier {
 public:
 
-  TcpCarrier() {
-    requireAckFlag = true;
-  }
+    TcpCarrier() {
+        requireAckFlag = true;
+    }
 
-  virtual Carrier *create() {
-    return new TcpCarrier();
-  }
+    virtual Carrier *create() {
+        return new TcpCarrier();
+    }
 
-  virtual String getName() {
-    return "tcp";
-  }
+    virtual String getName() {
+        return "tcp";
+    }
 
-  int getSpecifierCode() {
-    return 3;
-  }
+    int getSpecifierCode() {
+        return 3;
+    }
 
-  virtual bool checkHeader(const Bytes& header) {
-    return getSpecifier(header)%16 == getSpecifierCode();
-  }
+    virtual bool checkHeader(const Bytes& header) {
+        return getSpecifier(header)%16 == getSpecifierCode();
+    }
 
-  virtual void getHeader(const Bytes& header) {
-    createStandardHeader(getSpecifierCode()+(requireAckFlag?128:0), header);
-  }
+    virtual void getHeader(const Bytes& header) {
+        createStandardHeader(getSpecifierCode()+(requireAckFlag?128:0), header);
+    }
 
-  virtual void setParameters(const Bytes& header) {
-    int specifier = getSpecifier(header);
-    requireAckFlag = (specifier&128)!=0;
-  }
+    virtual void setParameters(const Bytes& header) {
+        int specifier = getSpecifier(header);
+        requireAckFlag = (specifier&128)!=0;
+    }
 
-  virtual bool requireAck() {
-    return requireAckFlag;
-  }
+    virtual bool requireAck() {
+        return requireAckFlag;
+    }
 
-  virtual bool isConnectionless() {
-    return false;
-  }
+    virtual bool isConnectionless() {
+        return false;
+    }
 
-  virtual void respondToHeader(Protocol& proto) {
-    int cport = proto.getStreams().getLocalAddress().getPort();
-    proto.writeYarpInt(cport);
-  }
+    virtual void respondToHeader(Protocol& proto) {
+        int cport = proto.getStreams().getLocalAddress().getPort();
+        proto.writeYarpInt(cport);
+    }
 
-  virtual void expectReplyToHeader(Protocol& proto) {
-    proto.readYarpInt(); // ignore result
-  }
+    virtual void expectReplyToHeader(Protocol& proto) {
+        proto.readYarpInt(); // ignore result
+    }
 
 private:
-  bool requireAckFlag;
+    bool requireAckFlag;
 };
 
 #endif

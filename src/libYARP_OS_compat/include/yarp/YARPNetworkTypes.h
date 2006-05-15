@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,7 +53,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPNetworkTypes.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPNetworkTypes.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -83,91 +84,91 @@
 
 /*
   Need to specify number and order of bytes
- */
+*/
 
 #ifdef __LINUX__
-	/**
-	 * Definition of the NetInt32 type for Linux/gcc.
-	 */
-	typedef int32_t NetInt32;
+/**
+ * Definition of the NetInt32 type for Linux/gcc.
+ */
+typedef int32_t NetInt32;
 #endif
 
 #ifdef __DARWIN__
-    /**
-     * Definition of the NetInt32 type for Darwin/gcc.
-	 * We need to be careful about our Endian mode.
-	 * YARP integers are defined to be little-endian.
-     */
+/**
+ * Definition of the NetInt32 type for Darwin/gcc.
+ * We need to be careful about our Endian mode.
+ * YARP integers are defined to be little-endian.
+ */
 #ifdef __BIG_ENDIAN__
 typedef int32_t RawNetInt32;
 class NetInt32 {
 private:
-  int32_t raw_value;
-  int32_t swap(uint32_t x) const {
-    return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
-  }
-  RawNetInt32 get() const {
-    return (int32_t)swap((uint32_t)raw_value);
-  }
-  void set(RawNetInt32 v) {
-    raw_value = (int32_t)swap((uint32_t)v);
-  }
+    int32_t raw_value;
+    int32_t swap(uint32_t x) const {
+        return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
+    }
+    RawNetInt32 get() const {
+        return (int32_t)swap((uint32_t)raw_value);
+    }
+    void set(RawNetInt32 v) {
+        raw_value = (int32_t)swap((uint32_t)v);
+    }
 public:
-  NetInt32() {
-  }
-  NetInt32(RawNetInt32 val) {
-    set(val);
-  }
-  operator RawNetInt32() const {
-    return get();
-  }
-  RawNetInt32 operator+(RawNetInt32 v) const {
-    return get()+v;
-  }
-  RawNetInt32 operator-(RawNetInt32 v) const {
-    return get()-v;
-  }
-  RawNetInt32 operator*(RawNetInt32 v) const {
-    return get()*v;
-  }
-  RawNetInt32 operator/(RawNetInt32 v) const {
-    return get()/v;
-  }
-  void operator+=(RawNetInt32 v) {
-    set(get()+v);
-  }
-  void operator-=(RawNetInt32 v) {
-    set(get()-v);
-  }
-  void operator*=(RawNetInt32 v) {
-    set(get()*v);
-  }
-  void operator/=(RawNetInt32 v) {
-    set(get()/v);
-  }
+    NetInt32() {
+    }
+    NetInt32(RawNetInt32 val) {
+        set(val);
+    }
+    operator RawNetInt32() const {
+        return get();
+    }
+    RawNetInt32 operator+(RawNetInt32 v) const {
+        return get()+v;
+    }
+    RawNetInt32 operator-(RawNetInt32 v) const {
+        return get()-v;
+    }
+    RawNetInt32 operator*(RawNetInt32 v) const {
+        return get()*v;
+    }
+    RawNetInt32 operator/(RawNetInt32 v) const {
+        return get()/v;
+    }
+    void operator+=(RawNetInt32 v) {
+        set(get()+v);
+    }
+    void operator-=(RawNetInt32 v) {
+        set(get()-v);
+    }
+    void operator*=(RawNetInt32 v) {
+        set(get()*v);
+    }
+    void operator/=(RawNetInt32 v) {
+        set(get()/v);
+    }
 };
 #else
-        typedef int32_t NetInt32;
+typedef int32_t NetInt32;
 #endif
 
 #endif
 
 #ifdef __QNX__
-	/**
-	 * Definition of the NetInt32 type for qnx6/gcc.
-	 */
-	typedef long int NetInt32;
+/**
+ * Definition of the NetInt32 type for qnx6/gcc.
+ */
+typedef long int NetInt32;
 #endif
 
 #ifdef __WIN__
 #	ifdef __WIN_MSVC__
-		/**
-		 * Definition of the NetInt32 type for Windows/msvc.
-		 */
-		typedef __int32 NetInt32;
+/**
+ * Definition of the NetInt32 type for Windows/msvc.
+ */
+typedef __int32 NetInt32;
 #	else
 #		include <sys/config.h>
-		typedef __int32_t NetInt32;
+typedef __int32_t NetInt32;
 #	endif
 #endif
 

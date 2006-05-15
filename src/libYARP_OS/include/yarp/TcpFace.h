@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_TCPFACE_
 #define _YARP2_TCPFACE_
 
@@ -12,7 +13,7 @@
 
 
 namespace yarp {
-  class TcpFace;
+    class TcpFace;
 }
 
 /**
@@ -20,25 +21,25 @@ namespace yarp {
  */
 class yarp::TcpFace : public Face {
 public:
-  TcpFace() { }
+    TcpFace() { }
 
-  virtual ~TcpFace();
+    virtual ~TcpFace();
 
-  virtual void open(const Address& address); // throws IOException
-  virtual void close(); // throws IOException
-  virtual InputProtocol *read(); // throws IOException
-  virtual OutputProtocol *write(const Address& address); // throws IOException
+    virtual void open(const Address& address); // throws IOException
+    virtual void close(); // throws IOException
+    virtual InputProtocol *read(); // throws IOException
+    virtual OutputProtocol *write(const Address& address); // throws IOException
 
-  /**
-   * This class like all classes except the port objects does
-   * not have any notion of running in a multi-threaded environment.
-   *
-   */
+    /**
+     * This class like all classes except the port objects does
+     * not have any notion of running in a multi-threaded environment.
+     *
+     */
 
 private:
-  void closeFace();
-  Address address;
-  ACE_SOCK_Acceptor peerAcceptor;
+    void closeFace();
+    Address address;
+    ACE_SOCK_Acceptor peerAcceptor;
 };
 
 

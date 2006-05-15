@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPSound.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPSound.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -107,12 +108,12 @@ public:
 	void Cleanup ()
 	{
 		if (_buffer != NULL && _owner == true)
-		{
-			delete[] _buffer;
-			_buffer = NULL;
-			_size = 0;
-			_owner = false;
-		}
+            {
+                delete[] _buffer;
+                _buffer = NULL;
+                _size = 0;
+                _owner = false;
+            }
 	}
 
 	void Refer (const YARPSoundBuffer& buf) 

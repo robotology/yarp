@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -34,7 +35,7 @@
 ///
 ///	     "Licensed under the Academic Free License Version 1.0"
 ///
-/// $Id: YARPConfigFile.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPConfigFile.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///  
 /// very simple class to handle config files... by nat May 2003
 //

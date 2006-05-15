@@ -1,8 +1,9 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
   This file is in a pretty hacky state.  Sorry! -paulfitz
 
- */
+*/
 
 
 #include <yarp/Logger.h>
@@ -35,133 +36,133 @@ inline int PAD_BYTES (int len, int pad)
 
 static int _GetPixelSize(int pixel_type)
 {
-  int result = 0;
-  switch (pixel_type)
-    {
-    case YARP_PIXEL_MONO:
-      result = sizeof(PixelMono);
-      break;
-    case YARP_PIXEL_RGB:
-      result = sizeof(PixelRgb);
-      break;
-    case YARP_PIXEL_HSV:
-      result = sizeof(PixelHsv);
-      break;
-    case YARP_PIXEL_BGR:
-      result = sizeof(PixelBgr);
-      break;
-    case YARP_PIXEL_MONO_SIGNED:
-      result = sizeof(PixelMonoSigned);
-      break;
-    case YARP_PIXEL_RGB_SIGNED:
-      result = sizeof(PixelRgbSigned);
-      break;
-    case YARP_PIXEL_MONO_FLOAT:
-      result = sizeof(PixelFloat);
-      break;
-    case YARP_PIXEL_RGB_FLOAT:
-      result = sizeof(PixelRgbFloat);
-      break;
-    case YARP_PIXEL_HSV_FLOAT:
-      result = sizeof(PixelHsvFloat);
-      break;
-    default:
-      // only other acceptable possibility is that the size is being supplied
-      // for an unknown type
-      //ACE_ASSERT (pixel_type<0);
-      result = -pixel_type;
-      break;
-    }
-  //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
-  return result;
+    int result = 0;
+    switch (pixel_type)
+        {
+        case YARP_PIXEL_MONO:
+            result = sizeof(PixelMono);
+            break;
+        case YARP_PIXEL_RGB:
+            result = sizeof(PixelRgb);
+            break;
+        case YARP_PIXEL_HSV:
+            result = sizeof(PixelHsv);
+            break;
+        case YARP_PIXEL_BGR:
+            result = sizeof(PixelBgr);
+            break;
+        case YARP_PIXEL_MONO_SIGNED:
+            result = sizeof(PixelMonoSigned);
+            break;
+        case YARP_PIXEL_RGB_SIGNED:
+            result = sizeof(PixelRgbSigned);
+            break;
+        case YARP_PIXEL_MONO_FLOAT:
+            result = sizeof(PixelFloat);
+            break;
+        case YARP_PIXEL_RGB_FLOAT:
+            result = sizeof(PixelRgbFloat);
+            break;
+        case YARP_PIXEL_HSV_FLOAT:
+            result = sizeof(PixelHsvFloat);
+            break;
+        default:
+            // only other acceptable possibility is that the size is being supplied
+            // for an unknown type
+            //ACE_ASSERT (pixel_type<0);
+            result = -pixel_type;
+            break;
+        }
+    //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
+    return result;
 }
 
 
 class ImageStorage {
 public:
-  IplImage* pImage;
-  char **Data;       // this is not IPL. it's char to maintain IPL compatibility  
-  int quantum;
+    IplImage* pImage;
+    char **Data;       // this is not IPL. it's char to maintain IPL compatibility  
+    int quantum;
 
 protected:
-  Image& owner;
+    Image& owner;
 
-  int type_id;
+    int type_id;
   
-  int is_owner;
+    int is_owner;
   
-  // ipl allocation is done in two steps.
-  // _alloc allocates the actual ipl pointer.
-  // _alloc_data allocates the image array and data.
-  // memory is allocated in a single chunk. Row ptrs are then
-  // made to point appropriately. This is compatible with IPL and
-  // SOMEONE says it's more efficient on NT.
-  void _alloc (void);
-  void _alloc_extern (void *buf);
-  void _alloc_data (void);
-  void _free (void);
-  void _free_data (void);
+    // ipl allocation is done in two steps.
+    // _alloc allocates the actual ipl pointer.
+    // _alloc_data allocates the image array and data.
+    // memory is allocated in a single chunk. Row ptrs are then
+    // made to point appropriately. This is compatible with IPL and
+    // SOMEONE says it's more efficient on NT.
+    void _alloc (void);
+    void _alloc_extern (void *buf);
+    void _alloc_data (void);
+    void _free (void);
+    void _free_data (void);
   
-  void _make_independent(); 
-  void _set_ipl_header(int x, int y, int pixel_type, int quantum = 0);
-  void _free_ipl_header();
-  void _alloc_complete(int x, int y, int pixel_type);
-  void _free_complete();
+    void _make_independent(); 
+    void _set_ipl_header(int x, int y, int pixel_type, int quantum = 0);
+    void _free_ipl_header();
+    void _alloc_complete(int x, int y, int pixel_type);
+    void _free_complete();
   
   
-  // computes the # of padding bytes. These are always at the end of the row.
-  int _pad_bytes (int linesize, int align) const;
+    // computes the # of padding bytes. These are always at the end of the row.
+    int _pad_bytes (int linesize, int align) const;
   
-  inline int GetPadding() const { 
-    return _pad_bytes (pImage->width * pImage->nChannels, 
-		       YARP_IMAGE_ALIGN); 
-  }
+    inline int GetPadding() const { 
+        return _pad_bytes (pImage->width * pImage->nChannels, 
+                           YARP_IMAGE_ALIGN); 
+    }
 
 public:
-  ImageStorage(Image& owner) : owner(owner) {
-    type_id = 0;
-    pImage = NULL;
-    Data = NULL;
-    is_owner = 0;
-    quantum = 0;
-  }
+    ImageStorage(Image& owner) : owner(owner) {
+        type_id = 0;
+        pImage = NULL;
+        Data = NULL;
+        is_owner = 0;
+        quantum = 0;
+    }
 
-  ~ImageStorage() {
-    _free_complete();
-  }
+    ~ImageStorage() {
+        _free_complete();
+    }
 
-  void resize(int x, int y, int pixel_type, 
-	      int pixel_size, int quantum);
+    void resize(int x, int y, int pixel_type, 
+                int pixel_size, int quantum);
 
-  void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
-			      int quantum);
+    void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
+                                int quantum);
 
 };
 
 
 void ImageStorage::resize(int x, int y, int pixel_type, 
-			  int pixel_size, int quantum) {
-  int need_recreation = 1;
-  /*
-  if (pImage != NULL) {
-    if (x == pImage->width && y == pImage->height) {
+                          int pixel_size, int quantum) {
+    int need_recreation = 1;
+    /*
+      if (pImage != NULL) {
+      if (x == pImage->width && y == pImage->height) {
       if (pImage->imageSize == row_size * y * pixel_size &&
 	  pImage->imageData != NULL && Data != NULL)
-	{
+      {
 	  need_recreation = 0;
-	}
+      }
+      }
+      }
+    */
+
+    YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
+    this->quantum = quantum = YARP_IMAGE_ALIGN;
+
+    if (need_recreation) {
+        _free_complete();
+        DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
+        _alloc_complete (x, y, pixel_type);
     }
-  }
-  */
-
-  YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
-  this->quantum = quantum = YARP_IMAGE_ALIGN;
-
-  if (need_recreation) {
-    _free_complete();
-    DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
-    _alloc_complete (x, y, pixel_type);
-  }
 }
 
 
@@ -169,120 +170,120 @@ void ImageStorage::resize(int x, int y, int pixel_type,
 
 // allocates an empty image.
 void ImageStorage::_alloc (void) {
-  ACE_ASSERT (pImage != NULL);
+    ACE_ASSERT (pImage != NULL);
 
-  if (pImage != NULL)
-    if (pImage->imageData != NULL)
-      _free(); // was iplDeallocateImage(pImage); but that won't work with refs
+    if (pImage != NULL)
+        if (pImage->imageData != NULL)
+            _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 	
-  if ( (type_id == YARP_PIXEL_MONO_FLOAT) || (type_id == YARP_PIXEL_RGB_FLOAT) ||
-       (type_id == YARP_PIXEL_HSV_FLOAT) )
-    iplAllocateImageFP(pImage, 0, 0);
-  else
-    iplAllocateImage (pImage, 0, 0);
+    if ( (type_id == YARP_PIXEL_MONO_FLOAT) || (type_id == YARP_PIXEL_RGB_FLOAT) ||
+         (type_id == YARP_PIXEL_HSV_FLOAT) )
+        iplAllocateImageFP(pImage, 0, 0);
+    else
+        iplAllocateImage (pImage, 0, 0);
 
-  iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
+    iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
 // installs an external buffer as the image data
 void ImageStorage::_alloc_extern (void *buf)
 {
-  ACE_ASSERT (pImage != NULL);
-  ACE_ASSERT(Data==NULL);
+    ACE_ASSERT (pImage != NULL);
+    ACE_ASSERT(Data==NULL);
 
-  if (pImage != NULL)
-    if (pImage->imageData != NULL)
-      iplDeallocateImage (pImage);
+    if (pImage != NULL)
+        if (pImage->imageData != NULL)
+            iplDeallocateImage (pImage);
 
-  //iplAllocateImage (pImage, 0, 0);
-  pImage->imageData = (char*)buf;
-  // HIT probably need to do more for real IPL
+    //iplAllocateImage (pImage, 0, 0);
+    pImage->imageData = (char*)buf;
+    // HIT probably need to do more for real IPL
   
-  //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
+    //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
 
 // allocates the Data pointer.
 void ImageStorage::_alloc_data (void)
 {
-  DBGPF1 ACE_OS::printf("alloc_data1\n"), fflush(stdout);
-  ACE_ASSERT (pImage != NULL);
+    DBGPF1 ACE_OS::printf("alloc_data1\n"), fflush(stdout);
+    ACE_ASSERT (pImage != NULL);
 
-  ACE_ASSERT(Data==NULL);
-  /*
-    if (Data != NULL)
-    {
-    DBGPF1 printf("HIT Deleting Data\n"), fflush(stdout);
-    //delete[] Data; //HIT2
-    free(Data);
-    Data = NULL;
-    }
-  */
+    ACE_ASSERT(Data==NULL);
+    /*
+      if (Data != NULL)
+      {
+      DBGPF1 printf("HIT Deleting Data\n"), fflush(stdout);
+      //delete[] Data; //HIT2
+      free(Data);
+      Data = NULL;
+      }
+    */
 
-  //int hh = pImage->height * sizeof(char *);
+    //int hh = pImage->height * sizeof(char *);
 
-  char **ptr = new char *[pImage->height];
+    char **ptr = new char *[pImage->height];
 
-  Data = ptr;
+    Data = ptr;
 
-  ACE_ASSERT (Data != NULL);
+    ACE_ASSERT (Data != NULL);
 
-  ACE_ASSERT (pImage->imageData != NULL);
+    ACE_ASSERT (pImage->imageData != NULL);
 
-  //int nPlanes = pImage->nChannels;
-  //int width = pImage->width;
-  int height = pImage->height;
+    //int nPlanes = pImage->nChannels;
+    //int width = pImage->width;
+    int height = pImage->height;
 
-  char * DataArea = pImage->imageData;
+    char * DataArea = pImage->imageData;
     
-  for (int r = 0; r < height; r++)
-    {
-      Data[r] = DataArea;
-      DataArea += pImage->widthStep;
-    }
-  DBGPF1 ACE_OS::printf("alloc_data4\n");
+    for (int r = 0; r < height; r++)
+        {
+            Data[r] = DataArea;
+            DataArea += pImage->widthStep;
+        }
+    DBGPF1 ACE_OS::printf("alloc_data4\n");
 }
 
 void ImageStorage::_free (void)
 {
-  //	ACE_ASSERT (pImage != NULL);
-  if (pImage != NULL)
-    if (pImage->imageData != NULL)
-      {
-	//cout << "HIT maybe deleting ipl image" << endl;
-	if (is_owner)
-	  {
-	    DBGPF1 cout << "HIT really truly deleting ipl image" << endl;
-	    iplDeallocateImage (pImage);
-	    if (Data!=NULL)
-	      {
-		delete[] Data;
-	      }
-	  }
-	else
-	  {
-	    if (Data!=NULL)
-	      {
-		delete[] Data;
-	      }
-	  }
+    //	ACE_ASSERT (pImage != NULL);
+    if (pImage != NULL)
+        if (pImage->imageData != NULL)
+            {
+                //cout << "HIT maybe deleting ipl image" << endl;
+                if (is_owner)
+                    {
+                        DBGPF1 cout << "HIT really truly deleting ipl image" << endl;
+                        iplDeallocateImage (pImage);
+                        if (Data!=NULL)
+                            {
+                                delete[] Data;
+                            }
+                    }
+                else
+                    {
+                        if (Data!=NULL)
+                            {
+                                delete[] Data;
+                            }
+                    }
 
-	is_owner = 1;
-	Data = NULL;
-	pImage->imageData = NULL;
-      }
+                is_owner = 1;
+                Data = NULL;
+                pImage->imageData = NULL;
+            }
 }
 
 void ImageStorage::_free_data (void)
 {
-  ACE_ASSERT(Data==NULL); // Now always free Data at same time
-  // as image buffer, for correct refcounting
-  /*
-    if (Data != NULL)
-    {
-    delete[] Data;
-    }
-    Data = NULL;
-  */
+    ACE_ASSERT(Data==NULL); // Now always free Data at same time
+    // as image buffer, for correct refcounting
+    /*
+      if (Data != NULL)
+      {
+      delete[] Data;
+      }
+      Data = NULL;
+    */
 }
 
 
@@ -297,9 +298,9 @@ void ImageStorage::_free_complete()
 void ImageStorage::_free_ipl_header()
 {
 	if (pImage!=NULL)
-	{
-		iplDeallocate (pImage, IPL_IMAGE_HEADER);
-	}
+        {
+            iplDeallocate (pImage, IPL_IMAGE_HEADER);
+        }
 	pImage = NULL;
 }
 
@@ -324,216 +325,216 @@ void ImageStorage::_make_independent()
 
 void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
 {
-  if (quantum==0) {
-    quantum = IPL_ALIGN_QWORD;
-  }
-  int implemented_yet = 1;
+    if (quantum==0) {
+        quantum = IPL_ALIGN_QWORD;
+    }
+    int implemented_yet = 1;
 	// used to allocate the ipl header.
 	switch (pixel_type)
-	{
-	case YARP_PIXEL_MONO:
-		pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_8U,			
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		DBGPF1 ACE_OS::printf("Set pImage to %ld\n", (long int) pImage);
-		DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
-		break;
+        {
+        case YARP_PIXEL_MONO:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            DBGPF1 ACE_OS::printf("Set pImage to %ld\n", (long int) pImage);
+            DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
+            break;
 
-	case YARP_PIXEL_RGB:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"RGB",
-					"RGB",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_RGB:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "RGB",
+                                          "RGB",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_HSV:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"HSV",
-					"HSV",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_HSV:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "HSV",
+                                          "HSV",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_BGR:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_8U,			
-					"RGB",
-					"BGR",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_BGR:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "RGB",
+                                          "BGR",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_MONO_SIGNED:
-		pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_8S,			
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		break;
+        case YARP_PIXEL_MONO_SIGNED:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_8S,			
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_RGB_SIGNED:
-		ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_RGB_SIGNED:
+            ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_MONO_FLOAT:
-             	  pImage = iplCreateImageHeader(
-					  1,
-					  0,
-					  IPL_DEPTH_32F,
-					  "GRAY",
-					  "GRAY",
-					  IPL_DATA_ORDER_PIXEL,
-					  IPL_ORIGIN_BL,
-					  quantum,
-					  x,
-					  y,
-					  NULL,
-					  NULL,
-					  NULL,
-					  NULL);
-		break;
+        case YARP_PIXEL_MONO_FLOAT:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32F,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          quantum,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_RGB_FLOAT:
-		pImage = iplCreateImageHeader(
-					3,
-					0,
-					IPL_DEPTH_32F,			
-					"RGB",
-					"RGB",
-					IPL_DATA_ORDER_PIXEL,	 
-					IPL_ORIGIN_BL,			
-					quantum,		
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-		//ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_RGB_FLOAT:
+            pImage = iplCreateImageHeader(
+                                          3,
+                                          0,
+                                          IPL_DEPTH_32F,			
+                                          "RGB",
+                                          "RGB",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          IPL_ORIGIN_BL,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            //ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_HSV_FLOAT:
-		ACE_ASSERT (implemented_yet == 0);
-		break;
+        case YARP_PIXEL_HSV_FLOAT:
+            ACE_ASSERT (implemented_yet == 0);
+            break;
 
-	case YARP_PIXEL_INT:
-             	  pImage = iplCreateImageHeader(
-					  1,
-					  0,
-					  IPL_DEPTH_32S,
-					  "GRAY",
-					  "GRAY",
-					  IPL_DATA_ORDER_PIXEL,
-					  IPL_ORIGIN_BL,
-					  quantum,
-					  x,
-					  y,
-					  NULL,
-					  NULL,
-					  NULL,
-					  NULL);
-		break;
+        case YARP_PIXEL_INT:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          quantum,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case YARP_PIXEL_INVALID:
-		// not a type!
-		ACE_OS::printf ("*** Trying to allocate an invalid pixel type image\n");
-		ACE_OS::exit(1);
-		break;
+        case YARP_PIXEL_INVALID:
+            // not a type!
+            ACE_OS::printf ("*** Trying to allocate an invalid pixel type image\n");
+            ACE_OS::exit(1);
+            break;
 	  
-	case -2:
-	  pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_16S,
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,
-					IPL_ORIGIN_BL,
-					quantum,
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-	  break;
+        case -2:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_16S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          quantum,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	case -4:
-	  pImage = iplCreateImageHeader(
-					1,
-					0,
-					IPL_DEPTH_32S,
-					"GRAY",
-					"GRAY",
-					IPL_DATA_ORDER_PIXEL,
-					IPL_ORIGIN_BL,
-					quantum,
-					x,
-					y,
-					NULL,
-					NULL,
-					NULL,
-					NULL);
-	  break;
+        case -4:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_32S,
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,
+                                          IPL_ORIGIN_BL,
+                                          quantum,
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
 
-	default:
-		// unknown pixel type. Should revert to a non-IPL mode... how?
-		// LATER: implement this.
-		ACE_ASSERT (implemented_yet == 0);
-		break;
-	}
+        default:
+            // unknown pixel type. Should revert to a non-IPL mode... how?
+            // LATER: implement this.
+            ACE_ASSERT (implemented_yet == 0);
+            break;
+        }
 
 	type_id = pixel_type;
 	this->quantum = quantum;
@@ -541,10 +542,10 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
 
 void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum)
 {
-  if (quantum==0) {
-    quantum = 1;
-  }
-  this->quantum = quantum;
+    if (quantum==0) {
+        quantum = 1;
+    }
+    this->quantum = quantum;
 
 	_make_independent();
 	_free_complete();
@@ -560,7 +561,7 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
 // LATER: implement for LINUX.
 int ImageStorage::_pad_bytes (int linesize, int align) const
 {
-  return PAD_BYTES (linesize, align);
+    return PAD_BYTES (linesize, align);
 }
 
 
@@ -571,36 +572,36 @@ int ImageStorage::_pad_bytes (int linesize, int align) const
 
 
 Image::Image() {
-  initialize();
+    initialize();
 }
 
 void Image::initialize() {
-  implementation = NULL;
-  data = NULL;
-  imgWidth = imgHeight = 0;
-  imgPixelSize = imgRowSize = 0;
-  imgPixelCode = 0;
-  imgQuantum = 0;
-  implementation = new ImageStorage(*this);
-  ACE_ASSERT(implementation!=NULL);
+    implementation = NULL;
+    data = NULL;
+    imgWidth = imgHeight = 0;
+    imgPixelSize = imgRowSize = 0;
+    imgPixelCode = 0;
+    imgQuantum = 0;
+    implementation = new ImageStorage(*this);
+    ACE_ASSERT(implementation!=NULL);
 }
 
 
 Image::~Image() {
-  if (implementation!=NULL) {
-    delete (ImageStorage*)implementation;
-    implementation = NULL;
-  }
+    if (implementation!=NULL) {
+        delete (ImageStorage*)implementation;
+        implementation = NULL;
+    }
 }
 
 
 int Image::getPixelSize() const {
-  return imgPixelSize;
+    return imgPixelSize;
 }
 
 
 int Image::getPixelCode() const {
-  return imgPixelCode;
+    return imgPixelCode;
 }
 
 
@@ -609,77 +610,77 @@ void Image::zero() {
 
 
 void Image::resize(int imgWidth, int imgHeight) {
-  int code = getPixelCode();
-  if (code!=imgPixelCode) { imgPixelCode = code; }
-  int size = getPixelSize();
-  if (size!=imgPixelSize) { imgPixelSize = size; }
+    int code = getPixelCode();
+    if (code!=imgPixelCode) { imgPixelCode = code; }
+    int size = getPixelSize();
+    if (size!=imgPixelSize) { imgPixelSize = size; }
 
-  ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
-					  imgPixelCode,
-					  imgPixelSize,
-					  imgQuantum);
-  synchronize();
+    ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
+                                            imgPixelCode,
+                                            imgPixelSize,
+                                            imgQuantum);
+    synchronize();
 }
 
 
 void Image::setPixelCode(int imgPixelCode) {
-  this->imgPixelCode = imgPixelCode;
+    this->imgPixelCode = imgPixelCode;
 }
 
 
 void Image::setPixelSize(int imgPixelSize) {
-  this->imgPixelSize = imgPixelSize;
+    this->imgPixelSize = imgPixelSize;
 }
 
 
 void Image::setQuantum(int imgQuantum) {
-  this->imgQuantum = imgQuantum;
+    this->imgQuantum = imgQuantum;
 }
 
 
 void Image::synchronize() {
-  ImageStorage *impl = (ImageStorage*)implementation;
-  ACE_ASSERT(impl!=NULL);
-  if (impl->pImage!=NULL) {
-    imgWidth = impl->pImage->width;
-    imgHeight = impl->pImage->height;
-    data = impl->Data;
-    imgQuantum = impl->quantum;
-    imgRowSize = impl->pImage->widthStep;
-  } else {
-    data = NULL;
-    imgWidth = imgHeight = 0;
-  }
-  imgPixelSize = getPixelSize();
-  imgPixelCode = getPixelCode();
+    ImageStorage *impl = (ImageStorage*)implementation;
+    ACE_ASSERT(impl!=NULL);
+    if (impl->pImage!=NULL) {
+        imgWidth = impl->pImage->width;
+        imgHeight = impl->pImage->height;
+        data = impl->Data;
+        imgQuantum = impl->quantum;
+        imgRowSize = impl->pImage->widthStep;
+    } else {
+        data = NULL;
+        imgWidth = imgHeight = 0;
+    }
+    imgPixelSize = getPixelSize();
+    imgPixelCode = getPixelCode();
 }
 
 
 char *Image::getRawImage() const {
-  ImageStorage *impl = (ImageStorage*)implementation;
-  ACE_ASSERT(impl!=NULL);
-  if (impl->pImage!=NULL) {
-    return impl->pImage->imageData;
-  }
-  return NULL;
+    ImageStorage *impl = (ImageStorage*)implementation;
+    ACE_ASSERT(impl!=NULL);
+    if (impl->pImage!=NULL) {
+        return impl->pImage->imageData;
+    }
+    return NULL;
 }
 
 int Image::getRawImageSize() const {
-  ImageStorage *impl = (ImageStorage*)implementation;
-  ACE_ASSERT(impl!=NULL);
-  if (impl->pImage!=NULL) {
-    return impl->pImage->imageSize;
-  }
-  return 0;
+    ImageStorage *impl = (ImageStorage*)implementation;
+    ACE_ASSERT(impl!=NULL);
+    if (impl->pImage!=NULL) {
+        return impl->pImage->imageSize;
+    }
+    return 0;
 }
 
 void *Image::getIplImage() {
-  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
-  return NULL;
+    fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+    return NULL;
 }
 
 void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
-  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+    fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
 }
 
 
@@ -692,106 +693,106 @@ void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
 class YARPImagePortContentHeader
 {
 public:
-  yarp::os::NetInt32 len;
-  yarp::os::NetInt32 w;
-  yarp::os::NetInt32 id;
-  yarp::os::NetInt32 h;
-  yarp::os::NetInt32 depth;
-  yarp::os::NetInt32 ext1;
-  yarp::os::NetInt32 ext2;
-  //double timestamp;
+    yarp::os::NetInt32 len;
+    yarp::os::NetInt32 w;
+    yarp::os::NetInt32 id;
+    yarp::os::NetInt32 h;
+    yarp::os::NetInt32 depth;
+    yarp::os::NetInt32 ext1;
+    yarp::os::NetInt32 ext2;
+    //double timestamp;
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
 
 
 bool Image::read(yarp::os::ConnectionReader& connection) {
-  YARPImagePortContentHeader header;
+    YARPImagePortContentHeader header;
 
-  connection.expectBlock((char*)&header,sizeof(header));
+    connection.expectBlock((char*)&header,sizeof(header));
 
-  imgPixelCode = header.id;
+    imgPixelCode = header.id;
 
-  // make sure we're not trying to read into an incompatible image type
-  ACE_ASSERT(getPixelCode()==header.id);
+    // make sure we're not trying to read into an incompatible image type
+    ACE_ASSERT(getPixelCode()==header.id);
 
-  resize(header.w,header.h);
+    resize(header.w,header.h);
 
-  char *mem = getRawImage();
-  ACE_ASSERT(mem!=NULL);
-  ACE_ASSERT(getRawImageSize()==header.len);
-  connection.expectBlock(getRawImage(),getRawImageSize());
+    char *mem = getRawImage();
+    ACE_ASSERT(mem!=NULL);
+    ACE_ASSERT(getRawImageSize()==header.len);
+    connection.expectBlock(getRawImage(),getRawImageSize());
 
-  return true;
+    return true;
 }
 
 
 bool Image::write(yarp::os::ConnectionWriter& connection) {
-  YARPImagePortContentHeader header;
-  header.h = height();
-  header.w = width();
-  header.depth = getPixelSize();
-  header.id = getPixelCode();
-  header.len = getRawImageSize();
-  //header.timestamp = 0;
-  header.ext1 = 0;
-  header.ext2 = 0;
-  connection.appendBlock((char*)&header,sizeof(header));
-  char *mem = getRawImage();
-  ACE_ASSERT(mem!=NULL);
+    YARPImagePortContentHeader header;
+    header.h = height();
+    header.w = width();
+    header.depth = getPixelSize();
+    header.id = getPixelCode();
+    header.len = getRawImageSize();
+    //header.timestamp = 0;
+    header.ext1 = 0;
+    header.ext2 = 0;
+    connection.appendBlock((char*)&header,sizeof(header));
+    char *mem = getRawImage();
+    ACE_ASSERT(mem!=NULL);
 
-  // Note use of external block.  Implies care needed about ownership.
-  connection.appendExternalBlock(mem,header.len);
+    // Note use of external block.  Implies care needed about ownership.
+    connection.appendExternalBlock(mem,header.len);
 
-  return true;
+    return true;
 }
 
 
 Image::Image(const Image& alt) {
-  initialize();
-  copy(alt);
+    initialize();
+    copy(alt);
 }
 
 
 const Image& Image::operator=(const Image& alt) {
-  copy(alt);
-  return *this;
+    copy(alt);
+    return *this;
 }
 
 
 bool Image::copy(const Image& alt) {
-  bool ok = false;
-  int myCode = getPixelCode();
-  if (myCode==0) {
-    setPixelCode(alt.getPixelCode());
-  }
-  resize(alt.width(),alt.height());
-  YARP_ASSERT(width()==alt.width());
-  YARP_ASSERT(height()==alt.height());
-  if (getPixelCode()==alt.getPixelCode()) {
-    YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
-    YARP_ASSERT(getQuantum()==alt.getQuantum());
-  }
-  YARP_ASSERT(height()==alt.height());
-  copyPixels(alt.getRawImage(),alt.getPixelCode(),
-	     getRawImage(),getPixelCode(),
-	     width(),height(),
-	     getRawImageSize(),getQuantum());
-  ok = true;
-  return ok;
+    bool ok = false;
+    int myCode = getPixelCode();
+    if (myCode==0) {
+        setPixelCode(alt.getPixelCode());
+    }
+    resize(alt.width(),alt.height());
+    YARP_ASSERT(width()==alt.width());
+    YARP_ASSERT(height()==alt.height());
+    if (getPixelCode()==alt.getPixelCode()) {
+        YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
+        YARP_ASSERT(getQuantum()==alt.getQuantum());
+    }
+    YARP_ASSERT(height()==alt.height());
+    copyPixels(alt.getRawImage(),alt.getPixelCode(),
+               getRawImage(),getPixelCode(),
+               width(),height(),
+               getRawImageSize(),getQuantum());
+    ok = true;
+    return ok;
 }
 
 
 void Image::setExternal(void *data, int imgWidth, int imgHeight) {
-  if (imgQuantum==0) {
-    imgQuantum = 1;
-  }
-  ((ImageStorage*)implementation)->_alloc_complete_extern(data,
-							  imgWidth,
-							  imgHeight,
-							  getPixelCode(),
-							  imgQuantum);
-  synchronize();
+    if (imgQuantum==0) {
+        imgQuantum = 1;
+    }
+    ((ImageStorage*)implementation)->_alloc_complete_extern(data,
+                                                            imgWidth,
+                                                            imgHeight,
+                                                            getPixelCode(),
+                                                            imgQuantum);
+    synchronize();
 }
 
 

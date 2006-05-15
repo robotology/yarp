@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImagePortContent.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPImagePortContent.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -84,12 +85,12 @@
 class YARPImagePortContentHeader
 {
 public:
-  NetInt32 len;
-  NetInt32 w;
-  NetInt32 id;
-  NetInt32 h;
-  NetInt32 depth;
-  double timestamp;
+    NetInt32 len;
+    NetInt32 w;
+    NetInt32 id;
+    NetInt32 h;
+    NetInt32 depth;
+    double timestamp;
 } PACKED_FOR_NET;
 
 #include <yarp/end_pack_for_net.h>
@@ -106,23 +107,23 @@ public:
 	virtual int Read(YARPPortReader& reader)
 	{
 		if (reader.Read((char*)(&header),sizeof(header)))
-		{
-			//	  cout.flush();
-			SetID(header.id);
-			//SetPixelSize(header.depth);
-			///int r = GetWidth();
-			if (GetWidth()!=header.w || GetHeight()!=header.h)
-			{
-				//	      cout << "CREATING!! " << header.w << " " << GetWidth() << endl;
-				Resize(header.w,header.h);
-			}
+            {
+                //	  cout.flush();
+                SetID(header.id);
+                //SetPixelSize(header.depth);
+                ///int r = GetWidth();
+                if (GetWidth()!=header.w || GetHeight()!=header.h)
+                    {
+                        //	      cout << "CREATING!! " << header.w << " " << GetWidth() << endl;
+                        Resize(header.w,header.h);
+                    }
 
-			char *mem = GetRawBuffer();
-			ACE_ASSERT(mem!=NULL);
-			ACE_ASSERT(GetWidth()==header.w && GetHeight()==header.h && GetPixelSize()==header.depth);
-			reader.Read(mem,header.len);
-			//timestamp = header.timestamp;
-		}
+                char *mem = GetRawBuffer();
+                ACE_ASSERT(mem!=NULL);
+                ACE_ASSERT(GetWidth()==header.w && GetHeight()==header.h && GetPixelSize()==header.depth);
+                reader.Read(mem,header.len);
+                //timestamp = header.timestamp;
+            }
 		return 1;
 	}
 
@@ -156,7 +157,7 @@ class YARPInputPortOf<YARPGenericImage> : public YARPBasicInputPort<YARPImagePor
 {
 public:
 	YARPInputPortOf<YARPGenericImage>(int n_service_type = DEFAULT_BUFFERS, 
-					  int n_protocol_type = YARP_DEFAULT_PROTOCOL) :
+                                      int n_protocol_type = YARP_DEFAULT_PROTOCOL) :
 		YARPBasicInputPort<YARPImagePortContent> (n_service_type, n_protocol_type) {}
 
 	virtual ~YARPInputPortOf<YARPGenericImage> () { YARPPort::End(); }

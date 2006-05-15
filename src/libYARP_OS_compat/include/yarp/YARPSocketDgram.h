@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPSocketDgram.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPSocketDgram.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 

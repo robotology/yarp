@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-///  $Id: YARPConfigFile.cpp,v 1.1 2006-03-13 12:52:42 eshuy Exp $
+///  $Id: YARPConfigFile.cpp,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -57,10 +58,10 @@ bool YARPConfigFile::_open(const YARPString &path, const YARPString &filename)
 	tmp.append(filename);
 	_pFile = ACE_OS::fopen(tmp.c_str(), "r");
 	if (_pFile != NULL)
-	{
-		_openFlag = true;
-		return true;
-	}
+        {
+            _openFlag = true;
+            return true;
+        }
 	else 
 		return false;
 }
@@ -124,11 +125,11 @@ int YARPConfigFile::getHex(const char *section, const char *name, char *out, int
 	int i = 0;
 	int tmp;
 	while ( (i<n) && (fscanf(_pFile, "%x", &tmp) != EOF) )
-	{
-		*out = (char) tmp;
-		out++;
-		i++;
-	}
+        {
+            *out = (char) tmp;
+            out++;
+            i++;
+        }
 			
 	_close();
 	
@@ -146,11 +147,11 @@ int YARPConfigFile::getHex(const char *section, const char *name, short *out, in
 	int i = 0;
 	int tmp;
 	while ( (i<n) && (fscanf(_pFile, "%x", &tmp) != EOF) )
-	{
-		*out = (short) tmp;
-		i++;
-		out++;
-	}
+        {
+            *out = (short) tmp;
+            i++;
+            out++;
+        }
 			
 	_close();
 	
@@ -254,10 +255,10 @@ int YARPConfigFile::_get(const char *section, const char *name)
 		return YARP_FAIL;
 
 	if (!_findSection(section))
-	{
-		_close();
-		return YARP_FAIL;
-	}
+        {
+            _close();
+            return YARP_FAIL;
+        }
 
 	if (_findString(name))
 		return YARP_OK;
@@ -271,10 +272,10 @@ bool YARPConfigFile::_findSection(const char *sec)
 	char row[255];
 	
 	while (fscanf(_pFile, "%s", row) != EOF)
-	{
-		if (ACE_OS::strcmp(sec, row) == 0)
-			return true;
-	}
+        {
+            if (ACE_OS::strcmp(sec, row) == 0)
+                return true;
+        }
 
 	return false;
 }
@@ -288,13 +289,13 @@ bool YARPConfigFile::_findString(const char *str)
 		return false;
 	
 	while (fscanf(_pFile, "%s", row) != EOF)
-	{
-		if (row[0] == '[')
-			return false;		//end of section
+        {
+            if (row[0] == '[')
+                return false;		//end of section
 		
-		if (ACE_OS::strcmp(row, str) == 0)
-			return true;
-	}
+            if (ACE_OS::strcmp(row, str) == 0)
+                return true;
+        }
 
 	return false;
 }

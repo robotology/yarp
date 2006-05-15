@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: YARPVectorPortContent.h,v 1.1 2006-03-15 09:31:28 eshuy Exp $
+/// $Id: YARPVectorPortContent.h,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -59,14 +60,14 @@
 class YARPVectorPortContentHeader
 {
 public:
-  NetInt32 len;
+    NetInt32 len;
 } PACKED_FOR_NET;
 
 class YARPMatrixPortContentHeader
 {
 public:
-  NetInt32 r;
-  NetInt32 c;
+    NetInt32 r;
+    NetInt32 c;
 } PACKED_FOR_NET;
 
 #include <yarp/end_pack_for_net.h>
@@ -82,14 +83,14 @@ public:
 	virtual int Read (YARPPortReader& reader)
 	{
 		if (reader.Read ((char*)(&header), sizeof(header)))
-		{
-			if (header.len != Length()) 
-				Resize (header.len);
+            {
+                if (header.len != Length()) 
+                    Resize (header.len);
 
-			char *mem = (char *)data();
-			ACE_ASSERT (mem != NULL);
-			reader.Read (mem, header.len * sizeof(double));
-		}
+                char *mem = (char *)data();
+                ACE_ASSERT (mem != NULL);
+                reader.Read (mem, header.len * sizeof(double));
+            }
 		return 1;
 	}
 
@@ -143,14 +144,14 @@ public:
 	virtual int Read (YARPPortReader& reader)
 	{
 		if (reader.Read ((char*)(&header), sizeof(header)))
-		{
-			if (header.r != NRows() || header.c != NCols())
-				Resize (header.r, header.c);
+            {
+                if (header.r != NRows() || header.c != NCols())
+                    Resize (header.r, header.c);
 
-			char *mem = (char *)(data()[0]);		/// mem is contiguous.
-			ACE_ASSERT (mem != NULL);
-			reader.Read (mem, header.r * header.c * sizeof(double));
-		}
+                char *mem = (char *)(data()[0]);		/// mem is contiguous.
+                ACE_ASSERT (mem != NULL);
+                reader.Read (mem, header.r * header.c * sizeof(double));
+            }
 		return 1;
 	}
 

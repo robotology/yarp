@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImageUtils.cpp,v 1.1 2006-03-15 09:33:51 eshuy Exp $
+/// $Id: YARPImageUtils.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 
@@ -82,15 +83,15 @@ void GetPlane (const YARPGenericImage& in, YARPImageOf<YarpPixelMono>& out, int 
 	unsigned char *dst = NULL;
 
 	for (int i = 0; i < height; i++)
-	{
-		src = (unsigned char *)in.GetArray()[i] + shift;
-		dst = (unsigned char *)out.GetArray()[i];
-		for (int j = 0; j < width; j++)
-		{
-			*dst++ = *src;
-			src += 3;
-		}
-	}
+        {
+            src = (unsigned char *)in.GetArray()[i] + shift;
+            dst = (unsigned char *)out.GetArray()[i];
+            for (int j = 0; j < width; j++)
+                {
+                    *dst++ = *src;
+                    src += 3;
+                }
+        }
 }
 
 void SetPlane (const YARPImageOf<YarpPixelMono>& in, YARPGenericImage& out, int shift)
@@ -106,15 +107,15 @@ void SetPlane (const YARPImageOf<YarpPixelMono>& in, YARPGenericImage& out, int 
 	unsigned char *dst = NULL;
 
 	for (int i = 0; i < height; i++)
-	{
-		src = (unsigned char *)in.GetArray()[i];
-		dst = (unsigned char *)out.GetArray()[i] + shift;
-		for (int j = 0; j < width; j++)
-		{
-			*dst = *src++;
-			dst += 3;
-		}
-	}
+        {
+            src = (unsigned char *)in.GetArray()[i];
+            dst = (unsigned char *)out.GetArray()[i] + shift;
+            for (int j = 0; j < width; j++)
+                {
+                    *dst = *src++;
+                    dst += 3;
+                }
+        }
 }
 
 void YARPImageUtils::GetRed (const YARPImageOf<YarpPixelRGB>& in, YARPImageOf<YarpPixelMono>& out)
@@ -216,36 +217,36 @@ void YARPImageUtils::PasteInto (const YARPImageOf<YarpPixelMono>& src, int x, in
 	ACE_ASSERT (dh * zoom + y < h);
 
 	if (zoom == 1)
-	{
-		bs += (y * w);
-		for (int i = 0; i < dh; i++)
-		{
-			memcpy (bs + x, dsY, dw);
+        {
+            bs += (y * w);
+            for (int i = 0; i < dh; i++)
+                {
+                    memcpy (bs + x, dsY, dw);
 
-			bs += w;
-			dsY += dw;
-		}
-	}
+                    bs += w;
+                    dsY += dw;
+                }
+        }
 	else
-	{
-		bs += (y * w);
-		for (int i = 0; i < dh; i++)
-		{
-			char * st_row = bs;
-			bs += x;
-			for (int j = 0; j < dw; j++)
-			{
-				for (int k = 0; k < zoom; k++)
-				{
-					*bs++ = *dsY;
-				}
-				dsY++;
-			}
+        {
+            bs += (y * w);
+            for (int i = 0; i < dh; i++)
+                {
+                    char * st_row = bs;
+                    bs += x;
+                    for (int j = 0; j < dw; j++)
+                        {
+                            for (int k = 0; k < zoom; k++)
+                                {
+                                    *bs++ = *dsY;
+                                }
+                            dsY++;
+                        }
 
-			for (int k = 1; k < zoom; k++)
-				memcpy (st_row + x + w * k, st_row + x, dw * zoom); 
+                    for (int k = 1; k < zoom; k++)
+                        memcpy (st_row + x + w * k, st_row + x, dw * zoom); 
 
-			bs = st_row + w * zoom;
-		}
-	}
+                    bs = st_row + w * zoom;
+                }
+        }
 }

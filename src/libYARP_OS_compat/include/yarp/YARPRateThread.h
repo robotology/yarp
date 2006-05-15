@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -52,7 +53,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: YARPRateThread.h,v 1.1 2006-03-13 13:35:18 eshuy Exp $
+/// $Id: YARPRateThread.h,v 1.2 2006-05-15 15:57:58 eshuy Exp $
 ///
 ///
 
@@ -192,9 +193,9 @@ public:
 	{
 		// close the thread
 		if (isRunning()) 
-		{
-			terminate();
-		}
+            {
+                terminate();
+            }
 
 	}
 
@@ -232,16 +233,16 @@ public:
 														   0,
 														   0,
 														   thread_priority
-															);
+                                                           );
 #else
 		// create suspended.
 		thread_id = ACE_Thread_Manager::instance ()->spawn(real_thread, //thread function
-								   this,		//thread parameter
-								   THR_NEW_LWP||THR_SUSPENDED,
-								   0,
-								   0,
-								   thread_priority
-							 	  );
+                                                           this,		//thread parameter
+                                                           THR_NEW_LWP||THR_SUSPENDED,
+                                                           0,
+                                                           0,
+                                                           thread_priority
+                                                           );
 #endif
 		ACE_Thread_Manager::instance()->resume_grp(thread_id);
 		isRunningF = true;
@@ -271,26 +272,26 @@ public:
 		bool timeout_flag = false;
 
 		if (!timeout)
-		{
-			synchro.wait();
-			timeout_flag = false;
-		}
+            {
+                synchro.wait();
+                timeout_flag = false;
+            }
 		else if (synchro.wait(&_timeout_value, 0) == -1)
-		{
+            {
 #if defined(__WIN32__)
-			// win32 doesn't support kill signal, so we have to use the API
-			TerminateThread (handle, -1);
+                // win32 doesn't support kill signal, so we have to use the API
+                TerminateThread (handle, -1);
 #elif defined(__QNX6__)
-	                ThreadDestroy (thread_id, -1, (void *)-1);
+                ThreadDestroy (thread_id, -1, (void *)-1);
 #elif defined(__LINUX__)
-			pthread_cancel (thread_id);
+                pthread_cancel (thread_id);
 #elif defined(__DARWIN__)
-			pthread_cancel (thread_id);
+                pthread_cancel (thread_id);
 #else
 #error "destroy thread: not implemented for the specified architecture"
 #endif
-			timeout_flag = true;
-		}
+                timeout_flag = true;
+            }
 
 		// after the syncro event or the kill the thread should end, just wait for it
 		ACE_Thread_Manager::instance()->wait_grp(thread_id);		
@@ -299,19 +300,19 @@ public:
 		isSuspendedF = false;
 
 #ifdef THREAD_STATS
-			if (timeout_flag)
+        if (timeout_flag)
 			{
 				cout << "WARNING: " << name << " exited with timeout\n";
 			}
-			else
-				cout << name << " exited gracefully.\n";
+        else
+            cout << name << " exited gracefully.\n";
 
-			cout << "Dumping statistics:\n";
-			cout << "Estimated period: "<< thread_stats.period.get_mean();
-			cout << " +/-" << thread_stats.period.get_std() << "\n";
-			cout << "Estimated time: "<< thread_stats.time.get_mean();
-			cout << " +/-" << thread_stats.time.get_std();
-			cout << "\n";
+        cout << "Dumping statistics:\n";
+        cout << "Estimated period: "<< thread_stats.period.get_mean();
+        cout << " +/-" << thread_stats.period.get_std() << "\n";
+        cout << "Estimated time: "<< thread_stats.time.get_mean();
+        cout << " +/-" << thread_stats.time.get_std();
+        cout << "\n";
 #endif /* THREAD_STATS */
 
 		unlock ();
@@ -347,19 +348,19 @@ public:
 	void setInterval(int i)
 	{
 		if (i >= 0)
-		{
-			bool was_running = isRunning();
-			if (was_running)
-			{
-				suspend();
-			}
+            {
+                bool was_running = isRunning();
+                if (was_running)
+                    {
+                        suspend();
+                    }
 
-			period.set(0,i*1000);
+                period.set(0,i*1000);
 		
 
-			if (was_running)
-				resume();
-		}
+                if (was_running)
+                    resume();
+            }
 	}
 
 	/**
@@ -442,7 +443,7 @@ public:
 		
 		context->doInit();
 #ifdef THREAD_STATS
-				begin_timer.start();
+        begin_timer.start();
 #endif /* THREAD_STATS */
 		context->synchro.signal();
 		// set synchro event
@@ -450,7 +451,7 @@ public:
 		// first "est_period" value
 		ACE_OS::sleep(context->period);
 		while (!context->end)
-		{
+            {
 #ifdef THREAD_STATS
 				// est period
 				begin_timer.stop();
@@ -460,26 +461,26 @@ public:
 				context->thread_stats.period+=est_period.usec()/1000.0;
 #endif /* THREAD_STATS */
 
-			// loop
-			thread_timer.start();
-			context->doLoop ();
-			thread_timer.stop();
-			thread_timer.elapsed_time(est_time);
+                // loop
+                thread_timer.start();
+                context->doLoop ();
+                thread_timer.stop();
+                thread_timer.elapsed_time(est_time);
 			
 #ifdef THREAD_STATS
 				// context->thread_stats.time+=est_time.msec();
 				context->thread_stats.time+=est_time.usec()/1000.0;
 #endif /* THREAD_STATS */
 
-			// compute sleep time
-			sleep_period = context->period-est_time;
+                // compute sleep time
+                sleep_period = context->period-est_time;
 			
-			if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-				sleep_period.set(0,0);
+                if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
+                    sleep_period.set(0,0);
 
-			ACE_OS::sleep(sleep_period);
-			// WaitForSingleObject(w32timer, INFINITE);
-		}
+                ACE_OS::sleep(sleep_period);
+                // WaitForSingleObject(w32timer, INFINITE);
+            }
 
 		context->doRelease ();
 		// since we have no control on the doRelease function

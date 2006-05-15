@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: YARPRobotMath.cpp,v 1.1 2006-03-15 09:33:52 eshuy Exp $
+/// $Id: YARPRobotMath.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 

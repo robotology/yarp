@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///                                                                   ///
@@ -61,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImageUtils.h,v 1.2 2006-04-12 14:27:43 eshuy Exp $
+/// $Id: YARPImageUtils.h,v 1.3 2006-05-15 15:57:59 eshuy Exp $
 ///
 ///
 

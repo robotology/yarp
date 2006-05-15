@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef _YARP2_NAME_
 #define _YARP2_NAME_
 
@@ -5,7 +6,7 @@
 #include <yarp/Address.h>
 
 namespace yarp {
-  class Name;
+    class Name;
 }
 
 /**
@@ -13,14 +14,14 @@ namespace yarp {
  */
 class yarp::Name {
 public:
-  Name(const String& txt);
+    Name(const String& txt);
 
-  bool isRooted() const;
+    bool isRooted() const;
 
-  Address toAddress() const;
+    Address toAddress() const;
 
 private:
-  String txt;
+    String txt;
 };
 
 #endif
