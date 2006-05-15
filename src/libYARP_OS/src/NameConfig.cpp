@@ -11,10 +11,10 @@
 
 // does ACE require new c++ header files or not?
 #if ACE_HAS_STANDARD_CPP_LIBRARY
-    #include <fstream>
-    using namespace std;
+#include <fstream>
+using namespace std;
 #else
-    #include <fstream.h>
+#include <fstream.h>
 #endif
 
 using namespace yarp;
