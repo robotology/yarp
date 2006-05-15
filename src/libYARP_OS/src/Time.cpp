@@ -3,6 +3,7 @@
 #include <yarp/os/Time.h>
 
 #include <ace/OS.h>
+#include <ace/High_Res_Timer.h>
 
 #ifdef ACE_WIN32
 // for WIN32 MM functions
@@ -26,6 +27,10 @@ double Time::now() {
     return double(timev.sec()) + timev.usec() * 1e-6; 
 }
 
+double Time::preciseNow() {
+	ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
+    return double(timev.sec()) + timev.usec() * 1e-6; 
+}
 
 void Time::turboBoost() {
 #ifdef ACE_WIN32
