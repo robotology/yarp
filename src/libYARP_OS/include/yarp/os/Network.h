@@ -3,6 +3,10 @@
 
 #include <yarp/os/Contact.h>
 
+#ifdef main
+#undef main
+#endif
+
 namespace yarp {
   namespace os {
     class Network;

@@ -1,4 +1,3 @@
-
 #include <yarp/Address.h>
 
 using namespace yarp;

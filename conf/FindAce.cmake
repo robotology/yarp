@@ -8,7 +8,8 @@ IF (WIN32)
 ENDIF (WIN32)
 SET(YARP_ACE_CONFIG_GUESS $ENV{ACE_ROOT}/../../include/${OS_TAG})
 
-FIND_PATH(ACE_INCLUDE_CONFIG_DIR ace/config.h /usr/include /usr/local/include ${YARP_ACE_CONFIG_GUESS} DOC "directory containing ace/config.h")
+#FIND_PATH(ACE_INCLUDE_CONFIG_DIR ace/config.h /usr/include /usr/local/include $ENV{ACE_ROOT} ${YARP_ACE_CONFIG_GUESS} DOC "directory containing ace/config.h")
+SET(ACE_INCLUDE_CONFIG_DIR ${ACE_INCLUDE_DIR})
 
 FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file")
 

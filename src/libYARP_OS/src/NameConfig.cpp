@@ -9,8 +9,13 @@
 #include <ace/INET_Addr.h>
 #include <ace/Sock_Connect.h>
 
-#include <fstream>
-using namespace std;
+// does ACE require new c++ header files or not?
+#if ACE_HAS_STANDARD_CPP_LIBRARY
+    #include <fstream>
+    using namespace std;
+#else
+    #include <fstream.h>
+#endif
 
 using namespace yarp;
 
