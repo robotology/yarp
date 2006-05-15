@@ -3,6 +3,7 @@
 
 #include <yarp/os/Contact.h>
 
+//protects against some dangerous ACE macros
 #ifdef main
 #undef main
 #endif
