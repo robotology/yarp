@@ -4,33 +4,38 @@ PROJECT(libYARP_dev)
 #to this name to compile the debug version
 SET(PROJECT_NAME YARP_dev)
 
-
+## BEGIN PLATFORM SPECIFICS -- list of available dd and respective libs
 IF (WIN32 AND NOT CYGWIN)
+	# list of available device drivers
 	SET(avail_dd picolo dragonfly)
+	# list of dd libraries
 	SET(dd_libs Picolo32 PGRFlyCapture)
-  	#search DD libs	
-	FOREACH(DD ${dd_libs})
-		SET(DD_PATH_VAR_NAME PATH-${DD})
-		
-		FOREACH(PATH ${avail_dd})
-			SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${PATH}/${OS_TAG}/dd_orig/lib)
-			FIND_LIBRARY(${DD_PATH_VAR_NAME} ${DD} ${LOCAL_PATH})
-			ENDIF(DD_PATH_VAR_NAME)
-		ENDFOREACH(PATH ${avail_DD})
-
-		SET(DD_PATHS ${DD_PATHS} ${${DD_PATH_VAR_NAME}})
-	ENDFOREACH(DD ${dd_libs})
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(avail_dd dragonfly/linux)
+   SET(avail_dd dragonfly)
+   SET(dd_libs libraw1394)
 ENDIF (UNIX)
 
+#search DD libs	
+FOREACH(DD ${dd_libs})
+	SET(DD_PATH_VAR_NAME PATH-${DD})
+		
+	FOREACH(PATH ${avail_dd})
+		SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${PATH}/${OS_TAG}/dd_orig/lib)
+		FIND_LIBRARY(${DD_PATH_VAR_NAME} ${DD} ${LOCAL_PATH})
+		ENDIF(DD_PATH_VAR_NAME)
+	ENDFOREACH(PATH ${avail_DD})
+
+	SET(DD_PATHS ${DD_PATHS} ${${DD_PATH_VAR_NAME}})
+ENDFOREACH(DD ${dd_libs})
+
+## COMMON INCLUDE FILES
 INCLUDE_DIRECTORIES(include ../libYARP_OS/include 
 			${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
 			${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
-
 LINK_DIRECTORIES(${dd_dir_libs})
+
 
 # We just intend to use cmake to create visual studio project files -
 # so ok not to manually include list of source code
