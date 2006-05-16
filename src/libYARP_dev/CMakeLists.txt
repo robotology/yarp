@@ -19,18 +19,25 @@ IF (UNIX)
 ENDIF (UNIX)
 
 FOREACH(DD ${avail_dd})
-		SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
-		MESSAGE(STATUS "Parsing ${LOCAL_PATH}") 
-
-		FILE(GLOB TEMP_PATH ${LOCAL_PATH}/libraries.txt)
-		IF(TEMP_PATH)
-				MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
-				SET(FOUND_DD ${FOUND_DD} ${DD})
-		ELSE(TEMP_PATH)
-				MESSAGE(STATUS "No libraries.txt found for ${DD} skipping")
-		ENDIF(TEMP_PATH)
-
+        SET(FLAG-${DD} FALSE CACHE BOOL "Do you want to compile ${DD}?")
 ENDFOREACH(DD ${avail_DD})
+
+# re-check all DD to see which ones were selected
+FOREACH(DD ${avail_dd})
+   IF (FLAG-${DD})
+        SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
+        MESSAGE(STATUS "Parsing ${LOCAL_PATH}") 
+        FILE(GLOB TEMP_PATH ${LOCAL_PATH}/libraries.txt)
+        IF(TEMP_PATH)
+		    MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
+            SET(FOUND_DD ${FOUND_DD} ${DD})
+		SET(FOUND_ONE TRUE)
+        ELSE(TEMP_PATH)
+		    MESSAGE(STATUS "No libraries.txt found for ${DD} skipping")
+        ENDIF(TEMP_PATH)
+    ENDIF (FLAG-${DD})
+ENDFOREACH(DD ${avail_dd})
+
 
 ## COMMON INCLUDE FILES
 INCLUDE_DIRECTORIES(include ../libYARP_OS/include 
@@ -40,10 +47,11 @@ INCLUDE_DIRECTORIES(include ../libYARP_OS/include
 
 # parse all dd and collect source and header files
 FOREACH(DD ${FOUND_DD})
+             MESSAGE(STATUS "Adding source for ${DD}")
 			 # source files, (AUX_SOURCE_DIRECTORY seems to append to the output list)
 			 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode)
 			 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode)
-
+ 
 			 # header files
 			 FILE(GLOB_RECURSE tmpHeaders src/${DD}/${OS_TAG}/yarp/*.h)
 			 SET(libheaders ${libheaders} ${tmpHeaders})
@@ -55,6 +63,11 @@ SET(libheader ${libheaders} ${libheader2})
 SOURCE_GROUP("Header Files" FILES ${libheader})
 
 INCLUDE(YarpReqLib)
+MESSAGE(STATUS "GOING TO ADD: ${libcode}")
+MESSAGE(STATUS "AND: ${libheader}")
 
-ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libheader})
-INSTALL_TARGETS(/lib ${PROJECT_NAME})
+IF(FOUND_ONE)
+	ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libheader})
+ENDIF(FOUND_ONE)
+
+MESSAGE(STATUS "DONE")
