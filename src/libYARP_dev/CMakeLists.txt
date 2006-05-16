@@ -13,8 +13,8 @@ IF (WIN32 AND NOT CYGWIN)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(avail_dd dragonfly)
-   SET(dd_libs libraw1394)
+   SET(avail_dd "")
+   SET(dd_libs "")
 ENDIF (UNIX)
 
 #search DD libs	
