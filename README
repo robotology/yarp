@@ -1,5 +1,12 @@
 
-Welcome to YARP2.
+__  __ ___     ____   ____  ___
+\ \/ //   |   / __ \ / __ \|__ \
+ \  // /| |  / /_/ // /_/ /__/ /
+ / // ___ | / _, _// ____// __/
+/_//_/  |_|/_/ |_|/_/    /____/
+
+      Welcome to YARP2.
+
 License and copyright information is in COPYING.
 For a brief introduction and project status see NEWS.
 
@@ -58,7 +65,7 @@ for your system.
 
 In Linux, in the YARP2 directory, type:
 
-  cmake .
+  cmake . (or "ccmake ." for a graphical interface)
   make
   make test
 
@@ -95,7 +102,7 @@ in the "lib" directory.
 
 ===============================================================================
 
-AUTOCONF
+AUTOCONF (may be out of date at the moment)
 --------
 
 This method requires the autoconf, automake, and libtool tools (e.g.
