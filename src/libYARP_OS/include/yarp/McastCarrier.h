@@ -90,7 +90,7 @@ public:
             ip[i] = base[i];
             if (i!=0) { add += "."; }
             char buf[100];
-            sprintf(buf,"%d",ip[i]);
+            ACE_OS::sprintf(buf,"%d",ip[i]);
             add += buf;
         }
         port = 256*base[4]+base[5];
