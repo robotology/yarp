@@ -31,7 +31,19 @@ FOREACH(DD ${avail_dd})
         IF(TEMP_PATH)
 		    MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
             SET(FOUND_DD ${FOUND_DD} ${DD})
-		SET(FOUND_ONE TRUE)
+
+			FILE(READ ${TEMP_PATH} TEST)
+		    MESSAGE(STATUS ${TEST})
+
+			FOREACH(FILE_ENTRY ${TEST})
+			   IF(${FILE_ENTRY} STREQUAL YARP_LOCAL)
+					MESSAGE(STATUS "${DD} will be local")
+			   ELSE (${FILE_ENTRY} STREQUAL YARP_LOCAL)
+					MESSAGE(STATUS "${DD} will be extern")
+			   ENDIF(${FILE_ENTRY} STREQUAL YARP_LOCAL)
+			ENDFOREACH(FILE_ENTRY ${TEST})
+
+		SET(FOUND_ONE TRUE) #at least one dd was found
         ELSE(TEMP_PATH)
 		    MESSAGE(STATUS "No libraries.txt found for ${DD} skipping")
         ENDIF(TEMP_PATH)
