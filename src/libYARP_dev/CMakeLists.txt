@@ -1,3 +1,5 @@
+INCLUDE(ListUtils.cmake)
+
 PROJECT(libYARP_dev)
 
 #the name of the project, the output will be this name .lib (in windows "d" will be added
@@ -29,23 +31,11 @@ FOREACH(DD ${avail_dd})
         MESSAGE(STATUS "Parsing ${LOCAL_PATH}") 
         FILE(GLOB TEMP_PATH ${LOCAL_PATH}/libraries.txt)
         IF(TEMP_PATH)
-		    MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
-            SET(FOUND_DD ${FOUND_DD} ${DD})
-
-			FILE(READ ${TEMP_PATH} TEST)
-		    MESSAGE(STATUS ${TEST})
-
-			FOREACH(FILE_ENTRY ${TEST})
-			   IF(${FILE_ENTRY} STREQUAL YARP_LOCAL)
-					MESSAGE(STATUS "${DD} will be local")
-			   ELSE (${FILE_ENTRY} STREQUAL YARP_LOCAL)
-					MESSAGE(STATUS "${DD} will be extern")
-			   ENDIF(${FILE_ENTRY} STREQUAL YARP_LOCAL)
-			ENDFOREACH(FILE_ENTRY ${TEST})
-
+		MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
+		SET(FOUND_DD ${FOUND_DD} ${DD})
 		SET(FOUND_ONE TRUE) #at least one dd was found
         ELSE(TEMP_PATH)
-		    MESSAGE(STATUS "No libraries.txt found for ${DD} skipping")
+		MESSAGE(STATUS "No libraries.txt found for ${DD}, skipping")
         ENDIF(TEMP_PATH)
     ENDIF (FLAG-${DD})
 ENDFOREACH(DD ${avail_dd})
@@ -53,21 +43,34 @@ ENDFOREACH(DD ${avail_dd})
 
 ## COMMON INCLUDE FILES
 INCLUDE_DIRECTORIES(include ../libYARP_OS/include 
-			${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
-			${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
+			    ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
+			    ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
 
 
 # parse all dd and collect source and header files
 FOREACH(DD ${FOUND_DD})
-             MESSAGE(STATUS "Adding source for ${DD}")
-			 # source files, (AUX_SOURCE_DIRECTORY seems to append to the output list)
-			 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode)
-			 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode)
- 
-			 # header files
-			 FILE(GLOB_RECURSE tmpHeaders src/${DD}/${OS_TAG}/yarp/*.h)
-			 SET(libheaders ${libheaders} ${tmpHeaders})
-ENDFOREACH(DD $(FOUND_DD))
+        SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
+        MESSAGE(STATUS "Reading ${LOCApL_PATH}/libraries.txt") 
+        FILE(READ ${LOCAL_PATH}/libraries.txt FILE)
+	MESSAGE(STATUS ${FILE})
+	CAR(TOKEN ${FILE})
+	CDR(LIB_LIST ${FILE})
+	IF (TOKEN STREQUAL YARP_LOCAL)
+	   MESSAGE(STATUS "${DD} is going to use local libs: ${LIB_LIST}")
+	   DD_FIND_LOCAL_LIB(DUMMY ${DD} ${LIB_LIST})
+	ELSE (TOKEN STREQUAL YARP_LOCAL)
+	   DD_FIND_EXTERNAL_LIB(DUMMY ${DD} ${LIB_LIST})
+	ENDIF(TOKEN STREQUAL YARP_LOCAL)
+
+	MESSAGE(STATUS "Adding source for ${DD}")
+	 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode)
+	 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode)
+	 # header files
+	 FILE(GLOB_RECURSE tmpHeaders src/${DD}/${OS_TAG}/yarp/*.h)
+	 SET(libheaders ${libheaders} ${tmpHeaders})
+	 FILE(GLOB_RECURSE tmpHeaders src/${DD}/common/*.h)
+ SET(libheaders ${libheaders} ${tmpHeaders})
+ENDFOREACH(DD ${FOUND_DD})
 
 #add include files to project (visual studio)
 FILE(GLOB_RECURSE libheader2 include/*.h)
@@ -83,3 +86,4 @@ IF(FOUND_ONE)
 ENDIF(FOUND_ONE)
 
 MESSAGE(STATUS "DONE")
+

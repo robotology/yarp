@@ -1,0 +1,1 @@
+YARP_EXTERNAL;libraw1394;libvideo
