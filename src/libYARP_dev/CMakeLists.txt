@@ -4,16 +4,16 @@ PROJECT(libYARP_dev)
 #to this name to compile the debug version
 SET(PROJECT_NAME YARP_dev)
 
-IF (WIN32 AND NOT CYGWIN)
-   SET(avail_dd picolo/winnt dragonfly/winnt)
-   SET(dd_libs Picolo32 PGRFlyCapture)
 
-	#search DD libs	
+IF (WIN32 AND NOT CYGWIN)
+	SET(avail_dd picolo dragonfly)
+	SET(dd_libs Picolo32 PGRFlyCapture)
+  	#search DD libs	
 	FOREACH(DD ${dd_libs})
 		SET(DD_PATH_VAR_NAME PATH-${DD})
 		
 		FOREACH(PATH ${avail_dd})
-			SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${PATH}/dd_orig/lib)
+			SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${PATH}/${OS_TAG}/dd_orig/lib)
 			FIND_LIBRARY(${DD_PATH_VAR_NAME} ${DD} ${LOCAL_PATH})
 			ENDIF(DD_PATH_VAR_NAME)
 		ENDFOREACH(PATH ${avail_DD})
@@ -38,10 +38,14 @@ LINK_DIRECTORIES(${dd_dir_libs})
 # parse all dd and collect source and header files
 FOREACH(X ${avail_dd})
 	# source files, (AUX_SOURCE_DIRECTORY seems to append to the output list)
-	AUX_SOURCE_DIRECTORY(src/${X}/yarp libcode)
+	AUX_SOURCE_DIRECTORY(src/${X}/${OS_TAG}/yarp libcode)
+	AUX_SOURCE_DIRECTORY(src/${X}/common libcode)
 
-	FILE(GLOB_RECURSE tmpHeaders src/${X}/yarp/*.h)
-	SET(libheaders ${libheaders} ${tmpHeaders})
+	FILE(GLOB_RECURSE tmpSpecHeaders src/${X}/${OS_CODE}/yarp/*.h)
+	FILE(GLOB_RECURSE tmpCommonHeaders src/${X}/common/*.h)
+	
+	SET(libheaders ${libheaders} ${tmpSpecHeaders})
+	SET(libheaders ${libheaders} ${tmpCommonHeaders})
 ENDFOREACH(X $(avail_dd))
 FILE(GLOB_RECURSE libheader2 include/*.h)
 SET(libheader ${libheaders} ${libheader2})
