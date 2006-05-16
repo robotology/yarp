@@ -21,17 +21,10 @@ public:
 
     /**
      * Return the current time in seconds, relative to an arbitrary 
-     * starting point.
+     * starting point, using the best possible timer resolution.
      * @return the system time in seconds
      */
     static double now();
-
-    /**
-     * Return the current time in seconds, relative to an arbitrary 
-     * starting point, using a high-resolution timer.
-     * @return the system time in seconds
-     */
-    static double preciseNow();
 
     /**
      * The calling thread releases its remaining quantum upon calling

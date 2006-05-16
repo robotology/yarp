@@ -23,11 +23,6 @@ void Time::delay(double seconds) {
 }
 
 double Time::now() {
-    ACE_Time_Value timev = ACE_OS::gettimeofday ();
-    return double(timev.sec()) + timev.usec() * 1e-6; 
-}
-
-double Time::preciseNow() {
 	ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
     return double(timev.sec()) + timev.usec() * 1e-6; 
 }
