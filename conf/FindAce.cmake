@@ -2,10 +2,6 @@
 FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h /usr/include /usr/local/include $ENV{ACE_ROOT} DOC "directory containing ace/*.h for ACE library")
 
 # this is for easy YARP1 compatability, not too important
-SET(OS_TAG linux)
-IF (WIN32)
-	SET(OS_TAG winnt)
-ENDIF (WIN32)
 SET(YARP_ACE_CONFIG_GUESS $ENV{ACE_ROOT}/../../include/${OS_TAG})
 
 #FIND_PATH(ACE_INCLUDE_CONFIG_DIR ace/config.h /usr/include /usr/local/include $ENV{ACE_ROOT} ${YARP_ACE_CONFIG_GUESS} DOC "directory containing ace/config.h")
