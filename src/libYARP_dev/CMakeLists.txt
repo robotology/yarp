@@ -11,13 +11,10 @@ YarpTag()
 IF (WIN32 AND NOT CYGWIN)
 	# list of available device drivers
 	SET(avail_dd picolo dragonfly)
-	# list of dd libraries
-#	SET(dd_libs Picolo32 PGRFlyCapture)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
    SET(avail_dd dragonfly)
-#   SET(dd_libs libraw1394)
 ENDIF (UNIX)
 
 FOREACH(DD ${avail_dd})
@@ -31,35 +28,33 @@ FOREACH(DD ${avail_dd})
         MESSAGE(STATUS "Parsing ${LOCAL_PATH}") 
         FILE(GLOB TEMP_PATH ${LOCAL_PATH}/libraries.txt)
         IF(TEMP_PATH)
-		MESSAGE(STATUS "FOUND libraries.txt for ${DD}") 
+		MESSAGE(STATUS "Found libraries.txt for ${DD}") 
 		SET(FOUND_DD ${FOUND_DD} ${DD})
 		SET(FOUND_ONE TRUE) #at least one dd was found
         ELSE(TEMP_PATH)
-		MESSAGE(STATUS "No libraries.txt found for ${DD}, skipping")
+		MESSAGE(STATUS "No libraries.txt found for ${DD}, skipping it")
         ENDIF(TEMP_PATH)
     ENDIF (FLAG-${DD})
 ENDFOREACH(DD ${avail_dd})
-
 
 ## COMMON INCLUDE FILES
 INCLUDE_DIRECTORIES(include ../libYARP_OS/include 
 			    ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
 			    ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
 
-
 # parse all dd and collect source and header files
 FOREACH(DD ${FOUND_DD})
         SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
-        MESSAGE(STATUS "Reading ${LOCApL_PATH}/libraries.txt") 
+        MESSAGE(STATUS "Reading ${LOCAL_PATH}/libraries.txt:") 
         FILE(READ ${LOCAL_PATH}/libraries.txt FILE)
-	MESSAGE(STATUS ${FILE})
+	MESSAGE("${FILE}")
 	CAR(TOKEN ${FILE})
 	CDR(LIB_LIST ${FILE})
 	IF (TOKEN STREQUAL YARP_LOCAL)
 	   MESSAGE(STATUS "${DD} is going to use local libs: ${LIB_LIST}")
-	   DD_FIND_LOCAL_LIB(DUMMY ${DD} ${LIB_LIST})
+	   DD_FIND_LOCAL_LIB(DUMMY ${DD} "${LIB_LIST}")
 	ELSE (TOKEN STREQUAL YARP_LOCAL)
-	   DD_FIND_EXTERNAL_LIB(DUMMY ${DD} ${LIB_LIST})
+	   DD_FIND_EXTERNAL_LIB(DUMMY ${DD} "${LIB_LIST}")
 	ENDIF(TOKEN STREQUAL YARP_LOCAL)
 
 	MESSAGE(STATUS "Adding source for ${DD}")
@@ -78,12 +73,12 @@ SET(libheader ${libheaders} ${libheader2})
 SOURCE_GROUP("Header Files" FILES ${libheader})
 
 INCLUDE(YarpReqLib)
-MESSAGE(STATUS "GOING TO ADD: ${libcode}")
-MESSAGE(STATUS "AND: ${libheader}")
+MESSAGE(STATUS "Adding source files in:")
+MESSAGE("${libcode}")
+MESSAGE(STATUS "Adding header files:")
+MESSAGE("${libheader}")
 
+#avoid empty projects...
 IF(FOUND_ONE)
 	ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libheader})
 ENDIF(FOUND_ONE)
-
-MESSAGE(STATUS "DONE")
-
