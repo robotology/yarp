@@ -36,12 +36,11 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.1 2006-05-16 09:57:57 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.2 2006-05-17 09:39:24 natta Exp $
 ///
 ///
 
-
-#include "../../common/DragonflyDeviceDriver.h"
+#include <yarp/DragonflyDeviceDriver.h>
 #include <yarp/dev/FrameGrabber.h>
 #include <yarp/os/Thread.h>
 #include <ace/Log_msg.h>
