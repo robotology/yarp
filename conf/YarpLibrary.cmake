@@ -22,7 +22,7 @@ ADD_LIBRARY(${name} ${libcode} ${folder_header})
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
 
-TARGET_LINK_LIBRARIES(harness_${postfix} ${name} ${NEED_LIBS})
+TARGET_LINK_LIBRARIES(harness_${postfix} ${name} ${NEED_LIBS} ${ACE_LINK_FLAGS})
 
 GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
 

@@ -23,15 +23,14 @@ LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/lib/Debug ${CMAKE_B
 
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
 
+# set the OS_TAG variable to "linux" or "winnt"
+
 INCLUDE(UsePkgConfig)
 INCLUDE(YarpTag)
-INCLUDE(YarpLibrary)
-
-# set the OS_TAG variable to "linux" or "winnt"
 YarpTag()
-
 FIND_PACKAGE(Ace REQUIRED)
 FIND_PACKAGE(Yarp1)
+INCLUDE(YarpLibrary)
 
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_CONFIG_DIR})

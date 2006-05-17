@@ -35,9 +35,9 @@ MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
 
       EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --variable=libdir OUTPUT_VARIABLE ${_link_DIR} )
 
-      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --libs-only-other OUTPUT_VARIABLE ${_link_FLAGS} )
+      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --libs-only-l --libs-only-other OUTPUT_VARIABLE ${_link_FLAGS} )
 
-      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags-only-other OUTPUT_VARIABLE ${_cflags} )
+      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags OUTPUT_VARIABLE ${_cflags} )
 
     ENDIF(NOT _return_VALUE)
 

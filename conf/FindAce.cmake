@@ -1,10 +1,26 @@
 
+
+########################################################################
+## check pkg-config for ace information, if available
+
+SET(ACE_INCLUDE_DIR_GUESS)
+SET(ACE_LIBRARY_DIR_GUESS)
+SET(ACE_LINK_FLAGS)
+IF(PKGCONFIG_EXECUTABLE)
+	PKGCONFIG(ace ACE_INCLUDE_DIR_GUESS ACE_LIBRARY_DIR_GUESS ACE_LINK_FLAGS ACE_C_FLAGS)
+	IF (NOT ACE_LINK_FLAGS)
+		PKGCONFIG(ACE ACE_INCLUDE_DIR_GUESS ACE_LIBRARY_DIR_GUESS ACE_LINK_FLAGS ACE_C_FLAGS)
+	ENDIF (NOT ACE_LINK_FLAGS)
+	ADD_DEFINITIONS(${ACE_C_FLAGS})
+ENDIF(PKGCONFIG_EXECUTABLE)
+SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
+
+
+########################################################################
+##  general find
+
 FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h /usr/include /usr/local/include $ENV{ACE_ROOT} DOC "directory containing ace/*.h for ACE library")
 
-# this is for easy YARP1 compatability, not too important
-SET(YARP_ACE_CONFIG_GUESS $ENV{ACE_ROOT}/../../include/${OS_TAG})
-
-#FIND_PATH(ACE_INCLUDE_CONFIG_DIR ace/config.h /usr/include /usr/local/include $ENV{ACE_ROOT} ${YARP_ACE_CONFIG_GUESS} DOC "directory containing ace/config.h")
 SET(ACE_INCLUDE_CONFIG_DIR ${ACE_INCLUDE_DIR})
 
 FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file")
@@ -14,7 +30,9 @@ IF (WIN32 AND NOT CYGWIN)
 	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file (debug version)")
 ENDIF (WIN32 AND NOT CYGWIN)
 
-#FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACED ACEd aced PATHS /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT})
+
+########################################################################
+## finished - now just set up flags and complain to user if necessary
 
 IF (ACE_INCLUDE_DIR AND ACE_LIBRARY AND ACE_INCLUDE_CONFIG_DIR)
 	SET(ACE_FOUND TRUE)
