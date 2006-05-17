@@ -38,16 +38,15 @@ FOREACH(DD ${avail_dd})
 ENDFOREACH(DD ${avail_dd})
 
 ## COMMON INCLUDE FILES
-INCLUDE_DIRECTORIES(include ../libYARP_OS/include 
-			    ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
-			    ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(include ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
+			    	    ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
 
 # parse all dd and collect source and header files
 FOREACH(DD ${FOUND_DD})
         SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
         MESSAGE(STATUS "Reading ${LOCAL_PATH}/libraries.txt:") 
         FILE(READ ${LOCAL_PATH}/libraries.txt FILE)
-	MESSAGE("${FILE}")
+	MESSAGE(STATUS "${FILE}")
 	CAR(TOKEN ${FILE})
 	CDR(LIB_LIST ${FILE})
 	IF (TOKEN STREQUAL YARP_LOCAL)
@@ -61,8 +60,8 @@ FOREACH(DD ${FOUND_DD})
 	 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode1)
 	 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode2)
 	 SET(libcode ${libcode1} ${libcode2})
-	 INCLUDE_DIRECTORIES(src/${DD}/common)
-	 INCLUDE_DIRECTORIES(src/${DD}/${OS_TAG}/yarp)
+	 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/common)
+	 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
 	 # header files
 	 FILE(GLOB_RECURSE tmpHeaders src/${DD}/${OS_TAG}/yarp/*.h)
 	 SET(libheaders ${libheaders} ${tmpHeaders})
@@ -77,9 +76,9 @@ SOURCE_GROUP("Header Files" FILES ${libheader})
 
 INCLUDE(YarpReqLib)
 MESSAGE(STATUS "Adding source files in:")
-MESSAGE("${libcode}")
+MESSAGE(STATUS "${libcode}")
 MESSAGE(STATUS "Adding header files:")
-MESSAGE("${libheader}")
+MESSAGE(STATUS "${libheader}")
 
 #avoid empty projects...
 IF(FOUND_ONE)
