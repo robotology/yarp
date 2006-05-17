@@ -5,6 +5,7 @@
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
 
 #ifndef _WINDOWS
 #define _WINDOWS
@@ -80,22 +81,6 @@ protected:
 	inline PICOLOHANDLE _init (const PicoloOpenParameters& params);
 	inline void _prepareBuffers (void);
 };
-
-///
-double GetTimeAsSeconds(void)
-{
-	ACE_Time_Value timev = ACE_OS::gettimeofday ();
-	return double(timev.sec()) + timev.usec() * 1e-6; 
-}
-
-void DelayInSeconds(double delay_in_seconds)
-{
-	ACE_Time_Value tv;
-	tv.sec (int(delay_in_seconds));
-	tv.usec ((delay_in_seconds-int(delay_in_seconds)) * 1e6);
-
-	ACE_OS::sleep(tv);
-}
 
 ///
 ///
@@ -398,7 +383,7 @@ void PicoloResources::run (void)
 
 			/// 40 ms delay
 			if (i < _num_buffers-1)
-				DelayInSeconds (0.040);
+                Time::delay (0.040);
 		} /// end for
 	}
 

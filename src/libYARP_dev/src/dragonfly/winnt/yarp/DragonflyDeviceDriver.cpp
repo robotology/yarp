@@ -36,13 +36,14 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.2 2006-05-17 09:39:24 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.3 2006-05-17 17:28:34 natta Exp $
 ///
 ///
 
 #include <yarp/DragonflyDeviceDriver.h>
 #include <yarp/dev/FrameGrabber.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Time.h>
 #include <ace/Log_msg.h>
 
 using namespace yarp::dev;
@@ -53,12 +54,6 @@ using namespace yarp::os;
 //=============================================================================
 #include "../dd_orig/include/pgrflycapture.h"
 
-///
-double GetTimeAs_mSeconds(void)
-{
-	ACE_Time_Value timev = ACE_OS::gettimeofday ();
-	return double(timev.sec()*1e3) + timev.usec() * 1e-3; 
-}
 
 //
 class DragonflyResources: public Thread
@@ -385,7 +380,7 @@ void DragonflyResources::run (void)
 
 	int nImages = 0;
 	double startTime;
-	startTime = GetTimeAs_mSeconds();
+    startTime = Time::now()/1000.0;//GetTimeAs_mSeconds();
 	int lostFrames = 0;
 
 	ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] Acquisition thread starting... "));
@@ -422,7 +417,7 @@ void DragonflyResources::run (void)
 	}
 	
 	double stopTime;
-	stopTime = GetTimeAs_mSeconds();
+    stopTime = Time::now()/1000.0;
 	unsigned int delay = int(stopTime - startTime);
 	unsigned int avTime = delay / nImages;
 	double fps = 1000 * (1/double(avTime));

@@ -16,16 +16,7 @@ namespace yarp{
 class yarp::dev::FrameGrabber: public DeviceDriver
 {
  public:
-   /**
-    * Costructor
-    */
-   FrameGrabber(){}
-
-   /** 
-    * Destructor
-    */
-   virtual ~FrameGrabber(){}
-
+     virtual ~FrameGrabber(){}
    /**
     * Get a raw buffer from the frame grabber
     * @param pointer to the buffer to be filled (must be previously allocated)

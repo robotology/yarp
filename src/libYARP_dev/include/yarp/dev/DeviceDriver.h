@@ -14,22 +14,13 @@ namespace yarp {
  */
 class yarp::dev::DeviceDriver 
 {
- public:
-   /**
-    * Constructor
-    */
-   DeviceDriver(){};
-
-   /**
-    * Destructor
-    */
-   virtual ~DeviceDriver(){};
-
+public:
+    virtual ~DeviceDriver(){}
    /**
     * Open the DeviceDriver. Specific devices might define 
     * more suitable methods, with parameters.
     */
-   bool open(){};
+   virtual bool open(){return true;}
 
    /**
     * Close the DeviceDriver. 

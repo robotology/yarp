@@ -1,22 +1,14 @@
 #ifndef __YARP2PicoloDeviceDriverh__
 #define __YARP2PicoloDeviceDriverh__
 
-//#include <yarp/YARPConfig.h>
-#include <yarp/os/Thread.h>
 #include <yarp/dev/FrameGrabber.h>
-//#include <yarp/YARPSemaphore.h>
-//#include <yarp/YARPDeviceDriver.h>
 
 #include <stdlib.h>
 #include <string.h>
 
 /**
- * \file YARPPicoloDeviceDriver.h device driver for managing the Picolo frame grabber.
+ * \file PicoloDeviceDriver.h device driver for managing the Picolo frame grabber.
  * This is a bt848 based frame grabber.
- */
-
-/**
- * Structure for defining the open() parameters of the frame grabber.
  */
 
 namespace yarp {
@@ -26,6 +18,9 @@ namespace yarp {
   }
 }
 
+/**
+ * Class for defining the open() parameters of the frame grabber.
+ */
 class yarp::dev::PicoloOpenParameters
 {
 public:
@@ -52,6 +47,7 @@ public:
 	int _offset_x;			/** x offset, with respect to the center. */
 	float _alfa;			/** to have the possibility of shifting the ROI vertically, the requested size is actually _alfa*_size_y */
 };
+
 /**
  * The Picolo frame grabber, derived from the DeviceDriver and from the Thread class.
  * The device driver handles triple buffering by having a thread waiting on new frame events and
@@ -111,7 +107,7 @@ protected:
 	/**
 	 * Locks the current image buffer.
 	 * @param buffer is a pointer to the buffer address (i.e. a double pointer).
-	 * @return YARP_OK if successful.
+	 * @return true if successful.
 	 */
 	bool acquireBuffer(void *buffer);
 
