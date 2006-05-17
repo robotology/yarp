@@ -58,8 +58,11 @@ FOREACH(DD ${FOUND_DD})
 	ENDIF(TOKEN STREQUAL YARP_LOCAL)
 
 	MESSAGE(STATUS "Adding source for ${DD}")
-	 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode)
-	 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode)
+	 AUX_SOURCE_DIRECTORY(src/${DD}/common libcode1)
+	 AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode2)
+	 SET(libcode ${libcode1} ${libcode2})
+	 INCLUDE_DIRECTORIES(src/${DD}/common)
+	 INCLUDE_DIRECTORIES(src/${DD}/${OS_TAG}/yarp)
 	 # header files
 	 FILE(GLOB_RECURSE tmpHeaders src/${DD}/${OS_TAG}/yarp/*.h)
 	 SET(libheaders ${libheaders} ${tmpHeaders})
