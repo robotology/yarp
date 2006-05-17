@@ -1,4 +1,4 @@
-#include "DragonflyDeviceDriver.h"
+#include <yarp/DragonflyDeviceDriver.h>
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/DeviceDriver.h>
