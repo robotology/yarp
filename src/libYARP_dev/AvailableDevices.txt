@@ -2,7 +2,7 @@
 # One day this list could be populated automatically.
 
 IF (WIN32 AND NOT CYGWIN)
-	SET(AVAILABLE_DEVICES picolo dragonfly dummy)
+	SET(AVAILABLE_DEVICES picolo dragonfly)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
