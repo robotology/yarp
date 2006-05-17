@@ -34,7 +34,7 @@ SET(AVAILABLE_DEVICES "") #default is an empty list
 INCLUDE(AvailableDevices.txt)
 
 # cycle all available devices
-FOREACH(DD ${AVAILABLE_DEVICES)
+FOREACH(DD ${AVAILABLE_DEVICES})
   SET(FLAG-${DD} FALSE CACHE BOOL "Do you want to add ${DD} to libYARP_dev?")
 ENDFOREACH(DD ${AVAILABLE_DEVICES})
 
