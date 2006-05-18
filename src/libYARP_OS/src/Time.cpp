@@ -29,6 +29,8 @@ double Time::now() {
     return double(timev.sec()) + timev.usec() * 1e-6; 
 #else
     // on other operating systems, high res seems dysfunctional
+    // which is weird since ACE manual claims it maps naturally 
+    // on gettimoday...
     ACE_Time_Value timev = ACE_OS::gettimeofday ();
     return double(timev.sec()) + timev.usec() * 1e-6; 
 #endif
