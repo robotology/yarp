@@ -1,4 +1,4 @@
-// Yo Emacs!  Parse this file in -*- C++ -*- mode.
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef GLOBALMATHHELPER
 #define GLOBALMATHHELPER
 
@@ -14,7 +14,7 @@
 #define sqr(x) ((x)*(x))
 
 inline float log_base(float x, float b) { 
-  return( log(x)/log(b) );}
+    return( log(x)/log(b) );}
 
 inline float d2r(float degrees)
 {
@@ -36,9 +36,9 @@ inline long myround(const float param)
 
 inline int twopow(int e)
 {
-  int out;
-  out = 1<<e;
-  return(out);
+    int out;
+    out = 1<<e;
+    return(out);
 }
 
 #endif

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef __YARP2PicoloDeviceDriverh__
 #define __YARP2PicoloDeviceDriverh__
 
@@ -12,10 +13,10 @@
  */
 
 namespace yarp {
-  namespace dev{
-    class PicoloDeviceDriver;
-    class PicoloOpenParameters;
-  }
+    namespace dev{
+        class PicoloDeviceDriver;
+        class PicoloOpenParameters;
+    }
 }
 
 /**

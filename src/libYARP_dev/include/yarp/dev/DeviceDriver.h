@@ -1,10 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef __YARP2_DEVICEDRIVER__
 #define __YARP2_DEVICEDRIVER__
 
 namespace yarp {
-  namespace dev {
-    class DeviceDriver;
-  }
+    namespace dev {
+        class DeviceDriver;
+    }
 }
 
 /**
@@ -16,16 +17,16 @@ class yarp::dev::DeviceDriver
 {
 public:
     virtual ~DeviceDriver(){}
-   /**
-    * Open the DeviceDriver. Specific devices might define 
-    * more suitable methods, with parameters.
-    */
-   virtual bool open(){return true;}
+    /**
+     * Open the DeviceDriver. Specific devices might define 
+     * more suitable methods, with parameters.
+     */
+    virtual bool open(){return true;}
 
-   /**
-    * Close the DeviceDriver. 
-    */
-   virtual bool close()=0;
+    /**
+     * Close the DeviceDriver. 
+     */
+    virtual bool close()=0;
 };
 
 #endif

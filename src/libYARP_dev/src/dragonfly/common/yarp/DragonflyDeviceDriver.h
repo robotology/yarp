@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.1 2006-05-17 09:39:24 natta Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.2 2006-05-18 09:58:05 babybot Exp $
 ///
 ///
 
@@ -57,8 +58,8 @@
 
 namespace yarp {
     namespace dev {
-    class DragonflyOpenParameters;
-    class DragonflyDeviceDriver;
+        class DragonflyOpenParameters;
+        class DragonflyDeviceDriver;
     }
 }
 
@@ -130,19 +131,19 @@ public:
 	virtual bool close(void);
 
     /**
-    * Implements FrameGrabber basic interface.
-    * @return returns true/false on success/failure.
-    */
+     * Implements FrameGrabber basic interface.
+     * @return returns true/false on success/failure.
+     */
     virtual bool getBuffer(unsigned char *buffer);
 
     /**
-    * Implements FrameGrabber basic interface.
-    */
+     * Implements FrameGrabber basic interface.
+     */
     virtual int getHeight();
     
     /**
-    * Implements FrameGrabber basic interface.
-    */
+     * Implements FrameGrabber basic interface.
+     */
     virtual int getWidth();
 
 protected:

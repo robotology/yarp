@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2004           ///
@@ -36,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.3 2006-05-17 17:28:34 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.4 2006-05-18 09:58:05 babybot Exp $
 ///
 ///
 
@@ -135,16 +136,16 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
 	// Create the context.
 	if (!_validContext)
-	{
-		error = flycaptureCreateContext( &context );
-		if (error != FLYCAPTURE_OK)
-			return false;
-		_validContext = true;
-		// Initialize the camera.
-		error = flycaptureInitialize( context, params._unit_number );
-		if (error != FLYCAPTURE_OK)
-			return false;
-	}
+        {
+            error = flycaptureCreateContext( &context );
+            if (error != FLYCAPTURE_OK)
+                return false;
+            _validContext = true;
+            // Initialize the camera.
+            error = flycaptureInitialize( context, params._unit_number );
+            if (error != FLYCAPTURE_OK)
+                return false;
+        }
 	
 	// Setup Camera Parameters, Magic Numbers :-)
 	_setBrightness(0);
@@ -167,14 +168,14 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
 	// Start Acquisition
 	if (!_acqStarted)
-	{
-		error = flycaptureStart(	context, 
-							FLYCAPTURE_VIDEOMODE_640x480Y8,
-							FLYCAPTURE_FRAMERATE_30 );  
-		if (error != FLYCAPTURE_OK)
-			return false;
-		_acqStarted = true;
-	}
+        {
+            error = flycaptureStart(	context, 
+                                        FLYCAPTURE_VIDEOMODE_640x480Y8,
+                                        FLYCAPTURE_FRAMERATE_30 );  
+            if (error != FLYCAPTURE_OK)
+                return false;
+            _acqStarted = true;
+        }
 	
 	return true;
 }
@@ -188,20 +189,20 @@ inline bool DragonflyResources::_uninitialize (void)
 		mutexArray[i].wait();
 	// Stop Acquisition
 	if (_acqStarted)
-	{
-		error = flycaptureStop(context);
-		if (error != FLYCAPTURE_OK)
-			return false;
-		_acqStarted = false;
-	}
+        {
+            error = flycaptureStop(context);
+            if (error != FLYCAPTURE_OK)
+                return false;
+            _acqStarted = false;
+        }
 	// Destroy the context.
 	if (_validContext)
-	{
-		error = flycaptureDestroyContext( context );
-		if (error != FLYCAPTURE_OK)
-			return false;
-		_validContext = false;
-	}
+        {
+            error = flycaptureDestroyContext( context );
+            if (error != FLYCAPTURE_OK)
+                return false;
+            _validContext = false;
+        }
 	// Deallocate buffers
 	_destroyBuffers();
 	for (i=0; i< _num_buffers; i++)
@@ -311,19 +312,19 @@ inline void DragonflyResources::_subSampling(void)
 	unsigned char *pDst = pDstImg;
 
 	for (int j=0; j<dstSizeY; j++)
-	{
-		srcY = (int)(yRatio*j);
-		srcOffset = srcY * srcSizeX * bytePerPixel;
+        {
+            srcY = (int)(yRatio*j);
+            srcOffset = srcY * srcSizeX * bytePerPixel;
 
-		for (int i=0; i<dstSizeX; i++)
-		{
-			srcX = (int)(xRatio*i);
-			pSrc = pSrcImg + srcOffset + (srcX * bytePerPixel);
-			memcpy(pDst,pSrc,bytePerPixel);
-			pDst += bytePerPixel;
+            for (int i=0; i<dstSizeX; i++)
+                {
+                    srcX = (int)(xRatio*i);
+                    pSrc = pSrcImg + srcOffset + (srcX * bytePerPixel);
+                    memcpy(pDst,pSrc,bytePerPixel);
+                    pDst += bytePerPixel;
 
-		}
-	}
+                }
+        }
 }
 
 inline DragonflyResources& RES(void *res) { return *(DragonflyResources *)res; }
@@ -385,36 +386,36 @@ void DragonflyResources::run (void)
 
 	ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] Acquisition thread starting... "));
 	while (!isClosing())	
-	{
-		bufIndex++;
+        {
+            bufIndex++;
 	
-		if (bufIndex == _num_buffers)
+            if (bufIndex == _num_buffers)
 				bufIndex = 0;
 		
-		if ((mutexArray[bufIndex]).check())
-		{
+            if ((mutexArray[bufIndex]).check())
+                {
 
-			error = flycaptureGrabImage2( context, &(imageBuffer[bufIndex]) );
-			if (_canPost)
-			{
-				_canPost = false;
-				_newFrameMutex.post();
-			}
+                    error = flycaptureGrabImage2( context, &(imageBuffer[bufIndex]) );
+                    if (_canPost)
+                        {
+                            _canPost = false;
+                            _newFrameMutex.post();
+                        }
 			
-			(mutexArray[bufIndex]).post();
-			if (error != FLYCAPTURE_OK)
-			{
-				ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] ERROR: It's likely that the acquisition failed, returning.\n"));
-				// find a way to close the thread...
-			}
-			nImages++;
-		}
-		else
-		{
-			ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] WARNING: Frame lost. "));
-			lostFrames++;
-		}
-	}
+                    (mutexArray[bufIndex]).post();
+                    if (error != FLYCAPTURE_OK)
+                        {
+                            ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] ERROR: It's likely that the acquisition failed, returning.\n"));
+                            // find a way to close the thread...
+                        }
+                    nImages++;
+                }
+            else
+                {
+                    ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] WARNING: Frame lost. "));
+                    lostFrames++;
+                }
+        }
 	
 	double stopTime;
     stopTime = Time::now()/1000.0;
@@ -455,10 +456,10 @@ bool DragonflyDeviceDriver::acquireBuffer (void *buffer)
 	if ((d.sizeX == d._raw_sizeX) && (d.sizeY == d._raw_sizeY) )
 		(*(unsigned char **)buffer)= d.imageConverted.pData;
 	else
-	{
-		d._subSampling();
-		(*(unsigned char **)buffer)= d._pSubsampled_data;
-	}
+        {
+            d._subSampling();
+            (*(unsigned char **)buffer)= d._pSubsampled_data;
+        }
 	
 	return true;
 }

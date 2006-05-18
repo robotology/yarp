@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include "PicoloDeviceDriver.h"
 #include <ace/os.h>
 #include <ace/Sched_Params.h>
@@ -68,13 +69,13 @@ public:
 
     void setPriority(int p)
     {
-       fprintf(stderr, "Asked to set priority, doing nothing.\n");
+        fprintf(stderr, "Asked to set priority, doing nothing.\n");
     }
 
     int getPriority()
     {
-       fprintf(stderr, "Asked to get priority, doing nothing.\n");
-       return 0;
+        fprintf(stderr, "Asked to get priority, doing nothing.\n");
+        return 0;
     }
 
 protected:
@@ -97,9 +98,9 @@ inline bool PicoloResources::_intialize (const PicoloOpenParameters& params)
 	//
 	int i;
 	for (i = 0; i < _num_buffers; i++)
-	{
-		BufferList[i] = _bufHandles[i];
-	}
+        {
+            BufferList[i] = _bufHandles[i];
+        }
 
 	PicoloStatus = PicoloSetBufferList (_picoloHandle, BufferList, _num_buffers);
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
@@ -157,10 +158,10 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 	/// starts board up.
 	PICOLOHANDLE ret = PicoloStart(params._unit_number);
 	if (ret < 0)
-	{
-		ACE_DEBUG ((LM_DEBUG, "troubles opening the grabber number %d\n", params._unit_number));
-		return false;
-	}
+        {
+            ACE_DEBUG ((LM_DEBUG, "troubles opening the grabber number %d\n", params._unit_number));
+            return false;
+        }
 
 	// video input.
 	PICOLOSTATUS PicoloStatus;
@@ -168,13 +169,13 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 
 	/// it might require more params (e.g. ntsc, etc.)
 	if (params._video_type == 0)
-	{
-		PicoloStatus = PicoloSelectVideoInput(ret, PICOLO_INPUT_COMPOSITE_BNC, PICOLO_IFORM_STD_PAL);
-	}
+        {
+            PicoloStatus = PicoloSelectVideoInput(ret, PICOLO_INPUT_COMPOSITE_BNC, PICOLO_IFORM_STD_PAL);
+        }
 	else
-	{
-		PicoloStatus = PicoloSelectVideoInput(ret, PICOLO_INPUT_SVIDEO_MINIDIN4, PICOLO_IFORM_625LINES);
-	}
+        {
+            PicoloStatus = PicoloSelectVideoInput(ret, PICOLO_INPUT_SVIDEO_MINIDIN4, PICOLO_IFORM_625LINES);
+        }
 
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
 
@@ -248,21 +249,21 @@ inline void PicoloResources::_prepareBuffers(void)
 {
 	int i;
 	for (i = 0; i < _num_buffers; i++)
-	{
-		_buffer[i] = (PUINT8)VirtualAlloc(NULL, 
-										  _nImageSize, 
-										  MEM_COMMIT, 
-										  PAGE_READWRITE);
-		ACE_ASSERT (_buffer[i] != NULL);
-		_bufHandles[i] = PicoloSetImageBuffer(
-									_picoloHandle, 
-									_buffer[i],  
-									_nImageSize, 
-									PICOLO_FIELD_DOWN_ONLY,
-									(PVOID*) &_aligned[i]);
-		ACE_ASSERT (_bufHandles[i] >= 0);
-		memset(_aligned[i], 0, _nImageSize);
-	}
+        {
+            _buffer[i] = (PUINT8)VirtualAlloc(NULL, 
+                                              _nImageSize, 
+                                              MEM_COMMIT, 
+                                              PAGE_READWRITE);
+            ACE_ASSERT (_buffer[i] != NULL);
+            _bufHandles[i] = PicoloSetImageBuffer(
+                                                  _picoloHandle, 
+                                                  _buffer[i],  
+                                                  _nImageSize, 
+                                                  PICOLO_FIELD_DOWN_ONLY,
+                                                  (PVOID*) &_aligned[i]);
+            ACE_ASSERT (_bufHandles[i] >= 0);
+            memset(_aligned[i], 0, _nImageSize);
+        }
 }
 
 inline PicoloResources& RES(void *res) { return *(PicoloResources *)res; }
@@ -326,7 +327,7 @@ bool PicoloDeviceDriver::getBuffer(unsigned char *buff)
 void PicoloResources::run (void)
 {
 	PICOLOSTATUS PicoloStatus;
-//	PicoloResources& d = RES(system_resources);
+    //	PicoloResources& d = RES(system_resources);
 
 	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
 	setPriority (prio);
@@ -345,47 +346,47 @@ void PicoloResources::run (void)
 
 	/// strategy, waits, copy into lockable buffer.
 	while (!isClosing())	
-	{
-		PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
-		if (PicoloStatus != PICOLO_OK)
-		{
-			ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
-			ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
-	        break; //we want to leave the while loop, and hopefully end the thread 
-		}
+        {
+            PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
+            if (PicoloStatus != PICOLO_OK)
+                {
+                    ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
+                    ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
+                    break; //we want to leave the while loop, and hopefully end the thread 
+                }
 
-		readfro = startbuf;
+            readfro = startbuf;
 
-		for (i = 0; i < _num_buffers; i++)
-		{
-			if (_bmutex.check () == true)
-			{
-				/// buffer acquired.
-				/// read from buffer
-				memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
+            for (i = 0; i < _num_buffers; i++)
+                {
+                    if (_bmutex.check () == true)
+                        {
+                            /// buffer acquired.
+                            /// read from buffer
+                            memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
 					
-				if (_canpost)
-				{
-					_canpost = false;
-					_new_frame.post();
-				}
+                            if (_canpost)
+                                {
+                                    _canpost = false;
+                                    _new_frame.post();
+                                }
 
-				_bmutex.post();
-			}
-			else
-			{
-				/// can't acquire, it means the buffer is still in use.
-				/// silently ignores this condition.
-				ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
-			}
+                            _bmutex.post();
+                        }
+                    else
+                        {
+                            /// can't acquire, it means the buffer is still in use.
+                            /// silently ignores this condition.
+                            ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
+                        }
 
-			readfro = ((readfro + 1) % _num_buffers);
+                    readfro = ((readfro + 1) % _num_buffers);
 
-			/// 40 ms delay
-			if (i < _num_buffers-1)
-                Time::delay (0.040);
-		} /// end for
-	}
+                    /// 40 ms delay
+                    if (i < _num_buffers-1)
+                        Time::delay (0.040);
+                } /// end for
+        }
 
 	ACE_DEBUG ((LM_DEBUG, "acquisition thread returning...\n"));
 }
@@ -419,13 +420,13 @@ bool PicoloDeviceDriver::waitOnNewFrame ()
 
 int PicoloDeviceDriver::getWidth ()
 {
-   PicoloResources& d = RES(system_resources);
-   return d._nRequestedSizeX;
+    PicoloResources& d = RES(system_resources);
+    return d._nRequestedSizeX;
 }
 
 int PicoloDeviceDriver::getHeight ()
 {
-  return RES(system_resources)._nRequestedSizeY;
+    return RES(system_resources)._nRequestedSizeY;
 }
 
 #if 0
