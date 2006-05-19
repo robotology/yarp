@@ -4,6 +4,8 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
+/*! \file FrameGrabber.h define common interfaces for framer grabber devices */
+
 namespace yarp{
     namespace dev {
         class FrameGrabber;
@@ -20,7 +22,7 @@ public:
     virtual ~FrameGrabber(){}
     /**
      * Get a raw buffer from the frame grabber
-     * @param pointer to the buffer to be filled (must be previously allocated)
+     * @param buffer: pointer to the buffer to be filled (must be previously allocated)
      * @return true/false upon success/failure
      */
     virtual bool getBuffer(unsigned char *buffer)=0;

@@ -3,6 +3,9 @@
 #define __YARP2_DEVICEDRIVER__
 
 namespace yarp {
+    /**
+     * An interface for the device drivers 
+     */
     namespace dev {
         class DeviceDriver;
     }
@@ -20,11 +23,13 @@ public:
     /**
      * Open the DeviceDriver. Specific devices might define 
      * more suitable methods, with parameters.
+     * @return true/false upon success/failure
      */
     virtual bool open(){return true;}
 
     /**
-     * Close the DeviceDriver. 
+     * Close the DeviceDriver.
+     * @return true/false on success/failure.
      */
     virtual bool close()=0;
 };
