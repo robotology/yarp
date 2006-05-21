@@ -62,7 +62,7 @@
 ///
 
 ///
-/// $Id: YARPImage.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
+/// $Id: YARPImage.cpp,v 1.3 2006-05-21 13:48:22 gmetta Exp $
 ///
 ///
 
@@ -316,9 +316,9 @@ dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_SIGNED)
     dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = float(*src);
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_HSV_FLOAT)
-    dest->v = *src;
+    dest->v = float(*src);
 dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_MONO_SIGNED)
     *dest = *src >> 1;

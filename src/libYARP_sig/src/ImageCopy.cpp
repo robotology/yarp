@@ -239,9 +239,9 @@ dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_SIGNED)
     dest->r = dest->g = dest->b = *src;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB_FLOAT)
-    dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = float(*src);
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_HSV_FLOAT)
-    dest->v = *src;
+    dest->v = float(*src);
 dest->h = dest->s = 0;
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_MONO_SIGNED)
     *dest = *src >> 1;
