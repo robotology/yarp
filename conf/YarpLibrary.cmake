@@ -33,6 +33,17 @@ FOREACH(X ${harnesscode})
 ENDFOREACH(X $(harnesscode))
 
 INSTALL_TARGETS(/lib ${name})
+FILE(GLOB header_1 include/yarp/*.h)
+INSTALL_FILES(/include/yarp FILES ${header_1})
+FILE(GLOB header_2 include/yarp/${postfix}/*.h)
+INSTALL_FILES(/include/yarp/${postfix} FILES ${header_2})
+
+# pasa addition. still under development.
+#IF (WIN32 AND NOT CYGWIN)
+#  ADD_CUSTOM_COMMAND(TARGET ${name} POST_BUILD COMMAND xcopy ARGS include\\*.h ${CMAKE_INSTALL_PREFIX}\\include\\ /S /C /Y /I)
+#ELSE (WIN32 AND NOT CYGWIN)
+#
+#ENDIF (WIN32 AND NOT CYGWIN)
 
 ENDMACRO(YarpLibrary)
 
