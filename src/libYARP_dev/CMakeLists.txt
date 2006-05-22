@@ -101,11 +101,11 @@ INCLUDE(YarpReqLib)
 #avoid empty projects...
 IF(FOUND_ONE)
   ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libheader})
+  ### INSTALL RULES ###
+  #libYARP_dev.a or YARP_dev.lib will be copied in CMAKE_INSTALL_PREFIX/lib
+  INSTALL_TARGETS(/lib YARP_dev) 
+  FILE(GLOB installedHeaders include/yarp/dev/*.h) 
+  #libYARP_dev/include/yarp/dev/*.h will be copied in CMAKE_INSTALL_PREFIX/include/yarp/dev
+  INSTALL_FILES(/include/yarp/dev FILES ${installedHeaders})
 ENDIF(FOUND_ONE)
 
-### INSTALL RULES ###
-#libYARP_dev.a or YARP_dev.lib will be copied in CMAKE_INSTALL_PREFIX/lib
-INSTALL_TARGETS(/lib YARP_dev) 
-FILE(GLOB installedHeaders include/yarp/dev/*.h) 
-#libYARP_dev/include/yarp/dev/*.h will be copied in CMAKE_INSTALL_PREFIX/include/yarp/dev
-INSTALL_FILES(/include/yarp/dev FILES ${installedHeaders})

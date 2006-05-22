@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.2 2006-05-18 09:58:05 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.3 2006-05-22 17:00:24 babybot Exp $
 ///
 ///
 
@@ -50,9 +50,6 @@
 
 // May 06, readapted for YARP2 by nat
 
-#include <ace/config.h>
-#include <ace/OS.h>
-#include <ace/Sched_Params.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/FrameGrabber.h>
 
