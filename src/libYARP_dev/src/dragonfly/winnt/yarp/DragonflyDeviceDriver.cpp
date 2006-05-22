@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.4 2006-05-18 09:58:05 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.5 2006-05-22 18:47:51 babybot Exp $
 ///
 ///
 
@@ -461,6 +461,21 @@ bool DragonflyDeviceDriver::acquireBuffer (void *buffer)
             (*(unsigned char **)buffer)= d._pSubsampled_data;
         }
 	
+	return true;
+}
+
+bool DragonflyDeviceDriver::getBuffer(unsigned char *buffer)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    char *tmpBuff;
+    waitOnNewFrame ();
+	acquireBuffer(&tmpBuff);
+
+	memcpy(buffer, tmpBuff, d.sizeX * d.sizeY * 3);
+
+	releaseBuffer ();
+
 	return true;
 }
 
