@@ -284,10 +284,10 @@ class yarp::dev::IPositionControl: public DeviceDriver
 
     /** Set reference speed on all joints. These values are used during the
      * interpolation of the trajectory.
-     * @param vel pointer to the array of speed values.
+     * @param spds pointer to the array of speed values.
      * @return true/false upon success/failure
      */
-    virtual bool setRefSpeed(const double *sps)=0;
+    virtual bool setRefSpeed(const double *spds)=0;
 
     /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
@@ -299,7 +299,7 @@ class yarp::dev::IPositionControl: public DeviceDriver
 
     /** Set reference acceleration on all joints. This is the valure that is
      * used during the generation of the trajectory.
-     * @param acc pointer to the array of acceleration values
+     * @param accs pointer to the array of acceleration values
      * @return true/false upon success/failure
      */
     virtual bool setRefAcceleration(const double *accs)=0;
@@ -315,7 +315,7 @@ class yarp::dev::IPositionControl: public DeviceDriver
      * interpolation of the trajectory.
      * @param spds pointer to the array that will store the speed values.
      */
-    virtual void setRefSpeed(double *sps)=0;
+    virtual void setRefSpeed(double *spds)=0;
 
     /** Get reference acceleration for a joint. Returns the acceleration used to 
      * generate the trajectory profile.
