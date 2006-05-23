@@ -184,13 +184,13 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
 
 	// assume we want a square image
-	float scalex = 768.0/_nRequestedSizeX;
+	float scalex = float(768.0/_nRequestedSizeX);
 	float scaley = (float) (576.0/(_nRequestedSizeY*params._alfa));	// a slighlty bigger immage is acquired, this allows some offsets along the vertical direction (see offset)
 	float scale = (scalex < scaley) ? scalex : scaley;
 	scalex = scale;
-	scaley = scale / 2.0;	//the image is interlaced
-	float xSize = 768.0/scalex;
-	float ySize = 576.0/scaley;
+	scaley = scale / 2.0f;	//the image is interlaced
+	float xSize = 768.0f/scalex;
+	float ySize = 576.0f/scaley;
 	int offsetX = (int) ((xSize-_nRequestedSizeX) / 2 + params._offset_x + 0.5);
 	int offsetY = (int) ((ySize-_nRequestedSizeY*2.0) / 2 + params._offset_y + 0.5);
 	

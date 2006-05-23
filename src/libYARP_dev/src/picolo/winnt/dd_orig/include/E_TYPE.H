@@ -7,6 +7,7 @@
 //
 //	Reference	-	J.H.	99-01-01
 //	HANDLE		-	J.M.W.	99-05-18
+//  fixed clash of types with XP on VisualStudio 8 - pasa 2006
 //
 //
 ************************************************************************/
@@ -42,17 +43,17 @@ typedef unsigned long _FAR_ *   PUINT32;
 #endif
 
 #define VOID                    void
-typedef char                    INT8;
-typedef short                   INT16;
+typedef signed char             INT8;
+typedef signed short            INT16;
 typedef float                   FLOAT32;
 typedef double                  FLOAT64;
 typedef unsigned char           UINT8;
 typedef unsigned short          UINT16;
 typedef void _FAR_ *            PVOID;
 typedef void _FAR_ * _FAR_ *    PPVOID;
-typedef char _FAR_ *            PINT8;
-typedef char _FAR_ *            PCHAR;
-typedef short _FAR_ *           PINT16;
+typedef signed char *           PINT8;
+typedef char *                  PCHAR;
+typedef signed short *          PINT16;
 typedef float _FAR_ *           PFLOAT32;
 typedef double _FAR_ *          PFLOAT64;
 typedef unsigned char _FAR_ *   PUINT8;
