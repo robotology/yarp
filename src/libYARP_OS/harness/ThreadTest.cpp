@@ -88,6 +88,15 @@ private:
     };
 
 
+    class Thread3: public ThreadImpl {
+    public:
+        virtual void run() {
+            Time::delay(1);
+        }
+    };
+
+
+
 public:
     ThreadTest() : sema(0), state(1) {
         expectCount = 0;
@@ -119,6 +128,14 @@ public:
         checkEqual(true,expectCount==11,"thread event counts");
     }
 
+    void testCloseVersusStop() {
+        report(0,"testing that close versus stop confusion doesn't cause crash");
+        Thread3 t;
+        t.start();
+        t.close();
+        report(0,"done");
+    }
+
     virtual void testMin() {
         report(0,"testing minimal thread functions to check for mem leakage...");
         for (int i=0; i<20; i++) {
@@ -134,6 +151,7 @@ public:
     virtual void runTests() {
         testMin();
         testSync();
+        testCloseVersusStop();
     }
 };
 
