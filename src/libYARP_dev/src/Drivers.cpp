@@ -1,5 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#ifdef USE_EXPERIMENTAL
+
 #include <yarp/dev/Drivers.h>
 #include <yarp/String.h>
 #include <yarp/Logger.h>
@@ -43,3 +45,4 @@ DeviceDriver *create(const yarp::os::Property& prop) {
 }
 
 
+#endif
