@@ -5,6 +5,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabber.h>
 #include <ace/Log_Msg.h>
+#include <ace/OS.h>
 
 #include "FirewireCameras.h"
 
