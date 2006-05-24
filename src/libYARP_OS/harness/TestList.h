@@ -28,6 +28,7 @@ extern yarp::UnitTest& getNameConfigTest();
 extern yarp::UnitTest& getPortTest();
 extern yarp::UnitTest& getNetTypeTest();
 extern yarp::UnitTest& getBinPortableTest();
+extern yarp::UnitTest& getPropertyTest();
 
 class yarp::TestList {
 public:
@@ -51,6 +52,7 @@ public:
         root.add(getPortTest());
         root.add(getNetTypeTest());
         root.add(getBinPortableTest());
+        root.add(getPropertyTest());
     }
 };
 
