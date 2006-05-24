@@ -28,7 +28,7 @@ public:
     }
 
     virtual void close() {
-        owner.close();
+        owner.onStop();
         ThreadImpl::close();
     }
 };
@@ -61,7 +61,7 @@ void Thread::run() {
 }
 
 
-void Thread::close() {
+void Thread::onStop() {
     ((ThreadImpl*)implementation)->close();
 }
 
@@ -69,7 +69,7 @@ bool Thread::start() {
     return ((ThreadImpl*)implementation)->start();
 }
 
-bool Thread::isClosing() {
+bool Thread::isStopping() {
     return ((ThreadImpl*)implementation)->isClosing();
 }
 

@@ -32,8 +32,8 @@ public:
      * After Thread::start is called, this
      * method will start running in a separate thread.
      * It is important that this method either keeps checking
-     * Thread::isClosing to see if it should stop, or
-     * you override the Thread::close method to interact
+     * Thread::isStopping to see if it should stop, or
+     * you override the Thread::onStop method to interact
      * with it in some way to shut the new thread down.
      * There is no really reliable, portable way to stop
      * a thread cleanly unless that thread cooperates.
@@ -41,11 +41,12 @@ public:
     virtual void run();
 
     /**
-     * Procedure for halting the new thread.
+     * Call-back, called while halting the thread.
+     * Should not be called directly.
      * Override this method to do the right thing for
      * your particular Thread::run.
      */
-    virtual void close();
+    virtual void onStop();
 
     /**
      * Start the new thread running.
@@ -56,8 +57,8 @@ public:
 
     /**
      * Stop the new thread.
-     * Thread::isClosing will start returning true.
-     * The user-defined Thread::close method will be called.
+     * Thread::isStopping will start returning true.
+     * The user-defined Thread::onStop method will be called.
      * Then, this simply sits back and waits.
      * @return true iff the new thread stops successfully
      */
@@ -75,11 +76,11 @@ public:
     virtual void afterStart(bool success);
 
     /**
-     * Returns true if the thread is closing down (Thread::stop has
+     * Returns true if the thread is stopping (Thread::stop has
      * been called).
-     * @return true iff the thread is closing
+     * @return true iff the thread is stopping
      */
-    bool isClosing();
+    bool isStopping();
 
     /**
      * Set the stack size the the new thread.  Must be called before

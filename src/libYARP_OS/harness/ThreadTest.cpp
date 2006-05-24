@@ -1,5 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/ThreadImpl.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
@@ -20,7 +21,7 @@ public:
 
 private:
 
-    class Thread0: public ThreadImpl {
+    class Thread0: public Thread {
     public:
         virtual void run() {
             Time::delay(0.01);
@@ -88,7 +89,7 @@ private:
     };
 
 
-    class Thread3: public ThreadImpl {
+    class Thread3: public Thread {
     public:
         virtual void run() {
             Time::delay(1);
@@ -129,10 +130,10 @@ public:
     }
 
     void testCloseVersusStop() {
-        report(0,"testing that close versus stop confusion doesn't cause crash");
+        report(0,"testing that onStop called directly doesn't cause crash");
         Thread3 t;
         t.start();
-        t.close();
+        t.stop();
         report(0,"done");
     }
 
@@ -142,8 +143,8 @@ public:
             Thread0 t0, t1;
             t0.start();
             t1.start();
-            t0.join();
-            t1.join();
+            t0.stop();
+            t1.stop();
         }
         report(0,"...done");
     }
