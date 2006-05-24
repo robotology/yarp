@@ -1,1 +1,1 @@
-YARP_EXTERNAL;libraw1394-dev;libdc1394-11-dev
+YARP_EXTERNAL;raw1394;dc1394_control

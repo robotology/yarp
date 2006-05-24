@@ -18,6 +18,8 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 
+Drivers Drivers::instance;
+
 Drivers::Drivers() {
   implementation = NULL;
 }
@@ -26,12 +28,12 @@ Drivers::Drivers() {
 Drivers::~Drivers() {
 }
 
-yarp::os::ConstString toString() {
+yarp::os::ConstString Drivers::toString() {
   return ConstString("no description yet");
 }
 
 
-DeviceDriver *create(const yarp::os::Property& prop) {
+DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
   String str = prop.get("name").c_str();
   if (str == "dragonfly") {
     DragonflyDeviceDriver *driver = new DragonflyDeviceDriver();

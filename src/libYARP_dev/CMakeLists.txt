@@ -1,5 +1,8 @@
 INCLUDE(ListUtils.cmake)
 
+SET(EXT_LIBS "")
+SET(ALL_SRC "")
+
 ##### LOCAL MACROS
 MACRO(DD_FIND_LOCAL_LIB var dd LIBS)
   FOREACH(lib ${LIBS})
@@ -17,6 +20,7 @@ ENDMACRO(DD_FIND_LOCAL_LIB)
 
 MACRO(DD_FIND_EXTERNAL_LIB var dd LIBS)
   MESSAGE(STATUS "WARNING: ${dd} requires proper installation of: ${LIBS}, YARP assumes you took care of that.")
+  SET(EXT_LIBS "${EXT_LIBS} ${LIBS}")
 ENDMACRO(DD_FIND_EXTERNAL_LIB)
 ##### END  LOCAL MACROS
 
@@ -76,9 +80,12 @@ FOREACH(DD ${FOUND_DD})
   ENDIF(TOKEN STREQUAL YARP_LOCAL)
 
   MESSAGE(STATUS "Adding source files for ${DD}")
-  AUX_SOURCE_DIRECTORY(src/${DD}/common libcode1)
-  AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode2)
+  FILE(GLOB libcode1 src/${DD}/common/*.cpp)
+  #AUX_SOURCE_DIRECTORY(src/${DD}/common libcode1)
+  FILE(GLOB libcode2 src/${DD}/${OS_TAG}/yarp/*.cpp)
+  #AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode2)
   SET(libcode ${libcode1} ${libcode2})
+  SET(ALL_SRC ${ALL_SRC} ${libcode})
   INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/common)
   INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
   SET(header_path "${header_path} ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/common")
@@ -103,12 +110,16 @@ INCLUDE(YarpReqLib)
 
 
 # any non-driver-specific source code
-AUX_SOURCE_DIRECTORY(src libcode_general)
+#AUX_SOURCE_DIRECTORY(src libcode_general)
+FILE(GLOB libcode_general src/*.cpp)
+SET(ALL_SRC ${ALL_SRC} ${libcode_general})
+
 
 #avoid empty projects...
 IF(FOUND_ONE)
-  ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libcode_general} ${libheader})
-  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path ${header_path})
+  ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader})
+  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path "${header_path}")
+  SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ext_libs "${EXT_LIBS}")
   ### INSTALL RULES ###
   #libYARP_dev.a or YARP_dev.lib will be copied in CMAKE_INSTALL_PREFIX/lib
   INSTALL_TARGETS(/lib YARP_dev) 
