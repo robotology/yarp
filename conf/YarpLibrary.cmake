@@ -6,7 +6,8 @@ PROJECT(lib${name})
 FOREACH(X ${NEED_LIBS})
 	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/lib${X}/include)
 ENDFOREACH(X ${NEED_LIBS})
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/lib${name}/include)
+SET(header_path ${CMAKE_SOURCE_DIR}/src/lib${name}/include)
+INCLUDE_DIRECTORIES(${header_path})
 
 #AUX_SOURCE_DIRECTORY(src libcode)
 FILE(GLOB_RECURSE folder_source src/*.cpp)
@@ -18,6 +19,7 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 INCLUDE(YarpReqLib)
 
 ADD_LIBRARY(${name} ${libcode} ${folder_header})
+SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
