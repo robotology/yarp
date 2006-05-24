@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.5 2006-05-22 18:47:51 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.6 2006-05-24 13:28:50 babybot Exp $
 ///
 ///
 
@@ -360,8 +360,7 @@ bool DragonflyDeviceDriver::open (const DragonflyOpenParameters &par)
 bool DragonflyDeviceDriver::close (void)
 {
 	DragonflyResources& d = RES(system_resources);
-
-	d.close();	/// stops the thread first (joins too).
+	d.stop();	/// stops the thread first (joins too).
 
 	bool ret = d._uninitialize ();
 
