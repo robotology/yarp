@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.6 2006-05-24 13:28:50 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.7 2006-05-24 14:57:17 natta Exp $
 ///
 ///
 
@@ -384,7 +384,7 @@ void DragonflyResources::run (void)
 	int lostFrames = 0;
 
 	ACE_DEBUG ((LM_DEBUG, "\n[DragonFly Driver] Acquisition thread starting... "));
-	while (!isClosing())	
+	while (!isStopping())	
         {
             bufIndex++;
 	

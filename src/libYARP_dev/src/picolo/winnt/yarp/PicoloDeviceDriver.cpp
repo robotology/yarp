@@ -345,7 +345,7 @@ void PicoloResources::run (void)
 	unsigned int readfro = startbuf;
 
 	/// strategy, waits, copy into lockable buffer.
-	while (!isClosing())	
+	while (!isStopping())	
         {
             PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
             if (PicoloStatus != PICOLO_OK)
