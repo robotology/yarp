@@ -18,8 +18,8 @@ public:
     virtual ~Property();
 
     void put(const char *key, const char *val);
-    bool check(const char *key);
-    ConstString get(const char *key);
+    bool check(const char *key) const;
+    ConstString get(const char *key) const;
 
 private:
     void *implementation;

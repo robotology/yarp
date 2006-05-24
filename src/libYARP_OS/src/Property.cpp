@@ -17,13 +17,13 @@ public:
     data.rebind(String(key),String(val));
   }
 
-  bool check(const char *key) {
+  bool check(const char *key) const {
     String out;
     int result = data.find(String(key),out);
     return (result!=-1);
   }
 
-  ConstString get(const char *key) {
+  ConstString get(const char *key) const {
     String out;
     int result = data.find(String(key),out);
     if (result!=-1) {
@@ -57,12 +57,12 @@ void Property::put(const char *key, const char *val) {
 }
 
 
-bool Property::check(const char *key) {
+bool Property::check(const char *key) const {
   return HELPER(implementation).check(key);
 }
 
 
-ConstString Property::get(const char *key) {
+ConstString Property::get(const char *key) const {
   return HELPER(implementation).get(key);
 }
 

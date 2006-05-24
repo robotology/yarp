@@ -98,9 +98,13 @@ INCLUDE(YarpReqLib)
 #MESSAGE(STATUS "Adding header files:")
 #MESSAGE(STATUS "${libheader}")
 
+
+# any non-driver-specific source code
+AUX_SOURCE_DIRECTORY(src libcode_general)
+
 #avoid empty projects...
 IF(FOUND_ONE)
-  ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libheader})
+  ADD_LIBRARY(${PROJECT_NAME} ${libcode} ${libcode_general} ${libheader})
   ### INSTALL RULES ###
   #libYARP_dev.a or YARP_dev.lib will be copied in CMAKE_INSTALL_PREFIX/lib
   INSTALL_TARGETS(/lib YARP_dev) 
