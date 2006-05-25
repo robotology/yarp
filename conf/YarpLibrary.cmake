@@ -21,6 +21,13 @@ INCLUDE(YarpReqLib)
 ADD_LIBRARY(${name} ${libcode} ${folder_header})
 SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 
+# have to do this here to support cmake 2.0
+GET_TARGET_PROPERTY(${name}_LIB ${name} LOCATION)
+GET_TARGET_PROPERTY(${name}_INC ${name} header_path)
+SET(${name}_LIB "${${name}_LIB}" CACHE INTERNAL "libraries")
+SET(${name}_INC "${${name}_INC}" CACHE INTERNAL "include path")
+
+
 AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
 

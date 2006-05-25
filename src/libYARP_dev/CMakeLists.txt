@@ -128,3 +128,20 @@ IF(FOUND_ONE)
   INSTALL_FILES(/include/yarp/dev FILES ${installedHeaders})
 ENDIF(FOUND_ONE)
 
+
+# Prepare properties for external users of library
+
+GET_TARGET_PROPERTY(YARP_dev_LIB YARP_dev LOCATION)
+GET_TARGET_PROPERTY(YARP_dev_INC YARP_dev header_path)
+GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS YARP_dev ext_libs)
+SET(YARP_dev_LIB "${YARP_dev_LIB} ${YARP_dev_EXT_LIBS}")
+IF (NOT YARP_dev_LIB)
+   SET(YARP_dev_LIB "")
+ENDIF (NOT YARP_dev_LIB)
+IF (NOT YARP_dev_INC)
+   SET(YARP_dev_INC "")
+ENDIF (NOT YARP_dev_INC)
+
+SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")
+SET(YARP_dev_INC "${YARP_dev_INC}" CACHE INTERNAL "include path")
+SET(YARP_dev_EXT_LIBS "${YARP_dev_EXT_LIBS}" CACHE INTERNAL "extra libs")
