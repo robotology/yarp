@@ -1,0 +1,41 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+#include <yarp/dev/Drivers.h>
+#include <yarp/String.h>
+#include <yarp/Logger.h>
+
+#include <ace/OS.h>
+
+using namespace yarp;
+using namespace yarp::os;
+using namespace yarp::dev;
+
+
+
+// this is an automatically configured file
+#cmakedefine ENABLE_dragonfly
+
+// add header file here, and factory code below
+#ifdef ENABLE_dragonfly
+#include <yarp/DragonflyDeviceDriver.h>
+#endif
+
+
+DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
+    String str = prop.get("device").c_str();
+
+#ifdef ENABLE_dragonfly
+    if (str == "dragonfly") {
+        DragonflyDeviceDriver *driver = new DragonflyDeviceDriver();
+        YARP_ASSERT(driver!=NULL);
+        DragonflyOpenParameters par;
+        par._size_x = 640;
+        par._size_y = 480;
+        driver->open(par);
+        return driver;
+    }
+#endif
+    
+    return NULL;
+}
+
