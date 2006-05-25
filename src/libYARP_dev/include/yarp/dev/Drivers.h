@@ -18,9 +18,9 @@ public:
     virtual ~DriverFactory() {}
 
     // calls create with the given name property
-    DeviceDriver *create(const char *name) {
+    DeviceDriver *create(const char *device) {
         yarp::os::Property p;
-        p.put("name",name);
+        p.put("device",device);
         return create(p);
     }
 

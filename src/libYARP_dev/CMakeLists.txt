@@ -41,7 +41,14 @@ INCLUDE(AvailableDevices.txt)
 # cycle all available devices
 FOREACH(DD ${AVAILABLE_DEVICES})
   SET(FLAG-${DD} FALSE CACHE BOOL "Do you want to add ${DD} to libYARP_dev?")
+  # cannot use - symbol when configuring external file
+  SET(ENABLE_${DD} "${FLAG-${DD}}" CACHE INTERNAL "config driver")
 ENDFOREACH(DD ${AVAILABLE_DEVICES})
+
+SET(populator ${CMAKE_BINARY_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
+               ${CMAKE_BINARY_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp @ONLY  IMMEDIATE)
+
 
 # re-check all DD to find the ones that were selected by the user
 FOREACH(DD ${AVAILABLE_DEVICES})
@@ -113,7 +120,7 @@ INCLUDE(YarpReqLib)
 # any non-driver-specific source code
 #AUX_SOURCE_DIRECTORY(src libcode_general)
 FILE(GLOB libcode_general src/*.cpp)
-SET(ALL_SRC ${ALL_SRC} ${libcode_general})
+SET(ALL_SRC ${ALL_SRC} ${libcode_general} ${populator})
 
 
 #avoid empty projects...
@@ -151,3 +158,4 @@ ENDIF (NOT YARP_dev_INC)
 SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")
 SET(YARP_dev_INC "${YARP_dev_INC}" CACHE INTERNAL "include path")
 SET(YARP_dev_EXT_LIBS "${YARP_dev_EXT_LIBS}" CACHE INTERNAL "extra libs")
+
