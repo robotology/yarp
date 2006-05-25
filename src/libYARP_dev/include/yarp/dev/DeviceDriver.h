@@ -2,6 +2,10 @@
 #ifndef __YARP2_DEVICEDRIVER__
 #define __YARP2_DEVICEDRIVER__
 
+#include <yarp/os/ConnectionReader.h>
+#include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/Bottle.h>
+
 namespace yarp {
     /**
      * An interface for the device drivers 
@@ -32,6 +36,20 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close()=0;
+
+    /**
+     * Generic command interface.
+     * @return true on success.
+     */
+    virtual bool apply(yarp::os::ConnectionReader& cmd);
+
+    /**
+     * Generic command interface.
+     * @return true on success.
+     */
+    virtual bool apply(yarp::os::Bottle& cmd, 
+                       yarp::os::Bottle& response);
+
 };
 
 #endif

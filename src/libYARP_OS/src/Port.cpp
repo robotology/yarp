@@ -171,6 +171,23 @@ bool Port::write(PortWriter& writer) {
 }
 
 /**
+ * write something to the port
+ */
+bool Port::write(PortWriter& writer, PortReader& reader) {
+    PortCoreAdapter& core = HELPER(implementation);
+    bool result = false;
+    try {
+        core.send(writer,&reader);
+        result = true;
+    } catch (IOException e) {
+        YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
+        writer.onCompletion();
+        // leave result false
+    }
+    return false;
+}
+
+/**
  * read something from the port
  */
 bool Port::read(PortReader& reader) {

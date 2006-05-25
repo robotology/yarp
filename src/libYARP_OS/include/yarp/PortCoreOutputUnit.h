@@ -30,6 +30,7 @@ public:
         sending = false;
         name = owner.getName();
         cachedWriter = NULL;
+        cachedReader = NULL;
         cachedTracker = NULL;
     }
 
@@ -63,6 +64,7 @@ public:
     virtual Route getRoute();
 
     virtual void *send(Writable& writer, 
+                       Readable *reader,
                        void *tracker,
                        bool waitAfter,
                        bool waitBefore);
@@ -77,6 +79,7 @@ private:
     String name;
     SemaphoreImpl phase, activate;
     Writable *cachedWriter;
+    Readable *cachedReader;
     void *cachedTracker;
 
     void sendHelper();

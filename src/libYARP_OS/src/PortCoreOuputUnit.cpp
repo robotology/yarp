@@ -149,6 +149,9 @@ void PortCoreOutputUnit::sendHelper() {
         if (op!=NULL) {
             PortCommand pc('d',"");
             BufferedConnectionWriter buf(op->isTextMode());
+            if (cachedReader!=NULL) {
+                buf.setReplyHandler(*cachedReader);
+            }
             pc.writeBlock(buf);
             YARP_ASSERT(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
@@ -165,6 +168,7 @@ void PortCoreOutputUnit::sendHelper() {
 }
 
 void *PortCoreOutputUnit::send(Writable& writer, 
+                               Readable *reader,
                                void *tracker,
                                bool waitAfter,
                                bool waitBefore) {
@@ -186,6 +190,7 @@ void *PortCoreOutputUnit::send(Writable& writer,
         tracker = cachedTracker;
         sending = true;
         cachedWriter = &writer;
+        cachedReader = reader;
         cachedTracker = nextTracker;
         if (waitAfter==true) {
             sendHelper();

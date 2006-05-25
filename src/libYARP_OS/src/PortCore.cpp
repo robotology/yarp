@@ -574,7 +574,7 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 }
 
 
-void PortCore::send(Writable& writer) {
+void PortCore::send(Writable& writer, Readable *reader) {
 
     // pass the data to all output units.
     // for efficiency, it should be converted to block form first.
@@ -602,7 +602,7 @@ void PortCore::send(Writable& writer) {
                     YMSG(("------- -- inc\n"));
                     packet->inc();
                     YMSG(("------- -- presend\n"));
-                    void *out = unit->send(writer,(void *)packet,
+                    void *out = unit->send(writer,reader,(void *)packet,
                                            waitAfterSend,waitBeforeSend);
                     YMSG(("------- -- send\n"));
                     if (out!=NULL) {

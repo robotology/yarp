@@ -71,6 +71,16 @@ public:
     bool write(PortWriter& writer);
 
     /**
+     * Write an object to the port, then expect one back.
+     * @param writer any object that knows how to write itself to a
+     * network connection - see for example Bottle
+     * @param reader any object that knows how to read itself from a
+     * network connection - see for example Bottle
+     * @return true iff an object is successfully written and read
+     */
+    bool write(PortWriter& writer, PortReader& reader);
+
+    /**
      * Read an object from the port.
      * @param reader any object that knows how to read itself from a
      * network connection - see for example Bottle

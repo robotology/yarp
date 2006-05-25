@@ -49,6 +49,7 @@ public:
     }
 
     virtual void *send(Writable& writer, 
+                       Readable *reader,
                        void *tracker,
                        bool waitAfter = true,
                        bool waitBefore = true) {

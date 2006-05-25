@@ -73,7 +73,7 @@ public:
     virtual bool start();
 
     // use port as output
-    void send(Writable& writer);
+    void send(Writable& writer, Readable *reader = NULL);
 
     // shut down and deconfigure core
     virtual void close();
