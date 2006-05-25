@@ -5,7 +5,7 @@ PROJECT(configuration)
 #GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS YARP_dev ext_libs)
 # actually device stuff isn't set up yet
 
-SET(YARP_LIBRARIES "${YARP_dev_LIB} ${YARP_sig_LIB} ${YARP_OS_LIB}  ${ACE_LIBRARY}")
+SET(YARP_LIBRARIES "${YARP_dev_LIB} ${YARP_sig_LIB} ${YARP_OS_LIB}  ${ACE_LIB}")
 SET(YARP_INCLUDES "${ACE_INCLUDE_DIR} ${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC}")
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/YARPConfig.cmake.in
