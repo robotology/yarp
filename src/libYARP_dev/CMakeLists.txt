@@ -45,6 +45,10 @@ FOREACH(DD ${AVAILABLE_DEVICES})
   SET(ENABLE_${DD} "${FLAG-${DD}}" CACHE INTERNAL "config driver")
 ENDFOREACH(DD ${AVAILABLE_DEVICES})
 
+# any non-driver-specific source code
+#AUX_SOURCE_DIRECTORY(src libcode_general)
+FILE(GLOB libcode_general src/*.cpp)
+
 SET(populator ${CMAKE_BINARY_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
                ${CMAKE_BINARY_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp @ONLY  IMMEDIATE)
@@ -117,9 +121,6 @@ INCLUDE(YarpReqLib)
 #MESSAGE(STATUS "${libheader}")
 
 
-# any non-driver-specific source code
-#AUX_SOURCE_DIRECTORY(src libcode_general)
-FILE(GLOB libcode_general src/*.cpp)
 SET(ALL_SRC ${ALL_SRC} ${libcode_general} ${populator})
 
 
