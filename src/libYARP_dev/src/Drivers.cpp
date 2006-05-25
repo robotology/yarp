@@ -39,6 +39,8 @@ DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
     DragonflyDeviceDriver *driver = new DragonflyDeviceDriver();
     YARP_ASSERT(driver!=NULL);
     DragonflyOpenParameters par;
+	par._size_x = 640;
+	par._size_y = 480;
     driver->open(par);
     return driver;
   }
