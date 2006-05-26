@@ -106,62 +106,75 @@ Address NameClient::extractAddress(const String& txt) {
 
 
 String NameClient::send(const String& cmd, bool multi) {
-    YARP_DEBUG(Logger::get(),String("sending to nameserver: ") + cmd);
-
-    if (isFakeMode()) {
-        YARP_DEBUG(Logger::get(),"fake mode nameserver");
-        return getServer().apply(cmd,Address("localhost",10000,"tcp")) + "\n";
-    }
-
+    bool retried = false;
+    bool retry = false;
     String result;
-    TcpFace face;
-    YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toString());
-    OutputProtocol *ip = face.write(getAddress());
-    if (ip==NULL) {
-        YARP_INFO(Logger::get(),"no connection to nameserver");
-        Address alt;
-        if (!isFakeMode()) {
-            YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
-            alt = FallbackNameClient::seek();
+
+    do {
+
+        YARP_DEBUG(Logger::get(),String("sending to nameserver: ") + cmd);
+
+        if (isFakeMode()) {
+            YARP_DEBUG(Logger::get(),"fake mode nameserver");
+            return getServer().apply(cmd,Address("localhost",10000,"tcp")) + "\n";
         }
-        if (alt.isValid()) {
-            NameConfig nc;
-            nc.setAddress(alt);
-            nc.toFile();
-            address = alt;
+        
+        TcpFace face;
+        YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toString());
+        OutputProtocol *ip = NULL;
+        if (!retry) {
             ip = face.write(getAddress());
-            if (ip==NULL) {
-                YARP_ERROR(Logger::get(),
-                           "no connection to nameserver, scanning mcast");
+        } else {
+            retried = true;
+        }
+        if (ip==NULL) {
+            YARP_INFO(Logger::get(),"no connection to nameserver");
+            Address alt;
+            if (!isFakeMode()) {
+                YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
+                alt = FallbackNameClient::seek();
+            }
+            if (alt.isValid()) {
+                NameConfig nc;
+                nc.setAddress(alt);
+                nc.toFile();
+                address = alt;
+                ip = face.write(getAddress());
+                if (ip==NULL) {
+                    YARP_ERROR(Logger::get(),
+                               "no connection to nameserver, scanning mcast");
+                    return "";
+                }
+            } else {
                 return "";
             }
-        } else {
-            return "";
         }
-    }
-    String cmdn = cmd + "\n";
-    Bytes b((char*)cmdn.c_str(),cmdn.length());
-    ip->getOutputStream().write(b);
-    bool more = multi;
-    while (more) {
-        String line = "";
-        try {
-            line = NetType::readLine(ip->getInputStream());
-        } catch (IOException e) {
-            more = false;
-            break;
-            YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
-        }
-        if (line.length()>1) {
-            if (line[0] == '*') {
+        String cmdn = cmd + "\n";
+        Bytes b((char*)cmdn.c_str(),cmdn.length());
+        ip->getOutputStream().write(b);
+        bool more = multi;
+        while (more) {
+            String line = "";
+            try {
+                line = NetType::readLine(ip->getInputStream());
+            } catch (IOException e) {
                 more = false;
+                YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
+                retry = true;
+                break;
             }
+            if (line.length()>1) {
+                if (line[0] == '*') {
+                    more = false;
+                }
+            }
+            result += line + "\n";
         }
-        result += line + "\n";
-    }
-    ip->close();
-    delete ip;
-    ACE_DEBUG((LM_DEBUG,"<<< received from nameserver: %s",result.c_str()));
+        ip->close();
+        delete ip;
+        ACE_DEBUG((LM_DEBUG,"<<< received from nameserver: %s",result.c_str()));
+    } while (retry&&!retried);
+
     return result;
 }
 

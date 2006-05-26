@@ -10,6 +10,7 @@
 #include <yarp/PortCore.h>
 #include <yarp/BottleImpl.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
 #include <yarp/NameServer.h>
 #include <yarp/NameConfig.h>
 
@@ -131,7 +132,7 @@ int Companion::cmdName(int argc, char *argv[]) {
 
 int Companion::cmdConf(int argc, char *argv[]) {
     NameConfig nc;
-    ACE_OS::printf("configuration file: %s\n",nc.getConfigFileName().c_str());
+    ACE_OS::printf("%s\n",nc.getConfigFileName().c_str());
     return 0;
 }
 
@@ -309,6 +310,13 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     CompanionCheckHelper check;
     PortCore in;
     Address address = nic.registerName("...");
+    bool faking = false;
+    if (!address.isValid()) {
+        YARP_INFO(log,"=== NO NAME SERVER!  Switching to local, fake mode");
+        Network::setLocalMode(true);
+        address = nic.registerName("...");
+        faking = true;
+    }
     in.listen(address);
     in.setReadHandler(check);
     in.start();
@@ -361,7 +369,11 @@ int Companion::cmdCheck(int argc, char *argv[]) {
         //diagnose();
         return 1;
     } else {
-        YARP_INFO(log,"*** YARP seems okay!");
+        if (faking) {
+            YARP_INFO(log,"*** YARP seems okay, but there is no name server available.");
+        } else {
+            YARP_INFO(log,"*** YARP seems okay!");
+        }
     }
     return 0;
 }
