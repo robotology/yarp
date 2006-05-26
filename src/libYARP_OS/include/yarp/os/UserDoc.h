@@ -2,9 +2,45 @@
 #ifndef _YARP2_USERDOC_
 #define _YARP2_USERDOC_
 
+/**
+ * @mainpage Welcome to YARP
+ *
+ * @section welcome_disclaimer Disclaimer
+ *
+ * \code
+       Through Me Pass into the Painful City,
+       Through Me Pass into Eternal Grief,
+       Through Me Pass among the Lost People.
+       Justice Moved My Master-Builder:
+       Heavenly Power First Fashioned Me
+       With Highest Wisdom and with Primal Love.
+       Before Me Nothing Was Created That
+       Was Not Eternal, and I Last Eternally.
+       All Hope Abandon, You Who Enter Here.
+ * \endcode
+ *
+ * @section welcome_topics Topics
+ *
+ * Need help installing and compiling YARP?  See @ref install.
+ *
+ * Want to start using the library?  Start with @ref yarp_os.
+ *
+ */
+
 
 /**
- * @mainpage User Documentation for the YARP OS library
+ * @page install Installation Tips
+ *
+ * @section install_start Getting started
+ *
+ * YARP is available from http://yarp0.sourceforge.net
+ *
+ *
+ *
+ */
+
+/**
+ * @page yarp_os The YARP OS library
  *
  * @section intro_sec Introduction
  *
