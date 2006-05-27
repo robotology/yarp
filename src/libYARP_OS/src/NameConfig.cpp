@@ -48,14 +48,17 @@ bool NameConfig::fromString(const String& txt) {
 String NameConfig::getConfigFileName() {
     String root = getEnv("YARP_CONF");
     String home = getEnv("HOME");
+    String homepath = getEnv("HOMEPATH");
     String conf = "";
     if (root!="") {
         //conf = new File(new File(root,"conf"),"namer.conf");
         conf = root + "/conf/" + CONF_FILENAME;
     } else if (home!="") {
         conf = home + "/.yarp/conf/" + CONF_FILENAME;
+    } else if (homepath!="") {
+        conf = getEnv("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + CONF_FILENAME;
     } else {
-        YARP_ERROR(Logger::get(),"Cannot decide where configuration file is - set YARP_CONF or HOME");
+        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
     }
     YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);
@@ -66,7 +69,10 @@ String NameConfig::getConfigFileName() {
 bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
     int index = fileName.rfind('/');
     if (index==-1) {
-        return false;
+		index = fileName.rfind('\\');
+	    if (index==-1) {
+		    return false;
+		}
     }
     String base = fileName.substr(0,index);
     ACE_stat sb;

@@ -18,7 +18,7 @@ using namespace yarp::os;
 void Time::delay(double seconds) {
     ACE_Time_Value tv;
     tv.sec (long(seconds));
-    tv.usec (long((seconds-int(seconds)) * 1e6));
+    tv.usec (long((seconds-long(seconds)) * 1.0e6));
     ACE_OS::sleep(tv);
 }
 
