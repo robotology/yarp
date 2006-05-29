@@ -4,11 +4,6 @@
 # call from root as ./scripts/make-debian
 
 echo "Warning: I am runing cmake to set a temporary install path!"
-which cpack || {
-  "Error: I need a version of cmake that includes cpack"
-  exit 1
-}
-
 
 WORK="$PWD/tmp-deb"
 rm -rf $WORK
