@@ -3,7 +3,7 @@
 # This script makes a debian package
 # call from root as ./scripts/make-debian
 
-echo "Warning: I am runing cmake to set a temporary install path!"
+echo "Warning: I am running cmake to set a temporary install path!"
 
 WORK="$PWD/tmp-deb"
 rm -rf $WORK
