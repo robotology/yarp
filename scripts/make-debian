@@ -11,10 +11,41 @@ rm -rf $WORK
 cmake -DCMAKE_INSTALL_PREFIX:PATH=$WORK .
 
 make && make install
-cp -R $WORK/usr/share/doc/yarp/DEBIAN $WORK/DEBIAN
+
+# required files
+cp -R $WORK/doc/DEBIAN $WORK/DEBIAN
 NAME=`grep -i "Package:" $WORK/DEBIAN/control | sed "s/.* //"`
 VERSION=`grep -i "Version:" $WORK/DEBIAN/control | sed "s/.* //"`
-dpkg --build $WORK $NAME-$VERSION.deb
+mkdir -p $WORK/doc
+cp ./COPYING $WORK/doc/copyright
+cp ./ChangeLog $WORK/doc/changelog
+(
+echo "yarp-dev (2.0.0) unstable; urgency=low"
+echo "  * yarp-dev Debian maintainer and upstream author are identical,"
+echo "    therefore see also normal changelog file for Debian changes."
+echo ""
+echo " -- paulfitz <paulfitz@localhost.localdomain>  Mon, 29 May 2006 19:58:41 -0600"
+echo ""
+) > $WORK/doc/changelog.Debian
+gzip --best $WORK/doc/changelog
+gzip --best $WORK/doc/changelog.Debian
+
+# strip binaries
+pushd $WORK/bin
+for f in `ls`; do
+    echo STRIPPING $f
+    strip --strip-unneeded $f
+done
+popd
+
+# remap directories
+mkdir -p $WORK/usr
+mkdir -p $WORK/usr/share/doc
+mv $WORK/include $WORK/usr/include
+mv $WORK/bin $WORK/usr/bin
+mv $WORK/doc $WORK/usr/share/doc/$NAME
+
+fakeroot dpkg-deb --build $WORK $NAME-$VERSION.deb
 
 
 
