@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# This script makes a debian package
+# call from root as ./scripts/make-debian
+
+echo "Warning: I am runing cmake to set a temporary install path!"
+
+WORK="$PWD/tmp-deb"
+rm -rf $WORK
+
+cmake -D CMAKE_INSTALL_PREFIX:PATH=$WORK .
+
+make && make install
+cp -R $WORK/usr/share/doc/yarp/DEBIAN $WORK/DEBIAN
+NAME=`grep -i "Package:" $WORK/DEBIAN/control | sed "s/.* //"`
+VERSION=`grep -i "Version:" $WORK/DEBIAN/control | sed "s/.* //"`
+dpkg --build $WORK $NAME-$VERSION.deb
+
+
+

@@ -14,3 +14,4 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/YARPConfig.cmake.in
 #MESSAGE(STATUS "YARPConfig.make records libs as: " ${YARP_LIBRARIES})
 #MESSAGE(STATUS "YARPConfig.make records includes as: " ${YARP_INCLUDES})
 
+
