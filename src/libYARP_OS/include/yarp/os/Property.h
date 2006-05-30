@@ -18,8 +18,9 @@ public:
 
     virtual ~Property();
 
-    void put(const char *key, const char *val);
     bool check(const char *key) const;
+
+    void put(const char *key, const char *val);
     ConstString get(const char *key) const;
 
     Bottle& putBottle(const char *key, const Bottle& val);
