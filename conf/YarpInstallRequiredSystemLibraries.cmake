@@ -7,6 +7,14 @@
 # developers.
 IF(MSVC)
   FILE(TO_CMAKE_PATH "$ENV{SYSTEMROOT}" SYSTEMROOT)
+  IF(MSVC60)
+    SET(__install__libs
+      "${SYSTEMROOT}/system32/msvcp60.dll"
+      "${SYSTEMROOT}/system32/msvcr60.dll"
+      "${SYSTEMROOT}/system32/msvcp60d.dll"
+      "${SYSTEMROOT}/system32/msvcr60d.dll"
+      )
+  ENDIF(MSVC60)
   IF(MSVC70)
     SET(__install__libs
       "${SYSTEMROOT}/system32/msvcp70.dll"
