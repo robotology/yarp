@@ -25,7 +25,11 @@ namespace yarp {
 template <class T>
 class yarp::os::BufferedPort : public Contactable {
 public:
+
+    typedef T ContentType;
+
     BufferedPort() {
+        cachedRead = NULL;
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
@@ -102,15 +106,24 @@ public:
      */
     T *read(bool wait = true) {
         if (!wait) {
-            if (!reader.check()) { return NULL; }
+            if (!reader.check()) { 
+                cachedRead = NULL;
+                return NULL; 
+            }
         }
-        return reader.read();  
+        cachedRead = reader.read();  
+        return cachedRead;
+    }
+
+    T *lastRead() {
+        return cachedRead;
     }
 
 private:
     Port port;
     PortReaderBuffer<T> reader;
     PortWriterBuffer<T> writer;
+    T *cachedRead;
 };
 
 #endif

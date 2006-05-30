@@ -334,6 +334,7 @@ class yarp::sig::ImageOf : public Image
 private:
     T nullPixel;
 public:
+
     virtual int getPixelSize() const {
         return sizeof(T);
     }

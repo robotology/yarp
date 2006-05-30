@@ -42,4 +42,4 @@ PACKAGING
 
 NSIS + CMAKE
 
-
+GTK debian: libglib2.0-dev libgtk2.0-dev
