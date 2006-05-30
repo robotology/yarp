@@ -8,7 +8,7 @@
 ///
 
 ///
-/// $Id: ImageFile.h,v 1.1 2006-05-30 17:41:42 natta Exp $
+/// $Id: ImageFile.h,v 1.2 2006-05-30 17:45:41 natta Exp $
 ///
 ///
 
@@ -21,13 +21,13 @@ pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
 nat: May 06, adapted for YARP2
 */
 
-#ifndef YARPImageFile_INC
-#define YARPImageFile_INC
+#ifndef YARP2ImageFile_INC
+#define YARP2ImageFile_INC
 
 #include <yarp/sig/Image.h>
 
 /**
- * Image file operations, on ppm images.
+ * Image file operations.
  */
 namespace yarp {
    namespace sig{
@@ -44,9 +44,9 @@ namespace yarp {
       int read(ImageOf<PixelBgr>& dest, const char *src);
       int read(ImageOf<PixelMono>& dest, const char *src);
 
-      int write(ImageOf<PixelRgb>& src, const char *dest);
-      int write(ImageOf<PixelBgr>& src, const char *dest);
-      int write(ImageOf<PixelMono>& src, const char *dest);
+      int write(const ImageOf<PixelRgb>& src, const char *dest);
+      int write(const ImageOf<PixelBgr>& src, const char *dest);
+      int write(const ImageOf<PixelMono>& src, const char *dest);
       }
    }
 };

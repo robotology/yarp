@@ -8,7 +8,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.1 2006-05-30 17:41:42 natta Exp $
+/// $Id: ImageFile.cpp,v 1.2 2006-05-30 17:45:41 natta Exp $
 ///
 ///
 
@@ -301,14 +301,14 @@ int file::read(ImageOf<PixelBgr> & dest, const char *src)
    return ImageReadBGR(dest,src);
 }
 
-int file::write(ImageOf<PixelRgb> & src, const char *dest)
+int file::write(const ImageOf<PixelRgb> & src, const char *dest)
 {
-    return ImageWriteRGB(src, dest);
+    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest);
 }
 
-int file::write(ImageOf<PixelBgr> & src, const char *dest)
+int file::write(const ImageOf<PixelBgr> & src, const char *dest)
 {
-    return ImageWriteBGR(src, dest);
+    return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest);
 }
 
 int file::read(ImageOf<PixelMono> & dest, const char *src)
@@ -316,8 +316,8 @@ int file::read(ImageOf<PixelMono> & dest, const char *src)
    return ImageReadMono(dest,src);
 }
 
-int file::write(ImageOf<PixelMono> & src, const char *dest)
+int file::write(const ImageOf<PixelMono> & src, const char *dest)
 {
-    return ImageWriteMono(src, dest);
+    return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest);
 }
 
