@@ -8,14 +8,14 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.2 2006-05-30 17:45:41 natta Exp $
+/// $Id: ImageFile.cpp,v 1.3 2006-05-30 18:22:05 eshuy Exp $
 ///
 ///
 
-#include "ImageFile.h"
+#include <yarp/sig/ImageFile.h>
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
-#include <fstream>
+//#include <fstream>
 
 using namespace std;
 using namespace yarp::sig;
