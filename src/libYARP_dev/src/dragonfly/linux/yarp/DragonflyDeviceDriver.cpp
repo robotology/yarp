@@ -217,6 +217,29 @@ bool DragonflyDeviceDriver::getBuffer(unsigned char *buff)
 	releaseBuffer ();
 }
 
+
+bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
+                                     image) {
+    bool ok = false;
+
+    DragonflyResources& d = RES(system_resources);
+
+    char *tmpBuff;
+    waitOnNewFrame ();
+	acquireBuffer(&tmpBuff);
+
+    image.resize(getWidth(),getHeight());
+    if(image.getRawImageSize()==d.buffLength) {
+        memcpy(image.getRawImage(), tmpBuff, d.buffLength);
+        ok = true;
+    }
+
+	releaseBuffer ();
+
+    return ok;
+}
+
+
 int DragonflyDeviceDriver::getWidth ()
 {
 	return RES(system_resources).sizeX;

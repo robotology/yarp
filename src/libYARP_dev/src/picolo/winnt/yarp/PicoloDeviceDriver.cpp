@@ -321,6 +321,29 @@ bool PicoloDeviceDriver::getBuffer(unsigned char *buff)
     return true;
 }
 
+
+virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    bool ok = false;
+
+    DragonflyResources& d = RES(system_resources);
+
+    char *tmpBuff;
+    waitOnNewFrame ();
+	acquireBuffer(&tmpBuff);
+
+    image.resize(getWidth(),getHeight());
+    int len = d._nRequestedSizeX * d._nRequestedSizeY * 3;
+    if(image.getRawImageSize()==len) {
+        memcpy(image.getRawImage(), tmpBuff, len);
+        ok = true;
+    }
+
+	releaseBuffer ();
+
+    return ok;
+}
+
+
 ///
 ///
 /// acquisition thread for real!

@@ -94,6 +94,8 @@ public:
 	 */
 	virtual bool getBuffer(unsigned char *buff);
 
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+
 	/**
 	 * Implements the FrameGrabber interface.
 	 */

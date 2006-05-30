@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.7 2006-05-24 14:57:17 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.8 2006-05-30 10:18:42 eshuy Exp $
 ///
 ///
 
@@ -477,6 +477,30 @@ bool DragonflyDeviceDriver::getBuffer(unsigned char *buffer)
 
 	return true;
 }
+
+
+bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
+                                     image) {
+    bool ok = false;
+
+    DragonflyResources& d = RES(system_resources);
+
+    char *tmpBuff;
+    waitOnNewFrame ();
+	acquireBuffer(&tmpBuff);
+
+    image.resize(getWidth(),getHeight());
+    int len = tmpBuff, d.sizeX * d.sizeY * 3);
+    if(image.getRawImageSize()==len) {
+        memcpy(image.getRawImage(), tmpBuff, len);
+        ok = true;
+    }
+
+	releaseBuffer ();
+
+    return ok;
+}
+
 
 bool DragonflyDeviceDriver::releaseBuffer ()
 {

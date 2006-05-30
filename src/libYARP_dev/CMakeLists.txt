@@ -71,7 +71,7 @@ ENDFOREACH(DD ${avail_dd})
 
 ## COMMON INCLUDE FILES
 INCLUDE_DIRECTORIES(include ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include 
-  ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${ACE_INCLUDE_DIR})
+  ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${CMAKE_SOURCE_DIR}/src/libYARP_sig/include ${ACE_INCLUDE_DIR})
 SET(header_path ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include)
 
 

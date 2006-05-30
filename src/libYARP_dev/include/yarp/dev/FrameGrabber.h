@@ -4,6 +4,8 @@
 
 #include <yarp/dev/DeviceDriver.h>
 
+#include <yarp/sig/Image.h>
+
 /*! \file FrameGrabber.h define common interfaces for framer grabber devices */
 
 namespace yarp{
@@ -26,6 +28,9 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getBuffer(unsigned char *buffer)=0;
+
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
 
     /** 
      * Return the height of each frame.

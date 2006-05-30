@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.3 2006-05-22 17:00:24 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.4 2006-05-30 10:18:42 eshuy Exp $
 ///
 ///
 
@@ -132,6 +132,8 @@ public:
      * @return returns true/false on success/failure.
      */
     virtual bool getBuffer(unsigned char *buffer);
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     /**
      * Implements FrameGrabber basic interface.
