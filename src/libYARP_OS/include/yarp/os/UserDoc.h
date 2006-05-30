@@ -8,15 +8,15 @@
  * @section welcome_disclaimer Disclaimer
  *
  * \code
-       Through Me Pass into the Painful City,
-       Through Me Pass into Eternal Grief,
-       Through Me Pass among the Lost People.
-       Justice Moved My Master-Builder:
-       Heavenly Power First Fashioned Me
-       With Highest Wisdom and with Primal Love.
-       Before Me Nothing Was Created That
-       Was Not Eternal, and I Last Eternally.
-       All Hope Abandon, You Who Enter Here.
+ Through Me Pass into the Painful City,
+ Through Me Pass into Eternal Grief,
+ Through Me Pass among the Lost People.
+ Justice Moved My Master-Builder:
+ Heavenly Power First Fashioned Me
+ With Highest Wisdom and with Primal Love.
+ Before Me Nothing Was Created That
+ Was Not Eternal, and I Last Eternally.
+ All Hope Abandon, You Who Enter Here.
  * \endcode
  *
  * @section welcome_topics Topics
@@ -47,35 +47,35 @@
  *
  * The components of YARP can be broken down into:
 
-    * libYARP_OS - interfacing with the operating system(s) to support
-    * easy streaming of data across many threads across many
-    * machines. YARP is written to be OS neutral, and explicitly
-    * supports Linux, Microsoft Windows, Mac Os (aka Darwin) and the
-    * QNX realtime operating system.
+ * libYARP_OS - interfacing with the operating system(s) to support
+ * easy streaming of data across many threads across many
+ * machines. YARP is written to be OS neutral, and explicitly
+ * supports Linux, Microsoft Windows, Mac Os (aka Darwin) and the
+ * QNX realtime operating system.
 
-    * libYARP_sig - performing common signal processing tasks (visual,
-    * auditory) in an open manner easily interfaced with other
-    * commonly used libraries.
+ * libYARP_sig - performing common signal processing tasks (visual,
+ * auditory) in an open manner easily interfaced with other
+ * commonly used libraries.
 
-    * libYARP_sig_logpolar - performing the logpolar subsampling of
-    * images. This is the author's preference when doing image
-    * processing for robots. It offers full field of view with reduced
-    * number of pixels to process. For a full reference please check
-    * the relative manual.
+ * libYARP_sig_logpolar - performing the logpolar subsampling of
+ * images. This is the author's preference when doing image
+ * processing for robots. It offers full field of view with reduced
+ * number of pixels to process. For a full reference please check
+ * the relative manual.
 
-    * libYARP_dev - interfacing with common devices used in robotics:
-    * framegrabbers, digital cameras, motor control boards, etc.
+ * libYARP_dev - interfacing with common devices used in robotics:
+ * framegrabbers, digital cameras, motor control boards, etc.
 
-    * libYARP_robot - common interface to different robotic platform
-    * with easy to replace device drivers as in the libYARP_dev
-    * library.
+ * libYARP_robot - common interface to different robotic platform
+ * with easy to replace device drivers as in the libYARP_dev
+ * library.
 
-    * tools - various support tools, utilities, and executable components.
+ * tools - various support tools, utilities, and executable components.
 
-    * These components are maintained separately. The core component
-    * is libYARP_OS, which must be available before the other
-    * components can be used. This manual describes how to install and
-    * use that component first, then the others.
+ * These components are maintained separately. The core component
+ * is libYARP_OS, which must be available before the other
+ * components can be used. This manual describes how to install and
+ * use that component first, then the others.
 
  *
  */

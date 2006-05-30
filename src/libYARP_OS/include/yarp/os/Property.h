@@ -6,9 +6,9 @@
 #include <yarp/os/Bottle.h>
 
 namespace yarp {
-  namespace os {
-    class Property;
-  }
+    namespace os {
+        class Property;
+    }
 }
 
 class yarp::os::Property {

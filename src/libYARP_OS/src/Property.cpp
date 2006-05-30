@@ -109,44 +109,44 @@ public:
 
 
 Property::Property() {
-  implementation = new PropertyHelper;
-  YARP_ASSERT(implementation!=NULL);
+    implementation = new PropertyHelper;
+    YARP_ASSERT(implementation!=NULL);
 }
 
 
 Property::~Property() {
-  if (implementation!=NULL) {
-    delete &HELPER(implementation);
-    implementation = NULL;
-  }
+    if (implementation!=NULL) {
+        delete &HELPER(implementation);
+        implementation = NULL;
+    }
 }
 
 
 void Property::put(const char *key, const char *val) {
-  HELPER(implementation).put(key,val);
+    HELPER(implementation).put(key,val);
 }
 
 
 bool Property::check(const char *key) const {
-  return HELPER(implementation).check(key);
+    return HELPER(implementation).check(key);
 }
 
 
 ConstString Property::get(const char *key) const {
-  return HELPER(implementation).get(key);
+    return HELPER(implementation).get(key);
 }
 
 
 Bottle& Property::putBottle(const char *key, const Bottle& val) {
-  return HELPER(implementation).putBottle(key,val);
+    return HELPER(implementation).putBottle(key,val);
 }
 
 Bottle& Property::putBottle(const char *key) {
-  return HELPER(implementation).putBottle(key);
+    return HELPER(implementation).putBottle(key);
 }
 
 Bottle *Property::getBottle(const char *key) const {
-  return HELPER(implementation).getBottle(key);
+    return HELPER(implementation).getBottle(key);
 }
 
 

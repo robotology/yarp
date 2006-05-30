@@ -35,13 +35,13 @@ YARPImgRecv::YARPImgRecv(char *portName, char *network)
 {
 	sprintf(_portName, portName);
 	if (network == NULL)
-	{
-		sprintf(_network, "default");
-	}
+        {
+            sprintf(_network, "default");
+        }
 	else
-	{
-		sprintf(_network, network);
-	}
+        {
+            sprintf(_network, network);
+        }
 	_connected = false;
 	_portNameIsValid = true;
 	_width = 0;
@@ -60,15 +60,15 @@ bool YARPImgRecv::Connect()
 	bool res = false;
 	res = _registerPorts();
 	if (res == true)
-	{
-		_connected = true;
-		return true;
-	}
+        {
+            _connected = true;
+            return true;
+        }
 	else
-	{
-		_connected = false;
-		return false;
-	}
+        {
+            _connected = false;
+            return false;
+        }
 }
 
 bool YARPImgRecv::Connect(char *portName, char *network)
@@ -79,26 +79,26 @@ bool YARPImgRecv::Connect(char *portName, char *network)
 		return false;
 	sprintf(_portName,portName);
 	if (network == NULL)
-	{
-		sprintf(_network, "default");
-	}
+        {
+            sprintf(_network, "default");
+        }
 	else
-	{
-		sprintf(_network, network);
-	}
+        {
+            sprintf(_network, network);
+        }
 	_portNameIsValid = true;
 
 	res = _registerPorts();
 	if (res == true)
-	{
-		_connected = true;
-		return true;
-	}
+        {
+            _connected = true;
+            return true;
+        }
 	else
-	{
-		_connected = false;
-		return false;
-	}
+        {
+            _connected = false;
+            return false;
+        }
 	_width = 0;
 	_height = 0;
 }
@@ -107,7 +107,7 @@ bool YARPImgRecv::Update()
 {
 	
 	if ( _connected == false)
-	  return false;
+        return false;
 	
 	PortType::ContentType *content = _inPort.read(0);
 
@@ -131,44 +131,44 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 		return false;
 
 	if (_logpolar)
-	{
-		_img.copy(*_inPort.lastRead());
-		//_logpolarConversion(_fovea, data);
-        exit(1);
-	}
+        {
+            _img.copy(*_inPort.lastRead());
+            //_logpolarConversion(_fovea, data);
+            exit(1);
+        }
 	else
-	{
-		if ( (_width != data->width()) || (_height != data->height()) )
-			data->resize(_width, _height);
-		data->copy(*(_inPort.lastRead()));
-	}
+        {
+            if ( (_width != data->width()) || (_height != data->height()) )
+                data->resize(_width, _height);
+            data->copy(*(_inPort.lastRead()));
+        }
 	
 	return true;
 }
 
 /*
-bool YARPImgRecv::SaveLastImage(char *fileName, int format)
-{
-	if ( _connected == false)
-		return false;
+  bool YARPImgRecv::SaveLastImage(char *fileName, int format)
+  {
+  if ( _connected == false)
+  return false;
 	
-	if ((_width == 0) || (_height == 0))
-		return false;
+  if ((_width == 0) || (_height == 0))
+  return false;
 	
-	if (_logpolar)
-	{
-		_img.CastCopy(_inPort.Content());
-		_logpolarConversion(_fovea, &_logImg);
-		YARPImageFile::Write(fileName, _logImg, format);
-	}
-	else
-	{
-		_img.CastCopy(_inPort.Content());
-		YARPImageFile::Write(fileName, _img, format);
-	}
+  if (_logpolar)
+  {
+  _img.CastCopy(_inPort.Content());
+  _logpolarConversion(_fovea, &_logImg);
+  YARPImageFile::Write(fileName, _logImg, format);
+  }
+  else
+  {
+  _img.CastCopy(_inPort.Content());
+  YARPImageFile::Write(fileName, _img, format);
+  }
 
-	return true;
-}
+  return true;
+  }
 */
 
 bool YARPImgRecv::Disconnect()
@@ -180,10 +180,10 @@ bool YARPImgRecv::Disconnect()
 
 	res = _unregisterPorts();
 	if (res == true)
-	{
-		_connected = false;
-		return true;
-	}
+        {
+            _connected = false;
+            return true;
+        }
 	else
 		return false;
 
@@ -248,16 +248,16 @@ bool YARPImgRecv::GetLogpolar()
 
 void YARPImgRecv::_logpolarConversion(bool fovea, YARPGenericImage *dest)
 {
-	_img.Refer (_inPort.Content());
-	if (fovea)
-	{
-		_logopolarMapper.SafeLogpolar2CartesianFovea (_img, _logImg);
+_img.Refer (_inPort.Content());
+if (fovea)
+{
+    _logopolarMapper.SafeLogpolar2CartesianFovea (_img, _logImg);
 		
-	}
-	else
-	{
-		_logopolarMapper.SafeLogpolar2Cartesian (_img, _logImg);
-	}
-	*dest = _logImg;
+}
+ else
+     {
+         _logopolarMapper.SafeLogpolar2Cartesian (_img, _logImg);
+     }
+ *dest = _logImg;
 }
 */

@@ -22,13 +22,13 @@ namespace yarp{
  */
 class Pid
 {
- public:
+public:
     double kp;     /**< proportional gain */
     double kd;     /**< derivative gain */
     double ki;	   /**< integrative gain */
     double int_max;  /**< saturation threshold for the integrator */
 
- public:
+public:
     /*! \brief Default Constructor */
     Pid();
     /*! \brief destructor */
@@ -73,7 +73,7 @@ class Pid
  */
 class yarp::dev::IControlPid: public DeviceDriver
 {
- public:
+public:
     /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -233,7 +233,7 @@ class yarp::dev::IControlPid: public DeviceDriver
  */
 class yarp::dev::IPositionControl: public DeviceDriver
 {
- public:
+public:
     /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
@@ -440,21 +440,21 @@ class yarp::dev::IEncoders: public DeviceDriver
 public:
 
     /* Reset encoder, single joint. Set the encoder value to zero 
-    * @param j encoder number
-    * @return true/false
-    */
+     * @param j encoder number
+     * @return true/false
+     */
     bool encoderReset(int j)=0;
 
     /* Reset encoders. Set the encoders value to zero 
-    * @return true/false
-    */
+     * @return true/false
+     */
     bool encoderReset()=0;
 
     /* Set the value of the encoder for a given joint. 
-    * @param j encoder number
-    * @param val new value
-    * @return true/false
-    */
+     * @param j encoder number
+     * @param val new value
+     * @return true/false
+     */
     bool encoderSet(int j, double val)=0;
 
     /* Read the value of an encoder.
@@ -491,9 +491,9 @@ public:
     void encoderGetAcceleration(double *accs)=0;
 
     /* Set the value of all encoders.
-    * @param vals pointer to the new values
-    * @return true/false
-    */
+     * @param vals pointer to the new values
+     * @return true/false
+     */
     bool encoderSet(const double *vals)=0;
 };
 
@@ -503,7 +503,7 @@ public:
  */
 class yarp::dev::IControlAmplifier: public DeviceDriver
 {
- public:
+public:
     /** Enable the amplifier. Be careful, check that the output
      * of the controller is appropriate (usually zero), to avoid 
      * generating abrupt movements.

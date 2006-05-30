@@ -14,7 +14,7 @@ using namespace yarp::dev;
 Drivers Drivers::instance;
 
 Drivers::Drivers() {
-  implementation = NULL;
+    implementation = NULL;
 }
 
 
@@ -22,7 +22,7 @@ Drivers::~Drivers() {
 }
 
 yarp::os::ConstString Drivers::toString() {
-  return ConstString("no description yet");
+    return ConstString("no description yet");
 }
 
 

@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 ///
 ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2003 
@@ -8,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.3 2006-05-30 18:22:05 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.4 2006-05-30 18:25:57 eshuy Exp $
 ///
 ///
 

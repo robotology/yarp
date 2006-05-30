@@ -30,7 +30,7 @@ void FallbackNameClient::run() {
             if (txt.strstr("registration ")==0) {
                 address = NameClient::extractAddress(txt);
                 YARP_INFO(Logger::get(),String("Received address ") + 
-                           address.toString());
+                          address.toString());
                 return;
             }
         }

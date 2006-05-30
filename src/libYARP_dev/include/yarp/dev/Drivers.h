@@ -6,10 +6,10 @@
 #include <yarp/dev/DeviceDriver.h>
 
 namespace yarp {
-  namespace dev {
-      class DriverFactory;
-      class Drivers;
-  }
+    namespace dev {
+        class DriverFactory;
+        class Drivers;
+    }
 }
 
 
