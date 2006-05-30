@@ -30,6 +30,15 @@ echo ""
 gzip --best $WORK/doc/changelog
 gzip --best $WORK/doc/changelog.Debian
 
+# man pages
+./scripts/make-manpages
+mkdir -p $WORK/man/man1
+
+mv *.1 $WORK/man/man1
+for f in `ls $WORK/man/man1/*.1`; do
+    gzip --best $f
+done
+
 # strip binaries
 pushd $WORK/bin
 for f in `ls`; do
@@ -43,6 +52,7 @@ mkdir -p $WORK/usr
 mkdir -p $WORK/usr/share/doc
 mv $WORK/include $WORK/usr/include
 mv $WORK/bin $WORK/usr/bin
+mv $WORK/man $WORK/usr/share/man
 mv $WORK/doc $WORK/usr/share/doc/$NAME
 
 fakeroot dpkg-deb --build $WORK $NAME-$VERSION.deb

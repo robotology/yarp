@@ -1,0 +1,12 @@
+#!/bin/sh
+
+which docbook-to-man || {
+    echo "Need docbook-to-man for manpages, skipping"
+    exit 0
+}
+
+for f in `find . -iname "*.sgml"`; do
+    out=`basename $f .sgml`.1
+    echo Generating $out from $f
+    docbook-to-man $f > $out
+done
