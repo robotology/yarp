@@ -1,8 +1,8 @@
 #!/bin/sh
 
 which docbook-to-man || {
-    echo "Need docbook-to-man for manpages, skipping"
-    exit 0
+    echo "Need docbook-to-man for manpages"
+    exit 1
 }
 
 for f in `find . -iname "*.sgml"`; do

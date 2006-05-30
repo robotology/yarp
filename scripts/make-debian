@@ -8,7 +8,9 @@ echo "Warning: I am running cmake to set a temporary install path!"
 WORK="$PWD/tmp-deb"
 rm -rf $WORK
 
-cmake -DCMAKE_INSTALL_PREFIX:PATH=$WORK .
+echo "Make sure RPATH is not used - if you have lintian problems"
+echo "then please make clean"
+cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$WORK .
 
 make && make install
 
@@ -31,7 +33,7 @@ gzip --best $WORK/doc/changelog
 gzip --best $WORK/doc/changelog.Debian
 
 # man pages
-./scripts/make-manpages
+./scripts/make-manpages || exit 1
 mkdir -p $WORK/man/man1
 
 mv *.1 $WORK/man/man1
@@ -43,7 +45,7 @@ done
 pushd $WORK/bin
 for f in `ls`; do
     echo STRIPPING $f
-    strip --strip-unneeded $f
+    strip --strip-unneeded --remove-section=.comment $f
 done
 popd
 
@@ -55,7 +57,11 @@ mv $WORK/bin $WORK/usr/bin
 mv $WORK/man $WORK/usr/share/man
 mv $WORK/doc $WORK/usr/share/doc/$NAME
 
-fakeroot dpkg-deb --build $WORK $NAME-$VERSION.deb
-
+PACK=$NAME-$VERSION.deb
+echo "Making package $PACK"
+fakeroot dpkg-deb --build $WORK $PACK
+echo "Checking package $PACK"
+lintian $PACK
+echo "DONE"
 
 
