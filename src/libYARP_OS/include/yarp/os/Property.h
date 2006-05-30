@@ -3,6 +3,7 @@
 #define _YARP2_PROPERTY_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
   namespace os {
@@ -20,6 +21,10 @@ public:
     void put(const char *key, const char *val);
     bool check(const char *key) const;
     ConstString get(const char *key) const;
+
+    Bottle& putBottle(const char *key, const Bottle& val);
+    Bottle& putBottle(const char *key);
+    Bottle *getBottle(const char *key) const;
 
 private:
     void *implementation;

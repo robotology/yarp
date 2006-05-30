@@ -41,6 +41,11 @@ public:
      */
     Bottle(const char *text);
 
+    Bottle(const Bottle& bottle);
+
+    const Bottle& operator = (const Bottle& bottle);
+
+
     /**
      * Destructor.
      */
@@ -151,7 +156,7 @@ public:
      * for passing to Bottle::fromString (see that method for examples)
      * @return a textual representation of the bottle
      */
-    ConstString toString();
+    ConstString toString() const;
 
     /**
      * Output a representation of the bottle to a network connection.

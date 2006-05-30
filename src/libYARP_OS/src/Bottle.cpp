@@ -16,6 +16,17 @@ Bottle::Bottle() {
     YARP_ASSERT(implementation!=NULL);
 }
 
+Bottle::Bottle(const Bottle& bottle) {
+    implementation = new BottleImpl;
+    YARP_ASSERT(implementation!=NULL);
+    fromString(bottle.toString().c_str());
+}
+
+const Bottle& Bottle::operator = (const Bottle& bottle) {
+    fromString(bottle.toString().c_str());
+}
+
+
 Bottle::Bottle(const char *text) {
     implementation = new BottleImpl;
     YARP_ASSERT(implementation!=NULL);
@@ -85,8 +96,8 @@ void Bottle::fromString(const char *text) {
     HELPER(implementation).fromString(text);
 }
 
-ConstString Bottle::toString() {
-    return ConstString(HELPER(implementation).toString().c_str());;
+ConstString Bottle::toString() const {
+    return ConstString(HELPER(implementation).toString().c_str());
 }
 
 bool Bottle::write(ConnectionWriter& writer) {

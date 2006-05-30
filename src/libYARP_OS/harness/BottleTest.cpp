@@ -124,6 +124,16 @@ public:
     }
 
 
+    void testClear() {
+        report(0,"testing clear...");
+        Bottle b;
+        b.addString("hello");
+        checkEqual(1,b.size(),"size ok");
+        b.clear();
+        b.addString("there");
+        checkEqual(1,b.size(),"size ok");
+    }
+
     void testLists() {
         report(0,"testing lists...");
         BottleImpl bot, bot2, bot3;
@@ -160,6 +170,7 @@ public:
 
 
     virtual void runTests() {
+        testClear();
         testSize();
         testString();
         testBinary();
