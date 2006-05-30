@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.8 2006-05-30 10:18:42 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.9 2006-05-30 10:30:49 eshuy Exp $
 ///
 ///
 
@@ -490,7 +490,7 @@ bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 	acquireBuffer(&tmpBuff);
 
     image.resize(getWidth(),getHeight());
-    int len = tmpBuff, d.sizeX * d.sizeY * 3);
+    int len = d.sizeX * d.sizeY * 3;
     if(image.getRawImageSize()==len) {
         memcpy(image.getRawImage(), tmpBuff, len);
         ok = true;

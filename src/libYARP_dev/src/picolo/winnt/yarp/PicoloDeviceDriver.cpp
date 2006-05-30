@@ -322,10 +322,10 @@ bool PicoloDeviceDriver::getBuffer(unsigned char *buff)
 }
 
 
-virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     bool ok = false;
 
-    DragonflyResources& d = RES(system_resources);
+    PicoloResources& d = RES(system_resources);
 
     char *tmpBuff;
     waitOnNewFrame ();
