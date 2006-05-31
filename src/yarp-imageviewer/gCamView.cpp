@@ -586,7 +586,7 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 	n_channels = gdk_pixbuf_get_n_channels (destPixbuf);
 	dst_size_in_memory = rowstride * height;
 	src_line_size = sourceImg->getRowSize(); //GetAllocatedLineSize();
-	src_data = sourceImg->getRawImage(); //GetRawBuffer();
+	src_data = (char *) sourceImg->getRawImage(); //GetRawBuffer();
 
 	if ( src_line_size == rowstride)
 	{
