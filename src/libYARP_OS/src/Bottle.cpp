@@ -24,6 +24,7 @@ Bottle::Bottle(const Bottle& bottle) {
 
 const Bottle& Bottle::operator = (const Bottle& bottle) {
     fromString(bottle.toString().c_str());
+    return *this;
 }
 
 

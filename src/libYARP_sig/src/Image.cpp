@@ -656,11 +656,11 @@ void Image::synchronize() {
 }
 
 
-char *Image::getRawImage() const {
+unsigned char *Image::getRawImage() const {
     ImageStorage *impl = (ImageStorage*)implementation;
     ACE_ASSERT(impl!=NULL);
     if (impl->pImage!=NULL) {
-        return impl->pImage->imageData;
+        return (unsigned char *)impl->pImage->imageData;
     }
     return NULL;
 }
@@ -718,10 +718,10 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
     resize(header.w,header.h);
 
-    char *mem = getRawImage();
+    unsigned char *mem = getRawImage();
     ACE_ASSERT(mem!=NULL);
     ACE_ASSERT(getRawImageSize()==header.len);
-    connection.expectBlock(getRawImage(),getRawImageSize());
+    connection.expectBlock((char *)getRawImage(),getRawImageSize());
 
     return true;
 }
@@ -738,11 +738,11 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.ext1 = 0;
     header.ext2 = 0;
     connection.appendBlock((char*)&header,sizeof(header));
-    char *mem = getRawImage();
+    unsigned char *mem = getRawImage();
     ACE_ASSERT(mem!=NULL);
 
     // Note use of external block.  Implies care needed about ownership.
-    connection.appendExternalBlock(mem,header.len);
+    connection.appendExternalBlock((char *)mem,header.len);
 
     return true;
 }

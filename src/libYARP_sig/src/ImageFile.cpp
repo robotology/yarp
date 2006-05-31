@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.5 2006-05-31 08:20:17 natta Exp $
+/// $Id: ImageFile.cpp,v 1.6 2006-05-31 13:28:24 natta Exp $
 ///
 ///
 
@@ -177,7 +177,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 	const int w = img.width() * img.getPixelSize();
 	const int h = img.height();
 	const int pad = img.getRowSize();
-	char *dst = img.getRawImage ();
+	unsigned char *dst = img.getRawImage ();
 	size = w * h;
 
 	num = 0;
@@ -220,7 +220,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 	const int w = tmpImg.width() * img.getPixelSize();
 	const int h = tmpImg.height();
 	const int pad = tmpImg.getRowSize();
-	char *dst = tmpImg.getRawImage ();
+	unsigned char *dst = tmpImg.getRawImage ();
 	size = w * h;
 
 	num = 0;
@@ -263,7 +263,7 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 	const int w = img.width() * img.getPixelSize();
 	const int h = img.height();
 	const int pad = img.getRowSize();
-	char *dst = img.getRawImage ();
+	unsigned char *dst = img.getRawImage ();
 	size = w * h;
 
 	num = 0;

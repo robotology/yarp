@@ -285,8 +285,8 @@ static void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 #define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
 
 // More elegant ways to do this, but needs to be efficient at pixel level
-void Image::copyPixels(const char *src, int id1, 
-                       char *dest, int id2, int w, int h,
+void Image::copyPixels(const unsigned char *src, int id1, 
+                       char unsigned *dest, int id2, int w, int h,
                        int imageSize, int quantum)
 {
     if (id1==id2) {

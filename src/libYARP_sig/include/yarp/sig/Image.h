@@ -106,8 +106,8 @@ public:
      * @param y y coordinate
      * @return address of pixel in memory
      */
-    inline char *getPixelAddress(int x, int y) const {
-        return data[y] + x*imgPixelSize;
+    inline unsigned char *getPixelAddress(int x, int y) const {
+        return (unsigned char *)(data[y] + x*imgPixelSize);
     }
 
     /**
@@ -134,7 +134,7 @@ public:
 
     void setExternal(void *data, int imgWidth, int imgHeight);
 
-    char *getRawImage() const;
+    unsigned char *getRawImage() const;
 
     int getRawImageSize() const;
 
@@ -182,8 +182,8 @@ private:
     void synchronize();
     void initialize();
 
-    void copyPixels(const char *src, int id1, 
-                    char *dest, int id2, int w, int h,
+    void copyPixels(const unsigned char *src, int id1, 
+                    unsigned char *dest, int id2, int w, int h,
                     int imageSize, int quantum);
 };
 
