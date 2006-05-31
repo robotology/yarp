@@ -386,8 +386,15 @@ public:
         BufferedPort<BinPortable<int> > output, input;
         output.open("/out");
         input.open("/in");
+
+        report(0,"is write a no-op when no connection exists?...");
+        BinPortable<int>& datum0 = output.prepare();
+        datum0.content() = 123;
+        report(0,"writing...");
+        output.write();
+
         output.addOutput("/in");
-        report(0,"preparing...");
+        report(0,"now with a connection...");
         BinPortable<int>& datum = output.prepare();
         datum.content() = 999;
         report(0,"writing...");

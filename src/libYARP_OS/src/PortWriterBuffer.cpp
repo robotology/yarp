@@ -62,10 +62,11 @@ public:
 
     void write() {
         stateSema.wait();
-        if (current!=NULL && port!=NULL) {
-            port->write(*current);
-        }
+        PortWriter *active = current;
         stateSema.post();
+        if (active!=NULL && port!=NULL) {
+            port->write(*active);
+        } 
     }
 
 private:

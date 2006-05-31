@@ -613,8 +613,11 @@ void PortCore::send(Writable& writer, Readable *reader) {
                 }
             }
         }
+        YMSG(("------- send dec\n"));
         packet->dec();
+        YMSG(("------- pack check\n"));
         packets.checkPacket(packet);
+        YMSG(("------- packed\n"));
     }
     //writer.onCompletion();
     YMSG(("------- send out\n"));
