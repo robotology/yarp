@@ -46,13 +46,13 @@ public:
      * Return the height of each frame.
      * @return image height
      */
-    virtual int height()=0;
+    virtual int height() const =0;
 
     /** 
      * Return the width of each frame.
      * @return image width
      */
-    virtual int width()=0;
+    virtual int width() const =0;
 };
 
 /** 
@@ -75,13 +75,13 @@ public:
      * Return the height of each frame.
      * @return image height
      */
-    virtual int height()=0;
+    virtual int height() const =0;
 
     /** 
      * Return the width of each frame.
      * @return image width
      */
-    virtual int width()=0;
+    virtual int width() const =0;
 };
 
 class yarp::dev::IFrameGrabberImage: public virtual DeviceDriver
@@ -101,12 +101,12 @@ public:
      * Return the height of each frame.
      * @return image height
      */
-    virtual int height()=0;
+    virtual int height() const =0;
 
     /** 
      * Return the width of each frame.
      * @return image width
      */
-    virtual int width()=0;
+    virtual int width() const =0;
 };
 #endif
