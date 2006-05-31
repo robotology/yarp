@@ -411,8 +411,8 @@ public:
         testReadBuffer();
         testPair();
         testReply();
-        //    testUdp();
-        //    testHeavy();
+        testUdp();
+        //testHeavy();
         testBackground();
         testWriteBuffer();
         testBufferedPort();
