@@ -306,7 +306,7 @@ bool PicoloDeviceDriver::close (void)
 	return true;
 }
 
-bool PicoloDeviceDriver::getBgrBuffer(unsigned char *buff)
+bool PicoloDeviceDriver::getRgbBuffer(unsigned char *buff)
 {
     PicoloResources& d = RES(system_resources);
 

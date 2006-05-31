@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.5 2006-05-31 08:14:00 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.6 2006-05-31 10:23:51 natta Exp $
 ///
 ///
 
@@ -97,7 +97,7 @@ public:
 };
 
 class yarp::dev::DragonflyDeviceDriver : 
-public IFrameGrabber, public IFrameGrabberBgr
+public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage
 {
 private:
 	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
@@ -164,7 +164,16 @@ public:
     * @param buffer pointer to the array that will contain the last frame.
     * @return true/false upon success/failure
     */
-    virtual bool getBgrBuffer(unsigned char *buffer);
+    virtual bool getRgbBuffer(unsigned char *buffer);
+
+    /** 
+    * FrameGrabber image interface, returns the last acquired frame as
+    * an rgb image. A demosaicking method is applied to 
+    * reconstuct the color from the Bayer pattern of the sensor.
+    * @param image that will store the last frame.
+    * @return true/false upon success/failure
+    */
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
 protected:
 	/**

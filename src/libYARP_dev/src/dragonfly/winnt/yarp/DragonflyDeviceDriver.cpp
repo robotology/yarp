@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.10 2006-05-31 08:14:22 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.11 2006-05-31 10:23:51 natta Exp $
 ///
 ///
 
@@ -387,7 +387,7 @@ unsigned char* DragonflyDeviceDriver::acquireBuffer ()
 	return 0;
 }
 
-bool DragonflyDeviceDriver::getBgrBuffer(unsigned char *buffer)
+bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buffer)
 {
     DragonflyResources& d = RES(system_resources);
 
@@ -402,6 +402,25 @@ bool DragonflyDeviceDriver::getBgrBuffer(unsigned char *buffer)
 		return false;
 	
 	d.reconstructColor(pSrc->pData, buffer);
+
+	return true;
+}
+
+bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    FlyCaptureError error = FLYCAPTURE_OK;
+
+	FlyCaptureImage *pSrc;
+	
+	pSrc = &(d.lastBuffer);
+	
+	error = flycaptureGrabImage2(d.context, pSrc);
+	if (error!=FLYCAPTURE_OK)
+		return false;
+	
+	d.reconstructColor(pSrc->pData, (unsigned char *)image.getRawImage());
 
 	return true;
 }

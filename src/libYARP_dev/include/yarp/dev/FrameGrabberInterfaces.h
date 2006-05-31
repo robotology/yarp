@@ -3,13 +3,14 @@
 #define __YARP2_FRAME_GRABBER__
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/sig/Image.h>
 
 /*! \file FrameGrabber.h define common interfaces for framer grabber devices */
 
 namespace yarp{
     namespace dev {
         class IFrameGrabberRgb;
-        class IFrameGrabberBgr;
+        class IFrameGrabberImage;
         class IFrameGrabber;
         class FrameGrabberOpenParameters;
     }
