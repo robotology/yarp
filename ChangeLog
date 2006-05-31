@@ -1,3 +1,7 @@
-2006-05-29  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-05-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* Changed dgram/mcast behavior for overflowing packets.
+
+2006-05-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Started ChangeLog.
