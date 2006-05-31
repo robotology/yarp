@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.4 2006-05-30 18:25:57 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.5 2006-05-31 08:20:17 natta Exp $
 ///
 ///
 
@@ -34,13 +34,13 @@ static void warn(char *message)
 	ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
 }
 
-static int SavePGM(char *src, const char *filename, int h, int w, int rowSize)
+static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 {
 	FILE *fp = ACE_OS::fopen(filename, "wb");
 	if (!fp) 
 	{
 		ACE_OS::printf("cannot open file %s for writing\n", filename);
-		return -1;
+		return false;
 	}
 	else
 	{
@@ -56,16 +56,16 @@ static int SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 		ACE_OS::fclose(fp);
 	}
 
-	return 0;
+	return true;
 }
 
-static int SavePPM(char *src, const char *filename, int h, int w, int rowSize)
+static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 {
 	FILE *fp = ACE_OS::fopen(filename, "wb");
 	if (!fp) 
 	{
 		ACE_OS::printf("cannot open file %s for writing\n", filename);
-		return -1;
+		return false;
 	}
 	else
 	{
@@ -82,11 +82,11 @@ static int SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 		ACE_OS::fclose(fp);
 	}
 
-	return 0;
+	return true;
 }
 
 
-static int ReadHeader(FILE *fp, int *height, int *width, int *color)
+static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
 {
 	char ch;
 	int  maxval;
@@ -98,7 +98,7 @@ static int ReadHeader(FILE *fp, int *height, int *width, int *color)
 	//die("file is not in pgm/ppm raw format; cannot read");
 	{
 		warn("file is not in pgm/ppm raw format; cannot read");
-		return -1;
+		return false;
 	}
 
 	if (ch=='6') *color = 1;
@@ -130,7 +130,7 @@ static int ReadHeader(FILE *fp, int *height, int *width, int *color)
 	if (!isdigit(ch)) //die("cannot read header information from pgm/ppm file");
 	{
 		warn("cannot read header information from pgm/ppm file");
-		return -1;
+		return false;
 	}
 	ungetc(ch, fp);
 
@@ -141,10 +141,10 @@ static int ReadHeader(FILE *fp, int *height, int *width, int *color)
 	{
 		//die("image is not true-color (24 bit); read failed");
 		warn("image is not true-color (24 bit); read failed");
-		return -1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
@@ -159,7 +159,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
         return false;
     }
 
-	if (ReadHeader(fp, &height, &width, &color) < 0)
+	if (!ReadHeader(fp, &height, &width, &color))
 	{
 		ACE_OS::fclose (fp);
         ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
@@ -201,7 +201,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
         return false;
     }
 
-	if (ReadHeader(fp, &height, &width, &color) < 0)
+	if (!ReadHeader(fp, &height, &width, &color))
 	{
 		ACE_OS::fclose (fp);
         ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
@@ -245,7 +245,7 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
         return false;
     }
 
-	if (ReadHeader(fp, &height, &width, &color) < 0)
+	if (!ReadHeader(fp, &height, &width, &color))
 	{
 		ACE_OS::fclose (fp);
         ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
@@ -287,37 +287,37 @@ static bool ImageWriteBGR(ImageOf<PixelBgr>& img, const char *filename)
 	return SavePPM((char*)img2.getRawImage(),filename,img2.height(), img2.width(), img.getRowSize());	  
 }
 
-static int ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
+static bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)
 {
     return SavePGM((char*)img.getRawImage(), filename, img.height(), img.width(), img.getRowSize());
 }
 
-int file::read(ImageOf<PixelRgb> & dest, const char *src)
+bool file::read(ImageOf<PixelRgb> & dest, const char *src)
 {
    return ImageReadRGB(dest,src);
 }
 
-int file::read(ImageOf<PixelBgr> & dest, const char *src)
+bool file::read(ImageOf<PixelBgr> & dest, const char *src)
 {
    return ImageReadBGR(dest,src);
 }
 
-int file::write(const ImageOf<PixelRgb> & src, const char *dest)
+bool file::write(const ImageOf<PixelRgb> & src, const char *dest)
 {
     return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest);
 }
 
-int file::write(const ImageOf<PixelBgr> & src, const char *dest)
+bool file::write(const ImageOf<PixelBgr> & src, const char *dest)
 {
     return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest);
 }
 
-int file::read(ImageOf<PixelMono> & dest, const char *src)
+bool file::read(ImageOf<PixelMono> & dest, const char *src)
 {
    return ImageReadMono(dest,src);
 }
 
-int file::write(const ImageOf<PixelMono> & src, const char *dest)
+bool file::write(const ImageOf<PixelMono> & src, const char *dest)
 {
     return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest);
 }

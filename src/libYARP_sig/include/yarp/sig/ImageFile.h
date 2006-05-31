@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.h,v 1.3 2006-05-30 18:25:57 eshuy Exp $
+/// $Id: ImageFile.h,v 1.4 2006-05-31 08:20:17 natta Exp $
 ///
 ///
 
@@ -41,13 +41,13 @@ namespace yarp {
             FORMAT_PPM,
             FORMAT_NUMERIC,
          };
-      int read(ImageOf<PixelRgb>& dest, const char *src);
-      int read(ImageOf<PixelBgr>& dest, const char *src);
-      int read(ImageOf<PixelMono>& dest, const char *src);
+      bool read(ImageOf<PixelRgb>& dest, const char *src);
+      bool read(ImageOf<PixelBgr>& dest, const char *src);
+      bool read(ImageOf<PixelMono>& dest, const char *src);
 
-      int write(const ImageOf<PixelRgb>& src, const char *dest);
-      int write(const ImageOf<PixelBgr>& src, const char *dest);
-      int write(const ImageOf<PixelMono>& src, const char *dest);
+      bool write(const ImageOf<PixelRgb>& src, const char *dest);
+      bool write(const ImageOf<PixelBgr>& src, const char *dest);
+      bool write(const ImageOf<PixelMono>& src, const char *dest);
       }
    }
 };
