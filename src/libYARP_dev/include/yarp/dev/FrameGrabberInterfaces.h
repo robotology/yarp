@@ -57,7 +57,7 @@ public:
 /** 
  * RGB Interface to a FrameGrabber device.
  */
-class yarp::dev::IFrameGrabberRgb: public DeviceDriver
+class yarp::dev::IFrameGrabberRgb:  public DeviceDriver
 {
 public:
     virtual ~IFrameGrabberRgb(){}
@@ -69,23 +69,41 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getRgbBuffer(unsigned char *buffer)=0;
+
+    /** 
+     * Return the height of each frame.
+     * @return image height
+     */
+    virtual int height()=0;
+
+    /** 
+     * Return the width of each frame.
+     * @return image width
+     */
+    virtual int width()=0;
 };
 
-/** 
- * BGR Interface to a FrameGrabber device.
- */
-class yarp::dev::IFrameGrabberBgr: public DeviceDriver
+class yarp::dev::IFrameGrabberImage: public DeviceDriver
 {
-public:
-    virtual ~IFrameGrabberBgr(){}
-    /**
-     * Get a bgr buffer from the frame grabber, if required
+     /**
+     * Get an rgb image from the frame grabber, if required
      * demosaicking/color reconstruction is applied
      * 
-     * @param buffer: pointer to the buffer to be filled (must be previously allocated)
+     * @param image: the image to be filled
      * @return true/false upon success/failure
      */
-    virtual bool getBgrBuffer(unsigned char *buffer)=0;
-};
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
+    
+    /** 
+     * Return the height of each frame.
+     * @return image height
+     */
+    virtual int height()=0;
 
+    /** 
+     * Return the width of each frame.
+     * @return image width
+     */
+    virtual int width()=0;
+};
 #endif
