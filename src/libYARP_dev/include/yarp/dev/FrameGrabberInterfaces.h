@@ -86,6 +86,8 @@ public:
 
 class yarp::dev::IFrameGrabberImage: public virtual DeviceDriver
 {
+public:
+    virtual ~IFrameGrabberImage(){}
      /**
      * Get an rgb image from the frame grabber, if required
      * demosaicking/color reconstruction is applied
