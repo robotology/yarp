@@ -3,7 +3,7 @@
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/dev/FrameGrabber.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <ace/Log_Msg.h>
 #include <ace/OS.h>
 
@@ -167,7 +167,6 @@ bool DragonflyDeviceDriver::open (const DragonflyOpenParameters &par)
 {
 	DragonflyResources& d = RES(system_resources);
 	bool ret = d._initialize (par);
-    //	YARPScheduler::setHighResScheduling ();
 
 	return ret;
 }
@@ -181,42 +180,33 @@ bool DragonflyDeviceDriver::close (void)
 	return ret;
 }
 
-bool DragonflyDeviceDriver::acquireBuffer (void *buffer)
+bool DragonflyDeviceDriver::getRawBuffer(unsigned char *buff)
 {
     DragonflyResources& d = RES(system_resources);
-  
-    (*(unsigned char **)buffer) = d.img;
-  
-    return true;
-}
 
-bool DragonflyDeviceDriver::releaseBuffer ()
-{	
-    return true;
-}
+    unsigned char *tmpBuff;
 
-bool DragonflyDeviceDriver::waitOnNewFrame ()
-{
-    DragonflyResources& d = RES(system_resources);
-  
     d.cam.Capture(d.img);
-	
-    return true;
-}
-
-bool DragonflyDeviceDriver::getBuffer(unsigned char *buff)
-{
-    DragonflyResources& d = RES(system_resources);
-
-    char *tmpBuff;
-    waitOnNewFrame ();
-	acquireBuffer(&tmpBuff);
+  
+    tmpBuff=d.img;
 
 	memcpy(buff, tmpBuff, d.buffLength);
 
-	releaseBuffer ();
+    return true;
 }
 
+bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buff)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    d.cam.Capture(d.img);
+
+    unsigned  char *tmpBuff=d.img;
+
+	memcpy(buff, tmpBuff, d.buffLength);
+
+    return true;
+}
 
 bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
                                      image) {
@@ -224,28 +214,30 @@ bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
 
     DragonflyResources& d = RES(system_resources);
 
-    char *tmpBuff;
-    waitOnNewFrame ();
-	acquireBuffer(&tmpBuff);
+    d.cam.Capture(d.img);
+    unsigned char *tmpBuff=d.img;
 
-    image.resize(getWidth(),getHeight());
+    image.resize(width(),height());
     if(image.getRawImageSize()==d.buffLength) {
         memcpy(image.getRawImage(), tmpBuff, d.buffLength);
         ok = true;
     }
 
-	releaseBuffer ();
-
     return ok;
 }
 
+int DragonflyDeviceDriver::getRawBufferSize()
+{
+    DragonflyResources& d = RES(system_resources);
+    return d.buffLength;
+}
 
-int DragonflyDeviceDriver::getWidth ()
+int DragonflyDeviceDriver::width ()
 {
 	return RES(system_resources).sizeX;
 }
 
-int DragonflyDeviceDriver::getHeight ()
+int DragonflyDeviceDriver::height ()
 {
 	return RES(system_resources).sizeY;
 }
