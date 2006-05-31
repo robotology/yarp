@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.11 2006-05-31 10:23:51 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.12 2006-05-31 15:20:36 natta Exp $
 ///
 ///
 
@@ -76,6 +76,7 @@ public:
 		_acqStarted = false;
 		_validContext = false;
 		imageSubSampled = NULL;
+        imageFullSize = NULL;
 	}
 
 	~DragonflyResources () 
@@ -95,25 +96,29 @@ public:
 	FlyCaptureImage imageConverted;
 	FlyCaptureImage lastBuffer;
 	unsigned char *imageSubSampled;
-	
-	inline bool reconstructColor(const unsigned char *src, unsigned char *dst);
-	inline bool recColorFSNN(const unsigned char *src, unsigned char *dst);
-    inline bool recColorFSBilinear(const unsigned char *src, unsigned char *dst);
-    inline bool recColorHSBilinear(const unsigned char *src, unsigned char *dst);
-	inline bool _initialize (const DragonflyOpenParameters& params);
-	inline bool _uninitialize (void);
-	
-	inline bool _setBrightness (int value, bool bDefault=false);
-	inline bool _setExposure (int value, bool bDefault=false);
-	inline bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=false);
-	inline bool _setShutter (int value, bool bDefault=false);
-	inline bool _setGain (int value, bool bDefault=false);
+	unsigned char *imageFullSize; //used by the reconstructGenearal method
 
-	inline bool reconstructHalfSize(const unsigned char *src, unsigned char *dst);
+    //color reconstruction methods
+	bool reconstructColor(const unsigned char *src, unsigned char *dst);
+	bool recColorFSNN(const unsigned char *src, unsigned char *dst);
+    bool recColorFSBilinear(const unsigned char *src, unsigned char *dst);
+    bool recColorHSBilinear(const unsigned char *src, unsigned char *dst);
+	bool recColorGeneral(const unsigned char *src, unsigned char *dst);
+    void subSampling(const unsigned char *src, unsigned char *dst);
+    //
+    
+    bool _initialize (const DragonflyOpenParameters& params);
+	bool _uninitialize (void);
+	
+	bool _setBrightness (int value, bool bDefault=false);
+	bool _setExposure (int value, bool bDefault=false);
+	bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=false);
+	bool _setShutter (int value, bool bDefault=false);
+	bool _setGain (int value, bool bDefault=false);
 
  private:
-	inline void _prepareBuffers (void);
-	inline void _destroyBuffers (void);
+	void _prepareBuffers (void);
+	void _destroyBuffers (void);
 };
 
 bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned char *dst)
@@ -124,17 +129,16 @@ bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned cha
 		recColorFSBilinear(src, dst);
 		return true;
 	}
+    if ((sizeX == _halfX) && (sizeY == _halfY) )
+    {
+        recColorHSBilinear(src,dst);
+	}
 	else
     {
-	    reconstructHalfSize(src,dst);
+	    recColorGeneral(src,dst);
 		return true;
     }
-}
-
-bool DragonflyResources::reconstructHalfSize(const unsigned char *src, unsigned char *dest)
-{
-
-	return true;
+    return true;
 }
 
 void reportCameraInfo( const FlyCaptureInfoEx* pinfo )
@@ -245,7 +249,12 @@ inline void DragonflyResources::_prepareBuffers(void)
 
 	if (imageSubSampled == NULL)
 		imageSubSampled = new unsigned char[ sizeX * sizeY * 3 ];
+
+    if (imageFullSize == NULL)
+        imageFullSize = new unsigned char [_sizeX*_sizeY*3];
+
 	memset(imageSubSampled, 0x0, (sizeX * sizeY * 3));
+    memset(imageFullSize, 0x0, (_sizeX*_sizeY*3));
 }
 
 inline void DragonflyResources::_destroyBuffers(void)
@@ -253,6 +262,10 @@ inline void DragonflyResources::_destroyBuffers(void)
 	if (imageConverted.pData != NULL)
 		delete [] imageConverted.pData;
 	imageConverted.pData = NULL;
+
+    if (imageFullSize != NULL)
+        delete [] imageFullSize;
+    imageFullSize=NULL;
 
 	if (imageSubSampled != NULL)
 		delete [] imageSubSampled;
@@ -308,43 +321,6 @@ inline bool DragonflyResources::_setGain (int value, bool bAuto)
 	else 
 		return false;
 }
-
-#if 0
-inline void DragonflyResources::_subSampling(void)
-{
-	int srcX, srcY;
-	float xRatio, yRatio;
-	int srcOffset;
-
-	int srcSizeY = _sizeY, srcSizeX = _sizeX;
-	int dstSizeY = sizeY, dstSizeX = sizeX;
-	int bytePerPixel = 3;
-
-	xRatio = ((float)srcSizeX)/dstSizeX;
-	yRatio = ((float)srcSizeY)/dstSizeY;
-
-	unsigned char *pSrcImg = imageConverted.pData;
-	unsigned char *pDstImg = imageSubSampled;
-
-	unsigned char *pSrc = pSrcImg;
-	unsigned char *pDst = pDstImg;
-
-	for (int j=0; j<dstSizeY; j++)
-        {
-            srcY = (int)(yRatio*j);
-            srcOffset = srcY * srcSizeX * bytePerPixel;
-
-            for (int i=0; i<dstSizeX; i++)
-                {
-                    srcX = (int)(xRatio*i);
-                    pSrc = pSrcImg + srcOffset + (srcX * bytePerPixel);
-                    memcpy(pDst,pSrc,bytePerPixel);
-                    pDst += bytePerPixel;
-
-                }
-        }
-}
-#endif
 
 inline DragonflyResources& RES(void *res) { return *(DragonflyResources *)res; }
 
@@ -452,12 +428,12 @@ int DragonflyDeviceDriver::getRawBufferSize()
     return _sizeX*_sizeY;
 }
 
-int DragonflyDeviceDriver::width ()
+int DragonflyDeviceDriver::width () const
 {
 	return RES(system_resources).sizeX;
 }
 
-int DragonflyDeviceDriver::height ()
+int DragonflyDeviceDriver::height () const
 {
 	return RES(system_resources).sizeY;
 }
@@ -497,9 +473,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	tmpG=*(tmpSrc+_sizeX);
 	tmpG+=*(tmpSrc+1);
 
-	*dest++=*(tmpSrc+_sizeX+1);
-	*dest++=(unsigned char) tmpG/2;
 	*dest++=*tmpSrc;
+	*dest++=(unsigned char) tmpG/2;
+	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc++;
 
     // prima riga
@@ -512,9 +488,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 		// x interpolation
 		tmpB=*(tmpSrc+_sizeX);
 						
-		*dest++=(unsigned char)(tmpB);
-		*dest++=*(tmpSrc);
 		*dest++=(unsigned char)(tmpR/2);
+		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpB);
 
 		tmpSrc++;
 
@@ -526,20 +502,20 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
         tmpG+=*(tmpSrc+1); 
 		tmpG+=*(tmpSrc+_sizeX); 
 
-		*dest++=(unsigned char)(tmpB/2);
+		*dest++=*(tmpSrc);
 		*dest++=(unsigned char)(tmpG/3);
-        *dest++=*(tmpSrc);
+        *dest++=(unsigned char)(tmpB/2);
 		tmpSrc++;
 	}
 
 	// last columns, ends with g
-	*dest++=*(tmpSrc+_sizeX);
-	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-1);
+	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+_sizeX);
 
 	tmpSrc++;
 
-	for (rr=1; rr<(_sizeY/2-1); rr++)
+	for (rr=1; rr<(_sizeY/2); rr++)
 	{
 		////////////////// gb row
 		// prima colonna
@@ -548,9 +524,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 		tmpR=*(tmpSrc-_sizeX);
 		tmpR+=*(tmpSrc+_sizeX);
 
-		*dest++=tmpB;
-		*dest++=tmpG;
 		*dest++=(unsigned char)(tmpR/2);
+		*dest++=tmpG;
+		*dest++=tmpB;
 		
 		tmpSrc++;
 
@@ -568,9 +544,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 			tmpG+=*(tmpSrc+1);		
 			tmpG+=*(tmpSrc+_sizeX);		
 
-			*dest++=*tmpSrc;
-			*dest++=(unsigned char)(tmpG/4);
 			*dest++=(unsigned char)(tmpR/4);
+			*dest++=(unsigned char)(tmpG/4);
+			*dest++=*tmpSrc;
 
             tmpSrc++;
 
@@ -582,16 +558,16 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 			tmpB=*(tmpSrc-1);
 			tmpB+=*(tmpSrc+1);
 						
-			*dest++=(unsigned char)(tmpB/2);
-			*dest++=*tmpSrc;
 			*dest++=(unsigned char)(tmpR/2);
+			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpB/2);
 			
             tmpSrc++;
 		}
 		//last col, ends with b
-		*dest++=*tmpSrc;
-		*dest++=*(tmpSrc+_sizeX);
 		*dest++=*(tmpSrc+_sizeX-1);
+		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*tmpSrc;
 
 		tmpSrc++;
 			
@@ -605,9 +581,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 		tmpB+=*(tmpSrc+_sizeX+1);
 		tmpR=*tmpSrc;
 		
-		*dest++=(unsigned char)(tmpB/2);
-		*dest++=(unsigned char)(tmpG/3);
 		*dest++=(unsigned char)(tmpR);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
 
 		tmpSrc++;
 
@@ -622,9 +598,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 			tmpR=*(tmpSrc-1);	
 			tmpR+=*(tmpSrc+1);	
 						
-			*dest++=(unsigned char)(tmpB/2);
-			*dest++=*tmpSrc;
 			*dest++=(unsigned char)(tmpR/2);
+			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpB/2);
 
             tmpSrc++;
 
@@ -640,45 +616,45 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 			tmpG+=*(tmpSrc+_sizeX);
 			tmpG+=*(tmpSrc-_sizeX);
 			
-			*dest++=(unsigned char)(tmpB/4);
-			*dest++=(unsigned char)(tmpG/4);
 			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpG/4);
+			*dest++=(unsigned char)(tmpB/4);
 			
             tmpSrc++;
 		}
 	
-		*dest++=*(tmpSrc-_sizeX);
-		*dest++=*(tmpSrc);
 		*dest++=*(tmpSrc-1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX);
 
 		tmpSrc++;
 	}
 
 	//////////// ultima riga
 	// prima colonna
-	*dest++=*(tmpSrc+1);
-	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-_sizeX);
+	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+1);
 
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
 	{
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc+1);
 		*dest++=*(tmpSrc-_sizeX+1);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
 		tmpSrc++;
 
-        *dest++=*(tmpSrc-_sizeX+1);
+        *dest++=*(tmpSrc-_sizeX);
 		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX);
+		*dest++=*(tmpSrc-_sizeX+1);
 		tmpSrc++;
 	}
 
 	// ultimo pixel
-	*dest++=*tmpSrc;
-	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc-1-_sizeX);
+	*dest++=*(tmpSrc-1);
+	*dest++=*tmpSrc;
 	tmpSrc++;
 
 	return true;
@@ -700,74 +676,74 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 
 	///////////// prima riga
 	// primo pixel
-	*dest++=*(tmpSrc+_sizeX+1);
-	*dest++=*(tmpSrc+1);
 	*dest++=*tmpSrc;
+	*dest++=*(tmpSrc+1);
+	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc++;
 
     // prima riga
 	for(cc=1;cc<(_sizeX/2); cc++)
 	{
 		// first pixel
-		*dest++=*(tmpSrc+_sizeX);
-		*dest++=*(tmpSrc);
 		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc+_sizeX);
 
 		tmpSrc++;
 
 		// second pixel
-		*dest++=*(tmpSrc+_sizeX-1);
+		*dest++=*(tmpSrc);
 		*dest++=*(tmpSrc+1);
-        *dest++=*(tmpSrc);
+        *dest++=*(tmpSrc+_sizeX-1);
 
         tmpSrc++;
 	}
 
 	// last columns, ends with g
-	*dest++=*(tmpSrc+_sizeX);
-	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-1);
+	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+_sizeX);
 
 	tmpSrc++;
 
-	for (rr=1; rr<(_sizeY/2-1); rr++)
+	for (rr=1; rr<=(_sizeY/2-1); rr++)
 	{
 		////////////////// gb row
 		// prima colonna
-		*dest++=*(tmpSrc); //check this if somthing looks weird
-		*dest++=*(tmpSrc+1);
 		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
 		
 		tmpSrc++;
 
 		for(cc=1; cc<(_sizeX/2); cc++)
 		{
 			// second pixel
-			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+_sizeX+1);
 			*dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc+_sizeX+1);
+            *dest++=*tmpSrc;
 
             tmpSrc++;
 
 			// first pixel
-			*dest++=*(tmpSrc+1);
-			*dest++=*tmpSrc;
 			*dest++=*(tmpSrc+_sizeX);
+			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+1);
 
             tmpSrc++;
 		}
 		//last col, ends with b
-		*dest++=*tmpSrc;
-		*dest++=*(tmpSrc+_sizeX);
 		*dest++=*(tmpSrc+_sizeX-1);
+		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*tmpSrc;
 
 		tmpSrc++;
 			
 		////////////////// gb row
 		// prima colonna
-		*dest++=*(tmpSrc+_sizeX+1);
-		*dest++=*(tmpSrc+1);
 		*dest++=*tmpSrc;
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc+_sizeX+1);
 
 		tmpSrc++;
 
@@ -775,52 +751,52 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 		for(cc=1; cc<(_sizeX/2); cc++)
 		{
 			// second pixel
-			*dest++=*(tmpSrc+_sizeX);
-			*dest++=*tmpSrc;
 			*dest++=*(tmpSrc+1);
+			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+_sizeX);
 
             tmpSrc++;
 
 			// first pixel, x interpolation
-			*dest++=*(tmpSrc+_sizeX+1);
-			*dest++=*(tmpSrc+1);
 			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+1);
+			*dest++=*(tmpSrc+_sizeX+1);
 
             tmpSrc++;
 		}
 	
-		*dest++=*(tmpSrc-_sizeX);
-		*dest++=*(tmpSrc);
 		*dest++=*(tmpSrc-1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX);
 
 		tmpSrc++;
 	}
 
 	//////////// ultima riga
 	// prima colonna
-	*dest++=*(tmpSrc+1);
-	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-_sizeX);
+	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+1);
 
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
 	{
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc+1);
 		*dest++=*(tmpSrc-_sizeX+1);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
 		tmpSrc++;
 
-        *dest++=*(tmpSrc-_sizeX+1);
+        *dest++=*(tmpSrc-_sizeX);
 		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX);
+		*dest++=*(tmpSrc-_sizeX+1);
 		tmpSrc++;
 	}
 
 	// ultimo pixel
-	*dest++=*tmpSrc;
-	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc-1-_sizeX);
+	*dest++=*(tmpSrc-1);
+	*dest++=*tmpSrc;
 	tmpSrc++;
 
 	return true;
@@ -846,9 +822,9 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 
     //////// prima riga
 	// primo pixel
-	*dest++=*(tmpSrc+_sizeX+1);
-	*dest++=*(tmpSrc+1);
 	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+1);
+	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc+=2;
 
     c++;
@@ -864,9 +840,9 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
         tmpG+=*(tmpSrc+1);
         tmpG+=*(tmpSrc+_sizeX);
 						
-		*dest++=(unsigned char)(tmpB/2);
-		*dest++=(unsigned char)(tmpG/3);
 		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
 
 		tmpSrc+=2;
 
@@ -874,9 +850,9 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 	}
 
   	// last columns, ends with r
-	*dest++=*(tmpSrc+_sizeX-1);
-	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc-1);
+	*dest++=*(tmpSrc+_sizeX-1);
 	tmpSrc+=2;
     
     c++;
@@ -890,9 +866,9 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 	{
 		////////////////// rg row
 		// prima colonna
-		*dest++=*(tmpSrc+_sizeX+1);
-		*dest++=*(tmpSrc+1);
 		*dest++=*tmpSrc;
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc+_sizeX+1);
 		
 		tmpSrc+=2;
         c++;
@@ -910,17 +886,17 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
             tmpG+=*(tmpSrc+_sizeX);
             tmpG+=*(tmpSrc-_sizeX);
             
-            *dest++=(unsigned char)(tmpB/4);
-            *dest++=(unsigned char)(tmpG/4);
             *dest++=*(tmpSrc);
+            *dest++=(unsigned char)(tmpG/4);
+            *dest++=(unsigned char)(tmpB/4);
             
             tmpSrc+=2;
             c++;
 		}
 		//last col, ends with r
- 	    *dest++=*(tmpSrc+_sizeX-1);
+ 	    *dest++=*(tmpSrc);
 	    *dest++=*(tmpSrc-1);
-	    *dest++=*(tmpSrc);
+	    *dest++=*(tmpSrc+_sizeX-1);
  
 		tmpSrc+=2;
         tmpSrc+=_sizeX; //skip a row
@@ -933,15 +909,14 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 
     //////// ultima riga
 	// primo pixel
-	*dest++=*(tmpSrc-_sizeX+1);
-	*dest++=*(tmpSrc+1);
 	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc+1);
+	*dest++=*(tmpSrc-_sizeX+1);
 	tmpSrc+=2;
 
     c++;
 
-    // prima riga
-	for(cc=1;cc<(_halfX-1); cc++)
+    for(cc=1;cc<(_halfX-1); cc++)
 	{
 		// first pixel
 		tmpB=*(tmpSrc-_sizeX+1);
@@ -951,9 +926,9 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
         tmpG+=*(tmpSrc+1);
         tmpG+=*(tmpSrc-_sizeX);
 						
-		*dest++=(unsigned char)(tmpB/2);
-		*dest++=(unsigned char)(tmpG/3);
 		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
 
 		tmpSrc+=2;
 
@@ -961,9 +936,53 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 	}
 
   	// last columns, ends with r
-	*dest++=*(tmpSrc-_sizeX-1);
-	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc);
+	*dest++=*(tmpSrc-1);
+	*dest++=*(tmpSrc-_sizeX-1);
 	
 	return true;
 }
+
+////// Reconstruct color and downsampling, general case.
+// Assumes pattern: RGRG...RG
+//                  GBGB...GB etc..
+bool DragonflyResources::recColorGeneral(const unsigned char *src, unsigned char *dest)
+{
+    bool ret;
+    ret=recColorFSNN(src, imageFullSize);
+    subSampling(imageFullSize, dest);
+    return ret;
+}
+
+void DragonflyResources::subSampling(const unsigned char *src, unsigned char *dest)
+{
+	int srcX, srcY;
+	float xRatio, yRatio;
+	int srcOffset;
+
+	int srcSizeY = _sizeY, srcSizeX = _sizeX;
+	int dstSizeY = sizeY, dstSizeX = sizeX;
+	int bytePerPixel = 3;
+
+	xRatio = ((float)srcSizeX)/dstSizeX;
+	yRatio = ((float)srcSizeY)/dstSizeY;
+
+    const unsigned char *pSrc = src;
+	unsigned char *pDst = dest;
+
+	for (int j=0; j<dstSizeY; j++)
+        {
+            srcY = (int)(yRatio*j);
+            srcOffset = srcY * srcSizeX * bytePerPixel;
+
+            for (int i=0; i<dstSizeX; i++)
+                {
+                    srcX = (int)(xRatio*i);
+                    pSrc = src + srcOffset + (srcX * bytePerPixel);
+                    memcpy(pDst,pSrc,bytePerPixel);
+                    pDst += bytePerPixel;
+
+                }
+        }
+}
+

@@ -104,12 +104,12 @@ public:
 	/**
 	 * Implements the FrameGrabber interface.
 	 */
-	virtual int height();
+	virtual int height() const;
 
 	/**
 	 * Implements the FrameGrabber interface.
 	 */
-	virtual int width();
+	virtual int width() const;
 
 protected:
 	/**

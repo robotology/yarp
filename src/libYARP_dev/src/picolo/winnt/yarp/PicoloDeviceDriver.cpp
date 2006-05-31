@@ -433,13 +433,13 @@ bool PicoloDeviceDriver::waitOnNewFrame ()
 	return true;
 }
 
-int PicoloDeviceDriver::width ()
+int PicoloDeviceDriver::width () const
 {
     PicoloResources& d = RES(system_resources);
     return d._nRequestedSizeX;
 }
 
-int PicoloDeviceDriver::height ()
+int PicoloDeviceDriver::height () const
 {
     return RES(system_resources)._nRequestedSizeY;
 }

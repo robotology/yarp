@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.6 2006-05-31 10:23:51 natta Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.7 2006-05-31 15:20:36 natta Exp $
 ///
 ///
 
@@ -150,12 +150,12 @@ public:
     /**
      * Implements FrameGrabber basic interface.
      */
-    virtual int height();
+    virtual int height() const;
     
     /**
      * Implements FrameGrabber basic interface.
      */
-    virtual int width();
+    virtual int width() const;
 
     /** 
     * FrameGrabber bgr interface, returns the last acquired frame as
