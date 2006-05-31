@@ -2,7 +2,7 @@
 #ifndef __YARP2PicoloDeviceDriverh__
 #define __YARP2PicoloDeviceDriverh__
 
-#include <yarp/dev/FrameGrabber.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 
 #include <stdlib.h>
 #include <string.h>
@@ -50,18 +50,12 @@ public:
 };
 
 /**
- * The Picolo frame grabber, derived from the DeviceDriver and from the Thread class.
+ * The Picolo frame grabber device.
  * The device driver handles triple buffering by having a thread waiting on new frame events and
  * manually generating the correct pointer for the user to read. The class is not itself 
  * protected by a mutex since there's an internal mutex already. This is hidden in system_resources.
- * The crucial methods of this class allows waiting for the next frame to be acquired
- * (waitOnNewFrame()), then acquire the last buffer (acquireBuffer()) which protects the 
- * acquired image during multi-thread access, and finally release the buffer by calling
- * releaseBuffer(). This last operation is required to allow the driver to continue its
- * operation. The remainder of the methods are for controlling the acquisition parameters
- * (in practice certain hardware filters and amplifier gains).
  */
-class yarp::dev::PicoloDeviceDriver : public FrameGrabber
+class yarp::dev::PicoloDeviceDriver : public IFrameGrabber, public IFrameGrabberBgr
 {
 private:
 	PicoloDeviceDriver(const PicoloDeviceDriver&);
@@ -92,19 +86,30 @@ public:
 	/**
 	 * Implements the FrameGrabber interface.
 	 */
-	virtual bool getBuffer(unsigned char *buff);
+	virtual bool getBgrBuffer(unsigned char *buff);
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+    /**
+	 * Implements the FrameGrabber interface, for the
+     * Picolo device the raw buffer is a triplet of bgr
+     * values.
+	 */
+	virtual bool getRawBuffer(unsigned char *buff);
+
+    /**
+	 * Implements the FrameGrabber interface, for the 
+     * Picolo device, this is 3*height()*width().
+	 */
+	virtual int getRawBufferSize();
 
 	/**
 	 * Implements the FrameGrabber interface.
 	 */
-	virtual int getHeight();
+	virtual int height();
 
 	/**
 	 * Implements the FrameGrabber interface.
 	 */
-	virtual int getWidth();
+	virtual int width();
 
 protected:
 	/**

@@ -306,7 +306,7 @@ bool PicoloDeviceDriver::close (void)
 	return true;
 }
 
-bool PicoloDeviceDriver::getBuffer(unsigned char *buff)
+bool PicoloDeviceDriver::getBgrBuffer(unsigned char *buff)
 {
     PicoloResources& d = RES(system_resources);
 
@@ -321,28 +321,20 @@ bool PicoloDeviceDriver::getBuffer(unsigned char *buff)
     return true;
 }
 
-
-bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-    bool ok = false;
-
+bool PicoloDeviceDriver::getRawBuffer(unsigned char *buff)
+{
     PicoloResources& d = RES(system_resources);
 
     char *tmpBuff;
     waitOnNewFrame ();
 	acquireBuffer(&tmpBuff);
 
-    image.resize(getWidth(),getHeight());
-    int len = d._nRequestedSizeX * d._nRequestedSizeY * 3;
-    if(image.getRawImageSize()==len) {
-        memcpy(image.getRawImage(), tmpBuff, len);
-        ok = true;
-    }
+	memcpy(buff, tmpBuff, d._nRequestedSizeX * d._nRequestedSizeY * 3);
 
 	releaseBuffer ();
 
-    return ok;
+    return true;
 }
-
 
 ///
 ///
@@ -441,13 +433,13 @@ bool PicoloDeviceDriver::waitOnNewFrame ()
 	return true;
 }
 
-int PicoloDeviceDriver::getWidth ()
+int PicoloDeviceDriver::width ()
 {
     PicoloResources& d = RES(system_resources);
     return d._nRequestedSizeX;
 }
 
-int PicoloDeviceDriver::getHeight ()
+int PicoloDeviceDriver::height ()
 {
     return RES(system_resources)._nRequestedSizeY;
 }

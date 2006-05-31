@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.4 2006-05-30 10:18:42 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.5 2006-05-31 08:14:00 babybot Exp $
 ///
 ///
 
@@ -51,7 +51,7 @@
 // May 06, readapted for YARP2 by nat
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/dev/FrameGrabber.h>
+#include <yarp/dev/FrameGrabberInterfaces.h>
 
 namespace yarp {
     namespace dev {
@@ -97,7 +97,7 @@ public:
 };
 
 class yarp::dev::DragonflyDeviceDriver : 
-	public FrameGrabber
+public IFrameGrabber, public IFrameGrabberBgr
 {
 private:
 	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
@@ -114,9 +114,15 @@ public:
 	 */
 	virtual ~DragonflyDeviceDriver();
 
+    // temp: here for debug purposes only
+    void recColorFSBilinear(const unsigned char *src, unsigned char *out);
+    void recColorFSNN(const unsigned char *src, unsigned char *out);
+    void recColorHSBilinear(const unsigned char *src, unsigned char *out);
+
+
     /**
 	 * Open the device driver.
-     * @par parameters for the device driver
+     * @param par parameters for the device driver
 	 * @return returns true on success, false on failure.
 	 */
     bool open(const DragonflyOpenParameters& par);
@@ -129,21 +135,36 @@ public:
 
     /**
      * Implements FrameGrabber basic interface.
+     * @param buffer the pointer to the array to store the last frame.
      * @return returns true/false on success/failure.
      */
-    virtual bool getBuffer(unsigned char *buffer);
+    virtual bool getRawBuffer(unsigned char *buffer);
 
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
+    /**
+    * Implements the Frame grabber basic interface.
+    * @return the size of the raw buffer (for the Dragonfly
+    * camera this is 1x640x480).
+    */
+    virtual int getRawBufferSize();
 
     /**
      * Implements FrameGrabber basic interface.
      */
-    virtual int getHeight();
+    virtual int height();
     
     /**
      * Implements FrameGrabber basic interface.
      */
-    virtual int getWidth();
+    virtual int width();
+
+    /** 
+    * FrameGrabber bgr interface, returns the last acquired frame as
+    * a buffer of bgr triplets. A demosaicking method is applied to 
+    * reconstuct the color from the Bayer pattern of the sensor.
+    * @param buffer pointer to the array that will contain the last frame.
+    * @return true/false upon success/failure
+    */
+    virtual bool getBgrBuffer(unsigned char *buffer);
 
 protected:
 	/**
@@ -151,7 +172,7 @@ protected:
 	 * @param buffer is a pointer to the buffer address (i.e. a double pointer).
 	 * @return true if successful, false otherwise.
 	 */
-	bool acquireBuffer(void *buffer);
+	unsigned char *acquireBuffer();
 
 	/**
 	 * Releases the current image buffer.
