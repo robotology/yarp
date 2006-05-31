@@ -14,7 +14,7 @@
 //#define YMSG(x) ACE_OS::printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
-#define YMSG(x) 
+#define YMSG(x)
 #define YTRACE(x) 
 
 using namespace yarp;

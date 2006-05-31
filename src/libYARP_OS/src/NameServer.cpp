@@ -159,6 +159,8 @@ NameServer::HostRecord *NameServer::getHostRecord(const String& name,
         }
         hostMap.bind(name,HostRecord());
         result = hostMap.find(name,entry);
+        YARP_ASSERT(entry!=NULL);
+        entry->int_id_.setBase(basePort);
     }
     YARP_ASSERT(result!=-1);
     YARP_ASSERT(entry!=NULL);
@@ -184,6 +186,9 @@ NameServer::HostRecord *NameServer::getHostRecord(const String& name,
 
 
 void NameServer::setup() {
+
+    basePort = 10002; // this gets replaced
+
     dispatcher.add("register", &NameServer::cmdRegister);
     dispatcher.add("unregister", &NameServer::cmdUnregister);
     dispatcher.add("query", &NameServer::cmdQuery);
@@ -478,6 +483,10 @@ String NameServer::apply(const String& txt, const Address& remote) {
 class MainNameServer : public NameServer, public Readable {
 
 public:
+    MainNameServer(int basePort) {
+        this->basePort = basePort;
+    }
+
     virtual bool read(ConnectionReader& reader) {
         ManagedBytes header(12);
         for (int i0=0; i0<header.length(); i0++) {
@@ -619,7 +628,7 @@ int NameServer::main(int argc, char *argv[]) {
         }
     
         PortCore server;  // we use a subset of the PortCore functions
-        MainNameServer name;
+        MainNameServer name(suggest.getPort() + 2);
         name.registerName("root",suggest);
         server.setReadHandler(name);
         server.setAutoHandshake(false);

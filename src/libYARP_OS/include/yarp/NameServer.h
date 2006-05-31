@@ -130,8 +130,12 @@ private:
     public:
         HostRecord() {
             //YARP_DEBUG(Logger::get(),"FIXME: HostRecord has hardcoded base");
-            base = 10002;
+            base = 0;
             legacyStep = 10;
+        }
+
+        void setBase(int base) {
+            this->base = base;
         }
 
         int get() {
@@ -354,9 +358,10 @@ protected:
     String textify(const Address& addr);
     String terminate(const String& str);
 
+    int basePort;
+
 private:
     yarp::os::Semaphore mutex;
-
 };
 
 #endif

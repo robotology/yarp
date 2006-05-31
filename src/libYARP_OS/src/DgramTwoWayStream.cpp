@@ -11,8 +11,9 @@
 using namespace yarp;
 
 #define CRC_SIZE 8
-#define READ_SIZE (65536-CRC_SIZE)
-#define WRITE_SIZE (65500-CRC_SIZE)
+#define READ_SIZE (60000-CRC_SIZE)
+//#define WRITE_SIZE (65500-CRC_SIZE)
+#define WRITE_SIZE (60000-CRC_SIZE)
 
 
 
@@ -199,11 +200,12 @@ int DgramTwoWayStream::read(const Bytes& b) {
         bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct);
         pct++;
         if (!crcOk) {
-            YARP_DEBUG(Logger::get(),"CRC failure");
+            YARP_DEBUG(Logger::get(),"****** CRC failure ******");
             //readAt = 0;
             //readAvail = 0;
             reset();
             throw IOException("CRC failure");
+            return -1;
         } else {
             readAt += CRC_SIZE;
             readAvail -= CRC_SIZE;
@@ -271,6 +273,11 @@ void DgramTwoWayStream::flush() {
         YARP_DEBUG(Logger::get(),
                    String("DGRAM wrote ") +
                    NetType::toString(len) + " bytes");
+        if (len>WRITE_SIZE*0.75) {
+            YARP_DEBUG(Logger::get(),
+                       "long dgrams need a little time, in general");
+            yarp::os::Time::delay(0.005);
+        }
 
         if (len<0) {
             happy = false;
@@ -312,6 +319,8 @@ void DgramTwoWayStream::beginPacket() {
 
 void DgramTwoWayStream::endPacket() {
     //YARP_ERROR(Logger::get(),String("Packet ends: ")+(reader?"reader":"writer"));
-    pct = 0;
+    if (!reader) {
+        pct = 0;
+    }
 }
 
