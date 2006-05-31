@@ -21,13 +21,13 @@
  *
  * @section welcome_topics Topics
  *
- * @ref what_is_yarp
+ * @subpage what_is_yarp
  *
- * @ref requirements
+ * @subpage requirements
  *
- * Need help installing and compiling YARP?  See @ref install.
+ * Need help installing and compiling YARP?  See @subpage install.
  *
- * Want to start using the library?  Start with @ref yarp_os.
+ * Want to start using the library?  Start with @subpage yarp_os.
  *
  */
 
