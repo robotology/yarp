@@ -7,6 +7,7 @@
 
 
 #include <yarp/Logger.h>
+#include <yarp/IOException.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
 
@@ -707,21 +708,27 @@ public:
 
 
 bool Image::read(yarp::os::ConnectionReader& connection) {
-    YARPImagePortContentHeader header;
-
-    connection.expectBlock((char*)&header,sizeof(header));
-
-    imgPixelCode = header.id;
-
-    // make sure we're not trying to read into an incompatible image type
-    ACE_ASSERT(getPixelCode()==header.id);
-
-    resize(header.w,header.h);
-
-    unsigned char *mem = getRawImage();
-    ACE_ASSERT(mem!=NULL);
-    ACE_ASSERT(getRawImageSize()==header.len);
-    connection.expectBlock((char *)getRawImage(),getRawImageSize());
+    
+    try {
+        YARPImagePortContentHeader header;
+        
+        connection.expectBlock((char*)&header,sizeof(header));
+        
+        imgPixelCode = header.id;
+        
+        // make sure we're not trying to read into an incompatible image type
+        ACE_ASSERT(getPixelCode()==header.id);
+        
+        resize(header.w,header.h);
+        
+        unsigned char *mem = getRawImage();
+        ACE_ASSERT(mem!=NULL);
+        ACE_ASSERT(getRawImageSize()==header.len);
+        connection.expectBlock((char *)getRawImage(),getRawImageSize());
+        
+    } catch (IOException e) {
+        return false;
+    }
 
     return true;
 }
