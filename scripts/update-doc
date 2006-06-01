@@ -5,3 +5,6 @@
 doxygen Doxyfile.min
 doxygen Doxyfile.part
 doxygen Doxyfile
+
+cd doc/min/latex
+make pdf
