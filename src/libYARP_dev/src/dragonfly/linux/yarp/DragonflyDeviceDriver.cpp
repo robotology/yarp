@@ -242,53 +242,38 @@ int DragonflyDeviceDriver::height () const
 	return RES(system_resources).sizeY;
 }
 
-#if 0
-int YARPDragonflyDeviceDriver::setBrightness (void *cmd)
+bool DragonflyDeviceDriver::setBrightness (double value)
 {
-    /// RES(system_resources)._setBrightness(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::setBrightness not yet implemented\n");
+    return false;
 }
 
-int YARPDragonflyDeviceDriver::setHue (void *cmd)
+bool DragonflyDeviceDriver::setShutter(double value)
 {
-    /// RES(system_resources)._setHue(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::setShutter not yet implemented\n");
+    return false;
 }
 
-int YARPDragonflyDeviceDriver::setContrast (void *cmd)
+bool DragonflyDeviceDriver::setGain(double value)
 {
-    /// RES(system_resources)._setContrast(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::setGain yet implemented\n");
+    return false;
 }
 
-int YARPDragonflyDeviceDriver::setSatU (void *cmd)
+double DragonflyDeviceDriver::getBrightness () const
 {
-    /// RES(system_resources)._setSatU(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::getBrightness not yet implemented\n");
+    return -1;
 }
 
-int YARPDragonflyDeviceDriver::setSatV (void *cmd)
+double DragonflyDeviceDriver::getShutter() const
 {
-    /// RES(system_resources)._setSatV(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::getShutter not yet implemented\n");
+    return -1;
 }
 
-int YARPDragonflyDeviceDriver::setLNotch (void *cmd)
+double DragonflyDeviceDriver::getGain() const
 {
-    /// RES(system_resources)._setLNotch(*cmd);
-    return YARP_OK;
+    fprintf(stderr, "DragonflyDeviceDriver::getGain yet implemented\n");
+    return -1;
 }
-
-int YARPDragonflyDeviceDriver::setLDec (void *cmd)
-{
-    /// RES(system_resources)._setLDec(*cmd);
-    return YARP_OK;
-}
-
-int YARPDragonflyDeviceDriver::setCrush (void *cmd)
-{
-    /// RES(system_resources)._setCrush(*cmd);
-    return YARP_OK;
-}
-
-#endif
