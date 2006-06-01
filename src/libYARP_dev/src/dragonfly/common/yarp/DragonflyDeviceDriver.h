@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.8 2006-06-01 12:56:59 natta Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.9 2006-06-01 16:20:21 natta Exp $
 ///
 ///
 
@@ -97,7 +97,7 @@ public:
 };
 
 class yarp::dev::DragonflyDeviceDriver : 
-public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public DeviceDriver
+public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
 {
 private:
 	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
@@ -175,84 +175,35 @@ public:
     */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
-protected:
-	/**
-	 * Locks the current image buffer.
-	 * @param buffer is a pointer to the buffer address (i.e. a double pointer).
-	 * @return true if successful, false otherwise.
-	 */
-	unsigned char *acquireBuffer();
+    /**
+    * Set image brightness.
+    */
+    virtual bool setBrightness(double v);
 
-	/**
-	 * Releases the current image buffer.
-	 * @return true if successful, false otherwise.
-	 */
-	bool releaseBuffer();
+    /**
+    * Set shutter time.
+    */
+    virtual bool setShutter(double v);
 
-	/**
-	 * Waits on a new frame. An event is signaled when a new frame is acquired,
-	 * the calling thread waits efficiently on this event.
-	 * @return true on success, false otherwise (God forbid)
-	 */
-	bool waitOnNewFrame ();
+    /**
+    * Set gain.
+    */
+    virtual bool setGain(double v);
 
-#if 0
-	/**
-	 * Sets the average image brightness. UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setBrightness (void *cmd);
+    /**
+    * Get shutter time.
+    */
+    virtual double getShutter() const;
 
-	/**
-	 * Sets the acquisition hue. UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setHue (void *cmd);
+    /**
+    * Get gain.
+    */
+    virtual double getGain() const;
 
-	/**
-	 * Sets the acquisition contrast. UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setContrast (void *cmd);
-
-	/**
-	 * Sets the gain of the amplifier on the U chroma channel. UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setSatU (void *cmd);
-
-	/**
-	 * Sets the gain of the amplifier on the V chroma channel. UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setSatV (void *cmd);
-
-	/**
-	 * Enables the notch filter (bt848 hardware). UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setLNotch (void *cmd);
-
-	/**
-	 * Enables the decimation filter (bt848 hardware). UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setLDec (void *cmd);
-
-	/**
-	 * Enables the crush filter (bt848 hardware). UNIMPLEMENTED.
-	 * @param cmd is a pointer to an integer.
-	 * @return YARP_OK on success.
-	 */
-	virtual int setCrush (void *cmd);
-#endif
+    /**
+    * Get image brightness.
+    */
+    virtual double getBrightness() const;
 
 protected:
 	void *system_resources;

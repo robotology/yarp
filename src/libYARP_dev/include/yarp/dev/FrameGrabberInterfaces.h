@@ -12,6 +12,7 @@ namespace yarp{
         class IFrameGrabberRgb;
         class IFrameGrabberImage;
         class IFrameGrabber;
+        class IFrameGrabberControls;
         class FrameGrabberOpenParameters;
     }
 }
@@ -108,5 +109,20 @@ public:
      * @return image width
      */
     virtual int width() const =0;
+};
+
+/**
+* Control interface for frame grabber devices.
+*/
+class yarp::dev::IFrameGrabberControls
+{
+public:
+    virtual bool setBrightness(double v) = 0;
+    virtual bool setShutter(double v) = 0;
+    virtual bool setGain(double v) = 0;
+
+    virtual double getBrightness() const = 0;
+    virtual double getShutter() const = 0;
+    virtual double getGain() const = 0;
 };
 #endif

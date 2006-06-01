@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.12 2006-05-31 15:20:36 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.13 2006-06-01 16:20:21 natta Exp $
 ///
 ///
 
@@ -357,12 +357,6 @@ bool DragonflyDeviceDriver::close (void)
 	return ret;
 }
 
-unsigned char* DragonflyDeviceDriver::acquireBuffer ()
-{
-	//obsolete
-	return 0;
-}
-
 bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buffer)
 {
     DragonflyResources& d = RES(system_resources);
@@ -436,6 +430,84 @@ int DragonflyDeviceDriver::width () const
 int DragonflyDeviceDriver::height () const
 {
 	return RES(system_resources).sizeY;
+}
+
+bool DragonflyDeviceDriver::setBrightness(double value)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_BRIGHTNESS, (int) value, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return true;
+	else 
+		return false;
+}
+
+bool DragonflyDeviceDriver::setShutter(double value)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_SHUTTER, (int) value, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return true;
+	else 
+		return false;
+}
+
+bool DragonflyDeviceDriver::setGain(double value)
+{
+    DragonflyResources& d = RES(system_resources);
+
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_GAIN, (int) value, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return true;
+	else 
+		return false;
+}
+
+double DragonflyDeviceDriver::getShutter() const
+{
+    DragonflyResources& d = RES(system_resources);
+
+    long tmpA;
+  
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return tmpA;
+	else 
+		return -1;
+}
+
+double DragonflyDeviceDriver::getBrightness() const
+{
+    DragonflyResources& d = RES(system_resources);
+
+    long tmpA;
+    
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return tmpA;
+	else 
+		return -1;
+}
+
+double DragonflyDeviceDriver::getGain() const
+{
+    DragonflyResources& d = RES(system_resources);
+
+    long tmpA;
+
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_GAIN, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return tmpA;
+	else 
+		return -1;
 }
 
 void DragonflyDeviceDriver::recColorFSBilinear(const unsigned char *src, unsigned char *out)
