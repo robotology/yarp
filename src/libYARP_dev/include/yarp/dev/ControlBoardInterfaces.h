@@ -31,7 +31,7 @@ public:
 public:
     /*! \brief Default Constructor */
     Pid();
-    /*! \brief destructor */
+    /*! \brief Destructor */
     ~Pid();
 
     /** Constructor
@@ -71,7 +71,7 @@ public:
 /**
  * Interface for a generic control board device implementing a PID controller.
  */
-class yarp::dev::IControlPid: public DeviceDriver
+class yarp::dev::IControlPid
 {
 public:
     /** Set new pid value for a joint axis.
@@ -231,7 +231,7 @@ public:
 /**
  * Interface for a generic control board device implementing position control.
  */
-class yarp::dev::IPositionControl: public DeviceDriver
+class yarp::dev::IPositionControl
 {
 public:
     /** Set position mode. This command
@@ -357,7 +357,7 @@ public:
 /**
  * Interface for control boards implementig velocity control.
  */
-class yarp::dev::IVelocityControl: public DeviceDriver
+class yarp::dev::IVelocityControl
 {
 public:
     /**
@@ -396,7 +396,7 @@ public:
 /**
  * Interface for control boards implementig torque control.
  */
-class yarp::dev::ITorqueControl: public DeviceDriver
+class yarp::dev::ITorqueControl
 {
 public:
     /**
@@ -435,7 +435,7 @@ public:
 /**
  * Control board, encoder interface.
  */
-class yarp::dev::IEncoders: public DeviceDriver
+class yarp::dev::IEncoders
 {
 public:
 
@@ -501,7 +501,7 @@ public:
 /**
  * Interface for control devices. Amplifier commands.
  */
-class yarp::dev::IControlAmplifier: public DeviceDriver
+class yarp::dev::IControlAmplifier
 {
 public:
     /** Enable the amplifier. Be careful, check that the output

@@ -19,7 +19,7 @@ namespace yarp{
 /** 
  * Common interface to a FrameGrabber.
  */
-class yarp::dev::IFrameGrabber: public virtual DeviceDriver
+class yarp::dev::IFrameGrabber
 {
 public:
     virtual ~IFrameGrabber(){}
@@ -58,7 +58,7 @@ public:
 /** 
  * RGB Interface to a FrameGrabber device.
  */
-class yarp::dev::IFrameGrabberRgb:  public virtual DeviceDriver
+class yarp::dev::IFrameGrabberRgb
 {
 public:
     virtual ~IFrameGrabberRgb(){}
@@ -84,7 +84,7 @@ public:
     virtual int width() const =0;
 };
 
-class yarp::dev::IFrameGrabberImage: public virtual DeviceDriver
+class yarp::dev::IFrameGrabberImage
 {
 public:
     virtual ~IFrameGrabberImage(){}

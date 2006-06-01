@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.7 2006-05-31 15:20:36 natta Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.8 2006-06-01 12:56:59 natta Exp $
 ///
 ///
 
@@ -97,7 +97,7 @@ public:
 };
 
 class yarp::dev::DragonflyDeviceDriver : 
-public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage
+public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public DeviceDriver
 {
 private:
 	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
