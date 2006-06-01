@@ -276,7 +276,12 @@ void DgramTwoWayStream::flush() {
         if (len>WRITE_SIZE*0.75) {
             YARP_DEBUG(Logger::get(),
                        "long dgrams need a little time, in general");
-            yarp::os::Time::delay(0.005);
+            yarp::os::Time::delay(0.0025);
+            // Can someone find a better solution?  There are all
+            // sorts of complicated things one could try, but if
+            // you are sending a large message and chunks can't
+            // get sent out in a reasonable time, UDP/MCAST is just
+            // not going to be a happy thing.
         }
 
         if (len<0) {

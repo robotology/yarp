@@ -232,12 +232,12 @@ int DragonflyDeviceDriver::getRawBufferSize()
     return d.buffLength;
 }
 
-int DragonflyDeviceDriver::width ()
+int DragonflyDeviceDriver::width () const
 {
 	return RES(system_resources).sizeX;
 }
 
-int DragonflyDeviceDriver::height ()
+int DragonflyDeviceDriver::height () const
 {
 	return RES(system_resources).sizeY;
 }
