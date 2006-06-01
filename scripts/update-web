@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# just an example; replace username "eshuy" to yours
-# run from $YARP_ROOT/src/libYARP_OS2/
-# as "./scripts/update-web"
+# run as "./scripts/update-web"
 
 echo Updating Sourceforge website from local system
 

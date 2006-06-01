@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# run as "./scripts/update-doc"
+
+doxygen Doxyfile.min
+doxygen Doxyfile.part
+doxygen Doxyfile
