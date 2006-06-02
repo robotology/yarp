@@ -1,3 +1,7 @@
+2006-06-02  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Added missing Thread::isRunning method.
+
 2006-05-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Changed dgram/mcast behavior for overflowing packets.

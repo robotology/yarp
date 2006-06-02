@@ -73,6 +73,10 @@ bool Thread::isStopping() {
     return ((ThreadImpl*)implementation)->isClosing();
 }
 
+bool Thread::isRunning() {
+    return ((ThreadImpl*)implementation)->isRunning();
+}
+
 void Thread::beforeStart() {
 }
 

@@ -132,8 +132,11 @@ public:
     void testCloseVersusStop() {
         report(0,"testing that onStop called directly doesn't cause crash");
         Thread3 t;
+        checkTrue(!t.isRunning(),"not active");
         t.start();
+        checkTrue(t.isRunning(),"active");
         t.stop();
+        checkTrue(!t.isRunning(),"not active");
         report(0,"done");
     }
 

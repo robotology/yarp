@@ -30,6 +30,10 @@ public:
     virtual bool start();
 
     bool isClosing();
+    
+    bool isRunning() {
+        return active;
+    }
 
     virtual void beforeStart();
     virtual void afterStart(bool success);

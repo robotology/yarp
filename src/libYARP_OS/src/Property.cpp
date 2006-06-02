@@ -150,4 +150,15 @@ Bottle *Property::getBottle(const char *key) const {
 }
 
 
+void Property::clear() {
+}
+
+
+void Property::fromString(const char *txt) {
+}
+
+
+ConstString Property::toString() const {
+    return "not implemented";
+}
 

@@ -83,6 +83,13 @@ public:
     bool isStopping();
 
     /**
+     * Returns true if the thread is running (Thread::start has
+     * been called successfully and the thread has not stopped).
+     * @return true iff the thread is running
+     */
+    bool isRunning();
+
+    /**
      * Set the stack size the the new thread.  Must be called before
      * Thread::start
      * @param stackSize the desired stack size in bytes (if 0, uses

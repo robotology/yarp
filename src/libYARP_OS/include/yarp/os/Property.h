@@ -27,6 +27,12 @@ public:
     Bottle& putBottle(const char *key);
     Bottle *getBottle(const char *key) const;
 
+    void clear();
+
+    void fromString(const char *txt);
+
+    ConstString toString() const;
+
 private:
     void *implementation;
 
