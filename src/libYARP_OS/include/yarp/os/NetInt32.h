@@ -56,7 +56,35 @@ namespace yarp {
 #endif
 #endif
 
+#ifdef __darwin__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
 
+#ifdef __DARWIN__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef DARWIN
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef MACOSX
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef __APPLE__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
 
 #ifdef YARP2_LINUX
         typedef int NetInt32;
@@ -65,6 +93,9 @@ namespace yarp {
 #  ifdef YARP2_WINDOWS
         typedef __int32 NetInt32;
 #  else
+#    ifdef YARP2_OSX
+#       error "not yet OSX aware"
+#    else
         // now we have to assume we are using autoconf etc
 #undef  PACKAGE_BUGREPORT
 #undef  PACKAGE_NAME
@@ -82,8 +113,9 @@ namespace yarp {
 #      error "could not choose NetInt32 type; see yarp/os/NetInt32.h"
 #endif
 #endif
-#    else
-#      error "need to define NetInt32 for this OS; see yarp/os/NetInt32.h"
+#      else
+#        error "need to define NetInt32 for this OS; see yarp/os/NetInt32.h"
+#      endif
 #    endif
 #  endif
 #endif
