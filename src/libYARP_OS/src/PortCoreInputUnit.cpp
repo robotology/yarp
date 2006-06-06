@@ -110,7 +110,11 @@ void PortCoreInputUnit::run() {
                 case 'd':
                     {
                         try {
-                            man.readBlock(br,id,os);
+                            if (localReader) {
+                                localReader->read(br);
+                            } else {
+                                man.readBlock(br,id,os);
+                            }
                         } catch (IOException e) {
                             YARP_DEBUG(Logger::get(),e.toString() + " <<< user level PortCoreInputUnit exception, passing on");
                             done = true;
@@ -156,6 +160,11 @@ void PortCoreInputUnit::run() {
         }
     } else {
         YARP_DEBUG(Logger::get(),"PortCoreInputUnit shutting down");
+    }
+
+    if (localReader!=NULL) {
+        delete localReader;
+        localReader = NULL;
     }
 
     running = false;

@@ -41,6 +41,7 @@ public:
         events = 0;
         face = NULL;
         reader = NULL;
+        readableCreator = NULL;
     }
 
     virtual ~PortCore();
@@ -51,6 +52,8 @@ public:
     bool isWriting();
 
     void setReadHandler(Readable& reader);
+
+    void setReadCreator(ReadableCreator& creator);
 
     void setAutoHandshake(bool autoHandshake) {
         this->autoHandshake = autoHandshake;
@@ -86,6 +89,10 @@ public:
 
     const Address& getAddress() const {
         return address;
+    }
+
+    ReadableCreator *getReadCreator() {
+        return readableCreator;
     }
 
 public:
@@ -129,6 +136,7 @@ private:
     String name;
     Address address;
     Readable *reader;
+    ReadableCreator *readableCreator;
     bool listening, running, starting, closing, finished, autoHandshake;
     bool waitBeforeSend, waitAfterSend;
     int events;

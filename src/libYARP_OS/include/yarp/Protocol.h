@@ -179,7 +179,8 @@ public:
         YARP_ASSERT(delegate!=NULL);
         getStreams().beginPacket();
         delegate->expectIndex(*this);
-        reader.reset(is(),&getStreams(),messageLen,delegate->isTextMode());
+        reader.reset(is(),&getStreams(),getRoute(),
+                     messageLen,delegate->isTextMode());
     }
 
     void defaultExpectIndex();
@@ -327,7 +328,8 @@ public:
             getStreams().endPacket();
             PortReader *reply = writer.getReplyHandler();
             if (reply!=NULL) {
-                reader.reset(is(),&getStreams(),messageLen,delegate->isTextMode());
+                reader.reset(is(),&getStreams(),getRoute(),
+                             messageLen,delegate->isTextMode());
                 reply->read(reader);
             }
         }

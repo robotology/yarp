@@ -91,6 +91,12 @@ void PortCore::setReadHandler(Readable& reader) {
     this->reader = &reader;
 }
 
+void PortCore::setReadCreator(ReadableCreator& creator) {
+    YARP_ASSERT(running==false);
+    YARP_ASSERT(this->readableCreator==NULL);
+    this->readableCreator = &creator;
+}
+
 
 
 void PortCore::run() {

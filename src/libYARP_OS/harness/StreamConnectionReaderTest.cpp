@@ -17,7 +17,8 @@ public:
         StringOutputStream sos;
         sis.add("Hello\ngood evening and welcome");
         StreamConnectionReader sbr;
-        sbr.reset(sis,NULL,10,true);
+        Route route;
+        sbr.reset(sis,NULL,route,10,true);
         String line = sbr.expectLine();
         checkEqual(line,"Hello","one line");
     }

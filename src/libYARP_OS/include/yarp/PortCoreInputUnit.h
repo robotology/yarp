@@ -28,10 +28,19 @@ public:
         finished = false;
         running = false;
         name = owner.getName();
+        ReadableCreator *creator = owner.getReadCreator();
+        localReader = NULL;
+        if (creator!=NULL) {
+            localReader = creator->create();
+        }
     }
 
     virtual ~PortCoreInputUnit() {
         closeMain();
+        if (localReader!=NULL) {
+            delete localReader;
+            localReader = NULL;
+        }
     }
 
     virtual bool start();
@@ -66,6 +75,7 @@ private:
     bool autoHandshake;
     bool closing, finished, running;
     String name;
+    Readable *localReader;
 
     void closeMain();
 };

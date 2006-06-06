@@ -33,7 +33,8 @@ public:
         StringInputStream sis;
         StreamConnectionReader br;
         sis.add("d\n");
-        br.reset(sis,NULL,sis.toString().length(),true);
+        Route route;
+        br.reset(sis,NULL,route,sis.toString().length(),true);
         cmd.readBlock(br);
         char key = cmd.getKey();
         checkEqual('d',cmd.getKey(),"basic data command");

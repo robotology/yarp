@@ -84,7 +84,8 @@ public:
       
             s = bbw.toString();
             sis.add(s);
-            sbr.reset(sis,NULL,s.length(),true);
+            Route route;
+            sbr.reset(sis,NULL,route,s.length(),true);
       
             BottleImpl bot2;
             bot2.read(sbr);

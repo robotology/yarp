@@ -5,6 +5,7 @@
 #include <yarp/os/Contactable.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
+#include <yarp/os/PortReaderCreator.h>
 
 namespace yarp {
     namespace os {
@@ -93,6 +94,8 @@ public:
      * @param reader the external reader to use
      */
     void setReader(PortReader& reader);
+
+    void setReaderCreator(PortReaderCreator& creator);
 
     /**
      * control whether writing from this port is done in the background.

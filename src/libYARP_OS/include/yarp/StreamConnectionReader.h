@@ -9,6 +9,7 @@
 #include <yarp/NetType.h>
 #include <yarp/Bytes.h>
 #include <yarp/Logger.h>
+#include <yarp/Route.h>
 #include <yarp/os/Contact.h>
 
 namespace yarp {
@@ -33,10 +34,11 @@ public:
 
     virtual ~StreamConnectionReader();
 
-    void reset(InputStream& in, TwoWayStream *str, 
+    void reset(InputStream& in, TwoWayStream *str, const Route& route,
                int len, bool textMode) {
         this->in = &in;
         this->str = str;    
+        this->route = route;
         this->messageLen = len;
         this->textMode = textMode;
     }
@@ -110,14 +112,16 @@ public:
     virtual yarp::os::Contact getRemoteContact() {
         if (str!=NULL) {
             Address remote = str->getRemoteAddress();
-            return remote.toContact();
+            return remote.addRegName(route.getFromName()).toContact();
         }
         return yarp::os::Contact::invalid();
     }
 
     virtual yarp::os::Contact getLocalContact() {
-        YARP_ERROR(Logger::get(), 
-                   "StreamConnectionReader getLocalContact not implemented");
+        if (str!=NULL) {
+            Address local = str->getLocalAddress();
+            return local.addRegName(route.getToName()).toContact();
+        }
         return yarp::os::Contact::invalid();
     }
 
@@ -141,6 +145,7 @@ private:
     TwoWayStream *str;
     int messageLen;
     bool textMode;
+    Route route;
 };
 
 #endif

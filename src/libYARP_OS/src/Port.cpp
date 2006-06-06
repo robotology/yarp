@@ -17,11 +17,14 @@ private:
     Port& owner;
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;
+    //PortReaderCreator *readCreatorDelegate;
     bool readResult, readActive, readBackground;
     SemaphoreImpl produce, consume;
 public:
     PortCoreAdapter(Port& owner) : 
-        owner(owner), stateMutex(1), readDelegate(NULL), readResult(false),
+        owner(owner), stateMutex(1), readDelegate(NULL), 
+        //readCreatorDelegate(NULL),
+        readResult(false),
         readActive(false),
         readBackground(false),
         produce(0), consume(0)
@@ -69,6 +72,7 @@ public:
         consume.post(); // just do this once
         stateMutex.post();
     }
+
 };
 
 // implementation is a PortCoreAdapter
@@ -205,6 +209,11 @@ bool Port::read(PortReader& reader) {
 void Port::setReader(PortReader& reader) {
     PortCoreAdapter& core = HELPER(implementation);
     core.configReader(reader);
+}
+
+void Port::setReaderCreator(PortReaderCreator& creator) {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.setReadCreator(creator);
 }
 
 

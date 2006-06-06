@@ -3,11 +3,13 @@
 #define _YARP2_READABLE_
 
 #include <yarp/os/PortReader.h>
+#include <yarp/os/PortReaderCreator.h>
 
 // this typedef will be removed soon - it used be a separate class
 
 namespace yarp {
     typedef yarp::os::PortReader Readable;
+    typedef yarp::os::PortReaderCreator ReadableCreator;
     //class Readable;
 }
 

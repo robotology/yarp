@@ -137,7 +137,8 @@ bool BottleImpl::fromBytes(const Bytes& data) {
     StringInputStream sis;
     sis.add(wrapper);
     StreamConnectionReader reader;
-    reader.reset(sis,NULL,data.length(),false);
+    Route route;
+    reader.reset(sis,NULL,route,data.length(),false);
 
     clear();
     dirty = true; // for clarity
