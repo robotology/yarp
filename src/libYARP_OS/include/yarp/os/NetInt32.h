@@ -94,7 +94,63 @@ namespace yarp {
         typedef __int32 NetInt32;
 #  else
 #    ifdef YARP2_OSX
-#       error "not yet OSX aware"
+
+
+
+
+        /* OSX begins*/
+
+typedef int32_t RawNetInt32;
+class NetInt32 {
+private:
+  int32_t raw_value;
+  int32_t swap(uint32_t x) const {
+    return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
+  }
+  RawNetInt32 get() const {
+    return (int32_t)swap((uint32_t)raw_value);
+  }
+  void set(RawNetInt32 v) {
+    raw_value = (int32_t)swap((uint32_t)v);
+  }
+public:
+  NetInt32() {
+  }
+  NetInt32(RawNetInt32 val) {
+    set(val);
+  }
+  operator RawNetInt32() const {
+    return get();
+  }
+  RawNetInt32 operator+(RawNetInt32 v) const {
+    return get()+v;
+  }
+  RawNetInt32 operator-(RawNetInt32 v) const {
+    return get()-v;
+  }
+  RawNetInt32 operator*(RawNetInt32 v) const {
+    return get()*v;
+  }
+  RawNetInt32 operator/(RawNetInt32 v) const {
+    return get()/v;
+  }
+  void operator+=(RawNetInt32 v) {
+    set(get()+v);
+  }
+  void operator-=(RawNetInt32 v) {
+    set(get()-v);
+  }
+  void operator*=(RawNetInt32 v) {
+    set(get()*v);
+  }
+  void operator/=(RawNetInt32 v) {
+    set(get()/v);
+  }
+};
+
+        /* OSX ends*/
+
+
 #    else
         // now we have to assume we are using autoconf etc
 #undef  PACKAGE_BUGREPORT
