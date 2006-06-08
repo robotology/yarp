@@ -835,9 +835,11 @@ void cleanExit()
 //-------------------------------------------------
 // Main
 //-------------------------------------------------
+#undef main //ace leaves a "main" macro defined
 
- int main(int argc, char* argv[])
+int myMain(int argc, char* argv[])
 {
+    fprintf(stderr, "Starting as console app\n");
 	// Global variables init
 	_frameN = 0;
 	_savingSet = false;
@@ -875,14 +877,20 @@ void cleanExit()
   return 0;
 }
 
-#ifdef __WIN32__
+#ifdef WIN32
 #include <windows.h>
-
+// win32 non-console applications define WinMain as the
+// entry point for the linker
 int WINAPI WinMain(HINSTANCE hInstance,
                    HINSTANCE hPrevInstance,
                    LPSTR lpCmdLine,
                    int nCmdShow)
 {
-  return main (__argc, __argv);
+    return myMain (__argc, __argv);
+}
+#else
+int main(int argc, char* argv[])
+{
+    return myMain(argc, argv);
 }
 #endif

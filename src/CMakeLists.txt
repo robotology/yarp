@@ -5,17 +5,13 @@ IF (COEXIST_WITH_YARP1 AND YARP1_FOUND)
    SUBDIRS(libYARP_OS_compat libYARP_sig_compat)
 ENDIF (COEXIST_WITH_YARP1 AND YARP1_FOUND)
 
-# option offered while device library build behavior is untested
-SET(CREATE_DEVICE_LIBRARY FALSE CACHE BOOL "Do you want to compile the device library")
 
 IF (CREATE_DEVICE_LIBRARY)
    SUBDIRS(libYARP_dev)
 ENDIF (CREATE_DEVICE_LIBRARY)
 
-IF (GtkPlus_FOUND)
-   SET(CREATE_GUIS TRUE CACHE BOOL "Do you want to compile GUIs")
-   IF (CREATE_GUIS)
+IF (CREATE_GUIS)
+  IF (GtkPlus_FOUND)
       SUBDIRS(yarp-imageviewer)
-   ENDIF (CREATE_GUIS)
-ENDIF (GtkPlus_FOUND)
-
+  ENDIF (GtkPlus_FOUND)
+ENDIF(CREATE_GUIS)
