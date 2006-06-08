@@ -1,5 +1,10 @@
 PROJECT(YARP)
 
+# option offered while device library build behavior is untested
+SET(CREATE_DEVICE_LIBRARY FALSE CACHE BOOL "Do you want to compile the device library")
+# option for guis
+SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
+
 # on windows, we have to tell ace how it was compiled
 IF (WIN32 AND NOT CYGWIN)
    ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
@@ -9,7 +14,6 @@ ENDIF (WIN32 AND NOT CYGWIN)
 #IF (USE_EXPERIMENTAL)
 #   ADD_DEFINITIONS(-DUSE_EXPERIMENTAL)
 #ENDIF (USE_EXPERIMENTAL)
-
 
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -37,10 +41,12 @@ YarpTag()
 
 FIND_PACKAGE(Ace REQUIRED)
 
-FIND_PACKAGE(GtkPlus)
-IF (NOT GtkPlus_FOUND)
-   MESSAGE(STATUS "gtk+ not found, won't compile dependent tools")
-ENDIF (NOT GtkPlus_FOUND)
+IF (CREATE_GUIS)
+  FIND_PACKAGE(GtkPlus)
+  IF (NOT GtkPlus_FOUND)
+	MESSAGE(ERROR "gtk+ not found, won't compile dependent tools")
+  ENDIF (NOT GtkPlus_FOUND)
+ENDIF (CREATE_GUIS)
 
 FIND_PACKAGE(Yarp1)
 
