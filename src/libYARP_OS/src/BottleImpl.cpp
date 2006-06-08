@@ -282,7 +282,8 @@ String StoreInt::toStringFlex() const {
 }
 
 void StoreInt::fromString(const String& src) {
-    x = ACE_OS::atoi(src.c_str());
+    //x = ACE_OS::atoi(src.c_str());
+    x = ACE_OS::strtol(src.c_str(), (char **)NULL, 0);
 }
 
 bool StoreInt::read(ConnectionReader& reader) {
@@ -336,6 +337,29 @@ String StoreString::toStringFlex() const {
 String StoreString::toStringNested() const {
     // quoting code: very inefficient, but portable
     String result;
+
+    bool needQuote = false;
+    for (unsigned int i=0; i<x.length(); i++) {
+        char ch = x[i];
+        if ((ch<'a'||ch>'z')&&
+            (ch<'A'||ch>'Z')&&
+            ch!='_') {
+            if ((ch>='0'&&ch<='9')||ch=='.'||ch=='-') {
+                if (i==0) {
+                    needQuote = true;
+                    break;
+                }
+            } else {
+                needQuote = true;
+                break;
+            }
+        }
+    }
+
+    if (!needQuote) {
+        return x;
+    }
+
     result += "\"";
     for (unsigned int i=0; i<x.length(); i++) {
         char ch = x[i];
@@ -345,6 +369,7 @@ String StoreString::toStringNested() const {
         result += ch;
     }
     result += "\"";
+
     return result;
 }
 

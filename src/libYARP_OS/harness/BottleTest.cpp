@@ -98,7 +98,8 @@ public:
     void testTypes() {
         report(0,"testing types...");
         BottleImpl bot[3];
-        bot[0].fromString("5 10.2 \"hello\" -15 -15.0");
+        bot[0].fromString("5 10.2 \"hello\" -0xF -15.0");
+        checkEqual(bot[0].get(3).asInt(),-15,"hex works");
         bot[1].addInt(5);
         bot[1].addDouble(10.2);
         bot[1].addString("hello");
@@ -203,6 +204,14 @@ public:
         checkEqual(bot2.get(0).toString().c_str(),"2 3","subrange");
     }
 
+    void testFind() {
+        report(0,"testing find...");
+        Bottle bot("(hello friend) (say 12 13) green");
+        checkEqual(bot.find("say").toString().c_str(),"say 12 13","seek key");
+        checkEqual(bot.find("green").toString().c_str(),"green","seek key");
+        checkEqual(bot.find("blue").toString().c_str(),"","seek absent key");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -214,6 +223,7 @@ public:
         testBits();
         testEquality();
         testRange();
+        testFind();
     }
 
     virtual String getName() {

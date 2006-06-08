@@ -143,6 +143,23 @@ void Bottle::copyRange(const Bottle& alt, int first, int len) {
                                      len);
 }
 
+BottleBit& Bottle::find(const char *key) {
+    for (int i=0; i<size(); i++) {
+        BottleBit *org = &(get(i));
+        BottleBit *cursor = org;
+        if (cursor->isList()) {
+            cursor = &(cursor->asList()->get(0));
+        }
+        if (String(key)==cursor->toString().c_str()) {
+            return *org;
+        }
+    }
+    // return invalid object
+    return get(-1);
+}
+
+
+
 BottleBit *Bottle::clone() {
     Bottle *b = new Bottle();
     YARP_ASSERT(b!=NULL);

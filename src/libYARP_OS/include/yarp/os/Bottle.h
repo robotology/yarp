@@ -230,6 +230,8 @@ public:
 
     virtual BottleBit *clone();
 
+    BottleBit& find(const char *key);
+
 private:
     void *implementation;
 };
