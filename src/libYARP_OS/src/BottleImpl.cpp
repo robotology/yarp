@@ -16,6 +16,8 @@ const int StoreString::code = 5;
 const int StoreDouble::code = 2;
 const int StoreList::code = 16;
 
+yarp::StoreNull BottleImpl::storeNull;
+
 
 BottleImpl::BottleImpl() {
     dirty = true;
@@ -57,7 +59,7 @@ void BottleImpl::smartAdd(const String& str) {
             s = new StoreString("");
         }
         if (s!=NULL) {
-            s->fromString(str);
+            s->fromStringNested(str);
             //ACE_OS::printf("*** smartAdd [%s] [%s]\n", str.c_str(), s->toString().c_str());
             add(s);
         }
@@ -122,7 +124,7 @@ String BottleImpl::toString() {
     for (unsigned int i=0; i<content.size(); i++) {
         if (i>0) { result += " "; }
         Storable& s = *content[i];
-        result += s.toString();
+        result += s.toStringNested();
     }
     return result;
 }
@@ -273,7 +275,7 @@ void BottleImpl::synch() {
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt
 
-String StoreInt::toString() {
+String StoreInt::toStringFlex() const {
     char buf[256];
     ACE_OS::sprintf(buf,"%d",x);
     return String(buf);
@@ -297,7 +299,7 @@ bool StoreInt::write(ConnectionWriter& writer) {
 ////////////////////////////////////////////////////////////////////////////
 // StoreDouble
 
-String StoreDouble::toString() {
+String StoreDouble::toStringFlex() const {
     char buf[256];
     ACE_OS::sprintf(buf,"%g",x);
     String str(buf);
@@ -327,7 +329,11 @@ bool StoreDouble::write(ConnectionWriter& writer) {
 // StoreString
 
 
-String StoreString::toString() {
+String StoreString::toStringFlex() const {
+    return x;
+}
+
+String StoreString::toStringNested() const {
     // quoting code: very inefficient, but portable
     String result;
     result += "\"";
@@ -343,6 +349,10 @@ String StoreString::toString() {
 }
 
 void StoreString::fromString(const String& src) {
+    x = src;
+}
+
+void StoreString::fromStringNested(const String& src) {
     // unquoting code: very inefficient, but portable
     String result = "";
     x = "";
@@ -394,11 +404,19 @@ bool StoreString::write(ConnectionWriter& writer) {
 
 
 
-String StoreList::toString() {
+String StoreList::toStringFlex() const {
+    return String(content.toString().c_str());
+}
+
+String StoreList::toStringNested() const {
     return String("[") + content.toString().c_str() + "]";
 }
 
 void StoreList::fromString(const String& src) {
+    content.fromString(src.c_str());
+}
+
+void StoreList::fromStringNested(const String& src) {
     if (src.length()>0) {
         if (src[0]=='[') {
             // ignore first [ and last ]
@@ -456,12 +474,19 @@ bool BottleImpl::isList(int index) {
 
 
 
+yarp::os::BottleBit& BottleImpl::get(int index) {
+    if (index>=0 && index<size()) {
+        return *(content[index]);
+    }
+    return storeNull;
+}
+
 int BottleImpl::getInt(int index) {
     if (!isInt(index)) { return 0; }
     return content[index]->asInt();
 }
 
-String BottleImpl::getString(int index) {
+yarp::os::ConstString BottleImpl::getString(int index) {
     if (!isString(index)) { return ""; }
     return content[index]->asString();
 }

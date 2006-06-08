@@ -77,6 +77,11 @@ Bottle *Bottle::getList(int index) {
     return HELPER(implementation).getList(index);
 }
 
+BottleBit& Bottle::get(int index) {
+    return HELPER(implementation).get(index);
+}
+
+
 bool Bottle::isInt(int index) {
     return HELPER(implementation).isInt(index);
 }
@@ -100,6 +105,7 @@ void Bottle::fromString(const char *text) {
 ConstString Bottle::toString() const {
     return ConstString(HELPER(implementation).toString().c_str());
 }
+
 
 bool Bottle::write(ConnectionWriter& writer) {
     bool result = false;

@@ -117,7 +117,7 @@ public:
             checkTrue(b.isString(2),"strings");
             checkEqual(b.getInt(0),5,"arg 0");
             checkTrue(myfabs(b.getDouble(1)-10.2)<0.01,"arg 1");
-            checkEqual(b.getString(2),"hello","arg 2");
+            checkEqual(b.getString(2).c_str(),"hello","arg 2");
             checkEqual(b.getInt(3),-15,"arg 3");
             checkTrue(myfabs(b.getDouble(4)+15.0)<0.01,"arg 4");
         }
@@ -169,6 +169,20 @@ public:
                    "construction test 4");
     }
 
+    void testBits() {
+        report(0,"testing BottleBits interface...");
+        Bottle bot("1 \"hi\" [4 \"foo\"] 6 7");
+        checkTrue(bot.isInt(0),"indirect type check");
+        checkTrue(bot.get(0).isInt(),"type check");
+        checkTrue(bot.get(1).isString(),"type check");
+        checkTrue(bot.get(2).isList(),"type check");
+        checkTrue(bot.get(2).asList()!=NULL,"can get sublist");
+        if (bot.get(2).asList()!=NULL) {
+            checkTrue(bot.get(2).asList()->get(0).isInt(),"type check");
+            checkTrue(bot.get(2).asList()->get(1).isString(),"type check");
+        }
+        checkTrue(bot.get(50).isNull(),"null type check");        
+    }
 
     virtual void runTests() {
         testClear();
@@ -178,6 +192,7 @@ public:
         testStreaming();
         testTypes();
         testLists();
+        testBits();
     }
 
     virtual String getName() {

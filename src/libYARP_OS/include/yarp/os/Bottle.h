@@ -8,8 +8,33 @@
 namespace yarp {
     namespace os {
         class Bottle;
+        class BottleBit;
     }
 }
+
+
+
+class yarp::os::BottleBit : public Portable {
+public:
+    virtual bool isNull()    { return false; }
+    virtual bool isInt()     { return false; }
+    virtual bool isString()  { return false; }
+    virtual bool isDouble()  { return false; }
+    virtual bool isList()    { return false; }
+
+    virtual ConstString toString() const = 0;
+
+    virtual int asInt()            { return 0; }
+    virtual double asDouble()      { return 0; }
+    virtual ConstString asString() { return ""; }
+    virtual Bottle *asList()       { return (Bottle*)0; }
+
+    virtual bool read(ConnectionReader& reader) = 0;
+    virtual bool write(ConnectionWriter& writer) = 0;
+};
+
+
+
 
 /**
  * A simple collection of objects that can be be
@@ -24,7 +49,7 @@ namespace yarp {
  * somewhere else.  In the very early days of YARP, that is what
  * communication felt like.
  */
-class yarp::os::Bottle : public Portable {
+class yarp::os::Bottle : public BottleBit  {
 public:
 
     /**
@@ -74,6 +99,7 @@ public:
      */
     void addString(const char *str);
 
+    BottleBit& get(int x);
 
     /**
      * Places an empty nested list in the bottle, at the end of the list.
@@ -179,6 +205,12 @@ public:
      * @return number of elements in the bottle
      */
     int size();
+
+    virtual bool isList() { return true; }
+
+    virtual Bottle *asList() { 
+        return this; 
+    }
 
 private:
     void *implementation;

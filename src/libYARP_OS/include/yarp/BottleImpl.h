@@ -15,6 +15,7 @@
 namespace yarp {
     class BottleImpl;
     class Storable;
+    class StoreNull;
     class StoreInt;
     class StoreDouble;
     class StoreString;
@@ -22,11 +23,22 @@ namespace yarp {
 }
 
 
-class yarp::Storable {
+class yarp::Storable : public yarp::os::BottleBit {
 public:
     virtual ~Storable() {}
-    virtual String toString() = 0;
+
     virtual void fromString(const String& src) = 0;
+    virtual void fromStringNested(const String& src) {
+        fromString(src);
+    }
+
+    virtual yarp::os::ConstString toString() const {
+        return yarp::os::ConstString(toStringFlex().c_str());
+    }
+
+    virtual String toStringFlex() const = 0;
+    virtual String toStringNested() const { return toStringFlex(); }
+
     virtual int getCode() = 0;
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
@@ -34,8 +46,40 @@ public:
 
     virtual int asInt() { return 0; }
     virtual double asDouble() { return 0; }
-    virtual String asString() { return ""; }
+    virtual String asStringFlex() { return ""; }
+    virtual yarp::os::ConstString asString() { 
+        return yarp::os::ConstString(asStringFlex().c_str()); 
+    }
+    virtual yarp::os::Bottle *asList() { return NULL; }
+
+    virtual Storable *clone() {
+        Storable *item = create();
+        YARP_ASSERT(item!=NULL);
+        item->copy(*this);
+        return item;
+    }    
+
+    virtual void copy(const Storable& alt) {
+        fromString(alt.toStringFlex());  
+        // general, if inefficient, copy method
+        // ideally would have special cases in subclasses
+    }
 };
+
+
+class yarp::StoreNull : public Storable {
+public:
+    StoreNull() { }
+    virtual yarp::os::ConstString toString() const { return ""; }
+    virtual String toStringFlex() const { return ""; }
+    virtual void fromString(const String& src) {}
+    virtual int getCode() { return -1; }
+    virtual bool read(ConnectionReader& reader) { return false; }
+    virtual bool write(ConnectionWriter& writer) { return false; }
+    virtual Storable *create() { return new StoreNull(); }
+    virtual bool isNull() { return true; }
+};
+
 
 class yarp::StoreInt : public Storable {
 private:
@@ -43,7 +87,7 @@ private:
 public:
     StoreInt() { x = 0; }
     StoreInt(int x) { this->x = x; }
-    virtual String toString();
+    virtual String toStringFlex() const;
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
@@ -51,6 +95,7 @@ public:
     virtual Storable *create() { return new StoreInt(0); }
     virtual int asInt() { return x; }
     virtual double asDouble() { return x; }
+    virtual bool isInt() { return true; }
     static const int code;
 };
 
@@ -60,13 +105,16 @@ private:
 public:
     StoreString() { x = ""; }
     StoreString(const String& x) { this->x = x; }
-    virtual String toString();
+    virtual String toStringFlex() const;
     virtual void fromString(const String& src);
+    virtual String toStringNested() const;
+    virtual void fromStringNested(const String& src);
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
     virtual Storable *create() { return new StoreString(String("")); }
-    virtual String asString() { return x; }
+    virtual String asStringFlex() { return x; }
+    virtual bool isString() { return true; }
     static const int code;
 };
 
@@ -76,7 +124,7 @@ private:
 public:
     StoreDouble() { x = 0; }
     StoreDouble(double x) { this->x = x; }
-    virtual String toString();
+    virtual String toStringFlex() const;
     virtual void fromString(const String& src);
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
@@ -84,8 +132,32 @@ public:
     virtual Storable *create() { return new StoreDouble(0); }
     virtual int asInt() { return (int)x; }
     virtual double asDouble() { return x; }
+    virtual bool isDouble() { return true; }
     static const int code;
 };
+
+
+class yarp::StoreList : public Storable {
+private:
+    yarp::os::Bottle content;
+public:
+    StoreList() {}
+    yarp::os::Bottle& internal() {
+        return content;
+    }
+    virtual String toStringFlex() const;
+    virtual void fromString(const String& src);
+    virtual String toStringNested() const;
+    virtual void fromStringNested(const String& src);
+    virtual int getCode() { return code; }
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
+    virtual Storable *create() { return new StoreList(); }
+    virtual bool isList() { return true; }
+    virtual yarp::os::Bottle *asList() { return &content; }
+    static const int code;
+};
+
 
 
 /**
@@ -106,8 +178,11 @@ public:
     bool isList(int index);
 
     int getInt(int index);
-    String getString(int index);
+    yarp::os::ConstString getString(int index);
     double getDouble(int index);
+
+    yarp::os::BottleBit& get(int x);
+
     yarp::os::Bottle *getList(int index);
 
     void addInt(int x) {
@@ -159,7 +234,10 @@ public:
     const char *getBytes();
     int byteCount();
 
+
+
 private:
+    static StoreNull storeNull;
 
     ACE_Vector<Storable*> content;
     ACE_Vector<char> data;
@@ -171,23 +249,6 @@ private:
     void synch();
 };
 
-
-class yarp::StoreList : public Storable {
-private:
-    yarp::os::Bottle content;
-public:
-    StoreList() {}
-    yarp::os::Bottle& internal() {
-        return content;
-    }
-    virtual String toString();
-    virtual void fromString(const String& src);
-    virtual int getCode() { return code; }
-    virtual bool read(ConnectionReader& reader);
-    virtual bool write(ConnectionWriter& writer);
-    virtual Storable *create() { return new StoreList(); }
-    static const int code;
-};
 
 #endif
 
