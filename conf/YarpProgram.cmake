@@ -16,11 +16,11 @@ SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 IF (${no_console} STREQUAL NO_CONSOLE)
-#WIN32 in windows creates an application without
-#console, this flag is probably ignored in linux
-	ADD_EXECUTABLE(${name} WIN32 ${folder_source} ${folder_header}) 
+  #WIN32 in windows creates an application without
+  #console, this flag is probably ignored in linux
+  ADD_EXECUTABLE(${name} WIN32 ${folder_source} ${folder_header}) 
 ELSE (${no_console} STREQUAL NO_CONSOLE)
-	ADD_EXECUTABLE(${name} ${folder_source} ${folder_header})
+  ADD_EXECUTABLE(${name} ${folder_source} ${folder_header})
 ENDIF (${no_console} STREQUAL NO_CONSOLE)
 
 TARGET_LINK_LIBRARIES(${name} ${NEED_LIBS} ${ACE_LINK_FLAGS})
