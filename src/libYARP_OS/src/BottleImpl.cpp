@@ -220,6 +220,15 @@ bool BottleImpl::read(ConnectionReader& reader) {
     try {
         if (reader.isTextMode()) {
             String str = reader.expectText().c_str();
+            bool done = (str.length()<=0);
+            while (!done) {
+                if (str[str.length()-1]=='\\') {
+                    str = str.substr(0,str.length()-1);
+                    str += reader.expectText().c_str();
+                } else {
+                    done = true;
+                }
+            }
             fromString(str);
             result = true;
         } else {
