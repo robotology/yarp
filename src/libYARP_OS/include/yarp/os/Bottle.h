@@ -31,6 +31,16 @@ public:
 
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
+
+    virtual bool operator == (const BottleBit& alt);
+
+    virtual bool operator != (const BottleBit& alt) {
+        return !((*this)==alt);
+    }
+
+    virtual BottleBit *create() = 0;
+    virtual BottleBit *clone() = 0;
+
 };
 
 
@@ -99,8 +109,6 @@ public:
      */
     void addString(const char *str);
 
-    BottleBit& get(int x);
-
     /**
      * Places an empty nested list in the bottle, at the end of the list.
      * The list itself is represented as a bottle.
@@ -139,6 +147,8 @@ public:
      * see Bottle::isList
      */
     Bottle *getList(int index);
+
+    BottleBit& get(int x) const;
 
     /**
      * Checks if a certain part of the list is an integer.
@@ -204,13 +214,21 @@ public:
      * Gets the number of elements in the bottle
      * @return number of elements in the bottle
      */
-    int size();
+    int size() const;
 
     virtual bool isList() { return true; }
 
     virtual Bottle *asList() { 
         return this; 
     }
+
+    void copyRange(const Bottle& alt, int first = 0, int len = -1);
+
+    virtual BottleBit *create() {
+        return new Bottle();
+    }
+
+    virtual BottleBit *clone();
 
 private:
     void *implementation;

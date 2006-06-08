@@ -138,7 +138,7 @@ public:
     void testLists() {
         report(0,"testing lists...");
         BottleImpl bot, bot2, bot3;
-        bot.fromString("[1 [2 3 7] 3] [0.0 \"b\" 1]");
+        bot.fromString("(1 (2 3 7) 3) (0.0 \"b\" 1)");
         checkEqual(bot.size(),2,"list test 1");
         bot2.fromString(bot.toString());
         checkEqual(bot2.size(),2,"list test 2");
@@ -162,7 +162,7 @@ public:
             bb.addInt(6);
         }
         checkEqual(bot10.size(),2,"construction test 1");
-        checkEqual(bot10.toString().c_str(),"[1 2 3] [4 5 6]",
+        checkEqual(bot10.toString().c_str(),"(1 2 3) (4 5 6)",
                    "construction test 2");
         checkTrue(bot10.isList(1),"construction test 3");
         checkEqual(bot10.getList(1)->toString().c_str(),"4 5 6",
@@ -171,7 +171,7 @@ public:
 
     void testBits() {
         report(0,"testing BottleBits interface...");
-        Bottle bot("1 \"hi\" [4 \"foo\"] 6 7");
+        Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
         checkTrue(bot.isInt(0),"indirect type check");
         checkTrue(bot.get(0).isInt(),"type check");
         checkTrue(bot.get(1).isString(),"type check");
@@ -184,6 +184,25 @@ public:
         checkTrue(bot.get(50).isNull(),"null type check");        
     }
 
+    void testEquality() {
+        report(0,"testing equality...");
+        Bottle bot1("1 2 3");
+        Bottle bot2("1 2");
+        Bottle bot3("1 2 3"); 
+        checkTrue(bot1 != bot2, "A!=B");
+        checkTrue(bot2 != bot3, "B!=C");
+        checkTrue(bot1 == bot3, "A==C");
+    }
+
+    void testRange() {
+        report(0,"testing range...");
+        Bottle bot1("1 (2 3) (4 5 6) 7");
+        Bottle bot2;
+        bot2.copyRange(bot1,1,2);
+        checkEqual(bot2.size(),2,"subrange");
+        checkEqual(bot2.get(0).toString().c_str(),"2 3","subrange");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -193,6 +212,8 @@ public:
         testTypes();
         testLists();
         testBits();
+        testEquality();
+        testRange();
     }
 
     virtual String getName() {

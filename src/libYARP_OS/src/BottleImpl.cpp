@@ -53,7 +53,7 @@ void BottleImpl::smartAdd(const String& str) {
             } else {
                 s = new StoreDouble(0);
             }
-        } else if (ch=='[') {
+        } else if (ch=='(') {
             s = new StoreList();
         } else {
             s = new StoreString("");
@@ -95,10 +95,10 @@ void BottleImpl::fromString(const String& line) {
                     }
                 }
                 if (!quoted) {
-                    if (ch=='[') {
+                    if (ch=='(') {
                         nested++;
                     }
-                    if (ch==']') {
+                    if (ch==')') {
                         nested--;
                     }
                 }
@@ -129,7 +129,7 @@ String BottleImpl::toString() {
     return result;
 }
 
-int BottleImpl::size() {
+int BottleImpl::size() const {
     return content.size();
 }
 
@@ -409,7 +409,7 @@ String StoreList::toStringFlex() const {
 }
 
 String StoreList::toStringNested() const {
-    return String("[") + content.toString().c_str() + "]";
+    return String("(") + content.toString().c_str() + ")";
 }
 
 void StoreList::fromString(const String& src) {
@@ -418,8 +418,8 @@ void StoreList::fromString(const String& src) {
 
 void StoreList::fromStringNested(const String& src) {
     if (src.length()>0) {
-        if (src[0]=='[') {
-            // ignore first [ and last ]
+        if (src[0]=='(') {
+            // ignore first ( and last )
             String buf = src.substr(1,src.length()-2);
             content.fromString(buf.c_str());
         }
@@ -474,7 +474,7 @@ bool BottleImpl::isList(int index) {
 
 
 
-yarp::os::BottleBit& BottleImpl::get(int index) {
+Storable& BottleImpl::get(int index) const {
     if (index>=0 && index<size()) {
         return *(content[index]);
     }
@@ -508,4 +508,19 @@ yarp::os::Bottle& BottleImpl::addList() {
     return lst->internal();
 }
 
+
+void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
+    clear();
+    if (len==-1) { len = alt.size(); }
+    int last = first + len - 1;
+    int top = alt.size()-1;
+    if (first<0) { first = 0; }
+    if (last<0) { last = 0; }
+    if (first>top) { first = top; }
+    if (last>top) { last = top; }
+
+    for (int i=first; i<=last; i++) {
+        add(alt.get(i).cloneStorable());
+    }
+}
 

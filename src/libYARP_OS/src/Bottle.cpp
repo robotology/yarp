@@ -77,7 +77,7 @@ Bottle *Bottle::getList(int index) {
     return HELPER(implementation).getList(index);
 }
 
-BottleBit& Bottle::get(int index) {
+BottleBit& Bottle::get(int index) const {
     return HELPER(implementation).get(index);
 }
 
@@ -133,8 +133,26 @@ bool Bottle::read(ConnectionReader& reader) {
     return result;
 }
 
-int Bottle::size() {
+int Bottle::size() const {
     return HELPER(implementation).size();
+}
+
+void Bottle::copyRange(const Bottle& alt, int first, int len) {
+    HELPER(implementation).copyRange(HELPER(alt.implementation),
+                                     first,
+                                     len);
+}
+
+BottleBit *Bottle::clone() {
+    Bottle *b = new Bottle();
+    YARP_ASSERT(b!=NULL);
+    b->copyRange(*this);
+    return b;
+}
+
+
+bool BottleBit::operator == (const BottleBit& alt) {
+    return String(toString().c_str()) == alt.toString().c_str();
 }
 
 

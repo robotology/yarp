@@ -42,7 +42,8 @@ public:
     virtual int getCode() = 0;
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
-    virtual Storable *create() = 0;
+    virtual Storable *createStorable() = 0;
+    virtual BottleBit *create() { return createStorable(); }
 
     virtual int asInt() { return 0; }
     virtual double asDouble() { return 0; }
@@ -52,12 +53,16 @@ public:
     }
     virtual yarp::os::Bottle *asList() { return NULL; }
 
-    virtual Storable *clone() {
-        Storable *item = create();
+    virtual BottleBit *clone() {
+        return cloneStorable();
+    }
+
+    virtual Storable *cloneStorable() {
+        Storable *item = createStorable();
         YARP_ASSERT(item!=NULL);
         item->copy(*this);
         return item;
-    }    
+    }
 
     virtual void copy(const Storable& alt) {
         fromString(alt.toStringFlex());  
@@ -76,7 +81,7 @@ public:
     virtual int getCode() { return -1; }
     virtual bool read(ConnectionReader& reader) { return false; }
     virtual bool write(ConnectionWriter& writer) { return false; }
-    virtual Storable *create() { return new StoreNull(); }
+    virtual Storable *createStorable() { return new StoreNull(); }
     virtual bool isNull() { return true; }
 };
 
@@ -92,7 +97,7 @@ public:
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *create() { return new StoreInt(0); }
+    virtual Storable *createStorable() { return new StoreInt(0); }
     virtual int asInt() { return x; }
     virtual double asDouble() { return x; }
     virtual bool isInt() { return true; }
@@ -112,7 +117,7 @@ public:
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *create() { return new StoreString(String("")); }
+    virtual Storable *createStorable() { return new StoreString(String("")); }
     virtual String asStringFlex() { return x; }
     virtual bool isString() { return true; }
     static const int code;
@@ -129,7 +134,7 @@ public:
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *create() { return new StoreDouble(0); }
+    virtual Storable *createStorable() { return new StoreDouble(0); }
     virtual int asInt() { return (int)x; }
     virtual double asDouble() { return x; }
     virtual bool isDouble() { return true; }
@@ -152,7 +157,7 @@ public:
     virtual int getCode() { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *create() { return new StoreList(); }
+    virtual Storable *createStorable() { return new StoreList(); }
     virtual bool isList() { return true; }
     virtual yarp::os::Bottle *asList() { return &content; }
     static const int code;
@@ -181,7 +186,7 @@ public:
     yarp::os::ConstString getString(int index);
     double getDouble(int index);
 
-    yarp::os::BottleBit& get(int x);
+    Storable& get(int x) const;
 
     yarp::os::Bottle *getList(int index);
 
@@ -209,7 +214,7 @@ public:
 
     void fromString(const String& line);
     String toString();
-    int size();
+    int size() const;
 
     bool fromBytes(const Bytes& data);
     void toBytes(const Bytes& data);
@@ -234,6 +239,7 @@ public:
     const char *getBytes();
     int byteCount();
 
+    void copyRange(const BottleImpl& alt, int first = 0, int len = -1);
 
 
 private:
