@@ -45,6 +45,26 @@ ACE before following any of the steps below.  See:
 for download and installation instructions.  Some linux distributions
 have binary packages for ACE (e.g. debian has "libace-dev").
 
+  * Read about ACE here: http://www.cs.wustl.edu/~schmidt/ACE.html
+
+  * Download ACE here: http://deuce.doc.wustl.edu/Download.html
+      o For Windows, we suggest: http://deuce.doc.wustl.edu/ACE.zip
+      o For all others, we suggest: http://deuce.doc.wustl.edu/ACE.tar.gz
+
+  * Compile ACE using the instructions here: 
+    http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html
+
+      o Don't panic! The instructions cover a lot of operating systems and 
+        compilers. Just look carefully for your combination.
+
+      o Windows/DevStudio instructions are here: 
+        http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#msvc
+
+      o UNIX/gcc instructions are here:
+        http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#unix_traditional
+
+      o OSX/gcc users, follow the UNIX instructions. 
+
 On Microsoft Windows, please set the ACE_ROOT environment variable to
 the location of your ACE install (a directory called "ACE_wrappers").
 The directory in which the ACE library resides will also need to be in
