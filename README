@@ -72,6 +72,10 @@ In Linux, in the YARP2 directory, type:
 In Microsoft Windows, run cmake, answer "Where is the source code" by
 browsing to the YARP2 directory.
 
+  Note: in Microsoft Windows your can run cmake as a GUI (by clicking
+  on the appropriate icon) or from the command line.  We recommend
+  that you run the GUI - it is easier to see what is going on.
+
 Answer "Where to build the binaries" with whatever you like.
 
 Then hit the "Configure" button.  You'll be prompted for the Generator
