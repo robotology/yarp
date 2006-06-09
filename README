@@ -63,18 +63,30 @@ or other build files for a number of operating systems and tool sets.
 Download cmake from www.cmake.org or install it as a package if available
 for your system.
 
+
 In Linux, in the YARP2 directory, type:
 
   cmake . (or "ccmake ." for a graphical interface)
   make
   make test
 
+* Note: CMake tries to remember things you've already told it.  
+  If you run into trouble while setting things up, and decide to 
+  start again, consider deleting the automatically generated
+  "CMakeCache.txt" file to make sure CMake is really starting agin.
+
+
 In Microsoft Windows, run cmake, answer "Where is the source code" by
 browsing to the YARP2 directory.
 
-  Note: in Microsoft Windows your can run cmake as a GUI (by clicking
+* Note: in Microsoft Windows your can run cmake as a GUI (by clicking
   on the appropriate icon) or from the command line.  We recommend
   that you run the GUI - it is easier to see what is going on.
+
+* Note: CMake tries to remember things you've already told it.  
+  If you run into trouble while setting things up, and decide to 
+  start again, consider clicking the "Delete Cache" button to make 
+  sure CMake is really starting agin.
 
 Answer "Where to build the binaries" with whatever you like.
 
