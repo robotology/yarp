@@ -2,7 +2,7 @@
 
 # run as ./scripts/autocheck-windows.sh
 
-#cvs update -d
+cvs update -d
 
 SOURCE=`cygpath -w $PWD`
 GEN="NMake Makefiles"
@@ -44,6 +44,6 @@ cmp report.txt report-prev.txt || (
 	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
 )
 
-sleep 60
+sleep 600
 
 done
