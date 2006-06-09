@@ -2,17 +2,22 @@
 
 # run as ./scripts/autocheck-windows.sh
 
-cvs update -d
-
 SOURCE=`cygpath -w $PWD`
 GEN="NMake Makefiles"
 CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 
 while true; do
 
+rm -f should_report.txt
+
 (
 
-echo Working in directory $SOURCE
+cvs update -d > cvslog.txt
+cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
+
+if egrep "[a-zA-Z]" cvslog2.txt; then
+
+echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
@@ -26,23 +31,23 @@ if [ ! -e failure.txt ]; then
 	nmake test || ( echo YARP_AUTOCHECK nmake regression failed | tee failure.txt )
 fi
 
+cat cvslog.txt
+
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
 fi
 
+else
+	echo "Nothing new in CVS"
+fi
 
 ) | tee report.txt
 
-if [ ! -e report-prev.txt ]; then
-	echo | report-prev.txt
-fi
-
-cmp report.txt report-prev.txt || (
-	cp report.txt report-prev.txt
+if [ -e should_report.txt ]; then
 	date > report-decor.txt
 	cat report.txt >> report-decor.txt
 	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
-)
+fi
 
 sleep 600
 
