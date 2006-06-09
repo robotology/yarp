@@ -361,8 +361,8 @@ String StoreString::toStringNested() const {
     }
 
     result += "\"";
-    for (unsigned int i=0; i<x.length(); i++) {
-        char ch = x[i];
+    for (unsigned int j=0; j<x.length(); j++) {
+        char ch = x[j];
         if (ch=='\\'||ch=='\"') {
             result += '\\';
         }

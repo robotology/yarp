@@ -404,13 +404,13 @@ bool PortCore::removeUnit(const Route& route) {
                 String wild = "*";
                 bool ok = true;
                 if (route.getFromName()!=wild) {
-                    ok &= route.getFromName()==alt.getFromName();
+                    ok = ok && (route.getFromName()==alt.getFromName());
                 }
                 if (route.getToName()!=wild) {
-                    ok &= route.getToName()==alt.getToName();
+                    ok = ok && (route.getToName()==alt.getToName());
                 }
                 if (route.getCarrierName()!=wild) {
-                    ok &= route.getCarrierName()==alt.getCarrierName();
+                    ok = ok && (route.getCarrierName()==alt.getCarrierName());
                 }
 	
                 if (ok) {

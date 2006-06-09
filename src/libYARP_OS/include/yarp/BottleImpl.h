@@ -43,7 +43,7 @@ public:
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
     virtual Storable *createStorable() = 0;
-    virtual BottleBit *create() { return createStorable(); }
+    virtual yarp::os::BottleBit *create() { return createStorable(); }
 
     virtual int asInt() { return 0; }
     virtual double asDouble() { return 0; }
@@ -53,7 +53,7 @@ public:
     }
     virtual yarp::os::Bottle *asList() { return NULL; }
 
-    virtual BottleBit *clone() {
+    virtual yarp::os::BottleBit *clone() {
         return cloneStorable();
     }
 
