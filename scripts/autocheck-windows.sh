@@ -12,7 +12,6 @@ while true; do
 
 (
 
-date
 echo Working in directory $SOURCE
 
 rm -f CMakeCache.txt
@@ -34,7 +33,16 @@ fi
 
 ) | tee report.txt
 
-scp report.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
+if [ ! -e report-prev.txt ]; then
+	echo | report-prev.txt
+fi
+
+cmp report.txt report-prev.txt || (
+	cp report.txt report-prev.txt
+	date > report-decor.txt
+	cat report.txt >> report-decor.txt
+	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
+)
 
 sleep 60
 
