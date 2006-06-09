@@ -40,13 +40,13 @@ public:
 		// _alfa = 1.125f;
 	}
 
-	int _unit_number;		/** board number 0, 1, 2, etc. */
-	int _video_type;		/** 0 composite, 1 svideo. */
-	int _size_x;			/** requested size x. */
-	int _size_y;			/** requested size y. */
-	int _offset_y;			/** y offset, with respect to the center. */
-	int _offset_x;			/** x offset, with respect to the center. */
-	float _alfa;			/** to have the possibility of shifting the ROI vertically, the requested size is actually _alfa*_size_y */
+	int _unit_number;		/**< board number 0, 1, 2, etc. */
+	int _video_type;		/**< 0 composite, 1 svideo. */
+	int _size_x;			/**< requested size x. */
+	int _size_y;			/**< requested size y. */
+	int _offset_y;			/**< y offset, with respect to the center. */
+	int _offset_x;			/**< x offset, with respect to the center. */
+	float _alfa;			/**< to have the possibility of shifting the ROI vertically, the requested size is actually _alfa*_size_y */
 };
 
 /**
