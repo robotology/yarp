@@ -190,3 +190,78 @@ You should be able to browse library documentation from:
 
   doc/index.html
 
+===============================================================================
+
+GUIS.
+----------------------
+
+Graphic User Interface(s) are implemented in YARP with gtk+. By default GUIs 
+are not compiled, but you can ask cmake to include them.
+
+Simply change the value of the cache variable CREATE_GUIS to ON. 
+The easiest way to do this is through the graphic interface of cmake 
+(ccmake in linux), but if you prefer you can manually edit the cache 
+file instead (either ways are fine with us :)
+
+Before you ask cmake to generate your project/make files, you need to install
+gtk+. Needless to say, this procedure is different on Linux and Windows.
+
+-Installing gtk+ on Linux
+Follow the installation guide in the gtk web site (www.gtk.org/download).
+
+-Installing gtk+ on Windows
+We recommand you install glade for win32, which sets up everything you need
+to compile applications with gtk (including yarp guis). Don't be scared, this
+installation will not copy files in your windows directory (unless you say so)
+and will only add a couple of environment variables. However, we understand 
+you might want to install gtk manually (indeed this is what the author decided
+to do the first time he installed gtk), so we provide a short explanation 
+of how to do it.
+
+1) Glade for win32. Go to gladewin32.sourceforge.net and get the 
+gtk+/win32 Development Environment from the download section (at the time
+of writing the release 2.8.18 is available). Run the installer and follow
+the instructions.When prompted to choose which components you want to install
+select "Register Environment Variables" and "Devel headers/libraries". Feel
+free to decide if you want "Glade" and the "Documentation" (they are not 
+required by yarp). Pick the destination folder you prefer and finish the 
+installation.
+
+The Glade installation defines GTK_BASEPATH environment variable to point 
+to the directory where gtk was installed. GTK_BASEPATH will be used by cmake 
+to locate the header files and the libraries required to compile and link gtk.
+We also recommend that you append %GTK_BASEPATH%/bin to your PATH so that 
+the dlls will be correctly found and loaded at runtime. 
+
+2) The manual installation of gtk+ is a bit complicated because you need to
+download and unpack a few packages. Go to http://www.gtk.org/download/ and
+click on "win32 packages", download:
+
+atk and atk-dev
+cairo and cairo-dev
+glib and glib-dev
+gtk+ and gtk+-dev
+pango and pango-dev
+
+and
+gettext
+libiconv
+libpng
+zlib123-dll
+
+from the "dependencies" subdirectory. As you will see, all the above libraries
+come in different versions, pick the most recent ones.
+
+Unpack all zip files in the same directory. Create the environment variable
+GTK_BASEPATH to point to it (e.g. if you unpack all zip files in 
+c:\gtk\ set GTK_BASEPATH=c:\gtk). GTK_BASEPATH will be used by cmake to locate 
+the required header files and libraries. Also append %GTK_BASEPATH%/bin 
+to your PATH, so that all dlls are located and loaded at runtime. 
+
+Once you you installed gtk+, (please check that the environment variable 
+GTK_BASEPATH exists and points to the correct location, that is the 
+root of your gtk+ installation), activates the cache variable CREATE_GUIS 
+(unless you have already done this) and ask cmake to generate your project
+files (click on configure a couple of times). If you installed gtk+ correctly
+everything should work fine, otherwise cmake will ask you to locate a few
+header files and libraries.

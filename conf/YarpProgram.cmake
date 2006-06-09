@@ -2,7 +2,6 @@
 
 MACRO(YarpProgram name no_console)
 
-
 FOREACH(X ${NEED_LIBS})
 	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/lib${X}/include)
 ENDFOREACH(X ${NEED_LIBS})

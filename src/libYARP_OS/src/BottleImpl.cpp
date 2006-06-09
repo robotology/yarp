@@ -78,7 +78,8 @@ void BottleImpl::fromString(const String& line) {
     String nline = line + " ";
 
     // check ahead for a player-stage style implicit break into stanzas
-    for (unsigned int i=0; i<nline.length(); i++) {
+    unsigned int i=0;
+    for (i=0; i<nline.length(); i++) {
         char ch = nline[i];
         if (ch=='\n'||ch=='\r') {
             if (!back) {
@@ -98,7 +99,7 @@ void BottleImpl::fromString(const String& line) {
     begun = false;
     back = false;
 
-    for (unsigned int i=0; i<nline.length(); i++) {
+    for (i=0; i<nline.length(); i++) {
         char ch = nline[i];
         if (back) {
             arg += ch;
