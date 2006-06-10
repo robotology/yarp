@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.6 2006-05-31 13:28:24 natta Exp $
+/// $Id: ImageFile.cpp,v 1.7 2006-06-10 14:34:40 eshuy Exp $
 ///
 ///
 
@@ -23,11 +23,14 @@ using namespace yarp::sig;
 
 // The PGM/PPM code is old code from a long forgotten source.
 
+/*
+// not used any more?
 static void die(char *message)
 {
 	ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
 	ACE_OS::exit(1);
 }
+*/
 
 static void warn(char *message)
 {

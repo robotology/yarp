@@ -20,7 +20,7 @@ public:
         port = NULL;
     }
 
-    ~PortWriterBufferBaseHelper() {
+    virtual ~PortWriterBufferBaseHelper() {
         stateSema.wait();
     }
 

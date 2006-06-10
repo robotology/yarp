@@ -51,7 +51,7 @@ private:
     public:
         ThreadTest& owner;
 
-        Thread2(ThreadTest& owner) : mutex(1), finished(false), owner(owner) {}
+        Thread2(ThreadTest& owner) : owner(owner), mutex(1), finished(false) {}
     
         virtual void run() {
             bool done = false;

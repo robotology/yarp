@@ -18,6 +18,8 @@ namespace yarp {
 
 class yarp::os::PortWriterBufferManager {
 public:
+    virtual ~PortWriterBufferManager() {}
+
     virtual void onCompletion(void *tracker) = 0;
 };
 

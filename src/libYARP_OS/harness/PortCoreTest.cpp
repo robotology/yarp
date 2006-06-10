@@ -61,7 +61,6 @@ public:
         ct++; // close is an event
 
         core.join();
-        int x = core.getEventCount();
         checkEqual(core.getEventCount(),ct,"Got all events");
 
         nic.setFakeMode(false);

@@ -35,6 +35,8 @@ inline int PAD_BYTES (int len, int pad)
 	return (rem != 0) ? (pad - rem) : rem;
 }
 
+/*
+  // not used any more?
 static int _GetPixelSize(int pixel_type)
 {
     int result = 0;
@@ -77,6 +79,7 @@ static int _GetPixelSize(int pixel_type)
     //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
     return result;
 }
+*/
 
 
 class ImageStorage {

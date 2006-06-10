@@ -264,6 +264,7 @@ static void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 	const int p1 = PAD_BYTES (w * sizeof(T1), YARP_IMAGE_ALIGN);
 	const int p2 = PAD_BYTES (w * sizeof(T2), YARP_IMAGE_ALIGN);
 
+    YARPDummyCopyPixel();
 	for (int i=0; i<h; i++)
         {
             for (int j = 0; j < w; j++)
@@ -353,6 +354,9 @@ void Image::copyPixels(const unsigned char *src, int id1,
         }
 }
 
+/*
+// not needed any more?
+
 static int _GetPixelSize(int pixel_type)
 {
     int result = 0;
@@ -395,3 +399,4 @@ static int _GetPixelSize(int pixel_type)
     //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
     return result;
 }
+*/

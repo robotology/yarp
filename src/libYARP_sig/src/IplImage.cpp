@@ -62,7 +62,7 @@
 ///
 
 ///
-/// $Id: IplImage.cpp,v 1.3 2006-05-15 15:57:59 eshuy Exp $
+/// $Id: IplImage.cpp,v 1.4 2006-06-10 14:34:40 eshuy Exp $
 ///
 ///
 
@@ -426,7 +426,7 @@ IPLAPIIMPL(void, iplConvolve2DFP,(IplImage* srcImage, IplImage* dstImage,
             // inplace.
             float tmp;
             float *source = (float *)srcImage->imageData;
-            float *dest = (float *)dstImage->imageData;
+            //float *dest = (float *)dstImage->imageData;
             for (int i = bordery; i <  h - bordery; i++)
                 {
                     for (int j = borderx; j < w - borderx; j++)
@@ -725,7 +725,7 @@ IPLAPIIMPL(void, iplConvolveSep2D,(IplImage* srcImage, IplImage* dstImage,
 IPLAPIIMPL(void, iplAllocateImage,(IplImage* image, int doFill, int fillValue))
 {
 	// Not implemented depth != 8
-	int depth = (image->depth & IPL_DEPTH_MASK)/8;
+	//int depth = (image->depth & IPL_DEPTH_MASK)/8;
 	assert (image->dataOrder == IPL_DATA_ORDER_PIXEL);
 	///assert (image->widthStep == image->width * (image->depth & IPL_DEPTH_MASK) / 8 * image->nChannels);
 	assert (image->imageSize == image->widthStep * image->height);
@@ -1417,7 +1417,7 @@ IPLAPIIMPL(void, iplSetROI,(IplROI*   roi,      int coi,
 IPLAPIIMPL(void, iplRGB2HSV,(IplImage* rgbImage, IplImage* hsvImage))
 {
 	// Image types should be checked.
-	const int planesize = rgbImage->widthStep * rgbImage->height;
+	//const int planesize = rgbImage->widthStep * rgbImage->height;
 	unsigned char *sdata = (unsigned char *)rgbImage->imageData; // bgr
 	unsigned char *ddata0 = (unsigned char *)hsvImage->imageData;		// Hue.
 	unsigned char *ddata1 = ddata0 + 1;		// Saturation.
