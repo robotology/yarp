@@ -41,14 +41,16 @@ public:
      * Generic command interface.
      * @return true on success.
      */
-    virtual bool apply(yarp::os::ConnectionReader& cmd);
+    //deprecated
+    //virtual bool apply(yarp::os::ConnectionReader& cmd);
 
     /**
      * Generic command interface.
      * @return true on success.
      */
-    virtual bool apply(yarp::os::Bottle& cmd, 
-                       yarp::os::Bottle& response);
+    //deprecated
+    //virtual bool apply(yarp::os::Bottle& cmd, 
+    //                 yarp::os::Bottle& response);
 
 };
 

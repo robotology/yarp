@@ -7,6 +7,9 @@
 using namespace yarp::dev;
 using namespace yarp::os;
 
+// the commented out commands are deprecated
+
+/*
 bool DeviceDriver::apply(yarp::os::ConnectionReader& cmd) {
     yarp::os::Bottle in, out;
     in.read(cmd);
@@ -35,4 +38,4 @@ bool DeviceDriver::apply(yarp::os::Bottle& cmd,
     return false;
 }
 
-
+*/
