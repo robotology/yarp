@@ -23,6 +23,8 @@ rm -f CMakeCache.txt
 rm -f failure.txt
 "$CMAKE" -G "$GEN" $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
 
+nmake clean || echo "nmake clean failed"
+
 if [ ! -e failure.txt ]; then
 	nmake || ( echo YARP_AUTOCHECK nmake compile failed | tee failure.txt )
 fi
