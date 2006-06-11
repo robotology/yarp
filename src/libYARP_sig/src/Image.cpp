@@ -610,6 +610,9 @@ int Image::getPixelCode() const {
 
 
 void Image::zero() {
+    if (getRawImage()!=NULL) {
+        ACE_OS::memset(getRawImage(),0,getRawImageSize());
+    }
 }
 
 

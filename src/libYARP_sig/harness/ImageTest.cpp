@@ -85,6 +85,15 @@ public:
         }
     }
 
+    void testZero() {
+        report(0,"testing image zeroing...");
+        ImageOf<PixelRgb> img1;
+        img1.resize(128,64);
+        img1.pixel(20,10).r = 42;
+        checkEqual(img1.pixel(20,10).r,42,"pixel set");
+        img1.zero();
+        checkEqual(img1.pixel(20,10).r,0,"pixel unset");
+    }
 
     void testCast() {
         report(0,"testing image casting...");
@@ -250,6 +259,7 @@ public:
         testCast();
         testExternal();
         testPadding();
+        testZero();
     }
 };
 
