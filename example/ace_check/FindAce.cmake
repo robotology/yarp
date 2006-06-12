@@ -63,17 +63,17 @@ SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 ########################################################################
 ##  general find
 
-FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} DOC "directory containing ace/*.h for ACE library")
+FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ ${CMAKE_SOURCE_DIR}/../../ACE_wrappers/ ${CMAKE_SOURCE_DIR}/../../../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} DOC "directory containing ace/*.h for ACE library")
 
 # in YARP1, config was in another directory
 SET(ACE_INCLUDE_CONFIG_DIR "" CACHE STRING "location of ace/config.h")
 MARK_AS_ADVANCED(ACE_INCLUDE_CONFIG_DIR)
 
-FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file")
+FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ ${CMAKE_SOURCE_DIR}/../../ACE_wrappers/lib/ ${CMAKE_SOURCE_DIR}/../../../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file")
 
 IF (WIN32 AND NOT CYGWIN)
 	SET(CMAKE_DEBUG_POSTFIX "d")
-	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file (debug version)")
+	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ ${CMAKE_SOURCE_DIR}/../../ACE_wrappers/lib/ ${CMAKE_SOURCE_DIR}/../../../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file (debug version)")
 ENDIF (WIN32 AND NOT CYGWIN)
 
 
@@ -107,6 +107,15 @@ ENDIF (WIN32 AND NOT CYGWIN)
 IF (ACE_FOUND)
 	INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIR})
 	LINK_LIBRARIES(${ACE_LINK_FLAGS})
+
+	# on windows, we have to tell ace how it was compiled
+	IF (WIN32 AND NOT CYGWIN)
+	   ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
+	ELSE (WIN32 AND NOT CYGWIN)
+	   # flush out warnings
+	   ADD_DEFINITIONS(-Wall)
+	ENDIF (WIN32 AND NOT CYGWIN)
+
 	IF (NOT Ace_FIND_QUIETLY)
 		MESSAGE(STATUS "Found ACE library: ${ACE_LIBRARY}")
 		MESSAGE(STATUS "Found ACE include: ${ACE_INCLUDE_DIR}")
