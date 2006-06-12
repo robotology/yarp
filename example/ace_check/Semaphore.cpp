@@ -1,0 +1,32 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+#include "Semaphore.h"
+#include "SemaphoreImpl.h"
+
+Semaphore::Semaphore(int initialCount) {
+    implementation = new SemaphoreImpl(initialCount);
+    if (implementation==NULL) {
+        ACE_OS::printf("Could not allocate thread, exitting\n");
+        ACE_OS::exit(1);
+    }
+}
+
+Semaphore::~Semaphore() {
+    if (implementation!=NULL) {
+        delete ((SemaphoreImpl*)implementation);
+        implementation = NULL;
+    }
+}
+
+void Semaphore::wait() {
+    ((SemaphoreImpl*)implementation)->wait();
+}
+
+bool Semaphore::check() {
+    return ((SemaphoreImpl*)implementation)->check();
+}
+
+void Semaphore::post() {
+    ((SemaphoreImpl*)implementation)->post();
+}
+
