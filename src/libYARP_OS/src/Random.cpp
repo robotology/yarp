@@ -34,7 +34,7 @@ double Random::uniform() {
 
 double Random::normal(double m, double s)	
 	{				        
-		float x1, x2, w, y1;
+		double x1, x2, w, y1;
 		static double y2;
 		static int use_last = 0;
 
