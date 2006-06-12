@@ -1,0 +1,20 @@
+
+if [ "`uname`" = "Linux" ]; then
+	EXT="tgz"
+	MGEN=""
+	PGEN="-G TGZ"
+else
+	EXT="zip"
+	MGEN="-G \"NMake Makefiles\""
+	PGEN="-G ZIP"
+fi
+
+
+cd example/ace_check
+rm -f CMakeCache.txt
+sh -c "cmake $MGEN ."
+rm -f *.$EXT
+cpack $PGEN
+for f in `ls *.$EXT`; do
+	scp $f eshuy@yarp0.sf.net:www/downloads/$f
+done
