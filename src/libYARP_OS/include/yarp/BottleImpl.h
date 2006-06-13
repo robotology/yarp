@@ -75,6 +75,10 @@ public:
     virtual int subCode() {
         return 0;
     }
+
+    virtual BottleBit& find(const char *txt);
+    virtual yarp::os::Bottle& findGroup(const char *txt);
+
 };
 
 
@@ -208,6 +212,14 @@ public:
     virtual yarp::os::Bottle *asList() { return &content; }
     static const int code;
     virtual int subCode();
+
+    virtual BottleBit& find(const char *txt) {
+        return content.find(txt);
+    }
+
+    virtual yarp::os::Bottle& findGroup(const char *txt) {
+        return content.findGroup(txt);
+    }
 };
 
 
@@ -305,6 +317,10 @@ public:
             return get(size()-1);
         }
         return get(-1);
+    }
+
+    static StoreNull& getNull() {
+        return storeNull;
     }
 
 private:

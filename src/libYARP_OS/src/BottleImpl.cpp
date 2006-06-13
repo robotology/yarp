@@ -832,3 +832,10 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
 
 
 
+BottleBit& Storable::find(const char *txt) {
+    return BottleImpl::getNull();
+}
+
+Bottle& Storable::findGroup(const char *txt) {
+    return Bottle::getNull();
+}

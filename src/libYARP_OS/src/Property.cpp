@@ -150,10 +150,17 @@ public:
     void fromConfigFile(const char *fname) {
         ifstream fin(fname);
         String txt;
-        while (!(fin.eof()||fin.bad())) {
+        if (fin.fail()) {
+            YARP_ERROR(Logger::get(),String("cannot read from ") +
+                       fname);
+        }
+        while (!(fin.eof()||fin.fail())) {
             char buf[1000];
             fin.getline(buf,sizeof(buf));
-            txt += buf;
+            if (!fin.eof()) {
+                txt += buf;
+                txt += "\n";
+            }
         }
         fromConfig(txt.c_str());
     }

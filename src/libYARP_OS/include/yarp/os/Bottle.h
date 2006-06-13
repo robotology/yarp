@@ -53,6 +53,9 @@ public:
     virtual BottleBit *clone() = 0;
 
     virtual int getCode() { return 0; }
+
+    virtual BottleBit& find(const char *txt) = 0;
+    virtual Bottle& findGroup(const char *txt) = 0;
 };
 
 
@@ -248,7 +251,9 @@ public:
 
     virtual BottleBit *clone();
 
-    BottleBit& findValue(const char *key);
+    virtual BottleBit& find(const char *txt) {
+        return findValue(txt);
+    }
 
     Bottle& findGroup(const char *key);
 
@@ -260,8 +265,14 @@ public:
         return bottleNull;
     }
 
+    BottleBit& findValue(const char *key);
+
+    static Bottle& getNull();
 private:
-    BottleBit& find(const char *key);
+
+    BottleBit& findGroupBit(const char *key);
+
+    //BottleBit& find(const char *key);
     static Bottle bottleNull;
     void *implementation;
 };

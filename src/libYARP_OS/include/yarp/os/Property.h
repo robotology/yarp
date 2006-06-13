@@ -22,6 +22,16 @@ public:
 
     void put(const char *key, const char *val);
 
+    BottleBit& find(const char *key) const {
+        return get(key);
+    }
+
+    Bottle& findGroup(const char *key) const {
+        Bottle *result = getList(key);
+        if (result!=((Bottle*)0)) { return *result; }
+        return Bottle::getNull();
+    }
+
     BottleBit& get(const char *key) const;
     Bottle *getList(const char *key) const;
     ConstString getString(const char *key) const;

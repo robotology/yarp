@@ -18,3 +18,9 @@ libraries.
     Tests the YARP factories for producing interfaces to 
     device drivers.
     
+* property
+
+    Reading config files and command line arguments in a way
+    that is compatible with configuring drivers and sending 
+    network messages.
+

@@ -166,7 +166,7 @@ void Bottle::copyRange(const Bottle& alt, int first, int len) {
                                      len);
 }
 
-BottleBit& Bottle::find(const char *key) {
+BottleBit& Bottle::findGroupBit(const char *key) {
     for (int i=0; i<size(); i++) {
         BottleBit *org = &(get(i));
         BottleBit *cursor = org;
@@ -203,7 +203,7 @@ BottleBit& Bottle::findValue(const char *key) {
 }
 
 Bottle& Bottle::findGroup(const char *key) {
-    BottleBit& bb = find(key);
+    BottleBit& bb = findGroupBit(key);
     if (bb.isList()) {
         return *(bb.asList());
     }
@@ -228,3 +228,6 @@ bool BottleBit::operator == (const BottleBit& alt) {
 }
 
 
+Bottle& Bottle::getNull() {
+    return bottleNull;
+}
