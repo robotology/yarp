@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.1 2006-06-07 10:40:47 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.2 2006-06-13 08:47:34 gmetta Exp $
 ///
 ///
 
@@ -35,6 +35,7 @@
 #include <yarp/os/Time.h>
 #include <ace/config.h>
 #include <ace/OS.h>
+#include <ace/Log_msg.h>
 #include <ace/Sched_Params.h>
 
 /// specific to this device driver.
