@@ -57,6 +57,15 @@ public:
     checkEqual(p4.getList("size")->get(2).toString().c_str(),"20","height");
     checkTrue(p4.getList("size")->get(1).isInt(),"width type");
     checkEqual(p4.getList("size")->get(1).asInt(),10,"width type val");
+
+    report(0,"more realistic config-style string");
+    Property p5;
+    p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo bar\n");
+    Bottle bot3(p5.toString().c_str());
+    checkEqual(bot3.size(),2,"right number of terms");
+    checkTrue(p5.getList("cat1")!=NULL,"category 1");
+    checkEqual(p5.getList("cat1")->findGroup("size").get(1).asInt(),
+               10,"category 1, size, width");
   }
 
   virtual void runTests() {

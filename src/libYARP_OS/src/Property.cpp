@@ -163,9 +163,10 @@ public:
         sis.add(txt);
         clear();
         String tag = "";
-        bool isTag = false;
+        Bottle accum;
         bool done = false;
         do {
+            bool isTag = false;
             String buf;
             try {
                 buf = NetType::readLine(sis);
@@ -176,7 +177,7 @@ public:
                 if (buf[0]=='[') {
                     int stop = buf.strstr("]");
                     if (stop>=0) {
-                        tag = buf.substr(1,stop);
+                        buf = buf.substr(1,stop-1);
                         isTag = true;
                     }
                 }
@@ -185,8 +186,23 @@ public:
                 Bottle bot;
                 bot.fromString(buf.c_str());
                 if (bot.size()>=1) {
-                    putBottle(bot.get(0).toString().c_str(),bot);
+                    if (tag=="") {
+                        putBottle(bot.get(0).toString().c_str(),bot);
+                    } else {
+                        accum.addList().copy(bot);
+                    }
                 }
+            }
+            if (isTag||done) {
+                if (tag!="") {
+                    if (accum.size()>=1) {
+                        putBottle(tag.c_str(),accum);
+                    }
+                    tag = "";
+                }
+                tag = buf;
+                accum.clear();
+                accum.addString(tag.c_str());
             }
         } while (!done);
     }
