@@ -223,8 +223,9 @@ private:
 enum __PixelTypesEnum
     {	 
         YARP_PIXEL_INVALID = 0,
-        YARP_PIXEL_MONO,
-        YARP_PIXEL_RGB,
+        YARP_PIXEL_MONO = 1,
+        YARP_PIXEL_RGB = 2,
+        YARP_PIXEL_INT = 3,
         YARP_PIXEL_HSV,
         YARP_PIXEL_BGR,  // external libraries sometimes want flipped order
         YARP_PIXEL_MONO_SIGNED,
@@ -232,7 +233,6 @@ enum __PixelTypesEnum
         YARP_PIXEL_MONO_FLOAT,
         YARP_PIXEL_RGB_FLOAT,
         YARP_PIXEL_HSV_FLOAT,
-        YARP_PIXEL_INT,
         // negative ids reserved for pixels of undeclared type but known size
         // in bytes
     };
