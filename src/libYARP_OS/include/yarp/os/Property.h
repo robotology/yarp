@@ -36,6 +36,10 @@ public:
     
     void fromCommand(int argc, char *argv[]);
 
+    void fromConfigFile(const char *fname);
+
+    void fromConfig(const char *txt);
+
     ConstString toString() const;
 
 private:

@@ -3,9 +3,14 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/Logger.h>
+#include <yarp/StringInputStream.h>
+#include <yarp/NetType.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
+
+#include <fstream>
+using namespace std;
 
 using namespace yarp;
 using namespace yarp::os;
@@ -133,12 +138,57 @@ public:
                 tag = work;
                 accum.clear();
             }
-            accum.addString(work.c_str());
+            accum.addBit(work.c_str());
         }
         if (tag!="") {
             total.addList().copy(accum);
         }
         fromBottle(total);
+    }
+
+
+    void fromConfigFile(const char *fname) {
+        ifstream fin(fname);
+        String txt;
+        while (!(fin.eof()||fin.bad())) {
+            char buf[1000];
+            fin.getline(buf,sizeof(buf));
+            txt += buf;
+        }
+        fromConfig(txt.c_str());
+    }
+
+    void fromConfig(const char *txt) {
+        StringInputStream sis;
+        sis.add(txt);
+        clear();
+        String tag = "";
+        bool isTag = false;
+        bool done = false;
+        do {
+            String buf;
+            try {
+                buf = NetType::readLine(sis);
+            } catch (IOException e) {
+                done = true;
+            }
+            if (!done) {
+                if (buf[0]=='[') {
+                    int stop = buf.strstr("]");
+                    if (stop>=0) {
+                        tag = buf.substr(1,stop);
+                        isTag = true;
+                    }
+                }
+            }
+            if (!isTag) {
+                Bottle bot;
+                bot.fromString(buf.c_str());
+                if (bot.size()>=1) {
+                    putBottle(bot.get(0).toString().c_str(),bot);
+                }
+            }
+        } while (!done);
     }
 
 
@@ -237,3 +287,14 @@ ConstString Property::toString() const {
 void Property::fromCommand(int argc, char *argv[]) {
     HELPER(implementation).fromCommand(argc,argv);
 }
+
+void Property::fromConfigFile(const char *fname) {
+    HELPER(implementation).fromConfigFile(fname);
+}
+
+
+void Property::fromConfig(const char *txt) {
+    HELPER(implementation).fromConfig(txt);
+}
+
+

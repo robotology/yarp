@@ -121,6 +121,8 @@ public:
      */
     void addString(const char *str);
 
+    BottleBit& addBit(const char *str);
+
     /**
      * Places an empty nested list in the bottle, at the end of the list.
      * The list itself is represented as a bottle.

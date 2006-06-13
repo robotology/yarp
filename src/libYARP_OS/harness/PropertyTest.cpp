@@ -45,6 +45,18 @@ public:
     checkEqual(bot.size(),2,"right number of terms");
     checkEqual(p3.getList("size")->get(1).toString().c_str(),"10","width");
     checkEqual(p3.getList("size")->get(2).toString().c_str(),"20","height");
+    checkTrue(p3.getList("size")->get(1).isInt(),"width type");
+    checkEqual(p3.getList("size")->get(1).asInt(),10,"width type val");
+
+    report(0,"reading from config-style string");
+    Property p4;
+    p4.fromConfig("size 10 20\nmono on\n");
+    Bottle bot2(p4.toString().c_str());
+    checkEqual(bot2.size(),2,"right number of terms");
+    checkEqual(p4.getList("size")->get(1).toString().c_str(),"10","width");
+    checkEqual(p4.getList("size")->get(2).toString().c_str(),"20","height");
+    checkTrue(p4.getList("size")->get(1).isInt(),"width type");
+    checkEqual(p4.getList("size")->get(1).asInt(),10,"width type val");
   }
 
   virtual void runTests() {

@@ -218,6 +218,10 @@ BottleBit *Bottle::clone() {
     return b;
 }
 
+BottleBit& Bottle::addBit(const char *str) {
+    return HELPER(implementation).addBit(str);
+}
+
 
 bool BottleBit::operator == (const BottleBit& alt) {
     return String(toString().c_str()) == alt.toString().c_str();

@@ -297,6 +297,16 @@ public:
 
     int subCode();
 
+    yarp::os::BottleBit& addBit(const char *str) {
+        int len = size();
+        String x(str);
+        smartAdd(x);
+        if (size()>len) {
+            return get(size()-1);
+        }
+        return get(-1);
+    }
+
 private:
     static StoreNull storeNull;
 
