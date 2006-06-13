@@ -22,7 +22,7 @@ using namespace yarp::dev;
 
 
 DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
-    String str = prop.get("device").c_str();
+    String str = prop.get("device").asString().c_str();
 
 #ifdef ENABLE_dragonfly
     if (str == "dragonfly") {

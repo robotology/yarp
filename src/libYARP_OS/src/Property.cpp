@@ -60,6 +60,7 @@ public:
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
+        p->bot.addString(key);
         p->bot.addString(val);
     }
 
@@ -68,13 +69,13 @@ public:
         return p!=NULL;
     }
 
-    ConstString get(const char *key) const {
+    BottleBit& get(const char *key) const {
         String out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
-            return p->bot.getString(0);
+            return p->bot.get(1);
         }
-        return ConstString("");
+        return Bottle::null();
     }
 
     Bottle& putBottle(const char *key, const Bottle& val) {
@@ -100,6 +101,37 @@ public:
             return &(p->bot);
         }
         return NULL;
+    }
+    
+    void clear() {
+        data.unbind_all();
+    }
+
+    void fromString(const char *txt) {
+        Bottle bot;
+        bot.fromString(txt);
+        fromBottle(bot);
+    }
+
+    void fromBottle(Bottle& bot) {
+        for (int i=0; i<bot.size(); i++) {
+            BottleBit& bb = bot.get(i);
+            if (bb.isList()) {
+                Bottle *sub = bb.asList();
+                putBottle(bb.asList()->get(0).toString().c_str(),*sub);
+            }
+        }
+    }
+
+    ConstString toString() {
+        Bottle bot;
+        for (ACE_Hash_Map_Manager<String,PropertyItem,ACE_Null_Mutex>::iterator
+                 it = data.begin(); it!=data.end(); it++) {
+            PropertyItem& rec = (*it).int_id_;
+            Bottle& sub = bot.addList();
+            sub.copy(rec.bot);
+        }
+        return bot.toString();
     }
 };
 
@@ -132,11 +164,20 @@ bool Property::check(const char *key) const {
 }
 
 
-ConstString Property::get(const char *key) const {
+BottleBit& Property::get(const char *key) const {
     return HELPER(implementation).get(key);
 }
 
+Bottle *Property::getList(const char *key) const {
+    return HELPER(implementation).getBottle(key);
+}
 
+ConstString Property::getString(const char *key) const {
+    return HELPER(implementation).get(key).toString();
+}
+
+
+/*
 Bottle& Property::putBottle(const char *key, const Bottle& val) {
     return HELPER(implementation).putBottle(key,val);
 }
@@ -148,17 +189,19 @@ Bottle& Property::putBottle(const char *key) {
 Bottle *Property::getBottle(const char *key) const {
     return HELPER(implementation).getBottle(key);
 }
-
+*/
 
 void Property::clear() {
+    HELPER(implementation).clear();
 }
 
 
 void Property::fromString(const char *txt) {
+    HELPER(implementation).fromString(txt);
 }
 
 
 ConstString Property::toString() const {
-    return "not implemented";
+    return HELPER(implementation).toString();
 }
 

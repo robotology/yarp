@@ -236,6 +236,10 @@ public:
 
     void copyRange(const Bottle& alt, int first = 0, int len = -1);
 
+    void copy(const Bottle& alt) {
+        copyRange(alt);
+    }
+    
     virtual BottleBit *create() {
         return new Bottle();
     }
@@ -249,6 +253,10 @@ public:
     void specialize(int subCode);
     int getSpecialization();
     void setNested(bool nested);
+
+    static BottleBit& null() {
+        return bottleNull;
+    }
 
 private:
     BottleBit& find(const char *key);

@@ -21,11 +21,14 @@ public:
     bool check(const char *key) const;
 
     void put(const char *key, const char *val);
-    ConstString get(const char *key) const;
 
-    Bottle& putBottle(const char *key, const Bottle& val);
-    Bottle& putBottle(const char *key);
-    Bottle *getBottle(const char *key) const;
+    BottleBit& get(const char *key) const;
+    Bottle *getList(const char *key) const;
+    ConstString getString(const char *key) const;
+
+    //Bottle& putBottle(const char *key, const Bottle& val);
+    //Bottle& putBottle(const char *key);
+    //Bottle *getBottle(const char *key) const;
 
     void clear();
 

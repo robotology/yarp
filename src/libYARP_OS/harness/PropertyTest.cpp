@@ -19,12 +19,29 @@ public:
     checkTrue(p.check("hello"), "key 1 exists");
     checkTrue(p.check("x"), "key 2 exists");
     checkTrue(!(p.check("y")), "other key should not exist");
-    checkEqual(p.get("hello").c_str(),"friend", "key 1 has good value");
-    checkEqual(p.get("x").c_str(),"y", "key 2 has good value");
+    checkEqual(p.get("hello").toString().c_str(),"friend", 
+               "key 1 has good value");
+    checkEqual(p.get("x").toString().c_str(),"y", 
+               "key 2 has good value");
+  }
+
+  void checkExternal() {
+    report(0,"checking external forms");
+    Property p;
+    p.fromString("(foo 12) (testing left right)");
+    checkEqual(p.getString("foo").c_str(),"12","good key 1");
+    checkEqual(p.getString("testing").c_str(),"left","good key 2");
+    checkEqual(p.getList("testing")->toString().c_str(),
+               "testing left right","good key 2 (more)");
+
+    Property p2;
+    p2.fromString(p.toString().c_str());
+    checkEqual(p.getString("testing").c_str(),"left","good key after copy");
   }
 
   virtual void runTests() {
     checkPutGet();
+    checkExternal();
   }
 };
 
