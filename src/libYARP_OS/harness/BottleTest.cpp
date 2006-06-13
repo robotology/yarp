@@ -65,6 +65,13 @@ public:
         checkEqual(bot2.size(),2,"recovery binary, length");
         checkEqual(bot2.isInt(0),bot.isInt(0),"recovery binary, integer");
         checkEqual(bot2.isString(1),bot.isString(1),"recovery binary, integer");
+        BottleImpl bot3;
+        bot3.fromString("[go] (10 20 30 40)");
+        ManagedBytes store2(bot3.byteCount());
+        bot3.toBytes(store2.bytes());
+        bot.fromBytes(store2.bytes());
+        checkEqual(bot.get(0).isVocab(),true,"type check");
+        checkEqual(bot.get(1).isList(),true,"type check");
     }
 
     void testStreaming() {
@@ -143,6 +150,8 @@ public:
         checkEqual(bot.size(),2,"list test 1");
         bot2.fromString(bot.toString());
         checkEqual(bot2.size(),2,"list test 2");
+
+        bot.fromString("(1 2) 4");
         ManagedBytes store(bot.byteCount());
         bot.toBytes(store.bytes());
         bot3.fromBytes(store.bytes());
@@ -232,6 +241,37 @@ public:
         checkEqual(bot.get(0).asBlob()[1],42, "blob match");
     }
 
+    void testStandard() {
+        report(0,"testing standard compliance...");
+
+        // in theory, bottles should comply with a standard binary format
+        // we check that here
+
+        Bottle bot("10 20 30 40");
+        //bot.setNested(true);
+        //bot.specialize(bot.get(0).getCode());
+        BufferedConnectionWriter writer;
+        bot.write(writer);
+        String s = writer.toString();
+        checkEqual(s.length(),sizeof(NetInt32)*(1+1+1+bot.size()),
+                   "exact number of integers, plus bytes/type/count");
+
+        Bottle bot2("[go] (10 20 30 40)");
+        writer.clear();
+        bot2.write(writer);
+        s = writer.toString();
+        // 1 for message size
+        // 1 for (outer) list code
+        // 1 for list length
+        // 1 for vocab code
+        // 1 for vocab code value
+        // 1 for (inner) list code
+        // 1 for (inner) list length
+        // 4 for integers in list
+        checkEqual(s.length(),sizeof(NetInt32)*(11),
+                   "nested example");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -246,6 +286,7 @@ public:
         testFind();
         testVocab();
         testBlob();
+        testStandard();
     }
 
     virtual String getName() {

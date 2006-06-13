@@ -45,6 +45,7 @@ public:
     virtual BottleBit *create() = 0;
     virtual BottleBit *clone() = 0;
 
+    virtual int getCode() { return 0; }
 };
 
 
@@ -205,14 +206,12 @@ public:
      */
     bool write(ConnectionWriter& writer);
 
-
     /**
      * Set the bottle's value based on input from a network connection.
      * @param reader the interface to the network connection for reading
      * @return true iff the bottle was read successfully.
      */
     bool read(ConnectionReader& reader);
-
 
     /*
      * Gets the number of elements in the bottle
@@ -237,6 +236,10 @@ public:
     BottleBit& findValue(const char *key);
 
     Bottle& findGroup(const char *key);
+
+    void specialize(int subCode);
+    int getSpecialization();
+    void setNested(bool nested);
 
 private:
     BottleBit& find(const char *key);

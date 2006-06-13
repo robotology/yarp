@@ -41,7 +41,7 @@ public:
     virtual String toStringFlex() const = 0;
     virtual String toStringNested() const { return toStringFlex(); }
 
-    virtual int getCode() = 0;
+    //virtual int getCode() = 0;
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
     virtual Storable *createStorable() = 0;
@@ -70,6 +70,10 @@ public:
         fromString(alt.toStringFlex());  
         // general, if inefficient, copy method
         // ideally would have special cases in subclasses
+    }
+
+    virtual int subCode() {
+        return 0;
     }
 };
 
@@ -196,13 +200,14 @@ public:
     virtual void fromString(const String& src);
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() { return code+subCode(); }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
     virtual Storable *createStorable() { return new StoreList(); }
     virtual bool isList() { return true; }
     virtual yarp::os::Bottle *asList() { return &content; }
     static const int code;
+    virtual int subCode();
 };
 
 
@@ -258,9 +263,6 @@ public:
     String toString();
     int size() const;
 
-    bool fromBytes(const Bytes& data);
-    void toBytes(const Bytes& data);
-
     virtual bool write(ConnectionWriter& writer);
 
     virtual bool read(ConnectionReader& reader);
@@ -282,12 +284,24 @@ public:
 
     void copyRange(const BottleImpl& alt, int first = 0, int len = -1);
 
+    bool fromBytes(const Bytes& data);
+    void toBytes(const Bytes& data);
+
+    bool fromBytes(ConnectionReader& reader);
+
+    void specialize(int subCode);
+    int getSpecialization();
+    void setNested(bool nested);
+
+    int subCode();
 
 private:
     static StoreNull storeNull;
 
     ACE_Vector<Storable*> content;
     ACE_Vector<char> data;
+    int speciality;
+    bool nested;
     bool dirty;
 
     void add(Storable *s);

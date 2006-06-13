@@ -14,18 +14,42 @@
 using namespace yarp;
 using namespace yarp::os;
 
+
+//#define YMSG(x) ACE_OS::printf x;
+//#define YTRACE(x) YMSG(("at %s\n",x))
+
+#define YMSG(x)
+#define YTRACE(x) 
+
+// YARP1 compatible codes
+//const int StoreInt::code = 1;
+//const int StoreString::code = 5;
+//const int StoreDouble::code = 2;
+//const int StoreList::code = 16;
+//const int StoreVocab::code = 32;
+//const int StoreBlob::code = 33;
+//#define USE_YARP1_PREFIX
+
+// new YARP2 codes
+#define OFFSET 128
 const int StoreInt::code = 1;
-const int StoreString::code = 5;
+const int StoreVocab::code = 1+8;
 const int StoreDouble::code = 2;
-const int StoreList::code = 16;
-const int StoreVocab::code = 32;
-const int StoreBlob::code = 33;
+const int StoreString::code = 3;
+const int StoreBlob::code = 3+8;
+const int StoreList::code = 32;
+
+#define UNIT_MASK 15
+#define GROUP_MASK 32
+
 
 yarp::StoreNull BottleImpl::storeNull;
 
 
 BottleImpl::BottleImpl() {
     dirty = true;
+    nested = false;
+    speciality = 0;
 }
 
 
@@ -152,22 +176,17 @@ int BottleImpl::size() const {
     return content.size();
 }
 
-bool BottleImpl::fromBytes(const Bytes& data) {
-    String wrapper;
-    wrapper.set(data.get(),data.length(),0);
-    StringInputStream sis;
-    sis.add(wrapper);
-    StreamConnectionReader reader;
-    Route route;
-    reader.reset(sis,NULL,route,data.length(),false);
 
-    clear();
-    dirty = true; // for clarity
-
-    try {
-        while (reader.getSize()>0) {
-            int id = reader.expectInt();
+bool BottleImpl::fromBytes(ConnectionReader& reader) {
+            int id = speciality;
+            if (id==0) {
+                id = reader.expectInt();
+                YMSG(("READ subcode %d\n", id));
+            } else {
+                YMSG(("READ skipped subcode %d\n", speciality));
+            }
             Storable *storable = NULL;
+            int subCode = 0;
             switch (id) {
             case StoreInt::code:
                 storable = new StoreInt();
@@ -186,17 +205,50 @@ bool BottleImpl::fromBytes(const Bytes& data) {
                 break;
             case StoreList::code:
                 storable = new StoreList();
+                YARP_ASSERT(storable!=NULL);
+                storable->asList()->setNested(true);
+                break;
+            default:
+                if (id&GROUP_MASK!=0) {
+                    // typed list
+                    subCode = id&UNIT_MASK;
+                    storable = new StoreList();
+                    YARP_ASSERT(storable!=NULL);
+                    storable->asList()->specialize(subCode);
+                    storable->asList()->setNested(true);
+                }
                 break;
             }
             if (storable==NULL) {
                 YARP_ERROR(Logger::get(), "BottleImpl reader failed");
-                throw IOException("BottleImpl reader failed - unrecognized format?");
+                throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
             }
             storable->read(reader);
             add(storable);
+            return true;
+}
+
+
+bool BottleImpl::fromBytes(const Bytes& data) {
+    String wrapper;
+    wrapper.set(data.get(),data.length(),0);
+    StringInputStream sis;
+    sis.add(wrapper);
+    StreamConnectionReader reader;
+    Route route;
+    reader.reset(sis,NULL,route,data.length(),false);
+
+    clear();
+    dirty = true; // for clarity
+
+    try {
+        int len = reader.expectInt();
+        YMSG(("READ bottle length %d\n", len));
+        for (int i=0; i<len; i++) {
+            fromBytes(reader);
         }
     } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " bottle reader stopped");
+        YARP_DEBUG(Logger::get(), e.toString() + " -- bottle reader stopped");
         return false;
     }
     return true;
@@ -226,11 +278,19 @@ bool BottleImpl::write(ConnectionWriter& writer) {
             //writer.appendLine(toString());
             writer.appendString(toString().c_str(),'\n');
         } else {
-            String name = "YARP2";
-            writer.appendInt(name.length()+1);
-            writer.appendString(name.c_str(),'\0');
+#ifdef USE_YARP1_PREFIX
+            if (!nested) {
+                String name = "YARP2";
+                writer.appendInt(name.length()+1);
+                writer.appendString(name.c_str(),'\0');
+            }
+#endif
+            if (!nested) {
+                YMSG(("bottle byte count %d\n",byteCount()));
+                writer.appendInt(byteCount());
+                writer.appendInt(StoreList::code + speciality);
+            }
             synch();
-            writer.appendInt(byteCount());
             //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
             writer.appendBlock((char*)getBytes(),byteCount());
         }
@@ -259,15 +319,49 @@ bool BottleImpl::read(ConnectionReader& reader) {
             fromString(str);
             result = true;
         } else {
-            int len = reader.expectInt();
-            //String name = reader.expectString(len);
-            String buf((size_t)len);
-            reader.expectBlock((const char *)buf.c_str(),len);
-            String name = buf.c_str();
-            int bct = reader.expectInt();
-            ManagedBytes b(bct);
-            reader.expectBlock(b.get(),b.length());
-            result = fromBytes(b.bytes());
+#if USE_YARP1_PREFIX
+            if (!nested) {
+                int len = reader.expectInt();
+                //String name = reader.expectString(len);
+                String buf((size_t)len);
+                reader.expectBlock((const char *)buf.c_str(),len);
+                String name = buf.c_str();
+            }
+#endif
+            if (!nested) {
+                reader.expectInt(); // the bottle byte ct; ignored
+                int code = reader.expectInt();
+                code = code & UNIT_MASK;
+                if (code!=0) {
+                    specialize(code);
+                }
+            }
+
+            //ManagedBytes b(bct);
+            //reader.expectBlock(b.get(),b.length());
+            //result = fromBytes(b.bytes());
+
+            result = true;
+            clear();
+            dirty = true; // for clarity
+
+            int len = 0;
+            int i = 0;
+            try {
+                len = reader.expectInt();
+                YMSG(("READ got length %d\n", len));
+                for (i=0; i<len; i++) {
+                    fromBytes(reader);
+                }
+            } catch (IOException e) {
+                YARP_DEBUG(Logger::get(), e.toString() + 
+                           " -- bottle reader stopped at " +
+                           NetType::toString(i) + " of " +
+                           NetType::toString(len));
+                result = false;;
+            }
+
+
         }
     } catch (IOException e) {
         YARP_DEBUG(Logger::get(), String("Bottle read exception: ")+e.toString());
@@ -279,12 +373,27 @@ bool BottleImpl::read(ConnectionReader& reader) {
 
 void BottleImpl::synch() {
     if (dirty) {
+        if (!nested) {
+            subCode();
+            YMSG(("bottle code %d\n",StoreList::code + subCode()));
+        }
         data.clear();
         //StringOutputStream sos;
         BufferedConnectionWriter writer;
+        YMSG(("bottle length %d\n",size()));
+        writer.appendInt(size());
         for (unsigned int i=0; i<content.size(); i++) {
             Storable *s = content[i];
-            writer.appendInt(s->getCode());
+            if (speciality==0) {
+                YMSG(("subcode %d\n",s->getCode()));
+                writer.appendInt(s->getCode());
+            } else {
+                YMSG(("skipped subcode %d\n",s->getCode()));
+                YARP_ASSERT(speciality==s->getCode());
+            }
+            if (s->isList()) {
+                s->asList()->setNested(true);
+            }
             s->write(writer);
         }
         //buf.write(sos);
@@ -296,6 +405,18 @@ void BottleImpl::synch() {
 }
 
 
+void BottleImpl::specialize(int subCode) {
+    speciality = subCode;
+}
+
+
+int BottleImpl::getSpecialization() {
+    return speciality;
+}
+
+void BottleImpl::setNested(bool nested) {
+    this->nested = nested;
+}
 
 ////////////////////////////////////////////////////////////////////////////
 // StoreInt
@@ -583,9 +704,36 @@ bool StoreList::write(ConnectionWriter& writer) {
     return true;
 }
 
+template <class T>
+int subCoder(T& content) {
+    int c = -1;
+    bool ok = false;
+    for (int i=0; i<content.size(); i++) {
+        int sc = content.get(i).getCode();
+        if (c==-1) {
+            c = sc;
+            ok = true;
+        }
+        if (sc!=c) {
+            ok = false;
+        }
+    }
+    // just optimize primitive types
+    if ((c&GROUP_MASK)!=0) {
+        ok = false;
+    }
+    c = ok?c:0;
+    content.specialize(c);
+    return c;
+}
 
+int StoreList::subCode() {
+    return subCoder(content);
+}
 
-
+int BottleImpl::subCode() {
+    return subCoder(*this);
+}
 
 bool BottleImpl::isInt(int index) {
     if (index>=0 && index<size()) {
@@ -612,7 +760,7 @@ bool BottleImpl::isDouble(int index) {
 
 bool BottleImpl::isList(int index) {
     if (index>=0 && index<size()) {
-        return content[index]->getCode() == StoreList::code;
+        return content[index]->isList();
     }
     return false;
 }

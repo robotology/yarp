@@ -139,6 +139,22 @@ int Bottle::size() const {
     return HELPER(implementation).size();
 }
 
+void Bottle::specialize(int subCode) {
+    HELPER(implementation).specialize(subCode);
+}
+
+
+int Bottle::getSpecialization() {
+    return HELPER(implementation).getSpecialization();
+}
+
+
+void Bottle::setNested(bool nested) {
+    return HELPER(implementation).setNested(nested);
+}
+
+
+
 void Bottle::copyRange(const Bottle& alt, int first, int len) {
     HELPER(implementation).copyRange(HELPER(alt.implementation),
                                      first,
