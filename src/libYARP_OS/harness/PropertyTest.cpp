@@ -37,6 +37,14 @@ public:
     Property p2;
     p2.fromString(p.toString().c_str());
     checkEqual(p.getString("testing").c_str(),"left","good key after copy");
+
+    Property p3;
+    char *args[] = {"--size","10","20","--mono","on"};
+    p3.fromCommand(5,args);
+    Bottle bot(p3.toString().c_str());
+    checkEqual(bot.size(),2,"right number of terms");
+    checkEqual(p3.getList("size")->get(1).toString().c_str(),"10","width");
+    checkEqual(p3.getList("size")->get(2).toString().c_str(),"20","height");
   }
 
   virtual void runTests() {

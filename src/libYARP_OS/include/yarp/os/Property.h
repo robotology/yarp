@@ -33,6 +33,8 @@ public:
     void clear();
 
     void fromString(const char *txt);
+    
+    void fromCommand(int argc, char *argv[]);
 
     ConstString toString() const;
 

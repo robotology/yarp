@@ -113,6 +113,35 @@ public:
         fromBottle(bot);
     }
 
+    void fromCommand(int argc, char *argv[]) {
+        String tag = "";
+        Bottle accum;
+        Bottle total;
+        for (int i=0; i<argc; i++) {
+            String work = argv[i];
+            bool isTag = false;
+            if (work.length()>=2) {
+                if (work[0]=='-'&&work[1]=='-') {
+                    work = work.substr(2,work.length()-2);
+                    isTag = true;
+                }
+            }
+            if (isTag) {
+                if (tag!="") {
+                    total.addList().copy(accum);
+                }
+                tag = work;
+                accum.clear();
+            }
+            accum.addString(work.c_str());
+        }
+        if (tag!="") {
+            total.addList().copy(accum);
+        }
+        fromBottle(total);
+    }
+
+
     void fromBottle(Bottle& bot) {
         for (int i=0; i<bot.size(); i++) {
             BottleBit& bb = bot.get(i);
@@ -205,3 +234,6 @@ ConstString Property::toString() const {
     return HELPER(implementation).toString();
 }
 
+void Property::fromCommand(int argc, char *argv[]) {
+    HELPER(implementation).fromCommand(argc,argv);
+}
