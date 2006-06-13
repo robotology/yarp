@@ -18,6 +18,7 @@ namespace yarp{
         class IControlDebug;
         class IControlLimits;
         class IControlCalibration;
+        class IPositionControl2;
     }
 }
 
@@ -268,6 +269,7 @@ public:
     */
     virtual bool stop()=0;
 };
+
 
 /**
  * Interface for control boards implementig velocity control.
@@ -563,5 +565,137 @@ public:
     */
     virtual bool getLimits(int axis, double *min, double *max)=0;
 };
+
+/**
+ * Interface for a generic control board device implementing position control.
+ * This interface is a wraps IPositionControl, to provide axis map and 
+ * encoder/angle conversion.
+ */
+class yarp::dev::IPositionControl2
+{
+    IPositionControl *iPosition;
+    void *helper;
+    double *temp;
+public:
+
+    IPositionControl2(IPositionControl *pos, 
+            int nj, const int *axisMap, 
+            const double *angToEncoders,
+            const double *zeros);
+    virtual ~IPositionControl2();
+
+     /** Set position mode. This command
+     * is required by control boards implementing different
+     * control methods (e.g. velocity/torque), in some cases
+     * it can be left empty.
+     * return true/false on success failure
+     */
+    bool setPositionMode();
+
+    /** Set new reference point for a single axis.
+     * @param j joint number
+     * @param ref specifies the new ref point
+     * @return true/false on success/failure
+     */
+    bool positionMove(int j, double ref);
+
+    /** Set new reference point for all axes.
+     * @param refs array, new reference points.
+     * @return true/false on success/failure
+     */
+    bool positionMove(const double *refs);
+
+    /** Set relative position. The command is relative to the 
+     * current position of the axis.
+     * @param j joint axis number
+     * @param delta relative command
+     * @return true/false on success/failure
+     */
+    bool relativeMove(int j, double delta);
+
+    /** Set relative position, all joints.
+     * @param deltas pointer to the relative commands
+     * @return true/false on success/failure
+     */
+    bool relativeMove(const double *deltas);
+
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @return true if the trajectory is terminated, false otherwise
+     */
+    bool checkMotionDone(int j, bool *flag);
+
+    bool checkMotionDone(bool *flag);
+
+    /** Set reference speed for a joint, this is the speed used during the
+     * interpolation of the trajectory.
+     * @param j joint number
+     * @param sp speed value
+     * @return true/false upon success/failure
+     */
+    bool setRefSpeed(int j, double sp);
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param spds pointer to the array of speed values.
+     * @return true/false upon success/failure
+     */
+    bool setRefSpeeds(const double *spds);
+
+    /** Set reference acceleration for a joint. This value is used during the
+     * trajectory generation.
+     * @param j joint number
+     * @param acc acceleration value
+     * @return true/false upon success/failure
+     */
+    bool setRefAcceleration(int j, double acc);
+
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param accs pointer to the array of acceleration values
+     * @return true/false upon success/failure
+     */
+    bool setRefAccelerations(const double *accs);
+
+    /** Get reference speed for a joint. Returns the speed used to 
+     * generate the trajectory profile.
+     * @param j joint number
+     * @param ref pointer to storage for the return value
+     * @return true/false on success or failure
+     */
+    bool getRefSpeed(int j, double *ref);
+
+    /** Get reference speed of all joints. These are the  values used during the
+     * interpolation of the trajectory.
+     * @param spds pointer to the array that will store the speed values.
+     */
+    bool getRefSpeeds(double *spds);
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to 
+     * generate the trajectory profile.
+     * @param j joint number
+     * @param acc pointer to storage for the return value
+     * @return true/false on success/failure
+     */
+    bool getRefAcceleration(int j, double *acc);
+
+    /** Get reference acceleration of all joints. These are the values used during the
+     * interpolation of the trajectory.
+     * @param accs pointer to the array that will store the acceleration values.
+     * @return true/false on success or failure 
+     */
+    bool getRefAccelerations(double *accs);
+
+    /** Stop motion, single joint
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    bool stop(int j);
+
+    /** Stop motion, multiple joints 
+    * @return true/false on success/failure
+    */
+    bool stop();
+};
+
 #endif
 //

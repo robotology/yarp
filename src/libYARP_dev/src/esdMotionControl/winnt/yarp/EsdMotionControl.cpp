@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.2 2006-06-13 08:47:34 gmetta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.3 2006-06-13 14:49:31 natta Exp $
 ///
 ///
 
@@ -419,7 +419,8 @@ bool EsdCanResources::error (const CMSG& m)
 inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 
 
-EsdMotionControl::EsdMotionControl() 
+EsdMotionControl::EsdMotionControl(const EsdMotionControlParameters &par) :
+IPositionControl2(this, par.nj, par.axisMap, par.angleToEncoder, par.zeros)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);

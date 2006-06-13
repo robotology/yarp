@@ -1,6 +1,6 @@
 
 ///
-/// $Id: EsdMotionControl.h,v 1.1 2006-06-07 10:40:47 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.2 2006-06-13 14:49:31 natta Exp $
 ///
 ///
 
@@ -48,6 +48,11 @@ public:
 	int _polling_interval;						/** thread polling interval [ms] */
 	int _timeout;								/** number of cycles before timing out */
 	int (*_p) (const char *fmt, ...);			/** printf-like function for spying messages */
+
+    int *axisMap;
+    double *angleToEncoder;
+    double *zeros;
+    int nj;
 };
 
 
@@ -64,17 +69,18 @@ class yarp::dev::EsdMotionControl:
           public IAmplifierControl,
           public IControlCalibration,
           public IControlDebug,
-          public IControlLimits
+          public IControlLimits,
+          public IPositionControl2
 {
 private:
-	EsdMotionControl(const EsdMotionControl&);
+    EsdMotionControl(const EsdMotionControl&);
 	void operator=(const EsdMotionControl&);
 
 public:
 	/**
 	 * Constructor.
 	 */
-	EsdMotionControl();
+    EsdMotionControl(const EsdMotionControlParameters &par);
 
 	/**
 	 * Destructor.
