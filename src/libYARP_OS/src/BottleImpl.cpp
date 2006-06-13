@@ -6,15 +6,20 @@
 #include <yarp/StringOutputStream.h>
 #include <yarp/StringInputStream.h>
 
+#include <yarp/os/Vocab.h>
+
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
 using namespace yarp;
+using namespace yarp::os;
 
 const int StoreInt::code = 1;
 const int StoreString::code = 5;
 const int StoreDouble::code = 2;
 const int StoreList::code = 16;
+const int StoreVocab::code = 32;
+const int StoreBlob::code = 33;
 
 yarp::StoreNull BottleImpl::storeNull;
 
@@ -55,6 +60,10 @@ void BottleImpl::smartAdd(const String& str) {
             }
         } else if (ch=='(') {
             s = new StoreList();
+        } else if (ch=='[') {
+            s = new StoreVocab();
+        } else if (ch=='{') {
+            s = new StoreBlob();
         } else {
             s = new StoreString("");
         }
@@ -74,6 +83,7 @@ void BottleImpl::fromString(const String& line) {
     bool back = false;
     bool begun = false;
     int nested = 0;
+    int nestedAlt = 0;
     String nline = line + " ";
 
     for (unsigned int i=0; i<nline.length(); i++) {
@@ -102,12 +112,20 @@ void BottleImpl::fromString(const String& line) {
                     if (ch==')') {
                         nested--;
                     }
+                    if (ch=='{') {
+                        nestedAlt++;
+                    }
+                    if (ch=='}') {
+                        nestedAlt--;
+                    }
                 }
                 if (ch=='\\') {
                     back = true;
                     arg += ch;
                 } else {
-                    if ((!quoted)&&(ch==' '||ch=='\t')&&(nested==0)) {
+                    if ((!quoted)&&(ch==' '||ch=='\t')
+                        &&(nestedAlt==0)
+                        &&(nested==0)) {
                         smartAdd(arg);
                         arg = "";
                         begun = false;
@@ -154,11 +172,17 @@ bool BottleImpl::fromBytes(const Bytes& data) {
             case StoreInt::code:
                 storable = new StoreInt();
                 break;
+            case StoreVocab::code:
+                storable = new StoreVocab();
+                break;
             case StoreDouble::code:
                 storable = new StoreDouble();
                 break;
             case StoreString::code:
                 storable = new StoreString();
+                break;
+            case StoreBlob::code:
+                storable = new StoreBlob();
                 break;
             case StoreList::code:
                 storable = new StoreList();
@@ -298,6 +322,43 @@ bool StoreInt::write(ConnectionWriter& writer) {
 }
 
 
+
+////////////////////////////////////////////////////////////////////////////
+// StoreVocab
+
+String StoreVocab::toStringFlex() const {
+    return String(Vocab::decode(x).c_str());
+}
+
+void StoreVocab::fromString(const String& src) {
+    x = Vocab::encode(src.c_str());
+}
+
+String StoreVocab::toStringNested() const {
+    return String("[") + toStringFlex() + "]";
+}
+
+void StoreVocab::fromStringNested(const String& src) {
+    if (src.length()>0) {
+        if (src[0]=='[') {
+            // ignore first [ and last ]
+            String buf = src.substr(1,src.length()-2);
+            fromString(buf.c_str());
+        }
+    }
+}
+
+bool StoreVocab::read(ConnectionReader& reader) {
+    x = reader.expectInt();
+    return true;
+}
+
+bool StoreVocab::write(ConnectionWriter& writer) {
+    writer.appendInt(x);
+    return true;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////
 // StoreDouble
 
@@ -426,6 +487,64 @@ bool StoreString::write(ConnectionWriter& writer) {
     return true;
 }
 
+
+////////////////////////////////////////////////////////////////////////////
+// StoreBlob
+
+
+String StoreBlob::toStringFlex() const {
+    String result = "";
+    for (unsigned int i=0; i<x.length(); i++) {
+        if (i>0) {
+            result += " ";
+        }
+        result += NetType::toString((int)x[i]);
+    }
+    return result;
+}
+
+String StoreBlob::toStringNested() const {
+    return String("{") + toStringFlex() + "}";
+}
+
+void StoreBlob::fromString(const String& src) {
+    Bottle bot(src.c_str());
+    String buf((size_t)(bot.size()));
+    for (int i=0; i<bot.size(); i++) {
+        buf[i] = (char)(bot.get(i).asInt());
+    }
+    x.set(buf.c_str(),bot.size(),1);
+}
+
+void StoreBlob::fromStringNested(const String& src) {
+    if (src.length()>0) {
+        if (src[0]=='{') {
+            // ignore first { and last }
+            String buf = src.substr(1,src.length()-2);
+            fromString(buf.c_str());
+        }
+    }
+}
+
+
+bool StoreBlob::read(ConnectionReader& reader) {
+    int len = reader.expectInt();
+    String buf((size_t)len);
+    reader.expectBlock((const char *)buf.c_str(),len);
+    x.set(buf.c_str(),(size_t)len,1);
+    return true;
+}
+
+bool StoreBlob::write(ConnectionWriter& writer) {
+    writer.appendInt(x.length());
+    writer.appendBlock(x.c_str(),x.length());
+    return true;
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+// StoreList
 
 
 

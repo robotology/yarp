@@ -17,8 +17,10 @@ namespace yarp {
     class Storable;
     class StoreNull;
     class StoreInt;
+    class StoreVocab;
     class StoreDouble;
     class StoreString;
+    class StoreBlob;
     class StoreList;
 }
 
@@ -104,6 +106,26 @@ public:
     static const int code;
 };
 
+class yarp::StoreVocab : public Storable {
+private:
+    int x;
+public:
+    StoreVocab() { x = 0; }
+    StoreVocab(int x) { this->x = x; }
+    virtual String toStringFlex() const;
+    virtual void fromString(const String& src);
+    virtual String toStringNested() const;
+    virtual void fromStringNested(const String& src);
+    virtual int getCode() { return code; }
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
+    virtual Storable *createStorable() { return new StoreVocab(0); }
+    virtual int asInt() { return x; }
+    virtual double asDouble() { return x; }
+    virtual bool isVocab() { return true; }
+    static const int code;
+};
+
 class yarp::StoreString : public Storable {
 private:
     String x;
@@ -120,6 +142,26 @@ public:
     virtual Storable *createStorable() { return new StoreString(String("")); }
     virtual String asStringFlex() { return x; }
     virtual bool isString() { return true; }
+    static const int code;
+};
+
+class yarp::StoreBlob : public Storable {
+private:
+    String x;
+public:
+    StoreBlob() { x = ""; }
+    StoreBlob(const String& x) { this->x = x; }
+    virtual String toStringFlex() const;
+    virtual void fromString(const String& src);
+    virtual String toStringNested() const;
+    virtual void fromStringNested(const String& src);
+    virtual int getCode() { return code; }
+    virtual bool read(ConnectionReader& reader);
+    virtual bool write(ConnectionWriter& writer);
+    virtual Storable *createStorable() { return new StoreBlob(String("")); }
+    virtual bool isBlob() { return true; }
+    virtual const char *asBlob()         { return x.c_str(); }
+    virtual int asBlobLength()     { return x.length(); }
     static const int code;
 };
 

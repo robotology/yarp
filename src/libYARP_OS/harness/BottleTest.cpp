@@ -8,8 +8,8 @@
 
 #include <yarp/UnitTest.h>
 
-
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Vocab.h>
 
 #include "TestList.h"
 
@@ -214,6 +214,24 @@ public:
         checkTrue(bot.findValue("blue").isNull(),"seek absent key");
     }
 
+    void testVocab() {
+        report(0,"testing vocab...");
+        Bottle bot("[send] 10 20");
+        checkEqual(bot.size(),3,"plausible parse");
+        checkTrue(bot.get(0).isVocab(),"vocab present");
+        checkEqual(bot.get(0).asInt(),VOCAB('s','e','n','d'),
+                   "vocab match");
+    }
+
+    void testBlob() {
+        report(0,"testing blob...");
+        Bottle bot("{4 42 255} 10 20");
+        checkEqual(bot.size(),3,"plausible parse");
+        checkTrue(bot.get(0).isBlob(),"blob present");
+        checkEqual(bot.get(0).asBlobLength(),3,"blob length");
+        checkEqual(bot.get(0).asBlob()[1],42, "blob match");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -226,6 +244,8 @@ public:
         testEquality();
         testRange();
         testFind();
+        testVocab();
+        testBlob();
     }
 
     virtual String getName() {

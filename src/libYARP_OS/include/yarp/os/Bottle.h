@@ -21,6 +21,8 @@ public:
     virtual bool isString()  { return false; }
     virtual bool isDouble()  { return false; }
     virtual bool isList()    { return false; }
+    virtual bool isVocab()   { return false; }
+    virtual bool isBlob()    { return false; }
 
     virtual ConstString toString() const = 0;
 
@@ -28,6 +30,8 @@ public:
     virtual double asDouble()      { return 0; }
     virtual ConstString asString() { return ""; }
     virtual Bottle *asList()       { return (Bottle*)0; }
+    virtual const char *asBlob()   { return (const char*)0; }
+    virtual int asBlobLength()     { return 0; }
 
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
