@@ -39,7 +39,7 @@ public:
     checkEqual(p.getString("testing").c_str(),"left","good key after copy");
 
     Property p3;
-    char *args[] = {"--size","10","20","--mono","on"};
+    char *args[] = {"CMD","--size","10","20","--mono","on"};
     p3.fromCommand(5,args);
     Bottle bot(p3.toString().c_str());
     checkEqual(bot.size(),2,"right number of terms");

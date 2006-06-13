@@ -174,6 +174,12 @@ public:
                 done = true;
             }
             if (!done) {
+                // this comment filter is not safe for quoting
+                int comment = buf.strstr("//");
+                if (comment>=0) {
+                    buf = buf.substr(0,comment);
+                }
+
                 if (buf[0]=='[') {
                     int stop = buf.strstr("]");
                     if (stop>=0) {
@@ -300,7 +306,11 @@ ConstString Property::toString() const {
     return HELPER(implementation).toString();
 }
 
-void Property::fromCommand(int argc, char *argv[]) {
+void Property::fromCommand(int argc, char *argv[], bool skipFirst) {
+    if (skipFirst) {
+        argc--;
+        argv++;
+    }
     HELPER(implementation).fromCommand(argc,argv);
 }
 

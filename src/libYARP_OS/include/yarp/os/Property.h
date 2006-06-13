@@ -26,15 +26,11 @@ public:
     Bottle *getList(const char *key) const;
     ConstString getString(const char *key) const;
 
-    //Bottle& putBottle(const char *key, const Bottle& val);
-    //Bottle& putBottle(const char *key);
-    //Bottle *getBottle(const char *key) const;
-
     void clear();
 
     void fromString(const char *txt);
     
-    void fromCommand(int argc, char *argv[]);
+    void fromCommand(int argc, char *argv[], bool skipFirst=true);
 
     void fromConfigFile(const char *fname);
 
