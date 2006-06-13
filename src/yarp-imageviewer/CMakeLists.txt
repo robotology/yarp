@@ -8,10 +8,10 @@ INCLUDE_DIRECTORIES(${GTKPLUS_INCLUDE_DIR})
 # set up to use libYARP_*
 SET(NEED_LIBS YARP_OS YARP_sig)
 
-IF(WIN32)
+IF (WIN32 AND NOT CYGWIN)
   YarpProgram(yarpimageviewer NO_CONSOLE) #damn!
   INSTALL_TARGETS(/bin yarpimageviewer)
-ELSE(WIN32)
+ELSE (WIN32 AND NOT CYGWIN)
   YarpProgram(yarp-imageviewer CONSOLE)
-ENDIF(WIN32)
+ENDIF (WIN32 AND NOT CYGWIN)
 
