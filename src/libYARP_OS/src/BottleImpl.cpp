@@ -38,8 +38,8 @@ const int StoreString::code = BOTTLE_TAG_STRING;
 const int StoreBlob::code = BOTTLE_TAG_BLOB;
 const int StoreList::code = BOTTLE_TAG_LIST;
 
-#define UNIT_MASK 15
-#define GROUP_MASK 32
+#define UNIT_MASK (BOTTLE_TAG_INT|BOTTLE_TAG_VOCAB|BOTTLE_TAG_DOUBLE|BOTTLE_TAG_STRING|BOTTLE_TAG_BLOB)
+#define GROUP_MASK (BOTTLE_TAG_LIST)
 
 
 yarp::StoreNull BottleImpl::storeNull;
@@ -631,7 +631,8 @@ String StoreBlob::toStringFlex() const {
         if (i>0) {
             result += " ";
         }
-        result += NetType::toString((int)x[i]);
+        unsigned char *src = (unsigned char *)(&x[i]);
+        result += NetType::toString(*src);
     }
     return result;
 }
@@ -644,7 +645,7 @@ void StoreBlob::fromString(const String& src) {
     Bottle bot(src.c_str());
     String buf((size_t)(bot.size()));
     for (int i=0; i<bot.size(); i++) {
-        buf[i] = (char)(bot.get(i).asInt());
+        buf[i] = (char)((unsigned char)(bot.get(i).asInt()));
     }
     x.set(buf.c_str(),bot.size(),1);
 }

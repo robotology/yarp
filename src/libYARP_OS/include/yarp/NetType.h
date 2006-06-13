@@ -45,6 +45,8 @@ public:
 
     static String toString(int x);
 
+    static String toString(unsigned int x);
+
     static int toInt(String x);
 
     static unsigned long int getCrc(char *buf, int len);
