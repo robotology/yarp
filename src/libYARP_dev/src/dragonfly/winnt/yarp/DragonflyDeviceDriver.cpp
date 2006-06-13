@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.13 2006-06-01 16:20:21 natta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.14 2006-06-13 08:46:51 gmetta Exp $
 ///
 ///
 
@@ -531,9 +531,9 @@ void DragonflyDeviceDriver::recColorHSBilinear(const unsigned char *src, unsigne
 //                  GBGB...GB etc..
 bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned char *dest)
 {
-	int tmpB=0.0;
-	int tmpG=0.0;
-	int tmpR=0.0;
+	int tmpB=0;
+	int tmpG=0;
+	int tmpR=0;
 
 	int rr=0;
 	int cc=0;
@@ -737,9 +737,9 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 //                  GBGB...GB etc..
 bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *dest)
 {
-	int tmpB=0.0;
-	int tmpG=0.0;
-	int tmpR=0.0;
+	int tmpB=0;
+	int tmpG=0;
+	int tmpR=0;
 
 	int rr=0;
 	int cc=0;
@@ -880,9 +880,9 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 //                  GBGB...GB etc..
 bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned char *dest)
 {
-	int tmpB=0.0;
-	int tmpG=0.0;
-	int tmpR=0.0;
+	int tmpB=0;
+	int tmpG=0;
+	int tmpR=0;
 
 	int rr=0;
 	int cc=0;
