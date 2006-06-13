@@ -750,15 +750,27 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         
         imgPixelCode = header.id;
         
-        // make sure we're not trying to read into an incompatible image type
-        ACE_ASSERT(getPixelCode()==header.id);
         
-        resize(header.width,header.height);
-        
-        unsigned char *mem = getRawImage();
-        ACE_ASSERT(mem!=NULL);
-        ACE_ASSERT(getRawImageSize()==header.imgSize);
-        connection.expectBlock((char *)getRawImage(),getRawImageSize());
+        if (getPixelCode()!=header.id) {
+            // we're trying to read an incompatible image type
+            // rather than just fail, we'll read it (inefficiently)
+            FlexImage flex;
+            flex.setPixelCode(header.id);
+            flex.resize(header.width,header.height);
+            unsigned char *mem = flex.getRawImage();
+            ACE_ASSERT(mem!=NULL);
+            ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
+            connection.expectBlock((char *)flex.getRawImage(),
+                                   flex.getRawImageSize());
+            copy(flex);
+        } else {
+            ACE_ASSERT(getPixelCode()==header.id);
+            resize(header.width,header.height);
+            unsigned char *mem = getRawImage();
+            ACE_ASSERT(mem!=NULL);
+            ACE_ASSERT(getRawImageSize()==header.imgSize);
+            connection.expectBlock((char *)getRawImage(),getRawImageSize());
+        }
         
     } catch (IOException e) {
         return false;
