@@ -207,9 +207,11 @@ public:
     void testFind() {
         report(0,"testing find...");
         Bottle bot("(hello friend) (say 12 13) green");
-        checkEqual(bot.find("say").toString().c_str(),"say 12 13","seek key");
-        checkEqual(bot.find("green").toString().c_str(),"green","seek key");
-        checkEqual(bot.find("blue").toString().c_str(),"","seek absent key");
+        checkEqual(bot.findGroup("say").toString().c_str(),
+                   "say 12 13","seek key");
+        checkEqual(bot.findValue("hello").toString().c_str(),
+                   "friend","seek key");
+        checkTrue(bot.findValue("blue").isNull(),"seek absent key");
     }
 
     virtual void runTests() {

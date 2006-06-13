@@ -1,6 +1,6 @@
 
 if [ "`uname`" = "Linux" ]; then
-	EXT="tgz"
+	EXT="tar.gz"
 	MGEN=""
 	PGEN="-G TGZ"
 else

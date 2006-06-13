@@ -73,33 +73,10 @@ void BottleImpl::fromString(const String& line) {
     bool quoted = false;
     bool back = false;
     bool begun = false;
-    bool cuts = false;
     int nested = 0;
     String nline = line + " ";
 
-    // check ahead for a player-stage style implicit break into stanzas
-    unsigned int i=0;
-    for (i=0; i<nline.length(); i++) {
-        char ch = nline[i];
-        if (ch=='\n'||ch=='\r') {
-            if (!back) {
-                if (begun) {
-                    cuts = true;
-                }
-            }
-        } else {
-            back = (ch=='\\');
-        }
-        if (ch!=' '&&ch!='\t') {
-            begun = true;
-        }
-    }
-
-    // reset flags
-    begun = false;
-    back = false;
-
-    for (i=0; i<nline.length(); i++) {
+    for (unsigned int i=0; i<nline.length(); i++) {
         char ch = nline[i];
         if (back) {
             arg += ch;
@@ -572,4 +549,6 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
         add(alt.get(i).cloneStorable());
     }
 }
+
+
 

@@ -235,7 +235,6 @@ public:
       }
     */
 
-
     const char *getBytes();
     int byteCount();
 

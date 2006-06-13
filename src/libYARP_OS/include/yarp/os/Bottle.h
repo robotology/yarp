@@ -230,9 +230,13 @@ public:
 
     virtual BottleBit *clone();
 
-    BottleBit& find(const char *key);
+    BottleBit& findValue(const char *key);
+
+    Bottle& findGroup(const char *key);
 
 private:
+    BottleBit& find(const char *key);
+    static Bottle bottleNull;
     void *implementation;
 };
 

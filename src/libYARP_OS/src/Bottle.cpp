@@ -8,6 +8,8 @@
 using namespace yarp;
 using namespace yarp::os;
 
+Bottle Bottle::bottleNull;
+
 // implementation is a BottleImpl
 #define HELPER(x) (*((BottleImpl*)(x)))
 
@@ -158,6 +160,34 @@ BottleBit& Bottle::find(const char *key) {
     return get(-1);
 }
 
+
+BottleBit& Bottle::findValue(const char *key) {
+    for (int i=0; i<size(); i++) {
+        BottleBit *org = &(get(i));
+        BottleBit *cursor = org;
+        bool nested = false;
+        if (cursor->isList()) {
+            cursor = &(cursor->asList()->get(0));
+            nested = true;
+        }
+        if (String(key)==cursor->toString().c_str()) {
+            if (nested) {
+                return org->asList()->get(1);
+            }
+            return get(i+1);
+        }
+    }
+    // return invalid object
+    return get(-1);
+}
+
+Bottle& Bottle::findGroup(const char *key) {
+    BottleBit& bb = find(key);
+    if (bb.isList()) {
+        return *(bb.asList());
+    }
+    return bottleNull;
+}
 
 
 BottleBit *Bottle::clone() {
