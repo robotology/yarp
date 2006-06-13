@@ -289,6 +289,8 @@ public:
 
     bool fromBytes(ConnectionReader& reader);
 
+    void fromBinary(const char *text, int len);
+
     void specialize(int subCode);
     int getSpecialization();
     void setNested(bool nested);

@@ -10,8 +10,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 #include <yarp/NetType.h>
+#include <yarp/BufferedConnectionWriter.h>
 
 #include "TestList.h"
 
@@ -250,6 +252,21 @@ public:
         checkEqual(img3.width(),13,"normal external row width");
     }
 
+    virtual void testStandard() {
+        report(0,"checking standard compliance of description...");
+        ImageOf<PixelRgb> img;
+        img.resize(8,4);
+        BufferedConnectionWriter writer;
+        img.write(writer);
+        String s = writer.toString();
+        Bottle bot;
+        bot.fromBinary(s.c_str(),s.length());
+        checkEqual(bot.size(),3,"plausible bottle out");
+        checkEqual(bot.get(0).toString().c_str(),"img","good tag");
+        YARP_DEBUG(Logger::get(),"an example image:");
+        YARP_DEBUG(Logger::get(),bot.toString().c_str());
+    }
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -260,6 +277,7 @@ public:
         testExternal();
         testPadding();
         testZero();
+        testStandard();
     }
 };
 

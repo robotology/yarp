@@ -21,6 +21,16 @@ public:
         data = "";
     }
 
+    void reset() {
+        at = 0;
+        data = "";
+    }
+
+    void reset(const String& str) {
+        at = 0;
+        data = str;
+    }
+
     void add(const char *txt) {
         data += txt;
     }

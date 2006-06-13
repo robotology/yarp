@@ -31,13 +31,12 @@ using namespace yarp::os;
 //#define USE_YARP1_PREFIX
 
 // new YARP2 codes
-#define OFFSET 128
-const int StoreInt::code = 1;
-const int StoreVocab::code = 1+8;
-const int StoreDouble::code = 2;
-const int StoreString::code = 3;
-const int StoreBlob::code = 3+8;
-const int StoreList::code = 32;
+const int StoreInt::code = BOTTLE_TAG_INT;
+const int StoreVocab::code = BOTTLE_TAG_VOCAB;
+const int StoreDouble::code = BOTTLE_TAG_DOUBLE;
+const int StoreString::code = BOTTLE_TAG_STRING;
+const int StoreBlob::code = BOTTLE_TAG_BLOB;
+const int StoreList::code = BOTTLE_TAG_LIST;
 
 #define UNIT_MASK 15
 #define GROUP_MASK 32
@@ -209,9 +208,9 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
                 storable->asList()->setNested(true);
                 break;
             default:
-                if (id&GROUP_MASK!=0) {
+                if ((id&GROUP_MASK)!=0) {
                     // typed list
-                    subCode = id&UNIT_MASK;
+                    subCode = (id&UNIT_MASK);
                     storable = new StoreList();
                     YARP_ASSERT(storable!=NULL);
                     storable->asList()->specialize(subCode);
@@ -227,6 +226,19 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
             add(storable);
             return true;
 }
+
+
+void BottleImpl::fromBinary(const char *text, int len) {
+    String wrapper;
+    wrapper.set(text,len,0);
+    StringInputStream sis;
+    sis.add(wrapper);
+    StreamConnectionReader reader;
+    Route route;
+    reader.reset(sis,NULL,route,len,false);
+    read(reader);
+}
+
 
 
 bool BottleImpl::fromBytes(const Bytes& data) {

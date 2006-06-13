@@ -11,6 +11,9 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
 
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Vocab.h>
+
 #include <assert.h>
 
 #include <ace/OS_NS_stdlib.h>
@@ -700,6 +703,9 @@ void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
 class YARPImagePortContentHeader
 {
 public:
+
+    /*
+      // YARP1 codes
     yarp::os::NetInt32 len;
     yarp::os::NetInt32 w;
     yarp::os::NetInt32 id;
@@ -708,6 +714,25 @@ public:
     yarp::os::NetInt32 ext1;
     yarp::os::NetInt32 ext2;
     //double timestamp;
+    */
+
+    // YARP2 codes
+    yarp::os::NetInt32 totalLen;
+    yarp::os::NetInt32 listTag;
+    yarp::os::NetInt32 listLen;
+    yarp::os::NetInt32 paramNameTag;
+    yarp::os::NetInt32 paramName;
+    yarp::os::NetInt32 paramListTag;
+    yarp::os::NetInt32 paramListLen;
+    yarp::os::NetInt32 id;
+    yarp::os::NetInt32 depth;
+    yarp::os::NetInt32 imgSize;
+    yarp::os::NetInt32 rowSize;
+    yarp::os::NetInt32 width;
+    yarp::os::NetInt32 height;
+    yarp::os::NetInt32 paramBlobTag;
+    yarp::os::NetInt32 paramBlobLen;
+
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
@@ -716,6 +741,9 @@ public:
 bool Image::read(yarp::os::ConnectionReader& connection) {
     
     try {
+        // auto-convert text mode interaction
+        connection.convertTextMode();
+
         YARPImagePortContentHeader header;
         
         connection.expectBlock((char*)&header,sizeof(header));
@@ -725,11 +753,11 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         // make sure we're not trying to read into an incompatible image type
         ACE_ASSERT(getPixelCode()==header.id);
         
-        resize(header.w,header.h);
+        resize(header.width,header.height);
         
         unsigned char *mem = getRawImage();
         ACE_ASSERT(mem!=NULL);
-        ACE_ASSERT(getRawImageSize()==header.len);
+        ACE_ASSERT(getRawImageSize()==header.imgSize);
         connection.expectBlock((char *)getRawImage(),getRawImageSize());
         
     } catch (IOException e) {
@@ -742,6 +770,9 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
 bool Image::write(yarp::os::ConnectionWriter& connection) {
     YARPImagePortContentHeader header;
+
+    /*
+      // YARP1 initialization
     header.h = height();
     header.w = width();
     header.depth = getPixelSize();
@@ -750,12 +781,30 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     //header.timestamp = 0;
     header.ext1 = 0;
     header.ext2 = 0;
+    */
+
+    header.totalLen = sizeof(header)+getRawImageSize();
+    header.listTag = BOTTLE_TAG_LIST;
+    header.listLen = 3;
+    header.paramNameTag = BOTTLE_TAG_VOCAB;
+    header.paramName = VOCAB3('i','m','g');
+    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+    header.paramListLen = 6;
+    header.id = getPixelCode();
+    header.depth = getPixelSize();
+    header.imgSize = getRawImageSize();
+    header.rowSize = getRowSize();
+    header.width = width();
+    header.height = height();
+    header.paramBlobTag = BOTTLE_TAG_BLOB;
+    header.paramBlobLen = getRawImageSize();
+
     connection.appendBlock((char*)&header,sizeof(header));
     unsigned char *mem = getRawImage();
     ACE_ASSERT(mem!=NULL);
 
     // Note use of external block.  Implies care needed about ownership.
-    connection.appendExternalBlock((char *)mem,header.len);
+    connection.appendExternalBlock((char *)mem,header.imgSize);
 
     return true;
 }

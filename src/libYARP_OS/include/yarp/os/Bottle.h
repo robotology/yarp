@@ -5,6 +5,13 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Portable.h>
 
+#define BOTTLE_TAG_INT 1
+#define BOTTLE_TAG_VOCAB (1+8)
+#define BOTTLE_TAG_DOUBLE (2+8)
+#define BOTTLE_TAG_STRING (4)
+#define BOTTLE_TAG_BLOB (4+8)
+#define BOTTLE_TAG_LIST 256
+
 namespace yarp {
     namespace os {
         class Bottle;
@@ -191,6 +198,8 @@ public:
      * @param text the textual form of the bottle to be interpreted
      */
     void fromString(const char *text);
+
+    void fromBinary(const char *text, int len);
 
     /**
      * Gives a human-readable textual representation of the bottle, suitable 

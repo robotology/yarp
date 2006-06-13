@@ -4,6 +4,7 @@
 
 #include <yarp/InputStream.h>
 #include <yarp/TwoWayStream.h>
+#include <yarp/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/IOException.h>
 #include <yarp/NetType.h>
@@ -88,6 +89,9 @@ public:
         return textMode;
     }
 
+
+    virtual bool convertTextMode();
+
     virtual int getSize() {
         return messageLen;
     }
@@ -141,6 +145,7 @@ public:
 
 private:
     BufferedConnectionWriter *writer;
+    StringInputStream altStream;
     InputStream *in;
     TwoWayStream *str;
     int messageLen;

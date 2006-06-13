@@ -108,6 +108,11 @@ ConstString Bottle::toString() const {
     return ConstString(HELPER(implementation).toString().c_str());
 }
 
+void Bottle::fromBinary(const char *text, int len) {
+    HELPER(implementation).fromBinary(text,len);
+}
+
+
 
 bool Bottle::write(ConnectionWriter& writer) {
     bool result = false;

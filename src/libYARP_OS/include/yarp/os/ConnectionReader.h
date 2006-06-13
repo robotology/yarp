@@ -59,6 +59,16 @@ public:
     virtual bool isTextMode() = 0;
 
     /**
+     * Reads in a standard description in text mode, and converts
+     * it to a standard description in binary.  Useful if you
+     * only operate on the binary description usually, and just
+     * want to permit text mode for command-line interaction.
+     * If isTextMode would return false, no conversion is done.
+     * @return true if the conversion was possible
+     */
+    virtual bool convertTextMode() = 0;
+
+    /**
      * Checks how much data is available.
      * @return the number of bytes left on the connection.
      */
