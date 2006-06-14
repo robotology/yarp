@@ -266,12 +266,6 @@ public:
         add(new StoreDouble(x));
     }
 
-    void addInts(int *x, int ct) {
-    }
-
-    void addFloats(double *x, int ct) {
-    }
-
     void addString(const char *text) {
         add(new StoreString(String(text)));
     }
@@ -320,7 +314,9 @@ public:
 
     void addBit(yarp::os::BottleBit& bit) {
         // all BottleBits are Storables -- important invariant!
-        add((Storable*)bit.clone());
+        if (!bit.isNull()) {
+            add((Storable*)(bit.clone()));
+        }
     }
 
     yarp::os::BottleBit& addBit(const char *str) {

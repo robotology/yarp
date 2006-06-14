@@ -75,7 +75,7 @@ public:
  * somewhere else.  In the very early days of YARP, that is what
  * communication felt like.
  */
-class yarp::os::Bottle : public BottleBit  {
+class yarp::os::Bottle : public Portable {
 public:
 
     /**
@@ -250,11 +250,11 @@ public:
         copyRange(alt);
     }
     
-    virtual BottleBit *create() {
+    virtual Bottle *create() {
         return new Bottle();
     }
 
-    virtual BottleBit *clone();
+    virtual Bottle *clone();
 
     virtual BottleBit& find(const char *txt) {
         return findValue(txt);
@@ -267,12 +267,20 @@ public:
     void setNested(bool nested);
 
     static BottleBit& getNullBit() {
-        return bottleNull;
+        return bottleNull.get(-1);
     }
 
     BottleBit& findValue(const char *key);
 
     static Bottle& getNull();
+
+
+    virtual bool operator == (const Bottle& alt);
+
+    virtual bool operator != (const Bottle& alt) {
+        return !((*this)==alt);
+    }
+
 private:
 
     BottleBit& findGroupBit(const char *key);

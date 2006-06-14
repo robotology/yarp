@@ -74,9 +74,9 @@ public:
 
     PortCorePacket *getFreePacket() {
         //YARP_INFO(Logger::get(),String("inactive count is ") + 
-        //       NetType::toString(inactive.size()));
+        //     NetType::toString(inactive.size()));
         //YARP_INFO(Logger::get(),String("active count is ") + 
-        //       NetType::toString(active.size()));
+        //     NetType::toString(active.size()));
         if (inactive.is_empty()) {
             inactive.insert_tail(new PortCorePacket());
         }
@@ -101,7 +101,7 @@ public:
     bool checkPacket(PortCorePacket *packet) {
         if (packet!=NULL) {
             //YARP_INFO(Logger::get(), String("packet use count is ") +
-            //	NetType::toString(packet->getCount()));
+            //NetType::toString(packet->getCount()));
             if (packet->getCount()<=0) {
                 if (packet->getContent()!=NULL) {
                     YARP_DEBUG(Logger::get(), "Sending an onCompletion message");

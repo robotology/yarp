@@ -186,16 +186,17 @@ void *PortCoreOutputUnit::send(Writable& writer,
         YARP_ERROR(Logger::get(), "chosen port wait combination not yet implemented");
     }
     if (!sending) {
-        void *nextTracker = tracker;
-        tracker = cachedTracker;
-        sending = true;
         cachedWriter = &writer;
         cachedReader = reader;
-        cachedTracker = nextTracker;
+
+        sending = true;
         if (waitAfter==true) {
             sendHelper();
             sending = false;
         } else {
+            void *nextTracker = tracker;
+            tracker = cachedTracker;
+            cachedTracker = nextTracker;
             activate.post();
         }
     } else {

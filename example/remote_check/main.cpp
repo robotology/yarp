@@ -14,6 +14,8 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
+#include <yarp/Logger.h>
+
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -72,6 +74,7 @@ public:
 
 
 int main() {
+    //yarp::Logger::get().setVerbosity(100);
     Network::setLocalMode(true);
 
     FakeFrameGrabber fake;
@@ -103,10 +106,11 @@ int main() {
         dd.view(ctrl);
         if (ctrl!=NULL) {
             printf("*** It can be controlled as a framegrabber\n");
-            //double x = ctrl->getBrightness();
-            //printf("*** brightness before setting is reported as %g\n", x);
-            ctrl->setBrightness(100);
             double x = ctrl->getBrightness();
+            printf("*** brightness before setting is reported as %g\n", x);
+            ctrl->setBrightness(100);
+            printf("*** brightness set\n");
+            x = ctrl->getBrightness();
             printf("*** brightness after setting reported as %g\n", x);
         } else {
             printf("*** It can <<<<<NOT>>>>> be controlled as a framegrabber\n");

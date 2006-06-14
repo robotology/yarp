@@ -215,7 +215,7 @@ Bottle& Bottle::findGroup(const char *key) {
 }
 
 
-BottleBit *Bottle::clone() {
+Bottle *Bottle::clone() {
     Bottle *b = new Bottle();
     YARP_ASSERT(b!=NULL);
     b->copyRange(*this);
@@ -239,4 +239,9 @@ bool BottleBit::operator == (const BottleBit& alt) {
 
 Bottle& Bottle::getNull() {
     return bottleNull;
+}
+
+
+bool Bottle::operator == (const Bottle& alt) {
+    return String(toString().c_str()) == alt.toString().c_str();
 }
