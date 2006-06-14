@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/dev/ControlBoardInterfaces.h>
-#include <ace/Log_msg.h>
+#include <ace/Log_Msg.h>
 #include <stdio.h>
 
 using namespace yarp::dev;
