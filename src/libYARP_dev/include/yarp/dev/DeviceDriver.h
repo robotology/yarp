@@ -4,7 +4,7 @@
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
 
 namespace yarp {
     /**
@@ -30,6 +30,9 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool open(){return true;}
+
+
+    virtual bool open(yarp::os::Property& config){ return open(); }
 
     /**
      * Close the DeviceDriver.

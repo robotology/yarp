@@ -3,6 +3,7 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/String.h>
 #include <yarp/Logger.h>
+#include <yarp/os/Bottle.h>
 
 #include <ace/OS.h>
 
@@ -21,8 +22,17 @@ using namespace yarp::dev;
 #endif
 
 
-DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
+extern DeviceDriver *createRemoteFrameGrabber();
+
+
+DeviceDriver *Drivers::create(yarp::os::Property& prop) {
     String str = prop.get("device").asString().c_str();
+    Bottle bot(str.c_str());
+    if (bot.size()>1) {
+        // this wasn't a device name, but some codes -- rearrange
+        prop.fromString(str.c_str());
+        str = prop.get("device").asString().c_str();
+    }
 
 #ifdef ENABLE_dragonfly
     if (str == "dragonfly") {
@@ -35,6 +45,14 @@ DeviceDriver *Drivers::create(const yarp::os::Property& prop) {
         return driver;
     }
 #endif
+
+    if (str == "remote_framegrabber") {
+        DeviceDriver *dd = createRemoteFrameGrabber();
+        if (dd!=NULL) {
+            dd->open(prop);
+            return dd;
+        }
+    }
     
     return NULL;
 }

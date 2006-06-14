@@ -29,7 +29,7 @@ public:
     typedef T ContentType;
 
     BufferedPort() {
-        cachedRead = NULL;
+        cachedRead = 0; /*NULL*/
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
@@ -107,8 +107,8 @@ public:
     T *read(bool wait = true) {
         if (!wait) {
             if (!reader.check()) { 
-                cachedRead = NULL;
-                return NULL; 
+                cachedRead = 0; /*NULL*/
+                return 0; /*NULL*/
             }
         }
         cachedRead = reader.read();  

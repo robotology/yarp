@@ -24,7 +24,7 @@ public:
         create(txt);
     }
 
-    PolyDriver(const yarp::os::Property& prop) {
+    PolyDriver(yarp::os::Property& prop) {
         dd = NULL;
         create(prop);
     }
@@ -34,7 +34,7 @@ public:
         return isValid();
     }
 
-    bool create(const yarp::os::Property& prop) {
+    bool create(yarp::os::Property& prop) {
         dd = Drivers::factory().create(prop);
         return isValid();
     }

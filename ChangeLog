@@ -1,3 +1,7 @@
+2006-06-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Starting to add remote devices, primitive so far.
+
 2006-06-08  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Making Bottle a better behaved recursive data structure (an

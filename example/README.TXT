@@ -24,3 +24,6 @@ libraries.
     that is compatible with configuring drivers and sending 
     network messages.
 
+* remote_check
+
+    Tests the remote framegrabber device
