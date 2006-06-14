@@ -37,10 +37,10 @@ public:
     virtual bool getRawBuffer(unsigned char *buffer)=0;
 
     /**
-    * Get the size of the card's internal buffer, the user should use this 
-    * method to allocate the storage to contain a raw frame (getRawBuffer).
-    * @return the size of the internal buffer, in bytes.
-    **/
+     * Get the size of the card's internal buffer, the user should use this 
+     * method to allocate the storage to contain a raw frame (getRawBuffer).
+     * @return the size of the internal buffer, in bytes.
+     **/
     virtual int getRawBufferSize()=0;
 
     /** 
@@ -89,7 +89,7 @@ class yarp::dev::IFrameGrabberImage
 {
 public:
     virtual ~IFrameGrabberImage(){}
-     /**
+    /**
      * Get an rgb image from the frame grabber, if required
      * demosaicking/color reconstruction is applied
      * 
@@ -112,8 +112,8 @@ public:
 };
 
 /**
-* Control interface for frame grabber devices.
-*/
+ * Control interface for frame grabber devices.
+ */
 class yarp::dev::IFrameGrabberControls
 {
 public:

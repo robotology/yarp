@@ -24,7 +24,7 @@ public:
 	 * Generates a random number in the range 0 to 1.
 	 * @return a random floating point number in the range 0 to 1.
 	 */
-  static double uniform();
+    static double uniform();
 
 	/**
 	 * A normal random number generator.
@@ -32,7 +32,7 @@ public:
 	 * @param s is the standard deviation of the distribution.
 	 * @return a random number with normal distribution.
 	 */
-  static double normal(double m, double s);
+    static double normal(double m, double s);
 
 	/**
 	 * Sets the seed of the random number generator.

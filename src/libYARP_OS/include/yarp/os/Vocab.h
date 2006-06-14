@@ -7,9 +7,9 @@
 #include <yarp/os/ConstString.h>
 
 namespace yarp {
-  namespace os {
-    class Vocab;
-  }
+    namespace os {
+        class Vocab;
+    }
 }
 
 // We need a macro for efficient switching.

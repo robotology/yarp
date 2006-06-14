@@ -177,54 +177,54 @@ int BottleImpl::size() const {
 
 
 bool BottleImpl::fromBytes(ConnectionReader& reader) {
-            int id = speciality;
-            if (id==0) {
-                id = reader.expectInt();
-                YMSG(("READ subcode %d\n", id));
-            } else {
-                YMSG(("READ skipped subcode %d\n", speciality));
-            }
-            Storable *storable = NULL;
-            int subCode = 0;
-            switch (id) {
-            case StoreInt::code:
-                storable = new StoreInt();
-                break;
-            case StoreVocab::code:
-                storable = new StoreVocab();
-                break;
-            case StoreDouble::code:
-                storable = new StoreDouble();
-                break;
-            case StoreString::code:
-                storable = new StoreString();
-                break;
-            case StoreBlob::code:
-                storable = new StoreBlob();
-                break;
-            case StoreList::code:
-                storable = new StoreList();
-                YARP_ASSERT(storable!=NULL);
-                storable->asList()->setNested(true);
-                break;
-            default:
-                if ((id&GROUP_MASK)!=0) {
-                    // typed list
-                    subCode = (id&UNIT_MASK);
-                    storable = new StoreList();
-                    YARP_ASSERT(storable!=NULL);
-                    storable->asList()->specialize(subCode);
-                    storable->asList()->setNested(true);
-                }
-                break;
-            }
-            if (storable==NULL) {
-                YARP_ERROR(Logger::get(), "BottleImpl reader failed");
-                throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
-            }
-            storable->read(reader);
-            add(storable);
-            return true;
+    int id = speciality;
+    if (id==0) {
+        id = reader.expectInt();
+        YMSG(("READ subcode %d\n", id));
+    } else {
+        YMSG(("READ skipped subcode %d\n", speciality));
+    }
+    Storable *storable = NULL;
+    int subCode = 0;
+    switch (id) {
+    case StoreInt::code:
+        storable = new StoreInt();
+        break;
+    case StoreVocab::code:
+        storable = new StoreVocab();
+        break;
+    case StoreDouble::code:
+        storable = new StoreDouble();
+        break;
+    case StoreString::code:
+        storable = new StoreString();
+        break;
+    case StoreBlob::code:
+        storable = new StoreBlob();
+        break;
+    case StoreList::code:
+        storable = new StoreList();
+        YARP_ASSERT(storable!=NULL);
+        storable->asList()->setNested(true);
+        break;
+    default:
+        if ((id&GROUP_MASK)!=0) {
+            // typed list
+            subCode = (id&UNIT_MASK);
+            storable = new StoreList();
+            YARP_ASSERT(storable!=NULL);
+            storable->asList()->specialize(subCode);
+            storable->asList()->setNested(true);
+        }
+        break;
+    }
+    if (storable==NULL) {
+        YARP_ERROR(Logger::get(), "BottleImpl reader failed");
+        throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
+    }
+    storable->read(reader);
+    add(storable);
+    return true;
 }
 
 

@@ -286,17 +286,17 @@ ConstString Property::getString(const char *key) const {
 
 
 /*
-Bottle& Property::putBottle(const char *key, const Bottle& val) {
-    return HELPER(implementation).putBottle(key,val);
-}
+  Bottle& Property::putBottle(const char *key, const Bottle& val) {
+  return HELPER(implementation).putBottle(key,val);
+  }
 
-Bottle& Property::putBottle(const char *key) {
-    return HELPER(implementation).putBottle(key);
-}
+  Bottle& Property::putBottle(const char *key) {
+  return HELPER(implementation).putBottle(key);
+  }
 
-Bottle *Property::getBottle(const char *key) const {
-    return HELPER(implementation).getBottle(key);
-}
+  Bottle *Property::getBottle(const char *key) const {
+  return HELPER(implementation).getBottle(key);
+  }
 */
 
 void Property::clear() {

@@ -41,8 +41,8 @@ public:
 	int GetWidth();
 	int GetHeight();
 	bool Update();
-  //bool SaveLastImage(char *fileName, int format=YARPImageFile::FORMAT_PPM);
-        bool GetLastImage(yarp::sig::Image *data);
+    //bool SaveLastImage(char *fileName, int format=YARPImageFile::FORMAT_PPM);
+    bool GetLastImage(yarp::sig::Image *data);
 	bool Connect();
 	bool Connect(char *portName, char *network=NULL);
 	YARPImgRecv(char *portNamechar, char *network=NULL);
@@ -52,13 +52,13 @@ public:
 private:
 	bool _registerPorts();
 	bool _unregisterPorts();
-  //void _logpolarConversion(bool fovea, YARPGenericImage *dest);
+    //void _logpolarConversion(bool fovea, YARPGenericImage *dest);
 
 	char _portName[256];
 	char _network[256];
 	PortType _inPort;
 	yarp::sig::ImageOf<yarp::sig::PixelBgr> _img, _logImg;
-  //YARPLogpolar _logopolarMapper;
+    //YARPLogpolar _logopolarMapper;
 	bool _connected;
 	bool _portNameIsValid;
 	int _width;

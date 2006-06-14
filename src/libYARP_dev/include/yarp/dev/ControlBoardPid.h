@@ -41,7 +41,7 @@ public:
 
     /** Set proportional gain 
      * @param p new gain
-    */
+     */
     void setKp(double p);
 
     /** Set integrative gain 
@@ -51,27 +51,27 @@ public:
 
     /** Set derivative gain 
      * @param d new gain
-    */
+     */
     void setKd(double d);
 
     /** Set max threshold for the integrative part
      * @param m new max
-    */
+     */
     void setMaxInt(double m);
 
     /** Set output scale for the pid.
      * @param sc scale value
-    */
+     */
     void setScale(double sc);
 
     /** Set max output value for the pid.
-    * @param m new value
-    */
+     * @param m new value
+     */
     void setMaxOut(double m);
 
     /** Set offset value for the pid.
-    * @param o new offset value
-    */
+     * @param o new offset value
+     */
     void setOffset(double o);
 };
 

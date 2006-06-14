@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.14 2006-06-13 08:46:51 gmetta Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.15 2006-06-14 08:39:44 eshuy Exp $
 ///
 ///
 
@@ -116,7 +116,7 @@ public:
 	bool _setShutter (int value, bool bDefault=false);
 	bool _setGain (int value, bool bDefault=false);
 
- private:
+private:
 	void _prepareBuffers (void);
 	void _destroyBuffers (void);
 };
@@ -124,31 +124,31 @@ public:
 bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned char *dst)
 {
 	if ((sizeX == _sizeX) && (sizeY == _sizeY) )
-	{
-		// full size reconstruction
-		recColorFSBilinear(src, dst);
-		return true;
-	}
+        {
+            // full size reconstruction
+            recColorFSBilinear(src, dst);
+            return true;
+        }
     if ((sizeX == _halfX) && (sizeY == _halfY) )
-    {
-        recColorHSBilinear(src,dst);
-	}
+        {
+            recColorHSBilinear(src,dst);
+        }
 	else
-    {
-	    recColorGeneral(src,dst);
-		return true;
-    }
+        {
+            recColorGeneral(src,dst);
+            return true;
+        }
     return true;
 }
 
 void reportCameraInfo( const FlyCaptureInfoEx* pinfo )
 {
-   fprintf(stderr, "Serial number: %d\n", pinfo->SerialNumber );
-   fprintf(stderr, "Camera model: %s\n", pinfo->pszModelName );
-   fprintf(stderr, "Camera vendor: %s\n", pinfo->pszVendorName );
-   fprintf(stderr, "Sensor: %s\n", pinfo->pszSensorInfo );
-   fprintf(stderr, "DCAM compliance: %1.2f\n", (float)pinfo->iDCAMVer / 100.0 );
-   fprintf(stderr, "Bus position: (%d,%d).\n", pinfo->iBusNum, pinfo->iNodeNum );
+    fprintf(stderr, "Serial number: %d\n", pinfo->SerialNumber );
+    fprintf(stderr, "Camera model: %s\n", pinfo->pszModelName );
+    fprintf(stderr, "Camera vendor: %s\n", pinfo->pszVendorName );
+    fprintf(stderr, "Sensor: %s\n", pinfo->pszSensorInfo );
+    fprintf(stderr, "DCAM compliance: %1.2f\n", (float)pinfo->iDCAMVer / 100.0 );
+    fprintf(stderr, "Bus position: (%d,%d).\n", pinfo->iBusNum, pinfo->iNodeNum );
 }
 
 ///
@@ -552,33 +552,33 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 
     // prima riga
 	for(cc=1;cc<(_sizeX/2); cc++)
-	{
-		// first pixel
-		tmpR=*(tmpSrc-1);  
-		tmpR+=*(tmpSrc+1); 
+        {
+            // first pixel
+            tmpR=*(tmpSrc-1);  
+            tmpR+=*(tmpSrc+1); 
 			
-		// x interpolation
-		tmpB=*(tmpSrc+_sizeX);
+            // x interpolation
+            tmpB=*(tmpSrc+_sizeX);
 						
-		*dest++=(unsigned char)(tmpR/2);
-		*dest++=*(tmpSrc);
-		*dest++=(unsigned char)(tmpB);
+            *dest++=(unsigned char)(tmpR/2);
+            *dest++=*(tmpSrc);
+            *dest++=(unsigned char)(tmpB);
 
-		tmpSrc++;
+            tmpSrc++;
 
-		// second pixel
-        tmpB=*(tmpSrc+_sizeX+1); 
-		tmpB+=*(tmpSrc+_sizeX-1); 
+            // second pixel
+            tmpB=*(tmpSrc+_sizeX+1); 
+            tmpB+=*(tmpSrc+_sizeX-1); 
 			
-       	tmpG=*(tmpSrc-1);  
-        tmpG+=*(tmpSrc+1); 
-		tmpG+=*(tmpSrc+_sizeX); 
+            tmpG=*(tmpSrc-1);  
+            tmpG+=*(tmpSrc+1); 
+            tmpG+=*(tmpSrc+_sizeX); 
 
-		*dest++=*(tmpSrc);
-		*dest++=(unsigned char)(tmpG/3);
-        *dest++=(unsigned char)(tmpB/2);
-		tmpSrc++;
-	}
+            *dest++=*(tmpSrc);
+            *dest++=(unsigned char)(tmpG/3);
+            *dest++=(unsigned char)(tmpB/2);
+            tmpSrc++;
+        }
 
 	// last columns, ends with g
 	*dest++=*(tmpSrc-1);
@@ -588,119 +588,119 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	tmpSrc++;
 
 	for (rr=1; rr<(_sizeY/2); rr++)
-	{
-		////////////////// gb row
-		// prima colonna
-		tmpG=*(tmpSrc);
-		tmpB=*(tmpSrc+1);
-		tmpR=*(tmpSrc-_sizeX);
-		tmpR+=*(tmpSrc+_sizeX);
+        {
+            ////////////////// gb row
+            // prima colonna
+            tmpG=*(tmpSrc);
+            tmpB=*(tmpSrc+1);
+            tmpR=*(tmpSrc-_sizeX);
+            tmpR+=*(tmpSrc+_sizeX);
 
-		*dest++=(unsigned char)(tmpR/2);
-		*dest++=tmpG;
-		*dest++=tmpB;
+            *dest++=(unsigned char)(tmpR/2);
+            *dest++=tmpG;
+            *dest++=tmpB;
 		
-		tmpSrc++;
-
-		for(cc=1; cc<(_sizeX/2); cc++)
-		{
-			// second pixel
-			tmpR= *(tmpSrc-_sizeX-1);  
-			tmpR+= *(tmpSrc-_sizeX+1); 
-			tmpR+= *(tmpSrc+_sizeX-1); 
-			tmpR+= *(tmpSrc+_sizeX+1); 
-			
-			// + interpolation
-			tmpG=*(tmpSrc-_sizeX);		
-			tmpG+=*(tmpSrc-1);	
-			tmpG+=*(tmpSrc+1);		
-			tmpG+=*(tmpSrc+_sizeX);		
-
-			*dest++=(unsigned char)(tmpR/4);
-			*dest++=(unsigned char)(tmpG/4);
-			*dest++=*tmpSrc;
-
             tmpSrc++;
 
-			// first pixel
-			tmpR=*(tmpSrc-_sizeX);	
-			tmpR+=*(tmpSrc+_sizeX);
+            for(cc=1; cc<(_sizeX/2); cc++)
+                {
+                    // second pixel
+                    tmpR= *(tmpSrc-_sizeX-1);  
+                    tmpR+= *(tmpSrc-_sizeX+1); 
+                    tmpR+= *(tmpSrc+_sizeX-1); 
+                    tmpR+= *(tmpSrc+_sizeX+1); 
 			
-			// x interpolation
-			tmpB=*(tmpSrc-1);
-			tmpB+=*(tmpSrc+1);
+                    // + interpolation
+                    tmpG=*(tmpSrc-_sizeX);		
+                    tmpG+=*(tmpSrc-1);	
+                    tmpG+=*(tmpSrc+1);		
+                    tmpG+=*(tmpSrc+_sizeX);		
+
+                    *dest++=(unsigned char)(tmpR/4);
+                    *dest++=(unsigned char)(tmpG/4);
+                    *dest++=*tmpSrc;
+
+                    tmpSrc++;
+
+                    // first pixel
+                    tmpR=*(tmpSrc-_sizeX);	
+                    tmpR+=*(tmpSrc+_sizeX);
+			
+                    // x interpolation
+                    tmpB=*(tmpSrc-1);
+                    tmpB+=*(tmpSrc+1);
 						
-			*dest++=(unsigned char)(tmpR/2);
-			*dest++=*tmpSrc;
-			*dest++=(unsigned char)(tmpB/2);
+                    *dest++=(unsigned char)(tmpR/2);
+                    *dest++=*tmpSrc;
+                    *dest++=(unsigned char)(tmpB/2);
 			
+                    tmpSrc++;
+                }
+            //last col, ends with b
+            *dest++=*(tmpSrc+_sizeX-1);
+            *dest++=*(tmpSrc+_sizeX);
+            *dest++=*tmpSrc;
+
             tmpSrc++;
-		}
-		//last col, ends with b
-		*dest++=*(tmpSrc+_sizeX-1);
-		*dest++=*(tmpSrc+_sizeX);
-		*dest++=*tmpSrc;
-
-		tmpSrc++;
 			
-		////////////////// gb row
-		// prima colonna
-		tmpG=*(tmpSrc-_sizeX);	
-		tmpG+=*(tmpSrc+_sizeX);	
-		tmpG+=*(tmpSrc+1);	
+            ////////////////// gb row
+            // prima colonna
+            tmpG=*(tmpSrc-_sizeX);	
+            tmpG+=*(tmpSrc+_sizeX);	
+            tmpG+=*(tmpSrc+1);	
 
-		tmpB=*(tmpSrc-_sizeX+1);
-		tmpB+=*(tmpSrc+_sizeX+1);
-		tmpR=*tmpSrc;
+            tmpB=*(tmpSrc-_sizeX+1);
+            tmpB+=*(tmpSrc+_sizeX+1);
+            tmpR=*tmpSrc;
 		
-		*dest++=(unsigned char)(tmpR);
-		*dest++=(unsigned char)(tmpG/3);
-		*dest++=(unsigned char)(tmpB/2);
+            *dest++=(unsigned char)(tmpR);
+            *dest++=(unsigned char)(tmpG/3);
+            *dest++=(unsigned char)(tmpB/2);
 
-		tmpSrc++;
+            tmpSrc++;
 
-		// altre colonne
-		for(cc=1; cc<(_sizeX/2); cc++)
-		{
-			// second pixel
-			tmpB=*(tmpSrc-_sizeX);	
-			tmpB+=*(tmpSrc+_sizeX);  
+            // altre colonne
+            for(cc=1; cc<(_sizeX/2); cc++)
+                {
+                    // second pixel
+                    tmpB=*(tmpSrc-_sizeX);	
+                    tmpB+=*(tmpSrc+_sizeX);  
 			
-			// x interpolation
-			tmpR=*(tmpSrc-1);	
-			tmpR+=*(tmpSrc+1);	
+                    // x interpolation
+                    tmpR=*(tmpSrc-1);	
+                    tmpR+=*(tmpSrc+1);	
 						
-			*dest++=(unsigned char)(tmpR/2);
-			*dest++=*tmpSrc;
-			*dest++=(unsigned char)(tmpB/2);
+                    *dest++=(unsigned char)(tmpR/2);
+                    *dest++=*tmpSrc;
+                    *dest++=(unsigned char)(tmpB/2);
 
-            tmpSrc++;
+                    tmpSrc++;
 
-			// first pixel, x interpolation
-			tmpB=*(tmpSrc-_sizeX-1);		
-			tmpB+=*(tmpSrc-_sizeX+1);	
-			tmpB+=*(tmpSrc+_sizeX-1);
-			tmpB+=*(tmpSrc+_sizeX+1);	
+                    // first pixel, x interpolation
+                    tmpB=*(tmpSrc-_sizeX-1);		
+                    tmpB+=*(tmpSrc-_sizeX+1);	
+                    tmpB+=*(tmpSrc+_sizeX-1);
+                    tmpB+=*(tmpSrc+_sizeX+1);	
 			
-			// + interpolation
-			tmpG=*(tmpSrc+1);
-			tmpG+=*(tmpSrc-1);
-			tmpG+=*(tmpSrc+_sizeX);
-			tmpG+=*(tmpSrc-_sizeX);
+                    // + interpolation
+                    tmpG=*(tmpSrc+1);
+                    tmpG+=*(tmpSrc-1);
+                    tmpG+=*(tmpSrc+_sizeX);
+                    tmpG+=*(tmpSrc-_sizeX);
 			
-			*dest++=*tmpSrc;
-			*dest++=(unsigned char)(tmpG/4);
-			*dest++=(unsigned char)(tmpB/4);
+                    *dest++=*tmpSrc;
+                    *dest++=(unsigned char)(tmpG/4);
+                    *dest++=(unsigned char)(tmpB/4);
 			
-            tmpSrc++;
-		}
+                    tmpSrc++;
+                }
 	
-		*dest++=*(tmpSrc-1);
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX);
+            *dest++=*(tmpSrc-1);
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc-_sizeX);
 
-		tmpSrc++;
-	}
+            tmpSrc++;
+        }
 
 	//////////// ultima riga
 	// prima colonna
@@ -711,17 +711,17 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
-	{
-		*dest++=*(tmpSrc-_sizeX+1);
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc);
-		tmpSrc++;
+        {
+            *dest++=*(tmpSrc-_sizeX+1);
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc);
+            tmpSrc++;
 
-        *dest++=*(tmpSrc-_sizeX);
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX+1);
-		tmpSrc++;
-	}
+            *dest++=*(tmpSrc-_sizeX);
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc-_sizeX+1);
+            tmpSrc++;
+        }
 
 	// ultimo pixel
 	*dest++=*(tmpSrc-1-_sizeX);
@@ -755,21 +755,21 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 
     // prima riga
 	for(cc=1;cc<(_sizeX/2); cc++)
-	{
-		// first pixel
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc+_sizeX);
+        {
+            // first pixel
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc+_sizeX);
 
-		tmpSrc++;
+            tmpSrc++;
 
-		// second pixel
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc+1);
-        *dest++=*(tmpSrc+_sizeX-1);
+            // second pixel
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc+_sizeX-1);
 
-        tmpSrc++;
-	}
+            tmpSrc++;
+        }
 
 	// last columns, ends with g
 	*dest++=*(tmpSrc-1);
@@ -779,70 +779,70 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 	tmpSrc++;
 
 	for (rr=1; rr<=(_sizeY/2-1); rr++)
-	{
-		////////////////// gb row
-		// prima colonna
-		*dest++=*(tmpSrc+_sizeX);
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc);
+        {
+            ////////////////// gb row
+            // prima colonna
+            *dest++=*(tmpSrc+_sizeX);
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc);
 		
-		tmpSrc++;
+            tmpSrc++;
 
-		for(cc=1; cc<(_sizeX/2); cc++)
-		{
-			// second pixel
-			*dest++=*(tmpSrc+_sizeX+1);
-			*dest++=*(tmpSrc+1);
+            for(cc=1; cc<(_sizeX/2); cc++)
+                {
+                    // second pixel
+                    *dest++=*(tmpSrc+_sizeX+1);
+                    *dest++=*(tmpSrc+1);
+                    *dest++=*tmpSrc;
+
+                    tmpSrc++;
+
+                    // first pixel
+                    *dest++=*(tmpSrc+_sizeX);
+                    *dest++=*tmpSrc;
+                    *dest++=*(tmpSrc+1);
+
+                    tmpSrc++;
+                }
+            //last col, ends with b
+            *dest++=*(tmpSrc+_sizeX-1);
+            *dest++=*(tmpSrc+_sizeX);
             *dest++=*tmpSrc;
 
             tmpSrc++;
-
-			// first pixel
-			*dest++=*(tmpSrc+_sizeX);
-			*dest++=*tmpSrc;
-			*dest++=*(tmpSrc+1);
-
-            tmpSrc++;
-		}
-		//last col, ends with b
-		*dest++=*(tmpSrc+_sizeX-1);
-		*dest++=*(tmpSrc+_sizeX);
-		*dest++=*tmpSrc;
-
-		tmpSrc++;
 			
-		////////////////// gb row
-		// prima colonna
-		*dest++=*tmpSrc;
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc+_sizeX+1);
-
-		tmpSrc++;
-
-		// altre colonne
-		for(cc=1; cc<(_sizeX/2); cc++)
-		{
-			// second pixel
-			*dest++=*(tmpSrc+1);
-			*dest++=*tmpSrc;
-			*dest++=*(tmpSrc+_sizeX);
+            ////////////////// gb row
+            // prima colonna
+            *dest++=*tmpSrc;
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc+_sizeX+1);
 
             tmpSrc++;
 
-			// first pixel, x interpolation
-			*dest++=*tmpSrc;
-			*dest++=*(tmpSrc+1);
-			*dest++=*(tmpSrc+_sizeX+1);
+            // altre colonne
+            for(cc=1; cc<(_sizeX/2); cc++)
+                {
+                    // second pixel
+                    *dest++=*(tmpSrc+1);
+                    *dest++=*tmpSrc;
+                    *dest++=*(tmpSrc+_sizeX);
 
-            tmpSrc++;
-		}
+                    tmpSrc++;
+
+                    // first pixel, x interpolation
+                    *dest++=*tmpSrc;
+                    *dest++=*(tmpSrc+1);
+                    *dest++=*(tmpSrc+_sizeX+1);
+
+                    tmpSrc++;
+                }
 	
-		*dest++=*(tmpSrc-1);
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX);
+            *dest++=*(tmpSrc-1);
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc-_sizeX);
 
-		tmpSrc++;
-	}
+            tmpSrc++;
+        }
 
 	//////////// ultima riga
 	// prima colonna
@@ -853,17 +853,17 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
-	{
-		*dest++=*(tmpSrc-_sizeX+1);
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc);
-		tmpSrc++;
+        {
+            *dest++=*(tmpSrc-_sizeX+1);
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc);
+            tmpSrc++;
 
-        *dest++=*(tmpSrc-_sizeX);
-		*dest++=*(tmpSrc);
-		*dest++=*(tmpSrc-_sizeX+1);
-		tmpSrc++;
-	}
+            *dest++=*(tmpSrc-_sizeX);
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc-_sizeX+1);
+            tmpSrc++;
+        }
 
 	// ultimo pixel
 	*dest++=*(tmpSrc-1-_sizeX);
@@ -903,23 +903,23 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 
     // prima riga
 	for(cc=1;cc<(_halfX-1); cc++)
-	{
-		// first pixel
-		tmpB=*(tmpSrc+_sizeX+1);
-        tmpB+=*(tmpSrc+_sizeX-1);
+        {
+            // first pixel
+            tmpB=*(tmpSrc+_sizeX+1);
+            tmpB+=*(tmpSrc+_sizeX-1);
         
-        tmpG=*(tmpSrc-1);
-        tmpG+=*(tmpSrc+1);
-        tmpG+=*(tmpSrc+_sizeX);
+            tmpG=*(tmpSrc-1);
+            tmpG+=*(tmpSrc+1);
+            tmpG+=*(tmpSrc+_sizeX);
 						
-		*dest++=*(tmpSrc);
-		*dest++=(unsigned char)(tmpG/3);
-		*dest++=(unsigned char)(tmpB/2);
+            *dest++=*(tmpSrc);
+            *dest++=(unsigned char)(tmpG/3);
+            *dest++=(unsigned char)(tmpB/2);
 
-		tmpSrc+=2;
+            tmpSrc+=2;
 
-        c++;
-	}
+            c++;
+        }
 
   	// last columns, ends with r
 	*dest++=*(tmpSrc);
@@ -935,47 +935,47 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
     c=0;
     r++;
 	for (rr=1; rr<(_halfY-1); rr++)
-	{
-		////////////////// rg row
-		// prima colonna
-		*dest++=*tmpSrc;
-		*dest++=*(tmpSrc+1);
-		*dest++=*(tmpSrc+_sizeX+1);
+        {
+            ////////////////// rg row
+            // prima colonna
+            *dest++=*tmpSrc;
+            *dest++=*(tmpSrc+1);
+            *dest++=*(tmpSrc+_sizeX+1);
 		
-		tmpSrc+=2;
-        c++;
-
-		for(cc=1; cc<(_halfX-1); cc++)
-		{
-            // first pixel
-            tmpB=*(tmpSrc+_sizeX+1);
-            tmpB+=*(tmpSrc+_sizeX-1);
-            tmpB+=*(tmpSrc-_sizeX+1);
-            tmpB+=*(tmpSrc-_sizeX-1);
-            
-            tmpG=*(tmpSrc-1);
-            tmpG+=*(tmpSrc+1);
-            tmpG+=*(tmpSrc+_sizeX);
-            tmpG+=*(tmpSrc-_sizeX);
-            
-            *dest++=*(tmpSrc);
-            *dest++=(unsigned char)(tmpG/4);
-            *dest++=(unsigned char)(tmpB/4);
-            
             tmpSrc+=2;
             c++;
-		}
-		//last col, ends with r
- 	    *dest++=*(tmpSrc);
-	    *dest++=*(tmpSrc-1);
-	    *dest++=*(tmpSrc+_sizeX-1);
- 
-		tmpSrc+=2;
-        tmpSrc+=_sizeX; //skip a row
 
-        r++;
-        c=0;
-    }
+            for(cc=1; cc<(_halfX-1); cc++)
+                {
+                    // first pixel
+                    tmpB=*(tmpSrc+_sizeX+1);
+                    tmpB+=*(tmpSrc+_sizeX-1);
+                    tmpB+=*(tmpSrc-_sizeX+1);
+                    tmpB+=*(tmpSrc-_sizeX-1);
+            
+                    tmpG=*(tmpSrc-1);
+                    tmpG+=*(tmpSrc+1);
+                    tmpG+=*(tmpSrc+_sizeX);
+                    tmpG+=*(tmpSrc-_sizeX);
+            
+                    *dest++=*(tmpSrc);
+                    *dest++=(unsigned char)(tmpG/4);
+                    *dest++=(unsigned char)(tmpB/4);
+            
+                    tmpSrc+=2;
+                    c++;
+                }
+            //last col, ends with r
+            *dest++=*(tmpSrc);
+            *dest++=*(tmpSrc-1);
+            *dest++=*(tmpSrc+_sizeX-1);
+ 
+            tmpSrc+=2;
+            tmpSrc+=_sizeX; //skip a row
+
+            r++;
+            c=0;
+        }
 
     c=0;
 
@@ -989,23 +989,23 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
     c++;
 
     for(cc=1;cc<(_halfX-1); cc++)
-	{
-		// first pixel
-		tmpB=*(tmpSrc-_sizeX+1);
-        tmpB+=*(tmpSrc-_sizeX-1);
+        {
+            // first pixel
+            tmpB=*(tmpSrc-_sizeX+1);
+            tmpB+=*(tmpSrc-_sizeX-1);
         
-        tmpG=*(tmpSrc-1);
-        tmpG+=*(tmpSrc+1);
-        tmpG+=*(tmpSrc-_sizeX);
+            tmpG=*(tmpSrc-1);
+            tmpG+=*(tmpSrc+1);
+            tmpG+=*(tmpSrc-_sizeX);
 						
-		*dest++=*(tmpSrc);
-		*dest++=(unsigned char)(tmpG/3);
-		*dest++=(unsigned char)(tmpB/2);
+            *dest++=*(tmpSrc);
+            *dest++=(unsigned char)(tmpG/3);
+            *dest++=(unsigned char)(tmpB/2);
 
-		tmpSrc+=2;
+            tmpSrc+=2;
 
-        c++;
-	}
+            c++;
+        }
 
   	// last columns, ends with r
 	*dest++=*(tmpSrc);

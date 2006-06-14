@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /////////////////////////////////////////////////////////////////////////
 ///                                                                   ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2003           ///
@@ -27,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.3 2006-06-13 14:49:31 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.4 2006-06-14 08:39:44 eshuy Exp $
 ///
 ///
 

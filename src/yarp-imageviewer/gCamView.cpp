@@ -12,22 +12,22 @@
 static gint timeout_CB (gpointer data)
 {
 	if ( (!_freezed) && getImage() )
-	{
-		int imageWidth, imageHeight, pixbufWidth, pixbufHeight;
-		imageWidth = _inputImg.width();
-		imageHeight = _inputImg.height();
-		pixbufWidth = gdk_pixbuf_get_width(frame);
-		pixbufHeight = gdk_pixbuf_get_height(frame);
-		if ( (imageWidth != pixbufWidth) || (imageHeight != pixbufHeight) )
-		{
-			g_object_unref(frame);
-			frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
-		}
-		_frameN++;	
-		gtk_widget_queue_draw (da);
-		if (_savingSet)
-			saveCurrentFrame();
-	}
+        {
+            int imageWidth, imageHeight, pixbufWidth, pixbufHeight;
+            imageWidth = _inputImg.width();
+            imageHeight = _inputImg.height();
+            pixbufWidth = gdk_pixbuf_get_width(frame);
+            pixbufHeight = gdk_pixbuf_get_height(frame);
+            if ( (imageWidth != pixbufWidth) || (imageHeight != pixbufHeight) )
+                {
+                    g_object_unref(frame);
+                    frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
+                }
+            _frameN++;	
+            gtk_widget_queue_draw (da);
+            if (_savingSet)
+                saveCurrentFrame();
+        }
 
 	return TRUE;
 }
@@ -50,54 +50,54 @@ static gboolean delete_event( GtkWidget *widget, GdkEvent *event, gpointer data 
 static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ((frame) && (mainWindow))
-	{
-		guchar *pixels;
-		unsigned int rowstride;
-		unsigned int imageWidth, imageHeight, areaWidth, areaHeight;
+        {
+            guchar *pixels;
+            unsigned int rowstride;
+            unsigned int imageWidth, imageHeight, areaWidth, areaHeight;
 
-		_semaphore.wait();
-		yarpImage2pixbuf(&_inputImg, frame);
-		_semaphore.post();
+            _semaphore.wait();
+            yarpImage2pixbuf(&_inputImg, frame);
+            _semaphore.post();
  
-		imageWidth = _inputImg.width();
-		imageHeight = _inputImg.height();
-		areaWidth = event->area.width;
-		areaHeight = event->area.height;
+            imageWidth = _inputImg.width();
+            imageHeight = _inputImg.height();
+            areaWidth = event->area.width;
+            areaHeight = event->area.height;
 
-		if ( (areaWidth != imageWidth) || (areaHeight != imageHeight) )
-		{
-			GdkPixbuf *scaledFrame;
-			scaledFrame = gdk_pixbuf_scale_simple(	frame,
-													areaWidth,
-													areaHeight,
-													GDK_INTERP_BILINEAR); // Best quality
-													//GDK_INTERP_NEAREST); // Best speed
+            if ( (areaWidth != imageWidth) || (areaHeight != imageHeight) )
+                {
+                    GdkPixbuf *scaledFrame;
+                    scaledFrame = gdk_pixbuf_scale_simple(	frame,
+                                                            areaWidth,
+                                                            areaHeight,
+                                                            GDK_INTERP_BILINEAR); // Best quality
+                    //GDK_INTERP_NEAREST); // Best speed
 
-			pixels = gdk_pixbuf_get_pixels (scaledFrame);
-			rowstride = gdk_pixbuf_get_rowstride(scaledFrame);
-			gdk_draw_rgb_image (widget->window,
-				widget->style->black_gc,
-				event->area.x, event->area.y,
-				event->area.width, event->area.height,
-				GDK_RGB_DITHER_NORMAL,
-				pixels,
-				rowstride);
-			g_object_unref(scaledFrame);
+                    pixels = gdk_pixbuf_get_pixels (scaledFrame);
+                    rowstride = gdk_pixbuf_get_rowstride(scaledFrame);
+                    gdk_draw_rgb_image (widget->window,
+                                        widget->style->black_gc,
+                                        event->area.x, event->area.y,
+                                        event->area.width, event->area.height,
+                                        GDK_RGB_DITHER_NORMAL,
+                                        pixels,
+                                        rowstride);
+                    g_object_unref(scaledFrame);
 			
-		}
-		else
-		{
-			pixels = gdk_pixbuf_get_pixels (frame);
-			rowstride = gdk_pixbuf_get_rowstride(frame);
-			gdk_draw_rgb_image (widget->window,
-					widget->style->black_gc,
-					event->area.x, event->area.y,
-					event->area.width, event->area.height,
-					GDK_RGB_DITHER_NORMAL,
-					pixels,
-					rowstride);
-		}
-	}
+                }
+            else
+                {
+                    pixels = gdk_pixbuf_get_pixels (frame);
+                    rowstride = gdk_pixbuf_get_rowstride(frame);
+                    gdk_draw_rgb_image (widget->window,
+                                        widget->style->black_gc,
+                                        event->area.x, event->area.y,
+                                        event->area.width, event->area.height,
+                                        GDK_RGB_DITHER_NORMAL,
+                                        pixels,
+                                        rowstride);
+                }
+        }
 	return TRUE;
 }
 
@@ -111,10 +111,10 @@ static gint menuFileQuit_CB(GtkWidget *widget, gpointer data)
 static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 {
 	const gchar *authors[] = 
-	{
-		"EmmeBi",
-		NULL
-	 };
+        {
+            "EmmeBi",
+            NULL
+        };
 	const gchar *license =
 		"Licensed under the Academic Free License Version 1.0\n"
 		"The complete license description is contained in the\n"
@@ -136,13 +136,13 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 		"ONNECTION WITH THE SOFTWARE.\n";
 
 	gtk_show_about_dialog(GTK_WINDOW(mainWindow),
-							"name", "gview",
-							"version", "0.4",
-							"license", license,
-							"website", "http://www.liralab.it",
-							"comments", "Program to display images received on a port.",
-							"authors", authors,
-							NULL);
+                          "name", "gview",
+                          "version", "0.4",
+                          "license", license,
+                          "website", "http://www.liralab.it",
+                          "comments", "Program to display images received on a port.",
+                          "authors", authors,
+                          NULL);
 	return TRUE;
 }
 
@@ -196,15 +196,15 @@ static gint menuImageInterval_CB(GtkWidget *widget, gpointer data)
 static gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-    {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
-		gtk_widget_show_all (saveSingleDialog);
+        {
+            gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
+            gtk_widget_show_all (saveSingleDialog);
 		
-    } 
+        } 
 	else 
-	{
-		gtk_widget_hide (saveSingleDialog);	
-    }
+        {
+            gtk_widget_hide (saveSingleDialog);	
+        }
 
 	return TRUE;
 }
@@ -212,15 +212,15 @@ static gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer
 static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-    {
-        gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
+        {
+            gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
 					
-		gtk_widget_show_all (saveSetDialog);
-    } 
+            gtk_widget_show_all (saveSetDialog);
+        } 
 	else 
-	{
-		gtk_widget_hide (saveSetDialog);
-    }
+        {
+            gtk_widget_hide (saveSetDialog);
+        }
 
 	return TRUE;
 }
@@ -228,13 +228,13 @@ static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer da
 static gint menuImageFreeze_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
-    {
-        _freezed = true;
+        {
+            _freezed = true;
     
-    } else 
-	{
-		_freezed = false;
-    }
+        } else 
+            {
+                _freezed = false;
+            }
 
 	return TRUE;
 }
@@ -286,13 +286,13 @@ static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 	gint response;
 
 	dialog = gtk_dialog_new_with_buttons ("New Frame Rate",
-					GTK_WINDOW (mainWindow),
-					GTK_DIALOG_MODAL,
-					GTK_STOCK_OK,
-					GTK_RESPONSE_OK,
-                    GTK_STOCK_CANCEL,
-                    GTK_RESPONSE_CANCEL,
-					NULL);
+                                          GTK_WINDOW (mainWindow),
+                                          GTK_DIALOG_MODAL,
+                                          GTK_STOCK_OK,
+                                          GTK_RESPONSE_OK,
+                                          GTK_STOCK_CANCEL,
+                                          GTK_RESPONSE_CANCEL,
+                                          NULL);
 
 	hbox = gtk_hbox_new (FALSE, 8);
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
@@ -309,12 +309,12 @@ static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 
 	if (response == GTK_RESPONSE_OK)
-	{
-		_options.refreshTime = (int) gtk_spin_button_get_value (GTK_SPIN_BUTTON(spinner));
-		gtk_timeout_remove (_options.refreshTime);
-		timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
-		updateStatusbar(GTK_STATUSBAR (statusbar));
-	}
+        {
+            _options.refreshTime = (int) gtk_spin_button_get_value (GTK_SPIN_BUTTON(spinner));
+            gtk_timeout_remove (_options.refreshTime);
+            timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
+            updateStatusbar(GTK_STATUSBAR (statusbar));
+        }
 
 	gtk_widget_destroy (dialog);
 		
@@ -332,25 +332,25 @@ static gint clickDA_CB (GtkWidget *widget, GdkEventButton *event, gpointer data)
 	imageWidth = _imgRecv.GetWidth();
 	imageHeight = _imgRecv.GetHeight();
 	if ( (imageWidth != 0) && (imageHeight != 0) )
-	{
-		daWidth = widget->allocation.width;
-		daHeight = widget->allocation.height;
-		clickX = (int) event->x;
-		clickY = (int) event->y;
-		ratioX = double(clickX) / double(daWidth);
-		ratioY = double(clickY) / double(daHeight);
-		imageX = int(imageWidth * ratioX + 0.5);
-		imageY = int(imageHeight * ratioY + 0.5);
+        {
+            daWidth = widget->allocation.width;
+            daHeight = widget->allocation.height;
+            clickX = (int) event->x;
+            clickY = (int) event->y;
+            ratioX = double(clickX) / double(daWidth);
+            ratioY = double(clickY) / double(daHeight);
+            imageX = int(imageWidth * ratioX + 0.5);
+            imageY = int(imageHeight * ratioY + 0.5);
 
-		/*
-		_outBottle.writeInt(imageX);
-		_outBottle.writeInt(imageY);
-		_pOutPort->Content() = _outBottle;
-		_pOutPort->Write();
-		_outBottle.reset();
-		*/
+            /*
+              _outBottle.writeInt(imageX);
+              _outBottle.writeInt(imageY);
+              _pOutPort->Content() = _outBottle;
+              _pOutPort->Write();
+              _outBottle.reset();
+            */
 	
-	}
+        }
 
 	return TRUE;
 }
@@ -412,62 +412,62 @@ GtkWidget* createSaveSetDialog(void)
 //-------------------------------------------------
 GtkWidget* createMenubar(void)
 {
-   GtkWidget *menubar;
+    GtkWidget *menubar;
 
 	menubar =  gtk_menu_bar_new ();
 	GtkWidget *menuSeparator;	
-// Submenus Items on menubar
-  fileItem = gtk_menu_item_new_with_label ("File");
-  imageItem = gtk_menu_item_new_with_label ("Image");
-  helpItem = gtk_menu_item_new_with_label ("Help");
-// Submenu: File 
-  fileMenu = gtk_menu_new();
-  fileSingleItem = gtk_check_menu_item_new_with_label ("Save single image..");
-  gtk_menu_append( GTK_MENU(fileMenu), fileSingleItem);
-  gtk_signal_connect( GTK_OBJECT(fileSingleItem), "toggled", GTK_SIGNAL_FUNC(menuFileSingle_CB), mainWindow);
-  fileSetItem = gtk_check_menu_item_new_with_label ("Save a set of images..");
-  gtk_menu_append( GTK_MENU(fileMenu), fileSetItem);
-  gtk_signal_connect( GTK_OBJECT(fileSetItem), "toggled", GTK_SIGNAL_FUNC(menuFileSet_CB), mainWindow);
-  menuSeparator = gtk_separator_menu_item_new();
-  gtk_menu_append( GTK_MENU(fileMenu), menuSeparator);
-  fileQuitItem = gtk_menu_item_new_with_label ("Quit");
-  gtk_menu_append( GTK_MENU(fileMenu), fileQuitItem);
-  gtk_signal_connect( GTK_OBJECT(fileQuitItem), "activate", GTK_SIGNAL_FUNC(menuFileQuit_CB), mainWindow);
-// Submenu: Image  
-  imageMenu = gtk_menu_new();
-  imageSizeItem = gtk_menu_item_new_with_label ("Original size");
-  gtk_menu_append( GTK_MENU(imageMenu), imageSizeItem);
-  gtk_signal_connect( GTK_OBJECT(imageSizeItem), "activate", GTK_SIGNAL_FUNC(menuImageSize_CB), mainWindow);
-  imageRatioItem = gtk_menu_item_new_with_label ("Original aspect ratio");
-  gtk_menu_append( GTK_MENU(imageMenu), imageRatioItem);
-  gtk_signal_connect( GTK_OBJECT(imageRatioItem), "activate", GTK_SIGNAL_FUNC(menuImageRatio_CB), mainWindow);
-  menuSeparator = gtk_separator_menu_item_new();
-  gtk_menu_append( GTK_MENU(imageMenu), menuSeparator);
-  imageFreezeItem = gtk_check_menu_item_new_with_label ("Freeze");
-  gtk_menu_append( GTK_MENU(imageMenu), imageFreezeItem);
-  gtk_signal_connect( GTK_OBJECT(imageFreezeItem), "toggled", GTK_SIGNAL_FUNC(menuImageFreeze_CB), mainWindow);
-  menuSeparator = gtk_separator_menu_item_new();
-  gtk_menu_append( GTK_MENU(imageMenu), menuSeparator);
-  imageFramerateItem = gtk_menu_item_new_with_label ("Change frame rate..");
-  gtk_menu_append( GTK_MENU(imageMenu), imageFramerateItem);
-  gtk_signal_connect( GTK_OBJECT(imageFramerateItem), "activate", GTK_SIGNAL_FUNC(menuImageFramerate_CB), mainWindow);
-  imageIntervalItem = gtk_menu_item_new_with_label ("Show Interval..");
-  gtk_menu_append( GTK_MENU(imageMenu), imageIntervalItem);
-  gtk_signal_connect( GTK_OBJECT(imageIntervalItem), "activate", GTK_SIGNAL_FUNC(menuImageInterval_CB), mainWindow);
-// Submenu: Help
-  helpMenu = gtk_menu_new();	
-  helpAboutItem = gtk_menu_item_new_with_label ("About..");
-  gtk_menu_append( GTK_MENU(helpMenu), helpAboutItem);
-  gtk_signal_connect( GTK_OBJECT(helpAboutItem), "activate", GTK_SIGNAL_FUNC(menuHelpAbout_CB), mainWindow);
-// linking the submenus to items on menubar
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(fileItem), fileMenu);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(imageItem), imageMenu);
-  gtk_menu_item_set_submenu(GTK_MENU_ITEM(helpItem), helpMenu);
-// appending the submenus to the menubar
-  gtk_menu_bar_append(GTK_MENU_BAR(menubar), fileItem);
-  gtk_menu_bar_append(GTK_MENU_BAR(menubar), imageItem);
-  gtk_menu_item_set_right_justified (GTK_MENU_ITEM (helpItem), TRUE);
-  gtk_menu_bar_append(GTK_MENU_BAR(menubar), helpItem);
+    // Submenus Items on menubar
+    fileItem = gtk_menu_item_new_with_label ("File");
+    imageItem = gtk_menu_item_new_with_label ("Image");
+    helpItem = gtk_menu_item_new_with_label ("Help");
+    // Submenu: File 
+    fileMenu = gtk_menu_new();
+    fileSingleItem = gtk_check_menu_item_new_with_label ("Save single image..");
+    gtk_menu_append( GTK_MENU(fileMenu), fileSingleItem);
+    gtk_signal_connect( GTK_OBJECT(fileSingleItem), "toggled", GTK_SIGNAL_FUNC(menuFileSingle_CB), mainWindow);
+    fileSetItem = gtk_check_menu_item_new_with_label ("Save a set of images..");
+    gtk_menu_append( GTK_MENU(fileMenu), fileSetItem);
+    gtk_signal_connect( GTK_OBJECT(fileSetItem), "toggled", GTK_SIGNAL_FUNC(menuFileSet_CB), mainWindow);
+    menuSeparator = gtk_separator_menu_item_new();
+    gtk_menu_append( GTK_MENU(fileMenu), menuSeparator);
+    fileQuitItem = gtk_menu_item_new_with_label ("Quit");
+    gtk_menu_append( GTK_MENU(fileMenu), fileQuitItem);
+    gtk_signal_connect( GTK_OBJECT(fileQuitItem), "activate", GTK_SIGNAL_FUNC(menuFileQuit_CB), mainWindow);
+    // Submenu: Image  
+    imageMenu = gtk_menu_new();
+    imageSizeItem = gtk_menu_item_new_with_label ("Original size");
+    gtk_menu_append( GTK_MENU(imageMenu), imageSizeItem);
+    gtk_signal_connect( GTK_OBJECT(imageSizeItem), "activate", GTK_SIGNAL_FUNC(menuImageSize_CB), mainWindow);
+    imageRatioItem = gtk_menu_item_new_with_label ("Original aspect ratio");
+    gtk_menu_append( GTK_MENU(imageMenu), imageRatioItem);
+    gtk_signal_connect( GTK_OBJECT(imageRatioItem), "activate", GTK_SIGNAL_FUNC(menuImageRatio_CB), mainWindow);
+    menuSeparator = gtk_separator_menu_item_new();
+    gtk_menu_append( GTK_MENU(imageMenu), menuSeparator);
+    imageFreezeItem = gtk_check_menu_item_new_with_label ("Freeze");
+    gtk_menu_append( GTK_MENU(imageMenu), imageFreezeItem);
+    gtk_signal_connect( GTK_OBJECT(imageFreezeItem), "toggled", GTK_SIGNAL_FUNC(menuImageFreeze_CB), mainWindow);
+    menuSeparator = gtk_separator_menu_item_new();
+    gtk_menu_append( GTK_MENU(imageMenu), menuSeparator);
+    imageFramerateItem = gtk_menu_item_new_with_label ("Change frame rate..");
+    gtk_menu_append( GTK_MENU(imageMenu), imageFramerateItem);
+    gtk_signal_connect( GTK_OBJECT(imageFramerateItem), "activate", GTK_SIGNAL_FUNC(menuImageFramerate_CB), mainWindow);
+    imageIntervalItem = gtk_menu_item_new_with_label ("Show Interval..");
+    gtk_menu_append( GTK_MENU(imageMenu), imageIntervalItem);
+    gtk_signal_connect( GTK_OBJECT(imageIntervalItem), "activate", GTK_SIGNAL_FUNC(menuImageInterval_CB), mainWindow);
+    // Submenu: Help
+    helpMenu = gtk_menu_new();	
+    helpAboutItem = gtk_menu_item_new_with_label ("About..");
+    gtk_menu_append( GTK_MENU(helpMenu), helpAboutItem);
+    gtk_signal_connect( GTK_OBJECT(helpAboutItem), "activate", GTK_SIGNAL_FUNC(menuHelpAbout_CB), mainWindow);
+    // linking the submenus to items on menubar
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(fileItem), fileMenu);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(imageItem), imageMenu);
+    gtk_menu_item_set_submenu(GTK_MENU_ITEM(helpItem), helpMenu);
+    // appending the submenus to the menubar
+    gtk_menu_bar_append(GTK_MENU_BAR(menubar), fileItem);
+    gtk_menu_bar_append(GTK_MENU_BAR(menubar), imageItem);
+    gtk_menu_item_set_right_justified (GTK_MENU_ITEM (helpItem), TRUE);
+    gtk_menu_bar_append(GTK_MENU_BAR(menubar), helpItem);
   
 	return menubar;
 }
@@ -477,17 +477,17 @@ GtkWidget* createMenubar(void)
 //-------------------------------------------------
 void updateStatusbar (GtkStatusbar  *statusbar)
 {
-  gchar *msg;
-  float fps;
-  fps = 1000 / float(_options.refreshTime);
+    gchar *msg;
+    float fps;
+    fps = 1000 / float(_options.refreshTime);
  
-  gtk_statusbar_pop (statusbar, 0); // clear any previous message, underflow is allowed 
+    gtk_statusbar_pop (statusbar, 0); // clear any previous message, underflow is allowed 
 				    
-  msg = g_strdup_printf ("%s - %.1f fps",_options.portName, fps);
+    msg = g_strdup_printf ("%s - %.1f fps",_options.portName, fps);
 
-  gtk_statusbar_push (statusbar, 0, msg);
+    gtk_statusbar_push (statusbar, 0, msg);
 
-  g_free (msg);
+    g_free (msg);
 }
 
 //-------------------------------------------------
@@ -519,11 +519,11 @@ GtkWidget* createMainWindow(void)
 	da = gtk_drawing_area_new ();
 	g_signal_connect (da, "expose_event", G_CALLBACK (expose_CB), NULL);
 	if (_options.outputEnabled == 1)
-	{
-		g_signal_connect (da, "button_press_event", G_CALLBACK (clickDA_CB), NULL);
-		// Ask to receive events the drawing area doesn't normally subscribe to
-		gtk_widget_set_events (da, gtk_widget_get_events (da) | GDK_BUTTON_PRESS_MASK);
-	}
+        {
+            g_signal_connect (da, "button_press_event", G_CALLBACK (clickDA_CB), NULL);
+            // Ask to receive events the drawing area doesn't normally subscribe to
+            gtk_widget_set_events (da, gtk_widget_get_events (da) | GDK_BUTTON_PRESS_MASK);
+        }
 	gtk_box_pack_start(GTK_BOX(box), da, TRUE, TRUE, 0);
 	// StatusBar for main window
 	statusbar = gtk_statusbar_new ();
@@ -565,7 +565,7 @@ bool getImage()
 
 
 bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg, 
-		      GdkPixbuf* destPixbuf)
+                      GdkPixbuf* destPixbuf)
 {
 	// il pixbuf deve essere già allocato e di dimensioni opportune
 	guchar *dst_data;
@@ -589,132 +589,132 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 	src_data = (char *) sourceImg->getRawImage(); //GetRawBuffer();
 
 	if ( src_line_size == rowstride)
-	{
-		ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
-	}
+        {
+            ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
+        }
 	else
-	{
-		for (int i=0; i < height; i++)
-		{
-			p_dst = dst_data + i * rowstride;
-			p_src = src_data + i * src_line_size;
-			ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
-		}
-	}
+        {
+            for (int i=0; i < height; i++)
+                {
+                    p_dst = dst_data + i * rowstride;
+                    p_src = src_data + i * src_line_size;
+                    ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
+                }
+        }
 
 	return true;
 }
 
 void parseOptFile(char *fileName)
 {
-  /*
-	YARPConfigFile optFile;
-	char s_tmp[255];
+    /*
+      YARPConfigFile optFile;
+      char s_tmp[255];
 	
-	optFile.setName(fileName);
+      optFile.setName(fileName);
 
-	if ( optFile.getString("[NETWORK]", "PortName", s_tmp) == YARP_OK) 
-		ACE_OS::sprintf(_options.portName, s_tmp);
-	if ( optFile.getString("[NETWORK]", "NetName", s_tmp) == YARP_OK)
-		ACE_OS::sprintf(_options.networkName, s_tmp);
-	if ( optFile.getString("[NETWORK]", "OutPortName", s_tmp) == YARP_OK) 
-		ACE_OS::sprintf(_options.outPortName, s_tmp);
-	if ( optFile.getString("[NETWORK]", "OutNetName", s_tmp) == YARP_OK)
-		ACE_OS::sprintf(_options.outNetworkName, s_tmp);
-		optFile.get("[WINDOW]", "RefreshTime", &_options.refreshTime);
-	optFile.get("[WINDOW]", "PosX", &_options.posX);
-	optFile.get("[WINDOW]", "PosY", &_options.posY);
-	optFile.get("[WINDOW]", "Width", &_options.windWidth);
-	optFile.get("[WINDOW]", "Height", &_options.windHeight);
-	optFile.get("[PROGRAM]", "OutputEnabled", &_options.outputEnabled);
-	optFile.get("[PROGRAM]", "SaveOptions", &_options.saveOnExit);
-	optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
-	optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
-  */
+      if ( optFile.getString("[NETWORK]", "PortName", s_tmp) == YARP_OK) 
+      ACE_OS::sprintf(_options.portName, s_tmp);
+      if ( optFile.getString("[NETWORK]", "NetName", s_tmp) == YARP_OK)
+      ACE_OS::sprintf(_options.networkName, s_tmp);
+      if ( optFile.getString("[NETWORK]", "OutPortName", s_tmp) == YARP_OK) 
+      ACE_OS::sprintf(_options.outPortName, s_tmp);
+      if ( optFile.getString("[NETWORK]", "OutNetName", s_tmp) == YARP_OK)
+      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
+      optFile.get("[WINDOW]", "RefreshTime", &_options.refreshTime);
+      optFile.get("[WINDOW]", "PosX", &_options.posX);
+      optFile.get("[WINDOW]", "PosY", &_options.posY);
+      optFile.get("[WINDOW]", "Width", &_options.windWidth);
+      optFile.get("[WINDOW]", "Height", &_options.windHeight);
+      optFile.get("[PROGRAM]", "OutputEnabled", &_options.outputEnabled);
+      optFile.get("[PROGRAM]", "SaveOptions", &_options.saveOnExit);
+      optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
+      optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
+    */
 }
 
 void saveOptFile(char *fileName)
 {
-  /*
-	FILE *optFile = NULL;
-	optFile = ACE_OS::fopen(_options.fileName,"wt");
-	if (optFile == NULL)
-	{
-		g_print("ERROR: Impossible to save to option file.\n");
-		return;
-	}
-	ACE_OS::fprintf(optFile,"[NETWORK]\n" );
-	ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
-	ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
-	ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
-	ACE_OS::fprintf(optFile,"OutNetName %s\n", _options.outNetworkName);
-	ACE_OS::fprintf(optFile,"[WINDOW]\n" );
-	ACE_OS::fprintf(optFile,"RefreshTime %d\n", _options.refreshTime);
-	ACE_OS::fprintf(optFile,"PosX %d\n", _options.posX);
-	ACE_OS::fprintf(optFile,"PosY %d\n", _options.posY);
-	ACE_OS::fprintf(optFile,"Width %d\n", _options.windWidth);
-	ACE_OS::fprintf(optFile,"Height %d\n", _options.windHeight);
-	ACE_OS::fprintf(optFile,"[PROGRAM]\n" );
-	ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
-	ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
-	ACE_OS::fprintf(optFile,"Logpolar %d\n", _options.logpolar);
-	ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
+    /*
+      FILE *optFile = NULL;
+      optFile = ACE_OS::fopen(_options.fileName,"wt");
+      if (optFile == NULL)
+      {
+      g_print("ERROR: Impossible to save to option file.\n");
+      return;
+      }
+      ACE_OS::fprintf(optFile,"[NETWORK]\n" );
+      ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
+      ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
+      ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
+      ACE_OS::fprintf(optFile,"OutNetName %s\n", _options.outNetworkName);
+      ACE_OS::fprintf(optFile,"[WINDOW]\n" );
+      ACE_OS::fprintf(optFile,"RefreshTime %d\n", _options.refreshTime);
+      ACE_OS::fprintf(optFile,"PosX %d\n", _options.posX);
+      ACE_OS::fprintf(optFile,"PosY %d\n", _options.posY);
+      ACE_OS::fprintf(optFile,"Width %d\n", _options.windWidth);
+      ACE_OS::fprintf(optFile,"Height %d\n", _options.windHeight);
+      ACE_OS::fprintf(optFile,"[PROGRAM]\n" );
+      ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
+      ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
+      ACE_OS::fprintf(optFile,"Logpolar %d\n", _options.logpolar);
+      ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
 	
-	ACE_OS::fclose(optFile);
-  */
+      ACE_OS::fclose(optFile);
+    */
 }
 
 void parseParameters(int argc, char* argv[])
 {
-  /*
-	char s_tmp[255];
-	int i_tmp;
+    /*
+      char s_tmp[255];
+      int i_tmp;
 
-	if(YARPParseParameters::parse(argc, argv, "-name", s_tmp))
-		ACE_OS::sprintf(_options.portName, s_tmp);
+      if(YARPParseParameters::parse(argc, argv, "-name", s_tmp))
+      ACE_OS::sprintf(_options.portName, s_tmp);
 		
-	if (YARPParseParameters::parse(argc, argv, "-net", s_tmp))
-		ACE_OS::sprintf(_options.networkName, s_tmp);
+      if (YARPParseParameters::parse(argc, argv, "-net", s_tmp))
+      ACE_OS::sprintf(_options.networkName, s_tmp);
 
-	if (YARPParseParameters::parse(argc, argv, "-p", &i_tmp))
-		_options.refreshTime = i_tmp;
+      if (YARPParseParameters::parse(argc, argv, "-p", &i_tmp))
+      _options.refreshTime = i_tmp;
 
-	if (YARPParseParameters::parse(argc, argv, "-x", &i_tmp))
-		_options.posX = i_tmp;
+      if (YARPParseParameters::parse(argc, argv, "-x", &i_tmp))
+      _options.posX = i_tmp;
 	
-	if (YARPParseParameters::parse(argc, argv, "-y", &i_tmp))
-		_options.posY = i_tmp;
+      if (YARPParseParameters::parse(argc, argv, "-y", &i_tmp))
+      _options.posY = i_tmp;
 
-	if (YARPParseParameters::parse(argc, argv, "-w", &i_tmp))
-		_options.windWidth = i_tmp;
+      if (YARPParseParameters::parse(argc, argv, "-w", &i_tmp))
+      _options.windWidth = i_tmp;
 
-	if (YARPParseParameters::parse(argc, argv, "-h", &i_tmp))
-		_options.windHeight = i_tmp;
+      if (YARPParseParameters::parse(argc, argv, "-h", &i_tmp))
+      _options.windHeight = i_tmp;
 
-	if (YARPParseParameters::parse(argc, argv, "-saveoptions"))
-		_options.saveOnExit = 1;
-	else 
-		_options.saveOnExit = 0;
-	if (YARPParseParameters::parse(argc, argv, "-l"))
-		_options.logpolar = 1;
-	else 
-		_options.logpolar = 0;
+      if (YARPParseParameters::parse(argc, argv, "-saveoptions"))
+      _options.saveOnExit = 1;
+      else 
+      _options.saveOnExit = 0;
+      if (YARPParseParameters::parse(argc, argv, "-l"))
+      _options.logpolar = 1;
+      else 
+      _options.logpolar = 0;
 	
-	if (YARPParseParameters::parse(argc, argv, "-f"))
-		_options.fovea = 1;
-	else 
-		_options.fovea = 0;
+      if (YARPParseParameters::parse(argc, argv, "-f"))
+      _options.fovea = 1;
+      else 
+      _options.fovea = 0;
 
-	if (YARPParseParameters::parse(argc, argv, "-out", s_tmp)) 
-	{ 
-		ACE_OS::sprintf(_options.outPortName, s_tmp);
-		_options.outputEnabled = 1;
-	}
+      if (YARPParseParameters::parse(argc, argv, "-out", s_tmp)) 
+      { 
+      ACE_OS::sprintf(_options.outPortName, s_tmp);
+      _options.outputEnabled = 1;
+      }
 
 
-	if (YARPParseParameters::parse(argc, argv, "-neto", s_tmp))
-		ACE_OS::sprintf(_options.outNetworkName, s_tmp);
-  */
+      if (YARPParseParameters::parse(argc, argv, "-neto", s_tmp))
+      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
+    */
 }
 
 void setOptionsToDefault()
@@ -745,30 +745,30 @@ bool openPorts()
 	g_print("Registering port %s on network %s...\n", _options.portName, _options.networkName);
 	ret = _imgRecv.Connect(_options.portName, _options.networkName);
 	if (ret == true)
-	{
-		g_print("Port registration succeed!\n");
-	}
+        {
+            g_print("Port registration succeed!\n");
+        }
 	else
-	{
-		g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
-		return false;
-	}
+        {
+            g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
+            return false;
+        }
 	if (_options.outputEnabled == 1)
-	{
-	  /*
+        {
+            /*
 		
-		_pOutPort = new YARPOutputPortOf<YARPBottle>(YARPOutputPort::DEFAULT_OUTPUTS, YARP_UDP);
-		g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
-		res = _pOutPort->Register(_options.outPortName, _options.outNetworkName);
-		if  (res == YARP_OK)
+            _pOutPort = new YARPOutputPortOf<YARPBottle>(YARPOutputPort::DEFAULT_OUTPUTS, YARP_UDP);
+            g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
+            res = _pOutPort->Register(_options.outPortName, _options.outNetworkName);
+            if  (res == YARP_OK)
 			g_print("Port registration succeed!\n");
-		else 
-		{
+            else 
+            {
 			g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
 			return false;
-		}
-	  */
-	}
+            }
+            */
+        }
 
 	return true;
 }
@@ -780,25 +780,25 @@ void closePorts()
 	g_print("Uregistering port(s)...\n");
 	ret = _imgRecv.Disconnect();
 	if (ret)
-	{
-		g_print("Port %s unregistration succeed!\n", _options.portName);
-	}
+        {
+            g_print("Port %s unregistration succeed!\n", _options.portName);
+        }
 	else
-	{
-		g_print("ERROR: Port %s unregistration failed.\n", _options.portName);
-	}
+        {
+            g_print("ERROR: Port %s unregistration failed.\n", _options.portName);
+        }
 	
 	if (_options.outputEnabled == 1)
-	{
-	  /*
-		res = _pOutPort->close();
-		if  (res)
-			g_print("Port %s unregistration succeed!\n", _options.outPortName);
-		else 
-			g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
-		delete _pOutPort;
-	  */
-	}
+        {
+            /*
+              res = _pOutPort->close();
+              if  (res)
+              g_print("Port %s unregistration succeed!\n", _options.outPortName);
+              else 
+              g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
+              delete _pOutPort;
+            */
+        }
 }
 
 void setUp()
@@ -874,7 +874,7 @@ int myMain(int argc, char* argv[])
 	// mouse event).
 	gtk_main ();
 
-  return 0;
+    return 0;
 }
 
 #ifdef WIN32

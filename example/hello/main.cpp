@@ -6,8 +6,8 @@
 using namespace yarp::os;
 
 int main() {
-  printf("Hello...\n");
-  Time::delay(1);
-  printf("...world\n");
-  return 0;
+    printf("Hello...\n");
+    Time::delay(1);
+    printf("...world\n");
+    return 0;
 }

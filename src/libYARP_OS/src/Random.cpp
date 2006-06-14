@@ -10,7 +10,7 @@
 using namespace yarp::os;
 
 double Random::uniform() {
-  return double (ACE_OS::rand ()) / double (RAND_MAX);
+    return double (ACE_OS::rand ()) / double (RAND_MAX);
 }
 
 
@@ -22,28 +22,28 @@ double Random::uniform() {
 // original code copyright reported below.
 
 /* boxmuller.c           
-            Implements the Polar form of the Box-Muller
-                         Transformation
+   Implements the Polar form of the Box-Muller
+   Transformation
 
-               (c) Copyright 1994, Everett F. Carter Jr.
-              Permission is granted by the author to use
-           this software for any application provided this
-                    copyright notice is preserved.
+   (c) Copyright 1994, Everett F. Carter Jr.
+   Permission is granted by the author to use
+   this software for any application provided this
+   copyright notice is preserved.
 
 */
 
 double Random::normal(double m, double s)	
-	{				        
-		double x1, x2, w, y1;
-		static double y2;
-		static int use_last = 0;
+{				        
+    double x1, x2, w, y1;
+    static double y2;
+    static int use_last = 0;
 
-		if (use_last)		        /* use value from previous call */
+    if (use_last)		        /* use value from previous call */
 		{
 			y1 = y2;
 			use_last = 0;
 		}
-		else
+    else
 		{
 			do {
 				x1 = 2.0 * uniform() - 1.0;
@@ -57,8 +57,8 @@ double Random::normal(double m, double s)
 			use_last = 1;
 		}
 
-		return( m + y1 * s );
-	}
+    return( m + y1 * s );
+}
 
 void Random::seed(int seed) { 
     ACE_OS::srand (seed); 

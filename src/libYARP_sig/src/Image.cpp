@@ -39,48 +39,48 @@ inline int PAD_BYTES (int len, int pad)
 }
 
 /*
-  // not used any more?
+// not used any more?
 static int _GetPixelSize(int pixel_type)
 {
-    int result = 0;
-    switch (pixel_type)
-        {
-        case YARP_PIXEL_MONO:
-            result = sizeof(PixelMono);
-            break;
-        case YARP_PIXEL_RGB:
-            result = sizeof(PixelRgb);
-            break;
-        case YARP_PIXEL_HSV:
-            result = sizeof(PixelHsv);
-            break;
-        case YARP_PIXEL_BGR:
-            result = sizeof(PixelBgr);
-            break;
-        case YARP_PIXEL_MONO_SIGNED:
-            result = sizeof(PixelMonoSigned);
-            break;
-        case YARP_PIXEL_RGB_SIGNED:
-            result = sizeof(PixelRgbSigned);
-            break;
-        case YARP_PIXEL_MONO_FLOAT:
-            result = sizeof(PixelFloat);
-            break;
-        case YARP_PIXEL_RGB_FLOAT:
-            result = sizeof(PixelRgbFloat);
-            break;
-        case YARP_PIXEL_HSV_FLOAT:
-            result = sizeof(PixelHsvFloat);
-            break;
-        default:
-            // only other acceptable possibility is that the size is being supplied
-            // for an unknown type
-            //ACE_ASSERT (pixel_type<0);
-            result = -pixel_type;
-            break;
-        }
-    //printf("Getting pixel size for %d (%d)\n", pixel_type, result);
-    return result;
+int result = 0;
+switch (pixel_type)
+{
+ case YARP_PIXEL_MONO:
+     result = sizeof(PixelMono);
+     break;
+ case YARP_PIXEL_RGB:
+     result = sizeof(PixelRgb);
+     break;
+ case YARP_PIXEL_HSV:
+     result = sizeof(PixelHsv);
+     break;
+ case YARP_PIXEL_BGR:
+     result = sizeof(PixelBgr);
+     break;
+ case YARP_PIXEL_MONO_SIGNED:
+     result = sizeof(PixelMonoSigned);
+     break;
+ case YARP_PIXEL_RGB_SIGNED:
+     result = sizeof(PixelRgbSigned);
+     break;
+ case YARP_PIXEL_MONO_FLOAT:
+     result = sizeof(PixelFloat);
+     break;
+ case YARP_PIXEL_RGB_FLOAT:
+     result = sizeof(PixelRgbFloat);
+     break;
+ case YARP_PIXEL_HSV_FLOAT:
+     result = sizeof(PixelHsvFloat);
+     break;
+ default:
+     // only other acceptable possibility is that the size is being supplied
+     // for an unknown type
+     //ACE_ASSERT (pixel_type<0);
+     result = -pixel_type;
+     break;
+}
+//printf("Getting pixel size for %d (%d)\n", pixel_type, result);
+ return result;
 }
 */
 
@@ -705,7 +705,7 @@ class YARPImagePortContentHeader
 public:
 
     /*
-      // YARP1 codes
+    // YARP1 codes
     yarp::os::NetInt32 len;
     yarp::os::NetInt32 w;
     yarp::os::NetInt32 id;
@@ -784,7 +784,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     YARPImagePortContentHeader header;
 
     /*
-      // YARP1 initialization
+    // YARP1 initialization
     header.h = height();
     header.w = width();
     header.depth = getPixelSize();

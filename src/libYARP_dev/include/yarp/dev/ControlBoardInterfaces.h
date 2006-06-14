@@ -75,7 +75,7 @@ public:
      */
     virtual bool setErrorLimits(const double *limits)=0;
 
-     /** Get the current error for a joint.
+    /** Get the current error for a joint.
      * @param j joint number
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
@@ -116,7 +116,7 @@ public:
      * @param j joint number
      * @param ref pointer to storage for return value
      * @return reference value 
-    */
+     */
     virtual bool getReference(int j, double *ref)=0;
 
     /** Get the current reference position of all controllers.
@@ -265,8 +265,8 @@ public:
     virtual bool stop(int j)=0;
 
     /** Stop motion, multiple joints 
-    * @return true/false on success/failure
-    */
+     * @return true/false on success/failure
+     */
     virtual bool stop()=0;
 };
 
@@ -301,7 +301,7 @@ public:
      */
     virtual bool velocityMove(const double *sp)=0;
 
-     /** Set reference acceleration for a joint. This value is used during the
+    /** Set reference acceleration for a joint. This value is used during the
      * trajectory generation.
      * @param j joint number
      * @param acc acceleration value
@@ -338,8 +338,8 @@ public:
     virtual bool stop(int j)=0;
 
     /** Stop motion, multiple joints 
-    * @return true/false on success or failure
-    */
+     * @return true/false on success or failure
+     */
     virtual bool stop()=0;
 };
 
@@ -473,33 +473,33 @@ public:
     virtual bool disableAmp(int j)=0;
 
     /* Read the electric current going to all motors.
-    * @param vals pointer to storage for the output values
-    * @return hopefully true, false in bad luck.
-    */
+     * @param vals pointer to storage for the output values
+     * @return hopefully true, false in bad luck.
+     */
     virtual bool getCurrents(double *vals)=0;
 
     /* Read the electric current going to a given motor.
-    * @param j motor number
-    * @param val pointer to storage for the output value
-    * @return probably true, might return false in bad times
-    */
+     * @param j motor number
+     * @param val pointer to storage for the output value
+     * @return probably true, might return false in bad times
+     */
     virtual bool getCurrent(int j, double *val)=0;
 
     /* Set the maximum electric current going to a given motor. The behavior 
-    * of the board/amplifier when this limit is reached depends on the
-    * implementation.
-    * @param j motor number
-    * @param v the new value
-    * @return probably true, might return false in bad times
-    */
+     * of the board/amplifier when this limit is reached depends on the
+     * implementation.
+     * @param j motor number
+     * @param v the new value
+     * @return probably true, might return false in bad times
+     */
     virtual bool setMaxCurrent(int j, double v)=0;
 
     /* Get the status of the amplifiers, coded in a 32 bits integer for
-    * each amplifier (at the moment contains only the fault, it will be 
-    * expanded in the future).
-    * @param st pointer to storage
-    * @return true in good luck, false otherwise.
-    */
+     * each amplifier (at the moment contains only the fault, it will be 
+     * expanded in the future).
+     * @param st pointer to storage
+     * @return true in good luck, false otherwise.
+     */
     virtual bool getAmpStatus(int *st)=0;
 };
 
@@ -510,7 +510,7 @@ class yarp::dev::IControlCalibration
 {
 public:
     /* Start calibration, this method is very often platform
-    * specific.
+     * specific.
      * @return true/false on success failure
      */
     virtual bool calibrate(int j)=0;
@@ -523,22 +523,22 @@ class yarp::dev::IControlDebug
 {
 public:
     /* Set the print function, pass here a pointer to your own function 
-    * to print. This function should implement "printf" like parameters. 
-    * @param a pointer to the print function
-    * @return I don't see good reasons why it should return false.
-    */
+     * to print. This function should implement "printf" like parameters. 
+     * @param a pointer to the print function
+     * @return I don't see good reasons why it should return false.
+     */
     virtual bool setPrintFunction(int (*f) (const char *fmt, ...))=0;
 
     /* Read the content of the board internal memory, this is usually done
-    * at boot time, but can be forced by calling this method. 
-    * @return true/false on success failure
-    */
+     * at boot time, but can be forced by calling this method. 
+     * @return true/false on success failure
+     */
     virtual bool loadBootMemory()=0;
     
     /* Save the current board configuration to the internal memory,
-    * this values are read at boot time or if loadBootMemory() is called.
-    * @return true/false on success/failure
-    */
+     * this values are read at boot time or if loadBootMemory() is called.
+     * @return true/false on success/failure
+     */
     virtual bool saveBootMemory()=0;
 };
 
@@ -549,20 +549,20 @@ class yarp::dev::IControlLimits
 {
 public:
     /* Set the software limits for a particular axis, the behavior of the
-    * control card when these limits are exceeded, depends on the implementation.
-    * @param axis joint number (why I'm telling you this)
-    * @param min the value of the lower limit
-    * @param max the value of the upper limit
-    * @return true or false on success or failure
-    */
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number (why I'm telling you this)
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
     virtual bool setLimits(int axis, double min, double max)=0;
     
     /* Get the software limits for a particular axis.
-    * @param axis joint number (again... why I'm telling you this)
-    * @param pointer to store the value of the lower limit
-    * @param pointer to store the value of the upper limit
-    * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
-    */
+     * @param axis joint number (again... why I'm telling you this)
+     * @param pointer to store the value of the lower limit
+     * @param pointer to store the value of the upper limit
+     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     */
     virtual bool getLimits(int axis, double *min, double *max)=0;
 };
 
@@ -579,12 +579,12 @@ class yarp::dev::IPositionControl2
 public:
 
     IPositionControl2(IPositionControl *pos, 
-            int nj, const int *axisMap, 
-            const double *angToEncoders,
-            const double *zeros);
+                      int nj, const int *axisMap, 
+                      const double *angToEncoders,
+                      const double *zeros);
     virtual ~IPositionControl2();
 
-     /** Set position mode. This command
+    /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
@@ -692,8 +692,8 @@ public:
     bool stop(int j);
 
     /** Stop motion, multiple joints 
-    * @return true/false on success/failure
-    */
+     * @return true/false on success/failure
+     */
     bool stop();
 };
 

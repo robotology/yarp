@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.9 2006-06-01 16:20:21 natta Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.10 2006-06-14 08:39:44 eshuy Exp $
 ///
 ///
 
@@ -97,7 +97,7 @@ public:
 };
 
 class yarp::dev::DragonflyDeviceDriver : 
-public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
+    public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
 {
 private:
 	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
@@ -141,10 +141,10 @@ public:
     virtual bool getRawBuffer(unsigned char *buffer);
 
     /**
-    * Implements the Frame grabber basic interface.
-    * @return the size of the raw buffer (for the Dragonfly
-    * camera this is 1x640x480).
-    */
+     * Implements the Frame grabber basic interface.
+     * @return the size of the raw buffer (for the Dragonfly
+     * camera this is 1x640x480).
+     */
     virtual int getRawBufferSize();
 
     /**
@@ -158,51 +158,51 @@ public:
     virtual int width() const;
 
     /** 
-    * FrameGrabber bgr interface, returns the last acquired frame as
-    * a buffer of bgr triplets. A demosaicking method is applied to 
-    * reconstuct the color from the Bayer pattern of the sensor.
-    * @param buffer pointer to the array that will contain the last frame.
-    * @return true/false upon success/failure
-    */
+     * FrameGrabber bgr interface, returns the last acquired frame as
+     * a buffer of bgr triplets. A demosaicking method is applied to 
+     * reconstuct the color from the Bayer pattern of the sensor.
+     * @param buffer pointer to the array that will contain the last frame.
+     * @return true/false upon success/failure
+     */
     virtual bool getRgbBuffer(unsigned char *buffer);
 
     /** 
-    * FrameGrabber image interface, returns the last acquired frame as
-    * an rgb image. A demosaicking method is applied to 
-    * reconstuct the color from the Bayer pattern of the sensor.
-    * @param image that will store the last frame.
-    * @return true/false upon success/failure
-    */
+     * FrameGrabber image interface, returns the last acquired frame as
+     * an rgb image. A demosaicking method is applied to 
+     * reconstuct the color from the Bayer pattern of the sensor.
+     * @param image that will store the last frame.
+     * @return true/false upon success/failure
+     */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     /**
-    * Set image brightness.
-    */
+     * Set image brightness.
+     */
     virtual bool setBrightness(double v);
 
     /**
-    * Set shutter time.
-    */
+     * Set shutter time.
+     */
     virtual bool setShutter(double v);
 
     /**
-    * Set gain.
-    */
+     * Set gain.
+     */
     virtual bool setGain(double v);
 
     /**
-    * Get shutter time.
-    */
+     * Get shutter time.
+     */
     virtual double getShutter() const;
 
     /**
-    * Get gain.
-    */
+     * Get gain.
+     */
     virtual double getGain() const;
 
     /**
-    * Get image brightness.
-    */
+     * Get image brightness.
+     */
     virtual double getBrightness() const;
 
 protected:
