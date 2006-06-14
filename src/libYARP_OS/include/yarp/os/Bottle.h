@@ -266,7 +266,7 @@ public:
     int getSpecialization();
     void setNested(bool nested);
 
-    static BottleBit& null() {
+    static BottleBit& getNullBit() {
         return bottleNull;
     }
 

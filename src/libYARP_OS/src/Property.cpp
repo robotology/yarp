@@ -88,7 +88,7 @@ public:
         if (p!=NULL) {
             return p->bot.get(1);
         }
-        return Bottle::null();
+        return Bottle::getNullBit();
     }
 
     Bottle& putBottle(const char *key, const Bottle& val) {

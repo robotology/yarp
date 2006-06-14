@@ -103,9 +103,11 @@ int main() {
         dd.view(ctrl);
         if (ctrl!=NULL) {
             printf("*** It can be controlled as a framegrabber\n");
+            //double x = ctrl->getBrightness();
+            //printf("*** brightness before setting is reported as %g\n", x);
             ctrl->setBrightness(100);
             double x = ctrl->getBrightness();
-            printf("*** brightness is %g\n", x);
+            printf("*** brightness after setting reported as %g\n", x);
         } else {
             printf("*** It can <<<<<NOT>>>>> be controlled as a framegrabber\n");
         }
