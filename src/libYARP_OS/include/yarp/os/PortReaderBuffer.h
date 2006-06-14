@@ -24,17 +24,24 @@ public:
 
 class yarp::PortReaderBufferBase {
 public:
-    PortReaderBufferBase(PortReaderBufferBaseCreator& creator, 
-                         unsigned int maxBuffer) : 
-        creator(creator), maxBuffer(maxBuffer) {
+    PortReaderBufferBase(unsigned int maxBuffer) : 
+        maxBuffer(maxBuffer) {
+        creator = 0; /*NULL*/
         init();
         allowReuse = true;
+    }
+
+    void setCreator(PortReaderBufferBaseCreator *creator) {
+        this->creator = creator;
     }
 
     virtual ~PortReaderBufferBase();
 
     virtual yarp::os::PortReader *create() {
-        return creator.create();
+        if (creator!=0 /*NULL*/) {
+            return creator->create();
+        }
+        return 0 /*NULL*/;
     }
 
     void release(yarp::os::PortReader *completed);
@@ -58,7 +65,7 @@ public:
 protected:
     void init();
 
-    PortReaderBufferBaseCreator& creator;
+    PortReaderBufferBaseCreator *creator;
     unsigned int maxBuffer;
     bool allowReuse;
     void *implementation;
@@ -83,7 +90,8 @@ public:
      * @param maxBuffer Maximum number of buffers permitted (0 = no limit)
      */
     PortReaderBuffer(unsigned int maxBuffer = 0) : 
-        implementation(*this,maxBuffer) {
+        implementation(maxBuffer) {
+        implementation.setCreator(this);
         last = 0; /*NULL*/
     }
 
