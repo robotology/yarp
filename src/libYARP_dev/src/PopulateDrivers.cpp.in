@@ -34,24 +34,21 @@ DeviceDriver *Drivers::create(yarp::os::Property& prop) {
         str = prop.get("device").asString().c_str();
     }
 
+    DeviceDriver *driver = NULL;
+
 #ifdef ENABLE_dragonfly
     if (str == "dragonfly") {
-        DragonflyDeviceDriver *driver = new DragonflyDeviceDriver();
-        YARP_ASSERT(driver!=NULL);
-        DragonflyOpenParameters par;
-        par._size_x = 640;
-        par._size_y = 480;
-        driver->open(par);
-        return driver;
+        driver = new DragonflyDeviceDriver();
     }
 #endif
 
     if (str == "remote_framegrabber") {
-        DeviceDriver *dd = createRemoteFrameGrabber();
-        if (dd!=NULL) {
-            dd->open(prop);
-            return dd;
-        }
+        driver = createRemoteFrameGrabber();
+    }
+
+    if (driver!=NULL) {
+        driver->open(prop);
+        return driver;
     }
     
     return NULL;

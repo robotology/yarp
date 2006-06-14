@@ -84,6 +84,7 @@ public:
      */
     PortReaderBuffer(unsigned int maxBuffer = 0) : 
         implementation(*this,maxBuffer) {
+        last = 0; /*NULL*/
     }
 
     /**
@@ -96,11 +97,27 @@ public:
     }
 
     /**
-     * Wait for data.
+     * Read data.
+     * @param shouldWait Wait for the data to arrive (default is to wait)
      * @return pointer to data received on the port, or NULL on failure.
      */
-    T *read() {
-        return (T *)implementation.readBase();
+    T *read(bool shouldWait=true) {
+        if (!shouldWait) {
+            if (!check()) {
+                last = 0; /*NULL*/
+                return last;
+            }
+        }
+        last = (T *)implementation.readBase();
+        return last;
+    }
+
+    /**
+     * Wait for data.
+     * @return pointer to last data returned by read(), or NULL on failure.
+     */
+    T *lastRead() {
+        return last;
     }
 
     /**
@@ -144,6 +161,7 @@ public:
 
 private:
     yarp::PortReaderBufferBase implementation;
+    T *last;
 };
 
 #endif

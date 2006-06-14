@@ -69,6 +69,14 @@ public:
         p->bot.addString(val);
     }
 
+    void put(const char *key, BottleBit& bit) {
+        PropertyItem *p = getProp(key,true);
+        p->singleton = true;
+        p->bot.clear();
+        p->bot.addString(key);
+        p->bot.addBit(bit);
+    }
+
     bool check(const char *key) const {
         PropertyItem *p = getPropNoCreate(key);
         return p!=NULL;
@@ -264,6 +272,10 @@ Property::~Property() {
 
 void Property::put(const char *key, const char *val) {
     HELPER(implementation).put(key,val);
+}
+
+void Property::put(const char *key, BottleBit& bit) {
+    HELPER(implementation).put(key,bit);
 }
 
 

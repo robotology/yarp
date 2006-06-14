@@ -117,6 +117,8 @@ public:
 class yarp::dev::IFrameGrabberControls
 {
 public:
+    virtual ~IFrameGrabberControls(){}
+
     virtual bool setBrightness(double v) = 0;
     virtual bool setShutter(double v) = 0;
     virtual bool setGain(double v) = 0;

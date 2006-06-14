@@ -7,6 +7,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/Vocab.h>
 
 #include <ace/Vector_T.h>
 
@@ -48,6 +49,7 @@ public:
     virtual yarp::os::BottleBit *create() { return createStorable(); }
 
     virtual int asInt() { return 0; }
+    virtual int asVocab() { return 0; }
     virtual double asDouble() { return 0; }
     virtual String asStringFlex() { return ""; }
     virtual yarp::os::ConstString asString() { 
@@ -109,6 +111,7 @@ public:
     virtual bool write(ConnectionWriter& writer);
     virtual Storable *createStorable() { return new StoreInt(0); }
     virtual int asInt() { return x; }
+    virtual int asVocab() { return x; }
     virtual double asDouble() { return x; }
     virtual bool isInt() { return true; }
     static const int code;
@@ -129,6 +132,7 @@ public:
     virtual bool write(ConnectionWriter& writer);
     virtual Storable *createStorable() { return new StoreVocab(0); }
     virtual int asInt() { return x; }
+    virtual int asVocab() { return x; }
     virtual double asDouble() { return x; }
     virtual bool isVocab() { return true; }
     static const int code;
@@ -149,6 +153,7 @@ public:
     virtual bool write(ConnectionWriter& writer);
     virtual Storable *createStorable() { return new StoreString(String("")); }
     virtual String asStringFlex() { return x; }
+    virtual int asVocab() { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() { return true; }
     static const int code;
 };
@@ -253,6 +258,10 @@ public:
         add(new StoreInt(x));
     }
 
+    void addVocab(int x) {
+        add(new StoreVocab(x));
+    }
+
     void addDouble(double x) {
         add(new StoreDouble(x));
     }
@@ -308,6 +317,11 @@ public:
     void setNested(bool nested);
 
     int subCode();
+
+    void addBit(yarp::os::BottleBit& bit) {
+        // all BottleBits are Storables -- important invariant!
+        add((Storable*)bit.clone());
+    }
 
     yarp::os::BottleBit& addBit(const char *str) {
         int len = size();

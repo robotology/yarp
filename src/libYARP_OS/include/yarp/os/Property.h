@@ -22,6 +22,8 @@ public:
 
     void put(const char *key, const char *val);
 
+    void put(const char *key, BottleBit& bit);
+
     BottleBit& find(const char *key) const {
         return get(key);
     }

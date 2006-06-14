@@ -177,7 +177,7 @@ bool Port::write(PortWriter& writer) {
 /**
  * write something to the port
  */
-bool Port::write(PortWriter& writer, PortReader& reader) {
+bool Port::write(PortWriter& writer, PortReader& reader) const {
     PortCoreAdapter& core = HELPER(implementation);
     bool result = false;
     try {

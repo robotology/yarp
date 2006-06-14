@@ -51,6 +51,10 @@ void Bottle::addInt(int x) {
     HELPER(implementation).addInt(x);
 }
 
+void Bottle::addVocab(int x) {
+    HELPER(implementation).addVocab(x);
+}
+
 void Bottle::addDouble(double x) {
     HELPER(implementation).addDouble(x);
 }
@@ -220,6 +224,11 @@ BottleBit *Bottle::clone() {
 
 BottleBit& Bottle::addBit(const char *str) {
     return HELPER(implementation).addBit(str);
+}
+
+
+void Bottle::addBit(BottleBit& bit) {
+    return HELPER(implementation).addBit(bit);
 }
 
 

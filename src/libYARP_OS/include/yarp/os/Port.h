@@ -79,7 +79,7 @@ public:
      * network connection - see for example Bottle
      * @return true iff an object is successfully written and read
      */
-    bool write(PortWriter& writer, PortReader& reader);
+    bool write(PortWriter& writer, PortReader& reader) const;
 
     /**
      * Read an object from the port.

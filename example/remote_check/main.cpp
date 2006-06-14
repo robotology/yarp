@@ -7,6 +7,8 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/Vocab.h>
 #include <yarp/sig/Image.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
@@ -17,12 +19,40 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 // a test remote frame grabber - provides blank images.
-// only supports streaming out, no requests.
-class FakeFrameGrabber : public Thread {
+class FakeFrameGrabber : public Thread, PortReader {
 private:
     Port p;
+    Property prop;
 public:
+
+    virtual bool read(ConnectionReader& connection) {
+        Bottle cmd, response;
+        cmd.read(connection);
+        printf("command received: %s\n", cmd.toString().c_str());
+        int code = cmd.get(0).asVocab();
+        switch (code) {
+        case VOCAB3('s','e','t'):
+            printf("set command received\n");
+            prop.put(cmd.get(1).asString().c_str(),cmd.get(2));
+            break;
+        case VOCAB3('g','e','t'):
+            printf("get command received\n");
+            response.addVocab(VOCAB2('i','s'));
+            response.addBit(cmd.get(1));
+            response.addBit(prop.find(cmd.get(1).asString().c_str()));
+            break;
+        }
+        if (response.size()>=1) {
+            ConnectionWriter *writer = connection.getWriter();
+            if (writer!=NULL) {
+                response.write(*writer);
+                printf("response sent: %s\n", response.toString().c_str());
+            }
+        }
+    }
+
     virtual void beforeStart() {
+        p.setReader(*this);
         p.open("/server");
     }
 
@@ -68,10 +98,22 @@ int main() {
         } else {
             printf("*** Failed to actually read an image\n");
         }
+
+        IFrameGrabberControls *ctrl;
+        dd.view(ctrl);
+        if (ctrl!=NULL) {
+            printf("*** It can be controlled as a framegrabber\n");
+            ctrl->setBrightness(100);
+            double x = ctrl->getBrightness();
+            printf("*** brightness is %g\n", x);
+        } else {
+            printf("*** It can <<<<<NOT>>>>> be controlled as a framegrabber\n");
+        }
+
     } else {
         printf("*** It can <<<<<NOT>>>>> supply images\n");
     }
-    
+
     IPidControl *pid;
     dd.view(pid);
     

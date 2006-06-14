@@ -34,6 +34,7 @@ public:
     virtual ConstString toString() const = 0;
 
     virtual int asInt()            { return 0; }
+    virtual int asVocab()            { return 0; }
     virtual double asDouble()      { return 0; }
     virtual ConstString asString() { return ""; }
     virtual Bottle *asList()       { return (Bottle*)0; }
@@ -112,6 +113,8 @@ public:
      */
     void addInt(int x);
 
+    void addVocab(int x);
+
     /**
      * Places a floating point number in the bottle, at the end of the list.
      * @param x the number to add
@@ -125,6 +128,8 @@ public:
     void addString(const char *str);
 
     BottleBit& addBit(const char *str);
+
+    void addBit(BottleBit& bit);
 
     /**
      * Places an empty nested list in the bottle, at the end of the list.

@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.10 2006-06-14 08:39:44 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.11 2006-06-14 12:39:12 eshuy Exp $
 ///
 ///
 
@@ -126,6 +126,18 @@ public:
 	 * @return returns true on success, false on failure.
 	 */
     bool open(const DragonflyOpenParameters& par);
+
+    virtual bool open(yarp::os::Property& config) {
+        DragonflyOpenParameters params;
+        params._unit_number = config.find("unit_number").asInt();
+		params._size_x  = config.find("size_x").asInt();
+		params._size_y = config.find("size_y").asInt();
+		params._video_type = config.find("video_type").asInt();
+		params._offset_y = config.find("offset_y").asInt();
+		params._offset_x = config.find("offset_x").asInt();
+		params._alfa = config.find("alfa").asInt();
+        return open(params);
+    }
 
 	/**
 	 * Closes the device driver.
