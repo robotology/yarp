@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.3 2006-06-14 08:39:44 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.4 2006-06-15 09:53:15 gmetta Exp $
 ///
 ///
 
@@ -62,16 +62,17 @@ public:
  * Contains a thread that takes care of polling the can bus for incoming messages.
  */
 class yarp::dev::EsdMotionControl: 
+    public yarp::dev::DeviceDriver,
     public os::Thread, 
-          public IPidControl, 
-          public IPositionControl, 
-          public IVelocityControl, 
-          public IEncoders, 
-          public IAmplifierControl,
-          public IControlCalibration,
-          public IControlDebug,
-          public IControlLimits,
-          public IPositionControl2
+    public IPidControl, 
+    public IPositionControl, 
+    public IVelocityControl, 
+    public IEncoders, 
+    public IAmplifierControl,
+    public IControlCalibration,
+    public IControlDebug,
+    public IControlLimits,
+    public IPositionControl2
 {
 private:
     EsdMotionControl(const EsdMotionControl&);

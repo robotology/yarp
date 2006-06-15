@@ -589,18 +589,18 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 	src_data = (char *) sourceImg->getRawImage(); //GetRawBuffer();
 
 	if ( src_line_size == rowstride)
-        {
-            ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
-        }
+    {
+        ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
+    }
 	else
-        {
-            for (int i=0; i < height; i++)
-                {
-                    p_dst = dst_data + i * rowstride;
-                    p_src = src_data + i * src_line_size;
-                    ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
-                }
-        }
+    {
+        for (int i=0; i < (int)height; i++)
+            {
+                p_dst = dst_data + i * rowstride;
+                p_src = src_data + i * src_line_size;
+                ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
+            }
+    }
 
 	return true;
 }

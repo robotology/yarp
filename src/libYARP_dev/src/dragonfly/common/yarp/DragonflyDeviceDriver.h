@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.11 2006-06-14 12:39:12 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.12 2006-06-15 09:53:15 gmetta Exp $
 ///
 ///
 
@@ -135,7 +135,7 @@ public:
 		params._video_type = config.find("video_type").asInt();
 		params._offset_y = config.find("offset_y").asInt();
 		params._offset_x = config.find("offset_x").asInt();
-		params._alfa = config.find("alfa").asInt();
+		params._alfa = (float)config.find("alfa").asInt();
         return open(params);
     }
 
