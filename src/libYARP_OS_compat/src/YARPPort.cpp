@@ -11,7 +11,7 @@
 
 
 ///
-/// $Id: YARPPort.cpp,v 1.6 2006-06-15 09:53:15 gmetta Exp $
+/// $Id: YARPPort.cpp,v 1.7 2006-06-15 10:15:56 gmetta Exp $
 //
 /// Based on: Id: YARPPort.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
@@ -389,6 +389,8 @@ YARPInputPort::YARPInputPort(int n_service_type, int n_protocol_type)
         ct = 3;
     }
     PD.buffer = new PortReaderBufferBase(ct);
+    YARP_ASSERT(PD.buffer!=NULL);
+    PD.buffer->setCreator(&PD);
     PD.in_owner = this;
 }
 
