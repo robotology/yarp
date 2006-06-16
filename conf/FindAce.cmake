@@ -19,7 +19,7 @@ SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 ########################################################################
 ##  general find
 
-FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} DOC "directory containing ace/*.h for ACE library")
+FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} $ENV{ACE_ROOT}/include DOC "directory containing ace/*.h for ACE library")
 
 # in YARP1, config was in another directory
 SET(ACE_INCLUDE_CONFIG_DIR "" CACHE STRING "location of ace/config.h")
