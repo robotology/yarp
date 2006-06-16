@@ -60,7 +60,7 @@ public:
         stateSema.post();
     }
 
-    void write() {
+    void write(bool strict) {
         stateSema.wait();
         PortWriter *active = current;
         stateSema.post();
@@ -113,8 +113,8 @@ void PortWriterBufferBase::attach(Port& port) {
     HELPER(implementation).attach(port);
 }
 
-void PortWriterBufferBase::write() {
-    HELPER(implementation).write();
+void PortWriterBufferBase::write(bool strict) {
+    HELPER(implementation).write(strict);
 }
 
 

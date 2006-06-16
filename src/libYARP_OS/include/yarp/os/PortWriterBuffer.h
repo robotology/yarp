@@ -59,7 +59,7 @@ public:
 
     void attach(Port& port);
 
-    void write();
+    void write(bool strict);
 
 
 protected:
@@ -124,7 +124,7 @@ public:
      * Try to write the last buffer returned by PortWriterBuffer::get.
      */
     void write() {
-        PortWriterBufferBase::write();
+        PortWriterBufferBase::write(true);
     }
 
 };

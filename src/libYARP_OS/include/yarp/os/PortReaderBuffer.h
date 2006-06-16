@@ -93,6 +93,16 @@ public:
         implementation(maxBuffer) {
         implementation.setCreator(this);
         last = 0; /*NULL*/
+        autoDiscard = true;
+    }
+
+    /**
+     * Call this to strictly keep all messages, or allow old ones
+     * to be quietly dropped (the default)
+     * @param strict True to keep all messages until they are read
+     */
+    void setStrict(bool strict = true) {
+        autoDiscard = !strict;
     }
 
     /**
@@ -107,9 +117,10 @@ public:
     /**
      * Read data.
      * @param shouldWait Wait for the data to arrive (default is to wait)
+     * @param forceStrict If true, old data will not be dropped.
      * @return pointer to data received on the port, or NULL on failure.
      */
-    T *read(bool shouldWait=true) {
+    T *read(bool shouldWait=true,bool forceStrict=false) {
         if (!shouldWait) {
             if (!check()) {
                 last = 0; /*NULL*/
@@ -117,6 +128,13 @@ public:
             }
         }
         last = (T *)implementation.readBase();
+        if (autoDiscard&&!forceStrict) {
+            // go up to date
+            while (check()) {
+                //printf("Dropping something\n");
+                last = (T *)implementation.readBase();
+            }
+        }
         return last;
     }
 
@@ -169,6 +187,7 @@ public:
 
 private:
     yarp::PortReaderBufferBase implementation;
+    bool autoDiscard;
     T *last;
 };
 
