@@ -2,6 +2,7 @@
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <ace/Log_Msg.h>
 #include <stdio.h>
+#include <ace/OS.h>
 
 using namespace yarp::dev;
 
