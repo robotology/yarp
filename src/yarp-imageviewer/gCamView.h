@@ -14,6 +14,8 @@
 #include <yarp/sig/Image.h>
 //#include <yarp/YARPImageFile.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/BufferedPort.h>
 //#include <yarp/YARPParseParameters.h>
 //#include <yarp/YARPConfigFile.h>
 //#include <yarp/YARPBottleContent.h>
@@ -122,9 +124,9 @@ int _occupiedHeight;
 // Frame must be freezed
 bool _freezed;
 // Output Point Port
-//YARPOutputPortOf<YARPBottle> *_pOutPort;
+yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
 // Output Bottle Container
-//YARPBottle _outBottle;
+yarp::os::Bottle _outBottle;
 //-------------------------------------------------
 // Program Options 
 //-------------------------------------------------

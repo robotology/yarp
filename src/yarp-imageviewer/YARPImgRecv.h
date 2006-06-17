@@ -41,6 +41,7 @@ public:
 	int GetWidth();
 	int GetHeight();
 	bool Update();
+    bool SaveLastImage(char *fileName);
     //bool SaveLastImage(char *fileName, int format=YARPImageFile::FORMAT_PPM);
     bool GetLastImage(yarp::sig::Image *data);
 	bool Connect();

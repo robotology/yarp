@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.h,v 1.5 2006-06-14 08:39:44 eshuy Exp $
+/// $Id: ImageFile.h,v 1.6 2006-06-17 19:57:46 eshuy Exp $
 ///
 ///
 
@@ -44,10 +44,12 @@ namespace yarp {
             bool read(ImageOf<PixelRgb>& dest, const char *src);
             bool read(ImageOf<PixelBgr>& dest, const char *src);
             bool read(ImageOf<PixelMono>& dest, const char *src);
+            //bool read(FlexImage& dest, const char *src);
 
             bool write(const ImageOf<PixelRgb>& src, const char *dest);
             bool write(const ImageOf<PixelBgr>& src, const char *dest);
             bool write(const ImageOf<PixelMono>& src, const char *dest);
+            bool write(const Image& src, const char *dest);
         }
     }
 };

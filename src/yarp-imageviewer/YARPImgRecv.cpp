@@ -7,6 +7,8 @@
 
 #include "YARPImgRecv.h"
 
+#include <yarp/sig/ImageFile.h>
+
 using namespace yarp::os;
 
 //////////////////////////////////////////////////////////////////////
@@ -147,30 +149,37 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 	return true;
 }
 
-/*
-  bool YARPImgRecv::SaveLastImage(char *fileName, int format)
-  {
+
+bool YARPImgRecv::SaveLastImage(char *fileName) {
+
   if ( _connected == false)
   return false;
 	
   if ((_width == 0) || (_height == 0))
-  return false;
+      return false;
 	
   if (_logpolar)
   {
-  _img.CastCopy(_inPort.Content());
-  _logpolarConversion(_fovea, &_logImg);
-  YARPImageFile::Write(fileName, _logImg, format);
+      printf("LOGPOLAR is not supported\n");
+      /*
+        _img.CastCopy(_inPort.Content());
+        _logpolarConversion(_fovea, &_logImg);
+        YARPImageFile::Write(fileName, _logImg, format);
+      */
   }
   else
   {
-  _img.CastCopy(_inPort.Content());
-  YARPImageFile::Write(fileName, _img, format);
+      //_img.CastCopy(_inPort.Content());
+      //YARPImageFile::Write(fileName, _img, format);
+      yarp::sig::FlexImage *img = _inPort.lastRead();
+      if (img!=NULL) {
+          yarp::sig::file::write(*img,fileName);
+      }
   }
 
   return true;
   }
-*/
+
 
 bool YARPImgRecv::Disconnect()
 {

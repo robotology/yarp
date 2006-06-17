@@ -267,6 +267,7 @@ public:
         YARP_DEBUG(Logger::get(),bot.toString().c_str());
     }
 
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);

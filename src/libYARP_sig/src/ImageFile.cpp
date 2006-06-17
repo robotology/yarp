@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.9 2006-06-17 09:22:10 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.10 2006-06-17 19:57:46 eshuy Exp $
 ///
 ///
 
@@ -323,5 +323,22 @@ bool file::read(ImageOf<PixelMono> & dest, const char *src)
 bool file::write(const ImageOf<PixelMono> & src, const char *dest)
 {
     return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest);
+}
+
+
+/*
+bool file::read(FlexImage & dest, const char *src)
+{
+    ImageOf<PixelRgb> img;
+    read(img,src);
+    return dest.copy(img);
+}
+*/
+
+bool file::write(const Image& src, const char *dest)
+{
+    ImageOf<PixelRgb> img;
+    img.copy(src);
+    return write(img,dest);
 }
 

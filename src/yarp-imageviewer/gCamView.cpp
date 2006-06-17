@@ -343,14 +343,18 @@ static gint clickDA_CB (GtkWidget *widget, GdkEventButton *event, gpointer data)
             imageX = int(imageWidth * ratioX + 0.5);
             imageY = int(imageHeight * ratioY + 0.5);
 
-            /*
-              _outBottle.writeInt(imageX);
-              _outBottle.writeInt(imageY);
-              _pOutPort->Content() = _outBottle;
-              _pOutPort->Write();
-              _outBottle.reset();
-            */
+            printf("Transmitting click information...\n");
+            if (_pOutPort!=NULL) {
+                yarp::os::Bottle& bot = _pOutPort->prepare();
+                bot.clear();
+                bot.addInt(imageX);
+                bot.addInt(imageY);
+                //_pOutPort->Content() = _outBottle;
+                _pOutPort->write();
+            }
 	
+        } else {
+            printf("I would send a position, but there's no image for scaling\n");
         }
 
 	return TRUE;
@@ -547,7 +551,7 @@ void saveCurrentFrame()
 {
 	char fileName[256];
 	sprintf(fileName,"%03d.ppm",_frameN);
-	//_imgRecv.SaveLastImage(fileName);
+	_imgRecv.SaveLastImage(fileName);
 }
 
 bool getImage()
@@ -703,7 +707,6 @@ void parseParameters(int argc, char* argv[])
 {
     yarp::os::Property options;
     options.fromCommand(argc,argv);
-    printf("options are %s\n", options.toString().c_str());
     setOptions(options);
 }
 
@@ -745,19 +748,18 @@ bool openPorts()
         }
 	if (_options.outputEnabled == 1)
         {
-            /*
 		
-            _pOutPort = new YARPOutputPortOf<YARPBottle>(YARPOutputPort::DEFAULT_OUTPUTS, YARP_UDP);
+            _pOutPort = new yarp::os::BufferedPort<yarp::os::Bottle>;
             g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
-            res = _pOutPort->Register(_options.outPortName, _options.outNetworkName);
-            if  (res == YARP_OK)
+            bool ok = _pOutPort->open(_options.outPortName);
+            if  (ok)
 			g_print("Port registration succeed!\n");
             else 
             {
 			g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
 			return false;
             }
-            */
+
         }
 
 	return true;
@@ -780,14 +782,14 @@ void closePorts()
 	
 	if (_options.outputEnabled == 1)
         {
-            /*
-              res = _pOutPort->close();
-              if  (res)
-              g_print("Port %s unregistration succeed!\n", _options.outPortName);
-              else 
-              g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
-              delete _pOutPort;
-            */
+            _pOutPort->close();
+            bool ok = true;
+            if  (ok)
+                g_print("Port %s unregistration succeed!\n", _options.outPortName);
+            else 
+                g_print("ERROR: Port %s unregistration failed.\n", _options.outPortName);
+            delete _pOutPort;
+            _pOutPort = NULL;
         }
 }
 
