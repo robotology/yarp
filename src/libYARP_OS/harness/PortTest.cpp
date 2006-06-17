@@ -405,6 +405,39 @@ public:
         checkEqual(bin->content(),999,"good send");
     }
 
+    void testCloseOrder() {
+        report(0,"check that port close order doesn't matter...");
+
+        for (int i=0; i<4; i++) {
+            // on OSX there is a problem only tickled upon repetition
+            {
+                Port input, output;
+                input.open("/in");
+                output.open("/out");
+                output.addOutput("/in");
+                
+                report(0,"closing in");
+                input.close();
+                
+                report(0,"closing out");
+                output.close();
+            }
+            
+            {
+                Port input, output;
+                input.open("/in");
+                output.open("/out");
+                output.addOutput("/in");
+                
+                report(0,"closing out");
+                output.close();
+                
+                report(0,"closing in");
+                input.close();
+            }
+        }
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -417,6 +450,7 @@ public:
         testBackground();
         testWriteBuffer();
         testBufferedPort();
+        testCloseOrder();
 
         nic.setFakeMode(false);
     }
