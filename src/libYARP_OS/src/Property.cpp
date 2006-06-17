@@ -77,6 +77,12 @@ public:
         p->bot.addBit(bit);
     }
 
+    bool check(const char *key, BottleBit *&output) const {
+        PropertyItem *p = getPropNoCreate(key);
+        
+        return p!=NULL;
+    }
+
     bool check(const char *key) const {
         PropertyItem *p = getPropNoCreate(key);
         return p!=NULL;
@@ -276,6 +282,16 @@ void Property::put(const char *key, const char *val) {
 
 void Property::put(const char *key, BottleBit& bit) {
     HELPER(implementation).put(key,bit);
+}
+
+
+bool Property::check(const char *key, BottleBit *&output) const {
+    bool ok = false;
+    if (HELPER(implementation).check(key)) {
+        output = &find(key);
+        ok = true;
+    }
+    return ok;
 }
 
 

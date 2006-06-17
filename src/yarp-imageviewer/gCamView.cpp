@@ -3,7 +3,8 @@
 //
 
 #include "gCamView.h" 
- 
+
+#include <yarp/os/Property.h> 
 
 //-------------------------------------------------
 // Main Window Callbacks
@@ -631,11 +632,45 @@ void parseOptFile(char *fileName)
       optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
       optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
     */
+
+
+    /*
+    yarp::os::Property optFile;
+    optFile.fromConfigFile(fileName);
+    yarp::os::Bottle& network = optFile.findGroup("[NETWORK]");
+    yarp::os::Bottle& window = optFile.findGroup("[WINDOW]");
+    yarp::os::Bottle& program = optFile.findGroup("[PROGRAM]");
+    yarp::os::BottleBit *val;
+    if (network.check("PortName",val)) {
+        ACE_OS::sprintf(_options.portName, val->asString().c_str());
+    }
+    if (network.check("NetName",val)) {
+        ACE_OS::sprintf(_options.networkName, val->asString().c_str());
+    }
+    */
+
+    /*
+
+      if ( optFile.getString("[NETWORK]", "NetName", s_tmp) == YARP_OK)
+      ACE_OS::sprintf(_options.networkName, s_tmp);
+      if ( optFile.getString("[NETWORK]", "OutPortName", s_tmp) == YARP_OK) 
+      ACE_OS::sprintf(_options.outPortName, s_tmp);
+      if ( optFile.getString("[NETWORK]", "OutNetName", s_tmp) == YARP_OK)
+      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
+      optFile.get("[WINDOW]", "RefreshTime", &_options.refreshTime);
+      optFile.get("[WINDOW]", "PosX", &_options.posX);
+      optFile.get("[WINDOW]", "PosY", &_options.posY);
+      optFile.get("[WINDOW]", "Width", &_options.windWidth);
+      optFile.get("[WINDOW]", "Height", &_options.windHeight);
+      optFile.get("[PROGRAM]", "OutputEnabled", &_options.outputEnabled);
+      optFile.get("[PROGRAM]", "SaveOptions", &_options.saveOnExit);
+      optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
+      optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
+    */
 }
 
 void saveOptFile(char *fileName)
 {
-    /*
       FILE *optFile = NULL;
       optFile = ACE_OS::fopen(_options.fileName,"wt");
       if (optFile == NULL)
@@ -661,7 +696,6 @@ void saveOptFile(char *fileName)
       ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
 	
       ACE_OS::fclose(optFile);
-    */
 }
 
 void parseParameters(int argc, char* argv[])

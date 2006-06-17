@@ -20,6 +20,8 @@ public:
 
     bool check(const char *key) const;
 
+    bool check(const char *key, BottleBit *&output) const;
+
     void put(const char *key, const char *val);
 
     void put(const char *key, BottleBit& bit);
