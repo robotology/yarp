@@ -12,6 +12,7 @@
 #include <yarp/NetType.h>
 
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Network.h>
 
 #include "TestList.h"
 
@@ -447,6 +448,7 @@ public:
         testReply();
         testUdp();
         //testHeavy();
+        
         testBackground();
         testWriteBuffer();
         testBufferedPort();

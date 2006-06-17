@@ -26,7 +26,8 @@ public:
      * @param dest the name of an input port
      * @return true on success, false on failure
      */
-    static bool connect(const char *src, const char *dest);
+    static bool connect(const char *src, const char *dest,
+                        bool quiet=false);
 
     /**
      * Request that an output port disconnect from an input port.
@@ -34,7 +35,8 @@ public:
      * @param dest the name of an input port
      * @return true on success, false on failure
      */
-    static bool disconnect(const char *src, const char *dest);
+    static bool disconnect(const char *src, const char *dest, 
+                           bool quiet=false);
 
     /**
      * The standard main method for the YARP companion utility.

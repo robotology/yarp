@@ -10,14 +10,14 @@
 using namespace yarp;
 using namespace yarp::os;
 
-bool Network::connect(const char *src, const char *dest) {
-    int result = Companion::connect(src,dest);
+bool Network::connect(const char *src, const char *dest, bool quiet) {
+    int result = Companion::connect(src,dest,quiet);
     return result == 0;
 }
 
 
-bool Network::disconnect(const char *src, const char *dest) {
-    int result = Companion::disconnect(src,dest);
+bool Network::disconnect(const char *src, const char *dest, bool quiet) {
+    int result = Companion::disconnect(src,dest,quiet);
     return result == 0;
 }
 

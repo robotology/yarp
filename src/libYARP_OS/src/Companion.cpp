@@ -192,7 +192,7 @@ int Companion::sendMessage(const String& port, Writable& writable,
         }
         return 1;
     }
-    Route route("external",port,"tcp");
+    Route route("external",port,"text");
     try {
         out->open(route);
         //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
@@ -206,6 +206,15 @@ int Companion::sendMessage(const String& port, Writable& writable,
         }
 
         out->write(bw);
+        InputProtocol& ip = out->getInput();
+        ConnectionReader& con = ip.beginRead();
+        Bottle b;
+        b.read(con);
+        b.read(con);
+        if (!quiet) {
+            //ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
+        }
+        ip.endRead();
         out->close();
     } catch (IOException e) {
         YARP_ERROR(Logger::get(),e.toString() + " <<< exception during message");

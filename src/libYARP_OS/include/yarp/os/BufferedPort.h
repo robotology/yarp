@@ -35,6 +35,10 @@ public:
         writer.attach(port);
     }
 
+    virtual ~BufferedPort() {
+        port.close();
+    }
+
 
     // documentation provided in Contactable
     virtual bool open(const char *name) {

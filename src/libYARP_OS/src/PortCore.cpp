@@ -8,6 +8,8 @@
 #include <yarp/PortCoreOutputUnit.h>
 #include <yarp/Name.h>
 
+#include <yarp/os/Network.h>
+
 #include <ace/OS_NS_stdio.h>
 
 
@@ -197,6 +199,30 @@ bool PortCore::start() {
 
 void PortCore::closeMain() {
     YTRACE("PortCore::closeMain");
+
+
+    stateMutex.wait();
+    // Politely pre-disconnect inputs
+    for (unsigned int i=0; i<units.size(); i++) {
+        PortCoreUnit *unit = units[i];
+        if (unit!=NULL) {
+            if (unit->isInput()) {
+                Route r = unit->getRoute();
+                String s = r.getFromName();
+                if (s.length()>=1) {
+                    if (s[0]=='/') {
+                        if (s!=getName()) {
+                            yarp::os::Network::disconnect(s.c_str(),
+                                                          getName().c_str(),
+                                                          true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    stateMutex.post();
+
 
     stateMutex.wait();
     bool stopRunning = running;
