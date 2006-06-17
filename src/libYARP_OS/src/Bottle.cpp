@@ -8,7 +8,15 @@
 using namespace yarp;
 using namespace yarp::os;
 
-Bottle Bottle::bottleNull;
+class NullBottle : public Bottle {
+public:
+    virtual bool isNull()    { return true; }
+
+    static NullBottle bottleNull;
+};
+
+NullBottle NullBottle::bottleNull;
+
 
 // implementation is a BottleImpl
 #define HELPER(x) (*((BottleImpl*)(x)))
@@ -211,7 +219,7 @@ Bottle& Bottle::findGroup(const char *key) {
     if (bb.isList()) {
         return *(bb.asList());
     }
-    return bottleNull;
+    return getNull();
 }
 
 
@@ -238,10 +246,20 @@ bool BottleBit::operator == (const BottleBit& alt) {
 
 
 Bottle& Bottle::getNull() {
-    return bottleNull;
+    return NullBottle::bottleNull;
 }
 
 
 bool Bottle::operator == (const Bottle& alt) {
     return String(toString().c_str()) == alt.toString().c_str();
+}
+
+
+bool Searchable::check(const char *txt, BottleBit *& result) {
+    BottleBit& bit = find(txt);
+    bool ok = !(bit.isNull());
+    if (ok) {
+        result = &bit;
+    }
+    return ok;
 }

@@ -606,72 +606,73 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 	return true;
 }
 
-void parseOptFile(char *fileName)
-{
-    /*
-      YARPConfigFile optFile;
-      char s_tmp[255];
-	
-      optFile.setName(fileName);
 
-      if ( optFile.getString("[NETWORK]", "PortName", s_tmp) == YARP_OK) 
-      ACE_OS::sprintf(_options.portName, s_tmp);
-      if ( optFile.getString("[NETWORK]", "NetName", s_tmp) == YARP_OK)
-      ACE_OS::sprintf(_options.networkName, s_tmp);
-      if ( optFile.getString("[NETWORK]", "OutPortName", s_tmp) == YARP_OK) 
-      ACE_OS::sprintf(_options.outPortName, s_tmp);
-      if ( optFile.getString("[NETWORK]", "OutNetName", s_tmp) == YARP_OK)
-      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
-      optFile.get("[WINDOW]", "RefreshTime", &_options.refreshTime);
-      optFile.get("[WINDOW]", "PosX", &_options.posX);
-      optFile.get("[WINDOW]", "PosY", &_options.posY);
-      optFile.get("[WINDOW]", "Width", &_options.windWidth);
-      optFile.get("[WINDOW]", "Height", &_options.windHeight);
-      optFile.get("[PROGRAM]", "OutputEnabled", &_options.outputEnabled);
-      optFile.get("[PROGRAM]", "SaveOptions", &_options.saveOnExit);
-      optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
-      optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
-    */
+void setOptions(yarp::os::Searchable& options) {
 
+    // switch to subsections if available
+    yarp::os::Searchable *network = &options.findGroup("NETWORK");
+    yarp::os::Searchable *window = &options.findGroup("WINDOW");
+    yarp::os::Searchable *program = &options.findGroup("PROGRAM");
 
-    /*
-    yarp::os::Property optFile;
-    optFile.fromConfigFile(fileName);
-    yarp::os::Bottle& network = optFile.findGroup("[NETWORK]");
-    yarp::os::Bottle& window = optFile.findGroup("[WINDOW]");
-    yarp::os::Bottle& program = optFile.findGroup("[PROGRAM]");
+    if (network->isNull()) { network = &options; }
+    if (window->isNull()) { window = &options; }
+    if (program->isNull()) { program = &options; }
+
     yarp::os::BottleBit *val;
-    if (network.check("PortName",val)) {
+    if (network->check("PortName",val)||network->check("name",val)) {
         ACE_OS::sprintf(_options.portName, val->asString().c_str());
     }
-    if (network.check("NetName",val)) {
+    if (network->check("NetName",val)||network->check("n",val)) {
         ACE_OS::sprintf(_options.networkName, val->asString().c_str());
     }
-    */
+    if (network->check("OutPortName",val)||network->check("out",val)) {
+        ACE_OS::sprintf(_options.outPortName, val->asString().c_str());
+    }
+    if (network->check("OutNetName",val)||network->check("neto",val)) {
+        ACE_OS::sprintf(_options.outNetworkName, val->asString().c_str());
+    }
+    if (network->check("RefreshTime",val)||network->check("p",val)) {
+        _options.refreshTime = val->asDouble();
+    }
+    if (window->check("PosX",val)||window->check("x",val)) {
+        _options.posX = val->asInt();
+    }
+    if (window->check("PosY",val)||window->check("y",val)) {
+        _options.posY = val->asInt();
+    }
+    if (window->check("Width",val)||window->check("w",val)) {
+        _options.windWidth = val->asInt();
+    }
+    if (window->check("Height",val)||window->check("h",val)) {
+        _options.windHeight = val->asInt();
+    }
+    if (program->check("OutputEnabled",val)) {
+        _options.outputEnabled = val->asInt();
+    }
+    if (program->check("out",val)) {
+        _options.outputEnabled = true;
+    }
+    if (program->check("SaveOptions",val)||program->check("saveoptions",val)) {
+        _options.outputEnabled = val->asInt();
+    }
+    if (program->check("Logpolar",val)||program->check("l",val)) {
+        _options.logpolar = val->asInt();
+    }
+    if (program->check("Fovea",val)||program->check("f",val)) {
+        _options.fovea = val->asInt();
+    }
+}
 
-    /*
-
-      if ( optFile.getString("[NETWORK]", "NetName", s_tmp) == YARP_OK)
-      ACE_OS::sprintf(_options.networkName, s_tmp);
-      if ( optFile.getString("[NETWORK]", "OutPortName", s_tmp) == YARP_OK) 
-      ACE_OS::sprintf(_options.outPortName, s_tmp);
-      if ( optFile.getString("[NETWORK]", "OutNetName", s_tmp) == YARP_OK)
-      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
-      optFile.get("[WINDOW]", "RefreshTime", &_options.refreshTime);
-      optFile.get("[WINDOW]", "PosX", &_options.posX);
-      optFile.get("[WINDOW]", "PosY", &_options.posY);
-      optFile.get("[WINDOW]", "Width", &_options.windWidth);
-      optFile.get("[WINDOW]", "Height", &_options.windHeight);
-      optFile.get("[PROGRAM]", "OutputEnabled", &_options.outputEnabled);
-      optFile.get("[PROGRAM]", "SaveOptions", &_options.saveOnExit);
-      optFile.get("[PROGRAM]", "Logpolar", &_options.logpolar);
-      optFile.get("[PROGRAM]", "Fovea", &_options.fovea);
-    */
+void parseOptFile(char *fileName)
+{
+    yarp::os::Property options;
+    options.fromConfigFile(fileName);
+    setOptions(options);
 }
 
 void saveOptFile(char *fileName)
 {
-      FILE *optFile = NULL;
+    FILE *optFile = NULL;
       optFile = ACE_OS::fopen(_options.fileName,"wt");
       if (optFile == NULL)
       {
@@ -700,55 +701,10 @@ void saveOptFile(char *fileName)
 
 void parseParameters(int argc, char* argv[])
 {
-    /*
-      char s_tmp[255];
-      int i_tmp;
-
-      if(YARPParseParameters::parse(argc, argv, "-name", s_tmp))
-      ACE_OS::sprintf(_options.portName, s_tmp);
-		
-      if (YARPParseParameters::parse(argc, argv, "-net", s_tmp))
-      ACE_OS::sprintf(_options.networkName, s_tmp);
-
-      if (YARPParseParameters::parse(argc, argv, "-p", &i_tmp))
-      _options.refreshTime = i_tmp;
-
-      if (YARPParseParameters::parse(argc, argv, "-x", &i_tmp))
-      _options.posX = i_tmp;
-	
-      if (YARPParseParameters::parse(argc, argv, "-y", &i_tmp))
-      _options.posY = i_tmp;
-
-      if (YARPParseParameters::parse(argc, argv, "-w", &i_tmp))
-      _options.windWidth = i_tmp;
-
-      if (YARPParseParameters::parse(argc, argv, "-h", &i_tmp))
-      _options.windHeight = i_tmp;
-
-      if (YARPParseParameters::parse(argc, argv, "-saveoptions"))
-      _options.saveOnExit = 1;
-      else 
-      _options.saveOnExit = 0;
-      if (YARPParseParameters::parse(argc, argv, "-l"))
-      _options.logpolar = 1;
-      else 
-      _options.logpolar = 0;
-	
-      if (YARPParseParameters::parse(argc, argv, "-f"))
-      _options.fovea = 1;
-      else 
-      _options.fovea = 0;
-
-      if (YARPParseParameters::parse(argc, argv, "-out", s_tmp)) 
-      { 
-      ACE_OS::sprintf(_options.outPortName, s_tmp);
-      _options.outputEnabled = 1;
-      }
-
-
-      if (YARPParseParameters::parse(argc, argv, "-neto", s_tmp))
-      ACE_OS::sprintf(_options.outNetworkName, s_tmp);
-    */
+    yarp::os::Property options;
+    options.fromCommand(argc,argv);
+    printf("options are %s\n", options.toString().c_str());
+    setOptions(options);
 }
 
 void setOptionsToDefault()

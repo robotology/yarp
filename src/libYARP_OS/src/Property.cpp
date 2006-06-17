@@ -285,7 +285,8 @@ void Property::put(const char *key, BottleBit& bit) {
 }
 
 
-bool Property::check(const char *key, BottleBit *&output) const {
+/*
+bool Property::check(const char *key, BottleBit *&output) {
     bool ok = false;
     if (HELPER(implementation).check(key)) {
         output = &find(key);
@@ -293,7 +294,7 @@ bool Property::check(const char *key, BottleBit *&output) const {
     }
     return ok;
 }
-
+*/
 
 bool Property::check(const char *key) const {
     return HELPER(implementation).check(key);

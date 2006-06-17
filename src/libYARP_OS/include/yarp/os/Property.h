@@ -11,7 +11,8 @@ namespace yarp {
     }
 }
 
-class yarp::os::Property {
+
+class yarp::os::Property : public Searchable {
 
 public:
     Property();
@@ -20,17 +21,17 @@ public:
 
     bool check(const char *key) const;
 
-    bool check(const char *key, BottleBit *&output) const;
+    //virtual bool check(const char *key, BottleBit *&output);
 
     void put(const char *key, const char *val);
 
     void put(const char *key, BottleBit& bit);
 
-    BottleBit& find(const char *key) const {
+    virtual BottleBit& find(const char *key) {
         return get(key);
     }
 
-    Bottle& findGroup(const char *key) const {
+    virtual Bottle& findGroup(const char *key) {
         Bottle *result = getList(key);
         if (result!=((Bottle*)0)) { return *result; }
         return Bottle::getNull();

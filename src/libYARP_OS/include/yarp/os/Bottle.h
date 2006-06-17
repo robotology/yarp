@@ -16,22 +16,34 @@ namespace yarp {
     namespace os {
         class Bottle;
         class BottleBit;
+        class Searchable;
     }
 }
 
 
-
-class yarp::os::BottleBit : public Portable {
+class yarp::os::Searchable {
 public:
+    virtual ~Searchable() {}
+
+    virtual BottleBit& find(const char *txt) = 0;
+    virtual Bottle& findGroup(const char *txt) = 0;
+
+    bool check(const char *txt, BottleBit *& result);
+
     virtual bool isNull()    { return false; }
+
+    virtual ConstString toString() const = 0;
+};
+
+
+class yarp::os::BottleBit : public Portable, public Searchable {
+public:
     virtual bool isInt()     { return false; }
     virtual bool isString()  { return false; }
     virtual bool isDouble()  { return false; }
     virtual bool isList()    { return false; }
     virtual bool isVocab()   { return false; }
     virtual bool isBlob()    { return false; }
-
-    virtual ConstString toString() const = 0;
 
     virtual int asInt()            { return 0; }
     virtual int asVocab()            { return 0; }
@@ -55,8 +67,6 @@ public:
 
     virtual int getCode() { return 0; }
 
-    virtual BottleBit& find(const char *txt) = 0;
-    virtual Bottle& findGroup(const char *txt) = 0;
 };
 
 
@@ -75,7 +85,7 @@ public:
  * somewhere else.  In the very early days of YARP, that is what
  * communication felt like.
  */
-class yarp::os::Bottle : public Portable {
+class yarp::os::Bottle : public Portable, public Searchable {
 public:
 
     /**
@@ -267,7 +277,7 @@ public:
     void setNested(bool nested);
 
     static BottleBit& getNullBit() {
-        return bottleNull.get(-1);
+        return getNull().get(-1);
     }
 
     BottleBit& findValue(const char *key);
@@ -286,7 +296,6 @@ private:
     BottleBit& findGroupBit(const char *key);
 
     //BottleBit& find(const char *key);
-    static Bottle bottleNull;
     void *implementation;
 };
 
