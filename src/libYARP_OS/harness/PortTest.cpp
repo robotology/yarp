@@ -120,6 +120,7 @@ public:
         report(0,"checking read buffering");
         Bottle bot1;
         PortReaderBuffer<Bottle> buf;
+        buf.setStrict(true);
 
         bot1.fromString("1 2 3");
         for (int i=0; i<10000; i++) {
