@@ -2,19 +2,154 @@
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/BufferedPort.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/String.h>
 
 using namespace yarp::os;
+using namespace yarp::dev;
 using namespace yarp::sig;
 
 
 namespace yarp{
     namespace dev {
       class RemoteFrameGrabber;
+      class ServerFrameGrabber;
     }
 }
+
+
+class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
+            public PortReader,
+            public IFrameGrabberImage, public IFrameGrabberControls
+            // convenient to put these here just to make sure all
+            // methods get implemented
+{
+private:
+    Port p;
+    DeviceDriver *dd;
+    IFrameGrabberImage *fgImage;
+    IFrameGrabberControls *fgCtrl;
+    Property settings;
+    int ct;
+public:
+    ServerFrameGrabber() {
+        dd = NULL;
+        fgImage = NULL;
+        fgCtrl = NULL;
+        ct = 0;
+    }
+    
+    virtual bool open() {
+        return false;
+    }
+    
+    virtual bool close() {
+        if (dd!=NULL) {
+            dd->close();
+        }
+        return true;
+    }
+    
+    virtual bool open(Property& prop) {
+        p.setReader(*this);
+        
+        BottleBit *name;
+        if (prop.check("name",name)) {
+            p.open(name->asString());
+        } else {
+            p.open("/grabber");
+        }
+        start();
+        return true;
+    }
+
+    virtual void run() {
+        printf("Fake framegrabber starting\n");
+        while (!isStopping()) {
+            ImageOf<PixelRgb> img;
+            img.resize(40,20);
+            img.zero();
+            for (int i=0; i<img.width(); i++) {
+                img.pixel(i,ct).r = 255;
+            }
+            ct++;
+            if (ct>=img.height()) {
+                ct = 0;
+            }
+            printf("Fake framegrabber wrote an image...\n");
+            p.write(img);
+            Time::delay(1);
+        }
+        printf("Fake framegrabber stopping\n");
+    }
+
+    virtual bool read(ConnectionReader& connection) {
+        Bottle cmd, response;
+        cmd.read(connection);
+        printf("command received: %s\n", cmd.toString().c_str());
+        int code = cmd.get(0).asVocab();
+        switch (code) {
+        case VOCAB3('s','e','t'):
+            printf("set command received\n");
+            settings.put(cmd.get(1).asString().c_str(),cmd.get(2));
+            break;
+        case VOCAB3('g','e','t'):
+            printf("get command received\n");
+            response.addVocab(VOCAB2('i','s'));
+            response.addBit(cmd.get(1));
+            response.addBit(settings.find(cmd.get(1).asString().c_str()));
+            break;
+        }
+        if (response.size()>=1) {
+            ConnectionWriter *writer = connection.getWriter();
+            if (writer!=NULL) {
+                response.write(*writer);
+                printf("response sent: %s\n", response.toString().c_str());
+            }
+        }
+        return true;
+    }
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+        return fgImage->getImage(image);
+    }
+    
+    virtual int height() const {
+        return fgImage->height();
+    }
+
+    virtual int width() const {
+        return fgImage->width();
+    }
+
+    virtual bool setBrightness(double v) {
+        return fgCtrl->setBrightness(v);
+    }
+
+    virtual bool setShutter(double v) {
+        return fgCtrl->setShutter(v);
+    }
+
+    virtual bool setGain(double v) {
+        return fgCtrl->setGain(v);
+    }
+
+    virtual double getBrightness() const {
+        return fgCtrl->getBrightness();
+    }
+
+    virtual double getShutter() const {
+        return fgCtrl->getShutter();
+    }
+
+    virtual double getGain() const {
+        return fgCtrl->getGain();
+    }
+};
+
 
 class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
             public IFrameGrabberControls,
@@ -76,7 +211,7 @@ public:
     }
 
     virtual bool close() {
-        return true;
+        return true;;
     }
 
     bool setCommand(int code, double v) {
@@ -124,4 +259,8 @@ public:
 
 yarp::dev::DeviceDriver *createRemoteFrameGrabber() {
     return new yarp::dev::RemoteFrameGrabber();
+}
+
+yarp::dev::DeviceDriver *createServerFrameGrabber() {
+    return new yarp::dev::ServerFrameGrabber();
 }

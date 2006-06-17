@@ -15,3 +15,5 @@ IF (CREATE_GUIS)
       SUBDIRS(yarp-imageviewer)
   ENDIF (GtkPlus_FOUND)
 ENDIF(CREATE_GUIS)
+
+SUBDIRS(yarpdev)

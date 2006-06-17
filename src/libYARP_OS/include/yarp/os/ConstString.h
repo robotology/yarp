@@ -42,6 +42,10 @@ public:
      */
     const char *c_str() const;
 
+    operator const char *() const { 
+        return c_str(); 
+    }
+
 private:
     const ConstString& operator = (const ConstString& alt);
 

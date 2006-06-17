@@ -15,6 +15,8 @@ namespace yarp {
 class yarp::os::Property : public Searchable {
 
 public:
+    using Searchable::check;
+
     Property();
 
     virtual ~Property();

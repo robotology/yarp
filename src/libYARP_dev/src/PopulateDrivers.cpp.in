@@ -23,6 +23,7 @@ using namespace yarp::dev;
 
 
 extern DeviceDriver *createRemoteFrameGrabber();
+extern DeviceDriver *createServerFrameGrabber();
 
 
 DeviceDriver *Drivers::create(yarp::os::Property& prop) {
@@ -44,6 +45,11 @@ DeviceDriver *Drivers::create(yarp::os::Property& prop) {
 
     if (str == "remote_framegrabber") {
         driver = createRemoteFrameGrabber();
+    }
+
+
+    if (str == "server_framegrabber") {
+        driver = createServerFrameGrabber();
     }
 
     if (driver!=NULL) {

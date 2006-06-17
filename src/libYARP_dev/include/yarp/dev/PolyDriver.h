@@ -16,16 +16,16 @@ public:
     DeviceDriver *dd;
 
     PolyDriver() {
-        dd = NULL;
+        dd = 0 /*NULL*/;
     }
 
     PolyDriver(const char *txt) {
-        dd = NULL;
+        dd = 0 /*NULL*/;
         create(txt);
     }
 
     PolyDriver(yarp::os::Property& prop) {
-        dd = NULL;
+        dd = 0 /*NULL*/;
         create(prop);
     }
 
@@ -40,19 +40,19 @@ public:
     }
 
     virtual ~PolyDriver() {
-        if (dd!=NULL) {
+        if (dd!=0 /*NULL*/) {
             dd->close();
             delete dd;
-            dd = NULL;
+            dd = 0 /*NULL*/;
         }
     }
 
     virtual bool close() {
         bool result = false;
-        if (dd!=NULL) {
+        if (dd!=0 /*NULL*/) {
             result = dd->close();
             delete dd;
-            dd = NULL;
+            dd = 0 /*NULL*/;
         }
         return result;
     }
@@ -60,7 +60,7 @@ public:
     template <class T>
     bool view(T *&x) {
         bool result = false;
-        x = NULL;
+        x = 0 /*NULL*/;
 
         // This is not super-portable; and it requires RTTI compiled
         // in.  For systems on which this is a problem, suggest:
@@ -68,7 +68,7 @@ public:
         // implement own method for checking interface support.
         T *v = dynamic_cast<T *>(dd);
 
-        if (v!=NULL) {
+        if (v!=0 /*NULL*/) {
             x = v;
             result = true;
         }
@@ -76,7 +76,7 @@ public:
     }
 
     bool isValid() {
-        return dd != NULL;
+        return dd != 0 /*NULL*/;
     }
 };
 
