@@ -6,14 +6,14 @@
  *
  */
 
+#include <yarp/NetType.h>
+#include <yarp/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <yarp/NetType.h>
-#include <yarp/BufferedConnectionWriter.h>
 
 #include "TestList.h"
 

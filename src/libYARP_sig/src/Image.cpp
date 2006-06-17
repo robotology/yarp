@@ -5,6 +5,8 @@
 
 */
 
+#include <ace/OS_NS_stdlib.h>
+#include <ace/OS_NS_stdio.h>
 
 #include <yarp/Logger.h>
 #include <yarp/IOException.h>
@@ -15,9 +17,6 @@
 #include <yarp/os/Vocab.h>
 
 #include <assert.h>
-
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_stdio.h>
 
 
 using namespace yarp;

@@ -99,7 +99,7 @@ namespace yarp {
 
 
         /* OSX begins*/
-
+        #include <sys/types.h>
         typedef int32_t RawNetInt32;
         class NetInt32 {
         private:
