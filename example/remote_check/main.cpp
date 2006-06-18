@@ -80,11 +80,10 @@ int main() {
     FakeFrameGrabber fake;
     fake.start();
     
-    PolyDriver dd("(device remote_framegrabber) (local /client) (remote /server)");
+    PolyDriver dd("(device client_grabber) (local /client) (remote /server)");
     
     if (!dd.isValid()) {
         printf("Device not available\n");
-        printf("(If this is June 2006, you need to delete cache and run cmake again, sorry)\n");
         exit(1);
     }
     
