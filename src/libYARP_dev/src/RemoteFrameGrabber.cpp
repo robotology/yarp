@@ -33,6 +33,11 @@ namespace yarp{
 #define VOCAB_HEIGHT VOCAB1('h')
 
 
+//class yarp::dev::GenericServer : public DeviceDriver {
+//public:
+//};
+
+
 class yarp::dev::TestFrameGrabber : public DeviceDriver, 
             public IFrameGrabberImage, public IFrameGrabberControls {
 private:
@@ -418,13 +423,13 @@ public:
 };
 
 yarp::dev::DriverCreator *createTestFrameGrabber() {
-    return new yarp::dev::DriverCreatorOf<TestFrameGrabber>("test_grabber");
+    return new DriverCreatorOf<TestFrameGrabber>("test_grabber","grabber");
 }
 
 yarp::dev::DriverCreator *createRemoteFrameGrabber() {
-    return new yarp::dev::DriverCreatorOf<RemoteFrameGrabber>("client_grabber");
+    return new DriverCreatorOf<RemoteFrameGrabber>("remote_grabber","grabber");
 }
 
 yarp::dev::DriverCreator *createServerFrameGrabber() {
-    return new yarp::dev::DriverCreatorOf<ServerFrameGrabber>("net_grabber");
+    return new DriverCreatorOf<ServerFrameGrabber>("grabber","grabber");
 }

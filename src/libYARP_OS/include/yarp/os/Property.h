@@ -29,6 +29,8 @@ public:
 
     void put(const char *key, BottleBit& bit);
 
+    void unput(const char *key);
+
     virtual BottleBit& find(const char *key) {
         return get(key);
     }

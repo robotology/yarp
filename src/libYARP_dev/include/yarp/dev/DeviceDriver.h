@@ -20,7 +20,7 @@ namespace yarp {
  * At the moment this is an empty class, in the future it might contain
  * methods common to all device drivers (e.g. serialization/deserialization)
  */
-class yarp::dev::DeviceDriver 
+class yarp::dev::DeviceDriver
 {
 public:
     virtual ~DeviceDriver(){}
@@ -44,8 +44,7 @@ public:
      * Generic command interface.
      * @return true on success.
      */
-    //deprecated
-    //virtual bool apply(yarp::os::ConnectionReader& cmd);
+    //virtual bool read(yarp::os::ConnectionReader& cmd);
 
     /**
      * Generic command interface.

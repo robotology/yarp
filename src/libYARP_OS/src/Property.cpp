@@ -83,6 +83,10 @@ public:
         return p!=NULL;
     }
 
+    void unput(const char *key) {
+        data.unbind(String(key));
+    }
+
     bool check(const char *key) const {
         PropertyItem *p = getPropNoCreate(key);
         return p!=NULL;
@@ -298,6 +302,11 @@ bool Property::check(const char *key, BottleBit *&output) {
 
 bool Property::check(const char *key) const {
     return HELPER(implementation).check(key);
+}
+
+
+void Property::unput(const char *key) {
+    HELPER(implementation).unput(key);
 }
 
 

@@ -44,6 +44,9 @@ int main(int argc, char *argv[]) {
         options.fromString(lispy);
     }
 
+    // ask for a wrapped, remotable device rather than raw device
+    options.put("wrapped","1");
+
     // create a device
     //printf("Options: %s\n", options.toString().c_str());
     PolyDriver dd(options);

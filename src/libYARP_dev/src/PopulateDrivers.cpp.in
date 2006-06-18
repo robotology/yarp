@@ -29,7 +29,7 @@ extern DriverCreator *createTestFrameGrabber();
 
 void Drivers::init() {
 #ifdef ENABLE_dragonfly
-    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly"));
+    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly","grabber"));
 #endif
     add(createRemoteFrameGrabber());
     add(createServerFrameGrabber());

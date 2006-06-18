@@ -13,6 +13,7 @@ namespace yarp {
     }
 }
 
+
 class yarp::dev::DriverCreator {
 public:
     virtual ~DriverCreator() {}
@@ -21,22 +22,29 @@ public:
     virtual yarp::os::ConstString toString() = 0;
 
     virtual DeviceDriver *create() = 0;
+    
+    virtual yarp::os::ConstString getWrapper() = 0;
 };
 
 
 template <class T>
 class yarp::dev::DriverCreatorOf : public DriverCreator {
 private:
-    yarp::os::ConstString desc;
+    yarp::os::ConstString desc, wrap;
 public:
-    DriverCreatorOf() : desc("unnamed") {
+    DriverCreatorOf() : desc("unnamed"), wrap("unnamed") {
     }
 
-    DriverCreatorOf(const char *str) : desc(str) {
+    DriverCreatorOf(const char *str, const char *wrap) : desc(str), wrap(wrap)
+    {
     }
 
     virtual yarp::os::ConstString toString() {
         return desc;
+    }
+
+    virtual yarp::os::ConstString getWrapper() {
+        return wrap;
     }
 
     virtual DeviceDriver *create() {

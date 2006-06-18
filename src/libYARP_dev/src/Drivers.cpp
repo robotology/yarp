@@ -102,7 +102,21 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 
     DriverCreator *creator = find(str.c_str());
     if (creator!=NULL) {
-        driver = creator->create();
+        BottleBit *val;
+        if (config->check("wrapped",val)) {
+            String wrapper = creator->getWrapper().c_str();
+            DriverCreator *wrapCreator = find(wrapper.c_str());
+            if (wrapCreator!=NULL) {
+                p.fromString(config->toString());
+                p.put("subdevice",str.c_str());
+                p.put("device",wrapper.c_str());
+                p.unput("wrapped");
+                config = &p;
+                driver = wrapCreator->create();
+            }
+        } else {
+            driver = creator->create();
+        }
     } else {
         printf("Could not find device <%s>\n", str.c_str());
     }
