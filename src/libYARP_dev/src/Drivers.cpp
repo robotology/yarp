@@ -108,11 +108,16 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
             DriverCreator *wrapCreator = find(wrapper.c_str());
             if (wrapCreator!=NULL) {
                 p.fromString(config->toString());
-                p.put("subdevice",str.c_str());
-                p.put("device",wrapper.c_str());
                 p.unput("wrapped");
                 config = &p;
-                driver = wrapCreator->create();
+                if (wrapCreator!=creator) {
+                    p.put("subdevice",str.c_str());
+                    p.put("device",wrapper.c_str());
+                    driver = wrapCreator->create();
+                } else {
+                    // already wrapped
+                    driver = creator->create();
+                }
             }
         } else {
             driver = creator->create();

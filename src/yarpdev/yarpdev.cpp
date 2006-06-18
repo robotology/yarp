@@ -14,7 +14,11 @@ int main(int argc, char *argv[]) {
 
     // just list the devices if no argument given
     if (argc==1) {
-        printf("Here are the known devices:\n");
+        printf("You can call yarpdev like this:\n");
+        printf("   yarpdev --device DEVICENAME --OPTION VALUE ...\n");
+        printf("For example:\n");
+        printf("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
+        printf("Here are devices listed for your system:\n");
         printf("%s", Drivers::factory().toString().c_str());
         return 0;
     }
