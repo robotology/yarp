@@ -129,7 +129,7 @@ public:
         type_id = 0;
         pImage = NULL;
         Data = NULL;
-        is_owner = 0;
+        is_owner = 1;
         quantum = 0;
     }
 
@@ -620,15 +620,27 @@ void Image::zero() {
 
 void Image::resize(int imgWidth, int imgHeight) {
     int code = getPixelCode();
-    if (code!=imgPixelCode) { imgPixelCode = code; }
     int size = getPixelSize();
-    if (size!=imgPixelSize) { imgPixelSize = size; }
+    bool change = false;
+    if (code!=imgPixelCode) { 
+        imgPixelCode = code; 
+        change = true;
+    }
+    if (size!=imgPixelSize) { 
+        imgPixelSize = size; 
+        change=true;
+    }
+    if (imgWidth!=width()||imgHeight!=height()) {
+        change = true;
+    }
 
-    ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
-                                            imgPixelCode,
-                                            imgPixelSize,
-                                            imgQuantum);
-    synchronize();
+    if (change) {
+        ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
+                                                imgPixelCode,
+                                                imgPixelSize,
+                                                imgQuantum);
+        synchronize();
+    }
 }
 
 

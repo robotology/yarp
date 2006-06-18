@@ -5,13 +5,14 @@
 #include <yarp/Logger.h>
 #include <yarp/NameClient.h>
 #include <yarp/Companion.h>
+#include <yarp/os/NetInt32.h>
 
 #include "TestList.h"
 
 using namespace yarp;
 
 
-#ifdef __LINUX__
+#ifdef YARP2_LINUX
 #define CHECK_FOR_LEAKS
 #endif
 
