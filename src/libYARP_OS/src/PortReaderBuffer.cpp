@@ -83,7 +83,8 @@ public:
         for (unsigned int i=0; i<readers.size(); i++) {
             if (content[i]) {
                 content[i] = flag;
-                return readers[i];
+                prev = readers[i];
+                return prev;
             }
         }
         return NULL;
