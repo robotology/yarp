@@ -7,45 +7,71 @@
 
 namespace yarp {
     namespace dev {
-        class DriverFactory;
+        template <class T> class DriverCreatorOf;
+        class DriverCreator;
         class Drivers;
     }
 }
 
-
-class yarp::dev::DriverFactory {
+class yarp::dev::DriverCreator {
 public:
-    virtual ~DriverFactory() {}
-
-    // calls create with the given name property
-    DeviceDriver *create(const char *device) {
-        yarp::os::Property p;
-        p.put("device",device);
-        return create(p);
-    }
+    virtual ~DriverCreator() {}
 
     // returns a simple description of devices the factory can make
     virtual yarp::os::ConstString toString() = 0;
 
-    // returns null if name is not consistent
-    virtual DeviceDriver *create(yarp::os::Searchable& prop) = 0;
+    virtual DeviceDriver *create() = 0;
+};
+
+
+template <class T>
+class yarp::dev::DriverCreatorOf : public DriverCreator {
+private:
+    yarp::os::ConstString desc;
+public:
+    DriverCreatorOf() : desc("unnamed") {
+    }
+
+    DriverCreatorOf(const char *str) : desc(str) {
+    }
+
+    virtual yarp::os::ConstString toString() {
+        return desc;
+    }
+
+    virtual DeviceDriver *create() {
+        return new T;
+    }
 };
 
 
 
-class yarp::dev::Drivers : public DriverFactory {
+class yarp::dev::Drivers {
 public:
-    static DriverFactory& factory() {
+    static Drivers& factory() {
         return instance;
     }
 
-    virtual DeviceDriver *create(yarp::os::Searchable& prop);
+    // calls create with the given name property
+    DeviceDriver *open(const char *device) {
+        yarp::os::Property p;
+        p.put("device",device);
+        return open(p);
+    }
+
+    virtual DeviceDriver *open(yarp::os::Searchable& prop);
 
     virtual yarp::os::ConstString toString();
 
     virtual ~Drivers();
 
+    void add(DriverCreator *creator);
+
 private:
+
+    DriverCreator *find(const char *name);
+
+    void init();
 
     void *implementation;
 

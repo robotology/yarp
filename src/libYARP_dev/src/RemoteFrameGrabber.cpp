@@ -153,9 +153,9 @@ public:
                 Property p;
                 p.fromString(prop.toString());
                 p.put("device",name->toString());
-                poly.create(p);
+                poly.open(p);
             } else {
-                poly.create(*name);
+                poly.open(*name);
             }
             if (!poly.isValid()) {
                 printf("cannot make <%s>\n", name->toString().c_str());
@@ -187,7 +187,7 @@ public:
         while (!isStopping()) {
             ImageOf<PixelRgb> img;
             getImage(img);
-            printf("Fake framegrabber writing a %dx%d image...\n",
+            printf("Network framegrabber writing a %dx%d image...\n",
                    img.width(),img.height());
             p.write(img);
             Time::delay(0.05);
@@ -417,14 +417,14 @@ public:
     }
 };
 
-yarp::dev::DeviceDriver *createTestFrameGrabber() {
-    return new yarp::dev::TestFrameGrabber();
+yarp::dev::DriverCreator *createTestFrameGrabber() {
+    return new yarp::dev::DriverCreatorOf<TestFrameGrabber>("test_grabber");
 }
 
-yarp::dev::DeviceDriver *createRemoteFrameGrabber() {
-    return new yarp::dev::RemoteFrameGrabber();
+yarp::dev::DriverCreator *createRemoteFrameGrabber() {
+    return new yarp::dev::DriverCreatorOf<RemoteFrameGrabber>("client_grabber");
 }
 
-yarp::dev::DeviceDriver *createServerFrameGrabber() {
-    return new yarp::dev::ServerFrameGrabber();
+yarp::dev::DriverCreator *createServerFrameGrabber() {
+    return new yarp::dev::DriverCreatorOf<ServerFrameGrabber>("net_grabber");
 }

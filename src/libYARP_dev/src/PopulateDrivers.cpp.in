@@ -22,56 +22,17 @@ using namespace yarp::dev;
 #endif
 
 
-extern DeviceDriver *createRemoteFrameGrabber();
-extern DeviceDriver *createServerFrameGrabber();
-extern DeviceDriver *createTestFrameGrabber();
+extern DriverCreator *createRemoteFrameGrabber();
+extern DriverCreator *createServerFrameGrabber();
+extern DriverCreator *createTestFrameGrabber();
 
-DeviceDriver *Drivers::create(yarp::os::Searchable& prop) {
-    yarp::os::Searchable *config = &prop;
-    Property p;
-    String str = prop.toString().c_str();
-    BottleBit *part;
-    if (prop.check("device",part)) {
-        str = part->toString().c_str();
-    }
-    Bottle bot(str.c_str());
-    if (bot.size()>1) {
-        // this wasn't a device name, but some codes -- rearrange
-        p.fromString(str.c_str());
-        str = p.get("device").asString().c_str();
-        config = &p;
-    }
 
-    DeviceDriver *driver = NULL;
-
+void Drivers::init() {
 #ifdef ENABLE_dragonfly
-    if (str == "dragonfly") {
-        driver = new DragonflyDeviceDriver();
-    }
+    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly"));
 #endif
-
-    if (str == "remote_framegrabber") {
-        driver = createRemoteFrameGrabber();
-    }
-
-
-    if (str == "server_framegrabber") {
-        driver = createServerFrameGrabber();
-    }
-
-    if (str == "test_framegrabber") {
-        driver = createTestFrameGrabber();
-    }
-
-    if (driver!=NULL) {
-        bool ok = driver->open(*config);
-        if (!ok) {
-            delete driver;
-            driver = NULL;
-        }
-        return driver;
-    }
-    
-    return NULL;
+    add(createRemoteFrameGrabber());
+    add(createServerFrameGrabber());
+    add(createTestFrameGrabber());
 }
 

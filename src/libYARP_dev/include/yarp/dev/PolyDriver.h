@@ -21,21 +21,21 @@ public:
 
     PolyDriver(const char *txt) {
         dd = 0 /*NULL*/;
-        create(txt);
+        open(txt);
     }
 
     PolyDriver(yarp::os::Searchable& prop) {
         dd = 0 /*NULL*/;
-        create(prop);
+        open(prop);
     }
 
-    bool create(const char *txt) {
-        dd = Drivers::factory().create(txt);
+    bool open(const char *txt) {
+        dd = Drivers::factory().open(txt);
         return isValid();
     }
 
-    bool create(yarp::os::Searchable& prop) {
-        dd = Drivers::factory().create(prop);
+    bool open(yarp::os::Searchable& prop) {
+        dd = Drivers::factory().open(prop);
         return isValid();
     }
 
