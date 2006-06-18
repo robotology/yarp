@@ -81,7 +81,7 @@ public:
             }
             printf("Fake framegrabber wrote an image...\n");
             p.write(img);
-            Time::delay(1);
+            Time::delay(0.05);
         }
         printf("Fake framegrabber stopping\n");
     }
