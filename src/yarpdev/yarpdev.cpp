@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    while (1) {
+    while (dd.isValid()) {
         printf("Device active...\n");
         Time::delay(1);
     }

@@ -1,12 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/String.h>
+
+#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/PolyDriver.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -15,10 +17,89 @@ using namespace yarp::sig;
 
 namespace yarp{
     namespace dev {
+      class TestFrameGrabber;
       class RemoteFrameGrabber;
       class ServerFrameGrabber;
     }
 }
+
+#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
+#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
+#define VOCAB_GAIN VOCAB4('g','a','i','n')
+#define VOCAB_SET VOCAB3('s','e','t')
+#define VOCAB_GET VOCAB3('g','e','t')
+#define VOCAB_IS VOCAB2('i','s')
+
+
+class yarp::dev::TestFrameGrabber : public DeviceDriver, 
+            public IFrameGrabberImage, public IFrameGrabberControls {
+private:
+    int ct;
+
+public:
+    TestFrameGrabber() {
+        ct = 0;
+    }
+
+
+    virtual bool open() {
+        return true;
+    }
+
+    virtual bool close() {
+        return true;
+    }
+
+    virtual bool open(Property& prop) {
+        return true;
+    }
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+        Time::delay(0.05);
+        image.resize(40,20);
+        image.zero();
+        for (int i=0; i<image.width(); i++) {
+            image.pixel(i,ct).r = 255;
+        }
+        ct++;
+        if (ct>=image.height()) {
+            ct = 0;
+        }
+        return true;
+    }
+    
+    virtual int height() const {
+        return 20;
+    }
+
+    virtual int width() const {
+        return 40;
+    }
+
+    virtual bool setBrightness(double v) {
+        return false;
+    }
+
+    virtual bool setShutter(double v) {
+        return false;
+    }
+
+    virtual bool setGain(double v) {
+        return false;
+    }
+
+    virtual double getBrightness() const {
+        return 0;
+    }
+
+    virtual double getShutter() const {
+        return 0;
+    }
+
+    virtual double getGain() const {
+        return 0;
+    }
+};
 
 
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
@@ -29,17 +110,14 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
 {
 private:
     Port p;
-    DeviceDriver *dd;
+    PolyDriver poly;
     IFrameGrabberImage *fgImage;
     IFrameGrabberControls *fgCtrl;
     Property settings;
-    int ct;
 public:
     ServerFrameGrabber() {
-        dd = NULL;
         fgImage = NULL;
         fgCtrl = NULL;
-        ct = 0;
     }
     
     virtual bool open() {
@@ -47,9 +125,6 @@ public:
     }
     
     virtual bool close() {
-        if (dd!=NULL) {
-            dd->close();
-        }
         return true;
     }
     
@@ -57,33 +132,40 @@ public:
         p.setReader(*this);
         
         BottleBit *name;
+        if (prop.check("subdevice",name)) {
+            poly.create(name->asString());
+        } else {
+            printf("\"--subdevice <name>\" not set for server_framegrabber\n");
+            return false;
+        }
         if (prop.check("name",name)) {
             p.open(name->asString());
         } else {
             p.open("/grabber");
         }
-        start();
-        return true;
+        if (poly.isValid()) {
+            poly.view(fgImage);
+            poly.view(fgCtrl);
+        }
+        if (fgImage!=NULL) {
+            start();
+            return true;
+        }
+        printf("subdevice <%s> doesn't look like a framegrabber\n",
+               name->asString().c_str());
+        return false;
     }
 
     virtual void run() {
-        printf("Fake framegrabber starting\n");
+        printf("Server framegrabber starting\n");
         while (!isStopping()) {
             ImageOf<PixelRgb> img;
-            img.resize(40,20);
-            img.zero();
-            for (int i=0; i<img.width(); i++) {
-                img.pixel(i,ct).r = 255;
-            }
-            ct++;
-            if (ct>=img.height()) {
-                ct = 0;
-            }
-            printf("Fake framegrabber wrote an image...\n");
+            getImage(img);
+            printf("Fake framegrabber writing an image...\n");
             p.write(img);
             Time::delay(0.05);
         }
-        printf("Fake framegrabber stopping\n");
+        printf("Server framegrabber stopping\n");
     }
 
     virtual bool read(ConnectionReader& connection) {
@@ -92,15 +174,46 @@ public:
         printf("command received: %s\n", cmd.toString().c_str());
         int code = cmd.get(0).asVocab();
         switch (code) {
-        case VOCAB3('s','e','t'):
+        case VOCAB_SET:
             printf("set command received\n");
-            settings.put(cmd.get(1).asString().c_str(),cmd.get(2));
+            {
+                bool ok = false;
+                switch(cmd.get(1).asVocab()) {
+                case VOCAB_BRIGHTNESS:
+                    ok = setBrightness(cmd.get(2).asDouble());
+                    break;
+                case VOCAB_SHUTTER:
+                    ok = setShutter(cmd.get(2).asDouble());
+                    break;
+                case VOCAB_GAIN:
+                    ok = setGain(cmd.get(2).asDouble());
+                    break;
+                }
+            }
             break;
-        case VOCAB3('g','e','t'):
+        case VOCAB_GET:
             printf("get command received\n");
-            response.addVocab(VOCAB2('i','s'));
-            response.addBit(cmd.get(1));
-            response.addBit(settings.find(cmd.get(1).asString().c_str()));
+            {
+                bool ok = false;
+                double val = 0;
+                switch(cmd.get(1).asVocab()) {
+                case VOCAB_BRIGHTNESS:
+                    ok = true;
+                    val = getBrightness();
+                    break;
+                case VOCAB_SHUTTER:
+                    ok = true;
+                    val = getShutter();
+                    break;
+                case VOCAB_GAIN:
+                    ok = true;
+                    val = getGain();
+                    break;
+                }
+                response.addVocab(VOCAB_IS);
+                response.addBit(cmd.get(1));
+                response.addDouble(val);
+            }
             break;
         }
         if (response.size()>=1) {
@@ -114,38 +227,47 @@ public:
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+        if (fgImage==NULL) { return false; }
         return fgImage->getImage(image);
     }
     
     virtual int height() const {
+        if (fgImage==NULL) { return 0; }
         return fgImage->height();
     }
 
     virtual int width() const {
+        if (fgImage==NULL) { return 0; }
         return fgImage->width();
     }
 
     virtual bool setBrightness(double v) {
+        if (fgCtrl==NULL) { return false; }
         return fgCtrl->setBrightness(v);
     }
 
     virtual bool setShutter(double v) {
+        if (fgCtrl==NULL) { return false; }
         return fgCtrl->setShutter(v);
     }
 
     virtual bool setGain(double v) {
+        if (fgCtrl==NULL) { return false; }
         return fgCtrl->setGain(v);
     }
 
     virtual double getBrightness() const {
+        if (fgCtrl==NULL) { return 0; }
         return fgCtrl->getBrightness();
     }
 
     virtual double getShutter() const {
+        if (fgCtrl==NULL) { return 0; }
         return fgCtrl->getShutter();
     }
 
     virtual double getGain() const {
+        if (fgCtrl==NULL) { return 0; }
         return fgCtrl->getGain();
     }
 };
@@ -216,7 +338,7 @@ public:
 
     bool setCommand(int code, double v) {
         Bottle cmd;
-        cmd.addVocab(VOCAB3('s','e','t'));
+        cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addDouble(v);
         port.write(cmd);
@@ -225,7 +347,7 @@ public:
 
     double getCommand(int code) const {
         Bottle cmd, response;
-        cmd.addVocab(VOCAB3('g','e','t'));
+        cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
@@ -233,29 +355,33 @@ public:
     }
 
     virtual bool setBrightness(double v) {
-        return setCommand(VOCAB3('b','r','i'),v);
+        return setCommand(VOCAB_BRIGHTNESS,v);
     }
 
     virtual bool setShutter(double v) {
-        return setCommand(VOCAB4('s','h','u','t'),v);
+        return setCommand(VOCAB_SHUTTER,v);
     }
 
     virtual bool setGain(double v) {
-        return setCommand(VOCAB4('g','a','i','n'),v);
+        return setCommand(VOCAB_GAIN,v);
     }
 
     virtual double getBrightness() const {
-        return getCommand(VOCAB3('b','r','i'));
+        return getCommand(VOCAB_BRIGHTNESS);
     }
 
     virtual double getShutter() const {
-        return getCommand(VOCAB4('s','h','u','t'));
+        return getCommand(VOCAB_SHUTTER);
     }
 
     virtual double getGain() const {
-        return getCommand(VOCAB4('g','a','i','n'));
+        return getCommand(VOCAB_GAIN);
     }
 };
+
+yarp::dev::DeviceDriver *createTestFrameGrabber() {
+    return new yarp::dev::TestFrameGrabber();
+}
 
 yarp::dev::DeviceDriver *createRemoteFrameGrabber() {
     return new yarp::dev::RemoteFrameGrabber();
