@@ -24,7 +24,7 @@ public:
         create(txt);
     }
 
-    PolyDriver(yarp::os::Property& prop) {
+    PolyDriver(yarp::os::Searchable& prop) {
         dd = 0 /*NULL*/;
         create(prop);
     }
@@ -34,7 +34,7 @@ public:
         return isValid();
     }
 
-    bool create(yarp::os::Property& prop) {
+    bool create(yarp::os::Searchable& prop) {
         dd = Drivers::factory().create(prop);
         return isValid();
     }

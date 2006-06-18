@@ -817,6 +817,10 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     // Note use of external block.  Implies care needed about ownership.
     connection.appendExternalBlock((char *)mem,header.imgSize);
 
+    // if someone is foolish enough to connect in text mode,
+    // let them see something readable.
+    connection.convertTextMode();
+
     return true;
 }
 

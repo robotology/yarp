@@ -32,7 +32,7 @@ public:
     virtual bool open(){return true;}
 
 
-    virtual bool open(yarp::os::Property& config){ return open(); }
+    virtual bool open(yarp::os::Searchable& config){ return open(); }
 
     /**
      * Close the DeviceDriver.

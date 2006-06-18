@@ -29,16 +29,23 @@ namespace yarp{
 #define VOCAB_SET VOCAB3('s','e','t')
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
+#define VOCAB_WIDTH VOCAB1('w')
+#define VOCAB_HEIGHT VOCAB1('h')
 
 
 class yarp::dev::TestFrameGrabber : public DeviceDriver, 
             public IFrameGrabberImage, public IFrameGrabberControls {
 private:
     int ct;
+    int w, h;
 
 public:
     TestFrameGrabber() {
         ct = 0;
+
+        // just for nostalgia
+        w = 128;
+        h = 128;
     }
 
 
@@ -50,13 +57,20 @@ public:
         return true;
     }
 
-    virtual bool open(Property& prop) {
+    virtual bool open(Searchable& prop) {
+        BottleBit *val;
+        if (prop.check("width",val)||prop.check("w",val)) {
+            w = val->asInt();
+        }
+        if (prop.check("height",val)||prop.check("h",val)) {
+            h = val->asInt();
+        }
         return true;
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         Time::delay(0.05);
-        image.resize(40,20);
+        image.resize(w,h);
         image.zero();
         for (int i=0; i<image.width(); i++) {
             image.pixel(i,ct).r = 255;
@@ -69,11 +83,11 @@ public:
     }
     
     virtual int height() const {
-        return 20;
+        return h;
     }
 
     virtual int width() const {
-        return 40;
+        return w;
     }
 
     virtual bool setBrightness(double v) {
@@ -128,12 +142,24 @@ public:
         return true;
     }
     
-    virtual bool open(Property& prop) {
+    virtual bool open(Searchable& prop) {
         p.setReader(*this);
         
         BottleBit *name;
         if (prop.check("subdevice",name)) {
-            poly.create(name->asString());
+            printf("Subdevice %s\n", name->toString().c_str());
+            if (name->isString()) {
+                // maybe user isn't doing nested configuration
+                Property p;
+                p.fromString(prop.toString());
+                p.put("device",name->toString());
+                poly.create(p);
+            } else {
+                poly.create(*name);
+            }
+            if (!poly.isValid()) {
+                printf("cannot make <%s>\n", name->toString().c_str());
+            }
         } else {
             printf("\"--subdevice <name>\" not set for server_framegrabber\n");
             return false;
@@ -152,7 +178,7 @@ public:
             return true;
         }
         printf("subdevice <%s> doesn't look like a framegrabber\n",
-               name->asString().c_str());
+               name->toString().c_str());
         return false;
     }
 
@@ -161,7 +187,8 @@ public:
         while (!isStopping()) {
             ImageOf<PixelRgb> img;
             getImage(img);
-            printf("Fake framegrabber writing an image...\n");
+            printf("Fake framegrabber writing a %dx%d image...\n",
+                   img.width(),img.height());
             p.write(img);
             Time::delay(0.05);
         }
@@ -195,24 +222,35 @@ public:
             printf("get command received\n");
             {
                 bool ok = false;
-                double val = 0;
+                response.addVocab(VOCAB_IS);
+                response.addBit(cmd.get(1));
                 switch(cmd.get(1).asVocab()) {
                 case VOCAB_BRIGHTNESS:
                     ok = true;
-                    val = getBrightness();
+                    response.addDouble(getBrightness());
                     break;
                 case VOCAB_SHUTTER:
                     ok = true;
-                    val = getShutter();
+                    response.addDouble(getShutter());
                     break;
                 case VOCAB_GAIN:
                     ok = true;
-                    val = getGain();
+                    response.addDouble(getGain());
+                    break;
+                case VOCAB_WIDTH:
+                    // normally, this would come from stream information
+                    ok = true;
+                    response.addInt(width());
+                    break;
+                case VOCAB_HEIGHT:
+                    // normally, this would come from stream information
+                    ok = true;
+                    response.addInt(height());
                     break;
                 }
-                response.addVocab(VOCAB_IS);
-                response.addBit(cmd.get(1));
-                response.addDouble(val);
+                if (!ok) {
+                    // leave answer blank
+                }
             }
             break;
         }
@@ -315,7 +353,7 @@ public:
         return true;
     }
 
-    virtual bool open(Property& config){
+    virtual bool open(Searchable& config){
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
         if (local!="") {

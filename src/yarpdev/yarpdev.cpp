@@ -23,6 +23,11 @@ int main(int argc, char *argv[]) {
         printf("Working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname);
     }
+    if (options.check("lispy",val)) {
+        ConstString lispy = val->toString();
+        printf("Working with config %s\n", lispy.c_str());
+        options.fromString(lispy);
+    }
 
     // create a device
     PolyDriver dd(options);
@@ -33,7 +38,7 @@ int main(int argc, char *argv[]) {
 
     while (dd.isValid()) {
         printf("Device active...\n");
-        Time::delay(1);
+        Time::delay(5);
     }
 
     return 0;

@@ -26,13 +26,20 @@ extern DeviceDriver *createRemoteFrameGrabber();
 extern DeviceDriver *createServerFrameGrabber();
 extern DeviceDriver *createTestFrameGrabber();
 
-DeviceDriver *Drivers::create(yarp::os::Property& prop) {
-    String str = prop.get("device").asString().c_str();
+DeviceDriver *Drivers::create(yarp::os::Searchable& prop) {
+    yarp::os::Searchable *config = &prop;
+    Property p;
+    String str = prop.toString().c_str();
+    BottleBit *part;
+    if (prop.check("device",part)) {
+        str = part->toString().c_str();
+    }
     Bottle bot(str.c_str());
     if (bot.size()>1) {
         // this wasn't a device name, but some codes -- rearrange
-        prop.fromString(str.c_str());
-        str = prop.get("device").asString().c_str();
+        p.fromString(str.c_str());
+        str = p.get("device").asString().c_str();
+        config = &p;
     }
 
     DeviceDriver *driver = NULL;
@@ -57,7 +64,7 @@ DeviceDriver *Drivers::create(yarp::os::Property& prop) {
     }
 
     if (driver!=NULL) {
-        bool ok = driver->open(prop);
+        bool ok = driver->open(*config);
         if (!ok) {
             delete driver;
             driver = NULL;

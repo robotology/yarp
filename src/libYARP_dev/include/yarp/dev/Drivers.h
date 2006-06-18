@@ -28,7 +28,7 @@ public:
     virtual yarp::os::ConstString toString() = 0;
 
     // returns null if name is not consistent
-    virtual DeviceDriver *create(yarp::os::Property& prop) = 0;
+    virtual DeviceDriver *create(yarp::os::Searchable& prop) = 0;
 };
 
 
@@ -39,7 +39,7 @@ public:
         return instance;
     }
 
-    virtual DeviceDriver *create(yarp::os::Property& prop);
+    virtual DeviceDriver *create(yarp::os::Searchable& prop);
 
     virtual yarp::os::ConstString toString();
 

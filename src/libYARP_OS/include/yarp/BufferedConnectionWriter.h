@@ -155,6 +155,8 @@ public:
         return reader;
     }
 
+    virtual bool convertTextMode();
+
 private:
     ACE_Vector<ManagedBytes *> lst;
     PortReader *reader;

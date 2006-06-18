@@ -82,6 +82,17 @@ public:
      * @param reader the object that handles replies.
      */
     virtual void setReplyHandler(PortReader& reader) = 0;
+
+
+    /**
+     * Converts a standard description in binary into a textual
+     * description, if the connection is in text-mode.  Useful if you
+     * only operate on the binary description usually, and just
+     * want to permit text mode for command-line interaction.
+     * If isTextMode would return false, no conversion is done.
+     * @return true if the conversion was possible
+     */
+    virtual bool convertTextMode() = 0;
 };
 
 #endif
