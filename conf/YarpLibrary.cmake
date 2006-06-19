@@ -42,7 +42,11 @@ GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
 # add in our tests
 FOREACH(X ${harnesscode})
 	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
+IF(WIN32 AND NOT CYGWIN)
+	  ADD_TEST(${name}::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_${postfix} regression ${XN})
+ELSE(WIN32 AND NOT CYGWIN)
 	  ADD_TEST(${name}::${XN} ${EXEC} regression ${XN})
+ENDIF(WIN32 AND NOT CYGWIN)
 ENDFOREACH(X $(harnesscode))
 
 INSTALL_TARGETS(/lib ${name})
