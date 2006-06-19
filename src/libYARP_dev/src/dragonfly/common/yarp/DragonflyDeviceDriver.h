@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.13 2006-06-18 12:13:45 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.14 2006-06-19 11:30:04 eshuy Exp $
 ///
 ///
 
@@ -78,8 +78,8 @@ public:
 	{
 		// parameters initialization
 		_unit_number = 0;
-		_size_x = 0;
-		_size_y = 0;
+		_size_x = 640;
+		_size_y = 480;
 		_video_type = 0;
 		_offset_y = 0;
 		_offset_x = 0;
@@ -129,9 +129,16 @@ public:
 
     virtual bool open(yarp::os::Searchable& config) {
         DragonflyOpenParameters params;
-        params._unit_number = config.find("unit_number").asInt();
-		params._size_x  = config.find("size_x").asInt();
-		params._size_y = config.find("size_y").asInt();
+		yarp::os::BottleBit *value;
+		if (config.check("unit_number",value)) {
+			params._unit_number = value->asInt();
+		}
+		if (config.check("size_x",value)||config.check("width",value)){
+			params._size_x  = value->asInt();
+		}
+		if (config.check("size_y",value)||config.check("height",value)){
+			params._size_y  = value->asInt();
+		}
 		params._video_type = config.find("video_type").asInt();
 		params._offset_y = config.find("offset_y").asInt();
 		params._offset_x = config.find("offset_x").asInt();

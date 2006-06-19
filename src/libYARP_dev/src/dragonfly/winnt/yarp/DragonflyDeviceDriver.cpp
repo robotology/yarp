@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.15 2006-06-14 08:39:44 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.16 2006-06-19 11:30:04 eshuy Exp $
 ///
 ///
 
@@ -390,7 +390,9 @@ bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& im
 	if (error!=FLYCAPTURE_OK)
 		return false;
 	
-	d.reconstructColor(pSrc->pData, (unsigned char *)image.getRawImage());
+	// hmm, we should make sure image has some space in it first, right?
+	image.resize(d.sizeX,d.sizeY);
+	//d.reconstructColor(pSrc->pData, (unsigned char *)image.getRawImage());
 
 	return true;
 }

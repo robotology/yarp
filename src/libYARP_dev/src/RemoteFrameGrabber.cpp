@@ -128,6 +128,7 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
             // methods get implemented
 {
 private:
+	bool spoke;
     Port p;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
@@ -137,6 +138,7 @@ public:
     ServerFrameGrabber() {
         fgImage = NULL;
         fgCtrl = NULL;
+		spoke = false;
     }
     
     virtual bool open() {
@@ -148,6 +150,7 @@ public:
     }
     
     virtual bool open(Searchable& prop) {
+		p.enableBackgroundWrite(true);
         p.setReader(*this);
         
         BottleBit *name;
@@ -192,10 +195,12 @@ public:
         while (!isStopping()) {
             ImageOf<PixelRgb> img;
             getImage(img);
-            printf("Network framegrabber writing a %dx%d image...\n",
-                   img.width(),img.height());
+			if (!spoke) {
+	            printf("Network framegrabber writing a %dx%d image...\n",
+						img.width(),img.height());
+				spoke = true;
+			}
             p.write(img);
-            Time::delay(0.05);
         }
         printf("Server framegrabber stopping\n");
     }
