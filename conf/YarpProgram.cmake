@@ -23,8 +23,8 @@ ELSE (${no_console} STREQUAL NO_CONSOLE)
 ENDIF (${no_console} STREQUAL NO_CONSOLE)
 
 FOREACH(X ${NEED_LIBS})
-	MESSAGE(STATUS "Linking for ${name} : ${${X}_LIB}")
-	TARGET_LINK_LIBRARIES(${name} ${${X}_LIB})
+	#MESSAGE(STATUS "Linking for ${name} : ${${X}_LIB}")
+	TARGET_LINK_LIBRARIES(${name} ${X})
 ENDFOREACH(X ${NEED_LIBS})
 TARGET_LINK_LIBRARIES(${name} ${ACE_LINK_FLAGS})
 
