@@ -130,6 +130,7 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
 private:
 	bool spoke;
     Port p;
+	PortWriterBuffer<ImageOf<PixelRgb> > writer;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
     IFrameGrabberControls *fgCtrl;
@@ -150,8 +151,8 @@ public:
     }
     
     virtual bool open(Searchable& prop) {
-		p.enableBackgroundWrite(true);
         p.setReader(*this);
+		writer.attach(p);
         
         BottleBit *name;
         if (prop.check("subdevice",name)) {
@@ -193,14 +194,14 @@ public:
     virtual void run() {
         printf("Server framegrabber starting\n");
         while (!isStopping()) {
-            ImageOf<PixelRgb> img;
+            ImageOf<PixelRgb>& img = writer.get();
             getImage(img);
 			if (!spoke) {
 	            printf("Network framegrabber writing a %dx%d image...\n",
 						img.width(),img.height());
 				spoke = true;
 			}
-            p.write(img);
+            writer.write();
         }
         printf("Server framegrabber stopping\n");
     }
