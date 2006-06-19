@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.7 2006-06-19 15:11:35 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.8 2006-06-19 17:27:47 natta Exp $
 ///
 ///
 
@@ -447,8 +447,8 @@ bool EsdCanResources::error (const CMSG& m)
 inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 
 EsdMotionControl::EsdMotionControl() : 
-    ImplementPositionControl<EsdMotionControl, IPositionControl>(this)
-//    ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this)
+    ImplementPositionControl<EsdMotionControl, IPositionControl>(this),
+    ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -808,14 +808,16 @@ AckMessageLoop:
 }
 
 // return the number of controlled axes.
-int EsdMotionControl::getAxes()
+bool EsdMotionControl::getAxes(int *ax)
 {
 	EsdCanResources& r = RES(system_resources);
-    return r.getJoints();
+    *ax = r.getJoints();
+
+    return true;
 }
 
 // LATER: can be optimized.
-bool EsdMotionControl::setPid (int axis, const yarp::dev::Pid &pid)
+bool EsdMotionControl::setPidRaw (int axis, const yarp::dev::Pid &pid)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -830,7 +832,7 @@ bool EsdMotionControl::setPid (int axis, const yarp::dev::Pid &pid)
 	return true;
 }
 
-bool EsdMotionControl::getPid (int axis, Pid *out)
+bool EsdMotionControl::getPidRaw (int axis, Pid *out)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	short s;
@@ -846,7 +848,7 @@ bool EsdMotionControl::getPid (int axis, Pid *out)
 	return true;
 }
 
-bool EsdMotionControl::getPids (Pid *out)
+bool EsdMotionControl::getPidsRaw (Pid *out)
 {
     EsdCanResources& r = RES(system_resources);
 
@@ -867,13 +869,13 @@ bool EsdMotionControl::getPids (Pid *out)
 }
 
 
-bool EsdMotionControl::setPids(const Pid *pids)
+bool EsdMotionControl::setPidsRaw(const Pid *pids)
 {
     return NOT_YET_IMPLEMENTED("setPids");
 }
 
 /// cmd is a SingleAxis poitner with 1 double arg
-bool EsdMotionControl::setReference (int j, double ref)
+bool EsdMotionControl::setReferenceRaw (int j, double ref)
 {
 	const int axis = j;
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
@@ -882,7 +884,7 @@ bool EsdMotionControl::setReference (int j, double ref)
 }
 
 /// cmd is an array of double (LATER: to be optimized).
-bool EsdMotionControl::setReferences (const double *refs)
+bool EsdMotionControl::setReferencesRaw (const double *refs)
 {
 	EsdCanResources& r = RES(system_resources);
 
@@ -896,17 +898,17 @@ bool EsdMotionControl::setReferences (const double *refs)
 	return true;
 }
 
-bool EsdMotionControl::setErrorLimit(int j, double limit)
+bool EsdMotionControl::setErrorLimitRaw(int j, double limit)
 {
     return NOT_YET_IMPLEMENTED("setErrorLimit");
 }
 
-bool EsdMotionControl::setErrorLimits(const double *limit)
+bool EsdMotionControl::setErrorLimitsRaw(const double *limit)
 {
     return NOT_YET_IMPLEMENTED("setErrorLimits");
 }
 
-bool EsdMotionControl::getError(int axis, double *err)
+bool EsdMotionControl::getErrorRaw(int axis, double *err)
 {
 	EsdCanResources& r = RES(system_resources);
 
@@ -921,7 +923,7 @@ bool EsdMotionControl::getError(int axis, double *err)
 	return true;
 }
 
-bool EsdMotionControl::getErrors(double *errs)
+bool EsdMotionControl::getErrorsRaw(double *errs)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -936,7 +938,7 @@ bool EsdMotionControl::getErrors(double *errs)
 	return true;
 }
 
-bool EsdMotionControl::getOutput(int axis, double *out)
+bool EsdMotionControl::getOutputRaw(int axis, double *out)
 {
    	EsdCanResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -946,7 +948,7 @@ bool EsdMotionControl::getOutput(int axis, double *out)
 	return true;
 }
 
-bool EsdMotionControl::getOutputs(double *outs)
+bool EsdMotionControl::getOutputsRaw(double *outs)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -961,7 +963,7 @@ bool EsdMotionControl::getOutputs(double *outs)
 	return true;
 }
 
-bool EsdMotionControl::getReference(int j, double *ref)
+bool EsdMotionControl::getReferenceRaw(int j, double *ref)
 {
 	const int axis = j;
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
@@ -975,27 +977,27 @@ bool EsdMotionControl::getReference(int j, double *ref)
 	return true;
 }
 
-bool EsdMotionControl::getReferences(double *ref)
+bool EsdMotionControl::getReferencesRaw(double *ref)
 {
    return _readDWordArray(CAN_GET_DESIRED_POSITION, ref);
 }
 
-bool EsdMotionControl::getErrorLimit(int j, double *err)
+bool EsdMotionControl::getErrorLimitRaw(int j, double *err)
 {
     return NOT_YET_IMPLEMENTED("getErrorLimit");
 }
 
-bool EsdMotionControl::getErrorLimits(double *errs)
+bool EsdMotionControl::getErrorLimitsRaw(double *errs)
 {
     return NOT_YET_IMPLEMENTED("getErrorLimits");
 }
 
-bool EsdMotionControl::resetPid(int j)
+bool EsdMotionControl::resetPidRaw(int j)
 {
     return NOT_YET_IMPLEMENTED("resetPid");
 }
 
-bool EsdMotionControl::enablePid(int axis)
+bool EsdMotionControl::enablePidRaw(int axis)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
@@ -1003,19 +1005,19 @@ bool EsdMotionControl::enablePid(int axis)
 
 }
 
-bool EsdMotionControl::disablePid(int axis)
+bool EsdMotionControl::disablePidRaw(int axis)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
 	return _writeNone (CAN_CONTROLLER_IDLE, axis);
 }
 
-bool EsdMotionControl::setPositionModeRaw()
+bool EsdMotionControl::setPositionMode()
 {
     return NOT_YET_IMPLEMENTED("setPositionModeRaw");
 }
 
-bool EsdMotionControl::setVelocityModeRaw()
+bool EsdMotionControl::setVelocityMode()
 {
     return NOT_YET_IMPLEMENTED("setVelocityModeRaw");
 }
@@ -1372,7 +1374,7 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
 	return true;
 }
 
-bool EsdMotionControl::setEncoder(int j, double val)
+bool EsdMotionControl::setEncoderRaw(int j, double val)
 {
 	const int axis = j;
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
@@ -1380,7 +1382,7 @@ bool EsdMotionControl::setEncoder(int j, double val)
 	return _writeDWord (CAN_SET_ENCODER_POSITION, axis, S_32(val));
 }
 
-bool EsdMotionControl::setEncoders(const double *vals)
+bool EsdMotionControl::setEncodersRaw(const double *vals)
 {
 	EsdCanResources& r = RES(system_resources);
 	
@@ -1394,31 +1396,31 @@ bool EsdMotionControl::setEncoders(const double *vals)
 	return true;
 }
 
-bool EsdMotionControl::resetEncoder(int j)
+bool EsdMotionControl::resetEncoderRaw(int j)
 {
-    return setEncoder(j, 0);
+    return setEncoderRaw(j, 0);
 }
 
-bool EsdMotionControl::resetEncoders()
+bool EsdMotionControl::resetEncodersRaw()
 {
     int n=RES(system_resources).getJoints();
     double *tmp=new double [n];
     for(int i=0;i<n;i++)
         tmp[i]=0;
 
-    bool ret= setEncoders(tmp);
+    bool ret= setEncodersRaw(tmp);
 
     delete [] tmp;
 
     return ret;
 }
 
-bool EsdMotionControl::getEncoders(double *v)
+bool EsdMotionControl::getEncodersRaw(double *v)
 {
     return _readDWordArray (CAN_GET_ENCODER_POSITION, v);
 }
 
-bool EsdMotionControl::getEncoder(int axis, double *v)
+bool EsdMotionControl::getEncoderRaw(int axis, double *v)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1433,34 +1435,34 @@ bool EsdMotionControl::getEncoder(int axis, double *v)
 	return false;
 }
 
-bool EsdMotionControl::getEncoderSpeeds(double *v)
+bool EsdMotionControl::getEncoderSpeedsRaw(double *v)
 {
   	return NOT_YET_IMPLEMENTED("getEncoderSpeeds");
 }
 
-bool EsdMotionControl::getEncoderSpeed(int j, double *v)
+bool EsdMotionControl::getEncoderSpeedRaw(int j, double *v)
 {
     return NOT_YET_IMPLEMENTED("getEncoderSpeed");
 }
 
-bool EsdMotionControl::getEncoderAccelerations(double *v)
+bool EsdMotionControl::getEncoderAccelerationsRaw(double *v)
 {
   	return NOT_YET_IMPLEMENTED("getEncoderAccs");
 }
 
-bool EsdMotionControl::getEncoderAcceleration(int j, double *v)
+bool EsdMotionControl::getEncoderAccelerationRaw(int j, double *v)
 {
     return NOT_YET_IMPLEMENTED("getEncoderAcc");
 }
 
-bool EsdMotionControl::disableAmp(int axis)
+bool EsdMotionControl::disableAmpRaw(int axis)
 {
     ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
 	return _writeNone (CAN_DISABLE_PWM_PAD, axis);
 }
 
-bool EsdMotionControl::enableAmp(int axis)
+bool EsdMotionControl::enableAmpRaw(int axis)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
@@ -1468,7 +1470,7 @@ bool EsdMotionControl::enableAmp(int axis)
 }
 
 // bcast
-bool EsdMotionControl::getCurrents(double *cs)
+bool EsdMotionControl::getCurrentsRaw(double *cs)
 {
     EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1484,7 +1486,7 @@ bool EsdMotionControl::getCurrents(double *cs)
 }
 
 // bcast currents
-bool EsdMotionControl::getCurrent(int axis, double *c)
+bool EsdMotionControl::getCurrentRaw(int axis, double *c)
 {
 	EsdCanResources& r = RES(system_resources);
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
@@ -1496,14 +1498,14 @@ bool EsdMotionControl::getCurrent(int axis, double *c)
 	return true;
 }
 
-bool EsdMotionControl::setMaxCurrent(int axis, double v)
+bool EsdMotionControl::setMaxCurrentRaw(int axis, double v)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
 	return _writeDWord (CAN_SET_CURRENT_LIMIT, axis, S_32(v));
 }
 
-bool EsdMotionControl::calibrate(int axis)
+bool EsdMotionControl::calibrateRaw(int axis)
 {
     return NOT_YET_IMPLEMENTED("calibrate");
 }
@@ -1518,7 +1520,7 @@ bool EsdMotionControl::setPrintFunction(int (*f) (const char *fmt, ...))
 	return true;
 }
 
-bool EsdMotionControl::getAmpStatus(int *st)
+bool EsdMotionControl::getAmpStatusRaw(int *st)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1533,7 +1535,7 @@ bool EsdMotionControl::getAmpStatus(int *st)
 	return true;
 }
 
-bool EsdMotionControl::setLimits(int axis, double min, double max)
+bool EsdMotionControl::setLimitsRaw(int axis, double min, double max)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1545,7 +1547,7 @@ bool EsdMotionControl::setLimits(int axis, double min, double max)
     return ret;
 }
 
-bool EsdMotionControl::getLimits(int axis, double *min, double *max)
+bool EsdMotionControl::getLimitsRaw(int axis, double *min, double *max)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	int iMin, iMax;
@@ -1607,815 +1609,6 @@ inline bool EsdMotionControl::ENABLED (int axis)
 	EsdCanResources& r = RES(system_resources);
 	return ((r._destinations[axis/2] & ESD_CAN_SKIP_ADDR) == 0) ? true : false;
 }
-
-#if 0
-///
-///
-/// specific messages that change the driver behavior.
-int EsdMotionControl::setDebugMessageFilter (void *cmd)
-{
-	_mutex.wait();
-	EsdCanResources& r = RES(system_resources);
-	_filter = *(int *)cmd;
-	_mutex.post();
-
-	return true;
-}
-
-int EsdMotionControl::setDebugPrintFunction (void *cmd)
-{
-	_mutex.wait();
-	EsdCanResources& r = RES(system_resources);
-	_p = (int (*) (const char *fmt, ...))cmd;
-	_mutex.post();
-
-	return true;
-}
-
-
-///
-/// 
-/// control card commands.
-///
-
-/// cmd is an array of double
-int EsdMotionControl::getPositions (void *cmd)
-{
-    EsdCanResources& r = RES(system_resources);
-	int i;
-	double *tmp = (double *)cmd;
-
-    _mutex.wait();
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		tmp[i] = double(r._bcastRecvBuffer[i]._position);
-	}
-
-    _mutex.post();
-	return true;
-}
-
-/// cmd is a SingleAxisParameters pointer with double arg
-int EsdMotionControl::getPosition (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
-    _mutex.wait();
-	*((double *)tmp->parameters) = double(r._bcastRecvBuffer[axis]._position);
-    _mutex.post();
-    return true;
-}
-
-/// cmd is an array of double (njoints long)
-int EsdMotionControl::setPositions (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-	int i;
-
-	_mutex.wait();
-	r.startPacket();
-
-	for (i = 0; i < r.getJoints (); i++)
-	{
-		if (ENABLED(i))
-		{
-			//SingleAxisParameters x;
-			//x.axis = i;
-			//x.parameters = tmp+i;	
-
-			r.addMessage (CAN_POSITION_MOVE, i);
-			const int j = r._writeMessages - 1;
-			_ref_positions[i] = tmp[i];
-			*((int*)(r._writeBuffer[j].data+1)) = S_32(_ref_positions[i]);		/// pos
-			*((short*)(r._writeBuffer[j].data+5)) = S_16(_ref_speeds[i]);		/// speed
-			r._writeBuffer[j].len = 7;
-		}
-		else
-		{
-			_ref_positions[i] = tmp[i];
-		}
-	}
-
-	_writerequested = true;
-	_noreply = true;
-	
-	_mutex.post();
-
-	/// syncing.
-	_done.wait();
-
-	return true;
-}
-
-///
-///
-/// cmd is a SingleAxisParameters pointer to a double argument
-int EsdMotionControl::setPosition (void *cmd)
-{
-	/// prepare can message.
-	EsdCanResources& r = RES(system_resources);
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-
-	if (!ENABLED (axis))
-	{
-		// still fills the _ref_position structure.
-		_ref_positions[axis] = *((double *)tmp->parameters);
-		return true;
-	}
-
-	_mutex.wait();
-
-	r.startPacket();
-	r.addMessage (CAN_POSITION_MOVE, axis);
-
-	_ref_positions[axis] = *((double *)tmp->parameters);
-	*((int*)(r._writeBuffer[0].data+1)) = S_32(_ref_positions[axis]);		/// pos
-	*((short*)(r._writeBuffer[0].data+5)) = S_16(_ref_speeds[axis]);			/// speed
-	r._writeBuffer[0].len = 7;
-		
-	_writerequested = true;
-	_noreply = true;
-	
-	_mutex.post();
-
-	/// syncing.
-	_done.wait();
-
-	return true;
-}
-
-
-///
-
-/// starts the homing procedure for a given joint.
-
-int EsdMotionControl::startCalibration (void *cmd)
-
-{
-
-	/// prepare can message.
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-
-	const int axis = tmp->axis;
-
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-
-	
-
-	return _writeWord16 (CAN_CALIBRATE_ENCODER, axis, S_16(*((double *)tmp->parameters)));   
-
-}
-
-
-
-///
-
-/// gets the control mode according to some controller specific coding (if any).
-
-int EsdMotionControl::getControlMode (void *cmd)
-
-{
-
-    short value = 0;
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-
-	const int axis = tmp->axis;
-
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-
-
-
-   	if (_readWord16 (CAN_GET_CONTROL_MODE, axis, value) != true)
-
-	{
-
-		*((double *)tmp->parameters) = 0;
-
-		return false;
-
-	}
-
-
-
-	*((double *)tmp->parameters) = double(value); 
-
-    return true;
-
-}
-
-
-/// cmd is an array of double of length njoints specifying speed 
-/// for each axis
-int EsdMotionControl::velocityMove (void *cmd)
-{
-	/// prepare can message.
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-	int i;
-
-	_mutex.wait();
-	r.startPacket();
-
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED (i))
-		{
-			r.addMessage (CAN_VELOCITY_MOVE, i);
-			const int j = r._writeMessages - 1;
-			_ref_speeds[i] = tmp[i];
-			*((short*)(r._writeBuffer[j].data+1)) = S_16(_ref_speeds[i]);	/// speed
-			*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
-			r._writeBuffer[j].len = 5;
-		}
-		else
-		{
-			_ref_speeds[i] = tmp[i];
-		}
-	}
-
-	_writerequested = true;
-	_noreply = true;
-
-	_mutex.post();
-
-	_done.wait();
-
-	return true;
-}
-
-/// cmd is a SingleAxis poitner with 1 double arg
-int EsdMotionControl::definePosition (void *cmd)
-{
-	/// prepare can message.
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeDWord (CAN_SET_ENCODER_POSITION, axis, S_32(*((double *)tmp->parameters)));
-}
-
-/// cmd is an array of double
-int EsdMotionControl::definePositions (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeDWord (CAN_SET_ENCODER_POSITION, i, S_32(tmp[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-
-/// cmd is an array of double
-int EsdMotionControl::getRefPositions (void *cmd)
-{
-	return _readDWordArray (CAN_GET_DESIRED_POSITION, (double *)cmd);
-}
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::getRefPosition (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	int value = 0;
-	if (_readDWord (CAN_GET_DESIRED_POSITION, axis, value) == true)
-		*((double *)(tmp->parameters)) = double (value);
-	else
-		return false;
-
-	return true;
-}
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::setSpeed (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	_ref_speeds[axis] = *((double *)(tmp->parameters));
-	//const short s = S_16(_ref_speeds[axis]);
-	//return _writeWord16 (CAN_SET_DESIRED_VELOCITY, axis, s);
-	return true;
-}
-
-/// cmd is an array of double
-int EsdMotionControl::setSpeeds (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		_ref_speeds[i] = tmp[i];
-		//if (_writeWord16 (CAN_SET_DESIRED_VELOCITY, i, S_16(tmp[i])) != true)
-		//	return false;
-	}
-
-	return true;
-}
-
-
-/// cmd is an array of double
-int EsdMotionControl::geSpeeds (void *cmd)
-{
-	return _readWord16Array (CAN_GET_DESIRED_VELOCITY, (double *)cmd);
-}
-
-/// cmd is an array of double (LATER: to be optimized).
-int EsdMotionControl::getRefSpeeds (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *out = (double *) cmd;
-	int i;
-	short value = 0;
-
-	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (_readWord16 (CAN_GET_DESIRED_VELOCITY, i, value) == true)
-			_ref_speeds[i] = out[i] = double (value);
-		else
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is a SingleAxis pointer with a double arg
-int EsdMotionControl::setAcceleration (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-
-	_ref_accs[axis] = *((double *)tmp->parameters);
-	const short s = S_16(_ref_accs[axis]);
-	
-	return _writeWord16 (CAN_SET_DESIRED_ACCELER, axis, s);
-}
-
-/// cmd is an array of double (LATER: to be optimized, WARNING: doesn't skip disabled joints).
-int EsdMotionControl::setAccelerations (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		_ref_accs[i] = tmp[i];
-		if (_writeWord16 (CAN_SET_DESIRED_ACCELER, i, S_16(_ref_accs[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is an array of double (LATER: to be optimized).
-int EsdMotionControl::getRefAccelerations (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *out = (double *) cmd;
-	int i;
-	short value = 0;
-
-	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (_readWord16 (CAN_GET_DESIRED_ACCELER, i, value) == true)
-			_ref_accs[i] = out[i] = double (value);
-		else
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is a SigleAxis pointer with 1 double arg
-int EsdMotionControl::setOffset (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	const short s = S_16(*((double *)tmp->parameters));
-	
-	return _writeWord16 (CAN_SET_OFFSET, axis, s);
-}
-
-/// cmd is an array of double (LATER: to be optimized).
-int EsdMotionControl::setOffsets (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeWord16 (CAN_SET_OFFSET, i, S_16(tmp[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is a SingleAxis pointer with 1 double arg
-int EsdMotionControl::setIntegratorLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	const short s = S_16(*((double *)tmp->parameters));
-	
-	return _writeWord16 (CAN_SET_ILIM_GAIN, axis, s);
-}
-
-/// cmd is an array of double (LATER: to be optimized, WARNING: doesn't check disabled cards).
-int EsdMotionControl::setIntegratorLimits (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeWord16 (CAN_SET_ILIM_GAIN, i, S_16(tmp[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-
-/// cmd is an int *
-int EsdMotionControl::enableAmp (void *cmd)
-{
-	const int axis = *((int *)cmd);
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeNone (CAN_ENABLE_PWM_PAD, axis);
-}
-
-/// cmd is an int *
-int EsdMotionControl::disableAmp (void *cmd)
-{
-	const int axis = *((int *)cmd);
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeNone (CAN_DISABLE_PWM_PAD, axis);
-}
-
-/// cmd is an int *
-int EsdMotionControl::controllerRun (void *cmd)
-{
-	const int axis = *((int *)cmd);
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeNone (CAN_CONTROLLER_RUN, axis);
-}
-
-/// cmd is an int *
-int EsdMotionControl::controllerIdle (void *cmd)
-{
-	const int axis = *((int *)cmd);
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeNone (CAN_CONTROLLER_IDLE, axis);
-}
-
-/// cmd is a SingleAxisParameters struct with a double argument.
-int EsdMotionControl::getPidError (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	short value;
-
-	if (_readWord16 (CAN_GET_PID_ERROR, axis, value) != true)
-	{
-		*((double *)tmp->parameters) = 0;
-		return false;
-	}
-
-	*((double *)tmp->parameters) = double(value);
-	return true;
-}
-
-/// cmd is a SingleAxis poitner with 1 double arg
-int EsdMotionControl::setCurrentLimit (void *cmd)
-{
-	/// prepare can message.
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeDWord (CAN_SET_CURRENT_LIMIT, axis, S_32(*((double *)tmp->parameters)));
-}
-
-/// cmd is an array of double
-/// LATER: can be optimized.
-int EsdMotionControl::setCurrentLimits (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeDWord (CAN_SET_CURRENT_LIMIT, i, S_32(tmp[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is a pointer to an integer (axis number).
-int EsdMotionControl::setSwPositiveLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeDWord (CAN_SET_MAX_POSITION, axis, S_32(*((double *)tmp->parameters)));
-}
-
-/// cmd is a pointer to SingleAxisParameters struct with a single double arg.
-int EsdMotionControl::setSwNegativeLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	
-	return _writeDWord (CAN_SET_MIN_POSITION, axis, S_32(*((double *)tmp->parameters)));
-}
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::getSwNegativeLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	int value;
-
-	_readDWord (CAN_GET_MIN_POSITION, axis, value);
-	*((double *)tmp->parameters) = double(value);
-
-	return true;
-}
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::getSwPositiveLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	int value;
-
-	_readDWord (CAN_GET_MAX_POSITION, axis, value);
-	*((double *)tmp->parameters) = double(value);
-
-	return true;
-}
-
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::setTorqueLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	const short s = S_16(*((double *)tmp->parameters));
-	
-	return _writeWord16 (CAN_SET_TLIM, axis, s);
-}
-
-/// cmd is an array of double
-/// LATER: can be optimized.
-int EsdMotionControl::setTorqueLimits (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *tmp = (double *)cmd;
-
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeWord16 (CAN_SET_TLIM, i, S_16(tmp[i])) != true)
-			return false;
-	}
-
-	return true;
-}
-
-/// cmd is a SingleAxis pointer with double arg
-int EsdMotionControl::getTorqueLimit (void *cmd)
-{
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-	short value;
-
-	_readWord16 (CAN_GET_TLIM, axis, value);
-	*((double *)tmp->parameters) = double(value);
-
-	return true;
-}
-
-/// cmd is an array of double
-/// LATER: can be optimized.
-int EsdMotionControl::getTorqueLimits (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	double *out = (double *) cmd;
-	int i;
-	short value = 0;
-
-	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (_readWord16 (CAN_GET_TLIM, i, value) == true)
-			out[i] = double (value);
-		else
-			return false;
-	}
-
-	return true;
-}
-
-
-///
-/// reads an array of double from the broadcast message position buffer.
-/// LATER: add a check of timing/error message.
-///
-int EsdMotionControl::getBCastPosition (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
-
-    _mutex.wait();
-	*((double *)tmp->parameters) = double(r._bcastRecvBuffer[axis]._position);
-    _mutex.post();
-
-
-	return true;
-}
-
-int EsdMotionControl::getBCastPositions (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	int i;
-	double *tmp = (double *)cmd;
-
-    _mutex.wait();
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		tmp[i] = double(r._bcastRecvBuffer[i]._position);
-	}
-
-    _mutex.post();
-	return true;
-}
-
-
-int EsdMotionControl::getBCastPIDOutput (void *cmd)
-
-{
-
-	EsdCanResources& r = RES(system_resources);
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-
-	const int axis = tmp->axis;
-
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-
-	
-
-    _mutex.wait();
-
-	*((double *)tmp->parameters) = double(r._bcastRecvBuffer[axis]._pid_value);
-
-    _mutex.post();
-
-
-
-	return true;
-
-}
-
-
-int EsdMotionControl::getBCastPIDOutputs (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	int i;
-	double *tmp = (double *)cmd;
-
-    _mutex.wait();
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		tmp[i] = double(r._bcastRecvBuffer[i]._pid_value);
-	}
-
-    _mutex.post();
-	return true;
-}
-
-int EsdMotionControl::getBCastCurrent (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-	const int axis = tmp->axis;
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-	
-
-    _mutex.wait();
-	*((double *)tmp->parameters) = double(r._bcastRecvBuffer[axis]._current);
-    _mutex.post();
-
-
-	return true;
-}
-
-int EsdMotionControl::getBCastCurrents (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	int i;
-	double *tmp = (double *)cmd;
-
-    _mutex.wait();
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		tmp[i] = double(r._bcastRecvBuffer[i]._current);
-	}
-
-    _mutex.post();
-	return true;
-}
-
-int EsdMotionControl::getBCastFaults (void *cmd)
-{
-	EsdCanResources& r = RES(system_resources);
-	int i;
-	short *tmp = (short *)cmd;
-
-
-    _mutex.wait();
-	for (i = 0; i < r.getJoints(); i++)
-	{
-		tmp[i] = short(r._bcastRecvBuffer[i]._fault);
-	}
-    _mutex.post();
-
-
-	return true;
-}
-
-int EsdMotionControl::getBCastPositionError (void *cmd)
-
-{
-
-	EsdCanResources& r = RES(system_resources);
-
-	SingleAxisParameters *tmp = (SingleAxisParameters *) cmd;
-
-	const int axis = tmp->axis;
-
-	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-
-	
-
-    _mutex.wait();
-
-	*((double *)tmp->parameters) = double(r._bcastRecvBuffer[axis]._position_error);
-
-    _mutex.post();
-
-
-
-	return true;
-
-}
-
-
-
-#endif
 
 ///
 /// helper functions.

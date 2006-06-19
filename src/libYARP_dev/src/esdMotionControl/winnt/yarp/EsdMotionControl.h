@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.7 2006-06-19 15:11:35 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.8 2006-06-19 17:27:47 natta Exp $
 ///
 ///
 
@@ -68,16 +68,16 @@ public:
 class yarp::dev::EsdMotionControl: 
     public DeviceDriver,
     public os::Thread, 
-    public IPidControl, 
+    public IPidControlRaw, 
     public IPositionControlRaw, 
     public IVelocityControlRaw, 
-    public IEncoders, 
-    public IAmplifierControl,
-    public IControlCalibration,
+    public IEncodersRaw, 
+    public IAmplifierControlRaw,
+    public IControlCalibrationRaw,
     public IControlDebug,
-    public IControlLimits,
-    public ImplementPositionControl<EsdMotionControl, IPositionControl>
-//    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
+    public IControlLimitsRaw,
+    public ImplementPositionControl<EsdMotionControl, IPositionControl>,
+    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
 {
 private:
     EsdMotionControl(const EsdMotionControl&);
@@ -110,32 +110,32 @@ public:
 
     ///////////// PID INTERFACE
     //
-    virtual bool setPid(int j, const Pid &pid);
-    virtual bool setPids(const Pid *pids);
-    virtual bool setReference(int j, double ref);
-    virtual bool setReferences(const double *refs);
-    virtual bool setErrorLimit(int j, double limit);
-    virtual bool setErrorLimits(const double *limits);
-    virtual bool getError(int j, double *err);
-    virtual bool getErrors(double *errs);
-    virtual bool getOutput(int j, double *out);
-    virtual bool getOutputs(double *outs);
-    virtual bool getPid(int j, Pid *pid);
-    virtual bool getPids(Pid *pids);
-    virtual bool getReference(int j, double *ref);
-    virtual bool getReferences(double *refs);
-    virtual bool getErrorLimit(int j, double *limit);
-    virtual bool getErrorLimits(double *limits);
-    virtual bool resetPid(int j);
-    virtual bool disablePid(int j);
-    virtual bool enablePid(int j);
+    virtual bool setPidRaw(int j, const Pid &pid);
+    virtual bool setPidsRaw(const Pid *pids);
+    virtual bool setReferenceRaw(int j, double ref);
+    virtual bool setReferencesRaw(const double *refs);
+    virtual bool setErrorLimitRaw(int j, double limit);
+    virtual bool setErrorLimitsRaw(const double *limits);
+    virtual bool getErrorRaw(int j, double *err);
+    virtual bool getErrorsRaw(double *errs);
+    virtual bool getOutputRaw(int j, double *out);
+    virtual bool getOutputsRaw(double *outs);
+    virtual bool getPidRaw(int j, Pid *pid);
+    virtual bool getPidsRaw(Pid *pids);
+    virtual bool getReferenceRaw(int j, double *ref);
+    virtual bool getReferencesRaw(double *refs);
+    virtual bool getErrorLimitRaw(int j, double *limit);
+    virtual bool getErrorLimitsRaw(double *limits);
+    virtual bool resetPidRaw(int j);
+    virtual bool disablePidRaw(int j);
+    virtual bool enablePidRaw(int j);
     //
     /////////////////////////////// END PID INTERFACE
 
     //
     /// POSITION CONTROL INTERFACE RAW
-    virtual int getAxes();
-    virtual bool setPositionModeRaw();
+    virtual bool getAxes(int *ax);
+    virtual bool setPositionMode();
     virtual bool positionMoveRaw(int j, double ref);
     virtual bool positionMoveRaw(const double *refs);
     virtual bool relativeMoveRaw(int j, double delta);
@@ -157,7 +157,7 @@ public:
 
     ///////////// Velocity control interface raw
     ///
-    virtual bool setVelocityModeRaw();
+    virtual bool setVelocityMode();
     virtual bool velocityMoveRaw(int j, double sp);
     virtual bool velocityMoveRaw(const double *sp);
     //
@@ -165,32 +165,32 @@ public:
 
     //////////////////////// BEGIN EncoderInterface
     //
-    virtual bool resetEncoder(int j);
-    virtual bool resetEncoders();
-    virtual bool setEncoder(int j, double val);
-    virtual bool setEncoders(const double *vals);
-    virtual bool getEncoder(int j, double *v);
-    virtual bool getEncoders(double *encs);
-    virtual bool getEncoderSpeed(int j, double *sp);
-    virtual bool getEncoderSpeeds(double *spds);
-    virtual bool getEncoderAcceleration(int j, double *spds);
-    virtual bool getEncoderAccelerations(double *accs);
+    virtual bool resetEncoderRaw(int j);
+    virtual bool resetEncodersRaw();
+    virtual bool setEncoderRaw(int j, double val);
+    virtual bool setEncodersRaw(const double *vals);
+    virtual bool getEncoderRaw(int j, double *v);
+    virtual bool getEncodersRaw(double *encs);
+    virtual bool getEncoderSpeedRaw(int j, double *sp);
+    virtual bool getEncoderSpeedsRaw(double *spds);
+    virtual bool getEncoderAccelerationRaw(int j, double *spds);
+    virtual bool getEncoderAccelerationsRaw(double *accs);
     //
     ///////////////////////// END Encoder Interface
 
     ////// Amplifier interface
     //
-    virtual bool enableAmp(int j);
-    virtual bool disableAmp(int j);
-    virtual bool getCurrents(double *vals);
-    virtual bool getCurrent(int j, double *val);
-    virtual bool setMaxCurrent(int j, double val);
-    virtual bool getAmpStatus(int *st);
+    virtual bool enableAmpRaw(int j);
+    virtual bool disableAmpRaw(int j);
+    virtual bool getCurrentsRaw(double *vals);
+    virtual bool getCurrentRaw(int j, double *val);
+    virtual bool setMaxCurrentRaw(int j, double val);
+    virtual bool getAmpStatusRaw(int *st);
     //
     /////////////// END AMPLIFIER INTERFACE
 
     ////// calibration
-    virtual bool calibrate(int j);
+    virtual bool calibrateRaw(int j);
 
     /// IControlDebug Interface
     virtual bool setPrintFunction(int (*f) (const char *fmt, ...));
@@ -198,8 +198,8 @@ public:
     virtual bool saveBootMemory();
 
     /////// Limits
-    virtual bool setLimits(int axis, double min, double max);
-    virtual bool getLimits(int axis, double *min, double *max);
+    virtual bool setLimitsRaw(int axis, double min, double max);
+    virtual bool getLimitsRaw(int axis, double *min, double *max);
 
 protected:
    	bool setBCastMessages (int axis, double v);

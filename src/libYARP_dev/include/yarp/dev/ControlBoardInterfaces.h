@@ -12,16 +12,21 @@
 
 namespace yarp {
     namespace dev {
+        class IPidControlRaw;
         class IPidControl;
         class IPositionControlRaw;
         class IPositionControl;
+        class IEncodersRaw;
         class IEncoders;
-        class ITorqueControl;
+        class ITorqueControlRaw;
         class IVelocityControlRaw;
         class IVelocityControl;
+        class IAmplifierControlRaw;
         class IAmplifierControl;
         class IControlDebug;
+        class IControlLimitsRaw;
         class IControlLimits;
+        class IControlCalibrationRaw;
         class IControlCalibration;
     }
 }
@@ -29,7 +34,7 @@ namespace yarp {
 /**
  * Interface for a generic control board device implementing a PID controller.
  */
-class yarp::dev::IPidControl
+class yarp::dev::IPidControlRaw
 {
 public:
     /** Set new pid value for a joint axis.
@@ -37,13 +42,13 @@ public:
      * @param pid new pid value
      * @return true/false on success/failure
      */
-    virtual bool setPid(int j, const Pid &pid)=0;
+    virtual bool setPidRaw(int j, const Pid &pid)=0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
      * @return true/false upon success/failure
      */
-    virtual bool setPids(const Pid *pids)=0;
+    virtual bool setPidsRaw(const Pid *pids)=0;
 
     /** Set the controller reference point for a given axis.
      * Warning this method can result in very large torques 
@@ -54,7 +59,7 @@ public:
      * @param ref new reference point
      * @return true/false upon success/failure
      */
-    virtual bool setReference(int j, double ref)=0;
+    virtual bool setReferenceRaw(int j, double ref)=0;
 
     /** Set the controller reference points, multiple axes.
      * Warning this method can result in very large torques 
@@ -64,82 +69,82 @@ public:
      * @param refs pointer to the vector that contains the new reference points.
      * @return true/false upon success/failure
      */
-    virtual bool setReferences(const double *refs)=0;
+    virtual bool setReferencesRaw(const double *refs)=0;
 
     /** Set the error limit for the controller on a specifi joint
      * @param j joint number
      * @param limit limit value
      * @return true/false on success/failure
      */
-    virtual bool setErrorLimit(int j, double limit)=0;
+    virtual bool setErrorLimitRaw(int j, double limit)=0;
 
     /** Get the error limit for the controller on all joints.
      * @param limits pointer to the vector with the new limits
      * @return true/false on success/failure
      */
-    virtual bool setErrorLimits(const double *limits)=0;
+    virtual bool setErrorLimitsRaw(const double *limits)=0;
 
     /** Get the current error for a joint.
      * @param j joint number
      * @param err pointer to the storage for the return value
      * @return true/false on success failure
      */
-    virtual bool getError(int j, double *err)=0;
+    virtual bool getErrorRaw(int j, double *err)=0;
 
     /** Get the error of all joints.
      * @param errs pointer to the vector that will store the errors
      */
-    virtual bool getErrors(double *errs)=0;
+    virtual bool getErrorsRaw(double *errs)=0;
 
     /** Get the output of the controller (e.g. pwm value)
      * @param j joint number
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getOutput(int j, double *out)=0;
+    virtual bool getOutputRaw(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      */
-    virtual bool getOutputs(double *outs)=0;
+    virtual bool getOutputsRaw(double *outs)=0;
 
     /** Get current pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
      * @return success/failure
      */
-    virtual bool getPid(int j, Pid *pid)=0;
+    virtual bool getPidRaw(int j, Pid *pid)=0;
 
     /** Get current pid value for a specific joint.
      * @param pids vector that will store the values of the pids.
      * @return success/failure
      */
-    virtual bool getPids(Pid *pids)=0;
+    virtual bool getPidsRaw(Pid *pids)=0;
 
     /** Get the current reference position of the controller for a specific joint.
      * @param j joint number
      * @param ref pointer to storage for return value
      * @return reference value 
      */
-    virtual bool getReference(int j, double *ref)=0;
+    virtual bool getReferenceRaw(int j, double *ref)=0;
 
     /** Get the current reference position of all controllers.
      * @param refs vector that will store the output.
      */
-    virtual bool getReferences(double *refs)=0;
+    virtual bool getReferencesRaw(double *refs)=0;
 
     /** Get the error limit for the controller on a specific joint
      * @param j joint number
      * @param limit pointer to storage
      * @return success/failure
      */
-    virtual bool getErrorLimit(int j, double *limit)=0;
+    virtual bool getErrorLimitRaw(int j, double *limit)=0;
 
     /** Get the error limit for all controllers
      * @param limits pointer to the array that will store the output
      * @return success or failure
      */
-    virtual bool getErrorLimits(double *limits)=0;
+    virtual bool getErrorLimitsRaw(double *limits)=0;
 
     /** Reset the controller of a given joint, usually sets the 
      * current position of the joint as the reference value for the PID, and resets
@@ -147,13 +152,13 @@ public:
      * @param j joint number
      * @return true on success, false on failure.
      */
-    virtual bool resetPid(int j)=0;
+    virtual bool resetPidRaw(int j)=0;
 
     /** Disable the pid computation for a joint*/
-    virtual bool disablePid(int j)=0;
+    virtual bool disablePidRaw(int j)=0;
 
     /** Enable the pid computation for a joint*/
-    virtual bool enablePid(int j)=0;
+    virtual bool enablePidRaw(int j)=0;
 };
 
 /**
@@ -166,9 +171,10 @@ public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * @param ax storage to return param
+     * @return true/false.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *ax) = 0;
 
     /** Set position mode. This command
      * is required by control boards implementing different
@@ -176,7 +182,7 @@ public:
      * it can be left empty.
      * return true/false on success failure
      */
-    virtual bool setPositionModeRaw()=0;
+    virtual bool setPositionMode()=0;
 
     /** Set new reference point for a single axis.
      * @param j joint number
@@ -295,15 +301,16 @@ public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * @param ax pointer to storage
+     * @return true/false.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *ax) = 0;
 
     /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
      * it can be left empty.
-     * return true/false on success failure
+     * return true/false on success/failure
      */
     virtual bool setPositionMode()=0;
 
@@ -424,9 +431,10 @@ public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * @param axis pointer to storage, return value
+     * @return true/false.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *axis) = 0;
 
     /**
      * Set position mode. This command
@@ -435,7 +443,7 @@ public:
      * it can be left empty.
      * @return true/false on success failure
      */
-    virtual bool setVelocityModeRaw()=0;
+    virtual bool setVelocityMode()=0;
 
     /**
      * Start motion at a given speed, single joint.
@@ -503,9 +511,10 @@ public:
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
-     * @return the number of controlled axes.
+     * parame axes pointer to storage
+     * @return true/false.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *axes) = 0;
 
     /**
      * Set position mode. This command
@@ -576,7 +585,7 @@ public:
 /**
  * Interface for control boards implementig torque control.
  */
-class yarp::dev::ITorqueControl
+class yarp::dev::ITorqueControlRaw
 {
 public:
     /**
@@ -584,7 +593,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *ax) = 0;
 
     /**
      * Set torque control mode. This command
@@ -599,24 +608,110 @@ public:
      * @param j joint number
      * @return torque value
      */
-    virtual double getRefTorque(int j)=0;
+    virtual double getRefTorqueRaw(int j)=0;
 
     /** Get the value of the torque for all joints.
      * @param t pointer to the array that will store the output
      */
-    virtual void getRefTorques(double *t)=0;
+    virtual void getRefTorquesRaw(double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false
      */
-    virtual bool setTorques(const double *t)=0;
+    virtual bool setTorquesRaw(const double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * @param j joint number
      * @param t new value
      */
-    virtual void setTorque(int j, double t)=0;
+    virtual void setTorqueRaw(int j, double t)=0;
+};
+
+/**
+ * Control board, encoder interface.
+ */
+class yarp::dev::IEncodersRaw
+{
+public:
+
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *ax) = 0;
+
+    /**
+     * Reset encoder, single joint. Set the encoder value to zero 
+     * @param j encoder number
+     * @return true/false
+     */
+    virtual bool resetEncoderRaw(int j)=0;
+
+    /**
+     * Reset encoders. Set the encoders value to zero 
+     * @return true/false
+     */
+    virtual bool resetEncodersRaw()=0;
+
+    /**
+     * Set the value of the encoder for a given joint. 
+     * @param j encoder number
+     * @param val new value
+     * @return true/false
+     */
+    virtual bool setEncoderRaw(int j, double val)=0;
+
+    /**
+     * Set the value of all encoders.
+     * @param vals pointer to the new values
+     * @return true/false
+     */
+    virtual bool setEncodersRaw(const double *vals)=0;
+
+    /**
+     * Read the value of an encoder.
+     * @param j encoder number
+     * @param v pointer to storage for the return value
+     * @return true/false, upon success/failure (you knew it, uh?)
+     */
+    virtual bool getEncoderRaw(int j, double *v)=0;
+
+    /**
+     * Read the position of all axes.
+     * @param encs pointer to the array that will contain the output
+     * @return true/false on success/failure
+     */
+    virtual bool getEncodersRaw(double *encs)=0;
+
+    /**
+     * Read the istantaneous speed of an axis.
+     * @param j axis number
+     * @param sp pointer to storage for the output
+     * @return true if successful, false ... otherwise.
+     */
+    virtual bool getEncoderSpeedRaw(int j, double *sp)=0;
+
+    /**
+     * Read the istantaneous acceleration of an axis.
+     * @param sp pointer to storage for the output values
+     * @return guess what? (true/false on success or failure).
+     */
+    virtual bool getEncoderSpeedsRaw(double *spds)=0;
+    
+    /**
+     * Read the istantaneous speed of all axes.
+     * @param spds pointer to the array that will contain the output
+     */
+    virtual bool getEncoderAccelerationRaw(int j, double *spds)=0;
+
+    /**
+     * Read the istantaneous acceleration of all axes.
+     * @param accs pointer to the array that will contain the output
+     * @return true if all goes well, false if anything bad happens. 
+     */
+    virtual bool getEncoderAccelerationsRaw(double *accs)=0;
 };
 
 /**
@@ -631,7 +726,7 @@ public:
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
-    virtual int getAxes() = 0;
+    virtual bool getAxes(int *ax) = 0;
 
     /**
      * Reset encoder, single joint. Set the encoder value to zero 
@@ -705,7 +800,6 @@ public:
     virtual bool getEncoderAccelerations(double *accs)=0;
 };
 
-
 /**
  * Interface for control devices. Amplifier commands.
  */
@@ -756,17 +850,67 @@ public:
     virtual bool getAmpStatus(int *st)=0;
 };
 
+/**
+ * Interface for control devices. Amplifier commands.
+ */
+class yarp::dev::IAmplifierControlRaw
+{
+public:
+    /** Enable the amplifier on a specific joint. Be careful, check that the output
+     * of the controller is appropriate (usually zero), to avoid 
+     * generating abrupt movements.
+     * @return true/false on success/failure
+     */
+    virtual bool enableAmpRaw(int j)=0;
+
+    /** Disable the amplifier on a specific joint. All computations within the board
+     * will be carried out normally, but the output will be disabled.
+     * @return true/false on success/failure
+     */
+    virtual bool disableAmpRaw(int j)=0;
+
+    /* Read the electric current going to all motors.
+     * @param vals pointer to storage for the output values
+     * @return hopefully true, false in bad luck.
+     */
+    virtual bool getCurrentsRaw(double *vals)=0;
+
+    /* Read the electric current going to a given motor.
+     * @param j motor number
+     * @param val pointer to storage for the output value
+     * @return probably true, might return false in bad times
+     */
+    virtual bool getCurrentRaw(int j, double *val)=0;
+
+    /* Set the maximum electric current going to a given motor. The behavior 
+     * of the board/amplifier when this limit is reached depends on the
+     * implementation.
+     * @param j motor number
+     * @param v the new value
+     * @return probably true, might return false in bad times
+     */
+    virtual bool setMaxCurrentRaw(int j, double v)=0;
+
+    /* Get the status of the amplifiers, coded in a 32 bits integer for
+     * each amplifier (at the moment contains only the fault, it will be 
+     * expanded in the future).
+     * @param st pointer to storage
+     * @return true in good luck, false otherwise.
+     */
+    virtual bool getAmpStatusRaw(int *st)=0;
+};
+
 /** 
  * Interface for control devices. Calibration commands.
  */
-class yarp::dev::IControlCalibration
+class yarp::dev::IControlCalibrationRaw
 {
 public:
     /* Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate(int j)=0;
+    virtual bool calibrateRaw(int j)=0;
 };
 
 /** 
@@ -803,7 +947,7 @@ class yarp::dev::IControlLimits
 public:
     /* Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number (why I'm telling you this)
+     * @param axis joint number (why am I telling you this)
      * @param min the value of the lower limit
      * @param max the value of the upper limit
      * @return true or false on success or failure
@@ -811,12 +955,36 @@ public:
     virtual bool setLimits(int axis, double min, double max)=0;
     
     /* Get the software limits for a particular axis.
-     * @param axis joint number (again... why I'm telling you this)
+     * @param axis joint number (again... why am I telling you this)
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
      */
     virtual bool getLimits(int axis, double *min, double *max)=0;
+};
+
+/** 
+ * Interface for control devices. Limits commands.
+ */
+class yarp::dev::IControlLimitsRaw
+{
+public:
+    /* Set the software limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number (why am I telling you this)
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setLimitsRaw(int axis, double min, double max)=0;
+    
+    /* Get the software limits for a particular axis.
+     * @param axis joint number (again... why am I telling you this)
+     * @param pointer to store the value of the lower limit
+     * @param pointer to store the value of the upper limit
+     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     */
+    virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
 };
 
 #endif
