@@ -11,7 +11,7 @@
 using namespace yarp;
 
 #define CRC_SIZE 8
-#define READ_SIZE (60000-CRC_SIZE)
+#define READ_SIZE (120000-CRC_SIZE)
 //#define WRITE_SIZE (65500-CRC_SIZE)
 #define WRITE_SIZE (60000-CRC_SIZE)
 
@@ -62,6 +62,7 @@ void DgramTwoWayStream::open(const Address& remote) {
 }
 
 void DgramTwoWayStream::open(const Address& local, const Address& remote) {
+
     localAddress = local;
     remoteAddress = remote;
 
@@ -71,10 +72,14 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
     }
     dgram = new ACE_SOCK_Dgram;
     YARP_ASSERT(dgram!=NULL);
+
     int result = dgram->open(localHandle);
     if (result!=0) {
         throw IOException("could not open datagram socket");
     }
+
+    configureSystemBuffers();
+
     dgram->get_local_addr(localHandle);
     YARP_DEBUG(Logger::get(),String("starting DGRAM entity on port number ") + NetType::toString(localHandle.get_port_number()));
     localAddress = Address("127.0.0.1",
@@ -82,7 +87,6 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
     YARP_DEBUG(Logger::get(),String("Update: DGRAM from ") + 
                localAddress.toString() + 
                " to " + remote.toString());
-
 
     allocate();
 }
@@ -95,6 +99,24 @@ void DgramTwoWayStream::allocate() {
     writeAvail = CRC_SIZE;
     happy = true;
     pct = 0;
+}
+
+
+void DgramTwoWayStream::configureSystemBuffers() {
+    // ask for more buffer space for udp/mcast
+    int window_size_desired = 600000;
+    int window_size = window_size_desired;
+    int result = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
+                                   (char *) &window_size, sizeof(window_size));
+    window_size = 0;
+    int len = 4;
+    int result2 = dgram->get_option(SOL_SOCKET, SO_RCVBUF,
+                                    (char *) &window_size, &len);
+    if (result!=0||result2!=0||window_size<window_size_desired) {
+        // give a warning if we get CRC problems
+        bufferAlertNeeded = true;
+        bufferAlerted = false;
+    }
 }
 
 
@@ -112,10 +134,15 @@ void DgramTwoWayStream::join(const Address& group, bool sender) {
 
     dgram = dmcast;
     YARP_ASSERT(dgram!=NULL);
+
     YARP_DEBUG(Logger::get(),String("subscribing to mcast address ") + 
                group.toString());
     ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
+
     int result = dmcast->join(addr,1);
+
+    configureSystemBuffers();
+
     if (result!=0) {
         throw IOException("cannot connect to multi-cast address");
     }
@@ -190,6 +217,11 @@ int DgramTwoWayStream::read(const Bytes& b) {
         YARP_DEBUG(Logger::get(),
                    String("DGRAM Got ") + NetType::toString(result) +
                    " bytes");
+        if (result>WRITE_SIZE*1.25) {
+            YARP_ERROR(Logger::get(),
+                       String("Got big datagram: ")+NetType::toString(result)+
+                       " bytes");
+        }
         if (closed||result<0) {
             happy = false;
             return result;
@@ -200,7 +232,24 @@ int DgramTwoWayStream::read(const Bytes& b) {
         bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct);
         pct++;
         if (!crcOk) {
-            YARP_DEBUG(Logger::get(),"****** CRC failure ******");
+            YARP_ERROR(Logger::get(),
+                       "*** Multicast/UDP packet dropped - checksum error ***");
+            if (bufferAlertNeeded&&!bufferAlerted) {
+                YARP_INFO(Logger::get(),
+                          "The UDP/MCAST system buffer limit on your system is low.");
+                YARP_INFO(Logger::get(),
+                          "You may get packet loss under heavy conditions.");
+#ifdef YARP2_LINUX
+                YARP_INFO(Logger::get(),
+                          "To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608");
+                YARP_INFO(Logger::get(),
+                          "(Might be something like: sudo /sbin/sysctl -w net.core.rmem_max=8388608)");
+#else
+                YARP_INFO(Logger::get(),
+                          "To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX");
+#endif
+                bufferAlerted = true;
+            }
             //readAt = 0;
             //readAvail = 0;
             reset();
@@ -275,13 +324,26 @@ void DgramTwoWayStream::flush() {
                    NetType::toString(len) + " bytes");
         if (len>WRITE_SIZE*0.75) {
             YARP_DEBUG(Logger::get(),
-                       "long dgrams need a little time, in general");
-            yarp::os::Time::delay(0.0025);
-            // Can someone find a better solution?  There are all
-            // sorts of complicated things one could try, but if
-            // you are sending a large message and chunks can't
-            // get sent out in a reasonable time, UDP/MCAST is just
-            // not going to be a happy thing.
+                       "long dgrams might need a little time");
+
+            // Under heavy loads, packets could get dropped
+            // 640x480x3 images correspond to about 15 datagrams
+            // so there's not much time possible between them
+            // looked at iperf, it just does a busy-waiting delay
+            // there's an implementation below, but commented out -
+            // better solution was to increase recv buffer size
+
+            /*
+            double first = yarp::os::Time::now();
+            double now = first;
+            int ct = 0;
+            do {
+                //printf("Busy wait... %d\n", ct);
+                yarp::os::Time::delay(0);
+                now = yarp::os::Time::now();
+                ct++;
+            } while (now-first<0.001);
+            */
         }
 
         if (len<0) {

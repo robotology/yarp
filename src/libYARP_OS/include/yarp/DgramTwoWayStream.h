@@ -25,6 +25,7 @@ public:
         writer = false;
         dgram = NULL;
         happy = false;
+        bufferAlerted = bufferAlertNeeded = false;
     }
 
     virtual void open(const Address& remote);
@@ -78,8 +79,12 @@ private:
     ManagedBytes readBuffer, writeBuffer;
     int readAt, readAvail, writeAvail, pct;
     bool happy;
+    bool bufferAlertNeeded;
+    bool bufferAlerted;
 
     void allocate();
+
+    void configureSystemBuffers();
 };
 
 #endif
