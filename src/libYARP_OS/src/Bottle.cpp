@@ -167,7 +167,7 @@ int Bottle::getSpecialization() {
 
 
 void Bottle::setNested(bool nested) {
-    return HELPER(implementation).setNested(nested);
+    HELPER(implementation).setNested(nested);
 }
 
 
@@ -236,7 +236,7 @@ BottleBit& Bottle::addBit(const char *str) {
 
 
 void Bottle::addBit(BottleBit& bit) {
-    return HELPER(implementation).addBit(bit);
+    HELPER(implementation).addBit(bit);
 }
 
 

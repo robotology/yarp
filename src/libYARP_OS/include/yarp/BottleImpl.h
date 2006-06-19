@@ -78,7 +78,7 @@ public:
         return 0;
     }
 
-    virtual BottleBit& find(const char *txt);
+    virtual yarp::os::BottleBit& find(const char *txt);
     virtual yarp::os::Bottle& findGroup(const char *txt);
 
 };
@@ -218,7 +218,7 @@ public:
     static const int code;
     virtual int subCode();
 
-    virtual BottleBit& find(const char *txt) {
+    virtual yarp::os::BottleBit& find(const char *txt) {
         return content.find(txt);
     }
 
