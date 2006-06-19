@@ -43,14 +43,20 @@ class yarp::dev::TestFrameGrabber : public DeviceDriver,
 private:
     int ct;
     int w, h;
+    double period, freq;
+    double first;
+    double prev;
 
 public:
     TestFrameGrabber() {
         ct = 0;
-
+        freq = 20;
+        period = 1/freq;
         // just for nostalgia
         w = 128;
         h = 128;
+        first = 0;
+        prev = 0;
     }
 
 
@@ -70,11 +76,36 @@ public:
         if (prop.check("height",val)||prop.check("h",val)) {
             h = val->asInt();
         }
+        if (prop.check("freq",val)) {
+            freq = val->asDouble();
+            period = 1/freq;
+        }
+        if (prop.check("period",val)) {
+            period = val->asDouble();
+            freq = 1/period;
+        }
+        printf("Test grabber period %g / freq %g\n", period, freq);
         return true;
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-        Time::delay(0.05);
+
+        double now = Time::now();
+
+        if (now-prev>1000) {
+            first = now;
+            prev = now;
+        }
+        double dt = period-(now-prev);
+
+        if (dt>0) {
+            Time::delay(dt);
+        }
+        
+        // this is the controlled instant when we consider the
+        // image as going out
+        prev += period;
+
         image.resize(w,h);
         image.zero();
         for (int i=0; i<image.width(); i++) {
