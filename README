@@ -228,6 +228,7 @@ gtk+. Needless to say, this procedure is different on Linux and Windows.
 
 -Installing gtk+ on Linux
 Follow the installation guide in the gtk web site (www.gtk.org/download).
+on Debian: sudo apt-get install libgtk2.0-dev
 
 -Installing gtk+ on Windows
 We recommand you install glade for win32, which sets up everything you need
