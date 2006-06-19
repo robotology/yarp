@@ -22,7 +22,11 @@ ELSE (${no_console} STREQUAL NO_CONSOLE)
   ADD_EXECUTABLE(${name} ${folder_source} ${folder_header})
 ENDIF (${no_console} STREQUAL NO_CONSOLE)
 
-TARGET_LINK_LIBRARIES(${name} ${NEED_LIBS} ${ACE_LINK_FLAGS})
+FOREACH(X ${NEED_LIBS})
+	MESSAGE(STATUS "Linking for ${name} : ${${X}_LIB}")
+	TARGET_LINK_LIBRARIES(${name} ${${X}_LIB})
+ENDFOREACH(X ${NEED_LIBS})
+TARGET_LINK_LIBRARIES(${name} ${ACE_LINK_FLAGS})
 
 
 ENDMACRO(YarpProgram)

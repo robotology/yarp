@@ -1,8 +1,6 @@
 
-# set up to use libYARP_*
-SET(NEED_LIBS YARP_OS YARP_sig YARP_dev)
+INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
+LINK_LIBRARIES(YARP_OS YARP_sig YARP_dev)
+ADD_EXECUTABLE(yarpdev yarpdev.cpp)
 
-LINK_LIBRARIES(${YARP_dev_EXT_LIBS} YARP_OS YARP_sig YARP_dev)
-
-YarpProgram(yarpdev NO_CONSOLE) #damn!
 INSTALL_TARGETS(/bin yarpdev)

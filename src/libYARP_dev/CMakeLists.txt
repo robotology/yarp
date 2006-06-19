@@ -122,6 +122,8 @@ INCLUDE(YarpReqLib)
 
 SET(ALL_SRC ${ALL_SRC} ${libcode_general})
 
+# device library contains useful code
+SET(FOUND_ONE TRUE)
 
 #avoid empty projects...
 IF(FOUND_ONE)
@@ -139,9 +141,9 @@ ENDIF(FOUND_ONE)
 
 # Prepare properties for external users of library
 
-GET_TARGET_PROPERTY(YARP_dev_LIB YARP_dev LOCATION)
-GET_TARGET_PROPERTY(YARP_dev_INC YARP_dev header_path)
-GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS YARP_dev ext_libs)
+GET_TARGET_PROPERTY(YARP_dev_LIB ${PROJECT_NAME} LOCATION)
+GET_TARGET_PROPERTY(YARP_dev_INC ${PROJECT_NAME} header_path)
+GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS ${PROJECT_NAME} ext_libs)
 IF (WIN32 AND NOT CYGWIN)
    SET(libname "${YARP_dev_LIB}")
    STRING(REPLACE ".lib" "d.lib" libname2 ${libname})

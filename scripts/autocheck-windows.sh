@@ -5,6 +5,7 @@
 SOURCE=`cygpath -w $PWD`
 GEN="NMake Makefiles"
 CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
+CMAKEOPTS="-DCREATE_GUIS:BOOL=FALSE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE"
 
 while true; do
 
@@ -21,7 +22,7 @@ echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
-"$CMAKE" -G "$GEN" $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
+"$CMAKE" $CMAKEOPTS -G "$GEN" $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
 
 nmake clean || echo "nmake clean failed"
 
