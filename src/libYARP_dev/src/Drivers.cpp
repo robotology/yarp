@@ -29,7 +29,7 @@ public:
     ConstString toString() {
         yarp::String s;
         for (unsigned int i=0; i<delegates.size(); i++) {
-            s += delegates[i]->toString();
+            s += delegates[i]->toString().c_str();
             s += "\n";
         }
         return ConstString(s.c_str());
