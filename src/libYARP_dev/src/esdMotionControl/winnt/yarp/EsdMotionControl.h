@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.4 2006-06-15 09:53:15 gmetta Exp $
+/// $Id: EsdMotionControl.h,v 1.5 2006-06-19 08:09:56 gmetta Exp $
 ///
 ///
 
@@ -30,6 +30,10 @@ namespace yarp{
  */
 class yarp::dev::EsdMotionControlParameters
 {
+private:
+    EsdMotionControlParameters (const EsdMotionControlParameters&);
+    void operator= (const EsdMotionControlParameters&);
+
 public:
 	/**
 	 * Constructor.
@@ -43,19 +47,18 @@ public:
 	long int _rxTimeout;
 
 	int _networkN;								/** network number */
-	int _njoints;								/** number of joints (cards * 2) */
+	int _njoints;								/** number of joints/axes/controlled motors */
 	unsigned char *_destinations;       		/** destination addresses */
 	unsigned char _my_address;					/** my address */
 	int _polling_interval;						/** thread polling interval [ms] */
 	int _timeout;								/** number of cycles before timing out */
 	int (*_p) (const char *fmt, ...);			/** printf-like function for spying messages */
 
-    int *axisMap;
-    double *angleToEncoder;
-    double *zeros;
-    int nj;
+    int *_axisMap;                              /** axis remapping lookup-table */
+    double *_angleToEncoder;                    /** angle to encoder conversion factors */
+    double *_zeros;                             /** encoder zeros */
+    double *_signs;                             /** sign of the encoder reading */
 };
-
 
 /**
  * The esd controller device driver.
@@ -65,14 +68,15 @@ class yarp::dev::EsdMotionControl:
     public yarp::dev::DeviceDriver,
     public os::Thread, 
     public IPidControl, 
-    public IPositionControl, 
-    public IVelocityControl, 
+    public IPositionControlRaw, 
+    public IVelocityControlRaw, 
     public IEncoders, 
     public IAmplifierControl,
     public IControlCalibration,
     public IControlDebug,
     public IControlLimits,
-    public IPositionControl2
+    public ImplementPositionControl<EsdMotionControl, IPositionControl>,
+    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
 {
 private:
     EsdMotionControl(const EsdMotionControl&);
@@ -80,9 +84,10 @@ private:
 
 public:
 	/**
-	 * Constructor.
+	 * Default constructor. Construction is done in two stages, first build the
+     * object and then open the device driver.
 	 */
-    EsdMotionControl(const EsdMotionControlParameters &par);
+    EsdMotionControl();
 
 	/**
 	 * Destructor.
@@ -125,33 +130,35 @@ public:
     virtual bool enablePid(int j);
     //
     /////////////////////////////// END PID INTERFACE
+
     //
-    /// POSITION CONTROL INTERFACE
-    virtual bool setPositionMode();
-    virtual bool positionMove(int j, double ref);
-    virtual bool positionMove(const double *refs);
-    virtual bool relativeMove(int j, double delta);
-    virtual bool relativeMove(const double *deltas);
-    virtual bool checkMotionDone(bool *flag);
-    virtual bool checkMotionDone(int j, bool *flag);
-    virtual bool setRefSpeed(int j, double sp);
-    virtual bool setRefSpeeds(const double *spds);
-    virtual bool setRefAcceleration(int j, double acc);
-    virtual bool setRefAccelerations(const double *accs);
-    virtual bool getRefSpeed(int j, double *ref);
-    virtual bool getRefSpeeds(double *spds);
-    virtual bool getRefAcceleration(int j, double *acc);
-    virtual bool getRefAccelerations(double *accs);
-    virtual bool stop(int j);
-    virtual bool stop();
+    /// POSITION CONTROL INTERFACE RAW
+    virtual int getAxes();
+    virtual bool setPositionModeRaw();
+    virtual bool positionMoveRaw(int j, double ref);
+    virtual bool positionMoveRaw(const double *refs);
+    virtual bool relativeMoveRaw(int j, double delta);
+    virtual bool relativeMoveRaw(const double *deltas);
+    virtual bool checkMotionDoneRaw(bool *flag);
+    virtual bool checkMotionDoneRaw(int j, bool *flag);
+    virtual bool setRefSpeedRaw(int j, double sp);
+    virtual bool setRefSpeedsRaw(const double *spds);
+    virtual bool setRefAccelerationRaw(int j, double acc);
+    virtual bool setRefAccelerationsRaw(const double *accs);
+    virtual bool getRefSpeedRaw(int j, double *ref);
+    virtual bool getRefSpeedsRaw(double *spds);
+    virtual bool getRefAccelerationRaw(int j, double *acc);
+    virtual bool getRefAccelerationsRaw(double *accs);
+    virtual bool stopRaw(int j);
+    virtual bool stopRaw();
     //
     /////////////////////////////// END Position Control INTERFACE
 
-    ///////////// Velocity control interface
+    ///////////// Velocity control interface raw
     ///
-    virtual bool setVelocityMode();
-    virtual bool velocityMove(int j, double sp);
-    virtual bool velocityMove(const double *sp);
+    virtual bool setVelocityModeRaw();
+    virtual bool velocityMoveRaw(int j, double sp);
+    virtual bool velocityMoveRaw(const double *sp);
     //
     /////////////////////////////// END Velocity Control INTERFACE
 
@@ -224,7 +231,7 @@ protected:
 
 	virtual void run(void);
 
-	/// helper functions
+	// helper functions
 	bool _writeWord16 (int msg, int axis, short s);
 	bool _writeWord16Ex (int msg, int axis, short s1, short s2);
 	bool _readWord16 (int msg, int axis, short& value);
@@ -234,7 +241,7 @@ protected:
 	bool _writeDWord (int msg, int axis, int value);
 	bool _writeNone (int msg, int axis);
 
-	/// internal stuff.
+	// internal stuff.
 	double *_ref_speeds;
 	double *_ref_accs;
 	double *_ref_positions;

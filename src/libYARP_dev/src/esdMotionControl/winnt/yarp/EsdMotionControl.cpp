@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.4 2006-06-14 08:39:44 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.5 2006-06-19 08:09:56 gmetta Exp $
 ///
 ///
 
@@ -56,9 +56,31 @@ using namespace yarp::dev;
 
 bool NOT_YET_IMPLEMENTED(const char *txt)
 {
-   fprintf(stderr, "%s not yet implemented for EsdMotionControl\n", txt);
+    ACE_OS::fprintf(stderr, "%s not yet implemented for EsdMotionControl\n", txt);
 
    return false;
+}
+
+/*
+ * simple helper template to alloc memory.
+ */
+template <class T>
+inline T* allocAndCheck(int size)
+{
+    T* t = new T[size];
+    ACE_ASSERT (t != NULL);
+    ACE_OS::memset(t, 0, sizeof(T) * size);
+    return t;
+}
+
+/*
+ * simple helper template to free memory.
+ */
+template <class T>
+inline void checkAndDestroy(T*& p)
+{
+    if (p != 0) delete[] p;
+    p = NULL;
 }
 
 /**
@@ -69,8 +91,13 @@ const int ESD_MAX_CARDS		= 16;
 EsdMotionControlParameters::EsdMotionControlParameters()
 {
     _networkN = 0;
-    _destinations = new unsigned char [ESD_MAX_CARDS];
-	memset (_destinations, 0, sizeof(unsigned char) * ESD_MAX_CARDS);
+    _destinations = allocAndCheck<unsigned char> (ESD_MAX_CARDS);
+
+    _axisMap = NULL;
+    _angleToEncoder = NULL;
+    _zeros = NULL;
+    _signs = NULL;
+
 	_my_address = 0;
 	_polling_interval = 10;
 	_timeout = 20;
@@ -85,7 +112,7 @@ EsdMotionControlParameters::EsdMotionControlParameters()
 
 EsdMotionControlParameters::~EsdMotionControlParameters()
 {
-    delete [] _destinations;
+    checkAndDestroy<unsigned char>(_destinations);
 }
 
 ///
@@ -133,6 +160,10 @@ public:
 ///
 class EsdCanResources
 {
+private:
+    EsdCanResources (const EsdCanResources&);
+    void operator= (const EsdCanResources&);
+
 public:
 	EsdCanResources ();
 	~EsdCanResources ();
@@ -174,6 +205,11 @@ public:
 	CMSG _replyBuffer[BUF_SIZE];				/// reply buffer.
 
 	BCastBufferElement *_bcastRecvBuffer;		/// local storage for bcast messages.
+    int *_axisMap;                              /// axis remapping lookup-table.
+    int *_invAxisMap;                           /// inverse axis map, recovered from the direct one.
+    double *_angleToEncoder;                    /// angle to encoder conversion factors.
+    double *_zeros;                             /// encoder zeros.
+    double *_signs;                             /// sign of the encoder reading.
 
 	unsigned char _my_address;					/// 
 	unsigned char _destinations[ESD_MAX_CARDS];	/// list of connected cards (and their addresses).
@@ -185,7 +221,7 @@ public:
 												/// used to spy on can messages.
 	int _filter;								/// don't print filtered messages.
 	
-	char _printBuffer[16384];
+	char _printBuffer[16384];                   /// might be better with dynamic allocation.
 };
 
 EsdCanResources::EsdCanResources ()
@@ -196,11 +232,11 @@ EsdCanResources::EsdCanResources ()
 	_speed = 0;						/// default 1Mbit/s
 	_networkN = 0;
 
-	memset (_readBuffer, 0, sizeof(CMSG)*BUF_SIZE);
-	memset (_writeBuffer, 0, sizeof(CMSG)*BUF_SIZE);
-	memset (_replyBuffer, 0, sizeof(CMSG)*BUF_SIZE);
+    ACE_OS::memset (_readBuffer, 0, sizeof(CMSG)*BUF_SIZE);
+    ACE_OS::memset (_writeBuffer, 0, sizeof(CMSG)*BUF_SIZE);
+    ACE_OS::memset (_replyBuffer, 0, sizeof(CMSG)*BUF_SIZE);
 
-	memset (_destinations, 0, sizeof(unsigned char) * ESD_MAX_CARDS);
+    ACE_OS::memset (_destinations, 0, sizeof(unsigned char) * ESD_MAX_CARDS);
 
 	_my_address = 0;
 	_njoints = 0;
@@ -210,8 +246,13 @@ EsdCanResources::EsdCanResources ()
 	_msg_lost = 0;
 	_writeMessages = 0;
 	_bcastRecvBuffer = NULL;
+    _axisMap = NULL;
+    _invAxisMap = NULL;
+    _angleToEncoder = NULL;
+    _zeros = NULL;
+    _signs = NULL;
 
-	_error_status = true;
+    _error_status = true;
 }
 
 EsdCanResources::~EsdCanResources () 
@@ -224,7 +265,7 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 	if (_handle != ACE_INVALID_HANDLE)
 		return false;
 
-	/// general variable init.
+	// general variable init.
 	_handle = ACE_INVALID_HANDLE;
 	_speed = 0;						/// default 1Mbit/s
 	_networkN = parms._networkN;
@@ -234,7 +275,7 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 	_msg_lost = 0;
 	_error_status = true;
 
-	memcpy (_destinations, parms._destinations, sizeof(unsigned char)*ESD_MAX_CARDS);
+    ACE_OS::memcpy (_destinations, parms._destinations, sizeof(unsigned char)*ESD_MAX_CARDS);
 	_my_address = parms._my_address;
 	_polling_interval = parms._polling_interval;
 	_timeout = parms._timeout;
@@ -247,19 +288,14 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 	_txTimeout = parms._txTimeout;
 	_rxTimeout = parms._rxTimeout;
 
-	_bcastRecvBuffer = new BCastBufferElement[_njoints];
-	ACE_ASSERT (_bcastRecvBuffer != NULL);
-    /// suspect an issue with allocation of array of classes.
+    _bcastRecvBuffer = allocAndCheck<BCastBufferElement> (_njoints);
 
-    /// it requires further investigation.
+	// clean up buffers.
+    ACE_OS::memset (_readBuffer, 0, sizeof(CMSG)*BUF_SIZE);
+	ACE_OS::memset (_writeBuffer, 0, sizeof(CMSG)*BUF_SIZE);
+	ACE_OS::memset (_replyBuffer, 0, sizeof(CMSG)*BUF_SIZE);
 
-
-	/// clean up buffers.
-	memset (_readBuffer, 0, sizeof(CMSG)*BUF_SIZE);
-	memset (_writeBuffer, 0, sizeof(CMSG)*BUF_SIZE);
-	memset (_replyBuffer, 0, sizeof(CMSG)*BUF_SIZE);
-
-	/// open the device.
+	// open the device.
 	int res = canOpen (_networkN, 0, _txQueueSize, _rxQueueSize, _txTimeout, _rxTimeout, &_handle);
 	if (res != NTCAN_SUCCESS)
 		return false;
@@ -271,8 +307,8 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 		return false;
 	}
 
-	/// sets all message ID's for class 0 and 1.
-	int i;
+	// sets all message ID's for class 0 and 1.
+    int i;
 	for (i = 0; i < 0xff; i++)
 		canIdAdd (_handle, i);
 	
@@ -285,7 +321,7 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 
 bool EsdCanResources::uninitialize ()
 {
-	if (_bcastRecvBuffer != NULL) delete[] _bcastRecvBuffer;
+    checkAndDestroy<BCastBufferElement> (_bcastRecvBuffer);
 
 	if (_handle != ACE_INVALID_HANDLE)
 	{
@@ -320,7 +356,7 @@ bool EsdCanResources::startPacket ()
 bool EsdCanResources::addMessage (int msg_id, int joint)
 {
 	CMSG x;
-	memset (&x, 0, sizeof(CMSG));
+	ACE_OS::memset (&x, 0, sizeof(CMSG));
 
 	x.id = _my_address << 4;
 	x.id = _destinations[joint/2] & 0x0f;
@@ -376,7 +412,6 @@ bool EsdCanResources::printMessage (const CMSG& m)
 
 	ret += ACE_OS::sprintf(_printBuffer+ret, "st: %x\n", m.msg_lost);
 
-
 	(*_p) 
 		("%s", _printBuffer);
 
@@ -414,14 +449,14 @@ bool EsdCanResources::error (const CMSG& m)
 	return false;
 }
 
-///
-///
-///
+/*
+ *
+ */
 inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 
-
-EsdMotionControl::EsdMotionControl(const EsdMotionControlParameters &par) :
-IPositionControl2(this, par.nj, par.axisMap, par.angleToEncoder, par.zeros)
+EsdMotionControl::EsdMotionControl() : 
+    ImplementPositionControl(this), 
+    ImplementVelocityControl(this)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -448,26 +483,29 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 		return false;
 	}
 
+    ImplementPositionControl<EsdMotionControl, IPositionControl>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros, p._signs);
+    // ImplementVelocityControl::initialize ();
+
     Thread::start();
 	_done.wait ();
 
-	/// used for printing debug messages.
+	// used for printing debug messages.
 	_p = p._p;
 	_filter = -1;
 	_writerequested = false;
 	_noreply = false;
 
-	/// temporary variables used by the ddriver.
-	_ref_positions = new double [r.getJoints()];		
-	_ref_speeds = new double [r.getJoints()];
-	_ref_accs = new double [r.getJoints()];
-	ACE_ASSERT (_ref_positions != NULL && _ref_speeds != NULL && _ref_accs != NULL);
+	// temporary variables used by the ddriver.
+	_ref_positions = allocAndCheck<double>(r.getJoints());		
+	_ref_speeds = allocAndCheck<double>(r.getJoints());
+	_ref_accs = allocAndCheck<double>(r.getJoints());
 	_mutex.post ();
 
-	/// default initialization for this device driver.
+	// default initialization for this device driver.
 	int i;
 	for(i = 0; i < r.getJoints(); i++)
-		setBCastMessages(i, double (0x1E)); /// 0x1A activates position and current consumption broadcast + fault events
+		setBCastMessages(i, double (0x1E)); // 0x1A activates position and current consumption broadcast + fault events
 	
 	return true;
 }
@@ -484,12 +522,14 @@ bool EsdMotionControl::close (void)
 		    setBCastMessages(i, double(0x00));
     }
 
-
     Thread::stop ();	/// stops the thread first (joins too).
 
-	if (_ref_positions != NULL) delete[] _ref_positions;
-	if (_ref_speeds != NULL) delete[] _ref_speeds;
-	if (_ref_accs != NULL) delete[] _ref_accs;
+    ImplementPositionControl<EsdMotionControl, IPositionControl>::uninitialize ();
+    // ImplementVelocityControl<>::uninitialize ();
+
+    checkAndDestroy<double> (_ref_positions);
+    checkAndDestroy<double> (_ref_speeds);
+    checkAndDestroy<double> (_ref_accs);
 
 	int ret = d.uninitialize ();
 
@@ -668,7 +708,7 @@ void EsdMotionControl::run ()
 								}
 								else
 								{
-									memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
+									ACE_OS::memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
 									remainingMsgs --;
 									if (remainingMsgs < 1)
 									{
@@ -737,7 +777,7 @@ AckMessageLoop:
 						noreply = _noreply;
 						r._error_status = true;
 						counter = 0;
-						memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
+						ACE_OS::memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
 
 						if (r._p)
 						{
@@ -775,7 +815,14 @@ AckMessageLoop:
 
 }
 
-/// LATER: can be optimized.
+// return the number of controlled axes.
+int EsdMotionControl::getAxes()
+{
+	EsdCanResources& r = RES(system_resources);
+    return r.getJoints();
+}
+
+// LATER: can be optimized.
 bool EsdMotionControl::setPid (int axis, const yarp::dev::Pid &pid)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
@@ -971,17 +1018,17 @@ bool EsdMotionControl::disablePid(int axis)
 	return _writeNone (CAN_CONTROLLER_IDLE, axis);
 }
 
-bool EsdMotionControl::setPositionMode()
+bool EsdMotionControl::setPositionModeRaw()
 {
-    return NOT_YET_IMPLEMENTED("setVelocityMode");
+    return NOT_YET_IMPLEMENTED("setPositionModeRaw");
 }
 
-bool EsdMotionControl::setVelocityMode()
+bool EsdMotionControl::setVelocityModeRaw()
 {
-    return NOT_YET_IMPLEMENTED("setVelocityMode");
+    return NOT_YET_IMPLEMENTED("setVelocityModeRaw");
 }
 
-bool EsdMotionControl::positionMove(int axis, double ref)
+bool EsdMotionControl::positionMoveRaw(int axis, double ref)
 {
     /// prepare can message.
 	EsdCanResources& r = RES(system_resources);
@@ -1015,7 +1062,7 @@ bool EsdMotionControl::positionMove(int axis, double ref)
 	return true;
 }
 
-bool EsdMotionControl::positionMove(const double *refs)
+bool EsdMotionControl::positionMoveRaw(const double *refs)
 {
  	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1051,18 +1098,18 @@ bool EsdMotionControl::positionMove(const double *refs)
 	return true;   
 }
 
-bool EsdMotionControl::relativeMove(int j, double delta)
+bool EsdMotionControl::relativeMoveRaw(int j, double delta)
 {
     return NOT_YET_IMPLEMENTED("positionRelative");
 }
 
-bool EsdMotionControl::relativeMove(const double *deltas)
+bool EsdMotionControl::relativeMoveRaw(const double *deltas)
 {
     return NOT_YET_IMPLEMENTED("positionRelative");
 }
 
 /// check motion done, single axis.
-bool EsdMotionControl::checkMotionDone(int axis, bool *ret)
+bool EsdMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1080,7 +1127,7 @@ bool EsdMotionControl::checkMotionDone(int axis, bool *ret)
 }
 
 /// cmd is a pointer to a bool
-bool EsdMotionControl::checkMotionDone (bool *ret)
+bool EsdMotionControl::checkMotionDoneRaw (bool *ret)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1132,7 +1179,7 @@ bool EsdMotionControl::checkMotionDone (bool *ret)
 	return true;
 }
 
-bool EsdMotionControl::setRefSpeed(int axis, double sp)
+bool EsdMotionControl::setRefSpeedRaw(int axis, double sp)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
@@ -1140,7 +1187,7 @@ bool EsdMotionControl::setRefSpeed(int axis, double sp)
 	return true;
 }
 
-bool EsdMotionControl::setRefSpeeds(const double *spds)
+bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
 
@@ -1151,7 +1198,7 @@ bool EsdMotionControl::setRefSpeeds(const double *spds)
 	return true;
 }
 
-bool EsdMotionControl::setRefAcceleration(int axis, double acc)
+bool EsdMotionControl::setRefAccelerationRaw(int axis, double acc)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1161,7 +1208,7 @@ bool EsdMotionControl::setRefAcceleration(int axis, double acc)
 	return _writeWord16 (CAN_SET_DESIRED_ACCELER, axis, s);
 }
 
-bool EsdMotionControl::setRefAccelerations(const double *accs)
+bool EsdMotionControl::setRefAccelerationsRaw(const double *accs)
 {
     EsdCanResources& r = RES(system_resources);
 
@@ -1177,7 +1224,7 @@ bool EsdMotionControl::setRefAccelerations(const double *accs)
 }
 
 /// cmd is an array of double (LATER: to be optimized).
-bool EsdMotionControl::getRefSpeeds (double *spds)
+bool EsdMotionControl::getRefSpeedsRaw (double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1197,7 +1244,7 @@ bool EsdMotionControl::getRefSpeeds (double *spds)
 	return true;
 }
 
-bool EsdMotionControl::getRefSpeed (int axis, double *spd)
+bool EsdMotionControl::getRefSpeedRaw (int axis, double *spd)
 {
     ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1216,7 +1263,7 @@ bool EsdMotionControl::getRefSpeed (int axis, double *spd)
 }
 
 /// cmd is an array of double (LATER: to be optimized).
-bool EsdMotionControl::getRefAccelerations (double *accs)
+bool EsdMotionControl::getRefAccelerationsRaw (double *accs)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
@@ -1234,7 +1281,7 @@ bool EsdMotionControl::getRefAccelerations (double *accs)
 }
 
 /// cmd is an array of double (LATER: to be optimized).
-bool EsdMotionControl::getRefAcceleration (int axis, double *accs)
+bool EsdMotionControl::getRefAccelerationRaw (int axis, double *accs)
 {
     ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -1251,19 +1298,19 @@ bool EsdMotionControl::getRefAcceleration (int axis, double *accs)
 	return true;
 }
 
-bool EsdMotionControl::stop(int j)
+bool EsdMotionControl::stopRaw(int j)
 {
     return NOT_YET_IMPLEMENTED("stop");
 }
 
-bool EsdMotionControl::stop()
+bool EsdMotionControl::stopRaw()
 {
     return NOT_YET_IMPLEMENTED("stop");
 }
 
 /// cmd is an array of double of length njoints specifying speed 
 /// for each axis
-bool EsdMotionControl::velocityMove (int axis, double sp)
+bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
 {
 	/// prepare can message.
 	EsdCanResources& r = RES(system_resources);
@@ -1297,7 +1344,7 @@ bool EsdMotionControl::velocityMove (int axis, double sp)
 
 /// cmd is an array of double of length njoints specifying speed 
 /// for each axis
-bool EsdMotionControl::velocityMove (const double *sp)
+bool EsdMotionControl::velocityMoveRaw (const double *sp)
 {
 	/// prepare can message.
 	EsdCanResources& r = RES(system_resources);
@@ -2482,7 +2529,7 @@ bool EsdMotionControl::_readWord16Array (int msg, double *out)
 
 	if (!r.getErrorStatus())
 	{
-		memset (out, 0, sizeof(double) * r.getJoints());
+		ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
 		return false;
 	}
 
@@ -2663,7 +2710,7 @@ bool EsdMotionControl::_readDWordArray (int msg, double *out)
 
 	if (!r.getErrorStatus())
 	{
-		memset (out, 0, sizeof(double) * r.getJoints());
+		ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
 		return false;
 	}
 

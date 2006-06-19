@@ -7,18 +7,19 @@
 
 /*! \file ControlBoardInterfaces.h define control board standard interfaces*/
 
-namespace yarp{
-    namespace dev{
+namespace yarp {
+    namespace dev {
         class IPidControl;
+        class IPositionControlRaw;
         class IPositionControl;
         class IEncoders;
         class ITorqueControl;
+        class IVelocityControlRaw;
         class IVelocityControl;
         class IAmplifierControl;
         class IControlDebug;
         class IControlLimits;
         class IControlCalibration;
-        class IPositionControl2;
     }
 }
 
@@ -141,6 +142,7 @@ public:
      * current position of the joint as the reference value for the PID, and resets
      * the integrator.
      * @param j joint number
+     * @return true on success, false on failure.
      */
     virtual bool resetPid(int j)=0;
 
@@ -152,11 +154,148 @@ public:
 };
 
 /**
+ * Interface for a generic control board device implementing position control in encoder
+ * coordinates.
+ */
+class yarp::dev::IPositionControlRaw
+{
+public:
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
+    /** Set position mode. This command
+     * is required by control boards implementing different
+     * control methods (e.g. velocity/torque), in some cases
+     * it can be left empty.
+     * return true/false on success failure
+     */
+    virtual bool setPositionModeRaw()=0;
+
+    /** Set new reference point for a single axis.
+     * @param j joint number
+     * @param ref specifies the new ref point
+     * @return true/false on success/failure
+     */
+    virtual bool positionMoveRaw(int j, double ref)=0;
+
+    /** Set new reference point for all axes.
+     * @param refs array, new reference points.
+     * @return true/false on success/failure
+     */
+    virtual bool positionMoveRaw(const double *refs)=0;
+
+    /** Set relative position. The command is relative to the 
+     * current position of the axis.
+     * @param j joint axis number
+     * @param delta relative command
+     * @return true/false on success/failure
+     */
+    virtual bool relativeMoveRaw(int j, double delta)=0;
+
+    /** Set relative position, all joints.
+     * @param deltas pointer to the relative commands
+     * @return true/false on success/failure
+     */
+    virtual bool relativeMoveRaw(const double *deltas)=0;
+
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @return true if the trajectory is terminated, false otherwise
+     */
+    virtual bool checkMotionDoneRaw(int j, bool *flag)=0;
+
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @return true if the trajectory is terminated, false otherwise
+     */
+    virtual bool checkMotionDoneRaw(bool *flag)=0;
+
+    /** Set reference speed for a joint, this is the speed used during the
+     * interpolation of the trajectory.
+     * @param j joint number
+     * @param sp speed value
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefSpeedRaw(int j, double sp)=0;
+
+    /** Set reference speed on all joints. These values are used during the
+     * interpolation of the trajectory.
+     * @param spds pointer to the array of speed values.
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefSpeedsRaw(const double *spds)=0;
+
+    /** Set reference acceleration for a joint. This value is used during the
+     * trajectory generation.
+     * @param j joint number
+     * @param acc acceleration value
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationRaw(int j, double acc)=0;
+
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param accs pointer to the array of acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationsRaw(const double *accs)=0;
+
+    /** Get reference speed for a joint. Returns the speed used to 
+     * generate the trajectory profile.
+     * @param j joint number
+     * @param ref pointer to storage for the return value
+     * @return true/false on success or failure
+     */
+    virtual bool getRefSpeedRaw(int j, double *ref)=0;
+
+    /** Get reference speed of all joints. These are the  values used during the
+     * interpolation of the trajectory.
+     * @param spds pointer to the array that will store the speed values.
+     */
+    virtual bool getRefSpeedsRaw(double *spds)=0;
+
+    /** Get reference acceleration for a joint. Returns the acceleration used to 
+     * generate the trajectory profile.
+     * @param j joint number
+     * @param acc pointer to storage for the return value
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerationRaw(int j, double *acc)=0;
+
+    /** Get reference acceleration of all joints. These are the values used during the
+     * interpolation of the trajectory.
+     * @param accs pointer to the array that will store the acceleration values.
+     * @return true/false on success or failure 
+     */
+    virtual bool getRefAccelerationsRaw(double *accs)=0;
+
+    /** Stop motion, single joint
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    virtual bool stopRaw(int j)=0;
+
+    /** Stop motion, multiple joints 
+     * @return true/false on success/failure
+     */
+    virtual bool stopRaw()=0;
+};
+
+/**
  * Interface for a generic control board device implementing position control.
  */
 class yarp::dev::IPositionControl
 {
 public:
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
     /** Set position mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
@@ -197,6 +336,9 @@ public:
      */
     virtual bool checkMotionDone(int j, bool *flag)=0;
 
+    /** Check if the current trajectory is terminated. Non blocking.
+     * @return true if the trajectory is terminated, false otherwise
+     */
     virtual bool checkMotionDone(bool *flag)=0;
 
     /** Set reference speed for a joint, this is the speed used during the
@@ -270,6 +412,84 @@ public:
     virtual bool stop()=0;
 };
 
+/**
+ * Interface for control boards implementig velocity control in encoder coordinates.
+ */
+class yarp::dev::IVelocityControlRaw
+{
+public:
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
+    /**
+     * Set position mode. This command
+     * is required by control boards implementing different
+     * control methods (e.g. velocity/torque), in some cases
+     * it can be left empty.
+     * @return true/false on success failure
+     */
+    virtual bool setVelocityModeRaw()=0;
+
+    /**
+     * Start motion at a given speed, single joint.
+     * @param j joint number
+     * @param sp speed value
+     * @return bool/false upone success/failure
+     */
+    virtual bool velocityMoveRaw(int j, double sp)=0;
+
+    /**
+     * Start motion at a given speed, multiple joints.
+     * @param sp pointer to the array containing the new speed values
+     * @return true/false upon success/failure
+     */
+    virtual bool velocityMoveRaw(const double *sp)=0;
+
+    /** Set reference acceleration for a joint. This value is used during the
+     * trajectory generation.
+     * @param j joint number
+     * @param acc acceleration value
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationRaw(int j, double acc)=0;
+
+    /** Set reference acceleration on all joints. This is the valure that is
+     * used during the generation of the trajectory.
+     * @param accs pointer to the array of acceleration values
+     * @return true/false upon success/failure
+     */
+    virtual bool setRefAccelerationsRaw(const double *accs)=0;
+ 
+    /** Get reference acceleration for a joint. Returns the acceleration used to 
+     * generate the trajectory profile.
+     * @param j joint number
+     * @param acc pointer to storage for the return value
+     * @return true/false on success/failure
+     */
+    virtual bool getRefAccelerationRaw(int j, double *acc)=0;
+
+    /** Get reference acceleration of all joints. These are the values used during the
+     * interpolation of the trajectory.
+     * @param accs pointer to the array that will store the acceleration values.
+     * @return true/false on success or failure 
+     */
+    virtual bool getRefAccelerationsRaw(double *accs)=0;
+
+    /** Stop motion, single joint
+     * @param j joint number
+     * @return true/false on success or failure
+     */
+    virtual bool stopRaw(int j)=0;
+
+    /** Stop motion, multiple joints 
+     * @return true/false on success or failure
+     */
+    virtual bool stopRaw()=0;
+};
 
 /**
  * Interface for control boards implementig velocity control.
@@ -277,6 +497,13 @@ public:
 class yarp::dev::IVelocityControl
 {
 public:
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
     /**
      * Set position mode. This command
      * is required by control boards implementing different
@@ -350,6 +577,13 @@ class yarp::dev::ITorqueControl
 {
 public:
     /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
+    /**
      * Set torque control mode. This command
      * is required by control boards implementing different
      * control methods (e.g. velocity/torque), in some cases
@@ -389,63 +623,79 @@ class yarp::dev::IEncoders
 {
 public:
 
-    /* Reset encoder, single joint. Set the encoder value to zero 
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual int getAxes() = 0;
+
+    /**
+     * Reset encoder, single joint. Set the encoder value to zero 
      * @param j encoder number
      * @return true/false
      */
     virtual bool resetEncoder(int j)=0;
 
-    /* Reset encoders. Set the encoders value to zero 
+    /**
+     * Reset encoders. Set the encoders value to zero 
      * @return true/false
      */
     virtual bool resetEncoders()=0;
 
-    /* Set the value of the encoder for a given joint. 
+    /**
+     * Set the value of the encoder for a given joint. 
      * @param j encoder number
      * @param val new value
      * @return true/false
      */
     virtual bool setEncoder(int j, double val)=0;
 
-    /* Set the value of all encoders.
+    /**
+     * Set the value of all encoders.
      * @param vals pointer to the new values
      * @return true/false
      */
     virtual bool setEncoders(const double *vals)=0;
 
-
-    /* Read the value of an encoder.
+    /**
+     * Read the value of an encoder.
      * @param j encoder number
      * @param v pointer to storage for the return value
      * @return true/false, upon success/failure (you knew it, uh?)
      */
     virtual bool getEncoder(int j, double *v)=0;
 
-    /* Read the position of all axes.
+    /**
+     * Read the position of all axes.
      * @param encs pointer to the array that will contain the output
      * @return true/false on success/failure
      */
     virtual bool getEncoders(double *encs)=0;
 
-    /* Read the istantaneous speed of an axis.
+    /**
+     * Read the istantaneous speed of an axis.
      * @param j axis number
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
     virtual bool getEncoderSpeed(int j, double *sp)=0;
 
-    /* Read the istantaneous acceleration of an axis.
+    /**
+     * Read the istantaneous acceleration of an axis.
      * @param sp pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeeds(double *spds)=0;
     
-    /* Read the istantaneous speed of all axes.
+    /**
+     * Read the istantaneous speed of all axes.
      * @param spds pointer to the array that will contain the output
      */
     virtual bool getEncoderAcceleration(int j, double *spds)=0;
 
-    /* Read the istantaneous acceleration of all axes.
+    /**
+     * Read the istantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens. 
      */
@@ -566,136 +816,304 @@ public:
     virtual bool getLimits(int axis, double *min, double *max)=0;
 };
 
-/**
- * Interface for a generic control board device implementing position control.
- * This interface is a wraps IPositionControl, to provide axis map and 
- * encoder/angle conversion.
- */
-class yarp::dev::IPositionControl2
-{
-    IPositionControl *iPosition;
-    void *helper;
-    double *temp;
-public:
 
-    IPositionControl2(IPositionControl *pos, 
-                      int nj, const int *axisMap, 
-                      const double *angToEncoders,
-                      const double *zeros);
-    virtual ~IPositionControl2();
+namespace yarp {
+    namespace dev {
 
-    /** Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * return true/false on success failure
-     */
-    bool setPositionMode();
+        /** 
+         * Default implementation of the IPositionControl interface. This template class can
+         * be used to easily provide an implementation of IPositionControl. It takes two
+         * arguments, the class it is derived from and the class it is implementing, typically
+         * IPositionControl (which should probably be removed from the template arguments).
+         * <IMPLEMENT> makes only explicit that the class is implementing IPositionControl and
+         * appears in the inheritance list of the derived class.
+         */
+        template <class DERIVED, class IMPLEMENT> class ImplementPositionControl : public IMPLEMENT
+        {
+        protected:
+            yarp::dev::IPositionControlRaw *x;
+            bool set;
+            int nj;
+            int *axisMap;
+            int *invAxisMap;
+            double *angleToEncoder;
+            double *zeros;
+            double *signs;
 
-    /** Set new reference point for a single axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
-     * @return true/false on success/failure
-     */
-    bool positionMove(int j, double ref);
+        public:
+            /**
+             * Constructor.
+             * @param y is the pointer to the class instance inheriting from this 
+             *  implementation.
+             */
+            ImplementPositionControl(DERIVED *y)
+            {
+                x = dynamic_cast<IPositionControlRaw *> (y);
+                nj = 0;
+                axisMap = NULL;
+                invAxisMap = NULL;
+                angleToEncoder = NULL;
+                zeros = NULL;
+                signs = NULL;
+                set = false;
+            }
 
-    /** Set new reference point for all axes.
-     * @param refs array, new reference points.
-     * @return true/false on success/failure
-     */
-    bool positionMove(const double *refs);
+            /**
+             * Destructor. Perform uninitialize if needed.
+             */
+            virtual ~ImplementPositionControl()
+            {
+                if (set) uninitialize();
+            }
 
-    /** Set relative position. The command is relative to the 
-     * current position of the axis.
-     * @param j joint axis number
-     * @param delta relative command
-     * @return true/false on success/failure
-     */
-    bool relativeMove(int j, double delta);
+            /**
+             * Initialize the internal data and alloc memory.
+             * @param size is the number of controlled axes the driver deals with.
+             * @param amap is a lookup table mapping axes onto physical drivers.
+             * @param enc is an array containing the encoder to angles conversion factors.
+             * @param zos is an array containing the zeros of the encoders.
+             * @param sgns is an array containing the signs of the encoder readings with
+             *  respect to the control/output values of the driver.
+             * @return true if initialized succeeded, false if it wasn't executed, or assert.
+             */
+            bool initialize (int size, int *amap, double *enc, double *zos, double *sgns)
+            {
+                if (set)
+                    return false;
 
-    /** Set relative position, all joints.
-     * @param deltas pointer to the relative commands
-     * @return true/false on success/failure
-     */
-    bool relativeMove(const double *deltas);
+                ACE_ASSERT(size > 0);
+                nj = size;
+                axisMap = new int[nj];
+                ACE_ASSERT (axisMap != NULL);
+                ACE_OS::memcpy(axisMap, amap, sizeof(int)*nj);
+                invAxisMap = new int[nj];
+                ACE_ASSERT (invAxisMap != NULL);
 
-    /** Check if the current trajectory is terminated. Non blocking.
-     * @return true if the trajectory is terminated, false otherwise
-     */
-    bool checkMotionDone(int j, bool *flag);
+	            int i, j;
+                for (i = 0; i < nj; i++)
+		            for (j = 0; j < nj; j++)
+		            {
+			            if (axisMap[j] == i)
+			            {
+				            invAxisMap[i] = j;
+				            break;
+			            }
+		            }
 
-    bool checkMotionDone(bool *flag);
+                angleToEncoder = new double[nj];
+                ACE_ASSERT (angleToEncoder != NULL);
+                ACE_OS::memcpy(angleToEncoder, enc, sizeof(double)*nj);
+                zeros = new double[nj];
+                ACE_ASSERT (zeros != NULL);
+                ACE_OS::memcpy(zeros, zos, sizeof(double)*nj);
+                signs = new double[nj];
+                ACE_ASSERT (signs != NULL);
+                ACE_OS::memcpy(signs, sgns, sizeof(double)*nj);
 
-    /** Set reference speed for a joint, this is the speed used during the
-     * interpolation of the trajectory.
-     * @param j joint number
-     * @param sp speed value
-     * @return true/false upon success/failure
-     */
-    bool setRefSpeed(int j, double sp);
+                set = true;
+                return true;
+            }
 
-    /** Set reference speed on all joints. These values are used during the
-     * interpolation of the trajectory.
-     * @param spds pointer to the array of speed values.
-     * @return true/false upon success/failure
-     */
-    bool setRefSpeeds(const double *spds);
+            /**
+             * Clean up internal data and memory.
+             * @return true if uninitialization is executed, false otherwise.
+             */
+            bool uninitialize ()
+            {
+                if (!set)
+                    return false;
 
-    /** Set reference acceleration for a joint. This value is used during the
-     * trajectory generation.
-     * @param j joint number
-     * @param acc acceleration value
-     * @return true/false upon success/failure
-     */
-    bool setRefAcceleration(int j, double acc);
+                if (axisMap != NULL) delete[] axisMap;
+                if (invAxisMap != NULL) delete[] invAxisMap;
+                if (angleToEncoder != NULL) delete[] angleToEncoder;
+                if (zeros != NULL) delete[] zeros;
+                if (signs != NULL) delete[] signs;
 
-    /** Set reference acceleration on all joints. This is the valure that is
-     * used during the generation of the trajectory.
-     * @param accs pointer to the array of acceleration values
-     * @return true/false upon success/failure
-     */
-    bool setRefAccelerations(const double *accs);
+                set = false;
+                return true;
+            }
 
-    /** Get reference speed for a joint. Returns the speed used to 
-     * generate the trajectory profile.
-     * @param j joint number
-     * @param ref pointer to storage for the return value
-     * @return true/false on success or failure
-     */
-    bool getRefSpeed(int j, double *ref);
+            /**
+             * Get the number of controlled axes. This command asks the number of controlled
+             * axes for the current physical interface.
+             * @return the number of controlled axes.
+             */
+            virtual int getAxes() const
+            {
+                if (!set)
+                    return -1;
+                return nj;     
+            }
 
-    /** Get reference speed of all joints. These are the  values used during the
-     * interpolation of the trajectory.
-     * @param spds pointer to the array that will store the speed values.
-     */
-    bool getRefSpeeds(double *spds);
+            /** 
+             * Set position mode. This command
+             * is required by control boards implementing different
+             * control methods (e.g. velocity/torque), in some cases
+             * the implementation can be left empty.
+             * @return true/false on success failure
+             */
+            virtual bool setPositionMode() 
+            {
+                ACE_OS::printf ("called setPositionMode in ImplementPositionControl\n");
+                if (!set) return false;
+                x->setPositionModeRaw();
+                return true; 
+            }
 
-    /** Get reference acceleration for a joint. Returns the acceleration used to 
-     * generate the trajectory profile.
-     * @param j joint number
-     * @param acc pointer to storage for the return value
-     * @return true/false on success/failure
-     */
-    bool getRefAcceleration(int j, double *acc);
+            virtual bool positionMove(int j, double ref) { return false; }
+            virtual bool positionMove(const double *refs) { return false; }
+            virtual bool relativeMove(int j, double delta) { return false; }
+            virtual bool relativeMove(const double *deltas) { return false; }
+            virtual bool checkMotionDone(bool *flag) { return false; }
+            virtual bool checkMotionDone(int j, bool *flag) { return false; }
+            virtual bool setRefSpeed(int j, double sp) { return false; }
+            virtual bool setRefSpeeds(const double *spds) { return false; }
+            virtual bool setRefAcceleration(int j, double acc) { return false; }
+            virtual bool setRefAccelerations(const double *accs) { return false; }
+            virtual bool getRefSpeed(int j, double *ref) { return false; }
+            virtual bool getRefSpeeds(double *spds) { return false; }
+            virtual bool getRefAcceleration(int j, double *acc) { return false; }
+            virtual bool getRefAccelerations(double *accs) { return false; }
+            virtual bool stop(int j) { return false; }
+            virtual bool stop() { return false; }
+        };
 
-    /** Get reference acceleration of all joints. These are the values used during the
-     * interpolation of the trajectory.
-     * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
-     */
-    bool getRefAccelerations(double *accs);
+        /** 
+         * Default implementation of the IVelocityControl interface. This template class can
+         * be used to easily provide an implementation of IVelocityControl. It takes two
+         * arguments, the class it is derived from and the class it is implementing, typically
+         * IVelocityControl (which should probably be removed from the template arguments).
+         * <IMPLEMENT> makes only explicit that the class is implementing IVelocityControl and
+         * appears in the inheritance list of the derived class.
+         */
+        template <class DERIVED, class IMPLEMENT> class ImplementVelocityControl : public IMPLEMENT
+        {
+        protected:
+            yarp::dev::IVelocityControlRaw *x;
+            bool set;
+            int nj;
+            int *axisMap;
+            int *invAxisMap;
+            double *angleToEncoder;
+            double *signs;
 
-    /** Stop motion, single joint
-     * @param j joint number
-     * @return true/false on success/failure
-     */
-    bool stop(int j);
+        public:
+            /**
+             * Constructor.
+             * @param y is the pointer to the class instance inheriting from this 
+             *  implementation.
+             */
+            ImplementVelocityControl(DERIVED *y)
+            {
+                x = dynamic_cast<IVelocityControlRaw *> (y);
+                nj = 0;
+                axisMap = NULL;
+                invAxisMap = NULL;
+                angleToEncoder = NULL;
+                signs = NULL;
+                set = false;
+            }
 
-    /** Stop motion, multiple joints 
-     * @return true/false on success/failure
-     */
-    bool stop();
-};
+            /**
+             * Destructor. Perform uninitialize if needed.
+             */
+            virtual ~ImplementVelocityControl()
+            {
+                if (set) uninitialize();
+            }
+
+            /**
+             * Initialize the internal data and alloc memory.
+             * @param size is the number of controlled axes the driver deals with.
+             * @param amap is a lookup table mapping axes onto physical drivers.
+             * @param enc is an array containing the encoder to angles conversion factors.
+             * @param sgns is an array containing the signs of the encoder readings with
+             *  respect to the control/output values of the driver.
+             * @return true if initialized succeeded, false if it wasn't executed, or assert.
+             */
+            bool initialize (int size, int *amap, double *enc, double *sgns)
+            {
+                if (set)
+                    return false;
+
+                ACE_ASSERT(size > 0);
+                nj = size;
+                axisMap = new int[nj];
+                ACE_ASSERT (axisMap != NULL);
+                ACE_OS::memcpy(axisMap, amap, sizeof(int)*nj);
+                invAxisMap = new int[nj];
+                ACE_ASSERT (invAxisMap != NULL);
+
+	            int i, j;
+                for (i = 0; i < nj; i++)
+		            for (j = 0; j < nj; j++)
+		            {
+			            if (axisMap[j] == i)
+			            {
+				            invAxisMap[i] = j;
+				            break;
+			            }
+		            }
+
+                angleToEncoder = new double[nj];
+                ACE_ASSERT (angleToEncoder != NULL);
+                ACE_OS::memcpy(angleToEncoder, enc, sizeof(double)*nj);
+                signs = new double[nj];
+                ACE_ASSERT (signs != NULL);
+                ACE_OS::memcpy(signs, sgns, sizeof(double)*nj);
+
+                set = true;
+                return true;
+            }
+
+            /**
+             * Clean up internal data and memory.
+             * @return true if uninitialization is executed, false otherwise.
+             */
+            bool uninitialize ()
+            {
+                if (!set)
+                    return false;
+
+                if (axisMap != NULL) delete[] axisMap;
+                if (invAxisMap != NULL) delete[] invAxisMap;
+                if (angleToEncoder != NULL) delete[] angleToEncoder;
+                if (signs != NULL) delete[] signs;
+
+                set = false;
+                return true;
+            }
+
+            /**
+             * Get the number of controlled axes. This command asks the number of controlled
+             * axes for the current physical interface.
+             * @return the number of controlled axes.
+             */
+            virtual int getAxes() const
+            {
+                if (!set) 
+                    return -1;
+                return nj;     
+            }
+
+            virtual bool setVelocityMode() 
+            {
+                ACE_OS::printf ("called setVelocityMode in ImplementVelocityControl\n");
+                x->setVelocityModeRaw();
+                return true; 
+            }
+
+            virtual bool velocityMove(int j, double sp) { return false; }
+            virtual bool velocityMove(const double *sp) { return false; }
+            virtual bool setRefAcceleration(int j, double acc) { return false; }
+            virtual bool setRefAccelerations(const double *accs) { return false; }
+            virtual bool getRefAcceleration(int j, double *acc) { return false; }
+            virtual bool getRefAccelerations(double *accs) { return false; }
+            virtual bool stop(int j) { return false; }
+            virtual bool stop() { return false; }
+        };
+    }
+}
 
 #endif
 //
