@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.8 2006-06-19 17:27:47 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.9 2006-06-19 19:15:39 natta Exp $
 ///
 ///
 
@@ -77,7 +77,8 @@ class yarp::dev::EsdMotionControl:
     public IControlDebug,
     public IControlLimitsRaw,
     public ImplementPositionControl<EsdMotionControl, IPositionControl>,
-    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
+    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>,
+    public ImplementPidControl<EsdMotionControl, IPidControl>
 {
 private:
     EsdMotionControl(const EsdMotionControl&);

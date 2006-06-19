@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.8 2006-06-19 17:27:47 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.9 2006-06-19 19:15:39 natta Exp $
 ///
 ///
 
@@ -307,7 +307,7 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 	for (i = 0x100; i < 0x1ff; i++)
 		canIdAdd (_handle, i);
 
-	return true;
+    return true;
 }
 
 
@@ -448,7 +448,8 @@ inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 
 EsdMotionControl::EsdMotionControl() : 
     ImplementPositionControl<EsdMotionControl, IPositionControl>(this),
-    ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this)
+    ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this),
+    ImplementPidControl<EsdMotionControl, IPidControl>(this)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -477,8 +478,10 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 
     ImplementPositionControl<EsdMotionControl, IPositionControl>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
-    // ImplementVelocityControl::initialize ();
-
+    
+    ImplementVelocityControl<EsdMotionControl, IVelocityControl>
+            ::initialize(p._njoints, p._axisMap, p._angleToEncoder);
+  
     Thread::start();
 	_done.wait ();
 
