@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.6 2006-06-19 13:37:36 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.7 2006-06-19 15:11:35 natta Exp $
 ///
 ///
 
@@ -66,7 +66,7 @@ public:
  * Contains a thread that takes care of polling the can bus for incoming messages.
  */
 class yarp::dev::EsdMotionControl: 
-    public yarp::dev::DeviceDriver,
+    public DeviceDriver,
     public os::Thread, 
     public IPidControl, 
     public IPositionControlRaw, 

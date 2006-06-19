@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.6 2006-06-19 13:37:33 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.7 2006-06-19 15:11:35 natta Exp $
 ///
 ///
 
@@ -42,6 +42,8 @@
 /// specific to this device driver.
 #include "EsdMotionControl.h"
 #include "../dd_orig/include/ntcan.h"
+
+#include "../../../ControlBoardInterfacesImpl.cpp"
 
 /// get the message types from the DSP code.
 #define __ONLY_DEF
