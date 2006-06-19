@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.5 2006-06-19 08:09:56 gmetta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.6 2006-06-19 13:37:33 natta Exp $
 ///
 ///
 
@@ -71,16 +71,6 @@ inline T* allocAndCheck(int size)
     ACE_ASSERT (t != NULL);
     ACE_OS::memset(t, 0, sizeof(T) * size);
     return t;
-}
-
-/*
- * simple helper template to free memory.
- */
-template <class T>
-inline void checkAndDestroy(T*& p)
-{
-    if (p != 0) delete[] p;
-    p = NULL;
 }
 
 /**
@@ -455,8 +445,8 @@ bool EsdCanResources::error (const CMSG& m)
 inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 
 EsdMotionControl::EsdMotionControl() : 
-    ImplementPositionControl(this), 
-    ImplementVelocityControl(this)
+    ImplementPositionControl<EsdMotionControl, IPositionControl>(this)
+//    ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -484,7 +474,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	}
 
     ImplementPositionControl<EsdMotionControl, IPositionControl>::
-        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros, p._signs);
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
     // ImplementVelocityControl::initialize ();
 
     Thread::start();

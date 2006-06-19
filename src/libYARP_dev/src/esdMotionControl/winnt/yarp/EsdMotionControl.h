@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.5 2006-06-19 08:09:56 gmetta Exp $
+/// $Id: EsdMotionControl.h,v 1.6 2006-06-19 13:37:36 natta Exp $
 ///
 ///
 
@@ -10,6 +10,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 
@@ -75,8 +76,8 @@ class yarp::dev::EsdMotionControl:
     public IControlCalibration,
     public IControlDebug,
     public IControlLimits,
-    public ImplementPositionControl<EsdMotionControl, IPositionControl>,
-    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
+    public ImplementPositionControl<EsdMotionControl, IPositionControl>
+//    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>
 {
 private:
     EsdMotionControl(const EsdMotionControl&);
