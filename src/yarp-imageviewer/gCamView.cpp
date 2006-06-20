@@ -5,6 +5,7 @@
 #include "gCamView.h" 
 
 #include <yarp/os/Property.h> 
+#include <yarp/os/Network.h> 
 
 //-------------------------------------------------
 // Main Window Callbacks
@@ -636,7 +637,7 @@ void setOptions(yarp::os::Searchable& options) {
         ACE_OS::sprintf(_options.outNetworkName, val->asString().c_str());
     }
     if (network->check("RefreshTime",val)||network->check("p",val)) {
-        _options.refreshTime = val->asDouble();
+        _options.refreshTime = val->asInt();
     }
     if (window->check("PosX",val)||window->check("x",val)) {
         _options.posX = val->asInt();
@@ -831,6 +832,7 @@ void cleanExit()
 
 int myMain(int argc, char* argv[])
 {
+    yarp::os::Network::init();
     fprintf(stderr, "Starting as console app\n");
 	// Global variables init
 	_frameN = 0;
@@ -865,6 +867,7 @@ int myMain(int argc, char* argv[])
 	// and waits for an event to occur (like a key press or
 	// mouse event).
 	gtk_main ();
+    yarp::os::Network::fini();
 
     return 0;
 }

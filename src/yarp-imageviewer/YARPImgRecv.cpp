@@ -142,7 +142,7 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 	else
         {
             if ( (_width != data->width()) || (_height != data->height()) )
-                data->resize(_width, _height);
+              data->resize(_width, _height);
             data->copy(*(_inPort.lastRead()));
         }
 	

@@ -128,11 +128,13 @@ public:
             }
         }
         last = (T *)implementation.readBase();
-        if (autoDiscard&&!forceStrict) {
-            // go up to date
-            while (check()) {
-                //printf("Dropping something\n");
-                last = (T *)implementation.readBase();
+        if (last!=0/*NULL*/) {
+            if (autoDiscard&&!forceStrict) {
+                // go up to date
+                while (check()) {
+                    //printf("Dropping something\n");
+                    last = (T *)implementation.readBase();
+                }
             }
         }
         return last;
