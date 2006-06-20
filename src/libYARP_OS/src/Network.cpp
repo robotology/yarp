@@ -7,6 +7,9 @@
 
 #include <yarp/Companion.h>
 #include <yarp/NameClient.h>
+#include <yarp/NameConfig.h>
+#include <yarp/Logger.h>
+#include <yarp/os/Bottle.h>
 
 using namespace yarp;
 using namespace yarp::os;
@@ -30,6 +33,12 @@ int Network::main(int argc, char *argv[]) {
 
 void Network::init() {
     ACE::init();
+    String verbose = NameConfig::getEnv("YARP_VERBOSE");
+    Bottle b(verbose.c_str());
+    if (b.get(0).asInt()>0) {
+        YARP_INFO(Logger::get(), "YARP_VERBOSE environment variable is set");
+        Logger::get().setVerbosity(b.get(0).asInt());
+    }
 	// make sure system is actually able to do things fast
 	Time::turboBoost();
 }
