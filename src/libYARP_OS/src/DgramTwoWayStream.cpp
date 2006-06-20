@@ -333,7 +333,6 @@ void DgramTwoWayStream::flush() {
             // there's an implementation below, but commented out -
             // better solution was to increase recv buffer size
 
-            /*
             double first = yarp::os::Time::now();
             double now = first;
             int ct = 0;
@@ -343,7 +342,6 @@ void DgramTwoWayStream::flush() {
                 now = yarp::os::Time::now();
                 ct++;
             } while (now-first<0.001);
-            */
         }
 
         if (len<0) {
