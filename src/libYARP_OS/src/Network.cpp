@@ -3,6 +3,7 @@
 
 
 #include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 
 #include <yarp/Companion.h>
 #include <yarp/NameClient.h>
@@ -29,6 +30,8 @@ int Network::main(int argc, char *argv[]) {
 
 void Network::init() {
     ACE::init();
+	// make sure system is actually able to do things fast
+	Time::turboBoost();
 }
 
 void Network::fini() {

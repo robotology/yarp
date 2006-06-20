@@ -2,6 +2,7 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 
 #include <stdio.h>
@@ -11,6 +12,8 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 int main(int argc, char *argv[]) {
+
+	Network::init();
 
     // just list the devices if no argument given
     if (argc==1) {
@@ -64,6 +67,8 @@ int main(int argc, char *argv[]) {
         printf("Device active...\n");
         Time::delay(5);
     }
+
+	Network::fini();
 
     return 0;
 }
