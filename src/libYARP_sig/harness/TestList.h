@@ -11,12 +11,14 @@ namespace yarp {
 // need to made one function for each new test, and add to collectTests()
 // method
 extern yarp::UnitTest& getImageTest();
+extern yarp::UnitTest& getVectorTest();
 
 class yarp::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
         root.add(getImageTest());
+        root.add(getVectorTest());
     }
 };
 
