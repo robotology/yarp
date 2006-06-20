@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.1 2006-06-20 14:42:24 gmetta Exp $
+// $Id: Vector.cpp,v 1.2 2006-06-20 16:49:09 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -49,7 +49,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
         connection.expectBlock((char*)&header, sizeof(header));
         if (header.listLen > 0)
         {
-            if (this->size() != header.listLen)
+            if (this->size() != (unsigned int)(header.listLen))
                 this->size(header.listLen);
             double *ptr = &(this->operator[](0));
             ACE_ASSERT (ptr != NULL);

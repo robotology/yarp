@@ -734,7 +734,7 @@ void setOptionsToDefault()
 bool openPorts()
 {
 	bool ret = false;
-	int res = 0;
+	//int res = 0;
 	// Registering Port(s)
 	g_print("Registering port %s on network %s...\n", _options.portName, _options.networkName);
 	ret = _imgRecv.Connect(_options.portName, _options.networkName);
@@ -769,7 +769,7 @@ bool openPorts()
 void closePorts()
 {
 	bool ret = false;
-	int res = 0;
+	//int res = 0;
 	g_print("Uregistering port(s)...\n");
 	ret = _imgRecv.Disconnect();
 	if (ret)

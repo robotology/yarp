@@ -17,8 +17,10 @@ using namespace yarp::os;
  
 YARPImgRecv::YARPImgRecv()
 {
-	sprintf(_portName,"\0");
-	sprintf(_network,"\0");
+    _portName[0] = '\0';
+    _network[0] = '\0';
+	//sprintf(_portName,"\0");
+	//sprintf(_network,"\0");
 	_connected = false;
 	_portNameIsValid = false;
 	_logpolar = false;
@@ -212,7 +214,7 @@ bool YARPImgRecv::_registerPorts()
 
 bool YARPImgRecv::_unregisterPorts()
 {
-	int res = 0;
+	//int res = 0;
 	_inPort.close();
 
     return true;

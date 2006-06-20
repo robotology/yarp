@@ -297,7 +297,7 @@ bool FWCameras::start_firewire(int camera_num)
 
             int num_dma_buffers = 4;
             int drop_frames = 1;
-            int do_extra_buffering = 0; //1 introduces high latency when it's turned on
+            //int do_extra_buffering = 0; //1 introduces high latency when it's turned on
 
             if(dc1394_dma_setup_capture(handle, camera_nodes[camera_num],
                                         camera_num, 
@@ -433,7 +433,7 @@ bool FWCameras::capture_a_frame(int camera_num)
 
     if(!dma_on)
         {
-            if(PRINTF_ON) printf("dc1394_single_capture(%d, %d)\n", handle, &(cameras[camera_num].capture));
+            if(PRINTF_ON) printf("dc1394_single_capture(%d, %d)\n", (int)handle, (int)(&(cameras[camera_num].capture)));
             if (dc1394_single_capture(handle, &(cameras[camera_num].capture))!=DC1394_SUCCESS) 
                 {
                     printf("unable to capture a frame from camera #%d\n", camera_num);
@@ -536,10 +536,11 @@ void FWCameras::capture_320x240_color_image(unsigned char * & buff_out, int came
     dh = 2; dw = 2;
 
     int tw,th; th = frame_height/dh; tw = frame_width/dw;
-    int sz = th*tw*3;
+    //int sz = th*tw*3;
 
-    int r_int, g_int, b_int;
-    unsigned char r,g,b;
+    //int r_int;
+    int g_int, b_int;
+    //unsigned char r,g,b;
     int h,w;
 
     int index;
@@ -590,10 +591,11 @@ void FWCameras::capture_color_image_5x5(unsigned char * & buff_out, int camera_n
     dh = 2; dw = 2;
    
     int tw,th; th = frame_height/dh; tw = frame_width/dw;
-    int sz = th*tw*3;
+    //int sz = th*tw*3;
 
-    int r_int, g_int, b_int;
-    unsigned char r,g,b;
+    //int r_int
+    int g_int, b_int;
+    //unsigned char r,g,b;
     int h,w;
 
     int index;
@@ -721,10 +723,11 @@ void FWCameras::capture_color_image_3x3(unsigned char * & buff_out, int camera_n
     dh = 2; dw = 2;
    
     int tw,th; th = frame_height/dh; tw = frame_width/dw;
-    int sz = th*tw*3;
+    //int sz = th*tw*3;
 
-    int r_int, g_int, b_int;
-    unsigned char r,g,b;
+    //int r_int, 
+    int g_int, b_int;
+    //unsigned char r,g,b;
     int h,w;
 
     int index;
@@ -970,7 +973,7 @@ void FWCameras::init_cameras(bool dma_on_in)
     bool init_ok = init_firewire();
     if(init_ok) 
         {
-            int num_camera=GetNumberOfCameras();
+            //int num_camera=GetNumberOfCameras();
             fprintf(stderr, "Found %d cameras\n", num_cameras);
             for(int cam_num=0; cam_num<num_cameras; cam_num++) 
                 {
