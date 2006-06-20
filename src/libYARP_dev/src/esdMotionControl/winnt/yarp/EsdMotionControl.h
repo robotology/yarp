@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.9 2006-06-19 19:15:39 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.10 2006-06-20 11:12:35 gmetta Exp $
 ///
 ///
 
@@ -37,9 +37,15 @@ private:
 
 public:
 	/**
-	 * Constructor.
+	 * Constructor (please make sure you use the constructor to allocate
+     * memory).
+     * @param nj is the number of controlled joints/axes.
 	 */
-	EsdMotionControlParameters ();
+	EsdMotionControlParameters (int nj);
+
+    /**
+     * Destructor, with memory deallocation.
+     */
     ~EsdMotionControlParameters ();
 	
 	long int _txQueueSize;
@@ -58,7 +64,6 @@ public:
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to encoder conversion factors */
     double *_zeros;                             /** encoder zeros */
-    double *_signs;                             /** sign of the encoder reading */
 };
 
 /**
@@ -97,11 +102,18 @@ public:
 	virtual ~EsdMotionControl();
 
 	/**
-	 * Opens the device driver.
+	 * Open the device driver.
 	 * @param d is the parameter structure 
-	 * @return true/false on success.
+	 * @return true/false on success/failure.
 	 */ 
-	bool open(const EsdMotionControlParameters &par);
+	virtual bool open(const EsdMotionControlParameters &par);
+
+    /**
+     * Open the device driver and start communication with the hardware.
+     * @param config is a Searchable object containing the list of parameters.
+     * @return true on success/failure.
+     */
+    virtual bool open(yarp::os::Searchable& config);
 
 	/**
 	 * Closes the device driver.

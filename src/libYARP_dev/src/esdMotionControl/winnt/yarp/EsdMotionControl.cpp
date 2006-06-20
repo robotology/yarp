@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.9 2006-06-19 19:15:39 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.10 2006-06-20 11:12:35 gmetta Exp $
 ///
 ///
 
@@ -80,15 +80,13 @@ inline T* allocAndCheck(int size)
  */
 const int ESD_MAX_CARDS		= 16;
 
-EsdMotionControlParameters::EsdMotionControlParameters()
+EsdMotionControlParameters::EsdMotionControlParameters(int nj)
 {
     _networkN = 0;
     _destinations = allocAndCheck<unsigned char> (ESD_MAX_CARDS);
-
-    _axisMap = NULL;
-    _angleToEncoder = NULL;
-    _zeros = NULL;
-    _signs = NULL;
+    _axisMap = allocAndCheck<int>(nj);
+    _angleToEncoder = allocAndCheck<double>(nj);
+    _zeros = allocAndCheck<double>(nj);
 
 	_my_address = 0;
 	_polling_interval = 10;
@@ -104,6 +102,9 @@ EsdMotionControlParameters::EsdMotionControlParameters()
 
 EsdMotionControlParameters::~EsdMotionControlParameters()
 {
+    checkAndDestroy<double>(_zeros);
+    checkAndDestroy<double>(_angleToEncoder);
+    checkAndDestroy<int>(_axisMap);
     checkAndDestroy<unsigned char>(_destinations);
 }
 
@@ -504,6 +505,33 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	
 	return true;
 }
+
+bool EsdMotionControl::open(yarp::os::Searchable& config) {
+    Property p;
+    p.fromString(config.toString());
+
+    if (!p.check("GENERAL")) {
+        ACE_DEBUG((LM_DEBUG, "Cannot understand configuration parameters\n"));
+        return false;
+    }
+
+    int i;
+    int nj = p.findGroup("GENERAL").find("Joints").asInt();
+    EsdMotionControlParameters params(nj);
+    params._njoints = nj;
+    Bottle& xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
+    for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
+    xtmp = p.findGroup("GENERAL").findGroup("Encoder");
+    for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
+    xtmp = p.findGroup("GENERAL").findGroup("Zeros");
+    for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
+    xtmp = p.findGroup("GENERAL").findGroup("CanAddresses");
+    for (i = 1; i < xtmp.size(); i++) params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
+    
+    // LATER: complete with the conversion/implementation of all the parameters.
+    return open(params);
+}
+
 
 bool EsdMotionControl::close (void)
 {
