@@ -46,7 +46,7 @@ public:
     virtual bool isBlob()    { return false; }
 
     virtual int asInt()            { return 0; }
-    virtual int asVocab()            { return 0; }
+    virtual int asVocab()          { return 0; }
     virtual double asDouble()      { return 0; }
     virtual ConstString asString() { return ""; }
     virtual Bottle *asList()       { return (Bottle*)0; }
