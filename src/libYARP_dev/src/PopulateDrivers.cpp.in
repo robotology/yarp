@@ -15,24 +15,35 @@ using namespace yarp::dev;
 
 // this is an automatically configured file
 #cmakedefine ENABLE_dragonfly
+#cmakedefine ENABLE_esdMotionControl
 
 // add header file here, and factory code below
 #ifdef ENABLE_dragonfly
 #include <yarp/DragonflyDeviceDriver.h>
 #endif
 
+#ifdef ENABLE_esdMotionControl
+#include <yarp/EsdMotionControl.h>
+#endif
 
 extern DriverCreator *createRemoteFrameGrabber();
 extern DriverCreator *createServerFrameGrabber();
 extern DriverCreator *createTestFrameGrabber();
+extern DriverCreator *createRemoteControlBoard();
+extern DriverCreator *createServerControlBoard();
 
 
 void Drivers::init() {
 #ifdef ENABLE_dragonfly
     add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly","grabber"));
 #endif
+#ifdef ENABLE_esdMotionControl
+    add(new DriverCreatorOf<EsdMotionControl>("esd","controlboard"));
+#endif
+    add(createTestFrameGrabber());
     add(createRemoteFrameGrabber());
     add(createServerFrameGrabber());
-    add(createTestFrameGrabber());
+    add(createRemoteControlBoard());
+    add(createServerControlBoard());
 }
 
