@@ -2,7 +2,7 @@
 
 #include <ace/config.h>
 #include <ace/OS.h>
-#include <ace/Log_msg.h>
+#include <ace/Log_Msg.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -172,11 +172,11 @@ public:
         }
         if (prop.check("name",name)) {
             String s((size_t)1024);
-            ACE_OS::sprintf(&s[0], "%s/rpc", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/rpc", name->asString().c_str());
             command_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/control", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/control", name->asString().c_str());
             control_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/state", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/state", name->asString().c_str());
             state_p.open(s.c_str());
         } else {
             command_p.open("/controlboard/rpc");

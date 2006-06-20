@@ -1087,7 +1087,10 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
+    // not sure if fix from next line to the line after is correct, hope so
+    //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+
     temp=new double [size];
     
     return true;
@@ -1161,7 +1164,10 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
+    // not sure if fix from next line to the line after is correct, hope so
+    //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+
     dTemp=new double[size];
     iTemp=new int[size];
     
