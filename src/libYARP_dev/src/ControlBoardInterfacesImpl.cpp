@@ -1,6 +1,8 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 
-#include <yarp/EsdMotionControl.h>
+// removing this - problem if ESD device is not being compiled,
+// and hopefully it is not needed
+//#include <yarp/EsdMotionControl.h>
 
 #include <ace/Log_Msg.h>
 #include <stdio.h>
