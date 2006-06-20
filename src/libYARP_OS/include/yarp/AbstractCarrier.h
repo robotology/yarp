@@ -91,6 +91,10 @@ public:
         proto.defaultSendAck();
     }
 
+    virtual void expectAck(Protocol& proto) {
+        proto.defaultExpectAck();
+    }
+
     virtual bool isActive() {
         return true;
     }
@@ -119,7 +123,7 @@ protected:
         ACE_UNUSED_ARG(writer);
         proto.sendIndex();
         proto.sendContent();
-        proto.expectAck();
+        // proto.expectAck(); //MOVE ack to after reply, if present
     }
 
 };

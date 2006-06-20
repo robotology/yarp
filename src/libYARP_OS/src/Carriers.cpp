@@ -25,6 +25,7 @@ Carriers::Carriers() {
     delegates.push_back(new McastCarrier());
     delegates.push_back(new UdpCarrier());
     delegates.push_back(new TextCarrier());
+    delegates.push_back(new TextCarrier(true));
 }
 
 Carriers::~Carriers() {

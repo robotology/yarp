@@ -12,13 +12,24 @@ namespace yarp {
  * Communicating between two ports via a plain-text protocol.
  */
 class yarp::TextCarrier : public TcpCarrier {
+private:
+    bool ackVariant;
 public:
+    TextCarrier(bool ackVariant = false) {
+        this->ackVariant = ackVariant;
+    }
 
     virtual String getName() {
+        if (ackVariant) {
+            return "text_ack";
+        }
         return "text";
     }
 
     virtual String getSpecifierName() {
+        if (ackVariant) {
+            return "CONNACK ";
+        }
         return "CONNECT ";
     }
 
@@ -44,15 +55,12 @@ public:
         }   
     }
 
-    TextCarrier() {
-    }
-
     virtual Carrier *create() {
-        return new TextCarrier();
+        return new TextCarrier(ackVariant);
     }
 
     virtual bool requireAck() {
-        return false;
+        return ackVariant;
     }
 
     virtual bool isTextMode() {
@@ -71,12 +79,10 @@ public:
     }
 
     void expectReplyToHeader(Protocol& proto) {
-        // ignore welcome line
-        /*
-          String result = NetType::readLine(proto.is());
-          ACE_DEBUG((LM_DEBUG,"text reply was %s",result.c_str()));
-        */
-        ACE_DEBUG((LM_DEBUG,"don't know what to do about BECOME"));
+        if (ackVariant) {
+            // expect and ignore welcome line
+            String result = NetType::readLine(proto.is());
+        }
     }
 
     void expectSenderSpecifier(Protocol& proto) {
@@ -91,6 +97,19 @@ public:
     }
 
     void sendAck(Protocol& proto) {
+        if (ackVariant) {
+            String from = "<ACK>\n";
+            Bytes b2((char*)from.c_str(),from.length());
+            proto.os().write(b2);
+            proto.os().flush();
+        }
+    }
+
+    virtual void expectAck(Protocol& proto) {
+        if (ackVariant) {
+            // expect and ignore acknowledgement
+            String result = NetType::readLine(proto.is());
+        }
     }
 
     void respondToHeader(Protocol& proto) {
@@ -100,7 +119,6 @@ public:
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();
-        ACE_DEBUG((LM_DEBUG,"don't know what to do about BECOME"));
     }
 };
 

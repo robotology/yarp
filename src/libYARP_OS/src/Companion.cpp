@@ -7,12 +7,16 @@
 
 #include <yarp/Carriers.h>
 #include <yarp/BufferedConnectionWriter.h>
+#include <yarp/StreamConnectionReader.h>
 #include <yarp/PortCore.h>
 #include <yarp/BottleImpl.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/NameServer.h>
 #include <yarp/NameConfig.h>
+
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Port.h>
 
 // just for "write", which needs to read from standard input
 #include <iostream>
@@ -43,6 +47,8 @@ Companion::Companion() {
         "read from the network and print to standard output");
     add("write",      &Companion::cmdWrite,
         "write to the network from standard input");
+    add("rpc",        &Companion::cmdRpc,
+        "read/write commands to a port, in standard format");
     add("regression", &Companion::cmdRegression,
         "run regression tests, if linked");
     add("server",     &Companion::cmdServer,
@@ -274,6 +280,18 @@ int Companion::cmdWrite(int argc, char *argv[]) {
 
     const char *src = argv[0];
     return write(src,argc-1,argv+1);
+}
+
+
+int Companion::cmdRpc(int argc, char *argv[]) {
+    if (argc!=1) {
+        ACE_OS::fprintf(stderr, "Please supply remote port name\n");
+        return 1;
+    }
+
+    const char *src = argv[0];
+
+    return rpc(src);
 }
 
 
@@ -535,5 +553,70 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     return 1;
 }
 
+
+
+int Companion::rpc(const char *name) {
+    try {
+        NameClient& nic = NameClient::getNameClient();
+        Address address = nic.queryName(name);
+        if (!address.isValid()) {
+            YARP_ERROR(Logger::get(),"could not find port");
+            return 1;
+        }
+
+        OutputProtocol *out = Carriers::connect(address);
+        if (out==NULL) {
+            throw IOException("cannot connect to port");
+        }
+        printf("RPC connection to %s at %s\n", name, 
+               address.toString().c_str());
+        Route r("anon-rpc",name,"text_ack");
+        out->open(r);
+        OutputStream& os = out->getOutputStream();
+        InputStream& is = out->getInputStream();
+        StreamConnectionReader reader;
+
+        while (!(cin.bad()||cin.eof())) {
+            // make sure this works on windows
+            char buf[25600] = "\0";
+            cin.getline(buf,sizeof(buf),'\n');
+            // TODO: add longer strings together
+      
+            if (!(cin.bad()||cin.eof())) {
+                if (buf[0]<32 && buf[0]!='\n' && buf[0]!='\r' && buf[0]!='\0') {
+                    break;  // for example, horrible windows ^D
+                }
+                Bottle bot;
+                bot.fromString(buf);
+
+                PortCommand pc(0,"d");
+                BufferedConnectionWriter bw(out->isTextMode());
+                bool ok = pc.write(bw);
+                if (!ok) {
+                    throw IOException("writer failed");
+                }
+                ok = bot.write(bw);
+                if (!ok) {
+                    throw IOException("writer failed");
+                }
+                bw.write(os);
+                Bottle resp;
+                reader.reset(is,NULL,r,0,true);
+                resp.read(reader);
+                if (String(resp.get(0).asString())=="<ACK>") {
+                    printf("Acknowledged\n");
+                } else {
+                    printf("Response: %s\n", resp.toString().c_str());
+                    resp.read(reader); // get rid of <ACK>
+                }
+            }
+        }
+
+        return 0;
+    } catch (IOException e) {
+        ACE_OS::fprintf(stderr,"write failed: %s\n",e.toString().c_str());    
+    }
+   return 0;
+}
 
 

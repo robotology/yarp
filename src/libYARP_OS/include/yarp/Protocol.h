@@ -188,8 +188,14 @@ public:
     void respondToIndex() {
     }
 
-
     void expectAck() {
+        YARP_ASSERT(delegate!=NULL);
+        if (delegate->requireAck()) {
+            delegate->expectAck(*this);
+        }
+    }
+
+    void defaultExpectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
             int hdr = NetType::readFull(is(),header.bytes());
@@ -332,6 +338,7 @@ public:
                              messageLen,delegate->isTextMode());
                 reply->read(reader);
             }
+            expectAck(); //MOVE ack to after reply, if present
         }
         this->writer = NULL;
     }
@@ -360,8 +367,8 @@ public:
             //altReader->release();
             sendAck();
         } else {
-            sendAck();
             reader.flushWriter();
+            sendAck();  //MOVE ack to after reply, if present
         }
     }
 

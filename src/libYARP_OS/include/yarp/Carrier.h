@@ -54,6 +54,7 @@ public:
     virtual void expectIndex(Protocol& proto) = 0;
     virtual void expectSenderSpecifier(Protocol& proto) = 0;
     virtual void sendAck(Protocol& proto) = 0;
+    virtual void expectAck(Protocol& proto) = 0;
 
     virtual bool isActive() = 0;
 

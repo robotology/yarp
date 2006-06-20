@@ -75,6 +75,7 @@ public:
 
     static int write(const char *name, int ntargets, char *targets[]);
 
+    static int rpc(const char *name);
 
 private:
 
@@ -105,6 +106,8 @@ private:
     int cmdRead(int argc, char *argv[]);
 
     int cmdWrite(int argc, char *argv[]);
+
+    int cmdRpc(int argc, char *argv[]);
 
     int cmdRegression(int argc, char *argv[]);
 
