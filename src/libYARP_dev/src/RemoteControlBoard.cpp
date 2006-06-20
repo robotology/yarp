@@ -100,7 +100,7 @@ public:
 /**
  * ServerControlBoard class, implement the server side of a remote
  * control board device driver. The device contains three ports:
- * - command_p handling the configuration interfaces of the robot
+ * - rpc_p handling the configuration interfaces of the robot
  * - state_p streaming information about the current state of the robot
  * - control_p receiving a stream of control commands (e.g. position)
  * 
@@ -114,12 +114,13 @@ class yarp::dev::ServerControlBoard :
 {
 private:
 	bool spoke;
-    Port command_p; // RPC to configure the robot
+    Port rpc_p; // RPC to configure the robot
     Port state_p;   // out port to read the state
     Port control_p; // in port to command the robot
 
-    PortWriterBuffer<yarp::sig::Vector> state_writer;
-    
+    PortWriterBuffer<yarp::sig::Vector> state_buffer;
+    PortReaderBuffer<yarp::sig::Vector> control_buffer;
+
     yarp::dev::CommandsHelper command_reader;
     yarp::dev::ControlHelper control_reader;
 
@@ -146,10 +147,11 @@ public:
     
     virtual bool open(Searchable& prop) {
         // attach readers.
-        command_p.setReader(command_reader);
+        rpc_p.setReader(command_reader);
         control_p.setReader(control_reader);
         // attach writers.
-        state_writer.attach(state_p);
+        state_buffer.attach(state_p);
+        control_buffer.attach(control_p);
         
         BottleBit *name;
         if (prop.check("subdevice",name)) {
@@ -170,28 +172,33 @@ public:
             ACE_OS::printf("\"--subdevice <name>\" not set for server_framegrabber\n");
             return false;
         }
+
         if (prop.check("name",name)) {
             String s((size_t)1024);
-            ACE_OS::sprintf(&s[0], "%s/rpc", name->asString().c_str());
-            command_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/control", name->asString().c_str());
+            ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString());
+            rpc_p.open(s.c_str());
+            ACE_OS::sprintf(&s[0], "%s/control:i", name->asString());
             control_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/state", name->asString().c_str());
+            ACE_OS::sprintf(&s[0], "%s/state:o", name->asString());
             state_p.open(s.c_str());
         } else {
-            command_p.open("/controlboard/rpc");
-            control_p.open("/controlboard/control");
-            state_p.open("/controlboard/state");
+            rpc_p.open("/controlboard/rpc:i");
+            control_p.open("/controlboard/control:i");
+            state_p.open("/controlboard/state:o");
         }
+        
         if (poly.isValid()) {
             poly.view(ctrl);
         }
+        
         if (ctrl != NULL) {
             start();
             return true;
         }
+        
         ACE_OS::printf("subdevice <%s> doesn't look like a control board\n",
                name->toString().c_str());
+        
         return false;
     }
 
@@ -201,16 +208,15 @@ public:
     virtual void run() {
         ACE_OS::printf("Server control board starting\n");
         while (!isStopping()) {
-            yarp::sig::Vector q (10, 0.0);
+            yarp::sig::Vector& v = state_buffer.get();
+            v.size(10);
 
-            yarp::sig::Vector& v = state_writer.get();
             // getCurrentPosition()
 			if (!spoke) {
-                ACE_OS::printf("Network control board writing a %d vector of double...\n",
-                    v.size());
+                ACE_OS::printf("Network control board writing a %d vector of double...\n", v.size());
 				spoke = true;
 			}
-            state_writer.write();
+            state_buffer.write();
         }
         ACE_OS::printf("Server control board stopping\n");
     }
@@ -363,8 +369,13 @@ class yarp::dev::RemoteControlBoard :
             // LATER: public more interfaces here,
             public DeviceDriver {
 protected:
-    Port port;
-    PortReaderBuffer<yarp::sig::Vector> reader;
+    Port rpc_p;
+    Port command_p;
+    Port state_p;
+
+    PortReaderBuffer<yarp::sig::Vector> state_buffer;
+    PortWriterBuffer<yarp::sig::Vector> command_buffer;
+
     String remote;
     String local;
 
@@ -372,7 +383,7 @@ protected:
         Bottle cmd;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        port.write(cmd);
+        rpc_p.write(cmd);
         return true;
     }
 
@@ -381,7 +392,7 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addDouble(v);
-        port.write(cmd);
+        rpc_p.write(cmd);
         return true;
     }
 
@@ -390,7 +401,7 @@ protected:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addInt(v);
-        port.write(cmd);
+        rpc_p.write(cmd);
         return true;
     }
 
@@ -398,7 +409,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        port.write(cmd,response);
+        rpc_p.write(cmd, response);
         // response should be [cmd] [name] value
         v = response.get(2).asDouble();
         return true;
@@ -408,7 +419,7 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        port.write(cmd,response);
+        rpc_p.write(cmd, response);
         // response should be [cmd] [name] value
         v = response.get(2).asInt();
         return true;
@@ -429,16 +440,29 @@ public:
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
         if (local != "") {
-            port.open(local.c_str());
+            String s1 = local;
+            s1 += "/rcp:o";
+            rpc_p.open(s1.c_str());
+            s1 = local;
+            s1 += "/command:o";
+            command_p.open(s1.c_str());
+            s1 = local;
+            s1 += "/state:i";
+            state_p.open(s1.c_str());
         }
+
+        // LATER: CONTINUE FROM HERE!!!!
         if (remote != "") {
-            Network::connect(remote.c_str(),local.c_str());
+            String s1 = remote;
+            s1 += "/rpc:i";
+            Network::connect(s1.c_str(), local.c_str());
 
             // reverse connection for RPC
             // could choose to do this only on need
-            Network::connect(local.c_str(), remote.c_str());
+            Network::connect(local.c_str(), s1.c_str());
         }
-        reader.attach(port);
+        
+        state_buffer.attach(state_p);
         return true;
     }
 
