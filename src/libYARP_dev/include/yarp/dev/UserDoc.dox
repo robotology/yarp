@@ -1,0 +1,67 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+#ifndef _YARP2_DEVDOC_
+#define _YARP2_DEVDOC_
+
+/**
+ * @page dev-how-to Device Drivers How-To
+
+The structure of a device driver has changed, but the structure of the libYARP_dev is quite similar to YARP(1).
+
+First of all a device driver is an object that implements one or more interfaces of a certain type. 
+
+At least a device driver should derive from the abstract class DeviceDriver (DeviceDriver.h). This interface contains methods common to all device drivers, which are open and close. Do not pay too much attention to the open method, for now. We are still working on this.
+
+Additionally a device driver implements other interfaces. For example a frame grabber (as usual the simplest example) might implement IFrameGrabber (a "raw" interface to the hardware) or IFrameGrabberRgb (FrameGrabberInterfaces.h). So for example the dragonly device (implemented in DragonflyDeviceDriver.cpp/.h) implements a few of these interfaces. Interfaces are abstract classes, the idea is that from outside the user can access a device by using a pointer to the interface he/she needs, if that interface is supported by the device. This is quite similar to the way COM works (in a simplified way).
+
+In practice to implement a new device you create a new object which derives from DeviceDriver and from the interface you want to support, and you implement them. The interfaces are documented in the code, using the doxygen standard. Hopefully this should be enough to begin with.
+
+Some practical rules are also required to have cmake include the .cpp/.h files in the libYARP_dev project.
+
+Let's assume you want to create the Foo device. 
+Start by creating the folder:
+libYARP_dev/src/foo/
+
+Files in foo will be organized in:
+
+/foo/common this folder will/might contain common header/code files, if any
+
+/foo/$os$ (where $os$ can be either linux or winnt) will store platform specific files
+
+Platform specific files are organized as:
+
+/foo/$os$/dd_orig contains header and lib files provided with the device, if any
+/foo/$os$/yarp contains header and cpp files implementing the YARP device driver (for example FooDeviceDriver.h FooDeviceDriver.cpp).
+
+CMake searches for YARP device drivers listed in:
+libYARP_dev/AvailableDevices.txt
+
+here you specify the directory that contains the device driver tree (in the above example we called it foo). For example for WIN32:
+
+SET(AVAILABLE_DEVICES picolo dragonfly esdMotionControl foo)
+
+This is the list of directories under libYARP_dev that are searched for device drivers, when cmake runs (cmake does this by searching for a file called libraries.txt, see below).
+
+The file libraries.txt tells cmake which additional libraries or packages (for linux) the device depends on. This files is platform specific and is located in /foo/$os$/. If this file is not found cmake simply warns the user and ignores the device.
+
+The file libraries.txt has two options. If the device driver requires a library that is included in the YARP tree you write:
+
+YARP_LOCAL;ntcan.lib
+
+This tells cmake that the device driver requires the library "ntcan.lib" and that this file is available within the YARP tree (on ./dd_orig/). CMake will search ./dd_orig/lib for ntcan.lib. If ntcan.lib is not found an error will be shown, and the user will have the possibility to manually enter the correct location of the file. This .lib file has probably header files associated with it. We recommend you put them in ./dd_orig/include and include them directly in you code as something like:
+
+#include <../dd_orig/include/foo_lib.h>
+
+Be careful to "hide" header files specific of each device driver (in this example foo_lib.h) so that symbols defined there are not visible from outside. In practice you do this by avoiding to include them in your header files.
+
+If the device driver has external dependencies you write:
+
+YARP_EXTERNAL;raw1394;dc1394_control
+
+In this example we are telling cmake that the device driver foo depends on the packages raw1394 and dc1394_control. In this case cmake will not do any check, but will print a warning message saying that these modules are required. It is the user's responsability (for now, and perhaps forever) to install these packages in the correct locations.
+
+Everything going well, you will see on cmake a list of variables whose name follows the pattern FLAG-device_name. These are the devices that are listed in AvailableDevices.txt. By default each flag is OFF meaning that the corresponding device will be ignored by cmake. You can turn ON the flags for the devices you want to compile, and type configure again. CMake will search for the file libraries.txt. If among the selected drivers there are some that require additional libraries there will be a list of variables whose name follows the pattern PATH-device_name. If these libraries are correctly located in the ./dd_orig/lib folder, all PATH-device_name entry should be correctly set. Although you can manually locate the libraries yourself, this probably means that there is an error in your YARP distribution or in the way the device is configured.
+
+If all libraries are located, you can go on with cmake and generate your make/project files. If at least one device driver was selected and correctly found, libYARP_dev should now compile.
+**/
+
+#endif
