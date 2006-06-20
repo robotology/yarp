@@ -9,6 +9,10 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementPositionControl;
         template <class DERIVED, class IMPLEMENT> class ImplementVelocityControl;
         template <class DERIVED, class IMPLEMENT> class ImplementPidControl;
+        template <class DERIVED, class IMPLEMENT> class ImplementEncoders;
+        template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
+        template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
+        template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
     }
 }
 
@@ -20,7 +24,8 @@ namespace yarp{
 * <IMPLEMENT> makes only explicit that the class is implementing IPositionControl and
 * appears in the inheritance list of the derived class.
 */
-template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPositionControl : public IMPLEMENT
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementPositionControl : public IMPLEMENT
 {
     protected:
         IPositionControlRaw *iPosition;
@@ -36,7 +41,7 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPositionCont
         *  respect to the control/output values of the driver.
         * @return true if initialized succeeded, false if it wasn't executed, or assert.
         */
-        bool initialize (int size, int *amap, double *enc, double *zos);
+        bool initialize (int size, const int *amap, const double *enc, const double *zos);
         
         /**
         * Clean up internal data and memory.
@@ -92,7 +97,8 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPositionCont
 * <IMPLEMENT> makes only explicit that the class is implementing IVelocityControl and
 * appears in the inheritance list of the derived class.
 */
-template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementVelocityControl : public IMPLEMENT
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementVelocityControl : public IMPLEMENT
 {
     protected:
         IVelocityControlRaw *iVelocity;
@@ -108,7 +114,7 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementVelocityCont
         *  respect to the control/output values of the driver.
         * @return true if initialized succeeded, false if it wasn't executed, or assert.
         */
-        bool initialize (int size, const int *amap, const double *enc);
+        bool initialize (int size, const int *amap, const double *enc, const double *zos);
           
         /**
         * Clean up internal data and memory.
@@ -143,7 +149,8 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementVelocityCont
         virtual bool stop();
 };
 
-template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPidControl : public IMPLEMENT
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementPidControl : public IMPLEMENT
 {
     protected:
         IPidControlRaw *iPid;
@@ -157,7 +164,7 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPidControl :
      * @param amap is a lookup table mapping axes onto physical drivers.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
-     bool initialize (int size, int *amap, int *enc, int *zeros);
+     bool initialize (int size, const int *amap, const double *enc, const double *zos);
           
      /**
       * Clean up internal data and memory.
@@ -302,4 +309,286 @@ template <class DERIVED, class IMPLEMENT> class yarp::dev::ImplementPidControl :
     virtual bool enablePid(int j);
 };
 
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementEncoders : public IMPLEMENT
+{
+    protected:
+        IEncodersRaw *iEncoders;
+        void *helper;
+        double *temp;
+
+     /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+     bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+     /**
+      * Clean up internal data and memory.
+      * @return true if uninitialization is executed, false otherwise.
+      */
+     bool uninitialize ();
+
+    public:
+    /* Constructor.
+    * @param y is the pointer to the class instance inheriting from this 
+    *  implementation.
+    */
+    ImplementEncoders(DERIVED *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementEncoders();
+
+
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *ax);
+
+    /**
+     * Reset encoder, single joint. Set the encoder value to zero 
+     * @param j encoder number
+     * @return true/false
+     */
+    virtual bool resetEncoder(int j);
+
+    /**
+     * Reset encoders. Set the encoders value to zero 
+     * @return true/false
+     */
+    virtual bool resetEncoders();
+
+    /**
+     * Set the value of the encoder for a given joint. 
+     * @param j encoder number
+     * @param val new value
+     * @return true/false
+     */
+    virtual bool setEncoder(int j, double val);
+
+    /**
+     * Set the value of all encoders.
+     * @param vals pointer to the new values
+     * @return true/false
+     */
+    virtual bool setEncoders(const double *vals);
+
+    /**
+     * Read the value of an encoder.
+     * @param j encoder number
+     * @param v pointer to storage for the return value
+     * @return true/false, upon success/failure (you knew it, uh?)
+     */
+    virtual bool getEncoder(int j, double *v);
+
+    /**
+     * Read the position of all axes.
+     * @param encs pointer to the array that will contain the output
+     * @return true/false on success/failure
+     */
+    virtual bool getEncoders(double *encs);
+
+    /**
+     * Read the istantaneous speed of an axis.
+     * @param j axis number
+     * @param sp pointer to storage for the output
+     * @return true if successful, false ... otherwise.
+     */
+    virtual bool getEncoderSpeed(int j, double *sp);
+
+    /**
+     * Read the istantaneous acceleration of an axis.
+     * @param sp pointer to storage for the output values
+     * @return guess what? (true/false on success or failure).
+     */
+    virtual bool getEncoderSpeeds(double *spds);
+    
+    /**
+     * Read the istantaneous speed of all axes.
+     * @param spds pointer to the array that will contain the output
+     */
+    virtual bool getEncoderAcceleration(int j, double *spds);
+
+    /**
+     * Read the istantaneous acceleration of all axes.
+     * @param accs pointer to the array that will contain the output
+     * @return true if all goes well, false if anything bad happens. 
+     */
+    virtual bool getEncoderAccelerations(double *accs);
+};
+
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementControlCalibration: public IMPLEMENT
+{
+    protected:
+        IControlCalibrationRaw *iCalibrate;
+        void *helper;
+        double *temp;
+
+     /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+     bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+     /**
+      * Clean up internal data and memory.
+      * @return true if uninitialization is executed, false otherwise.
+      */
+     bool uninitialize ();
+
+    public:
+    /* Constructor.
+    * @param y is the pointer to the class instance inheriting from this 
+    *  implementation.
+    */
+    ImplementControlCalibration(DERIVED *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementControlCalibration();
+
+    virtual bool calibrate(int j);
+};
+
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementControlLimits: public IMPLEMENT
+{
+protected:
+     IControlLimitsRaw *iLimits;
+     void *helper;
+     double *temp;
+
+     /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+     bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+     /**
+      * Clean up internal data and memory.
+      * @return true if uninitialization is executed, false otherwise.
+      */
+     bool uninitialize ();
+
+public:
+    /* Constructor.
+    * @param y is the pointer to the class instance inheriting from this 
+    *  implementation.
+    */
+    ImplementControlLimits(DERIVED *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementControlLimits();
+
+    /* Set the software limits for a particular axis, the behavior of the
+     * control card when these limits are exceeded, depends on the implementation.
+     * @param axis joint number (why am I telling you this)
+     * @param min the value of the lower limit
+     * @param max the value of the upper limit
+     * @return true or false on success or failure
+     */
+    virtual bool setLimits(int axis, double min, double max);
+    
+    /* Get the software limits for a particular axis.
+     * @param axis joint number (again... why am I telling you this)
+     * @param pointer to store the value of the lower limit
+     * @param pointer to store the value of the upper limit
+     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     */
+    virtual bool getLimits(int axis, double *min, double *max);
+};
+
+
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementAmplifierControl: public IMPLEMENT
+{
+protected:
+       IAmplifierControlRaw *iAmplifier;
+       void *helper;
+       double *dTemp;
+       int *iTemp;
+
+     /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+     bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+     /**
+      * Clean up internal data and memory.
+      * @return true if uninitialization is executed, false otherwise.
+      */
+     bool uninitialize ();
+
+public:
+    /* Constructor.
+    * @param y is the pointer to the class instance inheriting from this 
+    *  implementation.
+    */
+    ImplementAmplifierControl(DERIVED *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementAmplifierControl();
+
+    /** Enable the amplifier on a specific joint. Be careful, check that the output
+     * of the controller is appropriate (usually zero), to avoid 
+     * generating abrupt movements.
+     * @return true/false on success/failure
+     */
+    virtual bool enableAmp(int j);
+
+    /** Disable the amplifier on a specific joint. All computations within the board
+     * will be carried out normally, but the output will be disabled.
+     * @return true/false on success/failure
+     */
+    virtual bool disableAmp(int j);
+
+    /* Read the electric current going to all motors.
+     * @param vals pointer to storage for the output values
+     * @return hopefully true, false in bad luck.
+     */
+    virtual bool getCurrents(double *vals);
+
+    /* Read the electric current going to a given motor.
+     * @param j motor number
+     * @param val pointer to storage for the output value
+     * @return probably true, might return false in bad times
+     */
+    virtual bool getCurrent(int j, double *val);
+
+    /* Set the maximum electric current going to a given motor. The behavior 
+     * of the board/amplifier when this limit is reached depends on the
+     * implementation.
+     * @param j motor number
+     * @param v the new value
+     * @return probably true, might return false in bad times
+     */
+    virtual bool setMaxCurrent(int j, double v);
+
+    /* Get the status of the amplifiers, coded in a 32 bits integer for
+     * each amplifier (at the moment contains only the fault, it will be 
+     * expanded in the future).
+     * @param st pointer to storage
+     * @return true in good luck, false otherwise.
+     */
+    virtual bool getAmpStatus(int *st);
+};
 #endif

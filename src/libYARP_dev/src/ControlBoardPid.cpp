@@ -3,14 +3,32 @@
 
 using namespace yarp::dev;
 
-Pid::Pid(double kp, double kd, double ki, 
-        double int_max, double scale, double out_max)
+Pid::Pid(double p, double d, double i, 
+        double intm, double sc, double omax)
 {
-
+    kp=p;
+    kd=d;
+    ki=i;
+    scale=sc;
+    max_int=intm;
+    max_output=omax;
+    offset=0;
 }
+
 Pid::~Pid()
 {
 
+}
+
+Pid::Pid()
+{
+    kp=0;
+    kd=0;
+    ki=0;
+    scale=0;
+    max_int=0;
+    max_output=0;
+    offset=0;
 }
 
 void Pid::setKp(double p)

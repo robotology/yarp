@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.10 2006-06-20 11:12:35 gmetta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.11 2006-06-20 15:53:31 natta Exp $
 ///
 ///
 
@@ -450,7 +450,11 @@ inline EsdCanResources& RES(void *res) { return *(EsdCanResources *)res; }
 EsdMotionControl::EsdMotionControl() : 
     ImplementPositionControl<EsdMotionControl, IPositionControl>(this),
     ImplementVelocityControl<EsdMotionControl, IVelocityControl>(this),
-    ImplementPidControl<EsdMotionControl, IPidControl>(this)
+    ImplementPidControl<EsdMotionControl, IPidControl>(this),
+    ImplementEncoders<EsdMotionControl, IEncoders>(this),
+    ImplementControlCalibration<EsdMotionControl, IControlCalibration>(this),
+    ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>(this),
+    ImplementControlLimits<EsdMotionControl, IControlLimits>(this)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -480,9 +484,18 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
     ImplementPositionControl<EsdMotionControl, IPositionControl>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
     
-    ImplementVelocityControl<EsdMotionControl, IVelocityControl>
-            ::initialize(p._njoints, p._axisMap, p._angleToEncoder);
+    ImplementVelocityControl<EsdMotionControl, IVelocityControl>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
   
+    ImplementPidControl<EsdMotionControl, IPidControl>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
+
+    ImplementEncoders<EsdMotionControl, IEncoders>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
+
+    ImplementControlCalibration<EsdMotionControl, IControlCalibration>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
+
     Thread::start();
 	_done.wait ();
 

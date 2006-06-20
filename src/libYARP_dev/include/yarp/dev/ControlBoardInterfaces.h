@@ -1041,6 +1041,19 @@ public:
 };
 
 /** 
+ * Interface for control devices. Calibration commands.
+ */
+class yarp::dev::IControlCalibration
+{
+public:
+    /* Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
+    virtual bool calibrate(int j)=0;
+};
+
+/** 
  * Interface for control devices. Debug commands.
  */
 class yarp::dev::IControlDebug
