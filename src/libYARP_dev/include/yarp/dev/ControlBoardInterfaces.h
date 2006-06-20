@@ -37,6 +37,11 @@ namespace yarp {
 class yarp::dev::IPidControlRaw
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IPidControlRaw() {}
+
     /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -164,6 +169,11 @@ public:
 class yarp::dev::IPidControl
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IPidControl() {}
+
     /** Set new pid value for a joint axis.
      * @param j joint number
      * @param pid new pid value
@@ -296,6 +306,11 @@ class yarp::dev::IPositionControlRaw
 {
 public:
     /**
+     * Destructor.
+     */
+    virtual ~IPositionControlRaw() {}
+
+    /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
      * @param ax storage to return param
@@ -425,6 +440,11 @@ public:
 class yarp::dev::IPositionControl
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IPositionControl() {}
+
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
@@ -556,6 +576,11 @@ class yarp::dev::IVelocityControlRaw
 {
 public:
     /**
+     * Destructor.
+     */
+    virtual ~IVelocityControlRaw() {}
+
+    /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
      * @param axis pointer to storage, return value
@@ -635,6 +660,11 @@ public:
 class yarp::dev::IVelocityControl
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IVelocityControl() {}
+
     /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
@@ -716,6 +746,11 @@ class yarp::dev::ITorqueControlRaw
 {
 public:
     /**
+     * Destructor.
+     */
+    virtual ~ITorqueControlRaw() {}
+
+    /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
      * @return the number of controlled axes.
@@ -761,6 +796,10 @@ public:
 class yarp::dev::IEncodersRaw
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IEncodersRaw() {}
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -847,6 +886,10 @@ public:
 class yarp::dev::IEncoders
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IEncoders() {}
 
     /**
      * Get the number of controlled axes. This command asks the number of controlled
@@ -933,6 +976,11 @@ public:
 class yarp::dev::IAmplifierControl
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAmplifierControl() {}
+
     /** Enable the amplifier on a specific joint. Be careful, check that the output
      * of the controller is appropriate (usually zero), to avoid 
      * generating abrupt movements.
@@ -983,6 +1031,11 @@ public:
 class yarp::dev::IAmplifierControlRaw
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAmplifierControlRaw() {}
+
     /** Enable the amplifier on a specific joint. Be careful, check that the output
      * of the controller is appropriate (usually zero), to avoid 
      * generating abrupt movements.
@@ -1033,6 +1086,11 @@ public:
 class yarp::dev::IControlCalibrationRaw
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IControlCalibrationRaw() {}
+
     /* Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
@@ -1046,6 +1104,11 @@ public:
 class yarp::dev::IControlCalibration
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IControlCalibration() {}
+
     /* Start calibration, this method is very often platform
      * specific.
      * @return true/false on success failure
@@ -1059,6 +1122,11 @@ public:
 class yarp::dev::IControlDebug
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IControlDebug() {}
+
     /* Set the print function, pass here a pointer to your own function 
      * to print. This function should implement "printf" like parameters. 
      * @param a pointer to the print function
@@ -1085,6 +1153,11 @@ public:
 class yarp::dev::IControlLimits
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IControlLimits() {}
+
     /* Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number (why am I telling you this)
@@ -1109,6 +1182,11 @@ public:
 class yarp::dev::IControlLimitsRaw
 {
 public:
+    /**
+     * Destructor.
+     */
+    virtual ~IControlLimitsRaw() {}
+
     /* Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
      * @param axis joint number (why am I telling you this)
