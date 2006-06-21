@@ -1,0 +1,165 @@
+/** 
+ * @page yarp_companion The standard YARP companion utility
+
+We specify a standard command-line 
+utility called ``yarp'' for performing a set of
+useful operations for a YARP network.  
+The functionality described here 
+can be provided in other ways also, but
+at a minimum this utility should be present on a YARP 2.0 
+system.
+We specify the utility by the user-facing functionality
+it provides.  For any of the examples below, the word ``verbose'' 
+inserted as the first argument should increase the level of 
+detail at which the operation of the utility and problems
+encountered is described.
+
+@section yarp yarp
+
+\verbatim
+yarp
+\endverbatim
+
+The utility should give a friendly message if called with no arguments
+to confirm that it exists, and to give tips on where to get started
+using it.  Our current implementation says:
+
+\verbatim
+This is the YARP network companion.
+Call with the argument "help" to see a list of ways to use this program.
+\endverbatim
+
+
+@section yarp yarp help
+
+\verbatim
+yarp help
+\endverbatim
+
+This lists a human-readable summary of the 
+ways the utility can be used.  Our current implementation
+says:
+
+\verbatim
+Here are arguments you can give this program:
+help         get this list
+version      get version information
+where        report where the yarp name server is running
+conf         report what configuration file is being used
+name         send commands to the yarp name server
+connect      create a connection between two ports
+disconnect   remove a connection between two ports
+read         read from the network and print to standard output
+write        write to the network from standard input
+rpc          read/write commands to a port, in standard format
+regression   run regression tests, if linked
+server       run yarp name server
+check        run a simple sanity check to see if yarp is working
+\endverbatim
+
+@section yarp_server yarp server
+
+\verbatim
+  yarp server
+  yarp server SOCKETPORT
+  yarp server IP SOCKETPORT
+\endverbatim
+
+This starts a name server running on the current machine, optionally
+specifying the socket-port to listen to (default whatever was used in
+the previous invocation, as recorded in a configuration file, or 10000
+if this is the first time to run).
+Also, the IP by which the name server should be identified can
+optionally be specified (default is a fairly random choice of
+the IPs associated with the current machine).
+
+\section yarp_where yarp where
+
+\verbatim
+yarp where
+\endverbatim
+
+
+This will report where the name server is believed to be running,
+and the location of the configuration file used to determine that.
+Example output:
+
+\verbatim
+Name server is available at ip 5.255.112.225 port 10000
+This is configured in file /home/paulfitz/.yarp/conf/namer.conf
+You can change the directory where this configuration file is stored
+with the YARP_ROOT environment variable.
+\endverbatim
+
+
+\section yarp_version yarp version
+
+\verbatim
+yarp version
+\endverbatim
+
+
+This will report on the yarp version available.  Example:
+
+\verbatim
+YARP network version 2.0
+\endverbatim
+
+
+\section yarp_name yarp name
+
+\verbatim
+yarp name COMMAND ARG_1 ARG_2 ...
+\endverbatim
+
+This will send the given command and arguments to the name server
+using the YARP name server protocol, and report the results.
+
+
+\section yarp_read yarp read
+
+\verbatim
+yarp read PORT
+\endverbatim
+
+This will create an input port of the specified name.  It will
+then loop, 
+reading ``yarp bottles'' (a simple serialized list) and prints their content
+to standard output.  This simple utility is intended for use in testing, or
+getting familiar with using YARP.
+
+\section yarp_write yarp write
+
+\verbatim
+yarp write PORT
+\endverbatim
+
+This will create an output port of the specified name.  It will then
+loop, reading from standard input and writing yarp bottles..
+Optionally, a list of input ports to connect to automatically can be
+appended to the command.  This simple utility is intended for use in
+testing, or getting familiar with using YARP.
+
+
+\section yarp_connect yarp connect
+
+\verbatim
+yarp connect OUTPUT_PORT INPUT_PORT
+yarp connect OUTPUT_PORT INPUT_PORT CARRIER
+\endverbatim
+
+This will request the specified output port to send its output in 
+future to the specified input port.
+Optionally, the carrier to be used can be added as an extra argument
+(e.g. tcp, udp, mcast, ...).
+
+\section yarp_disconnect yarp disconnect
+
+\verbatim
+yarp disconnect OUTPUT_PORT INPUT_PORT
+\endverbatim
+
+This will request the specified output port to cease sending its output to
+the specified input port.
+
+*/

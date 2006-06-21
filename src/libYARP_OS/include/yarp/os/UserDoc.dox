@@ -29,6 +29,9 @@
  *
  * Do you want to understand how to add a device driver to libYARP_dev? Have 
  * a look at @subpage dev-how-to.
+ 
+ * If you are interested in network interoperability, your can read some \subpage terms "specification of YARP terms and protocols".
+
  */
 
 /**

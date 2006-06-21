@@ -1,0 +1,155 @@
+/** 
+  * @page data_rep Standard data representation format
+
+Formally, the policy for representing binary data in YARP is to
+stick closely to the XDR External Data Representation Standard
+(Srinivasan '95, RFC1832) -- we currently deviate from that standard by
+not using zero padding.
+
+The policy for representing data externally in YARP is chosen 
+carefully to encourage both efficiency and the ability to
+read/write network data by hand.
+
+We define the following:
+\li A standard set of data-types
+\li A standard binary format
+\li A standard text format
+\li A standard mapping between the two formats
+
+
+@section data_rep_base The NetType data-types
+
+We limit our basic data-types to ones which can be easily 
+read, written, and distinguished from each other in text form.
+The types, and their arbitrary names, are:
+
+\li NetInt: an integer
+\li NetFloat: a floating point number
+\li NetString: a string
+\li NetBlob: An arbitrary sequence of bytes
+\li NetVocab: A short identifier that can be interpreted either as an
+integer or a string
+\li NetList: An arbitrary sequence of NetTypes (they do not need to all be the same type, and can include NetLists)
+
+Some of the types have limitations on them because of how
+they are represented in binary format.  The important point
+is that they can all be represented easily in both text
+and binary form.
+
+
+@section data_rep_bin Binary format
+
+\li NetInt: Represented as a 32-bit little-endian signed integer.
+\li NetFloat: Represented as a 64-bit C "double" floating-point number (IEEE 754 double-precision).
+\li NetString: Represented as a null-terminated sequence of bytes.
+\li NetList: The NetList representation is discussed separately.
+\li NetVocab: Represented as a 32-bit little-endian signed integer.  If interpreted as a string, with the lowest order 8-bits as the first character, and the highest order non-zero 8-bits as the last character.
+\li NetBlob: Represented as a NetInt giving the number N of bytes, and then the sequence of N bytes.
+
+The NetList representation is as follows.  Every NetType is assigned a code:
+
+\li NetInt.code is 1
+\li NetFloat.code is 10
+\li NetString.code is 4
+\li NetBlob.code is 12
+\li NetVocab.code is 9
+\li NetList.code is 256 if it may contain elements of diverse types,
+or 256+T.code if it contains elements of a single type T.
+
+Suppose a NetList is the list of NetTypes (e1 e2 e3 ... eN).
+If the elements are all of the same type T (other than NetList itself)
+then the list is represented as:
+\li A NetInt containing the number NetList.code+T.code, followed by
+\li A NetInt containing the number of elements, N, followed by
+\li The representations of the N individual elements.
+
+If the elements are not all of the same type, or are all NetLists
+in turn, then the list is represented as:
+\li A NetInt containing the number NetList.code, followed by
+\li A NetInt containing the number of elements, N, followed by
+\li The representations of the N individual elements, where each element is
+preceded by a NetInt containing their type code.
+
+
+@section data_rep_text Text format
+
+\li NetInt: Represented in the text forms supported by C99 strtol, e.g. -15, 9991, 0xfa, ...
+\li NetFloat: Represented in text forms supported by ANSI C strtod, except that a period must be present in order distinguish this type from NetInts, e.g. 10.57, .0
+\li NetString: Represented as characters within double-quotes, with special characters escaped C-style.  The quotes may be omitted for strings that contain only alphanumeric characters.
+\li NetList: The NetList representation is a white-space separated list of elements.  Nested lists are placed within parentheses.
+\li NetVocab: Represented as a short string between square brackets, e.g. [get].  There should be at most 4 characters between the brackets.
+\li NetBlob: Represented as a series of numbers between curly braces, e.g. {1 10 255 6 3}.  Each number represents a byte.
+
+
+@section data_rep_mapping Examples
+
+The list of primes less than 20 would be represented as:
+\verbatim
+text: 2 3 5 7 11 13 17 19
+binary: [4:257] [4:8] [4:2] [4:3] [4:5] [4:7] [4:11] [4:13] [4:17] [4:19]
+\endverbatim
+where [b:n] represents the number n in b bytes.
+
+A list of numbers followed by a list of strings might be:
+\verbatim
+text: (91 92 93) (this is a "good list")
+binary: [4:256] [4:2] [4:257] [4:3] [4:91] [4:92] [4:93] [4:260] [4:4] 
+[4:5] [5:"this"] [4:3] [3:"is"] [4:2] [2:"a"] [4:10] [10:"good list"]
+\endverbatim
+
+
+
+@section data_rep_code In practice
+
+The \link yarp::os::Bottle \endlink class in YARP is a useful helper class for
+reading/writing the standard data format in binary and text mode.
+
+We also use mappings from common non-network external data such
+as command line-options and configuration files.
+
+@subsection data_rep_code_cmd Command-line mapping
+
+Command-line options of the form:
+\verbatim
+--opt1 arga argb --opt2 argc --opt3
+\endverbatim
+are interpreted to correspond to a list with the following elements in 
+unspecified order (expressed here as text)
+\verbatim
+(opt1 arga argb) (opt2 argc) (opt3)
+\endverbatim
+This mapping is implemented by
+ \link yarp::os::Property::fromCommand() \endlink.
+\code
+yarp::os::Property p;
+int argc = 5;
+char *argv[] = { "fake_program", "--size", "10", "20", "--name", "mr frog" };
+p.fromCommand(argc, argv[]);
+ConstString result = p.toString();
+// result will be a permutation of (size 10 20) (name "mr frog")
+\endcode
+
+@subsection data_rep_code_config Configuration-file mapping
+
+Configuration files of the form:
+\verbatim
+[SECTION1]
+opt1 arga argb
+opt2 argc
+[SECTION2]
+joints 5
+mins 0 0 0 0 10
+maxs 100 100 50 100 20
+\endverbatim
+are interpreted to correspond to a list with the following elements
+(expressed here as text)
+\verbatim
+(SECTION1 (opt1 arga argb) (opt2 argc)) 
+  (SECTION2 (joints 5) (mins 0 0 0 0 10) (maxs 100 100 50 100 20))
+\endverbatim
+This mapping is implemented by
+ \link yarp::os::Property::fromConfigFile() \endlink.
+
+
+
+*/
