@@ -22,18 +22,7 @@ namespace yarp {
  * For help sending and receiving data in the background, see
  * BufferedPort, or PortReaderBuffer and PortWriterBuffer.
  *
- * Here is an example pair of programs for sending and receiving data
- * via a Port.  A simple sender:
- *
- * \include example/os/simple_sender.cpp
- *
- * A simple receiver:
- *
- * \include example/os/simple_receiver.cpp
- *
- * Make sure you have a YARP name server running, then run the
- * first program, then the second.  The sender will send a message
- * to the receiver.
+ * For examples and help, see: \ref what_is_a_port
  *
  */
 class yarp::os::Port : public Contactable {

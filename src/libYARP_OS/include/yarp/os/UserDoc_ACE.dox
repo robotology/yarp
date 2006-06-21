@@ -1,0 +1,135 @@
+
+
+/**
+
+@page install_ace The ACE library
+
+
+\link cmake CMake \endlink liberates your project from the particular
+development environment you are using. But the code itself may still
+have operating-system dependencies that will make life difficult. ACE
+is a free and open source library that provides an excellent portable
+interface to a vast array of operating systems, dealing with the
+details so you don't have to.
+
+\li Read about ACE here: http://www.cs.wustl.edu/~schmidt/ACE.html
+
+@section intro_install_ace The general approach to installing ACE
+
+
+\li Download ACE here: http://deuce.doc.wustl.edu/Download.html
+\li For Windows, we suggest: http://deuce.doc.wustl.edu/ACE.zip
+\li For all others, we suggest: http://deuce.doc.wustl.edu/ACE.tar.gz
+\li (and for Debian Linux, we suggest: "apt-get install libace-dev") 
+
+Compile ACE using our summary instructions, below, or through the 
+official method given here: 
+
+\code
+http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html
+\endcode
+
+Don't panic! The instructions cover a lot of operating systems and compilers. Just look carefully for your combination. 
+          \li Windows/DevStudio instructions are here: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#msvc
+          \li UNIX/gcc instructions are here: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#unix_traditional
+          \li OSX/gcc users, follow the UNIX instructions. 
+
+ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.
+
+
+@section ace_unix Compiling ACE on UNIX
+
+If you are on a system with a binary ACE package (Debian, Redhat,
+... -- it is usually called libace-dev or libace-devel), then you can
+just install that and you are done. Otherwise you need to download
+ACE.tar.gz as described above and follow these steps:
+
+    \li Let's suppose you have placed ACE.tar.gz in the directory $HOME/work/. Then, in this directory, type: 
+
+\code
+ tar xzvf - < ACE.tar.gz
+\endcode
+
+    \li You should now have a subdirectory called "ACE_wrappers". Type one (or if you're not sure which, type both) of: 
+
+\code
+ export ACE_ROOT=$PWD/ACE_wrappers
+ setenv ACE_ROOT $PWD/ACE_wrappers
+\endcode
+
+    \li One of these lines will succeed and the other will fail, depending on what shell you use. That's fine. as long as when you type: "echo $ACE_ROOT" you get the ACE_wrappers directory.
+    \li You now need to configure ACE to your platform, by creating one build file and one include file. If you are on Linux, type: 
+
+\code
+ cd $ACE_ROOT/include/makeinclude/ 
+ ln -s platform_linux.GNU platform_macros.GNU
+ cd $ACE_ROOT/ace
+ ln -s config-linux.h config.h
+\endcode
+
+    \li If you are not on Linux, or even if you are, you should take a look at the platform_*.GNU and config-*.h files and pick the one that matches you.
+    \li Now, to compile, type: 
+
+\code
+ cd $ACE_ROOT/ace; make
+\endcode
+
+    \li If all goes well, at the end you will have some files in ACE_wrappers/ace, for example (the .so may be .dylib or other variants): 
+
+\code
+ $ ls $ACE_ROOT/lib/
+ libACE.so  libACE.so.5.4.7
+\endcode
+
+    \li One thing remains to be done; programs need to be able to find the ACE library at run time. You can set this up by runing one of the following: 
+
+\code
+ export LD_LIBRARY_PATH=$ACE_ROOT/lib:$LD_LIBRARY_PATH
+ setenv LD_LIBRARY_PATH $ACE_ROOT/lib:$LD_LIBRARY_PATH
+\endcode
+
+    \li (On OSX, the variable you need to set is DYLD_LIBRARY_PATH).
+    \li An alternative is to copy the files in $ACE_ROOT/lib to a standard library directory, for example, /usr/lib.
+    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#unix_traditional 
+
+
+@section ace_windows Compiling ACE on Windows
+
+For Borland C++Builder, MinGW, Cygwin instructions see: 
+
+\code
+http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#win32
+\endcode
+
+For Visual Studio, here's a brief summary of the steps.
+  \li Get ACE.zip as described above.
+  \li Unpack its contents to a directory. Find the directory ACE_wrappers in the unpacked material.
+  \li In the ACE_wrappers\ace, create a file called "config.h" and edit it to be just this: 
+
+\code
+ #include "ace/config-win32.h"
+\endcode
+
+    \li Open Visual Studio. Go to open a project/workspace/solution, and browse to the directory ACE_wrappers\ace.
+    \li Find the project/workspace/solution that works for you: probably called "ACE.dsw" or "ace_vc8.sln".
+    \li Compile! We suggest you compile both debug and release versions of the library.
+          \li On Visual Studio Express, you may need to add the in project properties -> linker -> input -> additional dependencies: kernel32.lib user32.lib advapi32.lib. See http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/ 
+    \li In the end, you should have some files in the directory ACE_wrappers/lib, including ACE.dll, ACE.lib, ACEd.dll, ACEd.lib (if you compiled both release and debug versions).
+    \li You must make sure you include the path to ACE_wrappers\lib in your PATH environment variable whenever you run programs that uses ACE. See generic instructions for setting environment variables:
+
+\code
+http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/environment_variables.mspx
+\endcode
+
+    \li It is also a good idea to set an environment variable ACE_ROOT to hold the path to ACE_wrappers. This will make it easier to find the libraries and header files. 
+
+
+On Windows you can unzip the ACE distribution and simply open the
+workspace file contained within it from within Visual Studio and
+then start the compilation.  We recommend you compile twice,
+once in debug mode and release mode, so you have both versions of
+the library available later.
+
+ */
+
+
