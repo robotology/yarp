@@ -16,14 +16,20 @@ using namespace yarp::dev;
 // this is an automatically configured file
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
+#cmakedefine ENABLE_microphone
 
-// add header file here, and factory code below
+// add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
+// and factory code below
 #ifdef ENABLE_dragonfly
 #include <yarp/DragonflyDeviceDriver.h>
 #endif
 
 #ifdef ENABLE_esdMotionControl
 #include <yarp/EsdMotionControl.h>
+#endif
+
+#ifdef ENABLE_microphone
+#include <yarp/MicrophoneDeviceDriver.h>
 #endif
 
 extern DriverCreator *createRemoteFrameGrabber();
@@ -39,6 +45,9 @@ void Drivers::init() {
 #endif
 #ifdef ENABLE_esdMotionControl
     add(new DriverCreatorOf<EsdMotionControl>("esd","controlboard"));
+#endif
+#ifdef ENABLE_microphone
+    add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone","grabber"));
 #endif
     add(createTestFrameGrabber());
     add(createRemoteFrameGrabber());

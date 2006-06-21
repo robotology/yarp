@@ -8,6 +8,7 @@
 #include <yarp/String.h>
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 
 using namespace yarp::os;
@@ -154,7 +155,8 @@ public:
 
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, public Thread,
             public PortReader,
-            public IFrameGrabberImage, public IFrameGrabberControls
+            public IFrameGrabberImage, public IFrameGrabberControls,
+            public IAudioGrabberSound
             // convenient to put these here just to make sure all
             // methods get implemented
 {
@@ -162,13 +164,16 @@ private:
 	bool spoke;
     Port p;
 	PortWriterBuffer<ImageOf<PixelRgb> > writer;
+	PortWriterBuffer<Sound> writerSound;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
+    IAudioGrabberSound *fgSound;
     IFrameGrabberControls *fgCtrl;
     Property settings;
 public:
     ServerFrameGrabber() {
         fgImage = NULL;
+        fgSound = NULL;
         fgCtrl = NULL;
 		spoke = false;
     }
@@ -183,7 +188,6 @@ public:
     
     virtual bool open(Searchable& prop) {
         p.setReader(*this);
-		writer.attach(p);
         
         BottleBit *name;
         if (prop.check("subdevice",name)) {
@@ -204,16 +208,25 @@ public:
             printf("\"--subdevice <name>\" not set for server_framegrabber\n");
             return false;
         }
+        if (poly.isValid()) {
+            poly.view(fgImage);
+            poly.view(fgSound);
+            poly.view(fgCtrl);
+        }
+
+        if (fgImage!=NULL) {
+            writer.attach(p);
+        } else {
+            writerSound.attach(p);
+        }
+
         if (prop.check("name",name)) {
             p.open(name->asString());
         } else {
             p.open("/grabber");
         }
-        if (poly.isValid()) {
-            poly.view(fgImage);
-            poly.view(fgCtrl);
-        }
-        if (fgImage!=NULL) {
+
+        if (fgImage!=NULL||fgSound!=NULL) {
             start();
             return true;
         }
@@ -223,18 +236,30 @@ public:
     }
 
     virtual void run() {
-        printf("Server framegrabber starting\n");
+        printf("Server grabber starting\n");
         while (!isStopping()) {
-            ImageOf<PixelRgb>& img = writer.get();
-            getImage(img);
-			if (!spoke) {
-	            printf("Network framegrabber writing a %dx%d image...\n",
-						img.width(),img.height());
-				spoke = true;
-			}
+            if (fgImage!=NULL) {
+                // for now, sound and image are mutually exclusive
+                ImageOf<PixelRgb>& img = writer.get();
+                getImage(img);
+                if (!spoke) {
+                    printf("Network framegrabber writing a %dx%d image...\n",
+                           img.width(),img.height());
+                    spoke = true;
+                }
+            } else {
+                // for now, sound and image are mutually exclusive
+                Sound& snd = writerSound.get();
+                getSound(snd);
+                if (!spoke) {
+                    printf("Network framegrabber writing a %dx%d sound...\n",
+                           snd.getSamples(),snd.getChannels());
+                    spoke = true;
+                }
+            }
             writer.write();
         }
-        printf("Server framegrabber stopping\n");
+        printf("Server grabber stopping\n");
     }
 
     virtual bool read(ConnectionReader& connection) {
@@ -309,6 +334,11 @@ public:
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         if (fgImage==NULL) { return false; }
         return fgImage->getImage(image);
+    }
+    
+    virtual bool getSound(yarp::sig::Sound& sound) {
+        if (fgSound==NULL) { return false; }
+        return fgSound->getSound(sound);
     }
     
     virtual int height() const {
