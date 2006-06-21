@@ -12,6 +12,19 @@ namespace yarp {
 }
 
 
+/**
+ *
+ * A class for storing options and configuration information.  
+ * Use put() to add keyword/value pairs, and get() or check() 
+ * to look them up afterwards.
+ * It can
+ * read from configuration files using the fromConfigFile() method,
+ * and from command line options using the fromCommand() method, and
+ * from any Searchable object (include Bottle objects) using the
+ * fromString() method.
+ * Property objects can be searched efficiently.
+ *
+ */
 class yarp::os::Property : public Searchable {
 
 public:
@@ -23,18 +36,18 @@ public:
 
     bool check(const char *key) const;
 
-    //virtual bool check(const char *key, BottleBit *&output);
-
     void put(const char *key, const char *val);
 
     void put(const char *key, BottleBit& bit);
 
     void unput(const char *key);
 
+    // documented in Searchable
     virtual BottleBit& find(const char *key) {
         return get(key);
     }
 
+    // documented in Searchable
     virtual Bottle& findGroup(const char *key) {
         Bottle *result = getList(key);
         if (result!=((Bottle*)0)) { return *result; }
@@ -55,6 +68,7 @@ public:
 
     void fromConfig(const char *txt);
 
+    // documented in Searchable
     ConstString toString() const;
 
 private:

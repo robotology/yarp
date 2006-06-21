@@ -20,22 +20,83 @@ namespace yarp {
     }
 }
 
-
+/**
+ *
+ * A base class for nested structures that can be searched.
+ * A Searchable object promises that you can look inside it
+ * with the find() and findGroup() methods to get values and
+ * lists corresponding to keywords.
+ *
+ * @see Property Bottle BottleBit
+ *
+ */
 class yarp::os::Searchable {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~Searchable() {}
 
+    /**
+     * Gets a value corresponding to a given keyword
+     * @param txt The keyword to look for
+     * @return A value corresponding to a given keyword.  If there is no
+     * such value, then the isNull() method called on the result will be
+     * true.  Otherwise, the value can be read by calling result.asInt(),
+     * result.asString(), etc. as appropriate.
+     */
     virtual BottleBit& find(const char *txt) = 0;
+
+    /**
+     * Gets a list corresponding to a given keyword
+     * @param txt The keyword to look for
+     * @return A list corresponding to a given keyword.  If there is no
+     * such list, then the isNull() method called on the result will be
+     * true.  Otherwise, the elements of the list can be read through
+     * result.get(index) where result.get(0) is the keyword, and
+     * result.get(i) for i>=1 are the "real" elements of the list.
+     *
+     */
     virtual Bottle& findGroup(const char *txt) = 0;
 
+    /**
+     * Gets a value corresponding to a given keyword
+     * @param txt The keyword to look for
+     * @param result A pointer to store the address of the result in
+     * @return True if there is a value corresponding to a given keyword,
+     * false otherwise.  See the find() method for interpreting the
+     * value found.
+     */
     bool check(const char *txt, BottleBit *& result);
 
+    /**
+     * Checks if the object is invalid.
+     * @return True if the object is invalid or "null".
+     */
     virtual bool isNull()    { return false; }
 
+    /**
+     * Return a standard text representation of the content of the
+     * object.  The representation is readable by the Bottle and 
+     * Property classes.
+     * @return A standard text representation of the content of the
+     * object.  
+     */
     virtual ConstString toString() const = 0;
 };
 
 
+/**
+ *
+ * A single value within a Bottle.  Values can be integers, strings,
+ * doubles (floating-point numbers), lists, vocabulary, or blobs
+ * (unformatted binary data).  This set is carefully chosen to have
+ * good text and binary representations both for network transmission
+ * and human viewing/generation.  Lists are represented as a nested
+ * Bottle object.  BottleBit objects are Searchable - but you won't
+ * find anything in them unless they are actually a list.
+ *
+ */
 class yarp::os::BottleBit : public Portable, public Searchable {
 public:
     virtual bool isInt()     { return false; }
