@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.11 2006-06-20 15:53:31 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.12 2006-06-21 16:58:35 natta Exp $
 ///
 ///
 
@@ -88,6 +88,14 @@ EsdMotionControlParameters::EsdMotionControlParameters(int nj)
     _angleToEncoder = allocAndCheck<double>(nj);
     _zeros = allocAndCheck<double>(nj);
 
+    _pids=allocAndCheck<Pid>(nj);
+    _limitsMax=allocAndCheck<double>(nj);
+    _limitsMin=allocAndCheck<double>(nj);
+    _currentLimits=allocAndCheck<double>(nj);
+    memset(_limitsMin, 0, sizeof(double)*nj);
+    memset(_limitsMax, 0, sizeof(double)*nj);
+    memset(_currentLimits, 0, sizeof(double)*nj);
+    
 	_my_address = 0;
 	_polling_interval = 10;
 	_timeout = 20;
@@ -106,6 +114,11 @@ EsdMotionControlParameters::~EsdMotionControlParameters()
     checkAndDestroy<double>(_angleToEncoder);
     checkAndDestroy<int>(_axisMap);
     checkAndDestroy<unsigned char>(_destinations);
+    
+    checkAndDestroy<Pid>(_pids);
+    checkAndDestroy<double>(_limitsMax);
+    checkAndDestroy<double>(_limitsMin);
+    checkAndDestroy<double>(_currentLimits);
 }
 
 ///
@@ -198,11 +211,6 @@ public:
 	CMSG _replyBuffer[BUF_SIZE];				/// reply buffer.
 
 	BCastBufferElement *_bcastRecvBuffer;		/// local storage for bcast messages.
-    int *_axisMap;                              /// axis remapping lookup-table.
-    int *_invAxisMap;                           /// inverse axis map, recovered from the direct one.
-    double *_angleToEncoder;                    /// angle to encoder conversion factors.
-    double *_zeros;                             /// encoder zeros.
-    double *_signs;                             /// sign of the encoder reading.
 
 	unsigned char _my_address;					/// 
 	unsigned char _destinations[ESD_MAX_CARDS];	/// list of connected cards (and their addresses).
@@ -239,11 +247,6 @@ EsdCanResources::EsdCanResources ()
 	_msg_lost = 0;
 	_writeMessages = 0;
 	_bcastRecvBuffer = NULL;
-    _axisMap = NULL;
-    _invAxisMap = NULL;
-    _angleToEncoder = NULL;
-    _zeros = NULL;
-    _signs = NULL;
 
     _error_status = true;
 }
@@ -496,7 +499,20 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
     ImplementControlCalibration<EsdMotionControl, IControlCalibration>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
 
-    Thread::start();
+    ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
+
+    ImplementControlLimits<EsdMotionControl, IControlLimits>::
+        initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
+
+    // set limits, on encoders and max current
+    for(int k=0; k<p._njoints; k++)
+    {
+        setLimits(k, p._limitsMax[k], p._limitsMin[k]);
+        setMaxCurrent(k, p._currentLimits[k]);
+    }
+
+     Thread::start();
 	_done.wait ();
 
 	// used for printing debug messages.
@@ -541,6 +557,33 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     xtmp = p.findGroup("GENERAL").findGroup("CanAddresses");
     for (i = 1; i < xtmp.size(); i++) params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
     
+    //pids
+    int j=0;
+    for(j=0;j<nj;j++)
+    {
+        char tmp[80];
+        sprintf(tmp, "Pid%d", j); 
+        xtmp = p.findGroup("PIDS").findGroup(tmp);
+        params._pids[j].kp = xtmp.get(1).asDouble();
+        params._pids[j].kd = xtmp.get(2).asDouble();
+        params._pids[j].ki = xtmp.get(3).asDouble();
+    
+        params._pids[j].max_int = xtmp.get(4).asDouble();
+        params._pids[j].max_output = xtmp.get(5).asDouble();
+        
+        params._pids[j].scale = xtmp.get(6).asDouble();
+        params._pids[j].offset = xtmp.get(7).asDouble();
+    }
+
+    xtmp = p.findGroup("GENERAL").findGroup("CurrentLimits");
+    for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
+
+    xtmp = p.findGroup("LIMITS").findGroup("Max");
+    for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
+
+    xtmp = p.findGroup("LIMITS").findGroup("Min");
+    for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
+
     // LATER: complete with the conversion/implementation of all the parameters.
     return open(params);
 }

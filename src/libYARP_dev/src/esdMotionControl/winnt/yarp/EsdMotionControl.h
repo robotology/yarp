@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.11 2006-06-20 15:53:31 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.12 2006-06-21 16:58:35 natta Exp $
 ///
 ///
 
@@ -64,6 +64,10 @@ public:
     int *_axisMap;                              /** axis remapping lookup-table */
     double *_angleToEncoder;                    /** angle to encoder conversion factors */
     double *_zeros;                             /** encoder zeros */
+    Pid *_pids;                                  /** initial gains */
+    double *_limitsMin;                          /** joint limits, max*/
+    double *_limitsMax;                         /** joint limits, min*/
+    double *_currentLimits;                     /** current limits */
 };
 
 /**
