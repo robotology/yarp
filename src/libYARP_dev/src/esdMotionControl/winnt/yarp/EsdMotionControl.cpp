@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.12 2006-06-21 16:58:35 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.13 2006-06-21 17:39:25 natta Exp $
 ///
 ///
 
@@ -548,16 +548,32 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     int nj = p.findGroup("GENERAL").find("Joints").asInt();
     EsdMotionControlParameters params(nj);
     params._njoints = nj;
-    Bottle& xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
+
+    ///// CAN PARAMETERS
+    Bottle &xtmp = p.findGroup("CAN").findGroup("CanDeviceNum");
+    params._networkN=xtmp.get(1).asInt();
+
+    xtmp = p.findGroup("CAN").findGroup("CanMyAddress");
+    params._my_address=xtmp.get(1).asInt();
+
+    xtmp = p.findGroup("CAN").findGroup("CanPollingInterval");
+    params._polling_interval=xtmp.get(1).asInt();
+
+    xtmp = p.findGroup("CAN").findGroup("CanTimeout");
+    params._timeout=xtmp.get(1).asInt();
+
+    xtmp = p.findGroup("CAN").findGroup("CanAddresses");
+    for (i = 1; i < xtmp.size(); i++) params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
+   
+    ////// GENERAL
+    xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
     for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
     xtmp = p.findGroup("GENERAL").findGroup("Encoder");
     for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
     xtmp = p.findGroup("GENERAL").findGroup("Zeros");
     for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
-    xtmp = p.findGroup("GENERAL").findGroup("CanAddresses");
-    for (i = 1; i < xtmp.size(); i++) params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
     
-    //pids
+    ////// PIDS
     int j=0;
     for(j=0;j<nj;j++)
     {
@@ -575,7 +591,8 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
         params._pids[j].offset = xtmp.get(7).asDouble();
     }
 
-    xtmp = p.findGroup("GENERAL").findGroup("CurrentLimits");
+    /////// LIMITS
+    xtmp = p.findGroup("LIMITS").findGroup("Currents");
     for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("LIMITS").findGroup("Max");
@@ -584,7 +601,6 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     xtmp = p.findGroup("LIMITS").findGroup("Min");
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
-    // LATER: complete with the conversion/implementation of all the parameters.
     return open(params);
 }
 
