@@ -175,11 +175,11 @@ public:
 
         if (prop.check("name",name)) {
             String s((size_t)1024);
-            ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString().c_str());
             rpc_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/control:i", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/control:i", name->asString().c_str());
             control_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/state:o", name->asString());
+            ACE_OS::sprintf(&s[0], "%s/state:o", name->asString().c_str());
             state_p.open(s.c_str());
         } else {
             rpc_p.open("/controlboard/rpc:i");
