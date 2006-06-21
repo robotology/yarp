@@ -21,7 +21,7 @@ namespace yarp{
 * be used to easily provide an implementation of IPositionControl. It takes two
 * arguments, the class it is derived from and the class it is implementing, typically
 * IPositionControl (which should probably be removed from the template arguments).
-* <IMPLEMENT> makes only explicit that the class is implementing IPositionControl and
+* "<IMPLEMENT>" makes only explicit that the class is implementing IPositionControl and
 * appears in the inheritance list of the derived class.
 */
 template <class DERIVED, class IMPLEMENT> 
@@ -94,7 +94,7 @@ class yarp::dev::ImplementPositionControl : public IMPLEMENT
 * be used to easily provide an implementation of IVelocityControl. It takes two
 * arguments, the class it is derived from and the class it is implementing, typically
 * IVelocityControl (which should probably be removed from the template arguments).
-* <IMPLEMENT> makes only explicit that the class is implementing IVelocityControl and
+* "<IMPLEMENT>" makes only explicit that the class is implementing IVelocityControl and
 * appears in the inheritance list of the derived class.
 */
 template <class DERIVED, class IMPLEMENT> 
@@ -395,28 +395,29 @@ class yarp::dev::ImplementEncoders : public IMPLEMENT
     virtual bool getEncoders(double *encs);
 
     /**
-     * Read the istantaneous speed of an axis.
+     * Read the instantaneous speed of an axis.
      * @param j axis number
-     * @param sp pointer to storage for the output
+     * @param spds pointer to storage for the output
      * @return true if successful, false ... otherwise.
      */
-    virtual bool getEncoderSpeed(int j, double *sp);
+    virtual bool getEncoderSpeed(int j, double *spds);
 
     /**
-     * Read the istantaneous acceleration of an axis.
-     * @param sp pointer to storage for the output values
+     * Read the instantaneous speed of all axes.
+     * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeeds(double *spds);
     
     /**
-     * Read the istantaneous speed of all axes.
+     * Read the instantaneous acceleration of an axis.
+     * @param j axis number
      * @param spds pointer to the array that will contain the output
      */
     virtual bool getEncoderAcceleration(int j, double *spds);
 
     /**
-     * Read the istantaneous acceleration of all axes.
+     * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens. 
      */

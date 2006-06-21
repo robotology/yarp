@@ -1,37 +1,31 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-///
-///
-///       YARP - Yet Another Robotic Platform (c) 2001-2003 
-///
-///                    #pasa, paulfitz#
-///
-///     "Licensed under the Academic Free License Version 1.0"
-///
+//
+//
+//       YARP - Yet Another Robotic Platform (c) 2001-2003 
+//
+//                    #pasa, paulfitz#
+//
+//     "Licensed under the Academic Free License Version 1.0"
+//
 
-///
-/// $Id: ImageFile.h,v 1.6 2006-06-17 19:57:46 eshuy Exp $
-///
-///
+//
+// $Id: ImageFile.h,v 1.7 2006-06-21 09:25:38 eshuy Exp $
+//
+//
 
-/*
-  paulfitz Wed May 30 18:35:14 EDT 2001
-*/
-
-/*
-  pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).
-  nat: May 06, adapted for YARP2
-*/
+// paulfitz Wed May 30 18:35:14 EDT 2001
+// pasa: June 2002, don't exit on open failure (gracefully returns -1, 0 if OK).// nat: May 06, adapted for YARP2
 
 #ifndef YARP2ImageFile_INC
 #define YARP2ImageFile_INC
 
 #include <yarp/sig/Image.h>
 
-/**
- * Image file operations.
- */
 namespace yarp {
     namespace sig{
+        /**
+         * Image file operations.
+         */
         namespace file {
             enum
                 {

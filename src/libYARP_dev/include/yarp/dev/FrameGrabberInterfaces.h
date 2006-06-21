@@ -5,7 +5,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Image.h>
 
-/*! \file FrameGrabber.h define common interfaces for framer grabber devices */
+/*! \file FrameGrabberInterfaces.h define common interfaces for frame
+  grabber devices */
 
 namespace yarp{
     namespace dev {

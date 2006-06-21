@@ -49,7 +49,9 @@ YARP_LOCAL;ntcan.lib
 
 This tells cmake that the device driver requires the library "ntcan.lib" and that this file is available within the YARP tree (on ./dd_orig/). CMake will search ./dd_orig/lib for ntcan.lib. If ntcan.lib is not found an error will be shown, and the user will have the possibility to manually enter the correct location of the file. This .lib file has probably header files associated with it. We recommend you put them in ./dd_orig/include and include them directly in you code as something like:
 
-#include <../dd_orig/include/foo_lib.h>
+\code
+  #include <../dd_orig/include/foo_lib.h>
+\endcode
 
 Be careful to "hide" header files specific of each device driver (in this example foo_lib.h) so that symbols defined there are not visible from outside. In practice you do this by avoiding to include them in your header files.
 

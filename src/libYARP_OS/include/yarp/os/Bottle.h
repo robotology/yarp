@@ -53,8 +53,8 @@ public:
     virtual const char *asBlob()   { return (const char*)0; }
     virtual int asBlobLength()     { return 0; }
 
-    virtual bool read(ConnectionReader& reader) = 0;
-    virtual bool write(ConnectionWriter& writer) = 0;
+    virtual bool read(ConnectionReader& connection) = 0;
+    virtual bool write(ConnectionWriter& connection) = 0;
 
     virtual bool operator == (const BottleBit& alt);
 

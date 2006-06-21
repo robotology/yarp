@@ -24,6 +24,7 @@ public:
      * Request that an output port connect to an input port.
      * @param src the name of an output port
      * @param dest the name of an input port
+     * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
     static bool connect(const char *src, const char *dest,
@@ -33,6 +34,7 @@ public:
      * Request that an output port disconnect from an input port.
      * @param src the name of an output port
      * @param dest the name of an input port
+     * @param quiet suppress messages displayed upon success/failure
      * @return true on success, false on failure
      */
     static bool disconnect(const char *src, const char *dest, 

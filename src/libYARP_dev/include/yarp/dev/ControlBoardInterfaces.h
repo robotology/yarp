@@ -852,7 +852,7 @@ public:
     virtual bool getEncodersRaw(double *encs)=0;
 
     /**
-     * Read the istantaneous speed of an axis.
+     * Read the instantaneous speed of an axis.
      * @param j axis number
      * @param sp pointer to storage for the output
      * @return true if successful, false ... otherwise.
@@ -860,20 +860,21 @@ public:
     virtual bool getEncoderSpeedRaw(int j, double *sp)=0;
 
     /**
-     * Read the istantaneous acceleration of an axis.
-     * @param sp pointer to storage for the output values
+     * Read the instantaneous acceleration of an axis.
+     * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeedsRaw(double *spds)=0;
     
     /**
-     * Read the istantaneous speed of all axes.
+     * Read the instantaneous acceleration of an axis.
+     * @param j axis number
      * @param spds pointer to the array that will contain the output
      */
     virtual bool getEncoderAccelerationRaw(int j, double *spds)=0;
 
     /**
-     * Read the istantaneous acceleration of all axes.
+     * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens. 
      */
@@ -950,14 +951,15 @@ public:
     virtual bool getEncoderSpeed(int j, double *sp)=0;
 
     /**
-     * Read the istantaneous acceleration of an axis.
-     * @param sp pointer to storage for the output values
+     * Read the instantaneous speed of all axes.
+     * @param spds pointer to storage for the output values
      * @return guess what? (true/false on success or failure).
      */
     virtual bool getEncoderSpeeds(double *spds)=0;
     
     /**
-     * Read the istantaneous speed of all axes.
+     * Read the instantaneous acceleration of an axis.
+     * @param j axis number
      * @param spds pointer to the array that will contain the output
      */
     virtual bool getEncoderAcceleration(int j, double *spds)=0;

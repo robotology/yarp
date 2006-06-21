@@ -56,7 +56,7 @@
 ///
 ///       YARP - Yet Another Robotic Platform (c) 2001-2003 
 ///
-///                    #pasa#   #paulfitz#
+///                     pasa     paulfitz
 ///
 ///     "Licensed under the Academic Free License Version 1.0"
 ///
