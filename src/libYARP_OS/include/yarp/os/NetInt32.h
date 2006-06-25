@@ -14,6 +14,12 @@ namespace yarp {
 #endif
 #endif
 
+#ifdef CYGWIN
+#ifndef YARP2_CYGWIN
+#define YARP2_CYGWIN
+#endif
+#endif
+
 #ifdef _WIN32
 #ifndef YARP2_WINDOWS
 #define YARP2_WINDOWS
@@ -92,6 +98,9 @@ namespace yarp {
 #else
 #  ifdef YARP2_WINDOWS
         typedef __int32 NetInt32;
+#else
+#  ifdef YARP2_CYGWIN
+        typedef int NetInt32;
 #  else
 #    ifdef YARP2_OSX
 
@@ -113,7 +122,7 @@ namespace yarp {
             void set(RawNetInt32 v) {
                 raw_value = (int32_t)swap((uint32_t)v);
             }
-        public:
+p        public:
             NetInt32() {
             }
             NetInt32(RawNetInt32 val) {
@@ -174,6 +183,7 @@ namespace yarp {
 #      endif
 #    endif
 #  endif
+#endif
 #endif
 
     }

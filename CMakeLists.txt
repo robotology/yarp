@@ -7,11 +7,16 @@ SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 
 # on windows, we have to tell ace how it was compiled
 IF (WIN32 AND NOT CYGWIN)
-   ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
+  ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
 ELSE (WIN32 AND NOT CYGWIN)
    # flush out warnings
    ADD_DEFINITIONS(-Wall)
 ENDIF (WIN32 AND NOT CYGWIN)
+
+## check if we are on cygwin
+IF(WIN32 AND CYGWIN)
+  ADD_DEFINITIONS(-DCYGWIN)
+ENDIF(WIN32 AND CYGWIN)
 
 #SET(USE_EXPERIMENTAL FALSE CACHE BOOL "Do you want to include experimental features?")
 #IF (USE_EXPERIMENTAL)
