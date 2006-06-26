@@ -4,6 +4,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardPid.h>
+#include <yarp/dev/CalibratorInterfaces.h>
 
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
@@ -1087,7 +1088,10 @@ public:
  */
 class yarp::dev::IControlCalibrationRaw
 {
+private:
+    ICalibrator *calibrator;
 public:
+    IControlCalibrationRaw();
     /**
      * Destructor.
      */
@@ -1098,6 +1102,25 @@ public:
      * @return true/false on success failure
      */
     virtual bool calibrateRaw(int j)=0;
+
+    /* Check if the calibration is terminated, on a particular joint.
+     * Non blocking.
+     * @return true/false 
+     */
+    virtual bool doneRaw(int j)=0;
+
+    /* Set the calibrator object to be used to calibrate the robot.
+     * @param c pointer to the calibrator object
+     * @return true/false on success failure
+     */
+    bool setCalibrator(ICalibrator *c);
+
+    /* Calibrate robot by using an external calibrator. The external 
+     * calibrator must be previously set by calling the setCalibration()
+     * method.
+     * @return true/false on success failure
+     */
+    bool calibrate();
 };
 
 /** 
@@ -1116,6 +1139,12 @@ public:
      * @return true/false on success failure
      */
     virtual bool calibrate(int j)=0;
+
+    /* Check if the calibration is terminated, on a particular joint.
+     * Non blocking.
+     * @return true/false 
+     */
+    virtual bool done(int j)=0;
 };
 
 /** 

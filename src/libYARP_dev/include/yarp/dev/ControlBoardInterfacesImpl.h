@@ -459,6 +459,8 @@ class yarp::dev::ImplementControlCalibration: public IMPLEMENT
     virtual ~ImplementControlCalibration();
 
     virtual bool calibrate(int j);
+
+    virtual bool done(int j);
 };
 
 template <class DERIVED, class IMPLEMENT> 

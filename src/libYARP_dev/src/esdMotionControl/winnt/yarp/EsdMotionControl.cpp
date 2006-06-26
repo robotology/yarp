@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.13 2006-06-21 17:39:25 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.14 2006-06-26 17:14:25 natta Exp $
 ///
 ///
 
@@ -43,7 +43,7 @@
 #include "EsdMotionControl.h"
 #include "../dd_orig/include/ntcan.h"
 
-#include "../../../ControlBoardInterfacesImpl.cpp"
+#include "../../../ControlBoardInterfacesImpl.inl"
 
 /// get the message types from the DSP code.
 #define __ONLY_DEF
@@ -1610,7 +1610,12 @@ bool EsdMotionControl::setMaxCurrentRaw(int axis, double v)
 
 bool EsdMotionControl::calibrateRaw(int axis)
 {
-    return NOT_YET_IMPLEMENTED("calibrate");
+    return NOT_YET_IMPLEMENTED("calibrateRaw");
+}
+
+bool EsdMotionControl::doneRaw(int axis)
+{
+    return NOT_YET_IMPLEMENTED("doneRaw");
 }
 
 bool EsdMotionControl::setPrintFunction(int (*f) (const char *fmt, ...))

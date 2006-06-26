@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.12 2006-06-21 16:58:35 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.13 2006-06-26 17:14:25 natta Exp $
 ///
 ///
 
@@ -213,6 +213,7 @@ public:
 
     ////// calibration
     virtual bool calibrateRaw(int j);
+    virtual bool doneRaw(int j);
 
     /// IControlDebug Interface
     virtual bool setPrintFunction(int (*f) (const char *fmt, ...));

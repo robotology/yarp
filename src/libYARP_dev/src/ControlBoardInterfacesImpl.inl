@@ -4,6 +4,10 @@
 // and hopefully it is not needed
 //#include <yarp/EsdMotionControl.h>
 
+// Be careful: this file contains template implementations and is included by translation
+// units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
+// avoid repetations.
+
 #include <ace/Log_Msg.h>
 #include <stdio.h>
 #include <ace/OS.h>
@@ -55,8 +59,6 @@ public:
 				}
 			}
 		}
-
-
     }
 
     bool alloc(int n)
@@ -1064,6 +1066,15 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j)
 
     return iCalibrate->calibrateRaw(k);
 }
+
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+
+    return iCalibrate->doneRaw(k);
+}
+
 ////////////////////////
 
 ///////////////// ImplementControlLimits
