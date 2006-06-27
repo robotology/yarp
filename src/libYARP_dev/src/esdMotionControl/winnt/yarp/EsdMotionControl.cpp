@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.15 2006-06-27 17:29:21 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.16 2006-06-27 23:01:34 gmetta Exp $
 ///
 ///
 
@@ -505,14 +505,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
     ImplementControlLimits<EsdMotionControl, IControlLimits>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
 
-    // set limits, on encoders and max current
-    for(int k=0; k<p._njoints; k++)
-    {
-        setLimits(k, p._limitsMax[k], p._limitsMin[k]);
-        setMaxCurrent(k, p._currentLimits[k]);
-    }
-
-     Thread::start();
+    Thread::start();
 	_done.wait ();
 
 	// used for printing debug messages.
@@ -531,7 +524,14 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	int i;
 	for(i = 0; i < r.getJoints(); i++)
 		setBCastMessages(i, double (0x1E)); // 0x1A activates position and current consumption broadcast + fault events
-	
+
+    // set limits, on encoders and max current
+    for(i = 0; i < p._njoints; i++)
+    {
+        setLimits(i, p._limitsMax[i], p._limitsMin[i]);
+        setMaxCurrent(i, p._currentLimits[i]);
+    }
+
 	return true;
 }
 

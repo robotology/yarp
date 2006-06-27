@@ -25,73 +25,10 @@ namespace yarp{
       class RemoteControlBoard;
       class ServerControlBoard;
       class CommandsHelper;
-      class ControlHelper;
+      class ImplementCallbackHelper;
     }
 }
 
-#define VOCAB_SET VOCAB3('s','e','t')
-#define VOCAB_GET VOCAB3('g','e','t')
-#define VOCAB_IS VOCAB2('i','s')
-
-// interface IPidControl sets.
-#define VOCAB_PID VOCAB3('p','i','d')
-#define VOCAB_PIDS VOCAB4('p','i','d','s')
-#define VOCAB_REF VOCAB3('r','e','f')
-#define VOCAB_REFS VOCAB4('r','e','f','s')
-#define VOCAB_LIM VOCAB3('l','i','m')
-#define VOCAB_LIMS VOCAB4('l','i','m','s')
-#define VOCAB_RESET VOCAB3('r','e','s')
-#define VOCAB_DISABLE VOCAB3('d','i','s')
-#define VOCAB_ENABLE VOCAB3('e','n','a')
-
-// interface IPidControl gets.
-#define VOCAB_ERR VOCAB3('e','r','r')
-#define VOCAB_ERRS VOCAB4('e','r','r','s')
-#define VOCAB_OUTPUT VOCAB3('o','u','t')
-#define VOCAB_OUTPUTS VOCAB4('o','u','t','s')
-#define VOCAB_REFERENCE VOCAB3('r','e','f')
-#define VOCAB_REFERENCES VOCAB4('r','e','f','s')
-
-// interface IPositionControl gets
-#define VOCAB_AXES VOCAB4('a','x','e','s')
-#define VOCAB_MOTION_DONE VOCAB3('d','o','n')
-#define VOCAB_MOTION_DONES VOCAB4('d','o','n','s')
-
-// interface IPositionControl sets
-#define VOCAB_POSITION_MODE VOCAB4('p','o','s','d')
-#define VOCAB_POSITION_MOVE VOCAB3('p','o','s')
-#define VOCAB_POSITION_MOVES VOCAB4('p','o','s','s')
-#define VOCAB_RELATIVE_MOVE VOCAB3('r','e','l')
-#define VOCAB_RELATIVE_MOVES VOCAB4('r','e','l','s')
-#define VOCAB_REF_SPEED VOCAB3('v','e','l')
-#define VOCAB_REF_SPEEDS VOCAB4('v','e','l','s')
-#define VOCAB_REF_ACCELERATION VOCAB3('a','c','c')
-#define VOCAB_REF_ACCELERATIONS VOCAB4('a','c','c','s')
-#define VOCAB_STOP VOCAB3('s','t','o')
-#define VOCAB_STOPS VOCAB4('s','t','o','s')
-
-// interface IEncoders sets
-#define VOCAB_E_RESET VOCAB3('e','r','e')
-#define VOCAB_E_RESETS VOCAB4('e','r','e','s')
-#define VOCAB_ENCODER VOCAB3('e','n','c')
-#define VOCAB_ENCODERS VOCAB4('e','n','c','s')
-
-// interface IEncoders gets
-#define VOCAB_ENCODER_SPEED VOCAB3('e','s','p')
-#define VOCAB_ENCODER_SPEEDS VOCAB4('e','s','p','s')
-#define VOCAB_ENCODER_ACCELERATION VOCAB3('e','a','c')
-#define VOCAB_ENCODER_ACCELERATIONS VOCAB4('e','a','c','s')
-
-// interface IAmplifierControl sets/gets
-#define VOCAB_AMP_ENABLE VOCAB3('a','e','n')
-#define VOCAB_AMP_DISABLE VOCAB3('a','d','i')
-#define VOCAB_AMP_CURRENT VOCAB3('a','c','u')
-#define VOCAB_AMP_CURRENTS VOCAB4('a','c','u','s')
-#define VOCAB_AMP_MAXCURRENT VOCAB4('m','a','x','c')
-#define VOCAB_AMP_STATUS VOCAB4('a','s','t','a')
-
-// interface IControlLimits sets/gets
-#define VOCAB_LIMITS VOCAB4('l','l','i','m')
 
 /**
  * Helper object for reading config commands for the ServerControlBoard
@@ -123,40 +60,34 @@ public:
      * @return true on a successful read.
      */
     virtual bool read(ConnectionReader& connection);
+
+    /**
+     * Initialize the internal data.
+     * @return true/false on success/failure
+     */
+    virtual bool initialize();
 };
 
+
 /**
- * Helper object for reading control commands for the ServerControlBoard
- * class.
+ * Callback implementation after buffered input.
  */
-class yarp::dev::ControlHelper : public PortReader {
+class yarp::dev::ImplementCallbackHelper : public TypedReaderCallback<Vector> {
 protected:
-    yarp::dev::ServerControlBoard   *caller;
-    yarp::dev::IPidControl          *pid;
-    yarp::dev::IPositionControl     *pos;
-    yarp::dev::IEncoders            *enc;
-//            public IVelocityControl,
-    yarp::dev::IAmplifierControl    *amp;
-    yarp::dev::IControlLimits       *lim;
-//            public IControlCalibration
-//            public IControlDebug
+    IPositionControl *pos;
 
 public:
     /**
      * Constructor.
-     * @param x is the pointer to the instance of the object that uses the ControlHelper.
-     * This is required to recover the pointers to the interfaces that implement the responses
-     * to the commands.
+     * @param x is the instance of the container class using the callback.
      */
-    ControlHelper(yarp::dev::ServerControlBoard *x);
+    ImplementCallbackHelper(yarp::dev::ServerControlBoard *x);
 
     /**
-     * read from the connection.
-     * @param connection is a reference to a ConnectionReader object which encapsulates
-     * the current port connection.
-     * @return true on a successful read.
+     * Callback function.
+     * @param v is the Vector being received.
      */
-    virtual bool read(ConnectionReader& connection);
+    virtual void onRead(Vector& v);
 };
 
 /**
@@ -189,13 +120,14 @@ private:
 
     PortWriterBuffer<yarp::sig::Vector> state_buffer;
     PortReaderBuffer<yarp::sig::Vector> control_buffer;
+    yarp::dev::ImplementCallbackHelper callback_impl;
 
     yarp::dev::CommandsHelper command_reader;
-    yarp::dev::ControlHelper control_reader;
 
     PolyDriver poly;
 
     int               nj;
+    int               thread_period;
     IPidControl       *pid;
     IPositionControl  *pos;
     IEncoders         *enc;
@@ -206,13 +138,14 @@ private:
     // LATER: other interfaces here.
 
 public:
-    ServerControlBoard() : command_reader(this), control_reader(this) {
+    ServerControlBoard() : command_reader(this), callback_impl(this) {
         pid = NULL;
         pos = NULL;
         enc = NULL;
         amp = NULL;
         lim = NULL;
-		spoke = false;
+        nj = 0;
+        thread_period = 20; // ms.
     }
     
     virtual bool open() {
@@ -220,19 +153,28 @@ public:
     }
     
     virtual bool close() {
+        if (Thread::isRunning())
+            Thread::stop();
+
         // close the port connections here!
-        // Network::
+        rpc_p.close();
+        control_p.close();
+        state_p.close();
+
+        poly.close();
+
         return true;
     }
     
     virtual bool open(Searchable& prop) {
         // attach readers.
         rpc_p.setReader(command_reader);
-        control_p.setReader(control_reader);
-        // attach writers.
+        // attach buffers.
         state_buffer.attach(state_p);
         control_buffer.attach(control_p);
-        
+        // attach callback.
+        control_buffer.delegate(callback_impl);
+
         BottleBit *name;
         if (prop.check("subdevice",name)) {
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
@@ -257,13 +199,13 @@ public:
             String s((size_t)1024);
             ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString().c_str());
             rpc_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/control:i", name->asString().c_str());
+            ACE_OS::sprintf(&s[0], "%s/command:i", name->asString().c_str());
             control_p.open(s.c_str());
             ACE_OS::sprintf(&s[0], "%s/state:o", name->asString().c_str());
             state_p.open(s.c_str());
         } else {
             rpc_p.open("/controlboard/rpc:i");
-            control_p.open("/controlboard/control:i");
+            control_p.open("/controlboard/command:i");
             state_p.open("/controlboard/state:o");
         }
         
@@ -284,6 +226,10 @@ public:
                 ACE_OS::printf ("problems: controlling 0 axes\n");
                 return false;
             }
+
+            // initialization.
+            command_reader.initialize();
+
             start();
             return true;
         }
@@ -299,16 +245,22 @@ public:
      */
     virtual void run() {
         ACE_OS::printf("Server control board starting\n");
+        double before, now;
         while (!isStopping()) {
+            before = Time::now();
             yarp::sig::Vector& v = state_buffer.get();
-            v.size(10);
-
-            // getCurrentPosition()
-			if (!spoke) {
-                ACE_OS::printf("Network control board writing a %d vector of double...\n", v.size());
-				spoke = true;
-			}
+            v.size(nj);
+            enc->getEncoders(&v[0]);
             state_buffer.write();
+            now = Time::now();
+            if ((now-before)*1000 < thread_period) {
+                const double k = double(thread_period)/1000.0-(now-before);
+                //ACE_OS::printf("time: %.3f\n", k);
+			    Time::delay(k);
+            }
+            else {
+                ACE_OS::printf("Can't comply with the %d ms period\n", thread_period);
+            }
         }
         ACE_OS::printf("Server control board stopping\n");
     }
@@ -1157,7 +1109,7 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            Network::connect(s2.c_str(), s1.c_str());
+            Network::connect(s1.c_str(), s2.c_str());
         }
         
         state_buffer.attach(state_p);
@@ -1173,6 +1125,9 @@ public:
     }
 
     virtual bool close() {
+        rpc_p.close();
+        command_p.close();
+        state_p.close();
         return true;
     }
 
@@ -1500,7 +1455,15 @@ public:
      * @return true/false on success/failure
      */
     virtual bool getEncoders(double *encs) {
-        return getDoubleArray(VOCAB_ENCODERS, encs);
+        Vector *v = state_buffer.read(true);
+        if (v != NULL) {
+            ACE_ASSERT (v->size() == nj);
+            ACE_OS::memcpy (encs, &(v->operator [](0)), sizeof(double)*nj);
+            return true;
+        }
+
+        return false;
+        //return getDoubleArray(VOCAB_ENCODERS, encs);
     }
 
     /**
@@ -1579,7 +1542,13 @@ public:
      * @return true/false on success/failure
      */
     virtual bool positionMove(const double *refs) { 
-        return setDoubleArray(VOCAB_POSITION_MOVES, refs);
+        Vector& v = command_buffer.get();
+        v.size(nj);
+        ACE_OS::memcpy(&v[0], refs, sizeof(double)*nj);
+        command_buffer.write();
+        return true;
+
+        //return setDoubleArray(VOCAB_POSITION_MOVES, refs);
     }
 
     /** 
@@ -1871,7 +1840,14 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     enc = dynamic_cast<yarp::dev::IEncoders *> (caller);
     amp = dynamic_cast<yarp::dev::IAmplifierControl *> (caller);
     lim = dynamic_cast<yarp::dev::IControlLimits *> (caller);
-    pos->getAxes(&nj);
+    nj = 0;
+}
+
+bool yarp::dev::CommandsHelper::initialize() {
+    if (pos) {
+        return pos->getAxes(&nj);
+    }
+    return false;
 }
 
 bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
@@ -2407,27 +2383,29 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
     return ok;
 }
 
-// implementation of ControlHelper
-yarp::dev::ControlHelper::ControlHelper(yarp::dev::ServerControlBoard *x) { 
-    ACE_ASSERT (x != NULL);
-    caller = x; 
-    pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
+// ImplementCallbackHelper class.
+
+yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerControlBoard *x) {
+    pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
+    ACE_ASSERT (pos != 0);
 }
 
-bool yarp::dev::ControlHelper::read(ConnectionReader& connection) {
-    Vector v;
-    v.read(connection);
-    ACE_OS::printf("data received of size: %d\n", v.size());
+void yarp::dev::ImplementCallbackHelper::onRead(Vector& v) {
+    ACE_OS::printf("Data received on the control channel of size: %d\n", v.size());
 
-    // do I need to check for the type of data (e.g. Bottle)?
-    // Vector should be binary compatible with Bottle...
+    ACE_OS::printf("v: ");
+    int i;
+    for (i = 0; i < (int)v.size(); i++)
+        ACE_OS::printf("%.3f ", v[i]);
+    ACE_OS::printf("\n");
 
-    // LATER: switch depending on the control mode.
-    // ctrl->positionMove (&v[0]);
-
-    // no response is needed here.
-    return true;
+    if (pos) {
+        bool ok = pos->positionMove(&v[0]);
+        if (!ok)
+            ACE_OS::printf("Issues while trying to start a position move\n");
+    }
 }
+
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerControlBoard() {
