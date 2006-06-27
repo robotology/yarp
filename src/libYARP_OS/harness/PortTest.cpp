@@ -86,9 +86,10 @@ public:
 
     virtual void run() {
         for (int i=0; i<3; i++) {
-            Bottle b;
+            Bottle b,b2;
             p.readWithReply(b);
-            p.reply(b);
+            b2.addInt(b.get(0).asInt()+1);
+            p.reply(b2);
         }
     }
 };
@@ -96,6 +97,7 @@ public:
 class DelegatedWriter : public Thread {
 public:
     Port p;
+    int total;
 
     DelegatedWriter() {
         p.open("/writer");
@@ -103,11 +105,14 @@ public:
     }
 
     virtual void run() {
+        total = 0;
         for (int i=0; i<3; i++) {
             Bottle b, b2;
-            b.fromString("10 10 20");
+            b.addInt(i);
             p.write(b,b2);
+            total += b2.get(0).asInt(); // should be i+1
         }
+        // total should be 1+2+3 = 6
     }
 };
 
@@ -486,6 +491,7 @@ public:
         writer.start();
         writer.stop();
         reader.stop();
+        checkEqual(writer.total,6,"read/replies give right checksum");
     }
 
     virtual void runTests() {
