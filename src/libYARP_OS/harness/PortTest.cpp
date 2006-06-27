@@ -3,6 +3,7 @@
 #include <yarp/NameClient.h>
 #include <yarp/Companion.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortWriterBuffer.h>
@@ -73,6 +74,43 @@ public:
         owner.checkEqual(ct,1,"just one read");
     }
 };
+
+
+class DelegatedReader : public Thread {
+public:
+    Port p;
+
+    DelegatedReader() {
+        p.open("/reader");
+    }
+
+    virtual void run() {
+        for (int i=0; i<3; i++) {
+            Bottle b;
+            p.readWithReply(b);
+            p.reply(b);
+        }
+    }
+};
+
+class DelegatedWriter : public Thread {
+public:
+    Port p;
+
+    DelegatedWriter() {
+        p.open("/writer");
+        Network::connect("/writer","/reader");
+    }
+
+    virtual void run() {
+        for (int i=0; i<3; i++) {
+            Bottle b, b2;
+            b.fromString("10 10 20");
+            p.write(b,b2);
+        }
+    }
+};
+
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -439,6 +477,17 @@ public:
         }
     }
 
+
+    virtual void testDelegatedReadReply() {
+        report(0,"check delegated read and reply...");
+        DelegatedReader reader;
+        DelegatedWriter writer;
+        reader.start();
+        writer.start();
+        writer.stop();
+        reader.stop();
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -453,6 +502,8 @@ public:
         testWriteBuffer();
         testBufferedPort();
         testCloseOrder();
+
+        testDelegatedReadReply();
 
         nic.setFakeMode(false);
     }

@@ -92,6 +92,10 @@ public:
      */
     bool read(PortReader& reader);
 
+    bool readWithReply(PortReader& reader);
+
+    bool reply(PortWriter& writer);
+
     /**
      * set an external reader for port data
      * @param reader the external reader to use

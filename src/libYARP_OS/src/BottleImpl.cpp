@@ -116,7 +116,7 @@ void BottleImpl::fromString(const String& line) {
             back = false;
         } else {
             if (!begun) {
-                if (ch!=' '&&ch!='\t') {
+                if (ch!=' '&&ch!='\t'&&ch!='\n'&&ch!='\r') {
                     begun = true;
                 }
             }
@@ -146,7 +146,7 @@ void BottleImpl::fromString(const String& line) {
                     back = true;
                     arg += ch;
                 } else {
-                    if ((!quoted)&&(ch==' '||ch=='\t')
+                    if ((!quoted)&&(ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
                         &&(nestedAlt==0)
                         &&(nested==0)) {
                         smartAdd(arg);

@@ -17,16 +17,17 @@ private:
     Port& owner;
     SemaphoreImpl stateMutex;
     PortReader *readDelegate;
+    PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
-    bool readResult, readActive, readBackground;
+    bool readResult, readActive, readBackground, willReply;
     SemaphoreImpl produce, consume;
 public:
     PortCoreAdapter(Port& owner) : 
-        owner(owner), stateMutex(1), readDelegate(NULL), 
-        //readCreatorDelegate(NULL),
+        owner(owner), stateMutex(1), readDelegate(NULL), writeDelegate(NULL),
         readResult(false),
         readActive(false),
         readBackground(false),
+        willReply(false),
         produce(0), consume(0)
     {}
 
@@ -43,22 +44,46 @@ public:
         if (readDelegate!=NULL) {
             readResult = readDelegate->read(reader);
         }
+        if (!readBackground) {
+            readDelegate = NULL;
+            writeDelegate = NULL;
+        }
         stateMutex.post();
         if (!readBackground) {
+            produce.post();
+        }
+        if (readResult&&willReply) {
+            consume.wait();
+            stateMutex.wait();
+            ConnectionWriter *writer = reader.getWriter();
+            if (writer!=NULL) {
+                readResult = writeDelegate->write(*writer);
+            }
+            stateMutex.post();
             produce.post();
         }
         return readResult;
     }
 
-    bool read(PortReader& reader) {
+    bool read(PortReader& reader, bool willReply = false) {
         // called by user
 
         stateMutex.wait();
         readActive = true;
         readDelegate = &reader;
+        writeDelegate = NULL;
+        this->willReply = willReply;
         consume.post(); // happy consumer
         stateMutex.post();
 
+        produce.wait();
+        bool result = readResult;
+        return result;
+    }
+
+    bool reply(PortWriter& writer) {
+        writeDelegate = &writer;
+        consume.post();
         produce.wait();
         bool result = readResult;
         return result;
@@ -197,6 +222,18 @@ bool Port::write(PortWriter& writer, PortReader& reader) const {
 bool Port::read(PortReader& reader) {
     PortCoreAdapter& core = HELPER(implementation);
     return core.read(reader);
+}
+
+
+bool Port::readWithReply(PortReader& reader) {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.read(reader,true);
+}
+
+
+bool Port::reply(PortWriter& writer) {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.reply(writer);
 }
 
 /**

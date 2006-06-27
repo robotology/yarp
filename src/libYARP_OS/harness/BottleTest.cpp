@@ -280,8 +280,13 @@ public:
         checkEqual(bot.size(),2,"ok with tab");
         checkEqual(bot.get(0).asString().c_str(),"hello","pre-tab ok");
         checkEqual(bot.get(1).asInt(),10,"post-tab ok");
-    }
 
+        report(0, "checking pasa problem with lists missing last element...");
+        String s2 = "[set] [poss] (10.0 20.0 30.0 40.0 5.1)\n";
+        Bottle p;
+        p.fromString(s2.c_str());
+        checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
+    }
 
     virtual void runTests() {
         testClear();
