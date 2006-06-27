@@ -20,6 +20,9 @@ public:
     int receives;
 
     bool read(ConnectionReader& reader) {
+        if (reader.getSize()==0) {
+            return false;
+        }
         receives++;
         BottleImpl bot;
         bot.read(reader);

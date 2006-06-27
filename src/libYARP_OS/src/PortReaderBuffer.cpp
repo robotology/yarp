@@ -187,7 +187,10 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
             HELPER(implementation).consumeSema.wait();
         }
     }
-    bool ok = reader->read(connection);
+    bool ok = false;
+    if (connection.getSize()>0) {
+        ok = reader->read(connection);
+    }
     if (ok) {
         HELPER(implementation).stateSema.wait();
         HELPER(implementation).configure(reader,false,true);
