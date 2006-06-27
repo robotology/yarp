@@ -534,7 +534,7 @@ public:
         out.open("/out");
         in.open("/in");
         Network::connect("/out","/in");
-        in.delegate(callback);
+        in.useCallback(callback);
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();

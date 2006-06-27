@@ -34,7 +34,6 @@ public:
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
-        reader.delegate(*this);
     }
 
     virtual ~BufferedPort() {
@@ -114,8 +113,27 @@ public:
 		return reader.isClosed();
 	}
 
+    /**
+     * this method will be called with new data, as long as you've
+     * requested this be done by calling useOnRead()
+     */
     virtual void onRead(T& datum) {
         // override this to do something
+    }
+
+    /**
+     * Set an object whose onRead method will be called when data is 
+     * available.
+     */
+    void useCallback(TypedReaderCallback<T>& callback) {
+        reader.delegate(callback);
+    }
+
+    /**
+     * Call own onRead method()
+     */
+    void useCallback() {
+        reader.delegate(*this);
     }
 
 private:
