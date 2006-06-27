@@ -4,14 +4,32 @@
 
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Thread.h>
 
 namespace yarp {
     namespace os {
         template <class T> class PortReaderBuffer;
+        template <class T> class TypedReaderCallback;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        template <class T> class TypedReader;
+        template <class T> class TypedReaderThread;
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
     }
     class PortReaderBufferBase;
     class PortReaderBufferBaseCreator;
 }
+
+
+template <class T> 
+class yarp::os::TypedReaderCallback {
+public:
+    virtual ~TypedReaderCallback() {}
+
+    virtual void onRead(T& datum) = 0;
+};
+
+
+
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -71,7 +89,60 @@ protected:
     void *implementation;
 };
 
+
+
+
+template <class T> 
+class yarp::os::TypedReader {
+public:
+    /**
+     * Read the next available object from the port.
+     * @param wait true if the method should wait until an object is available
+     * @param forceStrict true if the method should never drop objects
+     * @return A pointer to an object read from the port, or NULL if none
+     * is available and waiting was not requested.  This object is owned
+     * by the communication system and should not be deleted by the user.
+     * The object is available to the user until the next call to 
+     * read(), after which it should not be accessed again.
+     */
+    virtual T *read(bool shouldWait=true,
+                    bool forceStrict=false) = 0;
+
+    virtual T *lastRead() = 0;
+
+    virtual ~TypedReader() {}
+};
+
+#include <stdio.h>
+template <class T>
+class yarp::os::TypedReaderThread : public Thread {
+public:
+    TypedReader<T> *reader;
+    TypedReaderCallback<T> *callback;
+
+    TypedReaderThread() { reader = 0 /*NULL*/;  callback = 0 /*NULL*/; }
+
+    TypedReaderThread(TypedReader<T>& reader,
+                      TypedReaderCallback<T>& callback) {
+        this->reader = &reader;
+        this->callback = &callback;
+        start(); // automatically starts running
+    }
+
+    virtual void run() {
+        if (reader!=0/*NULL*/&&callback!=0/*NULL*/) {
+            while (!isStopping()) {
+                if (reader->read()) {
+                    callback->onRead(*(reader->lastRead()));
+                }
+            }
+        }
+    }
+};
+
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+
 
 /**
  * Buffer incoming data to a port.
@@ -82,7 +153,9 @@ protected:
  * class, such as Bottle.
  */
 template <class T>
-class yarp::os::PortReaderBuffer : public yarp::os::PortReader, private yarp::PortReaderBufferBaseCreator {
+class yarp::os::PortReaderBuffer : public yarp::os::PortReader, 
+            public yarp::os::TypedReader<T>,
+            private yarp::PortReaderBufferBaseCreator {
 public:
 
     /**
@@ -94,6 +167,16 @@ public:
         implementation.setCreator(this);
         last = 0; /*NULL*/
         autoDiscard = true;
+        reader = 0 /*NULL*/;
+    }
+
+    virtual ~PortReaderBuffer() {
+        // it would also help to close the port, so
+        // that incoming inputs are interrupted
+        if (reader!=0/*NULL*/) {
+            delete reader;
+            reader = 0/*NULL*/;
+        }
     }
 
     /**
@@ -157,6 +240,17 @@ public:
         port.setReader(*this);
     }
 
+    /**
+     * Set an object whose onRead method will be called when data is 
+     * available.
+     */
+    void delegate(TypedReaderCallback<T>& callback) {
+        if (reader!=0/*NULL*/) {
+            delete reader;
+            reader = 0/*NULL*/;
+        }
+        reader = new TypedReaderThread<T>(*this,callback);
+    }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -191,6 +285,9 @@ private:
     yarp::PortReaderBufferBase implementation;
     bool autoDiscard;
     T *last;
+    TypedReaderThread<T> *reader;
 };
+
+
 
 #endif

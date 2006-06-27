@@ -4,6 +4,7 @@
 #include <yarp/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/PortWriterBuffer.h>
@@ -83,7 +84,7 @@ public:
     DelegatedReader() {
         p.open("/reader");
     }
-
+    
     virtual void run() {
         for (int i=0; i<3; i++) {
             Bottle b,b2;
@@ -116,6 +117,19 @@ public:
     }
 };
 
+
+class DelegatedCallback : public TypedReaderCallback<Bottle> {
+public:
+    Bottle saved;
+    Semaphore produce;
+
+    DelegatedCallback() : produce(0) {}
+
+    virtual void onRead(Bottle& bot) {
+        saved = bot;
+        produce.post();
+    }
+};
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -494,6 +508,25 @@ public:
         checkEqual(writer.total,6,"read/replies give right checksum");
     }
 
+    virtual void testReaderHandler() {
+        report(0,"check reader handler...");
+        Port in;
+        Port out;
+        DelegatedCallback callback;
+        out.open("/out");
+        in.open("/in");
+        Network::connect("/out","/in");
+        PortReaderBuffer<Bottle> reader;
+        reader.attach(in);
+        reader.delegate(callback);
+        Bottle src("10 10 20");
+        out.write(src);
+        callback.produce.wait();
+        checkEqual(callback.saved.size(),3,"object came through");
+        out.close();
+        in.close();
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -508,8 +541,8 @@ public:
         testWriteBuffer();
         testBufferedPort();
         testCloseOrder();
-
         testDelegatedReadReply();
+        testReaderHandler();
 
         nic.setFakeMode(false);
     }
