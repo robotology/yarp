@@ -247,6 +247,7 @@ public:
                            img.width(),img.height());
                     spoke = true;
                 }
+                writer.write();
             } else {
                 // for now, sound and image are mutually exclusive
                 Sound& snd = writerSound.get();
@@ -256,8 +257,8 @@ public:
                            snd.getSamples(),snd.getChannels());
                     spoke = true;
                 }
+                writerSound.write();
             }
-            writer.write();
         }
         printf("Server grabber stopping\n");
     }

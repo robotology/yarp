@@ -272,6 +272,17 @@ public:
                    "nested example");
     }
 
+
+    void testWhiteSpace() {
+        report(0,"testing white space behavior...");
+        Bottle bot;
+        bot.fromString("\t\thello\t10\n");
+        checkEqual(bot.size(),2,"ok with tab");
+        checkEqual(bot.get(0).asString().c_str(),"hello","pre-tab ok");
+        checkEqual(bot.get(1).asInt(),10,"post-tab ok");
+    }
+
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -286,6 +297,7 @@ public:
         testFind();
         testVocab();
         testBlob();
+        testWhiteSpace();
         testStandard();
     }
 

@@ -60,12 +60,14 @@ public:
 
         report(0,"more realistic config-style string");
         Property p5;
-        p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo bar\n");
+        p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo\t100\n");
         Bottle bot3(p5.toString().c_str());
         checkEqual(bot3.size(),2,"right number of terms");
         checkTrue(p5.getList("cat1")!=NULL,"category 1");
         checkEqual(p5.getList("cat1")->findGroup("size").get(1).asInt(),
                    10,"category 1, size, width");
+        checkEqual(p5.getList("cat2")->findGroup("foo").get(1).asInt(),
+                   100,"category 2, foo");
     }
 
     virtual void runTests() {

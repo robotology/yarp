@@ -14,7 +14,7 @@ String NetType::readLine(InputStream& is, int terminal) {
         int v = is.read();
         //ACE_OS::printf("got [%d]\n",v);
         char ch = (char)v;
-        if (v>=32) {
+        if (v!=0&&v!='\r'&&v!='\n') {
             buf += ch;
         }
         if (ch==terminal) {
