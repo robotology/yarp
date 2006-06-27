@@ -114,6 +114,10 @@ public:
     virtual T *read(bool shouldWait=true,
                     bool forceStrict=false) = 0;
 
+    /**
+     * Get the last data returned by read()
+     * @return pointer to last data returned by read(), or NULL on failure.
+     */
     virtual T *lastRead() = 0;
 
     virtual ~TypedReader() {}
@@ -229,10 +233,6 @@ public:
         return last;
     }
 
-    /**
-     * Wait for data.
-     * @return pointer to last data returned by read(), or NULL on failure.
-     */
     T *lastRead() {
         return last;
     }

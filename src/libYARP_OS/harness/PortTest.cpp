@@ -527,6 +527,21 @@ public:
         in.close();
     }
 
+    virtual void testReaderHandler2() {
+        report(0,"check reader handler, bufferedport style...");
+        BufferedPort<Bottle> in;
+        Port out;
+        DelegatedCallback callback;
+        out.open("/out");
+        in.open("/in");
+        Network::connect("/out","/in");
+        in.delegate(callback);
+        Bottle src("10 10 20");
+        out.write(src);
+        callback.produce.wait();
+        checkEqual(callback.saved.size(),3,"object came through");
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -543,6 +558,7 @@ public:
         testCloseOrder();
         testDelegatedReadReply();
         testReaderHandler();
+        testReaderHandler2();
 
         nic.setFakeMode(false);
     }

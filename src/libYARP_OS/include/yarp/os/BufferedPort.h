@@ -23,13 +23,13 @@ namespace yarp {
  * (see BufferedPort::read and BufferedPort::write).
  */
 template <class T>
-class yarp::os::BufferedPort : public Contactable {
+class yarp::os::BufferedPort : public Contactable, public TypedReader<T>
+{
 public:
 
     typedef T ContentType;
 
     BufferedPort() {
-        cachedRead = 0; /*NULL*/
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
@@ -99,35 +99,27 @@ public:
         writer.write();
     }
 
-    /**
-     * Read the next available object from the port.
-     * @param wait true if the method should wait until an object is available
-     * @return A pointer to an object read from the port, or NULL if none
-     * is available and waiting was not requested.  This object is owned
-     * by the communication system and should not be deleted by the user.
-     * The object is available to the user until the next call to 
-     * BufferedPort::read, after which it should not be accessed again.
-     */
-    T *read(bool wait = true) {
-        if (!wait) {
-            if (!reader.check()) { 
-                cachedRead = 0; /*NULL*/
-                return 0; /*NULL*/
-            }
-        }
-        cachedRead = reader.read();  
-        return cachedRead;
+    virtual T *read(bool shouldWait=true,
+                    bool forceStrict=false) {
+        return reader.read();
     }
 
-    T *lastRead() {
-        return cachedRead;
+    virtual T *lastRead() {
+        return reader.lastRead();
+    }
+
+    /**
+     * Set an object whose onRead method will be called when data is 
+     * available.
+     */
+    void delegate(TypedReaderCallback<T>& callback) {
+        reader.delegate(callback);
     }
 
 private:
     Port port;
     PortReaderBuffer<T> reader;
     PortWriterBuffer<T> writer;
-    T *cachedRead;
 };
 
 #endif
