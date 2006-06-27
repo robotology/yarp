@@ -189,8 +189,7 @@ public:
         input.open("/in");
         output.open("/out");
 
-        input.setReader(buf);
-        //buf.attach(input); // this is an alternative
+        buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         //Time::delay(0.2);
@@ -233,7 +232,7 @@ public:
         input.open("/in");
         output.open("/out");
 
-        input.setReader(buf);
+        buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("udp"));
         //Time::delay(0.2);
@@ -276,7 +275,7 @@ public:
         input.open("/in");
         output.open("/out");
 
-        input.setReader(buf);
+        buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("udp"));
         //Time::delay(0.2);
@@ -316,7 +315,7 @@ public:
         input.open("/in");
         output.open("/out");
 
-        input.setReader(buf);
+        buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         //Time::delay(0.2);

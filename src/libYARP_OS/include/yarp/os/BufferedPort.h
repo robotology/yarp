@@ -108,6 +108,10 @@ public:
         return reader.lastRead();
     }
 
+	virtual bool isClosed() {
+		return reader.isClosed();
+	}
+
     /**
      * Set an object whose onRead method will be called when data is 
      * available.

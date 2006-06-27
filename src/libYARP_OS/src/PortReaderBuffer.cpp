@@ -41,6 +41,7 @@ private:
     PortReader *prev;
 
 public:
+	Port *port;
     SemaphoreImpl contentSema;
     SemaphoreImpl consumeSema;
     SemaphoreImpl stateSema;
@@ -49,9 +50,14 @@ public:
         owner(owner), contentSema(0), consumeSema(0), stateSema(1) {
         autoRelease = true;
         prev = NULL;
+		port = NULL;
     }
 
     virtual ~PortReaderBufferBaseHelper() {
+		if (port!=NULL) {
+			port->close();
+			port = NULL;
+		}
         clear();
     }
 
@@ -134,6 +140,11 @@ public:
             }
         }
     }
+
+	void attach(Port& port) {
+		this->port = &port;
+		port.setReader(owner);
+	}
 };
 
 
@@ -190,7 +201,11 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     bool ok = false;
     if (connection.isValid()) {
         ok = reader->read(connection);
-    }
+	} else {
+		// this is a disconnection
+		// don't talk to this port ever again
+		HELPER(implementation).port = NULL;
+	}
     if (ok) {
         HELPER(implementation).stateSema.wait();
         HELPER(implementation).configure(reader,false,true);
@@ -215,6 +230,14 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     HELPER(implementation).stateSema.wait();
     HELPER(implementation).setAutoRelease(flag);
     HELPER(implementation).stateSema.post();
+}
+
+void PortReaderBufferBase::attachBase(yarp::os::Port& port) {
+    HELPER(implementation).attach(port);
+}
+
+bool PortReaderBufferBase::isClosed() {
+	return HELPER(implementation).port==NULL;
 }
 
 

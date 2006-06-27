@@ -46,7 +46,7 @@ public:
     virtual yarp::os::PortReader *create() = 0;
 };
 
-class yarp::PortReaderBufferBase {
+class yarp::PortReaderBufferBase : public yarp::os::PortReader {
 public:
     PortReaderBufferBase(unsigned int maxBuffer) : 
         maxBuffer(maxBuffer) {
@@ -86,6 +86,10 @@ public:
         return maxBuffer;
     }
 
+	void attachBase(yarp::os::Port& port);
+
+	bool isClosed();
+
 protected:
     void init();
 
@@ -120,10 +124,17 @@ public:
      */
     virtual T *lastRead() = 0;
 
+	/**
+	 * @return true if Port associated with this
+	 * reader has been closed
+	 */
+	virtual bool isClosed() = 0;
+
+
     virtual ~TypedReader() {}
 };
 
-#include <stdio.h>
+
 template <class T>
 class yarp::os::TypedReaderThread : public Thread {
 public:
@@ -141,7 +152,7 @@ public:
 
     virtual void run() {
         if (reader!=0/*NULL*/&&callback!=0/*NULL*/) {
-            while (!isStopping()) {
+            while (!isStopping()&&!reader->isClosed()) {
                 if (reader->read()) {
                     callback->onRead(*(reader->lastRead()));
                 }
@@ -163,7 +174,7 @@ public:
  * class, such as Bottle.
  */
 template <class T>
-class yarp::os::PortReaderBuffer : public yarp::os::PortReader, 
+class yarp::os::PortReaderBuffer : 
             public yarp::os::TypedReader<T>,
             private yarp::PortReaderBufferBaseCreator {
 public:
@@ -243,7 +254,8 @@ public:
      * @param port the port to attach to
      */
     void attach(Port& port) {
-        port.setReader(*this);
+        //port.setReader(*this);
+		implementation.attachBase(port);
     }
 
     /**
@@ -286,6 +298,9 @@ public:
         return new T;
     }
 
+	bool isClosed() {
+		return implementation.isClosed();
+	}
 
 private:
     yarp::PortReaderBufferBase implementation;

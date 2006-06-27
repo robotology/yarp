@@ -189,7 +189,7 @@ public:
         Port input, output;
         input.open("/in");
         output.open("/out");
-        input.setReader(buf);
+        buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         Time::delay(0.2);

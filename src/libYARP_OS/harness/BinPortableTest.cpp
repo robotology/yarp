@@ -24,7 +24,8 @@ public:
         Port input, output;
         input.open("/in");
         output.open("/out");
-        input.setReader(buf);
+        //input.setReader(buf);
+		buf.attach(input);
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         report(0,"writing...");
         output.write(i);
