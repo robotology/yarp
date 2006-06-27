@@ -63,13 +63,18 @@ public:
 		}
     }
 
+    ~ControlBoardHelper() 
+    {
+        dealloc();
+    }
+
     bool alloc(int n)
     {
         nj=n;
         if (nj<=0)
             return false;
 
-        if (zeros==0)
+        if (zeros!=0)
             dealloc();
 
         zeros=new double [nj];
@@ -77,6 +82,7 @@ public:
         axisMap=new int [nj];
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
+        ACE_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0);
 
         return true;
     }
@@ -252,7 +258,6 @@ public:
     inline int axes()
     { return nj; }
         
-
  	int nj;
 
 	double *zeros;
@@ -278,7 +283,7 @@ ImplementPositionControl<DERIVED, IMPLEMENT>::ImplementPositionControl(DERIVED *
 template <class DERIVED, class IMPLEMENT> 
 ImplementPositionControl<DERIVED, IMPLEMENT>::~ImplementPositionControl()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -446,8 +451,10 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
-    
+    ACE_ASSERT (temp != 0);
+
     return true;
 }
 
@@ -459,11 +466,10 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        {
-            delete castToMapper(helper);
-            helper=0;
-        }
-
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
     checkAndDestroy(temp);
 
     return true;
@@ -482,7 +488,7 @@ ImplementVelocityControl(DERIVED *y)
 template <class DERIVED, class IMPLEMENT> ImplementVelocityControl<DERIVED, IMPLEMENT>::
 ~ImplementVelocityControl()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -492,8 +498,10 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
-    
+    ACE_ASSERT (temp != 0);
+
     return true;
 }
 
@@ -505,10 +513,10 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        {
-            delete castToMapper(helper);
-            helper=0;
-        }
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
 
     checkAndDestroy(temp);
 
@@ -611,7 +619,7 @@ ImplementPidControl(DERIVED *y)
 template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT>::
 ~ImplementPidControl()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -621,8 +629,11 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
+    ACE_ASSERT (temp != 0);
     tmpPids=new Pid[size];
+    ACE_ASSERT (tmpPids != 0);
     
     return true;
 }
@@ -636,8 +647,8 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
         delete castToMapper(helper);
-
     helper=0;    
+
     checkAndDestroy(tmpPids);
     checkAndDestroy(temp);
 
@@ -862,7 +873,7 @@ ImplementEncoders<DERIVED, IMPLEMENT>::ImplementEncoders(DERIVED *y)
 template <class DERIVED, class IMPLEMENT> 
 ImplementEncoders<DERIVED, IMPLEMENT>::~ImplementEncoders()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -872,8 +883,9 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
-    
+    ACE_ASSERT (temp != 0);
     return true;
 }
 
@@ -885,10 +897,10 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        {
-            delete castToMapper(helper);
-            helper=0;
-        }
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
     
     checkAndDestroy(temp);
 
@@ -1031,7 +1043,7 @@ ImplementControlCalibration<DERIVED, IMPLEMENT>::ImplementControlCalibration(DER
 template <class DERIVED, class IMPLEMENT> 
 ImplementControlCalibration<DERIVED, IMPLEMENT>::~ImplementControlCalibration()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -1041,8 +1053,9 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
-    
+    ACE_ASSERT (temp != 0);
     return true;
 }
 
@@ -1054,10 +1067,10 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        {
-            delete castToMapper(helper);
-            helper=0;
-        }
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
     
     checkAndDestroy(temp);
 
@@ -1094,7 +1107,7 @@ ImplementControlLimits<DERIVED, IMPLEMENT>::ImplementControlLimits(DERIVED *y)
 template <class DERIVED, class IMPLEMENT> 
 ImplementControlLimits<DERIVED, IMPLEMENT>::~ImplementControlLimits()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -1106,9 +1119,9 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-
+    ACE_ASSERT (helper != 0);
     temp=new double [size];
-    
+    ACE_ASSERT (temp != 0);
     return true;
 }
 
@@ -1121,8 +1134,8 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
         delete castToMapper(helper);
-    
     helper=0;
+
     checkAndDestroy(temp);
 
     return true;
@@ -1170,7 +1183,7 @@ ImplementAmplifierControl<DERIVED, IMPLEMENT>::ImplementAmplifierControl(DERIVED
 template <class DERIVED, class IMPLEMENT> 
 ImplementAmplifierControl<DERIVED, IMPLEMENT>::~ImplementAmplifierControl()
 {
-    if (helper!=0) uninitialize();
+    uninitialize();
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -1182,9 +1195,11 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-
+    ACE_ASSERT (helper != 0);
     dTemp=new double[size];
+    ACE_ASSERT (dTemp != 0);
     iTemp=new int[size];
+    ACE_ASSERT (iTemp != 0);
     
     return true;
 }
