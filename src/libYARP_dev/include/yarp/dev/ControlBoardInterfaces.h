@@ -1236,5 +1236,73 @@ public:
     virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
 };
 
+
+/* Vocabs representing the above interfaces */
+
+#define VOCAB_SET VOCAB3('s','e','t')
+#define VOCAB_GET VOCAB3('g','e','t')
+#define VOCAB_IS VOCAB2('i','s')
+
+// interface IPidControl sets.
+#define VOCAB_PID VOCAB3('p','i','d')
+#define VOCAB_PIDS VOCAB4('p','i','d','s')
+#define VOCAB_REF VOCAB3('r','e','f')
+#define VOCAB_REFS VOCAB4('r','e','f','s')
+#define VOCAB_LIM VOCAB3('l','i','m')
+#define VOCAB_LIMS VOCAB4('l','i','m','s')
+#define VOCAB_RESET VOCAB3('r','e','s')
+#define VOCAB_DISABLE VOCAB3('d','i','s')
+#define VOCAB_ENABLE VOCAB3('e','n','a')
+
+// interface IPidControl gets.
+#define VOCAB_ERR VOCAB3('e','r','r')
+#define VOCAB_ERRS VOCAB4('e','r','r','s')
+#define VOCAB_OUTPUT VOCAB3('o','u','t')
+#define VOCAB_OUTPUTS VOCAB4('o','u','t','s')
+#define VOCAB_REFERENCE VOCAB3('r','e','f')
+#define VOCAB_REFERENCES VOCAB4('r','e','f','s')
+
+// interface IPositionControl gets
+#define VOCAB_AXES VOCAB4('a','x','e','s')
+#define VOCAB_MOTION_DONE VOCAB3('d','o','n')
+#define VOCAB_MOTION_DONES VOCAB4('d','o','n','s')
+
+// interface IPositionControl sets
+#define VOCAB_POSITION_MODE VOCAB4('p','o','s','d')
+#define VOCAB_POSITION_MOVE VOCAB3('p','o','s')
+#define VOCAB_POSITION_MOVES VOCAB4('p','o','s','s')
+#define VOCAB_RELATIVE_MOVE VOCAB3('r','e','l')
+#define VOCAB_RELATIVE_MOVES VOCAB4('r','e','l','s')
+#define VOCAB_REF_SPEED VOCAB3('v','e','l')
+#define VOCAB_REF_SPEEDS VOCAB4('v','e','l','s')
+#define VOCAB_REF_ACCELERATION VOCAB3('a','c','c')
+#define VOCAB_REF_ACCELERATIONS VOCAB4('a','c','c','s')
+#define VOCAB_STOP VOCAB3('s','t','o')
+#define VOCAB_STOPS VOCAB4('s','t','o','s')
+
+// interface IEncoders sets
+#define VOCAB_E_RESET VOCAB3('e','r','e')
+#define VOCAB_E_RESETS VOCAB4('e','r','e','s')
+#define VOCAB_ENCODER VOCAB3('e','n','c')
+#define VOCAB_ENCODERS VOCAB4('e','n','c','s')
+
+// interface IEncoders gets
+#define VOCAB_ENCODER_SPEED VOCAB3('e','s','p')
+#define VOCAB_ENCODER_SPEEDS VOCAB4('e','s','p','s')
+#define VOCAB_ENCODER_ACCELERATION VOCAB3('e','a','c')
+#define VOCAB_ENCODER_ACCELERATIONS VOCAB4('e','a','c','s')
+
+// interface IAmplifierControl sets/gets
+#define VOCAB_AMP_ENABLE VOCAB3('a','e','n')
+#define VOCAB_AMP_DISABLE VOCAB3('a','d','i')
+#define VOCAB_AMP_CURRENT VOCAB3('a','c','u')
+#define VOCAB_AMP_CURRENTS VOCAB4('a','c','u','s')
+#define VOCAB_AMP_MAXCURRENT VOCAB4('m','a','x','c')
+#define VOCAB_AMP_STATUS VOCAB4('a','s','t','a')
+
+// interface IControlLimits sets/gets
+#define VOCAB_LIMITS VOCAB4('l','l','i','m')
+
+
 #endif
 //
