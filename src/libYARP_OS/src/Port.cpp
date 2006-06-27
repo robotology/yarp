@@ -219,16 +219,11 @@ bool Port::write(PortWriter& writer, PortReader& reader) const {
 /**
  * read something from the port
  */
-bool Port::read(PortReader& reader) {
+bool Port::read(PortReader& reader, bool willReply) {
     PortCoreAdapter& core = HELPER(implementation);
-    return core.read(reader);
+    return core.read(reader,willReply);
 }
 
-
-bool Port::readWithReply(PortReader& reader) {
-    PortCoreAdapter& core = HELPER(implementation);
-    return core.read(reader,true);
-}
 
 
 bool Port::reply(PortWriter& writer) {

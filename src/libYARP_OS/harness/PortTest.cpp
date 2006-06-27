@@ -87,7 +87,7 @@ public:
     virtual void run() {
         for (int i=0; i<3; i++) {
             Bottle b,b2;
-            p.readWithReply(b);
+            p.read(b,true);
             b2.addInt(b.get(0).asInt()+1);
             p.reply(b2);
         }

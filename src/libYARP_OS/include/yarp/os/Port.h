@@ -90,10 +90,16 @@ public:
      * network connection - see for example Bottle
      * @return true iff the object is successfully read
      */
-    bool read(PortReader& reader);
+    bool read(PortReader& reader, bool willReply = false);
 
-    bool readWithReply(PortReader& reader);
-
+    /**
+     * Send an object as a reply to an object real from the port.
+     * Only call this method if you set the willReply flag to 
+     * true when you called Port::read.
+     * @param writer any object that knows how to write itself to a
+     * network connection - see for example Bottle
+     * @return true iff the object is successfully written
+     */
     bool reply(PortWriter& writer);
 
     /**
