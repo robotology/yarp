@@ -13,10 +13,11 @@
 #include <ace/OS.h>
 
 template <class T>
-inline void checkAndDestroy(T *p)
-{
-    if (p!=0)
+inline void checkAndDestroy(T* &p) {
+    if (p!=0) {
         delete [] p;
+        p = 0;
+    }
 }
 
 //////////////// Control Board Helper
