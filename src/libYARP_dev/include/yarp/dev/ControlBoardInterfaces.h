@@ -6,9 +6,6 @@
 #include <yarp/dev/ControlBoardPid.h>
 #include <yarp/dev/CalibratorInterfaces.h>
 
-#include <ace/OS.h>
-#include <ace/Log_Msg.h>
-
 /*! \file ControlBoardInterfaces.h define control board standard interfaces*/
 
 namespace yarp {

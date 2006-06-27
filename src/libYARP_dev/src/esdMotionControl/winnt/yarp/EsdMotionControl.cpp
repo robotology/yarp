@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.14 2006-06-26 17:14:25 natta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.15 2006-06-27 17:29:21 natta Exp $
 ///
 ///
 
@@ -620,7 +620,12 @@ bool EsdMotionControl::close (void)
     Thread::stop ();	/// stops the thread first (joins too).
 
     ImplementPositionControl<EsdMotionControl, IPositionControl>::uninitialize ();
-    // ImplementVelocityControl<>::uninitialize ();
+    ImplementVelocityControl<EsdMotionControl, IVelocityControl>::uninitialize();
+    ImplementPidControl<EsdMotionControl, IPidControl>::uninitialize();
+    ImplementEncoders<EsdMotionControl, IEncoders>::uninitialize();
+    ImplementControlCalibration<EsdMotionControl, IControlCalibration>::uninitialize();
+    ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>::uninitialize();
+    ImplementControlLimits<EsdMotionControl, IControlLimits>::uninitialize();
 
     checkAndDestroy<double> (_ref_positions);
     checkAndDestroy<double> (_ref_speeds);

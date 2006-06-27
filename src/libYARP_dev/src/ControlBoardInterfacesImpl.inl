@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 
 // removing this - problem if ESD device is not being compiled,
@@ -458,12 +459,13 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        delete castToMapper(helper);
-    
-    delete [] temp;
-    
-    helper=0;
-    temp=0;
+        {
+            delete castToMapper(helper);
+            helper=0;
+        }
+
+    checkAndDestroy(temp);
+
     return true;
 }
 /////////////////// Implement PostionControl
@@ -503,12 +505,13 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        delete castToMapper(helper);
-    
-    delete [] temp;
-    
-    helper=0;
-    temp=0;
+        {
+            delete castToMapper(helper);
+            helper=0;
+        }
+
+    checkAndDestroy(temp);
+
     return true;
 }
 
@@ -633,12 +636,11 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
         delete castToMapper(helper);
-    
-    delete [] temp;
-    delete [] tmpPids;
-    
-    helper=0;
-    temp=0;
+
+    helper=0;    
+    checkAndDestroy(tmpPids);
+    checkAndDestroy(temp);
+
     return true;
 }
 
@@ -883,12 +885,13 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        delete castToMapper(helper);
+        {
+            delete castToMapper(helper);
+            helper=0;
+        }
     
-    delete [] temp;
-    
-    helper=0;
-    temp=0;
+    checkAndDestroy(temp);
+
     return true;
 }
 
@@ -1051,12 +1054,13 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
 {
     if (helper!=0)
-        delete castToMapper(helper);
+        {
+            delete castToMapper(helper);
+            helper=0;
+        }
     
-    delete [] temp;
-    
-    helper=0;
-    temp=0;
+    checkAndDestroy(temp);
+
     return true;
 }
 
@@ -1118,10 +1122,9 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::uninitialize ()
     if (helper!=0)
         delete castToMapper(helper);
     
-    delete [] temp;
-    
     helper=0;
-    temp=0;
+    checkAndDestroy(temp);
+
     return true;
 }
 
