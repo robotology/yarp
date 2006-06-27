@@ -285,7 +285,7 @@ void PortCore::closeMain() {
     // Check if someone is waiting for input.  If so, wake them up
     if (reader!=NULL) {
         // send empty data out
-        //YARP_INFO(Logger::get(),"sending empty message to listener");
+        YARP_DEBUG(log,"sending empty message to listener");
         StreamConnectionReader sbr;
         Route route;
         StringInputStream sis;
