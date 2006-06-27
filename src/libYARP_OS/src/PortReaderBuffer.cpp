@@ -1,6 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/Thread.h>
 
 #include <yarp/Logger.h>
 #include <yarp/SemaphoreImpl.h>
@@ -11,6 +12,24 @@
 using namespace yarp;
 using namespace yarp::os;
 
+/*
+class PortReaderBufferThread : public Thread {
+public:
+    PortReader& reader;
+    PortReaderBuffer& buffer;
+
+    PortReaderBufferThread(PortReader& reader, PortReaderBuffer& buffer) : 
+        reader(reader), buffer(buffer) {
+    }
+
+    virtual void run() {
+        while (!isStopping()) {
+            if (buffer.read()) {
+            }
+        }
+    }
+};
+*/
 
 class PortReaderBufferBaseHelper {
 private:
@@ -180,6 +199,9 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         HELPER(implementation).configure(reader,true,false);
         HELPER(implementation).stateSema.post();
         //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
+
+        // important to give reader a shot anyway
+        HELPER(implementation).contentSema.post();        
     }
     return ok;
 }
@@ -190,3 +212,7 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     HELPER(implementation).setAutoRelease(flag);
     HELPER(implementation).stateSema.post();
 }
+
+
+
+

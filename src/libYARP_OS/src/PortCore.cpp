@@ -6,6 +6,8 @@
 #include <yarp/NameClient.h>
 #include <yarp/PortCoreInputUnit.h>
 #include <yarp/PortCoreOutputUnit.h>
+#include <yarp/StreamConnectionReader.h>
+#include <yarp/StringInputStream.h>
 #include <yarp/Name.h>
 
 #include <yarp/os/Network.h>
@@ -278,6 +280,18 @@ void PortCore::closeMain() {
         }
         face = NULL;
         listening = false;
+    }
+
+    // Check if someone is waiting for input.  If so, wake them up
+    if (reader!=NULL) {
+        // send empty data out
+        YARP_INFO(Logger::get(),"sending empty message to listener");
+        StreamConnectionReader sbr;
+        Route route;
+        StringInputStream sis;
+        sbr.reset(sis,NULL,route,0,true);
+        reader->read(sbr);
+        reader = NULL;
     }
 
     // fresh as a daisy

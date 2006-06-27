@@ -158,6 +158,10 @@
  * (You may have to give a path to wherever yarp is compiled if it is
  * not in your path). The process on windows in similar.
  *
+ * @section more_example_sec More examples
+ *
+ * See @subpage yarp_code_examples
+ *
  */
 
 

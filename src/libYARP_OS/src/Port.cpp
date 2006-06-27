@@ -34,6 +34,17 @@ public:
     virtual bool read(ConnectionReader& reader) {
         // called by comms code
 
+        if (reader.getSize()==0) {
+            // termination
+            stateMutex.wait();
+            if (readDelegate!=NULL) {
+                readResult = readDelegate->read(reader);
+            }
+            stateMutex.post();
+            produce.post();
+            return false;
+        }
+
         // wait for happy consumer - don't want to miss a packet
         if (!readBackground) {
             consume.wait();

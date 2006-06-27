@@ -1,0 +1,38 @@
+/**
+  @page yarp_code_examples Examples for YARP OS
+
+  \li @subpage yarp_code_example1 
+
+ */
+
+
+/**
+ @page yarp_code_example1 Simple one-way communication example
+
+Here we work through an example of using YARP communication.
+First, here are two programs, a sender and receiver, 
+example/os/simple_sender.cpp and example/os/simple_receiver.cpp
+
+Here's simple_sender.cpp:
+
+\include example/os/simple_sender.cpp
+
+Here's simple_receiver.cpp:
+
+\include example/os/simple_receiver.cpp
+
+Make sure you have a YARP name server running, then run the
+first program, then the second.  The sender will send a message
+to the receiver.
+
+After compiling, on four separate consoles, do:
+\code
+ yarp server
+ ./simple_sender
+ ./simple_receiver
+ yarp connect /out /in
+\endcode
+
+
+ */
+

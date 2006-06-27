@@ -20,6 +20,12 @@ namespace yarp {
 }
 
 
+/**
+ * Your data is ready!  If you want to get your data
+ * while leaving the port free to read more in the
+ * background, you'll can use a callback.
+ *
+ */
 template <class T> 
 class yarp::os::TypedReaderCallback {
 public:
