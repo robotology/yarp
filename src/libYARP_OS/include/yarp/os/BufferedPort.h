@@ -23,7 +23,8 @@ namespace yarp {
  * (see BufferedPort::read and BufferedPort::write).
  */
 template <class T>
-class yarp::os::BufferedPort : public Contactable, public TypedReader<T>
+class yarp::os::BufferedPort : public Contactable, 
+            public TypedReader<T>, public TypedReaderCallback<T>
 {
 public:
 
@@ -33,6 +34,7 @@ public:
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
+        reader.delegate(*this);
     }
 
     virtual ~BufferedPort() {
@@ -112,12 +114,8 @@ public:
 		return reader.isClosed();
 	}
 
-    /**
-     * Set an object whose onRead method will be called when data is 
-     * available.
-     */
-    void delegate(TypedReaderCallback<T>& callback) {
-        reader.delegate(callback);
+    virtual void onRead(T& datum) {
+        // override this to do something
     }
 
 private:
