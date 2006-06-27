@@ -188,7 +188,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         }
     }
     bool ok = false;
-    if (connection.getSize()>0) {
+    if (connection.isValid()) {
         ok = reader->read(connection);
     }
     if (ok) {
@@ -203,8 +203,9 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         HELPER(implementation).stateSema.post();
         //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
 
-        // important to give reader a shot anyway
-        HELPER(implementation).contentSema.post();        
+        // important to give reader a shot anyway, allowing proper closing
+        YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
+        HELPER(implementation).contentSema.post();
     }
     return ok;
 }

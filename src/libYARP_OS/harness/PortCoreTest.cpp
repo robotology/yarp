@@ -20,7 +20,7 @@ public:
     int receives;
 
     bool read(ConnectionReader& reader) {
-        if (reader.getSize()==0) {
+        if (!reader.isValid()) {
             return false;
         }
         receives++;

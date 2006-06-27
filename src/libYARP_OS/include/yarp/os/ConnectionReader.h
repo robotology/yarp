@@ -98,6 +98,12 @@ public:
      * available)
      */
     virtual Contact getLocalContact() = 0;
+
+    /**
+     * @return true if the reader is valid.  A reader may be invalid
+     * if a connection has closed.
+     */
+    virtual bool isValid() = 0;
 };
 
 #endif

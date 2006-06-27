@@ -34,7 +34,7 @@ public:
     virtual bool read(ConnectionReader& reader) {
         // called by comms code
 
-        if (reader.getSize()==0) {
+        if (!reader.isValid()) {
             // termination
             stateMutex.wait();
             if (readDelegate!=NULL) {
