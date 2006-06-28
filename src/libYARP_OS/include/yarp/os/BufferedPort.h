@@ -106,7 +106,7 @@ public:
 
     virtual T *read(bool shouldWait=true,
                     bool forceStrict=false) {
-        return reader.read();
+        return reader.read(shouldWait,forceStrict);
     }
 
     virtual T *lastRead() {
