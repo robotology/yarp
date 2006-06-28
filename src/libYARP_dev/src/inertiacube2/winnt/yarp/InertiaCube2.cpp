@@ -149,26 +149,30 @@ bool InertiaCube2::stop()
 
 bool InertiaCube2::open(yarp::os::Searchable &config)
 {
-    InertiaCube2Parameters par;
+	InertiaCube2Parameters par;
     Property p;
     p.fromString(config.toString());
 
-    par.comPort=p.findGroup("GENERAL").find("ComPort").asInt();
+	par.comPort=p.findGroup("GENERAL").find("ComPort").asInt();
 
-    return open(par);
+	return open(par);
 }
 
 bool InertiaCube2::open(const InertiaCube2Parameters &par)
 {
-    IntersenseResources &d=RES(system_resources);
+	if (system_resources!=0)
+		return false;
+
+    system_resources=(void *) (new IntersenseResources);
+
+	IntersenseResources &d=RES(system_resources);
 
     d._handle_tracker = ISD_OpenTracker(0, par.comPort, false, false);
-    
+	if (d._handle_tracker<0)
+		return false;
+
     ISD_GetTrackerConfig(d._handle_tracker, &d._info_tracker, true);
     ISD_GetStationConfig(d._handle_tracker, &d._info_station, 1, true);
-
-    if (d._handle_tracker==-1)
-        return false;
 
     // start thread
     return InertiaCube2::start();
@@ -185,9 +189,17 @@ bool InertiaCube2::close()
     IntersenseResources &d=RES(system_resources);
 
     if (ISD_CloseTracker( d._handle_tracker) == false)
+	{
+		delete ((IntersenseResources *)(system_resources));
+		system_resources=0;
         return false;
+	}
     else
+	{
+		delete ((IntersenseResources *)(system_resources));
+		system_resources=0;
         return true;
+	}
 }
 
 // include dll 
