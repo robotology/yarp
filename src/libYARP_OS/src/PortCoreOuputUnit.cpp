@@ -54,16 +54,21 @@ void PortCoreOutputUnit::run() {
         phase.post();
         while (!closing) {
             activate.wait();
+            //YARP_DEBUG(Logger::get(), "request to write");
             if (!closing) {
                 if (sending) {
                     YARP_DEBUG(Logger::get(), "write something in background");
                     sendHelper();
                     if (cachedTracker!=NULL) {
-                        getOwner().notifyCompletion(cachedTracker);
+                        void *t = cachedTracker;
+                        cachedTracker = NULL;
+                        sending = false;
+                        getOwner().notifyCompletion(t);
+                    } else {
+                        sending = false;
                     }
                 }
             }
-            sending = false;
             YARP_DEBUG(Logger::get(), "wrote something in background");
         }
         YARP_DEBUG(Logger::get(),

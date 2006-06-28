@@ -541,6 +541,41 @@ public:
         checkEqual(callback.saved.size(),3,"object came through");
     }
 
+
+    virtual void testStrictWriter() {
+        report(0,"check strict writer...");
+        BufferedPort<Bottle> in;
+        BufferedPort<Bottle> out;
+        in.open("/in");
+        out.open("/out");
+        
+        Network::connect("/out","/in");
+        
+        Bottle& outBot1 = out.prepare();
+        outBot1.fromString("hello world");
+        printf("Writing bottle 1: %s\n", outBot1.toString().c_str());
+        out.write(true);
+        
+        Bottle& outBot2 = out.prepare();
+        outBot2.fromString("2 3 5 7 11");
+        printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
+        out.write(true);
+        
+        Bottle *inBot1 = in.readStrict();
+        checkTrue(inBot1!=NULL,"got 1 of 2 items");
+        if (inBot1!=NULL) {
+            printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
+            checkEqual(inBot1->size(),2,"match for item 1");
+        }
+        Bottle *inBot2 = in.readStrict();
+        checkTrue(inBot2!=NULL,"got 2 of 2 items");
+        if (inBot2!=NULL) {
+            printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
+            checkEqual(inBot2->size(),5,"match for item 1");
+        }
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -558,6 +593,7 @@ public:
         testDelegatedReadReply();
         testReaderHandler();
         testReaderHandler2();
+        testStrictWriter();
 
         nic.setFakeMode(false);
     }

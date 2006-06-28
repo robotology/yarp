@@ -687,6 +687,7 @@ void PortCore::send(Writable& writer, Readable *reader) {
     }
     //writer.onCompletion();
     YMSG(("------- send out\n"));
+    //packetMutex.post();
     stateMutex.post();
     YMSG(("------- send out real\n"));
 
@@ -729,13 +730,14 @@ bool PortCore::isWriting() {
 
 
 void PortCore::notifyCompletion(void *tracker) {
+    YMSG(("starting notifyCompletion\n"));
     packetMutex.wait();
-    if (!finished) {
-        if (tracker!=NULL) {
-            ((PortCorePacket *)tracker)->complete();
-        }
+    if (tracker!=NULL) {
+        ((PortCorePacket *)tracker)->dec();
+        packets.checkPacket((PortCorePacket *)tracker);
     }
     packetMutex.post();
+    YMSG(("stopping notifyCompletion\n"));
 }
 
 
