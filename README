@@ -31,7 +31,7 @@ If you are using some version of Microsoft Windows, we recommend cmake
 If you are using some version of Linux, you can use cmake or 
 autoconf (see AUTOCONF section below).
 
-In all other cases, we recommend autoconf.
+If all else fails, you can fall back on autoconf.
 
 
 ===============================================================================
@@ -138,7 +138,7 @@ in the "lib" directory.
 
 ===============================================================================
 
-AUTOCONF (may be out of date at the moment)
+AUTOCONF (support is partial)
 --------
 
 This method requires the autoconf, automake, and libtool tools (e.g.
@@ -147,8 +147,9 @@ debian packages libtool autoconf automake1.8).
 If you checked out from CVS and have a configure.ac file but would
 like to produce a configure file, try:
 
-  ./bootstrap
+  ./bootstrap.sh
 
+You may need to modify this to match your autotool versions.
 You should now have a configure file.
 Try:
 

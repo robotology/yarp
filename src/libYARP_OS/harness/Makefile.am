@@ -6,16 +6,18 @@ check-local: harness
 	./harness regression
 
 harness_SOURCES = \
-AddressTest.cpp                   PortCoreTest.cpp \
-BottleTest.cpp                    PortTest.cpp \
-BufferedConnectionWriterTest.cpp  ProtocolTest.cpp \
-ElectionTest.cpp                  StreamConnectionReaderTest.cpp \
-harness.cpp                       StringInputStreamTest.cpp \
-NameConfigTest.cpp                StringOutputStreamTest.cpp \
-NameServerTest.cpp                StringTest.cpp \
-NetTypeTest.cpp                   ThreadTest.cpp \
-PortCommandTest.cpp               TimeTest.cpp \
-TestList.h
+TestList.h \
+AddressTest.cpp                   PortTest.cpp \
+BinPortableTest.cpp               PropertyTest.cpp \
+BottleTest.cpp                    ProtocolTest.cpp \
+BufferedConnectionWriterTest.cpp  StreamConnectionReaderTest.cpp \
+ElectionTest.cpp                  StringInputStreamTest.cpp \
+harness.cpp                       StringOutputStreamTest.cpp \
+NameConfigTest.cpp                StringTest.cpp \
+NameServerTest.cpp                ThreadTest.cpp \
+NetTypeTest.cpp                   TimeTest.cpp \
+PortCommandTest.cpp               VocabTest.cpp \
+PortCoreTest.cpp
 
 
 harness_DEPENDENCIES = $(top_builddir)/src/libYARP_OS/src/libYARP_OS.la

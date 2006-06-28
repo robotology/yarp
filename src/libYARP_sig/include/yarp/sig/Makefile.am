@@ -2,4 +2,4 @@
 
 yarpsigdir = $(includedir)/yarp/sig
 yarpsig_HEADERS = \
-Image.h  IplImage.h
+ImageDraw.h  ImageFile.h  Image.h  IplImage.h  Sound.h  Vector.h

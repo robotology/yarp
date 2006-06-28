@@ -4,18 +4,19 @@ INCLUDES = -I$(srcdir)/../include
 lib_LTLIBRARIES = libYARP_OS.la
 
 libYARP_OS_la_SOURCES = \
-Address.cpp             Logger.cpp             PortReaderBuffer.cpp \
-Bottle.cpp              McastCarrier.cpp       Protocol.cpp \
-BottleImpl.cpp          NameClient.cpp         Semaphore.cpp \
-Carriers.cpp            NameConfig.cpp         ShmemTwoWayStream.cpp \
-Companion.cpp           Name.cpp               SocketTwoWayStream.cpp \
-ConstString.cpp         NameServer.cpp         StreamConnectionReader.cpp \
-Contact.cpp             NetType.cpp            TcpFace.cpp \
-DgramTwoWayStream.cpp   Network.cpp            Thread.cpp \
-Dispatcher.cpp          PortCommand.cpp        ThreadImpl.cpp \
-Election.cpp            PortCore.cpp           Time.cpp \
-FakeFace.cpp            PortCoreInputUnit.cpp  UnitTest.cpp \
-FallbackNameClient.cpp  PortCoreOuputUnit.cpp \
-FallbackNameServer.cpp  Port.cpp
+Address.cpp                   Logger.cpp             PortWriterBuffer.cpp \
+Bottle.cpp                    McastCarrier.cpp       Property.cpp \
+BottleImpl.cpp                NameClient.cpp         Protocol.cpp \
+BufferedConnectionWriter.cpp  NameConfig.cpp         Random.cpp \
+Carriers.cpp                  Name.cpp               Semaphore.cpp \
+Companion.cpp                 NameServer.cpp         ShmemTwoWayStream.cpp \
+ConstString.cpp               NetType.cpp            SocketTwoWayStream.cpp \
+Contact.cpp                   Network.cpp          StreamConnectionReader.cpp \
+DgramTwoWayStream.cpp         PortCommand.cpp        TcpFace.cpp \
+Dispatcher.cpp                PortCore.cpp           Thread.cpp \
+Election.cpp                  PortCoreInputUnit.cpp  ThreadImpl.cpp \
+FakeFace.cpp                  PortCoreOuputUnit.cpp  Time.cpp \
+FallbackNameClient.cpp        Port.cpp               UnitTest.cpp \
+FallbackNameServer.cpp        PortReaderBuffer.cpp   Vocab.cpp
 
 libYARP_OS_la_LDFLAGS = -rpath $(libdir)
