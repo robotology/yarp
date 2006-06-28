@@ -16,17 +16,20 @@ struct InertiaCube2Parameters
     short comPort;
 };
 
-class yarp::dev::InertiaCube2 : public IGenericSensor, DeviceDriver
+class yarp::dev::InertiaCube2 : public IGenericSensor, public DeviceDriver
 {
  public:
     InertiaCube2();
     ~InertiaCube2();
-
+    
+    // IGenericSensor interface.
     virtual bool read(yarp::sig::Vector &out);
-    virtual bool getChannel(int *nc);
+    virtual bool getChannels(int *nc);
+    virtual  bool open(yarp::os::Searchable &config);
+    virtual bool close();
 
+    // Open the device
     bool open(const InertiaCube2Parameters &par);
-    bool close();
 
  private:
     bool start();

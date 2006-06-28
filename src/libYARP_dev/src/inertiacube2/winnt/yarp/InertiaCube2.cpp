@@ -27,8 +27,16 @@ class IntersenseResources: public Thread
 
     ~IntersenseResources()
     {
+        if (isRunning())
+            stop();
+
+        _bStreamStarted=false;
+
         if (_last!=0)
-            delete [] _last;
+            {
+                delete [] _last;
+                _last=0;
+            }
     }
 
     bool _bStreamStarted;
@@ -80,8 +88,12 @@ InertiaCube2::InertiaCube2()
 
 InertiaCube2::~InertiaCube2()
 {
+    // stop thread first
     if (system_resources!=0)
-        delete system_resources;
+        {
+            delete system_resources;
+            system_resources=0;
+        }
 }
 
 bool InertiaCube2::read(Vector &out)
@@ -107,7 +119,7 @@ bool InertiaCube2::read(Vector &out)
     return ret;
 }
 
-bool InertiaCube2::getChannel(int *nc)
+bool InertiaCube2::getChannels(int *nc)
 {
     *nc=nchannels;
     return true;
@@ -127,10 +139,23 @@ bool InertiaCube2::stop()
 {
     IntersenseResources &d=RES(system_resources);
 
-    d.stop();
+    if (d.isRunning())
+        d.stop();
+
     d._bStreamStarted=false;
 
     return true;
+}
+
+bool InertiaCube2::open(yarp::os::Searchable &config)
+{
+    InertiaCube2Parameters par;
+    Property p;
+    p.fromString(config.toString());
+
+    par.comPort=p.findGroup("GENERAL").find("ComPort").asInt();
+
+    return open(par);
 }
 
 bool InertiaCube2::open(const InertiaCube2Parameters &par)
@@ -149,4 +174,21 @@ bool InertiaCube2::open(const InertiaCube2Parameters &par)
     return InertiaCube2::start();
 }
 
+bool InertiaCube2::close()
+{
+    // stop thread
+    if (system_resources==0)
+        return false; //the device was never opened, or there was an error 
 
+    InertiaCube2::stop();
+
+    IntersenseResources &d=RES(system_resources);
+
+    if (ISD_CloseTracker( d._handle_tracker) == false)
+        return false;
+    else
+        return true;
+}
+
+// include dll 
+#include "../dd_orig/include/isense.c"

@@ -17,6 +17,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
 #cmakedefine ENABLE_microphone
+#cmakedefine ENABLE_inertiacube2
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -30,6 +31,10 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_microphone
 #include <yarp/MicrophoneDeviceDriver.h>
+#endif
+
+#ifdef ENABLE_inertiacube2
+#include <yarp/InertiaCube2.h>
 #endif
 
 extern DriverCreator *createRemoteFrameGrabber();
@@ -49,6 +54,11 @@ void Drivers::init() {
 #ifdef ENABLE_microphone
     add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone","grabber"));
 #endif
+
+#ifdef ENABLE_inertiacube2
+    add(new DriverCreatorOf<InertiaCube2>("inertiacube2", "inertiacube2"));
+#endif
+
     add(createTestFrameGrabber());
     add(createRemoteFrameGrabber());
     add(createServerFrameGrabber());

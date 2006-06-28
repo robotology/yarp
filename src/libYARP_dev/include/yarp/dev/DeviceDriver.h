@@ -25,14 +25,11 @@ class yarp::dev::DeviceDriver
 public:
     virtual ~DeviceDriver(){}
     /**
-     * Open the DeviceDriver. Specific devices might define 
-     * more suitable methods, with parameters.
+     * Open the DeviceDriver. 
+     * @param config is a list of parameters for the device.
      * @return true/false upon success/failure
      */
-    virtual bool open(){return true;}
-
-
-    virtual bool open(yarp::os::Searchable& config){ return open(); }
+    virtual bool open(yarp::os::Searchable& config){ return true; }
 
     /**
      * Close the DeviceDriver.
