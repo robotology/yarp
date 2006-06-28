@@ -9,9 +9,9 @@ it on one or two machines first, before trying to set it up for a
 cluster.
 
 To set YARP up on a single machine:
-  \li \link cmake Install CMake \endlink
-  \li \link install_ace Install ACE \endlink
-  \li Compile YARP
+  \li @subpage cmake "Install CMake"
+  \li @subpage install_ace "Install ACE"
+  \li @subpage install_yarp "Get YARP"
  
 Then test your installation before moving on to
 other YARP components.
