@@ -17,7 +17,7 @@ namespace yarp {
 class yarp::dev::IGenericSensor
 {
 public:
-    ~IGenericSensor(){}
+    virtual ~IGenericSensor(){}
 
     /* Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
