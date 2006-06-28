@@ -54,11 +54,18 @@ public:
     }
 
     virtual ~PortReaderBufferBaseHelper() {
+        Port *closePort = NULL;
+        stateSema.wait();
 		if (port!=NULL) {
-			port->close();
-			port = NULL;
+			closePort = port;
 		}
+        stateSema.post();
+        if (closePort!=NULL) {
+            closePort->close();
+        }
+        stateSema.wait();
         clear();
+        //stateSema.post();  // never give back mutex
     }
 
     void setAutoRelease(bool flag) {

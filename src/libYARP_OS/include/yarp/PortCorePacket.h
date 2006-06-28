@@ -19,6 +19,7 @@ public:
     Writable *content;
     int ct;
     bool owned;
+    bool completed;
 
     PortCorePacket() {
         prev_ = next_ = NULL;
@@ -28,6 +29,7 @@ public:
     }
 
     virtual ~PortCorePacket() {
+        complete();
         reset();
     }
 
@@ -51,6 +53,7 @@ public:
         content = writable;
         ct = 1;
         this->owned = owned;
+        completed = false;
     }
 
     void reset() {
@@ -60,6 +63,17 @@ public:
         content = NULL;
         ct = 0;
         owned = false;
+        completed = false;
+    }
+
+    void complete() {
+        if (!completed) {
+            if (getContent()!=NULL) {
+                YARP_DEBUG(Logger::get(), "Sending an onCompletion message");
+                getContent()->onCompletion();
+                completed = true;
+            }
+        }
     }
 };
 
@@ -93,9 +107,20 @@ public:
             if (clear) {
                 packet->reset();
             }
+            packet->completed = true;
             active.remove(packet);
             inactive.insert_tail(packet);
         }
+    }
+
+    bool completePacket(PortCorePacket *packet) {
+        if (packet!=NULL) {
+            if (packet->getCount()<=0) {
+                packet->complete();
+                return true;
+            }
+        }
+        return false;
     }
 
     bool checkPacket(PortCorePacket *packet) {
@@ -103,10 +128,7 @@ public:
             //YARP_INFO(Logger::get(), String("packet use count is ") +
             //NetType::toString(packet->getCount()));
             if (packet->getCount()<=0) {
-                if (packet->getContent()!=NULL) {
-                    YARP_DEBUG(Logger::get(), "Sending an onCompletion message");
-                    packet->getContent()->onCompletion();
-                }
+                packet->complete();
                 freePacket(packet);
                 return true;
             }

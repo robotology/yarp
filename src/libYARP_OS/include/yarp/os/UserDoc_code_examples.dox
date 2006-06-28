@@ -2,6 +2,7 @@
   @page yarp_code_examples Examples for YARP OS
 
   \li @subpage yarp_code_example1 
+  \li @subpage yarp_code_example_buffer
 
  */
 
@@ -36,3 +37,10 @@ After compiling, on four separate consoles, do:
 
  */
 
+
+/**
+ @page yarp_code_example_buffer Buffered port example
+
+\include example/os/internal_monologue.cpp
+
+*/

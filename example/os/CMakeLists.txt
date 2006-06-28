@@ -6,4 +6,4 @@ FIND_PACKAGE(YARP)
 ADD_EXECUTABLE(simple_sender simple_sender.cpp)
 ADD_EXECUTABLE(simple_receiver simple_receiver.cpp)
 ADD_EXECUTABLE(internal_monologue internal_monologue.cpp)
-
+ADD_EXECUTABLE(buffered_port buffered_port.cpp)

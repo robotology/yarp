@@ -202,27 +202,45 @@ void PortCore::closeMain() {
     YTRACE("PortCore::closeMain");
 
 
-    stateMutex.wait();
     // Politely pre-disconnect inputs
-    for (unsigned int i=0; i<units.size(); i++) {
-        PortCoreUnit *unit = units[i];
-        if (unit!=NULL) {
-            if (unit->isInput()) {
-                Route r = unit->getRoute();
-                String s = r.getFromName();
-                if (s.length()>=1) {
-                    if (s[0]=='/') {
-                        if (s!=getName()) {
-                            yarp::os::Network::disconnect(s.c_str(),
-                                                          getName().c_str(),
-                                                          true);
+    finishing = true;
+    bool done = false;
+    String prevName = "";
+    while (!done) {
+        done = true;
+        String removeName = "";
+        stateMutex.wait();
+        for (unsigned int i=0; i<units.size(); i++) {
+            PortCoreUnit *unit = units[i];
+            if (unit!=NULL) {
+                if (unit->isInput()) {
+                    if (!unit->isDoomed()) {
+                        Route r = unit->getRoute();
+                        String s = r.getFromName();
+                        if (s.length()>=1) {
+                            if (s[0]=='/') {
+                                if (s!=getName()) {
+                                    if (s!=prevName) {
+                                        removeName = s;
+                                        done = false;
+                                        break;
+                                    }
+                                }
+                            }
                         }
                     }
                 }
             }
         }
+        stateMutex.post();
+        if (!done) {
+            yarp::os::Network::disconnect(removeName.c_str(),
+                                          getName().c_str(),
+                                          true);
+            prevName = removeName;
+        }
     }
-    stateMutex.post();
+
 
 
     stateMutex.wait();
@@ -634,8 +652,10 @@ void PortCore::send(Writable& writer, Readable *reader) {
     //   waitAfterSend and waitBeforeSend,
     // set by setWaitAfterSend() and setWaitBeforeSend()
     if (!finished) {
+        packetMutex.wait();
         PortCorePacket *packet = packets.getFreePacket();
         packet->setContent(&writer);
+        packetMutex.post();
         YARP_ASSERT(packet!=NULL);
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
@@ -649,7 +669,9 @@ void PortCore::send(Writable& writer, Readable *reader) {
                     YMSG(("------- -- send\n"));
                     if (out!=NULL) {
                         ((PortCorePacket *)out)->dec();
+                        packetMutex.wait();
                         packets.checkPacket((PortCorePacket *)out);
+                        packetMutex.post();
                     }
                     YMSG(("------- -- dec\n"));
                 }
@@ -658,7 +680,9 @@ void PortCore::send(Writable& writer, Readable *reader) {
         YMSG(("------- send dec\n"));
         packet->dec();
         YMSG(("------- pack check\n"));
+        packetMutex.wait();
         packets.checkPacket(packet);
+        packetMutex.post();
         YMSG(("------- packed\n"));
     }
     //writer.onCompletion();
@@ -687,7 +711,9 @@ bool PortCore::isWriting() {
                         if (tracker!=NULL) {
                             //YARP_INFO(log,"tracker returned...");
                             ((PortCorePacket *)tracker)->dec();
+                            packetMutex.wait();
                             packets.checkPacket((PortCorePacket *)tracker);
+                            packetMutex.post();
                         }
                     }
                 }
@@ -699,4 +725,17 @@ bool PortCore::isWriting() {
 
     return writing;
 }
+
+
+
+void PortCore::notifyCompletion(void *tracker) {
+    packetMutex.wait();
+    if (!finished) {
+        if (tracker!=NULL) {
+            ((PortCorePacket *)tracker)->complete();
+        }
+    }
+    packetMutex.post();
+}
+
 

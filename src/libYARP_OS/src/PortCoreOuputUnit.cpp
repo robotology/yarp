@@ -58,6 +58,9 @@ void PortCoreOutputUnit::run() {
                 if (sending) {
                     YARP_DEBUG(Logger::get(), "write something in background");
                     sendHelper();
+                    if (cachedTracker!=NULL) {
+                        getOwner().notifyCompletion(cachedTracker);
+                    }
                 }
             }
             sending = false;

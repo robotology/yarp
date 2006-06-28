@@ -15,12 +15,15 @@ using namespace yarp::os;
 class PortWriterBufferBaseHelper : public PortWriterBufferManager {
 public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) : 
-        owner(owner), stateSema(1) {
+        owner(owner), stateSema(1), completionSema(0) {
         current = NULL;
         port = NULL;
+        finishing = false;
+        outCt = 0;
     }
 
     virtual ~PortWriterBufferBaseHelper() {
+        finishWrites();
         stateSema.wait();
     }
 
@@ -29,6 +32,21 @@ public:
         int ct = packets.getCount();
         stateSema.post();
         return ct;
+    }
+
+    void finishWrites() {
+        bool done = false;
+        while (!done) {
+            stateSema.wait();
+            done = (outCt == 0);
+            if (!done) {
+                finishing = true;
+            }
+            stateSema.post();
+            if (!done) {
+                completionSema.wait();
+            }
+        }
     }
 
     void *get() {
@@ -49,7 +67,13 @@ public:
         stateSema.wait();
         YARP_DEBUG(Logger::get(), "freeing up a writer buffer");
         packets.freePacket((PortCorePacket*)tracker,false);
+        outCt--;
+        bool sig = finishing;
+        finishing = false;
         stateSema.post();
+        if (sig) {
+            completionSema.post();
+        }
     }
 
 
@@ -61,10 +85,14 @@ public:
     }
 
     void write(bool strict) {
+        if (strict) {
+            finishWrites();
+        }
         stateSema.wait();
         PortWriter *active = current;
         stateSema.post();
         if (active!=NULL && port!=NULL) {
+            outCt++;
             port->write(*active);
         } 
     }
@@ -73,8 +101,11 @@ private:
     PortWriterBufferBase& owner;
     PortCorePackets packets;
     SemaphoreImpl stateSema;
+    SemaphoreImpl completionSema;
     Port *port;
     PortWriter *current;
+    bool finishing;
+    int outCt;
 };
 
 #define HELPER(x) (*((PortWriterBufferBaseHelper*)(x)))

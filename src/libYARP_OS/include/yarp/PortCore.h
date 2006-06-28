@@ -29,13 +29,14 @@ namespace yarp {
 class yarp::PortCore : public ThreadImpl, public PortManager, public Readable {
 public:
 
-    PortCore() : stateMutex(1), log("port",Logger::get()) {
+    PortCore() : stateMutex(1), packetMutex(1), log("port",Logger::get()) {
         // dormant phase
         listening = false;
         running = false;
         starting = false;
         closing = false;
         finished = false;
+        finishing = false;
         autoHandshake = true;
         waitBeforeSend = waitAfterSend = true;
         events = 0;
@@ -95,6 +96,8 @@ public:
         return readableCreator;
     }
 
+    void notifyCompletion(void *tracker);
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -130,7 +133,7 @@ private:
 private:
 
     // main internal PortCore state and operations
-    SemaphoreImpl stateMutex;
+    SemaphoreImpl stateMutex, packetMutex;
     Logger log;
     Face *face;
     String name;
@@ -138,6 +141,7 @@ private:
     Readable *reader;
     ReadableCreator *readableCreator;
     bool listening, running, starting, closing, finished, autoHandshake;
+    bool finishing;
     bool waitBeforeSend, waitAfterSend;
     int events;
     PortCorePackets packets;

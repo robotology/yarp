@@ -123,8 +123,8 @@ public:
     /**
      * Try to write the last buffer returned by PortWriterBuffer::get.
      */
-    void write() {
-        PortWriterBufferBase::write(true);
+    void write(bool forceStrict=false) {
+        PortWriterBufferBase::write(forceStrict);
     }
 
 };

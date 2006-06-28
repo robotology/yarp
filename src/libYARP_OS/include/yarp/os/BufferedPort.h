@@ -95,9 +95,13 @@ public:
      * it is now owned by the communications system.  The BufferedPort::prepare
      * method should be called again to get a fresh (or reused) object
      * guaranteed to be not in use by the communications system.
+     * @param forceStrict If this is true, wait until any previous sends 
+     * are complete.  If false, the current object will not be sent on
+     * connections that are currently busy.
+     *
      */
-    void write() {
-        writer.write();
+    void write(bool forceStrict=false) {
+        writer.write(forceStrict);
     }
 
     virtual T *read(bool shouldWait=true,
@@ -130,7 +134,8 @@ public:
     }
 
     /**
-     * Call own onRead method()
+     * Call own onRead() method -- user can override this method
+     * to be informed about data as it arrives
      */
     void useCallback() {
         reader.delegate(*this);

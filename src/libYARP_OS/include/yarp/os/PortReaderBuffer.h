@@ -10,8 +10,8 @@ namespace yarp {
     namespace os {
         template <class T> class PortReaderBuffer;
         template <class T> class TypedReaderCallback;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
         template <class T> class TypedReader;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         template <class T> class TypedReaderThread;
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
     }
@@ -32,6 +32,68 @@ public:
     virtual ~TypedReaderCallback() {}
 
     virtual void onRead(T& datum) = 0;
+};
+
+template <class T> 
+class yarp::os::TypedReader {
+public:
+    /**
+     * Read an available object from the port.
+     * @param wait true if the method should wait until an object is available
+     * @param forceStrict true if the method should never drop objects
+     * @return A pointer to an object read from the port, or NULL if none
+     * is available and waiting was not requested.  This object is owned
+     * by the communication system and should not be deleted by the user.
+     * The object is available to the user until the next call to 
+     * one of the read methods, after which it should not be accessed again.
+     */
+    virtual T *read(bool shouldWait=true,
+                    bool forceStrict=false) = 0;
+
+
+    /**
+     * Read the next available object from the port.  The method
+     * does not drop older objects even if newer ones are available.
+     * @param wait true if the method should wait until an object is available
+     * @return A pointer to an object read from the port, or NULL if none
+     * is available and waiting was not requested.  This object is owned
+     * by the communication system and should not be deleted by the user.
+     * The object is available to the user until the next call to 
+     * one of the read methods, after which it should not be accessed again.
+     */
+    virtual T *readStrict(bool shouldWait=true) {
+        return read(shouldWait,true);
+    }
+
+    /**
+     * Read the newest available object from the port.  The method
+     * drops older objects if newer ones are available.
+     * @param wait true if the method should wait until an object is available
+     * @return A pointer to an object read from the port, or NULL if none
+     * is available and waiting was not requested.  This object is owned
+     * by the communication system and should not be deleted by the user.
+     * The object is available to the user until the next call to 
+     * one of the read methods, after which it should not be accessed again.
+     */
+    virtual T *readNewest(bool shouldWait=true) {
+        return read(shouldWait,false);
+    }
+
+
+    /**
+     * Get the last data returned by read()
+     * @return pointer to last data returned by read(), or NULL on failure.
+     */
+    virtual T *lastRead() = 0;
+
+	/**
+	 * @return true if Port associated with this
+	 * reader has been closed
+	 */
+	virtual bool isClosed() = 0;
+
+
+    virtual ~TypedReader() {}
 };
 
 
@@ -101,38 +163,6 @@ protected:
 
 
 
-
-template <class T> 
-class yarp::os::TypedReader {
-public:
-    /**
-     * Read the next available object from the port.
-     * @param wait true if the method should wait until an object is available
-     * @param forceStrict true if the method should never drop objects
-     * @return A pointer to an object read from the port, or NULL if none
-     * is available and waiting was not requested.  This object is owned
-     * by the communication system and should not be deleted by the user.
-     * The object is available to the user until the next call to 
-     * read(), after which it should not be accessed again.
-     */
-    virtual T *read(bool shouldWait=true,
-                    bool forceStrict=false) = 0;
-
-    /**
-     * Get the last data returned by read()
-     * @return pointer to last data returned by read(), or NULL on failure.
-     */
-    virtual T *lastRead() = 0;
-
-	/**
-	 * @return true if Port associated with this
-	 * reader has been closed
-	 */
-	virtual bool isClosed() = 0;
-
-
-    virtual ~TypedReader() {}
-};
 
 
 template <class T>
