@@ -510,7 +510,6 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
     Address parts = Name(dest).toAddress();
     Address address = NameClient::getNameClient().queryName(parts.getRegName());
     if (address.isValid()) {
-        bw.appendLine(String("Adding output to ") + dest);
         OutputProtocol *op = NULL;
         try {
             op = Carriers::connect(address);
@@ -521,11 +520,12 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
         } catch (IOException e) { /* ok */ }
         if (op!=NULL) {
             addOutput(op);
+            bw.appendLine(String("Added output to ") + dest);
         } else {
-            bw.appendLine(String("error - cannot connect to ") + dest);
+            bw.appendLine(String("Error - cannot connect to ") + dest);
         }
     } else {
-        bw.appendLine(String("error - do not know how to connect to ") + dest);
+        bw.appendLine(String("Error - do not know how to connect to ") + dest);
     }
 
     if(os!=NULL) {
