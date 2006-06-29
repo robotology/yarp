@@ -23,20 +23,24 @@ namespace yarp {
 /**
  * \ingroup key_class
  *
- * A simple collection of objects that can be be
- * transported across the network in a portable way.
+ * A simple collection of objects that can be
+ * described and transmitted in a portable way.
+ * Objects are stored in a list, which you can add to and access.
  * It is handy to use until you feel the need to make your own more 
  * efficient formats for transmission.
- * Objects are stored in a list, which you can add to and access.
- * To do that, you just need to make a class that is
- * a PortReader and a PortWriter.
- * The name of this comes from the idea of throwing a "message in a bottle"
- * into the network and hoping it will eventually wash ashore
- * somewhere else.  In the very early days of YARP, that is what
- * communication felt like.
+ *
+ * Here's an example of using a Bottle:
+ * \include example/os/bottle_add.cpp
+ *
+ * This class has a well-defined, documented representation in both
+ * binary and text form.  The name of this class comes from the idea
+ * of throwing a "message in a bottle" into the network and hoping it
+ * will eventually wash ashore somewhere else.  In the very early days
+ * of YARP, that is what communication felt like.
  */
 class yarp::os::Bottle : public Portable, public Searchable {
 public:
+
 
     /**
      * Constructor.  The bottle is initially empty.
@@ -58,18 +62,6 @@ public:
      */
     Bottle(const Bottle& bottle);
 
-    /**
-     * Assignment operator.
-     * @param bottle The object to copy
-     * @return the Bottle itself
-     */
-    const Bottle& operator = (const Bottle& bottle);
-
-
-    /**
-     * Destructor.
-     */
-    virtual ~Bottle();
 
     /**
      * Empties the bottle of any objects it contains.
@@ -135,6 +127,14 @@ public:
     Value& get(int x) const;
 
     /**
+     * Gets the number of elements in the bottle
+     * @return number of elements in the bottle
+     */
+    int size() const;
+
+
+
+    /**
      * Initializes bottle from a string, which should contain a textual
      * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\"" 
      * would give a bottle with 4 elements: an integer, two floating
@@ -171,11 +171,29 @@ public:
      */
     bool read(ConnectionReader& reader);
 
+
+
+
+    virtual Value& find(const char *txt);
+
+    Bottle& findGroup(const char *key);
+
+
+
     /**
-     * Gets the number of elements in the bottle
-     * @return number of elements in the bottle
+     * Assignment operator.
+     * @param bottle The object to copy
+     * @return the Bottle itself
      */
-    int size() const;
+    const Bottle& operator = (const Bottle& bottle);
+
+
+    /**
+     * Destructor.
+     */
+    virtual ~Bottle();
+
+
 
     /**
      * Copy all or part of another Bottle
@@ -184,10 +202,6 @@ public:
      * @param len The number of elements to copy (-1 for all)
      */
     void copy(const Bottle& alt, int first = 0, int len = -1);
-
-    virtual Value& find(const char *txt);
-
-    Bottle& findGroup(const char *key);
 
     /**
      * A special Bottle with no content
@@ -203,7 +217,7 @@ public:
      */
     virtual bool operator == (const Bottle& alt);
 
-   /**
+    /**
      * Inequality test.
      * @param alt the value to compare against
      * @result true iff the values are not equal
@@ -211,6 +225,11 @@ public:
     virtual bool operator != (const Bottle& alt) {
         return !((*this)==alt);
     }
+    
+    
+
+
+
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
