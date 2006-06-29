@@ -287,6 +287,12 @@ public:
         checkEqual(p.get(2).asList()->size(),5,"newline test checks out");
     }
 
+    void testNestDetection() {
+        report(0,"testing nesting detection...");
+        checkTrue(!BottleImpl::isComplete("(1 2 3"), "incomplete");
+        checkTrue(BottleImpl::isComplete("(1 2 3)"), "complete");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -303,6 +309,7 @@ public:
         testBlob();
         testWhiteSpace();
         testStandard();
+        testNestDetection();
     }
 
     virtual String getName() {

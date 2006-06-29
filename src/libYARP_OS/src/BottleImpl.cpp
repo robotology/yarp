@@ -161,6 +161,67 @@ void BottleImpl::fromString(const String& line) {
     }
 }
 
+bool BottleImpl::isComplete(const char *txt) {
+    bool quoted = false;
+    bool back = false;
+    bool begun = false;
+    int nested = 0;
+    int nestedAlt = 0;
+    String nline = txt;
+    nline += " ";
+
+    for (unsigned int i=0; i<nline.length(); i++) {
+        char ch = nline[i];
+        if (back) {
+            back = false;
+        } else {
+            if (!begun) {
+                if (ch!=' '&&ch!='\t'&&ch!='\n'&&ch!='\r') {
+                    begun = true;
+                }
+            }
+            if (begun) {
+                if (ch=='\"') {
+                    if (!quoted) {
+                        quoted = true;
+                    } else {
+                        quoted = false;
+                    }
+                }
+                if (!quoted) {
+                    if (ch=='(') {
+                        nested++;
+                    }
+                    if (ch==')') {
+                        nested--;
+                    }
+                    if (ch=='{') {
+                        nestedAlt++;
+                    }
+                    if (ch=='}') {
+                        nestedAlt--;
+                    }
+                }
+                if (ch=='\\') {
+                    back = true;
+                    //arg += ch;
+                } else {
+                    if ((!quoted)&&(ch==' '||ch=='\t'||ch=='\n'||ch=='\r')
+                        &&(nestedAlt==0)
+                        &&(nested==0)) {
+                        //smartAdd(arg);
+                        begun = false;
+                    } else {
+                        //arg += ch;
+                    }
+                }
+            }
+        }
+    }
+    return nested==0 && nestedAlt==0 && quoted==false;
+}
+
+
 String BottleImpl::toString() {
     String result = "";
     for (unsigned int i=0; i<content.size(); i++) {
@@ -325,7 +386,12 @@ bool BottleImpl::read(ConnectionReader& reader) {
                     str = str.substr(0,str.length()-1);
                     str += reader.expectText().c_str();
                 } else {
-                    done = true;
+                    if (isComplete(str.c_str())) {
+                        done = true;
+                    } else {
+                        str += "\n";
+                        str += reader.expectText().c_str();
+                    }
                 }
             }
             fromString(str);

@@ -338,6 +338,9 @@ public:
         return storeNull;
     }
 
+    // check if a piece of text is a completed bottle
+    static bool isComplete(const char *txt);
+
 private:
     static StoreNull storeNull;
 

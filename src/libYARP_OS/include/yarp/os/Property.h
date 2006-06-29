@@ -27,7 +27,7 @@ namespace yarp {
  * Property objects can be searched efficiently.
  *
  */
-class yarp::os::Property : public Searchable {
+class yarp::os::Property : public Searchable, public Portable {
 
 public:
     using Searchable::check;
@@ -72,6 +72,9 @@ public:
 
     // documented in Searchable
     ConstString toString() const;
+
+    bool read(ConnectionReader& reader);
+    bool write(ConnectionWriter& writer);
 
 private:
     void *implementation;

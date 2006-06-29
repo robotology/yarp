@@ -369,3 +369,21 @@ void Property::fromConfig(const char *txt) {
 }
 
 
+bool Property::read(ConnectionReader& reader) {
+    // for now just delegate to Bottle
+    Bottle b;
+    bool ok = b.read(reader);
+    if (ok) {
+        fromString(b.toString());
+    }
+    return ok;
+}
+
+
+bool Property::write(ConnectionWriter& writer) {
+    // for now just delegate to Bottle
+    Bottle b(toString());
+    return b.write(writer);
+}
+
+
