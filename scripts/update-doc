@@ -7,4 +7,12 @@ doxygen Doxyfile.part
 doxygen Doxyfile
 
 cd doc/min/latex
+
+# we don't include classes so fix up unresolved links
+for f in `ls *.tex`; do
+    perl -pe "s/p\....pageref\{\}/see class docs/g" < $f > junk.tex
+    mv junk.tex $f
+done
+
+
 make pdf

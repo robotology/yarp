@@ -1,18 +1,22 @@
+
 /**
   @page yarp_code_examples Examples for YARP OS
 
-  \li @subpage yarp_code_example1 
+  These examples are available in the examples/os directory of the YARP
+  source code -- see tips on @subpage install_yarp "getting YARP".
+
+  \li @subpage yarp_code_example_pair
   \li @subpage yarp_code_example_buffer
 
  */
 
 
 /**
- @page yarp_code_example1 Simple one-way communication example
+ @page yarp_code_example_pair Simple communicating programs example
 
-Here we work through an example of using YARP communication.
-First, here are two programs, a sender and receiver, 
-example/os/simple_sender.cpp and example/os/simple_receiver.cpp
+Here we work through an example of using YARP communication between programs.
+We will have two programs, a sender and receiver, 
+simple_sender.cpp and simple_receiver.cpp
 
 Here's simple_sender.cpp:
 
@@ -22,18 +26,54 @@ Here's simple_receiver.cpp:
 
 \include example/os/simple_receiver.cpp
 
-Make sure you have a YARP name server running, then run the
-first program, then the second.  The sender will send a message
-to the receiver.
+Here's an example CMakeLists.txt file to help with compiling
+if you use \link cmake CMake \endlink
+ (of course
+you can compile any way you like, you don't have to use CMake).
+You can set the YARP_ROOT environment variable to point to
+your YARP installation, or give the path through the CMake GUI.
 
-After compiling, on four separate consoles, do:
-\code
- yarp server
- ./simple_sender
- ./simple_receiver
- yarp connect /out /in
-\endcode
+\verbatim
+SET(YARP_DIR "$ENV{YARP_ROOT}" CACHE LOCATION "where is yarp?")
+FIND_PACKAGE(YARP)
+ADD_EXECUTABLE(simple_sender simple_sender.cpp)
+ADD_EXECUTABLE(simple_receiver simple_receiver.cpp)
+\endverbatim
 
+After compiling, on three separate 
+consoles, do:
+\verbatim
+ yarp server               # this starts the YARP name server
+ ./simple_sender           # this runs the sender
+ ./simple_receiver         # this runs the receiver
+\endverbatim
+
+Or in windows that would be:
+\verbatim
+ yarp.exe server           # this starts the YARP name server
+ simple_sender.exe         # this runs the sender
+ simple_receiver.exe       # this runs the receiver
+\endverbatim
+
+You'll need to be in the right directories to run the executables,
+or have them in your path.
+
+Here's what you should see on the terminal for the sender:
+\verbatim
+Sent message: testing 1 of 100
+Sent message: testing 2 of 100
+Sent message: testing 3 of 100
+Sent message: testing 4 of 100
+...
+\endverbatim
+
+Here's what you should see on the terminal for the receiver:
+\verbatim
+yarp: Receiving input from /sender to /receiver using tcp
+Got message: testing 7 of 100
+yarp: Removing input from /sender to /receiver
+\endverbatim
+You can run the receiver many times to connect and reconnect.
 
  */
 
@@ -41,6 +81,7 @@ After compiling, on four separate consoles, do:
 /**
  @page yarp_code_example_buffer Buffered port example
 
-\include example/os/internal_monologue.cpp
+\include example/os/buffered_port.cpp
 
 */
+

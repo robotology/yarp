@@ -104,6 +104,19 @@ public:
         writer.write(forceStrict);
     }
 
+    /**
+     * Write the current object being returned by BufferedPort::prepare,
+     * waiting until any previous sends are complete.
+     * That object should no longer be touched by the user of this class --
+     * it is now owned by the communications system.  The BufferedPort::prepare
+     * method should be called again to get a fresh (or reused) object
+     * guaranteed to be not in use by the communications system.
+     *
+     */
+    void writeStrict() {
+        write(true);
+    }
+
     virtual T *read(bool shouldWait=true,
                     bool forceStrict=false) {
         return reader.read(shouldWait,forceStrict);

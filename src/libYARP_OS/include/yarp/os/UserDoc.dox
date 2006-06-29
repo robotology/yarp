@@ -25,9 +25,9 @@
  *
  * Need help installing and compiling YARP?  See @subpage install.
  *
- * Want to start using the library?  Start with @subpage yarp_os.
+ * Want to start using the library?  Check out some @subpage yarp_code_examples "example code" or read about the @subpage yarp_os "YARP OS library".
  *
- * Do you want to understand how to add a device driver to libYARP_dev? Have 
+ * Do you want to understand how to add a new device driver?  Have 
  * a look at @subpage dev-how-to.
  
  * If you are interested in network interoperability, your can read some \subpage terms "specification of YARP terms and protocols".
@@ -95,11 +95,6 @@
  * \link yarp::os::Port Port\endlink
  * Network.
  * 
- * To install and test yarp,
- * see our website, http://yarp0.sourceforge.net,
- * where you can explore the classes
- * provided in the YARP OS library.  
- *
  * @section what_is_a_port What is a Port?
  *
  * A \link yarp::os::Port Port\endlink is an object that can read and
@@ -110,57 +105,22 @@
  * Ports are specialized for streaming communication, such as camera
  * images or motor commands.  You can switch network protocols for any
  * or all your connections without changing a line of code.
+ * For more details, see 
+ * \subpage terms "specification of YARP terms and protocols".
+
  *
- * @section example_sec A simple code example
+ * For examples, see @subpage yarp_code_examples.
  *
- * Here we work through an example of using YARP communication.
- * First, here are two programs, a sender and receiver, 
- * \ref simple_sender.cpp and \ref simple_receiver.cpp
+ * @section important_yarp_os_classes Important classes
  *
- * Here's simple_sender.cpp:
- *
- * \include example/os/simple_sender.cpp
- *
- * Here's simple_receiver.cpp:
- *
- * \include example/os/simple_receiver.cpp
- *
- * Make sure you have a YARP name server running, then run the
- * first program, then the second.  The sender will send a message
- * to the receiver.
- *
- * @subsection example_compiling Compiling the examples
- *
- * To compile these programs you need two libraries: yarp and ace.
- * These instructions assume you have installed them - if not, see
- * their websites for instructions.  The source of these programs
- * and a makefile are in the directory src/libYARP_OS2/examples
- *
- * If you're on a UNIX machine, you can compile with:
- * \code
- g++ simple_receiver.cpp -o simple_receiver -lACE -lYARP_OS
- g++ simple_sender.cpp -o simple_sender -lACE -lYARP_OS
- * \endcode
- *
- * On windows, you'll need to set up projects and set up include
- * paths and libraries appropriately.
- *
- * @subsection example_running Running the examples
- *
- * On UNIX, on four separate consoles, do:
- * \code
- yarp server
- ./simple_sender
- ./simple_receiver
- yarp connect /out /in
- * \endcode
- *
- * (You may have to give a path to wherever yarp is compiled if it is
- * not in your path). The process on windows in similar.
- *
- * @section more_example_sec More examples
- *
- * See @subpage yarp_code_examples
+ * \li \link yarp::os::Thread Thread\endlink
+ * \li \link yarp::os::Semaphore Semaphore\endlink
+ * \li \link yarp::os::Time Time\endlink
+ * \li \link yarp::os::Network Network\endlink
+ * \li \link yarp::os::Port Port\endlink
+ * \li \link yarp::os::BufferedPort BufferedPort\endlink
+ * \li \link yarp::os::Bottle Bottle\endlink
+ * \li \link yarp::os::Property Property\endlink
  *
  */
 
