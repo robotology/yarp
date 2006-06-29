@@ -2,17 +2,21 @@
 
 # run as "./scripts/update-doc"
 
-doxygen Doxyfile.min
-doxygen Doxyfile.part
-doxygen Doxyfile
+doxygen conf/Doxyfile.min
+doxygen conf/Doxyfile.pagenum
+doxygen conf/Doxyfile.part
+doxygen conf/Doxyfile
 
-cd doc/min/latex
+base=$PWD
 
-# we don't include classes so fix up unresolved links
-for f in `ls *.tex`; do
-    perl -pe "s/p\....pageref\{\}/see class docs/g" < $f > junk.tex
-    mv junk.tex $f
+for manual in min pagenum; do
+
+    cd $base/doc/$manual/latex
+
+    # we don't include classes so fix up unresolved links
+    for f in `ls *.tex`; do
+	perl -pe "s/p\....pageref\{\}/see class docs/g" < $f > junk.tex
+	mv junk.tex $f
+    done
+    make pdf
 done
-
-
-make pdf

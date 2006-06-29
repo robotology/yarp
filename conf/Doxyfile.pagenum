@@ -5,7 +5,7 @@
 #---------------------------------------------------------------------------
 PROJECT_NAME           = YARP
 PROJECT_NUMBER         = 
-OUTPUT_DIRECTORY       = doc/min
+OUTPUT_DIRECTORY       = doc/pagenum
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
@@ -72,7 +72,7 @@ FILE_PATTERNS          = *.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       = UserDoc_modules.dox
 EXAMPLE_PATH           = example/
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO

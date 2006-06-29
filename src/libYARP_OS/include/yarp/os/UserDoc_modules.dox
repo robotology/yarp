@@ -1,0 +1,21 @@
+
+/**
+ * \defgroup key_class Basic Classes
+ *
+ * Some classes for basic services (excluding communication).
+ *
+ */
+
+/**
+ * \defgroup comm_class Communication Classes
+ *
+ * The most important classes for getting started with communication
+ *
+ */
+
+/* NOT YET PRESENT, hence missing * on this line
+ * \defgroup advcomm_class Advanced Communication Classes
+ *
+ * Classes for customizing communication
+ *
+ */

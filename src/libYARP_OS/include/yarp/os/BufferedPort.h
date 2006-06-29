@@ -14,6 +14,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup comm_class
+ *
  * A mini-server for performing network communication in the background.
  * If you are a beginner, you might want to use the Port class first,
  * and then come back to BufferedPort when you want to send and receive

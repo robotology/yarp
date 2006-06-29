@@ -9,6 +9,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup key_class
+ *
  * A class for thread synchronization and mutual exclusion.
  * A semaphore has an internal counter.  Multiple threads can
  * safely increment or decrement that counter.  If one thread

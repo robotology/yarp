@@ -9,6 +9,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup key_class
+ *
  * Services related to time -- delay, current time.
  */
 class yarp::os::Time {

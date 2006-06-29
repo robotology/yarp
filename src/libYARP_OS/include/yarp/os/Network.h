@@ -16,6 +16,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup comm_class
+ *
  * Utilities for manipulating the YARP network.
  */
 class yarp::os::Network {

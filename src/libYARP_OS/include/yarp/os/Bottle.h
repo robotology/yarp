@@ -21,6 +21,8 @@ namespace yarp {
 
 
 /**
+ * \ingroup key_class
+ *
  * A simple collection of objects that can be be
  * transported across the network in a portable way.
  * It is handy to use until you feel the need to make your own more 

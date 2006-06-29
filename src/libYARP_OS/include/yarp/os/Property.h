@@ -13,6 +13,8 @@ namespace yarp {
 
 
 /**
+ * \ingroup key_class
+ *
  *
  * A class for storing options and configuration information.  
  * Use put() to add keyword/value pairs, and get() or check() 

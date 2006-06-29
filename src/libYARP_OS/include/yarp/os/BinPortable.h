@@ -11,6 +11,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup comm_class
+ *
  * Class for writing and reading simple binary structures.
  * Can be used in conjunction with the Port class to send data
  * across the network.

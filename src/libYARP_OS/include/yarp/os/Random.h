@@ -16,6 +16,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup key_class
+ *
  * A collection of basic random number generation algorithms.
  */
 class yarp::os::Random {

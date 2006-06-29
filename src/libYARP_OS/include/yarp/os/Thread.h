@@ -10,6 +10,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup key_class
+ *
  * An abstraction for a thread of execution.
  */
 class yarp::os::Thread {

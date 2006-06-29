@@ -14,6 +14,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup comm_class
+ *
  * A mini-server for network communication.
  * It maintains a dynamic collection of incoming and
  * outgoing connections.  Data coming from any incoming connection can
