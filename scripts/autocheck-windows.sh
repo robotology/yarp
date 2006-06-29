@@ -30,10 +30,13 @@ if [ ! -e failure.txt ]; then
 	nmake || ( echo YARP_AUTOCHECK nmake compile failed | tee failure.txt )
 fi
 
+echo "Regression tests not run" > testlog.txt
 if [ ! -e failure.txt ]; then
 	# helpful to go offline
 	ipconfig /release
-	nmake test || ( echo YARP_AUTOCHECK nmake regression failed | tee failure.txt )
+	(
+	    nmake test || ( echo YARP_AUTOCHECK nmake regression failed | tee failure.txt )
+	) | tee testlog.txt
 	ipconfig /renew
 fi
 
@@ -51,6 +54,9 @@ fi
 
 if [ -e should_report.txt ]; then
 	date > report-decor.txt
+	cat testlog.txt >> report-decor.txt
+	echo >> report-decor.txt
+	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
 	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
 fi

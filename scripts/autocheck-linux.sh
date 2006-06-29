@@ -27,8 +27,11 @@ if [ ! -e failure.txt ]; then
 	make || ( echo YARP_AUTOCHECK make compile failed | tee failure.txt )
 fi
 
+echo "Regression tests not run" > testlog.txt
 if [ ! -e failure.txt ]; then
+    (
 	make test || ( echo YARP_AUTOCHECK make regression failed | tee failure.txt )
+    ) 2>&1 | tee testlog.txt
 fi
 
 cat cvslog.txt
@@ -45,6 +48,9 @@ fi
 
 if [ -e should_report.txt ]; then
 	date > report-decor.txt
+	cat testlog.txt >> report-decor.txt
+	echo >> report-decor.txt
+	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
 	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-linux.txt
 fi
