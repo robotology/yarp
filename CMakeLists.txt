@@ -9,8 +9,8 @@ SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 IF (WIN32 AND NOT CYGWIN)
   ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
 ELSE (WIN32 AND NOT CYGWIN)
-   # flush out warnings
-   ADD_DEFINITIONS(-Wall)
+  # flush out warnings
+  ADD_DEFINITIONS(-Wall)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 ## check if we are on cygwin

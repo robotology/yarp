@@ -38,25 +38,33 @@ SET(AVAILABLE_DEVICES "") #default is an empty list
 
 INCLUDE(AvailableDevices.txt)
 
-# cycle all available devices
+# cycle all available devices -- creates a cache entry for each of them
+# so the user can enable/disable them. Devices that are disabled are
+# NOT compiled in libYARP_dev. ENABLE_${DD} is also used when CMake
+# generates PolulateDriver.cpp, see below.
 FOREACH(DD ${AVAILABLE_DEVICES})
-  SET(FLAG-${DD} FALSE CACHE BOOL "Do you want to add ${DD} to libYARP_dev?")
-  # cannot use - symbol when configuring external file
-  SET(ENABLE_${DD} "${FLAG-${DD}}" CACHE INTERNAL "config driver")
+  SET(ENABLE_${DD} FALSE CACHE BOOL "Do you want to add ${DD} to libYARP_dev?")
 ENDFOREACH(DD ${AVAILABLE_DEVICES})
+
+# cycle additional modules -- creates a cache entry for each of them.
+# These modules at the moment are always compiled
+# in libYARP_dev. ENABLE_${AM} (by default true) is used when CMake 
+# generates PopulateDriver.cpp, see below.
+FOREACH(AM ${ADDITIONAL_MODULES})
+  SET(ENABLE_${AM} TRUE CACHE INTERNAL "Select additional module ${AM}?")
+ENDFOREACH(AM ${ADDITIONAL_MODULES})
 
 SET(populator ${CMAKE_BINARY_DIR}/src/libYARP_dev/src_generated/PopulateDrivers.cpp)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
-               ${populator} @ONLY  IMMEDIATE)
+  ${populator} @ONLY  IMMEDIATE)
 
 # any non-driver-specific source code
 #AUX_SOURCE_DIRECTORY(src libcode_general)
 FILE(GLOB libcode_general src/*.cpp)
 
-
 # re-check all DD to find the ones that were selected by the user
 FOREACH(DD ${AVAILABLE_DEVICES})
-  IF (FLAG-${DD})
+  IF (ENABLE_${DD})
     SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
     MESSAGE(STATUS "Parsing ${LOCAL_PATH}") 
     FILE(GLOB TEMP_PATH ${LOCAL_PATH}/libraries.txt)
@@ -67,7 +75,7 @@ FOREACH(DD ${AVAILABLE_DEVICES})
     ELSE(TEMP_PATH)
 	  MESSAGE(STATUS "No libraries.txt found for ${DD}, skipping it")
     ENDIF(TEMP_PATH)
-  ENDIF (FLAG-${DD})
+  ENDIF (ENABLE_${DD})
 ENDFOREACH(DD ${avail_dd})
 
 ## COMMON INCLUDE FILES
@@ -79,13 +87,13 @@ SET(header_path ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include)
 # parse all dd to collect source and header files, check dependencies
 FOREACH(DD ${FOUND_DD})
   SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
-#  MESSAGE(STATUS "Reading ${LOCAL_PATH}/libraries.txt:") 
+  #  MESSAGE(STATUS "Reading ${LOCAL_PATH}/libraries.txt:") 
   FILE(READ ${LOCAL_PATH}/libraries.txt FILE)
-#  MESSAGE(STATUS "${FILE}")
+  #  MESSAGE(STATUS "${FILE}")
   CAR(TOKEN ${FILE})
   CDR(LIB_LIST ${FILE})
   IF (TOKEN STREQUAL YARP_LOCAL)
-#	MESSAGE(STATUS "${DD} is going to use local libs: ${LIB_LIST}")
+	#	MESSAGE(STATUS "${DD} is going to use local libs: ${LIB_LIST}")
 	DD_FIND_LOCAL_LIB(DUMMY ${DD} "${LIB_LIST}")
   ENDIF (TOKEN STREQUAL YARP_LOCAL)
   IF (TOKEN STREQUAL YARP_EXTERNAL)
@@ -109,10 +117,15 @@ FOREACH(DD ${FOUND_DD})
   SET(libheaders ${libheaders} ${tmpHeaders})
 ENDFOREACH(DD ${FOUND_DD})
 
-#add include files to project (visual studio)
+##### add include files to project (visual studio)
+# this only works if the files are also included in the project, see
+# ADD_LIBRARY below
 FILE(GLOB_RECURSE libheader2 include/*.h)
+FILE(GLOB inlinefiles src/*.inl)
 SET(libheader ${libheaders} ${libheader2})
 SOURCE_GROUP("Header Files" FILES ${libheader})
+SOURCE_GROUP("Inline Files" FILES ${inlinefiles})
+######
 
 INCLUDE(YarpReqLib)
 # A FEW MESSAGES USEFUL FOR DEBUG
@@ -129,7 +142,7 @@ SET(FOUND_ONE TRUE)
 
 #avoid empty projects...
 IF(FOUND_ONE)
-  ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader})
+  ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader} ${inlinefiles})
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path "${header_path}")
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ext_libs "${EXT_LIBS}")
   ### INSTALL RULES ###
@@ -148,16 +161,16 @@ GET_TARGET_PROPERTY(YARP_dev_INC ${PROJECT_NAME} header_path)
 GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS ${PROJECT_NAME} ext_libs)
 
 IF (WIN32 AND NOT CYGWIN)
-   SET(libname "${YARP_dev_LIB}")
-   STRING(REPLACE ".lib" "d.lib" libname2 ${libname})
-   SET(YARP_dev_LIB "optimized ${libname} debug ${libname2}" CACHE INTERNAL "libraries")
+  SET(libname "${YARP_dev_LIB}")
+  STRING(REPLACE ".lib" "d.lib" libname2 ${libname})
+  SET(YARP_dev_LIB "optimized ${libname} debug ${libname2}" CACHE INTERNAL "libraries")
 ENDIF (WIN32 AND NOT CYGWIN)
 SET(YARP_dev_LIB ${YARP_dev_LIB} ${YARP_dev_EXT_LIBS})
 IF (NOT YARP_dev_LIB)
-   SET(YARP_dev_LIB "")
+  SET(YARP_dev_LIB "")
 ENDIF (NOT YARP_dev_LIB)
 IF (NOT YARP_dev_INC)
-   SET(YARP_dev_INC "")
+  SET(YARP_dev_INC "")
 ENDIF (NOT YARP_dev_INC)
 
 SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")

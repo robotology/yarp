@@ -35,7 +35,7 @@ public:
      * Close the DeviceDriver.
      * @return true/false on success/failure.
      */
-    virtual bool close()=0;
+    virtual bool close(){ return true; }
 
     /**
      * Generic command interface.

@@ -3,6 +3,7 @@
 #ifndef __JAMES_CALIBRATOR__
 #define __JAMES_CALIBRATOR__
 
+#include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/CalibratorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -13,13 +14,15 @@ namespace yarp {
     }
 }
 
-class yarp::dev::JamesCalibrator:public ICalibrator
+class yarp::dev::JamesCalibrator:public ICalibrator, public DeviceDriver
 {
 public:
     JamesCalibrator();
     ~JamesCalibrator();
 
     bool calibrate(DeviceDriver *dd);
+
+    //no open or close methods? check this
 
 private:
     bool calibrateJoint(int j);

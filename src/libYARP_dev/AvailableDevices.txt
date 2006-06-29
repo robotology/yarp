@@ -8,3 +8,5 @@ ENDIF (WIN32 AND NOT CYGWIN)
 IF (UNIX)
    SET(AVAILABLE_DEVICES dragonfly microphone inertiacube2)
 ENDIF (UNIX)
+
+SET(ADDITIONAL_MODULES jamescalibrator)
