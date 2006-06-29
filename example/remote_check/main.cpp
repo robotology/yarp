@@ -40,8 +40,8 @@ public:
         case VOCAB3('g','e','t'):
             printf("get command received\n");
             response.addVocab(VOCAB2('i','s'));
-            response.addBit(cmd.get(1));
-            response.addBit(prop.find(cmd.get(1).asString().c_str()));
+            response.add(cmd.get(1));
+            response.add(prop.find(cmd.get(1).asString().c_str()));
             break;
         }
         if (response.size()>=1) {
@@ -80,7 +80,7 @@ int main() {
     FakeFrameGrabber fake;
     fake.start();
     
-    PolyDriver dd("(device client_grabber) (local /client) (remote /server)");
+    PolyDriver dd("(device test_grabber) (local /client) (remote /server)");
     
     if (!dd.isValid()) {
         printf("Device not available\n");
