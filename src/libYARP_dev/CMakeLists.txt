@@ -142,7 +142,13 @@ SET(FOUND_ONE TRUE)
 
 #avoid empty projects...
 IF(FOUND_ONE)
-  ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader} ${inlinefiles})
+  #I need to take care of this -- nat
+  IF(WIN32 AND NOT CYGWIN)
+	ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader} ${inlinefiles})
+  ELSE(WIN32 AND NOT CYGWIN)
+	  ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader})
+  ENDIF(WIN32 AND NOT CYGWIN)
+
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path "${header_path}")
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ext_libs "${EXT_LIBS}")
   ### INSTALL RULES ###
