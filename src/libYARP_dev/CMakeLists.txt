@@ -134,7 +134,6 @@ INCLUDE(YarpReqLib)
 #MESSAGE(STATUS "Adding header files:")
 #MESSAGE(STATUS "${libheader}")
 
-
 SET(ALL_SRC ${ALL_SRC} ${libcode_general} ${populator})
 
 # device library contains useful code
@@ -142,7 +141,8 @@ SET(FOUND_ONE TRUE)
 
 #avoid empty projects...
 IF(FOUND_ONE)
-  #I need to take care of this -- nat
+  # cmake does not like .inl files in linux/cygwin, but it is nice 
+  # to have them listed in  the visual studio project.
   IF(WIN32 AND NOT CYGWIN)
 	ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader} ${inlinefiles})
   ELSE(WIN32 AND NOT CYGWIN)
