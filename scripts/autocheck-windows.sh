@@ -31,7 +31,10 @@ if [ ! -e failure.txt ]; then
 fi
 
 if [ ! -e failure.txt ]; then
+	# helpful to go offline
+	ipconfig /release
 	nmake test || ( echo YARP_AUTOCHECK nmake regression failed | tee failure.txt )
+	ipconfig /renew
 fi
 
 cat cvslog.txt
