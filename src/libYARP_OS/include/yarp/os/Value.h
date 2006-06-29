@@ -54,6 +54,14 @@ public:
 
     virtual int getCode() { return 0; }
 
+
+    static Value *makeInt(int x);
+    static Value *makeDouble(double x);
+    static Value *makeString(const char *str);
+    static Value *makeVocab(int v);
+    static Value *makeVocab(const char *str);
+    static Value *makeBlob(void *data, int length);
+    static Value *makeList();
 };
 
 
