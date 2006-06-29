@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# run as ./scripts/update-automake
+
+for f in `find src -iname "Makefile.am"`; do
+	echo Scanning $f
+	dir=`dirname $f`
+	grep -q "automake_expand" $f && (
+		./scripts/update-automake-single $dir < $f > tmp.am
+		cmp $f tmp.am || ( 
+			echo "  Modified $f"
+			cp tmp.am $f
+		)
+	)
+done
+

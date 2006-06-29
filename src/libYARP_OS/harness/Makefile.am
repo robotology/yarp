@@ -5,19 +5,8 @@ check_PROGRAMS = harness
 check-local: harness
 	./harness regression
 
-harness_SOURCES = \
-TestList.h \
-AddressTest.cpp                   PortTest.cpp \
-BinPortableTest.cpp               PropertyTest.cpp \
-BottleTest.cpp                    ProtocolTest.cpp \
-BufferedConnectionWriterTest.cpp  StreamConnectionReaderTest.cpp \
-ElectionTest.cpp                  StringInputStreamTest.cpp \
-harness.cpp                       StringOutputStreamTest.cpp \
-NameConfigTest.cpp                StringTest.cpp \
-NameServerTest.cpp                ThreadTest.cpp \
-NetTypeTest.cpp                   TimeTest.cpp \
-PortCommandTest.cpp               VocabTest.cpp \
-PortCoreTest.cpp
+# automake_expand harness_SOURCES *.h *.cpp
+harness_SOURCES = AddressTest.cpp BinPortableTest.cpp BottleTest.cpp BufferedConnectionWriterTest.cpp ElectionTest.cpp harness.cpp NameConfigTest.cpp NameServerTest.cpp NetTypeTest.cpp PortCommandTest.cpp PortCoreTest.cpp PortTest.cpp PropertyTest.cpp ProtocolTest.cpp StreamConnectionReaderTest.cpp StringInputStreamTest.cpp StringOutputStreamTest.cpp StringTest.cpp TestList.h ThreadTest.cpp TimeTest.cpp VocabTest.cpp 
 
 
 harness_DEPENDENCIES = $(top_builddir)/src/libYARP_OS/src/libYARP_OS.la
