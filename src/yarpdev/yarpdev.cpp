@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     }
 
     // check if we're being asked to read the options from file
-    BottleBit *val;
+    Value *val;
     if (options.check("file",val)) {
         ConstString fname = val->toString();
         printf("Working with config file %s\n", fname.c_str());

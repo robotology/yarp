@@ -69,7 +69,7 @@ public:
         p->bot.addString(val);
     }
 
-    void put(const char *key, BottleBit& bit) {
+    void put(const char *key, Value& bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
@@ -77,7 +77,7 @@ public:
         p->bot.addBit(bit);
     }
 
-    bool check(const char *key, BottleBit *&output) const {
+    bool check(const char *key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
         
         return p!=NULL;
@@ -92,7 +92,7 @@ public:
         return p!=NULL;
     }
 
-    BottleBit& get(const char *key) const {
+    Value& get(const char *key) const {
         String out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
@@ -241,7 +241,7 @@ public:
 
     void fromBottle(Bottle& bot) {
         for (int i=0; i<bot.size(); i++) {
-            BottleBit& bb = bot.get(i);
+            Value& bb = bot.get(i);
             if (bb.isList()) {
                 Bottle *sub = bb.asList();
                 putBottle(bb.asList()->get(0).toString().c_str(),*sub);
@@ -284,13 +284,13 @@ void Property::put(const char *key, const char *val) {
     HELPER(implementation).put(key,val);
 }
 
-void Property::put(const char *key, BottleBit& bit) {
+void Property::put(const char *key, Value& bit) {
     HELPER(implementation).put(key,bit);
 }
 
 
 /*
-bool Property::check(const char *key, BottleBit *&output) {
+bool Property::check(const char *key, Value *&output) {
     bool ok = false;
     if (HELPER(implementation).check(key)) {
         output = &find(key);
@@ -310,7 +310,7 @@ void Property::unput(const char *key) {
 }
 
 
-BottleBit& Property::get(const char *key) const {
+Value& Property::get(const char *key) const {
     return HELPER(implementation).get(key);
 }
 

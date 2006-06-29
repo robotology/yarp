@@ -6,7 +6,7 @@
 
 namespace yarp {
     namespace os {
-        class BottleBit;
+        class Value;
         class Bottle;
         class Searchable;
     }
@@ -20,7 +20,7 @@ namespace yarp {
  * with the find() and findGroup() methods to get values and
  * lists corresponding to keywords.
  *
- * @see Property Bottle BottleBit
+ * @see Property Bottle Value
  *
  */
 class yarp::os::Searchable {
@@ -38,7 +38,7 @@ public:
      * true.  Otherwise, the value can be read by calling result.asInt(),
      * result.asString(), etc. as appropriate.
      */
-    virtual BottleBit& find(const char *txt) = 0;
+    virtual Value& find(const char *txt) = 0;
 
     /**
      * Gets a list corresponding to a given keyword
@@ -60,7 +60,7 @@ public:
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    bool check(const char *txt, BottleBit *& result);
+    bool check(const char *txt, Value *& result);
 
     /**
      * Checks if the object is invalid.

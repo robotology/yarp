@@ -175,7 +175,7 @@ public:
         // attach callback.
         control_buffer.delegate(callback_impl);
 
-        BottleBit *name;
+        Value *name;
         if (prop.check("subdevice",name)) {
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {

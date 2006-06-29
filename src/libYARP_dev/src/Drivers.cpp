@@ -86,7 +86,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     yarp::os::Searchable *config = &prop;
     Property p;
     String str = prop.toString().c_str();
-    BottleBit *part;
+    Value *part;
     if (prop.check("device",part)) {
         str = part->toString().c_str();
     }
@@ -102,7 +102,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 
     DriverCreator *creator = find(str.c_str());
     if (creator!=NULL) {
-        BottleBit *val;
+        Value *val;
         if (config->check("wrapped",val)) {
             String wrapper = creator->getWrapper().c_str();
             DriverCreator *wrapCreator = find(wrapper.c_str());

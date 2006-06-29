@@ -91,7 +91,7 @@ Bottle *Bottle::getList(int index) {
     return HELPER(implementation).getList(index);
 }
 
-BottleBit& Bottle::get(int index) const {
+Value& Bottle::get(int index) const {
     return HELPER(implementation).get(index);
 }
 
@@ -178,10 +178,10 @@ void Bottle::copyRange(const Bottle& alt, int first, int len) {
                                      len);
 }
 
-BottleBit& Bottle::findGroupBit(const char *key) {
+Value& Bottle::findGroupBit(const char *key) {
     for (int i=0; i<size(); i++) {
-        BottleBit *org = &(get(i));
-        BottleBit *cursor = org;
+        Value *org = &(get(i));
+        Value *cursor = org;
         if (cursor->isList()) {
             cursor = &(cursor->asList()->get(0));
         }
@@ -194,10 +194,10 @@ BottleBit& Bottle::findGroupBit(const char *key) {
 }
 
 
-BottleBit& Bottle::findValue(const char *key) {
+Value& Bottle::findValue(const char *key) {
     for (int i=0; i<size(); i++) {
-        BottleBit *org = &(get(i));
-        BottleBit *cursor = org;
+        Value *org = &(get(i));
+        Value *cursor = org;
         bool nested = false;
         if (cursor->isList()) {
             cursor = &(cursor->asList()->get(0));
@@ -215,7 +215,7 @@ BottleBit& Bottle::findValue(const char *key) {
 }
 
 Bottle& Bottle::findGroup(const char *key) {
-    BottleBit& bb = findGroupBit(key);
+    Value& bb = findGroupBit(key);
     if (bb.isList()) {
         return *(bb.asList());
     }
@@ -230,17 +230,17 @@ Bottle *Bottle::clone() {
     return b;
 }
 
-BottleBit& Bottle::addBit(const char *str) {
+Value& Bottle::addBit(const char *str) {
     return HELPER(implementation).addBit(str);
 }
 
 
-void Bottle::addBit(BottleBit& bit) {
+void Bottle::addBit(Value& bit) {
     HELPER(implementation).addBit(bit);
 }
 
 
-bool BottleBit::operator == (const BottleBit& alt) {
+bool Value::operator == (const Value& alt) {
     return String(toString().c_str()) == alt.toString().c_str();
 }
 
@@ -255,8 +255,8 @@ bool Bottle::operator == (const Bottle& alt) {
 }
 
 
-bool Searchable::check(const char *txt, BottleBit *& result) {
-    BottleBit& bit = find(txt);
+bool Searchable::check(const char *txt, Value *& result) {
+    Value& bit = find(txt);
     bool ok = !(bit.isNull());
     if (ok) {
         result = &bit;

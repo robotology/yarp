@@ -26,7 +26,7 @@ namespace yarp {
 }
 
 
-class yarp::Storable : public yarp::os::BottleBit {
+class yarp::Storable : public yarp::os::Value {
 public:
     virtual ~Storable() {}
 
@@ -46,7 +46,7 @@ public:
     virtual bool read(ConnectionReader& reader) = 0;
     virtual bool write(ConnectionWriter& writer) = 0;
     virtual Storable *createStorable() = 0;
-    virtual yarp::os::BottleBit *create() { return createStorable(); }
+    virtual yarp::os::Value *create() { return createStorable(); }
 
     virtual int asInt() { return 0; }
     virtual int asVocab() { return 0; }
@@ -57,7 +57,7 @@ public:
     }
     virtual yarp::os::Bottle *asList() { return NULL; }
 
-    virtual yarp::os::BottleBit *clone() {
+    virtual yarp::os::Value *clone() {
         return cloneStorable();
     }
 
@@ -78,7 +78,7 @@ public:
         return 0;
     }
 
-    virtual yarp::os::BottleBit& find(const char *txt);
+    virtual yarp::os::Value& find(const char *txt);
     virtual yarp::os::Bottle& findGroup(const char *txt);
 
 };
@@ -218,7 +218,7 @@ public:
     static const int code;
     virtual int subCode();
 
-    virtual yarp::os::BottleBit& find(const char *txt) {
+    virtual yarp::os::Value& find(const char *txt) {
         return content.find(txt);
     }
 
@@ -312,14 +312,14 @@ public:
 
     int subCode();
 
-    void addBit(yarp::os::BottleBit& bit) {
-        // all BottleBits are Storables -- important invariant!
+    void addBit(yarp::os::Value& bit) {
+        // all Values are Storables -- important invariant!
         if (!bit.isNull()) {
             add((Storable*)(bit.clone()));
         }
     }
 
-    yarp::os::BottleBit& addBit(const char *str) {
+    yarp::os::Value& addBit(const char *str) {
         int len = size();
         String x(str);
         smartAdd(x);

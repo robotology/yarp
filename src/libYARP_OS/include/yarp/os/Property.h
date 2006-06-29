@@ -38,12 +38,12 @@ public:
 
     void put(const char *key, const char *val);
 
-    void put(const char *key, BottleBit& bit);
+    void put(const char *key, Value& bit);
 
     void unput(const char *key);
 
     // documented in Searchable
-    virtual BottleBit& find(const char *key) {
+    virtual Value& find(const char *key) {
         return get(key);
     }
 
@@ -54,7 +54,7 @@ public:
         return Bottle::getNull();
     }
 
-    BottleBit& get(const char *key) const;
+    Value& get(const char *key) const;
     Bottle *getList(const char *key) const;
     ConstString getString(const char *key) const;
 

@@ -70,7 +70,7 @@ public:
     }
 
     virtual bool open(Searchable& prop) {
-        BottleBit *val;
+        Value *val;
         if (prop.check("width",val)||prop.check("w",val)) {
             w = val->asInt();
         }
@@ -189,7 +189,7 @@ public:
     virtual bool open(Searchable& prop) {
         p.setReader(*this);
         
-        BottleBit *name;
+        Value *name;
         if (prop.check("subdevice",name)) {
             printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {

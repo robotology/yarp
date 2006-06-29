@@ -623,7 +623,7 @@ void setOptions(yarp::os::Searchable& options) {
     if (window->isNull()) { window = &options; }
     if (program->isNull()) { program = &options; }
 
-    yarp::os::BottleBit *val;
+    yarp::os::Value *val;
     if (network->check("PortName",val)||network->check("name",val)) {
         ACE_OS::sprintf(_options.portName, val->asString().c_str());
     }

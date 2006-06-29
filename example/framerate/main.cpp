@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
   opt.fromCommand(argc,argv);
 
   // name port
-  BottleBit *val;
+  Value *val;
   String name = "/get_image";
   if (opt.check("local",val)) {
     name = val->asString().c_str();

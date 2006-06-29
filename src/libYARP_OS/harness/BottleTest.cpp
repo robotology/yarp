@@ -180,7 +180,7 @@ public:
     }
 
     void testBits() {
-        report(0,"testing BottleBits interface...");
+        report(0,"testing Value interface...");
         Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
         checkTrue(bot.isInt(0),"indirect type check");
         checkTrue(bot.get(0).isInt(),"type check");

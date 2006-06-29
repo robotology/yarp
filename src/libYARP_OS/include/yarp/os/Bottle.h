@@ -4,7 +4,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Portable.h>
-#include <yarp/os/BottleBit.h>
+#include <yarp/os/Value.h>
 
 #define BOTTLE_TAG_INT 1
 #define BOTTLE_TAG_VOCAB (1+8)
@@ -85,9 +85,9 @@ public:
      */
     void addString(const char *str);
 
-    BottleBit& addBit(const char *str);
+    Value& addBit(const char *str);
 
-    void addBit(BottleBit& bit);
+    void addBit(Value& bit);
 
     /**
      * Places an empty nested list in the bottle, at the end of the list.
@@ -128,7 +128,7 @@ public:
      */
     Bottle *getList(int index);
 
-    BottleBit& get(int x) const;
+    Value& get(int x) const;
 
     /**
      * Checks if a certain part of the list is an integer.
@@ -214,7 +214,7 @@ public:
 
     virtual Bottle *clone();
 
-    virtual BottleBit& find(const char *txt) {
+    virtual Value& find(const char *txt) {
         return findValue(txt);
     }
 
@@ -224,11 +224,11 @@ public:
     int getSpecialization();
     void setNested(bool nested);
 
-    static BottleBit& getNullBit() {
+    static Value& getNullBit() {
         return getNull().get(-1);
     }
 
-    BottleBit& findValue(const char *key);
+    Value& findValue(const char *key);
 
     static Bottle& getNull();
 
@@ -241,9 +241,9 @@ public:
 
 private:
 
-    BottleBit& findGroupBit(const char *key);
+    Value& findGroupBit(const char *key);
 
-    //BottleBit& find(const char *key);
+    //Value& find(const char *key);
     void *implementation;
 };
 
