@@ -49,3 +49,8 @@ Value *Value::makeValue(const char *txt) {
 }
 
 
+Value& Value::getNullValue() {
+  return BottleImpl::getNull();
+}
+
+

@@ -837,5 +837,5 @@ Value& Storable::find(const char *txt) {
 }
 
 Bottle& Storable::findGroup(const char *txt) {
-    return Bottle::getNull();
+    return Bottle::getNullBottle();
 }

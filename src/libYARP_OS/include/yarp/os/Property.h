@@ -53,7 +53,7 @@ public:
     virtual Bottle& findGroup(const char *key) {
         Bottle *result = getList(key);
         if (result!=((Bottle*)0)) { return *result; }
-        return Bottle::getNull();
+        return Bottle::getNullBottle();
     }
 
     Value& get(const char *key) const;

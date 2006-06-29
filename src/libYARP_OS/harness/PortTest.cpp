@@ -160,14 +160,14 @@ public:
         bot1.fromString("5 10 \"hello\"");
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.getInt(0),5,"check bot[0]");
-        checkEqual(bot1.getInt(1),10,"check bot[1]");
-        checkEqual(bot1.getString(2).c_str(),"hello","check bot[2]");
+        checkEqual(bot1.get(0).asInt(),5,"check bot[0]");
+        checkEqual(bot1.get(1).asInt(),10,"check bot[1]");
+        checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
 
         bot1.fromString("18");
         out.write(bot1);
         in.read(bot2);
-        checkEqual(bot1.getInt(0),18,"check one more send/receive");
+        checkEqual(bot1.get(0).asInt(),18,"check one more send/receive");
 
         in.close();
         out.close();

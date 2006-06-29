@@ -43,8 +43,18 @@ public:
     virtual bool read(ConnectionReader& connection) = 0;
     virtual bool write(ConnectionWriter& connection) = 0;
 
+    /**
+     * Equality test.
+     * @param alt the value to compare against
+     * @result true iff the values are equal
+     */
     virtual bool operator == (const Value& alt);
 
+    /**
+     * Inequality test.
+     * @param alt the value to compare against
+     * @result true iff the values are not equal
+     */
     virtual bool operator != (const Value& alt) {
         return !((*this)==alt);
     }
@@ -64,6 +74,9 @@ public:
     static Value *makeList();
 
     static Value *makeValue(const char *txt);
+
+
+    static Value& getNullValue();
 };
 
 

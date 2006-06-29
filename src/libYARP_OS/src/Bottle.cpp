@@ -194,7 +194,7 @@ Value& Bottle::findGroupBit(const char *key) {
 }
 
 
-Value& Bottle::findValue(const char *key) {
+Value& Bottle::find(const char *key) {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -219,7 +219,7 @@ Bottle& Bottle::findGroup(const char *key) {
     if (bb.isList()) {
         return *(bb.asList());
     }
-    return getNull();
+    return getNullBottle();
 }
 
 
@@ -245,7 +245,7 @@ bool Value::operator == (const Value& alt) {
 }
 
 
-Bottle& Bottle::getNull() {
+Bottle& Bottle::getNullBottle() {
     return NullBottle::bottleNull;
 }
 

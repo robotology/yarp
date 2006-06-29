@@ -174,15 +174,14 @@ public:
         checkEqual(bot10.size(),2,"construction test 1");
         checkEqual(bot10.toString().c_str(),"(1 2 3) (4 5 6)",
                    "construction test 2");
-        checkTrue(bot10.isList(1),"construction test 3");
-        checkEqual(bot10.getList(1)->toString().c_str(),"4 5 6",
+        checkTrue(bot10.get(1).isList(),"construction test 3");
+        checkEqual(bot10.get(1).asList()->toString().c_str(),"4 5 6",
                    "construction test 4");
     }
 
     void testBits() {
         report(0,"testing Value interface...");
         Bottle bot("1 \"hi\" (4 \"foo\") 6 7");
-        checkTrue(bot.isInt(0),"indirect type check");
         checkTrue(bot.get(0).isInt(),"type check");
         checkTrue(bot.get(1).isString(),"type check");
         checkTrue(bot.get(2).isList(),"type check");
@@ -218,9 +217,9 @@ public:
         Bottle bot("(hello friend) (say 12 13) green");
         checkEqual(bot.findGroup("say").toString().c_str(),
                    "say 12 13","seek key");
-        checkEqual(bot.findValue("hello").toString().c_str(),
+        checkEqual(bot.find("hello").toString().c_str(),
                    "friend","seek key");
-        checkTrue(bot.findValue("blue").isNull(),"seek absent key");
+        checkTrue(bot.find("blue").isNull(),"seek absent key");
     }
 
     void testVocab() {

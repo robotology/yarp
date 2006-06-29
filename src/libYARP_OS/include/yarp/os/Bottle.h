@@ -123,6 +123,126 @@ public:
     Bottle& addList();
 
     /**
+     * Reads a Value v from a certain part of the list.  Methods like
+     * v.isInt() or v.isString() can be used to check the type of the
+     * result.  Methods like v.asInt() or v.asString() can be used to
+     * access the result as a particular type.
+     *
+     * @param index the part of the list to read from
+     * @return the Value v; if the index lies outside the range of elements
+     * present, then v.isNull() will be true.  
+     */
+    Value& get(int x) const;
+
+    /**
+     * Initializes bottle from a string, which should contain a textual
+     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\"" 
+     * would give a bottle with 4 elements: an integer, two floating
+     * point numbers, and a string.
+     * @param text the textual form of the bottle to be interpreted
+     */
+    void fromString(const char *text);
+
+    /**
+     * Initializes bottle from a binary representation.
+     * @param buf the binary form of the bottle to be interpreted
+     * @param len the length of the binary form
+     */
+    void fromBinary(const char *buf, int len);
+
+    /**
+     * Gives a human-readable textual representation of the bottle, suitable 
+     * for passing to Bottle::fromString (see that method for examples)
+     * @return a textual representation of the bottle
+     */
+    ConstString toString() const;
+
+    /**
+     * Output a representation of the bottle to a network connection.
+     * @param writer the interface to the network connection for writing
+     * @result true iff the representation was written successfully.
+     */
+    bool write(ConnectionWriter& writer);
+
+    /**
+     * Set the bottle's value based on input from a network connection.
+     * @param reader the interface to the network connection for reading
+     * @return true iff the bottle was read successfully.
+     */
+    bool read(ConnectionReader& reader);
+
+    /**
+     * Gets the number of elements in the bottle
+     * @return number of elements in the bottle
+     */
+    int size() const;
+
+    /**
+     * Copy all or part of another Bottle
+     * @param alt The object to copy
+     * @param first The index of the first element to copy
+     * @param len The number of elements to copy (-1 for all)
+     */
+    void copy(const Bottle& alt, int first = 0, int len = -1);
+
+    virtual Value& find(const char *txt);
+
+    Bottle& findGroup(const char *key);
+
+    /**
+     * A special Bottle with no content
+     * @return the special invalid "null" Bottle.
+     */
+    static Bottle& getNullBottle();
+
+
+    /**
+     * Equality test.
+     * @param alt the value to compare against
+     * @result true iff the values are equal
+     */
+    virtual bool operator == (const Bottle& alt);
+
+   /**
+     * Inequality test.
+     * @param alt the value to compare against
+     * @result true iff the values are not equal
+     */
+    virtual bool operator != (const Bottle& alt) {
+        return !((*this)==alt);
+    }
+
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    // this is needed for implementation reasons -- could go away
+    // with judicious use of friend declarations
+    void specialize(int subCode);
+    int getSpecialization();
+    void setNested(bool nested);
+#endif
+
+
+private:
+
+    Value& findGroupBit(const char *key);
+
+    virtual Bottle *create() {
+        return new Bottle();
+    }
+
+    virtual Bottle *clone();
+
+    //Value& find(const char *key);
+    void *implementation;
+
+
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+    // the methods below are no longer used
+    ///////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////
+
+    /**
      * Reads an integer from a certain part of the list.
      * @param index the part of the list to read from
      * @return the integer - result is undefined if it is not actually an
@@ -154,8 +274,6 @@ public:
      */
     Bottle *getList(int index);
 
-    Value& get(int x) const;
-
     /**
      * Checks if a certain part of the list is an integer.
      * @param index the part of the list to check
@@ -184,43 +302,6 @@ public:
      */
     bool isList(int index);
 
-    /**
-     * Initializes bottle from a string, which should contain a textual
-     * form of the bottle, e.g. text = "10 -5.3 1.0 \"hello there\"" 
-     * would give a bottle with 4 elements: an integer, two floating
-     * point numbers, and a string.
-     * @param text the textual form of the bottle to be interpreted
-     */
-    void fromString(const char *text);
-
-    void fromBinary(const char *text, int len);
-
-    /**
-     * Gives a human-readable textual representation of the bottle, suitable 
-     * for passing to Bottle::fromString (see that method for examples)
-     * @return a textual representation of the bottle
-     */
-    ConstString toString() const;
-
-    /**
-     * Output a representation of the bottle to a network connection.
-     * @param writer the interface to the network connection for writing
-     * @result true iff the representation was written successfully.
-     */
-    bool write(ConnectionWriter& writer);
-
-    /**
-     * Set the bottle's value based on input from a network connection.
-     * @param reader the interface to the network connection for reading
-     * @return true iff the bottle was read successfully.
-     */
-    bool read(ConnectionReader& reader);
-
-    /*
-     * Gets the number of elements in the bottle
-     * @return number of elements in the bottle
-     */
-    int size() const;
 
     virtual bool isList() { return true; }
 
@@ -228,51 +309,7 @@ public:
     //  return this; 
     //}
 
-    /**
-     * Copy all or part of another Bottle
-     * @param alt The object to copy
-     * @param first The index of the first element to copy
-     * @param len The number of elements to copy (-1 for all)
-     */
-    void copy(const Bottle& alt, int first = 0, int len = -1);
 
-    virtual Value& find(const char *txt) {
-        return findValue(txt);
-    }
-
-    Bottle& findGroup(const char *key);
-
-    void specialize(int subCode);
-    int getSpecialization();
-    void setNested(bool nested);
-
-    static Value& getNullBit() {
-        return getNull().get(-1);
-    }
-
-    Value& findValue(const char *key);
-
-    static Bottle& getNull();
-
-
-    virtual bool operator == (const Bottle& alt);
-
-    virtual bool operator != (const Bottle& alt) {
-        return !((*this)==alt);
-    }
-
-private:
-
-    Value& findGroupBit(const char *key);
-
-    virtual Bottle *create() {
-        return new Bottle();
-    }
-
-    virtual Bottle *clone();
-
-    //Value& find(const char *key);
-    void *implementation;
 };
 
 #endif
