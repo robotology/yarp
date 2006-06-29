@@ -52,8 +52,17 @@ public:
      */
     Bottle(const char *text);
 
+    /**
+     * Copy constructor.
+     * @param bottle The object to copy
+     */
     Bottle(const Bottle& bottle);
 
+    /**
+     * Assignment operator.
+     * @param bottle The object to copy
+     * @return the Bottle itself
+     */
     const Bottle& operator = (const Bottle& bottle);
 
 
@@ -73,6 +82,10 @@ public:
      */
     void addInt(int x);
 
+    /**
+     * Places a vocabulary item in the bottle, at the end of the list.
+     * @param x the item to add
+     */
     void addVocab(int x);
 
     /**
@@ -87,9 +100,20 @@ public:
      */
     void addString(const char *str);
 
-    Value& addBit(const char *str);
+    /**
+     * Add a Value to the bottle, at the end of the list.
+     * @param value the Value to add
+     */
+    void add(Value& value);
 
-    void addBit(Value& bit);
+    /**
+     * Add a Value to the bottle, at the end of the list.
+     * The object passed will be placed directly into the list, without
+     * copying.  The Bottle will be responsible for deallocating it
+     * when appropriate.
+     * @param value the Value to add
+     */
+    void add(Value *value);
 
     /**
      * Places an empty nested list in the bottle, at the end of the list.
@@ -200,21 +224,17 @@ public:
 
     virtual bool isList() { return true; }
 
-    virtual Bottle *asList() { 
-        return this; 
-    }
+    //virtual Bottle *asList() { 
+    //  return this; 
+    //}
 
-    void copyRange(const Bottle& alt, int first = 0, int len = -1);
-
-    void copy(const Bottle& alt) {
-        copyRange(alt);
-    }
-    
-    virtual Bottle *create() {
-        return new Bottle();
-    }
-
-    virtual Bottle *clone();
+    /**
+     * Copy all or part of another Bottle
+     * @param alt The object to copy
+     * @param first The index of the first element to copy
+     * @param len The number of elements to copy (-1 for all)
+     */
+    void copy(const Bottle& alt, int first = 0, int len = -1);
 
     virtual Value& find(const char *txt) {
         return findValue(txt);
@@ -244,6 +264,12 @@ public:
 private:
 
     Value& findGroupBit(const char *key);
+
+    virtual Bottle *create() {
+        return new Bottle();
+    }
+
+    virtual Bottle *clone();
 
     //Value& find(const char *key);
     void *implementation;

@@ -172,7 +172,7 @@ void Bottle::setNested(bool nested) {
 
 
 
-void Bottle::copyRange(const Bottle& alt, int first, int len) {
+void Bottle::copy(const Bottle& alt, int first, int len) {
     HELPER(implementation).copyRange(HELPER(alt.implementation),
                                      first,
                                      len);
@@ -226,17 +226,17 @@ Bottle& Bottle::findGroup(const char *key) {
 Bottle *Bottle::clone() {
     Bottle *b = new Bottle();
     YARP_ASSERT(b!=NULL);
-    b->copyRange(*this);
+    b->copy(*this);
     return b;
 }
 
-Value& Bottle::addBit(const char *str) {
-    return HELPER(implementation).addBit(str);
+void Bottle::add(Value *value) {
+    HELPER(implementation).addBit(value);
 }
 
 
-void Bottle::addBit(Value& bit) {
-    HELPER(implementation).addBit(bit);
+void Bottle::add(Value& value) {
+    HELPER(implementation).addBit(value);
 }
 
 

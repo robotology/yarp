@@ -1,5 +1,6 @@
 
 #include <yarp/BottleImpl.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
@@ -39,6 +40,12 @@ Value *Value::makeBlob(void *data, int length) {
 
 Value *Value::makeList() {
   return new StoreList();
+}
+
+
+Value *Value::makeValue(const char *txt) {
+  Bottle bot(txt);
+  return bot.get(0).clone();
 }
 
 

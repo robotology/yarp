@@ -208,7 +208,7 @@ public:
         report(0,"testing range...");
         Bottle bot1("1 (2 3) (4 5 6) 7");
         Bottle bot2;
-        bot2.copyRange(bot1,1,2);
+        bot2.copy(bot1,1,2);
         checkEqual(bot2.size(),2,"subrange");
         checkEqual(bot2.get(0).toString().c_str(),"2 3","subrange");
     }

@@ -291,7 +291,7 @@ public:
             {
                 bool ok = false;
                 response.addVocab(VOCAB_IS);
-                response.addBit(cmd.get(1));
+                response.add(cmd.get(1));
                 switch(cmd.get(1).asVocab()) {
                 case VOCAB_BRIGHTNESS:
                     ok = true;

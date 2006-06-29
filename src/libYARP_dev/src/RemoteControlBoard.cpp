@@ -138,7 +138,7 @@ private:
     // LATER: other interfaces here.
 
 public:
-    ServerControlBoard() : command_reader(this), callback_impl(this) {
+    ServerControlBoard() : callback_impl(this), command_reader(this) {
         pid = NULL;
         pos = NULL;
         enc = NULL;
@@ -1457,7 +1457,7 @@ public:
     virtual bool getEncoders(double *encs) {
         Vector *v = state_buffer.read(true);
         if (v != NULL) {
-            ACE_ASSERT (v->size() == nj);
+            ACE_ASSERT (v->size() == ((unsigned int)nj));
             ACE_OS::memcpy (encs, &(v->operator [](0)), sizeof(double)*nj);
             return true;
         }
@@ -2105,7 +2105,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             int tmp = 0;
             double dtmp = 0.0;
             response.addVocab(VOCAB_IS);
-            response.addBit(cmd.get(1));
+            response.add(cmd.get(1));
             switch(cmd.get(1).asVocab()) {
             case VOCAB_ERR: {
                 ok = pid->getError(cmd.get(2).asInt(), &dtmp);

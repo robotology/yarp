@@ -74,7 +74,7 @@ public:
         p->singleton = true;
         p->bot.clear();
         p->bot.addString(key);
-        p->bot.addBit(bit);
+        p->bot.add(bit);
     }
 
     bool check(const char *key, Value *&output) const {
@@ -156,7 +156,7 @@ public:
                 tag = work;
                 accum.clear();
             }
-            accum.addBit(work.c_str());
+            accum.add(Value::makeValue(work.c_str()));
         }
         if (tag!="") {
             total.addList().copy(accum);

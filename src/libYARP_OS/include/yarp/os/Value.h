@@ -62,6 +62,8 @@ public:
     static Value *makeVocab(const char *str);
     static Value *makeBlob(void *data, int length);
     static Value *makeList();
+
+    static Value *makeValue(const char *txt);
 };
 
 

@@ -312,6 +312,11 @@ public:
 
     int subCode();
 
+    void addBit(yarp::os::Value *bit) {
+        // all Values are Storables -- important invariant!
+        add((Storable*)(bit));
+    }
+
     void addBit(yarp::os::Value& bit) {
         // all Values are Storables -- important invariant!
         if (!bit.isNull()) {
