@@ -30,6 +30,8 @@ namespace yarp {
 class yarp::os::Port : public Contactable {
 
 public:
+    using Contactable::open;
+
     /**
      * Constructor.  The port begins life in a dormant state. Call
      * Port::open to start things happening.

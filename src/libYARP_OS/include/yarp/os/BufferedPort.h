@@ -29,6 +29,7 @@ class yarp::os::BufferedPort : public Contactable,
             public TypedReader<T>, public TypedReaderCallback<T>
 {
 public:
+    using Contactable::open;
 
     typedef T ContentType;
 

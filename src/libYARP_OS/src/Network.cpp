@@ -9,14 +9,24 @@
 #include <yarp/NameClient.h>
 #include <yarp/NameConfig.h>
 #include <yarp/Logger.h>
+#include <yarp/String.h>
 #include <yarp/os/Bottle.h>
 
 using namespace yarp;
 using namespace yarp::os;
 
-bool Network::connect(const char *src, const char *dest, bool quiet) {
-    int result = Companion::connect(src,dest,quiet);
+bool Network::connect(const char *src, const char *dest, 
+                      const char *carrier, bool quiet) {
+    int result = -1;
+    if (carrier!=NULL) {
+        // prepend carrier
+        String fullDest = String(carrier) + ":/" + Companion::slashify(dest);
+        result = Companion::connect(src,fullDest.c_str(),quiet);
+    } else {
+        result = Companion::connect(src,dest,quiet);
+    }
     return result == 0;
+
 }
 
 

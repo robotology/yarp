@@ -31,10 +31,22 @@ public:
 
     /**
      * Start port operation, with automatically-chosen network parameters. 
-     * The port is registered with the given name, and allocated
+     * The port is assigned an arbitrary name, and allocated
      * network resources,
      * by communicating with the YARP name server.
      * @return true iff the port started operation successfully and is now
+     * visible on the YARP network
+     */
+    bool open() {
+        return open("...");
+    }
+
+    /**
+     * Start port operation, with a specific name, with
+     * automatically-chosen network parameters.  The port is
+     * registered with the given name, and allocated network
+     * resources, by communicating with the YARP name server.  @return
+     * true iff the port started operation successfully and is now
      * visible on the YARP network
      */
     virtual bool open(const char *name) = 0;
@@ -85,6 +97,14 @@ public:
      * @return network parameters for this port
      */
     virtual Contact where() = 0;
+
+    /**
+     * Get name of port.
+     * @return name of port
+     */
+    ConstString getName() {
+        return where().getName();
+    }
 };
 
 #endif
