@@ -3,7 +3,7 @@ SET(COEXIST_WITH_YARP1 FALSE CACHE BOOL "Do you want to work with YARP1, an olde
 
 IF (COEXIST_WITH_YARP1)
 
-	FIND_PATH(YARP1_INCLUDE_DIR yarp/YARPPort.h /usr/include /usr/local/include $ENV{YARP_ROOT}/include DOC "directory containing yarp/*.h for YARP1, an older version of YARP")
+	FIND_PATH(YARP1_INCLUDE_DIR yarp/YARPPort.h /usr/include /usr/local/include $ENV{YARP_ROOT}/include ${CMAKE_SOURCE_DIR}/../yarp/include DOC "directory containing yarp/*.h for YARP1, an older version of YARP")
 
 
 	IF (YARP1_INCLUDE_DIR)
