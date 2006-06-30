@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.16 2006-06-27 23:01:34 gmetta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.17 2006-06-30 20:44:59 babybot Exp $
 ///
 ///
 
@@ -1525,22 +1525,26 @@ bool EsdMotionControl::resetEncodersRaw()
 
 bool EsdMotionControl::getEncodersRaw(double *v)
 {
-    return _readDWordArray (CAN_GET_ENCODER_POSITION, v);
+	EsdCanResources& r = RES(system_resources);
+	int i;
+    _mutex.wait();
+	for (i = 0; i < r.getJoints(); i++) {
+		v[i] = double(r._bcastRecvBuffer[i]._position);
+	}
+    _mutex.post();
+	return true;
 }
 
 bool EsdMotionControl::getEncoderRaw(int axis, double *v)
 {
-	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
+	EsdCanResources& r = RES(system_resources);
+	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
 
-	int value;
-	if (_readDWord (CAN_GET_ENCODER_POSITION, axis, value) == true)
-	{
-		*v = double(value);
-		return true;
-	}
-	
-	*v= 0;
-	return false;
+    _mutex.wait();
+	*v = double(r._bcastRecvBuffer[axis]._position);
+    _mutex.post();
+
+	return true;
 }
 
 bool EsdMotionControl::getEncoderSpeedsRaw(double *v)

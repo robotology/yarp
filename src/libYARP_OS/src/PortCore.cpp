@@ -677,10 +677,9 @@ void PortCore::send(Writable& writer, Readable *reader) {
                 }
             }
         }
-        YMSG(("------- send dec\n"));
-        packet->dec();
         YMSG(("------- pack check\n"));
         packetMutex.wait();
+        packet->dec();
         packets.checkPacket(packet);
         packetMutex.post();
         YMSG(("------- packed\n"));

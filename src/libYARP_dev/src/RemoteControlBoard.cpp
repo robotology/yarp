@@ -250,7 +250,7 @@ public:
             before = Time::now();
             yarp::sig::Vector& v = state_buffer.get();
             v.size(nj);
-            enc->getEncoders(&v[0]);
+            //enc->getEncoders(&v[0]);
             state_buffer.write();
             now = Time::now();
             if ((now-before)*1000 < thread_period) {
