@@ -34,10 +34,10 @@ namespace yarp {
             template <class T>
             void addCircle(ImageOf<T>& dest, const T& pix, 
                            int i, int j, int r) {
-                float d, r2 = r*r;
+                float d, r2 = (float)(r*r);
                 for (int ii=i-r; ii<=i+r; ii++) {
                     for (int jj=j-r; jj<=j+r; jj++) {
-                        d = (ii-i)*(ii-i)+(jj-j)*(jj-j);
+                        d = float((ii-i)*(ii-i)+(jj-j)*(jj-j));
                         if (d<=r2) {
                             dest.safePixel(ii,jj) = pix;
                         }
