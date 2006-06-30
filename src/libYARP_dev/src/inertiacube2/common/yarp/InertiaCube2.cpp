@@ -1,8 +1,16 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "../common/yarp/InertiaCube2.h"
-#include "../dd_orig/include/isense.h"
-#include "../dd_orig/include/types.h"
+#include "InertiaCube2.h"
+
+#ifdef LINUX
+#include "../../linux/dd_orig/include/isense.h"
+#include "../../linux/dd_orig/include/types.h"
+#endif
+#ifdef WIN32
+#include "../../winnt/dd_orig/include/isense.h"
+#include "../../winnt/dd_orig/include/types.h"
+#endif
+
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 
