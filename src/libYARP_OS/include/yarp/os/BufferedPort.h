@@ -154,7 +154,7 @@ public:
      * to be informed about data as it arrives
      */
     void useCallback() {
-        reader.delegate(*this);
+        reader.useCallback(*this);
     }
 
 private:
