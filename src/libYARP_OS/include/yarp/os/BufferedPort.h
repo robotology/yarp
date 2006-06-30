@@ -146,7 +146,7 @@ public:
      * available.
      */
     void useCallback(TypedReaderCallback<T>& callback) {
-        reader.delegate(callback);
+        reader.useCallback(callback);
     }
 
     /**

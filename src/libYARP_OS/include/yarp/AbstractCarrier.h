@@ -34,6 +34,10 @@ public:
         return true;
     }
 
+    virtual bool supportReply() {
+        return !isConnectionless();
+    }
+
 
     virtual bool canAccept() {
         return true;

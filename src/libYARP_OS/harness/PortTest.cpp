@@ -517,7 +517,7 @@ public:
         Network::connect("/out","/in");
         PortReaderBuffer<Bottle> reader;
         reader.attach(in);
-        reader.delegate(callback);
+        reader.useCallback(callback);
         Bottle src("10 10 20");
         out.write(src);
         callback.produce.wait();

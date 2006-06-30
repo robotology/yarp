@@ -334,7 +334,10 @@ public:
             getStreams().endPacket();
             PortReader *reply = writer.getReplyHandler();
             if (reply!=NULL) {
-                reader.reset(is(),&getStreams(),getRoute(),
+                if (!delegate->supportReply()) {
+                    YARP_INFO(log,String("connection ") + getRoute().toString() + " does not support replies (try \"tcp\" or \"text_ack\")");
+                }
+                reader.reset(is(),&getStreams(), getRoute(),
                              messageLen,delegate->isTextMode());
                 reply->read(reader);
             }

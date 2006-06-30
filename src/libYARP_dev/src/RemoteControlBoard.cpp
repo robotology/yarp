@@ -173,7 +173,7 @@ public:
         state_buffer.attach(state_p);
         control_buffer.attach(control_p);
         // attach callback.
-        control_buffer.delegate(callback_impl);
+        control_buffer.useCallback(callback_impl);
 
         Value *name;
         if (prop.check("subdevice",name)) {

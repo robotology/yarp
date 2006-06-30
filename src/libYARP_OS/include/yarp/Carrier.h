@@ -35,6 +35,7 @@ public:
     virtual bool canOffer() = 0;
     virtual bool isTextMode() = 0;
     virtual bool requireAck() = 0;
+    virtual bool supportReply() = 0;
 
     // all remaining may throw IOException
 

@@ -67,6 +67,11 @@ public:
         return true;
     }
 
+
+    virtual bool supportReply() {
+        return requireAck();
+    }
+
     virtual void sendHeader(Protocol& proto) {
         String target = getSpecifierName();
         Bytes b((char*)target.c_str(),8);

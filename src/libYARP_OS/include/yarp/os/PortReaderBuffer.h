@@ -92,6 +92,12 @@ public:
 	 */
 	virtual bool isClosed() = 0;
 
+    /**
+     * Set an object whose onRead method will be called when data is 
+     * available.
+     */
+    virtual void useCallback(TypedReaderCallback<T>& callback) = 0;
+
 
     virtual ~TypedReader() {}
 };
@@ -288,11 +294,7 @@ public:
 		implementation.attachBase(port);
     }
 
-    /**
-     * Set an object whose onRead method will be called when data is 
-     * available.
-     */
-    void delegate(TypedReaderCallback<T>& callback) {
+    void useCallback(TypedReaderCallback<T>& callback) {
         if (reader!=0/*NULL*/) {
             delete reader;
             reader = 0/*NULL*/;
