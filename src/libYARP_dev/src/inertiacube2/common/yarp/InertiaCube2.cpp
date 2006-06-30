@@ -5,10 +5,12 @@
 #ifdef LINUX
 #include "../../linux/dd_orig/include/isense.h"
 #include "../../linux/dd_orig/include/types.h"
+#include "../../linux/dd_orig/include/isense.c"
 #endif
 #ifdef WIN32
 #include "../../winnt/dd_orig/include/isense.h"
 #include "../../winnt/dd_orig/include/types.h"
+#include "../../winnt/dd_orig/include/isense.c"
 #endif
 
 #include <yarp/os/Thread.h>
@@ -210,5 +212,3 @@ bool InertiaCube2::close()
 	}
 }
 
-// include dll 
-#include "../dd_orig/include/isense.c"
