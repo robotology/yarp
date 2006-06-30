@@ -20,12 +20,30 @@ namespace yarp {
 class yarp::McastCarrier : public UdpCarrier {
 protected:
     Address mcastAddress;
+    String mcastName;
+    String key;
 
     static ElectionOf<McastCarrier> caster;
 
 public:
 
     McastCarrier() {
+        key = "";
+    }
+
+    virtual ~McastCarrier() {
+        if (key!="") {
+            bool elect = isElect();
+            addRemove(key);
+            if (elect) {
+                McastCarrier *peer = caster.getElect(key);
+                if (peer==NULL) {
+                    // time to remove registration
+                    NameClient& nic = NameClient::getNameClient();
+                    nic.unregisterName(mcastName);
+                }
+            }
+        }
     }
 
     virtual Carrier *create() {
@@ -46,10 +64,24 @@ public:
         proto.defaultSendHeader();
         YARP_DEBUG(Logger::get(),"Adding extra mcast header");
 
-        // fetch an mcast address
+
         NameClient& nic = NameClient::getNameClient();
-        Address addr = nic.registerName("...",
-                                        Address("...",0,"mcast","..."));
+        Address addr;
+
+        McastCarrier *elect = 
+            caster.getElect(proto.getRoute().getFromName());
+        if (elect!=NULL) {
+            YARP_DEBUG(Logger::get(),"picking up peer mcast name");
+            addr = elect->mcastAddress;
+            mcastName = elect->mcastName;
+        } else {
+        
+            // fetch an mcast address
+            addr = nic.registerName("...",
+                                    Address("...",0,"mcast","..."));
+            mcastName = addr.getRegName();
+        }
+         
         int ip[] = { 224, 3, 1, 1 };
         int port = 11000;
         if (!addr.isValid()) {
@@ -107,12 +139,14 @@ public:
         Address remote = proto.getStreams().getRemoteAddress();
         proto.takeStreams(NULL); // free up port from tcp
         try {
-            stream->join(mcastAddress,sender);
-            //ManagedBytes b(100);
-            //stream->write(b.bytes());
-            //stream->open(remote);
             if (sender) {
-                addSender(mcastAddress.toString());
+                key = proto.getRoute().getFromName();
+                addSender(key);
+
+                // future optimization: only join when active
+                stream->join(mcastAddress,sender);
+            } else {
+                stream->join(mcastAddress,sender);
             }
       
         } catch (IOException e) {
@@ -140,7 +174,8 @@ public:
     }
   
     bool isElect() {
-        void *elect = caster.getElect(mcastAddress.toString());
+        void *elect = caster.getElect(key);
+        //void *elect = caster.getElect(mcastAddress.toString());
         return elect==this || elect==NULL;
     }
 

@@ -17,7 +17,8 @@ using namespace yarp;
 
 
 
-static bool checkCrc(char *buf, int length, int crcLength, int pct) {
+static bool checkCrc(char *buf, int length, int crcLength, int pct,
+                     int *store_altPct = NULL) {
     unsigned long alt = NetType::getCrc(buf+crcLength,length-crcLength);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
@@ -36,6 +37,9 @@ static bool checkCrc(char *buf, int length, int crcLength, int pct) {
     //YARP_ERROR(Logger::get(), String("check crc count is ") + NetType::toString(altPct));
     //YARP_ERROR(Logger::get(), String("check local count ") + NetType::toString(pct));
     //YARP_ERROR(Logger::get(), String("check remote count ") + NetType::toString(altPct));
+    if (store_altPct!=NULL) {
+        *store_altPct = altPct;
+    }
 
     return ok;
 }
@@ -200,77 +204,89 @@ void DgramTwoWayStream::close() {
 
 int DgramTwoWayStream::read(const Bytes& b) {
     reader = true;
+    bool done = false;
+    
+    while (!done) {
 
-    if (closed) { 
-        happy = false;
-        return -1; 
-    }
-
-    // if nothing is available, try to grab stuff
-    if (readAvail==0) {
-        readAt = 0;
-        ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
-        YARP_ASSERT(dgram!=NULL);
-        //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
-        int result =
-            dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
-        YARP_DEBUG(Logger::get(),
-                   String("DGRAM Got ") + NetType::toString(result) +
-                   " bytes");
-        if (result>WRITE_SIZE*1.25) {
-            YARP_ERROR(Logger::get(),
-                       String("Got big datagram: ")+NetType::toString(result)+
-                       " bytes");
-        }
-        if (closed||result<0) {
+        if (closed) { 
             happy = false;
-            return result;
+            return -1; 
         }
-        readAvail = result;
-
-        // deal with CRC
-        bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct);
-        pct++;
-        if (!crcOk) {
-            YARP_ERROR(Logger::get(),
-                       "*** Multicast/UDP packet dropped - checksum error ***");
-            if (bufferAlertNeeded&&!bufferAlerted) {
-                YARP_INFO(Logger::get(),
-                          "The UDP/MCAST system buffer limit on your system is low.");
-                YARP_INFO(Logger::get(),
-                          "You may get packet loss under heavy conditions.");
-#ifdef YARP2_LINUX
-                YARP_INFO(Logger::get(),
-                          "To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608");
-                YARP_INFO(Logger::get(),
-                          "(Might be something like: sudo /sbin/sysctl -w net.core.rmem_max=8388608)");
-#else
-                YARP_INFO(Logger::get(),
-                          "To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX");
-#endif
-                bufferAlerted = true;
+        
+        // if nothing is available, try to grab stuff
+        if (readAvail==0) {
+            readAt = 0;
+            ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
+            YARP_ASSERT(dgram!=NULL);
+            //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
+            int result =
+                dgram->recv(readBuffer.get(),readBuffer.length(),dummy);
+            YARP_DEBUG(Logger::get(),
+                       String("DGRAM Got ") + NetType::toString(result) +
+                       " bytes");
+            if (result>WRITE_SIZE*1.25) {
+                YARP_ERROR(Logger::get(),
+                           String("Got big datagram: ")+NetType::toString(result)+
+                           " bytes");
             }
-            //readAt = 0;
-            //readAvail = 0;
-            reset();
-            throw IOException("CRC failure");
-            return -1;
-        } else {
-            readAt += CRC_SIZE;
-            readAvail -= CRC_SIZE;
+            if (closed||result<0) {
+                happy = false;
+                return result;
+            }
+            readAvail = result;
+            
+            // deal with CRC
+            int altPct = 0;
+            bool crcOk = checkCrc(readBuffer.get(),readAvail,CRC_SIZE,pct,
+                                  &altPct);
+            if (altPct!=-1) {
+                pct++;
+                if (!crcOk) {
+                    YARP_ERROR(Logger::get(),
+                               "*** Multicast/UDP packet dropped - checksum error ***");
+                    if (bufferAlertNeeded&&!bufferAlerted) {
+                        YARP_INFO(Logger::get(),
+                                  "The UDP/MCAST system buffer limit on your system is low.");
+                        YARP_INFO(Logger::get(),
+                                  "You may get packet loss under heavy conditions.");
+#ifdef YARP2_LINUX
+                        YARP_INFO(Logger::get(),
+                                  "To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608");
+                        YARP_INFO(Logger::get(),
+                                  "(Might be something like: sudo /sbin/sysctl -w net.core.rmem_max=8388608)");
+#else
+                        YARP_INFO(Logger::get(),
+                                  "To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX");
+#endif
+                        bufferAlerted = true;
+                    }
+                    //readAt = 0;
+                    //readAvail = 0;
+                    reset();
+                    throw IOException("CRC failure");
+                    return -1;
+                } else {
+                    readAt += CRC_SIZE;
+                    readAvail -= CRC_SIZE;
+                }
+                done = true;
+            } else {
+                // this is just a housekeeping message, ignore it
+                readAvail = 0;
+            }
         }
-    }
 
-    // if stuff is available, take it
-    if (readAvail>0) {
-        int take = readAvail;
-        if (take>b.length()) {
-            take = b.length();
+        // if stuff is available, take it
+        if (readAvail>0) {
+            int take = readAvail;
+            if (take>b.length()) {
+                take = b.length();
+            }
+            ACE_OS::memcpy(b.get(),readBuffer.get()+readAt,take);
+            readAt += take;
+            readAvail -= take;
+            return take;
         }
-        ACE_OS::memcpy(b.get(),readBuffer.get()+readAt,take);
-        readAt += take;
-        readAvail -= take;
-        return take;
     }
 
     return 0;
