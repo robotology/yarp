@@ -629,6 +629,8 @@ int NameServer::main(int argc, char *argv[]) {
     
         PortCore server;  // we use a subset of the PortCore functions
         MainNameServer name(suggest.getPort() + 2);
+
+        // register root for documentation purposes
         name.registerName("root",suggest);
         server.setReadHandler(name);
         server.setAutoHandshake(false);
@@ -639,6 +641,11 @@ int NameServer::main(int argc, char *argv[]) {
     
         FallbackNameServer fallback(name);
         fallback.start();
+
+        // register fallback root for documentation purposes
+        name.registerName("bootstrap",FallbackNameServer::getAddress());
+        YARP_INFO(Logger::get(), String("Bootstrap server listening at ") + 
+                  FallbackNameServer::getAddress().toString());
     
         while (true) {
             YARP_DEBUG(Logger::get(),"name server running happily");

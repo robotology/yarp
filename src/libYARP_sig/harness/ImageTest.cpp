@@ -9,6 +9,7 @@
 #include <yarp/NetType.h>
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
+#include <yarp/sig/ImageDraw.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
@@ -19,6 +20,7 @@
 
 using namespace yarp;
 using namespace yarp::sig;
+using namespace yarp::sig::draw;
 using namespace yarp::os;
 
 class ImageTest : public UnitTest {
@@ -252,7 +254,7 @@ public:
         checkEqual(img3.width(),13,"normal external row width");
     }
 
-    virtual void testStandard() {
+    void testStandard() {
         report(0,"checking standard compliance of description...");
         ImageOf<PixelRgb> img;
         img.resize(8,4);
@@ -267,6 +269,22 @@ public:
         YARP_DEBUG(Logger::get(),bot.toString().c_str());
     }
 
+    void testDraw() {
+        report(0,"checking draw tools...");
+        ImageOf<PixelRgb> img;
+        img.resize(64,64);
+        img.zero();
+        addCircle(img,PixelRgb(255,0,0),32,32,200);
+        // full image should be colored blue
+        bool ok = true;
+        IMGFOR(img,x,y) {
+            if (img.pixel(x,y).r!=255) {
+                ok = false;
+            }
+        }
+        checkTrue(ok,"image is blue");
+    }
+
 
     virtual void runTests() {
         testCreate();
@@ -279,6 +297,7 @@ public:
         testPadding();
         testZero();
         testStandard();
+        testDraw();
     }
 };
 
