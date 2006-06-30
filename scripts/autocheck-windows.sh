@@ -7,6 +7,15 @@ GEN="NMake Makefiles"
 CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 CMAKEOPTS="-DCREATE_GUIS:BOOL=FALSE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE"
 
+YARP1_INCLUDE="$PWD/../yarp/include"
+
+if [ -e $YARP1_INCLUDE ]; then
+	echo "Found YARP1"
+	CMAKEOPTS="$CMAKEOPTS -DCOEXIST_WITH_YARP1:BOOL=ON -DYARP1_INCLUDE_DIR:PATH=$YARP1_INCLUDE"
+else
+	echo "Did not find YARP1"
+fi
+
 while true; do
 
 rm -f should_report.txt
