@@ -139,7 +139,7 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 
 	gtk_show_about_dialog(GTK_WINDOW(mainWindow),
                           "name", "gview",
-                          "version", "0.4",
+                          "version", "0.9",
                           "license", license,
                           "website", "http://www.liralab.it",
                           "comments", "Program to display images received on a port.",
@@ -371,18 +371,23 @@ GtkWidget* createSaveSingleDialog(void)
 	GtkWidget *button;
 	GtkWidget *hbox;
 	dialog = gtk_dialog_new ();
-	gtk_window_set_title(GTK_WINDOW(dialog), "");
+	gtk_window_set_title(GTK_WINDOW(dialog), "Save Snapshot");
 	gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
+	//gtk_window_resize(GTK_WINDOW(dialog), 185, 40);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	//gtk_window_set_default_size(GTK_WINDOW(dialog), 185, 40);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
 	gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
-	hbox = gtk_hbox_new (FALSE, 8); // parameters (gboolean homogeneous_space, gint spacing);
+	hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
 	button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 0); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+	gtk_widget_set_size_request (GTK_WIDGET(button), 150,50);
+	gtk_box_pack_start (GTK_BOX (hbox), button, TRUE, TRUE, 16); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 	gtk_signal_connect (GTK_OBJECT (button), "clicked", GTK_SIGNAL_FUNC (saveSingleClicked_CB), NULL);
 	gtk_signal_connect (GTK_OBJECT (dialog), "delete_event", GTK_SIGNAL_FUNC (saveSingleDelete_CB), NULL);
+	
+	//gtk_container_set_border_width(GTK_CONTAINER(hbox), 5);
 	
 	return dialog;
 }
@@ -394,17 +399,21 @@ GtkWidget* createSaveSetDialog(void)
 	GtkWidget *stopButton;
 	GtkWidget *hbox;
 	dialog = gtk_dialog_new ();
-	gtk_window_set_title(GTK_WINDOW(dialog), "");
+	gtk_window_set_title(GTK_WINDOW(dialog), "Save Image Set");
 	gtk_window_set_modal(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), GTK_WINDOW(mainWindow));
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	//gtk_window_set_default_size(GTK_WINDOW(dialog), 190, 40);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
 	gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_RECORD);
 	stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
+	gtk_widget_set_size_request (GTK_WIDGET(saveButton), 80,50);
+	gtk_widget_set_size_request (GTK_WIDGET(stopButton), 80,50);
+
 	hbox = gtk_hbox_new (TRUE, 8); // parameters (gboolean homogeneous_space, gint spacing);
-	gtk_box_pack_start (GTK_BOX (hbox), saveButton, TRUE, TRUE, 0); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
-	gtk_box_pack_start (GTK_BOX (hbox), stopButton, TRUE, TRUE, 0); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+	gtk_box_pack_start (GTK_BOX (hbox), saveButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
+	gtk_box_pack_start (GTK_BOX (hbox), stopButton, TRUE, TRUE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 8); // parameters (GtkBox *box, GtkWidget *child, gboolean expand, gboolean fill, guint padding);
 	gtk_signal_connect (GTK_OBJECT (saveButton), "clicked", GTK_SIGNAL_FUNC (saveSetStartClicked_CB), NULL);
 	gtk_signal_connect (GTK_OBJECT (stopButton), "clicked", GTK_SIGNAL_FUNC (saveSetStopClicked_CB), NULL);
