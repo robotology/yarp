@@ -25,7 +25,7 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	mkdir -p Build
-	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp .. )
+	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp -DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE .. )
 
 	touch configure-stamp
 
