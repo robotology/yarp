@@ -1,0 +1,16 @@
+Source: yarp
+Section: unknown
+Priority: optional
+Maintainer: Paul Fitzpatrick <paulfitz@liralab.it>
+Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.2.0), libace-dev (>= 5.4.0)
+Standards-Version: 3.7.2
+
+Package: yarp
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: OS interface for the yarp robot platform
+ Makes streaming communication between processes and/or machines easy;
+ and devices too.  Similar to player/stage for wheeled robots.
+ Uses well-specified protocols across tcp, udp, and multicast.
+ Command-line and library interfaces.
+ .
