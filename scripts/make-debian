@@ -3,65 +3,32 @@
 # This script makes a debian package
 # call from root as ./scripts/make-debian
 
-echo "Warning: I am running cmake to set a temporary install path!"
+ORG=$PWD
+SRC=$PWD/source-package
+BASE=$PWD/debian-package
 
-WORK="$PWD/tmp-deb"
-rm -rf $WORK
+echo "Make sure you run ./scripts/make-source-package first"
 
-echo "Make sure RPATH is not used - if you have lintian problems"
-echo "then please make clean"
-cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$WORK .
-
-make && make install
-
-# required files
-cp -R $WORK/doc/DEBIAN $WORK/DEBIAN
-NAME=`grep -i "Package:" $WORK/DEBIAN/control | sed "s/.* //"`
-VERSION=`grep -i "Version:" $WORK/DEBIAN/control | sed "s/.* //"`
-mkdir -p $WORK/doc
-cp ./COPYING $WORK/doc/copyright
-cp ./ChangeLog $WORK/doc/changelog
-(
-echo "yarp-dev (2.0.0) unstable; urgency=low"
-echo "  * yarp-dev Debian maintainer and upstream author are identical,"
-echo "    therefore see also normal changelog file for Debian changes."
-echo ""
-echo " -- paulfitz <paulfitz@localhost.localdomain>  Mon, 29 May 2006 19:58:41 -0600"
-echo ""
-) > $WORK/doc/changelog.Debian
-gzip --best $WORK/doc/changelog
-gzip --best $WORK/doc/changelog.Debian
-
-# man pages
-./scripts/make-manpages || exit 1
-mkdir -p $WORK/man/man1
-
-mv *.1 $WORK/man/man1
-for f in `ls $WORK/man/man1/*.1`; do
-    gzip --best $f
+for f in `ls $SRC/*.tar.gz`; do
+    echo Working with $f
+    rm -rf $BASE
+    mkdir -p $BASE
+    cd $BASE
+    tar xzvf - < $f
+    dir=`basename $f .tar.gz`
+    if [ -e $dir ]; then
+	echo Working in $dir
+	cd $dir
+	echo Packaging...
+#	dpkg-buildpackage -us -uc -d -rfakeroot
+	mkdir -p ../result
+	pdebuild --buildresult ../result
+    fi
 done
 
-# strip binaries
-pushd $WORK/bin
-for f in `ls`; do
-    echo STRIPPING $f
-    strip --strip-unneeded --remove-section=.comment $f
-done
-popd
+echo Results in $BASE/result
 
-# remap directories
-mkdir -p $WORK/usr
-mkdir -p $WORK/usr/share/doc
-mv $WORK/include $WORK/usr/include
-mv $WORK/bin $WORK/usr/bin
-mv $WORK/man $WORK/usr/share/man
-mv $WORK/doc $WORK/usr/share/doc/$NAME
-
-PACK=$NAME-$VERSION.deb
-echo "Making package $PACK"
-fakeroot dpkg-deb --build $WORK $PACK
-echo "Checking package $PACK"
-lintian $PACK
-echo "DONE"
+#cd $BASE
+#pbuilder build $BASE/*.dsc
 
 

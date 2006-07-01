@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# run as ./scripts/make-source-package
+
+ORG=$PWD
+BASE=$PWD/source-package
+
+mkdir -p $BASE/repository
+
+if [ ! -e $BASE/repository/CVS ]; then
+    cp -R CVS $BASE/repository/CVS
+fi
+
+# skip cvs update if nocvs specified
+if [ ! "nocvs" = "$1" ]; then
+    echo "CVS update"
+    cd $BASE/repository
+    cvs update -d
+fi
+
+rm -rf $BASE/pack
+rm -f $BASE/*.tar.gz
+mkdir -p $BASE/pack
+cd $BASE/pack
+cmake ../repository
+make package_source
+cp *.tar.gz $BASE
+echo Source package is $BASE/*.tar.gz
+
+
