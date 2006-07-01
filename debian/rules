@@ -25,7 +25,9 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	mkdir -p Build
-	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp -DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE .. )
+	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp -DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE ..; cmake . )
+	# cmake is called a second time to deal with nested options well -
+	# there's an odd bug otherwise in the c_flags generated
 
 	touch configure-stamp
 
