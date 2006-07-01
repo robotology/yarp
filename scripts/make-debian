@@ -3,6 +3,14 @@
 # This script makes a debian package
 # call from root as ./scripts/make-debian
 
+
+# how to create pbuilder environments
+#sudo apt-get install pbuilder
+#sudo pbuilder create --basetgz /var/cache/pbuilder/base-stable.tgz --distribution stable
+#sudo pbuilder create --basetgz /var/cache/pbuilder/base-unstable.tgz --distribution unstable
+
+
+
 ORG=$PWD
 SRC=$PWD/source-package
 BASE=$PWD/debian-package
@@ -20,13 +28,20 @@ for f in `ls $SRC/*.tar.gz`; do
 	echo Working in $dir
 	cd $dir
 	echo Packaging...
-#	dpkg-buildpackage -us -uc -d -rfakeroot
-	mkdir -p ../result
-	pdebuild --buildresult ../result
+	dists="stable unstable"
+	if which pdebuild; then
+	    for d in $dists; do
+		mkdir -p ../$d
+		pdebuild --buildresult ../$d -- --basetgz /var/cache/pbuilder/base-$d.tgz --distribution $d
+	    done
+	else
+	    # just give a taste of packaging process
+	    dpkg-buildpackage -us -uc -d -rfakeroot	
+	fi
+	echo "Results in $BASE/[$dists]"
     fi
 done
 
-echo Results in $BASE/result
 
 #cd $BASE
 #pbuilder build $BASE/*.dsc
