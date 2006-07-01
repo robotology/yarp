@@ -1,0 +1,5 @@
+
+The scripts in this directory are for maintaining the YARP repository.
+They are not part of YARP itself.  So if you are not a maintainer of YARP,
+you don't need to care about them.
+
