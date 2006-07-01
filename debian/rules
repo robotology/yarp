@@ -25,7 +25,7 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	mkdir -p Build
-	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES .. )
+	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp .. )
 
 	touch configure-stamp
 
@@ -37,7 +37,7 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	( cd Build; $(MAKE) )
-	#docbook-to-man debian/yarp.sgml > yarp.1
+	( cd Build; docbook-to-man ../src/libYARP_OS/yarp/yarp.sgml > yarp.1 )
 
 	touch build-stamp
 
@@ -58,8 +58,17 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/yarp.
-	( cd Build; $(MAKE) install DESTDIR=$(CURDIR)/debian/yarp )
+	( cd Build; $(MAKE) install )
+	#( cd Build; $(MAKE) install DESTDIR=$(CURDIR)/debian/yarp )
 
+	# Reorganize the installation for a debian system
+	mv $(CURDIR)/debian/yarp/include $(CURDIR)/debian/yarp/usr/include
+	mv $(CURDIR)/debian/yarp/lib $(CURDIR)/debian/yarp/usr/lib
+	mkdir -p $(CURDIR)/debian/yarp/usr/bin
+	mv $(CURDIR)/debian/yarp/bin/* $(CURDIR)/debian/yarp/usr/bin
+	rm -rf $(CURDIR)/debian/yarp/doc # doc is just old debian stuff now
+	mkdir -p $(CURDIR)/debian/yarp/usr/share/man/man1
+	cp Build/*.1 $(CURDIR)/debian/yarp/usr/share/man/man1
 
 # Build architecture-independent files here.
 binary-indep: build install
