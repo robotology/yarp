@@ -6,12 +6,6 @@ echo Updating Sourceforge website from local system
 
 target="yarp0.sourceforge.net"
 
-#if [ -e yarp-2.0.tar.gz ]; then
-#    cp yarp-2.0.tar.gz doc
-#else
-#    echo NO YARP install tar found, skipping
-#fi
-
 USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
 
 if [ ! "k$USER" = "k" ] ; then

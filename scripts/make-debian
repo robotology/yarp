@@ -4,7 +4,7 @@
 # call from root as ./scripts/make-debian
 
 
-# sudo apt-get install pbuilder debarchiver
+# sudo apt-get install pbuilder debarchiver debhelper fakeroot
 
 
 # how to create pbuilder environments
@@ -30,22 +30,33 @@ for f in `ls $SRC/*.tar.gz`; do
 	echo Working in $dir
 	cd $dir
 	YARP=$PWD
+	cd ..
+	mv $YARP original
+	cd original
+	ORIG=$PWD
 	echo Packaging...
 	dists="stable unstable"
 	if which pdebuild; then
 	    for d in $dists; do
+		rm -rf $YARP
+		cp $ORIG $YARP
 		cd $YARP
+		log=$PWD/debian/changelog
+		cp $log tmp.x
+		cat tmp.x | sed "s/unstable/$d/g" | tee $log
+		rm tmp.x
 		mkdir -p ../$d
 		pdebuild --buildresult ../$d -- --basetgz /var/cache/pbuilder/base-$d.tgz --distribution $d
 		cd ../$d
 		for c in `ls *.changes`; do
-		    # distribution name is wrong at the moment
-		    cp $c tmp.changes
-		    cat tmp.changes | sed "s/unstable/$d/g" | tee $c
-		    rm tmp.changes
+		    mkdir -p $BASE/archive
+		    mkdir copy
+		    cp * copy
+		    cd copy
+		    debarchiver -d $BASE/archive -i $PWD -o -a
+		    cd ..
+		    rm -rf copy
 		done
-		mkdir -p $BASE/archive
-		debarchiver -d $BASE/archive -i $PWD
 	    done
 	else
 	    # just give a taste of packaging process
