@@ -24,12 +24,19 @@ for f in `ls $SRC/*.tar.gz`; do
     rm -rf $BASE
     mkdir -p $BASE
     cd $BASE
-    tar xzvf - < $f
+    tar xzf - < $f
     dir=`basename $f .tar.gz`
+    ver=`echo $dir | sed s/.*-//g`
+    echo "Version number is $ver"
     if [ -e $dir ]; then
 	echo Working in $dir
 	cd $dir
 	YARP=$PWD
+	log=$PWD/debian/changelog
+	# propagate version number
+	cp $log tmp.x
+	cat tmp.x | sed "s/2\.[0-9]\.[0-9]/$ver/g" | tee $log
+	rm tmp.x
 	cd ..
 	mv $YARP original
 	cd original
