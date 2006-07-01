@@ -2,7 +2,7 @@ Source: yarp
 Section: unknown
 Priority: optional
 Maintainer: Paul Fitzpatrick <paulfitz@liralab.it>
-Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.2), libace-dev (>= 5.4), docbook-to-man
+Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.0), libace-dev (>= 5.4), docbook-to-man
 Standards-Version: 3.7.2
 
 Package: yarp
