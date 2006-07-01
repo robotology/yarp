@@ -57,7 +57,20 @@ There is an unofficial Debian package -- add the following to /etc/apt/sources.c
 <PRE>
    deb http://yarp0.sourceforge.net/downloads/yarp/debian stable main
 </PRE>
-(unstable is also available).
+(unstable is also available).  Then you can set up YARP with:
+<PRE>
+   sudo apt-get update
+   sudo apt-get install yarp
+</PRE>
+If you want the source code and not just executables and header files, add the following:
+<PRE>
+   deb-src http://yarp0.sourceforge.net/downloads/yarp/debian stable main
+</PRE>
+Then you can get the YARP source code with:
+<PRE>
+   sudo apt-get update
+   apt-get source yarp
+</PRE>
 
 <BR><BR>
 
