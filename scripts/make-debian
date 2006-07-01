@@ -42,7 +42,7 @@ for f in `ls $SRC/*.tar.gz`; do
 	cd original
 	ORIG=$PWD
 	echo Packaging...
-	dists="unstable"
+	dists="stable unstable"
 	if which pdebuild; then
 	    for d in $dists; do
 		rm -rf $YARP
