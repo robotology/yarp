@@ -13,5 +13,6 @@ IF (WIN32 AND NOT CYGWIN)
   INSTALL_TARGETS(/bin yarpimageviewer)
 ELSE (WIN32 AND NOT CYGWIN)
   YarpProgram(yarp-imageviewer CONSOLE)
+  INSTALL_TARGETS(/bin yarp-imageviewer)
 ENDIF (WIN32 AND NOT CYGWIN)
 
