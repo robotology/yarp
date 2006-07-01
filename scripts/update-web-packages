@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# run as "./scripts/update-web-packages"
+
+echo Updating Sourceforge website packages from local system
+
+target="yarp0.sourceforge.net"
+
+USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+
+if [ ! "k$USER" = "k" ] ; then
+
+    echo USER might be $USER
+
+    echo "Preparing local web package directory: web-package"
+    rm -rf web-package
+    mkdir -p web-package/debian
+    cp source-package/*.tar.gz web-package
+    cp -R debian-package/archive  web-package/debian/dists
+    ln -s dists web-package/debian/archive
+
+    echo "Uploading to http://yarp0.sourceforge.net/downloads/yarp"
+    cd web-package && rsync --rsh="ssh -x -l $USER" --modify-window=2 -lauvzP . $target:www/downloads/yarp
+
+else
+
+    echo cannot figure out CVS username
+
+fi
+
+
+

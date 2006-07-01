@@ -39,7 +39,7 @@ for f in `ls $SRC/*.tar.gz`; do
 	if which pdebuild; then
 	    for d in $dists; do
 		rm -rf $YARP
-		cp $ORIG $YARP
+		cp -R $ORIG $YARP
 		cd $YARP
 		log=$PWD/debian/changelog
 		cp $log tmp.x
