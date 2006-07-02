@@ -19,60 +19,73 @@ public:
         checkTrue(p.check("hello"), "key 1 exists");
         checkTrue(p.check("x"), "key 2 exists");
         checkTrue(!(p.check("y")), "other key should not exist");
-        checkEqual(p.get("hello").toString().c_str(),"friend", 
+        checkEqual(p.find("hello").toString().c_str(),"friend", 
                    "key 1 has good value");
-        checkEqual(p.get("x").toString().c_str(),"y", 
+        checkEqual(p.find("x").toString().c_str(),"y", 
                    "key 2 has good value");
+    }
+
+
+    void checkTypes() {
+        report(0,"checking puts and gets of various types");
+        Property p;
+        p.put("ten",10);
+        p.put("pi",(double)3.14);
+        checkEqual(p.find("ten").asInt(),10,"ten");
+        checkTrue(p.find("pi").asDouble()>3,"pi>3");
+        checkTrue(p.find("pi").asDouble()<4,"pi<4");
+        p.unput("ten");
+        checkTrue(p.find("ten").isNull(),"unput");
     }
 
     void checkExternal() {
         report(0,"checking external forms");
         Property p;
         p.fromString("(foo 12) (testing left right)");
-        checkEqual(p.getString("foo").c_str(),"12","good key 1");
-        checkEqual(p.getString("testing").c_str(),"left","good key 2");
-        checkEqual(p.getList("testing")->toString().c_str(),
+        checkEqual(p.find("foo").asInt(),12,"good key 1");
+        checkEqual(p.find("testing").asString().c_str(),"left","good key 2");
+        checkEqual(p.findGroup("testing").toString().c_str(),
                    "testing left right","good key 2 (more)");
 
         Property p2;
         p2.fromString(p.toString().c_str());
-        checkEqual(p.getString("testing").c_str(),"left","good key after copy");
+        checkEqual(p.find("testing").asString().c_str(),"left","good key after copy");
 
         Property p3;
         char *args[] = {"CMD","--size","10","20","--mono","on"};
         p3.fromCommand(5,args);
         Bottle bot(p3.toString().c_str());
         checkEqual(bot.size(),2,"right number of terms");
-        checkEqual(p3.getList("size")->get(1).toString().c_str(),"10","width");
-        checkEqual(p3.getList("size")->get(2).toString().c_str(),"20","height");
-        checkTrue(p3.getList("size")->get(1).isInt(),"width type");
-        checkEqual(p3.getList("size")->get(1).asInt(),10,"width type val");
+        checkEqual(p3.findGroup("size").get(1).toString().c_str(),"10","width");
+        checkEqual(p3.findGroup("size").get(2).toString().c_str(),"20","height");
+        checkTrue(p3.findGroup("size").get(1).isInt(),"width type");
+        checkEqual(p3.findGroup("size").get(1).asInt(),10,"width type val");
 
         report(0,"reading from config-style string");
         Property p4;
         p4.fromConfig("size 10 20\nmono on\n");
         Bottle bot2(p4.toString().c_str());
         checkEqual(bot2.size(),2,"right number of terms");
-        checkEqual(p4.getList("size")->get(1).toString().c_str(),"10","width");
-        checkEqual(p4.getList("size")->get(2).toString().c_str(),"20","height");
-        checkTrue(p4.getList("size")->get(1).isInt(),"width type");
-        checkEqual(p4.getList("size")->get(1).asInt(),10,"width type val");
+        checkEqual(p4.findGroup("size").get(1).toString().c_str(),"10","width");
+        checkEqual(p4.findGroup("size").get(2).toString().c_str(),"20","height");
+        checkTrue(p4.findGroup("size").get(1).isInt(),"width type");
+        checkEqual(p4.findGroup("size").get(1).asInt(),10,"width type val");
 
         report(0,"more realistic config-style string");
         Property p5;
         p5.fromConfig("[cat1]\nsize 10 20\nmono on\n[cat2]\nfoo\t100\n");
         Bottle bot3(p5.toString().c_str());
         checkEqual(bot3.size(),2,"right number of terms");
-        checkTrue(p5.getList("cat1")!=NULL,"category 1");
-        checkEqual(p5.getList("cat1")->findGroup("size").get(1).asInt(),
+        checkEqual(p5.findGroup("cat1").findGroup("size").get(1).asInt(),
                    10,"category 1, size, width");
-        checkEqual(p5.getList("cat2")->findGroup("foo").get(1).asInt(),
+        checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt(),
                    100,"category 2, foo");
     }
 
     virtual void runTests() {
         checkPutGet();
         checkExternal();
+        checkTypes();
     }
 };
 

@@ -77,6 +77,14 @@ public:
         p->bot.add(bit);
     }
 
+    void put(const char *key, Value *bit) {
+        PropertyItem *p = getProp(key,true);
+        p->singleton = true;
+        p->bot.clear();
+        p->bot.addString(key);
+        p->bot.add(bit);
+    }
+
     bool check(const char *key, Value *&output) const {
         PropertyItem *p = getPropNoCreate(key);
         
@@ -284,8 +292,13 @@ void Property::put(const char *key, const char *val) {
     HELPER(implementation).put(key,val);
 }
 
-void Property::put(const char *key, Value& bit) {
-    HELPER(implementation).put(key,bit);
+void Property::put(const char *key, Value& value) {
+    HELPER(implementation).put(key,value);
+}
+
+
+void Property::put(const char *key, Value *value) {
+    HELPER(implementation).put(key,value);
 }
 
 
@@ -310,16 +323,8 @@ void Property::unput(const char *key) {
 }
 
 
-Value& Property::get(const char *key) const {
+Value& Property::find(const char *key) {
     return HELPER(implementation).get(key);
-}
-
-Bottle *Property::getList(const char *key) const {
-    return HELPER(implementation).getBottle(key);
-}
-
-ConstString Property::getString(const char *key) const {
-    return HELPER(implementation).get(key).toString();
 }
 
 
@@ -387,3 +392,8 @@ bool Property::write(ConnectionWriter& writer) {
 }
 
 
+Bottle& Property::findGroup(const char *key) {
+    Bottle *result = HELPER(implementation).getBottle(key);
+    if (result!=((Bottle*)0)) { return *result; }
+    return Bottle::getNullBottle();
+}

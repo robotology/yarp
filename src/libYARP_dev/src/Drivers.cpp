@@ -94,7 +94,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     if (bot.size()>1) {
         // this wasn't a device name, but some codes -- rearrange
         p.fromString(str.c_str());
-        str = p.get("device").asString().c_str();
+        str = p.find("device").asString().c_str();
         config = &p;
     }
 

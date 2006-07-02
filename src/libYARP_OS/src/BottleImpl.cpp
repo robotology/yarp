@@ -806,8 +806,9 @@ int subCoder(T& content) {
     return c;
 }
 
-int StoreList::subCode() {
-    return subCoder(content);
+int StoreList::subCode() const {
+    Bottle *op = (Bottle*)(&content);
+    return subCoder(*op);
 }
 
 int BottleImpl::subCode() {
@@ -905,3 +906,9 @@ Value& Storable::find(const char *txt) {
 Bottle& Storable::findGroup(const char *txt) {
     return Bottle::getNullBottle();
 }
+
+
+bool Storable::operator == (const Value& alt) const {
+    return String(toString().c_str()) == alt.toString().c_str();
+}
+

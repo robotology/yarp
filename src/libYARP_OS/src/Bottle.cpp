@@ -240,11 +240,6 @@ void Bottle::add(Value& value) {
 }
 
 
-bool Value::operator == (const Value& alt) {
-    return String(toString().c_str()) == alt.toString().c_str();
-}
-
-
 Bottle& Bottle::getNullBottle() {
     return NullBottle::bottleNull;
 }
@@ -263,3 +258,14 @@ bool Searchable::check(const char *txt, Value *& result) {
     }
     return ok;
 }
+
+Value Searchable::check(const char *txt, const Value& fallback) {
+    Value& bit = find(txt);
+    bool ok = !(bit.isNull());
+    if (ok) {
+        return bit;
+    }
+    return fallback;
+}
+
+

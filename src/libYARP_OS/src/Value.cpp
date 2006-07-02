@@ -1,5 +1,6 @@
 
 #include <yarp/BottleImpl.h>
+#include <yarp/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Value.h>
 
@@ -51,6 +52,36 @@ Value *Value::makeValue(const char *txt) {
 
 Value& Value::getNullValue() {
   return BottleImpl::getNull();
+}
+
+
+void Value::setProxy(Value *proxy) {
+  if (this->proxy!=NULL) { 
+    delete this->proxy;
+    this->proxy = NULL;
+  }
+  YARP_ASSERT(proxy!=NULL);
+  this->proxy = proxy;
+}
+
+
+void Value::ok() const {
+  const Value *op = this;
+  if (proxy==NULL) {
+    ((Value*)op)->setProxy(makeList());
+  }
+}
+
+
+Value::Value(const Value& alt) {
+  proxy = 0;
+  setProxy(alt.clone());
+}
+
+
+const Value& Value::operator = (const Value& alt) {
+  setProxy(alt.clone());
+  return *this;
 }
 
 

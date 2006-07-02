@@ -28,6 +28,38 @@ namespace yarp {
 
 class yarp::Storable : public yarp::os::Value {
 public:
+    virtual bool isInt() const     { return false; }
+    virtual bool isString() const { return false; }
+    virtual bool isDouble() const  { return false; }
+    virtual bool isList() const    { return false; }
+    virtual bool isVocab() const   { return false; }
+    virtual bool isBlob() const    { return false; }
+
+    virtual int asInt() const            { return 0; }
+    virtual int asVocab() const          { return 0; }
+    virtual double asDouble() const      { return 0; }
+    virtual yarp::os::ConstString asString() const { 
+        return yarp::os::ConstString(asStringFlex().c_str()); 
+    }
+    virtual yarp::os::Bottle *asList() const { return NULL; }
+    virtual const char *asBlob() const   { return (const char*)0; }
+    virtual int asBlobLength() const     { return 0; }
+
+    virtual bool read(ConnectionReader& reader) = 0;
+    virtual bool write(ConnectionWriter& writer) = 0;
+
+    virtual yarp::os::Value& find(const char *txt);
+    virtual yarp::os::Bottle& findGroup(const char *txt);
+
+    virtual bool operator == (const Value& alt) const;
+
+    virtual yarp::os::Value *create() const { return createStorable(); }
+
+    virtual yarp::os::Value *clone() const {
+        return cloneStorable();
+    }
+
+
     virtual ~Storable() {}
 
     virtual void fromString(const String& src) = 0;
@@ -43,25 +75,11 @@ public:
     virtual String toStringNested() const { return toStringFlex(); }
 
     //virtual int getCode() = 0;
-    virtual bool read(ConnectionReader& reader) = 0;
-    virtual bool write(ConnectionWriter& writer) = 0;
-    virtual Storable *createStorable() = 0;
-    virtual yarp::os::Value *create() { return createStorable(); }
+    virtual Storable *createStorable() const = 0;
 
-    virtual int asInt() { return 0; }
-    virtual int asVocab() { return 0; }
-    virtual double asDouble() { return 0; }
-    virtual String asStringFlex() { return ""; }
-    virtual yarp::os::ConstString asString() { 
-        return yarp::os::ConstString(asStringFlex().c_str()); 
-    }
-    virtual yarp::os::Bottle *asList() { return NULL; }
+    virtual String asStringFlex() const { return ""; }
 
-    virtual yarp::os::Value *clone() {
-        return cloneStorable();
-    }
-
-    virtual Storable *cloneStorable() {
+    virtual Storable *cloneStorable() const {
         Storable *item = createStorable();
         YARP_ASSERT(item!=NULL);
         item->copy(*this);
@@ -74,12 +92,10 @@ public:
         // ideally would have special cases in subclasses
     }
 
-    virtual int subCode() {
+    virtual int subCode() const {
         return 0;
     }
 
-    virtual yarp::os::Value& find(const char *txt);
-    virtual yarp::os::Bottle& findGroup(const char *txt);
 
 };
 
@@ -90,11 +106,11 @@ public:
     virtual yarp::os::ConstString toString() const { return ""; }
     virtual String toStringFlex() const { return ""; }
     virtual void fromString(const String& src) {}
-    virtual int getCode() { return -1; }
+    virtual int getCode() const { return -1; }
     virtual bool read(ConnectionReader& reader) { return false; }
     virtual bool write(ConnectionWriter& writer) { return false; }
-    virtual Storable *createStorable() { return new StoreNull(); }
-    virtual bool isNull() { return true; }
+    virtual Storable *createStorable() const { return new StoreNull(); }
+    virtual bool isNull() const { return true; }
 };
 
 
@@ -106,14 +122,14 @@ public:
     StoreInt(int x) { this->x = x; }
     virtual String toStringFlex() const;
     virtual void fromString(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() const { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreInt(0); }
-    virtual int asInt() { return x; }
-    virtual int asVocab() { return x; }
-    virtual double asDouble() { return x; }
-    virtual bool isInt() { return true; }
+    virtual Storable *createStorable() const { return new StoreInt(0); }
+    virtual int asInt() const { return x; }
+    virtual int asVocab() const { return x; }
+    virtual double asDouble() const { return x; }
+    virtual bool isInt() const { return true; }
     static const int code;
 };
 
@@ -127,14 +143,14 @@ public:
     virtual void fromString(const String& src);
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() const { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreVocab(0); }
-    virtual int asInt() { return x; }
-    virtual int asVocab() { return x; }
-    virtual double asDouble() { return x; }
-    virtual bool isVocab() { return true; }
+    virtual Storable *createStorable() const { return new StoreVocab(0); }
+    virtual int asInt() const { return x; }
+    virtual int asVocab() const { return x; }
+    virtual double asDouble() const { return x; }
+    virtual bool isVocab() const { return true; }
     static const int code;
 };
 
@@ -148,13 +164,15 @@ public:
     virtual void fromString(const String& src);
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() const { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreString(String("")); }
-    virtual String asStringFlex() { return x; }
-    virtual int asVocab() { return yarp::os::Vocab::encode(x.c_str()); }
-    virtual bool isString() { return true; }
+    virtual Storable *createStorable() const { 
+        return new StoreString(String("")); 
+    }
+    virtual String asStringFlex() const { return x; }
+    virtual int asVocab() const { return yarp::os::Vocab::encode(x.c_str()); }
+    virtual bool isString() const { return true; }
     static const int code;
 };
 
@@ -168,13 +186,15 @@ public:
     virtual void fromString(const String& src);
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() const { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreBlob(String("")); }
-    virtual bool isBlob() { return true; }
-    virtual const char *asBlob()         { return x.c_str(); }
-    virtual int asBlobLength()     { return x.length(); }
+    virtual Storable *createStorable() const { 
+        return new StoreBlob(String("")); 
+    }
+    virtual bool isBlob() const { return true; }
+    virtual const char *asBlob() const         { return x.c_str(); }
+    virtual int asBlobLength() const     { return x.length(); }
     static const int code;
 };
 
@@ -186,13 +206,15 @@ public:
     StoreDouble(double x) { this->x = x; }
     virtual String toStringFlex() const;
     virtual void fromString(const String& src);
-    virtual int getCode() { return code; }
+    virtual int getCode() const { return code; }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreDouble(0); }
-    virtual int asInt() { return (int)x; }
-    virtual double asDouble() { return x; }
-    virtual bool isDouble() { return true; }
+    virtual Storable *createStorable() const { 
+        return new StoreDouble(0); 
+    }
+    virtual int asInt() const { return (int)x; }
+    virtual double asDouble() const { return x; }
+    virtual bool isDouble() const { return true; }
     static const int code;
 };
 
@@ -209,14 +231,18 @@ public:
     virtual void fromString(const String& src);
     virtual String toStringNested() const;
     virtual void fromStringNested(const String& src);
-    virtual int getCode() { return code+subCode(); }
+    virtual int getCode() const { return code+subCode(); }
     virtual bool read(ConnectionReader& reader);
     virtual bool write(ConnectionWriter& writer);
-    virtual Storable *createStorable() { return new StoreList(); }
-    virtual bool isList() { return true; }
-    virtual yarp::os::Bottle *asList() { return &content; }
+    virtual Storable *createStorable() const { 
+        return new StoreList(); 
+    }
+    virtual bool isList() const { return true; }
+    virtual yarp::os::Bottle *asList() const { 
+        return (yarp::os::Bottle*)(&content); 
+    }
     static const int code;
-    virtual int subCode();
+    virtual int subCode() const;
 
     virtual yarp::os::Value& find(const char *txt) {
         return content.find(txt);

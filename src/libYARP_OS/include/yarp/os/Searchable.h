@@ -62,11 +62,22 @@ public:
      */
     bool check(const char *txt, Value *& result);
 
+
+    /**
+     * Gets a value corresponding to a given keyword
+     * @param txt The keyword to look for
+     * @param fallback A default value to return if nothing found
+     * @return A value corresponding to a given keyword,
+     * or the default if nothing is found.  See the find() method for 
+     * interpreting the value found.
+     */
+    Value check(const char *txt, const Value& fallback);
+
     /**
      * Checks if the object is invalid.
      * @return True if the object is invalid or "null".
      */
-    virtual bool isNull()    { return false; }
+    virtual bool isNull() const  { return false; }
 
     /**
      * Return a standard text representation of the content of the
