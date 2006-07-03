@@ -323,7 +323,8 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
         pref = dest;
     }
 
-    return "port " + src + " route " + dest + " = " + pref;
+    String result = "port " + src + " route " + dest + " = " + pref + "\n";
+    return terminate(result);
 }
 
 
@@ -415,6 +416,7 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
         response += "port " + target + " property " + 
             key + " value " + argv[i] + " present " + val;
     }
+    response += "\n";
     return terminate(response);
 }
 

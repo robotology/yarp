@@ -360,7 +360,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
 #endif
             if (!nested) {
                 YMSG(("bottle byte count %d\n",byteCount()));
-                writer.appendInt(byteCount());
+                writer.appendInt(byteCount()+sizeof(NetInt32));
                 writer.appendInt(StoreList::code + speciality);
             }
             synch();
