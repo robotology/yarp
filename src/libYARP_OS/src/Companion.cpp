@@ -18,15 +18,35 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
 
-// just for "write", which needs to read from standard input
-#include <iostream>
-using namespace std;
-
+#include <ace/OS.h>
 
 using namespace yarp;
 using namespace yarp::os;
 
 Companion Companion::instance;
+
+
+static String getStdin() {
+    bool done = false;
+    String txt = "";
+    char buf[2048];
+    while (!done) {
+        char *result = ACE_OS::fgets(buf,sizeof(buf),stdin);
+        if (result!=NULL) {
+            for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) {
+                if (buf[i]=='\n') {
+                    buf[i] = '\0';
+                    done = true;
+                    break;
+                }
+            }
+            txt += buf;
+        } else {
+            done = true;
+        }
+    }
+    return txt;
+}
 
 Companion::Companion() {
     add("help",       &Companion::cmdHelp,
@@ -515,33 +535,41 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             YARP_ERROR(Logger::get(),"could not create port");
             return 1;
         }
-    
+
+        bool raw = false;
         for (int i=0; i<ntargets; i++) {
-            connect(name,targets[i]);
+            if (String(targets[i])=="raw") {
+                raw = true;
+            } else {
+                connect(name,targets[i]);
+            }
         }
 
 
-        while (!(cin.bad()||cin.eof())) {
-            // make sure this works on windows
-            char buf[25600] = "\0";
-            cin.getline(buf,sizeof(buf),'\n');
-            // TODO: add longer strings together
-      
-            if (!(cin.bad()||cin.eof())) {
-                if (buf[0]<32 && buf[0]!='\n' && buf[0]!='\r' && buf[0]!='\0') {
+        while (!feof(stdin)) {
+            String txt = getStdin();
+            if (!feof(stdin)) {
+                if (txt[0]<32 && txt[0]!='\n' && 
+                    txt[0]!='\r' && txt[0]!='\0') {
                     break;  // for example, horrible windows ^D
                 }
                 BottleImpl bot;
-                bot.addInt(0);
-                bot.addString(buf);
+                if (!raw) {
+                    bot.addInt(0);
+                    bot.addString(txt.c_str());
+                } else {
+                    bot.fromString(txt.c_str());
+                }
                 core.send(bot);
             }
         }
 
-        BottleImpl bot;
-        bot.addInt(1);
-        bot.addString("<EOF>");
-        core.send(bot);
+        if (!raw) {
+            BottleImpl bot;
+            bot.addInt(1);
+            bot.addString("<EOF>");
+            core.send(bot);
+        }
 
         core.close();
         core.join();
@@ -576,18 +604,16 @@ int Companion::rpc(const char *name) {
         InputStream& is = out->getInputStream();
         StreamConnectionReader reader;
 
-        while (!(cin.bad()||cin.eof())) {
-            // make sure this works on windows
-            char buf[25600] = "\0";
-            cin.getline(buf,sizeof(buf),'\n');
-            // TODO: add longer strings together
-      
-            if (!(cin.bad()||cin.eof())) {
-                if (buf[0]<32 && buf[0]!='\n' && buf[0]!='\r' && buf[0]!='\0') {
+        while (!feof(stdin)) {
+            String txt = getStdin();
+
+            if (!feof(stdin)) {
+                if (txt[0]<32 && txt[0]!='\n' && 
+                    txt[0]!='\r' && txt[0]!='\0') {
                     break;  // for example, horrible windows ^D
                 }
                 Bottle bot;
-                bot.fromString(buf);
+                bot.fromString(txt.c_str());
 
                 PortCommand pc(0,"d");
                 BufferedConnectionWriter bw(out->isTextMode());
