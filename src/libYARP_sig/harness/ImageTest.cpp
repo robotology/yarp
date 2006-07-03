@@ -252,6 +252,14 @@ public:
         checkEqual(img3.getQuantum(),8,"forced external quantum");
         checkEqual(img3.getRowSize(),16,"forced external row size");
         checkEqual(img3.width(),13,"normal external row width");
+
+
+        FlexImage img4;
+        img4.setPixelCode(YARP_PIXEL_MONO);
+        img4.setQuantum(1);
+        img4.resize(10,10);
+        checkEqual(img4.getQuantum(),1,"unit quantum");
+        checkEqual(img4.getRowSize(),10,"exact row size");
     }
 
     void testStandard() {
@@ -263,8 +271,8 @@ public:
         String s = writer.toString();
         Bottle bot;
         bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),3,"plausible bottle out");
-        checkEqual(bot.get(0).toString().c_str(),"img","good tag");
+        checkEqual(bot.size(),4,"plausible bottle out");
+        checkEqual(bot.get(0).toString().c_str(),"mat","good tag");
         YARP_DEBUG(Logger::get(),"an example image:");
         YARP_DEBUG(Logger::get(),bot.toString().c_str());
     }

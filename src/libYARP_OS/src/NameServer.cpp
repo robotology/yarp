@@ -633,7 +633,7 @@ int NameServer::main(int argc, char *argv[]) {
         MainNameServer name(suggest.getPort() + 2);
 
         // register root for documentation purposes
-        name.registerName("root",suggest);
+        name.registerName("root",suggest.addCarrier("text"));
         server.setReadHandler(name);
         server.setAutoHandshake(false);
         server.listen(Address(suggest.addRegName("root")));
@@ -645,7 +645,7 @@ int NameServer::main(int argc, char *argv[]) {
         fallback.start();
 
         // register fallback root for documentation purposes
-        name.registerName("bootstrap",FallbackNameServer::getAddress());
+        name.registerName("fallback",FallbackNameServer::getAddress());
         YARP_INFO(Logger::get(), String("Bootstrap server listening at ") + 
                   FallbackNameServer::getAddress().toString());
     

@@ -26,6 +26,8 @@
  *
  * Need help installing and compiling YARP?  See @subpage install.
  *
+ * Learn to use @subpage yarp "YARP's main command line interface".
+ *
  * Want to start using the library?  Check out some @subpage yarp_code_examples "example code" or read about the @subpage yarp_os "YARP OS library".
  *
  * Do you want to understand how to add a new device driver?  Have 

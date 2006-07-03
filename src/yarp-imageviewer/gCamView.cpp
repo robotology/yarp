@@ -622,7 +622,6 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 
 
 void setOptions(yarp::os::Searchable& options) {
-
     // switch to subsections if available
     yarp::os::Searchable *network = &options.findGroup("NETWORK");
     yarp::os::Searchable *window = &options.findGroup("WINDOW");

@@ -24,7 +24,6 @@ using namespace yarp::sig;
 
 #define DBGPF1 if (0)
 
-//#define ACE_ASSERT assert
 
 #include <iostream>
 using namespace std;
@@ -37,51 +36,6 @@ inline int PAD_BYTES (int len, int pad)
 	return (rem != 0) ? (pad - rem) : rem;
 }
 
-/*
-// not used any more?
-static int _GetPixelSize(int pixel_type)
-{
-int result = 0;
-switch (pixel_type)
-{
- case YARP_PIXEL_MONO:
-     result = sizeof(PixelMono);
-     break;
- case YARP_PIXEL_RGB:
-     result = sizeof(PixelRgb);
-     break;
- case YARP_PIXEL_HSV:
-     result = sizeof(PixelHsv);
-     break;
- case YARP_PIXEL_BGR:
-     result = sizeof(PixelBgr);
-     break;
- case YARP_PIXEL_MONO_SIGNED:
-     result = sizeof(PixelMonoSigned);
-     break;
- case YARP_PIXEL_RGB_SIGNED:
-     result = sizeof(PixelRgbSigned);
-     break;
- case YARP_PIXEL_MONO_FLOAT:
-     result = sizeof(PixelFloat);
-     break;
- case YARP_PIXEL_RGB_FLOAT:
-     result = sizeof(PixelRgbFloat);
-     break;
- case YARP_PIXEL_HSV_FLOAT:
-     result = sizeof(PixelHsvFloat);
-     break;
- default:
-     // only other acceptable possibility is that the size is being supplied
-     // for an unknown type
-     //ACE_ASSERT (pixel_type<0);
-     result = -pixel_type;
-     break;
-}
-//printf("Getting pixel size for %d (%d)\n", pixel_type, result);
- return result;
-}
-*/
 
 
 class ImageStorage {
@@ -112,7 +66,7 @@ protected:
     void _make_independent(); 
     void _set_ipl_header(int x, int y, int pixel_type, int quantum = 0);
     void _free_ipl_header();
-    void _alloc_complete(int x, int y, int pixel_type);
+    void _alloc_complete(int x, int y, int pixel_type, int quantum = 0);
     void _free_complete();
   
   
@@ -161,13 +115,16 @@ void ImageStorage::resize(int x, int y, int pixel_type,
       }
     */
 
-    YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
-    this->quantum = quantum = YARP_IMAGE_ALIGN;
+    //YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
+    //this->quantum = quantum = YARP_IMAGE_ALIGN;
+    if (quantum==0) {
+        quantum = YARP_IMAGE_ALIGN;
+    }
 
     if (need_recreation) {
         _free_complete();
         DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
-        _alloc_complete (x, y, pixel_type);
+        _alloc_complete (x, y, pixel_type, quantum);
     }
 }
 
@@ -311,11 +268,11 @@ void ImageStorage::_free_ipl_header()
 }
 
 
-void ImageStorage::_alloc_complete(int x, int y, int pixel_type)
+void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum)
 {
 	_make_independent();
 	_free_complete();
-	_set_ipl_header(x, y, pixel_type);
+	_set_ipl_header(x, y, pixel_type, quantum);
 	_alloc ();
 	_alloc_data ();
 }
@@ -733,12 +690,13 @@ public:
     yarp::os::NetInt32 listLen;
     yarp::os::NetInt32 paramNameTag;
     yarp::os::NetInt32 paramName;
+    yarp::os::NetInt32 paramIdTag;
+    yarp::os::NetInt32 id;
     yarp::os::NetInt32 paramListTag;
     yarp::os::NetInt32 paramListLen;
-    yarp::os::NetInt32 id;
     yarp::os::NetInt32 depth;
     yarp::os::NetInt32 imgSize;
-    yarp::os::NetInt32 rowSize;
+    yarp::os::NetInt32 quantum;
     yarp::os::NetInt32 width;
     yarp::os::NetInt32 height;
     yarp::os::NetInt32 paramBlobTag;
@@ -760,16 +718,36 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
         connection.expectBlock((char*)&header,sizeof(header));
         
         imgPixelCode = header.id;
+
+        int q = getQuantum();
+        if (q==0) {
+            q = YARP_IMAGE_ALIGN;
+        }
+        if (q!=header.quantum) {
+            
+            if ((header.depth*header.width)%q==0) {
+                header.quantum = q;
+            }
+        }
         
-        
-        if (getPixelCode()!=header.id) {
+        if (getPixelCode()!=header.id||q!=header.quantum) {
             // we're trying to read an incompatible image type
             // rather than just fail, we'll read it (inefficiently)
             FlexImage flex;
             flex.setPixelCode(header.id);
+            flex.setQuantum(header.quantum);
             flex.resize(header.width,header.height);
             unsigned char *mem = flex.getRawImage();
             ACE_ASSERT(mem!=NULL);
+            if (flex.getRawImageSize()!=header.imgSize) {
+                printf("There is a problem reading an image\n");
+                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                       header.width, header.height, 
+                       header.quantum, header.imgSize);
+                printf("my space: width %d, height %d, quantum %d, size %d\n",
+                       flex.width(), flex.height(), flex.getQuantum(), 
+                       flex.getRawImageSize());
+            }
             ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
             connection.expectBlock((char *)flex.getRawImage(),
                                    flex.getRawImageSize());
@@ -779,6 +757,14 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             resize(header.width,header.height);
             unsigned char *mem = getRawImage();
             ACE_ASSERT(mem!=NULL);
+            if (getRawImageSize()!=header.imgSize) {
+                printf("There is a problem reading an image\n");
+                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                       header.width, header.height, 
+                       header.quantum, header.imgSize);
+                printf("my space: width %d, height %d, quantum %d, size %d\n",
+                       width(), height(), getQuantum(), getRawImageSize());
+            }
             ACE_ASSERT(getRawImageSize()==header.imgSize);
             connection.expectBlock((char *)getRawImage(),getRawImageSize());
         }
@@ -806,17 +792,19 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.ext2 = 0;
     */
 
-    header.totalLen = sizeof(header)+getRawImageSize();
+    header.totalLen = (sizeof(header)-sizeof(yarp::os::NetInt32))+
+        getRawImageSize();
     header.listTag = BOTTLE_TAG_LIST;
-    header.listLen = 3;
+    header.listLen = 4;
     header.paramNameTag = BOTTLE_TAG_VOCAB;
-    header.paramName = VOCAB3('i','m','g');
-    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
-    header.paramListLen = 6;
+    header.paramName = VOCAB3('m','a','t');
+    header.paramIdTag = BOTTLE_TAG_VOCAB;
     header.id = getPixelCode();
+    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+    header.paramListLen = 5;
     header.depth = getPixelSize();
     header.imgSize = getRawImageSize();
-    header.rowSize = getRowSize();
+    header.quantum = getQuantum();
     header.width = width();
     header.height = height();
     header.paramBlobTag = BOTTLE_TAG_BLOB;
@@ -856,17 +844,23 @@ bool Image::copy(const Image& alt) {
         setPixelCode(alt.getPixelCode());
     }
     resize(alt.width(),alt.height());
+    int q1 = alt.getQuantum();
+    int q2 = getQuantum();
+    if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
+    if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
+
     YARP_ASSERT(width()==alt.width());
     YARP_ASSERT(height()==alt.height());
     if (getPixelCode()==alt.getPixelCode()) {
-        YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
-        YARP_ASSERT(getQuantum()==alt.getQuantum());
+        if (getQuantum()==alt.getQuantum()) {
+            YARP_ASSERT(getRawImageSize()==alt.getRawImageSize());
+            YARP_ASSERT(q1==q2);
+        }
     }
-    YARP_ASSERT(height()==alt.height());
     copyPixels(alt.getRawImage(),alt.getPixelCode(),
                getRawImage(),getPixelCode(),
                width(),height(),
-               getRawImageSize(),getQuantum());
+               getRawImageSize(),q1,q2);
     ok = true;
     return ok;
 }

@@ -15,7 +15,7 @@ If the image viewer is registered with name /gcamview/i:img, here's how:
    registration name /gcamview/i:img ip 127.0.0.1 port 10012 type tcp
    *** end of message
 
-    \$ ./animate.pl | telnet 127.0.0.1 100012
+    \$ ./animate.pl | telnet 127.0.0.1 10012
 
 You should see a moving gradient on the image viewer.
 ";
@@ -24,8 +24,8 @@ print STDERR "$instruct\n";
 
 print "CONNECT /perl/animate\n";
 
-my $h = 8;
-my $w = 8;
+my $h = 16;
+my $w = 16;
 
 for (my $i=0; $i<100; $i++) {
     print "d\n";
@@ -33,7 +33,7 @@ for (my $i=0; $i<100; $i++) {
     my $r = $i/10;
     my $c = abs(cos($r));
     my $s = abs(sin($r));
-    print "[img] (1 1 $all $w $h $w) {\\\n";
+    print "[mat] [mono] (1 $all 1 $w $h) {\\\n";
     for (my $y=0; $y<$h; $y++) {
 	for (my $x=0; $x<$w; $x++) {
 	    my $v = (($x*$c+$y*$s)*10+$i)%256;

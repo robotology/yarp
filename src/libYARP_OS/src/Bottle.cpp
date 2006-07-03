@@ -10,7 +10,7 @@ using namespace yarp::os;
 
 class NullBottle : public Bottle {
 public:
-    virtual bool isNull()    { return true; }
+    virtual bool isNull() const    { return true; }
 
     static NullBottle bottleNull;
 };

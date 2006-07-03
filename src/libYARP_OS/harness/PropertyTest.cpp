@@ -80,6 +80,23 @@ public:
                    10,"category 1, size, width");
         checkEqual(p5.findGroup("cat2").findGroup("foo").get(1).asInt(),
                    100,"category 2, foo");
+
+        report(0,"command line style string");
+        Property p6;
+        char *strs[] = { "program", "--name", "/foo" };
+        p6.fromCommand(3,strs);
+        checkEqual(p6.find("name").asString().c_str(),"/foo",
+                   "command line name");
+        Value *v = NULL;
+        p6.check("name",v);
+        checkTrue(v!=NULL,"check method");
+
+
+        Searchable *network = &p6.findGroup("NETWORK");
+        if (network->isNull()) { network = &p6; }
+        v = NULL;
+        network->check("name",v);
+        checkTrue(v!=NULL,"check method 2");
     }
 
     virtual void runTests() {

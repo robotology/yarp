@@ -4,8 +4,8 @@
 
 The YARP library supports transmission of a stream of
 user data across
-various protocols -- TCP, UDP, MCAST (multi-cast), shared memory, QNX
-message passing -- insulating a user of the library from the
+various protocols -- TCP, UDP, MCAST (multi-cast), shared memory -- 
+insulating a user of the library from the
 idiosyncratic details of the network technology used.  We call these
 these low-level protocols the ``Carriers'', to distinguish them from
 the higher-level protocols we will be concerned with here.
@@ -28,10 +28,9 @@ boundaries.  The flow of data can be manipulated and monitored
 externally (e.g. from the command-line) at run-time.  In other words,
 the edges in the YARP Network are entirely mutable.
 
-Ports are specialized into InputPorts and OutputPorts.
-Any OutputPort can send Content to any number of InputPorts.  Any
-InputPort can receive Content from any number of OutputPorts.  If an
-OutputPort is configured to send Content to an InputPort, they are
+A Port can send Content to any number of other Ports.  A
+Port can receive Content from any number of other Ports.  If one
+Port is configured to send Content to another Port, they are
 said to have a Connection.  Connections can be freely added or 
 removed, and may use different Carriers.
 
@@ -45,10 +44,7 @@ place to store these properties, so that only the name of the port is
 needed to recover them.
 
 
-
 Here are the specifications available in this document:
-
-
 
 \li Properties of a YARP network.
 
@@ -59,7 +55,6 @@ for communicating with it.
 
 \li Properties of ports and the protocol used
 for communicating with them.
-
 
 
 
@@ -84,7 +79,6 @@ is the source port.
 \li The name server maintains a list of registrations.  Each 
 registration contains information about a single port, identified
 by name.
-
 
 
 
@@ -117,7 +111,7 @@ The standard YARP companion utility can be used to create a
 name server, and also to act as an external entity for querying and
 modifying the YARP network.
 
-@subpage yarp_companion
+@subpage yarp
 
 @subpage companion_use
 

@@ -3,6 +3,7 @@
 #define _YARP2_IMAGE_
 
 #include <yarp/os/Portable.h>
+#include <yarp/os/Vocab.h>
 
 namespace yarp {
     /**
@@ -184,7 +185,7 @@ private:
 
     void copyPixels(const unsigned char *src, int id1, 
                     unsigned char *dest, int id2, int w, int h,
-                    int imageSize, int quantum);
+                    int imageSize, int quantum1, int quantum2);
 };
 
 
@@ -217,24 +218,20 @@ private:
 #ifndef YARP_IMAGE_HEADER_CONTROL // interlocking with compatibility library
 
 // the image types partially reflect the IPL image types.
-// IPL allows 16/32bpp images. Should we constrain our lib to 8bpp.
 // There must be a pixel type for every ImageType entry.
-// this enumeration is also required in C code.
 enum __PixelTypesEnum
     {	 
         YARP_PIXEL_INVALID = 0,
-        YARP_PIXEL_MONO = 1,
-        YARP_PIXEL_RGB = 2,
-        YARP_PIXEL_INT = 3,
-        YARP_PIXEL_HSV,
-        YARP_PIXEL_BGR,  // external libraries sometimes want flipped order
-        YARP_PIXEL_MONO_SIGNED,
-        YARP_PIXEL_RGB_SIGNED,
-        YARP_PIXEL_MONO_FLOAT,
-        YARP_PIXEL_RGB_FLOAT,
-        YARP_PIXEL_HSV_FLOAT,
-        // negative ids reserved for pixels of undeclared type but known size
-        // in bytes
+        YARP_PIXEL_MONO = VOCAB4('m','o','n','o'),
+        YARP_PIXEL_RGB = VOCAB3('r','g','b'),
+        YARP_PIXEL_INT = VOCAB3('i','n','t'),
+        YARP_PIXEL_HSV = VOCAB3('h','s','v'),
+        YARP_PIXEL_BGR = VOCAB3('b','g','r'),
+        YARP_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
+        YARP_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
+        YARP_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
+        YARP_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
+        YARP_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
     };
 
 #endif

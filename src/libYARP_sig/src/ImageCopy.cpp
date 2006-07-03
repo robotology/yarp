@@ -96,6 +96,8 @@ SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_RGB_FLOAT)
     ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_HSV_FLOAT)
     ACE_ASSERT(implemented_yet == 0);
+SPECIAL_COPY(YARP_PIXEL_HSV,YARP_PIXEL_INT)
+    ACE_ASSERT(implemented_yet == 0);
 
 
 SPECIAL_COPY(YARP_PIXEL_BGR,YARP_PIXEL_MONO)
@@ -228,6 +230,8 @@ SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_RGB_FLOAT)
     ACE_ASSERT(implemented_yet == 0);
 SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_HSV)
     ACE_ASSERT(implemented_yet == 0);
+SPECIAL_COPY(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_INT)
+    ACE_ASSERT(implemented_yet == 0);
 
 SPECIAL_COPY(YARP_PIXEL_INT,YARP_PIXEL_RGB)
     dest->r = dest->g = dest->b = *src;
@@ -259,10 +263,10 @@ static inline int PAD_BYTES (int len, int pad)
 ///
 ///
 template <class T1, class T2>
-static void CopyPixels(const T1 *src, T2 *dest, int w, int h)
+static void CopyPixels(const T1 *src, int q1, T2 *dest, int q2, int w, int h)
 {
-	const int p1 = PAD_BYTES (w * sizeof(T1), YARP_IMAGE_ALIGN);
-	const int p2 = PAD_BYTES (w * sizeof(T2), YARP_IMAGE_ALIGN);
+	const int p1 = PAD_BYTES (w * sizeof(T1), q1);
+	const int p2 = PAD_BYTES (w * sizeof(T2), q2);
 
     YARPDummyCopyPixel();
 	for (int i=0; i<h; i++)
@@ -280,17 +284,17 @@ static void CopyPixels(const T1 *src, T2 *dest, int w, int h)
 }
 
 
-#define HASH(id1,id2) ((id1)*256+(id2))
-#define HANDLE_CASE(len,x1,T1,x2,T2) CopyPixels((T1*)x1,(T2*)x2,w,h);
-#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,dest,Def_##id2); break;
+#define HASH(id1,id2) ((int)(((int)(id1%65537))*11+((long int)(id2))))
+#define HANDLE_CASE(len,x1,T1,q1,x2,T2,q2) CopyPixels((T1*)x1,q1,(T2*)x2,q2,w,h);
+#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,quantum1,dest,Def_##id2,quantum2); break;
 #define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const unsigned char *src, int id1, 
                        char unsigned *dest, int id2, int w, int h,
-                       int imageSize, int quantum)
+                       int imageSize, int quantum1, int quantum2)
 {
-    if (id1==id2) {
+    if (id1==id2&&quantum1==quantum2) {
         memcpy(dest,src,imageSize);
         return;
     }
@@ -300,6 +304,7 @@ void Image::copyPixels(const unsigned char *src, int id1,
         {
             // Macros rely on len, x1, x2 variable names
 
+            MAKE_CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO);
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB);
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV);
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_BGR);
@@ -308,7 +313,9 @@ void Image::copyPixels(const unsigned char *src, int id1,
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB);
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV);
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_BGR);
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_SIGNED);
@@ -316,36 +323,52 @@ void Image::copyPixels(const unsigned char *src, int id1,
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_HSV,YARP_PIXEL_HSV);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_BGR);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_SIGNED);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_SIGNED);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_HSV,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_BGR,YARP_PIXEL_BGR);
             MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_SIGNED);
             MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_SIGNED);
             MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_MONO_SIGNED);
             MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_SIGNED);
             MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_SIGNED,YARP_PIXEL_INT);
 
 
+            MAKE_CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB_SIGNED);
             MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_SIGNED,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_MONO_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_MONO_FLOAT,YARP_PIXEL_INT);
 
+            MAKE_CASE(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_RGB_FLOAT);
             MAKE_2CASE(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_RGB_FLOAT,YARP_PIXEL_INT);
 
-            MAKE_2CASE(YARP_PIXEL_BGR,YARP_PIXEL_INT);
+            MAKE_CASE(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_HSV_FLOAT);
+            MAKE_2CASE(YARP_PIXEL_HSV_FLOAT,YARP_PIXEL_INT);
+
+            MAKE_CASE(YARP_PIXEL_INT,YARP_PIXEL_INT);
 
         default:
             ACE_OS::printf("*** Tried to copy type %d to %d\n", id1, id2);

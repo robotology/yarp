@@ -1,26 +1,15 @@
 /** 
- * @page yarp_companion The standard YARP companion utility
+ * @page yarp The standard YARP companion utility.
 
-We specify a standard command-line 
-utility called ``yarp'' for performing a set of
-useful operations for a YARP network.  
-The functionality described here 
-can be provided in other ways also, but
-at a minimum this utility should be present on a YARP 2.0 
-system.
-We specify the utility by the user-facing functionality
-it provides.  For any of the examples below, the word ``verbose'' 
-inserted as the first argument should increase the level of 
-detail at which the operation of the utility and problems
-encountered is described.
+We specify a standard command-line utility called ``yarp'' for
+performing a set of useful operations for a YARP network.  The
+functionality described here can be provided in other ways also, but
+at a minimum this utility should be present on a YARP 2.0 system.
 
-@section yarp yarp
 
-\verbatim
-yarp
-\endverbatim
+@section yarp_base yarp
 
-The utility should give a friendly message if called with no arguments
+The utility gives a friendly message if called with no arguments
 to confirm that it exists, and to give tips on where to get started
 using it.  Our current implementation says:
 
@@ -30,11 +19,7 @@ Call with the argument "help" to see a list of ways to use this program.
 \endverbatim
 
 
-@section yarp yarp help
-
-\verbatim
-yarp help
-\endverbatim
+@section yarp_help yarp help
 
 This lists a human-readable summary of the 
 ways the utility can be used.  Our current implementation
@@ -73,31 +58,60 @@ Also, the IP by which the name server should be identified can
 optionally be specified (default is a fairly random choice of
 the IPs associated with the current machine).
 
+If possible, a fallback multi-cast server will be started with IP
+224.2.1.1 and port number 10001.  The purpose of this server is 
+to allow yarp processes to find the yarp name server in the absence
+of correct configuration.
+
+
 \section yarp_where yarp where
 
+
+This will report where the name server is believed to be running; for 
+example:
+
 \verbatim
-yarp where
+Name server is available at ip 15.255.112.22 port 10000
 \endverbatim
 
 
-This will report where the name server is believed to be running,
-and the location of the configuration file used to determine that.
-Example output:
+\section yarp_where yarp conf
+
+
+This will report where the name server location is configured.
+On my machine, the result is:
 
 \verbatim
-Name server is available at ip 5.255.112.225 port 10000
-This is configured in file /home/paulfitz/.yarp/conf/namer.conf
-You can change the directory where this configuration file is stored
-with the YARP_ROOT environment variable.
+/home/paulfitz/.yarp/conf/yarp.conf
 \endverbatim
 
+
+@section yarp_check yarp check
+
+Does some sanity tests of your setup.  If you run "yarp server" in
+one terminal, and then run this command ("yarp check") in another,
+you should see something like:
+
+\verbatim
+yarp: ==================================================================
+yarp: === Trying to register some ports
+yarp: ==================================================================
+yarp: === Trying to connect some ports
+yarp: Receiving input from /tmp/port/2 to /tmp/port/1 using tcp
+yarp: Sending output from /tmp/port/2 to /tmp/port/1 using tcp
+yarp: ==================================================================
+yarp: === Trying to write some data
+yarp: ==================================================================
+yarp: === Trying to read some data
+yarp: *** Read number 42
+yarp: ==================================================================
+yarp: === Trying to close some ports
+yarp: Removing input from /tmp/port/2 to /tmp/port/1
+yarp: Removing output from /tmp/port/2 to /tmp/port/1
+yarp: *** YARP seems okay!
+\endverbatim
 
 \section yarp_version yarp version
-
-\verbatim
-yarp version
-\endverbatim
-
 
 This will report on the yarp version available.  Example:
 
@@ -106,39 +120,30 @@ YARP network version 2.0
 \endverbatim
 
 
-\section yarp_name yarp name
-
-\verbatim
-yarp name COMMAND ARG_1 ARG_2 ...
-\endverbatim
-
-This will send the given command and arguments to the name server
-using the YARP name server protocol, and report the results.
-
-
 \section yarp_read yarp read
 
 \verbatim
-yarp read PORT
+yarp read INPUT_PORT
 \endverbatim
 
 This will create an input port of the specified name.  It will
 then loop, 
-reading ``yarp bottles'' (a simple serialized list) and prints their content
-to standard output.  This simple utility is intended for use in testing, or
+reading ``yarp bottles'' (a simple serialized list) and printing their content
+to standard output.  This simple utility is intended for use in testing, and
 getting familiar with using YARP.
 
 \section yarp_write yarp write
 
 \verbatim
-yarp write PORT
+yarp write OUTPUT_PORT
+yarp write OUTPUT_PORT INPUT_PORT1 INPUT_PORT2 ...
 \endverbatim
 
 This will create an output port of the specified name.  It will then
-loop, reading from standard input and writing yarp bottles..
+loop, reading from standard input and writing yarp bottles.
 Optionally, a list of input ports to connect to automatically can be
 appended to the command.  This simple utility is intended for use in
-testing, or getting familiar with using YARP.
+testing, and getting familiar with using YARP.
 
 
 \section yarp_connect yarp connect
@@ -161,5 +166,277 @@ yarp disconnect OUTPUT_PORT INPUT_PORT
 
 This will request the specified output port to cease sending its output to
 the specified input port.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section yarp_name yarp name
+
+\verbatim
+yarp name COMMAND ARG_1 ARG_2 ...
+\endverbatim
+
+This will send the given command and arguments to the YARP name server
+and report the results.  For example:
+
+\verbatim
+# user types...
+yarp name list
+   # system responds...
+   registration name root ip 172.16.232.1 port 10000 type text
+   registration name fallback ip 224.2.1.1 port 10001 type mcast
+   registration name /read ip 172.16.232.1 port 10002 type tcp
+   registration name /write ip 172.16.232.1 port 10012 type tcp
+   *** end of message
+\endverbatim
+
+This is equivalent to:
+
+\verbatim
+# user types...
+yarp where
+   # system responds...
+   Name server is available at ip 172.16.232.1 port 10000
+# user types...
+telnet 172.16.232.1 10000
+   # system responds...
+   Trying 172.16.232.1...
+   Connected to 172.16.232.1.
+   Escape character is '^]'.
+# user types...
+NAME_SERVER list
+   # system responds...
+   registration name /read ip 172.16.232.1 port 10002 type tcp
+   registration name root ip 172.16.232.1 port 10000 type text
+   registration name fallback ip 224.2.1.1 port 10001 type mcast
+   registration name /write ip 172.16.232.1 port 10012 type tcp
+   *** end of message
+# user types...
+^]
+   # system responds...
+   telnet> quit
+   Connection closed.
+\endverbatim
+
+
+\section yarp_name_help yarp name help
+
+This will list the commands available from the name server.
+For example, our current implementation gives:
+
+\verbatim
+Here are some ways to use the name server:
+  NAME_SERVER register ...
+  NAME_SERVER unregister ...
+  NAME_SERVER query ...
+  NAME_SERVER help ...
+  NAME_SERVER set ...
+  NAME_SERVER get ...
+  NAME_SERVER check ...
+  NAME_SERVER match ...
+  NAME_SERVER list ...
+  NAME_SERVER route ...
+*** end of message
+\endverbatim
+
+\section name_query yarp name query
+
+\verbatim
+yarp name query PORT
+\endverbatim
+
+Requests registration information for the named port.  Response is of 
+the following form:
+\verbatim
+registration name PORT ip ADDRESS port NUMBER type CARRIER
+*** end of message
+\endverbatim
+For example:
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+If there is no registration for the port, the registration line
+is omitted, and instead the response is simply:
+\verbatim
+*** end of message
+\endverbatim
+
+
+
+\section name_register yarp name register
+
+\verbatim
+yarp name register PORT
+yarp name register PORT CARRIER
+yarp name register PORT CARRIER IP
+yarp name register PORT CARRIER IP NUMBER
+\endverbatim
+
+Requests creation of registration information for the named port.  
+Response is of the following form:
+\verbatim
+registration name PORT ip ADDRESS port NUMBER type CARRIER
+*** end of message
+\endverbatim
+For example:
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
+Optionally, the user can take responsibility for more fields, 
+such as the carrier, ip, and socket port number.
+Any value (including the port name) can be replaced by ``...'' to leave it 
+up to the name-server to choose it.  For example:
+\verbatim
+yarp name register ... tcp 127.0.0.1 8080
+\endverbatim
+Gives something of the form:
+\verbatim
+registration name /tmp/port/1 ip 127.0.0.1 port 8080 type tcp
+*** end of message
+\endverbatim
+If you choose to set the ip yourself, be careful -- there is the 
+possibility of problems with multiple ways to identify the same
+machine.  It is best to let the name server choose a name,
+which it should do in a consistent way.  If a machine has
+multiple ip addresses on multiple networks, that can be 
+handled -- see the 
+discussion of the ips property in the section on "yarp name set".
+That is important for the purposes of controlling which 
+network is used for connections from one port to another.
+
+
+
+
+\section name_unregister yarp name unregister
+
+\verbatim
+yarp name unregister PORT
+\endverbatim
+
+Removes registration information for the named port.  
+Response is of the following form:
+\verbatim
+*** end of message
+\endverbatim
+
+
+\section name_list yarp name list
+
+Gives registration information of all known ports.
+Response is of the following form:
+\verbatim
+registration name /write ip 130.251.4.159 port 10021 type tcp
+registration name /read ip 130.251.4.159 port 10031 type tcp
+registration name /tmp/port/4 ip 130.251.4.159 port 10011 type tcp
+registration name /tmp/port/3 ip 130.251.4.52 port 10021 type tcp
+registration name /tmp/port/2 ip 130.251.4.52 port 10011 type tcp
+registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
+*** end of message
+\endverbatim
+
+
+
+\section name_set yarp name set
+
+\verbatim
+yarp name set PORT PROPERTY VALUE1 VALUE2 ...
+\endverbatim
+
+The name server can store extra properties of a port, beyond the
+bare details associated with registration.  The  set command
+is used to do this.  For example, the command:
+\verbatim
+NAME_SERVER set /write offers tcp udp mcast
+\endverbatim
+Gets the following response:
+\verbatim
+port /write property offers = tcp udp mcast
+\endverbatim
+The get and check commands can then be used to query
+such properties.
+
+There are some special properties used by YARP.  Property ``ips''
+can list multiple identifiers of a machine.  Property ``offers''
+lists carriers that an output port can support.  Propery ``accepts''
+lists carriers that an input port can support.
+
+
+
+
+
+\section name_get yarp name get
+
+\verbatim
+yarp name get PORT PROPERTY
+\endverbatim
+
+Gets the values of a stored property. For example, 
+after the set command example shown earlier, the command:
+\verbatim
+NAME_SERVER get /write offers
+\endverbatim
+Returns the following response:
+\verbatim
+port /write property offers = tcp udp mcast
+\endverbatim
+
+
+\section name_check yarp name check
+
+\verbatim
+yarp name check PORT PROPERTY VALUE
+\endverbatim
+
+Checks if a stored property can take the given value. For example, 
+after the set command example shown earlier, the command:
+\verbatim
+NAME_SERVER check /write offers tcp
+\endverbatim
+Returns the following response:
+\verbatim
+port /write property offers value tcp present true
+\endverbatim
+
+
+\section name_route yarp name route
+
+\verbatim
+yarp name route PORT1 PORT2
+\endverbatim
+
+Finds a good way to connect an output port to an input port, based
+on the carriers they have in common (preferred carriers can optionally
+be added to this command in decreasing order of preference) and
+which carriers are physically possible (for example, `shmem'
+requires ports to be on the same machine, and `local' requires
+ports to belong to threads with a shared memory space).
+For example, the command:
+\verbatim
+NAME_SERVER route /write /read
+\endverbatim
+Returns the following response:
+\verbatim
+port /write route /read = shmem://read
+\endverbatim
+This suggests that shmem is the best carrier to use.
+
+
+
+
 
 */
