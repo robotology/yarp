@@ -1,10 +1,9 @@
 /** 
  * @page yarp The standard YARP companion utility.
 
-We specify a standard command-line utility called ``yarp'' for
-performing a set of useful operations for a YARP network.  The
-functionality described here can be provided in other ways also, but
-at a minimum this utility should be present on a YARP 2.0 system.
+The command-line utility "yarp" performs a set of useful operations
+for a YARP network.  It can give status information, make and break
+connections between ports, and send/receive data to/from ports.
 
 
 @section yarp_base yarp
@@ -135,8 +134,8 @@ getting familiar with using YARP.
 \section yarp_write yarp write
 
 \verbatim
-yarp write OUTPUT_PORT
-yarp write OUTPUT_PORT INPUT_PORT1 INPUT_PORT2 ...
+yarp write OUTPUT_PORT [verbatim]
+yarp write OUTPUT_PORT [verbatim] INPUT_PORT1 INPUT_PORT2 ...
 \endverbatim
 
 This will create an output port of the specified name.  It will then
@@ -145,6 +144,13 @@ Optionally, a list of input ports to connect to automatically can be
 appended to the command.  This simple utility is intended for use in
 testing, and getting familiar with using YARP.
 
+If the "verbatim" keyword is included after the OUTPUT_PORT name,
+then input from standard input will be transmitted as a string,
+rather than as a bottle.  This will preserve the exact text
+with whitespace and quoting.  Otherwise the input is interpreted
+as a list of values that are transmitted in a standard network
+format that will not preserve whitespace, quoting, and other
+features.
 
 \section yarp_connect yarp connect
 

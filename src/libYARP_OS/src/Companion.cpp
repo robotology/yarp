@@ -454,10 +454,12 @@ class BottleReader : public Readable {
 private:
     PortCore core;
     SemaphoreImpl done;
+    bool raw;
 public:
     BottleReader(const char *name) : done(0) {
         NameClient& nic = NameClient::getNameClient();
         Address address = nic.registerName(name);
+        raw = false;
         core.setReadHandler(*this);
         if (address.isValid()) {
             ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
@@ -477,21 +479,24 @@ public:
 
     virtual bool read(ConnectionReader& reader) {
         BottleImpl bot;
-        bot.read(reader);
-        if (bot.size()==2 && bot.isInt(0) && bot.isString(1)) {
-            int code = bot.getInt(0);
-            if (code!=1) {
-                ACE_OS::printf("%s\n", bot.getString(1).c_str());
+        if (bot.read(reader)) {
+            if (bot.size()==2 && bot.isInt(0) && bot.isString(1) && !raw) {
+                int code = bot.getInt(0);
+                if (code!=1) {
+                    ACE_OS::printf("%s\n", bot.getString(1).c_str());
+                    ACE_OS::fflush(stdout);
+                }
+                if (code==1) {
+                    done.post();
+                }
+            } else {
+                raw = true;
+                ACE_OS::printf("%s\n", bot.toString().c_str());
                 ACE_OS::fflush(stdout);
             }
-            if (code==1) {
-                done.post();
-            }
-        } else {
-            ACE_OS::printf("%s\n", bot.toString().c_str());
-            ACE_OS::fflush(stdout);
+            return true;
         }
-        return true;
+        return false;
     }
   
     void close() {
@@ -536,10 +541,10 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             return 1;
         }
 
-        bool raw = false;
+        bool raw = true;
         for (int i=0; i<ntargets; i++) {
-            if (String(targets[i])=="raw") {
-                raw = true;
+            if (String(targets[i])=="verbatim") {
+                raw = false;
             } else {
                 connect(name,targets[i]);
             }

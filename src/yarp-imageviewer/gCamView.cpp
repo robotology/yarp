@@ -723,16 +723,16 @@ void setOptionsToDefault()
 {
 	// Options defaults
 	_options.refreshTime = 100;
-	ACE_OS::sprintf(_options.portName,"/gcamview/i:img");
+	ACE_OS::sprintf(_options.portName,"/yarpview/i:img");
 	ACE_OS::sprintf(_options.networkName, "default");
-	ACE_OS::sprintf(_options.outPortName,"/gcamview/o:point");
+	ACE_OS::sprintf(_options.outPortName,"/yarpview/o:point");
 	ACE_OS::sprintf(_options.outNetworkName, "default");
 	_options.outputEnabled = 0;
 	_options.windWidth = 300;
 	_options.windHeight = 300;
 	_options.posX = 100;
 	_options.posY = 100;
-	ACE_OS::sprintf(_options.fileName,"gcamview.conf");
+	ACE_OS::sprintf(_options.fileName,"yarpview.conf");
 	_options.saveOnExit = 0;
 	_options.logpolar = 0;
 	_options.fovea = 0;
