@@ -3,6 +3,7 @@
 # run as "./scripts/update-doc"
 
 doxygen conf/Doxyfile.min
+doxygen conf/Doxyfile.man
 doxygen conf/Doxyfile.pagenum
 doxygen conf/Doxyfile.part
 doxygen conf/Doxyfile
