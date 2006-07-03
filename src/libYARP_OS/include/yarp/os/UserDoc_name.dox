@@ -79,8 +79,8 @@ more transparent and easier to step through.
 
 For yarp utilities to correctly discover how
 to contact the name server,
-there should be a file namer.conf in the directory \$HOME/.yarp/conf/
-(or in the directory specified by an environment variable \$YARP\_ROOT)
+there should be a file namer.conf in the directory $HOME/.yarp/conf/
+(or in the directory specified by an environment variable $YARP_ROOT)
 that looks like this:
 \verbatim
 192.168.0.3 10000
@@ -96,7 +96,7 @@ multi-cast, it will respond with its ``true'' tcp address, which will
 then be used by the utility.  The configuration file will be updated
 automatically for future reference.  The multi-cast protocol is
 identical to the normal tcp protocol.  Clients can broadcast
-``NAME\_SERVER query root'' to trigger the name server to send a record
+``NAME_SERVER query root'' to trigger the name server to send a record
 of the form ``registration name root ip ADDRESS port NUMBER type
 CARRIER''.  The ``root'' record is a special record corresponding to
 the name server.  Multi-cast broadcasts should not generally be used
@@ -172,7 +172,7 @@ machine.  It is best to let the name server choose a name,
 which it should do in a consistent way.  If a machine has
 multiple ip addresses on multiple networks, that can be 
 handled -- see the 
-discussion of the {\tt ips} property in the section on {\tt set}.
+discussion of the ips property in the section on set.
 That is important for the purposes of controlling which 
 network is used for connections from one port to another.
 
@@ -219,7 +219,7 @@ NAME_SERVER set PORT PROPERTY VALUE1 VALUE2 ...
 \endverbatim
 
 The name server can store extra properties of a port, beyond the
-bare details associated with registration.  The {\tt set} command
+bare details associated with registration.  The  set command
 is used to do this.  For example, the command:
 \verbatim
 NAME_SERVER set /write offers tcp udp mcast
@@ -228,7 +228,7 @@ Gets the following response:
 \verbatim
 port /write property offers = tcp udp mcast
 \endverbatim
-The {\tt get} and {\tt check} commands can then be used to query
+The get and check commands can then be used to query
 such properties.
 
 There are some special properties used by YARP.  Property ``ips''
@@ -247,7 +247,7 @@ NAME_SERVER get PORT PROPERTY
 \endverbatim
 
 Gets the values of a stored property. For example, 
-after the {\tt set} command example shown earlier, the command:
+after the set command example shown earlier, the command:
 \verbatim
 NAME_SERVER get /write offers
 \endverbatim
@@ -264,7 +264,7 @@ NAME_SERVER check PORT PROPERTY VALUE
 \endverbatim
 
 Checks if a stored property can take the given value. For example, 
-after the {\tt set} command example shown earlier, the command:
+after the set command example shown earlier, the command:
 \verbatim
 NAME_SERVER check /write offers tcp
 \endverbatim

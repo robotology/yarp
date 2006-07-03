@@ -63,11 +63,7 @@ for communicating with them.
 
 
 
-This document does not contain specification of standard libraries.
-
-
-
-@subsection term_prop Properties of a YARP network
+@section term_prop Properties of a YARP network
 
 A YARP network consists of the following entities: a set of
 ports, a set of connections, a set of names, a name server, and a set

@@ -77,7 +77,7 @@ public:
      *   prop.find("width").asInt() // gives 10
      *   prop.find("height").asInt() // gives 15
      * \endcode
-     * @param text the textual form of the Property object
+     * @param txt the textual form of the Property object
      */
     void fromString(const char *txt);
     
@@ -128,10 +128,10 @@ public:
     ConstString toString() const;
 
     // documented in Portable
-    bool read(ConnectionReader& reader);
+    bool read(ConnectionReader& connection);
 
     // documented in Portable
-    bool write(ConnectionWriter& writer);
+    bool write(ConnectionWriter& connection);
 
 private:
     void *implementation;

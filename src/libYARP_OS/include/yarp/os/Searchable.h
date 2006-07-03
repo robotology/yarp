@@ -32,17 +32,17 @@ public:
 
     /**
      * Gets a value corresponding to a given keyword
-     * @param txt The keyword to look for
+     * @param key The keyword to look for
      * @return A value corresponding to a given keyword.  If there is no
      * such value, then the isNull() method called on the result will be
      * true.  Otherwise, the value can be read by calling result.asInt(),
      * result.asString(), etc. as appropriate.
      */
-    virtual Value& find(const char *txt) = 0;
+    virtual Value& find(const char *key) = 0;
 
     /**
      * Gets a list corresponding to a given keyword
-     * @param txt The keyword to look for
+     * @param key The keyword to look for
      * @return A list corresponding to a given keyword.  If there is no
      * such list, then the isNull() method called on the result will be
      * true.  Otherwise, the elements of the list can be read through
@@ -50,28 +50,28 @@ public:
      * result.get(i) for i>=1 are the "real" elements of the list.
      *
      */
-    virtual Bottle& findGroup(const char *txt) = 0;
+    virtual Bottle& findGroup(const char *key) = 0;
 
     /**
      * Gets a value corresponding to a given keyword
-     * @param txt The keyword to look for
+     * @param key The keyword to look for
      * @param result A pointer to store the address of the result in
      * @return True if there is a value corresponding to a given keyword,
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    bool check(const char *txt, Value *& result);
+    bool check(const char *key, Value *& result);
 
 
     /**
      * Gets a value corresponding to a given keyword
-     * @param txt The keyword to look for
+     * @param key The keyword to look for
      * @param fallback A default value to return if nothing found
      * @return A value corresponding to a given keyword,
      * or the default if nothing is found.  See the find() method for 
      * interpreting the value found.
      */
-    Value check(const char *txt, const Value& fallback);
+    Value check(const char *key, const Value& fallback);
 
     /**
      * Checks if the object is invalid.

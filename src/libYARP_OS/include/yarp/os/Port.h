@@ -92,6 +92,7 @@ public:
      * Read an object from the port.
      * @param reader any object that knows how to read itself from a
      * network connection - see for example Bottle
+     * @param willReply you must set this to true if you intend to call reply()
      * @return true iff the object is successfully read
      */
     bool read(PortReader& reader, bool willReply = false);

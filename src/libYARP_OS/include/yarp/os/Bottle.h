@@ -124,7 +124,7 @@ public:
      * @return the Value v; if the index lies outside the range of elements
      * present, then v.isNull() will be true.  
      */
-    Value& get(int x) const;
+    Value& get(int index) const;
 
     /**
      * Gets the number of elements in the bottle
@@ -174,7 +174,7 @@ public:
 
 
 
-    virtual Value& find(const char *txt);
+    virtual Value& find(const char *key);
 
     Bottle& findGroup(const char *key);
 

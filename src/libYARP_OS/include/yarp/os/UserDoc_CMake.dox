@@ -69,7 +69,7 @@ The generated file "CMakeCache.txt" contains all settings stored by CMake. It ca
 
 @section cmake_example CMake Example
 
-Create a new directory, something like $HOME/cmake/example or C:\cmake\example.
+Create a new directory, something like "$HOME/cmake/example" or "C:\cmake\example".
 
 Inside that directory, create a file called "CMakeLists.txt". In it place the following:
 

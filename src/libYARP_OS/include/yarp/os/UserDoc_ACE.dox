@@ -103,19 +103,19 @@ http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#win32
 
 For Visual Studio, here's a brief summary of the steps.
   \li Get ACE.zip as described above.
-  \li Unpack its contents to a directory. Find the directory ACE_wrappers in the unpacked material.
-  \li In the ACE_wrappers\ace, create a file called "config.h" and edit it to be just this: 
+  \li Unpack its contents to a directory. Find the directory "ACE_wrappers" in the unpacked material.
+  \li In the "ACE_wrappers\ace" directory, create a file called "config.h" and edit it to be just this: 
 
 \code
  #include "ace/config-win32.h"
 \endcode
 
-    \li Open Visual Studio. Go to open a project/workspace/solution, and browse to the directory ACE_wrappers\ace.
+    \li Open Visual Studio. Go to open a project/workspace/solution, and browse to the directory "ACE_wrappers\ace".
     \li Find the project/workspace/solution that works for you: probably called "ACE.dsw" or "ace_vc8.sln".
     \li Compile! We suggest you compile both debug and release versions of the library.
           \li On Visual Studio Express, you may need to add the in project properties -> linker -> input -> additional dependencies: kernel32.lib user32.lib advapi32.lib. See http://msdn.microsoft.com/vstudio/express/visualc/usingpsdk/ 
     \li In the end, you should have some files in the directory ACE_wrappers/lib, including ACE.dll, ACE.lib, ACEd.dll, ACEd.lib (if you compiled both release and debug versions).
-    \li You must make sure you include the path to ACE_wrappers\lib in your PATH environment variable whenever you run programs that uses ACE. See generic instructions for setting environment variables:
+    \li You must make sure you include the path to "ACE_wrappers\lib" in your PATH environment variable whenever you run programs that uses ACE. See generic instructions for setting environment variables:
 
 \code
 http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/environment_variables.mspx

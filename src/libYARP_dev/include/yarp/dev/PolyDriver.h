@@ -34,8 +34,8 @@ public:
         return isValid();
     }
 
-    bool open(yarp::os::Searchable& prop) {
-        dd = Drivers::factory().open(prop);
+    bool open(yarp::os::Searchable& config) {
+        dd = Drivers::factory().open(config);
         return isValid();
     }
 

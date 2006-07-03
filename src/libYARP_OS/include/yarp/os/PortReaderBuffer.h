@@ -39,7 +39,7 @@ class yarp::os::TypedReader {
 public:
     /**
      * Read an available object from the port.
-     * @param wait true if the method should wait until an object is available
+     * @param shouldWait true if the method should wait until an object is available
      * @param forceStrict true if the method should never drop objects
      * @return A pointer to an object read from the port, or NULL if none
      * is available and waiting was not requested.  This object is owned
@@ -54,7 +54,8 @@ public:
     /**
      * Read the next available object from the port.  The method
      * does not drop older objects even if newer ones are available.
-     * @param wait true if the method should wait until an object is available
+     * @param shouldWait true if the method should wait until an object
+     * is available
      * @return A pointer to an object read from the port, or NULL if none
      * is available and waiting was not requested.  This object is owned
      * by the communication system and should not be deleted by the user.
@@ -68,7 +69,8 @@ public:
     /**
      * Read the newest available object from the port.  The method
      * drops older objects if newer ones are available.
-     * @param wait true if the method should wait until an object is available
+     * @param shouldWait true if the method should wait until an object 
+     * is available
      * @return A pointer to an object read from the port, or NULL if none
      * is available and waiting was not requested.  This object is owned
      * by the communication system and should not be deleted by the user.

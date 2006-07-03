@@ -221,13 +221,13 @@ public:
     }
 
     // documented in Searchable
-    virtual Value& find(const char *txt) {
+    virtual Value& find(const char *key) {
         ok(); 
         return proxy->find(txt);
     }
 
     // documented in Searchable
-    virtual Bottle& findGroup(const char *txt) {
+    virtual Bottle& findGroup(const char *key) {
         ok();
         return proxy->findGroup(txt);
     }

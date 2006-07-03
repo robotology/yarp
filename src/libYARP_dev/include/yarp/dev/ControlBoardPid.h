@@ -35,6 +35,8 @@ public:
      * @param kd derivative gain
      * @param ki integrative gain
      * @param int_max  integrator max output
+     * @param scale scaling factor
+     * @param out_max cap on output
      */
     Pid(double kp, double kd, double ki, 
         double int_max, double scale, double out_max);

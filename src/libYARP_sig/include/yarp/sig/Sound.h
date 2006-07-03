@@ -53,9 +53,9 @@ public:
 
     /**
      * Check whether a sample lies within the sound
-     * @param s sample
-     * @param c channel
-     * @return true iff there is a pixel at the given coordinate
+     * @param sample the sample to choose
+     * @param channel the channel to choose
+     * @return true iff there is a sample at the given coordinate
      */
     inline bool isSample(int sample, int channel=0) const {
         return (sample>=0 && channel>=0 && sample<samples && channel<channels);

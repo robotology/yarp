@@ -110,8 +110,7 @@ class yarp::dev::ImplementVelocityControl : public IMPLEMENT
         * @param size is the number of controlled axes the driver deals with.
         * @param amap is a lookup table mapping axes onto physical drivers.
         * @param enc is an array containing the encoder to angles conversion factors.
-        * @param sgns is an array containing the signs of the encoder readings with
-        *  respect to the control/output values of the driver.
+        * @param zos is an array containing the zeros of the encoders.
         * @return true if initialized succeeded, false if it wasn't executed, or assert.
         */
         bool initialize (int size, const int *amap, const double *enc, const double *zos);
@@ -162,6 +161,8 @@ class yarp::dev::ImplementPidControl : public IMPLEMENT
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
      * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
      bool initialize (int size, const int *amap, const double *enc, const double *zos);
@@ -321,6 +322,8 @@ class yarp::dev::ImplementEncoders : public IMPLEMENT
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
      * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
      bool initialize (int size, const int *amap, const double *enc, const double *zos);
@@ -436,6 +439,8 @@ class yarp::dev::ImplementControlCalibration: public IMPLEMENT
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
      * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
      bool initialize (int size, const int *amap, const double *enc, const double *zos);
@@ -475,6 +480,8 @@ protected:
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
      * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
      bool initialize (int size, const int *amap, const double *enc, const double *zos);
@@ -529,6 +536,8 @@ protected:
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.
      * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
      bool initialize (int size, const int *amap, const double *enc, const double *zos);
