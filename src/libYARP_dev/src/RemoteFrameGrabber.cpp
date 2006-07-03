@@ -1,11 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#include <yarp/String.h>
+
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/String.h>
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>

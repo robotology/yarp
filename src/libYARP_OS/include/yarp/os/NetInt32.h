@@ -122,7 +122,7 @@ namespace yarp {
             void set(RawNetInt32 v) {
                 raw_value = (int32_t)swap((uint32_t)v);
             }
-p        public:
+        public:
             NetInt32() {
             }
             NetInt32(RawNetInt32 val) {

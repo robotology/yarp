@@ -742,8 +742,8 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             if (flex.getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                       header.width, header.height, 
-                       header.quantum, header.imgSize);
+                       (int)header.width, (int)header.height, 
+                       (int)header.quantum, (int)header.imgSize);
                 printf("my space: width %d, height %d, quantum %d, size %d\n",
                        flex.width(), flex.height(), flex.getQuantum(), 
                        flex.getRawImageSize());
@@ -760,8 +760,8 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             if (getRawImageSize()!=header.imgSize) {
                 printf("There is a problem reading an image\n");
                 printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                       header.width, header.height, 
-                       header.quantum, header.imgSize);
+                       (int)header.width, (int)header.height, 
+                       (int)header.quantum, (int)header.imgSize);
                 printf("my space: width %d, height %d, quantum %d, size %d\n",
                        width(), height(), getQuantum(), getRawImageSize());
             }

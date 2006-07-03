@@ -1,8 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#include <yarp/Logger.h>
+
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/Image.h>
-#include <yarp/Logger.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
