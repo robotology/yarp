@@ -490,7 +490,7 @@ public:
                     done.post();
                 }
             } else {
-                raw = true;
+                // raw = true; // don't make raw mode "sticky"
                 ACE_OS::printf("%s\n", bot.toString().c_str());
                 ACE_OS::fflush(stdout);
             }
@@ -532,7 +532,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         Address address = nic.registerName(name);
         if (address.isValid()) {
             ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
-                            name,
+                            address.getRegName().c_str(),
                             address.toString().c_str());
             core.listen(address);
             core.start();
@@ -546,7 +546,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             if (String(targets[i])=="verbatim") {
                 raw = false;
             } else {
-                connect(name,targets[i]);
+                connect(address.getRegName().c_str(),targets[i]);
             }
         }
 

@@ -4,7 +4,23 @@
 The command-line utility "yarp" performs a set of useful operations
 for a YARP network.  It can give status information, make and break
 connections between ports, and send/receive data to/from ports.
-
+\if MAN_PAGE_COND
+\else
+Here are the ways you can call yarp:
+- \ref yarp_base
+- \ref yarp_help
+- \ref yarp_version
+- \ref yarp_where
+- \ref yarp_conf
+- \ref yarp_name
+- \ref yarp_connect
+- \ref yarp_disconnect
+- \ref yarp_read
+- \ref yarp_write
+- \ref yarp_rpc
+- \ref yarp_server
+- \ref yarp_check
+\endif
 
 @section yarp_base yarp
 
@@ -36,7 +52,6 @@ disconnect   remove a connection between two ports
 read         read from the network and print to standard output
 write        write to the network from standard input
 rpc          read/write commands to a port, in standard format
-regression   run regression tests, if linked
 server       run yarp name server
 check        run a simple sanity check to see if yarp is working
 \endverbatim
@@ -74,15 +89,16 @@ Name server is available at ip 15.255.112.22 port 10000
 \endverbatim
 
 
-\section yarp_where yarp conf
+\section yarp_conf yarp conf
 
 
 This will report where the name server location is configured.
-On my machine, the result is:
-
+For the author's machine, the result is:
 \verbatim
 /home/paulfitz/.yarp/conf/yarp.conf
 \endverbatim
+If the YARP_CONF directory is set, this will be where the conf/yarp.conf
+file is created/read.
 
 
 @section yarp_check yarp check
@@ -131,6 +147,13 @@ reading ``yarp bottles'' (a simple serialized list) and printing their content
 to standard output.  This simple utility is intended for use in testing, and
 getting familiar with using YARP.
 
+For example, if you run "yarp server" in one terminal, "yarp read
+/read" in another, and "yarp write /write verbatim /read" in another,
+then everything you type on the "write" terminal will be echoed on the
+"read" terminal.
+
+
+
 \section yarp_write yarp write
 
 \verbatim
@@ -151,6 +174,24 @@ with whitespace and quoting.  Otherwise the input is interpreted
 as a list of values that are transmitted in a standard network
 format that will not preserve whitespace, quoting, and other
 features.
+
+For example, if you run "yarp server" in one terminal, "yarp read
+/read" in another, and "yarp write /write verbatim /read" in another,
+then everything you type on the "write" terminal will be echoed on the
+"read" terminal.
+
+
+\section yarp_rpc yarp rpc
+
+\verbatim
+yarp rpc TARGET_PORT
+\endverbatim
+
+This will send a message to the target port and expect a response.
+Useful only if you have a port that actually will respond.  Ports
+associated with devices may behave like this.  "RPC" stands for Remote
+Procedure Call.
+
 
 \section yarp_connect yarp connect
 
@@ -195,8 +236,21 @@ yarp name COMMAND ARG_1 ARG_2 ...
 \endverbatim
 
 This will send the given command and arguments to the YARP name server
-and report the results.  For example:
+and report the results.  Here are the possible commands:
+\if MAN_PAGE_COND
+\else
+- \ref name_help
+- \ref name_query
+- \ref name_register
+- \ref name_unregister
+- \ref name_list
+- \ref name_set
+- \ref name_get
+- \ref name_check
+- \ref name_route
+\endif
 
+For example:
 \verbatim
 # user types...
 yarp name list
@@ -237,7 +291,7 @@ NAME_SERVER list
 \endverbatim
 
 
-\section yarp_name_help yarp name help
+\section name_help yarp name help
 
 This will list the commands available from the name server.
 For example, our current implementation gives:
@@ -367,7 +421,7 @@ The name server can store extra properties of a port, beyond the
 bare details associated with registration.  The  set command
 is used to do this.  For example, the command:
 \verbatim
-NAME_SERVER set /write offers tcp udp mcast
+yarp name set /write offers tcp udp mcast
 \endverbatim
 Gets the following response:
 \verbatim
@@ -394,7 +448,7 @@ yarp name get PORT PROPERTY
 Gets the values of a stored property. For example, 
 after the set command example shown earlier, the command:
 \verbatim
-NAME_SERVER get /write offers
+yarp name get /write offers
 \endverbatim
 Returns the following response:
 \verbatim
@@ -411,7 +465,7 @@ yarp name check PORT PROPERTY VALUE
 Checks if a stored property can take the given value. For example, 
 after the set command example shown earlier, the command:
 \verbatim
-NAME_SERVER check /write offers tcp
+yarp name check /write offers tcp
 \endverbatim
 Returns the following response:
 \verbatim
@@ -433,7 +487,7 @@ requires ports to be on the same machine, and `local' requires
 ports to belong to threads with a shared memory space).
 For example, the command:
 \verbatim
-NAME_SERVER route /write /read
+yarp name route /write /read
 \endverbatim
 Returns the following response:
 \verbatim
@@ -442,7 +496,48 @@ port /write route /read = shmem://read
 This suggests that shmem is the best carrier to use.
 
 
+\section companion_extended An extended example
 
+Start five terminals, called A-E.  Do the following:
+\verbatim
+[in terminal A] yarp server
+[in terminal B] yarp check
+\endverbatim
+Terminal B should run some tests, then say yarp is "ok".  Now
+do the following, leaving terminal A untouched:
+\verbatim
+[in terminal B] yarp read /read
+[in terminal C] yarp write /write verbatim /read
+\endverbatim
+Now type some stuff into terminal C and hit return.  That stuff
+should be echoed on terminal B.  Now try:
+\verbatim
+[in terminal D] yarp disconnect /write /read
+\endverbatim
+Now if you type stuff in terminal C, it no longer appears on B.
+Now try:
+\verbatim
+[in terminal D] yarp connect /write /read
+\endverbatim
+Now if you type stuff in terminal C, it appears on B again.
 
+If you have the "yarpdev" and "yarpview" programs, we can go further.
+Try:
+\verbatim
+[in terminal E] yarpdev --device test_grabber --period 2 --width 8 --height 8 --name /grabber
+\endverbatim
+This creates a test "device" with a port called "/grabber", outputing a
+very small test image every 2 seconds.  You won't see much happen yet.
+Try:
+\verbatim
+[in terminal D] yarpview --name /view &
+[in terminal D] yarp connect /grabber /view
+\endverbatim
+You should now see a slow-moving red line.  Try:
+\verbatim
+[in terminal D] yarp connect /grabber /read
+\endverbatim
+You should now see a text representation of the image on terminal B
+appearing every 2 seconds.
 
 */
