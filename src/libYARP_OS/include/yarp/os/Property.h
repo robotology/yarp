@@ -43,20 +43,56 @@ public:
      */ 
     bool check(const char *key) const;
 
-    void put(const char *key, const char *val);
+    /**
+     * Associate the given key with the given string, so that
+     * find(key).asString() will give that string.
+     * @param key the key
+     * @param value the string value
+     */
+    void put(const char *key, const char *value);
 
-    void put(const char *key, Value& value);
+    /**
+     * Associate the given key with the given value, so that
+     * find(key).asString() will give that value.
+     * @param key the key
+     * @param value the value
+     */
+    void put(const char *key, const Value& value);
 
+    /**
+     * Associate the given key with the given value, so that
+     * find(key) will give that value.  The Property
+     * object is responsible for deallocating the value.
+     * @param key the key
+     * @param value the value
+     */
     void put(const char *key, Value *value);
 
+    /**
+     * Associate the given key with the given integer, so that
+     * find(key).asInt() will give that integer.
+     * @param key the key
+     * @param v the integer value
+     */
     void put(const char *key, int v) {
         put(key,Value::makeInt(v));
     }
 
+    /**
+     * Associate the given key with the given floating point number, so that
+     * find(key).asDouble() will give that number.
+     * @param key the key
+     * @param v the floating point value
+     */
     void put(const char *key, double v) {
         put(key,Value::makeDouble(v));
     }
 
+    /**
+     * Remove the association from the given key to a value, if present.
+     * Guarantees that find(key).isNull() will be true.
+     * @param key the key
+     */
     void unput(const char *key);
 
     // documented in Searchable
@@ -65,6 +101,10 @@ public:
     // documented in Searchable
     virtual Bottle& findGroup(const char *key);
 
+    /**
+     * Remove all associations.
+     * Guarantees that find(key).isNull() will be true for all values of key.
+     */
     void clear();
 
     /**
@@ -122,6 +162,11 @@ public:
      */
     void fromConfigFile(const char *fname);
 
+    /**
+     * Parses text in the configuration format described in
+     * fromConfigFile().
+     * @param txt the configuration text
+     */
     void fromConfig(const char *txt);
 
     // documented in Searchable

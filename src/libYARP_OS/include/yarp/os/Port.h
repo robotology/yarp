@@ -108,11 +108,19 @@ public:
     bool reply(PortWriter& writer);
 
     /**
-     * set an external reader for port data
+     * Set an external reader for port data.
      * @param reader the external reader to use
      */
     void setReader(PortReader& reader);
 
+    /**
+     * Set a creator for readers for port data.
+     * Every port that input is received from will be automatically
+     * given its own reader.  Handy if you care about the identity
+     * of the receiver.
+     *
+     * @param creator the "factor" for creating PortReader object
+     */
     void setReaderCreator(PortReaderCreator& creator);
 
     /**

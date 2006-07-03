@@ -17,6 +17,9 @@ namespace yarp {
  */
 class yarp::os::PortWriter {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~PortWriter() {}
 
     /**

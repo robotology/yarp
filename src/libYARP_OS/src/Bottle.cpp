@@ -235,7 +235,7 @@ void Bottle::add(Value *value) {
 }
 
 
-void Bottle::add(Value& value) {
+void Bottle::add(const Value& value) {
     HELPER(implementation).addBit(value);
 }
 

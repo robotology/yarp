@@ -69,7 +69,7 @@ public:
         p->bot.addString(val);
     }
 
-    void put(const char *key, Value& bit) {
+    void put(const char *key, const Value& bit) {
         PropertyItem *p = getProp(key,true);
         p->singleton = true;
         p->bot.clear();
@@ -292,7 +292,7 @@ void Property::put(const char *key, const char *val) {
     HELPER(implementation).put(key,val);
 }
 
-void Property::put(const char *key, Value& value) {
+void Property::put(const char *key, const Value& value) {
     HELPER(implementation).put(key,value);
 }
 

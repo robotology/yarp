@@ -42,6 +42,9 @@ public:
      */
     const char *c_str() const;
 
+    /**
+     * Typecast operator to C-style string.
+     */
     operator const char *() const { 
         return c_str(); 
     }

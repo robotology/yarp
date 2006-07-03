@@ -31,14 +31,23 @@ class yarp::os::BufferedPort : public Contactable,
 public:
     using Contactable::open;
 
+    /**
+     * The type of content stored by this BufferedPort.
+     */
     typedef T ContentType;
 
+    /**
+     * Constructor.
+     */
     BufferedPort() {
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~BufferedPort() {
         port.close();
     }

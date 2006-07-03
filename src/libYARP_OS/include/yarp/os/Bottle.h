@@ -96,7 +96,7 @@ public:
      * Add a Value to the bottle, at the end of the list.
      * @param value the Value to add
      */
-    void add(Value& value);
+    void add(const Value& value);
 
     /**
      * Add a Value to the bottle, at the end of the list.

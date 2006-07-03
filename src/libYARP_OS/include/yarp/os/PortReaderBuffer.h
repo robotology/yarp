@@ -21,19 +21,32 @@ namespace yarp {
 
 
 /**
- * Your data is ready!  If you want to get your data
+ * A callback for typed data from a port.  If you want to get your data
  * while leaving the port free to read more in the
- * background, you'll can use a callback.
+ * background, you can create a callback that implements this interface,
+ * and tell the port about it using BufferedPort::useCallback(callback)
+ * or PortReaderBuffer::useCallback(callback)
  *
  */
 template <class T> 
 class yarp::os::TypedReaderCallback {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~TypedReaderCallback() {}
 
+    /**
+     * Callback method.
+     * @param datum data read from a port
+     */
     virtual void onRead(T& datum) = 0;
 };
 
+/**
+ * A base class for sources of typed data.  This could be a 
+ * BufferedPort or a PortReaderBuffer.
+ */
 template <class T> 
 class yarp::os::TypedReader {
 public:
@@ -97,10 +110,14 @@ public:
     /**
      * Set an object whose onRead method will be called when data is 
      * available.
+     * @param callback the object whose onRead method will be called with data
      */
     virtual void useCallback(TypedReaderCallback<T>& callback) = 0;
 
 
+    /**
+     * Destructor.
+     */
     virtual ~TypedReader() {}
 };
 
@@ -229,6 +246,9 @@ public:
         reader = 0 /*NULL*/;
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~PortReaderBuffer() {
         // it would also help to close the port, so
         // that incoming inputs are interrupted

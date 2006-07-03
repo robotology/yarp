@@ -46,7 +46,20 @@ namespace yarp {
  */
 class yarp::os::Vocab {
 public:
+    /**
+     * Convert a string into a vocabulary identifier.  If the string
+     * is longer than four characters, only the first four characters
+     * are used.
+     * @param str the string to convert
+     * @result the integer equivalent of the string form of the identifier
+     */
     static NetInt32 encode(const char *str);
+
+    /**
+     * Convert a vocabulary identifier into a string.
+     * @param code the vocabulary identifier to convert
+     * @result the string equivalent of the integer form of the identifier
+     */
     static ConstString decode(NetInt32 code);
 };
 

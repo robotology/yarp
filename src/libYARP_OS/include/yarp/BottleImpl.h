@@ -343,7 +343,7 @@ public:
         add((Storable*)(bit));
     }
 
-    void addBit(yarp::os::Value& bit) {
+    void addBit(const yarp::os::Value& bit) {
         // all Values are Storables -- important invariant!
         if (!bit.isNull()) {
             add((Storable*)(bit.clone()));
