@@ -12,7 +12,7 @@ if [ ! "k$USER" = "k" ] ; then
 
     echo USER might be $USER
 
-    cd doc && rsync --rsh="ssh -x -l $USER" --modify-window=2 -lauvzP . $target:www/specs/dox
+    cd doc && rsync --rsh="ssh -x -l $USER" --modify-window=2 -lauvzP . $target:/home/groups/y/ya/yarp0/htdocs/specs/dox
 
 else
 
