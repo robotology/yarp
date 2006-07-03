@@ -112,6 +112,7 @@ static gint menuFileQuit_CB(GtkWidget *widget, gpointer data)
 
 static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 {
+#if GTK_CHECK_VERSION(2,6,0)
 	const gchar *authors[] = 
         {
             "EmmeBi",
@@ -145,6 +146,10 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
                           "comments", "Program to display images received on a port.",
                           "authors", authors,
                           NULL);
+#else
+    printf("Missing functionality on older GTK version, sorry\n");
+#endif
+
 	return TRUE;
 }
 
@@ -187,7 +192,11 @@ static gint menuImageInterval_CB(GtkWidget *widget, gpointer data)
 										GTK_MESSAGE_INFO,
 										GTK_BUTTONS_OK,
 										"Estimated interval during last cycle:\n");
+#if GTK_CHECK_VERSION(2,6,0)
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%.3f seconds.", interval);
+#else
+    printf("Missing functionality on older GTK version, sorry\n");
+#endif
 	gtk_window_set_title (GTK_WINDOW(dialog), "Estimated interval");
 	gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
@@ -213,6 +222,8 @@ static gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer
 
 static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+#if GTK_CHECK_VERSION(2,6,0)
+
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
         {
             gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
@@ -223,6 +234,8 @@ static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer da
         {
             gtk_widget_hide (saveSetDialog);
         }
+
+#endif
 
 	return TRUE;
 }
@@ -406,8 +419,12 @@ GtkWidget* createSaveSetDialog(void)
 	//gtk_window_set_default_size(GTK_WINDOW(dialog), 190, 40);
 	gtk_window_set_destroy_with_parent(GTK_WINDOW(dialog), TRUE);
 	gtk_dialog_set_has_separator (GTK_DIALOG(dialog), FALSE);
+#if GTK_CHECK_VERSION(2,6,0)
 	saveButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_RECORD);
 	stopButton = gtk_button_new_from_stock(GTK_STOCK_MEDIA_STOP);
+#else
+    printf("Missing functionality on older GTK version, sorry\n");
+#endif
 	gtk_widget_set_size_request (GTK_WIDGET(saveButton), 80,50);
 	gtk_widget_set_size_request (GTK_WIDGET(stopButton), 80,50);
 
@@ -867,7 +884,11 @@ int myMain(int argc, char* argv[])
 	
 	// Non Modal Dialogs
 	saveSingleDialog = createSaveSingleDialog();
+#if GTK_CHECK_VERSION(2,6,0)
 	saveSetDialog = createSaveSetDialog();
+#else
+    printf("Functionality omitted for older GTK version\n");
+#endif
 	// Shows all widgets in main Window
     gtk_widget_show_all (mainWindow);
 	gtk_window_move(GTK_WINDOW(mainWindow), _options.posX, _options.posY);

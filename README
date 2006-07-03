@@ -229,7 +229,18 @@ gtk+. Needless to say, this procedure is different on Linux and Windows.
 
 -Installing gtk+ on Linux
 Follow the installation guide in the gtk web site (www.gtk.org/download).
-on Debian: sudo apt-get install libgtk2.0-dev
+on Debian: sudo apt-get install libgtk2.0-dev pkgconfig
+
+-Installing gtk+ on Mac OSX
+We don't have a lot of experience on Macs.
+Getting the gtk+2 package using fink worked for us.  
++ Install fink from http://fink.sourceforge.net
++ Then from Terminal run "sudo apt-get install gtk+2-dev pkgconfig"
++ It also seemed necessary to install a few more things: "sudo apt-get install glib2-dev pango1-xft2-dev atk1"
++ Now you should be ready to run cmake and compile.
++ The "stable" gtk+2 version at the time of writing is a little older than
+  what we're using on Linux/Windows, so some functions are disabled in the
+  yarpview GUI until we rewrite them.
 
 -Installing gtk+ on Windows
 We recommand you install glade for win32, which sets up everything you need
