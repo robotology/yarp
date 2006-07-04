@@ -49,4 +49,20 @@ const char *ConstString::c_str() const {
     return HELPER(implementation).c_str();
 }
 
+bool ConstString::operator ==(const ConstString& alt) const {
+    return HELPER(implementation) == HELPER(alt.implementation);
+}
+
+bool ConstString::operator !=(const ConstString& alt) const {
+    return HELPER(implementation) != HELPER(alt.implementation);
+}
+
+bool ConstString::operator ==(const char *str) const {
+    return HELPER(implementation) == str;
+}
+
+
+bool ConstString::operator !=(const char *str) const {
+    return HELPER(implementation) != str;
+}
 

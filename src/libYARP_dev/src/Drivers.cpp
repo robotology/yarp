@@ -28,9 +28,28 @@ public:
 
     ConstString toString() {
         yarp::String s;
+        s += "\n";
         for (unsigned int i=0; i<delegates.size(); i++) {
-            s += delegates[i]->toString().c_str();
+            ConstString name = delegates[i]->getName();
+            ConstString wrapper = delegates[i]->getWrapper();
+            s += "Device <";
+            s += delegates[i]->getName().c_str();
+            s += ">";
             s += "\n";
+            s += "   documented by the C++ class ";
+            s += delegates[i]->getCode().c_str();
+            s += "\n";
+            s += "   ";
+            if (wrapper=="") {
+                s += "No network wrapper available.";
+            } else if (wrapper!=name) {
+                s += "Wrapped for the network by <";
+                s += delegates[i]->getWrapper().c_str();
+                s += ">";
+            } else {
+                s += "Does not need a network wrapper.";
+            }
+            s += "\n\n";
         }
         return ConstString(s.c_str());
     }

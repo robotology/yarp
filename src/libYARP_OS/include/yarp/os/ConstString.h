@@ -49,8 +49,15 @@ public:
         return c_str(); 
     }
 
-private:
     const ConstString& operator = (const ConstString& alt);
+
+    bool operator ==(const ConstString& alt) const;
+    bool operator !=(const ConstString& alt) const;
+
+    bool operator ==(const char *str) const;
+    bool operator !=(const char *str) const;
+
+private:
 
     void *implementation;
 };
