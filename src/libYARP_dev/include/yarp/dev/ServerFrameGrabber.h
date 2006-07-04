@@ -34,7 +34,9 @@ namespace yarp {
 
 
 /**
- * Export a frame grabber to the network, providing the 
+ * @ingroup dev_impl_wrapper
+ *
+ * Export a frame grabber to the network.  Provides the 
  * IFrameGrabberImage, IFrameGrabberControls, and IAudioGrabberSound
  * interfaces.  The corresponding client is a RemoteFrameGrabber.
  *

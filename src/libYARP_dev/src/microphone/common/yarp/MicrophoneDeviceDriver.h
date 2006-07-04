@@ -11,6 +11,14 @@ namespace yarp {
     }
 }
 
+/**
+ * @ingroup dev_impl
+ *
+ * A basic microphone input source.
+ * The implementation is very simple right now - if you want to
+ * use this for real you should fix it up.
+ *
+ */
 class yarp::dev::MicrophoneDeviceDriver : 
     public IAudioGrabberSound, public DeviceDriver
 {

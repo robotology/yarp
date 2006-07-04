@@ -67,8 +67,11 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = src/libYARP_OS/include/yarp/os src/libYARP_sig/include/yarp/sig src/libYARP_dev/include/yarp/dev src/yarp-imageviewer/UserDoc_man_yarpview.dox
-FILE_PATTERNS          = *.h *.dox *.cpp
+# there's no real good search pattern for "clean" device headers
+# unfortunately - need to find a better method than updating this line
+INPUT                  = src/libYARP_OS/include/yarp/os src/libYARP_sig/include/yarp/sig src/libYARP_dev/include/yarp/dev src/yarp-imageviewer/UserDoc_man_yarpview.dox src/libYARP_dev/src/dragonfly/common src/libYARP_dev/src/microphone/common src/libYARP_dev/src/inertiacube2/common src/libYARP_dev/src/microphone/common src/libYARP_dev/src/picolo/winnt/yarp src/libYARP_dev/src/esdMotionControl/winnt/yarp src/libYARP_dev/src
+# a lot of RemoteControlBoard.cpp should be moved to a header file
+FILE_PATTERNS          = *.h *.dox RemoteControlBoard.cpp
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
@@ -76,7 +79,7 @@ EXCLUDE_PATTERNS       =
 EXAMPLE_PATH           = example
 EXAMPLE_PATTERNS       = *.cpp
 EXAMPLE_RECURSIVE      = YES
-IMAGE_PATH             = 
+IMAGE_PATH             = doc/images
 INPUT_FILTER           = 
 FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------

@@ -9,7 +9,7 @@
 //
 
 //
-// $Id: ImageFile.h,v 1.7 2006-06-21 09:25:38 eshuy Exp $
+// $Id: ImageFile.h,v 1.8 2006-07-04 16:41:53 eshuy Exp $
 //
 //
 
@@ -24,6 +24,8 @@
 namespace yarp {
     namespace sig{
         /**
+         * \ingroup sig_class
+         *
          * Image file operations.
          */
         namespace file {

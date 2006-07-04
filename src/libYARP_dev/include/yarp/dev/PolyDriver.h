@@ -12,6 +12,8 @@ namespace yarp {
 
 
 /**
+ * \ingroup dev_class
+ *
  * A container for a device driver.
  */
 class yarp::dev::PolyDriver : public DeviceDriver {

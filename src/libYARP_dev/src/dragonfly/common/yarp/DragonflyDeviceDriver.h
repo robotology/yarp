@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.15 2006-06-29 10:31:10 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.16 2006-07-04 16:41:53 eshuy Exp $
 ///
 ///
 
@@ -96,6 +96,11 @@ public:
 	float _alfa;				/** NOT USED */
 };
 
+/**
+ * @ingroup dev_impl
+ *
+ * A Point Grey Dragonfly digital camera.
+ */
 class yarp::dev::DragonflyDeviceDriver : 
     public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
 {

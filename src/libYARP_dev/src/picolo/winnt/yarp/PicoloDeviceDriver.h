@@ -50,6 +50,8 @@ public:
 };
 
 /**
+ * @ingroup dev_impl
+ *
  * The Picolo frame grabber device.
  * The device driver handles triple buffering by having a thread waiting on new frame events and
  * manually generating the correct pointer for the user to read. The class is not itself 

@@ -29,6 +29,7 @@ namespace yarp{
     }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /**
  * Helper object for reading config commands for the ServerControlBoard
@@ -90,8 +91,12 @@ public:
     virtual void onRead(Vector& v);
 };
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+
 /**
- * ServerControlBoard class, implement the server side of a remote
+ * @ingroup dev_impl_wrapper
+ *
+ * Implement the server side of a remote
  * control board device driver. The device contains three ports:
  * - rpc_p handling the configuration interfaces of the robot
  * - state_p streaming information about the current state of the robot
@@ -925,7 +930,9 @@ public:
 };
 
 /**
- * The remoted side of the control board (client side).
+ * @ingroup dev_impl_wrapper
+ *
+ * The client side of the control board, connects to a ServerControlBoard.
  */
 class yarp::dev::RemoteControlBoard : 
             public IPidControl,

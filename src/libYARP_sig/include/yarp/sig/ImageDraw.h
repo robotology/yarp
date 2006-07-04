@@ -13,9 +13,11 @@
 namespace yarp {
     namespace sig{
         /**
-           Very basic drawing functions, in case you don't have 
-           anything better available.
-        */
+         * \ingroup sig_class
+         *
+         *  Very basic drawing functions, in case you don't have 
+         *  anything better available.
+         */
         namespace draw {
 
             template <class T>

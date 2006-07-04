@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.13 2006-06-26 17:14:25 natta Exp $
+/// $Id: EsdMotionControl.h,v 1.14 2006-07-04 16:41:53 eshuy Exp $
 ///
 ///
 
@@ -71,7 +71,9 @@ public:
 };
 
 /**
- * The esd controller device driver.
+ * @ingroup dev_impl
+ *
+ * The ESD motion controller device driver.
  * Contains a thread that takes care of polling the can bus for incoming messages.
  */
 class yarp::dev::EsdMotionControl: 

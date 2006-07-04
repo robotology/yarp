@@ -109,6 +109,8 @@ public:
 
 
 /**
+ * \ingroup dev_class
+ *
  * Global factory for devices.  You can create your devices any way
  * you like, but if you register them with the Driver object returned
  * by Drivers::factory() by calling the add() method on it, then

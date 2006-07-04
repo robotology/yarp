@@ -72,7 +72,8 @@ FILE_PATTERNS          = *.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = UserDoc_modules.dox
+# need to avoid the Module definitions - don't work well on paper
+EXCLUDE_PATTERNS       = UserDoc_modules.dox UserDoc_sig.dox UserDoc_dev.dox
 EXAMPLE_PATH           = example/
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO

@@ -11,6 +11,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup sig_class
+ *
  * Class for storing sounds
  */
 class yarp::sig::Sound : public yarp::os::Portable {

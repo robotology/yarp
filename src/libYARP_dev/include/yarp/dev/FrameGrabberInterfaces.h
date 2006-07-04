@@ -18,7 +18,11 @@ namespace yarp{
     }
 }
 
+
+
 /** 
+ * @ingroup dev_iface_media
+ *
  * Common interface to a FrameGrabber.
  */
 class yarp::dev::IFrameGrabber
@@ -58,6 +62,8 @@ public:
 };
 
 /** 
+ * @ingroup dev_iface_media
+ *
  * RGB Interface to a FrameGrabber device.
  */
 class yarp::dev::IFrameGrabberRgb
@@ -87,6 +93,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_media
+ *
  * Read a YARP-format image from a device.
  */
 class yarp::dev::IFrameGrabberImage
@@ -119,6 +127,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_media
+ *
  * Control interface for frame grabber devices.
  */
 class yarp::dev::IFrameGrabberControls

@@ -18,6 +18,8 @@ namespace yarp {
 
 
 /**
+ * \ingroup sig_class
+ *
  * Base class for storing images.
  * You actually want to use ImageOf or FlexImage.
  * This is a minimal class, designed to be as interoperable as possible

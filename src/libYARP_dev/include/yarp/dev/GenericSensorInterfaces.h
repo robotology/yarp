@@ -13,7 +13,11 @@ namespace yarp {
     }
 }
 
-/* IGenericSensor, a generic interface to sensors (gyro, ad converters...) */
+/**
+ * @ingroup dev_iface_other
+ *
+ * A generic interface to sensors -- gyro, a/d converters etc.
+ */
 class yarp::dev::IGenericSensor
 {
 public:

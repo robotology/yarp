@@ -16,8 +16,11 @@ namespace yarp {
 }
 
 /**
- * An implementation of IFrameGrabberImage and IFrameGrabberControls
- * for testing.
+ * @ingroup dev_impl
+ *
+ * A fake camera for testing.
+ * Implements the IFrameGrabberImage and IFrameGrabberControls
+ * interfaces.
  */
 class yarp::dev::TestFrameGrabber : public DeviceDriver, 
             public IFrameGrabberImage, public IFrameGrabberControls {

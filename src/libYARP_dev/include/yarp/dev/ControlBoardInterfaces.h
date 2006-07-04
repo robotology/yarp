@@ -29,7 +29,10 @@ namespace yarp {
     }
 }
 
+
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for a generic control board device implementing a PID controller.
  */
 class yarp::dev::IPidControlRaw
@@ -164,6 +167,12 @@ public:
     virtual bool enablePidRaw(int j)=0;
 };
 
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for a generic control board device implementing a PID controller,
+ * with scaled arguments.
+ */
 class yarp::dev::IPidControl
 {
 public:
@@ -297,6 +306,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for a generic control board device implementing position control in encoder
  * coordinates.
  */
@@ -433,6 +444,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for a generic control board device implementing position control.
  */
 class yarp::dev::IPositionControl
@@ -568,6 +581,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Interface for control boards implementig velocity control in encoder coordinates.
  */
 class yarp::dev::IVelocityControlRaw
@@ -653,7 +668,9 @@ public:
 };
 
 /**
- * Interface for control boards implementig velocity control.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control boards implementing velocity control.
  */
 class yarp::dev::IVelocityControl
 {
@@ -738,7 +755,9 @@ public:
 };
 
 /**
- * Interface for control boards implementig torque control.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control boards implementing torque control.
  */
 class yarp::dev::ITorqueControlRaw
 {
@@ -789,6 +808,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Control board, encoder interface.
  */
 class yarp::dev::IEncodersRaw
@@ -880,6 +901,8 @@ public:
 };
 
 /**
+ * @ingroup dev_iface_motor
+ *
  * Control board, encoder interface.
  */
 class yarp::dev::IEncoders
@@ -971,7 +994,9 @@ public:
 };
 
 /**
- * Interface for control devices. Amplifier commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, amplifier commands.
  */
 class yarp::dev::IAmplifierControl
 {
@@ -1026,7 +1051,9 @@ public:
 };
 
 /**
- * Interface for control devices. Amplifier commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, amplifier commands.
  */
 class yarp::dev::IAmplifierControlRaw
 {
@@ -1081,7 +1108,9 @@ public:
 };
 
 /** 
- * Interface for control devices. Calibration commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, calibration commands.
  */
 class yarp::dev::IControlCalibrationRaw
 {
@@ -1121,7 +1150,9 @@ public:
 };
 
 /** 
- * Interface for control devices. Calibration commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, calibration commands.
  */
 class yarp::dev::IControlCalibration
 {
@@ -1145,7 +1176,9 @@ public:
 };
 
 /** 
- * Interface for control devices. Debug commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, debug commands.
  */
 class yarp::dev::IControlDebug
 {
@@ -1176,7 +1209,9 @@ public:
 };
 
 /** 
- * Interface for control devices. Limits commands.
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, limits commands.
  */
 class yarp::dev::IControlLimits
 {
@@ -1302,4 +1337,4 @@ public:
 
 
 #endif
-//
+

@@ -16,9 +16,9 @@ namespace yarp {
 }
 
 /**
+ * \ingroup dev_class
+ *
  * Interface implemented by all device drivers.
- * At the moment this is an empty class, in the future it might contain
- * methods common to all device drivers (e.g. serialization/deserialization)
  */
 class yarp::dev::DeviceDriver
 {

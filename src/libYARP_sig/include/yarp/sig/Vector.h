@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.h,v 1.1 2006-06-20 14:42:24 gmetta Exp $
+// $Id: Vector.h,v 1.2 2006-07-04 16:41:53 eshuy Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -21,6 +21,8 @@ namespace yarp {
 }
 
 /**
+ * \ingroup sig_class
+ *
  * A simple Vector class derived from ACE and with Portable functionality.
  * Things you can do on Vector:
  * - use [] to access single elements without range checking

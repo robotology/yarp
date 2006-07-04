@@ -16,6 +16,12 @@ struct InertiaCube2Parameters
     short comPort;
 };
 
+/**
+ *
+ * @ingroup dev_impl
+ *
+ * InterSense inertia cube inertial sensor.
+ */
 class yarp::dev::InertiaCube2 : public IGenericSensor, public DeviceDriver
 {
  public:

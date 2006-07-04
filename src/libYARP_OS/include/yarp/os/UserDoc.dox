@@ -6,6 +6,25 @@
 /**
  * @mainpage Welcome to YARP
  *
+ * \image html yarp-small.jpg
+ *
+ * @section welcome_topics Topics
+ *
+ * \li @subpage what_is_yarp "what exactly is YARP"?
+ * \li @subpage install.
+ * \li @subpage yarp "YARP's main command line interface".
+ * \li Check out some @subpage yarp_code_examples "example code" 
+ * \li Read about the @subpage yarp_os "YARP OS library".
+ * \li For advanced users who want to add a new device, see the @subpage dev-how-to.
+ * \li For those interested in interoperability, read the \subpage terms "specification of YARP terms and protocols".
+ 
+
+ *
+ * If you're viewing this text online, you can click a "Modules" link
+ * at the top of your page to see the most important functionality
+ * of YARP broken down category by category.
+ *
+
  * @section welcome_disclaimer Ominous but Enigmatic Warning
  *
  * \code
@@ -20,20 +39,6 @@
  All Hope Abandon, You Who Enter Here.
  * \endcode
  *
- * @section welcome_topics Topics
- *
- * So \subpage what_is_yarp "what exactly is YARP"?
- *
- * Need help installing and compiling YARP?  See @subpage install.
- *
- * Learn to use @subpage yarp "YARP's main command line interface".
- *
- * Want to start using the library?  Check out some @subpage yarp_code_examples "example code" or read about the @subpage yarp_os "YARP OS library".
- *
- * Do you want to understand how to add a new device driver?  Have 
- * a look at @subpage dev-how-to.
- 
- * If you are interested in network interoperability, your can read some \subpage terms "specification of YARP terms and protocols".
 
  */
 
@@ -59,17 +64,16 @@
  * supports Linux, Microsoft Windows, Mac OSX and (in some versions) the
  * QNX realtime operating system.
 
- * \li libYARP_sig - performing common signal processing tasks (visual,
+ * \li \link sig_class libYARP_sig \endlink - performing common signal processing tasks (visual,
  * auditory) in an open manner easily interfaced with other
  * commonly used libraries.
 
- * \li libYARP_dev - interfacing with common devices used in robotics:
+ * \li \link dev_all libYARP_dev \endlink - interfacing with common devices used in robotics:
  * framegrabbers, digital cameras, motor control boards, etc.
 
  * These components are maintained separately. The core component
  * is libYARP_OS, which must be available before the other
- * components can be used. This manual describes how to install and
- * use that component first, then the others.
+ * components can be used.
 
  * YARP has some @subpage requirements
  *

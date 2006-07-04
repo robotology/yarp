@@ -11,6 +11,8 @@ namespace yarp {
 }
 
 /**
+ * @ingroup dev_iface_media
+ *
  * Read a YARP-format sound block from a device.
  */
 class yarp::dev::IAudioGrabberSound
