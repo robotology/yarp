@@ -232,8 +232,8 @@ Follow the installation guide in the gtk web site (www.gtk.org/download).
 on Debian: sudo apt-get install libgtk2.0-dev pkgconfig
 
 -Installing gtk+ on Mac OSX
-We don't have a lot of experience on Macs.
-Getting the gtk+2 package using fink worked for us.  
+We don't have a lot of experience on Macs, but here's some suggestions.
+Please let us know what works for you.
 + Install fink from http://fink.sourceforge.net
 + Then from Terminal run "sudo apt-get install gtk+2-dev pkgconfig"
 + It also seemed necessary to install a few more things: "sudo apt-get install glib2-dev pango1-xft2-dev atk1"
