@@ -32,8 +32,19 @@ class yarp::os::Property : public Searchable, public Portable {
 public:
     using Searchable::check;
 
+    /**
+     * Constructor.
+     */
     Property();
 
+    /**
+     * Initialize from a string, using fromString().
+     */
+    Property(const char *str);
+
+    /**
+     * Destructor.
+     */
     virtual ~Property();
 
     /**

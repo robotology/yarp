@@ -133,6 +133,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
                     p.put("subdevice",str.c_str());
                     p.put("device",wrapper.c_str());
                     driver = wrapCreator->create();
+                    creator = wrapCreator;
                 } else {
                     // already wrapped
                     driver = creator->create();
@@ -151,6 +152,15 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
             printf("Driver <%s> was found but could not open\n", str.c_str());
             delete driver;
             driver = NULL;
+        } else {
+            if (creator!=NULL) {
+                ConstString name = creator->getName();
+                ConstString wrapper = creator->getWrapper();
+                ConstString code = creator->getCode();
+                printf("Created %s <%s>.  See C++ class %s for the interfaces supported.\n",
+                       (name==wrapper)?"wrapper":"device",
+                       name.c_str(), code.c_str());
+            }
         }
         return driver;
     }

@@ -15,7 +15,10 @@ namespace yarp {
     }
 }
 
-
+/**
+ * An implementation of IFrameGrabberImage and IFrameGrabberControls
+ * for testing.
+ */
 class yarp::dev::TestFrameGrabber : public DeviceDriver, 
             public IFrameGrabberImage, public IFrameGrabberControls {
 private:
@@ -26,6 +29,9 @@ private:
     double prev;
 
 public:
+    /**
+     * Constructor.
+     */
     TestFrameGrabber() {
         ct = 0;
         freq = 20;
@@ -38,14 +44,22 @@ public:
     }
 
 
-    virtual bool open() {
-        return true;
-    }
-
     virtual bool close() {
         return true;
     }
 
+   /**
+     * Configure with a set of options. These are:
+     * <TABLE>
+     * <TR><TD> width/w </TD><TD> Width of image (default 128). </TD></TR>
+     * <TR><TD> height/h </TD><TD> Height of image (default 128). </TD></TR>
+     * <TR><TD> freq </TD><TD> Frequency in Hz to generate images (default 20Hz). </TD></TR>
+     * <TR><TD> period </TD><TD> Inverse of freq - only set one of these. </TD></TR>
+     * </TABLE>
+     *
+     * @param config The options to use
+     * @return true iff the object could be configured.
+     */
     virtual bool open(yarp::os::Searchable& prop) {
         yarp::os::Value *val;
         if (prop.check("width",val)||prop.check("w",val)) {

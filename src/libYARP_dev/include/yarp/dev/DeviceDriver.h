@@ -23,7 +23,11 @@ namespace yarp {
 class yarp::dev::DeviceDriver
 {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~DeviceDriver(){}
+
     /**
      * Open the DeviceDriver. 
      * @param config is a list of parameters for the device.

@@ -280,6 +280,13 @@ Property::Property() {
 }
 
 
+Property::Property(const char *str) {
+    implementation = new PropertyHelper;
+    YARP_ASSERT(implementation!=NULL);
+    fromString(str);
+}
+
+
 Property::~Property() {
     if (implementation!=NULL) {
         delete &HELPER(implementation);

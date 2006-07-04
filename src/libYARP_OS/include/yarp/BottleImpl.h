@@ -51,7 +51,7 @@ public:
     virtual yarp::os::Value& find(const char *key);
     virtual yarp::os::Bottle& findGroup(const char *key);
 
-    virtual bool operator == (const Value& alt) const;
+    virtual bool operator == (const yarp::os::Value& alt) const;
 
     virtual yarp::os::Value *create() const { return createStorable(); }
 

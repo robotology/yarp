@@ -118,12 +118,36 @@ public:
 class yarp::dev::IFrameGrabberControls
 {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~IFrameGrabberControls(){}
 
+    /**
+     * Set the brightness.
+     * @param v new value for parameter.
+     * @return true on success.
+     */
     virtual bool setBrightness(double v) = 0;
+
+    /**
+     * Set the shutter parameter.
+     * @param v new value for parameter.
+     * @return true on success.
+     */
     virtual bool setShutter(double v) = 0;
+
+    /**
+     * Set the gain.
+     * @param v new value for parameter.
+     * @return true on success.
+     */
     virtual bool setGain(double v) = 0;
 
+    /**
+     * Read the brightness parameter.
+     * @return the current brightness value.
+     */
     virtual double getBrightness() const = 0;
     virtual double getShutter() const = 0;
     virtual double getGain() const = 0;

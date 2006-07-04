@@ -13,23 +13,21 @@ namespace yarp{
     }
 }
 
+/**
+ * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
+ * the network protocol used.
+ */
 class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
             public IFrameGrabberControls,
             public DeviceDriver {
-private:
-    yarp::os::Port port;
-    yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
-    yarp::os::ConstString remote;
-    yarp::os::ConstString local;
-    int lastHeight;
-    int lastWidth;
+
 public:
+    /**
+     * Constructor.
+     */
     RemoteFrameGrabber() {
         lastHeight = 0;
         lastWidth = 0;
-    }
-
-    virtual ~RemoteFrameGrabber() {
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
@@ -51,10 +49,16 @@ public:
         return lastWidth;
     }
 
-    virtual bool open(){
-        return true;
-    }
-
+    /**
+     * Configure with a set of options. These are:
+     * <TABLE>
+     * <TR><TD> local </TD><TD> Port name of this client. </TD></TR>
+     * <TR><TD> remote </TD><TD> Port name of server to connect to. </TD></TR>
+     * </TABLE>
+     *
+     * @param config The options to use
+     * @return true iff the object could be configured.
+     */
     virtual bool open(yarp::os::Searchable& config){
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
@@ -74,24 +78,6 @@ public:
 
     virtual bool close() {
         return true;;
-    }
-
-    bool setCommand(int code, double v) {
-        yarp::os::Bottle cmd;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(code);
-        cmd.addDouble(v);
-        port.write(cmd);
-        return true;
-    }
-
-    double getCommand(int code) const {
-        yarp::os::Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(code);
-        port.write(cmd,response);
-        // response should be [cmd] [name] value
-        return response.get(2).asDouble();
     }
 
     virtual bool setBrightness(double v) {
@@ -117,6 +103,34 @@ public:
     virtual double getGain() const {
         return getCommand(VOCAB_GAIN);
     }
+
+
+private:
+    yarp::os::Port port;
+    yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
+    yarp::os::ConstString remote;
+    yarp::os::ConstString local;
+    int lastHeight;
+    int lastWidth;
+
+    bool setCommand(int code, double v) {
+        yarp::os::Bottle cmd;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(code);
+        cmd.addDouble(v);
+        port.write(cmd);
+        return true;
+    }
+
+    double getCommand(int code) const {
+        yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(code);
+        port.write(cmd,response);
+        // response should be [cmd] [name] value
+        return response.get(2).asDouble();
+    }
+
 };
 
 

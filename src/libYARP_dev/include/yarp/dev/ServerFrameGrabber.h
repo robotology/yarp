@@ -33,9 +33,41 @@ namespace yarp {
 
 
 
-
+/**
+ * Export a frame grabber to the network, providing the 
+ * IFrameGrabberImage, IFrameGrabberControls, and IAudioGrabberSound
+ * interfaces.  The corresponding client is a RemoteFrameGrabber.
+ *
+ * The network interface is a single Port.
+ * Images are streamed out from that Port -- RemoteFrameGrabber
+ * uses this stream to provide the IFrameGrabberImage interface.
+ * The IFrameGrabberControls functionality is provided via RPC.
+ *
+ * Here's a command-line example:
+ * \verbatim
+   [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --period 2
+   [terminal B] yarp read /read
+   [terminal C] yarp connect /grabber /read
+   [terminal C] echo "[get] [gain]" | yarp rpc /grabber
+   \endverbatim
+ * The yarpdev line starts a TestFrameGrabber wrapped in a ServerFrameGrabber.
+ * After the "yarp connect" line, image descriptions will show up in 
+ * terminal B (you could view them with the yarpview application).
+ * The "yarp rpc" command should query the gain (0.0 for the test grabber).
+ *
+ * <TABLE>
+ * <TR><TD> Command (text form) </TD><TD> Response </TD><TD> Code equivalent </TD></TR>
+ * <TR><TD> [set] [bri] 1.0 </TD><TD> none </TD><TD> setBrightness() </TD></TR>
+ * <TR><TD> [set] [gain] 1.0 </TD><TD> none </TD><TD> setGain() </TD></TR>
+ * <TR><TD> [set] [shut] 1.0 </TD><TD> none </TD><TD> setShutter() </TD></TR>
+ * <TR><TD> [get] [bri] </TD><TD> [is] [bri] 1.0 </TD><TD> getBrightness() </TD></TR>
+ * <TR><TD> [get] [gain] </TD><TD> [is] [gain] 1.0 </TD><TD> getGain() </TD></TR>
+ * <TR><TD> [get] [shut] </TD><TD> [is] [shut] 1.0 </TD><TD> getShutter() </TD></TR>
+ * </TABLE>
+ *
+ */
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, 
-	    public yarp::os::Thread,
+            private yarp::os::Thread,
             public yarp::os::PortReader,
             public IFrameGrabberImage, public IFrameGrabberControls,
             public IAudioGrabberSound
@@ -53,6 +85,9 @@ private:
     IFrameGrabberControls *fgCtrl;
     yarp::os::Property settings;
 public:
+    /**
+     * Constructor.
+     */
     ServerFrameGrabber() {
         fgImage = NULL;
         fgSound = NULL;
@@ -60,14 +95,20 @@ public:
 		spoke = false;
     }
     
-    virtual bool open() {
-        return false;
-    }
-    
     virtual bool close() {
         return true;
     }
     
+   /**
+     * Configure with a set of options. These are:
+     * <TABLE>
+     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
+     * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
+     * </TABLE>
+     *
+     * @param config The options to use
+     * @return true iff the object could be configured.
+     */
     virtual bool open(yarp::os::Searchable& prop) {
         p.setReader(*this);
         
