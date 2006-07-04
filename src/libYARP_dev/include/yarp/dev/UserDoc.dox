@@ -64,6 +64,9 @@ In this example we are telling cmake that the device driver foo depends on the p
 Everything going well, you will see on cmake a list of variables whose name follows the pattern ENABLE_device_name. These are the devices that are listed in AvailableDevices.txt. By default each flag is OFF meaning that the corresponding device will be ignored by cmake. You can turn ON the flags for the devices you want to compile, and type configure again. CMake will search for the file libraries.txt. If among the selected drivers there are some that require additional libraries there will be a list of variables whose name follows the pattern PATH-device_name. If these libraries are correctly located in the ./dd_orig/lib folder, all PATH-device_name entry should be correctly set. Although you can manually locate the libraries yourself, this probably means that there is an error in your YARP distribution or in the way the device is configured.
 
 If all libraries are located, you can go on with cmake and generate your make/project files. If at least one device driver was selected and correctly found, libYARP_dev should now compile.
+
+@subpage yarpdev The standard YARP device utility.
+
 **/
 
 #endif
