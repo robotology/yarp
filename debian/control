@@ -2,7 +2,7 @@ Source: yarp
 Section: devel
 Priority: optional
 Maintainer: Paul Fitzpatrick <paulfitz@liralab.it>
-Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.0), libace-dev (>= 5.4), docbook-to-man, libgtk2.0-dev
+Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.0), libace-dev (>= 5.4), doxygen, libgtk2.0-dev
 Standards-Version: 3.7.2
 
 Package: yarp

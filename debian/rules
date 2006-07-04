@@ -39,7 +39,8 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	( cd Build; $(MAKE) )
-	( cd Build; docbook-to-man ../src/libYARP_OS/yarp/yarp.sgml > yarp.1 )
+	( doxygen ./conf/Doxyfile.man )
+#	( cd Build; docbook-to-man ../src/libYARP_OS/yarp/yarp.sgml > yarp.1 )
 
 	touch build-stamp
 
@@ -50,6 +51,7 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	rm -rf Build
+	rm -rf doc/man
 
 	dh_clean 
 
@@ -70,7 +72,7 @@ install: build
 	mv $(CURDIR)/debian/yarp/bin/* $(CURDIR)/debian/yarp/usr/bin
 	rm -rf $(CURDIR)/debian/yarp/doc # doc is just old debian stuff now
 	mkdir -p $(CURDIR)/debian/yarp/usr/share/man/man1
-	cp Build/*.1 $(CURDIR)/debian/yarp/usr/share/man/man1
+	cp doc/man/man/man1/*.1 $(CURDIR)/debian/yarp/usr/share/man/man1
 
 # Build architecture-independent files here.
 binary-indep: build install
