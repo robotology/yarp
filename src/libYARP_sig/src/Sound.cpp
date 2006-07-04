@@ -40,7 +40,7 @@ void Sound::init(int bytesPerSample) {
 
     YARP_ASSERT(bytesPerSample==1); // that's all thats implemented right now
     HELPER(implementation).setPixelSize(bytesPerSample);
-    HELPER(implementation).setPixelCode(YARP_PIXEL_MONO);
+    HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO);
 
     samples = 0;
     channels = 0;

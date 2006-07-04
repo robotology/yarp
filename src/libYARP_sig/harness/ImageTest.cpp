@@ -30,7 +30,7 @@ public:
     void testCreate() {
         report(0,"testing image creation...");
         FlexImage image;
-        image.setPixelCode(YARP_PIXEL_RGB);
+        image.setPixelCode(VOCAB_PIXEL_RGB);
         image.resize(256,128);
         checkEqual(image.width(),256,"check width");
         checkEqual(image.height(),128,"check height");
@@ -255,7 +255,7 @@ public:
 
 
         FlexImage img4;
-        img4.setPixelCode(YARP_PIXEL_MONO);
+        img4.setPixelCode(VOCAB_PIXEL_MONO);
         img4.setQuantum(1);
         img4.resize(10,10);
         checkEqual(img4.getQuantum(),1,"unit quantum");

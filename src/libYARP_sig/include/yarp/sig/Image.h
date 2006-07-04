@@ -213,29 +213,23 @@ private:
 
 
 
-
-#ifndef YARPImage_INC // old YARP header file that we should be compat with
-#ifndef YARP_IMAGE_HEADER_CONTROL // interlocking with compatibility library
-
 // the image types partially reflect the IPL image types.
 // There must be a pixel type for every ImageType entry.
-enum __PixelTypesEnum
+enum YarpVocabPixelTypesEnum
     {	 
-        YARP_PIXEL_INVALID = 0,
-        YARP_PIXEL_MONO = VOCAB4('m','o','n','o'),
-        YARP_PIXEL_RGB = VOCAB3('r','g','b'),
-        YARP_PIXEL_INT = VOCAB3('i','n','t'),
-        YARP_PIXEL_HSV = VOCAB3('h','s','v'),
-        YARP_PIXEL_BGR = VOCAB3('b','g','r'),
-        YARP_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
-        YARP_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
-        YARP_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
-        YARP_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
-        YARP_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
+        VOCAB_PIXEL_INVALID = 0,
+        VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
+        VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
+        VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
+        VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
+        VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
+        VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
+        VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
+        VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
+        VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
+        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
     };
 
-#endif
-#endif
 
 #include <yarp/os/begin_pack_for_net.h>
 
@@ -380,16 +374,16 @@ public: \
 };
 
 
-        __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO,PixelMono)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB,PixelRgb)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV,PixelHsv)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_BGR,PixelBgr)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_SIGNED,PixelMonoSigned)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_SIGNED,PixelRgbSigned)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_MONO_FLOAT,PixelFloat)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_RGB_FLOAT,PixelRgbFloat)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_HSV_FLOAT,PixelHsvFloat)
-            __YARPIMAGE_ASSOCIATE_TAG(YARP_PIXEL_INT,PixelInt)
+        __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGR,PixelBgr)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_SIGNED,PixelMonoSigned)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_SIGNED,PixelRgbSigned)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_FLOAT,PixelFloat)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_FLOAT,PixelRgbFloat)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV_FLOAT,PixelHsvFloat)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_INT,PixelInt)
 
             }
 }

@@ -139,8 +139,8 @@ void ImageStorage::_alloc (void) {
         if (pImage->imageData != NULL)
             _free(); // was iplDeallocateImage(pImage); but that won't work with refs
 	
-    if ( (type_id == YARP_PIXEL_MONO_FLOAT) || (type_id == YARP_PIXEL_RGB_FLOAT) ||
-         (type_id == YARP_PIXEL_HSV_FLOAT) )
+    if ( (type_id == VOCAB_PIXEL_MONO_FLOAT) || (type_id == VOCAB_PIXEL_RGB_FLOAT) ||
+         (type_id == VOCAB_PIXEL_HSV_FLOAT) )
         iplAllocateImageFP(pImage, 0, 0);
     else
         iplAllocateImage (pImage, 0, 0);
@@ -295,7 +295,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
 	// used to allocate the ipl header.
 	switch (pixel_type)
         {
-        case YARP_PIXEL_MONO:
+        case VOCAB_PIXEL_MONO:
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
@@ -315,7 +315,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
             DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
             break;
 
-        case YARP_PIXEL_RGB:
+        case VOCAB_PIXEL_RGB:
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
@@ -333,7 +333,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_HSV:
+        case VOCAB_PIXEL_HSV:
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
@@ -351,7 +351,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_BGR:
+        case VOCAB_PIXEL_BGR:
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
@@ -369,7 +369,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_MONO_SIGNED:
+        case VOCAB_PIXEL_MONO_SIGNED:
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
@@ -387,11 +387,11 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_RGB_SIGNED:
+        case VOCAB_PIXEL_RGB_SIGNED:
             ACE_ASSERT (implemented_yet == 0);
             break;
 
-        case YARP_PIXEL_MONO_FLOAT:
+        case VOCAB_PIXEL_MONO_FLOAT:
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
@@ -409,7 +409,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_RGB_FLOAT:
+        case VOCAB_PIXEL_RGB_FLOAT:
             pImage = iplCreateImageHeader(
                                           3,
                                           0,
@@ -428,11 +428,11 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
             //ACE_ASSERT (implemented_yet == 0);
             break;
 
-        case YARP_PIXEL_HSV_FLOAT:
+        case VOCAB_PIXEL_HSV_FLOAT:
             ACE_ASSERT (implemented_yet == 0);
             break;
 
-        case YARP_PIXEL_INT:
+        case VOCAB_PIXEL_INT:
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
@@ -450,7 +450,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           NULL);
             break;
 
-        case YARP_PIXEL_INVALID:
+        case VOCAB_PIXEL_INVALID:
             // not a type!
             ACE_OS::printf ("*** Trying to allocate an invalid pixel type image\n");
             ACE_OS::exit(1);
