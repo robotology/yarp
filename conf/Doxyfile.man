@@ -67,8 +67,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = src/libYARP_OS/include/yarp/os
-FILE_PATTERNS          = UserDoc_companion.dox
+INPUT                  = src
+FILE_PATTERNS          = UserDoc_companion.dox UserDoc_dev_companion.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO

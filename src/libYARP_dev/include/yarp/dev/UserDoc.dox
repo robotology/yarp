@@ -65,7 +65,7 @@ Everything going well, you will see on cmake a list of variables whose name foll
 
 If all libraries are located, you can go on with cmake and generate your make/project files. If at least one device driver was selected and correctly found, libYARP_dev should now compile.
 
-@subpage yarpdev The standard YARP device utility.
+@subpage yarpdev
 
 **/
 
