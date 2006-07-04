@@ -60,19 +60,19 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& prop) {
+    virtual bool open(yarp::os::Searchable& config) {
         yarp::os::Value *val;
-        if (prop.check("width",val)||prop.check("w",val)) {
+        if (config.check("width",val)||config.check("w",val)) {
             w = val->asInt();
         }
-        if (prop.check("height",val)||prop.check("h",val)) {
+        if (config.check("height",val)||config.check("h",val)) {
             h = val->asInt();
         }
-        if (prop.check("freq",val)) {
+        if (config.check("freq",val)) {
             freq = val->asDouble();
             period = 1/freq;
         }
-        if (prop.check("period",val)) {
+        if (config.check("period",val)) {
             period = val->asDouble();
             freq = 1/period;
         }

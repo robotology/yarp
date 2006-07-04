@@ -16,8 +16,17 @@ namespace yarp {
 class yarp::dev::IAudioGrabberSound
 {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~IAudioGrabberSound(){}
 
+    /**
+     * Get a sound from a device.
+     * 
+     * @param sound the sound to be filled
+     * @return true/false upon success/failure
+     */
     virtual bool getSound(yarp::sig::Sound& sound) = 0;
 };
 

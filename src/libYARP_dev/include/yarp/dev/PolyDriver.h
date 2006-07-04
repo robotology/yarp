@@ -11,34 +11,69 @@ namespace yarp {
 };
 
 
+/**
+ * A container for a device driver.
+ */
 class yarp::dev::PolyDriver : public DeviceDriver {
 public:
-    DeviceDriver *dd;
 
+    /**
+     * Constructor.
+     */
     PolyDriver() {
         dd = 0 /*NULL*/;
     }
 
+    /**
+     * Construct and configure a device by its common name.
+     * @param txt common name of the device
+     */
     PolyDriver(const char *txt) {
         dd = 0 /*NULL*/;
         open(txt);
     }
 
-    PolyDriver(yarp::os::Searchable& prop) {
+    /**
+     * Create and configure a device, by name.  The config
+     * object should have a property called "device" that
+     * is set to the common name of the device.  All other
+     * properties are passed on the the device's
+     * DeviceDriver::open method.
+     * @param config configuration options for the device
+     */
+    PolyDriver(yarp::os::Searchable& config) {
         dd = 0 /*NULL*/;
-        open(prop);
+        open(config);
     }
 
+
+    /**
+     * Construct and configure a device by its common name.
+     * @param txt common name of the device
+     * @return true iff the device was created and configured successfully
+     */
     bool open(const char *txt) {
         dd = Drivers::factory().open(txt);
         return isValid();
     }
 
+    /**
+     * Create and configure a device, by name.  The config
+     * object should have a property called "device" that
+     * is set to the common name of the device.  All other
+     * properties are passed on the the device's
+     * DeviceDriver::open method.
+     * @param config configuration options for the device
+     * @return true iff the device was created and configured successfully
+     */
     bool open(yarp::os::Searchable& config) {
         dd = Drivers::factory().open(config);
         return isValid();
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~PolyDriver() {
         if (dd!=0 /*NULL*/) {
             dd->close();
@@ -57,6 +92,15 @@ public:
         return result;
     }
 
+    /**
+     * Get an interface to the device driver.
+
+     * @param x A pointer of type T which will be set to point to this
+     * object if that is possible.
+
+     * @return true iff the desired interface is implemented by
+     * the device driver.
+     */
     template <class T>
     bool view(T *&x) {
         bool result = false;
@@ -75,9 +119,17 @@ public:
         return result;
     }
 
+    /**
+     * Check if device is valid.
+     * @return true iff the device was created and configured successfully
+     */
     bool isValid() {
         return dd != 0 /*NULL*/;
     }
+
+
+private:
+    DeviceDriver *dd;
 };
 
 #endif

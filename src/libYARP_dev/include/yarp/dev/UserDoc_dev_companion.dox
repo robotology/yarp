@@ -1,0 +1,30 @@
+/**
+ * @page yarpdev The standard YARP device utility.
+
+The command-line utility "yarpdev" can create devices and wrap 
+them for network visibility.  This is useful in cases where you
+wish to control devices on remote machines.
+
+@section yarpdev_base yarpdev
+
+The utility gives a message if called with no arguments to confirm
+that it exists, and to give tips on where to get started using it.
+Our current implementation says:
+
+\verbatim
+You can call yarpdev like this:
+   yarpdev --device DEVICENAME --OPTION VALUE ...
+For example:
+   yarpdev --device test_grabber --width 32 --height 16 --name /grabber
+Here are devices listed for your system:
+test_grabber
+remote_grabber
+grabber
+remote_controlboard
+controlboard
+microphone
+dragonfly
+\endverbatim
+
+
+*/

@@ -545,6 +545,6 @@ appearing every 2 seconds.
 yarpdev: @subpage yarpdev
 
 yarpview: @subpage yarpview
-\fi
+\endif
 
 */

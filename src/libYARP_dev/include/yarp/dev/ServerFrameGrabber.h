@@ -109,16 +109,16 @@ public:
      * @param config The options to use
      * @return true iff the object could be configured.
      */
-    virtual bool open(yarp::os::Searchable& prop) {
+    virtual bool open(yarp::os::Searchable& config) {
         p.setReader(*this);
         
         yarp::os::Value *name;
-        if (prop.check("subdevice",name)) {
+        if (config.check("subdevice",name)) {
             printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 yarp::os::Property p;
-                p.fromString(prop.toString());
+                p.fromString(config.toString());
                 p.put("device",name->toString());
                 poly.open(p);
             } else {
@@ -143,7 +143,7 @@ public:
             writerSound.attach(p);
         }
 
-        if (prop.check("name",name)) {
+        if (config.check("name",name)) {
             p.open(name->asString());
         } else {
             p.open("/grabber");

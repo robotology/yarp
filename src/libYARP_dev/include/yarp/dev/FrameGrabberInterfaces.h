@@ -92,12 +92,15 @@ public:
 class yarp::dev::IFrameGrabberImage
 {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~IFrameGrabberImage(){}
     /**
      * Get an rgb image from the frame grabber, if required
      * demosaicking/color reconstruction is applied
      * 
-     * @param image: the image to be filled
+     * @param image the image to be filled
      * @return true/false upon success/failure
      */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
