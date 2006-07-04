@@ -10,6 +10,9 @@ namespace yarp {
     }
 }
 
+/**
+ * Read a YARP-format sound block from a device.
+ */
 class yarp::dev::IAudioGrabberSound
 {
 public:

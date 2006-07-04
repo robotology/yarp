@@ -86,6 +86,9 @@ public:
     virtual int width() const =0;
 };
 
+/**
+ * Read a YARP-format image from a device.
+ */
 class yarp::dev::IFrameGrabberImage
 {
 public:
@@ -149,7 +152,17 @@ public:
      * @return the current brightness value.
      */
     virtual double getBrightness() const = 0;
+
+    /**
+     * Read the shutter parameter.
+     * @return the current shutter value.
+     */
     virtual double getShutter() const = 0;
+
+    /**
+     * Read the gain parameter.
+     * @return the current gain value.
+     */
     virtual double getGain() const = 0;
 };
 #endif

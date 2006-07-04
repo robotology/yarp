@@ -16,8 +16,10 @@ public:
   void checkFormat() {
     report(0,"check vector format conforms to network standard...");
     Vector v(4,0.0);
-    for (unsigned int i=0; i<v.size(); i++ ){
-      v[i] = i;
+    {
+      for (unsigned int i=0; i<v.size(); i++ ){
+	v[i] = i;
+      }
     }
     BufferedConnectionWriter writer;
     v.write(writer);
@@ -25,9 +27,11 @@ public:
     Bottle bot;
     bot.fromBinary(s.c_str(),s.length());
     checkEqual(bot.size(),v.size(),"size matches");
-    for (int i=0; i<bot.size(); i++) {
-      checkTrue(bot.get(i).asDouble()>i-0.25,"bounded below");
-      checkTrue(bot.get(i).asDouble()<i+0.25,"bounded above");
+    {
+      for (int i=0; i<bot.size(); i++) {
+	checkTrue(bot.get(i).asDouble()>i-0.25,"bounded below");
+	checkTrue(bot.get(i).asDouble()<i+0.25,"bounded above");
+      }
     }
   }
 
