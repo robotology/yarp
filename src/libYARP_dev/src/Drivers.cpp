@@ -122,7 +122,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     DriverCreator *creator = find(str.c_str());
     if (creator!=NULL) {
         Value *val;
-        if (config->check("wrapped",val)) {
+        if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
             String wrapper = creator->getWrapper().c_str();
             DriverCreator *wrapCreator = find(wrapper.c_str());
             if (wrapCreator!=NULL) {

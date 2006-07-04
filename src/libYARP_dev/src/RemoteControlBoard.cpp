@@ -2409,9 +2409,13 @@ void yarp::dev::ImplementCallbackHelper::onRead(Vector& v) {
 
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerControlBoard() {
-    return new DriverCreatorOf<ServerControlBoard>("controlboard", "controlboard");
+    return new DriverCreatorOf<ServerControlBoard>("controlboard", 
+                                                   "controlboard",
+                                                   "ServerControlBoard");
 }
 
 yarp::dev::DriverCreator *createRemoteControlBoard() {
-    return new DriverCreatorOf<RemoteControlBoard>("remote_controlboard", "controlboard");
+    return new DriverCreatorOf<RemoteControlBoard>("remote_controlboard", 
+                                                   "controlboard",
+                                                   "RemoteControlBoard");
 }

@@ -42,35 +42,59 @@ using namespace yarp::dev;
 #include <yarp/dev/JamesCalibrator.h>
 #endif
 
-extern DriverCreator *createRemoteFrameGrabber();
-extern DriverCreator *createServerFrameGrabber();
-extern DriverCreator *createTestFrameGrabber();
+#include <yarp/dev/RemoteFrameGrabber.h>
+#include <yarp/dev/ServerFrameGrabber.h>
+#include <yarp/dev/TestFrameGrabber.h>
+
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
 
 
 void Drivers::init() {
 #ifdef ENABLE_dragonfly
-    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly","grabber"));
+    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly",
+                                                   "grabber",
+                                                   "DragonflyDeviceDriver"));
 #endif
 #ifdef ENABLE_esdMotionControl
-    add(new DriverCreatorOf<EsdMotionControl>("esd","controlboard"));
+    add(new DriverCreatorOf<EsdMotionControl>("esd",
+                                              "controlboard",
+                                              "EsdMotionControl"));
 #endif
 #ifdef ENABLE_microphone
-    add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone","grabber"));
+    add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone",
+                                                    "grabber",
+                                                    "MicrophoneDeviceDriver"));
 #endif
 
 #ifdef ENABLE_inertiacube2
-    add(new DriverCreatorOf<InertiaCube2>("inertiacube2", "inertiacube2"));
+    add(new DriverCreatorOf<InertiaCube2>("inertiacube2", 
+                                          "",
+                                          "InertiaCube2"));
 #endif
 
 #ifdef ENABLE_jamescalibrator
-    add(new DriverCreatorOf<JamesCalibrator>("jamescalibrator", "jamescalibrator"));
+    add(new DriverCreatorOf<JamesCalibrator>("jamescalibrator", 
+                                             "",
+                                             "JamesCalibrator"));
 #endif
 
-    add(createTestFrameGrabber());
-    add(createRemoteFrameGrabber());
-    add(createServerFrameGrabber());
+
+
+
+
+    add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
+                                              "grabber",
+                                              "TestFrameGrabber"));
+
+    add(new DriverCreatorOf<RemoteFrameGrabber>("remote_grabber",
+                                                "grabber",
+                                                "RemoteFrameGrabber"));
+
+    add(new DriverCreatorOf<ServerFrameGrabber>("grabber",
+                                                "grabber",
+                                                "ServerFrameGrabber"));
+
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 }
