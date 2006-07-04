@@ -16,8 +16,15 @@ if [ ! "k$USER" = "k" ] ; then
     rm -rf web-package
     mkdir -p web-package/debian
     cp source-package/*.tar.gz web-package
-    cp -R debian-package/archive  web-package/debian/dists
-    ln -s dists web-package/debian/archive
+    ct=`find debian-package/archive -iname "*.deb" | wc --lines`
+    # do we have both the stable and unstable packages?
+    if [ "k$ct" = "k2" ]; then
+	cp -R debian-package/archive  web-package/debian/dists
+	ln -s dists web-package/debian/archive
+    else
+	echo NOT ALL DEB PACKAGES ARE READY
+	sleep 2
+    fi
 
     echo "Uploading to http://yarp0.sourceforge.net/downloads/yarp"
     cd web-package && rsync --rsh="ssh -x -l $USER" --modify-window=2 -lauvzP . $target:www/downloads/yarp
