@@ -68,7 +68,7 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 INPUT                  = src
-FILE_PATTERNS          = UserDoc_companion.dox UserDoc_dev_companion.dox
+FILE_PATTERNS          = UserDoc_companion.dox UserDoc_dev_companion.dox UserDoc_man_*.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO

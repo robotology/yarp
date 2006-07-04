@@ -67,7 +67,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = src/libYARP_OS/include/yarp/os src/libYARP_sig/include/yarp/sig src/libYARP_dev/include/yarp/dev
+INPUT                  = src/libYARP_OS/include/yarp/os src/libYARP_sig/include/yarp/sig src/libYARP_dev/include/yarp/dev src/yarp-imageviewer/UserDoc_man_yarpview.dox
 FILE_PATTERNS          = *.h *.dox *.cpp
 RECURSIVE              = YES
 EXCLUDE                = 

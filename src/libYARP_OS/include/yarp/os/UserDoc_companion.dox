@@ -540,4 +540,11 @@ You should now see a slow-moving red line.  Try:
 You should now see a text representation of the image on terminal B
 appearing every 2 seconds.
 
+\if MAN_PAGE_COND
+\else
+yarpdev: @subpage yarpdev
+
+yarpview: @subpage yarpview
+\fi
+
 */
