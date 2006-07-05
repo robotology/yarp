@@ -87,6 +87,7 @@ INSTALL_FILES(/doc/DEBIAN FILES ${CMAKE_BINARY_DIR}/DEBIAN/control)
 
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
+#  if you are trying to distribute, this is useful, but not otherwise
 #  IF (WIN32 AND NOT CYGWIN)
 #    INCLUDE(YarpInstallRequiredSystemLibraries)
 #    INSTALL_FILES(/bin .dll ${ACE_LIBRARY} ${ACE_DEBUG_LIBRARY})
