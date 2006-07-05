@@ -478,8 +478,6 @@ public:
 
     /**
      * @brief Returns an iterator to the beginning of the VectorOf
-     * @note At the moment iterator is implemented as a pointer, it may change in the future.
-     * For this reason it should not be used as a pointer to the data, use data() instead.
      */
     iterator begin() noexcept {
         return bytes.begin();
@@ -494,8 +492,6 @@ public:
 
     /**
      * @brief Returns a const iterator to the beginning of the VectorOf
-     * @note At the moment iterator is implemented as a pointer, it may change in the future.
-     * For this reason it should not be used as a pointer to the data, use data() instead.
      */
     const_iterator begin() const noexcept {
         return bytes.begin();
@@ -510,8 +506,6 @@ public:
 
     /**
      * @brief Returns a const iterator to the beginning of the VectorOf
-     * @note At the moment iterator is implemented as a pointer, it may change in the future.
-     * For this reason it should not be used as a pointer to the data, use data() instead.
      */
     const_iterator cbegin() const noexcept {
         return bytes.cbegin();
