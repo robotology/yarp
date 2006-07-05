@@ -62,10 +62,10 @@ namespace yarp {
             template <class T>
             void addCircleOutline(ImageOf<T>& dest, const T& pix, 
                                   int i, int j, int r) {
-                float d, r2 = r*r, r2l = (r-1.1)*(r-1.1);
+                float d, r2 = float(r*r), r2l = float((r-1.1)*(r-1.1));
                 for (int ii=i-r; ii<=i+r; ii++) {
                     for (int jj=j-r; jj<=j+r; jj++) {
-                        d = (ii-i)*(ii-i)+(jj-j)*(jj-j);
+                        d = float((ii-i)*(ii-i)+(jj-j)*(jj-j));
                         if (d<=r2 && d>=r2l) {
                             dest.safePixel(ii,jj) = pix;
                         }
