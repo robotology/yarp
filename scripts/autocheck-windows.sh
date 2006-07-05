@@ -54,6 +54,12 @@ cat cvslog.txt
 
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
+else
+    if [ "k$1" = "kpackage" ]; then
+        # update packages
+	./scripts/make-source-package
+	./scripts/update-web-packages
+    fi
 fi
 
 else

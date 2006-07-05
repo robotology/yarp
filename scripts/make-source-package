@@ -22,9 +22,19 @@ rm -rf $BASE/pack
 rm -f $BASE/*.tar.gz
 mkdir -p $BASE/pack
 cd $BASE/pack
-cmake ../repository
-make package_source
-cp *.tar.gz $BASE
-echo Source package is $BASE/*.tar.gz
+OS=`uname -o`
+if [ "k$OS" = "kCygwin" ]; then
+	GEN="NMake Makefiles"
+	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
+	"$CMAKE" -G "$GEN" ../repository
+	nmake package_source
+	cp *.zip $BASE
+	echo Source package is $BASE/*.zip
+else
+	cmake ../repository
+	make package_source
+	cp *.tar.gz $BASE
+	echo Source package is $BASE/*.tar.gz
+fi
 
 
