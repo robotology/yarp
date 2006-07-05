@@ -673,7 +673,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::uninitialize ()
 template<class DERIVED, class IMPLEMENT>
 bool ImplementPidControl<DERIVED, IMPLEMENT>::setPid(int j, const Pid &pid)
 {
-    int k=castToMapper(helper)->toUser(j);
+    int k=castToMapper(helper)->toHw(j);
     return iPid->setPidRaw(k,pid);
 }
 
@@ -1175,7 +1175,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::getLimits(int j, double *min, d
     double minEnc;
     double maxEnc;
 
-    int k=castToMapper(helper)->toUser(j);
+    int k=castToMapper(helper)->toHw(j);
     bool ret=iLimits->getLimitsRaw(k, &minEnc, &maxEnc);
 
     *min=castToMapper(helper)->posE2A(minEnc, k);
@@ -1241,7 +1241,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::uninitialize ()
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::enableAmp(int j)
 {
-    int k=castToMapper(helper)->toUser(j);
+    int k=castToMapper(helper)->toHw(j);
 
     return iAmplifier->enableAmpRaw(k);
 }
@@ -1249,7 +1249,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::enableAmp(int j)
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::disableAmp(int j)
 {
-    int k=castToMapper(helper)->toUser(j);
+    int k=castToMapper(helper)->toHw(j);
 
     return iAmplifier->disableAmpRaw(k);
 }
@@ -1277,7 +1277,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getCurrent(int j, double *c)
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::setMaxCurrent(int j, double v)
 {
-    int k=castToMapper(helper)->toUser(j);
+    int k=castToMapper(helper)->toHw(j);
 
     return iAmplifier->setMaxCurrentRaw(k, v);
 }

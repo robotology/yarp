@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.18 2006-07-05 14:47:19 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.19 2006-07-05 17:26:44 babybot Exp $
 ///
 ///
 
@@ -519,7 +519,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 
     // set limits, on encoders and max current
     for(i = 0; i < p._njoints; i++) {
-        setLimits(i, p._limitsMax[i], p._limitsMin[i]);
+        setLimits(i, p._limitsMin[i], p._limitsMax[i]);
         setMaxCurrent(i, p._currentLimits[i]);
     }
 
