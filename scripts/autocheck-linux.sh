@@ -39,12 +39,22 @@ cat cvslog.txt
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
 else
-    if [ "k$1" = "kpackage" ]; then
+    touch build-source.txt
+    grep conf/build.txt | grep SOURCE | tee build-source-new.txt
+    cmp build-source-new.txt build-source.txt || (
         # update packages
 	./scripts/make-source-package
+	./scripts/update-web-packages
+    )
+    cp build-source-new.txt build-source.txt
+    touch build-debian.txt
+    grep conf/build.txt | grep DEBIAN | tee build-debian-new.txt
+    cmp build-debian-new.txt build-debian.txt || (
+        # update debian packages
 	./scripts/make-debian
 	./scripts/update-web-packages
-    fi
+    )
+    cp build-debian-new.txt build-debian.txt
 fi
 
 else

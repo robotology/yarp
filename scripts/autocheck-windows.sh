@@ -55,11 +55,17 @@ cat cvslog.txt
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
 else
-    if [ "k$1" = "kpackage" ]; then
+    touch build-source.txt
+    grep conf/build.txt | grep SOURCE | tee build-source-new.txt
+
+    cmp build-source-new.txt build-source.txt || (
+	echo "MAKING SOURCE PACKAGE"
         # update packages
 	./scripts/make-source-package
 	./scripts/update-web-packages
-    fi
+	echo "DONE MAKING SOURCE PACKAGE"
+    )
+    cp build-source-new.txt build-source.txt
 fi
 
 else
