@@ -48,6 +48,8 @@ public:
     virtual bool read(ConnectionReader& connection) = 0;
     virtual bool write(ConnectionWriter& connection) = 0;
 
+    virtual bool check(const char *key);
+
     virtual yarp::os::Value& find(const char *key);
     virtual yarp::os::Bottle& findGroup(const char *key);
 

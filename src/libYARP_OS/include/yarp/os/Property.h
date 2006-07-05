@@ -47,12 +47,8 @@ public:
      */
     virtual ~Property();
 
-    /**
-     * Check if there exists a property of the given name
-     * @param key the name to check for
-     * @return true iff a property of the given name exists
-     */ 
-    bool check(const char *key) const;
+    // documented in Searchable
+    bool check(const char *key);
 
     /**
      * Associate the given key with the given string, so that

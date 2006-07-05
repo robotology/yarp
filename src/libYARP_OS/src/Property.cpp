@@ -320,7 +320,7 @@ bool Property::check(const char *key, Value *&output) {
 }
 */
 
-bool Property::check(const char *key) const {
+bool Property::check(const char *key) {
     return HELPER(implementation).check(key);
 }
 

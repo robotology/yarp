@@ -23,6 +23,10 @@ public:
                    "key 1 has good value");
         checkEqual(p.find("x").toString().c_str(),"y", 
                    "key 2 has good value");
+        p.fromString("(hello)");
+        checkTrue(p.check("hello"), "key exists");
+        Value *v;
+        checkFalse(p.check("hello",v), "has no value");
     }
 
 

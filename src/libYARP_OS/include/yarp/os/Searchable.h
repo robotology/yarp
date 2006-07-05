@@ -31,6 +31,14 @@ public:
     virtual ~Searchable() {}
 
     /**
+     * Check if there exists a property of the given name
+     * @param key the name to check for
+     * @return true iff a property of the given name exists, even if
+     * it doesn't have a value associated with it
+     */ 
+    virtual bool check(const char *key) = 0;
+
+    /**
      * Gets a value corresponding to a given keyword
      * @param key The keyword to look for
      * @return A value corresponding to a given keyword.  If there is no
@@ -53,7 +61,23 @@ public:
     virtual Bottle& findGroup(const char *key) = 0;
 
     /**
-     * Gets a value corresponding to a given keyword
+     * Gets a value corresponding to a given keyword.  If a property
+     * does not exist, this returns false and does not modify the
+     * result pointer.  If a property exists but does not have a
+     * value, this again returns false and does not modify the result
+     * pointer.
+     *
+     * \code
+     * Property p;
+     * p.fromString("(width 10) (height 15) (help)");
+     * p.check("help")  // this is true
+     * p.check("width") // this is true
+     * p.check("foo")   // this is false
+     * Value *v;
+     * p.check("help",v)  // this is false, there is no value associated
+     * p.check("width",v) // this is true, and v->asInt() is 10
+     * \endcode
+     *
      * @param key The keyword to look for
      * @param result A pointer to store the address of the result in
      * @return True if there is a value corresponding to a given keyword,

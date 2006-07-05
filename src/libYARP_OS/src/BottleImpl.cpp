@@ -907,6 +907,12 @@ Bottle& Storable::findGroup(const char *txt) {
     return Bottle::getNullBottle();
 }
 
+bool Storable::check(const char *key) {
+    Bottle& val = findGroup(key);
+    return !val.isNull();
+}
+
+
 
 bool Storable::operator == (const Value& alt) const {
     return String(toString().c_str()) == alt.toString().c_str();

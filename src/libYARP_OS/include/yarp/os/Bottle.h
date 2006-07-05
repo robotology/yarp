@@ -40,7 +40,7 @@ namespace yarp {
  */
 class yarp::os::Bottle : public Portable, public Searchable {
 public:
-
+    using Searchable::check;
 
     /**
      * Constructor.  The bottle is initially empty.
@@ -171,8 +171,10 @@ public:
      */
     bool read(ConnectionReader& reader);
 
-
-
+    virtual bool check(const char *key) {
+        Bottle& val = findGroup(key);
+        return !val.isNull();
+    }
 
     virtual Value& find(const char *key);
 
