@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.17 2006-06-30 20:44:59 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.18 2006-07-05 14:47:19 babybot Exp $
 ///
 ///
 
@@ -63,18 +63,6 @@ bool NOT_YET_IMPLEMENTED(const char *txt)
    return false;
 }
 
-/*
- * simple helper template to alloc memory.
- */
-template <class T>
-inline T* allocAndCheck(int size)
-{
-    T* t = new T[size];
-    ACE_ASSERT (t != NULL);
-    ACE_OS::memset(t, 0, sizeof(T) * size);
-    return t;
-}
-
 /**
  * Max number of addressable cards in this implementation.
  */
@@ -99,7 +87,7 @@ EsdMotionControlParameters::EsdMotionControlParameters(int nj)
 	_my_address = 0;
 	_polling_interval = 10;
 	_timeout = 20;
-	_njoints = 0;
+	_njoints = nj;
 	_p = NULL;
 
 	_txQueueSize = 2047;					/** max len of the buffer for the esd driver */
@@ -457,7 +445,9 @@ EsdMotionControl::EsdMotionControl() :
     ImplementEncoders<EsdMotionControl, IEncoders>(this),
     ImplementControlCalibration<EsdMotionControl, IControlCalibration>(this),
     ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>(this),
-    ImplementControlLimits<EsdMotionControl, IControlLimits>(this)
+    ImplementControlLimits<EsdMotionControl, IControlLimits>(this),
+    _done(0),
+    _mutex(1)
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
@@ -477,7 +467,13 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	_mutex.wait();
 
     EsdCanResources& r = RES (system_resources);
-	
+
+	// used for printing debug messages.
+    _p = p._p;
+	_filter = -1;
+	_writerequested = false;
+	_noreply = false;
+    
 	if (!r.initialize (p))
 	{
 		_mutex.post();
@@ -508,12 +504,6 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
     Thread::start();
 	_done.wait ();
 
-	// used for printing debug messages.
-	_p = p._p;
-	_filter = -1;
-	_writerequested = false;
-	_noreply = false;
-
 	// temporary variables used by the ddriver.
 	_ref_positions = allocAndCheck<double>(r.getJoints());		
 	_ref_speeds = allocAndCheck<double>(r.getJoints());
@@ -521,13 +511,14 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	_mutex.post ();
 
 	// default initialization for this device driver.
+    setPids(p._pids);
+
 	int i;
 	for(i = 0; i < r.getJoints(); i++)
 		setBCastMessages(i, double (0x1E)); // 0x1A activates position and current consumption broadcast + fault events
 
     // set limits, on encoders and max current
-    for(i = 0; i < p._njoints; i++)
-    {
+    for(i = 0; i < p._njoints; i++) {
         setLimits(i, p._limitsMax[i], p._limitsMin[i]);
         setMaxCurrent(i, p._currentLimits[i]);
     }
@@ -567,10 +558,13 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
    
     ////// GENERAL
     xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
+	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
     xtmp = p.findGroup("GENERAL").findGroup("Encoder");
+	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
     xtmp = p.findGroup("GENERAL").findGroup("Zeros");
+	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
     
     ////// PIDS
@@ -593,14 +587,18 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
 
     /////// LIMITS
     xtmp = p.findGroup("LIMITS").findGroup("Currents");
+ 	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("LIMITS").findGroup("Max");
+	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("LIMITS").findGroup("Min");
+	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
+    params._p = ACE_OS::printf;
     return open(params);
 }
 
@@ -925,7 +923,7 @@ bool EsdMotionControl::getAxes(int *ax)
 }
 
 // LATER: can be optimized.
-bool EsdMotionControl::setPidRaw (int axis, const yarp::dev::Pid &pid)
+bool EsdMotionControl::setPidRaw (int axis, const Pid &pid)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
@@ -979,7 +977,20 @@ bool EsdMotionControl::getPidsRaw (Pid *out)
 
 bool EsdMotionControl::setPidsRaw(const Pid *pids)
 {
-    return NOT_YET_IMPLEMENTED("setPids");
+    EsdCanResources& r = RES(system_resources);
+
+	int i;
+    for (i = 0; i < r.getJoints(); i++) {
+	    _writeWord16 (CAN_SET_P_GAIN, i, S_16(pids[i].kp));
+	    _writeWord16 (CAN_SET_D_GAIN, i, S_16(pids[i].kd));
+	    _writeWord16 (CAN_SET_I_GAIN, i, S_16(pids[i].ki));
+	    _writeWord16 (CAN_SET_ILIM_GAIN, i, S_16(pids[i].max_int));
+	    _writeWord16 (CAN_SET_OFFSET, i, S_16(pids[i].offset));
+	    _writeWord16 (CAN_SET_SCALE, i, S_16(pids[i].scale));
+	    _writeWord16 (CAN_SET_TLIM, i, S_16(pids[i].max_output));
+    }
+
+	return true;
 }
 
 /// cmd is a SingleAxis poitner with 1 double arg

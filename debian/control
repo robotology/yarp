@@ -1,13 +1,11 @@
-Source: yarp
-Section: devel
+Package: yarp-dev
+Version: 2.0.4
+Section: libdevel
 Priority: optional
-Maintainer: Paul Fitzpatrick <paulfitz@liralab.it>
-Build-Depends: debhelper (>= 4.0.0), cmake (>= 2.0), libace-dev (>= 5.4), doxygen, libgtk2.0-dev
-Standards-Version: 3.7.2
-
-Package: yarp
-Architecture: any
-Depends: ${shlibs:Depends}
+Architecture: i386
+Depends: libace-dev | libace-dev-fake
+Maintainer: Paul Fitzpatrick <paulfitz@alum.mit.edu>
+Provides:
 Description: OS interface for the yarp robot platform
  Makes streaming communication between processes and/or machines easy;
  and devices too.  Similar to player/stage for wheeled robots.
