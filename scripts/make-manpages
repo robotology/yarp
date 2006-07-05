@@ -1,5 +1,10 @@
 #!/bin/sh
 
+echo "This script is no longer needed"
+echo "Man pages are built using doxygen"
+echo "run ./scripts/update-doc"
+exit 0
+
 which docbook-to-man || {
     echo "Need docbook-to-man for manpages"
     exit 1
