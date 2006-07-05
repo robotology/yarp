@@ -9,3 +9,4 @@ cmp build-doc-new.txt build-doc.txt || (
 	./scripts/update-doc
 	./scripts/update-web
 )
+cp build-doc-new.txt build-doc.txt
