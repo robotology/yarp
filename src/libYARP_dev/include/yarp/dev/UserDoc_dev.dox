@@ -1,0 +1,88 @@
+
+
+/**
+ * \defgroup dev_all Devices
+ *
+ * Dealing with devices.
+ *
+ */
+
+/**
+ * @ingroup dev_all
+ *
+ * \defgroup dev_class Device Creation/Configuration
+ *
+ * Basic classes and methods related to creating and configuring 
+ * devices, and network communication to and from devices.
+ *
+ */
+
+/**
+ * @ingroup dev_all
+ *
+ * \defgroup dev_iface Device Interfaces
+ *
+ * Device interfaces, specified independently of specific implementations.
+ *
+ */
+
+
+/**
+ * @ingroup dev_iface
+ *
+ * \defgroup dev_iface_motor Motor Interfaces
+ *
+ * Motor control and monitoring.
+ *
+ */
+
+
+/**
+ * @ingroup dev_iface
+ *
+ * \defgroup dev_iface_media Media Interfaces
+ *
+ * Images and sounds.
+ *
+ */
+
+
+/**
+ * @ingroup dev_iface
+ *
+ * \defgroup dev_iface_other Other Device Interfaces
+ *
+ * Sundry, miscellaneous.
+ *
+ */
+
+/**
+ * @ingroup dev_all
+ *
+ * \defgroup dev_impl Device Implementations
+ *
+ * Concrete device drivers that implement sets of interfaces.
+ *
+ */
+
+
+/**
+ * @ingroup dev_impl
+ *
+ * \defgroup dev_impl_wrapper Network Wrappers
+ *
+ * These take implementations of existing interfaces and wrap them
+ * up to work across the network.
+ *
+ */
+
+/**
+ * @ingroup dev_impl
+ *
+ * \defgroup dev_impl_wrapper Network Wrappers
+ *
+ * These take implementations of existing interfaces and wrap them
+ * up to work across the network.
+ *
+ */
+
