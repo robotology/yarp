@@ -61,6 +61,8 @@ else
 	echo "Nothing new in CVS"
 fi
 
+./scripts/autocheck-doc
+
 ) | tee report.txt
 
 if [ -e should_report.txt ]; then

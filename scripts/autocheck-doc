@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# run as ./scripts/autocheck-doc.sh
+
+touch build-doc.txt
+cat conf/build.txt | grep DOC | tee build-doc-new.txt
+cmp build-doc-new.txt build-doc.txt || (
+	# update packages
+	./scripts/update-doc
+	./scripts/update-web
+)
