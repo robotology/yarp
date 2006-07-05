@@ -130,13 +130,13 @@ void PortCoreInputUnit::run() {
                 case 'h':
                     if (os!=NULL) {
                         BufferedConnectionWriter bw(true);
-                        bw.appendLine("This is a YARP port.  Here are the commands I respond to:");
+                        bw.appendLine("This is a YARP port.  Here are the commands it responds to:");
                         bw.appendLine("*       Gives a description of this port");
-                        bw.appendLine("d       Signals that the next line is real data (not one of these commands)");
+                        bw.appendLine("d       Signals the beginning of input for the port's owner");
                         bw.appendLine("q       Disconnects");
-                        bw.appendLine("/port   Requests me send output to /port");
-                        bw.appendLine("!/port  Requests me to stop sending output to /port");
-                        bw.appendLine("~/port  Requests me to stop receiving input from /port");
+                        bw.appendLine("/port   Requests to send output to /port");
+                        bw.appendLine("!/port  Requests to stop sending output to /port");
+                        bw.appendLine("~/port  Requests to stop receiving input from /port");
                         bw.appendLine("?       Gives this help");
                         bw.write(*os);
                     }
@@ -144,7 +144,9 @@ void PortCoreInputUnit::run() {
                 default:
                     if (os!=NULL) {
                         BufferedConnectionWriter bw(true);
-                        bw.appendLine("Command not understood.  Type ? for help.");
+                        bw.appendLine("Port command not understood.");
+                        bw.appendLine("Type d to send data to the port's owner.");
+                        bw.appendLine("Type ? for help.");
                         bw.write(*os);
                     }
                     break;
