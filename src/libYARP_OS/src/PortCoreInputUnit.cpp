@@ -4,6 +4,7 @@
 #include <yarp/PortCoreInputUnit.h>
 #include <yarp/PortCommand.h>
 #include <yarp/Logger.h>
+#include <yarp/BufferedConnectionWriter.h>
 #include <yarp/Name.h>
 
 
@@ -124,6 +125,28 @@ void PortCoreInputUnit::run() {
                     break;
                 case 'q':
                     done = true;
+                    break;
+                case '?':
+                case 'h':
+                    if (os!=NULL) {
+                        BufferedConnectionWriter bw(true);
+                        bw.appendLine("This is a YARP port.  Here are the commands I respond to:");
+                        bw.appendLine("*       Gives a description of this port");
+                        bw.appendLine("d       Signals that the next line is real data (not one of these commands)");
+                        bw.appendLine("q       Disconnects");
+                        bw.appendLine("/port   Requests me send output to /port");
+                        bw.appendLine("!/port  Requests me to stop sending output to /port");
+                        bw.appendLine("~/port  Requests me to stop receiving input from /port");
+                        bw.appendLine("?       Gives this help");
+                        bw.write(*os);
+                    }
+                    break;
+                default:
+                    if (os!=NULL) {
+                        BufferedConnectionWriter bw(true);
+                        bw.appendLine("Command not understood.  Type ? for help.");
+                        bw.write(*os);
+                    }
                     break;
                 }
                 ip->endRead();
