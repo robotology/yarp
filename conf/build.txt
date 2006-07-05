@@ -1,0 +1,5 @@
+# this file is watched to trigger automatic generation of packages etc
+# add a line starting with DEBIAN to trigger a new debian build/dist
+# add a line starting with SOURCE to trigger a new source build/dist
+DEBIAN Wed Jul  5 16:06:50 CEST 2006
+SOURCE Wed Jul  5 16:06:50 CEST 2006
