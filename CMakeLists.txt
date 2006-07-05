@@ -87,12 +87,12 @@ INSTALL_FILES(/doc/DEBIAN FILES ${CMAKE_BINARY_DIR}/DEBIAN/control)
 
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
-  IF (WIN32 AND NOT CYGWIN)
-    INCLUDE(YarpInstallRequiredSystemLibraries)
-    INSTALL_FILES(/bin .dll ${ACE_LIBRARY} ${ACE_DEBUG_LIBRARY})
-    # just in case it is needed and not present
-    INSTALL_FILES(/bin FILES ${CMAKE_SOURCE_DIR}/conf/Microsoft.VC80.CRT.manifest)
-  ENDIF (WIN32 AND NOT CYGWIN)
+#  IF (WIN32 AND NOT CYGWIN)
+#    INCLUDE(YarpInstallRequiredSystemLibraries)
+#    INSTALL_FILES(/bin .dll ${ACE_LIBRARY} ${ACE_DEBUG_LIBRARY})
+#    # just in case it is needed and not present
+#    INSTALL_FILES(/bin FILES ${CMAKE_SOURCE_DIR}/conf/Microsoft.VC80.CRT.manifest)
+#  ENDIF (WIN32 AND NOT CYGWIN)
 
   SET(CPACK_PACKAGE_EXECUTABLES "yarp" "yarp")
   INCLUDE(CPack)
