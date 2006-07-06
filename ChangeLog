@@ -1,3 +1,9 @@
+2006-07-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Finally dealt with silly CR/LF issues so that telnet
+	access to yarp ports and the name server is less painful
+	on Windows.
+
 2006-07-03  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Large documentation updates; library brought into
