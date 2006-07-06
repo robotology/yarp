@@ -66,7 +66,7 @@ void Game::setMaze(const char *fname) {
   while (fin.good() && !fin.eof()) {
     char buf[2000];
     fin.getline(buf,sizeof(buf));
-    for (int x=0; x<strlen(buf); x++) {
+	for (unsigned int x=0; x<ACE_OS::strlen(buf); x++) {
       char ch = buf[x];
       ID v = 0;
       if (ch=='+' || ch=='-' || ch=='|'||ch=='#') { v = 1; }

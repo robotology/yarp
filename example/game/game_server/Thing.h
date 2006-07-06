@@ -5,6 +5,8 @@
 #include <math.h>
 #include <string.h>
 
+#include <ace/OS.h>
+
 #include "ID.h"
 
 
@@ -61,8 +63,8 @@ public:
 
 
   void setName(const char *txt) { 
-    strncpy(name,txt,sizeof(name));
-    for (int i=0; i<strlen(name); i++) {
+	  ACE_OS::strncpy(name,txt,sizeof(name));
+	  for (unsigned int i=0; i<ACE_OS::strlen(name); i++) {
       char ch = name[i];
       if (!((ch>='a'&&ch<='z')||
 	    (ch>='A'&&ch<='Z')||

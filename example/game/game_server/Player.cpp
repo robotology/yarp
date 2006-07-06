@@ -45,7 +45,7 @@ void Player::apply(int argc, const char *argv[]) {
 	      at++;
 	    }
 	  }
-	  for (int j=0; j<strlen(txt); j++)
+	  for (unsigned int j=0; j<ACE_OS::strlen(txt); j++)
 	    if (at<sizeof(buf)-2) {
 	      buf[at] = txt[j];
 	      at++;
@@ -169,7 +169,7 @@ void Player::apply(const char *command) {
 
   int at = 0;
   int sub_at = 0;
-  for (int i=0; i<strlen(command)+1; i++) {
+  for (unsigned int i=0; i<ACE_OS::strlen(command)+1; i++) {
     if (at<MAX_ARG_CT) {
       char ch = command[i];
       if (ch>=32||ch=='\0') {

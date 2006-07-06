@@ -5,6 +5,11 @@
 
 #include "Thing.h"
 
+// ACE messes up main()
+#ifdef main
+#undef main
+#endif
+
 class Game : public yarp::os::Thread {
 public:
   Game();

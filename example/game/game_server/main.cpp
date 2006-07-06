@@ -81,6 +81,7 @@ public:
       player.apply(ask.c_str());
       flush();
     }
+	return true;
   }
 
 
@@ -106,12 +107,12 @@ public:
     }
     //printf("asked to send %s\n", msg);
     if (result!="") {
-      result += "\n";
+      result += "\r\n";
     }
     result += msg;
     if (msg[0]!='\0') {
       int ct = 0;
-      for (int i=0; i<strlen(msg); i++) {
+	  for (unsigned int i=0; i<ACE_OS::strlen(msg); i++) {
 	if (msg[i] == '(') {
 	  ct++;
 	}
