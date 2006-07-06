@@ -20,6 +20,9 @@ void Logger::show(int level, const String& txt) {
     if (verbose>0) {
         level = 10000;
     }
+    if (verbose<0) {
+        level = -10000;
+    }
     if (parent == NULL) {
         if (level>=low) {
             ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
