@@ -21,6 +21,10 @@ int main() {
     BufferedPort<Bottle> in;
     BufferedPort<Bottle> out;
 
+    // we will want to read every message, with no skipping of "old" messages
+    // when new ones come in
+    in.setStrict();
+
     // Name the ports
     in.open("/in");
     out.open("/out");
@@ -47,13 +51,11 @@ int main() {
                                        // there was something being sent
 
     // Read the first object
-    Bottle *inBot1 = in.readStrict();  // readStrict() returns each message
-                                       // received; read() would skip older
-                                       // messages if newer ones are available
+    Bottle *inBot1 = in.read();
     printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
 
     // Read the second object
-    Bottle *inBot2 = in.readStrict();
+    Bottle *inBot2 = in.read();
     printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
 
     Network::fini(); // This is the reverse of Network::init()

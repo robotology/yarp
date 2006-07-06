@@ -129,9 +129,12 @@ public:
         write(true);
     }
 
-    virtual T *read(bool shouldWait=true,
-                    bool forceStrict=false) {
-        return reader.read(shouldWait,forceStrict);
+    void setStrict(bool strict=true) {
+        reader.setStrict(strict);
+    }
+
+    virtual T *read(bool shouldWait=true) {
+        return reader.read(shouldWait);
     }
 
     virtual T *lastRead() {

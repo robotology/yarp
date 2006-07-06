@@ -205,6 +205,7 @@ bool YARPImgRecv::_registerPorts()
 {
 	int res = 0;
 	res = _inPort.open(_portName);
+    _inPort.setStrict(false);
 
 	if  (res)
 		return true;

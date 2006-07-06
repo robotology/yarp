@@ -41,6 +41,7 @@ private:
     PortReader *prev;
 
 public:
+    int ct;
 	Port *port;
     SemaphoreImpl contentSema;
     SemaphoreImpl consumeSema;
@@ -51,6 +52,7 @@ public:
         autoRelease = true;
         prev = NULL;
 		port = NULL;
+        ct = 0;
     }
 
     virtual ~PortReaderBufferBaseHelper() {
@@ -79,6 +81,7 @@ public:
         readers.clear();  
         avail.clear();
         content.clear();
+        ct = 0;
     }
 
     PortReader *get() {
@@ -117,6 +120,7 @@ public:
                 content[i] = flag;
                 if (flag==false) {
                     prev = readers[i];
+                    ct--;
                 }
                 return readers[i];
             }
@@ -215,9 +219,17 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
 	}
     if (ok) {
         HELPER(implementation).stateSema.wait();
+        bool pruned = false;
+        if (HELPER(implementation).ct>0&&prune) {
+            PortReader *reader = HELPER(implementation).getContent(false);
+            pruned = (reader!=NULL);
+        }
         HELPER(implementation).configure(reader,false,true);
+        HELPER(implementation).ct++;
         HELPER(implementation).stateSema.post();
-        HELPER(implementation).contentSema.post();
+        if (!pruned) {
+            HELPER(implementation).contentSema.post();
+        }
         //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
     } else {
         HELPER(implementation).stateSema.wait();

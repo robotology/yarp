@@ -546,6 +546,7 @@ public:
         report(0,"check strict writer...");
         BufferedPort<Bottle> in;
         BufferedPort<Bottle> out;
+        in.setStrict();
         in.open("/in");
         out.open("/out");
         
@@ -561,13 +562,13 @@ public:
         printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
         out.write(true);
         
-        Bottle *inBot1 = in.readStrict();
+        Bottle *inBot1 = in.read();
         checkTrue(inBot1!=NULL,"got 1 of 2 items");
         if (inBot1!=NULL) {
             printf("Bottle 1 is: %s\n", inBot1->toString().c_str());
             checkEqual(inBot1->size(),2,"match for item 1");
         }
-        Bottle *inBot2 = in.readStrict();
+        Bottle *inBot2 = in.read();
         checkTrue(inBot2!=NULL,"got 2 of 2 items");
         if (inBot2!=NULL) {
             printf("Bottle 2 is: %s\n", inBot2->toString().c_str());

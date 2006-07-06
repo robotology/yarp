@@ -62,6 +62,7 @@ void Game::setMaze(const char *fname) {
     return;
   }
   int y = 0;
+  int ct = 0;
   printf("Initializing maze...\n");
   while (fin.good() && !fin.eof()) {
     char buf[2000];
@@ -76,11 +77,12 @@ void Game::setMaze(const char *fname) {
       }
       if (v.asInt()!=0) {
 	m.set(x,y,v);
+	ct++;
       }
     }
     y++;
   }
-  printf("Maze initialized\n");
+  printf("Maze initialized (%d blocks)\n", ct);
 }
 
 void Game::update() {

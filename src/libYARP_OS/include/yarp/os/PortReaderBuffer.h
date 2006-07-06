@@ -51,17 +51,24 @@ template <class T>
 class yarp::os::TypedReader {
 public:
     /**
+     * Call this to strictly keep all messages, or allow old ones
+     * to be quietly dropped.  If you don't call this,
+     * old messages will be quietly dropped.
+     * @param strict True to keep all messages until they are read,
+     * false to drop old messages when a new one comes in.
+     */
+    virtual void setStrict(bool strict = true) = 0;
+
+    /**
      * Read an available object from the port.
      * @param shouldWait true if the method should wait until an object is available
-     * @param forceStrict true if the method should never drop objects
      * @return A pointer to an object read from the port, or NULL if none
      * is available and waiting was not requested.  This object is owned
      * by the communication system and should not be deleted by the user.
      * The object is available to the user until the next call to 
      * one of the read methods, after which it should not be accessed again.
      */
-    virtual T *read(bool shouldWait=true,
-                    bool forceStrict=false) = 0;
+    virtual T *read(bool shouldWait = true) = 0;
 
 
     /**
@@ -75,9 +82,9 @@ public:
      * The object is available to the user until the next call to 
      * one of the read methods, after which it should not be accessed again.
      */
-    virtual T *readStrict(bool shouldWait=true) {
-        return read(shouldWait,true);
-    }
+    //virtual T *readStrict(bool shouldWait=true) {
+    //return read(shouldWait,true);
+    //}
 
     /**
      * Read the newest available object from the port.  The method
@@ -90,9 +97,9 @@ public:
      * The object is available to the user until the next call to 
      * one of the read methods, after which it should not be accessed again.
      */
-    virtual T *readNewest(bool shouldWait=true) {
-        return read(shouldWait,false);
-    }
+    //virtual T *readNewest(bool shouldWait=true) {
+    //    return read(shouldWait,false);
+    //}
 
 
     /**
@@ -140,6 +147,7 @@ public:
         creator = 0; /*NULL*/
         init();
         allowReuse = true;
+        prune = false;
     }
 
     void setCreator(PortReaderBufferBaseCreator *creator) {
@@ -163,6 +171,10 @@ public:
 
     void setAutoRelease(bool flag = true);
 
+    void setPrune(bool flag = true) {
+        prune = flag;
+    }
+
     void setAllowReuse(bool flag = true) {
         allowReuse = flag;
     }
@@ -182,6 +194,7 @@ protected:
 
     PortReaderBufferBaseCreator *creator;
     unsigned int maxBuffer;
+    bool prune;
     bool allowReuse;
     void *implementation;
 };
@@ -258,13 +271,11 @@ public:
         }
     }
 
-    /**
-     * Call this to strictly keep all messages, or allow old ones
-     * to be quietly dropped (the default)
-     * @param strict True to keep all messages until they are read
-     */
-    void setStrict(bool strict = true) {
+    // documented in TypedReader
+    virtual void setStrict(bool strict = true) {
         autoDiscard = !strict;
+        // do discard at earliest time possible
+        implementation.setPrune(autoDiscard);
     }
 
     /**
@@ -276,13 +287,8 @@ public:
         return implementation.check();
     }
 
-    /**
-     * Read data.
-     * @param shouldWait Wait for the data to arrive (default is to wait)
-     * @param forceStrict If true, old data will not be dropped.
-     * @return pointer to data received on the port, or NULL on failure.
-     */
-    T *read(bool shouldWait=true,bool forceStrict=false) {
+    // documented in TypedReader
+    T *read(bool shouldWait=true) {
         if (!shouldWait) {
             if (!check()) {
                 last = 0; /*NULL*/
@@ -291,7 +297,7 @@ public:
         }
         last = (T *)implementation.readBase();
         if (last!=0/*NULL*/) {
-            if (autoDiscard&&!forceStrict) {
+            if (autoDiscard) {
                 // go up to date
                 while (check()) {
                     //printf("Dropping something\n");
@@ -302,6 +308,7 @@ public:
         return last;
     }
 
+    // documented in TypedReader
     T *lastRead() {
         return last;
     }
