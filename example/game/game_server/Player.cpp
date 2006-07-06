@@ -202,7 +202,10 @@ void Player::apply(const char *command) {
 
 void Player::move(int dx, int dy) {
   Thing& thing = login.getThing();
-  if (!thing.isAlive()) { return; }
+  if (!thing.isAlive()) { 
+    send("error [dead] \"you are dead\"");
+    return; 
+  }
   send("ack [move] \"move requested\"");
   if (dx>1) dx = 1;
   if (dx<-1) dx = -1;
@@ -216,7 +219,10 @@ void Player::move(int dx, int dy) {
 
 void Player::fire(int tx, int ty) {
   Thing& thing = login.getThing();
-  if (!thing.isAlive()) { return; }
+  if (!thing.isAlive()) { 
+    send("error [dead] \"you are dead\"");
+    return; 
+  }
 
   send("ack [fire] \"fire requested\"");
 

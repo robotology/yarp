@@ -92,7 +92,7 @@ public:
       } else {
 	Bottle reply;
 	reply.fromString(result.c_str());
-	printf("writing... [%s]\n", reply.toString().c_str());
+	//printf("writing... [%s]\n", reply.toString().c_str());
 	reply.write(*writer);
       }
     }
@@ -104,13 +104,24 @@ public:
       flush();
       return;
     }
-    printf("asked to send %s\n", msg);
+    //printf("asked to send %s\n", msg);
     if (result!="") {
       result += "\n";
     }
     result += msg;
-    if ((msg[0]!='(') && msg[0]!=' ') {
-      flush();
+    if (msg[0]!='\0') {
+      int ct = 0;
+      for (int i=0; i<strlen(msg); i++) {
+	if (msg[i] == '(') {
+	  ct++;
+	}
+	if (msg[i] == ')') {
+	  ct--;
+	}
+      }
+      if (msg[0]!=' ' && ct<=0) {
+	flush();
+      }
     }
   }
 

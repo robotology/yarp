@@ -64,7 +64,10 @@ public:
     strncpy(name,txt,sizeof(name));
     for (int i=0; i<strlen(name); i++) {
       char ch = name[i];
-      if (!((ch>='a'&&ch<='z')||(ch>='a'&&ch<='z')||(ch>='0'&&ch<='9'))) {
+      if (!((ch>='a'&&ch<='z')||
+	    (ch>='A'&&ch<='Z')||
+	    (ch>='0'&&ch<='9')||
+	    ch=='/')) {
 	name[i] = '_';
       }
     }
