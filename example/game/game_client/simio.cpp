@@ -46,7 +46,7 @@ void clrscr()
 
 void gotoxy ( int x, int y )
 {
-	move ( y-1, x-1 );
+	move ( y, x );
 	autorefresh();
 }
 

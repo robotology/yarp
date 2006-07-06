@@ -4,7 +4,9 @@
 #include <stdlib.h>
 
 #include <yarp/os/all.h>
+#include <yarp/Logger.h>
 using namespace yarp::os;
+using namespace yarp;
 
 #include <ace/OS.h>
 
@@ -12,8 +14,8 @@ using namespace yarp::os;
 #include "keyboard.h"
 using namespace yarp;
 
-#define real_printf printf
-#define printf cprintf
+//#define real_printf printf
+//#define printf cprintf
 
 String pad(const String& src, int len = 70) {
 	String result = src;
@@ -52,13 +54,33 @@ public:
     this->name = name;
   }
 
+  void connect() {
+    reader.attach(p);
+    reader.useCallback(handler);
+
+    if (name[0]!='.') {
+      name = String("/player/") + name;
+    }
+    p.open(name.c_str());
+
+    printf("Connecting...\n");
+
+    Logger::get().setVerbosity(-1);
+    
+    // we'll be sending messages to the game (and getting responses)
+    Network::connect(p.getName(),"/game");
+    
+    // there are occasional messages broadcast from the game to us
+    Network::connect("/game",p.getName(),"mcast");
+
+  }
+
   void show() {
     mutex.wait();
     Bottle send("look");
     Property prop;
     p.write(send,prop);
-    //clrscr();
-	gotoxy(0,0);
+    gotoxy(0,0);
     Bottle& map = prop.findGroup("look").findGroup("map");
     broadcastMutex.wait();
     String prep = getPreparation().c_str();
@@ -68,13 +90,15 @@ public:
 	prep = prep + "_";
       }
     }
-    printf("%s\n%s\n%s\n", pad("").c_str(),pad(prep).c_str(), 
-			pad(broadcast).c_str());
+    cprintf("%s\n%s\n%s\n", 
+	    pad("").c_str(),
+	    pad(prep).c_str(), 
+	    pad(broadcast).c_str());
     broadcastMutex.post();
     for (int i=1; i<map.size(); i++) {
-      printf("  %s\n", map.get(i).asString().c_str());
+      cprintf("  %s\n", map.get(i).asString().c_str());
     }
-    printf("\n");
+    cprintf("\n");
     Bottle& players = prop.findGroup("look").findGroup("players");
     for (int i=1; i<players.size(); i++) {
       Bottle *player = players.get(i).asList();
@@ -89,14 +113,15 @@ public:
 			location.get(1).asInt(),
 			location.get(2).asInt(),
 			life.asInt());
-		printf("%s\n", pad(String(buf)).c_str());
+		cprintf("%s\n", pad(String(buf)).c_str());
 	}
 	  }
 	}
 	for (int j=players.size(); j<=5; j++) {
-		  printf("%s\n", pad(String("")).c_str());
+		  cprintf("%s\n", pad(String("")).c_str());
 	}
     
+    gotoxy(0,0);
     mutex.post();
   }
 
@@ -106,9 +131,9 @@ public:
     mutex.wait();
     p.write(send,recv);
     if (recv.get(0).asString()=="error") {
-      printf("PROBLEM:\n");
-      printf("  request: %s\n", send.toString().c_str());
-      printf("  response: %s\n", recv.toString().c_str());
+      cprintf("PROBLEM:\n");
+      cprintf("  request: %s\n", send.toString().c_str());
+      cprintf("  response: %s\n", recv.toString().c_str());
       refresh();
       Time::delay(2);
     }
@@ -117,23 +142,6 @@ public:
   }
 
   virtual void run() {
-    reader.attach(p);
-    reader.useCallback(handler);
-
-    if (name[0]!='.') {
-      name = String("/player/") + name;
-    }
-    p.open(name.c_str());
-    
-    // we'll be sending messages to the game (and getting responses)
-    Network::connect(p.getName(),"/game");
-    
-    // there are occasional messages broadcast from the game to us
-    Network::connect("/game",p.getName(),"mcast");
-
-	clrscr();
-    autorefresh();
-
     while (!isStopping()) {
       Time::delay(0.25);
       show();
@@ -148,7 +156,7 @@ public:
 
 void stop(int x) {
   clrscr();
-  printf("Stopping...\n");
+  cprintf("Stopping...\n");
   autorefresh();
   update_thread.stop();
   Time::delay(0.5);
@@ -159,8 +167,7 @@ void stop(int x) {
 
 
 
-void mainloop(const char *name) {
-  update_thread.setName(name);
+void mainloop() {
   update_thread.start();
 
   bool done = false;
@@ -183,25 +190,29 @@ void mainloop(const char *name) {
 
 
 int main(int argc, char *argv[]) {
+  Network::init();
+
+  const char *name = "...";
+  if (argc>=2) {
+    name = argv[1];
+  }
+  update_thread.setName(name);
+
+  update_thread.connect();
+
+  // switch to graphic mode
+  initconio();
+  setautorefresh(1);
+  clrscr();
+
 #ifndef WIN32
   signal(SIGKILL,stop);
   signal(SIGINT,stop);
   signal(SIGTERM,stop);
   signal(SIGPIPE,stop);
 #endif
-
-  Network::init();
-
-  initconio();
-  setautorefresh(1);
-  clrscr();
-
-  const char *name = "...";
-  if (argc>=2) {
-    name = argv[1];
-  }
-
-  mainloop(name);
+  
+  mainloop();
 
   Network::fini();
 
