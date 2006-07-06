@@ -4,6 +4,7 @@
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
 
+#include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -31,6 +32,12 @@ namespace yarp{
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+/* the control command message type 
+ * head is a Bottle which contains the specification of the message tyep
+ * body is a Vector which move the robot appropriately
+ */
+typedef PortablePair<Bottle, Vector> CommandMessage;
+
 /**
  * Helper object for reading config commands for the ServerControlBoard
  * class.
@@ -40,6 +47,7 @@ protected:
     yarp::dev::ServerControlBoard   *caller;
     yarp::dev::IPidControl          *pid;
     yarp::dev::IPositionControl     *pos;
+    yarp::dev::IVelocityControl     *vel;
     yarp::dev::IEncoders            *enc;
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
@@ -73,9 +81,10 @@ public:
 /**
  * Callback implementation after buffered input.
  */
-class yarp::dev::ImplementCallbackHelper : public TypedReaderCallback<Vector> {
+class yarp::dev::ImplementCallbackHelper : public TypedReaderCallback<CommandMessage> {
 protected:
     IPositionControl *pos;
+    IVelocityControl *vel;
 
 public:
     /**
@@ -88,7 +97,7 @@ public:
      * Callback function.
      * @param v is the Vector being received.
      */
-    virtual void onRead(Vector& v);
+    virtual void onRead(CommandMessage& v);
 };
 
 #endif // DOXYGEN_SHOULD_SKIP_THIS
@@ -114,8 +123,8 @@ class yarp::dev::ServerControlBoard :
             public Thread,
             public IPidControl,
             public IPositionControl,
+            public IVelocityControl,
             public IEncoders,
-//            public IVelocityControl,
             public IAmplifierControl,
             public IControlLimits
 //            public IControlCalibration
@@ -125,12 +134,12 @@ class yarp::dev::ServerControlBoard :
 {
 private:
 	bool spoke;
-    Port rpc_p; // RPC to configure the robot
+    Port rpc_p;     // RPC to configure the robot
     Port state_p;   // out port to read the state
     Port control_p; // in port to command the robot
 
     PortWriterBuffer<yarp::sig::Vector> state_buffer;
-    PortReaderBuffer<yarp::sig::Vector> control_buffer;
+    PortReaderBuffer<CommandMessage> control_buffer;
     yarp::dev::ImplementCallbackHelper callback_impl;
 
     yarp::dev::CommandsHelper command_reader;
@@ -141,17 +150,17 @@ private:
     int               thread_period;
     IPidControl       *pid;
     IPositionControl  *pos;
+    IVelocityControl  *vel;
     IEncoders         *enc;
     IAmplifierControl *amp;
     IControlLimits    *lim;
-    //IVelocityControl  *vel;
-
     // LATER: other interfaces here.
 
 public:
     ServerControlBoard() : callback_impl(this), command_reader(this) {
         pid = NULL;
         pos = NULL;
+        vel = NULL;
         enc = NULL;
         amp = NULL;
         lim = NULL;
@@ -223,6 +232,7 @@ public:
         if (poly.isValid()) {
             poly.view(pid);
             poly.view(pos);
+            poly.view(vel);
             poly.view(enc);
             poly.view(amp);
             poly.view(lim);
@@ -230,6 +240,7 @@ public:
         
         if (pid != NULL &&
             pos != NULL &&
+            vel != NULL &&
             enc != NULL &&
             amp != NULL &&
             lim != NULL) {
@@ -261,12 +272,12 @@ public:
             before = Time::now();
             yarp::sig::Vector& v = state_buffer.get();
             v.size(nj);
-            enc->getEncoders(&v[0]);
+            bool ok = enc->getEncoders(&v[0]);
+            // LATER: deal with the ok == false.
             state_buffer.write();
             now = Time::now();
             if ((now-before)*1000 < thread_period) {
                 const double k = double(thread_period)/1000.0-(now-before);
-                //ACE_OS::printf("time: %.3f\n", k);
 			    Time::delay(k);
             }
             else {
@@ -696,12 +707,48 @@ public:
         return false;
     }
 
-    /** Stop motion, multiple joints 
+    /** 
+     * Stop motion, multiple joints 
      * @return true/false on success/failure
      */
     virtual bool stop() {
         if (pos)
             return pos->stop();
+        return false;
+    }
+
+    /* IVelocityControl */
+
+    /** 
+     * Set new reference speed for a single axis.
+     * @param j joint number
+     * @param v specifies the new ref speed
+     * @return true/false on success/failure
+     */
+    virtual bool velocityMove(int j, double v) {
+        if (vel)
+            return vel->velocityMove(j, v);
+        return false;
+    }
+
+    /**
+     * Set a new reference speed for all axes.
+     * @param v is a vector of double representing the requested speed.
+     * @return true/false on success/failure.
+     */
+    virtual bool velocityMove(const double *v) {
+        if (vel)
+            return vel->velocityMove(v);
+        return false;
+    }
+
+    /**
+     * Set the controller to velocity mode.
+     * @return true/false on success/failure.
+     */
+    virtual bool setVelocityMode() {
+        if (vel)
+            return vel->setVelocityMode();
         return false;
     }
 
@@ -935,6 +982,20 @@ public:
     }
 };
 
+/* check whether the last command failed */
+inline bool CHECK_FAIL(bool ok, Bottle& response) {
+    if (ok) {
+        if (response.get(0).isVocab() && response.get(0).asVocab() == VOCAB_FAILED) {
+            return false;
+        }
+    }
+    else
+        return false;
+
+    return true;
+}
+
+
 /**
  * @ingroup dev_impl_wrapper
  *
@@ -943,6 +1004,7 @@ public:
 class yarp::dev::RemoteControlBoard : 
             public IPidControl,
             public IPositionControl, 
+            public IVelocityControl,
             public IEncoders,
             public IAmplifierControl,
             public IControlLimits,
@@ -953,7 +1015,7 @@ protected:
     Port state_p;
 
     PortReaderBuffer<yarp::sig::Vector> state_buffer;
-    PortWriterBuffer<yarp::sig::Vector> command_buffer;
+    PortWriterBuffer<CommandMessage> command_buffer;
 
     String remote;
     String local;
@@ -961,49 +1023,49 @@ protected:
     int nj;
 
     bool setCommand(int code) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     bool setCommand(int code, double v) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addDouble(v);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     bool setCommand(int code, int v) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addInt(v);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     bool getCommand(int code, double& v) const {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         // response should be [cmd] [name] value
         v = response.get(2).asDouble();
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     bool getCommand(int code, int& v) const {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         // response should be [cmd] [name] value
         v = response.get(2).asInt();
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1014,13 +1076,13 @@ protected:
      * @return true/false on success/failure
      */
     bool setDouble (int code, int j, double val) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
         cmd.addInt(j);
         cmd.addDouble(val);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1030,15 +1092,15 @@ protected:
      * @return true/false on success/failure
      */
     bool setDoubleArray(int v, const double *val) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v);
         Bottle& l = cmd.addList();
         int i;
         for (i = 0; i < nj; i++)
             l.addDouble(val[i]);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1053,9 +1115,9 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
         cmd.addInt(j);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         *val = response.get(2).asDouble();
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1068,14 +1130,14 @@ protected:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         int i;
         Bottle& l = *(response.get(2).asList());
         int njs = l.size();
         ACE_ASSERT (nj == njs);
         for (i = 0; i < nj; i++)
             val[i] = l.get(i).asDouble();
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
 public:
@@ -1151,7 +1213,7 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setPid(int j, const Pid &pid) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_PID);
         cmd.addInt(j);
@@ -1163,8 +1225,8 @@ public:
         l.addDouble(pid.max_output);
         l.addDouble(pid.offset);
         l.addDouble(pid.scale);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1173,7 +1235,7 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool setPids(const Pid *pids) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_PIDS);
         Bottle& l = cmd.addList();
@@ -1188,8 +1250,8 @@ public:
             m.addDouble(pids[i].offset);
             m.addDouble(pids[i].scale);
         }
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1285,7 +1347,7 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PID);
         cmd.addInt(j);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         Bottle& l = *(response.get(2).asList());
         pid->kp = l.get(0).asDouble();
         pid->kd = l.get(1).asDouble();
@@ -1294,7 +1356,7 @@ public:
         pid->max_output = l.get(4).asDouble();
         pid->offset = l.get(5).asDouble();
         pid->scale = l.get(6).asDouble();
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1306,7 +1368,7 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PIDS);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         int i;
         Bottle& l = *(response.get(2).asList());
         const int njs = l.size();
@@ -1322,7 +1384,7 @@ public:
             pids->offset = m.get(5).asDouble();
             pids->scale = m.get(6).asDouble();
         }
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1369,12 +1431,12 @@ public:
      * @return true on success, false on failure.
      */
     virtual bool resetPid(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_RESET);
         cmd.addInt(j);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1383,12 +1445,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool disablePid(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_DISABLE);
         cmd.addInt(j);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1397,12 +1459,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool enablePid(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_ENABLE);
         cmd.addInt(j);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd);
+        return CHECK_FAIL(ok, response);
     }
 
     /* IEncoder */
@@ -1413,12 +1475,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool resetEncoder(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_E_RESET);
         cmd.addInt(j);
-        rpc_p.write(cmd);   // missing return value, success/failure.
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1426,11 +1488,11 @@ public:
      * @return true/false
      */
     virtual bool resetEncoders() {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_E_RESETS);
-        rpc_p.write(cmd);
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1555,13 +1617,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool positionMove(const double *refs) { 
-        Vector& v = command_buffer.get();
-        v.size(nj);
-        ACE_OS::memcpy(&v[0], refs, sizeof(double)*nj);
+        CommandMessage& c = command_buffer.get();
+        c.head.addVocab(VOCAB_POSITION_MOVES);
+        c.body.size(nj);
+        ACE_OS::memcpy(&(c.body[0]), refs, sizeof(double)*nj);
         command_buffer.write();
         return true;
-
-        //return setDoubleArray(VOCAB_POSITION_MOVES, refs);
     }
 
     /** 
@@ -1592,9 +1653,9 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_MOTION_DONE);
         cmd.addInt(j);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         *flag = (bool)(response.get(2).asInt());
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
@@ -1604,14 +1665,14 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_MOTION_DONES);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         int i;
         Bottle& l = *(response.get(2).asList());
         int njs = l.size();
         ACE_ASSERT (nj == njs);
         for (i = 0; i < nj; i++)
             flag[i] = (bool)(l.get(i).asInt());
-        return true;
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1703,12 +1764,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_STOP);
         cmd.addInt(j);
-        rpc_p.write(cmd);   // missing return value, success/failure.
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1716,11 +1777,45 @@ public:
      * @return true/false on success/failure
      */
     virtual bool stop() { 
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_STOPS);
-        rpc_p.write(cmd);   // missing return value, success/failure.
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    /* IVelocityControl */
+
+    /** 
+     * Set new reference speed for a single axis.
+     * @param j joint number
+     * @param v specifies the new ref speed
+     * @return true/false on success/failure
+     */
+    virtual bool velocityMove(int j, double v) {
+        return setDouble(VOCAB_VELOCITY_MOVE, j, v);
+    }
+
+    /**
+     * Set a new reference speed for all axes.
+     * @param v is a vector of double representing the requested speed.
+     * @return true/false on success/failure.
+     */
+    virtual bool velocityMove(const double *v) {
+        CommandMessage& c = command_buffer.get();
+        c.head.addVocab(VOCAB_VELOCITY_MOVES);
+        c.body.size(nj);
+        ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        command_buffer.write();
         return true;
+    }
+
+    /**
+     * Set the controller to velocity mode.
+     * @return true/false on success/failure.
+     */
+    virtual bool setVelocityMode() {
+        return setCommand(VOCAB_VELOCITY_MODE);
     }
 
     /* IAmplifierControl */
@@ -1732,12 +1827,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool enableAmp(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_AMP_ENABLE);
         cmd.addInt(j);
-        rpc_p.write(cmd);   // missing return value, success/failure.
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /** 
@@ -1746,12 +1841,12 @@ public:
      * @return true/false on success/failure
      */
     virtual bool disableAmp(int j) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_AMP_DISABLE);
         cmd.addInt(j);
-        rpc_p.write(cmd);   // missing return value, success/failure.
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
 
     /**
@@ -1796,9 +1891,9 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_AMP_STATUS);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         *st = response.get(2).asInt();
-        return true;        
+        return CHECK_FAIL(ok, response);        
     }
 
     /* IControlLimits */
@@ -1812,14 +1907,14 @@ public:
      * @return true or false on success or failure
      */
     virtual bool setLimits(int axis, double min, double max) {
-        Bottle cmd;
+        Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_LIMITS);
         cmd.addInt(axis);
         cmd.addDouble(min);
         cmd.addDouble(max);
-        rpc_p.write(cmd);   // missing return value, success/failure.
-        return true;
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
     }
     
     /**
@@ -1834,12 +1929,11 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_LIMITS);
         cmd.addInt(axis);
-        rpc_p.write(cmd, response);
+        bool ok = rpc_p.write(cmd, response);
         *min = response.get(2).asDouble();
         *max = response.get(3).asDouble();
-        return true;        
+        return CHECK_FAIL(ok, response);        
     }
-
 };
 
 
@@ -1850,6 +1944,7 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     caller = x; 
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
     pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
+    vel = dynamic_cast<yarp::dev::IVelocityControl *> (caller);
     enc = dynamic_cast<yarp::dev::IEncoders *> (caller);
     amp = dynamic_cast<yarp::dev::IAmplifierControl *> (caller);
     lim = dynamic_cast<yarp::dev::IControlLimits *> (caller);
@@ -1965,6 +2060,16 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             }
             break;
 
+            case VOCAB_VELOCITY_MODE: {
+                ok = vel->setVelocityMode();
+            }
+            break;
+
+            case VOCAB_VELOCITY_MOVE: {
+                ok = vel->velocityMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
+            }
+            break;
+
             case VOCAB_POSITION_MODE: {
                 ok = pos->setPositionMode();
             }
@@ -1975,6 +2080,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             }
             break;
 
+/*
             case VOCAB_POSITION_MOVES: {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
@@ -1988,7 +2094,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 delete[] p;                
             }
             break;
-
+*/
             case VOCAB_RELATIVE_MOVE: {
                 ok = pos->relativeMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
@@ -2379,7 +2485,9 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             }
 
             if (!ok) {
-                // leave answer blank
+                // failed thus send only a VOCAB back.
+                response.clear();
+                response.addVocab(VOCAB_FAILED);
             }
         }
         break;
@@ -2401,22 +2509,48 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
 yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerControlBoard *x) {
     pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
     ACE_ASSERT (pos != 0);
+    vel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
+    ACE_ASSERT (vel != 0);
 }
 
-void yarp::dev::ImplementCallbackHelper::onRead(Vector& v) {
-    ACE_OS::printf("Data received on the control channel of size: %d\n", v.size());
+void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
+    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
 
-    ACE_OS::printf("v: ");
-    int i;
-    for (i = 0; i < (int)v.size(); i++)
-        ACE_OS::printf("%.3f ", v[i]);
-    ACE_OS::printf("\n");
+    Bottle& b = v.head;
+    switch (b.get(0).asVocab()) {
+        case VOCAB_POSITION_MODE: 
+        case VOCAB_POSITION_MOVES: {
+            ACE_OS::printf("Received a position command\n");
+            if (pos) {
+                bool ok = pos->positionMove(&(v.body[0]));
+                if (!ok)
+                    ACE_OS::printf("Issues while trying to start a position move\n");
+            }
+        }
+        break;
 
-    if (pos) {
-        bool ok = pos->positionMove(&v[0]);
-        if (!ok)
-            ACE_OS::printf("Issues while trying to start a position move\n");
+        case VOCAB_VELOCITY_MODE:
+        case VOCAB_VELOCITY_MOVES: {
+            ACE_OS::printf("Received a velocity command\n");
+            if (pos) {
+                bool ok = vel->velocityMove(&(v.body[0]));
+                if (!ok)
+                    ACE_OS::printf("Issues while trying to start a velocity move\n");
+            }
+        }
+        break;
+
+        default: {
+            ACE_OS::printf("Unrecognized message while receiving on command port\n");
+        }
+        break;
     }
+
+//    ACE_OS::printf("v: ");
+//    int i;
+//    for (i = 0; i < (int)v.size(); i++)
+//        ACE_OS::printf("%.3f ", v[i]);
+//    ACE_OS::printf("\n");
 }
 
 
