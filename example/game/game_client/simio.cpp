@@ -133,4 +133,15 @@ void clrscr()
   return; 
 }
 
+void gotoxy(int x, int y)
+{ 
+  COORD coordScreen = { x, y }; /* here's where we'll home the cursor */ 
+ 
+  /* get the output console handle */
+  HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+  /* put the cursor at (0, 0) */ 
+  SetConsoleCursorPosition(hConsole, coordScreen); 
+  return; 
+}
+
 #endif

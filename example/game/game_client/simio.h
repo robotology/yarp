@@ -36,10 +36,17 @@ extern void initconio();
 #define setautorefresh(refr)
 #define refresh()
 
-#define waitkey getch
-#define cputch putch
+#define waitkey _getch
+#define cputch _putch
+//#define cputch putch // apparently this is deprecated
 extern void autorefresh();
 extern void clrscr();
+extern void gotoxy(int x, int y);
+
+#ifdef cprintf
+#undef cprintf
+#endif
+#define cprintf _cprintf
 
 #endif
 

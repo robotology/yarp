@@ -6,6 +6,8 @@
 #include <yarp/os/all.h>
 using namespace yarp::os;
 
+#include <ace/OS.h>
+
 #include "simio.h"
 #include "keyboard.h"
 using namespace yarp;
@@ -13,6 +15,14 @@ using namespace yarp;
 #define real_printf printf
 #define printf cprintf
 
+String pad(const String& src, int len = 70) {
+	String result = src;
+	int ct = len-src.length();
+	for (int i=0; i<ct; i++) {
+		result += " ";
+	}
+	return result;
+}
 
 Semaphore broadcastMutex(1);
 String broadcast = "";
@@ -47,8 +57,8 @@ public:
     Bottle send("look");
     Property prop;
     p.write(send,prop);
-    mutex.post();
-    clrscr();
+    //clrscr();
+	gotoxy(0,0);
     Bottle& map = prop.findGroup("look").findGroup("map");
     broadcastMutex.wait();
     String prep = getPreparation().c_str();
@@ -58,7 +68,8 @@ public:
 	prep = prep + "_";
       }
     }
-    printf("\n%s\n%s\n\n", prep.c_str(), broadcast.c_str());
+    printf("%s\n%s\n%s\n", pad("").c_str(),pad(prep).c_str(), 
+			pad(broadcast).c_str());
     broadcastMutex.post();
     for (int i=1; i<map.size(); i++) {
       printf("  %s\n", map.get(i).asString().c_str());
@@ -70,13 +81,23 @@ public:
       if (player!=NULL) {
 	Bottle& location = player->findGroup("location");
 	Value& life = player->find("life");
-	printf("PLAYER %s is at (%d,%d) with lifeforce %d\n", 
-	       player->get(0).asString().c_str(), 
-	       location.get(1).asInt(),
-	       location.get(2).asInt(),
-	       life.asInt());
-      }
-    }
+	char buf[256];
+	ConstString playerName = player->get(0).asString();
+	if (strlen(playerName.c_str())<40) {
+		ACE_OS::sprintf(buf,"PLAYER %s is at (%d,%d) with lifeforce %d", 
+			playerName.c_str(), 
+			location.get(1).asInt(),
+			location.get(2).asInt(),
+			life.asInt());
+		printf("%s\n", pad(String(buf)).c_str());
+	}
+	  }
+	}
+	for (int j=players.size(); j<=5; j++) {
+		  printf("%s\n", pad(String("")).c_str());
+	}
+    
+    mutex.post();
   }
 
   void apply(const String& str) {
@@ -110,8 +131,10 @@ public:
     // there are occasional messages broadcast from the game to us
     Network::connect("/game",p.getName(),"mcast");
 
+	clrscr();
+    autorefresh();
+
     while (!isStopping()) {
-      autorefresh();
       Time::delay(0.25);
       show();
     }
