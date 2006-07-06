@@ -103,7 +103,7 @@ public:
  * - control_p receiving a stream of control commands (e.g. position)
  * 
  * Missing: return values on RPC commands
- *          complete get/set commands for position control
+ *
  *          complete get/set commands for velocity control
  *          torque control, NOT IMPLEMENTED
  *          calibration, tentative implementation, to be integrated

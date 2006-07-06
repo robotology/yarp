@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.19 2006-07-05 17:26:44 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.20 2006-07-06 21:18:49 babybot Exp $
 ///
 ///
 
@@ -1297,7 +1297,9 @@ bool EsdMotionControl::setRefSpeedRaw(int axis, double sp)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
 	_ref_speeds[axis] = sp;
-	return true;
+    const short s = S_16(_ref_speeds[axis]);
+
+	return _writeWord16(CAN_SET_DESIRED_VELOCITY, axis, s);
 }
 
 bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
@@ -1306,7 +1308,11 @@ bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
+    {
 		_ref_speeds[i] = spds[i];
+		if (!_writeWord16 (CAN_SET_DESIRED_VELOCITY, i, S_16(_ref_speeds[i])))
+			return false;
+    }
 
 	return true;
 }
