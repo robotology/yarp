@@ -237,9 +237,9 @@ int Companion::sendMessage(const String& port, Writable& writable,
         Bottle b;
         b.read(con);
         b.read(con);
-        //if (!quiet) {
-            ACE_OS::fprintf(stderr,"[[[%s]]]\n", b.toString().c_str());
-            //}
+        if (!quiet) {
+            //ACE_OS::fprintf(stderr,"[[[%s]]]\n", b.toString().c_str());
+        }
         ip.endRead();
         out->close();
     } catch (IOException e) {
