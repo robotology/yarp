@@ -1,0 +1,140 @@
+
+=== NOVA ============================================================
+
+Nova is a maze game.
+
+It is accessible via telnet or YARP.
+Here we describe how to use the game via telnet.
+
+First, you need to know where the game is running and how
+to reach it.  You need the name/IP of the server the game 
+is on, and the socket number it listens to.
+
+Either ask someone or, if you have YARP, run:
+  yarp name query /game
+This will give a response like this:
+  registration name /game ip 160.151.14.122 port 8080 type tcp
+  *** end of message
+
+You can then reach the game by typing:
+  telnet 160.151.14.122 8080
+
+
+=== login ===========================================================
+
+The very first thing the client must do is send:
+  CONNECT name
+
+Server responds with:
+  Welcome name
+
+Note that there is no password, authentication, or sanity checking.
+This is a toy game :-).  Please don't use names with any unusual
+characters, or whitespace.
+
+
+=== logout ==========================================================
+
+Client sends:
+  q
+
+Server responds by removing player from game and dropping connection.
+
+
+=== gameplay ========================================================
+
+To actually do anything in the game, the client sends:
+  d
+
+The server then waits for a game command.
+Game commands include:
+  look
+  go left/right/up/down
+  fire left/right/up/down
+  say message...
+
+----------
+-- look --
+----------
+
+To see a local view of the game map, the client sends:
+  d
+  look
+
+The server responds with something like:
+look
+(look
+  (map
+    ":::::::::::::::::::::::"
+    ":#          O         :"
+    ":#####   #   #####    :"
+    ":#       #       #    :"
+    ":#   ######  #   #### :"
+    ":#               #    :"
+    ":##########Q #####    :"
+    ":#       #            :"
+    ":#   #   #   ######## :"
+    ":#   #       #        :"
+    ":#   ##               :"
+    ":#                    :"
+    ":::::::::::::::::::::::")
+  (players
+    (bozo (location 10 16) (life 6))
+    (madmoody (location 11 11) (life 6))
+))
+
+There are two parts to this response.  The first is the map,
+which give a summary of what is around the player,
+using a set of characters with the following meanings:
+  :  -- edge of map
+  #  -- immovable obstacle
+  Q  -- the player, when alive
+  0  -- other players when alive
+  %  -- the player, when dead
+  *  -- other players, when dead
+  =  -- traces the path where someone fired; visible for a short time
+
+The second part is a list of the visible players.  The first player
+listed is always the player who issued the look command.  Locations
+are given in global coordinates.
+
+----------
+--  go  --
+----------
+
+To move around map, the client sends:
+  d
+  go left (or: go right / go up / go down)
+
+The server responds with
+  ack [move] "move requested"
+and will implement the move on the next game simulation step.
+The change in location will be visible in the map returned by "look".
+
+----------
+-- fire --
+----------
+
+To fire at another player, the client sends
+  d
+  fire left (or: go right / go up / go down)
+
+The server responds with
+  ack [fire] "fire requested"
+and will implement the firing operation on the next game
+simulation step.  If another player is close and in the
+line of fire, their "life" count will be reduced by one.
+
+----------
+-- say  --
+----------
+
+The game has a broadcast channel.  To send to this channel,
+the client sends:
+  d
+  say the-message-text
+
+The server responds with
+  broadcast username the-message-text
+The same response will be placed on the broadcast channel.
+
