@@ -41,6 +41,7 @@ if [ -e failure.txt ]; then
 else
     touch build-source.txt
     cat conf/build.txt | grep SOURCE | tee build-source-new.txt
+    rm -rf debian-package
     cmp build-source-new.txt build-source.txt || (
         # update packages
 	./scripts/make-source-package
