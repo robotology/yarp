@@ -79,6 +79,7 @@ public:
         String from = proto.getRoute().getFromName();
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
+        proto.os().write('\r');
         proto.os().write('\n');
         proto.os().flush();
     }
@@ -103,7 +104,7 @@ public:
 
     void sendAck(Protocol& proto) {
         if (ackVariant) {
-            String from = "<ACK>\n";
+            String from = "<ACK>\r\n";
             Bytes b2((char*)from.c_str(),from.length());
             proto.os().write(b2);
             proto.os().flush();
@@ -120,7 +121,7 @@ public:
     void respondToHeader(Protocol& proto) {
         String from = "Welcome ";
         from += proto.getRoute().getFromName();
-        from += '\n';
+        from += "\r\n";
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();

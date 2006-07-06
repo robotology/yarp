@@ -41,12 +41,12 @@ public:
 
             p1.open(Route("/out","/in","text"));
       
-            checkEqual(fake1->getOutputText(),"CONNECT /out\n",
+            checkEqual(fake1->getOutputText(),"CONNECT /out\r\n",
                        "text carrier header");
 
             p2.open("/in");
 
-            checkEqual(fake2->getOutputText(),"Welcome /out\n",
+            checkEqual(fake2->getOutputText(),"Welcome /out\r\n",
                        "text carrier response");
 
             BufferedConnectionWriter writer;
@@ -54,7 +54,7 @@ public:
             writer.appendLine("0 \"Hello\"");
             p1.write(writer);
       
-            const char *expect = "CONNECT /out\nd\n0 \"Hello\"\n";
+            const char *expect = "CONNECT /out\r\nd\r\n0 \"Hello\"\r\n";
             checkEqual(fake1->getOutputText(),expect,
                        "added a bottle");
 

@@ -77,7 +77,8 @@ public:
 
     virtual void appendLine(const String& data) {
         String copy = data;
-        copy += '\n';
+        copy += "\r\n"; // better windows support
+        //copy += '\n';
         Bytes b((char*)(copy.c_str()),copy.length());
         ManagedBytes *buf = new ManagedBytes(b,false);
         buf->copy();

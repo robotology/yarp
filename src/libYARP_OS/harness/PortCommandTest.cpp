@@ -18,12 +18,12 @@ public:
         PortCommand cmd1('d',"");;
         BufferedConnectionWriter bw(true);
         cmd1.writeBlock(bw);
-        checkEqual(humanize(bw.toString()),"d\\n","basic data command");
+        checkEqual(humanize(bw.toString()),"d\\r\\n","basic data command");
     
         PortCommand cmd2('\0',"/bozo");;
         BufferedConnectionWriter bw2(true);
         cmd2.writeBlock(bw2);
-        checkEqual(humanize(bw2.toString()),"/bozo\\n","connect command");
+        checkEqual(humanize(bw2.toString()),"/bozo\\r\\n","connect command");
     }
 
     void testTextReading() {
@@ -32,7 +32,7 @@ public:
         PortCommand cmd;
         StringInputStream sis;
         StreamConnectionReader br;
-        sis.add("d\n");
+        sis.add("d\r\n");
         Route route;
         br.reset(sis,NULL,route,sis.toString().length(),true);
         cmd.readBlock(br);

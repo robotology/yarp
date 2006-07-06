@@ -201,6 +201,8 @@ String UnitTest::humanize(const String& txt) {
         char ch = txt[i];
         if (ch == '\n') {
             result += "\\n";
+        } else if (ch == '\r') {
+            result += "\\r";
         } else if (ch == '\0') {
             result += "\\0";
         } else {

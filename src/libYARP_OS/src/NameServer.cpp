@@ -533,19 +533,17 @@ public:
                 //os->flush();
                 //os->close();
 
-                /*
                 // This change is just to make Microsoft Telnet happy
                 String tmp;
-                for (int i=0; i<result.length(); i++) {
-                if (result[i]=='\n') {
-                tmp += '\r';
-                }
-                tmp += result[i];
+                for (unsigned int i=0; i<result.length(); i++) {
+                    if (result[i]=='\n') {
+                        tmp += '\r';
+                    }
+                    tmp += result[i];
                 }
                 tmp += '\r';
                 os->appendString(tmp.c_str(),'\n');
-                */
-                os->appendString(result.c_str(),'\n');
+                //os->appendString(result.c_str(),'\n');
 	
                 YARP_DEBUG(Logger::get(),String("name server reply is ") + result);
                 String resultSparse = result;

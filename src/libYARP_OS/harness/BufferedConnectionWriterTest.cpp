@@ -18,7 +18,7 @@ public:
         bbr.appendLine("Hello");
         bbr.appendLine("Greetings");
         bbr.write(sos);
-        checkEqual(sos.toString(),"Hello\nGreetings\n","two line writes");
+        checkEqual(sos.toString(),"Hello\r\nGreetings\r\n","two line writes");
     }
 
     virtual void runTests() {
