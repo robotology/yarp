@@ -76,6 +76,8 @@ public:
   }
 
   void show() {
+	  int xx = 0;
+	  int yy = 1;
     mutex.wait();
     Bottle send("look");
     Property prop;
@@ -86,8 +88,9 @@ public:
     String prep = getPreparation().c_str();
     if (prep.length()>0) {
       long int t = (long int)Time::now();
+	  xx = prep.length();
       if (t%2==0) {
-	prep = prep + "_";
+	prep = prep + "*";
       }
     }
     cprintf("%s\n%s\n%s\n", 
@@ -121,7 +124,7 @@ public:
 		  cprintf("%s\n", pad(String("")).c_str());
 	}
     
-    gotoxy(0,0);
+    gotoxy(xx,yy);
     mutex.post();
   }
 

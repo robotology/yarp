@@ -103,6 +103,7 @@ String getCommand() {
     mode = 0;
     break;
   case 127:
+  case 8:
     if (mode==0) {
       msg = msg.substr(0,msg.length()-1);
       mode = 0;
@@ -112,7 +113,9 @@ String getCommand() {
     //cprintf("KEY is %d\n", key);
     if (mode==0) {
       mutex.wait();
-      msg += ((char)key);
+	  if (key>=32 && key<=126) {
+		msg += ((char)key);
+	  }
       mutex.post();
     }
     mode = 0;
