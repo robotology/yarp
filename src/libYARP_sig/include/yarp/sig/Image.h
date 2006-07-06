@@ -340,6 +340,10 @@ public:
         return *((T *)(getPixelAddress(x,y)));
     }
 
+    inline T& operator()(int x, int y) {
+        return pixel(x,y);
+    }
+
     inline T& safePixel(int x, int y) {
         if (!isPixel(x,y)) { return nullPixel; }
         return *((T *)(getPixelAddress(x,y)));
@@ -367,6 +371,10 @@ public: \
 \
   inline T& pixel(int x, int y) { \
     return *((T *)(getPixelAddress(x,y))); \
+  } \
+\
+  inline T& operator()(int x, int y) { \
+    return pixel(x,y); \
   } \
 \
   inline T& safePixel(int x, int y) { \
