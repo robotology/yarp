@@ -75,7 +75,7 @@ public:
 
     static int write(const char *name, int ntargets, char *targets[]);
 
-    static int rpc(const char *name);
+    static int rpc(const char *connectionName, const char *targetName);
 
     static String slashify(const String& src) {
         if (src.length()>0) {

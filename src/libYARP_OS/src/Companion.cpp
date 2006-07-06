@@ -304,14 +304,19 @@ int Companion::cmdWrite(int argc, char *argv[]) {
 
 
 int Companion::cmdRpc(int argc, char *argv[]) {
-    if (argc!=1) {
+    if (argc<1) {
         ACE_OS::fprintf(stderr, "Please supply remote port name\n");
+        ACE_OS::fprintf(stderr, "(and, optionally, a name for this connection)\n");
         return 1;
     }
 
-    const char *src = argv[0];
+    const char *dest = argv[0];
+    const char *src = "anon_rpc";
+    if (argc>1) {
+        src = argv[1];
+    }
 
-    return rpc(src);
+    return rpc(src,dest);
 }
 
 
@@ -588,10 +593,10 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 
 
 
-int Companion::rpc(const char *name) {
+int Companion::rpc(const char *connectionName, const char *targetName) {
     try {
         NameClient& nic = NameClient::getNameClient();
-        Address address = nic.queryName(name);
+        Address address = nic.queryName(targetName);
         if (!address.isValid()) {
             YARP_ERROR(Logger::get(),"could not find port");
             return 1;
@@ -601,9 +606,10 @@ int Companion::rpc(const char *name) {
         if (out==NULL) {
             throw IOException("cannot connect to port");
         }
-        printf("RPC connection to %s at %s\n", name, 
-               address.toString().c_str());
-        Route r("anon-rpc",name,"text_ack");
+        printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
+               address.toString().c_str(),
+               connectionName);
+        Route r(connectionName,targetName,"text_ack");
         out->open(r);
         OutputStream& os = out->getOutputStream();
         InputStream& is = out->getInputStream();

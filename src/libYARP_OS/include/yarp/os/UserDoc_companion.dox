@@ -185,11 +185,13 @@ then everything you type on the "write" terminal will be echoed on the
 
 \verbatim
 yarp rpc TARGET_PORT
+yarp rpc TARGET_PORT CONNECTION_NAME
 \endverbatim
 
 This will send a message to the target port and expect a response.
 Useful only if you have a port that actually will respond.  Ports
-associated with devices may behave like this.  "RPC" stands for Remote
+associated with devices may behave like this.  You may optionally
+specify the name for the connection.  "RPC" stands for Remote
 Procedure Call.
 
 
