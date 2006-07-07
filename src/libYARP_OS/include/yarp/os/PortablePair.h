@@ -34,6 +34,10 @@ public:
      * @return true iff the object pair was successfully read
      */
     virtual bool read(ConnectionReader& connection) {
+        // if someone connects in text mode, use standard
+        // text-to-binary mapping
+        connection.convertTextMode();
+
         int header = connection.expectInt();
         if (header!=BOTTLE_TAG_LIST) { return false; }
         int len = connection.expectInt();
@@ -58,6 +62,13 @@ public:
         if (ok) {
             ok = body.write(connection);
         }
+
+        if (ok) {
+            // if someone connects in text mode,
+            // let them see something readable.
+            connection.convertTextMode();
+        }
+
         return ok;
     }
 
