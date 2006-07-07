@@ -6,3 +6,6 @@ SOURCE Wed Jul  5 16:06:50 CEST 2006
 DEBIAN Wed Jul  5 16:25:50 CEST 2006
 SOURCE Wed Jul  5 16:25:50 CEST 2006
 SOURCE Thurs July 6 (cr/lf improvement)
+SOURCE Fri July 7 (standard net protocol)
+DEBIAN Fri July 7 (standard net protocol)
+DOC Fri July 7 (change to read/readStrict stuff)
