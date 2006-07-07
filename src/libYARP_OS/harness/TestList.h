@@ -31,6 +31,7 @@ extern yarp::UnitTest& getBinPortableTest();
 extern yarp::UnitTest& getPropertyTest();
 extern yarp::UnitTest& getVocabTest();
 extern yarp::UnitTest& getValueTest();
+extern yarp::UnitTest& getPortablePairTest();
 
 class yarp::TestList {
 public:
@@ -57,6 +58,7 @@ public:
         root.add(getPropertyTest());
         root.add(getVocabTest());
         root.add(getValueTest());
+        root.add(getPortablePairTest());
     }
 };
 

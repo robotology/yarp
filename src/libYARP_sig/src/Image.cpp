@@ -685,7 +685,7 @@ public:
     */
 
     // YARP2 codes
-    yarp::os::NetInt32 totalLen;
+    //yarp::os::NetInt32 totalLen; // not included any more - redundant
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
     yarp::os::NetInt32 paramNameTag;
@@ -792,8 +792,8 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.ext2 = 0;
     */
 
-    header.totalLen = (sizeof(header)-sizeof(yarp::os::NetInt32))+
-        getRawImageSize();
+    //header.totalLen = (sizeof(header)-sizeof(yarp::os::NetInt32))+
+    //getRawImageSize();
     header.listTag = BOTTLE_TAG_LIST;
     header.listLen = 4;
     header.paramNameTag = BOTTLE_TAG_VOCAB;

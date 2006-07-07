@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.2 2006-06-20 16:49:09 eshuy Exp $
+// $Id: Vector.cpp,v 1.3 2006-07-07 09:18:03 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -33,7 +33,7 @@ Vector::Vector (size_t size, const double& default_value) : ACE_Array<double>(si
 class YARPVectorPortContentHeader
 {
 public:
-    yarp::os::NetInt32 totalLen;
+    //yarp::os::NetInt32 totalLen; // not included any more - redundant
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 } PACKED_FOR_NET;
@@ -68,7 +68,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
 bool Vector::write(yarp::os::ConnectionWriter& connection) {
     YARPVectorPortContentHeader header;
 
-    header.totalLen = sizeof(header)+sizeof(double)*this->size();
+    //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
     header.listLen = this->size();
 

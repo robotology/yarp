@@ -191,6 +191,7 @@ public:
         Port input, output;
         input.open("/in");
         output.open("/out");
+        buf.setStrict();
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));

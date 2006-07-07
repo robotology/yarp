@@ -252,14 +252,13 @@ public:
         BufferedConnectionWriter writer;
         bot.write(writer);
         String s = writer.toString();
-        checkEqual(s.length(),sizeof(NetInt32)*(1+1+1+bot.size()),
-                   "exact number of integers, plus bytes/type/count");
+        checkEqual(s.length(),sizeof(NetInt32)*(1+1+bot.size()),
+                   "exact number of integers, plus type/count");
 
         Bottle bot2("[go] (10 20 30 40)");
         writer.clear();
         bot2.write(writer);
         s = writer.toString();
-        // 1 for message size
         // 1 for (outer) list code
         // 1 for list length
         // 1 for vocab code
@@ -267,7 +266,7 @@ public:
         // 1 for (inner) list code
         // 1 for (inner) list length
         // 4 for integers in list
-        checkEqual(s.length(),sizeof(NetInt32)*(11),
+        checkEqual(s.length(),sizeof(NetInt32)*(10),
                    "nested example");
     }
 

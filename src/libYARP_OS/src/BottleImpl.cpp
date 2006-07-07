@@ -358,12 +358,14 @@ bool BottleImpl::write(ConnectionWriter& writer) {
                 writer.appendString(name.c_str(),'\0');
             }
 #endif
+            synch();
             if (!nested) {
-                YMSG(("bottle byte count %d\n",byteCount()));
-                writer.appendInt(byteCount()+sizeof(NetInt32));
+                // No byte count any more, to facilitate nesting
+                //YMSG(("bottle byte count %d\n",byteCount()));
+                //writer.appendInt(byteCount()+sizeof(NetInt32));
+
                 writer.appendInt(StoreList::code + speciality);
             }
-            synch();
             //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
             writer.appendBlock((char*)getBytes(),byteCount());
         }
@@ -407,7 +409,9 @@ bool BottleImpl::read(ConnectionReader& reader) {
             }
 #endif
             if (!nested) {
-                reader.expectInt(); // the bottle byte ct; ignored
+                // no byte length any more to facilitate nesting
+                //reader.expectInt(); // the bottle byte ct; ignored
+
                 int code = reader.expectInt();
                 code = code & UNIT_MASK;
                 if (code!=0) {

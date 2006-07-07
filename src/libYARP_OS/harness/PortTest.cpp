@@ -189,6 +189,7 @@ public:
         input.open("/in");
         output.open("/out");
 
+        buf.setStrict();
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
@@ -232,6 +233,7 @@ public:
         input.open("/in");
         output.open("/out");
 
+        buf.setStrict();
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("udp"));
@@ -275,6 +277,7 @@ public:
         input.open("/in");
         output.open("/out");
 
+        buf.setStrict();
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("udp"));
@@ -315,6 +318,7 @@ public:
         input.open("/in");
         output.open("/out");
 
+        buf.setStrict();
         buf.attach(input);
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
@@ -516,6 +520,7 @@ public:
         in.open("/in");
         Network::connect("/out","/in");
         PortReaderBuffer<Bottle> reader;
+        reader.setStrict();
         reader.attach(in);
         reader.useCallback(callback);
         Bottle src("10 10 20");
@@ -531,6 +536,7 @@ public:
         BufferedPort<Bottle> in;
         Port out;
         DelegatedCallback callback;
+        in.setStrict();
         out.open("/out");
         in.open("/in");
         Network::connect("/out","/in");

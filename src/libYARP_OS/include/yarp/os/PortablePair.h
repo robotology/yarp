@@ -3,6 +3,7 @@
 #define _YARP2_PORTABLEPAIR_
 
 #include <yarp/os/Portable.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
@@ -33,6 +34,11 @@ public:
      * @return true iff the object pair was successfully read
      */
     virtual bool read(ConnectionReader& connection) {
+        int header = connection.expectInt();
+        if (header!=BOTTLE_TAG_LIST) { return false; }
+        int len = connection.expectInt();
+        if (len!=2) { return false; }
+
         bool ok = head.read(connection);
         if (ok) {
             ok = body.read(connection);
@@ -46,6 +52,8 @@ public:
      * @return true iff the object pair was successfully written
      */
     virtual bool write(ConnectionWriter& connection) {
+        connection.appendInt(BOTTLE_TAG_LIST); // nested structure
+        connection.appendInt(2);               // with two elements
         bool ok = head.write(connection);
         if (ok) {
             ok = body.write(connection);
