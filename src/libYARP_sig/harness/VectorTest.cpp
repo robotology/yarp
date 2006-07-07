@@ -35,8 +35,17 @@ public:
     }
   }
 
+  void checkCopy() {
+    report(0,"check vectors copy works...");
+    Vector v(4,7.0);
+    Vector v2;
+    v2 = v;
+    checkEqual(v.size(),v2.size(),"size matches");
+  }
+
   virtual void runTests() {
     checkFormat();
+    checkCopy();
   }
 };
 

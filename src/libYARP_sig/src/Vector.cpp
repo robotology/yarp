@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.3 2006-07-07 09:18:03 eshuy Exp $
+// $Id: Vector.cpp,v 1.4 2006-07-07 10:08:53 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -22,7 +22,14 @@ using namespace yarp::sig;
 Vector::Vector() : ACE_Array<double>() {}
 Vector::Vector(const Vector& x) : ACE_Array<double>((ACE_Array<double>&)x) {}
 Vector::~Vector() {}
-Vector& Vector::operator=(const Vector& x) { ACE_Array<double>::operator=((ACE_Array<double>&)x); return *this; }
+
+Vector& Vector::operator=(const Vector& x) { 
+    //ACE_Array<double>::operator=((ACE_Array<double>&)x); // buggy!
+    //ACE_Array<double>::operator=(*((ACE_Array<double>*)&x)); // non-buggy
+    ACE_Array<double>::operator=(x); // simpler
+    return *this; 
+}
+
 Vector::Vector (size_t size) : ACE_Array<double>(size) {}
 Vector::Vector (size_t size, const double& default_value) : ACE_Array<double>(size, default_value) {}
 
