@@ -143,9 +143,13 @@ public:
      */
     bool isValid() const;
 
-private:
-
+    /**
+     * Constructor.  Makes an empty contact.
+     */
     Contact();
+
+
+private:
 
 
     void *implementation;
