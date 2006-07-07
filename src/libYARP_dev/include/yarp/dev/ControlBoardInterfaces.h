@@ -1274,6 +1274,7 @@ public:
 #define VOCAB_SET VOCAB3('s','e','t')
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
+#define VOCAB_FAILED VOCAB4('f','a','i','l')
 
 // interface IPidControl sets.
 #define VOCAB_PID VOCAB3('p','i','d')
@@ -1311,6 +1312,11 @@ public:
 #define VOCAB_REF_ACCELERATIONS VOCAB4('a','c','c','s')
 #define VOCAB_STOP VOCAB3('s','t','o')
 #define VOCAB_STOPS VOCAB4('s','t','o','s')
+
+// interface IVelocityControl sets
+#define VOCAB_VELOCITY_MODE VOCAB4('v','e','l','d')
+#define VOCAB_VELOCITY_MOVE VOCAB3('v','m','o')
+#define VOCAB_VELOCITY_MOVES VOCAB4('v','m','o','s')
 
 // interface IEncoders sets
 #define VOCAB_E_RESET VOCAB3('e','r','e')
