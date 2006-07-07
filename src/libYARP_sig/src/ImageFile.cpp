@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.11 2006-07-07 15:52:15 orfra Exp $
+/// $Id: ImageFile.cpp,v 1.12 2006-07-07 16:44:23 orfra Exp $
 ///
 ///
 
@@ -189,7 +189,10 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
             num += ACE_OS::fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
-    return true;
+    
+	ACE_OS::fclose(fp);
+
+	return true;
 }
 
 static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
@@ -233,6 +236,8 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
             dst += pad;
         }
 
+	ACE_OS::fclose(fp);
+	
 	return img.copy(tmpImg);
 }
 
