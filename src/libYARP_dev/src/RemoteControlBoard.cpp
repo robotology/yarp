@@ -1053,9 +1053,12 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         bool ok = rpc_p.write(cmd, response);
-        // response should be [cmd] [name] value
-        v = response.get(2).asDouble();
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            // response should be [cmd] [name] value
+            v = response.get(2).asDouble();
+            return true;
+        }
+        return false;
     }
 
     bool getCommand(int code, int& v) const {
@@ -1063,9 +1066,12 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         bool ok = rpc_p.write(cmd, response);
-        // response should be [cmd] [name] value
-        v = response.get(2).asInt();
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            // response should be [cmd] [name] value
+            v = response.get(2).asInt();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -1116,8 +1122,13 @@ protected:
         cmd.addVocab(v);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
-        *val = response.get(2).asDouble();
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            // ok
+            *val = response.get(2).asDouble();
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -1131,13 +1142,20 @@ protected:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
         bool ok = rpc_p.write(cmd, response);
-        int i;
-        Bottle& l = *(response.get(2).asList());
-        int njs = l.size();
-        ACE_ASSERT (nj == njs);
-        for (i = 0; i < nj; i++)
-            val[i] = l.get(i).asDouble();
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+
+            int njs = l.size();
+            ACE_ASSERT (nj == njs);
+            for (i = 0; i < nj; i++)
+                val[i] = l.get(i).asDouble();
+            return true;
+        }
+
+        return false;
     }
 
 public:
@@ -1348,15 +1366,20 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
-        Bottle& l = *(response.get(2).asList());
-        pid->kp = l.get(0).asDouble();
-        pid->kd = l.get(1).asDouble();
-        pid->ki = l.get(2).asDouble();
-        pid->max_int = l.get(3).asDouble();
-        pid->max_output = l.get(4).asDouble();
-        pid->offset = l.get(5).asDouble();
-        pid->scale = l.get(6).asDouble();
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            pid->kp = l.get(0).asDouble();
+            pid->kd = l.get(1).asDouble();
+            pid->ki = l.get(2).asDouble();
+            pid->max_int = l.get(3).asDouble();
+            pid->max_output = l.get(4).asDouble();
+            pid->offset = l.get(5).asDouble();
+            pid->scale = l.get(6).asDouble();
+            return true;
+        }
+        return false;
     }
 
     /** 
@@ -1369,22 +1392,29 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PIDS);
         bool ok = rpc_p.write(cmd, response);
-        int i;
-        Bottle& l = *(response.get(2).asList());
-        const int njs = l.size();
-        ACE_ASSERT (njs == nj);
-        for (i = 0; i < nj; i++)
-        {
-            Bottle& m = *(l.get(i).asList());
-            pids->kp = m.get(0).asDouble();
-            pids->kd = m.get(1).asDouble();
-            pids->ki = m.get(2).asDouble();
-            pids->max_int = m.get(3).asDouble();
-            pids->max_output = m.get(4).asDouble();
-            pids->offset = m.get(5).asDouble();
-            pids->scale = m.get(6).asDouble();
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            const int njs = l.size();
+            ACE_ASSERT (njs == nj);
+            for (i = 0; i < nj; i++)
+            {
+                Bottle& m = *(l.get(i).asList());
+                if (&m == 0)
+                    return false;
+                pids->kp = m.get(0).asDouble();
+                pids->kd = m.get(1).asDouble();
+                pids->ki = m.get(2).asDouble();
+                pids->max_int = m.get(3).asDouble();
+                pids->max_output = m.get(4).asDouble();
+                pids->offset = m.get(5).asDouble();
+                pids->scale = m.get(6).asDouble();
+            }
+            return true;
         }
-        return CHECK_FAIL(ok, response);
+        return false;
     }
 
     /** 
@@ -1463,7 +1493,7 @@ public:
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_ENABLE);
         cmd.addInt(j);
-        bool ok = rpc_p.write(cmd);
+        bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
 
@@ -1654,8 +1684,11 @@ public:
         cmd.addVocab(VOCAB_MOTION_DONE);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
-        *flag = (bool)(response.get(2).asInt());
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            *flag = (bool)(response.get(2).asInt());
+            return true;
+        }
+        return false;
     }
 
     /** Check if the current trajectory is terminated. Non blocking.
@@ -1666,13 +1699,18 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_MOTION_DONES);
         bool ok = rpc_p.write(cmd, response);
-        int i;
-        Bottle& l = *(response.get(2).asList());
-        int njs = l.size();
-        ACE_ASSERT (nj == njs);
-        for (i = 0; i < nj; i++)
-            flag[i] = (bool)(l.get(i).asInt());
-        return CHECK_FAIL(ok, response);
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            int njs = l.size();
+            ACE_ASSERT (nj == njs);
+            for (i = 0; i < nj; i++)
+                flag[i] = (bool)(l.get(i).asInt());
+            return true;
+        }
+        return false;
     }
 
     /** 
@@ -1892,8 +1930,11 @@ public:
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_AMP_STATUS);
         bool ok = rpc_p.write(cmd, response);
-        *st = response.get(2).asInt();
-        return CHECK_FAIL(ok, response);        
+        if (CHECK_FAIL(ok, response)) {
+            *st = response.get(2).asInt();
+            return true;
+        }
+        return false;        
     }
 
     /* IControlLimits */
@@ -1930,9 +1971,12 @@ public:
         cmd.addVocab(VOCAB_LIMITS);
         cmd.addInt(axis);
         bool ok = rpc_p.write(cmd, response);
-        *min = response.get(2).asDouble();
-        *max = response.get(3).asDouble();
-        return CHECK_FAIL(ok, response);        
+        if (CHECK_FAIL(ok, response)) {
+            *min = response.get(2).asDouble();
+            *max = response.get(3).asDouble();
+            return true;
+        }
+        return false;
     }
 };
 
@@ -2483,15 +2527,17 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ACE_OS::printf("received an unknown request after a VOCAB_GET\n");
                 break;
             }
-
-            if (!ok) {
-                // failed thus send only a VOCAB back.
-                response.clear();
-                response.addVocab(VOCAB_FAILED);
-            }
         }
         break;
     }
+
+    if (!ok) {
+        // failed thus send only a VOCAB back.
+        response.clear();
+        response.addVocab(VOCAB_FAILED);
+    }
+    else
+        response.addVocab(VOCAB_OK);
 
     if (response.size() >= 1) {
         ConnectionWriter *writer = connection.getWriter();

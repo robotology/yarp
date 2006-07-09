@@ -207,7 +207,7 @@ bool Port::write(PortWriter& writer) {
         writer.onCompletion();
         // leave result false
     }
-    return false;
+    return result;
 }
 
 /**
@@ -224,7 +224,7 @@ bool Port::write(PortWriter& writer, PortReader& reader) const {
         writer.onCompletion();
         // leave result false
     }
-    return false;
+    return result;
 }
 
 /**

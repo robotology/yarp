@@ -1275,6 +1275,7 @@ public:
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
 #define VOCAB_FAILED VOCAB4('f','a','i','l')
+#define VOCAB_OK VOCAB2('o','k')
 
 // interface IPidControl sets.
 #define VOCAB_PID VOCAB3('p','i','d')
