@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.16 2006-07-04 16:41:53 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.17 2006-07-11 13:14:04 babybot Exp $
 ///
 ///
 
@@ -135,7 +135,7 @@ public:
     virtual bool open(yarp::os::Searchable& config) {
         DragonflyOpenParameters params;
 		yarp::os::Value *value;
-		if (config.check("unit_number",value)) {
+		if (config.check("unit_number",value)||config.check("d",value)) {
 			params._unit_number = value->asInt();
 		}
 		if (config.check("size_x",value)||config.check("width",value)){
