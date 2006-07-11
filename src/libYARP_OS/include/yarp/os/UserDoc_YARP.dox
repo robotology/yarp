@@ -4,11 +4,16 @@
 
 @page install_yarp Getting and compiling YARP
 
-YARP can currently only be installed from CVS. Follow the instructions at:
-* http://sourceforge.net/cvs/?group_id=62418
+YARP can be downloaded from:
+
+- http://yarp0.sourceforge.net/
+
+or installed from CVS by following the instructions at:
+
+- http://sourceforge.net/cvs/?group_id=62418
+
 with modulename "yarp2" to get the code.  You can compile it with CMake.  
-Documentation is built periodically at:
-* http://yarp0.sourceforge.net/specs/dox/
+Documentation is built periodically on the website.
 
 Here's a summary of the commands needed if you have command-line cvs:
 

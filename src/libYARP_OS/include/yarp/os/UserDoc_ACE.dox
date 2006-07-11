@@ -18,8 +18,8 @@ details so you don't have to.
 
 
 \li Download ACE here: http://deuce.doc.wustl.edu/Download.html
-\li For Windows, we suggest: http://deuce.doc.wustl.edu/ACE.zip
-\li For all others, we suggest: http://deuce.doc.wustl.edu/ACE.tar.gz
+\li For Windows, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.zip
+\li For all others, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.tar.gz
 \li (and for Debian Linux, we suggest: "apt-get install libace-dev") 
 
 Compile ACE using our summary instructions, below, or through the 
@@ -42,12 +42,12 @@ ACE will take a while to compile, but if you can do it you'll be able to deal wi
 If you are on a system with a binary ACE package (Debian, Redhat,
 ... -- it is usually called libace-dev or libace-devel), then you can
 just install that and you are done. Otherwise you need to download
-ACE.tar.gz as described above and follow these steps:
+ACE-5.5.tar.gz as described above and follow these steps:
 
-    \li Let's suppose you have placed ACE.tar.gz in the directory $HOME/work/. Then, in this directory, type: 
+    \li Let's suppose you have placed ACE-5.5.tar.gz in the directory $HOME/work/. Then, in this directory, type: 
 
 \code
- tar xzvf - < ACE.tar.gz
+ tar xzvf - < ACE-5.5.tar.gz
 \endcode
 
     \li You should now have a subdirectory called "ACE_wrappers". Type one (or if you're not sure which, type both) of: 
@@ -102,7 +102,7 @@ http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#win32
 \endcode
 
 For Visual Studio, here's a brief summary of the steps.
-  \li Get ACE.zip as described above.
+  \li Get ACE-5.5.zip as described above.
   \li Unpack its contents to a directory. Find the directory "ACE_wrappers" in the unpacked material.
   \li In the "ACE_wrappers\ace" directory, create a file called "config.h" and edit it to be just this: 
 
