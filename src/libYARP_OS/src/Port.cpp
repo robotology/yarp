@@ -148,6 +148,11 @@ bool Port::open(const Contact& contact, bool registerName) {
             if (success) {
                 success = core.start();
             }
+            YARP_INFO(Logger::get(),
+                      String("Port ") +
+                      address.getRegName() +
+                      " listening at " +
+                      address.toString());
         }
     } catch (IOException e) {
         success = false;
