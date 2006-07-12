@@ -879,3 +879,45 @@ void Image::setExternal(void *data, int imgWidth, int imgHeight) {
 }
 
 
+bool Image::copy(const Image& alt, int w, int h) {
+    if (&alt==this) {
+        FlexImage img;
+        img.copy(*this);
+        return copy(img,w,h);
+    }
+
+    if (getPixelCode()!=alt.getPixelCode()) {
+        FlexImage img;
+        img.setPixelCode(getPixelCode());
+        img.setPixelSize(getPixelSize());
+        img.setQuantum(getQuantum());
+        img.copy(alt);
+        return copy(img,w,h);
+    }
+
+    resize(w,h);
+    int d = getPixelSize();
+
+    int nw = w;
+    int nh = h;
+    w = alt.width();
+    h = alt.height();
+
+	float di = ((float)h)/nh;
+	float dj = ((float)w)/nw;
+
+	for (int i=0; i<nh; i++)
+	{
+		int i0 = (int)(di*i);
+		for (int j=0; j<nw; j++)
+		{
+			int j0 = (int)(dj*j);
+			ACE_OS::memcpy(getPixelAddress(j,i),
+                           alt.getPixelAddress(j0,i0),
+                           d);
+		}
+	}
+    return true;
+}
+
+

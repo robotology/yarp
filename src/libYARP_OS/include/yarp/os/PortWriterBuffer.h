@@ -92,8 +92,21 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
     /**
-     * Get a free buffer to prepare for writing.
-     * @return a free buffer.
+     * Access the object which will be transmitted by the next call to 
+     * PortWriterBuffer::write.
+     * The object can safely be modified by the user of this class, to
+     * prepare it.  Extra objects will be created or reused as 
+     * necessary depending on the state of communication with the
+     * output(s) of the port.
+     * @return the next object that will be written
+     */
+    T& prepare() {
+        return get();
+    }
+
+    /**
+     * A synonym of PortWriterBuffer::write.
+     * @return the next object that will be written
      */
     T& get() {
         PortWriterBufferAdaptor<T> *content = (PortWriterBufferAdaptor<T>*)getContent();  // guaranteed to be non-NULL

@@ -295,6 +295,35 @@ public:
     }
 
 
+    void testScale() {
+        report(0,"checking scaling...");
+        ImageOf<PixelRgb> img;
+        ImageOf<PixelMono> img2;
+        ImageOf<PixelRgb> img3;
+        img.resize(64,64);
+        img.zero();
+        for (int i=0; i<img.width()/2; i++) {
+            for (int j=0; j<img.height()/2; j++) {
+                img(i,j).r = 255;
+                img(i,j).g = 255;
+                img(i,j).b = 255;
+            }
+        }
+        img2.copy(img,32,32);
+        checkEqual(img2.width(),32,"dimension check");
+        checkEqual(img2(0,0),255,"logic check");
+        checkEqual(img2(img2.width()-2,0),0,"logic check");
+        checkEqual(img2(0,img2.height()-2),0,"logic check");
+        img3.copy(img,16,16);
+        checkEqual(img3.width(),16,"dimension check");
+        checkEqual(img3(0,0).r,255,"logic check");
+        checkEqual(img3(img3.width()-2,0).r,0,"logic check");
+        checkEqual(img3(0,img3.height()-2).r,0,"logic check");
+        img.copy(img3,4,4);
+        checkEqual(img.width(),4,"dimension check");
+    }
+
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -307,6 +336,7 @@ public:
         testZero();
         testStandard();
         testDraw();
+        testScale();
     }
 };
 

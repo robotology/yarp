@@ -65,6 +65,15 @@ public:
 
 
     /**
+     * Scaled copy.
+     * Clones the content of another image, and resizes in a fast but
+     * low-quality way.
+     * @param alt the image to clone
+     */
+    bool copy(const Image& alt, int w, int h);
+
+
+    /**
      * Gets width of image in pixels.
      * @return the width of the image in pixels (0 if no image present)
      */
