@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.17 2006-06-19 12:20:42 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.18 2006-07-12 09:39:28 babybot Exp $
 ///
 ///
 
@@ -218,24 +218,25 @@ inline bool DragonflyResources::_uninitialize (void)
 	FlyCaptureError   error = FLYCAPTURE_OK;
 
 	// Stop Acquisition
-	if (_acqStarted)
-        {
-            error = flycaptureStop(context);
-            if (error != FLYCAPTURE_OK)
-                return false;
-            _acqStarted = false;
-        }
-	// Destroy the context.
-	if (_validContext)
-        {
+	if (_acqStarted) {
+        error = flycaptureStop(context);
+        if (error != FLYCAPTURE_OK)
+            return false;
+        _acqStarted = false;
+
+		// Destroy the context only if properly started
+		// otherwise this might disturb another instance already running
+		if (_validContext) {
             error = flycaptureDestroyContext( context );
             if (error != FLYCAPTURE_OK)
                 return false;
             _validContext = false;
         }
+	}
+
 	// Deallocate buffers
 	_destroyBuffers();
-     
+	
 	return true;
 }
 
