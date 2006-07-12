@@ -8,6 +8,9 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Vocab.h>
+
+#define VOCAB_LINE VOCAB4('l','i','n','e')
 
 namespace yarp {
     namespace dev {
@@ -26,10 +29,13 @@ class yarp::dev::TestFrameGrabber : public DeviceDriver,
             public IFrameGrabberImage, public IFrameGrabberControls {
 private:
     int ct;
+    int bx, by;
     int w, h;
+    unsigned long rnd;
     double period, freq;
     double first;
     double prev;
+    int mode;
 
 public:
     /**
@@ -44,6 +50,7 @@ public:
         h = 128;
         first = 0;
         prev = 0;
+        rnd = 0;
     }
 
 
@@ -58,6 +65,7 @@ public:
      * <TR><TD> height/h </TD><TD> Height of image (default 128). </TD></TR>
      * <TR><TD> freq </TD><TD> Frequency in Hz to generate images (default 20Hz). </TD></TR>
      * <TR><TD> period </TD><TD> Inverse of freq - only set one of these. </TD></TR>
+     * <TR><TD> mode </TD><TD> Can be [ball] or [line] (default). </TD></TR>
      * </TABLE>
      *
      * @param config The options to use
@@ -79,7 +87,12 @@ public:
             period = val->asDouble();
             freq = 1/period;
         }
-        printf("Test grabber period %g / freq %g\n", period, freq);
+        mode = config.check("mode",yarp::os::Value(VOCAB_LINE,
+                                                   true)).asVocab();
+        printf("Test grabber period %g / freq %g, mode [%s]\n", period, freq,
+               yarp::os::Vocab::decode(mode).c_str());
+        bx = w/2;
+        by = h/2;
         return true;
     }
 
@@ -101,15 +114,7 @@ public:
         // image as going out
         prev += period;
 
-        image.resize(w,h);
-        image.zero();
-        for (int i=0; i<image.width(); i++) {
-            image.pixel(i,ct).r = 255;
-        }
-        ct++;
-        if (ct>=image.height()) {
-            ct = 0;
-        }
+        createTestImage(image);
         return true;
     }
     
@@ -144,6 +149,9 @@ public:
     virtual double getGain() const {
         return 0;
     }
+
+private:
+    void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 };
 
 
