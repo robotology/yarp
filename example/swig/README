@@ -1,0 +1,26 @@
+
+This directory is for producing SWIG interfaces to YARP.
+
+We just try Java for now.  To create the Java interface to YARP from linux
+(the process on windows is analogous using cmake):
+  ccmake .   # make sure the Java JNI directories get found
+  make
+You should end up with a "jyarp.so" library and a lot of generated "*.java"
+files in a directory called "generated_src".
+There will be a LOT of warnings during this process.  That is normal.
+
+Now either do something like one of:
+  setenv LD_LIBRARY_PATH $PWD:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
+Or move jyarp.so into a directory in your library path.
+
+Now try building the examples using ant by typing:
+  ant
+
+You should now have files like "example1.jar" in the bin directory.
+The source for these examples is in the "src" directory.
+
+Try running:
+  java -jar bin/example1.jar
+and see if stuff happens.
+
