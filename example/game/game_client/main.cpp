@@ -141,7 +141,7 @@ public:
       Time::delay(2);
     }
     mutex.post();
-    show();
+    //show();
   }
 
   virtual void run() {

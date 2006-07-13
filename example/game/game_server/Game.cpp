@@ -185,7 +185,7 @@ void Game::main() {
     wait();
     update();
     post();
-    yarp::os::Time::delay(0.25);
+    yarp::os::Time::delay(0.1);
   }
 }
 
