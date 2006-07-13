@@ -2,6 +2,11 @@
 # replace "..." with the path to your YARP binaries if needed
 SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 
+SET(CREATE_JAVA FALSE CACHE BOOL "Do you want to create a Java interface")
+SET(CREATE_PYTHON FALSE CACHE BOOL "Do you want to create the Python interface")
+SET(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
+
+
 # small update to FindJNI
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -9,23 +14,29 @@ FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
 FIND_PACKAGE(YARP REQUIRED)
 
-#FIND_PACKAGE(PythonLibs)
-#INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
-
-#FIND_PATH(JAVA_INCLUDE_PATH jni.h /usr/java/include DOC "directory containing jni.h for Java JNI")
-#FIND_PATH(JAVA_SYS_INCLUDE_PATH jni_md.h /usr/java/include/linux/ /usr/java/include DOC "directory containing jni_md.h for Java JNI")
-#INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH})
-#INCLUDE_DIRECTORIES(${JAVA_SYS_INCLUDE_PATH})
-
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
-FIND_PACKAGE(JNI REQUIRED)
-INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
-
-MAKE_DIRECTORY("generated_src")
-SET(CMAKE_SWIG_FLAGS "-outdir;generated_src;-Wall")
-
 SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES CPLUSPLUS ON)
 SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES SWIG_FLAGS "-includeall")
-SWIG_ADD_MODULE(libjyarp java yarp.i)
+
+IF (CREATE_JAVA)
+   MAKE_DIRECTORY("generated_src")
+   SET(CMAKE_SWIG_FLAGS "-outdir;generated_src;-Wall;-module;yarp")
+   FIND_PACKAGE(JNI REQUIRED)
+   INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
+   SWIG_ADD_MODULE(libjyarp java yarp.i)
+ENDIF (CREATE_JAVA)
+
+IF (CREATE_PYTHON)
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+   FIND_PACKAGE(PythonLibs)
+   INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+   SWIG_ADD_MODULE(yarp python yarp.i)
+ENDIF (CREATE_PYTHON)
+
+IF (CREATE_PERL)
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+   FIND_PACKAGE(PerlLibs)
+   INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
+   SWIG_ADD_MODULE(libyarp perl5 yarp.i)
+ENDIF (CREATE_PERL)
+
 

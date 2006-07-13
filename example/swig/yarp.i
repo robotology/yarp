@@ -15,8 +15,20 @@
 // Deal with overridden method clashes
 %ignore *::check(const char *key, Value *& result);
 %ignore *::where();
+%ignore *::seed(int seed);  // perl clash
 
 %{
+#define _SEARCH_H // strange perl clash
+// careful shuffling to deal with perl clash on seed name
+#ifdef seed
+#define seed_c seed
+#undef seed
+#endif
+#include <yarp/os/Random.h>
+#ifdef seed_c
+#define seed seed_c
+#endif
+
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 using namespace yarp::os;
@@ -90,10 +102,13 @@ using namespace yarp::sig;
 %feature("notabstract") yarp::os::BufferedPort;
 
 %define MAKE_COMMS(name)
+%feature("notabstract") yarp::os::BufferedPort<name>;
+%feature("notabstract") BufferedPort ## name;
 %template(TypedReader ## name) yarp::os::TypedReader<name>;
 %template(TypedReaderCallback ## name) yarp::os::TypedReaderCallback<name>;
 %template(BufferedPort ## name) yarp::os::BufferedPort<name>;
 %feature("notabstract") yarp::os::BufferedPort<name>;
+%feature("notabstract") BufferedPort ## name;
 %enddef
 
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;

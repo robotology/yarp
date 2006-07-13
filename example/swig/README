@@ -1,7 +1,10 @@
 
 This directory is for producing SWIG interfaces to YARP.
 
-We just try Java for now.  To create the Java interface to YARP from linux
+============================================================================
+== JAVA INTERFACE
+
+To create the Java interface to YARP from linux
 (the process on windows is analogous using cmake):
   ccmake .   # make sure the Java JNI directories get found
   make
@@ -24,3 +27,15 @@ Try running:
   java -jar bin/example1.jar
 and see if stuff happens.
 
+============================================================================
+== PYTHON AND PERL INTERFACES
+
+Run:
+  ccmake .
+And set "CREATE_PERL" and/or "CREATE_PYTHON" to true.
+Run:
+  make
+
+You should now have libraries called libyarp.so and/or _yarp.so
+
+Now try to run example.pl and/or example.py
