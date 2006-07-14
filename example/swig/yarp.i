@@ -44,7 +44,7 @@ using namespace yarp::sig;
 %enddef
 %define _YARP2_VOCAB_ 1
 %enddef
-%define PACKED_FOR_NET int
+%define PACKED_FOR_NET 
 %enddef
 //%define VOCAB(a,b,c,d) (((d)*256*65536)+((c)*65536)+((b)*256)+(a))
 %define VOCAB(a,b,c,d) 0

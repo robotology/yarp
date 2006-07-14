@@ -5,6 +5,7 @@ SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 SET(CREATE_JAVA FALSE CACHE BOOL "Do you want to create a Java interface")
 SET(CREATE_PYTHON FALSE CACHE BOOL "Do you want to create the Python interface")
 SET(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
+SET(CREATE_CHICKEN FALSE CACHE BOOL "Do you want to create the Chicken Scheme interface")
 
 
 # small update to FindJNI
@@ -38,5 +39,10 @@ IF (CREATE_PERL)
    INCLUDE_DIRECTORIES(${PERL_INCLUDE_PATH})
    SWIG_ADD_MODULE(libyarp perl5 yarp.i)
 ENDIF (CREATE_PERL)
+
+IF (CREATE_CHICKEN)
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
+   SWIG_ADD_MODULE(cyarp chicken yarp.i)
+ENDIF (CREATE_CHICKEN)
 
 

@@ -27,6 +27,7 @@ Try running:
   java -jar bin/example1.jar
 and see if stuff happens.
 
+
 ============================================================================
 == PYTHON AND PERL INTERFACES
 
@@ -39,3 +40,21 @@ Run:
 You should now have libraries called libyarp.so and/or _yarp.so
 
 Now try to run example.pl and/or example.py
+
+
+============================================================================
+== CHICKEN INTERFACE
+
+Run:
+  ccmake .
+And set "CREATE_CREATE" to true.
+Run:
+  make
+
+You should now have cyarp.so and cyarp.scm
+
+Now try:
+  chicken cyarp.scm
+  chicken example.scm && gcc example.c cyarp.c cyarp.so -lchicken -o example
+  ./example
+
