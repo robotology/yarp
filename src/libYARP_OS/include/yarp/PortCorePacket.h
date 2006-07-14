@@ -92,7 +92,13 @@ public:
         //YARP_INFO(Logger::get(),String("active count is ") + 
         //     NetType::toString(active.size()));
         if (inactive.is_empty()) {
-            inactive.insert_tail(new PortCorePacket());
+            size_t obj_size = sizeof (PortCorePacket);
+            PortCorePacket *obj = NULL;
+            ACE_NEW_MALLOC_RETURN (obj,
+                                   (PortCorePacket *)
+                                   ACE_Allocator::instance()->malloc(obj_size),
+                                   PortCorePacket(), 0);
+            inactive.insert_tail(obj);
         }
         PortCorePacket *next = NULL;
         inactive.get(next);

@@ -1,0 +1,105 @@
+#/bin/bash
+
+echo "run as ./scripts/grind"
+
+if [ -e  yarp.valgrind.suppress ]; then
+	mv yarp.valgrind.suppress yarp.valgrind.suppress.old
+fi
+
+(
+cat<<XXX
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:_dl_open
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:__libc_dlopen_mode
+   fun:__nss_lookup_function
+   obj:/lib/tls/libc-2.3.6.so
+   fun:__nss_hosts_lookup
+   fun:gethostbyname_r
+   fun:_ZN6ACE_OS15gethostbyname_rEPKcP7hostentPcPi
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   fun:_ZN4yarp6Logger4showEiRK15ACE_String_BaseIcE
+   fun:_ZN4yarp6Logger5debugERK15ACE_String_BaseIcE
+   fun:_ZN4yarp8PortCore10cleanUnitsEv
+   fun:_ZN4yarp8PortCore9addOutputERK15ACE_String_BaseIcEPvPNS_12OutputStreamE
+   fun:_ZN4yarp17PortCoreInputUnit3runEv
+   fun:_Z18theExecutiveBranchPv
+   fun:_ZN21ACE_OS_Thread_Adapter6invokeEv
+   fun:ace_thread_adapter
+   fun:start_thread
+   fun:clone
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Addr4
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:_dl_open
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:__libc_dlopen_mode
+   fun:__nss_lookup_function
+   obj:/lib/tls/libc-2.3.6.so
+   fun:__nss_hosts_lookup
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:_dl_open
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:__libc_dlopen_mode
+   fun:__nss_lookup_function
+   obj:/lib/tls/libc-2.3.6.so
+   fun:__nss_hosts_lookup
+   fun:gethostbyname_r
+   fun:_ZN6ACE_OS15gethostbyname_rEPKcP7hostentPcPi
+}
+
+{
+   <insert a suppression name here>
+   Memcheck:Cond
+   obj:/lib/ld-2.3.6.so
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:_dl_open
+   obj:/lib/tls/libc-2.3.6.so
+   obj:/lib/ld-2.3.6.so
+   fun:__libc_dlopen_mode
+   fun:__nss_lookup_function
+   obj:/lib/tls/libc-2.3.6.so
+   fun:__nss_hosts_lookup
+   fun:gethostbyname_r
+   fun:_ZN6ACE_OS15gethostbyname_rEPKcP7hostentPcPi
+}
+
+XXX
+
+) > yarp.valgrind.suppress
+
+lib=os
+
+if [ ! "k$1" = "k" ]; then
+	lib=$1
+fi
+
+valgrind --suppressions=yarp.valgrind.suppress --gen-suppressions=yes bin/harness_$lib regression
+

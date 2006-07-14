@@ -702,6 +702,7 @@ String StoreBlob::toStringFlex() const {
             result += " ";
         }
         unsigned char *src = (unsigned char *)(&x[i]);
+        fflush(stdout);
         result += NetType::toString(*src);
     }
     return result;

@@ -586,13 +586,15 @@ public:
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
+
         testOpen();
         testReadBuffer();
         testPair();
         testReply();
         testUdp();
         //testHeavy();
-        
+
+
         testBackground();
         testWriteBuffer();
         testBufferedPort();

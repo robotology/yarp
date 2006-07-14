@@ -163,6 +163,7 @@ DgramTwoWayStream::~DgramTwoWayStream() {
 }
 
 void DgramTwoWayStream::interrupt() {
+    bool handsOff = false;
     if (!closed) {
         closed = true;
         if (reader) {
@@ -178,6 +179,8 @@ void DgramTwoWayStream::interrupt() {
                 // don't want this message getting into a valid packet
                 tmp.pct = -1;
 
+                handsOff = true; // from this moment on, object may have
+                                 // been deleted
                 tmp.write(empty.bytes());
                 tmp.flush();
                 tmp.close();
@@ -187,7 +190,9 @@ void DgramTwoWayStream::interrupt() {
             YARP_DEBUG(Logger::get(),"finished dgram interrupt");
         }
     }
-    happy = false;
+    if (!handsOff) {
+        happy = false;
+    }
 }
 
 void DgramTwoWayStream::close() {

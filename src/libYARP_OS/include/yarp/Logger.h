@@ -47,6 +47,7 @@ public:
     Logger(const char *prefix, Logger& parent) {
         this->prefix = prefix;
         this->parent = &parent;
+        verbose = 0;
         low = DEFAULT_WARN;
     }
 
@@ -57,7 +58,7 @@ public:
     }
 
     void debug(const String& txt) {
-        show(DEBUG,txt);
+        show(LM_DEBUG,txt);
     }
 
     void println(const String& txt) {
@@ -65,19 +66,19 @@ public:
     }
 
     void info(const String& txt) {
-        show(INFO,txt);
+        show(LM_INFO,txt);
     }
 
     void warning(const String& txt) {
-        show(WARNING,txt);
+        show(LM_WARNING,txt);
     }
 
     void error(const String& txt) {
-        show(SEVERE,txt);
+        show(LM_ERROR,txt);
     }
 
     void fail(const String& txt) {
-        show(SEVERE,txt);
+        show(LM_ERROR,txt);
         exit(1);
     }
 

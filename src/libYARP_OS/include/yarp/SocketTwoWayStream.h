@@ -51,10 +51,12 @@ public:
     }
 
     virtual void interrupt() {
-        stream.close_reader();
-        stream.close_writer();
-        stream.close();
-        happy = false;
+        if (happy) {
+            happy = false;
+            stream.close_reader();
+        }
+        //stream.close_writer();
+        //stream.close();
     }
 
     virtual void close() {

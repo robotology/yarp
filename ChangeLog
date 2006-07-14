@@ -1,3 +1,9 @@
+2006-07-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Fixed some problems that valgrind picked up.  The
+	biggest was a mismatched constructor/destructor for an
+	class derived from ACE in PortCorePacket.h.
+
 2006-07-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Finally dealt with silly CR/LF issues so that telnet

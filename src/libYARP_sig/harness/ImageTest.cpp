@@ -267,6 +267,7 @@ public:
         report(0,"checking standard compliance of description...");
         ImageOf<PixelRgb> img;
         img.resize(8,4);
+        img.zero();
         BufferedConnectionWriter writer;
         img.write(writer);
         String s = writer.toString();
