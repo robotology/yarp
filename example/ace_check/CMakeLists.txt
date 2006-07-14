@@ -13,8 +13,8 @@ FILE(GLOB CODE *.cpp)
 
 # Lay the files out in folders in environments where that makes sense
 # This is completely optional
-SOURCE_GROUP("Source Files" FILES ${HEADERS})
-SOURCE_GROUP("Header Files" FILES ${CODE})
+SOURCE_GROUP("Header Files" FILES ${HEADERS})
+SOURCE_GROUP("Source Files" FILES ${CODE})
 
 # Create our executable
 ADD_EXECUTABLE(ace_check ${HEADERS} ${CODE})
@@ -25,7 +25,7 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
    SET(CPACK_PACKAGE_VENDOR "VVV")
    SET(CPACK_PACKAGE_VERSION_MAJOR "1")
    SET(CPACK_PACKAGE_VERSION_MINOR "0")
-   SET(CPACK_PACKAGE_VERSION_PATCH "0")
+   SET(CPACK_PACKAGE_VERSION_PATCH "1")
    INSTALL_FILES(/ FILES ${HEADERS} ${CODE} CMakeLists.txt FindAce.cmake)
    INCLUDE(CPack)
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
