@@ -17,33 +17,20 @@ int main(int argc, char *argv[]) {
 					  "FakeFrameGrabber");
   Drivers::factory().add(fakey_factory); // hand factory over to YARP
 
-  // use YARP to create and configure an instance of FakeFrameGrabber
+  // use YARP to create and configure a networked of FakeFrameGrabber
   Property config;
-  if (argc==1) {
-    // no arguments, use a default
-    config.fromString("(device fakey) (w 640) (h 480)");
-  } else {
-    // expect something like "--device fakey --w 640 --h 480"
-    //                    or "--device dragonfly"
-    //                    or "--device test_grabber --period 0.5 --mode [ball]"
-    config.fromCommand(argc,argv);
-  }
+  config.fromString("(device grabber) (name /fakey) (subdevice fakey) (w 200) (h 200)");
   PolyDriver dd(config);
   if (!dd.isValid()) {
     printf("Failed to create and configure a device\n");
     exit(1);
   }
-  IFrameGrabberImage *grabberInterface;
-  if (!dd.view(grabberInterface)) {
-    printf("Failed to view device through IFrameGrabberImage interface\n");
-    exit(1);
+
+  // snooze while the network device operates
+  while (true) {
+    printf("Network device is active...\n");
+    Time::delay(5);
   }
-
-  ImageOf<PixelRgb> img;
-  grabberInterface->getImage(img);
-  printf("Got a %dx%d image\n", img.width(), img.height());
-
-  dd.close();
 
   Network::fini();
   return 0;
