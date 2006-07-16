@@ -5,3 +5,4 @@ FIND_PACKAGE(YARP)
 
 ADD_EXECUTABLE(fake_grabber fake_grabber.cpp FakeFrameGrabber.h)
 ADD_EXECUTABLE(fake_grabber_net fake_grabber_net.cpp FakeFrameGrabber.h)
+ADD_EXECUTABLE(grabber_client grabber_client.cpp)

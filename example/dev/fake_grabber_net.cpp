@@ -7,7 +7,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-int main(int argc, char *argv[]) {
+int main() {
   Network::init();
 
   // give YARP a factory for creating instances of FakeFrameGrabber
