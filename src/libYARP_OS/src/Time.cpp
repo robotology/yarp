@@ -41,7 +41,7 @@ void Time::turboBoost() {
     // only does something on Microsoft Windows
     TIMECAPS tm;
     timeGetDevCaps(&tm, sizeof(TIMECAPS));
-    timeBeginPeriod(1);
+    timeBeginPeriod(tm.wPeriodMin);
 #endif
 }
 
