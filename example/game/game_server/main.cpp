@@ -62,7 +62,7 @@ public:
     if (!loggedOn) {
       printf("Completing login...\n");
       String cmd = "connect ";
-      cmd += connection.getRemoteContact().getName();
+      cmd += connection.getRemoteContact().getName().c_str();
       player.apply(cmd.c_str());
       loggedOn = true;
     }
