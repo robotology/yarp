@@ -31,18 +31,19 @@ int main(int argc, char *argv[]) {
   // pick out map part
   Bottle& map = response.findGroup("look").findGroup("map");
   printf("Here's your local view:\n");
-  for (int i=1; i<map.size(); i++) {
+  int i;
+  for (i=1; i<map.size(); i++) {
     printf("%s\n", map.get(i).asString().c_str());
   }
 
   // pick out and print player information
   Bottle& players = response.findGroup("look").findGroup("players");
-  for (int i=1; i<players.size(); i++) {
+  for (i=1; i<players.size(); i++) {
     Bottle *player = players.get(i).asList();
     if (player!=NULL) {
       Bottle& location = player->findGroup("location");
       Value& life = player->find("life");
-      char buf[256];
+
       ConstString playerName = player->get(0).asString();
       printf("PLAYER %s is at (%d,%d) with lifeforce %d\n", 
 	     playerName.c_str(), 
@@ -55,4 +56,6 @@ int main(int argc, char *argv[]) {
   port.close();
 
   Network::fini();
+
+  return 0;
 }
