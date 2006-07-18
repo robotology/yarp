@@ -1,0 +1,7 @@
+SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../../.." CACHE LOCATION "where is yarp?")
+FIND_PACKAGE(YARP)
+
+PROJECT(minimal_client)
+
+ADD_EXECUTABLE(minimal_client main.cpp)
+
