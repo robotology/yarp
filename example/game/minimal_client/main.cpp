@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   port.open(name);
 
   printf("Connecting with game server\n");
-  Network::connect(port.getName(),"game");
+  Network::connect(port.getName(),"/game");
 
   Bottle cmd;
   Bottle response;
