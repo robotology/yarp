@@ -98,12 +98,13 @@ public:
 	    pad(prep).c_str(), 
 	    pad(broadcast).c_str());
     broadcastMutex.post();
-    for (int i=1; i<map.size(); i++) {
+    int i;
+    for (i=1; i<map.size(); i++) {
       cprintf("  %s\n", map.get(i).asString().c_str());
     }
     cprintf("\n");
     Bottle& players = prop.findGroup("look").findGroup("players");
-    for (int i=1; i<players.size(); i++) {
+    for (i=1; i<players.size(); i++) {
       Bottle *player = players.get(i).asList();
       if (player!=NULL) {
 	Bottle& location = player->findGroup("location");
