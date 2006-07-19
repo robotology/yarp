@@ -145,6 +145,7 @@ private:
     yarp::dev::CommandsHelper command_reader;
 
     PolyDriver poly;
+    PolyDriver polyCalib;
 
     int               nj;
     int               thread_period;
@@ -154,6 +155,7 @@ private:
     IEncoders         *enc;
     IAmplifierControl *amp;
     IControlLimits    *lim;
+    IControlCalibrationRaw *calib;
     // LATER: other interfaces here.
 
 public:
@@ -182,6 +184,7 @@ public:
         state_p.close();
 
         poly.close();
+        polyCalib.close();
 
         return true;
     }
@@ -229,6 +232,13 @@ public:
             state_p.open("/controlboard/state:o");
         }
         
+        if (prop.check("calibrator", name))
+        {
+            Property p;
+            p.put("device",name->toString());
+            polyCalib.open(p);
+        }
+
         if (poly.isValid()) {
             poly.view(pid);
             poly.view(pos);
@@ -236,6 +246,15 @@ public:
             poly.view(enc);
             poly.view(amp);
             poly.view(lim);
+            poly.view(calib);
+        }
+
+        // set calibrator //
+        if (polyCalib.isValid())
+        {
+            ICalibrator *icalibrator;
+            polyCalib.view(icalibrator);
+            calib->setCalibrator(icalibrator);
         }
         
         if (pid != NULL &&
