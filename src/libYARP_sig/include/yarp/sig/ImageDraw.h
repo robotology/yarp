@@ -103,14 +103,14 @@ namespace yarp {
             }
 
             template <class T>
-			void addRectangle(ImageOf<T>& dest, const T& pix, 
-								  int i, int j, int w, int h) {
-				for (int ii=i-w; ii<=i+w; ii++) {
-					for (int jj=j-h; jj<=j+h; jj++) {
-						dest.safePixel(ii,jj) = pix;
-					}
-				}
-			}
+	    void addRectangle(ImageOf<T>& dest, const T& pix, 
+			      int i, int j, int w, int h) {
+		 for (int ii=i-w; ii<=i+w; ii++) {
+		    for (int jj=j-h; jj<=j+h; jj++) {
+		    	 dest.safePixel(ii,jj) = pix;
+		    }
+	         }
+	    }
 
             template <class T>
             int applyThreshold(ImageOf<T>& src, ImageOf<T>& dest, 
