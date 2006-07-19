@@ -1,0 +1,13 @@
+PROJECT(clientmt)
+
+SET(YARP_DIR "$ENV{YARP_ROOT}/build/vc6" CACHE LOCATION "where is your yarp build directory?")
+FIND_PACKAGE(YARP)
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+
+IF (NOT WIN32)
+   LINK_LIBRARIES(ncurses)
+ENDIF (NOT WIN32)
+
+ADD_EXECUTABLE(clientmt main.cpp)
+
