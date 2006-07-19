@@ -102,6 +102,9 @@ namespace yarp {
                 }
             }
 
+				/**
+				* warning : i, j is x, y center of rectangle
+				*/
             template <class T>
 	    void addRectangle(ImageOf<T>& dest, const T& pix, 
 			      int i, int j, int w, int h) {
