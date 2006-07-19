@@ -48,8 +48,11 @@ have binary packages for ACE (e.g. debian has "libace-dev").
   * Read about ACE here: http://www.cs.wustl.edu/~schmidt/ACE.html
 
   * Download ACE here: http://deuce.doc.wustl.edu/Download.html
-      o For Windows, we suggest: http://deuce.doc.wustl.edu/ACE.zip
-      o For all others, we suggest: http://deuce.doc.wustl.edu/ACE.tar.gz
+      o For Windows, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.zip
+      o For all others, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.tar.gz
+
+  * Please try using a release and not a beta version of ACE (at the moment of
+	writing the latest version is 5.5)
 
   * Compile ACE using the instructions here: 
     http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html
