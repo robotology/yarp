@@ -92,15 +92,15 @@ public:
         
         Bottle *player = users.get(1).asList();
         if (player!=0)
-        {
-            Bottle &location = player->findGroup("location");
-            Value &life = player->find("life");
-            ConstString playerName = player->get(0).asString();
+            {
+                Bottle &location = player->findGroup("location");
+                Value &life = player->find("life");
+                ConstString playerName = player->get(0).asString();
        
-            myX=location.get(1).asInt(),
-	        myY=location.get(2).asInt(),
-	        myLife=life.asInt();
-        }
+                myX=location.get(1).asInt(),
+                    myY=location.get(2).asInt(),
+                    myLife=life.asInt();
+            }
     }
 
     void rndMove()
@@ -198,65 +198,65 @@ public:
 
 int main(int argc, char **argv)
 {
-  if (argc!=3)
-      return 0;
+    if (argc!=3)
+        return 0;
   
-  Network::init();
+    Network::init();
 
-  MyPlayer *player = new MyPlayer(argv[1], PLAYER_RATE);
+    MyPlayer *player = new MyPlayer(argv[1], PLAYER_RATE);
   
-  if(atoi(argv[2])==0)
-      player->setShooter(0);
-  else
-      player->setShooter(1);
+    if(atoi(argv[2])==0)
+        player->setShooter(0);
+    else
+        player->setShooter(1);
 
-  player->start();
+    player->start();
 
-  int count=0;
-  while(true)
-  {
-     int plLife;
-     int plX;
-     int plY;
-     count++;
+    int count=0;
+    while(true)
+        {
+            int plLife;
+            int plX;
+            int plY;
+            count++;
 
-     plLife=player->getLife();
-     plX=player->getX();
-     plY=player->getY();
+            plLife=player->getLife();
+            plX=player->getX();
+            plY=player->getY();
 
-     if ((count==1000)||(plLife==0)) 
-     {
-         fprintf(stderr, "Stopping player\n");
-         player->stop();
-         fprintf(stderr, "Waiting some time\n");
-         Time::delay(2);
+            if ((count==500)||(plLife==0)) 
+                {
+                    fprintf(stderr, "Stopping player\n");
+                    player->stop();
+                    fprintf(stderr, "Waiting some time\n");
+                    Time::delay(2);
 
-         printf("Restarting the player\n");
-         player->start();
+                    printf("Restarting the player\n");
+                    player->start();
 
-         count=0;
-     }
+                    count=0;
+                }
 
-     Bottle world;
-     player->getWorld(world);
+            Bottle world;
+            player->getWorld(world);
 
-     int i;
-     for (i=1; i<world.size(); i++) 
-     {
-         printf("%s\n", world.get(i).asString().c_str());
-     }
+            int i;
+            for (i=1; i<world.size(); i++) 
+                {
+                    printf("%s\n", world.get(i).asString().c_str());
+                }
 
-     printf("X:%d Y:%d Life:%d\n", plX, plY, plLife);
+            printf("X:%d Y:%d Life:%d\n", plX, plY, plLife);
 
-     Time::delay(0.5);
-  }
+            Time::delay(0.5);
+        }
      
-  player->stop();
+    player->stop();
 
-  delete player;
+    delete player;
 
-  Network::fini();
+    Network::fini();
 
-  return 0;
+    return 0;
 }
 
