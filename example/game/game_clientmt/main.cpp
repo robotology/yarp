@@ -72,7 +72,7 @@ public:
     {
         mutex.wait();
 
-        fprintf(stderr, "Disconnecting\n");
+        printf("Disconnecting\n");
         Network::disconnect(port.getName(), SERVER_NAME);
         
         mutex.post();
