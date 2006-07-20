@@ -121,10 +121,10 @@ bool JamesCalibrator::calibrateJoint(int joint)
                 iPids->disablePid(2);
                 iAmps->disableAmp(2);
 
-                iEncoders->resetEncoder(2);
+                iEncoders->resetEncoder(0);
 
-                iPids->enablePid(2);
-                iAmps->enableAmp(2);
+                iPids->enablePid(0);
+                iAmps->enableAmp(0);
                 
                 iCalibrate->calibrate(0, param[0]);
 
@@ -237,7 +237,7 @@ void JamesCalibrator::goToZero(int j)
     int timeout = 0;
     while (!finished)
     {
-        iPosition->checkMotionDone(&finished);
+        iPosition->checkMotionDone(j, &finished);
 
         Time::delay (0.5);
         timeout ++;

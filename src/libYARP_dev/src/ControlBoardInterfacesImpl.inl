@@ -160,13 +160,13 @@ public:
     inline void posE2A(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
-        ang=(zeros[k]-enc)/angleToEncoders[k];
+        ang=(enc-zeros[k])/angleToEncoders[k];
     }
 
     inline double posE2A(double enc, int j)
     {
         int k=toUser(j);
-        return (zeros[k]-enc)/angleToEncoders[k];
+        return (enc-zeros[k])/angleToEncoders[k];
     }
 
     inline void velA2E(double ang, int j, double &enc, int &k)
