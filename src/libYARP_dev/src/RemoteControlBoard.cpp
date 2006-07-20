@@ -1772,7 +1772,7 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool setRefSpeeds(const double *spds) { 
-        return setDoubleArray(VOCAB_REF_SPEED, spds);
+        return setDoubleArray(VOCAB_REF_SPEEDS, spds);
     }
 
     /** 
