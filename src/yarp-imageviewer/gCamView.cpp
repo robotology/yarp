@@ -300,7 +300,7 @@ static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 	GtkAdjustment *spinner_adj;
 	gint response;
 
-	dialog = gtk_dialog_new_with_buttons ("New Frame Rate",
+	dialog = gtk_dialog_new_with_buttons ("New Refresh Time",
                                           GTK_WINDOW (mainWindow),
                                           GTK_DIALOG_MODAL,
                                           GTK_STOCK_OK,
@@ -313,9 +313,9 @@ static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 	gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
 	stock = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (hbox), stock, FALSE, FALSE, 0);
-	label = gtk_label_new_with_mnemonic ("Insert new frame rate (in mSec):");
+	label = gtk_label_new_with_mnemonic ("Insert new refresh time (in mSec):");
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
-	spinner_adj = (GtkAdjustment *) gtk_adjustment_new (_options.refreshTime, 0.0, 1000.0, 1.0, 5.0, 5.0);
+	spinner_adj = (GtkAdjustment *) gtk_adjustment_new (_options.refreshTime, 10.0, 1000.0, 1.0, 5.0, 5.0);
 	spinner = gtk_spin_button_new (spinner_adj, 1.0, 0);
 	gtk_box_pack_start (GTK_BOX (hbox), spinner, FALSE, FALSE, 0);
 	gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, FALSE, FALSE, 0);
@@ -480,7 +480,7 @@ GtkWidget* createMenubar(void)
     gtk_signal_connect( GTK_OBJECT(imageFreezeItem), "toggled", GTK_SIGNAL_FUNC(menuImageFreeze_CB), mainWindow);
     menuSeparator = gtk_separator_menu_item_new();
     gtk_menu_append( GTK_MENU(imageMenu), menuSeparator);
-    imageFramerateItem = gtk_menu_item_new_with_label ("Change frame rate..");
+    imageFramerateItem = gtk_menu_item_new_with_label ("Change refresh interval..");
     gtk_menu_append( GTK_MENU(imageMenu), imageFramerateItem);
     gtk_signal_connect( GTK_OBJECT(imageFramerateItem), "activate", GTK_SIGNAL_FUNC(menuImageFramerate_CB), mainWindow);
     imageIntervalItem = gtk_menu_item_new_with_label ("Show Interval..");
