@@ -1093,11 +1093,11 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::uninitialize ()
 }
 
 template <class DERIVED, class IMPLEMENT> 
-bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j)
+bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return iCalibrate->calibrateRaw(k);
+    return iCalibrate->calibrateRaw(k, p);
 }
 
 template <class DERIVED, class IMPLEMENT> 

@@ -1127,7 +1127,7 @@ public:
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrateRaw(int j)=0;
+    virtual bool calibrateRaw(int j, double p)=0;
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
@@ -1139,14 +1139,14 @@ public:
      * @param c pointer to the calibrator object
      * @return true/false on success failure
      */
-    bool setCalibrator(ICalibrator *c);
+    virtual bool setCalibrator(ICalibrator *c);
 
     /* Calibrate robot by using an external calibrator. The external 
      * calibrator must be previously set by calling the setCalibration()
      * method.
      * @return true/false on success failure
      */
-    bool calibrate();
+    virtual bool calibrate();
 };
 
 /** 
@@ -1166,7 +1166,7 @@ public:
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate(int j)=0;
+    virtual bool calibrate(int j, double p)=0;
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.

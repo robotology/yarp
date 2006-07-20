@@ -14,15 +14,15 @@ namespace yarp {
     }
 }
 
-class yarp::dev::JamesCalibrator:public ICalibrator, public DeviceDriver
+class yarp::dev::JamesCalibrator : public ICalibrator, public DeviceDriver
 {
 public:
     JamesCalibrator();
     ~JamesCalibrator();
 
     bool calibrate(DeviceDriver *dd);
-
-    //no open or close methods? check this
+	virtual bool open (yarp::os::Searchable& config);
+	virtual bool close ();
 
 private:
     bool calibrateJoint(int j);
@@ -33,5 +33,9 @@ private:
     IPidControl *iPids;
     IEncoders *iEncoders;
     IPositionControl *iPosition;
+
+	double *param;
+	double *pos;
+	double *vel;
 };
 #endif

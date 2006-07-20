@@ -126,8 +126,8 @@ class yarp::dev::ServerControlBoard :
             public IVelocityControl,
             public IEncoders,
             public IAmplifierControl,
-            public IControlLimits
-//            public IControlCalibration
+            public IControlLimits,
+            public IControlCalibrationRaw
 //            public IControlDebug
             // convenient to put these here just to make sure all
             // methods get implemented
@@ -166,6 +166,7 @@ public:
         enc = NULL;
         amp = NULL;
         lim = NULL;
+		calib = NULL;
         nj = 0;
         thread_period = 20; // ms.
     }
@@ -235,6 +236,7 @@ public:
         if (prop.check("calibrator", name))
         {
             Property p;
+			p.fromString(prop.toString());
             p.put("device",name->toString());
             polyCalib.open(p);
         }
@@ -999,6 +1001,26 @@ public:
         *max = 0.0;
         return false;
     }
+
+	/* IControlCalibrationRaw */
+    virtual bool calibrateRaw(int j, double p) {
+		if (calib)
+			return calib->calibrateRaw(j, p);
+		return false;
+	}
+
+    virtual bool doneRaw(int j) {
+		if (calib)
+			return calib->doneRaw(j);
+		return false;
+	}
+
+	virtual bool calibrate() {
+		if (calib)
+			return calib->calibrate();
+		return false;
+	}
+
 };
 
 /* check whether the last command failed */

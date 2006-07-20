@@ -463,7 +463,7 @@ class yarp::dev::ImplementControlCalibration: public IMPLEMENT
      */
     virtual ~ImplementControlCalibration();
 
-    virtual bool calibrate(int j);
+    virtual bool calibrate(int j, double p);
 
     virtual bool done(int j);
 };

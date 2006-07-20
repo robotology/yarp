@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.20 2006-07-06 21:18:49 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.21 2006-07-20 07:29:40 babybot Exp $
 ///
 ///
 
@@ -531,7 +531,7 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     p.fromString(config.toString());
 
     if (!p.check("GENERAL")) {
-        ACE_DEBUG((LM_DEBUG, "Cannot understand configuration parameters\n"));
+        fprintf(stderr, "Cannot understand configuration parameters\n");
         return false;
     }
 
@@ -1634,14 +1634,23 @@ bool EsdMotionControl::setMaxCurrentRaw(int axis, double v)
 	return _writeDWord (CAN_SET_CURRENT_LIMIT, axis, S_32(v));
 }
 
-bool EsdMotionControl::calibrateRaw(int axis)
+bool EsdMotionControl::calibrateRaw(int axis, double p)
 {
-    return NOT_YET_IMPLEMENTED("calibrateRaw");
+    return _writeWord16 (CAN_CALIBRATE_ENCODER, axis, S_16(p));
 }
 
 bool EsdMotionControl::doneRaw(int axis)
 {
-    return NOT_YET_IMPLEMENTED("doneRaw");
+    short value = 0;
+	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
+
+   	if (!_readWord16 (CAN_GET_CONTROL_MODE, axis, value))
+		return false;
+
+    if (!(value & 0xf0))
+		return true;
+
+	return false;
 }
 
 bool EsdMotionControl::setPrintFunction(int (*f) (const char *fmt, ...))

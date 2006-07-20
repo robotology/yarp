@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.14 2006-07-04 16:41:53 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.15 2006-07-20 07:29:40 babybot Exp $
 ///
 ///
 
@@ -214,7 +214,7 @@ public:
     /////////////// END AMPLIFIER INTERFACE
 
     ////// calibration
-    virtual bool calibrateRaw(int j);
+    virtual bool calibrateRaw(int j, double p);
     virtual bool doneRaw(int j);
 
     /// IControlDebug Interface
