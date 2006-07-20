@@ -94,8 +94,8 @@ bool JamesCalibrator::calibrate(DeviceDriver *dd)
 	int k;
 	for (k = 0; k < nj; k++) 
 	{
-		iPids->enablePid(2);
-		iAmps->enableAmp(2);
+		iPids->enablePid(k);
+		iAmps->enableAmp(k);
 	}
 
     ret = true;
@@ -231,4 +231,19 @@ void JamesCalibrator::goToZero(int j)
 {
 	iPosition->setRefSpeed(j, vel[j]);
     iPosition->positionMove(j, pos[j]);
+
+    // wait.
+    bool finished = false;
+    int timeout = 0;
+    while (!finished)
+    {
+        iPosition->checkMotionDone(&finished);
+
+        Time::delay (0.5);
+        timeout ++;
+        if (timeout >= 50)
+            finished = true;
+    }
+
+    // should return a value perhaps.
 }
