@@ -749,8 +749,12 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
                        flex.getRawImageSize());
             }
             ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
-            connection.expectBlock((char *)flex.getRawImage(),
-                                   flex.getRawImageSize());
+            try {
+                connection.expectBlock((char *)flex.getRawImage(),
+                                       flex.getRawImageSize());
+            } catch (IOException e) {
+                return false;
+            }
             copy(flex);
         } else {
             ACE_ASSERT(getPixelCode()==header.id);
@@ -780,48 +784,39 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 bool Image::write(yarp::os::ConnectionWriter& connection) {
     YARPImagePortContentHeader header;
 
-    /*
-    // YARP1 initialization
-    header.h = height();
-    header.w = width();
-    header.depth = getPixelSize();
-    header.id = getPixelCode();
-    header.len = getRawImageSize();
-    //header.timestamp = 0;
-    header.ext1 = 0;
-    header.ext2 = 0;
-    */
+    try {
+        header.listTag = BOTTLE_TAG_LIST;
+        header.listLen = 4;
+        header.paramNameTag = BOTTLE_TAG_VOCAB;
+        header.paramName = VOCAB3('m','a','t');
+        header.paramIdTag = BOTTLE_TAG_VOCAB;
+        header.id = getPixelCode();
+        header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        header.paramListLen = 5;
+        header.depth = getPixelSize();
+        header.imgSize = getRawImageSize();
+        header.quantum = getQuantum();
+        header.width = width();
+        header.height = height();
+        header.paramBlobTag = BOTTLE_TAG_BLOB;
+        header.paramBlobLen = getRawImageSize();
+        
+        connection.appendBlock((char*)&header,sizeof(header));
+        unsigned char *mem = getRawImage();
+        ACE_ASSERT(mem!=NULL);
+        
+        // Note use of external block.  Implies care needed about ownership.
+        connection.appendExternalBlock((char *)mem,header.imgSize);
+        
+        // if someone is foolish enough to connect in text mode,
+        // let them see something readable.
+        connection.convertTextMode();
 
-    //header.totalLen = (sizeof(header)-sizeof(yarp::os::NetInt32))+
-    //getRawImageSize();
-    header.listTag = BOTTLE_TAG_LIST;
-    header.listLen = 4;
-    header.paramNameTag = BOTTLE_TAG_VOCAB;
-    header.paramName = VOCAB3('m','a','t');
-    header.paramIdTag = BOTTLE_TAG_VOCAB;
-    header.id = getPixelCode();
-    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
-    header.paramListLen = 5;
-    header.depth = getPixelSize();
-    header.imgSize = getRawImageSize();
-    header.quantum = getQuantum();
-    header.width = width();
-    header.height = height();
-    header.paramBlobTag = BOTTLE_TAG_BLOB;
-    header.paramBlobLen = getRawImageSize();
-
-    connection.appendBlock((char*)&header,sizeof(header));
-    unsigned char *mem = getRawImage();
-    ACE_ASSERT(mem!=NULL);
-
-    // Note use of external block.  Implies care needed about ownership.
-    connection.appendExternalBlock((char *)mem,header.imgSize);
-
-    // if someone is foolish enough to connect in text mode,
-    // let them see something readable.
-    connection.convertTextMode();
-
-    return true;
+        return true;
+    } catch (IOException e) {
+        // miserable failure
+    }
+    return false;
 }
 
 
