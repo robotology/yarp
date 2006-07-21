@@ -255,7 +255,7 @@ public:
         implementation(maxBuffer) {
         implementation.setCreator(this);
         last = 0; /*NULL*/
-        setStrict(true);
+        setStrict(false);
         reader = 0 /*NULL*/;
     }
 
