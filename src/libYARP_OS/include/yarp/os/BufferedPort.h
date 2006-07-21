@@ -134,7 +134,12 @@ public:
     }
 
     virtual T *read(bool shouldWait=true) {
-        return reader.read(shouldWait);
+        T *result = reader.read(shouldWait);
+        // in some circs PortReaderBuffer::read(true) may return false
+        while (result==NULL && shouldWait) {
+            result = reader.read(shouldWait);
+        }
+        return result;
     }
 
     virtual T *lastRead() {
