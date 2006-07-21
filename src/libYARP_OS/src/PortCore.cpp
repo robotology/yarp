@@ -517,7 +517,13 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
                 op->open(Route(getName(),address.getRegName(),
                                parts.hasCarrierName()?parts.getCarrierName():"tcp"));
             }
-        } catch (IOException e) { /* ok */ }
+        } catch (IOException e) { 
+            YARP_DEBUG(log,e.toString() + " <<< open route error");            
+            if (op!=NULL) {
+                delete op;
+                op = NULL;
+            }
+        }
         if (op!=NULL) {
             addOutput(op);
             bw.appendLine(String("Added output to ") + dest);

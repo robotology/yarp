@@ -64,6 +64,9 @@ public:
         setRoute(getRoute().addCarrierName(carrierName));
         YARP_ASSERT(delegate==NULL);
         delegate = Carriers::chooseCarrier(carrierName);
+        if (delegate==NULL) {
+            throw new IOException("no such carrier");
+        }
         delegate->prepareSend(*this);
     }
 
