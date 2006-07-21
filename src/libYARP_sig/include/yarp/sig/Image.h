@@ -151,9 +151,9 @@ public:
     int getRawImageSize() const;
 
     /**
-     * not yet implemented.
      * Returns IPL view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
+     * This method is currently not well documented.
      * @return pointer to an IplImage structure
      */
     void *getIplImage();

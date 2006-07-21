@@ -7,6 +7,9 @@
 %rename(wait_c) *::wait();
 %rename(clone_c) *::clone() const;
 
+//%rename(open_contact) *::open(const Contact &);
+//%rename(open_contact) *::open(const Contact &,bool);
+
 // Deal with abstract base class problems
 %feature("notabstract") Port;
 %feature("notabstract") Bottle;
@@ -16,6 +19,9 @@
 %ignore *::check(const char *key, Value *& result);
 %ignore *::where();
 %ignore *::seed(int seed);  // perl clash
+//%ignore *::open(Contact const &);
+//%ignore *::open(Contact const &, bool);
+
 
 %{
 #define _SEARCH_H // strange perl clash

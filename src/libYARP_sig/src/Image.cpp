@@ -653,8 +653,8 @@ int Image::getRawImageSize() const {
 }
 
 void *Image::getIplImage() {
-    fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
-    return NULL;
+    //fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+    return ((ImageStorage*)implementation)->pImage;
 }
 
 void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {

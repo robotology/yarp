@@ -33,7 +33,7 @@ ENDIF (ALT_INCLUDES)
 IF (WIN32 AND NOT CYGWIN)
    SET(libname "${${name}_LIB}")
    STRING(REPLACE ".lib" "d.lib" libname2 ${libname})
-   SET(${name}_LIB "optimized ${libname} debug ${libname2}" CACHE INTERNAL "libraries")
+   SET(${name}_LIB "optimized \"${libname}\" debug \"${libname2}\"" CACHE INTERNAL "libraries")
 ENDIF (WIN32 AND NOT CYGWIN)
 
 AUX_SOURCE_DIRECTORY(harness harnesscode)

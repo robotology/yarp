@@ -583,6 +583,37 @@ public:
     }
 
 
+    virtual void testRecentReader() {
+        report(0,"check recent reader...");
+        BufferedPort<Bottle> in;
+        BufferedPort<Bottle> out;
+        in.setStrict(false);
+        in.open("/in");
+        out.open("/out");
+        
+        Network::connect("/out","/in");
+        
+        Bottle& outBot1 = out.prepare();
+        outBot1.fromString("hello world");
+        printf("Writing bottle 1: %s\n", outBot1.toString().c_str());
+        out.write(true);
+        
+        Bottle& outBot2 = out.prepare();
+        outBot2.fromString("2 3 5 7 11");
+        printf("Writing bottle 2: %s\n", outBot2.toString().c_str());
+        out.write(true);
+
+        Time::delay(0.25);
+
+        Bottle *inBot2 = in.read();
+        checkTrue(inBot2!=NULL,"got 2 of 2 items");
+        if (inBot2!=NULL) {
+            printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
+            checkEqual(inBot2->size(),5,"match for item 1");
+        }
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -603,6 +634,7 @@ public:
         testReaderHandler();
         testReaderHandler2();
         testStrictWriter();
+        testRecentReader();
 
         nic.setFakeMode(false);
     }
