@@ -134,6 +134,8 @@ class yarp::dev::ServerControlBoard :
 {
 private:
 	bool spoke;
+	bool verb;
+
     Port rpc_p;     // RPC to configure the robot
     Port state_p;   // out port to read the state
     Port control_p; // in port to command the robot
@@ -169,8 +171,11 @@ public:
 		calib = NULL;
         nj = 0;
         thread_period = 20; // ms.
+		verb = false;
     }
-    
+
+    bool verbose() const { return verb; }
+
     virtual bool open() {
         return false;
     }
@@ -274,6 +279,8 @@ public:
             command_reader.initialize();
 
             start();
+
+			verb = prop.check("verbose") || prop.check("v");
             return true;
         }
         
@@ -1247,6 +1254,7 @@ public:
         }
         
         state_buffer.attach(state_p);
+		state_buffer.setStrict(false);
         command_buffer.attach(command_p);
 
         bool ok = getCommand(VOCAB_AXES, nj);
@@ -2047,11 +2055,14 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
     Bottle cmd, response;
     bool ok = false;
     cmd.read(connection);
-    ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
+	if (caller->verbose())
+	    ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
     case VOCAB_SET:
-        ACE_OS::printf("set command received\n");
+		if (caller->verbose())
+			ACE_OS::printf("set command received\n");
+
         {
             switch(cmd.get(1).asVocab()) {
             case VOCAB_PID: {
@@ -2304,7 +2315,9 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
         break;
 
     case VOCAB_GET:
-        ACE_OS::printf("get command received\n");
+		if (caller->verbose())
+			ACE_OS::printf("get command received\n");
+
         {
             int tmp = 0;
             double dtmp = 0.0;
@@ -2584,7 +2597,8 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
             response.write(*writer);
-            ACE_OS::printf("response sent: %s\n", response.toString().c_str());
+			if (caller->verbose())
+				ACE_OS::printf("response sent: %s\n", response.toString().c_str());
         }
     }
 

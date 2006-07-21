@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.15 2006-07-20 07:29:40 babybot Exp $
+/// $Id: EsdMotionControl.h,v 1.16 2006-07-21 13:20:42 babybot Exp $
 ///
 ///
 
@@ -268,9 +268,10 @@ protected:
 	bool _writeNone (int msg, int axis);
 
 	// internal stuff.
-	double *_ref_speeds;
-	double *_ref_accs;
-	double *_ref_positions;
+	double *_ref_speeds;		// used for position control.
+	double *_command_speeds;	// used for velocity control.
+	double *_ref_accs;			// for velocity control, in position min jerk eq is used.
+	double *_ref_positions;		// for position control.
 
 	enum { MAX_SHORT = 32767, MIN_SHORT = -32768, MAX_INT = 0x7fffffff, MIN_INT = 0x80000000 };
 	enum { ESD_CAN_SKIP_ADDR = 0x80 };

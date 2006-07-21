@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.21 2006-07-20 07:29:40 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.22 2006-07-21 13:20:42 babybot Exp $
 ///
 ///
 
@@ -505,7 +505,8 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	_done.wait ();
 
 	// temporary variables used by the ddriver.
-	_ref_positions = allocAndCheck<double>(r.getJoints());		
+	_ref_positions = allocAndCheck<double>(r.getJoints());
+	_command_speeds = allocAndCheck<double>(r.getJoints());
 	_ref_speeds = allocAndCheck<double>(r.getJoints());
 	_ref_accs = allocAndCheck<double>(r.getJoints());
 	_mutex.post ();
@@ -522,6 +523,12 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
         setLimits(i, p._limitsMin[i], p._limitsMax[i]);
         setMaxCurrent(i, p._currentLimits[i]);
     }
+
+	// disable the controller, cards will start with the pid controller & pwm off
+	for (i = 0; i < p._njoints; i++) {
+		disablePid(i);
+		disableAmp(i);
+	}
 
 	return true;
 }
@@ -598,7 +605,11 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
 	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
-    params._p = ACE_OS::printf;
+	if (p.findGroup("GENERAL").find("Verbose").asInt() == 1)
+	    params._p = ACE_OS::printf;
+	else
+		params._p = NULL;
+
     return open(params);
 }
 
@@ -606,6 +617,13 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
 bool EsdMotionControl::close (void)
 {
 	EsdCanResources& d = RES(system_resources);
+
+	// disable the controller, pid controller & pwm off
+	int i;
+	for (i = 0; i < d._njoints; i++) {
+		disablePid(i);
+		disableAmp(i);
+	}
 
     if (Thread::isRunning())
     {
@@ -626,6 +644,7 @@ bool EsdMotionControl::close (void)
     ImplementControlLimits<EsdMotionControl, IControlLimits>::uninitialize();
 
     checkAndDestroy<double> (_ref_positions);
+	checkAndDestroy<double> (_command_speeds);
     checkAndDestroy<double> (_ref_speeds);
     checkAndDestroy<double> (_ref_accs);
 
@@ -1297,15 +1316,18 @@ bool EsdMotionControl::setRefSpeedRaw(int axis, double sp)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
 	_ref_speeds[axis] = sp;
-    const short s = S_16(_ref_speeds[axis]);
-
-	return _writeWord16(CAN_SET_DESIRED_VELOCITY, axis, s);
+	return true;
+   
+	//const short s = S_16(_ref_speeds[axis]);
+	//return _writeWord16(CAN_SET_DESIRED_VELOCITY, axis, s);
 }
 
 bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
+	ACE_OS::memcpy(_ref_speeds, spds, sizeof(double) * r.getJoints());
 
+	/*
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
     {
@@ -1313,7 +1335,7 @@ bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 		if (!_writeWord16 (CAN_SET_DESIRED_VELOCITY, i, S_16(_ref_speeds[i])))
 			return false;
     }
-
+	*/
 	return true;
 }
 
@@ -1346,9 +1368,9 @@ bool EsdMotionControl::setRefAccelerationsRaw(const double *accs)
 bool EsdMotionControl::getRefSpeedsRaw (double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
+	/*
 	int i;
 	short value = 0;
-
 	for(i = 0; i < r.getJoints(); i++)
 	{
         if (_readWord16 (CAN_GET_DESIRED_VELOCITY, i, value))
@@ -1359,17 +1381,19 @@ bool EsdMotionControl::getRefSpeedsRaw (double *spds)
 		else
 			return false;
 	}
-
+	*/
+	ACE_OS::memcpy(spds, _ref_speeds, sizeof(double) * r.getJoints());
 	return true;
 }
 
 bool EsdMotionControl::getRefSpeedRaw (int axis, double *spd)
 {
     ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
-
 	EsdCanResources& r = RES(system_resources);
-	short value = 0;
+	*spd = _ref_speeds[axis];
 
+	/*
+	short value = 0;
     if (_readWord16 (CAN_GET_DESIRED_VELOCITY, axis, value))
     {
     	_ref_speeds[axis] = double (value);
@@ -1377,6 +1401,7 @@ bool EsdMotionControl::getRefSpeedRaw (int axis, double *spd)
     } 
 	else
 		return false;
+	*/
 	
 	return true;
 }
@@ -1438,18 +1463,18 @@ bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
 	r.startPacket();
 
 	if (ENABLED (axis))
-		{
-			r.addMessage (CAN_VELOCITY_MOVE, axis);
-			const int j = r._writeMessages - 1;
-			_ref_speeds[axis] = sp;
-			*((short*)(r._writeBuffer[j].data+1)) = S_16(_ref_speeds[axis]);	/// speed
-			*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
-			r._writeBuffer[j].len = 5;
-		}
-		else
-		{
-			_ref_speeds[axis] = sp;
-		}
+	{
+		r.addMessage (CAN_VELOCITY_MOVE, axis);
+		const int j = r._writeMessages - 1;
+		_command_speeds[axis] = sp;
+		*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
+		*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
+		r._writeBuffer[j].len = 5;
+	}
+	else
+	{
+		_command_speeds[axis] = sp;
+	}
 
 	_writerequested = true;
 	_noreply = true;
@@ -1478,14 +1503,14 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
 		{
 			r.addMessage (CAN_VELOCITY_MOVE, i);
 			const int j = r._writeMessages - 1;
-			_ref_speeds[i] = sp[i];
-			*((short*)(r._writeBuffer[j].data+1)) = S_16(_ref_speeds[i]);	/// speed
+			_command_speeds[i] = sp[i];
+			*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
 			*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
 			r._writeBuffer[j].len = 5;
 		}
 		else
 		{
-			_ref_speeds[i] = sp[i];
+			_command_speeds[i] = sp[i];
 		}
 	}
 
