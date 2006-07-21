@@ -668,8 +668,8 @@ void PortCore::send(Writable& writer, Readable *reader) {
                                            waitAfterSend,waitBeforeSend);
                     YMSG(("------- -- send\n"));
                     if (out!=NULL) {
-                        ((PortCorePacket *)out)->dec();
                         packetMutex.wait();
+                        ((PortCorePacket *)out)->dec();
                         packets.checkPacket((PortCorePacket *)out);
                         packetMutex.post();
                     }
@@ -710,8 +710,8 @@ bool PortCore::isWriting() {
                         void *tracker = unit->takeTracker();
                         if (tracker!=NULL) {
                             //YARP_INFO(log,"tracker returned...");
-                            ((PortCorePacket *)tracker)->dec();
                             packetMutex.wait();
+                            ((PortCorePacket *)tracker)->dec();
                             packets.checkPacket((PortCorePacket *)tracker);
                             packetMutex.post();
                         }
