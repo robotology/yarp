@@ -204,6 +204,10 @@ public:
         // attach callback.
         control_buffer.useCallback(callback_impl);
 
+		verb = (prop.check("verbose") || prop.check("v"));
+		if (verb)
+			ACE_OS::printf("running with verbose output\n");
+
         Value *name;
         if (prop.check("subdevice",name)) {
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
@@ -280,7 +284,6 @@ public:
 
             start();
 
-			verb = prop.check("verbose") || prop.check("v");
             return true;
         }
         
