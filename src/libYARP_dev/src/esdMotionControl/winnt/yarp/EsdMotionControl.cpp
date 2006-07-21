@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.22 2006-07-21 13:20:42 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.23 2006-07-21 21:04:24 babybot Exp $
 ///
 ///
 
@@ -1315,6 +1315,7 @@ bool EsdMotionControl::setRefSpeedRaw(int axis, double sp)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
+	sp /= 10.0; // encoder ticks per ms
 	_ref_speeds[axis] = sp;
 	return true;
    
@@ -1326,6 +1327,9 @@ bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
 	ACE_OS::memcpy(_ref_speeds, spds, sizeof(double) * r.getJoints());
+	int i;
+	for (i = 0; i < r.getJoints(); i++)
+		_ref_speeds[i] /= 10.0;
 
 	/*
 	int i;
@@ -1343,6 +1347,7 @@ bool EsdMotionControl::setRefAccelerationRaw(int axis, double acc)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
+	acc /= 1000.0;
 	_ref_accs[axis] = acc;
 	const short s = S_16(_ref_accs[axis]);
 	
@@ -1356,7 +1361,7 @@ bool EsdMotionControl::setRefAccelerationsRaw(const double *accs)
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
 	{
-		_ref_accs[i] = accs[i];
+		_ref_accs[i] = accs[i] / 1000.0;
 		if (!_writeWord16 (CAN_SET_DESIRED_ACCELER, i, S_16(_ref_accs[i])))
 			return false;
 	}
@@ -1383,6 +1388,10 @@ bool EsdMotionControl::getRefSpeedsRaw (double *spds)
 	}
 	*/
 	ACE_OS::memcpy(spds, _ref_speeds, sizeof(double) * r.getJoints());
+	int i;
+	for (i = 0; i < r.getJoints(); i++)
+		spds[i] *= 10.0;
+
 	return true;
 }
 
@@ -1390,8 +1399,8 @@ bool EsdMotionControl::getRefSpeedRaw (int axis, double *spd)
 {
     ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	EsdCanResources& r = RES(system_resources);
-	*spd = _ref_speeds[axis];
-
+	*spd = _ref_speeds[axis] * 10.0;
+	
 	/*
 	short value = 0;
     if (_readWord16 (CAN_GET_DESIRED_VELOCITY, axis, value))
@@ -1415,8 +1424,10 @@ bool EsdMotionControl::getRefAccelerationsRaw (double *accs)
 
 	for(i = 0; i < r.getJoints(); i++)
 	{
-		if (_readWord16 (CAN_GET_DESIRED_ACCELER, i, value) == true)
+		if (_readWord16 (CAN_GET_DESIRED_ACCELER, i, value) == true) {
 			_ref_accs[i] = accs[i] = double (value);
+			accs[i] *= 1000.0;
+		}
 		else
 			return false;
 	}
@@ -1434,7 +1445,7 @@ bool EsdMotionControl::getRefAccelerationRaw (int axis, double *accs)
     if (_readWord16 (CAN_GET_DESIRED_ACCELER, axis, value) == true)
     {
 		_ref_accs[axis] = double (value);
-        *accs = double(value);
+        *accs = double(value) * 1000.0;
     }
 	else
 		return false;
@@ -1466,14 +1477,14 @@ bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
 	{
 		r.addMessage (CAN_VELOCITY_MOVE, axis);
 		const int j = r._writeMessages - 1;
-		_command_speeds[axis] = sp;
+		_command_speeds[axis] = sp / 1000.0;
 		*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
 		*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
 		r._writeBuffer[j].len = 5;
 	}
 	else
 	{
-		_command_speeds[axis] = sp;
+		_command_speeds[axis] = sp / 1000.0;
 	}
 
 	_writerequested = true;
@@ -1503,14 +1514,14 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
 		{
 			r.addMessage (CAN_VELOCITY_MOVE, i);
 			const int j = r._writeMessages - 1;
-			_command_speeds[i] = sp[i];
+			_command_speeds[i] = sp[i] / 1000.0;
 			*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
 			*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
 			r._writeBuffer[j].len = 5;
 		}
 		else
 		{
-			_command_speeds[i] = sp[i];
+			_command_speeds[i] = sp[i] / 1000.0;
 		}
 	}
 
@@ -1554,7 +1565,9 @@ bool EsdMotionControl::resetEncoderRaw(int j)
 bool EsdMotionControl::resetEncodersRaw()
 {
     int n=RES(system_resources).getJoints();
-    double *tmp=new double [n];
+    double *tmp = new double [n];
+	ACE_ASSERT (tmp != NULL);
+
     for(int i=0;i<n;i++)
         tmp[i]=0;
 

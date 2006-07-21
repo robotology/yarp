@@ -111,7 +111,7 @@ public:
  * - state_p streaming information about the current state of the robot
  * - control_p receiving a stream of control commands (e.g. position)
  * 
- * Missing: return values on RPC commands
+ * Missing: 
  *
  *          complete get/set commands for velocity control
  *          torque control, NOT IMPLEMENTED
@@ -1700,6 +1700,7 @@ public:
      */
     virtual bool positionMove(const double *refs) { 
         CommandMessage& c = command_buffer.get();
+		c.head.clear();
         c.head.addVocab(VOCAB_POSITION_MOVES);
         c.body.size(nj);
         ACE_OS::memcpy(&(c.body[0]), refs, sizeof(double)*nj);
@@ -1893,6 +1894,7 @@ public:
      */
     virtual bool velocityMove(const double *v) {
         CommandMessage& c = command_buffer.get();
+		c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
         c.body.size(nj);
         ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
@@ -2618,13 +2620,20 @@ yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerCon
 }
 
 void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
-    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+//    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+//	int i;
 
     Bottle& b = v.head;
+//	ACE_OS::printf("bottle: %s\n", b.toString().c_str());
+
     switch (b.get(0).asVocab()) {
         case VOCAB_POSITION_MODE: 
         case VOCAB_POSITION_MOVES: {
-            ACE_OS::printf("Received a position command\n");
+//            ACE_OS::printf("Received a position command\n");
+//			for (i = 0; i < v.body.size(); i++)
+//				ACE_OS::printf("%.2f ", v.body[i]);
+//			ACE_OS::printf("\n");
+
             if (pos) {
                 bool ok = pos->positionMove(&(v.body[0]));
                 if (!ok)
@@ -2635,7 +2644,11 @@ void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 
         case VOCAB_VELOCITY_MODE:
         case VOCAB_VELOCITY_MOVES: {
-            ACE_OS::printf("Received a velocity command\n");
+//            ACE_OS::printf("Received a velocity command\n");
+//			for (i = 0; i < v.body.size(); i++)
+//				ACE_OS::printf("%.2f ", v.body[i]);
+//			ACE_OS::printf("\n");
+
             if (pos) {
                 bool ok = vel->velocityMove(&(v.body[0]));
                 if (!ok)
