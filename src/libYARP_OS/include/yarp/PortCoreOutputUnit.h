@@ -20,7 +20,7 @@ public:
     // specifically for managing input connections
 
     PortCoreOutputUnit(PortCore& owner, OutputProtocol *op) : 
-        PortCoreUnit(owner), op(op), phase(1), activate(0) {
+        PortCoreUnit(owner), op(op), phase(1), activate(0), trackerMutex(1) {
 
         YARP_ASSERT(op!=NULL);
         closing = false;
@@ -77,7 +77,7 @@ private:
     OutputProtocol *op;
     bool closing, finished, running, threaded, sending;
     String name;
-    SemaphoreImpl phase, activate;
+    SemaphoreImpl phase, activate, trackerMutex;
     Writable *cachedWriter;
     Readable *cachedReader;
     void *cachedTracker;

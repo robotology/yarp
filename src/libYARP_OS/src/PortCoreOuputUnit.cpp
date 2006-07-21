@@ -59,6 +59,7 @@ void PortCoreOutputUnit::run() {
                 if (sending) {
                     YARP_DEBUG(Logger::get(), "write something in background");
                     sendHelper();
+                    trackerMutex.wait();
                     if (cachedTracker!=NULL) {
                         void *t = cachedTracker;
                         cachedTracker = NULL;
@@ -67,6 +68,7 @@ void PortCoreOutputUnit::run() {
                     } else {
                         sending = false;
                     }
+                    trackerMutex.post();
                 }
             }
             YARP_DEBUG(Logger::get(), "wrote something in background");
@@ -202,10 +204,12 @@ void *PortCoreOutputUnit::send(Writable& writer,
             sendHelper();
             sending = false;
         } else {
+            trackerMutex.wait();
             void *nextTracker = tracker;
             tracker = cachedTracker;
             cachedTracker = nextTracker;
             activate.post();
+            trackerMutex.post();
         }
     } else {
         YARP_DEBUG(Logger::get(), 
@@ -219,10 +223,12 @@ void *PortCoreOutputUnit::send(Writable& writer,
 
 void *PortCoreOutputUnit::takeTracker() {
     void *tracker = NULL;
+    trackerMutex.wait();
     if (!sending) {
         tracker = cachedTracker;
         cachedTracker = NULL;
     }
+    trackerMutex.post();
     return tracker;
 }
 
