@@ -7,11 +7,13 @@ private:
     int w, h;
     int ct;
     yarp::sig::PixelRgb circlePixel;
+    double brightness;
 public:
     FakeFrameGrabber() {
         h = w = 0;
 	ct = 0;
 	circlePixel = yarp::sig::PixelRgb(255,0,0);
+	brightness = 1;
     }
 
     bool open(int w, int h) {
@@ -48,6 +50,34 @@ public:
 
     virtual int width() const {
         return w;
+    }
+
+    virtual bool setBrightness(double v) {
+        if (v>1) v = 1;
+        if (v<0) v = 0;
+	circlePixel = yarp::sig::PixelRgb((unsigned char)(255*v),0,0);
+	brightness = v;
+	return true;
+    }
+
+    virtual bool setShutter(double v) {
+        return false;
+    }
+
+    virtual bool setGain(double v) {
+        return false;
+    }
+
+    virtual double getBrightness() const {
+        return brightness;
+    }
+
+    virtual double getShutter() const {
+        return 0;
+    }
+
+    virtual double getGain() const {
+        return 0;
     }
 };
 
