@@ -164,15 +164,20 @@ public:
         int period=0;
         if (config.check("framerate", name))
             {
-                framerate=(double) name->asInt();
+                framerate=name->asDouble();
             }
         
         if (framerate!=0)
+        {
             period=(int) (1000.0/framerate+0.5);
+            printf("Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n", framerate, period);
+        }
         else
+        {
+            printf("No framerate specified, polling the device\n");
             period=0; //continuous
-
-        printf("Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n", framerate, period);
+        }
+        
         RateThread::setRate(period);
 
         if (fgImage!=NULL||fgSound!=NULL) {
