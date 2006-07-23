@@ -2,6 +2,7 @@
 #include <yarp/sig/all.h>
 
 class FakeFrameGrabber : public yarp::dev::IFrameGrabberImage, 
+			 public yarp::dev::IFrameGrabberControls, 
                          public yarp::dev::DeviceDriver {
 private:
     int w, h;
