@@ -11,7 +11,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
 
@@ -47,12 +47,20 @@ namespace yarp {
  *
  * Here's a command-line example:
  * \verbatim
-   [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --period 2
+   [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --framerate 30
    [terminal B] yarp read /read
    [terminal C] yarp connect /grabber /read
    [terminal C] echo "[get] [gain]" | yarp rpc /grabber
    \endverbatim
  * The yarpdev line starts a TestFrameGrabber wrapped in a ServerFrameGrabber.
+ * Parameters are:
+ * --width, --height set the size of the frame in pixels
+ * --name portname set the name of the output port
+ * --framerate set the frequency (Hz) at which images will be read and boradcast to 
+ * the network; if the parameter is not set images are provided at the maximum speed
+ * supported by the device. Notice that the maximum frame rate is determined by
+ * the device.
+ * 
  * After the "yarp connect" line, image descriptions will show up in 
  * terminal B (you could view them with the yarpview application).
  * The "yarp rpc" command should query the gain (0.0 for the test grabber).
@@ -69,7 +77,7 @@ namespace yarp {
  *
  */
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, 
-            private yarp::os::Thread,
+            private yarp::os::RateThread,
             public yarp::os::PortReader,
             public IFrameGrabberImage, public IFrameGrabberControls,
             public IAudioGrabberSound
@@ -90,7 +98,7 @@ public:
     /**
      * Constructor.
      */
-    ServerFrameGrabber() {
+    ServerFrameGrabber(): RateThread(0) {
         fgImage = NULL;
         fgSound = NULL;
         fgCtrl = NULL;
@@ -115,6 +123,7 @@ public:
         p.setReader(*this);
         
         yarp::os::Value *name;
+
         if (config.check("subdevice",name)) {
             printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
@@ -151,6 +160,21 @@ public:
             p.open("/grabber");
         }
 
+        double framerate=0;
+        int period=0;
+        if (config.check("framerate", name))
+            {
+                framerate=(double) name->asInt();
+            }
+        
+        if (framerate!=0)
+            period=(int) (1000.0/framerate+0.5);
+        else
+            period=0; //continuous
+
+        printf("Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n", framerate, period);
+        RateThread::setRate(period);
+
         if (fgImage!=NULL||fgSound!=NULL) {
             start();
             return true;
@@ -160,32 +184,39 @@ public:
         return false;
     }
 
-    virtual void run() {
+    virtual void doInit()
+    { 
         printf("Server grabber starting\n");
-        while (!isStopping()) {
-            if (fgImage!=NULL) {
-                // for now, sound and image are mutually exclusive
-                yarp::sig::ImageOf<yarp::sig::PixelRgb>& img = writer.get();
-                getImage(img);
-                if (!spoke) {
-                    printf("Network framegrabber writing a %dx%d image...\n",
-                           img.width(),img.height());
-                    spoke = true;
-                }
-                writer.write();
-            } else {
-                // for now, sound and image are mutually exclusive
-                yarp::sig::Sound& snd = writerSound.get();
-                getSound(snd);
-                if (!spoke) {
-                    printf("Network framegrabber writing a %dx%d sound...\n",
-                           snd.getSamples(),snd.getChannels());
-                    spoke = true;
-                }
-                writerSound.write();
-            }
-        }
+    }
+
+    virtual void doRelease()
+    { 
         printf("Server grabber stopping\n");
+    }
+
+    virtual void doLoop() 
+    {
+        if (fgImage!=NULL) {
+            // for now, sound and image are mutually exclusive
+            yarp::sig::ImageOf<yarp::sig::PixelRgb>& img = writer.get();
+            getImage(img);
+            if (!spoke) {
+                printf("Network framegrabber writing a %dx%d image...\n",
+                       img.width(),img.height());
+                spoke = true;
+            }
+            writer.write();
+        } else {
+            // for now, sound and image are mutually exclusive
+            yarp::sig::Sound& snd = writerSound.get();
+            getSound(snd);
+            if (!spoke) {
+                printf("Network framegrabber writing a %dx%d sound...\n",
+                       snd.getSamples(),snd.getChannels());
+                spoke = true;
+            }
+            writerSound.write();
+        }
     }
 
     virtual bool read(ConnectionReader& connection) {
