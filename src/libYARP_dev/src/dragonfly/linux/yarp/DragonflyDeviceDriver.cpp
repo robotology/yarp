@@ -91,6 +91,7 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
         }
 
     cam.init_cameras();
+    cam.SetSize(params._size_x, params._size_y);
 
     buffLength=cam.getBufferLength();
     sizeX=cam.getX();

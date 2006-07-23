@@ -143,6 +143,11 @@ public:
     int GetUBColor(int camera_num=0) { return(cameras[camera_num].dstate.GetUBColor()); }
     int GetVRColor(int camera_num=0) { return(cameras[camera_num].dstate.GetVRColor()); }
 
+    // set the size of the frame, currently only a limited number of options are available
+    // (320x240 and 160x120), the function returns false if asked to produce an image of a 
+    // different format. Future versions of the driver might support more choices.
+    bool SetSize(int x, int y);
+
     void init_cameras(bool dma_on_in=true);
 private:
 
