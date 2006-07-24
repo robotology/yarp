@@ -628,7 +628,7 @@ public:
     virtual bool checkMotionDone(bool *flag) { 
         if (pos)
             return pos->checkMotionDone(flag);
-        ACE_OS::memset(flag, 1, sizeof(bool)*nj);
+        *flag = true;
         return false;
     }
 
@@ -1753,15 +1753,8 @@ public:
         cmd.addVocab(VOCAB_MOTION_DONES);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            int i;
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
-                return false;
-            int njs = l.size();
-            ACE_ASSERT (nj == njs);
-            for (i = 0; i < nj; i++)
-                flag[i] = (bool)(l.get(i).asInt());
-            return true;
+            *flag = (bool)(response.get(2).asInt());
+			return true;
         }
         return false;
     }
@@ -2449,14 +2442,9 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             break;
 
             case VOCAB_MOTION_DONES: {
-                bool *p = new bool[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pos->checkMotionDone(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addInt(p[i]);
-                delete[] p;
+				bool x = false;
+                ok = pos->checkMotionDone(&x);
+				response.addInt(x);
             }
             break;
 
