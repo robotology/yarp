@@ -1,12 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-#include "MTComm.h"
-#include "XSensMTx.h"
 #include <ace/OS.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <string>
+
+#include "MTComm.h"
+#include "XSensMTx.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -185,8 +186,8 @@ bool XSensMTx::open(yarp::os::Searchable &config)
     p.fromString(config.toString());
 
 #ifdef WIN32
-    if (p.check ("serial", name))
-	par.comPort = name->asInt ();
+    if (p.check ("serial", serial))
+	par.comPort = serial->asInt ();
     else
         par.comPort = 11;
 #else
