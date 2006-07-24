@@ -59,6 +59,10 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 			spoke = false;
 		}
 
+		virtual ~ServerInertial() {
+			if (IMU != NULL) close();
+		}
+
 		/**
 		* Configure with a set of options. These are:
 		* <TABLE>
@@ -122,7 +126,12 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 
 		virtual bool close()
 		{
-			return true;
+			if (IMU != NULL) {
+				stop();
+				IMU = NULL;
+				return true;
+			}
+			return false;
 		}
 
 
@@ -160,9 +169,11 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 
 		virtual void run()
 		{
+			double before, now;
 			printf("Server Inertial starting\n");
 			while (!isStopping())
 			{
+				before = Time::now();
 				if (IMU!=NULL)
 				{
 					yarp::os::Bottle& bot = writer.get();
@@ -176,7 +187,13 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 					writer.write();
 					
 				}
-				yarp::os::Time::delay (0.001);
+
+				/// wait 5 ms.
+				now = yarp::os::Time::now();
+				if ((now - before)*1000 < 5) {
+					double k = 0.005-(now-before);
+					yarp::os::Time::delay(k);
+				}
 			}
 			printf("Server Inertial stopping\n");
 		}
