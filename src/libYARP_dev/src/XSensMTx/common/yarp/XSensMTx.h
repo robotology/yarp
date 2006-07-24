@@ -1,0 +1,52 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+#ifndef __XSENSMTX__
+#define __XSENSMTX__
+
+#include "MTComm.h"
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/dev/GenericSensorInterfaces.h>
+#include <string>
+
+namespace yarp{
+    namespace dev{
+        class XSensMTx;
+    }
+}
+
+struct XSensMTxParameters
+{
+    std::string comPortString;
+    short comPort;
+};
+
+/**
+ *
+ * @ingroup dev_impl
+ *
+ * Driver for XSens's MTx IMU unit.
+ * @author Radu Bogdan Rusu, Alexis Maldonado
+ */
+class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
+{
+ public:
+    XSensMTx();
+    ~XSensMTx();
+    
+    // IGenericSensor interface.
+    virtual bool read(yarp::sig::Vector &out);
+    virtual bool getChannels(int *nc);
+    virtual bool open(yarp::os::Searchable &config);
+    virtual bool close();
+
+    // Open the device
+    bool open(const XSensMTxParameters &par);
+
+ private:
+    bool start();
+    bool stop();
+
+    void *system_resources;
+    int nchannels;
+};
+
+#endif

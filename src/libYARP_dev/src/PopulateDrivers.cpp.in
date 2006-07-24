@@ -19,6 +19,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_microphone
 #cmakedefine ENABLE_inertiacube2
 #cmakedefine ENABLE_jamescalibrator
+#cmakedefine ENABLE_XSensMTx
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -42,8 +43,13 @@ using namespace yarp::dev;
 #include <yarp/dev/JamesCalibrator.h>
 #endif
 
+#ifdef ENABLE_XSensMTx
+#include <yarp/XSensMTx.h>
+#endif
+
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
+#include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/TestFrameGrabber.h>
 
 extern DriverCreator *createRemoteControlBoard();
@@ -79,7 +85,11 @@ void Drivers::init() {
                                              "JamesCalibrator"));
 #endif
 
-
+#ifdef ENABLE_XSensMTx
+    add(new DriverCreatorOf<XSensMTx>("XSensMTx", 
+                                          "inertial",
+                                          "XSensMTx"));
+#endif
 
 
 
@@ -95,6 +105,11 @@ void Drivers::init() {
                                                 "grabber",
                                                 "ServerFrameGrabber"));
 
+
+    add(new DriverCreatorOf<ServerInertial>("inertial",
+                                            "inertial",
+                                            "ServerInertial"));
+						
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 }

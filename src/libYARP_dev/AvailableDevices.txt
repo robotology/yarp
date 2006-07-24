@@ -6,7 +6,7 @@ IF (WIN32 AND NOT CYGWIN)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(AVAILABLE_DEVICES dragonfly microphone inertiacube2)
+   SET(AVAILABLE_DEVICES dragonfly microphone XSensMTx inertiacube2)
 ENDIF (UNIX)
 
 SET(ADDITIONAL_MODULES jamescalibrator)
