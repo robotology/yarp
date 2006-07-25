@@ -10,7 +10,7 @@ the ControlBoardInterfaces.h header file. These are meant to abstract
 a great deal of details but not all of it since we want to retain the
 possibility of efficient and specialized motor control code.
 
-@section yarpdev_base motorcontrol
+@section yarp_motorcontrol_base Motor control.
 
 We take an example of a motor control device since this is simpler to
 explain than a general controller. The approach itself is 
