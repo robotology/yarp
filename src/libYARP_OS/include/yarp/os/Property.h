@@ -42,10 +42,21 @@ public:
      */
     Property(const char *str);
 
+
+    /**
+     * Copy constructor
+     */
+    Property(const Property& prop);
+
     /**
      * Destructor.
      */
     virtual ~Property();
+
+    /**
+     * Assignment.
+     */
+    const Property& operator = (const Property& prop);
 
     // documented in Searchable
     bool check(const char *key);

@@ -287,11 +287,24 @@ Property::Property(const char *str) {
 }
 
 
+Property::Property(const Property& prop) {
+    implementation = new PropertyHelper;
+    YARP_ASSERT(implementation!=NULL);
+    fromString(prop.toString());
+}
+
+
 Property::~Property() {
     if (implementation!=NULL) {
         delete &HELPER(implementation);
         implementation = NULL;
     }
+}
+
+
+const Property& Property::operator = (const Property& prop) {
+    fromString(prop.toString());
+    return *this;
 }
 
 
