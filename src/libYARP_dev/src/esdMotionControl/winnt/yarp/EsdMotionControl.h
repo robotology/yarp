@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.16 2006-07-21 13:20:42 babybot Exp $
+/// $Id: EsdMotionControl.h,v 1.17 2006-07-25 15:40:34 gmetta Exp $
 ///
 ///
 
@@ -24,6 +24,10 @@ namespace yarp{
 /**
  * \file EsdMotionControl.h 
  * class for interfacing with the ESD can device driver.
+ */
+
+/**
+ * \include UserDoc_dev_motorcontrol.dox
  */
 
 /**

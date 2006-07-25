@@ -6,7 +6,7 @@
 PROJECT_NAME           = YARP
 PROJECT_NUMBER         = 
 OUTPUT_DIRECTORY       = doc/user
-CREATE_SUBDIRS         = NO
+CREATE_SUBDIRS         = YES
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
 BRIEF_MEMBER_DESC      = YES
@@ -67,11 +67,20 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-# there's no real good search pattern for "clean" device headers
-# unfortunately - need to find a better method than updating this line
-INPUT                  = src/libYARP_OS/include/yarp/os src/libYARP_sig/include/yarp/sig src/libYARP_dev/include/yarp/dev src/yarp-imageviewer/UserDoc_man_yarpview.dox src/libYARP_dev/src/dragonfly/common src/libYARP_dev/src/microphone/common src/libYARP_dev/src/inertiacube2/common src/libYARP_dev/src/microphone/common src/libYARP_dev/src/picolo/winnt/yarp src/libYARP_dev/src/esdMotionControl/winnt/yarp src/libYARP_dev/src
-# a lot of RemoteControlBoard.cpp should be moved to a header file
-FILE_PATTERNS          = *.h *.dox RemoteControlBoard.cpp
+INPUT                  = src/libYARP_OS/include/yarp/os \
+                         src/libYARP_sig/include/yarp/sig \
+                         src/libYARP_dev/include/yarp/dev \
+                         src/yarp-imageviewer/UserDoc_man_yarpview.dox \
+                         src/libYARP_dev/src/dragonfly/common \
+                         src/libYARP_dev/src/microphone/common \
+                         src/libYARP_dev/src/inertiacube2/common \
+                         src/libYARP_dev/src/microphone/common \
+                         src/libYARP_dev/src/picolo/winnt/yarp \
+                         src/libYARP_dev/src/esdMotionControl/winnt/yarp \
+                         src/libYARP_dev/src
+FILE_PATTERNS          = *.h \
+                         *.dox \
+                         RemoteControlBoard.cpp
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
