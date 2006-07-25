@@ -103,6 +103,31 @@ public:
         checkTrue(v!=NULL,"check method 2");
     }
 
+    virtual void checkCopy() {
+        report(0,"checking copy");
+        Property p0;
+        p0.fromString("(foo 12) (testing left right)");
+        {
+            Property p(p0);
+            checkEqual(p.find("foo").asInt(),12,"good key 1");
+            checkEqual(p.find("testing").asString().c_str(),"left",
+                       "good key 2");
+            checkEqual(p.findGroup("testing").toString().c_str(),
+                       "testing left right","good key 2 (more)");
+        }
+        {
+            Property p;
+            p.fromString("bozo");
+            p = p0;
+            checkEqual(p.find("foo").asInt(),12,"good key 1");
+            checkEqual(p.find("testing").asString().c_str(),"left",
+                       "good key 2");
+            checkEqual(p.findGroup("testing").toString().c_str(),
+                       "testing left right","good key 2 (more)");
+        }
+
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
