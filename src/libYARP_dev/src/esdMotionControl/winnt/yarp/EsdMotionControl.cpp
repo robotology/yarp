@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.23 2006-07-21 21:04:24 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.24 2006-07-25 08:33:32 babybot Exp $
 ///
 ///
 
@@ -573,7 +573,8 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     xtmp = p.findGroup("GENERAL").findGroup("Zeros");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
-    
+
+
     ////// PIDS
     int j=0;
     for(j=0;j<nj;j++)

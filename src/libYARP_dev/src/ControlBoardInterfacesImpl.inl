@@ -56,6 +56,8 @@ public:
         else
             memset(zeros, 0, sizeof(double)*nj);
 
+       
+
         if (angToEncs!=0)
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
         else
@@ -76,7 +78,7 @@ public:
 				}
 			}
 		}
-    }
+    } 
 
     ~ControlBoardHelper() 
     {
@@ -148,25 +150,25 @@ public:
 
     inline void posA2E(double ang, int j, double &enc, int &k)
     {
-        enc=(ang*angleToEncoders[j])+zeros[j];
+        enc=(ang+zeros[j])*angleToEncoders[j];
         k=toHw(j);
     }
 
     inline double posA2E(double ang, int j)
     {
-        return (ang*angleToEncoders[j])+zeros[j];
+        return (ang+zeros[j])*angleToEncoders[j];
     }
 
     inline void posE2A(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
-        ang=(enc-zeros[k])/angleToEncoders[k];
+        ang=(enc/angleToEncoders[k])-zeros[k];
     }
 
     inline double posE2A(double enc, int j)
     {
         int k=toUser(j);
-        return (enc-zeros[k])/angleToEncoders[k];
+        return (enc/angleToEncoders[k])-zeros[k];
     }
 
     inline void velA2E(double ang, int j, double &enc, int &k)
