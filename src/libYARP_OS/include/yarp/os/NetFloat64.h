@@ -7,6 +7,7 @@
 namespace yarp {
     namespace os {
 
+
 #ifdef YARP2_LINUX
         typedef double NetFloat64;
 #else

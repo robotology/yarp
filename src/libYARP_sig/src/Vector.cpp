@@ -1,10 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.5 2006-07-26 12:39:26 eshuy Exp $
+// $Id: Vector.cpp,v 1.6 2006-07-26 15:50:42 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/ManagedBytes.h>
+#include <yarp/os/NetFloat64.h>
 
 /*
 preferred network format for a list of doubles.
@@ -66,7 +67,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
             int blockLen = sizeof(double)*header.listLen;
             ManagedBytes bytes(blockLen);
             connection.expectBlock((char *)bytes.get(), bytes.length());
-            NetFloat64 *floats = (NetFloat64*)bytes.get();
+            yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
             for (int i=0; i<header.listLen; i++) {
                 this->operator[](i) = floats[i];
             }
@@ -99,7 +100,7 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
     // native doubles don't match YARP's expectations
     int blockLen = sizeof(double)*header.listLen;
     ManagedBytes bytes(blockLen);
-    NetFloat64 *floats = (NetFloat64*)bytes.get();
+    yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
     for (int i=0; i<header.listLen; i++) {
         floats[i] = this->operator[](i);
     }
