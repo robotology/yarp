@@ -1,9 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/NetType.h>
+#include <yarp/os/NetInt32.h>
+#include <yarp/os/NetFloat64.h>
 
 #include "TestList.h"
 
 using namespace yarp;
+using namespace yarp::os;
 
 class NetTypeTest : public UnitTest {
 public:
@@ -29,8 +32,40 @@ public:
         checkTrue(ct1==ct2,"two identical sequences again");
     }
 
+    void checkInt() {
+        report(0,"checking integer representation");
+        union {
+            NetInt32 i;
+            unsigned char c[4];
+        } val;
+        val.i = 258;
+        checkEqual(val.c[0],2,"first byte ok");
+        checkEqual(val.c[1],1,"second byte ok");
+        checkEqual(val.c[2],0,"third byte ok");
+        checkEqual(val.c[3],0,"fourth byte ok");
+    }
+
+    void checkFloat() {
+        report(0,"checking floating point representation");
+        union {
+            NetFloat64 d;
+            unsigned char c[8];
+        } val;
+        val.d = 3.14159;
+        unsigned char rpi[8] = {
+            110, 134, 27, 240, 249, 33, 9, 64
+        };
+        for (int i=0; i<8; i++) {
+            val.c[i] = rpi[i];
+        }
+        checkTrue((val.d>3.14),"pi lower bound");
+        checkTrue((val.d<3.15),"pi upper bound");
+    }
+
     virtual void runTests() {
         checkCrc();
+        checkInt();
+        checkFloat();
     }
 };
 
