@@ -7,6 +7,7 @@
 #include <yarp/StringInputStream.h>
 
 #include <yarp/os/Vocab.h>
+#include <yarp/os/NetFloat64.h>
 
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
@@ -580,13 +581,16 @@ void StoreDouble::fromString(const String& src) {
 }
 
 bool StoreDouble::read(ConnectionReader& reader) {
-    reader.expectBlock((const char*)&x,sizeof(x));
+    NetFloat64 flt = 0;
+    reader.expectBlock((const char*)&flt,sizeof(flt));
+    x = flt;
     return true;
 }
 
 bool StoreDouble::write(ConnectionWriter& writer) {
     //writer.appendBlockCopy(Bytes((char*)&x,sizeof(x)));
-    writer.appendBlock((char*)&x,sizeof(x));
+    NetFloat64 flt = x;
+    writer.appendBlock((char*)&flt,sizeof(flt));
     return true;
 }
 
