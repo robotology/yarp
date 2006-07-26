@@ -48,10 +48,11 @@ public:
     void checkFloat() {
         report(0,"checking floating point representation");
         union {
-            NetFloat64 d;
+            double d;
             unsigned char c[8];
         } val;
-        val.d = 3.14159;
+        NetFloat64 d = 3.14159;
+        memcpy((char*)(&val.d),(char*)&d,sizeof(double));
         unsigned char rpi[8] = {
             110, 134, 27, 240, 249, 33, 9, 64
         };
