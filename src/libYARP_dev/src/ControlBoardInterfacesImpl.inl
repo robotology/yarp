@@ -631,6 +631,7 @@ ImplementPidControl(DERIVED *y)
     iPid= dynamic_cast<IPidControlRaw *> (y);
     helper = 0;        
     temp=0;
+    tmpPids=0;
 }
 
 template <class DERIVED, class IMPLEMENT> ImplementPidControl<DERIVED, IMPLEMENT>::
