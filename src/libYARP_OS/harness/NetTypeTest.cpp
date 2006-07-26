@@ -35,33 +35,31 @@ public:
     void checkInt() {
         report(0,"checking integer representation");
         union {
-            NetInt32 i;
-            unsigned char c[4];
+            int i;
+            unsigned char c[sizeof(int)];
         } val;
-        val.i = 258;
+		NetInt32 i = 258;
+        memcpy((char*)(&val.i),(char*)&i,sizeof(int));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
         checkEqual(val.c[2],0,"third byte ok");
         checkEqual(val.c[3],0,"fourth byte ok");
     }
-
+    
     void checkFloat() {
         report(0,"checking floating point representation");
-        union {
-            double d;
-            unsigned char c[8];
-        } val;
-        NetFloat64 d = 3.14159;
-        memcpy((char*)(&val.d),(char*)&d,sizeof(double));
-        unsigned char rpi[8] = {
+        NetFloat64 d = 99;
+		checkEqual(sizeof(NetFloat64), 8, "NetFloat64 size is ok.");
+		unsigned char rpi[8] = {
             110, 134, 27, 240, 249, 33, 9, 64
         };
         for (int i=0; i<8; i++) {
-            val.c[i] = rpi[i];
+            ((unsigned char*)(&d))[i] = rpi[i];
         }
-        checkTrue((val.d>3.14),"pi lower bound");
-        checkTrue((val.d<3.15),"pi upper bound");
+        checkTrue(((double)(d)>3.14),"pi lower bound");
+        checkTrue(((double)(d)<3.15),"pi upper bound");
     }
+
 
     virtual void runTests() {
         checkCrc();

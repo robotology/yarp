@@ -33,7 +33,7 @@ namespace yarp {
                 UnionNetFloat64 in, out;
                 in.d = x;
                 for (int i=0; i<8; i++) {
-                    out.c[i] = out.c[7-i];
+                    out.c[i] = in.c[7-i];
                 }
                 return out.d;
             }
