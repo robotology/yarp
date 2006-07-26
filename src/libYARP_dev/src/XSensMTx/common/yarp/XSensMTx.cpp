@@ -156,6 +156,12 @@ bool XSensMTx::getChannels(int *nc)
     return true;
 }
 
+bool XSensMTx::calibrate(int ch, double v)
+{
+    printf("Not implemented yet\n");
+    return false;
+}
+
 bool XSensMTx::start()
 {
     XSensMTxResources &d=RES(system_resources);

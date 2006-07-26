@@ -34,6 +34,13 @@ public:
      * @return true/false success/failure
      */
     virtual bool getChannels(int *nc)=0;
+
+    /* Calibrate the sensor, single channel.
+     * @param ch channel number
+     * @param v reset valure
+     * @return true/false success/failure
+     */
+    virtual bool calibrate(int ch, double v)=0;
 };
 
 #endif

@@ -36,6 +36,7 @@ class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
     virtual bool read(yarp::sig::Vector &out);
     virtual bool getChannels(int *nc);
     virtual bool open(yarp::os::Searchable &config);
+    virtual bool calibrate(int ch, double v);
     virtual bool close();
 
     // Open the device

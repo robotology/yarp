@@ -212,3 +212,37 @@ bool InertiaCube2::close()
 	}
 }
 
+bool InertiaCube2::calibrate(int ch, double v)
+{
+    IntersenseResources &d=RES(system_resources);
+
+    printf("Called calibrate method for channel %d value %lf\n", ch, v);
+    printf("Warning: this is not tested yet, so be careful\n");
+
+    if (ch!=0)
+    {
+          printf("Calibrate method not yet implemented for channel %d\n", ch);
+          return true;
+    }
+
+    d._mutex.wait();
+
+    if (v==0) {
+        ISD_ResetHeading(d._handle_tracker, 1);
+        d._mutex.post();
+        return true;
+    }
+    else
+    {
+        float nroll=(float) v;
+        float npitch=(float) d._last[1];
+        float nyaw=(float) d._last[2];
+                
+        ISD_BoresightReferenced(d._handle_tracker, 1, nyaw, npitch, nroll);
+
+        d._mutex.post();
+        return true;
+    }
+
+    return false;
+}

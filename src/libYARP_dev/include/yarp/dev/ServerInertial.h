@@ -97,7 +97,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 			}
 			else
 			{
-				printf("\"--subdevice <name>\" not set for server_framegrabber\n");
+				printf("\"--subdevice <name>\" not set for server_inertial\n");
 				return false;
 			}
 			if (poly.isValid())
@@ -181,7 +181,7 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 
 					if (!spoke)
 					{
-						printf("Writting an Inertial measurement.\n");
+						printf("Writing an Inertial measurement.\n");
 						spoke = true;
 					}
 					writer.write();
@@ -203,6 +203,9 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 			yarp::os::Bottle cmd, response;
 			cmd.read(connection);
 			printf("command received: %s\n", cmd.toString().c_str());
+
+
+            
 			// We receive a command but don't do anything with it.
 			return true;
 		}
@@ -218,6 +221,12 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 			if (IMU == NULL) { return false; }
 			return IMU->getChannels (nc);
 		}
+
+        virtual bool calibrate(int ch, double v)
+        {
+            if (IMU==NULL) {return false;}
+            return IMU->calibrate(ch, v);
+        }
 };
 
 #endif
