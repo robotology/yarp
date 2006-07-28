@@ -144,6 +144,11 @@ public:
      */
     void resize(int imgWidth, int imgHeight);
 
+    /**
+     * Use this to wrap an external image.
+     * Make sure to that pixel type and padding quantum are
+     * synchronized (you can set these in the FlexImage class).
+     */
     void setExternal(void *data, int imgWidth, int imgHeight);
 
     unsigned char *getRawImage() const;
@@ -158,11 +163,7 @@ public:
      */
     void *getIplImage();
 
-    /**
-     * not yet implemented.
-     * make sure to set all necessary properties first.
-     */
-    void wrapRawImage(void *buf, int imgWidth, int imgHeight);
+    //void wrapRawImage(void *buf, int imgWidth, int imgHeight);
 
 
     /**

@@ -1,3 +1,13 @@
+2006-07-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Fixed some problems picked up at summer school.
+	Including: representation of doubles on Mac OSX
+	(thanks Anthony Truchet!); buffering default for
+	BufferedPort set to lossy (thanks to lots of people);
+	no longer permit multiple connections between
+	a single source-target port pair; set orientation
+	in IPL structure associated with images.
+
 2006-07-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Fixed some problems that valgrind picked up.  The

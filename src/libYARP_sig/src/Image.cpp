@@ -653,14 +653,19 @@ int Image::getRawImageSize() const {
 }
 
 void *Image::getIplImage() {
-    //fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+    // this parameter doesn't seem to get set by YARP.
+    // this set should be moved back to the point of creation,
+    // but I am not sure where that is.
+    ((ImageStorage*)implementation)->pImage->origin = 0;
+
     return ((ImageStorage*)implementation)->pImage;
 }
 
+/*
 void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
     fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
 }
-
+*/
 
 
 

@@ -152,7 +152,7 @@ public:
 
     /**
      * this method will be called with new data, as long as you've
-     * requested this be done by calling useOnRead()
+     * requested this be done by calling useCallback()
      */
     virtual void onRead(T& datum) {
         // override this to do something
@@ -167,7 +167,7 @@ public:
     }
 
     /**
-     * Call own onRead() method -- user can override this method
+     * Call own onRead() method -- user can override that method
      * to be informed about data as it arrives
      */
     void useCallback() {
