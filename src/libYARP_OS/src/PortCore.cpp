@@ -9,6 +9,7 @@
 #include <yarp/StreamConnectionReader.h>
 #include <yarp/Name.h>
 
+#include <yarp/Companion.h>
 #include <yarp/os/Network.h>
 
 #include <ace/OS_NS_stdio.h>
@@ -21,6 +22,7 @@
 #define YTRACE(x) 
 
 using namespace yarp;
+using namespace yarp::os;
 
 /*
   Phases:
@@ -156,6 +158,12 @@ void PortCore::run() {
             ip = NULL;
         }
         reapUnits();
+        stateMutex.wait();
+        for (int i=0; i<connectionListeners; i++) {
+            connectionChange.post();
+        }
+        connectionListeners = 0;
+        stateMutex.post();
     }
 
 
@@ -358,8 +366,10 @@ void PortCore::reapUnits() {
             if (unit!=NULL) {
                 if (unit->isDoomed()&&!unit->isFinished()) {	
                     YARP_DEBUG(log,"REAPING a unit");
+                    //printf("Reaping...%s\n", unit->getRoute().toString().c_str());
                     unit->close();
                     unit->join();
+                    //printf("done Reaping...%s\n", unit->getRoute().toString().c_str());
                     YARP_DEBUG(log,"done REAPING a unit");
                 }
             }
@@ -428,6 +438,7 @@ void PortCore::addInput(InputProtocol *ip) {
 
 void PortCore::addOutput(OutputProtocol *op) {
     YARP_ASSERT(op!=NULL);
+
     stateMutex.wait();
     if (!finished) {
         PortCoreUnit *unit = new PortCoreOutputUnit(*this,op);
@@ -442,7 +453,39 @@ void PortCore::addOutput(OutputProtocol *op) {
 }
 
 
-bool PortCore::removeUnit(const Route& route) {
+bool PortCore::isUnit(const Route& route) {
+    // not mutexed
+    bool needReap = false;
+    if (!finished) {
+        for (unsigned int i=0; i<units.size(); i++) {
+            PortCoreUnit *unit = units[i];
+            if (unit!=NULL) {
+                Route alt = unit->getRoute();
+                String wild = "*";
+                bool ok = true;
+                if (route.getFromName()!=wild) {
+                    ok = ok && (route.getFromName()==alt.getFromName());
+                }
+                if (route.getToName()!=wild) {
+                    ok = ok && (route.getToName()==alt.getToName());
+                }
+                if (route.getCarrierName()!=wild) {
+                    ok = ok && (route.getCarrierName()==alt.getCarrierName());
+                }
+	
+                if (ok) {
+                    needReap = true;
+                    break;
+                }
+            }
+        }
+    }
+    //printf("Reporting %s as %d\n", route.toString().c_str(), needReap);
+    return needReap;
+}
+
+
+bool PortCore::removeUnit(const Route& route, bool synch) {
     // a request to remove a unit
     // this is the trickiest case, since any thread could here
     // affect any other thread
@@ -468,9 +511,23 @@ bool PortCore::removeUnit(const Route& route) {
                 }
 	
                 if (ok) {
-                    YARP_DEBUG(log, String("removing unit ") + alt.toString());
+                    YARP_DEBUG(log, 
+                               String("removing unit ") + alt.toString());
                     unit->setDoomed();
                     needReap = true;
+                    if (route.getToName()!="*") {
+                        /*
+                        printf("Disconnect %s %s...\n",
+                               alt.getToName().c_str(),
+                               alt.getFromName().c_str());
+                        printf("Disconnect route %s %s...\n",
+                               route.getToName().c_str(),
+                               route.getFromName().c_str());
+                        */
+                        Companion::disconnectInput(alt.getToName().c_str(),
+                                                   alt.getFromName().c_str(),
+                                                   true);
+                    }
                 }
             }
         }
@@ -489,6 +546,23 @@ bool PortCore::removeUnit(const Route& route) {
             }
         } catch (IOException e) {
             // no problem
+        }
+        if (synch) {
+            // wait until disconnection process is complete
+            bool cont = false;
+            do {
+                //printf("Waiting for close to finish...\n");
+                stateMutex.wait();
+                cont = isUnit(route);
+                if (cont) {
+                    connectionListeners++;
+                }
+                stateMutex.post();
+                if (cont) {
+                    connectionChange.wait();
+                }
+            } while (cont);
+            //printf("Waited for close to finish...\n");
         }
     }
     return needReap;
@@ -510,6 +584,10 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
     Address parts = Name(dest).toAddress();
     Address address = NameClient::getNameClient().queryName(parts.getRegName());
     if (address.isValid()) {
+        // as a courtesy, remove any existing connections between 
+        // source and destination
+        removeUnit(Route(getName(),address.getRegName(),"*"),true);
+
         OutputProtocol *op = NULL;
         try {
             op = Carriers::connect(address);
@@ -528,10 +606,10 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
             addOutput(op);
             bw.appendLine(String("Added output to ") + dest);
         } else {
-            bw.appendLine(String("Error - cannot connect to ") + dest);
+            bw.appendLine(String("Cannot connect to ") + dest);
         }
     } else {
-        bw.appendLine(String("Error - do not know how to connect to ") + dest);
+        bw.appendLine(String("Do not know how to connect to ") + dest);
     }
 
     if(os!=NULL) {
@@ -542,8 +620,8 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
 
 void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
     BufferedConnectionWriter bw(true);
-    if (removeUnit(Route("*",dest,"*"))) {
-        bw.appendLine(String("Removing connection from ") + getName() +
+    if (removeUnit(Route("*",dest,"*"),true)) {
+        bw.appendLine(String("Removed connection from ") + getName() +
                       " to " + dest);
     } else {
         bw.appendLine(String("Could not find an outgoing connection to ") +
@@ -557,7 +635,7 @@ void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
 
 void PortCore::removeInput(const String& dest, void *id, OutputStream *os) {
     BufferedConnectionWriter bw(true);
-    if (removeUnit(Route(dest,"*","*"))) {
+    if (removeUnit(Route(dest,"*","*"),true)) {
         bw.appendLine(String("Removing connection from ") + dest + " to " +
                       getName());
     } else {

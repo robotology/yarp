@@ -29,7 +29,8 @@ namespace yarp {
 class yarp::PortCore : public ThreadImpl, public PortManager, public Readable {
 public:
 
-    PortCore() : stateMutex(1), packetMutex(1), log("port",Logger::get()) {
+    PortCore() : stateMutex(1), packetMutex(1), connectionChange(1),
+                 log("port",Logger::get()) {
         // dormant phase
         listening = false;
         running = false;
@@ -39,6 +40,7 @@ public:
         finishing = false;
         autoHandshake = true;
         waitBeforeSend = waitAfterSend = true;
+        connectionListeners = 0;
         events = 0;
         face = NULL;
         reader = NULL;
@@ -128,12 +130,12 @@ private:
 
     void addOutput(OutputProtocol *op);
 
-    bool removeUnit(const Route& route);
+    bool removeUnit(const Route& route, bool synch = false);
 
 private:
 
     // main internal PortCore state and operations
-    SemaphoreImpl stateMutex, packetMutex;
+    SemaphoreImpl stateMutex, packetMutex, connectionChange;
     Logger log;
     Face *face;
     String name;
@@ -144,9 +146,12 @@ private:
     bool finishing;
     bool waitBeforeSend, waitAfterSend;
     int events;
+    int connectionListeners;
     PortCorePackets packets;
 
     void closeMain();
+
+    bool isUnit(const Route& route);
 };
 
 #endif
