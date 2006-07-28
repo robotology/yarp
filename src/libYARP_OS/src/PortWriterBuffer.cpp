@@ -35,6 +35,7 @@ public:
     }
 
     void finishWrites() {
+        YARP_DEBUG(Logger::get(), "finishing writes");
         bool done = false;
         while (!done) {
             stateSema.wait();
@@ -47,6 +48,7 @@ public:
                 completionSema.wait();
             }
         }
+        YARP_DEBUG(Logger::get(), "finished writes");
     }
 
     void *get() {

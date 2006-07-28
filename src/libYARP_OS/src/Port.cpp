@@ -5,7 +5,7 @@
 #include <yarp/Logger.h>
 #include <yarp/NameClient.h>
 #include <yarp/os/Contact.h>
-#include <yarp/Companion.h>
+#include <yarp/os/Network.h>
 #include <yarp/SemaphoreImpl.h>
 
 using namespace yarp;
@@ -191,7 +191,7 @@ Contact Port::where() {
 
 bool Port::addOutput(const Contact& contact) {
     Contact me = where();
-    return Companion::connect(me.getName().c_str(),
+    return Network::connect(me.getName().c_str(),
                               contact.toString().c_str());
 }
 

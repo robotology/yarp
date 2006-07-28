@@ -32,7 +32,7 @@ public:
      */
     static bool connect(const char *src, const char *dest,
                         const char *carrier = 0 /*NULL*/,
-                        bool quiet=false);
+                        bool quiet=true);
 
     /**
      * Request that an output port disconnect from an input port.
@@ -42,7 +42,7 @@ public:
      * @return true on success, false on failure
      */
     static bool disconnect(const char *src, const char *dest, 
-                           bool quiet=false);
+                           bool quiet=true);
 
     /**
      * The standard main method for the YARP companion utility.

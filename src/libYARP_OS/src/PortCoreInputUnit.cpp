@@ -182,7 +182,9 @@ void PortCoreInputUnit::run() {
         if (Name(route.getFromName()).isRooted()) {
             YARP_INFO(Logger::get(),String("Removing input from ") + 
                       route.getFromName() + " to " + route.getToName());
-        }
+		} else {
+	        YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
+		}
     } else {
         YARP_DEBUG(Logger::get(),"PortCoreInputUnit shutting down");
     }
@@ -228,12 +230,14 @@ void PortCoreInputUnit::closeMain() {
     if (running) {
         // give a kick (unfortunately unavoidable)
         if (ip!=NULL) {
-            //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
+            YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
             ip->interrupt();
-            //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
+            YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
         }
         closing = true;
+        YARP_DEBUG(Logger::get(),"PortCoreInputUnit joining");
         join();
+        YARP_DEBUG(Logger::get(),"PortCoreInputUnit joined");
     }
 
     if (ip!=NULL) {

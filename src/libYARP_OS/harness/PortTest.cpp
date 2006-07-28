@@ -441,6 +441,10 @@ public:
             report(0,"waiting for port to stabilize");
             Time::delay(0.2);
         }
+
+        report(0,"port stabilized");
+		output.close();
+        report(0,"shut down output buffering");
     }
 
     void testBufferedPort() {
@@ -464,7 +468,7 @@ public:
         report(0,"reading...");
         BinPortable<int> *bin = input.read();
         checkEqual(bin->content(),999,"good send");
-    }
+	}
 
     void testCloseOrder() {
         report(0,"check that port close order doesn't matter...");

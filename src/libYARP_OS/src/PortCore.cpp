@@ -166,11 +166,14 @@ void PortCore::run() {
         stateMutex.post();
     }
 
-
     YTRACE("PortCore::run closing");
 
     // closing phase
     stateMutex.wait();
+    for (int i=0; i<connectionListeners; i++) {
+            connectionChange.post();
+    }
+    connectionListeners = 0;
     finished = true;
     stateMutex.post();
 }
@@ -244,12 +247,36 @@ void PortCore::closeMain() {
         if (!done) {
             yarp::os::Network::disconnect(removeName.c_str(),
                                           getName().c_str(),
-                                          true);
+										  true);
             prevName = removeName;
         }
     }
 
-
+	// politely remove all outputs
+	done = false;
+    while (!done) {
+        done = true;
+        Route removeRoute;
+        stateMutex.wait();
+        for (unsigned int i=0; i<units.size(); i++) {
+            PortCoreUnit *unit = units[i];
+            if (unit!=NULL) {
+                if (unit->isOutput()&&!unit->isFinished()) {
+					removeRoute = unit->getRoute();
+					if (removeRoute.getFromName()==getName()) {
+						done = false;
+						break;
+					}
+                }
+            }
+        }
+        stateMutex.post();
+        if (!done) {
+			//printf("SHOULD remove %s for %s\n", removeRoute.toString().c_str(),
+			//		getName().c_str());
+			removeUnit(removeRoute);
+        }
+    }
 
     stateMutex.wait();
     bool stopRunning = running;
@@ -368,6 +395,7 @@ void PortCore::reapUnits() {
                     YARP_DEBUG(log,"REAPING a unit");
                     //printf("Reaping...%s\n", unit->getRoute().toString().c_str());
                     unit->close();
+                    YARP_DEBUG(log,"closed REAPING a unit");
                     unit->join();
                     //printf("done Reaping...%s\n", unit->getRoute().toString().c_str());
                     YARP_DEBUG(log,"done REAPING a unit");
@@ -513,20 +541,14 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
                 if (ok) {
                     YARP_DEBUG(log, 
                                String("removing unit ") + alt.toString());
-                    unit->setDoomed();
+					unit->setDoomed();
                     needReap = true;
                     if (route.getToName()!="*") {
-                        /*
-                        printf("Disconnect %s %s...\n",
-                               alt.getToName().c_str(),
-                               alt.getFromName().c_str());
-                        printf("Disconnect route %s %s...\n",
-                               route.getToName().c_str(),
-                               route.getFromName().c_str());
-                        */
-                        Companion::disconnectInput(alt.getToName().c_str(),
-                                                   alt.getFromName().c_str(),
-                                                   true);
+						// not needed any more
+                        //Companion::disconnectInput(alt.getToName().c_str(),
+                          //                         alt.getFromName().c_str(),
+                            //                       true);
+						break;
                     }
                 }
             }
@@ -539,30 +561,36 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
         // death will happen in due course; we can speed it up a bit
         // by waking up the grim reaper
         try {
+	        YARP_DEBUG(log,"reaping - send message...");
             OutputProtocol *op = face->write(address);
             if (op!=NULL) {
                 op->close();
                 delete op;
             }
-        } catch (IOException e) {
+	        YARP_DEBUG(log,"reaping - sent message...");
+
+			if (synch) {
+   	            YARP_DEBUG(log,"reaping - synch...");
+				// wait until disconnection process is complete
+				bool cont = false;
+				do {
+					//printf("Waiting for close to finish...\n");
+					stateMutex.wait();
+					cont = isUnit(route);
+					if (cont) {
+						connectionListeners++;
+					}
+					stateMutex.post();
+					if (cont) {
+						connectionChange.wait();
+					}
+				} while (cont);
+				//printf("Waited for close to finish...\n");
+			}
+
+		} catch (IOException e) {
+			YARP_DEBUG(log,"could not write to self");
             // no problem
-        }
-        if (synch) {
-            // wait until disconnection process is complete
-            bool cont = false;
-            do {
-                //printf("Waiting for close to finish...\n");
-                stateMutex.wait();
-                cont = isUnit(route);
-                if (cont) {
-                    connectionListeners++;
-                }
-                stateMutex.post();
-                if (cont) {
-                    connectionChange.wait();
-                }
-            } while (cont);
-            //printf("Waited for close to finish...\n");
         }
     }
     return needReap;
@@ -604,7 +632,7 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
         }
         if (op!=NULL) {
             addOutput(op);
-            bw.appendLine(String("Added output to ") + dest);
+            bw.appendLine(String("Added output connection from ") + getName() + " to " + dest);
         } else {
             bw.appendLine(String("Cannot connect to ") + dest);
         }
@@ -791,6 +819,8 @@ bool PortCore::isWriting() {
                     if (unit->isBusy()) {
                         writing = true;
                     } else {
+						// not needed anymore, done by callback
+						/*
                         void *tracker = unit->takeTracker();
                         if (tracker!=NULL) {
                             //YARP_INFO(log,"tracker returned...");
@@ -799,6 +829,7 @@ bool PortCore::isWriting() {
                             packets.checkPacket((PortCorePacket *)tracker);
                             packetMutex.post();
                         }
+						*/
                     }
                 }
             }
