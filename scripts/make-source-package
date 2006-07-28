@@ -24,6 +24,10 @@ mkdir -p $BASE/pack
 cd $BASE/pack
 OS=`uname -o`
 if [ "k$OS" = "kCygwin" ]; then
+	if [ "k$ACE_ROOT" = "k" ]; then
+		ACE_ROOT=`cygpath -w $ORG/../ACE_wrappers`
+	fi
+	echo "ACE_ROOT is $ACE_ROOT"
 	GEN="NMake Makefiles"
 	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 	"$CMAKE" -G "$GEN" ../repository
