@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.h,v 1.2 2006-07-04 16:41:53 eshuy Exp $
+// $Id: Vector.h,v 1.3 2006-08-01 23:20:30 gmetta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -72,13 +72,13 @@ public:
 
     /**
      * Read vector from a connection.
-     * return true iff image was read correctly
+     * return true iff a vector was read correctly
      */
     virtual bool read(yarp::os::ConnectionReader& connection);
 
     /**
      * Write vector to a connection.
-     * return true iff image was written correctly
+     * return true iff a vector was written correctly
      */
     virtual bool write(yarp::os::ConnectionWriter& connection);
 };

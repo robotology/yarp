@@ -2,11 +2,11 @@
 # One day this list could be populated automatically.
 
 IF (WIN32 AND NOT CYGWIN)
-   SET(AVAILABLE_DEVICES picolo dragonfly esdMotionControl inertiacube2 XSensMTx)
+   SET(AVAILABLE_DEVICES picolo dragonfly esdMotionControl inertiacube2 XSensMTx james)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(AVAILABLE_DEVICES dragonfly microphone XSensMTx inertiacube2)
+   SET(AVAILABLE_DEVICES dragonfly microphone XSensMTx inertiacube2 james)
 ENDIF (UNIX)
 
-SET(ADDITIONAL_MODULES jamescalibrator)
+# SET(ADDITIONAL_MODULES jamescalibrator)

@@ -33,8 +33,8 @@ namespace yarp{
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /* the control command message type 
- * head is a Bottle which contains the specification of the message tyep
- * body is a Vector which move the robot appropriately
+ * head is a Bottle which contains the specification of the message type
+ * body is a Vector which move the robot accordingly
  */
 typedef PortablePair<Bottle, Vector> CommandMessage;
 
@@ -112,10 +112,8 @@ public:
  * - control_p receiving a stream of control commands (e.g. position)
  * 
  * Missing: 
- *
- *          complete get/set commands for velocity control
  *          torque control, NOT IMPLEMENTED
- *          calibration, tentative implementation, to be integrated
+ *          calibration, tentative implementation, to be improved
  *
  */
 class yarp::dev::ServerControlBoard : 
@@ -128,7 +126,6 @@ class yarp::dev::ServerControlBoard :
             public IAmplifierControl,
             public IControlLimits,
             public IControlCalibrationRaw
-//            public IControlDebug
             // convenient to put these here just to make sure all
             // methods get implemented
 {
@@ -161,6 +158,9 @@ private:
     // LATER: other interfaces here.
 
 public:
+    /**
+     * Constructor.
+     */
     ServerControlBoard() : callback_impl(this), command_reader(this) {
         pid = NULL;
         pos = NULL;
@@ -174,12 +174,24 @@ public:
 		verb = false;
     }
 
+    /**
+     * Return the value of the verbose flag.
+     * @return the verbose flag.
+     */
     bool verbose() const { return verb; }
 
+    /**
+     * Default open() method.
+     * @return always false since initialization requires certain parameters.
+     */
     virtual bool open() {
         return false;
     }
     
+    /**
+     * Close the device driver by deallocating all resources and closing ports.
+     * @return true if successful or false otherwise.
+     */
     virtual bool close() {
         if (Thread::isRunning())
             Thread::stop();
@@ -195,6 +207,16 @@ public:
         return true;
     }
     
+    /**
+     * Open the device driver.
+     * @param prop is a Searchable object which contains the parameters. 
+     * Allowed parameters are:
+     * - verbose or v to print diagnostic information while running.
+     * - subdevice to specify the name of the wrapped device.
+     * - name to specify the predix of the port names.
+     * - calibrator to specify the name of the calibrator object (created through a PolyDriver).
+     * and all parameters required by the wrapped device driver.
+     */
     virtual bool open(Searchable& prop) {
         // attach readers.
         rpc_p.setReader(command_reader);
@@ -224,7 +246,7 @@ public:
                 ACE_OS::printf("cannot make <%s>\n", name->toString().c_str());
             }
         } else {
-            ACE_OS::printf("\"--subdevice <name>\" not set for server_framegrabber\n");
+            ACE_OS::printf("\"--subdevice <name>\" not set for server_controlboard\n");
             return false;
         }
 
@@ -404,7 +426,8 @@ public:
     }
 
     /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors
+     * @param errs pointer to the vector that will store the errors.
+     * @return true/false on success/failure.
      */
     virtual bool getErrors(double *errs) {
         if (pid)
@@ -1013,18 +1036,36 @@ public:
     }
 
 	/* IControlCalibrationRaw */
+
+    /**
+     * Calibrate a single joint, the calibration method accepts a parameter
+     * that is used to accomplish various things internally and is implementation
+     * dependent.
+     * @param j the axis number.
+     * @param p is a double value that is passed to the calibration procedure.
+     * @return true/false on success/failure.
+     */
     virtual bool calibrateRaw(int j, double p) {
 		if (calib)
 			return calib->calibrateRaw(j, p);
 		return false;
 	}
 
+    /**
+     * Check whether the calibration has been completed.
+     * @param j is the joint that has started a calibration procedure.
+     * @return true/false on success/failure.
+     */
     virtual bool doneRaw(int j) {
 		if (calib)
 			return calib->doneRaw(j);
 		return false;
 	}
 
+    /**
+     * Calibrate the entire robot.
+     * @return true/false on success/failure.
+     */
 	virtual bool calibrate() {
 		if (calib)
 			return calib->calibrate();
@@ -1073,6 +1114,11 @@ protected:
 
     int nj;
 
+    /** 
+     * Send a SET command without parameters and wait for a reply.
+     * @param code is the command Vocab identifier.
+     * @return true/false on success/failure.
+     */
     bool setCommand(int code) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1081,6 +1127,13 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
+    /** 
+     * Send a SET command and an additional double valued variable 
+     * and then wait for a reply.
+     * @param code is the command to send.
+     * @param v is a double valued parameter.
+     * @return true/false on success/failure.
+     */
     bool setCommand(int code, double v) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1090,6 +1143,13 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
+    /**
+     * Send a SET command with an additional integer valued variable
+     * and then wait for a reply.
+     * @param code is the command to send.
+     * @param v is an integer valued parameter.
+     * @return true/false on success/failure.
+     */
     bool setCommand(int code, int v) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -1099,6 +1159,12 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
+    /**
+     * Send a GET command expecting a double value in return.
+     * @param code is the Vocab code of the GET command.
+     * @param v is a reference to the return variable.
+     * @return true/false on success/failure.
+     */
     bool getCommand(int code, double& v) const {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1112,6 +1178,12 @@ protected:
         return false;
     }
 
+    /**
+     * Send a GET command expecting an integer value in return.
+     * @param code is the Vocab code of the GET command.
+     * @param v is a reference to the return variable.
+     * @return true/false on success/failure.
+     */
     bool getCommand(int code, int& v) const {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1178,7 +1250,6 @@ protected:
             *val = response.get(2).asDouble();
             return true;
         }
-
         return false;
     }
 
@@ -1210,13 +1281,23 @@ protected:
     }
 
 public:
+    /**
+     * Constructor.
+     */
     RemoteControlBoard() { 
         nj = 0;
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~RemoteControlBoard() {
     }
 
+    /**
+     * Default open.
+     * @return always true.
+     */
     virtual bool open() {
         return true;
     }
@@ -1269,6 +1350,10 @@ public:
         return true;
     }
 
+    /**
+     * Close the device driver and stop the port connections.
+     * @return true/false on success/failure.
+     */
     virtual bool close() {
         rpc_p.close();
         command_p.close();

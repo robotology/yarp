@@ -4,7 +4,7 @@
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
 
-#include <yarp/dev/JamesCalibrator.h>
+#include <yarp/JamesArmCalibrator.h>
 #include <yarp/os/Time.h>
 
 using namespace yarp::os;
@@ -13,19 +13,19 @@ using namespace yarp::dev;
 // calibrator for the arm of the robot James
 // LATER: change name of the class to JamesArmCalibrator.
 
-JamesCalibrator::JamesCalibrator()
+JamesArmCalibrator::JamesArmCalibrator()
 {
     param = NULL;
 	pos = NULL;
 	vel = NULL;
 }
 
-JamesCalibrator::~JamesCalibrator()
+JamesArmCalibrator::~JamesArmCalibrator()
 {
     //empty now
 }
 
-bool JamesCalibrator::open (yarp::os::Searchable& config)
+bool JamesArmCalibrator::open (yarp::os::Searchable& config)
 {
     Property p;
     p.fromString(config.toString());
@@ -62,7 +62,7 @@ bool JamesCalibrator::open (yarp::os::Searchable& config)
 	return true;
 }
 
-bool JamesCalibrator::close ()
+bool JamesArmCalibrator::close ()
 {
 	if (param != NULL) delete[] param;
 	param = NULL;
@@ -74,7 +74,7 @@ bool JamesCalibrator::close ()
 	return true;
 }
 
-bool JamesCalibrator::calibrate(DeviceDriver *dd)
+bool JamesArmCalibrator::calibrate(DeviceDriver *dd)
 {
     iCalibrate = dynamic_cast<IControlCalibration *>(dd);
     iAmps =  dynamic_cast<IAmplifierControl *>(dd);
@@ -110,7 +110,7 @@ bool JamesCalibrator::calibrate(DeviceDriver *dd)
     return ret;
 }
 
-bool JamesCalibrator::calibrateJoint(int joint)
+bool JamesArmCalibrator::calibrateJoint(int joint)
 {
     const int timeout = 60;
 
@@ -227,7 +227,7 @@ bool JamesCalibrator::calibrateJoint(int joint)
     return false;
 }
 
-void JamesCalibrator::goToZero(int j)
+void JamesArmCalibrator::goToZero(int j)
 {
 	iPosition->setRefSpeed(j, vel[j]);
     iPosition->positionMove(j, pos[j]);

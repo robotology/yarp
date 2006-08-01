@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.17 2006-07-25 15:40:34 gmetta Exp $
+/// $Id: EsdMotionControl.h,v 1.18 2006-08-01 23:20:30 gmetta Exp $
 ///
 ///
 
@@ -98,7 +98,6 @@ class yarp::dev::EsdMotionControl:
     public ImplementControlCalibration<EsdMotionControl, IControlCalibration>,
     public ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>,
     public ImplementControlLimits<EsdMotionControl, IControlLimits>
-
 {
 private:
     EsdMotionControl(const EsdMotionControl&);

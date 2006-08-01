@@ -1,3 +1,5 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
@@ -6,10 +8,10 @@ using namespace yarp::dev;
 bool IControlCalibrationRaw::setCalibrator(ICalibrator *c)
 {
     if (c!=0)
-        {
-            calibrator=c;
-            return true;
-        }
+    {
+        calibrator=c;
+        return true;
+    }
 
     return false;
 }

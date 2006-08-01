@@ -18,7 +18,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_esdMotionControl
 #cmakedefine ENABLE_microphone
 #cmakedefine ENABLE_inertiacube2
-#cmakedefine ENABLE_jamescalibrator
+#cmakedefine ENABLE_james
 #cmakedefine ENABLE_XSensMTx
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
@@ -39,8 +39,9 @@ using namespace yarp::dev;
 #include <yarp/InertiaCube2.h>
 #endif
 
-#ifdef ENABLE_jamescalibrator
-#include <yarp/dev/JamesCalibrator.h>
+#ifdef ENABLE_james
+#include <yarp/JamesArmCalibrator.h>
+// more components might show up here
 #endif
 
 #ifdef ENABLE_XSensMTx
@@ -79,10 +80,10 @@ void Drivers::init() {
                                           "InertiaCube2"));
 #endif
 
-#ifdef ENABLE_jamescalibrator
-    add(new DriverCreatorOf<JamesCalibrator>("jamescalibrator", 
+#ifdef ENABLE_james
+    add(new DriverCreatorOf<JamesArmCalibrator>("JamesArmCalibrator", 
                                              "",
-                                             "JamesCalibrator"));
+                                             "JamesArmCalibrator"));
 #endif
 
 #ifdef ENABLE_XSensMTx
@@ -90,8 +91,6 @@ void Drivers::init() {
                                           "inertial",
                                           "XSensMTx"));
 #endif
-
-
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
                                               "grabber",
