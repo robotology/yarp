@@ -81,7 +81,7 @@ void Drivers::init() {
 #endif
 
 #ifdef ENABLE_james
-    add(new DriverCreatorOf<JamesArmCalibrator>("JamesArmCalibrator", 
+    add(new DriverCreatorOf<JamesArmCalibrator>("jamesarmcalibrator", 
                                              "",
                                              "JamesArmCalibrator"));
 #endif
