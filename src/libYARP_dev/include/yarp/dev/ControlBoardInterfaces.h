@@ -1115,7 +1115,7 @@ public:
 class yarp::dev::IControlCalibrationRaw
 {
 public:
-    IControlCalibrationRaw();
+    IControlCalibrationRaw(){};
     /**
      * Destructor.
      */
