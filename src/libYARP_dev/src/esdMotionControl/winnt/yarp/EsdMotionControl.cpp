@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.24 2006-07-25 08:33:32 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.25 2006-08-02 16:36:19 gmetta Exp $
 ///
 ///
 
@@ -46,8 +46,7 @@
 #include "../../../ControlBoardInterfacesImpl.inl"
 
 /// get the message types from the DSP code.
-#define __ONLY_DEF
-#include "messages.h" //this can easily go to the common part
+#include "messages.h"
 
 #define BUF_SIZE 2047
 
@@ -1050,15 +1049,10 @@ bool EsdMotionControl::setErrorLimitsRaw(const double *limit)
 bool EsdMotionControl::getErrorRaw(int axis, double *err)
 {
 	EsdCanResources& r = RES(system_resources);
-
 	ACE_ASSERT (axis >= 0 && axis <= r.getJoints());
-
     _mutex.wait();
-
 	*(err) = double(r._bcastRecvBuffer[axis]._position_error);
-
     _mutex.post();
-
 	return true;
 }
 
@@ -1066,14 +1060,12 @@ bool EsdMotionControl::getErrorsRaw(double *errs)
 {
 	EsdCanResources& r = RES(system_resources);
 	int i;
-
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
 	{
 		errs[i] = double(r._bcastRecvBuffer[i]._position_error);
 	}
     _mutex.post();
-
 	return true;
 }
 

@@ -29,6 +29,7 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_esdMotionControl
 #include <yarp/EsdMotionControl.h>
+#include <yarp/EsdMessageSniffer.h>
 #endif
 
 #ifdef ENABLE_microphone
@@ -63,11 +64,16 @@ void Drivers::init() {
                                                    "grabber",
                                                    "DragonflyDeviceDriver"));
 #endif
+
 #ifdef ENABLE_esdMotionControl
     add(new DriverCreatorOf<EsdMotionControl>("esd",
                                               "controlboard",
                                               "EsdMotionControl"));
+    add(new DriverCreatorOf<EsdMessageSniffer>("esd_sniffer",
+                                              "",
+                                              "EsdMessageSniffer"));
 #endif
+
 #ifdef ENABLE_microphone
     add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone",
                                                     "grabber",
