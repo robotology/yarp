@@ -21,6 +21,8 @@ int main(int argc, char *argv[]) {
         printf("   yarpdev --device DEVICENAME --OPTION VALUE ...\n");
         printf("For example:\n");
         printf("   yarpdev --device test_grabber --width 32 --height 16 --name /grabber\n");
+        printf("or:\n");
+        printf("   yarpdev --device DEVICENAME --file CONFIG_FILENAME\n");
         printf("Here are devices listed for your system:\n");
         printf("%s", Drivers::factory().toString().c_str());
         return 0;
@@ -39,9 +41,18 @@ int main(int argc, char *argv[]) {
     // check if we're being asked to read the options from file
     Value *val;
     if (options.check("file",val)) {
+        Value *v1 = 0, *v2 = 0;
+        options.check("device", v1);
+        options.check("subdevice", v2);
+        ConstString dname = (v1)?v1->toString():"";
+        ConstString sdname = (v2)?v2->toString():"";
         ConstString fname = val->toString();
         printf("Working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname);
+        if (v1)
+            options.put("device", dname.c_str());
+        if (v2)
+            options.put("subdevice", sdname.c_str());
     }
 
     // check if we want to use lispy nested options (only for Paul's testing)

@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 //
-// $Id: EsdMessageSniffer.cpp,v 1.1 2006-08-02 16:36:19 gmetta Exp $
+// $Id: EsdMessageSniffer.cpp,v 1.2 2006-08-02 22:33:05 babybot Exp $
 //
 
 // general purpose stuff.
@@ -153,7 +153,7 @@ public:
 	PV _p;										///	pointer to a printf type function
 												/// used to spy on can messages.
 	
-	char _printBuffer[16384];                   /// old-style static printer buffer (should be used only for debugging).
+	char _printBuffer[16384];                   /// old-style static print buffer (should be used only for debugging).
 };
 
 EsdResources::EsdResources ()

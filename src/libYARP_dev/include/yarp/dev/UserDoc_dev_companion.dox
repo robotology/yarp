@@ -16,6 +16,8 @@ You can call yarpdev like this:
    yarpdev --device DEVICENAME --OPTION VALUE ...
 For example:
    yarpdev --device test_grabber --width 32 --height 16 --name /grabber
+or:
+   yarpdev --device DEVICENAME --file CONFIG_FILENAME
 Here are devices listed for your system:
 test_grabber
 remote_grabber
@@ -26,5 +28,8 @@ microphone
 dragonfly
 \endverbatim
 
+If a file parameter is present then only the device and subdevice 
+parameters are passed through, everything else is read from the specified
+configuration file.
 
 */
