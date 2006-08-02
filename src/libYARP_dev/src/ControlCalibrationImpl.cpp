@@ -5,7 +5,12 @@
 
 using namespace yarp::dev;
 
-bool IControlCalibrationRaw::setCalibrator(ICalibrator *c)
+IControlCalibration::IControlCalibration()
+{
+    calibrator=0;
+}
+
+bool IControlCalibration::setCalibrator(ICalibrator *c)
 {
     if (c!=0)
     {
@@ -16,12 +21,7 @@ bool IControlCalibrationRaw::setCalibrator(ICalibrator *c)
     return false;
 }
 
-IControlCalibrationRaw::IControlCalibrationRaw()
-{
-    calibrator=0;
-}
-
-bool IControlCalibrationRaw::calibrate()
+bool IControlCalibration::calibrate()
 {
     bool ret = false;
 

@@ -1114,8 +1114,6 @@ public:
  */
 class yarp::dev::IControlCalibrationRaw
 {
-private:
-    ICalibrator *calibrator;
 public:
     IControlCalibrationRaw();
     /**
@@ -1135,18 +1133,6 @@ public:
      */
     virtual bool doneRaw(int j)=0;
 
-    /* Set the calibrator object to be used to calibrate the robot.
-     * @param c pointer to the calibrator object
-     * @return true/false on success failure
-     */
-    virtual bool setCalibrator(ICalibrator *c);
-
-    /* Calibrate robot by using an external calibrator. The external 
-     * calibrator must be previously set by calling the setCalibration()
-     * method.
-     * @return true/false on success failure
-     */
-    virtual bool calibrate();
 };
 
 /** 
@@ -1156,7 +1142,11 @@ public:
  */
 class yarp::dev::IControlCalibration
 {
+private:
+    ICalibrator *calibrator;
+
 public:
+    IControlCalibration();
     /**
      * Destructor.
      */
@@ -1173,6 +1163,20 @@ public:
      * @return true/false 
      */
     virtual bool done(int j)=0;
+
+     /* Set the calibrator object to be used to calibrate the robot.
+     * @param c pointer to the calibrator object
+     * @return true/false on success failure
+     */
+    virtual bool setCalibrator(ICalibrator *c);
+
+    /* Calibrate robot by using an external calibrator. The external 
+     * calibrator must be previously set by calling the setCalibration()
+     * method.
+     * @return true/false on success failure
+     */
+    virtual bool calibrate();
+
 };
 
 /** 

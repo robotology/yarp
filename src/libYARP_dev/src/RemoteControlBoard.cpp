@@ -14,6 +14,7 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ControlBoardInterfacesImpl.h>
 
 #include <yarp/sig/Vector.h>
 
@@ -125,7 +126,7 @@ class yarp::dev::ServerControlBoard :
             public IEncoders,
             public IAmplifierControl,
             public IControlLimits,
-            public IControlCalibrationRaw
+            public IControlCalibration
             // convenient to put these here just to make sure all
             // methods get implemented
 {
@@ -154,14 +155,15 @@ private:
     IEncoders         *enc;
     IAmplifierControl *amp;
     IControlLimits    *lim;
-    IControlCalibrationRaw *calib;
+    IControlCalibration *calib;
     // LATER: other interfaces here.
 
 public:
     /**
      * Constructor.
      */
-    ServerControlBoard() : callback_impl(this), command_reader(this) {
+    ServerControlBoard() : callback_impl(this), command_reader(this)
+    {
         pid = NULL;
         pos = NULL;
         vel = NULL;
@@ -1013,7 +1015,7 @@ public:
      * @param min the value of the lower limit
      * @param max the value of the upper limit
      * @return true or false on success or failure
-     */
+     */ 
     virtual bool setLimits(int axis, double min, double max) {
         if (lim)
             return lim->setLimits(axis, min, max);
@@ -1045,9 +1047,9 @@ public:
      * @param p is a double value that is passed to the calibration procedure.
      * @return true/false on success/failure.
      */
-    virtual bool calibrateRaw(int j, double p) {
+     virtual bool calibrate(int j, double p) {
 		if (calib)
-			return calib->calibrateRaw(j, p);
+			return calib->calibrate(j, p);
 		return false;
 	}
 
@@ -1056,9 +1058,9 @@ public:
      * @param j is the joint that has started a calibration procedure.
      * @return true/false on success/failure.
      */
-    virtual bool doneRaw(int j) {
+    virtual bool done(int j) {
 		if (calib)
-			return calib->doneRaw(j);
+			return calib->done(j);
 		return false;
 	}
 

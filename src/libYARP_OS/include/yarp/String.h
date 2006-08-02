@@ -8,5 +8,7 @@ namespace yarp {
     typedef ACE_String_Base<char> String;
 }
 
+//#undef main //undef ace floating defines
+
 #endif
 
