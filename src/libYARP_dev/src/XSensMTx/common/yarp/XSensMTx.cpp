@@ -190,7 +190,7 @@ bool XSensMTx::open(yarp::os::Searchable &config)
     Property p;
     yarp::os::Value *serial;
     p.fromString(config.toString());
-
+    
 #ifdef WIN32
     if (p.check ("serial", serial))
 	par.comPort = serial->asInt ();
@@ -202,6 +202,7 @@ bool XSensMTx::open(yarp::os::Searchable &config)
     else
         par.comPortString = std::string ("/dev/ttyUSB0");
 #endif
+
     return open(par);
 }
 
