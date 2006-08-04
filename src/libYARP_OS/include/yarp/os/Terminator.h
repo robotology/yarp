@@ -2,7 +2,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.3 2006-08-04 22:19:47 gmetta Exp $
+// $Id: Terminator.h,v 1.4 2006-08-04 22:38:06 gmetta Exp $
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -128,6 +128,8 @@ public:
             }
         }
     }
+
+    // LATER: mustQuitBlocking() to wait on a semaphore.
 
     /**
      * Call this method to see whether a quit message has

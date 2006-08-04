@@ -93,6 +93,10 @@ int main(int argc, char *argv[]) {
             printf("Can't allocate terminator socket port\n");
             return 1;
         }
+        if (!terminee->isOk()) {
+            printf("Failed to create terminator socket port\n");
+            return 1;
+        }
     }
 
     while (dd.isValid() && !terminee->mustQuit()) {
