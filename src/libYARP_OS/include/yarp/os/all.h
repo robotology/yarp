@@ -24,6 +24,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/Terminator.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
