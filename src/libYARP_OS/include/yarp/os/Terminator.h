@@ -2,7 +2,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.2 2006-08-04 17:14:59 babybot Exp $
+// $Id: Terminator.h,v 1.3 2006-08-04 22:19:47 gmetta Exp $
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -26,12 +26,23 @@ namespace yarp {
 
 /**
  * Send a message to a process that has a corresponding
- * port created using the Terminator class to ask to start
+ * socket port created using the Terminee class to ask to start
  * a graceful quit procedure. The receiving process must
- * collaborate.
+ * collaborate and take appropriate action after receiving the
+ * message. The Terminator/Terminee class pair start a tcp socket on the 
+ * server side listening for incoming connections and the magin word "quit" 
+ * (all lowercase). The ip-port pair is registered with a symbolic name
+ * on the Yarp name server and can be queried by the client to send the 
+ * termination message.
  */
 class yarp::os::Terminator {
 public:
+    /** 
+     * Send a quit message to a specific socket port.
+     * @param name is the name of the socket port (as registered in 
+     * the name server).
+     * @return true/false on success/failure.
+     */
     static bool terminateByName(const char *name) {
         if (name == NULL)
             return false;
@@ -63,13 +74,15 @@ protected:
     SocketTwoWayStream sock;
     char data[4];
     volatile bool quit;
+    volatile bool ok;
 
 public:
     /**
      * Constructor. 
-     * @param name is the nickname to register to the name server.
+     * @param name is the nickname to register on the name server.
      */
     Terminee(const char *name) {
+        ok = false;
         if (name == NULL) {
             ACE_OS::printf("Terminator: Please supply a proper port name\n");
             return;
@@ -88,6 +101,7 @@ public:
         acceptor.open(addr);
         quit = false;
         start();
+        ok = true;
     }
 
     /**
@@ -121,6 +135,12 @@ public:
      * @return true is a quit has been received, false otherwise.
      */
     bool mustQuit() const { return quit; }
+
+    /**
+     * Check whether the message mechanism is ok.
+     * @return true if ok, false otherwise.
+     */
+    bool isOk() const { return ok; }
 };
 
 
