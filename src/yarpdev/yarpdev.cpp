@@ -3,7 +3,9 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Terminator.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/String.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -74,11 +76,32 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    while (dd.isValid()) {
-        printf("Device active...\n");
-        Time::delay(5);
+    Terminee *terminee = 0;
+    if (dd.isValid()) {
+        Value *v;
+        // default to /argv[0]/quit
+        yarp::String s("/");
+        s += argv[0];
+        s += "/quit";
+        if (options.check("name", v)) {
+            s.clear();
+            s += v->toString().c_str();
+            s += "/quit";
+        }
+        terminee = new Terminee(s.c_str());
+        if (terminee == 0) {
+            printf("Can't allocate terminator socket port\n");
+            return 1;
+        }
     }
 
+    while (dd.isValid() && !terminee->mustQuit()) {
+        printf("Device active...\n");
+        Time::delay(1);
+    }
+
+    delete terminee;
+    dd.close();
 	Network::fini();
 
     return 0;

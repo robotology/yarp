@@ -106,6 +106,7 @@ public:
     }
     
     virtual bool close() {
+        stop();
         return true;
     }
     

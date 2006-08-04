@@ -2,7 +2,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.1 2006-08-04 15:42:47 babybot Exp $
+// $Id: Terminator.h,v 1.2 2006-08-04 17:14:59 babybot Exp $
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -11,6 +11,7 @@
 #include <yarp/Address.h>
 #include <yarp/SocketTwoWayStream.h>
 #include <yarp/NameClient.h>
+#include <yarp/os/Thread.h>
 
 namespace yarp {
     namespace os {
@@ -32,6 +33,9 @@ namespace yarp {
 class yarp::os::Terminator {
 public:
     static bool terminateByName(const char *name) {
+        if (name == NULL)
+            return false;
+
         String s(name);
         if (name[0] != '/') {
             s.clear();
@@ -52,13 +56,13 @@ public:
  * A class that can be polled to see whether the process has been 
  * asked to quit gracefully.
  */ 
-class yarp::os::Terminee : public Thread {
+class yarp::os::Terminee : public yarp::os::Thread {
 protected:
     ACE_INET_Addr addr;
     ACE_SOCK_Acceptor acceptor;
     SocketTwoWayStream sock;
     char data[4];
-    bool quit;
+    volatile bool quit;
 
 public:
     /**

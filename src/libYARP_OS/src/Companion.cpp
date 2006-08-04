@@ -17,6 +17,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Terminator.h>
 
 #include <ace/OS.h>
 
@@ -75,6 +76,8 @@ Companion::Companion() {
         "run yarp name server");
     add("check",      &Companion::cmdCheck,
         "run a simple sanity check to see if yarp is working");
+    add("terminate",  &Companion::cmdTerminate,
+        "terminate a yarp-terminate-aware process by name");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -143,6 +146,16 @@ int Companion::main(int argc, char *argv[]) {
 }
 
 
+int Companion::cmdTerminate(int argc, char *argv[]) {
+    if (argc == 1) {
+        ACE_OS::printf("Asking port %s to quit gracefully\n", argv[0]);
+        Terminator::terminateByName(argv[0]);
+        return 0;
+    }
+
+    ACE_OS::printf("Wrong parameter format, please specify a port name as a single parameter to terminate\n");
+    return 1;
+}
 
 int Companion::cmdName(int argc, char *argv[]) {
     String cmd = "NAME_SERVER";

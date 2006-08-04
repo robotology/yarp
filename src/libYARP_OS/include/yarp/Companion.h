@@ -101,6 +101,8 @@ private:
 
     int cmdVersion(int argc, char *argv[]);
 
+    int cmdTerminate(int argc, char *argv[]);
+
     int cmdName(int argc, char *argv[]);
 
     int cmdWhere(int argc, char *argv[]);
