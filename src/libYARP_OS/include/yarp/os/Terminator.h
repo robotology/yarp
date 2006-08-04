@@ -2,7 +2,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.4 2006-08-04 22:38:06 gmetta Exp $
+// $Id: Terminator.h,v 1.5 2006-08-04 22:41:46 gmetta Exp $
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -29,8 +29,8 @@ namespace yarp {
  * socket port created using the Terminee class to ask to start
  * a graceful quit procedure. The receiving process must
  * collaborate and take appropriate action after receiving the
- * message. The Terminator/Terminee class pair start a tcp socket on the 
- * server side listening for incoming connections and the magin word "quit" 
+ * message. The Terminator/Terminee class pair starts a tcp socket on the 
+ * server side listening for incoming connections and the magic word "quit" 
  * (all lowercase). The ip-port pair is registered with a symbolic name
  * on the Yarp name server and can be queried by the client to send the 
  * termination message.
