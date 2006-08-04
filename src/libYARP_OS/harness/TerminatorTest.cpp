@@ -32,6 +32,8 @@ public:
         else
             ACE_OS::printf("failed\n");
 
+        Time::delay(1.3);
+
         ACE_OS::printf("quit flag was set properly: ");
         if (!terminee.mustQuit()) {
             ACE_OS::printf("failed\n");
