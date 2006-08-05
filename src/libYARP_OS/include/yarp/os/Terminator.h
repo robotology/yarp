@@ -2,7 +2,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.5 2006-08-04 22:41:46 gmetta Exp $
+// $Id: Terminator.h,v 1.6 2006-08-05 00:16:25 babybot Exp $
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -55,6 +55,7 @@ public:
         }
         NameClient& namer = NameClient::getNameClient();
         Address a = namer.queryName(s);
+	//ACE_OS::printf("address: %s port %d\n",a.getName().c_str(),a.getPort());
         SocketTwoWayStream sock;
         sock.open(a);
         sock.write(Bytes("quit",4));
@@ -97,8 +98,9 @@ public:
 
         NameClient& namer = NameClient::getNameClient();
         Address a = namer.registerName(s);
+	//ACE_OS::printf("listening address: %s port %d\n",a.getName().c_str(),a.getPort());
         addr.set(a.getPort());
-        acceptor.open(addr);
+        acceptor.open(addr, 1);
         quit = false;
         start();
         ok = true;
@@ -116,7 +118,8 @@ public:
     virtual void run() {
         while (!isStopping() && !quit) {
             sock.open(acceptor);
-    
+            Address a = sock.getRemoteAddress();
+            //ACE_OS::printf("incoming data: %s %d\n", a.getName().c_str(), a.getPort());
             sock.read(Bytes(data,4));
             if (data[0] == 'q' &&
                 data[1] == 'u' &&
