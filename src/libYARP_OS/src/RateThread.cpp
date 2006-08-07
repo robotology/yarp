@@ -9,6 +9,8 @@
 #include <ace/High_Res_Timer.h>
 #include <yarp/os/Semaphore.h>
 
+#include <yarp/os/Time.h>
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -69,14 +71,22 @@ public:
  //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
                 
                 //compute the sleep time
-                //the Sleep function rounds to 1ms, so we need to add 500 us, 
-                sleep_period = period-est_time+ACE_Time_Value(0, 500);
+                sleep_period = period-est_time;
+
+                //try to round to 1ms
+                //#if __WIN32__
+                int us=sleep_period.usec()%1000;
+                if (us>=500)
+                    sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
+                else
+                    sleep_period = sleep_period-ACE_Time_Value(0, us);
 			
                 if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
                     sleep_period.set(0,0);
 
 //              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
                 ACE_OS::sleep(sleep_period);
+                //Time::delay(sleep_period.sec()+sleep_period.usec()/1000000.0);
             }
 
 
