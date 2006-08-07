@@ -22,7 +22,7 @@ public:
 
     virtual void doInit()
     {
-        ACE_OS::printf("Starting rate thread: %.2lf[ms]...", getRate());
+        ACE_OS::printf("-->Starting rate thread: %.2lf[ms]...", getRate());
         n=0;
         t1=0;
         t2=0;
@@ -70,45 +70,35 @@ public:
 
         estPeriod=thread1->period;
         
-        ACE_OS::printf("Thread looped %d times\n", thread1->n);
-        ACE_OS::printf("->Requested period was %d[ms], estimated period is %.2lf[ms]\n", 
-            rate, estPeriod); 
- 
         delete thread1;
         return estPeriod;
     }
 
     virtual void testRateThread() {
+        char message[255];
+        
         report(0,"testing rate thread");
 
-        double estimated;
         //try plausible rates
-        double p1=test(15, 1);
-        double p2=test(10, 1);
-        double p3=test(1,  1);
-
-        if (fabs(p3-1)<0.5)
-            estimated=1;
-        else if (fabs(p2-10)<1)
-            estimated=10;
-        else if (fabs(p3-15)<1)
-            estimated=15;
-        else
-            estimated=-1;
-
-        report(0, "RateThread test was successful");
+        double p;
+        ACE_OS::sprintf(message, "Thread1 requested period: %d[ms]", 15);
+        report(0, message);
+        p=test(15, 1);
+        ACE_OS::sprintf(message, "Thread1 estimated: %.2lf[ms]", p);
+        report(0, message);
         
-        if (estimated!=-1)
-        {
-            ACE_OS::printf("I was able to run threads with period up to %.0lf[ms]\n", estimated);
-        }
-        else
-        {
-            ACE_OS::printf("Timing of periodic threads was not reliable. ");
-            ACE_OS::printf("Note: this might be due to many factors (e.g. cpu load) and should");
-            ACE_OS::printf(" not be considered a problem\n");
-        }
-        
+        ACE_OS::sprintf(message, "Thread2 requested period: %d[ms]", 10);
+        report(0, message);
+        p=test(10, 1);
+        ACE_OS::sprintf(message, "Thread2 estimated period: %.2lf[ms]", p);
+        report(0, message);
+
+        ACE_OS::sprintf(message, "Thread3 requested period: %d[ms]", 1);
+        report(0, message);
+        p=test(1, 1);
+        ACE_OS::sprintf(message, "Thread3 estimated period: %.2lf[ms]", p);
+        report(0, message);
+
         report(0, "successful");
     }
 
