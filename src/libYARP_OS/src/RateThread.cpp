@@ -73,8 +73,10 @@ public:
                 //compute the sleep time
                 sleep_period = period-est_time;
 
-                //try to round to 1ms
-                //#if __WIN32__
+                // round to 1ms. I noticed that ACE_OS::sleep() has a different 
+                // 'rounding' behavior depending on the os. This could be an ACE 
+                // problem because win32 and cygwin behaves differently. We should 
+                // check the implementation -- nat
                 int us=sleep_period.usec()%1000;
                 if (us>=500)
                     sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
