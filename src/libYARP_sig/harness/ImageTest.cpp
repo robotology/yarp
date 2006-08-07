@@ -238,6 +238,7 @@ public:
         checkEqual(img1.getQuantum(),8,"ipl compatible quantum");
         checkEqual(img1.getRowSize(),16,"ipl compatible row size");
         checkEqual(img1.width(),13,"good real row width");
+        checkEqual(img1.getPadding(), img1.getRowSize()-img1.width(), "getPadding()");
 
         unsigned char buf2[13][5];
         ImageOf<PixelMono> img2;
@@ -324,6 +325,87 @@ public:
         checkEqual(img.width(),4,"dimension check");
     }
 
+    // test row pointer access (getRow())
+    // this function only tests if getRow(r)[c] is consistent with the operator ()    
+    void testRowPointer()
+    {
+        ImageOf<PixelRgb> img1;
+        ImageOf<PixelRgb> img2;
+
+        img1.resize(59, 50);
+        img2.resize(59, 50);
+
+        img1.zero();
+        img2.zero();
+
+        int r,c;
+        // fill img1 with some data, using pointer to row
+        // access
+        for(r=0; r<img1.height(); r++)
+        {
+            unsigned char *row=img1.getRow(r);
+            for(c=0;c<img1.width(); c++)
+            {
+                *row++=(unsigned char) r;
+                *row++=(unsigned char) r;
+                *row++=(unsigned char) r;
+            }
+        }
+
+        // do the same on img2, but using the 
+        // pixel function
+        for(r=0; r<img2.height(); r++)
+            for(c=0;c<img2.width(); c++)
+            {
+                img2(c,r).r=r;
+                img2(c,r).g=r;
+                img2(c,r).b=r;
+            }
+       
+    
+        // now make sure the two images are the same
+        int acc=0;
+        for(r=0; r<img2.height(); r++)
+            for(c=0;c<img2.width(); c++)
+            {
+                acc+=(img2(c,r).r-img1(c,r).r);
+                acc+=(img2(c,r).g-img1(c,r).g);
+                acc+=(img2(c,r).b-img1(c,r).b);
+            }
+
+        checkEqual(acc,0,"pointer to row access");
+    }
+
+    // test const methods, this is mostly a compile time check.
+    void testConstMethods()
+    {
+        ImageOf<PixelMono> img1;
+        img1.resize(15,10);
+        img1.zero();
+
+        int r,c;
+        int acc=0;
+        for(r=0; r<img1.height(); r++)
+            for(c=0;c<img1.width(); c++)
+            {
+                img1(c,r)=(unsigned char) r;
+                acc+=r;
+            }
+  
+        const ImageOf<PixelMono> &constImg=img1;
+        for(r=0; r<constImg.height(); r++)
+        {
+            const unsigned char *row=constImg.getRow(r);
+            for(c=0;c<constImg.width(); c++)
+            {
+                const unsigned char &v1=constImg.pixel(c,r);
+                const unsigned char &v2=constImg(c,r);
+                acc-=v1;
+            }
+        }
+
+        checkEqual(acc,0,"const methods");
+    }
 
     virtual void runTests() {
         testCreate();
@@ -338,6 +420,8 @@ public:
         testStandard();
         testDraw();
         testScale();
+        testRowPointer();
+        testConstMethods();
     }
 };
 

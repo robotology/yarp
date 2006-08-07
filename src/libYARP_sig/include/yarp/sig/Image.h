@@ -112,6 +112,35 @@ public:
      */
     inline int getQuantum() const { return imgQuantum; }
 
+    inline int getPadding() const 
+    {
+        const int ret=imgRowSize-imgWidth*imgPixelSize;
+       	return ret; 
+    }
+
+    /**
+     * Get the address of a the first byte of a row in memory.
+     * @param r row number (starting from 0)
+     * @return address of the r-th row
+     */
+    inline unsigned char *getRow(int r)
+    {
+        // should we check limits?
+        return (unsigned char *)(data[r]);
+    }
+
+    /**
+     * Get the address of a the first byte of a row in memory,
+     * const versions.
+     * @param r row number (starting from 0)
+     * @return address of the r-th row
+     */
+    inline const unsigned char *getRow(int r) const
+    {
+        // should we check limits?
+        return (const unsigned char *)(data[r]);
+    }
+
     /**
      * Get address of a pixel in memory.
      * @param x x coordinate
@@ -349,6 +378,14 @@ public:
     inline T& pixel(int x, int y) {
         return *((T *)(getPixelAddress(x,y)));
     }
+  
+    inline T& pixel(int x, int y) const {
+        return *((T *)(getPixelAddress(x,y)));
+    }
+
+    inline const T& operator()(int x, int y) const {
+        return pixel(x,y);
+    }
 
     inline T& operator()(int x, int y) {
         return pixel(x,y);
@@ -383,7 +420,15 @@ public: \
     return *((T *)(getPixelAddress(x,y))); \
   } \
 \
+  inline const T& pixel(int x, int y) const { \
+    return *((T *)(getPixelAddress(x,y))); \
+  } \
+\
   inline T& operator()(int x, int y) { \
+    return pixel(x,y); \
+  } \
+\
+  inline const T& operator()(int x, int y) const { \
     return pixel(x,y); \
   } \
 \
