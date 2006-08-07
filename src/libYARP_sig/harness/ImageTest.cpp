@@ -400,6 +400,9 @@ public:
             {
                 const unsigned char &v1=constImg.pixel(c,r);
                 const unsigned char &v2=constImg(c,r);
+                unsigned char dummy=v1; //avoid unused var warnings
+                dummy=v2;
+                dummy=*row++;
                 acc-=v1;
             }
         }
