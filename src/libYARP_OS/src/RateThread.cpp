@@ -91,6 +91,14 @@ public:
          return true;
     }
 
+    double getRate()
+    {
+        return period.usec()/1000.0;
+    }
+
+    bool isSuspended()
+    { return suspended; }
+
     void suspend()
     { suspended=true; }
 
@@ -119,6 +127,16 @@ RateThread::~RateThread() {
 bool RateThread::setRate(int p)
 {
     return ((RateThreadCallbackAdapter*)implementation)->setRate(p);
+}
+
+double RateThread::getRate()
+{
+    return ((RateThreadCallbackAdapter*)implementation)->getRate();
+}
+
+bool RateThread::isSuspended()
+{
+    return ((RateThreadCallbackAdapter*)implementation)->isSuspended();
 }
 
 bool RateThread::join(double seconds) {

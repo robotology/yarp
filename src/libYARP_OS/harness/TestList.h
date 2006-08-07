@@ -33,6 +33,7 @@ extern yarp::UnitTest& getVocabTest();
 extern yarp::UnitTest& getValueTest();
 extern yarp::UnitTest& getPortablePairTest();
 extern yarp::UnitTest& getTerminatorTest();
+extern yarp::UnitTest& getRateThreadTest();
 
 class yarp::TestList {
 public:
@@ -48,6 +49,7 @@ public:
         root.add(getStreamConnectionReaderTest());
         root.add(getBufferedConnectionWriterTest());
         root.add(getThreadTest());
+        root.add(getRateThreadTest());
         root.add(getProtocolTest());
         root.add(getNameServerTest());
         root.add(getPortCoreTest());

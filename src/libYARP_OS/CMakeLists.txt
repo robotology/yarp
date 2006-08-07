@@ -6,3 +6,4 @@ YarpLibrary(YARP_OS os)
 ADD_EXECUTABLE(yarp yarp/yarp.cpp)
 TARGET_LINK_LIBRARIES(yarp YARP_OS ${ACE_LINK_FLAGS})
 INSTALL_TARGETS(/bin yarp)
+ 

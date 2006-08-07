@@ -63,11 +63,22 @@ public:
     bool isRunning();
 
     /**
+    * Returns true when the thread is suspended, false otherwise.
+    */
+    bool isSuspended();
+
+    /**
     * Set the (new) rate of the thread.
     * @param p the rate [ms]
     * @return true.
     */
     bool setRate(int p);
+
+    /**
+    * Return the current rate of the thread.
+    * @return thread current rate [ms].
+    */
+    double getRate();
 
     /**
     * Suspend the thread, the thread keeps running by doLoop is

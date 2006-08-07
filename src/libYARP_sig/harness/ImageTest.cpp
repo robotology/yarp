@@ -246,6 +246,7 @@ public:
         checkEqual(img2.getQuantum(),1,"natural external quantum");
         checkEqual(img2.getRowSize(),13,"natural external row size");
         checkEqual(img2.width(),13,"natural external row width");
+        checkEqual(img2.getPadding(), 0, "natural external padding");
 
         unsigned char buf3[16][5];
         ImageOf<PixelMono> img3;
@@ -254,7 +255,7 @@ public:
         checkEqual(img3.getQuantum(),8,"forced external quantum");
         checkEqual(img3.getRowSize(),16,"forced external row size");
         checkEqual(img3.width(),13,"normal external row width");
-
+        checkEqual(img3.getPadding(), 3, "forced external padding");
 
         FlexImage img4;
         img4.setPixelCode(VOCAB_PIXEL_MONO);
