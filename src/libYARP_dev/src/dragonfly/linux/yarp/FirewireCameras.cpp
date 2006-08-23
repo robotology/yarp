@@ -17,20 +17,21 @@ bool FWCameras::SetSize(int x, int y)
     if ( (x==320) && (y==240))
         {
             capture_size=_320x240;
-            fprintf(stderr, "FWCAmeras:: setting 320x240\n");
+            fprintf(stderr, "FWCameras:: setting 320x240\n");
             return true;
         }
     else if ( (x==160) && (y==120))
         {
             capture_size=_160x120;
-            fprintf(stderr, "FWCAmeras:: setting 160x120\n");
+            fprintf(stderr, "FWCameras:: setting 160x120\n");
             return true;
         }
     else
         {
             capture_size=_320x240;
-            fprintf(stderr, "FWCameras:: %dx%d, format not supported (yet)\n");
-            fprintf(stderr, "Setting 320x240, returning false");
+            fprintf(stderr, "FWCameras:: %dx%d, format not supported (yet)\n",
+                    x, y);
+            fprintf(stderr, "Setting 320x240, returning false\n");
             return false;
         }
 }
