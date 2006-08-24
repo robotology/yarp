@@ -71,8 +71,13 @@ int main(int argc, char *argv[]) {
     //printf("Options: %s\n", options.toString().c_str());
     PolyDriver dd(options);
     if (!dd.isValid()) {
-        printf("Device not available.  Here are the known devices:\n");
-        printf("%s", Drivers::factory().toString().c_str());
+        printf("Device not available.\n");
+        if (argc==1) { 
+            printf("Here are the known devices:\n");
+            printf("%s", Drivers::factory().toString().c_str());
+        } else {
+            printf("Call yarpdev with no arguments to see list of devices.\n");
+        }
         return 1;
     }
 

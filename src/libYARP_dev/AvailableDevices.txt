@@ -9,4 +9,6 @@ IF (UNIX)
    SET(AVAILABLE_DEVICES dragonfly microphone XSensMTx inertiacube2 portaudio james)
 ENDIF (UNIX)
 
+SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber)
+
 # SET(ADDITIONAL_MODULES jamescalibrator)

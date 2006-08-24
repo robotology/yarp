@@ -138,6 +138,7 @@ public:
             }
             if (!poly.isValid()) {
                 printf("cannot make <%s>\n", name->toString().c_str());
+                return false;
             }
         } else {
             printf("\"--subdevice <name>\" not set for server_framegrabber\n");

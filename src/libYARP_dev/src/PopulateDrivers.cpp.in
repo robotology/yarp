@@ -21,6 +21,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_james
 #cmakedefine ENABLE_XSensMTx
 #cmakedefine ENABLE_portaudio
+#cmakedefine ENABLE_opencv_grabber
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -52,6 +53,10 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_portaudio
 #include <yarp/PortAudioDeviceDriver.h>
+#endif
+
+#ifdef ENABLE_opencv_grabber
+#include <yarp/OpenCVGrabber.h>
 #endif
 
 #include <yarp/dev/RemoteFrameGrabber.h>
@@ -107,6 +112,12 @@ void Drivers::init() {
     add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio", 
                                                    "grabber",
                                                    "PortAudioDeviceDriver"));
+#endif
+
+#ifdef ENABLE_opencv_grabber
+    add(new DriverCreatorOf<OpenCVGrabber>("opencv_grabber", 
+                                           "grabber",
+                                           "OpenCVGrabber"));
 #endif
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
