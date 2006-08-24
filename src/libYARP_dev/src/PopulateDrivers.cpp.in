@@ -20,6 +20,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_inertiacube2
 #cmakedefine ENABLE_james
 #cmakedefine ENABLE_XSensMTx
+#cmakedefine ENABLE_portaudio
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -47,6 +48,10 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_XSensMTx
 #include <yarp/XSensMTx.h>
+#endif
+
+#ifdef ENABLE_portaudio
+#include <yarp/PortAudioDeviceDriver.h>
 #endif
 
 #include <yarp/dev/RemoteFrameGrabber.h>
@@ -96,6 +101,12 @@ void Drivers::init() {
     add(new DriverCreatorOf<XSensMTx>("XSensMTx", 
                                           "inertial",
                                           "XSensMTx"));
+#endif
+
+#ifdef ENABLE_portaudio
+    add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio", 
+                                                   "grabber",
+                                                   "PortAudioDeviceDriver"));
 #endif
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",

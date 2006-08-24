@@ -77,6 +77,7 @@ INPUT                  = src/libYARP_OS/include/yarp/os \
                          src/libYARP_dev/src/microphone/common \
                          src/libYARP_dev/src/picolo/winnt/yarp \
                          src/libYARP_dev/src/esdMotionControl/winnt/yarp \
+                         src/libYARP_dev/src/portaudio/common \
                          src/libYARP_dev/src
 FILE_PATTERNS          = *.h \
                          *.dox \
