@@ -1,3 +1,9 @@
+2006-08-24  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Bumped version up to 2.0.7
+	* Started portaudio device wrapper -- seems a good library
+	for doing cross-platform audio
+
 2006-07-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Fixed some problems picked up at summer school.
