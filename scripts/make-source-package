@@ -28,6 +28,7 @@ if [ "k$OS" = "kCygwin" ]; then
 		ACE_ROOT=`cygpath -w $ORG/../ACE_wrappers`
 	fi
 	echo "ACE_ROOT is $ACE_ROOT"
+	export ACE_ROOT=$ACE_ROOT
 	GEN="NMake Makefiles"
 	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 	"$CMAKE" -G "$GEN" ../repository
