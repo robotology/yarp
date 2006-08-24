@@ -34,6 +34,9 @@ public:
      * Create an OpenCV image grabber. This initializes members to
      * reasonable default values, the real initialization is done in
      * open().
+     *
+     * \author Eric Mislevic
+     *
      */
     OpenCVGrabber() : IFrameGrabberImage(), DeviceDriver(),
                       m_w(0), m_h(0), m_capture(0) { ; }

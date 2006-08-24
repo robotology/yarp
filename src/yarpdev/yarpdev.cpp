@@ -57,8 +57,8 @@ int main(int argc, char *argv[]) {
             options.put("subdevice", sdname.c_str());
     }
 
-    // check if we want to use lispy nested options (only for Paul's testing)
-    if (options.check("lispy",val)) {
+    // check if we want to use nested options (less ambiguous)
+    if (options.check("nested",val)||options.check("lispy",val)) {
         ConstString lispy = val->toString();
         printf("Working with config %s\n", lispy.c_str());
         options.fromString(lispy);
