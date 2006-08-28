@@ -23,7 +23,13 @@ IF (CREATE_JAVA)
    SET(CMAKE_SWIG_FLAGS "-outdir;generated_src;-Wall;-module;yarp")
    FIND_PACKAGE(JNI REQUIRED)
    INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
-   SWIG_ADD_MODULE(libjyarp java yarp.i)
+   
+   IF (WIN32 AND NOT CYGWIN)
+      SWIG_ADD_MODULE(jyarp java yarp.i)
+   ELSE(WIN32 AND NOT CYGWIN)
+      SWIG_ADD_MODULE(libjyarp java yarp.i)
+   ENDIF (WIN32 AND NOT CYGWIN)
+
 ENDIF (CREATE_JAVA)
 
 IF (CREATE_PYTHON)

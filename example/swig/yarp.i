@@ -8,7 +8,7 @@
 %rename(clone_c) *::clone() const;
 
 //%rename(open_contact) *::open(const Contact &);
-//%rename(open_contact) *::open(const Contact &,bool);
+//%rename(open_contact) *::open(const Contact &,bool); 
 
 // Deal with abstract base class problems
 %feature("notabstract") Port;
@@ -37,6 +37,12 @@
 
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+
+//deal with the usual ACE residual define...
+#ifdef main
+#undef main
+#endif
+
 using namespace yarp::os;
 using namespace yarp::sig;
 %}
@@ -46,8 +52,9 @@ using namespace yarp::sig;
 // Redefine a few things that SWIG currently chokes on
 %define _YARP2_NETINT32_
 %enddef
-%define NetInt32 int
-%enddef
+// removed by nat: on win was making swig clash while compiling the java interface
+//%define NetInt32 int 
+//%enddef
 %define _YARP2_VOCAB_ 1
 %enddef
 %define PACKED_FOR_NET 
