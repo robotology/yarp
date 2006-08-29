@@ -55,6 +55,7 @@ using namespace yarp::sig;
 // removed by nat: on win was making swig clash while compiling the java interface
 //%define NetInt32 int 
 //%enddef
+typedef int yarp::os::NetInt32;
 %define _YARP2_VOCAB_ 1
 %enddef
 %define PACKED_FOR_NET 
