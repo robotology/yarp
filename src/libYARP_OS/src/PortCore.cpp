@@ -272,8 +272,10 @@ void PortCore::closeMain() {
         }
         stateMutex.post();
         if (!done) {
-			printf("SHOULD remove %s for %s\n", removeRoute.toString().c_str(),
-					getName().c_str());
+            // stray debugging message
+			//printf("SHOULD remove %s for %s\n", 
+            //  removeRoute.toString().c_str(),
+            //	getName().c_str());
 			removeUnit(removeRoute,true);
         }
     }
