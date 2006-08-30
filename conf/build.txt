@@ -16,3 +16,4 @@ DEBIAN SOURCE Fri July 28 (post-summerschool version without sluggishness on lin
 DOC SOURCE Thu Aug 24 (back from vacation)
 DOC SOURCE Thu Aug 24 (try again, windows packaging did not work)
 DOC SOURCE Thu Aug 24 (add in opencv_grabber)
+DOC SOURCE Wed Aug 30 (contributors, stray debug message removed)

@@ -23,8 +23,11 @@ namespace yarp {
 #include <yarp/dev/DeviceDriver.h>
 
 /**
+ * @ingroup dev_impl
+ *
  * An image frame grabber device using OpenCV to capture images from
  * cameras and AVI files.
+ * @author Eric Mislivec
  */
 class yarp::dev::OpenCVGrabber : public IFrameGrabberImage, public DeviceDriver
 {
