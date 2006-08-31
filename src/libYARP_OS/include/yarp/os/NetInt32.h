@@ -2,6 +2,13 @@
 #ifndef _YARP2_NETINT32_
 #define _YARP2_NETINT32_
 
+// Sleazy trick for big endian systems we haven't tested on yet.
+// The two files NetInt32.h and NetFloat64.h need to be cleaned up.
+// They can be much simplified by deferring to cmake/autoconf.
+#ifdef YARP_BIG_ENDIAN
+#define YARP2_OSX
+#endif
+
 namespace yarp {
     namespace os {
 
@@ -106,8 +113,8 @@ namespace yarp {
 
 
 
-
         /* OSX begins*/
+#ifndef YARP_LITTLE_ENDIAN
         #include <sys/types.h>
         typedef int32_t RawNetInt32;
         class NetInt32 {
@@ -156,7 +163,11 @@ namespace yarp {
                 set(get()/v);
             }
         };
-
+#else
+        // not really guaranteed to have this
+        #include <sys/types.h>
+        typedef int32_t NetInt32;
+#endif
         /* OSX ends*/
 
 

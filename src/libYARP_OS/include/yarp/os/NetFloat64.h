@@ -21,6 +21,7 @@ namespace yarp {
 
 
         /* OSX begins*/
+#ifndef YARP_LITTLE_ENDIAN
 #define YARP_ACTIVE_DOUBLE
         typedef double RawNetFloat64;
         union UnionNetFloat64 {
@@ -78,7 +79,9 @@ namespace yarp {
                 set(get()/v);
             }
         };
-
+#else
+        typedef double NetFloat64; // random assumption
+#endif
         /* OSX ends*/
 
 
