@@ -24,8 +24,12 @@ public:
 
     static int netInt(const Bytes& code) {
         YARP_ASSERT(code.length()==sizeof(NetType::NetInt32));
-        NetType::NetInt32& i = *((NetType::NetInt32*)(code.get()));
-        return i;
+        //// this does not work on Solaris with gcc 3.2
+        //NetType::NetInt32& i = *((NetType::NetInt32*)(code.get()));
+        //return i;
+        NetType::NetInt32 tmp;
+        ACE_OS::memcpy((char*)(&tmp),code.get(),code.length());
+        return tmp;
     }
 
     static void netInt(int data, const Bytes& code) {
