@@ -45,6 +45,8 @@ public:
 
     static String toString(int x);
 
+    static String toString(long x);
+
     static String toString(unsigned int x);
 
     static int toInt(String x);

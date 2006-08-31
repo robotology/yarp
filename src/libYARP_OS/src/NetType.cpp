@@ -61,6 +61,12 @@ String NetType::toString(int x) {
     return buf;
 }
 
+String NetType::toString(long x) {
+    char buf[256];
+    ACE_OS::sprintf(buf,"%ld",x);
+    return buf;
+}
+
 String NetType::toString(unsigned int x) {
     char buf[256];
     ACE_OS::sprintf(buf,"%u",x);
