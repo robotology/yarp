@@ -618,6 +618,24 @@ public:
     }
 
 
+    virtual void testUnbufferedClose() {
+        report(0,"check that ports that receive data and do not read it can close...");
+        BufferedPort<Bottle> sender;
+        Port receiver;
+        sender.open("/sender");
+        receiver.open("/receiver");
+        Network::connect("/sender","/receiver");
+        Time::delay(0.25);
+        Bottle& bot = sender.prepare();
+        bot.clear();
+        bot.addInt(1);
+        sender.write();
+        Time::delay(0.25);
+        report(0,"if this hangs, PortTest::testUnbufferedClose is unhappy");
+        receiver.close();
+        sender.close();
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -639,6 +657,7 @@ public:
         testReaderHandler2();
         testStrictWriter();
         testRecentReader();
+        testUnbufferedClose();
 
         nic.setFakeMode(false);
     }

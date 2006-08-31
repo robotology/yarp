@@ -733,7 +733,6 @@ void PortCore::describe(void *id, OutputStream *os) {
 }
 
 void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
-
     // pass the data on out
 
     // we are in the context of one of the input threads,

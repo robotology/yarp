@@ -19,7 +19,7 @@ private:
     PortReader *readDelegate;
     PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
-    bool readResult, readActive, readBackground, willReply;
+    bool readResult, readActive, readBackground, willReply, closed;
     SemaphoreImpl produce, consume;
 public:
     PortCoreAdapter(Port& owner) : 
@@ -28,12 +28,29 @@ public:
         readActive(false),
         readBackground(false),
         willReply(false),
+        closed(false),
         produce(0), consume(0)
     {}
 
+    void openable() {
+        stateMutex.wait();
+        closed = false;
+        stateMutex.post();
+    }
+
+    void finishReading() {
+        if (!readBackground) {
+            stateMutex.wait();
+            YARP_DEBUG(Logger::get(),"Port::read closing...");
+            closed = true;
+            consume.post();
+            consume.post();
+            stateMutex.post();
+        }
+    }
+
     virtual bool read(ConnectionReader& reader) {
         // called by comms code
-
         if (!reader.isValid()) {
             // termination
             stateMutex.wait();
@@ -43,13 +60,17 @@ public:
             stateMutex.post();
             produce.post();
             return false;
-        }
+        } 
 
         // wait for happy consumer - don't want to miss a packet
         if (!readBackground) {
             consume.wait();
         }
-    
+
+        if (closed) {
+            throw IOException("Port::read shutting down");
+        }
+
         stateMutex.wait();
         readResult = false;
         if (readDelegate!=NULL) {
@@ -65,6 +86,9 @@ public:
         }
         if (readResult&&willReply) {
             consume.wait();
+            if (closed) {
+                throw IOException("Port::read shutting down");
+            }
             stateMutex.wait();
             ConnectionWriter *writer = reader.getWriter();
             if (writer!=NULL) {
@@ -122,11 +146,15 @@ Port::Port() {
 
 
 bool Port::open(const char *name) {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.openable();
     return open(Contact::byName(name));
 }
 
 
 bool Port::open(const Contact& contact, bool registerName) {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.openable();
 
     bool success = true;
     Address caddress(contact.getHost().c_str(),
@@ -168,6 +196,7 @@ bool Port::open(const Contact& contact, bool registerName) {
 
 void Port::close() {
     PortCoreAdapter& core = HELPER(implementation);
+    core.finishReading();
     core.close();
     core.join();
 }
