@@ -636,6 +636,35 @@ public:
         sender.close();
     }
 
+    virtual void testCloseOpenRepeats() {
+        report(0,"check that opening-closing-opening etc is ok...");
+        report(0,"non-buffered port:");
+        Port p;
+        p.open("/test1");
+        p.open("/test2");
+        p.open("/test3");
+        p.close();
+        p.open("/test4");
+        p.close();
+        report(0,"buffered port:");
+        BufferedPort<Bottle> p2, p3;
+        p2.open("/test1");
+        p2.open("/test2");
+        p2.open("/in");
+        p3.open("/out");
+        Network::connect("/out","/in");
+        p3.prepare().fromString("10 20 30");
+        p3.write();
+        report(0,"wait for input...");
+        p2.read(true);
+        report(0,"... got it");
+        p3.prepare().fromString("10 20 30");
+        p3.write();
+        p2.open("/test1");
+        p3.open("/test2");
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -658,6 +687,7 @@ public:
         testStrictWriter();
         testRecentReader();
         testUnbufferedClose();
+        testCloseOpenRepeats();
 
         nic.setFakeMode(false);
     }
