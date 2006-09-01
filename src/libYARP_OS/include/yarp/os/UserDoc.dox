@@ -15,6 +15,8 @@
  * \li @subpage yarp "YARP's main command line interface".
  * \li Check out some @subpage yarp_code_examples "example code". 
  * \li Read about the @subpage yarp_os "YARP OS library".
+ * \li Tutorial: @subpage note_ports
+ * \li Tutorial: @subpage note_devices
  * \li For advanced users who want to add a new device, see the @subpage dev-how-to.
  * \li Documentation about motor control @subpage yarp_motor_control.
  * \li For those interested in interoperability, read the \subpage terms "specification of YARP terms and protocols".
