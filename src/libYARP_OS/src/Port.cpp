@@ -19,8 +19,10 @@ private:
     PortReader *readDelegate;
     PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
-    bool readResult, readActive, readBackground, willReply, closed;
+    bool readResult, readActive, readBackground, willReply, closed, opened;
     SemaphoreImpl produce, consume;
+    ReadableCreator *recReadCreator;
+    int recWaitAfterSend;
 public:
     PortCoreAdapter(Port& owner) : 
         owner(owner), stateMutex(1), readDelegate(NULL), writeDelegate(NULL),
@@ -29,19 +31,22 @@ public:
         readBackground(false),
         willReply(false),
         closed(false),
-        produce(0), consume(0)
+        opened(false),
+        produce(0), consume(0),
+        recReadCreator(NULL),
+        recWaitAfterSend(-1)
     {}
 
     void openable() {
         stateMutex.wait();
         closed = false;
+        opened = true;
         stateMutex.post();
     }
 
     void finishReading() {
         if (!readBackground) {
             stateMutex.wait();
-            YARP_DEBUG(Logger::get(),"Port::read closing...");
             closed = true;
             consume.post();
             consume.post();
@@ -124,6 +129,11 @@ public:
         return result;
     }
 
+    /*
+      Configuration of a port that should be remembered 
+      between opens and closes
+     */
+
     void configReader(PortReader& reader) {
         stateMutex.wait();
         readActive = true;
@@ -133,6 +143,36 @@ public:
         stateMutex.post();
     }
 
+    void configReadCreator(ReadableCreator& creator) {
+        recReadCreator = &creator;
+        setReadCreator(creator);
+    }
+
+    void configWaitAfterSend(bool waitAfterSend) {
+        recWaitAfterSend = waitAfterSend?1:0;
+        setWaitAfterSend(waitAfterSend);
+    }
+
+    PortReader *checkPortReader() {
+        return readDelegate;
+    }
+
+    ReadableCreator *checkReadCreator() {
+        return recReadCreator;
+    }
+
+    int checkWaitAfterSend() {
+        return recWaitAfterSend;
+    }
+
+
+    bool isOpened() {
+        return opened;
+    }
+
+    void setOpen(bool opened) {
+        this->opened = opened;
+    }
 };
 
 // implementation is a PortCoreAdapter
@@ -146,14 +186,34 @@ Port::Port() {
 
 
 bool Port::open(const char *name) {
-    PortCoreAdapter& core = HELPER(implementation);
-    core.openable();
     return open(Contact::byName(name));
 }
 
 
 bool Port::open(const Contact& contact, bool registerName) {
+
+    // Allow for open() to be called safely many times on the same Port
+    PortCoreAdapter *currentCore = &(HELPER(implementation));
+    if (currentCore->isOpened()) {
+        PortCoreAdapter *newCore = new PortCoreAdapter(*this);
+        YARP_ASSERT(newCore!=NULL);
+        // copy state that should survive in a new open()
+        if (currentCore->checkPortReader()!=NULL) {
+            newCore->configReader(*(currentCore->checkPortReader()));
+        }
+        if (currentCore->checkReadCreator()!=NULL) {
+            newCore->configReadCreator(*(currentCore->checkReadCreator()));
+        }
+        if (currentCore->checkWaitAfterSend()>=0) {
+            newCore->configWaitAfterSend(currentCore->checkWaitAfterSend());
+        }
+        close();
+        delete ((PortCoreAdapter*)implementation);
+        implementation = newCore;
+    }
+
     PortCoreAdapter& core = HELPER(implementation);
+
     core.openable();
 
     bool success = true;
@@ -199,6 +259,9 @@ void Port::close() {
     core.finishReading();
     core.close();
     core.join();
+
+    // In fact, open flag means "ever opened", so don't reset it
+    // core.setOpened(false); 
 }
 
 
@@ -290,13 +353,13 @@ void Port::setReader(PortReader& reader) {
 
 void Port::setReaderCreator(PortReaderCreator& creator) {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setReadCreator(creator);
+    core.configReadCreator(creator);
 }
 
 
 void Port::enableBackgroundWrite(bool backgroundFlag) {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setWaitAfterSend(!backgroundFlag);
+    core.configWaitAfterSend(!backgroundFlag);
 }
 
 

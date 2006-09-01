@@ -662,6 +662,12 @@ public:
         p3.write();
         p2.open("/test1");
         p3.open("/test2");
+        Network::connect("/test2","/test1");
+        p3.prepare().fromString("10 20 30");
+        p3.write();
+        report(0,"wait for input...");
+        p2.read(true);
+        report(0,"... got it");
     }
 
 

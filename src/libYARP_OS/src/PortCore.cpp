@@ -47,7 +47,7 @@ bool PortCore::listen(const Address& address) {
     }
 
     YARP_ASSERT(address.isValid());
-    
+
     // try to enter listening phase
     stateMutex.wait();
     YARP_ASSERT(listening==false);
