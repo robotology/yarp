@@ -48,3 +48,7 @@ libraries.
 
     A port of a simple network to YARP
 
+* matlab
+    Examples that show how to call YARP from Matlab
+
+
