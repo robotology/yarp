@@ -1,7 +1,11 @@
 //run this to load the yarp library and initialize the network in Java
 
 class LoadYarp{
-	static int yarpInitialized=0;
+	private static int yarpInitialized=0;
+
+	public static int isLoaded()
+	{ return yarpInitialized; }
+
     public LoadYarp() {
 		if (yarpInitialized==0)
 			{
