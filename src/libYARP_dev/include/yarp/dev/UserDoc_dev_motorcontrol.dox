@@ -3,7 +3,7 @@
 #define _YARP2_USERDOC_
 
 /**
- * @page yarp_motor_control The yarp motor control interfaces.
+ * @page yarp_motor_control The YARP motor control interfaces
 
 When controlling a robot you typically use one of the interfaces from
 the ControlBoardInterfaces.h header file. These are meant to abstract
