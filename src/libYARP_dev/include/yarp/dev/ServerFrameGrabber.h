@@ -85,7 +85,6 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver,
             // methods get implemented
 {
 private:
-    bool spoke;
     yarp::os::Port p;
     yarp::os::PortWriterBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > writer;
     yarp::os::PortWriterBuffer<yarp::sig::Sound> writerSound;
@@ -94,6 +93,7 @@ private:
     IAudioGrabberSound *fgSound;
     IFrameGrabberControls *fgCtrl;
     yarp::os::Property settings;
+    bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
 public:
     /**
      * Constructor.
