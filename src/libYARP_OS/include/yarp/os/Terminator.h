@@ -2,19 +2,9 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.7 2006-09-04 16:34:50 eshuy Exp $
+// $Id: Terminator.h,v 1.8 2006-09-04 16:53:21 eshuy Exp $
 
-// ace include directives removed, since this file is included in all.h
-// (don't want to surprise users with random ace settings,
-//  such as redefining main)
-// --paulfitz
-//#include <ace/config.h>
-//#include <ace/OS.h>
-//#include <ace/Log_Msg.h>
 
-#include <yarp/Address.h>
-#include <yarp/SocketTwoWayStream.h>
-#include <yarp/NameClient.h>
 #include <yarp/os/Thread.h>
 
 namespace yarp {
@@ -47,25 +37,7 @@ public:
      * the name server).
      * @return true/false on success/failure.
      */
-    static bool terminateByName(const char *name) {
-        if (name == NULL)
-            return false;
-
-        String s(name);
-        if (name[0] != '/') {
-            s.clear();
-            s += "/";
-            s += name;
-        }
-        NameClient& namer = NameClient::getNameClient();
-        Address a = namer.queryName(s);
-	//ACE_OS::printf("address: %s port %d\n",a.getName().c_str(),a.getPort());
-        SocketTwoWayStream sock;
-        sock.open(a);
-        sock.write(Bytes("quit",4));
-        sock.close();
-        return true;
-    }
+    static bool terminateByName(const char *name);
 };
 
 /**
@@ -74,10 +46,7 @@ public:
  */ 
 class yarp::os::Terminee : public yarp::os::Thread {
 protected:
-    ACE_INET_Addr addr;
-    ACE_SOCK_Acceptor acceptor;
-    SocketTwoWayStream sock;
-    char data[4];
+    void *implementation;
     volatile bool quit;
     volatile bool ok;
 
@@ -86,57 +55,16 @@ public:
      * Constructor. 
      * @param name is the nickname to register on the name server.
      */
-    Terminee(const char *name) {
-        ok = false;
-        if (name == NULL) {
-            // Cannot use ACE_OS here.  Move to a cpp file if you want
-            // to do this! -paulfitz
-            //ACE_OS::printf("Terminator: Please supply a proper port name\n");
-            return;
-        }
-
-        String s(name);
-        if (name[0] != '/') {
-            s.clear();
-            s += "/";
-            s += name;
-        }
-
-        NameClient& namer = NameClient::getNameClient();
-        Address a = namer.registerName(s);
-	//ACE_OS::printf("listening address: %s port %d\n",a.getName().c_str(),a.getPort());
-        addr.set(a.getPort());
-        acceptor.open(addr, 1);
-        quit = false;
-        start();
-        ok = true;
-    }
+    Terminee(const char *name);
 
     /**
      * Destructor.
      */
-    virtual ~Terminee() {
-        sock.interrupt();
-        acceptor.close();
-        stop();
-    }
+    virtual ~Terminee();
 
-    virtual void run() {
-        while (!isStopping() && !quit) {
-            sock.open(acceptor);
-            Address a = sock.getRemoteAddress();
-            //ACE_OS::printf("incoming data: %s %d\n", a.getName().c_str(), a.getPort());
-            sock.read(Bytes(data,4));
-            if (data[0] == 'q' &&
-                data[1] == 'u' &&
-                data[2] == 'i' &&
-                data[3] == 't') {
-            quit = true;
-            sock.interrupt();
-            acceptor.close();
-            }
-        }
-    }
+
+    virtual void run();
+
 
     // LATER: mustQuitBlocking() to wait on a semaphore.
 
