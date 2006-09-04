@@ -2,11 +2,15 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.6 2006-08-05 00:16:25 babybot Exp $
+// $Id: Terminator.h,v 1.7 2006-09-04 16:34:50 eshuy Exp $
 
-#include <ace/config.h>
-#include <ace/OS.h>
-#include <ace/Log_Msg.h>
+// ace include directives removed, since this file is included in all.h
+// (don't want to surprise users with random ace settings,
+//  such as redefining main)
+// --paulfitz
+//#include <ace/config.h>
+//#include <ace/OS.h>
+//#include <ace/Log_Msg.h>
 
 #include <yarp/Address.h>
 #include <yarp/SocketTwoWayStream.h>
@@ -85,7 +89,9 @@ public:
     Terminee(const char *name) {
         ok = false;
         if (name == NULL) {
-            ACE_OS::printf("Terminator: Please supply a proper port name\n");
+            // Cannot use ACE_OS here.  Move to a cpp file if you want
+            // to do this! -paulfitz
+            //ACE_OS::printf("Terminator: Please supply a proper port name\n");
             return;
         }
 
