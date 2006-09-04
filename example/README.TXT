@@ -46,7 +46,7 @@ libraries.
 
 * game
 
-    A port of a simple network to YARP
+    A port of a simple network game to YARP
 
 * matlab
     Examples that show how to call YARP from Matlab
