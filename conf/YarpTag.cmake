@@ -6,3 +6,6 @@ IF (WIN32)
 ENDIF (WIN32)
 
 ENDMACRO(YarpTag)
+
+YarpTag()
+

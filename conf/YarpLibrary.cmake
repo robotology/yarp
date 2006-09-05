@@ -16,7 +16,7 @@ FILE(GLOB_RECURSE folder_header include/*.h)
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
-INCLUDE(YarpReqLib)
+#INCLUDE(YarpReqLib)
 
 ADD_LIBRARY(${name} ${libcode} ${folder_header})
 SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
