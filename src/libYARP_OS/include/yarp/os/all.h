@@ -1,6 +1,7 @@
 
 // everything for the yarp::os namespace
 
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
@@ -9,7 +10,6 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/Contact.h>
-#include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortablePair.h>
