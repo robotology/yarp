@@ -175,9 +175,10 @@ public:
     }
 
 private:
+    // solaris preferred order - strange
+    PortWriterBuffer<T> writer;
     Port port;
     PortReaderBuffer<T> reader;
-    PortWriterBuffer<T> writer;
 };
 
 #endif

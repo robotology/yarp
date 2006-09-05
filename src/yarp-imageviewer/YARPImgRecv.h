@@ -51,14 +51,16 @@ public:
 	virtual ~YARPImgRecv();
 
 private:
+    // solaris preferred order
+	PortType _inPort;
+	yarp::sig::ImageOf<yarp::sig::PixelBgr> _img, _logImg;
+
 	bool _registerPorts();
 	bool _unregisterPorts();
     //void _logpolarConversion(bool fovea, YARPGenericImage *dest);
 
 	char _portName[256];
 	char _network[256];
-	PortType _inPort;
-	yarp::sig::ImageOf<yarp::sig::PixelBgr> _img, _logImg;
     //YARPLogpolar _logopolarMapper;
 	bool _connected;
 	bool _portNameIsValid;
