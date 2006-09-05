@@ -150,7 +150,7 @@ SOURCE_GROUP("Header Files" FILES ${libheader})
 SOURCE_GROUP("Inline Files" FILES ${inlinefiles})
 ######
 
-INCLUDE(YarpReqLib)
+####INCLUDE(YarpReqLib) # this should only be included once
 # A FEW MESSAGES USEFUL FOR DEBUG
 #MESSAGE(STATUS "Adding source files in:")
 #MESSAGE(STATUS "${libcode}")
