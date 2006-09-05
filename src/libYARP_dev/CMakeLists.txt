@@ -125,7 +125,8 @@ FOREACH(DD ${FOUND_DD})
 
   FILE(GLOB libcode1 src/${DD}/common/yarp/*.cpp)
   #AUX_SOURCE_DIRECTORY(src/${DD}/common libcode1)
-  MESSAGE(STATUS "Source code for ${DD} is ${libcode1}")
+  #MESSAGE(STATUS "Source code for ${DD} is ${libcode1}")
+  ## this message never works
   FILE(GLOB libcode2 src/${DD}/${LOCAL_TAG}/yarp/*.cpp)
   #AUX_SOURCE_DIRECTORY(src/${DD}/${OS_TAG}/yarp libcode2)
   SET(libcode ${libcode1} ${libcode2})
