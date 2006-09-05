@@ -14,10 +14,6 @@
 // before Yarp's.
 #define YARP_CVTYPES_H_
 
-
-#include <opencv/cv.h>
-#include <opencv/highgui.h>
-
 #include <yarp/String.h>
 
 #include <yarp/dev/Drivers.h>
@@ -32,8 +28,15 @@
 
 #include <yarp/sig/Image.h>
 
-
 #include <stdio.h>
+
+#ifdef YARP2_WINDOWS
+    #include <cv.h>
+    #include <highgui.h>
+#else
+    #include <opencv/cv.h>
+    #include <opencv/highgui.h>
+#endif
 
 #include <yarp/OpenCVGrabber.h>
 
@@ -116,9 +119,10 @@ bool OpenCVGrabber::open(Searchable & config) {
 
 
     // Ignore capture properties - they are unreliable
-    //printf("Capture properties: %ld x %ld pixels @ %lf frames/sec.\n",
-    //     m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
+//    printf("Capture properties: %ld x %ld pixels @ %lf frames/sec.\n",
+ //        m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
 
+    fprintf(stderr, "-->OpenCVGrabber opened\n");
     // Success!
     return true;
 
@@ -156,16 +160,23 @@ bool OpenCVGrabber::close() {
  */
 bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
+    fprintf(stderr, "-->getImage123\n");
+
     // Must have a capture object
     if (0 == m_capture) {
         image.zero(); return false;
     }
 
+    fprintf(stderr, "-->HERE1\n");
     // Grab and retrieve a frame, OpenCV owns the returned image
     IplImage * iplFrame = cvQueryFrame((CvCapture*)m_capture);
+    fprintf(stderr, "-->HERE2\n");
+
     if (0 == iplFrame) {
         image.zero(); return false;
     }
+
+    fprintf(stderr, "-->HERE3\n");
 
     // Resize the output image, this should not result in new
     // memory allocation if the image is already the correct size

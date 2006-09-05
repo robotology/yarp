@@ -16,6 +16,8 @@
 # www.mip.informatik.uni-kiel.de/
 # --------------------------------
 
+# modified to work on win by nat, added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
+
 # helper: check compiler version to get correct /opt/net path
 SET(IS_GNUCXX3 FALSE)
 SET(IS_GNUCXX4 FALSE)
@@ -40,9 +42,6 @@ IF    (${CMAKE_COMPILER_IS_GNUCXX})
 
 ENDIF (${CMAKE_COMPILER_IS_GNUCXX})
 
-
-
-
 SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}"
   "$ENV{OPENCV_DIR}/include"
@@ -53,6 +52,7 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}/cvaux/include"
   "$ENV{OPENCV_DIR}/otherlibs/cvcam/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
+  "$ENV{OPENCV_DIR}/otherlibs/highgui/"
   "$ENV{OPENCV_HOME}"
   "$ENV{OPENCV_HOME}/include"
   "$ENV{OPENCV_HOME}/include/cv"
@@ -91,7 +91,6 @@ ENDIF(IS_GNUCXX4)
 SET(OPENCV_POSSIBLE_LIBRARY_PATHS
   "$ENV{OPENCV_DIR}"
   "$ENV{OPENCV_DIR}/lib"
-  "$ENV{OPENCV_HOME}/lib"
   "$ENV{ProgramFiles}/OpenCV/lib"
 #  "$ENV{EXTRA}"
 #  "$ENV{EXTRA}/lib"
@@ -99,6 +98,7 @@ SET(OPENCV_POSSIBLE_LIBRARY_PATHS
   "/usr/local/lib"
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]/lib"
 )
+
 IF   (IS_GNUCXX3)
   SET(OPENCV_POSSIBLE_LIBRARY_PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS}
     /opt/net/gcc33/OpenCV
@@ -125,8 +125,7 @@ FIND_PATH(OPENCV_INCLUDE_DIR_CVCAM    cvcam.h   ${OPENCV_POSSIBLE_INCDIRS} )
 # find (all) libraries - some dont exist on Linux
 FIND_LIBRARY(OPENCV_LIBRARY
   NAMES opencv cv cv0.9 cv0.9.5 cv0.9.6 cv0.9.7 cv0.9.8 cv0.9.9
-  PATHS "${OPENCV_POSSIBLE_LIBRARY_PATHS}" )
-MESSAGE(STATUS "opencv ${OPENCV_LIBRARY}")
+  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS})
 
 FIND_LIBRARY(OPENCV_CVAUX_LIBRARY
   NAMES cvaux cvaux0.9 cvaux0.9.5 cvaux0.9.6 cvaux0.9.7 cvaux0.9.8 cvaux0.9.9
@@ -144,7 +143,6 @@ FIND_LIBRARY(OPENCV_HIGHGUI_LIBRARY
 FIND_LIBRARY(OPENCV_CVCAM_LIBRARY
   NAMES cvcam
   PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} ) 
-
 
 ##
 # Logic for required headers / include dirs
@@ -177,7 +175,6 @@ ELSE (OPENCV_INCLUDE_DIR_CVCAM)
   ENDIF (WIN32)
 ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
 # MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
-
 
 ##
 # Logic for required libraries:
