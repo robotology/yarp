@@ -308,6 +308,10 @@ class yarp::dev::ImplementPidControl : public IMPLEMENT
 
     /** Enable the pid computation for a joint*/
     virtual bool enablePid(int j);
+
+    /** Enable the pid computation for a joint*/
+    virtual bool setOffset(int j, double v);
+
 };
 
 template <class DERIVED, class IMPLEMENT> 

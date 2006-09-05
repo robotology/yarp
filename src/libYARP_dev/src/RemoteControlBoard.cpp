@@ -1111,7 +1111,7 @@ class yarp::dev::RemoteControlBoard :
             public IEncoders,
             public IAmplifierControl,
             public IControlLimits,
-            public DeviceDriver {
+			public DeviceDriver {
 protected:
     Port rpc_p;
     Port command_p;
@@ -1360,7 +1360,7 @@ public:
 
         return true;
     }
-
+	
     /**
      * Close the device driver and stop the port connections.
      * @return true/false on success/failure.

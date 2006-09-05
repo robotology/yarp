@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.25 2006-08-02 16:36:19 gmetta Exp $
+/// $Id: EsdMotionControl.cpp,v 1.26 2006-09-05 17:43:26 babybot Exp $
 ///
 ///
 
@@ -1135,6 +1135,15 @@ bool EsdMotionControl::enablePidRaw(int axis)
 	return _writeNone (CAN_CONTROLLER_RUN, axis);
 
 }
+
+bool EsdMotionControl::setOffsetRaw(int axis, double v)
+{
+	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
+	
+	return true;
+
+}
+
 
 bool EsdMotionControl::disablePidRaw(int axis)
 {

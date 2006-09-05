@@ -884,7 +884,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::setOffset(int j, double v)
     int k=0;
     k=castToMapper(helper)->toHw(j);
 
-    return iPid->setOffset(k, v);
+    return iPid->setOffsetRaw(k, v);
 }
 
 ////////////////////////

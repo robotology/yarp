@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.19 2006-09-05 11:17:18 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.20 2006-09-05 17:43:26 babybot Exp $
 ///
 ///
 
@@ -156,6 +156,7 @@ public:
     virtual bool resetPidRaw(int j);
     virtual bool disablePidRaw(int j);
     virtual bool enablePidRaw(int j);
+	virtual bool setOffsetRaw(int j, double v);
     //
     /////////////////////////////// END PID INTERFACE
 

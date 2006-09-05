@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 //
-// $Id: EsdMessageSniffer.h,v 1.1 2006-08-02 16:36:19 gmetta Exp $
+// $Id: EsdMessageSniffer.h,v 1.2 2006-09-05 17:43:26 babybot Exp $
 //
 //
 
@@ -183,6 +183,7 @@ public:
     virtual bool resetPidRaw(int j) { return NOT_YET_IMPLEMENTED("resetPidRaw"); }
     virtual bool disablePidRaw(int j) { return NOT_YET_IMPLEMENTED("disablePidRaw"); }
     virtual bool enablePidRaw(int j) { return NOT_YET_IMPLEMENTED("enablePidRaw"); }
+	virtual bool setOffsetRaw(int j, double v) { return NOT_YET_IMPLEMENTED("setOffsetRaw"); }
 
     /**
      * Read the electric current going to all motors.
