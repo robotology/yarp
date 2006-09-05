@@ -461,6 +461,14 @@ public:
         return false;
     }
 
+	virtual bool setOffset(int j, double v)
+	{
+		if (pid)
+			return pid->setOffset(j,v);
+		
+		return false;
+	}
+
     /** Get current pid value for a specific joint.
      * @param j joint number
      * @param pid pointer to storage for the return value.
@@ -2008,6 +2016,18 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
+	virtual bool setOffset(int j, double v)
+	{
+		Bottle cmd, response;
+		cmd.addVocab(VOCAB_SET);
+		cmd.addVocab(VOCAB_OFFSET);
+		cmd.addInt(j);
+		cmd.addDouble(v);
+
+		bool ok = rpc_p.write(cmd, response);
+		return CHECK_FAIL(ok, response);
+	}
+
     /** 
      * Disable the amplifier on a specific joint. All computations within the board
      * will be carried out normally, but the output will be disabled.
@@ -2151,6 +2171,14 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
 
         {
             switch(cmd.get(1).asVocab()) {
+			case VOCAB_OFFSET:{
+			    double v;
+                int j = cmd.get(2).asInt();
+                Bottle& b = *(cmd.get(3).asList());
+                v=b.get(0).asDouble();
+                ok = pid->setOffset(j, v);
+			}
+			break;
             case VOCAB_PID: {
                 Pid p;
                 int j = cmd.get(2).asInt();

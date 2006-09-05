@@ -878,6 +878,15 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>::disablePid(int j)
     return iPid->disablePidRaw(k);
 }
 
+template<class DERIVED, class IMPLEMENT>
+bool ImplementPidControl<DERIVED, IMPLEMENT>::setOffset(int j, double v)
+{
+    int k=0;
+    k=castToMapper(helper)->toHw(j);
+
+    return iPid->setOffset(k, v);
+}
+
 ////////////////////////
 // Encoder Interface Implementation
 template <class DERIVED, class IMPLEMENT> 

@@ -165,6 +165,9 @@ public:
 
     /** Enable the pid computation for a joint*/
     virtual bool enablePidRaw(int j)=0;
+
+	/** Set offset value for a given pid*/
+    virtual bool setOffsetRaw(int j, double v)=0;
 };
 
 /**
@@ -303,6 +306,9 @@ public:
 
     /** Enable the pid computation for a joint*/
     virtual bool enablePid(int j)=0;
+
+	/** Set offset value for a given controller*/
+    virtual bool setOffset(int j, double v)=0;
 };
 
 /**
@@ -1280,6 +1286,8 @@ public:
 #define VOCAB_IS VOCAB2('i','s')
 #define VOCAB_FAILED VOCAB4('f','a','i','l')
 #define VOCAB_OK VOCAB2('o','k')
+
+#define VOCAB_OFFSET VOCAB3('o', 'f', 'f')
 
 // interface IPidControl sets.
 #define VOCAB_PID VOCAB3('p','i','d')
