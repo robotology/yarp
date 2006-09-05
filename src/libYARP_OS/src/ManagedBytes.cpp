@@ -1,7 +1,7 @@
 #include <ace/config.h>
 #include <ace/OS.h>
 
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 
 using namespace yarp;
 using namespace yarp::os;
