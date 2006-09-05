@@ -22,6 +22,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_XSensMTx
 #cmakedefine ENABLE_portaudio
 #cmakedefine ENABLE_opencv_grabber
+#cmakedefine ENABLE_ffmpeg
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -57,6 +58,10 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_opencv_grabber
 #include <yarp/OpenCVGrabber.h>
+#endif
+
+#ifdef ENABLE_ffmpeg
+#include <yarp/FfmpegGrabber.h>
 #endif
 
 #include <yarp/dev/RemoteFrameGrabber.h>
@@ -118,6 +123,12 @@ void Drivers::init() {
     add(new DriverCreatorOf<OpenCVGrabber>("opencv_grabber", 
                                            "grabber",
                                            "OpenCVGrabber"));
+#endif
+
+#ifdef ENABLE_ffmpeg
+    add(new DriverCreatorOf<FfmpegGrabber>("ffmpeg_grabber", 
+                                           "grabber",
+                                           "FfmpegGrabber"));
 #endif
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
