@@ -41,9 +41,11 @@ public:
      * @param rate Sample rate to use, in Hertz.  Specify 0 to use a default.
      * @param samples Number of samples per call to getSound.  Specify
      * 0 to use a default.
+     * @param channels Number of channels of input.  Specify
+     * 0 to use a default.
      * @return true on success
      */
-    bool open(int rate, int samples);
+    bool open(int rate, int samples, int channels);
 
 	virtual bool close(void);
 
@@ -53,6 +55,7 @@ protected:
     void *system_resource;
     yarp::os::ManagedBytes buffer;
     int num_samples;
+    int num_channels;
 };
 
 /**
