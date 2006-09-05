@@ -50,4 +50,13 @@ class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
     int nchannels;
 };
 
+
+/**
+  * @ingroup dev_runtime
+  * \defgroup cmd_device_xsensmtx XSensMTx
+
+An inertial sensor source, see yarp::dev::XSensMTx.
+
+*/
+
 #endif

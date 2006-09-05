@@ -58,5 +58,13 @@ protected:
     int dsp;
 };
 
+/**
+  * @ingroup dev_runtime
+  * \defgroup cmd_device_portaudio portaudio
+
+A portable audio source, see yarp::dev::PortAudioDeviceDriver.
+
+*/
+
 
 #endif

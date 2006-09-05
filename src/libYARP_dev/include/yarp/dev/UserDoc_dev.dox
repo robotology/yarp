@@ -86,3 +86,12 @@
  *
  */
 
+/**
+ * @ingroup dev_all
+ *
+ * \defgroup dev_runtime Command-line Accessible Devices 
+ *
+ * Devices that can be created and configured from the command-line.
+ *
+ */
+

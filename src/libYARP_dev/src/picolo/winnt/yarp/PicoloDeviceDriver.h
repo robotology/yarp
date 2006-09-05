@@ -198,4 +198,14 @@ protected:
 };
 
 
+
+/**
+  * @ingroup dev_runtime
+  * \defgroup cmd_device_picolo picolo
+
+A interface to the picolo framegrabber, see yarp::dev::PicoloDeviceDriver.
+
+*/
+
+
 #endif

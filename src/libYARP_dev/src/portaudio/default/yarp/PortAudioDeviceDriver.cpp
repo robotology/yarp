@@ -23,9 +23,6 @@ using namespace yarp::dev;
 
 // portaudio version 1.8 doesn't have Pa_ReadStream :-(
 
-
-
-
 /* Select sample format. */
 #if 0
 #define PA_SAMPLE_TYPE  paFloat32

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.18 2006-08-01 23:20:30 gmetta Exp $
+/// $Id: EsdMotionControl.h,v 1.19 2006-09-05 11:17:18 eshuy Exp $
 ///
 ///
 
@@ -301,6 +301,15 @@ protected:
 			return int(x + .5);
 	}
 };
+
+
+/**
+  * @ingroup dev_runtime
+  * \defgroup cmd_device_esd esd
+
+A CAN-bus based motor controller, see yarp::dev::EsdMotionControl.
+
+*/
 
 
 
