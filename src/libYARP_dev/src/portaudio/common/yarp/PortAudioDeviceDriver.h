@@ -2,6 +2,8 @@
 #ifndef __PortAudioDeviceDriverh__
 #define __PortAudioDeviceDriverh__
 
+#include <yarp/os/ManagedBytes.h>
+
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 
@@ -49,6 +51,8 @@ public:
 
 protected:
     void *system_resource;
+    yarp::os::ManagedBytes buffer;
+    int num_samples;
 };
 
 /**

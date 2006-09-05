@@ -42,11 +42,12 @@ typedef unsigned char SAMPLE;
 #define SAMPLE_UNSIGNED
 #endif
 
-static SAMPLE	pa_pulsecode[ NUM_SAMPLES*NUM_CHANNELS];
+//static SAMPLE	pa_pulsecode[ NUM_SAMPLES*NUM_CHANNELS];
 static double pa_tap_test = 1e6;
 
 PortAudioDeviceDriver::PortAudioDeviceDriver() {
     system_resource = NULL;
+    num_samples = 0;
 }
 
 PortAudioDeviceDriver::~PortAudioDeviceDriver() {
@@ -57,13 +58,10 @@ PortAudioDeviceDriver::~PortAudioDeviceDriver() {
 bool PortAudioDeviceDriver::open(int rate,
                                  int samples) {
     if (rate==0)    rate = SAMPLE_RATE;
-    if (samples!=0) {
-        printf("WARNING: \"samples\" ignored right now\n");
-    }
     if (samples==0) samples = NUM_SAMPLES;
+    num_samples = samples;
 
-    printf("WARNING: the PortAudioDeviceDriver is just a cartoon\n");
-    printf("WARNING: it hasn't really been written yet\n");
+    buffer.allocate(num_samples*NUM_CHANNELS*sizeof(SAMPLE));
 
     // just for testing, ssssh it is a secret
     pa_tap_test = 1e6; //config.check("tap",Value(1e6)).asDouble();
@@ -71,19 +69,11 @@ bool PortAudioDeviceDriver::open(int rate,
     PaStreamParameters inputParameters;
     PaStream *stream;
     PaError    err;
-    int        totalFrames;
-    int        numSamples;
-    int        numBytes;
-    printf("patest_record.c\n"); fflush(stdout);
-
-    numSamples = totalFrames * NUM_CHANNELS;
-
-    numBytes = numSamples * sizeof(SAMPLE);
 
     err = Pa_Initialize();
     if( err != paNoError ) {
-        printf("Audio error\n");
-        exit(1);
+        printf("portaudio system failed to initialize\n");
+        return false;
     }
 
 
@@ -104,16 +94,16 @@ bool PortAudioDeviceDriver::open(int rate,
               NULL
               );
     if( err != paNoError ) {
-        printf("Audio error\n");
-        exit(1);
+        printf("portaudio stream failed to initialize, check settings\n");
+        return false;
     }
 
     err = Pa_StartStream( stream );
     if( err != paNoError ) {
-        printf("Audio error\n");
-        exit(1);
+        printf("portaudio stream failed to start, check settings\n");
+        return false;
     }
-    printf("Now recording!!\n"); fflush(stdout);
+    printf("Reading audio data using portaudio...\n"); fflush(stdout);
     system_resource = stream;
     
     return true;
@@ -142,23 +132,26 @@ bool PortAudioDeviceDriver::close(void) {
 
 bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
 	// main loop to capture the waveform audio data	
-    sound.resize(NUM_SAMPLES);
+    sound.resize(num_samples);
     double total = 0;
     PaError err;
+    SAMPLE *pa_pulsecode = (SAMPLE *)buffer.get();
     err = Pa_ReadStream((PaStream*)system_resource,(void*)pa_pulsecode,1024);
     if( err != paNoError ) {
         printf("Audio error\n");
         exit(1);
     }    
-    for (int i=0; i<NUM_SAMPLES; i++) {
+    for (int i=0; i<num_samples; i++) {
         sound.set(pa_pulsecode[i],i);
         total += abs(pa_pulsecode[i]-128);
     }
-    total /= NUM_SAMPLES;
+    total /= num_samples;
+
+    printf("grabbing %d samples\n", num_samples);
 
     if (total >= pa_tap_test) {
         printf( "grabbing a chunk of %d samples... magnitude: %g\n", 
-                NUM_SAMPLES, total);
+                num_samples, total);
     }
     return true;
 }

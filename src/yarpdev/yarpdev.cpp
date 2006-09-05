@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         ConstString dname = (v1)?v1->toString():"";
         ConstString sdname = (v2)?v2->toString():"";
         ConstString fname = val->toString();
-        printf("Working with config file %s\n", fname.c_str());
+        printf("yarpdev: working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname);
         if (v1)
             options.put("device", dname.c_str());
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     // check if we want to use nested options (less ambiguous)
     if (options.check("nested",val)||options.check("lispy",val)) {
         ConstString lispy = val->toString();
-        printf("Working with config %s\n", lispy.c_str());
+        printf("yarpdev: working with config %s\n", lispy.c_str());
         options.fromString(lispy);
     }
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     //printf("Options: %s\n", options.toString().c_str());
     PolyDriver dd(options);
     if (!dd.isValid()) {
-        printf("Device not available.\n");
+        printf("yarpdev: ***ERROR*** device not available.\n");
         if (argc==1) { 
             printf("Here are the known devices:\n");
             printf("%s", Drivers::factory().toString().c_str());
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
     }
 
     while (dd.isValid() && !terminee->mustQuit()) {
-        printf("Device active...\n");
+        printf("yarpdev: device active...\n");
         Time::delay(1);
     }
 

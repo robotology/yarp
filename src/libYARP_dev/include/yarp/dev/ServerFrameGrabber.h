@@ -126,12 +126,12 @@ public:
         yarp::os::Value *name;
 
         if (config.check("subdevice",name)) {
-            printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 yarp::os::Property p;
                 p.fromString(config.toString());
                 p.put("device",name->toString());
+                p.unput("subdevice");
                 poly.open(p);
             } else {
                 poly.open(*name);
