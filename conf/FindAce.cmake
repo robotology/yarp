@@ -13,8 +13,8 @@ IF(PKGCONFIG_EXECUTABLE)
 	ENDIF (NOT ACE_LINK_FLAGS)
 	ADD_DEFINITIONS(${ACE_C_FLAGS})
 ENDIF(PKGCONFIG_EXECUTABLE)
-SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 
+SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 
 ########################################################################
 ##  general find
@@ -30,6 +30,24 @@ FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers
 IF (WIN32 AND NOT CYGWIN)
 	SET(CMAKE_DEBUG_POSTFIX "d")
 	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file (debug version)")
+ENDIF (WIN32 AND NOT CYGWIN)
+
+
+########################################################################
+## OS-specific extra linkage
+
+# Solaris needs some extra libraries that may not have been found already
+IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+  MESSAGE(STATUS "need to link solaris-specific libraries")
+  #  LINK_LIBRARIES(socket rt)
+  SET(ACE_LIBRARY ${ACE_LIBRARY} socket rt)
+ENDIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+
+# Windows needs some extra libraries
+IF (WIN32 AND NOT CYGWIN)
+  MESSAGE(STATUS "need to link windows-specific libraries")
+  #LINK_LIBRARIES(winmm)
+  SET(ACE_LIBRARY ${ACE_LIBRARY} winmm)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 

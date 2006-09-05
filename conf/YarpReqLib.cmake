@@ -17,12 +17,6 @@ IF(WIN32 AND CYGWIN)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DCYGWIN)
 ENDIF(WIN32 AND CYGWIN)
 
-# Solaris needs some extra libraries
-IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
-  MESSAGE(STATUS "linking solaris stuff")
-  LINK_LIBRARIES(socket rt)
-ENDIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
-
 # check endianness
 IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
     INCLUDE(TestBigEndian)
@@ -52,11 +46,6 @@ ELSE (ACE_DEBUG_FOUND)
  LINK_LIBRARIES(${ACE_LIBRARY})
  SET(ACE_LIB "${ACE_LIBRARY}" CACHE INTERNAL "libraries")
 ENDIF (ACE_DEBUG_FOUND)
-
-IF (WIN32 AND NOT CYGWIN)
-  LINK_LIBRARIES(winmm)
-  SET(ACE_LIB "${ACE_LIB} winmm" CACHE INTERNAL "libraries")
-ENDIF (WIN32 AND NOT CYGWIN)
 
 # YARP_DEFINES are set up in conf/YarpReqLib.cmake
 SET(YARP_DEFINES ${YARP_DEFINES_ACCUM} CACHE STRING "Definitions needed when compiling with YARP")
