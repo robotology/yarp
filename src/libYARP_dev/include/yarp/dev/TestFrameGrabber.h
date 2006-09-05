@@ -155,4 +155,13 @@ private:
 };
 
 
+/**
+  * @ingroup dev_runtime
+  * \defgroup cmd_device_test_grabber test_grabber
+
+A fake framegrabber, see yarp::dev::TestFrameGrabber.
+
+*/
+
+
 #endif
