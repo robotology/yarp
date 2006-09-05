@@ -24,7 +24,7 @@ SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 # describe library information for an external user
 GET_TARGET_PROPERTY(${name}_LIB ${name} LOCATION)
 GET_TARGET_PROPERTY(${name}_INC ${name} header_path)
-SET(${name}_LIB "${${name}_LIB}" CACHE INTERNAL "libraries")
+SET(${name}_LIB ${${name}_LIB} CACHE INTERNAL "libraries")
 IF (ALT_INCLUDES)
 	SET(${name}_INC "${ALT_INCLUDES}" CACHE INTERNAL "include path")
 ELSE (ALT_INCLUDES)
