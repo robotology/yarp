@@ -109,12 +109,30 @@ static GtkWidget *helpAboutItem;
 static GtkWidget *statusbar;
 // Timeout ID
 static guint timeout_ID;
+
+
+// These objects cannot (portably) be created statically,
+// need to reorganize them
+
 // Image Receiver
-YARPImgRecv _imgRecv;
+//YARPImgRecv _imgRecv;
 // Image to Display
-yarp::sig::ImageOf<yarp::sig::PixelRgb> _inputImg;
+//yarp::sig::ImageOf<yarp::sig::PixelRgb> _inputImg;
 // Semaphore
-yarp::os::Semaphore _semaphore;
+//yarp::os::Semaphore _semaphore;
+
+// Image Receiver
+YARPImgRecv *ptr_imgRecv;
+// Image to Display
+yarp::sig::ImageOf<yarp::sig::PixelRgb> *ptr_inputImg;
+// Semaphore
+yarp::os::Semaphore *ptr_semaphore;
+
+#define _imgRecv (*(ptr_imgRecv))
+#define _inputImg (*(ptr_inputImg))
+#define _semaphore (*(ptr_semaphore))
+
+
 // Frame Number
 int _frameN;
 // Save Set of Images mode

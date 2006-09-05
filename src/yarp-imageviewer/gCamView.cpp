@@ -7,6 +7,27 @@
 #include <yarp/os/Property.h> 
 #include <yarp/os/Network.h> 
 
+
+// Image Receiver
+extern YARPImgRecv *ptr_imgRecv;
+// Image to Display
+extern yarp::sig::ImageOf<yarp::sig::PixelRgb> *ptr_inputImg;
+// Semaphore
+extern yarp::os::Semaphore *ptr_semaphore;
+
+static void createObjects() {
+    ptr_imgRecv = new YARPImgRecv;
+    ptr_inputImg = new yarp::sig::ImageOf<yarp::sig::PixelRgb>;
+    ptr_semaphore = new yarp::os::Semaphore;
+}
+
+static void deleteObjects() {
+    delete ptr_imgRecv;
+    delete ptr_inputImg;
+    delete ptr_semaphore;
+}
+
+
 //-------------------------------------------------
 // Main Window Callbacks
 //-------------------------------------------------
@@ -848,6 +869,7 @@ void cleanExit()
 		g_object_unref(frame);
 	// Exit from application
 	gtk_main_quit ();
+    deleteObjects();
 }
 
 //-------------------------------------------------
@@ -858,6 +880,7 @@ void cleanExit()
 int myMain(int argc, char* argv[])
 {
     yarp::os::Network::init();
+    createObjects();
     fprintf(stderr, "Starting as console app\n");
 	// Global variables init
 	_frameN = 0;
