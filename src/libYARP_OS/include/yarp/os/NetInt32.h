@@ -112,6 +112,8 @@ namespace yarp {
 #    ifdef YARP2_OSX
 
 
+// in general, this has to come before any reference to sys/types.h
+#include <ace/config.h>
 
         /* OSX begins*/
 #ifndef YARP_LITTLE_ENDIAN

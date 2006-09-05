@@ -1,4 +1,5 @@
 #include <yarp/os/all.h>
+#include <stdlib.h>
 #include <iostream>
 
 using namespace std;
