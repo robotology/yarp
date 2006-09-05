@@ -147,8 +147,6 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
     }
     total /= num_samples;
 
-    printf("grabbing %d samples\n", num_samples);
-
     if (total >= pa_tap_test) {
         printf( "grabbing a chunk of %d samples... magnitude: %g\n", 
                 num_samples, total);
