@@ -327,7 +327,8 @@ public:
             before = Time::now();
             yarp::sig::Vector& v = state_buffer.get();
             v.size(nj);
-            bool ok = enc->getEncoders(&v[0]);
+            enc->getEncoders(&v[0]);
+            // bool ok = enc->getEncoders(&v[0]);
             // LATER: deal with the ok == false.
             state_buffer.write();
             now = Time::now();
