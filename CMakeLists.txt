@@ -61,6 +61,7 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 
 SET(YARP_DEFINES ${YARP_DEFINES_ACCUM} CACHE STRING "Definitions needed when compiling with YARP")
+MARK_AS_ADVANCED(YARP_DEFINES)
 ADD_DEFINITIONS(${YARP_DEFINES_ACCUM})
 
 # set the OS_TAG variable to "linux" or "winnt"
