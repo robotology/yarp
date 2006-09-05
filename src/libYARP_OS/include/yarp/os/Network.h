@@ -70,6 +70,13 @@ public:
      */
     static void fini();
 
+    /**
+     * An assertion.  Should be true.  If false, this will be
+     * reported, and YARP will shut down.  In general, this is an
+     * OS-specific process.
+     * @param shouldBeTrue the asserted truth value.
+     */
+    static void assertion(bool shouldBeTrue);
 
     /**
      * Find out information about a registered name.

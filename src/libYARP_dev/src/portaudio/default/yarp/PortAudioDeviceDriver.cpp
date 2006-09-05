@@ -10,7 +10,6 @@
 #define DITHER_FLAG     (0)
 
 #define NUM_SECONDS	0.1
-#define	NUM_SAMPLES	((int)(SAMPLE_RATE*NUM_SECONDS))
 
 //#define	NUM_SAMPLES	((int)(SAMPLE_RATE*NUM_SECONDS))
 #define	NUM_SAMPLES	((int)(1024))
@@ -46,108 +45,47 @@ typedef unsigned char SAMPLE;
 static SAMPLE	pa_pulsecode[ NUM_SAMPLES*NUM_CHANNELS];
 static double pa_tap_test = 1e6;
 
-typedef struct
-{
-    int          frameIndex;  /* Index into sample array. */
-    int          maxFrameIndex;
-    SAMPLE      *recordedSamples;
-}
-paTestData;
-
-/*
-static int recordCallback( void *inputBuffer, void *outputBuffer,
-                           unsigned long framesPerBuffer,
-                           PaTimestamp outTime, void *userData )
-{
-    paTestData *data = (paTestData*)userData;
-    SAMPLE *rptr = (SAMPLE*)inputBuffer;
-    SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
-    long framesToCalc;
-    long i;
-    int finished;
-    unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-
-    (void) outputBuffer; 
-    (void) outTime;
-
-    if( framesLeft < framesPerBuffer )
-    {
-        framesToCalc = framesLeft;
-        finished = 1;
-    }
-    else
-    {
-        framesToCalc = framesPerBuffer;
-        finished = 0;
-    }
-    if( inputBuffer == NULL )
-    {
-        for( i=0; i<framesToCalc; i++ )
-        {
-            *wptr++ = SAMPLE_SILENCE; 
-            if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE; 
-        }
-    }
-    else
-    {
-        for( i=0; i<framesToCalc; i++ )
-        {
-            *wptr++ = *rptr++; 
-            if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++; 
-        }
-    }
-    data->frameIndex += framesToCalc;
-    return finished;
-}
-*/
-
-
-
 PortAudioDeviceDriver::PortAudioDeviceDriver() {
     system_resource = NULL;
-    dsp = -1;
 }
 
 PortAudioDeviceDriver::~PortAudioDeviceDriver() {
     close();
 }
 
-bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
+
+bool PortAudioDeviceDriver::open(int rate,
+                                 int samples) {
+    if (rate==0)    rate = SAMPLE_RATE;
+    if (samples!=0) {
+        printf("WARNING: \"samples\" ignored right now\n");
+    }
+    if (samples==0) samples = NUM_SAMPLES;
 
     printf("WARNING: the PortAudioDeviceDriver is just a cartoon\n");
     printf("WARNING: it hasn't really been written yet\n");
 
-    pa_tap_test = config.check("tap",Value(1e6)).asDouble();
+    // just for testing, ssssh it is a secret
+    pa_tap_test = 1e6; //config.check("tap",Value(1e6)).asDouble();
 
-    PaStreamParameters inputParameters, outputParameters;
+    PaStreamParameters inputParameters;
     PaStream *stream;
     PaError    err;
-    paTestData data;
-    int        i;
     int        totalFrames;
     int        numSamples;
     int        numBytes;
-    SAMPLE     max, average, val;
     printf("patest_record.c\n"); fflush(stdout);
 
-    data.maxFrameIndex = totalFrames = (int)(NUM_SECONDS * SAMPLE_RATE); /* Record for a few seconds. */
-    data.frameIndex = 0;
     numSamples = totalFrames * NUM_CHANNELS;
 
     numBytes = numSamples * sizeof(SAMPLE);
-    data.recordedSamples = (SAMPLE *) malloc( numBytes );
-    if( data.recordedSamples == NULL )
-    {
-        printf("Could not allocate record array.\n");
-        exit(1);
-    }
-    for( i=0; i<numSamples; i++ ) data.recordedSamples[i] = 0;
 
     err = Pa_Initialize();
     if( err != paNoError ) {
         printf("Audio error\n");
         exit(1);
     }
+
 
     /* Record some audio. -------------------------------------------- */
     inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
@@ -159,16 +97,11 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
               &stream,
               &inputParameters,
               NULL,
-              SAMPLE_RATE,
+              rate,
               1024,            /* frames per buffer */
               paClipOff,
-#ifdef SIMULATE_MISSING_READ
-              recordCallback,
-              &data
-#else
               NULL, //recordCallback,
               NULL
-#endif
               );
     if( err != paNoError ) {
         printf("Audio error\n");
@@ -184,6 +117,13 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
     system_resource = stream;
     
     return true;
+}
+
+
+bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
+    int chosen_rate = config.check("rate",Value(0)).asInt();
+    int chosen_samples = config.check("samples",Value(0)).asInt();
+    return open(chosen_rate,chosen_samples);
 }
 
 bool PortAudioDeviceDriver::close(void) {
@@ -202,7 +142,6 @@ bool PortAudioDeviceDriver::close(void) {
 
 bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
 	// main loop to capture the waveform audio data	
-	unsigned char	*data = pa_pulsecode;
     sound.resize(NUM_SAMPLES);
     double total = 0;
     PaError err;

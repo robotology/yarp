@@ -12,6 +12,7 @@
 #include <ace/Vector_T.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/Logger.h>
 
 namespace yarp {
     class BottleImpl;

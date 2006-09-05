@@ -3,7 +3,7 @@
 #define _YARP2_MANAGEDBYTES_
 
 #include <yarp/Bytes.h>
-#include <yarp/Logger.h>
+#include <yarp/os/Network.h>
 
 namespace yarp {
     class ManagedBytes;
@@ -16,7 +16,7 @@ namespace yarp {
 class yarp::ManagedBytes {
 public:
     ManagedBytes() {
-        b = Bytes(NULL,0);
+        b = Bytes(0/*NULL*/,0);
         owned = false;
     }
 
@@ -46,7 +46,7 @@ public:
 
     ManagedBytes(int len) {
         char *buf = new char[len];
-        YARP_ASSERT(buf!=NULL);
+        yarp::os::Network::assertion(buf!=0/*NULL*/);
         b = Bytes(buf,len);
         owned = true;
     }
@@ -58,16 +58,7 @@ public:
         owned = true;
     }
 
-    void copy() {
-        if (!owned) {
-            int len = length();
-            char *buf = new char[len];
-            YARP_ASSERT(buf!=NULL);
-            ACE_OS::memcpy(buf,get(),len);
-            b = Bytes(buf,len);
-            owned = true;
-        }
-    }
+    void copy();
 
     int length() const {
         return b.length();
@@ -88,7 +79,7 @@ public:
             }
             owned = 0;
         }
-        b = Bytes(NULL,0);
+        b = Bytes(0/*NULL*/,0);
     }
 
     const Bytes& bytes() {

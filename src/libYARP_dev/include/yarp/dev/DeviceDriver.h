@@ -31,6 +31,10 @@ public:
     /**
      * Open the DeviceDriver. 
      * @param config is a list of parameters for the device.
+     * For specic devices, check other open methods for names of parameters
+     * and what they mean.  If there are no such open methods,
+     * you'll need to read the source code (please nag one of the 
+     * yarp developers to add documentation for your device).
      * @return true/false upon success/failure
      */
     virtual bool open(yarp::os::Searchable& config){ return true; }
@@ -40,20 +44,6 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close(){ return true; }
-
-    /**
-     * Generic command interface.
-     * @return true on success.
-     */
-    //virtual bool read(yarp::os::ConnectionReader& cmd);
-
-    /**
-     * Generic command interface.
-     * @return true on success.
-     */
-    //deprecated
-    //virtual bool apply(yarp::os::Bottle& cmd, 
-    //                 yarp::os::Bottle& response);
 
 };
 

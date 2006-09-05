@@ -28,34 +28,27 @@ private:
 	void operator=(const PortAudioDeviceDriver&);
 
 public:
-	/**
-	 * Constructor.
-	 */
 	PortAudioDeviceDriver();
 
-	/**
-	 * Destructor.
-	 */
 	virtual ~PortAudioDeviceDriver();
 
-    /**
-	 * Open the device driver.
-     * @param config parameters for the device driver
-	 * @return returns true on success, false on failure.
-	 */
     virtual bool open(yarp::os::Searchable& config);
 
-	/**
-	 * Closes the device driver.
-	 * @return returns true/false on success/failure.
-	 */
+    /**
+     * Configures the device.
+     * @param rate Sample rate to use, in Hertz.  Specify 0 to use a default.
+     * @param samples Number of samples per call to getSound.  Specify
+     * 0 to use a default.
+     * @return true on success
+     */
+    bool open(int rate, int samples);
+
 	virtual bool close(void);
 
     virtual bool getSound(yarp::sig::Sound& sound);
 
 protected:
-	void *system_resource;
-    int dsp;
+    void *system_resource;
 };
 
 /**
@@ -63,6 +56,7 @@ protected:
   * \defgroup cmd_device_portaudio portaudio
 
 A portable audio source, see yarp::dev::PortAudioDeviceDriver.
+Requires the PortAudio library (http://www.portaudio.com), at least v19.
 
 */
 

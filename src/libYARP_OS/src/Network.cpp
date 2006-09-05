@@ -98,3 +98,11 @@ bool Network::setLocalMode(bool flag) {
     return state;
 }
 
+
+void Network::assertion(bool shouldBeTrue) {
+    // could replace with ACE assertions, except should not 
+    // evaporate in release mode
+    YARP_ASSERT(shouldBeTrue);
+}
+
+
