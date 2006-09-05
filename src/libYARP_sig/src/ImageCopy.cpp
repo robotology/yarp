@@ -7,6 +7,7 @@
 using namespace yarp;
 using namespace yarp::sig;
 
+#define DBG if(0)
 
 // Default copy mechanism
 template <class T1, class T2>
@@ -269,10 +270,12 @@ static void CopyPixels(const T1 *src, int q1, T2 *dest, int q2, int w, int h)
 {
 	const int p1 = PAD_BYTES (w * sizeof(T1), q1);
 	const int p2 = PAD_BYTES (w * sizeof(T2), q2);
+    DBG printf("q1 %d q2 %d (%dx%d) inc %d %d\n", q1, q2, w, h, p1, p2);
 
     YARPDummyCopyPixel();
 	for (int i=0; i<h; i++)
         {
+            DBG printf("x,y = %d,%d\n", 0,i);
             for (int j = 0; j < w; j++)
                 {
                     CopyPixel(src,dest);
@@ -296,6 +299,8 @@ void Image::copyPixels(const unsigned char *src, int id1,
                        char unsigned *dest, int id2, int w, int h,
                        int imageSize, int quantum1, int quantum2)
 {
+    DBG printf("copyPixels...\n");
+
     if (id1==id2&&quantum1==quantum2) {
         memcpy(dest,src,imageSize);
         return;
@@ -377,51 +382,7 @@ void Image::copyPixels(const unsigned char *src, int id1,
             ACE_OS::exit(1);
             break;
         }
+
+    DBG printf("... done copyPixels\n");
 }
 
-/*
-// not needed any more?
-
-static int _GetPixelSize(int pixel_type)
-{
-int result = 0;
-switch (pixel_type)
-{
- case VOCAB_PIXEL_MONO:
-     result = sizeof(PixelMono);
-     break;
- case VOCAB_PIXEL_RGB:
-     result = sizeof(PixelRgb);
-     break;
- case VOCAB_PIXEL_HSV:
-     result = sizeof(PixelHsv);
-     break;
- case VOCAB_PIXEL_BGR:
-     result = sizeof(PixelBgr);
-     break;
- case VOCAB_PIXEL_MONO_SIGNED:
-     result = sizeof(PixelMonoSigned);
-     break;
- case VOCAB_PIXEL_RGB_SIGNED:
-     result = sizeof(PixelRgbSigned);
-     break;
- case VOCAB_PIXEL_MONO_FLOAT:
-     result = sizeof(PixelFloat);
-     break;
- case VOCAB_PIXEL_RGB_FLOAT:
-     result = sizeof(PixelRgbFloat);
-     break;
- case VOCAB_PIXEL_HSV_FLOAT:
-     result = sizeof(PixelHsvFloat);
-     break;
- default:
-     // only other acceptable possibility is that the size is being supplied
-     // for an unknown type
-     //ACE_ASSERT (pixel_type<0);
-     result = -pixel_type;
-     break;
-}
-//printf("Getting pixel size for %d (%d)\n", pixel_type, result);
- return result;
-}
-*/

@@ -204,8 +204,6 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     m_h = pCodecCtx->height;
     printf("  avi dimension %dx%d\n", m_w, m_h);
 
-    printf("  **** WARNING **** ffmpeg device currently uses a temp file in your directory called frame0.ppm\n");
-
     active = true;
     return true;
 }
@@ -237,9 +235,26 @@ bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
         img_convert((AVPicture *)pFrameRGB, PIX_FMT_RGB24, (AVPicture*)pFrame, 
                     pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height);
 
+#if 1
+        FlexImage flex;
+        flex.setPixelCode(VOCAB_PIXEL_RGB);
+        flex.setQuantum((pFrameRGB->linesize[0]));
+        flex.setExternal(pFrameRGB->data[0],
+                         pCodecCtx->width,
+                         pCodecCtx->height);
+        /*
+        printf("Prepare copy.. (%dx%d) %d %d %d\n", 
+               flex.width(),
+               flex.height(),
+               flex.getPixelSize(), 
+               flex.getRowSize()/3, flex.getQuantum());
+        */
+        image.copy(flex); 
+#else
         // Save the frame to disk
         SaveFrame(pFrameRGB, pCodecCtx->width, pCodecCtx->height, 0);
         yarp::sig::file::read(image,"frame0.ppm");
+#endif
         return true;
     } else {
         if (m_w>0) {
