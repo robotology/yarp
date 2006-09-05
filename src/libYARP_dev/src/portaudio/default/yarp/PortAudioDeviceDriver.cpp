@@ -92,7 +92,7 @@ bool PortAudioDeviceDriver::open(int rate,
               &inputParameters,
               NULL,
               rate,
-              1024,            /* frames per buffer */
+              num_samples,            /* frames per buffer */
               paClipOff,
               NULL, //recordCallback,
               NULL
