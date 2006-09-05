@@ -52,8 +52,8 @@ public:
 
 private:
     // solaris preferred order
-	PortType _inPort;
 	yarp::sig::ImageOf<yarp::sig::PixelBgr> _img, _logImg;
+	PortType _inPort;
 
 	bool _registerPorts();
 	bool _unregisterPorts();
