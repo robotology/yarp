@@ -51,4 +51,5 @@ libraries.
 * matlab
     Examples that show how to call YARP from Matlab
 
-
+* opencv
+    An example of image sharing between opencv and yarp
