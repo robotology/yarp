@@ -88,15 +88,15 @@ bool PortAudioDeviceDriver::open(int rate,
     inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
     inputParameters.hostApiSpecificStreamInfo = NULL;
     err = Pa_OpenStream(
-              &stream,
-              &inputParameters,
-              NULL,
-              rate,
-              num_samples,            /* frames per buffer */
-              paClipOff,
-              NULL, //recordCallback,
-              NULL
-              );
+                        &stream,
+                        &inputParameters,
+                        NULL,
+                        rate,
+                        num_samples,            /* frames per buffer */
+                        paClipOff,
+                        NULL, //recordCallback,
+                        NULL
+                        );
     if( err != paNoError ) {
         printf("portaudio stream failed to initialize, check settings\n");
         return false;

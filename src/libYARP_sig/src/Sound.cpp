@@ -82,13 +82,13 @@ void Sound::set(int value, int location, int channel) {
 }
 
 /*
-int Sound::getFrequency() {
-    return frequency;
-}
+  int Sound::getFrequency() {
+  return frequency;
+  }
 
-void Sound::setFrequency(int freq) {
-    this->frequency = freq;
-}
+  void Sound::setFrequency(int freq) {
+  this->frequency = freq;
+  }
 */
 
 bool Sound::read(ConnectionReader& connection) {

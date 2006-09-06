@@ -32,5 +32,5 @@ public:
 static SoundTest theSoundTest;
 
 UnitTest& getSoundTest() {
-  return theSoundTest;
+    return theSoundTest;
 }

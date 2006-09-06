@@ -1,8 +1,9 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
 class FakeFrameGrabber : public yarp::dev::IFrameGrabberImage, 
-			 public yarp::dev::IFrameGrabberControls, 
+                         public yarp::dev::IFrameGrabberControls, 
                          public yarp::dev::DeviceDriver {
 private:
     int w, h;
@@ -12,9 +13,9 @@ private:
 public:
     FakeFrameGrabber() {
         h = w = 0;
-	ct = 0;
-	circlePixel = yarp::sig::PixelRgb(255,0,0);
-	brightness = 1;
+        ct = 0;
+        circlePixel = yarp::sig::PixelRgb(255,0,0);
+        brightness = 1;
     }
 
     bool open(int w, int h) {
@@ -39,9 +40,9 @@ public:
         yarp::os::Time::delay(0.1);  // simulate waiting for hardware to report
         image.resize(w,h);
         image.zero();
-	yarp::sig::draw::addCrossHair(image,circlePixel,
-				      ct,h/2,h/8);
-	ct = (ct+4)%w;
+        yarp::sig::draw::addCrossHair(image,circlePixel,
+                                      ct,h/2,h/8);
+        ct = (ct+4)%w;
         return true;
     }
 
@@ -56,9 +57,9 @@ public:
     virtual bool setBrightness(double v) {
         if (v>1) v = 1;
         if (v<0) v = 0;
-	circlePixel = yarp::sig::PixelRgb((unsigned char)(255*v),0,0);
-	brightness = v;
-	return true;
+        circlePixel = yarp::sig::PixelRgb((unsigned char)(255*v),0,0);
+        brightness = v;
+        return true;
     }
 
     virtual bool setShutter(double v) {

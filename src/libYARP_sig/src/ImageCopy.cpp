@@ -71,12 +71,12 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_MONO_FLOAT)
     *dest = ((src->r + src->g + src->b)/3.0f);
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_RGB_FLOAT)
     dest->r = src->r;
-	dest->g = src->g;
-	dest->b = src->b;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_BGR)
     dest->r = src->r;
-	dest->g = src->g;
-	dest->b = src->b;
+dest->g = src->g;
+dest->b = src->b;
 SPECIAL_COPY(VOCAB_PIXEL_RGB,VOCAB_PIXEL_HSV_FLOAT)
     ACE_ASSERT(implemented_yet == 0);
 

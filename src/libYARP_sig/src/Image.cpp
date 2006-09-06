@@ -662,9 +662,9 @@ void *Image::getIplImage() {
 }
 
 /*
-void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
-    fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
-}
+  void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
+  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
+  }
 */
 
 
@@ -907,16 +907,16 @@ bool Image::copy(const Image& alt, int w, int h) {
 	float dj = ((float)w)/nw;
 
 	for (int i=0; i<nh; i++)
-	{
-		int i0 = (int)(di*i);
-		for (int j=0; j<nw; j++)
-		{
-			int j0 = (int)(dj*j);
-			ACE_OS::memcpy(getPixelAddress(j,i),
-                           alt.getPixelAddress(j0,i0),
-                           d);
-		}
-	}
+        {
+            int i0 = (int)(di*i);
+            for (int j=0; j<nw; j++)
+                {
+                    int j0 = (int)(dj*j);
+                    ACE_OS::memcpy(getPixelAddress(j,i),
+                                   alt.getPixelAddress(j0,i0),
+                                   d);
+                }
+        }
     return true;
 }
 

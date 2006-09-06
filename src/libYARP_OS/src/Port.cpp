@@ -132,7 +132,7 @@ public:
     /*
       Configuration of a port that should be remembered 
       between opens and closes
-     */
+    */
 
     void configReader(PortReader& reader) {
         stateMutex.wait();
@@ -284,7 +284,7 @@ Contact Port::where() {
 bool Port::addOutput(const Contact& contact) {
     Contact me = where();
     return Network::connect(me.getName().c_str(),
-                              contact.toString().c_str());
+                            contact.toString().c_str());
 }
 
 

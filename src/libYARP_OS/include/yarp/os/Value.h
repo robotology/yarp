@@ -359,51 +359,51 @@ public:
 
 
 /*
-class yarp::os::ValueInt : public Value {
-public:
-    ValueInt(int x) {
-        setProxy(makeInt(x));
-    }
-};
+  class yarp::os::ValueInt : public Value {
+  public:
+  ValueInt(int x) {
+  setProxy(makeInt(x));
+  }
+  };
 
-class yarp::os::ValueDouble : public Value {
-public:
-    ValueDouble(double x) {
-        setProxy(makeDouble(x));
-    }
-};
+  class yarp::os::ValueDouble : public Value {
+  public:
+  ValueDouble(double x) {
+  setProxy(makeDouble(x));
+  }
+  };
 
-class yarp::os::ValueString : public Value {
-public:
-    ValueString(const char *str) {
-        setProxy(makeString(str));
-    }
-};
+  class yarp::os::ValueString : public Value {
+  public:
+  ValueString(const char *str) {
+  setProxy(makeString(str));
+  }
+  };
 
-class yarp::os::ValueVocab : public Value {
-public:
-    ValueVocab(int x) {
-        setProxy(makeVocab(x));
-    }
+  class yarp::os::ValueVocab : public Value {
+  public:
+  ValueVocab(int x) {
+  setProxy(makeVocab(x));
+  }
 
-    ValueVocab(const char *str) {
-        setProxy(makeVocab(str));
-    }
-};
+  ValueVocab(const char *str) {
+  setProxy(makeVocab(str));
+  }
+  };
 
-class yarp::os::ValueBlob : public Value {
-public:
-    ValueBlob(void *data, int length) {
-        setProxy(makeBlob(data,length));
-    }
-};
+  class yarp::os::ValueBlob : public Value {
+  public:
+  ValueBlob(void *data, int length) {
+  setProxy(makeBlob(data,length));
+  }
+  };
 
-class yarp::os::ValueList : public Value {
-public:
-    ValueList() {
-        setProxy(makeList());
-    }
-};
+  class yarp::os::ValueList : public Value {
+  public:
+  ValueList() {
+  setProxy(makeList());
+  }
+  };
 */
 
 #endif

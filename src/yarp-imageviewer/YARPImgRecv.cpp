@@ -144,7 +144,7 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 	else
         {
             if ( (_width != data->width()) || (_height != data->height()) )
-              data->resize(_width, _height);
+                data->resize(_width, _height);
             data->copy(*(_inPort.lastRead()));
         }
 	
@@ -154,33 +154,33 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 
 bool YARPImgRecv::SaveLastImage(char *fileName) {
 
-  if ( _connected == false)
-  return false;
+    if ( _connected == false)
+        return false;
 	
-  if ((_width == 0) || (_height == 0))
-      return false;
+    if ((_width == 0) || (_height == 0))
+        return false;
 	
-  if (_logpolar)
-  {
-      printf("LOGPOLAR is not supported\n");
-      /*
-        _img.CastCopy(_inPort.Content());
-        _logpolarConversion(_fovea, &_logImg);
-        YARPImageFile::Write(fileName, _logImg, format);
-      */
-  }
-  else
-  {
-      //_img.CastCopy(_inPort.Content());
-      //YARPImageFile::Write(fileName, _img, format);
-      yarp::sig::FlexImage *img = _inPort.lastRead();
-      if (img!=NULL) {
-          yarp::sig::file::write(*img,fileName);
-      }
-  }
+    if (_logpolar)
+        {
+            printf("LOGPOLAR is not supported\n");
+            /*
+              _img.CastCopy(_inPort.Content());
+              _logpolarConversion(_fovea, &_logImg);
+              YARPImageFile::Write(fileName, _logImg, format);
+            */
+        }
+    else
+        {
+            //_img.CastCopy(_inPort.Content());
+            //YARPImageFile::Write(fileName, _img, format);
+            yarp::sig::FlexImage *img = _inPort.lastRead();
+            if (img!=NULL) {
+                yarp::sig::file::write(*img,fileName);
+            }
+        }
 
-  return true;
-  }
+    return true;
+}
 
 
 bool YARPImgRecv::Disconnect()

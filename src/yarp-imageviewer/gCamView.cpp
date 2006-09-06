@@ -642,18 +642,18 @@ bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 	src_data = (char *) sourceImg->getRawImage(); //GetRawBuffer();
 
 	if ( src_line_size == rowstride)
-    {
-        ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
-    }
+        {
+            ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
+        }
 	else
-    {
-        for (int i=0; i < (int)height; i++)
-            {
-                p_dst = dst_data + i * rowstride;
-                p_src = src_data + i * src_line_size;
-                ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
-            }
-    }
+        {
+            for (int i=0; i < (int)height; i++)
+                {
+                    p_dst = dst_data + i * rowstride;
+                    p_src = src_data + i * src_line_size;
+                    ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
+                }
+        }
 
 	return true;
 }
@@ -724,30 +724,30 @@ void parseOptFile(char *fileName)
 void saveOptFile(char *fileName)
 {
     FILE *optFile = NULL;
-      optFile = ACE_OS::fopen(_options.fileName,"wt");
-      if (optFile == NULL)
-      {
-      g_print("ERROR: Impossible to save to option file.\n");
-      return;
-      }
-      ACE_OS::fprintf(optFile,"[NETWORK]\n" );
-      ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
-      ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
-      ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
-      ACE_OS::fprintf(optFile,"OutNetName %s\n", _options.outNetworkName);
-      ACE_OS::fprintf(optFile,"[WINDOW]\n" );
-      ACE_OS::fprintf(optFile,"RefreshTime %d\n", _options.refreshTime);
-      ACE_OS::fprintf(optFile,"PosX %d\n", _options.posX);
-      ACE_OS::fprintf(optFile,"PosY %d\n", _options.posY);
-      ACE_OS::fprintf(optFile,"Width %d\n", _options.windWidth);
-      ACE_OS::fprintf(optFile,"Height %d\n", _options.windHeight);
-      ACE_OS::fprintf(optFile,"[PROGRAM]\n" );
-      ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
-      ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
-      ACE_OS::fprintf(optFile,"Logpolar %d\n", _options.logpolar);
-      ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
+    optFile = ACE_OS::fopen(_options.fileName,"wt");
+    if (optFile == NULL)
+        {
+            g_print("ERROR: Impossible to save to option file.\n");
+            return;
+        }
+    ACE_OS::fprintf(optFile,"[NETWORK]\n" );
+    ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
+    ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
+    ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
+    ACE_OS::fprintf(optFile,"OutNetName %s\n", _options.outNetworkName);
+    ACE_OS::fprintf(optFile,"[WINDOW]\n" );
+    ACE_OS::fprintf(optFile,"RefreshTime %d\n", _options.refreshTime);
+    ACE_OS::fprintf(optFile,"PosX %d\n", _options.posX);
+    ACE_OS::fprintf(optFile,"PosY %d\n", _options.posY);
+    ACE_OS::fprintf(optFile,"Width %d\n", _options.windWidth);
+    ACE_OS::fprintf(optFile,"Height %d\n", _options.windHeight);
+    ACE_OS::fprintf(optFile,"[PROGRAM]\n" );
+    ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
+    ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
+    ACE_OS::fprintf(optFile,"Logpolar %d\n", _options.logpolar);
+    ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
 	
-      ACE_OS::fclose(optFile);
+    ACE_OS::fclose(optFile);
 }
 
 void parseParameters(int argc, char* argv[])
@@ -800,12 +800,12 @@ bool openPorts()
             g_print("Registering port %s on network %s...\n", _options.outPortName, _options.outNetworkName);
             bool ok = _pOutPort->open(_options.outPortName);
             if  (ok)
-			g_print("Port registration succeed!\n");
+                g_print("Port registration succeed!\n");
             else 
-            {
-			g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
-			return false;
-            }
+                {
+                    g_print("ERROR: Port registration failed.\nQuitting, sorry.\n");
+                    return false;
+                }
 
         }
 

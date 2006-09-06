@@ -68,7 +68,7 @@ public:
                 thread_timer.stop();
 
                 thread_timer.elapsed_time(est_time);
- //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
+                //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
                 
                 //compute the sleep time
                 sleep_period = period-est_time;
@@ -86,7 +86,7 @@ public:
                 if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
                     sleep_period.set(0,0);
 
-//              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
+                //              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
                 ACE_OS::sleep(sleep_period);
                 //Time::delay(sleep_period.sec()+sleep_period.usec()/1000000.0);
             }
@@ -99,8 +99,8 @@ public:
 
     bool setRate(int p)
     {
-         period.set(0, p*1000);	//period here is usec
-         return true;
+        period.set(0, p*1000);	//period here is usec
+        return true;
     }
 
     double getRate()

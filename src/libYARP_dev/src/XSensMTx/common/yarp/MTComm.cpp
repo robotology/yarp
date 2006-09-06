@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 // MTComm.cpp: implementation of the CMTComm class.
 //
 // Version 1.2.0
@@ -129,10 +130,10 @@ clock_t CMTComm::clockms()
 	clock_t clk;
 #ifdef WIN32
 	clk = clock();		// Get current processor time
-	#if (CLOCKS_PER_SEC != 1000)
-		clk /= (CLOCKS_PER_SEC / 1000);
+#if (CLOCKS_PER_SEC != 1000)
+    clk /= (CLOCKS_PER_SEC / 1000);
 	//	clk = (clk * 1000) / CLOCKS_PER_SEC;
-	#endif
+#endif
 #else
 	struct timeval tv;
 	struct timezone tz;
@@ -213,9 +214,9 @@ short CMTComm::openPort(const int portNumber, const unsigned long baudrate, cons
 	CommTimeouts.ReadTotalTimeoutMultiplier = MAXDWORD; 
 
 	// immediate return whether data is available or not
-//	CommTimeouts.ReadTotalTimeoutConstant = 0;
-//	CommTimeouts.ReadIntervalTimeout = MAXDWORD;
-//	CommTimeouts.ReadTotalTimeoutMultiplier = 0; 
+    //	CommTimeouts.ReadTotalTimeoutConstant = 0;
+    //	CommTimeouts.ReadIntervalTimeout = MAXDWORD;
+    //	CommTimeouts.ReadTotalTimeoutMultiplier = 0; 
 
 	SetCommTimeouts(m_handle, &CommTimeouts);	// Set CommTimeouts structure
 
@@ -349,9 +350,9 @@ short CMTComm::openPort(const char *portName, const unsigned long baudrate, cons
 	CommTimeouts.ReadTotalTimeoutMultiplier = MAXDWORD; 
 
 	// immediate return whether data is available or not
-//	CommTimeouts.ReadTotalTimeoutConstant = 0;
-//	CommTimeouts.ReadIntervalTimeout = MAXDWORD;
-//	CommTimeouts.ReadTotalTimeoutMultiplier = 0; 
+    //	CommTimeouts.ReadTotalTimeoutConstant = 0;
+    //	CommTimeouts.ReadIntervalTimeout = MAXDWORD;
+    //	CommTimeouts.ReadTotalTimeoutMultiplier = 0; 
 	SetCommTimeouts(m_handle, &CommTimeouts);	// Set CommTimeouts structure
 
 	// Other initialization functions
@@ -514,7 +515,7 @@ int CMTComm::readData(unsigned char* msgBuffer, const int nBytesToRead)
 	if(nBytesRead == 0 && m_fileOpen) {
 		nBytesRead = 0;
 		m_retVal = MTRV_ENDOFFILE;
-    	}
+    }
 	else
 		m_retVal = MTRV_OK;
 	return nBytesRead;
@@ -522,27 +523,27 @@ int CMTComm::readData(unsigned char* msgBuffer, const int nBytesToRead)
 	// In Linux it is sometimes better to read per byte instead of a block of bytes at once
 	// Use this block if experiencing problems with the above code
 	/*
-		int j = 0;	// Index in buffer for read data
-		int k = 0;	// Timeout factor
-		int nRead = 0;	// Bytes read from port, return by read function
+      int j = 0;	// Index in buffer for read data
+      int k = 0;	// Timeout factor
+      int nRead = 0;	// Bytes read from port, return by read function
 
-		do {
-			nRead = read(m_handle, &msgBuffer[j], 1);
-			if (nRead == 1) {	// Byte read
-				k = 0;
-				j++;
-			}
-			else {
-    			k++;
-			}
+      do {
+      nRead = read(m_handle, &msgBuffer[j], 1);
+      if (nRead == 1) {	// Byte read
+      k = 0;
+      j++;
+      }
+      else {
+      k++;
+      }
 
-			if (k == 3)	{ // Timeout, too long no data read from port
-    			return nRead;
-			}
-		}
-		while (j < nBytesToRead);
+      if (k == 3)	{ // Timeout, too long no data read from port
+      return nRead;
+      }
+      }
+      while (j < nBytesToRead);
 		
-		return j;
+      return j;
 	*/
 #endif
 }
@@ -1009,7 +1010,7 @@ short CMTComm::readMessageRaw(unsigned char *msgBuffer, short *msgBufferLength)
 //   = MTRV_NOINPUTINITIALIZED
 //
 short CMTComm::writeMessage(const unsigned char mid, const unsigned long dataValue, 
-						   const unsigned char dataValueLen, const unsigned char bid)
+                            const unsigned char dataValueLen, const unsigned char bid)
 {
 	unsigned char buffer[MAXMSGLEN];
 	short msgLen;
@@ -1086,7 +1087,7 @@ short CMTComm::writeMessage(const unsigned char mid, const unsigned long dataVal
 //   = MTRV_NOINPUTINITIALIZED
 //
 short CMTComm::writeMessage(const unsigned char mid, const unsigned char data[], 
-						   const unsigned short &dataLen, const unsigned char bid)
+                            const unsigned short &dataLen, const unsigned char bid)
 {
 	unsigned char buffer[MAXMSGLEN];
 	short msgLen;
@@ -1564,8 +1565,8 @@ short CMTComm::reqSetting(const unsigned char mid,
 //	 dataOutLen contains the number bytes returned
 //
 short CMTComm::reqSetting(const unsigned char mid,
-						unsigned char dataIn[], short dataInLen,
-						unsigned char dataOut[], short &dataOutLen, const unsigned char bid)
+                          unsigned char dataIn[], short dataInLen,
+                          unsigned char dataOut[], short &dataOutLen, const unsigned char bid)
 {
 	unsigned char buffer[MAXMSGLEN];
 	short headerLength;

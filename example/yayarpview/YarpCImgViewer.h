@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /**
  * @file
  */
@@ -15,9 +16,9 @@
 /* Avoid including CImg.h in the header (it takes hours to parse) */
 namespace cimg_library
 {
-  template<typename T> struct CImg;
-  template<typename T> struct CImgl;
-  struct CImgDisplay;
+    template<typename T> struct CImg;
+    template<typename T> struct CImgl;
+    struct CImgDisplay;
 }
 
 
@@ -35,33 +36,33 @@ class YarpCImgViewer
 {
 public:
 
-  /**
-   * @arg \c portName
-   */
-  YarpCImgViewer(const char* portName);
-  ~YarpCImgViewer();
+    /**
+     * @arg \c portName
+     */
+    YarpCImgViewer(const char* portName);
+    ~YarpCImgViewer();
 
-  void acquire();
-  void broadcast();
+    void acquire();
+    void broadcast();
 
-  void setUdelay(int udelay);
-  void dumpAtLoc(const char* dumpName);
+    void setUdelay(int udelay);
+    void dumpAtLoc(const char* dumpName);
 
-  /**
-   * demo method
-   */
-  static int main(int argc, char ** argv);
+    /**
+     * demo method
+     */
+    static int main(int argc, char ** argv);
 
 private:
-  yarp::os::BufferedPort< yarp::sig::ImageOf<yarp::sig::PixelRgb> > videoPort;
+    yarp::os::BufferedPort< yarp::sig::ImageOf<yarp::sig::PixelRgb> > videoPort;
 
-  std::string portName;
-  std::string dumpName;
-  bool verbose;
-  int dumpID;
-  int udelay;
-  cimg_library::CImgDisplay *viewerWindow;
-  cimg_library::CImg<unsigned char> *viewerImage;
+    std::string portName;
+    std::string dumpName;
+    bool verbose;
+    int dumpID;
+    int udelay;
+    cimg_library::CImgDisplay *viewerWindow;
+    cimg_library::CImg<unsigned char> *viewerImage;
 };
 
 

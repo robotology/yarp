@@ -16,18 +16,18 @@ using namespace yarp::sig;
 
 class XSensMTxResources: public Thread
 {
- public:
+public:
     XSensMTxResources(void): _mutex(1)
-        {
-            _bStreamStarted=false;
-            _bError=false;
+    {
+        _bStreamStarted=false;
+        _bError=false;
             
-            _last=0;
+        _last=0;
 
-            _last=new double [12];
-            for(int k=0;k<12;k++)
-                _last[k]=0.0;
-        }
+        _last=new double [12];
+        for(int k=0;k<12;k++)
+            _last[k]=0.0;
+    }
 
     ~XSensMTxResources()
     {
@@ -67,16 +67,16 @@ void XSensMTxResources::run (void)
 
     while (!Thread::isStopping ())
         {
-	    // Get data from the MTx device
-	    received = mtcomm.readDataMessage (data, datalen);
-	    // Parse and get value (EULER ORIENTATION)
-	    mtcomm.getValue (VALUE_ORIENT_EULER, euler_data, data, BID_MASTER);
-	    // Parse and get calibrated acceleration values
-	    mtcomm.getValue (VALUE_CALIB_ACC, accel_data, data, BID_MASTER);
-	    // Parse and get calibrated gyro values
-	    mtcomm.getValue (VALUE_CALIB_GYR, gyro_data, data, BID_MASTER);
-	    // Parse and get calibrated magnetometer values
-	    mtcomm.getValue (VALUE_CALIB_MAG, magn_data, data, BID_MASTER);
+            // Get data from the MTx device
+            received = mtcomm.readDataMessage (data, datalen);
+            // Parse and get value (EULER ORIENTATION)
+            mtcomm.getValue (VALUE_ORIENT_EULER, euler_data, data, BID_MASTER);
+            // Parse and get calibrated acceleration values
+            mtcomm.getValue (VALUE_CALIB_ACC, accel_data, data, BID_MASTER);
+            // Parse and get calibrated gyro values
+            mtcomm.getValue (VALUE_CALIB_GYR, gyro_data, data, BID_MASTER);
+            // Parse and get calibrated magnetometer values
+            mtcomm.getValue (VALUE_CALIB_MAG, magn_data, data, BID_MASTER);
 	    
             _mutex.wait ();
             
@@ -136,9 +136,9 @@ bool XSensMTx::read(Vector &out)
         {
             d._mutex.wait();
             
-	    // Euler+accel+gyro+magn orientation values
-	    for (int i = 0; i < nchannels; i++)
-		out[i]=d._last[i];
+            // Euler+accel+gyro+magn orientation values
+            for (int i = 0; i < nchannels; i++)
+                out[i]=d._last[i];
 
             d._mutex.post();
 
@@ -193,12 +193,12 @@ bool XSensMTx::open(yarp::os::Searchable &config)
     
 #ifdef WIN32
     if (p.check ("serial", serial))
-	par.comPort = serial->asInt ();
+        par.comPort = serial->asInt ();
     else
         par.comPort = 11;
 #else
     if (p.check ("serial", serial))
-	par.comPortString = std::string (serial->toString ().c_str ());
+        par.comPortString = std::string (serial->toString ().c_str ());
     else
         par.comPortString = std::string ("/dev/ttyUSB0");
 #endif
@@ -209,7 +209,7 @@ bool XSensMTx::open(yarp::os::Searchable &config)
 bool XSensMTx::open(const XSensMTxParameters &par)
 {
     if (system_resources!=0)
-	return false;
+        return false;
 
     system_resources=(void *) (new XSensMTxResources);
 
@@ -218,10 +218,10 @@ bool XSensMTx::open(const XSensMTxParameters &par)
     // Open the MTx device
 #ifdef WIN32
     if (d.mtcomm.openPort (par.comPort) != MTRV_OK)
-	return false;
+        return false;
 #else
     if (d.mtcomm.openPort (par.comPortString.c_str ()) != MTRV_OK)
-	return false;
+        return false;
 #endif
 
     int outputSettings = OUTPUTSETTINGS_ORIENTMODE_EULER;
@@ -231,14 +231,14 @@ bool XSensMTx::open(const XSensMTxParameters &par)
 		
     // Put MTi/MTx in Config State
     if(d.mtcomm.writeMessage (MID_GOTOCONFIG) != MTRV_OK){
-	printf ("No device connected\n");
+        printf ("No device connected\n");
         return false;
     }
 
     unsigned short numDevices;
     // Get current settings and check if Xbus Master is connected
     if (d.mtcomm.getDeviceMode(&numDevices) != MTRV_OK) {
-	if (numDevices == 1)
+        if (numDevices == 1)
             printf ("MTi / MTx has not been detected\nCould not get device mode\n");
         else
             printf ("Not just MTi / MTx connected to Xbus\nCould not get all device modes\n");
@@ -248,11 +248,11 @@ bool XSensMTx::open(const XSensMTxParameters &par)
     // Check if Xbus Master is connected
     d.mtcomm.getMode (tmpOutputMode, tmpOutputSettings, tmpDataLength, BID_MASTER);
     if (tmpOutputMode == OUTPUTMODE_XM)
-    {
-        // If Xbus Master is connected, attached Motion Trackers should not send sample counter
-        printf ("Sorry, this driver only talks to one MTx device.\n");
-        return false;
-    }
+        {
+            // If Xbus Master is connected, attached Motion Trackers should not send sample counter
+            printf ("Sorry, this driver only talks to one MTx device.\n");
+            return false;
+        }
 
     int outputMode = OUTPUTMODE_CALIB + OUTPUTMODE_ORIENT;
     // Set output mode and output settings for the MTi/MTx
@@ -280,16 +280,16 @@ bool XSensMTx::close()
 
     // Close the MTx device
     if (d.mtcomm.close () != MTRV_OK)
-	{
-	    delete ((XSensMTxResources *)(system_resources));
-	    system_resources=0;
+        {
+            delete ((XSensMTxResources *)(system_resources));
+            system_resources=0;
             return false;
-	}
+        }
     else
-	{
-	    delete ((XSensMTxResources *)(system_resources));
-	    system_resources=0;
+        {
+            delete ((XSensMTxResources *)(system_resources));
+            system_resources=0;
             return true;
-	}
+        }
 }
 

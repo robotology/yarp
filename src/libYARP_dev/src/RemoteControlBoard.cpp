@@ -24,10 +24,10 @@ using namespace yarp::sig;
 
 namespace yarp{
     namespace dev {
-      class RemoteControlBoard;
-      class ServerControlBoard;
-      class CommandsHelper;
-      class ImplementCallbackHelper;
+        class RemoteControlBoard;
+        class ServerControlBoard;
+        class CommandsHelper;
+        class ImplementCallbackHelper;
     }
 }
 
@@ -118,7 +118,7 @@ public:
  *
  */
 class yarp::dev::ServerControlBoard : 
-            public DeviceDriver, 
+    public DeviceDriver, 
             public Thread,
             public IPidControl,
             public IPositionControl,
@@ -127,8 +127,8 @@ class yarp::dev::ServerControlBoard :
             public IAmplifierControl,
             public IControlLimits,
             public IControlCalibration
-            // convenient to put these here just to make sure all
-            // methods get implemented
+ // convenient to put these here just to make sure all
+ // methods get implemented
 {
 private:
 	bool spoke;
@@ -267,12 +267,12 @@ public:
         }
         
         if (prop.check("calibrator", name))
-        {
-            Property p;
-			p.fromString(prop.toString());
-            p.put("device",name->toString());
-            polyCalib.open(p);
-        }
+            {
+                Property p;
+                p.fromString(prop.toString());
+                p.put("device",name->toString());
+                polyCalib.open(p);
+            }
 
         if (poly.isValid()) {
             poly.view(pid);
@@ -286,11 +286,11 @@ public:
 
         // set calibrator //
         if (polyCalib.isValid())
-        {
-            ICalibrator *icalibrator;
-            polyCalib.view(icalibrator);
-            calib->setCalibrator(icalibrator);
-        }
+            {
+                ICalibrator *icalibrator;
+                polyCalib.view(icalibrator);
+                calib->setCalibrator(icalibrator);
+            }
 		        
         if (pid != NULL &&
             pos != NULL &&
@@ -312,7 +312,7 @@ public:
         }
         
         ACE_OS::printf("subdevice <%s> doesn't look like a control board (not all interfaces were acquired)\n",
-               name->toString().c_str());
+                       name->toString().c_str());
         
         return false;
     }
@@ -550,10 +550,10 @@ public:
     }
 
     /** 
-      * Disable the pid computation for a joint 
-      * @param j is the axis number
-      * @return true if successful, false on failure
-      **/
+     * Disable the pid computation for a joint 
+     * @param j is the axis number
+     * @return true if successful, false on failure
+     **/
     virtual bool disablePid(int j) {
         if (pid)
             return pid->disablePid(j);
@@ -561,10 +561,10 @@ public:
     }
 
     /** 
-      * Enable the pid computation for a joint
-      * @param j is the axis number
-      * @return true/false on success/failure
-      */
+     * Enable the pid computation for a joint
+     * @param j is the axis number
+     * @return true/false on success/failure
+     */
     virtual bool enablePid(int j) {
         if (pid)
             return pid->enablePid(j);
@@ -1056,7 +1056,7 @@ public:
      * @param p is a double value that is passed to the calibration procedure.
      * @return true/false on success/failure.
      */
-     virtual bool calibrate(int j, double p) {
+    virtual bool calibrate(int j, double p) {
 		if (calib)
 			return calib->calibrate(j, p);
 		return false;
@@ -1105,7 +1105,7 @@ inline bool CHECK_FAIL(bool ok, Bottle& response) {
  * The client side of the control board, connects to a ServerControlBoard.
  */
 class yarp::dev::RemoteControlBoard : 
-            public IPidControl,
+    public IPidControl,
             public IPositionControl, 
             public IVelocityControl,
             public IEncoders,
@@ -1548,18 +1548,18 @@ public:
             const int njs = l.size();
             ACE_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
-            {
-                Bottle& m = *(l.get(i).asList());
-                if (&m == 0)
-                    return false;
-                pids->kp = m.get(0).asDouble();
-                pids->kd = m.get(1).asDouble();
-                pids->ki = m.get(2).asDouble();
-                pids->max_int = m.get(3).asDouble();
-                pids->max_output = m.get(4).asDouble();
-                pids->offset = m.get(5).asDouble();
-                pids->scale = m.get(6).asDouble();
-            }
+                {
+                    Bottle& m = *(l.get(i).asList());
+                    if (&m == 0)
+                        return false;
+                    pids->kp = m.get(0).asDouble();
+                    pids->kd = m.get(1).asDouble();
+                    pids->ki = m.get(2).asDouble();
+                    pids->max_int = m.get(3).asDouble();
+                    pids->max_output = m.get(4).asDouble();
+                    pids->offset = m.get(5).asDouble();
+                    pids->scale = m.get(6).asDouble();
+                }
             return true;
         }
         return false;
@@ -2178,7 +2178,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 v=b.get(0).asDouble();
                 ok = pid->setOffset(j, v);
 			}
-			break;
+                break;
             case VOCAB_PID: {
                 Pid p;
                 int j = cmd.get(2).asInt();
@@ -2192,7 +2192,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 p.scale = b.get(6).asDouble();
                 ok = pid->setPid(j, p);
             }
-            break;
+                break;
 
             case VOCAB_PIDS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2202,25 +2202,25 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 Pid *p = new Pid[njs];
                 ACE_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
-                {
-                    Bottle& c = *(b.get(i).asList());
-                    p[i].kp = c.get(0).asDouble();
-                    p[i].kd = c.get(1).asDouble();
-                    p[i].ki = c.get(2).asDouble();
-                    p[i].max_int = c.get(3).asDouble();
-                    p[i].max_output = c.get(4).asDouble();
-                    p[i].offset = c.get(5).asDouble();
-                    p[i].scale = c.get(6).asDouble();
-                }
+                    {
+                        Bottle& c = *(b.get(i).asList());
+                        p[i].kp = c.get(0).asDouble();
+                        p[i].kd = c.get(1).asDouble();
+                        p[i].ki = c.get(2).asDouble();
+                        p[i].max_int = c.get(3).asDouble();
+                        p[i].max_output = c.get(4).asDouble();
+                        p[i].offset = c.get(5).asDouble();
+                        p[i].scale = c.get(6).asDouble();
+                    }
                 ok = pid->setPids(p);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_REF: {
                 ok = pid->setReference (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_REFS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2234,12 +2234,12 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pid->setReferences (p);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_LIM: {
                 ok = pid->setErrorLimit (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_LIMS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2253,62 +2253,62 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pid->setErrorLimits (p);
                 delete[] p;                
             }
-            break;
+                break;
 
             case VOCAB_RESET: {
                 ok = pid->resetPid (cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_DISABLE: {
                 ok = pid->disablePid (cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_ENABLE: {
                 ok = pid->enablePid (cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_VELOCITY_MODE: {
                 ok = vel->setVelocityMode();
             }
-            break;
+                break;
 
             case VOCAB_VELOCITY_MOVE: {
                 ok = vel->velocityMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_POSITION_MODE: {
                 ok = pos->setPositionMode();
             }
-            break;
+                break;
 
             case VOCAB_POSITION_MOVE: {
                 ok = pos->positionMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
-/*
-            case VOCAB_POSITION_MOVES: {
-                Bottle& b = *(cmd.get(2).asList());
-                int i;
-                const int njs = b.size();
-                ACE_ASSERT (njs == nj);
-                double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
-                for (i = 0; i < njs; i++)
-                    p[i] = b.get(i).asDouble();
-                ok = pos->positionMove(p);
-                delete[] p;                
-            }
-            break;
-*/
+                /*
+                  case VOCAB_POSITION_MOVES: {
+                  Bottle& b = *(cmd.get(2).asList());
+                  int i;
+                  const int njs = b.size();
+                  ACE_ASSERT (njs == nj);
+                  double *p = new double[njs];    // LATER: optimize to avoid allocation. 
+                  ACE_ASSERT (p != NULL);
+                  for (i = 0; i < njs; i++)
+                  p[i] = b.get(i).asDouble();
+                  ok = pos->positionMove(p);
+                  delete[] p;                
+                  }
+                  break;
+                */
             case VOCAB_RELATIVE_MOVE: {
                 ok = pos->relativeMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_RELATIVE_MOVES: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2322,12 +2322,12 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pos->relativeMove(p);
                 delete[] p;                
             }
-            break;
+                break;
 
             case VOCAB_REF_SPEED: {
                 ok = pos->setRefSpeed(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_REF_SPEEDS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2341,12 +2341,12 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pos->setRefSpeeds(p);
                 delete[] p;                
             }
-            break;
+                break;
 
             case VOCAB_REF_ACCELERATION: {
                 ok = pos->setRefAcceleration(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_REF_ACCELERATIONS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2360,32 +2360,32 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pos->setRefAccelerations(p);
                 delete[] p;                
             }
-            break;
+                break;
 
             case VOCAB_STOP: {
                 ok = pos->stop(cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_STOPS: {
                 ok = pos->stop();
             }
-            break;
+                break;
 
             case VOCAB_E_RESET: {
                 ok = enc->resetEncoder(cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_E_RESETS: {
                 ok = enc->resetEncoders();
             }
-            break;
+                break;
 
             case VOCAB_ENCODER: {
                 ok = enc->setEncoder(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_ENCODERS: {
                 Bottle& b = *(cmd.get(2).asList());
@@ -2399,27 +2399,27 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = enc->setEncoders(p);
                 delete[] p;                
             }
-            break;
+                break;
 
             case VOCAB_AMP_ENABLE: {
                 ok = amp->enableAmp(cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_AMP_DISABLE: {
                 ok = amp->disableAmp(cmd.get(2).asInt());
             }
-            break;
+                break;
 
             case VOCAB_AMP_MAXCURRENT: {
                 ok = amp->setMaxCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-            break;
+                break;
 
             case VOCAB_LIMITS: {
                 ok = lim->setLimits(cmd.get(2).asInt(), cmd.get(3).asDouble(), cmd.get(4).asDouble());
             }
-            break; 
+                break; 
 
             default:
                 ACE_OS::printf("received an unknown command after a VOCAB_SET\n");
@@ -2441,7 +2441,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             case VOCAB_ERR: {
                 ok = pid->getError(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
-                }
+            }
                 break;
 
             case VOCAB_ERRS: {
@@ -2454,13 +2454,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_OUTPUT: {
                 ok = pid->getOutput(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_OUTPUTS: {
                 double *p = new double[nj];
@@ -2472,7 +2472,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_PID: {
                 Pid p;
@@ -2486,7 +2486,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 b.addDouble(p.offset);
                 b.addDouble(p.scale);
             }
-            break;
+                break;
 
             case VOCAB_PIDS: {
                 Pid *p = new Pid[nj];
@@ -2495,25 +2495,25 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 Bottle& b = response.addList();
                 int i;
                 for (i = 0; i < nj; i++)
-                {
-                    Bottle& c = b.addList();
-                    c.addDouble(p[i].kp);
-                    c.addDouble(p[i].kd);
-                    c.addDouble(p[i].ki);
-                    c.addDouble(p[i].max_int);
-                    c.addDouble(p[i].max_output);
-                    c.addDouble(p[i].offset);
-                    c.addDouble(p[i].scale);
-                }
+                    {
+                        Bottle& c = b.addList();
+                        c.addDouble(p[i].kp);
+                        c.addDouble(p[i].kd);
+                        c.addDouble(p[i].ki);
+                        c.addDouble(p[i].max_int);
+                        c.addDouble(p[i].max_output);
+                        c.addDouble(p[i].offset);
+                        c.addDouble(p[i].scale);
+                    }
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_REFERENCE: {
                 ok = pid->getReference(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_REFERENCES: {
                 double *p = new double[nj];
@@ -2525,13 +2525,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_LIM: {
                 ok = pid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_LIMS: {
                 double *p = new double[nj];
@@ -2543,7 +2543,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_AXES:
                 ok = pos->getAxes(&tmp);
@@ -2555,20 +2555,20 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 ok = pos->checkMotionDone(cmd.get(2).asInt(), &x);
                 response.addInt(x);
             }
-            break;
+                break;
 
             case VOCAB_MOTION_DONES: {
 				bool x = false;
                 ok = pos->checkMotionDone(&x);
 				response.addInt(x);
             }
-            break;
+                break;
 
             case VOCAB_REF_SPEED: {
                 ok = pos->getRefSpeed(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_REF_SPEEDS: {
                 double *p = new double[nj];
@@ -2580,13 +2580,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_REF_ACCELERATION: {
                 ok = pos->getRefAcceleration(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_REF_ACCELERATIONS: {
                 double *p = new double[nj];
@@ -2598,13 +2598,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_ENCODER: {
                 ok = enc->getEncoder(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_ENCODERS: {
                 double *p = new double[nj];
@@ -2616,13 +2616,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_ENCODER_SPEED: {
                 ok = enc->getEncoderSpeed(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_ENCODER_SPEEDS: {
                 double *p = new double[nj];
@@ -2634,13 +2634,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_ENCODER_ACCELERATION: {
                 ok = enc->getEncoderAcceleration(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_ENCODER_ACCELERATIONS: {
                 double *p = new double[nj];
@@ -2652,13 +2652,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_AMP_CURRENT: {
                 ok = amp->getCurrent(cmd.get(2).asInt(), &dtmp);
                 response.addDouble(dtmp);
             }
-            break;
+                break;
 
             case VOCAB_AMP_CURRENTS: {
                 double *p = new double[nj];
@@ -2670,13 +2670,13 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                     b.addDouble(p[i]);
                 delete[] p;
             }
-            break;
+                break;
 
             case VOCAB_AMP_STATUS: {
                 ok = amp->getAmpStatus(&tmp);
                 response.addInt(tmp);
             }
-            break;
+                break;
 
             case VOCAB_LIMITS: {
                 double min = 0.0, max = 0.0;
@@ -2684,7 +2684,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
                 response.addDouble(min);
                 response.addDouble(max);
             }
-            break;
+                break;
 
             default:
                 ACE_OS::printf("received an unknown request after a VOCAB_GET\n");
@@ -2724,54 +2724,54 @@ yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerCon
 }
 
 void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
-//    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
-//	int i;
+    //    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+    //	int i;
 
     Bottle& b = v.head;
-//	ACE_OS::printf("bottle: %s\n", b.toString().c_str());
+    //	ACE_OS::printf("bottle: %s\n", b.toString().c_str());
 
     switch (b.get(0).asVocab()) {
-        case VOCAB_POSITION_MODE: 
-        case VOCAB_POSITION_MOVES: {
-//            ACE_OS::printf("Received a position command\n");
-//			for (i = 0; i < v.body.size(); i++)
-//				ACE_OS::printf("%.2f ", v.body[i]);
-//			ACE_OS::printf("\n");
+    case VOCAB_POSITION_MODE: 
+    case VOCAB_POSITION_MOVES: {
+        //            ACE_OS::printf("Received a position command\n");
+        //			for (i = 0; i < v.body.size(); i++)
+        //				ACE_OS::printf("%.2f ", v.body[i]);
+        //			ACE_OS::printf("\n");
 
-            if (pos) {
-                bool ok = pos->positionMove(&(v.body[0]));
-                if (!ok)
-                    ACE_OS::printf("Issues while trying to start a position move\n");
-            }
+        if (pos) {
+            bool ok = pos->positionMove(&(v.body[0]));
+            if (!ok)
+                ACE_OS::printf("Issues while trying to start a position move\n");
         }
+    }
         break;
 
-        case VOCAB_VELOCITY_MODE:
-        case VOCAB_VELOCITY_MOVES: {
-//            ACE_OS::printf("Received a velocity command\n");
-//			for (i = 0; i < v.body.size(); i++)
-//				ACE_OS::printf("%.2f ", v.body[i]);
-//			ACE_OS::printf("\n");
+    case VOCAB_VELOCITY_MODE:
+    case VOCAB_VELOCITY_MOVES: {
+        //            ACE_OS::printf("Received a velocity command\n");
+        //			for (i = 0; i < v.body.size(); i++)
+        //				ACE_OS::printf("%.2f ", v.body[i]);
+        //			ACE_OS::printf("\n");
 
-            if (pos) {
-                bool ok = vel->velocityMove(&(v.body[0]));
-                if (!ok)
-                    ACE_OS::printf("Issues while trying to start a velocity move\n");
-            }
+        if (pos) {
+            bool ok = vel->velocityMove(&(v.body[0]));
+            if (!ok)
+                ACE_OS::printf("Issues while trying to start a velocity move\n");
         }
+    }
         break;
 
-        default: {
-            ACE_OS::printf("Unrecognized message while receiving on command port\n");
-        }
+    default: {
+        ACE_OS::printf("Unrecognized message while receiving on command port\n");
+    }
         break;
     }
 
-//    ACE_OS::printf("v: ");
-//    int i;
-//    for (i = 0; i < (int)v.size(); i++)
-//        ACE_OS::printf("%.3f ", v[i]);
-//    ACE_OS::printf("\n");
+    //    ACE_OS::printf("v: ");
+    //    int i;
+    //    for (i = 0; i < (int)v.size(); i++)
+    //        ACE_OS::printf("%.3f ", v[i]);
+    //    ACE_OS::printf("\n");
 }
 
 

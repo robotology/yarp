@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef DMATRIX_H
 #define DMATRIX_H
 
@@ -15,10 +16,10 @@
 
 class hdline : public ACE_Hash_Map_Manager<ID,double,ACE_Null_Mutex> {
 public:
-  hdline() {
-  }
-  hdline(const hdline& alt) {
-  }
+    hdline() {
+    }
+    hdline(const hdline& alt) {
+    }
 };
 
 //typedef ACE_Hash_Map_Manager<ID,ID,ACE_Null_Mutex> hline;
@@ -32,28 +33,28 @@ typedef ACE_Hash_Map_Iterator<ID,hdline,ACE_Null_Mutex> hmdatrix_iterator;
 
 class DMatrix {
 private:
-  hdmatrix matrix;
+    hdmatrix matrix;
 public:
-  double get(ID x, ID y) {
-    hdmatrix_entry *entry;
-    if (0==matrix.find(y,entry)) {
-      double result;
-      if (0==entry->int_id_.find(x,result)) {
-	return result;
-      }
+    double get(ID x, ID y) {
+        hdmatrix_entry *entry;
+        if (0==matrix.find(y,entry)) {
+            double result;
+            if (0==entry->int_id_.find(x,result)) {
+                return result;
+            }
+        }
+        return 0;
     }
-    return 0;
-  }
 
-  void set(ID x, ID y, double val) {
-    hdmatrix_entry *entry;
-    if (matrix.find(y,entry)!=0) {
-      matrix.bind(y,hdline());
-      int find_again = matrix.find(y,entry);
-      assert(find_again==0);
+    void set(ID x, ID y, double val) {
+        hdmatrix_entry *entry;
+        if (matrix.find(y,entry)!=0) {
+            matrix.bind(y,hdline());
+            int find_again = matrix.find(y,entry);
+            assert(find_again==0);
+        }
+        entry->int_id_.rebind(x,val);
     }
-    entry->int_id_.rebind(x,val);
-  }
 };
 
 

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 //
-// $Id: EsdMessageSniffer.h,v 1.2 2006-09-05 17:43:26 babybot Exp $
+// $Id: EsdMessageSniffer.h,v 1.3 2006-09-06 21:30:55 eshuy Exp $
 //
 //
 
@@ -68,13 +68,13 @@ struct yarp::dev::EsdMessageSnifferParameters
  */
 class yarp::dev::EsdMessageSniffer : 
     public DeviceDriver,
-    public os::Thread, 
-    public IPidControlRaw, 
-    public IAmplifierControlRaw,
-    public IEncodersRaw, 
-    public ImplementPidControl<EsdMessageSniffer, IPidControl>,
-    public ImplementAmplifierControl<EsdMessageSniffer, IAmplifierControl>,
-    public ImplementEncoders<EsdMessageSniffer, IEncoders>
+            public os::Thread, 
+            public IPidControlRaw, 
+            public IAmplifierControlRaw,
+            public IEncodersRaw, 
+            public ImplementPidControl<EsdMessageSniffer, IPidControl>,
+            public ImplementAmplifierControl<EsdMessageSniffer, IAmplifierControl>,
+            public ImplementEncoders<EsdMessageSniffer, IEncoders>
 {
 private:
 	EsdMessageSniffer(const EsdMessageSniffer&);
@@ -272,10 +272,10 @@ protected:
 		if (x <= double(-(MAX_SHORT))-1)
 			return MIN_SHORT;
 		else
-		if (x >= double(MAX_SHORT))
-			return MAX_SHORT;
-		else
-			return short(x + .5);
+            if (x >= double(MAX_SHORT))
+                return MAX_SHORT;
+            else
+                return short(x + .5);
 	}
 
 	inline int S_32(double x) const
@@ -283,10 +283,10 @@ protected:
 		if (x <= double(-(MAX_INT))-1.0)
 			return MIN_INT;
 		else
-		if (x >= double(MAX_INT))
-			return MAX_INT;
-		else
-			return int(x + .5);
+            if (x >= double(MAX_INT))
+                return MAX_INT;
+            else
+                return int(x + .5);
 	}
 };
 

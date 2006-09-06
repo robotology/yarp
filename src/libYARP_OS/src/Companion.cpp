@@ -666,7 +666,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
     } catch (IOException e) {
         ACE_OS::fprintf(stderr,"write failed: %s\n",e.toString().c_str());    
     }
-   return 0;
+    return 0;
 }
 
 

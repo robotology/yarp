@@ -1170,7 +1170,7 @@ public:
      */
     virtual bool done(int j)=0;
 
-     /* Set the calibrator object to be used to calibrate the robot.
+    /* Set the calibrator object to be used to calibrate the robot.
      * @param c pointer to the calibrator object
      * @return true/false on success failure
      */

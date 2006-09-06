@@ -47,11 +47,11 @@ namespace yarp {
  *
  * Here's a command-line example:
  * \verbatim
-   [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --framerate 30
-   [terminal B] yarp read /read
-   [terminal C] yarp connect /grabber /read
-   [terminal C] echo "[get] [gain]" | yarp rpc /grabber
-   \endverbatim
+ [terminal A] yarpdev --device test_grabber --width 8 --height 8 --name /grabber --framerate 30
+ [terminal B] yarp read /read
+ [terminal C] yarp connect /grabber /read
+ [terminal C] echo "[get] [gain]" | yarp rpc /grabber
+ \endverbatim
  * The yarpdev line starts a TestFrameGrabber wrapped in a ServerFrameGrabber.
  * Parameters are:
  * --width, --height set the size of the frame in pixels
@@ -81,8 +81,8 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public yarp::os::PortReader,
             public IFrameGrabberImage, public IFrameGrabberControls,
             public IAudioGrabberSound
-            // convenient to put these here just to make sure all
-            // methods get implemented
+ // convenient to put these here just to make sure all
+ // methods get implemented
 {
 private:
     yarp::os::Port p;
@@ -110,7 +110,7 @@ public:
         return true;
     }
     
-   /**
+    /**
      * Configure with a set of options. These are:
      * <TABLE>
      * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>

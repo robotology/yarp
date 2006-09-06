@@ -15,10 +15,10 @@ IControlCalibration::IControlCalibration()
 bool IControlCalibration::setCalibrator(ICalibrator *c)
 {
     if (c!=0)
-    {
-        calibrator=c;
-        return true;
-    }
+        {
+            calibrator=c;
+            return true;
+        }
 
     return false;
 }
@@ -28,10 +28,10 @@ bool IControlCalibration::calibrate()
     bool ret = false;
 
     if (calibrator!=0)
-	{
-	    fprintf(stderr, "Going to call calibrator\n");
-        ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
-	}
+        {
+            fprintf(stderr, "Going to call calibrator\n");
+            ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
+        }
 	else
 		fprintf(stderr, "Warning called calibrate but no calibrator was set\n");
 

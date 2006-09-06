@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #ifndef THINGS_H
 #define THINGS_H
@@ -14,85 +15,85 @@ typedef ACE_Hash_Map_Entry<ID,Thing> hthing_entry;
 
 class Things {
 public:
-  hthing things;
-  hid created;
-  hid destroyed;
-  ID at;
-  static const ID theta;
-  Thing null_thing;
+    hthing things;
+    hid created;
+    hid destroyed;
+    ID at;
+    static const ID theta;
+    Thing null_thing;
 
-  Things() {
-    at = theta;
-  }
-
-  static bool isFluid(ID x) {
-    return x.asInt()>=theta.asInt();
-  }
-
-  ID create() {
-    // could also reuse
-    ID result = at;
-    created.bind(at,at);
-    things.bind(at,Thing());
-    at = at.asInt()+1;
-    return result;
-  }
-
-  ID create(ID nat) {
-    // could also reuse
-    created.bind(nat,nat);
-    things.bind(nat,Thing());
-    getThing(nat).setID(nat);
-    return nat;
-  }
-
-  Thing& getThing(ID x) {
-    hthing_entry *entry;
-    if (0==things.find(x,entry)) {
-      return entry->int_id_;
+    Things() {
+        at = theta;
     }
-    return null_thing;
-  }
 
-  bool isThing(ID x) {
-    hthing_entry *entry;
-    if (0==things.find(x,entry)) {
-      return true;
+    static bool isFluid(ID x) {
+        return x.asInt()>=theta.asInt();
     }
-    return false;
-  }
 
-  void destroy(ID x) {
-    // prepare for reuse
-    things.unbind(x);
-    created.unbind(x,x);
-    destroyed.bind(x,x);
-  }
+    ID create() {
+        // could also reuse
+        ID result = at;
+        created.bind(at,at);
+        things.bind(at,Thing());
+        at = at.asInt()+1;
+        return result;
+    }
 
-  bool isDestroyed(ID x) {
-    ID result;
-    return destroyed.find(x,result)==0;
-  }
+    ID create(ID nat) {
+        // could also reuse
+        created.bind(nat,nat);
+        things.bind(nat,Thing());
+        getThing(nat).setID(nat);
+        return nat;
+    }
 
-  void update() {
-    hid remove;
-    for (hid_iterator it=created.begin(); it!=created.end(); it++) {
-      ID id = (*it).ext_id_;
-      Thing& thing = getThing(id);
+    Thing& getThing(ID x) {
+        hthing_entry *entry;
+        if (0==things.find(x,entry)) {
+            return entry->int_id_;
+        }
+        return null_thing;
+    }
 
-      thing.update();
+    bool isThing(ID x) {
+        hthing_entry *entry;
+        if (0==things.find(x,entry)) {
+            return true;
+        }
+        return false;
+    }
+
+    void destroy(ID x) {
+        // prepare for reuse
+        things.unbind(x);
+        created.unbind(x,x);
+        destroyed.bind(x,x);
+    }
+
+    bool isDestroyed(ID x) {
+        ID result;
+        return destroyed.find(x,result)==0;
+    }
+
+    void update() {
+        hid remove;
+        for (hid_iterator it=created.begin(); it!=created.end(); it++) {
+            ID id = (*it).ext_id_;
+            Thing& thing = getThing(id);
+
+            thing.update();
       
-      if(!thing.isAlive()) {
-	// remove.bind(id,id); // for now, don't do this
-	// Players automatically expire from arena when client killed
-      }
-    }
-    for (hid_iterator it2=remove.begin(); it2!=remove.end(); it2++) {
-      ID id = (*it2).ext_id_;
-      destroy(id);
-    }
+            if(!thing.isAlive()) {
+                // remove.bind(id,id); // for now, don't do this
+                // Players automatically expire from arena when client killed
+            }
+        }
+        for (hid_iterator it2=remove.begin(); it2!=remove.end(); it2++) {
+            ID id = (*it2).ext_id_;
+            destroy(id);
+        }
 
-  }
+    }
 };
 
 

@@ -9,17 +9,17 @@
 
 /*
 
- YYYCalibrator--->ICalibrator
+YYYCalibrator--->ICalibrator
 
- XXXMotorControl--->IControlCalibrationRaw
-                    IControlCalibration
+XXXMotorControl--->IControlCalibrationRaw
+IControlCalibration
 
- Do:  Create XXXMotorControl
-      Create YYYCalibrator
-      IControlCalibrationRaw->setCalibrator(ICalibrator *)
-      IControlCalibrationRaw->calibrate() which calls ICalibrator->calibrate(XXXMotionControl*)
-      IControlCalibration methods are called by YYYCalibrator to perform the calibration
- */
+Do:  Create XXXMotorControl
+Create YYYCalibrator
+IControlCalibrationRaw->setCalibrator(ICalibrator *)
+IControlCalibrationRaw->calibrate() which calls ICalibrator->calibrate(XXXMotionControl*)
+IControlCalibration methods are called by YYYCalibrator to perform the calibration
+*/
 
 namespace yarp {
     namespace dev

@@ -171,7 +171,7 @@ void PortCore::run() {
     // closing phase
     stateMutex.wait();
     for (int i=0; i<connectionListeners; i++) {
-            connectionChange.post();
+        connectionChange.post();
     }
     connectionListeners = 0;
     finished = true;
@@ -548,8 +548,8 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
                     if (route.getToName()!="*") {
 						// not needed any more
                         //Companion::disconnectInput(alt.getToName().c_str(),
-                          //                         alt.getFromName().c_str(),
-                            //                       true);
+                        //                         alt.getFromName().c_str(),
+                        //                       true);
 						break;
                     }
                 }
@@ -822,14 +822,14 @@ bool PortCore::isWriting() {
                     } else {
 						// not needed anymore, done by callback
 						/*
-                        void *tracker = unit->takeTracker();
-                        if (tracker!=NULL) {
-                            //YARP_INFO(log,"tracker returned...");
-                            packetMutex.wait();
-                            ((PortCorePacket *)tracker)->dec();
-                            packets.checkPacket((PortCorePacket *)tracker);
-                            packetMutex.post();
-                        }
+                          void *tracker = unit->takeTracker();
+                          if (tracker!=NULL) {
+                          //YARP_INFO(log,"tracker returned...");
+                          packetMutex.wait();
+                          ((PortCorePacket *)tracker)->dec();
+                          packets.checkPacket((PortCorePacket *)tracker);
+                          packetMutex.post();
+                          }
 						*/
                     }
                 }

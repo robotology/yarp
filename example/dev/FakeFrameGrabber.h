@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
@@ -10,8 +11,8 @@ private:
 public:
     FakeFrameGrabber() {
         h = w = 0;
-	ct = 0;
-	circlePixel = yarp::sig::PixelRgb(255,0,0);
+        ct = 0;
+        circlePixel = yarp::sig::PixelRgb(255,0,0);
     }
 
     bool open(int w, int h) {
@@ -36,9 +37,9 @@ public:
         yarp::os::Time::delay(0.1);  // simulate waiting for hardware to report
         image.resize(w,h);
         image.zero();
-	yarp::sig::draw::addCrossHair(image,circlePixel,
-				      ct,h/2,h/8);
-	ct = (ct+4)%w;
+        yarp::sig::draw::addCrossHair(image,circlePixel,
+                                      ct,h/2,h/8);
+        ct = (ct+4)%w;
         return true;
     }
 

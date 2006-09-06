@@ -200,10 +200,10 @@ protected:
 
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_picolo picolo
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_picolo picolo
 
-A interface to the picolo framegrabber, see yarp::dev::PicoloDeviceDriver.
+ A interface to the picolo framegrabber, see yarp::dev::PicoloDeviceDriver.
 
 */
 

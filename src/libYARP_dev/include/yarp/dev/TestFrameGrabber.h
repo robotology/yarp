@@ -58,7 +58,7 @@ public:
         return true;
     }
 
-   /**
+    /**
      * Configure with a set of options. These are:
      * <TABLE>
      * <TR><TD> width/w </TD><TD> Width of image (default 128). </TD></TR>
@@ -156,10 +156,10 @@ private:
 
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_test_grabber test_grabber
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_test_grabber test_grabber
 
-A fake framegrabber, see yarp::dev::TestFrameGrabber.
+ A fake framegrabber, see yarp::dev::TestFrameGrabber.
 
 */
 

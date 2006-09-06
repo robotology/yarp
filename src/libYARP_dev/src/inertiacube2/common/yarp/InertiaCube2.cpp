@@ -22,18 +22,18 @@ using namespace yarp::sig;
 
 class IntersenseResources: public Thread
 {
- public:
+public:
     IntersenseResources(void): _mutex(1)
-        {
-            _bStreamStarted=false;
-            _bError=false;
+    {
+        _bStreamStarted=false;
+        _bError=false;
             
-            _last=0;
+        _last=0;
 
-            _last=new double [3];
-            for(int k=0;k<3;k++)
-                _last[k]=0.0;
-        }
+        _last=new double [3];
+        for(int k=0;k<3;k++)
+            _last[k]=0.0;
+    }
 
     ~IntersenseResources()
     {
@@ -199,17 +199,17 @@ bool InertiaCube2::close()
     IntersenseResources &d=RES(system_resources);
 
     if (ISD_CloseTracker( d._handle_tracker) == false)
-	{
-		delete ((IntersenseResources *)(system_resources));
-		system_resources=0;
-        return false;
-	}
+        {
+            delete ((IntersenseResources *)(system_resources));
+            system_resources=0;
+            return false;
+        }
     else
-	{
-		delete ((IntersenseResources *)(system_resources));
-		system_resources=0;
-        return true;
-	}
+        {
+            delete ((IntersenseResources *)(system_resources));
+            system_resources=0;
+            return true;
+        }
 }
 
 bool InertiaCube2::calibrate(int ch, double v)
@@ -220,10 +220,10 @@ bool InertiaCube2::calibrate(int ch, double v)
     printf("Warning: this is not tested yet, so be careful\n");
 
     if (ch!=0)
-    {
-          printf("Calibrate method not yet implemented for channel %d\n", ch);
-          return true;
-    }
+        {
+            printf("Calibrate method not yet implemented for channel %d\n", ch);
+            return true;
+        }
 
     d._mutex.wait();
 
@@ -233,16 +233,16 @@ bool InertiaCube2::calibrate(int ch, double v)
         return true;
     }
     else
-    {
-        float nroll=(float) v;
-        float npitch=(float) d._last[1];
-        float nyaw=(float) d._last[2];
+        {
+            float nroll=(float) v;
+            float npitch=(float) d._last[1];
+            float nyaw=(float) d._last[2];
                 
-        ISD_BoresightReferenced(d._handle_tracker, 1, nyaw, npitch, nroll);
+            ISD_BoresightReferenced(d._handle_tracker, 1, nyaw, npitch, nroll);
 
-        d._mutex.post();
-        return true;
-    }
+            d._mutex.post();
+            return true;
+        }
 
     return false;
 }

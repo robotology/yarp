@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.26 2006-09-05 17:43:26 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.27 2006-09-06 21:30:55 eshuy Exp $
 ///
 ///
 
@@ -59,7 +59,7 @@ bool NOT_YET_IMPLEMENTED(const char *txt)
 {
     ACE_OS::fprintf(stderr, "%s not yet implemented for EsdMotionControl\n", txt);
 
-   return false;
+    return false;
 }
 
 /**
@@ -285,10 +285,10 @@ bool EsdCanResources::initialize (const EsdMotionControlParameters& parms)
 
 	res = canSetBaudrate (_handle, _speed);
 	if (res != NTCAN_SUCCESS)
-	{
-		canClose (_handle);
-		return false;
-	}
+        {
+            canClose (_handle);
+            return false;
+        }
 
 	// sets all message ID's for class 0 and 1.
     int i;
@@ -307,12 +307,12 @@ bool EsdCanResources::uninitialize ()
     checkAndDestroy<BCastBufferElement> (_bcastRecvBuffer);
 
 	if (_handle != ACE_INVALID_HANDLE)
-	{
-		int res = canClose (_handle);
-		if (res != NTCAN_SUCCESS)
-			return false;
-		_handle = ACE_INVALID_HANDLE;
-	}
+        {
+            int res = canClose (_handle);
+            if (res != NTCAN_SUCCESS)
+                return false;
+            _handle = ACE_INVALID_HANDLE;
+        }
 	
 	return true;
 }
@@ -375,23 +375,23 @@ bool EsdCanResources::printMessage (const CMSG& m)
 		return false;
 
 	int ret = ACE_OS::sprintf (_printBuffer, "class: %2d s: %2x d: %2x c: %1d msg: %3d (%x) ",
-		  (m.id & 0x700) >> 8,
-		  (m.id & 0xf0) >> 4, 
-		  (m.id & 0x0f), 
-		  ((m.data[0] & 0x80)==0)?0:1,
-		  (m.data[0] & 0x7f),
-		  (m.data[0] & 0x7f));
+                               (m.id & 0x700) >> 8,
+                               (m.id & 0xf0) >> 4, 
+                               (m.id & 0x0f), 
+                               ((m.data[0] & 0x80)==0)?0:1,
+                               (m.data[0] & 0x7f),
+                               (m.data[0] & 0x7f));
 
 	if (m.len > 1)
-	{
-		ret += ACE_OS::sprintf (_printBuffer+ret, "x: "); 
-	}
+        {
+            ret += ACE_OS::sprintf (_printBuffer+ret, "x: "); 
+        }
 
 	int j;
 	for (j = 1; j < m.len; j++)
-	{
-		ret += ACE_OS::sprintf (_printBuffer+ret, "%x ", m.data[j]);
-	}
+        {
+            ret += ACE_OS::sprintf (_printBuffer+ret, "%x ", m.data[j]);
+        }
 
 	ret += ACE_OS::sprintf(_printBuffer+ret, "st: %x\n", m.msg_lost);
 
@@ -474,10 +474,10 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	_noreply = false;
     
 	if (!r.initialize (p))
-	{
-		_mutex.post();
-		return false;
-	}
+        {
+            _mutex.post();
+            return false;
+        }
 
     ImplementPositionControl<EsdMotionControl, IPositionControl>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
@@ -577,20 +577,20 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     ////// PIDS
     int j=0;
     for(j=0;j<nj;j++)
-    {
-        char tmp[80];
-        sprintf(tmp, "Pid%d", j); 
-        xtmp = p.findGroup("PIDS").findGroup(tmp);
-        params._pids[j].kp = xtmp.get(1).asDouble();
-        params._pids[j].kd = xtmp.get(2).asDouble();
-        params._pids[j].ki = xtmp.get(3).asDouble();
+        {
+            char tmp[80];
+            sprintf(tmp, "Pid%d", j); 
+            xtmp = p.findGroup("PIDS").findGroup(tmp);
+            params._pids[j].kp = xtmp.get(1).asDouble();
+            params._pids[j].kd = xtmp.get(2).asDouble();
+            params._pids[j].ki = xtmp.get(3).asDouble();
     
-        params._pids[j].max_int = xtmp.get(4).asDouble();
-        params._pids[j].max_output = xtmp.get(5).asDouble();
+            params._pids[j].max_int = xtmp.get(4).asDouble();
+            params._pids[j].max_output = xtmp.get(5).asDouble();
         
-        params._pids[j].scale = xtmp.get(6).asDouble();
-        params._pids[j].offset = xtmp.get(7).asDouble();
-    }
+            params._pids[j].scale = xtmp.get(6).asDouble();
+            params._pids[j].offset = xtmp.get(7).asDouble();
+        }
 
     /////// LIMITS
     xtmp = p.findGroup("LIMITS").findGroup("Currents");
@@ -626,12 +626,12 @@ bool EsdMotionControl::close (void)
 	}
 
     if (Thread::isRunning())
-    {
-	    /// default initialization for this device driver.
-	    int i;
-	    for(i = 0; i < d.getJoints(); i++)
-		    setBCastMessages(i, double(0x00));
-    }
+        {
+            /// default initialization for this device driver.
+            int i;
+            for(i = 0; i < d.getJoints(); i++)
+                setBCastMessages(i, double(0x00));
+        }
 
     Thread::stop ();	/// stops the thread first (joins too).
 
@@ -679,256 +679,256 @@ void EsdMotionControl::run ()
 	_done.post ();
 
 	while (!isStopping() || messagePending)
-	{
-		before = Time::now();
+        {
+            before = Time::now();
 
-		_mutex.wait ();
-		if (r.read () != true)
-			if (r._p) 
-				(*r._p) ("CAN: read failed\n");
+            _mutex.wait ();
+            if (r.read () != true)
+                if (r._p) 
+                    (*r._p) ("CAN: read failed\n");
 
-		// handle broadcast messages.
-		// (class 1, 8 bits of the ID used to define the message type and source address).
-		//
-		for (i = 0; i < r._readMessages; i++)
-		{
-			CMSG& m = r._readBuffer[i];
-			if (m.len & NTCAN_NO_DATA)
-				if (r._p)
-				{
-					(*r._p) ("CAN: error in message %x len: %d type: %x: %x\n",
-							m.id, m.len, m.data[0], m.msg_lost);
-						continue;
-				}
+            // handle broadcast messages.
+            // (class 1, 8 bits of the ID used to define the message type and source address).
+            //
+            for (i = 0; i < r._readMessages; i++)
+                {
+                    CMSG& m = r._readBuffer[i];
+                    if (m.len & NTCAN_NO_DATA)
+                        if (r._p)
+                            {
+                                (*r._p) ("CAN: error in message %x len: %d type: %x: %x\n",
+                                         m.id, m.len, m.data[0], m.msg_lost);
+                                continue;
+                            }
 
-			if ((m.id & 0x700) == 0x100) // class = 1.
-			{
-				// 4 next bits = source address, next 4 bits = msg type
-				// this allows sending two 32-bit numbers is a single CAN message.
-				//
-				// need an array here for storing the messages on a per-joint basis.
+                    if ((m.id & 0x700) == 0x100) // class = 1.
+                        {
+                            // 4 next bits = source address, next 4 bits = msg type
+                            // this allows sending two 32-bit numbers is a single CAN message.
+                            //
+                            // need an array here for storing the messages on a per-joint basis.
 
-				const int addr = ((m.id & 0x0f0) >> 4);
-				int j;
-				for (j = 0; j < ESD_MAX_CARDS; j++)
-				{
-					if (r._destinations[j] == addr)
-						break;
-				}
+                            const int addr = ((m.id & 0x0f0) >> 4);
+                            int j;
+                            for (j = 0; j < ESD_MAX_CARDS; j++)
+                                {
+                                    if (r._destinations[j] == addr)
+                                        break;
+                                }
 
-				j *= 2;
+                            j *= 2;
 
-				/* less sign nibble specifies msg type */
-				switch (m.id & 0x00f)
-				{
-				case CAN_BCAST_POSITION:
-					r._bcastRecvBuffer[j]._position = *((int *)(m.data));
-					r._bcastRecvBuffer[j]._update_p = before;
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._position = *((int *)(m.data+4));
-						r._bcastRecvBuffer[j]._update_p = before;
-					}
-					break;
+                            /* less sign nibble specifies msg type */
+                            switch (m.id & 0x00f)
+                                {
+                                case CAN_BCAST_POSITION:
+                                    r._bcastRecvBuffer[j]._position = *((int *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_p = before;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._position = *((int *)(m.data+4));
+                                            r._bcastRecvBuffer[j]._update_p = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_PID_VAL:
-					r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data));
-					r._bcastRecvBuffer[j]._update_v = before;
+                                case CAN_BCAST_PID_VAL:
+                                    r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_v = before;
 
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data+2));
-						r._bcastRecvBuffer[j]._update_v = before;
-					}
-					break;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data+2));
+                                            r._bcastRecvBuffer[j]._update_v = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_FAULT:
-					// fault signals.
-					r._bcastRecvBuffer[j]._fault = *((short *)(m.data));
-					r._bcastRecvBuffer[j]._update_e = before;
-					j++;
+                                case CAN_BCAST_FAULT:
+                                    // fault signals.
+                                    r._bcastRecvBuffer[j]._fault = *((short *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_e = before;
+                                    j++;
 
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._fault = *((short *)(m.data+2));
-						r._bcastRecvBuffer[j]._update_e = before;
-					}
-					break;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._fault = *((short *)(m.data+2));
+                                            r._bcastRecvBuffer[j]._update_e = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_CURRENT:
-					// also receives the control values.
-					r._bcastRecvBuffer[j]._current = *((short *)(m.data));
+                                case CAN_BCAST_CURRENT:
+                                    // also receives the control values.
+                                    r._bcastRecvBuffer[j]._current = *((short *)(m.data));
 
-					r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+4));
-					r._bcastRecvBuffer[j]._update_c = before;
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._current = *((short *)(m.data+2));
+                                    r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+4));
+                                    r._bcastRecvBuffer[j]._update_c = before;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._current = *((short *)(m.data+2));
 
-						r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+6));
-						r._bcastRecvBuffer[j]._update_c = before;
-					}
-					break;
+                                            r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+6));
+                                            r._bcastRecvBuffer[j]._update_c = before;
+                                        }
+                                    break;
 
-				default:
-					break;
-				}
-			}
-		}
+                                default:
+                                    break;
+                                }
+                        }
+                }
 
-		//
-		// handle class 0 messages - polling messages.
-		// (class 0, 8 bits of the ID used to represent the source and destination).
-		// the first byte of the message is the message type and motor number (0 or 1).
-		//
-		if (messagePending)
-		{
-			for (i = 0; i < r._readMessages; i++)
-			{
-				CMSG& m = r._readBuffer[i];
-				if (m.len & NTCAN_NO_DATA)
-					if (r._p) 
-					{
-						(*r._p) ("CAN: error in message %x len: %d type: %x: %x\n", 
-							m.id, m.len, m.data[0], m.msg_lost);
+            //
+            // handle class 0 messages - polling messages.
+            // (class 0, 8 bits of the ID used to represent the source and destination).
+            // the first byte of the message is the message type and motor number (0 or 1).
+            //
+            if (messagePending)
+                {
+                    for (i = 0; i < r._readMessages; i++)
+                        {
+                            CMSG& m = r._readBuffer[i];
+                            if (m.len & NTCAN_NO_DATA)
+                                if (r._p) 
+                                    {
+                                        (*r._p) ("CAN: error in message %x len: %d type: %x: %x\n", 
+                                                 m.id, m.len, m.data[0], m.msg_lost);
 						
-						continue;
-					}
+                                        continue;
+                                    }
 
-				if (((m.id &0x700) == 0) && 
-					((m.data[0] & 0x7f) != _filter) &&
-					 (m.data[0] & 0x7f) < NUM_OF_MESSAGES)
-					r.printMessage (m);
+                            if (((m.id &0x700) == 0) && 
+                                ((m.data[0] & 0x7f) != _filter) &&
+                                (m.data[0] & 0x7f) < NUM_OF_MESSAGES)
+                                r.printMessage (m);
 
-				if (!noreply) /// this requires a reply.
-				{
-					if (((m.id & 0x700) == 0) &&				/// class 0 msg.
-						((m.id & 0x0f) == r._my_address))
-					{
-						/// legitimate message directed here, checks whether replies to any message.
-						int j;
-						for (j = 0; j < r._writeMessages; j++)
-						{
-							if (((r._writeBuffer[j].id & 0x0f) == ((m.id & 0xf0) >> 4)) &&
-								(m.data[0] == r._writeBuffer[j].data[0]))
-							{
-								if (r._replyBuffer[j].id != 0)
-								{
-									if (r._p)
-									{
-										(*r._p) ("CAN: message %x was already replied\n", m.id);
-										r.printMessage (m);
-									}
-								}
-								else
-								{
-									ACE_OS::memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
-									remainingMsgs --;
-									if (remainingMsgs < 1)
-									{
-										messagePending = false;
-										r._error_status = true;
-										goto AckMessageLoop;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+                            if (!noreply) /// this requires a reply.
+                                {
+                                    if (((m.id & 0x700) == 0) &&				/// class 0 msg.
+                                        ((m.id & 0x0f) == r._my_address))
+                                        {
+                                            /// legitimate message directed here, checks whether replies to any message.
+                                            int j;
+                                            for (j = 0; j < r._writeMessages; j++)
+                                                {
+                                                    if (((r._writeBuffer[j].id & 0x0f) == ((m.id & 0xf0) >> 4)) &&
+                                                        (m.data[0] == r._writeBuffer[j].data[0]))
+                                                        {
+                                                            if (r._replyBuffer[j].id != 0)
+                                                                {
+                                                                    if (r._p)
+                                                                        {
+                                                                            (*r._p) ("CAN: message %x was already replied\n", m.id);
+                                                                            r.printMessage (m);
+                                                                        }
+                                                                }
+                                                            else
+                                                                {
+                                                                    ACE_OS::memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
+                                                                    remainingMsgs --;
+                                                                    if (remainingMsgs < 1)
+                                                                        {
+                                                                            messagePending = false;
+                                                                            r._error_status = true;
+                                                                            goto AckMessageLoop;
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
 
-			/// the pending msg doesn't require a reply.
-			if (noreply)
-			{
-				remainingMsgs = 0;
-				messagePending = false;
-				r._error_status = true;
-				goto AckMessageLoop;
-			}
+                    /// the pending msg doesn't require a reply.
+                    if (noreply)
+                        {
+                            remainingMsgs = 0;
+                            messagePending = false;
+                            r._error_status = true;
+                            goto AckMessageLoop;
+                        }
 
-			/// timeout
-			counter ++;
-			if (counter > r._timeout)
-			{	
-				/// complains.
-				if (r._p)
-				{
-					(*r._p) ("CAN: timeout - still %d messages unacknowledged\n", remainingMsgs);
-					r.dumpBuffers ();
-				}
+                    /// timeout
+                    counter ++;
+                    if (counter > r._timeout)
+                        {	
+                            /// complains.
+                            if (r._p)
+                                {
+                                    (*r._p) ("CAN: timeout - still %d messages unacknowledged\n", remainingMsgs);
+                                    r.dumpBuffers ();
+                                }
 
-				messagePending = false;
-				r._error_status = false;
-				goto AckMessageLoop;
-			}
+                            messagePending = false;
+                            r._error_status = false;
+                            goto AckMessageLoop;
+                        }
 
-AckMessageLoop:
-			if (!messagePending)
-			{
-				/// tell the caller it can continue.
-				_done.post();
-			}
-		}
-		else
-		{
-			/// any write?
-			if (_writerequested)
-			{
-				if (r._writeMessages > 0)
-				{
-					if (r.writePacket () != true)
-					{
-						if (r._p)
-						{
-							(*r._p) ("CAN: write message of %d elments failed\n", r._writeMessages);
-						}
-					}
-					else
-					{
-						messagePending = true;
-						_writerequested = false;
-						remainingMsgs = r._writeMessages;
-						noreply = _noreply;
-						r._error_status = true;
-						counter = 0;
-						ACE_OS::memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
+                AckMessageLoop:
+                    if (!messagePending)
+                        {
+                            /// tell the caller it can continue.
+                            _done.post();
+                        }
+                }
+            else
+                {
+                    /// any write?
+                    if (_writerequested)
+                        {
+                            if (r._writeMessages > 0)
+                                {
+                                    if (r.writePacket () != true)
+                                        {
+                                            if (r._p)
+                                                {
+                                                    (*r._p) ("CAN: write message of %d elments failed\n", r._writeMessages);
+                                                }
+                                        }
+                                    else
+                                        {
+                                            messagePending = true;
+                                            _writerequested = false;
+                                            remainingMsgs = r._writeMessages;
+                                            noreply = _noreply;
+                                            r._error_status = true;
+                                            counter = 0;
+                                            ACE_OS::memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
 
-						if (r._p)
-						{
-							int j;
-							for (j = 0; j < r._writeMessages; j++)
-							{
-								if ((r._writeBuffer[j].data[0] & 0x7f) != _filter)
-									r.printMessage (r._writeBuffer[j]);
-							}
-						}
-					}
-				}
-			}
-		}
+                                            if (r._p)
+                                                {
+                                                    int j;
+                                                    for (j = 0; j < r._writeMessages; j++)
+                                                        {
+                                                            if ((r._writeBuffer[j].data[0] & 0x7f) != _filter)
+                                                                r.printMessage (r._writeBuffer[j]);
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
 
-		_mutex.post ();
+            _mutex.post ();
 
-		/// wait.
-		now = Time::now();
-		if ((now - before)*1000 < r._polling_interval)
-		{
+            /// wait.
+            now = Time::now();
+            if ((now - before)*1000 < r._polling_interval)
+                {
 
-            double k = double(r._polling_interval)/1000.0-(now-before);
-			Time::delay(k);
+                    double k = double(r._polling_interval)/1000.0-(now-before);
+                    Time::delay(k);
 
-            //before = now + k;
-		}
-		else 
-		{
-			if (r._p) (*r._p)("CAN: thread can't poll fast enough (time: %f)\n", now-before);
-    		//before = now;
+                    //before = now + k;
+                }
+            else 
+                {
+                    if (r._p) (*r._p)("CAN: thread can't poll fast enough (time: %f)\n", now-before);
+                    //before = now;
 
-		}
-	}
+                }
+        }
 
 }
 
@@ -979,16 +979,16 @@ bool EsdMotionControl::getPidsRaw (Pid *out)
 
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
-	{
-	    short s;
-    	_readWord16 (CAN_GET_P_GAIN, i, s); out[i].kp = double(s);
-	    _readWord16 (CAN_GET_D_GAIN, i, s); out[i].kd = double(s);
-	    _readWord16 (CAN_GET_I_GAIN, i, s); out[i].ki = double(s);
-	    _readWord16 (CAN_GET_ILIM_GAIN, i, s); out[i].max_int = double(s);
-	    _readWord16 (CAN_GET_OFFSET, i, s); out[i].offset= double(s);
-	    _readWord16 (CAN_GET_SCALE, i, s); out[i].scale = double(s);
-        _readWord16 (CAN_GET_TLIM, i, s); out[i].max_output = double(s);
-    }
+        {
+            short s;
+            _readWord16 (CAN_GET_P_GAIN, i, s); out[i].kp = double(s);
+            _readWord16 (CAN_GET_D_GAIN, i, s); out[i].kd = double(s);
+            _readWord16 (CAN_GET_I_GAIN, i, s); out[i].ki = double(s);
+            _readWord16 (CAN_GET_ILIM_GAIN, i, s); out[i].max_int = double(s);
+            _readWord16 (CAN_GET_OFFSET, i, s); out[i].offset= double(s);
+            _readWord16 (CAN_GET_SCALE, i, s); out[i].scale = double(s);
+            _readWord16 (CAN_GET_TLIM, i, s); out[i].max_output = double(s);
+        }
 
 	return true;
 }
@@ -1028,10 +1028,10 @@ bool EsdMotionControl::setReferencesRaw (const double *refs)
 
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeDWord (CAN_SET_COMMAND_POSITION, i, S_32(refs[i])) != true)
-			return false;
-	}
+        {
+            if (_writeDWord (CAN_SET_COMMAND_POSITION, i, S_32(refs[i])) != true)
+                return false;
+        }
 
 	return true;
 }
@@ -1062,9 +1062,9 @@ bool EsdMotionControl::getErrorsRaw(double *errs)
 	int i;
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		errs[i] = double(r._bcastRecvBuffer[i]._position_error);
-	}
+        {
+            errs[i] = double(r._bcastRecvBuffer[i]._position_error);
+        }
     _mutex.post();
 	return true;
 }
@@ -1086,9 +1086,9 @@ bool EsdMotionControl::getOutputsRaw(double *outs)
 
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		outs[i] = double(r._bcastRecvBuffer[i]._pid_value);
-	}
+        {
+            outs[i] = double(r._bcastRecvBuffer[i]._pid_value);
+        }
 
     _mutex.post();
 	return true;
@@ -1110,7 +1110,7 @@ bool EsdMotionControl::getReferenceRaw(int j, double *ref)
 
 bool EsdMotionControl::getReferencesRaw(double *ref)
 {
-   return _readDWordArray(CAN_GET_DESIRED_POSITION, ref);
+    return _readDWordArray(CAN_GET_DESIRED_POSITION, ref);
 }
 
 bool EsdMotionControl::getErrorLimitRaw(int j, double *err)
@@ -1169,11 +1169,11 @@ bool EsdMotionControl::positionMoveRaw(int axis, double ref)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED (axis))
-	{
-		// still fills the _ref_position structure.
-		_ref_positions[axis] = ref;
-		return true;
-	}
+        {
+            // still fills the _ref_position structure.
+            _ref_positions[axis] = ref;
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -1205,21 +1205,21 @@ bool EsdMotionControl::positionMoveRaw(const double *refs)
 	r.startPacket();
 
 	for (i = 0; i < r.getJoints (); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (CAN_POSITION_MOVE, i);
-			const int j = r._writeMessages - 1;
-			_ref_positions[i] = refs[i];
-			*((int*)(r._writeBuffer[j].data+1)) = S_32(_ref_positions[i]);		/// pos
-			*((short*)(r._writeBuffer[j].data+5)) = S_16(_ref_speeds[i]);		/// speed
-			r._writeBuffer[j].len = 7;
-		}
-		else
-		{
-			_ref_positions[i] = refs[i];
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (CAN_POSITION_MOVE, i);
+                    const int j = r._writeMessages - 1;
+                    _ref_positions[i] = refs[i];
+                    *((int*)(r._writeBuffer[j].data+1)) = S_32(_ref_positions[i]);		/// pos
+                    *((short*)(r._writeBuffer[j].data+5)) = S_16(_ref_speeds[i]);		/// speed
+                    r._writeBuffer[j].len = 7;
+                }
+            else
+                {
+                    _ref_positions[i] = refs[i];
+                }
+        }
 
 	_writerequested = true;
 	_noreply = true;
@@ -1250,10 +1250,10 @@ bool EsdMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 	short value;
 
     if (!_readWord16 (CAN_MOTION_DONE, axis, value))
-    {
-        *ret=false;
-        return false;
-    }
+        {
+            *ret=false;
+            return false;
+        }
  
     *ret= (value!=0);
 
@@ -1271,12 +1271,12 @@ bool EsdMotionControl::checkMotionDoneRaw (bool *ret)
 	r.startPacket();
 
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (CAN_MOTION_DONE, i);
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (CAN_MOTION_DONE, i);
+                }
+        }
 
 	if (r._writeMessages < 1)
 		return false;
@@ -1292,22 +1292,22 @@ bool EsdMotionControl::checkMotionDoneRaw (bool *ret)
 	
 	int j;
 	for (i = 0, j = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			CMSG& m = r._replyBuffer[j];
-			if (m.id != 0xffff)
-			{
-				value = *((short *)(m.data+1));
-				if (!value)
-				{
-                    *ret=false;
-					return true;
+        {
+            if (ENABLED(i))
+                {
+                    CMSG& m = r._replyBuffer[j];
+                    if (m.id != 0xffff)
+                        {
+                            value = *((short *)(m.data+1));
+                            if (!value)
+                                {
+                                    *ret=false;
+                                    return true;
+                                }
+                        }
+                    j++;
                 }
-			}
-			j++;
-		}
-	}
+        }
 
     *ret=true;
 	return true;
@@ -1334,13 +1334,13 @@ bool EsdMotionControl::setRefSpeedsRaw(const double *spds)
 		_ref_speeds[i] /= 10.0;
 
 	/*
-	int i;
-	for (i = 0; i < r.getJoints(); i++)
-    {
-		_ref_speeds[i] = spds[i];
-		if (!_writeWord16 (CAN_SET_DESIRED_VELOCITY, i, S_16(_ref_speeds[i])))
-			return false;
-    }
+      int i;
+      for (i = 0; i < r.getJoints(); i++)
+      {
+      _ref_speeds[i] = spds[i];
+      if (!_writeWord16 (CAN_SET_DESIRED_VELOCITY, i, S_16(_ref_speeds[i])))
+      return false;
+      }
 	*/
 	return true;
 }
@@ -1362,11 +1362,11 @@ bool EsdMotionControl::setRefAccelerationsRaw(const double *accs)
 
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		_ref_accs[i] = accs[i] / 1000.0;
-		if (!_writeWord16 (CAN_SET_DESIRED_ACCELER, i, S_16(_ref_accs[i])))
-			return false;
-	}
+        {
+            _ref_accs[i] = accs[i] / 1000.0;
+            if (!_writeWord16 (CAN_SET_DESIRED_ACCELER, i, S_16(_ref_accs[i])))
+                return false;
+        }
 
 	return true;
 }
@@ -1376,18 +1376,18 @@ bool EsdMotionControl::getRefSpeedsRaw (double *spds)
 {
 	EsdCanResources& r = RES(system_resources);
 	/*
-	int i;
-	short value = 0;
-	for(i = 0; i < r.getJoints(); i++)
-	{
-        if (_readWord16 (CAN_GET_DESIRED_VELOCITY, i, value))
-        {
-			_ref_speeds[i] = double (value);
-            spds[i] = _ref_speeds[i];
-        } 
-		else
-			return false;
-	}
+      int i;
+      short value = 0;
+      for(i = 0; i < r.getJoints(); i++)
+      {
+      if (_readWord16 (CAN_GET_DESIRED_VELOCITY, i, value))
+      {
+      _ref_speeds[i] = double (value);
+      spds[i] = _ref_speeds[i];
+      } 
+      else
+      return false;
+      }
 	*/
 	ACE_OS::memcpy(spds, _ref_speeds, sizeof(double) * r.getJoints());
 	int i;
@@ -1404,14 +1404,14 @@ bool EsdMotionControl::getRefSpeedRaw (int axis, double *spd)
 	*spd = _ref_speeds[axis] * 10.0;
 	
 	/*
-	short value = 0;
-    if (_readWord16 (CAN_GET_DESIRED_VELOCITY, axis, value))
-    {
-    	_ref_speeds[axis] = double (value);
-         *spd = _ref_speeds[axis];
-    } 
-	else
-		return false;
+      short value = 0;
+      if (_readWord16 (CAN_GET_DESIRED_VELOCITY, axis, value))
+      {
+      _ref_speeds[axis] = double (value);
+      *spd = _ref_speeds[axis];
+      } 
+      else
+      return false;
 	*/
 	
 	return true;
@@ -1425,14 +1425,14 @@ bool EsdMotionControl::getRefAccelerationsRaw (double *accs)
 	short value = 0;
 
 	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (_readWord16 (CAN_GET_DESIRED_ACCELER, i, value) == true) {
-			_ref_accs[i] = accs[i] = double (value);
-			accs[i] *= 1000.0;
-		}
-		else
-			return false;
-	}
+        {
+            if (_readWord16 (CAN_GET_DESIRED_ACCELER, i, value) == true) {
+                _ref_accs[i] = accs[i] = double (value);
+                accs[i] *= 1000.0;
+            }
+            else
+                return false;
+        }
 
 	return true;
 }
@@ -1445,10 +1445,10 @@ bool EsdMotionControl::getRefAccelerationRaw (int axis, double *accs)
 	short value = 0;
 
     if (_readWord16 (CAN_GET_DESIRED_ACCELER, axis, value) == true)
-    {
-		_ref_accs[axis] = double (value);
-        *accs = double(value) * 1000.0;
-    }
+        {
+            _ref_accs[axis] = double (value);
+            *accs = double(value) * 1000.0;
+        }
 	else
 		return false;
 
@@ -1476,18 +1476,18 @@ bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
 	r.startPacket();
 
 	if (ENABLED (axis))
-	{
-		r.addMessage (CAN_VELOCITY_MOVE, axis);
-		const int j = r._writeMessages - 1;
-		_command_speeds[axis] = sp / 1000.0;
-		*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
-		*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
-		r._writeBuffer[j].len = 5;
-	}
+        {
+            r.addMessage (CAN_VELOCITY_MOVE, axis);
+            const int j = r._writeMessages - 1;
+            _command_speeds[axis] = sp / 1000.0;
+            *((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
+            *((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
+            r._writeBuffer[j].len = 5;
+        }
 	else
-	{
-		_command_speeds[axis] = sp / 1000.0;
-	}
+        {
+            _command_speeds[axis] = sp / 1000.0;
+        }
 
 	_writerequested = true;
 	_noreply = true;
@@ -1511,21 +1511,21 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
 	r.startPacket();
 
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED (i))
-		{
-			r.addMessage (CAN_VELOCITY_MOVE, i);
-			const int j = r._writeMessages - 1;
-			_command_speeds[i] = sp[i] / 1000.0;
-			*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
-			*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
-			r._writeBuffer[j].len = 5;
-		}
-		else
-		{
-			_command_speeds[i] = sp[i] / 1000.0;
-		}
-	}
+        {
+            if (ENABLED (i))
+                {
+                    r.addMessage (CAN_VELOCITY_MOVE, i);
+                    const int j = r._writeMessages - 1;
+                    _command_speeds[i] = sp[i] / 1000.0;
+                    *((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
+                    *((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
+                    r._writeBuffer[j].len = 5;
+                }
+            else
+                {
+                    _command_speeds[i] = sp[i] / 1000.0;
+                }
+        }
 
 	_writerequested = true;
 	_noreply = true;
@@ -1551,10 +1551,10 @@ bool EsdMotionControl::setEncodersRaw(const double *vals)
 	
 	int i;
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (_writeDWord (CAN_SET_ENCODER_POSITION, i, S_32(vals[i])) != true)
-			return false;
-	}
+        {
+            if (_writeDWord (CAN_SET_ENCODER_POSITION, i, S_32(vals[i])) != true)
+                return false;
+        }
 
 	return true;
 }
@@ -1646,9 +1646,9 @@ bool EsdMotionControl::getCurrentsRaw(double *cs)
 	
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		cs[i] = double(r._bcastRecvBuffer[i]._current);
-	}
+        {
+            cs[i] = double(r._bcastRecvBuffer[i]._current);
+        }
 
     _mutex.post();
 	return true;
@@ -1710,9 +1710,9 @@ bool EsdMotionControl::getAmpStatusRaw(int *st)
 	
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		st[i] = short(r._bcastRecvBuffer[i]._fault);
-	}
+        {
+            st[i] = short(r._bcastRecvBuffer[i]._fault);
+        }
     _mutex.post();
 
 	return true;
@@ -1751,11 +1751,11 @@ bool EsdMotionControl::loadBootMemory()
 	
     bool ret=true;
     for(int j=0; j<r.getJoints(); j++)
-    {
-        ret=_writeNone(CAN_READ_FLASH_MEM, j);
-        if (!ret)
-            return false;
-    }
+        {
+            ret=_writeNone(CAN_READ_FLASH_MEM, j);
+            if (!ret)
+                return false;
+        }
 
 	return true;
 }
@@ -1766,11 +1766,11 @@ bool EsdMotionControl::saveBootMemory ()
 	
     bool ret=true;
     for(int j=0; j<r.getJoints(); j++)
-    {
-        ret=_writeNone(CAN_WRITE_FLASH_MEM, j);
-        if (!ret)
-            return false;
-    }
+        {
+            ret=_writeNone(CAN_WRITE_FLASH_MEM, j);
+            if (!ret)
+                return false;
+        }
 
     return true;
 }
@@ -1806,9 +1806,9 @@ bool EsdMotionControl::_writeNone (int msg, int axis)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		return true;
-	}
+        {
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -1832,10 +1832,10 @@ bool EsdMotionControl::_readWord16 (int msg, int axis, short& value)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		value = short(0);
-		return true;
-	}
+        {
+            value = short(0);
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -1851,10 +1851,10 @@ bool EsdMotionControl::_readWord16 (int msg, int axis, short& value)
 	_done.wait();
 
 	if (!r.getErrorStatus())
-	{
-		value = 0;
-		return false;
-	}
+        {
+            value = 0;
+            return false;
+        }
 
 	value = *((short *)(r._replyBuffer[0].data+1));
 	return true;
@@ -1871,22 +1871,22 @@ bool EsdMotionControl::_readWord16Array (int msg, double *out)
 	r.startPacket ();
 
 	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (msg, i);
-		}
-		else
-			out[i] = 0;
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (msg, i);
+                }
+            else
+                out[i] = 0;
+        }
 
 	if (r._writeMessages < 1)
 
-	{
+        {
 
-		_mutex.post();
-		return false;
-	}
+            _mutex.post();
+            return false;
+        }
 
 
 	_writerequested = true;
@@ -1896,24 +1896,24 @@ bool EsdMotionControl::_readWord16Array (int msg, double *out)
 	_done.wait();
 
 	if (!r.getErrorStatus())
-	{
-		ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
-		return false;
-	}
+        {
+            ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
+            return false;
+        }
 
 	int j;
 	for (i = 0, j = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			CMSG& m = r._replyBuffer[j];
-			if (m.id == 0xffff)
-				out[i] = 0;
-			else
-				out[i] = *((short *)(m.data+1));
-			j++;
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    CMSG& m = r._replyBuffer[j];
+                    if (m.id == 0xffff)
+                        out[i] = 0;
+                    else
+                        out[i] = *((short *)(m.data+1));
+                    j++;
+                }
+        }
 
 	return true;
 }
@@ -2018,10 +2018,10 @@ bool EsdMotionControl::_readDWord (int msg, int axis, int& value)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		value = 0;
-		return true;
-	}
+        {
+            value = 0;
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -2036,10 +2036,10 @@ bool EsdMotionControl::_readDWord (int msg, int axis, int& value)
 	_done.wait();
 
 	if (!r.getErrorStatus())
-	{
-		value = 0;
-		return false;
-	}
+        {
+            value = 0;
+            return false;
+        }
 
 	value = *((int *)(r._replyBuffer[0].data+1));
 	return true;
@@ -2055,20 +2055,20 @@ bool EsdMotionControl::_readDWordArray (int msg, double *out)
 	r.startPacket();
 
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (msg, i);
-		}
-		else
-			out[i] = 0;
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (msg, i);
+                }
+            else
+                out[i] = 0;
+        }
 
 	if (r._writeMessages < 1)
-	{
-		_mutex.post();
-		return false;
-	}
+        {
+            _mutex.post();
+            return false;
+        }
 
 	_writerequested = true;
 	_noreply = false;
@@ -2077,24 +2077,24 @@ bool EsdMotionControl::_readDWordArray (int msg, double *out)
 	_done.wait();
 
 	if (!r.getErrorStatus())
-	{
-		ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
-		return false;
-	}
+        {
+            ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
+            return false;
+        }
 
 	int j;
 	for (i = 0, j = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			CMSG& m = r._replyBuffer[j];
-			if (m.id == 0xffff)
-				out[i] = 0;
-			else
-				out[i] = *((int *)(m.data+1));
-			j++;
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    CMSG& m = r._replyBuffer[j];
+                    if (m.id == 0xffff)
+                        out[i] = 0;
+                    else
+                        out[i] = *((int *)(m.data+1));
+                    j++;
+                }
+        }
 
 	return true;
 }

@@ -93,19 +93,19 @@ bool JamesArmCalibrator::calibrate(DeviceDriver *dd)
    
 	int k;
 	for (k = 0; k < nj; k++) 
-	{
-		iPids->enablePid(k);
-		iAmps->enableAmp(k);
-	}
+        {
+            iPids->enablePid(k);
+            iAmps->enableAmp(k);
+        }
 
     ret = true;
 	calibrateJoint(1);
 	calibrateJoint(0);
     for(k=2;k<nj;k++)
-    {
-		bool x = calibrateJoint(k);
-		ret = ret && x;
-    }
+        {
+            bool x = calibrateJoint(k);
+            ret = ret && x;
+        }
     
     return ret;
 }
@@ -130,11 +130,11 @@ bool JamesArmCalibrator::calibrateJoint(int joint)
 
                 int i;
                 for (i = 0; i < timeout; i++)
-                {
-                    if (iCalibrate->done(0))
-						break;
-                    Time::delay(1.0);
-                }
+                    {
+                        if (iCalibrate->done(0))
+                            break;
+                        Time::delay(1.0);
+                    }
                 if (i == timeout)
                     return false;
                 
@@ -154,11 +154,11 @@ bool JamesArmCalibrator::calibrateJoint(int joint)
 
                 int i;
                 for (i = 0; i < timeout; i++)
-                {
-                    if (iCalibrate->done(1))
-						break;
-                    Time::delay(1.0);
-                }
+                    {
+                        if (iCalibrate->done(1))
+                            break;
+                        Time::delay(1.0);
+                    }
                 if (i == timeout)
                     return false;
                 
@@ -177,11 +177,11 @@ bool JamesArmCalibrator::calibrateJoint(int joint)
 
                 int i;
                 for (i = 0; i < timeout; i++)
-                {
-                    if (iCalibrate->done(2))
-						break;
-                    Time::delay(1);
-                }
+                    {
+                        if (iCalibrate->done(2))
+                            break;
+                        Time::delay(1);
+                    }
                 if (i == timeout)
                     return false;
 
@@ -206,11 +206,11 @@ bool JamesArmCalibrator::calibrateJoint(int joint)
                 iCalibrate->calibrate(joint, param[joint]);
                 int i;
                 for (i = 0; i < timeout; i++)
-                {
-                    if (iCalibrate->done(joint))
-						break;
-                    Time::delay(1.0);
-                }
+                    {
+                        if (iCalibrate->done(joint))
+                            break;
+                        Time::delay(1.0);
+                    }
                 if (i == timeout)
                     return false;
 
@@ -236,14 +236,14 @@ void JamesArmCalibrator::goToZero(int j)
     bool finished = false;
     int timeout = 0;
     while (!finished)
-    {
-        iPosition->checkMotionDone(j, &finished);
+        {
+            iPosition->checkMotionDone(j, &finished);
 
-        Time::delay (0.5);
-        timeout ++;
-        if (timeout >= 50)
-            finished = true;
-    }
+            Time::delay (0.5);
+            timeout ++;
+            if (timeout >= 50)
+                finished = true;
+        }
 
     // should return a value perhaps.
 }

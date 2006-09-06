@@ -87,7 +87,7 @@ namespace yarp {
 
             template <class T>
             void addRectangleOutline(ImageOf<T>& dest, const T& pix, 
-                              int i, int j, int w, int h) {
+                                     int i, int j, int w, int h) {
                 for (int ii=i-w; ii<=i+w; ii++) {
                     dest.safePixel(ii,j-h) = pix;
                     dest.safePixel(ii+1,j-h+1) = pix;
@@ -102,18 +102,18 @@ namespace yarp {
                 }
             }
 
-				/**
-				* warning : i, j is x, y center of rectangle
-				*/
+            /**
+             * warning : i, j is x, y center of rectangle
+             */
             template <class T>
-	    void addRectangle(ImageOf<T>& dest, const T& pix, 
-			      int i, int j, int w, int h) {
-		 for (int ii=i-w; ii<=i+w; ii++) {
-		    for (int jj=j-h; jj<=j+h; jj++) {
-		    	 dest.safePixel(ii,jj) = pix;
-		    }
-	         }
-	    }
+            void addRectangle(ImageOf<T>& dest, const T& pix, 
+                              int i, int j, int w, int h) {
+                for (int ii=i-w; ii<=i+w; ii++) {
+                    for (int jj=j-h; jj<=j+h; jj++) {
+                        dest.safePixel(ii,jj) = pix;
+                    }
+                }
+            }
 
             template <class T>
             int applyThreshold(ImageOf<T>& src, ImageOf<T>& dest, 

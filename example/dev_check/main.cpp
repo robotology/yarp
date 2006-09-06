@@ -13,40 +13,40 @@ using namespace yarp::sig;
 
 
 int main() {
-  PolyDriver dd("dragonfly");
+    PolyDriver dd("dragonfly");
 
-  if (!dd.isValid()) {
-    printf("Dragonfly not available\n");
-    exit(1);
-  }
-
-  printf("*** Dragonfly created\n");
-  
-  IFrameGrabberImage *grabber;
-  dd.view(grabber);
-  
-  if (grabber!=NULL) {
-    printf("*** It can supply images\n");
-    ImageOf<PixelRgb> img;
-    if (grabber->getImage(img)) {
-      printf("*** Got a %dx%d image\n", img.width(), img.height());
-    } else {
-      printf("*** Failed to actually read an image\n");
+    if (!dd.isValid()) {
+        printf("Dragonfly not available\n");
+        exit(1);
     }
-  } else {
-    printf("*** It can <<<<<NOT>>>>> supply images\n");
-  }
 
-  IPidControl *pid;
-  dd.view(pid);
+    printf("*** Dragonfly created\n");
   
-  if (pid!=NULL) {
-    printf("*** It can do PID control\n");
-  } else {
-    printf("*** It can <<<<<NOT>>>>> do PID control\n");
-  }
+    IFrameGrabberImage *grabber;
+    dd.view(grabber);
   
-  return 0;
+    if (grabber!=NULL) {
+        printf("*** It can supply images\n");
+        ImageOf<PixelRgb> img;
+        if (grabber->getImage(img)) {
+            printf("*** Got a %dx%d image\n", img.width(), img.height());
+        } else {
+            printf("*** Failed to actually read an image\n");
+        }
+    } else {
+        printf("*** It can <<<<<NOT>>>>> supply images\n");
+    }
+
+    IPidControl *pid;
+    dd.view(pid);
+  
+    if (pid!=NULL) {
+        printf("*** It can do PID control\n");
+    } else {
+        printf("*** It can <<<<<NOT>>>>> do PID control\n");
+    }
+  
+    return 0;
 }
 
 

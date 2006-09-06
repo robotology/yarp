@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include "simio.h"
 
 #ifndef WIN32
@@ -61,13 +62,13 @@ void cputch ( int ch )
 int kbhit()
 {
 	if ( !key_stored )
-	{
-		last_key = getch();
-		if ( last_key != ERR )
-		{
-			key_stored = 1;
-		}
-	}
+        {
+            last_key = getch();
+            if ( last_key != ERR )
+                {
+                    key_stored = 1;
+                }
+        }
 
 	return key_stored;
 }
@@ -75,9 +76,9 @@ int kbhit()
 int waitkey()
 {
 	while ( !kbhit() )
-	{
-		// wait
-	}
+        {
+            // wait
+        }
 	key_stored = 0;
 
 	return last_key;
@@ -110,38 +111,38 @@ void autorefresh() {
 
 void clrscr() 
 { 
-  COORD coordScreen = { 0, 0 }; /* here's where we'll home the cursor */ 
-  DWORD cCharsWritten; 
-  CONSOLE_SCREEN_BUFFER_INFO csbi; /* to get buffer info */ 
-  DWORD dwConSize; /* number of character cells in the current buffer */ 
+    COORD coordScreen = { 0, 0 }; /* here's where we'll home the cursor */ 
+    DWORD cCharsWritten; 
+    CONSOLE_SCREEN_BUFFER_INFO csbi; /* to get buffer info */ 
+    DWORD dwConSize; /* number of character cells in the current buffer */ 
  
-  /* get the output console handle */
-  HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
-  /* get the number of character cells in the current buffer */ 
-  GetConsoleScreenBufferInfo(hConsole, &csbi); 
-  dwConSize = csbi.dwSize.X * csbi.dwSize.Y; 
-  /* fill the entire screen with blanks */ 
-  FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', 
-      dwConSize, coordScreen, &cCharsWritten); 
-  /* get the current text attribute */ 
-  GetConsoleScreenBufferInfo(hConsole, &csbi); 
-  /* now set the buffer's attributes accordingly */ 
-  FillConsoleOutputAttribute(hConsole, csbi.wAttributes, 
-      dwConSize, coordScreen, &cCharsWritten); 
-  /* put the cursor at (0, 0) */ 
-  SetConsoleCursorPosition(hConsole, coordScreen); 
-  return; 
+    /* get the output console handle */
+    HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+    /* get the number of character cells in the current buffer */ 
+    GetConsoleScreenBufferInfo(hConsole, &csbi); 
+    dwConSize = csbi.dwSize.X * csbi.dwSize.Y; 
+    /* fill the entire screen with blanks */ 
+    FillConsoleOutputCharacter(hConsole, (TCHAR) ' ', 
+                               dwConSize, coordScreen, &cCharsWritten); 
+    /* get the current text attribute */ 
+    GetConsoleScreenBufferInfo(hConsole, &csbi); 
+    /* now set the buffer's attributes accordingly */ 
+    FillConsoleOutputAttribute(hConsole, csbi.wAttributes, 
+                               dwConSize, coordScreen, &cCharsWritten); 
+    /* put the cursor at (0, 0) */ 
+    SetConsoleCursorPosition(hConsole, coordScreen); 
+    return; 
 }
 
 void gotoxy(int x, int y)
 { 
-  COORD coordScreen = { x, y }; /* here's where we'll home the cursor */ 
+    COORD coordScreen = { x, y }; /* here's where we'll home the cursor */ 
  
-  /* get the output console handle */
-  HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
-  /* put the cursor at (0, 0) */ 
-  SetConsoleCursorPosition(hConsole, coordScreen); 
-  return; 
+    /* get the output console handle */
+    HANDLE hConsole=GetStdHandle(STD_OUTPUT_HANDLE);
+    /* put the cursor at (0, 0) */ 
+    SetConsoleCursorPosition(hConsole, coordScreen); 
+    return; 
 }
 
 #endif

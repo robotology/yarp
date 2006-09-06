@@ -34,9 +34,9 @@ public:
         t2=Time::now();
         
         if (n>0)
-        {
-            average+=(t2-t1);        
-        }
+            {
+                average+=(t2-t1);        
+            }
         n++;
         t1=t2;
 

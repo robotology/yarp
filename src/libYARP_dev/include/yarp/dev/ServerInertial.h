@@ -43,105 +43,105 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 			public yarp::os::PortReader,
 			public yarp::dev::IGenericSensor
 {
-	private:
-		bool spoke;
-		PolyDriver poly;
-		IGenericSensor *IMU; //The inertial device
-		yarp::os::Port p;
-		yarp::os::PortWriterBuffer<yarp::os::Bottle> writer;
-	public:
-		/**
-		 * Constructor.
-		 */
-		ServerInertial()
-		{
-			IMU = NULL;
-			spoke = false;
-		}
+private:
+    bool spoke;
+    PolyDriver poly;
+    IGenericSensor *IMU; //The inertial device
+    yarp::os::Port p;
+    yarp::os::PortWriterBuffer<yarp::os::Bottle> writer;
+public:
+    /**
+     * Constructor.
+     */
+    ServerInertial()
+    {
+        IMU = NULL;
+        spoke = false;
+    }
 
-		virtual ~ServerInertial() {
-			if (IMU != NULL) close();
-		}
+    virtual ~ServerInertial() {
+        if (IMU != NULL) close();
+    }
 
-		/**
-		* Configure with a set of options. These are:
-		* <TABLE>
-		* <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
-		* <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
-		* </TABLE>
-		*
-		* @param config The options to use
-		* @return true iff the object could be configured.
-		*/
-		virtual bool open(yarp::os::Searchable& config)
-		{
-			p.setReader(*this);
+    /**
+     * Configure with a set of options. These are:
+     * <TABLE>
+     * <TR><TD> subdevice </TD><TD> Common name of device to wrap (e.g. "test_grabber"). </TD></TR>
+     * <TR><TD> name </TD><TD> Port name to assign to this server (default /grabber). </TD></TR>
+     * </TABLE>
+     *
+     * @param config The options to use
+     * @return true iff the object could be configured.
+     */
+    virtual bool open(yarp::os::Searchable& config)
+    {
+        p.setReader(*this);
 
-			//Look for the device name (serial Port). Usually /dev/ttyUSB0
-			yarp::os::Value *name;
-			if (config.check("subdevice",name))
+        //Look for the device name (serial Port). Usually /dev/ttyUSB0
+        yarp::os::Value *name;
+        if (config.check("subdevice",name))
 			{
 				printf("Subdevice %s\n", name->toString().c_str());
 				if (name->isString())
-				{
-					// maybe user isn't doing nested configuration
-					yarp::os::Property p;
-					p.fromString(config.toString());
-					p.put("device",name->toString());
-					poly.open(p);
-				}
+                    {
+                        // maybe user isn't doing nested configuration
+                        yarp::os::Property p;
+                        p.fromString(config.toString());
+                        p.put("device",name->toString());
+                        poly.open(p);
+                    }
 				else
 					poly.open(*name);
 				if (!poly.isValid())
 					printf("cannot make <%s>\n", name->toString().c_str());
 			}
-			else
+        else
 			{
 				printf("\"--subdevice <name>\" not set for server_inertial\n");
 				return false;
 			}
-			if (poly.isValid())
-				poly.view(IMU);
+        if (poly.isValid())
+            poly.view(IMU);
 
-			if (IMU!=NULL)
-				writer.attach(p);
+        if (IMU!=NULL)
+            writer.attach(p);
 
-			//Look for the portname to register (--name option)
-			if (config.check("name",name))
-				p.open(name->asString());
-			else
-				p.open("/inertial");
+        //Look for the portname to register (--name option)
+        if (config.check("name",name))
+            p.open(name->asString());
+        else
+            p.open("/inertial");
 
-			//Look for the portname to register (--name option)
-//			p.open(config.check("name", Value("/inertial")).asString());
+        //Look for the portname to register (--name option)
+        //			p.open(config.check("name", Value("/inertial")).asString());
 			
-			if (IMU!=NULL)
+        if (IMU!=NULL)
 			{
 				start();
 				return true;
 			}
-			else
-				return false;
-		}
+        else
+            return false;
+    }
 
-		virtual bool close()
-		{
-			if (IMU != NULL) {
-				stop();
-				IMU = NULL;
-				return true;
-			}
-			return false;
-		}
+    virtual bool close()
+    {
+        if (IMU != NULL) {
+            stop();
+            IMU = NULL;
+            return true;
+        }
+        return false;
+    }
 
 
-		virtual bool getInertial(yarp::os::Bottle &bot)
-		{
-			if (IMU==NULL)
+    virtual bool getInertial(yarp::os::Bottle &bot)
+    {
+        if (IMU==NULL)
 			{
 				return false;
 			}
-			else
+        else
 			{
 				int nchannels;
 				IMU->getChannels (&nchannels);
@@ -151,42 +151,42 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 
 				worked=IMU->read(indata);
 				if (worked)
-				{
-					bot.clear();
+                    {
+                        bot.clear();
 					
 			    		// Euler+accel+gyro+magn orientation values
-			                for (int i = 0; i < nchannels; i++)
-					    bot.addDouble (indata[i]);
-				}
+                        for (int i = 0; i < nchannels; i++)
+                            bot.addDouble (indata[i]);
+                    }
 				else
-				{
-					bot.clear(); //dummy info.
-				}
+                    {
+                        bot.clear(); //dummy info.
+                    }
 
 				return(worked);
 			}
-		}
+    }
 
-		virtual void run()
-		{
-			double before, now;
-			printf("Server Inertial starting\n");
-			while (!isStopping())
+    virtual void run()
+    {
+        double before, now;
+        printf("Server Inertial starting\n");
+        while (!isStopping())
 			{
 				before = Time::now();
 				if (IMU!=NULL)
-				{
-					yarp::os::Bottle& bot = writer.get();
-					getInertial(bot);
+                    {
+                        yarp::os::Bottle& bot = writer.get();
+                        getInertial(bot);
 
-					if (!spoke)
-					{
-						printf("Writing an Inertial measurement.\n");
-						spoke = true;
-					}
-					writer.write();
+                        if (!spoke)
+                            {
+                                printf("Writing an Inertial measurement.\n");
+                                spoke = true;
+                            }
+                        writer.write();
 					
-				}
+                    }
 
 				/// wait 5 ms.
 				now = yarp::os::Time::now();
@@ -195,38 +195,38 @@ class yarp::dev::ServerInertial : public DeviceDriver,
 					yarp::os::Time::delay(k);
 				}
 			}
-			printf("Server Inertial stopping\n");
-		}
+        printf("Server Inertial stopping\n");
+    }
 
-		virtual bool read(ConnectionReader& connection)
-		{
-			yarp::os::Bottle cmd, response;
-			cmd.read(connection);
-			printf("command received: %s\n", cmd.toString().c_str());
+    virtual bool read(ConnectionReader& connection)
+    {
+        yarp::os::Bottle cmd, response;
+        cmd.read(connection);
+        printf("command received: %s\n", cmd.toString().c_str());
 
 
             
-			// We receive a command but don't do anything with it.
-			return true;
-		}
+        // We receive a command but don't do anything with it.
+        return true;
+    }
 
-		virtual bool read(yarp::sig::Vector &out)
-		{
-			if (IMU == NULL) { return false; }
-			return IMU->read (out);
-		}
+    virtual bool read(yarp::sig::Vector &out)
+    {
+        if (IMU == NULL) { return false; }
+        return IMU->read (out);
+    }
 		
-		virtual bool getChannels(int *nc)
-		{
-			if (IMU == NULL) { return false; }
-			return IMU->getChannels (nc);
-		}
+    virtual bool getChannels(int *nc)
+    {
+        if (IMU == NULL) { return false; }
+        return IMU->getChannels (nc);
+    }
 
-        virtual bool calibrate(int ch, double v)
-        {
-            if (IMU==NULL) {return false;}
-            return IMU->calibrate(ch, v);
-        }
+    virtual bool calibrate(int ch, double v)
+    {
+        if (IMU==NULL) {return false;}
+        return IMU->calibrate(ch, v);
+    }
 };
 
 #endif

@@ -71,17 +71,17 @@ bool MicrophoneDeviceDriver::getSound(yarp::sig::Sound& sound) {
 	int	bytes_to_save = NUM_SAMPLES;
 	while ( bytes_to_save > 0 )
 		{
-		int	nbytes = read( dsp, data, bytes_to_grab );
-		if ( !begun )
-			{
-			int	max = 0;
-			for (int i = 0; i < nbytes; i++) 
-				if ( data[i] > max ) max = data[i];
-			if ( max > 0x99 ) begun = 1;
-			else	continue;
-			}
-		bytes_to_save -= nbytes;
-		data += nbytes;
+            int	nbytes = read( dsp, data, bytes_to_grab );
+            if ( !begun )
+                {
+                    int	max = 0;
+                    for (int i = 0; i < nbytes; i++) 
+                        if ( data[i] > max ) max = data[i];
+                    if ( max > 0x99 ) begun = 1;
+                    else	continue;
+                }
+            bytes_to_save -= nbytes;
+            data += nbytes;
 		}
     sound.resize(NUM_SAMPLES);
     double total = 0;

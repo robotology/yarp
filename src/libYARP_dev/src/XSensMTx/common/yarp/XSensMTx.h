@@ -28,7 +28,7 @@ struct XSensMTxParameters
  */
 class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
 {
- public:
+public:
     XSensMTx();
     ~XSensMTx();
     
@@ -42,7 +42,7 @@ class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
     // Open the device
     bool open(const XSensMTxParameters &par);
 
- private:
+private:
     bool start();
     bool stop();
 
@@ -52,10 +52,10 @@ class yarp::dev::XSensMTx : public IGenericSensor, public DeviceDriver
 
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_xsensmtx XSensMTx
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_xsensmtx XSensMTx
 
-An inertial sensor source, see yarp::dev::XSensMTx.
+ An inertial sensor source, see yarp::dev::XSensMTx.
 
 */
 

@@ -23,7 +23,7 @@ public:
             ACE_OS::printf("ok\n");
         else {
             ACE_OS::printf("failed\n");
-	    report(1,"failed to set terminator socket");
+            report(1,"failed to set terminator socket");
         }
         Time::delay(1.4);
 
@@ -39,7 +39,7 @@ public:
         ACE_OS::printf("quit flag was set properly: ");
         if (!terminee.mustQuit()) {
             ACE_OS::printf("failed\n");
-	    report(1,"failed to receive the quit message");
+            report(1,"failed to receive the quit message");
         }
         else {
             ACE_OS::printf("ok\n");

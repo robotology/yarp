@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef PLAYER_H
 #define PLAYER_H
 
@@ -10,89 +11,89 @@
 // a route to communicate with a player
 class Replier {
 public:
-  virtual void send(const char *msg) = 0;
-  virtual void broadcast(const char *msg) = 0;
+    virtual void send(const char *msg) = 0;
+    virtual void broadcast(const char *msg) = 0;
 };
 
 class Player : public Replier {
 public:
-  Player() : mutex(1) {
+    Player() : mutex(1) {
   
-  }
-
-  // this is the main command processing function
-  void apply(const char *command);
-
-  // commands are broken into pieces and processed here
-  void apply(int argc, const char *argv[]);
-
-  // this sets a callback, to pass messages back to the user
-  void setReplier(Replier *n_replier) {
-    mutex.wait();
-    replier = n_replier;
-    mutex.post();
-  }
-
-  // anything that needs to be said is said via the replier callback
-  virtual void send(const char *msg) {
-    mutex.wait();
-    if (replier!=NULL) {
-      replier->send(msg);
     }
-    mutex.post();
-  }
 
-  // anything that needs to be broadcast is done via the replier callback
-  virtual void broadcast(const char *msg) {
-    mutex.wait();
-    if (replier!=NULL) {
-      replier->broadcast(msg);
+    // this is the main command processing function
+    void apply(const char *command);
+
+    // commands are broken into pieces and processed here
+    void apply(int argc, const char *argv[]);
+
+    // this sets a callback, to pass messages back to the user
+    void setReplier(Replier *n_replier) {
+        mutex.wait();
+        replier = n_replier;
+        mutex.post();
     }
-    mutex.post();
-  }
 
-  // request a move for the player
-  void move(int dx, int dy);
+    // anything that needs to be said is said via the replier callback
+    virtual void send(const char *msg) {
+        mutex.wait();
+        if (replier!=NULL) {
+            replier->send(msg);
+        }
+        mutex.post();
+    }
 
-  // request a description of the player's surroundings
-  void look();
+    // anything that needs to be broadcast is done via the replier callback
+    virtual void broadcast(const char *msg) {
+        mutex.wait();
+        if (replier!=NULL) {
+            replier->broadcast(msg);
+        }
+        mutex.post();
+    }
 
-  // request a shoot for the player
-  void fire(int x, int y);
+    // request a move for the player
+    void move(int dx, int dy);
 
-  // remove the player from the game
-  void shutdown();
+    // request a description of the player's surroundings
+    void look();
 
-  // check whether player is present in the game
-  bool isEmbodied() {
-    return id.isValid();
-  }
-  void setEnergy(int e) {energy = e; };
-  int  getEnergy() {return energy; };
+    // request a shoot for the player
+    void fire(int x, int y);
 
-  void setLife(int l) { login.getThing().setLife(l); };
-  int  getLife() {return login.getThing().getLife(); };
+    // remove the player from the game
+    void shutdown();
 
-  void setFirerange(int f) {firerange = f; };
-  int  getFirerange() {return firerange; };
+    // check whether player is present in the game
+    bool isEmbodied() {
+        return id.isValid();
+    }
+    void setEnergy(int e) {energy = e; };
+    int  getEnergy() {return energy; };
 
-  void setName(const char *txt) { 
-    login.getThing().setName(txt);
-  }
-  const char *getName() {
-    return login.getThing().getName();
-  }
+    void setLife(int l) { login.getThing().setLife(l); };
+    int  getLife() {return login.getThing().getLife(); };
+
+    void setFirerange(int f) {firerange = f; };
+    int  getFirerange() {return firerange; };
+
+    void setName(const char *txt) { 
+        login.getThing().setName(txt);
+    }
+    const char *getName() {
+        return login.getThing().getName();
+    }
 
 private:
   
-  Replier *replier;
-  yarp::os::Semaphore mutex;
+    Replier *replier;
+    yarp::os::Semaphore mutex;
 
-  ID id;
-  Login login;
-  int life;
-  int energy;
-  int firerange;
+    ID id;
+    Login login;
+    int life;
+    int energy;
+    int firerange;
 };
 
 #endif

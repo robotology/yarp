@@ -13,22 +13,22 @@ using namespace yarp;
 using namespace yarp::os;
 
 /*
-class PortReaderBufferThread : public Thread {
-public:
-    PortReader& reader;
-    PortReaderBuffer& buffer;
+  class PortReaderBufferThread : public Thread {
+  public:
+  PortReader& reader;
+  PortReaderBuffer& buffer;
 
-    PortReaderBufferThread(PortReader& reader, PortReaderBuffer& buffer) : 
-        reader(reader), buffer(buffer) {
-    }
+  PortReaderBufferThread(PortReader& reader, PortReaderBuffer& buffer) : 
+  reader(reader), buffer(buffer) {
+  }
 
-    virtual void run() {
-        while (!isStopping()) {
-            if (buffer.read()) {
-            }
-        }
-    }
-};
+  virtual void run() {
+  while (!isStopping()) {
+  if (buffer.read()) {
+  }
+  }
+  }
+  };
 */
 
 class PortReaderBufferBaseHelper {

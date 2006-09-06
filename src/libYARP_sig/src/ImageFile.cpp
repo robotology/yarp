@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.12 2006-07-07 16:44:23 orfra Exp $
+/// $Id: ImageFile.cpp,v 1.13 2006-09-06 21:30:55 eshuy Exp $
 ///
 ///
 
@@ -335,12 +335,12 @@ bool file::write(const ImageOf<PixelMono> & src, const char *dest)
 
 
 /*
-bool file::read(FlexImage & dest, const char *src)
-{
-    ImageOf<PixelRgb> img;
-    read(img,src);
-    return dest.copy(img);
-}
+  bool file::read(FlexImage & dest, const char *src)
+  {
+  ImageOf<PixelRgb> img;
+  read(img,src);
+  return dest.copy(img);
+  }
 */
 
 bool file::write(const Image& src, const char *dest)

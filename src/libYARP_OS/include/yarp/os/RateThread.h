@@ -26,69 +26,69 @@ public:
     virtual ~RateThread();
 
     /**
-    * Initialization method. This function is executed once when
-    * the thread starts and before the first doLoop. The function
-    * is executed by the thread itself.
-    */
+     * Initialization method. This function is executed once when
+     * the thread starts and before the first doLoop. The function
+     * is executed by the thread itself.
+     */
     virtual void doInit();
     
     /**
-    * Release method. This function is executed once when
-    * the thread exits and after the last doLoop. The function
-    * is executed by the thread itself.
-    */
+     * Release method. This function is executed once when
+     * the thread exits and after the last doLoop. The function
+     * is executed by the thread itself.
+     */
     virtual void doRelease();
 
     /**
-    * Loop function. This is the period thread itself.
-    */
+     * Loop function. This is the period thread itself.
+     */
     virtual void doLoop()=0;
 
     /** 
-    * Call this to start the thread. Blocks until doInit()
-    * is executed.
-    */
+     * Call this to start the thread. Blocks until doInit()
+     * is executed.
+     */
     bool start();
  
     /** 
-    * Call this to stop the thread, this call blocks until the 
-    * thread is terminated (and doRelease() called). Actually 
-    * calls join.
-    */
+     * Call this to stop the thread, this call blocks until the 
+     * thread is terminated (and doRelease() called). Actually 
+     * calls join.
+     */
     bool stop();
 
     /**
-    * Returns true when the thread is started, false otherwise.
-    */
+     * Returns true when the thread is started, false otherwise.
+     */
     bool isRunning();
 
     /**
-    * Returns true when the thread is suspended, false otherwise.
-    */
+     * Returns true when the thread is suspended, false otherwise.
+     */
     bool isSuspended();
 
     /**
-    * Set the (new) rate of the thread.
-    * @param p the rate [ms]
-    * @return true.
-    */
+     * Set the (new) rate of the thread.
+     * @param p the rate [ms]
+     * @return true.
+     */
     bool setRate(int p);
 
     /**
-    * Return the current rate of the thread.
-    * @return thread current rate [ms].
-    */
+     * Return the current rate of the thread.
+     * @return thread current rate [ms].
+     */
     double getRate();
 
     /**
-    * Suspend the thread, the thread keeps running by doLoop is
-    * never executed.
-    */
+     * Suspend the thread, the thread keeps running by doLoop is
+     * never executed.
+     */
     void suspend();
 
     /**
-    * Resume the thread if previously suspended.
-    */
+     * Resume the thread if previously suspended.
+     */
     void resume();
 
 private:

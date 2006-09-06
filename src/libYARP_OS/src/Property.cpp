@@ -323,14 +323,14 @@ void Property::put(const char *key, Value *value) {
 
 
 /*
-bool Property::check(const char *key, Value *&output) {
-    bool ok = false;
-    if (HELPER(implementation).check(key)) {
-        output = &find(key);
-        ok = true;
-    }
-    return ok;
-}
+  bool Property::check(const char *key, Value *&output) {
+  bool ok = false;
+  if (HELPER(implementation).check(key)) {
+  output = &find(key);
+  ok = true;
+  }
+  return ok;
+  }
 */
 
 bool Property::check(const char *key) {

@@ -59,11 +59,11 @@ protected:
 };
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_portaudio portaudio
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_portaudio portaudio
 
-A portable audio source, see yarp::dev::PortAudioDeviceDriver.
-Requires the PortAudio library (http://www.portaudio.com), at least v19.
+ A portable audio source, see yarp::dev::PortAudioDeviceDriver.
+ Requires the PortAudio library (http://www.portaudio.com), at least v19.
 
 */
 

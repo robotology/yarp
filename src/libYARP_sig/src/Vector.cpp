@@ -1,5 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.6 2006-07-26 15:50:42 eshuy Exp $
+// $Id: Vector.cpp,v 1.7 2006-09-06 21:30:56 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -8,14 +8,14 @@
 #include <yarp/os/NetFloat64.h>
 
 /*
-preferred network format for a list of doubles.
+  preferred network format for a list of doubles.
 
-INT listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE
-INT listLen = N
-double 1
-double 2
-...
-double N
+  INT listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE
+  INT listLen = N
+  double 1
+  double 2
+  ...
+  double N
 */
 
 using namespace yarp::sig;
@@ -57,24 +57,24 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
         YARPVectorPortContentHeader header;
         connection.expectBlock((char*)&header, sizeof(header));
         if (header.listLen > 0)
-        {
-            if (this->size() != (unsigned int)(header.listLen))
-                this->size(header.listLen);
-            double *ptr = &(this->operator[](0));
-            ACE_ASSERT (ptr != NULL);
+            {
+                if (this->size() != (unsigned int)(header.listLen))
+                    this->size(header.listLen);
+                double *ptr = &(this->operator[](0));
+                ACE_ASSERT (ptr != NULL);
 #ifdef YARP_ACTIVE_DOUBLE
-            // native doubles don't match YARP's expectations
-            int blockLen = sizeof(double)*header.listLen;
-            ManagedBytes bytes(blockLen);
-            connection.expectBlock((char *)bytes.get(), bytes.length());
-            yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
-            for (int i=0; i<header.listLen; i++) {
-                this->operator[](i) = floats[i];
-            }
+                // native doubles don't match YARP's expectations
+                int blockLen = sizeof(double)*header.listLen;
+                ManagedBytes bytes(blockLen);
+                connection.expectBlock((char *)bytes.get(), bytes.length());
+                yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
+                for (int i=0; i<header.listLen; i++) {
+                    this->operator[](i) = floats[i];
+                }
 #else
-            connection.expectBlock((char *)ptr, sizeof(double)*header.listLen);
+                connection.expectBlock((char *)ptr, sizeof(double)*header.listLen);
 #endif
-        }
+            }
         else
             return false;
     } catch (yarp::IOException e) {

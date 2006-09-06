@@ -9,9 +9,9 @@ using namespace yarp::os;
 
 class Input : public BufferedPort<Bottle> {
 public:
-     virtual void onRead(Bottle& datum) {
-         printf("Got a bottle containing: %s\n", datum.toString().c_str());
-     }
+    virtual void onRead(Bottle& datum) {
+        printf("Got a bottle containing: %s\n", datum.toString().c_str());
+    }
 };
 
 int main() {

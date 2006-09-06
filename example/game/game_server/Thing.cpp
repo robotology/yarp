@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <stdio.h>
 
@@ -8,33 +9,33 @@
 Thing Thing::NOTHING;
 
 void Thing::set(ID n_x, ID n_y, ID n_id) {
-  x = n_x;
-  y = n_y;
-  id = n_id;
-  Game& game = Game::getGame();
-  game.setCell(x,y,id);
+    x = n_x;
+    y = n_y;
+    id = n_id;
+    Game& game = Game::getGame();
+    game.setCell(x,y,id);
 }
 
 void Thing::applyMove() {
-  Game& game = Game::getGame();
+    Game& game = Game::getGame();
 
-  if (dx!=0 || dy!=0) {
+    if (dx!=0 || dy!=0) {
 
-    ID x2 = x.asInt()+dx;
-    ID y2 = y.asInt()+dy;
+        ID x2 = x.asInt()+dx;
+        ID y2 = y.asInt()+dy;
     
-    if (game.getCell(x2,y2)==0) {
-      game.setCell(x,y,0);    
-      x = x2;
-      y = y2;
-      game.setCell(x,y,id);
-      printf("Implemented move for %ld\n", id.asInt());
-    } else {
-      printf("Ignored blocked move\n");
-    }
+        if (game.getCell(x2,y2)==0) {
+            game.setCell(x,y,0);    
+            x = x2;
+            y = y2;
+            game.setCell(x,y,id);
+            printf("Implemented move for %ld\n", id.asInt());
+        } else {
+            printf("Ignored blocked move\n");
+        }
 
-    dx = dy = 0;
-  }
+        dx = dy = 0;
+    }
 }
   
 

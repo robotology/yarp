@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 ///
-/// $Id: EsdMotionControl.h,v 1.20 2006-09-05 17:43:26 babybot Exp $
+/// $Id: EsdMotionControl.h,v 1.21 2006-09-06 21:30:55 eshuy Exp $
 ///
 ///
 
@@ -82,22 +82,22 @@ public:
  */
 class yarp::dev::EsdMotionControl: 
     public DeviceDriver,
-    public os::Thread, 
-    public IPidControlRaw, 
-    public IPositionControlRaw, 
-    public IVelocityControlRaw, 
-    public IEncodersRaw, 
-    public IAmplifierControlRaw,
-    public IControlCalibrationRaw,
-    public IControlDebug,
-    public IControlLimitsRaw,
-    public ImplementPositionControl<EsdMotionControl, IPositionControl>,
-    public ImplementVelocityControl<EsdMotionControl, IVelocityControl>,
-    public ImplementPidControl<EsdMotionControl, IPidControl>,
-    public ImplementEncoders<EsdMotionControl, IEncoders>,
-    public ImplementControlCalibration<EsdMotionControl, IControlCalibration>,
-    public ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>,
-    public ImplementControlLimits<EsdMotionControl, IControlLimits>
+            public os::Thread, 
+            public IPidControlRaw, 
+            public IPositionControlRaw, 
+            public IVelocityControlRaw, 
+            public IEncodersRaw, 
+            public IAmplifierControlRaw,
+            public IControlCalibrationRaw,
+            public IControlDebug,
+            public IControlLimitsRaw,
+            public ImplementPositionControl<EsdMotionControl, IPositionControl>,
+            public ImplementVelocityControl<EsdMotionControl, IVelocityControl>,
+            public ImplementPidControl<EsdMotionControl, IPidControl>,
+            public ImplementEncoders<EsdMotionControl, IEncoders>,
+            public ImplementControlCalibration<EsdMotionControl, IControlCalibration>,
+            public ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>,
+            public ImplementControlLimits<EsdMotionControl, IControlLimits>
 {
 private:
     EsdMotionControl(const EsdMotionControl&);
@@ -285,10 +285,10 @@ protected:
 		if (x <= double(-(MAX_SHORT))-1)
 			return MIN_SHORT;
 		else
-		if (x >= double(MAX_SHORT))
-			return MAX_SHORT;
-		else
-			return short(x + .5);
+            if (x >= double(MAX_SHORT))
+                return MAX_SHORT;
+            else
+                return short(x + .5);
 	}
 
 	inline int S_32(double x) const
@@ -296,19 +296,19 @@ protected:
 		if (x <= double(-(MAX_INT))-1.0)
 			return MIN_INT;
 		else
-		if (x >= double(MAX_INT))
-			return MAX_INT;
-		else
-			return int(x + .5);
+            if (x >= double(MAX_INT))
+                return MAX_INT;
+            else
+                return int(x + .5);
 	}
 };
 
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_esd esd
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_esd esd
 
-A CAN-bus based motor controller, see yarp::dev::EsdMotionControl.
+ A CAN-bus based motor controller, see yarp::dev::EsdMotionControl.
 
 */
 

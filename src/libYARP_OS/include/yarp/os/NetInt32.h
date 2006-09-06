@@ -112,12 +112,12 @@ namespace yarp {
 #    ifdef YARP2_OSX
 
 
-// in general, this has to come before any reference to sys/types.h
+        // in general, this has to come before any reference to sys/types.h
 #include <ace/config.h>
 
         /* OSX begins*/
 #ifndef YARP_LITTLE_ENDIAN
-        #include <sys/types.h>
+#include <sys/types.h>
         typedef int32_t RawNetInt32;
         class NetInt32 {
         private:
@@ -167,7 +167,7 @@ namespace yarp {
         };
 #else
         // not really guaranteed to have this
-        #include <sys/types.h>
+#include <sys/types.h>
         typedef int32_t NetInt32;
 #endif
         /* OSX ends*/

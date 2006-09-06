@@ -343,36 +343,36 @@ public:
         // fill img1 with some data, using pointer to row
         // access
         for(r=0; r<img1.height(); r++)
-        {
-            unsigned char *row=img1.getRow(r);
-            for(c=0;c<img1.width(); c++)
             {
-                *row++=(unsigned char) r;
-                *row++=(unsigned char) r;
-                *row++=(unsigned char) r;
+                unsigned char *row=img1.getRow(r);
+                for(c=0;c<img1.width(); c++)
+                    {
+                        *row++=(unsigned char) r;
+                        *row++=(unsigned char) r;
+                        *row++=(unsigned char) r;
+                    }
             }
-        }
 
         // do the same on img2, but using the 
         // pixel function
         for(r=0; r<img2.height(); r++)
             for(c=0;c<img2.width(); c++)
-            {
-                img2(c,r).r=r;
-                img2(c,r).g=r;
-                img2(c,r).b=r;
-            }
+                {
+                    img2(c,r).r=r;
+                    img2(c,r).g=r;
+                    img2(c,r).b=r;
+                }
        
     
         // now make sure the two images are the same
         int acc=0;
         for(r=0; r<img2.height(); r++)
             for(c=0;c<img2.width(); c++)
-            {
-                acc+=(img2(c,r).r-img1(c,r).r);
-                acc+=(img2(c,r).g-img1(c,r).g);
-                acc+=(img2(c,r).b-img1(c,r).b);
-            }
+                {
+                    acc+=(img2(c,r).r-img1(c,r).r);
+                    acc+=(img2(c,r).g-img1(c,r).g);
+                    acc+=(img2(c,r).b-img1(c,r).b);
+                }
 
         checkEqual(acc,0,"pointer to row access");
     }
@@ -388,25 +388,25 @@ public:
         int acc=0;
         for(r=0; r<img1.height(); r++)
             for(c=0;c<img1.width(); c++)
-            {
-                img1(c,r)=(unsigned char) r;
-                acc+=r;
-            }
+                {
+                    img1(c,r)=(unsigned char) r;
+                    acc+=r;
+                }
   
         const ImageOf<PixelMono> &constImg=img1;
         for(r=0; r<constImg.height(); r++)
-        {
-            const unsigned char *row=constImg.getRow(r);
-            for(c=0;c<constImg.width(); c++)
             {
-                const unsigned char &v1=constImg.pixel(c,r);
-                const unsigned char &v2=constImg(c,r);
-                unsigned char dummy=v1; //avoid unused var warnings
-                dummy=v2;
-                dummy=*row++;
-                acc-=v1;
+                const unsigned char *row=constImg.getRow(r);
+                for(c=0;c<constImg.width(); c++)
+                    {
+                        const unsigned char &v1=constImg.pixel(c,r);
+                        const unsigned char &v2=constImg(c,r);
+                        unsigned char dummy=v1; //avoid unused var warnings
+                        dummy=v2;
+                        dummy=*row++;
+                        acc-=v1;
+                    }
             }
-        }
 
         checkEqual(acc,0,"const methods");
     }

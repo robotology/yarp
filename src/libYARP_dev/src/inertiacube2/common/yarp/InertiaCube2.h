@@ -24,7 +24,7 @@ struct InertiaCube2Parameters
  */
 class yarp::dev::InertiaCube2 : public IGenericSensor, public DeviceDriver
 {
- public:
+public:
     InertiaCube2();
     ~InertiaCube2();
     
@@ -38,7 +38,7 @@ class yarp::dev::InertiaCube2 : public IGenericSensor, public DeviceDriver
     // Open the device
     bool open(const InertiaCube2Parameters &par);
 
- private:
+private:
     bool start();
     bool stop();
 

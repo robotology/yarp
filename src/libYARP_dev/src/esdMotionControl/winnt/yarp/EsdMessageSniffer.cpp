@@ -1,6 +1,6 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 //
-// $Id: EsdMessageSniffer.cpp,v 1.2 2006-08-02 22:33:05 babybot Exp $
+// $Id: EsdMessageSniffer.cpp,v 1.3 2006-09-06 21:30:55 eshuy Exp $
 //
 
 // general purpose stuff.
@@ -228,10 +228,10 @@ bool EsdResources::initialize (const EsdMessageSnifferParameters& parms)
 
 	res = canSetBaudrate (_handle, _speed);
 	if (res != NTCAN_SUCCESS)
-	{
-		canClose (_handle);
-		return false;
-	}
+        {
+            canClose (_handle);
+            return false;
+        }
 
 	/// sets all message ID's for class 0 and 1.
 	int i;
@@ -248,18 +248,18 @@ bool EsdResources::initialize (const EsdMessageSnifferParameters& parms)
 bool EsdResources::uninitialize ()
 {
 	if (_bcastRecvBuffer != NULL) 
-    {
-        delete[] _bcastRecvBuffer;
-        _bcastRecvBuffer = NULL;
-    }
+        {
+            delete[] _bcastRecvBuffer;
+            _bcastRecvBuffer = NULL;
+        }
 
 	if (_handle != ACE_INVALID_HANDLE)
-	{
-		int res = canClose (_handle);
-		if (res != NTCAN_SUCCESS)
-			return false;
-		_handle = ACE_INVALID_HANDLE;
-	}
+        {
+            int res = canClose (_handle);
+            if (res != NTCAN_SUCCESS)
+                return false;
+            _handle = ACE_INVALID_HANDLE;
+        }
 	
 	return true;
 }
@@ -322,23 +322,23 @@ bool EsdResources::printMessage (const CMSG& m)
 		return false;
 
 	int ret = ACE_OS::sprintf (_printBuffer, "class: %2d s: %2x d: %2x c: %1d msg: %3d (%x) ",
-		  (m.id & 0x700) >> 8,
-		  (m.id & 0xf0) >> 4, 
-		  (m.id & 0x0f), 
-		  ((m.data[0] & 0x80)==0)?0:1,
-		  (m.data[0] & 0x7f),
-		  (m.data[0] & 0x7f));
+                               (m.id & 0x700) >> 8,
+                               (m.id & 0xf0) >> 4, 
+                               (m.id & 0x0f), 
+                               ((m.data[0] & 0x80)==0)?0:1,
+                               (m.data[0] & 0x7f),
+                               (m.data[0] & 0x7f));
 
 	if (m.len > 1)
-	{
-		ret += ACE_OS::sprintf (_printBuffer+ret, "x: "); 
-	}
+        {
+            ret += ACE_OS::sprintf (_printBuffer+ret, "x: "); 
+        }
 
 	int j;
 	for (j = 1; j < m.len; j++)
-	{
-		ret += ACE_OS::sprintf (_printBuffer+ret, "%x ", m.data[j]);
-	}
+        {
+            ret += ACE_OS::sprintf (_printBuffer+ret, "%x ", m.data[j]);
+        }
 	ret += ACE_OS::sprintf(_printBuffer+ret, "st: %x\n", m.msg_lost);
 
 	(*_p) 
@@ -459,10 +459,10 @@ bool EsdMessageSniffer::open (EsdMessageSnifferParameters& parms)
 	_mutex.wait();
 	EsdResources& r = RES (system_resources);
 	if (!r.initialize (parms))
-	{
-		_mutex.post();
-		return false;
-	}
+        {
+            _mutex.post();
+            return false;
+        }
 
     // initialize the implementation.
     ImplementPidControl<EsdMessageSniffer, IPidControl>::
@@ -520,249 +520,249 @@ void EsdMessageSniffer::run(void)
 	_done.post ();
 
 	while (!isStopping() || messagePending)
-	{
-		before = Time::now();
+        {
+            before = Time::now();
 
-		_mutex.wait ();
-		if (r.read () != true)
-			if (r._p) 
-				(*r._p) ("Sniffer: read failed\n");
+            _mutex.wait ();
+            if (r.read () != true)
+                if (r._p) 
+                    (*r._p) ("Sniffer: read failed\n");
 
-		// handle broadcast messages.
-		// (class 1, 8 bits of the ID used to define the message type and source address).
-		//
-		for (i = 0; i < r._readMessages; i++)
-		{
-			CMSG& m = r._readBuffer[i];
-			if (m.len & NTCAN_NO_DATA)
-				if (r._p)
-				{
-					(*r._p) ("Sniffer: error in message %x len: %d type: %x: %x\n",
-							m.id, m.len, m.data[0], m.msg_lost);
-						continue;
-				}
+            // handle broadcast messages.
+            // (class 1, 8 bits of the ID used to define the message type and source address).
+            //
+            for (i = 0; i < r._readMessages; i++)
+                {
+                    CMSG& m = r._readBuffer[i];
+                    if (m.len & NTCAN_NO_DATA)
+                        if (r._p)
+                            {
+                                (*r._p) ("Sniffer: error in message %x len: %d type: %x: %x\n",
+                                         m.id, m.len, m.data[0], m.msg_lost);
+                                continue;
+                            }
 
-			if ((m.id & 0x700) == 0x100) // class = 1.
-			{
-				// 4 next bits = source address, next 4 bits = msg type
-				// this allows sending two 32-bit numbers is a single CAN message.
-				//
-				// need an array here for storing the messages on a per-joint basis.
+                    if ((m.id & 0x700) == 0x100) // class = 1.
+                        {
+                            // 4 next bits = source address, next 4 bits = msg type
+                            // this allows sending two 32-bit numbers is a single CAN message.
+                            //
+                            // need an array here for storing the messages on a per-joint basis.
 
-				const int addr = ((m.id & 0x0f0) >> 4);
-				int j;
-				for (j = 0; j < ESD_MAX_CARDS; j++)
-				{
-					if (r._destinations[j] == addr)
-						break;
-				}
+                            const int addr = ((m.id & 0x0f0) >> 4);
+                            int j;
+                            for (j = 0; j < ESD_MAX_CARDS; j++)
+                                {
+                                    if (r._destinations[j] == addr)
+                                        break;
+                                }
 
-				j *= 2;
+                            j *= 2;
 
-				/* less sign nibble specifies msg type */
-				switch (m.id & 0x00f)
-				{
-				case CAN_BCAST_POSITION:
-					r._bcastRecvBuffer[j]._position = *((int *)(m.data));
-					r._bcastRecvBuffer[j]._update_p = before;
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._position = *((int *)(m.data+4));
-						r._bcastRecvBuffer[j]._update_p = before;
-					}
-					break;
+                            /* less sign nibble specifies msg type */
+                            switch (m.id & 0x00f)
+                                {
+                                case CAN_BCAST_POSITION:
+                                    r._bcastRecvBuffer[j]._position = *((int *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_p = before;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._position = *((int *)(m.data+4));
+                                            r._bcastRecvBuffer[j]._update_p = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_PID_VAL:
-					r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data));
-					r._bcastRecvBuffer[j]._update_v = before;
+                                case CAN_BCAST_PID_VAL:
+                                    r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_v = before;
 
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data+2));
-						r._bcastRecvBuffer[j]._update_v = before;
-					}
-					break;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._pid_value = *((short *)(m.data+2));
+                                            r._bcastRecvBuffer[j]._update_v = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_FAULT:
-					// fault signals.
-					r._bcastRecvBuffer[j]._fault = *((short *)(m.data));
-					r._bcastRecvBuffer[j]._update_e = before;
-					j++;
+                                case CAN_BCAST_FAULT:
+                                    // fault signals.
+                                    r._bcastRecvBuffer[j]._fault = *((short *)(m.data));
+                                    r._bcastRecvBuffer[j]._update_e = before;
+                                    j++;
 
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._fault = *((short *)(m.data+2));
-						r._bcastRecvBuffer[j]._update_e = before;
-					}
-					break;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._fault = *((short *)(m.data+2));
+                                            r._bcastRecvBuffer[j]._update_e = before;
+                                        }
+                                    break;
 
-				case CAN_BCAST_CURRENT:
-					// also receives the control values.
-					r._bcastRecvBuffer[j]._current = *((short *)(m.data));
-					r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+4));
-					r._bcastRecvBuffer[j]._update_c = before;
-					j++;
-					if (j < r.getJoints())
-					{
-						r._bcastRecvBuffer[j]._current = *((short *)(m.data+2));
-						r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+6));
-						r._bcastRecvBuffer[j]._update_c = before;
-					}
-					break;
+                                case CAN_BCAST_CURRENT:
+                                    // also receives the control values.
+                                    r._bcastRecvBuffer[j]._current = *((short *)(m.data));
+                                    r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+4));
+                                    r._bcastRecvBuffer[j]._update_c = before;
+                                    j++;
+                                    if (j < r.getJoints())
+                                        {
+                                            r._bcastRecvBuffer[j]._current = *((short *)(m.data+2));
+                                            r._bcastRecvBuffer[j]._position_error = *((short *)(m.data+6));
+                                            r._bcastRecvBuffer[j]._update_c = before;
+                                        }
+                                    break;
 
-				default:
-					break;
-				}
-			}
-		}
+                                default:
+                                    break;
+                                }
+                        }
+                }
 
-		//
-		// handle class 0 messages - polling messages.
-		// (class 0, 8 bits of the ID used to represent the source and destination).
-		// the first byte of the message is the message type and motor number (0 or 1).
-		//
-		if (messagePending)
-		{
-			for (i = 0; i < r._readMessages; i++)
-			{
-				CMSG& m = r._readBuffer[i];
-				if (m.len & NTCAN_NO_DATA)
-					if (r._p) 
-					{
-						(*r._p) ("Sniffer: error in message %x len: %d type: %x: %x\n", 
-							m.id, m.len, m.data[0], m.msg_lost);
+            //
+            // handle class 0 messages - polling messages.
+            // (class 0, 8 bits of the ID used to represent the source and destination).
+            // the first byte of the message is the message type and motor number (0 or 1).
+            //
+            if (messagePending)
+                {
+                    for (i = 0; i < r._readMessages; i++)
+                        {
+                            CMSG& m = r._readBuffer[i];
+                            if (m.len & NTCAN_NO_DATA)
+                                if (r._p) 
+                                    {
+                                        (*r._p) ("Sniffer: error in message %x len: %d type: %x: %x\n", 
+                                                 m.id, m.len, m.data[0], m.msg_lost);
 						
-						continue;
-					}
+                                        continue;
+                                    }
 
-				if (((m.id &0x700) == 0) && 
-					((m.data[0] & 0x7f) < NUM_OF_MESSAGES))
-					r.printMessage (m);
+                            if (((m.id &0x700) == 0) && 
+                                ((m.data[0] & 0x7f) < NUM_OF_MESSAGES))
+                                r.printMessage (m);
 
-				if (!noreply) /// this requires a reply.
-				{
-					if (((m.id & 0x700) == 0) &&				/// class 0 msg.
-						((m.id & 0x0f) == r._my_address))
-					{
-						/// legitimate message directed here, checks whether replies to any message.
-						int j;
-						for (j = 0; j < r._writeMessages; j++)
-						{
-							if (((r._writeBuffer[j].id & 0x0f) == ((m.id & 0xf0) >> 4)) &&
-								(m.data[0] == r._writeBuffer[j].data[0]))
-							{
-								if (r._replyBuffer[j].id != 0)
-								{
-									if (r._p)
-									{
-										(*r._p) ("Sniffer: message %x was already replied\n", m.id);
-										r.printMessage (m);
-									}
-								}
-								else
-								{
-                                    ACE_OS::memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
-									remainingMsgs --;
-									if (remainingMsgs < 1)
-									{
-										messagePending = false;
-										r._error_status = false;
-										goto AckMessageLoop;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
+                            if (!noreply) /// this requires a reply.
+                                {
+                                    if (((m.id & 0x700) == 0) &&				/// class 0 msg.
+                                        ((m.id & 0x0f) == r._my_address))
+                                        {
+                                            /// legitimate message directed here, checks whether replies to any message.
+                                            int j;
+                                            for (j = 0; j < r._writeMessages; j++)
+                                                {
+                                                    if (((r._writeBuffer[j].id & 0x0f) == ((m.id & 0xf0) >> 4)) &&
+                                                        (m.data[0] == r._writeBuffer[j].data[0]))
+                                                        {
+                                                            if (r._replyBuffer[j].id != 0)
+                                                                {
+                                                                    if (r._p)
+                                                                        {
+                                                                            (*r._p) ("Sniffer: message %x was already replied\n", m.id);
+                                                                            r.printMessage (m);
+                                                                        }
+                                                                }
+                                                            else
+                                                                {
+                                                                    ACE_OS::memcpy (&r._replyBuffer[j], &m, sizeof(CMSG));
+                                                                    remainingMsgs --;
+                                                                    if (remainingMsgs < 1)
+                                                                        {
+                                                                            messagePending = false;
+                                                                            r._error_status = false;
+                                                                            goto AckMessageLoop;
+                                                                        }
+                                                                }
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
 
-			/// the pending msg doesn't require a reply.
-			if (noreply)
-			{
-				remainingMsgs = 0;
-				messagePending = false;
-				r._error_status = false;
-				goto AckMessageLoop;
-			}
+                    /// the pending msg doesn't require a reply.
+                    if (noreply)
+                        {
+                            remainingMsgs = 0;
+                            messagePending = false;
+                            r._error_status = false;
+                            goto AckMessageLoop;
+                        }
 
-			/// timeout
-			counter ++;
-			if (counter > r._timeout)
-			{	
-				/// complains.
-				if (r._p)
-				{
-					(*r._p) ("Sniffer: timeout - still %d messages unacknowledged\n", remainingMsgs);
-					r.dumpBuffers ();
-				}
+                    /// timeout
+                    counter ++;
+                    if (counter > r._timeout)
+                        {	
+                            /// complains.
+                            if (r._p)
+                                {
+                                    (*r._p) ("Sniffer: timeout - still %d messages unacknowledged\n", remainingMsgs);
+                                    r.dumpBuffers ();
+                                }
 
-				messagePending = false;
-				r._error_status = true;
-				goto AckMessageLoop;
-			}
+                            messagePending = false;
+                            r._error_status = true;
+                            goto AckMessageLoop;
+                        }
 
-AckMessageLoop:
-			if (!messagePending)
-			{
-				/// tell the caller it can continue.
-				_done.post();
-			}
-		}
-		else
-		{
-			/// any write?
-			if (_writerequested)
-			{
-				if (r._writeMessages > 0)
-				{
-					if (r.writePacket () != true)
-					{
-						if (r._p)
-						{
-							(*r._p) ("Sniffer: write message of %d elments failed\n", r._writeMessages);
-						}
-					}
-					else
-					{
-						messagePending = true;
-						_writerequested = false;
-						remainingMsgs = r._writeMessages;
-						noreply = _noreply;
-						r._error_status = false;
-						counter = 0;
-						memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
+                AckMessageLoop:
+                    if (!messagePending)
+                        {
+                            /// tell the caller it can continue.
+                            _done.post();
+                        }
+                }
+            else
+                {
+                    /// any write?
+                    if (_writerequested)
+                        {
+                            if (r._writeMessages > 0)
+                                {
+                                    if (r.writePacket () != true)
+                                        {
+                                            if (r._p)
+                                                {
+                                                    (*r._p) ("Sniffer: write message of %d elments failed\n", r._writeMessages);
+                                                }
+                                        }
+                                    else
+                                        {
+                                            messagePending = true;
+                                            _writerequested = false;
+                                            remainingMsgs = r._writeMessages;
+                                            noreply = _noreply;
+                                            r._error_status = false;
+                                            counter = 0;
+                                            memset (r._replyBuffer, 0, sizeof(CMSG) * r._writeMessages);
 
-						if (r._p)
-						{
-							int j;
-							for (j = 0; j < r._writeMessages; j++)
-							{
-								r.printMessage (r._writeBuffer[j]);
-							}
-						}
-					}
-				}
-			}
-		}
+                                            if (r._p)
+                                                {
+                                                    int j;
+                                                    for (j = 0; j < r._writeMessages; j++)
+                                                        {
+                                                            r.printMessage (r._writeBuffer[j]);
+                                                        }
+                                                }
+                                        }
+                                }
+                        }
+                }
 
-		_mutex.post ();
+            _mutex.post ();
 
-		/// wait.
-		now = Time::now();
-		if ((now - before)*1000 < r._polling_interval)
-		{
-            double k = double(r._polling_interval)/1000.0-(now-before);
-			Time::delay(k);
-            //before = now + k;
-		}
-		else 
-		{
-			if (r._p) (*r._p)("Sniffer: thread can't poll fast enough (time: %f)\n", now-before);
-    		//before = now;
-		}
-	}
+            /// wait.
+            now = Time::now();
+            if ((now - before)*1000 < r._polling_interval)
+                {
+                    double k = double(r._polling_interval)/1000.0-(now-before);
+                    Time::delay(k);
+                    //before = now + k;
+                }
+            else 
+                {
+                    if (r._p) (*r._p)("Sniffer: thread can't poll fast enough (time: %f)\n", now-before);
+                    //before = now;
+                }
+        }
 
 	///
 }
@@ -829,9 +829,9 @@ bool EsdMessageSniffer::getBCastPositions (double *p)
 	int i;
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		p[i] = double(r._bcastRecvBuffer[i]._position);
-	}
+        {
+            p[i] = double(r._bcastRecvBuffer[i]._position);
+        }
     _mutex.post();
 	return true;
 }
@@ -854,9 +854,9 @@ bool EsdMessageSniffer::getBCastPIDOutputs (double *p)
 	int i;
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		p[i] = double(r._bcastRecvBuffer[i]._pid_value);
-	}
+        {
+            p[i] = double(r._bcastRecvBuffer[i]._pid_value);
+        }
     _mutex.post();
 	return true;
 }
@@ -880,9 +880,9 @@ bool EsdMessageSniffer::getBCastCurrents (double *p)
 
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		p[i] = double(r._bcastRecvBuffer[i]._current);
-	}
+        {
+            p[i] = double(r._bcastRecvBuffer[i]._current);
+        }
     _mutex.post();
 
 	return true;
@@ -895,9 +895,9 @@ bool EsdMessageSniffer::getBCastFaults (int *p)
 
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		p[i] = short(r._bcastRecvBuffer[i]._fault);
-	}
+        {
+            p[i] = short(r._bcastRecvBuffer[i]._fault);
+        }
     _mutex.post();
 
 	return true;
@@ -923,9 +923,9 @@ bool EsdMessageSniffer::getBCastPositionErrors (double *p)
 
     _mutex.wait();
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		p[i] = double(r._bcastRecvBuffer[i]._position_error);
-	}
+        {
+            p[i] = double(r._bcastRecvBuffer[i]._position_error);
+        }
     _mutex.post();
 
 	return true;
@@ -945,9 +945,9 @@ bool EsdMessageSniffer::_writeNone (int msg, int axis)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		return true;
-	}
+        {
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -971,10 +971,10 @@ bool EsdMessageSniffer::_readWord16 (int msg, int axis, short& value)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		value = short(0);
-		return true;
-	}
+        {
+            value = short(0);
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -990,10 +990,10 @@ bool EsdMessageSniffer::_readWord16 (int msg, int axis, short& value)
 	_done.wait();
 
 	if (r.getErrorStatus() != true)
-	{
-		value = 0;
-		return false;
-	}
+        {
+            value = 0;
+            return false;
+        }
 
 	value = *((short *)(r._replyBuffer[0].data+1));
 	return true;
@@ -1010,20 +1010,20 @@ bool EsdMessageSniffer::_readWord16Array (int msg, double *out)
 	r.startPacket ();
 
 	for(i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (msg, i);
-		}
-		else
-			out[i] = 0;
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (msg, i);
+                }
+            else
+                out[i] = 0;
+        }
 
 	if (r._writeMessages < 1)
-	{
-		_mutex.post();
-		return false;
-	}
+        {
+            _mutex.post();
+            return false;
+        }
 
 	_writerequested = true;
 	_noreply = false;
@@ -1032,24 +1032,24 @@ bool EsdMessageSniffer::_readWord16Array (int msg, double *out)
 	_done.wait();
 
 	if (r.getErrorStatus() != true)
-	{
-        ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
-		return false;
-	}
+        {
+            ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
+            return false;
+        }
 
 	int j;
 	for (i = 0, j = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			CMSG& m = r._replyBuffer[j];
-			if (m.id == 0xffff)
-				out[i] = 0;
-			else
-				out[i] = *((short *)(m.data+1));
-			j++;
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    CMSG& m = r._replyBuffer[j];
+                    if (m.id == 0xffff)
+                        out[i] = 0;
+                    else
+                        out[i] = *((short *)(m.data+1));
+                    j++;
+                }
+        }
 
 	return true;
 }
@@ -1154,10 +1154,10 @@ bool EsdMessageSniffer::_readDWord (int msg, int axis, int& value)
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
 	if (!ENABLED(axis))
-	{
-		value = 0;
-		return true;
-	}
+        {
+            value = 0;
+            return true;
+        }
 
 	_mutex.wait();
 
@@ -1172,10 +1172,10 @@ bool EsdMessageSniffer::_readDWord (int msg, int axis, int& value)
 	_done.wait();
 
 	if (r.getErrorStatus() != true)
-	{
-		value = 0;
-		return false;
-	}
+        {
+            value = 0;
+            return false;
+        }
 
 	value = *((int *)(r._replyBuffer[0].data+1));
 	return true;
@@ -1191,20 +1191,20 @@ bool EsdMessageSniffer::_readDWordArray (int msg, double *out)
 	r.startPacket();
 
 	for (i = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			r.addMessage (msg, i);
-		}
-		else
-			out[i] = 0;
-	}
+        {
+            if (ENABLED(i))
+                {
+                    r.addMessage (msg, i);
+                }
+            else
+                out[i] = 0;
+        }
 
 	if (r._writeMessages < 1)
-	{
-		_mutex.post();
-		return false;
-	}
+        {
+            _mutex.post();
+            return false;
+        }
 
 	_writerequested = true;
 	_noreply = false;
@@ -1213,24 +1213,24 @@ bool EsdMessageSniffer::_readDWordArray (int msg, double *out)
 	_done.wait();
 
 	if (r.getErrorStatus() != true)
-	{
-        ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
-		return false;
-	}
+        {
+            ACE_OS::memset (out, 0, sizeof(double) * r.getJoints());
+            return false;
+        }
 
 	int j;
 	for (i = 0, j = 0; i < r.getJoints(); i++)
-	{
-		if (ENABLED(i))
-		{
-			CMSG& m = r._replyBuffer[j];
-			if (m.id == 0xffff)
-				out[i] = 0;
-			else
-				out[i] = *((int *)(m.data+1));
-			j++;
-		}
-	}
+        {
+            if (ENABLED(i))
+                {
+                    CMSG& m = r._replyBuffer[j];
+                    if (m.id == 0xffff)
+                        out[i] = 0;
+                    else
+                        out[i] = *((int *)(m.data+1));
+                    j++;
+                }
+        }
 
 	return true;
 }

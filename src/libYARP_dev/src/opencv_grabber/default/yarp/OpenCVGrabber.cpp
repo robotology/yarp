@@ -31,11 +31,11 @@
 #include <stdio.h>
 
 #ifdef YARP2_WINDOWS
-    #include <cv.h>
-    #include <highgui.h>
+#include <cv.h>
+#include <highgui.h>
 #else
-    #include <opencv/cv.h>
-    #include <opencv/highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #endif
 
 #include <yarp/OpenCVGrabber.h>
@@ -119,8 +119,8 @@ bool OpenCVGrabber::open(Searchable & config) {
 
 
     // Ignore capture properties - they are unreliable
-//    printf("Capture properties: %ld x %ld pixels @ %lf frames/sec.\n",
- //        m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
+    //    printf("Capture properties: %ld x %ld pixels @ %lf frames/sec.\n",
+    //        m_w, m_h, cvGetCaptureProperty(m_capture, CV_CAP_PROP_FPS));
 
     fprintf(stderr, "-->OpenCVGrabber opened\n");
     // Success!

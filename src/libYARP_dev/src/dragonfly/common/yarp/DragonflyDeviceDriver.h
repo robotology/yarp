@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.18 2006-09-05 11:17:18 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.19 2006-09-06 21:30:55 eshuy Exp $
 ///
 ///
 
@@ -234,10 +234,10 @@ protected:
 };
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_dragonfly dragonfly
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_dragonfly dragonfly
 
-A streaming digital camera source, see yarp::dev::DragonflyDeviceDriver.
+ A streaming digital camera source, see yarp::dev::DragonflyDeviceDriver.
 
 */
 

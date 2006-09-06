@@ -243,7 +243,7 @@ public:
  */
 template <class T>
 class yarp::os::PortReaderBuffer : 
-            public yarp::os::TypedReader<T>,
+    public yarp::os::TypedReader<T>,
             private yarp::PortReaderBufferBaseCreator {
 public:
 

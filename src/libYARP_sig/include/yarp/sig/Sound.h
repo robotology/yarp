@@ -5,9 +5,9 @@
 #include <yarp/os/Portable.h>
 
 namespace yarp {
-  namespace sig {
-    class Sound;
-  }
+    namespace sig {
+        class Sound;
+    }
 }
 
 /**

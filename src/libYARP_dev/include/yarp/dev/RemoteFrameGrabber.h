@@ -9,7 +9,7 @@
 
 namespace yarp{
     namespace dev {
-      class RemoteFrameGrabber;
+        class RemoteFrameGrabber;
     }
 }
 

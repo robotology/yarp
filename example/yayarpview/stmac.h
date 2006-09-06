@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #ifndef stmac_h
 #define stmac_h
 
@@ -13,32 +14,32 @@
           throw runtime_error(string(__FILE__) + ":" + rtoolbox::stringify(__LINE__) + \
                               ": failed to ensure `" + #expression + "'")
 
-  class BadConversion : public std::runtime_error {
-    public:
-      BadConversion(const std::string& s) : std::runtime_error(s) { }
-  };
+class BadConversion : public std::runtime_error {
+public:
+    BadConversion(const std::string& s) : std::runtime_error(s) { }
+};
 
-  template<typename T>
-      inline std::string stringify(const T& x)
-  {
+template<typename T>
+inline std::string stringify(const T& x)
+{
     std::ostringstream o;
     if (!(o << x))
-      throw BadConversion(std::string("stringify(")
-          + typeid(x).name() + ")");
+        throw BadConversion(std::string("stringify(")
+                            + typeid(x).name() + ")");
     return o.str();
-  }
+}
 
-  template<typename T>
-      inline T numify(const std::string& s,
-                      bool failIfLeftoverChars = true)
-  {
+template<typename T>
+inline T numify(const std::string& s,
+                bool failIfLeftoverChars = true)
+{
     T x;
     std::istringstream i(s);
     char c;
     if (!(i >> x) || (failIfLeftoverChars && i.get(c)))
-      throw BadConversion(s);
+        throw BadConversion(s);
     return x;
-  }
+}
 
 
 

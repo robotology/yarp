@@ -12,7 +12,7 @@ namespace yarp {
 
 class yarp::dev::ICalibrator
 {
- public:
+public:
     virtual ~ICalibrator(){}
 
     virtual bool calibrate(DeviceDriver *dd)=0;

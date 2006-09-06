@@ -79,10 +79,10 @@ protected:
 
 
 /**
-  * @ingroup dev_runtime
-  * \defgroup cmd_device_opencv_grabber opencv_grabber
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_opencv_grabber opencv_grabber
 
-A wrapper for the opencv library's image sources, see yarp::dev::OpenCVGrabber.
+ A wrapper for the opencv library's image sources, see yarp::dev::OpenCVGrabber.
 
 */
 

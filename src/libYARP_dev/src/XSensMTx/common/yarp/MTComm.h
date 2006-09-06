@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 // MTComm.h: interface for the CMTComm class.
 //
 // Version 1.2.0
@@ -922,49 +923,49 @@ public:
 	short	readDataMessage(unsigned char data[], short &dataLen);
 	short	readMessageRaw(unsigned char *msgBuffer, short *msgBufferLength);
 	short	writeMessage(const unsigned char mid, const unsigned long dataValue = 0, 
-						  const unsigned char dataValueLen = 0, const unsigned char bid = BID_MASTER);
+                         const unsigned char dataValueLen = 0, const unsigned char bid = BID_MASTER);
 	short   writeMessage(const unsigned char mid, const unsigned char data[], 
-							   const unsigned short &dataLen, const unsigned char bid = BID_MASTER);
+                         const unsigned short &dataLen, const unsigned char bid = BID_MASTER);
 	short	waitForMessage(const unsigned char mid, unsigned char data[] = NULL, short *dataLen = NULL, unsigned char *bid = NULL);
 
 	// Request & set setting functions
 	short	reqSetting(const unsigned char mid, unsigned long &value, const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid, const unsigned char param, unsigned long &value,  
-							  const unsigned char bid = BID_MASTER);
+                       const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid, float &value, const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid, const unsigned char param, float &value,
-							  const unsigned char bid = BID_MASTER);
+                       const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid, 
-							  unsigned char data[], short &dataLen, const unsigned char bid = BID_MASTER);
+                       unsigned char data[], short &dataLen, const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid,
-							  unsigned char dataIn[], short dataInLen,
-							  unsigned char dataOut[], short &dataOutLen, 
-							  const unsigned char bid = BID_MASTER);
+                       unsigned char dataIn[], short dataInLen,
+                       unsigned char dataOut[], short &dataOutLen, 
+                       const unsigned char bid = BID_MASTER);
 	short	reqSetting(const unsigned char mid, const unsigned char param, 
-							  unsigned char data[], short &dataLen, const unsigned char bid = BID_MASTER);
+                       unsigned char data[], short &dataLen, const unsigned char bid = BID_MASTER);
 	short	setSetting(const unsigned char mid,
-							  const unsigned long value, const unsigned short valuelen,
-							  const unsigned char bid = BID_MASTER);
+                       const unsigned long value, const unsigned short valuelen,
+                       const unsigned char bid = BID_MASTER);
 	short	setSetting(const unsigned char mid, const unsigned char param,
-							  const unsigned long value, const unsigned short valuelen,
-							  const unsigned char bid = BID_MASTER);
+                       const unsigned long value, const unsigned short valuelen,
+                       const unsigned char bid = BID_MASTER);
 	short	setSetting(const unsigned char mid, const float value, const unsigned char bid = BID_MASTER);
 	short	setSetting(const unsigned char mid, const unsigned char param,
-							  const float value, const unsigned char bid = BID_MASTER);
+                       const float value, const unsigned char bid = BID_MASTER);
 	short	setSetting(const unsigned char mid, const unsigned char param,
-							  const float value, const bool store, const unsigned char bid = BID_MASTER);
+                       const float value, const bool store, const unsigned char bid = BID_MASTER);
 	// Data-related functions
 	short	getDeviceMode(unsigned short *numDevices = NULL);
 	short	setDeviceMode(unsigned long OutputMode, unsigned long OutputSettings, const unsigned char bid = BID_MASTER);
 	short	getMode(unsigned long &OutputMode, unsigned long &OutputSettings, unsigned short &dataLength, 
-					  const unsigned char bid = BID_MASTER);
+                    const unsigned char bid = BID_MASTER);
 	short	setMode(unsigned long OutputMode, unsigned long OutputSettings, const unsigned char bid = BID_MASTER);
 	short	getValue(const unsigned long valueSpec, unsigned short &value, const unsigned char data[], 
-					   const unsigned char bid = BID_MT);
+                     const unsigned char bid = BID_MT);
 	short	getValue(const unsigned long valueSpec, unsigned short value[], const unsigned char data[], 
-					   const unsigned char bid = BID_MT);
+                     const unsigned char bid = BID_MT);
 	short	getValue(const unsigned long valueSpec, float value[], const unsigned char data[], 
-					   const unsigned char bid = BID_MT);
+                     const unsigned char bid = BID_MT);
 
 	// Generic MTComm functions
 	short	getLastDeviceError();

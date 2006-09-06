@@ -1,3 +1,4 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <stdio.h>
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
@@ -9,27 +10,27 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 int main() {
-  Network::init();
+    Network::init();
 
-  Property config;
-  config.fromString("(device remote_grabber) (local /client) (remote /fakey)");
-  PolyDriver dd(config);
-  if (!dd.isValid()) {
-    printf("Failed to create and configure device\n");
-    exit(1);
-  }
-  IFrameGrabberImage *grabberInterface;
-  if (!dd.view(grabberInterface)) {
-    printf("Failed to view device through IFrameGrabberImage interface\n");
-    exit(1);
-  }
+    Property config;
+    config.fromString("(device remote_grabber) (local /client) (remote /fakey)");
+    PolyDriver dd(config);
+    if (!dd.isValid()) {
+        printf("Failed to create and configure device\n");
+        exit(1);
+    }
+    IFrameGrabberImage *grabberInterface;
+    if (!dd.view(grabberInterface)) {
+        printf("Failed to view device through IFrameGrabberImage interface\n");
+        exit(1);
+    }
 
-  ImageOf<PixelRgb> img;
-  grabberInterface->getImage(img);
-  printf("Got a %dx%d image\n", img.width(), img.height());
+    ImageOf<PixelRgb> img;
+    grabberInterface->getImage(img);
+    printf("Got a %dx%d image\n", img.width(), img.height());
 
-  dd.close();
+    dd.close();
 
-  Network::fini();
-  return 0;
+    Network::fini();
+    return 0;
 }

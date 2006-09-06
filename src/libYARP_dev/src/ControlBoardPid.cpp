@@ -4,7 +4,7 @@
 using namespace yarp::dev;
 
 Pid::Pid(double p, double d, double i, 
-        double intm, double sc, double omax)
+         double intm, double sc, double omax)
 {
     kp=p;
     kd=d;
