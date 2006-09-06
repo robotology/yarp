@@ -19,26 +19,15 @@ MARK_AS_ADVANCED(PKGCONFIG_EXECUTABLE)
 
 IF(PKGCONFIG_EXECUTABLE)
 	# test which interface is available
-	EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --libs-only-other RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _var)
-	# in happy case, response is "Must specify package names on the command line"
-	SET(_var "${_var} and some filler here")
-	
-	#STRING(SUBSTRING "${_var}" 0 12 _test_VALUE)
-	#STRING(COMPARE EQUAL "${_test_VALUE}" "Must specify" _MODERN_PKGCONFIG)
-	# unfortunately, SUBSTRING is not in cmake2.0.5 (debian stable)
-	# so have to work around it
-	SET(_MODERN_PKGCONFIG FALSE)
-	IF(_var STRGREATER "Must specifx")
-		IF(_var STRLESS "Must specifz")
-			SET(_MODERN_PKGCONFIG TRUE)
-		ENDIF(_var STRLESS "Must specifz")
-	ENDIF(_var STRGREATER "Must specifx")
-
-	IF(_MODERN_PKGCONFIG)
+	EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --version RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _var)
+	SET(MIN_PKGCONFIG_VERSION "0.19")
+	IF(_var STRGREATER ${MIN_PKGCONFIG_VERSION})
+		SET(_MODERN_PKGCONFIG TRUE)
 		MESSAGE(STATUS "Modern pkg-config utility detected")
-	ELSE(_MODERN_PKGCONFIG)
+	ELSE(_var STRGREATER ${MIN_PKGCONFIG_VERSION})
+		SET(_MODERN_PKGCONFIG FALSE)
 		MESSAGE(STATUS "Older pkg-config utility detected")
-	ENDIF(_MODERN_PKGCONFIG)	
+	ENDIF(_var STRGREATER ${MIN_PKGCONFIG_VERSION})
 ENDIF(PKGCONFIG_EXECUTABLE)
 
 
