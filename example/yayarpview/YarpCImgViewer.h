@@ -53,13 +53,13 @@ public:
   static int main(int argc, char ** argv);
 
 private:
+  yarp::os::BufferedPort< yarp::sig::ImageOf<yarp::sig::PixelRgb> > videoPort;
 
   std::string portName;
   std::string dumpName;
   bool verbose;
   int dumpID;
   int udelay;
-  yarp::os::BufferedPort< yarp::sig::ImageOf<yarp::sig::PixelRgb> > videoPort;
   cimg_library::CImgDisplay *viewerWindow;
   cimg_library::CImg<unsigned char> *viewerImage;
 };
