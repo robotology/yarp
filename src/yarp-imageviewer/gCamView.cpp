@@ -906,8 +906,8 @@ int myMain(int argc, char* argv[])
     mainWindow = createMainWindow();
 	
 	// Non Modal Dialogs
-	saveSingleDialog = createSaveSingleDialog();
 #if GTK_CHECK_VERSION(2,6,0)
+	saveSingleDialog = createSaveSingleDialog();
 	saveSetDialog = createSaveSetDialog();
 #else
     printf("Functionality omitted for older GTK version\n");
