@@ -22,8 +22,18 @@ IF(PKGCONFIG_EXECUTABLE)
 	EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS --libs-only-other RETURN_VALUE _return_VALUE OUTPUT_VARIABLE _var)
 	# in happy case, response is "Must specify package names on the command line"
 	SET(_var "${_var} and some filler here")
-	STRING(SUBSTRING "${_var}" 0 12 _test_VALUE)
-	STRING(COMPARE EQUAL "${_test_VALUE}" "Must specify" _MODERN_PKGCONFIG)
+	
+	#STRING(SUBSTRING "${_var}" 0 12 _test_VALUE)
+	#STRING(COMPARE EQUAL "${_test_VALUE}" "Must specify" _MODERN_PKGCONFIG)
+	# unfortunately, SUBSTRING is not in cmake2.0.5 (debian stable)
+	# so have to work around it
+	SET(_MODERN_PKGCONFIG FALSE)
+	IF(_var STRGREATER "Must specifx")
+		IF(_var STRLESS "Must specifz")
+			SET(_MODERN_PKGCONFIG TRUE)
+		ENDIF(_var STRLESS "Must specifz")
+	ENDIF(_var STRGREATER "Must specifx")
+
 	IF(_MODERN_PKGCONFIG)
 		MESSAGE(STATUS "Modern pkg-config utility detected")
 	ELSE(_MODERN_PKGCONFIG)
@@ -56,11 +66,16 @@ MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
 	ELSE(_MODERN_PKGCONFIG)
 	      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --libs-only-l OUTPUT_VARIABLE ${_link_FLAGS} )
 	      # libs-only-L output will have surplus newline
+
 	      # only cmake 2.2 compatible hack available right now is to delete when just a newline
-	      STRING(LENGTH ${${_link_DIR}} _var)
-	      IF (_var LESS 3)
-		      SET(${_link_DIR} "")
-	      ENDIF (_var LESS 3)
+
+		#	      STRING(LENGTH ${${_link_DIR}} _var)
+		#	      IF (_var LESS 3)
+		#		      SET(${_link_DIR} "")
+		#	      ENDIF (_var LESS 3)
+
+		#unfortunately, have to support cmake 2.0.5 -- no STRING LENGTH
+		SET(${_link_DIR} "")
 	ENDIF(_MODERN_PKGCONFIG)
 
       EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags OUTPUT_VARIABLE ${_cflags} )

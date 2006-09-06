@@ -1,3 +1,5 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.0.5)
+
 PROJECT(YARP)
 
 # Pick up our scripts - they are all in the conf subdirectory
