@@ -106,8 +106,22 @@
 //
 //M*/
 
+// check if CV is present
+#ifndef _CV_H_
+// check if IPL is present
+#ifndef HAVE_IPL
+// or asserted to be present
+#ifndef HAVE_OPENCV
+
 #ifndef YARP_CVTYPES_H_
 #define YARP_CVTYPES_H_
+
+// To simplify interaction with opencv header files, say that we
+// have ipl headers
+// We may fail anyway, but we will certainly fail otherwise.
+#ifndef HAVE_IPL
+#define HAVE_IPL
+#endif
 
 //#include <yarp/YARPConfig.h>
 
@@ -132,8 +146,6 @@ typedef unsigned char uchar;
 /****************************************************************************************\
  *                                  Image type (IplImage)                                 *
 \****************************************************************************************/
-
-#ifndef HAVE_IPL
 
 /*
  * The following definitions (until #endif)
@@ -399,10 +411,11 @@ IPLAPIIMPL(void, iplXorS,(IplImage* srcImage, IplImage* dstImage, unsigned int v
 #define IPL_INTER_SUPER       3
 #define IPL_SMOOTH_EDGE      16
 
-#endif /* !HAVE_IPL */
-
 #define YARP_IMAGE_ALIGN     8
 
 #endif /*YARP_CVTYPES_H_*/
+#endif /*HAVE_OPENCV*/
+#endif /*HAVE_IPL*/
+#endif /*_CV_H_*/
 
 /* End of file. */
