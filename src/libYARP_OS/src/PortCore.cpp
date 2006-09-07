@@ -11,6 +11,7 @@
 
 #include <yarp/Companion.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Bottle.h>
 
 #include <ace/OS_NS_stdio.h>
 
@@ -743,6 +744,11 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
     if (this->reader!=NULL) {
         this->reader->read(reader);
+    } else {
+        // read and ignore
+        YARP_DEBUG(Logger::get(),"data received in PortCore, no reader for it");
+        Bottle b;
+        b.read(reader);
     }
 }
 

@@ -6,6 +6,7 @@
 #include <yarp/NameClient.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/SemaphoreImpl.h>
 
 using namespace yarp;
@@ -80,6 +81,11 @@ public:
         readResult = false;
         if (readDelegate!=NULL) {
             readResult = readDelegate->read(reader);
+        } else {
+            // read and ignore
+            YARP_DEBUG(Logger::get(),"data received in Port, no reader for it");
+            Bottle b;
+            b.read(reader);
         }
         if (!readBackground) {
             readDelegate = NULL;
