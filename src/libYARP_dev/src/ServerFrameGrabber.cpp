@@ -11,8 +11,6 @@ using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
-// should move more of implementation into this file
-
 
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     p.setReader(*this);
@@ -44,11 +42,13 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         poly.view(fgCtrl);
     }
 
+    /*
     if (fgImage!=NULL) {
         writer.attach(p);
     } else {
         writerSound.attach(p);
     }
+    */
 
     if (config.check("name",name)) {
         p.open(name->asString());
@@ -63,30 +63,25 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             framerate=name->asDouble();
         }
         
-    if (framerate!=0)
-        {
-            period=(int) (1000.0/framerate+0.5);
-            printf("Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n", framerate, period);
-        }
-    else
-        {
-            printf("No framerate specified, polling the device\n");
-            period=0; //continuous
-        }
-        
-    RateThread::setRate(period);
-
-    if (fgImage!=NULL||fgSound!=NULL) {
-        start();
-        return true;
+    if (fgImage==NULL&&fgSound==NULL) {
+        printf("subdevice <%s> doesn't look like a framegrabber\n",
+               name->toString().c_str());
+        return false;
     }
-    printf("subdevice <%s> doesn't look like a framegrabber\n",
-           name->toString().c_str());
-    return false;
+
+    if (fgImage!=NULL) {
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this));
+    } else {
+        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this));
+    }
+
+    thread.open(config.check("framerate",Value("0")).asDouble());
+    return true;
 }
 
 
-void ServerFrameGrabber::doLoop() 
+/*
+void ServerFrameGrabber::run() 
 {
     if (fgImage!=NULL) {
         // for now, sound and image are mutually exclusive
@@ -110,6 +105,7 @@ void ServerFrameGrabber::doLoop()
         writerSound.write();
     }
 }
+*/
 
 
 
@@ -181,4 +177,3 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
     }
     return true;
 }
-

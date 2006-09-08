@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 
+#include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -14,7 +15,6 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
-
 
 namespace yarp {
     namespace dev {
@@ -30,6 +30,7 @@ namespace yarp {
 #define VOCAB_IS VOCAB2('i','s')
 #define VOCAB_WIDTH VOCAB1('w')
 #define VOCAB_HEIGHT VOCAB1('h')
+
 
 
 
@@ -77,28 +78,26 @@ namespace yarp {
  *
  */
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, 
-            private yarp::os::RateThread,
             public yarp::os::PortReader,
-            public IFrameGrabberImage, public IFrameGrabberControls,
-            public IAudioGrabberSound
- // convenient to put these here just to make sure all
- // methods get implemented
+            public IFrameGrabberImage,
+            public IAudioGrabberSound,
+            public IFrameGrabberControls,
+            public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
+            public DataSource<yarp::sig::Sound>
 {
 private:
     yarp::os::Port p;
-    yarp::os::PortWriterBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > writer;
-    yarp::os::PortWriterBuffer<yarp::sig::Sound> writerSound;
+    yarp::os::RateThreadWrapper thread;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
     IAudioGrabberSound *fgSound;
     IFrameGrabberControls *fgCtrl;
-    yarp::os::Property settings;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
 public:
     /**
      * Constructor.
      */
-    ServerFrameGrabber(): RateThread(0) {
+    ServerFrameGrabber() {
         fgImage = NULL;
         fgSound = NULL;
         fgCtrl = NULL;
@@ -106,7 +105,7 @@ public:
     }
     
     virtual bool close() {
-        stop();
+        thread.stop();
         return true;
     }
     
@@ -122,20 +121,17 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config);
 
-    virtual void doInit()
-    { 
-        printf("Server grabber starting\n");
-    }
-
-    virtual void doRelease()
-    { 
-        printf("Server grabber stopping\n");
-    }
-
-    virtual void doLoop();
-
     virtual bool read(ConnectionReader& connection);
 
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+        bool ok = getImage(image);
+        return ok;
+    }
+    
+    virtual bool getDatum(yarp::sig::Sound& sound) {
+        return getSound(sound);
+    }
+    
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         if (fgImage==NULL) { return false; }
         return fgImage->getImage(image);
