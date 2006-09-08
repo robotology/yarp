@@ -87,7 +87,6 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
         return false;
     }
 
-
     inputParameters.device = Pa_GetDefaultInputDevice();
     inputParameters.channelCount = num_channels;
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
@@ -99,6 +98,7 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;
     //outputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
     outputParameters.hostApiSpecificStreamInfo = NULL;
+
 
     err = Pa_OpenStream(
                         &stream,
@@ -218,6 +218,10 @@ void PortAudioDeviceDriver::checkDelay(yarp::sig::Sound& sound) {
 
 bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound) {
     checkDelay(sound);
+
+    if (!canWrite) {
+        return false;
+    }
 
     PaError err;
     SAMPLE *pa_pulsecode = (SAMPLE *)buffer.get();
