@@ -147,7 +147,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     }
 
     if (driver!=NULL) {
-        printf("yarpdev: parameters are %s\n", config->toString().c_str());
+        //printf("yarpdev: parameters are %s\n", config->toString().c_str());
         bool ok = driver->open(*config);
         if (!ok) {
             printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
