@@ -1345,7 +1345,7 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            Network::connect(s1.c_str(), s2.c_str());
+            Network::connect(s1.c_str(), s2.c_str(), "mcast");
         }
         
         state_buffer.attach(state_p);
