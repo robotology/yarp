@@ -209,6 +209,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
 void PortAudioDeviceDriver::checkDelay(yarp::sig::Sound& sound) {
     if (delayed) {
         delayedConfig.rate = sound.getFrequency();
+        printf("rate from sound is %d\n", delayedConfig.rate);
         open(delayedConfig);
         delayed = false;
     }
