@@ -62,8 +62,10 @@ public:
     }
     
     virtual void runTests() {
+        Network::setLocalMode(true);
         checkSetGet();
         checkTransmit();
+        Network::setLocalMode(false);
     }
 };
 

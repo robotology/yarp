@@ -15,6 +15,7 @@ using namespace yarp;
 
 Sound::Sound(int bytesPerSample) {
     init(bytesPerSample);
+    frequency = 0;
 }
 
 Sound::Sound(const Sound& alt) {
@@ -22,6 +23,7 @@ Sound::Sound(const Sound& alt) {
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
+    frequency = alt.frequency;
     synchronize();
 }
 
@@ -30,6 +32,7 @@ const Sound& Sound::operator = (const Sound& alt) {
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
+    frequency = alt.frequency;
     synchronize();
     return *this;
 }
@@ -44,9 +47,9 @@ void Sound::init(int bytesPerSample) {
     implementation = new FlexImage();
     YARP_ASSERT(implementation!=NULL);
 
-    YARP_ASSERT(bytesPerSample==1); // that's all thats implemented right now
+    YARP_ASSERT(bytesPerSample==2); // that's all thats implemented right now
     HELPER(implementation).setPixelSize(bytesPerSample);
-    HELPER(implementation).setPixelCode(VOCAB_PIXEL_MONO);
+    HELPER(implementation).setPixelCode(VOCAB_PIXEL_INT);
 
     samples = 0;
     channels = 0;
@@ -69,21 +72,21 @@ void Sound::resize(int samples, int channels) {
 int Sound::get(int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
-    if (bytesPerSample==1) {
-        return *((char *)addr);
+    if (bytesPerSample==2) {
+        return *((NetInt32 *)addr);
     }
-    YARP_INFO(Logger::get(),"sound only implemented for 8 bit samples");
+    YARP_INFO(Logger::get(),"sound only implemented for 16 bit samples");
     return 0;
 }
 
 void Sound::set(int value, int location, int channel) {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
-    if (bytesPerSample==1) {
-        *((char *)addr) = (char)value;
+    if (bytesPerSample==2) {
+        *((NetInt32 *)addr) = value;
         return;
     }
-    YARP_INFO(Logger::get(),"sound only implemented for 8 bit samples");
+    YARP_INFO(Logger::get(),"sound only implemented for 16 bit samples");
 }
 
 int Sound::getFrequency() const {

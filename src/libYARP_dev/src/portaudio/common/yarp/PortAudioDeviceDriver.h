@@ -9,10 +9,20 @@
 
 namespace yarp {
     namespace dev {
+        class PortAudioDeviceDriverSettings;
         class PortAudioDeviceDriver;
     }
 }
 
+
+class yarp::dev::PortAudioDeviceDriverSettings {
+public:
+    int rate;
+    int samples;
+    int channels;
+    bool wantRead;
+    bool wantWrite;
+};
 
 /**
  * @ingroup dev_impl
@@ -23,7 +33,7 @@ namespace yarp {
  *
  */
 class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
-            public DeviceDriver
+            public IAudioRender, public DeviceDriver
 {
 private:
 	PortAudioDeviceDriver(const PortAudioDeviceDriver&);
@@ -43,20 +53,46 @@ public:
      * 0 to use a default.
      * @param channels Number of channels of input.  Specify
      * 0 to use a default.
+     * @param wantRead Should allow reading
+     * @param wantWrite Should allow writing
      * @return true on success
      */
-    bool open(int rate, int samples, int channels);
+    bool open(PortAudioDeviceDriverSettings& config);
 
 	virtual bool close(void);
 
     virtual bool getSound(yarp::sig::Sound& sound);
+
+    virtual bool renderSound(yarp::sig::Sound& sound);
 
 protected:
     void *system_resource;
     yarp::os::ManagedBytes buffer;
     int num_samples;
     int num_channels;
+    bool canRead, canWrite, loopBack;
+
+    bool delayed;
+    PortAudioDeviceDriverSettings delayedConfig;
+
+    void checkDelay(yarp::sig::Sound& sound);
 };
+
+
+/*
+class yarp::dev::PortAudioRender : public IAudioRender, public DeviceDriver {
+public:
+    PortAudioRender();
+
+    virtual ~PortAudioRender();
+
+    virtual bool open(yarp::os::Searchable& config);
+
+	virtual bool close();
+
+    virtual bool renderSound(yarp::sig::Sound& sound);
+};
+*/
 
 /**
  * @ingroup dev_runtime

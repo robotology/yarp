@@ -3,6 +3,7 @@
 #include <yarp/SocketTwoWayStream.h>
 
 #include <ace/INET_Addr.h>
+#include <ace/OS.h>
 
 using namespace yarp;
 
@@ -29,6 +30,9 @@ void SocketTwoWayStream::open(ACE_SOCK_Acceptor& acceptor) {
 }
 
 void SocketTwoWayStream::updateAddresses() {
+    int one = 1;
+    stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
+                       sizeof(int));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);

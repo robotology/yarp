@@ -17,7 +17,7 @@ namespace yarp {
  */
 class yarp::sig::Sound : public yarp::os::Portable {
 public:
-    Sound(int bytesPerSample = 1);
+    Sound(int bytesPerSample = 2);
 
     /**
      * Copy constructor.  
