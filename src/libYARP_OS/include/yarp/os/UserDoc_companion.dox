@@ -139,6 +139,7 @@ YARP network version 2.0
 
 \verbatim
 yarp read INPUT_PORT
+yarp read INPUT_PORT OUTPUT_PORT
 \endverbatim
 
 This will create an input port of the specified name.  It will
@@ -152,6 +153,7 @@ For example, if you run "yarp server" in one terminal, "yarp read
 then everything you type on the "write" terminal will be echoed on the
 "read" terminal.
 
+Specifying an OUTPUT_PORT tries to connect that port to the current one.
 
 
 \section yarp_write yarp write

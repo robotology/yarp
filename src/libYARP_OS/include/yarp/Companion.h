@@ -71,7 +71,7 @@ public:
      * @param name the name which which to register the port
      * @return 0 on success, non-zero on failure
      */
-    static int read(const char *name);
+    static int read(const char *name, const char *src = NULL);
 
     static int write(const char *name, int ntargets, char *targets[]);
 

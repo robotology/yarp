@@ -295,13 +295,17 @@ int Companion::cmdDisconnect(int argc, char *argv[]) {
 
 
 int Companion::cmdRead(int argc, char *argv[]) {
-    if (argc!=1) {
+    if (argc<1) {
         ACE_OS::fprintf(stderr, "Please supply the port name\n");
         return 1;
     }
 
-    const char *src = argv[0];
-    return read(src);
+    const char *name = argv[0];
+    const char *src = NULL;
+    if (argc>1) {
+        src = argv[1];
+    }
+    return read(name,src);
 }
 
 
@@ -528,9 +532,12 @@ public:
 
 
 
-int Companion::read(const char *name) {
+int Companion::read(const char *name, const char *src) {
     try {
         BottleReader reader(name);
+        if (src!=NULL) {
+            Network::connect(src,name);
+        }
         reader.wait();
         reader.close();
         return 0;
