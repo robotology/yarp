@@ -13,7 +13,7 @@ int SocketTwoWayStream::open(const Address& address) {
     }
     ACE_SOCK_Connector connector;
     ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
-    int result = connector.connect(stream,addr);
+    int result = connector.connect(stream,addr,0,ACE_Addr::sap_any,1);
     if (result>=0) {
         happy = true;
     }
