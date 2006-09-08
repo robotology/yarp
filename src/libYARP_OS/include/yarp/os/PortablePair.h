@@ -34,6 +34,19 @@ public:
      * @return true iff the object pair was successfully read
      */
     virtual bool read(ConnectionReader& connection) {
+        return readPair(connection,head,body);
+    }  
+
+    /**
+     * Reads an object pair from a network connection.
+     * @param connection an interface to the network connection for reading
+     * @param head the first object
+     * @param body the second object
+     * @return true iff the object pair was successfully read
+     */
+    static bool readPair(ConnectionReader& connection,
+                         Portable& head,
+                         Portable& body) {
         // if someone connects in text mode, use standard
         // text-to-binary mapping
         connection.convertTextMode();
@@ -48,7 +61,7 @@ public:
             ok = body.read(connection);
         }
         return ok;
-    }  
+    }
 
     /**
      * Writes this object pair to a network connection.  
@@ -56,6 +69,19 @@ public:
      * @return true iff the object pair was successfully written
      */
     virtual bool write(ConnectionWriter& connection) {
+        return writePair(connection,head,body);
+    }
+
+    /**
+     * Writes an object pair to a network connection.  
+     * @param connection an interface to the network connection for writing
+     * @param head the first object
+     * @param body the second object
+     * @return true iff the object pair was successfully written
+     */
+    static bool writePair(ConnectionWriter& connection,
+                          Portable& head,
+                          Portable& body) {
         connection.appendInt(BOTTLE_TAG_LIST); // nested structure
         connection.appendInt(2);               // with two elements
         bool ok = head.write(connection);

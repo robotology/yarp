@@ -4,6 +4,8 @@
 
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/Image.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/PortablePair.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
@@ -20,8 +22,7 @@ Sound::Sound(const Sound& alt) {
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
-    samples = img1.width();
-    channels = img1.height();
+    synchronize();
 }
 
 const Sound& Sound::operator = (const Sound& alt) {
@@ -29,9 +30,14 @@ const Sound& Sound::operator = (const Sound& alt) {
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);
     img1.copy(img2);
-    samples = img1.width();
-    channels = img1.height();
+    synchronize();
     return *this;
+}
+
+void Sound::synchronize() {
+    FlexImage& img = HELPER(implementation);
+    samples = img.width();
+    channels = img.height();
 }
 
 void Sound::init(int bytesPerSample) {
@@ -57,8 +63,7 @@ Sound::~Sound() {
 void Sound::resize(int samples, int channels) {
     FlexImage& img = HELPER(implementation);
     img.resize(samples,channels);
-    this->samples = img.width();
-    this->channels = img.height();
+    synchronize();
 }
 
 int Sound::get(int location, int channel) {
@@ -81,27 +86,30 @@ void Sound::set(int value, int location, int channel) {
     YARP_INFO(Logger::get(),"sound only implemented for 8 bit samples");
 }
 
-/*
-  int Sound::getFrequency() {
-  return frequency;
-  }
+int Sound::getFrequency() const {
+    return frequency;
+}
 
-  void Sound::setFrequency(int freq) {
-  this->frequency = freq;
-  }
-*/
+void Sound::setFrequency(int freq) {
+    this->frequency = freq;
+}
 
 bool Sound::read(ConnectionReader& connection) {
+    // lousy format - fix soon!
     FlexImage& img = HELPER(implementation);
-    frequency = 0; // no frequency transmitted yet
-    return img.read(connection);
+    Bottle bot;
+    bool ok = PortablePair<FlexImage,Bottle>::readPair(connection,img,bot);
+    frequency = bot.get(0).asInt();
+    synchronize();
+    return ok;
 }
 
 
 bool Sound::write(ConnectionWriter& connection) {
-    // we just ship the image -- this is sleazy because we don't send
-    // frequency
+    // lousy format - fix soon!
     FlexImage& img = HELPER(implementation);
-    return img.write(connection);
+    Bottle bot;
+    bot.addInt(frequency);
+    return PortablePair<FlexImage,Bottle>::writePair(connection,img,bot);
 }
 

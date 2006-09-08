@@ -63,8 +63,8 @@ public:
         return (sample>=0 && channel>=0 && sample<samples && channel<channels);
     }
 
-    //int getFrequency() const;
-    //void setFrequency(int freq);
+    int getFrequency() const;
+    void setFrequency(int freq);
 
     int getBytesPerSample() const { return bytesPerSample; }
 
@@ -78,6 +78,7 @@ public:
 
 private:
     void init(int bytesPerSample);
+    void synchronize();
 
     void *implementation;
     int samples;

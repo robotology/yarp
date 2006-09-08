@@ -22,8 +22,8 @@ namespace yarp {
  * use this for real you should fix it up.
  *
  */
-class yarp::dev::PortAudioDeviceDriver : 
-    public IAudioGrabberSound, public DeviceDriver
+class yarp::dev::PortAudioDeviceDriver : public IAudioGrabberSound, 
+            public DeviceDriver
 {
 private:
 	PortAudioDeviceDriver(const PortAudioDeviceDriver&);

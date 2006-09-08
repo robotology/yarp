@@ -7,6 +7,7 @@
 namespace yarp {
     namespace dev {
         class IAudioGrabberSound;
+        class IAudioRender;
     }
 }
 
@@ -30,6 +31,24 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getSound(yarp::sig::Sound& sound) = 0;
+};
+
+
+class yarp::dev::IAudioRender
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAudioRender(){}
+
+    /**
+     * Render a sound using a device (i.e. send it to the speakers).
+     * 
+     * @param sound the sound to be rendered
+     * @return true/false upon success/failure
+     */
+    virtual bool renderSound(yarp::sig::Sound& sound) = 0;
 };
 
 
