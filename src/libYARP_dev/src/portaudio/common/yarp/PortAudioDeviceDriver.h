@@ -70,6 +70,7 @@ protected:
     yarp::os::ManagedBytes buffer;
     int num_samples;
     int num_channels;
+    int set_freq;
     bool canRead, canWrite, loopBack;
 
     bool delayed;

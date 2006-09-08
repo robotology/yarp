@@ -53,6 +53,7 @@ PortAudioDeviceDriver::PortAudioDeviceDriver() {
     num_channels = 0;
     canRead = canWrite = false;
     loopBack = false;
+    set_freq = 0;
 }
 
 PortAudioDeviceDriver::~PortAudioDeviceDriver() {
@@ -71,6 +72,7 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     num_samples = samples;
     if (channels==0) channels = NUM_CHANNELS;
     num_channels = channels;
+    set_freq = rate;
 
     buffer.allocate(num_samples*num_channels*sizeof(SAMPLE));
 
@@ -151,9 +153,9 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
         loopBack = true;
     }
     delayed = false;
+    delayedConfig = config2;
     if (config.check("delay")) {
         printf("Delaying audio configuration\n");
-        delayedConfig = config2;
         delayed = true;
         return true;
     } else {
@@ -185,6 +187,7 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
 
 	// main loop to capture the waveform audio data	
     sound.resize(num_samples,num_channels);
+    sound.setFrequency(set_freq);
     PaError err;
     SAMPLE *pa_pulsecode = (SAMPLE *)buffer.get();
     err = Pa_ReadStream((PaStream*)system_resource,(void*)pa_pulsecode,
@@ -209,9 +212,21 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
 }
 
 void PortAudioDeviceDriver::checkDelay(yarp::sig::Sound& sound) {
+    int _rate = sound.getFrequency();
+    int _samples = sound.getSamples();    
+    if (!delayed) {
+        if ((_rate!=0&&delayedConfig.rate!=_rate)||
+            (_samples!=0&&delayedConfig.samples!=_samples)) {
+            printf("audio configuration mismatch, resetting\n");
+            close();
+            delayed = true;
+        }
+    }
     if (delayed) {
-        delayedConfig.rate = sound.getFrequency();
+        delayedConfig.rate = _rate;
+        delayedConfig.samples = _samples;
         printf("rate from sound is %d\n", delayedConfig.rate);
+        printf("samples from sound is %d\n", delayedConfig.samples);
         open(delayedConfig);
         delayed = false;
     }

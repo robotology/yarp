@@ -277,6 +277,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         const char *proto = argv[2];
         dest = String(proto) + ":/" + slashify(dest);
     }
+    disconnectInput(argv[1],src,true); // in connectionless cases
     return connect(src,dest.c_str());
 }
 

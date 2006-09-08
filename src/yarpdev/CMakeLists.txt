@@ -4,5 +4,6 @@ INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
 #MESSAGE(ERROR, ${YARP_dev_EXT_LIBS})
 LINK_LIBRARIES(${YARP_dev_EXT_LIBS} YARP_dev YARP_sig YARP_OS)
 ADD_EXECUTABLE(yarpdev yarpdev.cpp)
+ADD_EXECUTABLE(yarphear yarphear.cpp)
 
-INSTALL_TARGETS(/bin yarpdev)
+INSTALL_TARGETS(/bin yarpdev yarphear)
