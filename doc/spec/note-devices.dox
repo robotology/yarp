@@ -254,8 +254,9 @@ that works for all framegrabber devices.
 You can instantiate any device listed here from your code as follows:
 \code
   #include <yarp/dev/PolyDriver.h>
-  #include <yarp/dev/FrameGrabberInterface.h>
+  #include <yarp/dev/FrameGrabberInterfaces.h>
   using namespace yarp::dev;
+  ...
   PolyDriver dd("dragonfly");
   if (!dd.isValid()) {
     printf("Dragonfly not available\n");
