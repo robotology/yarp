@@ -16,6 +16,7 @@ libraries.
 * framerate
 
     Read images from a framegrabber and display the frame rate.
+    *UPDATE* now works with any port in standard network format.
 
 * os
 

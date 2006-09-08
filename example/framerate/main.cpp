@@ -17,13 +17,13 @@ using namespace yarp::sig;
 int main(int argc, char *argv[]) {
     Network::init();
     if (argc==1) {
-        printf("This program checks the framerate of an image output port\n");
+        printf("This program checks the framerate of an output port\n");
         printf("Call as:\n");
-        printf("   framerate --remote /image_port_name --local /local_name\n");
+        printf("   framerate --remote /port_name --local /local_name\n");
         exit(0);
     }
 
-    BufferedPort<ImageOf<PixelRgb> > port;
+    BufferedPort<Bottle> port;
 
     // get options
     Property opt;
@@ -48,20 +48,20 @@ int main(int argc, char *argv[]) {
     int ct = 0;
     bool spoke = false;
     while (true) {
-        ImageOf<PixelRgb> *img = port.read(true);
+        Bottle *bot = port.read(true);
         double now = Time::now()-first;
         ct++;
         if (now-prev>=2) {
             double period = (now-prev)/ct;
-            printf("Period is %g ms per frame, freq is %g (%d images in %g seconds)\n",
+            printf("Period is %g ms per message, freq is %g (%d messages in %g seconds)\n",
                    period*1000, 1/period, ct, now-prev);
             ct = 0;
             prev = now;
             spoke = false;
         }
-        if (img!=NULL) {
+        if (bot!=NULL) {
             if (!spoke) {
-                printf("Got a %dx%d image\n", img->width(), img->height());
+                printf("Got something with %d top-level elements\n", bot->size());
                 spoke = true;
             }
         }
