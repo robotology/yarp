@@ -183,3 +183,21 @@ void RateThread::doInit()
 
 void RateThread::doRelease()
 {}
+
+
+
+
+bool RateThreadWrapper::open(double framerate) {
+    int period = 0;
+    if (framerate>0) {
+        period=(int) (0.5+1000.0/framerate);
+        ACE_OS::printf("Setting framerate to: %.0lf[Hz] (thread period %d[ms])\n", 
+                       framerate, period);
+    } else {
+        ACE_OS::printf("No framerate specified, polling the device\n");
+        period=0; //continuous
+    }    
+    RateThread::setRate(period);
+    start();
+    return true;
+}

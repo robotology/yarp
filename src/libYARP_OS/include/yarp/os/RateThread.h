@@ -2,10 +2,12 @@
 #ifndef _YARP2_RATETHREAD_
 #define _YARP2_RATETHREAD_
 
+#include <yarp/os/Runnable.h>
 
 namespace yarp {
     namespace os {
         class RateThread;
+        class RateThreadWrapper;
     }
 }
 
@@ -95,6 +97,71 @@ private:
     bool join(double seconds = -1);
 
     void *implementation;
+};
+
+
+
+/**
+ * This class takes a Runnable instance and wraps a thread around it.
+ * This class is under development - API may change a lot.
+ */
+class yarp::os::RateThreadWrapper : public RateThread {
+private:
+    Runnable *helper;
+    int owned;
+public:
+  /**
+   * Default constructor.
+   */
+    RateThreadWrapper(): RateThread(0) {
+        helper = 0/*NULL*/;
+        owned = false;
+    }
+
+    RateThreadWrapper(Runnable *helper): RateThread(0) {
+        this->helper = helper;
+        owned = true;
+    }
+
+    RateThreadWrapper(Runnable& helper): RateThread(0) {
+        this->helper = &helper;
+        owned = false;
+    }
+    
+    void detach() {
+        if (owned) {
+            if (helper!=0/*NULL*/) {
+                delete helper;
+            }
+        }
+        helper = 0/*NULL*/;
+        owned = false;
+    }
+  
+    virtual bool attach(Runnable& helper) {
+        detach();
+        this->helper = &helper;
+        owned = false;
+    }
+    
+    virtual bool attach(Runnable *helper) {
+        detach();
+        this->helper = helper;
+        owned = true;
+    }
+
+    bool open(double framerate = -1);
+
+    bool close() {
+        stop();
+        return true;
+    }
+
+    virtual void doLoop() {
+        if (helper!=0/*NULL*/) {
+            helper->run();
+        }
+    }
 };
 
 #endif
