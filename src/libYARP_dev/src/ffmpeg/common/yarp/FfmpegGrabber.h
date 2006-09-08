@@ -35,6 +35,8 @@ public:
 
     FfmpegGrabber() {
         m_h = m_w = 0;
+        pFormatCtx = NULL;
+        packet.data = NULL;
         active = false;
     }
   
@@ -55,13 +57,7 @@ public:
 protected:
 
     AVFormatContext *pFormatCtx;
-    int             i, videoStream;
-    AVCodecContext  *pCodecCtx;
-    AVCodec         *pCodec;
-    AVFrame         *pFrame; 
-    AVFrame         *pFrameRGB;
-    int             numBytes;
-    uint8_t         *buffer;
+    AVPacket packet;
     bool active;
   
     /** Width of the images a grabber produces. */

@@ -18,103 +18,154 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
+class DecoderState {
+public:
+    int      bytesRemaining;
+    int      bytesDecoded;
+    int      frameFinished;
+    int      index;
 
-static bool GetNextFrame(AVFormatContext *pFormatCtx, 
-                         AVCodecContext *pCodecCtx, 
-                         int videoStream, AVFrame *pFrame)
-{
-    static AVPacket packet;
-    static int      bytesRemaining=0;
-    static uint8_t  *rawData;
-    static bool     fFirstTime=true;
-    int             bytesDecoded;
-    int             frameFinished;
+    AVCodecContext  *pCodecCtx;
+    AVCodec         *pCodec;
 
-    // First time we're called, set packet.data to NULL to indicate it
-    // doesn't have to be freed
-    if(fFirstTime)
-        {
-            fFirstTime=false;
-            packet.data=NULL;
+    // video buffers
+    AVFrame         *pFrame; 
+    AVFrame         *pFrameRGB;
+    uint8_t         *buffer;
+
+    DecoderState() {
+        index = -1;
+        pCodec = NULL;
+        pFrame = NULL;
+        pFrameRGB = NULL;
+        buffer = NULL;
+        frameFinished = 0;
+    }
+
+    bool isFinished() {
+        return frameFinished!=0;
+    }
+
+    int getIndex() {
+        return index;
+    }
+
+    virtual ~DecoderState() {
+        if (pCodecCtx!=NULL) {
+            avcodec_close(pCodecCtx);
         }
+        if (buffer!=NULL) {
+            delete [] buffer;
+        }
+        if (pFrameRGB!=NULL) {
+            av_free(pFrameRGB);
+        }
+        if (pFrame!=NULL) {
+            av_free(pFrame);
+        }
+    }
 
-    // Decode packets until we have decoded a complete frame
-    while(true)
-        {
-            // Work on the current packet until we have decoded all of it
-            while(bytesRemaining > 0)
+    int getStream(AVFormatContext *pFormatCtx, CodecType code, 
+                  const char *name) {
+        // Find the first stream
+        int videoStream=-1;
+        for(int i=0; i<pFormatCtx->nb_streams; i++)
+            if(pFormatCtx->streams[i]->codec->codec_type==code)
                 {
-                    // Decode the next chunk of data
-                    bytesDecoded=avcodec_decode_video(pCodecCtx, pFrame,
-                                                      &frameFinished, rawData, bytesRemaining);
-
-                    // Was there an error?
-                    if(bytesDecoded < 0)
-                        {
-                            fprintf(stderr, "Error while decoding frame\n");
-                            return false;
-                        }
-
-                    bytesRemaining-=bytesDecoded;
-                    rawData+=bytesDecoded;
-
-                    // Did we finish the current frame? Then we can return
-                    if(frameFinished)
-                        return true;
+                    videoStream=i;
+                    printf("First %s stream is stream #%d\n", name);
+                    break;
                 }
+        if(videoStream==-1) {
+            printf("Could not find %s stream\n", name);
+        }
+        index = videoStream;
 
-            // Read the next packet, skipping all packets that aren't for this
-            // stream
-            do
-                {
-                    // Free old packet
-                    if(packet.data!=NULL)
-                        av_free_packet(&packet);
+        return index;
+    }
 
-                    // Read new packet
-                    if(av_read_packet(pFormatCtx, &packet)<0)
-                        goto loop_exit;
-                } while(packet.stream_index!=videoStream);
+    bool getCodec(AVFormatContext *pFormatCtx) {
+        // Get a pointer to the codec context for the video stream
+        pCodecCtx=pFormatCtx->streams[index]->codec;
 
-            bytesRemaining=packet.size;
-            rawData=packet.data;
+        // Find the decoder for the video stream
+        pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
+        if(pCodec==NULL) {
+            printf("Codec not found\n");
+            return false; // Codec not found
+        }
+        
+        // Open codec
+        if(avcodec_open(pCodecCtx, pCodec)<0) {
+            printf("Could not open codec\n");
+            return false; // Could not open codec
         }
 
- loop_exit:
+        return true;
+    }
 
-    // Decode the rest of the last frame
-    bytesDecoded=avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
-                                      rawData, bytesRemaining);
 
-    // Free last packet
-    if(packet.data!=NULL)
-        av_free_packet(&packet);
+    bool allocateImage() {
+        // Allocate video frame
+        pFrame=avcodec_alloc_frame();
+        
+        // Allocate an AVFrame structure
+        pFrameRGB=avcodec_alloc_frame();
+        if(pFrameRGB==NULL) {
+            printf("Could not allocate a frame\n");
+            return false;
+        }
+        
+        // Determine required buffer size and allocate buffer
+        int numBytes=avpicture_get_size(PIX_FMT_RGB24, pCodecCtx->width,
+                                        pCodecCtx->height);
+        buffer=new uint8_t[numBytes];
+        
+        // Assign appropriate parts of buffer to image planes in pFrameRGB
+        avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGB24,
+                       pCodecCtx->width, pCodecCtx->height);
+        return true;
+    }
 
-    return frameFinished!=0;
-}
+    int getWidth() {
+        return pCodecCtx->width;
+    }
 
-void SaveFrame(AVFrame *pFrame, int width, int height, int iFrame)
-{
-    FILE *pFile;
-    char szFilename[32];
-    int  y;
+    int getHeight() {
+        return pCodecCtx->height;
+    }
 
-    // Open file
-    sprintf(szFilename, "frame%d.ppm", iFrame);
-    pFile=fopen(szFilename, "wb");
-    if(pFile==NULL)
-        return;
+    bool getVideo(AVPacket& packet,ImageOf<PixelRgb>& image) {
+        // Decode video frame
+        avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
+                             packet.data, packet.size);
 
-    // Write header
-    fprintf(pFile, "P6\n%d %d\n255\n", width, height);
+        // Did we get a video frame?
+        if(frameFinished) {
+            // Convert the image from its native format to RGB
+            img_convert((AVPicture *)pFrameRGB, PIX_FMT_RGB24, 
+                        (AVPicture*)pFrame, pCodecCtx->pix_fmt, 
+                        pCodecCtx->width, 
+                        pCodecCtx->height);
+        }
 
-    // Write pixel data
-    for(y=0; y<height; y++)
-        fwrite(pFrame->data[0]+y*pFrame->linesize[0], 1, width*3, pFile);
+        if (frameFinished) {
+            FlexImage flex;
+            flex.setPixelCode(VOCAB_PIXEL_RGB);
+            flex.setQuantum((pFrameRGB->linesize[0]));
+            flex.setExternal(pFrameRGB->data[0],
+                             pCodecCtx->width,
+                             pCodecCtx->height);
+            image.copy(flex); 
+        }
 
-    // Close file
-    fclose(pFile);
-}
+        return frameFinished;
+    }
+};
+
+
+DecoderState videoDecoder;
+DecoderState audioDecoder;
 
 
 bool FfmpegGrabber::open(yarp::os::Searchable & config) {
@@ -141,67 +192,25 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     dump_format(pFormatCtx, 0, fname.c_str(), false);
 
     // Find the first video stream
-    videoStream=-1;
-    for(i=0; i<pFormatCtx->nb_streams; i++)
-        if(pFormatCtx->streams[i]->codec->codec_type==CODEC_TYPE_VIDEO)
-            {
-                videoStream=i;
-                break;
-            }
-    if(videoStream==-1) {
-        printf("Could not find video stream in %s\n", fname.c_str());
-        return false; // Didn't find a video stream
-    }
+    int videoStream = videoDecoder.getStream(pFormatCtx,CODEC_TYPE_VIDEO,
+                                             "video");
+    // Find the first audio stream
+    int audioStream = audioDecoder.getStream(pFormatCtx,CODEC_TYPE_AUDIO,
+                                             "audio");
 
-    // Get a pointer to the codec context for the video stream
-    pCodecCtx=pFormatCtx->streams[videoStream]->codec;
-
-    // Find the decoder for the video stream
-    pCodec=avcodec_find_decoder(pCodecCtx->codec_id);
-    if(pCodec==NULL) {
-        printf("Codec not found\n");
-        return false; // Codec not found
-    }
-
-    // Inform the codec that we can handle truncated bitstreams -- i.e.,
-    // bitstreams where frame boundaries can fall in the middle of packets
-    if(pCodec->capabilities & CODEC_CAP_TRUNCATED)
-        pCodecCtx->flags|=CODEC_FLAG_TRUNCATED;
-
-    // Open codec
-    if(avcodec_open(pCodecCtx, pCodec)<0) {
-        printf("Could not open codec\n");
-        return false; // Could not open codec
-    }
-
-    // Hack to correct wrong frame rates that seem to be generated by some 
-    // codecs
-    /*
-      if(pCodecCtx->frame_rate>1000 && pCodecCtx->frame_rate_base==1)
-      pCodecCtx->frame_rate_base=1000;
-    */
-
-    // Allocate video frame
-    pFrame=avcodec_alloc_frame();
-
-    // Allocate an AVFrame structure
-    pFrameRGB=avcodec_alloc_frame();
-    if(pFrameRGB==NULL) {
-        printf("Could not allocate a frame\n");
+    if (videoStream==-1&&audioStream==-1) {
         return false;
     }
 
-    // Determine required buffer size and allocate buffer
-    numBytes=avpicture_get_size(PIX_FMT_RGB24, pCodecCtx->width,
-                                pCodecCtx->height);
-    buffer=new uint8_t[numBytes];
+    bool ok = true;
+    ok = ok && videoDecoder.getCodec(pFormatCtx);
+    ok = ok && audioDecoder.getCodec(pFormatCtx);
+    if (!ok) return false;
+    ok = ok && videoDecoder.allocateImage();
+    if (!ok) return false;
 
-    // Assign appropriate parts of buffer to image planes in pFrameRGB
-    avpicture_fill((AVPicture *)pFrameRGB, buffer, PIX_FMT_RGB24,
-                   pCodecCtx->width, pCodecCtx->height);
-
-    m_w = pCodecCtx->width;
-    m_h = pCodecCtx->height;
+    m_w = videoDecoder.getWidth();
+    m_h = videoDecoder.getHeight();
     printf("  avi dimension %dx%d\n", m_w, m_h);
 
     active = true;
@@ -213,56 +222,34 @@ bool FfmpegGrabber::close() {
         return false;
     }
     
-    // Free the RGB image
-    delete [] buffer;
-    av_free(pFrameRGB);
-
-    // Free the YUV frame
-    av_free(pFrame);
-
-    // Close the codec
-    avcodec_close(pCodecCtx);
-
     // Close the video file
-    av_close_input_file(pFormatCtx);
+    if (pFormatCtx!=NULL) {
+        av_close_input_file(pFormatCtx);
+    }
 
     active = false;
     return true;
 }
   
 bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
-    if (GetNextFrame(pFormatCtx, pCodecCtx, videoStream, pFrame)) {
-        img_convert((AVPicture *)pFrameRGB, PIX_FMT_RGB24, (AVPicture*)pFrame, 
-                    pCodecCtx->pix_fmt, pCodecCtx->width, pCodecCtx->height);
-
-#if 1
-        FlexImage flex;
-        flex.setPixelCode(VOCAB_PIXEL_RGB);
-        flex.setQuantum((pFrameRGB->linesize[0]));
-        flex.setExternal(pFrameRGB->data[0],
-                         pCodecCtx->width,
-                         pCodecCtx->height);
-        /*
-          printf("Prepare copy.. (%dx%d) %d %d %d\n", 
-          flex.width(),
-          flex.height(),
-          flex.getPixelSize(), 
-          flex.getRowSize()/3, flex.getQuantum());
-        */
-        image.copy(flex); 
-#else
-        // Save the frame to disk
-        SaveFrame(pFrameRGB, pCodecCtx->width, pCodecCtx->height, 0);
-        yarp::sig::file::read(image,"frame0.ppm");
-#endif
-        return true;
-    } else {
-        if (m_w>0) {
-            image.resize(m_w,m_h);
-            image.zero();
+    while(av_read_frame(pFormatCtx, &packet)>=0) {
+        // Is this a packet from the video stream?
+        printf("frame ");
+        bool done = false;
+        if(packet.stream_index==videoDecoder.getIndex()) {
+            printf("video ");
+            done = videoDecoder.getVideo(packet,image);
+        } else {
+            printf("other ");
         }
-        return true;
+        av_free_packet(&packet);
+        printf("%d\n", done);
+        if (done) {
+            return true;
+        }
     }
+    image.resize(m_w,m_h);
+    image.zero();
     return false;
 }
   
