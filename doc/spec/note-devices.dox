@@ -280,7 +280,7 @@ the device driver database.  Here's how:
 \code
 DriverCreator *fakey_factory = 
    new DriverCreatorOf<FakeFrameGrabber>("fakey","grabber","FakeFrameGrabber");
-Drivers.factory().add(fakey_factory); // hand factory over to YARP
+Drivers::factory().add(fakey_factory); // hand factory over to YARP
 \endcode
 The name "fakey" is an arbitrary common name we pick.
 The name "grabber" gives a network wrapper for this device ("" if there
