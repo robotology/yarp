@@ -48,7 +48,7 @@ public:
 template <class T1, class T2>
 class yarp::dev::DataSource2 {
 public:
-    virtual bool getDatum(T1& datum, T2& datum) = 0;
+    virtual bool getDatum(T1& datum1, T2& datum2) = 0;
 };
 
 
