@@ -97,22 +97,7 @@ void PortCoreOutputUnit::runSimulation() {
     return;
 }
 
-
-void PortCoreOutputUnit::closeMain() {
-
-    if (running) {
-        // give a kick (unfortunately unavoidable)
-        /*
-          if (op!=NULL) {
-          op->interrupt();
-          }
-        */
-        closing = true;
-        phase.post();
-        activate.post();
-        join();
-    }
-
+void PortCoreOutputUnit::closeBasic() {
     if (op!=NULL) {
         Route route = op->getRoute();
         if (op->isConnectionless()) {
@@ -141,6 +126,24 @@ void PortCoreOutputUnit::closeMain() {
         } catch (IOException e) { /*ok*/ }
         op = NULL;
     }
+}
+
+void PortCoreOutputUnit::closeMain() {
+
+    if (running) {
+        // give a kick (unfortunately unavoidable)
+        /*
+          if (op!=NULL) {
+          op->interrupt();
+          }
+        */
+        closing = true;
+        phase.post();
+        activate.post();
+        join();
+    }
+
+    closeBasic();
     running = false;
     closing = false;
     finished = true;
@@ -172,7 +175,9 @@ void PortCoreOutputUnit::sendHelper() {
         }
     } catch (IOException e) {
         YARP_DEBUG(Logger::get(), e.toString() + " <<< output exception");
+        closeBasic();
         finished = true;
+        closing = true;
         setDoomed(true);
     }
 }

@@ -84,6 +84,7 @@ private:
 
     void sendHelper();
 
+    void closeBasic();
 
     void closeMain();
 };
