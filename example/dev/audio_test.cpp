@@ -11,6 +11,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 int main(int argc, char *argv[]) {
+  Network::init();
 
   // Get an audio device.
 
@@ -62,6 +63,8 @@ int main(int argc, char *argv[]) {
     }
     put->renderSound(s);
   }
+
+  Network::fini();
 
   return 0;
 }

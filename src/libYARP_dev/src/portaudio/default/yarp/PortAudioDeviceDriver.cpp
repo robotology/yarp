@@ -90,7 +90,9 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     inputParameters.device = Pa_GetDefaultInputDevice();
     inputParameters.channelCount = num_channels;
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+    if ((Pa_GetDeviceInfo( inputParameters.device ))!=0) {
+        inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+    }
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
     outputParameters.device = Pa_GetDefaultInputDevice();
