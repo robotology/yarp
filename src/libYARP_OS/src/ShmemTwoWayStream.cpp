@@ -17,7 +17,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
                NetType::toString(address.getPort()));
     if (sender) {
         ACE_MEM_Connector connector;
-        result = connector.connect(stream,addr);
+        result = connector.connect(stream,addr,0,ACE_Addr::sap_any,1);
         if (result>=0) {
             happy = true;
         } else {

@@ -77,7 +77,10 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
     dgram = new ACE_SOCK_Dgram;
     YARP_ASSERT(dgram!=NULL);
 
-    int result = dgram->open(localHandle);
+    int result = dgram->open(localHandle,
+                             ACE_PROTOCOL_FAMILY_INET,
+                             0,
+                             1);
     if (result!=0) {
         throw IOException("could not open datagram socket");
     }
