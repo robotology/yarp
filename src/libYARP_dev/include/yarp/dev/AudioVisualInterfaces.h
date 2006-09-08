@@ -1,0 +1,44 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+#ifndef YARP2_AUDIO_VISUAL_INTERFACES
+#define YARP2_AUDIO_VISUAL_INTERFACES
+
+#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/os/PortablePair.h>
+
+namespace yarp{
+    namespace dev {
+        class IAudioVisualGrabber;
+        typedef yarp::os::PortablePair<yarp::sig::ImageOf<yarp::sig::PixelRgb>,
+                                       yarp::sig::Sound> ImageRgbSound;
+    }
+}
+
+/**
+ * @ingroup dev_iface_media
+ *
+ * Read a YARP-format image and sound from a device.
+ */
+class yarp::dev::IAudioVisualGrabber
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAudioVisualGrabber(){}
+
+    /**
+     * Get an image and sound
+     * 
+     * @param image the image to be filled
+     * @param sound the sound to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                yarp::sig::Sound& sound) = 0;    
+};
+
+
+#endif
+

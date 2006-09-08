@@ -18,7 +18,7 @@ namespace yarp {
     }
 }
 
-#include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 
 /**
@@ -27,7 +27,9 @@ namespace yarp {
  * An image frame grabber device using ffmpeg to capture images from
  * AVI files.
  */
-class yarp::dev::FfmpegGrabber : public IFrameGrabberImage, public DeviceDriver
+class yarp::dev::FfmpegGrabber : public IFrameGrabberImage, 
+            public IAudioVisualGrabber,
+            public DeviceDriver
 {
 public:
 
@@ -41,11 +43,13 @@ public:
     virtual bool close();
   
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
-  
-  
+
     virtual int height() const { return m_h; }
   
     virtual int width() const { return m_w; }
+  
+    virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                yarp::sig::Sound& sound);
   
 
 protected:

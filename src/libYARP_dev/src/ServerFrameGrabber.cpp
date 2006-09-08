@@ -1,6 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/String.h>
+#include <yarp/Logger.h>
 
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
@@ -13,6 +14,10 @@ using namespace yarp::sig;
 
 
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
+
+    // for AV, control whether output goes on a single port or multiple
+    bool separatePorts = false;
+
     p.setReader(*this);
         
     yarp::os::Value *name;
@@ -39,6 +44,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     if (poly.isValid()) {
         poly.view(fgImage);
         poly.view(fgSound);
+        poly.view(fgAv);
         poly.view(fgCtrl);
     }
 
@@ -62,17 +68,40 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         {
             framerate=name->asDouble();
         }
+
+
+    if (config.check("separate-ports")) {
+        separatePorts = true;
+        YARP_ASSERT(p2==NULL);
+        p2 = new Port;
+        YARP_ASSERT(p2!=NULL);
+        if (config.check("name2",name)) {
+            p2->open(name->asString());
+        } else {
+            p2->open("/grabber2");
+        }
+    }
+
         
-    if (fgImage==NULL&&fgSound==NULL) {
+    if (fgAv!=NULL) {
+        if (separatePorts) {
+            printf("Grabber for images and sound (in separate ports)\n");
+            YARP_ASSERT(p2!=NULL);
+            thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this));
+        } else {
+            printf("Grabber for images and sound (in shared port)\n");
+            thread.attach(new DataWriter<ImageRgbSound>(p,*this));
+        }
+    } else if (fgImage!=NULL) {
+        printf("Grabber for images\n");
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this));
+    } else if (fgSound!=NULL) {
+        printf("Grabber for sound\n");
+        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this));
+    } else {
         printf("subdevice <%s> doesn't look like a framegrabber\n",
                name->toString().c_str());
         return false;
-    }
-
-    if (fgImage!=NULL) {
-        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this));
-    } else {
-        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this));
     }
 
     thread.open(config.check("framerate",Value("0")).asDouble());

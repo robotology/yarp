@@ -8,6 +8,7 @@
 #include <yarp/dev/DataSource.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/dev/AudioVisualInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -81,16 +82,21 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public yarp::os::PortReader,
             public IFrameGrabberImage,
             public IAudioGrabberSound,
+            public IAudioVisualGrabber,
             public IFrameGrabberControls,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
-            public DataSource<yarp::sig::Sound>
+            public DataSource<yarp::sig::Sound>,
+            public DataSource<ImageRgbSound>,
+            public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
 {
 private:
     yarp::os::Port p;
+    yarp::os::Port *p2;
     yarp::os::RateThreadWrapper thread;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
     IAudioGrabberSound *fgSound;
+    IAudioVisualGrabber *fgAv;
     IFrameGrabberControls *fgCtrl;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
 public:
@@ -100,12 +106,18 @@ public:
     ServerFrameGrabber() {
         fgImage = NULL;
         fgSound = NULL;
+        fgAv = NULL;
         fgCtrl = NULL;
 		spoke = false;
+        p2 = NULL;
     }
     
     virtual bool close() {
         thread.stop();
+        if (p2!=NULL) {
+            delete p2;
+            p2 = NULL;
+        }
         return true;
     }
     
@@ -124,14 +136,22 @@ public:
     virtual bool read(ConnectionReader& connection);
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-        bool ok = getImage(image);
-        return ok;
+        return getImage(image);
     }
     
     virtual bool getDatum(yarp::sig::Sound& sound) {
         return getSound(sound);
     }
+
+    virtual bool getDatum(ImageRgbSound& imageSound) {
+        return getDatum(imageSound.head,imageSound.body);
+    }
     
+    virtual bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                          yarp::sig::Sound& sound) {
+        return getAudioVisual(image,sound);
+    }
+
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         if (fgImage==NULL) { return false; }
         return fgImage->getImage(image);
@@ -142,6 +162,12 @@ public:
         return fgSound->getSound(sound);
     }
     
+    virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                yarp::sig::Sound& sound) {
+        if (fgAv==NULL) { return false; }
+        return fgAv->getAudioVisual(image,sound);
+    }
+
     virtual int height() const {
         if (fgImage==NULL) { return 0; }
         return fgImage->height();

@@ -266,3 +266,11 @@ bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     return false;
 }
   
+bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                   yarp::sig::Sound& sound) {
+    bool ok = getImage(image);
+    sound.resize(100);
+    return ok;
+}
+
+

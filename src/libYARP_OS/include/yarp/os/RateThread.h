@@ -128,6 +128,10 @@ public:
         owned = false;
     }
     
+    virtual ~RateThreadWrapper() {
+        detach();
+    }
+
     void detach() {
         if (owned) {
             if (helper!=0/*NULL*/) {
@@ -142,12 +146,14 @@ public:
         detach();
         this->helper = &helper;
         owned = false;
+        return true;
     }
     
     virtual bool attach(Runnable *helper) {
         detach();
         this->helper = helper;
         owned = true;
+        return true;
     }
 
     bool open(double framerate = -1);
