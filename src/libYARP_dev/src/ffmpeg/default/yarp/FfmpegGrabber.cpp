@@ -85,7 +85,7 @@ public:
             if(pFormatCtx->streams[i]->codec->codec_type==code)
                 {
                     videoStream=i;
-                    printf("First %s stream is stream #%d\n", name);
+                    printf("First %s stream is stream #%d\n", name, i);
                     break;
                 }
         if(videoStream==-1) {
