@@ -742,40 +742,44 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
             flex.setPixelCode(header.id);
             flex.setQuantum(header.quantum);
             flex.resize(header.width,header.height);
-            unsigned char *mem = flex.getRawImage();
-            ACE_ASSERT(mem!=NULL);
-            if (flex.getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height, 
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, quantum %d, size %d\n",
-                       flex.width(), flex.height(), flex.getQuantum(), 
-                       flex.getRawImageSize());
-            }
-            ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
-            try {
-                connection.expectBlock((char *)flex.getRawImage(),
-                                       flex.getRawImageSize());
-            } catch (IOException e) {
-                return false;
+            if (header.width!=0&&header.height!=0) {
+                unsigned char *mem = flex.getRawImage();
+                ACE_ASSERT(mem!=NULL);
+                if (flex.getRawImageSize()!=header.imgSize) {
+                    printf("There is a problem reading an image\n");
+                    printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                           (int)header.width, (int)header.height, 
+                           (int)header.quantum, (int)header.imgSize);
+                    printf("my space: width %d, height %d, quantum %d, size %d\n",
+                           flex.width(), flex.height(), flex.getQuantum(), 
+                           flex.getRawImageSize());
+                }
+                ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
+                try {
+                    connection.expectBlock((char *)flex.getRawImage(),
+                                           flex.getRawImageSize());
+                } catch (IOException e) {
+                    return false;
+                }
             }
             copy(flex);
         } else {
             ACE_ASSERT(getPixelCode()==header.id);
             resize(header.width,header.height);
             unsigned char *mem = getRawImage();
-            ACE_ASSERT(mem!=NULL);
-            if (getRawImageSize()!=header.imgSize) {
-                printf("There is a problem reading an image\n");
-                printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                       (int)header.width, (int)header.height, 
-                       (int)header.quantum, (int)header.imgSize);
-                printf("my space: width %d, height %d, quantum %d, size %d\n",
-                       width(), height(), getQuantum(), getRawImageSize());
+            if (header.width!=0&&header.height!=0) {
+                ACE_ASSERT(mem!=NULL);
+                if (getRawImageSize()!=header.imgSize) {
+                    printf("There is a problem reading an image\n");
+                    printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                           (int)header.width, (int)header.height, 
+                           (int)header.quantum, (int)header.imgSize);
+                    printf("my space: width %d, height %d, quantum %d, size %d\n",
+                           width(), height(), getQuantum(), getRawImageSize());
+                }
+                ACE_ASSERT(getRawImageSize()==header.imgSize);
+                connection.expectBlock((char *)getRawImage(),getRawImageSize());
             }
-            ACE_ASSERT(getRawImageSize()==header.imgSize);
-            connection.expectBlock((char *)getRawImage(),getRawImageSize());
         }
         
     } catch (IOException e) {
@@ -808,11 +812,14 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
         
         connection.appendBlock((char*)&header,sizeof(header));
         unsigned char *mem = getRawImage();
-        ACE_ASSERT(mem!=NULL);
-        
-        // Note use of external block.  Implies care needed about ownership.
-        connection.appendExternalBlock((char *)mem,header.imgSize);
-        
+        if (header.width!=0&&header.height!=0) {
+            ACE_ASSERT(mem!=NULL);
+            
+            // Note use of external block.  
+            // Implies care needed about ownership.
+            connection.appendExternalBlock((char *)mem,header.imgSize);
+        }
+
         // if someone is foolish enough to connect in text mode,
         // let them see something readable.
         connection.convertTextMode();

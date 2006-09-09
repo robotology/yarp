@@ -70,7 +70,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         }
 
 
-    if (config.check("separate-ports")) {
+    if (!config.check("shared-ports")) {
         separatePorts = true;
         YARP_ASSERT(p2==NULL);
         p2 = new Port;
@@ -81,7 +81,6 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             p2->open("/grabber2");
         }
     }
-
         
     if (fgAv!=NULL) {
         if (separatePorts) {

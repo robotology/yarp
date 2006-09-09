@@ -35,9 +35,12 @@ public:
 
     FfmpegGrabber() {
         m_h = m_w = 0;
+        m_channels = m_rate = 0;
         pFormatCtx = NULL;
         packet.data = NULL;
         active = false;
+        startTime = 0;
+        hasAudio = hasVideo = false;
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -59,11 +62,16 @@ protected:
     AVFormatContext *pFormatCtx;
     AVPacket packet;
     bool active;
+    double startTime;
+    bool hasAudio, hasVideo;
   
     /** Width of the images a grabber produces. */
     int m_w;
     /** Height of the images a grabber produces. */
     int m_h;
+
+    int m_channels;
+    int m_rate;
   
     /** Opaque ffmpeg structure for image capture. */
     void * m_capture;

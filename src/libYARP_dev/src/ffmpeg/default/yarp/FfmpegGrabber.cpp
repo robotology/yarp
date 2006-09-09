@@ -18,6 +18,9 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
+#define DBG if (0)
+
+
 class DecoderState {
 public:
     int      bytesRemaining;
@@ -32,6 +35,9 @@ public:
     AVFrame         *pFrame; 
     AVFrame         *pFrameRGB;
     uint8_t         *buffer;
+    int16_t         *audioBuffer;
+    int16_t         *audioBufferAt;
+    int audioBufferLen;
 
     DecoderState() {
         index = -1;
@@ -39,6 +45,9 @@ public:
         pFrame = NULL;
         pFrameRGB = NULL;
         buffer = NULL;
+        audioBuffer = NULL;
+        audioBufferAt = NULL;
+        audioBufferLen = 0;
         frameFinished = 0;
     }
 
@@ -53,6 +62,9 @@ public:
     virtual ~DecoderState() {
         if (pCodecCtx!=NULL) {
             avcodec_close(pCodecCtx);
+        }
+        if (audioBuffer!=NULL) {
+            delete [] audioBuffer;
         }
         if (buffer!=NULL) {
             delete [] buffer;
@@ -127,6 +139,17 @@ public:
         return true;
     }
 
+    bool allocateSound() {
+        audioBuffer = new int16_t[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+        audioBufferAt = audioBuffer;
+        audioBufferLen = 0;
+        printf("channels %d, sample_rate %d, frame_size %d\n",
+               pCodecCtx->channels,
+               pCodecCtx->sample_rate,
+               pCodecCtx->frame_size);
+        return true;
+    }
+
     int getWidth() {
         return pCodecCtx->width;
     }
@@ -135,11 +158,60 @@ public:
         return pCodecCtx->height;
     }
 
-    bool getVideo(AVPacket& packet,ImageOf<PixelRgb>& image) {
+
+    int getRate() {
+        return pCodecCtx->sample_rate;
+    }
+
+    int getChannels() {
+        return pCodecCtx->channels;
+    }
+
+    bool getAudio(AVPacket& packet,Sound& sound) {
+        int ct = 0;
+        int bytesRead = 0;
+        int bytesWritten = 0;
+        while (bytesRead<packet.size) {
+            int r = avcodec_decode_audio(pCodecCtx, 
+                                         audioBuffer+bytesWritten, 
+                                         &ct,
+                                         packet.data+bytesRead, 
+                                         packet.size-bytesRead);
+            if (r<0) {
+                printf("error decoding audio\n");
+                return false;
+            }
+            DBG printf("audio bytes %d return %d\n", ct, r);
+            int num_channels = getChannels();
+            int num_rate = getRate();
+            //audioBufferAt += ct;
+            //audioBufferLen += ct;
+            bytesRead += r;
+            bytesWritten += ct;
+            if (bytesRead==packet.size) {
+                int num_samples = bytesWritten/(sizeof(int16_t)*num_channels);
+                sound.resize(num_samples,num_channels);
+                sound.setFrequency(num_rate);
+                
+                int idx = 0;
+                for (int i=0; i<num_samples; i++) {
+                    for (int j=0; j<num_channels; j++) {
+                        sound.set(audioBuffer[idx],i,j);
+                        idx++;
+                    }
+                }
+                //audioBufferAt = audioBuffer;
+                //audioBufferLen = 0;
+            }
+        }
+        return true;
+    }
+
+    bool getVideo(AVPacket& packet) {
         // Decode video frame
         avcodec_decode_video(pCodecCtx, pFrame, &frameFinished, 
                              packet.data, packet.size);
-
+        
         // Did we get a video frame?
         if(frameFinished) {
             // Convert the image from its native format to RGB
@@ -148,7 +220,11 @@ public:
                         pCodecCtx->width, 
                         pCodecCtx->height);
         }
+        return frameFinished;
+    }
 
+
+    bool getVideo(ImageOf<PixelRgb>& image) {
         if (frameFinished) {
             FlexImage flex;
             flex.setPixelCode(VOCAB_PIXEL_RGB);
@@ -159,6 +235,10 @@ public:
             image.copy(flex); 
         }
 
+        return frameFinished;
+    }
+
+    bool haveFrame() {
         return frameFinished;
     }
 };
@@ -202,17 +282,40 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         return false;
     }
 
+    hasVideo = (videoStream!=-1);
+    hasAudio = (audioStream!=-1);
+
     bool ok = true;
-    ok = ok && videoDecoder.getCodec(pFormatCtx);
-    ok = ok && audioDecoder.getCodec(pFormatCtx);
+    if (hasVideo) {
+        ok = ok && videoDecoder.getCodec(pFormatCtx);
+    }
+    if (hasAudio) {
+        ok = ok && audioDecoder.getCodec(pFormatCtx);
+    }
     if (!ok) return false;
-    ok = ok && videoDecoder.allocateImage();
+    
+    if (hasVideo) {
+        ok = ok && videoDecoder.allocateImage();
+    }
+    if (hasAudio) {
+        ok = ok && audioDecoder.allocateSound();
+    }
     if (!ok) return false;
 
-    m_w = videoDecoder.getWidth();
-    m_h = videoDecoder.getHeight();
-    printf("  avi dimension %dx%d\n", m_w, m_h);
+    if (hasVideo) {
+        m_w = videoDecoder.getWidth();
+        m_h = videoDecoder.getHeight();
+    }
+    if (hasAudio) {
+        m_channels = audioDecoder.getChannels();
+        m_rate = audioDecoder.getRate();
+    }
+    printf("  video size %dx%d, audio %dHz with %d channels\n", m_w, m_h,
+           m_rate, m_channels);
 
+    if (!(hasVideo||hasAudio)) {
+        return false;
+    }
     active = true;
     return true;
 }
@@ -232,32 +335,93 @@ bool FfmpegGrabber::close() {
 }
   
 bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
-    while(av_read_frame(pFormatCtx, &packet)>=0) {
-        // Is this a packet from the video stream?
-        printf("frame ");
-        bool done = false;
-        if(packet.stream_index==videoDecoder.getIndex()) {
-            printf("video ");
-            done = videoDecoder.getVideo(packet,image);
-        } else {
-            printf("other ");
-        }
-        av_free_packet(&packet);
-        printf("%d\n", done);
-        if (done) {
-            return true;
-        }
+    if (!hasVideo) {
+        return false;
     }
-    image.resize(m_w,m_h);
-    image.zero();
-    return false;
+    Sound sound;
+    return getAudioVisual(image,sound);
 }
   
 bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                    yarp::sig::Sound& sound) {
-    bool ok = getImage(image);
-    sound.resize(100);
-    return ok;
+    bool tryAgain = false;
+    bool triedAgain = false;
+    
+    do {
+    
+        bool gotAudio = false;
+        bool gotVideo = false;
+        if (startTime<0.5) {
+            startTime = Time::now();
+        }
+        double time_target = 0;
+        while(av_read_frame(pFormatCtx, &packet)>=0) {
+            // Is this a packet from the video stream?
+            DBG printf("frame ");
+            bool done = false;
+            if (packet.stream_index==videoDecoder.getIndex()) {
+                DBG printf("video ");
+                done = videoDecoder.getVideo(packet);
+                image.resize(1,1);
+                if (done) {
+                    //printf("got a video frame\n");
+                    gotVideo = true;
+                }
+            } if (packet.stream_index==audioDecoder.getIndex()) {
+                DBG printf("audio ");
+                done = audioDecoder.getAudio(packet,sound);
+                if (done) {
+                    //printf("got an audio frame\n");
+                    gotAudio = true;
+                }
+            } else {
+                DBG printf("other ");
+            }
+            AVRational& time_base = pFormatCtx->streams[packet.stream_index]->time_base;
+            double rbase = av_q2d(time_base);
+            
+            DBG printf(" time=%g ", packet.pts*rbase);
+            time_target = packet.pts*rbase;
+            
+            av_free_packet(&packet);
+            DBG printf(" %d\n", done);
+            if ((videoDecoder.haveFrame()||!hasVideo)&&
+                (gotAudio||!hasAudio)) {
+                if (hasVideo) {
+                    videoDecoder.getVideo(image);
+                } else {
+                    image.resize(0,0);
+                }
+                double now = Time::now()-startTime;
+                double delay = time_target-now;
+                if (delay>0) {
+                    DBG printf("DELAY %g ", delay);
+                    Time::delay(delay);
+                } else {
+                    DBG printf("NODELAY %g ", delay);
+                }
+                DBG printf("IMAGE size %dx%d  ", image.width(), image.height());
+                DBG printf("SOUND size %d\n", sound.getSamples());
+                if (!hasAudio) {
+                    sound.resize(0,0);
+                }
+                return true;
+            }
+        }
+
+        tryAgain = !triedAgain;
+   
+        if (tryAgain) {
+#if LIBAVFORMAT_BUILD > 4616
+            av_seek_frame(pFormatCtx,-1,0,AVSEEK_FLAG_BACKWARD);
+#else
+            av_seek_frame(pFormatCtx,-1,0);
+#endif
+            startTime = Time::now();
+        }
+    } while (tryAgain);
+
+    return false;
 }
 
 
