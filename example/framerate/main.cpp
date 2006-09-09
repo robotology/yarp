@@ -2,12 +2,12 @@
 
 #include <stdio.h>
 
+#include <yarp/String.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
-#include <yarp/String.h>
 #include <yarp/os/Network.h>
 
 using namespace yarp;
