@@ -41,6 +41,7 @@ public:
         active = false;
         startTime = 0;
         hasAudio = hasVideo = false;
+        system_resource = NULL;
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -58,6 +59,7 @@ public:
   
 
 protected:
+    void *system_resource;
 
     AVFormatContext *pFormatCtx;
     AVPacket packet;
@@ -76,6 +78,13 @@ protected:
     /** Opaque ffmpeg structure for image capture. */
     void * m_capture;
 
+    bool openFirewire(AVFormatContext **ppFormatCtx,
+                      const char *devname = "/dev/dv1394");
+
+    bool openV4L(AVFormatContext **ppFormatCtx);
+
+    bool openFile(AVFormatContext **ppFormatCtx,
+                  const char *fname);
 };
 
 

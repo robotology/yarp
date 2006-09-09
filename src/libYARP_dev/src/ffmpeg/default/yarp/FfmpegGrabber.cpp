@@ -3,6 +3,7 @@
 #include <yarp/FfmpegGrabber.h>
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+#include <yarp/Logger.h>
 
 // based on Martim Boehme's example at:
 //   http://www.inb.uni-luebeck.de/~boehme/using_libavcodec.html
@@ -243,9 +244,52 @@ public:
     }
 };
 
+class FfmpegHelper {
+public:
+    DecoderState videoDecoder;
+    DecoderState audioDecoder;
+};
 
-DecoderState videoDecoder;
-DecoderState audioDecoder;
+
+#define HELPER(x) (*((FfmpegHelper*)x))
+
+
+bool FfmpegGrabber::openV4L(AVFormatContext **ppFormatCtx) {
+
+    AVFormatParameters formatParams;
+    AVInputFormat *iformat;
+    
+    formatParams.device = "/dev/video0";
+    formatParams.channel = 0;
+    formatParams.standard = "ntsc";
+    formatParams.width = 640;
+    formatParams.height = 480;
+    formatParams.time_base.den = 29;
+    formatParams.time_base.num = 1;
+    iformat = av_find_input_format("video4linux");
+
+    return (av_open_input_file(ppFormatCtx,
+                               "", iformat, 0, &formatParams)==0);
+
+}
+
+
+bool FfmpegGrabber::openFirewire(AVFormatContext **ppFormatCtx,
+                                 const char *devname) {
+    AVFormatParameters formatParams;
+    AVInputFormat *iformat;
+    formatParams.device = devname;
+    iformat = av_find_input_format("dv1394");
+    printf("Checking for digital video in %s\n", devname);
+    return av_open_input_file(ppFormatCtx,
+                              "", iformat, 0, &formatParams)==0;
+}
+
+
+bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
+                             const char *fname) {
+    return av_open_input_file(ppFormatCtx, fname, NULL, 0, NULL)==0;
+}
 
 
 bool FfmpegGrabber::open(yarp::os::Searchable & config) {
@@ -257,11 +301,22 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     av_register_all();
 
     // Open video file
-    if(av_open_input_file(&pFormatCtx, fname.c_str(), NULL, 0, NULL)!=0) {
+    if (config.check("v4l")) {
+        if (!openV4L(&pFormatCtx)) {
+            printf("Could not open Video4Linux input\n");
+            return false;
+        }
+    } else if (config.check("firewire")||config.check("ieee1394")||
+        config.check("dv")) {
+        if (!openFirewire(&pFormatCtx)) {
+            printf("Could not open ieee1394 input\n");
+            return false;
+        }
+    } else if (!openFile(&pFormatCtx,fname.c_str())) {
         printf("Could not open avi file %s\n", fname.c_str());
         return false; // Couldn't open file
     }
-
+        
     // Retrieve stream information
     if(av_find_stream_info(pFormatCtx)<0) {
         printf("Could not find stream information in %s\n", fname.c_str());
@@ -270,6 +325,14 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
     // Dump information about file onto standard error
     dump_format(pFormatCtx, 0, fname.c_str(), false);
+
+    YARP_ASSERT(system_resource==NULL);
+    system_resource = new FfmpegHelper;
+    YARP_ASSERT(system_resource!=NULL);
+    FfmpegHelper& helper = HELPER(system_resource);
+    DecoderState& videoDecoder = helper.videoDecoder;
+    DecoderState& audioDecoder = helper.audioDecoder;
+
 
     // Find the first video stream
     int videoStream = videoDecoder.getStream(pFormatCtx,CODEC_TYPE_VIDEO,
@@ -329,6 +392,10 @@ bool FfmpegGrabber::close() {
     if (pFormatCtx!=NULL) {
         av_close_input_file(pFormatCtx);
     }
+    if (system_resource!=NULL) {
+        delete &HELPER(system_resource);
+        system_resource = NULL;
+    }
 
     active = false;
     return true;
@@ -344,6 +411,11 @@ bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
   
 bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                    yarp::sig::Sound& sound) {
+
+    FfmpegHelper& helper = HELPER(system_resource);
+    DecoderState& videoDecoder = helper.videoDecoder;
+    DecoderState& audioDecoder = helper.audioDecoder;
+
     bool tryAgain = false;
     bool triedAgain = false;
     
