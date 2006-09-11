@@ -6,7 +6,7 @@ SET(CREATE_JAVA FALSE CACHE BOOL "Do you want to create a Java interface")
 SET(CREATE_PYTHON FALSE CACHE BOOL "Do you want to create the Python interface")
 SET(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
 SET(CREATE_CHICKEN FALSE CACHE BOOL "Do you want to create the Chicken Scheme interface")
-
+SET(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
 
 # small update to FindJNI
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
@@ -50,5 +50,16 @@ IF (CREATE_CHICKEN)
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
    SWIG_ADD_MODULE(cyarp chicken yarp.i)
 ENDIF (CREATE_CHICKEN)
+
+
+IF (CREATE_CSHARP)
+   # outdir does not seem to work?
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+   IF (WIN32 AND NOT CYGWIN)
+      SWIG_ADD_MODULE(csyarp csharp yarp.i)
+   ELSE(WIN32 AND NOT CYGWIN)
+      SWIG_ADD_MODULE(libcsyarp csharp yarp.i)
+   ENDIF (WIN32 AND NOT CYGWIN)
+ENDIF (CREATE_CSHARP)
 
 

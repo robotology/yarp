@@ -47,7 +47,7 @@ Now try to run example.pl and/or example.py
 
 Run:
   ccmake .
-And set "CREATE_CREATE" to true.
+And set "CREATE_CHICKEN" to true.
 Run:
   make
 
@@ -57,4 +57,25 @@ Now try:
   chicken cyarp.scm
   chicken example.scm && gcc example.c cyarp.c cyarp.so -lchicken -o example
   ./example
+
+============================================================================
+== CSHARP INTERFACE
+
+Run:
+  ccmake .
+And set "CREATE_CSHARP" to true.
+Run:
+  make
+
+You should now have libcsyarp.so and a whole lot of .cs files
+
+The .cs files are not quite write, you need to run:
+  ./csharp-fix.pl
+to fix them up (problems with multiple inheritance mismatch)
+
+Now try:
+  mcs -out:example *.cs
+or whatever your compiler is.  If it works, then:
+  ./example.exe
+should do something yarpy.
 
