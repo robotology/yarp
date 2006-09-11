@@ -991,7 +991,7 @@ int FWCameras::getBufferLength(int camera_num)
     return buf_length;
 }
 
-void FWCameras::init_cameras(bool dma_on_in)
+bool FWCameras::init_cameras(bool dma_on_in)
 {
     init_variables(dma_on_in);
     bool init_ok = init_firewire();
@@ -1013,7 +1013,9 @@ void FWCameras::init_cameras(bool dma_on_in)
                     else
                         {
                             printf("\ncamera %d will not be usable\n", cam_num);
+                            init_ok = false;
                         }
                 }
         }   
+    return init_ok;
 }

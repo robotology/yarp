@@ -148,7 +148,7 @@ public:
     // different format. Future versions of the driver might support more choices.
     bool SetSize(int x, int y);
 
-    void init_cameras(bool dma_on_in=true);
+    bool init_cameras(bool dma_on_in=true);
 private:
 
     raw1394handle_t handle;

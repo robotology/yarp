@@ -90,7 +90,10 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
             return false;
         }
 
-    cam.init_cameras();
+    bool ok = cam.init_cameras();
+    if (!ok) {
+        return false;
+    }
     cam.SetSize(params._size_x, params._size_y);
 
     buffLength=cam.getBufferLength();
