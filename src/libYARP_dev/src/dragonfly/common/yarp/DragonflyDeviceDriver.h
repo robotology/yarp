@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.19 2006-09-06 21:30:55 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.20 2006-09-12 12:30:50 babybot Exp $
 ///
 ///
 
@@ -51,6 +51,7 @@
 // May 06, readapted for YARP2 by nat
 
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
 namespace yarp {
@@ -84,6 +85,8 @@ public:
 		_offset_y = 0;
 		_offset_x = 0;
 		_alfa = 0;
+		_white1 = -1;
+		_white2 = -1;
 	}
 
 	// Parameters
@@ -94,6 +97,7 @@ public:
 	int _offset_y;				/** NOT USED */
 	int _offset_x;				/** NOT USED */
 	float _alfa;				/** NOT USED */
+	float _white1, _white2;
 };
 
 /**
@@ -148,6 +152,11 @@ public:
 		params._offset_y = config.find("offset_y").asInt();
 		params._offset_x = config.find("offset_x").asInt();
 		params._alfa = (float)config.find("alfa").asInt();
+		yarp::os::Bottle& whites = config.findGroup("white_balance");
+		if (!whites.isNull()) {
+			params._white1 = whites.get(1).asDouble();
+			params._white2 = whites.get(2).asDouble();
+		}
         return open(params);
     }
 
