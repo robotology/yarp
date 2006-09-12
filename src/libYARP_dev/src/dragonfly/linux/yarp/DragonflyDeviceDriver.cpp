@@ -102,7 +102,15 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
     img=new unsigned char [buffLength];
 
-    cam.SetAuto(true);
+    //cam.SetAuto(true);
+
+	// Setup Camera Parameters, Magic Numbers :-)
+	cam.SetBrightness(0);
+	cam.SetExposure(300);
+    cam.SetColor(20, 50); 
+	cam.SetShutter(320);	// x * 0.0625 = 20 mSec = 50 Hz
+	cam.SetGain(500);		// x * -0.0224 = -11.2dB
+
     cam.Capture(img);
 
     return true;
