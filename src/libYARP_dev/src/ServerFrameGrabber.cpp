@@ -26,6 +26,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
+            p.setMonitor(config.getMonitor(),
+                         "subdevice"); // pass on any monitoring
             p.fromString(config.toString());
             p.put("device",name->toString());
             p.unput("subdevice");

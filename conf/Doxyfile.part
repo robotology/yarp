@@ -79,6 +79,7 @@ INPUT                  = src/libYARP_OS/include/yarp/os \
                          src/libYARP_dev/src/esdMotionControl/winnt/yarp \
                          src/libYARP_dev/src/portaudio/common \
                          src/libYARP_dev/src/opencv_grabber/common \
+                         src/libYARP_dev/src/ffmpeg/common \
                          src/libYARP_dev/src \
                          doc/spec
 FILE_PATTERNS          = *.h \

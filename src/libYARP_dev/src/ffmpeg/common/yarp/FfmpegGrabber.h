@@ -28,6 +28,7 @@ namespace yarp {
  * AVI files.
  */
 class yarp::dev::FfmpegGrabber : public IFrameGrabberImage, 
+            public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public DeviceDriver
 {
@@ -49,6 +50,8 @@ public:
     virtual bool close();
   
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
+
+    virtual bool getSound(yarp::sig::Sound& sound);
 
     virtual int height() const { return m_h; }
   

@@ -43,6 +43,7 @@ public:
     DecoderState() {
         index = -1;
         pCodec = NULL;
+        pCodecCtx = NULL;
         pFrame = NULL;
         pFrameRGB = NULL;
         buffer = NULL;
@@ -408,6 +409,16 @@ bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     Sound sound;
     return getAudioVisual(image,sound);
 }
+
+
+bool FfmpegGrabber::getSound(yarp::sig::Sound& sound) {
+    if (!hasAudio) {
+        return false;
+    }
+    ImageOf<PixelRgb> image;
+    return getAudioVisual(image,sound);
+}
+
   
 bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                    yarp::sig::Sound& sound) {

@@ -104,6 +104,7 @@ DriverCreator *Drivers::find(const char *name) {
 DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     yarp::os::Searchable *config = &prop;
     Property p;
+    p.setMonitor(prop.getMonitor(),"device"); // pass on any monitoring
     String str = prop.toString().c_str();
     Value *part;
     if (prop.check("device",part)) {

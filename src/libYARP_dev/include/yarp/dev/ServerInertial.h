@@ -86,6 +86,8 @@ public:
                     {
                         // maybe user isn't doing nested configuration
                         yarp::os::Property p;
+                        p.setMonitor(config.getMonitor(),
+                                     "subdevice"); // pass on any monitoring
                         p.fromString(config.toString());
                         p.put("device",name->toString());
                         poly.open(p);

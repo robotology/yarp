@@ -207,15 +207,39 @@ Value& Bottle::find(const char *key) {
             if (nested) {
                 return org->asList()->get(1);
             }
+            if (getMonitor()!=NULL) {
+                SearchReport report;
+                report.key = key;
+                report.isFound = true;
+                report.value = get(i+1).toString();
+                reportToMonitor(report);
+            }
             return get(i+1);
         }
     }
     // return invalid object
+    if (getMonitor()!=NULL) {
+        SearchReport report;
+        report.key = key;
+        reportToMonitor(report);
+    }
     return get(-1);
 }
 
 Bottle& Bottle::findGroup(const char *key) {
     Value& bb = findGroupBit(key);
+
+    if (getMonitor()!=NULL) {
+        SearchReport report;
+        report.key = key;
+        report.isGroup = true;
+        if (bb.isList()) {
+            report.isFound = true;
+            report.value = bb.toString();
+        }
+        reportToMonitor(report);
+    }
+
     if (bb.isList()) {
         return *(bb.asList());
     }

@@ -9,8 +9,29 @@ namespace yarp {
         class Value;
         class Bottle;
         class Searchable;
+        class SearchMonitor;
+        class SearchReport;
     }
 }
+
+class yarp::os::SearchReport {
+public:
+    ConstString key;
+    ConstString value;
+    bool isFound;
+    bool isGroup;
+
+    SearchReport() {
+        key = "?";
+        isFound = false;
+        isGroup = false;
+    }
+};
+
+class yarp::os::SearchMonitor {
+public:
+    virtual void report(const SearchReport& report, const char *context) = 0;
+};
 
 
 /**
@@ -24,7 +45,17 @@ namespace yarp {
  *
  */
 class yarp::os::Searchable {
+private:
+    SearchMonitor *monitor;
+    ConstString monitorContext;
 public:
+    /**
+     * Default constructor.
+     */
+    Searchable() {
+        monitor = 0/*NULL*/;
+    }
+
     /**
      * Destructor.
      */
@@ -84,7 +115,7 @@ public:
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    bool check(const char *key, Value *& result);
+    virtual bool check(const char *key, Value *& result);
 
 
     /**
@@ -95,7 +126,7 @@ public:
      * or the default if nothing is found.  See the find() method for 
      * interpreting the value found.
      */
-    Value check(const char *key, const Value& fallback);
+    virtual Value check(const char *key, const Value& fallback);
 
     /**
      * Checks if the object is invalid.
@@ -111,6 +142,26 @@ public:
      * object.  
      */
     virtual ConstString toString() const = 0;
+
+    virtual void setMonitor(SearchMonitor *monitor, const char *context="") {
+        this->monitor = monitor;
+        this->monitorContext = context;
+    }
+
+    virtual SearchMonitor *getMonitor() {
+        return monitor;
+    }
+
+    virtual ConstString getContext() {
+        return monitorContext;
+    }
+
+    virtual void reportToMonitor(const SearchReport& report) {
+        if (monitor!=0/*NULL*/) {
+            monitor->report(report,monitorContext);
+        }
+    }
 };
+
 
 #endif

@@ -32,6 +32,9 @@ public:
 class PropertyHelper {
 public:
     ACE_Hash_Map_Manager<String,PropertyItem,ACE_Null_Mutex> data;
+    Property& owner;
+
+    PropertyHelper(Property& owner) : owner(owner) {}
 
     PropertyItem *getPropNoCreate(const char *key) const {
         String n(key);
@@ -97,6 +100,12 @@ public:
 
     bool check(const char *key) const {
         PropertyItem *p = getPropNoCreate(key);
+        if (owner.getMonitor()!=NULL) {
+            SearchReport report;
+            report.key = key;
+            report.isFound = (p!=NULL);
+            owner.reportToMonitor(report);
+        }
         return p!=NULL;
     }
 
@@ -104,7 +113,19 @@ public:
         String out;
         PropertyItem *p = getPropNoCreate(key);
         if (p!=NULL) {
+            if (owner.getMonitor()!=NULL) {
+                SearchReport report;
+                report.key = key;
+                report.isFound = true;
+                report.value = p->bot.get(1).toString();
+                owner.reportToMonitor(report);
+            }
             return p->bot.get(1);
+        }
+        if (owner.getMonitor()!=NULL) {
+            SearchReport report;
+            report.key = key;
+            owner.reportToMonitor(report);
         }
         return Value::getNullValue();
     }
@@ -275,20 +296,20 @@ public:
 
 
 Property::Property() {
-    implementation = new PropertyHelper;
+    implementation = new PropertyHelper(*this);
     YARP_ASSERT(implementation!=NULL);
 }
 
 
 Property::Property(const char *str) {
-    implementation = new PropertyHelper;
+    implementation = new PropertyHelper(*this);
     YARP_ASSERT(implementation!=NULL);
     fromString(str);
 }
 
 
 Property::Property(const Property& prop) {
-    implementation = new PropertyHelper;
+    implementation = new PropertyHelper(*this);
     YARP_ASSERT(implementation!=NULL);
     fromString(prop.toString());
 }
@@ -414,6 +435,17 @@ bool Property::write(ConnectionWriter& writer) {
 
 Bottle& Property::findGroup(const char *key) {
     Bottle *result = HELPER(implementation).getBottle(key);
+    if (getMonitor()!=NULL) {
+        SearchReport report;
+        report.key = key;
+        report.isGroup = true;
+        if (result!=0/*NULL*/) {
+            report.isFound = true;
+            report.value = result->toString();
+        }
+        reportToMonitor(report);
+    }
+
     if (result!=((Bottle*)0)) { return *result; }
     return Bottle::getNullBottle();
 }

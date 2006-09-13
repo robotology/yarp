@@ -1,17 +1,77 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#include <yarp/String.h>
+
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/dev/PolyDriver.h>
-#include <yarp/String.h>
 
 #include <stdio.h>
 #include <stdlib.h>
 
+using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
+
+/*
+class MonitorSearchable : public SearchMonitor {
+public:
+
+
+    virtual bool check(const char *key) {
+        printf("checking %s\n", key);
+        return searchable.check(key);
+    }
+
+    virtual Value& find(const char *key) {
+        printf("finding %s\n", key);
+        return searchable.find(key);
+    }
+
+    virtual Bottle& findGroup(const char *key) {
+        printf("find group %s\n", key);
+        return searchable.findGroup(key);
+    }
+
+    virtual bool isNull() const  { 
+        return searchable.isNull();
+    }
+
+    virtual ConstString toString() const {
+        return searchable.toString();
+    }
+
+    // self-callers
+    //virtual bool check(const char *key, Value *& result);
+    //virtual Value check(const char *key, const Value& fallback);
+};
+*/
+
+class YarpDevMonitor : public SearchMonitor {
+public:
+    virtual void report(const SearchReport& report, const char *context) {
+        ConstString key = report.key;
+        if (key=="wrapped") {
+            return;
+        }
+        printf("  [%s] checking option \"%s\" ",
+               context, key.c_str());
+        if (report.isFound) {
+            printf("| found ");
+            String txt = report.value.c_str();
+            if (txt.length()<80) {
+                printf("| %s ", txt.c_str());
+            } else {
+                printf("| (value is long; suppressed) ");
+            }
+        } else {
+            printf("| not set ");
+        }
+        printf("\n");
+    }
+};
 
 int main(int argc, char *argv[]) {
 
@@ -69,6 +129,8 @@ int main(int argc, char *argv[]) {
 
     // create a device
     //printf("Options: %s\n", options.toString().c_str());
+    YarpDevMonitor monitor;
+    options.setMonitor(&monitor,"top-level");
     PolyDriver dd(options);
     if (!dd.isValid()) {
         printf("yarpdev: ***ERROR*** device not available.\n");

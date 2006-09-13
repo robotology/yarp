@@ -238,6 +238,8 @@ public:
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 Property p;
+                p.setMonitor(prop.getMonitor(),
+                             "subdevice"); // pass on any monitoring
                 p.fromString(prop.toString());
                 p.put("device",name->toString());
                 poly.open(p);
