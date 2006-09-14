@@ -271,6 +271,44 @@ public:
     }
 
 
+    void testReread() {
+        report(0,"testing reread specialization is not broken...");
+
+        Bottle bot("10 20 30");  // first a specialized list
+        Bottle bot2;
+        {
+            BufferedConnectionWriter writer(false);
+            bot.write(writer);
+            StringInputStream sis;
+            sis.add(writer.toString());
+            StreamConnectionReader br;
+            br.reset(sis,NULL,Route(),sis.toString().length(),false);
+            bot2.read(br);
+            //printf("bot is %s\n", bot.toString().c_str());
+            //printf("bot2 is %s\n", bot2.toString().c_str());
+            checkEqual(bot.size(),bot2.size(),"length check");
+            checkTrue(bot2.get(2).isInt(),"type check");
+            checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
+                       "content check");
+        }
+        bot.fromString("10 20 30.5"); // now an unspecialized list
+        {
+            BufferedConnectionWriter writer(false);
+            bot.write(writer);
+            StringInputStream sis;
+            sis.add(writer.toString());
+            StreamConnectionReader br;
+            br.reset(sis,NULL,Route(),sis.toString().length(),false);
+            bot2.read(br);
+            checkEqual(bot.size(),bot2.size(),"length check");
+            checkTrue(bot2.get(2).isDouble(),"type check");
+            checkEqual(bot.toString().c_str(),bot2.toString().c_str(),
+                       "content check");
+        }
+        
+    }
+
+
     void testWhiteSpace() {
         report(0,"testing white space behavior...");
         Bottle bot;
@@ -309,6 +347,7 @@ public:
         testWhiteSpace();
         testStandard();
         testNestDetection();
+        testReread();
     }
 
     virtual String getName() {

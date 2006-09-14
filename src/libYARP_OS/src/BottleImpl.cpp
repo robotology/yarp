@@ -413,6 +413,9 @@ bool BottleImpl::read(ConnectionReader& reader) {
                 // no byte length any more to facilitate nesting
                 //reader.expectInt(); // the bottle byte ct; ignored
 
+                clear();
+                specialize(0);
+
                 int code = reader.expectInt();
                 code = code & UNIT_MASK;
                 if (code!=0) {
