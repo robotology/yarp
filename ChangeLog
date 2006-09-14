@@ -1,3 +1,9 @@
+2006-09-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Integrated with ffmpeg for reading audio/visual material
+	* Bugfix for sound network format
+	* C# swig interface tested (added to Java, Perl, Python, ...)
+
 2006-09-01  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Fixed bug where non-buffered Port closed with data pending 
