@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# run as "./scripts/update-web"
+
+echo "Updating Sourceforge website (just main page) from local system"
+
+target="yarp0.sourceforge.net"
+
+USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+
+if [ ! "k$USER" = "k" ] ; then
+
+    echo USER might be $USER
+
+    cd doc && scp index.html $USER@$target:/home/groups/y/ya/yarp0/htdocs/specs/dox
+
+else
+
+    echo cannot figure out CVS username
+
+fi
+
+
+
