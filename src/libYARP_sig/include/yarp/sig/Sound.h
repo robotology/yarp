@@ -37,7 +37,7 @@ public:
 
     void resize(int samples, int channels = 1);
 
-    int get(int sample, int channel = 0);
+    int get(int sample, int channel = 0) const;
     void set(int value, int sample, int channel = 0);
 
     int getSafe(int sample, int channel = 0) {
@@ -75,6 +75,10 @@ public:
     virtual bool read(ConnectionReader& connection);
 
     virtual bool write(ConnectionWriter& connection);
+
+    unsigned char *getRawData() const;
+
+    int getRawDataSize() const;
 
 private:
     void init(int bytesPerSample);

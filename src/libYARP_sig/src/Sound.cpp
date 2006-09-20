@@ -69,7 +69,7 @@ void Sound::resize(int samples, int channels) {
     synchronize();
 }
 
-int Sound::get(int location, int channel) {
+int Sound::get(int location, int channel) const {
     FlexImage& img = HELPER(implementation);
     unsigned char *addr = img.getPixelAddress(location,channel);
     if (bytesPerSample==2) {
@@ -115,4 +115,15 @@ bool Sound::write(ConnectionWriter& connection) {
     bot.addInt(frequency);
     return PortablePair<FlexImage,Bottle>::writePair(connection,img,bot);
 }
+
+unsigned char *Sound::getRawData() const {
+    FlexImage& img = HELPER(implementation);
+    return img.getRawImage();
+}
+
+int Sound::getRawDataSize() const {
+    FlexImage& img = HELPER(implementation);
+    return img.getRawImageSize();
+}
+
 
