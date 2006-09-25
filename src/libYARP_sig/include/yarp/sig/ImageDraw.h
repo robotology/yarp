@@ -25,8 +25,7 @@ namespace yarp {
                             int x, int y, int dx, int dy) {
                 const double vx = double(dx - x);
                 const double vy = double(dy - y);
-                const int steps = (fabs(vx) > fabs(vy)) ? 
-                    2*fabs(vx) : 2*fabs(vy);
+                const int steps = int(2*fmax(fabs(vx), fabs(vy)));
                 const double r = 1.0 / steps;
                 for (int i = 0; i <= steps; i++) {
                     dest.safePixel(int(x+vx*i*r),int(y+vy*i*r)) = pix;
