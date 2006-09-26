@@ -86,6 +86,12 @@ public:
         return String("/") + src;
     }
 
+    /**
+     * Read a line of arbitrary length from standard input.
+     */
+    static String readString(bool *eof=NULL);
+
+
 
 private:
 

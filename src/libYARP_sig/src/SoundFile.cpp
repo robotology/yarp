@@ -194,7 +194,8 @@ bool yarp::sig::file::write(const Sound& src, const char *dest) {
     int channels = src.getChannels();
     for (int i=0; i<samples; i++) {
         for (int j=0; j<channels; j++) {
-            data[ct] = src.get(i,j);
+            int v = src.get(i,j);
+            data[ct] = v;
             ct++;
         }
     }

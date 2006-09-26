@@ -137,6 +137,21 @@ public:
      * @return prior state of this flag.
      */
     static bool setLocalMode(bool flag);
+
+
+    /**
+     * Read a line of arbitrary length from standard input.
+     *
+     * @param eof If non-null, this is set to true if standard input has
+     * closed.  Note that some heuristics are used to guess if someone
+     * on windows has hit the equivalent of ctrl-D, the key to close
+     * a stream on unix.  These heuristics will lead to false detects
+     * in some cases if the user hits strange keys.
+     *
+     * @return A string from standard input, without newline or
+     * linefeed characters.
+     */
+    static ConstString readString(bool *eof=0/*NULL*/);
 };
 
 #endif

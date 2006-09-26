@@ -678,3 +678,28 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
 }
 
 
+String Companion::readString(bool *eof) {
+    bool end = false;
+
+    String txt;
+
+    if (!feof(stdin)) {
+        txt = getStdin();
+    }
+
+    if (feof(stdin)) {
+        end = true;
+    } else if (txt[0]<32 && txt[0]!='\n' && 
+               txt[0]!='\r' && txt[0]!='\0') {
+        end = true;
+    }
+    if (end) {
+        txt = "";
+    }
+    if (eof!=NULL) {
+        *eof = end;
+    }
+    return txt;
+}
+
+

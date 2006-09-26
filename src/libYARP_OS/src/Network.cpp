@@ -106,3 +106,6 @@ void Network::assertion(bool shouldBeTrue) {
 }
 
 
+ConstString Network::readString(bool *eof) {
+    return ConstString(Companion::readString(eof).c_str());
+}
