@@ -131,6 +131,9 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     printf("     (sampling) rate (in Hertz) %d\n", rate);
     printf("     samples (per block) %d\n", num_samples);
     printf("     channels %d\n", num_channels);
+    config.rate = rate;
+    config.samples = samples;
+    config.channels = channels;
     system_resource = stream;
     canRead = wantRead;
     canWrite = wantWrite;
@@ -159,7 +162,7 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
         delayed = true;
         return true;
     } else {
-        return open(config2);
+        return open(delayedConfig);
     }
 }
 
@@ -168,7 +171,8 @@ bool PortAudioDeviceDriver::close(void) {
     if (system_resource!=NULL) {
         err = Pa_CloseStream( (PaStream*)system_resource );
         if( err != paNoError ) {
-            printf("Audio error\n");
+            printf("Audio error -- portaudio close failed (%s)\n",
+                                  Pa_GetErrorText(err));
             exit(1);
         }
         system_resource = NULL;
@@ -178,6 +182,7 @@ bool PortAudioDeviceDriver::close(void) {
 }
 
 bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
+
     checkDelay(sound);
     
     if (!canRead) {
@@ -192,8 +197,12 @@ bool PortAudioDeviceDriver::getSound(yarp::sig::Sound& sound) {
     SAMPLE *pa_pulsecode = (SAMPLE *)buffer.get();
     err = Pa_ReadStream((PaStream*)system_resource,(void*)pa_pulsecode,
                         num_samples);
-    if( err != paNoError ) {
-        printf("Audio error\n");
+    if (err == paInputOverflowed) {
+        printf("Audio warning -- there was an input overflow (%s)\n",
+               Pa_GetErrorText(err));
+    } else if( err != paNoError ) {
+        printf("Audio error -- portaudio read failed (%s)\n",
+               Pa_GetErrorText(err));
         exit(1);
     }
 
@@ -220,6 +229,18 @@ void PortAudioDeviceDriver::checkDelay(yarp::sig::Sound& sound) {
             (_samples!=0&&delayedConfig.samples!=_samples)||
             (_samples!=0&&delayedConfig.channels!=_channels)) {
             printf("audio configuration mismatch, resetting\n");
+            if (delayedConfig.rate!=_rate) {
+                printf("  (sample rate of %d versus %d)\n",
+                       delayedConfig.rate,_rate);
+            }
+            if (delayedConfig.rate!=_rate) {
+                printf("  (sample count of %d versus %d)\n",
+                       delayedConfig.samples,_samples);
+            }
+            if (delayedConfig.channels!=_channels) {
+                printf("  (channel count of %d versus %d)\n",
+                       delayedConfig.channels,_channels);
+            }
             close();
             delayed = true;
         }
@@ -262,7 +283,8 @@ bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound) {
     err = Pa_WriteStream((PaStream*)system_resource,(void*)pa_pulsecode,
                          num_samples);
     if( err != paNoError ) {
-        printf("Audio error\n");
+        printf("Audio error -- portaudio write failed (%s)\n",
+                                  Pa_GetErrorText(err));
         exit(1);
     }
     return true;
