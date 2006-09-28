@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.18 2006-07-12 09:39:28 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.19 2006-09-28 17:31:38 babybot Exp $
 ///
 ///
 
@@ -180,12 +180,18 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 	flycaptureGetCameraInfo(context, &info);
 	reportCameraInfo( &info );
 
-	// Setup Camera Parameters, Magic Numbers :-)
-	_setBrightness(0);
-	_setExposure(300);
-	_setWhiteBalance(20, 50); 
-	_setShutter(320);	// x * 0.0625 = 20 mSec = 50 Hz
-	_setGain(500);		// x * -0.0224 = -11.2dB
+	printf("Setting parameters:\n");
+	printf("Brightness %d\n", params._brightness);
+	printf("Exposure %d\n", params._exposure);
+	printf("White balance %d %d\n", params._whiteR, params._whiteB);
+	printf("Shutter %d\n", params._shutter);
+	printf("Gain %d\n", params._gain);
+
+	_setBrightness(params._brightness);
+	_setExposure(params._exposure);
+	_setWhiteBalance(params._whiteR, params._whiteB); 
+	_setShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
+	_setGain(params._gain);	 	// x * -0.0224 = -11.2dB
 	
 	// Set color reconstruction method
 	error = flycaptureSetColorProcessingMethod(context, FLYCAPTURE_NEAREST_NEIGHBOR_FAST); // Should be an Option
@@ -276,7 +282,9 @@ inline void DragonflyResources::_destroyBuffers(void)
 inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, value, 0, bAuto);
+//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, value, 0, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, value, 0);
+
 	if (error == FLYCAPTURE_OK)
 		return true;
 	else 
@@ -286,7 +294,9 @@ inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
+//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_AUTO_EXPOSURE, false, false, bAuto, value, 0);
+
 	if (error == FLYCAPTURE_OK)
 		return true;
 	else 
@@ -296,7 +306,9 @@ inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
+	//error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, false, bAuto, redValue, blueValue);
+
 	if (error == FLYCAPTURE_OK)
 		return true;
 	else 
@@ -306,7 +318,7 @@ inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, b
 inline bool DragonflyResources::_setShutter (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(context, FLYCAPTURE_SHUTTER,value, 0, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_SHUTTER, false, false, bAuto, value, 0);
 	if (error == FLYCAPTURE_OK)
 		return true;
 	else 
@@ -316,7 +328,8 @@ inline bool DragonflyResources::_setShutter (int value, bool bAuto)
 inline bool DragonflyResources::_setGain (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
+//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_GAIN, false, false, bAuto, value, 0);
 	if (error == FLYCAPTURE_OK)
 		return true;
 	else 

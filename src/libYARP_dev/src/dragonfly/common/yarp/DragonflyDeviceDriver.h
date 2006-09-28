@@ -37,7 +37,7 @@
 ///
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.20 2006-09-12 12:30:50 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.21 2006-09-28 17:31:38 babybot Exp $
 ///
 ///
 
@@ -72,6 +72,20 @@ namespace yarp {
 class yarp::dev::DragonflyOpenParameters
 {
 public:
+	// Parameters
+	unsigned int _unit_number;
+	unsigned int _size_x;
+	unsigned int _size_y;
+	unsigned int _video_type;
+
+	int _whiteR;
+	int _whiteB;
+
+	int _brightness;
+	int _exposure;
+	int _shutter;
+	int _gain;
+
 	/**
 	 * Constructor. Add here the parameters for the open().
 	 */
@@ -82,22 +96,16 @@ public:
 		_size_x = 640;
 		_size_y = 480;
 		_video_type = 0;
-		_offset_y = 0;
-		_offset_x = 0;
-		_alfa = 0;
-		_white1 = -1;
-		_white2 = -1;
+
+		//reasonable default values
+		_brightness=0;
+		_exposure=300;
+		_shutter=320;
+		_gain=500;
+		_whiteR=20;
+		_whiteB=50;
 	}
 
-	// Parameters
-	unsigned int _unit_number;
-	unsigned int _size_x;
-	unsigned int _size_y;
-	unsigned int _video_type;
-	int _offset_y;				/** NOT USED */
-	int _offset_x;				/** NOT USED */
-	float _alfa;				/** NOT USED */
-	float _white1, _white2;
 };
 
 /**
@@ -136,7 +144,8 @@ public:
 	 */
     bool open(const DragonflyOpenParameters& par);
 
-    virtual bool open(yarp::os::Searchable& config) {
+    virtual bool open(yarp::os::Searchable& config)
+	{
         DragonflyOpenParameters params;
 		yarp::os::Value *value;
 		if (config.check("unit_number",value)||config.check("d",value)) {
@@ -149,15 +158,30 @@ public:
 			params._size_y  = value->asInt();
 		}
 		params._video_type = config.find("video_type").asInt();
-		params._offset_y = config.find("offset_y").asInt();
-		params._offset_x = config.find("offset_x").asInt();
-		params._alfa = (float)config.find("alfa").asInt();
+
+		//params._offset_y = config.find("offset_y").asInt();
+		//params._offset_x = config.find("offset_x").asInt();
+		//params._alfa = (float)config.find("alfa").asInt();
 		yarp::os::Bottle& whites = config.findGroup("white_balance");
 		if (!whites.isNull()) {
-			params._white1 = whites.get(1).asDouble();
-			params._white2 = whites.get(2).asDouble();
+			params._whiteR = whites.get(1).asInt();
+			params._whiteB = whites.get(2).asInt();
 		}
-        return open(params);
+	
+		if (config.check("brightness", value)){
+			params._brightness=value->asInt();
+		}
+		if (config.check("exposure", value)){
+			params._exposure=value->asInt();
+		}
+		if (config.check("shutter", value)){
+			params._shutter=value->asInt();
+		}
+		if (config.check("gain", value)){
+			params._gain=value->asInt();
+		}
+
+		return open(params);
     }
 
 	/**

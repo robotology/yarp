@@ -28,7 +28,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.27 2006-09-06 21:30:55 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.28 2006-09-28 17:31:39 babybot Exp $
 ///
 ///
 
@@ -1140,7 +1140,7 @@ bool EsdMotionControl::setOffsetRaw(int axis, double v)
 {
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 	
-	return true;
+	return _writeWord16 (CAN_SET_OFFSET, axis, S_16(v));
 
 }
 
