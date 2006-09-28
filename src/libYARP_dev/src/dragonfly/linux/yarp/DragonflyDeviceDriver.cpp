@@ -107,14 +107,16 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 	// Setup Camera Parameters, Magic Numbers :-)
 	cam.SetBrightness(0);
 	cam.SetExposure(300);
-	if (params._white1>0) {
-		printf("white balance %g %g\n", params._white1, params._white2);
-		cam.SetColor(params._white1,params._white2); 
+	if (params._whiteR>0) {
+		printf("white balance %g %g\n", params._whiteR, params._whiteB);
+		cam.SetColor(params._whiteR,params._whiteB); 
 	} else {
 		cam.SetColor((float)50.0/63, (float)20.0/63); 
         }
-	cam.SetShutter(320);	// x * 0.0625 = 20 mSec = 50 Hz
-	cam.SetGain(500);		// x * -0.0224 = -11.2dB
+	cam.SetShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
+	cam.SetGain(params._gain);		// x * -0.0224 = -11.2dB
+    //    cam.SetBrigthness(params._brightness);
+    //    cam.SetExposure(params._exposure);
 
     cam.Capture(img);
 
