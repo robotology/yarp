@@ -346,38 +346,38 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         return false;
     }
 
-    hasVideo = (videoStream!=-1);
-    hasAudio = (audioStream!=-1);
+    _hasVideo = (videoStream!=-1);
+    _hasAudio = (audioStream!=-1);
 
     bool ok = true;
-    if (hasVideo) {
+    if (_hasVideo) {
         ok = ok && videoDecoder.getCodec(pFormatCtx);
     }
-    if (hasAudio) {
+    if (_hasAudio) {
         ok = ok && audioDecoder.getCodec(pFormatCtx);
     }
     if (!ok) return false;
     
-    if (hasVideo) {
+    if (_hasVideo) {
         ok = ok && videoDecoder.allocateImage();
     }
-    if (hasAudio) {
+    if (_hasAudio) {
         ok = ok && audioDecoder.allocateSound();
     }
     if (!ok) return false;
 
-    if (hasVideo) {
+    if (_hasVideo) {
         m_w = videoDecoder.getWidth();
         m_h = videoDecoder.getHeight();
     }
-    if (hasAudio) {
+    if (_hasAudio) {
         m_channels = audioDecoder.getChannels();
         m_rate = audioDecoder.getRate();
     }
     printf("  video size %dx%d, audio %dHz with %d channels\n", m_w, m_h,
            m_rate, m_channels);
 
-    if (!(hasVideo||hasAudio)) {
+    if (!(_hasVideo||_hasAudio)) {
         return false;
     }
     active = true;
@@ -403,7 +403,7 @@ bool FfmpegGrabber::close() {
 }
   
 bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
-    if (!hasVideo) {
+    if (!_hasVideo) {
         return false;
     }
     Sound sound;
@@ -412,7 +412,7 @@ bool FfmpegGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 
 
 bool FfmpegGrabber::getSound(yarp::sig::Sound& sound) {
-    if (!hasAudio) {
+    if (!_hasAudio) {
         return false;
     }
     ImageOf<PixelRgb> image;
@@ -468,9 +468,9 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
             
             av_free_packet(&packet);
             DBG printf(" %d\n", done);
-            if ((videoDecoder.haveFrame()||!hasVideo)&&
-                (gotAudio||!hasAudio)) {
-                if (hasVideo) {
+            if ((videoDecoder.haveFrame()||!_hasVideo)&&
+                (gotAudio||!_hasAudio)) {
+                if (_hasVideo) {
                     videoDecoder.getVideo(image);
                 } else {
                     image.resize(0,0);
@@ -485,7 +485,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                 }
                 DBG printf("IMAGE size %dx%d  ", image.width(), image.height());
                 DBG printf("SOUND size %d\n", sound.getSamples());
-                if (!hasAudio) {
+                if (!_hasAudio) {
                     sound.resize(0,0);
                 }
                 return true;

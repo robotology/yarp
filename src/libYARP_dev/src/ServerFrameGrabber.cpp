@@ -44,19 +44,27 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
     if (poly.isValid()) {
-        poly.view(fgImage);
-        poly.view(fgSound);
-        poly.view(fgAv);
+        IAudioVisualStream *str;
+        poly.view(str);
+        bool a = true;
+        bool v = true;
+        if (str!=NULL) {
+            a = str->hasAudio();
+            v = str->hasVideo();
+        } 
+        if (v) {
+            poly.view(fgImage);
+        }
+        if (a) {
+            poly.view(fgSound);
+        }
+        if (a&&v) {
+            poly.view(fgAv);
+        }
         poly.view(fgCtrl);
     }
 
-    /*
-    if (fgImage!=NULL) {
-        writer.attach(p);
-    } else {
-        writerSound.attach(p);
-    }
-    */
+    canDrop = !config.check("no_drop");
 
     if (config.check("name",name)) {
         p.open(name->asString());
@@ -88,17 +96,17 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         if (separatePorts) {
             printf("Grabber for images and sound (in separate ports)\n");
             YARP_ASSERT(p2!=NULL);
-            thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this));
+            thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop));
         } else {
             printf("Grabber for images and sound (in shared port)\n");
-            thread.attach(new DataWriter<ImageRgbSound>(p,*this));
+            thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop));
         }
     } else if (fgImage!=NULL) {
         printf("Grabber for images\n");
-        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this));
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop));
     } else if (fgSound!=NULL) {
         printf("Grabber for sound\n");
-        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this));
+        thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
         printf("subdevice <%s> doesn't look like a framegrabber\n",
                name->toString().c_str());
@@ -108,34 +116,6 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     thread.open(config.check("framerate",Value("0")).asDouble());
     return true;
 }
-
-
-/*
-void ServerFrameGrabber::run() 
-{
-    if (fgImage!=NULL) {
-        // for now, sound and image are mutually exclusive
-        yarp::sig::ImageOf<yarp::sig::PixelRgb>& img = writer.get();
-        getImage(img);
-        if (!spoke) {
-            printf("Network framegrabber writing a %dx%d image...\n",
-                   img.width(),img.height());
-            spoke = true;
-        }
-        writer.write();
-    } else {
-        // for now, sound and image are mutually exclusive
-        yarp::sig::Sound& snd = writerSound.get();
-        getSound(snd);
-        if (!spoke) {
-            printf("Network framegrabber writing a %dx%d sound...\n",
-                   snd.getSamples(),snd.getChannels());
-            spoke = true;
-        }
-        writerSound.write();
-    }
-}
-*/
 
 
 

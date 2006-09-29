@@ -30,6 +30,7 @@ namespace yarp {
 class yarp::dev::FfmpegGrabber : public IFrameGrabberImage, 
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
+            public IAudioVisualStream,
             public DeviceDriver
 {
 public:
@@ -41,7 +42,7 @@ public:
         packet.data = NULL;
         active = false;
         startTime = 0;
-        hasAudio = hasVideo = false;
+        _hasAudio = _hasVideo = false;
         system_resource = NULL;
     }
   
@@ -61,6 +62,14 @@ public:
                                 yarp::sig::Sound& sound);
   
 
+    virtual bool hasAudio() {
+        return _hasAudio;
+    }
+
+    virtual bool hasVideo() {
+        return _hasVideo;
+    }
+
 protected:
     void *system_resource;
 
@@ -68,7 +77,7 @@ protected:
     AVPacket packet;
     bool active;
     double startTime;
-    bool hasAudio, hasVideo;
+    bool _hasAudio, _hasVideo;
   
     /** Width of the images a grabber produces. */
     int m_w;

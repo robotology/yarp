@@ -88,6 +88,7 @@ public:
             }
         }
         mutex.post();
+        Time::yield();
     }
 
     void mute(bool muteFlag=true) {

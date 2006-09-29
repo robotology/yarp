@@ -99,6 +99,7 @@ private:
     IAudioVisualGrabber *fgAv;
     IFrameGrabberControls *fgCtrl;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
+    bool canDrop;
 public:
     /**
      * Constructor.
@@ -109,6 +110,7 @@ public:
         fgAv = NULL;
         fgCtrl = NULL;
 		spoke = false;
+        canDrop = true;
         p2 = NULL;
     }
     

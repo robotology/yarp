@@ -10,6 +10,7 @@
 namespace yarp{
     namespace dev {
         class IAudioVisualGrabber;
+        class IAudioVisualStream;
         typedef yarp::os::PortablePair<yarp::sig::ImageOf<yarp::sig::PixelRgb>,
                                        yarp::sig::Sound> ImageRgbSound;
     }
@@ -39,6 +40,25 @@ public:
                                 yarp::sig::Sound& sound) = 0;    
 };
 
+
+/**
+ * @ingroup dev_iface_media
+ *
+ * For streams capable of holding different kinds of content,
+ * check what they actually have.
+ *
+ */
+class yarp::dev::IAudioVisualStream {
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAudioVisualStream(){}
+
+    virtual bool hasAudio() = 0;
+
+    virtual bool hasVideo() = 0;
+};
 
 #endif
 
