@@ -10,8 +10,9 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/dev/GenericSensorInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
-
 #include <yarp/os/Time.h>
+
+#include "../../../ControlBoardInterfacesImpl.inl"
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -196,6 +197,8 @@ public:
                 ivel->velocityMove(k, vel[k]);
             }
          mutex.post();
+
+         return true;
     }
 
     bool relativeMove(int j, double d)
@@ -235,6 +238,40 @@ public:
         }
 
         return true;
+    }
+
+    bool enablePid(int j)
+    {
+        if (j<5)
+            return ipid->enablePid(j);
+        else 
+            return false;
+
+    }
+
+    bool disableAmp(int j)
+    {
+        if (j<5)
+            return iamps->disableAmp(j);
+        else
+            return false;
+    }
+
+    bool enableAmp(int j)
+    {
+        if (j<5)
+            return iamps->enableAmp(j);
+        else
+            return false;
+
+    }
+
+    bool disablePid(int j)
+    {
+        if (j<5)
+            return ipid->disablePid(j);
+        else
+            return false;
     }
 
     bool stop(int j)
@@ -583,9 +620,29 @@ public:
 };
 
 JamesHead::JamesHead():
-controller(0)
+ImplementPositionControl<JamesHead, IPositionControl>(this),
+ImplementVelocityControl<JamesHead, IVelocityControl>(this),
+ImplementEncoders<JamesHead, IEncoders>(this),
+ImplementPidControl<JamesHead, IPidControl>(this),
+ImplementAmplifierControl<JamesHead, IAmplifierControl>(this),
+ImplementControlLimits<JamesHead, IControlLimits>(this),
+controller(0),
+axisMap(0),
+angleToEncoder(0),
+zeros(0)
 {
     nj=HEAD_JOINTS;
+
+    axisMap=new int[nj];
+    angleToEncoder=new double [nj];
+    zeros=new double [nj];
+
+    for(int k=0;k<nj;k++)
+    {
+        axisMap[k]=k;
+        angleToEncoder[k]=1.0;
+        zeros[k]=0.0;
+    }
 }
 
 JamesHead::~JamesHead()
@@ -618,8 +675,25 @@ bool JamesHead::open(yarp::os::Searchable& config)
     {  
 		ACE_OS::printf("JamesHead: head device either not found or could not open\n");
 		return false;
-    } 
-	
+    }
+    
+    // initialize interfaces
+
+    ImplementPositionControl<JamesHead, IPositionControl>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+    ImplementVelocityControl<JamesHead, IVelocityControl>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+    ImplementEncoders<JamesHead, IEncoders>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+    ImplementPidControl<JamesHead, IPidControl>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+
+	ImplementAmplifierControl<JamesHead, IAmplifierControl>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+
+   	ImplementControlLimits<JamesHead, IControlLimits>::
+        initialize(nj, axisMap, angleToEncoder, zeros);
+
     //////////// inertial
     inertialParams.fromString(config.toString());
     Value &idevice=inertialParams.findGroup("INERTIAL").find("device");
@@ -886,7 +960,63 @@ bool JamesHead::stopRaw()
     return true;
 }
 
+bool JamesHead::velocityMoveRaw(int j, double v)
+{
+    HeadControl *c=my_cast(controller);
 
+    if (c!=0)
+        c->velocityMove(j, v);
+
+    return true;
+}
+
+bool JamesHead::velocityMoveRaw(const double *v)
+{
+    HeadControl *c=my_cast(controller);
+
+    if (c!=0)
+        c->velocityMove(v);
+
+    return true;
+}
+
+bool JamesHead::disablePidRaw(int j)
+{
+   HeadControl *c=my_cast(controller);
+
+   if (c!=0)
+       return c->disablePid(j);
+   else
+       return false;
+}
+
+bool JamesHead::enablePidRaw(int j)
+{
+   HeadControl *c=my_cast(controller);
+
+   if (c!=0)
+       return c->enablePid(j);
+   else
+       return false;
+}
+
+bool JamesHead::enableAmpRaw(int j)
+{
+    HeadControl *c=my_cast(controller);
+    if (c!=0)
+        return c->enableAmp(j);
+    else
+        return false;
+}
+
+bool JamesHead::disableAmpRaw(int j)
+{
+    HeadControl *c=my_cast(controller);
+    if (c!=0)
+        return c->disableAmp(j);
+    else
+        return false;
+}
 
 #include <math.h>
 
