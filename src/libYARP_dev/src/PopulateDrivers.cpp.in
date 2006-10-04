@@ -45,6 +45,7 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_james
 #include <yarp/JamesArmCalibrator.h>
+#include <yarp/JamesHead.h>
 // more components might show up here
 #endif
 
@@ -105,6 +106,9 @@ void Drivers::init() {
     add(new DriverCreatorOf<JamesArmCalibrator>("jamesarmcalibrator", 
                                              "",
                                              "JamesArmCalibrator"));
+    add(new DriverCreatorOf<JamesHead>("jameshead", 
+                                             "",
+                                             "JamesHead"));
 #endif
 
 #ifdef ENABLE_XSensMTx
