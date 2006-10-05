@@ -668,6 +668,8 @@ bool JamesHead::open(yarp::os::Searchable& config)
     Value &hsubdevice=headParams.findGroup("HEAD").find("subdevice");
 
 	headParams.put("device", hdevice);
+    headParams.put("subdevice", hsubdevice);
+
 
 	// create a device for the head 
 	ddHead.open(headParams);
