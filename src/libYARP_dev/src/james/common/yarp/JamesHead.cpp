@@ -27,6 +27,7 @@ const int HEAD_JOINTS=7;
 
 void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, double Pitch);
 void computeModifiedPitchRoll(double Yaw, double Roll, double Pitch, double &Roll_hat, double &Pitch_hat);
+void computeOriginalPitchRoll(double Yaw, double &Roll, double &Pitch, double Roll_hat, double Pitch_hat);
 
 class HeadControl;
 inline HeadControl* my_cast(void *p)
@@ -417,8 +418,8 @@ public:
 		enableControl();
 		
 		ACE_OS::printf("NeckControl::Starting calibration sequence");
-		rollPitchCalibrate();
 		yawCalibrate();
+		rollPitchCalibrate();
 
 		mutex.post();
     }
@@ -451,9 +452,6 @@ public:
 		}
 		
 		ACE_OS::printf("\nYaw calibration terminated");
-
-	//	ipid->disablePid(4);
-	//	iamps->disableAmp(4);
  
 	}
 
@@ -588,13 +586,18 @@ public:
 		//while the sensor is affected.
 		double pitch_hat;
 		double roll_hat;
+
+		double pitch_d_hat;
+		double roll_d_hat;
+
 		computeModifiedPitchRoll(yaw-90, roll, pitch, roll_hat, pitch_hat);
+		computeOriginalPitchRoll(yaw-90, roll_d_hat, pitch_d_hat, roll_d, pitch_d);
 
 		computeTendonsLength(d1, d2, d3, roll_hat, pitch_hat);
 
-	    vCmds[0]=-600*(roll-roll_d);
-		vCmds[1]=500*(pitch-pitch_d)+400*(roll-roll_d);
-		vCmds[2]=-500*(pitch-pitch_d)+400*(roll-roll_d);
+	    vCmds[0]=-600*(roll_hat-roll_d_hat);
+		vCmds[1]=500*(pitch_hat-pitch_d_hat)+400*(roll_hat-roll_d_hat);
+		vCmds[2]=-500*(pitch_hat-pitch_d_hat)+400*(roll_hat-roll_d_hat);
 
         //vCmds[0]=-400*(roll-roll_d);
         //vCmds[1]=500*(pitch-pitch_d)+600*(roll-roll_d);
@@ -624,7 +627,7 @@ public:
         {
             fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
             //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
-            fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
+            fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
 			//fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
             fprintf(stderr, "dT=%.3lf\n", (dT)/100);
             dT=0;
@@ -1155,5 +1158,34 @@ void computeModifiedPitchRoll(double Yaw, double Roll, double Pitch, double &Rol
 
 	Pitch_hat = Pitch_hat *180/PI;
 	Roll_hat = Roll_hat *180/PI;
+
+}
+
+void computeOriginalPitchRoll(double Yaw, double &Roll, double &Pitch, double Roll_hat, double Pitch_hat)
+{
+
+    Roll_hat = Roll_hat * PI / 180;
+    Pitch_hat = Pitch_hat * PI / 180;
+	Yaw = Yaw * PI / 180;
+
+	double x, x_hat;
+	double y, y_hat;
+	double z, z_hat;
+
+
+
+	x_hat = -sin(Pitch_hat) * cos(Roll_hat);
+	y_hat = -sin(Roll_hat);
+	z_hat = cos(Pitch_hat) * cos(Roll_hat);
+
+	x = x_hat*cos(Yaw) + y_hat*sin(Yaw);
+	y = -x_hat*sin(Yaw) + y_hat*cos(Yaw); 
+	z = z_hat;
+
+	Pitch = atan2(-x, z);
+	Roll = atan2(-y, z/cos(Pitch));
+
+	Pitch = Pitch *180/PI;
+	Roll = Roll *180/PI;
 
 }
