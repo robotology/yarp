@@ -19,7 +19,7 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 const double    P_GAIN=0.008;
-const int       NC_RATE=10;
+const int       NC_RATE=20;
 const double    IN_POSITION_THRESHOLD = 0.1;
 const double    REL_WEIGHT = 0.9;					//WARNING: has to be set between 0 and 1!!
 
@@ -90,62 +90,81 @@ public:
 
     bool getRefAcceleration(int j, double *acc)
     {
+		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->getRefAcceleration(j, acc);
 
+		mutex.post();
         return true;
     }
 
     bool getRefAccelerations(double *accs)
     {
+		mutex.wait();
+
         for(int k=0;k<5;k++)
             ipos->getRefAcceleration(k, accs+k);
 
+		mutex.post();
         return true; 
     }
 
     bool getRefSpeed(int j, double *sp)
     {
+		mutex.wait();
         for(int k=0;k<5;k++)
            ipos->getRefSpeed(j, sp);
 
+		mutex.post();
         return true;
     }
 
     bool getRefSpeeds(double *sps)
     {
+		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->getRefSpeed(k, sps+k);
+
+		mutex.post();
         return true; 
     }
 
     bool setRefSpeeds(const double *sp)
     {
+		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->setRefSpeed(k, sp[k]);
+
+		mutex.post();
         return true;
     }
 
     bool setRefSpeed(int j, double sp)
     {
+		mutex.wait();
         if (j<5)
             ipos->setRefSpeed(j, sp);
+		mutex.post();
         return true;
     }
 
     bool setRefAcceleration(int j, double acc)
     {
+		mutex.wait();
         if (j<5)
             ipos->setRefAcceleration(j, acc);
     
+		mutex.post();
         return true;
     }
 
     bool setRefAccelerations(const double *acc)
     {
+		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->setRefAcceleration(k, acc[k]);
 
+		mutex.post();
         return true;
     }
 
@@ -153,11 +172,12 @@ public:
     {
         mutex.wait();
             positionCmds[j]=pos;
-        mutex.post();
 
         if (j<5)
             ipos->positionMove(j, pos);
-     
+
+		mutex.post();
+
         return true;
     }
 
@@ -179,11 +199,12 @@ public:
     {
          mutex.wait();
             velocityCmds[j]=vel;
-         mutex.post();
-
+ 
          if (j<5)
              ivel->velocityMove(j, vel);
-        
+
+		 mutex.post();
+
          return true;
     }
 
@@ -203,32 +224,40 @@ public:
 
     bool relativeMove(int j, double d)
     {
+		mutex.wait();
+
         if (j<5)
             ipos->relativeMove(j,d);
         
+		mutex.post();
         return true;
     }
 
     bool relativeMove(const double *dq)
     { 
+		mutex.wait();
         for(int k=0;k<HEAD_JOINTS;k++)
         {
             if (k<5)
                 ipos->relativeMove(k,dq[k]);
         }
         
+		mutex.post();
         return true;
     }
 
     bool checkMotionDone(int j, bool *fl)
     {
+		mutex.wait();
         if (j<5)
             ipos->checkMotionDone(j, fl);
+		mutex.post();
         return true;
     }
 
     bool checkMotionDone(bool *fl)
     {
+		mutex.wait();
         for(int k=0;k<HEAD_JOINTS;k++)
         {
             if (k<5)
@@ -236,48 +265,60 @@ public:
             else
                 fl[k]=true;
         }
+		mutex.post();
 
         return true;
     }
 
     bool enablePid(int j)
     {
+		bool ret=false;
+		mutex.wait();
         if (j<5)
-            return ipid->enablePid(j);
-        else 
-            return false;
-
+            ret=ipid->enablePid(j);
+        
+		mutex.post();
+		return ret;
     }
 
     bool disableAmp(int j)
     {
+		bool ret=false;
+		mutex.wait();
         if (j<5)
-            return iamps->disableAmp(j);
-        else
-            return false;
+            ret=iamps->disableAmp(j);
+        
+		mutex.post();
+		return ret;
+
     }
 
     bool enableAmp(int j)
     {
+		bool ret=false;
+		mutex.wait();
         if (j<5)
-            return iamps->enableAmp(j);
-        else
-            return false;
+            ret=iamps->enableAmp(j);
+        
+		mutex.post();
 
+		return ret;
     }
 
     bool disablePid(int j)
     {
+		bool ret=false;
+		mutex.wait();
         if (j<5)
-            return ipid->disablePid(j);
-        else
-            return false;
+            ret=ipid->disablePid(j);
+        mutex.post();
+		return ret;
     }
 
-    bool stop(int j)
+    bool halt(int j)
     { return true;}
 
-    bool stop()
+    bool halt()
     {return true;}
 
     bool getEncoders(double *v)
@@ -333,7 +374,9 @@ public:
             return false;
         }
 
+		mutex.wait();
         iencs->getAxes(&nAxes);
+		mutex.post();
         encoders=new double [nAxes];
         return RateThread::start();
     }
@@ -366,15 +409,18 @@ public:
 
     void doInit()
     {
+		mutex.wait();
         ivel->setRefAcceleration(5, 1000);
         ivel->setRefAcceleration(6, 1000);
         ivel->setRefAcceleration(7, 1000);
 
 		enableControl();
-
+		
 		ACE_OS::printf("NeckControl::Starting calibration sequence");
 		rollPitchCalibrate();
 		yawCalibrate();
+
+		mutex.post();
     }
 
 	void yawCalibrate()
@@ -406,8 +452,8 @@ public:
 		
 		ACE_OS::printf("\nYaw calibration terminated");
 
-		ipid->disablePid(4);
-		iamps->disableAmp(4);
+	//	ipid->disablePid(4);
+	//	iamps->disableAmp(4);
  
 	}
 
@@ -517,29 +563,27 @@ public:
         double roll_d;
         double pitch_d;
 
+        mutex.wait();
+
         isensor->read(inertiaValue);
         iencs->getEncoders(encoders);
 
-        mutex.wait();
         roll=inertiaValue[0];
         pitch=inertiaValue[1];
         yaw=encoders[4];
 
-        positions[0]=roll;
-        positions[1]=pitch;
-        positions[2]=yaw;
-        positions[3]=encoders[0];
-        positions[4]=encoders[1];
-        positions[5]=encoders[2];
-        positions[6]=encoders[3];
+        positions[0]=encoders[0];
+        positions[1]=encoders[1];
+        positions[2]=encoders[2];
+        positions[3]=encoders[3];
+        positions[4]=encoders[4];
+        positions[5]=roll;
+        positions[6]=pitch;
 
-        roll_d=positionCmds[0];
-        pitch_d=positionCmds[1];
+		roll_d=positionCmds[5];
+        pitch_d=positionCmds[6];
 
-        mutex.post();
-
-
-		//accounts for the fact that the base of the neck
+ 		//accounts for the fact that the base of the neck
 		//is not affected by the yaw (pan of the head)
 		//while the sensor is affected.
 		double pitch_hat;
@@ -548,9 +592,9 @@ public:
 
 		computeTendonsLength(d1, d2, d3, roll_hat, pitch_hat);
 
-	    vCmds[0]=-600*(roll_hat-roll_d);
-		vCmds[1]=500*(pitch_hat-pitch_d)+400*(roll_hat-roll_d);
-		vCmds[2]=-500*(pitch_hat-pitch_d)+400*(roll_hat-roll_d);
+	    vCmds[0]=-600*(roll-roll_d);
+		vCmds[1]=500*(pitch-pitch_d)+400*(roll-roll_d);
+		vCmds[2]=-500*(pitch-pitch_d)+400*(roll-roll_d);
 
         //vCmds[0]=-400*(roll-roll_d);
         //vCmds[1]=500*(pitch-pitch_d)+600*(roll-roll_d);
@@ -564,14 +608,12 @@ public:
         vCmds[1]=-(1-REL_WEIGHT)*3*(encoders[6]-d2) + REL_WEIGHT*vCmds[1];
         vCmds[2]=-(1-REL_WEIGHT)*3*(encoders[7]-d1) + REL_WEIGHT*vCmds[2];
 
-        //ivel->setRefAcceleration(5, 1000);
-        //ivel->setRefAcceleration(6, 1000);
-        //ivel->setRefAcceleration(7, 1000);
-
         ivel->velocityMove(5, vCmds[0]);
         ivel->velocityMove(6, vCmds[1]);
         ivel->velocityMove(7, vCmds[2]);
         
+        mutex.post();
+
         double t2=Time::now();
         
         count++;
@@ -582,7 +624,7 @@ public:
         {
             fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
             //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
-            fprintf(stderr, "Inertial: %.2lf %.2lf", roll_hat, pitch_hat);
+            fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
 			//fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
             fprintf(stderr, "dT=%.3lf\n", (dT)/100);
             dT=0;
@@ -592,14 +634,20 @@ public:
 
     void doRelease()
     {
+		fprintf(stderr, "HeadControl::releasing...");
+		mutex.wait();
         ivel->velocityMove(5, 0);
         ivel->velocityMove(6, 0);
         ivel->velocityMove(7, 0);
 
 		disableControl();
 
+		mutex.post();
+
 		delete [] encoders;
         encoders=0;
+
+		fprintf(stderr, "done\n");
     }
     
     double roll;
@@ -670,7 +718,6 @@ bool JamesHead::open(yarp::os::Searchable& config)
 	headParams.put("device", hdevice);
     headParams.put("subdevice", hsubdevice);
 
-
 	// create a device for the head 
 	ddHead.open(headParams);
     if (!ddHead.isValid()) 
@@ -722,17 +769,22 @@ bool JamesHead::open(yarp::os::Searchable& config)
 
 bool JamesHead::close()
 {
+	fprintf(stderr, "JamesHead::calling close\n");
     HeadControl *c=my_cast(controller);
 
     if (c!=0)
-        c->stop();
+	{
+		fprintf(stderr, "JamesHead::calling close\n");
+		c->stop();
+	}
 
     return true;
 }
 
 bool JamesHead::getAxes(int *ax)
 {
-    *ax=nj;
+	fprintf(stderr, "JamesHead::getAxes: %d\n", nj);
+    *ax=nj; 
     return true;
 }
 
@@ -947,7 +999,7 @@ bool JamesHead::stopRaw(int j)
     HeadControl *c=my_cast(controller);
 
     if (c!=0)
-        c->stop(j);
+        c->halt(j);
 
     return true;
 }

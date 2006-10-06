@@ -15,10 +15,13 @@
 
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
+
+const double POLL_TIME=0.015;
 
 class IntersenseResources: public Thread
 {
@@ -85,6 +88,8 @@ void IntersenseResources::run(void)
                 _bError=true;
 
             _mutex.post();
+
+			Time::delay(POLL_TIME);
         }
 }
 
