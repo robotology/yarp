@@ -9,7 +9,7 @@
 ///
 
 ///
-/// $Id: ImageFile.cpp,v 1.13 2006-09-06 21:30:55 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.14 2006-10-06 10:56:52 eshuy Exp $
 ///
 ///
 
@@ -295,7 +295,7 @@ static bool ImageWriteBGR(ImageOf<PixelBgr>& img, const char *filename)
 {
 	ImageOf<PixelRgb> img2;
 	img2.copy(img);
-	return SavePPM((char*)img2.getRawImage(),filename,img2.height(), img2.width(), img.getRowSize());	  
+	return SavePPM((char*)img2.getRawImage(),filename,img2.height(), img2.width(), img2.getRowSize());	  
 }
 
 static bool ImageWriteMono(ImageOf<PixelMono>& img, const char *filename)

@@ -185,12 +185,18 @@ public:
     int getRawImageSize() const;
 
     /**
-     * Returns IPL view of image, if possible.
+     * Returns IPL/OpenCV view of image, if possible.
      * Not possible if the image is the wrong size, with no padding.
      * This method is currently not well documented.
      * @return pointer to an IplImage structure
      */
     void *getIplImage();
+
+    /**
+     * Act as a wrapper around an IPL/OpenCV image.
+     * @param iplImage pointer to an IplImage structure
+     */
+    void wrapIplImage(void *iplImage);
 
     //void wrapRawImage(void *buf, int imgWidth, int imgHeight);
 

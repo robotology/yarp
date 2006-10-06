@@ -15,12 +15,14 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/ConstString.h>
 
 #include <assert.h>
 
 
 using namespace yarp;
 using namespace yarp::sig;
+using namespace yarp::os;
 
 #define DBGPF1 if (0)
 
@@ -660,6 +662,51 @@ void *Image::getIplImage() {
 
     return ((ImageStorage*)implementation)->pImage;
 }
+
+
+void Image::wrapIplImage(void *iplImage) {
+    YARP_ASSERT(iplImage!=NULL);
+    IplImage *p = (IplImage *)iplImage;
+    YARP_ASSERT(p->depth==IPL_DEPTH_8U);
+    ConstString str = p->colorModel;
+    int code = -1;
+    if (str=="rgb"||str=="RGB") {
+        str = p->channelSeq;
+        if (str=="rgb"||str=="RGB") {
+            code = VOCAB_PIXEL_RGB;
+        } else if (str=="bgr"||str=="BGR") {
+            code = VOCAB_PIXEL_BGR;
+        } else {
+            printf("specific IPL RGB order (%s) is not yet supported\n", 
+                   str.c_str());
+            printf("Try RGB or BGR\n");
+            printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
+            ACE_OS::exit(1);
+        }
+    } else {
+        printf("specific IPL format (%s) is not yet supported\n", 
+               str.c_str());
+        printf("Try RGB or BGR\n");
+        printf("Or fix code at %s line %d\n",__FILE__,__LINE__);
+        ACE_OS::exit(1);
+    }
+    if (getPixelCode()!=code && getPixelCode()!=-1) {
+        printf("your specific IPL format (%s) does not match your YARP format\n",
+               str.c_str());
+        printf("Making a copy instead of just wrapping...\n");
+        FlexImage img;
+        img.setQuantum(p->align);
+        img.setPixelCode(code);
+        img.setExternal(p->imageData,p->width,p->height);
+        copy(img);
+    } else {
+        setQuantum(p->align);
+        setPixelCode(code);
+        setExternal(p->imageData,p->width,p->height);
+    }
+}
+
+
 
 /*
   void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {

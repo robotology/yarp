@@ -143,7 +143,9 @@ namespace yarp {
                 }  
             }
 
+#ifndef IMGFOR
 #define IMGFOR(img,i,j) for (int i=0; i<(img).width(); i++) for (int j=0; j<(img).height(); j++)
+#endif
 
         }
     }
