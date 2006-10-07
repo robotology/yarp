@@ -69,6 +69,12 @@ public:
     }
 
     void onRead(Sound& sound) {
+        //int v = sound.get(0);
+        //static int lastv = v-1;
+        //if (v!=lastv+1) {
+        //printf("v is %d\n", v);
+        //}
+        //lastv = v;
         mutex.wait();
         if (put!=NULL) {
             /**

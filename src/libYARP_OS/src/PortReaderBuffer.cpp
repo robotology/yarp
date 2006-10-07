@@ -7,40 +7,118 @@
 #include <yarp/SemaphoreImpl.h>
 
 #include <ace/Vector_T.h>
-
+#include <ace/Containers_T.h>
 
 using namespace yarp;
 using namespace yarp::os;
 
-/*
-  class PortReaderBufferThread : public Thread {
-  public:
-  PortReader& reader;
-  PortReaderBuffer& buffer;
 
-  PortReaderBufferThread(PortReader& reader, PortReaderBuffer& buffer) : 
-  reader(reader), buffer(buffer) {
-  }
 
-  virtual void run() {
-  while (!isStopping()) {
-  if (buffer.read()) {
-  }
-  }
-  }
-  };
-*/
+class PortReaderPacket {
+public:
+    PortReaderPacket *prev_, *next_;
+    PortReader *reader;
+
+    PortReaderPacket() {
+        prev_ = next_ = NULL;
+        reader = NULL;
+        reset();
+    }
+
+    virtual ~PortReaderPacket() {
+        reset();
+    }
+
+    void reset() {
+        if (reader!=NULL) {
+            delete reader;
+            reader = NULL;
+        }
+    }
+
+    PortReader *getReader() {
+        return reader;
+    }
+
+    void setReader(PortReader *reader) {
+        reset();
+        this->reader = reader;
+    }
+};
+
+
+class PortReaderPool {
+private:
+    ACE_Double_Linked_List<PortReaderPacket> inactive, active;
+
+public:
+
+    int getCount() {
+        return active.size();
+    }
+
+    int getFree() {
+        return inactive.size();
+    }
+
+    PortReaderPacket *getInactivePacket() {
+        if (inactive.is_empty()) {
+            size_t obj_size = sizeof (PortReaderPacket);
+            PortReaderPacket *obj = NULL;
+            ACE_NEW_MALLOC_RETURN (obj,
+                                   (PortReaderPacket *)
+                                   ACE_Allocator::instance()->malloc(obj_size),
+                                   PortReaderPacket(), 0);
+            inactive.insert_tail(obj);
+        }
+        PortReaderPacket *next = NULL;
+        inactive.get(next);
+        YARP_ASSERT(next!=NULL);
+        inactive.remove(next);
+        //active.insert_tail(next);
+        return next;
+    }
+
+    PortReaderPacket *getActivePacket() {
+        PortReaderPacket *next = NULL;
+        if (getCount()>=1) {
+            active.get(next);
+            YARP_ASSERT(next!=NULL);
+            active.remove(next);
+        }
+        return next;
+    }
+
+    void addActivePacket(PortReaderPacket *packet) {
+        if (packet!=NULL) {
+            active.insert_tail(packet);
+        }
+    }
+
+    void addInactivePacket(PortReaderPacket *packet) {
+        if (packet!=NULL) {
+            inactive.insert_tail(packet);
+        }
+    }
+
+    void reset() {
+        active.reset();
+        inactive.reset();
+    }
+};
+
+
 
 class PortReaderBufferBaseHelper {
 private:
+
     PortReaderBufferBase& owner;
-    ACE_Vector<PortReader*> readers;
-    ACE_Vector<bool> avail;
-    ACE_Vector<bool> content;
-    bool autoRelease;
-    PortReader *prev;
+    PortReaderPacket *prev;
 
 public:
+
+    PortReaderPool pool;
+
     int ct;
 	Port *port;
     SemaphoreImpl contentSema;
@@ -49,7 +127,6 @@ public:
 
     PortReaderBufferBaseHelper(PortReaderBufferBase& owner) : 
         owner(owner), contentSema(0), consumeSema(0), stateSema(1) {
-        autoRelease = true;
         prev = NULL;
 		port = NULL;
         ct = 0;
@@ -70,86 +147,55 @@ public:
         //stateSema.post();  // never give back mutex
     }
 
-    void setAutoRelease(bool flag) {
-        autoRelease = flag;
-    }
-
     void clear() {
-        for (unsigned int i=0; i<readers.size(); i++) {
-            delete readers[i];
+        if (prev!=NULL) {
+            pool.addInactivePacket(prev);
+            prev = NULL;
         }
-        readers.clear();  
-        avail.clear();
-        content.clear();
+        pool.reset();
         ct = 0;
     }
 
-    PortReader *get() {
-        PortReader *result = getAvail();
-        if (result == NULL) {
+
+    PortReaderPacket *get() {
+        PortReaderPacket *result = NULL;
+        bool grab = true;
+        if (pool.getFree()==0) {
+            grab = false;
             unsigned int maxBuf = owner.getMaxBuffer();
-            if (maxBuf==0 || content.size()<maxBuf) {
-                result = add();
+            if (maxBuf==0 || (pool.getFree()+pool.getCount())<maxBuf) {
+                grab = true;
             } else {
                 // ok, can't get free, clean space.
                 // here would be a good place to do buffer reuse.
             }
         }
+        if (grab) {
+            result = pool.getInactivePacket();
+            if (result->getReader()==NULL) {
+                PortReader *next = owner.create();
+                YARP_ASSERT(next!=NULL);
+                result->setReader(next);
+            }
+        }
+
         return result;
     }
 
-    PortReader *getAvail() {
-        for (unsigned int i=0; i<readers.size(); i++) {
-            if (avail[i]) {
-                avail[i] = false;
-                return readers[i];
-            }
-        }
-        return NULL;
+    bool checkContent() {
+        return pool.getCount()>0;
     }
 
-    PortReader *getContent(bool flag) {
-        if (autoRelease) {
-            if (prev!=NULL) {
-                configure(prev,true,false);
-                prev = NULL;
-            }
+    PortReaderPacket *getContent() {
+        if (prev!=NULL) {
+            pool.addInactivePacket(prev);
+            prev = NULL;
         }
-        for (unsigned int i=0; i<readers.size(); i++) {
-            if (content[i]) {
-                content[i] = flag;
-                if (flag==false) {
-                    prev = readers[i];
-                    ct--;
-                }
-                return readers[i];
-            }
+        if (pool.getCount()>=1) {
+            prev = pool.getActivePacket();
+            ct--;
         }
-        return NULL;
-    }
-
-    PortReader *add() {
-        PortReader *next = owner.create();
-        YARP_ASSERT(next!=NULL);
-        avail.push_back(false);
-        content.push_back(false);
-        readers.push_back(next);
-        return next;
-    }
-
-    void configure(PortReader *reader, bool isAvail, bool isContent) {
-        for (unsigned int i=0; i<readers.size(); i++) {
-            if (readers[i] == reader) {
-                avail[i] = isAvail;
-                content[i] = isContent;
-                break;
-            }
-        }
-        if (isAvail&&!isContent) {
-            if (reader == prev) {
-                prev = NULL;
-            }
-        }
+        return prev;
     }
 
 	void attach(Port& port) {
@@ -175,22 +221,26 @@ PortReaderBufferBase::~PortReaderBufferBase() {
 }
 
 void PortReaderBufferBase::release(PortReader *completed) {
-    HELPER(implementation).stateSema.wait();
-    HELPER(implementation).configure(completed,true,false);
-    HELPER(implementation).stateSema.post();
+    //HELPER(implementation).stateSema.wait();
+    //HELPER(implementation).configure(completed,true,false);
+    //HELPER(implementation).stateSema.post();
+    printf("release not implemented anymore; not needed\n");
+    exit(1);
 }
 
 bool PortReaderBufferBase::check() {
     HELPER(implementation).stateSema.wait();
-    PortReader *reader = HELPER(implementation).getContent(true);
+    bool ok = HELPER(implementation).checkContent();
     HELPER(implementation).stateSema.post();
-    return (reader!=NULL);
+    return ok;
 }
 
 PortReader *PortReaderBufferBase::readBase() {
     HELPER(implementation).contentSema.wait();
     HELPER(implementation).stateSema.wait();
-    PortReader *reader = HELPER(implementation).getContent(false);
+    PortReaderPacket *readerPacket = HELPER(implementation).getContent();
+    PortReader *reader = NULL;
+    if (readerPacket!=NULL) reader = readerPacket->getReader();
     HELPER(implementation).stateSema.post();
     if (reader!=NULL) {
         HELPER(implementation).consumeSema.post();
@@ -200,7 +250,7 @@ PortReader *PortReaderBufferBase::readBase() {
 
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
-    PortReader *reader = NULL;
+    PortReaderPacket *reader = NULL;
     while (reader==NULL) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
@@ -211,7 +261,8 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     }
     bool ok = false;
     if (connection.isValid()) {
-        ok = reader->read(connection);
+        YARP_ASSERT(reader->getReader()!=NULL);
+        ok = reader->getReader()->read(connection);
 	} else {
 		// this is a disconnection
 		// don't talk to this port ever again
@@ -221,10 +272,14 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         HELPER(implementation).stateSema.wait();
         bool pruned = false;
         if (HELPER(implementation).ct>0&&prune) {
-            PortReader *reader = HELPER(implementation).getContent(false);
+            PortReaderPacket *readerPacket = 
+                HELPER(implementation).getContent();
+            PortReader *reader = NULL;
+            if (readerPacket!=NULL) reader = readerPacket->getReader();
             pruned = (reader!=NULL);
         }
-        HELPER(implementation).configure(reader,false,true);
+        //HELPER(implementation).configure(reader,false,true);
+        HELPER(implementation).pool.addActivePacket(reader);
         HELPER(implementation).ct++;
         HELPER(implementation).stateSema.post();
         if (!pruned) {
@@ -233,7 +288,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
     } else {
         HELPER(implementation).stateSema.wait();
-        HELPER(implementation).configure(reader,true,false);
+        HELPER(implementation).pool.addInactivePacket(reader);
         HELPER(implementation).stateSema.post();
         //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
 
@@ -246,9 +301,11 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
 
 
 void PortReaderBufferBase::setAutoRelease(bool flag) {
-    HELPER(implementation).stateSema.wait();
-    HELPER(implementation).setAutoRelease(flag);
-    HELPER(implementation).stateSema.post();
+    //HELPER(implementation).stateSema.wait();
+    //HELPER(implementation).setAutoRelease(flag);
+    //HELPER(implementation).stateSema.post();
+    printf("setAutoRelease not implemented anymore; not needed\n");
+    exit(1);
 }
 
 void PortReaderBufferBase::attachBase(yarp::os::Port& port) {
