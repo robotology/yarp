@@ -121,6 +121,11 @@ public:
      */
     virtual void useCallback(TypedReaderCallback<T>& callback) = 0;
 
+    /**
+     * Check how many messages are waiting to be read.
+     * @return
+     */
+    virtual int getPendingReads() = 0;
 
     /**
      * Destructor.
@@ -165,7 +170,7 @@ public:
 
     void release(yarp::os::PortReader *completed);
 
-    bool check();
+    int check();
 
     virtual bool read(yarp::os::ConnectionReader& connection);
 
@@ -284,8 +289,13 @@ public:
      * immediately and successfully)
      */
     bool check() {
+        return implementation.check()>0;
+    }
+
+    virtual int getPendingReads() {
         return implementation.check();
     }
+
 
     // documented in TypedReader
     T *read(bool shouldWait=true) {

@@ -182,8 +182,8 @@ public:
         return result;
     }
 
-    bool checkContent() {
-        return pool.getCount()>0;
+    int checkContent() {
+        return pool.getCount();
     }
 
     PortReaderPacket *getContent() {
@@ -228,11 +228,11 @@ void PortReaderBufferBase::release(PortReader *completed) {
     exit(1);
 }
 
-bool PortReaderBufferBase::check() {
+int PortReaderBufferBase::check() {
     HELPER(implementation).stateSema.wait();
-    bool ok = HELPER(implementation).checkContent();
+    int count = HELPER(implementation).checkContent();
     HELPER(implementation).stateSema.post();
-    return ok;
+    return count;
 }
 
 PortReader *PortReaderBufferBase::readBase() {

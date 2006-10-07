@@ -83,6 +83,10 @@ public:
         port.close();
     }
 
+    virtual int getPendingReads() {
+        return reader.getPendingReads();
+    }
+
     // documentation provided in Contactable
     virtual Contact where() {
         return port.where();
