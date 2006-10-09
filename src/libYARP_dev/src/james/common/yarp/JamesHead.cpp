@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <stdio.h>
-#include <ace/os.h>
+//#include <ace/os.h>
 #include <math.h>
 #include <yarp/JamesHead.h>
 #include <yarp/os/RateThread.h>
@@ -513,7 +513,8 @@ public:
 		icalib->calibrate(6, 400);
 		icalib->calibrate(7, 400);
 
-		for (int k = 5; k <8; k++)
+        int k=0;
+		for (k = 5; k <8; k++)
 		{
 			while(!icalib->done(k))
 				ACE_OS::printf(".");
@@ -553,7 +554,7 @@ public:
     void doLoop()
     {
         double t1=Time::now();
-        static count=0;
+        static int count=0;
         double d1;              //length[cm] of the cable attached to joint 7
         double d2;              //length[cm] of the cable attached to joint 6
         double d3;              //length[cm] of the cable attached to joint 5
