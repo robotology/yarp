@@ -162,7 +162,7 @@ public:
         bool grab = true;
         if (pool.getFree()==0) {
             grab = false;
-            unsigned int maxBuf = owner.getMaxBuffer();
+            int maxBuf = owner.getMaxBuffer();
             if (maxBuf==0 || (pool.getFree()+pool.getCount())<maxBuf) {
                 grab = true;
             } else {

@@ -9,32 +9,54 @@
 namespace yarp {
     namespace os {
         class Stamp;
+        class Stamped;
     }
 }
 
-class yarp::os::Stamp {
+/**
+ * An abstraction for a time stamp and/or sequence number.
+ */
+class yarp::os::Stamp : public Portable {
 private:
     NetInt32 sequenceNumber;
     NetFloat64 timeStamp;
 public:
+    /**
+     * Constuct an invalid Stamp.
+     */
     Stamp() {
         sequenceNumber = -1;
         timeStamp = 0;
     }
 
-    Stamp(int sequenceNumber, double timeStamp) :
-        sequenceNumber(sequenceNumber),
-        timeStamp(timeStamp) {
+    /**
+     * Constuct a Stamp with a given sequence number and time.
+     * @param count the sequence number
+     * @param time the time stamp (in seconds, relative to an arbitrary
+     * zero time)
+     */
+    Stamp(int count, double time) :
+        sequenceNumber(count),
+        timeStamp(time) {
     }
 
+    /**
+     * @return the sequence number
+     */
     int getCount() {
         return sequenceNumber;
     }
 
+    /**
+     * @return the time stamp
+     */
     double getTime() {
         return timeStamp;
     }
 
+    /**
+     * @return true if this is a valid Stamp
+     */
     bool isValid() {
         return sequenceNumber>=0;
     }
@@ -43,5 +65,19 @@ public:
 
     virtual bool write(ConnectionWriter& connection);
 };
+
+
+/**
+ * A base class for objects with time stamps and/or sequence numbers.
+ */
+class yarp::os::Stamped {
+public:
+    /**
+     * @return the Stamp associated with this object (time stamp,
+     * sequence number).
+     */
+    virtual Stamp getStamp() const = 0;
+};
+
 
 #endif

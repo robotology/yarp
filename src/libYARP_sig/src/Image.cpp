@@ -16,6 +16,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Time.h>
 
 #include <assert.h>
 
@@ -974,4 +975,13 @@ bool Image::copy(const Image& alt, int w, int h) {
     return true;
 }
 
+
+void Image::setStamp() {
+    int ct = 0;
+    if (stamp.isValid()) {
+        ct = stamp.getCount()+1;
+    }
+    double now = Time::now();
+    stamp = Stamp(ct,now);
+}
 

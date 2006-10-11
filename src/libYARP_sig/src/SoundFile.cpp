@@ -102,11 +102,11 @@ static int _InitSound (WAVEHDR& waveHdr ,
     waveHdr.chkFmt.ckid     = cpu_to_le32(FOURCC_FMT);
     waveHdr.chkFmt.dwSize   = cpu_to_le32(sizeof (PCMWAVEFORMAT));
     waveHdr.wFormatTag      = cpu_to_le16(WAVE_FORMAT_PCM);
-    waveHdr.nChannels       = cpu_to_le16(channels);
+    waveHdr.nChannels       = (NetInt16) cpu_to_le16(channels);
     waveHdr.nSamplesPerSec  = cpu_to_le32(rate);
-    waveHdr.nBlockAlign     = cpu_to_le16(nBlockAlign);
+    waveHdr.nBlockAlign     = (NetInt16) cpu_to_le16(nBlockAlign);
     waveHdr.nAvgBytesPerSec = cpu_to_le32(nAvgBytesPerSec);
-    waveHdr.wBitsPerSample  = cpu_to_le16(nBitsPerSample);
+    waveHdr.wBitsPerSample  = (NetInt16) cpu_to_le16(nBitsPerSample);
     waveHdr.chkData.ckid    = cpu_to_le32(FOURCC_DATA);
     waveHdr.chkRiff.dwSize  = cpu_to_le32(temp);
     waveHdr.chkData.dwSize  = cpu_to_le32(expected_bytes);
@@ -206,6 +206,7 @@ bool yarp::sig::file::write(const Sound& src, const char *dest) {
                    1, fp);
     */
     ACE_OS::fclose(fp);
+    return true;
 }
 
 
