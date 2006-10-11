@@ -18,6 +18,9 @@ using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
+
+int padding = 0;
+
 class Echo : public TypedReaderCallback<Sound> {
 private:
     PolyDriver poly;
@@ -39,6 +42,7 @@ public:
         saving = false;
         samples = 0;
         channels = 0;
+        put = NULL;
     }
 
     bool open(Searchable& p) {
@@ -48,11 +52,13 @@ public:
             return false;
         }
 
-        // Make sure we can write sound
-        poly.view(put);
-        if (put==NULL) {
-            printf("cannot open interface\n");
-            return false;
+        if (!p.check("mute")) {
+            // Make sure we can write sound
+            poly.view(put);
+            if (put==NULL) {
+                printf("cannot open interface\n");
+                return false;
+            }
         }
 
         if (!port.open(p.check("name",Value("/yarphear")).asString())) {
@@ -71,29 +77,30 @@ public:
     void onRead(Sound& sound) {
         int ct = port.getPendingReads();
         //printf("pending reads %d\n", ct);
-        while (ct>0) {
-            port.read();
+        while (ct>padding) {
             ct = port.getPendingReads();
-            printf("Dropping sound packet, falling behind...\n");
+            printf("Dropping sound packet -- %d packet(s) behind\n", ct);
+            port.read();
         }
         mutex.wait();
-        if (put!=NULL) {
-            /**
-            if (muted) {
-                for (int i=0; i<sound.getChannels(); i++) {
-                    for (int j=0; j<sound.getSamples(); j++) {
-                        sound.put(0,j,i);
-                    }
-                }
-            }
-            */
-            if (!muted) {
+        /*
+          if (muted) {
+          for (int i=0; i<sound.getChannels(); i++) {
+          for (int j=0; j<sound.getSamples(); j++) {
+          sound.put(0,j,i);
+          }
+          }
+          }
+        */
+        if (!muted) {
+            if (put!=NULL) {
                 put->renderSound(sound);
             }
-            if (saving) {
-                saveFrame(sound);
-            }
         }
+        if (saving) {
+            saveFrame(sound);
+        }
+
         mutex.post();
         Time::yield();
     }
@@ -177,7 +184,7 @@ int main(int argc, char *argv[]) {
     // process the keyboard
     bool muted = false;
     bool saving = false;
-    bool help = true;
+    bool help = false;
     ConstString fname = "audio_%06d.wav";
     int ct = 0;
     bool done = false;
@@ -186,6 +193,7 @@ int main(int argc, char *argv[]) {
             printf("  Press return to mute/unmute\n");
             printf("  Type \"s\" to set start/stop saving audio in memory\n");
             printf("  Type \"write filename.wav\" to write saved audio to a file\n");
+            printf("  Type \"buf NUMBER\" to set buffering delay (default is 0)\n");
             printf("  Type \"write\" or \"w\" to write saved audio with same/default name\n");
             printf("  Type \"q\" to quit\n");
             printf("  Type \"help\" to see this list again\n");
@@ -220,6 +228,9 @@ int main(int argc, char *argv[]) {
             ct++;
         } else if (cmd=="q"||cmd=="quit") {
             done = true;
+        } else if (cmd=="buf"||cmd=="b") {
+            padding = b.get(1).asInt();
+            printf("Buffering at %d\n", padding);
         }
     }
 
