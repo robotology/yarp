@@ -42,6 +42,14 @@ public:
     virtual void appendInt(int data) = 0;
 
     /**
+     * Send a representation of a floating point number to the network
+     * connection.
+     *
+     * @param data the floating point number to send
+     */
+    virtual void appendDouble(double data) = 0;
+
+    /**
      * Send a character sequence to the network connection.
      * @param str the character sequence to send
      * @param terminate the terminating character to use

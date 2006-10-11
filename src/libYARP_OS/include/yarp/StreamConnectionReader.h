@@ -71,6 +71,16 @@ public:
         return x;
     }
 
+    virtual double expectDouble() {
+        if (!isValid()) { throw IOException("read from invalid stream"); }
+        NetType::NetFloat64 x = 0;
+        Bytes b((char*)(&x),sizeof(x));
+        YARP_ASSERT(in!=NULL);
+        in->read(b);
+        messageLen -= b.length();
+        return x;
+    }
+
     virtual String expectString(int len) {
         if (!isValid()) { throw IOException("read from invalid stream"); }
         char *buf = new char[len];

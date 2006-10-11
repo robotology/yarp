@@ -51,6 +51,12 @@ public:
     virtual int expectInt() = 0;
 
     /**
+     * Read a floating point number from the network connection.
+     * @return the floating point number read from the connection
+     */
+    virtual double expectDouble() = 0;
+
+    /**
      * Check if the connection is text mode.  If it is, you are
      * encouraged (but by no means required) to use a human-readable
      * representation of your data structure.  

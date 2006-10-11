@@ -62,6 +62,14 @@ public:
         lst.push_back(buf);
     }
 
+    virtual void appendDouble(double data) {
+        NetType::NetFloat64 i = data;
+        Bytes b((char*)(&i),sizeof(i));
+        ManagedBytes *buf = new ManagedBytes(b,false);
+        buf->copy();
+        lst.push_back(buf);
+    }
+
     virtual void appendStringBase(const String& data) {
         Bytes b((char*)(data.c_str()),data.length()+1);
         ManagedBytes *buf = new ManagedBytes(b,false);

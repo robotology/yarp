@@ -11,6 +11,7 @@
 #include <ace/OS_NS_stdlib.h>
 
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/NetFloat64.h>
 
 namespace yarp {
     class NetType;
@@ -58,6 +59,7 @@ public:
     static unsigned long int getCrc(char *buf, int len);
 
     typedef yarp::os::NetInt32 NetInt32;
+    typedef yarp::os::NetFloat64 NetFloat64;
 };
 
 #endif
