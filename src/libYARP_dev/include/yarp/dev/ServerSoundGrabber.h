@@ -133,7 +133,6 @@ class yarp::dev::ServerSoundGrabber : public DeviceDriver,
 
 		virtual void run()
 		{
-			Value *val_test;
 			while(!isStopping())
 			{
 				if (mic!=NULL)
