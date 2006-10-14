@@ -69,6 +69,7 @@ using namespace yarp::dev;
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/TestFrameGrabber.h>
+#include <yarp/dev/ServerSoundGrabber.h>
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
@@ -151,6 +152,10 @@ void Drivers::init() {
     add(new DriverCreatorOf<ServerInertial>("inertial",
                                             "inertial",
                                             "ServerInertial"));
+                                            
+    add(new DriverCreatorOf<ServerSoundGrabber>("sound_grabber",
+						"sound_grabber",
+    						"ServerSoundGrabber"));
 						
     add(createRemoteControlBoard());
     add(createServerControlBoard());
