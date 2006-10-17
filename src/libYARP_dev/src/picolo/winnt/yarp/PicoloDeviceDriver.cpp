@@ -16,6 +16,7 @@
 
 using namespace yarp::dev;
 using namespace yarp::os;
+using namespace yarp::sig;
 
 class PicoloResources:public Thread
 {
@@ -320,6 +321,34 @@ bool PicoloDeviceDriver::getRgbBuffer(unsigned char *buff)
 
     return true;
 }
+
+
+bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
+                                  image) {
+
+    // very inefficient code
+
+    PicoloResources& d = RES(system_resources);
+
+    FlexImage flex;
+    flex.setQuantum(1);
+    flex.setPixelCode(VOCAB_PIXEL_RGB);
+    flex.resize(d._nRequestedSizeX,d._nRequestedSizeY);
+
+    char *tmpBuff;
+    waitOnNewFrame ();
+	acquireBuffer(&tmpBuff);
+
+	memcpy(flex.getRawImage(), tmpBuff, flex.getRawSize());
+
+	releaseBuffer ();
+
+    image.copy(flex);
+
+    return true;
+}
+
+
 
 bool PicoloDeviceDriver::getRawBuffer(unsigned char *buff)
 {

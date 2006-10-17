@@ -57,7 +57,7 @@ public:
  * manually generating the correct pointer for the user to read. The class is not itself 
  * protected by a mutex since there's an internal mutex already. This is hidden in system_resources.
  */
-class yarp::dev::PicoloDeviceDriver : public IFrameGrabber, public IFrameGrabberRgb
+class yarp::dev::PicoloDeviceDriver : public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage
 {
 private:
 	PicoloDeviceDriver(const PicoloDeviceDriver&);
@@ -96,6 +96,8 @@ public:
      * values.
 	 */
 	virtual bool getRawBuffer(unsigned char *buff);
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     /**
 	 * Implements the FrameGrabber interface, for the 
