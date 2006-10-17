@@ -339,7 +339,7 @@ bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
     waitOnNewFrame ();
 	acquireBuffer(&tmpBuff);
 
-	memcpy(flex.getRawImage(), tmpBuff, flex.getRawSize());
+	memcpy(flex.getRawImage(), tmpBuff, flex.getRawImageSize());
 
 	releaseBuffer ();
 
