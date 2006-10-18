@@ -55,6 +55,16 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}/otherlibs/cvcam/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/"
+  "$ENV{OPENCV_ROOT}"
+  "$ENV{OPENCV_ROOT}/include"
+  "$ENV{OPENCV_ROOT}/include/cv" 
+  "$ENV{OPENCV_ROOT}/include/opencv" 
+  "$ENV{OPENCV_ROOT}/cxcore/include"
+  "$ENV{OPENCV_ROOT}/cv/include"
+  "$ENV{OPENCV_ROOT}/cvaux/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/cvcam/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/highgui/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/highgui/"
   "$ENV{OPENCV_HOME}"
   "$ENV{OPENCV_HOME}/include"
   "$ENV{OPENCV_HOME}/include/cv"
@@ -91,6 +101,7 @@ ENDIF(IS_GNUCXX4)
 
 # candidates for OpenCV library directories:
 SET(OPENCV_POSSIBLE_LIBRARY_PATHS
+  "$ENV{OPENCV_ROOT}/lib"
   "$ENV{OPENCV_ROOT}"
   "$ENV{OPENCV_DIR}"
   "$ENV{OPENCV_DIR}/lib"
