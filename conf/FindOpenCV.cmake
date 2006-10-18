@@ -1,5 +1,5 @@
 # 
-# Try to find OpenCV library  
+# Try to find OpenCV library
 # Once run this will define: 
 # 
 # OPENCV_FOUND
@@ -17,6 +17,8 @@
 # --------------------------------
 
 # modified to work on win by nat, added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
+# need to get opencv on windows or install libcvaux-dev libhighgui-dev libopencv-dev 
+# on linux
 
 # helper: check compiler version to get correct /opt/net path
 SET(IS_GNUCXX3 FALSE)
@@ -89,6 +91,7 @@ ENDIF(IS_GNUCXX4)
 
 # candidates for OpenCV library directories:
 SET(OPENCV_POSSIBLE_LIBRARY_PATHS
+  "$ENV{OPENCV_ROOT}"
   "$ENV{OPENCV_DIR}"
   "$ENV{OPENCV_DIR}/lib"
   "$ENV{ProgramFiles}/OpenCV/lib"
@@ -114,7 +117,7 @@ ENDIF(IS_GNUCXX4)
 #MESSAGE("DBG (OPENCV_POSSIBLE_LIBRARY_PATHS=${OPENCV_POSSIBLE_LIBRARY_PATHS}")
 
 # find (all) header files for include directories:
-FIND_PATH(OPENCV_INCLUDE_DIR_CXCORE   cxcore.h  ${OPENCV_POSSIBLE_INCDIRS} )
+# FIND_PATH(OPENCV_INCLUDE_DIR_CXCORE   cxcore.h  ${OPENCV_POSSIBLE_INCDIRS} )
 FIND_PATH(OPENCV_INCLUDE_DIR_CV       cv.h      ${OPENCV_POSSIBLE_INCDIRS} )
 FIND_PATH(OPENCV_INCLUDE_DIR_CVAUX    cvaux.h   ${OPENCV_POSSIBLE_INCDIRS} )
 FIND_PATH(OPENCV_INCLUDE_DIR_HIGHGUI  highgui.h ${OPENCV_POSSIBLE_INCDIRS} )
@@ -131,9 +134,9 @@ FIND_LIBRARY(OPENCV_CVAUX_LIBRARY
   NAMES cvaux cvaux0.9 cvaux0.9.5 cvaux0.9.6 cvaux0.9.7 cvaux0.9.8 cvaux0.9.9
   PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
 
-FIND_LIBRARY(OPENCV_CXCORE_LIBRARY
-  NAMES cxcore cxcore0.9  cxcore0.9.5 cxcore0.9.6 cxcore0.9.7 cxcore0.9.8 cxcore0.9.9
-  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
+#FIND_LIBRARY(OPENCV_CXCORE_LIBRARY
+#  NAMES cxcore cxcore0.9  cxcore0.9.5 cxcore0.9.6 cxcore0.9.7 cxcore0.9.8 cxcore0.9.9
+#  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
 
 FIND_LIBRARY(OPENCV_HIGHGUI_LIBRARY
   NAMES highgui highgui0.9 highgui0.9.5 highgui0.9.6 highgui0.9.7 highgui0.9.8 highgui0.9.9
@@ -150,7 +153,7 @@ FIND_LIBRARY(OPENCV_CVCAM_LIBRARY
 
 SET(OPENCV_FOUND ON)
 FOREACH(INCDIR 
-  OPENCV_INCLUDE_DIR_CXCORE 
+#  OPENCV_INCLUDE_DIR_CXCORE 
   OPENCV_INCLUDE_DIR_CV 
   OPENCV_INCLUDE_DIR_CVAUX 
   OPENCV_INCLUDE_DIR_HIGHGUI 
@@ -176,11 +179,12 @@ ELSE (OPENCV_INCLUDE_DIR_CVCAM)
 ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
 # MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
+
 ##
 # Logic for required libraries:
 ##
 FOREACH(LIBNAME  
-  OPENCV_CXCORE_LIBRARY 
+#  OPENCV_CXCORE_LIBRARY 
   OPENCV_LIBRARY 
   OPENCV_CVAUX_LIBRARY 
   OPENCV_HIGHGUI_LIBRARY 
@@ -188,7 +192,7 @@ FOREACH(LIBNAME
   IF    (${LIBNAME})
     SET(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${${LIBNAME}} )
   ELSE  (${LIBNAME})
-    MESSAGE("Turning off OPENCV_FOUND")
+    MESSAGE("${LIBNAME} not found turning off OPENCV_FOUND")
     SET(OPENCV_FOUND OFF)
   ENDIF (${LIBNAME})
 ENDFOREACH(LIBNAME)
@@ -213,7 +217,7 @@ ENDIF (OPENCV_LIBRARY)
 # display help message
 IF (NOT OPENCV_FOUND)
   MESSAGE("OPENCV library or headers not found. "
-  "Please search manually or set env. variable OPENCV_DIR to guide search." )
+  "Please search manually or set env. variable OPENCV_ROOT to guide search." )
 ENDIF (NOT OPENCV_FOUND)
 
 
