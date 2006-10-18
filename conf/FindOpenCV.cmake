@@ -15,12 +15,13 @@
 ##
 # www.mip.informatik.uni-kiel.de/
 # --------------------------------
-
-# modified to work on win by nat, added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
 # need to get opencv on windows or install libcvaux-dev libhighgui-dev libopencv-dev 
 # on linux
 
-# helper: check compiler version to get correct /opt/net path
+# - nat modified to work on win: added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
+# - nat, 19-oct 06 : cxcore lib no longer mandatory on linux, but included only if found. 
+# still a requirement in windows (by nat)
+
 SET(IS_GNUCXX3 FALSE)
 SET(IS_GNUCXX4 FALSE)
 IF    (${CMAKE_COMPILER_IS_GNUCXX})
