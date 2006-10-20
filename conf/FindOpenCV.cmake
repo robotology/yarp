@@ -20,10 +20,13 @@
 # - nat modified to work on win: added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
 # - nat, 19-oct 06: cxcore does not seem required by the opencv pakage that is 
 # distributed with Debian stable. Still a requirement in windows
-# - nat, 20-oct 06: not smart enough to handle possible clashes between different 
-# versions of opencv (e.g. /usr/local/lib or /usr/lib). Be careful.
+# - nat, 20-oct 06: not smart enough to handle possible clashes between 
+# different versions of opencv if installed in the system. Be careful.
 
-SET(LINK_LIB_HIGHGUI FALSE CACHE DOC "Do you want to link against libhighgui?")
+SET(LINK_LIB_HIGHGUI FALSE CACHE BOOL "Do you want to link against libhighgui?")
+IF (LINK_LIB_HIGHGUI AND WIN32)
+  SET(LINK_LIB_CVCAM)
+ENDIF(LINK_LIB_HIGHGUI AND WIN32)
 
 SET(IS_GNUCXX3 FALSE)
 SET(IS_GNUCXX4 FALSE)
@@ -182,16 +185,19 @@ FOREACH(INCDIR
   ENDIF (${INCDIR})  
 ENDFOREACH(INCDIR)
 
-# CVCAM exists only on Windows
-IF   (OPENCV_INCLUDE_DIR_CVCAM)
-  SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CVCAM} )
-ELSE (OPENCV_INCLUDE_DIR_CVCAM)
-  # exists only on Windows, thus only there required
-  IF (WIN32)
-    SET(OPENCV_FOUND OFF)
-	MESSAGE("- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM} ")
-  ENDIF (WIN32)
-ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
+# CVCAM exists only on Windows (check this -- nat)
+IF (LINK_LIB_CVCAM)
+  IF(OPENCV_INCLUDE_DIR_CVCAM)
+	SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CVCAM} )
+  ELSE (OPENCV_INCLUDE_DIR_CVCAM)
+	# exists only on Windows, thus only there required
+	IF (WIN32)
+      SET(OPENCV_FOUND OFF)
+	  MESSAGE("- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM} ")
+	ENDIF (WIN32)
+  ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
+ENDIF(LINK_LIB_CVCAM)
+
 # MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
 # libcxcore does not seem to be always required (different distribution behave 
@@ -240,15 +246,17 @@ ELSE (OPENCV_CXCORE_LIBRARY)
   ENDIF (WIN32)
 ENDIF(OPENCV_CXCORE_LIBRARY)
 
-# CVCAM exists only on Windows
-IF    (OPENCV_CVCAM_LIBRARY)
-  SET(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${OPENCV_CVCAM_LIBRARY} )
-ELSE  (OPENCV_CVCAM_LIBRARY)
-  IF   (WIN32)
-    SET(OPENCV_FOUND OFF)
-	MESSAGE("OPENCV_CVCAM_LIBRARY not found turning off OPENCV_FOUND")
-  ENDIF (WIN32)
-ENDIF (OPENCV_CVCAM_LIBRARY)
+# CVCAM exists only on Windows (check this -- nat)
+IF(LINK_LIB_CVCAM)
+  IF (OPENCV_CVCAM_LIBRARY)
+	SET(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${OPENCV_CVCAM_LIBRARY} )
+  ELSE  (OPENCV_CVCAM_LIBRARY)
+	IF (WIN32)
+      SET(OPENCV_FOUND OFF)
+	  MESSAGE("OPENCV_CVCAM_LIBRARY not found turning off OPENCV_FOUND")
+	ENDIF (WIN32)
+  ENDIF (OPENCV_CVCAM_LIBRARY)
+ENDIF(LINK_LIB_CVCAM)
 # MESSAGE("DBG OPENCV_LIBRARIES=${OPENCV_LIBRARIES}")
 
 IF (OPENCV_HIGHGUI_LIBRARY)
