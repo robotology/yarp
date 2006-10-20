@@ -16,14 +16,14 @@
 # www.mip.informatik.uni-kiel.de/
 # --------------------------------
 #
-#
+# Modified by nat for YARP
 # - nat modified to work on win: added "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
-# - nat, 19-oct 06: cxcore lib no longer mandatory on linux, but included only 
-# if found. Still a requirement in windows (by nat)
-# - nat, 20-oct 06: LINUX, we recommand you compile and install version opencv 0.9 
-# from sourceforge. The Debian (stable) release are not compatible with the Windows
-# version. If you installed the debian version of opencv make sure you remove them
-# carefully as they might (will) clash...
+# - nat, 19-oct 06: cxcore does not seem required by the opencv pakage that is 
+# distributed with Debian stable. Still a requirement in windows
+# - nat, 20-oct 06: not smart enough to handle possible clashes between different 
+# versions of opencv (e.g. /usr/local/lib or /usr/lib). Be careful.
+
+SET(LINK_LIB_HIGHGUI FALSE CACHE DOC "Do you want to link against libhighgui?")
 
 SET(IS_GNUCXX3 FALSE)
 SET(IS_GNUCXX4 FALSE)
@@ -102,7 +102,6 @@ IF   (IS_GNUCXX4)
 ENDIF(IS_GNUCXX4)
 #MESSAGE("DBG (OPENCV_POSSIBLE_INCDIRS=${OPENCV_POSSIBLE_INCDIRS}")
 
-
 # candidates for OpenCV library directories:
 SET(OPENCV_POSSIBLE_LIBRARY_PATHS
   "$ENV{OPENCV_ROOT}/lib"
@@ -143,42 +142,42 @@ FIND_PATH(OPENCV_INCLUDE_DIR_CVCAM    cvcam.h   ${OPENCV_POSSIBLE_INCDIRS} )
 # find (all) libraries - some dont exist on Linux
 FIND_LIBRARY(OPENCV_LIBRARY
   NAMES opencv cv cv0.9 cv0.9.5 cv0.9.6 cv0.9.7 cv0.9.8 cv0.9.9
-  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS})
+  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS}
+  DOC "Location of the opencv lib")
 
 FIND_LIBRARY(OPENCV_CVAUX_LIBRARY
   NAMES cvaux cvaux0.9 cvaux0.9.5 cvaux0.9.6 cvaux0.9.7 cvaux0.9.8 cvaux0.9.9
-  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
+  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} 
+  DOC "Location of the cvaux lib")
 
 FIND_LIBRARY(OPENCV_CXCORE_LIBRARY
   NAMES cxcore cxcore0.9  cxcore0.9.5 cxcore0.9.6 cxcore0.9.7 cxcore0.9.8 cxcore0.9.9
-  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
+  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} 
+  DOC "Location of the cvcore lib")
 
 FIND_LIBRARY(OPENCV_HIGHGUI_LIBRARY
  NAMES highgui highgui0.9 highgui0.9.5 highgui0.9.6 highgui0.9.7 highgui0.9.8 highgui0.9.9
- PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} )
+ PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} 
+ DOC "Location of the highgui library")
   
 # optional CVCAM libs (WIN32 only)
 FIND_LIBRARY(OPENCV_CVCAM_LIBRARY
   NAMES cvcam
-  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} ) 
-
-##
-# Logic for required headers / include dirs
-##
+  PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS} 
+  DOC "Location of the cvcam lib") 
 
 SET(OPENCV_FOUND ON)
+###########################################
+## CHECK HEADER FILES
+
+# REQUIRED LIBS
 FOREACH(INCDIR 
-#  OPENCV_INCLUDE_DIR_CXCORE 
   OPENCV_INCLUDE_DIR_CV 
-  OPENCV_INCLUDE_DIR_CVAUX 
-#  OPENCV_INCLUDE_DIR_HIGHGUI 
-  )
+  OPENCV_INCLUDE_DIR_CVAUX)
   IF    (${INCDIR})
     SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${${INCDIR}} )
-    # MESSAGE("+ DBG ${INCDIR}=${${INCDIR}} ")
-    # MESSAGE("+ DBG2 ${OPENCV_INCLUDE_DIR} ")
   ELSE  (${INCDIR})
-    MESSAGE("- DBG ${INCDIR}=${${INCDIR}} ")
+	MESSAGE("- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM}")
     SET(OPENCV_FOUND OFF)
   ENDIF (${INCDIR})  
 ENDFOREACH(INCDIR)
@@ -188,39 +187,43 @@ IF   (OPENCV_INCLUDE_DIR_CVCAM)
   SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CVCAM} )
 ELSE (OPENCV_INCLUDE_DIR_CVCAM)
   # exists only on Windows, thus only there required
-  IF    (WIN32)
+  IF (WIN32)
     SET(OPENCV_FOUND OFF)
+	MESSAGE("- DBG OPENCV_INCLUDE_DIR_CVCAM=${OPENCV_INCLUDE_DIR_CVCAM} ")
   ENDIF (WIN32)
 ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
 # MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
+# libcxcore does not seem to be always required (different distribution behave 
+# differently)
 IF (OPENCV_INCLUDE_DIR_CXCORE)
   SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_CXCORE})
 ELSE (OPENCV_INCLUDE_DIR_CXCORE)
-  IF (WIN32) #this is required on windows
+  IF (WIN32) #required in win
 	SET(OPENCV_FOUND OFF)
+	MESSAGE("- DBG OPENCV_INCLUDE_DIR_CXCORE=${OPENCV_INCLUDE_DIR_CXCORE} ")
   ENDIF (WIN32)
 ENDIF(OPENCV_INCLUDE_DIR_CXCORE)
 
-#highgui does not seem to be required
-IF (OPENCV_INCLUDE_DIR_HIGHGUI)
-  SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_HIGHGUI})
-ELSE (OPENCV_INCLUDE_DIR_HIGHGUI)
-  IF (WIN32)
-	SET(OPENCV_FOUND OFF)
-  ENDIF (WIN32)
-ENDIF(OPENCV_INCLUDE_DIR_HIGHGUI)
+IF(LINK_LIB_HIGHGUI)
+  IF (OPENCV_INCLUDE_DIR_HIGHGUI)
+	SET(OPENCV_INCLUDE_DIR ${OPENCV_INCLUDE_DIR} ${OPENCV_INCLUDE_DIR_HIGHGUI})
+  ELSE (OPENCV_INCLUDE_DIR_HIGHGUI)
+	IF (WIN32)
+	  SET(OPENCV_FOUND OFF)
+	MESSAGE("- DBG OPENCV_INCLUDE_DIR_HIGHGUI=${OPENCV_INCLUDE_DIR_HIGHGUI} ")
+	ENDIF (WIN32)
+  ENDIF(OPENCV_INCLUDE_DIR_HIGHGUI)
+ENDIF(LINK_LIB_HIGHGUI)
 
-##
-# Logic for required libraries:
-##
+#################################
+## LIBRARIES
+
+# REQUIRED LIBRARIES
 FOREACH(LIBNAME  
-#  OPENCV_CXCORE_LIBRARY 
   OPENCV_LIBRARY 
-  OPENCV_CVAUX_LIBRARY 
-#  OPENCV_HIGHGUI_LIBRARY 
-  )
-  IF    (${LIBNAME})
+  OPENCV_CVAUX_LIBRARY)
+IF (${LIBNAME})
     SET(OPENCV_LIBRARIES ${OPENCV_LIBRARIES} ${${LIBNAME}} )
   ELSE  (${LIBNAME})
     MESSAGE("${LIBNAME} not found turning off OPENCV_FOUND")
@@ -233,6 +236,7 @@ IF (OPENCV_CXCORE_LIBRARY)
 ELSE (OPENCV_CXCORE_LIBRARY)
   IF (WIN32) #this is required on windows
 	SET(OPENCV_FOUND OFF)
+	MESSAGE("OPENCV_CXCORE_LIBRARY not found turning off OPENCV_FOUND")
   ENDIF (WIN32)
 ENDIF(OPENCV_CXCORE_LIBRARY)
 
@@ -242,6 +246,7 @@ IF    (OPENCV_CVCAM_LIBRARY)
 ELSE  (OPENCV_CVCAM_LIBRARY)
   IF   (WIN32)
     SET(OPENCV_FOUND OFF)
+	MESSAGE("OPENCV_CVCAM_LIBRARY not found turning off OPENCV_FOUND")
   ENDIF (WIN32)
 ENDIF (OPENCV_CVCAM_LIBRARY)
 # MESSAGE("DBG OPENCV_LIBRARIES=${OPENCV_LIBRARIES}")
@@ -251,11 +256,12 @@ IF (OPENCV_HIGHGUI_LIBRARY)
 ELSE (OPENCV_HIGHGUI_LIBRARY)
   IF (WIN32) #this is required on windows
 	SET(OPENCV_FOUND OFF)
+	MESSAGE("OPENCV_HIGHGUI_LIBRARY not found turning off OPENCV_FOUND")
   ENDIF (WIN32)
 ENDIF(OPENCV_HIGHGUI_LIBRARY)
 
 # get the link directory for rpath to be used with LINK_DIRECTORIES: 
-IF    (OPENCV_LIBRARY)
+IF (OPENCV_LIBRARY)
   GET_FILENAME_COMPONENT(OPENCV_LINK_DIRECTORIES ${OPENCV_LIBRARY} PATH)
 ENDIF (OPENCV_LIBRARY)
 
@@ -266,7 +272,6 @@ IF (NOT OPENCV_FOUND)
   "Please search manually or set env. variable OPENCV_ROOT to guide search." )
 ENDIF (NOT OPENCV_FOUND)
 
-
 MARK_AS_ADVANCED(
   OPENCV_INCLUDE_DIR
   OPENCV_INCLUDE_DIR_CXCORE
@@ -276,7 +281,7 @@ MARK_AS_ADVANCED(
   OPENCV_INCLUDE_DIR_HIGHGUI  
   OPENCV_LIBRARIES
   OPENCV_LIBRARY
-#  OPENCV_HIGHGUI_LIBRARY
+  OPENCV_HIGHGUI_LIBRARY
   OPENCV_CVAUX_LIBRARY
   OPENCV_CXCORE_LIBRARY
   OPENCV_CVCAM_LIBRARY
