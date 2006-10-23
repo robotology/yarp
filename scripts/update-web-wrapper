@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# run as "./scripts/update-web"
+
+. ./scripts/config.sh
+
+echo Updating website from yarp-www
+
+target=$WEB_SERVER
+
+if [ "k$WEB_USER" = "k" ] ; then
+    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+fi
+
+echo USER is "$WEB_USER"
+
+mkdir -p yarp-www
+cd yarp-www
+if [ ! -e CVS ]; then
+    cp -R ../CVS CVS
+    echo "yarp-www" > CVS/Repository
+    echo "" > CVS/Entries
+fi
+cvs update -d
+rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DIR
+
