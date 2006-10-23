@@ -87,7 +87,7 @@ if [ -e should_report.txt ]; then
 	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
 	#scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
-	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
+	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-windows.txt
 fi
 
 sleep 600
