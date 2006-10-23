@@ -27,6 +27,10 @@ class ImageTest : public UnitTest {
 public:
     virtual String getName() { return "ImageTest"; }
 
+    void passImage(ImageOf<PixelRgb> img) {
+        report(0, "passed a blank image ok");
+    }
+
     void testCreate() {
         report(0,"testing image creation...");
         FlexImage image;
@@ -330,6 +334,7 @@ public:
     // this function only tests if getRow(r)[c] is consistent with the operator ()    
     void testRowPointer()
     {
+        report(0,"checking row pointer...");
         ImageOf<PixelRgb> img1;
         ImageOf<PixelRgb> img2;
 
@@ -380,6 +385,7 @@ public:
     // test const methods, this is mostly a compile time check.
     void testConstMethods()
     {
+        report(0,"checking const methods...");
         ImageOf<PixelMono> img1;
         img1.resize(15,10);
         img1.zero();
@@ -411,6 +417,13 @@ public:
         checkEqual(acc,0,"const methods");
     }
 
+
+    void testBlank() {
+        report(0,"checking blank images work (YARP bug 862810)...");
+        ImageOf<PixelRgb> img;
+        passImage(img);
+    }
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -426,6 +439,7 @@ public:
         testScale();
         testRowPointer();
         testConstMethods();
+        testBlank();
     }
 };
 
