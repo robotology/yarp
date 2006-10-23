@@ -1,3 +1,8 @@
+2006-10-23  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* YARPConfig.cmake fixed so that windows paths with 
+	spaces are OK.  Fixes bug 1582945.
+
 2006-10-07  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Bugfix - PortReaderBuffer was not always returning 
