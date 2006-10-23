@@ -22,6 +22,7 @@
 # distributed with Debian stable. Still a requirement in windows
 # - nat, 20-oct 06: not smart enough to handle possible clashes between 
 # different versions of opencv if installed in the system. Be careful.
+# - nat, 23-oct 06: First check OPENCV_DIR, OPENCV_ROOT or OPENCV_HOME
 
 SET(LINK_LIB_HIGHGUI FALSE CACHE BOOL "Do you want to link against libhighgui?")
 IF (LINK_LIB_HIGHGUI AND WIN32)
@@ -64,6 +65,10 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_ROOT}/otherlibs/cvcam/include"
   "$ENV{OPENCV_ROOT}/otherlibs/highgui/include"
   "$ENV{OPENCV_ROOT}/otherlibs/highgui/")
+
+SET(OPENCV_POSSIBLE_LIBRARY_PATHS
+  "$ENV{OPENCV_ROOT}/lib"
+  "$ENV{OPENCV_ROOT}")
 ENDIF (EXISTS "$ENV{OPENCV_ROOT}")
 
 # CHECK OPENCV_DIR
@@ -79,6 +84,11 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}/otherlibs/cvcam/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/")
+
+SET(OPENCV_POSSIBLE_LIBRARY_PATHS
+  "$ENV{OPENCV_DIR}"
+  "$ENV{OPENCV_DIR}/lib")
+
 ENDIF(EXISTS "$ENV{OPENCV_DIR}")
 
 # CHECK OPENCV_HOME
@@ -106,6 +116,14 @@ SET(OPENCV_POSSIBLE_INCDIRS
   /usr/local/include/opencv)
 ENDIF (NOT OPENCV_POSSIBLE_INCDIRS)
 
+IF (NOT OPENCV_POSSIBLE_LIBRARY_PATHS)
+SET(OPENCV_POSSIBLE_LIBRARY_PATHS
+  "$ENV{ProgramFiles}/OpenCV/lib"
+  "/usr/local/lib"
+  "/usr/lib"
+  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]/lib")
+ENDIF(NOT OPENCV_POSSIBLE_LIBRARY_PATHS)
+
 IF   (IS_GNUCXX3)
   SET(OPENCV_POSSIBLE_INCDIRS ${OPENCV_POSSIBLE_INCDIRS} 
     /opt/net/gcc33/OpenCV/
@@ -121,18 +139,6 @@ ENDIF(IS_GNUCXX4)
 #MESSAGE("DBG (OPENCV_POSSIBLE_INCDIRS=${OPENCV_POSSIBLE_INCDIRS}")
 
 # candidates for OpenCV library directories:
-SET(OPENCV_POSSIBLE_LIBRARY_PATHS
-  "$ENV{OPENCV_ROOT}/lib"
-  "$ENV{OPENCV_ROOT}"
-  "$ENV{OPENCV_DIR}"
-  "$ENV{OPENCV_DIR}/lib"
-  "$ENV{ProgramFiles}/OpenCV/lib"
-#  "$ENV{EXTRA}"
-#  "$ENV{EXTRA}/lib"
-  "/usr/local/lib"
-  "/usr/lib"
-  "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]/lib"
-)
 
 IF   (IS_GNUCXX3)
   SET(OPENCV_POSSIBLE_LIBRARY_PATHS ${OPENCV_POSSIBLE_LIBRARY_PATHS}
