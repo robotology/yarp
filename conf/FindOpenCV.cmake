@@ -51,6 +51,23 @@ IF    (${CMAKE_COMPILER_IS_GNUCXX})
 
 ENDIF (${CMAKE_COMPILER_IS_GNUCXX})
 
+# CHECK OPENCV_ROOT
+IF (EXISTS "$ENV{OPENCV_ROOT}")
+SET(OPENCV_POSSIBLE_INCDIRS
+  "$ENV{OPENCV_ROOT}"
+  "$ENV{OPENCV_ROOT}/include"
+  "$ENV{OPENCV_ROOT}/include/cv" 
+  "$ENV{OPENCV_ROOT}/include/opencv" 
+  "$ENV{OPENCV_ROOT}/cxcore/include"
+  "$ENV{OPENCV_ROOT}/cv/include"
+  "$ENV{OPENCV_ROOT}/cvaux/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/cvcam/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/highgui/include"
+  "$ENV{OPENCV_ROOT}/otherlibs/highgui/")
+ENDIF (EXISTS "$ENV{OPENCV_ROOT}")
+
+# CHECK OPENCV_DIR
+IF (EXISTS "$ENV{OPENCV_DIR}")
 SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}"
   "$ENV{OPENCV_DIR}/include"
@@ -61,21 +78,20 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_DIR}/cvaux/include"
   "$ENV{OPENCV_DIR}/otherlibs/cvcam/include"
   "$ENV{OPENCV_DIR}/otherlibs/highgui/include"
-  "$ENV{OPENCV_DIR}/otherlibs/highgui/"
-  "$ENV{OPENCV_ROOT}"
-  "$ENV{OPENCV_ROOT}/include"
-  "$ENV{OPENCV_ROOT}/include/cv" 
-  "$ENV{OPENCV_ROOT}/include/opencv" 
-  "$ENV{OPENCV_ROOT}/cxcore/include"
-  "$ENV{OPENCV_ROOT}/cv/include"
-  "$ENV{OPENCV_ROOT}/cvaux/include"
-  "$ENV{OPENCV_ROOT}/otherlibs/cvcam/include"
-  "$ENV{OPENCV_ROOT}/otherlibs/highgui/include"
-  "$ENV{OPENCV_ROOT}/otherlibs/highgui/"
+  "$ENV{OPENCV_DIR}/otherlibs/highgui/")
+ENDIF(EXISTS "$ENV{OPENCV_DIR}")
+
+# CHECK OPENCV_HOME
+IF (EXISTS "$ENV{OPENCV_HOME}")
+SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{OPENCV_HOME}"
   "$ENV{OPENCV_HOME}/include"
   "$ENV{OPENCV_HOME}/include/cv"
-  "$ENV{OPENCV_HOME}/include/opencv"
+  "$ENV{OPENCV_HOME}/include/opencv")
+ENDIF (EXISTS "$ENV{OPENCV_HOME}")
+
+IF (NOT OPENCV_POSSIBLE_INCDIRS)
+SET(OPENCV_POSSIBLE_INCDIRS
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]"  
   "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Intel(R) Open Source Computer Vision Library_is1;Inno Setup: App Path]/include"
   "$ENV{ProgramFiles}/OpenCV"
@@ -86,11 +102,10 @@ SET(OPENCV_POSSIBLE_INCDIRS
   "$ENV{ProgramFiles}/OpenCV/otherlibs/cvcam/include"
   "$ENV{ProgramFiles}/OpenCV/otherlibs/highgui/include"
   "$ENV{ProgramFiles}/OpenCV/otherlibs/highgui"
-#  "$ENV{EXTRA}"
-#  "$ENV{EXTRA}/include"
   /usr/include/opencv
-  /usr/local/include/opencv
-)
+  /usr/local/include/opencv)
+ENDIF (NOT OPENCV_POSSIBLE_INCDIRS)
+
 IF   (IS_GNUCXX3)
   SET(OPENCV_POSSIBLE_INCDIRS ${OPENCV_POSSIBLE_INCDIRS} 
     /opt/net/gcc33/OpenCV/
