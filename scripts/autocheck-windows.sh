@@ -90,6 +90,8 @@ if [ -e should_report.txt ]; then
 	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-windows.txt
 fi
 
+./scripts/update-web-wrapper
+
 sleep 600
 
 done
