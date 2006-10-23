@@ -2,6 +2,12 @@
 
 # run as ./scripts/autocheck-linux.sh
 
+. ./scripts/config.sh
+if [ "k$WEB_USER" = "k" ] ; then
+    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+fi
+echo USER is "$WEB_USER"
+
 CMAKEOPTS="-DCREATE_GUIS:BOOL=FALSE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE"
 
 while true; do
@@ -72,7 +78,8 @@ if [ -e should_report.txt ]; then
 	echo >> report-decor.txt
 	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
-	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-linux.txt
+	#scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-linux.txt
+	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
 fi
 
 sleep 600

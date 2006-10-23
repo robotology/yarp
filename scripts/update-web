@@ -2,23 +2,19 @@
 
 # run as "./scripts/update-web"
 
-echo Updating Sourceforge website from local system
+. ./scripts/config.sh
 
-target="yarp0.sourceforge.net"
+echo Updating website from local system
 
-USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+target=$WEB_SERVER
 
-if [ ! "k$USER" = "k" ] ; then
-
-    echo USER might be $USER
-
-    cd doc && rsync --rsh="ssh -x -l $USER" --modify-window=2 -lauvzP . $target:/home/groups/y/ya/yarp0/htdocs/specs/dox
-
-else
-
-    echo cannot figure out CVS username
-
+if [ "k$WEB_USER" = "k" ] ; then
+    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
 fi
+
+echo USER is "$WEB_USER"
+
+cd doc && rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DOC_DIR
 
 
 

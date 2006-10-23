@@ -1,3 +1,6 @@
+#!/bin/bash
+
+. ./scripts/config.sh
 
 if [ "`uname`" = "Linux" ]; then
 	EXT="tar.gz"
@@ -15,6 +18,12 @@ rm -f CMakeCache.txt
 sh -c "cmake $MGEN ."
 rm -f *.$EXT
 cpack $PGEN
+
+if [ "k$WEB_USER" = "k" ] ; then
+    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+fi
+
 for f in `ls *.$EXT`; do
-	scp $f eshuy@yarp0.sf.net:www/downloads/$f
+    echo Sending $f
+    scp $f $WEB_USER@$WEB_SERVER:$WEB_DOWNLOAD_DIR/$f
 done

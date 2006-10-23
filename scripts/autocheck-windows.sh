@@ -2,6 +2,12 @@
 
 # run as ./scripts/autocheck-windows.sh
 
+. ./scripts/config.sh
+if [ "k$WEB_USER" = "k" ] ; then
+    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+fi
+echo USER is "$WEB_USER"
+
 SOURCE=`cygpath -w $PWD`
 GEN="NMake Makefiles"
 CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
@@ -80,7 +86,8 @@ if [ -e should_report.txt ]; then
 	echo >> report-decor.txt
 	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
-	scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
+	#scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-windows.txt
+	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
 fi
 
 sleep 600
