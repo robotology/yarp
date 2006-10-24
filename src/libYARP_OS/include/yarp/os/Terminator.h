@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006 Giorgio Metta
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -9,7 +9,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.9 2006-10-24 19:12:33 eshuy Exp $
+// $Id: Terminator.h,v 1.10 2006-10-24 19:14:48 eshuy Exp $
 
 
 #include <yarp/os/Thread.h>
