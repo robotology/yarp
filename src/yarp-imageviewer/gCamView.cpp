@@ -140,11 +140,11 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
             NULL
         };
 	const gchar *license =
-		"Licensed under the Academic Free License Version 1.0\n"
+		"Released under the terms of the GNU GPL v2.0.\n"
 		"The complete license description is contained in the\n"
-		"licence.template file included in this distribution in\n"
-		"$YARP_ROOT/conf. Please refer to this file for complete\n"
-		"information about the licensing of YARP\n"
+		"COPYING file included in this distribution.\n"
+		"Please refer to this file for complete\n"
+		"information about the licensing of YARP.\n"
 		"\n"
 		"DISCLAIMERS: LICENSOR WARRANTS THAT THE COPYRIGHT IN AND TO THE\n"
 		"SOFTWARE IS OWNED BY THE LICENSOR OR THAT THE SOFTWARE IS\n"

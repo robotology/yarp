@@ -2,6 +2,16 @@
 
 my $fname = $ARGV[0];
 
+
+my $std_license = "
+/*
+ * Copyright (C) 2006 Author McAuthor
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+";
+
+
 print "$fname\n";
 
 my $txt = "";
@@ -66,15 +76,44 @@ if ($report ne "skipped") {
 }
 
 
-if (0) {
-    if ($txt ne $txt2) {
-	#open(FOUT,">$fname");
-	#print FOUT $txt;
-	#close(FOUT);
-	system "echo changed $fname >> license-changes.txt";
-    } else {
-	system "echo \"$report $fname\" >> license-changes.txt";
+if (0) { # don't need to scrub AFL anymore
+    if ($txt =~ /Academic Free License/) {
+	my $authors = "paulfitz";
+	if ($txt =~ /\/\/\/.*\#(.*)\#/) {
+	    $authors = $1;
+	}
+	
+	$authors =~ s/Add our.*/paulfitz, pasa/;
+	$authors =~ s/paulfitz/Paul Fitzpatrick/;
+	$authors =~ s/pasa/Giorgio Metta/;
+	
+	open(FOUT,">>license-changes.txt");
+	print FOUT "$fname needs AFL stripped\n";
+	print FOUT "$fname author $authors\n";
+	close(FOUT);
+	
+	$replacement = $std_license;
+	$replacement =~ s/Author McAuthor/$authors/;
+	
+#    $txt2 =~ s/\/\/\/\/\/\/\/\/\/(.|[\n\r])*Rosen(.|[\n\r])*Licensed under the Academic.*\n+(\/\/\/\n)*/$replacement/;
+#    $txt2 =~ s/\/\/\/\/\/\/\/\/\/(.|[\n\r])*YARP_ROOT.conf(.|[\n\r])*Licensed under the Academic.*\n+(\/\/\/\n)*/$replacement/;
+	$txt2 =~ s/\/\/\/(.|[\n\r])*Yet Another(.|[\n\r])*Licensed under the Academic.*\n+(\/\/\/\n)*/$replacement/;
     }
+    if (!($txt =~ /CopyPolicy/)) { 
+	open(FOUT,">>license-changes.txt");
+	print FOUT "$fname needs CopyPolicy added\n";
+	close(FOUT);
+    }
+}
+
+
+if ($txt ne $txt2) {
+#    open(FOUT,">$fname");
+#    print FOUT $txt2;
+#    close(FOUT);
+    system "echo should have changed $fname >> license-changes.txt";
+} else {
+#    system "echo \"$report $fname\" >> license-changes.txt";
 }
 
 

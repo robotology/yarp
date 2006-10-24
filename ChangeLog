@@ -1,3 +1,7 @@
+2006-10-24  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* License comments updated, removed older references to AFL
+
 2006-10-23  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* YARPConfig.cmake fixed so that windows paths with 

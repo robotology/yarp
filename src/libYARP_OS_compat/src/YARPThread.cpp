@@ -1,17 +1,15 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-///
-///
-///       YARP - Yet Another Robotic Platform (c) 2001-2003 
-///
-///                    #paulfitz, pasa#
-///
-///     "Licensed under the Academic Free License Version 1.0"
-///
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
 
 ///
 /// based on Id: YARPThread.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
-/// $Id: YARPThread.cpp,v 1.2 2006-05-15 15:57:59 eshuy Exp $
+/// $Id: YARPThread.cpp,v 1.3 2006-10-24 16:43:50 eshuy Exp $
 ///
 ///
 

@@ -1,11 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-/////////////////////////////////////////////////////////////////////////
-///                                                                   ///
-///       YARP - Yet Another Robotic Platform (c) 2001-2003           ///
-///                                                                   ///
-///                    #Add our name(s) here#                         ///
-///                                                                   ///
-///     "Licensed under the Academic Free License Version 1.0"        ///
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
 ///                                                                   ///
 /// The complete license description is contained in the              ///
 /// licence.template file included in this distribution in            ///
@@ -28,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.28 2006-09-28 17:31:39 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.29 2006-10-24 16:43:50 eshuy Exp $
 ///
 ///
 
