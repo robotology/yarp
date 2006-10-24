@@ -85,39 +85,10 @@ if ($report ne "skipped") {
 
 if ($copyright eq "default") {
     # no copyright information -> guess who wrote it
-    my $ok = 0;
-    if ($fname =~ /libYARP_dev\//) {
-	$ok = 1;
-    }
-    if (0) {
-    if ($fname =~ /James/i) {
+    my $ok = 1;
+    if ($fname =~ /example\//) {
 	$ok = 0;
     }
-    if ($fname =~ /control/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /Esd/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /XSens/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /dragonfly/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /inertiacube/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /calibrator/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /picolo/i) {
-	$ok = 0;
-    }
-    if ($fname =~ /generic/i) {
-	$ok = 0;
-    }
-}
     my $authors = "Paul Fitzpatrick";
     #my $authors = "Giorgio Metta";
     if ($ok) {
@@ -171,7 +142,7 @@ if ($txt ne $txt2) {
     print FOUT $txt2;
     close(FOUT);
     system "echo should have changed $fname >> license-changes.txt";
-    system "emacs $fname &";
+    #system "emacs $fname &";
 } else {
 #    system "echo \"$report $fname\" >> license-changes.txt";
 }
