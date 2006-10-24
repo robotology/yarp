@@ -664,6 +664,14 @@ void *Image::getIplImage() {
     return ((ImageStorage*)implementation)->pImage;
 }
 
+const void *Image::getIplImage() const {
+    // this parameter doesn't seem to get set by YARP.
+    // this set should be moved back to the point of creation,
+    // but I am not sure where that is.
+    ((ImageStorage*)implementation)->pImage->origin = 0;
+
+    return ((const ImageStorage*)implementation)->pImage;
+}
 
 void Image::wrapIplImage(void *iplImage) {
     YARP_ASSERT(iplImage!=NULL);

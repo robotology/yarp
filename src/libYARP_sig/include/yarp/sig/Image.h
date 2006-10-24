@@ -194,6 +194,14 @@ public:
     void *getIplImage();
 
     /**
+     * Returns IPL/OpenCV view of image, if possible.
+     * Not possible if the image is the wrong size, with no padding.
+     * This method is currently not well documented.
+     * @return pointer to an IplImage structure
+     */
+    const void *getIplImage() const;
+
+    /**
      * Act as a wrapper around an IPL/OpenCV image.
      * @param iplImage pointer to an IplImage structure
      */

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 // gCamView.cpp : Defines the entry point for the application.
 //
-
+ 
 #include "gCamView.h" 
 
 #include <yarp/os/Property.h> 
