@@ -22,8 +22,10 @@ if ($txt=~/license/i || $txt=~/copyright/i || $txt=~/rights/i) {
 }
 
 if ($txt=~/academic free/i || $quiet) {
-    $policy = "default";
-    $copyright = "default";
+    if (!($txt=~/CopyPolicy/)) {
+	$policy = "default";
+	$copyright = "default";
+    }
 }
 
 
@@ -55,7 +57,14 @@ if ($policy ne "default" || $copyright ne "default") {
 
 $txt2 = $txt;
 
-system "echo \"$report $fname\" >> license-changes.txt";
+#system "echo \"$report $fname\" >> license-changes.txt";
+if ($report ne "skipped") {
+    my $txt = "$fname\n\tCopyright: $copyright\n\tCopyPolicy: $policy\n\n";
+    open(FOUT,">>license-changes.txt");
+    print FOUT $txt;
+    close(FOUT);
+}
+
 
 if (0) {
     if ($txt ne $txt2) {
