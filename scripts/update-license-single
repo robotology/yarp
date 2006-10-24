@@ -85,15 +85,16 @@ if ($report ne "skipped") {
 
 if ($copyright eq "default") {
     # no copyright information -> maybe paul wrote it?
-    my $paul = 0;
+    my $ok = 0;
     if ($fname =~ /libYARP_OS\//) {
-	$paul = 1;
+	$ok = 1;
     }
-    if ($fname =~ /Terminator/) {
-	$paul = 0;
+    if (!($fname =~ /Terminator/)) {
+	$ok = 0;
     }
     my $authors = "Paul Fitzpatrick";
-    if ($paul) {
+    #my $authors = "Giorgio Metta";
+    if ($ok) {
 	open(FOUT,">>license-changes.txt");
 	print FOUT "$fname needs copyright statement\n";
 	print FOUT "$fname author $authors\n";
@@ -140,7 +141,7 @@ if (0) { # don't need to scrub AFL anymore
 
 
 if ($txt ne $txt2) {
-    open(FOUT,">$fname");
+    open(FOUT,">$fname.shadow");
     print FOUT $txt2;
     close(FOUT);
     system "echo should have changed $fname >> license-changes.txt";
