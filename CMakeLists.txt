@@ -2,6 +2,13 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.0.5)
 
 PROJECT(YARP)
 
+#ask user to specify build type (linux only)
+IF(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE "Release" CACHE STRING 
+	"Choose the type of build, recommanded options are: Debug or Release"
+       FORCE)
+ENDIF(NOT CMAKE_BUILD_TYPE)
+
 # Pick up our scripts - they are all in the conf subdirectory
 SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
 
