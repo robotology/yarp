@@ -20,6 +20,9 @@ double Random::uniform() {
 // - beware of initializing the seed of rand.
 
 // original code copyright reported below.
+// summary --
+//   CopyPolicy: Preserve copyright notice
+//   Copyright: 1994, Everett F. Carter Jr.
 
 /* boxmuller.c           
    Implements the Polar form of the Box-Muller
@@ -31,6 +34,8 @@ double Random::uniform() {
    copyright notice is preserved.
 
 */
+
+
 
 double Random::normal(double m, double s)	
 {				        

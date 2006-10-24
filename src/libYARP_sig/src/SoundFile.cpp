@@ -6,7 +6,6 @@
  * The behaviour and appearence of the program code below can differ to a major
  * extent from the version distributed by the original author(s).
  *
- *
  */
 
 /* @(#)wav.c	1.4 01/10/27 Copyright 1998,1999 Heiko Eissfeldt */
@@ -16,6 +15,9 @@
  *
  *
  */
+
+// Summary for YARP:
+// Copyright: 1998,1999 Heiko Eissfeldt
 
 
 #include <ace/OS.h>
