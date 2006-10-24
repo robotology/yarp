@@ -1,4 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 // source for receiver.cpp
 #include <yarp/os/Port.h>
 #include <yarp/os/Bottle.h>

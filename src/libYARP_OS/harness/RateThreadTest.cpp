@@ -1,4 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 #include <yarp/os/RateThread.h>
 #include <yarp/NameServer.h>
 #include <yarp/os/Network.h>
