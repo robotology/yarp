@@ -60,6 +60,14 @@ $copyright =~ s/\xa9/\(C\)/g;
 $policy =~ s/\s+$//g;
 $policy =~ s/^\s+//g;
 
+
+if ($copyright eq "default") {
+    # no copyright statement - only accept for example code
+    if (!($fname =~ /example\//)) {
+	$copyright = "unknown";
+    }
+}
+
 if ($policy ne "default" || $copyright ne "default") {
     $report = "CopyPolicy [$policy] Copyright [$copyright]";
 }
@@ -83,24 +91,26 @@ if ($report ne "skipped") {
 }
 
 
-if ($copyright eq "default") {
-    # no copyright information -> guess who wrote it
-    my $ok = 1;
-    if ($fname =~ /example\//) {
-	$ok = 0;
-    }
-    my $authors = "Paul Fitzpatrick";
-    #my $authors = "Giorgio Metta";
-    if ($ok) {
-	open(FOUT,">>license-changes.txt");
-	print FOUT "$fname needs copyright statement\n";
-	print FOUT "$fname author $authors\n";
-	close(FOUT);
-
-	my $replacement = $std_license;
-	$replacement =~ s/Author McAuthor/$authors/;
-	
-	$txt2 =~ s/(\-\*\-\n)/$1$replacement\n/;
+if (0) {
+    if ($copyright eq "default") {
+	# no copyright information -> guess who wrote it
+	my $ok = 1;
+	if ($fname =~ /example\//) {
+	    $ok = 1;
+	}
+	my $authors = "Paul Fitzpatrick";
+	#my $authors = "Giorgio Metta";
+	if ($ok) {
+	    open(FOUT,">>license-changes.txt");
+	    print FOUT "$fname needs copyright statement\n";
+	    print FOUT "$fname author $authors\n";
+	    close(FOUT);
+	    
+	    my $replacement = $std_license;
+	    $replacement =~ s/Author McAuthor/$authors/;
+	    
+	    $txt2 =~ s/(\-\*\-\n)/$1$replacement\n/;
+	}
     }
 }
 
