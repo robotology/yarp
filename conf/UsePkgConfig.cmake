@@ -67,6 +67,13 @@ MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
 		SET(${_link_DIR} "")
 	ENDIF(_MODERN_PKGCONFIG)
 
+	IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.3)
+	      STRING(REGEX REPLACE "\n" " " ${_link_FLAGS} ${${_link_FLAGS}})
+	      STRING(REGEX REPLACE "\n" " " ${_link_DIR} ${${_link_DIR}})
+	      STRING(REGEX REPLACE "\n" " " ${_include_DIR} ${${_include_DIR}})
+	ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.3)
+	
+
       EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags OUTPUT_VARIABLE ${_cflags} )
 
     ENDIF(NOT _return_VALUE)
