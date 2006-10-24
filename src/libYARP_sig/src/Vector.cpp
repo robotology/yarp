@@ -1,5 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.cpp,v 1.7 2006-09-06 21:30:56 eshuy Exp $
+
+/*
+ * Copyright (C) 2006 Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+// $Id: Vector.cpp,v 1.8 2006-10-24 19:51:04 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>

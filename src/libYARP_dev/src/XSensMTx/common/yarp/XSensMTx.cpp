@@ -1,5 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright (C) 2006 Radu Bogdan Rasu, Alexis Maldonado
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 #include <ace/OS.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>

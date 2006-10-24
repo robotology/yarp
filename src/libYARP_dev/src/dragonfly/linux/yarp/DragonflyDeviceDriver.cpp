@@ -1,4 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 #include <yarp/DragonflyDeviceDriver.h>
 
 #include <yarp/os/Semaphore.h>
@@ -13,7 +20,7 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 ///
-double GetTimeAs_mSeconds(void)
+static double GetTimeAs_mSeconds(void)
 {
 	ACE_Time_Value timev = ACE_OS::gettimeofday ();
 	return double(timev.sec()*1e3) + timev.usec() * 1e-3; 

@@ -1,5 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright (C) 2006 Charles C. Kemp
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+
 //based on libdc1394 example code grab_gray_image.c
 //and coriander
 

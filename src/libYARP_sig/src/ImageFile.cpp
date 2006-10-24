@@ -1,34 +1,22 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta, Paul Fitzpatrick
+ * Copyright (C) 2006 Lorenzo Natale, Giorgio Metta, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
 ///
-/// $Id: ImageFile.cpp,v 1.15 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.16 2006-10-24 19:51:04 eshuy Exp $
 ///
 ///
 
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
 #include <yarp/sig/ImageFile.h>
-//#include <fstream>
 
 using namespace std;
 using namespace yarp::sig;
-
-// The PGM/PPM code is old code from a long forgotten source.
-
-/*
-// not used any more?
-static void die(char *message)
-{
-ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
-ACE_OS::exit(1);
-}
-*/
 
 static void warn(char *message)
 {
@@ -331,15 +319,6 @@ bool file::write(const ImageOf<PixelMono> & src, const char *dest)
     return ImageWriteMono(const_cast<ImageOf<PixelMono> &>(src), dest);
 }
 
-
-/*
-  bool file::read(FlexImage & dest, const char *src)
-  {
-  ImageOf<PixelRgb> img;
-  read(img,src);
-  return dest.copy(img);
-  }
-*/
 
 bool file::write(const Image& src, const char *dest)
 {

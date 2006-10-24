@@ -1,7 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-  This file is in a pretty hacky state.  Sorry! -paulfitz
+ * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+
+/*
+  This file is in a pretty hacky state.  Sorry!
 
 */
 

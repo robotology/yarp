@@ -1,7 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright (C) 2006 Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 //
-// $Id: EsdMessageSniffer.h,v 1.3 2006-09-06 21:30:55 eshuy Exp $
+// $Id: EsdMessageSniffer.h,v 1.4 2006-10-24 19:51:03 eshuy Exp $
 //
 //
 

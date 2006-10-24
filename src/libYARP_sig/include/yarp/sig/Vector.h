@@ -1,5 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
-// $Id: Vector.h,v 1.3 2006-08-01 23:20:30 gmetta Exp $
+
+/*
+ * Copyright (C) 2006 Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+// $Id: Vector.h,v 1.4 2006-10-24 19:51:03 eshuy Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_

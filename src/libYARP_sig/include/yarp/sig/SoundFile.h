@@ -1,7 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+
 //
-// $Id: SoundFile.h,v 1.1 2006-09-20 17:48:17 eshuy Exp $
+// $Id: SoundFile.h,v 1.2 2006-10-24 19:51:03 eshuy Exp $
 //
 //
 

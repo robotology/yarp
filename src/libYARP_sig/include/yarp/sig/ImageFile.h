@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006 Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
 //
-// $Id: ImageFile.h,v 1.9 2006-10-24 16:43:50 eshuy Exp $
+// $Id: ImageFile.h,v 1.10 2006-10-24 19:51:03 eshuy Exp $
 //
 //
 
