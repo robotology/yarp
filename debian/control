@@ -8,9 +8,11 @@ Standards-Version: 3.7.2
 Package: yarp
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: OS interface for the yarp robot platform
- Makes streaming communication between processes and/or machines easy;
- and devices too.  Similar to player/stage for wheeled robots.
- Uses well-specified protocols across tcp, udp, and multicast.
- Command-line and library interfaces.
+Description: communication and device interfaces for humanoid robots
+ Flexible communication between processes and/or machines and/or
+ devices distributed across a network.  Used for humanoid robot
+ projects like COG and RobotCub.  Uses well-specified protocols 
+ across tcp, udp, shared-memory, and multicast.  Contains
+ command-line and library interfaces.
  .
+
