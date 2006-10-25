@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.20 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.21 2006-10-25 08:31:00 eshuy Exp $
 ///
 ///
 
@@ -252,7 +252,7 @@ inline void DragonflyResources::_destroyBuffers(void)
 inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, value, 0, bAuto);
+    //	error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, value, 0, bAuto);
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, value, 0);
 
 	if (error == FLYCAPTURE_OK)
@@ -264,7 +264,7 @@ inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
+    //	error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_AUTO_EXPOSURE, false, false, bAuto, value, 0);
 
 	if (error == FLYCAPTURE_OK)
@@ -298,7 +298,7 @@ inline bool DragonflyResources::_setShutter (int value, bool bAuto)
 inline bool DragonflyResources::_setGain (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
+    //	error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_GAIN, false, false, bAuto, value, 0);
 	if (error == FLYCAPTURE_OK)
 		return true;

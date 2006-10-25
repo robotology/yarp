@@ -139,13 +139,13 @@ bool yarp::sig::file::read(Sound& dest, const char *src) {
     dest.setFrequency(freq);
 
     /*
-    if (expect!=dest.getRawDataSize()) {
-        printf("expect to read %ld bytes but would read %ld\n",
-               dest.getRawDataSize(), expect);
-        ACE_OS::fclose(fp);
-        return false;
-    }
-    fread(dest.getRawData(),dest.getRawDataSize(),1,fp);
+      if (expect!=dest.getRawDataSize()) {
+      printf("expect to read %ld bytes but would read %ld\n",
+      dest.getRawDataSize(), expect);
+      ACE_OS::fclose(fp);
+      return false;
+      }
+      fread(dest.getRawData(),dest.getRawDataSize(),1,fp);
     */
 
     ManagedBytes bytes(expect);
@@ -178,12 +178,12 @@ bool yarp::sig::file::write(const Sound& src, const char *dest) {
         return false;
     }
     /*
-    if (expect!=src.getRawDataSize()) {
-        printf("expect to write %ld bytes but would write %ld\n",
-               expect, src.getRawDataSize());
-        ACE_OS::fclose(fp);
-        return false;
-    }
+      if (expect!=src.getRawDataSize()) {
+      printf("expect to write %ld bytes but would write %ld\n",
+      expect, src.getRawDataSize());
+      ACE_OS::fclose(fp);
+      return false;
+      }
     */
 
     ACE_OS::fwrite((void*)&waveHdr, 1, sizeof(waveHdr), fp);
@@ -204,8 +204,8 @@ bool yarp::sig::file::write(const Sound& src, const char *dest) {
     fwrite(bytes.get(),bytes.length(),1,fp);
 
     /*
-    ACE_OS::fwrite((void*)src.getRawData(), (size_t)src.getRawDataSize(), 
-                   1, fp);
+      ACE_OS::fwrite((void*)src.getRawData(), (size_t)src.getRawDataSize(), 
+      1, fp);
     */
     ACE_OS::fclose(fp);
     return true;

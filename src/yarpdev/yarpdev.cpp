@@ -23,37 +23,37 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 /*
-class MonitorSearchable : public SearchMonitor {
-public:
+  class MonitorSearchable : public SearchMonitor {
+  public:
 
 
-    virtual bool check(const char *key) {
-        printf("checking %s\n", key);
-        return searchable.check(key);
-    }
+  virtual bool check(const char *key) {
+  printf("checking %s\n", key);
+  return searchable.check(key);
+  }
 
-    virtual Value& find(const char *key) {
-        printf("finding %s\n", key);
-        return searchable.find(key);
-    }
+  virtual Value& find(const char *key) {
+  printf("finding %s\n", key);
+  return searchable.find(key);
+  }
 
-    virtual Bottle& findGroup(const char *key) {
-        printf("find group %s\n", key);
-        return searchable.findGroup(key);
-    }
+  virtual Bottle& findGroup(const char *key) {
+  printf("find group %s\n", key);
+  return searchable.findGroup(key);
+  }
 
-    virtual bool isNull() const  { 
-        return searchable.isNull();
-    }
+  virtual bool isNull() const  { 
+  return searchable.isNull();
+  }
 
-    virtual ConstString toString() const {
-        return searchable.toString();
-    }
+  virtual ConstString toString() const {
+  return searchable.toString();
+  }
 
-    // self-callers
-    //virtual bool check(const char *key, Value *& result);
-    //virtual Value check(const char *key, const Value& fallback);
-};
+  // self-callers
+  //virtual bool check(const char *key, Value *& result);
+  //virtual Value check(const char *key, const Value& fallback);
+  };
 */
 
 class YarpDevMonitor : public SearchMonitor {

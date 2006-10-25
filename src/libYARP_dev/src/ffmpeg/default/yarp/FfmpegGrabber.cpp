@@ -315,7 +315,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
             return false;
         }
     } else if (config.check("firewire")||config.check("ieee1394")||
-        config.check("dv")) {
+               config.check("dv")) {
         if (!openFirewire(&pFormatCtx)) {
             printf("Could not open ieee1394 input\n");
             return false;

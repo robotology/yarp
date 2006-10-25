@@ -88,18 +88,18 @@ protected:
 
 
 /*
-class yarp::dev::PortAudioRender : public IAudioRender, public DeviceDriver {
-public:
-    PortAudioRender();
+  class yarp::dev::PortAudioRender : public IAudioRender, public DeviceDriver {
+  public:
+  PortAudioRender();
 
-    virtual ~PortAudioRender();
+  virtual ~PortAudioRender();
 
-    virtual bool open(yarp::os::Searchable& config);
+  virtual bool open(yarp::os::Searchable& config);
 
-	virtual bool close();
+  virtual bool close();
 
-    virtual bool renderSound(yarp::sig::Sound& sound);
-};
+  virtual bool renderSound(yarp::sig::Sound& sound);
+  };
 */
 
 /**

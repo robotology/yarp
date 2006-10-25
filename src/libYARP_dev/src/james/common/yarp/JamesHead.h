@@ -15,8 +15,8 @@
 
 namespace yarp{
     namespace dev{
-    class JamesHead;
-}};
+        class JamesHead;
+    }};
 
 /**
  * @ingroup dev_impl_wrapper
@@ -109,7 +109,7 @@ public:
     virtual bool getRefAccelerationsRaw(double *accs);
 
     virtual bool setVelocityMode()
-        {return true;}
+    {return true;}
 
     virtual bool velocityMoveRaw(int j, double v);
     virtual bool velocityMoveRaw(const double *v);

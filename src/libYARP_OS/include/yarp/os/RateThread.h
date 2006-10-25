@@ -117,9 +117,9 @@ private:
     Runnable *helper;
     int owned;
 public:
-  /**
-   * Default constructor.
-   */
+    /**
+     * Default constructor.
+     */
     RateThreadWrapper(): RateThread(0) {
         helper = 0/*NULL*/;
         owned = false;

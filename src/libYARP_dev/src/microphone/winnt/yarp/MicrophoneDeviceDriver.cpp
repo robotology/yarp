@@ -35,9 +35,9 @@ using namespace yarp::dev;
 
 
 /*
-SoundOpenParameters contains initialization parameters.
-It is inherited from YARP1 and is now obsolete.
-Future: use Searchable class instead.
+  SoundOpenParameters contains initialization parameters.
+  It is inherited from YARP1 and is now obsolete.
+  Future: use Searchable class instead.
 */
 struct SoundOpenParameters
 {
@@ -58,8 +58,8 @@ struct SoundOpenParameters
 };
 
 /*
-SoundResources: 
-    Encapsulates windows native stuff for sound acquisition.
+  SoundResources: 
+  Encapsulates windows native stuff for sound acquisition.
 */
 
 class SoundResources : public yarp::os::Semaphore, public yarp::os::Thread
@@ -158,16 +158,16 @@ void
 SoundResources::_print_src_lines()
 {
 	for (int i = 0; i < m_numSrc; i++)
-	{
-		m_mixerLine.cbStruct = sizeof(MIXERLINE);
-		m_mixerLine.dwSource = i;
+        {
+            m_mixerLine.cbStruct = sizeof(MIXERLINE);
+            m_mixerLine.dwSource = i;
 
-		if (!(m_err = mixerGetLineInfo((HMIXEROBJ)m_MixerHandle, &m_mixerLine, MIXER_GETLINEINFOF_SOURCE)))
-		{
-			if (m_mixerLine.dwComponentType != MIXERLINE_COMPONENTTYPE_SRC_SYNTHESIZER)
-				printf("\t\t#%lu: %s\n", i, m_mixerLine.szName);
-		}
-	}
+            if (!(m_err = mixerGetLineInfo((HMIXEROBJ)m_MixerHandle, &m_mixerLine, MIXER_GETLINEINFOF_SOURCE)))
+                {
+                    if (m_mixerLine.dwComponentType != MIXERLINE_COMPONENTTYPE_SRC_SYNTHESIZER)
+                        printf("\t\t#%lu: %s\n", i, m_mixerLine.szName);
+                }
+        }
 }
 
 //--------------------------------------------------------------------------------------
@@ -203,7 +203,7 @@ SoundResources::_select_control(unsigned int control_type)
 int SoundResources::_select_line(unsigned int type)
 {
 
-		for(int i = 0; i < m_numSrc; i++) {
+    for(int i = 0; i < m_numSrc; i++) {
 		m_mixerLine.cbStruct = sizeof(MIXERLINE);	
 		m_mixerLine.dwSource = i;
 
@@ -214,10 +214,10 @@ int SoundResources::_select_line(unsigned int type)
 		if (m_err != MMSYSERR_NOERROR) continue;
 		
 		if (m_mixerLine.dwComponentType == type)
-		{
-			printf("yarpsounddriver: source line found\n");
-			return 1;
-		}	
+            {
+                printf("yarpsounddriver: source line found\n");
+                return 1;
+            }	
 	}
 	printf("yarpsounddriver: -warning- source line not found\n");
 	return -1;
@@ -230,8 +230,8 @@ void SoundResources::_prepareBuffers(void) {
 	//  Preparing all memory buffer allocation
 	//----------------------------------------------------------------------
 	m_WaveHeader[2].dwBufferLength = 
-	m_WaveHeader[1].dwBufferLength = 
-	m_WaveHeader[0].dwBufferLength = dwBufferLength;
+        m_WaveHeader[1].dwBufferLength = 
+        m_WaveHeader[0].dwBufferLength = dwBufferLength;
 
 	m_WaveHeader[0].lpData = (char *)VirtualAlloc(0, 
 												  m_WaveHeader[0].dwBufferLength, 
@@ -284,17 +284,17 @@ void SoundResources::_print_dst_lines() {
 	mixerGetDevCaps(0,&mixerCaps, sizeof(mixerCaps));
 
 	for (int i = 0; i < mixerCaps.cDestinations; i++)
-	{
-		m_mixerLine.cbStruct      = sizeof(MIXERLINE);
-		m_mixerLine.dwSource      = 0;
-		m_mixerLine.dwDestination = i;
+        {
+            m_mixerLine.cbStruct      = sizeof(MIXERLINE);
+            m_mixerLine.dwSource      = 0;
+            m_mixerLine.dwDestination = i;
 
-		if (!(m_err = mixerGetLineInfo((HMIXEROBJ)m_MixerHandle, &m_mixerLine, MIXER_GETLINEINFOF_DESTINATION))) {
+            if (!(m_err = mixerGetLineInfo((HMIXEROBJ)m_MixerHandle, &m_mixerLine, MIXER_GETLINEINFOF_DESTINATION))) {
 				printf("\t#%lu: %s\n", i, m_mixerLine.szName);
-		}
-		m_numSrc = m_mixerLine.cConnections;
-		_print_src_lines();
-	}
+            }
+            m_numSrc = m_mixerLine.cConnections;
+            _print_src_lines();
+        }
 
 	return;
 }
@@ -424,7 +424,7 @@ int SoundResources::_init (const SoundOpenParameters& params)
 	//----------------------------------------------------------------------
 	_bmutex.wait ();
 	_rawBuffer = new unsigned char [dwBufferLength];
-//	ACE_ASSERT (_rawBuffer != NULL);
+    //	ACE_ASSERT (_rawBuffer != NULL);
 	_bmutex.post ();
 
 	return 1; 
@@ -498,8 +498,8 @@ void SoundResources::run()
 	//----------------------------------------------------------------------
 
 	while ((GetMessage(&msg, 0, 0, 0) == 1) && isRunning()) 
-	{
-		switch (msg.message) {
+        {
+            switch (msg.message) {
 			case MM_WIM_DATA: //Buffer filled
 				/*********************************************************************************
 				 * the msg.lParam contains a pointer to the WAVEHDR structure for the filled buffer. *
@@ -521,14 +521,14 @@ void SoundResources::run()
 						_bmutex.post ();
 					}
 					else
-					{
-						//----------------------------------------------------------------------
-						//  can't acquire, it means the buffer is still in use.
-						//  silently ignores this condition.
-						//----------------------------------------------------------------------
-						//ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
-						printf("lost a frame, acq thread\n");
-					}
+                        {
+                            //----------------------------------------------------------------------
+                            //  can't acquire, it means the buffer is still in use.
+                            //  silently ignores this condition.
+                            //----------------------------------------------------------------------
+                            //ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
+                            printf("lost a frame, acq thread\n");
+                        }
 				}
 
 				//----------------------------------------------------------------------
@@ -553,8 +553,8 @@ void SoundResources::run()
 				//ACE_DEBUG ((LM_DEBUG, "yarpsounddriver: received an unknown message\n"));
 				break;
 				
-		}
-	}
+            }
+        }
 }
 
 
@@ -593,15 +593,15 @@ bool MicrophoneDeviceDriver::open(yarp::os::Searchable& config)
 	res->m_callbackthread_identifier = d.getKey();	
 	ret = d._initialize (*(SoundOpenParameters *)res);
 	if (ret)
-	{
-		printf("returning true\n");
-		return true;
-	}
+        {
+            printf("returning true\n");
+            return true;
+        }
 	else 
-	{		
-		printf("returning false\n");
-		return false;
-	}
+        {		
+            printf("returning false\n");
+            return false;
+        }
 }
 
 bool MicrophoneDeviceDriver::close(void) 

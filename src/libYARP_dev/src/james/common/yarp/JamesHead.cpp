@@ -61,11 +61,11 @@ private:
     double *positions;
 public:
     HeadControl(int r, PolyDriver *inertia, PolyDriver *head): RateThread(r),
-        ddInertia(0),
-        ddHead(0),
-        inertiaValue(3),
-        encoders(0),
-        nAxes(0)
+                                                               ddInertia(0),
+                                                               ddHead(0),
+                                                               inertiaValue(3),
+                                                               encoders(0),
+                                                               nAxes(0)
     {
         pGain=P_GAIN;
 
@@ -81,11 +81,11 @@ public:
         velocityCmds=new double [HEAD_JOINTS];
 
         for(int k=0; k<HEAD_JOINTS; k++)
-        {
-            positions[k]=0.0;
-            positionCmds[k]=0.0;
-            velocityCmds[k]=0.0;
-        }
+            {
+                positions[k]=0.0;
+                positionCmds[k]=0.0;
+                velocityCmds[k]=0.0;
+            }
     }
     
     ~HeadControl()
@@ -121,7 +121,7 @@ public:
     {
 		mutex.wait();
         for(int k=0;k<5;k++)
-           ipos->getRefSpeed(j, sp);
+            ipos->getRefSpeed(j, sp);
 
 		mutex.post();
         return true;
@@ -179,7 +179,7 @@ public:
     bool positionMove(int j, double pos)
     {
         mutex.wait();
-            positionCmds[j]=pos;
+        positionCmds[j]=pos;
 
         if (j<5)
             ipos->positionMove(j, pos);
@@ -192,7 +192,7 @@ public:
     bool positionMove(const double *pos)
     {
         mutex.wait();
-            for(int k=0;k<HEAD_JOINTS;k++)
+        for(int k=0;k<HEAD_JOINTS;k++)
             {
                 positionCmds[k]=pos[k];
                 if (k<5)
@@ -205,29 +205,29 @@ public:
 
     bool velocityMove(int j, double vel)
     {
-         mutex.wait();
-            velocityCmds[j]=vel;
+        mutex.wait();
+        velocityCmds[j]=vel;
  
-         if (j<5)
-             ivel->velocityMove(j, vel);
+        if (j<5)
+            ivel->velocityMove(j, vel);
 
-		 mutex.post();
+        mutex.post();
 
-         return true;
+        return true;
     }
 
     bool velocityMove(const double *vel)
     {
-         mutex.wait();
-            for(int k=0;k<HEAD_JOINTS;k++)
+        mutex.wait();
+        for(int k=0;k<HEAD_JOINTS;k++)
             {
                 velocityCmds[k]=vel[k];
                 if (k<5)
-                ivel->velocityMove(k, vel[k]);
+                    ivel->velocityMove(k, vel[k]);
             }
-         mutex.post();
+        mutex.post();
 
-         return true;
+        return true;
     }
 
     bool relativeMove(int j, double d)
@@ -245,10 +245,10 @@ public:
     { 
 		mutex.wait();
         for(int k=0;k<HEAD_JOINTS;k++)
-        {
-            if (k<5)
-                ipos->relativeMove(k,dq[k]);
-        }
+            {
+                if (k<5)
+                    ipos->relativeMove(k,dq[k]);
+            }
         
 		mutex.post();
         return true;
@@ -267,12 +267,12 @@ public:
     {
 		mutex.wait();
         for(int k=0;k<HEAD_JOINTS;k++)
-        {
-            if (k<5)
-                ipos->checkMotionDone(k,&fl[k]);
-            else
-                fl[k]=true;
-        }
+            {
+                if (k<5)
+                    ipos->checkMotionDone(k,&fl[k]);
+                else
+                    fl[k]=true;
+            }
 		mutex.post();
 
         return true;
@@ -361,10 +361,10 @@ public:
 
         ok=ddInertia->view(isensor);
         if (!ok)
-        {
-            ACE_OS::printf("NeckControl::Error getting IGenericSensor interface, returning false\n");
-            return false;
-        }
+            {
+                ACE_OS::printf("NeckControl::Error getting IGenericSensor interface, returning false\n");
+                return false;
+            }
 
         // calibration
         isensor->calibrate(0,0);
@@ -377,10 +377,10 @@ public:
         ok=ok && ddHead->view(ipos);
         
         if (!ok)
-        {
-            ACE_OS::printf("NeckControl::Error getting head interfaces, returning false\n");
-            return false;
-        }
+            {
+                ACE_OS::printf("NeckControl::Error getting head interfaces, returning false\n");
+                return false;
+            }
 
 		mutex.wait();
         iencs->getAxes(&nAxes);
@@ -451,12 +451,12 @@ public:
 
 		done = false;
 		while(!done)
-		{
-			if (ipos->checkMotionDone(4, &done))
-				ACE_OS::printf(".");
-			else
-				ACE_OS::printf("CheckMotionDone returned false\n");
-		}
+            {
+                if (ipos->checkMotionDone(4, &done))
+                    ACE_OS::printf(".");
+                else
+                    ACE_OS::printf("CheckMotionDone returned false\n");
+            }
 		
 		ACE_OS::printf("\nYaw calibration terminated");
  
@@ -473,44 +473,44 @@ public:
 
 		ACE_OS::printf("Trying to reach zero configuration: ");
 		while(!inPosition)
-		{
-			ACE_OS::printf(".");
+            {
+                ACE_OS::printf(".");
 
-			isensor->read(inertiaValue);
+                isensor->read(inertiaValue);
 
-			roll=inertiaValue[0];
-			pitch=inertiaValue[1];
+                roll=inertiaValue[0];
+                pitch=inertiaValue[1];
 
-	        vCmds[0]=-600*(roll-roll_d);
-		    vCmds[1]=500*(pitch-pitch_d)+400*(roll-roll_d);
-			vCmds[2]=-500*(pitch-pitch_d)+400*(roll-roll_d);
+                vCmds[0]=-600*(roll-roll_d);
+                vCmds[1]=500*(pitch-pitch_d)+400*(roll-roll_d);
+                vCmds[2]=-500*(pitch-pitch_d)+400*(roll-roll_d);
  
-	        vCmds[0]*=pGain;
-		    vCmds[1]*=pGain;
-			vCmds[2]*=pGain;
+                vCmds[0]*=pGain;
+                vCmds[1]*=pGain;
+                vCmds[2]*=pGain;
 
-			if (fabs(roll - roll_d) < IN_POSITION_THRESHOLD)
-			{
-				if (fabs(pitch - pitch_d) < IN_POSITION_THRESHOLD)
-				{
-					ACE_OS::printf("\nZero Configuration Reached\n");
+                if (fabs(roll - roll_d) < IN_POSITION_THRESHOLD)
+                    {
+                        if (fabs(pitch - pitch_d) < IN_POSITION_THRESHOLD)
+                            {
+                                ACE_OS::printf("\nZero Configuration Reached\n");
 
-					inPosition = true;
+                                inPosition = true;
 
-			        vCmds[0]=0;
-				    vCmds[1]=0;
-					vCmds[2]=0;
-				}
-			}
+                                vCmds[0]=0;
+                                vCmds[1]=0;
+                                vCmds[2]=0;
+                            }
+                    }
 
-			//ivel->setRefAcceleration(5, 1000);
-			//ivel->setRefAcceleration(6, 1000);
-			//ivel->setRefAcceleration(7, 1000);
+                //ivel->setRefAcceleration(5, 1000);
+                //ivel->setRefAcceleration(6, 1000);
+                //ivel->setRefAcceleration(7, 1000);
 
-			ivel->velocityMove(5, vCmds[0]);
-			ivel->velocityMove(6, vCmds[1]);
-			ivel->velocityMove(7, vCmds[2]);
-		}
+                ivel->velocityMove(5, vCmds[0]);
+                ivel->velocityMove(6, vCmds[1]);
+                ivel->velocityMove(7, vCmds[2]);
+            }
 
 		double pos;
 		bool done;
@@ -522,30 +522,30 @@ public:
 
         int k=0;
 		for (k = 5; k <8; k++)
-		{
-			while(!icalib->done(k))
-				ACE_OS::printf(".");
-		}
+            {
+                while(!icalib->done(k))
+                    ACE_OS::printf(".");
+            }
 
 		ACE_OS::printf("\nReleasing cable:");
 		for (k = 5; k <8; k++)
-		{
-			iencs->getEncoder(k, &pos);
-			ipos->setRefSpeed(k,5);
-			ipos->positionMove(k, pos-5);
-		}
+            {
+                iencs->getEncoder(k, &pos);
+                ipos->setRefSpeed(k,5);
+                ipos->positionMove(k, pos-5);
+            }
 
 		for (k = 5; k <8; k++)
-		{
-			done = false;
-			while(!done)
-			{
-				if (ipos->checkMotionDone(k, &done))
-					ACE_OS::printf(".");
-				else
-					ACE_OS::printf("CheckMotionDone returned false\n");
-			}
-		}
+            {
+                done = false;
+                while(!done)
+                    {
+                        if (ipos->checkMotionDone(k, &done))
+                            ACE_OS::printf(".");
+                        else
+                            ACE_OS::printf("CheckMotionDone returned false\n");
+                    }
+            }
 		
 		ACE_OS::printf("\n");
 
@@ -632,14 +632,14 @@ public:
         dT+=t2-t1;
         
         if (count%100==0)
-        {
-            fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
-            //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
-            fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
-			//fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
-            fprintf(stderr, "dT=%.3lf\n", (dT)/100);
-            dT=0;
-        }
+            {
+                fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
+                //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
+                fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
+                //fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
+                fprintf(stderr, "dT=%.3lf\n", (dT)/100);
+                dT=0;
+            }
 
     }
 
@@ -679,16 +679,16 @@ public:
 };
 
 JamesHead::JamesHead():
-ImplementPositionControl<JamesHead, IPositionControl>(this),
-ImplementVelocityControl<JamesHead, IVelocityControl>(this),
-ImplementEncoders<JamesHead, IEncoders>(this),
-ImplementPidControl<JamesHead, IPidControl>(this),
-ImplementAmplifierControl<JamesHead, IAmplifierControl>(this),
-ImplementControlLimits<JamesHead, IControlLimits>(this),
-controller(0),
-axisMap(0),
-angleToEncoder(0),
-zeros(0)
+    ImplementPositionControl<JamesHead, IPositionControl>(this),
+    ImplementVelocityControl<JamesHead, IVelocityControl>(this),
+    ImplementEncoders<JamesHead, IEncoders>(this),
+    ImplementPidControl<JamesHead, IPidControl>(this),
+    ImplementAmplifierControl<JamesHead, IAmplifierControl>(this),
+    ImplementControlLimits<JamesHead, IControlLimits>(this),
+    controller(0),
+    axisMap(0),
+    angleToEncoder(0),
+    zeros(0)
 {
     nj=HEAD_JOINTS;
 
@@ -697,21 +697,21 @@ zeros(0)
     zeros=new double [nj];
 
     for(int k=0;k<nj;k++)
-    {
-        axisMap[k]=k;
-        angleToEncoder[k]=1.0;
-        zeros[k]=0.0;
-    }
+        {
+            axisMap[k]=k;
+            angleToEncoder[k]=1.0;
+            zeros[k]=0.0;
+        }
 }
 
 JamesHead::~JamesHead()
 {
-   HeadControl *c=my_cast(controller);
+    HeadControl *c=my_cast(controller);
 
-   if (c!=0)
-      delete c;
+    if (c!=0)
+        delete c;
 
-   c=0;
+    c=0;
 }
 
 bool JamesHead::open(yarp::os::Searchable& config)
@@ -732,10 +732,10 @@ bool JamesHead::open(yarp::os::Searchable& config)
 	// create a device for the head 
 	ddHead.open(headParams);
     if (!ddHead.isValid()) 
-    {  
-		ACE_OS::printf("JamesHead: head device either not found or could not open\n");
-		return false;
-    }
+        {  
+            ACE_OS::printf("JamesHead: head device either not found or could not open\n");
+            return false;
+        }
     
     // initialize interfaces
 
@@ -765,10 +765,10 @@ bool JamesHead::open(yarp::os::Searchable& config)
 	// create a device for the arm 
 	ddInertia.open(inertialParams);
     if (!ddInertia.isValid()) 
-    {  
-		ACE_OS::printf("JamesHead: inertia device either not found or could not open");
-		return false;
-    } 
+        {  
+            ACE_OS::printf("JamesHead: inertia device either not found or could not open");
+            return false;
+        } 
 
     // instantiate inertia and head
     controller = new HeadControl(NC_RATE, &ddInertia, &ddHead);
@@ -784,10 +784,10 @@ bool JamesHead::close()
     HeadControl *c=my_cast(controller);
 
     if (c!=0)
-	{
-		fprintf(stderr, "JamesHead::calling close\n");
-		c->stop();
-	}
+        {
+            fprintf(stderr, "JamesHead::calling close\n");
+            c->stop();
+        }
 
     return true;
 }
@@ -1047,22 +1047,22 @@ bool JamesHead::velocityMoveRaw(const double *v)
 
 bool JamesHead::disablePidRaw(int j)
 {
-   HeadControl *c=my_cast(controller);
+    HeadControl *c=my_cast(controller);
 
-   if (c!=0)
-       return c->disablePid(j);
-   else
-       return false;
+    if (c!=0)
+        return c->disablePid(j);
+    else
+        return false;
 }
 
 bool JamesHead::enablePidRaw(int j)
 {
-   HeadControl *c=my_cast(controller);
+    HeadControl *c=my_cast(controller);
 
-   if (c!=0)
-       return c->enablePid(j);
-   else
-       return false;
+    if (c!=0)
+        return c->enablePid(j);
+    else
+        return false;
 }
 
 bool JamesHead::enableAmpRaw(int j)
@@ -1104,40 +1104,40 @@ void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, doubl
     Pitch = Pitch * PI / 180;
 
 	if ((fabs(Roll) < TOLERANCE) && (fabs(Pitch) < TOLERANCE))
-	{
-		d1 = 0.0;
-		d2 = 0.0;
-		d3 = 0.0;
-	}
+        {
+            d1 = 0.0;
+            d2 = 0.0;
+            d3 = 0.0;
+        }
 	else
-	{
-		s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)+3.0*cos(Pitch 
-			)*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
-			)*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
-			)*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
-			*acos(cos(Pitch)*cos(Roll))-cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))-6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
+        {
+            s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)+3.0*cos(Pitch 
+                                                                                                      )*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
+                                                                                                                                                                            )*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
+                                                                                                                                                                                                                                                                                                                                 )*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *acos(cos(Pitch)*cos(Roll))-cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))-6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
 
-		d1 = t0;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               d1 = t0;
 
-		d1 = -d1 / R_capstan * (180.0/PI);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               d1 = -d1 / R_capstan * (180.0/PI);
 
 
-		s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)-3.0*cos(Pitch 
-			)*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
-			)*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
-			)*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0+L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
-			*acos(cos(Pitch)*cos(Roll))+cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))+6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)-3.0*cos(Pitch 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         )*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               )*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0+L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  *acos(cos(Pitch)*cos(Roll))+cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))+6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
 
-		d2 = t0; 
-		d2 = -d2 / R_capstan * (180.0/PI);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d2 = t0; 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d2 = -d2 / R_capstan * (180.0/PI);
 
-		t0 = 1/(sqrt(cos(Pitch)*cos(Roll)+1.0))*sqrt(3.0)*sqrt(2.0)*sqrt(-3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L*pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)-cos(Pitch)*L_cables*L_cables*pow(cos(Roll),2.0)+cos(Pitch)*cos(Roll)*L_cables*L_cables 
-			-cos(Roll)*L_cables*L_cables-1/acos(cos(Pitch)*cos(Roll))*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*L-1/acos(cos(Pitch)*cos(Roll))*sin(Roll)*L*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch 
-			),2.0)*pow(cos(Roll),2.0)+1.0)+L_cables*L_cables+3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L)/3.0-sqrt(L*L); 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  t0 = 1/(sqrt(cos(Pitch)*cos(Roll)+1.0))*sqrt(3.0)*sqrt(2.0)*sqrt(-3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L*pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)-cos(Pitch)*L_cables*L_cables*pow(cos(Roll),2.0)+cos(Pitch)*cos(Roll)*L_cables*L_cables 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   -cos(Roll)*L_cables*L_cables-1/acos(cos(Pitch)*cos(Roll))*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*L-1/acos(cos(Pitch)*cos(Roll))*sin(Roll)*L*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ),2.0)*pow(cos(Roll),2.0)+1.0)+L_cables*L_cables+3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L)/3.0-sqrt(L*L); 
 
-		d3 = t0;
-		d3 = -d3 / R_capstan * (180.0/PI);
-	}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d3 = t0;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d3 = -d3 / R_capstan * (180.0/PI);
+        }
 }
 
 void computeModifiedPitchRoll(double Yaw, double Roll, double Pitch, double &Roll_hat, double &Pitch_hat)

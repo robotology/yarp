@@ -119,7 +119,7 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 		cam.SetColor(params._whiteR,params._whiteB); 
 	} else {
 		cam.SetColor((float)50.0/63, (float)20.0/63); 
-        }
+    }
 	cam.SetShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
 	cam.SetGain(params._gain);		// x * -0.0224 = -11.2dB
     //    cam.SetBrigthness(params._brightness);

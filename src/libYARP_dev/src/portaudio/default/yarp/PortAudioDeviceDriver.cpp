@@ -179,7 +179,7 @@ bool PortAudioDeviceDriver::close(void) {
         err = Pa_CloseStream( (PaStream*)system_resource );
         if( err != paNoError ) {
             printf("Audio error -- portaudio close failed (%s)\n",
-                                  Pa_GetErrorText(err));
+                   Pa_GetErrorText(err));
             exit(1);
         }
         system_resource = NULL;
@@ -291,7 +291,7 @@ bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound) {
                          num_samples);
     if( err != paNoError ) {
         printf("Audio error -- portaudio write failed (%s)\n",
-                                  Pa_GetErrorText(err));
+               Pa_GetErrorText(err));
         exit(1);
     }
     return true;
@@ -306,21 +306,21 @@ bool PortAudioDeviceDriver::renderSound(yarp::sig::Sound& sound) {
 //////////////////////////////////////////////////////////////////////////
 
 /*
-PortAudioRender::PortAudioRender() {
-}
+  PortAudioRender::PortAudioRender() {
+  }
 
-PortAudioRender::~PortAudioRender() {
-    close();
-}
+  PortAudioRender::~PortAudioRender() {
+  close();
+  }
 
-bool PortAudioRender::open(yarp::os::Searchable& config) {
-}
+  bool PortAudioRender::open(yarp::os::Searchable& config) {
+  }
 
-bool PortAudioRender::close() {
-}
+  bool PortAudioRender::close() {
+  }
 
 
-bool PortAudioRender::renderSound(yarp::sig::Sound& sound) {
-}
+  bool PortAudioRender::renderSound(yarp::sig::Sound& sound) {
+  }
 
 */
