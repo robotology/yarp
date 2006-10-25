@@ -11,4 +11,3 @@ ENDIF (UNIX)
 
 SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber ffmpeg)
 
-# SET(ADDITIONAL_MODULES jamescalibrator)
