@@ -25,3 +25,5 @@ DOC SOURCE DEBIAN Thu Oct 12 17:37:34 CEST 2006 (bug fixes, see changelog)
 SOURCE Sun Oct 15 14:09:54 CEST 2006 (sound driver from IST)
 DOC SOURCE DEBIAN Mon Oct 23 14:14:16 CEST 2006 (web site moved to eris.liralab.it)
 DOC SOURCE DEBIAN Tue Oct 24 11:47:36 CEST 2006 (make sure pipeline is working)
+DOC SOURCE DEBIAN Wed Oct 25 11:55:52 CEST 2006 (clean up licensing)
+

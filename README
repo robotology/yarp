@@ -5,24 +5,28 @@ __  __ ___     ____   ____  ___
  / // ___ | / _, _// ____// __/
 /_//_/  |_|/_/ |_|/_/    /____/
 
-      Welcome to YARP2.
+      Welcome to YARP.
 
-License and copyright information is in COPYING.
-Author list is in AUTHORS.
+YARP is a library and toolkit for communication and device interfaces
+for humanoid robots.
+
+Material included in YARP is copyright its authors -- please read COPYRIGHT.
+See COPYING for use, distribution, and modification rights (summary: GPLv2).
+See AUTHORS for a list of contributors to YARP.
 
 ===============================================================================
 
-COMPILATION and INSTALLATION
+INSTALLATION and COMPILATION
 ----------------------------
 
-There are a few different ways to compile YARP2.
+There are a few different ways to compile YARP.
 
 See if there is a file called "QUICKSTART".  If so, then you have a 
 distribution of YARP tailored to your specific operating system,
 and the instructions in this file will give the fastest way
 to get going.
 
-We now describe two general methods for compiling YARP2: "cmake" and
+We now describe two general methods for compiling YARP: "cmake" and
 "autoconf".
 
 If you are using some version of Microsoft Windows, we recommend cmake
@@ -39,7 +43,7 @@ If all else fails, you can fall back on autoconf.
 PREREQUISITES *** important! read this! ***
 -------------
 
-YARP2 depends on the ACE communications library.  Make sure you install
+YARP depends on the ACE communications library.  Make sure you install
 ACE before following any of the steps below.  See:
   http://www.cs.wustl.edu/~schmidt/ACE.html
 for download and installation instructions.  Some linux distributions
@@ -87,7 +91,7 @@ Download cmake from www.cmake.org or install it as a package if available
 for your system.
 
 
-In Linux, in the YARP2 directory, type:
+In Linux, in the YARP directory, type:
 
   cmake . (or "ccmake ." for a graphical interface)
   make
@@ -100,7 +104,7 @@ In Linux, in the YARP2 directory, type:
 
 
 In Microsoft Windows, run cmake, answer "Where is the source code" by
-browsing to the YARP2 directory.
+browsing to the YARP directory.
 
 * Note: in Microsoft Windows your can run cmake as a GUI (by clicking
   on the appropriate icon) or from the command line.  We recommend
