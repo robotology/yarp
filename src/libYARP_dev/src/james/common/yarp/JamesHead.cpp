@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale, Giorgio Metta
+ * Copyright (C) 2006 Lorenzo Natale, Giorgio Metta, Francesco Nori
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -129,7 +129,7 @@ public:
 
     bool getRefSpeeds(double *sps)
     {
-		mutex.wait();
+n		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->getRefSpeed(k, sps+k);
 

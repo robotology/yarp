@@ -1,14 +1,14 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta
+ * Copyright (C) 2006 Giorgio Metta, Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
 
 //
-// $Id: messages.h,v 1.2 2006-10-24 19:51:03 eshuy Exp $
+// $Id: messages.h,v 1.3 2006-10-25 09:06:05 babybot Exp $
 //
 //
 
