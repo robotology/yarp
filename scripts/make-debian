@@ -26,8 +26,11 @@ for f in `ls $SRC/*.tar.gz`; do
     cd $BASE
     tar xzf - < $f
     dir=`basename $f .tar.gz`
+    name=`echo $dir | sed s/-.*//g`
     ver=`echo $dir | sed s/.*-//g`
-    echo "Version number is $ver"
+    orig="${name}_$ver.orig.tar.gz"
+    echo "Version number is $ver, original source in $orig"
+    mv $f $orig
     if [ -e $dir ]; then
 	echo Working in $dir
 	cd $dir
@@ -53,7 +56,7 @@ for f in `ls $SRC/*.tar.gz`; do
 		cat tmp.x | sed "s/unstable/$d/g" | tee $log
 		rm tmp.x
 		mkdir -p ../$d
-		pdebuild --buildresult ../$d -- --basetgz /var/cache/pbuilder/base-$d.tgz --distribution $d
+		pdebuild --debbuildopts -sa --buildresult ../$d -- --basetgz /var/cache/pbuilder/base-$d.tgz --distribution $d
 		cd ../$d
 		for c in `ls *.changes`; do
 		    mkdir -p $BASE/archive
