@@ -129,7 +129,7 @@ public:
 
     bool getRefSpeeds(double *sps)
     {
-n		mutex.wait();
+		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->getRefSpeed(k, sps+k);
 
