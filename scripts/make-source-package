@@ -16,7 +16,34 @@ if [ ! "nocvs" = "$1" ]; then
     echo "CVS update"
     cd $BASE/repository
     cvs update -d
+
 fi
+
+
+rm -rf $BASE/pruned-repository
+cp -R $BASE/repository $BASE/pruned-repository
+cd $BASE/pruned-repository
+want_prune=true
+
+if $want_prune; then
+    echo "Directories removed for distribution:" > /tmp/REMOVED
+    # certain driver directories are of ambiguous redistribution status
+    for f in src/libYARP_dev/src/XSensMTx src/libYARP_dev/src/inertiacube2 src/libYARP_dev/src/picolo src/libYARP_dev/src/esdMotionControl ; do
+	echo "  Removed subdirectories of $f" >> /tmp/REMOVED
+	rm -rf $f/*
+    done
+
+    for f in src/libYARP_dev/src/dragonfly/winnt ; do
+	echo "  Removed directory $f" >> /tmp/REMOVED
+	rm -rf $f
+    done
+    (
+	cat src/libYARP_dev/AvailableDevices.txt | sed "s/ picolo//g"  | sed "s/ esdMotionControl//g"  | sed "s/ XSensMTx//g"  | sed "s/ inertiacube2//g" | sed "/WIN32/,/UNIX/s/ dragonfly//"
+    ) > /tmp/AvailableDevices.txt
+    cp /tmp/AvailableDevices.txt src/libYARP_dev
+    cp /tmp/REMOVED .
+fi
+
 
 rm -rf $BASE/pack
 rm -f $BASE/*.tar.gz
@@ -31,12 +58,12 @@ if [ "k$OS" = "kCygwin" ]; then
 	export ACE_ROOT=$ACE_ROOT
 	GEN="NMake Makefiles"
 	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
-	"$CMAKE" -G "$GEN" ../repository
+	"$CMAKE" -G "$GEN" ../pruned-repository
 	nmake package_source
 	cp *.zip $BASE
 	echo Source package is $BASE/*.zip
 else
-	cmake ../repository
+	cmake ../pruned-repository
 	make package_source
 	cp *.tar.gz $BASE
 	echo Source package is $BASE/*.tar.gz
