@@ -240,11 +240,14 @@ int DgramTwoWayStream::read(const Bytes& b) {
             YARP_DEBUG(Logger::get(),
                        String("DGRAM Got ") + NetType::toString(result) +
                        " bytes");
+            /*
+              // this message isn't needed anymore
             if (result>WRITE_SIZE*1.25) {
                 YARP_ERROR(Logger::get(),
                            String("Got big datagram: ")+NetType::toString(result)+
                            " bytes");
             }
+            */
             if (closed||result<0) {
                 happy = false;
                 return result;
