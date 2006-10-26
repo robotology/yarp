@@ -53,6 +53,8 @@ void Protocol::defaultExpectIndex() {
     YARP_DEBUG(Logger::get(),"secondary header came in happily...");
     int inLen = (unsigned char)(indexHeader.get()[0]);
     int outLen = (unsigned char)(indexHeader.get()[1]);
+    // Big limit on number of blocks here!  Inherited from QNX.
+    // should make it go away if it hurts someone.
 
     int total = 0;
     for (int i=0; i<inLen; i++) {

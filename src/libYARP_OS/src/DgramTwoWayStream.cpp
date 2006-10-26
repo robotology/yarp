@@ -20,8 +20,8 @@ using namespace yarp;
 #define CRC_SIZE 8
 #define READ_SIZE (120000-CRC_SIZE)
 //#define WRITE_SIZE (65500-CRC_SIZE)
-//#define WRITE_SIZE (60000-CRC_SIZE)
-#define WRITE_SIZE (1000-CRC_SIZE)
+#define WRITE_SIZE (60000-CRC_SIZE)
+//#define WRITE_SIZE (1000-CRC_SIZE)
 
 
 
