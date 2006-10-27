@@ -303,3 +303,10 @@ double DragonflyDeviceDriver::getGain() const
     fprintf(stderr, "DragonflyDeviceDriver::getGain yet implemented\n");
     return -1;
 }
+
+
+bool DragonflyDeviceDriver::setWhiteBalance(double r, double g)
+{
+    fprintf(stderr, "DragonflyDeviceDriver::setWhiteBalance not yet implemented\n");
+    return -1;
+}
