@@ -51,6 +51,7 @@ public:
         startTime = 0;
         _hasAudio = _hasVideo = false;
         system_resource = NULL;
+        needRateControl = false;
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -85,6 +86,7 @@ protected:
     bool active;
     double startTime;
     bool _hasAudio, _hasVideo;
+    bool needRateControl;
   
     /** Width of the images a grabber produces. */
     int m_w;
@@ -97,10 +99,11 @@ protected:
     /** Opaque ffmpeg structure for image capture. */
     void * m_capture;
 
-    bool openFirewire(AVFormatContext **ppFormatCtx,
-                      const char *devname = "/dev/dv1394");
+    bool openFirewire(yarp::os::Searchable & config, 
+                      AVFormatContext **ppFormatCtx);
 
-    bool openV4L(AVFormatContext **ppFormatCtx);
+    bool openV4L(yarp::os::Searchable & config, 
+                 AVFormatContext **ppFormatCtx);
 
     bool openFile(AVFormatContext **ppFormatCtx,
                   const char *fname);

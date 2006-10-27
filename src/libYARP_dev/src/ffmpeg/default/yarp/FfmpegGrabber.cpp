@@ -262,18 +262,23 @@ public:
 #define HELPER(x) (*((FfmpegHelper*)x))
 
 
-bool FfmpegGrabber::openV4L(AVFormatContext **ppFormatCtx) {
+
+bool FfmpegGrabber::openV4L(yarp::os::Searchable & config, 
+                            AVFormatContext **ppFormatCtx) {
 
     AVFormatParameters formatParams;
     AVInputFormat *iformat;
-    
-    formatParams.device = "/dev/video0";
-    formatParams.channel = 0;
-    formatParams.standard = "ntsc";
-    formatParams.width = 640;
-    formatParams.height = 480;
-    formatParams.time_base.den = 29;
-    formatParams.time_base.num = 1;
+	
+	formatParams.device = strdup(config.check("v4ldevice",Value("/dev/video0")).asString().c_str());
+    formatParams.channel = config.check("channel",Value(0)).asInt();
+    formatParams.standard = strdup(config.check("standard",Value("ntsc")).asString().c_str());
+    formatParams.width = config.check("width",Value(640)).asInt();
+    formatParams.height = config.check("height",Value(480)).asInt();
+    formatParams.time_base.den = config.check("time_base_den",
+                                              Value(29)).asInt();
+    formatParams.time_base.num = config.check("time_base_num",
+                                              Value(1)).asInt();
+
     iformat = av_find_input_format("video4linux");
 
     return (av_open_input_file(ppFormatCtx,
@@ -282,13 +287,15 @@ bool FfmpegGrabber::openV4L(AVFormatContext **ppFormatCtx) {
 }
 
 
-bool FfmpegGrabber::openFirewire(AVFormatContext **ppFormatCtx,
-                                 const char *devname) {
+
+bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config, 
+                                 AVFormatContext **ppFormatCtx) {
     AVFormatParameters formatParams;
     AVInputFormat *iformat;
-    formatParams.device = devname;
+    ConstString devname = config.check("devname",Value("/dev/dv1394")).asString();
+    formatParams.device = devname.c_str();
     iformat = av_find_input_format("dv1394");
-    printf("Checking for digital video in %s\n", devname);
+    printf("Checking for digital video in %s\n", devname.c_str());
     return av_open_input_file(ppFormatCtx,
                               "", iformat, 0, &formatParams)==0;
 }
@@ -310,19 +317,23 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
     // Open video file
     if (config.check("v4l")) {
-        if (!openV4L(&pFormatCtx)) {
+        needRateControl = false; // reading from live media
+        if (!openV4L(config,&pFormatCtx)) {
             printf("Could not open Video4Linux input\n");
             return false;
         }
-    } else if (config.check("firewire")||config.check("ieee1394")||
-               config.check("dv")) {
-        if (!openFirewire(&pFormatCtx)) {
+    } else if (config.check("ieee1394")) {
+        needRateControl = false; // reading from live media
+        if (!openFirewire(config,&pFormatCtx)) {
             printf("Could not open ieee1394 input\n");
             return false;
         }
-    } else if (!openFile(&pFormatCtx,fname.c_str())) {
-        printf("Could not open avi file %s\n", fname.c_str());
-        return false; // Couldn't open file
+    } else {
+        needRateControl = true; // reading from recorded media
+        if (!openFile(&pFormatCtx,fname.c_str())) {
+            printf("Could not open avi file %s\n", fname.c_str());
+            return false; // Couldn't open file
+        }
     }
         
     // Retrieve stream information
@@ -482,13 +493,15 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                 } else {
                     image.resize(0,0);
                 }
-                double now = Time::now()-startTime;
-                double delay = time_target-now;
-                if (delay>0) {
-                    DBG printf("DELAY %g ", delay);
-                    Time::delay(delay);
-                } else {
-                    DBG printf("NODELAY %g ", delay);
+                if (needRateControl) {
+                    double now = Time::now()-startTime;
+                    double delay = time_target-now;
+                    if (delay>0) {
+                        DBG printf("DELAY %g ", delay);
+                        Time::delay(delay);
+                    } else {
+                        DBG printf("NODELAY %g ", delay);
+                    }
                 }
                 DBG printf("IMAGE size %dx%d  ", image.width(), image.height());
                 DBG printf("SOUND size %d\n", sound.getSamples());
