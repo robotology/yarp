@@ -167,17 +167,29 @@ Route PortCoreOutputUnit::getRoute() {
 void PortCoreOutputUnit::sendHelper() {
     try {
         if (op!=NULL) {
-            PortCommand pc('d',"");
             BufferedConnectionWriter buf(op->isTextMode());
             if (cachedReader!=NULL) {
                 buf.setReplyHandler(*cachedReader);
             }
-            pc.writeBlock(buf);
             YARP_ASSERT(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 throw IOException("writer failed");
             }
+
+            buf.addToHeader();
+
+            if (cachedEnvelope!="") {
+                YARP_ERROR(Logger::get(),
+                           "****** envelope present, not ready for that yet");
+                printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
+                PortCommand pc('\0',String("d ") + cachedEnvelope);
+                pc.writeBlock(buf);
+            } else {
+                PortCommand pc('d',"");
+                pc.writeBlock(buf);
+            }
+
             op->write(buf);
         }
     } catch (IOException e) {
@@ -192,6 +204,7 @@ void PortCoreOutputUnit::sendHelper() {
 void *PortCoreOutputUnit::send(Writable& writer, 
                                Readable *reader,
                                void *tracker,
+                               const String& envelopeString,
                                bool waitAfter,
                                bool waitBefore) {
     if (!waitBefore || !waitAfter) {
@@ -210,6 +223,7 @@ void *PortCoreOutputUnit::send(Writable& writer,
     if (!sending) {
         cachedWriter = &writer;
         cachedReader = reader;
+        cachedEnvelope = envelopeString;
 
         sending = true;
         if (waitAfter==true) {

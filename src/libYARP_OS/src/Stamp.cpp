@@ -8,6 +8,7 @@
 
 
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Bottle.h>
 
 #include <yarp/IOException.h>
 
@@ -17,7 +18,16 @@ using namespace yarp;
 bool Stamp::read(ConnectionReader& connection) {
     try {
         connection.convertTextMode();
+        int header = connection.expectInt();
+        if (header!=BOTTLE_TAG_LIST) { return false; }
+        int len = connection.expectInt();
+        if (len!=2) { return false; }
+        int code;
+        code = connection.expectInt();
+        if (code!=BOTTLE_TAG_INT) { return false; }
         sequenceNumber = connection.expectInt();
+        code = connection.expectInt();
+        if (code!=BOTTLE_TAG_DOUBLE) { return false; }
         timeStamp = connection.expectDouble();
         return true;
     } catch (IOException e) {
@@ -29,7 +39,11 @@ bool Stamp::read(ConnectionReader& connection) {
 
 bool Stamp::write(ConnectionWriter& connection) {
     try {
+        connection.appendInt(BOTTLE_TAG_LIST); // nested structure
+        connection.appendInt(2);               // with two elements
+        connection.appendInt(BOTTLE_TAG_INT);
         connection.appendInt(sequenceNumber);
+        connection.appendInt(BOTTLE_TAG_DOUBLE);
         connection.appendDouble(timeStamp);
         connection.convertTextMode();
         return true;

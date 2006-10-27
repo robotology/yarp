@@ -73,6 +73,7 @@ public:
     virtual void *send(Writable& writer, 
                        Readable *reader,
                        void *tracker,
+                       const String& envelope,
                        bool waitAfter,
                        bool waitBefore);
 
@@ -88,6 +89,7 @@ private:
     Writable *cachedWriter;
     Readable *cachedReader;
     void *cachedTracker;
+    String cachedEnvelope;
 
     void sendHelper();
 

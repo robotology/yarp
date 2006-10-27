@@ -107,6 +107,10 @@ public:
 
     void notifyCompletion(void *tracker);
 
+    void setEnvelope(Writable& envelope);
+
+    void setEnvelope(const String& envelope);
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -155,6 +159,7 @@ private:
     int events;
     int connectionListeners;
     PortCorePackets packets;
+    String envelope;
 
     void closeMain();
 

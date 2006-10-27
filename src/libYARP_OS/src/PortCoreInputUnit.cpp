@@ -118,6 +118,12 @@ void PortCoreInputUnit::run() {
                 case 'd':
                     {
                         try {
+                            String env = cmd.getText();
+                            if (env.length()>1) {
+                                YARP_ERROR(Logger::get(),
+                                           "***** received an envelope!");
+                                man.setEnvelope(env.substr(2,env.length()));
+                            }
                             if (localReader) {
                                 localReader->read(br);
                             } else {

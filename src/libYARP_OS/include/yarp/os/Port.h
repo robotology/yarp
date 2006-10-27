@@ -144,6 +144,9 @@ public:
      */
     bool isWriting();
 
+    // documented in Contactable
+    virtual void setEnvelope(PortWriter& envelope);
+
 private:
     void *implementation;
 

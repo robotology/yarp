@@ -58,6 +58,7 @@ public:
     virtual void *send(Writable& writer, 
                        Readable *reader,
                        void *tracker,
+                       const String& envelope,                       
                        bool waitAfter = true,
                        bool waitBefore = true) {
         // do nothing

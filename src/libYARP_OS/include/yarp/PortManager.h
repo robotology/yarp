@@ -70,6 +70,8 @@ public:
         return String(name);
     }
 
+    virtual void setEnvelope(const String& envelope) = 0;
+
 protected:
     bool hasOutput() {
         return os!=NULL;

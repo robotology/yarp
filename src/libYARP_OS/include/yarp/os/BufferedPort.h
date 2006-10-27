@@ -185,6 +185,11 @@ public:
         reader.useCallback(*this);
     }
 
+    // documented in Contactable
+    virtual void setEnvelope(PortWriter& envelope) {
+        port.setEnvelope(envelope);
+    }
+
 private:
     // solaris preferred order - strange
     PortWriterBuffer<T> writer;

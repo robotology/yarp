@@ -32,6 +32,7 @@ public:
 
     BufferedConnectionWriter(bool textMode = false) : textMode(textMode) {
         reader = NULL;
+        target = &lst;
     }
 
     virtual ~BufferedConnectionWriter() {
@@ -45,20 +46,25 @@ public:
     }
 
     void clear() {
+        target = &lst;
         for (unsigned int i=0; i<lst.size(); i++) {
             delete lst[i];
         }
         lst.clear();
+        for (unsigned int i=0; i<header.size(); i++) {
+            delete header[i];
+        }
+        header.clear();
     }
 
     virtual void appendBlock(const Bytes& data) {
-        lst.push_back(new ManagedBytes(data,false));
+        target->push_back(new ManagedBytes(data,false));
     }
 
     virtual void appendBlockCopy(const Bytes& data) {
         ManagedBytes *buf = new ManagedBytes(data,false);
         buf->copy();
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual void appendInt(int data) {
@@ -66,7 +72,7 @@ public:
         Bytes b((char*)(&i),sizeof(i));
         ManagedBytes *buf = new ManagedBytes(b,false);
         buf->copy();
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual void appendDouble(double data) {
@@ -74,20 +80,20 @@ public:
         Bytes b((char*)(&i),sizeof(i));
         ManagedBytes *buf = new ManagedBytes(b,false);
         buf->copy();
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual void appendStringBase(const String& data) {
         Bytes b((char*)(data.c_str()),data.length()+1);
         ManagedBytes *buf = new ManagedBytes(b,false);
         buf->copy();
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual void appendBlock(const String& data) {
         Bytes b((char*)(data.c_str()),data.length()+1);
         ManagedBytes *buf = new ManagedBytes(b,false);
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual void appendLine(const String& data) {
@@ -100,7 +106,7 @@ public:
 
         //ACE_DEBUG((LM_DEBUG,"adding a line - %d bytes", copy.length()));
 
-        lst.push_back(buf);
+        target->push_back(buf);
     }
 
     virtual bool isTextMode() {
@@ -108,23 +114,34 @@ public:
     }
 
     void write(OutputStream& os) {
+        for (unsigned int i=0; i<header.size(); i++) {
+            ManagedBytes& b = *(header[i]);
+            os.write(b.bytes());
+        }
         for (unsigned int i=0; i<lst.size(); i++) {
             ManagedBytes& b = *(lst[i]);
-            //ACE_DEBUG((LM_DEBUG,"output a block, %d bytes",b.length()));
             os.write(b.bytes());
         }    
     }
 
     virtual int length() {
-        return lst.size();
+        return header.size()+lst.size();
     }
 
     virtual int length(int index) {
-        ManagedBytes& b = *(lst[index]);
+        if (index<header.size()) {
+            ManagedBytes& b = *(header[index]);
+            return b.length();
+        }
+        ManagedBytes& b = *(lst[index-header.size()]);
         return b.length();
     }
 
     virtual const char *data(int index) {
+        if (index<header.size()) {
+            ManagedBytes& b = *(header[index]);
+            return (const char *)b.get();
+        }
         ManagedBytes& b = *(lst[index]);
         return (const char *)b.get();
     }
@@ -173,8 +190,14 @@ public:
 
     virtual bool convertTextMode();
 
+    void addToHeader() {
+        target = &header;
+    }
+
 private:
     ACE_Vector<ManagedBytes *> lst;
+    ACE_Vector<ManagedBytes *> header;
+    ACE_Vector<ManagedBytes *> *target;
     PortReader *reader;
     bool textMode;
 };

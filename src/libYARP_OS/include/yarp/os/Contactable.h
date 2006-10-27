@@ -10,6 +10,7 @@
 #define _YARP2_CONTACTABLE_
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/PortWriter.h>
 
 /**
  * The main, catch-all namespace for YARP.
@@ -112,6 +113,22 @@ public:
     ConstString getName() {
         return where().getName();
     }
+
+
+    /**
+     * Every message sent by a port can have some information added
+     * to it called an envelope (this could be a timestamp, for example).
+     * You can set that envelope with this method.
+     *
+     * Currently, for proper operation, the envelope must serialize
+     * correctly in text-mode (even if you do not explicitly use
+     * text-mode connections).
+     *
+     * @param envelope some information to add to the next message sent
+     *
+     */
+    virtual void setEnvelope(PortWriter& envelope) =0;
+
 };
 
 #endif

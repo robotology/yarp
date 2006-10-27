@@ -762,6 +762,9 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
 void PortCore::send(Writable& writer, Readable *reader) {
 
+    String envelopeString = envelope;
+    envelope = "";
+
     // pass the data to all output units.
     // for efficiency, it should be converted to block form first.
     // some ports may want text-mode, some may want binary, so there
@@ -791,6 +794,7 @@ void PortCore::send(Writable& writer, Readable *reader) {
                     packet->inc();
                     YMSG(("------- -- presend\n"));
                     void *out = unit->send(writer,reader,(void *)packet,
+                                           envelopeString,
                                            waitAfterSend,waitBeforeSend);
                     YMSG(("------- -- send\n"));
                     if (out!=NULL) {
@@ -869,3 +873,20 @@ void PortCore::notifyCompletion(void *tracker) {
 }
 
 
+void PortCore::setEnvelope(Writable& envelope) {
+    BufferedConnectionWriter buf(true);
+    envelope.write(buf);
+    setEnvelope(buf.toString());
+}
+
+
+void PortCore::setEnvelope(const String& envelope) {
+    this->envelope = envelope;
+    for (int i=0; i<envelope.length(); i++) {
+        if (this->envelope[i]<32) {
+            this->envelope = this->envelope.substr(0,i);
+            break;
+        }
+    }
+    printf(">>>>> set envelope to %s\n", this->envelope.c_str());
+}
