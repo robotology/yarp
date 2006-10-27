@@ -31,6 +31,7 @@ namespace yarp {
 }
 
 #define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
+#define VOCAB_WHITE VOCAB4('w','h','i','t')
 #define VOCAB_SHUTTER VOCAB4('s','h','u','t')
 #define VOCAB_GAIN VOCAB4('g','a','i','n')
 #define VOCAB_SET VOCAB3('s','e','t')
@@ -195,6 +196,11 @@ public:
     virtual bool setShutter(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setShutter(v);
+    }
+
+	virtual bool setWhiteBalance(double r, double g) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setWhiteBalance(r,g);
     }
 
     virtual bool setGain(double v) {

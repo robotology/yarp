@@ -146,6 +146,10 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
             case VOCAB_GAIN:
                 ok = setGain(cmd.get(2).asDouble());
                 break;
+			case VOCAB_WHITE:
+				ok = setWhiteBalance(cmd.get(2).asDouble(),
+									 cmd.get(3).asDouble());
+				break;
             }
         }
         break;

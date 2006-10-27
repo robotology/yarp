@@ -184,5 +184,11 @@ public:
      * @return the current gain value.
      */
     virtual double getGain() const = 0;
+
+	/**
+     * Set the white balance for the frame grabber.
+     * @return true/false if successful or not.
+     */
+    virtual bool setWhiteBalance(double red, double green) = 0;
 };
 #endif

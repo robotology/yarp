@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.22 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.23 2006-10-27 08:13:53 babybot Exp $
 ///
 ///
 
@@ -231,6 +231,8 @@ public:
      * Get image brightness.
      */
     virtual double getBrightness() const;
+
+	virtual bool setWhiteBalance(double r, double b);
 
 protected:
 	void *system_resources;

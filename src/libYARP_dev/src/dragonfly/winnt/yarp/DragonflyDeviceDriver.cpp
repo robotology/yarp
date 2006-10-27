@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.22 2006-10-25 09:06:05 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.23 2006-10-27 08:13:53 babybot Exp $
 ///
 ///
 
@@ -82,9 +82,15 @@ public:
 	
 	bool _setBrightness (int value, bool bDefault=false);
 	bool _setExposure (int value, bool bDefault=false);
-	bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=false);
+	bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=true);
 	bool _setShutter (int value, bool bDefault=false);
 	bool _setGain (int value, bool bDefault=false);
+
+	double _getShutter() const;
+	double _getExposure() const;
+	double _getBrightness() const;
+	double _getGain() const;
+	bool _getWhiteBalance (int &redValue, int &blueValue) const;
 
 private:
 	void _prepareBuffers (void);
@@ -216,6 +222,48 @@ inline bool DragonflyResources::_uninitialize (void)
 	return true;
 }
 
+inline double DragonflyResources::_getShutter() const
+{
+    long tmpA;
+  
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return (double) tmpA;
+	else 
+		return -1;
+}
+
+inline double DragonflyResources::_getBrightness() const
+{
+    long tmpA;
+    
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return (double) tmpA;
+	else 
+		return -1;
+}
+
+inline double DragonflyResources::_getGain() const
+{
+    long tmpA;
+
+    FlyCaptureError   error = FLYCAPTURE_OK;
+	error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, 0, false);
+	if (error == FLYCAPTURE_OK)
+		return (double) tmpA;
+	else 
+		return -1;
+}
+
+inline bool DragonflyResources::_getWhiteBalance (int &redValue, int &blueValue) const
+{
+	fprintf(stderr, "Not implemented yet, assuming you care...");
+	return false;
+}
+
 ///
 ///
 inline void DragonflyResources::_prepareBuffers(void)
@@ -252,7 +300,6 @@ inline void DragonflyResources::_destroyBuffers(void)
 inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-    //	error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, value, 0, bAuto);
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, value, 0);
 
 	if (error == FLYCAPTURE_OK)
@@ -276,8 +323,26 @@ inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
-	//error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, false, bAuto, redValue, blueValue);
+	fprintf(stderr, "Setting White: %d %d\n", redValue, blueValue);
+	// error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
+	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, true, false, redValue, blueValue);
+
+	if (error==FLYCAPTURE_OK)
+	{
+		fprintf(stderr, "OK!!");
+	}
+	else
+	{
+		fprintf(stderr, "NOT ok\n");
+	}
+
+	bool push;
+	bool on;
+	bool bb;
+	
+	error = flycaptureGetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, &push, &on, &bb, &redValue, &blueValue);
+
+	fprintf(stderr, "Got back: %d %d\n", redValue, blueValue);
 
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -288,6 +353,7 @@ inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, b
 inline bool DragonflyResources::_setShutter (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
+
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_SHUTTER, false, false, bAuto, value, 0);
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -421,79 +487,47 @@ int DragonflyDeviceDriver::height () const
 bool DragonflyDeviceDriver::setBrightness(double value)
 {
     DragonflyResources& d = RES(system_resources);
-
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_BRIGHTNESS, (int) value, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return true;
-	else 
-		return false;
+	return d._setBrightness((int)(value));
 }
 
 bool DragonflyDeviceDriver::setShutter(double value)
 {
     DragonflyResources& d = RES(system_resources);
 
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_SHUTTER, (int) value, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return true;
-	else 
-		return false;
+	return d._setBrightness((int)(value));
 }
 
 bool DragonflyDeviceDriver::setGain(double value)
 {
     DragonflyResources& d = RES(system_resources);
 
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureSetCameraProperty(d.context, FLYCAPTURE_GAIN, (int) value, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return true;
-	else 
-		return false;
+	return d._setGain(value);
 }
 
 double DragonflyDeviceDriver::getShutter() const
 {
     DragonflyResources& d = RES(system_resources);
 
-    long tmpA;
-  
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return tmpA;
-	else 
-		return -1;
+	return d._getGain();
+}
+
+bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
+{
+    DragonflyResources& d = RES(system_resources);
+	return d._setWhiteBalance(red, blue);
 }
 
 double DragonflyDeviceDriver::getBrightness() const
 {
     DragonflyResources& d = RES(system_resources);
 
-    long tmpA;
-    
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return tmpA;
-	else 
-		return -1;
+	return d._getBrightness();
 }
 
 double DragonflyDeviceDriver::getGain() const
 {
     DragonflyResources& d = RES(system_resources);
-
-    long tmpA;
-
-    FlyCaptureError   error = FLYCAPTURE_OK;
-	error = flycaptureGetCameraProperty(d.context, FLYCAPTURE_GAIN, &tmpA, 0, false);
-	if (error == FLYCAPTURE_OK)
-		return tmpA;
-	else 
-		return -1;
+	return d._getGain();
 }
 
 void DragonflyDeviceDriver::recColorFSBilinear(const unsigned char *src, unsigned char *out)

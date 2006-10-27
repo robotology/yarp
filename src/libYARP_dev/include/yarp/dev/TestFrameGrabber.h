@@ -157,6 +157,11 @@ public:
         return 0;
     }
 
+	virtual bool setWhiteBalance(double r, double g)
+	{
+		return true;
+	}
+
 private:
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 };
