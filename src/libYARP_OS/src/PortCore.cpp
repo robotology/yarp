@@ -885,7 +885,7 @@ bool PortCore::setEnvelope(Writable& envelope) {
 
 void PortCore::setEnvelope(const String& envelope) {
     this->envelope = envelope;
-    for (int i=0; i<envelope.length(); i++) {
+    for (unsigned int i=0; i<envelope.length(); i++) {
         if (this->envelope[i]<32) {
             this->envelope = this->envelope.substr(0,i);
             break;
