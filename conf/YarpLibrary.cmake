@@ -4,10 +4,10 @@ MACRO(YarpLibrary name postfix)
 PROJECT(lib${name})
 
 FOREACH(X ${NEED_LIBS})
-	INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/src/lib${X}/include)
+	INCLUDE_DIRECTORIES("${CMAKE_SOURCE_DIR}/src/lib${X}/include")
 ENDFOREACH(X ${NEED_LIBS})
 SET(header_path ${CMAKE_SOURCE_DIR}/src/lib${name}/include)
-INCLUDE_DIRECTORIES(${header_path})
+INCLUDE_DIRECTORIES("${header_path}")
 
 #AUX_SOURCE_DIRECTORY(src libcode)
 FILE(GLOB_RECURSE folder_source src/*.cpp)

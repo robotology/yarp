@@ -26,6 +26,7 @@ echo Working in directory $SOURCE | tee should_report.txt
 rm -f CMakeCache.txt
 rm -f failure.txt
 cmake $CMAKEOPTS $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
+cmake $SOURCE # there seems to be a bug in cmake 2.5 with add_definitions 
 
 make clean || echo "make clean failed"
 
