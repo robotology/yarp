@@ -129,7 +129,7 @@ public:
     }
 
     virtual int length(int index) {
-        if (index<header.size()) {
+        if (index<(int)header.size()) {
             ManagedBytes& b = *(header[index]);
             return b.length();
         }
@@ -138,7 +138,7 @@ public:
     }
 
     virtual const char *data(int index) {
-        if (index<header.size()) {
+        if (index<(int)header.size()) {
             ManagedBytes& b = *(header[index]);
             return (const char *)b.get();
         }
