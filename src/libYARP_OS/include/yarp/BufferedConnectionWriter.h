@@ -47,11 +47,12 @@ public:
 
     void clear() {
         target = &lst;
-        for (unsigned int i=0; i<lst.size(); i++) {
+		unsigned int i;
+        for (i=0; i<lst.size(); i++) {
             delete lst[i];
         }
         lst.clear();
-        for (unsigned int i=0; i<header.size(); i++) {
+        for (i=0; i<header.size(); i++) {
             delete header[i];
         }
         header.clear();
@@ -114,11 +115,12 @@ public:
     }
 
     void write(OutputStream& os) {
-        for (unsigned int i=0; i<header.size(); i++) {
+		unsigned int i;
+        for (i=0; i<header.size(); i++) {
             ManagedBytes& b = *(header[i]);
             os.write(b.bytes());
         }
-        for (unsigned int i=0; i<lst.size(); i++) {
+        for (i=0; i<lst.size(); i++) {
             ManagedBytes& b = *(lst[i]);
             os.write(b.bytes());
         }    
