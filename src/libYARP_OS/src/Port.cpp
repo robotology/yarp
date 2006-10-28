@@ -383,8 +383,14 @@ bool Port::isWriting() {
 
 
 
-void Port::setEnvelope(PortWriter& envelope) {
+bool Port::setEnvelope(PortWriter& envelope) {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setEnvelope(envelope);
+    return core.setEnvelope(envelope);
+}
+
+
+bool Port::getEnvelope(PortReader& envelope) {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.getEnvelope(envelope);
 }
 

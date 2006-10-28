@@ -26,7 +26,7 @@ namespace yarp {
 class yarp::os::Stamp : public Portable {
 private:
     NetInt32 sequenceNumber;
-    NetFloat64 timeStamp;
+    NetFloat64 timeStamp, timeZero;
 public:
     /**
      * Constuct an invalid Stamp.
@@ -34,6 +34,7 @@ public:
     Stamp() {
         sequenceNumber = -1;
         timeStamp = 0;
+        timeZero = 0;
     }
 
     /**
@@ -45,6 +46,7 @@ public:
     Stamp(int count, double time) :
         sequenceNumber(count),
         timeStamp(time) {
+        timeZero = 0;
     }
 
     /**
@@ -67,6 +69,21 @@ public:
     bool isValid() {
         return sequenceNumber>=0;
     }
+
+
+    /**
+     * @returns the maximum sequence number, after which
+     * an incrementing sequence should return to zero.
+     */
+    int getMaxCount();
+
+
+    /**
+     * This method sets the timestamp to the current time,
+     * and increments the sequence number (wrapping to 0
+     * if the sequence number exceeds Stamp::getMaxCount)
+     */
+    void update();
 
     virtual bool read(ConnectionReader& connection);
 

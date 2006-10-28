@@ -180,9 +180,7 @@ void PortCoreOutputUnit::sendHelper() {
             buf.addToHeader();
 
             if (cachedEnvelope!="") {
-                YARP_ERROR(Logger::get(),
-                           "****** envelope present, not ready for that yet");
-                printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
+                //printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
                 PortCommand pc('\0',String("d ") + cachedEnvelope);
                 pc.writeBlock(buf);
             } else {

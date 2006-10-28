@@ -11,7 +11,6 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/Stamp.h>
 
 namespace yarp {
     /**
@@ -34,7 +33,7 @@ namespace yarp {
  * with other image classes in other libraries, particularly IPL-derived
  * libraries such as OpenCV.
  */
-class yarp::sig::Image : public yarp::os::Portable, public yarp::os::Stamped {
+class yarp::sig::Image : public yarp::os::Portable {
 
 public:
 
@@ -231,15 +230,6 @@ public:
 
     void setQuantum(int imgQuantum);
 
-    /**
-     * Mark this image with a timestamp and sequence number.
-     */
-    void setStamp();
-
-    virtual yarp::os::Stamp getStamp() const {
-        return stamp;
-    }
-
 protected:
 
     void setPixelCode(int imgPixelCode);
@@ -249,8 +239,6 @@ protected:
 
 private:
     int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode, imgQuantum;
-    yarp::os::Stamp stamp;
-
     char **data;
     void *implementation;
 

@@ -107,9 +107,13 @@ public:
 
     void notifyCompletion(void *tracker);
 
-    void setEnvelope(Writable& envelope);
+    bool setEnvelope(Writable& envelope);
 
     void setEnvelope(const String& envelope);
+
+    String getEnvelope();
+
+    bool getEnvelope(Readable& envelope);
 
 public:
 

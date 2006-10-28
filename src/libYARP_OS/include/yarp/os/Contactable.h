@@ -122,12 +122,35 @@ public:
      *
      * Currently, for proper operation, the envelope must serialize
      * correctly in text-mode (even if you do not explicitly use
-     * text-mode connections).
+     * text-mode connections).  The Bottle or Stamp class are good
+     * choices.
      *
      * @param envelope some information to add to the next message sent
      *
+     * @return true iff write was successful
+     *
      */
-    virtual void setEnvelope(PortWriter& envelope) =0;
+    virtual bool setEnvelope(PortWriter& envelope) = 0;
+
+
+    /**
+     * Every message sent by a port can have some information added to
+     * it called an envelope (this could be a timestamp, for example).
+     * If a port has received a message with such information, you can
+     * extract that envelope with this method.
+     *
+     * You must be sure to match the type of your envelope for 
+     * getEnvelope with whatever is being sent using setEnvelope.
+     * The Bottle class can read any kind of envelope (but is
+     * not specialized to be efficient).
+     *
+     * @param envelope recipient for envelope information for last
+     * message received by port.
+     *
+     * @return true iff read was successful
+     *
+     */
+    virtual bool getEnvelope(PortReader& envelope) = 0;
 
 };
 

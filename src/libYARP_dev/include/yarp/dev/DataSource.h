@@ -12,6 +12,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Runnable.h>
 #include <yarp/os/PortWriterBuffer.h>
+#include <yarp/os/Stamp.h>
 
 namespace yarp {
     namespace dev {
@@ -36,11 +37,14 @@ private:
     yarp::os::Port& port;
     yarp::os::PortWriterBuffer<T> writer;
     DataSource<T>& dater;
+    yarp::os::Stamp stamp;
     bool canDrop;
+    bool addStamp;
 public:
     DataWriter(yarp::os::Port& port, DataSource<T>& dater, 
-               bool canDrop=true) : 
-        port(port), dater(dater), canDrop(canDrop)
+               bool canDrop=true,
+               bool addStamp=false) : 
+        port(port), dater(dater), canDrop(canDrop), addStamp(addStamp)
     {
         writer.attach(port);
     }
@@ -48,6 +52,10 @@ public:
     virtual void run() {
         T& datum = writer.get();
         dater.getDatum(datum);
+        if (addStamp) {
+            stamp.update();
+            port.setEnvelope(stamp);
+        }
         writer.write(!canDrop);
     }
 };
@@ -70,12 +78,16 @@ private:
     yarp::os::PortWriterBuffer<T2> writer2;
     DataSource2<T1,T2>& dater;
     bool canDrop;
+    bool addStamp;
+    yarp::os::Stamp stamp;
 public:
     DataWriter2(yarp::os::Port& port1, 
                 yarp::os::Port& port2,
                 DataSource2<T1,T2>& dater,
-                bool canDrop) : 
-        port1(port1), port2(port2), dater(dater), canDrop(canDrop)
+                bool canDrop=true,
+                bool addStamp=false) : 
+        port1(port1), port2(port2), dater(dater), canDrop(canDrop),
+        addStamp(addStamp)
     {
         writer1.attach(port1);
         writer2.attach(port2);
@@ -85,6 +97,11 @@ public:
         T1& datum1 = writer1.get();
         T2& datum2 = writer2.get();
         dater.getDatum(datum1,datum2);
+        if (addStamp) {
+            stamp.update();
+            port1.setEnvelope(stamp);
+            port2.setEnvelope(stamp);
+        }
         writer1.write(!canDrop);
         writer2.write(!canDrop);
     }

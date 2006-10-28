@@ -9,6 +9,7 @@
 
 #include <yarp/os/Stamp.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Time.h>
 
 #include <yarp/IOException.h>
 
@@ -52,3 +53,22 @@ bool Stamp::write(ConnectionWriter& connection) {
     }
 }
 
+
+
+int Stamp::getMaxCount() {
+    // a very conservative maximum
+    return 32767;
+}
+
+
+void Stamp::update() {
+    double now = Time::now();
+    if (sequenceNumber<0) {
+        timeZero = now;
+    }
+    sequenceNumber++;
+    if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
+        sequenceNumber = 0;
+    }
+    timeStamp = now-timeZero;
+}

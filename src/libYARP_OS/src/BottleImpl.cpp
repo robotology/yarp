@@ -578,10 +578,24 @@ bool StoreVocab::write(ConnectionWriter& writer) {
 
 String StoreDouble::toStringFlex() const {
     char buf[256];
-    ACE_OS::sprintf(buf,"%g",x);
+    ACE_OS::sprintf(buf,"%f",x);
     String str(buf);
     if (str.strstr(".")<0) {
         str += ".0";
+    }
+    int ct = 0;
+    for (int i=str.length()-1; i>=0; i--) {
+        if (str[i]!='0') {
+            if (str[i]=='.') {
+                ct--;
+                i++;
+            }
+            if (ct>=1) {
+                str = str.substr(0,i+1);
+            }
+            break;
+        }
+        ct++;
     }
     return str;
 }

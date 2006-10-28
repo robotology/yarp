@@ -991,12 +991,3 @@ bool Image::copy(const Image& alt, int w, int h) {
 }
 
 
-void Image::setStamp() {
-    int ct = 0;
-    if (stamp.isValid()) {
-        ct = stamp.getCount()+1;
-    }
-    double now = Time::now();
-    stamp = Stamp(ct,now);
-}
-

@@ -72,6 +72,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     canDrop = !config.check("no_drop");
+    addStamp = config.check("stamp");
 
     if (config.check("name",name)) {
         p.open(name->asString());
@@ -103,14 +104,15 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         if (separatePorts) {
             printf("Grabber for images and sound (in separate ports)\n");
             YARP_ASSERT(p2!=NULL);
-            thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop));
+            thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
             printf("Grabber for images and sound (in shared port)\n");
-            thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop));
+            thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop,
+                                                        addStamp));
         }
     } else if (fgImage!=NULL) {
         printf("Grabber for images\n");
-        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop));
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp));
     } else if (fgSound!=NULL) {
         printf("Grabber for sound\n");
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));

@@ -108,6 +108,7 @@ private:
     IFrameGrabberControls *fgCtrl;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
+    bool addStamp;
 public:
     /**
      * Constructor.
@@ -119,6 +120,7 @@ public:
         fgCtrl = NULL;
 		spoke = false;
         canDrop = true;
+        addStamp = false;
         p2 = NULL;
     }
     

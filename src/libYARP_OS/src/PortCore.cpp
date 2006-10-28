@@ -763,7 +763,7 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 void PortCore::send(Writable& writer, Readable *reader) {
 
     String envelopeString = envelope;
-    envelope = "";
+    //envelope = ""; // let user control wiping
 
     // pass the data to all output units.
     // for efficiency, it should be converted to block form first.
@@ -873,10 +873,13 @@ void PortCore::notifyCompletion(void *tracker) {
 }
 
 
-void PortCore::setEnvelope(Writable& envelope) {
+bool PortCore::setEnvelope(Writable& envelope) {
     BufferedConnectionWriter buf(true);
-    envelope.write(buf);
-    setEnvelope(buf.toString());
+    bool ok = envelope.write(buf);
+    if (ok) {
+        setEnvelope(buf.toString());
+    }
+    return ok;
 }
 
 
@@ -888,5 +891,23 @@ void PortCore::setEnvelope(const String& envelope) {
             break;
         }
     }
-    printf(">>>>> set envelope to %s\n", this->envelope.c_str());
+    YARP_DEBUG(log,String("set envelope to ") + this->envelope);
 }
+
+String PortCore::getEnvelope() {
+    return envelope;
+}
+
+bool PortCore::getEnvelope(Readable& envelope) {
+    StringInputStream sis;
+    sis.add(this->envelope.c_str());
+    sis.add("\r\n");
+    StreamConnectionReader sbr;
+    Route route;
+    sbr.reset(sis,NULL,route,0,true);
+    //this->envelope = ""; // ley user control wiping
+    return envelope.read(sbr);
+}
+
+
+

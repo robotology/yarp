@@ -186,9 +186,16 @@ public:
     }
 
     // documented in Contactable
-    virtual void setEnvelope(PortWriter& envelope) {
-        port.setEnvelope(envelope);
+    virtual bool setEnvelope(PortWriter& envelope) {
+        return port.setEnvelope(envelope);
     }
+
+
+    // documented in Contactable
+    virtual bool getEnvelope(PortReader& envelope) {
+        return port.getEnvelope(envelope);
+    }
+
 
 private:
     // solaris preferred order - strange
