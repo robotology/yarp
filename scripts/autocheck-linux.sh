@@ -21,12 +21,17 @@ cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee c
 
 if egrep "[a-zA-Z]" cvslog2.txt; then
 
+SOURCE=$PWD
+
 echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
+echo running cmake $CMAKEOPTS $SOURCE
 cmake $CMAKEOPTS $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
-cmake $SOURCE # there seems to be a bug in cmake 2.5 with add_definitions 
+echo repeating cmake $SOURCE
+cmake $SOURCE
+# there seems to be a bug in cmake 2.5 with add_definitions 
 
 make clean || echo "make clean failed"
 
