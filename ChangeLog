@@ -1,3 +1,9 @@
+2006-10-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Integrated some video4linux stuff from Jonas Ruesch (thanks!).
+	* Implemented "envelope" information that could be passed
+	along from port to port, such as timestamps.
+
 2006-10-25  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Bumped version up to 2.1.0

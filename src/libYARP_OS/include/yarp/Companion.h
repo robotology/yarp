@@ -76,9 +76,13 @@ public:
      * The integer indicates whether the "end-of-file" has been reached.
      * The string is what gets printed.
      * @param name the name which which to register the port
+     * @param src name of a port to connect from, if any
+     * @param showEnvelope set to true if you want envelope information
+     * shown
      * @return 0 on success, non-zero on failure
      */
-    static int read(const char *name, const char *src = NULL);
+    static int read(const char *name, const char *src = NULL,
+                    bool showEnvelope = false);
 
     static int write(const char *name, int ntargets, char *targets[]);
 

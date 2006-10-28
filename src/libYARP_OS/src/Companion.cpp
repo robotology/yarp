@@ -313,10 +313,17 @@ int Companion::cmdRead(int argc, char *argv[]) {
 
     const char *name = argv[0];
     const char *src = NULL;
-    if (argc>1) {
-        src = argv[1];
+    bool showEnvelope = false;
+    while (argc>1) {
+        if (strcmp(argv[1],"envelope")==0) {
+            showEnvelope = true;
+        } else {
+            src = argv[1];
+        }
+        argc--;
+        argv++;
     }
-    return read(name,src);
+    return read(name,src,showEnvelope);
 }
 
 
@@ -488,11 +495,13 @@ private:
     PortCore core;
     SemaphoreImpl done;
     bool raw;
+    bool env;
 public:
-    BottleReader(const char *name) : done(0) {
+    BottleReader(const char *name, bool showEnvelope) : done(0) {
         NameClient& nic = NameClient::getNameClient();
         Address address = nic.registerName(name);
         raw = false;
+        env = showEnvelope;
         core.setReadHandler(*this);
         if (address.isValid()) {
             ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
@@ -510,12 +519,23 @@ public:
         done.wait();
     }
 
+    void showEnvelope() {
+        if (env) {
+            Bottle envelope;
+            core.getEnvelope(envelope);
+            if (envelope.size()>0) {
+                ACE_OS::printf("%s ", envelope.toString().c_str());
+            }
+        }
+    }
+
     virtual bool read(ConnectionReader& reader) {
         BottleImpl bot;
         if (bot.read(reader)) {
             if (bot.size()==2 && bot.isInt(0) && bot.isString(1) && !raw) {
                 int code = bot.getInt(0);
                 if (code!=1) {
+                    showEnvelope();
                     ACE_OS::printf("%s\n", bot.getString(1).c_str());
                     ACE_OS::fflush(stdout);
                 }
@@ -524,6 +544,7 @@ public:
                 }
             } else {
                 // raw = true; // don't make raw mode "sticky"
+                showEnvelope();
                 ACE_OS::printf("%s\n", bot.toString().c_str());
                 ACE_OS::fflush(stdout);
             }
@@ -543,9 +564,9 @@ public:
 
 
 
-int Companion::read(const char *name, const char *src) {
+int Companion::read(const char *name, const char *src, bool showEnvelope) {
     try {
-        BottleReader reader(name);
+        BottleReader reader(name,showEnvelope);
         if (src!=NULL) {
             Network::connect(src,name);
         }

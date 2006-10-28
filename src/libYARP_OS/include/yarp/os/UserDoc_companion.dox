@@ -138,8 +138,8 @@ YARP network version 2.0
 \section yarp_read yarp read
 
 \verbatim
-yarp read INPUT_PORT
-yarp read INPUT_PORT OUTPUT_PORT
+yarp read INPUT_PORT [envelope]
+yarp read INPUT_PORT [envelope] OUTPUT_PORT
 \endverbatim
 
 This will create an input port of the specified name.  It will
@@ -155,6 +155,9 @@ then everything you type on the "write" terminal will be echoed on the
 
 Specifying an OUTPUT_PORT tries to connect that port to the current one.
 
+Adding the "envelope" tag will request display of any envelope information
+included in the message, such as timestamps.  Such information may
+or may not be present, and is ignored if you do not specify this tag.
 
 \section yarp_write yarp write
 
