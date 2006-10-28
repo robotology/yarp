@@ -27,3 +27,4 @@ DOC SOURCE DEBIAN Mon Oct 23 14:14:16 CEST 2006 (web site moved to eris.liralab.
 DOC SOURCE DEBIAN Tue Oct 24 11:47:36 CEST 2006 (make sure pipeline is working)
 DOC SOURCE DEBIAN Wed Oct 25 11:55:52 CEST 2006 (clean up licensing)
 DOC Wed Oct 25 23:48:37 CEST 2006 (show yet-another-logo-01 logo)
+DOC SOURCE DEBIAN Sat Oct 28 16:03:48 CEST 2006 (envelopes, timestamps)
