@@ -287,7 +287,7 @@ Port::~Port() {
 }
 
 
-Contact Port::where() {
+Contact Port::where() const {
     PortCoreAdapter& core = HELPER(implementation);
     Address address = core.getAddress();
     return address.toContact();

@@ -95,9 +95,15 @@ public:
     }
 
     // documentation provided in Contactable
-    virtual Contact where() {
+    virtual Contact where() const {
         return port.where();
     }
+
+    // documentation provided in Contactable
+    virtual ConstString getName() const {
+        return where().getName();
+    }
+
 
     /**
      * Access the object which will be transmitted by the next call to 

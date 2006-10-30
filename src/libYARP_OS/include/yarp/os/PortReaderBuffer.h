@@ -12,6 +12,7 @@
 #include <yarp/os/PortReader.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Thread.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {
@@ -26,6 +27,10 @@ namespace yarp {
     class PortReaderBufferBaseCreator;
 }
 
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+extern void typedReaderMissingCallback();
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
  * A callback for typed data from a port.  If you want to get your data
@@ -47,7 +52,20 @@ public:
      * Callback method.
      * @param datum data read from a port
      */
-    virtual void onRead(T& datum) = 0;
+    virtual void onRead(T& datum) {
+        typedReaderMissingCallback();
+    }
+
+    /**
+     * Callback method.  Passes along source of callback.
+     * By default, this calls the version of onRead that just takes a 
+     * datum.
+     * @param datum data read from a port
+     * @param reader the original port (or delegate object)
+     */
+    virtual void onRead(T& datum, const yarp::os::TypedReader<T>& reader) {
+        onRead(datum);
+    }
 };
 
 /**
@@ -138,6 +156,13 @@ public:
      * Destructor.
      */
     virtual ~TypedReader() {}
+
+
+    /**
+     * Get name of port being read from
+     * @return name of port
+     */
+    virtual ConstString getName() const = 0;
 };
 
 
@@ -201,6 +226,8 @@ public:
 
 	bool isClosed();
 
+    yarp::os::ConstString getName() const;
+
 protected:
     void init();
 
@@ -234,7 +261,8 @@ public:
         if (reader!=0/*NULL*/&&callback!=0/*NULL*/) {
             while (!isStopping()&&!reader->isClosed()) {
                 if (reader->read()) {
-                    callback->onRead(*(reader->lastRead()));
+                    callback->onRead(*(reader->lastRead()),
+                                     *reader);
                 }
             }
         }
@@ -380,6 +408,9 @@ public:
 		return implementation.isClosed();
 	}
 
+    virtual ConstString getName() const {
+        return implementation.getName();
+    }
 private:
     yarp::PortReaderBufferBase implementation;
     bool autoDiscard;

@@ -74,7 +74,7 @@ public:
     void close();
 
     // documentation provided in Contactable
-    Contact where();
+    Contact where() const;
 
 
     /**

@@ -104,13 +104,13 @@ public:
      * Returns information about how this port can be reached.
      * @return network parameters for this port
      */
-    virtual Contact where() = 0;
+    virtual Contact where() const = 0;
 
     /**
      * Get name of port.
      * @return name of port
      */
-    ConstString getName() {
+    virtual ConstString getName() const {
         return where().getName();
     }
 

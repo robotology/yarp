@@ -164,6 +164,13 @@ public:
     }
 
 
+    ConstString getName() {
+        if (port!=NULL) {
+            return port->getName();
+        }
+        return "";
+    }
+
     PortReaderPacket *get() {
         PortReaderPacket *result = NULL;
         bool grab = true;
@@ -319,8 +326,20 @@ void PortReaderBufferBase::attachBase(yarp::os::Port& port) {
     HELPER(implementation).attach(port);
 }
 
+
 bool PortReaderBufferBase::isClosed() {
-	return HELPER(implementation).port==NULL;
+    return HELPER(implementation).port==NULL;
+}
+
+
+ConstString PortReaderBufferBase::getName() const {
+    return HELPER(implementation).getName();
+}
+
+
+
+void typedReaderMissingCallback() {
+    YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
 }
 
 
