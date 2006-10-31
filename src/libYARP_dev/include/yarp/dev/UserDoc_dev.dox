@@ -3,7 +3,19 @@
 /**
  * \defgroup dev_all Devices
  *
- * Dealing with devices.
+ * Dealing with devices.  What do you need to know to use devices in
+ * YARP?  First, we try to write our devices so that they implement a
+ * set of \link dev_iface interfaces\endlink.  Your program ideally would use
+ * the minimal set of interfaces needed for the particular task you
+ * have in mind.  Then you'll be later able to switch to any
+ * \link dev_impl implementation \endlink that meets your interface.  This
+ * is something you often have to do in robotics.
+ *
+ * Of course, pretty much every device has some special magic numbers
+ * you need to set up at the beginning.  This process of 
+ * \link dev_class configuration \endlink process is separated out in YARP
+ * to make it easy to control it via external command line switches
+ * or configuration files.
  *
  */
 
