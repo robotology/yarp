@@ -87,6 +87,35 @@ int main(int argc, char *argv[]) {
     // interpret as a set of flags
     options.fromCommand(argc,argv);
 
+    // check if we're being asked to read the options from file
+    Value *val;
+    if (options.check("file",val)) {
+        /*
+        Value *v1 = 0, *v2 = 0;
+        options.check("device", v1);
+        options.check("subdevice", v2);
+        ConstString dname = (v1)?v1->toString():"";
+        ConstString sdname = (v2)?v2->toString():"";
+        */
+        ConstString fname = val->toString();
+        options.unput("file");
+        printf("yarpdev: working with config file %s\n", fname.c_str());
+        options.fromConfigFile(fname,false);
+        /*
+        if (v1)
+            options.put("device", dname.c_str());
+        if (v2)
+            options.put("subdevice", sdname.c_str());
+        */
+    }
+
+    // check if we want to use nested options (less ambiguous)
+    if (options.check("nested",val)||options.check("lispy",val)) {
+        ConstString lispy = val->toString();
+        printf("yarpdev: working with config %s\n", lispy.c_str());
+        options.fromString(lispy);
+    }
+
     if (!options.check("device")) {
         // no device mentioned - maybe user needs help
         
@@ -107,30 +136,6 @@ int main(int argc, char *argv[]) {
             printf("   yarpdev --verbose --device ffmpeg_grabber\n");
         }
         return 0;
-    }
-
-    // check if we're being asked to read the options from file
-    Value *val;
-    if (options.check("file",val)) {
-        Value *v1 = 0, *v2 = 0;
-        options.check("device", v1);
-        options.check("subdevice", v2);
-        ConstString dname = (v1)?v1->toString():"";
-        ConstString sdname = (v2)?v2->toString():"";
-        ConstString fname = val->toString();
-        printf("yarpdev: working with config file %s\n", fname.c_str());
-        options.fromConfigFile(fname);
-        if (v1)
-            options.put("device", dname.c_str());
-        if (v2)
-            options.put("subdevice", sdname.c_str());
-    }
-
-    // check if we want to use nested options (less ambiguous)
-    if (options.check("nested",val)||options.check("lispy",val)) {
-        ConstString lispy = val->toString();
-        printf("yarpdev: working with config %s\n", lispy.c_str());
-        options.fromString(lispy);
     }
 
     // ask for a wrapped, remotable device rather than raw device

@@ -143,8 +143,9 @@ public:
      *   prop.find("height").asInt() // gives 15
      * \endcode
      * @param txt the textual form of the Property object
+     * @param wipe should Property be emptied first
      */
-    void fromString(const char *txt);
+    void fromString(const char *txt, bool wipe=true);
     
     /**
      * Interprets a list of command arguments as a list of properties. 
@@ -159,8 +160,10 @@ public:
      * @param argv the list of arguments
      * @param skipFirst set to true if the first argument should be skipped
      * (which is the right thing to do for arguments passed to main())
+     * @param wipe should Property be emptied first
      */
-    void fromCommand(int argc, char *argv[], bool skipFirst=true);
+    void fromCommand(int argc, char *argv[], bool skipFirst=true,
+                     bool wipe=true);
 
     /**
      * Interprets a file as a list of properties. 
@@ -184,15 +187,17 @@ public:
      *   prop.findGroup("APPEARANCE").find("color").asString() // gives red
      * \endcode
      * @param fname the name of the file to read from
+     * @param wipe should Property be emptied first
      */
-    void fromConfigFile(const char *fname);
+    void fromConfigFile(const char *fname,bool wipe=true);
 
     /**
      * Parses text in the configuration format described in
      * fromConfigFile().
      * @param txt the configuration text
+     * @param wipe should Property be emptied first
      */
-    void fromConfig(const char *txt);
+    void fromConfig(const char *txt,bool wipe=true);
 
     // documented in Searchable
     ConstString toString() const;

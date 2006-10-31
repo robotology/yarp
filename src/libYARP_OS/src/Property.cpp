@@ -166,13 +166,13 @@ public:
         data.unbind_all();
     }
 
-    void fromString(const char *txt) {
+    void fromString(const char *txt,bool wipe=true) {
         Bottle bot;
         bot.fromString(txt);
-        fromBottle(bot);
+        fromBottle(bot,wipe);
     }
 
-    void fromCommand(int argc, char *argv[]) {
+    void fromCommand(int argc, char *argv[],bool wipe=true) {
         String tag = "";
         Bottle accum;
         Bottle total;
@@ -197,11 +197,11 @@ public:
         if (tag!="") {
             total.addList().copy(accum);
         }
-        fromBottle(total);
+        fromBottle(total,wipe);
     }
 
 
-    void fromConfigFile(const char *fname) {
+    void fromConfigFile(const char *fname,bool wipe=true) {
         ifstream fin(fname);
         String txt;
         if (fin.fail()) {
@@ -216,13 +216,15 @@ public:
                 txt += "\n";
             }
         }
-        fromConfig(txt.c_str());
+        fromConfig(txt.c_str(),wipe);
     }
 
-    void fromConfig(const char *txt) {
+    void fromConfig(const char *txt,bool wipe=true) {
         StringInputStream sis;
         sis.add(txt);
-        clear();
+        if (wipe) {
+            clear();
+        }
         String tag = "";
         Bottle accum;
         bool done = false;
@@ -275,7 +277,10 @@ public:
     }
 
 
-    void fromBottle(Bottle& bot) {
+    void fromBottle(Bottle& bot, bool wipe=true) {
+        if (wipe) {
+            clear();
+        }
         for (int i=0; i<bot.size(); i++) {
             Value& bb = bot.get(i);
             if (bb.isList()) {
@@ -395,8 +400,8 @@ void Property::clear() {
 }
 
 
-void Property::fromString(const char *txt) {
-    HELPER(implementation).fromString(txt);
+void Property::fromString(const char *txt,bool wipe) {
+    HELPER(implementation).fromString(txt,wipe);
 }
 
 
@@ -404,21 +409,22 @@ ConstString Property::toString() const {
     return HELPER(implementation).toString();
 }
 
-void Property::fromCommand(int argc, char *argv[], bool skipFirst) {
+void Property::fromCommand(int argc, char *argv[], bool skipFirst,
+                           bool wipe) {
     if (skipFirst) {
         argc--;
         argv++;
     }
-    HELPER(implementation).fromCommand(argc,argv);
+    HELPER(implementation).fromCommand(argc,argv,wipe);
 }
 
-void Property::fromConfigFile(const char *fname) {
-    HELPER(implementation).fromConfigFile(fname);
+void Property::fromConfigFile(const char *fname,bool wipe) {
+    HELPER(implementation).fromConfigFile(fname,wipe);
 }
 
 
-void Property::fromConfig(const char *txt) {
-    HELPER(implementation).fromConfig(txt);
+void Property::fromConfig(const char *txt,bool wipe) {
+    HELPER(implementation).fromConfig(txt,wipe);
 }
 
 
