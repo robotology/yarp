@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
 
 using namespace yarp::os;
 
@@ -53,6 +54,28 @@ int main(int argc, char *argv[]) {
     // see documentation for Bottle::findGroup
     printf("nested check: %s\n", b6.find("nested").toString().c_str());
     printf("nested height check: %d\n", b6.find("nested").find("height").asInt());
+
+
+    printf("\n");
+    printf("Relationship of Bottle and Property\n");
+    Property subProp;
+    subProp.put("hello","there");
+    subProp.put("fortytwo",42);
+    printf("subProp: %s\n", subProp.toString().c_str());
+
+    Value *lst = Value::makeList();
+    if (lst==NULL) {
+        printf("Failed to allocate list\n");
+        return 1;
+    }
+    lst->asList()->fromString(subProp.toString());
+    printf("lst: %s\n", lst->toString().c_str());
+    
+    Property prop;
+    prop.put("height",15);
+    prop.put("verbose",1);
+    prop.put("sub",lst);
+    printf("prop: %s\n", prop.toString().c_str());
 
     return 0;
 }
