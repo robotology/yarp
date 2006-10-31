@@ -105,6 +105,7 @@ public:
                                    (PortCorePacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
                                    PortCorePacket(), 0);
+            YARP_ASSERT(obj!=NULL);
             inactive.insert_tail(obj);
         }
         PortCorePacket *next = NULL;
