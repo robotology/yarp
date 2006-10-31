@@ -6,8 +6,7 @@ PROJECT(YARP)
 #ask user to specify build type (linux only)
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE "Release" CACHE STRING 
-	"Choose the type of build, recommanded options are: Debug or Release"
-       FORCE)
+	"Choose the type of build, recommanded options are: Debug or Release")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 # hide variable to WINDOWS users (CMAKE_BUILD_TYPE is not used on win)
 IF (WIN32 AND NOT CYGWIN)
