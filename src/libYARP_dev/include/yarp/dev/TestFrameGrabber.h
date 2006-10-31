@@ -68,8 +68,8 @@ public:
     /**
      * Configure with a set of options. These are:
      * <TABLE>
-     * <TR><TD> width/w </TD><TD> Width of image (default 128). </TD></TR>
-     * <TR><TD> height/h </TD><TD> Height of image (default 128). </TD></TR>
+     * <TR><TD> width </TD><TD> Width of image (default 128). </TD></TR>
+     * <TR><TD> height </TD><TD> Height of image (default 128). </TD></TR>
      * <TR><TD> freq </TD><TD> Frequency in Hz to generate images (default 20Hz). </TD></TR>
      * <TR><TD> period </TD><TD> Inverse of freq - only set one of these. </TD></TR>
      * <TR><TD> mode </TD><TD> Can be [ball] or [line] (default). </TD></TR>
@@ -80,22 +80,21 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config) {
         yarp::os::Value *val;
-        if (config.check("width",val)||config.check("w",val)) {
-            w = val->asInt();
-        }
-        if (config.check("height",val)||config.check("h",val)) {
-            h = val->asInt();
-        }
-        if (config.check("freq",val)) {
+        w = config.check("width",yarp::os::Value(128),
+                         "desired width of test image").asInt();
+        h = config.check("height",yarp::os::Value(128),
+                         "desired height of test image").asInt();
+        if (config.check("freq",val,"rate of test images in Hz")) {
             freq = val->asDouble();
             period = 1/freq;
-        }
-        if (config.check("period",val)) {
+        } else if (config.check("period",val,
+                                "period of test images in seconds")) {
             period = val->asDouble();
             freq = 1/period;
         }
-        mode = config.check("mode",yarp::os::Value(VOCAB_LINE,
-                                                   true)).asVocab();
+        mode = config.check("mode",
+                            yarp::os::Value(VOCAB_LINE, true),
+                            "bouncy [ball] or scrolly [line]").asVocab();
         printf("Test grabber period %g / freq %g, mode [%s]\n", period, freq,
                yarp::os::Vocab::decode(mode).c_str());
         bx = w/2;

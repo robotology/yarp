@@ -4,8 +4,11 @@
 
 
 For robotics, we need access to all sorts of strange devices.
-
-
+This section contains a tutorial on the YARP view of what devices are.
+If you just want to get coding immediately, see
+the \link dev_all main page for YARP Devices\endlink, including
+information on interfaces, implementation, configuration and
+\link dev_runtime commandline\endlink usage.
 
 \section note_devices_yarp YARP Devices
 

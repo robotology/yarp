@@ -281,7 +281,15 @@ bool Bottle::operator == (const Bottle& alt) {
 }
 
 
-bool Searchable::check(const char *txt, Value *& result) {
+bool Searchable::check(const char *txt, Value *& result,
+                       const char *comment) {
+    if (getMonitor()!=NULL&&comment!=NULL) {
+        SearchReport report;
+        report.key = txt;
+        report.value = comment;
+        report.isComment = true;
+        reportToMonitor(report);
+    }
     Value& bit = find(txt);
     bool ok = !(bit.isNull());
     if (ok) {
@@ -290,11 +298,26 @@ bool Searchable::check(const char *txt, Value *& result) {
     return ok;
 }
 
-Value Searchable::check(const char *txt, const Value& fallback) {
+Value Searchable::check(const char *txt, const Value& fallback,
+                        const char *comment) {
+    if (getMonitor()!=NULL && comment!=NULL) {
+        SearchReport report;
+        report.key = txt;
+        report.value = comment;
+        report.isComment = true;
+        reportToMonitor(report);
+    }
     Value& bit = find(txt);
     bool ok = !(bit.isNull());
     if (ok) {
         return bit;
+    }
+    if (getMonitor()!=NULL) {
+        SearchReport report;
+        report.key = txt;
+        report.value = fallback.toString();
+        report.isDefault = true;
+        reportToMonitor(report);
     }
     return fallback;
 }

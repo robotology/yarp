@@ -27,11 +27,16 @@ public:
     ConstString value;
     bool isFound;
     bool isGroup;
+    bool isComment;
+    bool isDefault;
 
     SearchReport() {
         key = "?";
+        value = "";
         isFound = false;
         isGroup = false;
+        isComment = false;
+        isDefault = false;
     }
 };
 
@@ -118,22 +123,27 @@ public:
      *
      * @param key The keyword to look for
      * @param result A pointer to store the address of the result in
+     * @param comment Optional human-readable explanation
      * @return True if there is a value corresponding to a given keyword,
      * false otherwise.  See the find() method for interpreting the
      * value found.
      */
-    virtual bool check(const char *key, Value *& result);
+    virtual bool check(const char *key, Value *& result,
+                       const char *comment = 0 /*NULL*/);
 
 
     /**
      * Gets a value corresponding to a given keyword
      * @param key The keyword to look for
      * @param fallback A default value to return if nothing found
+     * @param comment Optional human-readable explanation
      * @return A value corresponding to a given keyword,
      * or the default if nothing is found.  See the find() method for 
      * interpreting the value found.
      */
-    virtual Value check(const char *key, const Value& fallback);
+    virtual Value check(const char *key, const Value& fallback,
+                        const char *comment = 0 /*NULL*/);
+
 
     /**
      * Checks if the object is invalid.

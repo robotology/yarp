@@ -34,7 +34,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
             p.setMonitor(config.getMonitor(),
-                         "subdevice"); // pass on any monitoring
+                         name->toString().c_str()); // pass on any monitoring
             p.fromString(config.toString());
             p.put("device",name->toString());
             p.unput("subdevice");
@@ -43,7 +43,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             poly.open(*name);
         }
         if (!poly.isValid()) {
-            printf("cannot make <%s>\n", name->toString().c_str());
+            //printf("cannot make <%s>\n", name->toString().c_str());
             return false;
         }
     } else {

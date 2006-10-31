@@ -6,15 +6,15 @@
 /**
  * @mainpage Welcome to YARP
  *
- * \image html yarp-small.jpg
+ * \image html yarp-small.jpg ""
  *
  * @section welcome_topics Topics
  *
  * \li @subpage what_is_yarp "what exactly is YARP"?
  * \li @subpage install.
  * \li @subpage yarp "YARP's main command line interface".
- * \li Check out some @subpage yarp_code_examples "example code". 
- * \li Read about the @subpage yarp_os "YARP OS library".
+ * \li Check out some  @subpage yarp_code_examples "example code". 
+ * \li Read about the  @subpage yarp_os "YARP OS library".
  * \li Tutorial: @subpage note_ports.
  * \li Tutorial: @subpage note_devices.
  * \li Tutorial: @subpage yarp_motor_control.

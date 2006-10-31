@@ -35,28 +35,26 @@ public:
 
     ConstString toString() {
         yarp::String s;
-        s += "\n";
         for (unsigned int i=0; i<delegates.size(); i++) {
             ConstString name = delegates[i]->getName();
             ConstString wrapper = delegates[i]->getWrapper();
-            s += "Device <";
+            s += "Device \"";
             s += delegates[i]->getName().c_str();
-            s += ">";
-            s += "\n";
-            s += "   documented by the C++ class ";
+            s += "\"";
+            s += ",";
+            s += " C++ class ";
             s += delegates[i]->getCode().c_str();
-            s += "\n";
-            s += "   ";
+            s += ", ";
             if (wrapper=="") {
-                s += "No network wrapper available.";
+                s += "has no network wrapper";
             } else if (wrapper!=name) {
-                s += "Wrapped for the network by <";
+                s += "wrapped by \"";
                 s += delegates[i]->getWrapper().c_str();
-                s += ">";
+                s += "\"";
             } else {
-                s += "Does not need a network wrapper.";
+                s += "is a network wrapper.";
             }
-            s += "\n\n";
+            s += "\n";
         }
         return ConstString(s.c_str());
     }
@@ -111,7 +109,6 @@ DriverCreator *Drivers::find(const char *name) {
 DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
     yarp::os::Searchable *config = &prop;
     Property p;
-    p.setMonitor(prop.getMonitor(),"device"); // pass on any monitoring
     String str = prop.toString().c_str();
     Value *part;
     if (prop.check("device",part)) {
@@ -140,6 +137,8 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
                 if (wrapCreator!=creator) {
                     p.put("subdevice",str.c_str());
                     p.put("device",wrapper.c_str());
+                    p.setMonitor(prop.getMonitor(),
+                                 wrapper.c_str()); // pass on any monitoring
                     driver = wrapCreator->create();
                     creator = wrapCreator;
                 } else {

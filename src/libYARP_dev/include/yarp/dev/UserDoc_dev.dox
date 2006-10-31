@@ -3,7 +3,7 @@
 /**
  * \defgroup dev_all Devices
  *
- * Dealing with devices.  What do you need to know to use devices in
+ * Dealing with devices. What do you need to know to use devices in
  * YARP?  First, we try to write our devices so that they implement a
  * set of \link dev_iface interfaces\endlink.  Your program ideally would use
  * the minimal set of interfaces needed for the particular task you
@@ -16,6 +16,9 @@
  * \link dev_class configuration \endlink process is separated out in YARP
  * to make it easy to control it via external command line switches
  * or configuration files.
+ *
+ * Under normal use, YARP devices are started from the 
+ * \link dev_runtime commandline\endlink.
  *
  */
 
@@ -89,21 +92,54 @@
  */
 
 /**
- * @ingroup dev_impl
- *
- * \defgroup dev_impl_wrapper Network Wrappers
- *
- * These take implementations of existing interfaces and wrap them
- * up to work across the network.
- *
- */
-
-/**
  * @ingroup dev_all
  *
  * \defgroup dev_runtime Command-line Accessible Devices 
  *
  * Devices that can be created and configured from the command-line.
+ * Generally you can create them with the yarpdev command by 
+ * specifying a "--device" option followed by their name, for example:
+ *
+ @verbatim
+ yarpdev --device test_grabber
+ @endverbatim
+ *
+ * This creates a test_grabber device with default options.  You will
+ * generally need to specify additional options, for example:
+ *
+ @verbatim
+ yarpdev --device test_grabber --width 640 --height 480 --name /test
+ @endverbatim
+ *
+ * How do you know what options are available?  When you try to run
+ * "yarpdev --device yourdevice" it will tell you what options it is
+ * checking.  Documentation of the options is currently weak.  
+ * Ideally the options are documented in the open method of the 
+ * corresponding C++ class, but not all devices do this yet.
+ *
+ * For example, if you look at test_grabber starting up without any options,
+ * you'll see:
+ *
+ @verbatim
+ $ yarpdev --device test_grabber
+ [top-level] checking option "device" | found | test_grabber 
+ [device] checking option "subdevice" | found | test_grabber 
+ [subdevice] checking option "device" | found | test_grabber 
+ [subdevice] checking option "width" | not set 
+ [subdevice] checking option "w" | not set 
+ [subdevice] checking option "height" | not set 
+ [subdevice] checking option "h" | not set 
+ [subdevice] checking option "freq" | not set 
+ [subdevice] checking option "period" | not set 
+ [subdevice] checking option "mode" | not set 
+ Test grabber period 0.05 / freq 20, mode [line]
+ yarpdev: created device <test_grabber>.  See C++ class TestFrameGrabber for documentation.
+ [device] checking option "no_drop" | not set 
+ [device] checking option "stamp" | not set 
+ [device] checking option "name" | not set 
+ yarp: Port /grabber listening at tcp://130.251.4.153:10022
+ ...
+ @endverbatim
  *
  */
 
