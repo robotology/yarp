@@ -1,0 +1,28 @@
+#!/bin/sh
+
+# run as "./scripts/update-doc-manual"
+
+# doxygen for pdf manual with links
+doxygen conf/Doxyfile.min
+
+# doxygen for pdf manual with page numbers
+doxygen conf/Doxyfile.pagenum
+
+base=$PWD
+
+for manual in min pagenum; do
+
+    cd $base/doc/$manual/latex
+
+    # fix up unresolved links for material not included
+    rm -f junk.tex junk2.tex junk3.tex junk4.tex
+    for f in `ls *.tex`; do
+	perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" < $f > junk2.tex
+	perl -pe "s/p\\....pageref\\{\\}/see class docs/g" < junk2.tex > junk3.tex
+	perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g" < junk3.tex > junk4.tex
+	perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$1\$2/g" < junk4.tex > junk.tex
+#	perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" < junk4.tex > junk.tex
+	mv junk.tex $f
+    done
+    make pdf
+done

@@ -2,14 +2,8 @@
 
 # run as "./scripts/update-doc"
 
-# doxygen for pdf manual with links
-doxygen conf/Doxyfile.min
-
 # doxygen for man pages
 doxygen conf/Doxyfile.man
-
-# doxygen for pdf manual with page numbers
-doxygen conf/Doxyfile.pagenum
 
 # doxygen for normal user - omits some junk
 rm -f doc/yarpdoc.zip
@@ -25,16 +19,4 @@ rm -rf tmpdoc
 # doxygen with everything included
 doxygen conf/Doxyfile
 
-base=$PWD
-
-for manual in min pagenum; do
-
-    cd $base/doc/$manual/latex
-
-    # we don't include classes so fix up unresolved links
-    for f in `ls *.tex`; do
-	perl -pe "s/p\....pageref\{\}/see class docs/g" < $f > junk.tex
-	mv junk.tex $f
-    done
-    make pdf
-done
+./scripts/update-doc-manual
