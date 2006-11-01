@@ -144,7 +144,7 @@ for easy human monitoring and intervention in the system.
       camera -> viewer1 [ label="mcast" ];
       camera -> tracker_image [ label="mcast" ];
       tracker_image -> viewer2 [ label="udp" ];
-      tracker_position -> motor_position [ label="shmem" ];
+      tracker_position -> motor_position [ label="tcp" ];
 
       fontname=Helvetica;
       fontsize=10;
@@ -213,7 +213,7 @@ guidelines, then communication will not be a problem:
       camera -> viewer1 [ label="mcast" ];
       camera -> tracker_image [ label="mcast" ];
       tracker_image -> viewer2 [ label="udp" ];
-      tracker_position -> motor_position [ label="shmem" ];
+      tracker_position -> motor_position [ label="tcp" ];
 
       fontname=Helvetica;
       fontsize=10;

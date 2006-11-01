@@ -81,7 +81,7 @@
  * is libYARP_OS, which must be available before the other
  * components can be used.
 
- * YARP has some @subpage requirements
+ * @subpage requirements "General requirements for YARP"
  *
  *
  */
