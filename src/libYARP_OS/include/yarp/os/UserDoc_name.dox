@@ -106,7 +106,7 @@ potential for cross-talk.
 
 
 
-\section name_query query
+\section protocol_name_query query
 
 \verbatim
 NAME_SERVER query PORT
@@ -131,7 +131,7 @@ is omitted, and instead the response is simply:
 
 
 
-\section name_register register
+\section protocol_name_register register
 
 \verbatim
 NAME_SERVER register PORT
@@ -179,7 +179,7 @@ network is used for connections from one port to another.
 
 
 
-\section name_unregister unregister
+\section protocol_name_unregister unregister
 
 \verbatim
 NAME_SERVER unregister PORT
@@ -192,7 +192,7 @@ Response is of the following form:
 \endverbatim
 
 
-\section name_list list
+\section protocol_name_list list
 
 \verbatim
 NAME_SERVER list
@@ -212,7 +212,7 @@ registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
 
 
 
-\section name_set set
+\section protocol_name_set set
 
 \verbatim
 NAME_SERVER set PORT PROPERTY VALUE1 VALUE2 ...
@@ -240,7 +240,7 @@ lists carriers that an input port can support.
 
 
 
-\section name_get get
+\section protocol_name_get get
 
 \verbatim
 NAME_SERVER get PORT PROPERTY
@@ -257,7 +257,7 @@ port /write property offers = tcp udp mcast
 \endverbatim
 
 
-\section name_check check
+\section protocol_name_check check
 
 \verbatim
 NAME_SERVER check PORT PROPERTY VALUE
@@ -274,7 +274,7 @@ port /write property offers value tcp present true
 \endverbatim
 
 
-\section name_route route
+\section protocol_name_route route
 
 \verbatim
 NAME_SERVER route PORT1 PORT2
