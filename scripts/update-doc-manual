@@ -21,7 +21,8 @@ for manual in min pagenum; do
 	perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" < $f > junk2.tex
 	perl -pe "s/p\\....pageref\\{\\}/see class docs/g" < junk2.tex > junk3.tex
 	perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g" < junk3.tex > junk4.tex
-	perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$1\$2/g" < junk4.tex > junk.tex
+	perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" < junk4.tex > junk.tex
+	#perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$1\$2/g" < junk4.tex > junk.tex
 	mv junk.tex $f
     done
     sed "/YARP Page/,/END/! { /YARP File/,/YARP Page/ s/^/%%/ }" -i refman.tex

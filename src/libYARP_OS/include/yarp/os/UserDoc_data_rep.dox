@@ -1,11 +1,6 @@
 /** 
   * @page data_rep Standard data representation format
 
-Formally, the policy for representing binary data in YARP is to
-stick closely to the XDR External Data Representation Standard
-(Srinivasan '95, RFC1832) -- we currently deviate from that standard by
-not using zero padding.
-
 The policy for representing data externally in YARP is chosen 
 carefully to encourage both efficiency and the ability to
 read/write network data by hand.
