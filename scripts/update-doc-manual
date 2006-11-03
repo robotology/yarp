@@ -15,16 +15,39 @@ for manual in min pagenum; do
 
     cd $base/doc/$manual/latex
 
+    perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" < manual.tex > order.txt
+    order=`cat order.txt | egrep "[a-z]"`
+    echo "ORDER is $order"
+    echo -n > order.tex
+    for f in $order; do
+	echo "\\include{$f}" >> order.tex
+    done
+
     # fix up unresolved links for material not included
-    rm -f junk.tex junk2.tex junk3.tex junk4.tex
+    rm -f junk.tex
     for f in `ls *.tex`; do
-	perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" < $f > junk2.tex
-	perl -pe "s/p\\....pageref\\{\\}/see class docs/g" < junk2.tex > junk3.tex
-	perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g" < junk3.tex > junk4.tex
-	perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" < junk4.tex > junk.tex
-	#perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$1\$2/g" < junk4.tex > junk.tex
+	( 
+	    perl -pe "s/\\\\hyperlink\\{\\}\\{([^\\}]*)\\}/\$1/g" | \
+		perl -pe "s/p\\....pageref\\{\\}/see class docs/g" | \
+		perl -pe "s/\\\\doxyref\\{([^\\}]*)\\}\\{p\\.\\}\\{\\}/\$1/g"|\
+		perl -pe "s/(\\\\hypertarget\\{[^\\}]*\\}\\{\\})(.*)\\\\label\\{[^\\}]*\\}/\$2\$1/g" | \
+		cat
+	    ) < $f > junk.tex
 	mv junk.tex $f
     done
     sed "/YARP Page/,/END/! { /YARP File/,/YARP Page/ s/^/%%/ }" -i refman.tex
+    sed "s/.*section.YARP Page.*/%%\\0/" -i refman.tex
+    sed "s/.*section.Welcome to YARP.*/%%\\0/" -i refman.tex
+    sed "s/.*chapter.YARP Page.*/%%\\0/" -i refman.tex
+    sed "s/.*chapter.Welcome to YARP.*/%%\\0/" -i refman.tex
+    sed "s/.*input.index.*/%%\\0/" -i refman.tex
+    sed "s/^.include.*/%%\\0/" -i refman.tex
+    sed "s/^.input.*/\\\\input\\{order\\}/" -i refman.tex
+    perl -pe "s/(\\{tocdepth\\})\\{1\\}/\\{tocdepth\\}\\{2\\}/" < refman.tex > junk.tex
+    mv junk.tex refman.tex
+    for f in `ls *.tex`; do
+	perl -pe "s/\\\\section/\\\\chapter/g" < $f > junk.tex
+	perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
+    done
     make pdf
 done

@@ -5,14 +5,11 @@
   These examples are available in the examples/os directory of the YARP
   source code -- see tips on @subpage install_yarp "getting YARP".
 
-  \li @subpage yarp_code_example_pair
-  \li @subpage yarp_code_example_buffer
-
- */
+  \li \ref yarp_code_example_pair
+  \li \ref yarp_code_example_buffer
 
 
-/**
- @page yarp_code_example_pair Simple communicating programs example
+ @section yarp_code_example_pair Simple communicating programs example
 
 Here we work through an example of using YARP communication between programs.
 We will have two programs, a sender and receiver, 
@@ -75,11 +72,8 @@ yarp: Removing input from /sender to /receiver
 \endverbatim
 You can run the receiver many times to connect and reconnect.
 
- */
 
-
-/**
- @page yarp_code_example_buffer Buffered port example
+ @section yarp_code_example_buffer Buffered port example
 
 \include example/os/buffered_port.cpp
 

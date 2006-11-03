@@ -111,13 +111,10 @@ The standard YARP companion utility can be used to create a
 name server, and also to act as an external entity for querying and
 modifying the YARP network.
 
-@subpage yarp
-
-@subpage companion_use
-
-@subpage name_server
-
-@subpage data_rep
+- \ref yarp
+- \ref companion_use
+- \ref name_server
+- \ref data_rep
 
 */
 
