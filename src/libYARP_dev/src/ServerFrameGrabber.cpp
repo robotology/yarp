@@ -21,6 +21,10 @@ using namespace yarp::sig;
 
 
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
+    if (active) {
+        printf("Did you just try to open the same ServerFrameGrabber twice?\n");
+        return false;
+    }
 
     // for AV, control whether output goes on a single port or multiple
     bool separatePorts = false;
@@ -123,6 +127,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     thread.open(config.check("framerate",Value("0")).asDouble());
+    active = true;
     return true;
 }
 

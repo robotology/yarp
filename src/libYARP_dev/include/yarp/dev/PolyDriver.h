@@ -76,6 +76,10 @@ public:
      * @return true iff the device was created and configured successfully
      */
     bool open(yarp::os::Searchable& config) {
+        if (isValid()) {
+            // already open - should close first
+            return false;
+        }
         dd = Drivers::factory().open(config);
         return isValid();
     }

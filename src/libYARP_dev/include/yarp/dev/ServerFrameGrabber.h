@@ -109,6 +109,7 @@ private:
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
     bool addStamp;
+    bool active;
 public:
     /**
      * Constructor.
@@ -121,10 +122,15 @@ public:
 		spoke = false;
         canDrop = true;
         addStamp = false;
+        active = false;
         p2 = NULL;
     }
     
     virtual bool close() {
+        if (!active) {
+            return false;
+        }
+        active = false;
         thread.stop();
         if (p2!=NULL) {
             delete p2;
