@@ -10,4 +10,5 @@ ADD_EXECUTABLE(fake_grabber_net2 fake_grabber_net2.cpp FakeFrameGrabber2.h)
 ADD_EXECUTABLE(file_grabber file_grabber.cpp FileFrameGrabber.h)
 ADD_EXECUTABLE(file_grabber_net file_grabber_net.cpp FileFrameGrabber.h)
 ADD_EXECUTABLE(audio_test audio_test.cpp)
+ADD_EXECUTABLE(double_server double_server.cpp)
 
