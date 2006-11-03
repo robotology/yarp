@@ -180,6 +180,7 @@ This page controls the pages shown in the printable user manual.
 
  * \li \ref what_is_yarp
  * \li \ref install
+ * \li \ref yarp_cluster
  * \li \ref note_ports
  * \li \ref note_devices
  * \li \ref yarp_code_examples

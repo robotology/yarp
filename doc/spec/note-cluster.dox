@@ -1,0 +1,159 @@
+
+/**
+ * @page yarp_cluster Setting up your network for YARP
+
+Along with TCP, YARP supports UDP and multicast communication on a
+local network. These are unreliable network protocols, but can be
+quite efficient. We discuss here steps that are useful for making your
+network friendly to UDP and multicast. But if you find yourself
+spending a lot of time on this, you may need to reconsider whether you
+have made the right choice of protocol.
+
+@section yarp_cluster_iperf iperf is your friend
+
+If you are doing any non-trivial networking, you need to learn how
+to test your network and debug throughput issues.  A key resource
+in this battle is the "iperf" program. 
+
+- Download from  http://dast.nlanr.net/Projects/Iperf/
+- FAQ at  http://dast.nlanr.net/Projects/Iperf/iperf_faq.php
+
+Please make sure you have iperf available on all your machines 
+before going any further.
+
+@section yarp_cluster_tcp Checking TCP communication
+
+TCP is the simplest protocol to work with, so let's start with it.
+Let's check the throughput between two of your machines.
+Pick two machines, and choose one (arbitrarily) to be the iperf
+server.  Determine its IP address of domain name -- let's say it is 
+10.0.0.26. Run the following commands:
+
+\verbatim
+ [On server, e.g. 10.0.0.26] iperf -s
+ [On client, e.g. 10.0.0.27] iperf -c 10.0.0.26
+\endverbatim
+
+This will run for a while and then describe your TCP throughput, for example:
+
+\verbatim
+ ------------------------------------------------------------
+ Client connecting to 10.0.0.26, TCP port 5001
+ TCP window size: 16.0 KByte (default)
+ ------------------------------------------------------------
+ [  3] local 10.0.0.25 port 34160 connected with 10.0.0.26 port 5001
+ [  3]  0.0-10.0 sec  1.08 GBytes    924 Mbits/sec
+\endverbatim
+
+@section yarp_cluster_udp Checking UDP communication
+
+UDP is an unreliable protocol, and there are lots of possible pitfalls
+in using it.  YARP will try to send messages broken into rather large
+UDP packets (around 60K), and your network may or may not actually
+pass those packets through.
+
+To test UDP behavior on your network with iperf, add the "-u" flag to
+the client and server. To the server, we can add "-i 1" to get reports
+at regular intervals. To the client, we can specify target bandwidth,
+e.g. "-b 50m" for a target of 50 MBits/sec.
+
+\verbatim
+ [On server, 10.0.0.26] iperf -s -u -i 1
+ [On client, 10.0.0.27] iperf -c 10.0.0.26 -b 50m
+\endverbatim
+
+Example result:
+
+\verbatim
+ Sending 1470 byte datagrams
+ UDP buffer size:   108 KByte (default)
+ ------------------------------------------------------------
+ [  3] local 10.0.0.25 port 32820 connected with 10.0.0.26 port 5001
+ [  3]  0.0-10.0 sec  59.7 MBytes  50.0 Mbits/sec
+ [  3] Sent 42555 datagrams
+ [  3] Server Report:
+ [  3]  0.0-10.0 sec    119 MBytes    100 Mbits/sec  0.030 ms    0/42554 (0%)
+ [  3]  0.0-10.0 sec  1 datagrams received out-of-order
+\endverbatim
+
+A key test for YARP is that you can send big datagrams okay. This is
+necessary for efficient transmission of large images using UDP or
+MCAST. To check 63KB datagrams, do:
+
+\verbatim
+ [On server, 10.0.0.26] iperf -s -u -l 63K -w 200K
+ [On client, 10.0.0.27] iperf -c 10.0.0.26 -u -l 63K -w 200K
+\endverbatim
+
+Make sure you try this in both directions! For example, we've seen an
+asymmetric problems going from a Linux machine to a Windows machine on
+a gigabit network with a particular switch.  If you see problems,
+reduce the "-l" size until things work just to understand your system 
+(but if you want to send large images you'll need to tweak your system
+until large packets work).
+
+
+\section  yarp_cluster_mcast Checking multicast communication
+
+For testing multicast, make sure you have the most recent version
+of iperf, and try this:
+
+\verbatim
+ iperf -c 224.0.55.55 -u -T 32 -t 100 -i 1 -l 60k 
+ iperf -s -u -B 224.0.55.55 -i 1 -T 32 -l 60k
+\endverbatim
+
+Note the IP addresses are multicast-style, they don't correspond to
+individual machines.
+
+On the client ("-c") side, you should see something like:
+
+\verbatim
+ ------------------------------------------------------------
+ Server listening on UDP port 5001
+ Binding to local address 224.0.55.55
+ Joining multicast group  224.0.55.55
+ Receiving 61440 byte datagrams
+ UDP buffer size:   108 KByte (default)
+ ------------------------------------------------------------
+ [  3] local 224.0.55.55 port 5001 connected with 10.0.0.25 port 32821
+ [  3]  0.0- 1.0 sec    120 KBytes    983 Kbits/sec  0.003 ms    0/    2 (0%)
+ [  3]  1.0- 2.0 sec    120 KBytes    983 Kbits/sec  0.030 ms    0/    2 (0%)
+ [  3]  2.0- 3.0 sec    120 KBytes    983 Kbits/sec  0.052 ms    0/    2 (0%)
+\endverbatim
+
+@section yarp_cluster_suggest YARP's suggestion
+
+If MCAST/UDP packets drop when using YARP, YARP may suggest this:
+
+\verbatim
+ The UDP/MCAST system buffer limit on your system is low.
+ You may get packet loss under heavy conditions.
+ To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608
+ (Might be something like: sudo /sbin/sysctl -w net.core.rmem_max=8388608)
+ To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX
+\endverbatim
+
+This controls the maximum allowed size for a RECEIVER buffer, so that
+a number of packets adding up to a large amount of data can be
+received and stored while your program is doing something else. YARP
+will try to get a large buffer, and your operating system may not
+comply unless you do the above. This configuration step is not
+necessary on MS-Windows.
+
+There are a lot more suggestions for Linux here:
+- http://wwwx.cs.unc.edu/~sparkst/howto/network_tuning.php
+
+\section yarp_cluster_code Relevant source code
+
+In case you need to fix something, the relevant source code in YARP is:
+
+- src/libYARP_OS/include/yarp/os/DgramTwoWayStream.h 
+- src/libYARP_OS/src/DgramTwoWayStream.cpp
+
+We appreciate patches to these files. We only have one network to test
+on, and this topic can be quite network-dependent and subtle.
+
+
+*/
+
