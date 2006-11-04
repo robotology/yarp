@@ -69,13 +69,13 @@ else
 	./scripts/update-web-packages
     )
     cp build-debian-new.txt build-debian.txt
+    ./scripts/autocheck-doc force
 fi
 
 else
 	echo "Nothing new in CVS"
+	./scripts/autocheck-doc
 fi
-
-./scripts/autocheck-doc
 
 ) | tee report.txt
 

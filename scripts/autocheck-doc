@@ -2,6 +2,12 @@
 
 # run as ./scripts/autocheck-doc.sh
 
+# now that our web server is local there's no reason not
+# to rebuild the documentation as often as the code changes
+if [ "k$1" = "kforce" ] ; then
+    rm build-doc.txt
+fi
+
 touch build-doc.txt
 cat conf/build.txt | grep DOC | tee build-doc-new.txt
 cmp build-doc-new.txt build-doc.txt || (
