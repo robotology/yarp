@@ -1,9 +1,8 @@
 #!/bin/sh
 
-# you may have to modify this to match your versions
-aclocal-1.8
+aclocal
 autoheader
 libtoolize
-automake-1.8 --add-missing
+automake --add-missing
 autoconf
 
