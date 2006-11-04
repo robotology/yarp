@@ -151,20 +151,20 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
 
 bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
     PortAudioDeviceDriverSettings config2;
-    config2.rate = config.check("rate",Value(0)).asInt();
-    config2.samples = config.check("samples",Value(0)).asInt();
-    config2.channels = config.check("channels",Value(0)).asInt();
-    config2.wantRead = (bool)config.check("read");
-    config2.wantWrite = (bool)config.check("write");
+    config2.rate = config.check("rate",Value(0),"audio sample rate (0=automatic)").asInt();
+    config2.samples = config.check("samples",Value(0),"number of samples per network packet (0=automatic)").asInt();
+    config2.channels = config.check("channels",Value(0),"number of audio channels (0=automatic, max is 2)").asInt();
+    config2.wantRead = (bool)config.check("read","if present, just deal with reading audio (microphone)");
+    config2.wantWrite = (bool)config.check("write","if present, just deal with writing audio (speaker)");
     if (!(config2.wantRead||config2.wantWrite)) {
         config2.wantRead = config2.wantWrite = true;
     }
-    if (config.check("loopback")) {
+    if (config.check("loopback","if present, send audio read from microphone immediately back to speaker")) {
         loopBack = true;
     }
     delayed = false;
     delayedConfig = config2;
-    if (config.check("delay")) {
+    if (config.check("delay","if present, do not configure audio device until it needs to be used")) {
         printf("Delaying audio configuration\n");
         delayed = true;
         return true;
