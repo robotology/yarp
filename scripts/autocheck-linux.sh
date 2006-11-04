@@ -42,6 +42,7 @@ fi
 echo "Regression tests not run" > testlog.txt
 if [ ! -e failure.txt ]; then
     (
+	rm -f src/libYARP_dev/harness/*.dox
 	make test || ( echo YARP_AUTOCHECK make regression failed | tee failure.txt )
     ) 2>&1 | tee testlog.txt
 fi
