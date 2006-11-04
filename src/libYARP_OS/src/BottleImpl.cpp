@@ -83,7 +83,32 @@ void BottleImpl::smartAdd(const String& str) {
     if (str.length()>0) {
         char ch = str[0];
         Storable *s = NULL;
-        if (ch>='0'&&ch<='9'||ch=='+'||ch=='-'||ch=='.') {
+        bool numberLike = true;
+        bool preamble = true;
+        bool hexActive = false;
+        for (int i=0; i<str.length(); i++) {
+            char ch2 = str[i];
+            if (preamble) {
+                if (ch2=='x'||ch2=='X') {
+                    hexActive = true;
+                    continue;
+                }
+            }
+            if (preamble) {
+                if (ch2=='0'||ch2=='+'||ch2=='-') {
+                    continue;
+                }
+            }
+            preamble = false;
+            if (!((ch2>='0'&&ch2<='9')||ch2=='.'||ch2=='e'||ch2=='E'||
+                  (hexActive&&((ch2>='a'&&ch2<='f')||
+                                 (ch2>='A'&&ch2<='F'))))) {
+                numberLike = false;
+                break;
+            }
+        }
+
+        if (numberLike && (ch>='0'&&ch<='9'||ch=='+'||ch=='-'||ch=='.')) {
             if (str.strstr(".")<0) {
                 s = new StoreInt(0);
             } else {

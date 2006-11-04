@@ -307,17 +307,17 @@ Value Searchable::check(const char *txt, const Value& fallback,
         report.isComment = true;
         reportToMonitor(report);
     }
-    Value& bit = find(txt);
-    bool ok = !(bit.isNull());
-    if (ok) {
-        return bit;
-    }
     if (getMonitor()!=NULL) {
         SearchReport report;
         report.key = txt;
         report.value = fallback.toString();
         report.isDefault = true;
         reportToMonitor(report);
+    }
+    Value& bit = find(txt);
+    bool ok = !(bit.isNull());
+    if (ok) {
+        return bit;
     }
     return fallback;
 }

@@ -337,6 +337,13 @@ public:
         checkTrue(BottleImpl::isComplete("(1 2 3)"), "complete");
     }
 
+
+    void testSpecialChars() {
+        report(0,"testing special characters...");
+        Bottle bot("file ../foo.txt");
+        checkTrue(bot.get(1).isString(),"paths starting with a decimal");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -355,6 +362,7 @@ public:
         testStandard();
         testNestDetection();
         testReread();
+        testSpecialChars();
     }
 
     virtual String getName() {

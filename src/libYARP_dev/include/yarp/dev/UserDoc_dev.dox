@@ -143,3 +143,14 @@
  *
  */
 
+
+/**
+ * @ingroup dev_all
+ *
+ * \defgroup dev_examples Device invocation examples
+ *
+ * Example configuration files.
+ *
+ */
+
+
