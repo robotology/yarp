@@ -15,6 +15,7 @@
  * \li @subpage yarp "YARP's main command line interface".
  * \li @subpage yarp_code_examples "Some example code". 
  * \li @subpage yarp_os "Overview of the YARP OS library".
+ * \li @subpage manual "User Manual".
  *
  * @section welcome_tutorials Tutorials
  *
@@ -177,7 +178,8 @@
 /**
  * @page manual User Manual
 
-This page controls the pages shown in the printable user manual.
+This page mirrors the order and content of material in
+our printable user manual.
 
  * \li \ref what_is_yarp
  * \li \ref install
@@ -190,6 +192,7 @@ This page controls the pages shown in the printable user manual.
  * \li \ref dev-how-to
  * \li \ref terms
  * \li \ref data_rep
+ * \li \ref yarp_protocol
  * \li \ref name_server
 
  */

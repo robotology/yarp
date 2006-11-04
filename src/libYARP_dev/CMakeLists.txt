@@ -208,3 +208,20 @@ SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")
 SET(YARP_dev_INC "${YARP_dev_INC}" CACHE INTERNAL "include path")
 SET(YARP_dev_EXT_LIBS "${YARP_dev_EXT_LIBS}" CACHE INTERNAL "extra libs")
 
+
+# tests for devices
+
+SET(postfix dev)
+AUX_SOURCE_DIRECTORY(harness harnesscode)
+ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
+TARGET_LINK_LIBRARIES(harness_${postfix} ${YARP_dev_LIB} ${YARP_sig_LIB} ${YARP_OS_LIB} ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS})
+GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
+
+# add in our tests
+FILE(GLOB inis harness/*.ini)
+FOREACH(X ${inis})
+	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
+	  GET_FILENAME_COMPONENT(XINI ${X} ABSOLUTE)
+	  ADD_TEST(device::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_${postfix} --file ${XINI})
+ENDFOREACH(X ${inis})
+

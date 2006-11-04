@@ -15,7 +15,7 @@ for manual in min pagenum; do
 
     cd $base/doc/$manual/latex
 
-    perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" < manual.tex > order.txt
+    ( perl -pe "s/\\\\doxyref\\{[^\\}]*\\}\\{p\\.\\}\\{([^\\}]*)\\}/\\\\hyperlink\\{\$1\\}/g" | perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < manual.tex > order.txt
     order=`cat order.txt | egrep "[a-z]"`
     echo "ORDER is $order"
     echo -n > order.tex
