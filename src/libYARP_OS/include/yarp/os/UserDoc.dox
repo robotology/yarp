@@ -163,6 +163,10 @@
  *
  * @section important_yarp_os_classes Important classes
  *
+ * If you are online, this list will link to API information.
+ * If you're offline, it is just a list of classes you may
+ * want to check.
+ *
  * \li \link yarp::os::Thread Thread\endlink
  * \li \link yarp::os::Semaphore Semaphore\endlink
  * \li \link yarp::os::Time Time\endlink
@@ -194,6 +198,7 @@ our printable user manual.
  * \li \ref data_rep
  * \li \ref yarp_protocol
  * \li \ref name_server
+ * \li \ref yarp_os
 
  */
 
