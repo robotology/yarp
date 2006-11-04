@@ -323,3 +323,16 @@ Value Searchable::check(const char *txt, const Value& fallback,
 }
 
 
+bool Searchable::check(const char *key,
+                       const char *comment) {
+    if (getMonitor()!=NULL && comment!=NULL) {
+        SearchReport report;
+        report.key = key;
+        report.value = comment;
+        report.isComment = true;
+        reportToMonitor(report);
+    }
+    return check(key);
+}
+
+

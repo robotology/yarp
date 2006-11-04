@@ -81,6 +81,17 @@ public:
      */ 
     virtual bool check(const char *key) = 0;
 
+
+    /**
+     * Check if there exists a property of the given name
+     * @param key the name to check for
+     * @param comment Human-readable explanation     
+     * @return true iff a property of the given name exists, even if
+     * it doesn't have a value associated with it
+     */ 
+    virtual bool check(const char *key,
+                       const char *comment);
+
     /**
      * Gets a value corresponding to a given keyword
      * @param key The keyword to look for

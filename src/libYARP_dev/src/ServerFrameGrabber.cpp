@@ -33,7 +33,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         
     yarp::os::Value *name;
 
-    if (config.check("subdevice",name)) {
+    if (config.check("subdevice",name,"name (or nested configuration) of device to wrap")) {
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
@@ -75,22 +75,17 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         poly.view(fgCtrl);
     }
 
-    canDrop = !config.check("no_drop");
-    addStamp = config.check("stamp");
+    canDrop = !config.check("no_drop","if present, use strict policy for sending data");
+    addStamp = config.check("stamp","if present, add timestamps to data");
 
-    if (config.check("name",name)) {
-        p.open(name->asString());
-    } else {
-        p.open("/grabber");
-    }
+    p.open(config.check("name",Value("/grabber"),"name of port to send on").asString());
 
     double framerate=0;
     int period=0;
-    if (config.check("framerate", name))
-        {
-            framerate=name->asDouble();
-        }
-
+    if (config.check("framerate", name, 
+                     "maximum rate in Hz to read from subdevice")) {
+        framerate=name->asDouble();
+    }
 
     if (fgAv&&!config.check("shared-ports")) {
         separatePorts = true;
