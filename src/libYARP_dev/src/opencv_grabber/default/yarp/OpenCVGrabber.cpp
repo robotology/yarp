@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006 Eric Mislivec and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -79,14 +79,10 @@ bool OpenCVGrabber::open(Searchable & config) {
 
 
     // Are we capturing from a file or a camera ?
-    bool fromFile = config.check("file");
+    ConstString file = config.check("movie", Value(""),
+                                    "if present, read from specified file rather than camera").asString();
+    bool fromFile = (file!="");
     if (fromFile) {
-
-        ConstString file = config.check("file", Value("")).asString();
-        if ("" == file) {
-            printf("No file name specified!\n");
-            return false;
-        }
 
         // Try to open a capture object for the file
         m_capture = (void*)cvCaptureFromAVI(file.c_str());
@@ -110,15 +106,15 @@ bool OpenCVGrabber::open(Searchable & config) {
 
     // Extract the desired image size from the configuration if
     // present, otherwise query the capture device
-    if (config.check("w")) {
-        m_w = config.check("w", Value(-1)).asInt();
+    if (config.check("width","if present, specifies desired image width")) {
+        m_w = config.check("width", Value(-1)).asInt();
     } else {
         m_w = (int)cvGetCaptureProperty((CvCapture*)m_capture,
                                         CV_CAP_PROP_FRAME_WIDTH);
     }
 
-    if (config.check("h")) {
-        m_h = config.check("h", Value(-1)).asInt();
+    if (config.check("height","if present, specifies desired image height")) {
+        m_h = config.check("height", Value(-1)).asInt();
     } else {
         m_h = (int)cvGetCaptureProperty((CvCapture*)m_capture,
                                         CV_CAP_PROP_FRAME_HEIGHT);
@@ -167,23 +163,23 @@ bool OpenCVGrabber::close() {
  */
 bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
-    fprintf(stderr, "-->getImage123\n");
+    //fprintf(stderr, "-->getImage123\n");
 
     // Must have a capture object
     if (0 == m_capture) {
         image.zero(); return false;
     }
 
-    fprintf(stderr, "-->HERE1\n");
+    //fprintf(stderr, "-->HERE1\n");
     // Grab and retrieve a frame, OpenCV owns the returned image
     IplImage * iplFrame = cvQueryFrame((CvCapture*)m_capture);
-    fprintf(stderr, "-->HERE2\n");
+    //fprintf(stderr, "-->HERE2\n");
 
     if (0 == iplFrame) {
         image.zero(); return false;
     }
 
-    fprintf(stderr, "-->HERE3\n");
+    //fprintf(stderr, "-->HERE3\n");
 
     // Resize the output image, this should not result in new
     // memory allocation if the image is already the correct size

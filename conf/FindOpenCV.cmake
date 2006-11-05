@@ -23,8 +23,11 @@
 # - nat, 20-oct 06: not smart enough to handle possible clashes between 
 # different versions of opencv if installed in the system. Be careful.
 # - nat, 23-oct 06: First check OPENCV_DIR, OPENCV_ROOT or OPENCV_HOME
+# - paulfitz, 5-nov 06: made link with libhighgui be default true
+#   so that the opencv driver can be compiled. Nat, can you explain again 
+#   which systems don't have this?
 
-SET(LINK_LIB_HIGHGUI FALSE CACHE BOOL "Do you want to link against libhighgui?")
+SET(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
 IF (LINK_LIB_HIGHGUI AND WIN32)
   SET(LINK_LIB_CVCAM)
 ENDIF(LINK_LIB_HIGHGUI AND WIN32)

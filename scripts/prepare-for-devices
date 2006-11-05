@@ -2,7 +2,7 @@
 
 echo On a debian machine, get all packages needed
 
-#gtk
+# gtk
 sudo apt-get install libgtk2.0-dev pkg-config
 
 # ffmpeg
@@ -11,3 +11,5 @@ sudo apt-get install libavformat-dev libavcodec-dev libavifile-0.7-dev
 # portaudio
 sudo apt-get install portaudio19-dev
 
+# opencv
+sudo apt-get install libcv-dev libhighgui-dev libcvaux-dev

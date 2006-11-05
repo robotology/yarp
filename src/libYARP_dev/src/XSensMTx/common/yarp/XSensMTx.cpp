@@ -193,20 +193,13 @@ bool XSensMTx::stop()
 bool XSensMTx::open(yarp::os::Searchable &config)
 {
     XSensMTxParameters par;
-    Property p;
-    yarp::os::Value *serial;
-    p.fromString(config.toString());
-    
+     
 #ifdef WIN32
-    if (p.check ("serial", serial))
-        par.comPort = serial->asInt ();
-    else
-        par.comPort = 11;
+    par.comPort = config.check ("serial", Value(11), 
+                                "numeric identifier of comport"))
 #else
-    if (p.check ("serial", serial))
-        par.comPortString = std::string (serial->toString ().c_str ());
-    else
-        par.comPortString = std::string ("/dev/ttyUSB0");
+    par.comPortString = config.check("serial",Value("/dev/ttyUSB0"),
+                                     "device name of comport").asString().c_str();
 #endif
 
     return open(par);
