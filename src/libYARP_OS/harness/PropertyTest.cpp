@@ -135,10 +135,29 @@ public:
 
     }
 
+
+    virtual void checkExpansion() {
+        report(0,"checking expansion");
+        Property p;
+        p.fromConfig("\
+color red\n\
+yarp1 $__YARP__\n\
+yarp2 ${__YARP__}\n\
+yarp3 pre_${__YARP__}_post\n\
+");
+        checkEqual(p.find("color").asString().c_str(),"red","normal key");
+        checkEqual(p.find("yarp1").asInt(),1,"basic expansion");
+        checkEqual(p.find("yarp2").asInt(),1,"expansion with parenthesis");
+        checkEqual(p.find("yarp3").asString().c_str(),"pre_1_post",
+                   "expansion with neighbor");
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
         checkTypes();
+        checkCopy();
+        checkExpansion();
     }
 };
 

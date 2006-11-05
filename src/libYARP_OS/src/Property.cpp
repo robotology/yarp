@@ -12,9 +12,11 @@
 #include <yarp/Logger.h>
 #include <yarp/StringInputStream.h>
 #include <yarp/NetType.h>
+#include <yarp/NameConfig.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
+#include <ace/OS.h>
 
 #include <fstream>
 using namespace std;
@@ -222,6 +224,7 @@ public:
     void fromConfig(const char *txt,bool wipe=true) {
         StringInputStream sis;
         sis.add(txt);
+        sis.add("\n");
         if (wipe) {
             clear();
         }
@@ -242,6 +245,9 @@ public:
                 if (comment>=0) {
                     buf = buf.substr(0,comment);
                 }
+
+                // expand any environment references
+                buf = expand(buf.c_str()).c_str();
 
                 if (buf[0]=='[') {
                     int stop = buf.strstr("]");
@@ -299,6 +305,88 @@ public:
             sub.copy(rec.bot);
         }
         return bot.toString();
+    }
+
+    // expand any environment variables found
+    ConstString expand(const char *txt) {
+        //printf("expanding %s\n", txt);
+        String input = txt;
+        if (input.strstr("$")<0) {
+            // no variables present for sure
+            return txt;
+        }
+        // check if variables present
+        String output = "";
+        String var = "";
+        bool inVar = false;
+        bool varHasParen = false;
+        bool quoted = false;
+        for (int i=0; i<=input.length(); i++) {
+            char ch = 0;
+            if (i<input.length()) {
+                ch = input[i];
+            }
+            if (quoted) {
+                if (!inVar) {
+                    output += '\\';
+                    if (ch!=0) {
+                        output += ch;
+                    }
+                } else {
+                    if (ch!=0) {
+                        var += ch;
+                    }
+                }
+                quoted = false;
+                continue;
+            } else {
+                if (ch=='\\') {
+                    quoted = true;
+                    continue;
+                }
+            }
+
+            if (inVar) {
+                if (ACE_OS::ace_isalnum(ch)||(ch=='_')) {
+                    var += ch;
+                    continue;
+                } else {
+                    if (ch=='('||ch=='{') {
+                        if (var.length()==0) {
+                            // ok, just ignore
+                            varHasParen = true;
+                            continue;
+                        }
+                    }
+                    inVar = false;
+                    //printf("VARIABLE %s\n", var.c_str());
+                    String add = NameConfig::getEnv(var);
+                    if (add=="") {
+                        if (var=="__YARP__") {
+                            add = "1";
+                        }
+                    }
+                    output += add;
+                    if (varHasParen && (ch=='}'||ch==')')) {
+                        continue;
+                        // don't need current char
+                    }
+                }
+            }
+
+            if (!inVar) {
+                if (ch=='$') {
+                    inVar = true;
+                    varHasParen = false;
+                    continue;
+                } else {
+                    if (ch!=0) {
+                        output += ch;
+                    }
+                }
+            }
+        }
+        return output.c_str();
     }
 };
 

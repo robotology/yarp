@@ -1,3 +1,10 @@
+2006-11-05  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Configuration parsing now expands environment variables.
+	* Devices are now automatically probed to generate documentation.
+	* Device documentation improved.
+	* Manual cleaned up.
+
 2006-10-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Integrated some video4linux stuff from Jonas Ruesch (thanks!).

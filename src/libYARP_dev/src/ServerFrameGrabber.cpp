@@ -78,7 +78,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
     addStamp = config.check("stamp","if present, add timestamps to data");
 
-    p.open(config.check("name",Value("/grabber"),"name of port to send on").asString());
+    p.open(config.check("name",Value("/grabber"),"name of port to send data on").asString());
 
     double framerate=0;
     int period=0;
@@ -87,16 +87,15 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         framerate=name->asDouble();
     }
 
-    if (fgAv&&!config.check("shared-ports")) {
+    if (fgAv&&
+        !config.check("shared-ports",
+                      "If present, send audio and images on same port")) {
         separatePorts = true;
         YARP_ASSERT(p2==NULL);
         p2 = new Port;
         YARP_ASSERT(p2!=NULL);
-        if (config.check("name2",name)) {
-            p2->open(name->asString());
-        } else {
-            p2->open("/grabber2");
-        }
+        p2->open(config.check("name2",Value("/grabber2"),
+                              "Name of second port to send data on, when audio and images sent seperately").asString());
     }
         
     if (fgAv!=NULL) {
