@@ -115,6 +115,19 @@ public:
     virtual Bottle& findGroup(const char *key) = 0;
 
     /**
+     * Gets a list corresponding to a given keyword
+     * @param key The keyword to look for
+     * @param comment Human-readable explanation     
+     * @return A list corresponding to a given keyword.  If there is no
+     * such list, then the isNull() method called on the result will be
+     * true.  Otherwise, the elements of the list can be read through
+     * result.get(index) where result.get(0) is the keyword, and
+     * result.get(i) for i>=1 are the "real" elements of the list.
+     *
+     */
+    Bottle& findGroup(const char *key, const char *comment);
+
+    /**
      * Gets a value corresponding to a given keyword.  If a property
      * does not exist, this returns false and does not modify the
      * result pointer.  If a property exists but does not have a

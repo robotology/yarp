@@ -545,6 +545,13 @@ Bottle& Property::findGroup(const char *key) {
             report.value = result->toString();
         }
         reportToMonitor(report);
+        if (result!=0/*NULL*/) {
+            String context = getContext().c_str();
+            context += ".";
+            context += key;
+            result->setMonitor(getMonitor(),
+                               context.c_str()); // pass on any monitoring
+        }
     }
 
     if (result!=((Bottle*)0)) { return *result; }

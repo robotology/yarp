@@ -65,7 +65,7 @@ public:
             printf("  [%s] %s ",
                    context, prefix.c_str());
             String txt = report.value.c_str();
-            if (txt.length()<80) {
+            if (txt.length()<40) {
                 printf(" %s", txt.c_str());
             } else {
                 printf(" (value is long; suppressed)");

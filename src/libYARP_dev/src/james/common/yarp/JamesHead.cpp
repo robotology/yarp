@@ -720,11 +720,15 @@ bool JamesHead::open(yarp::os::Searchable& config)
     Property inertialParams;
 
     headParams.fromString(config.toString());
+    headParams.setMonitor(config.getMonitor(),
+                          "headParams"); // pass on any monitoring
+
     ACE_OS::fprintf(stderr, "Opening JamesHead device\n");
 
 	//////////// head
-    Value &hdevice=headParams.findGroup("HEAD").find("device");
-    Value &hsubdevice=headParams.findGroup("HEAD").find("subdevice");
+    Bottle& head = headParams.findGroup("HEAD","section for robot head");
+    Value& hdevice = head.find("device");
+    Value& hsubdevice = head.find("subdevice");
 
 	headParams.put("device", hdevice);
     headParams.put("subdevice", hsubdevice);

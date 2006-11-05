@@ -201,7 +201,7 @@ Value& Bottle::findGroupBit(const char *key) {
 }
 
 
-Value& Bottle::find(const char *key) {
+Value& Bottle::findBit(const char *key) {
     for (int i=0; i<size(); i++) {
         Value *org = &(get(i));
         Value *cursor = org;
@@ -233,6 +233,22 @@ Value& Bottle::find(const char *key) {
     return get(-1);
 }
 
+
+Value& Bottle::find(const char *key) {
+    Value& val = findBit(key);
+    
+    if (getMonitor()!=NULL) {
+        SearchReport report;
+        report.key = key;
+        report.isFound = !val.isNull();
+        report.value = val.toString();
+        reportToMonitor(report);
+    }
+
+    return val;
+}
+
+
 Bottle& Bottle::findGroup(const char *key) {
     Value& bb = findGroupBit(key);
 
@@ -245,6 +261,13 @@ Bottle& Bottle::findGroup(const char *key) {
             report.value = bb.toString();
         }
         reportToMonitor(report);
+        if (bb.isList()) {
+            String context = getContext().c_str();
+            context += ".";
+            context += key;
+            bb.asList()->setMonitor(getMonitor(),
+                                    context.c_str()); // pass on any monitoring
+        }
     }
 
     if (bb.isList()) {
@@ -333,6 +356,21 @@ bool Searchable::check(const char *key,
         reportToMonitor(report);
     }
     return check(key);
+}
+
+
+
+
+Bottle& Searchable::findGroup(const char *key,
+                              const char *comment) {
+    if (getMonitor()!=NULL && comment!=NULL) {
+        SearchReport report;
+        report.key = key;
+        report.value = comment;
+        report.isComment = true;
+        reportToMonitor(report);
+    }
+    return findGroup(key);
 }
 
 

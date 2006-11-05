@@ -48,6 +48,7 @@ namespace yarp {
 class yarp::os::Bottle : public Portable, public Searchable {
 public:
     using Searchable::check;
+    using Searchable::findGroup;
 
     /**
      * Constructor.  The bottle is initially empty.
@@ -253,6 +254,7 @@ public:
 private:
 
     Value& findGroupBit(const char *key);
+    Value& findBit(const char *key);
 
     virtual Bottle *create() {
         return new Bottle();
