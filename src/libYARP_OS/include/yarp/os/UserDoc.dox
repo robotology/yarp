@@ -24,6 +24,7 @@
  * \li @subpage yarp_motor_control
  * \li @subpage yarp_cluster
  * \li @subpage dev-how-to
+ * \li \ref dev_examples
  * \li @subpage terms "Specification of YARP terms and protocols".
  
 
