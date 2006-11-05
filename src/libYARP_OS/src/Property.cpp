@@ -321,9 +321,9 @@ public:
         bool inVar = false;
         bool varHasParen = false;
         bool quoted = false;
-        for (int i=0; i<=input.length(); i++) {
+        for (int i=0; i<=(int)input.length(); i++) {
             char ch = 0;
-            if (i<input.length()) {
+            if (i<(int)input.length()) {
                 ch = input[i];
             }
             if (quoted) {
