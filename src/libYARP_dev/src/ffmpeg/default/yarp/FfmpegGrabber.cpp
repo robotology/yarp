@@ -12,9 +12,6 @@
 #include <yarp/sig/all.h>
 #include <yarp/Logger.h>
 
-// based on Martim Boehme's example at:
-//   http://www.inb.uni-luebeck.de/~boehme/using_libavcodec.html
-
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
 
@@ -209,8 +206,6 @@ public:
                         idx++;
                     }
                 }
-                //audioBufferAt = audioBuffer;
-                //audioBufferLen = 0;
             }
         }
         return true;
@@ -269,15 +264,22 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
     AVFormatParameters formatParams;
     AVInputFormat *iformat;
 	
-	formatParams.device = strdup(config.check("v4ldevice",Value("/dev/video0")).asString().c_str());
-    formatParams.channel = config.check("channel",Value(0)).asInt();
-    formatParams.standard = strdup(config.check("standard",Value("ntsc")).asString().c_str());
-    formatParams.width = config.check("width",Value(640)).asInt();
-    formatParams.height = config.check("height",Value(480)).asInt();
+	formatParams.device = strdup(config.check("v4ldevice",
+                                              Value("/dev/video0"),
+                                              "device name").asString().c_str());
+    formatParams.channel = config.check("channel",Value(0),
+                                        "channel identifier").asInt();
+    formatParams.standard = strdup(config.check("standard",
+                                                Value("ntsc"),
+                                                "pal versus ntsc").asString().c_str());
+    formatParams.width = config.check("width",Value(640),"width of image").asInt();
+    formatParams.height = config.check("height",Value(480),"height of image").asInt();
     formatParams.time_base.den = config.check("time_base_den",
-                                              Value(29)).asInt();
+                                              Value(29),
+                                              "denominator of basic time unit").asInt();
     formatParams.time_base.num = config.check("time_base_num",
-                                              Value(1)).asInt();
+                                              Value(1),
+                                              "numerator of basic time unit").asInt();
 
     iformat = av_find_input_format("video4linux");
 
@@ -292,7 +294,9 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
                                  AVFormatContext **ppFormatCtx) {
     AVFormatParameters formatParams;
     AVInputFormat *iformat;
-    ConstString devname = config.check("devname",Value("/dev/dv1394")).asString();
+    ConstString devname = config.check("devname",
+                                       Value("/dev/dv1394"),
+                                       "firewire device name").asString();
     formatParams.device = devname.c_str();
     iformat = av_find_input_format("dv1394");
     printf("Checking for digital video in %s\n", devname.c_str());
@@ -310,19 +314,21 @@ bool FfmpegGrabber::openFile(AVFormatContext **ppFormatCtx,
 bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 
     ConstString fname = 
-        config.check("source",Value("default.avi")).asString();
+        config.check("source",
+                     Value("default.avi"),
+                     "movie file to read from").asString();
 
     // Register all formats and codecs
     av_register_all();
 
     // Open video file
-    if (config.check("v4l")) {
+    if (config.check("v4l","if present, read from video4linux")) {
         needRateControl = false; // reading from live media
         if (!openV4L(config,&pFormatCtx)) {
             printf("Could not open Video4Linux input\n");
             return false;
         }
-    } else if (config.check("ieee1394")) {
+    } else if (config.check("ieee1394","if present, read from firewire")) {
         needRateControl = false; // reading from live media
         if (!openFirewire(config,&pFormatCtx)) {
             printf("Could not open ieee1394 input\n");
