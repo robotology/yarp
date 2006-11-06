@@ -41,13 +41,22 @@ public:
     }
 
     virtual void report(const SearchReport& report, const char *context) {
-        ConstString ctx = context;
+        String ctx = context;
         ConstString key = report.key;
+        String prefix = "";
 
         // just work with device, not subdevices
-        if (ctx!="harness") {
+        if (!(ctx.substr(0,7)=="harness")) {
             return;
         }
+
+        // but normal nested properties are worth documenting
+        if (ctx.substr(0,8)=="harness.") {
+            prefix = ctx.substr(8,ctx.length());
+            prefix += ".";
+        }
+
+        key = (prefix + key.c_str()).c_str();
 
         if (key=="device"||key=="wrapped") {
             return;
