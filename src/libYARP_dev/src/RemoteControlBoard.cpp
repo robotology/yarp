@@ -227,13 +227,6 @@ public:
      * and all parameters required by the wrapped device driver.
      */
     virtual bool open(Searchable& prop) {
-        // attach readers.
-        rpc_p.setReader(command_reader);
-        // attach buffers.
-        state_buffer.attach(state_p);
-        control_buffer.attach(control_p);
-        // attach callback.
-        control_buffer.useCallback(callback_impl);
 
 		verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
@@ -264,6 +257,14 @@ public:
         if (!poly.isValid()) {
             return false;
         }
+
+        // attach readers.
+        rpc_p.setReader(command_reader);
+        // attach buffers.
+        state_buffer.attach(state_p);
+        control_buffer.attach(control_p);
+        // attach callback.
+        control_buffer.useCallback(callback_impl);
 
         if (prop.check("name",name)) {
             String s((size_t)1024);

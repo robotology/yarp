@@ -91,9 +91,11 @@ bool PolyDriver::open(const char *txt) {
 
 bool PolyDriver::open(yarp::os::Searchable& config) {
     if (isValid()) {
+        YARP_DEBUG(Logger::get(),"PolyDriver already open");
         // already open - should close first
         return false;
     }
+    YARP_DEBUG(Logger::get(),"PolyDriver opening...");
     if (system_resource==NULL) {
         system_resource = new YarpDevMonitor;
     }
@@ -101,7 +103,9 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     if (config.getMonitor()==NULL) {
         config.setMonitor(&HELPER(system_resource));
     }
+    YARP_DEBUG(Logger::get(),"PolyDriver calling factory...");
     dd = Drivers::factory().open(config);
+    YARP_DEBUG(Logger::get(),"PolyDriver opened.");
     return isValid();
 }
 

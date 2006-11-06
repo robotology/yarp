@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/dev/Drivers.h>
 #include <yarp/String.h>
 #include <yarp/Logger.h>
+#include <yarp/dev/Drivers.h>
 
 #include <ace/OS.h>
 #include <ace/Vector_T.h>
@@ -121,6 +121,7 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
         str = p.find("device").asString().c_str();
         config = &p;
     }
+    YARP_DEBUG(Logger::get(),String("Drivers::open starting for ") + str);
 
     DeviceDriver *driver = NULL;
 
@@ -153,12 +154,18 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
         printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
     }
 
+    YARP_DEBUG(Logger::get(),String("Drivers::open started for ") + str);
+
     if (driver!=NULL) {
         //printf("yarpdev: parameters are %s\n", config->toString().c_str());
+        YARP_DEBUG(Logger::get(),String("Drivers::open config for ") + str);
         bool ok = driver->open(*config);
+        YARP_DEBUG(Logger::get(),String("Drivers::open configed for ") + str);
         if (!ok) {
             printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
+            //YARP_DEBUG(Logger::get(),String("Discarding ") + str);
             delete driver;
+            //YARP_DEBUG(Logger::get(),String("Discarded ") + str);
             driver = NULL;
         } else {
             if (creator!=NULL) {

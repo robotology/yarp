@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.4 2006-11-06 16:30:16 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.5 2006-11-06 20:06:28 eshuy Exp $
 ///
 ///
 
@@ -451,6 +451,7 @@ EsdMotionControl::EsdMotionControl() :
 {
 	system_resources = (void *) new EsdCanResources;
 	ACE_ASSERT (system_resources != NULL);
+    _opened = false;
 }
 
 
@@ -473,7 +474,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 	_filter = -1;
 	_writerequested = false;
 	_noreply = false;
-    
+
 	if (!r.initialize (p))
         {
             _mutex.post();
@@ -530,6 +531,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 		disableAmp(i);
 	}
 
+    _opened = true;
 	return true;
 }
 
@@ -645,37 +647,39 @@ bool EsdMotionControl::close (void)
 {
 	EsdCanResources& d = RES(system_resources);
 
-	// disable the controller, pid controller & pwm off
-	int i;
-	for (i = 0; i < d._njoints; i++) {
-		disablePid(i);
-		disableAmp(i);
-	}
-
-    if (Thread::isRunning())
-        {
-            /// default initialization for this device driver.
-            int i;
-            for(i = 0; i < d.getJoints(); i++)
-                setBCastMessages(i, double(0x00));
+    if (_opened) {
+        // disable the controller, pid controller & pwm off
+        int i;
+        for (i = 0; i < d._njoints; i++) {
+            disablePid(i);
+            disableAmp(i);
         }
+        
+        if (Thread::isRunning())
+            {
+                /// default initialization for this device driver.
+                int i;
+                for(i = 0; i < d.getJoints(); i++)
+                    setBCastMessages(i, double(0x00));
+            }
+        
+        Thread::stop ();	/// stops the thread first (joins too).
 
-    Thread::stop ();	/// stops the thread first (joins too).
-
-    ImplementPositionControl<EsdMotionControl, IPositionControl>::uninitialize ();
-    ImplementVelocityControl<EsdMotionControl, IVelocityControl>::uninitialize();
-    ImplementPidControl<EsdMotionControl, IPidControl>::uninitialize();
-    ImplementEncoders<EsdMotionControl, IEncoders>::uninitialize();
-    ImplementControlCalibration<EsdMotionControl, IControlCalibration>::uninitialize();
-    ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>::uninitialize();
-    ImplementControlLimits<EsdMotionControl, IControlLimits>::uninitialize();
-
+        ImplementPositionControl<EsdMotionControl, IPositionControl>::uninitialize ();
+        ImplementVelocityControl<EsdMotionControl, IVelocityControl>::uninitialize();
+        ImplementPidControl<EsdMotionControl, IPidControl>::uninitialize();
+        ImplementEncoders<EsdMotionControl, IEncoders>::uninitialize();
+        ImplementControlCalibration<EsdMotionControl, IControlCalibration>::uninitialize();
+        ImplementAmplifierControl<EsdMotionControl, IAmplifierControl>::uninitialize();
+        ImplementControlLimits<EsdMotionControl, IControlLimits>::uninitialize();
+    }
     checkAndDestroy<double> (_ref_positions);
-	checkAndDestroy<double> (_command_speeds);
+    checkAndDestroy<double> (_command_speeds);
     checkAndDestroy<double> (_ref_speeds);
     checkAndDestroy<double> (_ref_accs);
-
-	int ret = d.uninitialize ();
+    
+    int ret = d.uninitialize ();
+    _opened = false;
 
 	return ret;
 }

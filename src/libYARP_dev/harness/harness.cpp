@@ -8,6 +8,7 @@
 
 
 #include <yarp/String.h>
+#include <yarp/Logger.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
@@ -122,10 +123,14 @@ int main(int argc, char *argv[]) {
     ConstString shortFileName = seek.substr(pos,seek.length()).c_str();
 
     PolyDriver dd;
+    YARP_DEBUG(Logger::get(), "harness opening...");
     bool ok = dd.open(p);
+    YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;
     if (ok) {
+        YARP_DEBUG(Logger::get(), "harness closing...");
         dd.close();
+        YARP_DEBUG(Logger::get(), "harness closed.");
     }
 
     Network::fini();

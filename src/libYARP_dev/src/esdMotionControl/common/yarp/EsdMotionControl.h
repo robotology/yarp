@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: EsdMotionControl.h,v 1.1 2006-11-06 10:38:55 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.2 2006-11-06 20:06:28 eshuy Exp $
 ///
 ///
 
@@ -246,6 +246,7 @@ protected:
 
 	bool _writerequested;
 	bool _noreply;
+    bool _opened;
 	
 	/**
 	 * pointer to the function printing the device debug information.
