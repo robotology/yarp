@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: EsdMotionControl.h,v 1.22 2006-10-24 19:51:03 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.1 2006-11-06 10:38:55 eshuy Exp $
 ///
 ///
 
