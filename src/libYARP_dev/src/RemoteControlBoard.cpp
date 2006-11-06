@@ -235,12 +235,12 @@ public:
         // attach callback.
         control_buffer.useCallback(callback_impl);
 
-		verb = (prop.check("verbose") || prop.check("v"));
+		verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
 			ACE_OS::printf("running with verbose output\n");
 
         Value *name;
-        if (prop.check("subdevice",name)) {
+        if (prop.check("subdevice",name,"name of specific control device to wrap")) {
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
