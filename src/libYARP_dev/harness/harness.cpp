@@ -203,7 +203,7 @@ int main(int argc, char *argv[]) {
         fout << getFile(fileName).c_str();
         fout << "\\endverbatim" << endl;
         fout << endl;
-        fout << "Here is a list of properties checked when starting up this device" << endl;
+        fout << "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example" << endl;
         fout << endl;
         monitor.toDox(fout);
         fout << endl;
