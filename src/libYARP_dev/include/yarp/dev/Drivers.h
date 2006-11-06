@@ -187,9 +187,16 @@ public:
      */
     void add(DriverCreator *creator);
 
-private:
 
+    /**
+     * Find the factory for a named device.
+     * @param name The name of the device
+     * @return a pointer to the factory, or NULL if there is none
+     */
     DriverCreator *find(const char *name);
+
+
+private:
 
     void init();
 

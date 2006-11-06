@@ -11,8 +11,10 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/Drivers.h>
 
 #include <fstream>
+#include <iostream>
 
 using namespace yarp;
 using namespace yarp::os;
@@ -177,6 +179,16 @@ int main(int argc, char *argv[]) {
 
     Network::fini();
 
+    ConstString wrapperName = "";
+    ConstString codeName = "";
+
+    DriverCreator *creator = 
+        Drivers::factory().find(deviceName.c_str());
+    if (creator!=NULL) {
+        wrapperName = creator->getWrapper();
+        codeName = creator->getCode();
+    }
+
 
     if (dest!="") {
         ofstream fout(dest.c_str());
@@ -196,8 +208,15 @@ int main(int argc, char *argv[]) {
              << ")"
              << endl;
         fout << endl;
-        fout << "Configuration file: " 
-             << shortFileName.c_str()
+        fout << "Instantiates "
+             << "\\ref cmd_device_"
+             << deviceName.c_str()
+             << " \""
+             << deviceName.c_str()
+             << "\""
+             << " device implemented by yarp::dev::"
+             << codeName.c_str()
+             << "."
              << endl;
         fout << "\\verbatim" << endl;
         fout << getFile(fileName).c_str();
@@ -206,6 +225,11 @@ int main(int argc, char *argv[]) {
         fout << "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example" << endl;
         fout << endl;
         monitor.toDox(fout);
+        fout << endl;
+        fout << "\\sa ";
+        fout << "yarp::dev::"
+             << codeName.c_str()
+             << endl;
         fout << endl;
         fout << " */" << endl;
         fout.close();
