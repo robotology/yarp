@@ -39,6 +39,7 @@ public:
     Protocol(TwoWayStream *stream) : 
         log(Logger::get()), header(8), number(4), indexHeader(10) {
         shift.takeStream(stream);
+        active = true;
         route = Route("null","null","tcp");
         delegate = NULL;
         messageLen = 0;
@@ -236,10 +237,13 @@ public:
 
     void interrupt() {
         try {
-            if (pendingAck) {
-                sendAck();
+            if (active) {
+                if (pendingAck) {
+                    sendAck();
+                }
+                shift.getInputStream().interrupt();
+                active = false;
             }
-            shift.getInputStream().interrupt();
         } catch (IOException e) {
             YARP_DEBUG(Logger::get(),
                        String("yarp::Protocol::interrupt exception: ") + 
@@ -253,6 +257,7 @@ public:
 
     void closeHelper() {
         //YARP_DEBUG(Logger::get(),"Protocol object closing");
+        active = false;
         try {
             if (pendingAck) {
                 sendAck();
@@ -275,6 +280,9 @@ public:
 
     void takeStreams(TwoWayStream *streams) {
         shift.takeStream(streams);
+        if (streams!=NULL) {
+            active = true;
+        }
     }
 
     OutputStream& os() {
@@ -456,6 +464,7 @@ private:
     ManagedBytes number;
     ManagedBytes indexHeader;
     ShiftStream shift;
+    bool active;
     Carrier *delegate;
     Route route;
     //BufferedConnectionWriter writer;
