@@ -55,16 +55,12 @@ public:
         open(config);
     }
 
-
     /**
      * Construct and configure a device by its common name.
      * @param txt common name of the device
      * @return true iff the device was created and configured successfully
      */
-    bool open(const char *txt) {
-        dd = Drivers::factory().open(txt);
-        return isValid();
-    }
+    bool open(const char *txt);
 
     /**
      * Create and configure a device, by name.  The config
@@ -75,14 +71,7 @@ public:
      * @param config configuration options for the device
      * @return true iff the device was created and configured successfully
      */
-    bool open(yarp::os::Searchable& config) {
-        if (isValid()) {
-            // already open - should close first
-            return false;
-        }
-        dd = Drivers::factory().open(config);
-        return isValid();
-    }
+    bool open(yarp::os::Searchable& config);
 
     /**
      * Destructor.
