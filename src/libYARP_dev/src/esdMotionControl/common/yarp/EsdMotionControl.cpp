@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.1 2006-11-06 10:38:55 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.2 2006-11-06 11:55:44 eshuy Exp $
 ///
 ///
 
@@ -534,8 +534,7 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 }
 
 bool EsdMotionControl::open(yarp::os::Searchable& config) {
-    Property p;
-    p.fromString(config.toString());
+    Searchable& p = config;
 
     if (!p.check("GENERAL")) {
         fprintf(stderr, "Cannot understand configuration parameters\n");
