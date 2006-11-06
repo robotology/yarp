@@ -41,7 +41,7 @@ public:
         prefix += key.c_str();
         prefix += ":";
         if (key==prev) {
-            for (int i=0; i<prefix.length(); i++) {
+            for (int i=0; i<(int)prefix.length(); i++) {
                 if (prefix[i]=='*') {
                     prefix[i] = ' ';
                 }
