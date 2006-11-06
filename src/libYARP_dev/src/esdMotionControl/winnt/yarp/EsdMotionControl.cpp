@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.29 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.30 2006-11-06 10:32:00 eshuy Exp $
 ///
 ///
 
@@ -35,12 +35,14 @@
 #include <yarp/os/Time.h>
 #include <ace/config.h>
 #include <ace/OS.h>
-#include <ace/Log_msg.h>
+#include <ace/Log_Msg.h>
 #include <ace/Sched_Params.h>
 
 /// specific to this device driver.
 #include "EsdMotionControl.h"
-#include "../dd_orig/include/ntcan.h"
+// changed path here; if this doesn't work for you, please fix
+// libYARP_dev/CMakeLists.txt
+#include <dd_orig/include/ntcan.h>
 
 #include "../../../ControlBoardInterfacesImpl.inl"
 
