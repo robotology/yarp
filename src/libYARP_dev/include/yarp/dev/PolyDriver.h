@@ -30,6 +30,7 @@ public:
      * Constructor.
      */
     PolyDriver() {
+        system_resource = 0 /*NULL*/;
         dd = 0 /*NULL*/;
     }
 
@@ -38,6 +39,7 @@ public:
      * @param txt common name of the device
      */
     PolyDriver(const char *txt) {
+        system_resource = 0 /*NULL*/;
         dd = 0 /*NULL*/;
         open(txt);
     }
@@ -51,6 +53,7 @@ public:
      * @param config configuration options for the device
      */
     PolyDriver(yarp::os::Searchable& config) {
+        system_resource = 0 /*NULL*/;
         dd = 0 /*NULL*/;
         open(config);
     }
@@ -76,13 +79,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~PolyDriver() {
-        if (dd!=0 /*NULL*/) {
-            dd->close();
-            delete dd;
-            dd = 0 /*NULL*/;
-        }
-    }
+    virtual ~PolyDriver();
 
     virtual bool close() {
         bool result = false;
@@ -129,9 +126,41 @@ public:
         return dd != 0 /*NULL*/;
     }
 
+    /**
+     * After a call to PolyDriver::open, you can
+     * get a list of all the options checked by the 
+     * device.
+     * @return a list of options checked by the device
+     */
+    yarp::os::Bottle getOptions();
+
+    /**
+     * After a call to PolyDriver::open, you can
+     * check if the device has documentation on a given option.
+     * @param option the name of the option to check
+     * @return the human-readable description of the option, if found
+     */
+    yarp::os::ConstString getComment(const char *option);
+
+    /**
+     * After a call to PolyDriver::open, you can
+     * check if a given option has a particular default value.
+     * @param option the name of the option to check
+     * @return the default value of the option, if any.
+     */
+    yarp::os::Value getDefaultValue(const char *option);
+
+    /**
+     * After a call to PolyDriver::open, you can
+     * check what value was found for a particular option, if any.
+     * @param option the name of the option to check
+     * @return the value found for the option, if any.
+     */
+    yarp::os::Value getValue(const char *option);
 
 private:
     DeviceDriver *dd;
+    void *system_resource;
 };
 
 #endif

@@ -64,6 +64,7 @@ public:
     bool operator ==(const char *str) const;
     bool operator !=(const char *str) const;
 
+    int length() const;
 private:
 
     void *implementation;

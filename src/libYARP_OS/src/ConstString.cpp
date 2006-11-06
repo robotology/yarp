@@ -73,3 +73,7 @@ bool ConstString::operator !=(const char *str) const {
     return HELPER(implementation) != str;
 }
 
+int ConstString::length() const {
+    return HELPER(implementation).length();
+}
+

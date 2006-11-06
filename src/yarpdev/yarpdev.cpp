@@ -17,66 +17,62 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
+using namespace std;
 
 
-class YarpDevMonitor : public SearchMonitor {
-private:
-    ConstString prev;
-public:
-    YarpDevMonitor() {
-        prev = "";
-    }
+static void toDox(PolyDriver& dd, ostream& os) {
+    os << "===============================================================" 
+       << endl;
+    os << "== Options checked by device:" << endl;
+    os << "== " << endl;
 
-    virtual void report(const SearchReport& report, const char *context) {
-        ConstString key = report.key;
-        if (key=="wrapped") {
-            return;
+    Bottle order = dd.getOptions();
+    for (int i=0; i<order.size(); i++) {
+        String name = order.get(i).toString().c_str();
+        if (name=="wrapped"||(name.strstr(".wrapped")>=0)) {
+            continue;
         }
-
-        String prefix = "*** ";
-        prefix += key.c_str();
-        prefix += ":";
-        if (key==prev) {
-            for (int i=0; i<(int)prefix.length(); i++) {
-                if (prefix[i]=='*') {
-                    prefix[i] = ' ';
+        ConstString desc = dd.getComment(name.c_str());
+        Value def = dd.getDefaultValue(name.c_str());
+        Value actual = dd.getValue(name.c_str());
+        String out = "";
+        out += name.c_str();
+        if (!actual.isNull()) {
+            if (actual.toString()!="") {
+                out += "=";
+                if (actual.toString().length()<40) {
+                    out += actual.toString().c_str();
+                } else {
+                    out += "(value too long)";
                 }
             }
         }
-        prev = key;
-
-        if (report.isComment==true) {
-            printf("  [%s] %s \"%s\"\n",
-                   context, prefix.c_str(), report.value.c_str());
-            return;
-        }
-
-        if (report.isDefault==true) {
-            printf("  [%s] %s  default %s\n",
-                   context, prefix.c_str(), report.value.c_str());
-            return;
-        }
-
-        if (report.isFound) {
-            printf("  [%s] %s ",
-                   context, prefix.c_str());
-            String txt = report.value.c_str();
-            if (txt.length()<40) {
-                printf(" %s", txt.c_str());
-            } else {
-                printf(" (value is long; suppressed)");
+        if (!def.isNull()) {
+            if (def.toString()!="") {
+                out += " [";
+                if (def.toString().length()<40) {
+                    out += def.toString().c_str();
+                } else {
+                    out += "(value too long)";
+                }
+                out += "]";
             }
-            printf("\n");
-        } else {
-            printf("  [%s] %s  not found\n",
-                   context, prefix.c_str());
         }
+        if (desc!="") {
+            out += "\n    ";
+            out += desc.c_str();
+        }
+        os << out.c_str() << endl;
     }
-};
+    os << "==" << endl;
+    os << "===============================================================" 
+       << endl;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -141,11 +137,16 @@ int main(int argc, char *argv[]) {
     // ask for a wrapped, remotable device rather than raw device
     options.put("wrapped","1");
 
-    YarpDevMonitor monitor;
+    //YarpDevMonitor monitor;
+    bool verbose = false;
     if (options.check("verbose")) {
-        options.setMonitor(&monitor,"top-level");
+        verbose = true;
+        //options.setMonitor(&monitor,"top-level");
     }
     PolyDriver dd(options);
+    if (verbose) {
+        toDox(dd,cout);
+    }
     if (!dd.isValid()) {
         printf("yarpdev: ***ERROR*** device not available.\n");
         if (argc==1) { 

@@ -32,78 +32,7 @@ using namespace std;
 #endif
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-class YarpDevMonitor : public SearchMonitor {
-private:
-    Property comment, fallback, present;
-    Bottle order;
-
-public:
-    YarpDevMonitor() {
-    }
-
-    virtual void report(const SearchReport& report, const char *context) {
-        String ctx = context;
-        ConstString key = report.key;
-        String prefix = "";
-
-        // just work with device, not subdevices
-        if (!(ctx.substr(0,7)=="harness")) {
-            return;
-        }
-
-        // but normal nested properties are worth documenting
-        if (ctx.substr(0,8)=="harness.") {
-            prefix = ctx.substr(8,ctx.length());
-            prefix += ".";
-        }
-
-        key = (prefix + key.c_str()).c_str();
-
-        if (key=="device"||key=="wrapped") {
-            return;
-        }
-        
-
-        if (!present.check(key)) {
-            present.put(key,"present");
-            order.addString(key);
-        }
-
-        if (report.isComment==true) {
-            comment.put(key,report.value);
-            return;
-        }
-
-        if (report.isDefault==true) {
-            fallback.put(key,report.value);
-            return;
-        }
-    }
-
-    void toDox(ostream& os) {
-        os << "<table>" << endl;
-        os << "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>"
-           << endl;
-        for (int i=0; i<order.size(); i++) {
-            ConstString name = order.get(i).toString();
-            ConstString desc = comment.find(name).toString();
-            ConstString def = fallback.find(name).asString();
-            String out = "";
-            out += "<tr><td>";
-            out += name.c_str();
-            out += "</td><td>";
-            out += desc.c_str();
-            out += "</td><td>";
-            out += def.c_str();
-            out += "</td></tr>";
-            os << out.c_str() << endl;
-        }
-        os << "</table>" << endl;
-    }
-};
-
-String getFile(const char *fname) {
+static String getFile(const char *fname) {
     ifstream fin(fname);
     String txt;
     if (fin.fail()) {
@@ -119,7 +48,32 @@ String getFile(const char *fname) {
     }
     return txt;
 }
-#endif
+
+
+static void toDox(PolyDriver& dd, ostream& os) {
+    os << "<table>" << endl;
+    os << "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>"
+       << endl;
+    Bottle order = dd.getOptions();
+    for (int i=0; i<order.size(); i++) {
+        String name = order.get(i).toString().c_str();
+        if (name=="wrapped"||name.substr(0,10)=="subdevice.") {
+            continue;
+        }
+        ConstString desc = dd.getComment(name.c_str());
+        ConstString def = dd.getDefaultValue(name.c_str()).toString();
+        String out = "";
+        out += "<tr><td>";
+        out += name.c_str();
+        out += "</td><td>";
+        out += desc.c_str();
+        out += "</td><td>";
+        out += def.c_str();
+        out += "</td></tr>";
+        os << out.c_str() << endl;
+    }
+    os << "</table>" << endl;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -166,9 +120,6 @@ int main(int argc, char *argv[]) {
     }
     exampleName = seek.substr(pos,len).c_str();
     ConstString shortFileName = seek.substr(pos,seek.length()).c_str();
-
-    YarpDevMonitor monitor;
-    p.setMonitor(&monitor,"harness");
 
     PolyDriver dd;
     bool ok = dd.open(p);
@@ -245,7 +196,7 @@ int main(int argc, char *argv[]) {
         fout << "\\endcode" << endl;
         fout << "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example" << endl;
         fout << endl;
-        monitor.toDox(fout);
+        toDox(dd,fout);
         fout << endl;
         fout << "\\sa ";
         fout << "yarp::dev::"

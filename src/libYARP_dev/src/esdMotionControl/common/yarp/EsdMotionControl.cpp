@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.3 2006-11-06 12:31:37 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.4 2006-11-06 16:30:16 eshuy Exp $
 ///
 ///
 
@@ -572,13 +572,22 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
    
     ////// GENERAL
     xtmp = p.findGroup("GENERAL").findGroup("AxisMap","a list of reordered indices for the axes");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("AxisMap does not have the right number of entries\n");
+        return false;
+    }
     for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
     xtmp = p.findGroup("GENERAL").findGroup("Encoder","a list of scales for the encoders");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("Encoder does not have the right number of entries\n");
+        return false;
+    }
     for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
     xtmp = p.findGroup("GENERAL").findGroup("Zeros","a list of offsets for the zero point");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("Zeros does not have the right number of entries\n");
+        return false;
+    }
     for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
 
 
@@ -603,15 +612,24 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
     /////// LIMITS
     xtmp = p.findGroup("LIMITS").findGroup("Currents",
                                            "a list of current limits");
- 	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("Currents does not have the right number of entries\n");
+        return false;
+    }
     for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("LIMITS").findGroup("Max","a list of maximum angles (in degrees)");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("Max does not have the right number of entries\n");
+        return false;
+    }
     for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
 
     xtmp = p.findGroup("LIMITS").findGroup("Min","a list of minimum angles (in degrees)");
-	ACE_ASSERT (xtmp.size() == nj+1);
+	if (xtmp.size() != nj+1) {
+        printf("Min does not have the right number of entries\n");
+        return false;
+    }
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
 	if (p.findGroup("GENERAL").find("Verbose").asInt() == 1)
