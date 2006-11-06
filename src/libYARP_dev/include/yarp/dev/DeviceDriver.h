@@ -38,8 +38,12 @@ public:
     /**
      * Open the DeviceDriver. 
      * @param config is a list of parameters for the device.
-     * For specic devices, check other open methods for names of parameters
-     * and what they mean.  If there are no such open methods,
+     * Which parameters are effective for your device can vary.
+     * See \ref dev_examples "device invocation examples".
+     * If there is no example for your device,
+     * you can run the "yarpdev" program with the verbose flag
+     * set to probe what parameters the device is checking.
+     * If that fails too,
      * you'll need to read the source code (please nag one of the 
      * yarp developers to add documentation for your device).
      * @return true/false upon success/failure

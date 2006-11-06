@@ -222,6 +222,27 @@ int main(int argc, char *argv[]) {
         fout << getFile(fileName).c_str();
         fout << "\\endverbatim" << endl;
         fout << endl;
+        fout << "If this text is saved in a file called "
+             << shortFileName.c_str()
+             << " then the device can be created by doing:"
+             << endl;
+        fout << "\\verbatim" << endl;
+        fout << "yarpdev "
+             << "--file "
+             << shortFileName.c_str()
+             << endl;
+        fout << "\\endverbatim" << endl;
+        fout << "Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:" << endl;
+        fout << endl;
+        fout << "\\code" << endl;
+        fout << "Property p;" << endl;
+        fout << "p.fromConfigFile(\"" << shortFileName.c_str() << "\");" << endl;
+        fout << "// of course you could construct the Property object on-the-fly" << endl;
+        fout << "PolyDriver dev;" << endl;
+        fout << "dev.open(p);" << endl;
+        fout << "if (dev.isValid()) { /* use the device via view method */ }" 
+             << endl;
+        fout << "\\endcode" << endl;
         fout << "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example" << endl;
         fout << endl;
         monitor.toDox(fout);
