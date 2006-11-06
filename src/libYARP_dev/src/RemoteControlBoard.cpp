@@ -261,6 +261,10 @@ public:
             return false;
         }
 
+        if (!poly.isValid()) {
+            return false;
+        }
+
         if (prop.check("name",name)) {
             String s((size_t)1024);
             ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString().c_str());
