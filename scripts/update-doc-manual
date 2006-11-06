@@ -38,16 +38,32 @@ for manual in min pagenum; do
     sed "/YARP Page/,/END/! { /YARP File/,/YARP Page/ s/^/%%/ }" -i refman.tex
     sed "s/.*section.YARP Page.*/%%\\0/" -i refman.tex
     sed "s/.*section.Welcome to YARP.*/%%\\0/" -i refman.tex
-    sed "s/.*chapter.YARP Page.*/%%\\0/" -i refman.tex
-    sed "s/.*chapter.Welcome to YARP.*/%%\\0/" -i refman.tex
+    sed "s/\\\\chapter.*/%%\\0/" -i refman.tex
     sed "s/.*input.index.*/%%\\0/" -i refman.tex
     sed "s/^.include.*/%%\\0/" -i refman.tex
-    sed "s/^.input.*/\\\\input\\{order\\}/" -i refman.tex
+    sed "s/^.input.*/%%\\0/" -i refman.tex
+    sed "s/^%%.input.what_is_yarp.*/\\\\input\\{order\\}/" -i refman.tex
     perl -pe "s/(\\{tocdepth\\})\\{1\\}/\\{tocdepth\\}\\{2\\}/" < refman.tex > junk.tex
     mv junk.tex refman.tex
     for f in `ls *.tex`; do
 	perl -pe "s/\\\\section/\\\\chapter/g" < $f > junk.tex
 	perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
     done
+
+    # certain lists are generated automatically, but have clumsy
+    # formatting.  Here we patch that up.
+
+    for f in group__dev__examples.tex; do
+	sed "s/\\\\section.*Modules.*//" -i $f
+	sed "s/\\\\section.Detailed.*//" -i $f
+	( perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < $f > order.txt
+	order=`cat order.txt | egrep "[a-z]"`
+	for g in $order; do
+	    sed "s/\\\\chapter/\\\\section/" -i $g.tex
+	    cat $g.tex >> $f
+	done
+    done
+    
+
     make pdf
 done
