@@ -7,7 +7,7 @@ doxygen conf/Doxyfile.man
 
 # doxygen for normal user - omits some junk
 rm -f doc/yarpdoc.zip
-doxygen conf/Doxyfile.part
+doxygen conf/Doxyfile.part > /dev/null
 rm -rf tmpdoc
 mkdir tmpdoc
 cp -R doc/user/html tmpdoc/yarpdoc
@@ -17,6 +17,6 @@ cd ..
 rm -rf tmpdoc
 
 # doxygen with everything included
-doxygen conf/Doxyfile
+doxygen conf/Doxyfile > /dev/null
 
 ./scripts/update-doc-manual

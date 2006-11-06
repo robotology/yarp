@@ -3,11 +3,11 @@
 # run as "./scripts/update-doc-manual"
 
 ## doxygen for pdf manual with links
-doxygen conf/Doxyfile.min
+doxygen conf/Doxyfile.min > /dev/null
 
 # don't bother with this anymore
 # doxygen for pdf manual with page numbers
-doxygen conf/Doxyfile.pagenum
+doxygen conf/Doxyfile.pagenum > /dev/null
 
 base=$PWD
 
