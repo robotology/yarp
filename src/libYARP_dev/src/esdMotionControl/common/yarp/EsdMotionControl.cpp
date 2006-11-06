@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.2 2006-11-06 11:55:44 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.3 2006-11-06 12:31:37 eshuy Exp $
 ///
 ///
 
@@ -536,40 +536,48 @@ bool EsdMotionControl::open (const EsdMotionControlParameters &p)
 bool EsdMotionControl::open(yarp::os::Searchable& config) {
     Searchable& p = config;
 
-    if (!p.check("GENERAL")) {
+    if (!p.check("GENERAL","section for general motor control parameters")) {
         fprintf(stderr, "Cannot understand configuration parameters\n");
         return false;
     }
 
     int i;
-    int nj = p.findGroup("GENERAL").find("Joints").asInt();
+    int nj = p.findGroup("GENERAL").check("Joints",Value(1),
+                                          "Number of degrees of freedom").asInt();
     EsdMotionControlParameters params(nj);
     params._njoints = nj;
 
     ///// CAN PARAMETERS
-    Bottle &xtmp = p.findGroup("CAN").findGroup("CanDeviceNum");
-    params._networkN=xtmp.get(1).asInt();
+    Bottle& can = p.findGroup("CAN");
 
-    xtmp = p.findGroup("CAN").findGroup("CanMyAddress");
-    params._my_address=xtmp.get(1).asInt();
+    params._networkN = 
+        can.check("CanDeviceNum",Value(0),
+                  "numeric identifier of device").asInt();
+                  
+    params._my_address =
+        can.check("CanMyAddress",Value(0),
+                  "numeric identifier of my address").asInt();
+    
+    params._polling_interval = 
+        can.check("CanPollingInterval",Value(2),"polling period").asInt();
 
-    xtmp = p.findGroup("CAN").findGroup("CanPollingInterval");
-    params._polling_interval=xtmp.get(1).asInt();
+    params._timeout = 
+        can.check("CanTimeout",Value(20),"timeout period").asInt();
 
-    xtmp = p.findGroup("CAN").findGroup("CanTimeout");
-    params._timeout=xtmp.get(1).asInt();
-
-    xtmp = p.findGroup("CAN").findGroup("CanAddresses");
-    for (i = 1; i < xtmp.size(); i++) params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
+    Bottle& xtmp = can.findGroup("CanAddresses",
+                                 "a list of numeric identifiers");
+    for (i = 1; i < xtmp.size(); i++) {
+        params._destinations[i-1] = (unsigned char)(xtmp.get(i).asInt());
+    }
    
     ////// GENERAL
-    xtmp = p.findGroup("GENERAL").findGroup("AxisMap");
+    xtmp = p.findGroup("GENERAL").findGroup("AxisMap","a list of reordered indices for the axes");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._axisMap[i-1] = xtmp.get(i).asInt();
-    xtmp = p.findGroup("GENERAL").findGroup("Encoder");
+    xtmp = p.findGroup("GENERAL").findGroup("Encoder","a list of scales for the encoders");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._angleToEncoder[i-1] = xtmp.get(i).asDouble();
-    xtmp = p.findGroup("GENERAL").findGroup("Zeros");
+    xtmp = p.findGroup("GENERAL").findGroup("Zeros","a list of offsets for the zero point");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for (i = 1; i < xtmp.size(); i++) params._zeros[i-1] = xtmp.get(i).asDouble();
 
@@ -580,7 +588,7 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
         {
             char tmp[80];
             sprintf(tmp, "Pid%d", j); 
-            xtmp = p.findGroup("PIDS").findGroup(tmp);
+            xtmp = p.findGroup("PIDS","PID parameters").findGroup(tmp);
             params._pids[j].kp = xtmp.get(1).asDouble();
             params._pids[j].kd = xtmp.get(2).asDouble();
             params._pids[j].ki = xtmp.get(3).asDouble();
@@ -593,15 +601,16 @@ bool EsdMotionControl::open(yarp::os::Searchable& config) {
         }
 
     /////// LIMITS
-    xtmp = p.findGroup("LIMITS").findGroup("Currents");
+    xtmp = p.findGroup("LIMITS").findGroup("Currents",
+                                           "a list of current limits");
  	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._currentLimits[i-1]=xtmp.get(i).asDouble();
 
-    xtmp = p.findGroup("LIMITS").findGroup("Max");
+    xtmp = p.findGroup("LIMITS").findGroup("Max","a list of maximum angles (in degrees)");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMax[i-1]=xtmp.get(i).asDouble();
 
-    xtmp = p.findGroup("LIMITS").findGroup("Min");
+    xtmp = p.findGroup("LIMITS").findGroup("Min","a list of minimum angles (in degrees)");
 	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
