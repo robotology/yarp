@@ -2,12 +2,12 @@
 # One day this list could be populated automatically.
 
 IF (WIN32 AND NOT CYGWIN)
-   SET(AVAILABLE_DEVICES picolo dragonfly microphone esdMotionControl inertiacube2 XSensMTx james)
+   SET(AVAILABLE_DEVICES picolo dragonfly microphone inertiacube2 XSensMTx james)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
    SET(AVAILABLE_DEVICES dragonfly microphone XSensMTx inertiacube2 portaudio james)
 ENDIF (UNIX)
 
-SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber ffmpeg)
+SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber ffmpeg esdMotionControl)
 
