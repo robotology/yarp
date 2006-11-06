@@ -1,3 +1,8 @@
+2006-11-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* Device documentation procedure cleaned up a lot
+	* Bumped version up to 2.1.1
+
 2006-11-05  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Configuration parsing now expands environment variables.
