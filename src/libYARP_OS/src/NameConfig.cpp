@@ -27,8 +27,6 @@ using namespace std;
 
 using namespace yarp;
 
-//#define CONF_FILENAME "namer.conf"
-
 #define CONF_FILENAME "yarp.conf"
 
 

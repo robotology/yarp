@@ -150,6 +150,14 @@ yarp3 pre_${__YARP__}_post\n\
         checkEqual(p.find("yarp2").asInt(),1,"expansion with parenthesis");
         checkEqual(p.find("yarp3").asString().c_str(),"pre_1_post",
                    "expansion with neighbor");
+
+        Property env;
+        env.put("TARGET","Earth");
+        p.fromConfig("\
+targ $TARGET\n\
+",env);
+        checkEqual(p.find("targ").asString().c_str(),"Earth",
+                   "environment addition");
     }
 
     virtual void runTests() {

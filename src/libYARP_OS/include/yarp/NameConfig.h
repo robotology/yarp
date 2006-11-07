@@ -47,7 +47,6 @@ public:
 
     static String getEnv(const String& key);
 
-
 private:
     Address address;
 

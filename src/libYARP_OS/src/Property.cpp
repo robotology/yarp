@@ -203,7 +203,7 @@ public:
     }
 
 
-    void fromConfigFile(const char *fname,bool wipe=true) {
+    void fromConfigFile(const char *fname,Searchable& env,bool wipe=true) {
         ifstream fin(fname);
         String txt;
         if (fin.fail()) {
@@ -218,10 +218,10 @@ public:
                 txt += "\n";
             }
         }
-        fromConfig(txt.c_str(),wipe);
+        fromConfig(txt.c_str(),env,wipe);
     }
 
-    void fromConfig(const char *txt,bool wipe=true) {
+    void fromConfig(const char *txt,Searchable& env, bool wipe=true) {
         StringInputStream sis;
         sis.add(txt);
         sis.add("\n");
@@ -247,7 +247,7 @@ public:
                 }
 
                 // expand any environment references
-                buf = expand(buf.c_str()).c_str();
+                buf = expand(buf.c_str(),env).c_str();
 
                 if (buf[0]=='[') {
                     int stop = buf.strstr("]");
@@ -308,7 +308,7 @@ public:
     }
 
     // expand any environment variables found
-    ConstString expand(const char *txt) {
+    ConstString expand(const char *txt, Searchable& env) {
         //printf("expanding %s\n", txt);
         String input = txt;
         if (input.strstr("$")<0) {
@@ -361,6 +361,9 @@ public:
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
                     String add = NameConfig::getEnv(var);
+                    if (add=="") {
+                        add = env.find(var.c_str()).asString().c_str();
+                    }
                     if (add=="") {
                         if (var=="__YARP__") {
                             add = "1";
@@ -506,13 +509,13 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
     HELPER(implementation).fromCommand(argc,argv,wipe);
 }
 
-void Property::fromConfigFile(const char *fname,bool wipe) {
-    HELPER(implementation).fromConfigFile(fname,wipe);
+void Property::fromConfigFile(const char *fname,Searchable& env,bool wipe) {
+    HELPER(implementation).fromConfigFile(fname,env,wipe);
 }
 
 
-void Property::fromConfig(const char *txt,bool wipe) {
-    HELPER(implementation).fromConfig(txt,wipe);
+void Property::fromConfig(const char *txt,Searchable& env,bool wipe) {
+    HELPER(implementation).fromConfig(txt,env,wipe);
 }
 
 

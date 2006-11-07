@@ -190,7 +190,24 @@ public:
      * @param fname the name of the file to read from
      * @param wipe should Property be emptied first
      */
-    void fromConfigFile(const char *fname,bool wipe=true);
+    void fromConfigFile(const char *fname,bool wipe=true) {
+        Property p;
+        fromConfigFile(fname,p,wipe);
+    }
+
+
+    /**
+     * Variant of fromConfigFile(fname,wipe) that includes extra
+     * "environment variables".  These will be expanded, along
+     * with any other variables in the environment, if present
+     * in the configuration file in $variable or ${variable} form.
+     * @param fname the name of the file to read from
+     * @prama env extra set of environment variables
+     * @param wipe should Property be emptied first
+     */
+    void fromConfigFile(const char *fname,
+                        Searchable& env,
+                        bool wipe=true);
 
     /**
      * Parses text in the configuration format described in
@@ -198,7 +215,24 @@ public:
      * @param txt the configuration text
      * @param wipe should Property be emptied first
      */
-    void fromConfig(const char *txt,bool wipe=true);
+    void fromConfig(const char *txt,bool wipe=true) {
+        Property p;
+        fromConfig(txt,p,wipe);
+    }
+
+
+    /**
+     * Variant of fromConfig(txt,wipe) that includes extra
+     * "environment variables".  These will be expanded, along
+     * with any other variables in the environment, if present
+     * in the configuration file in $variable or ${variable} form.
+     * @param txt the configuration text
+     * @prama env extra set of environment variables
+     * @param wipe should Property be emptied first
+     */
+    void fromConfig(const char *txt,
+                    Searchable& env,
+                    bool wipe=true);
 
     // documented in Searchable
     ConstString toString() const;
