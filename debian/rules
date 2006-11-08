@@ -39,8 +39,9 @@ build-stamp: configure-stamp
 
 	# Add here commands to compile the package.
 	( cd Build; $(MAKE) )
+
+	# Make man page
 	( doxygen ./conf/Doxyfile.man )
-#	( cd Build; docbook-to-man ../src/libYARP_OS/yarp/yarp.sgml > yarp.1 )
 
 	touch build-stamp
 
@@ -63,14 +64,13 @@ install: build
 
 	# Add here commands to install the package into debian/yarp.
 	( cd Build; $(MAKE) install )
-	#( cd Build; $(MAKE) install DESTDIR=$(CURDIR)/debian/yarp )
 
 	# Reorganize the installation for a debian system
 	mv $(CURDIR)/debian/yarp/include $(CURDIR)/debian/yarp/usr/include
 	mv $(CURDIR)/debian/yarp/lib $(CURDIR)/debian/yarp/usr/lib
 	mkdir -p $(CURDIR)/debian/yarp/usr/bin
 	mv $(CURDIR)/debian/yarp/bin/* $(CURDIR)/debian/yarp/usr/bin
-	rm -rf $(CURDIR)/debian/yarp/doc # doc is just old debian stuff now
+	rm -rf $(CURDIR)/debian/yarp/doc
 	mkdir -p $(CURDIR)/debian/yarp/usr/share/man/man1
 	cp doc/man/man/man1/*.1 $(CURDIR)/debian/yarp/usr/share/man/man1
 
