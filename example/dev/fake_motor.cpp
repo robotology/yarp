@@ -229,15 +229,13 @@ int main(int argc, char *argv[]) {
     printf("check our device can be wrapped in controlboard\n");
 
 
-    while (1) {
-        PolyDriver indirect("(device controlboard) (subdevice motor)");
-        if (indirect.isValid()) {
-            printf("Indirect instantiation worked\n");
-        } else {
-            printf("Indirect instantiation failed\n");
-        }
-        indirect.close();
+    PolyDriver indirect("(device controlboard) (subdevice motor)");
+    if (indirect.isValid()) {
+        printf("Indirect instantiation worked\n");
+    } else {
+        printf("Indirect instantiation failed\n");
     }
+    indirect.close();
 
     
 
