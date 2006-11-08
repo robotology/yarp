@@ -9,6 +9,15 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+/*
+ * Read an image from a remote source using the "device" view of
+ * camera-like sources.
+ *
+ * Remote source could be, for example:
+ *   yarpdev --device test_grabber --name /fakey
+ *
+ */
+
 int main() {
     Network::init();
 
