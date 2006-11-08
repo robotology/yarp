@@ -1,7 +1,7 @@
+Author list for YARP2:
 Paul Fitzpatrick
 Giorgio Metta
 Lorenzo Natale
-and others (via YARP1)
 
 We've also had code contributed by:
 Radu Bogdan Rusu (inertial sensor)
@@ -11,4 +11,8 @@ Christopher Prince (Solaris fixes)
 Charles C. Kemp (firewire camera on linux)
 Julio Gomes (sound driver for windows)
 Alexandre Bernardino (sound driver for windows)
+Carlos Beltran (via YARP1)
 Jonas Ruesch (video4linux support in ffmpeg_grabber)
+
+Thanks also to:
+Assif Mirza (device library finding procedure)

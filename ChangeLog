@@ -4,7 +4,7 @@
 	GLOB.
 	* src/libYARP_dev/include/yarp/dev/UserDoc.dox: inserted
 	some important missing info into the howto.
-
+	
 2006-11-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Device documentation procedure cleaned up a lot
