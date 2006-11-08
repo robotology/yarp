@@ -199,6 +199,17 @@ public:
 };
 
 
+void testMotor(PolyDriver& driver) {
+    IPositionControl *pos;
+    if (driver.view(pos)) {
+        int ct = 0;
+        pos->getAxes(&ct);
+        printf("  number of axes is: %d\n", ct);
+    } else {
+        printf("  could not find IPositionControl interface\n");
+    }
+}
+
 int main(int argc, char *argv[]) {
     Drivers::factory().add(new DriverCreatorOf<FakeMotor>("motor", 
                                                           "controlboard",
@@ -210,21 +221,14 @@ int main(int argc, char *argv[]) {
     PolyDriver direct("motor");
     if (direct.isValid()) {
         printf("Direct instantiation worked\n");
-        IPositionControl *pos;
-        if (direct.view(pos)) {
-            int ct = 0;
-            pos->getAxes(&ct);
-            printf("  number of axes is: %d\n", ct);
-        } else {
-            printf("  but could not find interface\n");
-        }
+        testMotor(direct);
     } else {
         printf("Direct instantiation failed\n");
     }
     direct.close();
-    printf("\n\n");
 
     // check our device can be wrapped in the controlboard network wrapper
+    printf("\n\n");
     printf("============================================================\n");
     printf("check our device can be wrapped in controlboard\n");
 
@@ -236,6 +240,28 @@ int main(int argc, char *argv[]) {
         printf("Indirect instantiation failed\n");
     }
     indirect.close();
+
+    // check our device can be wrapped in the controlboard network wrapper
+    // and accessed remotely
+    printf("\n\n");
+    printf("============================================================\n");
+    printf("check our device can be accessed via remote_controlboard\n");
+
+    PolyDriver server("(device controlboard) (subdevice motor) (name /server)");
+    if (server.isValid()) {
+        printf("Server instantiation worked\n");
+
+        PolyDriver client("(device remote_controlboard) (local /client) (remote /server)");
+        if (client.isValid()) {
+            printf("Client instantiation worked\n");
+            testMotor(client);
+        } else {
+            printf("Client instantiation failed\n");
+        }
+        client.close();
+    }
+    server.close();
+
 
     
 
