@@ -10,6 +10,9 @@ note_devices, \ref dev_examples, and \ref yarpdev.  If you're read all
 that before and are interested in learning how to create devices, then
 read on...
 
+
+\section dev-howto-intro What is a device driver in YARP?
+
 A device driver should derive from the abstract class
 yarp::dev::DeviceDriver. This interface contains methods common to all
 device drivers, such as open and close.
@@ -28,7 +31,9 @@ device. This is quite similar to the way COM works (in a simplified way).
 In practice to implement a new device you create a new object which 
 derives from DeviceDriver and from the interface you want to support, 
 and you implement them. The interfaces are documented in the code, 
-using the doxygen standard. Hopefully this should be enough to begin with.
+using the doxygen standard. See \ref note_devices for an example.
+
+\section dev-howto-lib Adding a device driver to libYARP_dev
 
 Some practical rules are also required to have cmake include your .cpp/.h 
 files in the libYARP_dev (device library) project.
@@ -121,5 +126,106 @@ distribution or in the way the device is configured.
 If all libraries are located, you can go on with CMake and generate
 your make/project files. If at least one device driver was selected
 and correctly found, libYARP_dev should now compile.
+
+\section dev-howto-factory Adding a device driver factory
+
+It is useful to be able to create devices in a reconfigurable way,
+for example using the \ref yarpdev "yarpdev" application or the
+yarp::dev::PolyDriver class.
+This is done be adding a "factory" for your device driver to
+libYARP_dev.
+
+Take a look at this file:
+\verbatim
+src/libYARP_dev/src/PopulateDrivers.cpp.in
+\endverbatim
+
+This is a template that CMake configures based on the devices the
+user selects, adding factories for them to a global list.  Suppose 
+your device is called "foo".  Find the part of this file that
+contains a list something like this:
+\code
+#cmakedefine ENABLE_dragonfly
+#cmakedefine ENABLE_esdMotionControl
+#cmakedefine ENABLE_microphone
+#cmakedefine ENABLE_inertiacube2
+#cmakedefine ENABLE_XSensMTx
+#cmakedefine ENABLE_portaudio
+#cmakedefine ENABLE_opencv_grabber
+#cmakedefine ENABLE_ffmpeg
+\endcode
+and add:
+\code
+#cmakedefine ENABLE_foo
+\endcode
+This will be replaced with:
+\code
+#define ENABLE_foo
+\endcode
+by CMake if the user chooses to compile your device, otherwise it will
+be commented out.  You can see the code CMake generates at:
+\verbatim
+src/libYARP_dev/src_generated/PopulateDrivers.cpp
+\endverbatim
+This is a generated file, do not modify it!  Make all your changes to
+PopulateDrivers.cpp.in.
+
+Now find the part of PopulateDrivers.cpp.in that has lines like:
+\code
+#ifdef ENABLE_opencv_grabber
+#include <yarp/OpenCVGrabber.h>
+#endif
+\endcode
+And add:
+\code
+#ifdef ENABLE_foo
+#include <yarp/Foo.h>
+#endif
+\endcode
+or whatever header file is needed for your device.  The path to the header 
+file should usually work just as yarp/Foo.h rather than anything more
+complicated.
+
+Finally, now that we have our define, and have included the right 
+header file, we can add the factory for your device.  Go to the
+part of PopulateDrivers.cpp.in that has a list of lines like this:
+\code
+#ifdef ENABLE_portaudio
+    add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio", 
+                                                   "grabber",
+                                                   "PortAudioDeviceDriver"));
+#endif
+\endcode
+Now add in an entry for your device:
+\code
+#ifdef ENABLE_foo
+    add(new DriverCreatorOf<FooDeviceDriver>("foo", 
+                                             "",
+                                             "FooDeviceDriver"));
+#endif
+\endcode
+
+Replace FooDeviceDriver with the correct name of your class
+(which must be derived from yarp::dev::DeviceDriver).
+There are also three the
+Replace the text "foo" with whatever you want humans to call your device
+when they create it -- that's completely up to you.
+If there is a network wrapper device that can transport the data
+produced by your device, mention it as the second argument.
+That's the "" above.  See the Server classes in \ref dev_impl_wrapper
+for existing network wrappers.  A fairly generic wrapper is under
+development; in the meantime yarp::dev::ServerInertial is an example
+to start from if you find you have to write your own.
+Note that network wrappers are completely optional.  They
+are not needed for use of a device via yarp::dev::PolyDriver.
+
+The last text argument just repeats the class name for documentation
+purposes.
+
+\section dev-howto-wow Hey, why not automate all this?
+
+True, we should do more automation than we do now.  For now,
+we're just happy to have a mechanism that works solidly on
+both UNIX and Windows.
 
 **/
