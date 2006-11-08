@@ -19,7 +19,8 @@ public:
      * @return true/false.
      */
     virtual bool getAxes(int *ax) {
-        *ax = 1;
+        *ax = 2;
+        printf("FakeMotor reporting %d axes present\n", *ax);
         return true;
     }
 
@@ -203,21 +204,40 @@ int main(int argc, char *argv[]) {
                                                           "controlboard",
                                                           "FakeMotor"));
 
+    printf("============================================================\n");
+    printf("check our device can be instantiated directly\n");
+
     PolyDriver direct("motor");
     if (direct.isValid()) {
         printf("Direct instantiation worked\n");
+        IPositionControl *pos;
+        if (direct.view(pos)) {
+            int ct = 0;
+            pos->getAxes(&ct);
+            printf("  number of axes is: %d\n", ct);
+        } else {
+            printf("  but could not find interface\n");
+        }
     } else {
         printf("Direct instantiation failed\n");
     }
     direct.close();
+    printf("\n\n");
 
-    PolyDriver indirect("(device controlboard) (subdevice motor)");
-    if (indirect.isValid()) {
-        printf("Indirect instantiation worked\n");
-    } else {
-        printf("Indirect instantiation failed\n");
+    // check our device can be wrapped in the controlboard network wrapper
+    printf("============================================================\n");
+    printf("check our device can be wrapped in controlboard\n");
+
+
+    while (1) {
+        PolyDriver indirect("(device controlboard) (subdevice motor)");
+        if (indirect.isValid()) {
+            printf("Indirect instantiation worked\n");
+        } else {
+            printf("Indirect instantiation failed\n");
+        }
+        indirect.close();
     }
-    indirect.close();
 
     
 

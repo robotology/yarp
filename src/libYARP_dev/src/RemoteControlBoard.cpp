@@ -165,6 +165,24 @@ private:
     IControlCalibration *calib;
     // LATER: other interfaces here.
 
+    bool closeMain() {
+        if (Thread::isRunning()) {
+            Thread::stop();
+        }
+
+        // close the port connections here!
+        rpc_p.close();
+        control_p.close();
+        state_p.close();
+
+
+        poly.close();
+        polyCalib.close();
+
+        return true;
+    }
+    
+
 public:
     /**
      * Constructor.
@@ -181,6 +199,10 @@ public:
         nj = 0;
         thread_period = 20; // ms.
 		verb = false;
+    }
+
+    virtual ~ServerControlBoard() {
+        closeMain();
     }
 
     /**
@@ -202,20 +224,10 @@ public:
      * @return true if successful or false otherwise.
      */
     virtual bool close() {
-        if (Thread::isRunning())
-            Thread::stop();
-
-        // close the port connections here!
-        rpc_p.close();
-        control_p.close();
-        state_p.close();
-
-        poly.close();
-        polyCalib.close();
-
-        return true;
+        return closeMain();
     }
-    
+
+
     /**
      * Open the device driver.
      * @param prop is a Searchable object which contains the parameters. 
@@ -350,7 +362,9 @@ public:
             before = Time::now();
             yarp::sig::Vector& v = state_buffer.get();
             v.size(nj);
-            enc->getEncoders(&v[0]);
+            if (enc!=NULL) {
+                enc->getEncoders(&v[0]);
+            }
             // bool ok = enc->getEncoders(&v[0]);
             // LATER: deal with the ok == false.
             state_buffer.write();
