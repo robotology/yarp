@@ -1,3 +1,10 @@
+2006-11-08  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* src/libYARP_dev/CMakeLists.txt: fix from Assif for wrong
+	GLOB.
+	* src/libYARP_dev/include/yarp/dev/UserDoc.dox: inserted
+	some important missing info into the howto.
+
 2006-11-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* Device documentation procedure cleaned up a lot

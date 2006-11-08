@@ -1,5 +1,32 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Welcome to the "PopulateDrivers" source file, where factories
+ * are created for YARP device drivers.
+ *
+ * The file "src/libYARP_dev/src_generated/PopulateDrivers.cpp"
+ * is a generated file, and you should not edit it!
+ *
+ * The file "src/libYARP_dev/src/PopulateDrivers.cpp.in"
+ * is a human-written file.  Edit it to your heart's content,
+ * and then edit it a little bit more, and then again for
+ * old time's sake
+ * template from which "src/libYARP_dev/src_generated/PopulateDrivers.cpp"
+ * is produced.
+ *
+ * See the "Device How To" at http://yarp0.sourceforge.net for details.
+ *
+ *                                                 - paulfitz
+ *
+ */
+
+/*
+ * Copyright (C) 2006 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+
 #include <yarp/dev/Drivers.h>
 #include <yarp/String.h>
 #include <yarp/Logger.h>
