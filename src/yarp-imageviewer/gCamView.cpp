@@ -760,7 +760,13 @@ void saveOptFile(char *fileName)
 void parseParameters(int argc, char* argv[])
 {
     yarp::os::Property options;
-    options.fromCommand(argc,argv);
+    if (argc==2) {
+        // user did not use flags, just gave a port name
+        // might as well allow this
+        options.put("name",argv[1]);
+    } else {
+        options.fromCommand(argc,argv);
+    }
     setOptions(options);
 }
 
