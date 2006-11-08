@@ -70,6 +70,11 @@ public:
         return false;
     }
 
+
+    virtual bool setWhiteBalance(double red, double green) {
+        return false;
+    }
+
     virtual double getBrightness() const {
         return brightness;
     }

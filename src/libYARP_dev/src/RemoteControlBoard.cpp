@@ -306,12 +306,21 @@ public:
                 calib->setCalibrator(icalibrator);
             }
 		        
+        // experimental: let it be ok for not all interfaces to be
+        // implemented.
+
+        // we need at least the pos interface to get the number of 
+        // axes (is this true?)
+
+        /*
         if (pid != NULL &&
             pos != NULL &&
             vel != NULL &&
             enc != NULL &&
             amp != NULL &&
             lim != NULL) {
+        */
+        if (pos!=NULL) {
             if (!pos->getAxes(&nj)) {
                 ACE_OS::printf ("problems: controlling 0 axes\n");
                 return false;
@@ -325,7 +334,7 @@ public:
             return true;
         }
         
-        ACE_OS::printf("subdevice <%s> doesn't look like a control board (not all interfaces were acquired)\n",
+        ACE_OS::printf("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n",
                        name->toString().c_str());
         
         return false;
