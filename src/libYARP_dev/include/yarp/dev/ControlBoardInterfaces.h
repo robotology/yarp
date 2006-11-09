@@ -999,7 +999,7 @@ public:
     virtual bool getEncoderAcceleration(int j, double *spds)=0;
 
     /**
-     * Read the istantaneous acceleration of all axes.
+     * Read the instantaneous acceleration of all axes.
      * @param accs pointer to the array that will contain the output
      * @return true if all goes well, false if anything bad happens. 
      */
