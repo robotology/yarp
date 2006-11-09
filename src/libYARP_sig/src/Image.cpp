@@ -586,6 +586,8 @@ void Image::zero() {
 
 
 void Image::resize(int imgWidth, int imgHeight) {
+    YARP_ASSERT(imgWidth>=0 && imgHeight>=0);
+
     int code = getPixelCode();
     int size = getPixelSize();
     bool change = false;
