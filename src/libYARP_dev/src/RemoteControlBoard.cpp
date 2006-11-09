@@ -278,21 +278,14 @@ public:
         // attach callback.
         control_buffer.useCallback(callback_impl);
 
-        if (prop.check("name",name)) {
-            String s((size_t)1024);
-            ACE_OS::sprintf(&s[0], "%s/rpc:i", name->asString().c_str());
-            rpc_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/command:i", name->asString().c_str());
-            control_p.open(s.c_str());
-            ACE_OS::sprintf(&s[0], "%s/state:o", name->asString().c_str());
-            state_p.open(s.c_str());
-        } else {
-            rpc_p.open("/controlboard/rpc:i");
-            control_p.open("/controlboard/command:i");
-            state_p.open("/controlboard/state:o");
-        }
+        String rootName = 
+            prop.check("name",Value("/controlboard"),
+                       "prefix for port names").asString().c_str();
+        rpc_p.open((rootName+"/rpc:i").c_str());
+        control_p.open((rootName+"/command:i").c_str());
+        state_p.open((rootName+"/state:o").c_str());
         
-        if (prop.check("calibrator", name))
+        if (prop.check("calibrator", name,"calibration device to use, if any"))
             {
                 Property p;
                 p.fromString(prop.toString());
