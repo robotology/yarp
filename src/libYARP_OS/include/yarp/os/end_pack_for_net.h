@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: end_pack_for_net.h,v 1.5 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: end_pack_for_net.h,v 1.6 2006-11-10 14:52:06 eshuy Exp $
 ///
 ///
 
@@ -19,8 +19,12 @@
 
 #include <yarp/os/NetInt32.h>
 
+#ifdef YARP2_CYGWIN
+#pragma pack()
+#else
 #ifdef YARP2_WINDOWS
 #pragma pack(pop)
+#endif
 #endif
 
 #ifdef __LINUX__

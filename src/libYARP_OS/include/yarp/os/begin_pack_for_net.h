@@ -8,7 +8,7 @@
  */
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.5 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.6 2006-11-10 14:52:06 eshuy Exp $
 ///
 
 /**
@@ -22,11 +22,16 @@
 
 #include <yarp/os/NetInt32.h>
 
+#ifdef YARP2_CYGWIN
+#pragma pack(1)
+#define YARP_PACKING_CONSIDERED
+#else
 #ifdef YARP2_WINDOWS
 // use packing and make no apologies about it
 #pragma warning (disable:4103)
 #pragma pack(push, 1)
 #define YARP_PACKING_CONSIDERED
+#endif
 #endif
 
 #ifdef __LINUX__
