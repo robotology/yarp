@@ -141,12 +141,12 @@ Compile ACE using our summary instructions, below, or through the
 official method given here: 
 
 \code
-http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html
+http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html
 \endcode
 
 Don't panic! The instructions cover a lot of operating systems and compilers. Just look carefully for your combination. 
-          \li Windows/DevStudio instructions are here: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#msvc
-          \li UNIX/gcc instructions are here: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#unix_traditional
+          \li Windows/DevStudio instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#msvc
+          \li UNIX/gcc instructions are here: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional
           \li OSX/gcc users, follow the UNIX instructions. 
 
 ACE will take a while to compile, but if you can do it you'll be able to deal with anything we throw at you.
@@ -205,7 +205,7 @@ ACE-5.5.tar.gz as described above and follow these steps:
 
     \li (On OSX, the variable you need to set is DYLD_LIBRARY_PATH).
     \li An alternative is to copy the files in $ACE_ROOT/lib to a standard library directory, for example, /usr/lib.
-    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#unix_traditional 
+    \li We've given a simple procedure that works for most people. But if you run into a lot of trouble, we suggest you delete the ACE_wrappers directory, recreate it with tar again as above, and follow carefully all the detailed instructions in: http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#unix_traditional 
 
 
 
@@ -214,7 +214,7 @@ ACE-5.5.tar.gz as described above and follow these steps:
 For Borland C++Builder, MinGW, Cygwin instructions see: 
 
 \code
-http://www.cs.wustl.edu/~schmidt/ACE_wrappers/ACE-INSTALL.html#win32
+http://www.dre.vanderbilt.edu/~schmidt/DOC_ROOT/ACE/ACE-INSTALL.html#win32
 \endcode
 
 For Visual Studio, here's a brief summary of the steps.

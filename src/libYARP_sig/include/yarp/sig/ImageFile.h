@@ -7,7 +7,7 @@
  */
 
 //
-// $Id: ImageFile.h,v 1.10 2006-10-24 19:51:03 eshuy Exp $
+// $Id: ImageFile.h,v 1.11 2006-11-10 10:44:44 eshuy Exp $
 //
 //
 
@@ -35,14 +35,23 @@ namespace yarp {
                     FORMAT_PPM,
                     FORMAT_NUMERIC,
                 };
+
+            // PPM/PGM format
             bool read(ImageOf<PixelRgb>& dest, const char *src);
             bool read(ImageOf<PixelBgr>& dest, const char *src);
             bool read(ImageOf<PixelMono>& dest, const char *src);
-            //bool read(FlexImage& dest, const char *src);
 
+            // plain text format
+            bool read(ImageOf<PixelFloat>& dest, const char *src);
+
+            // PPM/PGM format
             bool write(const ImageOf<PixelRgb>& src, const char *dest);
             bool write(const ImageOf<PixelBgr>& src, const char *dest);
             bool write(const ImageOf<PixelMono>& src, const char *dest);
+
+            // plain text format
+            bool write(const ImageOf<PixelFloat>& src, const char *dest);
+
             bool write(const Image& src, const char *dest);
         }
     }

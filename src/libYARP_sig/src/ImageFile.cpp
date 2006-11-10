@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: ImageFile.cpp,v 1.16 2006-10-24 19:51:04 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.17 2006-11-10 10:44:44 eshuy Exp $
 ///
 ///
 
@@ -21,6 +21,94 @@ using namespace yarp::sig;
 static void warn(char *message)
 {
 	ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
+}
+
+
+bool file::write(const ImageOf<PixelFloat>& src, const char *dest) {
+	FILE *fp = ACE_OS::fopen(dest, "w");
+    if (fp==NULL) {
+        return false;
+    }
+    
+    for (int i=0; i<src.height(); i++) {
+        for (int j=0; j<src.width(); j++) {
+            fprintf(fp,"%g ", src(j,i));
+        }
+        fprintf(fp,"\n");
+    }
+    fclose(fp);
+    return false;
+}
+
+bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
+    int hh = 0, ww = 0;
+
+	FILE *fp = ACE_OS::fopen(src, "r");
+    if (fp==NULL) {
+        return false;
+    }
+    int blank = 1;
+    int curr = 0;
+    while (!feof(fp)) {
+        int ch = fgetc(fp);
+        if (ch==' ' || ch == '\t' || ch == '\r' ||ch == '\n'|| feof(fp)){
+            if (!blank) { 
+                if (curr==0) {
+                    hh++;
+                }
+                curr++;
+                if (curr>ww) {
+                    ww = curr;
+                }
+            }
+            blank = 1;
+            if (ch=='\n') {
+                curr = 0;
+            }
+        } else {
+            blank = 0;
+        }
+    }
+    fclose(fp);
+	fp = ACE_OS::fopen(src, "rb");
+    if (fp==NULL) {
+        return false;
+    }
+    dest.resize(ww,hh);
+    hh = 0; ww = 0;
+    {
+        char buf[256];
+        int idx = 0;
+        int blank = 1;
+        int curr = 0;
+        while (!feof(fp)) {
+            int ch = fgetc(fp);
+            if (ch==' ' || ch == '\t' ||ch == '\r'||ch == '\n' || feof(fp)){
+                if (!blank) {
+                    if (curr==0) {
+                        hh++;
+                    }
+                    curr++;
+                    if (curr>ww) {
+                        ww = curr;
+                    }
+                    buf[idx] = '\0';
+                    dest(curr-1,hh-1) = float(atof(buf));
+                    idx = 0;
+                }
+                blank = 1;
+                if (ch=='\n') {
+                    curr = 0;
+                }
+            } else {
+                buf[idx] = ch;
+                idx++;
+                assert(idx<sizeof(buf));
+                blank = 0;
+            }
+        }
+    }
+    fclose(fp);
 }
 
 static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)

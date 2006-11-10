@@ -181,6 +181,14 @@ public:
     void resize(int imgWidth, int imgHeight);
 
     /**
+     * Change the size of the image to match another.
+     * @param alt the image whose size we should match.
+     */
+    void resize(Image& alt) {
+        resize(alt.width(),alt.height());
+    }
+
+    /**
      * Use this to wrap an external image.
      * Make sure to that pixel type and padding quantum are
      * synchronized (you can set these in the FlexImage class).
