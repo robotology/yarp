@@ -200,10 +200,12 @@ public:
         PortReaderBuffer< ImageOf<PixelRgb> > buf;
 
         Port input, output;
-        input.open("/in");
-        output.open("/out");
+
         buf.setStrict();
         buf.attach(input);
+
+        input.open("/in");
+        output.open("/out");
 
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));
         Time::delay(0.2);
