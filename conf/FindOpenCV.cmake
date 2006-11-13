@@ -26,11 +26,26 @@
 # - paulfitz, 5-nov 06: made link with libhighgui be default true
 #   so that the opencv driver can be compiled. Nat, can you explain again 
 #   which systems don't have this?
+# - nat, 13-nov 06: differentiated LINK_LIBHIGHGUI default on windows and linux
+#   still both true by default. I used to set default to FALSE because on linux
+#   libhighgui gives 'unresolved external cvShowImage'. This is true for the
+#   libhighgui version provided with opencv-0.9.9; looking at the source code
+#   it seems that this function is indeed missing from the tar file. The same 
+#   version works fine on win. My current understanding is that libhighgui is
+#   required only by lib_cvcam which is available for windows only. So, I 
+#   would be tempted to set the default to TRUE for windows and FALSE for 
+#   linux.
 
-SET(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
+IF (WIN32)
+  SET(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
+  ELSE (WIN32)
+  SET(LINK_LIB_HIGHGUI TRUE CACHE BOOL "Do you want to link against libhighgui?")
+ENDIF (WIN32)
+
 IF (LINK_LIB_HIGHGUI AND WIN32)
   SET(LINK_LIB_CVCAM)
 ENDIF(LINK_LIB_HIGHGUI AND WIN32)
+
 
 SET(IS_GNUCXX3 FALSE)
 SET(IS_GNUCXX4 FALSE)
