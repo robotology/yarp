@@ -22,15 +22,19 @@ namespace yarp {
         /**
          * Definition of the NetInt32 type
          */
-#ifdef WIN32
-#ifndef YARP2_WINDOWS
-#define YARP2_WINDOWS
-#endif
-#endif
 
 #ifdef CYGWIN
 #ifndef YARP2_CYGWIN
 #define YARP2_CYGWIN
+#endif
+#endif
+
+
+#ifndef YARP2_CYGWIN
+
+#ifdef WIN32
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
 #endif
 #endif
 
@@ -63,6 +67,9 @@ namespace yarp {
 #define YARP2_WINDOWS
 #endif
 #endif
+
+#endif /* ifndef CYGWIN */
+
 
 #ifdef __LINUX__
 #ifndef YARP2_LINUX
