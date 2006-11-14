@@ -16,6 +16,7 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
 #include <yarp/dev/AudioVisualInterfaces.h>
+#include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -92,6 +93,7 @@ class yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
             public IFrameGrabberControls,
+            public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
             public DataSource<yarp::sig::Sound>,
             public DataSource<ImageRgbSound>,
@@ -110,6 +112,7 @@ private:
     bool canDrop;
     bool addStamp;
     bool active;
+    bool singleThreaded;
 public:
     /**
      * Constructor.
@@ -123,6 +126,7 @@ public:
         canDrop = true;
         addStamp = false;
         active = false;
+        singleThreaded = false;
         p2 = NULL;
     }
     
@@ -230,6 +234,14 @@ public:
         if (fgCtrl==NULL) { return 0; }
         return fgCtrl->getGain();
     }
+
+    virtual bool startService();
+
+    virtual bool stopService() {
+        return close();
+    }
+
+    virtual bool updateService();
 };
 
 #endif

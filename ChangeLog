@@ -1,3 +1,7 @@
+2006-11-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* experimental support for single-threaded yarpdev
+
 2006-11-08  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* src/libYARP_dev/CMakeLists.txt: fix from Assif for wrong

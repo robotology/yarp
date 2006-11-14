@@ -78,7 +78,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
     addStamp = config.check("stamp","if present, add timestamps to data");
 
-    p.open(config.check("name",Value("/grabber"),"name of port to send data on").asString());
+    p.open(config.check("name",Value("/grabber"),
+                        "name of port to send data on").asString());
 
     double framerate=0;
     int period=0;
@@ -120,7 +121,11 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         return false;
     }
 
-    thread.open(config.check("framerate",Value("0")).asDouble());
+    singleThreaded = 
+        (bool)config.check("single_threaded",
+                           "if present, operate in single threaded mode");
+    thread.open(config.check("framerate",Value("0")).asDouble(),
+                singleThreaded);
     active = true;
     return true;
 }
@@ -199,3 +204,24 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
     }
     return true;
 }
+
+
+bool ServerFrameGrabber::startService() {
+    if (singleThreaded) {
+        return false;
+    }
+    return active;
+}
+
+
+bool ServerFrameGrabber::updateService() {
+    if (singleThreaded) {
+        if (active) {
+            thread.step();
+        }
+        return active;
+    }
+    return false;
+}
+
+

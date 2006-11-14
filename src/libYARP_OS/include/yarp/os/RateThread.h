@@ -27,7 +27,7 @@ class yarp::os::RateThread {
 public:
 
     /**
-     * Constructor.  Thread begins in a dormat state.  Call Thread::start
+     * Constructor.  Thread begins in a dormant state.  Call Thread::start
      * to get things going.
      */
     RateThread(int period);
@@ -58,6 +58,13 @@ public:
      * is executed.
      */
     bool start();
+ 
+    /** 
+     * Call this to "step" the thread rather than
+     * starting it.  This will execute at most one call
+     * to doLoop before returning.
+     */
+    bool step();
  
     /** 
      * Call this to stop the thread, this call blocks until the 
@@ -163,7 +170,7 @@ public:
         return true;
     }
 
-    bool open(double framerate = -1);
+    bool open(double framerate = -1, bool polling = false);
 
     bool close() {
         stop();
@@ -174,6 +181,10 @@ public:
         if (helper!=0/*NULL*/) {
             helper->run();
         }
+    }
+
+    Runnable *getAttachment() const {
+        return helper;
     }
 };
 

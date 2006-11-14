@@ -14,6 +14,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/ServiceInterfaces.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -80,29 +81,23 @@ int main(int argc, char *argv[]) {
 
     // get command line options
     Property options;
+
+    // yarpdev will by default try to pass its thread on to the device.
+    // this is because some libraries need configuration and all
+    // access methods done in the same thread (e.g. opencv_grabber
+    // apparently).
+    options.put("single_threaded", 1);
+
     // interpret as a set of flags
-    options.fromCommand(argc,argv);
+    options.fromCommand(argc,argv,true,false);
 
     // check if we're being asked to read the options from file
     Value *val;
     if (options.check("file",val)) {
-        /*
-        Value *v1 = 0, *v2 = 0;
-        options.check("device", v1);
-        options.check("subdevice", v2);
-        ConstString dname = (v1)?v1->toString():"";
-        ConstString sdname = (v2)?v2->toString():"";
-        */
         ConstString fname = val->toString();
         options.unput("file");
         printf("yarpdev: working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname,false);
-        /*
-        if (v1)
-            options.put("device", dname.c_str());
-        if (v2)
-            options.put("subdevice", sdname.c_str());
-        */
     }
 
     // check if we want to use nested options (less ambiguous)
@@ -183,9 +178,34 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    double startTime = Time::now();
+    IService *service = NULL;
+    dd.view(service);
+    if (service!=NULL) {
+        bool backgrounded = service->startService();
+        if (backgrounded) {
+            // we don't need to poll this, so forget about the
+            // service interface
+            printf("yarpdev: service backgrounded\n");
+            service = NULL;
+        }
+    }
     while (dd.isValid() && !terminee->mustQuit()) {
-        printf("yarpdev: device active...\n");
-        Time::delay(1);
+        if (service!=NULL) {
+            double now = Time::now();
+            double dnow = 1;
+            if (now-startTime>dnow) {
+                printf("yarpdev: device active...\n");
+                startTime += dnow;
+            }
+            // we requested single threading, so need to
+            // give the device its chance
+            service->updateService();
+        } else {
+            // we don't need to do anything
+            printf("yarpdev: device active in background...\n");
+            Time::delay(1);
+        }
     }
 
     delete terminee;

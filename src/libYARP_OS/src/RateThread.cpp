@@ -30,6 +30,9 @@ private:
     RateThread& owner; 
 	ACE_Auto_Event synchro;	// event for init synchro
     Semaphore mutex;
+    ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
+    ACE_Time_Value		est_time;		// thread time
+    ACE_Time_Value		sleep_period;	// thread sleep
 
     bool suspended;
 
@@ -38,7 +41,7 @@ public:
     RateThreadCallbackAdapter(RateThread& owner, int p) : owner(owner) 
     {
         period.set(0, p*1000);	//period here is usec
-        suspended=false;
+        suspended = false;
     }
 
     virtual bool start()
@@ -55,47 +58,59 @@ public:
         ThreadImpl::join(-1);
     }
 
+    void singleStep()
+    {
+        /*
+
+          This code doesn't really seem to take into account time
+          spent by the OS in other threads - am I misreading it?
+          Maybe the goal isn't to deliver an exact framerate?  The
+          yarp::dev::TestFrameGrabber class has some test code that
+          might be useful -paulfitz
+
+         */
+
+
+        thread_timer.start();
+        
+        if (!suspended)
+            owner.doLoop();
+        
+        thread_timer.stop();
+        
+        thread_timer.elapsed_time(est_time);
+        //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
+        
+        //compute the sleep time
+        sleep_period = period-est_time;
+        
+        // round to 1ms. I noticed that ACE_OS::sleep() has a different 
+        // 'rounding' behavior depending on the os. This could be an ACE 
+        // problem because win32 and cygwin behaves differently. We should 
+        // check the implementation -- nat
+        int us=sleep_period.usec()%1000;
+        if (us>=500)
+            sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
+        else
+            sleep_period = sleep_period-ACE_Time_Value(0, us);
+        
+        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
+            sleep_period.set(0,0);
+        
+        //              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
+        ACE_OS::sleep(sleep_period);
+        //Time::delay(sleep_period.sec()+sleep_period.usec()/1000000.0);
+    }
+
     virtual void run() 
     {
-		ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
-		ACE_Time_Value		est_time;		// thread time
-		ACE_Time_Value		sleep_period;	// thread sleep
-
         owner.doInit();
 
         synchro.signal();
 
         while(!isClosing())
             {
-                thread_timer.start();
-
-                if (!suspended)
-                    owner.doLoop();
-                
-                thread_timer.stop();
-
-                thread_timer.elapsed_time(est_time);
-                //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
-                
-                //compute the sleep time
-                sleep_period = period-est_time;
-
-                // round to 1ms. I noticed that ACE_OS::sleep() has a different 
-                // 'rounding' behavior depending on the os. This could be an ACE 
-                // problem because win32 and cygwin behaves differently. We should 
-                // check the implementation -- nat
-                int us=sleep_period.usec()%1000;
-                if (us>=500)
-                    sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
-                else
-                    sleep_period = sleep_period-ACE_Time_Value(0, us);
-			
-                if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-                    sleep_period.set(0,0);
-
-                //              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
-                ACE_OS::sleep(sleep_period);
-                //Time::delay(sleep_period.sec()+sleep_period.usec()/1000000.0);
+                singleStep();
             }
 
 
@@ -167,6 +182,11 @@ bool RateThread::stop() {
     return true;
 }
 
+bool RateThread::step() {
+    ((RateThreadCallbackAdapter*)implementation)->singleStep();
+    return true;
+}
+
 bool RateThread::start() {
     return ((ThreadImpl*)implementation)->start();
 }
@@ -194,7 +214,7 @@ void RateThread::doRelease()
 
 
 
-bool RateThreadWrapper::open(double framerate) {
+bool RateThreadWrapper::open(double framerate, bool polling) {
     int period = 0;
     if (framerate>0) {
         period=(int) (0.5+1000.0/framerate);
@@ -205,6 +225,8 @@ bool RateThreadWrapper::open(double framerate) {
         period=0; //continuous
     }    
     RateThread::setRate(period);
-    start();
+    if (!polling) {
+        start();
+    }
     return true;
 }
