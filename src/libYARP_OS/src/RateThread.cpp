@@ -68,8 +68,19 @@ public:
           yarp::dev::TestFrameGrabber class has some test code that
           might be useful -paulfitz
 
+		  I do not see much difference between this code and 
+		  yarp::dev::TestFrameGrabber. Both assume the scheduler is
+		  doing its job at the end of the sleep period specified in 
+		  the delay/sleep functions. This is the case if the cpu is 
+		  not overloaded and the sleep period is > than the quantum 
+		  of the realtime clock (not much we can do otherwise...). 
+		  The only difference I see is the here we always call 
+		  sleep() with at least 0, whereas TestFrameGrabber never calls 
+		  delay if the rate is behind the required value. In this respect 
+		  TestFrameGrabber is a little less "nice" to other 
+		  processes/threads in case of cpu overload. 
+		  I hope I'm not missing the point... -nat
          */
-
 
         thread_timer.start();
         

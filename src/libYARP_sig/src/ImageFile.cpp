@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: ImageFile.cpp,v 1.17 2006-11-10 10:44:44 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.18 2006-11-14 19:33:36 natta Exp $
 ///
 ///
 
@@ -109,6 +109,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
         }
     }
     fclose(fp);
+	return true;
 }
 
 static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
