@@ -33,6 +33,7 @@ const double    REL_WEIGHT = 0.9;					//WARNING: has to be set between 0 and 1!!
 const int HEAD_JOINTS=7;
 
 void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, double Pitch);
+void computeTendonsLength2(double &d1, double &d2, double &d3, double Roll, double Pitch);
 void computeModifiedPitchRoll(double Yaw, double Roll, double Pitch, double &Roll_hat, double &Pitch_hat);
 void computeOriginalPitchRoll(double Yaw, double &Roll, double &Pitch, double Roll_hat, double Pitch_hat);
 
@@ -566,6 +567,11 @@ public:
         double d2;              //length[cm] of the cable attached to joint 6
         double d3;              //length[cm] of the cable attached to joint 5
 
+        double d1_tmp;              //length[cm] of the cable attached to joint 7
+        double d2_tmp;              //length[cm] of the cable attached to joint 6
+        double d3_tmp;              //length[cm] of the cable attached to joint 5
+
+
         double roll_d;
         double pitch_d;
 
@@ -601,6 +607,7 @@ public:
 		computeModifiedPitchRoll(yaw-90, roll, pitch, roll_hat, pitch_hat);
 		computeOriginalPitchRoll(yaw-90, roll_d_hat, pitch_d_hat, roll_d, pitch_d);
 
+		computeTendonsLength2(d1_tmp, d2_tmp, d3_tmp, roll_hat, pitch_hat);
 		computeTendonsLength(d1, d2, d3, roll_hat, pitch_hat);
 
 	    vCmds[0]=-600*(roll_hat-roll_d_hat);
@@ -634,6 +641,7 @@ public:
         if (count%100==0)
             {
                 fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
+				fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3_tmp), (encoders[6]-d2_tmp), (encoders[7]-d1_tmp));
                 //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
                 fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
                 //fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
@@ -1091,6 +1099,61 @@ bool JamesHead::disableAmpRaw(int j)
 
 const double PI=3.14159265;
 const double TOLERANCE = 0.0001;
+
+void computeTendonsLength2(double &d1, double &d2, double &d3, double Roll, double Pitch)
+{
+
+	double L        = 4.0;      // length of the spring
+    double L_2      = 2.0;      // length of rigid part of the spring
+    double L_cables = 5.2;      // distance between tendons
+	double R_capstan= 1.0;		// radius of the capstan
+	double Spring_R = 2.0;		// radius of the spring
+	double s1, s2, s3;
+	double s4;
+	double t0;
+
+    Roll = Roll * PI / 180;
+    Pitch = Pitch * PI / 180;
+
+	if ((fabs(Roll) < TOLERANCE) && (fabs(Pitch) < TOLERANCE))
+        {
+            d1 = 0.0;
+            d2 = 0.0;
+            d3 = 0.0;
+        }
+	else
+        {
+			s1 = pow(-(-2.0*Spring_R*acos(cos(Roll)*cos(Pitch))*sin(Pitch)-2.0*L*sin(Pitch 
+			)+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L+2.0*sin(Pitch)*cos(Roll)*cos(Pitch 
+			)*Spring_R*acos(cos(Roll)*cos(Pitch))-cos(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/2.0-L_cables/2.0,2.0);      s3 = pow((6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L+cos(Roll 
+			)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*Spring_R 
+			*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(-3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll 
+			),2.0)*pow(cos(Pitch),2.0))*L+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch 
+			),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch 
+			)),2.0)/36.0;      s2 = s3+s4;      t0 = s1+s2; 
+			
+			d1 = t0;
+			d1 = -d1 / R_capstan * (180.0/PI);
+
+			s1 = pow(-(2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))-2.0*Spring_R*acos(cos(Roll)*cos(Pitch))*sin(Pitch)+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L-2.0*L*sin(Pitch)+cos(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch 
+			)))/acos(cos(Roll)*cos(Pitch))/2.0+L_cables/2.0,2.0);      s3 = pow((6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll 
+			)*cos(Pitch))+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L-3.0*sin(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+cos(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L-6.0*sin(Roll)*cos(Pitch)*Spring_R 
+			*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/36.0;      s2 = s3+s4;      t0 = s1+s2; 
+
+			d2 = t0; 
+			d2 = -d2 / R_capstan * (180.0/PI);
+
+			s1 = pow(sin(Pitch),2.0)*pow(-L-Spring_R*acos(cos(Roll)*cos(Pitch))+cos(Roll 
+			)*cos(Pitch)*L+cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0);      s2 = pow(-(-3.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*cos(Pitch)*L-3.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+cos(Roll 
+			)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/3.0+L_cables*sqrt(3.0)/3.0,2.0)+pow(sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll 
+			)*cos(Pitch))-3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L-3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch 
+			)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/9.0;      t0 = s1+s2; 
+
+			d3 = t0;
+			d3 = -d3 / R_capstan * (180.0/PI);
+        }
+}
+
 
 void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, double Pitch)
 {
