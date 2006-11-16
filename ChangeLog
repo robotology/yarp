@@ -1,3 +1,8 @@
+2006-11-16  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+
+	* src/libYARP_dev/src/jrkerr: IST checked in a windows Jrkerr
+	motion controller.
+
 2006-11-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
 
 	* experimental support for single-threaded yarpdev
