@@ -299,4 +299,13 @@ protected:
 
 
 
+/**
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_jrkerr jrkerr
+
+ The Jrkerr motion controller, see yarp::dev::JrkerrMotionControl.
+
+*/
+
+
 #endif
