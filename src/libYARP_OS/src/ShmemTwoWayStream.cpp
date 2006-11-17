@@ -9,6 +9,7 @@
 
 #include <yarp/ShmemTwoWayStream.h>
 #include <yarp/NetType.h>
+#include <yarp/IOException.h>
 #include <yarp/os/Time.h>
 
 #include <ace/INET_Addr.h>
@@ -66,7 +67,7 @@ int ShmemTwoWayStream::accept() {
 
     // begin configuration option suggested by Giorgio Metta
     currentLength = INIT_SHMEM_BUFFER;
-    acceptor.init_buffer_size(currentLength);
+    acceptor.init_buffer_size(currentLength*4);
     acceptor.preferred_strategy(ACE_MEM_IO::Reactive);
     // end configuration option
     
@@ -97,19 +98,49 @@ void ShmemTwoWayStream::flush() {
 
 
 int ShmemTwoWayStream::read(const Bytes& b) {
-    int result = stream.recv_n(b.get(),b.length());
-    if (result<=0) {
-        happy = false;
-        YARP_DEBUG(Logger::get(),"bad socket read");
+    char *base = b.get();
+    int remaining = b.length();
+    int total = 0;
+    while (remaining>0) {
+        int len = remaining;
+        if (len>INIT_SHMEM_BUFFER) {
+            len = INIT_SHMEM_BUFFER;
+        }
+        int result = stream.recv_n(base,len);
+        if (result<=0) {
+            happy = false;
+            YARP_DEBUG(Logger::get(),"bad socket read");
+            total = -1;
+            throw IOException("shmem read failed");
+            break;
+        }
+        remaining -= len;
+        base += len;
+        total += len;
     }
-    return result;
+
+    return total;
 }
 
 void ShmemTwoWayStream::write(const Bytes& b) {
-    int result = stream.send_n(b.get(),b.length());
-    if (result<0) {
-        happy = false;
-        YARP_DEBUG(Logger::get(),"bad socket write");
+    char *base = b.get();
+    int remaining = b.length();
+    while (remaining>0) {
+        int len = remaining;
+        if (len>INIT_SHMEM_BUFFER) {
+            YARP_ERROR(Logger::get(),
+                       "shmem writing a long packet, may be unreliable");
+            len = INIT_SHMEM_BUFFER;
+        }
+        int result = stream.send_n(base,len);
+        if (result<0) {
+            happy = false;
+            YARP_DEBUG(Logger::get(),"bad socket write");
+            throw IOException("shmem write failed");
+            break;
+        }
+        remaining -= len;
+        base += len;
     }
 }
 

@@ -2,6 +2,7 @@
 INCLUDE(UsePkgConfig)
 
 SET(YARP_DEFINES_ACCUM "-DYARP_PRESENT")
+SET(YARP_DEFINES_ACCUM -D_REENTRANT)
 
 # on windows, we have to tell ace how it was compiled
 IF (WIN32 AND NOT CYGWIN)
