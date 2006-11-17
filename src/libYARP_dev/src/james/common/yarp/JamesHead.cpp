@@ -28,7 +28,7 @@ using namespace yarp::sig;
 const double    P_GAIN=0.008;
 const int       NC_RATE=20;
 const double    IN_POSITION_THRESHOLD = 0.1;
-const double    REL_WEIGHT = 0.0;					//WARNING: has to be set between 0 and 1!!
+const double    REL_WEIGHT = 0.5;					//WARNING: has to be set between 0 and 1!!
 
 const int HEAD_JOINTS=7;
 
@@ -567,11 +567,6 @@ public:
         double d2;              //length[cm] of the cable attached to joint 6
         double d3;              //length[cm] of the cable attached to joint 5
 
-        double d1_tmp;              //length[cm] of the cable attached to joint 7
-        double d2_tmp;              //length[cm] of the cable attached to joint 6
-        double d3_tmp;              //length[cm] of the cable attached to joint 5
-
-
         double roll_d;
         double pitch_d;
 
@@ -607,8 +602,7 @@ public:
 		computeModifiedPitchRoll(yaw-90, roll, pitch, roll_hat, pitch_hat);
 		computeOriginalPitchRoll(yaw-90, roll_d_hat, pitch_d_hat, roll_d, pitch_d);
 
-		computeTendonsLength2(d1_tmp, d2_tmp, d3_tmp, roll_hat, pitch_hat);
-		computeTendonsLength(d1, d2, d3, roll_hat, pitch_hat);
+		computeTendonsLength(d1, d2, d3, roll_d_hat, -pitch_d_hat);
 
 	    vCmds[0]=-600*(roll_hat-roll_d_hat);
 		vCmds[1]=500*(pitch_hat-pitch_d_hat)+400*(roll_hat-roll_d_hat);
@@ -622,9 +616,9 @@ public:
         vCmds[1]*=pGain;
         vCmds[2]*=pGain;
 
-        vCmds[0]=-(1-REL_WEIGHT)*3*(encoders[5]-d3) + REL_WEIGHT*vCmds[0];
-        vCmds[1]=-(1-REL_WEIGHT)*3*(encoders[6]-d1) + REL_WEIGHT*vCmds[1];
-        vCmds[2]=-(1-REL_WEIGHT)*3*(encoders[7]-d2) + REL_WEIGHT*vCmds[2];
+        vCmds[0]=-(1-REL_WEIGHT)*(encoders[5]-d3) + REL_WEIGHT*vCmds[0];
+        vCmds[1]=-(1-REL_WEIGHT)*(encoders[6]-d1) + REL_WEIGHT*vCmds[1];
+        vCmds[2]=-(1-REL_WEIGHT)*(encoders[7]-d2) + REL_WEIGHT*vCmds[2];
 
         ivel->velocityMove(5, vCmds[0]);
         ivel->velocityMove(6, vCmds[1]);
@@ -640,11 +634,11 @@ public:
         
         if (count%100==0)
             {
-                //fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
+                fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
 				//fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3_tmp), (encoders[6]-d2_tmp), (encoders[7]-d1_tmp));
-                fprintf(stderr, "%.2lf %.2lf %.2lf ", d1, d2, d3);
-				fprintf(stderr, "%.2lf %.2lf %.2lf ", d1_tmp, d2_tmp, d3_tmp);
-                //fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
+                //fprintf(stderr, "%.2lf %.2lf %.2lf ", (-d1*3.14/180)+4, (-d2*3.14/180)+4, (-d3*3.14/180)+4);
+				//fprintf(stderr, "%.2lf %.2lf %.2lf ", (-d1_tmp*3.14/180)+4, (-d2_tmp*3.14/180)+4, (-d3_tmp*3.14/180)+4);
+                fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
                 //fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
                 fprintf(stderr, "dT=%.3lf\n", (dT)/100);
                 dT=0;
@@ -1101,14 +1095,14 @@ bool JamesHead::disableAmpRaw(int j)
 const double PI=3.14159265;
 const double TOLERANCE = 0.0001;
 
-void computeTendonsLength2(double &d1, double &d2, double &d3, double Roll, double Pitch)
+void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, double Pitch)
 {
 
 	double L        = 4.0;      // length of the spring
     double L_2      = 2.0;      // length of rigid part of the spring
     double L_cables = 5.2;      // distance between tendons
 	double R_capstan= 1.0;		// radius of the capstan
-	double Spring_R = 2.0;		// radius of the spring
+	double Spring_R = 1.5/2;		// radius of the spring
 	double s1, s2, s3;
 	double s4;
 	double t0;
@@ -1156,58 +1150,6 @@ void computeTendonsLength2(double &d1, double &d2, double &d3, double Roll, doub
         }
 }
 
-
-void computeTendonsLength(double &d1, double &d2, double &d3, double Roll, double Pitch)
-{
-
-	double L        = 4.0;      // length of the spring
-    double L_2      = 2.0;      // length of rigid part of the spring
-    double L_cables = 5.2;      // distance between tendons
-	double R_capstan= 1.0;		// radius of the capstan
-	double s1, s2, s3;
-	double s4, s5, s6;
-	double t0;
-
-
-    Roll = Roll * PI / 180;
-    Pitch = Pitch * PI / 180;
-
-	if ((fabs(Roll) < TOLERANCE) && (fabs(Pitch) < TOLERANCE))
-        {
-            d1 = 0.0;
-            d2 = 0.0;
-            d3 = 0.0;
-        }
-	else
-        {
-            s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)+3.0*cos(Pitch 
-                                                                                                      )*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
-                                                                                                                                                                            )*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
-                                                                                                                                                                                                                                                                                                                                 )*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               *acos(cos(Pitch)*cos(Roll))-cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))-6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               d1 = t0;
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               d1 = -d1 / R_capstan * (180.0/PI);
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               s2 = 1.0/6.0;      s5 = 36.0*pow((-6.0*sin(Pitch)*pow(cos(Roll),2.0)*L*cos(Pitch)-3.0*cos(Pitch 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         )*L_cables*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               )*cos(Roll))+sin(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))+6.0*sin(Pitch)*cos(Roll 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    )*L)/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0+L_cables/2.0,2.0);      s6 = 36.0*pow((cos(Roll)*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*acos(cos(Pitch)*cos(Roll))-6.0*sin(Roll)*L+6.0*sin(Roll)*L*cos(Pitch)*cos(Roll))/sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)/acos(cos(Pitch)*cos(Roll))/6.0-L_cables*sqrt(3.0)/6.0,2.0)+pow(3.0*sin(Pitch)*L_cables 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  *acos(cos(Pitch)*cos(Roll))+cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Pitch)*cos(Roll))+6.0*L*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0),2.0)/pow(acos(cos(Pitch)*cos(Roll)),2.0);      s4 = s5+s6;      s3 = sqrt(s4);      s1 = s2*s3;      s2 = -sqrt(L*L);      t0 = s1+s2; 
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d2 = t0; 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d2 = -d2 / R_capstan * (180.0/PI);
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  t0 = 1/(sqrt(cos(Pitch)*cos(Roll)+1.0))*sqrt(3.0)*sqrt(2.0)*sqrt(-3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L*pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)-cos(Pitch)*L_cables*L_cables*pow(cos(Roll),2.0)+cos(Pitch)*cos(Roll)*L_cables*L_cables 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   -cos(Roll)*L_cables*L_cables-1/acos(cos(Pitch)*cos(Roll))*sqrt(-pow(cos(Pitch),2.0)*pow(cos(Roll),2.0)+1.0)*cos(Pitch)*sin(Roll)*L_cables*sqrt(3.0)*L-1/acos(cos(Pitch)*cos(Roll))*sin(Roll)*L*L_cables*sqrt(3.0)*sqrt(-pow(cos(Pitch 
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   ),2.0)*pow(cos(Roll),2.0)+1.0)+L_cables*L_cables+3.0/pow(acos(cos(Pitch)*cos(Roll)),2.0)*L*L)/3.0-sqrt(L*L); 
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d3 = t0;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  d3 = -d3 / R_capstan * (180.0/PI);
-        }
-}
 
 void computeModifiedPitchRoll(double Yaw, double Roll, double Pitch, double &Roll_hat, double &Pitch_hat)
 {
