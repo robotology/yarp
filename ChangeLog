@@ -1,68 +1,70 @@
-2006-11-17  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.h: bumped version up to 2.1.2
 
 	* src/libYARP_OS/include/yarp/ShmemTwoWayStream.h: removed
 	some YARP1 cruft and increased the default buffer size.
 
-2006-11-16  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/jrkerr: IST checked in a windows Jrkerr
 	motion controller.
 
-2006-11-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* experimental support for single-threaded yarpdev
 
-2006-11-08  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/CMakeLists.txt: fix from Assif for wrong
 	GLOB.
 	* src/libYARP_dev/include/yarp/dev/UserDoc.dox: inserted
 	some important missing info into the howto.
 	
-2006-11-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Device documentation procedure cleaned up a lot
 	* Bumped version up to 2.1.1
 
-2006-11-05  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-11-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Configuration parsing now expands environment variables.
 	* Devices are now automatically probed to generate documentation.
 	* Device documentation improved.
 	* Manual cleaned up.
 
-2006-10-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-10-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Integrated some video4linux stuff from Jonas Ruesch (thanks!).
 	* Implemented "envelope" information that could be passed
 	along from port to port, such as timestamps.
 
-2006-10-25  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-10-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Bumped version up to 2.1.0
 	* Consistent GPL licensing, copyright statements
 
-2006-10-24  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-10-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* License comments updated, removed older references to AFL
 
-2006-10-23  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-10-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* YARPConfig.cmake fixed so that windows paths with 
 	spaces are OK.  Fixes bug 1582945.
 
-2006-10-07  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-10-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Bugfix - PortReaderBuffer was not always returning 
 	messages in the right order, oops!
 
-2006-09-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Integrated with ffmpeg for reading audio/visual material
 	* Bugfix for sound network format
 	* C# swig interface tested (added to Java, Perl, Python, ...)
 
-2006-09-01  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-09-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Fixed bug where non-buffered Port closed with data pending 
 	would wait for that to get read
@@ -71,13 +73,13 @@
 	* Integrated opencv_grabber
 	* Added in some docs developed for summer school
 
-2006-08-24  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-08-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Bumped version up to 2.0.7
 	* Started portaudio device wrapper -- seems a good library
 	for doing cross-platform audio
 
-2006-07-28  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Fixed some problems picked up at summer school.
 	Including: representation of doubles on Mac OSX
@@ -87,38 +89,38 @@
 	a single source-target port pair; set orientation
 	in IPL structure associated with images.
 
-2006-07-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-07-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Fixed some problems that valgrind picked up.  The
 	biggest was a mismatched constructor/destructor for an
 	class derived from ACE in PortCorePacket.h.
 
-2006-07-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-07-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Finally dealt with silly CR/LF issues so that telnet
 	access to yarp ports and the name server is less painful
 	on Windows.
 
-2006-07-03  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-07-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Large documentation updates; library brought into
 	alignment with network type specifications.
 
-2006-06-14  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-06-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Starting to add remote devices, primitive so far.
 
-2006-06-08  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Making Bottle a better behaved recursive data structure (an
 	s-expression in disguise).
 
-2006-06-06  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-06-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Added Port::setReaderCreator so users can have persistent
 	readers for each port input.
 
-2006-06-02  Paul Fitzpatrick  <paulfitz@localhost.localdomain>
+2006-06-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Added missing Thread::isRunning method.
 
