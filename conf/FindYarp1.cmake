@@ -1,5 +1,8 @@
 
 SET(COEXIST_WITH_YARP1 FALSE CACHE BOOL "Do you want to work with YARP1, an older version of YARP")
+# YARP1 is now not so important
+MARK_AS_ADVANCED(COEXIST_WITH_YARP1)
+
 
 IF (COEXIST_WITH_YARP1)
 
