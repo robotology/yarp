@@ -195,8 +195,8 @@ bool XSensMTx::open(yarp::os::Searchable &config)
     XSensMTxParameters par;
      
 #ifdef WIN32
-    par.comPort = config.check ("serial", Value(11), 
-                                "numeric identifier of comport"))
+    par.comPort = config.check ("serial", Value(11),
+        "numeric identifier of comport").asInt();
 #else
     par.comPortString = config.check("serial",Value("/dev/ttyUSB0"),
                                      "device name of comport").asString().c_str();
