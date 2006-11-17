@@ -28,7 +28,7 @@ using namespace yarp::sig;
 const double    P_GAIN=0.008;
 const int       NC_RATE=20;
 const double    IN_POSITION_THRESHOLD = 0.1;
-const double    REL_WEIGHT = 0.9;					//WARNING: has to be set between 0 and 1!!
+const double    REL_WEIGHT = 0.0;					//WARNING: has to be set between 0 and 1!!
 
 const int HEAD_JOINTS=7;
 
@@ -623,8 +623,8 @@ public:
         vCmds[2]*=pGain;
 
         vCmds[0]=-(1-REL_WEIGHT)*3*(encoders[5]-d3) + REL_WEIGHT*vCmds[0];
-        vCmds[1]=-(1-REL_WEIGHT)*3*(encoders[6]-d2) + REL_WEIGHT*vCmds[1];
-        vCmds[2]=-(1-REL_WEIGHT)*3*(encoders[7]-d1) + REL_WEIGHT*vCmds[2];
+        vCmds[1]=-(1-REL_WEIGHT)*3*(encoders[6]-d1) + REL_WEIGHT*vCmds[1];
+        vCmds[2]=-(1-REL_WEIGHT)*3*(encoders[7]-d2) + REL_WEIGHT*vCmds[2];
 
         ivel->velocityMove(5, vCmds[0]);
         ivel->velocityMove(6, vCmds[1]);
@@ -640,10 +640,11 @@ public:
         
         if (count%100==0)
             {
-                fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
-				fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3_tmp), (encoders[6]-d2_tmp), (encoders[7]-d1_tmp));
-                //fprintf(stderr, "%.2lf %.2lf %.2lf ", d3, d2, d1);
-                fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
+                //fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3), (encoders[6]-d2), (encoders[7]-d1));
+				//fprintf(stderr, "%.2lf %.2lf %.2lf ", (encoders[5]-d3_tmp), (encoders[6]-d2_tmp), (encoders[7]-d1_tmp));
+                fprintf(stderr, "%.2lf %.2lf %.2lf ", d1, d2, d3);
+				fprintf(stderr, "%.2lf %.2lf %.2lf ", d1_tmp, d2_tmp, d3_tmp);
+                //fprintf(stderr, "Inertial: %.2lf %.2lf %.2lf %.2lf", roll_hat, pitch_hat, roll_d_hat, pitch_d_hat);
                 //fprintf(stderr, "Inertial: %.2lf %.2lf", roll, pitch);
                 fprintf(stderr, "dT=%.3lf\n", (dT)/100);
                 dT=0;
@@ -1123,33 +1124,34 @@ void computeTendonsLength2(double &d1, double &d2, double &d3, double Roll, doub
         }
 	else
         {
-			s1 = pow(-(-2.0*Spring_R*acos(cos(Roll)*cos(Pitch))*sin(Pitch)-2.0*L*sin(Pitch 
-			)+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L+2.0*sin(Pitch)*cos(Roll)*cos(Pitch 
-			)*Spring_R*acos(cos(Roll)*cos(Pitch))-cos(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/2.0-L_cables/2.0,2.0);      s3 = pow((6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L+cos(Roll 
-			)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*Spring_R 
-			*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(-3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll 
+			s1 = pow(-(-cos(Pitch)*L_cables*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))-2.0*sin(Pitch)*L-2.0*sin(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch)))/sqrt(1.0-pow(cos(Roll 
+			),2.0)*pow(cos(Pitch),2.0))/acos(cos(Roll)*cos(Pitch))/2.0-L_cables/2.0,2.0);      s3 = pow((3.0*sin(Roll)*sin(Pitch)*L_cables*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))+cos(Roll)*L_cables*sqrt(3.0)*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L-6.0*sin(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch 
+			))+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+6.0*sin(Roll)*pow(cos(Pitch 
+			),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch)))/sqrt(1.0-pow(cos(Roll 
+			),2.0)*pow(cos(Pitch),2.0))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(-3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll 
 			),2.0)*pow(cos(Pitch),2.0))*L+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch 
 			),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch 
 			)),2.0)/36.0;      s2 = s3+s4;      t0 = s1+s2; 
 			
-			d1 = t0;
+			d1 = sqrt(t0)-L;
 			d1 = -d1 / R_capstan * (180.0/PI);
 
-			s1 = pow(-(2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))-2.0*Spring_R*acos(cos(Roll)*cos(Pitch))*sin(Pitch)+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L-2.0*L*sin(Pitch)+cos(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch 
-			)))/acos(cos(Roll)*cos(Pitch))/2.0+L_cables/2.0,2.0);      s3 = pow((6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll 
-			)*cos(Pitch))+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L-3.0*sin(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+cos(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L-6.0*sin(Roll)*cos(Pitch)*Spring_R 
-			*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/36.0;      s2 = s3+s4;      t0 = s1+s2; 
+			s1 = pow(-(cos(Pitch)*L_cables*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))-2.0*sin(Pitch)*L-2.0*sin(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*L+2.0*sin(Pitch)*cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch)))/sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))/acos(cos(Roll)*cos(Pitch))/2.0+L_cables/2.0,2.0);      s3 = pow((-3.0*sin(Roll)*sin(Pitch)*L_cables*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))+cos(Roll)*L_cables*sqrt(3.0)*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))-6.0*sin(Roll)*cos(Pitch)*L-6.0*sin(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch 
+			))+6.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+6.0*sin(Roll)*pow(cos(Pitch 
+			),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch)))/sqrt(1.0-pow(cos(Roll 
+			),2.0)*pow(cos(Pitch),2.0))/acos(cos(Roll)*cos(Pitch))/6.0-L_cables*sqrt(3.0)/6.0,2.0);      s4 = pow(3.0*cos(Roll)*sin(Pitch)*L_cables*acos(cos(Roll)*cos(Pitch))+sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L+6.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/36.0;      s2 = s3+s4;      t0 = s1+s2; 
 
-			d2 = t0; 
+			d2 = sqrt(t0)-L; 
 			d2 = -d2 / R_capstan * (180.0/PI);
 
 			s1 = pow(sin(Pitch),2.0)*pow(-L-Spring_R*acos(cos(Roll)*cos(Pitch))+cos(Roll 
-			)*cos(Pitch)*L+cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0);      s2 = pow(-(-3.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*cos(Pitch)*L-3.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*L+cos(Roll 
-			)*L_cables*sqrt(3.0)*acos(cos(Roll)*cos(Pitch)))/acos(cos(Roll)*cos(Pitch))/3.0+L_cables*sqrt(3.0)/3.0,2.0)+pow(sin(Roll)*L_cables*sqrt(3.0)*acos(cos(Roll 
-			)*cos(Pitch))-3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L-3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R*acos(cos(Roll)*cos(Pitch 
-			)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/9.0;      t0 = s1+s2; 
+			)*cos(Pitch)*L+cos(Roll)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch)),2.0)/(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))/pow(acos(cos(Roll)*cos(Pitch)),2.0);      s2 = pow((-cos(Roll)*L_cables*sqrt(3.0)*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*acos(cos(Roll)*cos(Pitch))-3.0*sin(Roll)*cos(Pitch)*L-3.0*sin(Roll 
+			)*cos(Pitch)*Spring_R*acos(cos(Roll)*cos(Pitch))+3.0*sin(Roll)*pow(cos(Pitch 
+			),2.0)*cos(Roll)*L+3.0*sin(Roll)*pow(cos(Pitch),2.0)*cos(Roll)*Spring_R*acos(cos(Roll)*cos(Pitch)))/sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))/acos(cos(Roll)*cos(Pitch))/3.0+L_cables*sqrt(3.0)/3.0,2.0)+pow(-sin(Roll)*L_cables 
+			*sqrt(3.0)*acos(cos(Roll)*cos(Pitch))+3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*L+3.0*sqrt(1.0-pow(cos(Roll),2.0)*pow(cos(Pitch),2.0))*Spring_R 
+			*acos(cos(Roll)*cos(Pitch)),2.0)/pow(acos(cos(Roll)*cos(Pitch)),2.0)/9.0;      t0 = s1+s2; 
 
-			d3 = t0;
+			d3 = sqrt(t0)-L;
 			d3 = -d3 / R_capstan * (180.0/PI);
         }
 }
