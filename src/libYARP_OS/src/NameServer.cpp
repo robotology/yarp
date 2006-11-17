@@ -639,9 +639,9 @@ int NameServer::main(int argc, char *argv[]) {
 
         // register root for documentation purposes
         name.registerName("root",suggest.addCarrier("text"));
+        server.listen(Address(suggest.addRegName("root")));
         server.setReadHandler(name);
         server.setAutoHandshake(false);
-        server.listen(Address(suggest.addRegName("root")));
         YARP_INFO(Logger::get(), String("Name server listening at ") + 
                   suggest.toString());
         server.start();

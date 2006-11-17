@@ -30,9 +30,12 @@ class yarp::ShmemTwoWayStream : public TwoWayStream,
 public:
     ShmemTwoWayStream() {
         happy = false;
+        currentLength = 0;
     }
 
     int open(const Address& address, bool sender);
+
+    int accept();
 
     //void open(ACE_MEM_Acceptor& acceptor);
 
@@ -67,22 +70,9 @@ public:
         happy = false;
     }
 
-    virtual int read(const Bytes& b) {
-        int result = stream.recv_n(b.get(),b.length());
-        if (result<=0) {
-            happy = false;
-            YARP_DEBUG(Logger::get(),"bad socket read");
-        }
-        return result;
-    }
+    virtual int read(const Bytes& b);
 
-    virtual void write(const Bytes& b) {
-        int result = stream.send_n(b.get(),b.length());
-        if (result<0) {
-            happy = false;
-            YARP_DEBUG(Logger::get(),"bad socket write");
-        }
-    }
+    virtual void write(const Bytes& b);
 
     virtual void flush();
 
@@ -100,7 +90,9 @@ public:
 private:
     ACE_MEM_Stream stream;
     Address localAddress, remoteAddress;
+    ACE_MEM_Acceptor acceptor;
     bool happy;
+    int currentLength;
     void updateAddresses();
 };
 

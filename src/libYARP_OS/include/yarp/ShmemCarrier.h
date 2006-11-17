@@ -53,22 +53,34 @@ public:
     }
 
     virtual void becomeShmem(Protocol& proto, bool sender) {
-        YARP_ERROR(Logger::get(),"warning - SHMEM carrier is not YARP1 compatible yet");
+
         ShmemTwoWayStream *stream = new ShmemTwoWayStream();
         YARP_ASSERT(stream!=NULL);
-        Address remote = proto.getStreams().getRemoteAddress();
-        Address local = proto.getStreams().getLocalAddress();
-        proto.takeStreams(NULL); // free up port from tcp
+        Address base;
         try {
-            Address base = sender?remote:local;
-            // sad - YARP1 compatibility?
-            base = Address("localhost",base.getPort()+1);
-            stream->open(base,sender);
+            if (!sender) {
+                ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+                base = Address(anywhere.get_host_addr(),
+                               anywhere.get_port_number());
+                stream->open(base,sender);
+                int myPort = stream->getLocalAddress().getPort();
+                proto.writeYarpInt(myPort);
+                stream->accept();
+                proto.takeStreams(NULL);
+                proto.takeStreams(stream);
+            } else {
+                int altPort = proto.readYarpInt();
+                String myName = proto.getStreams().getLocalAddress().getName();
+                proto.takeStreams(NULL);
+                base = Address(myName,altPort);
+                stream->open(base,sender);
+                proto.takeStreams(stream);
+            }
         } catch (IOException e) {
             delete stream;
+            stream = NULL;
             throw e;
         }
-        proto.takeStreams(stream);
     }
 
     virtual void respondToHeader(Protocol& proto) {
