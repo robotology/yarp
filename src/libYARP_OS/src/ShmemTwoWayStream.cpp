@@ -13,8 +13,8 @@
 
 #include <ace/INET_Addr.h>
 
-// random shmem buffer size
-#define MAX_SHMEM_BUFFER (1000000)
+// shmem buffer size
+#define INIT_SHMEM_BUFFER (1000000)
 
 using namespace yarp;
 using namespace yarp::os;
@@ -39,6 +39,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
             YARP_ERROR(Logger::get(),"shmem sender connect failed");
             perror("send connect");
         }
+        currentLength = INIT_SHMEM_BUFFER;
         updateAddresses();
         return result;
     } else {
@@ -64,7 +65,7 @@ int ShmemTwoWayStream::accept() {
     int result = -1;
 
     // begin configuration option suggested by Giorgio Metta
-    currentLength = MAX_SHMEM_BUFFER;
+    currentLength = INIT_SHMEM_BUFFER;
     acceptor.init_buffer_size(currentLength);
     acceptor.preferred_strategy(ACE_MEM_IO::Reactive);
     // end configuration option
@@ -110,4 +111,15 @@ void ShmemTwoWayStream::write(const Bytes& b) {
         happy = false;
         YARP_DEBUG(Logger::get(),"bad socket write");
     }
+}
+
+
+
+void ShmemTwoWayStream::reset() {
+}
+
+void ShmemTwoWayStream::beginPacket() { 
+}
+
+void ShmemTwoWayStream::endPacket() { 
 }

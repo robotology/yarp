@@ -80,12 +80,11 @@ public:
         return happy;
     }
   
-    virtual void reset() {
-    }
+    virtual void reset();
 
-    virtual void beginPacket() { }
+    virtual void beginPacket();
 
-    virtual void endPacket() { }
+    virtual void endPacket();
 
 private:
     ACE_MEM_Stream stream;
@@ -94,6 +93,8 @@ private:
     bool happy;
     int currentLength;
     void updateAddresses();
+
+    void reconnect();
 };
 
 #endif
