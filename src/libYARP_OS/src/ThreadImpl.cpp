@@ -6,6 +6,8 @@
  *
  */
 
+//added threadRelease/threadInit methods, synchronization and 
+//init failure notification -nat 
 
 #include <yarp/ThreadImpl.h>
 #include <yarp/SemaphoreImpl.h>
@@ -29,7 +31,15 @@ static unsigned __stdcall theExecutiveBranch (void *args)
 
     ThreadImpl *thread = (ThreadImpl *)args;
     try {
-        thread->run();
+		bool success=thread->threadInit();
+		thread->notify(success);
+		thread->synchroPost();
+        
+		if (success)
+			{
+				thread->run();
+				thread->threadRelease();
+			}
     } catch (IOException e) {
         YARP_ERROR(Logger::get(),String("uncaught exception in thread: ") +
                    e.toString());
@@ -37,6 +47,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     ThreadImpl::changeCount(-1);
     YARP_DEBUG(Logger::get(),"Thread shutting down");
     //ACE_Thread::exit();
+	thread->notify(false);
     return 0;
 }
 
@@ -96,6 +107,7 @@ void ThreadImpl::close() {
     if (delegate!=NULL) {
         delegate->close();
     }
+	join(-1);
 }
 
 void ThreadImpl::beforeStart() {
@@ -110,8 +122,26 @@ void ThreadImpl::afterStart(bool success) {
     }
 }
 
+bool ThreadImpl::threadInit()
+{
+	if (delegate!=NULL){
+		return delegate->threadInit();
+	}
+	else
+		return true;
+}
+
+void ThreadImpl::threadRelease()
+{
+	if (delegate!=NULL){
+		delegate->threadRelease();
+	}
+}
+
 bool ThreadImpl::start() {
-    closing = false;
+	YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
+
+	closing = false;
     beforeStart();
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
@@ -121,16 +151,46 @@ bool ThreadImpl::start() {
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
                                    (size_t)stackSize);
-    if (result==0) {
-        ThreadImpl::changeCount(1);
-        active = true;
-        afterStart(true);
-    } else {
-        afterStart(false);
-    }
-    return result==0;
+
+	if (result==0)
+	{
+		//the thread started correctly, wait for the initialization
+		YARP_DEBUG(Logger::get(),"Thread waiting for init");
+		synchroWait();
+		if (active)
+		{
+			ThreadImpl::changeCount(1);
+			YARP_DEBUG(Logger::get(),"Init was successful");
+			afterStart(true);
+			return true;
+		}
+		else
+		{
+			YARP_DEBUG(Logger::get(),"Init was not successful");
+			//wait for the thread to really exit
+			ThreadImpl::join(-1);
+		}
+	}
+	//the thread did not start, call afterStart() to warn the user
+	YARP_DEBUG(Logger::get(),"Thread did not start");
+	afterStart(false);
+	return false;
 }
 
+void ThreadImpl::synchroWait()
+{
+	synchro.wait();
+}
+
+void ThreadImpl::synchroPost()
+{
+	synchro.signal();
+}
+
+void ThreadImpl::notify(bool s)
+{
+	active=s;
+}
 
 bool ThreadImpl::isClosing() {
     return closing;

@@ -18,6 +18,8 @@
 
 #include <yarp/os/Time.h>
 
+//added threadRelease/threadInit methods and synchronization -nat 
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -28,7 +30,6 @@ class RateThreadCallbackAdapter: public ThreadImpl
 private:
     ACE_Time_Value period;
     RateThread& owner; 
-	ACE_Auto_Event synchro;	// event for init synchro
     Semaphore mutex;
     ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
     ACE_Time_Value		est_time;		// thread time
@@ -42,20 +43,6 @@ public:
     {
         period.set(0, p*1000);	//period here is usec
         suspended = false;
-    }
-
-    virtual bool start()
-    {
-        bool ret=ThreadImpl::start();
-
-        synchro.wait();
-
-        return ret;
-    }
-
-    virtual void close()
-    {
-        ThreadImpl::join(-1);
     }
 
     void singleStep()
@@ -85,7 +72,7 @@ public:
         thread_timer.start();
         
         if (!suspended)
-            owner.doLoop();
+            owner.run();
         
         thread_timer.stop();
         
@@ -115,20 +102,21 @@ public:
 
     virtual void run() 
     {
-        owner.doInit();
-
-        synchro.signal();
-
         while(!isClosing())
             {
                 singleStep();
             }
-
-
-        if (!suspended)
-            owner.doRelease();
-		// synchro.signal(); not required, stop is synchronizing on join
     }
+
+	virtual bool threadInit()
+	{
+		return owner.threadInit();
+	}
+
+	virtual void threadRelease()
+	{
+		owner.threadRelease();
+	}
 
     bool setRate(int p)
     {
@@ -150,10 +138,15 @@ public:
     void resume()
     { suspended=false; }
 
+	virtual void afterStart(bool s)
+	{ owner.afterStart(s); }
+
+	virtual void beforeStart()
+	{ owner.beforeStart(); }
+
     void lock() {mutex.wait();}
     void unlock() {mutex.post();}
 };
-
 
 RateThread::RateThread(int p) 
 {
@@ -188,9 +181,9 @@ bool RateThread::join(double seconds) {
     return ((ThreadImpl*)implementation)->join(seconds);
 }
 
-bool RateThread::stop() {
+void RateThread::stop() {
     ((ThreadImpl*)implementation)->close();
-    return true;
+    //return true;
 }
 
 bool RateThread::step() {
@@ -216,14 +209,19 @@ void RateThread::resume()
     ((RateThreadCallbackAdapter*)implementation)->resume();
 }
 
-void RateThread::doInit()
+bool RateThread::threadInit()
+{
+	return true;
+}
+
+void RateThread::threadRelease()
 {}
 
-void RateThread::doRelease()
+void RateThread::beforeStart()
 {}
 
-
-
+void RateThread::afterStart(bool s)
+{}
 
 bool RateThreadWrapper::open(double framerate, bool polling) {
     int period = 0;

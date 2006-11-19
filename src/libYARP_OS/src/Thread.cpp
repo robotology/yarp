@@ -34,10 +34,16 @@ public:
         owner.run();
     }
 
-    virtual void close() {
+    virtual void stop() {
         owner.onStop();
         ThreadImpl::close();
     }
+
+	virtual bool threadInit() 
+	{return owner.threadInit();}
+	
+	virtual void threadRelease() 
+	{owner.threadRelease();}
 };
 
 
@@ -64,8 +70,8 @@ bool Thread::stop() {
 }
 
 
-void Thread::run() {
-}
+//void Thread::run() {
+//}
 
 
 void Thread::onStop() {

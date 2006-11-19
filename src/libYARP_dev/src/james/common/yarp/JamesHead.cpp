@@ -416,7 +416,7 @@ public:
         iamps->disableAmp(7);
 	}
 
-    void doInit()
+    bool threadInit()
     {
 		mutex.wait();
         ivel->setRefAcceleration(5, 1000);
@@ -430,6 +430,7 @@ public:
 		rollPitchCalibrate();
 
 		mutex.post();
+		return true;
     }
 
 	void yawCalibrate()
@@ -559,7 +560,7 @@ public:
 		enableControl();
 	}
 
-    void doLoop()
+    void run()
     {
         double t1=Time::now();
         static int count=0;
@@ -646,7 +647,7 @@ public:
 
     }
 
-    void doRelease()
+    void threadRelease()
     {
 		fprintf(stderr, "HeadControl::releasing...");
 		mutex.wait();

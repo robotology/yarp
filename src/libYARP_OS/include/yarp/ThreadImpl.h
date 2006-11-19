@@ -6,6 +6,8 @@
  *
  */
 
+//added threadInit/threadRelease functions, and synchronization -nat
+
 #ifndef _YARP2_THREADIMPL_
 #define _YARP2_THREADIMPL_
 
@@ -44,6 +46,9 @@ public:
 
     virtual void beforeStart();
     virtual void afterStart(bool success);
+	
+	virtual bool threadInit();
+	virtual void threadRelease();
 
     // call before start
     void setOptions(int stackSize = 0);
@@ -56,6 +61,11 @@ public:
     // get a unique key
     long int getKey();
 
+	//shoudl become private, when the thread is friend
+	void notify(bool s);
+	void synchroWait();
+	void synchroPost();
+
 private:
     int stackSize;
     ACE_hthread_t hid;
@@ -63,9 +73,12 @@ private:
     bool active;
     bool closing;
     Runnable *delegate;
+	ACE_Auto_Event synchro;	// event for init synchro
 
     static int threadCount;
     static SemaphoreImpl threadMutex;
+	bool initWasSuccessful;
+
 };
 
 #endif

@@ -6,6 +6,8 @@
  *
  */
 
+//added threadRelease/threadInit methods and synchronization -nat 
+
 #ifndef _YARP2_RATETHREAD_
 #define _YARP2_RATETHREAD_
 
@@ -36,25 +38,25 @@ public:
 
     /**
      * Initialization method. This function is executed once when
-     * the thread starts and before the first doLoop. The function
+     * the thread starts and before "run". Note: the function
      * is executed by the thread itself.
      */
-    virtual void doInit();
+    virtual bool threadInit();
     
     /**
      * Release method. This function is executed once when
-     * the thread exits and after the last doLoop. The function
+     * the thread exits and after the last run. Note: the function
      * is executed by the thread itself.
      */
-    virtual void doRelease();
+    virtual void threadRelease();
 
     /**
-     * Loop function. This is the period thread itself.
+     * Loop function. This is the thread itself.
      */
-    virtual void doLoop()=0;
+    virtual void run()=0;
 
     /** 
-     * Call this to start the thread. Blocks until doInit()
+     * Call this to start the thread. Blocks until initThread()
      * is executed.
      */
     bool start();
@@ -68,10 +70,10 @@ public:
  
     /** 
      * Call this to stop the thread, this call blocks until the 
-     * thread is terminated (and doRelease() called). Actually 
+     * thread is terminated (and releaseThread() called). Actually 
      * calls join.
      */
-    bool stop();
+    void stop();
 
     /**
      * Returns true when the thread is started, false otherwise.
@@ -106,6 +108,18 @@ public:
      * Resume the thread if previously suspended.
      */
     void resume();
+
+	
+    /**
+     * Called just before a new thread starts.
+     */
+    virtual void beforeStart();
+
+    /**
+     * Called just after a new thread starts (or fails to start).
+     * @param success true iff the new thread started successfully
+     */
+    virtual void afterStart(bool success);
 
 private:
     bool join(double seconds = -1);
@@ -172,16 +186,49 @@ public:
 
     bool open(double framerate = -1, bool polling = false);
 
-    bool close() {
-        stop();
-        return true;
+	void close() {
+		RateThread::stop();
     }
 
-    virtual void doLoop() {
+	void stop() {
+		RateThread::stop();
+	}
+
+    virtual void run() {
         if (helper!=0/*NULL*/) {
             helper->run();
         }
     }
+
+	virtual bool threadInit()
+	{
+		if (helper!=0) {
+			return helper->threadInit();
+		}
+		else
+			return true;
+	}
+
+	virtual void threadRelease()
+	{
+		if (helper!=0) {
+			helper->threadRelease();
+		}
+	}
+
+	virtual void afterStart(bool s)
+	{
+		if (helper!=0) {
+			helper->afterStart(s);
+		}
+	}
+
+	virtual void beforeStart()
+	{
+		if (helper!=0) {
+			helper->beforeStart();
+		}
+	}
 
     Runnable *getAttachment() const {
         return helper;

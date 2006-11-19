@@ -1,5 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+// Show thread basic functionalities, you may want to have a look at the
+// ratethread example.
+
+// added initThread/releaseThread example -nat
+
 #include <stdio.h>
 
 #include <yarp/os/Thread.h>
@@ -9,17 +14,33 @@ using namespace yarp::os;
 
 class Thread1 : public Thread {
 public:
+    virtual bool threadInit()
+	{
+		printf("Starting thread1\n");
+		return true;
+	}
+
     virtual void run() {
         while (!isStopping()) {
             printf("Hello, from thread1\n");
             Time::delay(1);
         }
     }
-};
 
+    virtual void threadRelease()
+	{
+		printf("Goodbye from thread1\n");
+	}
+};
 
 class Thread2 : public Thread {
 public:
+	virtual bool threadInit()
+	{
+		printf("Starting thread2\n");
+		return true;
+	}
+
     virtual void run() {
         Time::delay(0.5);
         while (!isStopping()) {
@@ -27,6 +48,11 @@ public:
             Time::delay(1);
         }
     }
+
+    virtual void threadRelease()
+	{
+		printf("Goodbye from thread2\n");
+	}
 };
 
 int main() {

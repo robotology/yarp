@@ -123,7 +123,8 @@ int main(int argc, char *argv[]) {
     ConstString shortFileName = seek.substr(pos,seek.length()).c_str();
 
     PolyDriver dd;
-    YARP_DEBUG(Logger::get(), "harness opening...");
+	YARP_DEBUG(Logger::get(), "harness opening...");
+	
     bool ok = dd.open(p);
     YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;

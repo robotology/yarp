@@ -6,6 +6,8 @@
  *
  */
 
+// initThread/releaseThread methods, synchronization on init failure/success -nat
+
 #ifndef _YARP2_THREAD_
 #define _YARP2_THREAD_
 
@@ -47,7 +49,7 @@ public:
      * There is no really reliable, portable way to stop
      * a thread cleanly unless that thread cooperates.
      */
-    virtual void run();
+    virtual void run()=0;
 
     /**
      * Call-back, called while halting the thread.
@@ -60,6 +62,10 @@ public:
     /**
      * Start the new thread running.
      * The new thread will call the user-defined Thread::run method.
+	 * The function starts the thread and waits until the thread executes
+	 * threadInit(). If the initialization was not successful the thread 
+	 * exits, otherwise run is executed. The return value of threadInit() 
+	 * is passed to afterStart().
      * @return true iff the new thread starts successfully
      */
     bool start();
@@ -83,6 +89,31 @@ public:
      * @param success true iff the new thread started successfully
      */
     virtual void afterStart(bool success);
+
+	
+	/**
+     * Initialization method. The thread executes this function
+	 * when it starts and before "run". This is a good place to 
+	 * perform initialization tasks that need to be done by the 
+	 * thread itself (device drivers initialization, memory 
+	 * allocation etc). If the function returns false the thread 
+	 * quits and never calls "run". The return value of threadInit()
+	 * is notified to the class and passed as a parameter 
+	 * to afterStart(). Note that afterStart() is called by the 
+	 * same thread that is executing the "start" method.
+     */
+	virtual bool threadInit()
+	{ return true;}
+
+	/**
+     * Release method. The thread executes this function once when
+     * it exits, after the last "run". This is a good place to release
+	 * resources that were initialized in threadInit() (release memory, 
+	 * and device driver resources).
+     */
+	virtual void threadRelease()
+	{}
+
 
     /**
      * Returns true if the thread is stopping (Thread::stop has
