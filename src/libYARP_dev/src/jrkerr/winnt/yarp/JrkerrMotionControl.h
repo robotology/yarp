@@ -35,6 +35,10 @@ namespace yarp{
     }
 }
 
+
+// servo clock of the jrkerr boards
+#define SERVOTICKTIME 0.000512
+
 /**
  * \file JrkerrMotionControl.h 
  * class for interfacing with the JRKERR control boards.
@@ -84,7 +88,7 @@ public:
 
 	int *_servoRate;
 	int *_deadBand;
-	int *_tickperturn;
+	int *_countperturn;
 
 };
 
@@ -286,7 +290,7 @@ protected:
 	int *_dc;		/** dead band compensation */
 	int *_pl;		/** positive position limit */
 	int *_nl;		/** negative position limit */
-	int *_tk;       /** encoder pulses per turn */
+	int *_ct;       /** encoder pulses per turn */
 	int *_vl;       /** velocity limit */
 	int *_al;		/** acceleration limit */
 	int *_en;		/** amplifier emable flags */

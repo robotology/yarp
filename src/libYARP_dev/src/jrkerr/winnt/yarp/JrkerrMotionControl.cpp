@@ -59,7 +59,7 @@ JrkerrMotionControlParameters::JrkerrMotionControlParameters(int nj)
 
 	_servoRate = allocAndCheck<int>(nj);
 	_deadBand = allocAndCheck<int>(nj);
-	_tickperturn = allocAndCheck<int>(nj);
+	_countperturn = allocAndCheck<int>(nj);
    	_njoints = nj;
 
 }
@@ -80,7 +80,7 @@ JrkerrMotionControlParameters::~JrkerrMotionControlParameters()
 
 	checkAndDestroy<int>(_servoRate);
 	checkAndDestroy<int>(_deadBand);
-	checkAndDestroy<int>(_tickperturn);
+	checkAndDestroy<int>(_countperturn);
 }
 
 ///
@@ -213,6 +213,7 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 		_mutex.post();
 		return false;
 	}
+	_mutex.post();
 
 	ImplementPositionControl<JrkerrMotionControl, IPositionControl>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
@@ -235,50 +236,74 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
     ImplementControlLimits<JrkerrMotionControl, IControlLimits>::
         initialize(p._njoints, p._axisMap, p._angleToEncoder, p._zeros);
 
-	// temporary variables used by the ddriver.
-	_ref_positions = allocAndCheck<double>(r.getJoints());		
-	_ref_speeds = allocAndCheck<double>(r.getJoints());
-	_ref_accs = allocAndCheck<double>(r.getJoints());
+	// store user set point values
+	_ref_positions = allocAndCheck<double>(r.getJoints()); //encoder counts
+	_ref_speeds = allocAndCheck<double>(r.getJoints());    //counts per second
+	_ref_accs = allocAndCheck<double>(r.getJoints());	   //counts per second^2
+
+
+	// immutable parameters for jrkerr board
+	_ct = allocAndCheck<int>(r.getJoints());   //encoder counts per turn
+	_cl = allocAndCheck<int>(r.getJoints());
+	_el = allocAndCheck<int>(r.getJoints());
+	_sr = allocAndCheck<int>(r.getJoints());
+	_dc = allocAndCheck<int>(r.getJoints());
+
+    // store pid values - defaults come from the config file, but can be 
+	// changed by the user, using jrkerr specific parameters
 	_kp = allocAndCheck<int>(r.getJoints());
 	_kd = allocAndCheck<int>(r.getJoints());
 	_ki = allocAndCheck<int>(r.getJoints());
 	_il = allocAndCheck<int>(r.getJoints());
 	_ol = allocAndCheck<int>(r.getJoints());
-	_cl = allocAndCheck<int>(r.getJoints());
-	_el = allocAndCheck<int>(r.getJoints());
-	_sr = allocAndCheck<int>(r.getJoints());
-	_dc = allocAndCheck<int>(r.getJoints());
-	_pl = allocAndCheck<int>(r.getJoints());
-	_nl = allocAndCheck<int>(r.getJoints());
-	_tk = allocAndCheck<int>(r.getJoints());
-	_vl = allocAndCheck<int>(r.getJoints());
-	_al = allocAndCheck<int>(r.getJoints());
+
 	_en = allocAndCheck<int>(r.getJoints());
 	_mode = allocAndCheck<int>(r.getJoints());
 
 
+	// position limit values - can be reduced but not increased by the user
+	_pl = allocAndCheck<int>(r.getJoints()); //encoder counts
+	_nl = allocAndCheck<int>(r.getJoints()); //encoder counts
+	
+	// velocity and acceleration limits - 
+	// maximum values cannot be changed by the user
+	_vl = allocAndCheck<int>(r.getJoints()); // counts per second
+	_al = allocAndCheck<int>(r.getJoints()); // counts per second^2
+	
+
 	int i;
 	for(i = 0; i < r.getJoints(); i++)
 	{
-		_kp[i] = (int)p._pids[i].kp;
-		_kd[i] = (int)p._pids[i].kd;
-		_ki[i] = (int)p._pids[i].ki;
-		_il[i] = (int)p._pids[i].max_int;
-		_ol[i] = (int)p._pids[i].max_output;
-		_cl[i] = (int)p._currentLimits[i];
-		_el[i] = (int)p._errorLimits[i];
-		_sr[i] = (int)p._servoRate[i];
-		_dc[i] = (int)p._deadBand[i];
+		// PID gains
+		_kp[i] = (int)p._pids[i].kp;			// Proportional
+		_kd[i] = (int)p._pids[i].kd;			// Derivative
+		_ki[i] = (int)p._pids[i].ki;			// Integral
+		_il[i] = (int)p._pids[i].max_int;		// Integratio Limit
+		_ol[i] = (int)p._pids[i].max_output;	// Output Limit
+		_cl[i] = (int)p._currentLimits[i];		// Current Limit
+		_el[i] = (int)p._errorLimits[i];		// Tracking Error Limit
+		_sr[i] = (int)p._servoRate[i];			// Servo Rate
+		_dc[i] = (int)p._deadBand[i];			// Dead Band
+
+		// Position Limits : input is in degrees , stored value is encoder counts
 		_pl[i] = (int)p._limitsMax[i]*p._angleToEncoder[i];
 		_nl[i] = (int)p._limitsMin[i]*p._angleToEncoder[i];
-		_tk[i] = (int)p._tickperturn[i];
-		_vl[i] = (int)(p._velocityLimits[i]*_tk[i]/360.0/1961.0);
-		_al[i] = (int)(p._accelerationLimits[i]*_tk[i]/360.0/3845521.0);
-		_en[i] = 1; //default is enabled
-
+		// Encoder resolution in counts per turn
+		_ct[i] = (int)p._countperturn[i];
+		// Velocity limit in encoder counts per second
+		_vl[i] = (int)(p._velocityLimits[i]*p._angleToEncoder[i]); 
+		// Acceleration limit in encoder counts per second^2
+		_al[i] = (int)(p._accelerationLimits[i]*p._angleToEncoder[i]); 
+		
+		// Initialize reference speeds and accelerations to maximum values
+		_ref_speeds[i] = _vl[i];
+		_ref_accs[i] = _al[i];
 
 		//initialize microcontroller with defaults
 		setPidRaw(i, p._pids[i]);
+		//enable amplifier
+		enableAmpRaw(i);
+
 	}
 	
 	
@@ -290,7 +315,7 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 		ACE_OS::printf("\tkp \t%d \tki \t%d \tkd \t%d\n",_kp[i], _ki[i], _kd[i]);
 		ACE_OS::printf("\til \t%d \tol \t%d \tcl \t%d\n",_il[i], _ol[i], _cl[i]);
 		ACE_OS::printf("\tel \t%d \tsr \t%d \tdc \t%d\n",_el[i], _sr[i], _dc[i]);
-		ACE_OS::printf("\tpl \t%d \tnl \t%d \ttk \t%d\n",_pl[i], _nl[i], _tk[i]);
+		ACE_OS::printf("\tpl \t%d \tnl \t%d \ttk \t%d\n",_pl[i], _nl[i], _ct[i]);
 		ACE_OS::printf("\tvl \t%d \tal \t%d \ten \t%d\n",_vl[i], _al[i], _en[i]);
 	}
 
@@ -382,7 +407,7 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
 
 	xtmp = p.findGroup("JRKERR").findGroup("TickPerTurn");
 	ACE_ASSERT (xtmp.size() == nj+1);
-    for(i=1;i<xtmp.size(); i++) params._tickperturn[i-1]=xtmp.get(i).asInt();
+    for(i=1;i<xtmp.size(); i++) params._countperturn[i-1]=xtmp.get(i).asInt();
 
 	xtmp = p.findGroup("JRKERR").findGroup("DeadBand");
 	ACE_ASSERT (xtmp.size() == nj+1);
@@ -419,7 +444,7 @@ bool JrkerrMotionControl::close (void)
 	checkAndDestroy<int> (_dc);
 	checkAndDestroy<int> (_pl);
 	checkAndDestroy<int> (_nl);
-	checkAndDestroy<int> (_tk);
+	checkAndDestroy<int> (_ct);
 	checkAndDestroy<int> (_vl);
 	checkAndDestroy<int> (_al);
 	checkAndDestroy<int> (_en);
@@ -444,6 +469,7 @@ bool JrkerrMotionControl::getAxes(int *ax)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
     *ax = r.getJoints();
+	printf("PORTUGAL !!!");
     return true;
 }
 
@@ -513,30 +539,49 @@ bool JrkerrMotionControl::setPidsRaw(const Pid *pids)
 	return true;
 }
 
-/// cmd is a SingleAxis poitner with 1 double arg
+/// cmd is a SingleAxis pointer with 1 double arg
+/// input reference is in encoder counts
 bool JrkerrMotionControl::setReferenceRaw (int axis, double ref)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
-	_mutex.wait();
-	_ref_positions[axis] = ref;
-	_mutex.post();
+	if( ref > _pl[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d position limit %f > %f \n", axis, ref, _pl[axis]);
+		_mutex.wait();
+		_ref_positions[axis] = _pl[axis];
+		_mutex.post();
+	}
+	else if( ref < _nl[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d position limit %f < %f \n", axis, ref, _nl[axis]);
+		_mutex.wait();
+		_ref_positions[axis] = _nl[axis];
+		_mutex.post();
+	}
+	else
+	{
+		_mutex.wait();
+		_ref_positions[axis] = ref;
+		_mutex.post();
+	}
 
 	return true;
 }
 
 /// cmd is an array of double (LATER: to be optimized).
+/// input references are encoder counts
 bool JrkerrMotionControl::setReferencesRaw (const double *refs)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
 
-	_mutex.wait();
-	for(int i = 0; i < r.getJoints(); i++ )
-		_ref_positions[i] = refs[i];
-	_mutex.post();
 
+	int i;
+
+	for(i = 0; i < r.getJoints(); i++ )
+		setReferenceRaw(i,refs[i]);
 	return true;
 }
 
@@ -553,6 +598,8 @@ bool JrkerrMotionControl::setErrorLimitRaw(int axis, double limit)
 	return true;
 }
 
+
+// there is a jrkerr hardware limitation for this : check this TODO
 bool JrkerrMotionControl::setErrorLimitsRaw(const double *limit)
 {
     JrkerrRS485Resources& r = RES(system_resources);
@@ -661,6 +708,7 @@ bool JrkerrMotionControl::setVelocityMode()
     return NOT_YET_IMPLEMENTED("setVelocityMode");
 }
 
+// reference values comes in encoder counts
 bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
 {
 	
@@ -668,58 +716,42 @@ bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
-	int res=0;
-	unsigned char mode;
-	double par;
-
-	int overlimit=0;
-
-  
-    if ( ref > _pl[axis] )
-    {
-       par = _pl[axis];
-       overlimit = 1;
-	}
-    else if ( ref < _nl[axis] )
-    {	
-      par = _nl[axis];
-      overlimit = 1;
-    }
-	else
-		par = ref;
+	setReferenceRaw(axis, ref);
 
 	if (!ENABLED (axis))
 	{
-		// still fills the _ref_position structure.
-		_ref_positions[axis] = par;
 		return true;
 	}
 
+	long pic_position; // counts
+	long pic_speed;   // 65535*counts/tick
+	long pic_accel;   // 65535*counts/tick^2
+	unsigned char mode;
+
+	pic_position = (long)(_ref_positions[axis]);
+	pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
 
 	mode = LOAD_POS | LOAD_VEL | LOAD_ACC | ENABLE_SERVO | START_NOW;   //trapezoidal mode
-
 	_mutex.wait();
-
-	ServoLoadTraj(axis+1, mode, (long)par, _ref_speeds[axis], _ref_accs[axis], 0, &(r.jrkerrcmd) );
-
+	ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
 	_mutex.post();
-
-	
-    if(overlimit)
-      printf("WARNING!!!!! Exceeding joint limits %f\n", axis, ref);
  
 	return true;
 }
 
+
 bool JrkerrMotionControl::positionMoveRaw(const double *refs)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
+
 	for(int i = 0; i < r.getJoints(); i++)
 	{
 		if(!positionMoveRaw(i, refs[i]))
 			return false;
 		
 	}
+
 	return true;
 }
 
@@ -761,52 +793,91 @@ bool JrkerrMotionControl::checkMotionDoneRaw (bool *ret)
 	return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");
 }
 
+
+/// input speed is in encoder counts per second
 bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
-	_mutex.wait();
-	_ref_speeds[axis] = sp;
-	_mutex.post();
-
+	if( sp > _vl[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d velocity limit %f > %f \n", axis, sp, _vl[axis]);
+		_mutex.wait();
+		_ref_speeds[axis] = _vl[axis];
+		_mutex.post();
+	}
+	else  if( sp < -_vl[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d velocity limit %f < %f \n", axis, sp, -_vl[axis]);
+		_mutex.wait();
+		_ref_speeds[axis] = -_vl[axis];
+		_mutex.post();
+	}
+	else
+	{
+		_mutex.wait();
+		_ref_speeds[axis] = sp;
+		_mutex.post();
+	}
+	
+	
 	return true;
 }
 
+
+/// input speeds are in encoder counts per second
 bool JrkerrMotionControl::setRefSpeedsRaw(const double *spds)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
 
-	_mutex.wait();
 	for(int i = 0; i < r.getJoints(); i++ )
-		_ref_speeds[i] = spds[i];
-	_mutex.post();
+		setRefSpeedRaw(i, spds[i]);
 
 	return true;
 }
 
+/// input acceleration is in encoder counts per second^2
 bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
 {
     JrkerrRS485Resources& r = RES(system_resources);
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
-	_mutex.wait();
-	_ref_accs[axis] = acc;
-	_mutex.post();
+	if( acc > _al[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f > %f \n", axis, acc, _al[axis]);
+		_mutex.wait();
+		_ref_accs[axis] = _al[axis];
+		_mutex.post();
+	}
+	else  if( acc < -_al[axis] )
+	{
+		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f < %f \n", axis, acc, -_al[axis]);
+		_mutex.wait();
+		_ref_accs[axis] = -_al[axis];
+		_mutex.post();
+	}
+	else
+	{
+		_mutex.wait();
+		_ref_accs[axis] = acc;
+		_mutex.post();
+	}
+	
 
 	return true;
 }
 
+
+/// input accelerations are in encoder counts per second^2
 bool JrkerrMotionControl::setRefAccelerationsRaw(const double *accs)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
 
-	_mutex.wait();
 	for(int i = 0; i < r.getJoints(); i++ )
-		_ref_accs[i] = accs[i];
-	_mutex.post();
+		setRefAccelerationRaw(i, accs[i]);
 
 	return true;
 }
@@ -892,63 +963,36 @@ bool JrkerrMotionControl::stopRaw()
 /// for each axis
 bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
 {
-	int res=0;
+	JrkerrRS485Resources& r = RES(system_resources);
+
 	unsigned char mode;
-	float acc,pos;
-	double par;
 
-	int overlimit=0;
+	setRefSpeedRaw(axis, sp);
 
-	if ( sp > _vl[axis] )
-	{
-      par = _vl[axis];
-      overlimit = 1;
-	}
-	else if ( sp < -_vl[axis] )
-	{
-      par = -_vl[axis];
-      overlimit = 1;
-	}
-	else
-		par = sp;
-
-    if (par > 0)
-    {
-		pos = _pl[axis];
-    }
+    if (_ref_speeds[axis] > 0)
+		setReferenceRaw(axis, _pl[axis]);
     else
-	{
-		pos = _nl[axis];
-    }
+		setReferenceRaw(axis, _nl[axis]);
 
 
-	if (!ENABLED (axis))
+	if(!ENABLED (axis))
 	{
-		_ref_speeds[axis] = par;
 		return true;
 	}
-
-    if(overlimit)
-        printf("WARNING!!!!! Motor %d with excessive velocity %lf\n", axis, sp);
    
+	long pic_position = (long)(_ref_positions[axis]);
+	long pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	long pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
 
 	mode = LOAD_POS | LOAD_VEL | LOAD_ACC | ENABLE_SERVO | START_NOW ;	//trapezoidal mode
-    if( par < 0) 
-        par = -par;
-
-	// values in ticks/cycle
-    par = par / 1961.0;
-    acc = _ref_accs[axis]/3845521.0; 
-	//values to the board
-	long lvel = (long)(par*65536);
-	long lacc = (long)(acc*65536);
     
-    //printf("vai andar a %f %d\n", par, (long)(par*65536));
 
-	JrkerrRS485Resources& r = RES(system_resources);
-	_mutex.wait();
+	if( pic_speed < 0) 
+        pic_speed = -pic_speed;
+
 	
-    ServoLoadTraj(axis+1, mode, (long)pos, lvel, lacc, 0, &(r.jrkerrcmd) );
+	_mutex.wait();
+    ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
 	_mutex.post();
 	return true;
 }
@@ -1014,11 +1058,11 @@ bool JrkerrMotionControl::getEncodersRaw(double *v)
 	}*/
 	//NmcDefineStatus(r._groupAddr, SEND_POS,  &(r.jrkerrcmd) );
 	//NmcNoOp(r._groupAddr,  &(r.jrkerrcmd) );
-	for(int i=0; i < r.getJoints(); i++){
+	/*for(int i=0; i < r.getJoints(); i++){
 		NmcDefineStatus(i+1, SEND_POS,  &(r.jrkerrcmd) );
 		NmcNoOp(i+1,  &(r.jrkerrcmd) );
 		v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
-	};
+	};*/
 	/*NmcNoOp(r._groupAddr,  &(r.jrkerrcmd) );
 	for(i=0; i < r.getJoints(); i++){
 		v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
@@ -1032,7 +1076,6 @@ bool JrkerrMotionControl::getEncoderRaw(int axis, double *v)
 	JrkerrRS485Resources& r = RES(system_resources);
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
-
 	unsigned char stat_items = SEND_POS;
 	_mutex.wait();
     NmcReadStatus(axis+1, stat_items, &(r.jrkerrcmd));
@@ -1056,7 +1099,6 @@ bool JrkerrMotionControl::getEncoderSpeedsRaw(double *v)
 	for(int i=0; i < r.getJoints(); i++){
 		v[i] = (double)ServoGetVel(i+1, &(r.jrkerrcmd));
 	}
-    _mutex.post();
     _mutex.post();
 	return true;
 }
