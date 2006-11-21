@@ -181,11 +181,10 @@ public:
     {
         mutex.wait();
         positionCmds[j]=pos;
+		mutex.post();
 
         if (j<5)
             ipos->positionMove(j, pos);
-
-		mutex.post();
 
         return true;
     }
@@ -208,11 +207,10 @@ public:
     {
         mutex.wait();
         velocityCmds[j]=vel;
- 
+		mutex.post();
+
         if (j<5)
             ivel->velocityMove(j, vel);
-
-        mutex.post();
 
         return true;
     }
@@ -571,10 +569,11 @@ public:
         double roll_d;
         double pitch_d;
 
-        mutex.wait();
-
         isensor->read(inertiaValue);
-        iencs->getEncoders(encoders);
+
+        mutex.wait();
+		iencs->getEncoders(encoders);
+		
 
         roll=inertiaValue[0];
         pitch=inertiaValue[1];
@@ -591,7 +590,9 @@ public:
 		roll_d=positionCmds[5];
         pitch_d=positionCmds[6];
 
- 		//accounts for the fact that the base of the neck
+		mutex.post();
+ 		
+		//accounts for the fact that the base of the neck
 		//is not affected by the yaw (pan of the head)
 		//while the sensor is affected.
 		double pitch_hat;
@@ -609,10 +610,6 @@ public:
 		vCmds[1]=500*(pitch_hat-pitch_d_hat)+400*(roll_hat-roll_d_hat);
 		vCmds[2]=-500*(pitch_hat-pitch_d_hat)+400*(roll_hat-roll_d_hat);
 
-        //vCmds[0]=-400*(roll-roll_d);
-        //vCmds[1]=500*(pitch-pitch_d)+600*(roll-roll_d);
-        //vCmds[2]=-500*(pitch-pitch_d)+600*(roll-roll_d);
-
 		vCmds[0]*=pGain;
         vCmds[1]*=pGain;
         vCmds[2]*=pGain;
@@ -625,8 +622,6 @@ public:
         ivel->velocityMove(6, vCmds[1]);
         ivel->velocityMove(7, vCmds[2]);
         
-        mutex.post();
-
         double t2=Time::now();
         
         count++;
