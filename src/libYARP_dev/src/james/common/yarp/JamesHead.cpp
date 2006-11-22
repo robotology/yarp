@@ -57,6 +57,8 @@ private:
     IControlCalibration *icalib;
     IPositionControl *ipos;
 
+	Semaphore mutex2;
+
     double *velocityCmds;
     double *positionCmds;
     double *positions;
@@ -181,10 +183,11 @@ public:
     {
         mutex.wait();
         positionCmds[j]=pos;
-		mutex.post();
 
         if (j<5)
             ipos->positionMove(j, pos);
+	
+		mutex.post();
 
         return true;
     }
@@ -207,24 +210,42 @@ public:
     {
         mutex.wait();
         velocityCmds[j]=vel;
-		mutex.post();
 
         if (j<5)
             ivel->velocityMove(j, vel);
+		mutex.post();
 
         return true;
     }
 
-    bool velocityMove(const double *vel)
+	bool velPosMove_RAT_(const double *vel)
     {
         mutex.wait();
-        for(int k=0;k<HEAD_JOINTS;k++)
+		for(int k=0;k<HEAD_JOINTS;k++)
             {
-                velocityCmds[k]=vel[k];
-                if (k<5)
+                //velocityCmds[k]=vel[k];
+				if (k<5)
                     ivel->velocityMove(k, vel[k]);
+				else
+					positionCmds[k]=vel[k];
             }
-        mutex.post();
+		mutex.post();
+
+		return true;
+    }
+
+    bool velocityMove(const double *vel)
+    {
+		velPosMove_RAT_(vel);
+
+	//        mutex.wait();
+	//        for(int k=0;k<HEAD_JOINTS;k++)
+	//            {
+    //				velocityCmds[k]=vel[k];
+    //				if (k<5)
+    //				ivel->velocityMove(k, vel[k]);
+    //			}
+    //		mutex.post();
 
         return true;
     }
@@ -330,9 +351,9 @@ public:
 
     bool getEncoders(double *v)
     {
-        mutex.wait();
+        mutex2.wait();
         memcpy(v, positions, sizeof(double)*HEAD_JOINTS);
-        mutex.post();
+        mutex2.post();
 
         return true;
     }
@@ -560,7 +581,6 @@ public:
 
     void run()
     {
-        double t1=Time::now();
         static int count=0;
         double d1;              //length[cm] of the cable attached to joint 7
         double d2;              //length[cm] of the cable attached to joint 6
@@ -571,7 +591,7 @@ public:
 
         isensor->read(inertiaValue);
 
-        mutex.wait();
+        mutex2.wait();
 		iencs->getEncoders(encoders);
 		
 
@@ -586,10 +606,11 @@ public:
         positions[4]=encoders[4];
         positions[5]=roll;
         positions[6]=pitch;
+		mutex2.post();
 
+		mutex.wait();
 		roll_d=positionCmds[5];
         pitch_d=positionCmds[6];
-
 		mutex.post();
  		
 		//accounts for the fact that the base of the neck
@@ -618,9 +639,13 @@ public:
         vCmds[1]=-(1-REL_WEIGHT)*(encoders[6]-d1) + REL_WEIGHT*vCmds[1];
         vCmds[2]=-(1-REL_WEIGHT)*(encoders[7]-d2) + REL_WEIGHT*vCmds[2];
 
+        double t1=Time::now();
+
+		mutex.wait();
         ivel->velocityMove(5, vCmds[0]);
         ivel->velocityMove(6, vCmds[1]);
         ivel->velocityMove(7, vCmds[2]);
+		mutex.post();
         
         double t2=Time::now();
         
