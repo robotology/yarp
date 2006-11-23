@@ -96,7 +96,8 @@ namespace yarp {
                                      int i, int j, int w, int h) {
                 for (int ii=i-w; ii<=i+w; ii++) {
                     dest.safePixel(ii,j-h) = pix;
-                    dest.safePixel(ii+1,j-h+1) = pix;
+                    //dest.safePixel(ii+1,j-h+1) = pix;
+                    dest.safePixel(ii,j-h+1) = pix;
                     dest.safePixel(ii,j+h) = pix;
                     dest.safePixel(ii,j+h-1) = pix;
                 }
