@@ -195,6 +195,13 @@ public:
      */
     DriverCreator *find(const char *name);
 
+    /**
+     * Body of the yarpdev program for starting device wrappers.
+     * @param argc number of arguments
+     * @param argv list of arguments
+     * @return 0 on success, error code otherwise
+     */
+    static int yarpdev(int argc, char *argv[]);
 
 private:
 
