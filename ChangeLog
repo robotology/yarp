@@ -1,3 +1,17 @@
+2006-11-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* Several OSX fixes added -- the usual small problems related to
+	ace header file order
+	* src/libYARP_OS/include/yarp/os/NetInt32.h -- added operator++ and
+	operator-- to big-endian implementation of NetInt32 (for OSX PPC).
+	* automake Makefile.am files updated using scripts/update-automake.  
+	This fixed bug #1601656.
+	* src/libYARP_OS/src/Terminator.cpp -- added unregister for
+	fake "quit" port, fixing bug #1595763.
+	* conf/YarpDevice.cmake, conf/yarpdev.cpp.in, 
+	conf/yarpdev_helper.cpp.in -- began to develop better support for
+	device compilation outside of libYARP_dev.
+	
 2006-11-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.h: bumped version up to 2.1.2
