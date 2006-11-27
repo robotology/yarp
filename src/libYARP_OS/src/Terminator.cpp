@@ -16,6 +16,7 @@
 #include <yarp/NameClient.h>
 
 #include <yarp/os/Terminator.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp;
 using namespace yarp::os;
@@ -50,6 +51,7 @@ public:
     ACE_SOCK_Acceptor acceptor;
     SocketTwoWayStream sock;
     char data[4];
+    String registeredName;
 };
 #define HELPER(x) (*((TermineeHelper*)(x)))
 
@@ -77,6 +79,7 @@ Terminee::Terminee(const char *name) {
 
     helper.addr.set(a.getPort());
     helper.acceptor.open(helper.addr, 1);
+    helper.registeredName = name;
     quit = false;
     start();
     ok = true;
@@ -88,6 +91,7 @@ Terminee::~Terminee() {
     helper.sock.interrupt();
     helper.acceptor.close();
     stop();
+    Network::unregisterName(helper.registeredName.c_str());
 
     if (implementation!=NULL) {
         delete &HELPER(implementation);
