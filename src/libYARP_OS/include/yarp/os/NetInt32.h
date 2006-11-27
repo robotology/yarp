@@ -178,6 +178,12 @@ namespace yarp {
             void operator/=(RawNetInt32 v) {
                 set(get()/v);
             }
+            void operator++(int) { 
+                set(get()+1);
+            };
+            void operator--(int) { 
+                set(get()-1);
+            };
         };
 #else
         // not really guaranteed to have this
