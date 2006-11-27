@@ -1,5 +1,7 @@
 #include <math.h>
 
+#include <yarp/String.h>
+
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>
 
