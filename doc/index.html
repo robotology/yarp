@@ -15,36 +15,21 @@ Welcome to YARP2, the newer, minty-fresh version of YARP: Yet Another
 Robot Platform.
 
 
-<h2>Documentation</h2>
+<h2>Documentation sources</h2>
 
 <ul>
 
-<li><a href="user/html/index.html">Online YARP documentation for users</a>,
-containing the most important classes and topics.</li><br>
+<li><a href="user/html/index.html">Online YARP documentation</a>
+ (<a href="yarpdoc.zip">zip</a>, <a href="min/latex/refman.pdf">pdf</a>, <a href="dev/html/index.html">verbose</a>)
+</li>
 
-<ul>
-<li><a href="yarpdoc.zip">ZIP file of YARP documentation for users</a>,
-for reading locally.</li><br>
-<li><a href="http://eris.liralab.it/wiki/YARP">YARP Wiki</a> for 
-topics that are under development.</li><br>
-<li><a href="dev/html/index.html">Unfiltered documentation</a> -- all
-classes and comments, not just the cleanest ones.</li><br>
+<li><a href="http://eris.liralab.it/wiki/YARP">Wiki</a> for 
+developing documentation.</li>
 
-</ul>
+<li><a href="https://lists.sourceforge.net/lists/listinfo/robotcub-hackers">Mailing list</a> (<a href="http://sourceforge.net/mailarchive/forum.php?forum=robotcub-hackers">archives</a>)</li>
 
-<li><a href="http://sourceforge.net/tracker/?group_id=62418">Bug reports and Feature requests</a> -- we welcome them!</li><br>
+<li><a href="http://sourceforge.net/tracker/?group_id=62418">Bug reports and Feature requests</a> -- we welcome them!</li>
 
-<li>Our <a href="https://lists.sourceforge.net/lists/listinfo/robotcub-hackers">mailing list</a> (<a href="http://sourceforge.net/mailarchive/forum.php?forum=robotcub-hackers">archives</a>)</li><br>
-
-<li><a href="min/latex/refman.pdf">User manual (pdf)</a> -- 
-a subset of our online documentation, packed into a single document.
-<!---
-If you plan on printing this out we suggest you use 
-a <a href="pagenum/latex/refman.pdf">version with pagenumbers (pdf)</a> 
-rather than clickable links. ---></li><br>
-
-<!---
-<li><a href="spec/yarp-protocol-2-0.pdf">Protocol specification (pdf)</a> for YARP network activity.</li> ---><br>
 
 
 </ul>
@@ -57,18 +42,24 @@ from CVS</A>:
   cvs -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 login
   cvs -z3 -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 co -P yarp2
 </PRE>
+(use empty/blank password).<P>
 
-Or you can download a source code package (you need <a href=http://www.cmake.org>CMAKE</a> 
-to build these packages):
+Or you can download a recent source code package:
 <ul>
 <li><A HREF=http://eris.liralab.it/yarp/downloads/yarp/yarp-2.1.2.tar.gz>yarp-2.1.2.tar.gz</A> for UNIX</li>
 <li><A HREF=http://eris.liralab.it/yarp/downloads/yarp/yarp-2.1.2.zip>yarp-2.1.2.zip</A> for Windows</li>
 </ul>
+You need <a href=http://www.cmake.org>CMake</a> to build these packages.<P>
 
-You might want to check if it is passing its regression tests:
+You can check if YARP is passing its regression tests on your OS:
 <ul>
-<li>Most recent <A HREF=http://eris.liralab.it/yarp/report-yarp2-windows.txt>Windows</A> report</li>
-<li>Most recent <A HREF=http://eris.liralab.it/yarp/report-yarp2-linux.txt>Linux</A> report</li>
+<li> 
+Most recent
+<A HREF=http://eris.liralab.it/yarp/report-yarp2-windows.txt>Windows</A> /
+<A HREF=http://eris.liralab.it/yarp/report-yarp2-linux.txt>Linux</A> / 
+<A HREF=http://eris.liralab.it/yarp/report-yarp2-Darwin.txt>Darwin</A>
+report.
+</li>
 </ul>
 
 <h2>Debian package</h2>
