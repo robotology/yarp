@@ -13,4 +13,5 @@ ADD_EXECUTABLE(file_grabber_net file_grabber_net.cpp FileFrameGrabber.h)
 ADD_EXECUTABLE(audio_test audio_test.cpp)
 ADD_EXECUTABLE(double_server double_server.cpp)
 ADD_EXECUTABLE(fake_motor fake_motor.cpp)
+ADD_EXECUTABLE(simple_motor_client simple_motor_client.cpp)
 
