@@ -22,6 +22,20 @@
   Other commands may not be supported by test_motor, but may be useful
   for your specific hardware.
 
+  When you type a command, there is an echo with the prefix "Bottle:".
+  This gives you the exact syntax (in text form) of the message being
+  sent.  You can then use such commands with yarp rpc:
+
+  $ yarp rpc /fakebot/head/rpc:i
+    RPC connection to /fakebot/head/rpc:i at tcp://127.0.0.1:10002 (...)
+    [get] [axes]
+    Response: [is] [axes] 8 [ok]
+    [set] [pos] 4 5.0
+    Response: [ok]
+    [get] [encs]
+    Response: [is] [encs] (0.0 0.0 0.0 0.0 5.0 0.0 0.0 0.0) [ok]
+    ...
+
  */
 
 #include <ace/OS.h>
