@@ -24,5 +24,5 @@ ADD_EXECUTABLE(image_source image_source.cpp)
 ADD_EXECUTABLE(database database.cpp)
 ADD_EXECUTABLE(threads threads.cpp)
 ADD_EXECUTABLE(image_process image_process.cpp)
-#ADD_EXECUTABLE(ratethread ratethread.cpp) # file missing at the moment
+ADD_EXECUTABLE(ratethread ratethread.cpp)
 
