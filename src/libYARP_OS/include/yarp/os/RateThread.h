@@ -29,8 +29,12 @@ class yarp::os::RateThread {
 public:
 
     /**
-     * Constructor.  Thread begins in a dormant state.  Call Thread::start
+     * Constructor.  Thread begins in a dormant state.  Call RateThread::start
      * to get things going.
+     * @param period The period in milliseconds [ms] between
+     * successive calls to the RateThread::run method
+     * (remember you need to call RateThread::start first
+     * before anything happens)
      */
     RateThread(int period);
 

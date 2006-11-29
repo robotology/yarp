@@ -20,7 +20,7 @@ public:
 		return true;
 	}
 
-	//called by start after initThread, s is true iff the thread started
+	//called by start after threadInit, s is true iff the thread started
 	//successfully
 	virtual void afterStart(bool s)
 	{
@@ -49,7 +49,7 @@ public:
 		return true; 
 	}
 
-	//called by start after initThread, s is true iff the thread started
+	//called by start after threadInit, s is true iff the thread started
 	//successfully
 	virtual void afterStart(bool s)
 	{
@@ -95,6 +95,7 @@ int main() {
 	for(int k=1;k<20;k++)
 	{
 		printf(".");
+        fflush(stdout);
 		Time::delay(0.2); //200[ms]
 	}
 	printf("\n");
