@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
         ImageOf<PixelRgb>& img = port.prepare();
         img.resize(100,100);
         img.zero();
-        PixelRgb blue(255,0,0);
+        PixelRgb blue(0,0,255);
         addCircle(img,blue,ct,50,10);
         ct = (ct+5)%100;
         port.write();
