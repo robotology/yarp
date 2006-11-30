@@ -1,5 +1,8 @@
 2006-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/dimax_u2c: driver contributed by 
+	Assif Mirza
+
 	* example/dev/fake_motor.cpp,simple_motor_client.cpp: examples
 	to help with developing new motor control devices
 	* src/libYARP_OS/src/Companion.cpp: added some more troubleshooting
