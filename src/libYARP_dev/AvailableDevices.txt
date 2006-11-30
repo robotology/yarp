@@ -2,7 +2,7 @@
 # One day this list could be populated automatically.
 
 IF (WIN32 AND NOT CYGWIN)
-   SET(AVAILABLE_DEVICES picolo dragonfly microphone inertiacube2 XSensMTx james jrkerr)
+   SET(AVAILABLE_DEVICES picolo dragonfly microphone inertiacube2 XSensMTx james jrkerr dimax_u2c)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)

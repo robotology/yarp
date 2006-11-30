@@ -50,6 +50,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_opencv_grabber
 #cmakedefine ENABLE_ffmpeg
 #cmakedefine ENABLE_jrkerr
+#cmakedefine ENABLE_dimax_u2c
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
@@ -94,6 +95,10 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_jrkerr
 #include <yarp/JrkerrMotionControl.h>
+#endif
+
+#ifdef ENABLE_dimax_u2c
+#include <yarp/DimaxU2C.h>
 #endif
 
 
@@ -174,6 +179,12 @@ void Drivers::init() {
     add(new DriverCreatorOf<FfmpegGrabber>("ffmpeg_grabber", 
                                            "grabber",
                                            "FfmpegGrabber"));
+#endif
+
+#ifdef ENABLE_dimax_u2c
+    add(new DriverCreatorOf<DimaxU2C>("dimax_u2c", 
+                                           "controlboard",
+                                           "DimaxU2C"));
 #endif
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",

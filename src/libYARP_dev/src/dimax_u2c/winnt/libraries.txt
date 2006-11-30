@@ -1,0 +1,1 @@
+YARP_LOCAL;U2CCommon.lib;I2cBrdg.lib;
