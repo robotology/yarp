@@ -392,6 +392,12 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     NameClient& nic = NameClient::getNameClient();
 
     YARP_INFO(log,"==================================================================");
+    YARP_INFO(log,"=== This is \"yarp check\"");
+    YARP_INFO(log,"=== It is a very simple sanity check for your installation");
+    YARP_INFO(log,"=== If it freezes, try deleting the file reported by \"yarp conf\"");
+    YARP_INFO(log,"=== Also, if you are mixing terminal types, e.g. bash/cmd.exe");
+    YARP_INFO(log,"=== on windows, make sure the \"yarp conf\" file is the same on each");
+    YARP_INFO(log,"==================================================================");
     YARP_INFO(log,"=== Trying to register some ports");
 
     CompanionCheckHelper check;
