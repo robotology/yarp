@@ -69,17 +69,20 @@ public:
      * @return true iff the object could be configured.
      */
     virtual bool open(yarp::os::Searchable& config){
-        remote = config.find("remote").asString().c_str();
-        local = config.find("local").asString().c_str();
-        if (local!="") {
-            port.open(local.c_str());
-        }
+        remote = config.check("remote",yarp::os::Value(""),
+                              "port name of real grabber").asString();
+        local = config.check("local",yarp::os::Value("..."),
+                             "port name to use locally").asString();
+        yarp::os::ConstString carrier = 
+            config.check("stream",yarp::os::Value("tcp"),
+                         "carrier to use for streaming").asString();
+        port.open(local);
         if (remote!="") {
-            yarp::os::Network::connect(remote.c_str(),local.c_str());
+            yarp::os::Network::connect(remote,local,carrier);
 
             // reverse connection for RPC
             // could choose to do this only on need
-            yarp::os::Network::connect(local.c_str(),remote.c_str());
+            yarp::os::Network::connect(local,remote);
         }
         reader.attach(port);
         return true;
