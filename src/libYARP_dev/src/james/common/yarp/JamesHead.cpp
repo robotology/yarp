@@ -62,6 +62,20 @@ private:
     double *velocityCmds;
     double *positionCmds;
     double *positions;
+
+	double roll_d;
+	double roll_v;
+	double timeRoll; 
+	double tfRoll;
+	double prevRoll_d;
+
+	double pitch_d;
+	double pitch_v;
+	double timePitch; 
+	double tfPitch;
+	double prevPitch_d;
+
+
 public:
     HeadControl(int r, PolyDriver *inertia, PolyDriver *head): RateThread(r),
                                                                ddInertia(0),
@@ -89,6 +103,18 @@ public:
                 positionCmds[k]=0.0;
                 velocityCmds[k]=0.0;
             }
+
+		roll_d = 0;
+		roll_v = 0;
+		timeRoll = 0; 
+		tfRoll = 0;
+		prevRoll_d = 0;
+
+		pitch_d = 0;
+		pitch_v = 0;
+		timePitch = 0; 
+		tfPitch = 0;
+		prevPitch_d = 0;
     }
     
     ~HeadControl()
@@ -145,7 +171,8 @@ public:
 		mutex.wait();
         for(int k=0;k<5;k++)
             ipos->setRefSpeed(k, sp[k]);
-
+		roll_v  = sp[5];
+		pitch_v = sp[6];
 		mutex.post();
         return true;
     }
@@ -155,6 +182,10 @@ public:
 		mutex.wait();
         if (j<5)
             ipos->setRefSpeed(j, sp);
+		if (j==5)
+			roll_v  = sp; 
+		if (j==6)
+			pitch_v = sp;
 		mutex.post();
         return true;
     }
@@ -182,10 +213,26 @@ public:
     bool positionMove(int j, double pos)
     {
         mutex.wait();
-        positionCmds[j]=pos;
 
         if (j<5)
+		{
+			positionCmds[j]=pos;
             ipos->positionMove(j, pos);
+		}
+		if (j==5)
+		{
+			prevRoll_d = positionCmds[j];
+			positionCmds[j] = pos;
+			tfRoll  = 1000*fabs(positionCmds[j] - prevRoll_d)/roll_v; 
+			timeRoll = 0;
+		}
+		if (j==6)
+		{
+			prevPitch_d = positionCmds[j];
+			positionCmds[j] = pos;
+			tfPitch  = 1000*fabs(positionCmds[j] - prevPitch_d)/pitch_v; 
+			timePitch = 0;
+		}
 	
 		mutex.post();
 
@@ -200,6 +247,20 @@ public:
                 positionCmds[k]=pos[k];
                 if (k<5)
                     ipos->positionMove(k, pos[k]);
+				if (k==5)
+				{
+					prevRoll_d = positionCmds[k];
+					positionCmds[k] = pos[k];
+					tfRoll  = 1000*fabs(positionCmds[k] - prevRoll_d)/roll_v; 
+					timeRoll = 0;
+				}
+				if (k==6)
+				{
+					prevPitch_d = positionCmds[k];
+					positionCmds[k] = pos[k];
+					tfPitch  = 1000*fabs(positionCmds[k] - prevPitch_d)/pitch_v; 
+					timePitch = 0;
+				}
             }
         mutex.post();
        
@@ -227,12 +288,39 @@ public:
 				if (k<5)
                     ivel->velocityMove(k, vel[k]);
 				else
-					positionCmds[k]=vel[k];
+				{
+					if (k==5)
+					{
+						prevRoll_d = positionCmds[k];
+						positionCmds[k] = vel[k];
+						tfRoll  = 1000*fabs(positionCmds[k] - prevRoll_d)/roll_v; 
+						timeRoll = 0;
+					}
+					if (k==6)
+					{
+						prevPitch_d = positionCmds[k];
+						positionCmds[k] = vel[k];
+						tfPitch  = 1000*fabs(positionCmds[k] - prevPitch_d)/pitch_v; 
+						timePitch = 0;
+					}
+				}
             }
 		mutex.post();
 
 		return true;
     }
+
+	bool resetEncoder(int j)
+	{
+		bool ret=false;
+		if (j<4)
+		{
+			mutex.wait();
+			ret=iencs->resetEncoder(j);
+			mutex.post();
+		}
+		return ret;
+	}
 
     bool velocityMove(const double *vel)
     {
@@ -489,8 +577,8 @@ public:
 
 		bool inPosition = false;
 
-        double roll_d=0;
-        double pitch_d=0;
+        double roll_des=0;
+        double pitch_des=0;
 
 		ACE_OS::printf("Trying to reach zero configuration: ");
 		while(!inPosition)
@@ -502,17 +590,17 @@ public:
                 roll=inertiaValue[0];
                 pitch=inertiaValue[1];
 
-                vCmds[0]=-600*(roll-roll_d);
-                vCmds[1]=500*(pitch-pitch_d)+400*(roll-roll_d);
-                vCmds[2]=-500*(pitch-pitch_d)+400*(roll-roll_d);
+                vCmds[0]=-600*(roll-roll_des);
+                vCmds[1]=500*(pitch-pitch_des)+400*(roll-roll_des);
+                vCmds[2]=-500*(pitch-pitch_des)+400*(roll-roll_des);
  
                 vCmds[0]*=pGain;
                 vCmds[1]*=pGain;
                 vCmds[2]*=pGain;
 
-                if (fabs(roll - roll_d) < IN_POSITION_THRESHOLD)
+                if (fabs(roll - roll_des) < IN_POSITION_THRESHOLD)
                     {
-                        if (fabs(pitch - pitch_d) < IN_POSITION_THRESHOLD)
+                        if (fabs(pitch - pitch_des) < IN_POSITION_THRESHOLD)
                             {
                                 ACE_OS::printf("\nZero Configuration Reached\n");
 
@@ -579,6 +667,47 @@ public:
 		enableControl();
 	}
 
+	/*
+	 * Generates a minimum jerk profile
+	 * as a reference trajectory for 
+	 * the roll and pitch movements
+	 */
+
+	void updateDesiredRollPitch()
+	{
+		mutex.wait();
+		timeRoll = timeRoll + NC_RATE;
+		double tau = timeRoll/tfRoll;
+		if (tau < 0 || tau > 1)
+		{
+			if (tau > 1)
+				roll_d=positionCmds[5];
+			else
+				roll_d=prevRoll_d;
+		}
+		else
+		{
+			roll_d = prevRoll_d + (prevRoll_d - positionCmds[5])*
+				(15*pow(tau, 4) - 6*pow(tau, 5) - 10*pow(tau, 3));
+		}
+
+		timePitch = timePitch + NC_RATE;
+		tau = timePitch/tfPitch;
+		if (tau < 0 || tau > 1)
+		{
+			if (tau > 1)
+				pitch_d=positionCmds[6];
+			else
+				pitch_d=prevPitch_d;
+		}
+		else
+		{
+			pitch_d = prevPitch_d + (prevPitch_d - positionCmds[6])*
+				(15*pow(tau, 4) - 6*pow(tau, 5) - 10*pow(tau, 3));
+		}
+		mutex.post();
+	}
+
     void run()
     {
         static int count=0;
@@ -586,8 +715,6 @@ public:
         double d2;              //length[cm] of the cable attached to joint 6
         double d3;              //length[cm] of the cable attached to joint 5
 
-        double roll_d;
-        double pitch_d;
 
         isensor->read(inertiaValue);
 
@@ -608,10 +735,7 @@ public:
         positions[6]=pitch;
 		mutex2.post();
 
-		mutex.wait();
-		roll_d=positionCmds[5];
-        pitch_d=positionCmds[6];
-		mutex.post();
+		updateDesiredRollPitch();
  		
 		//accounts for the fact that the base of the neck
 		//is not affected by the yaw (pan of the head)
@@ -829,12 +953,14 @@ bool JamesHead::getAxes(int *ax)
 
 bool JamesHead::resetEncoderRaw(int j)
 {
-    return true;
+	HeadControl *c=my_cast(controller);
+
+	return c->resetEncoder(j);
 }
 
 bool JamesHead::resetEncodersRaw()
 {
-    return true;
+    return false;
 }
  
 bool JamesHead::setEncoderRaw(int j, double val)
