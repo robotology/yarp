@@ -21,6 +21,7 @@ SET(JAVA_AWT_LIBRARY_DIRECTORIES
   /usr/lib/j2sdk1.5-sun/jre/lib/i386
   /opt/sun-jdk-1.5.0.04/jre/lib/amd64
   /usr/java
+  /usr/lib/jvm/java-1.5.0-sun-1.5.0.06/jre/lib/i386/
   )
 
 SET(JAVA_AWT_INCLUDE_DIRECTORIES
@@ -35,6 +36,7 @@ SET(JAVA_AWT_INCLUDE_DIRECTORIES
   /usr/lib/j2sdk1.5-sun/include
   /opt/sun-jdk-1.5.0.04/include
   /usr/java/include
+  /usr/lib/jvm/java-1.5.0-sun-1.5.0.06/include
   )
 
 FOREACH(JAVA_PROG "${JAVA_RUNTIME}" "${JAVA_COMPILE}" "${JAVA_ARCHIVE}")
