@@ -1,5 +1,10 @@
 2006-12-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/swig/yarp.i: updated to remove a new function clash
+
+	* example/swig/FindJNI.cmake: updated by Assif to work on
+	Ubuntu.
+
 	* conf/FindPortAudio.cmake: contribution from Hatice to get 
 	portaudio driver working under Windows
 
@@ -17,12 +22,16 @@
 
 	* Several OSX fixes added -- the usual small problems related to
 	ace header file order
+	
 	* src/libYARP_OS/include/yarp/os/NetInt32.h: added operator++ and
 	operator-- to big-endian implementation of NetInt32 (for OSX PPC).
+	
 	* automake Makefile.am files updated using scripts/update-automake.  
 	This fixed bug #1601656.
+	
 	* src/libYARP_OS/src/Terminator.cpp: added unregister for
 	fake "quit" port, fixing bug #1595763.
+	
 	* conf/YarpDevice.cmake, conf/yarpdev.cpp.in, 
 	conf/yarpdev_helper.cpp.in: began to develop better support for
 	device compilation outside of libYARP_dev.
@@ -53,24 +62,30 @@
 2006-11-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Device documentation procedure cleaned up a lot
+
 	* Bumped version up to 2.1.1
 
 2006-11-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Configuration parsing now expands environment variables.
+
 	* Devices are now automatically probed to generate documentation.
+
 	* Device documentation improved.
+
 	* Manual cleaned up.
 
 2006-10-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Integrated some video4linux stuff from Jonas Ruesch (thanks!).
+
 	* Implemented "envelope" information that could be passed
 	along from port to port, such as timestamps.
 
 2006-10-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Bumped version up to 2.1.0
+
 	* Consistent GPL licensing, copyright statements
 
 2006-10-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
@@ -90,21 +105,28 @@
 2006-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Integrated with ffmpeg for reading audio/visual material
+
 	* Bugfix for sound network format
+
 	* C# swig interface tested (added to Java, Perl, Python, ...)
 
 2006-09-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Fixed bug where non-buffered Port closed with data pending 
 	would wait for that to get read
+
 	* Fixed ports so you can open and close them repeatedly
+
 	* Made some Solaris fixes - YARP works there now!
+
 	* Integrated opencv_grabber
+
 	* Added in some docs developed for summer school
 
 2006-08-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* Bumped version up to 2.0.7
+
 	* Started portaudio device wrapper -- seems a good library
 	for doing cross-platform audio
 
