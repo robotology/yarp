@@ -1,3 +1,8 @@
+2006-12-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindPortAudio.cmake: contribution from Hatice to get this
+	working under Windows
+
 2006-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/dimax_u2c: driver contributed by 
