@@ -72,7 +72,7 @@ private:
 
 /**
  * @ingroup dev_runtime
- * \defgroup cmd_device_dimax_u2c DimaxU2C
+ * \defgroup cmd_device_dimax_u2c dimax_u2c
  *
  *  A motor driver, see yarp::dev::DimaxU2C.
  *
