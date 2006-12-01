@@ -13,7 +13,7 @@
 #include "../../../ControlBoardInterfacesImpl.inl"
 #include "../../common/yarp/DimaxU2C.h"
 
-#define KASPAR_NUM_MOTORS 16
+#define DEFAULT_NUM_MOTORS 16
 
 DimaxU2C::DimaxU2C():
 	ImplementPositionControl<DimaxU2C, IPositionControl>(this)
@@ -36,7 +36,9 @@ DimaxU2C::~DimaxU2C() {
 bool DimaxU2C::open(yarp::os::Searchable& config) { 
 	printf("DimaxU2C: open\n");
 	
-	numJoints = KASPAR_NUM_MOTORS;
+	numJoints = config.check("axes",
+                             Value(DEFAULT_NUM_MOTORS),
+                             "number of motors").asInt();
 
 	speeds = new double[numJoints];
 	accels = new double[numJoints];
