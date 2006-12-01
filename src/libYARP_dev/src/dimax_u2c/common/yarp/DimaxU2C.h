@@ -18,6 +18,14 @@ namespace yarp {
     }
 }
 
+/**
+ * @ingroup dev_impl
+ *
+ * A basic driver for dimax u2c 12
+ *
+ * @author Assif Mirza
+ *
+ */
 class yarp::dev::DimaxU2C : 
 	public yarp::dev::DeviceDriver ,
 	public yarp::dev::IPositionControlRaw,
@@ -60,5 +68,15 @@ private:
 	double *accels;
 
 };
+
+
+/**
+ * @ingroup dev_runtime
+ * \defgroup cmd_device_dimax_u2c DimaxU2C
+ *
+ *  A motor driver, see yarp::dev::DimaxU2C.
+ *
+ */
+
 
 #endif

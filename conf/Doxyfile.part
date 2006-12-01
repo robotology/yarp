@@ -81,6 +81,7 @@ INPUT                  = src/libYARP_OS/include/yarp/os \
                          src/libYARP_dev/src/portaudio/common \
                          src/libYARP_dev/src/XSensMTx/common \
                          src/libYARP_dev/src/jrkerr/winnt/yarp \
+                         src/libYARP_dev/src/dimax_u2c/common/yarp/DimaxU2C.h \
                          src/libYARP_dev/src \
                          doc/spec \
 			 src/libYARP_dev/harness
