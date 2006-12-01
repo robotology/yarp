@@ -13,10 +13,13 @@
 // Deal with abstract base class problems
 %feature("notabstract") Port;
 %feature("notabstract") Bottle;
+%feature("notabstract") Stamp;
 //%feature("abstract") Vocab;
+%feature("abstract") Searchable;
 
 // Deal with overridden method clashes
 %ignore *::check(const char *key, Value *& result);
+%ignore *::check(const char *key, Value *& result, const char *comment);
 %ignore *::where();
 %ignore *::seed(int seed);  // perl clash
 //%ignore *::open(Contact const &);
