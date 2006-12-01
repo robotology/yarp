@@ -37,7 +37,7 @@ bool DimaxU2C::open(yarp::os::Searchable& config) {
 	printf("DimaxU2C: open\n");
 	
 	numJoints = config.check("axes",
-                             Value(DEFAULT_NUM_MOTORS),
+                             yarp::os::Value(DEFAULT_NUM_MOTORS),
                              "number of motors").asInt();
 
 	speeds = new double[numJoints];
