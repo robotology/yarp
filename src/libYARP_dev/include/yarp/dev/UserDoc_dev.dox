@@ -84,6 +84,17 @@
 /**
  * @ingroup dev_impl
  *
+ * \defgroup dev_impl_motor Motor Devices
+ *
+ * These are devices useful for controlling motors.  They
+ * implement interfaces like yarp::dev::IPositionControl
+ * etc.
+ *
+ */
+
+/**
+ * @ingroup dev_impl
+ *
  * \defgroup dev_impl_wrapper Network Wrappers
  *
  * These take implementations of existing interfaces and wrap them

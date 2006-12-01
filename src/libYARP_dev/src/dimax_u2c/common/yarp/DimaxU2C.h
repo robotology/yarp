@@ -19,7 +19,7 @@ namespace yarp {
 }
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_motor
  *
  * A basic driver for dimax u2c 12
  *

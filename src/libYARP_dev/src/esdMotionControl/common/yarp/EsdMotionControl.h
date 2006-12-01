@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: EsdMotionControl.h,v 1.2 2006-11-06 20:06:28 eshuy Exp $
+/// $Id: EsdMotionControl.h,v 1.3 2006-12-01 11:19:34 eshuy Exp $
 ///
 ///
 
@@ -81,7 +81,7 @@ public:
 };
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_motor
  *
  * The ESD motion controller device driver.
  * Contains a thread that takes care of polling the can bus for incoming messages.

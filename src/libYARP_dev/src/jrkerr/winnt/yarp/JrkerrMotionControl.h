@@ -93,7 +93,7 @@ public:
 };
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_motor
  *
  * The Jrkerr motion controller device driver.
  * Contains a thread that takes care of polling the can bus for incoming messages.
