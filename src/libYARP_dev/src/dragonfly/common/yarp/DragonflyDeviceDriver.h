@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.24 2006-10-27 08:42:52 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.25 2006-12-01 11:24:48 eshuy Exp $
 ///
 ///
 
@@ -79,9 +79,9 @@ public:
 };
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_media
  *
- * A Point Grey Dragonfly digital camera.
+ * A Point Grey Dragonfly digital camera (or, on Linux, any digital camera).
  */
 class yarp::dev::DragonflyDeviceDriver : 
     public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver

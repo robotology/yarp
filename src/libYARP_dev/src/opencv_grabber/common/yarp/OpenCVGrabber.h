@@ -30,7 +30,7 @@ namespace yarp {
 #include <yarp/dev/DeviceDriver.h>
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_media
  *
  * An image frame grabber device using OpenCV to capture images from
  * cameras and AVI files.

@@ -32,7 +32,7 @@ public:
 };
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_media
  *
  * A basic microphone input source based on the PortAudio library.
  * The implementation is very simple right now - if you want to

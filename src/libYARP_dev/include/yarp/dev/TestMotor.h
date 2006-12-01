@@ -24,7 +24,7 @@ namespace yarp {
 }
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_motor
  *
  * A fake motor control board for testing.
  * Implements the IPositionControl and IEncoders interfaces.

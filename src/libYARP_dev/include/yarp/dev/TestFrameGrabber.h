@@ -26,7 +26,7 @@ namespace yarp {
 }
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_media
  *
  * A fake camera for testing.
  * Implements the IFrameGrabberImage and IFrameGrabberControls

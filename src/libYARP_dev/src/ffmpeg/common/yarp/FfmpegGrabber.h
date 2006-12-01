@@ -29,7 +29,7 @@ namespace yarp {
 #include <yarp/dev/DeviceDriver.h>
 
 /**
- * @ingroup dev_impl
+ * @ingroup dev_impl_media
  *
  * An image frame grabber device using ffmpeg to capture images from
  * AVI files.
