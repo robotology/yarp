@@ -8,6 +8,8 @@ SET(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
 SET(CREATE_CHICKEN FALSE CACHE BOOL "Do you want to create the Chicken Scheme interface")
 SET(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
 
+SET(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
+
 # small update to FindJNI
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -50,6 +52,13 @@ IF (CREATE_CHICKEN)
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
    SWIG_ADD_MODULE(cyarp chicken yarp.i)
 ENDIF (CREATE_CHICKEN)
+
+IF (CREATE_TCL)
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;cyarp")
+   FIND_PACKAGE(TCL REQUIRED)
+   INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH})
+   SWIG_ADD_MODULE(cyarp tcl yarp.i)
+ENDIF (CREATE_TCL)
 
 
 IF (CREATE_CSHARP)

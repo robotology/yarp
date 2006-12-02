@@ -29,17 +29,20 @@ and see if stuff happens.
 
 
 ============================================================================
-== PYTHON AND PERL INTERFACES
+== PYTHON, PERL, TCL INTERFACES
 
 Run:
   ccmake .
-And set "CREATE_PERL" and/or "CREATE_PYTHON" to true.
+And set "CREATE_PERL" and/or "CREATE_PYTHON" and/or "CREATE_TCL" to true.
 Run:
   make
 
-You should now have libraries called libyarp.so and/or _yarp.so
+You should now have libraries called 
++ libyarp.so 
++ and/or _yarp.so 
++ and/or cyarp.so
 
-Now try to run example.pl and/or example.py
+Now try to run example.pl and/or example.py and/or example.tcl
 
 
 ============================================================================
@@ -69,7 +72,7 @@ Run:
 
 You should now have libcsyarp.so and a whole lot of .cs files
 
-The .cs files are not quite write, you need to run:
+The .cs files are not quite correct, you need to run:
   ./csharp-fix.pl
 to fix them up (problems with multiple inheritance mismatch)
 
