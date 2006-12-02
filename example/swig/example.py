@@ -6,7 +6,6 @@ yarp.Network.init()
 
 p = yarp.BufferedPortBottle()
 p.open("/python");
-yarp.Network.connect("/foo","/bar");
 
 top = 100;
 for i in range(1,top):
