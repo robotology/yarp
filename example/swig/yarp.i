@@ -1,31 +1,66 @@
+//////////////////////////////////////////////////////////////////////////
+// 
+// This is a configuration file to explain YARP to SWIG
+//
+// SWIG, for the most part, understands YARP auto-magically.
+// There are a few things that need to be explained:
+//  + use of multiple inheritance
+//  + use of names that clash with special names in Java/Python/Perl/...
+//  + use of templates
+
+
 %module yarpswig
 
+// Translate std::string to whatever the native string type is
 %include "std_string.i"
 
 // Deal with Java method name conflicts
+// We rename a few methods as follows:
+//   toString -> toString_c
+//   wait -> wait_c
+//   clone -> clone_c
 %rename(toString_c) *::toString() const;
 %rename(wait_c) *::wait();
 %rename(clone_c) *::clone() const;
 
-//%rename(open_contact) *::open(const Contact &);
-//%rename(open_contact) *::open(const Contact &,bool); 
-
-// Deal with abstract base class problems
+// Deal with abstract base class problems, where SWIG guesses
+// incorrectly at whether a class can be instantiated or not
 %feature("notabstract") Port;
+%feature("notabstract") BufferedPort;
 %feature("notabstract") Bottle;
+%feature("notabstract") Property;
 %feature("notabstract") Stamp;
-//%feature("abstract") Vocab;
+%feature("abstract") Portable;
 %feature("abstract") Searchable;
+%feature("abstract") Contactable;
 
-// Deal with overridden method clashes
+// Deal with overridden method clashes, simply by ignoring them.
+// At some point, these methods should get renamed so they are still
+// available.
 %ignore *::check(const char *key, Value *& result);
 %ignore *::check(const char *key, Value *& result, const char *comment);
-%ignore *::where();
-%ignore *::seed(int seed);  // perl clash
-//%ignore *::open(Contact const &);
-//%ignore *::open(Contact const &, bool);
+%rename(where_c) *::where();
+%rename(seed_c) *::seed(int seed);  // perl clash
 
+//////////////////////////////////////////////////////////////////////////
+// Clean up a few unimportant things that give warnings
 
+// abstract methods just confuse SWIG
+%ignore yarp::os::BufferedPort::open; // let Contactable::open show
+%ignore yarp::os::Port::open; // let Contactable::open show
+// operator= does not get translated well
+%ignore *::operator=;
+%ignore yarp::PortReaderBuffer;
+%ignore yarp::sig::Image::operator()(int,int) const;
+%ignore yarp::sig::Image::pixel(int,int) const;
+%ignore yarp::sig::Image::getRow(int) const;
+%ignore yarp::sig::Image::getIplImage() const;
+%ignore yarp::os::Property::put(const char *,Value *);
+%ignore yarp::os::Bottle::add(Value *);
+%rename(toString) yarp::os::ConstString::operator const char *() const;
+%ignore yarp::os::PortReader::read;
+
+// Deal with some clash in perl involving the name "seed"
 %{
 #define _SEARCH_H // strange perl clash
 // careful shuffling to deal with perl clash on seed name
@@ -38,32 +73,32 @@
 #define seed seed_c
 #endif
 
+// Bring in the header files that are important to us
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+#include <yarp/dev/all.h>
 
-//deal with the usual ACE residual define...
+// Sometimes ACE redefines main() - we don't want that
 #ifdef main
 #undef main
 #endif
 
+// Bring in the main important namespace
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::dev;
 %}
 
 
-// Parse the original header files
+// Now we parse the original header files
 // Redefine a few things that SWIG currently chokes on
 %define _YARP2_NETINT32_
 %enddef
-// removed by nat: on win was making swig clash while compiling the java interface
-//%define NetInt32 int 
-//%enddef
 typedef int yarp::os::NetInt32;
 %define _YARP2_VOCAB_ 1
 %enddef
 %define PACKED_FOR_NET 
 %enddef
-//%define VOCAB(a,b,c,d) (((d)*256*65536)+((c)*65536)+((b)*256)+(a))
 %define VOCAB(a,b,c,d) 0
 %enddef
 %define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
@@ -101,6 +136,10 @@ typedef int yarp::os::NetInt32;
 %include <yarp/os/Thread.h>
 %include <yarp/os/Time.h>
 %include <yarp/sig/Image.h>
+%include <yarp/sig/Sound.h>
+%include <yarp/dev/PolyDriver.h>
+%include <yarp/dev/FrameGrabberInterfaces.h>
+%include <yarp/dev/AudioVisualInterfaces.h>
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -112,11 +151,27 @@ typedef int yarp::os::NetInt32;
         }
 }
 
+%extend yarp::os::Value {
+	std::string toString() {
+		return self->toString().c_str();
+        }
+}
+
+%extend yarp::os::Property {
+	std::string toString() {
+		return self->toString().c_str();
+        }
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with some templated classes
-
-%feature("notabstract") yarp::os::BufferedPort;
+//
+// We have to shuffle things around a little bit
+//   ImageRgb = ImageOf<PixelRgb>
+//   BufferedPortImageRgb = BufferedPort<ImageOf<PixelRgb> >
+//   BufferedPortBottle = BufferedPort<Bottle>
+//   BufferedPortProperty = BufferedPort<Property>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
@@ -128,33 +183,29 @@ typedef int yarp::os::NetInt32;
 %feature("notabstract") BufferedPort ## name;
 %enddef
 
-%template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
-%feature("notabstract") ImageRgb;
-
-
 MAKE_COMMS(Property)
 MAKE_COMMS(Bottle)
 
 
-//MAKE_COMMS(ImageRgb) // actually this turns out to be a bit trickier...
+// Now we do ImageRgb - it is a little trickey
+//%template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
+
 %{
-//typedef yarp::sig::ImageOf<yarp::sig::PixelMono> ImageMono;
 typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
 typedef yarp::os::TypedReader<ImageRgb> TypedReaderImageRgb;
 typedef yarp::os::TypedReaderCallback<ImageRgb> TypedReaderCallbackImageRgb;
 typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 %}
+
+%feature("notabstract") ImageRgb;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
 %feature("notabstract") BufferedPortImageRgb;
-typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
-typedef yarp::os::TypedReader<ImageRgb> TypedReaderImageRgb;
-typedef yarp::os::TypedReaderCallback<ImageRgb> TypedReaderCallbackImageRgb;
-typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
-%template(TypedReaderImageRgb) yarp::os::TypedReader<ImageRgb>;
-%template(TypedReaderCallback) yarp::os::TypedReaderCallback<ImageRgb>;
-%template(BufferedPortImageRgb) yarp::os::BufferedPort<ImageRgb>;
-%feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
-%feature("notabstract") BufferedPortImageRgb;
+
+%template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
+%template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+%template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+%template(BufferedPortImageRgb) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -173,4 +224,21 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return self->write(*((PortWriter*)(&data)));
 	}
 }
+
+
+//////////////////////////////////////////////////////////////////////////
+// Deal with PolyDriver idiom that doesn't translate too well
+
+%extend yarp::dev::PolyDriver {
+	yarp::dev::IFrameGrabberImage *viewFrameGrabberImage() {
+		yarp::dev::IFrameGrabberImage *result;
+		self->view(result);
+		return result;
+	}
+
+	// you'll need to add an entry for every interface you wish
+	// to use
+}
+
+
 

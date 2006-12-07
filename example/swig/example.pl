@@ -5,7 +5,6 @@ use yarp;
 yarp::Network::init();
 
 my $p = new yarp::BufferedPortBottle();
-#my $p = new yarp::BufferedPortImageRgb();
 
 $p->open("/perl");
 
