@@ -12,7 +12,10 @@ ENDIF(WIN32 AND NOT CYGWIN)
 #################################################
 
 
-SET(CREATE_DEVICE_LIBRARY FALSE CACHE BOOL "Do you want to compile the device library")
+# compile device library by default - safe, since individual devices
+# are added on request
+SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
+SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Do you want to build in some devices")
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 
 SET(CREATE_SHARED_LIBRARY FALSE CACHE BOOL "Compile shared libraries rather than linking statically")
@@ -24,4 +27,4 @@ ENDIF (WIN32)
 # Flag for device testing and documentation - not really for end-user,
 # but instead the library developers
 SET(CREATE_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create device tests")
-MARK_AS_ADVANCED(CREATE_DEVICE_TESTS)
+MARK_AS_ADVANCED(CREATE_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
