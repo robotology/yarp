@@ -6,6 +6,8 @@
  *
  */
 
+#ifndef __YARP2_SERVICEINTERFACES__
+#define __YARP2_SERVICEINTERFACES__
 
 #include <yarp/dev/DeviceDriver.h>
 
@@ -55,3 +57,5 @@ public:
         return false;
     }
 };
+
+#endif

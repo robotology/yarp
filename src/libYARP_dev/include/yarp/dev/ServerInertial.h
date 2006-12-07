@@ -182,7 +182,7 @@ public:
         printf("Server Inertial starting\n");
         while (!isStopping())
 			{
-				before = Time::now();
+				before = yarp::os::Time::now();
 				if (IMU!=NULL)
                     {
                         yarp::os::Bottle& bot = writer.get();

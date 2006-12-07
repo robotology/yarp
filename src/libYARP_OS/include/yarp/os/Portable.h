@@ -26,6 +26,11 @@ namespace yarp {
  * PortReader and PortWriter.
  */
 class yarp::os::Portable : public PortReader, public PortWriter {
+public:
+    // reiterate the inherited virtual methods, just as a reminder
+
+    virtual bool read(ConnectionReader& connection) = 0;
+    virtual bool write(ConnectionWriter& connection) = 0;
 };
 
 #endif

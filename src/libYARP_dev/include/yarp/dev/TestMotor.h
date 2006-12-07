@@ -46,7 +46,7 @@ public:
     }
 
     virtual bool open(yarp::os::Searchable& config) {
-        njoints = config.check("axes",Value(1),"number of axes to pretend to have").asInt();
+        njoints = config.check("axes",yarp::os::Value(1),"number of axes to pretend to have").asInt();
         pos.size(njoints);
         speed.size(njoints);
         acc.size(njoints);
