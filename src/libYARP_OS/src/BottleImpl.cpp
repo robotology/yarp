@@ -681,10 +681,18 @@ String StoreString::toStringNested() const {
     result += "\"";
     for (unsigned int j=0; j<x.length(); j++) {
         char ch = x[j];
-        if (ch=='\\'||ch=='\"') {
+        if (ch=='\n') {
             result += '\\';
+            result += 'n';
+        } else if (ch=='\r') {
+            result += '\\';
+            result += 'r';
+        } else {
+            if (ch=='\\'||ch=='\"') {
+                result += '\\';
+            }
+            result += ch;
         }
-        result += ch;
     }
     result += "\"";
 
@@ -719,8 +727,18 @@ void StoreString::fromStringNested(const String& src) {
                         back = false;
                     }
                 } else {
+                    if (back) {
+                        if (ch=='n') {
+                            x += '\n';
+                        } else if (ch=='r') {
+                            x += '\r';
+                        } else {
+                            x += ch;
+                        }
+                    } else {
+                        x += ch;
+                    }
                     back = false;
-                    x += ch;
                 }
             }
         }

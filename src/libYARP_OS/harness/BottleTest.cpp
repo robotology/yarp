@@ -342,6 +342,21 @@ public:
         report(0,"testing special characters...");
         Bottle bot("file ../foo.txt");
         checkTrue(bot.get(1).isString(),"paths starting with a decimal");
+        Bottle bot2;
+        ConstString test = "\"\n\r\"";
+        bot2.addString(test);
+        Bottle bot3;
+        bot3.fromString(bot2.toString());
+        checkEqual(bot3.get(0).asString().c_str(),test.c_str(),
+                   "roundtripping quotes newline etc");
+    }
+
+    void testAppend() {
+        report(0,"testing append...");
+        Bottle bot1("1 2 3");
+        Bottle bot2("4 5");
+        bot1.append(bot2);
+        checkEqual(bot1.size(),5,"add two bottles");
     }
 
     virtual void runTests() {
@@ -363,6 +378,7 @@ public:
         testNestDetection();
         testReread();
         testSpecialChars();
+        testAppend();
     }
 
     virtual String getName() {

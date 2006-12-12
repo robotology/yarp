@@ -237,6 +237,17 @@ public:
     }
     
     
+    /**
+     * Append the content of the given bottle to the current
+     * list.
+     * @param alt the content to add
+     */
+    void append(const Bottle& alt) {
+        for (int i=0; i<alt.size(); i++) {
+            add(alt.get(i));
+        }
+    }
+
 
 
 

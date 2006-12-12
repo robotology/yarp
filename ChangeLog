@@ -1,5 +1,8 @@
 2006-12-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/BottleImpl.cpp: fixed some gaps in 
+	text-mode quoting for bottles
+
 	* src/libYARP_OS/src/Vector.cpp: fixed constructor bug #1601862
 
 2006-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
