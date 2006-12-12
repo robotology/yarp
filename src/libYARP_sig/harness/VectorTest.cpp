@@ -11,6 +11,8 @@
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 
+#include <vector>
+
 #include "TestList.h"
 
 using namespace yarp;
@@ -49,6 +51,12 @@ public:
         Vector v2;
         v2 = v;
         checkEqual(v.size(),v2.size(),"size matches");
+
+        report(0,"check bug #1601862...");
+        std::vector<sig::Vector> myList; //using stl vector
+        Vector v3(10);
+        myList.push_back(v3);
+        // this segfaults on linux
     }
 
     virtual void runTests() {

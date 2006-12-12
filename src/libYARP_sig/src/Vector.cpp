@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.cpp,v 1.8 2006-10-24 19:51:04 eshuy Exp $
+// $Id: Vector.cpp,v 1.9 2006-12-12 13:42:12 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -29,7 +29,14 @@ using namespace yarp::sig;
 using namespace yarp;
 
 Vector::Vector() : ACE_Array<double>() {}
-Vector::Vector(const Vector& x) : ACE_Array<double>((ACE_Array<double>&)x) {}
+
+// buggy!
+//Vector::Vector(const Vector& x) : ACE_Array<double>((ACE_Array<double>&)x) {}
+Vector::Vector(const Vector& x) {
+    *this = x;
+}
+
+
 Vector::~Vector() {}
 
 Vector& Vector::operator=(const Vector& x) { 
