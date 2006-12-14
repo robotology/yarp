@@ -54,6 +54,9 @@ Value *Value::makeList() {
 
 Value *Value::makeValue(const char *txt) {
     Bottle bot(txt);
+    if (bot.size()>1) {
+        return makeString(txt);
+    }
     return bot.get(0).clone();
 }
 
