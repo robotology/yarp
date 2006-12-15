@@ -502,10 +502,11 @@ private:
     SemaphoreImpl done;
     bool raw;
     bool env;
+    Address address;
 public:
     BottleReader(const char *name, bool showEnvelope) : done(0) {
         NameClient& nic = NameClient::getNameClient();
-        Address address = nic.registerName(name);
+        address = nic.registerName(name);
         raw = false;
         env = showEnvelope;
         core.setReadHandler(*this);
@@ -563,6 +564,10 @@ public:
         core.close();
         core.join();
     }
+
+    String getName() {
+        return address.getRegName();
+    }
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -574,7 +579,7 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     try {
         BottleReader reader(name,showEnvelope);
         if (src!=NULL) {
-            Network::connect(src,name);
+            Network::connect(src,reader.getName().c_str());
         }
         reader.wait();
         reader.close();
