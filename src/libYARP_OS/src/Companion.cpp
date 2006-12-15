@@ -511,7 +511,7 @@ public:
         core.setReadHandler(*this);
         if (address.isValid()) {
             ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
-                            name,
+                            address.getRegName().c_str(),
                             address.toString().c_str());
             core.listen(address);
             core.start();
