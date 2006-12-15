@@ -962,7 +962,7 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
     const BottleImpl *src = &alt;
     BottleImpl tmp;
     if (&alt == this) {
-        tmp = *this;
+        tmp.fromString(toString());
         src = &tmp;
     }
 
