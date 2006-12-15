@@ -673,6 +673,9 @@ String StoreString::toStringNested() const {
             }
         }
     }
+    if (x.length()==0) {
+        needQuote = true;
+    }
 
     if (!needQuote) {
         return x;
