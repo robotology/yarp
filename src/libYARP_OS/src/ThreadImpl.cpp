@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006 Paul Fitzpatrick and Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
-//added threadRelease/threadInit methods, synchronization and 
-//init failure notification -nat 
+// added threadRelease/threadInit methods, synchronization and 
+// init failure notification -nat 
 
 #include <yarp/ThreadImpl.h>
 #include <yarp/SemaphoreImpl.h>
@@ -47,7 +47,12 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     ThreadImpl::changeCount(-1);
     YARP_DEBUG(Logger::get(),"Thread shutting down");
     //ACE_Thread::exit();
-	thread->notify(false);
+
+    //thread->notify(false);
+    // this notification removed since it confuses start() for
+    // threads that stop very rapidly, and everything else looks
+    // like it will work without this --paulfitz
+
     return 0;
 }
 

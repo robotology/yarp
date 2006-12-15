@@ -1,3 +1,11 @@
+2006-12-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ThreadImpl.cpp: fixed behavior of threads
+	that shut down immediately.
+
+	* src/libYARP_OS/src/BottleImpl.cpp: sundry small improvements.
+
+
 2006-12-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: fixed some gaps in 
