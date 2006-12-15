@@ -959,17 +959,24 @@ yarp::os::Bottle& BottleImpl::addList() {
 
 
 void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
+    const BottleImpl *src = &alt;
+    BottleImpl tmp;
+    if (&alt == this) {
+        tmp = *this;
+        src = &tmp;
+    }
+
     clear();
-    if (len==-1) { len = alt.size(); }
+    if (len==-1) { len = src->size(); }
     int last = first + len - 1;
-    int top = alt.size()-1;
+    int top = src->size()-1;
     if (first<0) { first = 0; }
     if (last<0) { last = 0; }
     if (first>top) { first = top; }
     if (last>top) { last = top; }
 
     for (int i=first; i<=last; i++) {
-        add(alt.get(i).cloneStorable());
+        add(src->get(i).cloneStorable());
     }
 }
 

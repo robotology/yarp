@@ -217,6 +217,8 @@ public:
         bot2.copy(bot1,1,2);
         checkEqual(bot2.size(),2,"subrange");
         checkEqual(bot2.get(0).toString().c_str(),"2 3","subrange");
+        bot2.copy(bot2,0,1);
+        checkEqual(bot2.size(),1,"self copy");
     }
 
     void testFind() {
