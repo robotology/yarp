@@ -172,7 +172,7 @@ bool ThreadImpl::start() {
 		}
 	}
 	//the thread did not start, call afterStart() to warn the user
-	YARP_DEBUG(Logger::get(),"Thread did not start");
+	YARP_ERROR(Logger::get(),"Thread did not start");
 	afterStart(false);
 	return false;
 }
