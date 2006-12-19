@@ -36,6 +36,7 @@ public:
     bool isThing(ID id);
     Thing& getThing(ID id);
 
+    virtual void run() { main(); }
     virtual void main();
 
     void save(bool force = false);
