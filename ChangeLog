@@ -1,5 +1,10 @@
 2007-01-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/external/nameclient.cpp: Added an example of accessing
+	the yarp name client using UNIX-style native tcp socket 
+	interface, rather than ACE+YARP.  This was in response to
+	questions from someone evaluating YARP.
+
 	* src/libYARP_dev/src/opencv_grabber: Added --loop option for
 	opencv_grabber, per Alex Bernardino's suggestion.
 
