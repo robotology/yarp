@@ -26,6 +26,7 @@ namespace yarp {
     }
 }
 
+#include <yarp/os/Property.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 
@@ -78,10 +79,15 @@ protected:
     int m_w;
     /** Height of the images a grabber produces. */
     int m_h;
-  
+
+    /** Whether to loop or not */
+    bool m_loop;
+
     /** Opaque OpenCV structure for image capture. */
     void * m_capture;
 
+    /** Saved copy of the device configuration */
+    yarp::os::Property m_config;
 };
 
 

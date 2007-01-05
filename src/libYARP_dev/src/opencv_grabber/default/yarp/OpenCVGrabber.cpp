@@ -73,10 +73,8 @@ using namespace yarp::dev;
 
 
 bool OpenCVGrabber::open(Searchable & config) {
-
     // Release any previously allocated resources, just in case
     close();
-
 
     // Are we capturing from a file or a camera ?
     ConstString file = config.check("movie", Value(""),
@@ -92,7 +90,12 @@ bool OpenCVGrabber::open(Searchable & config) {
             return false;
         }
 
+        // Should we loop?
+        m_loop = config.check("loop","if present, loop movie");
+
     } else {
+
+        m_loop = false;
 
         // Try to open a capture object for the first camera
         m_capture = (void*)cvCaptureFromCAM(-1);
@@ -127,6 +130,10 @@ bool OpenCVGrabber::open(Searchable & config) {
 
     fprintf(stderr, "-->OpenCVGrabber opened\n");
     // Success!
+
+    // save our configuration for future reference
+    m_config.fromString(config.toString());
+
     return true;
 
 }
@@ -174,6 +181,12 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     // Grab and retrieve a frame, OpenCV owns the returned image
     IplImage * iplFrame = cvQueryFrame((CvCapture*)m_capture);
     //fprintf(stderr, "-->HERE2\n");
+
+    if (0 == iplFrame && m_loop) {
+        bool ok = open(m_config);
+        if (!ok) return false;
+        iplFrame = cvQueryFrame((CvCapture*)m_capture);
+    }
 
     if (0 == iplFrame) {
         image.zero(); return false;
