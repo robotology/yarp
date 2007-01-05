@@ -682,7 +682,7 @@ public:
 
         report(0,"check that input/output counts are accurate...");
         int top = 3;
-        Port p[top];
+        Port p[3];
         p[0].open("/a");
         p[1].open("/b");
         p[2].open("/c");
