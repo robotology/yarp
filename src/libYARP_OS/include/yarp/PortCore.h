@@ -52,6 +52,7 @@ public:
         face = NULL;
         reader = NULL;
         readableCreator = NULL;
+        outputCount = inputCount = 0;
     }
 
     virtual ~PortCore();
@@ -60,6 +61,10 @@ public:
     bool listen(const Address& address);
 
     bool isWriting();
+
+    int getInputCount();
+
+    int getOutputCount();
 
     void setReadHandler(Readable& reader);
 
@@ -162,6 +167,7 @@ private:
     bool waitBeforeSend, waitAfterSend;
     int events;
     int connectionListeners;
+    int inputCount, outputCount;
     PortCorePackets packets;
     String envelope;
 

@@ -238,7 +238,7 @@ int Companion::sendMessage(const String& port, Writable& writable,
         }
         return 1;
     }
-    Route route("external",port,"text");
+    Route route("admin",port,"text");
     try {
         out->open(route);
         //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
@@ -246,8 +246,12 @@ int Companion::sendMessage(const String& port, Writable& writable,
         BufferedConnectionWriter bw(out->isTextMode());
         //bw.appendLine(msg);
         //writable.writeBlock(bw);
+        PortCommand disconnect('\0',"q");
         bool ok = writable.write(bw);
         if (!ok) {
+            throw IOException("writer failed");
+        }
+        if (!disconnect.write(bw)) {
             throw IOException("writer failed");
         }
 
@@ -478,6 +482,12 @@ int Companion::cmdCheck(int argc, char *argv[]) {
 int Companion::connect(const char *src, const char *dest, bool silent) {
     PortCommand pc('\0',slashify(dest));
     return sendMessage(src,pc,silent);
+}
+
+
+int Companion::poll(const char *target, bool silent) {
+    PortCommand pc('\0',"*");
+    return sendMessage(target,pc,silent);
 }
 
 int Companion::disconnect(const char *src, const char *dest, bool silent) {

@@ -152,6 +152,20 @@ public:
      */
     virtual bool getEnvelope(PortReader& envelope) = 0;
 
+
+    /**
+     * Determine how many connections are arriving into this port.
+     * In other words, how many other ports have this port listed as
+     * an output?
+     * @return number of input connections
+     */
+    virtual int getInputCount() = 0;
+
+    /**
+     * Determine how many output connections this port has.
+     * @return number of output connections
+     */
+    virtual int getOutputCount() = 0;
 };
 
 #endif

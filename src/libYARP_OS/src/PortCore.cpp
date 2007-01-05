@@ -409,7 +409,7 @@ void PortCore::reapUnits() {
                     unit->join();
                     //printf("done Reaping...%s\n", unit->getRoute().toString().c_str());
                     YARP_DEBUG(log,"done REAPING a unit");
-                }
+                } 
             }
         }
     }
@@ -418,6 +418,8 @@ void PortCore::reapUnits() {
 }
 
 void PortCore::cleanUnits() {
+    int updatedInputCount = 0;
+    int updatedOutputCount = 0;
     YARP_DEBUG(log,"CLEANING scan");
     stateMutex.wait();
     if (!finished) {
@@ -437,6 +439,17 @@ void PortCore::cleanUnits() {
                     delete unit;
                     units[i] = NULL;
                     YARP_DEBUG(log,"done CLEANING a unit");
+                } else {
+                    if (!unit->isDoomed()) {
+                        if (unit->isOutput()) {
+                            updatedOutputCount++;
+                        }
+                        if (unit->isInput()) {
+                            if (unit->getRoute().getFromName()!="admin") {
+                                updatedInputCount++;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -455,6 +468,8 @@ void PortCore::cleanUnits() {
         }
         //YMSG(("cleanUnits: there are now %d units\n", units.size()));
     }
+    inputCount = updatedInputCount;
+    outputCount = updatedOutputCount;
     stateMutex.post();
     YARP_DEBUG(log,"CLEANING scan done");
 }
@@ -737,6 +752,10 @@ void PortCore::describe(void *id, OutputStream *os) {
 
     if (os!=NULL) {
         bw.write(*os);
+    } else {
+        StringOutputStream sos;
+        bw.write(sos);
+        printf("%s\n",sos.toString().c_str());
     }
 }
 
@@ -857,6 +876,24 @@ bool PortCore::isWriting() {
     stateMutex.post();
 
     return writing;
+}
+
+
+int PortCore::getInputCount() {
+    cleanUnits();
+    //describe(NULL,NULL);
+    stateMutex.wait();
+    int result = inputCount;
+    stateMutex.post();
+    return result;
+}
+
+int PortCore::getOutputCount() {
+    cleanUnits();
+    stateMutex.wait();
+    int result = outputCount;
+    stateMutex.post();
+    return result;
 }
 
 

@@ -70,6 +70,8 @@ public:
     static int disconnectInput(const char *target, const char *src,
                                bool silent = false);
 
+    static int poll(const char *target, bool silent = false); 
+
     /**
      * Create a port to read Bottles and prints them to standard input.
      * It assumes the Bottles consist of an integer followed by a string.

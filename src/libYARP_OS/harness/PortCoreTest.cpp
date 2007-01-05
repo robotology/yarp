@@ -101,7 +101,7 @@ public:
             receiver.listen(read);
             sender.start();
             receiver.start();
-            Time::delay(1);
+            //Time::delay(1);
             BottleImpl bot;
             bot.addInt(0);
             bot.addString("Hello world");
@@ -154,7 +154,7 @@ public:
             receiver.listen(read);
             sender.start();
             receiver.start();
-            Time::delay(1);
+            //Time::delay(1);
             BottleImpl bot;
             bot.addInt(0);
             bot.addString("Hello world");

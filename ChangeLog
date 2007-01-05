@@ -1,5 +1,8 @@
 2007-01-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/Contactable.h: Exposed input
+	and output connection counts for Ports and BufferedPorts.
+
 	* example/external/nameclient.cpp: Added an example of accessing
 	the yarp name client using UNIX-style native tcp socket 
 	interface, rather than ACE+YARP.  This was in response to

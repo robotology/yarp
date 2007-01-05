@@ -186,6 +186,7 @@ void PortCoreInputUnit::run() {
         YARP_DEBUG(Logger::get(),e.toString() + " <<< PortCoreInputUnit exception");
     }
 
+    setDoomed(true);
   
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
     ip->close();

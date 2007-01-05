@@ -202,6 +202,15 @@ public:
         return port.getEnvelope(envelope);
     }
 
+    // documented in Contactable
+    virtual int getInputCount() {
+        return port.getInputCount();
+    }
+
+    // documented in Contactable
+    virtual int getOutputCount() {
+        return port.getOutputCount();
+    }
 
 private:
     // solaris preferred order - strange

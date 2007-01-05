@@ -394,3 +394,12 @@ bool Port::getEnvelope(PortReader& envelope) {
     return core.getEnvelope(envelope);
 }
 
+int Port::getInputCount() {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.getInputCount();
+}
+
+int Port::getOutputCount() {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.getOutputCount();
+}

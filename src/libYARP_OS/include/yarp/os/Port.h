@@ -150,6 +150,11 @@ public:
     // documented in Contactable
     virtual bool getEnvelope(PortReader& envelope);
 
+    // documented in Contactable
+    virtual int getInputCount();
+
+    // documented in Contactable
+    virtual int getOutputCount();
 private:
     void *implementation;
 

@@ -42,6 +42,11 @@ bool Network::disconnect(const char *src, const char *dest, bool quiet) {
     return result == 0;
 }
 
+bool Network::sync(const char *port) {
+    int result = Companion::poll(port,true);
+    return result == 0;
+}
+
 
 int Network::main(int argc, char *argv[]) {
     return Companion::main(argc,argv);

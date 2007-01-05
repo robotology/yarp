@@ -678,10 +678,53 @@ public:
     }
 
 
+    virtual void testCounts() {
+
+        report(0,"check that input/output counts are accurate...");
+        int top = 3;
+        Port p[top];
+        p[0].open("/a");
+        p[1].open("/b");
+        p[2].open("/c");
+        for (int i=0; i<top; i++) {
+            checkEqual(p[i].getInputCount(),0,"no input connections");
+            checkEqual(p[i].getOutputCount(),0,"no output connections");
+        }
+        Network::connect("/a","/b");
+        Network::connect("/a","/c");
+
+        Network::sync("/a");
+        Network::sync("/b");
+        Network::sync("/c");
+
+        checkEqual(p[0].getInputCount(),0,"input connections");
+        checkEqual(p[0].getOutputCount(),2,"output connections");
+        checkEqual(p[1].getInputCount(),1,"input connections");
+        checkEqual(p[1].getOutputCount(),0,"output connections");
+        checkEqual(p[2].getInputCount(),1,"input connections");
+        checkEqual(p[2].getOutputCount(),0,"output connections");
+
+        Network::disconnect("/a","/c");
+
+        Network::sync("/a");
+        Network::sync("/b");
+        Network::sync("/c");
+
+        checkEqual(p[0].getInputCount(),0,"input connections");
+        checkEqual(p[0].getOutputCount(),1,"output connections");
+        checkEqual(p[1].getInputCount(),1,"input connections");
+        checkEqual(p[1].getOutputCount(),0,"output connections");
+        checkEqual(p[2].getInputCount(),0,"input connections");
+        checkEqual(p[2].getOutputCount(),0,"output connections");
+
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
 
+        if (0) {
         testOpen();
         testReadBuffer();
         testPair();
@@ -701,6 +744,8 @@ public:
         testRecentReader();
         testUnbufferedClose();
         //testCloseOpenRepeats(); //bring this back soon
+        }
+        testCounts();
 
         nic.setFakeMode(false);
     }

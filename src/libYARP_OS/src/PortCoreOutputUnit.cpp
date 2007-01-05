@@ -105,6 +105,7 @@ void PortCoreOutputUnit::runSimulation() {
 }
 
 void PortCoreOutputUnit::closeBasic() {
+    bool waitForOther = false;
     if (op!=NULL) {
         Route route = op->getRoute();
         if (op->isConnectionless()) {
@@ -116,6 +117,17 @@ void PortCoreOutputUnit::closeBasic() {
                 YARP_DEBUG(Logger::get(),e.toString() + 
                            " <<< exception during request to close input");
             }
+        } else {
+            try {
+                BufferedConnectionWriter buf(op->isTextMode());
+                PortCommand pc('\0',String("q"));
+                pc.write(buf);
+                op->write(buf);
+                waitForOther = true;
+            } catch (IOException e) {
+                YARP_DEBUG(Logger::get(),e.toString() + 
+                           " <<< exception for inline request to close input");
+            }
         }
         if (Name(route.getToName()).isRooted()) {
             YARP_INFO(Logger::get(),String("Removing output from ") + 
@@ -126,6 +138,11 @@ void PortCoreOutputUnit::closeBasic() {
 
     if (op!=NULL) {
         try {
+            if (waitForOther) {
+                InputStream& is = op->getInputStream();
+                ManagedBytes dummy(1);
+                is.read(dummy.bytes());
+            }
             op->close();
         } catch (IOException e) { /*ok*/ }
         try {

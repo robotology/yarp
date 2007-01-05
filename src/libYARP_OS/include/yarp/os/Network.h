@@ -52,6 +52,13 @@ public:
                            bool quiet=true);
 
     /**
+     * Wait for a port to be ready and responsive.
+     * @param port the name of a port
+     * @return true on success, false on failure
+     */
+    static bool sync(const char *port);
+
+    /**
      * The standard main method for the YARP companion utility.
      * @param argc argument count
      * @param argv command line arguments
