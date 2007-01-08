@@ -248,7 +248,16 @@ public:
         }
     }
 
-
+    /**
+     * Get all but the first element of a bottle.
+     * @return a bottle containing all but the first element of the
+     * current bottle.
+     */
+    Bottle tail() const {
+        Bottle b;
+        b.copy(*this,1,size()-1);
+        return b;
+    }
 
 
 

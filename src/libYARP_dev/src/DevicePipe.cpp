@@ -18,9 +18,10 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 bool DevicePipe::open(yarp::os::Searchable& config) {
-    bool ok = open("source",source,config);
+    bool ok = open("source",source,config,
+                   "device to read from (string or nested properties)");
     if (!ok) return false;
-    ok = open("sink",sink,config);
+    ok = open("sink",sink,config,"device to write to (string or nested properties)");
     if (!ok) {
         source.close();
         return false;
@@ -30,10 +31,10 @@ bool DevicePipe::open(yarp::os::Searchable& config) {
 
 
 bool DevicePipe::open(const char *key, PolyDriver& poly, 
-                      yarp::os::Searchable& config) {
+                      yarp::os::Searchable& config, const char *comment) {
     
     Value *name;
-    if (config.check(key,name,"source device to wrap")) {
+    if (config.check(key,name,comment)) {
         if (name->isString()) {
             // maybe user isn't doing nested configuration
             yarp::os::Property p;
@@ -45,7 +46,8 @@ bool DevicePipe::open(const char *key, PolyDriver& poly,
             p.unput("wrapped");
             poly.open(p);
         } else {
-            poly.open(*name);
+            Bottle subdevice = config.findGroup(key).tail();
+            poly.open(subdevice);
         }
         if (!poly.isValid()) {
             printf("cannot make <%s>\n", name->toString().c_str());

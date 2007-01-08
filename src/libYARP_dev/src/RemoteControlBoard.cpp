@@ -256,7 +256,8 @@ public:
                 p.put("device",name->toString());
                 poly.open(p);
             } else {
-                poly.open(*name);
+                Bottle subdevice = prop.findGroup("subdevice").tail();
+                poly.open(subdevice);
             }
             if (!poly.isValid()) {
                 ACE_OS::printf("cannot make <%s>\n", name->toString().c_str());

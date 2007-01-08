@@ -44,7 +44,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             p.unput("subdevice");
             poly.open(p);
         } else {
-            poly.open(*name);
+            Bottle subdevice = config.findGroup("subdevice").tail();
+            poly.open(subdevice);
         }
         if (!poly.isValid()) {
             //printf("cannot make <%s>\n", name->toString().c_str());

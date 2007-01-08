@@ -48,7 +48,7 @@ protected:
     PolyDriver source, sink;
 
     bool open(const char *key, PolyDriver& poly, 
-              yarp::os::Searchable& config);
+              yarp::os::Searchable& config, const char *comment);
 };
 
 

@@ -263,7 +263,6 @@ static void handler (int) {
 }
 
 
-
 int Drivers::yarpdev(int argc, char *argv[]) {
 
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);

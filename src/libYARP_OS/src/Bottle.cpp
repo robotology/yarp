@@ -207,7 +207,8 @@ Value& Bottle::findBit(const char *key) {
         Value *cursor = org;
         bool nested = false;
         if (cursor->isList()) {
-            cursor = &(cursor->asList()->get(0));
+            Bottle *bot = cursor->asList();
+            cursor = &(bot->get(0));
             nested = true;
         }
         if (String(key)==cursor->toString().c_str()) {
@@ -218,7 +219,10 @@ Value& Bottle::findBit(const char *key) {
                 SearchReport report;
                 report.key = key;
                 report.isFound = true;
-                report.value = get(i+1).toString();
+                if (size()==2) {
+                    report.value = get(i+1).toString();
+                } else {
+                }
                 reportToMonitor(report);
             }
             return get(i+1);

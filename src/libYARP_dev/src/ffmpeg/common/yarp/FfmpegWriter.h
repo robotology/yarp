@@ -72,6 +72,7 @@ private:
         if (delayed) {
             delayed = false;
             ready = delayedOpen(savedConfig);
+            if (delayed) { ready = false; }
         }
         return ready;
     }
