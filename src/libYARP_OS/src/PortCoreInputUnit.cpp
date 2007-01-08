@@ -139,6 +139,10 @@ void PortCoreInputUnit::run() {
                 case 'q':
                     done = true;
                     break;
+                case 'i':
+                    printf("Interrupt requested\n");
+                    ACE_OS::kill(0,2); // SIGINT
+                    break;
                 case '?':
                 case 'h':
                     if (os!=NULL) {
@@ -147,6 +151,7 @@ void PortCoreInputUnit::run() {
                         bw.appendLine("*       Gives a description of this port");
                         bw.appendLine("d       Signals the beginning of input for the port's owner");
                         bw.appendLine("q       Disconnects");
+                        bw.appendLine("i       Interrupt parent process");
                         bw.appendLine("/port   Requests to send output to /port");
                         bw.appendLine("!/port  Requests to stop sending output to /port");
                         bw.appendLine("~/port  Requests to stop receiving input from /port");

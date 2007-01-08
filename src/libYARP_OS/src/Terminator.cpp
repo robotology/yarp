@@ -14,9 +14,12 @@
 #include <yarp/Address.h>
 #include <yarp/SocketTwoWayStream.h>
 #include <yarp/NameClient.h>
+#include <yarp/Companion.h>
+#include <yarp/PortCommand.h>
 
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Network.h>
+
 
 using namespace yarp;
 using namespace yarp::os;
@@ -24,8 +27,17 @@ using namespace yarp::os;
 bool Terminator::terminateByName(const char *name) {
     if (name == NULL)
         return false;
-    
+
     String s(name);
+
+    if (s.strstr("/quit")<0) {
+        // name doesn't include /quit
+        // old mechanism won't work, let's try new
+        PortCommand pc('\0',"i");
+        Companion::sendMessage(s,pc,true);
+        return true;
+    }
+
     if (name[0] != '/') {
         s.clear();
         s += "/";

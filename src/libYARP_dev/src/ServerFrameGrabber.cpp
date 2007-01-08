@@ -135,7 +135,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
 
 bool ServerFrameGrabber::read(ConnectionReader& connection) {
     yarp::os::Bottle cmd, response;
-    cmd.read(connection);
+    if (!cmd.read(connection)) { return false; }
     printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {

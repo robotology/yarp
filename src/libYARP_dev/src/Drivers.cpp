@@ -400,6 +400,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     delete terminee;
     dd.close();
 
+    printf("yarpdev is finished.\n");
+
     return 0;
 }
 

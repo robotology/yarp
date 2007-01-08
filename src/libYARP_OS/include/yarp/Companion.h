@@ -105,6 +105,9 @@ public:
     static String readString(bool *eof=NULL);
 
 
+    static int sendMessage(const String& port, Writable& writable, 
+                           bool silent = false);
+
 
 private:
 
@@ -145,9 +148,6 @@ private:
     int cmdServer(int argc, char *argv[]);
 
     int cmdCheck(int argc, char *argv[]);
-
-    static int sendMessage(const String& port, Writable& writable, 
-                           bool silent = false);
 
     class Entry {
     public:
