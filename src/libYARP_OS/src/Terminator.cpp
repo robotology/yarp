@@ -88,6 +88,9 @@ Terminee::Terminee(const char *name) {
 
 Terminee::~Terminee() {
     TermineeHelper& helper = HELPER(implementation);
+    if (!quit) {
+        Terminator::terminateByName(helper.registeredName.c_str());
+    }
     helper.sock.interrupt();
     helper.acceptor.close();
     stop();
