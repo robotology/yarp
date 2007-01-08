@@ -25,6 +25,7 @@ bool DevicePipe::open(yarp::os::Searchable& config) {
         source.close();
         return false;
     }
+    return true;
 }
 
 
