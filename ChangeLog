@@ -1,3 +1,8 @@
+2007-01-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ffmpeg: Added FfmpegWriter as basic
+	interface to ffmpeg's media writing capability.
+
 2007-01-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Contactable.h: Exposed input

@@ -245,6 +245,7 @@ static void toDox(PolyDriver& dd, ostream& os) {
 
 
 static ConstString terminatorKey = "";
+static bool terminated = false;
 static void handler (int) {
     static int ct = 0;
     ct++;
@@ -256,7 +257,8 @@ static void handler (int) {
         printf("[try %d of 3] Trying to shut down %s\n", 
                ct,
                terminatorKey.c_str());
-        Terminator::terminateByName(terminatorKey.c_str());
+        terminated = true;
+        //Terminator::terminateByName(terminatorKey.c_str());
     }
 }
 
@@ -378,7 +380,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service = NULL;
         }
     }
-    while (dd.isValid() && !terminee->mustQuit()) {
+    while (dd.isValid() && !(terminated||terminee->mustQuit())) {
         if (service!=NULL) {
             double now = Time::now();
             double dnow = 1;

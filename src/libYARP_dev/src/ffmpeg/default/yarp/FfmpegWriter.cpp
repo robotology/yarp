@@ -442,6 +442,9 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     int framerate = config.check("framerate",Value(30),
                                  "baseline images per second").asInt();
 
+    filename = config.check("out",Value("movie.avi"),
+                            "name of movie to write").asString();
+
     delayed = false;
     if (w<=0||h<=0) {
         delayed = true;
@@ -452,8 +455,6 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     /* initialize libavcodec, and register all codecs and formats */
     av_register_all();
     
-    filename = "test.avi";
-
     /* auto detect the output format from the name. default is
        mpeg. */
     fmt = guess_format(NULL, filename.c_str(), NULL);
@@ -544,6 +545,8 @@ bool FfmpegWriter::close() {
 
     /* free the stream */
     av_free(oc);
+
+    printf("Closed media file %s\n", filename.c_str());
 
     return true;
 }
