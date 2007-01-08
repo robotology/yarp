@@ -243,7 +243,28 @@ static void toDox(PolyDriver& dd, ostream& os) {
        << endl;
 }
 
+
+static ConstString terminatorKey = "";
+static void handler (int) {
+    static int ct = 0;
+    ct++;
+    if (ct>3) {
+        printf("Aborting...\n");
+        ACE_OS::exit(1);
+    }
+    if (terminatorKey!="") {
+        printf("[try %d of 3] Trying to shut down %s\n", 
+               ct,
+               terminatorKey.c_str());
+        Terminator::terminateByName(terminatorKey.c_str());
+    }
+}
+
+
+
 int Drivers::yarpdev(int argc, char *argv[]) {
+
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
 
     // get command line options
     Property options;
@@ -334,6 +355,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             s += "/quit";
         }
         terminee = new Terminee(s.c_str());
+        terminatorKey = s.c_str();
         if (terminee == 0) {
             printf("Can't allocate terminator socket port\n");
             return 1;

@@ -91,6 +91,7 @@ using namespace yarp::dev;
 
 #ifdef ENABLE_ffmpeg
 #include <yarp/FfmpegGrabber.h>
+#include <yarp/FfmpegWriter.h>
 #endif
 
 #ifdef ENABLE_jrkerr
@@ -104,6 +105,7 @@ using namespace yarp::dev;
 
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
+#include <yarp/dev/DevicePipe.h>
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
@@ -179,6 +181,9 @@ void Drivers::init() {
     add(new DriverCreatorOf<FfmpegGrabber>("ffmpeg_grabber", 
                                            "grabber",
                                            "FfmpegGrabber"));
+    add(new DriverCreatorOf<FfmpegWriter>("ffmpeg_writer", 
+                                          "",
+                                          "FfmpegWriter"));
 #endif
 
 #ifdef ENABLE_dimax_u2c
@@ -212,6 +217,10 @@ void Drivers::init() {
                                                 "sound_grabber",
                                                 "ServerSoundGrabber"));
 						
+    add(new DriverCreatorOf<DevicePipe>("pipe",
+                                        "",
+                                        "DevicePipe"));
+
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 }

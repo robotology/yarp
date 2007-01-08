@@ -25,6 +25,7 @@ namespace yarp{
  *
  * Connect to a ServerFrameGrabber.  See ServerFrameGrabber for
  * the network protocol used.
+ *
  */
 class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
             public IFrameGrabberControls,

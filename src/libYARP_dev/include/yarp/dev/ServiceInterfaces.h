@@ -42,7 +42,7 @@ public:
      * alternative to calling startService().  It is more 
      * appropriate in a single-threaded environment.
      * @return true iff the service is willing to run
-     * some more.  A return value of false means that the sevice 
+     * some more.  A return value of false means that the service 
      * would like to stop.
      */
     virtual bool updateService() {

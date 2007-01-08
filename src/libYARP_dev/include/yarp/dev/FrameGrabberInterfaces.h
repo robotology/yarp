@@ -22,6 +22,7 @@ namespace yarp{
         class IFrameGrabber;
         class IFrameGrabberControls;
         class FrameGrabberOpenParameters;
+        class IFrameWriterImage;
     }
 }
 
@@ -131,6 +132,28 @@ public:
      * @return image width
      */
     virtual int width() const =0;
+};
+
+/**
+ * @ingroup dev_iface_media
+ *
+ * Read a YARP-format image to a device.
+ */
+class yarp::dev::IFrameWriterImage
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IFrameWriterImage(){}
+
+    /**
+     * Write an image to the device.
+     * 
+     * @param image the image to write
+     * @return true/false upon success/failure
+     */
+    virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
 };
 
 /**
