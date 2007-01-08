@@ -1,11 +1,28 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+// This program based on contributions from Paul Fitzpatrick, Jose Gaspar
+
+// If you are on Windows, make sure WIN32 is defined.
+// otherwise, we assume UNIX.
+
+// This simple demo program doesn't deal with fragmentation of tcp
+// reads/writes.  If you're doing something serious, make sure you
+// deal with cases where socket reads/writes are only partially completed.
+// in one call.
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <sys/types.h>
+#include <string.h>
+
+#ifdef WIN32
+#include <winsock2.h>
+#else
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
-#include <string.h>
+#endif
 
 // port number for yarp server
 #define PORT        10000
@@ -16,21 +33,46 @@
 // buffer size for responses from name server
 #define BUFSIZE     1000
 
+#ifdef WIN32
+void windowsNetStart(void) {
+    int     wsaRc;
+    WSADATA wsaData;
+    if(wsaRc=WSAStartup(0x0101, &wsaData)) {
+        perror("WinSock init");
+    }
+	if(wsaData.wVersion != 0x0101) {
+        WSACleanup();
+        perror("wsaData.wVersion");
+    }
+}
+#endif
+
+
 int main(int argc, char *argv[]) {
 	char buf[BUFSIZE];
-	int  sd, i;
-	struct sockaddr_in sin;
+    int i;
+#ifdef WIN32
+    SOCKET sd;
+#else
+	int sd;
+#endif
+	//struct sockaddr_in sin;
 	struct sockaddr_in pin;
 	struct hostent *hp;
 
 	if (argc<=1) {
-	  printf("Please supply a message to send to the nameserver. ");
-	  printf(" Examples:\n");
-	  printf("   help\n");
-	  printf("   list\n");
-	  printf("   query /portname\n");
-	  exit(1);
+        printf("Please supply a message to send to the nameserver. ");
+        printf(" Examples:\n");
+        printf("   help\n");
+        printf("   list\n");
+        printf("   query /portname\n");
+        exit(1);
 	}
+
+#ifdef WIN32
+	// start windows networking
+	windowsNetStart();
+#endif
 
 	// get host information
 	if ((hp = gethostbyname(HOST)) == 0) {
@@ -61,8 +103,8 @@ int main(int argc, char *argv[]) {
 	buf[0] = '\0';
 	strncat(buf,"NAME_SERVER",sizeof(buf));
 	for (i=1; i<argc; i++) {
-	  strncat(buf," ",sizeof(buf));
-	  strncat(buf,argv[i],sizeof(buf));
+        strncat(buf," ",sizeof(buf));
+        strncat(buf,argv[i],sizeof(buf));
 	}
 	strncat(buf,"\n",sizeof(buf));
 	printf("Message to send to name server:\n");
@@ -74,20 +116,24 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
-        // wait for a message to come back from the server
+    // wait for a message to come back from the server
 	for (i=0; i<BUFSIZE; i++) {
-	  buf[i] = '\0';
+        buf[i] = '\0';
 	}
-        if (recv(sd, buf, BUFSIZE, 0) == -1) {
-                perror("recv");
-                exit(1);
-        }
+    if (recv(sd, buf, BUFSIZE, 0) == -1) {
+        perror("recv");
+        exit(1);
+    }
 
-        // print out the results
+    // print out the results
 	printf("Response from yarp server:\n");
-        printf("%s", buf);
+    printf("%s", buf);
 
+#ifdef WIN32
+	closesocket(sd);
+#else
 	close(sd);
+#endif
 }
 
  
