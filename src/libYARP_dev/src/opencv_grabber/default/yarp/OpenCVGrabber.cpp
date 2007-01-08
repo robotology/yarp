@@ -71,15 +71,19 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 
+#define DBG if (0)
 
 bool OpenCVGrabber::open(Searchable & config) {
     // Release any previously allocated resources, just in case
     close();
 
+    m_saidSize = false;
+    m_saidResize = false;
+
     // Are we capturing from a file or a camera ?
     ConstString file = config.check("movie", Value(""),
                                     "if present, read from specified file rather than camera").asString();
-    bool fromFile = (file!="");
+    fromFile = (file!="");
     if (fromFile) {
 
         // Try to open a capture object for the file
@@ -111,6 +115,10 @@ bool OpenCVGrabber::open(Searchable & config) {
     // present, otherwise query the capture device
     if (config.check("width","if present, specifies desired image width")) {
         m_w = config.check("width", Value(-1)).asInt();
+        if (!fromFile && m_w>0) {
+            cvSetCaptureProperty((CvCapture*)m_capture,
+                                 CV_CAP_PROP_FRAME_WIDTH, m_w);
+        }
     } else {
         m_w = (int)cvGetCaptureProperty((CvCapture*)m_capture,
                                         CV_CAP_PROP_FRAME_WIDTH);
@@ -118,6 +126,10 @@ bool OpenCVGrabber::open(Searchable & config) {
 
     if (config.check("height","if present, specifies desired image height")) {
         m_h = config.check("height", Value(-1)).asInt();
+        if (!fromFile && m_h>0) {
+            cvSetCaptureProperty((CvCapture*)m_capture,
+                                 CV_CAP_PROP_FRAME_HEIGHT, m_h);
+        }
     } else {
         m_h = (int)cvGetCaptureProperty((CvCapture*)m_capture,
                                         CV_CAP_PROP_FRAME_HEIGHT);
@@ -198,6 +210,12 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
     // memory allocation if the image is already the correct size
     image.resize(iplFrame->width, iplFrame->height);
 
+    if (!m_saidSize) {
+        printf("Received image of size %dx%d\n", 
+               image.width(), image.height());
+        m_saidSize = true;
+    }
+
     // Get an IplImage, the Yarp Image owns the memory pointed to
     IplImage * iplImage = (IplImage*)image.getIplImage();
 
@@ -212,8 +230,28 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
         cvCvtColor(iplImage, iplImage, CV_BGR2RGB);
     }
 
-    printf("%d by %d %s image\n", image.width(), image.height(),
-           iplFrame->channelSeq);
+    if (m_w<=0) {
+        m_w = image.width();
+    }
+    if (m_h<=0) {
+        m_h = image.height();
+    }
+    if (fromFile) {
+        if (m_w>0&&m_h>0) {
+            if (image.width()!=m_w || image.height()!=m_h) {
+                if (!m_saidResize) {
+                    printf("Software scaling from %dx%d to %dx%d\n", 
+                           image.width(), image.height(),
+                           m_w, m_h);
+                    m_saidResize = true;
+                }
+                image.copy(image,m_w,m_h);
+            }
+        }
+    }
+
+    DBG printf("%d by %d %s image\n", image.width(), image.height(),
+               iplFrame->channelSeq);
     // That's it
     return true;
 

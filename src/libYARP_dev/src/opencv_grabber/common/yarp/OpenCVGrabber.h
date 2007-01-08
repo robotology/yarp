@@ -83,6 +83,12 @@ protected:
     /** Whether to loop or not */
     bool m_loop;
 
+    bool m_saidSize;
+    bool m_saidResize;
+
+    /* reading from file or camera */
+    bool fromFile;
+
     /** Opaque OpenCV structure for image capture. */
     void * m_capture;
 

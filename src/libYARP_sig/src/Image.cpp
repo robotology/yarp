@@ -914,6 +914,8 @@ bool Image::copy(const Image& alt) {
     int myCode = getPixelCode();
     if (myCode==0) {
         setPixelCode(alt.getPixelCode());
+        setPixelSize(alt.getPixelSize());
+        setQuantum(alt.getQuantum());
     }
     resize(alt.width(),alt.height());
     int q1 = alt.getQuantum();
@@ -952,9 +954,14 @@ void Image::setExternal(void *data, int imgWidth, int imgHeight) {
 
 
 bool Image::copy(const Image& alt, int w, int h) {
+    if (getPixelCode()==0) {
+        setPixelCode(alt.getPixelCode());
+        setPixelSize(alt.getPixelSize());
+        setQuantum(alt.getQuantum());
+    }
     if (&alt==this) {
         FlexImage img;
-        img.copy(*this);
+        img.copy(alt);
         return copy(img,w,h);
     }
 
