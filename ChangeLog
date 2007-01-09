@@ -1,3 +1,9 @@
+2007-01-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ffmpeg: Added --nodelay flag if realtime
+	playback of movies is not required; also --loop and --noloop
+	options.
+
 2007-01-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCoreInputUnit.cpp: Allowed ports to

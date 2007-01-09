@@ -318,6 +318,20 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
                      Value("default.avi"),
                      "movie file to read from").asString();
 
+    if (config.check("loop","movie should loop (default)")) {
+        shouldLoop = true;
+    }
+
+    if (config.check("noloop","movie should not loop")) {
+        shouldLoop = false;
+    }
+
+    needRateControl = true; // default for recorded media
+
+    if (config.check("nodelay","movies will play in simulated realtime unless this is present")) {
+        needRateControl = false;
+    }
+
     // Register all formats and codecs
     av_register_all();
 
@@ -335,7 +349,6 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
             return false;
         }
     } else {
-        needRateControl = true; // reading from recorded media
         if (!openFile(&pFormatCtx,fname.c_str())) {
             printf("Could not open avi file %s\n", fname.c_str());
             return false; // Couldn't open file
@@ -521,6 +534,9 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
         tryAgain = !triedAgain;
    
         if (tryAgain) {
+            if (!shouldLoop) {
+                return false;
+            }
 #if LIBAVFORMAT_BUILD > 4616
             av_seek_frame(pFormatCtx,-1,0,AVSEEK_FLAG_BACKWARD);
 #else

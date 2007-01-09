@@ -52,6 +52,7 @@ public:
         _hasAudio = _hasVideo = false;
         system_resource = NULL;
         needRateControl = false;
+        shouldLoop = true;
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -87,6 +88,7 @@ protected:
     double startTime;
     bool _hasAudio, _hasVideo;
     bool needRateControl;
+    bool shouldLoop;
   
     /** Width of the images a grabber produces. */
     int m_w;
