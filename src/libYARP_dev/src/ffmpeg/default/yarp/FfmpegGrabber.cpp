@@ -320,19 +320,19 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     ConstString fname = 
         config.check("source",
                      Value("default.avi"),
-                     "movie file to read from").asString();
+                     "media file to read from").asString();
 
-    if (config.check("loop","movie should loop (default)")) {
+    if (config.check("loop","media should loop (default)")) {
         shouldLoop = true;
     }
 
-    if (config.check("noloop","movie should not loop")) {
+    if (config.check("noloop","media should not loop")) {
         shouldLoop = false;
     }
 
     needRateControl = true; // default for recorded media
 
-    if (config.check("nodelay","movies will play in simulated realtime unless this is present")) {
+    if (config.check("nodelay","media will play in simulated realtime unless this is present")) {
         needRateControl = false;
     }
 
@@ -354,7 +354,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         }
     } else {
         if (!openFile(&pFormatCtx,fname.c_str())) {
-            printf("Could not open avi file %s\n", fname.c_str());
+            printf("Could not open media file %s\n", fname.c_str());
             return false; // Couldn't open file
         }
     }
