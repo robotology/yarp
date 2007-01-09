@@ -336,6 +336,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         needRateControl = false;
     }
 
+    pace = config.check("pace",Value(1.0),
+                        "simulated realtime multiplier factor (must be <1 right now)").asDouble();
+    
     // Register all formats and codecs
     av_register_all();
 
@@ -517,7 +520,7 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
                     image.resize(0,0);
                 }
                 if (needRateControl) {
-                    double now = Time::now()-startTime;
+                    double now = (Time::now()-startTime)*pace;
                     double delay = time_target-now;
                     if (delay>0) {
                         DBG printf("DELAY %g ", delay);
