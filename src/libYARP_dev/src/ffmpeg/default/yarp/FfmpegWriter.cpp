@@ -68,6 +68,10 @@ using namespace yarp::sig::file;
 #include <ffmpeg/avformat.h>
 #include <ffmpeg/avcodec.h>
 
+#if LIBAVCODEC_BUILD < 4754
+#error "ffmpeg version is too old, sorry - please download and compile newer version"
+#endif
+
 #define STREAM_FRAME_RATE 25 /* 25 images/s */
 #define STREAM_PIX_FMT PIX_FMT_YUV420P /* default pix_fmt */
 #define STREAM_PIX_WORK PIX_FMT_RGB24

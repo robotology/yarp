@@ -17,6 +17,10 @@
 
 #include <stdio.h>
 
+#if LIBAVCODEC_BUILD < 4754
+#error "ffmpeg version is too old, sorry - please download and compile newer version"
+#endif
+
 using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
