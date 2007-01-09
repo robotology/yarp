@@ -85,6 +85,7 @@ bool DevicePipe::updateService() {
         printf("You're probably better off writing some short custom code.\n");
         Time::delay(1);
     }
+	return true;
 }
 
 
