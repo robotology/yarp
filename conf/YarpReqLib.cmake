@@ -8,8 +8,11 @@ SET(YARP_DEFINES_ACCUM -D_REENTRANT)
 IF (WIN32 AND NOT CYGWIN)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DWIN32 -D_WINDOWS)
 ELSE (WIN32 AND NOT CYGWIN)
-  # flush out warnings
-#  ADD_DEFINITIONS(-Wall)
+  # flush out warnings for those who want to see everything
+  SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
+  IF (YARP_ADMIN)
+    ADD_DEFINITIONS(-Wall)
+  ENDIF (YARP_ADMIN)
   # don't add to YARP_DEFINES_ACCUM since clients may not want it
 ENDIF (WIN32 AND NOT CYGWIN)
 

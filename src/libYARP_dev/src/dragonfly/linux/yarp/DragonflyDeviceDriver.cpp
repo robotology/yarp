@@ -19,12 +19,14 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+/*
 ///
 static double GetTimeAs_mSeconds(void)
 {
 	ACE_Time_Value timev = ACE_OS::gettimeofday ();
 	return double(timev.sec()*1e3) + timev.usec() * 1e-3; 
 }
+*/
 
 // Most of this is not used (here because the driver was ported).
 class DragonflyResources
@@ -115,7 +117,8 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 	cam.SetBrightness(0);
 	cam.SetExposure(300);
 	if (params._whiteR>0) {
-		printf("white balance %g %g\n", params._whiteR, params._whiteB);
+		printf("white balance %g %g\n", 
+               (double)params._whiteR, (double)params._whiteB);
 		cam.SetColor(params._whiteR,params._whiteB); 
 	} else {
 		cam.SetColor((float)50.0/63, (float)20.0/63); 

@@ -83,13 +83,13 @@ public:
     out.writeStrict();                 // writeStrict() will wait for any
 
     // Read the first object
-    Bottle *inBot1 = in.read();
+    in.read();
     Stamp inStamp;
     in.getEnvelope(inStamp);
     checkTrue(fabs(inStamp.getTime()-1)<0.0001,"time stamp 1 read");
 
     // Read the second object
-    Bottle *inBot2 = in.read();
+    in.read();
     in.getEnvelope(inStamp);
     checkTrue(fabs(inStamp.getTime()-1)<0.0001,"time stamp 2 read");
   }

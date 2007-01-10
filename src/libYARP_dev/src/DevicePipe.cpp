@@ -83,9 +83,9 @@ bool DevicePipe::updateService() {
         printf("Don't know how to pipe between these devices.\n");
         printf("Piping is very limited at the moment.\n");
         printf("You're probably better off writing some short custom code.\n");
-        Time::delay(1);
+        return false;
     }
-	return true;
+    return true;
 }
 
 

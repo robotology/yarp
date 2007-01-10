@@ -96,6 +96,8 @@ public:
  */
 class yarp::os::Stamped {
 public:
+    virtual ~Stamped() {}
+
     /**
      * @return the Stamp associated with this object (time stamp,
      * sequence number).

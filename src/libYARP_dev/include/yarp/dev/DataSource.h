@@ -27,6 +27,7 @@ namespace yarp {
 template <class T>
 class yarp::dev::DataSource {
 public:
+    virtual ~DataSource() {}
     virtual bool getDatum(T& datum) = 0;
 };
 
@@ -65,6 +66,7 @@ public:
 template <class T1, class T2>
 class yarp::dev::DataSource2 {
 public:
+    virtual ~DataSource2() {}
     virtual bool getDatum(T1& datum1, T2& datum2) = 0;
 };
 

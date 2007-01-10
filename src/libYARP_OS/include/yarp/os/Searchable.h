@@ -42,6 +42,7 @@ public:
 
 class yarp::os::SearchMonitor {
 public:
+    virtual ~SearchMonitor() {}
     virtual void report(const SearchReport& report, const char *context) = 0;
 };
 

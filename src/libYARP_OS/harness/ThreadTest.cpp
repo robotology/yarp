@@ -123,8 +123,8 @@ private:
     public:
 		Thread4():state(-1), fail(false){}
 
-		bool fail;
 		int state;
+		bool fail;
 		virtual bool threadInit()
 		{
 			state=0;
@@ -154,9 +154,9 @@ private:
     class Thread5: public Thread {
     public:
 		Thread5():state(0),fail(false){}
+		int state;
 		bool fail;
 
-		int state;
 		
 		void threadWillFail(bool f)
 		{

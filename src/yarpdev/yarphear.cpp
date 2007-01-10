@@ -129,8 +129,8 @@ public:
         samples += sound.getSamples();
         channels = sound.getChannels();
         printf("  %ld sound frames buffered in memory (%ld samples)\n", 
-               sounds.size(),
-               samples);
+               (long int) sounds.size(),
+               (long int) samples);
     }
 
     bool saveFile(const char *name) {

@@ -27,6 +27,8 @@ namespace yarp {
  */
 class yarp::dev::IService {
 public:
+    virtual ~IService() {}
+
     /**
      * Initiate the service, whatever it is.  The service should
      * then run by itself, without any further interaction with

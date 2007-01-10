@@ -83,7 +83,6 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
                         "name of port to send data on").asString());
 
     double framerate=0;
-    int period=0;
     if (config.check("framerate", name, 
                      "maximum rate in Hz to read from subdevice")) {
         framerate=name->asDouble();
