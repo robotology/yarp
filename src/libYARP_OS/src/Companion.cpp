@@ -85,6 +85,10 @@ Companion::Companion() {
         "run a simple sanity check to see if yarp is working");
     add("terminate",  &Companion::cmdTerminate,
         "terminate a yarp-terminate-aware process by name");
+    add("ping",  &Companion::cmdPing,
+        "get live information about a port");
+    add("exists",  &Companion::cmdExists,
+        "check if a port is alive (useful for conditions in scripts)");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -163,6 +167,92 @@ int Companion::cmdTerminate(int argc, char *argv[]) {
     ACE_OS::printf("Wrong parameter format, please specify a port name as a single parameter to terminate\n");
     return 1;
 }
+
+
+
+int Companion::cmdPing(int argc, char *argv[]) {
+    if (argc == 1) {
+        char *targetName = argv[0];
+        char *connectionName = "<ping>";
+        OutputProtocol *out = NULL;
+        try {
+            NameClient& nic = NameClient::getNameClient();
+            Address address = nic.queryName(targetName);
+            if (!address.isValid()) {
+                YARP_ERROR(Logger::get(),"could not find port");
+                return 1;
+            }
+            
+            out = Carriers::connect(address);
+            if (out==NULL) {
+                throw IOException("cannot connect to port");
+            }
+            /*
+            printf("RPC connection to %s at %s (connection name %s)\n", 
+                   targetName, 
+                   address.toString().c_str(),
+                   connectionName);
+            */
+            Route r(connectionName,targetName,"text_ack");
+            out->open(r);
+            OutputStream& os = out->getOutputStream();
+            InputStream& is = out->getInputStream();
+            StreamConnectionReader reader;
+
+            PortCommand pc(0,"*");
+            BufferedConnectionWriter bw(out->isTextMode());
+            bool ok = pc.write(bw);
+            if (!ok) {
+                throw IOException("writer failed");
+            }
+            bw.write(os);
+            Bottle resp;
+            reader.reset(is,NULL,r,0,true);
+            bool done = false;
+            while (!done) {
+                resp.read(reader);
+                String str = resp.toString().c_str();
+                if (resp.get(0).asString()!="<ACK>") {
+                    printf("%s\n", str.c_str());
+                } else {
+                    done = true;
+                }
+            }
+        } catch (IOException e) {
+            ACE_OS::fprintf(stderr,
+                            "write failed: %s\n",e.toString().c_str());    
+        }
+        if (out!=NULL) {
+            delete out;
+        }
+        return 0;
+    }
+    ACE_OS::fprintf(stderr,"Please specify a port name\n");
+    return 1;
+}
+
+
+int Companion::cmdExists(int argc, char *argv[]) {
+    if (argc == 1) {
+        NameClient& nic = NameClient::getNameClient();
+        Address address = nic.queryName(argv[0]);
+        if (!address.isValid()) {
+            return 2;
+        }
+        OutputProtocol *out = Carriers::connect(address);
+        if (out==NULL) {
+            return 1;
+        }
+        delete out;
+        out = NULL;
+        return 0;
+    }
+
+    ACE_OS::fprintf(stderr,"Please specify a port name\n");
+    return 1;
+}
+
+
 
 int Companion::cmdName(int argc, char *argv[]) {
     String cmd = "NAME_SERVER";
@@ -722,12 +812,18 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
             }
         }
 
+        if (out!=NULL) {
+            delete out;
+            out = NULL;
+        }
+
         return 0;
     } catch (IOException e) {
         ACE_OS::fprintf(stderr,"write failed: %s\n",e.toString().c_str());    
     }
     return 0;
 }
+
 
 
 String Companion::readString(bool *eof) {

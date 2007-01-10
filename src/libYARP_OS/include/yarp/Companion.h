@@ -149,6 +149,10 @@ private:
 
     int cmdCheck(int argc, char *argv[]);
 
+    int cmdPing(int argc, char *argv[]);
+
+    int cmdExists(int argc, char *argv[]);
+
     class Entry {
     public:
         String name;
