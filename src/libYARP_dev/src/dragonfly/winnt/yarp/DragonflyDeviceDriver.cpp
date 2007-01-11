@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.23 2006-10-27 08:13:53 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.24 2007-01-11 09:30:56 alex_bernardino Exp $
 ///
 ///
 
@@ -29,6 +29,10 @@ const int _sizeX=640;
 const int _sizeY=480;
 const int _halfX=_sizeX/2;
 const int _halfY=_sizeY/2;
+
+//forward function declaration
+bool Bayer2RGB( const unsigned char* bayer0, int bayer_step, unsigned char *dst0, int dst_step, int width, int height, int blue, int start_with_green, int rgb );
+
 
 //
 class DragonflyResources
@@ -61,6 +65,7 @@ public:
 	bool _canPost;
 	bool _acqStarted;
 	bool _validContext;
+	bool fleaCR;
 
 	FlyCaptureContext context;
 	FlyCaptureImage imageConverted;
@@ -97,8 +102,30 @@ private:
 	void _destroyBuffers (void);
 };
 
+
+
+
 bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned char *dst)
 {
+
+	//for flea cameras - not optimized for subsampling
+	if(fleaCR)
+	{
+		if ((sizeX == _sizeX) && (sizeY == _sizeY) )
+        {
+            // full size reconstruction
+            Bayer2RGB( src, sizeX*3, dst, sizeX*3, sizeX, sizeY, -1, 1, 1 );
+            return true;
+        }
+		else
+        {
+            Bayer2RGB( src, _sizeX*3, imageFullSize, _sizeX*3, _sizeX, _sizeY, -1, 1, 1 );
+			subSampling(imageFullSize, dst);
+            return true;
+        }
+	}
+
+	//for dragonfly cameras
 	if ((sizeX == _sizeX) && (sizeY == _sizeY) )
         {
             // full size reconstruction
@@ -138,6 +165,7 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
 	sizeX = params._size_x;
 	sizeY = params._size_y;
+	fleaCR = params._fleacr;
 
 	// Create the context.
 	if (!_validContext)
@@ -156,18 +184,25 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 	flycaptureGetCameraInfo(context, &info);
 	reportCameraInfo( &info );
 
-	printf("Setting parameters:\n");
-	printf("Brightness %d\n", params._brightness);
-	printf("Exposure %d\n", params._exposure);
-	printf("White balance %d %d\n", params._whiteR, params._whiteB);
-	printf("Shutter %d\n", params._shutter);
-	printf("Gain %d\n", params._gain);
+	if(params._brightness >= 0) {
+		_setBrightness(params._brightness);
+		printf("Brightness %d\n", params._brightness); }
 
-	_setBrightness(params._brightness);
-	_setExposure(params._exposure);
-	_setWhiteBalance(params._whiteR, params._whiteB); 
-	_setShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
-	_setGain(params._gain);	 	// x * -0.0224 = -11.2dB
+	if(params._exposure >= 0) {
+		_setExposure(params._exposure);
+		printf("Exposure %d\n", params._exposure); }
+
+	if( (params._whiteR >= 0) && (params._whiteB >= 0)) {
+		_setWhiteBalance(params._whiteR, params._whiteB); 
+		printf("White balance %d %d\n", params._whiteR, params._whiteB); }
+
+	if(params._shutter >= 0) {
+		_setShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
+		printf("Shutter %d\n", params._shutter); }
+
+	if(params._gain >= 0) {
+		_setGain(params._gain);	 	// x * -0.0224 = -11.2dB
+		printf("Gain %d\n", params._gain); }
 	
 	// Set color reconstruction method
 	error = flycaptureSetColorProcessingMethod(context, FLYCAPTURE_NEAREST_NEIGHBOR_FAST); // Should be an Option
@@ -222,11 +257,14 @@ inline bool DragonflyResources::_uninitialize (void)
 	return true;
 }
 
+
+
 inline double DragonflyResources::_getShutter() const
 {
     long tmpA;
-  
+
     FlyCaptureError   error = FLYCAPTURE_OK;
+
 	error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
 	if (error == FLYCAPTURE_OK)
 		return (double) tmpA;
@@ -234,10 +272,12 @@ inline double DragonflyResources::_getShutter() const
 		return -1;
 }
 
+
+
 inline double DragonflyResources::_getBrightness() const
 {
     long tmpA;
-    
+
     FlyCaptureError   error = FLYCAPTURE_OK;
 	error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
 	if (error == FLYCAPTURE_OK)
@@ -246,17 +286,21 @@ inline double DragonflyResources::_getBrightness() const
 		return -1;
 }
 
+
+
 inline double DragonflyResources::_getGain() const
 {
     long tmpA;
 
     FlyCaptureError   error = FLYCAPTURE_OK;
+
 	error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, 0, false);
 	if (error == FLYCAPTURE_OK)
 		return (double) tmpA;
 	else 
 		return -1;
 }
+
 
 inline bool DragonflyResources::_getWhiteBalance (int &redValue, int &blueValue) const
 {
@@ -300,6 +344,7 @@ inline void DragonflyResources::_destroyBuffers(void)
 inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
+
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, value, 0);
 
 	if (error == FLYCAPTURE_OK)
@@ -323,6 +368,7 @@ inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, bool bAuto)
 {
 	FlyCaptureError   error = FLYCAPTURE_OK;
+
 	fprintf(stderr, "Setting White: %d %d\n", redValue, blueValue);
 	// error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
 	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, true, false, redValue, blueValue);
@@ -442,6 +488,7 @@ bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& im
 	
 	// hmm, we should make sure image has some space in it first, right?
 	image.resize(d.sizeX,d.sizeY);
+
 	d.reconstructColor(pSrc->pData, (unsigned char *)image.getRawImage());
 
 	return true;
@@ -488,11 +535,13 @@ bool DragonflyDeviceDriver::setBrightness(double value)
 {
     DragonflyResources& d = RES(system_resources);
 	return d._setBrightness((int)(value));
+
 }
 
 bool DragonflyDeviceDriver::setShutter(double value)
 {
     DragonflyResources& d = RES(system_resources);
+
 
 	return d._setBrightness((int)(value));
 }
@@ -501,21 +550,31 @@ bool DragonflyDeviceDriver::setGain(double value)
 {
     DragonflyResources& d = RES(system_resources);
 
+
 	return d._setGain(value);
+
 }
 
 double DragonflyDeviceDriver::getShutter() const
 {
     DragonflyResources& d = RES(system_resources);
 
+
+
 	return d._getGain();
 }
 
+
 bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
+
 {
+
     DragonflyResources& d = RES(system_resources);
+
 	return d._setWhiteBalance(red, blue);
+
 }
+
 
 double DragonflyDeviceDriver::getBrightness() const
 {
@@ -528,6 +587,7 @@ double DragonflyDeviceDriver::getGain() const
 {
     DragonflyResources& d = RES(system_resources);
 	return d._getGain();
+
 }
 
 void DragonflyDeviceDriver::recColorFSBilinear(const unsigned char *src, unsigned char *out)
@@ -1077,4 +1137,105 @@ void DragonflyResources::subSampling(const unsigned char *src, unsigned char *de
                 }
         }
 }
+
+// converts bayer pattern to BGR
+// blue - indicates if the second line contains blue (-1 = YES, 1 = NO)
+// starts_with_green - indicates if the line to process has green in the second column (BOOLEAN)
+// rgb - indicates if the output color format is RGB ( rgb = 1 ) or BGR (rgb = -1)
+// properly setting "blue" and "start_with_green" covers all bayer pattern possibilities
+bool Bayer2RGB( const unsigned char* bayer0, int bayer_step, unsigned char *dst0, int dst_step, int width, int height, int blue, int start_with_green, int rgb )
+{
+	// normalize arguments
+    blue = (blue > 0 ? 1 : -1);
+    start_with_green = (start_with_green > 0 ? 1 : 0);
+	rgb = (rgb > 0 ? 1 : -1);
+
+    memset( dst0, 0, width*3*sizeof(dst0[0]) );
+    memset( dst0 + (height - 1)*dst_step, 0, width*3*sizeof(dst0[0]) );
+    dst0 += dst_step + 3 + 1;  //jumps to second line, second column, green field
+    height -= 2;
+    width -= 2;
+
+    for( ; height-- > 0; bayer0 += bayer_step, dst0 += dst_step )
+    {
+        int t0, t1;
+        const unsigned char* bayer = bayer0;
+        unsigned char* dst = dst0;
+        const unsigned char* bayer_end = bayer + width;
+
+        dst[-4] = dst[-3] = dst[-2] = dst[width*3-1] =
+            dst[width*3] = dst[width*3+1] = 0;
+
+        if( width <= 0 )
+            continue;
+
+        if( start_with_green )
+        {
+            t0 = (bayer[1] + bayer[bayer_step*2+1] + 1) >> 1;
+            t1 = (bayer[bayer_step] + bayer[bayer_step+2] + 1) >> 1;
+            dst[blue*rgb] = (unsigned char)t0;
+            dst[0] = bayer[bayer_step+1];
+            dst[-blue*rgb] = (unsigned char)t1;
+            bayer++;
+            dst += 3;
+        }
+
+        if( blue > 0 )
+        {
+            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+            {
+                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                      bayer[bayer_step*2+2] + 2) >> 2;
+                t1 = (bayer[1] + bayer[bayer_step] +
+                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+                dst[rgb] = (unsigned char)t0;
+                dst[0] = (unsigned char)t1;
+                dst[-rgb] = bayer[bayer_step+1];
+
+                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+                dst[3+rgb] = (unsigned char)t0;
+                dst[3] = bayer[bayer_step+2];
+                dst[3-rgb] = (unsigned char)t1;
+            }
+        }
+        else
+        {
+            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+            {
+                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                      bayer[bayer_step*2+2] + 2) >> 2;
+                t1 = (bayer[1] + bayer[bayer_step] +
+                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+                dst[-rgb] = (unsigned char)t0;
+                dst[0] = (unsigned char)t1;
+                dst[rgb] = bayer[bayer_step+1];
+
+                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+                dst[3-rgb] = (unsigned char)t0;
+                dst[3] = bayer[bayer_step+2];
+                dst[3+rgb] = (unsigned char)t1;
+            }
+        }
+
+        if( bayer < bayer_end )
+        {
+            t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+                  bayer[bayer_step*2+2] + 2) >> 2;
+            t1 = (bayer[1] + bayer[bayer_step] +
+                  bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+            dst[blue*rgb] = (unsigned char)t0;
+            dst[0] = (unsigned char)t1;
+            dst[-blue*rgb] = bayer[bayer_step+1];
+            bayer++;
+            dst += 3;
+        }
+
+        blue = -blue;
+        start_with_green = !start_with_green;
+    }
+    return true;
+}
+
 

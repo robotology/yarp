@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.25 2006-12-01 11:24:48 eshuy Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.26 2007-01-11 09:30:56 alex_bernardino Exp $
 ///
 ///
 
@@ -56,6 +56,8 @@ public:
 	int _shutter;
 	int _gain;
 
+	bool _fleacr;  //FLEA color reconstruction flag
+
 	/**
 	 * Constructor. Add here the parameters for the open().
 	 */
@@ -67,13 +69,21 @@ public:
 		_size_y = 480;
 		_video_type = 0;
 
-		//reasonable default values
-		_brightness=0;
-		_exposure=300;
-		_shutter=320;
-		_gain=500;
-		_whiteR=20;
-		_whiteB=50;
+		//uninitialized - inherit registry stored values
+		_brightness=-1;
+		_exposure=-1;
+		_shutter=-1;
+		_gain=-1;
+		_whiteR=-1;
+		_whiteB=-1;
+
+
+		// FLEA cameras are compatible with DRAGONFLY's but ...
+		// the color reconstruction method is different 
+		// (GBRG instead of RGGB)
+		// The default is to use Dragonsfly's method
+		_fleacr = false;
+
 	}
 
 };
@@ -150,6 +160,9 @@ public:
 		if (config.check("gain", value)){
 			params._gain=value->asInt();
 		}
+
+		params._fleacr = config.check("flea", "If present indicates to use Flea color reconstruction ");
+		
 
 		return open(params);
     }
