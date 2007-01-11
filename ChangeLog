@@ -1,6 +1,6 @@
 2007-01-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* src/libYARP_OS/src/Companion.cpp: Add "ping" and "exists"
+	* src/libYARP_OS/src/Companion.cpp: Added "ping" and "exists"
 	subcommands, to facilitate gathering information about the
 	existence and properties of a port.
 

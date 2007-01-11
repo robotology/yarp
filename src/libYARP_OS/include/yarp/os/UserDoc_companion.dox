@@ -20,6 +20,9 @@ Here are the ways you can call yarp:
 - \ref yarp_rpc
 - \ref yarp_server
 - \ref yarp_check
+- \ref yarp_terminate
+- \ref yarp_ping
+- \ref yarp_exists
 \endif
 
 @section yarp_base yarp
@@ -221,18 +224,54 @@ yarp disconnect OUTPUT_PORT INPUT_PORT
 This will request the specified output port to cease sending its output to
 the specified input port.
 
+\section yarp_connect yarp connect
 
+\verbatim
+yarp connect OUTPUT_PORT INPUT_PORT
+yarp connect OUTPUT_PORT INPUT_PORT CARRIER
+\endverbatim
 
+This will request the specified output port to send its output in 
+future to the specified input port.
+Optionally, the carrier to be used can be added as an extra argument
+(e.g. tcp, udp, mcast, ...).
 
+\section yarp_terminate yarp terminate
 
+\verbatim
+yarp terminate /PORTNAME
+\endverbatim
 
+This will request the specified output to interrupt the process it
+belongs to.  In general, this requires active cooperation from that
+process, so it may or may not function.  Currently will work for the
+".../quit" ports created by the yarpdev process.
 
+\section yarp_ping yarp ping
 
+\verbatim
+yarp ping /PORT
+\endverbatim
 
+Get information about the specified port.  Result will be something
+like:
 
+\verbatim
+This is "/port" at "tcp://192.168.0.5:10012"
+There is an output connection from "/write" to "/read" using tcp
+There is an input connection from "<ping>" to "/write" using text_ack
+\endverbatim
 
+\section yarp_exists yarp exists
 
+\verbatim
+yarp exists /PORT
+\endverbatim
 
+Check if a port is alive.  This can be useful as a quick test of
+whether the process that owns the port is running.  It is designed for
+use in scripts -- nothing is printed, the result is encoded in the
+return value of the program (0 = port exists).
 
 
 
