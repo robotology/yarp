@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.24 2007-01-11 09:30:56 alex_bernardino Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.25 2007-01-11 18:27:53 alex_bernardino Exp $
 ///
 ///
 
@@ -114,12 +114,13 @@ bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned cha
 		if ((sizeX == _sizeX) && (sizeY == _sizeY) )
         {
             // full size reconstruction
-            Bayer2RGB( src, sizeX*3, dst, sizeX*3, sizeX, sizeY, -1, 1, 1 );
+            Bayer2RGB( src, sizeX, dst, sizeX*3, sizeX, sizeY, -1, 1, 1 );
             return true;
         }
 		else
         {
-            Bayer2RGB( src, _sizeX*3, imageFullSize, _sizeX*3, _sizeX, _sizeY, -1, 1, 1 );
+            Bayer2RGB( src, _sizeX, imageFullSize, _sizeX*3, _sizeX, _sizeY, -1, 1, 1 );
+			//memcpy(imageFullSize, dst, sizeX*sizeY*3);
 			subSampling(imageFullSize, dst);
             return true;
         }
@@ -1137,6 +1138,7 @@ void DragonflyResources::subSampling(const unsigned char *src, unsigned char *de
                 }
         }
 }
+
 
 // converts bayer pattern to BGR
 // blue - indicates if the second line contains blue (-1 = YES, 1 = NO)
