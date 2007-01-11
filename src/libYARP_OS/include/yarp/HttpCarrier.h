@@ -10,6 +10,8 @@
 #define _YARP2_HTTPCARRIER_
 
 #include <yarp/TcpCarrier.h>
+#include <yarp/NameClient.h>
+#include <yarp/NetType.h>
 
 namespace yarp {
     class HttpCarrier;
@@ -29,9 +31,13 @@ public:
         if (s=="") {
             s = "*";
         }
-        if (s[0]=='d') {
-            sis.add("d\n");
-            s = s.substr(1,s.length()-1);
+        for (unsigned int i=0; i<s.length(); i++) {
+            if (s[i]=='/') {
+                s[i] = '\n';
+            }
+            if (s[i]=='+') {
+                s[i] = ' ';
+            }
         }
         sis.add(s);
         sis.add("\nq\nq\nq\n");
@@ -68,7 +74,32 @@ public:
         printf("Closing\n");
         String str = sos.toString().c_str();
         printf(">>> %s\n", str.c_str());
-        Bytes tmp((char*)str.c_str(),str.length());
+        String proc = "";
+        String part = "";
+        for (unsigned int i=0; i<str.length(); i++) {
+            char ch = str[i];
+            if (ch=='\r') { continue; }
+            part += ch;
+            if (ch == '\n') {
+                Address addr = NameClient::extractAddress(part);
+                if (addr.isValid()) {
+                    if (addr.getCarrierName()=="tcp") {
+                        proc += "<a href=\"http://";
+                        proc += addr.getName();
+                        proc += ":";
+                        proc += NetType::toString(addr.getPort());
+                        proc += "\">";
+                        proc += part;
+                        proc += "</A>\n";
+                    } else {
+                        proc += part;
+                    }
+                }
+                part = "";
+            }
+        }
+
+        Bytes tmp((char*)proc.c_str(),proc.length());
         delegate->getOutputStream().write(tmp);
         delegate->close();
     }
@@ -204,14 +235,19 @@ public:
 
 
         String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><pre>YARP HTTP.\n";
+        Address home = NameClient::getNameClient().getAddress();
+        from += "<a href=\"http://";
+        from += home.getName();
+        from += ":";
+        from += NetType::toString(home.getPort());
+        from += "/d/list\">index</a>\n";
         from += "This is ";
         from += proto.getRoute().getToName();
         from += "\n";
-        from += "You checked [";
+        from += "Command [";
         from += url;
         from += "]\n";
-        from += "Http protocol does not do much yet, as you can see\n";
-        from += "<pre></html>\n\n";
+        from += "\n\n";
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();
