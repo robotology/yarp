@@ -1,5 +1,8 @@
 2007-01-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/HttpCarrier.h: Made basic port 
+	properties visible to http connections (e.g. from web browser)
+
 	* src/libYARP_OS/include/yarp/NameserCarrier.h: Made name server
 	protocol a protocol supported at the port level.
 

@@ -326,9 +326,9 @@ public:
             setCarrier("text");
             setRoute(Route("no-name","no-name","no-carrier"));
         } else {
+            setRoute(getRoute().addToName(name));
             expectHeader();
             respondToHeader();
-            setRoute(getRoute().addToName(name));
         }
     }
 
