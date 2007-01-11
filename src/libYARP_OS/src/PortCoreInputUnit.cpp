@@ -80,7 +80,7 @@ void PortCoreInputUnit::run() {
             try {
                 ConnectionReader& br = ip->beginRead();
 
-                if (autoHandshake) {
+                if (autoHandshake&&(ip->canEscape())) {
                     cmd.readBlock(br);
                 } else {
                     cmd = PortCommand('d',"");

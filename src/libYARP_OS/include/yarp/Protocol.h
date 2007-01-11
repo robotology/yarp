@@ -285,6 +285,10 @@ public:
         }
     }
 
+    TwoWayStream *giveStreams() {
+        return shift.giveStream();
+    }
+
     OutputStream& os() {
         return shift.getOutputStream();
     }
@@ -456,6 +460,12 @@ private:
         delegate->expectSenderSpecifier(*this);
         ACE_DEBUG((LM_DEBUG,"Sender name is %s",getRoute().getFromName().c_str()));
     }
+
+    bool canEscape() { 
+        YARP_ASSERT(delegate!=NULL);
+        return delegate->canEscape();
+    }
+
 
     int messageLen;
     bool pendingAck;

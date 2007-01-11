@@ -21,6 +21,11 @@ using namespace yarp;
 using namespace yarp::os;
 
 
+// Migrate name server to use a real YARP port.
+// In the past, since the name server had to be built before ports
+// could be built, it used a distinct protocol (name_ser).
+#define SERVER_IS_PORT
+
 
 ////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////
@@ -497,14 +502,16 @@ public:
     }
 
     virtual bool read(ConnectionReader& reader) {
+        String ref = "NAME_SERVER ";
+        bool ok = true;
+        String msg = "?";
+#ifndef SERVER_IS_PORT
         ManagedBytes header(12);
         for (int i0=0; i0<header.length(); i0++) {
             header.get()[i0] = '\0';
         }
         reader.expectBlock(header.bytes().get(),header.bytes().length());
         YARP_DEBUG(Logger::get(),"name server got something");
-        String ref = "NAME_SERVER ";
-        bool ok = true;
         for (int i=0; i<header.length(); i++) {
             if (header.get()[i] != ref[i]) {
                 ok = false; 
@@ -514,7 +521,7 @@ public:
         if (header.get()[0] == '\0') {
             return false;
         }
-        String msg = "?";
+#endif // SERVER_IS_PORT
         if (ok) {
             msg = ref + reader.expectText().c_str();
         }
@@ -638,10 +645,17 @@ int NameServer::main(int argc, char *argv[]) {
         MainNameServer name(suggest.getPort() + 2);
 
         // register root for documentation purposes
+#ifndef SERVER_IS_PORT
         name.registerName("root",suggest.addCarrier("text"));
         server.listen(Address(suggest.addRegName("root")));
+#else
+        name.registerName("/root",suggest);
+        server.listen(Address(suggest.addRegName("/root")));
+#endif
         server.setReadHandler(name);
+#ifndef SERVER_IS_PORT
         server.setAutoHandshake(false);
+#endif
         YARP_INFO(Logger::get(), String("Name server listening at ") + 
                   suggest.toString());
         server.start();

@@ -34,6 +34,7 @@ public:
     virtual bool isActive() = 0;
     virtual bool isTextMode() = 0;
     virtual bool isConnectionless() = 0;
+    virtual bool canEscape() = 0;
 
     virtual bool checkStreams() = 0;
 

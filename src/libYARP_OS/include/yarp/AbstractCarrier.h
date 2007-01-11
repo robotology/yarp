@@ -62,6 +62,10 @@ public:
         return false;
     }
 
+    virtual bool canEscape() {
+        return true;
+    }
+
     virtual String toString() {
         return getName();
     }

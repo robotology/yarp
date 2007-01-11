@@ -17,6 +17,7 @@
 #include <yarp/McastCarrier.h>
 #include <yarp/ShmemCarrier.h>
 #include <yarp/LocalCarrier.h>
+#include <yarp/NameserCarrier.h>
 
 using namespace yarp;
 
@@ -26,7 +27,8 @@ static Logger carriersLog("Carriers", Logger::get());
 Carriers yarp::Carriers::instance;
 
 Carriers::Carriers() {
-    delegates.push_back(new LocalCarrier());
+    delegates.push_back(new LocalCarrier()); // not solid yet
+    delegates.push_back(new NameserCarrier());
     delegates.push_back(new ShmemCarrier());
     delegates.push_back(new TcpCarrier());
     delegates.push_back(new McastCarrier());

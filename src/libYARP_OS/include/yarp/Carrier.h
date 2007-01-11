@@ -41,6 +41,7 @@ public:
     virtual bool canAccept() = 0;
     virtual bool canOffer() = 0;
     virtual bool isTextMode() = 0;
+    virtual bool canEscape() = 0;
     virtual bool requireAck() = 0;
     virtual bool supportReply() = 0;
 

@@ -802,12 +802,19 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 bw.write(os);
                 Bottle resp;
                 reader.reset(is,NULL,r,0,true);
-                resp.read(reader);
-                if (String(resp.get(0).asString())=="<ACK>") {
-                    printf("Acknowledged\n");
-                } else {
-                    printf("Response: %s\n", resp.toString().c_str());
-                    resp.read(reader); // get rid of <ACK>
+                bool done = false;
+                bool first = true;
+                while (!done) {
+                    resp.read(reader);
+                    if (String(resp.get(0).asString())=="<ACK>") {
+                        if (first) {
+                            printf("Acknowledged\n");
+                        }
+                        done = true;
+                    } else {
+                        printf("Response: %s\n", resp.toString().c_str());
+                    }
+                    first = false;
                 }
             }
         }

@@ -1,16 +1,27 @@
+2007-01-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/NameserCarrier.h: Made name server
+	protocol a protocol supported at the port level.
+
+	* src/libYARP_OS/src/NameServer.cpp: Modified name server slightly
+	so that it uses a real port.  All port-level protocols and tools
+	can now be used to communicate with it.  In particular
+	"yarp rpc /root" works.
+
 2007-01-11  Alexandre Bernardino  <alex@isr.ist.utl.pt>
 
-	* src\libYARP_dev\src\dragonfly\common\yarp\DragonflyDeviceDriver.h: 
+	* src/libYARP_dev/src/dragonfly/common/yarp/DragonflyDeviceDriver.h: 
 	Added a new option (--flea) to provide support for pointgray FLEA
 	cameras.
 	
-	* src\libYARP_dev\src\dragonfly\winnt\yarp\DragonflyDeviceDriver.cpp: 
+	* src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp: 
 	1. Removed the hardcoded parameter initialization. 
-	2. Added FLEA camera's support through a more general color reconstruction 
-	method.
+	2. Added FLEA camera's support through a more general color 
+	reconstruction method.
 	
-	* src\libYARP_dev\src\dragonfly\winnt\yarp\COPYRIGHT: 
-	Original copyright for the Bayer2RGB color reconstruction method from OpenCV.
+	* src/libYARP_dev/src/dragonfly/winnt/yarp/COPYRIGHT: 
+	Original copyright for the Bayer2RGB color reconstruction method 
+	from OpenCV.
 
 
 2007-01-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>

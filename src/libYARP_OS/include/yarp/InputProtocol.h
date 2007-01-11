@@ -38,6 +38,9 @@ public:
     virtual ConnectionReader& beginRead() = 0;
     virtual void endRead() = 0;
 
+    // can metadata (port-level comms) be inserted?  if not,there is only data.
+    virtual bool canEscape() = 0;
+
     virtual bool checkStreams() = 0;
 
     virtual void resetStreams() = 0;

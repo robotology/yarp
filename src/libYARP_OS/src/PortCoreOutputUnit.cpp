@@ -119,11 +119,13 @@ void PortCoreOutputUnit::closeBasic() {
             }
         } else {
             try {
-                BufferedConnectionWriter buf(op->isTextMode());
-                PortCommand pc('\0',String("q"));
-                pc.write(buf);
-                op->write(buf);
-                waitForOther = true;
+                if (op->canEscape()) {
+                    BufferedConnectionWriter buf(op->isTextMode());
+                    PortCommand pc('\0',String("q"));
+                    pc.write(buf);
+                    op->write(buf);
+                    waitForOther = true;
+                }
             } catch (IOException e) {
                 YARP_DEBUG(Logger::get(),e.toString() + 
                            " <<< exception for inline request to close input");
@@ -194,15 +196,17 @@ void PortCoreOutputUnit::sendHelper() {
                 throw IOException("writer failed");
             }
 
-            buf.addToHeader();
-
-            if (cachedEnvelope!="") {
-                //printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
-                PortCommand pc('\0',String("d ") + cachedEnvelope);
-                pc.writeBlock(buf);
-            } else {
-                PortCommand pc('d',"");
-                pc.writeBlock(buf);
+            if (op->canEscape()) {
+                buf.addToHeader();
+                
+                if (cachedEnvelope!="") {
+                    //printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
+                    PortCommand pc('\0',String("d ") + cachedEnvelope);
+                    pc.writeBlock(buf);
+                } else {
+                    PortCommand pc('d',"");
+                    pc.writeBlock(buf);
+                }
             }
 
             op->write(buf);
