@@ -136,6 +136,25 @@ void PortCoreInputUnit::run() {
                         }
                     }
                     break;
+                case 'r':
+                    /*
+                      In YARP implementation, OP = IP.
+                      This is the one place we use that information.
+                      If it were not true, memory alloc would need to
+                      reorganized here
+                     */
+                    {
+                        OutputProtocol *op = &(ip->getOutput());
+                        ip->endRead();
+                        Route r = op->getRoute();
+                        // reverse route
+                        op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+                                   
+                        getOwner().addOutput(op);
+                        ip = NULL;
+                        done = true;
+                    }
+                    break;
                 case 'q':
                     done = true;
                     break;
@@ -151,7 +170,8 @@ void PortCoreInputUnit::run() {
                         bw.appendLine("*       Gives a description of this port");
                         bw.appendLine("d       Signals the beginning of input for the port's owner");
                         bw.appendLine("q       Disconnects");
-                        bw.appendLine("i       Interrupt parent process");
+                        bw.appendLine("i       Interrupt parent process (unix only)");
+                        bw.appendLine("r       Reverse connection type to be a reader");
                         bw.appendLine("/port   Requests to send output to /port");
                         bw.appendLine("!/port  Requests to stop sending output to /port");
                         bw.appendLine("~/port  Requests to stop receiving input from /port");
@@ -169,7 +189,9 @@ void PortCoreInputUnit::run() {
                     }
                     break;
                 }
-                ip->endRead();
+                if (ip!=NULL) {
+                    ip->endRead();
+                }
             } catch (IOException e) {
                 YARP_DEBUG(Logger::get(),e.toString() + " <<< initial PortCoreInputUnit exception");
                 if (!ip->checkStreams()) {
@@ -180,6 +202,10 @@ void PortCoreInputUnit::run() {
                     // clear out any garbage
                     ip->resetStreams();
                 }
+            }
+            if (ip==NULL) {
+                done = true;
+                break;
             }
             if (closing||isDoomed()||(!ip->checkStreams())) {
                 done = true;
@@ -194,7 +220,9 @@ void PortCoreInputUnit::run() {
     setDoomed(true);
   
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
-    ip->close();
+    if (ip!=NULL) {
+        ip->close();
+    }
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closed ip");
 
     if (autoHandshake) {

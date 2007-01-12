@@ -79,6 +79,7 @@ public:
         if (result<=0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket read");
+            throw IOException("input socket died");
         }
         return result;
     }
@@ -89,6 +90,7 @@ public:
         if (result<0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket write");
+            throw IOException("output socket died");
         }
     }
 

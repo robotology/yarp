@@ -19,17 +19,30 @@ namespace yarp {
 }
 
 
-class yarp::HttpTwoWayStream : public TwoWayStream {
+class yarp::HttpTwoWayStream : public TwoWayStream, public OutputStream {
 private:
+    String proc;
+    String part;
+    bool data;
+    bool filterData;
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
 public:
     HttpTwoWayStream(TwoWayStream *delegate, const char *txt) : 
         delegate(delegate) {
+        data = false;
+        filterData = false;
         String s(txt);
         if (s=="") {
             s = "*";
+        }
+        if (s[0]=='r') {
+            filterData = true;
+            String msg = "Reading data from port...\n";
+            Bytes tmp((char*)msg.c_str(),msg.length());
+            delegate->getOutputStream().write(tmp);
+            delegate->getOutputStream().flush();
         }
         for (unsigned int i=0; i<s.length(); i++) {
             if (s[i]==',') {
@@ -51,7 +64,7 @@ public:
     }
 
     virtual InputStream& getInputStream() { return sis; }
-    virtual OutputStream& getOutputStream() { return sos; }
+    virtual OutputStream& getOutputStream() { return *this; }
 
 
     virtual const Address& getLocalAddress() {
@@ -70,39 +83,52 @@ public:
         delegate->reset();
     }
 
-    virtual void close() {
-        //printf("Closing\n");
-        String str = sos.toString().c_str();
-        //printf(">>> %s\n", str.c_str());
-        String proc = "";
-        String part = "";
-        for (unsigned int i=0; i<str.length(); i++) {
-            char ch = str[i];
-            if (ch=='\r') { continue; }
-            if (ch == '\n') {
-                Address addr = NameClient::extractAddress(part);
-                if (addr.isValid()) {
-                    if (addr.getCarrierName()=="tcp") {
-                        proc += "<a href=\"http://";
-                        proc += addr.getName();
-                        proc += ":";
-                        proc += NetType::toString(addr.getPort());
-                        proc += "\">";
-                        proc += part;
-                        proc += "</A>\n";
-                    } else {
-                        proc += part;
-                        proc += "\n";
-                    }
-                }
-                part = "";
-            } else {
-                part += ch;
-            }
+    virtual void write(const Bytes& b) { // throws
+        for (int i=0; i<b.length(); i++) {
+            apply(b.get()[i]);
         }
+    }
 
-        Bytes tmp((char*)proc.c_str(),proc.length());
-        delegate->getOutputStream().write(tmp);
+    virtual void apply(char ch) {
+        if (ch=='\r') { return; }
+        if (ch == '\n') {
+            proc = "";
+            Address addr = NameClient::extractAddress(part);
+            if (addr.isValid()) {
+                if (addr.getCarrierName()=="tcp") {
+                    proc += "<a href=\"http://";
+                    proc += addr.getName();
+                    proc += ":";
+                    proc += NetType::toString(addr.getPort());
+                    proc += "\">";
+                    proc += part;
+                    proc += "</A>\n";
+                } else {
+                    proc += part;
+                    proc += "\n";
+                }
+            } else {
+                proc += part;
+                proc += "\n";
+            }
+            if (data||!filterData) {
+                Bytes tmp((char*)proc.c_str(),proc.length());
+                delegate->getOutputStream().write(tmp);
+                delegate->getOutputStream().flush();
+            }
+            data = false;
+            if (proc[0] == 'd') {
+                data = true;
+            }
+            part = "";
+        } else {
+            part += ch;
+        }
+    }
+
+    virtual void close() {
+        apply('\n');
+        apply('\n');
         delegate->close();
     }
 
@@ -240,12 +266,27 @@ public:
         from += proto.getRoute().getToName();
         from += "</h1>\n";
         Address home = NameClient::getNameClient().getAddress();
+        Address me = proto.getStreams().getLocalAddress();
+
         from += "<p>(<a href=\"http://";
         from += home.getName();
         from += ":";
         from += NetType::toString(home.getPort());
-        from += "/d,list\">see port index</a>)</p>\n";
-        from += "\n<pre>\n";
+        from += "/d,list\">All ports</a>)&nbsp;&nbsp;\n";
+
+        from += "(<a href=\"http://";
+        from += me.getName();
+        from += ":";
+        from += NetType::toString(me.getPort());
+        from += "/\">connections</a>)&nbsp;&nbsp;\n";
+
+        from += "(<a href=\"http://";
+        from += me.getName();
+        from += ":";
+        from += NetType::toString(me.getPort());
+        from += "/r\">read</a>)&nbsp;&nbsp;\n";
+
+        from += "</p>\n<pre>\n";
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();

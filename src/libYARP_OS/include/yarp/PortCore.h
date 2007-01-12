@@ -130,6 +130,9 @@ public:
     virtual void describe(void *id, OutputStream *os);
     virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
+    // public so that connections can be reversed
+    void addOutput(OutputProtocol *op);
+
 private:
 
     // internal maintenance of sub units
@@ -147,8 +150,6 @@ private:
 
     // only called in "running" phase
     void addInput(InputProtocol *ip);
-
-    void addOutput(OutputProtocol *op);
 
     bool removeUnit(const Route& route, bool synch = false);
 

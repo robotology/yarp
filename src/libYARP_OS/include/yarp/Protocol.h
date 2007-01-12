@@ -321,6 +321,11 @@ public:
         expectReplyToHeader();
     }
 
+    virtual void rename(const Route& route) {
+        setRoute(route);
+    }
+
+
     virtual void open(const String& name) {
         if (name=="") {
             setCarrier("text");

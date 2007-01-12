@@ -478,6 +478,21 @@ public:
         return NULL;
     }
 };
+
+class TextReader : public Readable {
+public:
+    ConstString str;
+    virtual bool read(yarp::os::ConnectionReader& reader) {
+        try {
+            str = reader.expectText();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+};
+
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
@@ -801,18 +816,30 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 }
                 bw.write(os);
                 Bottle resp;
+                TextReader formattedResp;
                 reader.reset(is,NULL,r,0,true);
                 bool done = false;
                 bool first = true;
                 while (!done) {
-                    resp.read(reader);
+                    if (reader.isTextMode()) {
+                        formattedResp.read(reader);
+                        resp.fromString(formattedResp.str.c_str());
+                    } else {
+                        resp.read(reader);
+                    }
                     if (String(resp.get(0).asString())=="<ACK>") {
                         if (first) {
                             printf("Acknowledged\n");
                         }
                         done = true;
                     } else {
-                        printf("Response: %s\n", resp.toString().c_str());
+                        ConstString txt;
+                        if (reader.isTextMode()) {
+                            txt = formattedResp.str;
+                        } else {
+                            txt = resp.toString().c_str();
+                        }
+                        printf("Response: %s\n", txt.c_str());
                     }
                     first = false;
                 }

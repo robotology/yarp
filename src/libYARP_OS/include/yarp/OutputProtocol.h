@@ -28,6 +28,7 @@ public:
     virtual ~OutputProtocol() {}
 
     virtual void open(const Route& route) = 0;
+    virtual void rename(const Route& route) = 0;
     virtual void close() = 0;
 
     virtual const Route& getRoute() = 0;
