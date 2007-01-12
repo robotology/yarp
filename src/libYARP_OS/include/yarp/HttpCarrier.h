@@ -79,7 +79,6 @@ public:
         for (unsigned int i=0; i<str.length(); i++) {
             char ch = str[i];
             if (ch=='\r') { continue; }
-            part += ch;
             if (ch == '\n') {
                 Address addr = NameClient::extractAddress(part);
                 if (addr.isValid()) {
@@ -93,9 +92,12 @@ public:
                         proc += "</A>\n";
                     } else {
                         proc += part;
+                        proc += "\n";
                     }
                 }
                 part = "";
+            } else {
+                part += ch;
             }
         }
 
