@@ -1,3 +1,7 @@
+2007-01-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* README: Updated compile/install instructions.
+
 2007-01-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/HttpCarrier.h: Made basic port 

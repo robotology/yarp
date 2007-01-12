@@ -19,6 +19,10 @@ See AUTHORS for a list of contributors to YARP.
 INSTALLATION and COMPILATION
 ----------------------------
 
+See official instructions at:
+  http://eris.liralab.it/yarp/specs/dox/user/html/install.html
+What follows is a summary.
+
 There are a few different ways to compile YARP.
 
 See if there is a file called "QUICKSTART".  If so, then you have a 
@@ -29,13 +33,17 @@ to get going.
 We now describe two general methods for compiling YARP: "cmake" and
 "autoconf".
 
-If you are using some version of Microsoft Windows, we recommend cmake
-(see CMAKE section below).
+We recommend the "cmake" method for users of Microsoft Windows.  See the
+CMAKE section below (after reading PREREQUISITES).
 
-If you are using some version of Linux, you can use cmake or 
-autoconf (see AUTOCONF section below).
+We also recommend the "cmake" method for users of UNIX-like systems
+(including Linux, OSX, Cygwin).  See the CMAKE section below
+(after reading PREREQUISITES).
 
-If all else fails, you can fall back on autoconf.
+Those on UNIX systems may also choose to use the "autoconf" method
+(see AUTOCONF section below).  Be aware that this method will not
+currently compile device interface support, only communication
+support.
 
 
 ===============================================================================
@@ -43,9 +51,12 @@ If all else fails, you can fall back on autoconf.
 PREREQUISITES *** important! read this! ***
 -------------
 
-YARP depends on the ACE communications library.  Make sure you install
-ACE before following any of the steps below.  See:
+YARP depends on a small, stable subset of the ACE communications
+library.  Make sure you install ACE before following any of the steps
+below.  See:
   http://www.cs.wustl.edu/~schmidt/ACE.html
+or:
+  http://eris.liralab.it/yarp/specs/dox/user/html/install.html#install_ace
 for download and installation instructions.  Some linux distributions
 have binary packages for ACE (e.g. debian has "libace-dev").
 
@@ -88,12 +99,12 @@ Cmake (www.cmake.org) can create developer studio projects, makefiles,
 or other build files for a number of operating systems and tool sets.
 
 Download cmake from www.cmake.org or install it as a package if available
-for your system.
-
+for your system.  For extra tips, see:
+  http://eris.liralab.it/yarp/specs/dox/user/html/install.html#cmake
 
 In Linux, in the YARP directory, type:
 
-  cmake . (or "ccmake ." for a graphical interface)
+  cmake . (or "ccmake ." for a graphical interface with clear options)
   make
   make test
 
@@ -101,6 +112,9 @@ In Linux, in the YARP directory, type:
   If you run into trouble while setting things up, and decide to 
   start again, consider deleting the automatically generated
   "CMakeCache.txt" file to make sure CMake is really starting agin.
+
+* See GUIS section below for steps needed to compile YARP graphical 
+  interfaces.
 
 
 In Microsoft Windows, run cmake, answer "Where is the source code" by
@@ -114,6 +128,9 @@ browsing to the YARP directory.
   If you run into trouble while setting things up, and decide to 
   start again, consider clicking the "Delete Cache" button to make 
   sure CMake is really starting agin.
+
+* See GUIS section below for steps needed to compile YARP graphical 
+  interfaces.
 
 Answer "Where to build the binaries" with whatever you like.
 
@@ -220,8 +237,8 @@ You should be able to browse library documentation from:
 
 ===============================================================================
 
-GUIS.
-----------------------
+GUIS
+----
 
 Graphic User Interface(s) are implemented in YARP with gtk+. By default GUIs 
 are not compiled, but you can ask cmake to include them.
