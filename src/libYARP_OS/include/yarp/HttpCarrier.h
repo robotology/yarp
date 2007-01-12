@@ -32,7 +32,7 @@ public:
             s = "*";
         }
         for (unsigned int i=0; i<s.length(); i++) {
-            if (s[i]=='/') {
+            if (s[i]==',') {
                 s[i] = '\n';
             }
             if (s[i]=='+') {
@@ -71,9 +71,9 @@ public:
     }
 
     virtual void close() {
-        printf("Closing\n");
+        //printf("Closing\n");
         String str = sos.toString().c_str();
-        printf(">>> %s\n", str.c_str());
+        //printf(">>> %s\n", str.c_str());
         String proc = "";
         String part = "";
         for (unsigned int i=0; i<str.length(); i++) {
@@ -234,20 +234,16 @@ public:
         }
 
 
-        String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><pre>YARP HTTP.\n";
+        String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body bgcolor='#ffffcc'><h1>yarp port ";
+        from += proto.getRoute().getToName();
+        from += "</h1>\n";
         Address home = NameClient::getNameClient().getAddress();
-        from += "<a href=\"http://";
+        from += "<p>(<a href=\"http://";
         from += home.getName();
         from += ":";
         from += NetType::toString(home.getPort());
-        from += "/d/list\">index</a>\n";
-        from += "This is ";
-        from += proto.getRoute().getToName();
-        from += "\n";
-        from += "Command [";
-        from += url;
-        from += "]\n";
-        from += "\n\n";
+        from += "/d,list\">see port index</a>)</p>\n";
+        from += "\n<pre>\n";
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();
