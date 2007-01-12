@@ -1,5 +1,11 @@
 2007-01-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/PortCoreInputUnit.cpp: Made connections
+	reversible, so that an input connection can switch to 
+	become an output connection.  This is helpful for communication
+	with non-YARP processes, where a connection to read data is
+	initiated externally.
+
 	* README: Updated compile/install instructions.
 
 2007-01-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
