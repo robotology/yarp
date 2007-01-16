@@ -103,6 +103,12 @@ public:
         this->prefix = prefix;
     }
 
+    void setPid();
+
+    long int getPid() {
+        return pid;
+    }
+
 private:
     void show(int level, const String& txt);
     void exit(int result);
@@ -112,6 +118,7 @@ private:
     Logger *parent;
     int verbose;
     int low;
+    long int pid;
 };
 
 // compromise - use macros so that debugging can evaporate in optimized code.

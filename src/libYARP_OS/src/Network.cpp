@@ -61,6 +61,7 @@ void Network::init() {
         YARP_INFO(Logger::get(), "YARP_VERBOSE environment variable is set");
         Logger::get().setVerbosity(b.get(0).asInt());
     }
+    Logger::get().setPid();
 	// make sure system is actually able to do things fast
 	Time::turboBoost();
 }

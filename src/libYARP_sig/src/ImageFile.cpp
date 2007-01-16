@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: ImageFile.cpp,v 1.18 2006-11-14 19:33:36 natta Exp $
+/// $Id: ImageFile.cpp,v 1.19 2007-01-16 18:08:35 eshuy Exp $
 ///
 ///
 
@@ -103,7 +103,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
             } else {
                 buf[idx] = ch;
                 idx++;
-                assert(idx<sizeof(buf));
+                assert(((unsigned int)idx)<sizeof(buf));
                 blank = 0;
             }
         }

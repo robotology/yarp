@@ -9,6 +9,7 @@
 
 #include <yarp/Logger.h>
 
+#include <ace/OS.h>
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
@@ -46,4 +47,9 @@ void Logger::show(int level, const String& txt) {
 
 void Logger::exit(int level) {
     ACE_OS::exit(level);
+}
+
+
+void Logger::setPid() {
+    pid = ACE_OS::getpid();
 }

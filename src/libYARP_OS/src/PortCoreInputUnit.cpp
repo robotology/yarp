@@ -160,7 +160,8 @@ void PortCoreInputUnit::run() {
                     break;
                 case 'i':
                     printf("Interrupt requested\n");
-                    ACE_OS::kill(0,2); // SIGINT
+                    //ACE_OS::kill(0,2); // SIGINT
+                    ACE_OS::kill(Logger::get().getPid(),2); // SIGINT
                     break;
                 case '?':
                 case 'h':
