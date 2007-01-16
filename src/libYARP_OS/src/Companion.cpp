@@ -279,6 +279,8 @@ int Companion::cmdWhere(int argc, char *argv[]) {
     if (address.isValid()) {
         ACE_OS::printf("Name server is available at ip %s port %d\n",
                        address.getName().c_str(), address.getPort());
+        ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
+                       address.getName().c_str(), address.getPort());
     } else {
         ACE_OS::printf("Name server not found\n");
         return 1;
