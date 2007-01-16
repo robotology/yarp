@@ -23,7 +23,7 @@ void FallbackNameClient::run() {
         DgramTwoWayStream send;
         send.join(call,true);
         listen.join(call,false);
-        String msg = "NAME_SERVER query root";
+        String msg = "NAME_SERVER query /root";
         send.beginPacket();
         send.writeLine(msg);
         send.flush();

@@ -1,3 +1,9 @@
+2007-01-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/FallbackNameClient.cpp,Companion.cpp:
+	called name server entry "/root" instead of "root" now that
+	it is a real port.
+
 2007-01-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCoreInputUnit.cpp: Made connections
