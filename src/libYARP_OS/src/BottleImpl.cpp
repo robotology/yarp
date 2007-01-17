@@ -109,7 +109,7 @@ void BottleImpl::smartAdd(const String& str) {
         }
 
         if (numberLike && (ch>='0'&&ch<='9'||ch=='+'||ch=='-'||ch=='.')) {
-            if (str.strstr(".")<0) {
+            if (str.strstr(".")==String::npos) {
                 s = new StoreInt(0);
             } else {
                 s = new StoreDouble(0);
@@ -605,7 +605,7 @@ String StoreDouble::toStringFlex() const {
     char buf[256];
     ACE_OS::sprintf(buf,"%f",x);
     String str(buf);
-    if (str.strstr(".")<0) {
+    if (str.strstr(".")==String::npos) {
         str += ".0";
     }
     int ct = 0;
