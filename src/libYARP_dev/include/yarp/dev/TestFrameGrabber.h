@@ -50,7 +50,7 @@ public:
      */
     TestFrameGrabber() {
         ct = 0;
-        freq = 20;
+        freq = 60;
         period = 1/freq;
         // just for nostalgia
         w = 128;
@@ -90,14 +90,28 @@ public:
         } else if (config.check("period",val,
                                 "period of test images in seconds")) {
             period = val->asDouble();
-            freq = 1/period;
+            if(period<=0)
+			{
+				period =0;
+				freq = -1;
+			}
         }
         mode = config.check("mode",
                             yarp::os::Value(VOCAB_LINE, true),
                             "bouncy [ball] or scrolly [line]").asVocab();
-        printf("Test grabber period %g / freq %g, mode [%s]\n", period, freq,
-               yarp::os::Vocab::decode(mode).c_str());
-        bx = w/2;
+
+		if (freq!=-1)
+		{
+			printf("Test grabber period %g / freq %g , mode [%s]\n", period, freq,
+				yarp::os::Vocab::decode(mode).c_str());
+		}
+		else
+		{
+			printf("Test grabber period %g / freq [inf], mode [%s]\n", period,
+				yarp::os::Vocab::decode(mode).c_str());
+		}
+       
+		bx = w/2;
         by = h/2;
         return true;
     }
@@ -113,7 +127,7 @@ public:
         double dt = period-(now-prev);
 
         if (dt>0) {
-       //     yarp::os::Time::delay(dt);
+            yarp::os::Time::delay(dt);
         }
         
         // this is the controlled instant when we consider the
@@ -156,9 +170,14 @@ public:
         return 0;
     }
 
+
+
 	virtual bool setWhiteBalance(double r, double g)
+
 	{
+
 		return true;
+
 	}
 
 private:
