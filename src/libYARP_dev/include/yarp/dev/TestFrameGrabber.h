@@ -50,7 +50,7 @@ public:
      */
     TestFrameGrabber() {
         ct = 0;
-        freq = 60;
+        freq = 30;
         period = 1/freq;
         // just for nostalgia
         w = 128;
