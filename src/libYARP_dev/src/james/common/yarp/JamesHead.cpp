@@ -283,28 +283,28 @@ public:
     {
         mutex.wait();
 		for(int k=0;k<HEAD_JOINTS;k++)
-            {
-                //velocityCmds[k]=vel[k];
-				if (k<5)
-                    ivel->velocityMove(k, vel[k]);
-				else
+		{
+			//velocityCmds[k]=vel[k];
+			if (k<5)
+				ivel->velocityMove(k, vel[k]);
+			else
+			{
+				if (k==5)
 				{
-					if (k==5)
-					{
-						prevRoll_d = positionCmds[k];
-						positionCmds[k] = vel[k];
-						tfRoll  = 1000*fabs(positionCmds[k] - prevRoll_d)/roll_v; 
-						timeRoll = 0;
-					}
-					if (k==6)
-					{
-						prevPitch_d = positionCmds[k];
-						positionCmds[k] = vel[k];
-						tfPitch  = 1000*fabs(positionCmds[k] - prevPitch_d)/pitch_v; 
-						timePitch = 0;
-					}
+					prevRoll_d = positionCmds[k];
+					positionCmds[k] = vel[k];
+					tfRoll  = 1000*fabs(positionCmds[k] - prevRoll_d)/roll_v; 
+					timeRoll = 0;
 				}
-            }
+				if (k==6)
+				{
+					prevPitch_d = positionCmds[k];
+					positionCmds[k] = vel[k];
+					tfPitch  = 1000*fabs(positionCmds[k] - prevPitch_d)/pitch_v; 
+					timePitch = 0;
+				}
+			}
+		}
 		mutex.post();
 
 		return true;

@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.5 2006-11-06 20:06:28 eshuy Exp $
+/// $Id: EsdMotionControl.cpp,v 1.6 2007-01-17 16:37:24 babybot Exp $
 ///
 ///
 
@@ -1511,8 +1511,8 @@ bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
             r.addMessage (CAN_VELOCITY_MOVE, axis);
             const int j = r._writeMessages - 1;
             _command_speeds[axis] = sp / 1000.0;
-            *((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
-            *((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
+            *((short*)(r._writeBuffer[j].data+1)) = S_16(16*_command_speeds[axis]);	/// speed
+            *((short*)(r._writeBuffer[j].data+3)) = S_16(16*_ref_accs[axis]);		/// accel
             r._writeBuffer[j].len = 5;
         }
 	else
@@ -1548,8 +1548,8 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
                     r.addMessage (CAN_VELOCITY_MOVE, i);
                     const int j = r._writeMessages - 1;
                     _command_speeds[i] = sp[i] / 1000.0;
-                    *((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
-                    *((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
+                    *((short*)(r._writeBuffer[j].data+1)) = S_16(16*_command_speeds[i]);	/// speed
+                    *((short*)(r._writeBuffer[j].data+3)) = S_16(16*_ref_accs[i]);		/// accel
                     r._writeBuffer[j].len = 5;
                 }
             else

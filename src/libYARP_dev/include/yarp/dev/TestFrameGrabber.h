@@ -113,7 +113,7 @@ public:
         double dt = period-(now-prev);
 
         if (dt>0) {
-            yarp::os::Time::delay(dt);
+       //     yarp::os::Time::delay(dt);
         }
         
         // this is the controlled instant when we consider the
