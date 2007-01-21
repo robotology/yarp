@@ -347,6 +347,11 @@ public:
         return delegate->isTextMode();
     }
 
+    virtual bool supportReply() {
+        YARP_ASSERT(delegate!=NULL);
+        return delegate->supportReply();
+    }
+
     virtual bool isConnectionless() {
         YARP_ASSERT(delegate!=NULL);
         return delegate->isConnectionless();

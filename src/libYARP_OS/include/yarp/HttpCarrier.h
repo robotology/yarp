@@ -18,7 +18,30 @@ namespace yarp {
     class HttpTwoWayStream;
 }
 
-
+/**
+ * Minimal http connection support.
+ * Most useful for connections to YARP ports from browsers.
+ * No support for connections in the opposite direction.
+ * This carrier is recruited when a port sees a TCP stream that
+ * begins with "GET /".  
+ *
+ * For "GET /", the URL following the "/" is
+ * currently translated to text as follows:
+ *   "," becomes newline
+ *   "+" becomes " "
+ * This text is then passed on to the port, just as for a normal
+ * text connection.
+ * For example
+ *   "GET /d,list"
+ * is the same as telnetting into a port and typing:
+ *   CONNECT anon
+ *   d
+ *   list
+ * or typing "list" to "yarp rpc /portname".
+ * The response of the port, if any, is output in ugly html.
+ *
+ * For "POST /" ... not done yet.
+ */
 class yarp::HttpTwoWayStream : public TwoWayStream, public OutputStream {
 private:
     String proc;
@@ -29,32 +52,7 @@ private:
     StringInputStream sis;
     StringOutputStream sos;
 public:
-    HttpTwoWayStream(TwoWayStream *delegate, const char *txt) : 
-        delegate(delegate) {
-        data = false;
-        filterData = false;
-        String s(txt);
-        if (s=="") {
-            s = "*";
-        }
-        if (s[0]=='r') {
-            filterData = true;
-            String msg = "Reading data from port...\n";
-            Bytes tmp((char*)msg.c_str(),msg.length());
-            delegate->getOutputStream().write(tmp);
-            delegate->getOutputStream().flush();
-        }
-        for (unsigned int i=0; i<s.length(); i++) {
-            if (s[i]==',') {
-                s[i] = '\n';
-            }
-            if (s[i]=='+') {
-                s[i] = ' ';
-            }
-        }
-        sis.add(s);
-        sis.add("\nq\nq\nq\n");
-    }
+    HttpTwoWayStream(TwoWayStream *delegate, const char *txt);
 
     virtual ~HttpTwoWayStream() {
         if (delegate!=NULL) {
@@ -148,21 +146,26 @@ public:
  */
 class yarp::HttpCarrier : public TcpCarrier {
 private:
-    String url;
+    String url, input;
     bool urlDone;
+    bool expectPost;
+    int contentLength;
 public:
     HttpCarrier() {
         url = "";
+        input = "";
         urlDone = false;
+        expectPost = false;
+        contentLength = 0;
     }
 
     virtual String getName() {
         return "http";
     }
 
-    virtual bool checkHeader(const Bytes& header) {
+    bool checkHeader(const Bytes& header, const char *prefix) {
         if (header.length()==8) {
-            String target = "GET /";
+            String target = prefix;
             for (unsigned int i=0; i<target.length(); i++) {
                 if (!(target[i]==header.get()[i])) {
                     return false;
@@ -173,16 +176,29 @@ public:
         return false;
     }
 
+    virtual bool checkHeader(const Bytes& header) {
+        bool ok = checkHeader(header,"GET /");
+        if (!ok) {
+            ok = checkHeader(header,"POST /");
+        }
+        return ok;
+    }
+
     virtual void setParameters(const Bytes& header) {
         if (header.length()==8) {
-            String target = "GET /";
-            for (unsigned int j=target.length(); j<8; j++) {
+            bool adding = false;
+            for (unsigned int j=0; j<8; j++) {
                 char ch = header.get()[j];
-                if (ch!=' ') {
-                    url += ch;
-                } else {
-                    urlDone = true;
-                    break;
+                if (adding) {
+                    if (ch!=' ') {
+                        url += ch;
+                    } else {
+                        urlDone = true;
+                        break;
+                    }
+                }
+                if (ch=='/') {
+                    adding = true;
                 }
             }
         }
@@ -233,82 +249,33 @@ public:
 
     }
 
+    void expectSenderSpecifier(Protocol& proto);
+
     void expectReplyToHeader(Protocol& proto) {
         // expect and ignore CONTENT lines
         String result = NetType::readLine(proto.is());
     }
 
-    void expectSenderSpecifier(Protocol& proto) {
-        proto.setRoute(proto.getRoute().addFromName("web"));
-        String remainder = NetType::readLine(proto.is());
-        if (!urlDone) {
-            for (unsigned int i=0; i<remainder.length(); i++) {
-                if (remainder[i]!=' ') {
-                    url += remainder[i];
-                } else {
-                    break;
-                }
-            }
-        }
-
-        bool done = false;
-        while (!done) {
-            String result = NetType::readLine(proto.is());
-            if (result == "") {
-                done = true;
-            } else {
-                //printf(">>> %s\n", result.c_str());
-            }
-        }
-
-
-        String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body bgcolor='#ffffcc'><h1>yarp port ";
-        from += proto.getRoute().getToName();
-        from += "</h1>\n";
-        Address home = NameClient::getNameClient().getAddress();
-        Address me = proto.getStreams().getLocalAddress();
-
-        from += "<p>(<a href=\"http://";
-        from += home.getName();
-        from += ":";
-        from += NetType::toString(home.getPort());
-        from += "/d,list\">All ports</a>)&nbsp;&nbsp;\n";
-
-        from += "(<a href=\"http://";
-        from += me.getName();
-        from += ":";
-        from += NetType::toString(me.getPort());
-        from += "/\">connections</a>)&nbsp;&nbsp;\n";
-
-        from += "(<a href=\"http://";
-        from += me.getName();
-        from += ":";
-        from += NetType::toString(me.getPort());
-        from += "/r\">read</a>)&nbsp;&nbsp;\n";
-
-        from += "</p>\n<pre>\n";
-        Bytes b2((char*)from.c_str(),from.length());
-        proto.os().write(b2);
-        proto.os().flush();
-        //proto.os().close();
-
-    }
 
     void sendIndex(Protocol& proto) {
+        // no index
     }
 
     void expectIndex(Protocol& proto) {
+        // no index
     }
 
     void sendAck(Protocol& proto) {
+        // no acknowledgement
     }
 
     virtual void expectAck(Protocol& proto) {
+        // no acknowledgement
     }
 
     void respondToHeader(Protocol& proto) {
         HttpTwoWayStream *stream = 
-            new HttpTwoWayStream(proto.giveStreams(),url.c_str());
+            new HttpTwoWayStream(proto.giveStreams(),input.c_str());
         proto.takeStreams(stream);
     }
 };

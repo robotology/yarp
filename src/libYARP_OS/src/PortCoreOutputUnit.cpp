@@ -123,6 +123,8 @@ void PortCoreOutputUnit::closeBasic() {
                     BufferedConnectionWriter buf(op->isTextMode());
                     PortCommand pc('\0',String("q"));
                     pc.write(buf);
+                    //printf("Asked for %s to close...\n",
+                    //     op->getRoute().toString().c_str());
                     op->write(buf);
                     waitForOther = true;
                 }
@@ -141,9 +143,14 @@ void PortCoreOutputUnit::closeBasic() {
     if (op!=NULL) {
         try {
             if (waitForOther) {
-                InputStream& is = op->getInputStream();
-                ManagedBytes dummy(1);
-                is.read(dummy.bytes());
+                // quit is only acknowledged in certain conditions
+                if (op->isTextMode()&&op->supportReply()) {
+                    InputStream& is = op->getInputStream();
+                    //printf("Waiting for %s to close...\n",
+                    //     op->getRoute().toString().c_str());
+                    ManagedBytes dummy(1);
+                    is.read(dummy.bytes());
+                }
             }
             op->close();
         } catch (IOException e) { /*ok*/ }

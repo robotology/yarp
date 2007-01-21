@@ -6,25 +6,32 @@
  *
  */
 
+// Migrate name server to use a real YARP port.
+// In the past, since the name server had to be built before ports
+// could be built, it used a distinct protocol (name_ser).
+#define SERVER_IS_PORT
 
 #include <yarp/NameServer.h>
 #include <yarp/Logger.h>
 #include <yarp/PortCore.h>
-#include <yarp/os/Time.h>
 #include <yarp/SplitString.h>
 #include <yarp/NetType.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/NameConfig.h>
 #include <yarp/FallbackNameServer.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp;
 using namespace yarp::os;
 
-
-// Migrate name server to use a real YARP port.
-// In the past, since the name server had to be built before ports
-// could be built, it used a distinct protocol (name_ser).
-#define SERVER_IS_PORT
+// produce a correctly parsed string in presence of quoting
+static ConstString STR_HELP(const char *txt) {
+    Value v;
+    v.fromString(txt);
+    return v.asString();
+}
+#define STR(x) STR_HELP(x).c_str()
 
 
 ////////////////////////////////////////////////////////////////////////
@@ -222,7 +229,7 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = argv[0];
+    String portName = STR(argv[0]);
 
     String machine = "...";
     String carrier = "...";
@@ -261,7 +268,7 @@ String NameServer::cmdQuery(int argc, char *argv[]) {
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = argv[0];
+    String portName = STR(argv[0]);
     Address address = queryName(portName);
     return terminate(textify(address));
 }
@@ -274,7 +281,7 @@ String NameServer::cmdUnregister(int argc, char *argv[]) {
     if (argc<1) {
         return "need at least one argument";
     }
-    String portName = argv[0];
+    String portName = STR(argv[0]);
     Address address = unregisterName(portName);
     return terminate(textify(address));
 }
@@ -288,8 +295,8 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
     if (argc<2) {
         return terminate("need at least two arguments: the source port and the target port\n(followed by an optional list of carriers in decreasing order of desirability)");
     }
-    String src = argv[0];
-    String dest = argv[1];
+    String src = STR(argv[0]);
+    String dest = STR(argv[1]);
 
     argc-=2;
     argv+=2;
@@ -363,7 +370,7 @@ String NameServer::cmdSet(int argc, char *argv[]) {
     if (argc<2) {
         return "need at least two arguments: the port name, and a key";
     }
-    String target = argv[0];
+    String target = STR(argv[0]);
     String key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     nameRecord.clearProp(key);
@@ -382,7 +389,7 @@ String NameServer::cmdGet(int argc, char *argv[]) {
     if (argc<2) {
         return "need exactly two arguments: the port name, and a key";
     }
-    String target = argv[0];
+    String target = STR(argv[0]);
     String key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     return terminate(String("port ") + target + " property " + key + " = " +
@@ -397,7 +404,7 @@ String NameServer::cmdMatch(int argc, char *argv[]) {
     if (argc<3) {
         return "need exactly three arguments: the port name, a key, and a prefix";
     }
-    String target = argv[0];
+    String target = STR(argv[0]);
     String key = argv[1];
     String prefix = argv[2];
     NameRecord& nameRecord = getNameRecord(target);
@@ -414,7 +421,7 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
         return "need at least two arguments: the port name, and a key";
     }
     String response = "";
-    String target = argv[0];
+    String target = STR(argv[0]);
     String key = argv[1];
     NameRecord& nameRecord = getNameRecord(target);
     for (int i=2; i<argc; i++) {

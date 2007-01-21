@@ -160,12 +160,29 @@ targ $TARGET\n\
                    "environment addition");
     }
 
+
+    virtual void checkUrl() {
+        report(0,"checking url parsing");
+        Property p;
+        p.fromQuery("prop1=val1&prop2=val2");
+        checkEqual(p.find("prop1").asString().c_str(),"val1","basic prop 1");
+        checkEqual(p.find("prop2").asString().c_str(),"val2","basic prop 2");
+        p.fromQuery("http://foo.bar.org/link?prop3=val3&prop4=val4",true);
+        checkEqual(p.find("prop3").asString().c_str(),"val3","full prop 3");
+        checkEqual(p.find("prop4").asString().c_str(),"val4","full prop 4");
+        p.fromQuery("prop1=val+one&prop2=val%2Ftwo%2C");
+        checkEqual(p.find("prop1").asString().c_str(),"val one","mix prop 1");
+        checkEqual(p.find("prop2").asString().c_str(),"val/two,","mix prop 2");
+    }
+
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
         checkTypes();
         checkCopy();
         checkExpansion();
+        checkUrl();
     }
 };
 

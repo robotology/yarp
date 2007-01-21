@@ -72,6 +72,7 @@ public:
     }
 
     virtual int read(const Bytes& b) {
+        if (!isOk()) { return -1; }
         //ACE_OS::printf("STWS::read pre \n");
         int result = stream.recv_n(b.get(),b.length());
         //ACE_OS::printf("socket read %d\n", result);
@@ -79,7 +80,7 @@ public:
         if (result<=0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket read");
-            throw IOException("input socket died");
+            //throw IOException("input socket died");
         }
         return result;
     }
@@ -90,7 +91,7 @@ public:
         if (result<0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket write");
-            throw IOException("output socket died");
+            //throw IOException("output socket died");
         }
     }
 

@@ -234,6 +234,29 @@ public:
                     Searchable& env,
                     bool wipe=true);
 
+
+    /**
+     * Parses text in a url, adding anything of the form foo=bar
+     * as a property
+     * @param url the text of the url, of form ...prop1=val1&prop2=val2...
+     * @param wipe should Property be emptied first
+     */
+    void fromQuery(const char *url,
+                   bool wipe=true);
+
+
+    /**
+     * Variant with environment.
+     * 
+     * @param url the text of the url, of form ...prop1=val1&prop2=val2...
+     * @prama env extra set of environment variables
+     * @param wipe should Property be emptied first
+     */
+    void fromQuery(const char *url,
+                   Searchable& env,
+                   bool wipe=true);
+
+
     // documented in Searchable
     ConstString toString() const;
 

@@ -724,14 +724,12 @@ public:
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
 
-        if (0) {
         testOpen();
         testReadBuffer();
         testPair();
         testReply();
         testUdp();
         //testHeavy();
-
 
         testBackground();
         testWriteBuffer();
@@ -744,7 +742,7 @@ public:
         testRecentReader();
         testUnbufferedClose();
         //testCloseOpenRepeats(); //bring this back soon
-        }
+
         testCounts();
 
         nic.setFakeMode(false);

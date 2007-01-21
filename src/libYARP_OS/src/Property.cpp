@@ -203,7 +203,7 @@ public:
     }
 
 
-    void fromConfigFile(const char *fname,Searchable& env,bool wipe=true) {
+    void fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
         ifstream fin(fname);
         String txt;
         if (fin.fail()) {
@@ -559,4 +559,60 @@ Bottle& Property::findGroup(const char *key) {
 
     if (result!=((Bottle*)0)) { return *result; }
     return Bottle::getNullBottle();
+}
+
+
+void Property::fromQuery(const char *url, bool wipe) {
+    if (wipe) {
+        clear();
+    }
+    String str = url;
+    str += "&";
+    String buf = "";
+    String key = "";
+    String val = "";
+    int code = 0;
+    int coding = 0;
+    
+    for (unsigned int i=0; i<str.length(); i++) {
+        char ch = str[i];
+        if (ch=='=') {
+            key = buf;
+            val = "";
+            buf = "";
+            //printf("adding key %s\n", key.c_str());
+        } else if (ch=='&') {
+            //printf("adding val %s\n", val.c_str());
+            val = buf;
+            buf = "";
+            if (key!="" && val!="") {
+                put(key.c_str(),val.c_str());
+            }
+            key = "";
+        } else if (ch=='?') {
+            buf = "";
+        } else {
+            if (ch=='+') {
+                ch = ' ';
+            } else if (ch=='%') {
+                coding = 2;
+            } else {
+                if (coding) {
+                    int hex = 0;
+                    if (ch>='0'&&ch<='9') { hex = ch-'0'; }
+                    if (ch>='A'&&ch<='F') { hex = ch-'A'+10; }
+                    if (ch>='a'&&ch<='f') { hex = ch-'a'+10; }
+                    code *= 16;
+                    code += hex;
+                    coding--;
+                    if (coding == 0) {
+                        ch = code;
+                    }
+                } 
+            }
+            if (coding==0) {
+                buf += ch;
+            }
+        }
+    }
 }

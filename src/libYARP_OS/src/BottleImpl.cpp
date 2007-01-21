@@ -86,8 +86,15 @@ void BottleImpl::smartAdd(const String& str) {
         bool numberLike = true;
         bool preamble = true;
         bool hexActive = false;
+        int periodCount = 0;
         for (int i=0; i<(int)str.length(); i++) {
             char ch2 = str[i];
+            if (ch=='.') {
+                periodCount++;
+                if (periodCount>1) {
+                    numberLike = false;
+                }
+            }
             if (preamble) {
                 if (ch2=='x'||ch2=='X') {
                     hexActive = true;

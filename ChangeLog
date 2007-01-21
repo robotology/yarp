@@ -1,7 +1,14 @@
+2007-01-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/HttpCarrier.cpp: support for "post" form
+	of http messages.
+
 2007-01-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp,PortCoreInputUnit.cpp: try to
 	deal with newest ACE not using -1 anymore for string methods.
+	(Motivation: running YARP on MAC OSX on intel processors requires
+	recent ACE beta).
 
 2007-01-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
