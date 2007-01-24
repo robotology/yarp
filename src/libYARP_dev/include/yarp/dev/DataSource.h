@@ -14,6 +14,12 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Stamp.h>
 
+
+// These classes are part of the YARP library implementation,
+// rather than its user interface
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+
 namespace yarp {
     namespace dev {
         template <class T> class DataSource;
@@ -108,6 +114,9 @@ public:
         writer2.write(!canDrop);
     }
 };
+
+
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
 #endif
