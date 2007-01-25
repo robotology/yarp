@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
         ACE_OS::printf("You can call %s like this:\n", argv[0]);
         ACE_OS::printf("   %s --robot ROBOTNAME --OPTION VALUE ...\n", argv[0]);
         ACE_OS::printf("For example:\n");
-        ACE_OS::printf("   %s --robot icub --local /talkto/james --remote /controlboard/rpc\n", argv[0]);
+        ACE_OS::printf("   %s --robot icub --part any --remote /controlboard\n", argv[0]);
         ACE_OS::printf("Here are devices listed for your system:\n");
         ACE_OS::printf("%s", Drivers::factory().toString().c_str());
         return 0;

@@ -326,10 +326,18 @@ public:
             amp != NULL &&
             lim != NULL) {
         */
-        if (pos!=NULL) {
-            if (!pos->getAxes(&nj)) {
-                ACE_OS::printf ("problems: controlling 0 axes\n");
-                return false;
+        if (pos!=NULL||vel!=NULL) {
+            if (pos!=NULL) {
+                if (!pos->getAxes(&nj)) {
+                    ACE_OS::printf ("problems: controlling 0 axes\n");
+                    return false;
+                }
+            }
+            if (vel!=NULL) {
+                if (!vel->getAxes(&nj)) {
+                    ACE_OS::printf ("problems: controlling 0 axes\n");
+                    return false;
+                }
             }
 
             // initialization.
@@ -613,6 +621,8 @@ public:
     virtual bool getAxes(int *ax) {
         if (pos) 
             return pos->getAxes(ax);
+        if (vel) 
+            return vel->getAxes(ax);
         *ax = 0;
         return false;
     }
@@ -2756,11 +2766,11 @@ yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerCon
 }
 
 void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
-    //    ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+    //ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
     //	int i;
 
     Bottle& b = v.head;
-    //	ACE_OS::printf("bottle: %s\n", b.toString().c_str());
+    //ACE_OS::printf("bottle: %s\n", b.toString().c_str());
 
     switch (b.get(0).asVocab()) {
     case VOCAB_POSITION_MODE: 
@@ -2780,12 +2790,12 @@ void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 
     case VOCAB_VELOCITY_MODE:
     case VOCAB_VELOCITY_MOVES: {
-        //            ACE_OS::printf("Received a velocity command\n");
+        //          ACE_OS::printf("Received a velocity command\n");
         //			for (i = 0; i < v.body.size(); i++)
         //				ACE_OS::printf("%.2f ", v.body[i]);
         //			ACE_OS::printf("\n");
 
-        if (pos) {
+        if (vel) {
             bool ok = vel->velocityMove(&(v.body[0]));
             if (!ok)
                 ACE_OS::printf("Issues while trying to start a velocity move\n");
