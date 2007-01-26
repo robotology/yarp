@@ -2200,9 +2200,12 @@ bool yarp::dev::CommandsHelper::initialize() {
 
     String args;
     for (int i=0; i<nj; i++) {
-        args = args + " $fPosition" + NetType::toString(nj);
+        if (i>0) {
+            args += " ";
+        }
+        args = args + "$fPosition" + NetType::toString(i);
     }
-    addUsage((String("[set] [poss]")+args).c_str(), 
+    addUsage((String("[set] [poss] (")+args+")").c_str(), 
              "set the position of all axes");
 
     return ok;
