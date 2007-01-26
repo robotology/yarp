@@ -105,6 +105,7 @@ for your system.  For extra tips, see:
 In Linux, in the YARP directory, type:
 
   cmake . (or "ccmake ." for a graphical interface with clear options)
+  cmake . (needed for a few version combinations of cmake/pkg-config/gtk)
   make
   make test
 

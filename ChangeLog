@@ -1,3 +1,17 @@
+2007-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: began
+	changes in order to better allow controlboards to be
+	queried in human-readable form.
+
+	* src/libYARP_dev/include/yarp/dev/DeviceDriver.h: began
+	support for human-readable device usage queries.
+
+	* src/libYARP_OS/src/PortCoreInputUnit.cpp: added
+	suppressed-reply operation, so that if a connection to an
+	RPC port does not actually care about a reply, that reply
+	is not sent.
+
 2007-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: make sure

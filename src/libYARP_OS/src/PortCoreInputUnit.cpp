@@ -115,8 +115,12 @@ void PortCoreInputUnit::run() {
                 case '*':
                     man.describe(id,os);
                     break;
+                case 'D':
                 case 'd':
                     {
+                        if (key=='D') {
+                            ip->suppressReply();
+                        }
                         try {
                             String env = cmd.getText();
                             if (env.length()>1) {

@@ -89,7 +89,7 @@ namespace yarp {
  *
  */
 class yarp::dev::ServerFrameGrabber : public DeviceDriver, 
-            public yarp::os::PortReader,
+            public DeviceResponder,
             public IFrameGrabberImage,
             public IAudioGrabberSound,
             public IAudioVisualGrabber,
@@ -118,18 +118,7 @@ public:
     /**
      * Constructor.
      */
-    ServerFrameGrabber() {
-        fgImage = NULL;
-        fgSound = NULL;
-        fgAv = NULL;
-        fgCtrl = NULL;
-		spoke = false;
-        canDrop = true;
-        addStamp = false;
-        active = false;
-        singleThreaded = false;
-        p2 = NULL;
-    }
+    ServerFrameGrabber();
     
     virtual bool close() {
         if (!active) {
@@ -156,7 +145,10 @@ public:
      */
     virtual bool open(yarp::os::Searchable& config);
 
-    virtual bool read(ConnectionReader& connection);
+    //virtual bool read(ConnectionReader& connection);
+
+    virtual bool respond(const yarp::os::Bottle& command, 
+                         yarp::os::Bottle& reply);
 
     bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         return getImage(image);

@@ -18,6 +18,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/String.h>
+#include <yarp/NetType.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -50,7 +51,7 @@ typedef PortablePair<Bottle, Vector> CommandMessage;
  * Helper object for reading config commands for the ServerControlBoard
  * class.
  */
-class yarp::dev::CommandsHelper : public PortReader {
+class yarp::dev::CommandsHelper : public DeviceResponder {
 protected:
     yarp::dev::ServerControlBoard   *caller;
     yarp::dev::IPidControl          *pid;
@@ -60,6 +61,7 @@ protected:
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
     int nj;
+    Vector vect;
 
 public:
     /**
@@ -70,13 +72,7 @@ public:
      */
     CommandsHelper(yarp::dev::ServerControlBoard *x);
 
-    /**
-     * read from the connection.
-     * @param connection is a reference to a ConnectionReader object which encapsulates
-     * the current port connection.
-     * @return true on a successful read.
-     */
-    virtual bool read(ConnectionReader& connection);
+    virtual bool respond(const Bottle& cmd, Bottle& response);
 
     /**
      * Initialize the internal data.
@@ -2193,21 +2189,35 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
 }
 
 bool yarp::dev::CommandsHelper::initialize() {
+    bool ok = false;
     if (pos) {
-        return pos->getAxes(&nj);
+        ok = pos->getAxes(&nj);
     }
-    return false;
+    DeviceResponder::makeUsage();
+    addUsage("[get] [axes]", "get the number of axes");
+    addUsage("[set] [pos] $iAxisNumber $fPosition", "set the position of an axis");
+    addUsage("[get] [enc] $iAxisNumber", "get the encoder value for an axis");
+
+    String args;
+    for (int i=0; i<nj; i++) {
+        args = args + " $fPosition" + NetType::toString(nj);
+    }
+    addUsage((String("[set] [poss]")+args).c_str(), 
+             "set the position of all axes");
+
+    return ok;
 }
 
-bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
-    Bottle cmd, response;
+bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd, 
+                                        yarp::os::Bottle& response) {
     bool ok = false;
-    cmd.read(connection);
+    bool rec = false; // is the command recognized?
 	if (caller->verbose())
 	    ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
     case VOCAB_SET:
+        rec = true;
 		if (caller->verbose())
 			ACE_OS::printf("set command received\n");
 
@@ -2332,21 +2342,39 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
             }
                 break;
 
-                /*
-                  case VOCAB_POSITION_MOVES: {
-                  Bottle& b = *(cmd.get(2).asList());
-                  int i;
-                  const int njs = b.size();
-                  ACE_ASSERT (njs == nj);
-                  double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                  ACE_ASSERT (p != NULL);
-                  for (i = 0; i < njs; i++)
-                  p[i] = b.get(i).asDouble();
-                  ok = pos->positionMove(p);
-                  delete[] p;                
-                  }
-                  break;
-                */
+                // this operation is also available on "command" port
+            case VOCAB_POSITION_MOVES: {
+                Bottle *b = cmd.get(2).asList();
+                int i;
+                if (b==NULL) break;
+                const int njs = b->size();
+                ACE_ASSERT (njs == nj);
+                vect.size(nj);
+                for (i = 0; i < njs; i++) {
+                    vect[i] = b->get(i).asDouble();
+                }
+                if (pos!=NULL) {
+                    ok = pos->positionMove(&vect[0]);
+                }
+            }
+                break;
+
+                // this operation is also available on "command" port
+            case VOCAB_VELOCITY_MOVES: {
+                Bottle *b = cmd.get(2).asList();
+                int i;
+                if (b==NULL) break;
+                const int njs = b->size();
+                ACE_ASSERT (njs == nj);
+                vect.size(nj);
+                for (i = 0; i < njs; i++)
+                    vect[i] = b->get(i).asDouble();
+                if (vel!=NULL) {
+                    ok = vel->velocityMove(&vect[0]);
+                }
+            }
+                break;
+
             case VOCAB_RELATIVE_MOVE: {
                 ok = pos->relativeMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
@@ -2471,6 +2499,7 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
         break;
 
     case VOCAB_GET:
+        rec = true;
 		if (caller->verbose())
 			ACE_OS::printf("get command received\n");
 
@@ -2736,6 +2765,10 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
         break;
     }
 
+    if (!rec) {
+        ok = DeviceResponder::respond(cmd,response);
+    }
+
     if (!ok) {
         // failed thus send only a VOCAB back.
         response.clear();
@@ -2744,14 +2777,6 @@ bool yarp::dev::CommandsHelper::read(ConnectionReader& connection) {
     else
         response.addVocab(VOCAB_OK);
 
-    if (response.size() >= 1) {
-        ConnectionWriter *writer = connection.getWriter();
-        if (writer!=NULL) {
-            response.write(*writer);
-			if (caller->verbose())
-				ACE_OS::printf("response sent: %s\n", response.toString().c_str());
-        }
-    }
 
     return ok;
 }

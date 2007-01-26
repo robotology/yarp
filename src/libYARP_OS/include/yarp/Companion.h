@@ -153,6 +153,8 @@ private:
 
     int cmdExists(int argc, char *argv[]);
 
+    int cmdMake(int argc, char *argv[]);
+
     class Entry {
     public:
         String name;

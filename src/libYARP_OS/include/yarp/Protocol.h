@@ -397,6 +397,10 @@ public:
         return reader;
     }
 
+    virtual void suppressReply() {
+        reader.suppressReply();
+    }
+
     virtual void endRead() {
         if (altReader!=NULL) {
             //altReader->release();

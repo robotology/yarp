@@ -203,15 +203,18 @@ void PortCoreOutputUnit::sendHelper() {
                 throw IOException("writer failed");
             }
 
+            bool suppressReply = (buf.getReplyHandler()==NULL);
+
             if (op->canEscape()) {
                 buf.addToHeader();
                 
                 if (cachedEnvelope!="") {
                     //printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
-                    PortCommand pc('\0',String("d ") + cachedEnvelope);
+                    PortCommand pc('\0', String(suppressReply?"D ":"d ") +
+                                   cachedEnvelope);
                     pc.writeBlock(buf);
                 } else {
-                    PortCommand pc('d',"");
+                    PortCommand pc(suppressReply?'D':'d',"");
                     pc.writeBlock(buf);
                 }
             }

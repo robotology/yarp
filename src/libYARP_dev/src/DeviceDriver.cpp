@@ -6,43 +6,94 @@
  *
  */
 
-
-#include <yarp/dev/DeviceDriver.h>
-
 #include <ace/OS.h>
+#include <yarp/String.h>
+#include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/Vocab.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
+using namespace yarp;
 
-// the commented out commands are deprecated
 
-/*
-  bool DeviceDriver::apply(yarp::os::ConnectionReader& cmd) {
-  yarp::os::Bottle in, out;
-  in.read(cmd);
-  bool result = apply(in,out);
-  if (result) {
-  if (out.size()>0) {
-  yarp::os::ConnectionWriter *writer = cmd.getWriter();
-  if (writer!=NULL) {
-  out.write(*writer);
-  }
-  }
-  }
-  return result;
-  }
 
-  bool DeviceDriver::apply(yarp::os::Bottle& cmd, 
-  yarp::os::Bottle& response) {
-  switch (cmd.getInt(0)) {
-  case 1:
-  ACE_OS::printf("hello, a dummy command was called\n");
-  response.clear();
-  response.addInt(42);
-  return true;
-  break;
-  }
-  return false;
-  }
+DeviceResponder::DeviceResponder() {
+    makeUsage();
+}
 
-*/
+void DeviceResponder::addUsage(const char *txt, const char *explain) {
+    examples.add(txt); //Value::makeList(txt));
+    explains.add((explain!=NULL)?explain:"");
+    details.add(Value::makeList(txt));
+    String more = String("   ") + explain;
+    details.add(more.c_str());
+}
+
+
+void DeviceResponder::addUsage(const Bottle& bot, const char *explain) {
+    addUsage(bot.toString().c_str(),explain);
+}
+
+
+bool DeviceResponder::respond(const Bottle& command, Bottle& reply) {
+    switch (command.get(0).asVocab()) {
+    case VOCAB4('h','e','l','p'):
+        if (examples.size()>=1) {
+            reply.add(Value::makeVocab("many"));
+            if (command.get(1).asString()=="more") {
+                reply.append(details);
+            } else {
+                reply.append(examples);
+            }
+            return true;
+        } else {
+            reply.add("no documentation available");
+            return false;
+        }
+        break;
+    default:
+        reply.add("command not recognized");
+        return false;
+    }
+    return false;
+}
+
+bool DeviceResponder::read(ConnectionReader& connection) {
+    Bottle cmd, response;
+    if (!cmd.read(connection)) { return false; }
+    //printf("command received: %s\n", cmd.toString().c_str());
+    bool result = respond(cmd,response);
+    if (response.size()>=1) {
+        ConnectionWriter *writer = connection.getWriter();
+        if (writer!=NULL) {
+            if (response.get(0).toString()=="many") {
+                for (int i=1; i<response.size(); i++) {
+                    Value& v = response.get(i);
+                    if (v.isList()) {
+                        v.asList()->write(*writer);
+                    } else {
+                        Bottle b;
+                        b.add(v);
+                        b.write(*writer);
+                    }
+                }
+            } else {
+                response.write(*writer);
+            }
+            
+            //printf("response sent: %s\n", response.toString().c_str());
+        }
+    }
+    return result;
+}
+
+
+void DeviceResponder::makeUsage() {
+    examples.clear();
+    explains.clear();
+    details.clear();
+    addUsage("[help]", "list usage");
+    addUsage("[help] [more]", "list usage with some comments");
+}
+
+

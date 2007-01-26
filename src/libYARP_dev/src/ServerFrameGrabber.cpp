@@ -20,6 +20,20 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 
+ServerFrameGrabber::ServerFrameGrabber() {
+    fgImage = NULL;
+    fgSound = NULL;
+    fgAv = NULL;
+    fgCtrl = NULL;
+    spoke = false;
+    canDrop = true;
+    addStamp = false;
+    active = false;
+    singleThreaded = false;
+    p2 = NULL;
+}
+
+
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     if (active) {
         printf("Did you just try to open the same ServerFrameGrabber twice?\n");
@@ -127,11 +141,100 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     thread.open(config.check("framerate",Value("0")).asDouble(),
                 singleThreaded);
     active = true;
+
+    DeviceResponder::makeUsage();
+    addUsage("[set] [bri] $fBrightness", "set brightness level");
+    addUsage("[set] [gain] $fGain", "set gain level");
+    addUsage("[set] [shut] $fShutter", "set shutter parameter");
+    addUsage("[set] [whit] $fRed $fGreen", "set white balance");
+    addUsage("[get] [bri]", "get brightness level");
+    addUsage("[get] [gain]", "get gain level");
+    addUsage("[get] [shut]", "get shutter parameter");
+    addUsage("[get] [w]", "get width of image");
+    addUsage("[get] [h]", "get height of image");
+
     return true;
 }
 
 
+bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd, 
+                                 yarp::os::Bottle& response) {
+    int code = cmd.get(0).asVocab();
+    bool rec = false;
+    bool ok = false;
+    switch (code) {
+    case VOCAB_SET:
+        printf("set command received\n");
+        {
+            switch(cmd.get(1).asVocab()) {
+            case VOCAB_BRIGHTNESS:
+                ok = setBrightness(cmd.get(2).asDouble());
+                rec = true;
+                break;
+            case VOCAB_SHUTTER:
+                ok = setShutter(cmd.get(2).asDouble());
+                rec = true;
+                break;
+            case VOCAB_GAIN:
+                ok = setGain(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_WHITE:
+				ok = setWhiteBalance(cmd.get(2).asDouble(),
+									 cmd.get(3).asDouble());
+                rec = true;
+				break;
+            }
+        }
+        break;
+    case VOCAB_GET:
+        printf("get command received\n");
+        {
+            response.addVocab(VOCAB_IS);
+            response.add(cmd.get(1));
+            switch(cmd.get(1).asVocab()) {
+            case VOCAB_BRIGHTNESS:
+                ok = true;
+                response.addDouble(getBrightness());
+                rec = true;
+                break;
+            case VOCAB_SHUTTER:
+                ok = true;
+                response.addDouble(getShutter());
+                rec = true;
+                break;
+            case VOCAB_GAIN:
+                ok = true;
+                response.addDouble(getGain());
+                rec = true;
+                break;
+            case VOCAB_WIDTH:
+                // normally, this would come from stream information
+                ok = true;
+                response.addInt(width());
+                rec = true;
+                break;
+            case VOCAB_HEIGHT:
+                // normally, this would come from stream information
+                ok = true;
+                response.addInt(height());
+                rec = true;
+                break;
+            }
+            if (!ok) {
+                // leave answer blank
+            }
+        }
+        break;
+    }
+    if (!rec) {
+        return DeviceResponder::respond(cmd,response);
+    }
+    return ok;
+}
 
+
+/*
 bool ServerFrameGrabber::read(ConnectionReader& connection) {
     yarp::os::Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
@@ -204,7 +307,7 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
     }
     return true;
 }
-
+*/
 
 bool ServerFrameGrabber::startService() {
     if (singleThreaded) {

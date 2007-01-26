@@ -19,6 +19,7 @@ namespace yarp {
      */
     namespace dev {
         class DeviceDriver;
+        class DeviceResponder;
     }
 }
 
@@ -56,6 +57,40 @@ public:
      */
     virtual bool close(){ return true; }
 
+};
+
+
+/**
+ * \ingroup dev_class
+ *
+ * A cheap and cheerful framework for human readable/writable forms of
+ * messages to devices.  The main concern is to makes it easier to
+ * document these messages.  Override DeviceResponder::respond() to
+ * respond to new messages.  You don't need to use this class --
+ * the network format of messages is defined independently of it.
+ */
+class yarp::dev::DeviceResponder : public yarp::os::PortReader {
+private:
+    yarp::os::Bottle examples;
+    yarp::os::Bottle explains;
+    yarp::os::Bottle details;
+
+public:
+    /**
+     * Constructor
+     */
+    DeviceResponder();
+
+    void addUsage(const char *txt, const char *explain=0/*NULL*/);
+
+    void addUsage(const yarp::os::Bottle& bot, const char *explain=0/*NULL*/);
+
+    virtual bool respond(const yarp::os::Bottle& command, 
+                         yarp::os::Bottle& reply);
+   
+    virtual bool read(yarp::os::ConnectionReader& connection);
+
+    void makeUsage();
 };
 
 #endif

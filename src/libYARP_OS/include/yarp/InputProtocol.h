@@ -47,6 +47,7 @@ public:
 
     // some connections are capable of ping-ponging
     virtual OutputProtocol& getOutput() = 0;
+    virtual void suppressReply() = 0;
   
     // direct access
     virtual OutputStream& getOutputStream() = 0;

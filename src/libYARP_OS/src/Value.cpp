@@ -52,6 +52,15 @@ Value *Value::makeList() {
 }
 
 
+Value *Value::makeList(const char *txt) {
+    Value *v = makeList();
+    if (v!=NULL) {
+        v->asList()->fromString(txt);
+    }
+    return v;
+}
+
+
 Value *Value::makeValue(const char *txt) {
     Bottle bot(txt);
     if (bot.size()>1) {

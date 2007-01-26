@@ -28,6 +28,14 @@
 
 #include <ace/OS.h>
 
+// does ACE require new c++ header files or not?
+#if ACE_HAS_STANDARD_CPP_LIBRARY
+#include <fstream>
+using namespace std;
+#else
+#include <fstream.h>
+#endif
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -55,6 +63,15 @@ static String getStdin() {
     }
     return txt;
 }
+
+static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
+    ofstream fout(fileName);
+    for (int i=0; i<bot.size(); i++) {
+        fout << bot.get(i).toString().c_str() << endl;
+    }
+    fout.close();
+}
+
 
 Companion::Companion() {
     add("help",       &Companion::cmdHelp,
@@ -89,6 +106,8 @@ Companion::Companion() {
         "get live information about a port");
     add("exists",  &Companion::cmdExists,
         "check if a port is alive (useful for conditions in scripts)");
+    add("cmake",  &Companion::cmdMake,
+        "create files to help compiling YARP projects");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -579,6 +598,65 @@ int Companion::cmdCheck(int argc, char *argv[]) {
             YARP_INFO(log,"*** YARP seems okay!");
         }
     }
+    return 0;
+}
+
+
+
+
+int Companion::cmdMake(int argc, char *argv[]) {
+    Bottle f;
+    f.add("# A fairly generic cmake file to get started with for new YARP projects.");
+    f.add("# It assumes you want to build an executable from source code in ");
+    f.add("# the current directory.");
+    f.add("# Replace \"yarpy\" with whatever your executable should be called.");
+    f.add("SET(KEYWORD \"yarpy\")");
+    f.add("");
+    f.add("# Find YARP.  Point the YARP_BUILD environment variable at your build.");
+    f.add("SET(YARP_DIR \"$ENV{YARP_BUILD}\" CACHE LOCATION \"where is yarp?\")");
+    f.add("FIND_PACKAGE(YARP)");
+    f.add("");
+    f.add("# Start a project.");
+    f.add("PROJECT(${KEYWORD})");    
+    f.add("");
+    f.add("# Check if there are any plugin device subdirectories.");
+    f.add("# Device subdirectories contain a config.cmake file.");
+    f.add("FILE(GLOB_RECURSE device_config config.cmake)");
+    f.add("IF (device_config)");
+    f.add("  YarpDevice(${device_config})");
+    f.add("ENDIF (device_config)");
+    f.add("");
+    f.add("# Search for source code.");
+    f.add("FILE(GLOB_RECURSE folder_source *.cpp *.cc *.c)");
+    f.add("FILE(GLOB_RECURSE folder_header *.h)");
+    f.add("SOURCE_GROUP(\"Source Files\" FILES ${folder_source})");
+    f.add("SOURCE_GROUP(\"Header Files\" FILES ${folder_header})");
+    f.add("");
+    f.add("# Automatically add include directories if needed.");
+    f.add("FOREACH(header_file ${folder_header})");
+    f.add("  GET_FILENAME_COMPONENT(p ${header_file} PATH)");
+    f.add("  INCLUDE_DIRECTORIES(${p})");
+    f.add("ENDFOREACH(header_file ${folder_header})");
+    f.add("");
+    f.add("# Set up our main executable.");
+    f.add("IF (folder_source)");
+    f.add("  ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})");
+    f.add("ELSE (folder_source)");
+    f.add("  MESSAGE(FATAL_ERROR \"No source code files found. Please add something\")");
+    f.add("ENDIF (folder_source)");
+
+    const char *target = "CMakeLists.txt";
+
+    ifstream fin(target);
+    if (!fin.fail()) {
+        printf("File %s already exists, please remove it first\n", target);
+        fin.close();
+        return 1;
+    }
+
+    writeBottleAsFile(target,f);
+    printf("Wrote to %s\n", target);
+    printf("Run cmake to generate makefiles or project files for compiling.\n");
     return 0;
 }
 

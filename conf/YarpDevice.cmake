@@ -15,7 +15,8 @@ FOREACH(dev ${ARGN})
 	MESSAGE(STATUS "Dealing with device ${dev}")
 
 	# pick up the configuration of the device
-	INCLUDE(${dev}/config.cmake)
+	GET_FILENAME_COMPONENT(dev_path "${dev}" PATH)
+	INCLUDE(${dev_path}/config.cmake)
 
 	# make a flag for conditional compilation of the device
 	SET(ENABLE_${YARPDEV_NAME} TRUE CACHE BOOL "Do you want to use ${YARPDEV_NAME}?")
@@ -35,7 +36,7 @@ FOREACH(dev ${ARGN})
 
 	# make sure this device directory is included in our header
 	# file path
-	INCLUDE_DIRECTORIES(${dev})
+	INCLUDE_DIRECTORIES(${dev_path})
 	
 ENDFOREACH(dev)
 

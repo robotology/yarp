@@ -130,6 +130,10 @@ public:
 
     virtual yarp::os::ConnectionWriter *getWriter();
 
+    void suppressReply() {
+        str = NULL;
+    }
+
     virtual void flushWriter();
 
     //virtual TwoWayStream *getStreams() {

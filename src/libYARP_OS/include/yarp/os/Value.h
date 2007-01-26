@@ -349,6 +349,13 @@ public:
     static Value *makeList();
 
     /**
+     * Create a list Value and initialize it
+     * @param txt the list in text form, e.g. "1 2.0 (4 5) xyz"
+     * @return a list Value
+     */
+    static Value *makeList(const char *txt);
+
+    /**
      * Create a Value from a text description.
      * @param txt the description.  E.g. "10" will create an integer,
      * "(5 6 7)" will create a list.
