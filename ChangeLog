@@ -1,5 +1,8 @@
 2007-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/HttpCarrier: Sketch how
+	http interface can expose human-readable queries as forms.
+
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: began
 	changes in order to better allow controlboards to be
 	queried in human-readable form.

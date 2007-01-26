@@ -143,6 +143,12 @@ void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += me.getName();
     from += ":";
     from += NetType::toString(me.getPort());
+    from += "/data=help\">help</a>)&nbsp;&nbsp;\n";
+
+    from += "(<a href=\"http://";
+    from += me.getName();
+    from += ":";
+    from += NetType::toString(me.getPort());
     from += "/r\">read</a>)&nbsp;&nbsp;\n";
 
     from += "</p>\n"; 

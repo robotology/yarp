@@ -106,6 +106,43 @@ public:
                     proc += "\n";
                 }
             } else {
+                if (part[0]=='\"'&&part[1]=='\[') {
+                    // translate this to a form
+                    String org = part;
+                    part = "<form method=post>";
+                    part += "<input type=hidden name=data value=";
+                    part += org;
+                    part += "\">";
+                    part += org;
+                    org += " ";
+                    bool arg = false;
+                    String var = "";
+                    for (unsigned int i=0; i<org.length(); i++) {
+                        char ch = org[i];
+                        if (arg) {
+                            if ((ch>='A'&&ch<='Z')||
+                                (ch>='a'&&ch<='z')||
+                                (ch>='0'&&ch<='9')||
+                                (ch=='_')) {
+                                var += ch;
+                            } else {
+                                arg = false;
+                                part += "\n    ";
+                                part += var;
+                                part += " ";
+                                part += "<input type=text name=";
+                                part += var;
+                                part += " size=5 value=\"\">";
+                                var = "";
+                            }
+                        }
+                        if (ch=='$') {
+                            arg = true;
+                        }
+                    }
+                    part += "<input type=submit value=\"go\">";
+                    part += "</form>";
+                }
                 proc += part;
                 proc += "\n";
             }
