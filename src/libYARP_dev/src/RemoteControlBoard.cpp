@@ -240,7 +240,7 @@ public:
      */
     virtual bool open(Searchable& prop) {
 
-        bool newInterface = prop.check("new","if present, use new simplified port interface");
+        bool newInterface = prop.check("single_port","if present, use new simplified port interface");
 
 		verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
