@@ -19,6 +19,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
     data = false;
     filterData = false;
     String s(txt);
+    String sData = "";
     Property p;
     p.fromQuery(txt);
     if (p.check("cmd")) {
@@ -44,9 +45,21 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
             }
         }
         s = bout.toString().c_str();
-        printf("data message: %s\n", s.c_str());
+        sData = s;
+        //printf("data message: %s\n", s.c_str());
         s = String("d\n") + s;
     }
+
+
+    String from = "<input type=text name=data value=\"";
+    from += sData.c_str();
+    from += "\"><input type=submit value=\"send data\"></form></p>\n"; 
+    from += "<pre>\n";
+    Bytes b2((char*)from.c_str(),from.length());
+    delegate->getOutputStream().write(b2);
+    delegate->getOutputStream().flush();
+
+
     if (s=="") {
         s = "*";
     }
@@ -114,10 +127,10 @@ void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
         Bytes start(blk.get(),contentLength);
         NetType::readFull(proto.is(),start);
         blk.get()[contentLength] = '\0';
-        printf("message: %s\n", blk.get());
+        //printf("message: %s\n", blk.get());
         input = blk.get();
     } else {
-        printf("message: %s\n", url.c_str());
+        //printf("message: %s\n", url.c_str());
         input = url;
     }
 
@@ -157,8 +170,7 @@ void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += home.getName();
     from += ":";
     from += NetType::toString(me.getPort());
-    from += "\"<input type=text name=data value=\"\"><input type=submit value=\"send data\"></form></p>\n"; 
-    from += "<pre>\n";
+    from += "\">";
     Bytes b2((char*)from.c_str(),from.length());
     proto.os().write(b2);
     proto.os().flush();

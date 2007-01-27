@@ -152,7 +152,7 @@ public:
                 delegate->getOutputStream().flush();
             }
             data = false;
-            if (proc[0] == 'd') {
+            if (proc[0] == 'd' || proc[0] == 'D') {
                 data = true;
             }
             part = "";

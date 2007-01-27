@@ -11,6 +11,7 @@
 
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
 
 namespace yarp {
@@ -69,7 +70,10 @@ public:
  * respond to new messages.  You don't need to use this class --
  * the network format of messages is defined independently of it.
  */
-class yarp::dev::DeviceResponder : public yarp::os::PortReader {
+class yarp::dev::DeviceResponder : public yarp::os::PortReader,
+            public yarp::os::TypedReaderCallback<yarp::os::Bottle>
+{
+
 private:
     yarp::os::Bottle examples;
     yarp::os::Bottle explains;
@@ -90,7 +94,18 @@ public:
    
     virtual bool read(yarp::os::ConnectionReader& connection);
 
+    virtual void onRead(yarp::os::Bottle& v) {
+        yarp::os::Bottle reply;
+        respond(v,reply);
+    }
+
     void makeUsage();
+
+    void attach(yarp::os::TypedReader<yarp::os::Bottle>& source) {
+        source.useCallback(*this);
+        source.setReplier(*this);
+    }
 };
+
 
 #endif

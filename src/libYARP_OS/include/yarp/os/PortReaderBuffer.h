@@ -14,6 +14,8 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/ConstString.h>
 
+#include <stdio.h>
+
 namespace yarp {
     namespace os {
         template <class T> class PortReaderBuffer;
@@ -163,6 +165,14 @@ public:
      * @return name of port
      */
     virtual ConstString getName() const = 0;
+
+
+   /**
+     * If a message is received that requires a reply, use this
+     * handler.  No buffering happens.
+     * @param the handler to use
+     */
+    virtual void setReplier(PortReader& reader) = 0;
 };
 
 
@@ -185,10 +195,15 @@ public:
         init();
         allowReuse = true;
         prune = false;
+        replier = 0 /*NULL*/;
     }
 
     void setCreator(PortReaderBufferBaseCreator *creator) {
         this->creator = creator;
+    }
+
+    void setReplier(PortReader& reader) {
+        replier = &reader;
     }
 
     virtual ~PortReaderBufferBase();
@@ -236,6 +251,7 @@ protected:
     bool prune;
     bool allowReuse;
     void *implementation;
+    PortReader *replier;
 };
 
 
@@ -402,6 +418,10 @@ public:
      */
     virtual PortReader *create() {
         return new T;
+    }
+
+    void setReplier(PortReader& reader) {
+        implementation.setReplier(reader);
     }
 
 	bool isClosed() {

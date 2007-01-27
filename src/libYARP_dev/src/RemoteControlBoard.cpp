@@ -143,9 +143,13 @@ private:
 
     PortWriterBuffer<yarp::sig::Vector> state_buffer;
     PortReaderBuffer<CommandMessage> control_buffer;
+
     yarp::dev::ImplementCallbackHelper callback_impl;
 
     yarp::dev::CommandsHelper command_reader;
+
+    // for new interface
+    PortReaderBuffer<Bottle> command_buffer;
 
     PolyDriver poly;
     PolyDriver polyCalib;
@@ -236,6 +240,8 @@ public:
      */
     virtual bool open(Searchable& prop) {
 
+        bool newInterface = prop.check("new","if present, use new simplified port interface");
+
 		verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
 			ACE_OS::printf("running with verbose output\n");
@@ -267,21 +273,30 @@ public:
             return false;
         }
 
-        // attach readers.
-        rpc_p.setReader(command_reader);
-        // attach buffers.
-        state_buffer.attach(state_p);
-        control_buffer.attach(control_p);
-        // attach callback.
-        control_buffer.useCallback(callback_impl);
-
         String rootName = 
             prop.check("name",Value("/controlboard"),
                        "prefix for port names").asString().c_str();
-        rpc_p.open((rootName+"/rpc:i").c_str());
-        control_p.open((rootName+"/command:i").c_str());
-        state_p.open((rootName+"/state:o").c_str());
-        
+
+       if (newInterface) {
+            command_reader.attach(command_buffer);
+            command_buffer.attach(rpc_p);
+            state_buffer.attach(rpc_p);
+            rpc_p.open(rootName.c_str());
+        } else {
+            // attach readers.
+            rpc_p.setReader(command_reader);
+            
+            // attach buffers.
+            state_buffer.attach(state_p);
+            control_buffer.attach(control_p);
+            // attach callback.
+            control_buffer.useCallback(callback_impl);
+            
+            rpc_p.open((rootName+"/rpc:i").c_str());
+            control_p.open((rootName+"/command:i").c_str());
+            state_p.open((rootName+"/state:o").c_str());
+        }
+            
         if (prop.check("calibrator", name,"calibration device to use, if any"))
             {
                 Property p;

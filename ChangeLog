@@ -1,6 +1,13 @@
+2007-01-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: Reduced port
+	count from 3 to 1.  For now, "--new" option needs to be set
+	during creation of the device in order to use this new
+	interface.  Don't want to surprise anyone too much.
+
 2007-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* src/libYARP_OS/include/yarp/HttpCarrier: Sketch how
+	* src/libYARP_OS/include/yarp/HttpCarrier.h: Sketch how
 	http interface can expose human-readable queries as forms.
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: began

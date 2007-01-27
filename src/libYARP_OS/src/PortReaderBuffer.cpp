@@ -264,6 +264,11 @@ PortReader *PortReaderBufferBase::readBase() {
 
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
+    if (replier!=0/*NULL*/) {
+        if (connection.getWriter()) {
+            return replier->read(connection);
+        }
+    }
     PortReaderPacket *reader = NULL;
     while (reader==NULL) {
         HELPER(implementation).stateSema.wait();
