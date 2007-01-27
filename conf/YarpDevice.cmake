@@ -16,7 +16,11 @@ FOREACH(dev ${ARGN})
 
 	# pick up the configuration of the device
 	GET_FILENAME_COMPONENT(dev_path "${dev}" PATH)
-	INCLUDE(${dev_path}/config.cmake)
+	IF (dev_path)
+		INCLUDE(${dev_path}/config.cmake)
+	ELSE (dev_path)
+		INCLUDE(${dev})
+	ENDIF (dev_path)
 
 	# make a flag for conditional compilation of the device
 	SET(ENABLE_${YARPDEV_NAME} TRUE CACHE BOOL "Do you want to use ${YARPDEV_NAME}?")
