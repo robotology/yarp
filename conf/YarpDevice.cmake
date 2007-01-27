@@ -1,9 +1,16 @@
 MACRO(YarpDevice)
 
+INCLUDE(UsePkgConfig)
+
+SET(GEN ${CMAKE_BINARY_DIR}/generated_code)
+IF (NOT EXISTS ${GEN})
+	FILE(MAKE_DIRECTORY ${GEN})
+ENDIF (NOT EXISTS ${GEN})
+
 # We have a cpp file and a header file that call/list the 
 # initialization methods for all devices
-SET(ADDER_CPP ${CMAKE_BINARY_DIR}/adder.cpp)
-SET(ADDER_H ${CMAKE_BINARY_DIR}/adder.h)
+SET(ADDER_CPP ${GEN}/adder.cpp)
+SET(ADDER_H ${GEN}/adder.h)
 
 # Write some preamble for the cpp file and header file
 WRITE_FILE(${ADDER_CPP} "#include \"adder.h\"")
@@ -16,11 +23,14 @@ FOREACH(dev ${ARGN})
 
 	# pick up the configuration of the device
 	GET_FILENAME_COMPONENT(dev_path "${dev}" PATH)
+	SET(SAVE_PATH ${CMAKE_MODULE_PATH})
+	SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dev_path})
 	IF (dev_path)
 		INCLUDE(${dev_path}/config.cmake)
 	ELSE (dev_path)
 		INCLUDE(${dev})
 	ENDIF (dev_path)
+	SET(CMAKE_MODULE_PATH ${SAVE_PATH})
 
 	# make a flag for conditional compilation of the device
 	SET(ENABLE_${YARPDEV_NAME} TRUE CACHE BOOL "Do you want to use ${YARPDEV_NAME}?")
@@ -31,7 +41,7 @@ FOREACH(dev ${ARGN})
 
 	# write a quick cpp file to add an appropriate factory for the device
 	CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
-	  ${CMAKE_BINARY_DIR}/add_${YARPDEV_NAME}.cpp @ONLY  IMMEDIATE)
+	  ${GEN}/add_${YARPDEV_NAME}.cpp @ONLY  IMMEDIATE)
 	MESSAGE(STATUS "Generated add_${YARPDEV_NAME}.cpp")
 
 	# aggregate this into our global list
@@ -52,7 +62,7 @@ MESSAGE(STATUS "Generated ${ADDER_H}")
 
 # write a standard wrapper program for creating the devices
 CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev.cpp.in
-	${CMAKE_BINARY_DIR}/yarpdev.cpp @ONLY  IMMEDIATE)
+	${GEN}/yarpdev.cpp @ONLY  IMMEDIATE)
 MESSAGE(STATUS "Generated yarpdev.cpp")
 
 # we are done!
