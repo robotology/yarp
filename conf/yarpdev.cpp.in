@@ -9,8 +9,7 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-// rename this to be "main" if you don't have your own main function
-int example_main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) {
 	Network::init();
 
     adder();
