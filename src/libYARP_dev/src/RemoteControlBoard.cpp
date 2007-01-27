@@ -278,8 +278,8 @@ public:
                        "prefix for port names").asString().c_str();
 
        if (newInterface) {
-            command_reader.attach(command_buffer);
             command_buffer.attach(rpc_p);
+            command_reader.attach(command_buffer);
             state_buffer.attach(rpc_p);
             rpc_p.open(rootName.c_str());
         } else {
