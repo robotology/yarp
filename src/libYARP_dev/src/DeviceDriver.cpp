@@ -40,7 +40,7 @@ bool DeviceResponder::respond(const Bottle& command, Bottle& reply) {
     case VOCAB4('h','e','l','p'):
         if (examples.size()>=1) {
             reply.add(Value::makeVocab("many"));
-            if (command.get(1).asString()=="more") {
+            if (command.get(1).toString()=="more") {
                 reply.append(details);
             } else {
                 reply.append(examples);
