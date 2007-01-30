@@ -251,7 +251,7 @@ protected:
     bool prune;
     bool allowReuse;
     void *implementation;
-    PortReader *replier;
+    yarp::os::PortReader *replier;
 };
 
 
