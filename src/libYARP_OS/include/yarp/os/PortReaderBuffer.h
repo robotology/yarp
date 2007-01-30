@@ -202,7 +202,7 @@ public:
         this->creator = creator;
     }
 
-    void setReplier(PortReader& reader) {
+    void setReplier(yarp::os::PortReader& reader) {
         replier = &reader;
     }
 
