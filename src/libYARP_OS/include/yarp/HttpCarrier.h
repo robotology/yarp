@@ -106,7 +106,7 @@ public:
                     proc += "\n";
                 }
             } else {
-                if (part[0]=='\"'&&part[1]=='\[') {
+                if (part[0]=='\"'&&part[1]=='[') {
                     // translate this to a form
                     String org = part;
                     part = "<form method=post>";
