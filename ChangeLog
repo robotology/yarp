@@ -1,9 +1,19 @@
+2007-01-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: Corrected
+	some goofs affecting Windows builds.  Hope we can get power
+	to our regression soon to catch these things.
+
 2007-01-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: Reduced port count
 	from 3 to 1.  For now, "--single_port" option needs to be set
 	during creation of the device in order to use this new interface.
 	Don't want to surprise anyone too much.
+
+	* src/libYARP_dev/include/yarp/os/PortReaderBuffer.h: Put in
+	a bypass for messages requiring replies (these cannot be logically
+	be buffered in any useful way).
 
 2007-01-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
