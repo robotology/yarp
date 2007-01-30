@@ -3,11 +3,11 @@ Paul Fitzpatrick
 Giorgio Metta
 Lorenzo Natale
 
-We've also had code contributed by:
+We've also had contributions from:
 Radu Bogdan Rusu (inertial sensor)
 Alexis Maldonado (inertial sensor)
 Eric Mislivec (opencv wrapper)
-Christopher Prince (Solaris fixes)
+Christopher Prince (Solaris fixes, mac regression machine)
 Charles C. Kemp (firewire camera on linux)
 Julio Gomes (sound driver, jrkerr driver, for windows)
 Alexandre Bernardino (sound driver, jrkerr driver, for windows)
@@ -16,3 +16,4 @@ Jonas Ruesch (video4linux support in ffmpeg_grabber)
 Assif Mirza (dimax_u2c driver, helped debug cmake library finding issues)
 Hatice Kose-Bagci (updated FindPortAudio script for Windows)
 Jose Gaspar (helped modify example/external/nameclient.cpp example for windows)
+Claudio Castellini (useful bug reports, some YARP1 device driver documentation)
