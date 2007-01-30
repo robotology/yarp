@@ -25,10 +25,10 @@ What follows is a summary.
 
 There are a few different ways to compile YARP.
 
-See if there is a file called "QUICKSTART".  If so, then you have a 
-distribution of YARP tailored to your specific operating system,
-and the instructions in this file will give the fastest way
-to get going.
+See if there is a file called "QUICKSTART-*.TXT" whose name matches
+your system configuration.  If so, then you have a distribution of
+YARP tailored to your specific operating system, and the instructions
+in this file will give the fastest way to get going.
 
 We now describe two general methods for compiling YARP: "cmake" and
 "autoconf".

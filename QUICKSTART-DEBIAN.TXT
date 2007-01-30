@@ -1,0 +1,16 @@
+
+As superuser:
+  apt-get install libace-dev cmake
+
+As normal user:
+  cmake .
+  cmake .  # just to be sure
+  make
+  make test
+
+If that's working, try:
+  ccmake .
+Which gives you access to configuration options.  See "README" for details.
+
+Welcome to YARP!
+
