@@ -1,5 +1,9 @@
 2007-01-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* QUICKSTART-WIN-VS6.TXT, QUICKSTART-DEBIAN: Added windows
+	installation notes from Claudio Castellini (thanks!), and sketched
+	debian installation procedure.
+
 	* src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: Corrected
 	some goofs affecting Windows builds.  Hope we can get power
 	to our regression soon to catch these things.
