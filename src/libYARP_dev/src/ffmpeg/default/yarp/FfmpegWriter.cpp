@@ -397,6 +397,18 @@ void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
             pkt.data= video_outbuf;
             pkt.size= out_size;
 
+            /*
+            static int x = 0;
+            printf("%ld / %ld  :  %ld / %ld  --> %d\n", 
+                   (long int) c->time_base.num,
+                   (long int) c->time_base.den,
+                   (long int) st->time_base.num,
+                   (long int) st->time_base.den,
+                   x);
+            pkt.pts = x;
+            x++;
+            */
+
             /* write the compressed frame in the media file */
             ret = av_write_frame(oc, &pkt);
         } else {

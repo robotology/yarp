@@ -330,6 +330,13 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         shouldLoop = false;
     }
 
+    imageSync = false;
+    ConstString sync = 
+        config.check("sync",
+                     Value("image"),
+                     "sync on image or audio (if have to choose)?").asString();
+    imageSync = (sync=="image");
+
     needRateControl = true; // default for recorded media
 
     if (config.check("nodelay","media will play in simulated realtime unless this is present")) {
@@ -418,8 +425,10 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         m_channels = audioDecoder.getChannels();
         m_rate = audioDecoder.getRate();
     }
-    printf("  video size %dx%d, audio %dHz with %d channels\n", m_w, m_h,
-           m_rate, m_channels);
+    printf("  video size %dx%d, audio %dHz with %d channels, %s sync\n", 
+           m_w, m_h,
+           m_rate, m_channels,
+           imageSync?"image":"audio");
 
     if (!(_hasVideo||_hasAudio)) {
         return false;
@@ -512,8 +521,8 @@ bool FfmpegGrabber::getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& imag
             
             av_free_packet(&packet);
             DBG printf(" %d\n", done);
-            if ((videoDecoder.haveFrame()||!_hasVideo)&&
-                (gotAudio||!_hasAudio)) {
+            if (((imageSync?gotVideo:videoDecoder.haveFrame())||!_hasVideo)&&
+                ((imageSync?1:gotAudio)||!_hasAudio)) {
                 if (_hasVideo) {
                     videoDecoder.getVideo(image);
                 } else {

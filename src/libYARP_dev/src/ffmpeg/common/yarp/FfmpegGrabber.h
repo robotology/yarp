@@ -54,6 +54,7 @@ public:
         needRateControl = false;
         shouldLoop = true;
         pace = 1;
+        imageSync = false;
     }
   
     virtual bool open(yarp::os::Searchable & config);
@@ -91,6 +92,7 @@ protected:
     bool needRateControl;
     bool shouldLoop;
     double pace;
+    bool imageSync;
   
     /** Width of the images a grabber produces. */
     int m_w;
