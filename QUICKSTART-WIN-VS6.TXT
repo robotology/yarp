@@ -38,6 +38,13 @@ Visual Studio 6 only.
     or do the same operations specified above in the winCVS GUI. of
     course, if you already have a username/pwd on the repository, you
     might use your own.
+    WARNING!! if you download using the anonymous user, you won't be able to
+    change the repository. you won't even be able to commit anything. so if
+    you DO have a user, I strongly recommend you use it instead of anonymous.
+    also, in that case, you might want to use ssh tunneling:
+
+      cvs -d:ssh:username@yarp0.cvs.sf.net:/cvsroot/yarp0 login
+      cvs -z3 -d:ssh:username@yarp0.cvs.sf.net:/cvsroot/yarp0 co -P yarp2
 
 (4) open CMake, indicate c:\work\yarp2 as both the location of the source 
     code and the destination for the EXEs; then hit "configure". you'll 
@@ -67,7 +74,10 @@ do "yarp check". this should end with "YARP seems OK!".
 if you need to install the GUI
 ------------------------------
 
-you might want to install the GUI as well, since a lot of application will actually rely on them. an example is yarpview, an application which opens a window and an input port, and just displays on the screen whtever is read off the port.
+you might want to install the GUI as well, since a lot of applications will
+actually rely on them. an example is yarpview, an application which opens
+a window and an input port, and just displays on the screen whtever is read
+off the port.
 
 so, after having done all you saw earlier on,
 
@@ -83,10 +93,12 @@ so, after having done all you saw earlier on,
 (2) re-run CMake, and this time set the variable CREATE_GUIS to ON. hit
     configure and then ok.
 
-(3) from within vc++, open YARP.dsw and rebuild everything. it should be
-    all right.
-
-To test, try this: check that yarpview.exe is in c:\work\yarp2\bin. if it isn't there, open vc++ and build C:\work\yarp2\src\yarp-imageviewer\yarpview.dsp. Now open a shell and do "yarp server"; then open another one and do "yarpview":
+that is basically it. as far as I know the code previously compiled needs not
+be recompiled. as a test, try this: open vc++ and build
+C:\work\yarp2\src\yarp-imageviewer\yarpview.dsp. you should then find a yarpview.exe
+in, e.g., c:\work\yarp2\bin\Release. copy that file to c:\work\yarp2\bin, so
+that now it is on your PATH. Now open a shell and do "yarp server"; then open
+another one and do "yarpview":
 - a window called YARP GTK Image Viewer should pop up
 - the yarp server should report a port called /yarpview/i:img being registered.
 
