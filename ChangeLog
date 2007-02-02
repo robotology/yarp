@@ -1,5 +1,8 @@
 2007-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/end_pack_for_net.h: add support
+	for Intel Mac OS/X.  This file needs to be cleaned up a bit.
+
 	* src/libYARP_OS/src/Companion.cpp: Assif spotted that when a port
 	is registered but does not exist yet, yarp ping does not return a
 	failure.  Thanks Assif!
