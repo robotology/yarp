@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: end_pack_for_net.h,v 1.6 2006-11-10 14:52:06 eshuy Exp $
+/// $Id: end_pack_for_net.h,v 1.7 2007-02-02 15:45:20 eshuy Exp $
 ///
 ///
 
@@ -21,29 +21,42 @@
 
 #ifdef YARP2_CYGWIN
 #pragma pack()
+#define YARP_UNPACKING_CONSIDERED
 #else
 #ifdef YARP2_WINDOWS
 #pragma pack(pop)
+#define YARP_UNPACKING_CONSIDERED
 #endif
 #endif
 
 #ifdef __LINUX__
 #pragma pack()
+#define YARP_UNPACKING_CONSIDERED
 #endif
 
 #ifdef __linux__
 #pragma pack()
+#define YARP_UNPACKING_CONSIDERED
 #endif
 
 #ifdef __DARWIN__
 #pragma pack()
+#define YARP_UNPACKING_CONSIDERED
 #endif
 
 #ifdef __QNX4__
 #pragma  pack (pop) ;
+#define YARP_UNPACKING_CONSIDERED
 #endif
 
 #ifdef __QNX6__
 ///#pragma align 0 
 #pragma pack()
+#define YARP_UNPACKING_CONSIDERED
+#endif
+
+#ifndef YARP_UNPACKING_CONSIDERED
+//#warning "Platform not known, guessing, please update end_pack_for_net.h"
+#pragma pack(4)
+#define YARP_UNPACKING_CONSIDERED
 #endif
