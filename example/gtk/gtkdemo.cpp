@@ -1,3 +1,18 @@
+
+/*
+  Example taken from GTK+ 2.0 Tutorial.
+    http://www.gtk.org/tutorial/
+
+  Copyright information from tutorial:
+    Copyright (C) 1997 Ian Main.
+    Copyright (C) 1998-2002 Tony Gale.
+    Permission is granted to make and distribute verbatim copies of this 
+    manual provided the copyright notice and this permission notice are 
+    preserved on all copies.
+    (see http://www.gtk.org/tutorial/ for more details)
+ */
+
+
 #include <gtk/gtk.h>
 
 /* Our callback.
