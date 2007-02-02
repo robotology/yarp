@@ -204,7 +204,8 @@ int Companion::cmdPing(int argc, char *argv[]) {
             
             out = Carriers::connect(address);
             if (out==NULL) {
-                throw IOException("cannot connect to port");
+                YARP_ERROR(Logger::get(),"port found, but cannot connect");
+                return 1;
             }
             /*
             printf("RPC connection to %s at %s (connection name %s)\n", 
