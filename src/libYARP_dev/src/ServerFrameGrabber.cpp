@@ -221,6 +221,17 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 rec = true;
                 break;
             }
+			case VOCAB_WHITE:
+			{
+				ok = true;
+				double r=0;
+				double g=0;
+				getWhiteBalance(r, g);
+				response.addDouble(r);
+				response.addDouble(g);
+				rec=true;
+				break;
+			}
             if (!ok) {
                 // leave answer blank
             }
