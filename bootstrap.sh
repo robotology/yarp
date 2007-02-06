@@ -1,10 +1,8 @@
 #!/bin/sh
 
-# call with --force if needed
-
+set -x
 aclocal
+libtoolize --force
 autoheader
-libtoolize $1
-automake --add-missing
+automake --gnu --add-missing
 autoconf
-
