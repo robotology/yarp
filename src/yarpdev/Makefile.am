@@ -1,7 +1,7 @@
 
 bin_PROGRAMS = yarpdev
 
-man_MANS = yarpdev.1
+dist_man_MANS = yarpdev.1
 
 yarpdev_SOURCES = yarpdev.cpp
 

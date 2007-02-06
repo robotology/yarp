@@ -1,7 +1,7 @@
 
 bin_PROGRAMS = yarp
 
-man_MANS = yarp.1
+dist_man_MANS = yarp.1
 
 yarp_SOURCES = yarp.cpp
 
