@@ -1,16 +1,17 @@
 2007-02-06 Lorenzo Natale <nat@liralab.it>
+
 	* src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp:
-	corrected erratic behavior on setGain/setShutter/setBrigthness and
-	corresponging getters.
+	corrected erratic behavior on setGain/setShutter/setBrightness and
+	corresponding getters.
 	
 	* src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h: 
-	added getWhiteBalanceMethod to IFrameGrabbersControl and changes
-	propagated to the following files:
-	* src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
-	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
-	* src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp
-	* src/libYARP_dev/src/dragonfly/common/yarp/DragonflyDeviceDriver.h
-		
+	added getWhiteBalanceMethod to IFrameGrabberControl and changes
+	propagated to the following files -	
+	- src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
+	- src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
+	- src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp
+	- src/libYARP_dev/src/dragonfly/common/yarp/DragonflyDeviceDriver.h
+
 2007-02-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/Makefile.am: ran
