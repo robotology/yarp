@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006 Paul Fitzpatrick and Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -213,5 +213,13 @@ public:
      * @return true/false if successful or not.
      */
     virtual bool setWhiteBalance(double red, double green) = 0;
+
+	/**
+     * Read the white balance parameters.
+     * @param red reference to return value for the red parameter
+	 * @param green reference to return value for the green parameter
+	 * @return true/false
+     */
+    virtual bool getWhiteBalance(double &red, double &green) const = 0;
 };
 #endif

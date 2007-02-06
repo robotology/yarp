@@ -212,7 +212,6 @@ public:
 
     }
 
-
     virtual bool setGain(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setGain(v);
@@ -233,6 +232,11 @@ public:
         return fgCtrl->getGain();
     }
 
+    virtual bool getWhiteBalance(double &r, double &g) const {
+        if (fgCtrl==NULL) { return 0; }
+        return fgCtrl->getWhiteBalance(r, g);
+    }
+
     virtual bool startService();
 
     virtual bool stopService() {
@@ -243,4 +247,3 @@ public:
 };
 
 #endif
-

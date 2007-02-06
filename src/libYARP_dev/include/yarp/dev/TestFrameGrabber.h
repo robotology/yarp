@@ -170,14 +170,16 @@ public:
         return 0;
     }
 
-
-
 	virtual bool setWhiteBalance(double r, double g)
-
 	{
-
 		return true;
+	}
 
+	virtual bool getWhiteBalance(double &r, double &g) const 
+	{
+		r=42.0;
+		g=42.0;
+		return true;
 	}
 
 private:

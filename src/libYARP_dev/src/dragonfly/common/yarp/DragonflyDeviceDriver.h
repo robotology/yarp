@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.26 2007-01-11 09:30:56 alex_bernardino Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.27 2007-02-06 13:28:26 babybot Exp $
 ///
 ///
 
@@ -246,6 +246,8 @@ public:
     virtual double getBrightness() const;
 
 	virtual bool setWhiteBalance(double r, double b);
+	
+	virtual bool getWhiteBalance(double &r, double &b) const;
 
 protected:
 	void *system_resources;

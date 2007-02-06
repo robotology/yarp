@@ -291,6 +291,12 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
                 ok = true;
                 response.addInt(height());
                 break;
+			case VOCAB_WHITE:
+				double r;
+				double g;
+				ok=getWhiteBalance(r, g);
+				response.addDouble(r);
+				response.addDouble(g);
             }
             if (!ok) {
                 // leave answer blank

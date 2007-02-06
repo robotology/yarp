@@ -122,6 +122,11 @@ public:
 		return setCommand(VOCAB_WHITE, r, g);
 	}
 
+	virtual bool getWhiteBalance(double &r, double &g) const
+	{
+		return getCommand(VOCAB_WHITE, r, g);
+	}
+
 
 private:
     yarp::os::Port port;
@@ -158,6 +163,18 @@ private:
         // response should be [cmd] [name] value
         return response.get(2).asDouble();
     }
+
+	bool getCommand(int code, double &r, double &g) const
+	{
+	    yarp::os::Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(code);
+        port.write(cmd,response);
+        // response should be [cmd] [name] value
+        r=response.get(2).asDouble();
+		g=response.get(3).asDouble();
+		return true;
+	}
 
 };
 
