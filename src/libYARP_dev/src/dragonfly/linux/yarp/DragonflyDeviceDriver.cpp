@@ -313,3 +313,11 @@ bool DragonflyDeviceDriver::setWhiteBalance(double r, double g)
     fprintf(stderr, "DragonflyDeviceDriver::setWhiteBalance not yet implemented\n");
     return -1;
 }
+
+bool DragonflyDeviceDriver::getWhiteBalance (double &r, double &g) const
+{
+    r=-1.0;
+    g=-1.0;
+    fprintf(stderr, "DragonflyDeviceDriver::getWhiteBalance not yet implemented\n");
+    return -1;
+}
