@@ -2,13 +2,16 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.5)
-AC_INIT(yarp, 2.0, [paulfitz@alum.mit.edu])
+AC_INIT(yarp, 2.1, [paulfitz@alum.mit.edu])
 AC_CONFIG_SRCDIR([src/libYARP_OS/src/Address.cpp])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([src/libYARP_OS/include/yarp/conf/yarp-config.h])
 
 # we need to be reentrant
 CPPFLAGS="$CPPFLAGS -D_REENTRANT"
+
+# we need to be avoid a few CMAKE-isms in PopulateDrivers.cpp
+CPPFLAGS="$CPPFLAGS -DYARP_AUTOCONF"
 
 # Checks for programs.
 AC_PROG_CXX
@@ -59,6 +62,8 @@ AC_FUNC_STAT
 AC_FUNC_STRTOD
 AC_CHECK_FUNCS([gettimeofday memset mkdir sqrt strstr])
 
+AC_CONFIG_FILES([src/libYARP_dev/generated_src/PopulateDrivers.cpp:src/libYARP_dev/src/PopulateDrivers.cpp.in])
+
 AC_CONFIG_FILES([Makefile
                  src/Makefile
                  src/libYARP_OS/Makefile
@@ -73,6 +78,14 @@ AC_CONFIG_FILES([Makefile
                  src/libYARP_sig/include/yarp/Makefile
                  src/libYARP_sig/include/yarp/sig/Makefile
                  src/libYARP_sig/src/Makefile
-                 src/libYARP_sig/harness/Makefile])
+                 src/libYARP_sig/harness/Makefile
+                 src/libYARP_dev/Makefile
+                 src/libYARP_dev/include/Makefile
+                 src/libYARP_dev/include/yarp/Makefile
+                 src/libYARP_dev/include/yarp/dev/Makefile
+                 src/libYARP_dev/src/Makefile
+                 src/libYARP_dev/harness/Makefile
+                 src/yarpdev/Makefile
+		 ])
 
 AC_OUTPUT

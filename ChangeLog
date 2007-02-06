@@ -1,3 +1,8 @@
+2007-02-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* configure.ac: added core libYARP_dev library to autoconf build,
+	along with the yarpdev program.
+
 2007-02-06 Lorenzo Natale <nat@liralab.it>
 
 	* src/libYARP_dev/src/dragonfly/winnt/yarp/DragonflyDeviceDriver.cpp:

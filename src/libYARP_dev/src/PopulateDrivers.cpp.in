@@ -40,6 +40,7 @@ using namespace yarp::dev;
 
 
 // this is an automatically configured file
+#ifndef YARP_AUTOCONF
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
 #cmakedefine ENABLE_microphone
@@ -51,6 +52,7 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_ffmpeg
 #cmakedefine ENABLE_jrkerr
 #cmakedefine ENABLE_dimax_u2c
+#endif
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
 // and factory code below
