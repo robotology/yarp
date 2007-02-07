@@ -1,0 +1,7 @@
+IF(UNIX)
+    MESSAGE(ERROR " gtkmm support not yet implemented in unix")
+ELSE(UNIX)
+    IF(WIN32 AND NOT CYGWIN)
+        FIND_PACKAGE(GtkMMWin32)
+    ENDIF(WIN32 AND NOT CYGWIN)
+ENDIF(UNIX)
