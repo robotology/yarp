@@ -2,7 +2,7 @@
 
 	* src/libYARP_OS/src/PortCoreInputUnit.cpp,PortCoreOutputUnit.cpp:
 	Francesco Nori reported a problem that was caused by the 
-	change on 2007-01-27 that adds information about whether replies
+	change on 2007-01-26 that adds information about whether replies
 	are expected to a message.  In some configurations this change
 	was not compatible with communicating with older YARP processes.
 	Should be fixed now.
