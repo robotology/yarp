@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: DragonflyDeviceDriver.h,v 1.27 2007-02-06 13:28:26 babybot Exp $
+/// $Id: DragonflyDeviceDriver.h,v 1.28 2007-02-07 16:14:05 ale-scalzo Exp $
 ///
 ///
 
@@ -48,13 +48,13 @@ public:
 	unsigned int _size_y;
 	unsigned int _video_type;
 
-	int _whiteR;
-	int _whiteB;
+	double _whiteR;
+	double _whiteB;
 
-	int _brightness;
-	int _exposure;
-	int _shutter;
-	int _gain;
+	double _brightness;
+	double _exposure;
+	double _shutter;
+	double _gain;
 
 	bool _fleacr;  //FLEA color reconstruction flag
 
@@ -144,21 +144,21 @@ public:
 		//params._alfa = (float)config.find("alfa").asInt();
 		yarp::os::Bottle& whites = config.findGroup("white_balance");
 		if (!whites.isNull()) {
-			params._whiteR = whites.get(1).asInt();
-			params._whiteB = whites.get(2).asInt();
+			params._whiteR = whites.get(1).asDouble();
+			params._whiteB = whites.get(2).asDouble();
 		}
 	
 		if (config.check("brightness", value)){
-			params._brightness=value->asInt();
+			params._brightness=value->asDouble();
 		}
 		if (config.check("exposure", value)){
-			params._exposure=value->asInt();
+			params._exposure=value->asDouble();
 		}
 		if (config.check("shutter", value)){
-			params._shutter=value->asInt();
+			params._shutter=value->asDouble();
 		}
 		if (config.check("gain", value)){
-			params._gain=value->asInt();
+			params._gain=value->asDouble();
 		}
 
 		params._fleacr = config.check("flea", "If present indicates to use Flea color reconstruction ");
@@ -216,37 +216,37 @@ public:
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 
     /**
-     * Set image brightness.
+     * Set image normalized brightness [0.0 : 1.0].
      */
     virtual bool setBrightness(double v);
 
     /**
-     * Set shutter time.
+     * Set normalized shutter time [0.0 : 1.0].
      */
     virtual bool setShutter(double v);
 
     /**
-     * Set gain.
+     * Set normalized gain [0.0 : 1.0].
      */
     virtual bool setGain(double v);
 
     /**
-     * Get shutter time.
+     * Get normalized shutter time [0.0 : 1.0].
      */
     virtual double getShutter() const;
 
     /**
-     * Get gain.
+     * Get normalized gain [0.0 : 1.0].
      */
     virtual double getGain() const;
 
     /**
-     * Get image brightness.
+     * Get normalized image brightness [0.0 : 1.0].
      */
     virtual double getBrightness() const;
 
 	virtual bool setWhiteBalance(double r, double b);
-	
+
 	virtual bool getWhiteBalance(double &r, double &b) const;
 
 protected:

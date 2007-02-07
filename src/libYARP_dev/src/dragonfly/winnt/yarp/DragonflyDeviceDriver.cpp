@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.26 2007-02-06 13:28:26 babybot Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.27 2007-02-07 16:14:05 ale-scalzo Exp $
 ///
 ///
 
@@ -49,14 +49,14 @@ public:
 		_acqStarted = false;
 		_validContext = false;
 		imageSubSampled = NULL;
-        imageFullSize = NULL;
+		imageFullSize = NULL;
 	}
 
 	~DragonflyResources () 
 	{ 
 		_uninitialize (); // To be sure - must protected against double calling
 	}
-	
+
 	int sizeX;
 	int sizeY;
 	int maxCams;
@@ -66,35 +66,38 @@ public:
 	bool _validContext;
 	bool fleaCR;
 
+	int min_Brightness,min_Shutter,min_Exposure,min_Gain,min_RBbalance;
+	int max_Brightness,max_Shutter,max_Exposure,max_Gain,max_RBbalance;
+
 	FlyCaptureContext context;
 	FlyCaptureImage imageConverted;
 	FlyCaptureImage lastBuffer;
 	unsigned char *imageSubSampled;
 	unsigned char *imageFullSize; //used by the reconstructGenearal method
 
-    //color reconstruction methods
+	//color reconstruction methods
 	bool reconstructColor(const unsigned char *src, unsigned char *dst);
 	bool recColorFSNN(const unsigned char *src, unsigned char *dst);
-    bool recColorFSBilinear(const unsigned char *src, unsigned char *dst);
-    bool recColorHSBilinear(const unsigned char *src, unsigned char *dst);
+	bool recColorFSBilinear(const unsigned char *src, unsigned char *dst);
+	bool recColorHSBilinear(const unsigned char *src, unsigned char *dst);
 	bool recColorGeneral(const unsigned char *src, unsigned char *dst);
-    void subSampling(const unsigned char *src, unsigned char *dst);
-    //
-    
-    bool _initialize (const DragonflyOpenParameters& params);
-	bool _uninitialize (void);
-	
-	bool _setBrightness (int value, bool bDefault=false);
-	bool _setExposure (int value, bool bDefault=false);
-	bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=true);
-	bool _setShutter (int value, bool bDefault=false);
-	bool _setGain (int value, bool bDefault=false);
+	void subSampling(const unsigned char *src, unsigned char *dst);
+	//
 
-	int _getShutter() const;
-	int _getExposure() const;
-	int _getBrightness() const;
-	int _getGain() const;
-	bool _getWhiteBalance (int &redValue, int &blueValue) const;
+	bool _initialize (const DragonflyOpenParameters& params);
+	bool _uninitialize (void);
+
+	bool _setBrightness (double value, bool bDefault=false);
+	bool _setExposure (double value, bool bDefault=false);
+	bool _setWhiteBalance (double redValue, double blueValue, bool bDefault=true);
+	bool _setShutter (double value, bool bDefault=false);
+	bool _setGain (double value, bool bDefault=false);
+
+	double _getShutter() const;
+	double _getExposure() const;
+	double _getBrightness() const;
+	double _getGain() const;
+	bool _getWhiteBalance (double &redValue, double &blueValue) const;
 
 private:
 	void _prepareBuffers (void);
@@ -107,47 +110,47 @@ bool DragonflyResources::reconstructColor(const unsigned char *src, unsigned cha
 	if(fleaCR)
 	{
 		if ((sizeX == _sizeX) && (sizeY == _sizeY) )
-        {
-            // full size reconstruction
-            Bayer2RGB( src, sizeX, dst, sizeX*3, sizeX, sizeY, -1, 1, 1 );
-            return true;
-        }
+		{
+			// full size reconstruction
+			Bayer2RGB( src, sizeX, dst, sizeX*3, sizeX, sizeY, -1, 1, 1 );
+			return true;
+		}
 		else
-        {
-            Bayer2RGB( src, _sizeX, imageFullSize, _sizeX*3, _sizeX, _sizeY, -1, 1, 1 );
+		{
+			Bayer2RGB( src, _sizeX, imageFullSize, _sizeX*3, _sizeX, _sizeY, -1, 1, 1 );
 			//memcpy(imageFullSize, dst, sizeX*sizeY*3);
 			subSampling(imageFullSize, dst);
-            return true;
-        }
+			return true;
+		}
 	}
 
 	//for dragonfly cameras
 	if ((sizeX == _sizeX) && (sizeY == _sizeY) )
-        {
-            // full size reconstruction
-            recColorFSBilinear(src, dst);
-            return true;
-        }
-    if ((sizeX == _halfX) && (sizeY == _halfY) )
-        {
-            recColorHSBilinear(src,dst);
-        }
+	{
+		// full size reconstruction
+		recColorFSBilinear(src, dst);
+		return true;
+	}
+	if ((sizeX == _halfX) && (sizeY == _halfY) )
+	{
+		recColorHSBilinear(src,dst);
+	}
 	else
-        {
-            recColorGeneral(src,dst);
-            return true;
-        }
-    return true;
+	{
+		recColorGeneral(src,dst);
+		return true;
+	}
+	return true;
 }
 
 void reportCameraInfo( const FlyCaptureInfoEx* pinfo )
 {
-    fprintf(stderr, "Serial number: %d\n", pinfo->SerialNumber );
-    fprintf(stderr, "Camera model: %s\n", pinfo->pszModelName );
-    fprintf(stderr, "Camera vendor: %s\n", pinfo->pszVendorName );
-    fprintf(stderr, "Sensor: %s\n", pinfo->pszSensorInfo );
-    fprintf(stderr, "DCAM compliance: %1.2f\n", (float)pinfo->iDCAMVer / 100.0 );
-    fprintf(stderr, "Bus position: (%d,%d).\n", pinfo->iBusNum, pinfo->iNodeNum );
+	fprintf(stderr, "Serial number: %d\n", pinfo->SerialNumber );
+	fprintf(stderr, "Camera model: %s\n", pinfo->pszModelName );
+	fprintf(stderr, "Camera vendor: %s\n", pinfo->pszVendorName );
+	fprintf(stderr, "Sensor: %s\n", pinfo->pszSensorInfo );
+	fprintf(stderr, "DCAM compliance: %1.2f\n", (float)pinfo->iDCAMVer / 100.0 );
+	fprintf(stderr, "Bus position: (%d,%d).\n", pinfo->iBusNum, pinfo->iNodeNum );
 }
 
 ///
@@ -165,41 +168,123 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
 	// Create the context.
 	if (!_validContext)
-        {
-            error = flycaptureCreateContext( &context );
-            if (error != FLYCAPTURE_OK)
-                return false;
-            _validContext = true;
-            // Initialize the camera.
-            error = flycaptureInitialize( context, params._unit_number );
-            if (error != FLYCAPTURE_OK)
-                return false;
-        }
-	
+	{
+		error = flycaptureCreateContext( &context );
+		if (error != FLYCAPTURE_OK)
+			return false;
+		_validContext = true;
+		// Initialize the camera.
+		error = flycaptureInitialize( context, params._unit_number );
+		if (error != FLYCAPTURE_OK)
+			return false;
+	}
+
 	FlyCaptureInfoEx info;
 	flycaptureGetCameraInfo(context, &info);
 	reportCameraInfo( &info );
 
-	if(params._brightness >= 0) {
+	// get control value ranges for normalization purposes
+	error = flycaptureGetCameraPropertyRangeEx(	context, 
+		FLYCAPTURE_BRIGHTNESS, 
+		NULL, NULL, NULL, NULL, NULL, NULL,
+		&min_Brightness,
+		&max_Brightness);
+
+	if (error == FLYCAPTURE_OK)
+	{
+		printf("Brightness range [%d : %d]\n",min_Brightness,max_Brightness);
+	}
+	else
+	{
+		printf("FlyCapture: unable to read min max Brightness\n==>Control Unavailable\n");
+		min_Brightness = max_Brightness = -1; 
+	}
+
+	error = flycaptureGetCameraPropertyRangeEx(	context, 
+		FLYCAPTURE_SHUTTER, 
+		NULL, NULL, NULL, NULL, NULL, NULL,
+		&min_Shutter,
+		&max_Shutter);
+
+	if (error == FLYCAPTURE_OK)
+	{
+		printf("Shutter range [%d : %d]\n",min_Shutter,max_Shutter);
+	}
+	else
+	{
+		printf("FlyCapture: unable to read min max Shutter\n==>Control Unavailable\n");
+		min_Shutter = max_Shutter = -1; 
+	}
+
+	error = flycaptureGetCameraPropertyRangeEx(	context, 
+		FLYCAPTURE_GAIN, 
+		NULL, NULL, NULL, NULL, NULL, NULL,
+		&min_Gain,
+		&max_Gain);
+
+	if (error == FLYCAPTURE_OK)
+	{
+		printf("Gain range [%d : %d]\n",min_Gain,max_Gain);
+	}
+	else
+	{
+		printf("FlyCapture: unable to read min max Gain\n==>Control Unavailable\n");
+		min_Gain = max_Gain = -1; 
+	}
+
+
+	error = flycaptureGetCameraPropertyRangeEx(	context, 
+		FLYCAPTURE_AUTO_EXPOSURE, 
+		NULL, NULL, NULL, NULL, NULL, NULL,
+		&min_Exposure,
+		&max_Exposure);
+
+	if (error == FLYCAPTURE_OK)
+	{
+		printf("Exposure range [%d : %d]\n",min_Exposure,max_Exposure);
+	}
+	else
+	{
+		printf("FlyCapture: unable to read min max Exposure\n==>Control Unavailable\n");
+		min_Exposure = max_Exposure = -1; 
+	}
+
+	error = flycaptureGetCameraPropertyRangeEx(	context, 
+		FLYCAPTURE_WHITE_BALANCE, 
+		NULL, NULL, NULL, NULL, NULL, NULL,
+		&min_RBbalance,
+		&max_RBbalance);
+
+	if (error == FLYCAPTURE_OK) 
+	{
+		printf("Red-Blue balance range [%d : %d]\n",min_RBbalance,max_RBbalance);
+	}
+	else
+	{
+		printf("FlyCapture: unable to read min max Red-Blue balance\n==>Control Unavailable\n");
+		min_RBbalance = max_RBbalance = -1; 
+	}
+
+	if(params._brightness >= 0.0 && params._brightness <= 1.0) {
 		_setBrightness(params._brightness);
-		printf("Brightness %d\n", params._brightness); }
+		printf("Brightness %f\n", params._brightness); } 
 
-	if(params._exposure >= 0) {
+	if(params._exposure >= 0.0 && params._exposure <= 1.0) {
 		_setExposure(params._exposure);
-		printf("Exposure %d\n", params._exposure); }
+		printf("Exposure %f\n", params._exposure); } 
 
-	if( (params._whiteR >= 0) && (params._whiteB >= 0)) {
+	if( (params._whiteR >= 0.0) && (params._whiteR <= 1.0) && (params._whiteB >= 0.0) && (params._whiteB <= 1.0)) {
 		_setWhiteBalance(params._whiteR, params._whiteB); 
-		printf("White balance %d %d\n", params._whiteR, params._whiteB); }
+		printf("White balance %f %f\n", params._whiteR, params._whiteB); }
 
-	if(params._shutter >= 0) {
+	if(params._shutter >= 0.0 && params._shutter <= 1.0) {
 		_setShutter(params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
-		printf("Shutter %d\n", params._shutter); }
+		printf("Shutter %f\n", params._shutter); }
 
-	if(params._gain >= 0) {
+	if(params._gain >= 0.0 && params._gain <= 1.0) {
 		_setGain(params._gain);	 	// x * -0.0224 = -11.2dB
-		printf("Gain %d\n", params._gain); }
-	
+		printf("Gain %f\n", params._gain); }
+
 	// Set color reconstruction method
 	error = flycaptureSetColorProcessingMethod(context, FLYCAPTURE_NEAREST_NEIGHBOR_FAST); // Should be an Option
 	if (error != FLYCAPTURE_OK)
@@ -214,15 +299,15 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 
 	// Start Acquisition
 	if (!_acqStarted)
-        {
-            error = flycaptureStart(	context, 
-                                        FLYCAPTURE_VIDEOMODE_640x480Y8,
-                                        FLYCAPTURE_FRAMERATE_30);  
-            if (error != FLYCAPTURE_OK)
-                return false;
-            _acqStarted = true;
-        }
-	
+	{
+		error = flycaptureStart(	context, 
+			FLYCAPTURE_VIDEOMODE_640x480Y8,
+			FLYCAPTURE_FRAMERATE_30);  
+		if (error != FLYCAPTURE_OK)
+			return false;
+		_acqStarted = true;
+	}
+
 	return true;
 }
 
@@ -232,32 +317,38 @@ inline bool DragonflyResources::_uninitialize (void)
 
 	// Stop Acquisition
 	if (_acqStarted) {
-        error = flycaptureStop(context);
-        if (error != FLYCAPTURE_OK)
-            return false;
-        _acqStarted = false;
+		error = flycaptureStop(context);
+		if (error != FLYCAPTURE_OK)
+			return false;
+		_acqStarted = false;
 
 		// Destroy the context only if properly started
 		// otherwise this might disturb another instance already running
 		if (_validContext) {
-            error = flycaptureDestroyContext( context );
-            if (error != FLYCAPTURE_OK)
-                return false;
-            _validContext = false;
-        }
+			error = flycaptureDestroyContext( context );
+			if (error != FLYCAPTURE_OK)
+				return false;
+			_validContext = false;
+		}
 	}
 
 	// Deallocate buffers
 	_destroyBuffers();
-	
+
 	return true;
 }
 
-inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
+inline bool DragonflyResources::_setBrightness (double value, bool bAuto)
 {
-	FlyCaptureError   error = FLYCAPTURE_OK;
+	if (min_Brightness == -1 && max_Brightness == -1) 
+		return false;
 
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, value, 0);
+	int iValue = min_Brightness + int(value * double(max_Brightness - min_Brightness));
+
+	if (iValue < min_Brightness) iValue = min_Brightness;
+	if (iValue > max_Brightness) iValue = max_Brightness;
+
+	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, iValue, 0);
 
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -265,11 +356,19 @@ inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
 		return false;
 }
 
-inline bool DragonflyResources::_setExposure (int value, bool bAuto)
+inline bool DragonflyResources::_setExposure (double value, bool bAuto)
 {
-	FlyCaptureError   error = FLYCAPTURE_OK;
-    //	error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_AUTO_EXPOSURE, false, false, bAuto, value, 0);
+	if (min_Exposure == -1 && max_Exposure == -1) 
+		return false;
+
+	int iValue = min_Exposure + int(value * double(max_Exposure - min_Exposure));
+
+	if (iValue < min_Exposure) iValue = min_Exposure;
+	if (iValue > max_Exposure) iValue = max_Exposure;
+
+	//FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
+
+	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_AUTO_EXPOSURE, false, false, bAuto, iValue, 0);
 
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -277,13 +376,24 @@ inline bool DragonflyResources::_setExposure (int value, bool bAuto)
 		return false;
 }
 
-inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, bool bAuto)
+inline bool DragonflyResources::_setWhiteBalance (double redValue, double blueValue, bool bAuto)
 {
-	FlyCaptureError   error = FLYCAPTURE_OK;
+	if (min_RBbalance == -1 && max_RBbalance == -1)
+		return false;
 
-	fprintf(stderr, "Setting White: %d %d\n", redValue, blueValue);
+	fprintf(stderr, "Setting White: %f %f\n", redValue, blueValue);
+
+	int iRedValue = min_RBbalance + int(redValue * double(max_RBbalance - min_RBbalance));
+	int iBlueValue = min_RBbalance + int(blueValue * double(max_RBbalance - min_RBbalance));
 	// error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, true, false, redValue, blueValue);
+
+	if (iRedValue < min_RBbalance) iRedValue = min_RBbalance;
+	if (iRedValue > max_RBbalance) iRedValue = max_RBbalance;
+
+	if (iBlueValue < min_RBbalance) iBlueValue = min_RBbalance;
+	if (iBlueValue > max_RBbalance) iBlueValue = max_RBbalance;
+
+	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, true, false, iRedValue, iBlueValue);
 
 	if (error == FLYCAPTURE_OK)
 	{
@@ -292,17 +402,23 @@ inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, b
 	}
 	else 
 	{
-		fprintf(stderr, "setWhiteBalance returned error (are %d %d valid values?)\n", redValue, blueValue);
+		fprintf(stderr, "setWhiteBalance returned error (are %d %d valid values?)\n", iRedValue, iBlueValue);
 		return false;
 	}
 }
 
-inline bool DragonflyResources::_setShutter (int value, bool bAuto)
+inline bool DragonflyResources::_setShutter (double value, bool bAuto)
 {
-	FlyCaptureError   error = FLYCAPTURE_OK;
+	if (min_Shutter == -1 && max_Shutter == -1) 
+		return false;
 
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_SHUTTER, false, false, bAuto, value, 0);
-	
+	int iValue = min_Shutter + int(value * double(max_Shutter - min_Shutter));
+
+	if (iValue < min_Shutter) iValue = min_Shutter;
+	if (iValue > max_Shutter) iValue = max_Shutter;
+
+	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_SHUTTER, false, false, bAuto, iValue, 0);
+
 	if (error == FLYCAPTURE_OK)
 	{
 		fprintf(stderr, "setShutter returned ok\n");
@@ -310,17 +426,25 @@ inline bool DragonflyResources::_setShutter (int value, bool bAuto)
 	}
 	else 
 	{
-		fprintf(stderr, "setShutter returned error (is %d a valid value?)\n", value);
+		fprintf(stderr, "setShutter returned error (is %d a valid value?)\n", iValue);
 		return false;
 	}
 }
 
-inline bool DragonflyResources::_setGain (int value, bool bAuto)
+inline bool DragonflyResources::_setGain (double value, bool bAuto)
 {
-	FlyCaptureError   error = FLYCAPTURE_OK;
-	//	error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
-	error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_GAIN, false, false, bAuto, value, 0);
-	
+	if (min_Gain == -1 && max_Gain == -1) 
+		return false;
+
+	int iValue = min_Gain + int(value * double(max_Gain - min_Gain));
+
+	if (iValue < min_Gain) iValue = min_Gain;
+	if (iValue > max_Gain) iValue = max_Gain;
+
+	//FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
+
+	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_GAIN, false, false, bAuto, iValue, 0);
+
 	if (error == FLYCAPTURE_OK)
 	{
 		fprintf(stderr, "setGain returned ok\n");
@@ -328,57 +452,68 @@ inline bool DragonflyResources::_setGain (int value, bool bAuto)
 	}
 	else 
 	{
-		fprintf(stderr, "setGain returned error (is %d a valid value?)\n", value);
+		fprintf(stderr, "setGain returned error (is %d a valid value?)\n", iValue);
 		return false;
 	}
 }
 
-inline int DragonflyResources::_getShutter() const
+inline double DragonflyResources::_getShutter() const
 {
-    long tmpA;
+	if (min_Shutter == max_Shutter) 
+		return min_Shutter;
 
-    FlyCaptureError error = FLYCAPTURE_OK;
+	long tmpA;
 
-	error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
+	
 	if (error == FLYCAPTURE_OK)
-		return tmpA;
+		return double(tmpA - min_Shutter)/double(max_Shutter - min_Shutter);
 	else 
-		return -1;
+		return -1.0;
 }
 
-inline int DragonflyResources::_getBrightness() const
+inline double DragonflyResources::_getBrightness() const
 {
-    long tmpA;
-    FlyCaptureError   error = FLYCAPTURE_OK;
+	if (min_Brightness == max_Brightness)
+		return min_Brightness;
 
-	error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
+	long tmpA;
+
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
+
 	if (error == FLYCAPTURE_OK)
-		return tmpA;
+		return double(tmpA - min_Brightness)/double(max_Brightness - min_Brightness);
 	else 
-		return -1;
+		return -1.0;
 }
 
-inline int DragonflyResources::_getGain() const
+inline double DragonflyResources::_getGain() const
 {
-    long tmpA;
-    FlyCaptureError  error = FLYCAPTURE_OK;
+	if (min_Gain == max_Gain)
+		return min_Gain;
 
-	error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, 0, false);
+	long tmpA;
+
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, 0, false);
+	
 	if (error == FLYCAPTURE_OK)
-		return tmpA;
+		return double(tmpA - min_Gain)/double(max_Gain - min_Gain);
 	else 
-		return -1;
+		return -1.0;
 }
 
-inline bool DragonflyResources::_getWhiteBalance (int &redValue, int &blueValue) const
+inline bool DragonflyResources::_getWhiteBalance (double &redValue, double &blueValue) const
 {
 	bool push;
 	bool on;
 	bool bb;
-	
-	FlyCaptureError error = FLYCAPTURE_OK;
 
-	error = flycaptureGetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, &push, &on, &bb, &redValue, &blueValue);
+	int tmpRed,tmpBlue;
+
+	FlyCaptureError error = flycaptureGetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, &push, &on, &bb, &tmpRed, &tmpBlue);
+
+	redValue = double(tmpRed - min_RBbalance)/double(max_RBbalance-min_RBbalance);
+	blueValue = double(tmpBlue - min_RBbalance)/double(max_RBbalance-min_RBbalance);
 
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -397,11 +532,11 @@ inline void DragonflyResources::_prepareBuffers(void)
 	if (imageSubSampled == NULL)
 		imageSubSampled = new unsigned char[ sizeX * sizeY * 3 ];
 
-    if (imageFullSize == NULL)
-        imageFullSize = new unsigned char [_sizeX*_sizeY*3];
+	if (imageFullSize == NULL)
+		imageFullSize = new unsigned char [_sizeX*_sizeY*3];
 
 	memset(imageSubSampled, 0x0, (sizeX * sizeY * 3));
-    memset(imageFullSize, 0x0, (_sizeX*_sizeY*3));
+	memset(imageFullSize, 0x0, (_sizeX*_sizeY*3));
 }
 
 inline void DragonflyResources::_destroyBuffers(void)
@@ -410,9 +545,9 @@ inline void DragonflyResources::_destroyBuffers(void)
 		delete [] imageConverted.pData;
 	imageConverted.pData = NULL;
 
-    if (imageFullSize != NULL)
-        delete [] imageFullSize;
-    imageFullSize=NULL;
+	if (imageFullSize != NULL)
+		delete [] imageFullSize;
+	imageFullSize=NULL;
 
 	if (imageSubSampled != NULL)
 		delete [] imageSubSampled;
@@ -425,7 +560,7 @@ inline DragonflyResources& RES(void *res) { return *(DragonflyResources *)res; }
 ///
 DragonflyDeviceDriver::DragonflyDeviceDriver(void)
 {
-    system_resources = 0;
+	system_resources = 0;
 	system_resources = (void *) new DragonflyResources;
 	ACE_ASSERT (system_resources != 0);
 }
@@ -443,7 +578,7 @@ bool DragonflyDeviceDriver::open (const DragonflyOpenParameters &par)
 {
 	DragonflyResources& d = RES(system_resources);
 	int ret = d._initialize (par);
-    return ret;
+	return ret;
 }
 
 bool DragonflyDeviceDriver::close (void)
@@ -456,18 +591,18 @@ bool DragonflyDeviceDriver::close (void)
 
 bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buffer)
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 
-    FlyCaptureError error = FLYCAPTURE_OK;
+	FlyCaptureError error = FLYCAPTURE_OK;
 
 	FlyCaptureImage *pSrc;
-	
+
 	pSrc = &(d.lastBuffer);
-	
+
 	error = flycaptureGrabImage2(d.context, pSrc);
 	if (error!=FLYCAPTURE_OK)
 		return false;
-	
+
 	d.reconstructColor(pSrc->pData, buffer);
 
 	return true;
@@ -475,18 +610,18 @@ bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buffer)
 
 bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 
-    FlyCaptureError error = FLYCAPTURE_OK;
+	FlyCaptureError error = FLYCAPTURE_OK;
 
 	FlyCaptureImage *pSrc;
-	
+
 	pSrc = &(d.lastBuffer);
-	
+
 	error = flycaptureGrabImage2(d.context, pSrc);
 	if (error!=FLYCAPTURE_OK)
 		return false;
-	
+
 	// hmm, we should make sure image has some space in it first, right?
 	image.resize(d.sizeX,d.sizeY);
 
@@ -497,28 +632,28 @@ bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& im
 
 bool DragonflyDeviceDriver::getRawBuffer(unsigned char *buffer)
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 
-    FlyCaptureError error = FLYCAPTURE_OK;
+	FlyCaptureError error = FLYCAPTURE_OK;
 
 	FlyCaptureImage *pSrc;
-	
+
 	pSrc = &(d.lastBuffer);
-	
+
 	error = flycaptureGrabImage2(d.context, pSrc);
 	if (error!=FLYCAPTURE_OK)
 		return false;
-	
+
 	memcpy(buffer, pSrc->pData, _sizeX*_sizeY);
-	
+
 	return true;
 }
 
 int DragonflyDeviceDriver::getRawBufferSize()
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 
-    return _sizeX*_sizeY;
+	return _sizeX*_sizeY;
 }
 
 int DragonflyDeviceDriver::width () const
@@ -533,73 +668,80 @@ int DragonflyDeviceDriver::height () const
 
 bool DragonflyDeviceDriver::setBrightness(double value)
 {
-    DragonflyResources& d = RES(system_resources);
-	return d._setBrightness((int)(value));
+	DragonflyResources& d = RES(system_resources);
+	return d._setBrightness(value);
 }
 
 bool DragonflyDeviceDriver::setShutter(double value)
 {
-    DragonflyResources& d = RES(system_resources);
-	return d._setShutter((int)(value));
+	DragonflyResources& d = RES(system_resources);
+	return d._setShutter(value);
 }
 
 bool DragonflyDeviceDriver::setGain(double value)
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 	return d._setGain(value);
 }
 
 double DragonflyDeviceDriver::getShutter() const
 {
-    DragonflyResources& d = RES(system_resources);
-	return (double) d._getShutter();
+	DragonflyResources& d = RES(system_resources);
+	return d._getShutter();
 }
 
 bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
 {
-    DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d = RES(system_resources);
 	return d._setWhiteBalance(red, blue);
 }
 
 double DragonflyDeviceDriver::getBrightness() const
 {
-    DragonflyResources& d = RES(system_resources);
-	return (double) d._getBrightness();
+	DragonflyResources& d = RES(system_resources);
+	return d._getBrightness();
 }
 
 double DragonflyDeviceDriver::getGain() const
 {
-    DragonflyResources& d = RES(system_resources);
-	return (double) d._getGain();
+	DragonflyResources& d = RES(system_resources);
+	return d._getGain();
 }
+
 
 bool DragonflyDeviceDriver::getWhiteBalance(double &r, double &g) const
 {
-    DragonflyResources& d = RES(system_resources);
-	int tmpR=-1;
-	int tmpG=-1;
+	DragonflyResources& d = RES(system_resources);
+
+	//int tmpR=-1;
+
+	//int tmpG=-1;
+
 	bool ret;
 
-	ret=d._getWhiteBalance(tmpR, tmpG);
-	r=(double)tmpR;
-	g=(double)tmpG;
+	ret=d._getWhiteBalance(r, g);
+
+	//r=(double)tmpR;
+
+	//g=(double)tmpG;
 
 	return ret;
 }
 
+
 void DragonflyDeviceDriver::recColorFSBilinear(const unsigned char *src, unsigned char *out)
 {
-    RES(system_resources).recColorFSBilinear(src, out);
+	RES(system_resources).recColorFSBilinear(src, out);
 }
 
 void DragonflyDeviceDriver::recColorFSNN(const unsigned char *src, unsigned char *out)
 {
-    RES(system_resources).recColorFSNN(src, out);
+	RES(system_resources).recColorFSNN(src, out);
 }
 
 void DragonflyDeviceDriver::recColorHSBilinear(const unsigned char *src, unsigned char *out)
 {
-    RES(system_resources).recColorHSBilinear(src, out);
+	RES(system_resources).recColorHSBilinear(src, out);
 }
 
 ////// Reconstruct color methods
@@ -627,35 +769,35 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc++;
 
-    // prima riga
+	// prima riga
 	for(cc=1;cc<(_sizeX/2); cc++)
-        {
-            // first pixel
-            tmpR=*(tmpSrc-1);  
-            tmpR+=*(tmpSrc+1); 
-			
-            // x interpolation
-            tmpB=*(tmpSrc+_sizeX);
-						
-            *dest++=(unsigned char)(tmpR/2);
-            *dest++=*(tmpSrc);
-            *dest++=(unsigned char)(tmpB);
+	{
+		// first pixel
+		tmpR=*(tmpSrc-1);  
+		tmpR+=*(tmpSrc+1); 
 
-            tmpSrc++;
+		// x interpolation
+		tmpB=*(tmpSrc+_sizeX);
 
-            // second pixel
-            tmpB=*(tmpSrc+_sizeX+1); 
-            tmpB+=*(tmpSrc+_sizeX-1); 
-			
-            tmpG=*(tmpSrc-1);  
-            tmpG+=*(tmpSrc+1); 
-            tmpG+=*(tmpSrc+_sizeX); 
+		*dest++=(unsigned char)(tmpR/2);
+		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpB);
 
-            *dest++=*(tmpSrc);
-            *dest++=(unsigned char)(tmpG/3);
-            *dest++=(unsigned char)(tmpB/2);
-            tmpSrc++;
-        }
+		tmpSrc++;
+
+		// second pixel
+		tmpB=*(tmpSrc+_sizeX+1); 
+		tmpB+=*(tmpSrc+_sizeX-1); 
+
+		tmpG=*(tmpSrc-1);  
+		tmpG+=*(tmpSrc+1); 
+		tmpG+=*(tmpSrc+_sizeX); 
+
+		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
+		tmpSrc++;
+	}
 
 	// last columns, ends with g
 	*dest++=*(tmpSrc-1);
@@ -665,119 +807,119 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	tmpSrc++;
 
 	for (rr=1; rr<(_sizeY/2); rr++)
-        {
-            ////////////////// gb row
-            // prima colonna
-            tmpG=*(tmpSrc);
-            tmpB=*(tmpSrc+1);
-            tmpR=*(tmpSrc-_sizeX);
-            tmpR+=*(tmpSrc+_sizeX);
+	{
+		////////////////// gb row
+		// prima colonna
+		tmpG=*(tmpSrc);
+		tmpB=*(tmpSrc+1);
+		tmpR=*(tmpSrc-_sizeX);
+		tmpR+=*(tmpSrc+_sizeX);
 
-            *dest++=(unsigned char)(tmpR/2);
-            *dest++=tmpG;
-            *dest++=tmpB;
-		
-            tmpSrc++;
+		*dest++=(unsigned char)(tmpR/2);
+		*dest++=tmpG;
+		*dest++=tmpB;
 
-            for(cc=1; cc<(_sizeX/2); cc++)
-                {
-                    // second pixel
-                    tmpR= *(tmpSrc-_sizeX-1);  
-                    tmpR+= *(tmpSrc-_sizeX+1); 
-                    tmpR+= *(tmpSrc+_sizeX-1); 
-                    tmpR+= *(tmpSrc+_sizeX+1); 
-			
-                    // + interpolation
-                    tmpG=*(tmpSrc-_sizeX);		
-                    tmpG+=*(tmpSrc-1);	
-                    tmpG+=*(tmpSrc+1);		
-                    tmpG+=*(tmpSrc+_sizeX);		
+		tmpSrc++;
 
-                    *dest++=(unsigned char)(tmpR/4);
-                    *dest++=(unsigned char)(tmpG/4);
-                    *dest++=*tmpSrc;
+		for(cc=1; cc<(_sizeX/2); cc++)
+		{
+			// second pixel
+			tmpR= *(tmpSrc-_sizeX-1);  
+			tmpR+= *(tmpSrc-_sizeX+1); 
+			tmpR+= *(tmpSrc+_sizeX-1); 
+			tmpR+= *(tmpSrc+_sizeX+1); 
 
-                    tmpSrc++;
+			// + interpolation
+			tmpG=*(tmpSrc-_sizeX);		
+			tmpG+=*(tmpSrc-1);	
+			tmpG+=*(tmpSrc+1);		
+			tmpG+=*(tmpSrc+_sizeX);		
 
-                    // first pixel
-                    tmpR=*(tmpSrc-_sizeX);	
-                    tmpR+=*(tmpSrc+_sizeX);
-			
-                    // x interpolation
-                    tmpB=*(tmpSrc-1);
-                    tmpB+=*(tmpSrc+1);
-						
-                    *dest++=(unsigned char)(tmpR/2);
-                    *dest++=*tmpSrc;
-                    *dest++=(unsigned char)(tmpB/2);
-			
-                    tmpSrc++;
-                }
-            //last col, ends with b
-            *dest++=*(tmpSrc+_sizeX-1);
-            *dest++=*(tmpSrc+_sizeX);
-            *dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpR/4);
+			*dest++=(unsigned char)(tmpG/4);
+			*dest++=*tmpSrc;
 
-            tmpSrc++;
-			
-            ////////////////// gb row
-            // prima colonna
-            tmpG=*(tmpSrc-_sizeX);	
-            tmpG+=*(tmpSrc+_sizeX);	
-            tmpG+=*(tmpSrc+1);	
+			tmpSrc++;
 
-            tmpB=*(tmpSrc-_sizeX+1);
-            tmpB+=*(tmpSrc+_sizeX+1);
-            tmpR=*tmpSrc;
-		
-            *dest++=(unsigned char)(tmpR);
-            *dest++=(unsigned char)(tmpG/3);
-            *dest++=(unsigned char)(tmpB/2);
+			// first pixel
+			tmpR=*(tmpSrc-_sizeX);	
+			tmpR+=*(tmpSrc+_sizeX);
 
-            tmpSrc++;
+			// x interpolation
+			tmpB=*(tmpSrc-1);
+			tmpB+=*(tmpSrc+1);
 
-            // altre colonne
-            for(cc=1; cc<(_sizeX/2); cc++)
-                {
-                    // second pixel
-                    tmpB=*(tmpSrc-_sizeX);	
-                    tmpB+=*(tmpSrc+_sizeX);  
-			
-                    // x interpolation
-                    tmpR=*(tmpSrc-1);	
-                    tmpR+=*(tmpSrc+1);	
-						
-                    *dest++=(unsigned char)(tmpR/2);
-                    *dest++=*tmpSrc;
-                    *dest++=(unsigned char)(tmpB/2);
+			*dest++=(unsigned char)(tmpR/2);
+			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpB/2);
 
-                    tmpSrc++;
+			tmpSrc++;
+		}
+		//last col, ends with b
+		*dest++=*(tmpSrc+_sizeX-1);
+		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*tmpSrc;
 
-                    // first pixel, x interpolation
-                    tmpB=*(tmpSrc-_sizeX-1);		
-                    tmpB+=*(tmpSrc-_sizeX+1);	
-                    tmpB+=*(tmpSrc+_sizeX-1);
-                    tmpB+=*(tmpSrc+_sizeX+1);	
-			
-                    // + interpolation
-                    tmpG=*(tmpSrc+1);
-                    tmpG+=*(tmpSrc-1);
-                    tmpG+=*(tmpSrc+_sizeX);
-                    tmpG+=*(tmpSrc-_sizeX);
-			
-                    *dest++=*tmpSrc;
-                    *dest++=(unsigned char)(tmpG/4);
-                    *dest++=(unsigned char)(tmpB/4);
-			
-                    tmpSrc++;
-                }
-	
-            *dest++=*(tmpSrc-1);
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc-_sizeX);
+		tmpSrc++;
 
-            tmpSrc++;
-        }
+		////////////////// gb row
+		// prima colonna
+		tmpG=*(tmpSrc-_sizeX);	
+		tmpG+=*(tmpSrc+_sizeX);	
+		tmpG+=*(tmpSrc+1);	
+
+		tmpB=*(tmpSrc-_sizeX+1);
+		tmpB+=*(tmpSrc+_sizeX+1);
+		tmpR=*tmpSrc;
+
+		*dest++=(unsigned char)(tmpR);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
+
+		tmpSrc++;
+
+		// altre colonne
+		for(cc=1; cc<(_sizeX/2); cc++)
+		{
+			// second pixel
+			tmpB=*(tmpSrc-_sizeX);	
+			tmpB+=*(tmpSrc+_sizeX);  
+
+			// x interpolation
+			tmpR=*(tmpSrc-1);	
+			tmpR+=*(tmpSrc+1);	
+
+			*dest++=(unsigned char)(tmpR/2);
+			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpB/2);
+
+			tmpSrc++;
+
+			// first pixel, x interpolation
+			tmpB=*(tmpSrc-_sizeX-1);		
+			tmpB+=*(tmpSrc-_sizeX+1);	
+			tmpB+=*(tmpSrc+_sizeX-1);
+			tmpB+=*(tmpSrc+_sizeX+1);	
+
+			// + interpolation
+			tmpG=*(tmpSrc+1);
+			tmpG+=*(tmpSrc-1);
+			tmpG+=*(tmpSrc+_sizeX);
+			tmpG+=*(tmpSrc-_sizeX);
+
+			*dest++=*tmpSrc;
+			*dest++=(unsigned char)(tmpG/4);
+			*dest++=(unsigned char)(tmpB/4);
+
+			tmpSrc++;
+		}
+
+		*dest++=*(tmpSrc-1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX);
+
+		tmpSrc++;
+	}
 
 	//////////// ultima riga
 	// prima colonna
@@ -788,17 +930,17 @@ bool DragonflyResources::recColorFSBilinear(const unsigned char *src, unsigned c
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
-        {
-            *dest++=*(tmpSrc-_sizeX+1);
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc);
-            tmpSrc++;
+	{
+		*dest++=*(tmpSrc-_sizeX+1);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
+		tmpSrc++;
 
-            *dest++=*(tmpSrc-_sizeX);
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc-_sizeX+1);
-            tmpSrc++;
-        }
+		*dest++=*(tmpSrc-_sizeX);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX+1);
+		tmpSrc++;
+	}
 
 	// ultimo pixel
 	*dest++=*(tmpSrc-1-_sizeX);
@@ -830,23 +972,23 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc++;
 
-    // prima riga
+	// prima riga
 	for(cc=1;cc<(_sizeX/2); cc++)
-        {
-            // first pixel
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc+_sizeX);
+	{
+		// first pixel
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc+_sizeX);
 
-            tmpSrc++;
+		tmpSrc++;
 
-            // second pixel
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc+_sizeX-1);
+		// second pixel
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc+_sizeX-1);
 
-            tmpSrc++;
-        }
+		tmpSrc++;
+	}
 
 	// last columns, ends with g
 	*dest++=*(tmpSrc-1);
@@ -856,70 +998,70 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 	tmpSrc++;
 
 	for (rr=1; rr<=(_sizeY/2-1); rr++)
-        {
-            ////////////////// gb row
-            // prima colonna
-            *dest++=*(tmpSrc+_sizeX);
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc);
-		
-            tmpSrc++;
+	{
+		////////////////// gb row
+		// prima colonna
+		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
 
-            for(cc=1; cc<(_sizeX/2); cc++)
-                {
-                    // second pixel
-                    *dest++=*(tmpSrc+_sizeX+1);
-                    *dest++=*(tmpSrc+1);
-                    *dest++=*tmpSrc;
+		tmpSrc++;
 
-                    tmpSrc++;
+		for(cc=1; cc<(_sizeX/2); cc++)
+		{
+			// second pixel
+			*dest++=*(tmpSrc+_sizeX+1);
+			*dest++=*(tmpSrc+1);
+			*dest++=*tmpSrc;
 
-                    // first pixel
-                    *dest++=*(tmpSrc+_sizeX);
-                    *dest++=*tmpSrc;
-                    *dest++=*(tmpSrc+1);
+			tmpSrc++;
 
-                    tmpSrc++;
-                }
-            //last col, ends with b
-            *dest++=*(tmpSrc+_sizeX-1);
-            *dest++=*(tmpSrc+_sizeX);
-            *dest++=*tmpSrc;
+			// first pixel
+			*dest++=*(tmpSrc+_sizeX);
+			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+1);
 
-            tmpSrc++;
-			
-            ////////////////// gb row
-            // prima colonna
-            *dest++=*tmpSrc;
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc+_sizeX+1);
+			tmpSrc++;
+		}
+		//last col, ends with b
+		*dest++=*(tmpSrc+_sizeX-1);
+		*dest++=*(tmpSrc+_sizeX);
+		*dest++=*tmpSrc;
 
-            tmpSrc++;
+		tmpSrc++;
 
-            // altre colonne
-            for(cc=1; cc<(_sizeX/2); cc++)
-                {
-                    // second pixel
-                    *dest++=*(tmpSrc+1);
-                    *dest++=*tmpSrc;
-                    *dest++=*(tmpSrc+_sizeX);
+		////////////////// gb row
+		// prima colonna
+		*dest++=*tmpSrc;
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc+_sizeX+1);
 
-                    tmpSrc++;
+		tmpSrc++;
 
-                    // first pixel, x interpolation
-                    *dest++=*tmpSrc;
-                    *dest++=*(tmpSrc+1);
-                    *dest++=*(tmpSrc+_sizeX+1);
+		// altre colonne
+		for(cc=1; cc<(_sizeX/2); cc++)
+		{
+			// second pixel
+			*dest++=*(tmpSrc+1);
+			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+_sizeX);
 
-                    tmpSrc++;
-                }
-	
-            *dest++=*(tmpSrc-1);
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc-_sizeX);
+			tmpSrc++;
 
-            tmpSrc++;
-        }
+			// first pixel, x interpolation
+			*dest++=*tmpSrc;
+			*dest++=*(tmpSrc+1);
+			*dest++=*(tmpSrc+_sizeX+1);
+
+			tmpSrc++;
+		}
+
+		*dest++=*(tmpSrc-1);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX);
+
+		tmpSrc++;
+	}
 
 	//////////// ultima riga
 	// prima colonna
@@ -930,17 +1072,17 @@ bool DragonflyResources::recColorFSNN(const unsigned char *src, unsigned char *d
 	tmpSrc++;
 
 	for(cc=1;cc<=(sizeX/2-1); cc++)
-        {
-            *dest++=*(tmpSrc-_sizeX+1);
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc);
-            tmpSrc++;
+	{
+		*dest++=*(tmpSrc-_sizeX+1);
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc);
+		tmpSrc++;
 
-            *dest++=*(tmpSrc-_sizeX);
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc-_sizeX+1);
-            tmpSrc++;
-        }
+		*dest++=*(tmpSrc-_sizeX);
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-_sizeX+1);
+		tmpSrc++;
+	}
 
 	// ultimo pixel
 	*dest++=*(tmpSrc-1-_sizeX);
@@ -964,131 +1106,131 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 	int rr=0;
 	int cc=0;
 
-    int r=0;
-    int c=0;
+	int r=0;
+	int c=0;
 
 	unsigned char *tmpSrc=const_cast<unsigned char *>(src);
 
-    //////// prima riga
+	//////// prima riga
 	// primo pixel
 	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc+1);
 	*dest++=*(tmpSrc+_sizeX+1);
 	tmpSrc+=2;
 
-    c++;
+	c++;
 
-    // prima riga
+	// prima riga
 	for(cc=1;cc<(_halfX-1); cc++)
-        {
-            // first pixel
-            tmpB=*(tmpSrc+_sizeX+1);
-            tmpB+=*(tmpSrc+_sizeX-1);
-        
-            tmpG=*(tmpSrc-1);
-            tmpG+=*(tmpSrc+1);
-            tmpG+=*(tmpSrc+_sizeX);
-						
-            *dest++=*(tmpSrc);
-            *dest++=(unsigned char)(tmpG/3);
-            *dest++=(unsigned char)(tmpB/2);
+	{
+		// first pixel
+		tmpB=*(tmpSrc+_sizeX+1);
+		tmpB+=*(tmpSrc+_sizeX-1);
 
-            tmpSrc+=2;
+		tmpG=*(tmpSrc-1);
+		tmpG+=*(tmpSrc+1);
+		tmpG+=*(tmpSrc+_sizeX);
 
-            c++;
-        }
+		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
 
-  	// last columns, ends with r
+		tmpSrc+=2;
+
+		c++;
+	}
+
+	// last columns, ends with r
 	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc+_sizeX-1);
 	tmpSrc+=2;
-    
-    c++;
 
-    // skip a row
-    tmpSrc+=_sizeX;
+	c++;
 
-    c=0;
-    r++;
+	// skip a row
+	tmpSrc+=_sizeX;
+
+	c=0;
+	r++;
 	for (rr=1; rr<(_halfY-1); rr++)
-        {
-            ////////////////// rg row
-            // prima colonna
-            *dest++=*tmpSrc;
-            *dest++=*(tmpSrc+1);
-            *dest++=*(tmpSrc+_sizeX+1);
-		
-            tmpSrc+=2;
-            c++;
+	{
+		////////////////// rg row
+		// prima colonna
+		*dest++=*tmpSrc;
+		*dest++=*(tmpSrc+1);
+		*dest++=*(tmpSrc+_sizeX+1);
 
-            for(cc=1; cc<(_halfX-1); cc++)
-                {
-                    // first pixel
-                    tmpB=*(tmpSrc+_sizeX+1);
-                    tmpB+=*(tmpSrc+_sizeX-1);
-                    tmpB+=*(tmpSrc-_sizeX+1);
-                    tmpB+=*(tmpSrc-_sizeX-1);
-            
-                    tmpG=*(tmpSrc-1);
-                    tmpG+=*(tmpSrc+1);
-                    tmpG+=*(tmpSrc+_sizeX);
-                    tmpG+=*(tmpSrc-_sizeX);
-            
-                    *dest++=*(tmpSrc);
-                    *dest++=(unsigned char)(tmpG/4);
-                    *dest++=(unsigned char)(tmpB/4);
-            
-                    tmpSrc+=2;
-                    c++;
-                }
-            //last col, ends with r
-            *dest++=*(tmpSrc);
-            *dest++=*(tmpSrc-1);
-            *dest++=*(tmpSrc+_sizeX-1);
- 
-            tmpSrc+=2;
-            tmpSrc+=_sizeX; //skip a row
+		tmpSrc+=2;
+		c++;
 
-            r++;
-            c=0;
-        }
+		for(cc=1; cc<(_halfX-1); cc++)
+		{
+			// first pixel
+			tmpB=*(tmpSrc+_sizeX+1);
+			tmpB+=*(tmpSrc+_sizeX-1);
+			tmpB+=*(tmpSrc-_sizeX+1);
+			tmpB+=*(tmpSrc-_sizeX-1);
 
-    c=0;
+			tmpG=*(tmpSrc-1);
+			tmpG+=*(tmpSrc+1);
+			tmpG+=*(tmpSrc+_sizeX);
+			tmpG+=*(tmpSrc-_sizeX);
 
-    //////// ultima riga
+			*dest++=*(tmpSrc);
+			*dest++=(unsigned char)(tmpG/4);
+			*dest++=(unsigned char)(tmpB/4);
+
+			tmpSrc+=2;
+			c++;
+		}
+		//last col, ends with r
+		*dest++=*(tmpSrc);
+		*dest++=*(tmpSrc-1);
+		*dest++=*(tmpSrc+_sizeX-1);
+
+		tmpSrc+=2;
+		tmpSrc+=_sizeX; //skip a row
+
+		r++;
+		c=0;
+	}
+
+	c=0;
+
+	//////// ultima riga
 	// primo pixel
 	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc+1);
 	*dest++=*(tmpSrc-_sizeX+1);
 	tmpSrc+=2;
 
-    c++;
+	c++;
 
-    for(cc=1;cc<(_halfX-1); cc++)
-        {
-            // first pixel
-            tmpB=*(tmpSrc-_sizeX+1);
-            tmpB+=*(tmpSrc-_sizeX-1);
-        
-            tmpG=*(tmpSrc-1);
-            tmpG+=*(tmpSrc+1);
-            tmpG+=*(tmpSrc-_sizeX);
-						
-            *dest++=*(tmpSrc);
-            *dest++=(unsigned char)(tmpG/3);
-            *dest++=(unsigned char)(tmpB/2);
+	for(cc=1;cc<(_halfX-1); cc++)
+	{
+		// first pixel
+		tmpB=*(tmpSrc-_sizeX+1);
+		tmpB+=*(tmpSrc-_sizeX-1);
 
-            tmpSrc+=2;
+		tmpG=*(tmpSrc-1);
+		tmpG+=*(tmpSrc+1);
+		tmpG+=*(tmpSrc-_sizeX);
 
-            c++;
-        }
+		*dest++=*(tmpSrc);
+		*dest++=(unsigned char)(tmpG/3);
+		*dest++=(unsigned char)(tmpB/2);
 
-  	// last columns, ends with r
+		tmpSrc+=2;
+
+		c++;
+	}
+
+	// last columns, ends with r
 	*dest++=*(tmpSrc);
 	*dest++=*(tmpSrc-1);
 	*dest++=*(tmpSrc-_sizeX-1);
-	
+
 	return true;
 }
 
@@ -1097,10 +1239,10 @@ bool DragonflyResources::recColorHSBilinear(const unsigned char *src, unsigned c
 //                  GBGB...GB etc..
 bool DragonflyResources::recColorGeneral(const unsigned char *src, unsigned char *dest)
 {
-    bool ret;
-    ret=recColorFSNN(src, imageFullSize);
-    subSampling(imageFullSize, dest);
-    return ret;
+	bool ret;
+	ret=recColorFSNN(src, imageFullSize);
+	subSampling(imageFullSize, dest);
+	return ret;
 }
 
 void DragonflyResources::subSampling(const unsigned char *src, unsigned char *dest)
@@ -1116,23 +1258,23 @@ void DragonflyResources::subSampling(const unsigned char *src, unsigned char *de
 	xRatio = ((float)srcSizeX)/dstSizeX;
 	yRatio = ((float)srcSizeY)/dstSizeY;
 
-    const unsigned char *pSrc = src;
+	const unsigned char *pSrc = src;
 	unsigned char *pDst = dest;
 
 	for (int j=0; j<dstSizeY; j++)
-        {
-            srcY = (int)(yRatio*j);
-            srcOffset = srcY * srcSizeX * bytePerPixel;
+	{
+		srcY = (int)(yRatio*j);
+		srcOffset = srcY * srcSizeX * bytePerPixel;
 
-            for (int i=0; i<dstSizeX; i++)
-                {
-                    srcX = (int)(xRatio*i);
-                    pSrc = src + srcOffset + (srcX * bytePerPixel);
-                    memcpy(pDst,pSrc,bytePerPixel);
-                    pDst += bytePerPixel;
+		for (int i=0; i<dstSizeX; i++)
+		{
+			srcX = (int)(xRatio*i);
+			pSrc = src + srcOffset + (srcX * bytePerPixel);
+			memcpy(pDst,pSrc,bytePerPixel);
+			pDst += bytePerPixel;
 
-                }
-        }
+		}
+	}
 }
 
 
@@ -1144,96 +1286,96 @@ void DragonflyResources::subSampling(const unsigned char *src, unsigned char *de
 bool Bayer2RGB( const unsigned char* bayer0, int bayer_step, unsigned char *dst0, int dst_step, int width, int height, int blue, int start_with_green, int rgb )
 {
 	// normalize arguments
-    blue = (blue > 0 ? 1 : -1);
-    start_with_green = (start_with_green > 0 ? 1 : 0);
+	blue = (blue > 0 ? 1 : -1);
+	start_with_green = (start_with_green > 0 ? 1 : 0);
 	rgb = (rgb > 0 ? 1 : -1);
 
-    memset( dst0, 0, width*3*sizeof(dst0[0]) );
-    memset( dst0 + (height - 1)*dst_step, 0, width*3*sizeof(dst0[0]) );
-    dst0 += dst_step + 3 + 1;  //jumps to second line, second column, green field
-    height -= 2;
-    width -= 2;
+	memset( dst0, 0, width*3*sizeof(dst0[0]) );
+	memset( dst0 + (height - 1)*dst_step, 0, width*3*sizeof(dst0[0]) );
+	dst0 += dst_step + 3 + 1;  //jumps to second line, second column, green field
+	height -= 2;
+	width -= 2;
 
-    for( ; height-- > 0; bayer0 += bayer_step, dst0 += dst_step )
-    {
-        int t0, t1;
-        const unsigned char* bayer = bayer0;
-        unsigned char* dst = dst0;
-        const unsigned char* bayer_end = bayer + width;
+	for( ; height-- > 0; bayer0 += bayer_step, dst0 += dst_step )
+	{
+		int t0, t1;
+		const unsigned char* bayer = bayer0;
+		unsigned char* dst = dst0;
+		const unsigned char* bayer_end = bayer + width;
 
-        dst[-4] = dst[-3] = dst[-2] = dst[width*3-1] =
-            dst[width*3] = dst[width*3+1] = 0;
+		dst[-4] = dst[-3] = dst[-2] = dst[width*3-1] =
+			dst[width*3] = dst[width*3+1] = 0;
 
-        if( width <= 0 )
-            continue;
+		if( width <= 0 )
+			continue;
 
-        if( start_with_green )
-        {
-            t0 = (bayer[1] + bayer[bayer_step*2+1] + 1) >> 1;
-            t1 = (bayer[bayer_step] + bayer[bayer_step+2] + 1) >> 1;
-            dst[blue*rgb] = (unsigned char)t0;
-            dst[0] = bayer[bayer_step+1];
-            dst[-blue*rgb] = (unsigned char)t1;
-            bayer++;
-            dst += 3;
-        }
+		if( start_with_green )
+		{
+			t0 = (bayer[1] + bayer[bayer_step*2+1] + 1) >> 1;
+			t1 = (bayer[bayer_step] + bayer[bayer_step+2] + 1) >> 1;
+			dst[blue*rgb] = (unsigned char)t0;
+			dst[0] = bayer[bayer_step+1];
+			dst[-blue*rgb] = (unsigned char)t1;
+			bayer++;
+			dst += 3;
+		}
 
-        if( blue > 0 )
-        {
-            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
-            {
-                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
-                      bayer[bayer_step*2+2] + 2) >> 2;
-                t1 = (bayer[1] + bayer[bayer_step] +
-                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
-                dst[rgb] = (unsigned char)t0;
-                dst[0] = (unsigned char)t1;
-                dst[-rgb] = bayer[bayer_step+1];
+		if( blue > 0 )
+		{
+			for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+			{
+				t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+					bayer[bayer_step*2+2] + 2) >> 2;
+				t1 = (bayer[1] + bayer[bayer_step] +
+					bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+				dst[rgb] = (unsigned char)t0;
+				dst[0] = (unsigned char)t1;
+				dst[-rgb] = bayer[bayer_step+1];
 
-                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
-                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
-                dst[3+rgb] = (unsigned char)t0;
-                dst[3] = bayer[bayer_step+2];
-                dst[3-rgb] = (unsigned char)t1;
-            }
-        }
-        else
-        {
-            for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
-            {
-                t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
-                      bayer[bayer_step*2+2] + 2) >> 2;
-                t1 = (bayer[1] + bayer[bayer_step] +
-                      bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
-                dst[-rgb] = (unsigned char)t0;
-                dst[0] = (unsigned char)t1;
-                dst[rgb] = bayer[bayer_step+1];
+				t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+				t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+				dst[3+rgb] = (unsigned char)t0;
+				dst[3] = bayer[bayer_step+2];
+				dst[3-rgb] = (unsigned char)t1;
+			}
+		}
+		else
+		{
+			for( ; bayer <= bayer_end - 2; bayer += 2, dst += 6 )
+			{
+				t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+					bayer[bayer_step*2+2] + 2) >> 2;
+				t1 = (bayer[1] + bayer[bayer_step] +
+					bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+				dst[-rgb] = (unsigned char)t0;
+				dst[0] = (unsigned char)t1;
+				dst[rgb] = bayer[bayer_step+1];
 
-                t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
-                t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
-                dst[3-rgb] = (unsigned char)t0;
-                dst[3] = bayer[bayer_step+2];
-                dst[3+rgb] = (unsigned char)t1;
-            }
-        }
+				t0 = (bayer[2] + bayer[bayer_step*2+2] + 1) >> 1;
+				t1 = (bayer[bayer_step+1] + bayer[bayer_step+3] + 1) >> 1;
+				dst[3-rgb] = (unsigned char)t0;
+				dst[3] = bayer[bayer_step+2];
+				dst[3+rgb] = (unsigned char)t1;
+			}
+		}
 
-        if( bayer < bayer_end )
-        {
-            t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
-                  bayer[bayer_step*2+2] + 2) >> 2;
-            t1 = (bayer[1] + bayer[bayer_step] +
-                  bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
-            dst[blue*rgb] = (unsigned char)t0;
-            dst[0] = (unsigned char)t1;
-            dst[-blue*rgb] = bayer[bayer_step+1];
-            bayer++;
-            dst += 3;
-        }
+		if( bayer < bayer_end )
+		{
+			t0 = (bayer[0] + bayer[2] + bayer[bayer_step*2] +
+				bayer[bayer_step*2+2] + 2) >> 2;
+			t1 = (bayer[1] + bayer[bayer_step] +
+				bayer[bayer_step+2] + bayer[bayer_step*2+1]+2) >> 2;
+			dst[blue*rgb] = (unsigned char)t0;
+			dst[0] = (unsigned char)t1;
+			dst[-blue*rgb] = bayer[bayer_step+1];
+			bayer++;
+			dst += 3;
+		}
 
-        blue = -blue;
-        start_with_green = !start_with_green;
-    }
-    return true;
+		blue = -blue;
+		start_with_green = !start_with_green;
+	}
+	return true;
 }
 
 

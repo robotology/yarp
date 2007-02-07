@@ -80,11 +80,11 @@ public:
 	inline bool _initialize (const DragonflyOpenParameters& params);
 	inline bool _uninitialize (void);
 
-	inline bool _setBrightness (int value, bool bDefault=false);
-	inline bool _setExposure (int value, bool bDefault=false);
-	inline bool _setWhiteBalance (int redValue, int blueValue, bool bDefault=false);
-	inline bool _setShutter (int value, bool bDefault=false);
-	inline bool _setGain (int value, bool bDefault=false);
+	inline bool _setBrightness (double value, bool bDefault=false);
+	inline bool _setExposure (double value, bool bDefault=false);
+	inline bool _setWhiteBalance (double redValue, double blueValue, bool bDefault=false);
+	inline bool _setShutter (double value, bool bDefault=false);
+	inline bool _setGain (double value, bool bDefault=false);
 
 	inline void _subSampling(void);
 
@@ -144,27 +144,27 @@ inline bool DragonflyResources::_uninitialize (void)
 ///
 ///
 #if 0
-inline bool DragonflyResources::_setBrightness (int value, bool bAuto)
+inline bool DragonflyResources::_setBrightness (double value, bool bAuto)
 {
     return false;
 }
 
-inline bool DragonflyResources::_setExposure (int value, bool bAuto)
+inline bool DragonflyResources::_setExposure (double value, bool bAuto)
 {
     return false;
 }
 
-inline bool DragonflyResources::_setWhiteBalance (int redValue, int blueValue, bool bAuto)
+inline bool DragonflyResources::_setWhiteBalance (double redValue, int blueValue, bool bAuto)
 {
     return false;
 }
 
-inline bool DragonflyResources::_setShutter (int value, bool bAuto)
+inline bool DragonflyResources::_setShutter (double value, bool bAuto)
 {
     return false;
 }
 
-inline bool DragonflyResources::_setGain (int value, bool bAuto)
+inline bool DragonflyResources::_setGain (double value, bool bAuto)
 {
     return false;
 }
