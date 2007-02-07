@@ -665,6 +665,9 @@ int NameServer::main(int argc, char *argv[]) {
 #endif
         YARP_INFO(Logger::get(), String("Name server listening at ") + 
                   suggest.toString());
+        ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
+                       suggest.getName().c_str(), suggest.getPort());
+
         server.start();
     
         FallbackNameServer fallback(name);
