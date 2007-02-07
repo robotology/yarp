@@ -1,5 +1,6 @@
 IF(UNIX)
     MESSAGE(ERROR " gtkmm support not yet implemented in unix")
+    SET(GTKMM_FOUND FALSE)
 ELSE(UNIX)
     IF(WIN32 AND NOT CYGWIN)
         FIND_PACKAGE(GtkMMWin32)
