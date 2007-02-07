@@ -118,15 +118,31 @@ void PortCoreInputUnit::run() {
                 case 'D':
                 case 'd':
                     {
+                        bool suppressed = false;
+                        
+                        // this will be the new way to signal that
+                        // replies are not expected.
                         if (key=='D') {
                             ip->suppressReply();
                         }
+
                         try {
                             String env = cmd.getText();
                             if (env.length()>1) {
-                                //YARP_ERROR(Logger::get(),
-                                //"***** received an envelope!");
-                                man.setEnvelope(env.substr(2,env.length()));
+                                if (!suppressed) {
+                                    // This is the backwards-compatible
+                                    // method for signalling replies are
+                                    // not expected.  To be used until
+                                    // YARP 2.1.2 is a "long time ago".
+                                    if (env[1]=='o') {
+                                        ip->suppressReply();
+                                    }
+                                }
+                                if (env.length()>2) {
+                                    //YARP_ERROR(Logger::get(),
+                                    //"***** received an envelope!");
+                                    man.setEnvelope(env.substr(2,env.length()));
+                                }
                             }
                             if (localReader) {
                                 localReader->read(br);
