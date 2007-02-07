@@ -1,3 +1,12 @@
+2007-02-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCoreInputUnit.cpp,PortCoreOutputUnit.cpp:
+	Francesco Nori reported a problem that was caused by the 
+	change on 2007-01-27 that adds information about whether replies
+	are expected to a message.  In some configurations this change
+	was not compatible with communicating with older YARP processes.
+	Should be fixed now.
+
 2007-02-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* configure.ac: added core libYARP_dev library to autoconf build,

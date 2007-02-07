@@ -209,13 +209,33 @@ void PortCoreOutputUnit::sendHelper() {
                 buf.addToHeader();
                 
                 if (cachedEnvelope!="") {
-                    //printf("ENVELOPE IS [%s]\n", cachedEnvelope.c_str());
-                    PortCommand pc('\0', String(suppressReply?"D ":"d ") +
+                    // this will be the new way to signal that replies
+                    // are not expected
+                    //PortCommand pc('\0', String(suppressReply?"D ":"d ") +
+                    //             cachedEnvelope);
+                    //pc.writeBlock(buf);
+
+                    // This is the backwards-compatible method.
+                    // To be used until YARP 2.1.2 is a "long time ago".
+                    PortCommand pc('\0', String(suppressReply?"do ":"d ") +
                                    cachedEnvelope);
                     pc.writeBlock(buf);
+
                 } else {
-                    PortCommand pc(suppressReply?'D':'d',"");
-                    pc.writeBlock(buf);
+                    // this will be the new way to signal that replies
+                    // are not expected
+                    //PortCommand pc(suppressReply?'D':'d',"");
+                    //pc.writeBlock(buf);
+
+                    // This is the backwards-compatible method.
+                    // To be used until YARP 2.1.2 is a "long time ago".
+                    if (suppressReply) {
+                        PortCommand pc('\0', "do");
+                        pc.writeBlock(buf);
+                    } else {
+                        PortCommand pc('d', "");
+                        pc.writeBlock(buf);
+                    }
                 }
             }
 
