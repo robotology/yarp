@@ -16,7 +16,7 @@ while (<STDIN>) {
     if ($_ =~ /^\# automake_expand ([^ ]+) (.*)/) {
 	my $var = $1;
 	my $card = $2;
-	my $fnames = `cd $dir; ls $card`;
+	my $fnames = `cd $dir; ls $card 2> /dev/null`;
 	$fnames =~ s/[\n\r]/ /g;
 	print "$var = $fnames\n";
 	$skip = 1;

@@ -3,7 +3,7 @@ INCLUDES = -I$(srcdir)/../include -I$(srcdir)/../../libYARP_OS/include -I$(srcdi
 
 lib_LTLIBRARIES = libYARP_dev.la
 
-# automake_expand libYARP_dev_la_SOURCES *.cpp
+# automake_expand libYARP_dev_la_SOURCES_direct *.cpp
 libYARP_dev_la_SOURCES_direct = ControlBoardPid.cpp ControlCalibrationImpl.cpp DeviceDriver.cpp DevicePipe.cpp Drivers.cpp PolyDriver.cpp RemoteControlBoard.cpp RemoteFrameGrabber.cpp ServerFrameGrabber.cpp TestFrameGrabber.cpp 
 
 libYARP_dev_la_SOURCES = $(libYARP_dev_la_SOURCES_direct) ../generated_src/PopulateDrivers.cpp
