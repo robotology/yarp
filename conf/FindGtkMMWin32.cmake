@@ -7,7 +7,7 @@
 # Creates:
 # GTKMM_INCLUDE_DIR   - Directories to include to use GTKMM
 # GTKMM_LINK_FLAGS    - Files to link against to use GTKMM
-# GTKMM_FOUND         - If false, don't try to use GTKMM
+# GtkMM_FOUND         - If false, don't try to use GTKMM
 
 
 # GTK header files
@@ -117,7 +117,7 @@ IF(GTKMM_gdkglext-config_INCLUDE_PATH AND
    GTKMM_glibmm_LIBRARY AND 
    GTKMM_sigc_LIBRARY)
 
-   SET(GTKMM_FOUND TRUE)
+   SET(GtkMM_FOUND TRUE)
    
    SET(GTKMM_INCLUDE_DIR ${GTKMM_gdkglext-config_INCLUDE_PATH}
        ${GTKMM_gtkgl_INCLUDE_PATH}
@@ -220,7 +220,7 @@ ELSE(GTKMM_gdkglext-config_INCLUDE_PATH AND
    GTKMM_glibmm_LIBRARY AND 
    GTKMM_sigc_LIBRARY)
 
-	SET(GTKMM_FOUND FALSE)
+	SET(GtkMM_FOUND FALSE)
 
 ENDIF(GTKMM_gdkglext-config_INCLUDE_PATH AND
    GTKMM_gtkgl_INCLUDE_PATH AND
