@@ -13,6 +13,102 @@
 using namespace yarp;
 using namespace yarp::os;
 
+
+static String quoteFree(const String& src) {
+    String result = "";
+    for (unsigned int i=0; i<src.length(); i++) {
+        char ch = src[i];
+        if (ch=='"') {
+            result += "&quot;";
+        } else {
+            result += ch;
+        }
+    }
+    return result;
+}
+
+void HttpTwoWayStream::apply(char ch) {
+    if (ch=='\r') { return; }
+    if (ch == '\n') {
+        proc = "";
+        Address addr = NameClient::extractAddress(part);
+        if (addr.isValid()) {
+            if (addr.getCarrierName()=="tcp") {
+                proc += "<a href=\"http://";
+                proc += addr.getName();
+                proc += ":";
+                proc += NetType::toString(addr.getPort());
+                proc += "\">";
+                proc += part;
+                proc += "</A>\n";
+            } else {
+                proc += part;
+                proc += "\n";
+            }
+        } else {
+            if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
+                // translate this to a form
+                if (part[0]=='+') { part[0] = ' '; }
+                String org = part;
+                part = "<form method=post>";
+                for (unsigned int i=0; i<org.length(); i++) {
+                    if (org[i]=='"') {
+                        org[i] = ' ';
+                    }
+                }
+                part += "<input type=hidden name=data value=\"";
+                part += org;
+                part += "\">";
+                part += org;
+                org += " ";
+                bool arg = false;
+                String var = "";
+                for (unsigned int i=0; i<org.length(); i++) {
+                    char ch = org[i];
+                    if (arg) {
+                        if ((ch>='A'&&ch<='Z')||
+                            (ch>='a'&&ch<='z')||
+                            (ch>='0'&&ch<='9')||
+                            (ch=='_')) {
+                            var += ch;
+                        } else {
+                            arg = false;
+                            part += "\n    ";
+                            part += var;
+                            part += " ";
+                            part += "<input type=text name=";
+                            part += var;
+                            part += " size=5 value=\"\">";
+                            var = "";
+                        }
+                    }
+                    if (ch=='$') {
+                        arg = true;
+                    }
+                }
+                part += "<input type=submit value=\"go\">";
+                part += "</form>";
+            }
+            proc += part;
+            proc += "\n";
+        }
+        if (data||!filterData) {
+            Bytes tmp((char*)proc.c_str(),proc.length());
+            delegate->getOutputStream().write(tmp);
+            delegate->getOutputStream().flush();
+        }
+        data = false;
+        if (proc[0] == 'd' || proc[0] == 'D') {
+            data = true;
+        }
+        part = "";
+    } else {
+        part += ch;
+    }
+}
+
+
+
 HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
     delegate(delegate) {
 
@@ -52,7 +148,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
 
 
     String from = "<input type=text name=data value=\"";
-    from += sData.c_str();
+    from += quoteFree(sData.c_str());
     from += "\"><input type=submit value=\"send data\"></form></p>\n"; 
     from += "<pre>\n";
     Bytes b2((char*)from.c_str(),from.length());

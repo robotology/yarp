@@ -353,11 +353,21 @@ String NameServer::cmdHelp(int argc, char *argv[]) {
     argv++;
 
     String result = "Here are some ways to use the name server:\n";
-    ACE_Vector<String> names = dispatcher.getNames();
-    for (unsigned i=0; i<names.size(); i++) {
-        const String& name = names[i];
-        result += String("  NAME_SERVER ") + name + " ...\n";
-    }
+    //ACE_Vector<String> names = dispatcher.getNames();
+    //for (unsigned i=0; i<names.size(); i++) {
+    //const String& name = names[i];
+    //result += String("   ") + name + " ...\n";
+    //}
+    result += String("+ help\n");
+    result += String("+ list\n");
+    result += String("+ register $portname\n");
+    result += String("+ unregister $portname\n");
+    result += String("+ query $portname\n");
+    result += String("+ set $portname $property $value\n");
+    result += String("+ get $portname $property\n");
+    result += String("+ check $portname $property\n");
+    result += String("+ match $portname $property $prefix\n");
+    result += String("+ route $port1 $port2\n");
     return terminate(result);
 }
 
