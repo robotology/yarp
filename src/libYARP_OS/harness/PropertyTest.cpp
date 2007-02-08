@@ -176,6 +176,15 @@ targ $TARGET\n\
     }
 
 
+    virtual void checkWipe() {
+        report(0,"checking wipe suppression");
+        Property p;
+        p.put("x",12);
+        p.fromConfig("y 20",false);
+        checkEqual(p.find("x").asInt(),12,"x is ok");
+        checkEqual(p.find("y").asInt(),20,"y is ok");
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -183,6 +192,7 @@ targ $TARGET\n\
         checkCopy();
         checkExpansion();
         checkUrl();
+        checkWipe();
     }
 };
 
