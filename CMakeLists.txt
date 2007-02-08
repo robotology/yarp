@@ -33,4 +33,4 @@ INCLUDE(YarpPackage)
 
 # make doc target - we could check whether doxygen is present, but
 # let's not make a big deal of it for now.
-ADD_CUSTOM_TARGET(doc COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/Doxyfile.part)
+ADD_CUSTOM_TARGET(dox COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/Doxyfile.part)
