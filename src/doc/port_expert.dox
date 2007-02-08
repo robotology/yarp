@@ -1,0 +1,410 @@
+
+/** 
+ * @page port_expert Port Power
+
+This tutorial builds on the material in \ref note_ports, and takes
+a deeper look at what ports can do for you.
+
+WARNING - THIS IS A DRAFT, CODE PRESENT HAS NOT BEEN TESTED,
+SEND FEEDBACK TO paulfitz@liralab.it
+
+
+\section port_expert_basic Streaming messages
+
+The fundamental class for communication in yarp is yarp::os::Port.
+Ports have names and can connect to any number of other Ports.  Data
+flows along these connections.  YARP has a strong bias towards
+"streaming" communication, where the sender of data is maximally
+decoupled from the receiver of data, but also supports "send/reply"
+communication where sender and receiver are tightly coupled.
+
+Here is an example of a receiver for streamed messages:
+\code
+Port p;            // Create a port.
+p.open("/in");     // Give it a name on the network.
+Bottle b;          // Make a place to store things.
+while (true) {
+  p.read(b);         // Read from the port.  Waits until data arrives.
+  ...                // Do something with data.
+}
+\endcode
+
+Here is an example of a sender of streamed messages:
+\code
+Port p;            // Create a port.
+p.open("/out");    // Give it a name on the network.
+while (true) {
+  Bottle b;        // Make a place to store things.
+  ...              // Generate data.
+  p.write(b);      // Send the data.
+}
+\endcode
+
+Here's an example of some code that connects the sender to the receiver:
+\code
+Network::connect("/out","/in");  // connect two ports.
+\endcode
+
+Characteristic of streaming operation, the sender and the receiver 
+don't know much about each other.  The sender or receiver could
+be restarted without needing to restart the other.  There could
+be multiple receivers or multiple senders.
+
+Our sender and receiver do have some dependencies on each other.
+In particular, once a receiver starts receiving an object, the 
+sender must wait for that process to finish before continuing.
+The sender can change this behavior by calling:
+yarp::os::Port::enableBackgroundWrite()
+before the port is opened.  However, this is only appropriate
+if we can promise the port that any object (b in this case) we ask
+it to write will stay in existence until it is communicated.
+The port won't take a copy of our object (that is inefficient
+in general).  We can tell when writing is finished in two 
+ways.  One is by calling yarp::os::Port::isWriting().  Another is
+by overriding the yarp::os::PortWriter::onCompletion() method on the
+object.  This will be called when the port is finished with
+the object.
+
+\section port_expert_timing Decoupling sender/receiver timing
+
+Keeping objects around until they have been transmitted is actually
+quite complicated to do, especially when there are multiple receivers
+operating at different rates.  YARP supplies the
+yarp::os::PortWriterBuffer class to manage these details.  There is a
+similar class for reducing timing dependencies during reading, called
+yarp::os::PortReaderBuffer.  These two kinds of buffering are bundled
+with the yarp::os::Port class in yarp::os::BufferedPort.  For 
+streaming communication, this class offers many advantages.
+We can rewrite our previous example like this -- the receiver:
+\code
+BufferedPort<Bottle> p; // Create a port.
+p.open("/in");          // Give it a name on the network.
+while (true) {
+  Bottle *b = p.read(); // Read from the port.  Waits until data arrives.
+  ...                   // Do something with data in *b.
+}
+\endcode
+
+The sender:
+\code
+BufferedPort<Bottle> p; // Create a port.
+p.open("/out");         // Give it a name on the network.
+while (true) {
+  Bottle& b = p.prepare(); // Get a place to store things.
+  ...                   // Generate data.
+  p.write();            // Send the data.
+}
+\endcode
+
+The code is very similar.  The big difference is that the 
+yarp::os::BufferedPort is now responsible for the lifetime
+of the objects being communicated.  It will make a pool of
+them, growing upon need, in order to give smooth performance
+with minimal timing dependencies between sender and receiver.
+
+By default, a BufferedPort will just keep the newest message
+received if several have come in between calls to read(),
+dropping old messages.  If you'd prefer to have all messages
+received, call yarp::os::BufferedPort::setStrict().
+
+By default, if asked to send a message while some
+connections are still writing a previous message, BufferedPort 
+will simply skip sending that message on those busy connections. If
+you'd rather all messages were send, call
+yarp::os::BufferedPort::writeStrict() when writing.
+
+\section port_expert_polling Polling ports
+
+If you want to know if data has arrived, but don't want
+to wait if it has not, you can do:
+\code
+BufferedPort<Bottle> p;
+...
+Bottle *b = p.read(false);
+if (b!=NULL) {
+  // data received in *b
+}
+\endcode
+The read method here will return immediately if there
+is no data.  Without the "false", it would wait until
+data is present.
+
+It is not possible to do something like this with
+yarp::os::Port, since this functionality requires buffering.
+You can, however, get a callback.
+
+
+\section port_expert_callbacks Getting a callback
+
+Often when reading from a port, it is preferable to ask the port
+to call a method when data arrives rather than to sit around
+calling read().  With the Port class, you can do that with
+the yarp::os::Port::setReader() method:
+\code
+class DataProcessor : public PortReader {
+     virtual bool read(ConnectionReader& connection) {
+          Bottle b;
+          b.read(connection);
+          // process data in b
+     }
+};
+DataProcessor processor;
+...
+p.setReader(processor);  // no need to call p.read() on port any more.
+\endcode
+
+With BufferedPorts, things are a bit easier since these ports
+know what type of data they are dealing with. 
+You can override the port's onRead method:
+\code
+class DataPort : public BufferedPort<Bottle> {
+     virtual void onRead(Bottle& datum) {
+          // process data in b
+     }
+};
+...
+DataPort p;
+p.useCallback();  // input should go to onRead() callback
+p.open("/in");
+\endcode
+Alternatively, you can leave the port unchanged and use 
+an external callback as follows:
+\code
+class DataProcessor : public TypedReaderCallback<Bottle> {
+     virtual void onRead(Bottle& datum) {
+          // process data in b
+     }
+};
+...
+DataProcessor processor;
+BufferedPort<Bottle> p;
+p.useCallback(processor);  // input should go to processor.onRead()
+\endcode
+
+
+\section port_expert_reply Getting replies
+
+Sometimes we want to send messages and wait for replies to them.
+If you're considering doing this, beware -- the timing of your processes
+is going to become tightly coupled, and a network of processes written
+this way is much less robust and malleable than with streaming 
+communication.  However, sometimes you really want to be sure a
+particular command gets through, and what the response to it is.
+In this case, we need something new.  Here's how we can do it,
+on the sender side:
+\code
+Port p;            // Create a port.
+p.open("/out");    // Give it a name on the network.
+while (true) {
+  Bottle in,out;   // Make places to store things.
+  ...              // prepare command "out".
+  p.write(out,in); // send command, wait for reply.
+  ...              // process response "in".
+}
+\endcode
+
+On the receiver side:
+\code
+Port p;            // Create a port.
+p.open("/in");     // Give it a name on the network.
+Bottle in, out;    // Make places to store things.
+while (true) {
+  p.read(in,true); // Read from the port, and warn that we'll be replying.
+  ...              // Do something with data, prepare reply
+  p.reply(out);    // send reply.
+  
+}
+\endcode
+
+If you expect replies, it is better to use one-to-one port connections
+rather than many-to-many -- otherwise it will get confusing.
+
+If we are using callbacks, our receiver should do something like this:
+\code
+class DataProcessor : public PortReader {
+     virtual bool read(ConnectionReader& connection) {
+          Bottle in, out;
+          in.read(connection);
+          ...      // process data "in", prepare "out"
+          ConnectionWriter *returnToSender = getWriter();
+          if (returnToSender!=NULL) {
+	     returnToSender->write(out);
+          }
+     }
+};
+DataProcessor processor;
+...
+p.setReader(processor);  // no need to call p.read() on port any more.
+\endcode
+(Technical note: beware that the requested reply does not happen until the 
+end of the DataProcessor read() method, since only then is the full
+size of the reply known and some lower-level network protocols require 
+that information to be send in a header.)
+
+Expecting replies is incompatible with buffering, and so can't be done
+with the yarp::os::BufferedPort class.  There's simply no way to
+isolate the timing of the sender and receiver in this case, since the
+one is explicitly waiting for the other to do some processing and
+respond.
+
+There is a yarp::os::BufferedPort::setReplier() method which can
+be used to establish a "replier" for buffered ports.  If someone
+connects to these ports and requests them to reply, this callback
+will be used (bypassing buffering).
+
+
+\section port_expert_data Datatypes
+
+What kind of data can be sent on ports?  Anything you like, YARP
+doesn't care.  If you communicate between machines with different OSes
+and compilers, you may need to be careful if you send your own custom
+data-typle, but apart from that there's no limit.
+
+Suppose you have the following data-structure:
+\code
+class Target {
+public:
+   int x;
+   int y;
+};
+\endcode
+Then you can create a buffered port for it this way:
+\code
+BufferedPort< BinPortable<Target> > port;
+\endcode
+The yarp::os::BinPortable class tells YARP that you want to 
+send the Target type across the network by encoding it exactly
+as it is represented in memory.  The method yarp::os::BinPortable::content()
+will give you access to the actual Target object.
+
+If you try this between, say, an intel machine and a non-intel Mac, you'll
+run into trouble since integers are represented in different ways on these
+machines ("big-endian" versus "little-endian").  If you try it between
+machines with different compilers, you may have trouble too -- compilers
+may add different amounts of "padding" into your structure
+
+If you define your data-structure as follows:
+\code
+#include <yarp/os/begin_pack_for_net.h>
+class Target {
+public:
+  NetInt32 x;
+  NetInt32 y;
+} PACKED_FOR_NET;
+#include <yarp/os/end_pack_for_net.h>
+\endcode
+Then you'll be in better shape.  The integers now have a well defined
+representation, and the compiler is requested not to introduce padding.
+
+More usually, rather than sending memory images across the network 
+(a procedure fraught with gotchas), it is better to provide explicit
+serialization methods for your class by implementing the
+yarp::os::Portable interface.  For example:
+\code
+class Target : public Portable {
+public:
+  int x;
+  int y;
+  virtual bool write(ConnectionWriter& connection) {
+    connection.appendInt(x);
+    connection.appendInt(y);
+    return true;
+  }
+  virtual bool read(ConnectionReader& connection) {
+    x = connection.expectInt(x);
+    y = connection.expectInt(y);
+    return true;
+  }
+};
+\endcode
+See the yarp::os::ConnectionWriter and yarp::os::ConnectionReader
+for the serialization methods available.  These take care of
+using neutral formats for your data types.  Now you no longer
+need the BinPortable wrapper:
+\code
+BufferedPort<Target> port;
+\endcode
+This is how classes like yarp::os::Bottle work.
+
+There is one other thing you might like to consider when deciding how
+to express your data on the network.  If you embed a few "tags" in
+your data, then it can be made compatible with the network format used
+by Bottles.  Then ports using the format can be read from and written
+to from the command line (with "yarp read", "yarp write", and "yarp
+rpc"), or a web-browser, etc.  For example, we could make Target's
+write method be:
+\code
+  virtual bool write(ConnectionWriter& connection) {
+    connection.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_INT);
+    connection.appendInt(2); // two elements
+    connection.appendInt(x);
+    connection.appendInt(y);
+    connection.convertTextMode(); // if connection is text-mode, convert!
+    return true;
+  }
+\endcode
+The first integer added says that the data is a list of integers.
+The second integer says there are 2 integers.
+The call to yarp::os::ConnectionWriter::convertTextMode is a friendly
+thing to do.  It means if someone connects to a port
+outputting this data, and they are in text-mode,
+they will see our two integers in text form.  The conversion is
+done by reading the data we've written as a Bottle, and then
+expressing that Bottle in text form.
+
+The corresponding read method would be:
+\code
+  virtual bool read(ConnectionReader& connection) {
+    connection.convertTextMode(); // if connection is text-mode, convert!
+    int tag = connection.expectInt();
+    if (tag!=BOTTLE_TAG_LIST+BOTTLE_TAG_INT) return false;
+    int ct = connection.expectInt();
+    if (tag!=2) return false;
+    x = connection.expectInt();
+    y = connection.expectInt();
+    return true;
+  }
+\endcode
+
+The advantages of doing this are for testing - no need to write 
+special purpose test programs to send and read particular messages,
+the yarp tools already work.  The disadvange is you have to do a
+bit more work.  It is entirely up to you, this issue is independent
+of the rest of YARP.
+
+
+\section port_expert_carriers Carriers
+
+Tcp, udp, mcast, shmem.  Details.  Note about when replies are 
+possible (basically, stick with tcp/shmem for that, otherwise stream 
+bidirectionally to capture the semantics of underlying carrier;
+yarp should complain if you try udp/mcast here).
+
+A bit about http (experimental).
+
+
+\section port_expert_raw Under the hood
+
+Telnetting in.
+
+
+\section port_expert_summary Summary
+
+A table of some sort?  What would it show?
+
+
+
+\section port_expert_others Other things to cover.
+
+ - Model: the overall nature of the communication system implemented.
+ - Timing summary
+ - Format: how data is represented as it is being transmitted across the 
+   network.
+ - Carrier: the low-level protocol recruited for communication, and how
+   it is organized to implement the model.
+
+
+
+
+ *
+ */
