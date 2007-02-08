@@ -220,18 +220,18 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 response.addInt(height());
                 rec = true;
                 break;
-            }
 			case VOCAB_WHITE:
-			{
 				ok = true;
 				double r=0;
 				double g=0;
+
 				getWhiteBalance(r, g);
 				response.addDouble(r);
 				response.addDouble(g);
 				rec=true;
 				break;
-			}
+            }
+
             if (!ok) {
                 // leave answer blank
             }
@@ -302,11 +302,17 @@ bool ServerFrameGrabber::read(ConnectionReader& connection) {
                 ok = true;
                 response.addInt(height());
                 break;
+
 			case VOCAB_WHITE:
+
 				double r;
+
 				double g;
+
 				ok=getWhiteBalance(r, g);
+
 				response.addDouble(r);
+
 				response.addDouble(g);
             }
             if (!ok) {

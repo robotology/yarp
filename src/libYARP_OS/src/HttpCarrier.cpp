@@ -51,7 +51,8 @@ void HttpTwoWayStream::apply(char ch) {
                 if (part[0]=='+') { part[0] = ' '; }
                 String org = part;
                 part = "<form method=post>";
-                for (unsigned int i=0; i<org.length(); i++) {
+				unsigned int i=0;
+                for (i=0; i<org.length(); i++) {
                     if (org[i]=='"') {
                         org[i] = ' ';
                     }
@@ -63,7 +64,7 @@ void HttpTwoWayStream::apply(char ch) {
                 org += " ";
                 bool arg = false;
                 String var = "";
-                for (unsigned int i=0; i<org.length(); i++) {
+                for (i=0; i<org.length(); i++) {
                     char ch = org[i];
                     if (arg) {
                         if ((ch>='A'&&ch<='Z')||
