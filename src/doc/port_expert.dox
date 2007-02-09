@@ -375,17 +375,44 @@ of the rest of YARP.
 
 \section port_expert_carriers Carriers
 
-Tcp, udp, mcast, shmem.  Details.  Note about when replies are 
-possible (basically, stick with tcp/shmem for that, otherwise stream 
-bidirectionally to capture the semantics of underlying carrier;
-yarp should complain if you try udp/mcast here).
+We've said a lot about communication.  But what exactly happens
+when you read or write?  What bytes get sent on the network?
+How reliable is transmission?
+The previous sections on datatypes and replies have started to 
+touch on such issues, and now we go into more detail.
 
-A bit about http (experimental).
+The first thing to realize is that we are now looking closely
+at the connections between ports, rather than the ports 
+themselves.  The properties of connections are quite loosely
+coupled with ports.  We are free to implement connections in
+all sorts of weird and wonderful ways, and ports won't
+care at all.  The abstraction in yarp for what a connection
+really does is called a "Carrier".  There are 
+currently carriers for tcp, udp, multi-cast, and shared memory
+communication.  There's nothing to stop you adding more if
+you have some novel kind of network, or want to send messages
+via audio, etc.  Ports will still work.
 
+Carriers can be connection based (tcp, shmem) or connectionless (udp,
+mcast).  Be aware that you on connectionless carriers data flows in
+one direction only.  As a consequence of this, replies are not
+possible.  Data transmission may also be unreliable for such carriers.
+YARP guarantees that if a message is sent and successfully received,
+it has not been corrupted.  For connectionless carriers it does not
+guarantee that the message will in fact be received.
 
-\section port_expert_raw Under the hood
+Ideally, for all carriers, YARP will send messages of arbitrary
+length.  At the time of writing, there is a limit on shmem
+message sizes.
 
-Telnetting in.
+There are some extra carriers designed to be as simple as possible
+for programs not written in YARP to use.  One of these is the
+"text" Carrier.  This allows messages in bottle-compatible  
+format to be sent as plain text.
+
+There is experimental support for http, as a way to browse
+port information from a browser.
+
 
 
 \section port_expert_summary Summary
