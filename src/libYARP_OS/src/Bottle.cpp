@@ -132,6 +132,14 @@ void Bottle::fromBinary(const char *text, int len) {
 }
 
 
+const char *Bottle::toBinary(int *size) {
+    if (size!=NULL) {
+        *size = HELPER(implementation).byteCount();
+    }
+    return HELPER(implementation).getBytes();
+}
+
+
 
 bool Bottle::write(ConnectionWriter& writer) {
     bool result = false;

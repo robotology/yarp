@@ -79,6 +79,14 @@ public:
         bot.fromBytes(store2.bytes());
         checkEqual(bot.get(0).isVocab(),true,"type check");
         checkEqual(bot.get(1).isList(),true,"type check");
+
+        Bottle bot4("0 1 2.2 3");
+        int hsize;
+        const char *hbuf = bot4.toBinary(&hsize);
+        Bottle bot5;
+        bot5.fromBinary(hbuf,hsize);
+        checkEqual(bot5.size(),4,"player bug");
+
     }
 
     void testStreaming() {

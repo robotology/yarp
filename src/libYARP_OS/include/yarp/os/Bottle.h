@@ -158,6 +158,17 @@ public:
      */
     void fromBinary(const char *buf, int len);
 
+
+    /**
+     * Returns binary representation of bottle.  Lifetime is
+     * until next modification of bottle.  
+     * @size if non-null, the referenced variable is set to the buffer size.
+     * @return pointer to a buffer holding the binary representation of the
+     * bottle.
+     */
+    const char *toBinary(int *size = 0/*NULL*/);
+
+
     /**
      * Gives a human-readable textual representation of the bottle, suitable 
      * for passing to Bottle::fromString (see that method for examples)

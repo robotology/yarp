@@ -279,6 +279,7 @@ int BottleImpl::size() const {
 
 bool BottleImpl::fromBytes(ConnectionReader& reader) {
     int id = speciality;
+    YMSG(("READING, nest flag is %d\n", nested));
     if (id==0) {
         id = reader.expectInt();
         YMSG(("READ subcode %d\n", id));
@@ -355,6 +356,18 @@ bool BottleImpl::fromBytes(const Bytes& data) {
     dirty = true; // for clarity
 
     try {
+        if (!nested) {
+
+            clear();
+            specialize(0);
+            
+            int code = reader.expectInt();
+            YMSG(("READ got top level code %d\n", code));
+            code = code & UNIT_MASK;
+            if (code!=0) {
+                specialize(code);
+            }
+        }
         int len = reader.expectInt();
         YMSG(("READ bottle length %d\n", len));
         for (int i=0; i<len; i++) {
@@ -375,6 +388,7 @@ void BottleImpl::toBytes(const Bytes& data) {
 
 
 const char *BottleImpl::getBytes() {
+    YMSG(("am I nested? %d\n", nested));
     synch();
     return &data[0];
 }
@@ -399,6 +413,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
             }
 #endif
             synch();
+            /*
             if (!nested) {
                 // No byte count any more, to facilitate nesting
                 //YMSG(("bottle byte count %d\n",byteCount()));
@@ -406,6 +421,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
 
                 writer.appendInt(StoreList::code + speciality);
             }
+            */
             //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
             writer.appendBlock((char*)getBytes(),byteCount());
         }
@@ -456,6 +472,7 @@ bool BottleImpl::read(ConnectionReader& reader) {
                 specialize(0);
 
                 int code = reader.expectInt();
+                YMSG(("READ got top level code %d\n", code));
                 code = code & UNIT_MASK;
                 if (code!=0) {
                     specialize(code);
@@ -505,6 +522,10 @@ void BottleImpl::synch() {
         data.clear();
         //StringOutputStream sos;
         BufferedConnectionWriter writer;
+        if (!nested) {
+            writer.appendInt(StoreList::code + speciality);
+            YMSG(("wrote bottle code %d\n",StoreList::code + speciality));
+        }
         YMSG(("bottle length %d\n",size()));
         writer.appendInt(size());
         for (unsigned int i=0; i<content.size(); i++) {
@@ -523,8 +544,18 @@ void BottleImpl::synch() {
         }
         //buf.write(sos);
         String str = writer.toString();
+        //int extra = 0;
+        //if (!nested) {
+        //  extra = sizeof(NetInt32);
+        //}
         data.resize(str.length(),' ');
         memcpy(&data[0],str.c_str(),str.length());
+        /*
+        if (!nested) {
+            Bytes b(&data[0],sizeof(NetInt32));
+            NetType::netInt(StoreList::code + speciality,b);
+        }
+        */
         dirty = false;
     }
 }
