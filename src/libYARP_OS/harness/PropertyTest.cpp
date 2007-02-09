@@ -102,13 +102,15 @@ public:
         p6.check("name",v);
         checkTrue(v!=NULL,"check method");
 
-
         Searchable *network = &p6.findGroup("NETWORK");
         if (network->isNull()) { network = &p6; }
         v = NULL;
         network->check("name",v);
         checkTrue(v!=NULL,"check method 2");
+
+        Property p7;
     }
+
 
     virtual void checkCopy() {
         report(0,"checking copy");
@@ -176,6 +178,17 @@ targ $TARGET\n\
     }
 
 
+    void checkNesting() {
+        report(0,"checking nested forms");
+        Property p;
+        p.fromConfig("[sect a]\nhello there\n[sect b]\nx 10\n");
+        ConstString sects = p.findGroup("sect").tail().toString();
+        checkEqual(sects.c_str(),"a b","section list present");
+        ConstString hello = p.findGroup("a").find("hello").asString();
+        checkEqual(hello.c_str(),"there","individual sections present");
+    }
+
+
     virtual void checkWipe() {
         report(0,"checking wipe suppression");
         Property p;
@@ -185,6 +198,7 @@ targ $TARGET\n\
         checkEqual(p.find("y").asInt(),20,"y is ok");
     }
 
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -192,6 +206,7 @@ targ $TARGET\n\
         checkCopy();
         checkExpansion();
         checkUrl();
+        checkNesting();
         checkWipe();
     }
 };

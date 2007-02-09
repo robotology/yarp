@@ -221,6 +221,7 @@ public:
         fromConfig(txt.c_str(),env,wipe);
     }
 
+
     void fromConfig(const char *txt,Searchable& env, bool wipe=true) {
         StringInputStream sis;
         sis.add(txt);
@@ -241,9 +242,8 @@ public:
             }
             if (!done) {
                 // this comment filter is not safe for quoting
-                int comment = buf.strstr("//");
-                if (comment>=0) {
-                    buf = buf.substr(0,comment);
+                if (buf.strstr("//")!=String::npos) {
+                    buf = buf.substr(0,buf.strstr("//"));
                 }
 
                 // expand any environment references
@@ -253,6 +253,23 @@ public:
                     int stop = buf.strstr("]");
                     if (stop>=0) {
                         buf = buf.substr(1,stop-1);
+                        int space = buf.strstr(" ");
+                        if (space>=0) {
+                            Bottle bot(buf.c_str());
+                            if (bot.size()==2) {
+                                buf = bot.get(1).toString().c_str();
+                                String key = bot.get(0).toString().c_str();
+                                Bottle *target = getBottle(key.c_str());
+                                if (target==NULL) {
+                                    Bottle init;
+                                    init.addString(key.c_str());
+                                    init.addString(buf.c_str());
+                                    putBottle(key.c_str(),init);
+                                } else {
+                                    target->addString(buf.c_str());
+                                }
+                            }
+                        }
                         isTag = true;
                     }
                 }
@@ -281,7 +298,6 @@ public:
             }
         } while (!done);
     }
-
 
     void fromBottle(Bottle& bot, bool wipe=true) {
         if (wipe) {
