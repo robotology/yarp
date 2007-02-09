@@ -1,0 +1,18 @@
+# set up to use GTKMM
+
+LINK_LIBRARIES(${GTKMM_LINK_FLAGS})
+
+INCLUDE_DIRECTORIES(${GTKMM_INCLUDE_DIR})
+
+# set up to use libYARP_*
+SET(NEED_LIBS YARP_OS YARP_sig YARP_dev)
+
+IF (WIN32 AND NOT CYGWIN)
+  ADD_DEFINITIONS(/vd2)
+  YarpProgram(yarpfggui CONSOLE)
+  INSTALL_TARGETS(/bin yarpfggui)
+ELSE (WIN32 AND NOT CYGWIN)
+  YarpProgram(yarpfggui CONSOLE)
+  INSTALL_TARGETS(/bin yarpfggui)
+ENDIF (WIN32 AND NOT CYGWIN)
+
