@@ -221,7 +221,20 @@ ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
 TARGET_LINK_LIBRARIES(harness_${postfix} YARP_dev YARP_sig YARP_OS ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS})
 GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
 
-IF (CREATE_DEVICE_TESTS)
+
+# add in standard tests
+FOREACH(X ${harnesscode})
+	  GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
+IF(WIN32 AND NOT CYGWIN)
+	  ADD_TEST(YARP_dev::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_${postfix} regression ${XN})
+ELSE(WIN32 AND NOT CYGWIN)
+	  ADD_TEST(YARP_dev::${XN} ${EXEC} regression ${XN})
+ENDIF(WIN32 AND NOT CYGWIN)
+ENDFOREACH(X $(harnesscode))
+
+
+# add in hardware specific tests, if requested
+IF (CREATE_BUILTIN_DEVICE_TESTS)
    # add in our tests
    FILE(GLOB inis harness/*.ini)
    FOREACH(X ${inis})
@@ -230,5 +243,5 @@ IF (CREATE_DEVICE_TESTS)
 	  SET(XDOX ${CMAKE_BINARY_DIR}/src/libYARP_dev/harness/${XN}.dox)
 	  ADD_TEST(device::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_${postfix} --file "${XINI}" --doc "${XDOX}")
    ENDFOREACH(X ${inis})
-ENDIF (CREATE_DEVICE_TESTS)
+ENDIF (CREATE_BUILTIN_DEVICE_TESTS)
 

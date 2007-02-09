@@ -1,3 +1,9 @@
+2007-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/CMakeLists.txt: add unit testing
+	to libYARP_dev - now that fake devices are available, 
+	at least partial automated testing should be easier.
+
 2007-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/port_expert.dox: started documenting some of the 

@@ -9,10 +9,16 @@
 
 #include <yarp/String.h>
 #include <yarp/Logger.h>
+#include <yarp/UnitTest.h>
+#include <yarp/NameClient.h>
+#include <yarp/Companion.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/Drivers.h>
+
+#include "TestList.h"
 
 #include <fstream>
 #include <iostream>
@@ -31,6 +37,51 @@ using namespace std;
 // this is just for memory leak checking, and only works in linux
 #include <mcheck.h>
 #endif
+
+
+
+int harness_main(int argc, char *argv[]) {
+#ifdef CHECK_FOR_LEAKS
+    mtrace();
+#endif
+
+    ACE::init();
+
+    bool done = false;
+    int result = 0;
+
+    if (argc>1) {
+        int verbosity = 0;
+        while (String(argv[1])==String("verbose")) {
+            verbosity++;
+            argc--;
+            argv++;
+        }
+        if (verbosity>0) {
+            Logger::get().setVerbosity(verbosity);
+        }
+    
+        if (String(argv[1])==String("regression")) {
+            done = true;
+            UnitTest::startTestSystem();
+            TestList::collectTests();  // just in case automation doesn't work
+            if (argc>2) {
+                result = UnitTest::getRoot().run(argc-2,argv+2);
+            } else {
+                result = UnitTest::getRoot().run();
+            }
+            UnitTest::stopTestSystem();
+            NameClient::removeNameClient();
+        }
+    } 
+    if (!done) {
+        Companion::main(argc,argv);
+    }
+    ACE::fini();
+
+    return result;
+}
+
 
 
 static String getFile(const char *fname) {
@@ -77,16 +128,6 @@ static void toDox(PolyDriver& dd, ostream& os) {
 }
 
 int main(int argc, char *argv[]) {
-
-#ifdef CHECK_FOR_LEAKS
-    mtrace();
-#endif
-
-    int result = 0;
-
-    Network::init();
-    Network::setLocalMode(true);
-
     Property p;
     p.fromCommand(argc,argv);
 
@@ -101,7 +142,24 @@ int main(int argc, char *argv[]) {
     }
 
     ConstString deviceName = p.check("device",Value("")).asString();
-    
+
+    // if no device given, we should be operating a completely
+    // standard test harness like for libYARP_OS and libYARP_sig
+    if (deviceName=="") {
+        return harness_main(argc,argv);
+    }
+
+    // device name given - use special device testing procedure
+
+#ifdef CHECK_FOR_LEAKS
+    mtrace();
+#endif
+
+    int result = 0;
+
+    Network::init();
+    Network::setLocalMode(true);
+
     String seek = fileName.c_str();
     ConstString exampleName = "";
     int pos = seek.rfind('/');
