@@ -197,44 +197,7 @@ option to configure to control where).
 
 "yarp" is the main executable
 
-A man page will be generated for the "yarp" executable if the 
-"docbook-to-man" program is installed on your system at compile-time.
 
-
-
-===============================================================================
-
-hand-crafted Makefiles
-----------------------------
-
-If you are on a debian linux system, there are some old hand-crafted
-Makefiles lying around.  To use them, type:
-
-  make -f Makefile.man [TARGET]
-
-For example, to compile everything:
-
-  make -f Makefile.man
-
-To make debian packages:
-
-  make -f Makefile.man deb
-
-There should now be installable packages in a directory called "package".
-Install using:
-
-  dpkg -i <package filename>
-
-The packages can be deinstalled using standard debian package management.
-
-
-You can make documentation if you have "doxygen":
-
-  make -f Makefile.man dox
-
-You should be able to browse library documentation from:
-
-  doc/index.html
 
 ===============================================================================
 
