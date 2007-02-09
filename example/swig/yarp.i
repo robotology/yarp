@@ -120,6 +120,7 @@ typedef int yarp::os::NetInt32;
 %include <yarp/os/Vocab.h>
 %include <yarp/os/BinPortable.h>
 %include <yarp/os/BufferedPort.h>
+%include <yarp/os/Contact.h>
 %include <yarp/os/Contactable.h>
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>

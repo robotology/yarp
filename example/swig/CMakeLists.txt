@@ -18,7 +18,12 @@ INCLUDE(${SWIG_USE_FILE})
 FIND_PACKAGE(YARP REQUIRED)
 
 SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES CPLUSPLUS ON)
-SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES SWIG_FLAGS "-includeall")
+
+# This causes a problem on Linux.
+# If it is needed in some other system, please wrap in an IF().
+# Thanks,
+# -- paulfitz
+# SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES SWIG_FLAGS "-includeall")
 
 IF (CREATE_JAVA)
    MAKE_DIRECTORY("generated_src")
