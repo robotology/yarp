@@ -1,5 +1,8 @@
 2007-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/include/yarp/dev/PolyDriver.h: add
+	reference-counting to PolyDrivers.
+
 	* src/libYARP_dev/CMakeLists.txt: add unit testing
 	to libYARP_dev - now that fake devices are available, 
 	at least partial automated testing should be easier.

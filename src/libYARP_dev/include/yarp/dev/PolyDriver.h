@@ -77,18 +77,21 @@ public:
     bool open(yarp::os::Searchable& config);
 
     /**
+     * Make this device be a link to an existing one.
+     * The device will be reference counted, and destroyed
+     * when the last relevant call to close() is made.
+     * @param alt the device to link to
+     * @return true iff link succeeded
+     */
+    bool link(PolyDriver& alt);
+
+    /**
      * Destructor.
      */
     virtual ~PolyDriver();
 
     virtual bool close() {
-        bool result = false;
-        if (dd!=0 /*NULL*/) {
-            result = dd->close();
-            delete dd;
-            dd = 0 /*NULL*/;
-        }
-        return result;
+        return closeMain();
     }
 
     /**
@@ -159,6 +162,8 @@ public:
     yarp::os::Value getValue(const char *option);
 
 private:
+    bool closeMain();
+
     DeviceDriver *dd;
     void *system_resource;
 };

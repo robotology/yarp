@@ -21,9 +21,13 @@ class YarpDevMonitor : public SearchMonitor {
 private:
     Property comment, fallback, present, actual;
     Bottle order;
+    int count;
 
 public:
+    Property info;
+
     YarpDevMonitor() {
+        count = 1;
     }
 
     virtual void report(const SearchReport& report, const char *context) {
@@ -76,6 +80,19 @@ public:
     Value getValue(const char *option) {
         return actual.find(option);
     }
+
+    void addRef() {
+        count++;
+    }
+
+    int removeRef() {
+        count--;
+        return count;
+    }
+
+    int getRef() {
+        return count;
+    }
 };
 
 
@@ -103,23 +120,56 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     if (config.getMonitor()==NULL) {
         config.setMonitor(&HELPER(system_resource));
     }
+
     YARP_DEBUG(Logger::get(),"PolyDriver calling factory...");
     dd = Drivers::factory().open(config);
+    HELPER(system_resource).info.fromString(config.toString());
     YARP_DEBUG(Logger::get(),"PolyDriver opened.");
     return isValid();
 }
 
 
-PolyDriver::~PolyDriver() {
-    if (dd!=0 /*NULL*/) {
-        dd->close();
-        delete dd;
-        dd = 0 /*NULL*/;
-    }
+bool PolyDriver::closeMain() {
+    bool result = false;
     if (system_resource!=NULL) {
-        delete &HELPER(system_resource);
+        YARP_DEBUG(Logger::get(),
+                   String("PolyDriver closing ") +
+                   HELPER(system_resource).info.toString().c_str());
+        int ct = HELPER(system_resource).removeRef();
+        if (ct==0) {
+            delete &HELPER(system_resource);
+            YARP_ASSERT(dd!=NULL);
+            result = dd->close();
+            YARP_DEBUG(Logger::get(),"PolyDriver closed.");
+            delete dd;
+            result = true;
+        } else {
+            YARP_DEBUG(Logger::get(),"PolyDriver still in use.");
+        }
+        dd = NULL;
         system_resource = NULL;
     }
+    return result;
+}
+
+
+bool PolyDriver::link(PolyDriver& alt) {
+    if (!alt.isValid()) return false;
+    if (isValid()) return false;
+    dd = alt.dd;
+    system_resource = alt.system_resource;
+    YARP_ASSERT(dd!=NULL);
+    YARP_ASSERT(system_resource!=NULL);
+    HELPER(system_resource).addRef();    
+    return true;
+}
+
+
+
+PolyDriver::~PolyDriver() {
+    closeMain();
+    YARP_ASSERT(dd==NULL);
+    YARP_ASSERT(system_resource==NULL);
 }
 
 
