@@ -137,11 +137,15 @@ bool PolyDriver::closeMain() {
                    HELPER(system_resource).info.toString().c_str());
         int ct = HELPER(system_resource).removeRef();
         if (ct==0) {
+            YARP_ASSERT(system_resource!=NULL);
             delete &HELPER(system_resource);
-            YARP_ASSERT(dd!=NULL);
-            result = dd->close();
-            YARP_DEBUG(Logger::get(),"PolyDriver closed.");
-            delete dd;
+            system_resource = NULL;
+            if (dd!=NULL) {
+                result = dd->close();
+                YARP_DEBUG(Logger::get(),"PolyDriver closed.");
+                delete dd;
+                dd = NULL;
+            }
             result = true;
         } else {
             YARP_DEBUG(Logger::get(),"PolyDriver still in use.");
