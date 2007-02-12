@@ -60,11 +60,13 @@ if [ "k$OS" = "kCygwin" ]; then
 	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 	"$CMAKE" -G "$GEN" ../pruned-repository
 	nmake package_source
+	rm -f $BASE/*.zip
 	cp *.zip $BASE
 	echo Source package is $BASE/*.zip
 else
 	cmake ../pruned-repository
 	make package_source
+	rm -f $BASE/*.tar.gz
 	cp *.tar.gz $BASE
 	echo Source package is $BASE/*.tar.gz
 fi
