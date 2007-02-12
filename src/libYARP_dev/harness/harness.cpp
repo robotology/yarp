@@ -186,13 +186,6 @@ int main(int argc, char *argv[]) {
     bool ok = dd.open(p);
     YARP_DEBUG(Logger::get(), "harness opened.");
     result = ok?0:1;
-    if (ok) {
-        YARP_DEBUG(Logger::get(), "harness closing...");
-        dd.close();
-        YARP_DEBUG(Logger::get(), "harness closed.");
-    }
-
-    Network::fini();
 
     ConstString wrapperName = "";
     ConstString codeName = "";
@@ -270,6 +263,15 @@ int main(int argc, char *argv[]) {
         fout << " */" << endl;
         fout.close();
     }
+
+
+    if (ok) {
+        YARP_DEBUG(Logger::get(), "harness closing...");
+        dd.close();
+        YARP_DEBUG(Logger::get(), "harness closed.");
+    }
+
+    Network::fini();
 
     // just checking for crashes, not device creation
     return 0; //result;
