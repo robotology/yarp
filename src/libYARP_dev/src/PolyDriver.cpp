@@ -122,7 +122,8 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     }
 
     YARP_DEBUG(Logger::get(),"PolyDriver calling factory...");
-    dd = Drivers::factory().open(config);
+    //dd = Drivers::factory().open(config);
+    coreOpen(config);
     HELPER(system_resource).info.fromString(config.toString());
     YARP_DEBUG(Logger::get(),"PolyDriver opened.");
     return isValid();
@@ -130,6 +131,9 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 
 
 bool PolyDriver::closeMain() {
+    if (!isValid()) {
+        return false;
+    }
     bool result = false;
     if (system_resource!=NULL) {
         YARP_DEBUG(Logger::get(),
@@ -205,4 +209,100 @@ Value PolyDriver::getValue(const char *option) {
     }
     return HELPER(system_resource).getValue(option);
 }
+
+
+
+bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
+    yarp::os::Searchable *config = &prop;
+    Property p;
+    String str = prop.toString().c_str();
+    Value *part;
+    if (prop.check("device",part)) {
+        str = part->toString().c_str();
+    }
+    Bottle bot(str.c_str());
+    if (bot.size()>1) {
+        // this wasn't a device name, but some codes -- rearrange
+        p.fromString(str.c_str());
+        str = p.find("device").asString().c_str();
+        config = &p;
+    }
+    YARP_DEBUG(Logger::get(),String("Drivers::open starting for ") + str);
+
+    DeviceDriver *driver = NULL;
+
+    DriverCreator *creator = Drivers::factory().find(str.c_str());
+    if (creator!=NULL) {
+        Value *val;
+        if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
+            String wrapper = creator->getWrapper().c_str();
+            DriverCreator *wrapCreator = 
+                Drivers::factory().find(wrapper.c_str());
+            if (wrapCreator!=NULL) {
+                p.fromString(config->toString());
+                p.unput("wrapped");
+                config = &p;
+                if (wrapCreator!=creator) {
+                    p.put("subdevice",str.c_str());
+                    p.put("device",wrapper.c_str());
+                    p.setMonitor(prop.getMonitor(),
+                                 wrapper.c_str()); // pass on any monitoring
+                    driver = wrapCreator->create();
+                    creator = wrapCreator;
+                } else {
+                    // already wrapped
+                    driver = creator->create();
+                }
+            }
+        } else {
+            driver = creator->create();
+        }
+    } else {
+        printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
+    }
+
+    YARP_DEBUG(Logger::get(),String("Drivers::open started for ") + str);
+
+    if (driver!=NULL) {
+        PolyDriver *manager = creator->owner();
+        if (manager!=NULL) {
+            link(*manager);
+            return true;
+        }
+
+        //printf("yarpdev: parameters are %s\n", config->toString().c_str());
+        YARP_DEBUG(Logger::get(),String("Drivers::open config for ") + str);
+        bool ok = driver->open(*config);
+        YARP_DEBUG(Logger::get(),String("Drivers::open configed for ") + str);
+        if (!ok) {
+            printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
+            //YARP_DEBUG(Logger::get(),String("Discarding ") + str);
+            delete driver;
+            //YARP_DEBUG(Logger::get(),String("Discarded ") + str);
+            driver = NULL;
+        } else {
+            if (creator!=NULL) {
+                ConstString name = creator->getName();
+                ConstString wrapper = creator->getWrapper();
+                ConstString code = creator->getCode();
+                printf("yarpdev: created %s <%s>.  See C++ class %s for documentation.\n",
+                       (name==wrapper)?"wrapper":"device",
+                       name.c_str(), code.c_str());
+            }
+        }
+        dd = driver;
+        return true;
+    }
+    
+    return false;
+}
+
+
+DeviceDriver *PolyDriver::take() {
+    // this is not very careful
+    DeviceDriver *result = dd;
+    dd = NULL;
+    return dd;
+}
+
 

@@ -37,6 +37,7 @@ public:
 
     ~DriversHelper() {
         for (unsigned int i=0; i<delegates.size(); i++) {
+            if (delegates[i]==NULL) continue;
             delete delegates[i];
         }
         delegates.clear();
@@ -45,6 +46,7 @@ public:
     ConstString toString() {
         yarp::String s;
         for (unsigned int i=0; i<delegates.size(); i++) {
+            if (delegates[i]==NULL) continue;
             ConstString name = delegates[i]->getName();
             ConstString wrapper = delegates[i]->getWrapper();
             s += "Device \"";
@@ -76,12 +78,25 @@ public:
 
     DriverCreator *find(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
+            if (delegates[i]==NULL) continue;
             yarp::String s = delegates[i]->toString().c_str();
             if (s==name) {
                 return delegates[i];
             }
         }
         return NULL;
+    }
+
+    bool remove(const char *name) {
+        for (unsigned int i=0; i<delegates.size(); i++) {
+            if (delegates[i]==NULL) continue;
+            yarp::String s = delegates[i]->toString().c_str();
+            if (s==name) {
+                delete delegates[i];
+                delegates[i] = NULL;
+            }
+        }
+        return false;
     }
 };
 
@@ -114,82 +129,16 @@ DriverCreator *Drivers::find(const char *name) {
     return HELPER(implementation).find(name);
 }
 
+bool Drivers::remove(const char *name) {
+    return HELPER(implementation).remove(name);
+}
+
 
 DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
-    yarp::os::Searchable *config = &prop;
-    Property p;
-    String str = prop.toString().c_str();
-    Value *part;
-    if (prop.check("device",part)) {
-        str = part->toString().c_str();
-    }
-    Bottle bot(str.c_str());
-    if (bot.size()>1) {
-        // this wasn't a device name, but some codes -- rearrange
-        p.fromString(str.c_str());
-        str = p.find("device").asString().c_str();
-        config = &p;
-    }
-    YARP_DEBUG(Logger::get(),String("Drivers::open starting for ") + str);
-
-    DeviceDriver *driver = NULL;
-
-    DriverCreator *creator = find(str.c_str());
-    if (creator!=NULL) {
-        Value *val;
-        if (config->check("wrapped",val)&&(creator->getWrapper()!="")) {
-            String wrapper = creator->getWrapper().c_str();
-            DriverCreator *wrapCreator = find(wrapper.c_str());
-            if (wrapCreator!=NULL) {
-                p.fromString(config->toString());
-                p.unput("wrapped");
-                config = &p;
-                if (wrapCreator!=creator) {
-                    p.put("subdevice",str.c_str());
-                    p.put("device",wrapper.c_str());
-                    p.setMonitor(prop.getMonitor(),
-                                 wrapper.c_str()); // pass on any monitoring
-                    driver = wrapCreator->create();
-                    creator = wrapCreator;
-                } else {
-                    // already wrapped
-                    driver = creator->create();
-                }
-            }
-        } else {
-            driver = creator->create();
-        }
-    } else {
-        printf("yarpdev: ***ERROR*** could not find device <%s>\n", str.c_str());
-    }
-
-    YARP_DEBUG(Logger::get(),String("Drivers::open started for ") + str);
-
-    if (driver!=NULL) {
-        //printf("yarpdev: parameters are %s\n", config->toString().c_str());
-        YARP_DEBUG(Logger::get(),String("Drivers::open config for ") + str);
-        bool ok = driver->open(*config);
-        YARP_DEBUG(Logger::get(),String("Drivers::open configed for ") + str);
-        if (!ok) {
-            printf("yarpdev: ***ERROR*** driver <%s> was found but could not open\n", config->find("device").toString().c_str());
-            //YARP_DEBUG(Logger::get(),String("Discarding ") + str);
-            delete driver;
-            //YARP_DEBUG(Logger::get(),String("Discarded ") + str);
-            driver = NULL;
-        } else {
-            if (creator!=NULL) {
-                ConstString name = creator->getName();
-                ConstString wrapper = creator->getWrapper();
-                ConstString code = creator->getCode();
-                printf("yarpdev: created %s <%s>.  See C++ class %s for documentation.\n",
-                       (name==wrapper)?"wrapper":"device",
-                       name.c_str(), code.c_str());
-            }
-        }
-        return driver;
-    }
-    
-    return NULL;
+    PolyDriver poly;
+    bool result = poly.open(prop);
+    if (!result) return NULL;
+    return poly.take();
 }
 
 

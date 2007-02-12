@@ -108,6 +108,7 @@ using namespace yarp::dev;
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/dev/DevicePipe.h>
+#include <yarp/dev/DeviceGroup.h>
 #include <yarp/dev/ServerInertial.h>
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
@@ -222,6 +223,10 @@ void Drivers::init() {
     add(new DriverCreatorOf<DevicePipe>("pipe",
                                         "",
                                         "DevicePipe"));
+
+    add(new DriverCreatorOf<DeviceGroup>("group",
+                                        "",
+                                        "DeviceGroup"));
 
     add(createRemoteControlBoard());
     add(createServerControlBoard());

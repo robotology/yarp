@@ -17,6 +17,7 @@ namespace yarp {
         template <class T> class DriverCreatorOf;
         class DriverCreator;
         class Drivers;
+        class PolyDriver;
     }
 }
 
@@ -63,6 +64,16 @@ public:
      * @return the name of the C++ class associated with this device.
      */
     virtual yarp::os::ConstString getCode() = 0;
+
+    /**
+     * For "links" to other devices.
+     * Default implementation returns NULL, which is correct for
+     * all real devices talking to hardware.
+     * @return the object managing the device.
+     */
+    virtual PolyDriver *owner() {
+        return 0/*NULL*/;
+    }
 };
 
 
@@ -194,6 +205,13 @@ public:
      * @return a pointer to the factory, or NULL if there is none
      */
     DriverCreator *find(const char *name);
+
+    /**
+     * Remove a factory for a named device.
+     * @param name The name of the device
+     * @return true if the factory was found and removed
+     */
+    bool remove(const char *name);
 
     /**
      * Body of the yarpdev program for starting device wrappers.

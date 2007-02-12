@@ -85,6 +85,14 @@ public:
      */
     bool link(PolyDriver& alt);
 
+
+    /**
+     * Gets the device this object manages.
+     * The user is then responsible for managing it.
+     * @return the device this object manages.
+     */
+    DeviceDriver *take();
+
     /**
      * Destructor.
      */
@@ -166,6 +174,8 @@ private:
 
     DeviceDriver *dd;
     void *system_resource;
+
+    bool coreOpen(yarp::os::Searchable& config);
 };
 
 #endif
