@@ -1,8 +1,10 @@
 2007-02-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/include/yarp/dev/DeviceGroup.h: new device
-	called "group" that lets you bundle a a group of devices as a
-	logical unit.
+	called "group" that lets you start a list of devices as a group.
+	There may be cross-references between the devices.  See
+	src/libYARP_dev/harness/group_basic.ini for a (fairly trivial)
+	example.
 
 	* conf/FindGtkMM.cmake: added basic unix support (via pkgconfig)
 
