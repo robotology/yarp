@@ -1,3 +1,7 @@
+2007-02-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindGtkMM.cmake: added basic unix support (via pkgconfig)
+
 2007-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: wrong header file order.
