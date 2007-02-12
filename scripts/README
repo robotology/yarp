@@ -5,3 +5,32 @@ you don't need to care about them.
 
 Someday they will disappear from here and go somewhere more discreet.
 
+##########################################################################
+
++ Unless otherwise specified, all scripts should be run from LINUX only.
+
++ Always run the script from $YARP_ROOT (one directory up) as:
+    ./scripts/script-name
+
++ If you do not know what a script does, run it on a separate
+  checkout of the repository.  It could do ANYTHING.
+
+##########################################################################
+
+MOST OFTEN USED SCRIPTS:
+
+./scripts/update-automake
+	synchronizes build files for autoconf and automake
+
+./scripts/update-headers
+	uses emacs to regularize indentation of all source files
+
+./scripts/make-source-package
+	Uses cvs to check out a clean copy of YARP, and 
+	generates a source package using cmake.
+	Works in a subdirectory, $YARP_ROOT/source-package
+
+	If you have to run it a few times in a row, you can do:
+          ./scripts/make-source-package nocvs
+	to avoid cvs being called each time.
+
