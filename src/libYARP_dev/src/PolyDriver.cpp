@@ -131,9 +131,6 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
 
 
 bool PolyDriver::closeMain() {
-    if (!isValid()) {
-        return false;
-    }
     bool result = false;
     if (system_resource!=NULL) {
         YARP_DEBUG(Logger::get(),
@@ -302,7 +299,7 @@ DeviceDriver *PolyDriver::take() {
     // this is not very careful
     DeviceDriver *result = dd;
     dd = NULL;
-    return dd;
+    return result;
 }
 
 
