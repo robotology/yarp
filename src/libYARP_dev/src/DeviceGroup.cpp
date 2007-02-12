@@ -132,7 +132,7 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
         return false;
     }
 
-    if (config.check("part")) {
+    if (config.check("part","a list of section names, with each section containing a device")) {
         Bottle bot = config.findGroup("part").tail();
         printf("Hmm, seems to be an assembly\n");
         printf("Assembly of: %s\n", bot.toString().c_str());
