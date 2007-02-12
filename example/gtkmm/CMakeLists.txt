@@ -19,5 +19,7 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 ADD_EXECUTABLE(gtkmmdemo ${folder_source} ${folder_header})
 
 TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_BASE})
-TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_FLAGS})
+
+# Is this correct?  It causes problems in linux
+# TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_FLAGS})
 
