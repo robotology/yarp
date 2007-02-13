@@ -85,22 +85,61 @@ public:
      */
     DeviceResponder();
 
+    /**
+     * Add information about a message that the respond() method
+     * understands.
+     * @param txt the message, in text form
+     * @param explain an (optional) what the message means
+     */
     void addUsage(const char *txt, const char *explain=0/*NULL*/);
 
+    /**
+     * Add information about a message that the respond() method
+     * understands.
+     * @param txt the message, in bottle form
+     * @param explain an (optional) what the message means
+     */
     void addUsage(const yarp::os::Bottle& bot, const char *explain=0/*NULL*/);
 
+    /**
+     * Respond to a message.  
+     * @param command the message
+     * @param reply the response
+     * @return true if there was no critical failure
+     */
     virtual bool respond(const yarp::os::Bottle& command, 
                          yarp::os::Bottle& reply);
    
+    /**
+     * Handler for reading messages from the network, and passing 
+     * them on to the respond() method.
+     * @param connection a network connection to a port
+     * @return true if the message was read successfully
+     */
     virtual bool read(yarp::os::ConnectionReader& connection);
 
+    /**
+     * Alternative handler for reading messages from the network, and passing 
+     * them on to the respond() method.  There can be no replies made
+     * if this handler is used.
+     * @param v the message
+     * @return true if the message was read successfully
+     */
     virtual void onRead(yarp::os::Bottle& v) {
         yarp::os::Bottle reply;
         respond(v,reply);
     }
 
+    /**
+     * Regenerate usage information.
+     */
     void makeUsage();
 
+    /**
+     * Attach this object to a source of messages.
+     * @param source a BufferedPort or PortReaderBuffer that
+     * receives data.
+     */
     void attach(yarp::os::TypedReader<yarp::os::Bottle>& source) {
         source.useCallback(*this);
         source.setReplier(*this);
