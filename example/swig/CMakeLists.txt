@@ -10,6 +10,9 @@ SET(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
 
 SET(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
 
+
+
+
 # small update to FindJNI
 SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -30,13 +33,19 @@ IF (CREATE_JAVA)
    SET(CMAKE_SWIG_FLAGS "-outdir;generated_src;-Wall;-module;yarp")
    FIND_PACKAGE(JNI REQUIRED)
    INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
-   
    IF (WIN32 AND NOT CYGWIN)
-      SWIG_ADD_MODULE(jyarp java yarp.i)
+      SET(target_name jyarp)
    ELSE(WIN32 AND NOT CYGWIN)
-      SWIG_ADD_MODULE(libjyarp java yarp.i)
+      SET(target_name libjyarp)
    ENDIF (WIN32 AND NOT CYGWIN)
+   SWIG_ADD_MODULE(${target_name} java yarp.i)
 
+   # issue on MINGW where C++ name-mangling prevents java finding methods
+   IF (MINGW)
+      MESSAGE(STATUS "untested MINGW patch - see CMakeLists.txt")
+      SET_TARGET_PROPERTIES(${target_name} PROPERTIES 
+                            LINK_FLAGS "--add-stdcall-alias")
+   ENDIF (MINGW)
 ENDIF (CREATE_JAVA)
 
 IF (CREATE_PYTHON)
@@ -75,5 +84,4 @@ IF (CREATE_CSHARP)
       SWIG_ADD_MODULE(libcsyarp csharp yarp.i)
    ENDIF (WIN32 AND NOT CYGWIN)
 ENDIF (CREATE_CSHARP)
-
 
