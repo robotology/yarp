@@ -17,9 +17,10 @@ SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 ADD_EXECUTABLE(gtkmmdemo ${folder_source} ${folder_header})
+INSTALL (TARGETS gtkmmdemo RUNTIME DESTINATION bin)
+INSTALL (FILES basic.glade DESTINATION bin)
 
 TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_BASE})
 
 # Is this correct?  It causes problems in linux
-# TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_FLAGS})
-
+TARGET_LINK_LIBRARIES(gtkmmdemo ${GTKMM_LINK_FLAGS})
