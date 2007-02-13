@@ -2,6 +2,10 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
+#ifdef main
+#undef main //just in case
+#endif
+
 class FakeFrameGrabber : public yarp::dev::IFrameGrabberImage, 
                          public yarp::dev::IFrameGrabberControls, 
                          public yarp::dev::DeviceDriver {
@@ -74,6 +78,13 @@ public:
     virtual bool setWhiteBalance(double red, double green) {
         return false;
     }
+
+	virtual bool getWhiteBalance(double &red, double &green) const
+	{
+		red=0;
+		green=0;
+		return false;
+	}
 
     virtual double getBrightness() const {
         return brightness;
