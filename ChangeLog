@@ -1,3 +1,10 @@
+2007-02-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/CMakeLists.txt: Conditional for MINGW added
+	for Java, based on feedback from Nelson Goncalves.  Not sure
+	if it works, but should do no harm and it alerts the user to 
+	the issue: passing "--add-stdcall-alias" to the linker.
+
 2007-02-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/include/yarp/dev/DeviceGroup.h: new device
