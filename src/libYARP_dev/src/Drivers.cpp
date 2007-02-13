@@ -287,7 +287,9 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         } else {
             printf("Suggestions:\n");
             printf("+ Do \"yarpdev --list\" to see list of supported devices.\n");
-            printf("+ Or append \"--verbose\" option to get more information.\n");
+            if (!options.check("verbose")) {
+                printf("+ Or append \"--verbose\" option to get more information.\n");
+            }
         }
         return 1;
     }
