@@ -57,7 +57,8 @@ public:
         mutex.post();
     }
 
-    void doLoop()
+    // void doLoop()
+    void run()
     {
         mutex.wait();
         

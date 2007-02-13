@@ -19,6 +19,8 @@ SOURCE_GROUP("Source Files" FILES ${CODE})
 # Create our executable
 ADD_EXECUTABLE(ace_check ${HEADERS} ${CODE})
 
+ADD_DEFINITIONS(-D_REENTRANT)
+
 # This is just for packaging up this example for distribution
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
    SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "An example for testing ACE")

@@ -1,8 +1,5 @@
-
-# You'll need to tell CMake where to find YARP.
-# From the command line, you can do:
-#   cmake -DYARP_DIR:LOCATION=../.. .
-# where ../.. is replaced with the path to which you built YARP.
+# replace "..." with the path to your YARP binaries if needed
+SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 
 FIND_PACKAGE(YARP)
 
