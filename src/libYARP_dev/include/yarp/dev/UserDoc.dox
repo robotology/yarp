@@ -222,6 +222,27 @@ are not needed for use of a device via yarp::dev::PolyDriver.
 The last text argument just repeats the class name for documentation
 purposes.
 
+\section dev-howto-compile Getting things compiled
+
+Now you should be able to compile your device the same way as any
+other YARP device.
+
+ - Start CMake and go to your YARP root directory.
+ - Make sure that the "CREATE_DEVICE_LIBRARY_BUILTINS" option is
+selected.  Otherwise YARP won't try to build any any hardware 
+devices into the library.  When this is selected, and you configure,
+you get a list of options of the form: ENABLE_*.  There should
+be a new one now, called ENABLE_foo (or whatever your device is called).
+Select it, reconfigure, and compile.
+
+Then run:
+\verbatim
+yarpdev --list
+\endverbatim
+Your device should show up in the list.  To learn more about
+using devices from code, see \ref note_devices, and the 
+examples in example/dev.
+
 \section dev-howto-wow Hey, why not automate all this?
 
 True, we should do more automation than we do now.  For now,
