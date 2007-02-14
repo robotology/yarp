@@ -7,6 +7,7 @@
 # Creates:
 # GTKMM_INCLUDE_DIR   - Directories to include to use GTKMM
 # GTKMM_LINK_FLAGS    - Files to link against to use GTKMM
+# GTKMM_C_FLAGS       - Flags to pass to the C/C++ compiler for GTKMM.
 # GtkMM_FOUND         - If false, don't try to use GTKMM
 
 
