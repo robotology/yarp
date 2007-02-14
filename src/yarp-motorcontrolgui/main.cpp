@@ -1,10 +1,6 @@
 /*
-    Example glade application. By Giorgio.
-    NOTE: The application doesn't shut down properly.
+    Motor control GUI. By Pasa.
  */
-
-// just removes the pervading warning that plagues compilation of the gtkmm on Visual Studio
-#pragma warning(disable: 4250)
 
 // real code here!
 #include <iostream>
@@ -13,29 +9,7 @@
 #include <libglademm.h>
 #include <gtkmm.h>
 
-// a class for managing the main widget (approach copied from 
-// http://www.pebble.org.uk/programming/libglademm_simple).
-//
-class MainWindow {
-public:
-    explicit MainWindow(Glib::RefPtr<Gnome::Glade::Xml> refXml);
-    ~MainWindow();
-
-    Gtk::Window& getWindow() const { return *mainWindow; }
-
-protected:
-    Gtk::Window *mainWindow;
-};
-
-MainWindow::MainWindow(Glib::RefPtr<Gnome::Glade::Xml> refXml) : mainWindow(0) {
-    refXml->get_widget("window_main", mainWindow);
-    if (!mainWindow)
-        throw std::runtime_error("Couldn't find window_main");
-}
-
-MainWindow::~MainWindow() {
-    //delete mainWindow; memory is managed by gtkmm.
-}
+#include "MainWindow.h"
 
 void onButtonQuitClicked () {
     std::cout << "quit clicked!" << std::endl;
