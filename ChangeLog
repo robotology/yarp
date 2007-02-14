@@ -1,5 +1,8 @@
 2007-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/port_power, src/doc/port_expert.dox: extend
+	tutorial material
+
 	* src/libYARP_OS/include/yarp/Companion.h: added a new
 	"yarp wait /portname" command.  Replicates the functionality
 	Assif Mirza has been implementing with a bash script.  This

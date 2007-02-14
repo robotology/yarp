@@ -1,13 +1,15 @@
 
 /** 
- * @page port_expert Port Power
+ * @page port_expert Port Power, Going Further with Ports
 
 This tutorial builds on the material in \ref note_ports, and takes
 a deeper look at what ports can do for you.
 
-WARNING - THIS IS A DRAFT, CODE PRESENT HAS NOT BEEN TESTED,
-SEND FEEDBACK TO paulfitz@liralab.it
+ - WARNING - THIS IS A DRAFT, CODE PRESENT HAS NOT BEEN FULLY TESTED,
+   SEND FEEDBACK TO paulfitz@liralab.it
 
+ - Some of the code is present in the example/port_power directory
+   of the YARP repository.
 
 \section port_expert_basic Streaming messages
 
@@ -158,7 +160,7 @@ know what type of data they are dealing with.
 You can override the port's onRead method:
 \code
 class DataPort : public BufferedPort<Bottle> {
-     virtual void onRead(Bottle& datum) {
+     virtual void onRead(Bottle& b) {
           // process data in b
      }
 };
@@ -171,7 +173,7 @@ Alternatively, you can leave the port unchanged and use
 an external callback as follows:
 \code
 class DataProcessor : public TypedReaderCallback<Bottle> {
-     virtual void onRead(Bottle& datum) {
+     virtual void onRead(Bottle& b) {
           // process data in b
      }
 };
