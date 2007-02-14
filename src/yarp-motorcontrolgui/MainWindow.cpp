@@ -1,3 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2006 Giorgio Metta
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 //
 // MainWindow implementation.
 //
@@ -12,3 +20,5 @@ MainWindow::MainWindow(Glib::RefPtr<Gnome::Glade::Xml> refXml) : mainWindow(0) {
 MainWindow::~MainWindow() {
     //delete mainWindow; memory is managed by gtkmm.
 }
+
+
