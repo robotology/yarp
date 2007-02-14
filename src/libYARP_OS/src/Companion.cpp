@@ -106,6 +106,8 @@ Companion::Companion() {
         "get live information about a port");
     add("exists",  &Companion::cmdExists,
         "check if a port is alive (useful for conditions in scripts)");
+    add("wait",  &Companion::cmdWait,
+        "wait for a port to be alive");
     add("cmake",  &Companion::cmdMake,
         "create files to help compiling YARP projects");
 }
@@ -265,6 +267,31 @@ int Companion::cmdExists(int argc, char *argv[]) {
         }
         delete out;
         out = NULL;
+        return 0;
+    }
+
+    ACE_OS::fprintf(stderr,"Please specify a port name\n");
+    return 1;
+}
+
+
+
+int Companion::cmdWait(int argc, char *argv[]) {
+    if (argc == 1) {
+        bool done = false;
+        int ct = 0;
+        while (!done) {
+            if (ct%10==0) {
+                ACE_OS::fprintf(stderr,"Waiting for %s...\n", argv[0]);
+            }
+            ct++;
+            int result = cmdExists(argc,argv);
+            if (result!=0) {
+                Time::delay(0.1);
+            } else {
+                done = true;
+            }
+        }
         return 0;
     }
 
