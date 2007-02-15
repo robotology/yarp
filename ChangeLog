@@ -1,3 +1,11 @@
+2007-02-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/NameServer.h: add a new "yarp name
+	gc" command.  This does garbage collection for port names.  Every
+	port for which "yarp exists /portname" returns false gets removed.
+	This will clean up port information registered by processes which
+	were interrupted without unregistering those ports.
+
 2007-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/port_power, src/doc/port_expert.dox: extend

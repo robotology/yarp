@@ -19,6 +19,7 @@
 #include <yarp/ManagedBytes.h>
 #include <yarp/NameConfig.h>
 #include <yarp/FallbackNameServer.h>
+#include <yarp/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
@@ -218,6 +219,7 @@ void NameServer::setup() {
     dispatcher.add("match", &NameServer::cmdMatch);
     dispatcher.add("list", &NameServer::cmdList);
     dispatcher.add("route", &NameServer::cmdRoute);
+    dispatcher.add("gc", &NameServer::cmdGarbageCollect);
 }
 
 String NameServer::cmdRegister(int argc, char *argv[]) {
@@ -368,6 +370,7 @@ String NameServer::cmdHelp(int argc, char *argv[]) {
     result += String("+ check $portname $property\n");
     result += String("+ match $portname $property $prefix\n");
     result += String("+ route $port1 $port2\n");
+    result += String("+ gc\n");
     return terminate(result);
 }
 
@@ -461,6 +464,29 @@ String NameServer::cmdList(int argc, char *argv[]) {
     return terminate(response);
 }
 
+
+String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
+    String response = "";
+
+    for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+        NameRecord& rec = (*it).int_id_;
+        Address addr = rec.getAddress();
+        String port = addr.getRegName();
+        if (port!="fallback"&&port!="/root") {
+            if (addr.isValid()) {
+                OutputProtocol *out = Carriers::connect(addr);
+                if (out==NULL) {
+                    response += "Removing " + port + "\n";
+                    unregisterName(port);
+                } else {
+                    delete out;
+                }
+            }
+        }
+    }
+
+    return terminate(response);
+}
 
 
 String NameServer::textify(const Address& address) {
