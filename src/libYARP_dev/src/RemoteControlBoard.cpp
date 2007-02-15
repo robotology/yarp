@@ -2211,6 +2211,7 @@ bool yarp::dev::CommandsHelper::initialize() {
     DeviceResponder::makeUsage();
     addUsage("[get] [axes]", "get the number of axes");
     addUsage("[set] [pos] $iAxisNumber $fPosition", "command the position of an axis");
+    addUsage("[set] [rel] $iAxisNumber $fPosition", "command the relative position of an axis");
     addUsage("[set] [vmo] $iAxisNumber $fVelocity", "command the velocity of an axis");
     addUsage("[get] [enc] $iAxisNumber", "get the encoder value for an axis");
 
@@ -2224,6 +2225,8 @@ bool yarp::dev::CommandsHelper::initialize() {
     }
     addUsage((String("[set] [poss] (")+args+")").c_str(), 
              "command the position of all axes");
+    addUsage((String("[set] [rels] (")+args+")").c_str(), 
+             "command the relative position of all axes");
     addUsage((String("[set] [vmos] (")+args+")").c_str(), 
              "command the velocity of all axes");
 

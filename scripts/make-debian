@@ -8,10 +8,11 @@
 
 
 # how to create pbuilder environments
-#sudo pbuilder create --basetgz /var/cache/pbuilder/base-stable.tgz --distribution stable
-#sudo pbuilder create --basetgz /var/cache/pbuilder/base-unstable.tgz --distribution unstable
+#  sudo pbuilder create --basetgz /var/cache/pbuilder/base-stable.tgz --distribution stable
+#  sudo pbuilder create --basetgz /var/cache/pbuilder/base-unstable.tgz --distribution unstable
 
-
+# may need to occasionally do (for stable and unstable):
+#  sudo pbuilder update --basetgz /var/cache/pbuilder/base-unstable.tgz --distribution unstable
 
 ORG=$PWD
 SRC=$PWD/source-package
