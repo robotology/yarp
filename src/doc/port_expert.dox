@@ -361,7 +361,7 @@ The corresponding read method would be:
     int tag = connection.expectInt();
     if (tag!=BOTTLE_TAG_LIST+BOTTLE_TAG_INT) return false;
     int ct = connection.expectInt();
-    if (tag!=2) return false;
+    if (ct!=2) return false;
     x = connection.expectInt();
     y = connection.expectInt();
     return true;
