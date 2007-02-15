@@ -6,7 +6,6 @@ using namespace yarp::os;
 int main() {
     Network::init();
     
-
     int ct = 0;
     Port p;            // Create a port.
     p.open("/out");    // Give it a name on the network.
