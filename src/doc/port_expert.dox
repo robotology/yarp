@@ -228,9 +228,9 @@ class DataProcessor : public PortReader {
           Bottle in, out;
           in.read(connection);
           ...      // process data "in", prepare "out"
-          ConnectionWriter *returnToSender = getWriter();
+          ConnectionWriter *returnToSender = connection.getWriter();
           if (returnToSender!=NULL) {
-	     returnToSender->write(out);
+	     out.write(*returnToSender);
           }
      }
 };
@@ -313,8 +313,8 @@ public:
     return true;
   }
   virtual bool read(ConnectionReader& connection) {
-    x = connection.expectInt(x);
-    y = connection.expectInt(y);
+    x = connection.expectInt();
+    y = connection.expectInt();
     return true;
   }
 };
