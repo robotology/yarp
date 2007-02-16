@@ -6,6 +6,9 @@
  *
  */
 
+#ifndef __gui2yarp__
+#define __gui2yarp__
+
 #include <iostream>
 #include <stdexcept>
 
@@ -27,13 +30,41 @@ using namespace yarp;
  */
 class Gui2Yarp {
 protected:    
-    // here's where the yarp data should go.    
     String initFilename;
+    Property options;
+    PolyDriver driver;
+
+    // more to come.
+    IPositionControl *positionControl;
+    IAmplifierControl *amplifierControl;
+
+    bool connected;
 
 public:
+    Gui2Yarp() {
+        // initFilename = "";
+    }
+
+    /**
+     * initialize the interface and network wrappers.
+     */
+    bool initialize();
+
+    /**
+     * shut down the connection to yarp stuff.
+     */
+    bool uninitialize();
+
     /**
      * initialize the device driver config file location.
      * @param s the filename including the path.
      */
     void setInitFilename(String& s) { initFilename = s; }
+
+    /**
+     * connect to the motor control device driver.
+     */
+    bool connectDevice(bool local = true);
 };
+
+#endif

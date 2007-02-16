@@ -10,11 +10,16 @@
 // MainWindow class definition.
 //
 
+#ifndef __mainwindow__
+#define __mainwindow__
+
 #include <iostream>
 #include <stdexcept>
 
 #include <libglademm.h>
 #include <gtkmm.h>
+
+#include "Gui2Yarp.h"
 
 /**
  * MainWindow, a helper class that wraps the access to the main window widget
@@ -45,6 +50,11 @@ public:
      */
     void onButtonFilechooserClicked();
 
+    /**
+     * connect to the device driver.
+     */
+    void onButtonConnectClicked();
+
 protected:
     /**
      * linkAll connects all signals to widgets.
@@ -67,13 +77,21 @@ protected:
     }
 
 protected:
+    // the interface with yarp driver code.
+    Gui2Yarp yarp;
+
     Glib::RefPtr<Gnome::Glade::Xml> refXml;
     Gtk::Window *mainWindow;
+
+    // driver connection frame.
     Gtk::Button *filechooserButton;
     Gtk::FileChooserDialog *filechooserDialog;
     Gtk::Entry *filenameEntry;
     Gtk::ComboBox *canCombo;
+    Gtk::Button *connectButton;
+    Gtk::Button *stopButton;
 
+    // PID parameters.
     Gtk::ComboBox *axisCombo;
     Gtk::Entry *pEntry;
     Gtk::Entry *dEntry;
@@ -84,3 +102,4 @@ protected:
     Gtk::Entry *pwmLimitEntry;
 };
 
+#endif

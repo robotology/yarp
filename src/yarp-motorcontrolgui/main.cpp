@@ -27,9 +27,6 @@ int main(int argc, char *argv[])
         Glib::RefPtr<Gnome::Glade::Xml> refXml = Gnome::Glade::Xml::create("yarpmotorcontrol.glade");        
         MainWindow mainw(refXml);
         mainw.initialize();
-        
-        Gui2Yarp yarp;
-
         kit.run(mainw.getMainWindow());
         return 0;
     }

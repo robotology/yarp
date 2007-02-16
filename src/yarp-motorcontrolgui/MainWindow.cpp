@@ -14,6 +14,11 @@
 MainWindow::MainWindow(Glib::RefPtr<Gnome::Glade::Xml> xml) : refXml(xml) {
     mainWindow = 0;
     filechooserButton = 0;
+    filechooserDialog = 0;
+    filenameEntry = 0;
+    canCombo = 0;
+    connectButton = 0;
+    stopButton = 0;
 
     mainWindow = (Gtk::Window *)getWidget("window_main");
 
@@ -21,6 +26,8 @@ MainWindow::MainWindow(Glib::RefPtr<Gnome::Glade::Xml> xml) : refXml(xml) {
     filechooserDialog = (Gtk::FileChooserDialog *)getWidget("filechooserdialog_inifile");
     filenameEntry = (Gtk::Entry *)getWidget("entry_inifile"); 
     canCombo = (Gtk::ComboBox *)getWidget("combobox_can");
+    connectButton = (Gtk::Button *)getWidget("button_connect");
+    stopButton = (Gtk::Button *)getWidget("button_stop");
 
     axisCombo = (Gtk::ComboBox *)getWidget("combobox_axis");
     pEntry = (Gtk::Entry *)getWidget("entry_p");
@@ -36,6 +43,8 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::initialize () {
+    yarp.initialize();
+
     // initialize also the state of the GUI.
     canCombo->set_active(0);
     axisCombo->set_active(0);
@@ -51,11 +60,13 @@ void MainWindow::linkAll () {
         (Gtk::ImageMenuItem *)getWidget("quit1");
     b->signal_activate().connect(sigc::mem_fun(*this, &MainWindow::onButtonQuitClicked));
 
+
+    connectButton->signal_activate().connect(sigc::mem_fun(*this, &MainWindow::onButtonConnectClicked));
     // more signals.
 }
 
 void MainWindow::onButtonQuitClicked () {
-    std::cout << "quit clicked!" << std::endl;
+    yarp.uninitialize();
     exit(0);
 }
 
@@ -73,4 +84,22 @@ void MainWindow::onButtonFilechooserClicked () {
             break;
     }
     filechooserDialog->hide();
+}
+
+void MainWindow::onButtonConnectClicked() {
+    int i = canCombo->get_active_row_number();
+
+    if (i == -1) {
+        std::cout << "You need to select the device type" << std::endl;
+        return;
+    }
+    else if (i == 0)
+        if (!yarp.connectDevice(false)) {
+            std::cout << "Troubles connecting to the device" << std::endl;
+            return;
+        }
+    else
+        yarp.connectDevice(true);
+
+    // activates the interface (set sensitive).
 }
