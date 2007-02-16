@@ -70,7 +70,6 @@ WARN_LOGFILE           =
 INPUT                  = src/libYARP_OS/include/yarp/os \
                          src/libYARP_sig/include/yarp/sig \
                          src/libYARP_dev/include/yarp/dev \
-                         src/yarp-imageviewer/UserDoc_man_yarpview.dox \
                          src/libYARP_dev/src/dragonfly/common \
                          src/libYARP_dev/src/esdMotionControl/winnt/yarp \
                          src/libYARP_dev/src/ffmpeg/common \

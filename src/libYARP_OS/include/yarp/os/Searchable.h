@@ -21,6 +21,8 @@ namespace yarp {
     }
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class yarp::os::SearchReport {
 public:
     ConstString key;
@@ -45,6 +47,8 @@ public:
     virtual ~SearchMonitor() {}
     virtual void report(const SearchReport& report, const char *context) = 0;
 };
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
 
 /**
@@ -185,6 +189,7 @@ public:
      */
     virtual ConstString toString() const = 0;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     virtual void setMonitor(SearchMonitor *monitor, const char *context="") {
         this->monitor = monitor;
         this->monitorContext = context;
@@ -203,6 +208,7 @@ public:
             monitor->report(report,monitorContext);
         }
     }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 };
 
 
