@@ -267,7 +267,7 @@ void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += home.getName();
     from += ":";
     from += NetType::toString(home.getPort());
-    from += "/d,list\">All ports</a>)&nbsp;&nbsp;\n";
+    from += "/data=list\">All ports</a>)&nbsp;&nbsp;\n";
 
     from += "(<a href=\"http://";
     from += me.getName();
