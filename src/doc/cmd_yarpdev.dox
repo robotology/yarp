@@ -5,12 +5,16 @@ The command-line utility "yarpdev" can create devices and wrap
 them for network visibility.  This is useful in cases where you
 wish to control devices on remote machines.
 
-If you do not have the "yarpdev" utility, you need to ask CMake to
-build it.  run "ccmake ." (on UNIX) or "cmake" (on Windows) on the
+The devices available to "yarpdev" depend on the options set
+when compiling YARP.  To choose the devices you want compiled,
+run "ccmake ." (on UNIX) or "cmake" (on Windows) on the
 root directory of the YARP source code and select the
-"CREATE_DEVICE_LIBRARY" option.  After you configure, new "ENABLE_*"
+"CREATE_DEVICE_LIBRARY_BUILTINS" option.  
+After you configure, new "ENABLE_*"
 options will appear that permit you to choose what devices you want
-to try and compile.
+to try and compile.  Often this will require that you install 
+particular libraries or operating system device drivers.
+
 
 @section yarpdev_base yarpdev
 

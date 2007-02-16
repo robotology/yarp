@@ -71,7 +71,7 @@ INPUT                  = src
 FILE_PATTERNS          = UserDoc_companion.dox \
                          UserDoc_dev_companion.dox \
                          UserDoc_man_*.dox \
-			 cmd_yarp.dox
+			 cmd_*.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
