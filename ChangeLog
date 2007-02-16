@@ -1,3 +1,8 @@
+2007-02-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/cmd_*.dox: freshened the documentation of the basic
+	yarp programs (yarp, yarpdev, yarpview).
+
 2007-02-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/NameServer.h: add a new "yarp name
