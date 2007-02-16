@@ -284,7 +284,10 @@ public:
             rpc_p.open(rootName.c_str());
         } else {
             // attach readers.
-            rpc_p.setReader(command_reader);
+            //rpc_p.setReader(command_reader);
+            // changed so that streaming input accepted if offered
+            command_buffer.attach(rpc_p);
+            command_reader.attach(command_buffer);
             
             // attach buffers.
             state_buffer.attach(state_p);
