@@ -170,8 +170,6 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
 
         Bottle bin(sFixed.c_str());
         sData = sFixed;
-        printf("data message: %s\n", s.c_str());
-        printf("data message: %s\n", sFixed.c_str());
         s = String("d\n") + sFixed;
     }
 
