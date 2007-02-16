@@ -5,10 +5,8 @@
 This tutorial builds on the material in \ref note_ports, and takes
 a deeper look at what ports can do for you.
 
- - WARNING - THIS IS A DRAFT, CODE PRESENT HAS NOT BEEN FULLY TESTED,
-   SEND FEEDBACK TO paulfitz@liralab.it
-
- - Some of the code is present in the example/port_power directory
+ - The code fragments in this tutorial are expanded into
+   self-contained programs in the example/port_power directory
    of the YARP repository.
 
 \section port_expert_basic Streaming messages
@@ -414,24 +412,6 @@ format to be sent as plain text.
 
 There is experimental support for http, as a way to browse
 port information from a browser.
-
-
-
-\section port_expert_summary Summary
-
-A table of some sort?  What would it show?
-
-
-
-\section port_expert_others Other things to cover.
-
- - Model: the overall nature of the communication system implemented.
- - Timing summary
- - Format: how data is represented as it is being transmitted across the 
-   network.
- - Carrier: the low-level protocol recruited for communication, and how
-   it is organized to implement the model.
-
 
 
 
