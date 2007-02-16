@@ -70,7 +70,8 @@ WARN_LOGFILE           =
 INPUT                  = src
 FILE_PATTERNS          = UserDoc_companion.dox \
                          UserDoc_dev_companion.dox \
-                         UserDoc_man_*.dox
+                         UserDoc_man_*.dox \
+			 cmd_yarp.dox
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
