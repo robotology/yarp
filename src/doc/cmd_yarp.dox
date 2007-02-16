@@ -4,6 +4,8 @@
 The command-line utility "yarp" performs a set of useful operations
 for a YARP network.  It can give status information, make and break
 connections between ports, and send/receive data to/from ports.
+For an example of usage, see this section: \ref companion_extended.
+
 \if MAN_PAGE_COND
 \else
 Here are the ways you can call yarp:
@@ -23,6 +25,8 @@ Here are the ways you can call yarp:
 - \ref yarp_terminate
 - \ref yarp_ping
 - \ref yarp_exists
+- \ref yarp_wait
+- \ref yarp_cmake
 \endif
 
 @section yarp_base yarp
@@ -40,24 +44,9 @@ Call with the argument "help" to see a list of ways to use this program.
 @section yarp_help yarp help
 
 This lists a human-readable summary of the 
-ways the utility can be used.  Our current implementation
-says:
+ways the utility can be used.  It is a short 
+version of what you are reading right now.
 
-\verbatim
-Here are arguments you can give this program:
-help         get this list
-version      get version information
-where        report where the yarp name server is running
-conf         report what configuration file is being used
-name         send commands to the yarp name server
-connect      create a connection between two ports
-disconnect   remove a connection between two ports
-read         read from the network and print to standard output
-write        write to the network from standard input
-rpc          read/write commands to a port, in standard format
-server       run yarp name server
-check        run a simple sanity check to see if yarp is working
-\endverbatim
 
 @section yarp_server yarp server
 
@@ -75,6 +64,10 @@ Also, the IP by which the name server should be identified can
 optionally be specified (default is a fairly random choice of
 the IPs associated with the current machine).
 
+The address of the name server can be determined using
+\ref yarp_where.  The address is cached in a configuration
+file - see \ref yarp_conf.
+
 If possible, a fallback multi-cast server will be started with IP
 224.2.1.1 and port number 10001.  The purpose of this server is 
 to allow yarp processes to find the yarp name server in the absence
@@ -89,20 +82,36 @@ example:
 
 \verbatim
 Name server is available at ip 15.255.112.22 port 10000
+Name server can be browsed at http://15.255.112.22:10000/
 \endverbatim
+
+The name server registers this address with itself under the name "/root".
+So typing:
+\verbatim
+yarp name query /root
+\endverbatim
+will get the same information.  See \ref name_query.
 
 
 \section yarp_conf yarp conf
 
 
-This will report where the name server location is configured.
+This will report the location of
+the file in which the name server location is configured.
 For the author's machine, the result is:
 \verbatim
 /home/paulfitz/.yarp/conf/yarp.conf
 \endverbatim
 If the YARP_CONF directory is set, this will be where the conf/yarp.conf
-file is created/read.
-
+file is created/read.  The first line of that file looks like this:
+\verbatim
+ 15.255.112.22 10000
+\endverbatim
+This is simply the IP address and the port number of the yarp name
+server.  The file can be modified by hand, but will be overwritten
+if the name server does not respond and is discovered running somewhere
+else.  You are also free to delete the file, which will force
+autodetection of the server.
 
 @section yarp_check yarp check
 
@@ -134,7 +143,7 @@ yarp: *** YARP seems okay!
 This will report on the yarp version available.  Example:
 
 \verbatim
-YARP network version 2.0
+YARP Companion utility version 2.0 implemented in C++
 \endverbatim
 
 
@@ -202,6 +211,22 @@ associated with devices may behave like this.  You may optionally
 specify the name for the connection.  "RPC" stands for Remote
 Procedure Call.
 
+An example of a port that will respond to RPC is the yarp server.
+For example, if you run:
+\verbatim
+yarp rpc /root
+\endverbatim
+and type:
+\verbatim
+list
+\endverbatim
+you'll receive a response like:
+\verbatim
+Response: registration name /root ip 192.168.0.204 port 10000 type tcp
+Response: registration name fallback ip 224.2.1.1 port 10001 type mcast
+Response: *** end of message
+\endverbatim
+See \ref yarp_name for other commands the name server responds to.
 
 \section yarp_connect yarp connect
 
@@ -274,6 +299,27 @@ use in scripts -- nothing is printed, the result is encoded in the
 return value of the program (0 = port exists).
 
 
+\section yarp_wait yarp wait
+
+\verbatim
+yarp wait /PORT
+\endverbatim
+
+Waits for the named port to come into existence.  Terminates when
+"yarp exists /PORT" would return true.  This can be useful in scripts.
+
+
+\section yarp_cmake yarp cmake
+
+\verbatim
+yarp cmake
+\endverbatim
+
+Experimental.  Generates a "CMakeLists.txt" that is suitable for
+compiling code for YARP, including new devices.  It is intended to
+help experienced users get started on new projects quickly.
+
+
 
 \section yarp_name yarp name
 
@@ -282,9 +328,10 @@ yarp name COMMAND ARG_1 ARG_2 ...
 \endverbatim
 
 This will send the given command and arguments to the YARP name server
-and report the results.  Here are the possible commands:
+and report the results.  
 \if MAN_PAGE_COND
 \else
+Here are the possible commands:
 - \ref name_help
 - \ref name_query
 - \ref name_register
@@ -294,6 +341,7 @@ and report the results.  Here are the possible commands:
 - \ref name_get
 - \ref name_check
 - \ref name_route
+- \ref name_gc
 \endif
 
 For example:
@@ -315,6 +363,7 @@ This is equivalent to:
 yarp where
    # system responds...
    Name server is available at ip 172.16.232.1 port 10000
+   Name server can be browsed at http://172.16.232.1:10000/
 # user types...
 telnet 172.16.232.1 10000
    # system responds...
@@ -540,6 +589,19 @@ Returns the following response:
 port /write route /read = shmem://read
 \endverbatim
 This suggests that shmem is the best carrier to use.
+
+
+\section name_gc yarp name gc
+
+\verbatim
+yarp name gc
+\endverbatim
+
+This requests that the server "garbage collect" any 
+registered ports that are no longer responding.
+This is useful for cleaning up registrations corresponding
+to programs that have crashed or been terminated 
+abruptly.
 
 
 \section companion_extended An extended example
