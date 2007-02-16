@@ -12,24 +12,28 @@
 #include <libglademm.h>
 #include <gtkmm.h>
 
+#include <yarp/os/all.h>
+#include <yarp/dev/all.h>
+#include <yarp/String.h>
+
+using namespace yarp::dev;
+using namespace yarp::os;
+using namespace yarp;
+
 /**
  * Gui2Yarp class definition.  Interfaces the gtk/glade GUI components
  * to the Yarp management of the motor control device driver by implementing
  * callbacks.
  */
 class Gui2Yarp {
-protected:
+protected:    
+    // here's where the yarp data should go.    
+    String initFilename;
 
 public:
     /**
-     * linkAll connects all signals to widgets.
-     * @param refXml is a reference count pointer to the xml glade representation.
+     * initialize the device driver config file location.
+     * @param s the filename including the path.
      */
-    void linkAll(Glib::RefPtr<Gnome::Glade::Xml> refXml);
-
-    /**
-     * quit the application.
-     */
-    void onButtonQuitClicked();
-
+    void setInitFilename(String& s) { initFilename = s; }
 };
