@@ -23,6 +23,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 
+#include <ace/Containers_T.h>
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -456,9 +458,18 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
 String NameServer::cmdList(int argc, char *argv[]) {
     String response = "";
 
+    ACE_Ordered_MultiSet<String> lines;
     for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = (*it).int_id_;
-        response += textify(rec.getAddress());
+        lines.insert(textify(rec.getAddress()));
+    }
+
+    // return result in alphabetical order
+    ACE_Ordered_MultiSet_Iterator<String> iter(lines);
+    iter.first();
+    while (!iter.done()) {
+        response += *iter;
+        iter.advance();
     }
 
     return terminate(response);

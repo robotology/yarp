@@ -82,7 +82,8 @@ Terminee::Terminee(const char *name) {
     }
     
     NameClient& namer = NameClient::getNameClient();
-    Address a = namer.registerName(s);
+    Address suggest = Address("...",0,"quit",s);
+    Address a = namer.registerName(s,suggest);
 	//ACE_OS::printf("listening address: %s port %d\n",a.getName().c_str(),a.getPort());
 
     implementation = new TermineeHelper;
