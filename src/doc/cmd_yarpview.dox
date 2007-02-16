@@ -1,0 +1,44 @@
+
+/**
+ * @page yarpview The YARP image viewer
+
+This is for viewing images transmitted in standard network format.
+Written by Matteo Brunettini.  See source code for documentation :-).
+Some very basic documentation follows.
+
+@section yarpview_base yarpview /PORTNAME
+This is the most common usage.  Starts up a viewer, listing with
+a given port name.  Then if we have an image source, for example:
+\verbatim
+yarpdev --device test_grabber --name /grabber
+\endverbatim
+We can connect it and see what it is doing:
+\verbatim
+yarp connect /grabber /PORTNAME
+\endverbatim
+
+This usage is a shorthand for "yarpview --name /PORTNAME".
+
+
+@section yarpview_click yarpview --name /PORTNAME --out /CLICK
+
+This adds an output port which produces a pair of coordinates
+every time the user clicks on the video stream.  For example,
+you can view this output with:
+\verbatim
+yarp read /read /CLICK
+\endverbatim
+
+Note that this will only work if at least one image has been shown by
+the viewer (the image is needed to establish the scale).
+
+@section yarpview_pos yarpview --x X_POSITION --y Y_POSITION
+
+Adding these options will place the viewer at the specified location.
+
+@section yarpview_size yarpview --w WIDTH --h HEIGHT
+
+Adding these options will create the viewer with the specified size.
+
+ */
+
