@@ -33,17 +33,30 @@ void HttpTwoWayStream::apply(char ch) {
         proc = "";
         Address addr = NameClient::extractAddress(part);
         if (addr.isValid()) {
-            if (addr.getCarrierName()=="tcp") {
+            if (addr.getCarrierName()=="tcp"&&
+                (addr.getRegName().strstr("/quit")==String::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getName();
                 proc += ":";
                 proc += NetType::toString(addr.getPort());
                 proc += "\">";
-                proc += part;
-                proc += "</A>\n";
-            } else {
-                proc += part;
+                proc += addr.getRegName();
+                proc += "</A> "; 
+                unsigned int len = addr.getRegName().length();
+                unsigned int target = 30;
+                if (len<target) {
+                    for (unsigned int i=0; i<target-len; i++) {
+                        proc += " ";
+                    }
+                }
+                proc += "(";
+                proc += addr.toString().c_str();
+                proc += ")";
                 proc += "\n";
+            } else {
+                // Don't show non tcp connections
+                //proc += part;
+                //proc += "\n";
             }
         } else {
             if ((part[0]=='\"'&&part[1]=='[')||(part[0]=='+')) {
@@ -138,14 +151,18 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
                 } else {
                     arg = false;
                     sFixed += p.check(var.c_str(),Value("")).toString();
-                    sFixed += ch;
+                    if (i!=s.length()-1) {
+                        sFixed += ch; // omit padding
+                    }
                     var = "";
                 }
             } else {
                 if (ch=='$') {
                     arg = true;
                 } else {
-                    sFixed += ch;
+                    if (i!=s.length()-1) {
+                        sFixed += ch; // omit padding
+                    }
                 }
             }
         }
