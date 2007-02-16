@@ -123,28 +123,39 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
         s = p.check("cmd",Value("")).asString().c_str();
     } else if (p.check("data")) {
         s = p.check("data",Value("")).asString().c_str();
-        Bottle bin(s.c_str()), bout;
-        for (int i=0; i<bin.size(); i++) {
-            Value& val = bin.get(i);
-            bool done = false;
-            if (val.isString()) {
-                if (val.asString()[0]=='$') {
-                    String key = val.asString().c_str();
-                    key = key.substr(1,String::npos);
-                    if (p.check(key.c_str())) {
-                        bout.add(Value::makeValue(p.check(key.c_str(),Value("")).asString()));
-                        done = true;
-                    }
+        s += " ";
+        String sFixed = "";
+        String var = "";
+        bool arg = false;
+        for (unsigned int i=0; i<s.length(); i++) {
+            char ch = s[i];
+            if (arg) {
+                if ((ch>='A'&&ch<='Z')||
+                    (ch>='a'&&ch<='z')||
+                    (ch>='0'&&ch<='9')||
+                    (ch=='_')) {
+                    var += ch;
+                } else {
+                    arg = false;
+                    sFixed += p.check(var.c_str(),Value("")).toString();
+                    sFixed += ch;
+                    var = "";
+                }
+            } else {
+                if (ch=='$') {
+                    arg = true;
+                } else {
+                    sFixed += ch;
                 }
             }
-            if (!done) {
-                bout.add(val);
-            }
         }
-        s = bout.toString().c_str();
-        sData = s;
-        //printf("data message: %s\n", s.c_str());
-        s = String("d\n") + s;
+
+
+        Bottle bin(sFixed.c_str());
+        sData = sFixed;
+        printf("data message: %s\n", s.c_str());
+        printf("data message: %s\n", sFixed.c_str());
+        s = String("d\n") + sFixed;
     }
 
 
