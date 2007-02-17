@@ -50,6 +50,12 @@ IF (WIN32 AND NOT CYGWIN)
   SET(ACE_LIBRARY ${ACE_LIBRARY} winmm)
 ENDIF (WIN32 AND NOT CYGWIN)
 
+IF (MINGW)
+  MESSAGE(STATUS "need to link windows-specific libraries")
+  #LINK_LIBRARIES(winmm wsock32)
+  SET(ACE_LIBRARY ${ACE_LIBRARY} winmm wsock32)
+ENDIF(MINGW)
+
 
 ########################################################################
 ## finished - now just set up flags and complain to user if necessary
