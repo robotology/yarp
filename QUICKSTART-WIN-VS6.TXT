@@ -8,7 +8,8 @@ YARP2. this works, and has been tested, for Windows and Microsoft
 Visual Studio 6 only.
 
 (0) decide a directory where to unpack all and, in general, where to work.
-    I use c:\work.
+    I use c:\work. See also the companion software page with useful links
+    for downloading libraries (http://pasa.liralab.it/yarp/software.html).
 
 (1) download and compile ACE
         1. dial http://deuce.doc.wustl.edu/ACE-5.5.zip

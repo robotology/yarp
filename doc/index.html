@@ -30,6 +30,9 @@ developing documentation.</li>
 
 <li><a href="http://sourceforge.net/tracker/?group_id=62418">Bug reports and Feature requests</a> -- we welcome them!</li>
 
+<li><a href="http://pasa.liralab.it/yarp/software.html">Companion software</a> 
+-- where to find libraries used by YARP!</li>
+
 
 
 </ul>
@@ -38,8 +41,7 @@ developing documentation.</li>
 
 You can <A HREF=user/html/install_yarp.html>install YARP 
 from CVS</A>:
-<PRE>
-  cvs -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 login
+<PRE>  cvs -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 login
   cvs -z3 -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 co -P yarp2
 </PRE>
 (use empty/blank password).<P>
@@ -68,21 +70,17 @@ We have an unofficial Debian source package (all architectures) and
 binary package (just i386).  Add the following to your
 /etc/apt/sources.conf:
 
-<PRE>
-   deb http://eris.liralab.it/yarp/downloads/yarp/debian stable main
+<PRE>   deb http://eris.liralab.it/yarp/downloads/yarp/debian stable main
 </PRE>
 (unstable is also available).  Then you can set up YARP with:
-<PRE>
-   sudo apt-get update
+<PRE>   sudo apt-get update
    sudo apt-get install yarp
 </PRE>
 If you want the source code and not just executables and header files, add the following:
-<PRE>
-   deb-src http://eris.liralab.it/yarp/downloads/yarp/debian stable main
+<PRE>   deb-src http://eris.liralab.it/yarp/downloads/yarp/debian stable main
 </PRE>
 Then you can get the YARP source code with:
-<PRE>
-   sudo apt-get update
+<PRE>   sudo apt-get update
    apt-get source yarp
 </PRE>
 
@@ -125,4 +123,3 @@ Older, stable versions of YARP:
 </BODY>
 
 </HTML>
-
