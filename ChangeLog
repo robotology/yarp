@@ -1,9 +1,12 @@
 2007-02-17  Alexandre Bernardino  <alex@isr.ist.utl.pt>
 
-        *conf/FindAce.cmake: Added specific rules for linking with MinGW:
-        -lwinmm -lwsock32
+	* conf/FindAce.cmake: Added specific rules for linking with MinGW:
+	-lwinmm -lwsock32
 
 2007-02-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Terminator.cpp: registered terminator
+	sockets in a way that distinguishes them from ports.
 
 	* src/doc/cmd_*.dox: freshened the documentation of the basic
 	yarp programs (yarp, yarpdev, yarpview).
