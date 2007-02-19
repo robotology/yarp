@@ -7,11 +7,11 @@ doxygen conf/Doxyfile.min > /dev/null
 
 # don't bother with this anymore
 # doxygen for pdf manual with page numbers
-doxygen conf/Doxyfile.pagenum > /dev/null
+# doxygen conf/Doxyfile.pagenum > /dev/null
 
 base=$PWD
 
-for manual in min pagenum; do
+for manual in min; do
 
     cd $base/doc/$manual/latex
 
