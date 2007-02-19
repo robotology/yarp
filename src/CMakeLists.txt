@@ -16,7 +16,7 @@ IF (CREATE_GUIS)
       SUBDIRS(yarp-imageviewer)
   ENDIF (GtkPlus_FOUND)
   IF (GtkMM_FOUND)
-  #    SUBDIRS(yarp-framegrabbergui)
+      SUBDIRS(yarp-framegrabbergui)
   ENDIF (GtkMM_FOUND)
 ENDIF(CREATE_GUIS)
 
