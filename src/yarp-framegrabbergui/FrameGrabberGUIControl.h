@@ -2,7 +2,7 @@
 #define __FRAME_GRABBER_GUI_CONTROL_H__
 
 #include <gtkmm.h>
-#include <yarp/dev/remoteframegrabber.h>
+#include <yarp/dev/RemoteFrameGrabber.h>
 
 class FrameGrabberGUIControl : public Gtk::Window, public yarp::dev::RemoteFrameGrabber
 {
