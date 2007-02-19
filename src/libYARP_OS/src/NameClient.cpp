@@ -102,11 +102,13 @@ Address NameClient::extractAddress(const String& txt) {
     Params p(txt.c_str());
     if (p.size()>=9) {
         // registration name /bozo ip 5.255.112.225 port 10002 type tcp
-        const char *regName = p.get(2);
-        const char *ip = p.get(4);
-        int port = atoi(p.get(6));
-        const char *carrier = p.get(8);
-        result = Address(ip,port,carrier,regName);
+        if (String(p.get(0))=="registration") {
+            const char *regName = p.get(2);
+            const char *ip = p.get(4);
+            int port = atoi(p.get(6));
+            const char *carrier = p.get(8);
+            result = Address(ip,port,carrier,regName);
+        }
     }
     return result;
 }
