@@ -6,6 +6,9 @@
  *
  */
 
+// forget about this file for a while --paulfitz
+#if 0 
+
 #include <yarp/ydr.h>
 
 #include <stdio.h>
@@ -278,3 +281,4 @@ int ydrmem_create(YDR *xdrs, void* buf, size_t buflen, int op) {
 }
 
 
+#endif
