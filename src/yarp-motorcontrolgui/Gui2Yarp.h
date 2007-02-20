@@ -41,17 +41,22 @@ protected:
     bool connected;
 
 public:
+    /**
+     * default constructor.
+     */
     Gui2Yarp() {
         // initFilename = "";
     }
 
     /**
      * initialize the interface and network wrappers.
+     * @return true is successful, false otherwise.
      */
     bool initialize();
 
     /**
      * shut down the connection to yarp stuff.
+     * @return true is successful, false otherwise.
      */
     bool uninitialize();
 
@@ -62,7 +67,15 @@ public:
     void setInitFilename(String& s) { initFilename = s; }
 
     /**
+     * return the connection status as a bool.
+     * @return the connection status.
+     */
+    bool isConnected() const { return connected; }
+
+    /**
      * connect to the motor control device driver.
+     * @param local, whethet the driver is local to the machine.
+     * @return true is successful, fail otherwise.
      */
     bool connectDevice(bool local = true);
 };

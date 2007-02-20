@@ -736,6 +736,7 @@
 		      <property name="width_request">160</property>
 		      <property name="height_request">20</property>
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Type the configuration filename</property>
 		      <property name="can_focus">True</property>
 		      <property name="editable">True</property>
 		      <property name="visibility">True</property>
@@ -747,29 +748,6 @@
 		    </widget>
 		    <packing>
 		      <property name="x">116</property>
-		      <property name="y">8</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkComboBox" id="combobox_can">
-		      <property name="width_request">70</property>
-		      <property name="height_request">20</property>
-		      <property name="visible">True</property>
-		      <property name="items" translatable="yes">remote
-0
-1
-2
-3
-4
-5
-6
-7</property>
-		      <property name="add_tearoffs">True</property>
-		      <property name="focus_on_click">True</property>
-		    </widget>
-		    <packing>
-		      <property name="x">325</property>
 		      <property name="y">8</property>
 		    </packing>
 		  </child>
@@ -796,33 +774,6 @@
 		    </widget>
 		    <packing>
 		      <property name="x">0</property>
-		      <property name="y">8</property>
-		    </packing>
-		  </child>
-
-		  <child>
-		    <widget class="GtkButton" id="button_filechooser">
-		      <property name="width_request">40</property>
-		      <property name="height_request">20</property>
-		      <property name="visible">True</property>
-		      <property name="can_focus">True</property>
-		      <property name="relief">GTK_RELIEF_HALF</property>
-		      <property name="focus_on_click">True</property>
-
-		      <child>
-			<widget class="GtkImage" id="image1">
-			  <property name="visible">True</property>
-			  <property name="stock">gtk-open</property>
-			  <property name="icon_size">1</property>
-			  <property name="xalign">0.5</property>
-			  <property name="yalign">0.5</property>
-			  <property name="xpad">0</property>
-			  <property name="ypad">0</property>
-			</widget>
-		      </child>
-		    </widget>
-		    <packing>
-		      <property name="x">280</property>
 		      <property name="y">8</property>
 		    </packing>
 		  </child>
@@ -985,6 +936,57 @@
 		    <packing>
 		      <property name="x">325</property>
 		      <property name="y">32</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkButton" id="button_filechooser">
+		      <property name="width_request">40</property>
+		      <property name="height_request">20</property>
+		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Choose the configuration file</property>
+		      <property name="can_focus">True</property>
+		      <property name="relief">GTK_RELIEF_HALF</property>
+		      <property name="focus_on_click">True</property>
+
+		      <child>
+			<widget class="GtkImage" id="image1">
+			  <property name="visible">True</property>
+			  <property name="stock">gtk-open</property>
+			  <property name="icon_size">1</property>
+			  <property name="xalign">0.5</property>
+			  <property name="yalign">0.5</property>
+			  <property name="xpad">0</property>
+			  <property name="ypad">0</property>
+			</widget>
+		      </child>
+		    </widget>
+		    <packing>
+		      <property name="x">280</property>
+		      <property name="y">8</property>
+		    </packing>
+		  </child>
+
+		  <child>
+		    <widget class="GtkComboBox" id="combobox_can">
+		      <property name="width_request">70</property>
+		      <property name="height_request">20</property>
+		      <property name="visible">True</property>
+		      <property name="items" translatable="yes">remote
+0
+1
+2
+3
+4
+5
+6
+7</property>
+		      <property name="add_tearoffs">True</property>
+		      <property name="focus_on_click">True</property>
+		    </widget>
+		    <packing>
+		      <property name="x">325</property>
+		      <property name="y">8</property>
 		    </packing>
 		  </child>
 		</widget>

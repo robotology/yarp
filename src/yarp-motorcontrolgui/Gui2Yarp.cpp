@@ -23,6 +23,7 @@ bool Gui2Yarp::initialize() {
 
 bool Gui2Yarp::uninitialize() {
     Network::fini();
+    connected = false;
     return true;
 }
 
@@ -36,11 +37,13 @@ bool Gui2Yarp::connectDevice(bool local) {
     }
 
     // I'm not dealing with the calibrator for now.
+    std::cout << options.toString().c_str() << std::endl;
 
     if (local) {
         driver.open(options);
         if (!driver.isValid()) {
             std::cout << "The driver filed to load" << std::endl;
+            connected = false;
             return false;
         }
         // acquire the interfaces.
@@ -57,6 +60,7 @@ bool Gui2Yarp::connectDevice(bool local) {
     }
     else {
         std::cout << "Remote device driver connection not yet implemented" << std::endl;
+        connected = false;
         return false;
     }
 
