@@ -123,8 +123,8 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
          }
      }
     }
-    IMGFOR(image,x,y) {
-        PixelRgb& pix = image(x,y);
+    IMGFOR(image,x2,y2) {
+        PixelRgb& pix = image(x2,y2);
         float f = noiseLevel;
         scramble(pix.r,f);
         scramble(pix.g,f);
