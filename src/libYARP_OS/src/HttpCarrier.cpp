@@ -150,7 +150,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
                     var += ch;
                 } else {
                     arg = false;
-                    sFixed += p.check(var.c_str(),Value("")).toString();
+                    sFixed+=p.check(var.c_str(),Value("")).toString().c_str();
                     if (i!=s.length()-1) {
                         sFixed += ch; // omit padding
                     }
