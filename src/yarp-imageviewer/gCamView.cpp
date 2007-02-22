@@ -795,11 +795,13 @@ bool openPorts()
 	bool ret = false;
 	//int res = 0;
 	// Registering Port(s)
-	g_print("Registering port %s on network %s...\n", _options.portName, _options.networkName);
+    //reduce verbosity --paulfitz
+	//g_print("Registering port %s on network %s...\n", _options.portName, _options.networkName);
 	ret = _imgRecv.Connect(_options.portName, _options.networkName);
 	if (ret == true)
         {
-            g_print("Port registration succeed!\n");
+            //reduce verbosity --paulfitz
+            //g_print("Port registration succeed!\n");
         }
 	else
         {
@@ -829,11 +831,13 @@ void closePorts()
 {
 	bool ret = false;
 	//int res = 0;
-	g_print("Uregistering port(s)...\n");
+    //reduce verbosity --paulfitz
+	//g_print("Unregistering port(s)...\n");
 	ret = _imgRecv.Disconnect();
 	if (ret)
         {
-            g_print("Port %s unregistration succeed!\n", _options.portName);
+            //reduce verbosity --paulfitz
+            //g_print("Port %s unregistration succeed!\n", _options.portName);
         }
 	else
         {
@@ -894,7 +898,8 @@ int myMain(int argc, char* argv[])
 {
     yarp::os::Network::init();
     createObjects();
-    fprintf(stderr, "Starting as console app\n");
+    //reduce verbosity --paulfitz
+    //fprintf(stderr, "Starting as console app\n");
 	// Global variables init
 	_frameN = 0;
 	_savingSet = false;
@@ -909,7 +914,8 @@ int myMain(int argc, char* argv[])
 	// Setting Up Program
 	setUp();
 
-	g_print("Starting application..\n");
+    //reduce verbosity --paulfitz
+	//g_print("Starting application..\n");
 	
 	// This is called in all GTK applications. Arguments are parsed
 	// from the command line and are returned to the application.

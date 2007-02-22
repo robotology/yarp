@@ -203,12 +203,13 @@ public:
     }
 
 
-    void fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
+    bool fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
         ifstream fin(fname);
         String txt;
         if (fin.fail()) {
-            YARP_ERROR(Logger::get(),String("cannot read from ") +
+            YARP_DEBUG(Logger::get(),String("cannot read from ") +
                        fname);
+            return false;
         }
         while (!(fin.eof()||fin.fail())) {
             char buf[1000];
@@ -219,6 +220,7 @@ public:
             }
         }
         fromConfig(txt.c_str(),env,wipe);
+        return true;
     }
 
 
@@ -525,8 +527,8 @@ void Property::fromCommand(int argc, char *argv[], bool skipFirst,
     HELPER(implementation).fromCommand(argc,argv,wipe);
 }
 
-void Property::fromConfigFile(const char *fname,Searchable& env,bool wipe) {
-    HELPER(implementation).fromConfigFile(fname,env,wipe);
+bool Property::fromConfigFile(const char *fname,Searchable& env,bool wipe) {
+    return HELPER(implementation).fromConfigFile(fname,env,wipe);
 }
 
 

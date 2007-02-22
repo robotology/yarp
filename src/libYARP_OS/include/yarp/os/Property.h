@@ -189,10 +189,11 @@ public:
      * \endcode
      * @param fname the name of the file to read from
      * @param wipe should Property be emptied first
+     * @return true if file exists and can be read
      */
-    void fromConfigFile(const char *fname,bool wipe=true) {
+    bool fromConfigFile(const char *fname,bool wipe=true) {
         Property p;
-        fromConfigFile(fname,p,wipe);
+        return fromConfigFile(fname,p,wipe);
     }
 
 
@@ -204,8 +205,9 @@ public:
      * @param fname the name of the file to read from
      * @prama env extra set of environment variables
      * @param wipe should Property be emptied first
+     * @return true if file exists and can be read
      */
-    void fromConfigFile(const char *fname,
+    bool fromConfigFile(const char *fname,
                         Searchable& env,
                         bool wipe=true);
 
