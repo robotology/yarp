@@ -41,7 +41,10 @@ build-stamp: configure-stamp
 	( cd Build; $(MAKE) )
 
 	# Make man page
-	( doxygen ./conf/Doxyfile.man )
+	doxygen ./conf/Doxyfile.man
+
+	# Make normal documentation page
+	doxygen ./conf/Doxyfile.min
 
 	touch build-stamp
 
