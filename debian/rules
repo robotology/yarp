@@ -66,6 +66,7 @@ install: build
 	( cd Build; $(MAKE) install )
 
 	# Reorganize the installation for a debian system
+	mkdir -p $(CURDIR)/debian/yarp/usr
 	mv $(CURDIR)/debian/yarp/include $(CURDIR)/debian/yarp/usr/include
 	mv $(CURDIR)/debian/yarp/lib $(CURDIR)/debian/yarp/usr/lib
 	mkdir -p $(CURDIR)/debian/yarp/usr/bin
