@@ -37,7 +37,7 @@ Section: net
 Priority: optional
 Architecture: any
 Suggests: yarp-doc
-Depends: ${shlibs:Depends}
+Depends: libyarp2 (= ${Source-Version})
 Description: short desc
  Something more.
  .

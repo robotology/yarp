@@ -20,6 +20,8 @@ BASE=$PWD/debian-package
 
 echo "Make sure you run ./scripts/make-source-package first"
 
+# Comment out this block for now
+if false; then
 for f in `ls $SRC/*.tar.gz`; do
     echo Working with $f
     rm -rf $BASE
@@ -75,6 +77,24 @@ for f in `ls $SRC/*.tar.gz`; do
 	fi
 	echo "Results in $BASE/archive"
     fi
+done
+fi
+
+for f in `ls $SRC/yarp-*.tar.gz`; do
+    orig=`echo $f | sed "s/yarp-/yarp_/" | sed "s/tar/orig.tar/"`
+    name=`echo $f | sed "s/.tar.gz//"`
+    rm -f *.deb
+    rm -f *orig.tar.gz
+    echo "Working with $f"
+    echo "Making $orig"
+    cp $f $orig
+    tar xzf - < $orig
+    cd $name
+    echo "Directory $PWD"
+    mkdir -p debian
+    cp conf/debian/* debian
+    rm debian/README.Yarp
+    dpkg-buildpackage -rfakeroot
 done
 
 
