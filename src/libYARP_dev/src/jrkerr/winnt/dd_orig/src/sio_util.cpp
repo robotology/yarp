@@ -1,3 +1,6 @@
+
+// Copyright: 2005 Jeffrey Kerr LLC
+
 #include <stdio.h>
 
 #include "sio_util.h"

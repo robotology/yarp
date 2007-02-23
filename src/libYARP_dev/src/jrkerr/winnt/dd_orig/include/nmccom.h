@@ -1,3 +1,6 @@
+
+// Copyright: 2005 Jeffrey Kerr LLC
+
 //---------------------------------------------------------------------------
 #ifndef nmccomH
 #define nmccomH

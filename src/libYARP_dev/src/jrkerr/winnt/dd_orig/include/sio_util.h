@@ -1,3 +1,5 @@
+// Copyright: 2005 Jeffrey Kerr, LLC
+
 //---------------------------------------------------------------------------
 #ifndef sio_utilH
 #define sio_utilH
