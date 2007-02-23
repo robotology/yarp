@@ -3,8 +3,12 @@
 echo "Puts license text in order."
 echo "Make sure you run this as ./scripts/update-license"
 
+if true; then
+
 # reset change log
 echo -n | tee license-changes.txt
+echo -n | tee license-good.txt
+echo -n | tee license-odd.txt
 
 for f in `find . -iname "*.h"; find . -iname "*.cpp"; find . -iname "*.c"`; do
     #ignore=`echo "$f" | grep -q dd_orig && echo true || echo false`
@@ -16,6 +20,48 @@ for f in `find . -iname "*.h"; find . -iname "*.cpp"; find . -iname "*.c"`; do
     fi
 done
 
+fi
 
+# license-good.txt has files under GNU GPL
+# license-odd.txt has everything else
 
+# Gather information on main GPL material
+cat license-good.txt  | grep "Copyright:" | sort | uniq > license-gpl.txt
+GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" ) < license-gpl.txt`
+echo $GPL_PEOPLE | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | sort | uniq | grep "." | tee license-gpl-people.txt
+GPL_YEARS=`sed "s/[^0-9 ]/ /g" < license-gpl.txt`
+echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "." | tee license-gpl-years.txt
+
+# Construct license report
+(
+
+cat<<EOF
+Unless otherwise stated, files in YARP are:
+  Copyright: 2006 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+  Released under the GNU GPL, version 2 - see GPL.TXT for details.
+
+Contributed files in YARP are copyright of their authors, and
+released under the same license.  The author list for contributed
+files follows.
+
+EOF
+
+echo -n "Copyright "
+echo -n `cat license-gpl-years.txt`
+echo ":"
+cat license-gpl-people.txt | sed "s/^/  /"
+echo ""
+
+cat<<EOF
+Certain files are integrated in YARP from other sources with
+compatible licenses.  Here is a list of these files and a summary of
+their copyright.  See the individual files for more details.
+
+EOF
+
+cat license-odd.txt
+
+) > license-statement.txt
+
+echo "License statement in license-statement.txt"
 

@@ -65,6 +65,7 @@ if ($copyright eq "default") {
     # no copyright statement - only accept for example code
     if (!($fname =~ /example\//)) {
 	$copyright = "unknown";
+	$report = "skipped";
     }
 }
 
@@ -78,18 +79,26 @@ if ($policy eq "default") {
 
 $txt2 = $txt;
 
-if ($policy =~ /GNU GPL/) {
-    $report = "skipped";
-}
+#if ($policy =~ /GNU GPL/) {
+#    $report = "skipped";
+#}
 
 #system "echo \"$report $fname\" >> license-changes.txt";
 if ($report ne "skipped") {
-    my $txt = "$fname\n\tCopyright: $copyright\n\tCopyPolicy: $policy\n\n";
+    my $txt = "$fname\n  Copyright: $copyright\n  CopyPolicy: $policy\n\n";
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);
+    if ($policy =~ /GNU GPL/) {
+	open(FOUT,">>license-good.txt");
+	print FOUT $txt;
+	close(FOUT);
+    } else {
+	open(FOUT,">>license-odd.txt");
+	print FOUT $txt;
+	close(FOUT);
+    }
 }
-
 
 if (0) {
     if ($copyright eq "default") {

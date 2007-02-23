@@ -1,3 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2007 Alessandro Scalzo
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 #include <gtkmm.h>
 #include "FrameGrabberGUIControl.h"
 
