@@ -112,7 +112,7 @@ Companion::Companion() {
     add("cmake",  &Companion::cmdMake,
         "create files to help compiling YARP projects");
     add("run",  &Companion::cmdRun,
-        "start and stop processes (experimental, linux-only)");
+        "start and stop processes (experimental)");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
