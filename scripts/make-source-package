@@ -44,6 +44,7 @@ if $want_prune; then
     cp /tmp/REMOVED .
     ./scripts/update-license
     cp license-statement.txt COPYING
+    rm -f license-*.txt
 fi
 
 
