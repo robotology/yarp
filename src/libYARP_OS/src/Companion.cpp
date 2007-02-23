@@ -25,6 +25,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Terminator.h>
+#include <yarp/os/Run.h>
 
 #include <ace/OS.h>
 
@@ -110,6 +111,8 @@ Companion::Companion() {
         "wait for a port to be alive");
     add("cmake",  &Companion::cmdMake,
         "create files to help compiling YARP projects");
+    add("run",  &Companion::cmdRun,
+        "start and stop processes (experimental, linux-only)");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -691,6 +694,9 @@ int Companion::cmdMake(int argc, char *argv[]) {
 }
 
 
+int Companion::cmdRun(int argc, char *argv[]) {
+    return Run::main(argc,argv);
+}
 
 
 

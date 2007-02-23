@@ -18,8 +18,13 @@
 #include <ace/Null_Mutex.h>
 #include <ace/OS.h>
 
+// does ACE require new c++ header files or not?
+#if ACE_HAS_STANDARD_CPP_LIBRARY
 #include <fstream>
 using namespace std;
+#else
+#include <fstream.h>
+#endif
 
 using namespace yarp;
 using namespace yarp::os;

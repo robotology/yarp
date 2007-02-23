@@ -157,6 +157,8 @@ private:
 
     int cmdMake(int argc, char *argv[]);
 
+    int cmdRun(int argc, char *argv[]);
+
     class Entry {
     public:
         String name;
