@@ -1,10 +1,6 @@
 /*
     Example glade application. By Giorgio.
-    NOTE: The application doesn't shut down properly.
  */
-
-// just removes the pervading warning that plagues compilation of the gtkmm on Visual Studio
-#pragma warning(disable: 4250)
 
 // real code here!
 #include <iostream>
