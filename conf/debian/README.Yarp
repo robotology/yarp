@@ -1,0 +1,9 @@
+
+This are templates for packaging YARP into debian .deb files.
+
+We keep them out of the top-level directory so as not to get in the
+way of any future "real" debian packaging.
+
+If you want to make packages, just copy these files into a debian
+directory at the top level.
+
