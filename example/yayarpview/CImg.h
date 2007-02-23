@@ -39,7 +39,7 @@
 
 // Summary for YARP
 // CopyPolicy: CeCILL license (use, modify, redistribute)
-// Copyright: David Tschumperle
+// Copyright: 2004 David Tschumperle
 
 #ifndef cimg_version
 #define cimg_version 1.14

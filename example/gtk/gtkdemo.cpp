@@ -12,6 +12,9 @@
     (see http://www.gtk.org/tutorial/ for more details)
  */
 
+// Summary for YARP
+// CopyPolicy: Tutorial copies permitted, preserve notices.
+// Copyright:  1997 Ian Main, 1998-2002 Tony Gale.
 
 #include <gtk/gtk.h>
 

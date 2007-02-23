@@ -10,8 +10,8 @@ __  __ ___     ____   ____  ___
 YARP is a library and toolkit for communication and device interfaces
 for humanoid robots.
 
-Material included in YARP is copyright its authors -- please read COPYRIGHT.
-See COPYING for use, distribution, and modification rights (summary: GPLv2).
+Material included in YARP is copyright its authors -- please read COPYING
+for use, distribution, and modification rights.
 See AUTHORS for a list of contributors to YARP.
 
 ===============================================================================

@@ -9,8 +9,7 @@ This is YARP2, a new version of the YARP robot library set.
 It helps do stuff with robots (or avoid doing stuff with robots by 
 spending your time writing libraries).
 
-License information is in COPYING.
-Copyright information is in COPYRIGHT.
+License and copyright information is in COPYING.
 
 ===============================================================================
 
