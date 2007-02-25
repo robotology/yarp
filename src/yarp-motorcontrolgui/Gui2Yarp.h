@@ -34,9 +34,13 @@ protected:
     Property options;
     PolyDriver driver;
 
-    // more to come.
+    // interfaces required.
     IPositionControl *positionControl;
+    IVelocityControl *velocityControl;
     IAmplifierControl *amplifierControl;
+    IEncoders *encoders;
+    IPidControl *pid;
+    IControlLimits *limits;
 
     bool connected;
 
@@ -75,9 +79,29 @@ public:
     /**
      * connect to the motor control device driver.
      * @param local, whethet the driver is local to the machine.
-     * @return true is successful, fail otherwise.
+     * @return true if successful, false otherwise.
      */
     bool connectDevice(bool local = true);
+
+    /**
+     * disconnect the device driver.
+     * @return true if successful, false otherwise.
+     */
+    bool disconnectDevice();
+
+    /**
+     * obtain the number of controlled axes.
+     * @return the number of conrolled axes or 0 in case of failure.
+     */
+    int getAxes() const;
+
+    /**
+     * get the pid values from the control card.
+     * @param j is the axis number.
+     * @param v is a vector of double of length equal to 7.
+     * @return true if successful, false otherwise.
+     */
+    bool getPid(int j, double* v) const;
 };
 
 #endif

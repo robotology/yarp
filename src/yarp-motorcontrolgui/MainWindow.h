@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <stdexcept>
+#include <sstream>
 
 #include <libglademm.h>
 #include <gtkmm.h>
@@ -55,6 +56,11 @@ public:
      */
     void onButtonConnectClicked();
 
+    /**
+     * close the connection with the device.
+     */
+    void onButtonStopClicked();
+
 protected:
     /**
      * linkAll connects all signals to widgets.
@@ -75,6 +81,16 @@ protected:
         }
         return p;
     }
+
+    /**
+     * activate the interface.
+     */
+    void activateInterface();
+
+    /**
+     * deactivate the interface.
+     */
+    void deactivateInterface();
 
 protected:
     // the interface with yarp driver code.
@@ -100,6 +116,7 @@ protected:
     Gtk::Entry *shiftEntry;
     Gtk::Entry *offsetEntry;
     Gtk::Entry *pwmLimitEntry;
+    Gtk::Button *updateButton;
 };
 
 #endif
