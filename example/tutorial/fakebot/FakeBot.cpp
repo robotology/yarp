@@ -85,10 +85,14 @@ bool FakeBot::open(yarp::os::Searchable& config) {
 
 // IFrameGrabberImage
 bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-    pos[0] = m_dx+dpos[0];
-    dpos[0] = 0;
-    pos[1] = m_dy+dpos[1];
-    dpos[1] = 0;
+    if (fabs(dpos[0])>0.001||fabs(dpos[0])>0.001) {
+        pos[0] = m_dx+dpos[0];
+        dpos[0] = 0;
+        pos[1] = m_dy+dpos[1];
+        dpos[1] = 0;
+    }
+    pos[0] += vel[0];
+    pos[1] += vel[1];
     double xx = pos[0];
     double yy = pos[1];
     double dx = (xx-m_dx)*5;

@@ -16,7 +16,9 @@ namespace yarp {
 }
 
 class yarp::dev::FakeBot : public DeviceDriver,
-	    public IPositionControl, public IEncoders, 
+            public IPositionControl, 
+            public IVelocityControl,
+            public IEncoders, 
             public IFrameGrabberImage,
             public DeviceResponder
 {
@@ -28,7 +30,7 @@ private:
     double m_tdx, m_tdy;
     int m_w, m_h;
     double noiseLevel;
-    yarp::sig::Vector pos, dpos, speed, acc, loc;
+    yarp::sig::Vector pos, dpos, vel, speed, acc, loc;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
     void init();
@@ -39,12 +41,14 @@ public:
         m_h = 128;
         pos.size(njoints);
         dpos.size(njoints);
+        vel.size(njoints);
         speed.size(njoints);
         acc.size(njoints);
         loc.size(njoints);
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             dpos[i] = 0;
+            vel[i] = 0;
             speed[i] = 0;
             acc[i] = 0;
             loc[i] = 0;
@@ -269,5 +273,24 @@ public:
         return true;
     }
 
+
+
+    virtual bool setVelocityMode() {
+        return true;
+    }
+
+    virtual bool velocityMove(int j, double sp) {
+        if (j<njoints) {
+            vel[j] = sp;
+        }
+        return true;
+    }
+
+    virtual bool velocityMove(const double *sp) {
+        for (int i=0; i<njoints; i++) {
+            vel[i] = sp[i];
+        }
+        return true;
+    }
 };
 
