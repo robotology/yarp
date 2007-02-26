@@ -85,14 +85,14 @@ bool FakeBot::open(yarp::os::Searchable& config) {
 
 // IFrameGrabberImage
 bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-    pos[0] += dpos[0];
+    pos[0] = m_dx+dpos[0];
     dpos[0] = 0;
-    pos[1] += dpos[1];
+    pos[1] = m_dy+dpos[1];
     dpos[1] = 0;
     double xx = pos[0];
     double yy = pos[1];
-    double dx = (xx-m_dx)*0.5;
-    double dy = (yy-m_dy)*0.5;
+    double dx = (xx-m_dx)*5;
+    double dy = (yy-m_dy)*5;
     m_tx += m_tdx;
     m_ty += m_tdy;
     if (m_tdx>0 && m_tx>back.width()*0.75) {
@@ -101,10 +101,14 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     if (m_tdx<0 && m_tx<back.width()*0.25) {
         m_tdx *= -1;
     }
+    /*
     if (dx>5) dx=5;
     if (dx<-5) dx=-5;
     if (dy>5) dy=5;
     if (dy<-5) dy=-5;
+    */
+    dx /= 40;
+    dy /= 40;
     m_dx += dx;
     m_dy += dy;
     image.resize(m_w,m_h);
