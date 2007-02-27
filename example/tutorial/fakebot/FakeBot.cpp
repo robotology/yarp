@@ -105,12 +105,6 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     if (m_tdx<0 && m_tx<back.width()*0.25) {
         m_tdx *= -1;
     }
-    /*
-    if (dx>5) dx=5;
-    if (dx<-5) dx=-5;
-    if (dy>5) dy=5;
-    if (dy<-5) dy=-5;
-    */
     dx /= 40;
     dy /= 40;
     if (amp[0]>0.5) {

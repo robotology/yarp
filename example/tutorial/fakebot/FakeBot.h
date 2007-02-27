@@ -18,6 +18,7 @@ namespace yarp {
 class yarp::dev::FakeBot : public DeviceDriver,
             public IPositionControl, 
             public IVelocityControl,
+            public IAmplifierControl,
             public IEncoders, 
             public IFrameGrabberImage,
             public DeviceResponder
@@ -30,7 +31,7 @@ private:
     double m_tdx, m_tdy;
     int m_w, m_h;
     double noiseLevel;
-    yarp::sig::Vector pos, dpos, vel, speed, acc, loc;
+    yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
 
     void init();
@@ -45,6 +46,7 @@ public:
         speed.size(njoints);
         acc.size(njoints);
         loc.size(njoints);
+        amp.size(njoints);
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             dpos[i] = 0;
@@ -52,6 +54,7 @@ public:
             speed[i] = 0;
             acc[i] = 0;
             loc[i] = 0;
+            amp[i] = 1; // initially on - ok for simulator
         }
         init();
     }
@@ -290,6 +293,45 @@ public:
         for (int i=0; i<njoints; i++) {
             vel[i] = sp[i];
         }
+        return true;
+    }
+
+
+
+    virtual bool enableAmp(int j) {
+        if (j<njoints) {
+            amp[j] = 1;
+        }
+        return true;
+    }
+
+    virtual bool disableAmp(int j) {
+        if (j<njoints) {
+            amp[j] = 0;
+        }
+        return true;
+    }
+
+    virtual bool getCurrent(int j, double *val) {
+        if (j<njoints) {
+            val[j] = amp[j];
+        }
+        return true;
+    }
+
+    virtual bool getCurrents(double *vals) {
+        for (int i=0; i<njoints; i++) {
+            vals[i] = amp[i];
+        }
+        return true;
+    }
+
+    virtual bool setMaxCurrent(int j, double v) {
+        return true;
+    }
+
+    virtual bool getAmpStatus(int *st) {
+        *st = 0;
         return true;
     }
 };
