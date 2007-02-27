@@ -2233,6 +2233,11 @@ bool yarp::dev::CommandsHelper::initialize() {
     addUsage((String("[set] [vmos] (")+args+")").c_str(), 
              "command the velocity of all axes");
 
+    addUsage("[set] [aen] $iAxisNumber", "enable (amplifier for) the given axis");
+    addUsage("[set] [adi] $iAxisNumber", "disable (amplifier for) the given axis");
+    addUsage("[get] [acu] $iAxisNumber", "get current for the given axis");
+    addUsage("[get] [acus]", "get current all axes");
+
     return ok;
 }
 

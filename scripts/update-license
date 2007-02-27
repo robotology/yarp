@@ -61,6 +61,14 @@ EOF
 
 cat license-odd.txt
 
+cat<<EOF
+
+On Debian systems, a copy of the GPL license is available at:
+  
+
+EOF
+
+
 ) > license-statement.txt
 
 echo "License statement in license-statement.txt"

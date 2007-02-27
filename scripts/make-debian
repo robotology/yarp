@@ -80,14 +80,20 @@ for f in `ls $SRC/*.tar.gz`; do
 done
 fi
 
-for f in `ls $SRC/yarp-*.tar.gz`; do
+cd $SRC
+for f in `ls yarp-*.tar.gz`; do
     orig=`echo $f | sed "s/yarp-/yarp_/" | sed "s/tar/orig.tar/"`
     name=`echo $f | sed "s/.tar.gz//"`
     rm -f *.deb
     rm -f *orig.tar.gz
+    rm -f *.diff.*
+    rm -f *.dsc
+    rm -f *.changes
     echo "Working with $f"
     echo "Making $orig"
     cp $f $orig
+    rm -rf $name.old
+    mv $name $name.old
     tar xzf - < $orig
     cd $name
     echo "Directory $PWD"

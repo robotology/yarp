@@ -91,7 +91,11 @@ void MainWindow::onButtonFilechooserClicked () {
         case Gtk::RESPONSE_OK:
             filename = filechooserDialog->get_filename();
             filenameEntry->set_text(Glib::filename_to_utf8(filename));
-            yarp.setInitFilename(String(filename.c_str()));
+            // avoid call with temporary to keep gcc happy
+            {
+                String initFilename = filename.c_str();
+                yarp.setInitFilename(initFilename);
+            }
             break;
         default:
             // do nothing.
