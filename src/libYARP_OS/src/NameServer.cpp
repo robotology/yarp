@@ -6,11 +6,6 @@
  *
  */
 
-// Migrate name server to use a real YARP port.
-// In the past, since the name server had to be built before ports
-// could be built, it used a distinct protocol (name_ser).
-#define SERVER_IS_PORT
-
 #include <yarp/NameServer.h>
 #include <yarp/Logger.h>
 #include <yarp/PortCore.h>
