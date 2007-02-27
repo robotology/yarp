@@ -113,8 +113,12 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     */
     dx /= 40;
     dy /= 40;
-    m_dx += dx;
-    m_dy += dy;
+    if (amp[0]>0.5) {
+        m_dx += dx;
+    }
+    if (amp[1]>0.5) {
+        m_dy += dy;
+    }
     image.resize(m_w,m_h);
     back.safePixel(-1,-1) = PixelRgb(255,0,0);
     loc[0] = m_dx;
