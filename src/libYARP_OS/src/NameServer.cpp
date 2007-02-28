@@ -17,8 +17,12 @@
 #include <yarp/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Port.h>
 
 #include <ace/Containers_T.h>
+
+// migrate to use normal yarp ports
+//#define USE_NORMAL_PORT
 
 using namespace yarp;
 using namespace yarp::os;
@@ -673,19 +677,25 @@ int NameServer::main(int argc, char *argv[]) {
                        conf.getConfigFileName());
         }
     
-        PortCore server;  // we use a subset of the PortCore functions
         MainNameServer name(suggest.getPort() + 2);
-
         // register root for documentation purposes
         name.registerName("/root",suggest);
-        server.listen(Address(suggest.addRegName("/root")));
+
+#ifndef USE_NORMAL_PORT
+        PortCore server;  // we use a subset of the PortCore functions
         server.setReadHandler(name);
+        server.listen(Address(suggest.addRegName("/root")));
+        server.start();
+#else
+        Port server;
+        server.setReader(name);
+        server.open(Address(suggest.addRegName("/root")).toContact());
+#endif
+
         YARP_INFO(Logger::get(), String("Name server listening at ") + 
                   suggest.toString());
         ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
                        suggest.getName().c_str(), suggest.getPort());
-
-        server.start();
     
         FallbackNameServer fallback(name);
         fallback.start();
