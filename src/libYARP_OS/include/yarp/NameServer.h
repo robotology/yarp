@@ -16,6 +16,7 @@
 #include <yarp/NetType.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/Bottle.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Vector_T.h>
@@ -69,6 +70,8 @@ public:
         return apply(txt,Address());
     }
 
+    virtual void onEvent(yarp::os::Bottle& event) {
+    }
 private:
 
     void setup();

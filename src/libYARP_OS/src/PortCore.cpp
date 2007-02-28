@@ -325,7 +325,9 @@ void PortCore::closeMain() {
 
         String name = getName();
         if (name!=String("")) {
-            NameClient::getNameClient().unregisterName(name);
+            if (controlRegistration) {
+                NameClient::getNameClient().unregisterName(name);
+            }
         }
     }
 

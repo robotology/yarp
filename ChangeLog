@@ -1,3 +1,9 @@
+2007-02-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameServer.cpp: Name server port now 
+	produces output when ports are registered/unregistered, you
+	can do "yarp read ... /root" to eavesdrop.
+
 2007-02-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/tutorial: This example is a simple simulation of a 

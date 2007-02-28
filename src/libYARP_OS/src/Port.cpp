@@ -239,6 +239,7 @@ bool Port::open(const Contact& contact, bool registerName) {
         PortCoreAdapter& core = HELPER(implementation);
         core.setReadHandler(core);
         NameClient& nic = NameClient::getNameClient();
+        core.setControlRegistration(registerName);
         if (registerName) {
             address = nic.registerName(contact.getName().c_str(),caddress);
         }

@@ -53,6 +53,7 @@ public:
         reader = NULL;
         readableCreator = NULL;
         outputCount = inputCount = 0;
+        controlRegistration = true;
     }
 
     virtual ~PortCore();
@@ -120,6 +121,10 @@ public:
 
     bool getEnvelope(Readable& envelope);
 
+    void setControlRegistration(bool flag) {
+        controlRegistration = flag;
+    }
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -166,6 +171,7 @@ private:
     bool listening, running, starting, closing, finished, autoHandshake;
     bool finishing;
     bool waitBeforeSend, waitAfterSend;
+    bool controlRegistration;
     int events;
     int connectionListeners;
     int inputCount, outputCount;

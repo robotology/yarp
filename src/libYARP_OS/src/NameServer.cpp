@@ -18,11 +18,12 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Vocab.h>
 
 #include <ace/Containers_T.h>
 
 // migrate to use normal yarp ports
-//#define USE_NORMAL_PORT
+#define USE_NORMAL_PORT
 
 using namespace yarp;
 using namespace yarp::os;
@@ -57,6 +58,11 @@ Address NameServer::unregisterName(const String& name) {
             //NameRecord& rec = getNameRecord(name);
             rec.clear();
             tmpNames.release(name);
+
+            Bottle event;
+            event.addVocab(Vocab::encode("del"));
+            event.addString(name.c_str());
+            onEvent(event);
         }
     }
   
@@ -119,6 +125,11 @@ Address NameServer::registerName(const String& name,
   
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
     nameRecord.setAddress(suggestion,reusablePort);
+
+    Bottle event;
+    event.addVocab(Vocab::encode("add"));
+    event.addString(suggestion.getRegName().c_str());
+    onEvent(event);
 
     return nameRecord.getAddress();
 }
@@ -548,73 +559,84 @@ String NameServer::apply(const String& txt, const Address& remote) {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 class MainNameServer : public NameServer, public Readable {
-
+private:
+    Port *port;
 public:
-    MainNameServer(int basePort) {
+    MainNameServer(int basePort, Port *port = NULL) : port(port) {
         this->basePort = basePort;
     }
 
-    virtual bool read(ConnectionReader& reader) {
-        String ref = "NAME_SERVER ";
-        bool ok = true;
-        String msg = "?";
-        if (ok) {
-            msg = ref + reader.expectText().c_str();
-        }
-        YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
-        int index = msg.find("NAME_SERVER");
-        if (index==0) {
-            Address remote;
-            remote = Address::fromContact(reader.getRemoteContact());
-            //if (reader.getStreams()!=NULL) {
-            //remote = reader.getStreams()->getRemoteAddress();
-            //}
-            YARP_DEBUG(Logger::get(),String("name server receiving from ") + 
-                       remote.toString());
-            YARP_DEBUG(Logger::get(),String("name server request is ") + msg);
-            String result = apply(msg,remote);
-            //OutputStream *os = reader.getReplyStream();
-            ConnectionWriter *os = reader.getWriter();
-            if (os!=NULL) {
-                if (result=="") {
-                    result = terminate(String("unknown command ") + msg + "\n");
-                }
-                //os->writeLine(result);
-                //os->flush();
-                //os->close();
+    void setPort(Port& port) {
+        this->port = &port;
+    }
 
-                // This change is just to make Microsoft Telnet happy
-                String tmp;
-                for (unsigned int i=0; i<result.length(); i++) {
-                    if (result[i]=='\n') {
-                        tmp += '\r';
+    virtual bool read(ConnectionReader& reader) {
+        try {
+            String ref = "NAME_SERVER ";
+            bool ok = true;
+            String msg = "?";
+            if (ok) {
+                msg = ref + reader.expectText().c_str();
+            }
+            YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
+            int index = msg.find("NAME_SERVER");
+            if (index==0) {
+                Address remote;
+                remote = Address::fromContact(reader.getRemoteContact());
+                YARP_DEBUG(Logger::get(),
+                           String("name server receiving from ") + 
+                           remote.toString());
+                YARP_DEBUG(Logger::get(),
+                           String("name server request is ") + msg);
+                String result = apply(msg,remote);
+                ConnectionWriter *os = reader.getWriter();
+                if (os!=NULL) {
+                    if (result=="") {
+                        result = terminate(String("unknown command ") + 
+                                           msg + "\n");
                     }
-                    tmp += result[i];
-                }
-                tmp += '\r';
-                os->appendString(tmp.c_str(),'\n');
-                //os->appendString(result.c_str(),'\n');
+                    // This change is just to make Microsoft Telnet happy
+                    String tmp;
+                    for (unsigned int i=0; i<result.length(); i++) {
+                        if (result[i]=='\n') {
+                            tmp += '\r';
+                        }
+                        tmp += result[i];
+                    }
+                    tmp += '\r';
+                    os->appendString(tmp.c_str(),'\n');
 	
-                YARP_DEBUG(Logger::get(),String("name server reply is ") + result);
-                String resultSparse = result;
-                int end = resultSparse.find("\n*** end of message");
-                if (end>=0) {
-                    resultSparse[end] = '\0';
+                    YARP_DEBUG(Logger::get(),
+                               String("name server reply is ") + result);
+                    String resultSparse = result;
+                    int end = resultSparse.find("\n*** end of message");
+                    if (end>=0) {
+                        resultSparse[end] = '\0';
+                    }
+                    YARP_INFO(Logger::get(),resultSparse);
                 }
-                YARP_INFO(Logger::get(),resultSparse);
+            } else {
+                YARP_INFO(Logger::get(),
+                          "Name server ignoring unknown command: "+msg);
+                ConnectionWriter *os = reader.getWriter();
+                if (os!=NULL) {
+                    // this result is necessary for YARP1 support
+                    os->appendString("???????????????????????????????????????",'\n');
+                    //os->flush();
+                    //os->close();
+                }
             }
-        } else {
-            YARP_INFO(Logger::get(),"Name server ignoring unknown command: "+msg);
-            //OutputStream *os = reader.getReplyStream();
-            ConnectionWriter *os = reader.getWriter();
-            if (os!=NULL) {
-                // this result is necessary for YARP1 support
-                os->appendString("???????????????????????????????????????",'\n');
-                //os->flush();
-                //os->close();
-            }
+        } catch (IOException e) {
+            YARP_DEBUG(Logger::get(),
+                       "Name server ignoring event, normal with old protocol");
         }
         return true;
+    }
+
+    virtual void onEvent(Bottle& event) {
+        if (port!=NULL) {
+            port->write(event);
+        }
     }
 };
 
@@ -686,14 +708,18 @@ int NameServer::main(int argc, char *argv[]) {
         server.setReadHandler(name);
         server.listen(Address(suggest.addRegName("/root")));
         server.start();
-#else
-        Port server;
-        server.setReader(name);
-        server.open(Address(suggest.addRegName("/root")).toContact());
-#endif
-
         YARP_INFO(Logger::get(), String("Name server listening at ") + 
                   suggest.toString());
+#else
+        Port server;
+        name.setPort(server);
+        server.setReader(name);
+        server.open(Address(suggest.addRegName("/root")).toContact(),
+                    false);
+        YARP_DEBUG(Logger::get(), String("Name server listening at ") + 
+                   suggest.toString());
+#endif
+
         ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
                        suggest.getName().c_str(), suggest.getPort());
     
