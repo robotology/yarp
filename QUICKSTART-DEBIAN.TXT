@@ -12,5 +12,13 @@ If that's working, try:
   ccmake .
 Which gives you access to configuration options.  See "README" for details.
 
+To compile basic GUIs, you'll need at least:
+  apt-get install libgtk2.0-dev
+
+And for even more GUIs:
+  apt-get install libgtkmm2.4-dev libglademm-2.4-dev
+
+GUIs are by no means essential to YARP usage.
+
 Welcome to YARP!
 
