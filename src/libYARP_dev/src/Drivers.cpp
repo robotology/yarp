@@ -318,7 +318,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         }
     }
 
-    double startTime = Time::now();
+    double dnow = 3;
+    double startTime = Time::now()-dnow;
     IService *service = NULL;
     dd.view(service);
     if (service!=NULL) {
@@ -333,7 +334,6 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     while (dd.isValid() && !(terminated||terminee->mustQuit())) {
         if (service!=NULL) {
             double now = Time::now();
-            double dnow = 1;
             if (now-startTime>dnow) {
                 printf("yarpdev: device active...\n");
                 startTime += dnow;
@@ -344,7 +344,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         } else {
             // we don't need to do anything
             printf("yarpdev: device active in background...\n");
-            Time::delay(1);
+            Time::delay(dnow);
         }
     }
 
