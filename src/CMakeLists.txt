@@ -17,7 +17,7 @@ IF (CREATE_GUIS)
   ENDIF (GtkPlus_FOUND)
   IF (GtkMM_FOUND)
       SUBDIRS(yarp-framegrabbergui)
-      SUBDIRS(yarp-motorcontrolgui)
+#      SUBDIRS(yarp-motorcontrolgui)
   ENDIF (GtkMM_FOUND)
 ENDIF(CREATE_GUIS)
 
