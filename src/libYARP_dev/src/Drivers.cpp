@@ -225,7 +225,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     // apparently).
     options.put("single_threaded", 1);
 
-    // interpret as a set of flags
+    // interpret command line options as a set of flags
     options.fromCommand(argc,argv,true,false);
 
     // check if we're being asked to read the options from file
@@ -235,6 +235,10 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         options.unput("file");
         printf("yarpdev: working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname,false);
+
+        // interpret command line options as a set of flags again
+        // (just in case we need to override something)
+        options.fromCommand(argc,argv,true,false);
     }
 
     // check if we want to use nested options (less ambiguous)
