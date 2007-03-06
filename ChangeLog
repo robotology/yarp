@@ -1,3 +1,8 @@
+2007-03-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindGtkPlus.cmake: Make sure pkg-config is loaded on
+	linux if available.
+
 2007-02-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/NameServer.cpp: Name server port now 
