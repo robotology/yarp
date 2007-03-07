@@ -20,6 +20,7 @@ namespace yarp {
 extern yarp::UnitTest& getImageTest();
 extern yarp::UnitTest& getVectorTest();
 extern yarp::UnitTest& getSoundTest();
+extern yarp::UnitTest& getMatrixTest();
 
 class yarp::TestList {
 public:
@@ -27,6 +28,7 @@ public:
         UnitTest& root = UnitTest::getRoot();
         root.add(getImageTest());
         root.add(getVectorTest());
+		root.add(getMatrixTest());
         root.add(getSoundTest());
     }
 };

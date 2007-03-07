@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta
+ * Copyright (C) 2007 Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
-// $Id: Vector.cpp,v 1.9 2006-12-12 13:42:12 eshuy Exp $
+// $Id: Vector.cpp,v 1.10 2007-03-07 15:28:24 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -14,80 +14,180 @@
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 
-/*
-  preferred network format for a list of doubles.
-
-  INT listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE
-  INT listLen = N
-  double 1
-  double 2
-  ...
-  double N
-*/
+#include <ace/config.h>
+#include <ace/Vector_T.h>
 
 using namespace yarp::sig;
 using namespace yarp;
 
-Vector::Vector() : ACE_Array<double>() {}
+#define RES(v) ((ACE_Vector<T> *)v)
+#define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
 
-// buggy!
-//Vector::Vector(const Vector& x) : ACE_Array<double>((ACE_Array<double>&)x) {}
-Vector::Vector(const Vector& x) {
-    *this = x;
-}
-
-
-Vector::~Vector() {}
-
-Vector& Vector::operator=(const Vector& x) { 
-    //ACE_Array<double>::operator=((ACE_Array<double>&)x); // buggy!
-    //ACE_Array<double>::operator=(*((ACE_Array<double>*)&x)); // non-buggy
-    ACE_Array<double>::operator=(x); // simpler
-    return *this; 
-}
-
-Vector::Vector (size_t size) : ACE_Array<double>(size) {}
-Vector::Vector (size_t size, const double& default_value) : ACE_Array<double>(size, default_value) {}
-
-
+/// network stuff
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
 
-class YARPVectorPortContentHeader
+class VectorPortContentHeader
 {
 public:
-    //yarp::os::NetInt32 totalLen; // not included any more - redundant
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
 
-bool Vector::read(yarp::os::ConnectionReader& connection) {
-    
+template<class T> 
+VectorImpl<T>::VectorImpl()
+{
+	aceVector=(void *) new ACE_Vector<T>;
+}
+
+template<class T>
+VectorImpl<T>::VectorImpl(size_t size)
+{
+	ACE_ASSERT (size>0);
+	aceVector=(void *)new ACE_Vector<T>(size);
+}
+
+template<class T>
+VectorImpl<T>::~VectorImpl()
+{
+	delete RES(aceVector);
+}
+
+template<class T>
+VectorImpl<T>::VectorImpl(const VectorImpl &l)
+{
+	aceVector=new ACE_Vector<T>;
+	*RES(aceVector)=*RES(l.aceVector);
+}
+
+template<class T>
+const VectorImpl<T> &VectorImpl<T>::operator=(const VectorImpl &l)
+{
+	*RES(aceVector)=*RES(l.aceVector);
+	return *this;
+}
+
+template<class T>
+const T &VectorImpl<T>::operator=(const T&l)
+{
+	int k=0;
+	int s=size();
+
+	for(k=0;k<s;k++)
+		(*RES(aceVector))[k]=l;
+	
+	return l;
+}
+
+template<class T>
+void VectorImpl<T>::resize(size_t size, const T& def)
+{
+	ACE_ASSERT (size>0);
+	RES(aceVector)->resize(size,def);
+}
+
+template<class T>
+int VectorImpl<T>::size() const
+{
+	return RES(aceVector)->size();
+}
+
+template<class T>
+T &VectorImpl<T>::operator[](int el)
+{
+	return (*RES(aceVector))[el];
+}
+
+template<class T>
+const T& VectorImpl<T>::operator[](int el) const
+{
+	return (*RES(aceVector))[el];
+}
+
+template<class T>
+void VectorImpl<T>::pop_back()
+{
+	RES(aceVector)->pop_back();
+}
+
+template<class T>
+void VectorImpl<T>::push_back(const T&e)
+{
+	RES(aceVector)->push_back(e);
+}
+
+template<class T>
+void VectorImpl<T>::clear()
+{
+	RES(aceVector)->clear();
+}
+
+
+template<class T>
+int VectorImpl<T>::set (T const &new_item, size_t slot)
+{
+	return RES(aceVector)->set(new_item, slot);
+}
+
+template<class T>
+int VectorImpl<T>::get (T &item, size_t slot) const
+{
+	return RES(aceVector)->get(item, slot);
+}
+
+//////////////////////////////////
+// iterator
+//
+template<class T>
+IteratorOf<T>::IteratorOf(const VectorImpl<T> &v)
+{
+	aceVectorIterator=new ACE_Vector_Iterator<T>((*RES(v.aceVector)));
+}
+
+template<class T>
+IteratorOf<T>::~IteratorOf()
+{
+	delete RES_ITERATOR(aceVectorIterator);
+}
+
+template<class T>
+int IteratorOf<T>::advance()
+{
+	return RES_ITERATOR(aceVectorIterator)->advance();
+}
+
+template<class T>
+int IteratorOf<T>::next(T *& n)
+{
+	return RES_ITERATOR(aceVectorIterator)->next(n);
+}
+			
+template<class T>
+int IteratorOf<T>::done()
+{
+	return RES_ITERATOR(aceVectorIterator)->done();
+}
+
+#include <list>
+
+using namespace std;
+
+bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     try {
         // auto-convert text mode interaction
         connection.convertTextMode();
-        YARPVectorPortContentHeader header;
+        VectorPortContentHeader header;
         connection.expectBlock((char*)&header, sizeof(header));
         if (header.listLen > 0)
             {
-                if (this->size() != (unsigned int)(header.listLen))
-                    this->size(header.listLen);
-                double *ptr = &(this->operator[](0));
-                ACE_ASSERT (ptr != NULL);
-#ifdef YARP_ACTIVE_DOUBLE
-                // native doubles don't match YARP's expectations
-                int blockLen = sizeof(double)*header.listLen;
-                ManagedBytes bytes(blockLen);
-                connection.expectBlock((char *)bytes.get(), bytes.length());
-                yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
-                for (int i=0; i<header.listLen; i++) {
-                    this->operator[](i) = floats[i];
-                }
-#else
-                connection.expectBlock((char *)ptr, sizeof(double)*header.listLen);
-#endif
+                if (getListSize() != (int)(header.listLen))
+                    resize(header.listLen);
+                const char *ptr = getMemoryBlock();
+                ACE_ASSERT (ptr != 0);
+				int elemSize=getElementSize();
+                connection.expectBlock(ptr, elemSize*header.listLen);
             }
         else
             return false;
@@ -99,30 +199,19 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool Vector::write(yarp::os::ConnectionWriter& connection) {
-    YARPVectorPortContentHeader header;
+bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
+	VectorPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
-    header.listLen = this->size();
+    header.listLen = getListSize();
 
     connection.appendBlock((char*)&header, sizeof(header));
-    double *ptr = &(this->operator[](0));
+    const char *ptr = getMemoryBlock();
+	int elemSize=getElementSize();
     ACE_ASSERT (ptr != NULL);
 
-#ifdef YARP_ACTIVE_DOUBLE
-    // native doubles don't match YARP's expectations
-    int blockLen = sizeof(double)*header.listLen;
-    ManagedBytes bytes(blockLen);
-    yarp::os::NetFloat64 *floats = (yarp::os::NetFloat64*)bytes.get();
-    for (int i=0; i<header.listLen; i++) {
-        floats[i] = this->operator[](i);
-    }
-    connection.appendBlock((char *)bytes.get(), bytes.length());
-#else
-    // Note use of external block.  Implies care needed about ownership.
-    connection.appendExternalBlock((char *)ptr, sizeof(double)*header.listLen);
-#endif
+    connection.appendExternalBlock(ptr, elemSize*header.listLen);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
@@ -131,3 +220,9 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
     return true;
 }
 
+template class yarp::VectorImpl<double>;
+template class yarp::VectorImpl<int>;
+template class yarp::VectorImpl<char>;
+template class yarp::VectorImpl<float>;
+template class yarp::sig::VectorOf<double>;
+template class yarp::sig::IteratorOf<double>;
