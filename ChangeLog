@@ -1,3 +1,6 @@
+2007-03-07 Lorenzo Natale <nat@liralab.it>
+	* libYARPsig: Matrix and Vector classes
+	
 2007-03-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindGtkPlus.cmake: Make sure pkg-config is loaded on
