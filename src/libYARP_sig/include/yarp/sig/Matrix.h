@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.1 2007-03-07 15:28:24 natta Exp $
+// $Id: Matrix.h,v 1.2 2007-03-07 15:51:15 babybot Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -19,11 +19,10 @@
 #include <stdio.h>
 
 /**
- * \file Vector.h contains the definition of a Vector type 
+ * \file Matrix.h contains the definition of a Matrix type 
  */
 namespace yarp {
 	class MatrixBase;
-    template<class T> class VectorImpl;
     namespace sig {
 		  //class Vector
 		  class Matrix;

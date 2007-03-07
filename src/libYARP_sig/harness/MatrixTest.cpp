@@ -6,7 +6,6 @@
  *
  */
 
-
 #include <yarp/sig/Matrix.h>
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
@@ -191,17 +190,11 @@ public:
         Matrix m(4,4);
 
 		m.zero();
-		m.print();
 		m.eye(5,5);
-		m.print();
 		m.eye(2,5);
-		m.print();
 		m.eye(5, 2);
-		m.print();
 
 		Matrix mt=m.transposed();
-
-		mt.print();
 	}
 
 	virtual void runTests() {
