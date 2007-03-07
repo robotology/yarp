@@ -1,3 +1,6 @@
+2007-03-07 Lorenzo Natale  <nat@liralab.it>
+        * FindGSL.cmake
+
 2007-03-07 Lorenzo Natale <nat@liralab.it>
 	* libYARPsig: Matrix and Vector classes
 	
