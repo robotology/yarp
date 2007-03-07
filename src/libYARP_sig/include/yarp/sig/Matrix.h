@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.3 2007-03-07 16:07:22 eshuy Exp $ 
+// $Id: Matrix.h,v 1.4 2007-03-07 16:40:46 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -39,9 +39,21 @@ class yarp::MatrixBase:public yarp::os::Portable
 {
 public:
 	virtual const char *getMemoryBlock() const =0;
-	virtual void resize(int r, int c)=0;
-	virtual int rows() const =0;
-	virtual int cols() const =0;
+	
+    /**
+    * Resize the matrix, specify new dimensions (r,c).
+    */
+    virtual void resize(int r, int c)=0;
+
+    /**
+    * Get number of rows.
+    */
+    virtual int rows() const =0;
+
+    /**
+    * Get number of columns.
+    */
+    virtual int cols() const =0;
 
 	 /**
      * Read matrix from a connection.
@@ -56,6 +68,14 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& connection);
 };
 
+/**
+ * \ingroup sig_class
+ *
+ * A class for a Matrix. A Matrix can be sent/read to/from 
+ * a port. Use the [] operator to access the r row of the matrix.
+ * The function returns a pointer so [][] access the r,c element
+ * in the matrix.
+ */
 class yarp::sig::Matrix: public yarp:: MatrixBase
 {
 private:
@@ -67,6 +87,10 @@ private:
 	int ncols;
 
 private:
+     /**
+     * Update pointer to data, call this every time you
+     * change the size of the object.
+     */
 	void updatePointers()
 	{
 		first=storage.getFirst();
@@ -101,7 +125,10 @@ public:
 		updatePointers();
 	}
 
-	Matrix(const Matrix &m):
+    /**
+    * Copy constructor.
+    */
+    Matrix(const Matrix &m):
 		storage(m.storage),
 		first(0),
 		matrix(0)
@@ -111,6 +138,9 @@ public:
 		updatePointers();
 	}
 
+    /**
+    * Copy operator.
+    */
 	const Matrix &operator=(const Matrix &r)
 	{
 		storage=r.storage;
@@ -120,6 +150,11 @@ public:
 		return *this;
 	}
 
+    /**
+    * Set all elements of the matrix to a given value.
+    * @param v a scalar
+    * @return a reference to the object
+    */
 	const Matrix &operator=(double v)
 	{
 		double *tmp=storage.getFirst();
@@ -136,12 +171,23 @@ public:
 			delete [] matrix;
 	}
 
+    /**
+    * Return number of rows.
+    */
 	virtual int rows() const
 	{ return nrows; }
-		
+	
+    /**
+    * Return number of columns.
+    */
 	virtual int cols() const
 	{ return ncols; }
 
+    /**
+    * Resize the matrix.
+    * @param r number of rows
+    * @param c number of columns
+    */
 	virtual void resize(int r, int c)
 	{
 		nrows=r;
@@ -151,15 +197,19 @@ public:
 		updatePointers();
 	}
 
+    /**
+    * Return pointer to internal memory.
+    */
 	virtual const char *getMemoryBlock() const
 	{
 		return (char *) storage.getFirst();
 	}
 
 	/**
-	* Single element access, no range check.
-	* @param i the index of the element to access.
-	* @return a reference to the requested element.
+	* Single element access, no range check. Returns
+    * a pointer to the r-th row.
+	* @param r row number.
+	* @return a pointer to the first element of the row.
 	*/
 	inline double *operator[](int r)
 	{
@@ -167,15 +217,19 @@ public:
 	}
 
 	/**
-	* Single element access, no range check, const version.
-	* @param i the index of the element to access.
-	* @return a reference to the requested element.
+	* Single element access, no range check (const version). 
+    * Returns a pointer to the r-th row.
+	* @param r row number.
+	* @return a (const) pointer to the first element of the row.
 	*/
 	inline const double *operator[](int r) const
 	{
 		return matrix[r];
 	}
 
+    /**
+	* Zero the matrix. Set all elements of the matrix to zero.
+	*/
 	void zero()
 	{
 		for (int k=0; k<ncols*nrows; k++)
@@ -184,6 +238,10 @@ public:
 		}
 	}
 
+    /**
+	* Return the transposed of the matrix. 
+    * @return the transposed copy of the matrix.
+	*/
 	Matrix transposed()
 	{
 		Matrix ret;
@@ -196,12 +254,21 @@ public:
 		return ret;
 	}
 	
+    /**
+    * Build an identity matrix, resize the matrix.
+    * @param r number of rows
+    * @param c number of columns
+    */
 	Matrix &eye(int r, int c)
 	{
 		resize(r,c);
 		return eye();
 	}
 
+    /**
+    * Build an identity matrix, don't resize.
+    * @return a reference to the object.
+    */
 	Matrix &eye()
 	{
 		zero();
@@ -216,6 +283,14 @@ public:
 		return *this;
 	}
 
+    /**
+    * Extract a submatrix from (r1:r2, c1:c2)
+    * @param r1 start row
+    * @param r2 end row
+    * @param c1 start col
+    * @param c2 end col
+    * @return the sumbatrix
+    */
 	Matrix submatrix(int r1, int r2, int c1, int c2) const
 	{
 		Matrix ret;
@@ -229,6 +304,11 @@ public:
 		return ret;
 	}
 
+    /**
+    * Get a row of the matrix as a vector.
+    * @param r the row number
+    * @return a vector which contains the requested row
+    */
 	Vector getRow(int r) const
 	{
 		Vector ret;
@@ -240,6 +320,11 @@ public:
 		return ret;
 	}
 
+    /**
+    * Get a columns of the matrix as a vector.
+    * @param c the column number
+    * @return a vector which contains the requested row
+    */
 	Vector getCol(int c) const
 	{
 		Vector ret;
@@ -251,24 +336,19 @@ public:
 		return ret;
 	}
 
-	void print()
-	{
-		for(int r=0; r<nrows; r++)
-		{
-			for(int c=0;c<ncols;c++)
-			{
-				printf("%lf\t", (*this)[r][c]);
-			}
-			printf("\n");
-		}
-		printf("\n");
-	}
-
+    /**
+    * Return a pointer to the first element
+    * @return the pointer to the first element
+    */
 	inline double *data()
 	{
 		return storage.getFirst();
 	}
 
+    /**
+    * Return a pointer to the first element (const version).
+    * @return the (const) pointer to the first element
+    */
 	inline const double *data() const
 	{
 		return storage.getFirst();

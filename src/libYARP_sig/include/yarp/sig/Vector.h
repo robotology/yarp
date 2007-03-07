@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.6 2007-03-07 16:07:22 eshuy Exp $
+// $Id: Vector.h,v 1.7 2007-03-07 16:40:46 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -22,14 +22,12 @@
  */
 namespace yarp {
 	class VectorBase;
-	class MatrixBase;
     template<class T> class VectorImpl;
     namespace sig {
 		  //class Vector
 		  template<class T> class IteratorOf;
 		  template<class T> class VectorOf;
           class Vector;
-		  class Matrix;
    }
 }
 
@@ -330,6 +328,12 @@ class yarp::sig::IteratorOf
 		int done();
 };
 
+/**
+* \ingroup sig_class
+*
+* A class for a Vector. A Vector can be sent/read to/from 
+* a port. Use the [] operator for single element access.
+*/
 class yarp::sig::Vector: public yarp::sig::VectorOf<double>
 {
 public:
