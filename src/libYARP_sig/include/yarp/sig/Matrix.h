@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.2 2007-03-07 15:51:15 babybot Exp $ 
+// $Id: Matrix.h,v 1.3 2007-03-07 16:07:22 eshuy Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -85,17 +85,17 @@ private:
 
 public:
 	Matrix():
-	  nrows(0),
-	  ncols(0),
 	  first(0),
-	  matrix(0)
+	  matrix(0),
+	  nrows(0),
+	  ncols(0)
 	{}
 
 	Matrix(int r, int c):
-	nrows(r),
-	ncols(c),
 	first(0),
-	matrix(0)
+	matrix(0),
+	nrows(r),
+	ncols(c)
 	{
 		storage.resize(r*c);
 		updatePointers();
@@ -126,6 +126,8 @@ public:
 
 		for(int k=0; k<nrows*ncols; k++)
 			tmp[k]=v;
+
+        return *this;
 	}
 
 	~Matrix()

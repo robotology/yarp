@@ -1766,7 +1766,7 @@ public:
     virtual bool getEncoders(double *encs) {
         Vector *v = state_buffer.read(true);
         if (v != NULL) {
-            ACE_ASSERT (v->size() == ((unsigned int)nj));
+            ACE_ASSERT (v->size() == nj);
             ACE_OS::memcpy (encs, &(v->operator [](0)), sizeof(double)*nj);
             return true;
         }

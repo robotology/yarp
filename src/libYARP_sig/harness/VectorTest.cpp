@@ -129,7 +129,7 @@ public:
 
         report(0,"check vector format conforms to network standard...");
         {
-            for (unsigned int i=0; i<v.size(); i++ ){
+            for (int i=0; i<v.size(); i++ ){
                 v[i] = i;
             }
         }
@@ -222,10 +222,12 @@ public:
     }
 
 	virtual void runTests() {
+        Network::setLocalMode(true);
         checkFormat();
 		checkCopyCtor();
         checkCopy();
 		checkSendReceive();
+        Network::setLocalMode(false);
     }
 };
 

@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.5 2007-03-07 15:28:24 natta Exp $
+// $Id: Vector.h,v 1.6 2007-03-07 16:07:22 eshuy Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -365,6 +365,8 @@ public:
 
 		for(int k=0; k<length(); k++)
 			tmp[k]=v;
+
+        return *this;
 	}
 	
 	inline double *data()

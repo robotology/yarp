@@ -198,10 +198,12 @@ public:
 	}
 
 	virtual void runTests() {
+        Network::setLocalMode(true);
 		checkCopyCtor();
         checkCopy();
 		checkSendReceive();
 		checkMiscOperations();
+        Network::setLocalMode(false);
     }
 };
 
