@@ -6,16 +6,13 @@
  *
  */
 
-// $Id: Vector.h,v 1.7 2007-03-07 16:40:46 natta Exp $
+// $Id: Vector.h,v 1.8 2007-03-07 16:49:54 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
 
 #include <stdlib.h> //defines size_t
 #include <yarp/os/Portable.h>
-
-//LATER REMOVE IT
-#include <stdio.h>
 
 /**
  * \file Vector.h contains the definition of a Vector type 
@@ -341,7 +338,8 @@ public:
 	Vector(size_t s):VectorOf<double>(s){}
 
 	/**
-    * Resize the vector, (warning: deprecated, use resize)
+    * Resize the vector, (warning: deprecated, use resize) here
+    * to maintain compatibility with the old Vector class.
 	* @param s the new size
     */
 	void size(size_t s)
@@ -352,17 +350,27 @@ public:
 		return VectorOf<double>::size();
 	}
 
+    /**
+    * Get the length of the vector.
+    * @return the length of the vector.
+    */
 	inline int length() const
 	{
 		return VectorOf<double>::size();
 	}
 
+    /**
+    * Zero the elements of the vector.
+    */
 	void zero()
 	{
 		for(int k=0; k<VectorOf<double>::size(); k++)
 			VectorOf<double>::operator[](k)=0;
 	}
 
+    /**
+    * Set all elements of the vector to a scalar.
+    */
 	const Vector &operator=(double v)
 	{
 		double *tmp=getFirst();
@@ -373,11 +381,20 @@ public:
         return *this;
 	}
 	
+    /**
+    * Return a pointer to the first element of the vector.
+    * @return a pointer to double.
+    */
 	inline double *data()
 	{
 		return VectorOf<double>::getFirst();
 	}
 
+    /**
+    * Return a pointer to the first element of the vector,
+    * const version
+    * @return a (const) pointer to double.
+    */
 	inline const double *data() const
 	{
 		return VectorOf<double>::getFirst();

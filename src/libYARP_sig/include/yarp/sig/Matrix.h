@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.4 2007-03-07 16:40:46 natta Exp $ 
+// $Id: Matrix.h,v 1.5 2007-03-07 16:49:54 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -14,9 +14,6 @@
 #include <stdlib.h> //defines size_t
 #include <yarp/os/Portable.h>
 #include <yarp/sig/Vector.h>
-
-//LATER REMOVE IT
-#include <stdio.h>
 
 /**
  * \file Matrix.h contains the definition of a Matrix type 
