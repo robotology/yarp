@@ -190,9 +190,9 @@ public:
         Matrix m(4,4);
 
 		m.zero();
-		m.eye(5,5);
-		m.eye(2,5);
-		m.eye(5, 2);
+        m=MatrixOps::eye(5,5);
+        m=MatrixOps::eye(2,5);
+        m=MatrixOps::eye(5, 2);
 
 		Matrix mt=m.transposed();
 	}

@@ -7,8 +7,8 @@ int main(int argc, const char **argv)
 {
     Matrix m1;
     Matrix m2; 
-    m1=Matrix::eye(5,5);    //build a 5x5 identity matrix
-    m2=Matrix::zeros(3,3);  //this is a 3x3 matrix of zeros
+    m1=MatrixOps::eye(5,5);    //build a 5x5 identity matrix
+    m2=MatrixOps::zeros(3,3);  //this is a 3x3 matrix of zeros
 
     //single element access
     for (int r=0;r<3;r++)
@@ -16,7 +16,7 @@ int main(int argc, const char **argv)
               m2(r,c)=r;        
             
     Vector v;
-    v=Vector::zeros(10);    //build a 10 element vector of zeros
+    v=MatrixOps::zeros(10);    //build a 10 element vector of zeros
     v=10;                   //set all elements to 10
  
     Matrix sm=m2.submatrix(1,2,3,3); //extract submatrix from 1,2 to 3,3

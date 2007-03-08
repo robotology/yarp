@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.12 2007-03-08 16:07:33 natta Exp $
+// $Id: Vector.cpp,v 1.13 2007-03-08 17:14:54 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -234,7 +234,7 @@ template class yarp::sig::IteratorOf<double>;
 using namespace yarp;
 using namespace yarp::os;
 
-Vector Vector::zeros(int s)
+Vector MatrixOps::zeros(int s)
 {
     Vector ret;
     ret.resize(s);

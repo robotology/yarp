@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.10 2007-03-08 16:07:33 natta Exp $
+// $Id: Vector.h,v 1.11 2007-03-08 17:14:53 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -26,7 +26,21 @@ namespace yarp {
 		  template<class T> class IteratorOf;
 		  template<class T> class VectorOf;
           class Vector;
-   }
+          
+          /**
+          * Namespace containing basic operations on matrices 
+          * and vectors
+          */
+          namespace MatrixOps
+          {
+              /**
+              * Creates a vector of zeros.
+              * @param s the size of the new vector
+              * @return a copy of the new vector
+              */
+              Vector zeros(int s);
+          }
+    }
 }
 
 /**
@@ -389,13 +403,6 @@ public:
     * Zero the elements of the vector.
     */
 	void zero();
-	
-    /**
-    * Creates a vector of zeros.
-    * @param s the size of the new vector
-    * @return a copy of the new vector
-    */
-	static Vector zeros(int s);
 	
     /**
     * Creates a string object containing a text 

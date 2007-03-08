@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.4 2007-03-08 16:07:33 natta Exp $ 
+// $Id: Matrix.cpp,v 1.5 2007-03-08 17:14:53 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -223,7 +223,7 @@ Matrix Matrix::transposed()
     return ret;
 }
 
-Matrix Matrix::eye(int r, int c)
+Matrix MatrixOps::eye(int r, int c)
 {
     Matrix ret;
     ret.resize(r,c);
@@ -231,7 +231,7 @@ Matrix Matrix::eye(int r, int c)
     return ret;
 }
 
-Matrix Matrix::zeros(int r, int c)
+Matrix MatrixOps::zeros(int r, int c)
 {
     Matrix ret;
     ret.resize(r,c);
