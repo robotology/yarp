@@ -36,7 +36,6 @@ int main(int argc, const char **argv)
 		1.0, &A1.matrix, &A2.matrix,
 		0.0, &A3.matrix);
 
-//	m3.print();
     printf("Result: (%s)", m3.toString().c_str());
 	
 	return 0; 

@@ -1,4 +1,6 @@
 2007-03-08 Lorenzo Natale  <nat@liralab.it>
+        * Added example/gsl_example: contains examples of how to use
+	gsl with yarp Matrix and Vector classes.
         * Added example/matrix: contains examples of how to use
 	Matrix and Vector classes.
 
