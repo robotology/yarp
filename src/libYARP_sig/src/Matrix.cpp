@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.cpp,v 1.2 2007-03-07 15:51:15 babybot Exp $ 
+// $Id: Matrix.cpp,v 1.3 2007-03-08 13:56:05 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -90,3 +90,41 @@ bool MatrixBase::write(yarp::os::ConnectionWriter& connection) {
     return true;
 }
 
+/// vector implementations
+#include <yarp/String.h>
+using namespace yarp;
+using namespace yarp::os;
+
+/**
+* Quick implementation, space for improvement.
+*/
+ConstString Matrix::toString() const
+{
+    String ret;
+    char tmp[80];
+    int c=0;
+    int r=0;
+    for(r=0;r<rows()-1;r++)
+    {
+        for(c=0;c<cols()-1;c++)
+        {
+            sprintf(tmp, "%lf\t", (*this)[r][c]);
+            ret.append(tmp, strlen(tmp));
+        }
+
+        sprintf(tmp, "%lf;", (*this)[r][c]);
+        ret.append(tmp, strlen(tmp));
+    }
+
+    // last row
+    for(c=0;c<cols()-1;c++)
+    {
+        sprintf(tmp, "%lf\t", (*this)[r][c]);
+        ret.append(tmp, strlen(tmp));
+    }
+    // last element
+    sprintf(tmp, "%lf", (*this)[r][c]);
+    ret.append(tmp, strlen(tmp));
+
+    return ConstString(ret.c_str());
+}

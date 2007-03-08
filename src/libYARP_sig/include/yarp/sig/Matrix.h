@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.5 2007-03-07 16:49:54 natta Exp $ 
+// $Id: Matrix.h,v 1.6 2007-03-08 13:56:05 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -21,7 +21,6 @@
 namespace yarp {
 	class MatrixBase;
     namespace sig {
-		  //class Vector
 		  class Matrix;
    }
 }
@@ -225,6 +224,28 @@ public:
 	}
 
     /**
+	* Single element access, no range check. 
+    * @param r row number.
+    * @param c col number.
+	* @return a reference to the element.
+	*/
+    inline const double &operator()(int r, int c) const
+    {
+        return matrix[r][c];
+    }
+
+    /**
+	* Single element access, no range check. 
+    * @param r row number.
+    * @param c col number.
+	* @return a (const) reference to the element.
+	*/
+    inline double &operator()(int r, int c)
+    {
+        return matrix[r][c];
+    }
+
+    /**
 	* Zero the matrix. Set all elements of the matrix to zero.
 	*/
 	void zero()
@@ -256,11 +277,26 @@ public:
     * @param r number of rows
     * @param c number of columns
     */
-	Matrix &eye(int r, int c)
+	static Matrix eye(int r, int c)
 	{
-		resize(r,c);
-		return eye();
+        Matrix ret;
+		ret.resize(r,c);
+        ret.eye();
+		return ret;
 	}
+
+    /**
+    * Build a matrix of zeros.
+    * @param r number of rows
+    * @param c number of columns
+    */
+    static Matrix zeros(int r, int c)
+    {
+        Matrix ret;
+        ret.resize(r,c);
+        ret.zero();
+        return ret;
+    }
 
     /**
     * Build an identity matrix, don't resize.
@@ -281,22 +317,28 @@ public:
 	}
 
     /**
-    * Extract a submatrix from (r1:r2, c1:c2)
-    * @param r1 start row
-    * @param r2 end row
-    * @param c1 start col
-    * @param c2 end col
+    * Extract a submatrix from (r1,c1 to r2,c2)
+    * @param r1 start point row
+    * @param c1 start point col
+    * @param r2 end point row
+    * @param c2 end point col
     * @return the sumbatrix
     */
-	Matrix submatrix(int r1, int r2, int c1, int c2) const
+	Matrix submatrix(int r1, int c1, int r2, int c2) const
 	{
 		Matrix ret;
 		ret.resize(r2-r1, c2-c1);
 
+        int rr=0;
+        int cc=0;
 		for(int r=r1; r<r2; r++)
 		{
-			for(int c=c1;c<c2;c++)
-				ret[r][c]=(*this)[r][c];
+            for(int c=c1;c<c2;c++)
+            {
+				ret[rr][cc]=(*this)[r][c];
+                cc++;
+            }
+            rr++;
 		}
 		return ret;
 	}
@@ -332,6 +374,14 @@ public:
 		
 		return ret;
 	}
+
+    /**
+    * Print matrix to a string. Useful for display, writing to text.
+    * Warning: the string format might change in the future. This method
+    * is here to ease debugging.
+    * @return a const string which contain the matrix in text form.
+    */
+    yarp::os::ConstString toString() const;
 
     /**
     * Return a pointer to the first element

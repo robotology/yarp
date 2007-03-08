@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.cpp,v 1.10 2007-03-07 15:28:24 natta Exp $
+// $Id: Vector.cpp,v 1.11 2007-03-08 13:56:05 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -220,9 +220,43 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     return true;
 }
 
+
 template class yarp::VectorImpl<double>;
 template class yarp::VectorImpl<int>;
 template class yarp::VectorImpl<char>;
 template class yarp::VectorImpl<float>;
 template class yarp::sig::VectorOf<double>;
 template class yarp::sig::IteratorOf<double>;
+
+
+/// vector implementations
+#include <yarp/String.h>
+using namespace yarp;
+using namespace yarp::os;
+
+Vector Vector::zeros(int s)
+{
+	Vector ret;
+    ret.resize(s);
+    ret.zero();
+    return ret;
+}
+
+/**
+* Quick implementation, space for improvement.
+*/
+ConstString Vector::toString()
+{
+    String ret;
+    char tmp[80];
+    int c=0;
+    for(c=0;c<length()-1;c++)
+    {
+        sprintf(tmp, "%lf\t", (*this)[c]);
+        ret.append(tmp, strlen(tmp));
+    }
+
+    sprintf(tmp, "%lf", (*this)[c]);
+    ret.append(tmp, strlen(tmp));
+    return ConstString(ret.c_str());
+}

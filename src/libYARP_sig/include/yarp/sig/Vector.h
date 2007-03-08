@@ -6,13 +6,14 @@
  *
  */
 
-// $Id: Vector.h,v 1.8 2007-03-07 16:49:54 natta Exp $
+// $Id: Vector.h,v 1.9 2007-03-08 13:56:05 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
 
 #include <stdlib.h> //defines size_t
 #include <yarp/os/Portable.h>
+#include <yarp/os/ConstString.h>
 
 /**
  * \file Vector.h contains the definition of a Vector type 
@@ -212,8 +213,7 @@ public:
 	const VectorOf<T> &operator=(const VectorOf<T> &r)
 	{
 		VectorImpl<T>::operator =(r);
-		first=r.first;
-		last=r.last;
+		_updatePointers();
 		return *this;
 	}
 
@@ -282,6 +282,26 @@ public:
 	{
 		return first[i];
 	}
+
+   	/**
+	* Single element access, no range check.
+	* @param i the index of the element to access.
+	* @return a reference to the requested element.
+	*/
+	inline T &operator()(int i)
+	{
+		return first[i];
+	}
+
+	/**
+	* Single element access, no range check, const version.
+	* @param i the index of the element to access.
+	* @return a reference to the requested element.
+	*/
+	inline const T &operator()(int i) const
+	{
+		return first[i];
+	}
 };
 
 /**
@@ -337,6 +357,20 @@ public:
 	Vector():VectorOf<double>(){}
 	Vector(size_t s):VectorOf<double>(s){}
 
+    /**
+    * Copy constructor.
+    */
+    Vector(const Vector &r): yarp::sig::VectorOf<double>(r){}
+    
+    /**
+    * Copy operator;
+    */
+    const Vector &operator=(const Vector &r)
+    {
+    	VectorOf<double>::operator =(r);
+        return *this;
+    }
+
 	/**
     * Resize the vector, (warning: deprecated, use resize) here
     * to maintain compatibility with the old Vector class.
@@ -368,6 +402,21 @@ public:
 			VectorOf<double>::operator[](k)=0;
 	}
 
+    /**
+    * Creates a vector of zeros.
+    * @param s the size of the new vector
+    * @return a copy of the new vector
+    */
+	static Vector zeros(int s);
+	
+    /**
+    * Creates a string object containing a text 
+    * representation of the object. Useful for printing.
+    * Warning: the string format might change in the future. This method
+    * is here to ease debugging.
+    */
+    yarp::os::ConstString toString();
+ 
     /**
     * Set all elements of the vector to a scalar.
     */
