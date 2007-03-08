@@ -6,7 +6,7 @@ using namespace yarp::sig;
 int main(int argc, const char **argv)
 {
     Matrix m1;
-    Matrix m2;
+    Matrix m2; 
     m1=Matrix::eye(5,5);    //build a 5x5 identity matrix
     m2=Matrix::zeros(3,3);  //this is a 3x3 matrix of zeros
 

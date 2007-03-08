@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Lorenzo Natale
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2007 Lorenzo Natale
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
-// $Id: Matrix.cpp,v 1.3 2007-03-08 13:56:05 natta Exp $ 
+// $Id: Matrix.cpp,v 1.4 2007-03-08 16:07:33 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -31,8 +31,8 @@ class MatrixPortContentHeader
 public:
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
-	yarp::os::NetInt32 rows;
-	yarp::os::NetInt32 cols;
+    yarp::os::NetInt32 rows;
+    yarp::os::NetInt32 cols;
 } PACKED_FOR_NET;
 #include <yarp/os/end_pack_for_net.h>
 
@@ -47,17 +47,17 @@ bool MatrixBase::read(yarp::os::ConnectionReader& connection) {
         MatrixPortContentHeader header;
         connection.expectBlock((char*)&header, sizeof(header));
         int r=rows();
-		int c=cols();
-		if (header.listLen > 0)
+        int c=cols();
+        if (header.listLen > 0)
+        {
+            if ( (r*c) != (int)(header.listLen))
             {
-				if ( (r*c) != (int)(header.listLen))
-				{
-					resize(header.rows, header.cols);
-            	}
-                const char *ptr = getMemoryBlock();
-                ACE_ASSERT (ptr != 0);
-                connection.expectBlock(ptr, sizeof(double)*header.listLen);
+                resize(header.rows, header.cols);
             }
+            const char *ptr = getMemoryBlock();
+            ACE_ASSERT (ptr != 0);
+            connection.expectBlock(ptr, sizeof(double)*header.listLen);
+        }
         else
             return false;
     } catch (yarp::IOException e) {
@@ -69,12 +69,12 @@ bool MatrixBase::read(yarp::os::ConnectionReader& connection) {
 
 
 bool MatrixBase::write(yarp::os::ConnectionWriter& connection) {
-	MatrixPortContentHeader header;
+    MatrixPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
-	header.rows=rows();
-	header.cols=cols();
+    header.rows=rows();
+    header.cols=cols();
     header.listLen = header.rows*header.cols;
 
     connection.appendBlock((char*)&header, sizeof(header));
@@ -127,4 +127,151 @@ ConstString Matrix::toString() const
     ret.append(tmp, strlen(tmp));
 
     return ConstString(ret.c_str());
+}
+
+Matrix Matrix::submatrix(int r1, int c1, int r2, int c2) const
+{
+    Matrix ret;
+    ret.resize(r2-r1, c2-c1);
+
+    int rr=0;
+    int cc=0;
+    for(int r=r1; r<r2; r++)
+    {
+        for(int c=c1;c<c2;c++)
+        {
+            ret[rr][cc]=(*this)[r][c];
+            cc++;
+        }
+        rr++;
+    }
+    return ret;
+}
+
+void Matrix::updatePointers()
+{
+    first=storage.getFirst();
+
+    if (matrix!=0)
+        delete [] matrix;
+
+    int r=0;
+    matrix=new double* [nrows];
+    matrix[0]=first;
+    for(r=1;r<nrows; r++)
+    {
+        matrix[r]=matrix[r-1]+ncols;
+    }
+}
+
+const Matrix &Matrix::operator=(const Matrix &r)
+{
+    storage=r.storage;
+    nrows=r.nrows;
+    ncols=r.ncols;
+    updatePointers();
+    return *this;
+}
+
+const Matrix &Matrix::operator=(double v)
+{
+	double *tmp=storage.getFirst();
+
+		for(int k=0; k<nrows*ncols; k++)
+			tmp[k]=v;
+
+        return *this;
+	}
+
+Matrix::~Matrix()
+	{
+		if (matrix!=0)
+			delete [] matrix;
+	}
+
+void Matrix::resize(int r, int c)	
+{
+    nrows=r;
+    ncols=c;
+
+    storage.resize(r*c);
+    updatePointers();
+}
+
+const char *Matrix::getMemoryBlock() const
+{
+    return (char *) storage.getFirst();
+}
+
+void Matrix::zero()
+{
+    for (int k=0; k<ncols*nrows; k++)
+    {
+        storage[k]=0;
+    }
+}
+
+Matrix Matrix::transposed()
+{
+    Matrix ret;
+    ret.resize(ncols, nrows);
+
+    for(int r=0; r<nrows; r++)
+        for(int c=0;c<ncols; c++)
+            ret[c][r]=(*this)[r][c];
+
+    return ret;
+}
+
+Matrix Matrix::eye(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.eye();
+    return ret;
+}
+
+Matrix Matrix::zeros(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.zero();
+    return ret;
+}
+
+const Matrix &Matrix::eye()
+{
+    zero();
+    int tmpR=nrows;
+    if (ncols<nrows)
+        tmpR=ncols;
+
+    int c=0;
+    for(int r=0; r<tmpR; r++,c++)
+        (*this)[r][c]=1.0;
+
+    return *this;
+}
+
+
+Vector Matrix::getRow(int r) const
+{
+    Vector ret;
+    ret.resize(ncols);
+
+    for(int c=0;c<ncols;c++)
+        ret[c]=(*this)[r][c];
+
+    return ret;
+}
+
+Vector Matrix::getCol(int c) const
+{
+    Vector ret;
+    ret.resize(nrows);
+
+    for(int r=0;r<nrows;r++)
+        ret[r]=(*this)[r][c];
+
+    return ret;
 }

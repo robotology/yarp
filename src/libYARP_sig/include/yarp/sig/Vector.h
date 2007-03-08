@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.9 2007-03-08 13:56:05 natta Exp $
+// $Id: Vector.h,v 1.10 2007-03-08 16:07:33 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -365,12 +365,8 @@ public:
     /**
     * Copy operator;
     */
-    const Vector &operator=(const Vector &r)
-    {
-    	VectorOf<double>::operator =(r);
-        return *this;
-    }
-
+    const Vector &operator=(const Vector &r);
+    
 	/**
     * Resize the vector, (warning: deprecated, use resize) here
     * to maintain compatibility with the old Vector class.
@@ -380,28 +376,20 @@ public:
 	{resize(s, 0);}
 
 	inline int size() const
-	{
-		return VectorOf<double>::size();
-	}
+	{ return VectorOf<double>::size(); }
 
     /**
     * Get the length of the vector.
     * @return the length of the vector.
     */
 	inline int length() const
-	{
-		return VectorOf<double>::size();
-	}
+	{ return VectorOf<double>::size(); }
 
     /**
     * Zero the elements of the vector.
     */
-	void zero()
-	{
-		for(int k=0; k<VectorOf<double>::size(); k++)
-			VectorOf<double>::operator[](k)=0;
-	}
-
+	void zero();
+	
     /**
     * Creates a vector of zeros.
     * @param s the size of the new vector
@@ -420,24 +408,14 @@ public:
     /**
     * Set all elements of the vector to a scalar.
     */
-	const Vector &operator=(double v)
-	{
-		double *tmp=getFirst();
-
-		for(int k=0; k<length(); k++)
-			tmp[k]=v;
-
-        return *this;
-	}
-	
+	const Vector &operator=(double v);
+		
     /**
     * Return a pointer to the first element of the vector.
     * @return a pointer to double.
     */
 	inline double *data()
-	{
-		return VectorOf<double>::getFirst();
-	}
+	{ return VectorOf<double>::getFirst(); }
 
     /**
     * Return a pointer to the first element of the vector,
@@ -445,9 +423,7 @@ public:
     * @return a (const) pointer to double.
     */
 	inline const double *data() const
-	{
-		return VectorOf<double>::getFirst();
-	}
+	{ return VectorOf<double>::getFirst();}
 };
 
 #endif

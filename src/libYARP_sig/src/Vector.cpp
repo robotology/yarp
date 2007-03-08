@@ -1,12 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Lorenzo Natale
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2007 Lorenzo Natale
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
-// $Id: Vector.cpp,v 1.11 2007-03-08 13:56:05 natta Exp $
+// $Id: Vector.cpp,v 1.12 2007-03-08 16:07:33 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -39,102 +39,102 @@ public:
 template<class T> 
 VectorImpl<T>::VectorImpl()
 {
-	aceVector=(void *) new ACE_Vector<T>;
+    aceVector=(void *) new ACE_Vector<T>;
 }
 
 template<class T>
 VectorImpl<T>::VectorImpl(size_t size)
 {
-	ACE_ASSERT (size>0);
-	aceVector=(void *)new ACE_Vector<T>(size);
+    ACE_ASSERT (size>0);
+    aceVector=(void *)new ACE_Vector<T>(size);
 }
 
 template<class T>
 VectorImpl<T>::~VectorImpl()
 {
-	delete RES(aceVector);
+    delete RES(aceVector);
 }
 
 template<class T>
 VectorImpl<T>::VectorImpl(const VectorImpl &l)
 {
-	aceVector=new ACE_Vector<T>;
-	*RES(aceVector)=*RES(l.aceVector);
+    aceVector=new ACE_Vector<T>;
+    *RES(aceVector)=*RES(l.aceVector);
 }
 
 template<class T>
 const VectorImpl<T> &VectorImpl<T>::operator=(const VectorImpl &l)
 {
-	*RES(aceVector)=*RES(l.aceVector);
-	return *this;
+    *RES(aceVector)=*RES(l.aceVector);
+    return *this;
 }
 
 template<class T>
 const T &VectorImpl<T>::operator=(const T&l)
 {
-	int k=0;
-	int s=size();
+    int k=0;
+    int s=size();
 
-	for(k=0;k<s;k++)
-		(*RES(aceVector))[k]=l;
-	
-	return l;
+    for(k=0;k<s;k++)
+        (*RES(aceVector))[k]=l;
+
+    return l;
 }
 
 template<class T>
 void VectorImpl<T>::resize(size_t size, const T& def)
 {
-	ACE_ASSERT (size>0);
-	RES(aceVector)->resize(size,def);
+    ACE_ASSERT (size>0);
+    RES(aceVector)->resize(size,def);
 }
 
 template<class T>
 int VectorImpl<T>::size() const
 {
-	return RES(aceVector)->size();
+    return RES(aceVector)->size();
 }
 
 template<class T>
 T &VectorImpl<T>::operator[](int el)
 {
-	return (*RES(aceVector))[el];
+    return (*RES(aceVector))[el];
 }
 
 template<class T>
 const T& VectorImpl<T>::operator[](int el) const
 {
-	return (*RES(aceVector))[el];
+    return (*RES(aceVector))[el];
 }
 
 template<class T>
 void VectorImpl<T>::pop_back()
 {
-	RES(aceVector)->pop_back();
+    RES(aceVector)->pop_back();
 }
 
 template<class T>
 void VectorImpl<T>::push_back(const T&e)
 {
-	RES(aceVector)->push_back(e);
+    RES(aceVector)->push_back(e);
 }
 
 template<class T>
 void VectorImpl<T>::clear()
 {
-	RES(aceVector)->clear();
+    RES(aceVector)->clear();
 }
 
 
 template<class T>
 int VectorImpl<T>::set (T const &new_item, size_t slot)
 {
-	return RES(aceVector)->set(new_item, slot);
+    return RES(aceVector)->set(new_item, slot);
 }
 
 template<class T>
 int VectorImpl<T>::get (T &item, size_t slot) const
 {
-	return RES(aceVector)->get(item, slot);
+    return RES(aceVector)->get(item, slot);
 }
 
 //////////////////////////////////
@@ -143,31 +143,31 @@ int VectorImpl<T>::get (T &item, size_t slot) const
 template<class T>
 IteratorOf<T>::IteratorOf(const VectorImpl<T> &v)
 {
-	aceVectorIterator=new ACE_Vector_Iterator<T>((*RES(v.aceVector)));
+    aceVectorIterator=new ACE_Vector_Iterator<T>((*RES(v.aceVector)));
 }
 
 template<class T>
 IteratorOf<T>::~IteratorOf()
 {
-	delete RES_ITERATOR(aceVectorIterator);
+    delete RES_ITERATOR(aceVectorIterator);
 }
 
 template<class T>
 int IteratorOf<T>::advance()
 {
-	return RES_ITERATOR(aceVectorIterator)->advance();
+    return RES_ITERATOR(aceVectorIterator)->advance();
 }
 
 template<class T>
 int IteratorOf<T>::next(T *& n)
 {
-	return RES_ITERATOR(aceVectorIterator)->next(n);
+    return RES_ITERATOR(aceVectorIterator)->next(n);
 }
-			
+
 template<class T>
 int IteratorOf<T>::done()
 {
-	return RES_ITERATOR(aceVectorIterator)->done();
+    return RES_ITERATOR(aceVectorIterator)->done();
 }
 
 #include <list>
@@ -181,14 +181,14 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
         VectorPortContentHeader header;
         connection.expectBlock((char*)&header, sizeof(header));
         if (header.listLen > 0)
-            {
-                if (getListSize() != (int)(header.listLen))
-                    resize(header.listLen);
-                const char *ptr = getMemoryBlock();
-                ACE_ASSERT (ptr != 0);
-				int elemSize=getElementSize();
-                connection.expectBlock(ptr, elemSize*header.listLen);
-            }
+        {
+            if (getListSize() != (int)(header.listLen))
+                resize(header.listLen);
+            const char *ptr = getMemoryBlock();
+            ACE_ASSERT (ptr != 0);
+            int elemSize=getElementSize();
+            connection.expectBlock(ptr, elemSize*header.listLen);
+        }
         else
             return false;
     } catch (yarp::IOException e) {
@@ -200,7 +200,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
 
 
 bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
-	VectorPortContentHeader header;
+    VectorPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
@@ -208,7 +208,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
-	int elemSize=getElementSize();
+    int elemSize=getElementSize();
     ACE_ASSERT (ptr != NULL);
 
     connection.appendExternalBlock(ptr, elemSize*header.listLen);
@@ -236,7 +236,7 @@ using namespace yarp::os;
 
 Vector Vector::zeros(int s)
 {
-	Vector ret;
+    Vector ret;
     ret.resize(s);
     ret.zero();
     return ret;
@@ -259,4 +259,26 @@ ConstString Vector::toString()
     sprintf(tmp, "%lf", (*this)[c]);
     ret.append(tmp, strlen(tmp));
     return ConstString(ret.c_str());
+}
+
+const Vector &Vector::operator=(const Vector &r)
+{
+    VectorOf<double>::operator =(r);
+    return *this;
+}
+
+void Vector::zero()
+{
+    for(int k=0; k<VectorOf<double>::size(); k++)
+        VectorOf<double>::operator[](k)=0;
+}
+
+const Vector &Vector::operator=(double v)
+{
+    double *tmp=getFirst();
+
+    for(int k=0; k<length(); k++)
+        tmp[k]=v;
+
+    return *this;
 }
