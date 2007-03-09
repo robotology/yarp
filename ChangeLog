@@ -1,14 +1,19 @@
 2007-03-08 Lorenzo Natale  <nat@liralab.it>
-        * Added example/gsl_example: contains examples of how to use
-	gsl with yarp Matrix and Vector classes.
-        * Added example/matrix: contains examples of how to use
-	Matrix and Vector classes.
+
+	* example/gsl_example: contains examples of how to use GSL with
+	yarp Matrix and Vector classes.
+        
+	* example/matrix: contains examples of how to use Matrix and
+	Vector classes.
 
 2007-03-07 Lorenzo Natale  <nat@liralab.it>
-        * FindGSL.cmake
+
+	* conf/FindGSL.cmake: added for finding GSL library, the
+	GNU Scientific Library
 
 2007-03-07 Lorenzo Natale <nat@liralab.it>
-	* libYARPsig: Matrix and Vector classes
+
+	* src/libYARPsig: added Matrix and Vector classes
 	
 2007-03-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
