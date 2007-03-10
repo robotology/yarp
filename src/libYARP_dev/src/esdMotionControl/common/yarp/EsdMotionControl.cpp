@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.7 2007-02-21 18:04:21 babybot Exp $
+/// $Id: EsdMotionControl.cpp,v 1.8 2007-03-10 11:09:25 francesco_nori Exp $
 ///
 ///
 

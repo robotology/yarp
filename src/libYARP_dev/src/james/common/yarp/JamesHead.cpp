@@ -75,9 +75,6 @@ private:
 	double tfPitch;
 	double prevPitch_d;
 
-public:
-	double neckLimitsMax[2];
-	double neckLimitsMin[2];
 
 public:
     HeadControl(int r, PolyDriver *inertia, PolyDriver *head): RateThread(r),
@@ -224,12 +221,6 @@ public:
 		}
 		if (j==5)
 		{
-			if (pos> neckLimitsMax[0])
-				pos=neckLimitsMax[0];
-
-			if (pos< neckLimitsMin[0])
-				pos=neckLimitsMin[0];
-
 			prevRoll_d = positionCmds[j];
 			positionCmds[j] = pos;
 			tfRoll  = 1000*fabs(positionCmds[j] - prevRoll_d)/roll_v; 
@@ -237,12 +228,6 @@ public:
 		}
 		if (j==6)
 		{
-			if (pos> neckLimitsMax[1])
-				pos=neckLimitsMax[1];
-
-			if (pos<neckLimitsMin[1])
-				pos=neckLimitsMin[1];
-
 			prevPitch_d = positionCmds[j];
 			positionCmds[j] = pos;
 			tfPitch  = 1000*fabs(positionCmds[j] - prevPitch_d)/pitch_v; 
@@ -264,27 +249,15 @@ public:
                     ipos->positionMove(k, pos[k]);
 				if (k==5)
 				{
-					double tmpP=pos[k];
-					if (tmpP>neckLimitsMax[0])
-						tmpP=neckLimitsMax[0];
-					if (tmpP<neckLimitsMin[0])
-						tmpP=neckLimitsMin[0];
-
 					prevRoll_d = positionCmds[k];
-					positionCmds[k] = tmpP;
+					positionCmds[k] = pos[k];
 					tfRoll  = 1000*fabs(positionCmds[k] - prevRoll_d)/roll_v; 
 					timeRoll = 0;
 				}
 				if (k==6)
 				{
-					double tmpP=pos[k];
-					if (tmpP>neckLimitsMax[1])
-						tmpP=neckLimitsMax[1];
-					if (tmpP<neckLimitsMin[1])
-						tmpP=neckLimitsMin[1];
-
 					prevPitch_d = positionCmds[k];
-					positionCmds[k] = tmpP;
+					positionCmds[k] = pos[k];
 					tfPitch  = 1000*fabs(positionCmds[k] - prevPitch_d)/pitch_v; 
 					timePitch = 0;
 				}
@@ -904,10 +877,7 @@ bool JamesHead::open(yarp::os::Searchable& config)
     Bottle& head = headParams.findGroup("HEAD","section for robot head");
     Value& hdevice = head.find("device");
     Value& hsubdevice = head.find("subdevice");
-	Bottle& neckLimitsMax=head.findGroup("NeckMax", "a list of limits (max), for the neck");
-	Bottle& neckLimitsMin=head.findGroup("NeckMin", "a list of limits (min), for the neck");
-		
-	///
+
 	headParams.put("device", hdevice);
     headParams.put("subdevice", hsubdevice);
 
@@ -956,15 +926,8 @@ bool JamesHead::open(yarp::os::Searchable& config)
     controller = new HeadControl(NC_RATE, &ddInertia, &ddHead);
     HeadControl *c=my_cast(controller);
 
-	c->neckLimitsMax[0]=neckLimitsMax.get(1).asDouble();
-	c->neckLimitsMax[1]=neckLimitsMax.get(2).asDouble();
-
-	c->neckLimitsMin[0]=neckLimitsMin.get(1).asDouble();
-	c->neckLimitsMin[1]=neckLimitsMin.get(2).asDouble();
-
     c->start();
-
-	return true;
+    return true;
 }
 
 bool JamesHead::close()
