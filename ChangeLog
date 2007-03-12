@@ -1,5 +1,21 @@
 2007-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Network.cpp: added constructors and destructors.
+	On Windows, there was a potental problem when Ports are created 
+	in the main() method, and destroyed after the call to Network::fini()
+	without first closing the ports.  The symptom is Yarp scanning for 
+	a connection to the name server on shutdown.
+	This problem can be avoided by creating ports in a sub-method
+	or sub-scope.
+	Another possible way to avoid this problem is to replace calls
+	to Network::init and Network::fini with an object declaration:
+	    Network yarp;
+        Make sure this object is declared before any ports.  That way
+	it should go out of scope after them.  It calls Network::init
+	in its constructor and Network::fini in its destructor.
+	This scoping behavior may or may not be guaranteed, I haven't 
+	checked that yet.
+
 	* src/libYARP_OS: added IConfig and Module classes; these are
 	experimental generalizations of devices.  They are incomplete
 	and may be withdrawn or modified - use with caution.
