@@ -1,3 +1,9 @@
+2007-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS: added IConfig and Module classes; these are
+	experimental generalizations of devices.  They are incomplete
+	and may be withdrawn or modified - use with caution.
+
 2007-03-08 Lorenzo Natale  <nat@liralab.it>
 
 	* example/gsl_example: contains examples of how to use GSL with

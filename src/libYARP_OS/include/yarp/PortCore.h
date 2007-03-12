@@ -125,6 +125,8 @@ public:
         controlRegistration = flag;
     }
 
+    void interrupt();
+
 public:
 
     // PortManager interface, exposed to inputs

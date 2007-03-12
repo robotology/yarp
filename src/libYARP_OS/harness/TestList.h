@@ -42,6 +42,7 @@ extern yarp::UnitTest& getPortablePairTest();
 extern yarp::UnitTest& getTerminatorTest();
 extern yarp::UnitTest& getRateThreadTest();
 extern yarp::UnitTest& getStampTest();
+extern yarp::UnitTest& getModuleTest();
 
 class yarp::TestList {
 public:
@@ -72,6 +73,7 @@ public:
         root.add(getPortablePairTest());
         root.add(getTerminatorTest());
         root.add(getStampTest());
+        root.add(getModuleTest());
     }
 };
 

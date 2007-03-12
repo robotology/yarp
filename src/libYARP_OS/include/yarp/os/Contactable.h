@@ -101,6 +101,14 @@ public:
     virtual void close() = 0;
 
     /**
+     * Interrupt any current reads or writes attached to the port.
+     * This is useful prior to calling close(), if there are multiple
+     * threads operating on the port.  The port should not be used
+     * again after a call to interrupt().
+     */
+    virtual void interrupt() = 0;
+
+    /**
      * Returns information about how this port can be reached.
      * @return network parameters for this port
      */

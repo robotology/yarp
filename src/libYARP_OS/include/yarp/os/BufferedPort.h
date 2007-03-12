@@ -50,6 +50,7 @@ public:
         port.enableBackgroundWrite(true);
         reader.attach(port);
         writer.attach(port);
+        interrupted = false;
     }
 
     /**
@@ -88,6 +89,12 @@ public:
     // documentation provided in Contactable
     virtual void close() {
         port.close();
+    }
+
+    // documentation provided in Contactable
+    virtual void interrupt() {
+        interrupted = true;
+        port.interrupt();
     }
 
     virtual int getPendingReads() {
@@ -153,7 +160,8 @@ public:
     virtual T *read(bool shouldWait=true) {
         T *result = reader.read(shouldWait);
         // in some circs PortReaderBuffer::read(true) may return false
-        while (result==0 /*NULL*/ && shouldWait) {
+        while (result==0 /*NULL*/ && shouldWait && !reader.isClosed() &&
+               !interrupted) {
             result = reader.read(shouldWait);
         }
         return result;
@@ -221,6 +229,7 @@ private:
     PortWriterBuffer<T> writer;
     Port port;
     PortReaderBuffer<T> reader;
+    bool interrupted;
 };
 
 #endif

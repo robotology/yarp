@@ -74,6 +74,10 @@ public:
     void close();
 
     // documentation provided in Contactable
+    virtual void interrupt();
+
+
+    // documentation provided in Contactable
     Contact where() const;
 
 
@@ -155,6 +159,7 @@ public:
 
     // documented in Contactable
     virtual int getOutputCount();
+
 private:
     void *implementation;
 

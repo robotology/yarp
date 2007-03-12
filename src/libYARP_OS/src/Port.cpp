@@ -278,6 +278,12 @@ void Port::close() {
     // core.setOpened(false); 
 }
 
+void Port::interrupt() {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.interrupt();
+}
+
+
 
 Port::~Port() {
     if (implementation!=NULL) {

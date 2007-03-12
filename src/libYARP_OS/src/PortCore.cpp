@@ -217,9 +217,23 @@ bool PortCore::start() {
 
 
 
-void PortCore::closeMain() {
-    YTRACE("PortCore::closeMain");
+void PortCore::interrupt() {
+    stateMutex.wait();
+    // Check if someone is waiting for input.  If so, wake them up
+    if (reader!=NULL) {
+        // send empty data out
+        YARP_DEBUG(log,"sending interrupt message to listener");
+        StreamConnectionReader sbr;
+        reader->read(sbr);
+    }
+    stateMutex.post();
+}
 
+
+void PortCore::closeMain() {
+    if (finishing) return;
+
+    YTRACE("PortCore::closeMain");
 
     // Politely pre-disconnect inputs
     finishing = true;
@@ -354,6 +368,7 @@ void PortCore::closeMain() {
         reader->read(sbr);
         reader = NULL;
     }
+    finishing = false;
 
     // fresh as a daisy
     YARP_ASSERT(listening==false);
@@ -361,6 +376,7 @@ void PortCore::closeMain() {
     YARP_ASSERT(starting==false);
     YARP_ASSERT(closing==false);
     YARP_ASSERT(finished==false);
+    YARP_ASSERT(finishing==false);
     YARP_ASSERT(face==NULL);
 }
 

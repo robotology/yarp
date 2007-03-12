@@ -12,6 +12,7 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DeviceGroup.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Semaphore.h>
 #include <stdio.h>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
@@ -77,9 +78,14 @@ class DeviceGroupHelper {
 private:
     ACE_Vector<PolyDriver *> drivers;
     ACE_Vector<ConstString> names;
+    ACE_Vector<bool> needDrive;
+    Semaphore mutex;
 public:
+    DeviceGroupHelper() : mutex(1) {
+    }
 
     void clear() {
+        mutex.wait();
         ACE_Vector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             printf("*** Removing %s\n",names[i].c_str());
@@ -90,6 +96,22 @@ public:
         }
         lst.clear();
         names.clear();
+        mutex.post();
+    }
+
+    void update() {
+        mutex.wait();
+        ACE_Vector<PolyDriver *>& lst = drivers;
+        for (unsigned int i=0; i<lst.size(); i++) {
+            if (needDrive[i]) {
+                IService *service;
+                lst[i]->view(service);
+                if (service!=NULL) {
+                    service->updateService();
+                }
+            }
+        }
+        mutex.post();
     }
 
     bool close() {
@@ -114,6 +136,19 @@ public:
         }
         drivers.push_back(pd);
         names.push_back(ConstString(name));
+        IService *service = NULL;
+        pd->view(service);
+        bool backgrounded = false;
+        if (service!=NULL) {
+            backgrounded = service->startService();
+            if (backgrounded) {
+                // we don't need to poll this, so forget about the
+                // service interface
+                printf("group: service backgrounded\n");
+                service = NULL;
+            }
+        }
+        needDrive.push_back(!backgrounded);
         Drivers::factory().add(new LinkCreator(name,*pd));
         return true;
     }
@@ -149,16 +184,7 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
         }
         return true;
     }
-
-    bool ok = open("source",source,config,
-                   "device to read from (string or nested properties)");
-    if (!ok) return false;
-    ok = open("sink",sink,config,"device to write to (string or nested properties)");
-    if (!ok) {
-        source.close();
-        return false;
-    }
-    return true;
+    return false;
 }
 
 
@@ -203,26 +229,7 @@ bool DeviceGroup::closeMain() {
 
 
 bool DeviceGroup::updateService() {
-    if (source.isValid()&&sink.isValid()) {
-        IFrameGrabberImage *imgSource;
-        IFrameWriterImage *imgSink;
-        source.view(imgSource);
-        sink.view(imgSink);
-        if (imgSource!=NULL&&imgSink!=NULL) {
-            ImageOf<PixelRgb> tmp;
-            imgSource->getImage(tmp);
-            imgSink->putImage(tmp);
-            printf("piped %dx%d image\n", tmp.width(), tmp.height());
-        } else {
-            printf("Don't know how to pipe between these devices.\n");
-            printf("Piping is very limited at the moment.\n");
-            printf("You're probably better off writing some short custom code.\n");
-            return false;
-        }
-    } else {
-        //printf("Device aggregation in operation...\n");
-        Time::delay(1);
-    }
+    HELPER(implementation).update();
     return true;
 }
 
