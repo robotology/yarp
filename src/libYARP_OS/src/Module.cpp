@@ -70,6 +70,7 @@ public:
     }
 
     virtual void run() {
+        printf("Listening to terminal (type \"quit\" to stop module)\n");
         bool isEof = false;
         while (!(isEof||isStopping()||owner.isStopping())) {
             ConstString str = Network::readString(&isEof);
@@ -78,9 +79,9 @@ public:
                 Bottle reply;
                 bool ok = owner.respond(cmd,reply);
                 if (ok) {
-                    printf("%s\n", reply.toString().c_str());
+                    ACE_OS::printf("%s\n", reply.toString().c_str());
                 } else {
-                    printf("Command not understood -- %s\n", str.c_str());
+                    ACE_OS::printf("Command not understood -- %s\n", str.c_str());
                 }
             }
         }
@@ -169,11 +170,11 @@ static void handler (int) {
     static int ct = 0;
     ct++;
     if (ct>3) {
-        printf("Aborting...\n");
+        ACE_OS::printf("Aborting...\n");
         ACE_OS::exit(1);
     }
-    printf("[try %d of 3] Trying to shut down\n", 
-           ct);
+    ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
+                   ct);
     terminated = true;
     if (module!=NULL) {
         Bottle cmd, reply;
@@ -200,7 +201,7 @@ bool Module::runModule() {
         if (isStopping()) break;
         if (terminated) break;
     }
-    printf("Module finished\n");
+    ACE_OS::printf("Module finished\n");
     if (terminated) {
         // only portable way to bring down a thread reading from
         // the keyboard -- no good way to interrupt.
@@ -245,7 +246,7 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     if (options.check("file",val)) {
         ConstString fname = val->toString();
         options.unput("file");
-        printf("Working with config file %s\n", fname.c_str());
+        ACE_OS::printf("Working with config file %s\n", fname.c_str());
         options.fromConfigFile(fname,false);
 
         // interpret command line options as a set of flags again
