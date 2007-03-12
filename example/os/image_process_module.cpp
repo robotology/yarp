@@ -75,11 +75,7 @@ int main(int argc, char *argv[]) {
     // Initialize the yarp network
     Network yarp;
 
+    // Create and run our module
     ImageProcessModule module;
-    if (module.openFromCommand(argc,argv)) {
-        module.attachTerminal();
-        module.runModule();
-    }
-  
-    return 0;
+    return module.runModule(argc,argv);
 }

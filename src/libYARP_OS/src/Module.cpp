@@ -204,7 +204,7 @@ bool Module::runModule() {
     if (terminated) {
         // only portable way to bring down a thread reading from
         // the keyboard -- no good way to interrupt.
-        ACE_OS::exit(0);
+        ACE_OS::exit(1);
     }
     return true;
 }
@@ -224,6 +224,42 @@ bool Module::attach(TypedReader<Bottle>& port, bool handleStream) {
 bool Module::attachTerminal() {
     HELPER(implementation).start();
     return true;
+}
+
+int Module::runModule(int argc, char *argv[], bool skipFirst) {
+    if (!openFromCommand(argc,argv,skipFirst)) {
+        return false;
+    }
+    attachTerminal();
+    bool ok = runModule();
+    close();
+    return ok?0:1;
+}
+
+bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
+    Property options;
+    options.fromCommand(argc,argv,skipFirst);
+
+    // check if we're being asked to read the options from file
+    Value *val;
+    if (options.check("file",val)) {
+        ConstString fname = val->toString();
+        options.unput("file");
+        printf("Working with config file %s\n", fname.c_str());
+        options.fromConfigFile(fname,false);
+
+        // interpret command line options as a set of flags again
+        // (just in case we need to override something)
+        options.fromCommand(argc,argv,true,false);
+    }
+
+    // check if we want to use nested options (less ambiguous)
+    if (options.check("nested",val)||options.check("lispy",val)) {
+        ConstString lispy = val->toString();
+        options.fromString(lispy);
+    }
+    
+    return open(options);
 }
 
 

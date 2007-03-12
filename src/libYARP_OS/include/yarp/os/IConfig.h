@@ -30,21 +30,6 @@ class yarp::os::IConfig {
 public:
 
     /**
-     * Interprets a list of command line arguments, then calls open()
-     * with the result.  If the command line is "--file filename.ini"
-     * it will read the desired configuration from the named file.
-     * The configuration file should be or the form needed for
-     * yarp::os::Property::fromConfigFile.
-     * @param argc the number of arguments
-     * @param argv the list of arguments
-     * @param skipFirst set to true if the first argument should be skipped
-     * (which is the right thing to do for arguments passed to main())
-     * @return true/false upon success/failure
-     */
-    virtual bool openFromCommand(int argc, char *argv[], 
-                                 bool skipFirst = true);
-
-    /**
      * Initialize the module.  You should override this.
      * @param config is a list of parameters for the module.
      * Which parameters are effective for your module can vary.
