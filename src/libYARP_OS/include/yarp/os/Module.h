@@ -25,11 +25,18 @@ namespace yarp {
 
 /**
  * 
- * A standard Yarp module.  Modules are expected to accept commands
- * passed to the respond() method.  At a minimum, they should return a
- * short message saying how to find information about them.  The
- * attach() methods configure ports to pass received data to the
- * respond() method.
+ * A base-class for standard Yarp modules.  If you're building a large
+ * system and want to regularize how parts of your system are
+ * configured and run, this class may be helpful to you.  Modules are
+ * expected to be configurable via IConfig::open() -- in other words,
+ * their configuration can be passed in from the command line, from
+ * configuration files, the network, or GUIs.  Typically, modules will
+ * create a set of ports for communicating with other modules.  We
+ * encourage, when possible, that at least one of those ports be
+ * hooked up to the respond() method with attach().  For non graphical
+ * applications, it is also convenient to hook up standard
+ * input/output to the respond() method as well using
+ * attachTerminal().
  *
  */
 class yarp::os::Module : public IConfig {
