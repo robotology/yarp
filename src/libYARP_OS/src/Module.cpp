@@ -7,6 +7,9 @@
  */
 
 
+#include <ace/config.h>
+#include <ace/OS.h>
+
 #include <yarp/Logger.h>
 
 #include <yarp/os/Module.h>
