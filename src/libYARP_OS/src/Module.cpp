@@ -82,7 +82,7 @@ public:
             }
         }
         //printf("terminal shutting down\n");
-        owner.interruptModule();
+        //owner.interruptModule();
     }
 };
 
@@ -150,6 +150,7 @@ bool Module::respond(const Bottle& command, Bottle& reply) {
     case VOCAB3('b','y','e'):
         reply.addVocab(Vocab::encode("bye"));
         stopFlag = true;
+        interruptModule();
         return true;
     default:
         reply.add("command not recognized");
@@ -158,12 +159,52 @@ bool Module::respond(const Bottle& command, Bottle& reply) {
     return false;
 }
 
-/*
+
+static Module *module = NULL;
+static bool terminated = false;
+static void handler (int) {
+    static int ct = 0;
+    ct++;
+    if (ct>3) {
+        printf("Aborting...\n");
+        ACE_OS::exit(1);
+    }
+    printf("[try %d of 3] Trying to shut down\n", 
+           ct);
+    terminated = true;
+    if (module!=NULL) {
+        Bottle cmd, reply;
+        cmd.fromString("quit");
+        module->respond(cmd,reply);
+        //printf("sent %s, got %s\n", cmd.toString().c_str(),
+        //     reply.toString().c_str());
+    }
+}
+
+
 bool Module::runModule() {
-    
+    if (module==NULL) {
+        module = this;
+        //module = &HELPER(implementation);
+    } else {
+        ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
+    }
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    while (updateModule()) {
+        if (terminated) break;
+        if (isStopping()) break;
+        Time::delay(getPeriod());
+        if (isStopping()) break;
+        if (terminated) break;
+    }
+    printf("Module finished\n");
+    if (terminated) {
+        // only portable way to bring down a thread reading from
+        // the keyboard -- no good way to interrupt.
+        ACE_OS::exit(0);
+    }
     return true;
 }
-*/
 
 
 

@@ -104,14 +104,7 @@ public:
      * @return true on success
      *
      */
-    virtual bool runModule() {
-        while (updateModule()) {
-            if (isStopping()) break;
-            Time::delay(getPeriod());
-            if (isStopping()) break;
-        }
-        return true;
-    }
+    virtual bool runModule();
 
     /**
      * Respond to a message.  You can override this to respond
