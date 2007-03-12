@@ -30,6 +30,23 @@ namespace yarp {
 class yarp::os::Network {
 public:
     /**
+     * Constructor.  Configures process to use the YARP network.
+     * Can be more convenient to use than calling Network::init()
+     * directly, since it will clean things up with a call to
+     * Network::fini() automatically.
+     */
+    Network() {
+        Network::init();
+    }
+
+    /**
+     * Destructor.  Disconnects from the YARP network.
+     */
+    virtual ~Network() {
+        Network::fini();
+    }
+
+    /**
      * Request that an output port connect to an input port.
      * @param src the name of an output port
      * @param dest the name of an input port

@@ -72,9 +72,8 @@ public:
 
 
 int main(int argc, char *argv[]) {
-
-    // Initialize network
-    Network::init();
+    // Initialize the yarp network
+    Network yarp;
 
     ImageProcessModule module;
     if (module.openFromCommand(argc,argv)) {
@@ -82,6 +81,5 @@ int main(int argc, char *argv[]) {
         module.runModule();
     }
   
-    Network::fini();
     return 0;
 }
