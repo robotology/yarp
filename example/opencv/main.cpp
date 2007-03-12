@@ -1,6 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <ace/config.h>
+#include <stdio.h>
 
 #include <cv.h>
 #include <cvaux.h>
