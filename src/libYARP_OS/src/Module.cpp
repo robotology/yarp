@@ -51,8 +51,11 @@ public:
      * @param source a BufferedPort or PortReaderBuffer that
      * receives data.
      */
-    bool attach(yarp::os::TypedReader<yarp::os::Bottle>& source) {
-        source.useCallback(*this);
+    bool attach(yarp::os::TypedReader<yarp::os::Bottle>& source,
+                bool handleStream) {
+        if (handleStream) {
+            source.useCallback(*this);
+        }
         source.setReplier(*this);
         return true;
     }
@@ -168,8 +171,8 @@ bool Module::attach(Port& port) {
     return HELPER(implementation).attach(port);
 }
 
-bool Module::attach(TypedReader<Bottle>& port) {
-    return HELPER(implementation).attach(port);
+bool Module::attach(TypedReader<Bottle>& port, bool handleStream) {
+    return HELPER(implementation).attach(port,handleStream);
 }
 
 

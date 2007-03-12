@@ -35,16 +35,23 @@ namespace yarp {
 class yarp::os::Module : public IConfig {
 
 public:
+    /**
+     * Constructor.
+     */
     Module();
 
+    /**
+     * Destructor.
+     */
     virtual ~Module();
 
 
     /**
      *
-     * You can control the approximate rate at which updateModule() is
-     * called.  Return 0 for no delays.  By default, there are no
-     * delays.
+     * You can override this to control the approximate periodicity at which
+     * updateModule() is called by runModule().  By default, it returns
+     * 0 (no delay).
+     * @return the desired period between successive calls to updateModule()
      * 
      */
     virtual double getPeriod() {
@@ -53,10 +60,11 @@ public:
 
     /**
      *
-     * Check if module should continue running.  Return true if so,
-     * false if it should stop.  The module's actual work can be done
-     * during this call.  Or it can check the state of a thread
-     * running in the background.
+     * Override this to do whatever your module needs to do.  When
+     * your module wants to stop, return false.  The module's actual
+     * work could be done during this call, or it could just check the
+     * state of a thread running in the background.  
+     * @return true iff module should continue
      * 
      */
     virtual bool updateModule() {
@@ -65,8 +73,13 @@ public:
 
     /**
      *
-     * Try to halt operations by threads managed by the module.
+     * Try to halt any ongoing operations by threads managed by the module.
      * By default it does nothing - you may want to override this.
+     * If you have created any ports, and have any threads that are 
+     * might be blocked on reading data from those ports, this is a 
+     * good place to add calls to BufferedPort::interrupt() or
+     * Port::interrupt().
+     * @return true if there was no catastrophic failure
      *
      */
     virtual bool interruptModule() {
@@ -78,9 +91,10 @@ public:
      *
      * Calls updateModule() until that returns false.
      * updateModule() is called every getPeriod()
-     * seconds.  The respond() command could be called at any time
-     * between open() and close(), if there is input from the 
+     * seconds.  Be aware that the the respond() command could be 
+     * asycnhronously at any time, if there is input from the 
      * standard input or a port connected via attach().
+     * @return true on success
      *
      */
     virtual bool runModule() {
@@ -93,34 +107,51 @@ public:
     }
 
     /**
-     * Respond to a message.  You can override this.
-     * @param command the message
-     * @param reply the response
+     * Respond to a message.  You can override this to respond
+     * to messages in your own way.  It is useful, if your module
+     * doesn't know what to do with a message, to call
+     * Module::respond() for any default responses.
+     * @param command the message received
+     * @param reply the response you wish to make
      * @return true if there was no critical failure
      */
     virtual bool respond(const Bottle& command, 
                          Bottle& reply);
 
     /**
-     * will read from and reply to port
+     * Make any input from a Port object go to the respond() method.
+     * @param port the port to attach
+     * @return true if port was attached correctly.
      */
     virtual bool attach(Port& port);
 
     /**
-     * will read from and reply to port
+     * Make any input from a BufferedPort or PortReaderBuffer object go to 
+     * the respond() method.
+     * @param port the port or buffer to attach
+     * @param handleStream control whether streaming messages (messages that
+     * don't expect replies) are also sent to respond().  If they are,
+     * replies will be discarded.
+     * @return true if port was attached correctly.
      */
-    virtual bool attach(TypedReader<Bottle>& port);
+    virtual bool attach(TypedReader<Bottle>& port, bool handleStream = false);
 
     /**
-     * Read/write from stdin/stdout
+     * Make any input from standard input (usually the keyboard) go to
+     * the respond() method.  The reply will be send to standard output.
+     * @return true on success.
      */
     virtual bool attachTerminal();
 
-    Property& getState() { return state; }
-
+    /**
+     * Check if the module is shutting down.
+     * @return true if the module is shutting down.
+     */
     bool isStopping() { return stopFlag; }
 
 private:
+    Property& getState() { return state; }
+
     void *implementation;
     Property state;
     bool stopFlag;
