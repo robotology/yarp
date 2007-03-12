@@ -22,9 +22,6 @@
 
 #include <ace/Containers_T.h>
 
-// migrate to use normal yarp ports
-#define USE_NORMAL_PORT
-
 using namespace yarp;
 using namespace yarp::os;
 
@@ -703,14 +700,6 @@ int NameServer::main(int argc, char *argv[]) {
         // register root for documentation purposes
         name.registerName("/root",suggest);
 
-#ifndef USE_NORMAL_PORT
-        PortCore server;  // we use a subset of the PortCore functions
-        server.setReadHandler(name);
-        server.listen(Address(suggest.addRegName("/root")));
-        server.start();
-        YARP_INFO(Logger::get(), String("Name server listening at ") + 
-                  suggest.toString());
-#else
         Port server;
         name.setPort(server);
         server.setReader(name);
@@ -718,7 +707,6 @@ int NameServer::main(int argc, char *argv[]) {
                     false);
         YARP_DEBUG(Logger::get(), String("Name server listening at ") + 
                    suggest.toString());
-#endif
 
         ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
                        suggest.getName().c_str(), suggest.getPort());
