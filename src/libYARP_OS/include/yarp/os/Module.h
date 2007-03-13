@@ -189,12 +189,29 @@ public:
      */
     bool isStopping() { return stopFlag; }
 
+
+    /**
+     * Return name of module, as set with --name flag or setName().
+     * @param subName get nested name with this at the end
+     * @return the name of the module
+     */
+    ConstString getName(const char *subName = 0/*NULL*/);
+
+    /**
+     * Set the name of the module.
+     * @param name the desired name of the module
+     */
+    void setName(const char *name) {
+        this->name = name;
+    }
+
 private:
     Property& getState() { return state; }
 
     void *implementation;
     Property state;
     bool stopFlag;
+    ConstString name;
 };
 
 #endif

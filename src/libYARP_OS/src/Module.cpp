@@ -259,8 +259,23 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
         ConstString lispy = val->toString();
         options.fromString(lispy);
     }
-    
+
+    if (options.check("name")) {
+        name = options.check("name",Value("/anon"),
+                             "name of module").asString();
+    }
+
     return open(options);
 }
 
+
+ConstString Module::getName(const char *subName) {
+    if (subName==NULL) {
+        return name;
+    }
+    String base = name.c_str();
+    base += "/";
+    base += subName;
+    return base.c_str();
+}
 
