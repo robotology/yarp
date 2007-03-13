@@ -229,6 +229,7 @@ bool Module::attachTerminal() {
 
 int Module::runModule(int argc, char *argv[], bool skipFirst) {
     if (!openFromCommand(argc,argv,skipFirst)) {
+        ACE_OS::printf("Module failed to open\n");
         return false;
     }
     attachTerminal();
