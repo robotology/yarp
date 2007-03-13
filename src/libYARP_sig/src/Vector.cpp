@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.13 2007-03-08 17:14:54 natta Exp $
+// $Id: Vector.cpp,v 1.14 2007-03-13 17:32:30 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -225,8 +225,8 @@ template class yarp::VectorImpl<double>;
 template class yarp::VectorImpl<int>;
 template class yarp::VectorImpl<char>;
 template class yarp::VectorImpl<float>;
-template class yarp::sig::VectorOf<double>;
-template class yarp::sig::IteratorOf<double>;
+template class yarp::VectorOf<double>;
+template class yarp::IteratorOf<double>;
 
 
 /// vector implementations

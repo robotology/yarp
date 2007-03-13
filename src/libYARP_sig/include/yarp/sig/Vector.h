@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.11 2007-03-08 17:14:53 natta Exp $
+// $Id: Vector.h,v 1.12 2007-03-13 17:32:30 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -21,10 +21,11 @@
 namespace yarp {
 	class VectorBase;
     template<class T> class VectorImpl;
+    template<class T> class IteratorOf;
+    template<class T> class VectorOf;
+  
     namespace sig {
 		  //class Vector
-		  template<class T> class IteratorOf;
-		  template<class T> class VectorOf;
           class Vector;
           
           /**
@@ -180,7 +181,7 @@ public:
 	/**
 	* Be friendly with your iterator.
 	*/
-	friend class yarp::sig::IteratorOf<T>;
+	friend class yarp::IteratorOf<T>;
 
 private:
 	void *aceVector;
@@ -192,13 +193,14 @@ private:
  * Derive from VectorImpl<T> to provide:
  * - inline, efficient access to elements (operator [])
  * - read/write network methods (see VectorBase)
+ * Warning: the class is designed to work only with types defined the language (int, double, char..)
  */
 template<class T>
-class yarp::sig::VectorOf: public yarp::VectorImpl<T>, public yarp::VectorBase
+class yarp::VectorOf: public yarp::VectorImpl<T>, public yarp::VectorBase
 {
 private:
-	double *first;
-	double *last;
+	T *first;
+	T *last;
 
 	inline void _updatePointers()
 	{
@@ -325,7 +327,7 @@ public:
 * @return a reference to the requested element.
 */
 template<class T>
-class yarp::sig::IteratorOf
+class yarp::IteratorOf
 {
 	private:
 		void *aceVectorIterator;
@@ -365,7 +367,7 @@ class yarp::sig::IteratorOf
 * A class for a Vector. A Vector can be sent/read to/from 
 * a port. Use the [] operator for single element access.
 */
-class yarp::sig::Vector: public yarp::sig::VectorOf<double>
+class yarp::sig::Vector: public yarp::VectorOf<double>
 {
 public:
 	Vector():VectorOf<double>(){}
@@ -374,7 +376,7 @@ public:
     /**
     * Copy constructor.
     */
-    Vector(const Vector &r): yarp::sig::VectorOf<double>(r){}
+    Vector(const Vector &r): yarp::VectorOf<double>(r){}
     
     /**
     * Copy operator;
