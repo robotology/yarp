@@ -130,6 +130,11 @@ public:
         stateMutex.post();
 
         produce.wait();
+        stateMutex.wait();
+        if (!readBackground) {
+            readDelegate = NULL;
+        }
+        stateMutex.post();
         bool result = readResult;
         return result;
     }
