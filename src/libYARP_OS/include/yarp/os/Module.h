@@ -155,8 +155,9 @@ public:
      * @param reply the response you wish to make
      * @return true if there was no critical failure
      */
-    virtual bool respond(const Bottle& command, 
-                         Bottle& reply);
+    virtual bool respond(const Bottle& command, Bottle& reply) {
+        return basicRespond(command,reply);
+    }
 
     /**
      * Make any input from a Port object go to the respond() method.
@@ -205,8 +206,17 @@ public:
         this->name = name;
     }
 
+    /**
+     * Wrapper around respond() that is guaranteed to process system messages.
+     */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    bool safeRespond(const Bottle& command, Bottle& reply);
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+
 private:
     Property& getState() { return state; }
+
+    virtual bool basicRespond(const Bottle& command, Bottle& reply);
 
     void *implementation;
     Property state;

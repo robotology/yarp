@@ -218,15 +218,17 @@ bool PortCore::start() {
 
 
 void PortCore::interrupt() {
-    stateMutex.wait();
-    // Check if someone is waiting for input.  If so, wake them up
-    if (reader!=NULL) {
-        // send empty data out
-        YARP_DEBUG(log,"sending interrupt message to listener");
-        StreamConnectionReader sbr;
-        reader->read(sbr);
+    if (interruptible) {
+        stateMutex.wait();
+        // Check if someone is waiting for input.  If so, wake them up
+        if (reader!=NULL) {
+            // send empty data out
+            YARP_DEBUG(log,"sending interrupt message to listener");
+            StreamConnectionReader sbr;
+            reader->read(sbr);
+        }
+        stateMutex.post();
     }
-    stateMutex.post();
 }
 
 
@@ -787,7 +789,10 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     // constant over the lifetime of the input threads.
 
     if (this->reader!=NULL) {
+        interruptible = false; // no mutexing; user of interrupt() has to be
+                               // careful
         this->reader->read(reader);
+        interruptible = true;
     } else {
         // read and ignore
         YARP_DEBUG(Logger::get(),"data received in PortCore, no reader for it");

@@ -54,6 +54,7 @@ public:
         readableCreator = NULL;
         outputCount = inputCount = 0;
         controlRegistration = true;
+        interruptible = true;
     }
 
     virtual ~PortCore();
@@ -174,6 +175,7 @@ private:
     bool finishing;
     bool waitBeforeSend, waitAfterSend;
     bool controlRegistration;
+    bool interruptible;
     int events;
     int connectionListeners;
     int inputCount, outputCount;

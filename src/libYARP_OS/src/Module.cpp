@@ -46,7 +46,7 @@ public:
      */
     virtual void onRead(yarp::os::Bottle& v) {
         yarp::os::Bottle reply;
-        owner.respond(v,reply);
+        owner.safeRespond(v,reply);
     }
 
     /**
@@ -77,9 +77,18 @@ public:
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;
-                bool ok = owner.respond(cmd,reply);
+                bool ok = owner.safeRespond(cmd,reply);
                 if (ok) {
-                    ACE_OS::printf("%s\n", reply.toString().c_str());
+                    //printf("ALL: %s\n", reply.toString().c_str());
+                    //printf("ITEM 1: %s\n", reply.get(0).toString().c_str());
+                    if (reply.get(0).toString()=="help") {
+                        for (int i=0; i<reply.size(); i++) {
+                            ACE_OS::printf("%s\n", 
+                                           reply.get(i).toString().c_str());
+                        }
+                    } else {
+                        ACE_OS::printf("%s\n", reply.toString().c_str());
+                    }
                 } else {
                     ACE_OS::printf("Command not understood -- %s\n", str.c_str());
                 }
@@ -95,7 +104,7 @@ bool ModuleHelper::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     //printf("command received: %s\n", cmd.toString().c_str());
-    bool result = owner.respond(cmd,response);
+    bool result = owner.safeRespond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
@@ -138,7 +147,7 @@ Module::~Module() {
     }
 }
 
-bool Module::respond(const Bottle& command, Bottle& reply) {
+bool Module::basicRespond(const Bottle& command, Bottle& reply) {
     switch (command.get(0).asVocab()) {
     case VOCAB3('s','e','t'):
         state.put(command.get(1).toString(),command.get(2));
@@ -163,6 +172,15 @@ bool Module::respond(const Bottle& command, Bottle& reply) {
     return false;
 }
 
+bool Module::safeRespond(const Bottle& command, Bottle& reply) {
+    bool ok = respond(command,reply);
+    if (!ok) {
+        // just in case derived classes don't correctly pass on messages
+        ok = basicRespond(command,reply);
+    }
+    return ok;
+}
+
 
 static Module *module = NULL;
 static bool terminated = false;
@@ -179,7 +197,7 @@ static void handler (int) {
     if (module!=NULL) {
         Bottle cmd, reply;
         cmd.fromString("quit");
-        module->respond(cmd,reply);
+        module->safeRespond(cmd,reply);
         //printf("sent %s, got %s\n", cmd.toString().c_str(),
         //     reply.toString().c_str());
     }
@@ -201,8 +219,10 @@ bool Module::runModule() {
         if (isStopping()) break;
         if (terminated) break;
     }
+    ACE_OS::printf("Module closing\n");
+    close();
     ACE_OS::printf("Module finished\n");
-    if (terminated) {
+    if (1) { //terminated) {
         // only portable way to bring down a thread reading from
         // the keyboard -- no good way to interrupt.
         ACE_OS::exit(1);
