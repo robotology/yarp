@@ -46,34 +46,28 @@ int main(int argc, char *argv[])
     
 		char portName[256]="",outPortName[256]="";
 		int posX=0,posY=0;
-
-		//ACE_OS::sprintf(portName,argv[1]);
-		//ACE_OS::sprintf(outPortName,argv[2]);
+		int width=280,height=100;
 
 		if (Network->check("PortName",val)||Network->check("local",val)) 
 		{
 			strcpy(portName, val->asString().c_str());
 		}
-    
+
 		if (Network->check("OutPortName",val)||Network->check("remote",val)) 
 		{
 			strcpy(outPortName, val->asString().c_str());
 		}
 
-		if (Window->check("PosX",val)||Window->check("x",val)) 
-		{
-			posX = val->asInt();
-		}
-    
-		if (Window->check("PosY",val)||Window->check("y",val)) 
-		{
-			posY = val->asInt();
-		}
-	
-		printf("using local=%s remote=%s x=%d y=%d\n",portName,outPortName,posX,posY);
-		fflush(stdout);
+		if (Window->check("PosX",val)||Window->check("x",val)) posX = val->asInt();
+		if (Window->check("PosY",val)||Window->check("y",val)) posY = val->asInt();
+		if (Window->check("width",val)) width = val->asInt();
+		if (Window->check("height",val)) height = val->asInt();
+
+		//printf("using local=%s remote=%s x=%d y=%d\n",portName,outPortName,posX,posY);
+		//fflush(stdout);
 
 		FrameGrabberGUIControl window(portName,outPortName);
+		window.set_size_request(width,height);
 		window.move(posX,posY);
 		Gtk::Main::run(window);
 	}

@@ -36,7 +36,7 @@ public:
 
 		// GTKMM
 
-		set_size_request(560,200);
+		set_size_request(280,100);
 		set_title("Grabber Remote GUI");
 
 		m_bri.set_update_policy(Gtk::UPDATE_DISCONTINUOUS);
