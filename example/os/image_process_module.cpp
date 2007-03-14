@@ -35,15 +35,14 @@ class ImageProcessModule : public Module {
 private:
     // Make a port for reading and writing images
     BufferedPort<ImageOf<PixelRgb> > port;
+    Port cmdPort;
     int ct;
 public:
     bool open(Searchable& config) {
         ct = 0;
-        // Set the name of the port 
-        // (use "/worker" if there is no --name option)
-        ConstString portName = config.check("name",
-                                            Value("/worker")).asString();
-        port.open(portName);
+        port.open(getName());
+        cmdPort.open(getName("cmd")); // optional command port
+        attach(cmdPort); // cmdPort will work just like terminal
         return true;
     }
 
@@ -77,5 +76,6 @@ int main(int argc, char *argv[]) {
 
     // Create and run our module
     ImageProcessModule module;
+    module.setName("/worker");
     return module.runModule(argc,argv);
 }
