@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.14 2007-03-13 17:32:30 natta Exp $
+// $Id: Vector.cpp,v 1.15 2007-03-15 15:30:13 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -247,7 +247,7 @@ Vector MatrixOps::zeros(int s)
 */
 ConstString Vector::toString()
 {
-    String ret;
+    String ret = "";
     char tmp[80];
     int c=0;
     for(c=0;c<length()-1;c++)
@@ -256,8 +256,10 @@ ConstString Vector::toString()
         ret.append(tmp, strlen(tmp));
     }
 
-    sprintf(tmp, "%lf", (*this)[c]);
-    ret.append(tmp, strlen(tmp));
+    if (length()>=1) {
+        sprintf(tmp, "%lf", (*this)[c]);
+        ret.append(tmp, strlen(tmp));
+    }
     return ConstString(ret.c_str());
 }
 

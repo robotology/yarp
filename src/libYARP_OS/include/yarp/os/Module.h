@@ -12,6 +12,7 @@
 #include <yarp/os/IConfig.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/all.h>
@@ -75,6 +76,9 @@ public:
      * 
      */
     virtual bool updateModule() {
+        // insert a delay so, if user accidentally doesn't override this
+        // method, the thread won't kill the processor
+        yarp::os::Time::delay(0.5);
         return true;
     }
 
