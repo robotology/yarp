@@ -30,6 +30,7 @@ private:
     double m_tx, m_ty;
     double m_tdx, m_tdy;
     int m_w, m_h;
+    double xScale, yScale;
     double noiseLevel;
     yarp::sig::Vector pos, dpos, vel, speed, acc, loc, amp;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> back, fore;
@@ -47,6 +48,8 @@ public:
         acc.size(njoints);
         loc.size(njoints);
         amp.size(njoints);
+        xScale = 1;
+        yScale = 1;
         for (int i=0; i<njoints; i++) {
             pos[i] = 0;
             dpos[i] = 0;

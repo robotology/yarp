@@ -79,6 +79,12 @@ bool FakeBot::open(yarp::os::Searchable& config) {
     }
     noiseLevel = config.check("noise",Value(0.05),
                               "pixel noise level").asDouble();
+
+    xScale = config.check("sx",Value(1.0),
+                          "scaling for x coordinate").asDouble();
+    yScale = config.check("sy",Value(1.0),
+                          "scaling for y coordinate").asDouble();
+
     return true;
 }
 
@@ -117,9 +123,12 @@ bool FakeBot::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     back.safePixel(-1,-1) = PixelRgb(255,0,0);
     loc[0] = m_dx;
     loc[1] = m_dy;
+
+    double m_dx_scaled = m_dx*xScale;
+    double m_dy_scaled = m_dy*yScale;
     IMGFOR(image,x,y) {
-        int x0 = int(x+m_x+m_dx*0.5+0.5);
-        int y0 = int(y+m_y+m_dy*0.5+0.5);
+        int x0 = int(x+m_x+m_dx_scaled*0.5+0.5);
+        int y0 = int(y+m_y+m_dy_scaled*0.5+0.5);
         image(x,y) = back.safePixel(x0,y0);
         
         if (fore.isPixel(int(x0-m_tx),int(y0-m_ty))) {
