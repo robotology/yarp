@@ -1,5 +1,8 @@
 2007-03-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/DgramTwoWayStream.cpp: crc mistreated
+	in 64-bit linux.  Follow-up on sourceforge bug 1682155.
+
 	* src/libYARP_sig/src/IplImage.cpp: applied 
 	fix for compile error in 64-bit linux [sourceforge bug 1682155].
 	Bug report and fix provided by Marco Barbosa.
