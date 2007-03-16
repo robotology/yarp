@@ -1,137 +1,183 @@
-#if 0 // do not compile yet
-///////// YARPRndNormal
-YARPRndNormal::YARPRndNormal(): YARPRnd()
+#include <yarp/os/Semaphore.h>
+#include <yarp/sig/Rand.h>
+#include <time.h>
+#include <stdio.h>
+#include <math.h>
+
+//constants, from NR
+#define IA 16807
+#define IM 2147483647
+#define AM (1.0/IM)
+#define IQ 127773
+#define IR 2836
+#define NDIV (1+(IM-1)/NTAB)
+#define EPS 1.2e-7
+#define RNMX (1.0-EPS)
+
+using namespace yarp;
+
+class ThreadSafeRandScalar : public RandScalar
 {
-  _y[0] = 0.0;
-  _y[1] = 0.0;
-  _last = 2;
+    yarp::os::Semaphore mutex;
+public:
+    ThreadSafeRandScalar(): RandScalar()
+    {
+        
+    }
+
+    void init()        
+    {
+        mutex.wait();
+        RandScalar::init();
+        mutex.post();
+    }
+
+    void init(int s)
+    {
+        mutex.wait();
+        RandScalar::init(s);
+        mutex.post();
+    }
+    
+    double get()
+    {
+        double ret;
+        mutex.wait();
+        ret=RandScalar::get();
+        mutex.post();
+        return ret;
+    }
+
+} theRandScalar;
+
+double Random::rand()
+{
+    return theRandScalar.get();
 }
 
-void YARPRndNormal::init()
+void Random::init()
 {
-  YARPRnd::init();
-  _last=2;
+    return theRandScalar.init();
 }
 
-void YARPRndNormal::init(int aSeed)
+void Random::init(int seed)
 {
-  YARPRnd::init(aSeed);
-  _last = 2;
+    return theRandScalar.init(seed);
 }
 
-double YARPRndNormal::getNumber()
+RandScalar::RandScalar()
+{
+  idum=0;
+  iy=0;
+  init();
+}
+
+RandScalar::RandScalar(int seed)
+{
+  idum=0;
+  iy=0;
+  init(seed);
+}
+
+double RandScalar::get()
+{
+  int k;
+  double temp;
+  int j;
+
+  k=(idum)/IQ;
+  idum=IA*(idum-k*IQ)-IR*k;
+  if (idum<0)
+    idum+=IM;
+  j=iy/NDIV;
+  iy=iv[j];
+  iv[j]=idum;
+  temp=AM*iy;
+  if (temp > RNMX)
+    temp=RNMX;
+
+  return temp;
+}
+
+RandnScalar::RandnScalar()
+{
+  y[0] = 0.0;
+  y[1] = 0.0;
+  last = 2;
+}
+
+void RandnScalar::init()
+{
+  rnd.init();
+  last=2;
+}
+
+void RandnScalar::init(int aSeed)
+{
+  rnd.init(aSeed);
+  last = 2;
+}
+
+double RandnScalar::get()
 {
   double ret;
-  if (_last > 1)
+  if (last > 1)
     {
-      _boxMuller();	//compute two normally distr random number
-      _last = 0;
+        boxMuller();    //compute two normally distr random number
+        last = 0;
     }
-		
-  ret = _y[_last];
-  _last++;
+    
+  ret = y[last];
+  last++;
   return ret;
 }
 
-inline void YARPRndNormal::_boxMuller()
+inline void RandnScalar::boxMuller()
 {
   double x1, x2;
   double w = 2.0;
   while (w >= 1.0)
     {
-      x1 = 2.0 * YARPRnd::getNumber() - 1.0;
-      x2 = 2.0 * YARPRnd::getNumber() - 1.0;
+      x1 = 2.0 * rnd.get() - 1.0;
+      x2 = 2.0 * rnd.get() - 1.0;
       w = x1 * x1 + x2 * x2;
     }
 
   w = sqrt( (-2.0 * log( w ) ) / w );
-  _y[0] = x1 * w;
-  _y[1] = x2 * w;
+  y[0] = x1 * w;
+  y[1] = x2 * w;
 }
 
-////////// YARPRndVector
-void YARPRndVector::init(int s)
+
+// initialize with a call to "time"
+void RandScalar::init()
 {
-  _rndGen.init(s);
+  // initialize with time
+  int t=(int)time(0);
+  RandScalar::init(t);
 }
 
-void YARPRndVector::init()
+void RandScalar::init(int s)
 {
-  _rndGen.init();
-}
+  idum=-s;
+  int k;
+  int j;
 
-void YARPRndVector::resize(const YVector &max, const YVector &min)
-{
-//  ACE_ASSERT(max.Length() == min.Length());
-//  ACE_ASSERT(max.Length() > 0);
-	
-  _size=max.Length();
-
-  _size = max.Length();
-  _max = max;
-  _min = min;
-  _random.Resize(_size);
-}
-
-////////// YARPRndGaussVector
-void YARPRndGaussVector::resize(const YVector &av, const YVector &std)
-{
-//  ACE_ASSERT(av.Length() == std.Length());
- // ACE_ASSERT(av.Length() > 0);
-	
-  _rndGen=new YARPRndNormal[av.Length()];
-
-  _size = av.Length();
-  _average = av;
-  _std = std;
-  _random.Resize(_size);
-}
-
-void YARPRndGaussVector::init(int s)
-{
-  YARPRnd seeds;
-  seeds.init(s);
-    
-  for(int k=0;k<_size;k++)
+  if (idum<=0 || !iy)
     {
-      int r=(int) (seeds.getNumber()*INT_MAX+0.5);
-      _rndGen[k].init(r);
+      if (-idum<1)
+          idum=1;
+      else
+          idum=-idum;
+      for (j=NTAB+7;j>=0;j--)
+      {
+          k=(idum)/IQ;
+          idum=IA*(idum-k*IQ)-IR*k;
+          if (idum<0)
+              idum+=IM;
+          if (j<NTAB)
+              iv[j]=idum;
+      }
+      iy=iv[0];
     }
 }
-
-// initialize by using time
-void YARPRndGaussVector::init()
-{
-  YARPRnd seeds;
-  seeds.init();
-    
-  for(int k=0;k<_size;k++)
-    {
-      int r=(int) (seeds.getNumber()*INT_MAX+0.5);
-      _rndGen[k].init(r);
-    }
-}
-
-void YARPRndGaussVector::setStd(const YVector &std)
-{
-  _std=std;
-}
-
-void YARPRndGaussVector::setAv(const YVector &av)
-{
-  _average=av;
-}
-
-////////// YARPRndSafeGaussVector
-void YARPRndSafeGaussVector::resize(const YVector &max, const YVector &min, const YVector &av, const YVector &std)
-{
-//  ACE_ASSERT((av.Length() == std.Length()) && (max.Length() == min.Length()) && (min.Length() == std.Length()));
- // ACE_ASSERT(av.Length() > 0);
-
-  YARPRndGaussVector::resize(av, std);
-
-  _max = max;
-  _min = min;
-}
-
-#endif do not compile yet
