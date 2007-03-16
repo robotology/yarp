@@ -12,12 +12,10 @@
 #include <yarp/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/NetType.h>
-#include <yarp/os/NetInt32.h>
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
 using namespace yarp;
-using namespace yarp::os;
 
 #define CRC_SIZE 8
 #define READ_SIZE (120000-CRC_SIZE)
@@ -26,10 +24,11 @@ using namespace yarp::os;
 
 static bool checkCrc(char *buf, int length, int crcLength, int pct,
                      int *store_altPct = NULL) {
-    NetInt32 alt = (NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
+    NetType::NetInt32 alt = 
+        (NetType::NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
-    NetInt32 curr = NetType::netInt(b);
+    NetType::NetInt32 curr = NetType::netInt(b);
     int altPct = NetType::netInt(b2);
     bool ok = (alt == curr && pct==altPct);
     if (!ok) {
@@ -53,7 +52,8 @@ static bool checkCrc(char *buf, int length, int crcLength, int pct,
 
 
 static void addCrc(char *buf, int length, int crcLength, int pct) {
-    NetInt32 alt = (NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
+    NetType::NetInt32 alt = 
+        (NetType::NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
     NetType::netInt((NetType::NetInt32)alt,b);
