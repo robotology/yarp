@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: IplImage.cpp,v 1.6 2007-01-10 17:06:33 eshuy Exp $
+/// $Id: IplImage.cpp,v 1.7 2007-03-16 15:49:37 eshuy Exp $
 ///
 ///
 
@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <ace/OS.h>
 #include <yarp/sig/IplImage.h>
 #include <yarp/Logger.h>
 
@@ -45,7 +46,7 @@ template <class T>
 T* AllocAligned (int size)
 {
 	T *ptr = new T[size + YARP_IMAGE_ALIGN];
-	const int rem = (((unsigned int)ptr) % YARP_IMAGE_ALIGN);
+	const int rem = (((size_t)ptr) % YARP_IMAGE_ALIGN);
 	const char addbytes = YARP_IMAGE_ALIGN - rem; 
 	///((rem != 0) ? (YARP_IMAGE_ALIGN - rem) : 0); 
 
