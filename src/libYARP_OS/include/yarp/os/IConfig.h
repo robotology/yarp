@@ -44,16 +44,17 @@ public:
     virtual bool close() { return true; }
 
     /**
-     * Reinitialize the object.  By default, this is the same as calling
-     * close() and then open() with the new configuration, but particular
-     * modules override this to do things more efficiently.
      *
-     * @param config A list of parameters for the module.
+     * Change online parameters.  
+     * The parameters that can be changed online (in other words,
+     * without closing and reopening) will vary between objects.
+     *
+     * @param config A list of parameters for the object.
+     * @return true/false on success/failure.
      *
      */
     virtual bool configure(Searchable& config) {
-        close();
-        return open(config);
+        return false;
     }
 
     /**
