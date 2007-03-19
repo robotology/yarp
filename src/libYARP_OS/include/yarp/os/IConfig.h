@@ -49,12 +49,9 @@ public:
      * modules override this to do things more efficiently.
      *
      * @param config A list of parameters for the module.
-     * @param wipe If this is set, then prior configuration should be ignored.
-     * Otherwise, configuration is just added to or changed rather than wiped.
-     * @return true/false on success/failure.
      *
      */
-    virtual bool configure(Searchable& config, bool wipe = false) {
+    virtual bool configure(Searchable& config) {
         close();
         return open(config);
     }
