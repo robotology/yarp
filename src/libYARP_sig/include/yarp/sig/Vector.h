@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.12 2007-03-13 17:32:30 natta Exp $
+// $Id: Vector.h,v 1.13 2007-03-19 11:51:02 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -47,7 +47,7 @@ namespace yarp {
 /**
  * \ingroup sig_class
  *
- * A Base calss for a VectorOf<T>, provide default implementatio for 
+ * A Base calss for a VectorOf<T>, provide default implementation for 
  * read/write methods.
  */
 class yarp::VectorBase:public yarp::os::Portable
@@ -218,7 +218,7 @@ public:
 
 	VectorOf(size_t size):VectorImpl<T>(size)
 	{
-		_updatePointers();
+        _updatePointers();
 	}
 
     VectorOf(const VectorOf &r):VectorImpl<T>(r)

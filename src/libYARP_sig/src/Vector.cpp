@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.15 2007-03-15 15:30:13 eshuy Exp $
+// $Id: Vector.cpp,v 1.16 2007-03-19 11:51:02 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -47,6 +47,7 @@ VectorImpl<T>::VectorImpl(size_t size)
 {
     ACE_ASSERT (size>0);
     aceVector=(void *)new ACE_Vector<T>(size);
+    RES(aceVector)->resize(size, T(0));
 }
 
 template<class T>
@@ -86,6 +87,7 @@ void VectorImpl<T>::resize(size_t size, const T& def)
 {
     ACE_ASSERT (size>0);
     RES(aceVector)->resize(size,def);
+ //   ((ACE_Array_Base<T> *)(aceVector))->size(size);
 }
 
 template<class T>
@@ -109,13 +111,13 @@ const T& VectorImpl<T>::operator[](int el) const
 template<class T>
 void VectorImpl<T>::pop_back()
 {
-    RES(aceVector)->pop_back();
+   RES(aceVector)->pop_back();
 }
 
 template<class T>
 void VectorImpl<T>::push_back(const T&e)
 {
-    RES(aceVector)->push_back(e);
+   RES(aceVector)->push_back(e);
 }
 
 template<class T>

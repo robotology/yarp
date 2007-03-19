@@ -125,7 +125,7 @@ public:
     virtual String getName() { return "VectorTest"; }
 
     void checkFormat() {
-	    Vector v;
+	    Vector v(10);
 
         report(0,"check vector format conforms to network standard...");
         {
