@@ -30,25 +30,33 @@ class yarp::os::IConfig {
 public:
 
     /**
-     * Initialize the module.  You should override this.
-     * @param config is a list of parameters for the module.
-     * Which parameters are effective for your module can vary.
+     * Initialize the object.  You should override this.
+     * @param config is a list of parameters for the object.
+     * Which parameters are effective for your object can vary.
      * @return true/false upon success/failure
      */
     virtual bool open(Searchable& config) { return true; }
 
     /**
-     * Shut the module down.  You should override this.
+     * Shut the object down.  You should override this.
      * @return true/false on success/failure.
      */
     virtual bool close() { return true; }
 
     /**
-     * Reinitialize the module.  By default, this is the same as calling
+     * Reinitialize the object.  By default, this is the same as calling
      * close() and then open() with the new configuration, but particular
      * modules override this to do things more efficiently.
+     *
+     * If the 
+     *
+     * @param config A list of parameters for the module.
+     * @param wipe If this is set, then prior configuration should be ignored.
+     * Otherwise, configuration is just added to or changed rather than wiped.
+     * @return true/false on success/failure.
+     *
      */
-    virtual bool configure(Searchable& config) {
+    virtual bool configure(Searchable& config, bool wipe = false) {
         close();
         return open(config);
     }
