@@ -72,13 +72,22 @@ bool DevicePipe::close() {
 bool DevicePipe::updateService() {
     IFrameGrabberImage *imgSource;
     IFrameWriterImage *imgSink;
+    IAudioGrabberSound *sndSource;
+    IAudioRender *sndSink;
     source.view(imgSource);
+    source.view(sndSource);
     sink.view(imgSink);
+    sink.view(sndSink);
     if (imgSource!=NULL&&imgSink!=NULL) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);
         printf("piped %dx%d image\n", tmp.width(), tmp.height());
+    } else if (sndSource!=NULL&&sndSink!=NULL) {
+        Sound tmp;
+        sndSource->getSound(tmp);
+        sndSink->renderSound(tmp);
+        printf("piped %dx%d sound\n", tmp.getSamples(), tmp.getChannels());
     } else {
         printf("Don't know how to pipe between these devices.\n");
         printf("Piping is very limited at the moment.\n");

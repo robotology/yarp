@@ -13,6 +13,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/IConfig.h>
 
 namespace yarp {
     /**
@@ -29,7 +30,7 @@ namespace yarp {
  *
  * Interface implemented by all device drivers.
  */
-class yarp::dev::DeviceDriver
+class yarp::dev::DeviceDriver : public yarp::os::IConfig
 {
 public:
     /**
