@@ -185,6 +185,8 @@ public:
 		v[2]=99;
 		v[3]=99;
 
+        checkEqual(v.size(),4,"size set ok");
+
         Vector v2(v);
         checkEqual(v.size(),v2.size(),"size matches");
 
