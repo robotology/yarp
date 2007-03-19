@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.13 2007-03-19 11:51:02 natta Exp $
+// $Id: Vector.h,v 1.14 2007-03-19 11:52:13 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -83,8 +83,6 @@ public:
  * - use set()/get() to access single elements with range checking
  * - use size() to get the current size of the Vector
  * - use operator= to copy Vectors
- * This is derived from ACE_Array & ACE_Array_Base but it doesn't need to be the case if this
- * shows to be unefficient.
  */
 template<class T> 
 class yarp::VectorImpl
