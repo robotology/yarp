@@ -48,8 +48,6 @@ public:
      * close() and then open() with the new configuration, but particular
      * modules override this to do things more efficiently.
      *
-     * If the 
-     *
      * @param config A list of parameters for the module.
      * @param wipe If this is set, then prior configuration should be ignored.
      * Otherwise, configuration is just added to or changed rather than wiped.
