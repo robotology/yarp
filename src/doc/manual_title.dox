@@ -1,0 +1,24 @@
+/**
+ * @page manual_title User Manual Title
+
+\image html yarp-yal01.png ""
+\image latex yarp-yal01.eps ""
+
+\latexonly
+\ \\
+{\Large
+YARP User Manual
+}
+\endlatexonly
+
+
+Paul Fitzpatrick
+
+Giorgio Metta
+
+Lorenzo Natale
+
+online at http://yarp0.sourceforge.net
+
+*
+*/

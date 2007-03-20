@@ -52,6 +52,7 @@ for manual in min; do
     sed "s/^.include.*/%%\\0/" -i refman.tex
     sed "s/^.input.*/%%\\0/" -i refman.tex
     sed "s/.*what_is_yarp.*/\\\\input\\{order\\}/" -i refman.tex
+    sed "s/^.*manual_title.*/\\\\input\\{manual_title\\}/" -i refman.tex
     perl -pe "s/(\\{tocdepth\\})\\{1\\}/\\{tocdepth\\}\\{2\\}/" < refman.tex > junk.tex
     mv junk.tex refman.tex
     for f in `ls *.tex`; do
@@ -72,7 +73,8 @@ for manual in min; do
 	    cat $g.tex >> $f
 	done
     done
-    
 
+    sed "s/.*chapter.*//" -i manual_title.tex
+    
     make pdf
 done
