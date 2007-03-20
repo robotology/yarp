@@ -282,3 +282,187 @@ in your own program.
 
 */
 
+
+
+
+
+/**
+ \example port_power/ex0000_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0001_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0002_connector.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0100_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0101_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0200_polling.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0300_port_callback.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0301_buffered_callback.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0302_buffered_ext_callback.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0400_expect_reply.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0401_give_reply.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0402_port_callback_reply.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0403_bufferedport_callback_reply.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0500_raw_target_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0501_raw_target_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0502_raw_target_connector.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0503_serial_target_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0504_serial_target_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0505_compliant_target_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0506_compliant_target_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
