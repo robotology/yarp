@@ -143,29 +143,38 @@ public:
             return;
         }
 
-        if (!reported.check(key.c_str())) {
-            if (report.isFound) {
-                printf("Checking \"%s\": = %s\n", key.c_str(),
-                       report.value.c_str());
-            } else {
-                reported.put(key.c_str(),1);
-                bool hasDefault = fallback.check(key.c_str());
-                String defString = "";
-                if (hasDefault) {
-                    defString += " ";
-                    defString += "(default ";
-                    String theDefault = 
-                        fallback.find(key.c_str()).toString().c_str();
-                    if (theDefault=="") {
-                        defString += "is blank";
-                    } else {
-                        defString += theDefault;
+        if (comment.check(key.c_str())) {
+            if (!reported.check(key.c_str())) {
+                if (report.isFound) {
+                    String hasValue = report.value.c_str();
+                    if (hasValue.length()>35) {
+                        hasValue = hasValue.substr(0,30) + " ...";
                     }
-                    defString += ")";
+                    printf("Checking \"%s\": = %s (%s)\n", key.c_str(),
+                           hasValue.c_str(),
+                           comment.check(key.c_str(),
+                                         Value("")).toString().c_str());
+                } else {
+                    reported.put(key.c_str(),1);
+                    bool hasDefault = fallback.check(key.c_str());
+                    String defString = "";
+                    if (hasDefault) {
+                        defString += " ";
+                        defString += "(default ";
+                        String theDefault = 
+                            fallback.find(key.c_str()).toString().c_str();
+                        if (theDefault=="") {
+                            defString += "is blank";
+                        } else {
+                            defString += theDefault;
+                        }
+                        defString += ")";
+                    }
+                    printf("Checking \"%s\": %s%s\n", key.c_str(),
+                           comment.check(key.c_str(),
+                                         Value("")).toString().c_str(),
+                           defString.c_str());
                 }
-                printf("Checking \"%s\": %s%s\n", key.c_str(),
-                       comment.check(key.c_str(),Value("")).toString().c_str(),
-                       defString.c_str());
             }
         }
     }
