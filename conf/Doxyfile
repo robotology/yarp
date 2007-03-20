@@ -76,9 +76,9 @@ EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = example/
-EXAMPLE_PATTERNS       = 
-EXAMPLE_RECURSIVE      = NO
-IMAGE_PATH             = src/doc
+EXAMPLE_PATTERNS       = *.cpp *.h *.txt
+EXAMPLE_RECURSIVE      = YES
+IMAGE_PATH             = src/doc/
 INPUT_FILTER           = 
 FILTER_SOURCE_FILES    = NO
 #---------------------------------------------------------------------------

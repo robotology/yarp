@@ -1,18 +1,14 @@
 
 /**
-  @page yarp_code_examples Examples for YARP OS
+  @page yarp_code_examples Examples
 
-  These examples are available in the examples/os directory of the YARP
-  source code -- see tips on @subpage install_yarp "getting YARP".
+There are many code examples available in the "example/"
+subdirectory of YARP. If you're reading 
+this online, click on the "examples" button on the top right
+to see many of them.
 
-  \li \ref yarp_code_example_pair
-  \li \ref yarp_code_example_buffer
-
-
- @section yarp_code_example_pair Simple communicating programs example
-
-Here we work through an example of using YARP communication between programs.
-We will have two programs, a sender and receiver, 
+Here we work through an example of using YARP communication
+between programs.  We will have two programs, a sender and receiver,
 simple_sender.cpp and simple_receiver.cpp
 
 Here's simple_sender.cpp:
@@ -76,6 +72,213 @@ You can run the receiver many times to connect and reconnect.
  @section yarp_code_example_buffer Buffered port example
 
 \include example/os/buffered_port.cpp
+
+*/
+
+
+/**
+ * \example os/buffered_port.cpp
+
+This example shows how to communicate between a pair of buffered ports.
+
+*/
+
+
+
+/**
+ * \example os/simple_sender.cpp
+
+This outputs some data to a port.  
+Designed to be used with \ref os/simple_receiver.cpp example.
+
+*/
+
+
+/**
+ * \example os/simple_receiver.cpp
+
+This reads some data from a port.
+Designed to be used with \ref os/simple_sender.cpp example.
+
+*/
+
+
+/**
+ * \example os/bottle_add.cpp
+
+How to construct a very simple bottle.
+
+*/
+
+
+/**
+ * \example os/database.cpp
+
+A toy "database" program for storing and fetching key-values, accessible
+from a port.
+
+*/
+
+
+/**
+ * \example os/image_process.cpp
+
+An example of how to receive, process, and output images to and from a port.
+
+*/
+
+
+/**
+ * \example os/image_source.cpp
+
+An example of how to create a source of images as a port.
+
+*/
+
+
+
+/**
+ * \example os/make_count.cpp
+
+Send countdown messages from a port (paired with \ref os/view_count.cpp
+example).
+
+*/
+
+/**
+ * \example os/view_count.cpp
+
+View countdown messages coming from a port (paired with \ref os/make_count.cpp
+example).
+
+*/
+
+
+/**
+ * \example os/portable_pair.cpp
+
+Show use of the yarp::os::PortablePair class, to send messages
+of mixed type.  If the component types follow the YARP network
+data format, then their composition will also.
+
+*/
+
+
+
+/**
+ * \example os/ratethread.cpp
+
+Show a class for running some processing at a specified interval.
+
+*/
+
+
+
+
+/**
+ * \example os/summer.cpp
+
+Add up numbers received on a port, and send the result back out.
+
+*/
+
+
+
+/**
+ * \example os/threads.cpp
+
+Demonstrate the basic use of threads.  See also \ref os/ratethread.cpp
+
+*/
+
+
+/**
+ * \example opencv/main.cpp
+
+An example of using OpenCV with YARP.
+
+*/
+
+
+
+/**
+ * \example property/main.cpp
+
+How to read a configuration file.  This example is designed to
+read a file like the following (property/config.txt):
+
+\include example/property/config.txt
+
+*/
+
+
+/**
+ * \example dev/grabber_client.cpp
+
+How to grab images from a remote source using the yarp::dev::IFrameGrabber
+interface.
+
+*/
+
+
+/**
+ * \example dev/file_grabber.cpp
+
+This example shows how we would make a new device for a camera.
+We make a device that reads images from file.  The only step
+missing here is to integrate the device into the YARP library.
+
+Here's the header file, dev/FileFrameGrabber.h
+
+\include dev/FileFrameGrabber.h
+
+And here's how we can use it.  In fact, we just grab the first
+image from the device.
+
+*/
+
+
+/**
+ * \example dev/fake_motor.cpp
+
+Some tips on how to create a device for a new motor control board.
+
+*/
+
+
+/**
+ * \example bottle/main.cpp
+
+Experiment with bottles and properties.
+
+*/
+
+
+
+/**
+ * \example framerate/main.cpp
+
+Measure the framerate of a data source.  This example was originally
+designed for images but should work with anything.
+
+*/
+
+
+
+/**
+ * \example imagemagick/main.cpp
+
+Using ImageMagick and YARP
+
+*/
+
+
+
+/**
+ * \example external/nameclient.cpp
+
+How to get data from YARP's name server without using any YARP code
+in your own program.
 
 */
 

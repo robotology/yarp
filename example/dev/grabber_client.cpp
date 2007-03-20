@@ -22,7 +22,10 @@ int main() {
     Network::init();
 
     Property config;
-    config.fromString("(device remote_grabber) (local /client) (remote /fakey)");
+    config.put("device","remote_grabber"); // device type
+    config.put("local","/client");         // name of local port to use
+    config.put("remote","/fakey");         // name of remote port to connect to
+
     PolyDriver dd(config);
     if (!dd.isValid()) {
         printf("Failed to create and configure device\n");
