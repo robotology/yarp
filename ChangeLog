@@ -1,5 +1,8 @@
 2007-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc: move dispersed doxygen files here, and rationalize
+	their names.
+
 	* src/libYARP_OS/src/Module.cpp: show configuration parameters
 	when started up from console.
 
