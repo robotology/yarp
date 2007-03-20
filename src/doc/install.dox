@@ -120,7 +120,7 @@ shared by developers on Windows, Linux, OSX, ...
 @section install_ace The ACE library
 
 
-\link cmake CMake \endlink liberates your project from the particular
+CMake liberates your project from the particular
 development environment you are using. But the code itself may still
 have operating-system dependencies that will make life difficult. ACE
 is a free and open source library that provides an excellent portable

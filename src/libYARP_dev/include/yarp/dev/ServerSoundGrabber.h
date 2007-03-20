@@ -38,7 +38,9 @@ namespace yarp
  * Export a microphone device
  
  * streaming sound samples
- * @adapted Júlio Gomes, VisLab ISR/IST - 2006
+ *
+ * \author (adapted) Júlio Gomes, VisLab ISR/IST - 2006
+ *
  */
 class yarp::dev::ServerSoundGrabber : public DeviceDriver,
 			private yarp::os::Thread,

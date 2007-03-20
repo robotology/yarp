@@ -117,14 +117,14 @@ public:
         return getCommand(VOCAB_GAIN);
     }
 
-	virtual bool setWhiteBalance(double r, double g)
+	virtual bool setWhiteBalance(double red, double green)
 	{
-		return setCommand(VOCAB_WHITE, r, g);
+		return setCommand(VOCAB_WHITE, red, green);
 	}
 
-	virtual bool getWhiteBalance(double &r, double &g) const
+	virtual bool getWhiteBalance(double &red, double &green) const
 	{
-		return getCommand(VOCAB_WHITE, r, g);
+		return getCommand(VOCAB_WHITE, red, green);
 	}
 
 

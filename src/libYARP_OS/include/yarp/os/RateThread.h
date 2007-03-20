@@ -220,10 +220,10 @@ public:
 		}
 	}
 
-	virtual void afterStart(bool s)
+	virtual void afterStart(bool success)
 	{
 		if (helper!=0) {
-			helper->afterStart(s);
+			helper->afterStart(success);
 		}
 	}
 

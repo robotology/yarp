@@ -170,12 +170,12 @@ public:
         return 0;
     }
 
-	virtual bool setWhiteBalance(double r, double g)
+	virtual bool setWhiteBalance(double red, double green)
 	{
 		return true;
 	}
 
-	virtual bool getWhiteBalance(double &r, double &g) const 
+	virtual bool getWhiteBalance(double &red, double &green) const 
 	{
 		r=42.0;
 		g=42.0;

@@ -126,8 +126,6 @@ index, and body.
   
 </ul>
 
-
-\noindent
 This is the basic pattern of YARP communication between ports.
 Clearly different carriers have a lot of freedom in how they operate.
 

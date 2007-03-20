@@ -203,7 +203,7 @@ public:
      * with any other variables in the environment, if present
      * in the configuration file in $variable or ${variable} form.
      * @param fname the name of the file to read from
-     * @prama env extra set of environment variables
+     * @param env extra set of environment variables
      * @param wipe should Property be emptied first
      * @return true if file exists and can be read
      */
@@ -229,7 +229,7 @@ public:
      * with any other variables in the environment, if present
      * in the configuration file in $variable or ${variable} form.
      * @param txt the configuration text
-     * @prama env extra set of environment variables
+     * @param env extra set of environment variables
      * @param wipe should Property be emptied first
      */
     void fromConfig(const char *txt,

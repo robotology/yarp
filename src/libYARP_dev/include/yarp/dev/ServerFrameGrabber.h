@@ -232,9 +232,9 @@ public:
         return fgCtrl->getGain();
     }
 
-    virtual bool getWhiteBalance(double &r, double &g) const {
+    virtual bool getWhiteBalance(double &red, double &green) const {
         if (fgCtrl==NULL) { return 0; }
-        return fgCtrl->getWhiteBalance(r, g);
+        return fgCtrl->getWhiteBalance(red, green);
     }
 
     virtual bool startService();

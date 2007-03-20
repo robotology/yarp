@@ -170,7 +170,7 @@ public:
    /**
      * If a message is received that requires a reply, use this
      * handler.  No buffering happens.
-     * @param the handler to use
+     * @param reader the handler to use
      */
     virtual void setReplier(PortReader& reader) = 0;
 };

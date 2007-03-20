@@ -97,7 +97,7 @@ public:
     /**
      * Add information about a message that the respond() method
      * understands.
-     * @param txt the message, in bottle form
+     * @param bot the message, in bottle form
      * @param explain an (optional) what the message means
      */
     void addUsage(const yarp::os::Bottle& bot, const char *explain=0/*NULL*/);

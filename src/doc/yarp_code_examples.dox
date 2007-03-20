@@ -24,7 +24,7 @@ Here's simple_receiver.cpp:
 \include example/os/simple_receiver.cpp
 
 Here's an example CMakeLists.txt file to help with compiling
-if you use \link cmake CMake \endlink
+if you use CMake
  (of course
 you can compile any way you like, you don't have to use CMake).
 You can set the YARP_ROOT environment variable to point to
