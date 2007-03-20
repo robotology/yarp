@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # run as "./scripts/update-doc-manual"
 
@@ -15,13 +15,18 @@ for manual in min; do
 
     cd $base/doc/$manual/latex
 
-    ( perl -pe "s/\\\\doxyref\\{[^\\}]*\\}\\{p\\.\\}\\{([^\\}]*)\\}/\\\\hyperlink\\{\$1\\}/g" | perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < manual.tex > order.txt
+    # find the entities referred to in "manual.tex"
+    perl -pe "s/\\\\doxyref\\{[^\\}]*\\}\\{p\\.\\}\\{([^\\}]*)\\}/\\\\hyperlink\\{\$1\\}/g" < manual.tex > canonical.tmp
+    perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" < canonical.tmp > order.txt
     order=`cat order.txt | egrep "[a-z]"`
     echo "ORDER is $order"
     echo -n > order.tex
     for f in $order; do
 	echo "\\include{$f}" >> order.tex
     done
+
+    # at this point, "order.tex" should have an include line for
+    # every entity listed in "manual.tex"
 
     # fix up unresolved links for material not included
     rm -f junk.tex
@@ -35,6 +40,10 @@ for manual in min; do
 	    ) < $f > junk.tex
 	mv junk.tex $f
     done
+
+    # patch the main tex file to link only to what we want
+    # basically, every include/input gets commented out
+    # and one ("what_is_yarp") gets replaced with an input from "order.tex"
     sed "/YARP Page/,/END/! { /YARP File/,/YARP Page/ s/^/%%/ }" -i refman.tex
     sed "s/.*section.YARP Page.*/%%\\0/" -i refman.tex
     sed "s/.*section.Welcome to YARP.*/%%\\0/" -i refman.tex
@@ -42,7 +51,7 @@ for manual in min; do
     sed "s/.*input.index.*/%%\\0/" -i refman.tex
     sed "s/^.include.*/%%\\0/" -i refman.tex
     sed "s/^.input.*/%%\\0/" -i refman.tex
-    sed "s/^%%.input.what_is_yarp.*/\\\\input\\{order\\}/" -i refman.tex
+    sed "s/.*what_is_yarp.*/\\\\input\\{order\\}/" -i refman.tex
     perl -pe "s/(\\{tocdepth\\})\\{1\\}/\\{tocdepth\\}\\{2\\}/" < refman.tex > junk.tex
     mv junk.tex refman.tex
     for f in `ls *.tex`; do
@@ -56,8 +65,8 @@ for manual in min; do
     for f in group__dev__examples.tex; do
 	sed "s/\\\\section.*Modules.*//" -i $f
 	sed "s/\\\\section.Detailed.*//" -i $f
-	( perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < $f > order.txt
-	order=`cat order.txt | egrep "[a-z]"`
+	( perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" ) < $f > order2.txt
+	order=`cat order2.txt | egrep "[a-z]"`
 	for g in $order; do
 	    sed "s/\\\\chapter/\\\\section/" -i $g.tex
 	    cat $g.tex >> $f
