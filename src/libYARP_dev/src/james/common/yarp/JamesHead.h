@@ -111,8 +111,8 @@ public:
     virtual bool setVelocityMode()
     {return true;}
 
-    virtual bool velocityMoveRaw(int j, double v);
-    virtual bool velocityMoveRaw(const double *v);
+    virtual bool velocityMoveRaw(int j, double sp);
+    virtual bool velocityMoveRaw(const double *sp);
     
     virtual bool stopRaw(int j);
 

@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.15 2007-03-19 11:56:51 natta Exp $
+// $Id: Vector.h,v 1.16 2007-03-20 11:29:32 eshuy Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -28,10 +28,6 @@ namespace yarp {
 		  //class Vector
           class Vector;
           
-          /**
-          * Namespace containing basic operations on matrices 
-          * and vectors
-          */
           namespace MatrixOps
           {
               /**
@@ -108,7 +104,7 @@ public:
 
     /**
      * Copies a Vector object into the current one.
-     * @param x is a reference to an object of type Vector.
+     * @param l is a reference to an object of type Vector.
      * @return a reference to the current object.
      */
 	const VectorImpl &operator=(const VectorImpl &l);

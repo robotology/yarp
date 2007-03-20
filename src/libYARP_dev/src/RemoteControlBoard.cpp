@@ -400,7 +400,7 @@ public:
 
     /** Set new pid value for a joint axis.
      * @param j joint number
-     * @param pid new pid value
+     * @param p new pid value
      * @return true/false on success/failure
      */
     virtual bool setPid(int j, const Pid &p) {
@@ -410,7 +410,7 @@ public:
     }
 
     /** Set new pid value on multiple axes.
-     * @param pids pointer to a vector of pids
+     * @param ps pointer to a vector of pids
      * @return true/false upon success/failure
      */
     virtual bool setPids(const Pid *ps) {
@@ -524,7 +524,7 @@ public:
 
     /** Get current pid value for a specific joint.
      * @param j joint number
-     * @param pid pointer to storage for the return value.
+     * @param p pointer to storage for the return value.
      * @return success/failure
      */
     virtual bool getPid(int j, Pid *p) {
@@ -700,7 +700,8 @@ public:
 
     /** 
      * Check if the current trajectory is terminated. Non blocking.
-     * @param true if the trajectory is terminated, false otherwise
+     * @param j the axis
+     * @param flag true if the trajectory is terminated, false otherwise
      * @return false on failure
      */
     virtual bool checkMotionDone(int j, bool *flag) {
@@ -712,7 +713,8 @@ public:
 
     /** 
      * Check if the current trajectory is terminated. Non blocking.
-     * @param true if the trajectory is terminated, false otherwise
+     * @param flag true if the trajectory is terminated, false otherwise
+     * @return false on failure
      */
     virtual bool checkMotionDone(bool *flag) { 
         if (pos)
@@ -971,7 +973,7 @@ public:
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
-     * @param spds pointer to the array that will contain the output
+     * @param acc pointer to the array that will contain the output
      */
     virtual bool getEncoderAcceleration(int j, double *acc) {
         if (enc)
@@ -1089,8 +1091,8 @@ public:
     /**
      * Get the software limits for a particular axis.
      * @param axis joint number (again... why am I telling you this)
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
      */
     virtual bool getLimits(int axis, double *min, double *max) {
@@ -1283,7 +1285,7 @@ protected:
     /** 
      * Helper method used to set an array of double to all axes.
      * @param v is the command to set
-     * @param val is the double array (of length <nj>)
+     * @param val is the double array (of length nj)
      * @return true/false on success/failure
      */
     bool setDoubleArray(int v, const double *val) {
@@ -1797,7 +1799,7 @@ public:
     /**
      * Read the instantaneous acceleration of an axis.
      * @param j axis number
-     * @param spds pointer to the array that will contain the output
+     * @param acc pointer to the array that will contain the output
      */
     virtual bool getEncoderAcceleration(int j, double *acc) {
         return getDouble(VOCAB_ENCODER_ACCELERATION, j, acc);
@@ -2172,8 +2174,8 @@ public:
     /**
      * Get the software limits for a particular axis.
      * @param axis joint number (again... why am I telling you this)
-     * @param pointer to store the value of the lower limit
-     * @param pointer to store the value of the upper limit
+     * @param min pointer to store the value of the lower limit
+     * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
      */
     virtual bool getLimits(int axis, double *min, double *max) {
@@ -2194,6 +2196,9 @@ public:
 
 
 // implementation of CommandsHelper
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) { 
     ACE_ASSERT (x != NULL);
     caller = x; 
@@ -2887,3 +2892,5 @@ yarp::dev::DriverCreator *createRemoteControlBoard() {
                                                    "controlboard",
                                                    "RemoteControlBoard");
 }
+
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */

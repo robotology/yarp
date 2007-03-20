@@ -8,7 +8,7 @@
 
 
 //
-// $Id: SoundFile.h,v 1.2 2006-10-24 19:51:03 eshuy Exp $
+// $Id: SoundFile.h,v 1.3 2007-03-20 11:29:32 eshuy Exp $
 //
 //
 
@@ -19,13 +19,21 @@
 
 namespace yarp {
     namespace sig{
-        /**
-         * \ingroup sig_class
-         *
-         * Sound file operations.
-         */
         namespace file {
+            /**
+             * Read a sound from file.
+             * @param dest sound to read
+             * @param src name of file (should be a WAV file)
+             * @return true on success
+             */
             bool read(Sound& dest, const char *src);
+
+            /**
+             * Write a sound to file.
+             * @param src sound to write
+             * @param dest name of file (will be a WAV file)
+             * @return true on success
+             */
             bool write(const Sound& src, const char *dest);
         }
     }

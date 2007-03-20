@@ -33,7 +33,7 @@ class yarp::RandScalar
 
     /**
     * Get the seed.
-    * @ret the seed.
+    * @return the seed.
     */
      int getSeed ()
      { return idum; }
@@ -83,7 +83,7 @@ public:
     /**
     * Inizialize the generator.
     * Provide a seed.
-    * @param seed, the seed
+    * @param seed the seed
     */
     void init (int seed);
 

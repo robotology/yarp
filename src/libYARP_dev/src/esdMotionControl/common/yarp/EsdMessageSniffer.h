@@ -7,7 +7,7 @@
  */
 
 //
-// $Id: EsdMessageSniffer.h,v 1.1 2006-11-06 10:38:55 eshuy Exp $
+// $Id: EsdMessageSniffer.h,v 1.2 2007-03-20 11:29:32 eshuy Exp $
 //
 //
 
@@ -99,7 +99,7 @@ public:
 
 	/**
 	 * Open the device driver.
-	 * @param d is the pointer to the parameter structure which is expected to be
+	 * @param params is the parameter structure which is expected to be
 	 * of type EsdMessageSnifferParameters.
 	 * @return true/false on success/failure.
 	 */ 

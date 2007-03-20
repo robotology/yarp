@@ -1,5 +1,8 @@
 2007-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/RemoteControlBoard.cpp: (and a lot of other
+	files) - cleaned up doxygen tags
+
 	* src/doc: move dispersed doxygen files here, and rationalize
 	their names.
 

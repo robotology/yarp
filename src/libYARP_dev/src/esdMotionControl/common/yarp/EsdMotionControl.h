@@ -6,10 +6,10 @@
  *
  */
 
-///
-/// $Id: EsdMotionControl.h,v 1.3 2006-12-01 11:19:34 eshuy Exp $
-///
-///
+//
+// $Id: EsdMotionControl.h,v 1.4 2007-03-20 11:29:32 eshuy Exp $
+//
+//
 
 #ifndef __EsdMotionControlh__
 #define __EsdMotionControlh__
@@ -123,7 +123,7 @@ public:
 
 	/**
 	 * Open the device driver.
-	 * @param d is the parameter structure 
+	 * @param par is the parameter structure 
 	 * @return true/false on success/failure.
 	 */ 
 	virtual bool open(const EsdMotionControlParameters &par);

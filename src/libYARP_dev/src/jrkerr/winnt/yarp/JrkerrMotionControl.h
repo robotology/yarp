@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * Open the device driver.
-	 * @param d is the parameter structure 
+	 * @param par is the parameter structure 
 	 * @return true/false on success/failure.
 	 */ 
 	virtual bool open(const JrkerrMotionControlParameters &par);

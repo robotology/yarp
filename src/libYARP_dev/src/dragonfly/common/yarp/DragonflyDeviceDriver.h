@@ -6,10 +6,10 @@
  *
  */
 
-///
-/// $Id: DragonflyDeviceDriver.h,v 1.28 2007-02-07 16:14:05 ale-scalzo Exp $
-///
-///
+//
+// $Id: DragonflyDeviceDriver.h,v 1.29 2007-03-20 11:29:32 eshuy Exp $
+//
+//
 
 #ifndef __DragonflyDeviceDriverh__
 #define __DragonflyDeviceDriverh__
@@ -245,9 +245,9 @@ public:
      */
     virtual double getBrightness() const;
 
-	virtual bool setWhiteBalance(double r, double b);
+	virtual bool setWhiteBalance(double red, double green);
 
-	virtual bool getWhiteBalance(double &r, double &b) const;
+	virtual bool getWhiteBalance(double &red, double &green) const;
 
 protected:
 	void *system_resources;

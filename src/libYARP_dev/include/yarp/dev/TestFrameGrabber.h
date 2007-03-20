@@ -177,8 +177,8 @@ public:
 
 	virtual bool getWhiteBalance(double &red, double &green) const 
 	{
-		r=42.0;
-		g=42.0;
+		red=42.0;
+		green=42.0;
 		return true;
 	}
 

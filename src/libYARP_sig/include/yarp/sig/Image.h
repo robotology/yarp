@@ -75,7 +75,9 @@ public:
      * Scaled copy.
      * Clones the content of another image, and resizes in a fast but
      * low-quality way.
-     * @param alt the image to clone
+     * @param alt the image to copy
+     * @param w target width for image
+     * @param h target height for image
      */
     bool copy(const Image& alt, int w, int h);
 

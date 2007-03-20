@@ -55,13 +55,19 @@ public:
 
     /**
      * Configures the device.
-     * @param rate Sample rate to use, in Hertz.  Specify 0 to use a default.
-     * @param samples Number of samples per call to getSound.  Specify
+     *
+     * rate: Sample rate to use, in Hertz.  Specify 0 to use a default.
+     *
+     * samples: Number of samples per call to getSound.  Specify
      * 0 to use a default.
-     * @param channels Number of channels of input.  Specify
+     *
+     * channels: Number of channels of input.  Specify
      * 0 to use a default.
-     * @param wantRead Should allow reading
-     * @param wantWrite Should allow writing
+     *
+     * read: Should allow reading
+     *
+     * write: Should allow writing
+     *
      * @return true on success
      */
     bool open(PortAudioDeviceDriverSettings& config);
