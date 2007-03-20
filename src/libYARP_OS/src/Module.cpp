@@ -10,6 +10,7 @@
 #include <ace/config.h>
 #include <ace/OS.h>
 
+#include <yarp/String.h>
 #include <yarp/Logger.h>
 
 #include <yarp/os/Module.h>
@@ -17,15 +18,20 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Searchable.h>
 
+using namespace yarp;
 using namespace yarp::os;
+
 
 class ModuleHelper : public yarp::os::PortReader,
                      public yarp::os::TypedReaderCallback<yarp::os::Bottle>,
-                     public Thread {
+                     public Thread,
+                     public SearchMonitor {
     
 private:
     Module& owner;
+
 public:
     ModuleHelper(Module& owner) : owner(owner) {}
 
@@ -97,6 +103,90 @@ public:
         //printf("terminal shutting down\n");
         //owner.interruptModule();
     }
+
+
+    // SearchMonitor role
+
+private:
+    Property comment, fallback, present, actual, reported;
+    Bottle order;
+public:
+    virtual void report(const SearchReport& report, const char *context) {
+        String ctx = context;
+        String key = report.key.c_str();
+        String prefix = "";
+
+        prefix = ctx;
+        prefix += ".";
+
+        key = prefix + key;
+        if (key.substr(0,1)=='.') {
+            key = key.substr(1,key.length());
+        }
+
+        if (!present.check(key.c_str())) {
+            present.put(key.c_str(),"present");
+            order.addString(key.c_str());
+        }
+
+        if (report.isFound) {
+            actual.put(key.c_str(),report.value);
+        }
+
+        if (report.isComment==true) {
+            comment.put(key.c_str(),report.value);
+            return;
+        }
+
+        if (report.isDefault==true) {
+            fallback.put(key.c_str(),report.value);
+            return;
+        }
+
+        if (!reported.check(key.c_str())) {
+            if (report.isFound) {
+                printf("Checking \"%s\": = %s\n", key.c_str(),
+                       report.value.c_str());
+            } else {
+                reported.put(key.c_str(),1);
+                bool hasDefault = fallback.check(key.c_str());
+                String defString = "";
+                if (hasDefault) {
+                    defString += " ";
+                    defString += "(default ";
+                    String theDefault = 
+                        fallback.find(key.c_str()).toString().c_str();
+                    if (theDefault=="") {
+                        defString += "is blank";
+                    } else {
+                        defString += theDefault;
+                    }
+                    defString += ")";
+                }
+                printf("Checking \"%s\": %s%s\n", key.c_str(),
+                       comment.check(key.c_str(),Value("")).toString().c_str(),
+                       defString.c_str());
+            }
+        }
+    }
+
+    Bottle getOptions() {
+        return order;
+    }
+
+    ConstString getComment(const char *option) {
+        ConstString desc = comment.find(option).toString();
+        return desc;
+    }
+
+    Value getDefaultValue(const char *option) {
+        return fallback.find(option);
+    }
+
+    Value getValue(const char *option) {
+        return actual.find(option);
+    }
+
 };
 
 
@@ -262,9 +352,10 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
     Property options;
     options.fromCommand(argc,argv,skipFirst);
 
+    options.setMonitor(&HELPER(implementation));
     // check if we're being asked to read the options from file
     Value *val;
-    if (options.check("file",val)) {
+    if (options.check("file",val,"configuration file to use, if any")) {
         ConstString fname = val->toString();
         options.unput("file");
         ACE_OS::printf("Working with config file %s\n", fname.c_str());
@@ -275,16 +366,16 @@ bool Module::openFromCommand(int argc, char *argv[], bool skipFirst) {
         options.fromCommand(argc,argv,true,false);
     }
 
+    // probably folloing options will be removed, so don't advertise them
+    options.setMonitor(NULL);
     // check if we want to use nested options (less ambiguous)
     if (options.check("nested",val)||options.check("lispy",val)) {
         ConstString lispy = val->toString();
         options.fromString(lispy);
     }
+    options.setMonitor(&HELPER(implementation));
 
-    if (options.check("name")) {
-        name = options.check("name",Value("/anon"),
-                             "name of module").asString();
-    }
+    name = options.check("name",Value(name),"name of module").asString();
 
     return open(options);
 }
