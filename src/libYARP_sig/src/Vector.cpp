@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.17 2007-03-21 11:20:45 natta Exp $
+// $Id: Vector.cpp,v 1.18 2007-03-21 16:55:09 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -267,6 +267,14 @@ const Vector &Vector::operator=(const Vector &r)
 {
     VectorOf<double>::operator =(r);
     return *this;
+}
+
+Vector::Vector(size_t s, const double *p):VectorOf<double>(s)
+{
+    VectorOf<double>::resize(s);
+
+    for(int k=0; k<VectorOf<double>::size(); k++)
+        VectorOf<double>::operator[](k)=p[k];
 }
 
 void Vector::zero()

@@ -1,3 +1,8 @@
+2007-03-21  Lorenzo Natale  <nat@liralab.it>
+
+	* src/libYARP_sig/src/Rand.cpp: random generation (scalar and 
+	vectors)
+
 2007-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/RemoteControlBoard.cpp: (and a lot of other

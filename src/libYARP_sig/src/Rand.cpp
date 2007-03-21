@@ -15,6 +15,7 @@
 #define RNMX (1.0-EPS)
 
 using namespace yarp;
+using namespace yarp::sig;
 
 class ThreadSafeRandScalar : public RandScalar
 {
@@ -39,20 +40,25 @@ public:
         mutex.post();
     }
     
-    double get()
+    double get(double min=0.0, double max=1.0)
     {
         double ret;
         mutex.wait();
-        ret=RandScalar::get();
+        ret=RandScalar::get(min, max);
         mutex.post();
         return ret;
     }
 
 } theRandScalar;
 
-double Random::rand()
+double Random::scalar()
 {
     return theRandScalar.get();
+}
+
+double Random::scalar(double min, double max)
+{
+    return theRandScalar.get(min, max);
 }
 
 void Random::init()
@@ -63,6 +69,29 @@ void Random::init()
 void Random::init(int seed)
 {
     return theRandScalar.init(seed);
+}
+
+Vector Random::vector(int s)
+{
+    yarp::sig::Vector ret((size_t) s);
+    for(int k=0;k<s;k++)
+    {
+        ret[k]=theRandScalar.get();
+    }
+
+    return ret;
+}
+
+Vector Random::vector(const Vector &min, const Vector &max)
+{
+    int s=min.size();
+    yarp::sig::Vector ret(s);
+    for(int k=0;k<s;k++)
+    {
+        ret[k]=theRandScalar.get(min[k], max[k]);
+    }
+
+    return ret;
 }
 
 RandScalar::RandScalar()
@@ -97,6 +126,13 @@ double RandScalar::get()
     temp=RNMX;
 
   return temp;
+}
+
+double RandScalar::get(double min, double max)
+{
+    double ret=RandScalar::get();
+    ret=ret*(max-min)+min;
+    return ret;
 }
 
 RandnScalar::RandnScalar()
@@ -181,3 +217,76 @@ void RandScalar::init(int s)
       iy=iv[0];
     }
 }
+
+using namespace yarp::sig;
+
+RandVector::RandVector(int s)
+{
+    data.resize(s);
+}
+
+void RandVector::resize(int s)
+{
+    data.resize(s);
+}
+
+void RandVector::init()
+{
+    rnd.init();
+}
+
+void RandVector::init(int seed)
+{
+    rnd.init(seed);
+}
+
+const Vector &RandVector::get()
+{
+    for (int k=0;k<data.size(); k++)
+    {
+        data[k]=rnd.get();
+    }
+
+    return data;
+}
+
+const Vector &RandVector::get(const Vector &min, const Vector &max)
+{
+    for (int k=0;k<data.size(); k++)
+    {
+        data[k]=rnd.get(min[k], max[k]);
+    }
+
+    return data;
+}
+
+RandnVector::RandnVector(int s)
+{
+    data.resize(s);
+}
+
+void RandnVector::resize(int s)
+{
+    data.resize(s);
+}
+
+void RandnVector::init()
+{
+    rnd.init();
+}
+
+void RandnVector::init(int seed)
+{
+    rnd.init(seed);
+}
+
+const Vector &RandnVector::get()
+{
+    for (int k=0;k<data.size(); k++)
+    {
+        data[k]=rnd.get();
+    }
+
+    return data;
+}
+

@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.17 2007-03-21 11:20:45 natta Exp $
+// $Id: Vector.h,v 1.18 2007-03-21 16:55:09 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -371,7 +371,14 @@ class yarp::sig::Vector: public yarp::VectorOf<double>
 {
 public:
 	Vector():VectorOf<double>(){}
-	Vector(size_t s):VectorOf<double>(s){}
+	
+    Vector(size_t s):VectorOf<double>(s){}
+
+    /**
+    * Builds a vector and initialize the vector with 
+    * values from 'p'. Copies memory.
+    */
+    Vector(size_t s, const double *p);
 
     /**
     * Copy constructor.
