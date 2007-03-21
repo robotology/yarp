@@ -9,13 +9,13 @@ int main(int argc, const char **)
 {
     for(int k=0; k<10; k++)
     { 
-        double n=Random::scalar();
+        double n=Rand::scalar();
         fprintf(stderr, "%lf\n", n);
     }
 
     for(int k=0; k<10; k++)
     { 
-        Vector v=Random::vector(3);
+        Vector v=Rand::vector(3);
         fprintf(stderr, "%s\n", v.toString().c_str());
     }
 

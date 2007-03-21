@@ -12,7 +12,7 @@ namespace yarp
     class RandVector;
     namespace sig
     {
-        class Random;
+        class Rand;
     }
 };
 
@@ -156,7 +156,7 @@ public:
 * A static class grouping function for random number 
 * generator. Thread safe.
 */
-class yarp::sig::Random
+class yarp::sig::Rand
 {
 public:
     /**

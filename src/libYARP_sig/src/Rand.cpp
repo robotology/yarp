@@ -51,27 +51,27 @@ public:
 
 } theRandScalar;
 
-double Random::scalar()
+double Rand::scalar()
 {
     return theRandScalar.get();
 }
 
-double Random::scalar(double min, double max)
+double Rand::scalar(double min, double max)
 {
     return theRandScalar.get(min, max);
 }
 
-void Random::init()
+void Rand::init()
 {
     return theRandScalar.init();
 }
 
-void Random::init(int seed)
+void Rand::init(int seed)
 {
     return theRandScalar.init(seed);
 }
 
-Vector Random::vector(int s)
+Vector Rand::vector(int s)
 {
     yarp::sig::Vector ret((size_t) s);
     for(int k=0;k<s;k++)
@@ -82,7 +82,7 @@ Vector Random::vector(int s)
     return ret;
 }
 
-Vector Random::vector(const Vector &min, const Vector &max)
+Vector Rand::vector(const Vector &min, const Vector &max)
 {
     int s=min.size();
     yarp::sig::Vector ret(s);
