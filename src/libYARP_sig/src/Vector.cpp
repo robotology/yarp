@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.16 2007-03-19 11:51:02 natta Exp $
+// $Id: Vector.cpp,v 1.17 2007-03-21 11:20:45 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -87,7 +87,6 @@ void VectorImpl<T>::resize(size_t size, const T& def)
 {
     ACE_ASSERT (size>0);
     RES(aceVector)->resize(size,def);
- //   ((ACE_Array_Base<T> *)(aceVector))->size(size);
 }
 
 template<class T>
@@ -199,7 +198,6 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
 
     return true;
 }
-
 
 bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     VectorPortContentHeader header;

@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.5 2007-03-08 17:14:53 natta Exp $ 
+// $Id: Matrix.cpp,v 1.6 2007-03-21 11:20:45 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -194,7 +194,7 @@ void Matrix::resize(int r, int c)
     nrows=r;
     ncols=c;
 
-    storage.resize(r*c);
+    storage.resize(r*c,0.0);
     updatePointers();
 }
 

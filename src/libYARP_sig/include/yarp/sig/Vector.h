@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.16 2007-03-20 11:29:32 eshuy Exp $
+// $Id: Vector.h,v 1.17 2007-03-21 11:20:45 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -44,7 +44,8 @@ namespace yarp {
  * \ingroup sig_class
  *
  * A Base calss for a VectorOf<T>, provide default implementation for 
- * read/write methods.
+ * read/write methods. Warning: the current implementation assumes the same 
+ * representation for data type (endianess).
  */
 class yarp::VectorBase:public yarp::os::Portable
 {
@@ -112,12 +113,12 @@ public:
 	const T& operator=(const T&v);
 
     /**
-    * Resize a Vector placing the def in each index.
+    * Resize a Vector placing def at each index.
     * @param size is the size of the vector.
     * @param def is the initial value of the vector.
     */
 	void resize(size_t size, const T &def);
-	
+
     /**
     * Access the el-th element of the vector, no range check.
     * @param el index of the element to be accessed.
@@ -253,14 +254,18 @@ public:
 		return first;
 	}
 
-	inline void resize(size_t size, const T &def)
+	virtual void resize(size_t size)
 	{
+        T def;
 		VectorImpl<T>::resize(size, def);
 		_updatePointers();
 	}
 
-	virtual void resize(size_t size)
-	{ resize(size, T(0)); }
+    void resize(size_t size, const T&def)
+    {
+        VectorImpl<T>::resize(size, def);
+		_updatePointers();
+    }
 
 	inline void push_back (const T &elem)
 	{
@@ -384,17 +389,24 @@ public:
 	* @param s the new size
     */
 	void size(size_t s)
-	{resize(s, 0);}
+    {Vector::resize(s);}
+
+    /**
+    * Resize the vector.
+	* @param s the new size
+    */
+    void resize(size_t s)
+    {VectorOf<double>::resize(s,0.0);}
 
 	inline int size() const
-	{ return VectorOf<double>::size(); }
+	{ return VectorOf<double>::size();}
 
     /**
     * Get the length of the vector.
     * @return the length of the vector.
     */
 	inline int length() const
-	{ return VectorOf<double>::size(); }
+	{ return VectorOf<double>::size();}
 
     /**
     * Zero the elements of the vector.

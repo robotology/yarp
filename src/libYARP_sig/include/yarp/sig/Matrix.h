@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.8 2007-03-08 17:14:53 natta Exp $ 
+// $Id: Matrix.h,v 1.9 2007-03-21 11:20:45 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -126,7 +126,7 @@ public:
 	nrows(r),
 	ncols(c)
 	{
-		storage.resize(r*c);
+		storage.resize(r*c,0.0);
 		updatePointers();
 	}
 
