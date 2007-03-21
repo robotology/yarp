@@ -129,6 +129,15 @@ An example of how to receive, process, and output images to and from a port.
 
 
 /**
+ * \example os/image_process_module.cpp
+
+This is the \ref os/image_process.cpp example rewritten as a "module".
+It inherits better starting up, configuring, and shutting down behavior.
+
+*/
+
+
+/**
  * \example os/image_source.cpp
 
 An example of how to create a source of images as a port.
