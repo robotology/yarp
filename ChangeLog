@@ -1,3 +1,10 @@
+2007-03-22  Lorenzo Natale  <nat@liralab.it>
+
+	* src/libYARP_math: added directory structure and some initial
+	files for for libYARP_math. Changed cmake files accordingly..
+	For now the default is that CMake does not include the library 
+	in the main project.
+
 2007-03-21  Lorenzo Natale  <nat@liralab.it>
 
 	* src/libYARP_sig/src/Rand.cpp: random generation (scalar and 

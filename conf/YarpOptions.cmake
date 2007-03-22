@@ -18,6 +18,8 @@ SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device lib
 SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Do you want to link specific hardware into the device library")
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 
+SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create lib libYARP_math (experimental)?")
+
 SET(CREATE_SHARED_LIBRARY FALSE CACHE BOOL "Compile shared libraries rather than linking statically")
 IF (WIN32)
 	MARK_AS_ADVANCED(CREATE_SHARED_LIBRARY)

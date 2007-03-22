@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.18 2007-03-21 16:55:09 natta Exp $
+// $Id: Vector.h,v 1.19 2007-03-22 11:06:17 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -27,7 +27,6 @@ namespace yarp {
     namespace sig {
 		  //class Vector
           class Vector;
-          
           namespace MatrixOps
           {
               /**
