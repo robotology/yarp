@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.18 2007-03-21 16:55:09 natta Exp $
+// $Id: Vector.cpp,v 1.19 2007-03-22 17:29:50 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -171,10 +171,6 @@ int IteratorOf<T>::done()
     return RES_ITERATOR(aceVectorIterator)->done();
 }
 
-#include <list>
-
-using namespace std;
-
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     try {
         // auto-convert text mode interaction
@@ -227,7 +223,6 @@ template class yarp::VectorImpl<char>;
 template class yarp::VectorImpl<float>;
 template class yarp::VectorOf<double>;
 template class yarp::IteratorOf<double>;
-
 
 /// vector implementations
 #include <yarp/String.h>

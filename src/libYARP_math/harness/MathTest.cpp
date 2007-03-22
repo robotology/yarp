@@ -15,13 +15,40 @@
 
 #include <yarp/UnitTest.h>
 
+#include <yarp/math/Math.h>
+#include <yarp/sig/Vector.h>
+
 using namespace yarp;
+using namespace yarp::sig;
+using namespace yarp::math;
 
 class MathTest : public UnitTest {
 public:
     virtual String getName() { return "MathTest"; }
 
-    virtual void runTests() {
+    void vectorOp()
+    {
+        report(0,"checking vector operators...");
+    
+        Vector a(3);
+        Vector b(3);
+        Vector c;
+        a=1;
+        b=1;
+    
+        //test 
+        c=a+b;
+
+        double acc=c(1)+c(2)+c(3);
+        checkEqual(acc,6, "opeartor + on vectors works");
+        
+        c=a-b;
+        acc=c(1)+c(2)+c(3);
+        checkEqual(acc,0, "opeartor - on vectors works");
+    }
+    virtual void runTests() 
+    {
+        vectorOp();
     }
 };
 

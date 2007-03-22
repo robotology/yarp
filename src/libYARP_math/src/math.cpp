@@ -9,9 +9,8 @@
 #include <yarp/math/math.h>
 
 using namespace yarp::sig;
-using namespace yarp::math;
 
-inline yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
+Vector yarp::math::operator+(const Vector &a, const Vector &b)
 {
     int s=a.size();
     yarp::sig::Vector ret(s);
@@ -19,8 +18,8 @@ inline yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::
         ret[k]=a[k]+b[k];
     return ret;
 }
-
-inline yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
+ 
+Vector yarp::math::operator-(const Vector &a, const Vector &b)
 {
     int s=a.size();
     yarp::sig::Vector ret(s);
