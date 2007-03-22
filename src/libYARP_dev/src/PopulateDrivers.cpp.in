@@ -25,21 +25,18 @@
  *
  */
 
-
 #include <yarp/dev/Drivers.h>
 #include <yarp/String.h>
 #include <yarp/Logger.h>
 #include <yarp/os/Bottle.h>
-
 #include <ace/OS.h>
 
 using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-
-
 // this is an automatically configured file
+
 #ifndef YARP_AUTOCONF
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
@@ -52,6 +49,12 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_ffmpeg
 #cmakedefine ENABLE_jrkerr
 #cmakedefine ENABLE_dimax_u2c
+#cmakedefine ENABLE_picolo_grabber
+#cmakedefine ENABLE_fob
+#cmakedefine ENABLE_cyberglove
+#cmakedefine ENABLE_e504
+#cmakedefine ENABLE_joypres
+#cmakedefine ENABLE_mei				//Mattia
 #endif
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
@@ -104,6 +107,27 @@ using namespace yarp::dev;
 #include <yarp/DimaxU2C.h>
 #endif
 
+#ifdef ENABLE_mei			//Mattia
+#include <yarp/MEIDeviceDriver.h>
+#endif
+
+// ------------------------ for the mirror acquisition setup
+#ifdef ENABLE_picolo_grabber
+#include <yarp/PicoloDeviceDriver.h>
+#endif
+#ifdef ENABLE_fob
+#include <yarp/FoBDeviceDriver.h>
+#endif
+#ifdef ENABLE_cyberglove
+#include <yarp/CyberGloveDeviceDriver.h>
+#endif
+#ifdef ENABLE_e504
+#include <yarp/E504DeviceDriver.h>
+#endif
+#ifdef ENABLE_joypres
+#include <yarp/JoyPresDeviceDriver.h>
+#endif
+// ------------------------
 
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
@@ -116,7 +140,6 @@ using namespace yarp::dev;
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
-
 
 void Drivers::init() {
 #ifdef ENABLE_dragonfly
@@ -134,12 +157,17 @@ void Drivers::init() {
                                               "EsdMessageSniffer"));
 #endif
 
+#ifdef ENABLE_mei				//Mattia
+    add(new DriverCreatorOf<MEIDeviceDriver>("mei",
+                                              "",
+                                              "MEIDeviceDriver"));
+#endif
+
 #ifdef ENABLE_jrkerr
     add(new DriverCreatorOf<JrkerrMotionControl>("jrkerr",
                                               "controlboard",
                                               "JrkerrMotionControl"));
 #endif
-
 
 #ifdef ENABLE_microphone
     add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone",
@@ -195,6 +223,25 @@ void Drivers::init() {
                                            "DimaxU2C"));
 #endif
 
+// ------------------------ for the mirror acquisition setup
+#ifdef ENABLE_picolo_grabber
+ add(new DriverCreatorOf<PicoloDeviceDriver>("picolo", "grabber", "PicoloDeviceDriver"));
+#endif
+#ifdef ENABLE_fob
+ add(new DriverCreatorOf<FoBDeviceDriver>("fob", "", "FoBDeviceDriver"));
+#endif
+#ifdef ENABLE_cyberglove
+ add(new DriverCreatorOf<CyberGloveDeviceDriver>("cyberglove", "", "CyberGloveDeviceDriver"));
+#endif
+#ifdef ENABLE_e504
+ add(new DriverCreatorOf<E504DeviceDriver>("e504", "", "E504DeviceDriver"));
+#endif
+#ifdef ENABLE_joypres
+ add(new DriverCreatorOf<JoyPresDeviceDriver>("joypres", "", "JoyPresDeviceDriver"));
+#endif
+
+// ------------------------
+
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
                                               "grabber",
                                               "TestFrameGrabber"));
@@ -231,4 +278,3 @@ void Drivers::init() {
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 }
-
