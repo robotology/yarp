@@ -17,6 +17,7 @@ namespace yarp
     {
         yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
         yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        double operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
     }
 }
 

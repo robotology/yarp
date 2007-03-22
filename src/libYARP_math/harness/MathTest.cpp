@@ -39,12 +39,15 @@ public:
         //test 
         c=a+b;
 
-        double acc=c(1)+c(2)+c(3);
-        checkEqual(acc,6, "opeartor + on vectors works");
+        double acc=c[0]+c[1]+c[2];
+        checkEqual(acc,6, "operator+ on vectors works");
         
         c=a-b;
-        acc=c(1)+c(2)+c(3);
-        checkEqual(acc,0, "opeartor - on vectors works");
+        acc=c[0]+c[1]+c[2];
+        checkEqual(acc,0, "operator- on vectors works");
+
+        double dot=a*b;
+        checkEqual(dot, 3, "operator* (dot product) on vectors works");
     }
     virtual void runTests() 
     {

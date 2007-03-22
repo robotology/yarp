@@ -7,6 +7,25 @@
  */
 
 #include <yarp/math/math.h>
+#include <gsl/gsl_matrix.h>
+#include <gsl/gsl_matrix_double.h>
+
+#include <gsl/gsl_vector.h>
+#include <gsl/gsl_vector_double.h>
+#include <gsl/gsl_cblas.h>
+
+gsl_vector_view getView(const yarp::sig::Vector &v)
+{
+    gsl_vector_view ret=gsl_vector_view_array(const_cast<double *>(v.data()), v.size());
+    return ret;
+}
+
+gsl_vector_view getView(yarp::sig::Vector &v)
+{
+    gsl_vector_view ret=gsl_vector_view_array(v.data(),
+                                             v.size());
+    return ret;
+}
 
 using namespace yarp::sig;
 
@@ -28,3 +47,9 @@ Vector yarp::math::operator-(const Vector &a, const Vector &b)
     return ret;
 }
 
+double yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
+{
+    double ret;
+    ret=cblas_ddot(a.size(), a.data(),1, b.data(),1);
+    return ret;
+}
