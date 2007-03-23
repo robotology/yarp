@@ -18,7 +18,7 @@ namespace yarp
     class RandScalar;
     class RandnScalar;
     class RandVector;
-    namespace sig
+    namespace math
     {
         class Rand;
     }
@@ -164,7 +164,7 @@ public:
 * A static class grouping function for random number 
 * generator. Thread safe.
 */
-class yarp::sig::Rand
+class yarp::math::Rand
 {
 public:
     /**

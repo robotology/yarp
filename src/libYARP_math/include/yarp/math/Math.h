@@ -10,6 +10,7 @@
 #define __YARP_MATH__
 
 #include <yarp/sig/Vector.h>
+#include <yarp/sig/Matrix.h>
 
 namespace yarp
 {
@@ -17,26 +18,32 @@ namespace yarp
     {
         yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
         yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
-        double operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        double dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
+        yarp::sig::Vector operator*(const yarp::sig::Vector &a, double k);
+
+        /**
+        * Creates a vector of zeros.
+        * @param s the size of the new vector
+        * @return a copy of the new vector
+        */
+        yarp::sig::Vector zeros(int s);
+
+        /**
+        * Build an identity matrix.
+        * @param r number of rows
+        * @param c number of columns
+        * @return the new matrix
+        */
+        yarp::sig::Matrix eye(int r, int c);
+
+        /**
+        * Build a matrix of zeros.
+        * @param r number of rows
+        * @param c number of columns
+        */
+        yarp::sig::Matrix zeros(int r, int c);
     }
 }
 
-#if 0
-// norm 2.
-double norm2(void) const;
-double norm2square(void) const;
-
-Vector operator/(double dbl) const;
-
-YVector& operator+=(const Vector &b);
-YVector& operator-=(const Vector &b);
-
-Vector& operator+=(double dbl);
-Vector& operator-=(double dbl);
-Vector operator+(double dbl) const;
-Vector operator-(double dbl) const;
-
-Vector& operator*=(double dbl);
-Vector& operator/=(double dbl);
-#endif
 #endif

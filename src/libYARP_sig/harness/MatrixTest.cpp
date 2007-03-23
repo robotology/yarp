@@ -185,24 +185,11 @@ public:
 		checkTrue(ok,"elements match");   
 	}
 
-	void checkMiscOperations() {
-	    report(0,"check matrix misc operations...");
-        Matrix m(4,4);
-
-		m.zero();
-        m=MatrixOps::eye(5,5);
-        m=MatrixOps::eye(2,5);
-        m=MatrixOps::eye(5, 2);
-
-		Matrix mt=m.transposed();
-	}
-
 	virtual void runTests() {
         Network::setLocalMode(true);
 		checkCopyCtor();
         checkCopy();
 		checkSendReceive();
-		checkMiscOperations();
         Network::setLocalMode(false);
     }
 };

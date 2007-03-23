@@ -26,6 +26,18 @@ class MathTest : public UnitTest {
 public:
     virtual String getName() { return "MathTest"; }
 
+    void checkMiscOperations() {
+	    report(0,"check matrix misc operations...");
+        Matrix m(4,4);
+
+		m.zero();
+        m=eye(5,5);
+        m=eye(2,5);
+        m=eye(5, 2);
+
+		Matrix mt=m.transposed();
+	}
+
     void vectorOp()
     {
         report(0,"checking vector operators...");
@@ -40,17 +52,30 @@ public:
         c=a+b;
 
         double acc=c[0]+c[1]+c[2];
-        checkEqual(acc,6, "operator+ on vectors works");
+        checkTrue(acc==6, "operator+ on vectors works");
         
         c=a-b;
         acc=c[0]+c[1]+c[2];
-        checkEqual(acc,0, "operator- on vectors works");
+        checkTrue(acc==0,  "operator- on vectors works");
 
-        double dot=a*b;
-        checkEqual(dot, 3, "operator* (dot product) on vectors works");
+        a=2;
+        b=2;
+        acc=dot(a,b);
+        checkTrue(acc==12,  "dot product on vectors works");
+
+        //scalar mult
+        a=1;
+        Vector m1=a*3;
+        Vector m2=3*a;
+
+        acc=m1[0]+m1[1]+m1[2];
+        checkTrue(acc==9, "operator* works");
+        acc=m2[0]+m2[1]+m2[2];
+        checkTrue(acc==9, "operator* works");
     }
     virtual void runTests() 
     {
+        checkMiscOperations();
         vectorOp();
     }
 };

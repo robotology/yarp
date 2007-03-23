@@ -1,3 +1,9 @@
+2007-03-23  Lorenzo Natale  <nat@liralab.it>
+
+	* src/libYARP_sig: moved Rand.h, Rand.cpp to libYARP_math. 
+	Moved all Vector/Matrix related functions that were previously 
+	in libYARP_sig to libYARP_math.
+
 2007-03-22  Lorenzo Natale  <nat@liralab.it>
 
 	* src/libYARP_math: added directory structure and some initial

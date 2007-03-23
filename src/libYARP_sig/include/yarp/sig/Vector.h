@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.19 2007-03-22 11:06:17 natta Exp $
+// $Id: Vector.h,v 1.20 2007-03-23 13:28:57 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -27,15 +27,6 @@ namespace yarp {
     namespace sig {
 		  //class Vector
           class Vector;
-          namespace MatrixOps
-          {
-              /**
-              * Creates a vector of zeros.
-              * @param s the size of the new vector
-              * @return a copy of the new vector
-              */
-              Vector zeros(int s);
-          }
     }
 }
 

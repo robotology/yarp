@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.6 2007-03-21 11:20:45 natta Exp $ 
+// $Id: Matrix.cpp,v 1.7 2007-03-23 13:28:57 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -223,37 +223,6 @@ Matrix Matrix::transposed()
     return ret;
 }
 
-Matrix MatrixOps::eye(int r, int c)
-{
-    Matrix ret;
-    ret.resize(r,c);
-    ret.eye();
-    return ret;
-}
-
-Matrix MatrixOps::zeros(int r, int c)
-{
-    Matrix ret;
-    ret.resize(r,c);
-    ret.zero();
-    return ret;
-}
-
-const Matrix &Matrix::eye()
-{
-    zero();
-    int tmpR=nrows;
-    if (ncols<nrows)
-        tmpR=ncols;
-
-    int c=0;
-    for(int r=0; r<tmpR; r++,c++)
-        (*this)[r][c]=1.0;
-
-    return *this;
-}
-
-
 Vector Matrix::getRow(int r) const
 {
     Vector ret;
@@ -274,4 +243,18 @@ Vector Matrix::getCol(int c) const
         ret[r]=(*this)[r][c];
 
     return ret;
+}
+
+const Matrix &Matrix::eye()
+{
+    zero();
+    int tmpR=nrows;
+    if (ncols<nrows)
+        tmpR=ncols;
+
+    int c=0;
+    for(int r=0; r<tmpR; r++,c++)
+        (*this)[r][c]=1.0;
+
+    return *this;
 }

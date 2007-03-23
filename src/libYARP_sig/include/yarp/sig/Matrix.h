@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.9 2007-03-21 11:20:45 natta Exp $ 
+// $Id: Matrix.h,v 1.10 2007-03-23 13:28:56 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -22,28 +22,6 @@ namespace yarp {
 	class MatrixBase;
     namespace sig {
 		  class Matrix;
-          
-          /**
-          * Namespace containing basic operations on matrices 
-          * and vectors
-          */
-          namespace MatrixOps
-          {
-              /**
-              * Build an identity matrix.
-              * @param r number of rows
-              * @param c number of columns
-              * @return the new matrix
-              */
-              yarp::sig::Matrix eye(int r, int c);
-
-              /**
-              * Build a matrix of zeros.
-              * @param r number of rows
-              * @param c number of columns
-              */
-              yarp::sig::Matrix zeros(int r, int c);
-          }
     }
 }
 

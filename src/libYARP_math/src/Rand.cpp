@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/sig/Rand.h>
+#include <yarp/math/Rand.h>
 #include <time.h>
 #include <stdio.h>
 #include <math.h>
@@ -18,6 +18,7 @@
 
 using namespace yarp;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 class ThreadSafeRandScalar : public RandScalar
 {

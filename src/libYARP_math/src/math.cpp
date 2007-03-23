@@ -47,9 +47,49 @@ Vector yarp::math::operator-(const Vector &a, const Vector &b)
     return ret;
 }
 
-double yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
+double yarp::math::dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b)
 {
     double ret;
     ret=cblas_ddot(a.size(), a.data(),1, b.data(),1);
+    return ret;
+}
+
+Vector yarp::math::operator*(const Vector &a, double k)
+{
+    int size=a.size();
+    Vector ret(size);
+    int i;
+    for(i=0;i<size;i++)
+        ret[i]=a[i]*k;
+
+    return ret;
+}
+
+Vector yarp::math::operator*(double k, const Vector &b)
+{
+    return operator*(b,k);
+}
+
+Matrix yarp::math::eye(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.eye();
+    return ret;
+}
+
+Matrix yarp::math::zeros(int r, int c)
+{
+    Matrix ret;
+    ret.resize(r,c);
+    ret.zero();
+    return ret;
+}
+
+Vector yarp::math::zeros(int s)
+{
+    Vector ret;
+    ret.resize(s);
+    ret.zero();
     return ret;
 }
