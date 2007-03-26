@@ -74,7 +74,7 @@ public:
 
 	unsigned char *_rawBuffer;
 
-	inline bool _intialize (const PicoloOpenParameters& params);
+	inline bool _initialize (const PicoloOpenParameters& params);
 	inline bool _uninitialize (void);
 
     //thread body
@@ -97,10 +97,10 @@ protected:
 
 // full initialize and startup of the grabber.
 
-inline bool PicoloResources::_intialize (const PicoloOpenParameters& params)
+inline bool PicoloResources::_initialize (const PicoloOpenParameters& params)
 {
 
-	_init (params);
+	if ( _init (params) == false ) return false;
 	_prepareBuffers ();
 
 	// n-part buffering.
@@ -280,11 +280,12 @@ bool PicoloDeviceDriver::open(yarp::os::Searchable& config)
 	par._offset_y = config.find("yoffset").asInt();
 	par._unit_number = config.find("unit").asInt();
 
-    bool ret = d._intialize (par);
+    if ( d._initialize (par) == false ) 
+        return false;
 
 	d.start();
 
-	return ret;
+	return true;
 
 }
 
@@ -296,9 +297,7 @@ bool PicoloDeviceDriver::close (void)
 
 	d.stop();
 
-	bool ret = d._uninitialize ();
-
-	return true;
+	return d._uninitialize ();
 
 }
 
