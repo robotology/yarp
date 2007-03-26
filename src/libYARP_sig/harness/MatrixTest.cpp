@@ -112,6 +112,28 @@ class MatrixTest : public UnitTest {
 public:
     virtual String getName() { return "MatrixTest"; }
 
+    void checkOperators()
+    {
+        report(0,"checking operator ==");
+
+        Matrix M1(3,3);
+        Matrix M2(3,3);
+
+        M1=1;
+        M2=1; //now we have to identical vectors
+
+        bool ok=false;
+        if (M1==M2)
+            ok=true;
+        
+        M1=2;
+        M2=1; //now vectors are different
+        if (M1==M2)
+            ok=false;
+
+        checkTrue(ok, "operator== for matrix work");
+    }
+
     void checkSendReceive()
 	{
 		Port portIn;
@@ -190,6 +212,7 @@ public:
 		checkCopyCtor();
         checkCopy();
 		checkSendReceive();
+        checkOperators();
         Network::setLocalMode(false);
     }
 };

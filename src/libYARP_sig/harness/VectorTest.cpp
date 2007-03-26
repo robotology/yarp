@@ -223,12 +223,35 @@ public:
         // this segfaults on linux
     }
 
+    void checkOperators()
+    {
+        report(0,"checking operator ==");
+
+        Vector v1(5);
+        Vector v2(5);
+
+        v1=1;
+        v2=1; //now we have to identical vectors
+
+        bool ok=false;
+        if (v1==v2)
+            ok=true;
+        
+        v1=2;
+        v2=1; //now vectors are different
+        if (v1==v2)
+            ok=false;
+
+        checkTrue(ok, "operator== for vectors work");
+    }
+
 	virtual void runTests() {
         Network::setLocalMode(true);
         checkFormat();
 		checkCopyCtor();
         checkCopy();
 		checkSendReceive();
+        checkOperators();
         Network::setLocalMode(false);
     }
 };

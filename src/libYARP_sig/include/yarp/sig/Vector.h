@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Vector.h,v 1.20 2007-03-23 13:28:57 natta Exp $
+// $Id: Vector.h,v 1.21 2007-03-26 14:57:32 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -437,6 +437,21 @@ public:
     */
 	inline const double *data() const
 	{ return VectorOf<double>::getFirst();}
+
+    /**
+    * Return a pointer to a GSL vector structure.
+    */
+    void *getGslVector();
+
+    /**
+    * Return a const pointer to a GSL vector structure.
+    */
+    const void *getGslVector() const;
+
+    /**
+    * True iff all elements of a match all element of b.
+    */
+    bool operator==(const yarp::sig::Vector &r) const;
 };
 
 #endif

@@ -38,7 +38,7 @@ public:
 		Matrix mt=m.transposed();
 	}
 
-    void vectorOp()
+    void vectorOps()
     {
         report(0,"checking vector operators...");
     
@@ -73,10 +73,29 @@ public:
         acc=m2[0]+m2[1]+m2[2];
         checkTrue(acc==9, "operator* works");
     }
+
+    void matrixOps()
+    {
+        report(0,"checking matrix operations...");
+
+        Matrix A(3,4);
+        Matrix B(4,2);
+        A=2;
+        B=3;
+        Matrix C=A*B;
+
+        Matrix exp(3,4);
+        exp=24; //expected result
+        
+        bool ret=(exp==C);
+        checkTrue(ret, "Matrix::operator* works");
+    }
+
     virtual void runTests() 
     {
         checkMiscOperations();
-        vectorOp();
+        vectorOps();
+        matrixOps();
     }
 };
 

@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.8 2007-03-26 12:57:52 eshuy Exp $ 
+// $Id: Matrix.cpp,v 1.9 2007-03-26 14:57:32 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -109,22 +109,26 @@ ConstString Matrix::toString() const
         for(c=0;c<cols()-1;c++)
         {
             sprintf(tmp, "%lf\t", (*this)[r][c]);
-            ret.append(tmp, strlen(tmp));
+            //ret.append(tmp, strlen(tmp));
+            ret+=tmp;
         }
 
         sprintf(tmp, "%lf;", (*this)[r][c]);
-        ret.append(tmp, strlen(tmp));
+        //ret.append(tmp, strlen(tmp));
+        ret+=tmp;
     }
 
     // last row
     for(c=0;c<cols()-1;c++)
     {
         sprintf(tmp, "%lf\t", (*this)[r][c]);
-        ret.append(tmp, strlen(tmp));
+        //ret.append(tmp, strlen(tmp));
+        ret+=tmp;
     }
     // last element
     sprintf(tmp, "%lf", (*this)[r][c]);
-    ret.append(tmp, strlen(tmp));
+    //ret.append(tmp, strlen(tmp));
+    ret+=tmp;
 
     return ConstString(ret.c_str());
 }
@@ -257,4 +261,26 @@ const Matrix &Matrix::eye()
         (*this)[r][c]=1.0;
 
     return *this;
+
+}
+
+bool Matrix::operator==(const yarp::sig::Matrix &r) const
+{
+    const double *tmp1=data();
+    const double *tmp2=r.data();
+
+    //check dimensions first
+    if ( (rows()!=r.rows()) || (cols()!=r.cols()))
+        return false;
+
+    bool ret=true;
+
+    int c=rows()*cols();
+    while(c--)
+    {
+        if (*tmp1++!=*tmp2++)
+            return false;
+    }
+
+    return true;
 }

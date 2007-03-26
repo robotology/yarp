@@ -1,3 +1,9 @@
+2007-03-26  Lorenzo Natale  <nat@liralab.it>
+
+	* src/libYARP_sig/src/Matrix.cpp and Vector.cpp 
+	removed ACE_String_Base::append() which does not
+	compile on ace 5.4. Now using operator +=.
+
 2007-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindGSL.cmake: added minimal linux functionality, 

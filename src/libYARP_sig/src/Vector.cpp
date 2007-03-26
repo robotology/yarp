@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.20 2007-03-23 13:28:57 natta Exp $
+// $Id: Vector.cpp,v 1.21 2007-03-26 14:57:32 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -26,6 +26,30 @@ using namespace yarp;
 /// network stuff
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
+
+/// GSL TYPES
+#ifndef gsl_block
+typedef struct 
+{
+  size_t size;
+  double *data;
+} gsl_block;
+#endif
+
+#ifndef gsl_vector
+struct gsl_vector
+{
+  size_t size;
+  size_t stride;
+  double *data; 
+  gsl_block *block;
+  int owner;
+};
+#endif
+
+//typedef gsl_vector;
+
+///////////////////
 
 class VectorPortContentHeader
 {
@@ -240,12 +264,14 @@ ConstString Vector::toString()
     for(c=0;c<length()-1;c++)
     {
         sprintf(tmp, "%lf\t", (*this)[c]);
-        ret.append(tmp, strlen(tmp));
+        //ret.append(tmp, strlen(tmp));
+        ret+=tmp;
     }
 
     if (length()>=1) {
         sprintf(tmp, "%lf", (*this)[c]);
-        ret.append(tmp, strlen(tmp));
+        //ret.append(tmp, strlen(tmp));
+        ret+=tmp;
     }
     return ConstString(ret.c_str());
 }
@@ -278,4 +304,25 @@ const Vector &Vector::operator=(double v)
         tmp[k]=v;
 
     return *this;
+}
+
+bool Vector::operator==(const yarp::sig::Vector &r) const
+{
+    const double *tmp1=data();
+    const double *tmp2=r.data();
+
+    //check dimensions first
+    if (size()!=r.size())
+        return false;
+
+    bool ret=true;
+
+    int c=size();
+    while(c--)
+    {
+        if (*tmp1++!=*tmp2++)
+            return false;
+    }
+
+    return true;
 }

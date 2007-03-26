@@ -70,6 +70,17 @@ Vector yarp::math::operator*(double k, const Vector &b)
     return operator*(b,k);
 }
 
+Matrix yarp::math::operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
+{
+    Matrix c(a.rows(), b.cols());
+    cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
+                   c.rows(), c.cols(), a.cols(),
+                   1.0, a.data(), a.cols(), b.data(), b.cols(), 0.0,
+                   c.data(), c.cols());
+
+    return c;
+}
+
 Matrix yarp::math::eye(int r, int c)
 {
     Matrix ret;

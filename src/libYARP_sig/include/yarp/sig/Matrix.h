@@ -6,7 +6,7 @@
  *
  */
 
-// $Id: Matrix.h,v 1.10 2007-03-23 13:28:56 natta Exp $ 
+// $Id: Matrix.h,v 1.11 2007-03-26 14:57:32 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -260,6 +260,12 @@ public:
     */
 	inline const double *data() const
 	{ return storage.getFirst(); }
+
+    /**
+    * True iff all elements of a match all element of b.
+    */
+    bool operator==(const yarp::sig::Matrix &r) const;
+
 };
 
 

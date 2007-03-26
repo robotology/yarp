@@ -21,6 +21,7 @@ namespace yarp
         double dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
         yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
         yarp::sig::Vector operator*(const yarp::sig::Vector &a, double k);
+        yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
 
         /**
         * Creates a vector of zeros.
