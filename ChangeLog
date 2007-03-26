@@ -1,3 +1,8 @@
+2007-03-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindGSL.cmake: added minimal linux functionality, 
+	corrected some (probably copy/paste?) references to OpenCV.
+
 2007-03-23  Lorenzo Natale  <nat@liralab.it>
 
 	* src/libYARP_sig: moved Rand.h, Rand.cpp to libYARP_math. 

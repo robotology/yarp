@@ -42,17 +42,25 @@ IF (EXISTS "$ENV{GSL_DIR}")
 	"$ENV{GSL_DIR}/lib")
 ENDIF (EXISTS "$ENV{GSL_DIR}")
 
-FIND_PATH(GSL_BLAS_HEADER gsl/gsl_blas.h  ${GSL_POSSIBLE_INCDIRS} )
+FIND_PATH(GSL_BLAS_HEADER gsl/gsl_blas.h  
+	${GSL_POSSIBLE_INCDIRS} 
+	/usr/include
+	/usr/local/include
+	)
 
 FIND_LIBRARY(GSL_LIBRARY
-  NAMES libgsl libgsl.lib
+  NAMES libgsl libgsl.lib gsl
   PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
-  DOC "Location of the opencv lib")
+	/usr/lib
+	/usr/local/lib
+  DOC "Location of the gsl lib")
 
 FIND_LIBRARY(GSLCBLAS_LIBRARY
-  NAMES libgslcblas libgslcblas.lib
+  NAMES libgslcblas libgslcblas.lib gslcblas
   PATHS ${GSL_POSSIBLE_LIBRARY_PATHS}
-  DOC "Location of the opencv lib")
+	/usr/lib
+	/usr/local/lib
+  DOC "Location of the gsl lib")
 
 IF (GSLCBLAS_LIBRARY AND GSL_LIBRARY AND GSL_BLAS_HEADER)
   SET(GSL_INCLUDE_DIR "${GSL_BLAS_HEADER}")

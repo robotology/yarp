@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.7 2007-03-23 13:28:57 natta Exp $ 
+// $Id: Matrix.cpp,v 1.8 2007-03-26 12:57:52 eshuy Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
