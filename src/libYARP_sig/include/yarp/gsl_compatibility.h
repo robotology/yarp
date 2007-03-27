@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: gsl_compatibility.h,v 1.3 2007-03-27 15:06:49 babybot Exp $
+// $Id: gsl_compatibility.h,v 1.4 2007-03-27 15:07:57 babybot Exp $
 
 /** 
 * Defines types for binary compatibily with the GSL. Included by cpp 
@@ -44,4 +44,5 @@ struct gsl_matrix
   int owner;
 };
 #endif
-///
+
+//
