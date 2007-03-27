@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.h,v 1.13 2007-03-27 14:55:26 natta Exp $ 
+// $Id: Matrix.h,v 1.14 2007-03-27 15:12:15 babybot Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -51,6 +51,7 @@ private:
     */
     void updatePointers();
 
+    // gsl related functions
     void allocGslData();
     void freeGslData();
     void updateGslData();
