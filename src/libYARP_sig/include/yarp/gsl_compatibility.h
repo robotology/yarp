@@ -6,14 +6,13 @@
 *
 */
 
-// $Id: gsl_compatibility.h,v 1.4 2007-03-27 15:07:57 babybot Exp $
+// $Id: gsl_compatibility.h,v 1.5 2007-03-27 15:09:04 babybot Exp $
 
 /** 
 * Defines types for binary compatibily with the GSL. Included by cpp 
 * files within yarp.
 */
 
-/// GSL TYPES
 #ifndef gsl_block
 typedef struct 
 {
