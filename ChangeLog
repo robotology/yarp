@@ -1,3 +1,8 @@
+2007-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpReqLib.cmake: turned "-Wall" on by default for
+	UNIX, rather than just when YARP_ADMIN is set.
+
 2007-03-27  Lorenzo Natale  <nat@liralab.it>
 
 	* src/libYARP_sig/Matrix.h, Vector.h:
