@@ -52,7 +52,8 @@ public:
     virtual void run()=0;
 
     /**
-     * Call-back, called while halting the thread.
+     * Call-back, called while halting the thread (before
+     * join).
      * Should not be called directly.
      * Override this method to do the right thing for
      * your particular Thread::run.

@@ -102,10 +102,12 @@ private:
     class Thread3: public Thread {
     public:
         Thread3():state(-1){}
-
+    
+        bool onStopCalled;
         int state;
         virtual bool threadInit()
         {
+            onStopCalled=false;
             state=0;
             return true;
         }
@@ -117,6 +119,9 @@ private:
 
         virtual void threadRelease()
         {state++;}
+
+        virtual void onStop()
+        { onStopCalled=true;}
     };
 
     class Thread4: public Thread {
@@ -157,7 +162,6 @@ private:
         int state;
         bool fail;
 
-
         void threadWillFail(bool f)
         {
             state=0;
@@ -192,21 +196,24 @@ private:
         Runnable1():initCalled(false), 
             notified(false), 
             releaseCalled(false),
-            executed(false){}
+            executed(false)
+            {}
 
         bool initCalled;
         bool notified;
         bool releaseCalled;
         bool executed;
+        bool onStopCalled;
 
         virtual bool threadInit()
         {
             initCalled=true;
+            onStopCalled=false;
             return true;
         }
 
         void afterStart(bool s)
-        {	notified=true;}
+        {   notified=true;}
 
         virtual void run() {
             Time::delay(0.5);
@@ -217,29 +224,6 @@ private:
         {releaseCalled=true;}
     };
 
-    class TestOnStopThread: public yarp::os::Thread {
-    public:
-        TestOnStopThread()
-          {
-              onStopWasCalled=false;
-          }
-
-          virtual void onStop()
-          {
-              onStopWasCalled=true;
-              Thread::onStop();
-          }
-
-          virtual void run()
-          {
-              while (!isStopping())
-              {
-                  Time::delay(0.01);
-              }
-          }
-        bool   onStopWasCalled;
-    };
-
 public:
     ThreadTest() : sema(0), state(1) {
         expectCount = 0;
@@ -247,16 +231,6 @@ public:
     }
 
     virtual yarp::String getName() { return "ThreadTest"; }
-
-    void testOnStop()
-    {
-        report(0, "testing onStop callback");
-        TestOnStopThread foo;
-        foo.start();
-        Time::delay(0.5);
-        foo.stop();
-        checkTrue(foo.onStopWasCalled, "onStop was called");
-    }
 
     void testIsRunning()
     {
@@ -292,14 +266,16 @@ public:
         checkEqual(true,expectCount==11,"thread event counts");
     }
 
-    void testCloseVersusStop() {
-        report(0,"testing that onStop called directly doesn't cause crash");
+    void testStartVersusStop() {
+        report(0,"testing start/stop");
         Thread3 t;
         checkTrue(!t.isRunning(),"not active");
         t.start();
         checkTrue(t.isRunning(),"active");
         t.stop();
         checkTrue(!t.isRunning(),"not active");
+        
+        checkTrue(t.onStopCalled, "onStop was called");
         report(0,"done");
     }
 
@@ -364,10 +340,9 @@ public:
         checkTrue(foo.notified, "afterStart() was called");
         checkTrue(foo.executed, "thread main function was executed");
         checkTrue(foo.releaseCalled, "threadRelease was called");
-
         report(0, "done");
     }
-
+ 
     virtual void testMin() {
         report(0,"testing minimal thread functions to check for mem leakage...");
         for (int i=0; i<20; i++) {
@@ -384,13 +359,12 @@ public:
         testMin();
         testSync();
         testIsRunning();
-        testCloseVersusStop();
+        testStartVersusStop();
         testInitReleaseSynchro();
         testFailureSuccess();
         testInitAndRelease();
         testRunnable();
-        testOnStop();
-    }
+       }
 };
 
 static ThreadTest theThreadTest;
