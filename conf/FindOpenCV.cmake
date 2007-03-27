@@ -240,7 +240,7 @@ IF (LINK_LIB_CVCAM)
   ENDIF(OPENCV_INCLUDE_DIR_CVCAM)
 ENDIF(LINK_LIB_CVCAM)
 
-# MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
+#MESSAGE("DBG OPENCV_INCLUDE_DIR=${OPENCV_INCLUDE_DIR}")
 
 # libcxcore does not seem to be always required (different distribution behave 
 # differently)

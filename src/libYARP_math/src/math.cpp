@@ -6,7 +6,7 @@
  *
  */
 
-#include <yarp/math/math.h>
+#include <yarp/math/Math.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_matrix_double.h>
 
