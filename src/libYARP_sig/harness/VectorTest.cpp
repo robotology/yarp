@@ -129,7 +129,7 @@ class VectorTest : public UnitTest {
         gsl_vector *tmp;
         tmp=(gsl_vector *)(a.getGslVector());
         bool ret=true;
-        if (tmp->size!=a.size())
+        if ((int)tmp->size!=a.size())
             ret=false;
 
         if (tmp->data!=a.data())

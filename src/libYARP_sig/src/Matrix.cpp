@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.11 2007-03-27 15:05:56 babybot Exp $ 
+// $Id: Matrix.cpp,v 1.12 2007-03-27 16:48:05 eshuy Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -276,8 +276,6 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
     //check dimensions first
     if ( (rows()!=r.rows()) || (cols()!=r.cols()))
         return false;
-
-    bool ret=true;
 
     int c=rows()*cols();
     while(c--)

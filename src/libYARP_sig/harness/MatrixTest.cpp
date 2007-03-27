@@ -118,13 +118,13 @@ class MatrixTest : public UnitTest {
         gsl_matrix *tmp;
         tmp=(gsl_matrix *)(a.getGslMatrix());
         bool ret=true;
-        if (tmp->size1!=a.rows())
+        if ((int)tmp->size1!=a.rows())
             ret=false;
 
-        if (tmp->size2!=a.cols())
+        if ((int)tmp->size2!=a.cols())
             ret=false;
 
-        if (tmp->block->size!=a.cols()*a.rows())
+        if ((int)tmp->block->size!=a.cols()*a.rows())
             ret=false;
 
         if (tmp->data!=a.data())
