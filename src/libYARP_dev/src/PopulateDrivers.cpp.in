@@ -54,7 +54,8 @@ using namespace yarp::dev;
 #cmakedefine ENABLE_cyberglove
 #cmakedefine ENABLE_e504
 #cmakedefine ENABLE_joypres
-#cmakedefine ENABLE_mei				//Mattia
+#cmakedefine ENABLE_mei
+#cmakedefine ENABLE_urbtc
 #endif
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
@@ -107,8 +108,12 @@ using namespace yarp::dev;
 #include <yarp/DimaxU2C.h>
 #endif
 
-#ifdef ENABLE_mei			//Mattia
+#ifdef ENABLE_mei
 #include <yarp/MEIDeviceDriver.h>
+#endif
+
+#ifdef ENABLE_urbtc
+#include <yarp/UrbtcControl.h>
 #endif
 
 // ------------------------ for the mirror acquisition setup
@@ -221,6 +226,12 @@ void Drivers::init() {
     add(new DriverCreatorOf<DimaxU2C>("dimax_u2c", 
                                            "controlboard",
                                            "DimaxU2C"));
+#endif
+
+#ifdef ENABLE_urbtc
+    add(new DriverCreatorOf<UrbtcControl>("urbtc", 
+                                          "controlboard",
+                                          "UrbtcControl"));
 #endif
 
 // ------------------------ for the mirror acquisition setup
