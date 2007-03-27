@@ -112,7 +112,7 @@ void ThreadImpl::close() {
     if (delegate!=NULL) {
         delegate->close();
     }
-	join(-1);
+    join(-1);
 }
 
 void ThreadImpl::beforeStart() {

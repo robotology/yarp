@@ -5,6 +5,11 @@
 
 2007-03-27  Lorenzo Natale  <nat@liralab.it>
 
+	* src/libYARP_OS/src/Thread.cpp: fixed bug, onClose()
+	not called properly when overloaded.
+
+2007-03-27  Lorenzo Natale  <nat@liralab.it>
+
 	* src/libYARP_sig/Matrix.h, Vector.h:
 	Modified Vector and Matrix classes to include internal
 	compatibility with the GSL library. Vector class no

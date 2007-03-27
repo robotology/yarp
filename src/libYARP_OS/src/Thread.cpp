@@ -34,16 +34,16 @@ public:
         owner.run();
     }
 
-    virtual void stop() {
+    virtual void close() {
         owner.onStop();
         ThreadImpl::close();
     }
 
-	virtual bool threadInit() 
-	{return owner.threadInit();}
-	
-	virtual void threadRelease() 
-	{owner.threadRelease();}
+    virtual bool threadInit() 
+    {return owner.threadInit();}
+
+    virtual void threadRelease() 
+    {owner.threadRelease();}
 };
 
 
@@ -66,7 +66,8 @@ bool Thread::join(double seconds) {
 }
 
 bool Thread::stop() {
-    return ((ThreadImpl*)implementation)->join(-1);
+    ((ThreadImpl*)implementation)->close();
+    return true;
 }
 
 
@@ -74,8 +75,9 @@ bool Thread::stop() {
 //}
 
 
-void Thread::onStop() {
-    ((ThreadImpl*)implementation)->close();
+void Thread::onStop()
+{
+    // by default this does nothing
 }
 
 bool Thread::start() {
