@@ -32,8 +32,9 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-class PicoloResources:public Thread {
+class PicoloResources : public Thread {
 public:
+
 	PicoloResources (void) : _bmutex(1), _new_frame(0) {
 		_nRequestedSizeX = 0;
 		_nRequestedSizeY = 0;
@@ -236,6 +237,66 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 
 }
 
+void PicoloResources::run (void)
+{
+
+	PICOLOSTATUS PicoloStatus;
+
+	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
+	setPriority (prio);
+
+	PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);		/// timeout 120 ms.
+
+	_canpost = true;
+
+	int i = 0;
+
+	unsigned int bufno = 0;
+	PicoloStatus = PicoloGetCurrentBuffer (_picoloHandle, &bufno);
+	ACE_ASSERT (PicoloStatus == PICOLO_OK);
+	const unsigned int startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
+	unsigned int readfro = startbuf;
+
+	/// strategy, waits, copy into lockable buffer.
+	while ( ! isStopping() ) {
+        PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
+        if (PicoloStatus != PICOLO_OK) {
+            ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
+            ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
+            break; //we want to leave the while loop, and hopefully end the thread 
+        }
+
+        readfro = startbuf;
+
+        for (i = 0; i < _num_buffers; i++) {
+            if (_bmutex.check () == true) {
+                // buffer acquired.
+                // read from buffer
+                memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
+                if (_canpost) {
+                    _canpost = false;
+                    _new_frame.post();
+                }
+                _bmutex.post();
+			} else {
+                // can't acquire, it means the buffer is still in use.
+                // silently ignores this condition.
+                ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
+            }
+
+            readfro = ((readfro + 1) % _num_buffers);
+
+            // 40 ms delay
+            if (i < _num_buffers-1)
+//                Time::delay (0.040);
+                Time::delay (0.020);
+        }
+    }
+
+	ACE_DEBUG ((LM_DEBUG, "acquisition thread returning...\n"));
+
+}
+
 inline void PicoloResources::_prepareBuffers(void)
 {
 
@@ -366,68 +427,6 @@ int PicoloDeviceDriver::getRawBufferSize()
 	PicoloResources& d = RES(system_resources);
 
 	return	d._nRequestedSizeX * d._nRequestedSizeY * 3;
-
-}
-
-
-// acquisition thread for real!
-
-void PicoloResources::run (void)
-{
-
-	PICOLOSTATUS PicoloStatus;
-
-	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
-	setPriority (prio);
-
-	PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);		/// timeout 120 ms.
-
-	_canpost = true;
-
-	int i = 0;
-
-	unsigned int bufno = 0;
-	PicoloStatus = PicoloGetCurrentBuffer (_picoloHandle, &bufno);
-	ACE_ASSERT (PicoloStatus == PICOLO_OK);
-	const unsigned int startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
-	unsigned int readfro = startbuf;
-
-	/// strategy, waits, copy into lockable buffer.
-	while ( ! isStopping() ) {
-        PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
-        if (PicoloStatus != PICOLO_OK) {
-            ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
-            ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
-            break; //we want to leave the while loop, and hopefully end the thread 
-        }
-
-        readfro = startbuf;
-
-        for (i = 0; i < _num_buffers; i++) {
-            if (_bmutex.check () == true) {
-                // buffer acquired.
-                // read from buffer
-                memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
-                if (_canpost) {
-                    _canpost = false;
-                    _new_frame.post();
-                }
-                _bmutex.post();
-			} else {
-                // can't acquire, it means the buffer is still in use.
-                // silently ignores this condition.
-                ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
-            }
-
-            readfro = ((readfro + 1) % _num_buffers);
-
-            // 40 ms delay
-            if (i < _num_buffers-1)
-                Time::delay (0.040);
-        }
-    }
-
-	ACE_DEBUG ((LM_DEBUG, "acquisition thread returning...\n"));
 
 }
 
