@@ -1,6 +1,11 @@
+2007-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/urbtc: added driver from Jonas Ruesch for
+	iMCs01 controlboard (see http://www.ixs.co.jp/en).
+
 2007-03-26  Lorenzo Natale  <nat@liralab.it>
 
-	* src/libYARP_sig/src/Matrix.cpp and Vector.cpp 
+	* src/libYARP_sig/src/Matrix.cpp, Vector.cpp:
 	removed ACE_String_Base::append() which does not
 	compile on ace 5.4. Now using operator +=.
 
