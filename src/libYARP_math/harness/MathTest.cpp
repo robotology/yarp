@@ -8,9 +8,7 @@
 
 
 /**
- *
- * Tests for math.
- *
+ * \infile Tests for math.
  */
 
 #include <yarp/UnitTest.h>

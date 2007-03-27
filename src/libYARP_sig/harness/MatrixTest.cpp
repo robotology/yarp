@@ -23,6 +23,7 @@ using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+//
 class MThread1:public Thread
 {
 public:

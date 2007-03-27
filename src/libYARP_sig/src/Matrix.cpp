@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.10 2007-03-27 13:14:12 natta Exp $ 
+// $Id: Matrix.cpp,v 1.11 2007-03-27 15:05:56 babybot Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -36,6 +36,7 @@ public:
     yarp::os::NetInt32 rows;
     yarp::os::NetInt32 cols;
 } PACKED_FOR_NET;
+
 #include <yarp/os/end_pack_for_net.h>
 
 /// network stuff

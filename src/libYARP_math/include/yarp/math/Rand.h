@@ -11,7 +11,6 @@
 
 #include <yarp/sig/Vector.h>
 
-//
 const int NTAB=32;
 
 namespace yarp
