@@ -6,11 +6,11 @@
 *
 */
 
-// $Id: gsl_compatibility.h,v 1.1 2007-03-27 13:35:13 natta Exp $
+// $Id: gsl_compatibility.h,v 1.2 2007-03-27 14:55:26 natta Exp $
 
 /** 
 * Defines types for binary compatibily with the GSL. Included by cpp 
-* code within yarp.
+* files within yarp.
 */
 
 /// GSL TYPES

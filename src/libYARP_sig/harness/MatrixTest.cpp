@@ -3,7 +3,6 @@
 /*
 * Copyright (C) 2006 Lorenzo Natale
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*
 */
 
 #include <yarp/sig/Matrix.h>

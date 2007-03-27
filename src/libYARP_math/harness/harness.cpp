@@ -6,7 +6,6 @@
  *
  */
 
-
 #include <yarp/UnitTest.h>
 
 #include <yarp/Logger.h>

@@ -9,7 +9,7 @@
 
 /**
  *
- * Tests for math. Empty for now
+ * Tests for math.
  *
  */
 

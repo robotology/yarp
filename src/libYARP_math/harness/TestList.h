@@ -16,7 +16,7 @@ namespace yarp {
 }
 
 // need to made one function for each new test, and add to collectTests()
-// method
+// method.
 extern yarp::UnitTest& getMathTest();
 
 class yarp::TestList {

@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.h,v 1.12 2007-03-27 13:14:12 natta Exp $ 
+// $Id: Matrix.h,v 1.13 2007-03-27 14:55:26 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -18,6 +18,7 @@
 /**
 * \file Matrix.h contains the definition of a Matrix type 
 */
+
 namespace yarp {
     namespace sig {
         class Matrix;
