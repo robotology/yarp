@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.h,v 1.22 2007-03-27 13:14:12 natta Exp $
+// $Id: Vector.h,v 1.23 2007-03-27 13:45:19 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -380,7 +380,7 @@ public:
         updateGslData();
     }
 
-    Vector::~Vector()
+    ~Vector()
     {
         freeGslData();
     }
