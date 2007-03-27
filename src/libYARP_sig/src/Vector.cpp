@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.21 2007-03-26 14:57:32 natta Exp $
+// $Id: Vector.cpp,v 1.22 2007-03-27 13:14:12 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -27,27 +27,7 @@ using namespace yarp;
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
 
-/// GSL TYPES
-#ifndef gsl_block
-typedef struct 
-{
-  size_t size;
-  double *data;
-} gsl_block;
-#endif
-
-#ifndef gsl_vector
-struct gsl_vector
-{
-  size_t size;
-  size_t stride;
-  double *data; 
-  gsl_block *block;
-  int owner;
-};
-#endif
-
-//typedef gsl_vector;
+#include <yarp/gsl_compatibility.h>
 
 ///////////////////
 
@@ -278,27 +258,30 @@ ConstString Vector::toString()
 
 const Vector &Vector::operator=(const Vector &r)
 {
-    VectorOf<double>::operator =(r);
+    storage=r.storage;
+    updateGslData();
     return *this;
 }
 
-Vector::Vector(size_t s, const double *p):VectorOf<double>(s)
+Vector::Vector(size_t s, const double *p)
 {
-    VectorOf<double>::resize(s);
+    storage.resize(s);
 
-    for(int k=0; k<VectorOf<double>::size(); k++)
-        VectorOf<double>::operator[](k)=p[k];
+    for(int k=0; k<storage.size(); k++)
+        storage[k]=p[k];
+
+    updateGslData();
 }
 
 void Vector::zero()
 {
-    for(int k=0; k<VectorOf<double>::size(); k++)
-        VectorOf<double>::operator[](k)=0;
+    for(int k=0; k<storage.size(); k++)
+        storage[k]=0;
 }
 
 const Vector &Vector::operator=(double v)
 {
-    double *tmp=getFirst();
+    double *tmp=storage.getFirst();
 
     for(int k=0; k<length(); k++)
         tmp[k]=v;
@@ -323,6 +306,97 @@ bool Vector::operator==(const yarp::sig::Vector &r) const
         if (*tmp1++!=*tmp2++)
             return false;
     }
+
+    return true;
+}
+
+void *Vector::getGslVector()
+{
+    return gslData;
+}
+
+const void *Vector::getGslVector() const
+{
+    return gslData;
+}
+
+void Vector::allocGslData()
+{
+    gsl_vector *vect=new gsl_vector;
+    gsl_block *bl=new gsl_block;
+    
+    vect->block=bl;
+
+    //these are constant (at least for now)
+    vect->owner=1;
+    vect->stride=1;
+
+    gslData=vect;
+}
+
+void Vector::freeGslData()
+{
+    gsl_vector *tmp=(gsl_vector *) (gslData);
+
+    if (tmp!=0)
+    {
+        delete tmp->block;
+        delete tmp;
+    }
+
+    gslData=0;
+}
+
+void Vector::updateGslData()
+{
+    gsl_vector *tmp=static_cast<gsl_vector *>(gslData);
+    tmp->block->data=Vector::data();
+    tmp->data=tmp->block->data;
+    tmp->block->size=Vector::size();
+    tmp->owner=1;
+    tmp->stride=1;
+    tmp->size=tmp->block->size;
+}
+
+bool Vector::read(yarp::os::ConnectionReader& connection) {
+    try {
+        // auto-convert text mode interaction
+        connection.convertTextMode();
+        VectorPortContentHeader header;
+        connection.expectBlock((char*)&header, sizeof(header));
+        if (header.listLen > 0)
+        {
+            if (size() != (int)(header.listLen))
+                resize(header.listLen);
+            
+            int k=0;
+            for (k=0;k<header.listLen;k++)
+                   (*this)[k]=connection.expectDouble();
+        }
+        else
+            return false;
+    } catch (yarp::IOException e) {
+        return false;
+    }
+
+    return true;
+}
+
+bool Vector::write(yarp::os::ConnectionWriter& connection) {
+    VectorPortContentHeader header;
+
+    header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
+    header.listLen = size();
+
+    connection.appendBlock((char*)&header, sizeof(header));
+
+    int k=0;
+    for (k=0;k<header.listLen;k++)
+        connection.appendDouble((*this)[k]);
+
+    // if someone is foolish enough to connect in text mode,
+    // let them see something readable.
+    connection.convertTextMode();
 
     return true;
 }

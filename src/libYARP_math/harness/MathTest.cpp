@@ -84,7 +84,7 @@ public:
         B=3;
         Matrix C=A*B;
 
-        Matrix exp(3,4);
+        Matrix exp(3,2);
         exp=24; //expected result
         
         bool ret=(exp==C);

@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2006 Lorenzo Natale
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
 #include <yarp/sig/Matrix.h>
 #include <yarp/BufferedConnectionWriter.h>
@@ -12,6 +12,9 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
+
+#include <yarp/gsl_compatibility.h>
+
 
 #include <vector>
 
@@ -24,93 +27,134 @@ using namespace yarp::sig;
 class MThread1:public Thread
 {
 public:
-	MThread1(Port *p)
-	{
-		portOut=p;
-	}
+    MThread1(Port *p)
+    {
+        portOut=p;
+    }
 
-	bool threadInit()
-	{
-		success=false;
-		return true;
-	}
+    bool threadInit()
+    {
+        success=false;
+        return true;
+    }
 
-	void run()
-	{
-		Matrix m;
+    void run()
+    {
+        Matrix m;
 
-		int times=10;
+        int times=10;
 
-		while(times--)
-		{
-			m.resize(4,4);
-			int r=0;
-			int c=0;
-			for(r=0; r<4; r++)
-			for (c=0; c<4; c++)
-				m[r][c]=99;
+        while(times--)
+        {
+            m.resize(4,4);
+            int r=0;
+            int c=0;
+            for(r=0; r<4; r++)
+                for (c=0; c<4; c++)
+                    m[r][c]=99;
 
-			portOut->write(m);
-			Time::delay(0.1);
+            portOut->write(m);
+            Time::delay(0.1);
 
-			m.resize(2,4);
-			for(r=0; r<2; r++)
-			for (c=0; c<4; c++)
-				m[r][c]=66;
+            m.resize(2,4);
+            for(r=0; r<2; r++)
+                for (c=0; c<4; c++)
+                    m[r][c]=66;
 
-			portOut->write(m);
-		}
+            portOut->write(m);
+        }
 
-		success=true;
-	}
+        success=true;
+    }
 
-	Port *portOut;
-	bool success;
+    Port *portOut;
+    bool success;
 };
 
 class MThread2:public Thread
 {
 public:
-	MThread2(Port *p)
-	{
-		portIn=p;
-	}
+    MThread2(Port *p)
+    {
+        portIn=p;
+    }
 
-	bool threadInit()
-	{
-		success=false;
-		return true;
-	}
+    bool threadInit()
+    {
+        success=false;
+        return true;
+    }
 
-	void run()
-	{
-		Matrix m;
+    void run()
+    {
+        Matrix m;
 
-		int times=10;
-		bool ok=true;
-		while(times--)
-		{
-			portIn->read(m);
-			if ( (m.rows()!=4)||(m.cols()!=4))
-				ok=false;
+        int times=10;
+        bool ok=true;
+        while(times--)
+        {
+            portIn->read(m);
+            if ( (m.rows()!=4)||(m.cols()!=4))
+                ok=false;
 
 
-			portIn->read(m);
+            portIn->read(m);
 
-			if ( (m.rows()!=2)||(m.cols()!=4))
-				ok=false;
-		}
+            if ( (m.rows()!=2)||(m.cols()!=4))
+                ok=false;
+        }
 
-		success=ok;
-	}
+        success=ok;
+    }
 
-	Port *portIn;
-	bool success;
+    Port *portIn;
+    bool success;
 };
 
 class MatrixTest : public UnitTest {
+    
+    bool checkConsistency(Matrix &a)
+    {
+        gsl_matrix *tmp;
+        tmp=(gsl_matrix *)(a.getGslMatrix());
+        bool ret=true;
+        if (tmp->size1!=a.rows())
+            ret=false;
+
+        if (tmp->size2!=a.cols())
+            ret=false;
+
+        if (tmp->block->size!=a.cols()*a.rows())
+            ret=false;
+
+        if (tmp->data!=a.data())
+            ret=false;
+
+        if (tmp->block->data!=a.data())
+            ret=false;
+
+        return ret;
+    }
+
 public:
     virtual String getName() { return "MatrixTest"; }
+
+    void checkGsl()
+    {
+        Matrix a(5,5);
+        Matrix b;
+        b=a;
+        checkTrue(checkConsistency(a), "gsldata consistent after creation");
+        checkTrue(checkConsistency(b), "gsldata consistent after copy");
+        b.resize(100,100);
+        checkTrue(checkConsistency(b), "gsldata consistent after resize");
+
+        Matrix s=a.submatrix(1,1,2,2);
+        checkConsistency(s);
+        checkTrue(checkConsistency(s), "gsldata consistent for submatrix");
+        Matrix c=a;
+        checkTrue(checkConsistency(c), "gsldata consistent after init");
+    }
 
     void checkOperators()
     {
@@ -125,7 +169,7 @@ public:
         bool ok=false;
         if (M1==M2)
             ok=true;
-        
+
         M1=2;
         M2=1; //now vectors are different
         if (M1==M2)
@@ -135,84 +179,85 @@ public:
     }
 
     void checkSendReceive()
-	{
-		Port portIn;
-		Port portOut;
+    {
+        Port portIn;
+        Port portOut;
 
-		MThread2 *receiverThread=new MThread2(&portIn);
-		MThread1 *senderThread=new MThread1(&portOut);
+        MThread2 *receiverThread=new MThread2(&portIn);
+        MThread1 *senderThread=new MThread1(&portOut);
 
-		portOut.open("/harness_sig/mtest/o");
-		portIn.open("/harness_sig/mtest/i");
-	
-		Network::connect("/harness_sig/mtest/o", "/harness_sig/mtest/i");
+        portOut.open("/harness_sig/mtest/o");
+        portIn.open("/harness_sig/mtest/i");
 
-		receiverThread->start();
-		senderThread->start();
+        Network::connect("/harness_sig/mtest/o", "/harness_sig/mtest/i");
 
-		receiverThread->stop();
-		senderThread->stop();
+        receiverThread->start();
+        senderThread->start();
 
-		portOut.close();
-		portIn.close();
+        receiverThread->stop();
+        senderThread->stop();
 
-		checkTrue(senderThread->success, "Send matrix test");
-		checkTrue(receiverThread->success, "Receive matrix test");
+        portOut.close();
+        portIn.close();
 
-		delete receiverThread;
-		delete senderThread;
-	}
+        checkTrue(senderThread->success, "Send matrix test");
+        checkTrue(receiverThread->success, "Receive matrix test");
 
-	void checkCopyCtor()
-	{
-	    report(0,"check matrix copy constructor works...");
+        delete receiverThread;
+        delete senderThread;
+    }
+
+    void checkCopyCtor()
+    {
+        report(0,"check matrix copy constructor works...");
         Matrix m(4,4);
-		int r=0;
-		int c=0;
-		for(r=0; r<4; r++)
-		{
-			for (c=0; c<4; c++)
-				m[r][c]=1333;
-		}
+        int r=0;
+        int c=0;
+        for(r=0; r<4; r++)
+        {
+            for (c=0; c<4; c++)
+                m[r][c]=1333;
+        }
 
         Matrix m2(m);
         checkEqual(m.rows(),m2.rows(),"rows matches");
-		checkEqual(m.cols(),m2.cols(),"cols matches");
+        checkEqual(m.cols(),m2.cols(),"cols matches");
 
-		bool ok=true;
-		for(r=0; r<4; r++)
-			for (c=0; c<4; c++)
-				ok=ok && ((m[r])[c]==(m2[r])[c]);
+        bool ok=true;
+        for(r=0; r<4; r++)
+            for (c=0; c<4; c++)
+                ok=ok && ((m[r])[c]==(m2[r])[c]);
 
-		checkTrue(ok,"elements match");
-	}
+        checkTrue(ok,"elements match");
+    }
 
     void checkCopy() {
-	    report(0,"check matrix copy constructor works...");
+        report(0,"check matrix copy constructor works...");
         Matrix m(4,4);
-		int r=0;
-		int c=0;
-		for(r=0; r<4; r++)
-			for (c=0; c<4; c++)
-				m[r][c]=99;
-        
-		Matrix m2(m);
+        int r=0;
+        int c=0;
+        for(r=0; r<4; r++)
+            for (c=0; c<4; c++)
+                m[r][c]=99;
+
+        Matrix m2(m);
         checkEqual(m.rows(),m2.rows(),"rows matches");
-		checkEqual(m.cols(),m2.cols(),"cols matches");
+        checkEqual(m.cols(),m2.cols(),"cols matches");
 
-		bool ok=true;
-		for(r=0; r<4; r++)
-			for (c=0; c<4; c++)
-				ok=ok && (m[r][c]==m2[r][c]);
-		checkTrue(ok,"elements match");   
-	}
+        bool ok=true;
+        for(r=0; r<4; r++)
+            for (c=0; c<4; c++)
+                ok=ok && (m[r][c]==m2[r][c]);
+        checkTrue(ok,"elements match");   
+    }
 
-	virtual void runTests() {
+    virtual void runTests() {
         Network::setLocalMode(true);
-		checkCopyCtor();
+        checkCopyCtor();
         checkCopy();
-		checkSendReceive();
+        checkSendReceive();
         checkOperators();
+        checkGsl();
         Network::setLocalMode(false);
     }
 };

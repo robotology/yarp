@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale and Giorgio Metta
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2006 Lorenzo Natale and Giorgio Metta
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
 
 #include <yarp/sig/Vector.h>
@@ -16,6 +16,8 @@
 
 #include <vector>
 
+#include <yarp/gsl_compatibility.h>
+
 #include "TestList.h"
 
 using namespace yarp;
@@ -25,107 +27,144 @@ using namespace yarp::sig;
 class Thread1:public Thread
 {
 public:
-	Thread1(Port *p)
-	{
-		portOut=p;
-	}
+    Thread1(Port *p)
+    {
+        portOut=p;
+    }
 
-	bool threadInit()
-	{
-		success=false;
-		return true;
-	}
+    bool threadInit()
+    {
+        success=false;
+        return true;
+    }
 
-	void run()
-	{
-		Vector v;
+    void run()
+    {
+        Vector v;
 
-		int times=10;
+        int times=10;
 
-		while(times--)
-		{
-			v.clear();
-			int k=0;
-			for(k=0;k<10;k++)
-				v.push_back(3.14159265);
-			
-			portOut->write(v);
-			Time::delay(0.1);
-			v.clear();
+        while(times--)
+        {
+            v.clear();
+            int k=0;
+            for(k=0;k<10;k++)
+                v.push_back(3.14159265);
 
-			for(k=0;k<5;k++)
-				v.push_back(k);
-			
-			portOut->write(v);
-		}
+            portOut->write(v);
+            Time::delay(0.1);
+            v.clear();
 
-		success=true;
-	}
+            for(k=0;k<5;k++)
+                v.push_back(k);
 
-	Port *portOut;
-	bool success;
+            portOut->write(v);
+        }
+
+        success=true;
+    }
+
+    Port *portOut;
+    bool success;
 };
 
 class Thread2:public Thread
 {
 public:
-	Thread2(Port *p)
-	{
-		portIn=p;
-	}
+    Thread2(Port *p)
+    {
+        portIn=p;
+    }
 
-	bool threadInit()
-	{
-		success=false;
-		return true;
-	}
+    bool threadInit()
+    {
+        success=false;
+        return true;
+    }
 
-	void run()
-	{
-		Vector v;
+    void run()
+    {
+        Vector v;
 
-		int times=10;
-		bool ok=true;
-		while(times--)
-		{
-			portIn->read(v);
-			//check if I received 42 42s
+        int times=10;
+        bool ok=true;
+        while(times--)
+        {
+            portIn->read(v);
+            //check if I received 42 42s
 
-			int k;
-			int s=v.size();
-			if (s!=10)
-				ok=false;
-			for(k=0;k<s;k++)
-			{
-				if (v[k]!=3.14159265)
-					ok=false;
-			}
+            int k;
+            int s=v.size();
+            if (s!=10)
+                ok=false;
+            for(k=0;k<s;k++)
+            {
+                if (v[k]!=3.14159265)
+                    ok=false;
+            }
 
-			portIn->read(v);
-			s=v.size();
-			if (s!=5)
-				ok=false;
-			for(k=0;k<s;k++)
-			{
-				if (v[k]!=k)
-					ok=false;
-			}
+            portIn->read(v);
+            s=v.size();
+            if (s!=5)
+                ok=false;
+            for(k=0;k<s;k++)
+            {
+                if (v[k]!=k)
+                    ok=false;
+            }
 
-		}
+        }
 
-		success=ok;
-	}
+        success=ok;
+    }
 
-	Port *portIn;
-	bool success;
+    Port *portIn;
+    bool success;
 };
 
 class VectorTest : public UnitTest {
+    
+    bool checkConsistency(Vector &a)
+    {
+        gsl_vector *tmp;
+        tmp=(gsl_vector *)(a.getGslVector());
+        bool ret=true;
+        if (tmp->size!=a.size())
+            ret=false;
+
+        if (tmp->data!=a.data())
+            ret=false;
+
+        if (tmp->block->data!=a.data())
+            ret=false;
+
+        return ret;
+    }
+
 public:
     virtual String getName() { return "VectorTest"; }
 
+    void checkGsl()
+    {
+        Vector a(5);
+        Vector b;
+        b=a;
+        checkTrue(checkConsistency(a), "gsldata consistent after creation");
+        checkTrue(checkConsistency(b), "gsldata consistent after copy");
+        b.resize(100);
+        checkTrue(checkConsistency(b), "gsldata consistent after resize");
+
+        for(int k=0;k<100;k++)
+            a.push_back(1.0);
+
+        checkConsistency(a);
+        checkTrue(checkConsistency(a), "gsldata consistent after push");
+        Vector c=a;
+        checkTrue(checkConsistency(c), "gsldata consistent after init");
+    }
+
     void checkFormat() {
-	    Vector v(10);
+        Vector v(10);
 
         report(0,"check vector format conforms to network standard...");
         {
@@ -147,74 +186,74 @@ public:
         }
     }
 
-	void checkSendReceive()
-	{
-		Port portIn;
-		Port portOut;
+    void checkSendReceive()
+    {
+        Port portIn;
+        Port portOut;
 
-		Thread2 *receiverThread=new Thread2(&portIn);
-		Thread1 *senderThread=new Thread1(&portOut);
+        Thread2 *receiverThread=new Thread2(&portIn);
+        Thread1 *senderThread=new Thread1(&portOut);
 
-		portOut.open("/harness_sig/vtest/o");
-		portIn.open("/harness_sig/vtest/i");
-	
-		Network::connect("/harness_sig/vtest/o", "/harness_sig/vtest/i");
+        portOut.open("/harness_sig/vtest/o");
+        portIn.open("/harness_sig/vtest/i");
 
-		receiverThread->start();
-		senderThread->start();
+        Network::connect("/harness_sig/vtest/o", "/harness_sig/vtest/i");
 
-		receiverThread->stop();
-		senderThread->stop();
+        receiverThread->start();
+        senderThread->start();
 
-		portOut.close();
-		portIn.close();
+        receiverThread->stop();
+        senderThread->stop();
 
-		checkTrue(senderThread->success, "Send test");
-		checkTrue(receiverThread->success, "Receive test");
+        portOut.close();
+        portIn.close();
 
-		delete receiverThread;
-		delete senderThread;
-	}
+        checkTrue(senderThread->success, "Send test");
+        checkTrue(receiverThread->success, "Receive test");
 
-	void checkCopyCtor()
-	{
-	    report(0,"check vectors copy constructor works...");
+        delete receiverThread;
+        delete senderThread;
+    }
+
+    void checkCopyCtor()
+    {
+        report(0,"check vectors copy constructor works...");
         Vector v(4);
-		v[0]=99;
-		v[1]=99;
-		v[2]=99;
-		v[3]=99;
+        v[0]=99;
+        v[1]=99;
+        v[2]=99;
+        v[3]=99;
 
         checkEqual(v.size(),4,"size set ok");
 
         Vector v2(v);
         checkEqual(v.size(),v2.size(),"size matches");
 
-		bool ok=true;
-		for (int k=0; k<4; k++)
-			ok=ok&&(v2[k]==v[k]);
+        bool ok=true;
+        for (int k=0; k<4; k++)
+            ok=ok&&(v2[k]==v[k]);
 
-		checkTrue(ok,"elements match");
-	}
+        checkTrue(ok,"elements match");
+    }
 
 
     void checkCopy() {
         report(0,"check vectors copy works...");
         Vector v(4);
-		v[0]=99;
-		v[1]=99;
-		v[2]=99;
-		v[3]=99;
+        v[0]=99;
+        v[1]=99;
+        v[2]=99;
+        v[3]=99;
 
         Vector v2;
         v2 = v;
         checkEqual(v.size(),v2.size(),"size matches");
 
-		bool ok=true;
-		for (int k=0; k<4; k++)
-			ok=ok&&(v2[k]==v[k]);
+        bool ok=true;
+        for (int k=0; k<4; k++)
+            ok=ok&&(v2[k]==v[k]);
 
-		checkTrue(ok,"elements match");
+        checkTrue(ok,"elements match");
 
         report(0,"check bug #1601862...");
         std::vector<sig::Vector> myList; //using stl vector
@@ -236,7 +275,7 @@ public:
         bool ok=false;
         if (v1==v2)
             ok=true;
-        
+
         v1=2;
         v2=1; //now vectors are different
         if (v1==v2)
@@ -245,13 +284,14 @@ public:
         checkTrue(ok, "operator== for vectors work");
     }
 
-	virtual void runTests() {
+    virtual void runTests() {
         Network::setLocalMode(true);
         checkFormat();
-		checkCopyCtor();
+        checkCopyCtor();
         checkCopy();
-		checkSendReceive();
+        checkSendReceive();
         checkOperators();
+        checkGsl();
         Network::setLocalMode(false);
     }
 };

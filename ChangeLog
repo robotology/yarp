@@ -1,3 +1,13 @@
+2007-03-27  Lorenzo Natale  <nat@liralab.it>
+
+	* src/libYARP_sig/Matrix.h, Vector.h:
+	Modified Vector and Matrix classes to include internal
+	compatibility with the GSL library. Vector class no
+	longer derives from VectorOf<double>.
+	Separated read/write methods in Vector class; methods should
+	now allow sending/receiving data across different architectures.
+	Changed regression tests accordingly.
+
 2007-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/urbtc: added driver from Jonas Ruesch for

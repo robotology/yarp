@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.9 2007-03-26 14:57:32 natta Exp $ 
+// $Id: Matrix.cpp,v 1.10 2007-03-27 13:14:12 natta Exp $ 
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
@@ -14,6 +14,8 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
+
+#include <yarp/gsl_compatibility.h>
 
 #include <ace/config.h>
 #include <ace/Vector_T.h>
@@ -40,7 +42,7 @@ public:
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
 
-bool MatrixBase::read(yarp::os::ConnectionReader& connection) {
+bool Matrix::read(yarp::os::ConnectionReader& connection) {
     try {
         // auto-convert text mode interaction
         connection.convertTextMode();
@@ -54,9 +56,11 @@ bool MatrixBase::read(yarp::os::ConnectionReader& connection) {
             {
                 resize(header.rows, header.cols);
             }
-            const char *ptr = getMemoryBlock();
-            ACE_ASSERT (ptr != 0);
-            connection.expectBlock(ptr, sizeof(double)*header.listLen);
+
+            int l=0;
+            double *tmp=data();
+            for(l=0;l<header.listLen;l++)
+                tmp[l]=connection.expectDouble();
         }
         else
             return false;
@@ -68,7 +72,7 @@ bool MatrixBase::read(yarp::os::ConnectionReader& connection) {
 }
 
 
-bool MatrixBase::write(yarp::os::ConnectionWriter& connection) {
+bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     MatrixPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
@@ -78,10 +82,11 @@ bool MatrixBase::write(yarp::os::ConnectionWriter& connection) {
     header.listLen = header.rows*header.cols;
 
     connection.appendBlock((char*)&header, sizeof(header));
-    const char *ptr = getMemoryBlock();
-    ACE_ASSERT (ptr != NULL);
 
-    connection.appendExternalBlock(ptr, sizeof(double)*header.listLen);
+    int l=0;
+    const double *tmp=data();
+    for(l=0;l<header.listLen;l++)
+        connection.appendDouble(tmp[l]);
 
     // if someone is foolish enough to connect in text mode,
     // let them see something readable.
@@ -166,6 +171,8 @@ void Matrix::updatePointers()
     {
         matrix[r]=matrix[r-1]+ncols;
     }
+
+    updateGslData();
 }
 
 const Matrix &Matrix::operator=(const Matrix &r)
@@ -179,32 +186,28 @@ const Matrix &Matrix::operator=(const Matrix &r)
 
 const Matrix &Matrix::operator=(double v)
 {
-	double *tmp=storage.getFirst();
+    double *tmp=storage.getFirst();
 
-		for(int k=0; k<nrows*ncols; k++)
-			tmp[k]=v;
+    for(int k=0; k<nrows*ncols; k++)
+        tmp[k]=v;
 
-        return *this;
-	}
+    return *this;
+}
 
 Matrix::~Matrix()
-	{
-		if (matrix!=0)
-			delete [] matrix;
-	}
+{
+    if (matrix!=0)
+        delete [] matrix;
+    freeGslData();
+}
 
-void Matrix::resize(int r, int c)	
+void Matrix::resize(int r, int c)
 {
     nrows=r;
     ncols=c;
 
     storage.resize(r*c,0.0);
     updatePointers();
-}
-
-const char *Matrix::getMemoryBlock() const
-{
-    return (char *) storage.getFirst();
 }
 
 void Matrix::zero()
@@ -283,4 +286,43 @@ bool Matrix::operator==(const yarp::sig::Matrix &r) const
     }
 
     return true;
+}
+
+
+void Matrix::allocGslData()
+{
+    gsl_matrix *mat=new gsl_matrix;
+    gsl_block *bl=new gsl_block;
+    
+    mat->block=bl;
+
+    //this is constant (at least for now)
+    mat->owner=1;
+
+    gslData=mat;
+}
+
+void Matrix::freeGslData()
+{
+    gsl_matrix *tmp=(gsl_matrix *) (gslData);
+
+    if (tmp!=0)
+    {
+        delete tmp->block;
+        delete tmp;
+    }
+
+    gslData=0;
+}
+
+void Matrix::updateGslData()
+{
+    gsl_matrix *tmp=static_cast<gsl_matrix *>(gslData);
+    tmp->block->data=Matrix::data();
+    tmp->data=tmp->block->data;
+    tmp->block->size=rows()*cols();
+    tmp->owner=1;
+    tmp->tda=cols();
+    tmp->size1=rows();
+    tmp->size2=cols();
 }
