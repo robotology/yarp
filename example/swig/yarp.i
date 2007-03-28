@@ -13,6 +13,9 @@
 
 // Translate std::string to whatever the native string type is
 %include "std_string.i"
+// Translate std::vector to whatever the native vector type is
+%include "std_vector.i"
+
 
 // Deal with Java method name conflicts
 // We rename a few methods as follows:
@@ -41,6 +44,13 @@
 %ignore *::check(const char *key, Value *& result, const char *comment);
 %rename(where_c) *::where();
 %rename(seed_c) *::seed(int seed);  // perl clash
+%ignore *::setPid(int j, const Pid &pid);
+%ignore *::getPid(int j, Pid *pid);
+%ignore *::setKp(double);
+%ignore *::setKi(double);
+%ignore *::setKd(double);
+%ignore *::setScale(double);
+%ignore *::setOffset(double);
 
 //////////////////////////////////////////////////////////////////////////
 // Clean up a few unimportant things that give warnings
@@ -141,7 +151,13 @@ typedef int yarp::os::NetInt32;
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
+%include <yarp/dev/ControlBoardInterfaces.h>
+%include <yarp/dev/ControlBoardPid.h>
 
+namespace std {
+   %template(DVector) vector<double>;
+   %template(PidVector) vector<yarp::dev::Pid>;
+};
 
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour
@@ -237,9 +253,219 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return result;
 	}
 
+	yarp::dev::IPositionControl *viewIPositionControl() {
+		yarp::dev::IPositionControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IVelocityControl *viewIVelocityControl() {
+		yarp::dev::IVelocityControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IEncoders *viewIEncoders() {
+		yarp::dev::IEncoders *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IPidControl *viewIPidControl() {
+		yarp::dev::IPidControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IAmplifierControl *viewIAmplifierControl() {
+		yarp::dev::IAmplifierControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IControlLimits *viewIControlLimits() {
+		yarp::dev::IControlLimits *result;
+		self->view(result);
+		return result;
+	}
+
 	// you'll need to add an entry for every interface you wish
 	// to use
 }
 
 
+//////////////////////////////////////////////////////////////////////////
+// Deal with ControlBoardInterfaces pointer arguments that don't translate
 
+%extend yarp::dev::IPositionControl {
+	int getAxes() {
+		int buffer;
+		bool ok = self->getAxes(&buffer);
+		if (!ok) return 0;
+		return buffer;
+	}
+	
+	bool positionMove(std::vector<double> data) {
+		return self->positionMove(&data[0]);
+	}
+	
+	bool relativeMove(std::vector<double> data) {
+		return self->relativeMove(&data[0]);
+	}
+	
+	bool setRefSpeeds(std::vector<double> data) {
+		return self->setRefSpeeds(&data[0]);
+	}
+	
+	bool getRefSpeed(int j, std::vector<double> data) {
+		return self->getRefSpeed(j, &data[0]);
+	}
+	
+	bool getRefSpeeds(std::vector<double> data) {
+		return self->getRefSpeeds(&data[0]);
+	}
+	
+	bool getRefAcceleration(int j, std::vector<double> data) {
+		return self->getRefAcceleration(j, &data[0]);
+	}
+	
+	bool getRefAccelerations(std::vector<double> data) {
+		return self->getRefAccelerations(&data[0]);
+	}
+}
+
+%extend yarp::dev::IVelocityControl {
+	int getAxes() {
+		int buffer;
+		bool ok = self->getAxes(&buffer);
+		if (!ok) return 0;
+		return buffer;
+	}
+	
+	bool velocityMove(std::vector<double> data) {
+		return self->velocityMove(&data[0]);
+	}
+	
+	bool setRefAccelerations(std::vector<double> data) {
+		return self->setRefAccelerations(&data[0]);
+	}
+	
+	bool getRefAcceleration(int j, std::vector<double> data) {
+		return self->getRefAcceleration(j, &data[0]);
+	}
+	
+	bool getRefAccelerations(std::vector<double> data) {
+		return self->getRefAccelerations(&data[0]);
+	}
+}
+
+%extend yarp::dev::IEncoders {
+	int getAxes() {
+		int buffer;
+		bool ok = self->getAxes(&buffer);
+		if (!ok) return 0;
+		return buffer;
+	}
+	
+	bool setEncoders(std::vector<double> data) {
+		return self->setEncoders(&data[0]);
+	}
+	
+	bool getEncoder(int j, std::vector<double> data) {
+		return self->getEncoder(j, &data[0]);
+	}
+	
+	bool getEncoders(std::vector<double> data) {
+		return self->getEncoders(&data[0]);
+	}
+	
+	bool getEncoderSpeed(int j, std::vector<double> data) {
+		return self->getEncoderSpeed(j, &data[0]);
+	}
+	
+	bool getEncoderSpeeds(std::vector<double> data) {
+		return self->getEncoderSpeeds(&data[0]);
+	}
+	
+	bool getEncoderAcceleration(int j, std::vector<double> data) {
+		return self->getEncoderAcceleration(j, &data[0]);
+	}
+
+	bool getEncoderAccelerations(std::vector<double> data) {
+		return self->getEncoderAccelerations(&data[0]);
+	}
+}
+
+%extend yarp::dev::IPidControl {
+	bool setReferences(std::vector<double> data) {
+		return self->setReferences(&data[0]);
+	}
+	
+	bool getReference(int j, std::vector<double> data) {
+		return self->getReference(j, &data[0]);
+	}
+	
+	bool getReferences(std::vector<double> data) {
+		return self->getReferences(&data[0]);
+	}
+
+	bool setErrorLimits(std::vector<double> data) {
+		return self->setErrorLimits(&data[0]);
+	}
+	
+	bool getErrorLimit(int j, std::vector<double> data) {
+		return self->getErrorLimit(j, &data[0]);
+	}
+	
+	bool getErrorLimits(std::vector<double> data) {
+		return self->getErrorLimits(&data[0]);
+	}
+	
+	bool getError(int j, std::vector<double> data) {
+		return self->getError(j, &data[0]);
+	}
+	
+	bool getErrors(std::vector<double> data) {
+		return self->getErrors(&data[0]);
+	}
+	
+	bool getOutput(int j, std::vector<double> data) {
+		return self->getOutput(j, &data[0]);
+	}
+	
+	bool getOutputs(std::vector<double> data) {
+		return self->getOutputs(&data[0]);
+	}
+	
+	bool setPid(int j, yarp::dev::Pid pid) {
+		return self->setPid(j,pid);
+	}
+
+	bool setPids(std::vector<yarp::dev::Pid> pids) {
+		return self->setPids(&pids[0]);
+	}
+
+	bool getPid(int j, std::vector<yarp::dev::Pid> pid) {
+		return self->getPid(j,&pid[0]);
+	}
+
+	bool getPids(std::vector<yarp::dev::Pid> pids) {
+		return self->getPids(&pids[0]);
+	}
+}
+
+%extend yarp::dev::IAmplifierControl {
+	bool getCurrents(std::vector<double> data) {
+		return self->getCurrents(&data[0]);
+	}
+	
+	bool getCurrent(int j, std::vector<double> data) {
+		return self->getCurrent(j, &data[0]);
+	}
+}
+
+%extend yarp::dev::IControlLimits {
+	bool getLimits(int axis, std::vector<double> min, std::vector<double> max) {
+		return self->getLimits(axis, &min[0], &max[0]);
+	}
+}

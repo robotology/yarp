@@ -1,5 +1,10 @@
 2007-03-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/swig/yarp.i: applied patches from Boris Duran to
+	fix up methods in ControlBoardInterfaces such as IPositionControl
+	that don't get translated well due to use of pointers.
+	Motor control from Matlab is now working on fakebot at least :-).
+
 	* src/libYARP_OS/include/yarp/BottleImpl.h: applied patch from
 	Tomassino Ferrauto to make copies a little bit less 
 	inefficient.
