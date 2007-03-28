@@ -1,3 +1,8 @@
+2007-03-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: propagated 
+	return values for a bunch of methods.
+
 2007-03-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpReqLib.cmake: turned "-Wall" on by default for

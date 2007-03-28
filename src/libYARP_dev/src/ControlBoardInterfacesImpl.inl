@@ -412,15 +412,15 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeed(int j, double *re
     
     *ref=(castToMapper(helper)->velE2A(enc, k));
     
-    return true;
+    return ret;
 }
 
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeeds(double *spds)
 {
-    bool ret=iPosition->getRefSpeedsRaw(temp);
+    bool ret = iPosition->getRefSpeedsRaw(temp);
     castToMapper(helper)->velE2A(temp, spds);
-    return true;
+    return ret;
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -428,7 +428,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *a
 {
     bool ret=iPosition->getRefAccelerationsRaw(temp);
     castToMapper(helper)->accE2A(temp, accs);
-    return true;
+    return ret;
 }
 
 template <class DERIVED, class IMPLEMENT> 
@@ -598,7 +598,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *a
 {
     bool ret=iVelocity->getRefAccelerationsRaw(temp);
     castToMapper(helper)->accE2A(temp, accs);
-    return true;
+    return ret;
 }
 
 template <class DERIVED, class IMPLEMENT> 
