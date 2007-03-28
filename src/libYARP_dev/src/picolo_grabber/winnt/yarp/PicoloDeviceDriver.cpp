@@ -288,8 +288,7 @@ void PicoloResources::run (void)
 
             // 40 ms delay
             if (i < _num_buffers-1)
-//                Time::delay (0.040);
-                Time::delay (0.020);
+                Time::delay (0.040);
         }
     }
 
