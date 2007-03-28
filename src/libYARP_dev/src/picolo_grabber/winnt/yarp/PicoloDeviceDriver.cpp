@@ -383,20 +383,20 @@ bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 
     PicoloResources& d = RES(system_resources);
 
-    FlexImage flex;
-    flex.setQuantum(1);
-    flex.setPixelCode(VOCAB_PIXEL_RGB);
-    flex.resize(d._nRequestedSizeX,d._nRequestedSizeY);
+	// images acquired form the picolo are BGR
+	yarp::sig::ImageOf<yarp::sig::PixelBgr> tmpImg;
+    tmpImg.setQuantum(1);
+    tmpImg.resize(d._nRequestedSizeX,d._nRequestedSizeY);
 
     char *tmpBuff;
-    waitOnNewFrame ();
+    waitOnNewFrame();
 	acquireBuffer(&tmpBuff);
 
-	memcpy(flex.getRawImage(), tmpBuff, flex.getRawImageSize());
+	memcpy(tmpImg.getRawImage(), tmpBuff, tmpImg.getRawImageSize());
 
-	releaseBuffer ();
+	releaseBuffer();
 
-    image.copy(flex);
+    image.copy(tmpImg);
 
     return true;
 
