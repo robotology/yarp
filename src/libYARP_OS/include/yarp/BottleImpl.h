@@ -96,11 +96,7 @@ public:
         return item;
     }
 
-    virtual void copy(const Storable& alt) {
-        fromString(alt.toStringFlex());  
-        // general, if inefficient, copy method
-        // ideally would have special cases in subclasses
-    }
+    virtual void copy(const Storable& alt) = 0;
 
     virtual int subCode() const {
         return 0;
@@ -121,6 +117,7 @@ public:
     virtual bool write(ConnectionWriter& connection) { return false; }
     virtual Storable *createStorable() const { return new StoreNull(); }
     virtual bool isNull() const { return true; }
+    virtual void copy(const Storable& alt) {}
 };
 
 
@@ -141,6 +138,7 @@ public:
     virtual double asDouble() const { return x; }
     virtual bool isInt() const { return true; }
     static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asInt(); }
 };
 
 class yarp::StoreVocab : public Storable {
@@ -162,6 +160,7 @@ public:
     virtual double asDouble() const { return x; }
     virtual bool isVocab() const { return true; }
     static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asVocab(); }
 };
 
 class yarp::StoreString : public Storable {
@@ -184,6 +183,7 @@ public:
     virtual int asVocab() const { return yarp::os::Vocab::encode(x.c_str()); }
     virtual bool isString() const { return true; }
     static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asString().c_str(); }
 };
 
 class yarp::StoreBlob : public Storable {
@@ -206,6 +206,7 @@ public:
     virtual const char *asBlob() const         { return x.c_str(); }
     virtual int asBlobLength() const     { return x.length(); }
     static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asBlob(); }
 };
 
 class yarp::StoreDouble : public Storable {
@@ -226,6 +227,7 @@ public:
     virtual double asDouble() const { return x; }
     virtual bool isDouble() const { return true; }
     static const int code;
+    virtual void copy(const Storable& alt) { x = alt.asDouble(); }
 };
 
 
@@ -261,6 +263,7 @@ public:
     virtual yarp::os::Bottle& findGroup(const char *key) {
         return content.findGroup(key);
     }
+    virtual void copy(const Storable& alt) { content = *(alt.asList()); }
 };
 
 

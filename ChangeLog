@@ -1,5 +1,9 @@
 2007-03-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/BottleImpl.h: applied patch from
+	Tomassino Ferrauto to make copies a little bit less 
+	inefficient.
+
 	* src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: propagated 
 	return values for a bunch of methods.
 
