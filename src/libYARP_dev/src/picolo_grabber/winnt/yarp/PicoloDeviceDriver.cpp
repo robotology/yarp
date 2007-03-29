@@ -19,7 +19,7 @@
 #include <ace/Log_Msg.h>
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Time.h>
 
 #ifndef _WINDOWS
@@ -32,10 +32,10 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-class PicoloResources : public Thread {
+class PicoloResources : public RateThread {
 public:
 
-	PicoloResources (void) : _bmutex(1), _new_frame(0) {
+	PicoloResources (void) : _bmutex(1), _new_frame(0), RateThread(1000) {
 		_nRequestedSizeX = 0;
 		_nRequestedSizeY = 0;
 		_nWidth = 0;
@@ -49,12 +49,20 @@ public:
 
 		_rawBuffer = NULL;
 		_canpost = true;
+
+		_rate = 25.0;
 	}
 
 	~PicoloResources () { _uninitialize (); }
 
+	bool threadInit (void);
+	void run (void);
+	void threadRelease (void);
+
 	enum { _num_buffers = 3 };
 
+	double _rate;
+	
 	PICOLOHANDLE _picoloHandle;	
 
 	Semaphore _bmutex;
@@ -67,6 +75,10 @@ public:
 	UINT32 _nHeight;
 	UINT32 _nImageSize;
 
+	PICOLOSTATUS PicoloStatus;
+	unsigned int startbuf;
+	unsigned int readfro;
+
 	PICOLOHANDLE _bufHandles[_num_buffers];
 	PUINT8 _buffer[_num_buffers];
 	PUINT8 _aligned[_num_buffers];
@@ -77,9 +89,6 @@ public:
 
 	inline bool _initialize (const PicoloOpenParameters& params);
 	inline bool _uninitialize (void);
-
-    //thread body
-    virtual void run(void);
 
     void setPriority(int p) {
         fprintf(stderr, "Asked to set priority, doing nothing.\n");
@@ -163,6 +172,7 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 {
 
 	/// copy params.
+	_rate = params._rate;
 	_nRequestedSizeX = params._size_x;
 	_nRequestedSizeY = params._size_y;
 
@@ -237,65 +247,71 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 
 }
 
-void PicoloResources::run (void)
+bool PicoloResources::threadInit (void)
 {
 
-	PICOLOSTATUS PicoloStatus;
+	// set correct streaming rate
+    setRate((int)(1000/_rate));
+//	printf("picolo grabber streaming every %.2fmsec.\n", getRate());
 
 	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
 	setPriority (prio);
 
-	PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);		/// timeout 120 ms.
+	PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);
 
 	_canpost = true;
 
-	int i = 0;
-
 	unsigned int bufno = 0;
+
 	PicoloStatus = PicoloGetCurrentBuffer (_picoloHandle, &bufno);
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
-	const unsigned int startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
-	unsigned int readfro = startbuf;
+	
+	startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
+	readfro = startbuf;
 
-	/// strategy, waits, copy into lockable buffer.
-	while ( ! isStopping() ) {
-        PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
-        if (PicoloStatus != PICOLO_OK) {
-            ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
-            ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
-            break; //we want to leave the while loop, and hopefully end the thread 
-        }
+    return true;
 
-        readfro = startbuf;
+}
 
-        for (i = 0; i < _num_buffers; i++) {
-            if (_bmutex.check () == true) {
-                // buffer acquired.
-                // read from buffer
-                memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
-                if (_canpost) {
-                    _canpost = false;
-                    _new_frame.post();
-                }
-                _bmutex.post();
-			} else {
-                // can't acquire, it means the buffer is still in use.
-                // silently ignores this condition.
-                ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
-            }
+void PicoloResources::run (void)
+{
 
-            readfro = ((readfro + 1) % _num_buffers);
-
-            // 40 ms delay
-            if (i < _num_buffers-1)
-                Time::delay (0.040);
-        }
+    PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
+    if (PicoloStatus != PICOLO_OK) {
+        ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
+        ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
+        return;
     }
+
+    readfro = startbuf;
+
+    for (int i = 0; i < _num_buffers; i++) {
+        if (_bmutex.check () == true) {
+            // buffer acquired.
+            // read from buffer
+            memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
+            if (_canpost) {
+                _canpost = false;
+                _new_frame.post();
+            }
+            _bmutex.post();
+		} else {
+            // can't acquire, it means the buffer is still in use.
+            // silently ignores this condition.
+            ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
+        }
+        readfro = ((readfro + 1) % _num_buffers);
+    }
+
+}
+
+void PicoloResources::threadRelease (void)
+{
 
 	ACE_DEBUG ((LM_DEBUG, "acquisition thread returning...\n"));
 
 }
-
+	
 inline void PicoloResources::_prepareBuffers(void)
 {
 
@@ -339,6 +355,7 @@ bool PicoloDeviceDriver::open(yarp::os::Searchable& config)
 	par._size_y = config.find("height").asInt();
 	par._offset_y = config.find("yoffset").asInt();
 	par._unit_number = config.find("unit").asInt();
+	if ( config.check("rate") ) par._rate = config.find("rate").asDouble();
 
     if ( d._initialize (par) == false ) 
         return false;
