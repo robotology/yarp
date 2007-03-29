@@ -53,6 +53,9 @@ public:
 		_rate = 25.0;
 	}
 
+double _prev;
+
+
 	~PicoloResources () { _uninitialize (); }
 
 	bool threadInit (void);
@@ -252,7 +255,7 @@ bool PicoloResources::threadInit (void)
 
 	// set correct streaming rate
     setRate((int)(1000/_rate));
-//	printf("picolo grabber streaming every %.2fmsec.\n", getRate());
+	printf("picolo grabber streaming every %.2fmsec.\n", getRate());
 
 	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
 	setPriority (prio);
@@ -280,17 +283,17 @@ void PicoloResources::run (void)
     if (PicoloStatus != PICOLO_OK) {
         ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
         ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
-        return;
+        stop();
     }
 
     readfro = startbuf;
 
     for (int i = 0; i < _num_buffers; i++) {
-        if (_bmutex.check () == true) {
+        if (_bmutex.check() == true) {
             // buffer acquired.
             // read from buffer
             memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
-            if (_canpost) {
+			if (_canpost) {
                 _canpost = false;
                 _new_frame.post();
             }
@@ -355,7 +358,13 @@ bool PicoloDeviceDriver::open(yarp::os::Searchable& config)
 	par._size_y = config.find("height").asInt();
 	par._offset_y = config.find("yoffset").asInt();
 	par._unit_number = config.find("unit").asInt();
-	if ( config.check("rate") ) par._rate = config.find("rate").asDouble();
+	if ( config.check("rate") ) {
+		if ( config.find("rate").asDouble() <= 25.0 ) {
+			par._rate = config.find("rate").asDouble();
+		} else {
+			printf("WARNING maximum rate is 25Hz, setting this value.\n");
+		}
+	}
 
     if ( d._initialize (par) == false ) 
         return false;
@@ -384,11 +393,11 @@ bool PicoloDeviceDriver::getRgbBuffer(unsigned char *buff)
 	PicoloResources& d = RES(system_resources);
 
     char *tmpBuff;
+
     waitOnNewFrame ();
+	
 	acquireBuffer(&tmpBuff);
-
 	memcpy(buff, tmpBuff, d._nRequestedSizeX * d._nRequestedSizeY * 3);
-
 	releaseBuffer ();
 
     return true;
@@ -400,17 +409,20 @@ bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 
     PicoloResources& d = RES(system_resources);
 
+printf("getimage rate: %.3fmsec.\r", 1000*(Time::now()-d._prev));
+d._prev = Time::now();
+
 	// images acquired form the picolo are BGR
 	yarp::sig::ImageOf<yarp::sig::PixelBgr> tmpImg;
     tmpImg.setQuantum(1);
     tmpImg.resize(d._nRequestedSizeX,d._nRequestedSizeY);
 
     char *tmpBuff;
-    waitOnNewFrame();
+
+//    waitOnNewFrame();
+
 	acquireBuffer(&tmpBuff);
-
 	memcpy(tmpImg.getRawImage(), tmpBuff, tmpImg.getRawImageSize());
-
 	releaseBuffer();
 
     image.copy(tmpImg);
@@ -425,11 +437,11 @@ bool PicoloDeviceDriver::getRawBuffer(unsigned char *buff)
 	PicoloResources& d = RES(system_resources);
 
     char *tmpBuff;
+
     waitOnNewFrame ();
+	
 	acquireBuffer(&tmpBuff);
-
 	memcpy(buff, tmpBuff, d._nRequestedSizeX * d._nRequestedSizeY * 3);
-
 	releaseBuffer();
 
     return true;
@@ -461,6 +473,7 @@ bool PicoloDeviceDriver::releaseBuffer ()
 {
 	
 	PicoloResources& d = RES(system_resources);
+
 	d._canpost = true;
 	d._bmutex.post ();
 
@@ -472,6 +485,7 @@ bool PicoloDeviceDriver::waitOnNewFrame ()
 {
 	
 	PicoloResources& d = RES(system_resources);
+	
 	d._new_frame.wait();
 
 	return true;
