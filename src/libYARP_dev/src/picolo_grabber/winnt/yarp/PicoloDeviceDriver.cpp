@@ -53,9 +53,6 @@ public:
 		_rate = 25.0;
 	}
 
-double _prev;
-
-
 	~PicoloResources () { _uninitialize (); }
 
 	bool threadInit (void);
@@ -409,17 +406,12 @@ bool PicoloDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
 
     PicoloResources& d = RES(system_resources);
 
-printf("getimage rate: %.3fmsec.\r", 1000*(Time::now()-d._prev));
-d._prev = Time::now();
-
 	// images acquired form the picolo are BGR
 	yarp::sig::ImageOf<yarp::sig::PixelBgr> tmpImg;
     tmpImg.setQuantum(1);
     tmpImg.resize(d._nRequestedSizeX,d._nRequestedSizeY);
 
     char *tmpBuff;
-
-//    waitOnNewFrame();
 
 	acquireBuffer(&tmpBuff);
 	memcpy(tmpImg.getRawImage(), tmpBuff, tmpImg.getRawImageSize());
