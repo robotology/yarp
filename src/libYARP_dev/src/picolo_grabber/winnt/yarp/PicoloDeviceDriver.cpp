@@ -19,7 +19,7 @@
 #include <ace/Log_Msg.h>
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/os/RateThread.h>
+#include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 
 #ifndef _WINDOWS
@@ -32,10 +32,10 @@ using namespace yarp::dev;
 using namespace yarp::os;
 using namespace yarp::sig;
 
-class PicoloResources : public RateThread {
+class PicoloResources : public Thread {
 public:
 
-	PicoloResources (void) : _bmutex(1), _new_frame(0), RateThread(1000) {
+	PicoloResources (void) : _bmutex(1), _new_frame(0) {
 		_nRequestedSizeX = 0;
 		_nRequestedSizeY = 0;
 		_nWidth = 0;
@@ -50,19 +50,14 @@ public:
 		_rawBuffer = NULL;
 		_canpost = true;
 
-		_rate = 25.0;
 	}
 
 	~PicoloResources () { _uninitialize (); }
 
-	bool threadInit (void);
 	void run (void);
-	void threadRelease (void);
 
 	enum { _num_buffers = 3 };
 
-	double _rate;
-	
 	PICOLOHANDLE _picoloHandle;	
 
 	Semaphore _bmutex;
@@ -74,10 +69,6 @@ public:
 	UINT32 _nWidth;
 	UINT32 _nHeight;
 	UINT32 _nImageSize;
-
-	PICOLOSTATUS PicoloStatus;
-	unsigned int startbuf;
-	unsigned int readfro;
 
 	PICOLOHANDLE _bufHandles[_num_buffers];
 	PUINT8 _buffer[_num_buffers];
@@ -172,7 +163,6 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 {
 
 	/// copy params.
-	_rate = params._rate;
 	_nRequestedSizeX = params._size_x;
 	_nRequestedSizeY = params._size_y;
 
@@ -201,8 +191,9 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
 
 	// assume we want a square image
-	float scalex = float(768.0/_nRequestedSizeX);
-	float scaley = (float) (576.0/(_nRequestedSizeY*params._alfa));	// a slighlty bigger immage is acquired, this allows some offsets along the vertical direction (see offset)
+	float scalex = (7680000/_nRequestedSizeX)/10000.0; // need this trick to avoid rounding errors - thanks to Fabio
+	// a slighlty bigger image is acquired, this allows some offsets along the vertical direction (see offset)
+	float scaley = 576.0/((float)_nRequestedSizeY*params._alfa);
 	float scale = (scalex < scaley) ? scalex : scaley;
 	scalex = scale;
 	scaley = scale / 2.0f;	//the image is interlaced
@@ -247,17 +238,15 @@ inline PICOLOHANDLE PicoloResources::_init (const PicoloOpenParameters& params)
 
 }
 
-bool PicoloResources::threadInit (void)
+void PicoloResources::run (void)
 {
 
-	// set correct streaming rate
-    setRate((int)(1000/_rate));
-	printf("picolo grabber streaming every %.2fmsec.\n", getRate());
+	// thread initialisation
 
 	const int prio = ACE_Sched_Params::next_priority (ACE_SCHED_OTHER, getPriority(), ACE_SCOPE_THREAD);
 	setPriority (prio);
 
-	PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);
+	PICOLOSTATUS PicoloStatus = PicoloSetWaitTimeout (_picoloHandle, 500);
 
 	_canpost = true;
 
@@ -266,52 +255,51 @@ bool PicoloResources::threadInit (void)
 	PicoloStatus = PicoloGetCurrentBuffer (_picoloHandle, &bufno);
 	ACE_ASSERT (PicoloStatus == PICOLO_OK);
 	
-	startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
-	readfro = startbuf;
+	unsigned int startbuf = (bufno > 0) ? (bufno - 1) : (_num_buffers - 1);
+	unsigned int readfro = startbuf;
 
-    return true;
+	// thread body
 
-}
+	while ( ! isStopping() ) {
 
-void PicoloResources::run (void)
-{
+	    PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
+	    if (PicoloStatus != PICOLO_OK) {
+	        ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
+	        ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
+	        stop();
+	    }
 
-    PicoloStatus = PicoloWaitEvent (_picoloHandle, PICOLO_EV_END_ACQUISITION);
-    if (PicoloStatus != PICOLO_OK) {
-        ACE_DEBUG ((LM_DEBUG, "it's likely that the acquisition timed out, returning\n"));
-        ACE_DEBUG ((LM_DEBUG, "WARNING: this leaves the acquisition thread in an unterminated state --- can't be restarted from here!\n"));
-        stop();
-    }
+	    readfro = startbuf;
 
-    readfro = startbuf;
+	    for (int i = 0; i < _num_buffers; i++) {
+		    if (_bmutex.check() == true) {
+	            // buffer acquired.
+	            // read from buffer
+	            memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
+				if (_canpost) {
+	                _canpost = false;
+	                _new_frame.post();
+	            }
+	            _bmutex.post();
+			} else {
+	            // can't acquire, it means the buffer is still in use.
+	            // silently ignores this condition.
+	            ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
+	        }
+	        readfro = ((readfro + 1) % _num_buffers);
 
-    for (int i = 0; i < _num_buffers; i++) {
-        if (_bmutex.check() == true) {
-            // buffer acquired.
-            // read from buffer
-            memcpy (_rawBuffer, _aligned[readfro], _nImageSize);
-			if (_canpost) {
-                _canpost = false;
-                _new_frame.post();
-            }
-            _bmutex.post();
-		} else {
-            // can't acquire, it means the buffer is still in use.
-            // silently ignores this condition.
-            ACE_DEBUG ((LM_DEBUG, "lost a frame, acq thread\n"));
-        }
-        readfro = ((readfro + 1) % _num_buffers);
-    }
+			// 40 ms delay
+			if (i < _num_buffers-1)
+				Time::delay(0.040);
 
-}
+	    }
 
-void PicoloResources::threadRelease (void)
-{
+	}
 
 	ACE_DEBUG ((LM_DEBUG, "acquisition thread returning...\n"));
 
 }
-	
+
 inline void PicoloResources::_prepareBuffers(void)
 {
 
@@ -355,13 +343,6 @@ bool PicoloDeviceDriver::open(yarp::os::Searchable& config)
 	par._size_y = config.find("height").asInt();
 	par._offset_y = config.find("yoffset").asInt();
 	par._unit_number = config.find("unit").asInt();
-	if ( config.check("rate") ) {
-		if ( config.find("rate").asDouble() <= 25.0 ) {
-			par._rate = config.find("rate").asDouble();
-		} else {
-			printf("WARNING maximum rate is 25Hz, setting this value.\n");
-		}
-	}
 
     if ( d._initialize (par) == false ) 
         return false;
@@ -391,8 +372,6 @@ bool PicoloDeviceDriver::getRgbBuffer(unsigned char *buff)
 
     char *tmpBuff;
 
-    waitOnNewFrame ();
-	
 	acquireBuffer(&tmpBuff);
 	memcpy(buff, tmpBuff, d._nRequestedSizeX * d._nRequestedSizeY * 3);
 	releaseBuffer ();
@@ -430,8 +409,6 @@ bool PicoloDeviceDriver::getRawBuffer(unsigned char *buff)
 
     char *tmpBuff;
 
-    waitOnNewFrame ();
-	
 	acquireBuffer(&tmpBuff);
 	memcpy(buff, tmpBuff, d._nRequestedSizeX * d._nRequestedSizeY * 3);
 	releaseBuffer();

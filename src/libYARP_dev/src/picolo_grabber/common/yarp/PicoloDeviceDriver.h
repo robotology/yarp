@@ -50,7 +50,6 @@ public:
 		_offset_y = 0;
 		_offset_x = 0;
 		_alfa = 1.055f;
-		_rate = 25.0;
 		// _alfa = 1.125f;
 	}
 
@@ -61,7 +60,6 @@ public:
 	int _offset_y;			/**< y offset, with respect to the center. */
 	int _offset_x;			/**< x offset, with respect to the center. */
 	float _alfa;			/**< to have the possibility of shifting the ROI vertically, the requested size is actually _alfa*_size_y */
-	double _rate;
 
 };
 
