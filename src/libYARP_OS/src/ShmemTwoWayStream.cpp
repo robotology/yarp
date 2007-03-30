@@ -35,6 +35,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
 
         result = connector.connect(stream,addr,0,ACE_Addr::sap_any,1);
         if (result>=0) {
+            YARP_DEBUG(Logger::get(),"shmem sender connect succeeded");
             happy = true;
         } else {
             YARP_ERROR(Logger::get(),"shmem sender connect failed");
@@ -52,7 +53,7 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
         remoteAddress = localAddress; // finalized in call to accept()
 
         if (result>=0) {
-
+            YARP_DEBUG(Logger::get(),"shmem receiver open succeeded");
         } else {
             YARP_ERROR(Logger::get(),"shmem receiver open failed");
             perror("recv open");
@@ -73,6 +74,7 @@ int ShmemTwoWayStream::accept() {
     
     result = acceptor.accept(stream);
     if (result>=0) {
+        YARP_DEBUG(Logger::get(),"shmem receiver accept succeeded");
         happy = true;
     } else {
         YARP_ERROR(Logger::get(),"shmem receiver accept failed");
