@@ -29,12 +29,17 @@ if $want_prune; then
     echo "Directories removed for distribution:" > /tmp/REMOVED
     # certain driver directories are of ambiguous redistribution status
     for f in src/libYARP_dev/src/XSensMTx src/libYARP_dev/src/inertiacube2 src/libYARP_dev/src/picolo src/libYARP_dev/src/esdMotionControl src/libYARP_dev/src/jrkerr src/libYARP_dev/src/dimax_u2c; do
-	echo "  Removed subdirectories of $f" >> /tmp/REMOVED
+	echo "  Removed subdirectories of: $f" >> /tmp/REMOVED
 	rm -rf $f/*
     done
 
     for f in src/libYARP_dev/src/dragonfly/winnt ; do
-	echo "  Removed directory $f" >> /tmp/REMOVED
+	echo "  Removed directory: $f" >> /tmp/REMOVED
+	rm -rf $f
+    done
+
+    for f in debian ; do
+	echo "  For future downstream convenience, removed: $f" >> /tmp/REMOVED
 	rm -rf $f
     done
     (
