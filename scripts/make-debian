@@ -98,8 +98,7 @@ for f in `ls yarp-*.tar.gz`; do
     cd $name
     echo "Directory $PWD"
     mkdir -p debian
-    cp conf/debian/* debian
-    rm debian/README.Yarp
+    cp $SRC/repository/debian/* debian
     dpkg-buildpackage -rfakeroot
 done
 
