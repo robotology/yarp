@@ -1,4 +1,12 @@
 /*
+ * 
+ * Copyright and CopyPolicy summary for YARP:
+ *
+ * Copyright (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+/*
  * USB H8 based motor controller driver 
  *
  * based on USB Skeleton driver.
