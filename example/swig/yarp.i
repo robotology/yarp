@@ -305,31 +305,31 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return buffer;
 	}
 	
-	bool positionMove(std::vector<double> data) {
+	bool positionMove(std::vector<double>& data) {
 		return self->positionMove(&data[0]);
 	}
 	
-	bool relativeMove(std::vector<double> data) {
+	bool relativeMove(std::vector<double>& data) {
 		return self->relativeMove(&data[0]);
 	}
 	
-	bool setRefSpeeds(std::vector<double> data) {
+	bool setRefSpeeds(std::vector<double>& data) {
 		return self->setRefSpeeds(&data[0]);
 	}
 	
-	bool getRefSpeed(int j, std::vector<double> data) {
+	bool getRefSpeed(int j, std::vector<double>& data) {
 		return self->getRefSpeed(j, &data[0]);
 	}
 	
-	bool getRefSpeeds(std::vector<double> data) {
+	bool getRefSpeeds(std::vector<double>& data) {
 		return self->getRefSpeeds(&data[0]);
 	}
 	
-	bool getRefAcceleration(int j, std::vector<double> data) {
+	bool getRefAcceleration(int j, std::vector<double>& data) {
 		return self->getRefAcceleration(j, &data[0]);
 	}
 	
-	bool getRefAccelerations(std::vector<double> data) {
+	bool getRefAccelerations(std::vector<double>& data) {
 		return self->getRefAccelerations(&data[0]);
 	}
 }
@@ -342,19 +342,19 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return buffer;
 	}
 	
-	bool velocityMove(std::vector<double> data) {
+	bool velocityMove(std::vector<double>& data) {
 		return self->velocityMove(&data[0]);
 	}
 	
-	bool setRefAccelerations(std::vector<double> data) {
+	bool setRefAccelerations(std::vector<double>& data) {
 		return self->setRefAccelerations(&data[0]);
 	}
 	
-	bool getRefAcceleration(int j, std::vector<double> data) {
+	bool getRefAcceleration(int j, std::vector<double>& data) {
 		return self->getRefAcceleration(j, &data[0]);
 	}
 	
-	bool getRefAccelerations(std::vector<double> data) {
+	bool getRefAccelerations(std::vector<double>& data) {
 		return self->getRefAccelerations(&data[0]);
 	}
 }
@@ -367,76 +367,93 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return buffer;
 	}
 	
-	bool setEncoders(std::vector<double> data) {
+	bool setEncoders(std::vector<double>& data) {
 		return self->setEncoders(&data[0]);
 	}
 	
-	bool getEncoder(int j, std::vector<double> data) {
-		return self->getEncoder(j, &data[0]);
+	double getEncoder(int j) {
+		double data;
+		bool ok = self->getEncoder(j, &data);
+		if (!ok) return 0;
+		return data;
 	}
 	
-	bool getEncoders(std::vector<double> data) {
+	bool getEncoders(std::vector<double>& data) {
 		return self->getEncoders(&data[0]);
 	}
 	
-	bool getEncoderSpeed(int j, std::vector<double> data) {
-		return self->getEncoderSpeed(j, &data[0]);
+	double getEncoderSpeed(int j) {
+		double data;
+		bool ok = self->getEncoderSpeed(j, &data);
+		if (!ok) return 0;
+		return data;
 	}
 	
-	bool getEncoderSpeeds(std::vector<double> data) {
+	bool getEncoderSpeeds(std::vector<double>& data) {
 		return self->getEncoderSpeeds(&data[0]);
 	}
 	
-	bool getEncoderAcceleration(int j, std::vector<double> data) {
-		return self->getEncoderAcceleration(j, &data[0]);
+	double getEncoderAcceleration(int j) {
+		double data;
+		bool ok = self->getEncoderAcceleration(j, &data);
+		if (!ok) return 0;
+		return data;
 	}
 
-	bool getEncoderAccelerations(std::vector<double> data) {
+	bool getEncoderAccelerations(std::vector<double>& data) {
 		return self->getEncoderAccelerations(&data[0]);
 	}
 }
 
 %extend yarp::dev::IPidControl {
-	bool setReferences(std::vector<double> data) {
+	bool setReferences(std::vector<double>& data) {
 		return self->setReferences(&data[0]);
 	}
 	
-	bool getReference(int j, std::vector<double> data) {
+	bool getReference(int j, std::vector<double>& data) {
 		return self->getReference(j, &data[0]);
 	}
 	
-	bool getReferences(std::vector<double> data) {
+	bool getReferences(std::vector<double>& data) {
 		return self->getReferences(&data[0]);
 	}
-
-	bool setErrorLimits(std::vector<double> data) {
+	
+	bool setErrorLimits(std::vector<double>& data) {
 		return self->setErrorLimits(&data[0]);
 	}
 	
-	bool getErrorLimit(int j, std::vector<double> data) {
+	bool getErrorLimit(int j, std::vector<double>& data) {
 		return self->getErrorLimit(j, &data[0]);
 	}
 	
-	bool getErrorLimits(std::vector<double> data) {
+	bool getErrorLimits(std::vector<double>& data) {
 		return self->getErrorLimits(&data[0]);
 	}
 	
-	bool getError(int j, std::vector<double> data) {
+	bool getError(int j, std::vector<double>& data) {
 		return self->getError(j, &data[0]);
 	}
 	
-	bool getErrors(std::vector<double> data) {
+	bool getErrors(std::vector<double>& data) {
 		return self->getErrors(&data[0]);
 	}
 	
-	bool getOutput(int j, std::vector<double> data) {
+	bool getOutput(int j, std::vector<double>& data) {
 		return self->getOutput(j, &data[0]);
 	}
 	
-	bool getOutputs(std::vector<double> data) {
+	bool getOutputs(std::vector<double>& data) {
 		return self->getOutputs(&data[0]);
 	}
 	
+	bool getReference(int j, std::vector<double>& data) {
+		return self->getReference(j, &data[0]);
+	}
+
+	bool getReferences(std::vector<double>& data) {
+		return self->getReferences(&data[0]);
+	}
+
 	bool setPid(int j, yarp::dev::Pid pid) {
 		return self->setPid(j,pid);
 	}
@@ -455,17 +472,18 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 }
 
 %extend yarp::dev::IAmplifierControl {
-	bool getCurrents(std::vector<double> data) {
+	bool getCurrents(std::vector<double>& data) {
 		return self->getCurrents(&data[0]);
 	}
 	
-	bool getCurrent(int j, std::vector<double> data) {
+	bool getCurrent(int j, std::vector<double>& data) {
 		return self->getCurrent(j, &data[0]);
 	}
 }
 
 %extend yarp::dev::IControlLimits {
-	bool getLimits(int axis, std::vector<double> min, std::vector<double> max) {
+	bool getLimits(int axis, std::vector<double>& min, std::vector<double>& max) {
 		return self->getLimits(axis, &min[0], &max[0]);
 	}
 }
+ 	  	 

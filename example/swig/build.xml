@@ -39,6 +39,12 @@
                 <attribute name="Main-Class" value="Example2"/>
             </manifest>
     </jar>
+
+    <jar jarfile="${dist}/example3.jar" basedir="${build}">
+           <manifest>
+                <attribute name="Main-Class" value="Example3"/>
+            </manifest>
+    </jar>
   </target>
 
   <target name="clean"

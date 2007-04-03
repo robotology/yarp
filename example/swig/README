@@ -1,6 +1,8 @@
 
 This directory is for producing SWIG interfaces to YARP.
 
+This lets you run YARP from Java, Python, Perl, Tcl, Chicken, C#, Matlab.
+
 Note that while we try to preserve YARP as close to its original form
 as possible, some classes and methods had to be changed because
 of issues with templates and pointers.  So the API is slightly 
@@ -17,6 +19,10 @@ are:
 
 ============================================================================
 == JAVA INTERFACE
+
+See also:
+  http://eris.liralab.it/wiki/YARP_and_Java
+for latest tips.
 
 To create the Java interface to YARP from linux
 (the process on windows is analogous using cmake):
@@ -99,4 +105,15 @@ Now try:
 or whatever your compiler is.  If it works, then:
   ./example.exe
 should do something yarpy.
+
+
+============================================================================
+== MATLAB INTERFACE
+
+Matlab can run java code, so we access YARP via java.  See the 
+"Java interface" section above.
+
+See also:
+  http://eris.liralab.it/wiki/Calling_yarp_from_Matlab
+for latest tips.
 
