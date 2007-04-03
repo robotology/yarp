@@ -89,7 +89,7 @@ if ($report ne "skipped") {
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);
-    if ($policy =~ /GNU GPL/) {
+    if ($policy =~ /GNU GPL v2.0/) {
 	open(FOUT,">>license-good.txt");
 	print FOUT $txt;
 	close(FOUT);

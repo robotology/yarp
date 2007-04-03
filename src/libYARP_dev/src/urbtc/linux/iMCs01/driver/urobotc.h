@@ -1,3 +1,12 @@
+/*
+ * 
+ * Author information summary for YARP:
+ *
+ * Copyright (C) 2007 iXs Research Corp
+ * CopyPolicy: Released under the terms of the GNU GPL version 2
+ *
+ */
+
 /* ビットとチャンネルの対応 */
 #define CH0 1
 #define CH1 2
@@ -52,6 +61,14 @@ struct uout {
 #define WR_SELOUT 0x40
 #define WR_OFFSET 0x20
 #define WR_BREAKS 0x10
+/*
+ * 
+ * Copyright and CopyPolicy summary prepared for YARP:
+ *
+ * Copyright (C) 2007 iXs Research Corp
+ * CopyPolicy: Released under the terms of the GNU GPL version 2
+ *
+ */
 
 struct ccmd {
   unsigned char retval;    /* 次に内部カウンタが上がったときの値を EP1 から返す */

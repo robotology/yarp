@@ -2,6 +2,9 @@
 
 	* conf/YarpVersion.cmake: freezing version 2.1.4
 
+	* COPYING: freshen author and licensing information using
+	./scripts/update-license
+
 	* src/libYARP_OS/src/ShmemTwoWayStream.cpp: added message
 	about occasional bad shared memory / hostname configuration 
 	interaction problem.  If a shared memory connection fails, the

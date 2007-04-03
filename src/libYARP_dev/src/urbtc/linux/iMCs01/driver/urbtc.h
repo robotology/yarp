@@ -1,3 +1,13 @@
+/*
+ * 
+ * Author information summary for YARP:
+ *
+ * Copyright (C) 2007 iXs Research Corp
+ * CopyPolicy: Released under the terms of the GNU GPL version 2
+ *
+ */
+
+
 #ifndef __URBTC_H__
 #define __URBTC_H__
 

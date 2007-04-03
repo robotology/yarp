@@ -12,6 +12,7 @@ Copyright 2005 2006 2007:
   Alexis Maldonado
   Assif Mirza
   Charles C. Kemp
+  Claudio Castellini
   Eric Mislivec
   Francesco Nori
   Giorgio Metta
@@ -20,6 +21,7 @@ Copyright 2005 2006 2007:
   Lars Olsson
   Lorenzo Natale
   Matteo Brunettini
+  Mattia Castelnovi
   Mike P. Blow
   Paul Fitzpatrick
   Radu Bogdan Rasu
@@ -85,24 +87,28 @@ their copyright.  See the individual files for more details.
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/nmccom.h
-  Copyright: unknown
+  Copyright: 2005 Jeffrey Kerr LLC
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/picservo.h
-  Copyright: unknown
+  Copyright: 2005 Jeffrey Kerr LLC
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/sio_util.h
+  Copyright: 2005 Jeffrey Kerr, LLC
+  CopyPolicy: unknown
+
+./src/libYARP_dev/src/mei/common/yarp/MEIDeviceDriver.h
   Copyright: unknown
   CopyPolicy: unknown
 
-./src/libYARP_dev/src/picolo/winnt/dd_orig/include/E_TYPE.H
-  Copyright: unknown
-  CopyPolicy: unknown
+./src/libYARP_dev/src/urbtc/linux/iMCs01/driver/urbtc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
 
-./src/libYARP_dev/src/picolo/winnt/dd_orig/include/Picolo32.h
-  Copyright: unknown
-  CopyPolicy: unknown
+./src/libYARP_dev/src/urbtc/linux/iMCs01/driver/urobotc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
 
 ./src/libYARP_sig/include/yarp/sig/IplImage.h
   Copyright: (C) 2000, Intel Corporation, all rights reserved.
@@ -125,14 +131,18 @@ their copyright.  See the individual files for more details.
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/nmccom.cpp
-  Copyright: unknown
+  Copyright: 2005 Jeffrey Kerr LLC
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/picservo.cpp
-  Copyright: unknown
+  Copyright: 2005 Jeffrey Kerr LLC
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/sio_util.cpp
+  Copyright: 2005 Jeffrey Kerr LLC
+  CopyPolicy: unknown
+
+./src/libYARP_dev/src/mei/winnt/yarp/MEIDeviceDriver.cpp
   Copyright: unknown
   CopyPolicy: unknown
 
@@ -147,4 +157,8 @@ their copyright.  See the individual files for more details.
 ./src/libYARP_dev/src/inertiacube2/winnt/dd_orig/include/isense.c
   Copyright: InterSense 2003 - All rights Reserved.
   CopyPolicy: unknown
+
+./src/libYARP_dev/src/urbtc/linux/iMCs01/driver/urbtc.c
+  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+  CopyPolicy: Released under the terms of the GNU GPL version 2
 
