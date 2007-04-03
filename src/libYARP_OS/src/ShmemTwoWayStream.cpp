@@ -38,8 +38,17 @@ int ShmemTwoWayStream::open(const Address& address, bool sender) {
             YARP_DEBUG(Logger::get(),"shmem sender connect succeeded");
             happy = true;
         } else {
-            YARP_ERROR(Logger::get(),"shmem sender connect failed");
-            perror("send connect");
+            YARP_ERROR(Logger::get(),"*** Shared memory connection failed");
+            // perror doesn't seem to get set in any useful way, omit it
+            // perror("send connect");
+            YARP_ERROR(Logger::get(),"Shared memory connections can fail due to a network configuration problem.");
+            YARP_ERROR(Logger::get(),"There is a check to make sure shared memory connections are local,");
+            YARP_ERROR(Logger::get(),"and this check relies on your hostname being configured well.");
+            YARP_ERROR(Logger::get(),"Possible fixes:");
+            YARP_ERROR(Logger::get(),"   - On linux, edit /etc/hosts to link 127.0.0.1 with your hostname");
+            YARP_ERROR(Logger::get(),"   - (you can find out your hostname with the \"hostname\" command)");
+            YARP_ERROR(Logger::get(),"   - On a windows laptop, make sure you have a network card attached");
+            YARP_ERROR(Logger::get(),"For up to date information, see mailing list linked on yarp0.sf.net");
         }
         currentLength = INIT_SHMEM_BUFFER;
         updateAddresses();
