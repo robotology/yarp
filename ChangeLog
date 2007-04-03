@@ -488,7 +488,7 @@
 	
 2006-11-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* conf/YarpVersion.h: bumped version up to 2.1.2
+	* conf/YarpVersion.cmake: bumped version up to 2.1.2
 
 	* src/libYARP_OS/include/yarp/ShmemTwoWayStream.h: removed
 	some YARP1 cruft and increased the default buffer size.
