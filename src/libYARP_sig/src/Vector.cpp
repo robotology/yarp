@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.22 2007-03-27 13:14:12 natta Exp $
+// $Id: Vector.cpp,v 1.23 2007-04-03 16:42:23 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -297,8 +297,6 @@ bool Vector::operator==(const yarp::sig::Vector &r) const
     //check dimensions first
     if (size()!=r.size())
         return false;
-
-    bool ret=true;
 
     int c=size();
     while(c--)
