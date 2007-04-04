@@ -52,17 +52,19 @@ We have unofficial Debian packages.  Add the following to your
 (stable is also available; for other configurations such as testing
 or Ubuntu please use the source package).<BR>
 
+To get the yarp programs, do:
+<PRE>   apt-get update
+   apt-get install yarp-bin
+</PRE>
+Check that everything is installed ok by running the "yarp" command.
+If you want to compile code that uses yarp, you'll need header files -- do:
+<PRE>
+   apt-get install libyarp2-dev
+</PRE>
 To get the source code, do:
 <PRE>   apt-get update
    apt-get source libyarp2-dev
 </PRE>
-
-To get a binary package (NOT AVAILABLE at the moment, sorry!), do:
-<PRE>   apt-get update
-   apt-get install libyarp2-dev (NOT AVAILABLE)
-</PRE>
-Check that everything is installed ok by running the "yarp" command.
-
 
 
 <h2>Older versions</h2>
