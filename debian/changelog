@@ -1,10 +1,10 @@
 yarp (2.1.4-1) unstable; urgency=low
 
-  * New version.
+  * New upstream version.
 
  -- Paul Fitzpatrick <paulfitz@alum.mit.edu>  Fri, 23 Feb 2007 14:40:15 +0200
 
-yarp (2.0.3) unstable; urgency=low
+yarp (2.0.3-1) unstable; urgency=low
 
   * Initial Release.
 

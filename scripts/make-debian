@@ -52,7 +52,7 @@ if $JUST_A_TEST; then
 
 else
 
-    # more conmplicated method, uses stored environments
+    # more complicated method, uses stored environments
     # results are better for distribution
 
     for f in `ls $SRC/*.tar.gz`; do
@@ -70,6 +70,8 @@ else
 	if [ -e $dir ]; then
 	    echo Working in $dir
 	    cd $dir
+	    mkdir -p debian
+	    cp $SRC/repository/debian/* debian
 	    YARP=$PWD
 	    log=$PWD/debian/changelog
 	    # propagate version number
