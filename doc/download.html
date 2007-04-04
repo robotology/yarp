@@ -44,23 +44,25 @@ report.
 
 <h2>Debian package</h2>
 
-We have an unofficial Debian source package (all architectures) and
-binary package (just i386).  Add the following to your
+We have unofficial Debian packages.  Add the following to your
 /etc/apt/sources.conf:
+<PRE>   deb http://eris.liralab.it/yarp/downloads/yarp/debian unstable main
+   deb-src http://eris.liralab.it/yarp/downloads/yarp/debian unstable main
+</PRE>
+(stable is also available; for other configurations such as testing
+or Ubuntu please use the source package)
 
-<PRE>   deb http://eris.liralab.it/yarp/downloads/yarp/debian stable main
+To get the source code, do:
+<PRE>   apt-get update
+   apt-get source libyarp2-dev
 </PRE>
-(unstable is also available).  Then you can set up YARP with:
-<PRE>   sudo apt-get update
-   sudo apt-get install yarp
+
+To get a binary package (NOT AVAILABLE at the moment, sorry!), do:
+<PRE>   apt-get update
+   apt-get install libyarp2-dev (NOT AVAILABLE)
 </PRE>
-If you want the source code and not just executables and header files, add the following:
-<PRE>   deb-src http://eris.liralab.it/yarp/downloads/yarp/debian stable main
-</PRE>
-Then you can get the YARP source code with:
-<PRE>   sudo apt-get update
-   apt-get source yarp
-</PRE>
+Check that everything is installed ok by running the "yarp" command.
+
 
 
 <h2>Older versions</h2>
