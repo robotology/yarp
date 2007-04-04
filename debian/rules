@@ -25,9 +25,15 @@ configure-stamp:
 	dh_testdir
 	# Add here commands to configure the package.
 	mkdir -p Build
-	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp -DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE ..; cmake . )
+	( cd Build; cmake -DCMAKE_SKIP_RPATH:BOOL=YES -DCMAKE_INSTALL_PREFIX:PATH=$(CURDIR)/debian/yarp -DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY:BOOL=TRUE -DCREATE_SHARED_LIBRARY:BOOL=TRUE ..; cmake . )
 	# cmake is called a second time to deal with nested options well -
 	# there's an odd bug otherwise in the c_flags generated
+
+	# Configure man page
+	doxygen ./conf/Doxyfile.man
+
+	# Configure normal documentation page
+	doxygen ./conf/Doxyfile.min
 
 	touch configure-stamp
 
@@ -40,12 +46,6 @@ build-stamp: configure-stamp
 	# Add here commands to compile the package.
 	( cd Build; $(MAKE) )
 
-	# Make man page
-	doxygen ./conf/Doxyfile.man
-
-	# Make normal documentation page
-	doxygen ./conf/Doxyfile.min
-
 	touch build-stamp
 
 clean:
@@ -56,6 +56,8 @@ clean:
 	# Add here commands to clean up after the build process.
 	rm -rf Build
 	rm -rf doc/man
+	rm -rf doc/min
+	rm -rf debian/yarp
 
 	dh_clean 
 
@@ -66,13 +68,15 @@ install: build
 	dh_installdirs
 
 	# Add here commands to install the package into debian/yarp.
+	rm -rf $(CURDIR)/debian/yarp
 	( cd Build; $(MAKE) install )
 
 	# Reorganize the installation for a debian system
-	mkdir -p $(CURDIR)/debian/yarp/usr
-	mv $(CURDIR)/debian/yarp/include $(CURDIR)/debian/yarp/usr/include
-	mv $(CURDIR)/debian/yarp/lib $(CURDIR)/debian/yarp/usr/lib
+	mkdir -p $(CURDIR)/debian/yarp/usr/include
+	mkdir -p $(CURDIR)/debian/yarp/usr/lib
 	mkdir -p $(CURDIR)/debian/yarp/usr/bin
+	mv $(CURDIR)/debian/yarp/include/* $(CURDIR)/debian/yarp/usr/include
+	mv $(CURDIR)/debian/yarp/lib/* $(CURDIR)/debian/yarp/usr/lib
 	mv $(CURDIR)/debian/yarp/bin/* $(CURDIR)/debian/yarp/usr/bin
 	rm -rf $(CURDIR)/debian/yarp/doc
 	mkdir -p $(CURDIR)/debian/yarp/usr/share/man/man1
@@ -89,7 +93,7 @@ binary-arch: build install
 	dh_installchangelogs ChangeLog
 	dh_installdocs
 	dh_installexamples
-#	dh_install
+	dh_install --sourcedir=$(CURDIR)/debian/yarp
 #	dh_installmenu
 #	dh_installdebconf	
 #	dh_installlogrotate
@@ -99,8 +103,8 @@ binary-arch: build install
 #	dh_installinit
 #	dh_installcron
 #	dh_installinfo
-	dh_installman
-	dh_link
+#	dh_installman
+#	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms

@@ -15,7 +15,7 @@
 
 # set this to "true" to just use local environment
 # set this to "false" to do a more robust, but slower, packaging job
-JUST_A_TEST=false
+JUST_A_TEST=true
 
 ORG=$PWD
 SRC=$PWD/source-package
