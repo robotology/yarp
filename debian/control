@@ -10,12 +10,14 @@ Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
 Suggests: yarp-bin
-Description: communication and device interfaces for humanoid robots
- Flexible communication between processes and/or machines and/or
- devices distributed across a network.  Used for humanoid robot
- projects like COG and RobotCub.  Uses well-specified protocols 
- across tcp, udp, shared-memory, and multicast.  Contains
- command-line and library interfaces.
+Description: library support for YARP network of ports and devices
+ Flexible communication between processes and devices spread
+ across a local network.  Especially useful for inhomogeneous networks
+ with a mixture of operating systems and compilers.  Originally developed
+ for large-scale humanoid robot projects such as COG, Kismet, and RobotCub, 
+ where many idiosyncratic devices need to be integrated into a single
+ control system without there being any one OS that supports them all.
+ Uses well-specified protocols across tcp, udp, shared-memory, and multicast.
  .
 
 Package: libyarp2-dev
@@ -24,12 +26,14 @@ Priority: optional
 Architecture: any
 Depends: libyarp2 (= ${Source-Version})
 Provides: libyarp-dev
-Description: communication and device interfaces for humanoid robots
- Flexible communication between processes and/or machines and/or
- devices distributed across a network.  Used for humanoid robot
- projects like COG and RobotCub.  Uses well-specified protocols 
- across tcp, udp, shared-memory, and multicast.  Contains
- command-line and library interfaces.
+Description: header files for YARP library
+ Flexible communication between processes and devices spread
+ across a local network.  Especially useful for inhomogeneous networks
+ with a mixture of operating systems and compilers.  Originally developed
+ for large-scale humanoid robot projects such as COG, Kismet, and RobotCub, 
+ where many idiosyncratic devices need to be integrated into a single
+ control system without there being any one OS that supports them all.
+ Uses well-specified protocols across tcp, udp, shared-memory, and multicast.
  .
 
 Package: yarp-bin
@@ -38,14 +42,26 @@ Priority: optional
 Architecture: any
 Suggests: yarp-doc
 Depends: libyarp2 (= ${Source-Version})
-Description: short desc
- Something more.
+Description: command-line interface to YARP network of ports and devices
+ Flexible communication between processes and devices spread
+ across a local network.  Especially useful for inhomogeneous networks
+ with a mixture of operating systems and compilers.  Originally developed
+ for large-scale humanoid robot projects such as COG, Kismet, and RobotCub, 
+ where many idiosyncratic devices need to be integrated into a single
+ control system without there being any one OS that supports them all.
+ Uses well-specified protocols across tcp, udp, shared-memory, and multicast.
  .
 
 
 Package: yarp-doc
 Architecture: all
 Suggests: yarp-bin, libyarp2-dev
-Description: Documentation for YARP
- Something more.
+Description: Documentation for YARP library
+ Flexible communication between processes and devices spread
+ across a local network.  Especially useful for inhomogeneous networks
+ with a mixture of operating systems and compilers.  Originally developed
+ for large-scale humanoid robot projects such as COG, Kismet, and RobotCub, 
+ where many idiosyncratic devices need to be integrated into a single
+ control system without there being any one OS that supports them all.
+ Uses well-specified protocols across tcp, udp, shared-memory, and multicast.
  .
