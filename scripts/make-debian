@@ -13,9 +13,10 @@
 # may need to occasionally do (for stable and unstable):
 #  sudo pbuilder update --basetgz /var/cache/pbuilder/base-unstable.tgz --distribution unstable
 
-# set this to "true" to just use local environment
-# set this to "false" to do a more robust, but slower, packaging job
-JUST_A_TEST=true
+JUST_A_TEST=false
+if [ "k$1" = "ktest" ] ; then
+    JUST_A_TEST=true
+fi
 
 ORG=$PWD
 SRC=$PWD/source-package
