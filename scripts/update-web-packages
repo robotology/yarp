@@ -20,7 +20,7 @@ mkdir -p web-package/debian
 cp source-package/*.tar.gz source-package/*.zip web-package
 ct=`find debian-package/archive -iname "*.deb" | wc --lines`
     # do we have both the stable and unstable packages?
-if [ "k$ct" = "k2" ]; then
+if [ "k$ct" = "k8" ]; then
     cp -R debian-package/archive  web-package/debian/dists
     ln -s dists web-package/debian/archive
 else
