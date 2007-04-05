@@ -85,3 +85,4 @@ if [ -e zip-cmake ] ; then
     make && ( echo "zip cmake is good" >> $BASE/report.txt )
 fi
 
+cat $BASE/report.txt
