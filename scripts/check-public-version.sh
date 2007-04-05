@@ -30,6 +30,12 @@ if [ ! -e yarp-$ver.zip ] ; then
     rm -rf zip-cmake
 fi
 
+if [ ! -e yarpdoc-$ver.zip ] ; then
+    wget http://eris.liralab.it/yarp/specs/dox/yarpdoc.zip
+    mv yarpdoc.zip yarpdoc-$ver.zip
+    rm -rf zip-doc
+fi
+
 cd $BASE
 if [ ! -e tgz-automake ] ; then
     mkdir -p tgz-automake
@@ -84,5 +90,21 @@ if [ -e zip-cmake ] ; then
     fi
     make && ( echo "zip cmake is good" >> $BASE/report.txt )
 fi
+
+
+cd $BASE
+if [ ! -e zip-doc ] ; then
+    mkdir -p zip-doc
+    cd zip-doc
+    unzip ../yarpdoc-$ver.zip
+fi
+
+cd $BASE
+if [ -e zip-doc ] ; then
+    cd zip-doc
+    cd yarpdoc*
+    test -e index.html && ( echo "zip doc is good" >> $BASE/report.txt )
+fi
+
 
 cat $BASE/report.txt
