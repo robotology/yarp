@@ -31,6 +31,19 @@ public:
 
 private:
 
+    class ThreadImmediateReturn: public Thread {
+    public:
+        virtual void run() {
+        }
+    };
+
+    class ThreadDelay: public Thread {
+    public:
+        virtual void run() {
+            Time::delay(0.5);
+        }
+    };
+
     class Thread0: public Thread {
     public:
         virtual void run() {
@@ -355,6 +368,27 @@ public:
         report(0,"...done");
     }
 
+
+    virtual void testRunningFlag() {
+        report(0,"testing running flag (bug #1695724)...");
+        ThreadDelay t1;
+        checkFalse(t1.isRunning(),"not running before start");
+        t1.start();
+        checkTrue(t1.isRunning(),"running after start");
+        t1.stop();
+        checkFalse(t1.isRunning(),"not running after stop");
+        t1.start();
+        checkTrue(t1.isRunning(),"running after start");
+        t1.stop();
+        checkFalse(t1.isRunning(),"not running after stop");
+
+        ThreadImmediateReturn t0;
+        t0.start();
+        Time::delay(0.5);
+        checkFalse(t0.isRunning(),"not running after thread exits");
+    }
+
+
     virtual void runTests() {
         testMin();
         testSync();
@@ -364,6 +398,7 @@ public:
         testFailureSuccess();
         testInitAndRelease();
         testRunnable();
+        testRunningFlag();
        }
 };
 

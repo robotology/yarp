@@ -1,3 +1,11 @@
+2007-04-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ThreadImpl.cpp: Added fix for bug #1695724.
+
+	* src/libYARP_OS/harness/ThreadTest.cpp: Added regression test
+	for bug #1695724 -- Thread::isRunning() not returning correct
+	values in some situations.
+
 2007-04-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: freezing version 2.1.4

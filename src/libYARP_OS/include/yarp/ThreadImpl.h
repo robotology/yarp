@@ -61,8 +61,9 @@ public:
     // get a unique key
     long int getKey();
 
-	//shoudl become private, when the thread is friend
+	//should become private, when the thread is friend
 	void notify(bool s);
+	void notifyOpened(bool s) { opened = s; }
 	void synchroWait();
 	void synchroPost();
 
@@ -71,6 +72,7 @@ private:
     ACE_hthread_t hid;
     ACE_thread_t id;
     bool active;
+    bool opened;
     bool closing;
     Runnable *delegate;
 	ACE_Auto_Event synchro;	// event for init synchro

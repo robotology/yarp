@@ -33,6 +33,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     try {
 		bool success=thread->threadInit();
 		thread->notify(success);
+		thread->notifyOpened(success);
 		thread->synchroPost();
         
 		if (success)
@@ -48,10 +49,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     YARP_DEBUG(Logger::get(),"Thread shutting down");
     //ACE_Thread::exit();
 
-    //thread->notify(false);
-    // this notification removed since it confuses start() for
-    // threads that stop very rapidly, and everything else looks
-    // like it will work without this --paulfitz
+    thread->notify(false);
 
     return 0;
 }
@@ -162,7 +160,7 @@ bool ThreadImpl::start() {
 		//the thread started correctly, wait for the initialization
 		YARP_DEBUG(Logger::get(),"Thread waiting for init");
 		synchroWait();
-		if (active)
+		if (opened)
 		{
 			ThreadImpl::changeCount(1);
 			YARP_DEBUG(Logger::get(),"Init was successful");
