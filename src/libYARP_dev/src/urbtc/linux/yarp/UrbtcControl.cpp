@@ -27,7 +27,7 @@ yarp::dev::UrbtcControl::UrbtcControl() : ImplementPositionControl<UrbtcControl,
 	// without any gear
 	// 965 tics per radian
 	// 200'000 is _approximatly_ 180 degrees with a gear of 1:66
-    _dblFactRad2Raw = 200000.0/3.14159;  
+    _dblFactDeg2Raw = 200000.0/180.0;
 	_intLimitDefault = 32000;
 
     _pidPosDefault.kp = 0.5;
@@ -106,7 +106,7 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config){
 	if (!configValid){
 		// default configuration
 		for (int i = 0; i < _intNumControllers; i++)
-			encoderFactors[i] = _dblFactRad2Raw;
+			encoderFactors[i] = _dblFactDeg2Raw;
 	}
 
 	configValid = true;
@@ -190,7 +190,10 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config){
 						_out[i-1].ch[j].kd = (signed short)(botKd.get(i).asDouble() * _pidAccuracy);         
 						_out[i-1].ch[j].kdx =(unsigned short) _pidAccuracy;        // D gain = 2/1 = 2   
 						_out[i-1].ch[j].ki = (signed short)(botKi.get(i).asDouble() * _pidAccuracy);         
-						_out[i-1].ch[j].kix = (unsigned short)_pidAccuracy;        // I gain = 0/1 = 0   
+						_out[i-1].ch[j].kix = (unsigned short)_pidAccuracy;        // I gain = 0/1 = 0
+                        //printf ("kp nomin: %lf\n" , (botKp.get(i).asDouble() * _pidAccuracy));
+                        //printf ("kd nomin: %lf\n" , (botKd.get(i).asDouble() * _pidAccuracy));
+                        //printf ("ki nomin: %lf\n" , (botKi.get(i).asDouble() * _pidAccuracy));
 				}
 			}
 		}
@@ -224,6 +227,7 @@ bool yarp::dev::UrbtcControl::open(yarp::os::Searchable& config){
     _posAccuracy = config.check("motionDoneAccuracy",
                                 Value(1000),
                                 "Integer value specifying +/- range of encoder tics").asInt();
+
     
    // encoder zeros
    // limit exceedings
@@ -378,7 +382,8 @@ bool yarp::dev::UrbtcControl::positionMoveRaw(int j, double ref){
      // check axis
     if (j > -1 && j < _intNumControllers){
         // check limits
-        if ( ((int)ref) > _limitsMin[j] && ((int)ref) < _limitsMax[j]){
+        if ( ((int)ref) > _limitsMin[j] &&
+             ((int)ref) < _limitsMax[j]){
             _mutex.wait();
             _posDesired[j] = (long)ref;
             _out[j].ch[0].x = _out[j].ch[1].x = _out[j].ch[2].x = _out[j].ch[3].x  = (short)ref; 
@@ -389,6 +394,8 @@ bool yarp::dev::UrbtcControl::positionMoveRaw(int j, double ref){
             _mutex.post();
             return true;
         }
+        printf("Axis %d exceeded limts. Requested value: %d Limits: %d %d\n",
+               j, ((int)ref), _limitsMin[j], _limitsMax[j]);
     }
     return false;
     
@@ -436,9 +443,11 @@ bool yarp::dev::UrbtcControl::positionMoveRaw(const double *refs){
 bool yarp::dev::UrbtcControl::relativeMoveRaw(int j, double delta){
     
     // check axis
-    if (j > -1 && j < _intNumControllers){
+    if ((j > -1) && (j < _intNumControllers)){
         // check limits
-        if ( ((short)delta + _out[j].ch[0].x) > (short)_limitsMin[j] && ((short)delta + _out[j].ch[0].x) < (short)_limitsMax[j]){
+        //printf("out channel axis %d: %d\n", j, _out[j].ch[0].x);
+        if ( ((int)delta + (int)_out[j].ch[0].x) > _limitsMin[j]  &&
+             ((int)delta + (int)_out[j].ch[0].x) < _limitsMax[j] ){
             _mutex.wait();
             // for all channels of axis j
             _out[j].ch[0].x += (short)delta;
@@ -448,11 +457,14 @@ bool yarp::dev::UrbtcControl::relativeMoveRaw(int j, double delta){
             _posDesired[j] = _out[j].ch[0].x;
             if (write(_fd[j], &_out[j], sizeof(_out[j])) < 0){
                 _mutex.post();
+                printf("writing failed!\n");
                 return false;
             }
             _mutex.post();
             return true;
         }
+        printf("Axis %d exceeded limts. Requested value: %d Limits: %d %d\n",
+               j, ((short)delta + _out[j].ch[0].x), _limitsMin[j], _limitsMax[j]);
     }
     return false;
 }
@@ -467,10 +479,14 @@ bool yarp::dev::UrbtcControl::relativeMoveRaw(const double *deltas){
 }
 
 bool yarp::dev::UrbtcControl::checkMotionDoneRaw(int j, bool *flag){
-        
+
+    // being out of bounds is considered to be 'motion done'
+    if ( _pos[j] > _limitsMax[j] || _pos[j] < _limitsMin[j]){
+        //printf("motion done true due to limit!\n");
+        *flag = true;
+    }
     // take difference between t-1 and t into account too.
-    //cout << "pos: " << _pos[j] << " pos old: " << _posOld[j] << " ch[0]: " << _out[j].ch[0].x << " accuracy: " << _posAccuracy << endl;
-    if ( (_pos[j] > (_posOld[j] - _posAccuracy)) &&
+    else if ( (_pos[j] > (_posOld[j] - _posAccuracy)) &&
          (_pos[j] < (_posOld[j] + _posAccuracy)) &&
          (_pos[j] > (_out[j].ch[0].x - _posAccuracy)) &&
          (_pos[j] < (_out[j].ch[0].x + _posAccuracy)) ){
@@ -482,40 +498,50 @@ bool yarp::dev::UrbtcControl::checkMotionDoneRaw(int j, bool *flag){
 }
 
 bool yarp::dev::UrbtcControl::checkMotionDoneRaw(bool *flag){
-    
+
+    bool success = true;
     for (int i = 0; i < _intNumControllers; i++){
-        checkMotionDoneRaw(i,&flag[i]);
+        success = success && checkMotionDoneRaw(i,&flag[i]);
     }
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::setRefSpeedRaw(int j, double sp) {
     printf("UrbtcControl::setRefSpeedRaw(): Not implemented.\n");
-    return true;
+    bool success = true;
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::setRefSpeedsRaw(const double *spds) {
     printf("UrbtcControl::setSetRefSpeed(): Not implemented.\n");
-    return true;
+    bool success = true;
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::setRefAccelerationRaw(int j, double acc) {
     printf("UrbtcControl::setRefAccelerationRaw(): Not implemented.\n");
-    return true;
+    bool success = true;
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::setRefAccelerationsRaw(const double *accs) {
     printf("UrbtcControl::setRefAcceleartionsRaw(): Not implemented.\n");
-    return true;
+    bool success = true;
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::getRefSpeedRaw(int j, double *ref) {
     printf("UrbtcControl::getRefSpeedRaw(): Not implemented.\n");
-    return true;
+   bool success = true;
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::getRefSpeedsRaw(double *spds) {
-    printf("UrbtcControl::getRefSpeedsRaw(): Not implemented.\n");
-    return true;
+    bool success = true;
+    for (int i = 0; i < _intNumControllers; i++){
+        success = success && getRefSpeedRaw(i,&spds[i]);
+    }
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::getRefAccelerationRaw(int j, double *acc) {
@@ -524,8 +550,11 @@ bool yarp::dev::UrbtcControl::getRefAccelerationRaw(int j, double *acc) {
 }
 
 bool yarp::dev::UrbtcControl::getRefAccelerationsRaw(double *accs) {
-    printf("UrbtcControl::getRefAccelarationsRaw(): Not implemented.\n");
-    return true;
+    bool success = true;
+    for (int i = 0; i < _intNumControllers; i++){
+        success = success && getRefAccelerationRaw(i,&accs[i]);
+    }
+    return success;
 }
 
 bool yarp::dev::UrbtcControl::stopRaw(int j) {
@@ -999,8 +1028,6 @@ void yarp::dev::UrbtcControl::run() {
     double k = 0;
     double *oldPos = new double[_intNumControllers];
     double *newPos = new double[_intNumControllers];
-    long error;
-    int move;
 
     for (int i = 0; i < _intNumControllers; i++){
         oldPos[i] = 0.0;
@@ -1015,7 +1042,7 @@ void yarp::dev::UrbtcControl::run() {
 
 			// calculate the accumulated position value
             oldPos[i] = newPos[i];
-            newPos[i] = getEncoderValue(i);
+            newPos[i] = getUrbtcEncoderValue(i);
             
             if ( (oldPos[i] - newPos[i]) > 32000)    // switched from 32768 to -32768
                 _periodCounter[i]++;
@@ -1028,9 +1055,10 @@ void yarp::dev::UrbtcControl::run() {
 
 			// make sure motors do not run over limits
 			if (_pos[i] > _limitsMax[i] || _pos[i] < _limitsMin[i]){
-				printf("Caution: UrbtcControl::run(): Axis %d is exceeding limits! Stopped.\n", i);
+				//printf("Caution: UrbtcControl::run(): Axis %d is exceeding limits! Stopped.\n", i);
+                printf("Caution: UrbtcControl::run(): Axis %d is exceeding limits, position is at: %d!\n", i, (int)_pos[i]);
 				//if (!_limitsExceeding[i]) // dangerous if in velocity mode
-				stopRaw(i);	// stop first time exceeding limit
+				//stopRaw(i);	// stop first time exceeding limit
 				_limitsExceeding[i] = true;
 			}
 			else{
@@ -1047,13 +1075,13 @@ void yarp::dev::UrbtcControl::run() {
             yarp::os::Time::delay(k);
         }
         else{
-            printf("UrbtcControl::run(): Can't read fast enough encoder values! Time: %d", (now - before) );
+            printf("UrbtcControl::run(): Encoder value reading too slow...");
         }
 
     }
 }
 
-short yarp::dev::UrbtcControl::getEncoderValue(int axis){
+short yarp::dev::UrbtcControl::getUrbtcEncoderValue(int axis){
 
     _mutex.wait();
     if ((read(_fd[axis], &_in[axis], sizeof(_in[axis]))) != sizeof(_in[axis])) {
@@ -1062,7 +1090,6 @@ short yarp::dev::UrbtcControl::getEncoderValue(int axis){
     // actually only channel 0 should contain the encoder value, the others should be 0
     _mutex.post();
     return (_in[axis].ct[0] + _in[axis].ct[1] + _in[axis].ct[2] + _in[axis].ct[3]);
-   
 }
 
 //bool yarp::dev::UrbtcControl::positionMoveClose(int axis, long position, unsigned short stepSize, long tolerance){

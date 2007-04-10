@@ -76,7 +76,7 @@ protected:
     yarp::dev::Pid          _pidPosDefault;         // default pid values for position control 
     yarp::dev::Pid          _pidVelDefault;         // default pid values for velocity control 
     double					_pidAccuracy;           // to convert from nominator/denominator representation to 
-    double                  _dblFactRad2Raw;         // this times radian value equals encoder value (without gear!)
+    double                  _dblFactDeg2Raw;         // this times radian value equals encoder value (without gear!)
     int						_intLimitDefault;		// +/- defalt limits
 
 	int*					_limitsMax;				// upper limits in encoder tics
@@ -100,7 +100,7 @@ protected:
     // Thread
     virtual void run();
 
-    short                   getEncoderValue(int axis);
+    short                   getUrbtcEncoderValue(int axis);
 
     //bool                    velocityMoveClose(int axis, long position, unsigned short speed, long tolerance);
     //bool                    positionMoveClose(int axis, long position, unsigned short speed, long tolerance);
