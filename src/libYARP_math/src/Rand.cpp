@@ -72,12 +72,12 @@ double Rand::scalar(double min, double max)
 
 void Rand::init()
 {
-    return theRandScalar.init();
+    theRandScalar.init();
 }
 
 void Rand::init(int seed)
 {
-    return theRandScalar.init(seed);
+    theRandScalar.init(seed);
 }
 
 Vector Rand::vector(int s)
