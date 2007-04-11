@@ -36,7 +36,7 @@ ENDIF (EXISTS "$ENV{GSL_ROOT}")
 IF (EXISTS "$ENV{GSL_DIR}")
   SET(GSL_POSSIBLE_INCDIRS
 	"$ENV{GSL_DIR}/include"
-	"$ENV{GSL_DIR}/gsl")
+	"$ENV{GSL_DIR}")
   
   SET(GSL_POSSIBLE_LIBRARY_PATHS
 	"$ENV{GSL_DIR}/lib")
@@ -75,7 +75,7 @@ ENDIF (GSLCBLAS_LIBRARY AND GSL_LIBRARY AND GSL_BLAS_HEADER)
 # display help message
 IF (NOT GSL_FOUND)
   MESSAGE("GSL library or headers not found. "
-  "Please search manually or set env. variable GSL_ROOT to guide search." )
+  "Please search manually or set env. variable GSL_DIR to guide search." )
 ENDIF (NOT GSL_FOUND)
 
 #MARK_AS_ADVANCED(
