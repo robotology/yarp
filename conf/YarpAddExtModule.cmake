@@ -18,7 +18,7 @@ SET(tmp_headers "")
 
 # Check if there are any plugin device subdirectories.
 # Device subdirectories contain a config.cmake file.
-FILE(GLOB_RECURSE devices_list "${path}/config.cmake")
+FILE(GLOB_RECURSE devices_list "${path}/yarpdevice.cmake")
 IF (devices_list)
   SET(GEN ${CMAKE_BINARY_DIR}/${modulename}/generated_code)
   IF (NOT EXISTS ${GEN})
@@ -45,7 +45,7 @@ IF (devices_list)
 	SET(SAVE_PATH ${CMAKE_MODULE_PATH})
 	SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dev_path})
 	IF (dev_path)
-	  INCLUDE(${dev_path}/config.cmake)
+	  INCLUDE(${dev_path}/yarpdevice.cmake)
 	ELSE (dev_path)
 	  INCLUDE(${dev})
 	ENDIF (dev_path)
