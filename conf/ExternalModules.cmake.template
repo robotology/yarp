@@ -1,0 +1,3 @@
+# put here external modules and rename to ExternalModules.cmake. 
+# Follow the syntax:
+# SET(EXTERNAL_MODULES fakeModules "D:/dev/local/yarpmodule")
