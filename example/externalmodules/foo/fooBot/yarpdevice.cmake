@@ -1,0 +1,6 @@
+
+ SET(YARPDEV_NAME "foobot")
+ SET(YARPDEV_WRAPPER "")
+ SET(YARPDEV_INCLUDE "foobot.h")
+ SET(YARPDEV_TYPE "foobot")
+

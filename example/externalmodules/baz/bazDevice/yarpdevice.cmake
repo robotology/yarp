@@ -1,0 +1,6 @@
+
+SET(YARPDEV_NAME "bazdevice")
+SET(YARPDEV_WRAPPER "")
+SET(YARPDEV_INCLUDE "bazdevice.h")
+SET(YARPDEV_TYPE "bazdevice")
+
