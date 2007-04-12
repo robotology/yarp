@@ -1,3 +1,11 @@
-# put here external modules and rename to ExternalModules.cmake. 
-# Follow the syntax:
-# SET(EXTERNAL_MODULES fakeModules "D:/dev/local/yarpmodule")
+# ExternalModules.cmake template file.
+
+# List all modules here (this is a symbolic name):
+# SET(EXTERNAL_MODULES mod1 mod2 mod3)
+
+# For each MODULE above add a variable named MODULE_PATH 
+# which specifies its location on your disk. 
+
+# SET(mod1_PATH "/usr/local/mod1")
+# SET(mod2_PATH "/usr/local/mod2")
+# SET(mod3_PATH "c:/mod3")

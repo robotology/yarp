@@ -62,7 +62,6 @@ IF (devices_list)
 	  # write a quick cpp file to add an appropriate factory for the device
 	  CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
 		${GEN}/add_${YARPDEV_NAME}.cpp @ONLY  IMMEDIATE)
-	  MESSAGE(STATUS "Generated add_${YARPDEV_NAME}.cpp")
 
 	  # aggregate this into our global list
 	  WRITE_FILE(${ADDER_CPP} "add_${YARPDEV_NAME}();" APPEND)
@@ -85,9 +84,10 @@ IF (devices_list)
 
   # finish up the list of devices
   WRITE_FILE(${ADDER_CPP} "}" APPEND)
-  MESSAGE(STATUS "Generated ${ADDER_CPP}")
   WRITE_FILE(${ADDER_H} "extern void add${modulename}();" APPEND)
-  MESSAGE(STATUS "Generated ${ADDER_H}")
+
+  MESSAGE(STATUS "Generated ${ADDER_CPP}")
+  MESSAGE(STATUS "Generated  ${ADDER_H}")
 
   SET(tmp_sources ${tmp_sources} ${ADDER_CPP})
   SET(tmp_headers ${tmp_headers} ${ADDER_H})
