@@ -1,8 +1,8 @@
 INCLUDE(ListUtils.cmake)
 INCLUDE(YarpAddExtModule)
 
-SET(EXT_LIBS "")
-SET(ALL_SRC "")
+SET(EXT_LIBS ${})
+SET(ALL_SRC ${})
 
 ##### LOCAL MACROS
 MACRO(DD_FIND_LOCAL_LIB var dd LIBS)
@@ -93,7 +93,6 @@ INCLUDE_DIRECTORIES(include ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include
   ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include ${CMAKE_SOURCE_DIR}/src/libYARP_sig/include ${ACE_INCLUDE_DIR})
 SET(header_path ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include)
 
-
 # parse all dd to collect source and header files, check dependencies
 FOREACH(DD ${FOUND_DD})
   SET(LOCAL_PATH ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/${DD}/${OS_TAG})
@@ -162,14 +161,14 @@ IF (EXISTS ${EXTERNAL_MODULES_FILE})
   ## parse the list of modules
   FOREACH(MOD ${EXTERNAL_MODULES})
 	SET(MOD_PATH ${${MOD}_PATH})
-	MESSAGE(STATUS "Adding module ${MOD} in ${MOD_PATH}")
+	MESSAGE(STATUS "Adding module ${MOD} from ${MOD_PATH}")
 
 	# search each module for devices
 	YarpAddExtModule(${MOD} ${MOD_PATH})
 	
 	# populate list of header folders
-	SET(ext_lib_headers "${ext_lib_headers}" "${CMAKE_BINARY_DIR}/${MOD}/generated_code")
-
+	SET(ext_lib_headers "${ext_lib_headers}" "${CMAKE_BINARY_DIR}/generated_code/${MOD}")
+	  
 	# populate list of libraries
 	IF (WIN32 AND NOT CYGWIN)
 	  SET(libname "${MOD}.lib")
@@ -229,7 +228,7 @@ IF(FOUND_ONE)
   ENDIF(WIN32 AND NOT CYGWIN)
 
   IF (ext_lib_headers)
-	INCLUDE_DIRECTORIES("${ext_lib_headers}")
+	INCLUDE_DIRECTORIES(${ext_lib_headers})
   ENDIF(ext_lib_headers)
 
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path "${header_path}")

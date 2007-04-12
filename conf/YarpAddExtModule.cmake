@@ -13,14 +13,14 @@ MACRO(YarpAddExtModule modulename path)
 PROJECT(${modulename})
 
 ## clean variables
-SET(tmp_sources "")
-SET(tmp_headers "")
+SET(tmp_sources ${})
+SET(tmp_headers ${})
 
 # Check if there are any plugin device subdirectories.
 # Device subdirectories contain a config.cmake file.
 FILE(GLOB_RECURSE devices_list "${path}/yarpdevice.cmake")
 IF (devices_list)
-  SET(GEN ${CMAKE_BINARY_DIR}/${modulename}/generated_code)
+  SET(GEN "${CMAKE_BINARY_DIR}/generated_code/${modulename}")
   IF (NOT EXISTS ${GEN})
 	FILE(MAKE_DIRECTORY ${GEN})
   ENDIF (NOT EXISTS ${GEN})
@@ -82,7 +82,7 @@ IF (devices_list)
 	  MESSAGE(STATUS "Device ${YARPDEV_NAME} is not enabled")	
 	ENDIF (ENABLE_YARPDEV_NAME)
   ENDFOREACH(dev)
-  
+
   # finish up the list of devices
   WRITE_FILE(${ADDER_CPP} "}" APPEND)
   MESSAGE(STATUS "Generated ${ADDER_CPP}")
