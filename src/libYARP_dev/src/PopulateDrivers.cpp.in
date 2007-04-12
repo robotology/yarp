@@ -37,6 +37,8 @@ using namespace yarp::dev;
 
 // this is an automatically configured file
 
+void addExternalDevices();
+
 #ifndef YARP_AUTOCONF
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
@@ -288,4 +290,6 @@ void Drivers::init() {
 
     add(createRemoteControlBoard());
     add(createServerControlBoard());
+
+    addExternalDevices();
 }
