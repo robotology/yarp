@@ -7,7 +7,7 @@
 */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.27 2007-02-07 16:14:05 ale-scalzo Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.28 2007-04-13 14:53:10 ale-scalzo Exp $
 ///
 ///
 
@@ -66,8 +66,9 @@ public:
 	bool _validContext;
 	bool fleaCR;
 
-	int min_Brightness,min_Shutter,min_Exposure,min_Gain,min_RBbalance;
-	int max_Brightness,max_Shutter,max_Exposure,max_Gain,max_RBbalance;
+	double m_Gain,m_Shutter,m_Brightness,m_WhiteB,m_WhiteR;
+	int min_Brightness,min_Shutter,min_Gain,min_RBbalance;
+	int max_Brightness,max_Shutter,max_Gain,max_RBbalance;
 
 	FlyCaptureContext context;
 	FlyCaptureImage imageConverted;
@@ -87,17 +88,20 @@ public:
 	bool _initialize (const DragonflyOpenParameters& params);
 	bool _uninitialize (void);
 
-	bool _setBrightness (double value, bool bDefault=false);
-	bool _setExposure (double value, bool bDefault=false);
-	bool _setWhiteBalance (double redValue, double blueValue, bool bDefault=true);
-	bool _setShutter (double value, bool bDefault=false);
-	bool _setGain (double value, bool bDefault=false);
+	bool _setBrightness (double value);
+	bool _setWhiteBalance (double blueValue, double redValue);
+	bool _setShutter (double value);
+	bool _setGain (double value);
 
 	double _getShutter() const;
-	double _getExposure() const;
 	double _getBrightness() const;
 	double _getGain() const;
-	bool _getWhiteBalance (double &redValue, double &blueValue) const;
+	bool _getWhiteBalance (double &blueValue, double &redValue) const;
+
+	bool _setAutoBrightness(bool bAuto);
+	bool _setAutoShutter(bool bAuto);
+	bool _setAutoGain(bool bAuto);
+	bool _setAutoWhiteBalance(bool bAuto);
 
 private:
 	void _prepareBuffers (void);
@@ -232,23 +236,6 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 		min_Gain = max_Gain = -1; 
 	}
 
-
-	error = flycaptureGetCameraPropertyRangeEx(	context, 
-		FLYCAPTURE_AUTO_EXPOSURE, 
-		NULL, NULL, NULL, NULL, NULL, NULL,
-		&min_Exposure,
-		&max_Exposure);
-
-	if (error == FLYCAPTURE_OK)
-	{
-		printf("Exposure range [%d : %d]\n",min_Exposure,max_Exposure);
-	}
-	else
-	{
-		printf("FlyCapture: unable to read min max Exposure\n==>Control Unavailable\n");
-		min_Exposure = max_Exposure = -1; 
-	}
-
 	error = flycaptureGetCameraPropertyRangeEx(	context, 
 		FLYCAPTURE_WHITE_BALANCE, 
 		NULL, NULL, NULL, NULL, NULL, NULL,
@@ -269,12 +256,8 @@ inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& para
 		_setBrightness(params._brightness);
 		printf("Brightness %f\n", params._brightness); } 
 
-	if(params._exposure >= 0.0 && params._exposure <= 1.0) {
-		_setExposure(params._exposure);
-		printf("Exposure %f\n", params._exposure); } 
-
 	if( (params._whiteR >= 0.0) && (params._whiteR <= 1.0) && (params._whiteB >= 0.0) && (params._whiteB <= 1.0)) {
-		_setWhiteBalance(params._whiteR, params._whiteB); 
+		_setWhiteBalance(params._whiteB, params._whiteR); 
 		printf("White balance %f %f\n", params._whiteR, params._whiteB); }
 
 	if(params._shutter >= 0.0 && params._shutter <= 1.0) {
@@ -338,17 +321,19 @@ inline bool DragonflyResources::_uninitialize (void)
 	return true;
 }
 
-inline bool DragonflyResources::_setBrightness (double value, bool bAuto)
+inline bool DragonflyResources::_setBrightness (double value)
 {
 	if (min_Brightness == -1 && max_Brightness == -1) 
 		return false;
+
+	m_Brightness=value;
 
 	int iValue = min_Brightness + int(value * double(max_Brightness - min_Brightness));
 
 	if (iValue < min_Brightness) iValue = min_Brightness;
 	if (iValue > max_Brightness) iValue = max_Brightness;
 
-	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_BRIGHTNESS, false, false, bAuto, iValue, 0);
+	FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, iValue, 0, false);
 
 	if (error == FLYCAPTURE_OK)
 		return true;
@@ -356,36 +341,18 @@ inline bool DragonflyResources::_setBrightness (double value, bool bAuto)
 		return false;
 }
 
-inline bool DragonflyResources::_setExposure (double value, bool bAuto)
-{
-	if (min_Exposure == -1 && max_Exposure == -1) 
-		return false;
-
-	int iValue = min_Exposure + int(value * double(max_Exposure - min_Exposure));
-
-	if (iValue < min_Exposure) iValue = min_Exposure;
-	if (iValue > max_Exposure) iValue = max_Exposure;
-
-	//FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_AUTO_EXPOSURE, value, 0, bAuto);
-
-	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_AUTO_EXPOSURE, false, false, bAuto, iValue, 0);
-
-	if (error == FLYCAPTURE_OK)
-		return true;
-	else 
-		return false;
-}
-
-inline bool DragonflyResources::_setWhiteBalance (double redValue, double blueValue, bool bAuto)
+inline bool DragonflyResources::_setWhiteBalance (double blueValue, double redValue)
 {
 	if (min_RBbalance == -1 && max_RBbalance == -1)
 		return false;
+
+	m_WhiteB=blueValue;
+	m_WhiteR=redValue;
 
 	fprintf(stderr, "Setting White: %f %f\n", redValue, blueValue);
 
 	int iRedValue = min_RBbalance + int(redValue * double(max_RBbalance - min_RBbalance));
 	int iBlueValue = min_RBbalance + int(blueValue * double(max_RBbalance - min_RBbalance));
-	// error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, redValue, blueValue, bAuto);
 
 	if (iRedValue < min_RBbalance) iRedValue = min_RBbalance;
 	if (iRedValue > max_RBbalance) iRedValue = max_RBbalance;
@@ -393,7 +360,7 @@ inline bool DragonflyResources::_setWhiteBalance (double redValue, double blueVa
 	if (iBlueValue < min_RBbalance) iBlueValue = min_RBbalance;
 	if (iBlueValue > max_RBbalance) iBlueValue = max_RBbalance;
 
-	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, false, true, false, iRedValue, iBlueValue);
+	FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, iRedValue, iBlueValue, false);
 
 	if (error == FLYCAPTURE_OK)
 	{
@@ -407,17 +374,19 @@ inline bool DragonflyResources::_setWhiteBalance (double redValue, double blueVa
 	}
 }
 
-inline bool DragonflyResources::_setShutter (double value, bool bAuto)
+inline bool DragonflyResources::_setShutter (double value)
 {
 	if (min_Shutter == -1 && max_Shutter == -1) 
 		return false;
+
+	m_Shutter=value;
 
 	int iValue = min_Shutter + int(value * double(max_Shutter - min_Shutter));
 
 	if (iValue < min_Shutter) iValue = min_Shutter;
 	if (iValue > max_Shutter) iValue = max_Shutter;
 
-	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_SHUTTER, false, false, bAuto, iValue, 0);
+	FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_SHUTTER, iValue, 0, false);
 
 	if (error == FLYCAPTURE_OK)
 	{
@@ -431,19 +400,19 @@ inline bool DragonflyResources::_setShutter (double value, bool bAuto)
 	}
 }
 
-inline bool DragonflyResources::_setGain (double value, bool bAuto)
+inline bool DragonflyResources::_setGain (double value)
 {
 	if (min_Gain == -1 && max_Gain == -1) 
 		return false;
+
+	m_Gain=value;
 
 	int iValue = min_Gain + int(value * double(max_Gain - min_Gain));
 
 	if (iValue < min_Gain) iValue = min_Gain;
 	if (iValue > max_Gain) iValue = max_Gain;
 
-	//FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, value, 0, bAuto);
-
-	FlyCaptureError error = flycaptureSetCameraPropertyEx(context, FLYCAPTURE_GAIN, false, false, bAuto, iValue, 0);
+	FlyCaptureError error = flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, iValue, 0, false);
 
 	if (error == FLYCAPTURE_OK)
 	{
@@ -457,6 +426,38 @@ inline bool DragonflyResources::_setGain (double value, bool bAuto)
 	}
 }
 
+bool DragonflyResources::_setAutoBrightness(bool bAuto)
+{
+	if (bAuto)
+		return flycaptureSetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, 0, 0, true)==FLYCAPTURE_OK;
+	else
+		return _setBrightness(m_Brightness);
+}
+
+bool DragonflyResources::_setAutoShutter(bool bAuto)
+{
+	if (bAuto)
+		return flycaptureSetCameraProperty(context, FLYCAPTURE_SHUTTER, 0, 0, true)==FLYCAPTURE_OK;
+	else
+		return _setShutter(m_Shutter);
+}
+
+bool DragonflyResources::_setAutoGain(bool bAuto)
+{
+	if (bAuto)
+		return flycaptureSetCameraProperty(context, FLYCAPTURE_GAIN, 0, 0, true)==FLYCAPTURE_OK;
+	else
+		return _setGain(m_Gain);
+}
+
+bool DragonflyResources::_setAutoWhiteBalance(bool bAuto)
+{
+	if (bAuto)
+		return flycaptureSetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, 0, 0, true)==FLYCAPTURE_OK;
+	else
+		return _setWhiteBalance(m_WhiteB,m_WhiteR);
+}
+
 inline double DragonflyResources::_getShutter() const
 {
 	if (min_Shutter == max_Shutter) 
@@ -464,7 +465,7 @@ inline double DragonflyResources::_getShutter() const
 
 	long tmpA;
 
-	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, 0, false);
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_SHUTTER, &tmpA, NULL, NULL);
 	
 	if (error == FLYCAPTURE_OK)
 		return double(tmpA - min_Shutter)/double(max_Shutter - min_Shutter);
@@ -479,7 +480,7 @@ inline double DragonflyResources::_getBrightness() const
 
 	long tmpA;
 
-	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, 0, false);
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_BRIGHTNESS, &tmpA, NULL, NULL);
 
 	if (error == FLYCAPTURE_OK)
 		return double(tmpA - min_Brightness)/double(max_Brightness - min_Brightness);
@@ -494,7 +495,7 @@ inline double DragonflyResources::_getGain() const
 
 	long tmpA;
 
-	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, 0, false);
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_GAIN, &tmpA, NULL, NULL);
 	
 	if (error == FLYCAPTURE_OK)
 		return double(tmpA - min_Gain)/double(max_Gain - min_Gain);
@@ -502,15 +503,11 @@ inline double DragonflyResources::_getGain() const
 		return -1.0;
 }
 
-inline bool DragonflyResources::_getWhiteBalance (double &redValue, double &blueValue) const
+inline bool DragonflyResources::_getWhiteBalance (double &blueValue, double &redValue) const
 {
-	bool push;
-	bool on;
-	bool bb;
+	long tmpRed,tmpBlue;
 
-	int tmpRed,tmpBlue;
-
-	FlyCaptureError error = flycaptureGetCameraPropertyEx(context, FLYCAPTURE_WHITE_BALANCE, &push, &on, &bb, &tmpRed, &tmpBlue);
+	FlyCaptureError error = flycaptureGetCameraProperty(context, FLYCAPTURE_WHITE_BALANCE, &tmpRed, &tmpBlue, NULL);
 
 	redValue = double(tmpRed - min_RBbalance)/double(max_RBbalance-min_RBbalance);
 	blueValue = double(tmpBlue - min_RBbalance)/double(max_RBbalance-min_RBbalance);
@@ -684,16 +681,16 @@ bool DragonflyDeviceDriver::setGain(double value)
 	return d._setGain(value);
 }
 
+bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._setWhiteBalance(blue, red);
+}
+
 double DragonflyDeviceDriver::getShutter() const
 {
 	DragonflyResources& d = RES(system_resources);
 	return d._getShutter();
-}
-
-bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
-{
-	DragonflyResources& d = RES(system_resources);
-	return d._setWhiteBalance(red, blue);
 }
 
 double DragonflyDeviceDriver::getBrightness() const
@@ -708,26 +705,51 @@ double DragonflyDeviceDriver::getGain() const
 	return d._getGain();
 }
 
+bool DragonflyDeviceDriver::getWhiteBalance(double &red, double &blue) const
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._getWhiteBalance(blue, red);
+}
 
-bool DragonflyDeviceDriver::getWhiteBalance(double &r, double &g) const
+bool DragonflyDeviceDriver::setAutoBrightness(bool bAuto)
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._setAutoBrightness(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoGain(bool bAuto)
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._setAutoGain(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoShutter(bool bAuto)
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._setAutoShutter(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoWhiteBalance(bool bAuto)
+{
+	DragonflyResources& d = RES(system_resources);
+	return d._setAutoWhiteBalance(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAuto(bool bAuto)
 {
 	DragonflyResources& d = RES(system_resources);
 
-	//int tmpR=-1;
+	bool bOk=true;
 
-	//int tmpG=-1;
+	bOk = bOk && d._setAutoBrightness(bAuto);
+	bOk = bOk && d._setAutoGain(bAuto);
+	bOk = bOk && d._setAutoShutter(bAuto);
+	bOk = bOk && d._setAutoWhiteBalance(bAuto);
 
-	bool ret;
-
-	ret=d._getWhiteBalance(r, g);
-
-	//r=(double)tmpR;
-
-	//g=(double)tmpG;
-
-	return ret;
+	return bOk;
 }
 
+void DragonflyDeviceDriver::PrintSettings(){}
 
 void DragonflyDeviceDriver::recColorFSBilinear(const unsigned char *src, unsigned char *out)
 {

@@ -7,7 +7,7 @@
  */
 
 //
-// $Id: DragonflyDeviceDriver.h,v 1.29 2007-03-20 11:29:32 eshuy Exp $
+// $Id: DragonflyDeviceDriver.h,v 1.30 2007-04-13 14:53:09 ale-scalzo Exp $
 //
 //
 
@@ -52,7 +52,6 @@ public:
 	double _whiteB;
 
 	double _brightness;
-	double _exposure;
 	double _shutter;
 	double _gain;
 
@@ -71,7 +70,6 @@ public:
 
 		//uninitialized - inherit registry stored values
 		_brightness=-1;
-		_exposure=-1;
 		_shutter=-1;
 		_gain=-1;
 		_whiteR=-1;
@@ -151,9 +149,7 @@ public:
 		if (config.check("brightness", value)){
 			params._brightness=value->asDouble();
 		}
-		if (config.check("exposure", value)){
-			params._exposure=value->asDouble();
-		}
+
 		if (config.check("shutter", value)){
 			params._shutter=value->asDouble();
 		}
@@ -230,7 +226,13 @@ public:
      */
     virtual bool setGain(double v);
 
-    /**
+	/**
+     * Set normalized white balance [0.0 : 1.0].
+     */
+	virtual bool setWhiteBalance(double red, double blue);
+
+	
+	/**
      * Get normalized shutter time [0.0 : 1.0].
      */
     virtual double getShutter() const;
@@ -245,9 +247,24 @@ public:
      */
     virtual double getBrightness() const;
 
-	virtual bool setWhiteBalance(double red, double green);
+    /**
+     * Get normalized image white balance [0.0 : 1.0].
+     */
+	virtual bool getWhiteBalance(double &red, double &blue) const;
 
-	virtual bool getWhiteBalance(double &red, double &green) const;
+
+
+	virtual bool setAutoBrightness(bool bAuto=true);
+
+	virtual bool setAutoGain(bool bAuto=true);
+
+	virtual bool setAutoShutter(bool bAuto=true);
+
+	virtual bool setAutoWhiteBalance(bool bAuto=true);
+
+	virtual bool setAuto(bool bAuto=true);
+
+	virtual void PrintSettings();
 
 protected:
 	void *system_resources;

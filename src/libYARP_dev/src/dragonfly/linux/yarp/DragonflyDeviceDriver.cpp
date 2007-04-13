@@ -14,26 +14,18 @@
 #include <ace/Log_Msg.h>
 #include <ace/OS.h>
 
-#include "FirewireCameras.h"
+#include "FirewireCameraSet.h"
 
 using namespace yarp::os;
 using namespace yarp::dev;
-
-/*
-///
-static double GetTimeAs_mSeconds(void)
-{
-	ACE_Time_Value timev = ACE_OS::gettimeofday ();
-	return double(timev.sec()*1e3) + timev.usec() * 1e-3; 
-}
-*/
 
 // Most of this is not used (here because the driver was ported).
 class DragonflyResources
 {
 public:
-	DragonflyResources (void) : _newFrameMutex(0),  _convImgMutex(1) 
+	DragonflyResources (void) //: _newFrameMutex(0),  _convImgMutex(1) 
 	{
+	    /*
 		// Variables initialization
 		sizeX = 0;
 		sizeY = 0;
@@ -45,214 +37,313 @@ public:
 		_pSubsampled_data = NULL;
 		_raw_sizeX = 640;
 		_raw_sizeY = 480;
-
-        img=0;
+        */
+        
+        //img=0;
 	}
 
 	~DragonflyResources () 
 	{ 
-        //		_uninitialize ();
-		// To be sure - must protected against double calling
+        _uninitialize();
 	}
+	
 	
 	// Hardware-dependant variables
 	enum { _num_buffers = 3 };
-	int sizeX;
-	int sizeY;
-    int buffLength;
+	/*	
 	int maxCams;
 	int bufIndex;
+	unsigned int unit_number;
 	bool _canPost;
 	bool _acqStarted;
 	bool _validContext;
 	int _raw_sizeX;
 	int _raw_sizeY;
 	unsigned char *_pSubsampled_data;
+	*/
 	
-    FWCameras cam;
+    static CFWCameraSet* m_pCameraSet;
+    static Semaphore m_InitCloseMutex;
 
-    unsigned char *img;
+    //unsigned char *img;
+    
+    unsigned int unit_number;
 
-	Semaphore mutexArray[_num_buffers];
-	Semaphore _newFrameMutex;
-	Semaphore _convImgMutex;
+	int sizeX;
+	int sizeY;
+    int buffLength;
+
+	//Semaphore mutexArray[_num_buffers];
+	//Semaphore _newFrameMutex;
+	//Semaphore _convImgMutex;
 	
 	inline bool _initialize (const DragonflyOpenParameters& params);
-	inline bool _uninitialize (void);
+	inline bool _uninitialize();
 
-	inline bool _setBrightness (double value, bool bDefault=false);
-	inline bool _setExposure (double value, bool bDefault=false);
-	inline bool _setWhiteBalance (double redValue, double blueValue, bool bDefault=false);
-	inline bool _setShutter (double value, bool bDefault=false);
-	inline bool _setGain (double value, bool bDefault=false);
+	inline bool _setBrightness (double value);
+	inline bool _setWhiteBalance (double blueValue, double redValue);
+	inline bool _setShutter (double value);
+	inline bool _setGain (double value);
 
-	inline void _subSampling(void);
+    inline double _getBrightness();
+    inline bool _getWhiteBalance(double& blue,double& red);
+    inline double _getShutter();
+    inline double _getGain();
 
+    inline bool _setAuto(bool bAuto);
+
+	inline bool _setAutoBrightness(bool bAuto=true);
+	inline bool _setAutoWhiteBalance(bool bAuto=true);
+	inline bool _setAutoShutter(bool bAuto=true);
+	inline bool _setAutoGain(bool bAuto=true);
+
+    inline void _printSettings()
+    {
+        m_pCameraSet->PrintSettings(unit_number);
+    }
+
+	//inline void _subSampling();
+	
+    inline bool _capture(unsigned char *buff)
+    {
+        return m_pCameraSet->Capture(unit_number,buff);
+    }
+
+    inline bool _capture_raw(unsigned char *buff)
+    {
+        return m_pCameraSet->CaptureRaw(unit_number,buff);
+    }
 };
+
+CFWCameraSet* DragonflyResources::m_pCameraSet=NULL;
+Semaphore DragonflyResources::m_InitCloseMutex;
 
 /// full initialize and startup of the grabber.
 inline bool DragonflyResources::_initialize (const DragonflyOpenParameters& params)
 {
-    if (img!=0)
+    m_InitCloseMutex.wait();
+    
+    if (!m_pCameraSet)
+    {
+        m_pCameraSet=new CFWCameraSet();
+        
+        if (!m_pCameraSet->Init()) // default port=0
         {
-            ACE_OS::fprintf(stderr, "DragonflyResources: img pointer not null, was _initialize() already called?\n");
+            delete m_pCameraSet;
+            m_pCameraSet=0;
+            m_InitCloseMutex.post(); 
             return false;
         }
+    }
 
-    bool ok = cam.init_cameras();
-    if (!ok) {
+    unit_number=params._unit_number;
+    sizeX=params._size_x;
+    sizeY=params._size_y;
+    buffLength=sizeX*sizeY*3;
+
+    if (!m_pCameraSet->StartCamera(unit_number,sizeX,sizeY)) // default dma=true
+    {
+        ACE_OS::fprintf(stderr, "DragonflyResources: can't open camera %d",unit_number);
         return false;
     }
-    cam.SetSize(params._size_x, params._size_y);
+    
+    m_InitCloseMutex.post();
+    
+    //img=new unsigned char [buffLength];
 
-    buffLength=cam.getBufferLength();
-    sizeX=cam.getX();
-    sizeY=cam.getY();
-
-    img=new unsigned char [buffLength];
-
-    cam.SetAuto(false);
+    //cam.SetAuto(false);
 
 	// Setup Camera Parameters, Magic Numbers :-)
-	cam.SetBrightness(0);
-	cam.SetExposure(300);
-	if (params._whiteR>0) {
-		printf("white balance %g %g\n", 
-               (double)params._whiteR, (double)params._whiteB);
-		cam.SetColor((float)params._whiteR,(float)params._whiteB); 
-	} else {
-		cam.SetColor((float)50.0/63, (float)20.0/63); 
+	m_pCameraSet->SetBrightness(unit_number,params._brightness);	
+	m_pCameraSet->SetShutter(unit_number,params._shutter);
+	m_pCameraSet->SetGain(unit_number,params._gain);
+	
+	if (params._whiteR>0.0) 
+	{
+		m_pCameraSet->SetWhiteBalance(unit_number,params._whiteB,params._whiteR); 
+	} 
+	else 
+	{
+		m_pCameraSet->SetWhiteBalance(unit_number,0.5,0.5); 
     }
-	cam.SetShutter((float)params._shutter);	// x * 0.0625 = 20 mSec = 50 Hz
-	cam.SetGain((float)params._gain);		// x * -0.0224 = -11.2dB
-    //    cam.SetBrigthness(params._brightness);
-    //    cam.SetExposure(params._exposure);
-
-    cam.Capture(img);
 
     return true;
 }
 
-inline bool DragonflyResources::_uninitialize (void)
+inline bool DragonflyResources::_uninitialize()
 {
-    delete [] img;
-    img=0;
-    cam.Shutdown();
+    m_InitCloseMutex.wait();
+    
+    /*
+    if (img)
+    {
+        delete [] img;
+        img=0;
+    }
+    */
+
+    if (m_pCameraSet)
+    {
+        m_pCameraSet->ShutdownCamera(unit_number);
+    
+        if (m_pCameraSet->GetCameraNum()<=0)
+        {
+            m_pCameraSet->Shutdown();
+            delete m_pCameraSet;
+            m_pCameraSet=0;
+        }
+    }
+    
+    m_InitCloseMutex.post();
+    
     return true;
 }
 
-///
-///
-#if 0
-inline bool DragonflyResources::_setBrightness (double value, bool bAuto)
+inline bool DragonflyResources::_setBrightness(double value)
 {
-    return false;
+    return m_pCameraSet->SetBrightness(unit_number,value);
 }
 
-inline bool DragonflyResources::_setExposure (double value, bool bAuto)
+inline bool DragonflyResources::_setWhiteBalance(double blue, double red)
 {
-    return false;
+    return m_pCameraSet->SetWhiteBalance(unit_number,blue,red);
 }
 
-inline bool DragonflyResources::_setWhiteBalance (double redValue, int blueValue, bool bAuto)
+inline bool DragonflyResources::_setShutter(double value)
 {
-    return false;
+    return m_pCameraSet->SetShutter(unit_number,value);
 }
 
-inline bool DragonflyResources::_setShutter (double value, bool bAuto)
+inline bool DragonflyResources::_setGain(double value)
 {
-    return false;
+    return m_pCameraSet->SetGain(unit_number,value);
 }
 
-inline bool DragonflyResources::_setGain (double value, bool bAuto)
+inline double DragonflyResources::_getBrightness()
 {
-    return false;
+    return m_pCameraSet->GetBrightness(unit_number);
 }
 
+inline bool DragonflyResources::_getWhiteBalance(double& blue, double& red)
+{
+    return m_pCameraSet->GetWhiteBalance(unit_number,blue,red);
+}
+
+inline double DragonflyResources::_getShutter()
+{
+    return m_pCameraSet->GetShutter(unit_number);
+}
+
+inline double DragonflyResources::_getGain()
+{
+    return m_pCameraSet->GetGain(unit_number);
+}
+
+inline bool DragonflyResources::_setAuto(bool bAuto)
+{
+    bool bOk=true;
+
+    bOk=bOk && _setAutoBrightness(bAuto);
+    bOk=bOk && _setAutoWhiteBalance(bAuto);
+    bOk=bOk && _setAutoShutter(bAuto);
+    bOk=bOk && _setAutoGain(bAuto);
+
+    return bOk;
+}
+
+inline bool DragonflyResources::_setAutoBrightness(bool bAuto)
+{
+    return m_pCameraSet->SetAutoBrightness(unit_number,bAuto);
+}
+
+inline bool DragonflyResources::_setAutoWhiteBalance(bool bAuto)
+{
+    return m_pCameraSet->SetAutoWhiteBalance(unit_number,bAuto);
+}
+
+inline bool DragonflyResources::_setAutoShutter(bool bAuto)
+{
+    return m_pCameraSet->SetAutoShutter(unit_number,bAuto);
+}
+
+inline bool DragonflyResources::_setAutoGain(bool bAuto)
+{
+    return m_pCameraSet->SetAutoGain(unit_number,bAuto);
+}
+
+/*
 inline void DragonflyResources::_subSampling(void)
 {
 }
-#endif
+*/
 
 inline DragonflyResources& RES(void *res) { return *(DragonflyResources *)res; }
 
-///
-///
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+
 DragonflyDeviceDriver::DragonflyDeviceDriver(void)
 {
-	system_resources = (void *) new DragonflyResources;
-	ACE_ASSERT (system_resources != NULL);
+	system_resources=(void *)new DragonflyResources;
+	ACE_ASSERT(system_resources!=NULL);
 }
 
 DragonflyDeviceDriver::~DragonflyDeviceDriver()
 {
 	if (system_resources != NULL)
 		delete (DragonflyResources *)system_resources;
-	system_resources = NULL;
+	
+	system_resources=NULL;
 }
 
 ///
 bool DragonflyDeviceDriver::open (const DragonflyOpenParameters &par)
 {
-	DragonflyResources& d = RES(system_resources);
-	bool ret = d._initialize (par);
-
-	return ret;
+	DragonflyResources& d=RES(system_resources);
+	
+	return d._initialize(par);
 }
 
 bool DragonflyDeviceDriver::close (void)
 {
-	DragonflyResources& d = RES(system_resources);
+	DragonflyResources& d=RES(system_resources);
 
-	bool ret = d._uninitialize ();
-
-	return ret;
+	return d._uninitialize();
 }
 
 bool DragonflyDeviceDriver::getRawBuffer(unsigned char *buff)
 {
     DragonflyResources& d = RES(system_resources);
 
-    unsigned char *tmpBuff;
-
-    d.cam.Capture(d.img);
-  
-    tmpBuff=d.img;
-
-	memcpy(buff, tmpBuff, d.buffLength);
-
-    return true;
+    return d._capture_raw(buff);
 }
 
 bool DragonflyDeviceDriver::getRgbBuffer(unsigned char *buff)
 {
-    DragonflyResources& d = RES(system_resources);
+    DragonflyResources& d=RES(system_resources);
 
-    d.cam.Capture(d.img);
-
-    unsigned  char *tmpBuff=d.img;
-
-	memcpy(buff, tmpBuff, d.buffLength);
-
-    return true;
+    return d._capture(buff);
 }
 
-bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& 
-                                     image) {
-    bool ok = false;
-
+bool DragonflyDeviceDriver::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) 
+{
     DragonflyResources& d = RES(system_resources);
 
-    d.cam.Capture(d.img);
-    unsigned char *tmpBuff=d.img;
+    //d._capture(d.img);
 
-    image.resize(width(),height());
-    if(image.getRawImageSize()==d.buffLength) {
-        memcpy(image.getRawImage(), tmpBuff, d.buffLength);
-        ok = true;
+    image.resize(d.sizeX,d.sizeY);
+    
+    if(image.getRawImageSize()==d.buffLength) 
+    {
+        //memcpy(image.getRawImage(),d.img,d.buffLength);
+        d._capture(image.getRawImage());
+        return true;
     }
 
-    return ok;
+    return false;
 }
 
 int DragonflyDeviceDriver::getRawBufferSize()
@@ -273,51 +364,98 @@ int DragonflyDeviceDriver::height () const
 
 bool DragonflyDeviceDriver::setBrightness (double value)
 {
-    fprintf(stderr, "DragonflyDeviceDriver::setBrightness not yet implemented\n");
-    return false;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setBrightness(value);
 }
 
 bool DragonflyDeviceDriver::setShutter(double value)
 {
-    fprintf(stderr, "DragonflyDeviceDriver::setShutter not yet implemented\n");
-    return false;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setShutter(value);
 }
 
 bool DragonflyDeviceDriver::setGain(double value)
 {
-    fprintf(stderr, "DragonflyDeviceDriver::setGain yet implemented\n");
-    return false;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setGain(value);
 }
 
-double DragonflyDeviceDriver::getBrightness () const
+double DragonflyDeviceDriver::getBrightness() const
 {
-    fprintf(stderr, "DragonflyDeviceDriver::getBrightness not yet implemented\n");
-    return -1;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._getBrightness();
 }
 
 double DragonflyDeviceDriver::getShutter() const
 {
-    fprintf(stderr, "DragonflyDeviceDriver::getShutter not yet implemented\n");
-    return -1;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._getShutter();
 }
 
 double DragonflyDeviceDriver::getGain() const
 {
-    fprintf(stderr, "DragonflyDeviceDriver::getGain yet implemented\n");
-    return -1;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._getGain();
 }
 
-
-bool DragonflyDeviceDriver::setWhiteBalance(double r, double g)
+bool DragonflyDeviceDriver::setWhiteBalance(double red, double blue)
 {
-    fprintf(stderr, "DragonflyDeviceDriver::setWhiteBalance not yet implemented\n");
-    return -1;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setWhiteBalance(blue,red);
 }
 
-bool DragonflyDeviceDriver::getWhiteBalance (double &r, double &g) const
+bool DragonflyDeviceDriver::getWhiteBalance (double &red, double &blue) const
 {
-    r=-1.0;
-    g=-1.0;
-    fprintf(stderr, "DragonflyDeviceDriver::getWhiteBalance not yet implemented\n");
-    return -1;
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._getWhiteBalance(blue,red);
+}
+
+bool DragonflyDeviceDriver::setAuto(bool bAuto)
+{
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setAuto(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoBrightness(bool bAuto)
+{
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setAutoBrightness(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoShutter(bool bAuto)
+{
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setAutoShutter(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoGain(bool bAuto)
+{
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setAutoGain(bAuto);
+}
+
+bool DragonflyDeviceDriver::setAutoWhiteBalance(bool bAuto)
+{
+    DragonflyResources& d=RES(system_resources);
+    
+    return d._setAutoWhiteBalance(bAuto);
+}
+
+void DragonflyDeviceDriver::PrintSettings()
+{
+    DragonflyResources& d=RES(system_resources);
+
+    d._printSettings();
 }
