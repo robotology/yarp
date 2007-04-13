@@ -27,7 +27,7 @@
 /////////////////////////////////////////////////////////////////////////
 
 ///
-/// $Id: EsdMotionControl.cpp,v 1.8 2007-03-10 11:09:25 francesco_nori Exp $
+/// $Id: EsdMotionControl.cpp,v 1.9 2007-04-13 17:18:15 babybot Exp $
 ///
 ///
 
@@ -1213,7 +1213,7 @@ bool EsdMotionControl::positionMoveRaw(int axis, double ref)
 
 	_ref_positions[axis] = ref;
 	*((int*)(r._writeBuffer[0].data+1)) = S_32(_ref_positions[axis]);		/// pos
-	*((short*)(r._writeBuffer[0].data+5)) = S_16(_ref_speeds[axis]);			/// speed
+	*((short*)(r._writeBuffer[0].data+5)) = S_16(_ref_speeds[axis]);		/// speed
 	r._writeBuffer[0].len = 7;
 		
 	_writerequested = true;
@@ -1528,10 +1528,10 @@ bool EsdMotionControl::velocityMoveRaw (int axis, double sp)
             const int j = r._writeMessages - 1;
             _command_speeds[axis] = sp / 1000.0;
 
-			*((short*)(r._writeBuffer[j].data+1)) = S_16(16*_command_speeds[axis]);	/// speed
+			*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[axis]);	/// speed
 			
-			if (16*_ref_accs[axis]>1)
-				*((short*)(r._writeBuffer[j].data+3)) = S_16(16*_ref_accs[axis]);		/// accel
+			if (_ref_accs[axis]>1)
+				*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[axis]);		/// accel
 			else
 				*((short*)(r._writeBuffer[j].data+3)) = S_16(1);
 
@@ -1571,10 +1571,10 @@ bool EsdMotionControl::velocityMoveRaw (const double *sp)
                     const int j = r._writeMessages - 1;
                     _command_speeds[i] = sp[i] / 1000.0;
 
-					*((short*)(r._writeBuffer[j].data+1)) = S_16(16*_command_speeds[i]);	/// speed
+					*((short*)(r._writeBuffer[j].data+1)) = S_16(_command_speeds[i]);	/// speed
 			
-					if (16*_ref_accs[i]>1)
-						*((short*)(r._writeBuffer[j].data+3)) = S_16(16*_ref_accs[i]);		/// accel
+					if (_ref_accs[i]>1)
+						*((short*)(r._writeBuffer[j].data+3)) = S_16(_ref_accs[i]);		/// accel
 					else
 						*((short*)(r._writeBuffer[j].data+3)) = S_16(1);
 
@@ -1743,11 +1743,15 @@ bool EsdMotionControl::doneRaw(int axis)
     short value = 0;
 	ACE_ASSERT (axis >= 0 && axis <= (ESD_MAX_CARDS-1)*2);
 
-   	if (!_readWord16 (CAN_GET_CONTROL_MODE, axis, value))
+    if (!_readWord16 (CAN_GET_CONTROL_MODE, axis, value))
+    {
 		return false;
+    }
 
     if (!(value & 0xf0))
-		return true;
+    {
+        return true;
+    }
 
 	return false;
 }

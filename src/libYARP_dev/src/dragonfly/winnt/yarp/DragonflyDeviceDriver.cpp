@@ -7,7 +7,7 @@
 */
 
 ///
-/// $Id: DragonflyDeviceDriver.cpp,v 1.28 2007-04-13 14:53:10 ale-scalzo Exp $
+/// $Id: DragonflyDeviceDriver.cpp,v 1.29 2007-04-13 17:18:15 babybot Exp $
 ///
 ///
 
@@ -36,7 +36,7 @@ bool Bayer2RGB( const unsigned char* bayer0, int bayer_step, unsigned char *dst0
 //
 class DragonflyResources
 {
-public:
+public: 
 	DragonflyResources (void) 
 	{
 		// Variables initialization
