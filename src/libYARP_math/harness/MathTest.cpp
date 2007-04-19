@@ -15,6 +15,8 @@
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
+#include <yarp/math/Rand.h>
+#include <yarp/math/SVD.h>
 
 using namespace yarp;
 using namespace yarp::sig;
@@ -31,7 +33,7 @@ public:
 		m.zero();
         m=eye(5,5);
         m=eye(2,5);
-        m=eye(5, 2);
+        m=eye(5,2);
 
 		Matrix mt=m.transposed();
 	}
@@ -72,6 +74,32 @@ public:
         checkTrue(acc==9, "operator* works");
     }
 
+    void vectMatrix()
+    {
+        
+        Matrix m(3,2);
+        m=eye(3,2);
+        Vector v1(3);
+        v1=1;
+        Vector v2(2);
+        v2=1;
+        Vector a1;
+        Vector a2;
+        Vector ret1(2);
+        Vector ret2(3);
+        ret1(0)=1;
+        ret1(1)=1;
+
+        ret2(0)=1;
+        ret2(1)=1;
+        ret2(2)=0;
+
+        a1=v1*m;
+        checkTrue((ret1==a1), "Vector by Matrix mult works");
+        a2=m*v2;
+        checkTrue((ret2==a2), "Matrix by Vector mult works");
+    }
+
     void matrixOps()
     {
         report(0,"checking matrix operations...");
@@ -89,11 +117,37 @@ public:
         checkTrue(ret, "Matrix::operator* works");
     }
 
+    void svd()
+    {
+        Matrix M(6,5);
+        M=1;
+        Matrix U,V;
+        Vector s;
+        Matrix S;
+        S.resize(5,5);
+
+        U.resize(6,5);
+        s.resize(5);
+        V.resize(5,5);
+
+        SVD(M, U, s, V);
+
+        S.diagonal(s);
+
+        Matrix T(6,5);
+        T=U*S*V.transposed();
+
+        printf("%s\n", M.toString().c_str());
+        printf("%s\n", T.toString().c_str());
+    }
+
     virtual void runTests() 
     {
         checkMiscOperations();
         vectorOps();
         matrixOps();
+        vectMatrix();
+        svd();
     }
 };
 

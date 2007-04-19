@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.h,v 1.14 2007-03-27 15:12:15 babybot Exp $ 
+// $Id: Matrix.h,v 1.15 2007-04-19 10:56:37 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -179,6 +179,12 @@ public:
       * @return a reference to the object.
       */
       const Matrix &eye();
+
+      /**
+      * Build a diagonal matrix, don't resize.
+      * @return a reference to the object.
+      */
+      const Matrix &diagonal(const Vector &d);
 
       /**
       * Extract a submatrix from (r1,c1 to r2,c2)

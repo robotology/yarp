@@ -12,7 +12,7 @@
 
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_vector_double.h>
-#include <gsl/gsl_cblas.h>
+#include <gsl/gsl_blas.h>
 
 gsl_vector_view getView(const yarp::sig::Vector &v)
 {
@@ -102,5 +102,29 @@ Vector yarp::math::zeros(int s)
     Vector ret;
     ret.resize(s);
     ret.zero();
+    return ret;
+}
+
+Vector yarp::math::operator*(const yarp::sig::Vector &a, const yarp::sig::Matrix &m)
+{
+    // to be implemented
+    Vector ret(m.cols());
+    ret=0.0;
+
+    gsl_blas_dgemv(CblasTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
+        (const gsl_vector *) a.getGslVector(), 0.0, 
+        (gsl_vector *) ret.getGslVector());
+    return ret;
+}
+
+Vector yarp::math::operator*(const yarp::sig::Matrix &m, const yarp::sig::Vector &a)
+{
+    Vector ret(m.rows());
+    ret=0.0;
+
+    gsl_blas_dgemv(CblasNoTrans, 1.0, (const gsl_matrix *) m.getGslMatrix(), 
+        (const gsl_vector *) a.getGslVector(), 0.0, 
+        (gsl_vector *) ret.getGslVector());
+
     return ret;
 }

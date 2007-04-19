@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.15 2007-03-27 18:29:53 babybot Exp $ 
+// $Id: Matrix.cpp,v 1.16 2007-04-19 10:56:37 natta Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/IOException.h>
@@ -264,7 +264,20 @@ const Matrix &Matrix::eye()
         (*this)[r][c]=1.0;
 
     return *this;
+}
 
+const Matrix &Matrix::diagonal(const Vector &d)
+{
+    zero();
+    int tmpR=nrows;
+    if (ncols<nrows)
+        tmpR=ncols;
+
+    int c=0;
+    for(int r=0; r<tmpR; r++,c++)
+        (*this)[r][c]=d[r];
+
+    return *this;
 }
 
 bool Matrix::operator==(const yarp::sig::Matrix &r) const

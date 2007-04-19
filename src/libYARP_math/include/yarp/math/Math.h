@@ -16,11 +16,61 @@ namespace yarp
 {
     namespace math 
     {
+        /**
+        * Addition operator between vectors, returns a+b.
+        */
         yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        
+        /**
+        * Subtraction operator between vectors, returns a-b.
+        */
         yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        
+        /**
+        * Scalar product between vectors, returns a.*b.
+        */
         double dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        
+        /**
+        * Scalar-vector product operator. 
+        * @param k a scalar
+        * @param b vector
+        * @return k*b
+        */
         yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
-        yarp::sig::Vector operator*(const yarp::sig::Vector &a, double k);
+
+        /**
+        * Vector-scalar product operator. 
+        * @param b a vector
+        * @param k a scalar
+        * @return b*k
+        */
+        yarp::sig::Vector operator*(const yarp::sig::Vector &b, double k);
+        
+        /**
+        * Vector-matrix product operator. 
+        * @param a is a vector (interpreted as a row)
+        * @param m is a matrix
+        * @return a*m
+        */
+         yarp::sig::Vector operator*(const yarp::sig::Vector &a, 
+            const yarp::sig::Matrix &m);
+        
+        /**
+        * Matrix-vector product operator. 
+        * @param a is a vector (interpreted as a column)
+        * @param m is a matrix
+        * @return m*a
+        */
+         yarp::sig::Vector operator*(const yarp::sig::Matrix &m, 
+            const yarp::sig::Vector &a);
+        
+         /**
+        * Matrix-matrix product operator. 
+        * @param a a matrix
+        * @param b a matrix
+        * @return a*b
+        */
         yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
 
         /**
