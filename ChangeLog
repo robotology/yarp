@@ -1,5 +1,8 @@
 2007-04-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/harness/ModuleTest.cpp: fix for the usual mac +
+	ACE header file order issue.
+
 	* src/libYARP_OS/src/IConfig.cpp: fix for the usual mac + ACE
 	header file order issue.
 
