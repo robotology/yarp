@@ -14,6 +14,7 @@
 // They can be much simplified by deferring to cmake/autoconf.
 #ifdef YARP_BIG_ENDIAN
 #define YARP2_OSX
+#include <yarp/String.h>
 #endif
 
 namespace yarp {

@@ -79,7 +79,7 @@ public:
      */
     ManagedBytes(int len) {
         char *buf = new char[len];
-        yarp::os::Network::assertion(buf!=0/*NULL*/);
+        Network::assertion(buf!=0/*NULL*/);
         b = Bytes(buf,len);
         owned = true;
     }
