@@ -7,6 +7,7 @@
  */
 
 
+#include <yarp/String.h>
 #include <yarp/os/IConfig.h>
 #include <yarp/os/all.h>
 
