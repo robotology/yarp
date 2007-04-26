@@ -6,12 +6,13 @@
 *
 */
 
-// $Id: Vector.h,v 1.23 2007-03-27 13:45:19 natta Exp $
+// $Id: Vector.h,v 1.24 2007-04-26 12:32:04 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
 
-#include <stdlib.h> //defines size_t
+//#include <stdlib.h> //defines size_t
+#include <stddef.h> //defines size_t
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConstString.h>
 
