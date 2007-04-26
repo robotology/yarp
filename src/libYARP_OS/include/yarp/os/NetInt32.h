@@ -128,6 +128,7 @@ namespace yarp {
 
 
         // in general, this has to come before any reference to sys/types.h
+#include <yarp/String.h>
 #include <ace/config.h>
 
         /* OSX begins*/
