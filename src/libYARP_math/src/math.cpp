@@ -40,8 +40,8 @@ Vector yarp::math::operator+(const Vector &a, const Vector &b)
 
 Matrix yarp::math::operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
 {
-    int m=a.cols();
-	int n=a.rows();
+    int n=a.cols();
+	int m=a.rows();
     yarp::sig::Matrix ret(m,n);
     for (int r=0; r<m;r++)
 		for (int c=0; c<n;c++)
@@ -60,8 +60,8 @@ Vector yarp::math::operator-(const Vector &a, const Vector &b)
 
 Matrix yarp::math::operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
 {
-    int m=a.cols();
-	int n=a.rows();
+    int n=a.cols();
+	int m=a.rows();
     yarp::sig::Matrix ret(m,n);
     for (int r=0; r<m;r++)
 		for (int c=0; c<n;c++)
