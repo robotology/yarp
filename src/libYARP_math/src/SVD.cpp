@@ -12,8 +12,10 @@
 
 #include <yarp/math/SVD.h>
 #include <gsl/gsl_linalg.h>
+#include <yarp/math/Math.h>
 
 using namespace yarp::sig;
+
 
 /**
 * Perform SVD decomposition on a NxM matrix. Golub Reinsch method.
@@ -67,3 +69,31 @@ void yarp::math::SVDJacobi(const Matrix &in,
         (gsl_vector *) S.getGslVector());
 }
 
+/**
+* Perform the moore-penrose pseudo-inverse on 
+* a NxM matrix. 
+* 
+*/
+Matrix yarp::math::pinv(const Matrix &in)
+{
+	int m = in.rows();
+	int n = in.cols();
+	Matrix U(m,n);
+	Vector Sdiag(n);
+	Matrix V(n,n);
+
+	yarp::math::SVD(in, U, Sdiag, V);
+
+	Matrix Spinv = zeros(n,n);
+	for (int c=0;c<n; c++)
+	{
+		for(int r=0;r<n;r++)
+		{
+			if ( r==c && Sdiag(c)!=0 )
+				Spinv(r,c) = 1/Sdiag(c);
+			else
+				Spinv(r,c) = 0;
+		}
+	}
+	return V*Spinv*U.transposed();
+}

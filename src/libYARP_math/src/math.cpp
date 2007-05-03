@@ -37,6 +37,17 @@ Vector yarp::math::operator+(const Vector &a, const Vector &b)
         ret[k]=a[k]+b[k];
     return ret;
 }
+
+Matrix yarp::math::operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
+{
+    int m=a.cols();
+	int n=a.rows();
+    yarp::sig::Matrix ret(m,n);
+    for (int r=0; r<m;r++)
+		for (int c=0; c<n;c++)
+			ret(r,c)=a(r,c)+b(r,c);
+    return ret;
+}
  
 Vector yarp::math::operator-(const Vector &a, const Vector &b)
 {
@@ -44,6 +55,17 @@ Vector yarp::math::operator-(const Vector &a, const Vector &b)
     yarp::sig::Vector ret(s);
     for (int k=0; k<s;k++)
         ret[k]=a[k]-b[k];
+    return ret;
+}
+
+Matrix yarp::math::operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
+{
+    int m=a.cols();
+	int n=a.rows();
+    yarp::sig::Matrix ret(m,n);
+    for (int r=0; r<m;r++)
+		for (int c=0; c<n;c++)
+			ret(r,c)=a(r,c)-b(r,c);
     return ret;
 }
 
