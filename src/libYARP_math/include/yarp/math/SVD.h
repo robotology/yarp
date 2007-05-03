@@ -42,6 +42,11 @@ namespace yarp
             yarp::sig::Vector &S,
             yarp::sig::Matrix &V);
 
+        /**
+        * Perform moore-penrose pinv on a NxM
+        * matrix.
+        */
+        yarp::sig::Matrix pinv(const yarp::sig::Matrix &in);
     }
 }
 

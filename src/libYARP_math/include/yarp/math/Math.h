@@ -20,11 +20,21 @@ namespace yarp
         * Addition operator between vectors, returns a+b.
         */
         yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Addition operator between matrices, returns a+b.
+        */
+        yarp::sig::Matrix operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
         
         /**
         * Subtraction operator between vectors, returns a-b.
         */
         yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Addition operator between matrices, returns a+b.
+        */
+        yarp::sig::Matrix operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
         
         /**
         * Scalar product between vectors, returns a.*b.
