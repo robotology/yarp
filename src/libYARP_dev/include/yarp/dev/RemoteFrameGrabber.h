@@ -164,18 +164,19 @@ private:
         return response.get(2).asDouble();
     }
 
+
+
 	bool getCommand(int code, double &r, double &g) const
-	{
-	    yarp::os::Bottle cmd, response;
+    {
+        yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
         r=response.get(2).asDouble();
-		g=response.get(3).asDouble();
-		return true;
-	}
-
+        g=response.get(3).asDouble();
+        return true;
+    }
 };
 
 
