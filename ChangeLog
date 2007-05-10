@@ -1,3 +1,10 @@
+2007-05-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ThreadImpl.cpp: bugfix - join was no
+	longer being called in some situations due to changes made 
+	for bug #1695724. This gave a memory leak, first noticed
+	in the yarp name server.
+	
 2007-04-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/ModuleTest.cpp: fix for the usual mac +
