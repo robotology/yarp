@@ -60,6 +60,7 @@ ThreadImpl::ThreadImpl() {
     delegate = NULL;
     active = false;
     closing = false;
+    needJoin = false;
     setOptions();
 }
 
@@ -68,15 +69,14 @@ ThreadImpl::ThreadImpl(Runnable *target) {
     delegate = target;
     active = false;
     closing = false;
+    needJoin = false;
     setOptions();
 }
 
 
 ThreadImpl::~ThreadImpl() {
     YARP_DEBUG(Logger::get(),"Thread being deleted");
-    if (active) {
-        join();
-    }
+    join();
 }
 
 
@@ -92,8 +92,11 @@ void ThreadImpl::setOptions(int stackSize) {
 
 int ThreadImpl::join(double seconds) {
     closing = true;
-    if (active) {
+    if (needJoin) {
+        //printf("trying to join...\n");
         int result = ACE_Thread::join(hid);
+        //printf("join result %d...\n", result);
+        needJoin = false;
         active = false;
         return result;
     }
@@ -158,7 +161,10 @@ bool ThreadImpl::start() {
 
 	if (result==0)
 	{
-		//the thread started correctly, wait for the initialization
+        // we must, at some point in the future, join the thread
+        needJoin = true;
+
+		// the thread started correctly, wait for the initialization
 		YARP_DEBUG(Logger::get(),"Thread waiting for init");
 		synchroWait();
 		if (opened)
