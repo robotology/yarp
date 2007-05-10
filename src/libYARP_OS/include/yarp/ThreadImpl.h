@@ -74,6 +74,7 @@ private:
     bool active;
     bool opened;
     bool closing;
+    bool needJoin;
     Runnable *delegate;
 	ACE_Auto_Event synchro;	// event for init synchro
 
