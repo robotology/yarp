@@ -12,6 +12,7 @@
 #include <yarp/ThreadImpl.h>
 #include <yarp/SemaphoreImpl.h>
 #include <yarp/Logger.h>
+#include <yarp/NetType.h>
 #include <yarp/IOException.h>
 
 using namespace yarp;
@@ -175,7 +176,9 @@ bool ThreadImpl::start() {
 		}
 	}
 	//the thread did not start, call afterStart() to warn the user
-	YARP_ERROR(Logger::get(),"Thread did not start");
+	YARP_ERROR(Logger::get(),
+               String("Thread did not start: ") +
+               ACE_OS::strerror(ACE_OS::last_error()));
 	afterStart(false);
 	return false;
 }
