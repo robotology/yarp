@@ -1,5 +1,10 @@
 2007-05-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/CMakeLists.txt: use TARGET_LINK_LIBRARIES
+	instead of LINK_LIBRARIES so that external dependencies
+	propagate correctly to any other subprojects using the device 
+	library (src/yarp-framegrabbergui seems to currently need this).
+
 	* src/libYARP_OS/src/ThreadImpl.cpp: bugfix - join was no
 	longer being called in some situations due to changes made 
 	for bug #1695724. This gave a memory leak, first noticed
