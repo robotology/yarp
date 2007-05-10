@@ -25,23 +25,23 @@ MACRO(YarpAddExtModule modulename path)
   # Check if there are any plugin device subdirectories.
   # Device subdirectories contain a config.cmake file.
   FILE(GLOB_RECURSE devices_list "${path}/yarpdevice.cmake")
+  SET(GEN "${CMAKE_BINARY_DIR}/generated_code/${modulename}")
+  IF (NOT EXISTS ${GEN})
+    FILE(MAKE_DIRECTORY ${GEN})
+  ENDIF (NOT EXISTS ${GEN})
+
+  # We have a cpp file and a header file that call/list the 
+  # initialization methods for all devices
+  SET(ADDER_CPP ${GEN}/${modulename}Adder.cpp)
+  SET(ADDER_H ${GEN}/${modulename}Adder.h)
+  WRITE_FILE(${ADDER_H} "")
+
+  # Write some preamble for the cpp file and header file
+  WRITE_FILE(${ADDER_CPP} "#include \"${modulename}Adder.h\"")
+  WRITE_FILE(${ADDER_CPP} "void add${modulename}() {" APPEND)
+
   IF (devices_list)
-	SET(GEN "${CMAKE_BINARY_DIR}/generated_code/${modulename}")
-	IF (NOT EXISTS ${GEN})
-	  FILE(MAKE_DIRECTORY ${GEN})
-	ENDIF (NOT EXISTS ${GEN})
-
 	SET(devices "${devices_list}")
-
-	# We have a cpp file and a header file that call/list the 
-	# initialization methods for all devices
-	SET(ADDER_CPP ${GEN}/${modulename}Adder.cpp)
-	SET(ADDER_H ${GEN}/${modulename}Adder.h)
-	WRITE_FILE(${ADDER_H} "")
-
-	# Write some preamble for the cpp file and header file
-	WRITE_FILE(${ADDER_CPP} "#include \"${modulename}Adder.h\"")
-	WRITE_FILE(${ADDER_CPP} "void add${modulename}() {" APPEND)
 
 	# For each device directory, create the appropriate files
 	SET(met_dependencies ${})
@@ -151,25 +151,27 @@ MACRO(YarpAddExtModule modulename path)
 	  ENDIF (ENABLE_YARPDEV_NAME)
 	ENDFOREACH(dev)
 
-	# finish up the list of devices
-	WRITE_FILE(${ADDER_CPP} "}" APPEND)
-	WRITE_FILE(${ADDER_H} "extern void add${modulename}();" APPEND)
-
-	MESSAGE(STATUS "Generated ${ADDER_CPP}")
-	MESSAGE(STATUS "Generated  ${ADDER_H}")
-
-	SET(tmp_sources ${tmp_sources} ${ADDER_CPP})
-	SET(tmp_headers ${tmp_headers} ${ADDER_H})
-
-	# Automatically add include directories if needed.
-	FOREACH(header_file ${tmp_headers})
-	  GET_FILENAME_COMPONENT(p ${header_file} PATH)
-	  #MESSAGE(ERROR ${p})
-	  INCLUDE_DIRECTORIES(${p})
-	ENDFOREACH(header_file ${folder_header})
-
-	# Set up the lib
-	ADD_LIBRARY(${modulename} ${tmp_sources} ${tmp_headers})
-
   ENDIF (devices_list)
+
+  # finish up the list of devices
+  WRITE_FILE(${ADDER_CPP} "}" APPEND)
+  WRITE_FILE(${ADDER_H} "extern void add${modulename}();" APPEND)
+
+  MESSAGE(STATUS "Generated ${ADDER_CPP}")
+  MESSAGE(STATUS "Generated  ${ADDER_H}")
+
+  SET(tmp_sources ${tmp_sources} ${ADDER_CPP})
+  SET(tmp_headers ${tmp_headers} ${ADDER_H})
+
+  # Automatically add include directories if needed.
+  FOREACH(header_file ${tmp_headers})
+  GET_FILENAME_COMPONENT(p ${header_file} PATH)
+  #MESSAGE(ERROR ${p})
+  INCLUDE_DIRECTORIES(${p})
+  ENDFOREACH(header_file ${folder_header})
+
+  # Set up the lib
+  ADD_LIBRARY(${modulename} ${tmp_sources} ${tmp_headers})
+
+
 ENDMACRO(YarpAddExtModule)
