@@ -7,7 +7,7 @@ IF (WIN32 AND NOT CYGWIN)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(AVAILABLE_DEVICES dragonfly microphone urbtc)
+   SET(AVAILABLE_DEVICES firewirecamera dragonfly microphone urbtc)
 ENDIF (UNIX)
 
 SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber ffmpeg portaudio)

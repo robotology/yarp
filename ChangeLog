@@ -1,8 +1,14 @@
 2007-05-14  Lorenzo Natale  <nat@liralab.it>
 
+	* src/libYARP_dev/src/firewirecamera:
+	new device, video steraming from firewire bus.
+
+2007-05-14  Lorenzo Natale  <nat@liralab.it>
+
 	* src/libYARP_dev/src/esdMotionControl: 
 	* src/libYARP_dev/src/James:
 	* src/libYARP_dev/src/XSensMTx: 
+	* src/libYARP_dev/src/inertiacube2:
 	code removed. It is now placed in platform specific modules.
 
 2007-05-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
