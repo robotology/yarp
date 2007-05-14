@@ -2,7 +2,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
-#include "FirewireCamera.h"
+#include "FirewireCameraDC1394.h"
 #include "FirewireCameraSet.h"
 
 ///////////////////////////////////////////////////////

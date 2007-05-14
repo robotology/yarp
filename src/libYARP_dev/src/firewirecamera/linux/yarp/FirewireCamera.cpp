@@ -27,7 +27,7 @@ public:
 	{
 	}
 
-	~DragonflyResources () 
+	~FirewireCameraResources () 
 	{ 
         _uninitialize();
 	}
@@ -51,7 +51,7 @@ public:
 	//Semaphore _newFrameMutex;
 	//Semaphore _convImgMutex;
 	
-	inline bool _initialize (const FireireCameraOpenParameters & params);
+	inline bool _initialize (const FirewireCameraOpenParameters & params);
 	inline bool _uninitialize();
 
 	inline bool _setBrightness (double value);
@@ -117,7 +117,7 @@ inline bool FirewireCameraResources::_initialize (const FirewireCameraOpenParame
 
     if (!m_pCameraSet->StartCamera(unit_number,sizeX,sizeY)) // default dma=true
     {
-        ACE_OS::fprintf(stderr, "DragonflyResources: can't open camera %d",unit_number);
+        ACE_OS::fprintf(stderr, "FirewirecameraResources: can't open camera %d",unit_number);
         return false;
     }
     
@@ -261,50 +261,50 @@ inline FirewireCameraResources& RES(void *res) { return *(FirewireCameraResource
 
 FirewireCamera::FirewireCamera(void)
 {
-	system_resources=(void *)new DragonflyResources;
+	system_resources=(void *)new FirewireCameraResources;
 	ACE_ASSERT(system_resources!=NULL);
 }
 
 FirewireCamera::~FirewireCamera()
 {
 	if (system_resources != NULL)
-		delete (DragonflyResources *)system_resources;
+		delete (FirewireCameraResources *)system_resources;
 	
 	system_resources=NULL;
 }
 
 ///
-bool FirewireCamera::open (const DragonflyOpenParameters &par)
+bool FirewireCamera::open (const FirewireCameraOpenParameters &par)
 {
-	DragonflyResources& d=RES(system_resources);
+	FirewireCameraResources& d=RES(system_resources);
 	
 	return d._initialize(par);
 }
 
 bool FirewireCamera::close (void)
 {
-	DragonflyResources& d=RES(system_resources);
+	FirewireCameraResources& d=RES(system_resources);
 
 	return d._uninitialize();
 }
 
 bool FirewireCamera::getRawBuffer(unsigned char *buff)
 {
-    DragonflyResources& d = RES(system_resources);
+    FirewireCameraResources& d = RES(system_resources);
 
     return d._capture_raw(buff);
 }
 
 bool FirewireCamera::getRgbBuffer(unsigned char *buff)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
 
     return d._capture(buff);
 }
 
 bool FirewireCamera::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) 
 {
-    DragonflyResources& d = RES(system_resources);
+    FirewireCameraResources& d = RES(system_resources);
 
     //d._capture(d.img);
 
@@ -322,7 +322,7 @@ bool FirewireCamera::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image)
 
 int FirewireCamera::getRawBufferSize()
 {
-    DragonflyResources& d = RES(system_resources);
+    FirewireCameraResources& d = RES(system_resources);
     return d.buffLength;
 }
 
@@ -338,98 +338,98 @@ int FirewireCamera::height () const
 
 bool FirewireCamera::setBrightness (double value)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setBrightness(value);
 }
 
 bool FirewireCamera::setShutter(double value)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setShutter(value);
 }
 
 bool FirewireCamera::setGain(double value)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setGain(value);
 }
 
 double FirewireCamera::getBrightness() const
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._getBrightness();
 }
 
 double FirewireCamera::getShutter() const
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._getShutter();
 }
 
 double FirewireCamera::getGain() const
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._getGain();
 }
 
 bool FirewireCamera::setWhiteBalance(double red, double blue)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setWhiteBalance(blue,red);
 }
 
 bool FirewireCamera::getWhiteBalance (double &red, double &blue) const
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._getWhiteBalance(blue,red);
 }
 
 bool FirewireCamera::setAuto(bool bAuto)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setAuto(bAuto);
 }
 
 bool FirewireCamera::setAutoBrightness(bool bAuto)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setAutoBrightness(bAuto);
 }
 
 bool FirewireCamera::setAutoShutter(bool bAuto)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setAutoShutter(bAuto);
 }
 
 bool FirewireCamera::setAutoGain(bool bAuto)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setAutoGain(bAuto);
 }
 
 bool FirewireCamera::setAutoWhiteBalance(bool bAuto)
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
     
     return d._setAutoWhiteBalance(bAuto);
 }
 
 void FirewireCamera::PrintSettings()
 {
-    DragonflyResources& d=RES(system_resources);
+    FirewireCameraResources& d=RES(system_resources);
 
     d._printSettings();
 }
