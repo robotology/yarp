@@ -1,7 +1,9 @@
 2007-05-14  Lorenzo Natale  <nat@liralab.it>
 
-	* src/libYARP_dev/src/esdMotionControl: code removed. It is
-	now placed in platform specific modules.
+	* src/libYARP_dev/src/esdMotionControl: 
+	* src/libYARP_dev/src/James:
+	* src/libYARP_dev/src/XSensMTx: 
+	code removed. It is now placed in platform specific modules.
 
 2007-05-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
