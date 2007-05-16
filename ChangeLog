@@ -1,7 +1,13 @@
+2007-05-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/include/yarp/sig/all.h: removed automatic
+	include of IplImage.h -- clashes with opencv in some cases,
+	and should be unnecessary.  Closes bug #1720180 (thanks Jonas).
+
 2007-05-14  Lorenzo Natale  <nat@liralab.it>
 
 	* src/libYARP_dev/src/firewirecamera:
-	new device, video steraming from firewire bus.
+	new device, video streaming from firewire bus.
 
 2007-05-14  Lorenzo Natale  <nat@liralab.it>
 
