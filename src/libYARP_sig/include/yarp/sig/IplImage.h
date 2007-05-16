@@ -2,14 +2,12 @@
 
 
 // Summary for YARP:
-// CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
-// Copyright: (C) 2000, Intel Corporation, all rights reserved.
 
 
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ * Copyright: (C) 2000, Intel Corporation, all rights reserved.
+ * CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
  *
  */
 
