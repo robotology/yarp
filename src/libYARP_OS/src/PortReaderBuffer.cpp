@@ -212,6 +212,20 @@ public:
         return prev;
     }
 
+    PortReaderPacket *dropContent() {
+        // don't affect "prev"
+        PortReaderPacket *drop = NULL;
+
+        if (pool.getCount()>=1) {
+            drop = pool.getActivePacket();
+            if (drop!=NULL) {
+                pool.addInactivePacket(drop);
+            }
+            ct--;
+        }
+        return drop;
+    }
+
 	void attach(Port& port) {
 		this->port = &port;
 		port.setReader(owner);
@@ -292,7 +306,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         bool pruned = false;
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket = 
-                HELPER(implementation).getContent();
+                HELPER(implementation).dropContent();
             PortReader *reader = NULL;
             if (readerPacket!=NULL) reader = readerPacket->getReader();
             pruned = (reader!=NULL);

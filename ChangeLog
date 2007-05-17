@@ -1,3 +1,9 @@
+2007-05-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortReaderBuffer.cpp: There was a bug that
+	would in some cases let a port overwrite a message currently being
+	accessed by the user of the port (thanks Jonas).
+
 2007-05-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/all.h: removed automatic
