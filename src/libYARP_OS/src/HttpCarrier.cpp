@@ -63,7 +63,7 @@ void HttpTwoWayStream::apply(char ch) {
                 // translate this to a form
                 if (part[0]=='+') { part[0] = ' '; }
                 String org = part;
-                part = "<form method=post>";
+                part = "<p><form method=post>";
 				unsigned int i=0;
                 for (i=0; i<org.length(); i++) {
                     if (org[i]=='"') {
@@ -101,7 +101,7 @@ void HttpTwoWayStream::apply(char ch) {
                     }
                 }
                 part += "<input type=submit value=\"go\">";
-                part += "</form>";
+                part += "</form></p>";
             }
             proc += part;
             proc += "\n";

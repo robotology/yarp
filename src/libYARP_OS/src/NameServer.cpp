@@ -372,6 +372,8 @@ String NameServer::cmdHelp(int argc, char *argv[]) {
     result += String("+ help\n");
     result += String("+ list\n");
     result += String("+ register $portname\n");
+    result += String("+ register $portname $carrier $ipAddress $portNumber\n");
+    result += String("  (if you want a field set automatically, write '...')\n");
     result += String("+ unregister $portname\n");
     result += String("+ query $portname\n");
     result += String("+ set $portname $property $value\n");
