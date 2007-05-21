@@ -10,27 +10,41 @@
 #define _YARP2_SHMEMCARRIER_
 
 #include <yarp/AbstractCarrier.h>
+
 #include <yarp/ShmemTwoWayStream.h>
+
+// new shmem implementation from Alessandro
+#include <yarp/ShmemHybridStream.h>
 
 namespace yarp {
     class ShmemCarrier;
 }
 
 class yarp::ShmemCarrier : public AbstractCarrier {
+private:
+    int version;
 public:
-    ShmemCarrier() {
+    /**
+     * verion 1 is "classic" YARP implementation of shmem.
+     * version 2 is "Alessandro" version.
+     */
+    ShmemCarrier(int version = 1) {
+        this->version = version;
     }
 
     virtual Carrier *create() {
-        return new ShmemCarrier();
+        return new ShmemCarrier(version);
     }
 
     virtual String getName() {
-        return "shmem";
+        return (version==1)?"shmem":"shmem2";
     }
 
     virtual int getSpecifierCode() {
-        return 2;
+        // specifier codes are a very old yarp feature,
+        // not necessary any more really.
+        // number 14 reserved for testing.
+        return (version==1)?2:14;
     }
 
     virtual bool requireAck() {
@@ -54,32 +68,69 @@ public:
 
     virtual void becomeShmem(Protocol& proto, bool sender) {
 
-        ShmemTwoWayStream *stream = new ShmemTwoWayStream();
-        YARP_ASSERT(stream!=NULL);
-        Address base;
-        try {
-            if (!sender) {
-                ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-                base = Address(anywhere.get_host_addr(),
-                               anywhere.get_port_number());
-                stream->open(base,sender);
-                int myPort = stream->getLocalAddress().getPort();
-                proto.writeYarpInt(myPort);
-                stream->accept();
-                proto.takeStreams(NULL);
-                proto.takeStreams(stream);
-            } else {
-                int altPort = proto.readYarpInt();
-                String myName = proto.getStreams().getLocalAddress().getName();
-                proto.takeStreams(NULL);
-                base = Address(myName,altPort);
-                stream->open(base,sender);
-                proto.takeStreams(stream);
+        // big copy-and-paste
+        // this is only for testing purposes
+
+        if (version==1) {
+            // "classic" shmem
+
+            ShmemTwoWayStream *stream = new ShmemTwoWayStream();
+            YARP_ASSERT(stream!=NULL);
+            Address base;
+            try {
+                if (!sender) {
+                    ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+                    base = Address(anywhere.get_host_addr(),
+                                   anywhere.get_port_number());
+                    stream->open(base,sender);
+                    int myPort = stream->getLocalAddress().getPort();
+                    proto.writeYarpInt(myPort);
+                    stream->accept();
+                    proto.takeStreams(NULL);
+                    proto.takeStreams(stream);
+                } else {
+                    int altPort = proto.readYarpInt();
+                    String myName = proto.getStreams().getLocalAddress().getName();
+                    proto.takeStreams(NULL);
+                    base = Address(myName,altPort);
+                    stream->open(base,sender);
+                    proto.takeStreams(stream);
+                }
+            } catch (IOException e) {
+                delete stream;
+                stream = NULL;
+                throw e;
             }
-        } catch (IOException e) {
-            delete stream;
-            stream = NULL;
-            throw e;
+        } else {
+            // experimental shmem
+
+            ShmemHybridStream *stream = new ShmemHybridStream();
+            YARP_ASSERT(stream!=NULL);
+            Address base;
+            try {
+                if (!sender) {
+                    ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+                    base = Address(anywhere.get_host_addr(),
+                                   anywhere.get_port_number());
+                    stream->open(base,sender);
+                    int myPort = stream->getLocalAddress().getPort();
+                    proto.writeYarpInt(myPort);
+                    stream->accept();
+                    proto.takeStreams(NULL);
+                    proto.takeStreams(stream);
+                } else {
+                    int altPort = proto.readYarpInt();
+                    String myName = proto.getStreams().getLocalAddress().getName();
+                    proto.takeStreams(NULL);
+                    base = Address(myName,altPort);
+                    stream->open(base,sender);
+                    proto.takeStreams(stream);
+                }
+            } catch (IOException e) {
+                delete stream;
+                stream = NULL;
+                throw e;
+            }
         }
     }
 

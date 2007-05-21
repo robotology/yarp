@@ -1,3 +1,9 @@
+2007-05-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/ShmemCarrier.h, 
+	src/libYARP_OS/include/src/Carriers.cpp: told YARP about
+	ale's new carrier, called it "shmem2" for testing purposes.
+
 2007-05-21  Alessandro Scalzo <ale@liralab.it>
 	* src/libYARP_OS/include/yarp/ShmemHybridStream.h, 
 	src/libYARP_OS/src/ShmemHybridStream.cpp: added a new
