@@ -62,11 +62,10 @@ MACRO(YarpAddExtModule modulename path)
 	  ENDIF (dev_path)
 	  SET(CMAKE_MODULE_PATH ${SAVE_PATH})
 
-
 	  SET(SELECTED_ONE 0)
 
 	  ### parse all devices in the folder, they can be more than one
-	  SET(lib_sourcpes ${})
+	  SET(lib_sources ${})
 	  FOREACH(YARPDEV_NAME ${YARPDEV_NAMES})
 		#####
 		CAR(YARPDEV_INCLUDE ${YARPDEV_INCLUDES})

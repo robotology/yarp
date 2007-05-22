@@ -6,7 +6,7 @@
  */
 
 //
-// $Id: FirewireCamera.h,v 1.1 2007-05-14 19:21:15 natta Exp $
+// $Id: FirewireCamera.h,v 1.2 2007-05-22 21:35:51 babybot Exp $
 //
 //
 
@@ -26,14 +26,14 @@
 
 namespace yarp {
     namespace dev {
-        class DragonflyOpenParameters;
-        class DragonflyDeviceDriver;
+        class FirewireCameraOpenParameters;
+        class FirewireCamera;
     }
 }
 
 /**
  * \file FirewireCamera.h device driver for managing the 
- * Dragonfly IEEE-1394 Camera
+ * IEEE-1394 Camera
  */
 
 /**
@@ -89,25 +89,25 @@ public:
 /**
  * @ingroup dev_impl_media
  *
- * A Point Grey Dragonfly digital camera (or, on Linux, any digital camera).
+ * A generic firewire digital camera (or, on Linux, any digital camera).
  */
-class yarp::dev::FirewireCameraOpenParameters : 
+class yarp::dev::FirewireCamera : 
     public IFrameGrabber, public IFrameGrabberRgb, public IFrameGrabberImage, public IFrameGrabberControls, public DeviceDriver
 {
 private:
-	DragonflyDeviceDriver(const DragonflyDeviceDriver&);
-	void operator=(const DragonflyDeviceDriver&);
+	FirewireCamera(const FirewireCamera&);
+	void operator=(const FirewireCamera&);
 
 public:
 	/**
 	 * Constructor.
 	 */
-	FirewireCameraOpenParameters();
+	FirewireCamera();
 
 	/**
 	 * Destructor.
 	 */
-	virtual ~FirewireCameraOpenParameters();
+	virtual ~FirewireCamera();
 
     // temp: here for debug purposes only
     void recColorFSBilinear(const unsigned char *src, unsigned char *out);
@@ -124,7 +124,7 @@ public:
 
     virtual bool open(yarp::os::Searchable& config)
 	{
-        DragonflyOpenParameters params;
+        FirewireCameraOpenParameters params;
 		yarp::os::Value *value;
 		if (config.check("unit_number",value)||config.check("d",value)) {
 			params._unit_number = value->asInt();
