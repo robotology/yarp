@@ -13,12 +13,14 @@
 
 # April 07 -- nat
 
+INCLUDE(ListUtils.cmake)
+
 MACRO(YarpAddExtModule modulename path)
 
   # Start a project.
   PROJECT(${modulename})
 
-  ## clean variables
+  ## clean variables, not sure if this is the right way to do it
   SET(tmp_sources ${})
   SET(tmp_headers ${})
 
@@ -60,25 +62,50 @@ MACRO(YarpAddExtModule modulename path)
 	  ENDIF (dev_path)
 	  SET(CMAKE_MODULE_PATH ${SAVE_PATH})
 
-	  # make a flag for conditional compilation of the device
-	  SET(ENABLE_${YARPDEV_NAME} FALSE CACHE BOOL "Do you want to use ${YARPDEV_NAME}?")
-	  SET(ENABLE_YARPDEV_NAME 0)
-	  IF (ENABLE_${YARPDEV_NAME})
-		SET(ENABLE_YARPDEV_NAME 1)
-	  ENDIF (ENABLE_${YARPDEV_NAME})
 
-	  IF (ENABLE_YARPDEV_NAME)
-		# write a quick cpp file to add an appropriate factory for the device
-		CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
-		  ${GEN}/add_${YARPDEV_NAME}.cpp @ONLY  IMMEDIATE)
+	  SET(SELECTED_ONE 0)
 
-		# aggregate this into our global list
-		WRITE_FILE(${ADDER_CPP} "add_${YARPDEV_NAME}();" APPEND)
-		WRITE_FILE(${ADDER_H} "extern void add_${YARPDEV_NAME}();" APPEND)
-		FILE(GLOB folder_dev_source ${dev_path}/*.cpp ${dev_path}/*.cc 
-		  ${dev_path}/*.c)
-		FILE(GLOB folder_dev_header ${dev_path}/*.h)
+	  ### parse all devices in the folder, they can be more than one
+	  SET(lib_sourcpes ${})
+	  FOREACH(YARPDEV_NAME ${YARPDEV_NAMES})
+		#####
+		CAR(YARPDEV_INCLUDE ${YARPDEV_INCLUDES})
+		CAR(YARPDEV_TYPE ${YARPDEV_TYPES})
+		
+		SET(ENABLE_${modulename}_${YARPDEV_NAME} FALSE CACHE BOOL 
+		  "Do you want to include ${dev_path}?")
 
+		SET(ENABLE_YARPDEV_NAME 0)
+		IF (ENABLE_${modulename}_${YARPDEV_NAME})
+		  SET(SELECTED_ONE 1)
+		  SET(ENABLE_YARPDEV_NAME 1)
+		ENDIF (ENABLE_${modulename}_${YARPDEV_NAME})
+
+		#		  MESSAGE(ERROR "YARPDEV_NAME: ${YARPDEV_NAME}")	
+		#		  MESSAGE(ERROR "YARPDEV_INCLUDE: ${YARPDEV_INCLUDE}")
+		#		  MESSAGE(ERROR "YARPDEV_TYPE: ${YARPDEV_TYPE}")
+
+		# write a quick cpp file to add an appropriate factory 
+		# for the device
+		IF(ENABLE_YARPDEV_NAME)
+		  CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
+			${GEN}/add_${YARPDEV_NAME}.cpp @ONLY  IMMEDIATE)
+
+		  # aggregate this into our global list
+		  WRITE_FILE(${ADDER_CPP} "add_${YARPDEV_NAME}();" APPEND)
+		  WRITE_FILE(${ADDER_H} "extern void add_${YARPDEV_NAME}();" APPEND)
+		  FILE(GLOB folder_dev_source ${dev_path}/*.cpp ${dev_path}/*.cc 
+			${dev_path}/*.c)
+
+		  SET(lib_sources ${lib_sources} ${GEN}/add_${YARPDEV_NAME}.cpp)
+		  FILE(GLOB folder_dev_header ${dev_path}/*.h)
+		ELSE(ENABLE_YARPDEV_NAME)
+		  MESSAGE(STATUS "${modulename}_${YARPDEV_NAME} not selected, skipping it")
+		ENDIF(ENABLE_YARPDEV_NAME)
+	  ENDFOREACH(YARPDEV_NAME ${YARPDEV_NAMES})
+
+	  IF(SELECTED_ONE)
+		### now seach files in the directory
 		SET(folder_common_source ${})
 		SET(folder_common_header ${})
 
@@ -104,14 +131,14 @@ MACRO(YarpAddExtModule modulename path)
 		  INCLUDE(${dev_path}/${OS_TAG}/dependencies.cmake)
 		ENDIF(EXISTS ${dev_path}/${OS_TAG}/dependencies.cmake)
 
-		SET(tmp_sources ${tmp_sources} ${GEN}/add_${YARPDEV_NAME}.cpp 
+		SET(tmp_sources ${tmp_sources} ${lib_sources}
 		  ${folder_dev_source} ${folder_common_source} ${folder_plat_source})
 		SET(tmp_headers ${tmp_headers} ${folder_dev_header} 
 		  ${folder_common_header} ${folder_plat_header})
 
-		#	MESSAGE(STATUS "DEV: ${folder_dev_header}")
-		#	MESSAGE(STATUS "COMMON: ${folder_common_header}")
-		#  	MESSAGE(STATUS "PLAT: ${folder_plat_header}")
+		#		MESSAGE(STATUS "DEV: ${folder_dev_header}")
+		#		MESSAGE(STATUS "COMMON: ${folder_common_header}")
+		#		MESSAGE(STATUS "PLAT: ${folder_plat_header}")
 
 		######### now try to meet dependencies
 		FOREACH(DEP ${YARPDEV_DEPENDENCIES})
@@ -126,10 +153,10 @@ MACRO(YarpAddExtModule modulename path)
 			IF(PKGCONFIG_EXECUTABLE)
 			  PKGCONFIG(${DEP} ${DEP}_INCLUDE_DIR ${DEP}_LINK_DIRECTORIES
 				${DEP}_LIBRARIES ${DEP}_CFLAGS)
-#			  message(STATUS "inc: -${${DEP}_INCLUDE_DIR}")
-#			  message(STATUS "link flags: -${${DEP}_LINK_FLAGS}")
-#			  message(STATUS "cflags: -${${DEP}_CFLAGS}")
-#			  message(STATUS "link dir: -${${DEP}_LINK_DIR}")
+			  #		  message(STATUS "inc: -${${DEP}_INCLUDE_DIR}")
+			  #		  message(STATUS "link flags: -${${DEP}_LINK_FLAGS}")
+			  #		  message(STATUS "cflags: -${${DEP}_CFLAGS}")
+			  #		  message(STATUS "link dir: -${${DEP}_LINK_DIR}")
 			ENDIF(PKGCONFIG_EXECUTABLE)
 			IF (${DEP}_LIBRARIES) ### check if found
 			  SET(met_dependencies ${met_dependencies} ${${DEP}_LIBRARIES})
@@ -146,11 +173,8 @@ MACRO(YarpAddExtModule modulename path)
 		# make sure this device directory is included in our header
 		# file path
 		INCLUDE_DIRECTORIES(${dev_path})
-	  ELSE (ENABLE_YARPDEV_NAME)
-		MESSAGE(STATUS "Device ${YARPDEV_NAME} is not enabled")	
-	  ENDIF (ENABLE_YARPDEV_NAME)
+	  ENDIF (SELECTED_ONE)
 	ENDFOREACH(dev)
-
   ENDIF (devices_list)
 
   # finish up the list of devices
@@ -165,13 +189,11 @@ MACRO(YarpAddExtModule modulename path)
 
   # Automatically add include directories if needed.
   FOREACH(header_file ${tmp_headers})
-  GET_FILENAME_COMPONENT(p ${header_file} PATH)
-  #MESSAGE(ERROR ${p})
-  INCLUDE_DIRECTORIES(${p})
+	GET_FILENAME_COMPONENT(p ${header_file} PATH)
+	#MESSAGE(ERROR ${p})
+	INCLUDE_DIRECTORIES(${p})
   ENDFOREACH(header_file ${folder_header})
 
   # Set up the lib
   ADD_LIBRARY(${modulename} ${tmp_sources} ${tmp_headers})
-
-
 ENDMACRO(YarpAddExtModule)
