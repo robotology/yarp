@@ -15,11 +15,9 @@
 #include <ace/SOCK_Connector.h>
 #include <ace/Log_Msg.h>
 #if defined(ACE_LACKS_SYSV_SHMEM)
-#include <ace/Mem_Map.h>
-#define SHARED_MEM_IMPL ACE_Mem_Map
+#include <ace/Shared_Memory_MM.h>
 #else
 #include <ace/Shared_Memory_SV.h>
-#define SHARED_MEM_IMPL ACE_Shared_Memory_SV
 #endif
 
 #include <yarp/os/Semaphore.h>
@@ -117,7 +115,7 @@ protected:
 	int m_Port;
 	Address m_LocalAddress;
 
-	SHARED_MEM_IMPL *m_pSendMap,*m_pRecvMap;
+	ACE_Shared_Memory *m_pSendMap,*m_pRecvMap;
 
 	char *m_pSendBuffer,*m_pRecvBuffer;
 
@@ -285,7 +283,7 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 		}
 
 #if defined(ACE_LACKS_SYSV_SHMEM)
-		m_pSendMap->sync();
+		//m_pSendMap->sync();
 #endif
 
 		m_SendNData+=bytes_num;
@@ -332,7 +330,7 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 	if (m_RecvNData>0) // data available
 	{
 #if defined(ACE_LACKS_SYSV_SHMEM)
-		m_pRecvMap->sync();
+		//m_pRecvMap->sync();
 #endif
 
 		int bytes_num=size<m_RecvNData?size:m_RecvNData;
