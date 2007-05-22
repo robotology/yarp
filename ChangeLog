@@ -1,3 +1,10 @@
+2007-05-21  Lorenzo Natale  <nat@liralab.it>
+
+	* conf/YarpAddExternalModules: multiple devices 
+	can now be listed in each device directory, 
+	module name gets propagated to cmake flag variable
+	to avoid clashes.
+
 2007-05-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/ShmemCarrier.h, 
