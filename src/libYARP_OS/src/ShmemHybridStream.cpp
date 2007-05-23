@@ -90,7 +90,7 @@ int yarp::ShmemHybridStream::accept()
 		PROT_RDWR, //int prot = PROT_RDWR,
 		ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
 #else
-	int shmemkey=2*m_Port;
+	int shmemkey=2*m_LocalAddress.getPort();
 
 	m_pSendMap=new ACE_Shared_Memory_SV(shmemkey,m_SendBuffSize,ACE_Shared_Memory_SV::ACE_CREATE);
 #endif
@@ -126,7 +126,7 @@ int yarp::ShmemHybridStream::accept()
 		ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
 
 #else
-	shmemkey=2*m_Port+1;
+	shmemkey=2*m_LocalAddress.getPort()+1;
 
 	m_pRecvMap=new ACE_Shared_Memory_SV(shmemkey,m_RecvBuffSize);
 #endif
@@ -185,7 +185,7 @@ int yarp::ShmemHybridStream::connect(const Address& address)
 
 #else
 
-	int shmemkey=2*m_Port;
+	int shmemkey=2*m_LocalAddress.getPort();
 
 	m_pRecvMap=new ACE_Shared_Memory_SV(shmemkey,m_RecvBuffSize);			
 
@@ -225,7 +225,7 @@ int yarp::ShmemHybridStream::connect(const Address& address)
 
 #else
 
-	shmemkey=2*m_Port+1;
+	shmemkey=2*m_LocalAddress.getPort()+1;
 
 	m_pSendMap=new ACE_Shared_Memory_SV(shmemkey,m_SendBuffSize,ACE_Shared_Memory_SV::ACE_CREATE);			
 
