@@ -11,28 +11,6 @@
 
 #include <yarp/NetType.h>
 
-bool yarp::ShmemHybridStream::Create(int port,int sendbuffsize)
-{
-	m_bLinked=false;
-	m_bDataRequest=false;
-	m_bSpaceRequest=false;
-
-	m_SendNFree=m_SendBuffSize=sendbuffsize;
-	m_RecvNFree=m_RecvBuffSize=0;
-
-	m_pRecvMap=0;
-	m_pSendMap=0;
-	m_Port=port;
-
-	m_LocalAddress=Address("127.0.0.1",m_Port);
-
-	m_RecvHead=m_RecvTail=0;
-	m_SendHead=m_SendTail=0;
-	m_RecvNData=m_SendNData=0;
-
-	return true;
-}
-
 bool yarp::ShmemHybridStream::Close(bool bCloseRemote)
 {
 	if (!m_bLinked) return false;
@@ -71,14 +49,18 @@ int yarp::ShmemHybridStream::accept()
 {
 	if (m_bLinked) return -1;
 
-	ACE_INET_Addr addr(m_Port,"127.0.0.1");
-	ACE_SOCK_Acceptor acceptor(addr);
-	int result=acceptor.accept(m_SockStream);
+	int result=m_Acceptor.accept(m_SockStream);
 
 	if (result<0)
 	{
 		return result;
 	}
+
+    ACE_INET_Addr local,remote;
+    m_SockStream.get_local_addr(local);
+    m_SockStream.get_remote_addr(remote);
+    m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
+    m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
 
 	ShmemConnect_t send_conn_data;
 	send_conn_data.command=ACKNOWLEDGE;
@@ -93,11 +75,11 @@ int yarp::ShmemHybridStream::accept()
 
 	if (tmpres!=-1)
 	{
-		sprintf(send_conn_data.filename,"%s/SRV_SHMEM_FILE_%d",file_path,m_Port);
+		sprintf(send_conn_data.filename,"%s/SRV_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
 	}
 	else
 	{
-		sprintf(send_conn_data.filename,"SRV_SHMEM_FILE_%d",m_Port);
+		sprintf(send_conn_data.filename,"SRV_SHMEM_FILE_%d",m_LocalAddress.getPort());
 		YARP_DEBUG(Logger::get(),"ShmemHybridStream: no temp directory found, using Local.");
 	}
 
@@ -158,11 +140,11 @@ int yarp::ShmemHybridStream::accept()
 	return result;
 }
 
-int yarp::ShmemHybridStream::connect()
+int yarp::ShmemHybridStream::connect(const Address& address)
 {
 	if (m_bLinked) return -1;
 
-	ACE_INET_Addr addr(m_Port,"127.0.0.1");
+	ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
 	ACE_SOCK_Connector connector;
 	int result=connector.connect(m_SockStream,addr);
 
@@ -171,6 +153,12 @@ int yarp::ShmemHybridStream::connect()
 		return result;
 	}
 
+	ACE_INET_Addr local,remote;
+    m_SockStream.get_local_addr(local);
+    m_SockStream.get_remote_addr(remote);
+    m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
+    m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
+	
 	ShmemConnect_t recv_conn_data;
 
 	int ret=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
@@ -220,11 +208,11 @@ int yarp::ShmemHybridStream::connect()
 
 	if (tmpres!=-1)
 	{
-		sprintf(send_conn_data.filename,"%s/CLN_SHMEM_FILE_%d",file_path,m_Port);
+		sprintf(send_conn_data.filename,"%s/CLN_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
 	}
 	else
 	{
-		sprintf(send_conn_data.filename,"CLN_SHMEM_FILE_%d",m_Port);
+		sprintf(send_conn_data.filename,"CLN_SHMEM_FILE_%d",m_LocalAddress.getPort());
 		YARP_DEBUG(Logger::get(),"ShmemHybridStream: no temp directory found, using Local.");
 	}
 

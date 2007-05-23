@@ -65,18 +65,46 @@ public:
 		Close();
 	}
 	
-	bool Create(int port,int sendbuffsize=4096);
 	bool Close(bool bCloseRemote=false);
 	int  accept();
-	int connect();
 	inline int send(char* data,int size,bool bNonBlocking=false);
 	inline int recv(char* data,int size,bool bNonBlocking=false);
 
-	int open(const Address& address,bool sender,int buffsize=4096) 
+	int open(const Address& address,bool sender,int sendbuffsize=4096) 
 	{
-		if (!Create(address.getPort(),buffsize)) return -1;
+		m_bLinked=false;
+		m_bDataRequest=false;
+		m_bSpaceRequest=false;
 
-		if (sender) return connect();
+		m_SendNFree=m_SendBuffSize=sendbuffsize;
+		m_RecvNFree=m_RecvBuffSize=0;
+
+		m_pRecvMap=0;
+		m_pSendMap=0;
+
+		m_RecvHead=m_RecvTail=0;
+		m_SendHead=m_SendTail=0;
+		m_RecvNData=m_SendNData=0;
+
+		m_LocalAddress=address;
+
+		if (sender)
+		{				
+			return connect(address);
+		}
+		else
+		{
+			ACE_INET_Addr server_addr(address.getPort());
+			int result = m_Acceptor.open(server_addr,1);
+			m_Acceptor.get_local_addr(server_addr);
+			m_LocalAddress = Address(address.getName(),server_addr.get_port_number());
+			m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
+
+			printf("Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
+			fflush(stdout);
+
+			return result;
+		}
 
 		return 1;
 	}
@@ -91,7 +119,7 @@ public:
 	virtual void beginPacket(){}
 	virtual void endPacket(){}
 	virtual const Address& getLocalAddress(){ return m_LocalAddress; }
-	virtual const Address& getRemoteAddress(){ return m_LocalAddress; }
+	virtual const Address& getRemoteAddress(){ return m_RemoteAddress; }
 
 	// InputStream implementation
 	virtual int read(const Bytes& b)
@@ -112,14 +140,15 @@ protected:
 	
 	bool m_bLinked;
 
-	int m_Port;
-	Address m_LocalAddress;
+	Address m_LocalAddress,m_RemoteAddress;
 
 	ACE_Shared_Memory *m_pSendMap,*m_pRecvMap;
 
 	char *m_pSendBuffer,*m_pRecvBuffer;
 
 	ACE_SOCK_Stream m_SockStream;
+
+	ACE_SOCK_Acceptor m_Acceptor;
 
 	int m_SendBuffSize,m_RecvBuffSize;
 
@@ -138,6 +167,8 @@ protected:
 
 	// Thread run() function implementation
 	void run();
+
+	int connect(const Address &address);
 
 	inline void ReadAck(int size);
 	inline void WriteAck(int size);
@@ -282,10 +313,6 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 			memcpy((void*)(m_pSendBuffer+m_SendHead),(void*)data,bytes_num);
 		}
 
-#if defined(ACE_LACKS_SYSV_SHMEM)
-		//m_pSendMap->sync();
-#endif
-
 		m_SendNData+=bytes_num;
 		m_SendNFree-=bytes_num;
 		m_SendHead+=bytes_num;
@@ -329,10 +356,6 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 
 	if (m_RecvNData>0) // data available
 	{
-#if defined(ACE_LACKS_SYSV_SHMEM)
-		//m_pRecvMap->sync();
-#endif
-
 		int bytes_num=size<m_RecvNData?size:m_RecvNData;
 
 		if (m_RecvTail+bytes_num>m_RecvBuffSize)
