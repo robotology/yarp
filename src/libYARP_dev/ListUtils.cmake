@@ -5,10 +5,6 @@ MACRO(CAR var)
   SET(${var} ${ARGV1})
 ENDMACRO(CAR)
 
-# lisp CDR
-MACRO(CDR var junk)
-  SET(${var} ${ARGN})
-ENDMACRO(CDR)
 
 # get the length of a list
 MACRO(LIST_LENGTH var)
@@ -18,6 +14,20 @@ MACRO(LIST_LENGTH var)
   ENDFOREACH(e)
   STRING(LENGTH ${entries} ${var})
 ENDMACRO(LIST_LENGTH)
+
+# lisp CDR
+MACRO(CDR var)
+  LIST_LENGTH(length ${ARGN})
+  IF(length EQUAL 1)
+     SET(${var} "")
+  ELSE(length EQUAL 1)
+     MY_CDR(${var} ${ARGN})
+  ENDIF(length EQUAL 1)
+ENDMACRO(CDR)
+
+MACRO(MY_CDR var junk)
+  SET(${var} ${ARGN})
+ENDMACRO(MY_CDR)
 
 # get the n-th element of a list
 MACRO(LIST_INDEX var index)
@@ -37,4 +47,5 @@ MACRO(LIST_CONTAINS var value)
     ENDIF (${value} STREQUAL ${value2})
   ENDFOREACH (value2)
 ENDMACRO(LIST_CONTAINS)
+
 

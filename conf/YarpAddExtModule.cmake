@@ -21,8 +21,8 @@ MACRO(YarpAddExtModule modulename path)
   PROJECT(${modulename})
 
   ## clean variables, not sure if this is the right way to do it
-  SET(tmp_sources ${})
-  SET(tmp_headers ${})
+  SET(tmp_sources "")
+  SET(tmp_headers "")
 
   # Check if there are any plugin device subdirectories.
   # Device subdirectories contain a config.cmake file.
@@ -46,8 +46,8 @@ MACRO(YarpAddExtModule modulename path)
 	SET(devices "${devices_list}")
 
 	# For each device directory, create the appropriate files
-	SET(met_dependencies ${})
-	SET(unmet_dependencies ${})
+	SET(met_dependencies "")
+	SET(unmet_dependencies "")
 
 	FOREACH(dev ${devices})
 	  # pick up the configuration of the device
@@ -65,12 +65,42 @@ MACRO(YarpAddExtModule modulename path)
 	  SET(SELECTED_ONE 0)
 
 	  ### parse all devices in the folder, they can be more than one
-	  SET(lib_sources ${})
+	  SET(lib_sources "")
 	  FOREACH(YARPDEV_NAME ${YARPDEV_NAMES})
 		#####
+
+		# clear variable to avoid that previous values
+		# interfere with new devices in case of empty
+		# lists
+		SET(YARPDEV_INCLUDE "")
+		SET(YARPDEV_TYPE "")
+		SET(YARPDEV_WRAPPER "")
+
 		CAR(YARPDEV_INCLUDE ${YARPDEV_INCLUDES})
 		CAR(YARPDEV_TYPE ${YARPDEV_TYPES})
+		CAR(YARPDEV_WRAPPER ${YARPDEV_WRAPPERS})
+
+#		MESSAGE(STATUS "-->INCLUDES: ${YARPDEV_INCLUDES}")	
+#		MESSAGE(STATUS "-->TYPES: ${YARPDEV_TYPES}")	
+#		MESSAGE(STATUS "-->WRAPPERS: ${YARPDEV_WRAPPERS}")	
+
+		CDR(TMP_INCLUDES ${YARPDEV_INCLUDES})
+		CDR(TMP_TYPES ${YARPDEV_TYPES})
+                CDR(TMP_WRAPPERS ${YARPDEV_WRAPPERS})
+
+	        SET(TMP_EMPTY "None")
+		IF(YARPDEV_WRAPPER STREQUAL TMP_EMPTY)
+	            SET(YARPDEV_WRAPPER "")
+	        ENDIF(YARPDEV_WRAPPER STREQUAL TMP_EMPTY)
+
+	        SET(YARPDEV_INCLUDES ${TMP_INCLUDES})
+	        SET(YARPDEV_TYPES ${TMP_TYPES})
+	        SET(YARPDEV_WRAPPERS ${TMP_WRAPPERS})
 		
+		MESSAGE(STATUS "INCLUDE: ${YARPDEV_INCLUDE}")	
+		MESSAGE(STATUS "TYPE: ${YARPDEV_TYPE}")	
+		MESSAGE(STATUS "WRAPPER: ${YARPDEV_WRAPPER}")	
+
 		SET(ENABLE_${modulename}_${YARPDEV_NAME} FALSE CACHE BOOL 
 		  "Do you want to include ${dev_path}?")
 
@@ -79,10 +109,6 @@ MACRO(YarpAddExtModule modulename path)
 		  SET(SELECTED_ONE 1)
 		  SET(ENABLE_YARPDEV_NAME 1)
 		ENDIF (ENABLE_${modulename}_${YARPDEV_NAME})
-
-		#		  MESSAGE(ERROR "YARPDEV_NAME: ${YARPDEV_NAME}")	
-		#		  MESSAGE(ERROR "YARPDEV_INCLUDE: ${YARPDEV_INCLUDE}")
-		#		  MESSAGE(ERROR "YARPDEV_TYPE: ${YARPDEV_TYPE}")
 
 		# write a quick cpp file to add an appropriate factory 
 		# for the device
@@ -103,14 +129,16 @@ MACRO(YarpAddExtModule modulename path)
 		ENDIF(ENABLE_YARPDEV_NAME)
 	  ENDFOREACH(YARPDEV_NAME ${YARPDEV_NAMES})
 
+#	MESSAGE(STATUS ${lib_sources})
+	
 	  IF(SELECTED_ONE)
 		### now seach files in the directory
-		SET(folder_common_source ${})
-		SET(folder_common_header ${})
+		SET(folder_common_source "")
+		SET(folder_common_header "")
 
-		SET(folder_plat_source ${})
-		SET(folder_header ${})
-		SET(YARPDEV_DEPENDENCIES ${})
+		SET(folder_plat_source "")
+		SET(folder_header "")
+		SET(YARPDEV_DEPENDENCIES "")
 
 		#now searches for specific directories:
 		#common directory	  
