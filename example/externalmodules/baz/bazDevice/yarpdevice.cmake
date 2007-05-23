@@ -1,6 +1,6 @@
 
-SET(YARPDEV_NAME "bazdevice")
-SET(YARPDEV_WRAPPER "")
-SET(YARPDEV_INCLUDE "bazdevice.h")
-SET(YARPDEV_TYPE "bazdevice")
+SET(YARPDEV_NAMES "bazdevice")
+SET(YARPDEV_WRAPPERS "None")
+SET(YARPDEV_INCLUDES "bazdevice.h")
+SET(YARPDEV_TYPES "bazdevice")
 
