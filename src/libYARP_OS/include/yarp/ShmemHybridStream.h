@@ -86,8 +86,6 @@ public:
 		m_SendHead=m_SendTail=0;
 		m_RecvNData=m_SendNData=0;
 
-		m_LocalAddress=address;
-
 		if (sender)
 		{				
 			return connect(address);
@@ -97,6 +95,7 @@ public:
 			ACE_INET_Addr server_addr(address.getPort());
 			int result = m_Acceptor.open(server_addr,1);
 			m_Acceptor.get_local_addr(server_addr);
+
 			m_LocalAddress = Address(address.getName(),server_addr.get_port_number());
 			m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
 

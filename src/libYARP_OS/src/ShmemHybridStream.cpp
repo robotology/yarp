@@ -6,7 +6,6 @@
  *
  */
 
-
 #include <yarp/ShmemHybridStream.h>
 
 #include <yarp/NetType.h>
@@ -90,7 +89,7 @@ int yarp::ShmemHybridStream::accept()
 		PROT_RDWR, //int prot = PROT_RDWR,
 		ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
 #else
-	int shmemkey=2*m_LocalAddress.getPort();
+	int shmemkey=m_LocalAddress.getPort();
 
 	m_pSendMap=new ACE_Shared_Memory_SV(shmemkey,m_SendBuffSize,ACE_Shared_Memory_SV::ACE_CREATE);
 #endif
@@ -126,7 +125,7 @@ int yarp::ShmemHybridStream::accept()
 		ACE_MAP_SHARED); //int share = ACE_MAP_PRIVATE,
 
 #else
-	shmemkey=2*m_LocalAddress.getPort()+1;
+	shmemkey=m_RemoteAddress.getPort();
 
 	m_pRecvMap=new ACE_Shared_Memory_SV(shmemkey,m_RecvBuffSize);
 #endif
@@ -185,7 +184,7 @@ int yarp::ShmemHybridStream::connect(const Address& address)
 
 #else
 
-	int shmemkey=2*m_LocalAddress.getPort();
+	int shmemkey=m_RemoteAddress.getPort();
 
 	m_pRecvMap=new ACE_Shared_Memory_SV(shmemkey,m_RecvBuffSize);			
 
@@ -216,7 +215,7 @@ int yarp::ShmemHybridStream::connect(const Address& address)
 		YARP_DEBUG(Logger::get(),"ShmemHybridStream: no temp directory found, using Local.");
 	}
 
-	m_pRecvMap=new ACE_Shared_Memory_MM(send_conn_data.filename, //const ACE_TCHAR *filename,
+	m_pSendMap=new ACE_Shared_Memory_MM(send_conn_data.filename, //const ACE_TCHAR *filename,
 		m_SendBuffSize, //int len = -1,
 		O_RDWR | O_CREAT, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
@@ -225,13 +224,13 @@ int yarp::ShmemHybridStream::connect(const Address& address)
 
 #else
 
-	shmemkey=2*m_LocalAddress.getPort()+1;
+	shmemkey=m_LocalAddress.getPort();
 
 	m_pSendMap=new ACE_Shared_Memory_SV(shmemkey,m_SendBuffSize,ACE_Shared_Memory_SV::ACE_CREATE);			
 
 #endif
 
-	m_pSendBuffer=(char*)m_pRecvMap->malloc();
+	m_pSendBuffer=(char*)m_pSendMap->malloc();
 
 	ret=m_SockStream.send_n(&send_conn_data,sizeof send_conn_data);
 
