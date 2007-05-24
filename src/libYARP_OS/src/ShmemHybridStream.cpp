@@ -52,6 +52,7 @@ int yarp::ShmemHybridStream::accept()
 
 	if (result<0)
 	{
+		printf("accept(): returned %d\n",result);
 		return result;
 	}
 
@@ -60,6 +61,10 @@ int yarp::ShmemHybridStream::accept()
     m_SockStream.get_remote_addr(remote);
     m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
     m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
+
+	printf("accept(): local Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
+	printf("accept(): remote Port number %d address %s\n",m_RemoteAddress.getPort(),m_RemoteAddress.getName().c_str());
+	fflush(stdout);
 
 	ShmemConnect_t send_conn_data;
 	send_conn_data.command=ACKNOWLEDGE;
@@ -139,16 +144,18 @@ int yarp::ShmemHybridStream::accept()
 	return result;
 }
 
-int yarp::ShmemHybridStream::connect(const Address& address)
+int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 {
 	if (m_bLinked) return -1;
 
-	ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
 	ACE_SOCK_Connector connector;
-	int result=connector.connect(m_SockStream,addr);
+	//int result=connector.connect(m_SockStream,ace_address,0,ACE_Addr::sap_any,1);
+	int result=connector.connect(m_SockStream,ace_address);
 
 	if (result<0)
 	{
+		printf("connect() failed returned %d\n",result);
+		fflush(stdout);
 		return result;
 	}
 
@@ -157,7 +164,11 @@ int yarp::ShmemHybridStream::connect(const Address& address)
     m_SockStream.get_remote_addr(remote);
     m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
     m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
-	
+
+	printf("connect(): local Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
+	printf("connect(): remote Port number %d address %s\n",m_RemoteAddress.getPort(),m_RemoteAddress.getName().c_str());
+	fflush(stdout);
+
 	ShmemConnect_t recv_conn_data;
 
 	int ret=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
@@ -254,10 +265,15 @@ void yarp::ShmemHybridStream::run()
 
 	while (m_bLinked)
 	{
+		printf("\nRUN RUN RUN RUN RUN RUN!!!\n\n");
+		fflush(stdout);
+
 		int ret=m_SockStream.recv_n(&packet,sizeof packet);
 
 		if (ret<=0)
 		{
+			printf("\nERROR ERROR HORROR HORROR!!!\n\n");
+			fflush(stdout);
 			Close();
 			return;
 		}
@@ -266,11 +282,15 @@ void yarp::ShmemHybridStream::run()
 		{
 		case READ:
 			{
+				printf("READ_ACK %d bytes\n",packet.size);
+				fflush(stdout);
 				ReadAck(packet.size);
 				break;
 			}
 		case WRITE:
 			{
+				printf("WRITE_ACK %d bytes\n",packet.size);
+				fflush(stdout);
 				WriteAck(packet.size);
 				break;
 			}
@@ -278,6 +298,11 @@ void yarp::ShmemHybridStream::run()
 			{
 				Close();
 				return;
+			}
+		default:
+			{
+				printf("\nWARNING: received unknown command (%x,%d)!!!\n\n",packet.command,packet.size);
+				fflush(stdout);
 			}
 		}
 	}

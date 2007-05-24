@@ -70,7 +70,7 @@ public:
 	inline int send(char* data,int size,bool bNonBlocking=false);
 	inline int recv(char* data,int size,bool bNonBlocking=false);
 
-	int open(const Address& address,bool sender,int sendbuffsize=4096) 
+	int open(const Address& yarp_address,bool sender,int sendbuffsize=4096) 
 	{
 		m_bLinked=false;
 		m_bDataRequest=false;
@@ -86,20 +86,32 @@ public:
 		m_SendHead=m_SendTail=0;
 		m_RecvNData=m_SendNData=0;
 
+		ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getName().c_str());
+		printf("open(): address %s port %d\n",yarp_address.getName().c_str(),yarp_address.getPort());
+		fflush(stdout);
+
 		if (sender)
 		{				
-			return connect(address);
+			return connect(ace_address);
 		}
 		else
 		{
-			ACE_INET_Addr server_addr(address.getPort());
-			int result = m_Acceptor.open(server_addr,1);
-			m_Acceptor.get_local_addr(server_addr);
+			ACE_INET_Addr ace_server_addr(ace_address.get_port_number());
+			//int result = m_Acceptor.open(ace_server_addr,1);
+			int result = m_Acceptor.open(ace_server_addr);
 
-			m_LocalAddress = Address(address.getName(),server_addr.get_port_number());
+			if (result<0)
+			{
+				printf("open(): returned %d\n",result);
+				return result;
+			}
+
+			m_Acceptor.get_local_addr(ace_server_addr);
+
+			m_LocalAddress = Address(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
 			m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
 
-			printf("Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
+			printf("open(): Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
 			fflush(stdout);
 
 			return result;
@@ -167,7 +179,7 @@ protected:
 	// Thread run() function implementation
 	void run();
 
-	int connect(const Address &address);
+	int connect(const ACE_INET_Addr &address);
 
 	inline void ReadAck(int size);
 	inline void WriteAck(int size);
