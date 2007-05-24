@@ -114,6 +114,18 @@ MACRO(YarpAddExtModule modulename path)
 		IF (ENABLE_${modulename}_${YARPDEV_NAME})
 		  SET(SELECTED_ONE 1)
 		  SET(ENABLE_YARPDEV_NAME 1)
+
+		  # give opportunity for user-specific stuff to happen
+		  SET(ENABLE_${YARPDEV_NAME} 1)
+  		  SET(SAVE_PATH ${CMAKE_MODULE_PATH})
+		  SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${dev_path})
+		  IF (dev_path)
+			INCLUDE(${dev_path}/yarpdevice.cmake)
+		  ELSE (dev_path)
+			INCLUDE(${dev})
+		  ENDIF (dev_path)
+		  SET(CMAKE_MODULE_PATH ${SAVE_PATH})
+
 		ENDIF (ENABLE_${modulename}_${YARPDEV_NAME})
 
 		# write a quick cpp file to add an appropriate factory 
