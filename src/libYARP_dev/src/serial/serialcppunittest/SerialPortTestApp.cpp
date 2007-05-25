@@ -4,7 +4,6 @@
 #include <cppunit/extensions/TestFactoryRegistry.h>
 #include <cppunit/ui/text/TestRunner.h>
 #include "SerialPortTest.h"
-#include "DGSLogManager.h"
 #include <SerialHandler.h>
 
 SerialHandler serialhandler;
@@ -35,14 +34,16 @@ int ACE_TMAIN (int argc, ACE_TCHAR *argv[])
 {
     //DGS_LOG_MANAGER->clearAllMessages();
 
-    ACE_LOG_MSG->priority_mask (LM_TRACE | LM_DEBUG | LM_INFO | LM_NOTICE | LM_ERROR | LM_WARNING, ACE_Log_Msg::THREAD);
-    ACE_LOG_MSG->open(argv[0],ACE_Log_Msg::STDERR, ACE_TEXT("syslogTest"));
-    ACE_LOG_MSG->priority_mask (LM_TRACE | LM_DEBUG | LM_INFO | LM_NOTICE | LM_ERROR | LM_WARNING, ACE_Log_Msg::THREAD);
+
+    ACE_LOG_MSG->open(argv[0], ACE_Log_Msg::SILENT, ACE_TEXT("syslogTest"));
+    //ACE_LOG_MSG->priority_mask (LM_TRACE | LM_DEBUG | LM_INFO | LM_NOTICE |
+    //LM_ERROR | LM_WARNING, ACE_Log_Msg::THREAD);
+    //ACE_LOG_MSG->open(argv[0],ACE_Log_Msg::STDERR, ACE_TEXT("syslogTest"));
+    //ACE_LOG_MSG->priority_mask (LM_TRACE | LM_DEBUG | LM_INFO | LM_NOTICE | LM_ERROR | LM_WARNING, ACE_Log_Msg::THREAD);
     // dispatch ace events
 
     MyTestRunnner mytestrunner;
     mytestrunner.activate();
-    printf("Hola\n");
 
     int success = 1;
     success = !(ACE_Proactor::run_event_loop () == -1);
