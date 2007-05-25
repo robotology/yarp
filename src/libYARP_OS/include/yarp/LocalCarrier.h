@@ -173,7 +173,7 @@ public:
 
     virtual void becomeLocal(Protocol& proto, bool sender) {
         //proto.takeStreams(NULL); // free up port from tcp
-        YARP_DEBUG(Logger::get(),"*** local carrier is experimental ****");
+        YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
         //ACE_OS::exit(1);
     }
 
