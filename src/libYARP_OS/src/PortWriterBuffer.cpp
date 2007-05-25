@@ -24,6 +24,7 @@ public:
     PortWriterBufferBaseHelper(PortWriterBufferBase& owner) : 
         owner(owner), stateSema(1), completionSema(0) {
         current = NULL;
+        callback = NULL;
         port = NULL;
         finishing = false;
         outCt = 0;
@@ -64,12 +65,18 @@ public:
         YARP_ASSERT(packet!=NULL);
         if (packet->getContent()==NULL) {
             YARP_DEBUG(Logger::get(), "creating a writer buffer");
-            packet->setContent(owner.create(*this,packet),true);
+            //packet->setContent(owner.create(*this,packet),true);
+            yarp::os::PortWriterWrapper *wrapper = 
+                owner.create(*this,packet);
+            //packet->setContent(wrapper,true);
+            packet->setContent(wrapper->getInternal(), false,
+                             wrapper,true);
         }
         stateSema.post();
 
         current = packet->getContent();
-        return current;
+        callback = packet->getCallback();
+        return callback;
     }
 
     virtual void onCompletion(void *tracker) {
@@ -99,10 +106,11 @@ public:
         }
         stateSema.wait();
         PortWriter *active = current;
+        PortWriter *cback = callback;
         stateSema.post();
         if (active!=NULL && port!=NULL) {
             outCt++;
-            port->write(*active);
+            port->write(*active,cback);
         } 
     }
 
@@ -113,6 +121,7 @@ private:
     SemaphoreImpl completionSema;
     Port *port;
     PortWriter *current;
+    PortWriter *callback;
     bool finishing;
     int outCt;
 };

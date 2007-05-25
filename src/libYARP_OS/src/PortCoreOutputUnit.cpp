@@ -9,6 +9,7 @@
 
 
 #include <yarp/os/Time.h>
+#include <yarp/os/Portable.h>
 #include <yarp/PortCoreOutputUnit.h>
 #include <yarp/PortCommand.h>
 #include <yarp/Logger.h>
@@ -193,10 +194,24 @@ Route PortCoreOutputUnit::getRoute() {
 void PortCoreOutputUnit::sendHelper() {
     try {
         if (op!=NULL) {
+
             BufferedConnectionWriter buf(op->isTextMode());
             if (cachedReader!=NULL) {
                 buf.setReplyHandler(*cachedReader);
             }
+
+            
+            if (op->isLocal()) {
+                //buf.setReference((yarp::os::Portable *)cachedWriter);
+                buf.setReference(dynamic_cast<yarp::os::Portable *> 
+                                 (cachedWriter));
+
+                //printf("REF %ld\n", (long int)buf.getReference());
+                op->write(buf);
+                return;
+            }
+
+
             YARP_ASSERT(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
@@ -252,6 +267,7 @@ void PortCoreOutputUnit::sendHelper() {
 
 void *PortCoreOutputUnit::send(Writable& writer, 
                                Readable *reader,
+                               Writable *callback,
                                void *tracker,
                                const String& envelopeString,
                                bool waitAfter,
@@ -272,6 +288,7 @@ void *PortCoreOutputUnit::send(Writable& writer,
     if (!sending) {
         cachedWriter = &writer;
         cachedReader = reader;
+        cachedCallback = callback;
         cachedEnvelope = envelopeString;
 
         sending = true;

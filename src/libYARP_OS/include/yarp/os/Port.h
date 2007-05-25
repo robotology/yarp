@@ -9,6 +9,7 @@
 #ifndef _YARP2_PORT_
 #define _YARP2_PORT_
 
+#include <yarp/os/Portable.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/PortWriter.h>
@@ -85,9 +86,11 @@ public:
      * Write an object to the port.
      * @param writer any object that knows how to write itself to a
      * network connection - see for example Bottle
+     * @param callback object on which to call onCompletion() after write
+     * is done (otherwise writer.onCompletion() is called)
      * @return true iff the object is successfully written
      */
-    bool write(PortWriter& writer);
+    bool write(PortWriter& writer, PortWriter *callback = 0 /*NULL*/);
 
     /**
      * Write an object to the port, then expect one back.
@@ -95,9 +98,12 @@ public:
      * network connection - see for example Bottle
      * @param reader any object that knows how to read itself from a
      * network connection - see for example Bottle
+     * @param callback object on which to call onCompletion() after write 
+     * is done (otherwise writer.onCompletion() is called)
      * @return true iff an object is successfully written and read
      */
-    bool write(PortWriter& writer, PortReader& reader) const;
+    bool write(PortWriter& writer, PortReader& reader, 
+               PortWriter *callback = 0 /*NULL*/) const;
 
     /**
      * Read an object from the port.

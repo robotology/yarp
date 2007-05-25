@@ -39,6 +39,7 @@ public:
         textMode = false;
         writer = NULL;
         valid = false;
+        ref = NULL;
     }
 
     virtual ~StreamConnectionReader();
@@ -51,6 +52,7 @@ public:
         this->messageLen = len;
         this->textMode = textMode;
         this->valid = true;
+        ref = NULL;
     }
 
     virtual void expectBlock(const Bytes& b) {
@@ -174,6 +176,14 @@ public:
         return valid;
     }
 
+    virtual yarp::os::Portable *getReference() {
+        return ref;
+    }
+
+    virtual void setReference(yarp::os::Portable *obj) {
+        ref = obj;
+    }
+
 private:
     BufferedConnectionWriter *writer;
     StringInputStream altStream;
@@ -183,6 +193,7 @@ private:
     bool textMode;
     bool valid;
     Route route;
+    yarp::os::Portable *ref;
 };
 
 #endif

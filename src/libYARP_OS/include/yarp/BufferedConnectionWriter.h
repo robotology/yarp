@@ -33,6 +33,7 @@ public:
     BufferedConnectionWriter(bool textMode = false) : textMode(textMode) {
         reader = NULL;
         target = &lst;
+        ref = NULL;
     }
 
     virtual ~BufferedConnectionWriter() {
@@ -43,6 +44,7 @@ public:
         this->textMode = textMode;
         clear();
         reader = NULL;
+        ref = NULL;
     }
 
     void clear() {
@@ -196,12 +198,21 @@ public:
         target = &header;
     }
 
+    virtual yarp::os::Portable *getReference() {
+        return ref;
+    }
+
+    virtual void setReference(yarp::os::Portable *obj) {
+        ref = obj;
+    }
+
 private:
     ACE_Vector<ManagedBytes *> lst;
     ACE_Vector<ManagedBytes *> header;
     ACE_Vector<ManagedBytes *> *target;
     PortReader *reader;
     bool textMode;
+    yarp::os::Portable *ref;
 };
 
 #endif

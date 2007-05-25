@@ -80,6 +80,21 @@ void PortCoreInputUnit::run() {
             try {
                 ConnectionReader& br = ip->beginRead();
 
+                if (br.getReference()!=NULL) {
+                    //printf("HAVE A REFERENCE\n");
+                    if (localReader!=NULL) {
+                        localReader->read(br);
+                    } else {
+                        PortManager& man = getOwner();
+                        man.readBlock(br,id,NULL);
+                    }
+                    //printf("DONE WITH A REFERENCE\n");
+                    if (ip!=NULL) {
+                        ip->endRead();
+                    }
+                    continue;
+                }
+
                 if (autoHandshake&&(ip->canEscape())) {
                     cmd.readBlock(br);
                 } else {

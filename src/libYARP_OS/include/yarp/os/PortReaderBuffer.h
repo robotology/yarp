@@ -13,6 +13,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/LocalReader.h>
 
 #include <stdio.h>
 
@@ -99,37 +100,6 @@ public:
 
 
     /**
-     * Read the next available object from the port.  The method
-     * does not drop older objects even if newer ones are available.
-     * @param shouldWait true if the method should wait until an object
-     * is available
-     * @return A pointer to an object read from the port, or NULL if none
-     * is available and waiting was not requested.  This object is owned
-     * by the communication system and should not be deleted by the user.
-     * The object is available to the user until the next call to 
-     * one of the read methods, after which it should not be accessed again.
-     */
-    //virtual T *readStrict(bool shouldWait=true) {
-    //return read(shouldWait,true);
-    //}
-
-    /**
-     * Read the newest available object from the port.  The method
-     * drops older objects if newer ones are available.
-     * @param shouldWait true if the method should wait until an object 
-     * is available
-     * @return A pointer to an object read from the port, or NULL if none
-     * is available and waiting was not requested.  This object is owned
-     * by the communication system and should not be deleted by the user.
-     * The object is available to the user until the next call to 
-     * one of the read methods, after which it should not be accessed again.
-     */
-    //virtual T *readNewest(bool shouldWait=true) {
-    //    return read(shouldWait,false);
-    //}
-
-
-    /**
      * Get the last data returned by read()
      * @return pointer to last data returned by read(), or NULL on failure.
      */
@@ -187,7 +157,8 @@ public:
     virtual yarp::os::PortReader *create() = 0;
 };
 
-class yarp::PortReaderBufferBase : public yarp::os::PortReader {
+class yarp::PortReaderBufferBase : public yarp::os::PortReader
+{
 public:
     PortReaderBufferBase(unsigned int maxBuffer) : 
         maxBuffer(maxBuffer) {
@@ -242,6 +213,14 @@ public:
 	bool isClosed();
 
     yarp::os::ConstString getName() const;
+
+    // direct writer-buffer to reader-buffer pointer sharing methods
+
+    virtual bool acceptObjectBase(yarp::os::PortReader *obj,
+                              yarp::os::PortWriter *wrapper);
+
+    virtual bool forgetObjectBase(yarp::os::PortReader *obj,
+                                  yarp::os::PortWriter *wrapper);
 
 protected:
     void init();
@@ -300,6 +279,7 @@ public:
 template <class T>
 class yarp::os::PortReaderBuffer : 
     public yarp::os::TypedReader<T>,
+            public yarp::os::LocalReader<T>,
             public yarp::PortReaderBufferBaseCreator {
 public:
 
@@ -431,6 +411,20 @@ public:
     virtual ConstString getName() const {
         return implementation.getName();
     }
+
+
+    virtual bool acceptObject(T *obj,
+                              PortWriter *wrapper) {
+        return implementation.acceptObjectBase(obj,wrapper);
+    }
+
+    virtual bool forgetObject(T *obj,
+                              yarp::os::PortWriter *wrapper) {
+        return implementation.forgetObjectBase(obj,wrapper);
+    }
+
+
+
 private:
     yarp::PortReaderBufferBase implementation;
     bool autoDiscard;

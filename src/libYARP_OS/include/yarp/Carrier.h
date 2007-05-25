@@ -44,6 +44,7 @@ public:
     virtual bool canEscape() = 0;
     virtual bool requireAck() = 0;
     virtual bool supportReply() = 0;
+    virtual bool isLocal() = 0;
 
     // all remaining may throw IOException
 

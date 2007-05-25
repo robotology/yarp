@@ -19,6 +19,7 @@
 #include <yarp/ManagedBytes.h>
 #include <yarp/NetType.h>
 #include <yarp/ShiftStream.h>
+#include <yarp/os/Portable.h>
 
 namespace yarp {
     class Protocol;
@@ -46,6 +47,7 @@ public:
         pendingAck = false;
         writer = NULL;
         altReader = NULL;
+        ref = NULL;
     }
 
     virtual ~Protocol() {
@@ -189,9 +191,13 @@ public:
         messageLen = 0;
         YARP_ASSERT(delegate!=NULL);
         getStreams().beginPacket();
+        ref = NULL;
         delegate->expectIndex(*this);
         reader.reset(is(),&getStreams(),getRoute(),
                      messageLen,delegate->isTextMode());
+        if (ref!=NULL) {
+            reader.setReference(ref);
+        }
     }
 
     void defaultExpectIndex();
@@ -424,6 +430,11 @@ public:
         this->altReader = altReader;
     }
 
+
+    void setReference(yarp::os::Portable *ref) {
+        this->ref = ref;
+    }
+
 private:
 
     void sendProtocolSpecifier() {
@@ -480,6 +491,12 @@ private:
         return delegate->canEscape();
     }
 
+    bool isLocal() {
+        YARP_ASSERT(delegate!=NULL);
+        return delegate->isLocal();
+    }
+
+
 
     int messageLen;
     bool pendingAck;
@@ -495,7 +512,7 @@ private:
     SizedWriter *writer;
     StreamConnectionReader reader;
     ConnectionReader *altReader;
-
+    yarp::os::Portable *ref;
 };
 
 #endif

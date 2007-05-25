@@ -57,6 +57,7 @@ public:
 
     virtual void *send(Writable& writer, 
                        Readable *reader,
+                       Writable *callback,
                        void *tracker,
                        const String& envelope,                       
                        bool waitAfter = true,

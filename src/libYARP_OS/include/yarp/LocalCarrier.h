@@ -10,22 +10,90 @@
 #define _YARP2_LOCALCARRIER_
 
 #include <yarp/AbstractCarrier.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Portable.h>
 
 namespace yarp {
     class LocalCarrier;
+    class LocalCarrierManager;
 }
 
-class yarp::LocalCarrier : public AbstractCarrier {
-public:
-    LocalCarrier *peer;
 
-    LocalCarrier() {
+class yarp::LocalCarrierManager {
+private:
+    yarp::os::Semaphore senderMutex, receiverMutex, received;
+    LocalCarrier *sender, *receiver;
+public:
+    LocalCarrierManager() : senderMutex(1), receiverMutex(1),
+                            received(0) {
+        sender = receiver = NULL;
+    }
+
+    void setSender(LocalCarrier *sender) {
+        senderMutex.wait();
+        this->sender = sender;
+    }
+
+    LocalCarrier *getReceiver() {
+        received.wait();
+        LocalCarrier *result = receiver;
+        sender = NULL;
+        senderMutex.post();
+        return result;
+    }
+
+    LocalCarrier *getSender(LocalCarrier *receiver) {
+        receiverMutex.wait();
+        this->receiver = receiver;
+        LocalCarrier *result = sender;
+        received.post();
+        receiverMutex.post();
+        return result;
+    }
+
+    void revoke(LocalCarrier *carrier) {
+        if (sender == carrier) {
+            senderMutex.post();
+        }
+    }
+};
+
+class yarp::LocalCarrier : public AbstractCarrier {
+protected:
+    yarp::os::Portable *ref;
+    LocalCarrier *peer;
+    yarp::os::Semaphore peerMutex;
+    yarp::os::Semaphore sent, received;
+    String portName;
+
+    static LocalCarrierManager manager;
+
+public:
+
+    LocalCarrier() : peerMutex(1), sent(0), received(0) {
+        ref = NULL;
         peer = NULL;
+    }
+
+    virtual ~LocalCarrier() {
+        peerMutex.wait();
+        if (peer!=NULL) {
+            peer->accept(NULL);
+            LocalCarrier *wasPeer = peer;
+            peer = NULL;
+            wasPeer->removePeer();
+        }
+        peerMutex.post();
     }
 
     virtual Carrier *create() {
         return new LocalCarrier();
+    }
+
+    void removePeer() {
+        peerMutex.wait();
+        peer = NULL;
+        peerMutex.post();        
     }
 
     virtual String getName() {
@@ -38,6 +106,14 @@ public:
 
     virtual bool isConnectionless() {
         return false;
+    }
+
+    virtual bool canEscape() {
+        return false;
+    }
+
+    virtual bool isLocal() {
+        return true;
     }
 
     virtual String getSpecifierName() {
@@ -69,10 +145,36 @@ public:
     virtual void setParameters(const Bytes& header) {
     }
 
+    virtual void sendHeader(Protocol& proto) {
+        portName = proto.getRoute().getFromName();
+
+        manager.setSender(this);
+
+        proto.defaultSendHeader();
+        // now switch over to some local structure to communicate
+        peerMutex.wait();
+        peer = manager.getReceiver();
+        //printf("sender %ld sees receiver %ld\n", (long int) this,
+        //       (long int) peer);
+        peerMutex.post();
+    }
+
+    virtual void expectExtraHeader(Protocol& proto) {
+        portName = proto.getRoute().getToName();
+        // switch over to some local structure to communicate
+        peerMutex.wait();
+        peer = manager.getSender(this);
+        //printf("receiver %ld (%s) sees sender %ld (%s)\n", 
+        //       (long int) this, portName.c_str(),
+        //       (long int) peer, peer->portName.c_str());
+        proto.setRoute(proto.getRoute().addFromName(peer->portName));
+        peerMutex.post();
+    }
+
     virtual void becomeLocal(Protocol& proto, bool sender) {
-        YARP_ERROR(Logger::get(),"local carrier is not yet implemented");
-        ACE_OS::exit(1);
-        proto.takeStreams(NULL);
+        //proto.takeStreams(NULL); // free up port from tcp
+        YARP_DEBUG(Logger::get(),"*** local carrier is experimental ****");
+        //ACE_OS::exit(1);
     }
 
     virtual void write(Protocol& proto, SizedWriter& writer) {
@@ -85,11 +187,24 @@ public:
         // bit on how SizedWriter operates so that this becomes efficiently
         // doable
 
-        // default behavior upon a write request
-        ACE_UNUSED_ARG(writer);
-        proto.sendIndex();
-        proto.sendContent();
-        proto.expectAck();
+        //proto.sendIndex();
+        //proto.sendContent();
+        //proto.expectAck();
+
+        yarp::os::Portable *ref = writer.getReference();
+        if (ref!=NULL) {
+            peerMutex.wait();
+            if (peer!=NULL) {
+                peer->accept(ref);
+            } else {
+                YARP_ERROR(Logger::get(),
+                           "local send failed - write without peer");
+            }
+            peerMutex.post();
+        } else {
+            YARP_ERROR(Logger::get(),
+                       "local send failed - no object");
+        }
     }
 
     virtual void respondToHeader(Protocol& proto) {
@@ -105,6 +220,28 @@ public:
         becomeLocal(proto,true);
     }
 
+    virtual void expectIndex(Protocol& proto) {
+
+        YARP_DEBUG(Logger::get(),"local recv: wait send");
+        sent.wait();
+        YARP_DEBUG(Logger::get(),"local recv: got send");
+        proto.setReference(ref);
+        received.post();
+        if (ref!=NULL) {
+            YARP_DEBUG(Logger::get(),"local recv: received");
+        } else {
+            YARP_DEBUG(Logger::get(),"local recv: shutdown");
+        }
+    }
+
+    void accept(yarp::os::Portable *ref) {
+        this->ref = ref;
+        YARP_DEBUG(Logger::get(),"local send: send ref");
+        sent.post();
+        YARP_DEBUG(Logger::get(),"local send: wait receipt");
+        received.wait();
+        YARP_DEBUG(Logger::get(),"local send: received");
+    }
 };
 
 #endif

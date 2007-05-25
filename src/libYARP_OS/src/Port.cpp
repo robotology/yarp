@@ -7,6 +7,7 @@
  */
 
 
+#include <yarp/os/Portable.h>
 #include <yarp/os/Port.h>
 #include <yarp/PortCore.h>
 #include <yarp/Logger.h>
@@ -316,17 +317,21 @@ bool Port::addOutput(const Contact& contact) {
 /**
  * write something to the port
  */
-bool Port::write(PortWriter& writer) {
+bool Port::write(PortWriter& writer, PortWriter *callback) {
     PortCoreAdapter& core = HELPER(implementation);
     bool result = false;
     try {
         //WritableAdapter adapter(writer);
-        core.send(writer);
+        core.send(writer,NULL,callback);
         //writer.onCompletion();
         result = true;
     } catch (IOException e) {
         YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        writer.onCompletion();
+        if (callback!=NULL) {
+            callback->onCompletion();
+        } else {
+            writer.onCompletion();
+        }
         // leave result false
     }
     return result;
@@ -335,15 +340,20 @@ bool Port::write(PortWriter& writer) {
 /**
  * write something to the port
  */
-bool Port::write(PortWriter& writer, PortReader& reader) const {
+bool Port::write(PortWriter& writer, PortReader& reader, 
+                 PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
     bool result = false;
     try {
-        core.send(writer,&reader);
+        core.send(writer,&reader,callback);
         result = true;
     } catch (IOException e) {
         YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
-        writer.onCompletion();
+        if (callback!=NULL) {
+            callback->onCompletion();
+        } else {
+            writer.onCompletion();
+        }
         // leave result false
     }
     return result;

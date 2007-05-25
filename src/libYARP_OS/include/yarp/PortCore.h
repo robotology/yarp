@@ -93,7 +93,8 @@ public:
     virtual bool start();
 
     // use port as output
-    void send(Writable& writer, Readable *reader = NULL);
+    void send(Writable& writer, Readable *reader = NULL,
+              Writable *callback = NULL);
 
     // shut down and deconfigure core
     virtual void close();

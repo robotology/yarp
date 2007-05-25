@@ -7,6 +7,7 @@
  */
 
 
+#include <yarp/os/Portable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 
@@ -24,15 +25,25 @@ using namespace yarp::os;
 class PortReaderPacket {
 public:
     PortReaderPacket *prev_, *next_;
+
+    // if non-null, contains a buffer that the packet owns
     PortReader *reader;
+
+    // if nun-null, refers to an external buffer
+    // by convention, overrides reader
+    PortReader *external;
+    PortWriter *writer; // if a callback is needed
 
     PortReaderPacket() {
         prev_ = next_ = NULL;
         reader = NULL;
+        external = NULL;
+        writer = NULL;
         reset();
     }
 
     virtual ~PortReaderPacket() {
+        resetExternal();
         reset();
     }
 
@@ -41,6 +52,7 @@ public:
             delete reader;
             reader = NULL;
         }
+        writer = NULL;
     }
 
     PortReader *getReader() {
@@ -48,8 +60,28 @@ public:
     }
 
     void setReader(PortReader *reader) {
+        resetExternal();
         reset();
         this->reader = reader;
+    }
+
+
+    PortReader *getExternal() {
+        return external;
+    }
+
+    void setExternal(PortReader *reader, PortWriter *writer) {
+        resetExternal();
+        this->external = reader;
+        this->writer = writer;
+    }
+
+    void resetExternal() {
+        if (writer!=NULL) {
+            writer->onCompletion();
+            writer = NULL;
+        }
+        external = NULL;
     }
 };
 
@@ -186,11 +218,6 @@ public:
         }
         if (grab) {
             result = pool.getInactivePacket();
-            if (result->getReader()==NULL) {
-                PortReader *next = owner.create();
-                YARP_ASSERT(next!=NULL);
-                result->setReader(next);
-            }
         }
 
         return result;
@@ -268,7 +295,14 @@ PortReader *PortReaderBufferBase::readBase() {
     HELPER(implementation).stateSema.wait();
     PortReaderPacket *readerPacket = HELPER(implementation).getContent();
     PortReader *reader = NULL;
-    if (readerPacket!=NULL) reader = readerPacket->getReader();
+    if (readerPacket!=NULL) {
+        PortReader *external = readerPacket->getExternal();
+        if (external==NULL) {
+            reader = readerPacket->getReader();
+        } else {
+            reader = external;
+        }
+    }
     HELPER(implementation).stateSema.post();
     if (reader!=NULL) {
         HELPER(implementation).consumeSema.post();
@@ -278,6 +312,11 @@ PortReader *PortReaderBufferBase::readBase() {
 
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
+    if (connection.getReference()!=NULL) {
+        //printf("REF %ld\n", (long int)connection.getReference());
+        return acceptObjectBase(connection.getReference(),NULL);
+    }
+
     if (replier!=0/*NULL*/) {
         if (connection.getWriter()) {
             return replier->read(connection);
@@ -287,6 +326,11 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     while (reader==NULL) {
         HELPER(implementation).stateSema.wait();
         reader = HELPER(implementation).get();
+        if (reader->getReader()==NULL) {
+            PortReader *next = create();
+            YARP_ASSERT(next!=NULL);
+            reader->setReader(next);
+        }
         HELPER(implementation).stateSema.post();
         if (reader==NULL) {
             HELPER(implementation).consumeSema.wait();
@@ -307,9 +351,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
         if (HELPER(implementation).ct>0&&prune) {
             PortReaderPacket *readerPacket = 
                 HELPER(implementation).dropContent();
-            PortReader *reader = NULL;
-            if (readerPacket!=NULL) reader = readerPacket->getReader();
-            pruned = (reader!=NULL);
+            pruned = (readerPacket!=NULL);
         }
         //HELPER(implementation).configure(reader,false,true);
         HELPER(implementation).pool.addActivePacket(reader);
@@ -356,11 +398,77 @@ ConstString PortReaderBufferBase::getName() const {
 }
 
 
+/////////////////////
+///
+/// Careful!  merge with ::read -- very similar code
+/// Unil merge, don't change one without looking at other :-(
+
+bool PortReaderBufferBase::acceptObjectBase(PortReader *obj,
+                                            yarp::os::PortWriter *wrapper) {
+    // getting an object here should be basically the same as
+    // receiving from a Port -- except no need to create/read
+    // the object
+
+    PortReaderPacket *reader = NULL;
+    while (reader==NULL) {
+        HELPER(implementation).stateSema.wait();
+        reader = HELPER(implementation).get();
+        HELPER(implementation).stateSema.post();
+        if (reader==NULL) {
+            HELPER(implementation).consumeSema.wait();
+        }
+    }
+    bool ok = true;
+    if (ok) {
+        reader->setExternal(obj,wrapper);
+
+        HELPER(implementation).stateSema.wait();
+        bool pruned = false;
+        if (HELPER(implementation).ct>0&&prune) {
+            PortReaderPacket *readerPacket = 
+                HELPER(implementation).dropContent();
+            //PortReader *reader = NULL;
+            pruned = (readerPacket!=NULL);
+            //reader = readerPacket->getReader();
+            //pruned = (reader!=NULL);
+        }
+        //HELPER(implementation).configure(reader,false,true);
+        HELPER(implementation).pool.addActivePacket(reader);
+        HELPER(implementation).ct++;
+        HELPER(implementation).stateSema.post();
+        if (!pruned) {
+            HELPER(implementation).contentSema.post();
+        }
+        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> adding data");
+    } else {
+        HELPER(implementation).stateSema.wait();
+        HELPER(implementation).pool.addInactivePacket(reader);
+        HELPER(implementation).stateSema.post();
+        //YARP_ERROR(Logger::get(),">>>>>>>>>>>>>>>>> skipping data");
+
+        // important to give reader a shot anyway, allowing proper closing
+        YARP_DEBUG(Logger::get(), "giving PortReaderBuffer chance to close");
+        HELPER(implementation).contentSema.post();
+    }
+    
+    return true;
+}
+
+
+
+bool PortReaderBufferBase::forgetObjectBase(PortReader *obj,
+                                            yarp::os::PortWriter *wrapper) {
+    printf("Sorry, forgetting not implemented yet\n");
+    return false;
+}
+
+
+
+
+
 
 void typedReaderMissingCallback() {
     YARP_ERROR(Logger::get(), "Missing or incorrectly typed onRead function");
 }
-
-
 
 

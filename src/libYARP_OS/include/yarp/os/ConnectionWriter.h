@@ -9,11 +9,12 @@
 #ifndef _YARP2_CONNECTIONWRITER_
 #define _YARP2_CONNECTIONWRITER_
 
+#include <yarp/os/Portable.h>
+
 namespace yarp {
     namespace os {
         class ConnectionWriter;
         class ConnectionReader;
-        class PortReader;
     }
 }
 
@@ -98,7 +99,14 @@ public:
      */
     virtual void setReplyHandler(PortReader& reader) = 0;
 
+    /**
+     * Stores a direct pointer to the object being sent.
+     * This is useful for local communication, to bypass 
+     * serialization.
+     */
+    virtual void setReference(Portable *obj) = 0;
 
+ 
     /**
      * Converts a standard description in binary into a textual
      * description, if the connection is in text-mode.  Useful if you

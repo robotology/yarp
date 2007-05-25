@@ -43,6 +43,7 @@ extern yarp::UnitTest& getTerminatorTest();
 extern yarp::UnitTest& getRateThreadTest();
 extern yarp::UnitTest& getStampTest();
 extern yarp::UnitTest& getModuleTest();
+extern yarp::UnitTest& getPortReaderBufferTest();
 
 class yarp::TestList {
 public:
@@ -74,6 +75,7 @@ public:
         root.add(getTerminatorTest());
         root.add(getStampTest());
         root.add(getModuleTest());
+        root.add(getPortReaderBufferTest());
     }
 };
 

@@ -802,7 +802,7 @@ void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 }
 
 
-void PortCore::send(Writable& writer, Readable *reader) {
+void PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
 
     String envelopeString = envelope;
     //envelope = ""; // let user control wiping
@@ -825,7 +825,7 @@ void PortCore::send(Writable& writer, Readable *reader) {
     if (!finished) {
         packetMutex.wait();
         PortCorePacket *packet = packets.getFreePacket();
-        packet->setContent(&writer);
+        packet->setContent(&writer,false,callback);
         packetMutex.post();
         YARP_ASSERT(packet!=NULL);
         for (unsigned int i=0; i<units.size(); i++) {
@@ -835,7 +835,9 @@ void PortCore::send(Writable& writer, Readable *reader) {
                     YMSG(("------- -- inc\n"));
                     packet->inc();
                     YMSG(("------- -- presend\n"));
-                    void *out = unit->send(writer,reader,(void *)packet,
+                    void *out = unit->send(writer,reader,
+                                           (callback!=NULL)?callback:(&writer),
+                                           (void *)packet,
                                            envelopeString,
                                            waitAfterSend,waitBeforeSend);
                     YMSG(("------- -- send\n"));

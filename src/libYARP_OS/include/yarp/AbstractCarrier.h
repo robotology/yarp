@@ -66,6 +66,10 @@ public:
         return true;
     }
 
+    virtual bool isLocal() {
+        return false;
+    }
+
     virtual String toString() {
         return getName();
     }

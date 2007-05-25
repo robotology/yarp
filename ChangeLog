@@ -1,3 +1,15 @@
+2007-05-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/LocalCarrier.h: new and better
+	implementation of the "local" carrier.  If ports are running as
+	part of the same process, and are attached to each other using the
+	"local" carrier, then serialization never needs to happen --
+	direct object references are passed around instead.  This works
+	particularly well for BufferedPorts, since these can manage
+	details such as keeping "written" objects around untouched until
+	all readers have finished working with them.  This carrier should
+	be considered experimental for now.
+
 2007-05-21  Lorenzo Natale  <nat@liralab.it>
 
 	* conf/YarpAddExternalModules: multiple devices 

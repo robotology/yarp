@@ -24,14 +24,18 @@ class yarp::PortCorePacket {
 public:
     PortCorePacket *prev_, *next_;
     Writable *content;
+    Writable *callback;
     int ct;
     bool owned;
+    bool ownedCallback;
     bool completed;
 
     PortCorePacket() {
         prev_ = next_ = NULL;
         content = NULL;
+        callback = NULL;
         owned = false;
+        ownedCallback = false;
         reset();
     }
 
@@ -56,10 +60,18 @@ public:
         return content;
     }
 
-    void setContent(Writable *writable, bool owned = false) {
+    Writable *getCallback() {
+        return (callback!=0/*NULL*/)?callback:content;
+    }
+
+    void setContent(Writable *writable, bool owned = false,
+                    Writable *callback = NULL,
+                    bool ownedCallback = false) {
         content = writable;
+        this->callback = callback;
         ct = 1;
         this->owned = owned;
+        this->ownedCallback = ownedCallback;
         completed = false;
     }
 
@@ -67,9 +79,14 @@ public:
         if (owned) {
             delete content;
         }
+        if (ownedCallback) {
+            delete callback;
+        }
         content = NULL;
+        callback = NULL;
         ct = 0;
         owned = false;
+        ownedCallback = false;
         completed = false;
     }
 
@@ -77,7 +94,7 @@ public:
         if (!completed) {
             if (getContent()!=NULL) {
                 YARP_DEBUG(Logger::get(), "Sending an onCompletion message");
-                getContent()->onCompletion();
+                getCallback()->onCompletion();
                 completed = true;
             }
         }

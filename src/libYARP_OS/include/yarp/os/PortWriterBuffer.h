@@ -18,6 +18,7 @@ namespace yarp {
         class PortWriterBufferManager;
         template <class T> class PortWriterBufferAdaptor;
         class PortWriterBufferBase;
+        class PortWriterWrapper;
     }
 }
 
@@ -30,8 +31,13 @@ public:
     virtual void onCompletion(void *tracker) = 0;
 };
 
+class yarp::os::PortWriterWrapper : public yarp::os::PortWriter {
+public:
+    virtual PortWriter *getInternal() = 0;
+};
+
 template <class T>
-class yarp::os::PortWriterBufferAdaptor : public PortWriter {
+class yarp::os::PortWriterBufferAdaptor : public PortWriterWrapper {
 public:
     PortWriterBufferManager& creator;
     T writer;
@@ -49,6 +55,10 @@ public:
         writer.onCompletion();
         creator.onCompletion(tracker);
     }
+
+    virtual PortWriter *getInternal() {
+        return &writer;
+    }
 };
 
 class yarp::os::PortWriterBufferBase {
@@ -57,8 +67,8 @@ public:
 
     virtual ~PortWriterBufferBase();
 
-    virtual PortWriter *create(PortWriterBufferManager& man,
-                               void *tracker) = 0;
+    virtual PortWriterWrapper *create(PortWriterBufferManager& man,
+                                      void *tracker) = 0;
 
     void *getContent();
 
@@ -92,8 +102,8 @@ public:
     //typedef T Type;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-    virtual PortWriter *create(PortWriterBufferManager& man,
-                               void *tracker) {
+    virtual PortWriterWrapper *create(PortWriterBufferManager& man,
+                                      void *tracker) {
         return new PortWriterBufferAdaptor<T>(man,tracker);
     }
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

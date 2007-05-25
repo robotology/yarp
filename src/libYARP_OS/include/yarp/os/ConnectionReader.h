@@ -16,6 +16,7 @@ namespace yarp {
     namespace os {
         class ConnectionReader;
         class ConnectionWriter;
+        class Portable;
     }
 
     // place in both namespaces
@@ -93,6 +94,16 @@ public:
      * @return An object that permits replies, or NULL if this cannot be done.
      */
     virtual ConnectionWriter *getWriter() = 0;
+
+
+    /**
+     * Get a direct pointer to the object being sent, if possible.
+     * This only makes sense in local operation, when sender and
+     * receiver are in the same process; in all other situations
+     * this returns NULL
+     * @return The message object, or NULL if not available
+     */
+    virtual Portable *getReference() = 0;
 
     /**
      * Gets information about who is supplying the data being read, if

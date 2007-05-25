@@ -72,6 +72,7 @@ public:
 
     virtual void *send(Writable& writer, 
                        Readable *reader,
+                       Writable *writer,
                        void *tracker,
                        const String& envelope,
                        bool waitAfter,
@@ -88,6 +89,7 @@ private:
     SemaphoreImpl phase, activate, trackerMutex;
     Writable *cachedWriter;
     Readable *cachedReader;
+    Writable *cachedCallback;
     void *cachedTracker;
     String cachedEnvelope;
 

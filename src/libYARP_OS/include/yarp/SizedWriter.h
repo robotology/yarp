@@ -38,6 +38,8 @@ public:
     virtual const char *data(int index) = 0;
 
     virtual PortReader *getReplyHandler() = 0;
+    
+    virtual yarp::os::Portable *getReference() = 0;
 };
 
 #endif
