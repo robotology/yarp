@@ -22,7 +22,7 @@ public:
   
 
     void checkAccept() {
-        // add tests here
+        report(0, "checking direct object accept...");
 
         PortReaderBuffer<Bottle> buffer;
         Bottle dummy;
@@ -32,19 +32,17 @@ public:
         buffer.acceptObject(&data, &dummy);
         
         Bottle *bot = buffer.read();
+        checkTrue(bot!=NULL,"Inserted message received");
         if (bot!=NULL) {
-            printf("got %s\n", bot->toString().c_str());
-        } else {
-            printf("doh, no data\n");
+            checkEqual(bot->toString().c_str(),"hello","value ok");
         }
 
         buffer.acceptObject(&data2, NULL);
 
         bot = buffer.read();
+        checkTrue(bot!=NULL,"Inserted message received");
         if (bot!=NULL) {
-            printf("got %s\n", bot->toString().c_str());
-        } else {
-            printf("doh, no data\n");
+            checkEqual(bot->toString().c_str(),"there","value ok");
         }
         
         buffer.read(false);
@@ -85,12 +83,16 @@ public:
         if (bot!=NULL) {
             checkEqual(bot->toString().c_str(),"hello2","value ok");
         }
+
+        p0.close();
+        p1.close();
+        p2.close();
     }
 
     virtual void runTests() {
         Network::setLocalMode(true);
-        checkLocal();
-        //checkAccept();
+        //checkLocal(); // still too experimental
+        checkAccept();
         Network::setLocalMode(false);
     }
 };

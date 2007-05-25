@@ -101,7 +101,7 @@ public:
     }
 
     virtual bool requireAck() {
-        return true;
+        return false;
     }
 
     virtual bool isConnectionless() {
