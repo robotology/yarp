@@ -303,6 +303,9 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 		setPidRaw(i, p._pids[i]);
 		//enable amplifier
 		enableAmpRaw(i);
+	
+		
+		NmcDefineStatus( i+1, SEND_POS,  &(r.jrkerrcmd) );
 
 	}
 	
@@ -320,6 +323,13 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 	}
 
 	_mutex.post ();
+	//initialize acceleration and velocities to defaults and start controlling axes
+	for(i = 0; i < r.getJoints(); i++)
+	{
+		setRefSpeedRaw(i, _ref_speeds[i]);
+		setRefAccelerationRaw(i, _ref_accs[i]);
+		positionMoveRaw(i, 0);
+	}
 
 	return true;
 }
@@ -723,18 +733,22 @@ bool JrkerrMotionControl::positionMoveRaw(int axis, double ref)
 		return true;
 	}
 
+	_mutex.wait();
+
 	long pic_position; // counts
 	long pic_speed;   // 65535*counts/tick
 	long pic_accel;   // 65535*counts/tick^2
 	unsigned char mode;
 
 	pic_position = (long)(_ref_positions[axis]);
-	pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	pic_speed = 0;
+    pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	pic_accel = 0;
 	pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
 
-	mode = LOAD_POS | LOAD_VEL | LOAD_ACC | ENABLE_SERVO | START_NOW;   //trapezoidal mode
-	_mutex.wait();
+	mode = LOAD_POS | ENABLE_SERVO | START_NOW;   //trapezoidal mode
 	ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
+
 	_mutex.post();
  
 	return true;
@@ -774,12 +788,12 @@ bool JrkerrMotionControl::checkMotionDoneRaw(int axis, bool *ret)
 	unsigned char statbyte;
 
 	_mutex.wait();
-	do
-	{
+	
+	
        NmcNoOp(axis+1, &(r.jrkerrcmd));	//poll controller to get current status data
        statbyte = NmcGetStat(axis+1, &(r.jrkerrcmd));
-	}
-    while ( !(statbyte & MOVE_DONE) );  //wait for MOVE_DONE bit to go HIGH
+	
+        *ret = (statbyte & MOVE_DONE);  //wait for MOVE_DONE bit to go HIGH
 	_mutex.post();
 
 
@@ -801,26 +815,34 @@ bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
+	_mutex.wait();
 	if( sp > _vl[axis] )
 	{
-		printf("WARNING!!!!! Exceeding joint %d velocity limit %f > %f \n", axis, sp, _vl[axis]);
-		_mutex.wait();
+		printf("WARNING!!!!! Exceeding joint %d velocity limit %f > %f \n", axis, sp, _vl[axis]);	
 		_ref_speeds[axis] = _vl[axis];
-		_mutex.post();
 	}
 	else  if( sp < -_vl[axis] )
 	{
 		printf("WARNING!!!!! Exceeding joint %d velocity limit %f < %f \n", axis, sp, -_vl[axis]);
-		_mutex.wait();
 		_ref_speeds[axis] = -_vl[axis];
-		_mutex.post();
 	}
 	else
 	{
-		_mutex.wait();
-		_ref_speeds[axis] = sp;
-		_mutex.post();
+		_ref_speeds[axis] = sp;		
 	}
+
+	long pic_position = 0;
+	long pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	long pic_accel = 0;
+
+
+	if( pic_speed < 0)
+		pic_speed = -pic_speed;
+
+	unsigned char mode = LOAD_VEL | ENABLE_SERVO | START_NOW;   //trapezoidal mode
+	
+	ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
+	_mutex.post();
 	
 	
 	return true;
@@ -845,27 +867,32 @@ bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
 	if(!(axis >= 0 && axis < r.getJoints())) 
 		return false;
 
+
+	_mutex.wait();
 	if( acc > _al[axis] )
 	{
 		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f > %f \n", axis, acc, _al[axis]);
-		_mutex.wait();
 		_ref_accs[axis] = _al[axis];
-		_mutex.post();
 	}
 	else  if( acc < -_al[axis] )
 	{
 		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f < %f \n", axis, acc, -_al[axis]);
-		_mutex.wait();
 		_ref_accs[axis] = -_al[axis];
-		_mutex.post();
 	}
 	else
 	{
-		_mutex.wait();
 		_ref_accs[axis] = acc;
-		_mutex.post();
 	}
+	long pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
+	long pic_position = 0;
+	long pic_speed = 0;
+
+	unsigned char mode = LOAD_ACC | ENABLE_SERVO | START_NOW;
+    
+	ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
+	_mutex.post();	
 	
+
 
 	return true;
 }
@@ -969,7 +996,9 @@ bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
 
 	setRefSpeedRaw(axis, sp);
 
-    if (_ref_speeds[axis] > 0)
+	
+
+    if (sp > 0)
 		setReferenceRaw(axis, _pl[axis]);
     else
 		setReferenceRaw(axis, _nl[axis]);
@@ -980,19 +1009,22 @@ bool JrkerrMotionControl::velocityMoveRaw (int axis, double sp)
 		return true;
 	}
    
-	long pic_position = (long)(_ref_positions[axis]);
-	long pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
-	long pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
+	_mutex.wait();
 
-	mode = LOAD_POS | LOAD_VEL | LOAD_ACC | ENABLE_SERVO | START_NOW ;	//trapezoidal mode
+	long pic_position = (long)(_ref_positions[axis]);
+	//long pic_speed = (long)(65535.0*_ref_speeds[axis]*SERVOTICKTIME);
+	long pic_speed = 0;
+	//long pic_accel = (long)(65535.0*_ref_accs[axis]*SERVOTICKTIME*SERVOTICKTIME);
+	long pic_accel = 0; //not loading acceleration;
+
+	mode = LOAD_POS | ENABLE_SERVO | START_NOW ;	//trapezoidal mode
     
 
 	if( pic_speed < 0) 
         pic_speed = -pic_speed;
 
 	
-	_mutex.wait();
-    ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
+	ServoLoadTraj(axis+1, mode, pic_position, pic_speed, pic_accel, 0, &(r.jrkerrcmd) );
 	_mutex.post();
 	return true;
 }
@@ -1052,22 +1084,11 @@ bool JrkerrMotionControl::getEncodersRaw(double *v)
 	
 	unsigned char stat_items = SEND_POS;
 	_mutex.wait();
-	/*for(int i=0; i < r.getJoints(); i++){
+	for(int i=0; i < r.getJoints(); i++){
 		NmcReadStatus(i+1, stat_items, &(r.jrkerrcmd));
 		v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
-	}*/
-	//NmcDefineStatus(r._groupAddr, SEND_POS,  &(r.jrkerrcmd) );
-	//NmcNoOp(r._groupAddr,  &(r.jrkerrcmd) );
-	/*for(int i=0; i < r.getJoints(); i++){
-		NmcDefineStatus(i+1, SEND_POS,  &(r.jrkerrcmd) );
-		NmcNoOp(i+1,  &(r.jrkerrcmd) );
-		v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
-	};*/
-	/*NmcNoOp(r._groupAddr,  &(r.jrkerrcmd) );
-	for(i=0; i < r.getJoints(); i++){
-		v[i] = (double)ServoGetPos(i+1, &(r.jrkerrcmd));
-	};*/
-    _mutex.post();
+	}
+	_mutex.post();
 	return true;
 }
 
@@ -1236,4 +1257,3 @@ inline bool JrkerrMotionControl::ENABLED (int axis)
 {
 	return _en[axis];
 }
-
