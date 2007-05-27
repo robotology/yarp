@@ -8,8 +8,6 @@
 
 #include <yarp/ShmemHybridStream.h>
 
-#include <yarp/NetType.h>
-
 bool yarp::ShmemHybridStream::Close(bool bCloseRemote)
 {
 	if (!m_bLinked) return false;
@@ -52,7 +50,9 @@ int yarp::ShmemHybridStream::accept()
 
 	if (result<0)
 	{
-		printf("accept(): returned %d\n",result);
+		YARP_ERROR(Logger::get(),
+			       String("ShmemHybridStream server returned ")
+                   +NetType::toString(result));
 		return result;
 	}
 
@@ -61,10 +61,6 @@ int yarp::ShmemHybridStream::accept()
     m_SockStream.get_remote_addr(remote);
     m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
     m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
-
-	printf("accept(): local Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
-	printf("accept(): remote Port number %d address %s\n",m_RemoteAddress.getPort(),m_RemoteAddress.getName().c_str());
-	fflush(stdout);
 
 	ShmemConnect_t send_conn_data;
 	send_conn_data.command=ACKNOWLEDGE;
@@ -79,7 +75,7 @@ int yarp::ShmemHybridStream::accept()
 
 	if (tmpres!=-1)
 	{
-		sprintf(send_conn_data.filename,"%s/SRV_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
+		sprintf(send_conn_data.filename,"%sSRV_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
 	}
 	else
 	{
@@ -154,7 +150,9 @@ int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 
 	if (result<0)
 	{
-		printf("connect() failed returned %d\n",result);
+		YARP_ERROR(Logger::get(),
+                   String("ShmemHybridStream client returned ")
+                   +NetType::toString(result));
 		fflush(stdout);
 		return result;
 	}
@@ -164,10 +162,6 @@ int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
     m_SockStream.get_remote_addr(remote);
     m_LocalAddress=Address(local.get_host_addr(),local.get_port_number());
     m_RemoteAddress=Address(remote.get_host_addr(),remote.get_port_number());
-
-	printf("connect(): local Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
-	printf("connect(): remote Port number %d address %s\n",m_RemoteAddress.getPort(),m_RemoteAddress.getName().c_str());
-	fflush(stdout);
 
 	ShmemConnect_t recv_conn_data;
 
@@ -218,7 +212,7 @@ int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 
 	if (tmpres!=-1)
 	{
-		sprintf(send_conn_data.filename,"%s/CLN_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
+		sprintf(send_conn_data.filename,"%sCLN_SHMEM_FILE_%d",file_path,m_LocalAddress.getPort());
 	}
 	else
 	{
@@ -265,15 +259,10 @@ void yarp::ShmemHybridStream::run()
 
 	while (m_bLinked)
 	{
-		printf("\nRUN RUN RUN RUN RUN RUN!!!\n\n");
-		fflush(stdout);
-
 		int ret=m_SockStream.recv_n(&packet,sizeof packet);
 
 		if (ret<=0)
 		{
-			printf("\nERROR ERROR HORROR HORROR!!!\n\n");
-			fflush(stdout);
 			Close();
 			return;
 		}
@@ -282,15 +271,11 @@ void yarp::ShmemHybridStream::run()
 		{
 		case READ:
 			{
-				printf("READ_ACK %d bytes\n",packet.size);
-				fflush(stdout);
 				ReadAck(packet.size);
 				break;
 			}
 		case WRITE:
 			{
-				printf("WRITE_ACK %d bytes\n",packet.size);
-				fflush(stdout);
 				WriteAck(packet.size);
 				break;
 			}
@@ -301,8 +286,9 @@ void yarp::ShmemHybridStream::run()
 			}
 		default:
 			{
-				printf("\nWARNING: received unknown command (%x,%d)!!!\n\n",packet.command,packet.size);
-				fflush(stdout);
+				YARP_ERROR(Logger::get(),
+                           String("ShmemHybridStream received unknown command")
+                           +NetType::toString(packet.command));
 			}
 		}
 	}

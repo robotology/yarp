@@ -26,6 +26,7 @@
 #include <yarp/TwoWayStream.h>
 #include <yarp/IOException.h>
 #include <yarp/Logger.h>
+#include <yarp/NetType.h>
 
 struct ShmemConnect_t
 {
@@ -87,8 +88,6 @@ public:
 		m_RecvNData=m_SendNData=0;
 
 		ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getName().c_str());
-		printf("open(): address %s port %d\n",yarp_address.getName().c_str(),yarp_address.getPort());
-		fflush(stdout);
 
 		if (sender)
 		{				
@@ -102,7 +101,9 @@ public:
 
 			if (result<0)
 			{
-				printf("open(): returned %d\n",result);
+				YARP_ERROR(Logger::get(),
+                           String("ShmemHybridStream open result")
+                           +NetType::toString(result));
 				return result;
 			}
 
@@ -110,9 +111,6 @@ public:
 
 			m_LocalAddress = Address(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
 			m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
-
-			printf("open(): Port number %d address %s\n",m_LocalAddress.getPort(),m_LocalAddress.getName().c_str());
-			fflush(stdout);
 
 			return result;
 		}
@@ -198,6 +196,8 @@ int yarp::ShmemHybridStream::send(char* data,int size,bool bNonBlocking)
 
 	m_SendSerializerMutex.wait();
 
+	int nSent=0;
+
 	while (size>0)
 	{
 		int bytes_req=size>m_SendBuffSize?m_SendBuffSize:size;
@@ -212,12 +212,13 @@ int yarp::ShmemHybridStream::send(char* data,int size,bool bNonBlocking)
 		}
 
 		size-=bytes_num;
+		nSent+=bytes_num;
 		data+=bytes_num;
 	}
 
 	m_SendSerializerMutex.post();
 
-	return true;
+	return nSent;
 }
 
 int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
@@ -229,6 +230,8 @@ int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
 	}
 
 	m_RecvSerializerMutex.wait();
+
+	int nReceived=0;
 
 	while (size>0)
 	{
@@ -244,12 +247,13 @@ int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
 		}
 
 		size-=bytes_num;
+		nReceived+=bytes_num;
 		data+=bytes_num;
 	}
 
 	m_RecvSerializerMutex.post();
 
-	return true;
+	return nReceived;
 }
 
 void yarp::ShmemHybridStream::ReadAck(int size)
