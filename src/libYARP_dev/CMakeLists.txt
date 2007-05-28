@@ -1,4 +1,4 @@
-INCLUDE(ListUtils.cmake)
+INCLUDE(YarpListUtils)
 INCLUDE(YarpAddExtModule)
 
 SET(EXT_LIBS ${})

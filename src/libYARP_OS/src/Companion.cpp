@@ -659,8 +659,8 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("SOURCE_GROUP(\"Header Files\" FILES ${folder_header})");
     f.add("");
     f.add("# Check if there are any plugin device subdirectories.");
-    f.add("# Device subdirectories contain a config.cmake file.");
-    f.add("FILE(GLOB_RECURSE device_config config.cmake)");
+    f.add("# Device subdirectories contain a yarpdevice.cmake file.");
+    f.add("FILE(GLOB_RECURSE device_config yarpdevice.cmake)");
     f.add("IF (device_config)");
     f.add("  YarpDevice(${device_config})");
     f.add("ENDIF (device_config)");
