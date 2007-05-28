@@ -13,7 +13,7 @@
 
 # April 07 -- nat
 
-INCLUDE(ListUtils.cmake)
+INCLUDE(YarpListUtils)
 
 MACRO(YarpAddExtModule modulename path)
 
