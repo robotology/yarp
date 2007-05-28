@@ -1,3 +1,11 @@
+2007-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpCompileModules.cmake: modify Lorenzo's method
+	for adding external modules into libYARP_dev so that it
+	can also be used to compile modules completely outside
+	of the YARP library (a bit like kernel modules).
+	Updated "yarp cmake" cmake file to reflect these changes.
+
 2007-05-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/LocalCarrier.h: new and better

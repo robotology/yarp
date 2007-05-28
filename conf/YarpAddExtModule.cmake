@@ -240,5 +240,6 @@ MACRO(YarpAddExtModule modulename path)
   ENDFOREACH(header_file ${folder_header})
 
   # Set up the lib
+  MESSAGE(STATUS "setting up ${modulename}: ${tmp_sources}")
   ADD_LIBRARY(${modulename} ${tmp_sources} ${tmp_headers})
 ENDMACRO(YarpAddExtModule)
