@@ -9,12 +9,13 @@
 #ifndef _YARP2_CONNECTIONWRITER_
 #define _YARP2_CONNECTIONWRITER_
 
-#include <yarp/os/Portable.h>
-
 namespace yarp {
     namespace os {
         class ConnectionWriter;
         class ConnectionReader;
+        class PortReader;
+        class PortWriter;
+        class Portable;
     }
 }
 
