@@ -72,7 +72,7 @@ public:
 
     virtual void *send(Writable& writer, 
                        Readable *reader,
-                       Writable *writer,
+                       Writable *callback,
                        void *tracker,
                        const String& envelope,
                        bool waitAfter,
