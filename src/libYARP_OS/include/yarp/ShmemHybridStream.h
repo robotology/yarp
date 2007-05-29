@@ -51,6 +51,8 @@ public:
 		m_bDataRequest=false;
 		m_bSpaceRequest=false;
 
+		m_PacketDataSent=0;
+
 		m_SendResizeNum=m_RecvResizeNum=0;
 
 		file_path[0]=0;
@@ -129,7 +131,26 @@ public:
 	virtual void close(){ Close(); }
 	virtual void reset(){}
 	virtual void beginPacket(){}
-	virtual void endPacket(){}
+	virtual void endPacket()
+	{
+		m_SendSerializerMutex.wait();
+
+		ShmemPacket_t write_data;
+		write_data.command=WRITE;
+		write_data.size=m_PacketDataSent;
+		m_PacketDataSent=0;
+		int ret=m_SockStream.send_n(&write_data,sizeof write_data);
+
+		if (ret<=0)
+		{
+			YARP_ERROR(Logger::get(),
+                   String("ShmemHybridStream socket writing error ")
+                   +NetType::toString(ret));
+			Close();
+		}
+
+		m_SendSerializerMutex.post();
+	}
 	virtual const Address& getLocalAddress(){ return m_LocalAddress; }
 	virtual const Address& getRemoteAddress(){ return m_RemoteAddress; }
 
@@ -153,6 +174,8 @@ protected:
 	bool m_bLinked;
 
 	int m_SendResizeNum,m_RecvResizeNum;
+
+	int m_PacketDataSent;
 
 	Address m_LocalAddress,m_RemoteAddress;
 
@@ -348,8 +371,14 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 		m_SendHead+=bytes_num;
 		m_SendHead%=m_SendBuffSize;
 
-		m_SendQueueMutex.post();
 
+
+		m_PacketDataSent+=bytes_num;
+
+
+
+		m_SendQueueMutex.post();
+		/*
 		ShmemPacket_t write_data;
 		write_data.command=WRITE;
 		write_data.size=bytes_num;
@@ -363,6 +392,7 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 			Close();
 			return -1;
 		}
+		*/
 
 		return bytes_num;
 	}
