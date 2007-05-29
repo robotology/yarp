@@ -221,7 +221,9 @@ int yarp::ShmemHybridStream::send(char* data,int size,bool bNonBlocking)
 {
 	if (!m_bLinked)
 	{
-		YARP_ERROR(Logger::get(),"ShmemHybridStream: not connected.");
+        if (!isStopping()) {
+            YARP_ERROR(Logger::get(),"ShmemHybridStream: not connected.");
+        }
 		return -1;
 	}
 
@@ -261,7 +263,9 @@ int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
 {
 	if (!m_bLinked)
 	{
-		YARP_ERROR(Logger::get(),"ShmemHybridStream: not connected.");
+        if (!isStopping()) {
+            YARP_ERROR(Logger::get(),"ShmemHybridStream: not connected.");
+        }
 		return -1;
 	}
 
@@ -276,6 +280,9 @@ int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
 		m_ResizeMutex.post();
 
 		int bytes_num=read_buff(data,bytes_req,bNonBlocking);
+        if (bytes_num<0) {
+            return bytes_num;
+        }
 
 		if (bNonBlocking)
 		{
@@ -455,9 +462,11 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 
 		if (ret<=0)
 		{
-			YARP_ERROR(Logger::get(),
-                   String("ShmemHybridStream socket writing error ")
-                   +NetType::toString(ret));
+            if (!isStopping()) {
+                YARP_ERROR(Logger::get(),
+                           String("ShmemHybridStream socket writing error ")
+                           +NetType::toString(ret));
+            }
 			Close();
 			return -1;
 		}
@@ -487,7 +496,7 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 	// wait for data available
 	m_WaitDataMutex.wait();
 
-	return 0;
+	return isStopping()?-1:0;
 }
 
 #endif

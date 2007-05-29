@@ -39,6 +39,9 @@ bool yarp::ShmemHybridStream::Close(bool bCloseRemote)
 
 	m_SockStream.close();
 
+    // kick listening thread in case it stays blocked forever
+    m_WaitDataMutex.post();
+
 	return true;
 }
 
@@ -102,8 +105,10 @@ int yarp::ShmemHybridStream::accept()
 
 	if (ret<=0)
 	{
-		YARP_ERROR(Logger::get(),
-                   String("ShmemHybridStream socket writing error"));
+        if (!isStopping()) {
+            YARP_ERROR(Logger::get(),
+                       String("ShmemHybridStream socket writing error"));
+        }
 		Close();
 		return -1;
 	}
