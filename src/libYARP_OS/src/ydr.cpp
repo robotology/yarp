@@ -6,7 +6,12 @@
  *
  */
 
-// forget about this file for a while --paulfitz
+// This file is disabled right now until types can be tested
+// extensively on all platforms.
+// One dummy function is included to avoid warnings on OSX
+//   -- paulfitz
+
+
 #if 0 
 
 #include <yarp/ydr.h>
@@ -280,5 +285,10 @@ int ydrmem_create(YDR *xdrs, void* buf, size_t buflen, int op) {
     return 1;
 }
 
+#else
+
+int i_am_a_dummy_function_for_osx() {
+    return 1;
+}
 
 #endif

@@ -75,11 +75,15 @@ ENDIF (ACE_DEBUG_FOUND)
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_CONFIG_DIR})
 
-# msvc problems...
-LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/lib/Debug ${CMAKE_BINARY_DIR}/lib/Release)
-# again, can't do this on windows without a lot of mess
+# make this visual studio specific, otherwise see warnings on e.g. OSX
+# that these directories don't exist
+IF (MSVC)
+  # msvc problems...
+  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/lib/Debug ${CMAKE_BINARY_DIR}/lib/Release)
+ENDIF (MSVC)
 
 
+# acan't do this on windows without a lot of mess
 IF(CREATE_SHARED_LIBRARY)
 	SET(BUILD_SHARED_LIBS ON)
 ENDIF(CREATE_SHARED_LIBRARY)
