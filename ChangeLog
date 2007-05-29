@@ -1,3 +1,12 @@
+
+2007-05-29  Alessandro Scalzo <ale@liralab.it>
+	* src/libYARP_OS/include/yarp/ShmemHybridStream.h, 
+	src/libYARP_OS/src/ShmemHybridStream.cpp: added a new
+	two way communication stream based on shared memory.
+	Synchronization obtained by socket. It has the same
+	interface as ShmemTwoWayStream. Now adapts the
+	buffer size at runtime. Tested.
+
 2007-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpCompileModules.cmake: modify Lorenzo's method
