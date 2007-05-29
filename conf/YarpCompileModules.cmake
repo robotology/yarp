@@ -78,13 +78,16 @@ YarpTag()
 
 SET(AVAILABLE_DEVICES "") #default is an empty list
 
-IF (EXISTS AvailableDevices.txt)
+SET(AVAILABLE_DEVICES_FILE "${BASE_SOURCE_DIR}${REL_DIR}AvailableDevices.txt")
+
+#MESSAGE(STATUS "checking ${AVAILABLE_DEVICES_FILE}")
+IF (EXISTS ${AVAILABLE_DEVICES_FILE})
   IF (CREATE_DEVICE_LIBRARY_BUILTINS)
-    INCLUDE(AvailableDevices.txt)
+    INCLUDE(${AVAILABLE_DEVICES_FILE})
   ELSE (CREATE_DEVICE_LIBRARY_BUILTINS)
     SET(AVAILABLE_DEVICES "")
   ENDIF (CREATE_DEVICE_LIBRARY_BUILTINS)
-ENDIF (EXISTS AvailableDevices.txt)
+ENDIF (EXISTS ${AVAILABLE_DEVICES_FILE})
 
 # cycle all available devices -- creates a cache entry for each of them
 # so the user can enable/disable them. Devices that are disabled are
