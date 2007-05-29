@@ -28,16 +28,7 @@
 #include <yarp/Logger.h>
 #include <yarp/NetType.h>
 
-struct ShmemConnect_t
-{
-	int command;
-	int size;
-	#if defined(ACE_LACKS_SYSV_SHMEM)
-	char filename[256];
-	#endif
-};
-
-struct ShmemReadWrite_t
+struct ShmemPacket_t
 {
 	int command;
 	int size;
@@ -59,6 +50,16 @@ public:
 		m_bLinked=false;
 		m_bDataRequest=false;
 		m_bSpaceRequest=false;
+
+		m_SendResizeNum=m_RecvResizeNum=0;
+
+		file_path[0]=0;
+
+		if (ACE::get_temp_dir(file_path,256)==-1)
+		{
+			file_path[0]=0;
+			YARP_DEBUG(Logger::get(),"ShmemHybridStream: no temp directory found, using Local.");
+		}
 	}
 	
 	virtual ~ShmemHybridStream()
@@ -70,6 +71,8 @@ public:
 	int  accept();
 	inline int send(char* data,int size,bool bNonBlocking=false);
 	inline int recv(char* data,int size,bool bNonBlocking=false);
+	bool SendResize(int new_size);
+	bool RecvResize(int new_size);
 
 	int open(const Address& yarp_address,bool sender,int sendbuffsize=4096) 
 	{
@@ -143,17 +146,21 @@ public:
 	}
 
 protected:
-	enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF};
+	enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
 	
 	// DATA
 	
 	bool m_bLinked;
+
+	int m_SendResizeNum,m_RecvResizeNum;
 
 	Address m_LocalAddress,m_RemoteAddress;
 
 	ACE_Shared_Memory *m_pSendMap,*m_pRecvMap;
 
 	char *m_pSendBuffer,*m_pRecvBuffer;
+
+	char file_path[256];
 
 	ACE_SOCK_Stream m_SockStream;
 
@@ -171,6 +178,7 @@ protected:
 	yarp::os::Semaphore m_SendQueueMutex,m_RecvQueueMutex;
 	yarp::os::Semaphore m_WaitDataMutex,m_WaitSpaceMutex;
 	yarp::os::Semaphore m_SendSerializerMutex,m_RecvSerializerMutex;
+	yarp::os::Semaphore m_ResizeMutex;
 
 	// FUNCTIONS
 
@@ -195,6 +203,11 @@ int yarp::ShmemHybridStream::send(char* data,int size,bool bNonBlocking)
 	}
 
 	m_SendSerializerMutex.wait();
+
+	if (size>m_SendBuffSize)
+	{
+		SendResize(3*size);
+	}
 
 	int nSent=0;
 
@@ -235,7 +248,9 @@ int yarp::ShmemHybridStream::recv(char* data,int size,bool bNonBlocking)
 
 	while (size>0)
 	{
+		m_ResizeMutex.wait();
 		int bytes_req=size>m_RecvBuffSize?m_RecvBuffSize:size;
+		m_ResizeMutex.post();
 
 		int bytes_num=read_buff(data,bytes_req,bNonBlocking);
 
@@ -335,10 +350,19 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 
 		m_SendQueueMutex.post();
 
-		ShmemReadWrite_t write_data;
+		ShmemPacket_t write_data;
 		write_data.command=WRITE;
 		write_data.size=bytes_num;
-		m_SockStream.send_n(&write_data,sizeof write_data);
+		int ret=m_SockStream.send_n(&write_data,sizeof write_data);
+
+		if (ret<=0)
+		{
+			YARP_ERROR(Logger::get(),
+                   String("ShmemHybridStream socket writing error ")
+                   +NetType::toString(ret));
+			Close();
+			return -1;
+		}
 
 		return bytes_num;
 	}
@@ -355,7 +379,7 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 	m_bSpaceRequest=true;
 	m_SendQueueMutex.post();
 
-	//ShmemReadWrite_t read_data;
+	//ShmemPacket_t read_data;
 	//read_data.command=WAKE_UP_MF;
 	//m_SockStream.send_n(&read_data,sizeof read_data);
 
@@ -368,6 +392,7 @@ int yarp::ShmemHybridStream::write_buff(char* data,int size,bool bNonBlocking)
 int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 {
 	m_RecvQueueMutex.wait();
+	m_ResizeMutex.wait();
 
 	if (m_RecvNData>0) // data available
 	{
@@ -390,18 +415,29 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 		m_RecvTail+=bytes_num;
 		m_RecvTail%=m_RecvBuffSize;
 
+		m_ResizeMutex.post();
 		m_RecvQueueMutex.post();
 
-		ShmemReadWrite_t read_data;
+		ShmemPacket_t read_data;
 		read_data.command=READ;
 		read_data.size=bytes_num;
-		m_SockStream.send_n(&read_data,sizeof read_data);
+		int ret=m_SockStream.send_n(&read_data,sizeof read_data);
+
+		if (ret<=0)
+		{
+			YARP_ERROR(Logger::get(),
+                   String("ShmemHybridStream socket writing error ")
+                   +NetType::toString(ret));
+			Close();
+			return -1;
+		}
 
 		return bytes_num;
 	}
 
 	if (bNonBlocking)
 	{
+		m_ResizeMutex.post();
 		m_RecvQueueMutex.post();
 
 		return 0;
@@ -410,9 +446,11 @@ int yarp::ShmemHybridStream::read_buff(char* data,int size,bool bNonBlocking)
 	// no data available
 
 	m_bDataRequest=true;
+	
+	m_ResizeMutex.post();
 	m_RecvQueueMutex.post();
 
-	//ShmemReadWrite_t read_data;
+	//ShmemPacket_t read_data;
 	//read_data.command=WAKE_UP_MF;
 	//m_SockStream.send_n(&read_data,sizeof read_data);
 
