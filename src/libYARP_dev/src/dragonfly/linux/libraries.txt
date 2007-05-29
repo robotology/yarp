@@ -1,1 +1,0 @@
-YARP_EXTERNAL;raw1394;dc1394_control

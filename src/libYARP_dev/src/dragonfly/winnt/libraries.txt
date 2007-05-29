@@ -1,1 +1,0 @@
-YARP_LOCAL;PGRFlyCapture.lib

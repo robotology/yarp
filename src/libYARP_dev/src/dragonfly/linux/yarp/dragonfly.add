@@ -1,4 +1,0 @@
-YARP_DEP_LIB += -lopencv
-YARP_DEP_LIB += `Magick++-config --ldflags --libs` 
-YARP_DEP_LIB += -ldc1394_control 
-YARP_DEP_LIB += -lraw1394
