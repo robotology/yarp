@@ -17,7 +17,7 @@
  */
 
 /*
- * RCS-ID:$Id: SerialFeedbackData.h,v 1.1 2007-05-25 08:16:00 alex_bernardino Exp $
+ * RCS-ID:$Id: SerialFeedbackData.h,v 1.1 2007-05-30 10:26:45 alex_bernardino Exp $
  */
 
 #ifndef _SERIALFEEDBACKDATAH_ 
@@ -25,7 +25,7 @@
 
 #include <ace/OS.h>
 #include <ace/String_Base.h>
-#include "DGSTask.h"
+#include <ace/Task.h>
 
 /** 
  * @class SerialFeedbackData
@@ -61,8 +61,7 @@ public:
      * @param command_sender The pointer to the Task that has sent the serial
      * command.  
      */
-    void setCommandSender( DGSTask * command_sender){ _command_sender = command_sender; };
-
+    void setCommandSender( ACE_Task<ACE_MT_SYNCH> * command_sender){ _command_sender = command_sender; };
     bool getStreamingMode(){ return _streaming;};
     void setStreamingMode(bool streaming){ _streaming = streaming;};
 
@@ -71,7 +70,7 @@ public:
      * 
      * @return 
      */
-    DGSTask * getCommandSender(){ return _command_sender;};
+    ACE_Task<ACE_MT_SYNCH> * getCommandSender(){ return _command_sender;};
 
     /** 
      * setSerialResponseDelimiter
@@ -122,7 +121,7 @@ public:
 protected:
 
 private:
-    DGSTask * _command_sender;      /// Pointer to the DGSTask that has sent the command.
+    ACE_Task<ACE_MT_SYNCH> * _command_sender;      /// Pointer to the DGSTask that has sent the command.
     ACE_String_Base<char> * _delimiter_string;   /// The delimiter string that detects the end of a serial response.
     int _bytes_to_read;             /// The number of bytes that are expected to be read for a response.
     bool _use_string_delimiter;      /// Determines whether or not use the string
@@ -130,7 +129,7 @@ private:
     bool _use_bytesnumber_delimiter; /// Determines whether or not use a count of
                                     /// readed bytes to control the reponse limit.
     bool _use_nul_delimiter;
-    int _counted_bytes; /// A counter tha acculates the number of bytes readed so far.
+    int _counted_bytes; /// A counter that acculates the number of bytes readed so far.
     bool _streaming;
 }; 
 

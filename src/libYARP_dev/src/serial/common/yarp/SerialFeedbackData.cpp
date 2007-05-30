@@ -17,7 +17,7 @@
  */
 
 /*
- * RCS-ID:$Id: SerialFeedbackData.cpp,v 1.1 2007-05-25 08:16:00 alex_bernardino Exp $
+ * RCS-ID:$Id: SerialFeedbackData.cpp,v 1.1 2007-05-30 10:26:45 alex_bernardino Exp $
  */
 
 #include "SerialFeedbackData.h"

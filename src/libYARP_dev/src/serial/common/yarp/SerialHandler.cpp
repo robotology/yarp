@@ -18,7 +18,7 @@
  */
 
 /*
- * $Id: SerialHandler.cpp,v 1.1 2007-05-25 08:16:00 alex_bernardino Exp $
+ * $Id: SerialHandler.cpp,v 1.1 2007-05-30 10:26:45 alex_bernardino Exp $
  */
 #include <string.h>
 #include "SerialHandler.h"
@@ -63,7 +63,7 @@ int SerialHandler::initialize(int argc, ACE_TCHAR *argv[])
       ACE_Addr::sap_any, 0, O_RDWR|FILE_FLAG_OVERLAPPED); 
 
   // Set serial port parameters
-  ACE_TTY_IO::Serial_Params myparams;
+  ACE_TTY_IO::Serial_Params params;
   myparams.baudrate   = _baudrate;
   myparams.xonlim     = 0;
   myparams.xofflim    = 0;
@@ -158,8 +158,8 @@ int SerialHandler::svc()
             SerialFeedbackData * feedback_data =
                 ACE_reinterpret_cast(SerialFeedbackData *,
                     serial_block->cont()->rd_ptr());
-            DGSTask * command_sender = feedback_data->getCommandSender();
-            command_sender->IsAlive();
+            ACE_Task<ACE_MT_SYNCH> * command_sender = feedback_data->getCommandSender();
+            //command_sender->IsAlive();
         }
     }
     ACE_DEBUG((LM_NOTICE, ACE_TEXT("%N Line %l SerialHandler::svc Exiting\n")));
@@ -245,7 +245,7 @@ SerialHandler::handle_read_stream (const ACE_Asynch_Read_Stream::Result &result)
           result.message_block().rd_ptr(), result.message_block().length());
 
       // Get the sender of the command.
-      DGSTask * command_sender = feedback_data->getCommandSender();
+      ACE_Task<ACE_MT_SYNCH> * command_sender = feedback_data->getCommandSender();
       ACE_ASSERT( command_sender != NULL);
       size_t space = result.message_block().space();
 
