@@ -11,8 +11,11 @@
 
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/os/ConstString.h>
+#include <yarp/os/Bottle.h>
 
 #include "ace/TTY_IO.h"
+#include "ace/Task.h"
 
 namespace yarp {
     namespace dev {
@@ -21,6 +24,7 @@ namespace yarp {
     }
 }
 
+using namespace yarp::os;
 
 class yarp::dev::SerialDeviceDriverSettings {
 public:
@@ -70,16 +74,18 @@ public:
  * A basic Serial Communications Link (RS232, USB).
  * 
  */
-class yarp::dev::SeriaDeviceDriver : public DeviceDriver, public ACE_Task<ACE_MT_SYNCH>
+class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ACE_Task<ACE_MT_SYNCH>
 {
+protected:
+    void *system_resources;
 private:
-	SeriaDeviceDriver(const SeriaDeviceDriver&);
-	void operator=(const SeriaDeviceDriver&);
+	SerialDeviceDriver(const SerialDeviceDriver&);
+	void operator=(const SerialDeviceDriver&);
 
 public:
-	SeriaDeviceDriver();
+	SerialDeviceDriver();
 
-	virtual ~SeriaDeviceDriver();
+	virtual ~SerialDeviceDriver();
 
     virtual bool open(yarp::os::Searchable& config);
 
@@ -97,7 +103,7 @@ public:
      * @param msg the string to send
      * @return true on success
      */
-    bool send(const Bottle& msg)
+    bool send(const Bottle& msg);
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.
@@ -109,9 +115,6 @@ public:
     //putData _WaitForReply
     //putData _NoWaitNeglectFeedback
     //putData _NoWaitSaveFeedbackIWillGetItLatter
-
-protected:
-    SerialHandler _serialhandler;
 };
 
 
