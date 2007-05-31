@@ -32,7 +32,9 @@ namespace yarp {
         class IControlLimitsRaw;
         class IControlLimits;
         class IControlCalibrationRaw;
+        class IControlCalibration2Raw;
         class IControlCalibration;
+        class IControlCalibration2;
     }
 }
 
@@ -1151,6 +1153,34 @@ public:
 /** 
  * @ingroup dev_iface_motor
  *
+ * New interface for control devices, calibration commands.
+ */
+class yarp::dev::IControlCalibration2Raw
+{
+public:
+    IControlCalibration2Raw(){};
+    /**
+     * Destructor.
+     */
+    virtual ~IControlCalibration2Raw() {}
+
+    /* Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
+    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+
+    /* Check if the calibration is terminated, on a particular joint.
+     * Non blocking.
+     * @return true/false 
+     */
+    virtual bool doneRaw(int j)=0;
+
+};
+
+/** 
+ * @ingroup dev_iface_motor
+ *
  * Interface for control devices, calibration commands.
  */
 class yarp::dev::IControlCalibration
@@ -1170,6 +1200,50 @@ public:
      * @return true/false on success failure
      */
     virtual bool calibrate(int j, double p)=0;
+
+    /* Check if the calibration is terminated, on a particular joint.
+     * Non blocking.
+     * @return true/false 
+     */
+    virtual bool done(int j)=0;
+
+    /* Set the calibrator object to be used to calibrate the robot.
+     * @param c pointer to the calibrator object
+     * @return true/false on success failure
+     */
+    virtual bool setCalibrator(ICalibrator *c);
+
+    /* Calibrate robot by using an external calibrator. The external 
+     * calibrator must be previously set by calling the setCalibration()
+     * method.
+     * @return true/false on success failure
+     */
+    virtual bool calibrate();
+
+};
+
+/** 
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control devices, calibration commands.
+ */
+class yarp::dev::IControlCalibration2
+{
+private:
+    ICalibrator *calibrator;
+
+public:
+    IControlCalibration2();
+    /**
+     * Destructor.
+     */
+    virtual ~IControlCalibration2() {}
+
+    /* Start calibration, this method is very often platform
+     * specific.
+     * @return true/false on success failure
+     */
+    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.

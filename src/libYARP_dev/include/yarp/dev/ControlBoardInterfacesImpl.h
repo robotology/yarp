@@ -20,6 +20,7 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementAmplifierControl;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
+        template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
     }
 }
 
@@ -614,4 +615,46 @@ public:
      */
     virtual bool getAmpStatus(int *st);
 };
+
+template <class DERIVED, class IMPLEMENT> 
+class yarp::dev::ImplementControlCalibration2: public IMPLEMENT
+{
+protected:
+    IControlCalibration2Raw *iCalibrate;
+    void *helper;
+    double *temp;
+
+    /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+    bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+    /**
+     * Clean up internal data and memory.
+     * @return true if uninitialization is executed, false otherwise.
+     */
+    bool uninitialize ();
+
+public:
+    /* Constructor.
+     * @param y is the pointer to the class instance inheriting from this 
+     *  implementation.
+     */
+    ImplementControlCalibration2(DERIVED *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementControlCalibration2();
+
+    virtual bool calibrate();
+
+    virtual bool done(int j);
+};
+
 #endif
