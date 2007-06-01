@@ -31,8 +31,8 @@ Carriers::Carriers() {
     delegates.push_back(new HttpCarrier());
     delegates.push_back(new NameserCarrier());
     delegates.push_back(new LocalCarrier()); // not solid yet
-    delegates.push_back(new ShmemCarrier(0));
-    delegates.push_back(new ShmemCarrier(1)); // new Alessandro version
+    delegates.push_back(new ShmemCarrier(1));
+    delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
     delegates.push_back(new TcpCarrier());
     delegates.push_back(new McastCarrier());
     delegates.push_back(new UdpCarrier());

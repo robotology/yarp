@@ -28,7 +28,7 @@ public:
      * verion 1 is "classic" YARP implementation of shmem.
      * version 2 is "Alessandro" version.
      */
-    ShmemCarrier(int version = 1) {
+    ShmemCarrier(int version = 2) {
         this->version = version;
     }
 
@@ -37,13 +37,12 @@ public:
     }
 
     virtual String getName() {
-        return (version==1)?"shmem":"shmem2";
+        return (version==2)?"shmem":"shmem1";
     }
 
     virtual int getSpecifierCode() {
         // specifier codes are a very old yarp feature,
-        // not necessary any more really.
-        // number 14 reserved for testing.
+        // not necessary any more really, should be replaced.
         return (version==1)?2:14;
     }
 
