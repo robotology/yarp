@@ -1168,7 +1168,7 @@ public:
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrateRaw(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrate2Raw(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.
@@ -1243,7 +1243,7 @@ public:
      * specific.
      * @return true/false on success failure
      */
-    virtual bool calibrate(int axis, unsigned int type, double p1, double p2, double p3)=0;
+    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3)=0;
 
     /* Check if the calibration is terminated, on a particular joint.
      * Non blocking.

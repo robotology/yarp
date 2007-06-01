@@ -44,3 +44,37 @@ bool IControlCalibration::calibrate()
 
     return ret;
 }
+
+
+/// IControlCalibration2
+IControlCalibration2::IControlCalibration2()
+{
+    calibrator=0;
+}
+
+bool IControlCalibration2::setCalibrator(ICalibrator *c)
+{
+    if (c!=0)
+        {
+            calibrator=c;
+            return true;
+        }
+
+    return false;
+}
+
+bool IControlCalibration2::calibrate()
+{
+    bool ret = false;
+
+    if (calibrator!=0)
+        {
+            fprintf(stderr, "Going to call calibrator\n");
+            ret=calibrator->calibrate(dynamic_cast<DeviceDriver *>(this));
+        }
+	else
+		fprintf(stderr, "Warning called calibrate but no calibrator was set\n");
+
+    return ret;
+}
+

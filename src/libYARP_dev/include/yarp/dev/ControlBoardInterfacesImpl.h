@@ -652,7 +652,7 @@ public:
      */
     virtual ~ImplementControlCalibration2();
 
-    virtual bool calibrate();
+    virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3);
 
     virtual bool done(int j);
 };

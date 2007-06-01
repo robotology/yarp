@@ -7,10 +7,6 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 
-// removing this - problem if ESD device is not being compiled,
-// and hopefully it is not needed
-//#include <yarp/EsdMotionControl.h>
-
 // Be careful: this file contains template implementations and is included by translation
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
 // avoid repetations.
@@ -1127,6 +1123,70 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
 }
 
 ////////////////////////
+
+////////////////////////
+// ControlCalibration2 Interface Implementation
+template <class DERIVED, class IMPLEMENT> 
+ImplementControlCalibration2<DERIVED, IMPLEMENT>::ImplementControlCalibration2(DERIVED *y)
+{
+    iCalibrate= dynamic_cast<IControlCalibration2Raw *> (y);
+    helper = 0;        
+    temp=0;
+}
+
+template <class DERIVED, class IMPLEMENT> 
+ImplementControlCalibration2<DERIVED, IMPLEMENT>::~ImplementControlCalibration2()
+{
+    uninitialize();
+}
+
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, const int *amap, const double *enc, const double *zos)
+{
+    if (helper!=0)
+        return false;
+    
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    ACE_ASSERT (helper != 0);
+    temp=new double [size];
+    ACE_ASSERT (temp != 0);
+    return true;
+}
+
+/**
+* Clean up internal data and memory.
+* @return true if uninitialization is executed, false otherwise.
+*/
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::uninitialize ()
+{
+    if (helper!=0)
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
+    
+    checkAndDestroy(temp);
+
+    return true;
+}
+
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::calibrate2(int axis, unsigned int type, double p1, double p2, double p3)
+{
+    int k=castToMapper(helper)->toHw(axis);
+
+    return iCalibrate->calibrate2Raw(k, type, p1, p2, p3);
+}
+
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementControlCalibration2<DERIVED, IMPLEMENT>::done(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+
+    return iCalibrate->doneRaw(k);
+}
+
 
 ///////////////// ImplementControlLimits
 template <class DERIVED, class IMPLEMENT> 
