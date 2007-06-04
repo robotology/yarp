@@ -1,5 +1,7 @@
 2007-06-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpVersion.cmake: froze version 2.1.5
+
 	* src/libYARP_OS/src/Property.cpp: make an exception to
 	the processing of backslash symbols when reading command
 	line options, to make it easier for Windows people to
