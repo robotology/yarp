@@ -413,7 +413,7 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 	bool getReference(int j, std::vector<double>& data) {
 		return self->getReference(j, &data[0]);
 	}
-	
+
 	bool getReferences(std::vector<double>& data) {
 		return self->getReferences(&data[0]);
 	}
@@ -446,14 +446,6 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 		return self->getOutputs(&data[0]);
 	}
 	
-	bool getReference(int j, std::vector<double>& data) {
-		return self->getReference(j, &data[0]);
-	}
-
-	bool getReferences(std::vector<double>& data) {
-		return self->getReferences(&data[0]);
-	}
-
 	bool setPid(int j, yarp::dev::Pid pid) {
 		return self->setPid(j,pid);
 	}
