@@ -4,7 +4,7 @@
 # run as ./scripts/check-public-version.sh
 
 # default version to test - override by passing in an argument
-ver="2.1.4"
+ver="2.1.5"
 
 if [ ! "k$1" = "k" ]; then
     ver="$1"

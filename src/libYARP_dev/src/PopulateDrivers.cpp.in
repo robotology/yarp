@@ -302,5 +302,7 @@ void Drivers::init() {
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 
+#ifndef YARP_AUTOCONF
     addExternalDevices();
+#endif
 }
