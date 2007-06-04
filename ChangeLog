@@ -1,5 +1,10 @@
 2007-06-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Property.cpp: make an exception to
+	the processing of backslash symbols when reading command
+	line options, to make it easier for Windows people to
+	pass filenames.
+
 	* src/libYARP_OS/include/yarp/ShmemCarrier.h: don't use
 	member templates, Visual Studio 6 unhappy.
 

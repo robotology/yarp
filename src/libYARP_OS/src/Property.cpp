@@ -198,6 +198,20 @@ public:
                 }
                 tag = work;
                 accum.clear();
+            } else {
+                if (work.strstr("\\")!=String::npos) {
+                    // Specifically when reading from the command
+                    // line, we will allow windows-style paths.
+                    // Hence we have to break the "\" character
+                    String buf = "";
+                    for (unsigned int i=0; i<work.length(); i++) {
+                        buf += work[i];
+                        if (work[i]=='\\') {
+                            buf += work[i];
+                        }
+                    }
+                    work = buf;
+                }
             }
             accum.add(Value::makeValue(work.c_str()));
         }

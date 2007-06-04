@@ -198,6 +198,22 @@ targ $TARGET\n\
         checkEqual(p.find("y").asInt(),20,"y is ok");
     }
 
+    virtual void checkBackslashPath() {
+        // on windows, backslashes are used in paths
+        // if passed on command-line, don't be shocked
+        report(0,"checking backslash path behavior");
+        Property p;
+        ConstString target = "conf\\brains-brains.ini";
+        char *argv[] = {
+            "PROGRAM NAME",
+            "--file",
+            (char*)target.c_str()
+        };
+        int argc = 3;
+        p.fromCommand(argc,argv);
+        checkEqual(p.find("file").asString().c_str(),target.c_str(),
+                   "string with slash");
+    }
 
     virtual void runTests() {
         checkPutGet();
@@ -208,6 +224,7 @@ targ $TARGET\n\
         checkUrl();
         checkNesting();
         checkWipe();
+        checkBackslashPath();
     }
 };
 
