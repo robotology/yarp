@@ -1,5 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright (C) 2007 Alessandro Scalzo
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 #ifndef __FIREWIRE_CAMERA_H__
 #define __FIREWIRE_CAMERA_H__
 
