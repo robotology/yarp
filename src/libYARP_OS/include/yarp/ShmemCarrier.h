@@ -66,9 +66,73 @@ public:
     }
 
 
+    /*
+      -- unfortunately member templates not working on Visual Studio 6?
     template <class T>
     void becomeShmemVersion(Protocol& proto, bool sender) {
         T *stream = new T();  // Shmem(TwoWay|Hybrid)Stream
+        YARP_ASSERT(stream!=NULL);
+        Address base;
+        try {
+            if (!sender) {
+                ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+                base = Address(anywhere.get_host_addr(),
+                               anywhere.get_port_number());
+                stream->open(base,sender);
+                int myPort = stream->getLocalAddress().getPort();
+                proto.writeYarpInt(myPort);
+                stream->accept();
+                proto.takeStreams(NULL);
+                proto.takeStreams(stream);
+            } else {
+                int altPort = proto.readYarpInt();
+                String myName = proto.getStreams().getLocalAddress().getName();
+                proto.takeStreams(NULL);
+                base = Address(myName,altPort);
+                stream->open(base,sender);
+                proto.takeStreams(stream);
+            }
+        } catch (IOException e) {
+            delete stream;
+            stream = NULL;
+            throw e;
+        }
+    }
+    */
+
+
+    void becomeShmemVersionTwoWayStream(Protocol& proto, bool sender) {
+        ShmemTwoWayStream *stream = new ShmemTwoWayStream();
+        YARP_ASSERT(stream!=NULL);
+        Address base;
+        try {
+            if (!sender) {
+                ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+                base = Address(anywhere.get_host_addr(),
+                               anywhere.get_port_number());
+                stream->open(base,sender);
+                int myPort = stream->getLocalAddress().getPort();
+                proto.writeYarpInt(myPort);
+                stream->accept();
+                proto.takeStreams(NULL);
+                proto.takeStreams(stream);
+            } else {
+                int altPort = proto.readYarpInt();
+                String myName = proto.getStreams().getLocalAddress().getName();
+                proto.takeStreams(NULL);
+                base = Address(myName,altPort);
+                stream->open(base,sender);
+                proto.takeStreams(stream);
+            }
+        } catch (IOException e) {
+            delete stream;
+            stream = NULL;
+            throw e;
+        }
+    }
+
+    void becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
+        ShmemHybridStream *stream = new ShmemHybridStream();
         YARP_ASSERT(stream!=NULL);
         Address base;
         try {
@@ -100,11 +164,13 @@ public:
     virtual void becomeShmem(Protocol& proto, bool sender) {
         if (version==1) {
             // "classic" shmem
-            becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
+            //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
+            becomeShmemVersionTwoWayStream(proto,sender);
 
         } else {
             // experimental shmem
-            becomeShmemVersion<ShmemHybridStream>(proto,sender);
+            //becomeShmemVersion<ShmemHybridStream>(proto,sender);
+            becomeShmemVersionHybridStream(proto,sender);
         }
     }
 
