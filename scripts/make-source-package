@@ -28,7 +28,7 @@ want_prune=true
 if $want_prune; then
     echo "Directories removed for distribution:" > /tmp/REMOVED
     # certain driver directories are of ambiguous redistribution status
-    for f in src/libYARP_dev/src/XSensMTx src/libYARP_dev/src/inertiacube2 src/libYARP_dev/src/picolo src/libYARP_dev/src/esdMotionControl src/libYARP_dev/src/jrkerr src/libYARP_dev/src/dimax_u2c; do
+    for f in src/libYARP_dev/src/XSensMTx src/libYARP_dev/src/inertiacube2 src/libYARP_dev/src/picolo src/libYARP_dev/src/esdMotionControl src/libYARP_dev/src/jrkerr src/libYARP_dev/src/dimax_u2c src/libYARP_dev/src/serial; do
 	echo "  Removed subdirectories of: $f" >> /tmp/REMOVED
 	rm -rf $f/*
     done
@@ -43,7 +43,7 @@ if $want_prune; then
 	rm -rf $f
     done
     (
-	cat src/libYARP_dev/AvailableDevices.txt | sed "s/ picolo//g"  | sed "s/ esdMotionControl//g"  | sed "s/ XSensMTx//g" | sed "s/ inertiacube2//g" | sed "s/ dimax_u2c//g" | sed "s/ jrkerr//g" | sed "/WIN32/,/UNIX/s/ dragonfly//"
+	cat src/libYARP_dev/AvailableDevices.txt | sed "s/ picolo//g"  | sed "s/ serial//g"  | sed "s/ esdMotionControl//g"  | sed "s/ XSensMTx//g" | sed "s/ inertiacube2//g" | sed "s/ dimax_u2c//g" | sed "s/ jrkerr//g" | sed "/WIN32/,/UNIX/s/ dragonfly//"
     ) > /tmp/AvailableDevices.txt
     cp /tmp/AvailableDevices.txt src/libYARP_dev
     cp /tmp/REMOVED .
