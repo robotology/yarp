@@ -686,7 +686,11 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
     }
 
     if(os!=NULL) {
-        bw.write(*os);
+        try {
+            bw.write(*os);
+        } catch (IOException e) { 
+            YARP_DEBUG(log,e.toString() + " <<< response failed");
+        }
     }
     cleanUnits();
 }
@@ -701,7 +705,11 @@ void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {
                       dest);
     }
     if(os!=NULL) {
-        bw.write(*os);
+        try {
+            bw.write(*os);
+        } catch (IOException e) { 
+            YARP_DEBUG(log,e.toString() + " <<< response failed");
+        }
     }
     cleanUnits();
 }
@@ -716,7 +724,11 @@ void PortCore::removeInput(const String& dest, void *id, OutputStream *os) {
                       dest);
     }
     if(os!=NULL) {
-        bw.write(*os);
+        try {
+            bw.write(*os);
+        } catch (IOException e) { 
+            YARP_DEBUG(log,e.toString() + " <<< response failed");
+        }
     }
     cleanUnits();
 }
@@ -771,7 +783,11 @@ void PortCore::describe(void *id, OutputStream *os) {
     stateMutex.post();
 
     if (os!=NULL) {
-        bw.write(*os);
+        try {
+            bw.write(*os);
+        } catch (IOException e) { 
+            YARP_DEBUG(log,e.toString() + " <<< response failed");
+        }
     } else {
         StringOutputStream sos;
         bw.write(sos);

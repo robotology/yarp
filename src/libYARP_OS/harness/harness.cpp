@@ -13,10 +13,12 @@
 #include <yarp/NameClient.h>
 #include <yarp/Companion.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/os/Network.h>
 
 #include "TestList.h"
 
 using namespace yarp;
+using namespace yarp::os;
 
 
 #ifdef YARP2_LINUX
@@ -36,7 +38,7 @@ int main(int argc, char *argv[]) {
     mtrace();
 #endif
 
-    ACE::init();
+    Network yarp;
 
     bool done = false;
     int result = 0;
@@ -68,7 +70,6 @@ int main(int argc, char *argv[]) {
     if (!done) {
         Companion::main(argc,argv);
     }
-    ACE::fini();
 
     return result;
 }

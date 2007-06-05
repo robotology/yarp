@@ -84,14 +84,15 @@ public:
             checkEqual(bot->toString().c_str(),"hello2","value ok");
         }
 
-        p0.close();
-        p1.close();
-        p2.close();
+        //p0.close();
+        //Network::disconnect("/p1","/p2","local");
+        //p1.close();
+        //p2.close();
     }
 
     virtual void runTests() {
         Network::setLocalMode(true);
-        //checkLocal(); // still too experimental
+        checkLocal(); // still too experimental
         checkAccept();
         Network::setLocalMode(false);
     }

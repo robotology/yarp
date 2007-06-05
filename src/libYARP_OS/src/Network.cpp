@@ -54,6 +54,10 @@ int Network::main(int argc, char *argv[]) {
 
 
 void Network::init() {
+
+    // Broken pipes need to be dealt with through other means
+    ACE_OS::signal(SIGPIPE, SIG_IGN);
+
     ACE::init();
     String verbose = NameConfig::getEnv("YARP_VERBOSE");
     Bottle b(verbose.c_str());

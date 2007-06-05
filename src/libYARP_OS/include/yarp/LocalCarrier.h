@@ -12,10 +12,12 @@
 #include <yarp/AbstractCarrier.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Portable.h>
+#include <yarp/SocketTwoWayStream.h>
 
 namespace yarp {
     class LocalCarrier;
     class LocalCarrierManager;
+    class LocalCarrierStream;
 }
 
 
@@ -58,8 +60,24 @@ public:
     }
 };
 
+
+class yarp::LocalCarrierStream : public SocketTwoWayStream {
+private:
+    LocalCarrier *owner;
+    bool sender;
+public:
+    void attach(LocalCarrier *owner, bool sender) {
+        this->owner = owner;
+        this->sender = sender;
+    }
+
+    virtual void close();
+
+};
+
 class yarp::LocalCarrier : public AbstractCarrier {
 protected:
+    bool doomed;
     yarp::os::Portable *ref;
     LocalCarrier *peer;
     yarp::os::Semaphore peerMutex;
@@ -73,17 +91,11 @@ public:
     LocalCarrier() : peerMutex(1), sent(0), received(0) {
         ref = NULL;
         peer = NULL;
+        doomed = false;
     }
 
     virtual ~LocalCarrier() {
-        peerMutex.wait();
-        if (peer!=NULL) {
-            peer->accept(NULL);
-            LocalCarrier *wasPeer = peer;
-            peer = NULL;
-            wasPeer->removePeer();
-        }
-        peerMutex.post();
+        shutdown();
     }
 
     virtual Carrier *create() {
@@ -91,9 +103,25 @@ public:
     }
 
     void removePeer() {
-        peerMutex.wait();
-        peer = NULL;
-        peerMutex.post();        
+        if (!doomed) {
+            peerMutex.wait();
+            peer = NULL;
+            peerMutex.post();
+        }
+    }
+
+    void shutdown() {
+        if (!doomed) {
+            doomed = true;
+            peerMutex.wait();
+            if (peer!=NULL) {
+                peer->accept(NULL);
+                LocalCarrier *wasPeer = peer;
+                peer = NULL;
+                wasPeer->removePeer();
+            }
+            peerMutex.post();
+        }
     }
 
     virtual String getName() {
@@ -172,7 +200,11 @@ public:
     }
 
     virtual void becomeLocal(Protocol& proto, bool sender) {
-        //proto.takeStreams(NULL); // free up port from tcp
+        LocalCarrierStream *stream = new LocalCarrierStream();
+        if (stream!=NULL) {
+            stream->attach(this,sender);
+        }
+        proto.takeStreams(stream);
         YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
         //ACE_OS::exit(1);
     }
@@ -238,10 +270,13 @@ public:
         this->ref = ref;
         YARP_DEBUG(Logger::get(),"local send: send ref");
         sent.post();
-        YARP_DEBUG(Logger::get(),"local send: wait receipt");
-        received.wait();
-        YARP_DEBUG(Logger::get(),"local send: received");
+        if (ref!=NULL&&!doomed) {
+            YARP_DEBUG(Logger::get(),"local send: wait receipt");
+            received.wait();
+            YARP_DEBUG(Logger::get(),"local send: received");
+        }
     }
+
 };
 
 #endif

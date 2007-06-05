@@ -9,5 +9,16 @@
 
 #include <yarp/LocalCarrier.h>
 
-yarp::LocalCarrierManager yarp::LocalCarrier::manager;
+using namespace yarp;
 
+LocalCarrierManager LocalCarrier::manager;
+
+
+void LocalCarrierStream::close() {
+    SocketTwoWayStream::close();
+    if (owner!=NULL) {
+        LocalCarrier *owned = owner;
+        owner = NULL;
+        owned->shutdown();
+    }
+}
