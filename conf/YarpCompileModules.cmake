@@ -213,8 +213,9 @@ ELSE (NOT COMPILING_ALL_YARP)
     INCLUDE(${EXTERNAL_MODULES_FILE})
   ENDIF (EXISTS ${EXTERNAL_MODULES_FILE})
   # add some standard built in modules
-  SET(EXTERNAL_MODULES yarpmod ${EXTERNAL_MODULES})
-  SET(yarpmod_PATH "${CMAKE_SOURCE_DIR}/src/modules")
+    # needs testing on windows --paulfitz
+  #  SET(EXTERNAL_MODULES yarpmod ${EXTERNAL_MODULES})
+  #SET(yarpmod_PATH "${CMAKE_SOURCE_DIR}/src/modules")
 ENDIF (NOT COMPILING_ALL_YARP)
 
 
