@@ -378,12 +378,15 @@ public:
     virtual bool relativeMoveRaw(const double *deltas)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @return true if the trajectory is terminated, false otherwise
+	 * @param j is the axis number
+	 * @param flag is a pointer to return value
+	 * @return true/false on success/failure
      */
     virtual bool checkMotionDoneRaw(int j, bool *flag)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
-     * @return true if the trajectory is terminated, false otherwise
+	 * @param flag is a pointer to return value ("and" of all joints)
+	 * @return true/false on success/failure
      */
     virtual bool checkMotionDoneRaw(bool *flag)=0;
 
