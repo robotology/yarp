@@ -1,5 +1,5 @@
 #####
-# Parse a list of devices, creates library which compiles 
+# Parse a list of devices, creates a library which compiles 
 # all devices together. Generates code for inclusion 
 # in libYARP_dev.  
 # modulename: the name of the library

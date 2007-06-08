@@ -1,3 +1,6 @@
+# clean variables
+SET(YARP_EXTMOD_TARGETS "")
+SET(YARP_EXTMOD_LIBS "")
 
 IF (NOT COMPILING_ALL_YARP)
    PROJECT(FloatingYarpDev)
@@ -69,7 +72,6 @@ IF (COMPILING_ALL_YARP)
 ELSE (COMPILING_ALL_YARP)
   SET(PROJECT_NAME runnable)
 ENDIF (COMPILING_ALL_YARP)
-
 
 #the name of the project, the output will be this name .lib (in windows "d" will be added
 #to this name to compile the debug version)
@@ -212,19 +214,7 @@ ELSE (NOT COMPILING_ALL_YARP)
   IF (EXISTS ${EXTERNAL_MODULES_FILE})
     INCLUDE(${EXTERNAL_MODULES_FILE})
   ENDIF (EXISTS ${EXTERNAL_MODULES_FILE})
-  # add some standard built in modules
-    # needs testing on windows --paulfitz
-  #  SET(EXTERNAL_MODULES yarpmod ${EXTERNAL_MODULES})
-  #SET(yarpmod_PATH "${CMAKE_SOURCE_DIR}/src/modules")
 ENDIF (NOT COMPILING_ALL_YARP)
-
-
-# make sure we don't try to compile modules if user doesn't want
-# us to --paulfitz
-IF (NOT CREATE_DEVICE_LIBRARY_BUILTINS)
-    SET(EXTERNAL_MODULES "")
-ENDIF (NOT CREATE_DEVICE_LIBRARY_BUILTINS)
-
 
 IF (EXTERNAL_MODULES)
   ## parse the list of modules
@@ -240,14 +230,17 @@ IF (EXTERNAL_MODULES)
 	  # populate list of header folders
 	  SET(ext_lib_headers "${ext_lib_headers}" "${BASE_BINARY_DIR}/generated_code/${MOD}")
 	  
-	  # populate list of libraries
+        # populate list of projects/targets to be added as "internal" dependencies for 
+        # yarp built-in binaries
+	  SET(YARP_EXTMOD_TARGETS "${YARP_EXTMOD_TARGETS}" ${MOD})
+	  # populate list of libraries, for external programs using yarp
 	  IF (WIN32 AND NOT CYGWIN)
 		SET(libname "${MOD}.lib")
 		STRING(REPLACE ".lib" "d.lib" libname2 ${libname})
-		SET(EXT_LIBS "${EXT_LIBS}" "optimized;${libname};debug;${libname2}")
+		SET(YARP_EXTMOD_LIBS "${YARP_EXTMOD_LIBS}" "optimized;${libname};debug;${libname2}")
 	  ELSE(WIN32 AND NOT CYGWIN)
 		# populate list of dependencies
-		SET(EXT_LIBS "${EXT_LIBS}" "${MOD}")
+		SET(YARP_EXTMOD_LIBS "${YARP_EXTMOD_LIBS}" "${MOD}")
 	  ENDIF (WIN32 AND NOT CYGWIN)
 
 	  ## NOW BUILD DEPENDENCIES
@@ -355,6 +348,9 @@ SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")
 SET(YARP_dev_INC "${YARP_dev_INC}" CACHE INTERNAL "include path")
 SET(YARP_dev_EXT_LIBS "${YARP_dev_EXT_LIBS}" CACHE INTERNAL "extra libs")
 
+SET(YARP_EXTMOD_TARGETS "${YARP_EXTMOD_TARGETS}" CACHE INTERNAL "external modules targets")
+SET(YARP_EXTMOD_LIBS "${YARP_EXTMOD_LIBS}" CACHE INTERNAL "external modules libraries")
+
 
 IF (COMPILING_ALL_YARP)
 
@@ -362,7 +358,7 @@ IF (COMPILING_ALL_YARP)
    SET(postfix dev)
    AUX_SOURCE_DIRECTORY(harness harnesscode)
    ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
-   TARGET_LINK_LIBRARIES(harness_${postfix} YARP_dev YARP_sig YARP_OS ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS})
+   TARGET_LINK_LIBRARIES(harness_${postfix} YARP_dev YARP_sig YARP_OS ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS})
    GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
    
   # add in standard tests
@@ -389,7 +385,6 @@ IF (COMPILING_ALL_YARP)
 
 ENDIF (COMPILING_ALL_YARP)
 
-
 IF (NOT COMPILING_ALL_YARP)
   # make a basic test program
   SET(runner ${BASE_BINARY_DIR}${REL_DIR}generated_code/main.cpp)
@@ -398,3 +393,7 @@ IF (NOT COMPILING_ALL_YARP)
   ADD_EXECUTABLE(runner ${runner})
   TARGET_LINK_LIBRARIES(runner ${PROJECT_NAME} localmod)
 ENDIF (NOT COMPILING_ALL_YARP)
+
+#MESSAGE(STATUS "External modules: generated list of targets" "${YARP_EXTMOD_TARGETS}")
+#MESSAGE(STATUS "External modules: generated list of libs" "${YARP_EXTMOD_LIBS}")
+#MESSAGE(STATUS "YARP_dev_EXT_LIBS: " "${YARP_dev_EXT_LIBS}")

@@ -2859,7 +2859,6 @@ void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
         //			for (i = 0; i < v.body.size(); i++)
         //				ACE_OS::printf("%.2f ", v.body[i]);
         //			ACE_OS::printf("\n");
-
         if (vel) {
             bool ok = vel->velocityMove(&(v.body[0]));
             if (!ok)

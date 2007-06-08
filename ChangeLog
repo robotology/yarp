@@ -1,9 +1,10 @@
-2007-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
-
-	* conf/YarpCompileModules.cmake: something bad happening on visual
-	studio version 6 in debug mode with no modules selected for
-	compilation; disabled including that module directory by default
-	for now.
+2007-07-04  Lorenzo Natale <nat@liralab.it>
+	* conf/CMakeLists.txt
+	* conf/YARPCompileModules.txt
+	* src/yarpdev/CMakeLists.txt
+      External modules support. CMake was not setting dependencies
+	between libraries correctly (build all failed if external libs
+	were not manually compiled beforehand). Now fixed.
 
 2007-06-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
