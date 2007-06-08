@@ -1,3 +1,10 @@
+2007-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpCompileModules.cmake: something bad happening on visual
+	studio version 6 in debug mode with no modules selected for
+	compilation; disabled including that module directory by default
+	for now.
+
 2007-06-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/LocalCarrier.h: improvements

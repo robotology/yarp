@@ -219,6 +219,13 @@ ELSE (NOT COMPILING_ALL_YARP)
 ENDIF (NOT COMPILING_ALL_YARP)
 
 
+# make sure we don't try to compile modules if user doesn't want
+# us to --paulfitz
+IF (NOT CREATE_DEVICE_LIBRARY_BUILTINS)
+    SET(EXTERNAL_MODULES "")
+ENDIF (NOT CREATE_DEVICE_LIBRARY_BUILTINS)
+
+
 IF (EXTERNAL_MODULES)
   ## parse the list of modules
   FOREACH(MOD ${EXTERNAL_MODULES})
