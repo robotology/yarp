@@ -7,7 +7,7 @@
  */
 
 //
-// $Id: MEIMotionControl.h,v 1.1 2007-06-07 09:59:51 babybot Exp $
+// $Id: MEIMotionControl.h,v 1.2 2007-06-12 15:38:12 eshuy Exp $
 //
 //
 
@@ -162,6 +162,10 @@ public:
 } ;
 
 
+// why is this file appearing twice? in src/mei and here? --paulfitz
+// removing messy namespace from documentation
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace _BabybotArm
 {
@@ -197,6 +201,8 @@ namespace _BabybotArm
 	const double _limitsMax[_nj]= {30.0 , 50.0  ,40.0,  90.0,	 70.0,   40.0};
 	const double _limitsMin[_nj]= {-20.0 ,-30.0, -40.0, -90.0 ,-90.0 ,-270.0};
 }; // namespace
+
+#endif
 
 /**
  * \file MEIMotionControl.h 
