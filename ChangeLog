@@ -1,8 +1,14 @@
+2007-06-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/CmakeLists.txt, conf/YarpReqLib.cmake, src/yarp-framegrabbergui: 
+	removed GtkMM dependency
+
 2007-07-04  Lorenzo Natale <nat@liralab.it>
+
 	* conf/CMakeLists.txt
 	* conf/YARPCompileModules.txt
 	* src/yarpdev/CMakeLists.txt
-      External modules support. CMake was not setting dependencies
+	External modules support. CMake was not setting dependencies
 	between libraries correctly (build all failed if external libs
 	were not manually compiled beforehand). Now fixed.
 

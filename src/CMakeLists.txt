@@ -14,12 +14,14 @@ IF (CREATE_GUIS)
   IF (GtkPlus_FOUND)
       SUBDIRS(yarp-imageviewer)
   ENDIF (GtkPlus_FOUND)
-  IF (GtkMM_FOUND)
-      SUBDIRS(yarp-framegrabbergui)
-#      SUBDIRS(yarp-motorcontrolgui)
-  ENDIF (GtkMM_FOUND)
+# GtkMM GUIs have been moved to the iCub repository
+#  IF (GtkMM_FOUND)
+#      SUBDIRS(yarp-framegrabbergui)
+##      SUBDIRS(yarp-motorcontrolgui)
+#  ENDIF (GtkMM_FOUND)
 ENDIF(CREATE_GUIS)
 
 IF (YARP_HAS_MATH_LIB)
  SUBDIRS(libYARP_math)
 ENDIF(YARP_HAS_MATH_LIB)
+
