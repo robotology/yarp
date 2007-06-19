@@ -82,6 +82,8 @@ public:
     double *_currentLimits;                     /** current limits */
 	double *_velocityLimits;					/** velocity limits (deg/s)          */
 	double *_accelerationLimits;				/** acceleration limits (deg/s^2)    */
+    double *_velocityDefaults;					/** velocity default value (deg/s)          */
+	double *_accelerationDefaults;				/** acceleration default value (deg/s^2)    */
 	double *_errorLimits;						/** position error limits (encoder)  */
 
     Pid *_pids;                                  /** initial gains */
@@ -276,9 +278,14 @@ protected:
 
 
 	// internal stuff.
-	double *_ref_speeds;
-	double *_ref_accs;
-	double *_ref_positions;
+	double *_ref_speeds;            //encoder pulses per second
+	double *_ref_accs;              //encoder pulses per secong square
+	double *_ref_positions;         //encoder pulses
+    double *_velocity_limits;        //encoder pulses per second
+	double *_acceleration_limits;	//encoder pulses per second square
+    double *_velocity_defaults;      //encoder pulses per second
+    double *_acceleration_defaults;  //encoder pulses per second square
+
 	int *_kp;		/** controller proportional gain */
  	int *_kd;		/** controller derivative gain */
 	int *_ki;		/** controller integral gain */
@@ -291,9 +298,7 @@ protected:
 	int *_pl;		/** positive position limit */
 	int *_nl;		/** negative position limit */
 	int *_ct;       /** encoder pulses per turn */
-	int *_vl;       /** velocity limit */
-	int *_al;		/** acceleration limit */
-	int *_en;		/** amplifier emable flags */
+	int *_en;		/** amplifier enable flags */
 	int *_mode;     /** control modes: 0 = position, 1 = velocity **/
 	// Modes are implemented via jrkerr trapezoidal control profiles
 	// Default is positions

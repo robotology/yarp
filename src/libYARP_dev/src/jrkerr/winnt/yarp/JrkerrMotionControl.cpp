@@ -48,6 +48,8 @@ JrkerrMotionControlParameters::JrkerrMotionControlParameters(int nj)
     _currentLimits=allocAndCheck<double>(nj);
 	_velocityLimits=allocAndCheck<double>(nj);
 	_accelerationLimits=allocAndCheck<double>(nj);
+    _velocityDefaults=allocAndCheck<double>(nj);
+	_accelerationDefaults=allocAndCheck<double>(nj);
 	_errorLimits=allocAndCheck<double>(nj);
     memset(_limitsMin, 0, sizeof(double)*nj);
     memset(_limitsMax, 0, sizeof(double)*nj);
@@ -267,8 +269,10 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 	
 	// velocity and acceleration limits - 
 	// maximum values cannot be changed by the user
-	_vl = allocAndCheck<int>(r.getJoints()); // counts per second
-	_al = allocAndCheck<int>(r.getJoints()); // counts per second^2
+	_velocity_limits = allocAndCheck<double>(r.getJoints()); // counts per second
+	_acceleration_limits = allocAndCheck<double>(r.getJoints()); // counts per second^2
+    _velocity_defaults = allocAndCheck<double>(r.getJoints()); // counts per second
+	_acceleration_defaults = allocAndCheck<double>(r.getJoints()); // counts per second^2
 	
 
 	int i;
@@ -291,26 +295,27 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 		// Encoder resolution in counts per turn
 		_ct[i] = (int)p._countperturn[i];
 		// Velocity limit in encoder counts per second
-		_vl[i] = (int)(p._velocityLimits[i]*p._angleToEncoder[i]); 
+		_velocity_limits[i] = (int)(p._velocityLimits[i]*p._angleToEncoder[i]); 
 		// Acceleration limit in encoder counts per second^2
-		_al[i] = (int)(p._accelerationLimits[i]*p._angleToEncoder[i]); 
-		
+		_acceleration_limits[i] = (int)(p._accelerationLimits[i]*p._angleToEncoder[i]); 
+        // Velocity default value in encoder counts per second
+		_velocity_defaults[i] = (int)(p._velocityDefaults[i]*p._angleToEncoder[i]); 
+		// Acceleration default value in encoder counts per second^2
+		_acceleration_defaults[i] = (int)(p._accelerationDefaults[i]*p._angleToEncoder[i]); 
+	
+	
 		// Initialize reference speeds and accelerations to maximum values
-		_ref_speeds[i] = _vl[i];
-		_ref_accs[i] = _al[i];
+		_ref_speeds[i] = _velocity_defaults[i];
+		_ref_accs[i] = _acceleration_defaults[i];
 
 		//initialize microcontroller with defaults
 		setPidRaw(i, p._pids[i]);
 		//enable amplifier
 		enableAmpRaw(i);
-	
 		
 		NmcDefineStatus( i+1, SEND_POS,  &(r.jrkerrcmd) );
-
 	}
 	
-	
-
 	ACE_OS::printf("Initializing %d axes at port  %d\n", r._njoints, p._comPort);
 	for(i = 0; i < r.getJoints(); i++)
 	{
@@ -319,7 +324,6 @@ bool JrkerrMotionControl::open (const JrkerrMotionControlParameters &p)
 		ACE_OS::printf("\til \t%d \tol \t%d \tcl \t%d\n",_il[i], _ol[i], _cl[i]);
 		ACE_OS::printf("\tel \t%d \tsr \t%d \tdc \t%d\n",_el[i], _sr[i], _dc[i]);
 		ACE_OS::printf("\tpl \t%d \tnl \t%d \ttk \t%d\n",_pl[i], _nl[i], _ct[i]);
-		ACE_OS::printf("\tvl \t%d \tal \t%d \ten \t%d\n",_vl[i], _al[i], _en[i]);
 	}
 
 	_mutex.post ();
@@ -405,6 +409,24 @@ bool JrkerrMotionControl::open(yarp::os::Searchable& config) {
 	ACE_ASSERT (xtmp.size() == nj+1);
     for(i=1;i<xtmp.size(); i++) params._limitsMin[i-1]=xtmp.get(i).asDouble();
 
+    /////// DEFAULTS
+
+	xtmp = p.findGroup("DEFAULTS").findGroup("Velocity");
+	if( xtmp.size() != nj+1 )
+        for(i=1;i<xtmp.size(); i++) 
+            params._velocityDefaults[i-1]=xtmp.get(i).asDouble();
+    else  //set defaults to "safe values"
+        for(i=1;i<xtmp.size(); i++) 
+            params._velocityDefaults[i-1]=0;
+
+	xtmp = p.findGroup("DEFAULTS").findGroup("Acceleration");
+	if( xtmp.size() != nj+1 )
+        for(i=1;i<xtmp.size(); i++) 
+            params._accelerationDefaults[i-1]=xtmp.get(i).asDouble();
+    else  //set defaults to "safe values"
+        for(i=1;i<xtmp.size(); i++) 
+            params._accelerationDefaults[i-1]=0;
+
 //  JRKERR SPECIFIC STUFF
 
 	params._comPort = p.findGroup("JRKERR").find("ComPort").asInt();
@@ -443,6 +465,11 @@ bool JrkerrMotionControl::close (void)
     checkAndDestroy<double> (_ref_positions);
     checkAndDestroy<double> (_ref_speeds);
     checkAndDestroy<double> (_ref_accs);
+    checkAndDestroy<double> (_velocity_limits);
+	checkAndDestroy<double> (_acceleration_limits);
+    checkAndDestroy<double> (_velocity_defaults);
+	checkAndDestroy<double> (_acceleration_defaults);
+
 	checkAndDestroy<int> (_kp);
 	checkAndDestroy<int> (_kd);
 	checkAndDestroy<int> (_ki);
@@ -455,8 +482,6 @@ bool JrkerrMotionControl::close (void)
 	checkAndDestroy<int> (_pl);
 	checkAndDestroy<int> (_nl);
 	checkAndDestroy<int> (_ct);
-	checkAndDestroy<int> (_vl);
-	checkAndDestroy<int> (_al);
 	checkAndDestroy<int> (_en);
 	checkAndDestroy<int> (_mode);
 
@@ -479,7 +504,6 @@ bool JrkerrMotionControl::getAxes(int *ax)
 {
 	JrkerrRS485Resources& r = RES(system_resources);
     *ax = r.getJoints();
-	printf("PORTUGAL !!!");
     return true;
 }
 
@@ -816,15 +840,15 @@ bool JrkerrMotionControl::setRefSpeedRaw(int axis, double sp)
 		return false;
 
 	_mutex.wait();
-	if( sp > _vl[axis] )
+	if( sp > _velocity_limits[axis] )
 	{
-		printf("WARNING!!!!! Exceeding joint %d velocity limit %f > %f \n", axis, sp, _vl[axis]);	
-		_ref_speeds[axis] = _vl[axis];
+		printf("WARNING!!!!! Exceeding joint %d velocity limit %f > %f \n", axis, sp, _velocity_limits[axis]);	
+		_ref_speeds[axis] = _velocity_limits[axis];
 	}
-	else  if( sp < -_vl[axis] )
+	else  if( sp < -_velocity_limits[axis] )
 	{
-		printf("WARNING!!!!! Exceeding joint %d velocity limit %f < %f \n", axis, sp, -_vl[axis]);
-		_ref_speeds[axis] = -_vl[axis];
+		printf("WARNING!!!!! Exceeding joint %d velocity limit %f < %f \n", axis, sp, -_velocity_limits[axis]);
+		_ref_speeds[axis] = -_velocity_limits[axis];
 	}
 	else
 	{
@@ -869,15 +893,15 @@ bool JrkerrMotionControl::setRefAccelerationRaw(int axis, double acc)
 
 
 	_mutex.wait();
-	if( acc > _al[axis] )
+	if( acc > _acceleration_limits[axis] )
 	{
-		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f > %f \n", axis, acc, _al[axis]);
-		_ref_accs[axis] = _al[axis];
+		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f > %f \n", axis, acc, _acceleration_limits[axis]);
+		_ref_accs[axis] = _acceleration_limits[axis];
 	}
-	else  if( acc < -_al[axis] )
+	else  if( acc < -_acceleration_limits[axis] )
 	{
-		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f < %f \n", axis, acc, -_al[axis]);
-		_ref_accs[axis] = -_al[axis];
+		printf("WARNING!!!!! Exceeding joint %d acceleration limit %f < %f \n", axis, acc, -_acceleration_limits[axis]);
+		_ref_accs[axis] = -_acceleration_limits[axis];
 	}
 	else
 	{
