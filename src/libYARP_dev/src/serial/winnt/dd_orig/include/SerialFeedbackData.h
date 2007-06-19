@@ -17,14 +17,14 @@
  */
 
 /*
- * RCS-ID:$Id: SerialFeedbackData.h,v 1.1 2007-05-30 22:47:15 alex_bernardino Exp $
+ * RCS-ID:$Id: SerialFeedbackData.h,v 1.2 2007-06-19 13:30:32 beltran Exp $
  */
 
 #ifndef _SERIALFEEDBACKDATAH_ 
 #define _SERIALFEEDBACKDATAH_
 
 #include <ace/OS.h>
-#include <ace/String_Base.h>
+#include <yarp/String.h>
 #include <ace/Task.h>
 
 /** 
@@ -40,7 +40,6 @@ public:
     SerialFeedbackData ()
     {
         // Initialize local parameters.
-        _delimiter_string = 0;
         _command_sender   = 0;
         _bytes_to_read    = 0;
         _counted_bytes    = 0;
@@ -52,7 +51,6 @@ public:
 
     ~SerialFeedbackData()
     {
-        if ( _delimiter_string != 0) free(_delimiter_string);
     };
 
     /** 
@@ -122,7 +120,6 @@ protected:
 
 private:
     ACE_Task<ACE_MT_SYNCH> * _command_sender;      /// Pointer to the DGSTask that has sent the command.
-    ACE_String_Base<char> * _delimiter_string;   /// The delimiter string that detects the end of a serial response.
     int _bytes_to_read;             /// The number of bytes that are expected to be read for a response.
     bool _use_string_delimiter;      /// Determines whether or not use the string
                                     /// delimiter to detect the end of a response
