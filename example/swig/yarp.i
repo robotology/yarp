@@ -224,6 +224,36 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 %template(BufferedPortImageRgb) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 
 
+// Now we do ImageFloat - it is a little trickey too..
+//%template(ImageFloat) yarp::sig::ImageOf<yarp::sig::PixelFloat>;
+
+// Add getPixel and setPixel methods to access float values
+%extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
+   float getPixel(int x, int y) {
+       return self->pixel(x,y);
+       }
+
+   void setPixel(int x, int y, float v) {
+       self->pixel(x,y) = v;
+       }
+}
+
+%{
+typedef yarp::sig::ImageOf<yarp::sig::PixelFloat> ImageFloat;
+typedef yarp::os::TypedReader<ImageFloat> TypedReaderImageFloat;
+typedef yarp::os::TypedReaderCallback<ImageFloat> TypedReaderCallbackImageFloat;
+typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
+%}
+
+%feature("notabstract") ImageFloat;
+%feature("notabstract") yarp::os::BufferedPort<ImageFloat>;
+%feature("notabstract") BufferedPortImageFloat;
+
+%template(ImageFloat) yarp::sig::ImageOf<yarp::sig::PixelFloat>;
+%template(TypedReaderImageFloat) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
+%template(TypedReaderCallbackImageFloat) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
+%template(BufferedPortImageFloat) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelFloat> >;
+
 
 //////////////////////////////////////////////////////////////////////////
 // Deal with poor translation of interface inheritance in current SWIG
@@ -238,6 +268,10 @@ typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 	}
 
 	bool write(yarp::sig::ImageOf<yarp::sig::PixelRgb>& data) {
+		return self->write(*((PortWriter*)(&data)));
+	}
+    
+    bool write(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data) {
 		return self->write(*((PortWriter*)(&data)));
 	}
 }
