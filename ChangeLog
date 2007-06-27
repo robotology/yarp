@@ -1,3 +1,10 @@
+2007-06-27  Jonas Ruesch  <ruesch@ifi.uzh.ch>
+
+	* example/swig/yarp.i:
+    support for ImageOf<PixelFloat> added.
+    * example/swig/src/YarpImageHelper.java
+    method get2DMatrix(ImageFloat img) added. 
+
 2007-06-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/CmakeLists.txt, conf/YarpReqLib.cmake, src/yarp-framegrabbergui: 
