@@ -7,6 +7,7 @@ public class YarpImageHelper
 	short [][][] sarray1;
 	short [][] array2d;
 	short [][] arrayfull;
+    float [][] arrFltFull;
 	int width;
 	int height;
 
@@ -21,6 +22,7 @@ public class YarpImageHelper
 		sarray1 = new short [h][w][3];
 		array2d = new short [h][w];
 		arrayfull = new short [h][3*w];
+        arrFltFull = new float [h][w];
 		height=h;
 		width=w;
 	}
@@ -152,5 +154,21 @@ public class YarpImageHelper
 				}
 
 		return arrayfull;
+	}
+    
+    /**
+         * Converts a floating point YARP image to a two dimensional array. 
+	* @param img input image
+	* @return output array
+	*/
+	public float [][] get2DMatrix(ImageFloat img)
+	{
+		for(int r=0; r<img.height(); r++)
+			for(int c=0; c<img.width(); c++)
+				{
+					arrFltFull[r][c] = img.getPixel(c,r);
+				}
+
+		return arrFltFull;
 	}
 }
