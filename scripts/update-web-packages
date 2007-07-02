@@ -29,6 +29,6 @@ else
 fi
 
 echo "Uploading to website download directory"
-cd web-package && rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DOWNLOAD_DIR/yarp
+cd web-package && timeout 600 rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DOWNLOAD_DIR/yarp
 
 

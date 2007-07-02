@@ -14,7 +14,7 @@ fi
 
 echo USER is "$WEB_USER"
 
-cd doc && scp download.html index.html $WEB_USER@$target:$WEB_DOC_DIR
+cd doc && timeout 600 scp download.html index.html $WEB_USER@$target:$WEB_DOC_DIR
 
 
 

@@ -25,7 +25,7 @@ rm -f should_report.txt
 
 (
 
-cvs update -d > cvslog.txt
+timeout 600 cvs update -d > cvslog.txt
 cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
 
 if egrep "[a-zA-Z]" cvslog2.txt; then
@@ -96,7 +96,7 @@ if [ -e should_report.txt ]; then
 	echo >> report-decor.txt
 	cat report.txt >> report-decor.txt
 	#scp report-decor.txt eshuy@yarp0.sf.net:www/report-yarp2-linux.txt
-	scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
+	timeout 600 scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
 fi
 
 sleep 600

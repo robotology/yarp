@@ -22,5 +22,5 @@ if [ ! -e CVS ]; then
     echo "" > CVS/Entries
 fi
 cvs update -d
-rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DIR
+timeout 600 rsync --rsh="ssh -x -l $WEB_USER" --modify-window=2 -lauvzP . $target:$WEB_DIR
 
