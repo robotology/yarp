@@ -30,8 +30,13 @@ namespace yarp {
 class yarp::os::Run {
 public:
     static int main(int argc, char *argv[]);
-};
 
+protected:
+	static int run(Searchable& config);
+	static int runServer(Searchable& config);
+	static int runConnect(Searchable& config);
+	static int runClient(Searchable& config);
+};
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
