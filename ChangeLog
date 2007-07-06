@@ -1,3 +1,10 @@
+2007-07-06  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_os/include/yarp/os/Run.h
+	* src/yarp/libYARP_os/src/Run.cpp
+	New version, supports run & kill processes
+	on both unix and win32. Does not support
+	IO (by now).
+	
 2007-06-27  Jonas Ruesch  <ruesch@ifi.uzh.ch>
 
 	* example/swig/yarp.i:
