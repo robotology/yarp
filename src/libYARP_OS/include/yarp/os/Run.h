@@ -30,6 +30,7 @@ namespace yarp {
 class yarp::os::Run {
 public:
     static int main(int argc, char *argv[]);
+	~Run();
 
 protected:
 	static int run(Searchable& config);

@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Paul Fitzpatrick, Alessandro Scalzo
+ * Copyright (C) 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
- * Paul Fitzpatrick wrote "old version"
- * Alessandro Scalzo wrote "new version"
- *
  */
+
+#define NEWVERSION
+#ifdef NEWVERSION
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -28,7 +28,7 @@ using namespace std;
 #endif
 
 #ifndef ACE_LACKS_KILL
-#define KILL() kill()
+#define KILL() kill(SIGKILL)
 #else
 #define KILL() terminate()
 #endif
@@ -44,14 +44,14 @@ public:
 	TProcess()
 	{
 		m_Pid=-1;
-		m_Name="unnamed";
+		m_Name="default";
 	}
 	~TProcess()
 	{
 		Kill();
 	}
 	
-	pid_t Spawn(ACE_Process_Options& options,String name="unnamed")
+	pid_t Spawn(ACE_Process_Options& options,String name="default")
 	{
 		m_Pid=m_Child.spawn(options);
 		
@@ -71,7 +71,7 @@ public:
 			m_Child.wait();
 			//Time::delay(0.5);
 			m_Pid=-1;
-			m_Name="unnamed";
+			m_Name="default";
 			return true;
 		}
 		return false;
@@ -110,32 +110,6 @@ public:
 		//m_apChilds.clear();
 	}
 
-	bool Kill(pid_t pid)
-	{
-		for (int i=0; i<m_nProcesses; ++i)
-		{
-			if (m_apChilds[i])
-			{
-				if (*m_apChilds[i]==pid)
-				{
-					m_Mutex.wait();
-					m_apChilds[i]->Kill();
-					m_Mutex.post();
-					delete m_apChilds[i];
-					m_apChilds[i]=0;
-
-					Pack();
-
-					return true;
-				}
-			}
-		}
-
-		Pack();
-
-		return false;
-	}
-
 	int Killall()
 	{
 		int killed=0;
@@ -158,7 +132,7 @@ public:
 		return killed;
 	}
 
-	int Killall(String name)
+	int Kill(String name)
 	{
 		int killed=0;
 
@@ -222,13 +196,13 @@ protected:
 	void Pack()
 	{
 		int tot=0;
-		int i=0;
-		for (i=0; i<m_nProcesses; ++i)
+
+		for (int i=0; i<m_nProcesses; ++i)
 		{
 			if (m_apChilds[i]) m_apChilds[tot++]=m_apChilds[i]; 
 		}
 
-		for (i=tot; i<m_nProcesses; ++i)
+		for (int i=tot; i<m_nProcesses; ++i)
 			m_apChilds[i]=0;
 
 		m_nProcesses=tot;
@@ -298,24 +272,42 @@ static Bottle readStdinAsBottle()
 	return bot;
 }
 
-static Bottle readFileAsBottle(const char *fileName) 
+static bool writeBottleAsFile(Bottle& bottle,String& filename) 
+{
+	FILE* fout=fopen(filename.c_str(),"wc");
+    
+	if (!fout) return false;
+
+	for (int i=0; i<bottle.size(); ++i)
+	{
+		fprintf(fout,"%s\n",bottle.get(i).asString().c_str());
+	}
+
+	fclose(fout);
+
+    return true;
+}
+
+static Bottle readScriptAsBottle(const char *fileName) 
 {
     Bottle bot;
+
+	bot.addString("script");
+	//bot.addString(fileName);
+
     ifstream fin(fileName);
     if (fin.eof()||fin.fail()) 
 	{
-        return "";
+		bot.addString("");
+        return bot;
     }
-    
+   
+    char buf[25600];
+
 	while (!(fin.eof()||fin.bad())) 
 	{
-        char buf[25600];
         fin.getline(buf,sizeof(buf),'\n');
-    
-		if (!(fin.eof()||fin.bad())) 
-		{
-            bot.addString(buf);
-        }
+		bot.addString(buf);
     }
 
     return bot;
@@ -346,143 +338,201 @@ public:
     }
 };
 
-#ifdef notdef
-int Run::run(TProcessVector &pv,const Bottle& input, Bottle& output, Searchable& config)
+Run::~Run()
 {
-	printf("\nRUNNING %s\n\n",input.toString().c_str());
-
-	String cmd=input.get(0).toString();
-
-	printf("Running: %s ...\n",cmd.c_str());
-
-    ACE_Process_Options options;
-	options.command_line("%s",cmd.c_str());
-
-	ACE_Process* pChild=new ACE_Process;
-	m_apChilds.push_back(pChild);
-
-    pid_t pid=pChild->spawn(options);
-    options.release_handles();
-	options.re
-	output.addString(Value(pid).toString());
-	Time::delay(5.0);
-
-	printf("Process ID %d\n\n",m_nProcesses++);
-
-	return 0;
+	ACE_OS::rmdir("runner");
 }
-#endif
 
 int Run::runServer(Searchable& config) 
 {
 	Port port;
     port.open(config.check("server",Value("/run"),"port name for server").asString());
-    //myName = port.getName();
+    String myPort = port.getName().c_str();
+	String directory("runner");
+	ACE_OS::mkdir(directory.c_str());
 
 	TProcessVector pv;
 
 	bool bRun=true;
 
+	int serial=0;
+
+	char intbuf[16];
+
     while (bRun) 
 	{
-        Bottle bot,output;
-        port.read(bot,true);
+		++serial;
+		sprintf(intbuf,"%d",serial);
+		String serial_str(intbuf);
 
-		DBG printf("\nBOTTLE = %s\n\n",bot.toString().c_str());
+        Bottle msg,output;
+        port.read(msg,true);
+
+		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
 		//fflush(stdout);
 
 		int result=-1;
 
-		if (bot.get(0).asString()=="cmd")
+		String key=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
+		String yarp_ctrl=String("YARP_CTRL=\"yarp run --on ")+myPort+" --as "+key+" --cmd \"";
+
+		if (msg.check("cmd"))
 		{
-			bot.copy(bot,1,bot.size());
-			String name=bot.get(0).asString().c_str();
+			Bottle cmd=msg.findGroup("cmd");
+			cmd=cmd.tail();
+
+			bool isDos=cmd.get(0).asString()=="batch";
+
+			if (isDos) yarp_ctrl=yarp_ctrl.substring(11,yarp_ctrl.length()-12);
+
+			if (msg.check("script"))
+			{
+				Bottle script; 
+				if (!isDos) script.addString(yarp_ctrl.c_str());
+				script.append(msg.findGroup("script").tail());
+				//String filename=script.get(0).asString().c_str();
+				//script=script.tail();
+				String filename;
+				if (isDos)
+				{
+					filename=directory+"\\script_"+serial_str+".bat";
+					cmd.clear();
+				}
+				else
+				{
+					filename=directory+"/script_"+serial_str+".sh";
+				}
+
+				cmd.addString(filename.c_str());
+
+				if (isDos)
+				{
+					Bottle newscript;
+
+					for (int i=0; i<script.size(); ++i)
+					{
+						String line=script.get(i).asString().c_str();
+						String linenew;
+
+						printf("line=%s\n",line.c_str());
+						
+						for (unsigned int s=0; s<line.length(); ++s)
+						{
+							if (line[s]!='$')
+								linenew+=line[s];
+							else
+							{
+								if (line.substr(s,12)=="${YARP_CTRL}")
+								{
+									linenew+=yarp_ctrl;
+									s+=11;
+								}
+							}
+						}
+						printf("linenew=%s\n",linenew.c_str());
+						newscript.addString(linenew.c_str());
+					}
+
+					script=newscript;
+				}
+
+				printf("filename=%s\n",filename.c_str());
+				writeBottleAsFile(script,filename);
+			}
+			
+			bool bNeedBatch=false;
+
+			if (msg.check("stdin"))
+			{
+				bNeedBatch=true;
+				Bottle Stdin=msg.findGroup("stdin");
+				String StdinCmd=String("yarp read ")+Stdin.get(1).toString().c_str()+String(" | ");
+				Bottle tmp;
+				tmp.addString(StdinCmd.c_str());
+				String cmd_without_quotes=cmd.toString().c_str();
+				cmd_without_quotes=cmd_without_quotes.substring(1,cmd_without_quotes.length()-2);
+				if (isDos) tmp.addString(" CALL ");
+				tmp.addString(cmd_without_quotes.c_str());
+				cmd=tmp;
+			}
+
+			if (msg.check("stdout"))
+			{
+				bNeedBatch=true;
+				Bottle Stdout=msg.findGroup("stdout");
+				String StdoutCmd=String(" | yarp write ")+Stdout.get(1).toString().c_str();
+				cmd.addString(StdoutCmd.c_str());
+			}
+
+			String command;
+			
+			for (int s=0; s<cmd.size(); ++s)
+				command+=String(cmd.get(s).toString().c_str())+" ";
+			
+			if (bNeedBatch)
+			{
+				String filename;
+				if (isDos)
+					filename=directory+"\\batch_"+serial_str+".bat";
+				else
+					filename=directory+"/batch_"+serial_str+".sh";
+				
+
+				printf("\nFILENAME: %s\n\n",filename.c_str());
+
+				FILE* file=fopen(filename.c_str(),"wc");
+				if (!isDos) fprintf(file,"%s\n",yarp_ctrl.c_str());
+				fprintf(file,"%s\n",command.c_str());
+				fclose(file);
+				
+				if (isDos)
+					command=filename;
+				else
+					command="bash "+filename;
+			}
+
 			ACE_Process_Options options;
-			options.command_line("%s",bot.toString().c_str());
-			pid_t pid=pv.Spawn(options,name.c_str());
-			DBG printf("\nSPAWN %d\n\n",pid);
-			//fflush(stdout);
+			options.command_line("%s",command.c_str());
+			printf("command=%s\n",command.c_str());
+
+			pid_t pid=pv.Spawn(options,key);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,key.c_str());
+			
 			if (pid!=-1) result=0;
 
 			output.addInt(pid);
 		}
-		else if (bot.get(0).asString()=="kill")
+		else if (msg.check("kill"))
 		{
-			bot.copy(bot,1,bot.size());
-			pid_t pid=bot.get(0).asInt();
-			if (pv.Kill(pid)) result=0;
+			Bottle killer=msg.findGroup("kill");
+			String key=killer.get(1).asString().c_str();
+			if (pv.Kill(key))
+			{ 
+			    result=0;
+			}
+			else
+			{
+			    printf("can't kill process %s\n",key.c_str());
+			}
 
-			DBG printf("\nKILL %d\n\n",pid);
+			DBG printf("\nKILL %s\n\n",key.c_str());
 			//fflush(stdout);
 		}
-		else if (bot.get(0).asString()=="killall")
-		{
-			bot.copy(bot,1,bot.size());
-			String name=bot.get(0).asString().c_str();
-			if (pv.Killall(name)) result=0;
-
-			DBG printf("\nKILLALL %s\n\n",name.c_str());
-			//fflush(stdout);
-		}
-		else if (bot.get(0).asString()=="stop")
+		else if (msg.check("killall"))
 		{
 			if (pv.Killall()) result=0;
 
-			DBG printf("\nSTOP\n\n");
+			DBG printf("\nKILLALL\n\n");
 			//fflush(stdout);
 		}
-		else if (bot.get(0).asString()=="exit")
+		else if (msg.check("exit"))
 		{
 			bRun=false;
 			result=0;
 			DBG printf("\nEXIT\n\n");
 		}
-		else if (bot.get(0).asString()=="script")
-		{
-			result=0;
 
-			bot.copy(bot,1,bot.size());
-
-			for (int i=0; i<bot.size(); ++i)
-			{
-				String command=bot.get(i).asString().c_str();
-
-				int comment_pos=command.find('#');
-
-				if (comment_pos>-1) command=command.substring(0,comment_pos);
-
-				while (command.find(' ')==0)
-				{
-					command=command.substring(1);
-				}
-
-				if (command.length()<=0) continue;
-
-				String name;
-				int name_len=command.find(' ');
-				
-				if (name_len>-1)
-				{
-					name=command.substring(0,name_len);
-				}
-				else
-				{
-					name=command;
-				}
-				
-				printf("%d) %s\n",i,command.c_str());	
-				printf("NAME= %s\n",name.c_str());
-				
-				ACE_Process_Options options;
-				options.command_line("%s",command.c_str());
-				pid_t pid=pv.Spawn(options,name.c_str());
-				DBG printf("\nSPAWN %d\n\n",pid);
-				//fflush(stdout);
-				if (pid==-1) result=-1;
-
-				output.addInt(pid);
-			}
-		}
 
 		Bottle reply;
         reply.addVocab(result?VOCAB4('f','a','i','l'):VOCAB2('o','k'));
@@ -517,52 +567,53 @@ int Run::runConnect(Searchable& config)
 
 int Run::runClient(Searchable& config)
 {
-	Bottle cmd;
+	printf("\nCONFIG: %s\n\n",config.toString().c_str());
+
+	Bottle msg;
 
 	if (config.check("cmd"))
-	{        
-        cmd=config.findGroup("cmd");
-		printf("\n--cmd = %s\n\n",cmd.toString().c_str());
+	{                
+		msg.addList()=config.findGroup("cmd");
+
+		if (config.check("as"))
+			msg.addList()=config.findGroup("as");
+
+		if (config.check("blocking"))
+			msg.addList()=config.findGroup("blocking");
+
+		if (config.check("script"))
+		{
+			String fname=config.check("script",Value("")).toString().c_str();
+			if (fname!="")
+			{
+				Bottle script=readScriptAsBottle(fname.c_str());
+				msg.addList()=script;
+			}
+        }
+
+		if (config.check("stdin"))
+		{
+			msg.addList()=config.findGroup("stdin");
+		}
+
+		if (config.check("stdout"))
+		{
+			msg.addList()=config.findGroup("stdout");
+		}
+
+		printf("\nSCRIPT: %s\n\n",msg.toString().c_str());
 	}
 	else if (config.check("kill")) 
 	{ 
-        cmd=config.findGroup("kill");
-		printf("\n--kill = %s\n\n",cmd.toString().c_str());
+		msg.addList()=config.findGroup("kill");
 	}
 	else if (config.check("killall")) 
 	{ 
-        cmd=config.findGroup("killall");
-		printf("\n--killall = %s\n\n",cmd.toString().c_str());
+		msg.addList()=config.findGroup("killall");
 	}	
-	else if (config.check("stop")) 
-	{ 
-        cmd=config.findGroup("stop");
-		printf("\n--stop = %s\n\n",cmd.toString().c_str());
-	}
 	else if (config.check("exit")) 
-	{ 
-        cmd=config.findGroup("exit");
-		printf("\n--stop = %s\n\n",cmd.toString().c_str());
-	}
-	else if (config.check("script"))
 	{
-        String fname = config.check("script",Value("")).toString().c_str();
-        Bottle script;
-
-		if (fname!="") 
-		{
-            script=readFileAsBottle(fname.c_str());
-			printf("\nSCRIPT(0)= %s\n\n",script.toString().c_str());
-        } 
-		else 
-		{
-            script=readStdinAsBottle();
-			printf("\nSCRIPT(1)= %s\n\n",script.toString().c_str());
-        }
-
-		cmd.clear();
-		cmd.addString("script");
-		cmd.append(script);
+        msg.addList()=config.findGroup("exit");
 	}
 	else return -1;
 
@@ -571,7 +622,7 @@ int Run::runClient(Searchable& config)
 	ConstString target=config.check("on",Value("/run")).asString();
     Network::connect(port.getName().c_str(),target.c_str());
 	Bottle response;
-    port.write(cmd,response);
+    port.write(msg,response);
     Network::disconnect(port.getName().c_str(),target.c_str());
     port.close();
 
@@ -579,106 +630,6 @@ int Run::runClient(Searchable& config)
 
 	return 0;
 }
-
-#ifdef notdef
-int Run::runClient(Searchable& config) 
-{
-    DBG printf("config stuff is %s\n", config.toString().c_str());
-
-    //String prefix = "#pragma yarp ";
-    //prefix += config.toString().c_str();
-
-    //Bottle cmd;
-	
-	if (config.check("cmd")) 
-	{        
-        Bottle cmd=config.findGroup("cmd");
-		printf("\nCMD(0)= %s\n\n",cmd.toString().c_str());
-        
-		//cmd.copy(cmd,1,cmd.size());
-		//printf("\nCMD(1)= %s\n\n",cmd.toString().c_str());
-
-		if (cmd.size()>1) 
-		{
-            ConstString desc = cmd.toString();
-            cmd.clear();
-            cmd.addString(desc);
-			printf("\nCMD(2)= %s\n\n",cmd.toString().c_str());
-        }
-		
-		printf("\nCMD(3)= %s\n\n",cmd.toString().c_str());
-    }
-	else if (config.check("stop"))
-	{
-
-	}
-	else if (config.check("script")) 
-	{
-        String fname = config.check("script",Value("")).toString().c_str();
-        
-		if (fname!="") 
-		{
-            cmd = readFileAsBottle(fname.c_str());
-			printf("\nSCRIPT(0)= %s\n\n",cmd.toString().c_str());
-        } 
-		else 
-		{
-            cmd = readStdinAsBottle();
-			printf("\nSCRIPT(1)= %s\n\n",cmd.toString().c_str());
-        }
-    } 
-	else if (config.check("stop"))
-	{
-        cmd.clear();
-        String fname = config.check("stop",Value("")).toString().c_str();
-
-        if (fname!="") 
-		{
-            String stop = "sh runner/";
-            stop += fname;
-            stop += "/stop.sh";
-            cmd.addString(stop.c_str());
-        }
-    }
-
-    if (cmd.size()>=1) 
-	{
-        Bottle response;
-        
-        //cmd.addString(prefix.c_str());
-     
-		DBG printf("Have a command to send: %s\n", cmd.toString().c_str());
-
-        Port port;
-        port.open("...");
-		ConstString target=config.check("on",Value("/run")).asString();
-        Network::connect(port.getName().c_str(),target.c_str());
-        port.write(cmd,response);
-        Network::disconnect(port.getName().c_str(),target.c_str());
-        port.close();
-        
-        printf("\n");
-        for (int i=0; i<response.size(); i++) 
-		{
-            printf("%s\n", response.get(i).toString().c_str());
-        }
-        
-		int result = (response.get(0).asVocab() == VOCAB2('o','k'))?0:1;
-        
-		if (result) 
-		{
-            printf("*** error reported\n");
-        }
-        
-		Time::delay(2.0);
-		pid_t pid=response.get(1).asInt();
-
-		return result;
-    }
-   
-    return 1;
-}
-#endif
 
 int Run::main(int argc, char *argv[]) 
 {
@@ -691,19 +642,17 @@ int Run::main(int argc, char *argv[])
         DBG printf("server state %s:%d\n",__FILE__,__LINE__);
         return runServer(config);
     } 
-	else 
+	if (config.check("connect")) 
 	{
-		if (config.check("connect")) 
-		{
-            DBG printf("connect state %s:%d\n",__FILE__,__LINE__);
-            return runConnect(config);
-        } 
-		else 
-		{ 
-            DBG printf("client state %s:%d\n",__FILE__,__LINE__);
-            return runClient(config);
-        }
+        DBG printf("connect state %s:%d\n",__FILE__,__LINE__);
+        return runConnect(config);
+    } 
+	else if (config.check("cmd") || config.check("kill") || config.check("killall") || config.check("exit"))
+	{ 
+        DBG printf("client state %s:%d\n",__FILE__,__LINE__);
+        return runClient(config);
     }
+	else return -1;
 
     return 0;
 }
@@ -712,7 +661,7 @@ int Run::main(int argc, char *argv[])
 
 // OLD VERSION
 
-#ifdef notdef
+#else
 
 #include <ace/config.h>
 #include <ace/OS.h>
@@ -1209,3 +1158,51 @@ int Run::main(int argc, char *argv[]) {
 #endif
 
 
+		/*
+		else if (bot.get(0).asString()=="script")
+		{
+			result=0;
+
+			bot.copy(bot,1,bot.size());
+
+			for (int i=0; i<bot.size(); ++i)
+			{
+				String command=bot.get(i).asString().c_str();
+
+				int comment_pos=command.find('#');
+
+				if (comment_pos>-1) command=command.substring(0,comment_pos);
+
+				while (command.find(' ')==0)
+				{
+					command=command.substring(1);
+				}
+
+				if (command.length()<=0) continue;
+
+				String name;
+				int name_len=command.find(' ');
+				
+				if (name_len>-1)
+				{
+					name=command.substring(0,name_len);
+				}
+				else
+				{
+					name=command;
+				}
+				
+				printf("%d) %s\n",i,command.c_str());	
+				printf("NAME= %s\n",name.c_str());
+				
+				ACE_Process_Options options;
+				options.command_line("%s",command.c_str());
+				pid_t pid=pv.Spawn(options,name.c_str());
+				DBG printf("\nSPAWN %d\n\n",pid);
+				//fflush(stdout);
+				if (pid==-1) result=-1;
+
+				output.addInt(pid);
+			}
+		}
+		*/
