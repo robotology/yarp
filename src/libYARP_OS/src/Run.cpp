@@ -197,12 +197,13 @@ protected:
 	{
 		int tot=0;
 
-		for (int i=0; i<m_nProcesses; ++i)
+		int i;
+		for (i=0; i<m_nProcesses; ++i)
 		{
 			if (m_apChilds[i]) m_apChilds[tot++]=m_apChilds[i]; 
 		}
 
-		for (int i=tot; i<m_nProcesses; ++i)
+		for (i=tot; i<m_nProcesses; ++i)
 			m_apChilds[i]=0;
 
 		m_nProcesses=tot;
