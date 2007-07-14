@@ -1223,6 +1223,8 @@ public:
      */
     virtual bool calibrate();
 
+    virtual bool park(bool wait=true);
+
 };
 
 /** 
@@ -1267,6 +1269,7 @@ public:
      */
     virtual bool calibrate();
 
+    virtual bool park(bool wait=true);
 };
 
 /** 

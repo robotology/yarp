@@ -45,6 +45,17 @@ bool IControlCalibration::calibrate()
     return ret;
 }
 
+bool IControlCallibration::park(bool wait)
+{
+    if (calibrator!=0)
+    {
+        fprintf(stderr, "Going to call calibrator\n");
+        ret=calibrator->park(wait);
+    }
+   	else
+		fprintf(stderr, "Warning called park but no calibrator was set\n");
+}
+
 
 /// IControlCalibration2
 IControlCalibration2::IControlCalibration2()
@@ -78,3 +89,13 @@ bool IControlCalibration2::calibrate()
     return ret;
 }
 
+bool IControlCallibration2::park(bool wait)
+{
+    if (calibrator!=0)
+    {
+        fprintf(stderr, "Going to call calibrator\n");
+        ret=calibrator->park(wait);
+    }
+   	else
+		fprintf(stderr, "Warning called park but no calibrator was set\n");
+}
