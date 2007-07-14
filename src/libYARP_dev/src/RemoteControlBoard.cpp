@@ -1142,6 +1142,13 @@ public:
 		return false;
 	}
 
+    virtual bool park(bool wait=true)
+    {
+        if (calib)
+            return calib->park(wait);
+        return false;
+    }
+
 };
 
 /* check whether the last command failed */

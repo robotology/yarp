@@ -23,7 +23,7 @@ bool IControlCalibration::setCalibrator(ICalibrator *c)
 {
     if (c!=0)
         {
-            calibrator=c;
+            calibrator=c;    
             return true;
         }
 
@@ -33,7 +33,6 @@ bool IControlCalibration::setCalibrator(ICalibrator *c)
 bool IControlCalibration::calibrate()
 {
     bool ret = false;
-
     if (calibrator!=0)
         {
             fprintf(stderr, "Going to call calibrator\n");
