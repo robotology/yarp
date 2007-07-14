@@ -23,6 +23,8 @@ public:
     virtual ~ICalibrator(){}
 
     virtual bool calibrate(DeviceDriver *dd)=0;
+    
+    virtual bool park(bool wait=true)=0;
 };
 
 #endif
