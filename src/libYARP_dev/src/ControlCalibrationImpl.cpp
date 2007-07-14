@@ -51,7 +51,7 @@ bool IControlCalibration::park(bool wait)
     if (calibrator!=0)
     {
         fprintf(stderr, "Going to call calibrator\n");
-        ret=calibrator->park(wait);
+        ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
     }
    	else
 		fprintf(stderr, "Warning called park but no calibrator was set\n");
@@ -97,7 +97,7 @@ bool IControlCalibration2::park(bool wait)
     if (calibrator!=0)
     {
         fprintf(stderr, "Going to call calibrator\n");
-        ret=calibrator->park(wait);
+        ret=calibrator->park(dynamic_cast<DeviceDriver *>(this), wait);
     }
    	else
 		fprintf(stderr, "Warning called park but no calibrator was set\n");
