@@ -2408,6 +2408,7 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
 
                 // this operation is also available on "command" port
             case VOCAB_VELOCITY_MOVES: {
+
                 Bottle *b = cmd.get(2).asList();
                 int i;
                 if (b==NULL) break;
