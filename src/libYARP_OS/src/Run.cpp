@@ -1,8 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Paul Fitzpatrick
+ * Copyright (C) 2007 Alessandro Scalzo, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ * Old version by Paul Fitzpatrick
+ * New version by Alessandro Scalzo
  *
  */
 
@@ -210,6 +213,8 @@ protected:
 	}
 };
 
+// compiler warns that this is not used anymore
+/*
 static ConstString getStdin(bool& term) 
 {
     bool done = false;
@@ -272,6 +277,7 @@ static Bottle readStdinAsBottle()
     
 	return bot;
 }
+*/
 
 static bool writeBottleAsFile(Bottle& bottle,String& filename) 
 {
