@@ -1,3 +1,10 @@
+2007-07-16  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_os/include/yarp/os/Run.h
+	* src/yarp/libYARP_os/src/Run.cpp
+	New version, supports run & kill commands,
+	.sh and .bat scripts, redirect stdin and 
+	stdout to yarp ports. 
+
 2007-07-06  Alessandro Scalzo <alessandro@liralab.it>
 	* src/yarp/libYARP_os/include/yarp/os/Run.h
 	* src/yarp/libYARP_os/src/Run.cpp

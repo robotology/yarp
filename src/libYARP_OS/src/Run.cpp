@@ -1,11 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Alessandro Scalzo, Paul Fitzpatrick
+ * Copyright (C) 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- * Old version by Paul Fitzpatrick
- * New version by Alessandro Scalzo
  *
  */
 
@@ -31,9 +28,13 @@ using namespace std;
 #endif
 
 #ifndef ACE_LACKS_KILL
-#define KILL() kill(SIGKILL)
+#define KILL() kill()
 #else
 #define KILL() terminate()
+#endif
+
+#ifdef WIN32
+BOOL WINAPI KillProcessEx(IN DWORD dwProcessId,IN BOOL bTree);
 #endif
 
 using namespace yarp;
@@ -54,29 +55,110 @@ public:
 		Kill();
 	}
 	
-	pid_t Spawn(ACE_Process_Options& options,String name="default")
+	pid_t Spawn(ACE_Process_Options& options,String name="default",bool bWait=false)
 	{
 		m_Pid=m_Child.spawn(options);
 		
 		if (m_Pid!=-1)
 		{
 			m_Name=name;
+			if (bWait) m_Child.wait();
 		}
 
+        Time::delay(0.5);
+
 		return m_Pid;
+	}
+	
+	void KillAllChilds(pid_t parent_pid)
+	{
+		#ifndef ACE_LACKS_KILL
+	    pid_t* stack=new pid_t[4096];
+	    
+	    int head=1;
+	    
+	    stack[0]=parent_pid;
+	    
+	    char pidbuff[16];
+	    
+	    while (head)
+	    {
+	        pid_t pid=stack[--head];
+	        
+	        sprintf(pidbuff,"%d",pid);
+	        String filename("runner/pgrep.txt");
+	        //filename+=String(pidbuff)+".txt";
+	        
+	        String pgrep_cmd=String("pgrep -P ")+pidbuff+" > "+filename;
+	        DBG printf("%s\n",pgrep_cmd.c_str());
+	        
+	        FILE *pgrepsh=fopen("runner/mypgrep.sh","wc");
+	        fprintf(pgrepsh,"%s\n",pgrep_cmd.c_str());
+	        fclose(pgrepsh);
+	        
+	        ACE_Process_Options pgrep_opt;
+	        pgrep_opt.command_line("%s","bash runner/mypgrep.sh");
+	        ACE_Process pgrep_proc;
+	        pid_t pgrep_pid=pgrep_proc.spawn(pgrep_opt);
+	        pgrep_proc.wait();
+	        
+	        if (pgrep_pid==-1) break;
+	        
+	        Time::delay(0.1);
+	    
+	        if (pid!=parent_pid)
+	        {    
+	            String kill_cmd=String("kill -2 ")+pidbuff;
+	            ACE_Process_Options kill_opt;
+	            kill_opt.command_line("%s",kill_cmd.c_str());
+	            ACE_Process kill_proc;
+	            kill_proc.spawn(kill_opt);
+	            kill_proc.wait();
+	        }
+	        
+	        ifstream fpids(filename.c_str());
+	        
+            if (fpids.eof()||fpids.fail()) 
+	        {        
+	            printf("\n CANT OPEN FILE %s\n\n",filename.c_str());
+		        continue;
+            }
+
+	        while (!(fpids.eof()||fpids.bad())) 
+	        {
+                fpids.getline(pidbuff,sizeof(pidbuff),'\n');
+		        
+		        int new_pid=atoi(pidbuff);
+		        
+		        DBG printf("new_pid==%d\n",new_pid);
+		        
+		        if (new_pid>0) stack[head++]=new_pid;
+            }
+	    }
+	    
+	    delete [] stack;
+		#else
+		#ifdef WIN32
+		KillProcessEx(parent_pid,true);
+		#endif
+		#endif
 	}
 
 	bool Kill()
 	{
-		if (m_Pid!=-1)
+		if (m_Pid>0)
 		{
+		    KillAllChilds(m_Pid);
+		   
 			m_Child.KILL();
 			m_Child.wait();
-			//Time::delay(0.5);
+			Time::delay(0.5);
 			m_Pid=-1;
 			m_Name="default";
+			
 			return true;
 		}
+
 		return false;
 	}
 
@@ -109,15 +191,13 @@ public:
 				m_apChilds[i]=0;
 			}
 		}
-
-		//m_apChilds.clear();
 	}
 
 	int Killall()
 	{
 		int killed=0;
 
-		for (int i=0; i<m_nProcesses; ++i)
+		for (int i=m_nProcesses-1; i>=0; --i)
 		{
 			if (m_apChilds[i])
 			{
@@ -139,7 +219,7 @@ public:
 	{
 		int killed=0;
 
-		for (int i=0; i<m_nProcesses; ++i)
+		for (int i=m_nProcesses-1; i>=0; --i)
 		{
 			if (m_apChilds[i])
 			{
@@ -160,7 +240,7 @@ public:
 		return killed;
 	}
 
-	pid_t Spawn(ACE_Process_Options& options,String name="unnamed")
+	pid_t Spawn(ACE_Process_Options& options,String name="unnamed",bool bWait=false)
 	{
 		m_Mutex.wait();
 
@@ -171,9 +251,9 @@ public:
 		}
 
 		TProcess* pChild=new TProcess;
-		//m_apChilds.push_back(pChild);
+		
 		m_apChilds[m_nProcesses]=pChild;
-		pid_t pid=pChild->Spawn(options,name);
+		pid_t pid=pChild->Spawn(options,name,bWait);
 
 		if (pid!=-1)
 		{
@@ -200,88 +280,21 @@ protected:
 	{
 		int tot=0;
 
-		int i;
-		for (i=0; i<m_nProcesses; ++i)
+		for (int i=0; i<m_nProcesses; ++i)
 		{
 			if (m_apChilds[i]) m_apChilds[tot++]=m_apChilds[i]; 
 		}
 
-		for (i=tot; i<m_nProcesses; ++i)
+		for (int i=tot; i<m_nProcesses; ++i)
 			m_apChilds[i]=0;
 
 		m_nProcesses=tot;
 	}
 };
 
-// compiler warns that this is not used anymore
-/*
-static ConstString getStdin(bool& term) 
+static bool writeBottleAsFile(Bottle& bottle,String& file_name) 
 {
-    bool done = false;
-    String txt = "";
-    char buf[2048];
-
-	while (!done) 
-	{
-        char *result = ACE_OS::fgets(buf,sizeof(buf),stdin);
-    
-		if (result!=NULL) 
-		{
-            for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
-			{
-                if (buf[i]=='\n') 
-				{
-                    buf[i] = '\0';
-                    done = true;
-                    break;
-                }
-            }
-          
-			txt += buf;
-        } 
-		else 
-		{
-            done = true;
-        }
-    }
-
-    term = feof(stdin);
-    return txt.c_str();
-}
-
-static Bottle readStdinAsBottle() 
-{
-    Bottle bot;
-    bool done = false;
-
-	while (!done) 
-	{
-        bool term = false;
-        ConstString str = getStdin(term);
-    
-		if (term) 
-		{
-            done = true;
-        } 
-		else 
-		{
-            printf("adding string %s\n", str.c_str());
-            bot.addString(str.c_str());
-        }
-    }
-
-    for (int i=0; i<bot.size(); i++) 
-	{
-        printf("have line %s\n", bot.get(i).asString().c_str());
-    }
-    
-	return bot;
-}
-*/
-
-static bool writeBottleAsFile(Bottle& bottle,String& filename) 
-{
-	FILE* fout=fopen(filename.c_str(),"wc");
+	FILE* fout=fopen(file_name.c_str(),"wc");
     
 	if (!fout) return false;
 
@@ -289,20 +302,20 @@ static bool writeBottleAsFile(Bottle& bottle,String& filename)
 	{
 		fprintf(fout,"%s\n",bottle.get(i).asString().c_str());
 	}
-
+	
+	fflush(fout);
 	fclose(fout);
 
     return true;
 }
 
-static Bottle readScriptAsBottle(const char *fileName) 
+static Bottle readScriptAsBottle(const char *file_name) 
 {
     Bottle bot;
 
 	bot.addString("script");
-	//bot.addString(fileName);
-
-    ifstream fin(fileName);
+	
+    ifstream fin(file_name);
     if (fin.eof()||fin.fail()) 
 	{
 		bot.addString("");
@@ -345,166 +358,376 @@ public:
     }
 };
 
-Run::~Run()
+bool Run::checkBash()
 {
-	ACE_OS::rmdir("runner");
+	ACE_OS::mkdir("runner");
+
+	FILE* fCheck=fopen("runner/checkbash.sh","wc");
+	fprintf(fCheck,"printf \"hello I am bash\n\"");
+	fclose(fCheck);
+
+	ACE_Process_Options options;
+	options.command_line("bash runner/checkbash.sh");
+	ACE_Process proc;
+	pid_t pid=proc.spawn(options);
+	proc.wait();
+	return pid!=-1;
 }
 
-int Run::runServer(Searchable& config) 
+int Run::runServerBash(Searchable& config) 
 {
 	Port port;
     port.open(config.check("server",Value("/run"),"port name for server").asString());
     String myPort = port.getName().c_str();
 	String directory("runner");
-	ACE_OS::mkdir(directory.c_str());
 
 	TProcessVector pv;
 
 	bool bRun=true;
 
 	int serial=0;
-
-	char intbuf[16];
+	char intbuff[16];
 
     while (bRun) 
 	{
-		++serial;
-		sprintf(intbuf,"%d",serial);
-		String serial_str(intbuf);
+		sprintf(intbuff,"%06d",++serial);
+		String serial_str(intbuff);
 
         Bottle msg,output;
         port.read(msg,true);
 
 		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
-		//fflush(stdout);
 
 		int result=-1;
 
-		String key=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
-		String yarp_ctrl=String("YARP_CTRL=\"yarp run --on ")+myPort+" --as "+key+" --cmd \"";
+		String alias=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
+
+		if (msg.check("script"))
+		{
+			Bottle script_bottle; 
+			script_bottle.append(msg.findGroup("script").tail());	
+			String script_name=directory+"/script"+serial_str+".sh";
+			
+			writeBottleAsFile(script_bottle,script_name);			
+			
+			String command_text="yarp read /"+alias+"/stdin | bash "+script_name+" | yarp write /"+alias+"/stdout";
+	        
+	        
+	        String command_name=directory+"/command"+serial_str+".sh";
+	        	
+			FILE *command_file=fopen(command_name.c_str(),"wc");
+			fprintf(command_file,"%s\n",command_text.c_str());
+			fflush(command_file);
+			fclose(command_file);		
+			
+			String exec_text="bash "+command_name;
+			ACE_Process_Options exec_options;
+			exec_options.command_line("%s",exec_text.c_str());
+
+			pid_t pid=pv.Spawn(exec_options,alias);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
+			
+			if (pid!=-1) result=0;
+
+			output.addInt(pid);
+		}
+		else if (msg.check("cmd"))
+		{
+			Bottle command_bottle=msg.findGroup("cmd");
+			command_bottle=command_bottle.tail();
+
+            String command_text;
+
+			for (int s=0; s<command_bottle.size(); ++s)
+				command_text+=String(command_bottle.get(s).toString().c_str())+" ";
+
+			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
+	        
+	        
+	        String command_name=directory+"/command"+serial_str+".sh";
+
+			FILE *command_file=fopen(command_name.c_str(),"wc");
+			fprintf(command_file,"%s\n",command_text.c_str());
+			fflush(command_file);
+			fclose(command_file);
+			
+			String exec_text="bash "+command_name;
+			ACE_Process_Options exec_options;
+			exec_options.command_line("%s",exec_text.c_str());
+
+			pid_t pid=pv.Spawn(exec_options,alias);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
+			
+			if (pid!=-1) result=0;
+
+			output.addInt(pid);	
+		}
+		else if (msg.check("kill"))
+		{
+			Bottle killer=msg.findGroup("kill");
+			String key=killer.get(1).asString().c_str();
+			if (pv.Kill(key))
+			{ 
+			    result=0;
+			}
+			else
+			{
+			    printf("can't kill process %s\n",key.c_str());
+			}
+
+			DBG printf("\nKILL %s\n\n",key.c_str());
+		}
+		else if (msg.check("killall"))
+		{
+			if (pv.Killall()) result=0;
+
+			DBG printf("\nKILLALL\n\n");
+		}
+		else if (msg.check("exit"))
+		{
+		    pv.Killall();
+		
+			bRun=false;
+			result=0;
+			
+			DBG printf("\nEXIT\n\n");
+			
+			ACE_Process_Options rmdir_opt;
+			#ifdef WIN32
+			rmdir_opt.command_line("%s","rmdir /S /Q runner");
+			#else
+			rmdir_opt.command_line("%s","rm -rf runner");
+			#endif
+			ACE_Process rmdir_proc;
+			rmdir_proc.spawn(rmdir_opt);
+			rmdir_proc.wait();
+		}
+
+		Bottle reply;
+        reply.addVocab(result?VOCAB4('f','a','i','l'):VOCAB2('o','k'));
+        
+		reply.append(output);
+        port.reply(reply);
+
+        //Time::delay(0.5); // something strange with ACE_Process::spawn
+    }
+ 
+	return 0;
+}
+
+#ifdef WIN32
+int Run::runServerDos(Searchable& config) 
+{
+	Port port;
+    port.open(config.check("server",Value("/run"),"port name for server").asString());
+    String myPort = port.getName().c_str();
+	String directory("runner");
+
+	TProcessVector pv;
+
+	bool bRun=true;
+
+	int serial=0;
+	char intbuff[16];
+
+    while (bRun) 
+	{
+		sprintf(intbuff,"%06d",++serial);
+		String serial_str(intbuff);
+
+        Bottle msg,output;
+        port.read(msg,true);
+
+		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
+
+		int result=-1;
+
+		String alias=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
+
+		if (msg.check("script"))
+		{
+			//output.addString("scripting not supported in DOS");
+
+			Bottle script_bottle; 
+			script_bottle.append(msg.findGroup("script").tail());	
+			String script_name=directory+"/script"+serial_str+".bat";
+			
+			writeBottleAsFile(script_bottle,script_name);			
+			
+			String command_text="yarp read /"+alias+"/stdin | "+directory+"\\script"+serial_str+".bat | yarp write /"+alias+"/stdout";
+	        
+			Time::delay(0.5);
+	        
+	        String command_name=directory+"/cmd"+serial_str+".bat";
+	        	
+			FILE *command_file=fopen(command_name.c_str(),"wc");
+			fprintf(command_file,"%s\n",command_text.c_str());
+			fflush(command_file);
+			fclose(command_file);		
+			
+			String exec_text=directory+"\\cmd"+serial_str+".bat";
+			ACE_Process_Options exec_options;
+			exec_options.command_line("%s",exec_text.c_str());
+
+			pid_t pid=pv.Spawn(exec_options,alias);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
+			
+			if (pid!=-1) result=0;
+
+			output.addInt(pid);
+		}
+		else if (msg.check("cmd"))
+		{
+			Bottle command_bottle=msg.findGroup("cmd");
+			command_bottle=command_bottle.tail();
+
+            String command_text;
+
+			for (int s=0; s<command_bottle.size(); ++s)
+				command_text+=String(command_bottle.get(s).toString().c_str())+" ";
+
+			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
+
+	        String command_name=directory+"/cmd"+serial_str+".bat";
+
+			FILE *command_file=fopen(command_name.c_str(),"wc");
+			fprintf(command_file,"%s\n",command_text.c_str());
+			fflush(command_file);
+			fclose(command_file);
+			
+			String exec_text=directory+"\\cmd"+serial_str+".bat";
+			ACE_Process_Options exec_options;
+			exec_options.command_line("%s",exec_text.c_str());
+
+			Time::delay(0.5);
+
+			pid_t pid=pv.Spawn(exec_options,alias);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
+			
+			if (pid!=-1) result=0;
+
+			output.addInt(pid);	
+		}
+		else if (msg.check("kill"))
+		{
+			Bottle killer=msg.findGroup("kill");
+			String key=killer.get(1).asString().c_str();
+			if (pv.Kill(key))
+			{ 
+			    result=0;
+			}
+			else
+			{
+			    printf("can't kill process %s\n",key.c_str());
+			}
+
+			DBG printf("\nKILL %s\n\n",key.c_str());
+		}
+		else if (msg.check("killall"))
+		{
+			if (pv.Killall()) result=0;
+
+			DBG printf("\nKILLALL\n\n");
+		}
+		else if (msg.check("exit"))
+		{
+		    pv.Killall();
+		
+			bRun=false;
+			result=0;
+			
+			DBG printf("\nEXIT\n\n");
+			
+			ACE_Process_Options rmdir_opt;
+			rmdir_opt.command_line("%s","rmdir /S /Q runner");
+			ACE_Process rmdir_proc;
+			rmdir_proc.spawn(rmdir_opt);
+			rmdir_proc.wait();
+		}
+
+		Bottle reply;
+        reply.addVocab(result?VOCAB4('f','a','i','l'):VOCAB2('o','k'));
+        
+		reply.append(output);
+        port.reply(reply);
+
+        //Time::delay(0.5); // something strange with ACE_Process::spawn
+    }
+ 
+	return 0;
+}
+#endif
+
+/*
+int Run::runServerDos(Searchable& config) 
+{
+	Port port;
+    port.open(config.check("server",Value("/run"),"port name for server").asString());
+    String myPort = port.getName().c_str();
+	String directory("runner");
+
+	TProcessVector pv;
+
+	bool bRun=true;
+
+	int serial=0;
+	char intbuff[16];
+
+    while (bRun) 
+	{
+		sprintf(intbuff,"%06d",++serial);
+		String serial_str(intbuff);
+
+        Bottle msg,output;
+        port.read(msg,true);
+
+		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
+
+		int result=-1;
+
+		String alias=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
+
+		Bottle cmd;
+
+		String command;
 
 		if (msg.check("cmd"))
 		{
 			Bottle cmd=msg.findGroup("cmd");
 			cmd=cmd.tail();
 
-			bool isDos=cmd.get(0).asString()=="batch";
-
-			if (isDos) yarp_ctrl=yarp_ctrl.substring(11,yarp_ctrl.length()-12);
+			for (int s=0; s<cmd.size(); ++s)
+				command+=String(cmd.get(s).toString().c_str())+" ";
 
 			if (msg.check("script"))
 			{
 				Bottle script; 
-				if (!isDos) script.addString(yarp_ctrl.c_str());
-				script.append(msg.findGroup("script").tail());
-				//String filename=script.get(0).asString().c_str();
-				//script=script.tail();
-				String filename;
-				if (isDos)
-				{
-					filename=directory+"\\script_"+serial_str+".bat";
-					cmd.clear();
-				}
-				else
-				{
-					filename=directory+"/script_"+serial_str+".sh";
-				}
-
-				cmd.addString(filename.c_str());
-
-				if (isDos)
-				{
-					Bottle newscript;
-
-					for (int i=0; i<script.size(); ++i)
-					{
-						String line=script.get(i).asString().c_str();
-						String linenew;
-
-						printf("line=%s\n",line.c_str());
-						
-						for (unsigned int s=0; s<line.length(); ++s)
-						{
-							if (line[s]!='$')
-								linenew+=line[s];
-							else
-							{
-								if (line.substr(s,12)=="${YARP_CTRL}")
-								{
-									linenew+=yarp_ctrl;
-									s+=11;
-								}
-							}
-						}
-						printf("linenew=%s\n",linenew.c_str());
-						newscript.addString(linenew.c_str());
-					}
-
-					script=newscript;
-				}
-
-				printf("filename=%s\n",filename.c_str());
-				writeBottleAsFile(script,filename);
-			}
+				script.append(msg.findGroup("script").tail());		
+				String filename="script_"+serial_str+".bat";
+				String path=directory+"/"+filename;
+				writeBottleAsFile(script,path);			
 			
-			bool bNeedBatch=false;
-
-			if (msg.check("stdin"))
-			{
-				bNeedBatch=true;
-				Bottle Stdin=msg.findGroup("stdin");
-				String StdinCmd=String("yarp read ")+Stdin.get(1).toString().c_str()+String(" | ");
-				Bottle tmp;
-				tmp.addString(StdinCmd.c_str());
-				String cmd_without_quotes=cmd.toString().c_str();
-				cmd_without_quotes=cmd_without_quotes.substring(1,cmd_without_quotes.length()-2);
-				if (isDos) tmp.addString(" CALL ");
-				tmp.addString(cmd_without_quotes.c_str());
-				cmd=tmp;
+				command=directory+"\\"+filename;
 			}
 
-			if (msg.check("stdout"))
-			{
-				bNeedBatch=true;
-				Bottle Stdout=msg.findGroup("stdout");
-				String StdoutCmd=String(" | yarp write ")+Stdout.get(1).toString().c_str();
-				cmd.addString(StdoutCmd.c_str());
-			}
-
-			String command;
-			
-			for (int s=0; s<cmd.size(); ++s)
-				command+=String(cmd.get(s).toString().c_str())+" ";
-			
-			if (bNeedBatch)
-			{
-				String filename;
-				if (isDos)
-					filename=directory+"\\batch_"+serial_str+".bat";
-				else
-					filename=directory+"/batch_"+serial_str+".sh";
-				
-
-				printf("\nFILENAME: %s\n\n",filename.c_str());
-
-				FILE* file=fopen(filename.c_str(),"wc");
-				if (!isDos) fprintf(file,"%s\n",yarp_ctrl.c_str());
-				fprintf(file,"%s\n",command.c_str());
-				fclose(file);
-				
-				if (isDos)
-					command=filename;
-				else
-					command="bash "+filename;
-			}
+			String filename="cmd_"+serial_str+".bat";
+			String exec_str="yarp read /"+alias+"/stdin | "+command+" | yarp write /"+alias+"/stdout\n";
+			FILE *fcmd=fopen((directory+"/"+filename).c_str(),"wc");
+			fprintf(fcmd,"%s",exec_str.c_str());
+			fclose(fcmd);
 
 			ACE_Process_Options options;
-			options.command_line("%s",command.c_str());
-			printf("command=%s\n",command.c_str());
-
-			pid_t pid=pv.Spawn(options,key);
 			
-			DBG printf("\nSPAWN %d %s\n\n",pid,key.c_str());
+			options.command_line("%s",(directory+"\\"+filename).c_str());
+			DBG printf("command=%s\n",(directory+"\\"+filename).c_str());
+
+			pid_t pid=pv.Spawn(options,alias);
+			
+			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
 			
 			if (pid!=-1) result=0;
 
@@ -535,9 +758,17 @@ int Run::runServer(Searchable& config)
 		}
 		else if (msg.check("exit"))
 		{
+		    pv.Killall();
+		    
 			bRun=false;
 			result=0;
 			DBG printf("\nEXIT\n\n");
+			
+			ACE_Process_Options rmdir_opt;
+			rmdir_opt.command_line("%s","rmdir /S /Q runner");
+			ACE_Process rmdir_proc;
+			rmdir_proc.spawn(rmdir_opt);
+			rmdir_proc.wait();
 		}
 
 
@@ -552,6 +783,7 @@ int Run::runServer(Searchable& config)
  
 	return 0;
 }
+*/
 
 int Run::runConnect(Searchable& config) 
 {
@@ -574,41 +806,30 @@ int Run::runConnect(Searchable& config)
 
 int Run::runClient(Searchable& config)
 {
-	printf("\nCONFIG: %s\n\n",config.toString().c_str());
+	DBG printf("\nCONFIG: %s\n\n",config.toString().c_str());
 
 	Bottle msg;
 
-	if (config.check("cmd"))
+	if (config.check("script"))
+	{
+		String fname=config.check("script",Value("")).toString().c_str();
+		if (fname!="")
+		{
+			Bottle script=readScriptAsBottle(fname.c_str());
+			msg.addList()=script;
+		}
+		
+		if (config.check("as"))
+			msg.addList()=config.findGroup("as");
+    }
+	else if (config.check("cmd"))
 	{                
 		msg.addList()=config.findGroup("cmd");
 
 		if (config.check("as"))
 			msg.addList()=config.findGroup("as");
 
-		if (config.check("blocking"))
-			msg.addList()=config.findGroup("blocking");
-
-		if (config.check("script"))
-		{
-			String fname=config.check("script",Value("")).toString().c_str();
-			if (fname!="")
-			{
-				Bottle script=readScriptAsBottle(fname.c_str());
-				msg.addList()=script;
-			}
-        }
-
-		if (config.check("stdin"))
-		{
-			msg.addList()=config.findGroup("stdin");
-		}
-
-		if (config.check("stdout"))
-		{
-			msg.addList()=config.findGroup("stdout");
-		}
-
-		printf("\nSCRIPT: %s\n\n",msg.toString().c_str());
+		DBG printf("\nCMD: %s\n\n",msg.toString().c_str());
 	}
 	else if (config.check("kill")) 
 	{ 
@@ -647,14 +868,26 @@ int Run::main(int argc, char *argv[])
     if (config.check("server")) 
 	{
         DBG printf("server state %s:%d\n",__FILE__,__LINE__);
-        return runServer(config);
-    } 
+		if (checkBash())
+		{
+			printf("bash server found\n");
+			return runServerBash(config);
+		}
+		#ifdef WIN32
+			printf("bash not available, running DOS server\n");
+			return runServerDos(config);
+		#endif
+		
+		printf("ERROR: no bash, no dos, who am I???\n");
+		
+		return -1;
+	} 
 	if (config.check("connect")) 
 	{
         DBG printf("connect state %s:%d\n",__FILE__,__LINE__);
         return runConnect(config);
     } 
-	else if (config.check("cmd") || config.check("kill") || config.check("killall") || config.check("exit"))
+	else if (config.check("cmd") || config.check("kill") || config.check("killall") || config.check("exit") || config.check("script"))
 	{ 
         DBG printf("client state %s:%d\n",__FILE__,__LINE__);
         return runClient(config);
@@ -664,9 +897,416 @@ int Run::main(int argc, char *argv[])
     return 0;
 }
 
+#ifdef WIN32
+#define _WIN32_WINNT 0x500
 
+#include <windows.h>
+#include <tchar.h>
+#include <crtdbg.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <tlhelp32.h>
 
+//---------------------------------------------------------------------------
+// KillProcess
+//
+//  Terminates the specified process.
+//
+//  Parameters:
+//	  dwProcessId - identifier of the process to terminate
+//
+//  Returns:
+//	  TRUE, if successful, FALSE - otherwise.
+//
+BOOL
+WINAPI
+KillProcess(
+	IN DWORD dwProcessId
+	)
+{
+	HANDLE hProcess;
+	DWORD dwError;
+
+	// first try to obtain handle to the process without the use of any
+	// additional privileges
+	hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcessId);
+	if (hProcess == NULL)
+	{
+		if (GetLastError() != ERROR_ACCESS_DENIED)
+			return FALSE;
+
+		OSVERSIONINFO osvi;
+
+		// determine operating system version
+		osvi.dwOSVersionInfoSize = sizeof(osvi);
+		GetVersionEx(&osvi);
+
+		// we cannot do anything else if this is not Windows NT
+		if (osvi.dwPlatformId != VER_PLATFORM_WIN32_NT)
+			return SetLastError(ERROR_ACCESS_DENIED), FALSE;
+
+		// enable SE_DEBUG_NAME privilege and try again
+
+		TOKEN_PRIVILEGES Priv, PrivOld;
+		DWORD cbPriv = sizeof(PrivOld);
+		HANDLE hToken;
+
+		// obtain the token of the current thread 
+		if (!OpenThreadToken(GetCurrentThread(), 
+							 TOKEN_QUERY|TOKEN_ADJUST_PRIVILEGES,
+							 FALSE, &hToken))
+		{
+			if (GetLastError() != ERROR_NO_TOKEN)
+				return FALSE;
+
+			// revert to the process token
+			if (!OpenProcessToken(GetCurrentProcess(),
+								  TOKEN_QUERY|TOKEN_ADJUST_PRIVILEGES,
+								  &hToken))
+				return FALSE;
+		}
+
+		_ASSERTE(ANYSIZE_ARRAY > 0);
+
+		Priv.PrivilegeCount = 1;
+		Priv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+		LookupPrivilegeValue(NULL, SE_DEBUG_NAME, &Priv.Privileges[0].Luid);
+
+		// try to enable the privilege
+		if (!AdjustTokenPrivileges(hToken, FALSE, &Priv, sizeof(Priv),
+								   &PrivOld, &cbPriv))
+		{
+			dwError = GetLastError();
+			CloseHandle(hToken);
+			return SetLastError(dwError), FALSE;
+		}
+
+		if (GetLastError() == ERROR_NOT_ALL_ASSIGNED)
+		{
+			// the SE_DEBUG_NAME privilege is not present in the caller's
+			// token
+			CloseHandle(hToken);
+			return SetLastError(ERROR_ACCESS_DENIED), FALSE;
+		}
+
+		// try to open process handle again
+		hProcess = OpenProcess(PROCESS_TERMINATE, FALSE, dwProcessId);
+		dwError = GetLastError();
+		
+		// restore the original state of the privilege
+		AdjustTokenPrivileges(hToken, FALSE, &PrivOld, sizeof(PrivOld),
+							  NULL, NULL);
+		CloseHandle(hToken);
+
+		if (hProcess == NULL)
+			return SetLastError(FALSE), NULL;
+	}
+
+	// terminate the process
+	if (!TerminateProcess(hProcess, (UINT)-1))
+	{
+		dwError = GetLastError();
+		CloseHandle(hProcess);
+		return SetLastError(dwError), FALSE;
+	}
+
+	CloseHandle(hProcess);
+
+	// completed successfully
+	return TRUE;
+}
+
+typedef LONG	NTSTATUS;
+typedef LONG	KPRIORITY;
+
+#define NT_SUCCESS(Status) ((NTSTATUS)(Status) >= 0)
+
+#define STATUS_INFO_LENGTH_MISMATCH      ((NTSTATUS)0xC0000004L)
+
+#define SystemProcessesAndThreadsInformation	5
+
+typedef struct _CLIENT_ID {
+    DWORD	    UniqueProcess;
+    DWORD	    UniqueThread;
+} CLIENT_ID;
+
+typedef struct _UNICODE_STRING {
+    USHORT	    Length;
+    USHORT	    MaximumLength;
+    PWSTR	    Buffer;
+} UNICODE_STRING;
+
+typedef struct _VM_COUNTERS {
+    SIZE_T	    PeakVirtualSize;
+    SIZE_T	    VirtualSize;
+    ULONG	    PageFaultCount;
+    SIZE_T	    PeakWorkingSetSize;
+    SIZE_T	    WorkingSetSize;
+    SIZE_T	    QuotaPeakPagedPoolUsage;
+    SIZE_T	    QuotaPagedPoolUsage;
+    SIZE_T	    QuotaPeakNonPagedPoolUsage;
+    SIZE_T	    QuotaNonPagedPoolUsage;
+    SIZE_T	    PagefileUsage;
+    SIZE_T	    PeakPagefileUsage;
+} VM_COUNTERS;
+
+typedef struct _SYSTEM_THREADS {
+    LARGE_INTEGER   KernelTime;
+    LARGE_INTEGER   UserTime;
+    LARGE_INTEGER   CreateTime;
+    ULONG			WaitTime;
+    PVOID			StartAddress;
+    CLIENT_ID	    ClientId;
+    KPRIORITY	    Priority;
+    KPRIORITY	    BasePriority;
+    ULONG			ContextSwitchCount;
+    LONG			State;
+    LONG			WaitReason;
+} SYSTEM_THREADS, * PSYSTEM_THREADS;
+
+// Note that the size of the SYSTEM_PROCESSES structure is different on
+// NT 4 and Win2K, but we don't care about it, since we don't access neither
+// IoCounters member nor Threads array
+
+typedef struct _SYSTEM_PROCESSES {
+    ULONG			NextEntryDelta;
+    ULONG			ThreadCount;
+    ULONG			Reserved1[6];
+    LARGE_INTEGER   CreateTime;
+    LARGE_INTEGER   UserTime;
+    LARGE_INTEGER   KernelTime;
+    UNICODE_STRING  ProcessName;
+    KPRIORITY	    BasePriority;
+    ULONG			ProcessId;
+    ULONG			InheritedFromProcessId;
+    ULONG			HandleCount;
+    ULONG			Reserved2[2];
+    VM_COUNTERS	    VmCounters;
+#if _WIN32_WINNT >= 0x500
+    IO_COUNTERS	    IoCounters;
+#endif
+    SYSTEM_THREADS  Threads[1];
+} SYSTEM_PROCESSES, * PSYSTEM_PROCESSES;
+
+//---------------------------------------------------------------------------
+// KillProcessTreeNtHelper
+//
+//  This is a recursive helper function that terminates all the processes
+//  started by the specified process and them terminates the process itself
+//
+//  Parameters:
+//	  pInfo       - processes information
+//	  dwProcessId - identifier of the process to terminate
+//
+//  Returns:
+//	  Win32 error code.
+//
+static
+BOOL
+WINAPI
+KillProcessTreeNtHelper(
+	IN PSYSTEM_PROCESSES pInfo,
+	IN DWORD dwProcessId
+	)
+{
+	_ASSERTE(pInfo != NULL);
+
+    PSYSTEM_PROCESSES p = pInfo;
+
+    // kill all children first
+    for (;;)
+    {
+		if (p->InheritedFromProcessId == dwProcessId)
+			KillProcessTreeNtHelper(pInfo, p->ProcessId);
+
+		if (p->NextEntryDelta == 0)
+			break;
+
+		// find the address of the next process structure
+		p = (PSYSTEM_PROCESSES)(((LPBYTE)p) + p->NextEntryDelta);
+    }
+
+	// kill the process itself
+    if (!KillProcess(dwProcessId)) return GetLastError();
+
+	return ERROR_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+// KillProcessTreeWinHelper
+//
+//  This is a recursive helper function that terminates all the processes
+//  started by the specified process and them terminates the process itself
+//
+//  Parameters:
+//	  dwProcessId - identifier of the process to terminate
+//
+//  Returns:
+//	  Win32 error code.
+//
+static
+BOOL
+WINAPI
+KillProcessTreeWinHelper(
+	IN DWORD dwProcessId
+	)
+{
+	HINSTANCE hKernel;
+	HANDLE (WINAPI * _CreateToolhelp32Snapshot)(DWORD, DWORD);
+	BOOL (WINAPI * _Process32First)(HANDLE, PROCESSENTRY32 *);
+	BOOL (WINAPI * _Process32Next)(HANDLE, PROCESSENTRY32 *);
+
+	// get handle to KERNEL32.DLL
+	hKernel = GetModuleHandle(_T("kernel32.dll"));
+	_ASSERTE(hKernel != NULL);
+
+	// locate necessary functions in KERNEL32.DLL
+	*(FARPROC *)&_CreateToolhelp32Snapshot =
+		GetProcAddress(hKernel, "CreateToolhelp32Snapshot");
+	*(FARPROC *)&_Process32First =
+		GetProcAddress(hKernel, "Process32First");
+	*(FARPROC *)&_Process32Next =
+		GetProcAddress(hKernel, "Process32Next");
+
+	if (_CreateToolhelp32Snapshot == NULL ||
+		_Process32First == NULL ||
+		_Process32Next == NULL)
+		return ERROR_PROC_NOT_FOUND;
+
+	HANDLE hSnapshot;
+	PROCESSENTRY32 Entry;
+
+	// create a snapshot
+	hSnapshot = _CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	if (hSnapshot == INVALID_HANDLE_VALUE)
+		return GetLastError();
+
+	Entry.dwSize = sizeof(Entry);
+	if (!_Process32First(hSnapshot, &Entry))
+	{
+		DWORD dwError = GetLastError();
+		CloseHandle(hSnapshot);
+		return dwError;
+	}
+
+	// kill all children first
+	do
+	{
+		if (Entry.th32ParentProcessID == dwProcessId)
+			KillProcessTreeWinHelper(Entry.th32ProcessID);
+
+		Entry.dwSize = sizeof(Entry);
+	}
+	while (_Process32Next(hSnapshot, &Entry));
+
+	CloseHandle(hSnapshot);
+
+	// kill the process itself
+    if (!KillProcess(dwProcessId)) return GetLastError();
+
+	return ERROR_SUCCESS;
+}
+
+//---------------------------------------------------------------------------
+// KillProcessEx
+//
+//  Terminates the specified process and, optionally, all processes started
+//	from the specified process (the so-called process tree).
+//
+//  Parameters:
+//	  dwProcessId - identifier of the process to terminate
+//	  bTree		  - specifies whether the entire process tree should be
+//					terminated
+//
+//  Returns:
+//	  TRUE, if successful, FALSE - otherwise.
+//
+BOOL
+WINAPI
+KillProcessEx(
+	IN DWORD dwProcessId,
+	IN BOOL bTree
+	)
+{
+	if (!bTree)
+		return KillProcess(dwProcessId);
+
+	OSVERSIONINFO osvi;
+	DWORD dwError;
+
+	// determine operating system version
+	osvi.dwOSVersionInfoSize = sizeof(osvi);
+	GetVersionEx(&osvi);
+
+	if (osvi.dwPlatformId == VER_PLATFORM_WIN32_NT && osvi.dwMajorVersion < 5)
+	{
+		HINSTANCE hNtDll;
+		NTSTATUS (WINAPI * _ZwQuerySystemInformation)(UINT, PVOID, ULONG, PULONG);
+
+		// get handle to NTDLL.DLL
+		hNtDll = GetModuleHandle(_T("ntdll.dll"));
+		_ASSERTE(hNtDll != NULL);
+
+		// find the address of ZwQuerySystemInformation
+		*(FARPROC *)&_ZwQuerySystemInformation =
+			GetProcAddress(hNtDll, "ZwQuerySystemInformation");
+		if (_ZwQuerySystemInformation == NULL)
+			return SetLastError(ERROR_PROC_NOT_FOUND), NULL;
+
+		// obtain a handle to the default process heap
+		HANDLE hHeap = GetProcessHeap();
+    
+		NTSTATUS Status;
+		ULONG cbBuffer = 0x8000;
+		PVOID pBuffer = NULL;
+
+		// it is difficult to say a priory which size of the buffer 
+		// will be enough to retrieve all information, so we start
+		// with 32K buffer and increase its size until we get the
+		// information successfully
+		do
+		{
+			pBuffer = HeapAlloc(hHeap, 0, cbBuffer);
+			if (pBuffer == NULL)
+				return SetLastError(ERROR_NOT_ENOUGH_MEMORY), FALSE;
+
+			Status = _ZwQuerySystemInformation(
+							SystemProcessesAndThreadsInformation,
+							pBuffer, cbBuffer, NULL);
+
+			if (Status == STATUS_INFO_LENGTH_MISMATCH)
+			{
+				HeapFree(hHeap, 0, pBuffer);
+				cbBuffer *= 2;
+			}
+			else if (!NT_SUCCESS(Status))
+			{
+				HeapFree(hHeap, 0, pBuffer);
+				return SetLastError(Status), NULL;
+			}
+		}
+		while (Status == STATUS_INFO_LENGTH_MISMATCH);
+
+		// call the helper function
+		dwError = KillProcessTreeNtHelper((PSYSTEM_PROCESSES)pBuffer, 
+										  dwProcessId);
+		
+		HeapFree(hHeap, 0, pBuffer);
+	}
+	else
+	{
+		// call the helper function
+		dwError = KillProcessTreeWinHelper(dwProcessId);
+	}
+
+	SetLastError(dwError);
+	return dwError == ERROR_SUCCESS;
+}
+#endif
+
+// ***********************************************************************
 // OLD VERSION
+// ***********************************************************************
 
 #else
 
@@ -1164,52 +1804,3 @@ int Run::main(int argc, char *argv[]) {
 
 #endif
 
-
-		/*
-		else if (bot.get(0).asString()=="script")
-		{
-			result=0;
-
-			bot.copy(bot,1,bot.size());
-
-			for (int i=0; i<bot.size(); ++i)
-			{
-				String command=bot.get(i).asString().c_str();
-
-				int comment_pos=command.find('#');
-
-				if (comment_pos>-1) command=command.substring(0,comment_pos);
-
-				while (command.find(' ')==0)
-				{
-					command=command.substring(1);
-				}
-
-				if (command.length()<=0) continue;
-
-				String name;
-				int name_len=command.find(' ');
-				
-				if (name_len>-1)
-				{
-					name=command.substring(0,name_len);
-				}
-				else
-				{
-					name=command;
-				}
-				
-				printf("%d) %s\n",i,command.c_str());	
-				printf("NAME= %s\n",name.c_str());
-				
-				ACE_Process_Options options;
-				options.command_line("%s",command.c_str());
-				pid_t pid=pv.Spawn(options,name.c_str());
-				DBG printf("\nSPAWN %d\n\n",pid);
-				//fflush(stdout);
-				if (pid==-1) result=-1;
-
-				output.addInt(pid);
-			}
-		}
-		*/

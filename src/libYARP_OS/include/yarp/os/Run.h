@@ -30,11 +30,14 @@ namespace yarp {
 class yarp::os::Run {
 public:
     static int main(int argc, char *argv[]);
-	~Run();
 
 protected:
+	static bool checkBash();
 	static int run(Searchable& config);
-	static int runServer(Searchable& config);
+	static int runServerBash(Searchable& config);
+	#ifdef WIN32
+	static int runServerDos(Searchable& config);
+	#endif
 	static int runConnect(Searchable& config);
 	static int runClient(Searchable& config);
 };
