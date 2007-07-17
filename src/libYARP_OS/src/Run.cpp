@@ -28,7 +28,7 @@ using namespace std;
 #endif
 
 #ifndef ACE_LACKS_KILL
-#define KILL() kill()
+#define KILL() kill(SIGKILL)
 #else
 #define KILL() terminate()
 #endif
@@ -108,7 +108,7 @@ public:
 	    
 	        if (pid!=parent_pid)
 	        {    
-	            String kill_cmd=String("kill -2 ")+pidbuff;
+	            String kill_cmd=String("kill -9 ")+pidbuff;
 	            ACE_Process_Options kill_opt;
 	            kill_opt.command_line("%s",kill_cmd.c_str());
 	            ACE_Process kill_proc;
