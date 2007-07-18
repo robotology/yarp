@@ -32,11 +32,11 @@ public:
     static int main(int argc, char *argv[]);
 
 protected:
-	static bool checkBash();
-	static int run(Searchable& config);
-	static int runServerBash(Searchable& config);
+	static bool checkBash(String& workdir);
+	static int run();
+	static int runServerBash(ConstString& portname,String& workdir);
 	#ifdef WIN32
-	static int runServerDos(Searchable& config);
+	static int runServerDos(ConstString& portname,String& workdir);
 	#endif
 	static int runConnect(Searchable& config);
 	static int runClient(Searchable& config);

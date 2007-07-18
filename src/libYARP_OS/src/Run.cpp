@@ -45,9 +45,11 @@ using namespace yarp::os;
 class TProcess
 {
 public:
-	TProcess()
+	TProcess(String& workdir)
 	{
+		m_Workdir=workdir;
 		m_Pid=-1;
+		m_Serial=0;
 		m_Name="default";
 	}
 	~TProcess()
@@ -55,12 +57,13 @@ public:
 		Kill();
 	}
 	
-	pid_t Spawn(ACE_Process_Options& options,String name="default",bool bWait=false)
+	pid_t Spawn(ACE_Process_Options& options,String name="default",int serial=0,bool bWait=false)
 	{
 		m_Pid=m_Child.spawn(options);
 		
 		if (m_Pid!=-1)
 		{
+			m_Serial=serial;
 			m_Name=name;
 			if (bWait) m_Child.wait();
 		}
@@ -86,18 +89,17 @@ public:
 	        pid_t pid=stack[--head];
 	        
 	        sprintf(pidbuff,"%d",pid);
-	        String filename("runner/pgrep.txt");
-	        //filename+=String(pidbuff)+".txt";
+	        String filename(m_Workdir+"pgrep.txt");
 	        
 	        String pgrep_cmd=String("pgrep -P ")+pidbuff+" > "+filename;
 	        DBG printf("%s\n",pgrep_cmd.c_str());
 	        
-	        FILE *pgrepsh=fopen("runner/mypgrep.sh","wc");
+	        FILE *pgrepsh=fopen((m_Workdir+"mypgrep.sh").c_str(),"wc");
 	        fprintf(pgrepsh,"%s\n",pgrep_cmd.c_str());
 	        fclose(pgrepsh);
 	        
 	        ACE_Process_Options pgrep_opt;
-	        pgrep_opt.command_line("%s","bash runner/mypgrep.sh");
+	        pgrep_opt.command_line("%s",("bash "+m_Workdir+"mypgrep.sh").c_str());
 	        ACE_Process pgrep_proc;
 	        pid_t pgrep_pid=pgrep_proc.spawn(pgrep_opt);
 	        pgrep_proc.wait();
@@ -130,8 +132,6 @@ public:
 		        
 		        int new_pid=atoi(pidbuff);
 		        
-		        DBG printf("new_pid==%d\n",new_pid);
-		        
 		        if (new_pid>0) stack[head++]=new_pid;
             }
 	    }
@@ -154,6 +154,7 @@ public:
 			m_Child.wait();
 			Time::delay(0.5);
 			m_Pid=-1;
+			m_Serial=0;
 			m_Name="default";
 			
 			return true;
@@ -162,22 +163,26 @@ public:
 		return false;
 	}
 
+	int Serial(){ return m_Serial; }
+
 	bool operator==(const String& name){ return name==m_Name; }
 	bool operator==(pid_t pid){ return pid==m_Pid; }
 
 protected:
+    String m_Workdir;
 	String m_Name;
 	pid_t m_Pid;
+	int m_Serial;
 	ACE_Process m_Child;
 };
 
 class TProcessVector
 {
 public:
-	TProcessVector()
+	TProcessVector(String& workdir)
 	{
+	    m_Workdir=workdir;
 		m_nProcesses=0;
-		//m_apChilds.clear();
 	}
 
 	~TProcessVector()
@@ -201,8 +206,8 @@ public:
 		{
 			if (m_apChilds[i])
 			{
-				++killed;
 				m_Mutex.wait();
+				m_KillList[killed++]=m_apChilds[i]->Serial();
 				m_apChilds[i]->Kill();
 				m_Mutex.post();				
 				delete m_apChilds[i];
@@ -225,8 +230,8 @@ public:
 			{
 				if (*m_apChilds[i]==name)
 				{
-					++killed;
 					m_Mutex.wait();
+					m_KillList[killed++]=m_apChilds[i]->Serial();
 					m_apChilds[i]->Kill();
 					m_Mutex.post();
 					delete m_apChilds[i];
@@ -240,7 +245,7 @@ public:
 		return killed;
 	}
 
-	pid_t Spawn(ACE_Process_Options& options,String name="unnamed",bool bWait=false)
+	pid_t Spawn(ACE_Process_Options& options,String name="default",int serial=0,bool bWait=false)
 	{
 		m_Mutex.wait();
 
@@ -250,10 +255,10 @@ public:
 			return -1;
 		}
 
-		TProcess* pChild=new TProcess;
+		TProcess* pChild=new TProcess(m_Workdir);
 		
 		m_apChilds[m_nProcesses]=pChild;
-		pid_t pid=pChild->Spawn(options,name,bWait);
+		pid_t pid=pChild->Spawn(options,name,serial,bWait);
 
 		if (pid!=-1)
 		{
@@ -269,12 +274,15 @@ public:
 		return pid;
 	}
 
+	int* GetKillList(){ return m_KillList; }
+
 protected:
-	TProcess* m_apChilds[1024];
+    String m_Workdir;
+	enum { MAX_PROCESSES=1024 };
+	TProcess* m_apChilds[MAX_PROCESSES];
+	int m_KillList[MAX_PROCESSES];
 	int m_nProcesses;
 	Semaphore m_Mutex;
-
-	enum { MAX_PROCESSES=1024 };
 
 	void Pack()
 	{
@@ -358,30 +366,21 @@ public:
     }
 };
 
-bool Run::checkBash()
+int Run::runServerBash(ConstString& portname,String& workdir) 
 {
-	ACE_OS::mkdir("runner");
+	#ifdef WIN32
+	String workdir_dos=workdir;
 
-	FILE* fCheck=fopen("runner/checkbash.sh","wc");
-	fprintf(fCheck,"printf \"hello I am bash\n\"");
-	fclose(fCheck);
+	for (unsigned int i=0; i<workdir.length(); ++i)
+	{
+		if (workdir[i]=='/') workdir_dos[i]='\\';
+	}
+	#endif
 
-	ACE_Process_Options options;
-	options.command_line("bash runner/checkbash.sh");
-	ACE_Process proc;
-	pid_t pid=proc.spawn(options);
-	proc.wait();
-	return pid!=-1;
-}
-
-int Run::runServerBash(Searchable& config) 
-{
 	Port port;
-    port.open(config.check("server",Value("/run"),"port name for server").asString());
-    String myPort = port.getName().c_str();
-	String directory("runner");
+	port.open(portname);
 
-	TProcessVector pv;
+	TProcessVector pv(workdir);
 
 	bool bRun=true;
 
@@ -406,14 +405,14 @@ int Run::runServerBash(Searchable& config)
 		{
 			Bottle script_bottle; 
 			script_bottle.append(msg.findGroup("script").tail());	
-			String script_name=directory+"/script"+serial_str+".sh";
+			String script_name=workdir+"script"+serial_str+".sh";
 			
 			writeBottleAsFile(script_bottle,script_name);			
 			
 			String command_text="yarp read /"+alias+"/stdin | bash "+script_name+" | yarp write /"+alias+"/stdout";
 	        
 	        
-	        String command_name=directory+"/command"+serial_str+".sh";
+	        String command_name=workdir+"command"+serial_str+".sh";
 	        	
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
@@ -424,7 +423,7 @@ int Run::runServerBash(Searchable& config)
 			ACE_Process_Options exec_options;
 			exec_options.command_line("%s",exec_text.c_str());
 
-			pid_t pid=pv.Spawn(exec_options,alias);
+			pid_t pid=pv.Spawn(exec_options,alias,serial);
 			
 			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
 			
@@ -444,8 +443,8 @@ int Run::runServerBash(Searchable& config)
 
 			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
 	        
-	        
-	        String command_name=directory+"/command"+serial_str+".sh";
+
+	        String command_name=workdir+"command"+serial_str+".sh";
 
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
@@ -456,7 +455,7 @@ int Run::runServerBash(Searchable& config)
 			ACE_Process_Options exec_options;
 			exec_options.command_line("%s",exec_text.c_str());
 
-			pid_t pid=pv.Spawn(exec_options,alias);
+			pid_t pid=pv.Spawn(exec_options,alias,serial);
 			
 			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
 			
@@ -468,9 +467,26 @@ int Run::runServerBash(Searchable& config)
 		{
 			Bottle killer=msg.findGroup("kill");
 			String key=killer.get(1).asString().c_str();
-			if (pv.Kill(key))
-			{ 
-			    result=0;
+			
+			int killed=pv.Kill(key);
+
+			if (killed)
+			{			
+				result=0;
+
+				int* pKillList=pv.GetKillList();
+				char rmstr[256];
+				
+				for (int i=0; i<killed; ++i)
+				{
+					ACE_Process_Options rmfiles_opt;
+					sprintf(rmstr,"rm -f %scommand%06d.sh %sscript%06d.sh",workdir.c_str(),pKillList[i],workdir.c_str(),pKillList[i]);
+					DBG printf("%s\n",rmstr);
+					rmfiles_opt.command_line("%s",rmstr);
+					ACE_Process rmfiles_proc;
+					rmfiles_proc.spawn(rmfiles_opt);
+					rmfiles_proc.wait();
+				}
 			}
 			else
 			{
@@ -481,7 +497,26 @@ int Run::runServerBash(Searchable& config)
 		}
 		else if (msg.check("killall"))
 		{
-			if (pv.Killall()) result=0;
+			int killed=pv.Killall();
+
+			if (killed)
+			{			
+				result=0;
+
+				int* pKillList=pv.GetKillList();
+				char rmstr[256];
+
+				for (int i=0; i<killed; ++i)
+				{
+					ACE_Process_Options rmfiles_opt;
+					sprintf(rmstr,"rm -f %scommand%06d.sh %sscript%06d.sh",workdir.c_str(),pKillList[i],workdir.c_str(),pKillList[i]);
+					DBG printf("%s\n",rmstr);
+					rmfiles_opt.command_line("%s",rmstr);
+					ACE_Process rmfiles_proc;
+					rmfiles_proc.spawn(rmfiles_opt);
+					rmfiles_proc.wait();
+				}
+			}
 
 			DBG printf("\nKILLALL\n\n");
 		}
@@ -495,11 +530,7 @@ int Run::runServerBash(Searchable& config)
 			DBG printf("\nEXIT\n\n");
 			
 			ACE_Process_Options rmdir_opt;
-			#ifdef WIN32
-			rmdir_opt.command_line("%s","rmdir /S /Q runner");
-			#else
-			rmdir_opt.command_line("%s","rm -rf runner");
-			#endif
+			rmdir_opt.command_line("%s",("rm -rf "+workdir).c_str());
 			ACE_Process rmdir_proc;
 			rmdir_proc.spawn(rmdir_opt);
 			rmdir_proc.wait();
@@ -514,30 +545,38 @@ int Run::runServerBash(Searchable& config)
         //Time::delay(0.5); // something strange with ACE_Process::spawn
     }
  
+	port.close();
+
 	return 0;
 }
 
 #ifdef WIN32
-int Run::runServerDos(Searchable& config) 
+int Run::runServerDos(ConstString& portname,String& workdir) 
 {
 	Port port;
-    port.open(config.check("server",Value("/run"),"port name for server").asString());
-    String myPort = port.getName().c_str();
-	String directory("runner");
+	port.open(portname);
 
-	TProcessVector pv;
+	TProcessVector pv(workdir);
 
 	bool bRun=true;
 
 	int serial=0;
 	char intbuff[16];
 
+	String workdir_dos=workdir;
+	
+	for (unsigned int i=0; i<workdir.length(); ++i)
+	{
+		if (workdir[i]=='/') workdir_dos[i]='\\';
+	}
+	
     while (bRun) 
 	{
 		sprintf(intbuff,"%06d",++serial);
 		String serial_str(intbuff);
 
         Bottle msg,output;
+
         port.read(msg,true);
 
 		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
@@ -552,26 +591,25 @@ int Run::runServerDos(Searchable& config)
 
 			Bottle script_bottle; 
 			script_bottle.append(msg.findGroup("script").tail());	
-			String script_name=directory+"/script"+serial_str+".bat";
+			String script_name=workdir+"script"+serial_str+".bat";
 			
 			writeBottleAsFile(script_bottle,script_name);			
-			
-			String command_text="yarp read /"+alias+"/stdin | "+directory+"\\script"+serial_str+".bat | yarp write /"+alias+"/stdout";
+			String command_text="yarp read /"+alias+"/stdin | "+workdir_dos+"script"+serial_str+".bat | yarp write /"+alias+"/stdout";
 	        
 			Time::delay(0.5);
 	        
-	        String command_name=directory+"/cmd"+serial_str+".bat";
+	        String command_name=workdir+"cmd"+serial_str+".bat";
 	        	
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
 			fflush(command_file);
 			fclose(command_file);		
 			
-			String exec_text=directory+"\\cmd"+serial_str+".bat";
+			String exec_text=workdir_dos+"cmd"+serial_str+".bat";
 			ACE_Process_Options exec_options;
 			exec_options.command_line("%s",exec_text.c_str());
 
-			pid_t pid=pv.Spawn(exec_options,alias);
+			pid_t pid=pv.Spawn(exec_options,alias,serial);
 			
 			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
 			
@@ -591,20 +629,20 @@ int Run::runServerDos(Searchable& config)
 
 			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
 
-	        String command_name=directory+"/cmd"+serial_str+".bat";
+	        String command_name=workdir+"cmd"+serial_str+".bat";
 
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
 			fflush(command_file);
 			fclose(command_file);
 			
-			String exec_text=directory+"\\cmd"+serial_str+".bat";
+			String exec_text=workdir_dos+"cmd"+serial_str+".bat";
 			ACE_Process_Options exec_options;
 			exec_options.command_line("%s",exec_text.c_str());
 
 			Time::delay(0.5);
 
-			pid_t pid=pv.Spawn(exec_options,alias);
+			pid_t pid=pv.Spawn(exec_options,alias,serial);
 			
 			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
 			
@@ -616,9 +654,30 @@ int Run::runServerDos(Searchable& config)
 		{
 			Bottle killer=msg.findGroup("kill");
 			String key=killer.get(1).asString().c_str();
-			if (pv.Kill(key))
+			
+			int killed=pv.Kill(key);
+			
+			if (killed)
 			{ 
 			    result=0;
+				
+				/*
+				int* pKillList=pv.GetKillList();
+				char delcommand[256];
+
+				for (int i=0; i<killed; ++i)
+				{
+					ACE_Process_Options rmfiles_opt;
+					sprintf(delcommand,"del /Q %scmd%06d.bat %sscript%06d.bat",workdir_dos.c_str(),pKillList[i],workdir_dos.c_str(),pKillList[i]);
+					DBG printf("%s\n",delcommand);
+					rmfiles_opt.command_line("%s",delcommand);
+					ACE_Process rmfiles_proc;
+					rmfiles_proc.spawn(rmfiles_opt);
+					rmfiles_proc.wait();
+					//Time::delay(3.0);
+					//rmfiles_proc.terminate();
+				}
+				*/
 			}
 			else
 			{
@@ -629,25 +688,52 @@ int Run::runServerDos(Searchable& config)
 		}
 		else if (msg.check("killall"))
 		{
-			if (pv.Killall()) result=0;
+			int killed=pv.Killall();
+
+			if (killed)
+			{			
+				result=0;
+				/* doesn't work
+				int* pKillList=pv.GetKillList();
+				
+				char delcommand[256];
+
+				for (int i=0; i<killed; ++i)
+				{
+					ACE_Process_Options rmfiles_opt;
+					sprintf(delcommand,"del /Q %scmd%06d.bat %sscript%06d.bat",workdir_dos.c_str(),pKillList[i],workdir_dos.c_str(),pKillList[i]);
+					DBG printf("%s\n",delcommand);
+					rmfiles_opt.command_line("%s",delcommand);
+					ACE_Process rmfiles_proc;
+					rmfiles_proc.spawn(rmfiles_opt);
+					rmfiles_proc.wait();
+					//Time::delay(3.0);
+					//rmfiles_proc.terminate();
+				}
+				*/
+			}
 
 			DBG printf("\nKILLALL\n\n");
 		}
 		else if (msg.check("exit"))
 		{
-		    pv.Killall();
-		
+			pv.Killall();
 			bRun=false;
 			result=0;
-			
+
 			DBG printf("\nEXIT\n\n");
-			
+			/* doesn't work
 			ACE_Process_Options rmdir_opt;
-			rmdir_opt.command_line("%s","rmdir /S /Q runner");
+			rmdir_opt.command_line("%s",("cmd rmdir /S /Q "+workdir_dos).c_str());
 			ACE_Process rmdir_proc;
 			rmdir_proc.spawn(rmdir_opt);
-			rmdir_proc.wait();
+			//rmdir_proc.wait();
+			Time::delay(3.0);
+			rmdir_proc.terminate();
+			*/
 		}
+
+		String s;
 
 		Bottle reply;
         reply.addVocab(result?VOCAB4('f','a','i','l'):VOCAB2('o','k'));
@@ -657,133 +743,12 @@ int Run::runServerDos(Searchable& config)
 
         //Time::delay(0.5); // something strange with ACE_Process::spawn
     }
- 
+
+	port.close();
+
 	return 0;
 }
 #endif
-
-/*
-int Run::runServerDos(Searchable& config) 
-{
-	Port port;
-    port.open(config.check("server",Value("/run"),"port name for server").asString());
-    String myPort = port.getName().c_str();
-	String directory("runner");
-
-	TProcessVector pv;
-
-	bool bRun=true;
-
-	int serial=0;
-	char intbuff[16];
-
-    while (bRun) 
-	{
-		sprintf(intbuff,"%06d",++serial);
-		String serial_str(intbuff);
-
-        Bottle msg,output;
-        port.read(msg,true);
-
-		DBG printf("\nBOTTLE = %s\n\n",msg.toString().c_str());
-
-		int result=-1;
-
-		String alias=msg.check("as")?msg.findGroup("as").get(1).asString().c_str():"default";
-
-		Bottle cmd;
-
-		String command;
-
-		if (msg.check("cmd"))
-		{
-			Bottle cmd=msg.findGroup("cmd");
-			cmd=cmd.tail();
-
-			for (int s=0; s<cmd.size(); ++s)
-				command+=String(cmd.get(s).toString().c_str())+" ";
-
-			if (msg.check("script"))
-			{
-				Bottle script; 
-				script.append(msg.findGroup("script").tail());		
-				String filename="script_"+serial_str+".bat";
-				String path=directory+"/"+filename;
-				writeBottleAsFile(script,path);			
-			
-				command=directory+"\\"+filename;
-			}
-
-			String filename="cmd_"+serial_str+".bat";
-			String exec_str="yarp read /"+alias+"/stdin | "+command+" | yarp write /"+alias+"/stdout\n";
-			FILE *fcmd=fopen((directory+"/"+filename).c_str(),"wc");
-			fprintf(fcmd,"%s",exec_str.c_str());
-			fclose(fcmd);
-
-			ACE_Process_Options options;
-			
-			options.command_line("%s",(directory+"\\"+filename).c_str());
-			DBG printf("command=%s\n",(directory+"\\"+filename).c_str());
-
-			pid_t pid=pv.Spawn(options,alias);
-			
-			DBG printf("\nSPAWN %d %s\n\n",pid,alias.c_str());
-			
-			if (pid!=-1) result=0;
-
-			output.addInt(pid);
-		}
-		else if (msg.check("kill"))
-		{
-			Bottle killer=msg.findGroup("kill");
-			String key=killer.get(1).asString().c_str();
-			if (pv.Kill(key))
-			{ 
-			    result=0;
-			}
-			else
-			{
-			    printf("can't kill process %s\n",key.c_str());
-			}
-
-			DBG printf("\nKILL %s\n\n",key.c_str());
-			//fflush(stdout);
-		}
-		else if (msg.check("killall"))
-		{
-			if (pv.Killall()) result=0;
-
-			DBG printf("\nKILLALL\n\n");
-			//fflush(stdout);
-		}
-		else if (msg.check("exit"))
-		{
-		    pv.Killall();
-		    
-			bRun=false;
-			result=0;
-			DBG printf("\nEXIT\n\n");
-			
-			ACE_Process_Options rmdir_opt;
-			rmdir_opt.command_line("%s","rmdir /S /Q runner");
-			ACE_Process rmdir_proc;
-			rmdir_proc.spawn(rmdir_opt);
-			rmdir_proc.wait();
-		}
-
-
-		Bottle reply;
-        reply.addVocab(result?VOCAB4('f','a','i','l'):VOCAB2('o','k'));
-        
-		reply.append(output);
-        port.reply(reply);
-
-        //Time::delay(0.5); // something strange with ACE_Process::spawn
-    }
- 
-	return 0;
-}
-*/
 
 int Run::runConnect(Searchable& config) 
 {
@@ -859,6 +824,20 @@ int Run::runClient(Searchable& config)
 	return 0;
 }
 
+bool Run::checkBash(String& workdir)
+{
+	FILE* fCheck=fopen((workdir+"checkbash.sh").c_str(),"wc");
+	fprintf(fCheck,"printf \"hello I am bash\n\"");
+	fclose(fCheck);
+
+	ACE_Process_Options options;
+	options.command_line("%s",("bash "+workdir+"checkbash.sh").c_str());
+	ACE_Process proc;
+	pid_t pid=proc.spawn(options);
+	proc.wait();
+	return pid!=-1;
+}
+
 int Run::main(int argc, char *argv[]) 
 {
     Property config;
@@ -867,29 +846,59 @@ int Run::main(int argc, char *argv[])
 
     if (config.check("server")) 
 	{
-        DBG printf("server state %s:%d\n",__FILE__,__LINE__);
-		if (checkBash())
+		ConstString portname=config.check("server",Value("/run"),"port name for server").asString();
+
+		char temp_dir_path[1024];
+		if (ACE::get_temp_dir(temp_dir_path,1024)==-1)
+		{
+			temp_dir_path[0]=0;
+			printf("WARNING: no temp directory found, using Local.\n");
+		}
+
+		String workdir=String(temp_dir_path)+"run";
+
+		for (unsigned int i=0; i<workdir.length(); ++i)
+			if (workdir[i]=='\\') workdir[i]='/';
+
+		ACE_OS::mkdir(workdir.c_str());
+
+		workdir+=String(portname.c_str())+"/";
+
+		for (unsigned int i=0; i<workdir.length(); ++i)
+			if (workdir[i]=='\\') workdir[i]='/';
+
+		ACE_OS::mkdir(workdir.c_str());
+
+		DBG printf("WORKDIR=%s\n",workdir.c_str());
+		
+		int ret=-1;
+
+		if (checkBash(workdir))
 		{
 			printf("bash server found\n");
-			return runServerBash(config);
+			ret=runServerBash(portname,workdir);
 		}
 		#ifdef WIN32
+		else
+		{
 			printf("bash not available, running DOS server\n");
-			return runServerDos(config);
+			ret=runServerDos(portname,workdir);
+		}
+		#else
+		else
+		{
+			printf("ERROR: no bash, no dos, who am I???\n");
+		}
 		#endif
 		
-		printf("ERROR: no bash, no dos, who am I???\n");
-		
-		return -1;
+		return ret;
 	} 
 	if (config.check("connect")) 
 	{
-        DBG printf("connect state %s:%d\n",__FILE__,__LINE__);
         return runConnect(config);
     } 
 	else if (config.check("cmd") || config.check("kill") || config.check("killall") || config.check("exit") || config.check("script"))
 	{ 
-        DBG printf("client state %s:%d\n",__FILE__,__LINE__);
         return runClient(config);
     }
 	else return -1;
