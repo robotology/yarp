@@ -19,7 +19,8 @@ int main(int argc, char *argv[]) {
     if (argc==1) {
         printf("This program checks the framerate of an output port\n");
         printf("Call as:\n");
-        printf("   framerate --remote /port_name --local /local_name\n");
+        printf("   framerate --remote /port_name --local /local_name --prot protocol\n");
+        printf("protocol can be for example tcp,udp,mcast\n");
         exit(0);
     }
 
@@ -31,17 +32,21 @@ int main(int argc, char *argv[]) {
 
     // name port
     Value *val;
-    String name = "/get_image";
+    Value *prot;
+    String local = "/get_image";
     if (opt.check("local",val)) {
-        name = val->asString().c_str();
+        local = val->asString().c_str();
     }
-    port.open(name.c_str());
+    port.open(local.c_str());
 
     // connect port
-    if (opt.check("remote",val)) {
-        Network::connect(val->asString(),name.c_str());
-    }
-
+    if (opt.check("remote", val))
+    {
+        if (opt.check("prot", prot))
+            Network::connect(val->asString(), local.c_str(), prot->asString().c_str());
+        else
+            Network::connect(val->asString(), local.c_str());
+    }        
     // read
     double first = Time::now();
     double prev = 0;
