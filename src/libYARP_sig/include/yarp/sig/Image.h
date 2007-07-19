@@ -176,14 +176,19 @@ public:
     void zero();
 
     /**
-     * Change the size of the image.
+     * Reallocate an image to be of a desired size, throwing away its
+     * current contents.  If the desired size is the same as the current
+     * size, then no reallocation is done.  But the resulting image
+     * should always be assumed to have undefined content.  To rescale
+     * an image, maintaining its content, see the Image::copy methods.
      * @param imgWidth the desired width (the number of possible x values)
-     * @param imgHeight the desired width (the number of possible y values)
+     * @param imgHeight the desired height (the number of possible y values)
      */
     void resize(int imgWidth, int imgHeight);
 
     /**
-     * Change the size of the image to match another.
+     * Reallocate the size of the image to match another, throwing
+     * away the actual content of the image.
      * @param alt the image whose size we should match.
      */
     void resize(Image& alt) {
