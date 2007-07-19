@@ -168,11 +168,18 @@ public:
 
     /**
      * Interprets a file as a list of properties. 
-     * For example, for a file containing two lines,
-     * "width 10" and "height 15", the Property object
-     * will be the mapping {width => 10, height => 15}.
+     * For example, for a file containing:
+     * \code
+     *   width 10
+     *   height 15
+     * the Property object will be the mapping  {width => 10, height => 15}.
+     * In other words:
+     * \code
+     *   prop.find("width").asInt() // gives 10
+     *   prop.find("height").asInt() // gives 15
+     * \endcode
      * Lines of the form "[NAME]" will result in nested subproperties.
-     * For example, with file content:
+     * For example, for a file containing:
      * \code
      * [SIZE]
      * width 10
@@ -182,11 +189,25 @@ public:
      * \endcode
      * the structure of the Property object will be 
      * "(SIZE (width 10) (height 15)) (APPEARANCE (color red))".
-     * So, for example:
+     * In other words:
      * \code
      *   prop.findGroup("SIZE").find("width").asInt() // gives 10
      *   prop.findGroup("APPEARANCE").find("color").asString() // gives red
      * \endcode
+     *
+     * It is possible to nest configuration files.  To include
+     * the configuration file "preamble.ini" inside another one, 
+     * do:
+     * \code
+     *   [include "preamble.ini"]
+     * \endcode
+     * This will insert the content of preamble.ini as if cut-and-pasted.
+     * If rather you would like the content included within a subsection
+     * called FOO, do instead:
+     * \code
+     *   [include FOO "preamble.ini"]
+     * \endcode
+     *
      * @param fname the name of the file to read from
      * @param wipe should Property be emptied first
      * @return true if file exists and can be read

@@ -10,6 +10,17 @@
 
 #include "TestList.h"
 
+
+#include <ace/OS_NS_stdlib.h>
+// does ACE require new c++ header files or not?
+#if ACE_HAS_STANDARD_CPP_LIBRARY
+#include <fstream>
+using namespace std;
+#else
+#include <fstream.h>
+#endif
+
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -215,6 +226,67 @@ targ $TARGET\n\
                    "string with slash");
     }
 
+
+    virtual void checkIncludes() {
+        report(0,"checking include behavior");
+
+        const char *fname1 = "_yarp_regression_test1.txt";
+        const char *fname2 = "_yarp_regression_test2.txt";
+
+        // create some test files
+
+        {
+            ofstream fout1(fname1);
+            fout1 << "x 1" << endl;
+            fout1.close();
+            ofstream fout2(fname2);
+            fout2 << "[include " << fname1 << "]" << endl;
+            fout2 << "y 2" << endl;
+            fout2.close();
+            Property p;
+            p.fromConfigFile(fname2);
+            checkEqual(p.find("x").asInt(),1,"x is ok");
+            checkEqual(p.find("y").asInt(),2,"y is ok");
+        }
+
+
+        {
+            ofstream fout1(fname1);
+            fout1 << "x 1" << endl;
+            fout1.close();
+            ofstream fout2(fname2);
+            fout2 << "[include base " << fname1 << "]" << endl;
+            fout2 << "y 2" << endl;
+            fout2.close();
+            Property p;
+            p.fromConfigFile(fname2);
+            checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
+            checkEqual(p.find("y").asInt(),2,"y is ok");
+        }
+
+        {
+            ofstream fout1(fname1);
+            fout1 << "x 1" << endl;
+            fout1.close();
+            ofstream fout2(fname2);
+            fout2 << "[base]" << endl;
+            fout2 << "w 4" << endl;
+            fout2 << "[base]" << endl;
+            fout2 << "z 3" << endl;
+            fout2 << "[include base " << fname1 << "]" << endl;
+            fout2 << "y 2" << endl;
+            fout2.close();
+            Property p;
+            p.fromConfigFile(fname2);
+            checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
+            checkEqual(p.find("y").asInt(),2,"y is ok");
+            checkEqual(p.findGroup("base").find("z").asInt(),3,"z is ok");
+            checkEqual(p.findGroup("base").find("w").asInt(),4,"w is ok");
+        }
+
+
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -225,6 +297,7 @@ targ $TARGET\n\
         checkNesting();
         checkWipe();
         checkBackslashPath();
+        checkIncludes();
     }
 };
 

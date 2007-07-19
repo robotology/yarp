@@ -1,13 +1,22 @@
+2007-07-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarp/libYARP_OS/src/Property.cpp: the inevitable addition
+	of "include" mechanism to configuration files.
+	   [include "filename.ini"]
+	includes the given file.
+	   [include subname "filename.ini"]
+	includes the given file within a subsection called "subname".
+
 2007-07-16  Alessandro Scalzo <alessandro@liralab.it>
-	* src/yarp/libYARP_os/include/yarp/os/Run.h
-	* src/yarp/libYARP_os/src/Run.cpp
+	* src/yarp/libYARP_OS/include/yarp/os/Run.h
+	* src/yarp/libYARP_OS/src/Run.cpp
 	New version, supports run & kill commands,
 	.sh and .bat scripts, redirect stdin and 
 	stdout to yarp ports. 
 
 2007-07-06  Alessandro Scalzo <alessandro@liralab.it>
-	* src/yarp/libYARP_os/include/yarp/os/Run.h
-	* src/yarp/libYARP_os/src/Run.cpp
+	* src/yarp/libYARP_OS/include/yarp/os/Run.h
+	* src/yarp/libYARP_OS/src/Run.cpp
 	New version, supports run & kill processes
 	on both unix and win32. Does not support
 	IO (by now).

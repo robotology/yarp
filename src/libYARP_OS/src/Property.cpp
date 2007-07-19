@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -255,6 +255,7 @@ public:
         bool done = false;
         do {
             bool isTag = false;
+            bool including = false;
             String buf;
             try {
                 buf = NetType::readLine(sis);
@@ -262,6 +263,8 @@ public:
                 done = true;
             }
             if (!done) {
+                including = false;
+
                 // this comment filter is not safe for quoting
                 if (buf.strstr("//")!=String::npos) {
                     buf = buf.substr(0,buf.strstr("//"));
@@ -277,7 +280,51 @@ public:
                         int space = buf.strstr(" ");
                         if (space>=0) {
                             Bottle bot(buf.c_str());
-                            if (bot.size()==2) {
+                            if (bot.size()>1) {
+                                if (bot.get(0).toString() == "include") {
+                                    including = true;
+                                    if (bot.size()>2) {
+                                        if (tag!="") {
+                                            if (accum.size()>=1) {
+                                                putBottle(tag.c_str(),accum);
+                                            }
+                                            tag = "";
+                                        }                                
+                                        ConstString subName = 
+                                            bot.get(1).toString();
+                                        ConstString fname = 
+                                            bot.get(2).toString();
+
+                                        Property p;
+                                        if (getBottle(subName)!=NULL) {
+                                            p.fromString(getBottle(subName)->tail().toString());
+                                            //printf(">>> prior p %s\n",
+                                            //     p.toString().c_str());
+                                        } 
+                                        p.fromConfigFile(fname.c_str(),
+                                                         env, false);
+                                        accum.fromString(p.toString());
+                                        tag = subName.c_str();
+                                        //printf(">>> tag %s accum %s\n",
+                                        //     tag.c_str(),
+                                        //     accum.toString().c_str());
+                                        if (tag!="") {
+                                            if (accum.size()>=1) {
+                                                putBottle(tag.c_str(),accum);
+                                            }
+                                            tag = "";
+                                        }                                
+                                    } else {
+                                        tag = "";
+                                        ConstString fname = 
+                                            bot.get(1).toString();
+                                        //printf("Including %s\n", fname.c_str());
+                                        fromConfigFile(fname.c_str(),
+                                                       env, false);
+                                    }
+                                }
+                            }
+                            if (bot.size()==2 && !including) {
                                 buf = bot.get(1).toString().c_str();
                                 String key = bot.get(0).toString().c_str();
                                 Bottle *target = getBottle(key.c_str());
@@ -291,11 +338,13 @@ public:
                                 }
                             }
                         }
-                        isTag = true;
+                        if (!including) {
+                            isTag = true;
+                        }
                     }
                 }
             }
-            if (!isTag) {
+            if (!isTag && !including) {
                 Bottle bot;
                 bot.fromString(buf.c_str());
                 if (bot.size()>=1) {
@@ -316,6 +365,14 @@ public:
                 tag = buf;
                 accum.clear();
                 accum.addString(tag.c_str());
+                if (tag!="") {
+                    if (getBottle(tag.c_str())!=NULL) {
+                        // merge data
+                        accum.append(getBottle(tag.c_str())->tail());
+                        //printf("MERGE %s, got %s\n", tag.c_str(),
+                        //     accum.toString().c_str());
+                    }
+                }
             }
         } while (!done);
     }
