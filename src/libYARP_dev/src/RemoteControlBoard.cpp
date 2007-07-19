@@ -1411,8 +1411,8 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            //            Network::connect(s1.c_str(), s2.c_str(), "mcast");
-            Network::connect(s1.c_str(), s2.c_str(), "udp");
+            Network::connect(s1.c_str(), s2.c_str(), "mcast");
+            //Network::connect(s1.c_str(), s2.c_str(), "udp");
         }
         
         state_buffer.attach(state_p);
