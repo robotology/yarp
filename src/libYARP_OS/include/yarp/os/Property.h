@@ -172,6 +172,7 @@ public:
      * \code
      *   width 10
      *   height 15
+     * \endcode
      * the Property object will be the mapping  {width => 10, height => 15}.
      * In other words:
      * \code
@@ -181,11 +182,11 @@ public:
      * Lines of the form "[NAME]" will result in nested subproperties.
      * For example, for a file containing:
      * \code
-     * [SIZE]
-     * width 10
-     * height 15
-     * [APPEARANCE]
-     * color red
+     *   [SIZE]
+     *   width 10
+     *   height 15
+     *   [APPEARANCE]
+     *   color red
      * \endcode
      * the structure of the Property object will be 
      * "(SIZE (width 10) (height 15)) (APPEARANCE (color red))".
