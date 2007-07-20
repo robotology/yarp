@@ -147,7 +147,8 @@ void DgramTwoWayStream::configureSystemBuffers() {
 
 int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
                                      const Address& ipLocal) {
-    printf("  restricting multicast to %s\n", ipLocal.getName().c_str());
+    YARP_INFO(Logger::get(),
+              String("multicast connection on network interface for ") + ipLocal.getName());
     int result = -1;
     // There's some major damage in ACE mcast interfaces.
     // Most require interface names, yet provide no way to query
@@ -186,14 +187,14 @@ void DgramTwoWayStream::openMcast(const Address& group,
     int result = -1;
     ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
     if (ipLocal.isValid()) {
-        printf("  sender: determine multicast interface from ip %s\n",
-               ipLocal.getName().c_str());
+        //printf("  sender: determine multicast interface from ip %s\n",
+        //     ipLocal.getName().c_str());
         result = dmcast->open(addr,NULL,1); 
         if (result==0) {
             result = restrictMcast(dmcast,ipLocal);
         }
     } else {
-        printf("  generic multicast interface\n");
+        //printf("  generic multicast interface\n");
         result = dmcast->open(addr,NULL,1); 
     }
 
@@ -237,8 +238,8 @@ void DgramTwoWayStream::join(const Address& group, bool sender,
 
     int result = -1;
     if (ipLocal.isValid()) {
-        printf("  receiver: determine multicast interface from ip %s\n",
-               ipLocal.getName().c_str());
+        //printf("  receiver: determine multicast interface from ip %s\n",
+        //     ipLocal.getName().c_str());
         result = dmcast->join(addr,1); 
         if (result==0) {
             result = restrictMcast(dmcast,ipLocal);

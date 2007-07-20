@@ -12,6 +12,7 @@
 #include <yarp/AbstractCarrier.h>
 #include <yarp/UdpCarrier.h>
 #include <yarp/DgramTwoWayStream.h>
+#include <yarp/Logger.h>
 
 #include <yarp/Election.h>
 #include <yarp/SplitString.h>
@@ -148,13 +149,10 @@ public:
         YARP_ASSERT(stream!=NULL);
         Address remote = proto.getStreams().getRemoteAddress();
         Address local;
-        bool extend = (NameConfig::getEnv("YARP_TEST")!="");
-        if (extend) {
-            local = proto.getStreams().getLocalAddress();
-            printf("  MULTICAST is being extended; some temporary status messages added\n");
-            printf("  Local: %s\n", local.toString().c_str());
-            printf("  Remote: %s\n", remote.toString().c_str());
-        }
+        local = proto.getStreams().getLocalAddress();
+        //printf("  MULTICAST is being extended; some temporary status messages added\n");
+        //printf("  Local: %s\n", local.toString().c_str());
+        //printf("  Remote: %s\n", remote.toString().c_str());
         proto.takeStreams(NULL); // free up port from tcp
         try {
             if (sender) {
@@ -167,11 +165,10 @@ public:
                   the author doesn't know, so is being cautious.
                  */
                 key = proto.getRoute().getFromName();
-                if (extend) {
-                    key += " on ";
-                    key += local.getName();
-                    printf("  multicast key: %s\n", key.c_str());
-                }
+                key += " on ";
+                key += local.getName();
+                YARP_DEBUG(Logger::get(),
+                           String("multicast key: ") + key);
                 addSender(key);
 
                 // future optimization: only join when active
