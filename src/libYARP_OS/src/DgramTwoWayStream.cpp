@@ -134,11 +134,52 @@ void DgramTwoWayStream::configureSystemBuffers() {
 }
 
 
-void DgramTwoWayStream::join(const Address& group, bool sender) {
+void DgramTwoWayStream::openMcast(const Address& group, 
+                                  const Address& ipLocal) {
+    
+    localAddress = ipLocal;
+    localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
+                                (ACE_UINT32)INADDR_ANY);
+
+    ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
+    dgram = dmcast;
+    YARP_ASSERT(dgram!=NULL);
+
+    int result = -1;
+    ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
+    if (ipLocal.isValid()) {
+        printf("  trying to determine multicast interface from ip %s\n",
+               ipLocal.getName().c_str());
+        result = dmcast->open(addr,ipLocal.getName().c_str(),1); 
+    } else {
+        printf("  generic multicast interface\n");
+        result = dmcast->open(addr,NULL,1); 
+    }
+
+    if (result!=0) {
+        throw IOException("could not open multicast datagram socket");
+    }
+
+    configureSystemBuffers();
+
+    remoteAddress = group;
+    localHandle.set(localAddress.getPort(),localAddress.getName().c_str());
+    remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
+
+    allocate();
+}
+
+
+void DgramTwoWayStream::join(const Address& group, bool sender,
+                             const Address& ipLocal) {
 
     if (sender) {
-        // just use udp as normal
-        open(group);
+        if (ipLocal.isValid()) {
+            openMcast(group,ipLocal);
+        } else {
+            // just use udp as normal
+            open(group);
+        }
         return;
     }
 
@@ -153,7 +194,14 @@ void DgramTwoWayStream::join(const Address& group, bool sender) {
                group.toString());
     ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
 
-    int result = dmcast->join(addr,1);
+    int result = -1;
+    if (ipLocal.isValid()) {
+        printf("  trying to determine multicast interface from ip %s\n",
+               ipLocal.getName().c_str());
+        result = dmcast->join(addr,1,ipLocal.getName().c_str()); 
+    } else {
+        result = dmcast->join(addr,1); 
+    }
 
     configureSystemBuffers();
 

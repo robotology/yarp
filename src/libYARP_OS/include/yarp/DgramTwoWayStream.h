@@ -39,7 +39,15 @@ public:
 
     virtual void open(const Address& local, const Address& remote);
 
-    virtual void join(const Address& group, bool sender);
+    virtual void openMcast(const Address& group,
+                           const Address& ipLocal);
+
+    virtual void join(const Address& group, bool sender,
+                      const Address& ipLocal);
+
+    virtual void join(const Address& group, bool sender) {
+        join(group,sender,Address());
+    }
 
     virtual ~DgramTwoWayStream();
 

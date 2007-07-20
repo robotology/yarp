@@ -16,6 +16,7 @@
 #include <yarp/Election.h>
 #include <yarp/SplitString.h>
 #include <yarp/NameClient.h>
+#include <yarp/NameConfig.h>
 
 #include <stdio.h>
 
@@ -146,20 +147,37 @@ public:
         DgramTwoWayStream *stream = new DgramTwoWayStream();
         YARP_ASSERT(stream!=NULL);
         Address remote = proto.getStreams().getRemoteAddress();
-        Address local = proto.getStreams().getLocalAddress();
+        Address local;
+        bool extend = (NameConfig::getEnv("YARP_TEST")!="");
+        if (extend) {
+            local = proto.getStreams().getLocalAddress();
+            printf("  MULTICAST is being extended; some temporary status messages added\n");
+            printf("  Local: %s\n", local.toString().c_str());
+            printf("  Remote: %s\n", remote.toString().c_str());
+        }
         proto.takeStreams(NULL); // free up port from tcp
-        printf("  MULTICAST is being extended; some temporary status messages added\n");
-        printf("  Local: %s\n", local.toString().c_str());
-        printf("  Remote: %s\n", remote.toString().c_str());
         try {
             if (sender) {
+                /*
+                  Multicast behavior seems a bit variable.
+                  We assume here that if packages need to be broadcast
+                  to targets via different network interfaces, that
+                  we'll need to send independently on those two
+                  interfaces.  This may or may not always be the case,
+                  the author doesn't know, so is being cautious.
+                 */
                 key = proto.getRoute().getFromName();
+                if (extend) {
+                    key += " on ";
+                    key += local.getName();
+                    printf("  multicast key: %s\n", key.c_str());
+                }
                 addSender(key);
 
                 // future optimization: only join when active
-                stream->join(mcastAddress,sender);
+                stream->join(mcastAddress,sender,local);
             } else {
-                stream->join(mcastAddress,sender);
+                stream->join(mcastAddress,sender,local);
             }
       
         } catch (IOException e) {
