@@ -14,6 +14,7 @@
 #include <yarp/ManagedBytes.h>
 
 #include <ace/SOCK_Dgram.h>
+#include <ace/SOCK_Dgram_Mcast.h>
 
 namespace yarp {
     class DgramTwoWayStream;
@@ -41,6 +42,9 @@ public:
 
     virtual void openMcast(const Address& group,
                            const Address& ipLocal);
+
+    virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
+                              const Address& ipLocal);
 
     virtual void join(const Address& group, bool sender,
                       const Address& ipLocal);

@@ -15,6 +15,17 @@
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
+#include <ace/SOCK_Dgram.h>
+#include <ace/Handle_Set.h>
+#include <ace/Log_Msg.h>
+#include <ace/INET_Addr.h>
+#include <ace/ACE.h>
+#include <ace/OS_NS_string.h>
+#include <ace/OS_Memory.h>
+#include <ace/OS_NS_sys_select.h>
+#include <ace/os_include/net/os_if.h>
+
+
 using namespace yarp;
 
 #define CRC_SIZE 8
@@ -134,23 +145,53 @@ void DgramTwoWayStream::configureSystemBuffers() {
 }
 
 
+int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
+                                     const Address& ipLocal) {
+    printf("  restricting multicast to %s\n", ipLocal.getName().c_str());
+    int result = -1;
+    // There's some major damage in ACE mcast interfaces.
+    // Most require interface names, yet provide no way to query
+    // these names - and in the end, convert to IP addresses.
+    // Here we try to do an end run around ACE.
+    
+    // based on: ACE_SOCK_Dgram::set_nic
+    
+    ip_mreq multicast_address;
+    ACE_INET_Addr interface_addr(ipLocal.getPort(),
+                                 ipLocal.getName().c_str());
+    multicast_address.imr_interface.s_addr =
+        htonl (interface_addr.get_ip_address ());
+    
+    result = 
+        ((ACE_SOCK*)dmcast)->set_option (IPPROTO_IP,
+                                         IP_MULTICAST_IF,
+                                         &multicast_address.imr_interface.s_addr,
+                                         sizeof (struct in_addr));
+    
+    return result;
+}
+
+
 void DgramTwoWayStream::openMcast(const Address& group, 
                                   const Address& ipLocal) {
     
     localAddress = ipLocal;
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
                                 (ACE_UINT32)INADDR_ANY);
-
+    
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
     dgram = dmcast;
     YARP_ASSERT(dgram!=NULL);
-
+    
     int result = -1;
     ACE_INET_Addr addr(group.getPort(),group.getName().c_str());
     if (ipLocal.isValid()) {
-        printf("  trying to determine multicast interface from ip %s\n",
+        printf("  sender: determine multicast interface from ip %s\n",
                ipLocal.getName().c_str());
-        result = dmcast->open(addr,ipLocal.getName().c_str(),1); 
+        result = dmcast->open(addr,NULL,1); 
+        if (result==0) {
+            result = restrictMcast(dmcast,ipLocal);
+        }
     } else {
         printf("  generic multicast interface\n");
         result = dmcast->open(addr,NULL,1); 
@@ -196,9 +237,12 @@ void DgramTwoWayStream::join(const Address& group, bool sender,
 
     int result = -1;
     if (ipLocal.isValid()) {
-        printf("  trying to determine multicast interface from ip %s\n",
+        printf("  receiver: determine multicast interface from ip %s\n",
                ipLocal.getName().c_str());
-        result = dmcast->join(addr,1,ipLocal.getName().c_str()); 
+        result = dmcast->join(addr,1); 
+        if (result==0) {
+            result = restrictMcast(dmcast,ipLocal);
+        }
     } else {
         result = dmcast->join(addr,1); 
     }
