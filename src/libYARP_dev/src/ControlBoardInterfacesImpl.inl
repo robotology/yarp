@@ -7,6 +7,8 @@
 
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 
+#include <math.h>
+
 // Be careful: this file contains template implementations and is included by translation
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
 // avoid repetations.
@@ -179,20 +181,42 @@ public:
         enc=ang*angleToEncoders[j];
     }
 
+	inline void velA2E_abs(double ang, int j, double &enc, int &k)
+    {
+        k=toHw(j);
+        enc=ang*fabs(angleToEncoders[j]);
+    }
+
     inline void velE2A(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
         ang=enc/angleToEncoders[k];
     }
 
+	inline void velE2A_abs(double enc, int j, double &ang, int &k)
+    {
+        k=toUser(j);
+        ang=enc/fabs(angleToEncoders[k]);
+    }
+
     inline void accA2E(double ang, int j, double &enc, int &k)
     {
         velA2E(ang, j, enc, k);
+    }
+	
+	inline void accA2E_abs(double ang, int j, double &enc, int &k)
+    {
+        velA2E_abs(ang, j, enc, k);
     }
 
     inline void accE2A(double enc, int j, double &ang, int &k)
     {
         velE2A(enc, j, ang, k);
+    }
+
+	inline void accE2A_abs(double enc, int j, double &ang, int &k)
+    {
+        velE2A_abs(enc, j, ang, k);
     }
 
     inline double velE2A(double enc, int j)
@@ -201,9 +225,21 @@ public:
         return enc/angleToEncoders[k];
     }
 
+	inline double velE2A_abs(double enc, int j)
+    {
+        int k=toUser(j);
+        return enc/fabs(angleToEncoders[k]);
+    }
+
+
     inline double accE2A(double enc, int j)
     {
         return velE2A(enc, j);
+    }
+
+	inline double accE2A_abs(double enc, int j)
+    {
+        return velE2A_abs(enc, j);
     }
 
     //map a vector, convert from angles to encoders
@@ -241,6 +277,17 @@ public:
         }
     }
 
+	inline void velA2E_abs(const double *ang, double *enc)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            velA2E_abs(ang[j], j, tmp, index);
+            enc[index]=tmp;
+        }
+    }
+
     inline void velE2A(const double *enc, double *ang)
     {
         double tmp;
@@ -248,6 +295,17 @@ public:
         for(int j=0;j<nj;j++)
         {
             velE2A(enc[j], j, tmp, index);
+            ang[index]=tmp;
+        }
+    }
+
+	inline void velE2A_abs(const double *enc, double *ang)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            velE2A_abs(enc[j], j, tmp, index);
             ang[index]=tmp;
         }
     }
@@ -263,6 +321,17 @@ public:
         }
     }
 
+	inline void accA2E_abs(const double *ang, double *enc)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            accA2E_abs(ang[j], j, tmp, index);
+            enc[index]=tmp;
+        }
+    }
+
     inline void accE2A(const double *enc, double *ang)
     {
         double tmp;
@@ -270,6 +339,17 @@ public:
         for(int j=0;j<nj;j++)
         {
             accE2A(enc[j], j, tmp, index);
+            ang[index]=tmp;
+        }
+    }
+
+	inline void accE2A_abs(const double *enc, double *ang)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            accE2A_abs(enc[j], j, tmp, index);
             ang[index]=tmp;
         }
     }
@@ -367,14 +447,14 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefSpeed(int j, double sp)
 {
     int k;
     double enc;
-    castToMapper(helper)->velA2E(sp, j, enc, k);
+    castToMapper(helper)->velA2E_abs(sp, j, enc, k);
     return iPosition->setRefSpeedRaw(k, enc);
 }
 
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefSpeeds(const double *spds)
 {
-    castToMapper(helper)->velA2E(spds, temp);
+    castToMapper(helper)->velA2E_abs(spds, temp);
     
     return iPosition->setRefSpeedsRaw(temp);
 }
@@ -385,14 +465,14 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefAcceleration(int j, dou
     int k;
     double enc;
     
-    castToMapper(helper)->accA2E(acc, j, enc, k);
+    castToMapper(helper)->accA2E_abs(acc, j, enc, k);
     return iPosition->setRefAccelerationRaw(k, enc);
 }
 
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::setRefAccelerations(const double *accs)
 {
-    castToMapper(helper)->accA2E(accs, temp);
+    castToMapper(helper)->accA2E_abs(accs, temp);
     
     return iPosition->setRefAccelerationsRaw(temp);
 }
@@ -406,7 +486,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeed(int j, double *re
     
     bool ret = iPosition->getRefSpeedRaw(k, &enc);
     
-    *ref=(castToMapper(helper)->velE2A(enc, k));
+    *ref=(castToMapper(helper)->velE2A_abs(enc, k));
     
     return ret;
 }
@@ -415,7 +495,7 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefSpeeds(double *spds)
 {
     bool ret = iPosition->getRefSpeedsRaw(temp);
-    castToMapper(helper)->velE2A(temp, spds);
+    castToMapper(helper)->velE2A_abs(temp, spds);
     return ret;
 }
 
@@ -423,7 +503,7 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *accs)
 {
     bool ret=iPosition->getRefAccelerationsRaw(temp);
-    castToMapper(helper)->accE2A(temp, accs);
+    castToMapper(helper)->accE2A_abs(temp, accs);
     return ret;
 }
 
@@ -435,7 +515,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>::getRefAcceleration(int j, dou
     k=castToMapper(helper)->toHw(j);
     bool ret = iPosition->getRefAccelerationRaw(k, &enc);
     
-    *acc=castToMapper(helper)->accE2A(enc, k);
+    *acc=castToMapper(helper)->accE2A_abs(enc, k);
     
     return ret;
 }
@@ -577,14 +657,14 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setRefAcceleration(int j, dou
     int k;
     double enc;
     
-    castToMapper(helper)->accA2E(acc, j, enc, k);
+    castToMapper(helper)->accA2E_abs(acc, j, enc, k);
     return iVelocity->setRefAccelerationRaw(k, enc);
 }
 
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::setRefAccelerations(const double *accs)
 {
-    castToMapper(helper)->accA2E(accs, temp);
+    castToMapper(helper)->accA2E_abs(accs, temp);
     
     return iVelocity->setRefAccelerationsRaw(temp);
 }
@@ -593,7 +673,7 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAccelerations(double *accs)
 {
     bool ret=iVelocity->getRefAccelerationsRaw(temp);
-    castToMapper(helper)->accE2A(temp, accs);
+    castToMapper(helper)->accE2A_abs(temp, accs);
     return ret;
 }
 
@@ -605,7 +685,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>::getRefAcceleration(int j, dou
     k=castToMapper(helper)->toHw(j);
     bool ret = iVelocity->getRefAccelerationRaw(k, &enc);
     
-    *acc=castToMapper(helper)->accE2A(enc, k);
+    *acc=castToMapper(helper)->accE2A_abs(enc, k);
     
     return ret;
 }
