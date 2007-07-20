@@ -17,6 +17,8 @@
 #include <yarp/SplitString.h>
 #include <yarp/NameClient.h>
 
+#include <stdio.h>
+
 namespace yarp {
     class McastCarrier;
 }
@@ -144,7 +146,11 @@ public:
         DgramTwoWayStream *stream = new DgramTwoWayStream();
         YARP_ASSERT(stream!=NULL);
         Address remote = proto.getStreams().getRemoteAddress();
+        Address local = proto.getStreams().getLocalAddress();
         proto.takeStreams(NULL); // free up port from tcp
+        printf("  MULTICAST is being extended; some temporary status messages added\n");
+        printf("  Local: %s\n", local.toString().c_str());
+        printf("  Remote: %s\n", remote.toString().c_str());
         try {
             if (sender) {
                 key = proto.getRoute().getFromName();
