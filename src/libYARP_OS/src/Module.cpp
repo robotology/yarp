@@ -311,6 +311,7 @@ bool Module::runModule() {
         ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
     }
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
     while (updateModule()) {
         if (terminated) break;
         if (isStopping()) break;

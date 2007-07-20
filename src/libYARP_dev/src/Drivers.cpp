@@ -215,6 +215,7 @@ static void handler (int) {
 int Drivers::yarpdev(int argc, char *argv[]) {
 
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 
     // get command line options
     Property options;

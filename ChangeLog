@@ -1,3 +1,8 @@
+2007-07-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarp/libYARP_OS/src/Module.cpp, src/yarp/libYARP_dev/src/Drivers.cpp:
+	Added SIGTERM handler, equal to SIGINT, for modules and drivers.
+
 2007-07-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarp/libYARP_OS/src/Property.cpp: the inevitable addition
