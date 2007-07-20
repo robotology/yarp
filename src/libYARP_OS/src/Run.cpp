@@ -27,12 +27,6 @@ using namespace std;
 #include <fstream.h>
 #endif
 
-#ifndef ACE_LACKS_KILL
-#define KILL() kill(SIGKILL)
-#else
-#define KILL() terminate()
-#endif
-
 #ifdef WIN32
 BOOL WINAPI KillProcessEx(IN DWORD dwProcessId,IN BOOL bTree);
 #endif
@@ -73,17 +67,20 @@ public:
 		return m_Pid;
 	}
 	
-	void KillAllChilds(pid_t parent_pid)
+	#ifndef ACE_LACKS_KILL
+	void SendSigTree(pid_t parent_pid,int sig)
 	{
-		#ifndef ACE_LACKS_KILL
 	    pid_t* stack=new pid_t[4096];
 	    
 	    int head=1;
 	    
 	    stack[0]=parent_pid;
 	    
-	    char pidbuff[16];
-	    
+	    char pidbuff[16],sigbuff[16];
+	    sprintf(sigbuff,"%d ",sig);
+		String Cmd("kill -");
+		Cmd+=sigbuff;
+
 	    while (head)
 	    {
 	        pid_t pid=stack[--head];
@@ -110,7 +107,7 @@ public:
 	    
 	        if (pid!=parent_pid)
 	        {    
-	            String kill_cmd=String("kill -9 ")+pidbuff;
+	            String kill_cmd=Cmd+pidbuff;
 	            ACE_Process_Options kill_opt;
 	            kill_opt.command_line("%s",kill_cmd.c_str());
 	            ACE_Process kill_proc;
@@ -136,10 +133,27 @@ public:
             }
 	    }
 	    
-	    delete [] stack;
+	    delete [] stack;			
+	}
+	#endif
+
+	void KillAllChilds(pid_t parent_pid)
+	{
+		#ifndef ACE_LACKS_KILL	
+		SendSigTree(parent_pid,SIGTERM);
+		m_Child.kill(SIGTERM);
+		Time::delay(0.5);
+		m_Child.wait();
+		SendSigTree(parent_pid,SIGKILL);
+		m_Child.kill(SIGKILL);
+		Time::delay(0.5);
+		m_Child.wait();
 		#else
 		#ifdef WIN32
 		KillProcessEx(parent_pid,true);
+		m_Child.terminate();
+		m_Child.wait();
+		Time::delay(0.5);
 		#endif
 		#endif
 	}
@@ -149,10 +163,6 @@ public:
 		if (m_Pid>0)
 		{
 		    KillAllChilds(m_Pid);
-		   
-			m_Child.KILL();
-			m_Child.wait();
-			Time::delay(0.5);
 			m_Pid=-1;
 			m_Serial=0;
 			m_Name="default";
