@@ -365,7 +365,7 @@ int Companion::cmdHelp(int argc, char *argv[]) {
 
 
 int Companion::cmdVersion(int argc, char *argv[]) {
-    ACE_OS::printf("YARP Companion utility version %s implemented in C++\n", 
+    ACE_OS::printf("YARP version %s\n", 
                    version().c_str());
     return 0;
 }
@@ -1015,4 +1015,14 @@ String Companion::readString(bool *eof) {
     return txt;
 }
 
+#define yarp_stringify(s) yarp_xstringify(s)
+#define yarp_xstringify(s) #s
+
+String Companion::version() {
+#ifdef YARP_VERSION
+    return yarp_stringify(YARP_VERSION);
+#else
+    return "2";
+#endif
+}
 

@@ -3,6 +3,8 @@
 	* src/libYARP_OS/src/Companion.cpp: more information when
 	"yarp where" fails, about what you can actually do to fix things.
 
+	Also, version number from "yarp version" is now more accurate :-)
+
 2007-07-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarp/libYARP_OS/include/yarp.McastCarrier.h,
