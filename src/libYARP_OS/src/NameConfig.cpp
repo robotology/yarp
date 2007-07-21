@@ -107,7 +107,7 @@ String NameConfig::readConfig(const String& fileName) {
     while (!(fin.eof()||fin.bad())) {
         char buf[25600];
         fin.getline(buf,sizeof(buf),'\n');
-        if (!(fin.eof()||fin.bad())) {
+        if (!fin.bad()) {
             result += buf;
             result += "\n";
         }

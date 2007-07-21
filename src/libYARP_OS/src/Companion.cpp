@@ -332,7 +332,18 @@ int Companion::cmdWhere(int argc, char *argv[]) {
         ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
                        address.getName().c_str(), address.getPort());
     } else {
-        ACE_OS::printf("Name server not found\n");
+        ACE_OS::printf("\n");
+        ACE_OS::printf("*** Name server not found ***\n");
+        ACE_OS::printf("It is either not available, or cannot be found automatically.\n");
+        ACE_OS::printf("\n");
+        ACE_OS::printf("Some network setups make automatic detection of the server hard.\n");
+        ACE_OS::printf("Suggestion: edit this configuration file:\n");
+        ACE_OS::printf("   ");
+        cmdConf(argc,argv);
+        ACE_OS::printf("Find out the IP address of your yarp name server (for example, 192.168.0.1)\n");
+        ACE_OS::printf("and the socket port number (usually 10000).\n");
+        ACE_OS::printf("Then write that in the configuration file like this:\n");
+        ACE_OS::printf("  192.168.0.1 10000\n");
         return 1;
     }
     return 0;
