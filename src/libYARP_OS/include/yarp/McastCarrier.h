@@ -165,16 +165,18 @@ public:
                   the author doesn't know, so is being cautious.
                  */
                 key = proto.getRoute().getFromName();
-                key += " on ";
-                key += local.getName();
+                //key += " on ";
+                //key += local.getName();
                 YARP_DEBUG(Logger::get(),
                            String("multicast key: ") + key);
                 addSender(key);
 
                 // future optimization: only join when active
-                stream->join(mcastAddress,sender,local);
+                stream->join(mcastAddress,sender);
+                //stream->join(mcastAddress,sender,local);
             } else {
-                stream->join(mcastAddress,sender,local);
+                stream->join(mcastAddress,sender);
+                //stream->join(mcastAddress,sender,local);
             }
       
         } catch (IOException e) {

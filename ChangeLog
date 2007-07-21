@@ -1,5 +1,8 @@
 2007-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/McastCarrier.h: disable recent 
+	changes to mcast, problems reported in the field.
+
 	* src/libYARP_OS/src/Companion.cpp: more information when
 	"yarp where" fails, about what you can actually do to fix things.
 
