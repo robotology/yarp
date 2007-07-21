@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Alessandro Scalzo, Paul Fitzpatrick
+ * Copyright (C) 2007 Paul Fitzpatrick - Alessandro Scalzo
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -67,19 +67,44 @@ public:
 		return m_Pid;
 	}
 	
+	bool Kill()
+	{
+		if (m_Pid>0)
+		{
+		    KillTree();
+			m_Pid=-1;
+			m_Serial=0;
+			m_Name="default";
+			
+			return true;
+		}
+
+		return false;
+	}
+
+	int Serial(){ return m_Serial; }
+
+	bool operator==(const String& name){ return name==m_Name; }
+	bool operator==(pid_t pid){ return pid==m_Pid; }
+
+protected:
+    String m_Workdir;
+	String m_Name;
+	pid_t m_Pid;
+	int m_Serial;
+	ACE_Process m_Child;
+
 	#ifndef ACE_LACKS_KILL
-	void SendSigTree(pid_t parent_pid,int sig)
+	void SendTKSignals()
 	{
 	    pid_t* stack=new pid_t[4096];
+	    pid_t* to_kill_list=new pid_t[4096];	    
+
+	    int head=1,n_to_kill=0;
 	    
-	    int head=1;
-	    
-	    stack[0]=parent_pid;
-	    
-	    char pidbuff[16],sigbuff[16];
-	    sprintf(sigbuff,"%d ",sig);
-		String Cmd("kill -");
-		Cmd+=sigbuff;
+	    stack[0]=m_Pid;
+
+		char pidbuff[16];
 
 	    while (head)
 	    {
@@ -93,8 +118,9 @@ public:
 	        
 	        FILE *pgrepsh=fopen((m_Workdir+"mypgrep.sh").c_str(),"wc");
 	        fprintf(pgrepsh,"%s\n",pgrep_cmd.c_str());
+			fflush(pgrepsh);
 	        fclose(pgrepsh);
-	        
+
 	        ACE_Process_Options pgrep_opt;
 	        pgrep_opt.command_line("%s",("bash "+m_Workdir+"mypgrep.sh").c_str());
 	        ACE_Process pgrep_proc;
@@ -102,14 +128,13 @@ public:
 	        pgrep_proc.wait();
 	        
 	        if (pgrep_pid==-1) break;
-	        
-	        Time::delay(0.1);
 	    
-	        if (pid!=parent_pid)
-	        {    
-	            String kill_cmd=Cmd+pidbuff;
+	        if (pid!=m_Pid)
+			{    
+				to_kill_list[n_to_kill++]=pid;
+		
 	            ACE_Process_Options kill_opt;
-	            kill_opt.command_line("%s",kill_cmd.c_str());
+	            kill_opt.command_line("kill -15 %d",pid);
 	            ACE_Process kill_proc;
 	            kill_proc.spawn(kill_opt);
 	            kill_proc.wait();
@@ -133,57 +158,52 @@ public:
             }
 	    }
 	    
-	    delete [] stack;			
+	    delete [] stack;
+
+		Time::delay(2.0);
+
+		char procfilename[32];
+		FILE *procfile;
+
+		for (int n=0; n<n_to_kill; ++n)
+		{
+			sprintf(procfilename,"/proc/%d/status",to_kill_list[n]);
+			
+			if ((procfile=fopen(procfilename,"r")))
+			{
+				fclose(procfile);
+
+				printf("process %d won't die, sending SIGKILL\n",to_kill_list[n]);
+
+	            ACE_Process_Options kill_opt;
+	            kill_opt.command_line("kill -9 %d",to_kill_list[n]);
+	            ACE_Process kill_proc;
+	            kill_proc.spawn(kill_opt);
+	            kill_proc.wait();
+			}
+		}
+
+		delete [] to_kill_list;
 	}
 	#endif
 
-	void KillAllChilds(pid_t parent_pid)
+	void KillTree()
 	{
 		#ifndef ACE_LACKS_KILL	
-		SendSigTree(parent_pid,SIGTERM);
+		SendTKSignals();
 		m_Child.kill(SIGTERM);
-		Time::delay(0.5);
-		m_Child.wait();
-		SendSigTree(parent_pid,SIGKILL);
-		m_Child.kill(SIGKILL);
-		Time::delay(0.5);
-		m_Child.wait();
+		ACE_Time_Value tw(2);
+		if (m_Child.wait(tw)!=m_Pid)
+		{
+			m_Child.kill(SIGKILL);
+		}
 		#else
 		#ifdef WIN32
-		KillProcessEx(parent_pid,true);
+		KillProcessEx(m_Pid,true);
 		m_Child.terminate();
-		m_Child.wait();
-		Time::delay(0.5);
 		#endif
 		#endif
 	}
-
-	bool Kill()
-	{
-		if (m_Pid>0)
-		{
-		    KillAllChilds(m_Pid);
-			m_Pid=-1;
-			m_Serial=0;
-			m_Name="default";
-			
-			return true;
-		}
-
-		return false;
-	}
-
-	int Serial(){ return m_Serial; }
-
-	bool operator==(const String& name){ return name==m_Name; }
-	bool operator==(pid_t pid){ return pid==m_Pid; }
-
-protected:
-    String m_Workdir;
-	String m_Name;
-	pid_t m_Pid;
-	int m_Serial;
-	ACE_Process m_Child;
 };
 
 class TProcessVector
@@ -848,11 +868,29 @@ bool Run::checkBash(String& workdir)
 	return pid!=-1;
 }
 
+void Run::printHelp()
+{
+	printf("yarp run provides a server able to run/kill commands/scripts on a remote machine.\n\n");
+	printf("To run a server on a machine:\n$ yarp run --server <serverport>\n\n");
+	printf("To run a command by the remote server:\n$ yarp run --on <serverport> --as <tag> --cmd <command> [<arglist>]\n\n");
+	printf("To run a script by the remote server:\n$ yarp run --on <serverport> --as <tag> --script <scriptname>\n");
+	printf("in this case the script is copied and executed on the remote server\n\n");
+	printf("To kill a command/script:\n$ yarp run --on <serverport> --kill <tag>\n\n");
+	printf("To kill all commands/scripts on a server:\n$ yarp run --on <serverport> --killall\n\n");
+	printf("To clean shutdown a server:\n$ yarp run --on <serverport> --exit\n\n");
+}
+
 int Run::main(int argc, char *argv[]) 
 {
     Property config;
 
     config.fromCommand(argc,argv,false);
+
+	if (config.check("help"))
+	{
+		printHelp();
+		return 0;
+	}
 
     if (config.check("server")) 
 	{
@@ -911,7 +949,7 @@ int Run::main(int argc, char *argv[])
 	{ 
         return runClient(config);
     }
-	else return -1;
+	else printHelp();
 
     return 0;
 }
