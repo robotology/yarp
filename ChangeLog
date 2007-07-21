@@ -1,3 +1,10 @@
+2007-07-21  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_OS/include/yarp/os/Run.h
+	* src/yarp/libYARP_OS/src/Run.cpp
+	In killing processes, tries first SIGTERM
+	and then SIGKILL. On windows, terminates
+	processes as usual. Help added.
+
 2007-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/McastCarrier.h: disable recent 
