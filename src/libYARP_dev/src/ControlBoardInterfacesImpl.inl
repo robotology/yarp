@@ -1324,6 +1324,14 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::setLimits(int j, double min, do
     castToMapper(helper)->posA2E(min, j, minEnc, k);
     castToMapper(helper)->posA2E(max, j, maxEnc, k);
 
+    if( (max > min) && (minEnc > maxEnc)) //angle to encoder conversion factor is negative
+    {
+        double temp;   // exchange max and min limits
+        temp = minEnc;
+        minEnc = maxEnc;
+        maxEnc = temp;
+    }
+
     return iLimits->setLimitsRaw(k, minEnc, maxEnc);
 }
 
@@ -1339,6 +1347,13 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::getLimits(int j, double *min, d
     *min=castToMapper(helper)->posE2A(minEnc, k);
     *max=castToMapper(helper)->posE2A(maxEnc, k);
 
+    if( (*max < *min) && (minEnc < maxEnc)) //angle to encoder conversion factor is negative
+    {
+        double temp;   // exchange max and min limits
+        temp = *min;
+        *min = *max;
+        *max = temp;
+    }
     return ret;
 }
 
