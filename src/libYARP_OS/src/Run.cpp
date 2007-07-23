@@ -910,7 +910,12 @@ int Run::main(int argc, char *argv[])
 
 		ACE_OS::mkdir(workdir.c_str());
 
-		workdir+=String(portname.c_str())+"/";
+		String localdir=portname.c_str();
+
+		for (unsigned int i=1; i<localdir.length(); ++i)
+			if (localdir[i]=='/') localdir[i]='_';
+
+		workdir+=localdir+"/";
 
 		for (unsigned int i=0; i<workdir.length(); ++i)
 			if (workdir[i]=='\\') workdir[i]='/';
