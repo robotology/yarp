@@ -9,7 +9,6 @@
 #ifndef __SerialDeviceDriverh__
 #define __SerialDeviceDriverh__
 
-
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/os/Bottle.h>
@@ -26,9 +25,10 @@ namespace yarp {
 
 using namespace yarp::os;
 
-class yarp::dev::SerialDeviceDriverSettings {
+class yarp::dev::SerialDeviceDriverSettings 
+{
 public:
-    char CommChannel[10]; // Contains the name of the com port "COM1", "COM2", etc...
+    char CommChannel[10]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
     ACE_TTY_IO::Serial_Params SerialParams;
     /** Serial_Params contains the following variables:
     /** int baudrate; Specifies the baudrate at which the communication port operates. */
