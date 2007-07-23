@@ -1,3 +1,19 @@
+2007-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/DgramTwoWayStream.cpp: added environment
+	variable control of packet sizes.  Set:
+	  YARP_DGRAM_SIZE
+	to the maximum number of bytes you want per packet.  This
+	does not affect the size of messages that yarp can send,
+	just the maximum size of individual packets within that message.
+	
+	If you wish to control UDP and MCAST packet sizes independently,
+	set either/both of:
+	  YARP_UDP_SIZE
+	  YARP_MCAST_SIZE
+	Make sure to keep the settings for senders and receivers of
+	messages synchronized with each other.
+
 2007-07-21  Alessandro Scalzo <alessandro@liralab.it>
 	* src/yarp/libYARP_OS/include/yarp/os/Run.h
 	* src/yarp/libYARP_OS/src/Run.cpp

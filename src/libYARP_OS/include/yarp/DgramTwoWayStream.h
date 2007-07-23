@@ -34,6 +34,7 @@ public:
         dgram = NULL;
         happy = false;
         bufferAlerted = bufferAlertNeeded = false;
+        multiMode = false;
     }
 
     virtual void open(const Address& remote);
@@ -100,6 +101,7 @@ private:
     bool happy;
     bool bufferAlertNeeded;
     bool bufferAlerted;
+    bool multiMode;
 
     void allocate();
 

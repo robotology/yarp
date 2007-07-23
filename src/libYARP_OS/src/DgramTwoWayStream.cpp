@@ -12,6 +12,7 @@
 #include <yarp/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/NetType.h>
+#include <yarp/NameConfig.h>
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
@@ -117,8 +118,29 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
 }
 
 void DgramTwoWayStream::allocate() {
-    readBuffer.allocate(READ_SIZE+CRC_SIZE);
-    writeBuffer.allocate(WRITE_SIZE+CRC_SIZE);
+    int _read_size = READ_SIZE+CRC_SIZE;
+    int _write_size = WRITE_SIZE+CRC_SIZE;
+
+    String _env_dgram = NameConfig::getEnv("YARP_DGRAM_SIZE");
+    String _env_mode = "";
+    if (multiMode) {
+        _env_mode = NameConfig::getEnv("YARP_MCAST_SIZE");
+    } else {
+        _env_mode = NameConfig::getEnv("YARP_UDP_SIZE");
+    }
+    if ( _env_mode!="") {
+        _env_dgram = _env_mode;
+    }
+    if (_env_dgram!="") {
+        int sz = NetType::toInt(_env_dgram);
+        if (sz!=0) {
+            _read_size = _write_size = sz;
+        }
+        YARP_INFO(Logger::get(),String("Datagram packet size set to ") +
+                  NetType::toString(_read_size));
+    }
+    readBuffer.allocate(_read_size);
+    writeBuffer.allocate(_write_size);
     readAt = 0;
     readAvail = 0;
     writeAvail = CRC_SIZE;
@@ -176,6 +198,8 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
 void DgramTwoWayStream::openMcast(const Address& group, 
                                   const Address& ipLocal) {
     
+    multiMode = true;
+
     localAddress = ipLocal;
     localHandle = ACE_INET_Addr((u_short)(localAddress.getPort()),
                                 (ACE_UINT32)INADDR_ANY);
@@ -214,6 +238,7 @@ void DgramTwoWayStream::openMcast(const Address& group,
 
 void DgramTwoWayStream::join(const Address& group, bool sender,
                              const Address& ipLocal) {
+    multiMode = true;
 
     if (sender) {
         if (ipLocal.isValid()) {
@@ -449,7 +474,8 @@ void DgramTwoWayStream::flush() {
         YARP_DEBUG(Logger::get(),
                    String("DGRAM wrote ") +
                    NetType::toString(len) + " bytes");
-        if (len>WRITE_SIZE*0.75) {
+        //if (len>WRITE_SIZE*0.75) {
+        if (len>writeBuffer.length()*0.75) {
             YARP_DEBUG(Logger::get(),
                        "long dgrams might need a little time");
 
