@@ -2,6 +2,7 @@ Author list for YARP2:
 Paul Fitzpatrick
 Giorgio Metta
 Lorenzo Natale
+Alessandro Scalzo
 
 We've also had contributions from:
 Radu Bogdan Rusu (inertial sensor)
@@ -24,5 +25,4 @@ Marco Barbosa (64-bit linux bug fix)
 Tomassino Ferrauto (patches to Bottle implementation; shmem bug tracking)
 Boris Duran (patches for SWIG for motor control classes)
 Mattia Castelnovi (a bunch of drivers)
-Alessandro Scalzo (framegrabber GUI, firewire device cleanup, ...)
 
