@@ -121,6 +121,7 @@ void addExternalDevices();
 
 #ifdef ENABLE_serial
 #include <yarp/SerialDeviceDriver.h>
+#include <yarp/dev/ServerSerial.h>
 #endif
 
 // ------------------------ for the mirror acquisition setup
@@ -149,7 +150,6 @@ void addExternalDevices();
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
-#include <yarp/dev/ServerSerial.h>
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
@@ -300,9 +300,11 @@ void Drivers::init() {
                                         "",
                                         "DeviceGroup"));
                                         
+#ifdef ENABLE_serial
    add(new DriverCreatorOf<ServerSerial>("serial",
                                             "serial",
                                             "ServerSerial"));
+#endif
 
     add(createRemoteControlBoard());
     add(createServerControlBoard());
