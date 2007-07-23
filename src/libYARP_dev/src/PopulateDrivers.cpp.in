@@ -149,6 +149,7 @@ void addExternalDevices();
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerSoundGrabber.h>
 #include <yarp/dev/TestMotor.h>
+#include <yarp/dev/ServerSerial.h>
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
@@ -242,8 +243,8 @@ void Drivers::init() {
 #endif
 
 #ifdef ENABLE_serial
-    add(new DriverCreatorOf<SerialDeviceDriver>("serial", 
-                                          	"",
+    add(new DriverCreatorOf<SerialDeviceDriver>("serialdevice", 
+                                          	"serial",
                                           	"SerialDeviceDriver"));
 #endif
 
@@ -298,6 +299,10 @@ void Drivers::init() {
     add(new DriverCreatorOf<DeviceGroup>("group",
                                         "",
                                         "DeviceGroup"));
+                                        
+   add(new DriverCreatorOf<ServerSerial>("serial",
+                                            "serial",
+                                            "ServerSerial"));
 
     add(createRemoteControlBoard());
     add(createServerControlBoard());

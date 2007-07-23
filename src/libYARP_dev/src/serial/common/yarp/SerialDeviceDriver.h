@@ -11,7 +11,7 @@
 
 
 #include <yarp/dev/DeviceDriver.h>
-#include <yarp/os/ConstString.h>
+#include <yarp/dev/SerialInterfaces.h>
 #include <yarp/os/Bottle.h>
 
 #include "ace/TTY_IO.h"
@@ -28,7 +28,7 @@ using namespace yarp::os;
 
 class yarp::dev::SerialDeviceDriverSettings {
 public:
-    ConstString CommChannel; // Contains the name of the com port "COM1", "COM2", etc...
+    char CommChannel[10]; // Contains the name of the com port "COM1", "COM2", etc...
     ACE_TTY_IO::Serial_Params SerialParams;
     /** Serial_Params contains the following variables:
     /** int baudrate; Specifies the baudrate at which the communication port operates. */
@@ -74,7 +74,7 @@ public:
  * A basic Serial Communications Link (RS232, USB).
  * 
  */
-class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ACE_Task<ACE_MT_SYNCH>
+class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ACE_Task<ACE_MT_SYNCH>, public ISerialDevice
 {
 protected:
     void *system_resources;
@@ -103,18 +103,15 @@ public:
      * @param msg the string to send
      * @return true on success
      */
-    bool send(const Bottle& msg);
+    virtual bool send(const Bottle& msg);
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.
      * @param msg - the received string
      * @return - true on success; false if no messages available
      */
-    bool receive(Bottle& msg);
+    virtual bool receive(Bottle& msg);
 
-    //putData _WaitForReply
-    //putData _NoWaitNeglectFeedback
-    //putData _NoWaitSaveFeedbackIWillGetItLatter
 };
 
 

@@ -29,5 +29,6 @@
 #include<yarp/dev/ServiceInterfaces.h>
 #include<yarp/dev/TestFrameGrabber.h>
 #include<yarp/dev/TestMotor.h>
+//#include<yarp/dev/ServerSerial.h>
 
 #endif
