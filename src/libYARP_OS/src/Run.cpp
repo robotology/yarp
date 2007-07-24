@@ -439,7 +439,7 @@ int Run::runServerBash(ConstString& portname,String& workdir)
 			
 			writeBottleAsFile(script_bottle,script_name);			
 			
-			String command_text="yarp read /"+alias+"/stdin | bash "+script_name+" | yarp write /"+alias+"/stdout";
+			String command_text="yarp read /"+alias+"/stdin | bash "+script_name+" 2>&1 | yarp write /"+alias+"/stdout";
 	        
 	        
 	        String command_name=workdir+"command"+serial_str+".sh";
