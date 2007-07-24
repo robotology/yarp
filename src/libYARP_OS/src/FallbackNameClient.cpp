@@ -11,6 +11,7 @@
 #include <yarp/Logger.h>
 #include <yarp/NetType.h>
 #include <yarp/NameClient.h>
+#include <yarp/NameConfig.h>
 #include <yarp/os/Time.h>
 #include <yarp/FallbackNameServer.h>
 
@@ -19,11 +20,12 @@ using namespace yarp::os;
 
 void FallbackNameClient::run() {
     try {
+        NameConfig nc;
         Address call = FallbackNameServer::getAddress();
         DgramTwoWayStream send;
         send.join(call,true);
         listen.join(call,false);
-        String msg = "NAME_SERVER query /root";
+        String msg = String("NAME_SERVER query ") + nc.getNamespace();
         send.beginPacket();
         send.writeLine(msg);
         send.flush();

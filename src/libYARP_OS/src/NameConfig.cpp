@@ -10,6 +10,7 @@
 #include <yarp/NameConfig.h>
 #include <yarp/SplitString.h>
 #include <yarp/NetType.h>
+#include <yarp/os/Bottle.h>
 
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_sys_stat.h>
@@ -26,8 +27,9 @@ using namespace std;
 #endif
 
 using namespace yarp;
+using namespace yarp::os;
 
-#define CONF_FILENAME "yarp.conf"
+#define CONF_FILENAME YARP_CONFIG_FILENAME
 
 
 String NameConfig::getEnv(const String& key) {
@@ -50,18 +52,35 @@ bool NameConfig::fromString(const String& txt) {
 }
 
 
-String NameConfig::getConfigFileName() {
+String NameConfig::getConfigFileName(const char *stem) {
     String root = getEnv("YARP_CONF");
     String home = getEnv("HOME");
     String homepath = getEnv("HOMEPATH");
     String conf = "";
+    String fname = (stem!=NULL)?stem:CONF_FILENAME;
+    if (stem==NULL) {
+        String space = getNamespace();
+        if (space!="/root") {
+            // for non-default namespace, need a separate cache file
+            String base = "";
+            for (unsigned int i=0; i<space.length(); i++) {
+                if (space[i]!='/') {
+                    base += space[i];
+                } else {
+                    base += "_";
+                }
+            }
+            base += ".conf";
+            fname = base;
+        }
+    }
     if (root!="") {
         //conf = new File(new File(root,"conf"),"namer.conf");
-        conf = root + "/conf/" + CONF_FILENAME;
+        conf = root + "/conf/" + fname;
     } else if (home!="") {
-        conf = home + "/.yarp/conf/" + CONF_FILENAME;
+        conf = home + "/.yarp/conf/" + fname;
     } else if (homepath!="") {
-        conf = getEnv("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + CONF_FILENAME;
+        conf = getEnv("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
     } else {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
@@ -233,3 +252,17 @@ String NameConfig::getIps() {
 void NameConfig::setAddress(const Address& address) {
     this->address = address;
 }
+
+
+String NameConfig::getNamespace() {
+    if (space=="") {
+        String fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+        Bottle bot(readConfig(fname).c_str());
+        space = bot.get(0).asString().c_str();
+        if (space=="") {
+            space = "/root";
+        }
+    }
+    return space;
+}
+

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -113,6 +113,8 @@ Companion::Companion() {
         "create files to help compiling YARP projects");
     add("run",  &Companion::cmdRun,
         "start and stop processes (experimental)");
+    add("namespace",  &Companion::cmdNamespace,
+        "set or query the name of the yarp name server (default is /root)");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -324,12 +326,15 @@ int Companion::cmdConf(int argc, char *argv[]) {
 
 
 int Companion::cmdWhere(int argc, char *argv[]) {
+    NameConfig nc;
     NameClient& nic = NameClient::getNameClient();
-    Address address = nic.queryName("/root");
+    Address address = nic.queryName(nc.getNamespace());
     if (address.isValid()) {
-        ACE_OS::printf("Name server is available at ip %s port %d\n",
+        ACE_OS::printf("Name server %s is available at ip %s port %d\n",
+                       nc.getNamespace().c_str(),
                        address.getName().c_str(), address.getPort());
-        ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
+        ACE_OS::printf("Name server %s can be browsed at http://%s:%d/\n",
+                       nc.getNamespace().c_str(),
                        address.getName().c_str(), address.getPort());
     } else {
         ACE_OS::printf("\n");
@@ -712,6 +717,30 @@ int Companion::cmdMake(int argc, char *argv[]) {
 int Companion::cmdRun(int argc, char *argv[]) {
     return Run::main(argc,argv);
 }
+
+
+
+int Companion::cmdNamespace(int argc, char *argv[]) {
+    NameConfig nc;
+    String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    if (argc!=0) {
+        ACE_OS::printf("Setting namespace in: %s\n",fname.c_str());
+        ACE_OS::printf("Remove this file to revert to the default namespace (/root)\n");
+        String space = argv[0];
+        argc--;
+        argv++;
+        nc.writeConfig(fname,space);
+    }
+    Bottle bot(nc.readConfig(fname).c_str());
+    String space = bot.get(0).asString().c_str();
+    if (space=="") {
+        ACE_OS::printf("No namespace specified, using default\n");
+        space = "/root";
+    }
+    ACE_OS::printf("YARP namespace: %s\n",space.c_str());
+    return 0;
+}
+
 
 
 

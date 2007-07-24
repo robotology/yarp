@@ -1,3 +1,33 @@
+2007-07-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameConfig.cpp: basic support
+	for multiple nameservers, and switching back and forth
+	between them.  Use:
+
+	   yarp namespace /foo
+
+	To set the namespace to "/foo" (default is "/root").  Use:
+
+	   yarp namespace
+
+	to query the current namespace.  "Namespace" just means the
+	name of a port associated with a particular yarp name server.
+
+	For example, on a single machine you could start up two
+	name servers that operate independently:
+	   [terminal 1] yarp namespace /space1
+	   [terminal 1] yarp server
+	   [terminal 2] yarp namespace /space2
+	   [terminal 2] yarp server 20000
+	The 20000 in the second server is the start of the range of
+	socket port numbers that server manages.  If you plan to 
+	simultaneously use multiple nameservers they need to own 
+	different socket port ranges.
+	After the above, names are registered and queried from /space2
+	until you type
+	   [terminal 3] yarp namespace /space1
+	at which point they switch to the first namespace.
+	
 2007-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/DgramTwoWayStream.cpp: added environment

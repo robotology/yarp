@@ -11,6 +11,7 @@
 #include <yarp/PortCore.h>
 #include <yarp/SplitString.h>
 #include <yarp/NetType.h>
+#include <yarp/NameConfig.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/NameConfig.h>
 #include <yarp/FallbackNameServer.h>
@@ -488,11 +489,12 @@ String NameServer::cmdList(int argc, char *argv[]) {
 String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     String response = "";
 
+    NameConfig nc;
     for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = (*it).int_id_;
         Address addr = rec.getAddress();
         String port = addr.getRegName();
-        if (port!="fallback"&&port!="/root") {
+        if (port!="fallback"&&port!=nc.getNamespace().c_str()) {
             if (addr.isValid()) {
                 OutputProtocol *out = Carriers::connect(addr);
                 if (out==NULL) {
@@ -700,12 +702,12 @@ int NameServer::main(int argc, char *argv[]) {
     
         MainNameServer name(suggest.getPort() + 2);
         // register root for documentation purposes
-        name.registerName("/root",suggest);
+        name.registerName(conf.getNamespace(),suggest);
 
         Port server;
         name.setPort(server);
         server.setReader(name);
-        server.open(Address(suggest.addRegName("/root")).toContact(),
+        server.open(Address(suggest.addRegName(conf.getNamespace())).toContact(),
                     false);
         YARP_DEBUG(Logger::get(), String("Name server listening at ") + 
                    suggest.toString());

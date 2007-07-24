@@ -16,6 +16,9 @@ namespace yarp {
     class NameConfig;
 }
 
+#define YARP_CONFIG_FILENAME "yarp.conf"
+#define YARP_CONFIG_NAMESPACE_FILENAME "yarp_namespace.conf"
+
 /**
  * Small helper class to help deal with legacy YARP configuration files. 
  *
@@ -23,7 +26,7 @@ namespace yarp {
 class yarp::NameConfig {
 public:
 
-    String getConfigFileName();
+    String getConfigFileName(const char *stem = NULL);
 
     bool createPath(const String& fileName, int ignoreLevel = 1);
 
@@ -45,10 +48,13 @@ public:
 
     Address getAddress();
 
+    String getNamespace();
+
     static String getEnv(const String& key);
 
 private:
     Address address;
+    String space;
 
     bool fromString(const String& txt);
 };
