@@ -74,7 +74,7 @@ long-lasting, without compromising our ability to constantly change
 our sensors, actuators, processors, and networks.  It helps organize
 communication between sensors, processors, and actuators so that loose
 coupling is encouraged, making gradual system evolution much easier.
-The YARP model of communication that is transport-neutral, so that
+The YARP model of communication is transport-neutral, so that
 data flow is decoupled from the details of the underlying networks and
 protocols in use (allowing several to be used simultaneously, key to
 smooth evolution).  YARP uses a methodology for interfacing with
