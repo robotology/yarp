@@ -57,6 +57,39 @@
  * @page what_is_yarp What is YARP?
  *
 
+
+YARP is plumbing for robot software.  It is a set of 
+libraries, protocols, and tools to keep modules and devices 
+cleanly decoupled.  It is reluctant middleware, with no desire
+or expectation to be in control of your system.
+
+Robot projects are often evolutionary dead ends, with the software and
+hardware they produce disappearing without trace afterwards.  Common
+causes include dependencies on uncommon or obsolete devices or
+libraries, and dispersion of an already small group of users.  In
+humanoid robotics, a small field with an avid appetite for novel
+devices, we experience a great deal of churn of this nature.  YARP
+is our attempt to make robot software that is more stable and
+long-lasting, without compromising our ability to constantly change
+our sensors, actuators, processors, and networks.  It helps organize
+communication between sensors, processors, and actuators so that loose
+coupling is encouraged, making gradual system evolution much easier.
+The YARP model of communication that is transport-neutral, so that
+data flow is decoupled from the details of the underlying networks and
+protocols in use (allowing several to be used simultaneously, key to
+smooth evolution).  YARP uses a methodology for interfacing with
+devices (sensors, actuators, etc.) that again encourages loose
+coupling and can make changes in devices less disruptive.  At the same
+time, YARP doesn't expect to be in charge; we want to minimize problem
+of incompatible "architectures", "frameworks", and "middleware"
+(also known in this context as "muddleware").
+
+
+YARP is free and open software. Along with many other benefits, the
+Free Software social contract can speed software development for small
+communities with idiosyncratic requirements, such as ourselves.
+
+
 YARP is written by and for researchers in robotics, particularly
 humanoid robotics, who find themselves with a complicated pile of
 hardware to control with an equally complicated pile of
