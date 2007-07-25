@@ -111,7 +111,6 @@ public:
      * @return - true on success; false if no messages available
      */
     virtual bool receive(Bottle& msg);
-
 };
 
 

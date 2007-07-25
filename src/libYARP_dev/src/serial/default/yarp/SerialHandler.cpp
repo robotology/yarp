@@ -1,24 +1,13 @@
 /* vim:set tw=78: set sw=4: set ts=4: */
-/** 
- * 
+
+/*
+ * Copyright (C) 2007 Carlos Beltran-Gonzalez
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
- *             RESCUER - IST-2003-511492 (c) 2004-2008 
- *
- *   Improvement of the Emergency Risk Management through Secure Mobile
- *   Mechatronic Support to Bomb Disposal and Rescue Operations
- *
- * @file SerialHandler.cpp
- *  Contains the implementation of the Serial Handler
- * @version 1.0
- * @date 21-Jun-06 1:53:39 PM ora solare Europa occidentale
- * @author Carlos Beltran Gonzalez (Carlos), cbeltran@dist.unige.it
- * @author Lira-Lab
- * Revisions:
- * @todo Write a correct method of finalization of the system.
  */
 
 /*
- * $Id: SerialHandler.cpp,v 1.1 2007-07-23 13:17:53 alex_bernardino Exp $
+ * RCS-ID:$Id: SerialHandler.cpp,v 1.2 2007-07-25 16:08:47 beltran Exp $
  */
 #include <string.h>
 #include "SerialHandler.h"
@@ -56,10 +45,8 @@ int SerialHandler::initialize(int argc, ACE_TCHAR *argv[])
 {
   ACE_TRACE("SerialHandler::initialize");
 
-//  read_configuration_file("DGS_MCU_Driver");
-
   // Initialize serial port
-  _serialConnector.connect(_serial_dev, ACE_DEV_Addr(_commchannel), 0,
+  _serialConnector.connect(_serial_dev, ACE_DEV_Addr("COM1"), 0,
       ACE_Addr::sap_any, 0, O_RDWR|FILE_FLAG_OVERLAPPED); 
 
   // Set serial port parameters
@@ -77,7 +64,7 @@ int SerialHandler::initialize(int argc, ACE_TCHAR *argv[])
   // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
   if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &myparams) == -1)
       ACE_ERROR_RETURN ((LM_ERROR, ACE_TEXT ("%p control\n"),
-              _commchannel), -1);
+              "COM1"), -1);
 
   // Asociate the ACE_Asynch_Read_Stream with the TTY serial device
   if (this->_serial_read_stream.open (*this, _serial_dev.get_handle()) == -1)
@@ -175,10 +162,9 @@ int SerialHandler::initialize(const char * commchannel, ACE_TTY_IO::Serial_Param
   /*}}}*/
   
   //Start the keyboad reading thread
-  //activate();
+  activate();
   return 0;
 }
-
 /** 
  *  SerialHandler::svc 
  * @return 
@@ -203,8 +189,8 @@ int SerialHandler::svc()
             ACE_DEBUG((LM_NOTICE, 
                     ACE_TEXT("%l SerialHandler::svc Procesing Message_block\n")));
             // Write in the serial device.
-            int debug_val = serial_block->length();
-            if (this->_serial_write_stream.write (*serial_block, serial_block->length()) == -1)
+            if (this->_serial_write_stream.write (*serial_block,
+                    serial_block->length()) == -1)
             {
                 ACE_ERROR ((LM_ERROR, 
                         "%l \n", "Error writing in svc SerialHandler"));
@@ -213,11 +199,11 @@ int SerialHandler::svc()
             //serial_block->release();
             //DGSTask * command_sender = ACE_reinterpret_cast(DGSTask *,
             //serial_block->cont()->rd_ptr());
-            SerialFeedbackData * feedback_data =
-                ACE_reinterpret_cast(SerialFeedbackData *,
-                    serial_block->cont()->rd_ptr());
-            ACE_Task<ACE_MT_SYNCH> * command_sender = feedback_data->getCommandSender();
-            //command_sender->IsAlive();
+            ////SerialFeedbackData * feedback_data =
+            ////    ACE_reinterpret_cast(SerialFeedbackData *,
+            ////        serial_block->cont()->rd_ptr());
+            ////DGSTask * command_sender = feedback_data->getCommandSender();
+            ////command_sender->IsAlive();
         }
     }
     ACE_DEBUG((LM_NOTICE, ACE_TEXT("%N Line %l SerialHandler::svc Exiting\n")));
@@ -292,80 +278,80 @@ SerialHandler::handle_read_stream (const ACE_Asynch_Read_Stream::Result &result)
       ACE_ASSERT( result.bytes_transferred() <= BUFSIZ );
       ACE_ASSERT( result.success() == 1);
 
-      //Get the feedbackdata block from the message_block.
-      SerialFeedbackData * feedback_data =
-          ACE_reinterpret_cast(SerialFeedbackData *,
-              result.message_block().cont()->rd_ptr());
+      /////Get the feedbackdata block from the message_block.
+      ///SerialFeedbackData * feedback_data =
+      ///    ACE_reinterpret_cast(SerialFeedbackData *,
+      ///        result.message_block().cont()->rd_ptr());
 
-      // Check if the  delimiter condition is meet for this message.
-      unsigned int delimiter_pos = 0;
-      int response = feedback_data->checkSerialResponseEnd(delimiter_pos,
-          result.message_block().rd_ptr(), result.message_block().length());
+      ///// Check if the  delimiter condition is meet for this message.
+      ///unsigned int delimiter_pos = 0;
+      ///int response = feedback_data->checkSerialResponseEnd(delimiter_pos,
+      ///    result.message_block().rd_ptr(), result.message_block().length());
 
-      // Get the sender of the command.
-      ACE_Task<ACE_MT_SYNCH> * command_sender = feedback_data->getCommandSender();
-      ACE_ASSERT( command_sender != NULL);
-      size_t space = result.message_block().space();
+      ///// Get the sender of the command.
+      ///DGSTask * command_sender = feedback_data->getCommandSender();
+      ///ACE_ASSERT( command_sender != NULL);
+      ///size_t space = result.message_block().space();
 
-      // Proceed depending on which is the status of the response.
-      switch(response){
-          case 0: // We have not finish. Continue reading form the serial device.
-              ACE_DEBUG ((LM_DEBUG,
-                      ACE_TEXT( "%l handle_read_stream continuing reading\n")));
-              ACE_ASSERT( space > 0 );
-              if (this->_serial_read_stream.read (result.message_block(), space-1) == -1)
-                  ACE_ERROR ((LM_ERROR, ACE_TEXT("%p\n"),
-                          ACE_TEXT("ACE_Asynch_Read_Stream::read")));
-              break;
-          case 1: // He have got a termination condition.
-              // If the delimiter is exactly at the end of the message
-              if ( (result.message_block().length() == (delimiter_pos + 1))
-                  || (delimiter_pos == 0))
-              {
-                  ACE_DEBUG ((LM_WARNING,ACE_TEXT( "%l handle_read_stream termination condition reached \n")));
-                  ACE_Message_Block * response_block = result.message_block().cont();
-                  result.message_block().cont(NULL);
-                  command_sender->putq(&result.message_block());
+      ///// Proceed depending on which is the status of the response.
+      ///switch(response){
+      ///    case 0: // We have not finish. Continue reading form the serial device.
+      ///        ACE_DEBUG ((LM_DEBUG,
+      ///                ACE_TEXT( "%l handle_read_stream continuing reading\n")));
+      ///        ACE_ASSERT( space > 0 );
+      ///        if (this->_serial_read_stream.read (result.message_block(), space-1) == -1)
+      ///            ACE_ERROR ((LM_ERROR, ACE_TEXT("%p\n"),
+      ///                    ACE_TEXT("ACE_Asynch_Read_Stream::read")));
+      ///        break;
+      ///    case 1: // He have got a termination condition.
+      ///        // If the delimiter is exactly at the end of the message
+      ///        if ( (result.message_block().length() == (delimiter_pos + 1))
+      ///            || (delimiter_pos == 0))
+      ///        {
+      ///            ACE_DEBUG ((LM_WARNING,ACE_TEXT( "%l handle_read_stream termination condition reached \n")));
+      ///            ACE_Message_Block * response_block = result.message_block().cont();
+      ///            result.message_block().cont(NULL);
+      ///            command_sender->putq(&result.message_block());
 
-                  if (feedback_data->getStreamingMode())
-                      initiate_read_stream (response_block);
-              }
-              else //We have found a delimiter but it is immerse in the middle of the message.
-              {
-                  // Task: divide the message. The first part till the nul is
-                  // sent to the receiver. The other part is keep and used to
-                  // accumulate the rest of the command from the serial device.
-                  ACE_DEBUG ((LM_WARNING, 
-                          ACE_TEXT ("%l handle_read_stream termination condition in the middle of a message\n")));
+      ///            if (feedback_data->getStreamingMode())
+      ///                initiate_read_stream (response_block);
+      ///        }
+      ///        else //We have found a delimiter but it is immerse in the middle of the message.
+      ///        {
+      ///            // Task: divide the message. The first part till the nul is
+      ///            // sent to the receiver. The other part is keep and used to
+      ///            // accumulate the rest of the command from the serial device.
+      ///            ACE_DEBUG ((LM_WARNING, 
+      ///                    ACE_TEXT ("%l handle_read_stream termination condition in the middle of a message\n")));
 
-                  // Create Message_Block, copy the valid part of the
-                  // received block and send it the command sender
-                  ACE_Message_Block *tmp_message_block = 0;
-                  ACE_NEW_NORETURN (tmp_message_block, ACE_Message_Block (delimiter_pos + 1));
-                  ACE_ASSERT( tmp_message_block != NULL);
-                  if (tmp_message_block->copy(result.message_block().rd_ptr(), delimiter_pos + 1 )) 
-                      ACE_ERROR ((LM_ERROR,"%p%l", ACE_TEXT ("%I%N%l Error coping user message block\n")));
-                  command_sender->putq(tmp_message_block);
+      ///            // Create Message_Block, copy the valid part of the
+      ///            // received block and send it the command sender
+      ///            ACE_Message_Block *tmp_message_block = 0;
+      ///            ACE_NEW_NORETURN (tmp_message_block, ACE_Message_Block (delimiter_pos + 1));
+      ///            ACE_ASSERT( tmp_message_block != NULL);
+      ///            if (tmp_message_block->copy(result.message_block().rd_ptr(), delimiter_pos + 1 )) 
+      ///                ACE_ERROR ((LM_ERROR,"%p%l", ACE_TEXT ("%I%N%l Error coping user message block\n")));
+      ///            command_sender->putq(tmp_message_block);
 
-                  // Crunch the rest of the message and send it back to the
-                  // serial dev to read again.
-                  result.message_block().rd_ptr(delimiter_pos+1);
-                  result.message_block().crunch();
-                  space = result.message_block().space();
-                  ACE_ASSERT( space >= 1);
-                  ACE_ASSERT( space != 1);
-                  if (this->_serial_read_stream.read (result.message_block(), space-1) == -1)
-                      ACE_ERROR ((LM_ERROR, ACE_TEXT("%p\n"), ACE_TEXT("ACE_Asynch_Read_Stream::read")));
-              }
-              break;
-          case 2: // There is not termination condition. Just send back what we have and continue reading.
+      ///            // Crunch the rest of the message and send it back to the
+      ///            // serial dev to read again.
+      ///            result.message_block().rd_ptr(delimiter_pos+1);
+      ///            result.message_block().crunch();
+      ///            space = result.message_block().space();
+      ///            ACE_ASSERT( space >= 1);
+      ///            ACE_ASSERT( space != 1);
+      ///            if (this->_serial_read_stream.read (result.message_block(), space-1) == -1)
+      ///                ACE_ERROR ((LM_ERROR, ACE_TEXT("%p\n"), ACE_TEXT("ACE_Asynch_Read_Stream::read")));
+      ///        }
+      ///        break;
+      ///    case 2: // There is not termination condition. Just send back what we have and continue reading.
               ACE_DEBUG ((LM_DEBUG,ACE_TEXT( "%l handle_read_stream no termination condition. Continuing reading\n")));
               ACE_Message_Block * response_block = result.message_block().cont();
               result.message_block().cont(NULL);
-              command_sender->putq(&result.message_block());
+              _command_sender->putq(&result.message_block());
               initiate_read_stream (response_block);
-              break;
-      }
+              ///break;
+      ///}
   }
   timer.stop ();
 
@@ -416,57 +402,4 @@ void SerialHandler::handle_write_stream (const ACE_Asynch_Write_Stream::Result &
             result.message_block ().rd_ptr ()));
 #endif  /* 0 *//*}}}*/
 }
-
-
-/** 
- * SerialHandler::read_configuration_file
- * 
- * @param filename 
- * 
- * @return 
- */
-/*
-int SerialHandler::read_configuration_file(char * filename)
-{
-  /// Getting the configuration information from the conf file
-  // Let build the file name
-  ACE_TCHAR config_file [MAXPATHLEN];
-  ACE_String_Base<char> conffilename(filename);
-  conffilename += ACE_TEXT(".conf");
-  ACE_OS_String::strcpy (config_file, conffilename.c_str());
-
-  // Let create the configuration heap and import the conf file
-  ACE_Configuration_Heap config;
-  config.open();
-  ACE_Registry_ImpExp config_importer(config);
-  if (config_importer.import_config(config_file) == -1)
-      ACE_ERROR_RETURN( (LM_ERROR, ACE_TEXT("%p\n"), config_file), -1);
-
-  // Let start reading the conf file by opening a section
-  ACE_Configuration_Section_Key status_section;
-  if (config.open_section (config.root_section(), ACE_TEXT("CommParameters"),
-          0, status_section) == -1)
-      ACE_ERROR_RETURN (( LM_ERROR, ACE_TEXT("%p\n"), ACE_TEXT("Can't open CommParameters section")), -1);
-
-  // Let read the udp connection port from the conf file
-  if (config.get_string_value(status_section, ACE_TEXT("ListenPort"), _udpport) == -1)
-      ACE_ERROR_RETURN((LM_ERROR, ACE_TEXT("ListenPort does ") ACE_TEXT("not exist\n")),-1);
-  ACE_OS::printf("This is the _udpport: %s\n", _udpport.c_str());
-
-  // Let read the serial communication port
-  if (config.get_string_value(status_section, ACE_TEXT("CommChannel"), _commchannel) == -1)
-      ACE_ERROR_RETURN((LM_ERROR, ACE_TEXT("CommChannel does ") ACE_TEXT("not exist\n")),-1);
-  ACE_OS::printf("This is the comm port: %s\n", _commchannel.c_str());
-  ///@todo Make the client port open with the conf file reading
-  u_short client_port = ACE_DEFAULT_SERVICE_PORT; /* This seems to be 20003*/
-
-  // Let read the serial communication port
- /* ACE_TString baudrate;
-  if (config.get_string_value(status_section, ACE_TEXT("BaudRate"), baudrate) == -1)
-      ACE_ERROR_RETURN((LM_ERROR, ACE_TEXT("BaudRate does ") ACE_TEXT("not exist\n")),-1);
-  ACE_OS::printf("This is the baudrate: %s\n", baudrate.c_str());
-  _baudrate = ACE_OS::atoi(baudrate.c_str());
-
-  return 0;
-}*/
 

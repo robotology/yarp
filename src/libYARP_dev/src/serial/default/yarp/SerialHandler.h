@@ -1,25 +1,14 @@
 /* vim:set tw=78: set sw=4: set ts=4: */
-/** 
- * 
+
+/*
+ * Copyright (C) 2007 Carlos Beltran-Gonzalez
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
- *             RESCUER - IST-2003-511492 (c) 2004-2008 
- *
- *   Improvement of the Emergency Risk Management through Secure Mobile
- *   Mechatronic Support to Bomb Disposal and Rescue Operations
- *
- * @file SerialHandler.h
- *  Contains the serial handler using the ACE Proactor framework.
- * @version 1.0
- * @date 21-Jun-06 1:06:18 PM ora solare Europa occidentale
- * @author Carlos Beltran Gonzalez (Carlos), cbeltran@dist.unige.it
- * @author Lira-Lab
- * Revisions:
  */
 
 /*
- * $Id: SerialHandler.h,v 1.1 2007-07-23 13:17:53 alex_bernardino Exp $
+ * RCS-ID:$Id: SerialHandler.h,v 1.2 2007-07-25 16:08:47 beltran Exp $
  */
-
 #ifndef __SERIALHANDLERH__
 #define __SERIALHANDLERH__
 
@@ -35,14 +24,15 @@
 #include <ace/Task.h>
 #include <ace/CDR_Stream.h>
 #include <ace/DEV_Connector.h>
-#include <ace/Task.h>
-#include "SerialFeedbackData.h"
+#include "../../DGSTask.h"
+#include <ace/String_Base.h>
+//#include "SerialFeedbackData.h"
 
 /** 
  * @class SerialHandler
  *  Implements the Serial Adaptor
  */
-class SerialHandler : public ACE_Task<ACE_MT_SYNCH>, public ACE_Service_Handler
+class SerialHandler : public DGSTask, public ACE_Service_Handler
 {
 
 public:
@@ -65,6 +55,8 @@ public:
      * @return 
      */
     virtual int svc();
+
+    void setCommandSender (ACE_Task * command_sender){ _command_sender = command_sender;};
 
 protected:
 
@@ -95,14 +87,6 @@ private:
      */
     int initiate_read_stream (ACE_Message_Block *);
 
-    /** 
-     * read_configuration_file It read the parameters from a given
-     * configuration file
-     * 
-     * @return 0 ok
-     * @return -1 file does not exist or some fields do not exist.
-     */
-    //int read_configuration_file(char * filename);
     /**
      *  Parameters.
      */
@@ -117,9 +101,8 @@ private:
     ACE_DEV_Connector _serialConnector;
     int flag;
     /// 
-    char _udpport[10];
-    char _commchannel[10];
     int _baudrate;
+    ACE_Task * _command_sender;
 
 };
 #endif /* __SERIALHANDLER__ */ 
