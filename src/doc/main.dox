@@ -56,72 +56,75 @@
 /**
  * @page what_is_yarp What is YARP?
  *
- * YARP is written by and for researchers in robotics, particularly
- * humanoid robotics, who find themselves with a complicated pile of
- * hardware to control with an equally complicated pile of
- * software. At the time of writing (2006), running decent visual,
- * auditory, and tactile perception while performing elaborate motor
- * control in real-time requires a lot of computation. The easiest and
- * most scalable way to do this right now is to have a cluster of
- * computers. Every year what one machine can do grows, but so do our
- * demands. YARP is a set of tools we have found useful for meeting
- * our computational needs for controlling various humanoid robots.
+
+YARP is written by and for researchers in robotics, particularly
+humanoid robotics, who find themselves with a complicated pile of
+hardware to control with an equally complicated pile of
+software. At the time of writing (2050*), running decent visual,
+auditory, and tactile perception while performing elaborate motor
+control in real-time requires a lot of computation. The easiest and
+most scalable way to do this right now is to have a cluster of
+computers. Every year what one machine can do grows, but so do our
+demands. YARP is a set of tools we have found useful for meeting
+our computational needs for controlling various humanoid robots.
+
+The components of YARP can be broken down into:
+
+\li \link yarp_os libYARP_OS \endlink - interfacing with the operating system(s) to support
+easy streaming of data across many threads across many
+machines. YARP is written to be OS neutral, and has been used
+on Linux, Microsoft Windows, Mac OSX and Solaris.
+YARP uses the open-source ACE (ADAPTIVE
+Communication Environment) library, which is portable across a very
+broad range of environments, and YARP inherits that
+portability. YARP is written almost entirely in C++.
+
+\li \link sig_class libYARP_sig \endlink - performing common signal processing tasks (visual,
+auditory) in an open manner easily interfaced with other
+commonly used libraries, for example OpenCV.
+
+\li \link dev_all libYARP_dev \endlink - interfacing with common devices used in robotics:
+framegrabbers, digital cameras, motor control boards, etc.
+
+These components are maintained separately. The core component
+is libYARP_OS, which must be available before the other
+components can be used.
+
+
+For real-time operation, network overhead has to be minimized, so
+YARP is designed to operate on an isolated network or behind a
+firewall. If you expose machines running YARP to the internet,
+expect your robot to one day be commanded to make a crude gesture
+at your funders by a script kiddie in New Zealand (or, if you are
+in New Zealand, New York).
+
+For interfacing with hardware, we are at the mercy of which
+operating systems particular companies choose to support - few are
+enlightened enough to provide source. The libYARP_dev library is
+structured to interface easily with vendor-supplied code, but to
+shield the rest of your system from that code so that future
+hardware replacements are possible. Check the requirements imposed
+by your current hardware; YARP will not reduce these, only make
+future changes easier.
+
+YARP has consequently three levels of configuration: operating
+system, hardware, and robot level. The first level of configuration
+should concern you only if you're planning to compile YARP on a new
+operating system. 
+
+The second level is the hardware. A new addition on an existing
+platform or a new platform altogether might require preparing a few
+YARP device drivers. These are to all effects C++ classes that
+support the methods for accessing the hardware which is normally
+implemented through function calls to whatever provided by the
+hardware vendor. This comes typically in the form of either a DLL
+or a static library.
+
+Finally, you can prepare configuration files for an entirely
+new robotic platform.
+
  *
- * The components of YARP can be broken down into:
-
- * \li \link yarp_os libYARP_OS \endlink - interfacing with the operating system(s) to support
- * easy streaming of data across many threads across many
- * machines. YARP is written to be OS neutral, and has been used
- * on Linux, Microsoft Windows, Mac OSX and Solaris.
- * YARP uses the open-source ACE (ADAPTIVE
- * Communication Environment) library, which is portable across a very
- * broad range of environments, and YARP inherits that
- * portability. YARP is written almost entirely in C++.
-
- * \li \link sig_class libYARP_sig \endlink - performing common signal processing tasks (visual,
- * auditory) in an open manner easily interfaced with other
- * commonly used libraries, for example OpenCV.
-
- * \li \link dev_all libYARP_dev \endlink - interfacing with common devices used in robotics:
- * framegrabbers, digital cameras, motor control boards, etc.
-
- * These components are maintained separately. The core component
- * is libYARP_OS, which must be available before the other
- * components can be used.
-
-
- * For real-time operation, network overhead has to be minimized, so
- * YARP is designed to operate on an isolated network or behind a
- * firewall. If you expose machines running YARP to the internet,
- * expect your robot to one day be commanded to make a crude gesture
- * at your funders by a script kiddie in New Zealand (or, if you are
- * in New Zealand, New York).
-
- * For interfacing with hardware, we are at the mercy of which
- * operating systems particular companies choose to support - few are
- * enlightened enough to provide source. The libYARP_dev library is
- * structured to interface easily with vendor-supplied code, but to
- * shield the rest of your system from that code so that future
- * hardware replacements are possible. Check the requirements imposed
- * by your current hardware; YARP will not reduce these, only make
- * future changes easier.
-
- * YARP has consequently three levels of configuration: operating
- * system, hardware, and robot level. The first level of configuration
- * should concern you only if you're planning to compile YARP on a new
- * operating system. 
-
- * The second level is the hardware. A new addition on an existing
- * platform or a new platform altogether might require preparing a few
- * YARP device drivers. These are to all effects C++ classes that
- * support the methods for accessing the hardware which is normally
- * implemented through function calls to whatever provided by the
- * hardware vendor. This comes typically in the form of either a DLL
- * or a static library.
-
- * Finally, you can prepare configuration files for an entirely
- * new robotic platform.
-
+(*) Just joking.
  *
  *
  */
@@ -132,78 +135,78 @@
 
 
 /**
- * @page yarp_os The YARP OS library
+@page yarp_os The YARP OS library
  *
- * @section intro_sec Introduction
+@section intro_sec Introduction
  *
- * Welcome to the YARP OS library.  This library interfaces
- * with your operating system and provides some basic services.
- * We give you
- * \link yarp::os::Thread Thread\endlink, 
- * \link yarp::os::Semaphore Semaphore\endlink, and 
- * \link yarp::os::Time Time\endlink
- * services just in case
- * you don't have them, but our main goal is to give you easy network
- * communication using the YARP 
- * \link yarp::os::Port Port\endlink
- * Network.
- * 
- * @section what_is_a_port What is a Port?
+Welcome to the YARP OS library.  This library interfaces
+with your operating system and provides some basic services.
+We give you
+\link yarp::os::Thread Thread\endlink, 
+\link yarp::os::Semaphore Semaphore\endlink, and 
+\link yarp::os::Time Time\endlink
+services just in case
+you don't have them, but our main goal is to give you easy network
+communication using the YARP 
+\link yarp::os::Port Port\endlink
+Network.
+
+@section what_is_a_port What is a Port?
  *
- * A \link yarp::os::Port Port\endlink is an object that can read and
- * write values to peer objects spread throughout a network of
- * computers.  You can create them in your program, and then add and
- * remove connections either from that program, from the command line,
- * or from another program.
- * Ports are specialized for streaming communication, such as camera
- * images or motor commands.  You can switch network protocols for any
- * or all your connections without changing a line of code.
- * For more details, see 
- * \subpage terms "specification of YARP terms and protocols".
+A \link yarp::os::Port Port\endlink is an object that can read and
+write values to peer objects spread throughout a network of
+computers.  You can create them in your program, and then add and
+remove connections either from that program, from the command line,
+or from another program.
+Ports are specialized for streaming communication, such as camera
+images or motor commands.  You can switch network protocols for any
+or all your connections without changing a line of code.
+For more details, see 
+\subpage terms "specification of YARP terms and protocols".
 
  *
- * For examples, see @subpage yarp_code_examples.
+For examples, see @subpage yarp_code_examples.
  *
- * @section important_yarp_os_classes Important classes
+@section important_yarp_os_classes Important classes
  *
- * If you are online, this list will link to API information.
- * If you're offline, it is just a list of classes you may
- * want to check.
+If you are online, this list will link to API information.
+If you're offline, it is just a list of classes you may
+want to check.
  *
- * \li \link yarp::os::Thread Thread\endlink
- * \li \link yarp::os::Semaphore Semaphore\endlink
- * \li \link yarp::os::Time Time\endlink
- * \li \link yarp::os::Network Network\endlink
- * \li \link yarp::os::Port Port\endlink
- * \li \link yarp::os::BufferedPort BufferedPort\endlink
- * \li \link yarp::os::Bottle Bottle\endlink
- * \li \link yarp::os::Property Property\endlink
+\li \link yarp::os::Thread Thread\endlink
+\li \link yarp::os::Semaphore Semaphore\endlink
+\li \link yarp::os::Time Time\endlink
+\li \link yarp::os::Network Network\endlink
+\li \link yarp::os::Port Port\endlink
+\li \link yarp::os::BufferedPort BufferedPort\endlink
+\li \link yarp::os::Bottle Bottle\endlink
+\li \link yarp::os::Property Property\endlink
  *
  */
 
 
 /**
- * @page manual User Manual
+@page manual User Manual
 
 This page mirrors the order and content of material in
 our printable user manual.
 
- * \li \ref what_is_yarp
- * \li \ref install
- * \li \ref yarp_cluster
- * \li \ref note_ports
- * \li \ref note_devices
- * \li \ref yarp_code_examples
- * \li \ref yarp
- * \li \ref yarp_motor_control
- * \li \ref dev-how-to
- * \li \ref terms
- * \li \ref data_rep
- * \li \ref yarp_protocol
- * \li \ref name_server
- * \li \ref yarp_os
- * \li \ref dev_examples
- * \li \ref yarpdev
+\li \ref what_is_yarp
+\li \ref install
+\li \ref yarp_cluster
+\li \ref note_ports
+\li \ref note_devices
+\li \ref yarp_code_examples
+\li \ref yarp
+\li \ref yarp_motor_control
+\li \ref dev-how-to
+\li \ref terms
+\li \ref data_rep
+\li \ref yarp_protocol
+\li \ref name_server
+\li \ref yarp_os
+\li \ref dev_examples
+\li \ref yarpdev
 
  */
 
