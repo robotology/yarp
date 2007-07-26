@@ -40,7 +40,7 @@ cd $BASE
 if [ ! -e tgz-automake ] ; then
     mkdir -p tgz-automake
     cd tgz-automake
-    tar xzvf - < ../yarp-$ver.tar.gz
+    tar mxzvf - < ../yarp-$ver.tar.gz
 fi
 
 cd $BASE
@@ -60,7 +60,7 @@ cd $BASE
 if [ ! -e tgz-cmake ] ; then
     mkdir -p tgz-cmake
     cd tgz-cmake
-    tar xzvf - < ../yarp-$ver.tar.gz
+    tar mxzvf - < ../yarp-$ver.tar.gz
 fi
 
 cd $BASE
