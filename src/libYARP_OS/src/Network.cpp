@@ -43,10 +43,12 @@ bool Network::disconnect(const char *src, const char *dest, bool quiet) {
 }
 
 bool Network::sync(const char *port, bool quiet) {
-    //int result = Companion::poll(port,true);
     //if (!result) {
     int result = Companion::wait(port,quiet);
     //}
+    if (result==0) {
+        Companion::poll(port,true);
+    }
     return result == 0;
 }
 
