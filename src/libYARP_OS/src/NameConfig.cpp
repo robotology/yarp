@@ -76,7 +76,9 @@ String NameConfig::getConfigFileName(const char *stem) {
     }
     if (root!="") {
         //conf = new File(new File(root,"conf"),"namer.conf");
-        conf = root + "/conf/" + fname;
+        //conf = root + "/conf/" + fname;
+        // users of YARP_CONF want /conf postfix removed
+        conf = root + "/" + fname;
     } else if (home!="") {
         conf = home + "/.yarp/conf/" + fname;
     } else if (homepath!="") {
