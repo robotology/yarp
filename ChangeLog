@@ -1,5 +1,7 @@
 2007-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpVersion.cmake: froze version 2.1.6
+
 	* src/libYARP_OS/src/NameConfig.cpp: removed "/conf" added
 	automatically to directory supplied by YARP_CONF.  Users
 	of the optional environment variable YARP_CONF seem to prefer 
