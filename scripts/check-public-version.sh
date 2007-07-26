@@ -8,6 +8,13 @@ ver="2.1.5"
 
 if [ ! "k$1" = "k" ]; then
     ver="$1"
+else
+    rm -f junk.wget
+    wget -O junk.wget http://eris.liralab.it/yarp/specs/dox/download.html
+    verp=`cat junk.wget | grep -i "for Unix" | head -n1 | sed "s/.*yarp-//" | sed "s/.tar.gz.*//"`
+    if [ ! "kverp" = "k" ]; then
+	ver="$verp"
+    fi
 fi
 
 echo "Working in /tmp/yarpy -- delete directory to start fresh"
