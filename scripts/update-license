@@ -27,7 +27,7 @@ fi
 
 # Gather information on main GPL material
 cat license-good.txt  | grep "Copyright:" | sort | uniq > license-gpl.txt
-GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" ) < license-gpl.txt`
+GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" | sed "s/ - / , /g" ) < license-gpl.txt`
 echo $GPL_PEOPLE | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | sort | uniq | grep "." | tee license-gpl-people.txt
 GPL_YEARS=`sed "s/[^0-9 ]/ /g" < license-gpl.txt`
 echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "." | tee license-gpl-years.txt
