@@ -1,5 +1,9 @@
 2007-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/NameConfig.cpp: removed "/conf" added
+	automatically to directory supplied by YARP_CONF.  Users
+	of YARP_CONF seem to prefer this.
+
 	* src/libYARP_OS/src/Network.cpp: make Network::sync
 	behave exactly like "yarp wait /portname" from the 
 	command line
