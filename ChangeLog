@@ -1,5 +1,9 @@
 2007-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Network.cpp: make Network::sync
+	behave exactly like "yarp wait /portname" from the 
+	command line
+
 	* src/libYARP_OS/src/Companion.cpp: propagated a more
 	useful return value to Network::connect
 

@@ -71,9 +71,10 @@ public:
     /**
      * Wait for a port to be ready and responsive.
      * @param port the name of a port
+     * @param quiet suppress messages displayed during wait
      * @return true on success, false on failure
      */
-    static bool sync(const char *port);
+    static bool sync(const char *port, bool quiet=true);
 
     /**
      * The standard main method for the YARP companion utility.

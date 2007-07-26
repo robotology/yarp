@@ -261,18 +261,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
 
 int Companion::cmdExists(int argc, char *argv[]) {
     if (argc == 1) {
-        NameClient& nic = NameClient::getNameClient();
-        Address address = nic.queryName(argv[0]);
-        if (!address.isValid()) {
-            return 2;
-        }
-        OutputProtocol *out = Carriers::connect(address);
-        if (out==NULL) {
-            return 1;
-        }
-        delete out;
-        out = NULL;
-        return 0;
+        return exists(argv[0],true);
     }
 
     ACE_OS::fprintf(stderr,"Please specify a port name\n");
@@ -281,27 +270,59 @@ int Companion::cmdExists(int argc, char *argv[]) {
 
 
 
+int Companion::exists(const char *target, bool silent) {
+    NameClient& nic = NameClient::getNameClient();
+    Address address = nic.queryName(target);
+    if (!address.isValid()) {
+        if (!silent) {
+            printf("Address of port %s is not valid\n", target);
+        }
+        return 2;
+    }
+    OutputProtocol *out = Carriers::connect(address);
+    if (out==NULL) {
+        if (!silent) {
+            printf("Cannot connect to port %s\n", target);
+        }
+        return 1;
+    } else {
+        out->close();
+    }
+    delete out;
+    out = NULL;
+    return 0;
+}
+
+
+
 int Companion::cmdWait(int argc, char *argv[]) {
     if (argc == 1) {
-        bool done = false;
-        int ct = 0;
-        while (!done) {
-            if (ct%10==0) {
-                ACE_OS::fprintf(stderr,"Waiting for %s...\n", argv[0]);
-            }
-            ct++;
-            int result = cmdExists(argc,argv);
-            if (result!=0) {
-                Time::delay(0.1);
-            } else {
-                done = true;
-            }
-        }
-        return 0;
+        return wait(argv[0],false);
     }
 
     ACE_OS::fprintf(stderr,"Please specify a port name\n");
     return 1;
+}
+
+
+int Companion::wait(const char *target, bool silent) {
+    bool done = false;
+    int ct = 1;
+    while (!done) {
+        if (ct%10==1) {
+            if (!silent) {
+                ACE_OS::fprintf(stderr,"Waiting for %s...\n", target);
+            }
+        }
+        ct++;
+        int result = exists(target,true);
+        if (result!=0) {
+            Time::delay(0.1);
+        } else {
+            done = true;
+        }
+    }
+    return 0;
 }
 
 

@@ -8,11 +8,31 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Port.h>
+#include <yarp/os/Thread.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/ConstString.h>
+#include <yarp/os/Time.h>
 
 #include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;
+
+class NetworkTestWorker1 : public Thread {
+public:
+    Semaphore fini;
+    ConstString name;
+    Port p;
+
+    NetworkTestWorker1() : fini(0) {
+    }
+
+    void run() {
+        Time::delay(0.5);
+        p.open(name.c_str());
+        fini.wait();
+    }
+};
 
 class NetworkTest : public UnitTest {
 public:
@@ -32,9 +52,27 @@ public:
         p1.close();
     }
 
+
+    void checkSync() {
+        report(0,"checking port synchronization");
+        Port p1;
+        Port p2;
+        p1.open("/p1");
+        NetworkTestWorker1 worker;
+        worker.name = "/p2";
+        worker.start();
+        Network::sync("/p2");
+        checkTrue(Network::connect("/p1","/p2"),"good connect");
+        worker.fini.post();
+        worker.stop();
+        //p2.close();
+        p1.close();
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
+        checkSync();
         Network::setLocalMode(false);
     }
 };

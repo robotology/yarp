@@ -70,6 +70,10 @@ public:
 
     static int poll(const char *target, bool silent = false); 
 
+    static int wait(const char *target, bool silent = false); 
+
+    static int exists(const char *target, bool silent = false); 
+
     /**
      * Create a port to read Bottles and prints them to standard input.
      * It assumes the Bottles consist of an integer followed by a string.
