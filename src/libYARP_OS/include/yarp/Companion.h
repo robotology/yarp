@@ -104,7 +104,14 @@ public:
 
 
     static int sendMessage(const String& port, Writable& writable, 
-                           bool silent = false);
+                           bool silent = false) {
+        String output;
+        return sendMessage(port,writable,output,silent);
+    }
+
+    static int sendMessage(const String& port, Writable& writable, 
+                           String& output,
+                           bool silent);
 
 
 private:

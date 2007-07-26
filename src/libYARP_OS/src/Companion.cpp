@@ -377,7 +377,8 @@ int Companion::cmdVersion(int argc, char *argv[]) {
 
 
 int Companion::sendMessage(const String& port, Writable& writable, 
-                           bool quiet) {
+                           String& output, bool quiet) {
+    output = "";
     NameClient& nic = NameClient::getNameClient();
     Address srcAddress = nic.queryName(port);
     //Address srcAddress("localhost",9999,"tcp");
@@ -419,6 +420,7 @@ int Companion::sendMessage(const String& port, Writable& writable,
         Bottle b;
         b.read(con);
         b.read(con);
+        output = b.toString().c_str();
         if (!quiet) {
             ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
         }
@@ -746,7 +748,19 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
     PortCommand pc('\0',slashify(dest));
-    return sendMessage(src,pc,silent);
+    String result = "";
+    int err = sendMessage(src,pc,result,silent);
+    if (err==0) {
+        err = 1;
+        //printf("RESULT is %s err is %d\n", result.c_str(), err);
+        // specifically test for "Added output..." message
+        if (result.length()>0) {
+            if (result[0]=='A') {
+                err = 0;
+            }
+        }
+    }
+    return err;
 }
 
 
