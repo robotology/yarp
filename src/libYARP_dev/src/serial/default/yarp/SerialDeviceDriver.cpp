@@ -16,12 +16,10 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-#include "SerialHandler.h"
-
-inline SerialHandler& RES(void *res) { return *(SerialHandler *)res; }
+//inline SerialHandler& RES(void *res) { return *(SerialHandler *)res; }
 
 SerialDeviceDriver::SerialDeviceDriver() {
-    system_resources = (SerialHandler*) new SerialHandler();
+    //system_resources = (SerialHandler*) new SerialHandler();
 }
 
 SerialDeviceDriver::~SerialDeviceDriver() {
@@ -30,9 +28,26 @@ SerialDeviceDriver::~SerialDeviceDriver() {
 
 bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config) 
 {
-    if(RES(system_resources).initialize(config.CommChannel, config.SerialParams) < 0)
-        return false;
-    RES(system_resources).setCommandSender(this);
+    //if(RES(system_resources).initialize(config.CommChannel, config.SerialParams) < 0)
+    //    return false;
+    //RES(system_resources).setCommandSender(this);
+    ACE_TRACE("SerialHandler::initialize");
+    ACE_OS::printf("Starting Serial Port in %s \n", config.CommChannel);
+
+    // Initialize serial port
+    if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
+    { 
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p Connect\n"), config.CommChannel));
+    } 
+
+
+    // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
+    if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
+    {
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p control\n"),
+                config.CommChannel));
+    }
+
     return true;
 }
 
@@ -67,39 +82,32 @@ bool SerialDeviceDriver::close(void) {
 
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
-    int error = 0;
-
     ACE_OS::printf("Received string: %s\n", msg.toString().c_str());
     int message_size = msg.toString().length();
-    ACE_Message_Block * message_block = 0;
-    ACE_NEW_NORETURN( message_block, ACE_Message_Block(message_size+1));
+    // Write message in the serial device
+    ssize_t bytes_written = _serial_dev.send_n((void *) msg.toString().c_str(), message_size);
 
-    if (message_block->copy(msg.toString().c_str(), message_size)) 
-        ACE_ERROR ((LM_ERROR,"%p%l", 
-                ACE_TEXT ("%I%N%l Error coping user message block\n")));
-
-    //Write the message
-    error = RES(system_resources).putq(message_block);
+    if (bytes_written != 1)
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
 
     return true;
 } 
 
 bool SerialDeviceDriver::receive(Bottle& msg)
 {
-    int error = 0;
+    char message[1001];
 
-    ACE_Message_Block * response_block;
-    error = this->getq(response_block);
+    ssize_t bytes_read = _serial_dev.recv ((void *) message, 1000);
 
-    // Just set a terminator null
-    *(response_block->wr_ptr()) = 0;
-    response_block->wr_ptr(1);
+    if (bytes_read == -1)
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p  recv\n"), "COM4"));
 
-    printf("Datareceived in Serial DeviceDriver receive:#%s#\n",response_block->rd_ptr());
+    message[bytes_read] = 0;
+
+    printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
 
     // Put message in the bottle
-    msg.addString(response_block->rd_ptr());
-    response_block->release();
+    msg.addString(message);
 
     return true;
 }

@@ -13,8 +13,9 @@
 #include <yarp/dev/SerialInterfaces.h>
 #include <yarp/os/Bottle.h>
 
-#include "ace/TTY_IO.h"
-#include "ace/Task.h"
+#include <ace/DEV_Connector.h>
+#include <ace/TTY_IO.h>
+#include <ace/Task.h>
 
 namespace yarp {
     namespace dev {
@@ -82,6 +83,9 @@ private:
 	SerialDeviceDriver(const SerialDeviceDriver&);
 	void operator=(const SerialDeviceDriver&);
 
+    ACE_TTY_IO _serial_dev;
+    ACE_DEV_Connector _serialConnector;
+
 public:
 	SerialDeviceDriver();
 
@@ -112,7 +116,5 @@ public:
      */
     virtual bool receive(Bottle& msg);
 };
-
-
 
 #endif
