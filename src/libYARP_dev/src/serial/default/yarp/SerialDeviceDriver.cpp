@@ -87,7 +87,7 @@ bool SerialDeviceDriver::send(const Bottle& msg)
     // Write message in the serial device
     ssize_t bytes_written = _serial_dev.send_n((void *) msg.toString().c_str(), message_size);
 
-    if (bytes_written != 1)
+    if (bytes_written == -1)
         ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
 
     return true;
