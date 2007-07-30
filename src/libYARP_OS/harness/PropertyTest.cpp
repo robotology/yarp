@@ -60,6 +60,17 @@ public:
         checkTrue(p.find("ten").isNull(),"unput");
     }
 
+
+    void checkNegative() {
+        report(0,"checking things are NOT found in correct manner");
+        Property p;
+        p.put("ten",10);
+        checkTrue(p.check("ten"),"found");
+        checkFalse(p.check("eleven"),"not found");
+        Bottle& bot = p.findGroup("twelve");
+        checkTrue(bot.isNull(),"group not found");
+    }
+
     void checkExternal() {
         report(0,"checking external forms");
         Property p;
@@ -291,6 +302,7 @@ targ $TARGET\n\
         checkPutGet();
         checkExternal();
         checkTypes();
+        checkNegative();
         checkCopy();
         checkExpansion();
         checkUrl();
