@@ -104,7 +104,7 @@ bool SerialDeviceDriver::receive(Bottle& msg)
 
     message[bytes_read] = 0;
 
-    printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
+    ACE_OS::printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
 
     // Put message in the bottle
     msg.addString(message);

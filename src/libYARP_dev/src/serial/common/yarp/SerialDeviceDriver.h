@@ -15,7 +15,7 @@
 
 #include <ace/DEV_Connector.h>
 #include <ace/TTY_IO.h>
-#include <ace/Task.h>
+#include <ace/OS_NS_stdio.h>
 
 namespace yarp {
     namespace dev {
@@ -75,10 +75,8 @@ public:
  * A basic Serial Communications Link (RS232, USB).
  * 
  */
-class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ACE_Task<ACE_MT_SYNCH>, public ISerialDevice
+class yarp::dev::SerialDeviceDriver : public DeviceDriver, public ISerialDevice
 {
-protected:
-    void *system_resources;
 private:
 	SerialDeviceDriver(const SerialDeviceDriver&);
 	void operator=(const SerialDeviceDriver&);
