@@ -321,11 +321,11 @@ void PortCoreInputUnit::closeMain() {
         access.wait();
         if (ip!=NULL) {
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
-            while (running) {
-                YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupt pulse");
-                ip->interrupt();
-                Time::delay(0.01);
-            }
+            //while (running) {
+            //YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupt pulse");
+            ip->interrupt();
+            //  Time::delay(0.01);
+            //}
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
         }
         closing = true;
