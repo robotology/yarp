@@ -13,6 +13,7 @@
 #include <yarp/Logger.h>
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/Name.h>
+#include <yarp/os/Time.h>
 
 
 #define YMSG(x) ACE_OS::printf x;
@@ -20,6 +21,7 @@
 
 
 using namespace yarp;
+using namespace yarp::os;
 
 bool PortCoreInputUnit::start() {
 
@@ -319,7 +321,11 @@ void PortCoreInputUnit::closeMain() {
         access.wait();
         if (ip!=NULL) {
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
-            ip->interrupt();
+            while (running) {
+                YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupt pulse");
+                ip->interrupt();
+                Time::delay(0.01);
+            }
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
         }
         closing = true;
