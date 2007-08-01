@@ -44,8 +44,7 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
     if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
     {
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p control\n"),
-                config.CommChannel));
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p control\n"), config.CommChannel));
     }
 
     return true;
@@ -89,7 +88,6 @@ bool SerialDeviceDriver::send(const Bottle& msg)
 
     if (bytes_written == -1)
         ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
-
     return true;
 } 
 
@@ -97,11 +95,15 @@ bool SerialDeviceDriver::receive(Bottle& msg)
 {
     char message[1001];
 
+    //this function call blocks
     ssize_t bytes_read = _serial_dev.recv ((void *) message, 1000);
 
     if (bytes_read == -1)
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p  recv\n"), "COM4"));
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("Error on SerialDeviceDriver : receive \n")));
 
+    if (bytes_read == 0)  //nothing there
+        return true;
+        
     message[bytes_read] = 0;
 
     ACE_OS::printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);

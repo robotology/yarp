@@ -115,7 +115,7 @@ public:
     virtual bool send(const Bottle& msg)
     {
         if(verb)
-           ACE_OS::printf("Received string: %s\n", msg.toString().c_str());
+            ACE_OS::printf("String to send : %s\n", msg.toString().c_str());
         if(serial != NULL) {
             serial->send(msg);
             return true;
@@ -203,8 +203,8 @@ public:
 
         command_buffer.useCallback(callback_impl);
         
-        toDevice.open((rootName+"/command:i").c_str());
-        fromDevice.open((rootName+"/reply:o").c_str());
+        toDevice.open((rootName+"/in").c_str());
+        fromDevice.open((rootName+"/out").c_str());
 
 
 
@@ -231,9 +231,13 @@ public:
         while (!isStopping()) {
             before = Time::now();
             Bottle& b = reply_buffer.get();
+            b.clear();
             receive( b ); //blocks
-            reply_buffer.write();
+            if(b.size() > 0)
+                reply_buffer.write();
             now = Time::now();
+            // geve other threads the chance to run 
+            yarp:os::Time::delay(0.010);
         }
         ACE_OS::printf("Server Serial stopping\n");
     }
@@ -253,7 +257,7 @@ void yarp::dev::ImplementCallbackHelper2::onRead(Bottle &b) {
    if (ser) {
         bool ok = ser->send(b);
         if (!ok)
-            ACE_OS::printf("Issues while trying to send data\n");
+            ACE_OS::printf("Problems while trying to send data\n");
     }
 }
 
