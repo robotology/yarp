@@ -28,7 +28,8 @@ public:
 
     PortCoreInputUnit(PortCore& owner, InputProtocol *ip, 
                       bool autoHandshake) : 
-        PortCoreUnit(owner), ip(ip), phase(1), autoHandshake(autoHandshake) {
+        PortCoreUnit(owner), ip(ip), phase(1), access(1),
+        autoHandshake(autoHandshake) {
 
         YARP_ASSERT(ip!=NULL);
         closing = false;
@@ -78,7 +79,7 @@ public:
 
 private:
     InputProtocol *ip;
-    SemaphoreImpl phase;
+    SemaphoreImpl phase, access;
     bool autoHandshake;
     bool closing, finished, running;
     String name;

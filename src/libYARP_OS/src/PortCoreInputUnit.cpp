@@ -258,9 +258,11 @@ void PortCoreInputUnit::run() {
     setDoomed(true);
   
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closing ip");
+    access.wait();
     if (ip!=NULL) {
         ip->close();
     }
+    access.post();
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closed ip");
 
     if (autoHandshake) {
@@ -314,12 +316,14 @@ void PortCoreInputUnit::closeMain() {
 
     if (running) {
         // give a kick (unfortunately unavoidable)
+        access.wait();
         if (ip!=NULL) {
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupting");
             ip->interrupt();
             YARP_DEBUG(Logger::get(),"PortCoreInputUnit interrupted");
         }
         closing = true;
+        access.post();
         YARP_DEBUG(Logger::get(),"PortCoreInputUnit joining");
         join();
         YARP_DEBUG(Logger::get(),"PortCoreInputUnit joined");
