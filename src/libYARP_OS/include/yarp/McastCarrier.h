@@ -150,9 +150,12 @@ public:
         Address remote = proto.getStreams().getRemoteAddress();
         Address local;
         local = proto.getStreams().getLocalAddress();
-        //printf("  MULTICAST is being extended; some temporary status messages added\n");
-        //printf("  Local: %s\n", local.toString().c_str());
-        //printf("  Remote: %s\n", remote.toString().c_str());
+        bool test = (yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
+        if (test) {
+            printf("  MULTICAST is being extended; some temporary status messages added\n");
+            printf("  Local: %s\n", local.toString().c_str());
+            printf("  Remote: %s\n", remote.toString().c_str());
+        }
         proto.takeStreams(NULL); // free up port from tcp
         try {
             if (sender) {
@@ -165,18 +168,20 @@ public:
                   the author doesn't know, so is being cautious.
                  */
                 key = proto.getRoute().getFromName();
-                //key += " on ";
-                //key += local.getName();
+                if (test) {
+                    key += " on ";
+                    key += local.getName();
+                }
                 YARP_DEBUG(Logger::get(),
                            String("multicast key: ") + key);
                 addSender(key);
+            }
 
-                // future optimization: only join when active
-                stream->join(mcastAddress,sender);
-                //stream->join(mcastAddress,sender,local);
+            // future optimization: only join when active
+            if (test) {
+                stream->join(mcastAddress,sender,local);
             } else {
                 stream->join(mcastAddress,sender);
-                //stream->join(mcastAddress,sender,local);
             }
       
         } catch (IOException e) {
