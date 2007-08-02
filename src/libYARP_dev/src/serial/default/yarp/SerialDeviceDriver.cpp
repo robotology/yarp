@@ -37,14 +37,16 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
     // Initialize serial port
     if(_serialConnector.connect(_serial_dev, ACE_DEV_Addr(config.CommChannel)) == -1)
     { 
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p Connect\n"), config.CommChannel));
+        ACE_OS::printf("Invalid communications port in %s \n", config.CommChannel);
+        return false;
     } 
 
 
     // Set TTY_IO parameter into the ACE_TTY_IO device(_serial_dev)
     if (_serial_dev.control (ACE_TTY_IO::SETPARAMS, &config.SerialParams) == -1)
     {
-        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p control\n"), config.CommChannel));
+         ACE_OS::printf("Can not control communications port %s \n", config.CommChannel);
+        return false;
     }
 
     return true;
@@ -71,8 +73,7 @@ bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     config2.SerialParams.dtrdisable = config.check("dtrdisable",Value(0),"Controls whether DTR is disabled or enabled.").asInt();
     config2.SerialParams.databits = config.check("databits",Value(7),"Data bits. Valid values 5, 6, 7 and 8 data bits. Additionally Win32 supports 4 data bits.").asInt();
     config2.SerialParams.stopbits = config.check("stopbits",Value(1),"Stop bits. Valid values are 1 and 2.").asInt();
-    open(config2);
-    return true;
+    return open(config2);
 }
 
 bool SerialDeviceDriver::close(void) {
