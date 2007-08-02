@@ -99,6 +99,10 @@ You should now have libcsyarp.so and a whole lot of .cs files
 The .cs files are not quite correct, you need to run:
   ./csharp-fix.pl
 to fix them up (problems with multiple inheritance mismatch)
+You need the "mcs" compiler for this script to work.  If you're
+on windows, it might be easier to borrow a linux laptop for this
+step.  Alternatively, manually fix the problems (there are cases
+where "override" is specified rather than "virtual").
 
 Now try:
   mcs -out:example *.cs
