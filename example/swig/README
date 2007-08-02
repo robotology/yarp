@@ -104,6 +104,10 @@ on windows, it might be easier to borrow a linux laptop for this
 step.  Alternatively, manually fix the problems (there are cases
 where "override" is specified rather than "virtual").
 
+At the time of writing, there are also a few errors related to the
+PidVector class.  One solution is to just remove that and all 
+references to it.
+
 Now try:
   mcs -out:example *.cs
 or whatever your compiler is.  If it works, then:
