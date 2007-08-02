@@ -243,7 +243,7 @@ void Drivers::init() {
 #endif
 
 #ifdef ENABLE_serial
-    add(new DriverCreatorOf<SerialDeviceDriver>("serialdevice", 
+    add(new DriverCreatorOf<SerialDeviceDriver>("serialport", 
                                           	"serial",
                                           	"SerialDeviceDriver"));
 #endif

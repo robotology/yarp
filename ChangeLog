@@ -1,3 +1,23 @@
+2007-08-02  Alex Bernardino, Carlos Beltran  <alex@isr.ist.utl.pt>, <cbeltran@dist.unige.it> 
+
+	* src/libYARP_dev/src/serial
+	Driver for Serial communications 
+	This driver creates an OS independent serial communications driver for YARP. 
+	We exploit the capacity of ACE (Adaptive Communications Environment) to 
+	provide serial communications. 
+	
+	* src\libYARP_dev\include\yarp\dev\ServerSerial.h.
+	The companion network wrapper that provides a "yarpdev" server for the driver.
+	Invocation example:
+	>> yarpdev --device serialport --comport COM4 --file serial.ini
+	The server opens two ports (defaults /serial/in and /serial/out) that receive 
+	and send Bottles to the clients, containing the characters to send/receive 
+	to/from the serial link. To test the driver, you may use a rs232 9-pin plug 
+	with pins 2 and 3 shortcutted (rx/tx) then send strings to the input port 
+	using yarp write and attach a yarp read to the output port. 
+	The sent strings should appear unchanged at the yarp read terminal 
+	(except for being broken or having extra control characters from the bottle format).
+
 2007-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: froze version 2.1.6
