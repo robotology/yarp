@@ -237,7 +237,7 @@ public:
                 reply_buffer.write();
             now = Time::now();
             // give other threads the chance to run 
-            yarp:os::Time::delay(0.010);
+            yarp::os::Time::delay(0.010);
         }
         ACE_OS::printf("Server Serial stopping\n");
     }

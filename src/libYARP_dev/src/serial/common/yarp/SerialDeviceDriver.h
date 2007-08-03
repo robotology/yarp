@@ -31,7 +31,7 @@ class yarp::dev::SerialDeviceDriverSettings
 public:
     char CommChannel[10]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
     ACE_TTY_IO::Serial_Params SerialParams;
-    /** Serial_Params contains the following variables:
+    /** Serial_Params contains the following variables: */
     /** int baudrate; Specifies the baudrate at which the communication port operates. */
     /** int xonlim; Specifies the minimum number of bytes in input buffer before XON char
         is sent. Negative value indicates that default value should
