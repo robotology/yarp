@@ -37,6 +37,7 @@ Election::PeerRecord *Election::getRecord(const String& key, bool create) {
 
 void Election::add(const String& key, void *entity) {
     ct++;
+    //printf("add called with %s\n", key.c_str());
     PeerRecord *rec = getRecord(key,true);
     YARP_ASSERT(rec!=NULL);
     rec->add(entity);

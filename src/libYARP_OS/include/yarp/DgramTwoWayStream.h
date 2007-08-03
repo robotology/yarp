@@ -12,6 +12,7 @@
 #include <yarp/TwoWayStream.h>
 #include <yarp/IOException.h>
 #include <yarp/ManagedBytes.h>
+#include <yarp/os/Semaphore.h>
 
 #include <ace/SOCK_Dgram.h>
 #include <ace/SOCK_Dgram_Mcast.h>
@@ -27,12 +28,14 @@ namespace yarp {
 class yarp::DgramTwoWayStream : public TwoWayStream, public InputStream, public OutputStream {
 
 public:
-    DgramTwoWayStream() {
+    DgramTwoWayStream() : mutex(1) {
+        interrupting = false;
         closed = false;
         reader = false;
         writer = false;
         dgram = NULL;
-        happy = false;
+        mgram = NULL;
+        happy = true;
         bufferAlerted = bufferAlertNeeded = false;
         multiMode = false;
     }
@@ -45,7 +48,9 @@ public:
                            const Address& ipLocal);
 
     virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
-                              const Address& ipLocal);
+                              const Address& group,
+                              const Address& ipLocal,
+                              bool add);
 
     virtual void join(const Address& group, bool sender,
                       const Address& ipLocal);
@@ -74,7 +79,11 @@ public:
 
     virtual void interrupt();
 
-    virtual void close();
+    virtual void close() {
+        closeMain();
+    }
+
+    virtual void closeMain();
 
     virtual int read(const Bytes& b);
 
@@ -92,11 +101,13 @@ public:
 
 private:
 
-    bool closed, reader, writer;
+    bool closed, interrupting, reader, writer;
     ACE_SOCK_Dgram *dgram;
+    ACE_SOCK_Dgram_Mcast *mgram;
     ACE_INET_Addr localHandle, remoteHandle;
-    Address localAddress, remoteAddress;
+    Address localAddress, remoteAddress, restrictInterfaceIp;
     ManagedBytes readBuffer, writeBuffer;
+    yarp::os::Semaphore mutex;
     int readAt, readAvail, writeAvail, pct;
     bool happy;
     bool bufferAlertNeeded;

@@ -53,6 +53,11 @@ Address NameServer::unregisterName(const String& name) {
                 HostRecord& host = getHostRecord(prev.getName());
                 host.release(prev.getPort());
             }
+            if (rec.isReusableIp()) {
+                if (rec.getAddress().getCarrierName()=="mcast") {
+                    mcastRecord.releaseAddress(rec.getAddress().getName().c_str());
+                }
+            }
             //NameRecord& rec = getNameRecord(name);
             rec.clear();
             tmpNames.release(name);
@@ -73,6 +78,7 @@ Address NameServer::registerName(const String& name,
                                  const Address& address,
                                  const String& remote) {
     bool reusablePort = false;
+    bool reusableIp = false;
 
     YARP_DEBUG(Logger::get(),"in registerName...");
 
@@ -107,6 +113,7 @@ Address NameServer::registerName(const String& name,
             }
         } else {
             machine = mcastRecord.get();
+            reusableIp = true;
         }
     }
 
@@ -122,7 +129,7 @@ Address NameServer::registerName(const String& name,
                suggestion.toString());
   
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
-    nameRecord.setAddress(suggestion,reusablePort);
+    nameRecord.setAddress(suggestion,reusablePort,reusableIp);
 
     Bottle event;
     event.addVocab(Vocab::encode("add"));

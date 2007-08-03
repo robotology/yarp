@@ -79,8 +79,12 @@ public:
         NameClient& nic = NameClient::getNameClient();
         Address addr;
 
-        McastCarrier *elect = 
-            caster.getElect(proto.getRoute().getFromName());
+        Address alt = proto.getStreams().getLocalAddress();
+        String altKey = 
+            proto.getRoute().getFromName() +
+            "/net=" + alt.getName();
+        //printf("Key should be %s\n", altKey.c_str());
+        McastCarrier *elect = caster.getElect(altKey);
         if (elect!=NULL) {
             YARP_DEBUG(Logger::get(),"picking up peer mcast name");
             addr = elect->mcastAddress;
@@ -150,12 +154,15 @@ public:
         Address remote = proto.getStreams().getRemoteAddress();
         Address local;
         local = proto.getStreams().getLocalAddress();
-        bool test = (yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
+        bool test = true;
+        //(yarp::NameConfig::getEnv("YARP_MCAST_TEST")!="");
+        /*
         if (test) {
             printf("  MULTICAST is being extended; some temporary status messages added\n");
             printf("  Local: %s\n", local.toString().c_str());
             printf("  Remote: %s\n", remote.toString().c_str());
         }
+        */
         proto.takeStreams(NULL); // free up port from tcp
         try {
             if (sender) {
@@ -169,7 +176,7 @@ public:
                  */
                 key = proto.getRoute().getFromName();
                 if (test) {
-                    key += " on ";
+                    key += "/net=";
                     key += local.getName();
                 }
                 YARP_DEBUG(Logger::get(),
@@ -177,11 +184,12 @@ public:
                 addSender(key);
             }
 
-            // future optimization: only join when active
-            if (test) {
-                stream->join(mcastAddress,sender,local);
-            } else {
-                stream->join(mcastAddress,sender);
+            if (isElect()||!sender) {
+                if (test) {
+                    stream->join(mcastAddress,sender,local);
+                } else {
+                    stream->join(mcastAddress,sender);
+                }
             }
       
         } catch (IOException e) {

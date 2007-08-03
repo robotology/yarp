@@ -14,6 +14,7 @@
 #include <yarp/Logger.h>
 #include <yarp/Dispatcher.h>
 #include <yarp/NetType.h>
+#include <yarp/SplitString.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
@@ -186,6 +187,20 @@ private:
             return String("224.1.") + NetType::toString(v2+1) + "." + 
                 NetType::toString(v1+1);
         }
+
+        void releaseAddress(const char *addr) {
+            SplitString ss(addr,'.');
+            int ip[] = { 224, 3, 1, 1 };
+            YARP_ASSERT(ss.size()==4);
+            for (int i=0; i<4; i++) {
+                ip[i] = NetType::toInt(ss.get(i));
+            }
+            int v2 = ip[2]-1;
+            int v1 = ip[3]-1;
+            int x = v2*255+v1;
+            printf("Releasing %s %d  %d:%d\n", addr, x, v2, v1);
+            release(x);
+        }
     };
 
 
@@ -242,13 +257,16 @@ private:
     private:
         Address address;
         bool reusablePort;
+        bool reusableIp;
         ACE_Hash_Map_Manager<String,PropertyRecord,ACE_Null_Mutex> propMap;
     public:
         NameRecord() : propMap(5) {
+            reusableIp = false;
             reusablePort = false;
         }
 
         NameRecord(const NameRecord& alt) : propMap(5) {
+            reusableIp = false;
             reusablePort = false;
         }
 
@@ -256,15 +274,23 @@ private:
             return reusablePort;
         }
 
+        bool isReusableIp() {
+            return reusableIp;
+        }
+
         void clear() {
             propMap.unbind_all();
             address = Address();
+            reusableIp = false;
             reusablePort = false;
         }
 
-        void setAddress(const Address& address, bool reusablePort=false) {
+        void setAddress(const Address& address, 
+                        bool reusablePort=false,
+                        bool reusableIp=false) {
             this->address = address;
             this->reusablePort = reusablePort;
+            this->reusableIp = reusableIp;
         }
 
         Address getAddress() {
