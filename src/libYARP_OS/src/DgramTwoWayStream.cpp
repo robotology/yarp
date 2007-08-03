@@ -217,6 +217,7 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
             // our membership is already correct / Address already in use
             result = 0;
         }
+        result = 0; // in fact, best to proceed for Windows.
     }
     
     return result;
