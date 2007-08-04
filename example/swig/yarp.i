@@ -11,20 +11,9 @@
 
 %module yarpswig
 
-// Translate std::string to whatever the native string type is
+// Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
-// Translate std::vector to whatever the native vector type is
 %include "std_vector.i"
-
-
-// Deal with Java method name conflicts
-// We rename a few methods as follows:
-//   toString -> toString_c
-//   wait -> wait_c
-//   clone -> clone_c
-%rename(toString_c) *::toString() const;
-%rename(wait_c) *::wait();
-%rename(clone_c) *::clone() const;
 
 // Deal with abstract base class problems, where SWIG guesses
 // incorrectly at whether a class can be instantiated or not
@@ -34,6 +23,8 @@
 %feature("notabstract") Property;
 %feature("notabstract") Stamp;
 %feature("abstract") Portable;
+%feature("abstract") PortReader;
+%feature("abstract") PortWriter;
 %feature("abstract") Searchable;
 %feature("abstract") Contactable;
 
@@ -52,6 +43,50 @@
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
 
+#if defined(SWIGCSHARP)
+	// there's a big CSHARP virtual/override muddle
+	// we just bypass the issue for now
+	%csmethodmodifiers write "public new";
+	%csmethodmodifiers check "public new";
+	%csmethodmodifiers check "public new";
+	%csmethodmodifiers find "public new";
+	%csmethodmodifiers findGroup "public new";
+	%csmethodmodifiers toString "public new";
+	%csmethodmodifiers lastRead "public new";
+	%csmethodmodifiers isClosed "public new";
+	%csmethodmodifiers read "public new";
+	%csmethodmodifiers setReplier "public new";
+	%csmethodmodifiers onRead "public new";
+	%csmethodmodifiers getPendingReads "public new";
+	%csmethodmodifiers setStrict "public new";
+	%csmethodmodifiers useCallback "public new";
+#endif
+
+// Deal with method name conflicts
+%rename(toString_c) *::toString() const;
+
+// python conflict
+#ifdef SWIGPYTHON
+	%rename(yield_c) *::yield();
+#endif
+
+// java conflict
+#ifdef SWIGJAVA
+	%rename(wait_c) *::wait();
+	%rename(clone_c) *::clone() const;
+#endif
+
+#ifdef SWIGCHICKEN
+	// small warning on chicken
+	%rename(delay_c) *::delay();
+#endif
+
+#ifdef SWIGTCL
+	// small warning on chicken
+	%rename(configure_c) *::configure();
+#endif
+
+
 //////////////////////////////////////////////////////////////////////////
 // Clean up a few unimportant things that give warnings
 
@@ -68,6 +103,9 @@
 %ignore yarp::os::Property::put(const char *,Value *);
 %ignore yarp::os::Bottle::add(Value *);
 %rename(toString) yarp::os::ConstString::operator const char *() const;
+%rename(isEqual) *::operator==;
+%rename(notEqual) *::operator!=;
+%rename(access) *::operator();
 %ignore yarp::os::PortReader::read;
 
 // Deal with some clash in perl involving the name "seed"
@@ -148,16 +186,20 @@ typedef int yarp::os::NetInt32;
 %include <yarp/os/Time.h>
 %include <yarp/sig/Image.h>
 %include <yarp/sig/Sound.h>
+%template(BottleCallback) yarp::os::TypedReaderCallback<yarp::os::Bottle>;
+%include <yarp/os/IConfig.h>
+%include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
 %include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 
-namespace std {
-   %template(DVector) vector<double>;
-   %template(PidVector) vector<yarp::dev::Pid>;
-};
+%template(DVector) std::vector<double>;
+#if defined(SWIGCSHARP)
+	SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+#endif
+%template(PidVector) std::vector<yarp::dev::Pid>;
 
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour

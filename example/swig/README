@@ -94,22 +94,29 @@ And set "CREATE_CSHARP" to true.
 Run:
   make
 
-You should now have libcsyarp.so and a whole lot of .cs files
+You should now have libyarp.so and a whole lot of .cs files
 
-The .cs files are not quite correct, you need to run:
-  ./csharp-fix.pl
-to fix them up (problems with multiple inheritance mismatch)
-You need the "mcs" compiler for this script to work.  If you're
-on windows, it might be easier to borrow a linux laptop for this
-step.  Alternatively, manually fix the problems (there are cases
-where "override" is specified rather than "virtual").
+Now either do something like one of:
+  setenv LD_LIBRARY_PATH $PWD:$LD_LIBRARY_PATH
+  export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 
-At the time of writing, there are also a few errors related to the
-PidVector class.  One solution is to just remove that and all 
-references to it.
+There used be some issues that are now fixed; solution preserved
+just in case they recur
+
+OLD>  The .cs files are not quite correct, you need to run:
+OLD>  ./csharp-fix.pl
+OLD> to fix them up (problems with multiple inheritance mismatch)
+OLD> You need the "mcs" compiler for this script to work.  If you're
+OLD> on windows, it might be easier to borrow a linux laptop for this
+OLD> step.  Alternatively, manually fix the problems (there are cases
+OLD> where "override" is specified rather than "virtual").
+OLD>
+OLD> At the time of writing, there are also a few errors related to the
+OLD> PidVector class.  One solution is to just remove that and all 
+OLD> references to it.
 
 Now try:
-  mcs -out:example *.cs
+  mcs -out:example.exe *.cs
 or whatever your compiler is.  If it works, then:
   ./example.exe
 should do something yarpy.

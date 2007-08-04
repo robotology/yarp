@@ -79,9 +79,9 @@ IF (CREATE_CSHARP)
    # outdir does not seem to work?
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
    IF (WIN32 AND NOT CYGWIN)
-      SWIG_ADD_MODULE(csyarp csharp yarp.i)
+      SWIG_ADD_MODULE(yarp csharp yarp.i)
    ELSE(WIN32 AND NOT CYGWIN)
-      SWIG_ADD_MODULE(libcsyarp csharp yarp.i)
+      SWIG_ADD_MODULE(libyarp csharp yarp.i)
    ENDIF (WIN32 AND NOT CYGWIN)
 ENDIF (CREATE_CSHARP)
 
