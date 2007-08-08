@@ -18,6 +18,7 @@
 # Modified by macl
 #
 
+
 # Included in yarp by nat March 07.
 # Some changes to account for different include dirs.
 # TODO: check if it works on linux.
@@ -41,6 +42,15 @@ IF (EXISTS "$ENV{GSL_DIR}")
   SET(GSL_POSSIBLE_LIBRARY_PATHS
 	"$ENV{GSL_DIR}/lib")
 ENDIF (EXISTS "$ENV{GSL_DIR}")
+
+IF (GSL_DIR)
+  SET(GSL_POSSIBLE_INCDIRS
+	"${GSL_DIR}/include"
+	"${GSL_DIR}")
+  
+  SET(GSL_POSSIBLE_LIBRARY_PATHS
+	"${GSL_DIR}/lib")
+ENDIF (GSL_DIR)
 
 FIND_PATH(GSL_BLAS_HEADER gsl/gsl_blas.h  
 	${GSL_POSSIBLE_INCDIRS} 
@@ -76,10 +86,24 @@ SET (GSL_MARK)
 
 IF (GSL_FOUND)
   # nothing to say
+  IF (NOT GSL_DIR)
+	MARK_AS_ADVANCED(GSL_DIR)
+  ENDIF (NOT GSL_DIR)
 ELSE (GSL_FOUND)
-  SET (GSL_MARK CLEAR)
+  SET (GSL_DIR "" CACHE PATH "Location of GSL")
   IF (GSL_FIND_REQUIRED OR GSL_DIR)
-    MESSAGE(FATAL_ERROR "GSL library or headers not found."
+    SET (GSL_MARK CLEAR)
+    MARK_AS_ADVANCED(
+      ${GSL_MARK}
+      GSL_INCLUDE_DIR
+      GSL_LINK_DIRECTORIES
+      GSL_LIBRARIES
+      GSLCBLAS_LIBRARIES
+      GSLCBLAS_LIBRARY
+      GSL_BLAS_HEADER
+      GSL_LIBRARY
+    )
+    MESSAGE(FATAL_ERROR "GSL library or headers not found. "
             "Please search manually or set env. variable GSL_DIR to guide search." )
   ENDIF (GSL_FIND_REQUIRED OR GSL_DIR)  
 ENDIF (GSL_FOUND)
