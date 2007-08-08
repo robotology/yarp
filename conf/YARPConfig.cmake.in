@@ -1,5 +1,5 @@
 
-MESSAGE(STATUS "YARP configuration")
+MESSAGE(STATUS "Using YARP")
 
 SET(YARP_LIBRARIES "@YARP_LIBRARIES@" CACHE INTERNAL "Libraries needed for YARP")
 SET(YARP_INCLUDES "@YARP_INCLUDES@" CACHE INTERNAL "Include directories needed for YARP")
