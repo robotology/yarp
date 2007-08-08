@@ -5,12 +5,14 @@ echo "These can get left behind if processes crash"
 
 for f in `yarp name list | sed "s/registration name //" | sed "s/ .*//" | sed "s/\\*//g" | grep -v "/quit" | grep -v "fallback" | grep -v "\\-\\-"`; do
 	echo "Port $f"
-	if timeout 10 yarp exists $f; then
-	    echo "  it is ok"
+	timeout 10 yarp ping $f > port.report.txt
+	if grep -iq "This is" port.report.txt; then
+	    echo "  $f is ok"
 	else
-	    echo "  $f does not exist"
+	    echo "  $f is not ok"
 	    yarp name unregister $f
 	fi
+	rm -f port.report.txt
 done
 
 
