@@ -30,5 +30,6 @@
 #include<yarp/dev/TestFrameGrabber.h>
 #include<yarp/dev/TestMotor.h>
 //#include<yarp/dev/ServerSerial.h>
+#include<yarp/dev/GPUInterface.h>
 
 #endif

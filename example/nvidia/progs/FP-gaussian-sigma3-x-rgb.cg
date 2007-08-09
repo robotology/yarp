@@ -1,0 +1,102 @@
+/**
+ * This file is part of the OpenVIDIA project at http://openvidia.sf.net
+ * Copyright (C) 2004, James Fung
+ *
+ * OpenVIDIA is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * OpenVIDIA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with OpenVIDIA; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ **/
+
+void FragmentProgram(
+    const uniform  float4 thresh ,
+    in float2 fptexCoord : TEXCOORD0,
+    in float2 fptexCoord1 : TEXCOORD1,
+    in float2 fptexCoord2 : TEXCOORD2,
+    in float2 fptexCoord3 : TEXCOORD3,
+    in float2 fptexCoord4 : TEXCOORD4,
+    in float2 fptexCoord5 : TEXCOORD5,
+    in float2 fptexCoord6 : TEXCOORD6,
+    in float2 fptexCoord7 : TEXCOORD7,
+    out float4 colorO       : COLOR0,
+    in float4 wpos : WPOS,
+    const uniform samplerRECT FPE1: TEXUNIT0 )
+//    const uniform samplerRECT FPE2: TEXUNIT1 )
+{
+//    if( texRECT( FPE2, fptexCoord ).x < 0.9 ) discard;
+    //gaussian filter kernel
+    float4 filt_a = {0.00147945167871,   
+                     0.00380423901867,   
+                     0.00875346226514,   
+                     0.01802341114108 };   
+    float4 filt_b = {0.03320772876259,    
+                     0.05475028876252,
+                     0.08077532472119,
+                     0.10663900118034 };
+    float2 filt_c = {0.12597909446199,   
+                     0.13317599601554 };
+
+    float4 sumcolor;
+    float3 sum = float3(0.0, 0.0, 0.0);
+
+    sum += filt_a.xxx*texRECT(FPE1, fptexCoord+float2(-9,0)).rgb;
+    sum += filt_a.yyy*texRECT(FPE1, fptexCoord+float2(-8,0)).rgb;
+    sum += filt_a.zzz*texRECT(FPE1, fptexCoord+float2(-7,0)).rgb;
+    sum += filt_a.www*texRECT(FPE1, fptexCoord+float2(-6,0)).rgb;
+
+    sum += filt_b.xxx*texRECT(FPE1, fptexCoord+float2(-5,0)).rgb;
+    sum += filt_b.yyy*texRECT(FPE1, fptexCoord+float2(-4,0)).rgb;
+    sum += filt_b.zzz*texRECT(FPE1, fptexCoord+float2(-3,0)).rgb;
+    sum += filt_b.www*texRECT(FPE1, fptexCoord+float2(-2,0)).rgb;
+/*
+    float4 offsets = fptexCoord.xxxx + float4(-9,-8,-7,-6);
+    sum += filt_a.xxx*texRECT(FPE1, float2(offsets.x,fptexCoord.y)).rgb;
+    sum += filt_a.yyy*texRECT(FPE1, float2(offsets.y,fptexCoord.y)).rgb;
+    sum += filt_a.zzz*texRECT(FPE1, float2(offsets.z,fptexCoord.y)).rgb;
+    sum += filt_a.www*texRECT(FPE1, float2(offsets.w,fptexCoord.y)).rgb;
+
+    float4 offsets2 = fptexCoord.xxxx + float4(-5,-4,-3,-2);
+    sum += filt_b.xxx*texRECT(FPE1, float2(offsets2.x,fptexCoord.y)).rgb;
+    sum += filt_b.yyy*texRECT(FPE1, float2(offsets2.y,fptexCoord.y)).rgb;
+    sum += filt_b.zzz*texRECT(FPE1, float2(offsets2.z,fptexCoord.y)).rgb;
+    sum += filt_b.www*texRECT(FPE1, float2(offsets2.w,fptexCoord.y)).rgb;
+*/
+
+
+
+    sum += filt_c.xxx*texRECT(FPE1, fptexCoord+float2(-1,0)).rgb;
+    sum += filt_c.yyy*texRECT(FPE1, fptexCoord).rgb;
+    //sum += filt_c.xxx*texRECT(FPE1, fptexCoord+float2( 1,0)).rgb;
+    sum += filt_c.xxx*texRECT(FPE1, fptexCoord1).rgb;
+
+
+    //sum += filt_b.www*texRECT(FPE1, fptexCoord+float2( 2,0)).rgb;
+    sum += filt_b.www*texRECT(FPE1, fptexCoord2).rgb;
+    //sum += filt_b.zzz*texRECT(FPE1, fptexCoord+float2( 3,0)).rgb;
+    sum += filt_b.zzz*texRECT(FPE1, fptexCoord3).rgb;
+    sum += filt_b.yyy*texRECT(FPE1, fptexCoord4).rgb;
+    //sum += filt_b.xxx*texRECT(FPE1, fptexCoord+float2( 5,0)).rgb;
+    sum += filt_b.xxx*texRECT(FPE1, fptexCoord5).rgb;
+
+    //sum += filt_a.www*texRECT(FPE1, fptexCoord+float2( 6,0)).rgb;
+    sum += filt_a.www*texRECT(FPE1, fptexCoord6).rgb;
+    //sum += filt_a.zzz*texRECT(FPE1, fptexCoord+float2( 7,0)).rgb;
+    sum += filt_a.zzz*texRECT(FPE1, fptexCoord7).rgb;
+    sum += filt_a.yyy*texRECT(FPE1, fptexCoord+float2( 8,0)).rgb;
+    sum += filt_a.xxx*texRECT(FPE1, fptexCoord+float2( 9,0)).rgb;
+
+
+
+    //colorO = float4(0.0, 1.0, 0.0, 0.0);
+    colorO.xyz = sum.xyz;
+    colorO.w = 0.0;
+}

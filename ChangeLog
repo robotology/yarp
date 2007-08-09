@@ -1,4 +1,10 @@
-2007-08-03  Paul Fitzpatrick  <paulfitz@icub-b6.icub.humanoids.iit.it>
+2007-08-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: checked in
+	this and a set of nvidia-related files for Giacomo Spigler,
+	which gives a basic GPU interface for nvidia hardware.
+
+2007-08-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/DgramTwoWayStream.cpp: a set of changes
 	to better control multicast routing when multiple interfaces

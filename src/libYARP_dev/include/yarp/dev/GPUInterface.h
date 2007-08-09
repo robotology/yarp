@@ -1,0 +1,64 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2007 Giacomo Spigler
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ */
+
+#ifndef __YARPGPUINTERFACES__
+#define __YARPGPUINTERFACES__
+
+#include <yarp/dev/DeviceDriver.h>
+
+/*! \file GPUInterface.h define interfaces for a generic GPU*/
+
+namespace yarp {
+    namespace dev {
+        class IGPUDevice;
+    }
+}
+
+/**
+ * @ingroup dev_iface_other
+ *
+ * A generic interface to GPU port devices.
+ */
+class yarp::dev::IGPUDevice {
+public:
+    /**
+     * It changes the dimensions of the current working space (the texture used for communication with the GPU).
+     * @param width the new width
+     * @param height the new height
+     * @return true if successful
+     */
+    virtual bool resize(int width, int height) = 0;
+    /**
+     * It changes the number of bytes per pixel (data matrix element). Matrices are passed as 1D vectors.
+     * @param bytespp the new number of bytes per pixel
+     */
+    virtual void changebpp(int bytespp) = 0;
+    /**
+     * Load a program for the GPU.
+     * @param name the name of the program to load from the HD
+     * @return an object representing the program casted to int (for compatibility purpose)
+     */
+    virtual int load(char *name) = 0;
+    /**
+     * Set a program's argument to 'vector' (1D vector for single values).
+     * @param prg a program
+     * @param name the name of the argument to set
+     * @param vector the value/s to set
+     * @param len the vector's length
+     */
+    virtual void setargument(int prg, char *name, float *vector, int len) = 0;
+    /**
+     * Execute a loaded program on a given matrix (eg: an image).
+     * @param prg a previously loaded program
+     * @param in the matrix containing the data to be processed
+     * @param out the program's results
+     */
+    virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
+};
+
+#endif
+//
