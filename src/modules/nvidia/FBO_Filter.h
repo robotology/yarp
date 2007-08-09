@@ -8,6 +8,8 @@
 #ifdef WIN32
 #include <GL/glew.h>
 #define GLEW_STATIC 1
+#else
+#include <GL/glew.h>
 #endif
 
 #include <assert.h>
@@ -24,21 +26,25 @@
 
 class FBO_Filter {
 protected:
-    void checkProfile(const char *name, CGprofile profile) {
+    void checkProfile(const char *name, CGprofile profile, 
+                      CGprofile highlight = CG_PROFILE_UNKNOWN) {
         CGbool supported = cgGLIsProfileSupported(profile);
-        printf("  profile %s is%s supported.\n", name,
-               supported?"":" not");
+        bool show = (highlight==CG_PROFILE_UNKNOWN)||(highlight==profile);
+        if (show) {
+            printf("Cg profile %s is%s supported.\n", name,
+                   supported?"":" not");
+        }
     } 
 
-    void checkProfiles() {
-        checkProfile("vp20", CG_PROFILE_VP20);
-        checkProfile("fp20", CG_PROFILE_FP20);
-        checkProfile("vp30", CG_PROFILE_VP30);
-        checkProfile("fp30", CG_PROFILE_FP30);
-        checkProfile("vp40", CG_PROFILE_VP40);
-        checkProfile("fp40", CG_PROFILE_FP40);
-        checkProfile("arbvp1", CG_PROFILE_ARBVP1);
-        checkProfile("arbfp1", CG_PROFILE_ARBFP1); 
+    void checkProfiles(CGprofile highlight = CG_PROFILE_UNKNOWN) {
+        checkProfile("vp20", CG_PROFILE_VP20, highlight);
+        checkProfile("fp20", CG_PROFILE_FP20, highlight);
+        checkProfile("vp30", CG_PROFILE_VP30, highlight);
+        checkProfile("fp30", CG_PROFILE_FP30, highlight);
+        checkProfile("vp40", CG_PROFILE_VP40, highlight);
+        checkProfile("fp40", CG_PROFILE_FP40, highlight);
+        checkProfile("arbvp1", CG_PROFILE_ARBVP1, highlight);
+        checkProfile("arbfp1", CG_PROFILE_ARBFP1, highlight); 
     }
 
     void checkCg(const char *act) {
@@ -49,8 +55,6 @@ protected:
             printf("nvidia device - %s: %s\n", act, str);
             if (error == CG_COMPILER_ERROR) {
                 printf("  %s\n", cgGetLastListing(cgContext));
-                printf("\n");
-                checkProfiles();
             }
             exit(1);
         } else {
@@ -176,6 +180,8 @@ FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H
         if (cgp==CG_PROFILE_UNKNOWN) {
             checkProfiles();
             printf("Cannot get a \"fragment\" CG profile for this hardware\n");
+        } else {
+            checkProfiles(cgp);
         }
     }
 
@@ -197,13 +203,25 @@ FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H
 
     tWidth = W; tHeight = H;
 
+
+    if (glewGetExtension("GL_EXT_framebuffer_object") != GL_TRUE) {
+        printf("GL_EXT_framebuffer_object extension needed but not supported\n");
+        exit(1);
+    } 
+
     //create the framebuffer object.
     oTex = outputTex ;
+    printf("at %s %d\n", __FILE__, __LINE__);
     glGenFramebuffersEXT(1, &fb);
+    printf("at %s %d\n", __FILE__, __LINE__);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+    printf("at %s %d\n", __FILE__, __LINE__);
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, oTex);
+    printf("at %s %d\n", __FILE__, __LINE__);
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,               GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_NV, oTex, 0);
+    printf("at %s %d\n", __FILE__, __LINE__);
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+    printf("at %s %d\n", __FILE__, __LINE__);
 }
 
 GLuint FBO_Filter::apply(GLuint iTex, bool FBOtex, GLenum rb_fmt, GLenum rb_type) {

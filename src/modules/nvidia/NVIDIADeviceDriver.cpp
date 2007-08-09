@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <GL/glew.h>
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/glu.h>
@@ -43,6 +44,7 @@ bool NVIDIAGPU::open(int w, int h, int bytespp) {
       int argc=0;
       char **argv;
       glutInit(&argc, argv);
+      glewInit();
 
       glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
       glutInitWindowSize(w, h);
