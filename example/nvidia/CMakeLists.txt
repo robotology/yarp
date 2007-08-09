@@ -1,5 +1,5 @@
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "$ENV{YARP_ROOT}")
+# replace with the path to your YARP binaries if needed
+SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 
 FIND_PACKAGE(YARP REQUIRED)
 
@@ -9,4 +9,7 @@ LINK_DIRECTORIES(${OPENCV_LINK_DIRECTORIES})
 LINK_LIBRARIES(${OPENCV_LIBRARIES})
 
 LINK_LIBRARIES(pthread GL glut CgGL)
+IF (NOT WINDOWS)
+LINK_LIBRARIES(GLEW)   
+ENDIF (NOT WINDOWS)
 ADD_EXECUTABLE(nvidia_gpu nvidia_gpu.cpp)
