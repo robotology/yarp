@@ -294,8 +294,29 @@ targ $TARGET\n\
             checkEqual(p.findGroup("base").find("z").asInt(),3,"z is ok");
             checkEqual(p.findGroup("base").find("w").asInt(),4,"w is ok");
         }
+    }
 
 
+    virtual void checkCommand() {
+        report(0,"checking command line parsing");
+        char *argv[] = { 
+            "program",
+            "--on",
+            "/server",
+            "--cmd",
+            "\"ls foo\""
+        };
+        int argc = 5;
+        Property p;
+        p.fromCommand(argc,argv);
+        ConstString target1 = "(cmd \"ls foo\") (on \"/server\")";
+        ConstString target2 = "(on \"/server\") (cmd \"ls foo\")";
+        ConstString actual = p.toString();
+        if (actual==target1) {
+            checkEqual(actual.c_str(),target1.c_str(),"command ok");
+        } else {
+            checkEqual(actual.c_str(),target2.c_str(),"command ok");
+        }
     }
 
     virtual void runTests() {
@@ -310,6 +331,7 @@ targ $TARGET\n\
         checkWipe();
         checkBackslashPath();
         checkIncludes();
+        checkCommand();
     }
 };
 
