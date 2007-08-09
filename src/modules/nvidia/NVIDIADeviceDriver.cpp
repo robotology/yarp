@@ -15,7 +15,7 @@
 #include <Cg/cg.h>
 #include <Cg/cgGL.h>
 
-#include "FBO_Filter.cc"
+#include "FBO_Filter.h"
 
 #include "NVIDIADeviceDriver.h"
 
