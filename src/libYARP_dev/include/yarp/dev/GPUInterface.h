@@ -25,7 +25,7 @@ namespace yarp {
  */
 class yarp::dev::IGPUDevice {
 public:
-    virtual ~GPUInterface() {}
+    virtual ~IGPUDevice() {}
 
     /**
      * It changes the dimensions of the current working space (the texture used for communication with the GPU).
