@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.5)
-AC_INIT(yarp, 2.1.6, [paulfitz@alum.mit.edu])
+AC_INIT(yarp, 2.1.7, [paulfitz@alum.mit.edu])
 AC_CONFIG_SRCDIR([src/libYARP_OS/src/Address.cpp])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([src/libYARP_OS/include/yarp/conf/yarp-config.h])
