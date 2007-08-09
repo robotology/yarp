@@ -25,6 +25,8 @@ namespace yarp {
  */
 class yarp::dev::IGPUDevice {
 public:
+    virtual ~GPUInterface() {}
+
     /**
      * It changes the dimensions of the current working space (the texture used for communication with the GPU).
      * @param width the new width
@@ -58,6 +60,7 @@ public:
      * @param out the program's results
      */
     virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
+
 };
 
 #endif
