@@ -106,7 +106,7 @@ Designed to be used with \ref os/simple_sender.cpp example.
 /**
  * \example os/bottle_add.cpp
 
-How to construct a very simple bottle.
+How to construct a very simple bottle.  See also \ref os/browse_bottle.cpp example.
 
 */
 
@@ -197,6 +197,14 @@ Add up numbers received on a port, and send the result back out.
  * \example os/threads.cpp
 
 Demonstrate the basic use of threads.  See also \ref os/ratethread.cpp
+
+*/
+
+
+/**
+ * \example os/browse_bottle.cpp
+
+Demonstrates one way to access bottle objects.  See also \ref os/bottle_add.cpp
 
 */
 
