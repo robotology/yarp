@@ -20,4 +20,5 @@ ADD_EXECUTABLE(image_process_module image_process_module.cpp)
 ADD_EXECUTABLE(ratethread ratethread.cpp)
 ADD_EXECUTABLE(make_count make_count.cpp)
 ADD_EXECUTABLE(view_count view_count.cpp)
+ADD_EXECUTABLE(browse_bottle browse_bottle.cpp)
 
