@@ -1382,6 +1382,10 @@ public:
     virtual bool open(Searchable& config) {
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
+        // mcast is a pretty bad default here :-( 
+        // often won't work for beginners on a laptop.
+        // suggestion: change carrier default and modify your scripts 
+        // -- paulfitz
         ConstString carrier = 
             config.check("carrier",
                          Value("mcast"),
@@ -1418,6 +1422,10 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
+            // mcast is a pretty bad default here :-( 
+            // often won't work for beginners on a laptop
+            // suggestion: change carrier default and modify your scripts 
+            // -- paulfitz
             Network::connect(s1.c_str(), s2.c_str(), carrier);
             //Network::connect(s1.c_str(), s2.c_str(), "udp");
         }

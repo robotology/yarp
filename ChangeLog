@@ -1,3 +1,10 @@
+2007-08-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: recent changes
+	here seemed to force use of mcast for streaming data; added a
+	"carrier" option so this can be overridden (mcast is sometimes
+	not available)
+
 2007-08-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: checked in
