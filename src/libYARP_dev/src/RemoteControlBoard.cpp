@@ -1382,6 +1382,10 @@ public:
     virtual bool open(Searchable& config) {
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
+        ConstString carrier = 
+            config.check("carrier",
+                         Value("mcast"),
+                         "default carrier for streaming robot state").asString().c_str();
         if (local != "") {
             String s1 = local;
             s1 += "/rpc:o";
@@ -1400,6 +1404,9 @@ public:
             String s2 = local;
             s2 += "/rpc:o";
             // connect twice for RPC ports.
+            // (NOTE FROM paulfitz: you don't actually need to connect twice
+            // for rpc, if the rpc commands are being initiated from just
+            // one side)
             Network::connect(s2.c_str(), s1.c_str());
             Network::connect(s1.c_str(), s2.c_str());
             s1 = remote;
@@ -1411,7 +1418,7 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            Network::connect(s1.c_str(), s2.c_str(), "mcast");
+            Network::connect(s1.c_str(), s2.c_str(), carrier);
             //Network::connect(s1.c_str(), s2.c_str(), "udp");
         }
         

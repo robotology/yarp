@@ -4,7 +4,6 @@
 #include <yarp/os/Vocab.h>
 using namespace yarp::os;
 
-
 void showBottle(Bottle& anUnknownBottle, int indentation = 0) {
     for (int i=0; i<anUnknownBottle.size(); i++) {
         for (int j=0; j<indentation; j++) { printf(" "); }
