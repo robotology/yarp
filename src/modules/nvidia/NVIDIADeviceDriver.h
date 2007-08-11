@@ -45,6 +45,6 @@ public:
 
     void setargument(int prg, char *name, float *vector, int len);
 
-    void execute(int prg, unsigned char *in, unsigned char *out);
+    void execute(int prg, unsigned char *in, unsigned char *out, int type=GL_UNSIGNED_BYTE);
 };
 

@@ -92,20 +92,21 @@ void NVIDIAGPU::setargument(int prg, char *name, float *vector, int len) {
 }
 
 
-void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
+//Actually in and out type's is the same!
+void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out, int type) {
     GPUProgram prog=(GPUProgram)prg;
 
     // Build the texture representing inputs
     glGenTextures(1, &(this->tex));
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, GL_UNSIGNED_BYTE, in);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, type, in);
 
-    prog->apply(this->tex, true);
+    prog->apply(this->tex, true, oglformat);
 
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
 
-    glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, GL_UNSIGNED_BYTE, out);
+    glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, type, out);
 }
 
 
