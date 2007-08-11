@@ -5,6 +5,14 @@
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  */
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <Cg/cg.h>
+#include <Cg/cgGL.h>
+
 #include <yarp/os/all.h>
 #include <yarp/dev/all.h>
 #include <yarp/sig/all.h>

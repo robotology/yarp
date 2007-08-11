@@ -59,7 +59,7 @@ public:
      * @param in the matrix containing the data to be processed
      * @param out the program's results
      */
-    virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
+    virtual void execute(int prg, unsigned char *in, unsigned char *out, int type) = 0;
 
 };
 
