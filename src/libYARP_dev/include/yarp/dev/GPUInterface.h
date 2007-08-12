@@ -40,6 +40,11 @@ public:
      */
     virtual void changebpp(int bytespp) = 0;
     /**
+     * It changes the size of each pixel (the type each pixel's element is). 
+     * @param newtype the new pixel's elements type (cfr. enum YarpVocabPixelTypesEnum under image.h)
+     */
+    virtual void changetype(int newtype) = 0;
+    /**
      * Load a program for the GPU.
      * @param name the name of the program to load from the HD
      * @return an object representing the program casted to int (for compatibility purpose)
@@ -59,7 +64,7 @@ public:
      * @param in the matrix containing the data to be processed
      * @param out the program's results
      */
-    virtual void execute(int prg, unsigned char *in, unsigned char *out, int type) = 0;
+    virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
 
 };
 

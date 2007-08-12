@@ -26,17 +26,26 @@ CGprofile GPUProfile=CG_PROFILE_FP30;
 //CGprofile GPUProfile=CG_PROFILE_FP40;
 
 
-bool NVIDIAGPU::open(int w, int h, int bytespp) {
+bool NVIDIAGPU::open(int w, int h, int bytespp, int elemtype) {
     this->w=w;
     this->h=h;
-    this->bpp=bytespp;
 
-    if(bytespp==1){
-        oglformat=GL_LUMINANCE;
-    }else if(bytespp==3){
-        oglformat=GL_RGB;
-    }else if(bytespp==4){
-        oglformat=GL_RGBA;
+    if(bytespp==1) {
+        oglformat = GL_LUMINANCE;
+    } else if(bytespp==3) {
+        oglformat = GL_RGB;
+    } else if(bytespp==4) {
+        oglformat = GL_RGBA;
+    }
+
+    if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR) {
+      ogltype = GL_UNSIGNED_BYTE;
+    } else if(elemtype==VOCAB_PIXEL_INT) {
+      ogltype = GL_INT;
+    } else if(elemtype==VOCAB_PIXEL_MONO_SIGNED || elemtype==VOCAB_PIXEL_RGB_SIGNED) {
+      ogltype = GL_BYTE;
+    } else if(elemtype==VOCAB_PIXEL_MONO_FLOAT || elemtype==VOCAB_PIXEL_RGB_FLOAT || elemtype==VOCAB_PIXEL_HSV_FLOAT) {
+      ogltype = GL_FLOAT;
     }
 
     if(this->w>0 && this->h>0) {
@@ -44,17 +53,18 @@ bool NVIDIAGPU::open(int w, int h, int bytespp) {
       int argc=0;
       char **argv;
       glutInit(&argc, argv);
-      glewInit();
 
       glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
       glutInitWindowSize(w, h);
       glutCreateWindow("");
       glutHideWindow();
 
+      glewInit();
+
       //Build the needed textures (the working space for the GPU)
       glGenTextures(1, &(this->oTex));
       glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
-      glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, GL_UNSIGNED_BYTE, NULL);
+      glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, NULL);
     }
 
     return w>0 && h>0;
@@ -66,7 +76,7 @@ bool NVIDIAGPU::resize(int width, int height) {
     this->h=height;
 
     if(this->w>0 && this->h>0) {
-      glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, GL_UNSIGNED_BYTE, NULL);
+      glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, NULL);
     }
 
     return w>0 && h>0;
@@ -93,20 +103,20 @@ void NVIDIAGPU::setargument(int prg, char *name, float *vector, int len) {
 
 
 //Actually in and out type's is the same!
-void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out, int type) {
+void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
     GPUProgram prog=(GPUProgram)prg;
 
     // Build the texture representing inputs
     glGenTextures(1, &(this->tex));
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex);
-    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, type, in);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, in);
 
-    prog->apply(this->tex, true, oglformat);
+    prog->apply(this->tex, true, oglformat, ogltype);
 
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
 
-    glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, type, out);
+    glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, ogltype, out);
 }
 
 

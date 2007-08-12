@@ -19,15 +19,16 @@
 
 class NVIDIAGPU : public yarp::dev::IGPUDevice, public yarp::dev::DeviceDriver {
 private:
-    int w, h, bpp;
+    int w, h;
     int oglformat;
+    int ogltype;
     unsigned int tex, oTex;
 public:
     NVIDIAGPU() {
         h = w = 0;
     }
 
-    bool open(int w, int h, int bytespp);
+    bool open(int w, int h, int bytespp, int elemtype);
 
     virtual bool open(yarp::os::Searchable& config) { 
         // -extract width and height configuration, if present
@@ -36,7 +37,8 @@ public:
         int desiredWidth = config.check("w",yarp::os::Value(256)).asInt();
         int desiredHeight = config.check("h",yarp::os::Value(256)).asInt();
         int desiredBytes = config.check("bpp",yarp::os::Value(4)).asInt();
-        return open(desiredWidth,desiredHeight, desiredBytes);
+        int desiredType =  config.check("type",yarp::os::Value(VOCAB_PIXEL_RGB)).asInt();
+        return open(desiredWidth, desiredHeight, desiredBytes, desiredType);
     }
 
     virtual bool close() { 
@@ -44,7 +46,25 @@ public:
     }
 
     virtual void changebpp(int bytespp) {
-      this->bpp=bytespp;
+        if(bytespp==1) {
+            oglformat = GL_LUMINANCE;
+        } else if(bytespp==3) {
+            oglformat = GL_RGB;
+        } else if(bytespp==4) {
+            oglformat = GL_RGBA;
+        }
+    }
+
+    virtual void changetype(int elemtype) {
+        if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR) {
+          ogltype = GL_UNSIGNED_BYTE;
+        } else if(elemtype==VOCAB_PIXEL_INT) {
+          ogltype = GL_INT;
+        } else if(elemtype==VOCAB_PIXEL_MONO_SIGNED || elemtype==VOCAB_PIXEL_RGB_SIGNED) {
+          ogltype = GL_BYTE;
+        } else if(elemtype==VOCAB_PIXEL_MONO_FLOAT || elemtype==VOCAB_PIXEL_RGB_FLOAT || elemtype==VOCAB_PIXEL_HSV_FLOAT) {
+          ogltype = GL_FLOAT;
+        }
     }
 
     bool resize(int width, int height);
@@ -53,6 +73,6 @@ public:
 
     void setargument(int prg, char *name, float *vector, int len);
 
-    void execute(int prg, unsigned char *in, unsigned char *out, int type=GL_UNSIGNED_BYTE);
+    void execute(int prg, unsigned char *in, unsigned char *out);
 };
 
