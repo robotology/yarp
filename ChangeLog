@@ -1,10 +1,11 @@
-2007-08-11  Giacomo Spigler  <spiglerg@gmail.com>
+2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
 
 	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: these 2 files 
 	needed a little fix to allow the usage of textures containing 
 	float, int, .. values. Before this fix only 0-255 values where 
-	accepted. Look at NVIDIAGPU::execute for the new argument (type, 
-	eg: GL_UNSIGNED_BYTE)
+	accepted.
+	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: this file was
+	modified to introduce the new feature.
 
 2007-08-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
