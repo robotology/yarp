@@ -9,6 +9,7 @@
 #define __YARPGPUINTERFACES__
 
 #include <yarp/dev/DeviceDriver.h>
+#include <yarp/sig/Image.h>
 
 /*! \file GPUInterface.h define interfaces for a generic GPU*/
 
@@ -65,7 +66,13 @@ public:
      * @param out the program's results
      */
     virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
-
+    /**
+     * Execute a loaded program on a given matrix (eg: an image).
+     * @param prg a previously loaded program
+     * @param in the sig::ImageOf containing the data to be processed
+     * @param out the program's results (sig::ImageOf)
+     */
+    virtual void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) = 0;
 };
 
 #endif
