@@ -26,10 +26,8 @@ int main(int argc, char *argv[]) {
     //Instantiate the GPU driver
     ImageOf<PixelRgb> img;
     yarp::sig::file::read(img, "../dev/image/img0250.ppm");
-    unsigned char *buf = img.getRawImage();
 
     ImageOf<PixelRgb> out=img;
-    unsigned char *outb = out.getRawImage();
 
 
     // use YARP to create and configure an instance of NVIDIAGPU
@@ -60,7 +58,7 @@ int main(int argc, char *argv[]) {
         prog = gpu->load(argv[1]);
     }
     write(out,"test0.ppm");
-    gpu->execute(prog, buf, outb);
+    gpu->execute(prog, &img, &out);
     write(out,"test1.ppm");
 
     //Show the resulting image onto the screen using OpenCV
