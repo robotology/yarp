@@ -16,6 +16,10 @@
 #include <Cg/cg.h>
 #include <Cg/cgGL.h>
 
+#include <yarp/os/all.h>
+#include <yarp/dev/all.h>
+#include <yarp/sig/all.h>
+
 #include "FBO_Filter.h"
 
 #include "NVIDIADeviceDriver.h"
@@ -117,6 +121,14 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
 
     glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, ogltype, out);
+}
+
+
+void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) {
+    unsigned char *buf = in->getRawImage();
+    unsigned char *outb = out->getRawImage();
+
+    this->execute(prg, buf, outb);
 }
 
 
