@@ -11,10 +11,13 @@
 
 #include <yarp/AbstractCarrier.h>
 
-#include <yarp/ShmemTwoWayStream.h>
+// removing old shmem version
+// #include <yarp/ShmemTwoWayStream.h>
 
 // new shmem implementation from Alessandro
 #include <yarp/ShmemHybridStream.h>
+
+#include <ace/OS.h>
 
 namespace yarp {
     class ShmemCarrier;
@@ -100,7 +103,7 @@ public:
     }
     */
 
-
+    /*
     void becomeShmemVersionTwoWayStream(Protocol& proto, bool sender) {
         ShmemTwoWayStream *stream = new ShmemTwoWayStream();
         YARP_ASSERT(stream!=NULL);
@@ -130,6 +133,7 @@ public:
             throw e;
         }
     }
+    */
 
     void becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
         ShmemHybridStream *stream = new ShmemHybridStream();
@@ -165,7 +169,9 @@ public:
         if (version==1) {
             // "classic" shmem
             //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
-            becomeShmemVersionTwoWayStream(proto,sender);
+            //becomeShmemVersionTwoWayStream(proto,sender);
+            ACE_OS::printf("Classic shmem no longer exists\n");
+            ACE_OS::exit(1);
 
         } else {
             // experimental shmem

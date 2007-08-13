@@ -7,6 +7,12 @@
  */
 
 
+// this whole class removed
+// not needed anymore, and triggers a strange ACE static object issue
+// during compiles on certain Fedora systems.
+
+#if 0
+
 #include <yarp/ShmemTwoWayStream.h>
 #include <yarp/NetType.h>
 #include <yarp/IOException.h>
@@ -165,3 +171,5 @@ void ShmemTwoWayStream::beginPacket() {
 
 void ShmemTwoWayStream::endPacket() { 
 }
+
+#endif
