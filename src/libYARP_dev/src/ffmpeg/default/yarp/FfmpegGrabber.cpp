@@ -288,7 +288,8 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
     iformat = av_find_input_format("video4linux");
 
     return (av_open_input_file(ppFormatCtx,
-                               "", iformat, 0, &formatParams)==0);
+                               formatParams.device, iformat, 0, 
+                               &formatParams)==0);
 
 }
 
