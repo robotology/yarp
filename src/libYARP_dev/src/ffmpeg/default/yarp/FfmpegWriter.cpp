@@ -80,8 +80,12 @@ using namespace yarp::sig::file;
 /* audio output */
 
 float t, tincr, tincr2;
+
 int16_t *samples;
 int samples_size;
+int samples_at;
+int samples_channels;
+
 uint8_t *audio_outbuf;
 int audio_outbuf_size;
 int audio_input_frame_size;
@@ -158,8 +162,16 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     } else {
         audio_input_frame_size = c->frame_size;
     }
-    sampleSize = audio_input_frame_size * c->channels;
-    samples = (int16_t*)av_malloc(samples_size*2);
+    samples_size = audio_input_frame_size;
+    samples_at = 0;
+    samples_channels = c->channels;
+    samples = (int16_t*)av_malloc(samples_size*2*samples_channels);
+
+
+    printf("FRAME SIZE is %d / samples size is %d\n", 
+           c->frame_size,
+           samples_size);
+    exit(1);
 }
 
 /* prepare a 16 bit dummy audio frame of 'frame_size' samples and
@@ -203,6 +215,67 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st)
     } else {
         printf("Wrote some audio\n");
     }
+}
+
+static void write_audio_frame(AVFormatContext *oc, AVStream *st, Sound& snd)
+{
+    printf("Preparing to write audio (%d left over)\n", samples_at);
+    AVCodecContext *c;
+    int key = 1;
+
+    c = st->codec;
+
+    int at = 0;
+    while (at<snd.getSamples()) {
+        
+        int avail = samples_size - samples_at;
+        int remain = snd.getSamples() - at;
+        int chan = snd.getChannels();
+        if (remain<avail) { avail = remain; }
+        for (int i=0; i<avail; i++) {
+            int offset = samples_at*samples_channels;
+            for (int j=0; j<samples_channels; j++) {
+                samples[offset+j] = snd.get(at,j%chan);
+            }
+            samples_at++;
+            at++;
+        }
+        avail = samples_size - samples_at;
+    
+        if (avail==0) {
+            AVPacket pkt;
+            av_init_packet(&pkt);
+            pkt.size= avcodec_encode_audio(c, 
+                                           audio_outbuf, 
+                                           audio_outbuf_size, 
+                                           samples);
+        
+            pkt.pts= av_rescale_q(c->coded_frame->pts, c->time_base, 
+                                  st->time_base);
+            pkt.dts = pkt.pts;
+            //printf("(%d)", pkt.size);
+            if (key) {
+                pkt.flags |= PKT_FLAG_KEY;
+                key = 0;
+            }
+            pkt.stream_index= st->index;
+            pkt.data = audio_outbuf;
+            pkt.duration = 0;
+            
+            
+            /* write the compressed frame in the media file */
+            printf("+");
+            fflush(stdout);
+            if (av_write_frame(oc, &pkt) != 0) {
+                fprintf(stderr, "Error while writing audio frame\n");
+                exit(1);
+            } else {
+                printf(".");
+            }
+            samples_at = 0;
+        }
+    }
+    printf(" wrote audio\n");
 }
 
 static void close_audio(AVFormatContext *oc, AVStream *st)
@@ -643,7 +716,11 @@ bool FfmpegWriter::putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image
         savedConfig.put("audio",Value(1));
     }
     if (!isOk()) { return false; }
-    return putImage(image);
+
+    /* write interleaved audio and video frames */
+    write_video_frame(oc, video_st, image);
+    write_audio_frame(oc, audio_st, sound);
+    return true;
 }
 
 
