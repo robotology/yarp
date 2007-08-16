@@ -71,14 +71,46 @@ bool DevicePipe::close() {
 
 bool DevicePipe::updateService() {
     IFrameGrabberImage *imgSource;
-    IFrameWriterImage *imgSink;
     IAudioGrabberSound *sndSource;
+    IAudioVisualGrabber *imgSndSource;
+    IAudioVisualStream *sourceType;
+
     IAudioRender *sndSink;
+    IFrameWriterImage *imgSink;
+    IFrameWriterAudioVisual *imgSndSink;
+    IAudioVisualStream *sinkType;
+
     source.view(imgSource);
     source.view(sndSource);
+    source.view(imgSndSource);
+    source.view(sourceType);
+
     sink.view(imgSink);
     sink.view(sndSink);
-    if (imgSource!=NULL&&imgSink!=NULL) {
+    sink.view(imgSndSink);
+    sink.view(sinkType);
+
+    if (sourceType!=NULL) {
+        if (!(sourceType->hasAudio()&&sourceType->hasVideo())) {
+            imgSndSource = NULL;
+        }
+    }
+    if (sinkType!=NULL) {
+        if (!(sinkType->hasAudio()&&sinkType->hasVideo())) {
+            imgSndSink = NULL;
+        }
+    }
+
+
+    if (imgSndSource!=NULL&&imgSndSink!=NULL) {
+        ImageOf<PixelRgb> tmp;
+        Sound tmpSound;
+        imgSndSource->getAudioVisual(tmp,tmpSound);
+        imgSndSink->putAudioVisual(tmp,tmpSound);
+        printf("piped %dx%d image, %dx%d sound\n", 
+               tmp.width(), tmp.height(),
+               tmpSound.getSamples(), tmpSound.getChannels());
+    } else if (imgSource!=NULL&&imgSink!=NULL) {
         ImageOf<PixelRgb> tmp;
         imgSource->getImage(tmp);
         imgSink->putImage(tmp);

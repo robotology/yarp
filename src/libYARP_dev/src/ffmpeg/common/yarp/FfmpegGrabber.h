@@ -46,6 +46,8 @@ public:
         m_h = m_w = 0;
         m_channels = m_rate = 0;
         pFormatCtx = NULL;
+        pFormatCtx2 = NULL;
+        pAudioFormatCtx = NULL;
         packet.data = NULL;
         active = false;
         startTime = 0;
@@ -84,7 +86,8 @@ public:
 protected:
     void *system_resource;
 
-    AVFormatContext *pFormatCtx;
+    AVFormatParameters formatParamsVideo, formatParamsAudio;
+    AVFormatContext *pFormatCtx, *pFormatCtx2, *pAudioFormatCtx;
     AVPacket packet;
     bool active;
     double startTime;
@@ -109,7 +112,8 @@ protected:
                       AVFormatContext **ppFormatCtx);
 
     bool openV4L(yarp::os::Searchable & config, 
-                 AVFormatContext **ppFormatCtx);
+                 AVFormatContext **ppFormatCtx,
+                 AVFormatContext **ppFormatCtx2);
 
     bool openFile(AVFormatContext **ppFormatCtx,
                   const char *fname);

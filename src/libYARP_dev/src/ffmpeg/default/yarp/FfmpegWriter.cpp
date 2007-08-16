@@ -54,7 +54,7 @@ using namespace yarp::sig::file;
 
 #define DBG if (1)
 
-#define OMIT_AUDIO
+//#define OMIT_AUDIO
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -81,6 +81,7 @@ using namespace yarp::sig::file;
 
 float t, tincr, tincr2;
 int16_t *samples;
+int samples_size;
 uint8_t *audio_outbuf;
 int audio_outbuf_size;
 int audio_input_frame_size;
@@ -112,6 +113,7 @@ static AVStream *add_audio_stream(AVFormatContext *oc, CodecID codec_id)
 
 static void open_audio(AVFormatContext *oc, AVStream *st)
 {
+    printf("Opening audio stream\n");
     AVCodecContext *c;
     AVCodec *codec;
 
@@ -120,7 +122,7 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     /* find the audio encoder */
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
-        fprintf(stderr, "codec not found\n");
+        fprintf(stderr, "audio codec not found\n");
         exit(1);
     }
 
@@ -156,7 +158,8 @@ static void open_audio(AVFormatContext *oc, AVStream *st)
     } else {
         audio_input_frame_size = c->frame_size;
     }
-    samples = (int16_t*)av_malloc(audio_input_frame_size * 2 * c->channels);
+    sampleSize = audio_input_frame_size * c->channels;
+    samples = (int16_t*)av_malloc(samples_size*2);
 }
 
 /* prepare a 16 bit dummy audio frame of 'frame_size' samples and
@@ -197,6 +200,8 @@ static void write_audio_frame(AVFormatContext *oc, AVStream *st)
     if (av_write_frame(oc, &pkt) != 0) {
         fprintf(stderr, "Error while writing audio frame\n");
         exit(1);
+    } else {
+        printf("Wrote some audio\n");
     }
 }
 
@@ -284,6 +289,7 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
 
 void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
 {
+    printf("Opening video stream\n");
     AVCodec *codec;
     AVCodecContext *c;
 
@@ -292,7 +298,7 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
     /* find the video encoder */
     codec = avcodec_find_encoder(c->codec_id);
     if (!codec) {
-        fprintf(stderr, "codec not found\n");
+        fprintf(stderr, "video codec not found\n");
         exit(1);
     }
 
@@ -450,6 +456,7 @@ bool FfmpegWriter::open(yarp::os::Searchable & config) {
 
 
 bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
+    //printf("DELAYED OPEN %s\n", config.toString().c_str());
 
     int w = config.check("width",Value(0),
                          "width of image (must be even)").asInt();
@@ -457,6 +464,16 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
                          "height of image (must be even)").asInt();
     int framerate = config.check("framerate",Value(30),
                                  "baseline images per second").asInt();
+    
+    int sample_rate = 0;
+    int channels = 0;
+    bool audio = config.check("audio","should audio be included");
+    if (audio) {
+        sample_rate = config.check("sample_rate",Value(44100),
+                                   "audio samples per second").asInt();
+        channels = config.check("channels",Value(1),
+                                "audio samples per second").asInt();
+    }
 
     filename = config.check("out",Value("movie.avi"),
                             "name of movie to write").asString();
@@ -501,8 +518,22 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
     }
 
 #ifndef OMIT_AUDIO
-    if (fmt->audio_codec != CODEC_ID_NONE) {
-        audio_st = add_audio_stream(oc, fmt->audio_codec);
+    if (audio) {
+        printf("Adding audio %dx%d\n", sample_rate, channels);
+        if (fmt->audio_codec != CODEC_ID_NONE) {
+            audio_st = add_audio_stream(oc, fmt->audio_codec);
+            if (audio_st!=NULL) {
+                AVCodecContext *c = audio_st->codec;
+                c->sample_rate = sample_rate;
+                c->channels = channels;
+            } else {
+                printf("Failed to add audio\n");
+            }
+        } else {
+            printf("No audio codec available\n");
+        }
+    } else {
+        printf("Skipping audio\n");
     }
 #endif
 
@@ -517,10 +548,12 @@ bool FfmpegWriter::delayedOpen(yarp::os::Searchable & config) {
 
     /* now that all the parameters are set, we can open the audio and
        video codecs and allocate the necessary encode buffers */
-    if (video_st)
+    if (video_st) {
         open_video(oc, video_st);
-    if (audio_st)
+    }
+    if (audio_st) {
         open_audio(oc, audio_st);
+    }
 
     /* open the output file, if needed */
     if (!(fmt->flags & AVFMT_NOFILE)) {
@@ -596,6 +629,21 @@ bool FfmpegWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     }
 
     return true;
+}
+
+
+
+bool FfmpegWriter::putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                  yarp::sig::Sound& sound) {
+    if (delayed) {
+        savedConfig.put("width",Value(image.width()));
+        savedConfig.put("height",Value(image.height()));
+        savedConfig.put("sample_rate",Value(sound.getFrequency()));
+        savedConfig.put("channels",Value(sound.getChannels()));
+        savedConfig.put("audio",Value(1));
+    }
+    if (!isOk()) { return false; }
+    return putImage(image);
 }
 
 

@@ -36,7 +36,9 @@ namespace yarp {
  *
  */
 class yarp::dev::FfmpegWriter : public IFrameWriterImage, 
-            public DeviceDriver
+            public IFrameWriterAudioVisual,
+            public DeviceDriver,
+            public IAudioVisualStream
 {
 public:
 
@@ -50,6 +52,14 @@ public:
     virtual bool close();
   
     virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
+
+    virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                yarp::sig::Sound& sound);
+
+
+    virtual bool hasAudio() { return true; }
+
+    virtual bool hasVideo() { return true; }
 
 private:
     void *system_resource;

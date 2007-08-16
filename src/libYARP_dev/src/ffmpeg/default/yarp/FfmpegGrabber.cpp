@@ -17,6 +17,8 @@
 
 #include <stdio.h>
 
+#include <ace/OS.h>
+
 #if LIBAVCODEC_BUILD < 4754
 #error "ffmpeg version is too old, sorry - please download and compile newer version"
 #endif
@@ -29,6 +31,40 @@ using namespace yarp::sig::file;
 
 #define DBG if (0)
 
+
+
+static void print_error(const char *filename, int err) {
+    switch(err) {
+    case AVERROR_NUMEXPECTED:
+        fprintf(stderr, "%s: Incorrect image filename syntax.\n"
+                "Use '%%d' to specify the image number:\n"
+                "  for img1.jpg, img2.jpg, ..., use 'img%%d.jpg';\n"
+                "  for img001.jpg, img002.jpg, ..., use 'img%%03d.jpg'.\n",
+                filename);
+        break;
+    case AVERROR_INVALIDDATA:
+        fprintf(stderr, "%s: Error while parsing header\n", filename);
+        break;
+    case AVERROR_NOFMT:
+        fprintf(stderr, "%s: Unknown format\n", filename);
+        break;
+    case AVERROR(EIO):
+        fprintf(stderr, "%s: I/O error occured\n"
+                "Usually that means that input file is truncated and/or corrupted.\n",
+                filename);
+        break;
+    case AVERROR(ENOMEM):
+        fprintf(stderr, "%s: memory allocation error occured\n", filename);
+        break;
+    case AVERROR(ENOENT):
+        fprintf(stderr, "%s: no such file or directory\n", filename);
+        break;
+    default:
+        fprintf(stderr, "%s: Error while opening file (%d)\n", 
+                filename, err);
+        break;
+    }
+}
 
 class DecoderState {
 public:
@@ -150,9 +186,9 @@ public:
     }
 
     bool allocateSound() {
-        audioBuffer = new int16_t[AVCODEC_MAX_AUDIO_FRAME_SIZE];
+        audioBufferLen = AVCODEC_MAX_AUDIO_FRAME_SIZE*10;
+        audioBuffer = new int16_t[audioBufferLen];
         audioBufferAt = audioBuffer;
-        audioBufferLen = 0;
         printf("channels %d, sample_rate %d, frame_size %d\n",
                pCodecCtx->channels,
                pCodecCtx->sample_rate,
@@ -182,11 +218,20 @@ public:
         int bytesRead = 0;
         int bytesWritten = 0;
         while (bytesRead<packet.size) {
+            ct = audioBufferLen;
+#if LIBAVCODEC_BUILD < 65536
             int r = avcodec_decode_audio(pCodecCtx, 
                                          audioBuffer+bytesWritten, 
                                          &ct,
                                          packet.data+bytesRead, 
                                          packet.size-bytesRead);
+#else
+            int r = avcodec_decode_audio2(pCodecCtx, 
+                                          audioBuffer+bytesWritten, 
+                                          &ct,
+                                          packet.data+bytesRead, 
+                                          packet.size-bytesRead);
+#endif
             if (r<0) {
                 printf("error decoding audio\n");
                 return false;
@@ -263,33 +308,74 @@ public:
 
 
 bool FfmpegGrabber::openV4L(yarp::os::Searchable & config, 
-                            AVFormatContext **ppFormatCtx) {
+                            AVFormatContext **ppFormatCtx,
+                            AVFormatContext **ppFormatCtx2) {
 
-    AVFormatParameters formatParams;
+	bool audio = (ppFormatCtx==NULL);
+    AVFormatParameters& formatParams = 
+        *(audio?(&formatParamsAudio):(&formatParamsVideo));
+
     AVInputFormat *iformat;
-	
-	formatParams.device = strdup(config.check("v4ldevice",
-                                              Value("/dev/video0"),
-                                              "device name").asString().c_str());
-    formatParams.channel = config.check("channel",Value(0),
-                                        "channel identifier").asInt();
-    formatParams.standard = strdup(config.check("standard",
-                                                Value("ntsc"),
-                                                "pal versus ntsc").asString().c_str());
-    formatParams.width = config.check("width",Value(640),"width of image").asInt();
-    formatParams.height = config.check("height",Value(480),"height of image").asInt();
-    formatParams.time_base.den = config.check("time_base_den",
-                                              Value(29),
-                                              "denominator of basic time unit").asInt();
-    formatParams.time_base.num = config.check("time_base_num",
-                                              Value(1),
-                                              "numerator of basic time unit").asInt();
+    Value v;
 
-    iformat = av_find_input_format("video4linux");
+    memset(&formatParams, 0, sizeof(formatParams));
+    if (!audio) {
+        //formatParams.prealloced_context = 1;
+        v = config.check("v4ldevice",
+                         Value("/dev/video0"),
+                         "device name");
+    } else {
+        v = config.check("audio",
+                         Value("/dev/dsp"),
+                         "optional audio device name");
+    }
+    printf("Device %s\n",v.asString().c_str());
+    formatParams.device = strdup(v.asString().c_str());
 
-    return (av_open_input_file(ppFormatCtx,
-                               formatParams.device, iformat, 0, 
-                               &formatParams)==0);
+    if (audio) {
+        formatParams.sample_rate = config.check("audio_rate",
+                                                Value(44100),
+                                                "audio sample rate").asInt();
+        formatParams.channels = config.check("channels",Value(1),
+                                             "number of channels").asInt();
+    } else {
+        formatParams.time_base.den = config.check("time_base_den",
+                                                  Value(29),
+                                                  "denominator of basic time unit").asInt();
+        formatParams.time_base.num = config.check("time_base_num",
+                                                  Value(1),
+                                                  "numerator of basic time unit").asInt();
+        formatParams.channel = config.check("channel",Value(0),
+                                            "channel identifier").asInt();
+        formatParams.standard = strdup(config.check("standard",
+                                                    Value("ntsc"),
+                                                    "pal versus ntsc").asString().c_str());
+        formatParams.width = config.check("width",Value(640),"width of image").asInt();
+        formatParams.height = config.check("height",Value(480),"height of image").asInt();
+    }
+
+
+    iformat = av_find_input_format(audio?"audio_device":"video4linux");
+
+    int result = av_open_input_file(audio?ppFormatCtx2:ppFormatCtx,
+                                    strdup(v.asString().c_str()), 
+                                    iformat, 0, 
+                                    &formatParams);
+    bool ok = (result==0);
+    if (!ok) {
+        print_error(v.asString().c_str(),result);
+    }
+
+    if (ok) {
+        if (ppFormatCtx!=NULL) {
+            if (config.check("audio",
+                             "optional audio device")) {
+                ok = openV4L(config,NULL,ppFormatCtx2);
+            }
+        }
+    }
+
+    return ok;
 
 }
 
@@ -353,7 +439,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     // Open video file
     if (config.check("v4l","if present, read from video4linux")) {
         needRateControl = false; // reading from live media
-        if (!openV4L(config,&pFormatCtx)) {
+        if (!openV4L(config,&pFormatCtx,&pFormatCtx2)) {
             printf("Could not open Video4Linux input\n");
             return false;
         }
@@ -369,16 +455,35 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
             return false; // Couldn't open file
         }
     }
-        
+
+
     // Retrieve stream information
     if(av_find_stream_info(pFormatCtx)<0) {
         printf("Could not find stream information in %s\n", fname.c_str());
         return false; // Couldn't find stream information
     }
-
+    
     // Dump information about file onto standard error
     dump_format(pFormatCtx, 0, fname.c_str(), false);
 
+    if (pFormatCtx2!=NULL) {
+        
+        if(av_find_stream_info(pFormatCtx2)<0) {
+            printf("Could not find stream information in %s\n", fname.c_str());
+            return false; // Couldn't find stream information
+        }
+        
+        // Dump information about file onto standard error
+        dump_format(pFormatCtx2, 0, fname.c_str(), false);
+    }
+
+
+    if (pFormatCtx2!=NULL) {
+        pAudioFormatCtx = pFormatCtx2;
+    } else {
+        pAudioFormatCtx = pFormatCtx;
+    }
+        
     YARP_ASSERT(system_resource==NULL);
     system_resource = new FfmpegHelper;
     YARP_ASSERT(system_resource!=NULL);
@@ -391,7 +496,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     int videoStream = videoDecoder.getStream(pFormatCtx,CODEC_TYPE_VIDEO,
                                              "video");
     // Find the first audio stream
-    int audioStream = audioDecoder.getStream(pFormatCtx,CODEC_TYPE_AUDIO,
+    int audioStream = audioDecoder.getStream(pAudioFormatCtx,CODEC_TYPE_AUDIO,
                                              "audio");
 
     if (videoStream==-1&&audioStream==-1) {
@@ -406,7 +511,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
         ok = ok && videoDecoder.getCodec(pFormatCtx);
     }
     if (_hasAudio) {
-        ok = ok && audioDecoder.getCodec(pFormatCtx);
+        ok = ok && audioDecoder.getCodec(pAudioFormatCtx);
     }
     if (!ok) return false;
     
@@ -446,6 +551,9 @@ bool FfmpegGrabber::close() {
     // Close the video file
     if (pFormatCtx!=NULL) {
         av_close_input_file(pFormatCtx);
+    }
+    if (pFormatCtx2!=NULL) {
+        av_close_input_file(pFormatCtx2);
     }
     if (system_resource!=NULL) {
         delete &HELPER(system_resource);

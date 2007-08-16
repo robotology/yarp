@@ -18,6 +18,7 @@ namespace yarp{
     namespace dev {
         class IAudioVisualGrabber;
         class IAudioVisualStream;
+        class IFrameWriterAudioVisual;
         typedef yarp::os::PortablePair<yarp::sig::ImageOf<yarp::sig::PixelRgb>,
                                        yarp::sig::Sound> ImageRgbSound;
     }
@@ -44,6 +45,31 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
+                                yarp::sig::Sound& sound) = 0;    
+};
+
+
+/**
+ * @ingroup dev_iface_media
+ *
+ * Write a YARP-format image and sound to a device.
+ */
+class yarp::dev::IFrameWriterAudioVisual
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IFrameWriterAudioVisual(){}
+
+    /**
+     * Write an image and sound
+     * 
+     * @param image the image to be written
+     * @param sound the sound to be written
+     * @return true/false upon success/failure
+     */
+    virtual bool putAudioVisual(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image,
                                 yarp::sig::Sound& sound) = 0;    
 };
 
