@@ -74,6 +74,7 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     int channels = config.channels;
     bool wantRead = config.wantRead;
     bool wantWrite = config.wantWrite;
+    int deviceNumber = config.deviceNumber;
     if (rate==0)    rate = SAMPLE_RATE;
     if (samples==0) samples = NUM_SAMPLES;
     num_samples = samples;
@@ -96,7 +97,8 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
         return false;
     }
 
-    inputParameters.device = Pa_GetDefaultInputDevice();
+    inputParameters.device = (deviceNumber==-1)?Pa_GetDefaultInputDevice():deviceNumber;
+    printf("Device number %d\n", inputParameters.device);
     inputParameters.channelCount = num_channels;
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
     if ((Pa_GetDeviceInfo( inputParameters.device ))!=0) {
@@ -104,7 +106,7 @@ bool PortAudioDeviceDriver::open(PortAudioDeviceDriverSettings& config) {
     }
     inputParameters.hostApiSpecificStreamInfo = NULL;
 
-    outputParameters.device = Pa_GetDefaultInputDevice();
+    outputParameters.device = (deviceNumber==-1)?Pa_GetDefaultInputDevice():deviceNumber;
     outputParameters.channelCount = num_channels;
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;
     //outputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
@@ -156,6 +158,7 @@ bool PortAudioDeviceDriver::open(yarp::os::Searchable& config) {
     config2.channels = config.check("channels",Value(0),"number of audio channels (0=automatic, max is 2)").asInt();
     config2.wantRead = (bool)config.check("read","if present, just deal with reading audio (microphone)");
     config2.wantWrite = (bool)config.check("write","if present, just deal with writing audio (speaker)");
+    config2.deviceNumber = config.check("id",Value(-1),"which portaudio index to use (-1=automatic)").asInt();
     if (!(config2.wantRead||config2.wantWrite)) {
         config2.wantRead = config2.wantWrite = true;
     }

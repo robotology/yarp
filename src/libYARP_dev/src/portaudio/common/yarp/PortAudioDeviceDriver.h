@@ -29,6 +29,7 @@ public:
     int channels;
     bool wantRead;
     bool wantWrite;
+    int deviceNumber;
 };
 
 /**
