@@ -52,6 +52,13 @@ public:
      */
     virtual int load(char *name) = 0;
     /**
+     * Set a program's argument to 'val' (float).
+     * @param prg a program
+     * @param name the name of the argument to set
+     * @param vector the value to set
+     */
+    virtual void setargument(int prg, char *name, float val) = 0;
+    /**
      * Set a program's argument to 'vector' (1D vector for single values).
      * @param prg a program
      * @param name the name of the argument to set
