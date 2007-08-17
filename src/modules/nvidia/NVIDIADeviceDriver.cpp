@@ -92,17 +92,23 @@ int NVIDIAGPU::load(char *name) {
 }
 
 
+void NVIDIAGPU::setargument(int prg, char *name, float val) {
+    CGprogram prog = ((GPUProgram)prg)->getProgram();
+    cgGLSetParameter1f(cgGetNamedParameter(prog, name), val);
+}
+
+
 void NVIDIAGPU::setargument(int prg, char *name, float *vector, int len) {
-  CGprogram prog = ((GPUProgram)prg)->getProgram();
-  if(len==1){
-    cgGLSetParameter1f(cgGetNamedParameter(prog, name), *vector);
-  } else if(len==2) {
-    cgGLSetParameter2fv(cgGetNamedParameter(prog, name), vector);
-  } else if(len==3) {
-    cgGLSetParameter3fv(cgGetNamedParameter(prog, name), vector);
-  } else if(len==4) {
-    cgGLSetParameter4fv(cgGetNamedParameter(prog, name), vector);
-  }
+    CGprogram prog = ((GPUProgram)prg)->getProgram();
+    if(len==1){
+        cgGLSetParameter1f(cgGetNamedParameter(prog, name), *vector);
+    } else if(len==2) {
+        cgGLSetParameter2fv(cgGetNamedParameter(prog, name), vector);
+    } else if(len==3) {
+        cgGLSetParameter3fv(cgGetNamedParameter(prog, name), vector);
+    } else if(len==4) {
+        cgGLSetParameter4fv(cgGetNamedParameter(prog, name), vector);
+    }
 }
 
 

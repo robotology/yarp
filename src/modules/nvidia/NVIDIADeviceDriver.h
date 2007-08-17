@@ -71,10 +71,10 @@ public:
 
     int load(char *name);
 
+    void setargument(int prg, char *name, float val);
     void setargument(int prg, char *name, float *vector, int len);
 
     void execute(int prg, unsigned char *in, unsigned char *out);
-
     void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out);
 };
 
