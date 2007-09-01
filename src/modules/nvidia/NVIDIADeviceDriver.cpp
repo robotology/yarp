@@ -16,18 +16,14 @@
 #include <Cg/cg.h>
 #include <Cg/cgGL.h>
 
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
-#include <yarp/sig/all.h>
-
 #include "FBO_Filter.h"
 
 #include "NVIDIADeviceDriver.h"
 
 typedef FBO_Filter* GPUProgram;
 //CGprofile GPUProfile=CG_PROFILE_ARBFP1;
-CGprofile GPUProfile=CG_PROFILE_FP30;
-//CGprofile GPUProfile=CG_PROFILE_FP40;
+//CGprofile GPUProfile=CG_PROFILE_FP30;
+CGprofile GPUProfile=CG_PROFILE_FP40;
 
 
 bool NVIDIAGPU::open(int w, int h, int bytespp, int elemtype) {
@@ -42,15 +38,7 @@ bool NVIDIAGPU::open(int w, int h, int bytespp, int elemtype) {
         oglformat = GL_RGBA;
     }
 
-    if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR) {
-      ogltype = GL_UNSIGNED_BYTE;
-    } else if(elemtype==VOCAB_PIXEL_INT) {
-      ogltype = GL_INT;
-    } else if(elemtype==VOCAB_PIXEL_MONO_SIGNED || elemtype==VOCAB_PIXEL_RGB_SIGNED) {
-      ogltype = GL_BYTE;
-    } else if(elemtype==VOCAB_PIXEL_MONO_FLOAT || elemtype==VOCAB_PIXEL_RGB_FLOAT || elemtype==VOCAB_PIXEL_HSV_FLOAT) {
-      ogltype = GL_FLOAT;
-    }
+    ogltype = elemtype;
 
     if(this->w>0 && this->h>0) {
       //Initialize the GLUT system to use OpenGL
@@ -68,6 +56,10 @@ bool NVIDIAGPU::open(int w, int h, int bytespp, int elemtype) {
       //Build the needed textures (the working space for the GPU)
       glGenTextures(1, &(this->oTex));
       glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
+      glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, NULL);
+
+      glGenTextures(1, &(this->tex));
+      glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex);
       glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, NULL);
     }
 
@@ -99,16 +91,16 @@ void NVIDIAGPU::setargument(int prg, char *name, float val) {
 
 
 void NVIDIAGPU::setargument(int prg, char *name, float *vector, int len) {
-    CGprogram prog = ((GPUProgram)prg)->getProgram();
-    if(len==1){
-        cgGLSetParameter1f(cgGetNamedParameter(prog, name), *vector);
-    } else if(len==2) {
-        cgGLSetParameter2fv(cgGetNamedParameter(prog, name), vector);
-    } else if(len==3) {
-        cgGLSetParameter3fv(cgGetNamedParameter(prog, name), vector);
-    } else if(len==4) {
-        cgGLSetParameter4fv(cgGetNamedParameter(prog, name), vector);
-    }
+  CGprogram prog = ((GPUProgram)prg)->getProgram();
+  if(len==1){
+    cgGLSetParameter1f(cgGetNamedParameter(prog, name), *vector);
+  } else if(len==2) {
+    cgGLSetParameter2fv(cgGetNamedParameter(prog, name), vector);
+  } else if(len==3) {
+    cgGLSetParameter3fv(cgGetNamedParameter(prog, name), vector);
+  } else if(len==4) {
+    cgGLSetParameter4fv(cgGetNamedParameter(prog, name), vector);
+  }
 }
 
 
@@ -117,10 +109,10 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
     GPUProgram prog=(GPUProgram)prg;
 
     // Build the texture representing inputs
-    glGenTextures(1, &(this->tex));
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex);
     glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, in);
+
 
     prog->apply(this->tex, true, oglformat, ogltype);
 
@@ -129,12 +121,5 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
     glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, ogltype, out);
 }
 
-
-void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) {
-    unsigned char *buf = in->getRawImage();
-    unsigned char *outb = out->getRawImage();
-
-    this->execute(prg, buf, outb);
-}
 
 
