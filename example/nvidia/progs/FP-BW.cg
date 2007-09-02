@@ -24,7 +24,7 @@ void FragmentProgram(
     const uniform samplerRECT FPE1 :TEXUNIT0)
 {
   float4 t=texRECT(FPE1, fptexCoord).rgba;
-  t.r=(t.r+t.r+t.b)/3;
+  t.r=(t.r+t.g+t.b)/3;
   t=t.rrra;
   colorO=t;
 }
