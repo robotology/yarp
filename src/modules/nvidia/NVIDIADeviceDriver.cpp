@@ -123,3 +123,10 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
 
 
 
+void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) {
+    unsigned char *in_ = in->getRawImage();
+    unsigned char *out_ = out->getRawImage();
+
+    this->execute(prg, in_, out_);
+}
+
