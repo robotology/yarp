@@ -49,8 +49,7 @@ static void print_error(const char *filename, int err) {
         fprintf(stderr, "%s: Unknown format\n", filename);
         break;
     case AVERROR(EIO):
-        fprintf(stderr, "%s: I/O error occured\n"
-                "Usually that means that input file is truncated and/or corrupted.\n",
+        fprintf(stderr, "%s: I/O error occured\n",
                 filename);
         break;
     case AVERROR(ENOMEM):
