@@ -30,15 +30,8 @@ bool NVIDIAGPU::open(int w, int h, int bytespp, int elemtype) {
     this->w=w;
     this->h=h;
 
-    if(bytespp==1) {
-        oglformat = GL_LUMINANCE;
-    } else if(bytespp==3) {
-        oglformat = GL_RGB;
-    } else if(bytespp==4) {
-        oglformat = GL_RGBA;
-    }
-
-    ogltype = elemtype;
+    this->changebpp(bytespp);
+    this->changetype(elemtype);
 
     if(this->w>0 && this->h>0) {
       //Initialize the GLUT system to use OpenGL
@@ -124,9 +117,9 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
 
 
 void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) {
-    unsigned char *in_ = in->getRawImage();
-    unsigned char *out_ = out->getRawImage();
+  unsigned char *input=in->getRawImage();
+  unsigned char *output=out->getRawImage();
 
-    this->execute(prg, in_, out_);
+    this->execute(prg, input, output);
 }
 

@@ -37,6 +37,7 @@ protected:
     } 
 
     void checkProfiles(CGprofile highlight = CG_PROFILE_UNKNOWN) {
+#ifdef DEBUG
         checkProfile("vp20", CG_PROFILE_VP20, highlight);
         checkProfile("fp20", CG_PROFILE_FP20, highlight);
         checkProfile("vp30", CG_PROFILE_VP30, highlight);
@@ -44,7 +45,8 @@ protected:
         checkProfile("vp40", CG_PROFILE_VP40, highlight);
         checkProfile("fp40", CG_PROFILE_FP40, highlight);
         checkProfile("arbvp1", CG_PROFILE_ARBVP1, highlight);
-        checkProfile("arbfp1", CG_PROFILE_ARBFP1, highlight); 
+        checkProfile("arbfp1", CG_PROFILE_ARBFP1, highlight);
+#endif
     }
 
     void checkCg(const char *act) {
@@ -175,6 +177,7 @@ void FBO_Filter::drawQuadFBT() {
 }
 
 FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H) {
+#ifdef DEBUG
     if (!cgGLIsProfileSupported(cgp)) {
         cgp = cgGLGetLatestProfile(CG_GL_FRAGMENT);
         if (cgp==CG_PROFILE_UNKNOWN) {
@@ -186,17 +189,24 @@ FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H
     }
 
     checkCg("initialize");
+#endif
     depth = -1.0;
     //Load the Cg Program.
     cgProfile = cgp;
     cgContext = cgCreateContext();
+#ifdef DEBUG
     checkCg("create context");
+#endif
 
     if(name!=NULL) {
         cgProgram = load_cgprogram(cgProfile, name);
+#ifdef DEBUG
         checkCg("preload");
+#endif
         cgGLLoadProgram(cgProgram);
+#ifdef DEBUG
         checkCg("load");
+#endif
     } else {
         cgProgram = 0;
     }
@@ -211,17 +221,29 @@ FBO_Filter::FBO_Filter(CGprofile cgp, char *name, GLuint outputTex, int W, int H
 
     //create the framebuffer object.
     oTex = outputTex ;
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
     glGenFramebuffersEXT(1, &fb);
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, fb);
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
     glBindTexture(GL_TEXTURE_RECTANGLE_NV, oTex);
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
     glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT,               GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_NV, oTex, 0);
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+#ifdef DEBUG
     printf("at %s %d\n", __FILE__, __LINE__);
+#endif
 }
 
 GLuint FBO_Filter::apply(GLuint iTex, bool FBOtex, GLenum rb_fmt, GLenum rb_type) {
@@ -236,13 +258,21 @@ GLuint FBO_Filter::apply(GLuint iTex, bool FBOtex, GLenum rb_fmt, GLenum rb_type
 
     renderBegin();
     cgGLEnableProfile(cgProfile);
+#ifdef DEBUG
     checkCg("enable profile");
+#endif
     cgGLBindProgram(cgProgram);
+#ifdef DEBUG
     checkCg("bind program");
+#endif
     (FBOtex ? drawQuadFBT() : drawQuadTex());
+#ifdef DEBUG
     checkCg("draw quad");
+#endif
     cgGLDisableProfile(cgProfile);
+#ifdef DEBUG
     checkCg("disable profile");
+#endif
     renderEnd();
 
     glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
