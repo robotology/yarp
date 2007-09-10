@@ -372,6 +372,12 @@ the yarp tools already work.  The disadvange is you have to do a
 bit more work.  It is entirely up to you, this issue is independent
 of the rest of YARP.
 
+<b>NOTE:</b> For automatic text conversion to work, your message will need
+to be represented as a list at the top level.  If you try to send a
+single integer, for example, translation will not work.  This is 
+because we chose to omit parentheses from lists at the top level of
+messages in text-mode, so there would be no way to differentiate a
+list containing an integer from an integer on its own.
 
 \section port_expert_carriers Carriers
 
