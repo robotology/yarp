@@ -23,6 +23,8 @@
 #error "ffmpeg version is too old, sorry - please download and compile newer version"
 #endif
 
+#define ERROR_PROBLEM
+
 using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -34,6 +36,9 @@ using namespace yarp::sig::file;
 
 
 static void print_error(const char *filename, int err) {
+#ifdef ERROR_PROBLEM
+    fprintf(stderr, "%s: ffmpeg error %d\n", filename,err);
+#else
     switch(err) {
     case AVERROR_NUMEXPECTED:
         fprintf(stderr, "%s: Incorrect image filename syntax.\n"
@@ -63,6 +68,7 @@ static void print_error(const char *filename, int err) {
                 filename, err);
         break;
     }
+#endif
 }
 
 class DecoderState {
@@ -225,7 +231,6 @@ public:
                                          packet.data+bytesRead, 
                                          packet.size-bytesRead);
 #else
-#error LIBAVCODEC_BUILD
             int r = avcodec_decode_audio2(pCodecCtx, 
                                           audioBuffer+bytesWritten, 
                                           &ct,
