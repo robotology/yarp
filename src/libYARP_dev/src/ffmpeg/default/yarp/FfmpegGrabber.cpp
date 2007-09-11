@@ -225,6 +225,7 @@ public:
                                          packet.data+bytesRead, 
                                          packet.size-bytesRead);
 #else
+#error LIBAVCODEC_BUILD
             int r = avcodec_decode_audio2(pCodecCtx, 
                                           audioBuffer+bytesWritten, 
                                           &ct,
