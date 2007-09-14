@@ -1,5 +1,8 @@
 2007-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: checked for case
+	of no axes available.
+
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h: added
 	an IAxisInfo interface as a standard way to get the name of an axis.
 

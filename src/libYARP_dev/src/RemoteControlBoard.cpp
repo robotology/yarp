@@ -1452,6 +1452,9 @@ public:
 
         bool ok = getCommand(VOCAB_AXES, nj);
 		fprintf(stderr, "AXES:%d\n", nj);
+        if (nj==0) {
+            ok = false;
+        }
         if (!ok) {
             ACE_OS::printf("Problems with obtaining the number of controlled axes\n");
             return false;
