@@ -2278,6 +2278,7 @@ bool yarp::dev::CommandsHelper::initialize() {
     }
     DeviceResponder::makeUsage();
     addUsage("[get] [axes]", "get the number of axes");
+    addUsage("[get] [name] $iAxisNumber", "get a human-readable name for an axis, if available");
     addUsage("[set] [pos] $iAxisNumber $fPosition", "command the position of an axis");
     addUsage("[set] [rel] $iAxisNumber $fPosition", "command the relative position of an axis");
     addUsage("[set] [vmo] $iAxisNumber $fVelocity", "command the velocity of an axis");
@@ -2301,7 +2302,7 @@ bool yarp::dev::CommandsHelper::initialize() {
     addUsage("[set] [aen] $iAxisNumber", "enable (amplifier for) the given axis");
     addUsage("[set] [adi] $iAxisNumber", "disable (amplifier for) the given axis");
     addUsage("[get] [acu] $iAxisNumber", "get current for the given axis");
-    addUsage("[get] [acus]", "get current all axes");
+    addUsage("[get] [acus]", "get current for all axes");
 
     return ok;
 }
