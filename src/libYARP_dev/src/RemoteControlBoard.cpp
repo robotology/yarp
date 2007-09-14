@@ -1192,6 +1192,7 @@ class yarp::dev::RemoteControlBoard :
             public IEncoders,
             public IAmplifierControl,
             public IControlLimits,
+            public IAxisInfo,
 			public DeviceDriver {
 protected:
     Port rpc_p;
@@ -2231,6 +2232,24 @@ public:
         }
         return false;
     }
+
+
+
+    /* IAxisInfo */
+    
+    virtual bool getAxisName(int j, yarp::os::ConstString& name) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_INFO_NAME);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            name = response.get(2).asString();
+            return true;
+        }
+        return false;
+    }
+
 };
 
 
