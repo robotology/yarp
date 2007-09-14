@@ -1,3 +1,12 @@
+2007-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h: added
+	an IAxisInfo interface as a standard way to get the name of an axis.
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: added remote route
+	for IAxisInfo interface.
+
+
 2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
 
 	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability of 

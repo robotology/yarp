@@ -60,6 +60,7 @@ protected:
     yarp::dev::IEncoders            *enc;
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
+    yarp::dev::IAxisInfo            *info;
     int nj;
     Vector vect;
 
@@ -129,7 +130,8 @@ class yarp::dev::ServerControlBoard :
             public IEncoders,
             public IAmplifierControl,
             public IControlLimits,
-            public IControlCalibration
+            public IControlCalibration,
+            public IAxisInfo
  // convenient to put these here just to make sure all
  // methods get implemented
 {
@@ -163,6 +165,7 @@ private:
     IAmplifierControl *amp;
     IControlLimits    *lim;
     IControlCalibration *calib;
+    IAxisInfo          *info;
     // LATER: other interfaces here.
 
     bool closeMain() {
@@ -196,6 +199,7 @@ public:
         amp = NULL;
         lim = NULL;
 		calib = NULL;
+        info = NULL;
         nj = 0;
         thread_period = 20; // ms.
 		verb = false;
@@ -318,6 +322,7 @@ public:
             poly.view(amp);
             poly.view(lim);
             poly.view(calib);
+            poly.view(info);
         }
 
         // set calibrator //
@@ -1146,6 +1151,16 @@ public:
     {
         if (calib)
             return calib->park(wait);
+        return false;
+    }
+
+
+    /* IAxisInfo */
+
+    virtual bool getAxisName(int j, yarp::os::ConstString& name) {
+        if (info) {
+            return info->getAxisName(j, name);
+        }
         return false;
     }
 
@@ -2233,6 +2248,7 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     enc = dynamic_cast<yarp::dev::IEncoders *> (caller);
     amp = dynamic_cast<yarp::dev::IAmplifierControl *> (caller);
     lim = dynamic_cast<yarp::dev::IControlLimits *> (caller);
+    info = dynamic_cast<yarp::dev::IAxisInfo *> (caller);
     nj = 0;
 }
 
@@ -2820,6 +2836,14 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 response.addDouble(max);
             }
                 break;
+
+            case VOCAB_INFO_NAME: {
+                ConstString name = "undocumented";
+                ok = info->getAxisName(cmd.get(2).asInt(),name);
+                response.addString(name.c_str());
+            }
+                break;
+
 
             default:
                 ACE_OS::printf("received an unknown request after a VOCAB_GET\n");

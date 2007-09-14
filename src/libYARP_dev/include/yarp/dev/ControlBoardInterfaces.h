@@ -35,6 +35,7 @@ namespace yarp {
         class IControlCalibration2Raw;
         class IControlCalibration;
         class IControlCalibration2;
+        class IAxisInfo;
     }
 }
 
@@ -1366,6 +1367,22 @@ public:
 };
 
 
+
+/** 
+ * Interface for getting information about specific axes, if available.
+ */
+class yarp::dev::IAxisInfo
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IAxisInfo() {}
+
+    virtual bool getAxisName(int axis, yarp::os::ConstString& name) = 0;
+};
+
+
 /* Vocabs representing the above interfaces */
 
 #define VOCAB_SET VOCAB3('s','e','t')
@@ -1440,6 +1457,9 @@ public:
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')
+
+// interface IAxisInfo
+#define VOCAB_INFO_NAME VOCAB4('n','a','m','e')
 
 
 #endif
