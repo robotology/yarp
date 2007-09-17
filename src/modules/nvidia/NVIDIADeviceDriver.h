@@ -22,7 +22,7 @@ private:
     int w, h;
     int oglformat;
     int ogltype;
-    unsigned int tex, oTex;
+    unsigned int tex, tex2, oTex;
 public:
     NVIDIAGPU() {
         h = w = 0;
@@ -75,6 +75,9 @@ public:
     void setargument(int prg, char *name, float *vector, int len);
 
     void execute(int prg, unsigned char *in, unsigned char *out);
+    void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out);
+
     void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out);
+    void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out);
 };
 

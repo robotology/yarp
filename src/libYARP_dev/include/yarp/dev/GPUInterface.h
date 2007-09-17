@@ -74,12 +74,28 @@ public:
      */
     virtual void execute(int prg, unsigned char *in, unsigned char *out) = 0;
     /**
+     * Execute a loaded program on 2 given matrices (eg: images).
+     * @param prg a previously loaded program
+     * @param in the first matrix containing the data to be processed
+     * @param in2 the second matrix containing the data to be processed
+     * @param out the program's results
+     */
+    virtual void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out) = 0;
+    /**
      * Execute a loaded program on a given matrix (eg: an image).
      * @param prg a previously loaded program
      * @param in the sig::ImageOf containing the data to be processed
      * @param out the program's results (sig::ImageOf)
      */
-    virtual void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) = 0;
+    virtual void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) =  0;
+    /**
+     * Execute a loaded program on 2 given matrices (eg: images).
+     * @param prg a previously loaded program
+     * @param in the first sig::ImageOf containing the data to be processed
+     * @param in2 the second sig::ImageOf containing the data to be processed
+     * @param out the program's results (sig::ImageOf)
+     */
+    virtual void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out) = 0;
 };
 
 #endif

@@ -116,10 +116,43 @@ void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
 
 
 
+void NVIDIAGPU::execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out) {
+    GPUProgram prog=(GPUProgram)prg;
+
+    // Build the texture representing inputs
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
+    glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, in);
+
+    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE,  GL_REPLACE);
+    glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->tex2);
+    glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, GL_RGBA, this->w, this->h, 0, oglformat, ogltype, in2);
+
+
+    prog->apply(this->tex, true, oglformat, ogltype);
+
+    glBindTexture(GL_TEXTURE_RECTANGLE_NV, this->oTex);
+
+    glGetTexImage(GL_TEXTURE_RECTANGLE_NV, 0, oglformat, ogltype, out);
+}
+
+
+
 void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out) {
   unsigned char *input=in->getRawImage();
   unsigned char *output=out->getRawImage();
 
     this->execute(prg, input, output);
 }
+
+
+
+void NVIDIAGPU::execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out) {
+  unsigned char *input=in->getRawImage();
+  unsigned char *input2=in2->getRawImage();
+  unsigned char *output=out->getRawImage();
+
+    this->execute(prg, input, input2, output);
+}
+
 
