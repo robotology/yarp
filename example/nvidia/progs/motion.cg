@@ -1,0 +1,12 @@
+
+void FragmentProgram(
+    in float2 fptexCoord : TEXCOORD0,
+    out float4 colorO : COLOR0,
+    in float4 wpos : WPOS,
+    const uniform samplerRECT FPE1 : TEXUNIT0,
+    const uniform samplerRECT FPE2 : TEXUNIT1 ) //FPE1 is the first frame in time, FPE2 the second one
+{
+  colorO.r = abs(texRECT(FPE2, fptexCoord).r - texRECT(FPE1, fptexCoord).r);
+  colorO.rgb = colorO.rrr;
+}
+
