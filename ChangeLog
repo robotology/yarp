@@ -1,3 +1,10 @@
+2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
+
+	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability to process 2 images at the same time. A possible application for this feature is, ie, motion detection (throught subtraction of subsequent frames)
+	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: same as above
+	* example/nvidia/progs/: added a new example program, FP-motion.
+
+
 2007-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: checked for case
@@ -16,6 +23,7 @@
 	setting non-vector arguments in an easier way
 	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: same as above
 	* example/nvidia/progs/: added a new example program, FP-resize.
+
 
 2007-08-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
