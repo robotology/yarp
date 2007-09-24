@@ -1,3 +1,9 @@
+2007-09-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpdev/yarphear.cpp: yarphear can now save audio from
+	the network to a file, without also requiring access to the
+	speakers (use --nodevice option)
+
 2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
 
 	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability to process 2 images at the same time. A possible application for this feature is, ie, motion detection (throught subtraction of subsequent frames)

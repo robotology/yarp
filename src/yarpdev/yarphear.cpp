@@ -53,26 +53,33 @@ public:
     }
 
     bool open(Searchable& p) {
-        poly.open(p);
-        if (!poly.isValid()) {
-            printf("cannot open driver\n");
-            return false;
+        bool dev = true;
+        if (p.check("nodevice")) {
+            dev = false;
         }
-
-        if (!p.check("mute")) {
-            // Make sure we can write sound
-            poly.view(put);
-            if (put==NULL) {
-                printf("cannot open interface\n");
+        if (dev) {
+            poly.open(p);
+            if (!poly.isValid()) {
+                printf("cannot open driver\n");
                 return false;
             }
+            
+            if (!p.check("mute")) {
+                // Make sure we can write sound
+                poly.view(put);
+                if (put==NULL) {
+                    printf("cannot open interface\n");
+                    return false;
+                }
+            }
         }
-
+            
+        port.setStrict(true);
         if (!port.open(p.check("name",Value("/yarphear")).asString())) {
             printf("Communication problem\n");
             return false;
         }
-
+        
         if (p.check("remote")) {
             Network::connect(p.check("remote",Value("/remote")).asString(),
                              port.getName());
