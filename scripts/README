@@ -49,7 +49,7 @@ How to make a YARP release:
   If they look old, you may need to kick the regression virtual
   machines; they get powered down randomly from time to time.
 
-* For practice, run:
+* For practice, run (replacing 2.1.6 with current version):
 
   ./scripts/check-public-version.sh 2.1.6
 
@@ -67,4 +67,13 @@ How to make a YARP release:
   and tars for the selected version number, placing them in:
 
   http://eris.liralab.it/yarp/downloads/yarp/
+
+* When the right version files show up in that directory (may take
+  some time), run (replacing 2.1.7 with new version):
+
+  ./scripts/check-public-version.sh 2.1.7
+
+* Be sure to check that the information produced in the COPYING
+  file is valid.  If not, track down files without license information
+  etc and fix, then add another line to conf/build.txt and repeat.
 
