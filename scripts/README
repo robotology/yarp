@@ -34,3 +34,37 @@ MOST OFTEN USED SCRIPTS:
           ./scripts/make-source-package nocvs
 	to avoid cvs being called each time.
 
+##########################################################################
+
+How to make a YARP release:
+--------------------------
+
+* Be on a linux machine, ideally debian or ubuntu or along those lines
+
+* Look at this page to get the current YARP version, say 2.1.6:
+
+  http://eris.liralab.it/yarp/specs/dox/download.html
+
+* Check that all the regression tests listed on that page are passing.
+  If they look old, you may need to kick the regression virtual
+  machines; they get powered down randomly from time to time.
+
+* For practice, run:
+
+  ./scripts/check-public-version.sh 2.1.6
+
+* That checks that everything in the public version compiles ok.
+
+* Make sure that conf/YarpVersion.cmake is different to the latest
+  public version, bumping up the version number if needed.
+
+* To update shadow autoconf/automake file, from $YARP_ROOT run:
+
+  ./scripts/update-automake 
+
+* Add a line to the bottom of conf/build.txt (follow the pattern) and
+  commit all to CVS.  This makes the test servers (re)generate zips 
+  and tars for the selected version number, placing them in:
+
+  http://eris.liralab.it/yarp/downloads/yarp/
+
