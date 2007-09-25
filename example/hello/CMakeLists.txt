@@ -1,6 +1,6 @@
 
-# replace "${CMAKE_SOURCE_DIR}/.." with the path to your YARP binaries
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+# Make sure that YARP_DIR is set in your environment to wherever you 
+# compiled YARP.
 
 FIND_PACKAGE(YARP)
 

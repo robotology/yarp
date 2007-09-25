@@ -14,10 +14,16 @@ SET(YARP_LIBRARIES "${YARP_dev_LIB};${YARP_EXTMOD_LIBS};${YARP_dev_EXT_LIBS};${Y
 SET(YARP_INCLUDES "${ACE_INCLUDE_DIR};${YARP_OS_INC};${YARP_sig_INC};${YARP_dev_INC};${YARP_OS_compat_INC}")
 ENDIF(YARP_HAS_MATH_LIB)
 
+
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 
-#MESSAGE(STATUS "YARPConfig.make records libs as: " ${YARP_LIBRARIES})
-#MESSAGE(STATUS "YARPConfig.make records includes as: " ${YARP_INCLUDES})
 
+# There are several macros we would like to have available
+# for user
+
+FOREACH(conf YarpCompileModules.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindYarp1.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindAce.cmake)
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/${conf}
+                 ${CMAKE_BINARY_DIR}/conf/${conf} COPYONLY IMMEDIATE)
+ENDFOREACH(conf)
 

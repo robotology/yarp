@@ -1,3 +1,12 @@
+2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/CMakeLists.txt: copy more configuration files to the
+	"binary" directory, so that it becomes more independent.
+	This is so users of YARP can just set the YARP_DIR directory
+	and do not need to point to the full source with YARP_ROOT.
+	YARP_DIR is understood automatically by CMake, wherease YARP_ROOT
+	is not.
+
 2007-09-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpdev/yarphear.cpp: yarphear can now save audio from
