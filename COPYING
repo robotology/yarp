@@ -6,15 +6,16 @@ Contributed files in YARP are copyright of their authors, and
 released under the same license.  The author list for contributed
 files follows.
 
-Copyright 2005 2006 2007:
+Copyright 2003 2005 2006 2007:
   Alessandro Scalzo
   Alexandre Bernardino
-  Alexis Maldonado
+  Alex Bernardino
   Assif Mirza
-  Charles C. Kemp
+  Carlos Beltran-Gonzalez
   Claudio Castellini
   Eric Mislivec
-  Francesco Nori
+  Freyr Magnusson
+  Giacomo Spigler
   Giorgio Metta
   Jonas Ruesch
   Julio Gomes
@@ -24,7 +25,6 @@ Copyright 2005 2006 2007:
   Mattia Castelnovi
   Mike P. Blow
   Paul Fitzpatrick
-  Radu Bogdan Rasu
 
 Certain files are integrated in YARP from other sources with
 compatible licenses.  Here is a list of these files and a summary of
@@ -34,73 +34,17 @@ their copyright.  See the individual files for more details.
   Copyright: 2004 David Tschumperle
   CopyPolicy: CeCILL license (use, modify, redistribute)
 
-./src/libYARP_dev/src/XSensMTx/common/yarp/MTComm.h
-  Copyright: (C) Xsens Technologies B.V., 2005.  All rights reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dimax_u2c/winnt/dd_orig/include/i2cbridge.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dimax_u2c/winnt/dd_orig/include/I2c.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dimax_u2c/winnt/dd_orig/include/u2c_common_func.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dragonfly/winnt/dd_orig/include/PGRFlyCapture.h
-  Copyright: (C) 2004 Point Grey Research, Inc. All Rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dragonfly/winnt/dd_orig/include/PGRFlyCapturePlus.h
-  Copyright: (C) 2004 Point Grey Research, Inc. All Rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/dragonfly/winnt/dd_orig/include/pgrerror.h
-  Copyright: (C) 2003 Point Grey Research, Inc. All Rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/esdMotionControl/linux/dd_orig/include/ntcan.h
-  Copyright: (c) 2001-2004 by electronic system design gmbh
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/esdMotionControl/winnt/dd_orig/include/ntcan.h
-  Copyright: (c) 1997-2002, esd gmbh. All rights reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/inertiacube2/linux/dd_orig/include/isense.h
-  Copyright: InterSense 2002 - All rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/inertiacube2/linux/dd_orig/include/types.h
-  Copyright: InterSense 2002 - All rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/inertiacube2/winnt/dd_orig/include/isense.h
-  Copyright: InterSense 2002 - All rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/inertiacube2/winnt/dd_orig/include/types.h
-  Copyright: InterSense 2002 - All rights Reserved.
-  CopyPolicy: unknown
-
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/nmccom.h
-  Copyright: 2005 Jeffrey Kerr LLC
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/picservo.h
-  Copyright: 2005 Jeffrey Kerr LLC
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/include/sio_util.h
-  Copyright: 2005 Jeffrey Kerr, LLC
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/mei/common/yarp/MEIDeviceDriver.h
-  Copyright: unknown
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_dev/src/urbtc/linux/iMCs01/driver/urbtc.h
   Copyright: (C) 2007 iXs Research Corp
@@ -122,41 +66,25 @@ their copyright.  See the individual files for more details.
   Copyright: 1994, Everett F. Carter Jr.
   CopyPolicy: Preserve copyright notice
 
-./src/libYARP_dev/src/XSensMTx/common/yarp/MTComm.cpp
-  Copyright: (C) Xsens Technologies B.V., 2005.  All rights reserved.
-  CopyPolicy: unknown
-
 ./src/libYARP_dev/src/dimax_u2c/winnt/yarp/I2c.cpp
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: unknown
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/nmccom.cpp
-  Copyright: 2005 Jeffrey Kerr LLC
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/picservo.cpp
-  Copyright: 2005 Jeffrey Kerr LLC
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_dev/src/jrkerr/winnt/dd_orig/src/sio_util.cpp
-  Copyright: 2005 Jeffrey Kerr LLC
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/mei/winnt/yarp/MEIDeviceDriver.cpp
-  Copyright: unknown
-  CopyPolicy: unknown
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 ./src/libYARP_sig/src/SoundFile.cpp
   Copyright: 1998,1999 Heiko Eissfeldt
   CopyPolicy: GNU Public License 2 applies
-
-./src/libYARP_dev/src/inertiacube2/linux/dd_orig/include/isense.c
-  Copyright: InterSense 2003 - All rights Reserved.
-  CopyPolicy: unknown
-
-./src/libYARP_dev/src/inertiacube2/winnt/dd_orig/include/isense.c
-  Copyright: InterSense 2003 - All rights Reserved.
-  CopyPolicy: unknown
 
 ./src/libYARP_dev/src/urbtc/linux/iMCs01/driver/urbtc.c
   Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
