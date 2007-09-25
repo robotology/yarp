@@ -1,5 +1,9 @@
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpLibrary.cmake: insert SONAME versioning for shared
+	libraries; this is provisional.  ABI stability will need some 
+	planning.
+
 	* src/libYARP_OS/include/yarp/os/BinPortable.h: automatic text
 	mode convertion of compliant structures (see BinPortableTest.cpp)
 

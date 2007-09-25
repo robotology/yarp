@@ -21,6 +21,13 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 ADD_LIBRARY(${name} ${libcode} ${folder_header})
 SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 
+SET_TARGET_PROPERTIES(
+  ${name}
+PROPERTIES
+  VERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}
+  SOVERSION ${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}
+)
+
 # describe library information for an external user
 GET_TARGET_PROPERTY(${name}_LIB ${name} LOCATION)
 GET_TARGET_PROPERTY(${name}_INC ${name} header_path)
