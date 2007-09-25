@@ -433,6 +433,17 @@ public:
         passImage(img);
     }
 
+    void testRgba() {
+        report(0,"checking rgba...");
+        ImageOf<PixelRgba> img;
+        ImageOf<PixelRgb> img2;
+        img.resize(50,50);
+        img(4,2) = PixelRgba(10,20,30,40);
+        img2.copy(img);
+        checkEqual(img(4,2).a,40,"a level");
+        checkEqual(img2(4,2).r,10,"r level");
+    }
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -449,6 +460,7 @@ public:
         testRowPointer();
         testConstMethods();
         testBlank();
+        testRgba();
     }
 };
 

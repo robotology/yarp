@@ -297,6 +297,7 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_INVALID = 0,
         VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
         VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
+        VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
         VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
         VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
         VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
@@ -335,6 +336,19 @@ namespace yarp {
             PixelRgb() { r = g = b = 0; }
             PixelRgb(unsigned char n_r, unsigned char n_g, unsigned char n_b)
             { r = n_r;  g = n_g;  b = n_b; }
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+    
+        /**
+         * Packed RGBA pixel type.
+         */
+        struct PixelRgba
+        { 
+            unsigned char r,g,b,a; 
+      
+            PixelRgba() { r = g = b = a = 0; }
+            PixelRgba(unsigned char n_r, unsigned char n_g, 
+                      unsigned char n_b, unsigned char n_a)
+            { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
     
         /**
@@ -477,6 +491,7 @@ public: \
 
         __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGR,PixelBgr)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_SIGNED,PixelMonoSigned)

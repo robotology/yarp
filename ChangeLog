@@ -1,5 +1,11 @@
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/BinPortable.h: automatic text
+	mode convertion of compliant structures (see BinPortableTest.cpp)
+
+	* src/libYARP_sig/include/yarp/sig/Image.h: added RGBA image
+	class.
+
 	* src/libYARP_OS/include/yarp/os/DummyConnector.h: added
 	useful new class for testing Portable datatypes; patch number
 	1798250 from Freyr Magnusson

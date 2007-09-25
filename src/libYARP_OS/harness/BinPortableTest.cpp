@@ -12,11 +12,30 @@
 #include <yarp/NameClient.h>
 #include <yarp/Companion.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/DummyConnector.h>
+#include <yarp/os/Bottle.h>
 
 #include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;
+
+
+#include <yarp/os/begin_pack_for_net.h>
+class BinPortableTarget {
+public:
+    BinPortableTarget() {
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        len = 2;
+    }
+
+    NetInt32 tag;
+    NetInt32 len;
+    NetInt32 x;
+    NetInt32 y;
+} PACKED_FOR_NET;
+#include <yarp/os/end_pack_for_net.h>
+
 
 class BinPortableTest : public UnitTest {
 public:
@@ -46,10 +65,26 @@ public:
         input.close();
     }
 
+    void testText() {
+        report(0,"checking text mode");
+        DummyConnector con;
+        
+        BinPortable<BinPortableTarget> t1, t2;
+        t1.content().x = 10;
+        t1.content().y = 20;
+        
+        t1.write(con.getWriter());
+        t2.read(con.getReader());
+
+        checkEqual(t2.content().x, 10, "x value");
+        checkEqual(t2.content().y, 20, "y value");
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
         testInt();
+        testText();
         nic.setFakeMode(false);
     }
 };
