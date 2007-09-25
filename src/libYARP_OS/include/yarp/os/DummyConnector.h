@@ -18,21 +18,21 @@ namespace yarp {
 }
 
 /**
- * \class DummyConnector
- * \brief A dummy connection to test yarp::os::Portable implementations
+ *
+ * A dummy connection to test yarp::os::Portable implementations.
  * This class provides simple means to test read and write methods of the Portable interface.
  * 
- * Psudocode for a test should look something like this:
- *  - DummyConnector dummy; // create new connection with textmode=false
- *  - PortableObject object;
- *  - ... // set object values
- *  - object.write(dummy.getWriter()); // this will reset the connection and then write to it
- *  - PortableObject newObject;
- *  - newObject.read(dummy.getReader()); // this will write from the connection to the new object
- *  - ... // assert newObject values
+ * Pseudocode for a test should look something like this:
+ * \code
+ *   DummyConnector dummy; // create new connection with textmode=false
+ *   PortableObject object;
+ *   ... // set object values
+ *   object.write(dummy.getWriter()); // reset the connection and then write to it
+ *   PortableObject newObject;
+ *   newObject.read(dummy.getReader()); // write from the connection to the new object
+ *   ... // assert newObject values
+ * \endcode
  * 
- * \sa Portable BufferedConnectionWriter StreamConnectionReader StringInputStream Route
- *
  * \author Freyr Magnusson
  *
  */
