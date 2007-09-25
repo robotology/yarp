@@ -29,37 +29,26 @@ public:
         report(0, "checking Stamp can serialize ok...");
 
         for (int i=0; i<=1; i++) {
+            DummyConnector con;
+
             bool textMode = (i==0);
             if (textMode) {
                 report(0, "checking in text mode");
             } else {
                 report(0, "checking in binary mode");
             }
+            con.setTextMode(textMode);
 
             Stamp stamp(55,1.0);
-      
-            BufferedConnectionWriter writer(textMode);
-            stamp.write(writer);
-            String s = writer.toString();
+            stamp.write(con.getWriter());
             Bottle bot;
-            if (textMode) {
-                bot.fromString(s.c_str());
-            } else {
-                bot.fromBinary(s.c_str(),s.length());    
-            }
-      
+            bot.read(con.getReader());
             checkEqual(bot.get(0).asInt(),55,"sequence number write");
             checkTrue(fabs(bot.get(1).asDouble()-1)<0.0001,"time stamp write");
       
-            StringInputStream sis;
-            StreamConnectionReader sbr;
-            s = writer.toString();
-            sis.add(s);
-            Route route;
-            sbr.reset(sis,NULL,route,s.length(),textMode);
-      
+            stamp.write(con.getCleanWriter());
             Stamp outStamp;
-            outStamp.read(sbr);
+            outStamp.read(con.getReader());
       
             checkEqual(outStamp.getCount(),55,"sequence number read");
             checkTrue(fabs(outStamp.getTime()-1)<0.0001,"time stamp read");

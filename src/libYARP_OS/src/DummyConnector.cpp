@@ -30,6 +30,7 @@ public:
     void setTextMode(bool textmode)
     {
         textMode = textmode;
+        writer.reset(textMode);
     }
 
 
