@@ -1,5 +1,9 @@
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/DummyConnector.h: added
+	useful new class for testing Portable datatypes; patch number
+	1798250 from Freyr Magnusson
+
 	* conf/CMakeLists.txt: copy more configuration files to the
 	"binary" directory, so that it becomes more independent.
 	This is so users of YARP can just set the YARP_DIR directory
