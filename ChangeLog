@@ -4,7 +4,7 @@
 	the network to a file, without also requiring access to the
 	speakers (use --nodevice option)
 
-2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
+2007-09-21  Giacomo Spigler  <spiglerg@gmail.com>
 
 	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability to process 2 images at the same time. A possible application for this feature is, ie, motion detection (throught subtraction of subsequent frames)
 	* src/libYARP_dev/include/yarp/dev/GPUInterface.h: same as above
@@ -23,7 +23,7 @@
 	for IAxisInfo interface.
 
 
-2007-08-12  Giacomo Spigler  <spiglerg@gmail.com>
+2007-08-14  Giacomo Spigler  <spiglerg@gmail.com>
 
 	* src/modules/nvidia/NVIDIADeviceDriver.cpp/.h: Added the capability of 
 	setting non-vector arguments in an easier way
