@@ -295,6 +295,34 @@ public:
 \endcode
 Then you'll be in better shape.  The integers now have a well defined
 representation, and the compiler is requested not to introduce padding.
+So this is a portable representation.
+
+Even better, for YARP, is to add in a small "header" that describes
+your data-type.  If you defined Target as follows:
+\code
+#include <yarp/os/Bottle.h>
+#include <yarp/os/begin_pack_for_net.h>
+class Target {
+public:
+    NetInt32 tag;
+    NetInt32 len;
+    NetInt32 x;
+    NetInt32 y;
+    Target() {
+        tag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+        len = 2;
+    }
+} PACKED_FOR_NET;
+#include <yarp/os/end_pack_for_net.h>
+\endcode
+
+Then suddenly ports carrying this data become a lot easy to
+interoperate with.  You can read from them using "yarp read", write to
+them using "yarp write", send/reply to them using "yarp rpc". You can
+even connect your own sockets to them without using YARP to write
+their values in a standard, document text/binary format.  You may not
+see why you'd want to do any of that today, but it might be worth 
+bearing in mind for the future.  
 
 More usually, rather than sending memory images across the network 
 (a procedure fraught with gotchas), it is better to provide explicit
