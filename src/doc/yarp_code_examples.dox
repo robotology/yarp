@@ -483,3 +483,22 @@ ports. See \link port_expert Port power tutorial\endlink.
 */
 
 
+
+/**
+ \example port_power/ex0507_alternative_compliant_target_receiver.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/ex0508_alternative_compliant_target_sender.cpp
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
