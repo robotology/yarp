@@ -502,3 +502,39 @@ ports. See \link port_expert Port power tutorial\endlink.
 */
 
 
+/**
+ \example port_power/TargetVer1.h
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/TargetVer1b.h
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/TargetVer2.h
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
+/**
+ \example port_power/TargetVer3.h
+
+Part of a series of examples on the different ways of using 
+ports. See \link port_expert Port power tutorial\endlink.
+
+*/
+
+
