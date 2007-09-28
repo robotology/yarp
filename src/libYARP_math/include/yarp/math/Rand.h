@@ -11,8 +11,6 @@
 
 #include <yarp/sig/Vector.h>
 
-const int NTAB=32;
-
 namespace yarp
 {
     class RandScalar;
@@ -29,6 +27,7 @@ namespace yarp
 */
 class yarp::RandScalar
 {
+    static const int NTAB=32;
     int idum;
     int iy;
     int iv[NTAB];
