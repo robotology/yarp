@@ -3,6 +3,7 @@
 # run as ./scripts/ace-helper.sh
 
 VER=5.6.1
+LOCALVER=1
 
 mkdir -p ace-helper
 cd ace-helper
@@ -28,7 +29,7 @@ if [ ! -e ACE_wrappers ]; then
     exit 1
 fi
 
-YACE=ace4yarp-$VER-1
+YACE=ace4yarp-$VER-$LOCALVER
 
 if [ ! -e $YACE ]; then
     mkdir -p $YACE
