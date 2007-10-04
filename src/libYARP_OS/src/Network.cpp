@@ -19,6 +19,15 @@
 #include <yarp/String.h>
 #include <yarp/os/Bottle.h>
 
+#include <yarp/InputStream.h>
+#include <yarp/OutputProtocol.h>
+#include <yarp/Carriers.h>
+#include <yarp/IOException.h>
+#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/StreamConnectionReader.h>
+#include <yarp/Route.h>
+#include <yarp/PortCommand.h>
+
 using namespace yarp;
 using namespace yarp::os;
 
@@ -131,3 +140,69 @@ void Network::assertion(bool shouldBeTrue) {
 ConstString Network::readString(bool *eof) {
     return ConstString(Companion::readString(eof).c_str());
 }
+
+
+
+bool Network::write(const Contact& contact, 
+                    PortWriter& cmd,
+                    PortReader& reply) {
+
+    // This is a little complicated because we make the connection
+    // without using a port ourselves.  With a port it is easy.
+
+    try {
+        const char *connectionName = "anon";
+        ConstString name = contact.getName();
+        const char *targetName = name.c_str();  // use carefully!
+        Address address = Address::fromContact(contact);
+        if (!address.isValid()) {
+            NameClient& nic = NameClient::getNameClient();
+            address = nic.queryName(targetName);
+        }
+        if (!address.isValid()) {
+            YARP_ERROR(Logger::get(),"could not find port");
+            return false;
+        }
+
+        OutputProtocol *out = Carriers::connect(address);
+        if (out==NULL) {
+            YARP_ERROR(Logger::get(),"cannot connect to port");
+            return false;
+        }
+        //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
+        //     address.toString().c_str(),
+        //     connectionName);
+        Route r(connectionName,targetName,"text_ack");
+        out->open(r);
+        OutputStream& os = out->getOutputStream();
+        InputStream& is = out->getInputStream();
+        StreamConnectionReader reader;
+
+        PortCommand pc(0,"d");
+        BufferedConnectionWriter bw(out->isTextMode());
+        bool ok = pc.write(bw);
+        if (!ok) {
+            throw IOException("writer failed");
+        }
+        ok = cmd.write(bw);
+        if (!ok) {
+            throw IOException("writer failed");
+        }
+        bw.write(os);
+        Bottle resp;
+        reader.reset(is,NULL,r,0,out->isTextMode());
+        reply.read(reader);
+        if (out!=NULL) {
+            delete out;
+            out = NULL;
+        }
+        return true;
+    } catch (IOException e) {
+        YARP_ERROR(Logger::get(),"write failed");
+        // should deallocate stream if allocated
+        return false;
+    }
+    return true;
+}
+
+

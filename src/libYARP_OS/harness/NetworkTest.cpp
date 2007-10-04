@@ -12,6 +12,7 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Bottle.h>
 
 #include "TestList.h"
 
@@ -33,6 +34,27 @@ public:
         fini.wait();
     }
 };
+
+
+class NetworkServiceProvider : public PortReader {
+public:
+
+    virtual bool read(ConnectionReader& connection) {
+        Bottle receive;
+        //printf("service provider reading data\n");
+        receive.read(connection);
+        //printf("service provider read data\n");
+        receive.addInt(5);
+        ConnectionWriter *writer = connection.getWriter();
+        if (writer!=NULL) {
+            //printf("service provider replying\n");
+            receive.write(*writer);
+            //printf("service provider replied\n");
+        }
+        return true;
+    }
+};
+
 
 class NetworkTest : public UnitTest {
 public:
@@ -69,10 +91,27 @@ public:
         p1.close();
     }
 
+
+    void checkComms() {
+        report(0,"checking basic communications");
+        Port server;
+        NetworkServiceProvider provider;
+        server.setReader(provider);
+        server.open("/server");
+
+        Network::sync("/server");
+        Bottle cmd("10"), reply;
+        Network::write("/server",cmd,reply);
+        checkEqual(reply.size(),2,"got append");
+        checkEqual(reply.get(1).asInt(),5,"append is correct");
+        server.close();
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
         checkSync();
+        checkComms();
         Network::setLocalMode(false);
     }
 };

@@ -10,6 +10,7 @@
 #define _YARP2_NETWORK_
 
 #include <yarp/os/Contact.h>
+#include <yarp/os/Portable.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -184,6 +185,41 @@ public:
      * linefeed characters.
      */
     static ConstString readString(bool *eof=0/*NULL*/);
+
+
+    /**
+     *
+     * Send a single command to a port and await a single response.
+     * Similar to the "yarp rpc" command line utility.
+     * If you want to send several such commands, you'd be better off
+     * making a port and using its methods for writing with replies.
+     *
+     * @param contact the target to communicate with
+     * @param cmd the message to send
+     * @param reply the response is read here
+     *
+     * @return true on success
+     */
+    static bool write(const Contact& contact, 
+                      PortWriter& cmd,
+                      PortReader& reply);
+
+    /**
+     *
+     * Variant write method with port name specified directly.
+     *
+     * @param port_name the target to communicate with
+     * @param cmd the message to send
+     * @param reply the response is read here
+     *
+     * @return true on success
+     */
+    static bool write(const char *port_name,
+                      PortWriter& cmd,
+                      PortReader& reply) {
+        return write(Contact::byName(port_name),cmd,reply);
+    }
+
 };
 
 #endif

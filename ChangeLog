@@ -1,5 +1,8 @@
 2007-10-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/Network.h: add helper method
+	for once off command/response actions, Network::write.
+
 	* src/libYARP_OS/src/NameServer.cpp: start offering responses from
 	the name server that are in standard (bottle) format.
 	Historically, the name server has been using its own idiosyncratic
