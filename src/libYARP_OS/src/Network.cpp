@@ -172,11 +172,9 @@ bool Network::write(const Contact& contact,
         //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
         //     address.toString().c_str(),
         //     connectionName);
-        Route r(connectionName,targetName,"text_ack");
+        //Route r(connectionName,targetName,"text_ack");
+        Route r(connectionName,targetName,"tcp");
         out->open(r);
-        OutputStream& os = out->getOutputStream();
-        InputStream& is = out->getInputStream();
-        StreamConnectionReader reader;
 
         PortCommand pc(0,"d");
         BufferedConnectionWriter bw(out->isTextMode());
@@ -188,10 +186,12 @@ bool Network::write(const Contact& contact,
         if (!ok) {
             throw IOException("writer failed");
         }
-        bw.write(os);
-        Bottle resp;
-        reader.reset(is,NULL,r,0,out->isTextMode());
-        reply.read(reader);
+        bw.setReplyHandler(reply);
+        out->write(bw);
+        //InputProtocol& ip = out->getInput();
+        //ConnectionReader& reader = ip.beginRead();
+        //reply.read(reader);
+        //ip.endRead();
         if (out!=NULL) {
             delete out;
             out = NULL;
