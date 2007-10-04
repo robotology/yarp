@@ -20,6 +20,7 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Network.h>
 
 #include <ace/Containers_T.h>
 
@@ -237,6 +238,11 @@ void NameServer::setup() {
     dispatcher.add("list", &NameServer::cmdList);
     dispatcher.add("route", &NameServer::cmdRoute);
     dispatcher.add("gc", &NameServer::cmdGarbageCollect);
+    dispatcher.add("bot", &NameServer::cmdBot);
+
+    ndispatcher.add("list", &NameServer::ncmdList);
+    ndispatcher.add("query", &NameServer::ncmdQuery);
+    ndispatcher.add("version", &NameServer::ncmdQuery);
 }
 
 String NameServer::cmdRegister(int argc, char *argv[]) {
@@ -493,6 +499,53 @@ String NameServer::cmdList(int argc, char *argv[]) {
 }
 
 
+String NameServer::cmdBot(int argc, char *argv[]) {
+    String txt = "";
+    argc--;
+    argv++;
+    if (argc>=1) {
+        String key = argv[0];
+        argc--;
+        argv++;
+        Bottle result = ndispatcher.dispatch(this,key.c_str(),argc,argv);
+        txt = result.toString().c_str();
+    }
+    return txt;
+}
+
+
+Bottle NameServer::ncmdList(int argc, char *argv[]) {
+    Bottle response;
+    
+    response.addString("ports");
+    for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+        NameRecord& rec = (*it).int_id_;
+        response.addList() = botify(rec.getAddress());
+    }
+
+    return response;
+}
+
+
+yarp::os::Bottle NameServer::ncmdQuery(int argc, char *argv[]) {
+    Bottle response;
+    if (argc==1) {
+        String portName = STR(argv[0]);
+        Address address = queryName(portName);
+        response = botify(address);
+    }
+    return response;
+}
+
+
+yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
+    Bottle response;
+    response.addString("version");
+    response.addString(Companion::version().c_str());
+    return response;
+}
+
+
 String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     String response = "";
 
@@ -531,6 +584,39 @@ String NameServer::textify(const Address& address) {
 }
 
 
+Bottle NameServer::botify(const Address& address) {
+    Bottle result;
+    if (address.isValid()) {
+        Bottle bname;
+        bname.addString("name");
+        bname.addString(address.getRegName().c_str());
+        Bottle bip;
+        bip.addString("ip");
+        bip.addString(address.getName().c_str());
+        Bottle bnum;
+        bnum.addString("port_number");
+        bnum.addInt(address.getPort());
+        Bottle bcarrier;
+        bcarrier.addString("carrier");
+        bcarrier.addString(address.getCarrierName().c_str());
+
+        result.addString("port");
+        result.addList() = bname;
+        result.addList() = bip;
+        result.addList() = bnum;
+        result.addList() = bcarrier;
+    } else {
+        Bottle bstate;
+        bstate.addString("error");
+        bstate.addInt(-2);
+        bstate.addString("port not known");
+        result.addString("port");
+        result.addList() = bstate;
+    }
+    return result;
+}
+
+
 String NameServer::terminate(const String& str) {
     return str + "*** end of message";
 }
@@ -547,6 +633,11 @@ String NameServer::apply(const String& txt, const Address& remote) {
             ss.set(1,remote.getName().c_str());
             result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
                                          (char **)(ss.get()+1));
+            if (result == "") {
+                Bottle b = ndispatcher.dispatch(this,key.c_str(),ss.size()-1,
+                                                (char **)(ss.get()+1));
+                result = b.toString().c_str();
+            }
             YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
             YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
         }
@@ -584,7 +675,14 @@ public:
             bool ok = true;
             String msg = "?";
             if (ok) {
-                msg = ref + reader.expectText().c_str();
+                if (reader.isTextMode()) {
+                    msg = ref + reader.expectText().c_str();
+                } else {
+                    // migrate to binary mode support, eventually optimize
+                    Bottle b;
+                    b.read(reader);
+                    msg = ref + b.toString().c_str();
+                }
             }
             YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
             int index = msg.find("NAME_SERVER");
@@ -654,6 +752,8 @@ public:
 
 
 int NameServer::main(int argc, char *argv[]) {
+
+    Network yarp;
 
     // pick an address
     Address suggest("...",0); // suggestion is initially empty

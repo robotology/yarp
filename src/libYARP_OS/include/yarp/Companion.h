@@ -34,7 +34,7 @@ namespace yarp {
 class yarp::Companion {
 public:
 
-    String version();
+    static String version();
 
     /**
      * The standard main method for the YARP companion utility.

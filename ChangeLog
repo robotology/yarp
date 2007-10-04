@@ -1,3 +1,18 @@
+2007-10-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameServer.cpp: start offering responses from
+	the name server that are in standard (bottle) format.
+	Historically, the name server has been using its own idiosyncratic
+	protocols (since it was written before the rest of YARP existed).
+	The low-level protocols were brought into line with standard yarp
+	ports some time back, but the actual commands and responses
+	continued to be defined in terms of strings rather than nested
+	structures.  The new changes offer nested (bottle-compatible)
+	structures as well.  To get the new responses, simply prefix
+	commands with the word "bot".  This commit adds "bot list" and
+	"bot query" commands with responses that are structured versions
+	of the current "list" and "query" commands.
+
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: froze YARP version 2.1.7

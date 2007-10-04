@@ -363,7 +363,12 @@ private:
     String cmdList(int argc, char *argv[]);
     String cmdRoute(int argc, char *argv[]);
     String cmdGarbageCollect(int argc, char *argv[]);
+    String cmdBot(int argc, char *argv[]);
 
+    // making a more easy to parse interface
+    yarp::os::Bottle ncmdList(int argc, char *argv[]);
+    yarp::os::Bottle ncmdQuery(int argc, char *argv[]);
+    yarp::os::Bottle ncmdVersion(int argc, char *argv[]);
 
     typedef ACE_Hash_Map_Manager<String,NameRecord,ACE_Null_Mutex> NameMapHash;
 
@@ -389,10 +394,13 @@ private:
     }
 
     Dispatcher<NameServer,String> dispatcher;
+    Dispatcher<NameServer,yarp::os::Bottle> ndispatcher;
 
 protected:
 
     String textify(const Address& addr);
+    yarp::os::Bottle botify(const Address& address);
+
     String terminate(const String& str);
 
     int basePort;
