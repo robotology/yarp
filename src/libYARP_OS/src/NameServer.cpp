@@ -242,7 +242,7 @@ void NameServer::setup() {
 
     ndispatcher.add("list", &NameServer::ncmdList);
     ndispatcher.add("query", &NameServer::ncmdQuery);
-    ndispatcher.add("version", &NameServer::ncmdQuery);
+    ndispatcher.add("version", &NameServer::ncmdVersion);
 }
 
 String NameServer::cmdRegister(int argc, char *argv[]) {
@@ -637,6 +637,10 @@ String NameServer::apply(const String& txt, const Address& remote) {
                 Bottle b = ndispatcher.dispatch(this,key.c_str(),ss.size()-1,
                                                 (char **)(ss.get()+1));
                 result = b.toString().c_str();
+                if (result!="") {
+                    result = result + "\n";
+                    result = terminate(result);
+                }
             }
             YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
             YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
