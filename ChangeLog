@@ -1,3 +1,10 @@
+2007-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpfs/yarpfs.cpp: some experimental code for mapping from
+	the YARP Network to a file system (analogous to the /proc
+	directory on Linux).  Pre-alpha, not included in the main YARP
+	build.
+
 2007-10-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Network.h: add helper method
