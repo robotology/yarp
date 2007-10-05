@@ -173,7 +173,7 @@ bool Network::write(const Contact& contact,
         //     address.toString().c_str(),
         //     connectionName);
         //Route r(connectionName,targetName,"text_ack");
-        Route r(connectionName,targetName,"tcp");
+        Route r(connectionName,targetName,"text_ack");
         out->open(r);
 
         PortCommand pc(0,"d");
