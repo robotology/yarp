@@ -1,3 +1,15 @@
+2007-10-8 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_dev/mei
+	* src/libYARP_dev/meiMotionControl
+	* src/libYARP_dev/picolo_grabber
+	* src/libYARP_dev/cyberglove
+	*                /e504
+	*                /fob
+	*                /joypres
+
+	--> Removed as previously planned. They will be placed in separate
+	repositories. Could not redistribute them for violation of copyright.
+	
 2007-10-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpfs/yarpfs.cpp: directory structure basically in 
@@ -28,6 +40,7 @@
 	"bot query" commands with responses that are structured versions
 	of the current "list" and "query" commands.
 
+>>>>>>> 1.188
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: froze YARP version 2.1.7
