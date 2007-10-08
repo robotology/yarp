@@ -6,7 +6,7 @@
  *
  */
 
-#define FUSE_USE_VERSION 30
+#define FUSE_USE_VERSION 26
 
 #include <fuse/fuse.h>
 #include <stdio.h>
@@ -284,6 +284,68 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
     return size;
 }
 
+
+static int yarp_write(const char *path, const char *buf, size_t size,
+                      off_t offset, struct fuse_file_info *fi)
+{
+    size_t len;
+    (void) fi;
+
+    YPath ypath(path);
+    string tail = ypath.getTail();
+    string head = ypath.getHead();
+    // lets just try to implement write for now
+    if (tail!="write") {
+        return -ENOENT;
+    }
+
+    /*
+    if (offset!=0) {
+        printf("Writer is really lame\n");
+        return -ENOENT;
+    }
+    */
+
+    signal(SIGALRM, &alarm_handler);
+    signal(SIGPIPE, &alarm_handler);
+    signal(SIGTERM, &alarm_handler);
+
+    BufferedPort<Bottle> port;
+    port.setStrict(true);
+    port.open("...");
+    Network::connect(port.getName(),head.c_str());
+    Bottle& bot = port.prepare();
+    bot.clear();
+    string src(buf,size);
+    bot.fromString(src.c_str());
+    port.write(true);
+    port.close();
+
+    return size;
+
+
+    //int fd;
+    //int res;
+
+    //(void) fi;
+    //fd = open(path, O_WRONLY);
+    //    if (fd == -1)
+    //return -errno;
+
+    //res = pwrite(fd, buf, size, offset);
+    //    if (res == -1)
+    //        res = -errno;
+    //close(fd);
+    //return res;
+}
+
+
+static int yarp_truncate(const char *path, off_t size)
+{
+    return 0;
+}
+
+
 static void *yarp_init(struct fuse_conn_info *conn) {
     umask(0);
     Network yarp;
@@ -300,6 +362,8 @@ int main(int argc, char *argv[])
     yarp_oper.readdir	= yarp_readdir;
     yarp_oper.open	= yarp_open;
     yarp_oper.read	= yarp_read;
+    yarp_oper.write	= yarp_write;
+    yarp_oper.truncate	= yarp_truncate;
     yarp_oper.init       = yarp_init;
     return fuse_main(argc, argv, &yarp_oper,NULL);
 }
