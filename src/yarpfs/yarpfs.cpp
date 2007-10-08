@@ -9,6 +9,7 @@
 #define FUSE_USE_VERSION 26
 
 #include <fuse/fuse.h>
+//#include <fuse/fuse_lowlevel.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -121,6 +122,95 @@ public:
     }
 };
 
+
+
+class YHandle {
+private:
+    YPath ypath;
+    BufferedPort<Bottle> port;
+    bool writing, reading, opened;
+public:
+    YHandle(const char *path) : ypath(path) {
+        writing = false;
+        reading = false;
+        opened = false;
+    }
+
+    string getHead() {
+        return ypath.getHead();
+    }
+
+    string getTail() {
+        return ypath.getTail();
+    }
+
+    bool isStem() {
+        return ypath.isStem();
+    }
+
+    bool isPort() {
+        return ypath.isPort();
+    }
+
+    bool isAct() {
+        return ypath.isAct();
+    }
+
+    int open() {
+        if (!opened) {
+            port.setStrict(true);
+            port.open("...");
+            opened = true;
+        }
+        return 0;
+    }
+
+    int write(const char *buf, size_t size, off_t offset) {
+        open();
+        if (!writing) {
+            Network::connect(port.getName(),getHead().c_str());
+            writing = true;
+        }
+        Bottle& bot = port.prepare();
+        bot.clear();
+        string src(buf,size);
+        bot.fromString(src.c_str());
+        port.write(true);
+        return size;
+    }
+
+    int read(char *buf, size_t size, off_t offset) {
+
+        open();
+        if (!reading) {
+            Network::connect(getHead().c_str(),port.getName());
+            reading = true;
+        }
+
+        Bottle *bot = port.read();
+        if (bot==NULL) {
+            return 0;
+        }
+        string str = bot->toString().c_str();
+        str = str + "\n";
+        const char *yarp_str = str.c_str();
+        printf(">>> Got %s\n", str.c_str());
+        
+        offset = 0;
+        size_t len = strlen(yarp_str);
+        if (offset < len) {
+            if (offset + size > len)
+                size = len - offset;
+            memcpy(buf, yarp_str + offset, size);
+        } else
+            size = 0;
+        
+        return size;
+    }
+};
+
+#define YHANDLE(x) ((YHandle*)((x)->fh))
+
 static int yarp_getattr(const char *path, struct stat *stbuf)
 {
     int res = 0;
@@ -160,7 +250,7 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     if (ypath.isPort()) {
         filler(buf, "read", NULL, 0);
         filler(buf, "write", NULL, 0);
-        filler(buf, "status", NULL, 0);
+        //filler(buf, "status", NULL, 0);
         return 0;
     }
 
@@ -222,20 +312,24 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int yarp_open(const char *path, struct fuse_file_info *fi)
 {
-    //if(strcmp(path, "/nonexist") != 0)
-    //return -ENOENT;
-
-    //if((fi->flags & 3) != O_RDONLY)
-    //return -EACCES;
-
     fi->direct_io = 1;
+    fi->fh = (uint64_t) (new YHandle(path));
+
+    if (fi->fh == 0) {
+        return -EACCES;
+    }
 
     return 0;
 }
 
 
-static void alarm_handler(int x) {
-    printf("PANIC!!!\n");
+static int yarp_release(const char *path, struct fuse_file_info *fi)
+{
+    if (YHANDLE(fi) != NULL) {
+        delete YHANDLE(fi);
+        fi->fh = 0;
+    }
+    return 0;
 }
 
 
@@ -246,42 +340,19 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
     (void) fi;
 
 
-    YPath ypath(path);
+    YHandle *fh = YHANDLE(fi);
+    if (fh==NULL) {
+        return -ENOENT;
+    }
 
-    string tail = ypath.getTail();
-    string head = ypath.getHead();
+    string tail = fh->getTail();
+    string head = fh->getHead();
     // lets just try to implement read for now
     if (tail!="read") {
         return -ENOENT;
     }
 
-    signal(SIGALRM, &alarm_handler);
-    signal(SIGPIPE, &alarm_handler);
-    signal(SIGTERM, &alarm_handler);
-
-    BufferedPort<Bottle> port;
-    port.open("...");
-    Network::connect(head.c_str(),port.getName());
-    Bottle *bot = port.read();
-    port.close();
-    if (bot==NULL) {
-        return -ENOENT;
-    }
-    string str = bot->toString().c_str();
-    str = str + "\n";
-    const char *yarp_str = str.c_str();
-    printf(">>> Got %s\n", str.c_str());
-
-    offset = 0;
-    len = strlen(yarp_str);
-    if (offset < len) {
-        if (offset + size > len)
-            size = len - offset;
-        memcpy(buf, yarp_str + offset, size);
-    } else
-        size = 0;
-
-    return size;
+    return fh->read(buf,size,offset);
 }
 
 
@@ -291,52 +362,19 @@ static int yarp_write(const char *path, const char *buf, size_t size,
     size_t len;
     (void) fi;
 
-    YPath ypath(path);
-    string tail = ypath.getTail();
-    string head = ypath.getHead();
+    YHandle *fh = YHANDLE(fi);
+    if (fh==NULL) {
+        return -ENOENT;
+    }
+
+    string tail = fh->getTail();
+    string head = fh->getHead();
     // lets just try to implement write for now
     if (tail!="write") {
         return -ENOENT;
     }
 
-    /*
-    if (offset!=0) {
-        printf("Writer is really lame\n");
-        return -ENOENT;
-    }
-    */
-
-    signal(SIGALRM, &alarm_handler);
-    signal(SIGPIPE, &alarm_handler);
-    signal(SIGTERM, &alarm_handler);
-
-    BufferedPort<Bottle> port;
-    port.setStrict(true);
-    port.open("...");
-    Network::connect(port.getName(),head.c_str());
-    Bottle& bot = port.prepare();
-    bot.clear();
-    string src(buf,size);
-    bot.fromString(src.c_str());
-    port.write(true);
-    port.close();
-
-    return size;
-
-
-    //int fd;
-    //int res;
-
-    //(void) fi;
-    //fd = open(path, O_WRONLY);
-    //    if (fd == -1)
-    //return -errno;
-
-    //res = pwrite(fd, buf, size, offset);
-    //    if (res == -1)
-    //        res = -errno;
-    //close(fd);
-    //return res;
+    return fh->write(buf,size,offset);
 }
 
 
@@ -347,7 +385,6 @@ static int yarp_truncate(const char *path, off_t size)
 
 
 static void *yarp_init(struct fuse_conn_info *conn) {
-    umask(0);
     Network yarp;
     printf("Initializing...\n");
     return NULL;
@@ -361,10 +398,11 @@ int main(int argc, char *argv[])
     yarp_oper.getattr	= yarp_getattr;
     yarp_oper.readdir	= yarp_readdir;
     yarp_oper.open	= yarp_open;
+    yarp_oper.release	= yarp_release;
     yarp_oper.read	= yarp_read;
     yarp_oper.write	= yarp_write;
     yarp_oper.truncate	= yarp_truncate;
     yarp_oper.init       = yarp_init;
-    return fuse_main(argc, argv, &yarp_oper,NULL);
-}
 
+    return fuse_main(argc, argv, &yarp_oper, NULL);
+}
