@@ -3,7 +3,7 @@
 
 IF (WIN32 AND NOT CYGWIN)
    SET(AVAILABLE_DEVICES dragonfly microphone jrkerr dimax_u2c)
-   SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} picolo_grabber fob cyberglove e504 joypres mei)
+   SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} fob cyberglove e504 joypres)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
