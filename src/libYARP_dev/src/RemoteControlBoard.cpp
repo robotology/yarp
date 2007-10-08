@@ -2157,7 +2157,7 @@ public:
      * Read the electric current going to a given motor.
      * @param j motor number
      * @param val pointer to storage for the output value
-     * @return probably true, might return false in bad times
+     * @return probably true, might return false in bad time
      */
     virtual bool getCurrent(int j, double *val) {
         return getDouble(VOCAB_AMP_CURRENT, j, val);
@@ -2169,7 +2169,7 @@ public:
      * implementation.
      * @param j motor number
      * @param v the new value
-     * @return probably true, might return false in bad times
+     * @return probably true, might return false in bad time
      */
     virtual bool setMaxCurrent(int j, double v) {
         return setDouble(VOCAB_AMP_MAXCURRENT, j, v);
@@ -2199,7 +2199,7 @@ public:
     /**
      * Set the software limits for a particular axis, the behavior of the
      * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number (why am I telling you this)
+     * @param axis joint number
      * @param min the value of the lower limit
      * @param max the value of the upper limit
      * @return true or false on success or failure
@@ -2217,10 +2217,10 @@ public:
     
     /**
      * Get the software limits for a particular axis.
-     * @param axis joint number (again... why am I telling you this)
+     * @param axis joint number
      * @param min pointer to store the value of the lower limit
      * @param max pointer to store the value of the upper limit
-     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     * @return true if everything goes fine, false if something bad happens
      */
     virtual bool getLimits(int axis, double *min, double *max) {
         Bottle cmd, response;
