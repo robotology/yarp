@@ -27,22 +27,118 @@ using namespace yarp::os;
 using namespace yarp;
 using namespace std;
 
+
+/*
+
+We try to map from filesystem paths to port names.
+
+The "directory" is the port name, and the "file" part is
+an aspect of the port - properties, or read/write pipes.
+
+ */
+class YPath {
+private:
+    string path, head, tail;
+    bool dirty;
+    bool _isStem, _isPort, _isAct;
+
+    void check() {
+        if (dirty) {
+            NameConfig nc;
+            String name = nc.getNamespace();
+            Bottle msg, reply;
+            msg.addString("bot");
+            msg.addString("query");
+            msg.addString(head.c_str());
+            Network::write(name.c_str(),
+                           msg,
+                           reply);
+            printf("Check got %s\n", reply.toString().c_str());
+            _isAct = false;
+            _isStem = true;
+            _isPort = false;
+            if (!reply.check("error")) {
+                _isAct = true;
+                _isStem = false;
+                _isPort = false;
+            } else {
+                msg.clear();
+                msg.addString("bot");
+                msg.addString("query");
+                msg.addString(path.c_str());
+                Network::write(name.c_str(),
+                               msg,
+                               reply);
+                printf("Check 2 got %s\n", reply.toString().c_str());
+                if (!reply.check("error")) {
+                    _isAct = false;
+                    _isStem = true;
+                    _isPort = true;
+                }
+            }
+            dirty = false;
+        }
+    }
+public:
+    YPath(const char *path) {
+        set(path);
+    }
+
+    void set(const char *path) {
+        this->path = path;
+        head = path;
+        tail = path;
+        size_t at = tail.rfind("/");
+        if (at!=tail.npos) {
+            tail = tail.substr(at+1,tail.length());
+            head = head.substr(0,at);
+        }
+        printf("PATH [%s] [%s]\n", head.c_str(), tail.c_str());
+        dirty = true;
+    }
+
+    string getHead() {
+        return head;
+    }
+
+    string getTail() {
+        return tail;
+    }
+
+    bool isStem() {
+        check();
+        return _isStem;
+    }
+
+    bool isPort() {
+        check();
+        return _isPort;
+    }
+
+    bool isAct() {
+        check();
+        return _isAct;
+    }
+};
+
 static int yarp_getattr(const char *path, struct stat *stbuf)
 {
     int res = 0;
 
+    YPath ypath(path);
+
     memset(stbuf, 0, sizeof(struct stat));
-    //if(strcmp(path, "/") == 0) {
-    stbuf->st_mode = S_IFDIR | 0755;
-    stbuf->st_nlink = 2;
-    //}
-    //else if(strcmp(path, yarp_path) == 0) {
-    //stbuf->st_mode = S_IFREG | 0444;
-    //stbuf->st_nlink = 1;
-    //stbuf->st_size = 0; //strlen(yarp_str);
-    //}
-    //else
-    //res = -ENOENT;
+    if (ypath.isStem()) {
+        stbuf->st_mode = S_IFDIR | 0755;
+        stbuf->st_nlink = 2;
+    } else if (ypath.isAct()) {
+        stbuf->st_mode = S_IFREG | 0444;
+        stbuf->st_nlink = 1;
+        stbuf->st_size = 0; //strlen(yarp_str);
+    }
+    else {
+        res = -ENOENT;
+    }
 
     return res;
 }
@@ -55,16 +151,22 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     printf(">>>>>>>>>>>READING DIR\n");
 
-    //if(strcmp(path, "/") != 0)
-    //return -ENOENT;
 
     filler(buf, ".", NULL, 0);
     filler(buf, "..", NULL, 0);
 
-    //NameClient& nic = NameClient::getNameClient();
+    YPath ypath(path);
+
+    if (ypath.isPort()) {
+        filler(buf, "read", NULL, 0);
+        filler(buf, "write", NULL, 0);
+        filler(buf, "status", NULL, 0);
+        return 0;
+    }
+
     NameConfig nc;
     
-    String name = nc.getNamespace(); //nic.getAddress().getRegName();
+    String name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
@@ -105,7 +207,6 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         }
     }
 
-
     // return result in alphabetical order
     ACE_Ordered_MultiSet_Iterator<String> iter(lines);
     iter.first();
@@ -121,11 +222,11 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
 static int yarp_open(const char *path, struct fuse_file_info *fi)
 {
-    if(strcmp(path, "/nonexist") != 0)
-        return -ENOENT;
+    //if(strcmp(path, "/nonexist") != 0)
+    //return -ENOENT;
 
-    if((fi->flags & 3) != O_RDONLY)
-        return -EACCES;
+    //if((fi->flags & 3) != O_RDONLY)
+    //return -EACCES;
 
     fi->direct_io = 1;
 
@@ -143,9 +244,16 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
 {
     size_t len;
     (void) fi;
-    if(strcmp(path, "/noexist") != 0)
-        return -ENOENT;
 
+
+    YPath ypath(path);
+
+    string tail = ypath.getTail();
+    string head = ypath.getHead();
+    // lets just try to implement read for now
+    if (tail!="read") {
+        return -ENOENT;
+    }
 
     signal(SIGALRM, &alarm_handler);
     signal(SIGPIPE, &alarm_handler);
@@ -153,7 +261,7 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
 
     BufferedPort<Bottle> port;
     port.open("...");
-    Network::connect(path,port.getName());
+    Network::connect(head.c_str(),port.getName());
     Bottle *bot = port.read();
     port.close();
     if (bot==NULL) {
