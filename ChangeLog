@@ -1,3 +1,8 @@
+2007-10-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpfs/yarpfs.cpp: directory structure basically in 
+	place, and read/write operations work.
+
 2007-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpfs/yarpfs.cpp: some experimental code for mapping from
