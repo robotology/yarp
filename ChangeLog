@@ -1,3 +1,12 @@
+2007-10-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Port.cpp: fix for problem reported by
+	Marco Randazzo, where calling Port::read(...,true) and then
+	failing to eventually call Port::reply(...) causes a crash.
+
+	* src/libYARP_OS/harness/PortTest.cpp: regression test for
+	Marco Randazzo's problem.
+
 2007-10-8 Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_dev/mei
 	* src/libYARP_dev/meiMotionControl
