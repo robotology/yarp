@@ -29,6 +29,7 @@ private:
     PortWriter *writeDelegate;
     //PortReaderCreator *readCreatorDelegate;
     bool readResult, readActive, readBackground, willReply, closed, opened;
+    bool replyDue;
     SemaphoreImpl produce, consume;
     ReadableCreator *recReadCreator;
     int recWaitAfterSend;
@@ -41,6 +42,7 @@ public:
         willReply(false),
         closed(false),
         opened(false),
+        replyDue(false),
         produce(0), consume(0),
         recReadCreator(NULL),
         recWaitAfterSend(-1)
@@ -122,6 +124,17 @@ public:
     bool read(PortReader& reader, bool willReply = false) {
         // called by user
 
+        // user claimed they would reply to last read, but then
+        // decided not to.
+        if (replyDue) {
+            Bottle emptyMessage;
+            reply(emptyMessage);
+            replyDue = false;
+        }
+        if (willReply) {
+            replyDue = true;
+        }
+
         stateMutex.wait();
         readActive = true;
         readDelegate = &reader;
@@ -141,6 +154,9 @@ public:
     }
 
     bool reply(PortWriter& writer) {
+
+        replyDue = false;
+
         writeDelegate = &writer;
         consume.post();
         produce.wait();

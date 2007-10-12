@@ -7,7 +7,7 @@
 	* src/libYARP_OS/harness/PortTest.cpp: regression test for
 	Marco Randazzo's problem.
 
-2007-10-8 Lorenzo Natale <nat@liralab.it>
+2007-10-08 Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_dev/mei
 	* src/libYARP_dev/meiMotionControl
 	* src/libYARP_dev/picolo_grabber
@@ -49,7 +49,6 @@
 	"bot query" commands with responses that are structured versions
 	of the current "list" and "query" commands.
 
->>>>>>> 1.188
 2007-09-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: froze YARP version 2.1.7

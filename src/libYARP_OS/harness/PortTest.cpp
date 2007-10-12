@@ -86,10 +86,12 @@ public:
 
 class DelegatedReader : public Thread {
 public:
+    bool faithful;
     Port p;
 
-    DelegatedReader() {
+    DelegatedReader(bool faithful = true) {
         p.open("/reader");
+        this->faithful = faithful;
     }
     
     virtual void run() {
@@ -97,7 +99,11 @@ public:
             Bottle b,b2;
             p.read(b,true);
             b2.addInt(b.get(0).asInt()+1);
-            p.reply(b2);
+            if ((!faithful)&&i==1) {
+                // no reply
+            } else {
+                p.reply(b2);
+            }
         }
     }
 };
@@ -720,6 +726,25 @@ public:
     }
 
 
+    virtual void testReadNoReply() {
+        report(0,"check that we survive if no reply() made when promised...");
+
+        Port p1;
+        DelegatedReader reader(false);
+        reader.start();
+        p1.open("/writer");
+        Network::connect("/writer","/reader");
+        Network::sync("/writer");
+        Network::sync("/reader");
+        Bottle bsend, breply;
+        bsend.addInt(10);
+        p1.write(bsend, breply);
+        p1.write(bsend, breply);
+        p1.write(bsend, breply);
+        reader.stop();
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -744,6 +769,8 @@ public:
         //testCloseOpenRepeats(); //bring this back soon
 
         //testCounts(); // bring this back soon
+
+        testReadNoReply();
 
         nic.setFakeMode(false);
     }
