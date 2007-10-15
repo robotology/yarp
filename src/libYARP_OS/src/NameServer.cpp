@@ -21,6 +21,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Property.h>
 
 #include <ace/Containers_T.h>
 
@@ -771,13 +772,25 @@ int NameServer::main(int argc, char *argv[]) {
                 suggest = Address("...",NetType::toInt(argv[0]));
             }
         }
+
+		Property config;
+		config.fromCommand(argc,argv,false);
     
+		bool bNoAuto=config.check("noauto");
+
         // see what address is lying around
         Address prev;
         NameConfig conf;
         if (conf.fromFile()) {
             prev = conf.getAddress();
         }
+		else if (bNoAuto)
+		{
+			YARP_ERROR(Logger::get(), String("Could not find configuration file ") +
+            conf.getConfigFileName());
+
+			return 1;
+		}
     
         // merge
         if (prev.isValid()) {
