@@ -92,6 +92,8 @@ public:
 
     static int rpc(const char *connectionName, const char *targetName);
 
+    static int forward(const char *localName, const char *targetName);
+
     static String slashify(const String& src) {
         if (src.length()>0) {
             if (src[0] == '/') {
@@ -151,6 +153,8 @@ private:
     int cmdWrite(int argc, char *argv[]);
 
     int cmdRpc(int argc, char *argv[]);
+
+    int cmdForward(int argc, char *argv[]);
 
     int cmdRegression(int argc, char *argv[]);
 

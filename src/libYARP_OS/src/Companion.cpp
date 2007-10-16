@@ -95,6 +95,8 @@ Companion::Companion() {
         "write to the network from standard input");
     add("rpc",        &Companion::cmdRpc,
         "read/write commands to a port, in standard format");
+    add("forward",        &Companion::cmdForward,
+        "forward commands to a port, in standard format (experimental)");
     add("regression", &Companion::cmdRegression,
         "run regression tests, if linked");
     add("server",     &Companion::cmdServer,
@@ -540,6 +542,19 @@ int Companion::cmdRpc(int argc, char *argv[]) {
 }
 
 
+int Companion::cmdForward(int argc, char *argv[]) {
+    if (argc<2) {
+        ACE_OS::fprintf(stderr, "Please supply local and remote port name\n");
+        return 1;
+    }
+
+    const char *src = argv[0];
+    const char *dest = argv[1];
+
+    return forward(src,dest);
+}
+
+
 int Companion::cmdRegression(int argc, char *argv[]) {
     ACE_OS::fprintf(stderr,"no regression tests linked in this version\n");
     return 1;
@@ -964,6 +979,21 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     return 1;
 }
 
+
+int Companion::forward(const char *localName, const char *targetName) {
+    Port p;
+    p.open(localName);
+    Network::connect(localName,targetName);
+    while (true) {
+        Bottle in, out;
+        p.read(in,true);
+        p.write(in,out);
+        printf("in [%s] out [%s]\n", in.toString().c_str(), 
+               out.toString().c_str());
+        p.reply(out);
+    }
+    return 0;
+}
 
 
 int Companion::rpc(const char *connectionName, const char *targetName) {
