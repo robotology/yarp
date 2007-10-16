@@ -1428,7 +1428,8 @@ public:
             // for rpc, if the rpc commands are being initiated from just
             // one side)
             Network::connect(s2.c_str(), s1.c_str());
-            Network::connect(s1.c_str(), s2.c_str());
+            // Network::connect(s1.c_str(), s2.c_str()); // went ahead and
+            // removed  --paulfitz
             s1 = remote;
             s1 += "/command:i";
             s2 = local;

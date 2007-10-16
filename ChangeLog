@@ -1,5 +1,10 @@
 2007-10-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: Historically, this
+	file has made a pointless connection from a reader port to a
+	writer port.  I'm not sure why.  This is finally causing some
+	troubles, so I've commented the connection out.
+
 	* src/libYARP_OS/src/Companion.cpp: added "yarp forward"
 	capability, to forward commands through an intermediary.  This is
 	useful for monitoring RPC command/reply sequences.  Streaming
