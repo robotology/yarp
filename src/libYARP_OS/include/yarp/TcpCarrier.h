@@ -23,16 +23,16 @@ namespace yarp {
 class yarp::TcpCarrier : public AbstractCarrier {
 public:
 
-    TcpCarrier() {
-        requireAckFlag = true;
+    TcpCarrier(bool requireAckFlag = true) {
+        this->requireAckFlag = requireAckFlag;
     }
 
     virtual Carrier *create() {
-        return new TcpCarrier();
+        return new TcpCarrier(requireAckFlag);
     }
 
     virtual String getName() {
-        return "tcp";
+        return requireAckFlag?"tcp":"fast_tcp";
     }
 
     int getSpecifierCode() {
@@ -40,7 +40,13 @@ public:
     }
 
     virtual bool checkHeader(const Bytes& header) {
-        return getSpecifier(header)%16 == getSpecifierCode();
+        int spec = getSpecifier(header);
+        if (spec%16 == getSpecifierCode()) {
+            if (((spec&128)!=0) == requireAckFlag) {
+                return true;
+            }
+        }
+        return false;
     }
 
     virtual void getHeader(const Bytes& header) {
@@ -48,8 +54,9 @@ public:
     }
 
     virtual void setParameters(const Bytes& header) {
-        int specifier = getSpecifier(header);
-        requireAckFlag = (specifier&128)!=0;
+        //int specifier = getSpecifier(header);
+        //requireAckFlag = (specifier&128)!=0;
+        // Now prefilter by ack flag
     }
 
     virtual bool requireAck() {

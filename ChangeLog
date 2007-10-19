@@ -1,3 +1,11 @@
+2007-10-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/TcpCarrier.h: dust off TCP carrier
+	variant without flow control, call it "fast_tcp".
+
+	* src/libYARP_OS/src/Carriers.cpp: add "fast_tcp" as a known 
+	carrier.
+
 2007-10-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: Historically, this
