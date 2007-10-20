@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Paul Fitzpatrick
+ * Copyright (C) 2007 Paul Fitzpatrick and Giacomo Spigler
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -27,6 +27,9 @@
 using namespace yarp::os;
 using namespace yarp;
 using namespace std;
+
+
+#include "link.cpp"
 
 
 /*
@@ -248,14 +251,14 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     YPath ypath(path);
 
     if (ypath.isPort()) {
-        filler(buf, "read", NULL, 0);
-        filler(buf, "write", NULL, 0);
+        filler(buf, "rw", NULL, 0);
+        //filler(buf, "write", NULL, 0); //deprecated
         //filler(buf, "status", NULL, 0);
         return 0;
     }
 
     NameConfig nc;
-    
+
     String name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
@@ -348,7 +351,7 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
     string tail = fh->getTail();
     string head = fh->getHead();
     // lets just try to implement read for now
-    if (tail!="read") {
+    if (tail!="rw") {
         return -ENOENT;
     }
 
@@ -370,11 +373,30 @@ static int yarp_write(const char *path, const char *buf, size_t size,
     string tail = fh->getTail();
     string head = fh->getHead();
     // lets just try to implement write for now
-    if (tail!="write") {
+    if (tail!="rw") {
         return -ENOENT;
     }
 
     return fh->write(buf,size,offset);
+}
+
+
+static int yarp_rename(const char *from, const char *to) {
+    YPath ypath(from);
+    if (!ypath.isStem()) { //Check that the path exists? Is it right?
+        return -ENOENT;
+    }
+
+
+    //Create the new Contact
+    Contact src = Network::queryName(from);
+    Network::unregisterContact(src);
+
+    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+
+    Network::registerContact(dest);
+
+    return 0;
 }
 
 
@@ -402,7 +424,14 @@ int main(int argc, char *argv[])
     yarp_oper.read	= yarp_read;
     yarp_oper.write	= yarp_write;
     yarp_oper.truncate	= yarp_truncate;
-    yarp_oper.init       = yarp_init;
+    yarp_oper.init      = yarp_init;
+
+    //Linking & Renaming
+    yarp_oper.readlink  = yarp_readlink;
+    yarp_oper.symlink   = yarp_symlink;
+    yarp_oper.unlink    = yarp_unlink;
+    yarp_oper.link      = yarp_link;
+    yarp_oper.rename    = yarp_rename;
 
     return fuse_main(argc, argv, &yarp_oper, NULL);
 }
