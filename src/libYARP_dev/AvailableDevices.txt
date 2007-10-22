@@ -2,12 +2,11 @@
 # One day this list could be populated automatically.
 
 IF (WIN32 AND NOT CYGWIN)
-   SET(AVAILABLE_DEVICES dragonfly microphone jrkerr dimax_u2c)
-   SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} fob cyberglove e504 joypres)
+   SET(AVAILABLE_DEVICES microphone jrkerr dimax_u2c)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (UNIX)
-   SET(AVAILABLE_DEVICES firewirecamera dragonfly microphone urbtc)
+   SET(AVAILABLE_DEVICES firewirecamera microphone urbtc)
 ENDIF (UNIX)
 
 SET(AVAILABLE_DEVICES ${AVAILABLE_DEVICES} opencv_grabber ffmpeg portaudio serial)
