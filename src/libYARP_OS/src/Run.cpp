@@ -966,7 +966,11 @@ int Run::main(int argc, char *argv[])
 
 #include <windows.h>
 #include <tchar.h>
+#ifdef MSVC
 #include <crtdbg.h>
+#else
+#define _ASSERTE(x)
+#endif
 #include <stdio.h>
 #include <stdarg.h>
 #include <tlhelp32.h>
