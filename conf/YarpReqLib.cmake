@@ -23,6 +23,11 @@ IF(WIN32 AND CYGWIN)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DCYGWIN)
 ENDIF(WIN32 AND CYGWIN)
 
+## check if we are on MSYS
+IF(MSYS)
+  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} "-mms-bitfields")
+ENDIF(MSYS)
+
 # check endianness
 IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
     INCLUDE(TestBigEndian)
