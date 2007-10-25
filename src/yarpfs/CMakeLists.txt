@@ -14,8 +14,6 @@ PROJECT(${KEYWORD})
 SET(YARP_DIR "$ENV{YARP_BUILD}" CACHE LOCATION "where is yarp?")
 FIND_PACKAGE(YARP)
 
-
-
 ADD_DEFINITIONS(-D_FILE_OFFSET_BITS=64)
 LINK_LIBRARIES(fuse)
 
@@ -25,25 +23,11 @@ FILE(GLOB folder_header *.h)
 SOURCE_GROUP("Source Files" FILES ${folder_source})
 SOURCE_GROUP("Header Files" FILES ${folder_header})
 
-# Check if there are any plugin device subdirectories.
-# Device subdirectories contain a yarpdevice.cmake file.
-FILE(GLOB_RECURSE device_config yarpdevice.cmake)
-IF (device_config)
-  INCLUDE(YarpCompileModules)
-ENDIF (device_config)
+INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR})
 
-# If no devices around, make a single executable
-IF (NOT device_config)
-  # Automatically add include directories if needed.
-  FOREACH(header_file ${folder_header})
-    GET_FILENAME_COMPONENT(p ${header_file} PATH)
-    INCLUDE_DIRECTORIES(${p})
-  ENDFOREACH(header_file ${folder_header})
-
-  # Set up our main executable.
-  IF (folder_source)
-    ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})
-  ELSE (folder_source)
-    MESSAGE(FATAL_ERROR "No source code files found. Please add something")
-  ENDIF (folder_source)
-ENDIF (NOT device_config)
+# Set up our main executable.
+IF (folder_source)
+  ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})
+ELSE (folder_source)
+  MESSAGE(FATAL_ERROR "No source code files found. Please add something")
+ENDIF (folder_source)
