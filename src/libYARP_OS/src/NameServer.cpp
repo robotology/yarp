@@ -517,11 +517,19 @@ String NameServer::cmdBot(int argc, char *argv[]) {
 
 Bottle NameServer::ncmdList(int argc, char *argv[]) {
     Bottle response;
+
+    String prefix = "";
+
+    if (argc==1) {
+        prefix = STR(argv[0]);
+    }
     
     response.addString("ports");
     for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = (*it).int_id_;
-        response.addList() = botify(rec.getAddress());
+        if (rec.getAddress().getRegName().find(prefix)==0) {
+            response.addList() = botify(rec.getAddress());
+        }
     }
 
     return response;

@@ -1,5 +1,8 @@
 2007-10-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/NameServer.cpp: allow list of ports
+	to be prefiltered by prefix, to optimize yarpfs.
+
 	* conf/YarpReqLib.cmake: Make MSYS compile compatible with GTK
 	by setting -mms-bitfields flag.
 
