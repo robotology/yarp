@@ -21,53 +21,53 @@
 
 #include <ace/Containers_T.h>
 
+#include "yarputils.h"
+
 
 static int yarp_readlink(const char *path, char *buf, size_t size) {
-/*
-    int res;
 
-    res = readlink(path, buf, size - 1);
-    if (res == -1)
-        return -errno;
 
-    buf[res] = '\0';
-*/
+
     return 0;
 }
 
 
 static int yarp_unlink(const char *path) {
-/*
-    int res;
 
-    res = unlink(path);
-    if (res == -1)
-        return -errno;
-*/
+
+
     return 0;
 }
 
 
 static int yarp_symlink(const char *from, const char *to) {
-/*
-    int res;
+    //TODO: actually, it only works with ln -s /read rd, and yet it throwns
+    //  some errors
 
-    res = symlink(from, to);
-    if (res == -1)
-        return -errno;
-*/
+    //YPath ypath(from);
+    //if (!ypath.isStem()) { //Check that the path exists? Is it right?
+    //    return -ENOENT;
+    //}
+
+
+    //Create the new Contact
+    Contact src = Network::queryName(from);
+
+    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+
+    Network::registerContact(dest);
+
+
     return 0;
 }
 
 
 static int yarp_link(const char *from, const char *to) {
-/*
-    int res;
+    //TODO: will it ever be possible to hard link ports?
+    //  If possible, it might be an alias for yarp_simlink, as with YARP 
+    //  there isn't a sym/hard linking difference
 
-    res = link(from, to);
-    if (res == -1)
-        return -errno;
-*/
+
     return 0;
 }
 
