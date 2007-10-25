@@ -46,43 +46,48 @@ private:
     bool dirty;
     bool _isStem, _isPort, _isAct;
 
+    // New version of check method.  Relies on very up-to-date yarp server.
+    // Deals better with non existent directories/files.
     void check() {
         if (dirty) {
+            // limit for now: no "rw" directories
+            bool leafLike = (tail=="rw");
+
             NameConfig nc;
             String name = nc.getNamespace();
             Bottle msg, reply;
             msg.addString("bot");
-            msg.addString("query");
-            msg.addString(head.c_str());
+            msg.addString("list");
+            msg.addString(leafLike?(head.c_str()):(path.c_str()));
             Network::write(name.c_str(),
                            msg,
                            reply);
-            printf("Check got %s\n", reply.toString().c_str());
+            printf("Check: got %s\n", reply.toString().c_str());
             _isAct = false;
-            _isStem = true;
+            _isStem = false;
             _isPort = false;
-            if (!reply.check("error")) {
-                _isAct = true;
-                _isStem = false;
-                _isPort = false;
+            if (leafLike) {
+                if (reply.size()>1) {
+                    _isAct = true;
+                }
             } else {
-                msg.clear();
-                msg.addString("bot");
-                msg.addString("query");
-                msg.addString(path.c_str());
-                Network::write(name.c_str(),
-                               msg,
-                               reply);
-                printf("Check 2 got %s\n", reply.toString().c_str());
-                if (!reply.check("error")) {
-                    _isAct = false;
+                if (reply.size()>1) {
                     _isStem = true;
-                    _isPort = true;
+                    if (reply.size()==2) {
+                        Property p;
+                        p.fromString(reply.get(1).toString());
+                        //printf("Property p: %s\n", p.toString().c_str());
+                        if (p.check("name",Value("[none]")).asString()==
+                            path.c_str()) {
+                            _isPort = true;
+                        }
+                    }
                 }
             }
             dirty = false;
         }
     }
+
 public:
     YPath(const char *path) {
         set(path);
@@ -97,7 +102,8 @@ public:
             tail = tail.substr(at+1,tail.length());
             head = head.substr(0,at);
         }
-        printf("PATH [%s] [%s]\n", head.c_str(), tail.c_str());
+        printf("PATH [%s] [%s] [%s]\n", head.c_str(), tail.c_str(),
+               this->path.c_str());
         dirty = true;
     }
 
@@ -221,6 +227,10 @@ static int yarp_getattr(const char *path, struct stat *stbuf)
     YPath ypath(path);
 
     memset(stbuf, 0, sizeof(struct stat));
+    printf("Checking attr // port %d, stem %d, act %d\n", 
+           ypath.isPort(),
+           ypath.isStem(),
+           ypath.isAct());
     if (ypath.isStem()) {
         stbuf->st_mode = S_IFDIR | 0755;
         stbuf->st_nlink = 2;
@@ -308,7 +318,6 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
         filler(buf, (*iter).c_str(), NULL, 0);
         iter.advance();
     }
-
 
     return 0;
 }
