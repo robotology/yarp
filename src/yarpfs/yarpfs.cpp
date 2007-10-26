@@ -30,12 +30,11 @@ using namespace std;
 
 
 #include "yarputils.h"
-
-#include "link.cpp"
-
+#include "yarpfns.h"
 
 
-static int yarp_getattr(const char *path, struct stat *stbuf)
+
+int yarp_getattr(const char *path, struct stat *stbuf)
 {
     int res = 0;
 
@@ -61,8 +60,8 @@ static int yarp_getattr(const char *path, struct stat *stbuf)
     return res;
 }
 
-static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-                        off_t offset, struct fuse_file_info *fi)
+int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
+                 off_t offset, struct fuse_file_info *fi)
 {
     (void) offset;
     (void) fi;
@@ -137,7 +136,8 @@ static int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
     return 0;
 }
 
-static int yarp_open(const char *path, struct fuse_file_info *fi)
+
+int yarp_open(const char *path, struct fuse_file_info *fi)
 {
     fi->direct_io = 1;
     fi->fh = (uint64_t) (new YHandle(path));
@@ -150,7 +150,7 @@ static int yarp_open(const char *path, struct fuse_file_info *fi)
 }
 
 
-static int yarp_release(const char *path, struct fuse_file_info *fi)
+int yarp_release(const char *path, struct fuse_file_info *fi)
 {
     if (YHANDLE(fi) != NULL) {
         delete YHANDLE(fi);
@@ -160,8 +160,8 @@ static int yarp_release(const char *path, struct fuse_file_info *fi)
 }
 
 
-static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
-                     struct fuse_file_info *fi)
+int yarp_read(const char *path, char *buf, size_t size, off_t offset,
+              struct fuse_file_info *fi)
 {
     size_t len;
     (void) fi;
@@ -183,8 +183,8 @@ static int yarp_read(const char *path, char *buf, size_t size, off_t offset,
 }
 
 
-static int yarp_write(const char *path, const char *buf, size_t size,
-                      off_t offset, struct fuse_file_info *fi)
+int yarp_write(const char *path, const char *buf, size_t size,
+               off_t offset, struct fuse_file_info *fi)
 {
     size_t len;
     (void) fi;
@@ -205,7 +205,7 @@ static int yarp_write(const char *path, const char *buf, size_t size,
 }
 
 
-static int yarp_rename(const char *from, const char *to) {
+int yarp_rename(const char *from, const char *to) {
     //TODO: the current code just renames ports, eg:
     //  /read can become /rd, but /read/rd1 cannot become /rd/rd1
     //  every subport/subdirectory should have to be renamed
@@ -228,7 +228,7 @@ static int yarp_rename(const char *from, const char *to) {
 }
 
 
-static int yarp_rmdir(const char *path) {
+int yarp_rmdir(const char *path) {
     //TODO: delete directories. Current code just links ports
     // eg: delete every subport/subdirectory
 
@@ -250,13 +250,13 @@ static int yarp_rmdir(const char *path) {
 }
 
 
-static int yarp_truncate(const char *path, off_t size)
+int yarp_truncate(const char *path, off_t size)
 {
     return 0;
 }
 
 
-static void *yarp_init(struct fuse_conn_info *conn) {
+void *yarp_init(struct fuse_conn_info *conn) {
     Network yarp;
     printf("Initializing...\n");
     return NULL;

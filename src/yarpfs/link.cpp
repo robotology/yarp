@@ -22,17 +22,10 @@
 #include <ace/Containers_T.h>
 
 #include "yarputils.h"
+#include "yarpfns.h"
 
 
-static int yarp_readlink(const char *path, char *buf, size_t size) {
-
-
-
-    return 0;
-}
-
-
-static int yarp_unlink(const char *path) {
+int yarp_readlink(const char *path, char *buf, size_t size) {
 
 
 
@@ -40,7 +33,15 @@ static int yarp_unlink(const char *path) {
 }
 
 
-static int yarp_symlink(const char *from, const char *to) {
+int yarp_unlink(const char *path) {
+
+
+
+    return 0;
+}
+
+
+int yarp_symlink(const char *from, const char *to) {
     //TODO: actually, it only works with ln -s /read rd, and yet it throwns
     //  some errors
 
@@ -62,7 +63,7 @@ static int yarp_symlink(const char *from, const char *to) {
 }
 
 
-static int yarp_link(const char *from, const char *to) {
+int yarp_link(const char *from, const char *to) {
     //TODO: will it ever be possible to hard link ports?
     //  If possible, it might be an alias for yarp_simlink, as with YARP 
     //  there isn't a sym/hard linking difference
