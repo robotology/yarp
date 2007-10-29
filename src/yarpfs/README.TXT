@@ -27,15 +27,15 @@ If you want to play with this here are some tips:
 
 + Run cmake and compile
 
-+ Make a directory for mounting, e.g.: mount /mnt/yarp
++ Make a directory for mounting, e.g.: [as root] mkdir -p /mnt/yarp
 
-+ Run server in debug mode, e.g.: sudo ./yarpfs /mnt/yarp -d
++ Run server in debug mode, e.g.: [as root] ./yarpfs /mnt/yarp -d
 
-+ Change into the directory and look around: cd /mnt/yarp
++ Change into the directory and look around: [as root] cd /mnt/yarp; ls
 
 + You should see a directory tree reflecting the ports that
   exist in your YARP Network.  
 
-+ The "leaf" files called "read" and "write" can be read from
++ The "leaf" files called "rw" can be read from
   and written to, and the data comes from and goes to the port
   associated with their containing directory.
