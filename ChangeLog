@@ -1,3 +1,8 @@
+2007-10-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/example.tcl: figure out how DLL inclusion works
+	in TCL on Windows.
+
 2007-10-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/NameServer.cpp: allow list of ports
