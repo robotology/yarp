@@ -61,9 +61,15 @@ You should now have libraries called
 + libyarp.so 
 + and/or _yarp.so 
 + and/or cyarp.so
+Or on windows, the equivalent DLLs.
 
 Now try to run example.pl and/or example.py and/or example.tcl
 
+For TCL, on windows, look at example.tcl and uncomment the line referring
+to a .dll, and comment the line referring to a .so
+
+Make sure all DLLs or SOs needed for YARP are available (for example, by
+copying them to the current directory).
 
 ============================================================================
 == CHICKEN INTERFACE
