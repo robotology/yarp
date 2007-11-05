@@ -1,3 +1,8 @@
+2007-11-05  Arjan Gijsberts  <arjan@liralab.it>
+
+	* src/libYARP_dev/src/ffmpeg/default/yarp/FfmpegGrabber.cpp: 
+	added support for Video4Linux2, using a --v4l2 flag.
+
 2007-10-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/example.tcl: figure out how DLL inclusion works
