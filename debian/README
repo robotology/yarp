@@ -1,6 +1,11 @@
-The Debian Package yarp
-----------------------------
+The Unofficial Debian Package: yarp
+-----------------------------------
 
-Comments regarding the Package
+YARP: Yet Another Robot Platform
 
-Paul Fitzpatrick <paulfitz@liralab.it>, Sat,  1 Jul 2006 13:39:47 +0200
+YARP is a library and toolkit for communication and device interfaces,
+developed by humanoid robotics researchers but useful beyond that field.
+
+See: http://yarp0.sourceforge.net
+
+Paul Fitzpatrick <paulfitz@alum.mit.edu>, Tue Nov  6 12:14:20 CET 2007
