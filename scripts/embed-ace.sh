@@ -57,7 +57,7 @@ done
 cp ace/config-linux.h ace/config.h
 mv ace ../$osdir/include
 
-# nobble the conf/FindAce.cmake script
+# nobble the conf/FindAce.cmake script, no external ace needed or wanted
 cd ..
 cd $merged
 cd conf
