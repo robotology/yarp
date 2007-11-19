@@ -1,5 +1,9 @@
 2007-11-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/PortReport.h: Started
+	work on a better method for getting notifications of port
+	status changes.
+
 	* src/libYARP_OS/include/yarp/os/Network.h: Added simpler
 	code interface for setting/getting port properties.  
 	The name server was updated for this, as part of the 

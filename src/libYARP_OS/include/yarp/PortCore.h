@@ -18,6 +18,8 @@
 #include <yarp/Writable.h>
 #include <yarp/PortCorePacket.h>
 
+#include <yarp/os/PortReport.h>
+
 #include <ace/Vector_T.h>
 
 namespace yarp {
@@ -128,6 +130,8 @@ public:
     }
 
     void interrupt();
+
+    virtual void describe(yarp::os::PortReport& reporter);
 
 public:
 

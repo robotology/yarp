@@ -795,6 +795,64 @@ void PortCore::describe(void *id, OutputStream *os) {
     }
 }
 
+
+void PortCore::describe(PortReport& reporter) {
+    cleanUnits();
+
+    stateMutex.wait();
+
+    PortInfo info;
+    info.message = (String("This is ") + address.getRegName() + " at " + 
+                    address.toString()).c_str();
+    reporter.report(info);
+
+    int oct = 0;
+    int ict = 0;
+    for (unsigned int i=0; i<units.size(); i++) {
+        PortCoreUnit *unit = units[i];
+        if (unit!=NULL) {
+            if (unit->isOutput()&&!unit->isFinished()) {
+                Route route = unit->getRoute();
+                String msg = "There is an output connection from " + 
+                    route.getFromName() +
+                    " to " + route.getToName() + " using " + 
+                    route.getCarrierName();
+                info.message = msg.c_str();
+                reporter.report(info);                
+                oct++;
+            }
+        }
+    }
+    if (oct<1) {
+        info.message = "There are no outgoing connections";
+        reporter.report(info);
+    } 
+    for (unsigned int i2=0; i2<units.size(); i2++) {
+        PortCoreUnit *unit = units[i2];
+        if (unit!=NULL) {
+            if (unit->isInput()&&!unit->isFinished()) {
+                Route route = unit->getRoute();
+                String msg = "There is an input connection from " + 
+                    route.getFromName() +
+                    " to " + route.getToName() + " using " + 
+                    route.getCarrierName();
+                info.message = msg.c_str();
+                reporter.report(info);                
+                ict++;
+            }
+        }
+    }
+    if (ict<1) {
+        info.message = "There are no incoming connections";
+        reporter.report(info);
+    } 
+
+    stateMutex.post();
+}
+
+
+
+
 void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     // pass the data on out
 
