@@ -22,6 +22,7 @@
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/PortReport.h>
 
 #include "TestList.h"
 
@@ -143,6 +144,22 @@ public:
         produce.post();
     }
 };
+
+
+class MyReport : public PortReport {
+public:
+    int ct;
+
+    MyReport() {
+        ct = 0;
+    }
+
+    virtual void report(const PortInfo& info) {
+        //printf("GOT REPORT %s\n", info.message.c_str());
+        ct++;
+    }
+};
+
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -745,6 +762,22 @@ public:
     }
 
 
+    virtual void testReports() {
+        // not checking any details yet
+        report(0,"check port status report...");
+        Port p1;
+        Port p2;
+        p1.open("/foo");
+        p2.open("/bar");
+        Network::connect("/foo","/bar");
+        Network::sync("/foo");
+        MyReport report;
+        p1.getReport(report);
+        checkTrue(report.ct>0,"got some report");
+        p1.close();
+        p2.close();
+    }
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -771,6 +804,7 @@ public:
         //testCounts(); // bring this back soon
 
         testReadNoReply();
+        testReports();
 
         nic.setFakeMode(false);
     }

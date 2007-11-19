@@ -11,6 +11,7 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/PortWriter.h>
+#include <yarp/os/PortReport.h>
 
 /**
  * The main, catch-all namespace for YARP.
@@ -174,6 +175,14 @@ public:
      * @return number of output connections
      */
     virtual int getOutputCount() = 0;
+
+    /**
+     *
+     * Get information on the state of the port - connections etc.
+     * @param reporter callback for port event/state information
+     *
+     */
+    virtual void getReport(PortReport& reporter) = 0;
 };
 
 #endif

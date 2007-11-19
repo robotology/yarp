@@ -31,6 +31,7 @@ public:
     ConstString message;
 };
 
+
 /**
  * \ingroup comm_class
  *
@@ -51,5 +52,6 @@ public:
      */
     virtual void report(const PortInfo& info) = 0;
 };
+
 
 #endif

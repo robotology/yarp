@@ -441,3 +441,9 @@ int Port::getOutputCount() {
     PortCoreAdapter& core = HELPER(implementation);
     return core.getOutputCount();
 }
+
+void Port::getReport(PortReport& reporter) {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.describe(reporter);
+}
+

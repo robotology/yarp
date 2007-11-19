@@ -224,6 +224,11 @@ public:
         return port.getOutputCount();
     }
 
+    // documented in Contactable
+    virtual void getReport(PortReport& reporter) {
+        port.getReport(reporter);
+    }
+
 private:
     // solaris preferred order - strange
     PortWriterBuffer<T> writer;

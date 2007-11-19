@@ -166,6 +166,9 @@ public:
     // documented in Contactable
     virtual int getOutputCount();
 
+    // documented in Contactable
+    virtual void getReport(PortReport& reporter);
+
 private:
     void *implementation;
 
