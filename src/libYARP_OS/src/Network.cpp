@@ -122,6 +122,36 @@ Contact Network::unregisterContact(const Contact& contact) {
     return address.toContact();
 }
 
+
+bool Network::setProperty(const char *name,
+                          const char *key,
+                          const Value& value) {
+    Bottle command;
+    command.addString("bot");
+    command.addString("set");
+    command.addString(name);
+    command.addString(key);
+    command.add(value);
+    Bottle reply;
+    NameClient& nic = NameClient::getNameClient();
+    nic.send(command,reply);
+    return reply.size()>0;
+}
+
+
+Value *Network::getProperty(const char *name, const char *key) {
+    Bottle command;
+    command.addString("bot");
+    command.addString("get");
+    command.addString(name);
+    command.addString(key);
+    Bottle reply;
+    NameClient& nic = NameClient::getNameClient();
+    nic.send(command,reply);
+    return Value::makeValue(reply.toString());
+}
+
+
 bool Network::setLocalMode(bool flag) {
     NameClient& nic = NameClient::getNameClient();
     bool state = nic.isFakeMode();
@@ -206,3 +236,8 @@ bool Network::write(const Contact& contact,
 }
 
 
+ConstString Network::getNameServerName() {
+    NameConfig nc;
+    String name = nc.getNamespace();
+    return name.c_str();
+}

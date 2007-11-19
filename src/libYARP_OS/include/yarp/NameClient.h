@@ -10,6 +10,7 @@
 #define _YARP2_NAMECLIENT_
 
 #include <yarp/Address.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     class NameClient;
@@ -92,6 +93,9 @@ public:
     static Address extractAddress(const String& txt);
 
     String send(const String& cmd, bool multi = true);
+
+    bool send(yarp::os::Bottle& cmd,
+              yarp::os::Bottle& reply);
 
     void setFakeMode(bool fake = true) {
         this->fake = fake;

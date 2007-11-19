@@ -244,6 +244,8 @@ void NameServer::setup() {
     ndispatcher.add("list", &NameServer::ncmdList);
     ndispatcher.add("query", &NameServer::ncmdQuery);
     ndispatcher.add("version", &NameServer::ncmdVersion);
+    ndispatcher.add("set", &NameServer::ncmdSet);
+    ndispatcher.add("get", &NameServer::ncmdGet);
 }
 
 String NameServer::cmdRegister(int argc, char *argv[]) {
@@ -555,6 +557,35 @@ yarp::os::Bottle NameServer::ncmdVersion(int argc, char *argv[]) {
 }
 
 
+yarp::os::Bottle NameServer::ncmdSet(int argc, char *argv[]) {
+
+    Bottle response;
+    if (argc >= 2) {
+        String target = STR(argv[0]);
+        String key = STR(argv[1]);
+        NameRecord& nameRecord = getNameRecord(target);
+        nameRecord.clearProp(key);
+        for (int i=2; i<argc; i++) {
+            nameRecord.addProp(key,argv[i]);
+        }
+        response.addString("ok");
+    }
+    return response;
+}
+
+yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
+    Bottle response;
+    if (argc==2) {
+        String target = STR(argv[0]);
+        String key = argv[1];
+        NameRecord& nameRecord = getNameRecord(target);
+        return Bottle(nameRecord.getProp(key).c_str());
+    }
+    return response;
+}
+
+
+
 String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     String response = "";
 
@@ -665,6 +696,16 @@ String NameServer::apply(const String& txt, const Address& remote) {
 }
 
 
+bool NameServer::apply(const Bottle& cmd, Bottle& result,
+                       const Address& remote) {
+    Bottle rcmd;
+    rcmd.addString("ignored_legacy");
+    rcmd.append(cmd);
+    String in = rcmd.toString().c_str();
+    String out = apply(in,remote).c_str();
+    result.fromString(out.c_str());
+    return true;
+}
 
 
 

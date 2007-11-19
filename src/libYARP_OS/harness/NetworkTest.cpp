@@ -107,11 +107,26 @@ public:
         server.close();
     }
 
+
+    void checkPropertySetGet() {
+        report(0,"checking property storage on name server");
+        Network::registerName("/foo");
+        Network::setProperty("/foo","my_prop",Value(15));
+        Value *v = Network::getProperty("/foo","my_prop");
+        checkTrue(v!=NULL,"got property");
+        if (v!=NULL) {
+            checkEqual(v->asInt(),15,"recover property");
+            delete v;
+        }
+        Network::unregisterName("/foo");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkConnect();
         checkSync();
         checkComms();
+        checkPropertySetGet();
         Network::setLocalMode(false);
     }
 };

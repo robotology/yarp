@@ -1,3 +1,10 @@
+2007-11-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Network.h: Added simpler
+	code interface for setting/getting port properties.  
+	The name server was updated for this, as part of the 
+	conversion to the fully bottle-compatible interface.
+
 2007-11-05  Arjan Gijsberts  <arjan@liralab.it>
 
 	* src/libYARP_dev/src/ffmpeg/default/yarp/FfmpegGrabber.cpp: 

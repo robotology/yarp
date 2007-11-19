@@ -13,8 +13,10 @@
 #include <yarp/NameServer.h>
 #include <yarp/NameConfig.h>
 #include <yarp/FallbackNameClient.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp;
+using namespace yarp::os;
 
 /**
  * The NameClient singleton
@@ -185,6 +187,18 @@ String NameClient::send(const String& cmd, bool multi) {
     } while (retry&&!retried);
 
     return result;
+}
+
+
+bool NameClient::send(Bottle& cmd, Bottle& reply) {
+    if (isFakeMode()) {
+        YARP_DEBUG(Logger::get(),"fake mode nameserver");
+        return getServer().apply(cmd,reply,
+                                 Address("localhost",10000,"tcp"));
+    } else {
+        ConstString server = Network::getNameServerName();
+        return Network::write(server,cmd,reply);
+    }
 }
 
 

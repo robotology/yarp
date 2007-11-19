@@ -54,7 +54,11 @@ int yarp_symlink(const char *from, const char *to) {
     //Create the new Contact
     Contact src = Network::queryName(from);
 
+    printf("source [%s] is %s\n", from, src.toString().c_str());
+
     Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+
+    printf("dest [%s] should be %s\n", to, src.toString().c_str());
 
     Network::registerContact(dest);
 
@@ -67,6 +71,15 @@ int yarp_link(const char *from, const char *to) {
     //TODO: will it ever be possible to hard link ports?
     //  If possible, it might be an alias for yarp_simlink, as with YARP 
     //  there isn't a sym/hard linking difference
+
+    //Create the new Contact
+    Contact src = Network::queryName(from);
+
+    printf("source [%s] is %s\n", from, src.toString().c_str());
+
+    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+
+    printf("dest [%s] should be %s\n", to, src.toString().c_str());
 
 
     return 0;

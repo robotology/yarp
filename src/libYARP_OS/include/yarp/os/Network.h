@@ -11,6 +11,7 @@
 
 #include <yarp/os/Contact.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/Value.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -160,6 +161,41 @@ public:
      * This will be the invalid contact (Contact::isValid is false).
      */
     static Contact unregisterContact(const Contact& contact);
+
+
+    /**
+     * Names registered with the nameserver can have arbitrary
+     * key->value properties associated with them.
+     * This method sets a value associated with a particular key
+     * for a named entry (typically a port name).
+     * @param name The name registered with the nameserver (typically a port).
+     * @param key The key to provide a value for.
+     * @param value The value associated with the key for the named entry.
+     * @return true on success.
+     */
+    static bool setProperty(const char *name,
+                            const char *key,
+                            const Value& value);
+
+
+    /**
+     * Look up the value associated with a particular key for a named
+     * entry registered with the nameserver.
+     * @param name The name registered with the nameserver (typically a port).
+     * @param key The key to provide a value for.
+     * @return the value associated with the given key.
+     */
+    static Value *getProperty(const char *name,
+                              const char *key);
+
+
+    /**
+     * Get the name of the port associated with the nameserver (usually
+     * "/root", but this can be overwritten by the "yarp namespace" 
+     * command).
+     * @return name of the port associated with the nameserver
+     */
+    static ConstString getNameServerName();
 
 
     /**

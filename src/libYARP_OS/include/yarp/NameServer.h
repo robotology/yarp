@@ -67,6 +67,9 @@ public:
 
     String apply(const String& txt, const Address& remote);
 
+    bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
+               const Address& remote);
+    
     String apply(const String& txt) {
         return apply(txt,Address());
     }
@@ -369,6 +372,8 @@ private:
     yarp::os::Bottle ncmdList(int argc, char *argv[]);
     yarp::os::Bottle ncmdQuery(int argc, char *argv[]);
     yarp::os::Bottle ncmdVersion(int argc, char *argv[]);
+    yarp::os::Bottle ncmdSet(int argc, char *argv[]);
+    yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
     typedef ACE_Hash_Map_Manager<String,NameRecord,ACE_Null_Mutex> NameMapHash;
 
