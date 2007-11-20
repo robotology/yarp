@@ -11,9 +11,25 @@
 # You will also set up where they yarp name server is running -
 # here it is configured to be socket number 10000 on localhost.
 
+
+#######################################################################
+##
+## Configure the location of the YARP Name Server
+##
+
 global name_server
 
 set name_server {"localhost" 10000}
+
+
+#######################################################################
+##
+## Send a single command to a port target, and return the first line
+## of the response.
+##
+## Warning: this method is inefficient for multiple commands, since 
+## there is no reuse of the socket connection.
+##
 
 proc send_text {target cmd} {
 
@@ -49,6 +65,12 @@ proc send_text {target cmd} {
     return $reply
 }
 
+#######################################################################
+##
+## Get contact information for a named port by querying the YARP
+## name server.
+##
+
 proc query {portname} {
     global name_server
     set r [send_text $name_server "query $portname"]
@@ -62,6 +84,13 @@ proc query {portname} {
     return $result
 }
 
+#######################################################################
+##
+## Convert a "YARP Bottle" to a TCL nested list.  The conversion is
+## quite approximate, and could fail if special characters are 
+## present in quoted form.
+##
+
 proc evaluate_bottle {txt} {
     set txt [string map {"\(" "\{"} "$txt"]
     set txt [string map {"\)" "\}"} "$txt"]
@@ -71,14 +100,32 @@ proc evaluate_bottle {txt} {
     return [eval list $txt]
 }
 
+
+
+#######################################################################
+##
+## Send a single command to a port target, and return the
+## response as a TCL nested list.
+##
+
 proc send_command {contact cmd} {
     set r [send_text $contact $cmd]
     return [evaluate_bottle $r]
 }
 
+
+#######################################################################
+##
+## Actually do something.
+##
+
+# Find how to contact a particular port.
 set motor [query "/controlboard/rpc:i"]
 
+# Check how many motors are controlled by the given port.
 puts [send_command $motor "get axes"]
+
+# Set the position of the first motor to 50.
 puts [send_command $motor "set pos 0 50"]
 
 
