@@ -119,7 +119,6 @@ namespace yarp {
         //typedef int32_t NetInt32;
 #else
 #  ifdef YARP2_WINDOWS
-#include <stdlib.h> // something harmless, to pick up mingw define if present
 #    ifdef __MINGW_H
         typedef int NetInt32;
 #    else 
