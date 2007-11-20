@@ -1,5 +1,16 @@
 #!/usr/bin/tclsh
 
+# This is a simple demo program for interacting with YARP from TCL.
+# It assumes you have some robot real or simulated to communicate with.
+#
+# Specifically, for testing, the program assumes you have run:
+#   yarpdev --device test_motor --name /controlboard
+# If you are doing something else, replace "/controlboard" below
+# with the suffix of the motor port you want to try controlling.
+#
+# You will also set up where they yarp name server is running -
+# here it is configured to be socket number 10000 on localhost.
+
 global name_server
 
 set name_server {"localhost" 10000}
