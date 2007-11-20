@@ -969,7 +969,9 @@ int Run::main(int argc, char *argv[])
 #ifdef MSVC
 #include <crtdbg.h>
 #else
+#ifndef _ASSERTE
 #define _ASSERTE(x)
+#endif
 #endif
 #include <stdio.h>
 #include <stdarg.h>
