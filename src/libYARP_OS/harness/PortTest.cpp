@@ -775,6 +775,7 @@ public:
         p2.open("/bar");
         Network::connect("/foo","/bar");
         Network::sync("/foo");
+        Network::sync("/bar");
         MyReport report;
         p1.getReport(report);
         checkTrue(report.ct>0,"got some report");
