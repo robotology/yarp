@@ -58,7 +58,7 @@ public:
     virtual void changetype(int elemtype) {
         if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR || elemtype==VOCAB_PIXEL_RGBA) {
           ogltype = GL_UNSIGNED_BYTE;
-        } else if(elemtype==VOCAB_PIXEL_INT) {
+        } else if(elemtype==VOCAB_PIXEL_INT || elemtype==VOCAB_PIXEL_RGB_INT) {
           ogltype = GL_INT;
         } else if(elemtype==VOCAB_PIXEL_MONO_SIGNED || elemtype==VOCAB_PIXEL_RGB_SIGNED) {
           ogltype = GL_BYTE;
