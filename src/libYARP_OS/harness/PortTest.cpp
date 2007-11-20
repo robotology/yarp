@@ -152,13 +152,15 @@ public:
     int oct;
 
     MyReport() {
-        ct = 0;
+        oct = ct = 0;
     }
 
     virtual void report(const PortInfo& info) {
         //printf("GOT REPORT %s\n", info.message.c_str());
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
-            oct++;
+            if (info.incoming == false) {
+                oct++;
+            }
         }
         ct++;
     }
@@ -779,7 +781,7 @@ public:
         MyReport report;
         p1.getReport(report);
         checkTrue(report.ct>0,"got some report");
-        checkTrue(report.oct==1,"exactly one output");
+        checkEqual(report.oct,1,"exactly one output");
         p1.close();
         p2.close();
     }
