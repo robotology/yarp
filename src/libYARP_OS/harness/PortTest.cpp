@@ -149,6 +149,7 @@ public:
 class MyReport : public PortReport {
 public:
     int ct;
+    int oct;
 
     MyReport() {
         ct = 0;
@@ -156,6 +157,9 @@ public:
 
     virtual void report(const PortInfo& info) {
         //printf("GOT REPORT %s\n", info.message.c_str());
+        if (info.tag == PortInfo::PORTINFO_CONNECTION) {
+            oct++;
+        }
         ct++;
     }
 };
@@ -774,6 +778,7 @@ public:
         MyReport report;
         p1.getReport(report);
         checkTrue(report.ct>0,"got some report");
+        checkTrue(report.oct==1,"exactly one output");
         p1.close();
         p2.close();
     }

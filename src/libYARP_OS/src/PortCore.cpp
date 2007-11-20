@@ -801,10 +801,12 @@ void PortCore::describe(PortReport& reporter) {
 
     stateMutex.wait();
 
-    PortInfo info;
-    info.message = (String("This is ") + address.getRegName() + " at " + 
-                    address.toString()).c_str();
-    reporter.report(info);
+    PortInfo baseInfo;
+    baseInfo.tag = yarp::os::PortInfo::PORTINFO_MISC;
+    ConstString portName = address.getRegName().c_str();
+    baseInfo.message = (String("This is ") + portName.c_str() + " at " + 
+                        address.toString()).c_str();
+    reporter.report(baseInfo);
 
     int oct = 0;
     int ict = 0;
@@ -817,13 +819,22 @@ void PortCore::describe(PortReport& reporter) {
                     route.getFromName() +
                     " to " + route.getToName() + " using " + 
                     route.getCarrierName();
+                PortInfo info;
                 info.message = msg.c_str();
+                info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+                info.incoming = false;
+                info.portName = portName;
+                info.sourceName = route.getFromName().c_str();
+                info.targetName = route.getToName().c_str();
+                info.carrierName = route.getCarrierName().c_str();
                 reporter.report(info);                
                 oct++;
             }
         }
     }
     if (oct<1) {
+        PortInfo info;
+        info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no outgoing connections";
         reporter.report(info);
     } 
@@ -836,13 +847,22 @@ void PortCore::describe(PortReport& reporter) {
                     route.getFromName() +
                     " to " + route.getToName() + " using " + 
                     route.getCarrierName();
+                PortInfo info;
                 info.message = msg.c_str();
+                info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+                info.incoming = true;
+                info.portName = portName;
+                info.sourceName = route.getFromName().c_str();
+                info.targetName = route.getToName().c_str();
+                info.carrierName = route.getCarrierName().c_str();
                 reporter.report(info);                
                 ict++;
             }
         }
     }
     if (ict<1) {
+        PortInfo info;
+        info.tag = yarp::os::PortInfo::PORTINFO_MISC;
         info.message = "There are no incoming connections";
         reporter.report(info);
     } 

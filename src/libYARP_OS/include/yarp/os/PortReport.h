@@ -10,6 +10,7 @@
 #define _YARP2_PORTREPORT_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Vocab.h>
 
 namespace yarp {
     namespace os {
@@ -28,6 +29,38 @@ namespace yarp {
  */
 class yarp::os::PortInfo {
 public:
+    PortInfo() {
+        tag = PORTINFO_NULL;
+        incoming = false;
+        message = "no information";
+    }
+
+    /// Possible tag values
+    enum {
+        /// No information.
+        PORTINFO_NULL = 0,
+
+        /// Information about an incoming or outgoing connection.
+        PORTINFO_CONNECTION = VOCAB4('c','o','n','n'),
+
+        /// Unspecified information.
+        PORTINFO_MISC = VOCAB4('m','i','s','c'),
+    };
+
+    /// Type of information. PORTINFO_CONNECTION for information 
+    /// about an incoming or outgoing connection.
+    int tag;
+
+    /// True if a connection is incoming, false if outgoing.
+    bool incoming;
+
+    /// Names of relevant ports, may be empty if irrelevant
+    ConstString portName, sourceName, targetName;
+    
+    /// Name of protocol type, if releveant.
+    ConstString carrierName;
+
+    /// A human-readable description of contents.
     ConstString message;
 };
 

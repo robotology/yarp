@@ -1,3 +1,10 @@
+2007-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCore.cpp: Returned structured
+	report on port status, rather than just human-readable
+	message.  See Port::getReport and BufferedPort::getReport
+	methods.
+
 2007-11-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/PortReport.h: Started
