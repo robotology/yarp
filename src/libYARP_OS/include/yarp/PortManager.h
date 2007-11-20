@@ -12,6 +12,7 @@
 #include <yarp/String.h>
 #include <yarp/OutputStream.h>
 #include <yarp/os/ConnectionReader.h>
+#include <yarp/os/PortReport.h>
 #include <yarp/Logger.h>
 
 #include <ace/OS_NS_stdio.h>
@@ -71,6 +72,8 @@ public:
     }
 
     virtual void setEnvelope(const String& envelope) = 0;
+
+    virtual void report(const yarp::os::PortInfo& info) = 0;
 
 protected:
     bool hasOutput() {

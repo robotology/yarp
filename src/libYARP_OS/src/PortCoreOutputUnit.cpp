@@ -10,6 +10,7 @@
 
 #include <yarp/os/Time.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/PortReport.h>
 #include <yarp/PortCoreOutputUnit.h>
 #include <yarp/PortCommand.h>
 #include <yarp/Logger.h>
@@ -23,6 +24,7 @@
 
 
 using namespace yarp;
+using namespace yarp::os;
 
 
 bool PortCoreOutputUnit::start() {
@@ -93,15 +95,29 @@ void PortCoreOutputUnit::runSimulation() {
 
     if (op!=NULL) {
         Route route = op->getRoute();
+        String msg = String("Sending output from ") + 
+            route.getFromName() + " to " + route.getToName() + " using " +
+            route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
-            YARP_INFO(Logger::get(),String("Sending output from ") + 
-                      route.getFromName() + " to " + route.getToName() + " using " +
-                      route.getCarrierName());
+            YARP_INFO(Logger::get(),msg);
         }
-    }
 
-    // no thread component at the moment
+        // Report the new connection
+        PortInfo info;
+        info.message = msg.c_str();
+        info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+        info.incoming = false;
+        info.created = true;
+        info.sourceName = route.getFromName().c_str();
+        info.targetName = route.getToName().c_str();
+        info.portName = info.sourceName;
+        info.carrierName = route.getCarrierName().c_str();
+        getOwner().report(info);
+    } 
+
+    // no thread component
     running = false;
+
     return;
 }
 
@@ -134,10 +150,25 @@ void PortCoreOutputUnit::closeBasic() {
                            " <<< exception for inline request to close input");
             }
         }
+
+        String msg = String("Removing output from ") + 
+            route.getFromName() + " to " + route.getToName();
+
         if (Name(route.getToName()).isRooted()) {
-            YARP_INFO(Logger::get(),String("Removing output from ") + 
-                      route.getFromName() + " to " + route.getToName());
+            YARP_INFO(Logger::get(), msg);
         }
+
+        // Report the disappearing connection
+        PortInfo info;
+        info.message = msg.c_str();
+        info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+        info.incoming = false;
+        info.created = false;
+        info.sourceName = route.getFromName().c_str();
+        info.targetName = route.getToName().c_str();
+        info.portName = info.sourceName;
+        info.carrierName = route.getCarrierName().c_str();
+        getOwner().report(info);
     }
 
 

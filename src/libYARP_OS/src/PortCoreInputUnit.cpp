@@ -14,6 +14,7 @@
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/Name.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/PortReport.h>
 
 
 #define YMSG(x) ACE_OS::printf x;
@@ -50,6 +51,7 @@ void PortCoreInputUnit::run() {
     phase.post();
 
     Route route;
+    bool wasNoticed = false;
 
     try {
         bool done = false;
@@ -61,12 +63,30 @@ void PortCoreInputUnit::run() {
         if (autoHandshake) {
             ip->open(getName().c_str());
             route = ip->getRoute();
+            String msg = String("Receiving input from ") + 
+                route.getFromName() + " to " + route.getToName() + 
+                " using " +
+                route.getCarrierName();
             if (Name(route.getFromName()).isRooted()) {
-                YARP_INFO(Logger::get(),String("Receiving input from ") + 
-                          route.getFromName() + " to " + route.getToName() + 
-                          " using " +
-                          route.getCarrierName());
+                YARP_INFO(Logger::get(),msg);
             }
+
+            // Report the new connection
+            PortInfo info;
+            info.message = msg.c_str();
+            info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+            info.incoming = true;
+            info.created = true;
+            info.sourceName = route.getFromName().c_str();
+            info.targetName = route.getToName().c_str();
+            info.portName = info.targetName;
+            info.carrierName = route.getCarrierName().c_str();
+
+            if (info.sourceName!="admin") {
+                getOwner().report(info);
+                wasNoticed = true;
+            }
+
         } else {
             ip->open(""); // anonymous connection
             route = ip->getRoute();
@@ -268,12 +288,32 @@ void PortCoreInputUnit::run() {
     YARP_DEBUG(Logger::get(),"PortCoreInputUnit closed ip");
 
     if (autoHandshake) {
+        String msg = String("Removing input from ") + 
+            route.getFromName() + " to " + route.getToName();
+
         if (Name(route.getFromName()).isRooted()) {
-            YARP_INFO(Logger::get(),String("Removing input from ") + 
-                      route.getFromName() + " to " + route.getToName());
+            YARP_INFO(Logger::get(),msg);
 		} else {
 	        YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
 		}
+
+        if (wasNoticed) {
+            // Report the disappearing connection
+            PortInfo info;
+            info.message = msg.c_str();
+            info.tag = yarp::os::PortInfo::PORTINFO_CONNECTION;
+            info.incoming = true;
+            info.created = false;
+            info.sourceName = route.getFromName().c_str();
+            info.targetName = route.getToName().c_str();
+            info.portName = info.targetName;
+            info.carrierName = route.getCarrierName().c_str();
+
+            if (info.sourceName!="admin") {
+                getOwner().report(info);
+            }
+        }
+
     } else {
         YARP_DEBUG(Logger::get(),"PortCoreInputUnit shutting down");
     }

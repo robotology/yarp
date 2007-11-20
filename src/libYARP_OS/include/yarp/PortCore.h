@@ -146,6 +146,10 @@ public:
     virtual void describe(void *id, OutputStream *os);
     virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
+
+    // Port events (other than messages)
+    virtual void report(const yarp::os::PortInfo& info);
+
     // public so that connections can be reversed
     void addOutput(OutputProtocol *op);
 

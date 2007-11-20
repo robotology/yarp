@@ -32,6 +32,7 @@ public:
     PortInfo() {
         tag = PORTINFO_NULL;
         incoming = false;
+        created = true;
         message = "no information";
     }
 
@@ -54,8 +55,17 @@ public:
     /// True if a connection is incoming, false if outgoing.
     bool incoming;
 
-    /// Names of relevant ports, may be empty if irrelevant
-    ConstString portName, sourceName, targetName;
+    /// True if a connection is created, false if destroyed.
+    bool created;
+
+    /// Name of port.
+    ConstString portName;
+    
+    /// Name of connection source, if any.
+    ConstString sourceName;
+
+    /// Name of connection target, if any.
+    ConstString targetName;
     
     /// Name of protocol type, if releveant.
     ConstString carrierName;
