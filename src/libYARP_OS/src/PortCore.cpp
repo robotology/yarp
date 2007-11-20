@@ -871,6 +871,13 @@ void PortCore::describe(PortReport& reporter) {
 }
 
 
+void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
+    stateMutex.wait();
+    printf("report callbacks not implemented yet\n");
+    eventReporter = reporter;
+    stateMutex.post();    
+}
+
 
 
 void PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {

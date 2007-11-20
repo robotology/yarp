@@ -57,6 +57,7 @@ public:
         outputCount = inputCount = 0;
         controlRegistration = true;
         interruptible = true;
+        eventReporter = NULL;
     }
 
     virtual ~PortCore();
@@ -133,6 +134,8 @@ public:
 
     virtual void describe(yarp::os::PortReport& reporter);
 
+    void setReportCallback(yarp::os::PortReport *reporter);
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -176,6 +179,7 @@ private:
     Address address;
     Readable *reader;
     ReadableCreator *readableCreator;
+    yarp::os::PortReport *eventReporter;
     bool listening, running, starting, closing, finished, autoHandshake;
     bool finishing;
     bool waitBeforeSend, waitAfterSend;
