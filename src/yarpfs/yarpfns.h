@@ -1,3 +1,10 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2007 Paul Fitzpatrick and Giacomo Spigler
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
 
 #ifndef YARPFNS_INC
 #define YARPFNS_INC
@@ -7,13 +14,13 @@
 // in yarpfs.cpp
 int yarp_getattr(const char *path, struct stat *stbuf);
 int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
-		 off_t offset, struct fuse_file_info *fi);
+                 off_t offset, struct fuse_file_info *fi);
 int yarp_open(const char *path, struct fuse_file_info *fi);
 int yarp_release(const char *path, struct fuse_file_info *fi);
 int yarp_read(const char *path, char *buf, size_t size, off_t offset,
               struct fuse_file_info *fi);
 int yarp_write(const char *path, const char *buf, size_t size,
-	       off_t offset, struct fuse_file_info *fi);
+               off_t offset, struct fuse_file_info *fi);
 int yarp_rename(const char *from, const char *to);
 int yarp_rmdir(const char *path);
 int yarp_truncate(const char *path, off_t size);
