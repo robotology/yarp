@@ -1,5 +1,8 @@
 2007-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_sig/include/yarp/sig/Image.h: implement RGB
+	format with 32-bit channels.
+
 	* src/libYARP_OS/src/PortCore.cpp: Now have callbacks for
 	connections/disconnections - use Port::setReporter and
 	BufferedPort:setReporter methods.

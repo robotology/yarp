@@ -444,6 +444,17 @@ public:
         checkEqual(img2(4,2).r,10,"r level");
     }
 
+    void testRgbInt() {
+        report(0,"checking rgbi...");
+        ImageOf<PixelRgbInt> img;
+        ImageOf<PixelRgb> img2;
+        img.resize(50,50);
+        img(4,2) = PixelRgbInt(10,20,30);
+        checkEqual(img(4,2).r,10,"r level original");
+        img2.copy(img);
+        checkEqual(img2(4,2).r,10,"r level copied");
+    }
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -461,6 +472,7 @@ public:
         testConstMethods();
         testBlank();
         testRgba();
+        testRgbInt();
     }
 };
 

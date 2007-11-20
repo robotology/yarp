@@ -303,6 +303,7 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
         VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
         VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
+        VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
         VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
         VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
         VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
@@ -365,7 +366,9 @@ namespace yarp {
         /**
          * Packed HSV (hue/saturation/value pixel type.
          */
-        typedef struct { unsigned char h,s,v; } PixelHsv;
+        typedef struct PixelHsv { 
+            unsigned char h,s,v; 
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**
          * Signed byte pixel type.
@@ -375,7 +378,9 @@ namespace yarp {
         /**
          * Signed, packed RGB pixel type.
          */
-        typedef struct { char r,g,b; } PixelRgbSigned;
+        struct PixelRgbSigned { 
+            char r,g,b; 
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**
          * Floating point pixel type.
@@ -385,12 +390,27 @@ namespace yarp {
         /**
          * Floating point RGB pixel type.
          */
-        typedef struct { float r,g,b; } PixelRgbFloat;
+        struct PixelRgbFloat { 
+            float r,g,b; 
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+
+        /**
+         * Integer RGB pixel type.
+         */
+        struct PixelRgbInt { 
+            yarp::os::NetInt32 r,g,b; 
+            PixelRgbInt() { r = g = b = 0; }
+            PixelRgbInt(int n_r, int n_g, int n_b) {
+                r = n_r; g = n_g; b = n_b;
+            }
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
         /**
          * Floating point HSV pixel type.
          */
-        typedef struct { float h,s,v; } PixelHsvFloat;
+        struct PixelHsvFloat { 
+            float h,s,v; 
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
 #include <yarp/os/end_pack_for_net.h>
 
@@ -498,6 +518,7 @@ public: \
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_SIGNED,PixelRgbSigned)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_FLOAT,PixelFloat)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_FLOAT,PixelRgbFloat)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_INT,PixelRgbInt)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV_FLOAT,PixelHsvFloat)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_INT,PixelInt)
 
