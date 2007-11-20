@@ -16,8 +16,9 @@ proc send_text {target cmd} {
     puts $sock "CONNACK tcl"
     set reply [gets $sock]
     # reply should be "Welcome tcl"
-    if {$reply ne "Welcome tcl"} {
-	puts "Warning: target is not behaving like a YARP port"
+    if {[string trim $reply] ne "Welcome tcl"} {
+	puts "Error: target port is not behaving like a YARP port"
+	exit 1
     }
 
     # send the command
@@ -40,17 +41,14 @@ proc send_text {target cmd} {
 proc query {portname} {
     global name_server
     set r [send_text $name_server "query $portname"]
-    if {$r eq "*** end of message"} {
-	if {$reply ne "Welcome tcl"} {
-	    puts "Warning: could not find port $portname"
-	}
-	return [list]
-    } else {
-	set contact_info [eval "list $r"]
-	set result [list [lindex $contact_info 4] [lindex $contact_info 6]]
-	puts "Found $portname at $result"
-	return $result
-    }
+    if {[string trim $r] eq "*** end of message"} {
+	puts "Error: could not find port $portname"
+	exit 1
+    } 
+    set contact_info [eval "list $r"]
+    set result [list [lindex $contact_info 4] [lindex $contact_info 6]]
+    puts "Found $portname at $result"
+    return $result
 }
 
 proc evaluate_bottle {txt} {
