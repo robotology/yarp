@@ -873,8 +873,9 @@ void PortCore::describe(PortReport& reporter) {
 
 void PortCore::setReportCallback(yarp::os::PortReport *reporter) {
    stateMutex.wait();
-   printf("warning: report callbacks not actually implemented yet\n");
-   eventReporter = reporter;
+   if (reporter!=NULL) {
+       eventReporter = reporter;
+   }
    stateMutex.post();     
 }
 
@@ -887,8 +888,8 @@ void PortCore::report(const PortInfo& info) {
     // kept constant over the lifetime of the input/output threads.
 
     if (eventReporter!=NULL) {
-        printf("call to PortCore::report for [%s]\n", info.message.c_str());
-        printf("warning: report callbacks not actually implemented yet\n");
+        //printf("call to PortCore::report for [%s]\n", info.message.c_str());
+        eventReporter->report(info);
     }
 }
 

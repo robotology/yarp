@@ -771,19 +771,40 @@ public:
     virtual void testReports() {
         // not checking any details yet
         report(0,"check port status report...");
-        Port p1;
-        Port p2;
-        p1.open("/foo");
-        p2.open("/bar");
-        Network::connect("/foo","/bar");
-        Network::sync("/foo");
-        Network::sync("/bar");
-        MyReport report;
-        p1.getReport(report);
-        checkTrue(report.ct>0,"got some report");
-        checkEqual(report.oct,1,"exactly one output");
-        p1.close();
-        p2.close();
+
+
+        {
+            Port p1;
+            Port p2;
+            p1.open("/foo");
+            p2.open("/bar");
+            Network::connect("/foo","/bar");
+            Network::sync("/foo");
+            Network::sync("/bar");
+            MyReport report;
+            p1.getReport(report);
+            checkTrue(report.ct>0,"got some report");
+            checkEqual(report.oct,1,"exactly one output");
+            p1.close();
+            p2.close();
+        }
+
+        {
+            Port p1;
+            Port p2;
+            MyReport report;
+            p1.setReporter(report);
+            p1.open("/foo");
+            p2.open("/bar");
+            Network::connect("/foo","/bar");
+            Network::sync("/foo");
+            Network::sync("/bar");
+            checkTrue(report.ct>0,"got some report callback");
+            checkEqual(report.oct,1,"exactly one output callback");
+            p1.close();
+            p2.close();
+        }
+
     }
 
     virtual void runTests() {

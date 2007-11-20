@@ -447,3 +447,10 @@ void Port::getReport(PortReport& reporter) {
     core.describe(reporter);
 }
 
+
+void Port::setReporter(PortReport& reporter) {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.setReportCallback(&reporter);
+}
+
+

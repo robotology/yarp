@@ -229,6 +229,11 @@ public:
         port.getReport(reporter);
     }
 
+    // documented in Contactable
+    virtual void setReporter(PortReport& reporter) {
+        port.setReporter(reporter);
+    }
+
 private:
     // solaris preferred order - strange
     PortWriterBuffer<T> writer;

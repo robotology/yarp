@@ -179,10 +179,28 @@ public:
     /**
      *
      * Get information on the state of the port - connections etc.
+     * PortReport::report will be called once for each connection to
+     * the port that exists right now.  To request callbacks for
+     * any future connections/disconnections, use the setReporter
+     * method instead.
+     *
      * @param reporter callback for port event/state information
      *
      */
     virtual void getReport(PortReport& reporter) = 0;
+
+
+    /**
+     *
+     * Set a callback to be called upon any future connections and
+     * disconnections to/from the port.  To get information on
+     * the current connections that exist, use the getReport method
+     * instead.
+     *
+     * @param reporter callback for port event/state information
+     *
+     */
+    virtual void setReporter(PortReport& reporter) = 0;
 };
 
 #endif

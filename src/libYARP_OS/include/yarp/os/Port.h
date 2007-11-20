@@ -169,6 +169,9 @@ public:
     // documented in Contactable
     virtual void getReport(PortReport& reporter);
 
+    // documented in Contactable
+    virtual void setReporter(PortReport& reporter);
+
 private:
     void *implementation;
 
