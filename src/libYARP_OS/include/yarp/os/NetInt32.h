@@ -9,6 +9,124 @@
 #ifndef _YARP2_NETINT32_
 #define _YARP2_NETINT32_
 
+
+////////////////////////////////////////////////////////////////////////
+//
+// The goal of this file is just to define a 32 bit signed little-endian
+// integer type.
+//
+// If you are having trouble with it, and your system has a 32 bit
+// little-endian type called e.g. ___my_system_int32, you can replace
+// this whole file with:
+//    typedef ___my_system_int32 NetInt32;
+//
+////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////////////////////////////////
+//
+// If we are compiling with CMake, we should have all the information
+// we need.
+//   YARP_INT32 should be a 32-bit integer
+//   YARP_BIG_ENDIAN should be defined if we are big endian
+//   YARP_LITTLE_ENDIAN should be defined if we are little endian
+
+
+#ifdef YARP_INT32
+
+namespace yarp {
+    namespace os {
+        /**
+         * Definition of the NetInt32 type
+         */
+
+#ifdef YARP_LITTLE_ENDIAN
+
+        typedef YARP_INT32 NetInt32;
+
+#else
+
+        class NetInt32 {
+        private:
+            unsigned YARP_INT32 raw_value;
+            unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const {
+                return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
+            }
+            YARPINT32 get() const {
+                return (YARP_INT32)swap(raw_value);
+            }
+            void set(YARPINT32 v) {
+                raw_value = (YARP_INT32)swap((unsigned YARP_INT32)v);
+            }
+        public:
+            NetInt32() {
+            }
+            NetInt32(YARP_INT32 val) {
+                set(val);
+            }
+            operator YARP_INT32() const {
+                return get();
+            }
+            YARP_INT32 operator+(YARP_INT32 v) const {
+                return get()+v;
+            }
+            YARP_INT32 operator-(YARP_INT32 v) const {
+                return get()-v;
+            }
+            YARP_INT32 operator*(YARP_INT32 v) const {
+                return get()*v;
+            }
+            YARP_INT32 operator/(YARP_INT32 v) const {
+                return get()/v;
+            }
+            void operator+=(YARP_INT32 v) {
+                set(get()+v);
+            }
+            void operator-=(YARP_INT32 v) {
+                set(get()-v);
+            }
+            void operator*=(YARP_INT32 v) {
+                set(get()*v);
+            }
+            void operator/=(YARP_INT32 v) {
+                set(get()/v);
+            }
+            void operator++(int) { 
+                set(get()+1);
+            };
+            void operator--(int) { 
+                set(get()-1);
+            };
+        };
+
+#endif
+
+    }
+}
+
+
+#endif  // YARP_INT32
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////////////////////
+//
+// If we are not compiling with CMake, we fall back on older code
+// for trying to guess the right type.  This code was starting to
+// get rather clunky.
+//
+
+#ifndef YARP_INT32
+
+
+
 // Sleazy trick for big endian systems we haven't tested on yet.
 // The two files NetInt32.h and NetFloat64.h need to be cleaned up.
 // They can be much simplified by deferring to cmake/autoconf.
@@ -227,6 +345,8 @@ namespace yarp {
 
     }
 }
+
+#endif // !YARP_INT32
 
 #endif /* _YARP2_NETINT32_ */
 

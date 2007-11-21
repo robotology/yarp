@@ -41,7 +41,7 @@ int yarp_unlink(const char *path) {
 }
 
 
-int yarp_symlink(const char *from, const char *to) {
+int yarp_symlink(const char *to, const char *from) {
     //TODO: actually, it only works with ln -s /read rd, and yet it throwns
     //  some errors
 
@@ -50,18 +50,23 @@ int yarp_symlink(const char *from, const char *to) {
     //    return -ENOENT;
     //}
 
-
     //Create the new Contact
-    Contact src = Network::queryName(from);
+    //Contact src = Network::queryName(from);
+    //printf("source [%s] is %s\n", from, src.toString().c_str());
+    //Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
+    //printf("dest [%s] should be %s\n", to, src.toString().c_str());
+    //Network::registerContact(dest);
 
-    printf("source [%s] is %s\n", from, src.toString().c_str());
+    printf("SYMLINK requested from %s to %s\n", from, to);
 
-    Contact dest = Contact::byName(to).addSocket(src.getCarrier(),src.getHost(),src.getPort());
-
-    printf("dest [%s] should be %s\n", to, src.toString().c_str());
-
+    // special symlink entry
+    Contact src = Network::queryName(to);
+    Contact dest = Contact::byName(from).addSocket("symlink",
+                                                   src.getHost(),
+                                                   src.getPort());
+    printf("Planning to register %s\n", dest.toString().c_str());
     Network::registerContact(dest);
-
+    Network::setProperty(from,"link",Value(to));
 
     return 0;
 }
