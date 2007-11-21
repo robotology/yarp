@@ -1,3 +1,9 @@
+2007-11-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/NetInt32.h, conf/YarpReqLib.cmake: 
+	finally made CMake responsible for figuring out appropriate integer 
+	type. Older guesses now only used when not compiling with CMake.
+
 2007-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/Image.h: implement RGB
