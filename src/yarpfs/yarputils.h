@@ -46,6 +46,8 @@ private:
     string path, head, tail;
     bool dirty;
     bool _isStem, _isPort, _isAct;
+    bool _isSymLink;
+    ConstString link;
 
     // New version of check method.  Relies on very up-to-date yarp server.
     // Deals better with non existent directories/files.
@@ -59,7 +61,7 @@ private:
             Bottle msg, reply;
             msg.addString("bot");
             msg.addString("list");
-            msg.addString(leafLike?(head.c_str()):(path.c_str()));
+            msg.addString(leafLike?(head.c_str()):path.c_str());
             Network::write(name.c_str(),
                            msg,
                            reply);
@@ -67,10 +69,12 @@ private:
             _isAct = false;
             _isStem = false;
             _isPort = false;
+            _isSymLink = false;
+            link = "";
             if (leafLike) {
                 if (reply.size()>1) {
                     _isAct = true;
-                }
+                } 
             } else {
                 if (reply.size()>1) {
                     _isStem = true;
@@ -81,6 +85,10 @@ private:
                         if (p.check("name",Value("[none]")).asString()==
                             path.c_str()) {
                             _isPort = true;
+                        }
+                        if (p.check("carrier",Value("[none]")).asString()==
+                            "symlink") {
+                            _isSymLink = true;
                         }
                     }
                 }
@@ -130,6 +138,22 @@ public:
         check();
         return _isAct;
     }
+
+    bool isSymLink() {
+        check();
+        return _isSymLink;
+    }
+
+    ConstString getLink() {
+        if (link=="") {
+            Value * v = Network::getProperty(path.c_str(),"link");
+            if (v!=NULL) {
+                link = v->asString();
+                delete v;
+            }
+        }
+        return link;
+    }
 };
 
 
@@ -164,6 +188,14 @@ public:
 
     bool isAct() {
         return ypath.isAct();
+    }
+
+    bool isSymLink() {
+        return ypath.isSymLink();
+    }
+
+    ConstString getLink() {
+        return ypath.getLink();
     }
 
     int open() {
@@ -203,6 +235,7 @@ public:
         }
         string str = bot->toString().c_str();
         str = str + "\n";
+
         const char *yarp_str = str.c_str();
         printf(">>> Got %s\n", str.c_str());
         

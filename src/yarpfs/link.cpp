@@ -27,7 +27,12 @@
 
 int yarp_readlink(const char *path, char *buf, size_t size) {
 
+    YPath ypath(path);
+    if (!ypath.isSymLink()) { 
+        return -ENOENT;
+    }
 
+    memcpy(buf,ypath.getLink().c_str(),size);
 
     return 0;
 }
@@ -57,14 +62,17 @@ int yarp_symlink(const char *to, const char *from) {
     //printf("dest [%s] should be %s\n", to, src.toString().c_str());
     //Network::registerContact(dest);
 
-    printf("SYMLINK requested from %s to %s\n", from, to);
+    printf("SYMLINK requested from [%s] to [%s]\n", from, to);
 
     // special symlink entry
-    Contact src = Network::queryName(to);
+    //Contact src = Network::queryName(to);
     Contact dest = Contact::byName(from).addSocket("symlink",
-                                                   src.getHost(),
-                                                   src.getPort());
-    printf("Planning to register %s\n", dest.toString().c_str());
+                                                   "none",
+                                                   1);
+    printf("Planning to register %s / %d / %d\n", 
+           dest.toString().c_str(),
+           dest.isValid(),
+           dest.getPort());
     Network::registerContact(dest);
     Network::setProperty(from,"link",Value(to));
 

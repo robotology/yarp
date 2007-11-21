@@ -41,11 +41,17 @@ int yarp_getattr(const char *path, struct stat *stbuf)
     YPath ypath(path);
 
     memset(stbuf, 0, sizeof(struct stat));
-    printf("Checking attr // port %d, stem %d, act %d\n", 
+    printf("Checking attr // port %d, stem %d, act %d, sym %d\n", 
            ypath.isPort(),
            ypath.isStem(),
-           ypath.isAct());
-    if (ypath.isStem()) {
+           ypath.isAct(),
+           ypath.isSymLink());
+    if (ypath.isSymLink()) {
+        stbuf->st_mode = S_IFLNK | 0755;
+        stbuf->st_nlink = 1;
+        stbuf->st_size = ypath.getLink().length()+1;
+        printf("Link size %d\n", stbuf->st_size);
+    } else if (ypath.isStem()) {
         stbuf->st_mode = S_IFDIR | 0755;
         stbuf->st_nlink = 2;
     } else if (ypath.isAct()) {
@@ -98,12 +104,18 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
+        string rpath = path;
+        if (rpath[rpath.length()-1]!='/') {
+            rpath = rpath + "/";
+        }
         if (entry!=NULL) {
             ConstString name = entry->check("name",Value("")).asString();
             if (name!="") {
-                if (strstr(name.c_str(),path)==name.c_str()) {
-                    printf(">>> %s is in path %s\n", name.c_str(),path);
-                    String part(name.c_str()+strlen(path));
+                if (strstr(name.c_str(),rpath.c_str())==
+                           name.c_str()) {
+                    printf(">>> %s is in path %s\n", name.c_str(),
+                           rpath.c_str());
+                    String part(name.c_str()+rpath.length());
                     if (part[0]=='/') {
                         part = part.substr(1,part.length()-1);
                     }
@@ -114,7 +126,7 @@ int yarp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
                         *brk = '\0';
                     }
                     String item(part.c_str());
-                    printf("   %s is the item\n", item.c_str());
+                    printf("    %s is the item\n", item.c_str());
                     if (item!="") {
                         lines.remove(item);
                         lines.insert(item);
