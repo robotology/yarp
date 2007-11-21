@@ -529,8 +529,12 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     response.addString("ports");
     for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = (*it).int_id_;
-        if (rec.getAddress().getRegName().find(prefix)==0) {
-            response.addList() = botify(rec.getAddress());
+        String iname = rec.getAddress().getRegName();
+        if (iname.find(prefix)==0) {
+            if (iname==prefix || iname[prefix.length()]=='/' || 
+                prefix[prefix.length()-1]=='/') {
+                response.addList() = botify(rec.getAddress());
+            }
         }
     }
 
