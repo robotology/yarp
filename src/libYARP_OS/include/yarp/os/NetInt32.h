@@ -53,10 +53,10 @@ namespace yarp {
             unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const {
                 return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
             }
-            YARPINT32 get() const {
+            YARP_INT32 get() const {
                 return (YARP_INT32)swap(raw_value);
             }
-            void set(YARPINT32 v) {
+            void set(YARP_INT32 v) {
                 raw_value = (YARP_INT32)swap((unsigned YARP_INT32)v);
             }
         public:
