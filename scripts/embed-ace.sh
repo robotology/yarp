@@ -154,9 +154,9 @@ if $os_mingw; then
 (
 MINGW_TYPES=""
 if grep -q YARP_FLOAT64 conf/YarpReqLib.cmake; then
-    echo fairly new yarp version
+    echo "# fairly new yarp version"
 else
-    echo need to fix type issue on mingw
+    echo "# need to fix type issue on mingw"
     MINGW_TYPES=" -DYARP_FLOAT64=double -DYARP_INT32=int"
 fi
 
