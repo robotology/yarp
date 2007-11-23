@@ -1098,9 +1098,9 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
     StringOutputStream cache;
     switch (cmd.get(0).asVocab()) {
     case VOCAB4('h','e','l','p'):
-        result.addString("[help]");
-        result.addString("[add] $targetPort");
-        result.addString("[del] $targetPort");
+        result.addString("[help] # give this help");
+        result.addString("[add] $targetPort # add an output connection");
+        result.addString("[del] $targetPort # remove an output connection");
         break;
     case VOCAB3('a','d','d'):
         addOutput(String(cmd.get(1).asString().c_str()),id,&cache);
@@ -1111,6 +1111,7 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString(cache.toString().c_str());
         break;
     default:
+        result.addVocab(Vocab::encode("fail"));
         result.addString("request");
         result.append(cmd);
         result.addString("ignored");
