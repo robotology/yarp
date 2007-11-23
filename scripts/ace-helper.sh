@@ -3,7 +3,7 @@
 # run as ./scripts/ace-helper.sh
 
 VER=5.6.1
-LOCALVER=1
+LOCALVER=2
 
 mkdir -p ace-helper
 cd ace-helper
