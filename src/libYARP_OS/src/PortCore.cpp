@@ -1084,27 +1084,43 @@ bool PortCore::getEnvelope(Readable& envelope) {
     StreamConnectionReader sbr;
     Route route;
     sbr.reset(sis,NULL,route,0,true);
-    //this->envelope = ""; // ley user control wiping
+    //this->envelope = ""; // let user control wiping
     return envelope.read(sbr);
 }
 
 
 
-void PortCore::admin(yarp::os::ConnectionReader& input) {
+void PortCore::adminBlock(ConnectionReader& reader, void *id, 
+                          OutputStream *os) {
     Bottle cmd, result;
-    cmd.read(input);
-    result.addString("request");
-    result.append(cmd);
-    result.addString("ignored");
-    ConnectionWriter *writer = input.getWriter();
+    cmd.read(reader);
+
+    StringOutputStream cache;
+    switch (cmd.get(0).asVocab()) {
+    case VOCAB4('h','e','l','p'):
+        result.addString("[help]");
+        result.addString("[add] $targetPort");
+        result.addString("[del] $targetPort");
+        break;
+    case VOCAB3('a','d','d'):
+        addOutput(String(cmd.get(1).asString().c_str()),id,&cache);
+        result.addString(cache.toString().c_str());
+        break;
+    case VOCAB3('d','e','l'):
+        removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
+        result.addString(cache.toString().c_str());
+        break;
+    default:
+        result.addString("request");
+        result.append(cmd);
+        result.addString("ignored");
+        break;
+    }
+
+    ConnectionWriter *writer = reader.getWriter();
     if (writer!=NULL) {
         result.write(*writer);
     }
-}
-
-void PortCore::adminBlock(ConnectionReader& reader, void *id, 
-                          OutputStream *os) {
-    admin(reader);
 }
 
 

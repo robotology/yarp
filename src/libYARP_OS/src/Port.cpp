@@ -454,3 +454,14 @@ void Port::setReporter(PortReport& reporter) {
 }
 
 
+void Port::setAdminMode(bool adminMode) {
+    if (adminMode) {
+        Bottle b("__ADMIN");
+        setEnvelope(b);
+    } else {
+        Bottle b;
+        setEnvelope(b);
+    }
+}
+
+

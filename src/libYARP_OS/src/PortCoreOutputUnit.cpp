@@ -253,7 +253,7 @@ void PortCoreOutputUnit::sendHelper() {
 
             if (op->canEscape()) {
                 buf.addToHeader();
-                
+
                 if (cachedEnvelope!="") {
                     // this will be the new way to signal that replies
                     // are not expected
@@ -263,9 +263,14 @@ void PortCoreOutputUnit::sendHelper() {
 
                     // This is the backwards-compatible method.
                     // To be used until YARP 2.1.2 is a "long time ago".
-                    PortCommand pc('\0', String(suppressReply?"do ":"d ") +
-                                   cachedEnvelope);
-                    pc.writeBlock(buf);
+                    if (cachedEnvelope=="__ADMIN") {
+                        PortCommand pc('a', "");
+                        pc.writeBlock(buf);
+                    } else {
+                        PortCommand pc('\0', String(suppressReply?"do ":"d ") +
+                                       cachedEnvelope);
+                        pc.writeBlock(buf);
+                    }
 
                 } else {
                     // this will be the new way to signal that replies

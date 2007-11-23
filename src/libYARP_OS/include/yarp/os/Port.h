@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -171,6 +171,18 @@ public:
 
     // documented in Contactable
     virtual void setReporter(PortReport& reporter);
+
+    /**
+     *
+     * Turn on/off "admin" mode.  With admin mode on, messages
+     * received from this port will be treated by other ports as
+     * administrative messages, rather than as data to pass on to the
+     * owner of the port.
+     *
+     * @param adminMode administration flag
+     *
+     */
+    void setAdminMode(bool adminMode = true);
 
 private:
     void *implementation;

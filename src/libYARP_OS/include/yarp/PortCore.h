@@ -136,8 +136,6 @@ public:
 
     void setReportCallback(yarp::os::PortReport *reporter);
 
-    void admin(yarp::os::ConnectionReader& input);
-
     void adminBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
 public:

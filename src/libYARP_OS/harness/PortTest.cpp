@@ -769,7 +769,6 @@ public:
 
 
     virtual void testReports() {
-        // not checking any details yet
         report(0,"check port status report...");
 
 
@@ -807,6 +806,29 @@ public:
 
     }
 
+
+    virtual void testAdmin() {
+        report(0,"check port admin interface...");
+
+        BufferedPort<Bottle> p1;
+        Port p2;
+        p1.open("/p1");
+        p2.open("/p2");
+        Network::connect("/p2","/p1");
+        Network::sync("/p1");
+        Network::sync("/p2");
+        
+        Bottle cmd("[help]"), reply;
+        p2.setAdminMode();
+        p2.write(cmd,reply);
+
+        checkTrue(reply.size()>=1, "got a reply");
+
+        p1.close();
+        p2.close();
+    }
+
+
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -834,6 +856,7 @@ public:
 
         testReadNoReply();
         testReports();
+        testAdmin();
 
         nic.setFakeMode(false);
     }
