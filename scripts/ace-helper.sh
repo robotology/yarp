@@ -11,6 +11,7 @@ cd ace-helper
 ZIP="ACE-$VER.tar.bz2"
 
 if [ ! -e $ZIP ]; then
+    echo "Fetching http://download.dre.vanderbilt.edu/previous_versions/$ZIP"
     wget http://download.dre.vanderbilt.edu/previous_versions/$ZIP
     rm -rf ACE_wrappers
 fi
@@ -93,11 +94,12 @@ IF (UNIX)
 ENDIF (UNIX)
 
 IF (MINGW)
+	MESSAGE(STATUS "MINGW operation")
         CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/ace/config-win32.h"
                    "${CMAKE_BINARY_DIR}/ace/config.h" COPYONLY IMMEDIATE)
         SET(CONFED TRUE)
 	ADD_DEFINITIONS(-DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
-	MESSAGE(STATUS "MINGW operation")
+	LINK_LIBRARIES(ws2_32 mswsock netapi32)
 ENDIF (MINGW)
 
 IF (NOT CONFED)
