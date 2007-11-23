@@ -24,9 +24,9 @@ if [ "k$yarp" = "k" ]; then
 fi
 
 if [ "k$stdc" = "k" ]; then
-    echo "Need a libstdc*.a file in the current directory."
+    echo "Could be useful to give a libstdc*.a file in the current directory."
     echo "On debian, this can be found in /usr/lib/gcc/..."
-    exit 1
+    sleep 2
 fi
 
 echo Merging $yarp and $ace
