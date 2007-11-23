@@ -6,6 +6,33 @@
 # of yarp, for linux.
 # We engulf both ACE and libstdc++.
 
+os=`uname`
+
+found=false
+wantstdc=false
+os_mingw=false
+os_linux=false
+
+if [ "k$os" = "kLinux" ]; then
+    found=true
+    wantstdc=true
+    os_linux=true
+fi
+
+if [ "k$os" = "kMINGW32_NT-5.1" ]; then
+    found=true
+    wantstdc=false
+    os_mingw=true
+fi
+
+if $found; then
+    echo "System: $os"
+else
+    echo embed-ace.sh has not been customized to work for $os
+    exit 1
+fi
+
+
 yarp=`ls yarp-*.tar.gz | head -n1`
 ace=`ls ace4yarp-*.tar.gz | head -n1`
 stdc=`ls libstdc*.a | head -n1`
@@ -23,10 +50,12 @@ if [ "k$yarp" = "k" ]; then
     exit 1
 fi
 
-if [ "k$stdc" = "k" ]; then
-    echo "Could be useful to give a libstdc*.a file in the current directory."
-    echo "On debian, this can be found in /usr/lib/gcc/..."
-    sleep 2
+if $wantstdc; then
+    if [ "k$stdc" = "k" ]; then
+	echo "Need a libstdc*.a file in the current directory."
+	echo "On debian, this can be found in /usr/lib/gcc/..."
+	sleep 2
+    fi
 fi
 
 echo Merging $yarp and $ace
@@ -54,7 +83,13 @@ mkdir -p ../$osdir/src/ace
 for src in `echo $srcs | sed "s|ace/||g"`; do
     mv ace/$src ../$osdir/src/_ace_$src
 done
-cp ace/config-linux.h ace/config.h
+
+if $os_mingw; then
+    cp ace/config-win32.h ace/config.h
+else
+    cp ace/config-linux.h ace/config.h
+fi
+
 mv ace ../$osdir/include
 
 # nobble the conf/FindAce.cmake script, no external ace needed or wanted
@@ -62,12 +97,25 @@ cd ..
 cd $merged
 cd conf
 (
+
+if $os_linux; then
 cat<<XXX
 SET(ACE_INCLUDE_DIR "/usr/include")
 SET(ACE_LIBRARY "-lm -lpthread -ldl")
-SET(ACE_LINK_FLAGS "$ACE_LIBRARY")
+SET(ACE_LINK_FLAGS "")
 SET(ACE_FOUND TRUE)
 XXX
+fi
+
+if $os_mingw; then
+cat<<XXX
+SET(ACE_INCLUDE_DIR "/usr/include")
+SET(ACE_LIBRARY "-lm -lws2_32 -lmswsock -lnetapi32 -lwinmm")
+SET(ACE_LINK_FLAGS "")
+SET(ACE_FOUND TRUE)
+XXX
+fi
+
 ) > FindAce.cmake
 
 cd ..
@@ -101,6 +149,17 @@ EOF
 cat CMakeLists.txt | grep -v "PROJECT.YARP"
 ) > CMakeLists.txt.fix
 mv CMakeLists.txt.fix CMakeLists.txt
+
+if $os_mingw; then
+(
+cat <<EOF
+SET(MINGW_DEFS "-DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL")
+ADD_DEFINITIONS(${MINGW_DEFS})
+SET(YARP_DEFINES ${YARP_DEFINES} ${MINGW_DEFS})
+EOF
+) >> conf/YarpReqLib.cmake
+fi
+
 mkdir add
 cp $base/$stdc add
 
