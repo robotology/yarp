@@ -157,7 +157,13 @@ if grep -q YARP_FLOAT64 conf/YarpReqLib.cmake; then
     echo "# fairly new yarp version"
 else
     echo "# need to fix type issue on mingw"
-    MINGW_TYPES=" -DYARP_FLOAT64=double -DYARP_INT32=int"
+    MINGW_TYPES=" -DYARP_FLOAT64=double -DYARP_INT32=int -DYARP2_WINDOWS"
+    (
+	echo "#ifndef _YARP2_NETINT32_"
+        echo "#define _YARP2_NETINT32_"
+	echo "typedef int NetInt32;"
+	echo "#endif"
+    ) > src/libYARP_OS/include/yarp/os/NetInt32.h
 fi
 
 cat <<EOF
