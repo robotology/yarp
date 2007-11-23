@@ -161,7 +161,9 @@ else
     (
 	echo "#ifndef _YARP2_NETINT32_"
         echo "#define _YARP2_NETINT32_"
+	echo "namespace yarp { namespace os {"
 	echo "typedef int NetInt32;"
+	echo "} }"
 	echo "#endif"
     ) > src/libYARP_OS/include/yarp/os/NetInt32.h
 fi
