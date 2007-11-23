@@ -1090,3 +1090,22 @@ bool PortCore::getEnvelope(Readable& envelope) {
 
 
 
+void PortCore::admin(yarp::os::ConnectionReader& input) {
+    Bottle cmd, result;
+    cmd.read(input);
+    result.addString("request");
+    result.append(cmd);
+    result.addString("ignored");
+    ConnectionWriter *writer = input.getWriter();
+    if (writer!=NULL) {
+        result.write(*writer);
+    }
+}
+
+void PortCore::adminBlock(ConnectionReader& reader, void *id, 
+                          OutputStream *os) {
+    admin(reader);
+}
+
+
+

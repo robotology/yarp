@@ -1,3 +1,10 @@
+2007-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCoreInputUnit.cpp: added stub for
+	generic administrative interface to ports.  Eventually, this
+	should deal with reporting statistics about port operation
+	and performance.
+
 2007-11-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/NetInt32.h, conf/YarpReqLib.cmake: 

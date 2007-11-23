@@ -193,6 +193,17 @@ void PortCoreInputUnit::run() {
                         }
                     }
                     break;
+                case 'a':
+                    {
+                        try {
+                            man.adminBlock(br,id,os);
+                        } catch (IOException e) {
+                            YARP_DEBUG(Logger::get(),e.toString() + " <<< admin level PortCoreInputUnit exception, passing on");
+                            done = true;
+                            throw e;
+                        }
+                    }
+                    break;
                 case 'r':
                     /*
                       In YARP implementation, OP = IP.
@@ -235,6 +246,7 @@ void PortCoreInputUnit::run() {
                         bw.appendLine("/port   Requests to send output to /port");
                         bw.appendLine("!/port  Requests to stop sending output to /port");
                         bw.appendLine("~/port  Requests to stop receiving input from /port");
+                        bw.appendLine("a       Signals the beginning of an administrative message");
                         bw.appendLine("?       Gives this help");
                         bw.write(*os);
                     }

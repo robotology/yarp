@@ -67,6 +67,11 @@ public:
                    getName().c_str()));
     }
 
+    virtual void adminBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to deal with admin\n",
+                   getName().c_str()));
+    }
+
     virtual String getName() {
         return String(name);
     }
