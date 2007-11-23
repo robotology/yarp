@@ -152,10 +152,18 @@ mv CMakeLists.txt.fix CMakeLists.txt
 
 if $os_mingw; then
 (
+MINGW_TYPES=""
+if grep -q YARP_FLOAT64 conf/YarpReqLib.cmake; then
+    echo fairly new yarp version
+else
+    echo need to fix type issue on mingw
+    MINGW_TYPES=" -DYARP_FLOAT64=double -DYARP_INT32=int"
+fi
+
 cat <<EOF
-SET(MINGW_DEFS "-DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL")
-ADD_DEFINITIONS(${MINGW_DEFS})
-SET(YARP_DEFINES ${YARP_DEFINES} ${MINGW_DEFS})
+SET(MINGW_DEFS "-DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL$MINGW_TYPES")
+ADD_DEFINITIONS(\${MINGW_DEFS})
+SET(YARP_DEFINES \${YARP_DEFINES} \${MINGW_DEFS})
 EOF
 ) >> conf/YarpReqLib.cmake
 fi
