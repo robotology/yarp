@@ -2,6 +2,6 @@
 
 yarposdir = $(includedir)/yarp/os
 # automake_expand yarpos_HEADERS *.h
-yarpos_HEADERS = all.h begin_pack_for_net.h BinPortable.h Bottle.h BufferedPort.h Bytes.h ConnectionReader.h ConnectionWriter.h ConstString.h Contactable.h Contact.h DummyConnector.h end_pack_for_net.h IConfig.h LocalReader.h ManagedBytes.h Module.h NetFloat64.h NetInt32.h Network.h Portable.h PortablePair.h Port.h PortReaderBuffer.h PortReaderCreator.h PortReader.h PortWriterBuffer.h PortWriter.h Property.h Random.h RateThread.h Run.h Runnable.h Searchable.h Semaphore.h Stamp.h Terminator.h Thread.h Time.h Value.h Vocab.h 
+yarpos_HEADERS = all.h begin_pack_for_net.h BinPortable.h Bottle.h BufferedPort.h Bytes.h ConnectionReader.h ConnectionWriter.h ConstString.h Contactable.h Contact.h DummyConnector.h end_pack_for_net.h IConfig.h LocalReader.h ManagedBytes.h Module.h NetFloat64.h NetInt32.h Network.h Portable.h PortablePair.h Port.h PortReaderBuffer.h PortReaderCreator.h PortReader.h PortReport.h PortWriterBuffer.h PortWriter.h Property.h Random.h RateThread.h Run.h Runnable.h Searchable.h Semaphore.h Stamp.h Terminator.h Thread.h Time.h Value.h Vocab.h 
 
 
