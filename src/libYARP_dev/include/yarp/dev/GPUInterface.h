@@ -58,6 +58,8 @@ public:
      * @param vector the value to set
      */
     virtual void setargument(int prg, char *name, float val) = 0;
+    virtual void setargument(int prg, int val) = 0;
+    virtual void setargument(int prg, float val) = 0;
     /**
      * Set a program's argument to 'vector' (1D vector for single values).
      * @param prg a program
