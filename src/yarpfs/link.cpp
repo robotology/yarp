@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Giacomo Spigler
+ * Copyright (C) 2007 Paul Fitzpatrick Giacomo Spigler
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
