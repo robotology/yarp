@@ -1,5 +1,8 @@
 2007-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/yarpdev/yarpview.cpp: stub for a device-based version of the
+	yarp viewer.
+
 	* src/libYARP_OS/include/yarp/Protocol.h: give a helpful
 	message if someone tries to connect to a YARP port and
 	sends gibberish.
