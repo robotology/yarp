@@ -1101,6 +1101,8 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[help] # give this help");
         result.addString("[add] $targetPort # add an output connection");
         result.addString("[del] $targetPort # remove an output connection");
+        result.addString("[list] [in] # list input connections");
+        result.addString("[list] [out] # list output connections");
         break;
     case VOCAB3('a','d','d'):
         addOutput(String(cmd.get(1).asString().c_str()),id,&cache);
@@ -1110,11 +1112,39 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
         removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
         result.addString(cache.toString().c_str());
         break;
+    case VOCAB4('l','i','s','t'):
+        switch (cmd.get(1).asVocab()) {
+        case VOCAB2('i','n'):
+            {
+                for (unsigned int i2=0; i2<units.size(); i2++) {
+                    PortCoreUnit *unit = units[i2];
+                    if (unit!=NULL) {
+                        if (unit->isInput()&&!unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            result.addString(route.getFromName().c_str());
+                        }
+                    }
+                }
+            }
+            break;
+        case VOCAB3('o','u','t'):
+        default:
+            {
+                for (unsigned int i=0; i<units.size(); i++) {
+                    PortCoreUnit *unit = units[i];
+                    if (unit!=NULL) {
+                        if (unit->isOutput()&&!unit->isFinished()) {
+                            Route route = unit->getRoute();
+                            result.addString(route.getToName().c_str());
+                        }
+                    }
+                }
+            }
+        }
+        break;
     default:
         result.addVocab(Vocab::encode("fail"));
-        result.addString("request");
-        result.append(cmd);
-        result.addString("ignored");
+        result.addString("send [help] for list of valid commands");
         break;
     }
 
