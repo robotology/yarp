@@ -1,8 +1,17 @@
+2007-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCore.cpp (adminBlock): made port admin
+	interface more complete.
+
 2007-11-24  Giacomo Spigler <spiglerg@gmail.com>
 
 	* src/modules/cuda/*:
-	* src/libYARP_dev/include/yarp/dev/GPUInterface.h:
-	* example/cuda: Added a new GPU device driver, using CUDA, the latest NVIDIA library for gpgpu. NOTE: it currently has a few limitations, and it can only run on the very latest NVIDIA GPUs. It can transform (NVIDIA GeForce 8800GTS) to bw a 320x240 image taking just 0.36ms!
+	* src/libYARP_dev/include/yarp/dev/GPUInterface.h:	
+	* example/cuda: Added a new GPU device driver, using CUDA, the
+	latest NVIDIA library for gpgpu. NOTE: it currently has a few
+	limitations, and it can only run on the very latest NVIDIA
+	GPUs. It can transform (NVIDIA GeForce 8800GTS) to bw a 320x240 
+	image taking just 0.36ms!
 
 2007-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
