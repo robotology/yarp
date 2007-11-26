@@ -461,7 +461,16 @@ private:
             }
         }
         if (!already) {
-            delegate = Carriers::chooseCarrier(header.bytes());
+            try {
+                delegate = Carriers::chooseCarrier(header.bytes());
+            } catch (IOException e) {
+                // carrier not found; send a message
+                String msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are criticial for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
+                Bytes b((char*)msg.c_str(),msg.length());
+                os().write(b);
+                os().flush();
+                throw e;
+            }
         }
         if (delegate==NULL) {
             throw IOException("unrecognized protocol");

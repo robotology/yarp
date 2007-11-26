@@ -1,5 +1,9 @@
 2007-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/Protocol.h: give a helpful
+	message if someone tries to connect to a YARP port and
+	sends gibberish.
+
 	* src/libYARP_OS/src/PortCore.cpp (adminBlock): made port admin
 	interface more complete.
 

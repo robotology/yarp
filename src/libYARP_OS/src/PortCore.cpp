@@ -1106,6 +1106,15 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[list] [out] # list output connections");
         result.addString("[list] [in] $sourcePort # give details for input");
         result.addString("[list] [out] $targetPort # give details for output");
+        result.addString("[ver] # report protocol version information");
+        break;
+    case VOCAB3('v','e','r'):
+        // This version number is for the network protocol.
+        // It is distinct from the YARP library versioning.
+        result.addVocab(Vocab::encode("ver"));
+        result.addInt(1);
+        result.addInt(2);
+        result.addInt(2);
         break;
     case VOCAB3('a','d','d'):
         {
