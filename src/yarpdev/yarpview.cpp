@@ -35,9 +35,37 @@ int main(int argc, char *argv[]) {
 
     Property pSink;
     pSink.put("device","ffmpeg_writer");
-    pSink.put("out","test.avi");
+    pSink.put("out","test.mpg");
     pSink.put("framerate",25);
     sink.open(pSink);
+
+    IFrameGrabberImage *iSource;
+    source.view(iSource);
+    IFrameWriterImage *iSink;
+    sink.view(iSink);
+
+    bool done = false;
+
+    if (iSource==NULL||iSink==NULL) {
+        if (iSource!=NULL) {
+            printf("Cannot find image source\n");
+        }
+        if (iSink!=NULL) {
+            printf("Cannot find image sink\n");
+        }
+        done = true;
+    }
+
+    ImageOf<PixelRgb> image;
+    while (!done) {
+        bool ok = iSource->getImage(image);
+        if (ok) {
+            ok = iSink->putImage(image);
+        } 
+        if (!ok) {
+            done = true;
+        }
+    }
 
     sink.close();
     source.close();
