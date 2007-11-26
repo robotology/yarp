@@ -1100,6 +1100,7 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
     case VOCAB4('h','e','l','p'):
         result.addString("[help] # give this help");
         result.addString("[add] $targetPort # add an output connection");
+        result.addString("[add] $targetPort $carrier # add an output with a given protocol");
         result.addString("[del] $targetPort # remove an output connection");
         result.addString("[list] [in] # list input connections");
         result.addString("[list] [out] # list output connections");
@@ -1107,8 +1108,15 @@ void PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[list] [out] $targetPort # give details for output");
         break;
     case VOCAB3('a','d','d'):
-        addOutput(String(cmd.get(1).asString().c_str()),id,&cache);
-        result.addString(cache.toString().c_str());
+        {
+            String output = cmd.get(1).asString().c_str();
+            String carrier = cmd.get(2).asString().c_str();
+            if (carrier!="") {
+                output = carrier + ":/" + output;
+            }
+            addOutput(output,id,&cache);
+            result.addString(cache.toString().c_str());
+        }
         break;
     case VOCAB3('d','e','l'):
         removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
