@@ -8,7 +8,7 @@
  */
 
 ///
-/// $Id: begin_pack_for_net.h,v 1.6 2006-11-10 14:52:06 eshuy Exp $
+/// $Id: begin_pack_for_net.h,v 1.7 2007-11-26 16:31:25 eshuy Exp $
 ///
 
 /**
@@ -21,6 +21,43 @@
  */
 
 #include <yarp/os/NetInt32.h>
+
+#ifdef CYGWIN
+#ifndef YARP2_CYGWIN
+#define YARP2_CYGWIN
+#endif
+#endif
+
+#ifdef WIN32
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef _WIN32
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef __WIN__
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef __WINDOWS__
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef WINDOWS
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
 
 #ifdef YARP2_CYGWIN
 #pragma pack(1)
