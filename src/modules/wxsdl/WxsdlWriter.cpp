@@ -143,6 +143,7 @@ SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0),
 SDLPanel::~SDLPanel() {
     if (screen) {
         SDL_FreeSurface(screen);
+        screen = NULL;
     }
 }
 
@@ -165,8 +166,16 @@ void SDLPanel::onPaint(wxPaintEvent &) {
     
         if (!done) {
             // create a bitmap from our pixel data
-            wxBitmap bmp(wxImage(screen->w, screen->h, 
-                                 static_cast<unsigned char *>(screen->pixels), true));
+            wxImage img(screen->w, screen->h, 
+                        static_cast<unsigned char *>(screen->pixels), true);
+
+            int width, height;
+            GetClientSize(&width, &height);
+
+            img.Rescale(width,height);
+
+            wxBitmap bmp(img);
+                         
             
             // unlock the screen
             if (SDL_MUSTLOCK(screen)) {
@@ -305,7 +314,12 @@ public:
      * Creates a new SDLFrame.
      */
     SDLFrame();
-    
+
+    virtual ~SDLFrame() {
+        stop();
+        printf("frame gone\n");
+    }
+
     /**
      * Gets the SDLPanel within this SDLFrame.
      *
@@ -332,7 +346,10 @@ public:
     }
 };
 
-inline void SDLFrame::onFileExit(wxCommandEvent &) { Close(); }
+inline void SDLFrame::onFileExit(wxCommandEvent &) { 
+    printf("On file exit\n");
+    Close(); 
+}
 inline SDLPanel &SDLFrame::getPanel() { return *panel; }
 
 IMPLEMENT_CLASS(SDLFrame, wxFrame)
@@ -345,8 +362,10 @@ END_EVENT_TABLE()
 SDLFrame::SDLFrame() {
     // Create the SDLFrame
     Create(0, IDF_FRAME, wxT("WxsdlWriter"), wxDefaultPosition,
-           wxDefaultSize, wxCAPTION | wxSYSTEM_MENU | 
-           wxMINIMIZE_BOX | wxCLOSE_BOX);
+           wxDefaultSize, wxDEFAULT_FRAME_STYLE);
+
+           // wxCAPTION | wxSYSTEM_MENU | 
+           //wxMINIMIZE_BOX | wxCLOSE_BOX | wxMAXIMIZE_BOX | wxRESIZE_BOX);
 
     // create the main menubar
     wxMenuBar *mb = new wxMenuBar;
@@ -454,8 +473,16 @@ int SDLApp::OnRun() {
 }
 
 int SDLApp::OnExit() {
+    printf("exiting\n");
+    
+    frame = NULL;
+
+    printf("sdl shutdown\n");
+
     // cleanup SDL
     SDL_Quit();
+
+    printf("standard exit\n");
     
     // return the standard exit code
     return wxApp::OnExit();
