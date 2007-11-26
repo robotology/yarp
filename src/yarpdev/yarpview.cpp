@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 
     PolyDriver source, sink;
 
+#if 0
     Property pSource;
     pSource.put("device","remote_grabber");
     pSource.put("local","/foo");
@@ -38,6 +39,17 @@ int main(int argc, char *argv[]) {
     pSink.put("out","test.mpg");
     pSink.put("framerate",25);
     sink.open(pSink);
+#endif
+
+#if 1
+    Property pSource;
+    pSource.put("device","test_grabber");
+    source.open(pSource);
+
+    Property pSink;
+    pSink.put("device","wxsdl");
+    sink.open(pSink);
+#endif
 
     IFrameGrabberImage *iSource;
     source.view(iSource);

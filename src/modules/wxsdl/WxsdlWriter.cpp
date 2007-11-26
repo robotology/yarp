@@ -27,7 +27,6 @@
  * 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 *******************************************************************************/
 
-
 #include <iostream>
 
 #include <wx/wxprec.h>
@@ -40,6 +39,11 @@
 #include <wx/image.h>
 
 #include "SDL.h"
+
+#include <yarp/os/all.h>
+#include <yarp/sig/all.h>
+using namespace yarp::os;
+using namespace yarp::sig;
 
 /*******************************************************************************
  * Global Declarations
@@ -60,6 +64,9 @@ class SDLPanel : public wxPanel {
     
 private:
     SDL_Surface *screen;
+    int wscreen, hscreen;
+    Semaphore mutex;
+    bool stopped;
 
     /**
      * Called to paint the panel.
@@ -79,8 +86,8 @@ private:
     /**
      * Creates the SDL_Surface used by this SDLPanel.
      */
-    void createScreen();
-    
+    void createScreen(int w, int h);
+
 public:
     /**
      * Creates a new SDLPanel.
@@ -93,6 +100,18 @@ public:
      * Destructor for the SDLPanel.
      */
     ~SDLPanel();
+
+    void putImage(ImageOf<PixelRgb>& image);
+
+    void stop() {
+        mutex.wait();
+        stopped = true;
+        if (screen) {
+            SDL_FreeSurface(screen);
+            screen = NULL;
+        }
+        mutex.post();
+    }
 };
 
 inline void SDLPanel::onEraseBackground(wxEraseEvent &) { /* do nothing */ }
@@ -105,12 +124,20 @@ BEGIN_EVENT_TABLE(SDLPanel, wxPanel)
     EVT_IDLE(SDLPanel::onIdle)
 END_EVENT_TABLE()
 
-SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0) {
+SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0),
+                                       mutex(1) {
+
+    wscreen = hscreen = 0;
+    stopped = false;
+
+    /*
     // ensure the size of the wxPanel
-    wxSize size(640, 480);
+    wxSize minsize(10, 10);
+    wxSize maxsize(640, 480);
     
-    SetMinSize(size);
-    SetMaxSize(size);
+    SetMinSize(minsize);
+    SetMaxSize(maxsize);
+    */
 }
 
 SDLPanel::~SDLPanel() {
@@ -120,83 +147,134 @@ SDLPanel::~SDLPanel() {
 }
 
 void SDLPanel::onPaint(wxPaintEvent &) {
+    bool done = false;
+
+    //printf("taking permit\n");
+
+    mutex.wait();
+
     // can't draw if the screen doesn't exist yet
-    if (!screen) {
-        return;
-    }
+    if (screen) {
     
-    // lock the surface if necessary
-    if (SDL_MUSTLOCK(screen)) {
-        if (SDL_LockSurface(screen) < 0) {
-            return;
+        // lock the surface if necessary
+        if (SDL_MUSTLOCK(screen)) {
+            if (SDL_LockSurface(screen) < 0) {
+                done = true;
+            }
+        }
+    
+        if (!done) {
+            // create a bitmap from our pixel data
+            wxBitmap bmp(wxImage(screen->w, screen->h, 
+                                 static_cast<unsigned char *>(screen->pixels), true));
+            
+            // unlock the screen
+            if (SDL_MUSTLOCK(screen)) {
+                SDL_UnlockSurface(screen);
+            }
+            
+            // paint the screen
+            wxBufferedPaintDC dc(this, bmp);
         }
     }
-    
-    // create a bitmap from our pixel data
-    wxBitmap bmp(wxImage(screen->w, screen->h, 
-                    static_cast<unsigned char *>(screen->pixels), true));
-    
-    // unlock the screen
-    if (SDL_MUSTLOCK(screen)) {
-        SDL_UnlockSurface(screen);
-    }
-    
-    // paint the screen
-    wxBufferedPaintDC dc(this, bmp);
+
+    mutex.post();
+
+    //printf("returning permit\n");
+
 }
 
 void SDLPanel::onIdle(wxIdleEvent &) {
+    return;
+}
+
+
+void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
+    //printf("low level put image\n");
+
+
+    mutex.wait();
+
+    if (stopped) {
+        mutex.post();
+        return;
+    }
+
+    //printf("got permit\n");
+
     // create the SDL_Surface
-    createScreen();
+    createScreen(image.width(),image.height());
     
+
+    bool done = false;
+
     // Lock surface if needed
     if (SDL_MUSTLOCK(screen)) {
         if (SDL_LockSurface(screen) < 0) {
-            return;
+            done = true;
         }
     }
     
-    // Ask SDL for the time in milliseconds
-    int tick = SDL_GetTicks();
-    
-    for (int y = 0; y < 480; y++) {
-        for (int x = 0; x < 640; x++) {
-            wxUint32 color = (y * y) + (x * x) + tick;
-            wxUint8 *pixels = static_cast<wxUint8 *>(screen->pixels) + 
-                              (y * screen->pitch) +
-                              (x * screen->format->BytesPerPixel);
+    if (!done) {
+        // Ask SDL for the time in milliseconds
+        int tick = SDL_GetTicks();
+        
+        for (int y = 0; y < hscreen; y++) {
+            for (int x = 0; x < wscreen; x++) {
+                //wxUint32 color = (y * y) + (x * x) + tick;
+                wxUint8 *pixels = static_cast<wxUint8 *>(screen->pixels) + 
+                    (y * screen->pitch) +
+                    (x * screen->format->BytesPerPixel);
+                
+                if (x<image.width()&&y<image.height()) {
+                    PixelRgb& pix = image(x,y);
+                    wxUint8 rr = (wxUint8) pix.r;
+                    wxUint8 gg = (wxUint8) pix.g;
+                    wxUint8 bb = (wxUint8) pix.b;
+                    
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+                    pixels[0] = bb; //color & 0xFF;
+                    pixels[1] = gg; //(color >> 8) & 0xFF;
+                    pixels[2] = rr; //(color >> 16) & 0xFF;
+#else
+                    pixels[0] = rr; //(color >> 16) & 0xFF;
+                    pixels[1] = gg; //(color >> 8) & 0xFF;
+                    pixels[2] = bb; //color & 0xFF;
+#endif
+                }
+            }
+        }
+        
+        // Unlock if needed
+        if (SDL_MUSTLOCK(screen)) {
+            SDL_UnlockSurface(screen);
+        }
 
-            #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-                pixels[0] = color & 0xFF;
-                pixels[1] = (color >> 8) & 0xFF;
-                pixels[2] = (color >> 16) & 0xFF;
-            #else
-                pixels[0] = (color >> 16) & 0xFF;
-                pixels[1] = (color >> 8) & 0xFF;
-                pixels[2] = color & 0xFF;
-            #endif
-        }
+        mutex.post();
+        
+        // refresh the panel
+        Refresh();
+        //Update();
+    } else {
+
+        mutex.post();
     }
-    
-    // Unlock if needed
-    if (SDL_MUSTLOCK(screen)) {
-        SDL_UnlockSurface(screen);
-    }
-    
-    // refresh the panel
-    Refresh(false);
-    
-    // throttle to keep from flooding the event queue
-    wxMilliSleep(33);
-    printf("tick...\n");
 }
 
-void SDLPanel::createScreen() {
+
+void SDLPanel::createScreen(int w, int h) {
+    if (screen && (w!=wscreen || h!=hscreen)) {
+        SDL_FreeSurface(screen);
+        screen = NULL;
+    }
     if (!screen) {
-        int width, height;
-        GetSize(&width, &height);
-        
-        screen = SDL_CreateRGBSurface(SDL_SWSURFACE, width, height, 
+        //int width, height;
+        //GetSize(&width, &height);
+
+        wscreen = w;
+        hscreen = h;
+
+        screen = SDL_CreateRGBSurface(SDL_SWSURFACE, w, h, 
                                       24, 0, 0, 0, 0);     
     }
 }
@@ -234,6 +312,24 @@ public:
      * @return The SDLPanel.
      */
     SDLPanel &getPanel();
+
+
+    bool putImage(ImageOf<PixelRgb>& image) {
+        if (panel!=NULL) {
+            //printf("put image on panel\n");
+            panel->putImage(image);
+            return true;
+        }
+        printf("No panel to draw on\n");
+        return true;
+    }
+
+    bool stop() {
+        if (panel!=NULL) {
+            panel->stop();
+        }
+        return true;
+    }
 };
 
 inline void SDLFrame::onFileExit(wxCommandEvent &) { Close(); }
@@ -248,7 +344,7 @@ END_EVENT_TABLE()
 
 SDLFrame::SDLFrame() {
     // Create the SDLFrame
-    Create(0, IDF_FRAME, wxT("wx-sdl Frame"), wxDefaultPosition,
+    Create(0, IDF_FRAME, wxT("WxsdlWriter"), wxDefaultPosition,
            wxDefaultSize, wxCAPTION | wxSYSTEM_MENU | 
            wxMINIMIZE_BOX | wxCLOSE_BOX);
 
@@ -277,8 +373,8 @@ SDLFrame::SDLFrame() {
 }
 
 void SDLFrame::onHelpAbout(wxCommandEvent &) {
-    wxMessageBox(wxT("wx-sdl tutorial\nCopyright (C) 2005,2007 John Ratliff"),
-                 wxT("about wx-sdl tutorial"), wxOK | wxICON_INFORMATION);
+    wxMessageBox(wxT("WxsdlWriter is based on the wx-sdl tutorial\nCopyright (C) 2005,2007 John Ratliff"),
+                 wxT("about WxsdlWriter"), wxOK | wxICON_INFORMATION);
 }
 
 /*******************************************************************************
@@ -312,12 +408,22 @@ public:
      * @return The exit code.
      */
     int OnExit();
+
+
+    bool putImage(ImageOf<PixelRgb>& image) {
+        if (frame!=NULL) {
+            //printf("put image on frame\n");
+            return frame->putImage(image);
+        }
+        printf("No frame to draw on\n");
+        return true;
+    }
 };
 
 bool SDLApp::OnInit() {
     // create the SDLFrame
     frame = new SDLFrame;
-    frame->SetClientSize(640, 480);
+    frame->SetClientSize(200, 200);
     frame->Centre();
     frame->Show();
     
@@ -332,16 +438,16 @@ int SDLApp::OnRun() {
   printf("starting...\n");
     // initialize SDL
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        std::cerr << "unable to init SDL: " << SDL_GetError() << '\n';
+        std::cerr << "unable to initialize SDL: " << SDL_GetError() << '\n';
         
         return -1;
     }
     printf("initialized\n");
     
     // generate an initial idle event to start things
-    wxIdleEvent event;
-    event.SetEventObject(&frame->getPanel());
-    frame->getPanel().AddPendingEvent(event);
+    //wxIdleEvent event;
+    //event.SetEventObject(&frame->getPanel());
+    //frame->getPanel().AddPendingEvent(event);
 
     // start the main loop
     return wxApp::OnRun();
@@ -393,5 +499,9 @@ bool WxsdlWriter::close() {
 }
   
 bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
-    return true;
+    if (!active) {
+        return true;
+    }
+    //printf("Putting image\n");
+    return wxGetApp().putImage(image);
 }
