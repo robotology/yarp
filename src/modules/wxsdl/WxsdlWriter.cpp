@@ -58,6 +58,11 @@ enum {
  * SDLPanel Class
 *******************************************************************************/
 
+static bool wxsdl_stopped = false;
+static bool wxsdl_drawing = false;
+
+static Semaphore mutex(1);
+
 class SDLPanel : public wxPanel {
     DECLARE_CLASS(SDLPanel)
     DECLARE_EVENT_TABLE()
@@ -65,7 +70,7 @@ class SDLPanel : public wxPanel {
 private:
     SDL_Surface *screen;
     int wscreen, hscreen;
-    Semaphore mutex;
+    //Semaphore mutex;
     bool stopped;
 
     /**
@@ -106,6 +111,7 @@ public:
     void stop() {
         mutex.wait();
         stopped = true;
+        wxsdl_stopped = true;
         if (screen) {
             SDL_FreeSurface(screen);
             screen = NULL;
@@ -124,8 +130,7 @@ BEGIN_EVENT_TABLE(SDLPanel, wxPanel)
     EVT_IDLE(SDLPanel::onIdle)
 END_EVENT_TABLE()
 
-SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0),
-                                       mutex(1) {
+SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0) {
 
     wscreen = hscreen = 0;
     stopped = false;
@@ -141,6 +146,13 @@ SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0),
 }
 
 SDLPanel::~SDLPanel() {
+    wxsdl_stopped = true;
+    while (wxsdl_drawing) {
+        printf("sdl panel dying\n");
+        Time::delay(0.1);
+    }
+    printf("sdl panel dead\n");
+
     if (screen) {
         SDL_FreeSurface(screen);
         screen = NULL;
@@ -204,7 +216,7 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
 
     mutex.wait();
 
-    if (stopped) {
+    if (stopped||wxsdl_stopped) {
         mutex.post();
         return;
     }
@@ -225,9 +237,6 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
     }
     
     if (!done) {
-        // Ask SDL for the time in milliseconds
-        int tick = SDL_GetTicks();
-        
         for (int y = 0; y < hscreen; y++) {
             for (int x = 0; x < wscreen; x++) {
                 //wxUint32 color = (y * y) + (x * x) + tick;
@@ -339,16 +348,20 @@ public:
     }
 
     bool stop() {
-        if (panel!=NULL) {
-            panel->stop();
-        }
+        mutex.wait();
+        wxsdl_stopped = true;
+        mutex.post();
         return true;
     }
 };
 
 inline void SDLFrame::onFileExit(wxCommandEvent &) { 
+    wxsdl_stopped = true;
     printf("On file exit\n");
+    stop();
+    mutex.wait();
     Close(); 
+    mutex.post();
 }
 inline SDLPanel &SDLFrame::getPanel() { return *panel; }
 
@@ -361,7 +374,7 @@ END_EVENT_TABLE()
 
 SDLFrame::SDLFrame() {
     // Create the SDLFrame
-    Create(0, IDF_FRAME, wxT("WxsdlWriter"), wxDefaultPosition,
+    Create(0, IDF_FRAME, wxT("yarpview"), wxDefaultPosition,
            wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 
            // wxCAPTION | wxSYSTEM_MENU | 
@@ -393,7 +406,7 @@ SDLFrame::SDLFrame() {
 
 void SDLFrame::onHelpAbout(wxCommandEvent &) {
     wxMessageBox(wxT("WxsdlWriter is based on the wx-sdl tutorial\nCopyright (C) 2005,2007 John Ratliff"),
-                 wxT("about WxsdlWriter"), wxOK | wxICON_INFORMATION);
+                 wxT("about yarpview"), wxOK | wxICON_INFORMATION);
 }
 
 /*******************************************************************************
@@ -521,14 +534,32 @@ bool WxsdlWriter::close() {
         //wxGetApp().OnExit();
         wxGetApp().CleanUp();
     }
-    stop();
+    if (!wxsdl_stopped) {
+        stop();
+    }
     return true;
 }
   
 bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
+    mutex.wait();
     if (!active) {
-        return true;
+        mutex.post();
+        return false;
     }
+    if (wxsdl_stopped) {
+        mutex.post();
+        return false;
+    }
+
+    wxsdl_drawing = true;
+    mutex.post();
+
     //printf("Putting image\n");
-    return wxGetApp().putImage(image);
+    bool result = wxGetApp().putImage(image);
+
+    mutex.wait();
+    wxsdl_drawing = false;
+    mutex.post();
+
+    return result;
 }
