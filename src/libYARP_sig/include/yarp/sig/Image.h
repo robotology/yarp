@@ -366,7 +366,7 @@ namespace yarp {
         /**
          * Packed HSV (hue/saturation/value pixel type.
          */
-        typedef struct PixelHsv { 
+        struct PixelHsv { 
             unsigned char h,s,v; 
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
 
