@@ -16,8 +16,6 @@
 /*
  * Uses ffmpeg to write images to movie files.
  *
- * Very rudimentary so far - just writes video not audio.
- *
  */
 
 namespace yarp {
@@ -32,7 +30,7 @@ namespace yarp {
 /**
  * @ingroup dev_impl_media
  *
- * Uses ffmpeg to write images to movie files (AVI, MOV, ...).
+ * Uses ffmpeg to write images/sounds to movie files (AVI, MOV, ...).
  *
  */
 class yarp::dev::FfmpegWriter : public IFrameWriterImage, 
