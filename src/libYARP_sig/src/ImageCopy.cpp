@@ -204,9 +204,9 @@ SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_SIGNED)
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_MONO_FLOAT)
     *dest = ((src->r + src->g + src->b)/3.0f);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB_FLOAT)
-    dest->r = src->r;
-dest->g = src->g;
-dest->b = src->b;
+    dest->r = (float)((int) src->r);
+dest->g = (float)((int) src->g);
+dest->b = (float)((int) src->b);
 SPECIAL_COPY(VOCAB_PIXEL_RGB_INT,VOCAB_PIXEL_RGB)
     dest->r = (unsigned char)src->r;
 dest->g = (unsigned char)src->g;
