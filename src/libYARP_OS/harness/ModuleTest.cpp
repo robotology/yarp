@@ -38,8 +38,12 @@ public:
         MyModule mm;
         Port p1, p2;
         mm.attach(p2);
-        p1.open("/p1");
-        p2.open("/p2");
+        bool ok1 = p1.open("/p1");
+        bool ok2 = p2.open("/p2");
+        checkTrue(ok1&&ok2,"ports opened ok");
+        if (!(ok1&&ok2)) {
+            return;
+        }
         Network::connect("/p1","/p2");
         Network::sync("/p1");
         Network::sync("/p2");
@@ -56,8 +60,12 @@ public:
         Port p1;
         BufferedPort<Bottle> p2;
         mm.attach(p2);
-        p1.open("/p1");
-        p2.open("/p2");
+        bool ok1 = p1.open("/p1");
+        bool ok2 = p2.open("/p2");
+        checkTrue(ok1&&ok2,"ports opened ok");
+        if (!(ok1&&ok2)) {
+            return;
+        }
         Network::connect("/p1","/p2");
         Network::sync("/p1");
         Network::sync("/p2");

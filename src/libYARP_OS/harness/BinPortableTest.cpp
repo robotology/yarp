@@ -48,8 +48,12 @@ public:
 
         PortReaderBuffer<BinPortable<int> > buf;
         Port input, output;
-        input.open("/in");
-        output.open("/out");
+        bool ok1 = input.open("/in");
+        bool ok2 = output.open("/out");
+        checkTrue(ok1&&ok2,"ports opened ok");
+        if (!(ok1&&ok2)) {
+            return;
+        }
         //input.setReader(buf);
 		buf.attach(input);
         output.addOutput(Contact::byName("/in").addCarrier("tcp"));

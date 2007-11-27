@@ -64,8 +64,12 @@ public:
         report(0,"checking return value of connect method");
         Port p1;
         Port p2;
-        p1.open("/p1");
-        p2.open("/p2");
+        bool ok1 = p1.open("/p1");
+        bool ok2 = p2.open("/p2");
+        checkTrue(ok1&&ok2,"ports opened ok");
+        if (!(ok1&&ok2)) {
+            return;
+        }
         Network::sync("/p1");
         Network::sync("/p2");
         checkTrue(Network::connect("/p1","/p2"),"good connect");
