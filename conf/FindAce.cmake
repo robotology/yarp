@@ -1,5 +1,24 @@
 
 
+# check for "built-in" ACE4YARP - an experimental feature,
+# only currently used for building YARP binary distributions.
+
+IF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+	MESSAGE(STATUS "ACE files have been included within YARP")
+
+	SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include")
+	IF(LINUX)
+		SET(ACE_LIBRARY "-lm -lpthread -ldl")
+	ENDIF(LINUX)
+	IF(MINGW)
+		SET(ACE_LIBRARY "-lm -lws2_32 -lmswsock -lnetapi32 -lwinmm")
+	ENDIF(MINGW)
+	SET(ACE_LINK_FLAGS "")
+	SET(ACE_FOUND TRUE)
+
+ELSE (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+	
+
 ########################################################################
 ## check pkg-config for ace information, if available
 
@@ -80,3 +99,5 @@ ELSE (ACE_FOUND)
 		MESSAGE(FATAL_ERROR "Could not find ACE")
 	ENDIF (Ace_FIND_REQUIRED)
 ENDIF (ACE_FOUND)
+
+ENDIF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
