@@ -20,7 +20,7 @@ private:
     int w, h;
     int oglformat;
     int ogltype;
-    unsigned int tex, oTex;
+    unsigned int tex, tex2, oTex;
     unsigned int size;
 public:
     CUDAGPU() {
@@ -79,16 +79,16 @@ public:
 
     //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'size', 'in' AND 'out' arrays
     void execute(int prg, unsigned char *in, unsigned char *out);
-
     void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out);
+
+    //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'size', 'in1' 'in2' AND 'out' arrays
+    void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out);
+    void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out);
 
 
     //IGNORE THESE ONES
     virtual void setargument(int prg, char *name, float val) { }
     virtual void setargument(int prg, char *name, float *vector, int len) { };
-
-    virtual void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out) { };
-    virtual void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out) { };
 };
 
 
