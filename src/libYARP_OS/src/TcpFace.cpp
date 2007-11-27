@@ -77,7 +77,8 @@ InputProtocol *TcpFace::read() {
     try {
         stream->open(peerAcceptor);
     } catch (IOException e) {
-        ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
+        YARP_DEBUG(tcpFaceLog,String("exception on tcp stream read: ") + e.toString().c_str());
+        //ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
         stream->close();
         delete stream;
         stream = NULL;

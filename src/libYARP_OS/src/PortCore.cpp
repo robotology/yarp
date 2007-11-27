@@ -137,6 +137,7 @@ void PortCore::run() {
             ip = face->read();
             YARP_DEBUG(log,"PortCore got something");
         } catch (IOException e) {
+            ip = NULL;
             YMSG(("read failed: %s\n",e.toString().c_str()));
         }
 
@@ -151,7 +152,9 @@ void PortCore::run() {
         if (!shouldStop) {
             // process event
             //YMSG(("PortCore::run got something, but no processing yet\n"));
-            addInput(ip);
+            if (ip!=NULL) {
+                addInput(ip);
+            }
             ip = NULL;
         }
 
