@@ -31,7 +31,7 @@ void TcpFace::open(const Address& address) {
     ACE_INET_Addr	serverAddr(address.getPort());
     int result = peerAcceptor.open(serverAddr,1);
     if (result==-1) {
-        printf("*** tcp error %d %d\n", result, errno);
+        //printf("*** tcp error %d %d\n", result, errno);
         throw IOException("cannot listen on specified tcp address");
     }
 }
