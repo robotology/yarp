@@ -201,7 +201,7 @@ int Companion::cmdTerminate(int argc, char *argv[]) {
 int Companion::cmdPing(int argc, char *argv[]) {
     if (argc == 1) {
         char *targetName = argv[0];
-        char *connectionName = "<ping>";
+        const char *connectionName = "<ping>";
         OutputProtocol *out = NULL;
         try {
             NameClient& nic = NameClient::getNameClient();
