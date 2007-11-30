@@ -211,7 +211,8 @@ public:
     }
 
     virtual bool isError() {
-        return err;
+        if (err) return true;
+        return !isActive();
     }
 
     virtual bool isActive() {
