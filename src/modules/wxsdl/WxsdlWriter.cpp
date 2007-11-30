@@ -42,8 +42,10 @@
 
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+#include <yarp/dev/all.h>
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::dev;
 
 /*******************************************************************************
  * Global Declarations
@@ -60,8 +62,10 @@ enum {
 
 static bool wxsdl_stopped = false;
 static bool wxsdl_drawing = false;
+static int wxsdl_post = 0;
+static bool wxsdl_framed = true;
 
-static Semaphore mutex(1);
+static Semaphore mutex(1), finished(0);
 
 class SDLPanel : public wxPanel {
     DECLARE_CLASS(SDLPanel)
@@ -151,12 +155,15 @@ SDLPanel::~SDLPanel() {
         printf("sdl panel dying\n");
         Time::delay(0.1);
     }
+
+    mutex.wait();
     printf("sdl panel dead\n");
 
     if (screen) {
         SDL_FreeSurface(screen);
         screen = NULL;
     }
+    mutex.post();
 }
 
 void SDLPanel::onPaint(wxPaintEvent &) {
@@ -325,8 +332,10 @@ public:
     SDLFrame();
 
     virtual ~SDLFrame() {
-        stop();
+        mutex.wait();
         printf("frame gone\n");
+        wxsdl_framed = false;
+        mutex.post();
     }
 
     /**
@@ -346,23 +355,29 @@ public:
         printf("No panel to draw on\n");
         return true;
     }
-
-    bool stop() {
-        mutex.wait();
-        wxsdl_stopped = true;
-        mutex.post();
-        return true;
-    }
 };
 
-inline void SDLFrame::onFileExit(wxCommandEvent &) { 
-    wxsdl_stopped = true;
-    printf("On file exit\n");
-    stop();
+
+static void wxsdlStop() {
     mutex.wait();
-    Close(); 
+    bool working = wxsdl_drawing;
+    wxsdl_stopped = true;
+    if (working) {
+        wxsdl_post = 1;
+    }
     mutex.post();
+    if (working) {
+        finished.wait();
+    }
+    printf("external writer stopped\n");
 }
+
+inline void SDLFrame::onFileExit(wxCommandEvent &) { 
+    printf("On file exit\n");
+    wxsdlStop();
+    Close(); 
+}
+
 inline SDLPanel &SDLFrame::getPanel() { return *panel; }
 
 IMPLEMENT_CLASS(SDLFrame, wxFrame)
@@ -420,6 +435,11 @@ private:
     SDLFrame *frame;
     
 public:
+
+    SDLFrame *getFrame() {
+        return frame;
+    }
+
     /**
      * Called to initialize this SDLApp.
      *
@@ -486,18 +506,10 @@ int SDLApp::OnRun() {
 }
 
 int SDLApp::OnExit() {
-    printf("exiting\n");
-    
-    frame = NULL;
+    int result = 0;
 
-    printf("sdl shutdown\n");
-
-    // cleanup SDL
-    SDL_Quit();
-
+    wxsdlStop();
     printf("standard exit\n");
-    
-    // return the standard exit code
     return wxApp::OnExit();
 }
 
@@ -518,8 +530,12 @@ void WxsdlWriter::run() {
     char *argv[] = { "yarp", NULL };
     active = true;
     wxEntry(argc, argv);
-    printf("WxsdlWriter finished\n");
     active = false;
+
+    printf("sdl shutdown\n");
+    SDL_Quit();
+
+    printf("WxsdlWriter finished\n");
 }
 
 bool WxsdlWriter::open(yarp::os::Searchable & config) {
@@ -529,14 +545,24 @@ bool WxsdlWriter::open(yarp::os::Searchable & config) {
 }
     
 bool WxsdlWriter::close() {
+    printf("WxsdlWriter::close\n");
+    mutex.wait();
     if (active) {
         active = false; 
-        //wxGetApp().OnExit();
-        wxGetApp().CleanUp();
-    }
-    if (!wxsdl_stopped) {
+        mutex.post();
+        wxsdlStop();
+        wxMutexGuiEnter();
+        if (wxsdl_framed) {
+            wxCloseEvent closeEv;
+            wxPostEvent(wxGetApp().getFrame(), closeEv);
+            // wxGetApp().CleanUp();
+        }
+        wxMutexGuiLeave();
         stop();
+    } else {
+        mutex.post();
     }
+
     return true;
 }
   
@@ -559,7 +585,53 @@ bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
 
     mutex.wait();
     wxsdl_drawing = false;
+    while (wxsdl_post>0) {
+        finished.post();
+        wxsdl_post--;
+    }
     mutex.post();
 
     return result;
 }
+
+
+#ifdef WXSDL_MAIN
+
+int main() {
+    Network yarp;
+ 
+    bool done = false;
+
+    PolyDriver source;
+    Property pSource;
+    pSource.put("device","test_grabber");
+    source.open(pSource);
+    IFrameGrabberImage *iSource;
+    source.view(iSource);
+    if (iSource==NULL) {
+        printf("Cannot find image source\n");
+        return 1;
+    }
+
+    WxsdlWriter writer;
+    Property p;
+    writer.open(p);
+
+    ImageOf<PixelRgb> img;
+    while (!done) {
+        
+        iSource->getImage(img);
+        bool ok = writer.putImage(img);
+        if (!ok) {
+            done = true;
+        } 
+    }
+    writer.close();
+
+    printf("Wxsdl test program finished\n");
+
+    return 0;
+}
+
+#endif
+
