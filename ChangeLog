@@ -1,5 +1,8 @@
 2007-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h: improve
+	close method to interrupt a read in progress.
+
 	* (many): removed the use of exceptions in port code, to
 	facilitate broader porting of libYARP_OS library.  Note: it is now
 	more important to check return values when reading from a
