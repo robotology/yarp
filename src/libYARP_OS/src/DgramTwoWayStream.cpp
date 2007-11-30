@@ -326,6 +326,7 @@ bool DgramTwoWayStream::join(const Address& group, bool sender,
 
     if (result!=0) {
         YARP_ERROR(Logger::get(),"cannot connect to multi-cast address");
+        happy = false;
         return false;
     }
     localAddress = group;
