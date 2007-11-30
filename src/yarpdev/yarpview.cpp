@@ -28,6 +28,8 @@ int main(int argc, char *argv[]) {
 
     PolyDriver source, sink;
 
+
+    // initial test configuration - port to ffmpeg
 #if 0
     Property pSource;
     pSource.put("device","remote_grabber");
@@ -41,7 +43,9 @@ int main(int argc, char *argv[]) {
     sink.open(pSink);
 #endif
 
-#if 1
+
+    // second test configuration - test_grabber to wxsdl
+#if 0
     Property pSource;
     pSource.put("device","test_grabber");
     source.open(pSource);
@@ -50,6 +54,17 @@ int main(int argc, char *argv[]) {
     pSink.put("device","wxsdl");
     sink.open(pSink);
 #endif
+
+
+    // actual useful configuration - port to wxsdl
+    Property pSource;
+    pSource.put("device","remote_grabber");
+    pSource.put("local","/foo");
+    source.open(pSource);
+
+    Property pSink;
+    pSink.put("device","wxsdl");
+    sink.open(pSink);
 
     IFrameGrabberImage *iSource;
     source.view(iSource);
