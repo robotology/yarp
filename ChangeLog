@@ -1,5 +1,8 @@
 2007-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/PortCore.cpp: fixed harmless race condition
+	were port could be shut down multiple times.
+
 	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h: improve
 	close method to interrupt a read in progress.
 

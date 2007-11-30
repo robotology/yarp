@@ -239,13 +239,19 @@ void PortCore::interrupt() {
 
 
 void PortCore::closeMain() {
-    if (finishing) return;
+    stateMutex.wait();
+    if (finishing||!running) {
+        stateMutex.post();
+        return;
+    }
 
     YTRACE("PortCore::closeMain");
 
     // Politely pre-disconnect inputs
     finishing = true;
-    YARP_DEBUG(log,"preparing to shut down port");
+    YARP_DEBUG(log,"now preparing to shut down port");
+    stateMutex.post();
+
     bool done = false;
     String prevName = "";
     while (!done) {
