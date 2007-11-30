@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
     Property input;
     input.fromCommand(argc,argv);
 
-    ConstString portName = input.check("port",
+    ConstString portName = input.check("name",
                                        Value("/yarpview"),
                                        "name of port").asString();
     int width = input.check("w",
