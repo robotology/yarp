@@ -63,6 +63,8 @@ public:
             happy = false;
             stream.close_reader();
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket reader");
+            stream.close_writer();
+            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket writer");
         }
         //stream.close_writer();
         //stream.close();
