@@ -13,7 +13,7 @@ IF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
 	IF(MINGW)
 		SET(ACE_LIBRARY "-lm -lws2_32 -lmswsock -lnetapi32 -lwinmm")
 	ENDIF(MINGW)
-	SET(ACE_LINK_FLAGS "")
+	SET(ACE_LINK_FLAGS "${ACE_LIBRARY}")
 	SET(ACE_FOUND TRUE)
 
 ELSE (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
