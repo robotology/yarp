@@ -79,7 +79,7 @@ public:
         return requireAck();
     }
 
-    virtual void sendHeader(Protocol& proto) {
+    virtual bool sendHeader(Protocol& proto) {
         String target = getSpecifierName();
         Bytes b((char*)target.c_str(),8);
         proto.os().write(b);
@@ -89,49 +89,57 @@ public:
         proto.os().write('\r');
         proto.os().write('\n');
         proto.os().flush();
+        return proto.os().isOk();
     }
 
-    void expectReplyToHeader(Protocol& proto) {
+    bool expectReplyToHeader(Protocol& proto) {
         if (ackVariant) {
             // expect and ignore welcome line
             String result = NetType::readLine(proto.is());
         }
+        return true;
     }
 
-    void expectSenderSpecifier(Protocol& proto) {
+    bool expectSenderSpecifier(Protocol& proto) {
         ACE_DEBUG((LM_DEBUG,"TextCarrier::expectSenderSpecifier"));
         proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
+        return true;
     }
 
-    void sendIndex(Protocol& proto) {
+    bool sendIndex(Protocol& proto) {
+        return true;
     }
 
-    void expectIndex(Protocol& proto) {
+    bool expectIndex(Protocol& proto) {
+        return true;
     }
 
-    void sendAck(Protocol& proto) {
+    bool sendAck(Protocol& proto) {
         if (ackVariant) {
             String from = "<ACK>\r\n";
             Bytes b2((char*)from.c_str(),from.length());
             proto.os().write(b2);
             proto.os().flush();
         }
+        return proto.os().isOk();
     }
 
-    virtual void expectAck(Protocol& proto) {
+    virtual bool expectAck(Protocol& proto) {
         if (ackVariant) {
             // expect and ignore acknowledgement
             String result = NetType::readLine(proto.is());
         }
+        return true;
     }
 
-    void respondToHeader(Protocol& proto) {
+    bool respondToHeader(Protocol& proto) {
         String from = "Welcome ";
         from += proto.getRoute().getFromName();
         from += "\r\n";
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().flush();
+        return proto.os().isOk();
     }
 };
 

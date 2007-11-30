@@ -89,11 +89,11 @@ void UnitTest::runSubTests(int argc, char *argv[]) {
     //sprintf(buf,"size is %d", subTests.size());
     //report(0,buf);
     for (unsigned int i=0; i<subTests.size(); i++) {
-        try {
-            subTests[i]->run(argc,argv);
-        } catch (IOException e) {
-            report(1,String("exception thrown ") + e.toString());
-        }
+        //try {
+        subTests[i]->run(argc,argv);
+        //} catch (IOException e) {
+        //report(1,String("exception thrown ") + e.toString());
+        //}
     }
 }
 
@@ -105,39 +105,39 @@ int UnitTest::run() {
 
 
 int UnitTest::run(int argc, char *argv[]) {
-    try {
-        //report(0,String("starting tests for " + getName()));
-        bool ran = false;
-        if (argc==0) {
+    //try {
+    //report(0,String("starting tests for " + getName()));
+    bool ran = false;
+    if (argc==0) {
+        runTests();
+        ran = true;
+    } else {
+        String name = getName();
+        bool onList = false;
+        for (int i=0; i<argc; i++) {
+            if (name == String(argv[i])) {
+                onList = true;
+                break;
+            }
+        }
+        if (onList) {
             runTests();
             ran = true;
-        } else {
-            String name = getName();
-            bool onList = false;
-            for (int i=0; i<argc; i++) {
-                if (name == String(argv[i])) {
-                    onList = true;
-                    break;
-                }
-            }
-            if (onList) {
-                runTests();
-                ran = true;
-            }
         }
-        runSubTests(argc,argv);
-        //report(0,String("ending tests for " + getName()));
-        if (hasProblem) {
-            report(0,"A PROBLEM WAS ENCOUNTERED");
-        } 
-        else {
-            if (ran) {
-                report(0,"no problems reported");
-            }
-        }
-    } catch (IOException e) {
-        report(1,String("exception thrown ") + e.toString());
     }
+    runSubTests(argc,argv);
+    //report(0,String("ending tests for " + getName()));
+    if (hasProblem) {
+        report(0,"A PROBLEM WAS ENCOUNTERED");
+    } 
+    else {
+        if (ran) {
+            report(0,"no problems reported");
+        }
+    }
+    //    } catch (IOException e) {
+    //report(1,String("exception thrown ") + e.toString());
+    //}
     return hasProblem;
 }
 

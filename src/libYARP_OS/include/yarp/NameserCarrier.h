@@ -165,46 +165,54 @@ public:
         return false;
     }
 
-    virtual void sendHeader(Protocol& proto) {
+    virtual bool sendHeader(Protocol& proto) {
         String target = getSpecifierName();
         Bytes b((char*)target.c_str(),8);
         proto.os().write(b);
         proto.os().flush();
+        return proto.os().isOk();
     }
 
-    void expectSenderSpecifier(Protocol& proto) {
+    bool expectSenderSpecifier(Protocol& proto) {
         proto.setRoute(proto.getRoute().addFromName("anon"));
+        return true;
     }
 
-    void sendIndex(Protocol& proto) {
+    bool sendIndex(Protocol& proto) {
         String target = firstSend?"VER ":"NAME_SERVER ";
         Bytes b((char*)target.c_str(),target.length());
         proto.os().write(b);
         proto.os().flush();
         firstSend = false;
+        return proto.os().isOk();
     }
 
-    void expectIndex(Protocol& proto) {
+    bool expectIndex(Protocol& proto) {
+        return true;
     }
 
-    void sendAck(Protocol& proto) {
+    bool sendAck(Protocol& proto) {
+        return true;
     }
 
-    virtual void expectAck(Protocol& proto) {
+    virtual bool expectAck(Protocol& proto) {
+        return true;
     }
 
-    virtual void respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(Protocol& proto) {
         // I am the receiver
         NameserTwoWayStream *stream = 
             new NameserTwoWayStream(proto.giveStreams());
         proto.takeStreams(stream);
+        return true;
     }
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
         // I am the sender
         //NameserTwoWayStream *stream = 
         //  new NameserTwoWayStream(proto.giveStreams(),true);
         //proto.takeStreams(stream);
+        return true;
     }
 };
 

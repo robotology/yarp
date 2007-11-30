@@ -126,7 +126,7 @@ String NameClient::send(const String& cmd, bool multi) {
         YARP_DEBUG(Logger::get(),String("sending to nameserver: ") + cmd);
 
         if (isFakeMode()) {
-            YARP_DEBUG(Logger::get(),"fake mode nameserver");
+            //YARP_DEBUG(Logger::get(),"fake mode nameserver");
             return getServer().apply(cmd,Address("localhost",10000,"tcp")) + "\n";
         }
         
@@ -166,11 +166,10 @@ String NameClient::send(const String& cmd, bool multi) {
         bool more = multi;
         while (more) {
             String line = "";
-            try {
-                line = NetType::readLine(ip->getInputStream());
-            } catch (IOException e) {
+            line = NetType::readLine(ip->getInputStream());
+            if (!(ip->checkStreams())) {
                 more = false;
-                YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
+                //YARP_DEBUG(Logger::get(), e.toString() + " <<< exception from name server");
                 retry = true;
                 break;
             }

@@ -134,54 +134,55 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
 
 int Companion::main(int argc, char *argv[]) {
+    Network yarp;
+    //ACE::init();
 
-    ACE::init();
-
-    try {
-
-        // eliminate 0th arg, the program name
-        argc--;
-        argv++;
-
-        if (argc<=0) {
-            ACE_OS::printf("This is the YARP network companion.\n");
-            ACE_OS::printf("Call with the argument \"help\" to see a list of ways to use this program.\n");
-            return 0;
+    // eliminate 0th arg, the program name
+    argc--;
+    argv++;
+    
+    if (argc<=0) {
+        ACE_OS::printf("This is the YARP network companion.\n");
+        ACE_OS::printf("Call with the argument \"help\" to see a list of ways to use this program.\n");
+        return 0;
+    }
+    
+    int verbose = 0;
+    bool more = true;
+    while (more && argc>0) {
+        more = false;
+        if (String(argv[0]) == String("verbose")) {
+            verbose++;
+            argc--;
+            argv++;
+            more = true;
         }
-
-        int verbose = 0;
-        bool more = true;
-        while (more && argc>0) {
-            more = false;
-            if (String(argv[0]) == String("verbose")) {
-                verbose++;
-                argc--;
-                argv++;
-                more = true;
-            }
-        }
-        if (verbose>0) {
-            Logger::get().setVerbosity(verbose);
-        }
-
-        if (argc<=0) {
-            ACE_OS::fprintf(stderr,"Please supply a command\n");
-            return -1;
-        }
-
-        const char *cmd = argv[0];
-        argc--;
-        argv++;
-
-        return getInstance().dispatch(cmd,argc,argv);
-
+    }
+    if (verbose>0) {
+        Logger::get().setVerbosity(verbose);
+    }
+    
+    if (argc<=0) {
+        ACE_OS::fprintf(stderr,"Please supply a command\n");
+        return -1;
+    }
+    
+    const char *cmd = argv[0];
+    argc--;
+    argv++;
+    
+    return getInstance().dispatch(cmd,argc,argv);
+    
+    /*
     } catch (IOException e) {
         YARP_ERROR(Logger::get(),
                    String("exception: ") + e.toString());
         ACE::fini();
         return 1;
     }
-    ACE::fini();
+    */
+
+    //ACE::fini();
 }
 
 
@@ -203,53 +204,50 @@ int Companion::cmdPing(int argc, char *argv[]) {
         char *targetName = argv[0];
         const char *connectionName = "<ping>";
         OutputProtocol *out = NULL;
-        try {
-            NameClient& nic = NameClient::getNameClient();
-            Address address = nic.queryName(targetName);
-            if (!address.isValid()) {
-                YARP_ERROR(Logger::get(),"could not find port");
-                return 1;
-            }
-            
-            out = Carriers::connect(address);
-            if (out==NULL) {
-                YARP_ERROR(Logger::get(),"port found, but cannot connect");
-                return 1;
-            }
-            /*
-            printf("RPC connection to %s at %s (connection name %s)\n", 
-                   targetName, 
-                   address.toString().c_str(),
-                   connectionName);
-            */
-            Route r(connectionName,targetName,"text_ack");
-            out->open(r);
-            OutputStream& os = out->getOutputStream();
-            InputStream& is = out->getInputStream();
-            StreamConnectionReader reader;
 
-            PortCommand pc(0,"*");
-            BufferedConnectionWriter bw(out->isTextMode());
-            bool ok = pc.write(bw);
-            if (!ok) {
-                throw IOException("writer failed");
+        NameClient& nic = NameClient::getNameClient();
+        Address address = nic.queryName(targetName);
+        if (!address.isValid()) {
+            YARP_ERROR(Logger::get(),"could not find port");
+            return 1;
+        }
+            
+        out = Carriers::connect(address);
+        if (out==NULL) {
+            YARP_ERROR(Logger::get(),"port found, but cannot connect");
+            return 1;
+        }
+        /*
+          printf("RPC connection to %s at %s (connection name %s)\n", 
+          targetName, 
+          address.toString().c_str(),
+          connectionName);
+        */
+        Route r(connectionName,targetName,"text_ack");
+        bool ok = out->open(r);
+        if (!ok) {
+            YARP_ERROR(Logger::get(),"could not connect to port");
+            return 1;
+        }
+        OutputStream& os = out->getOutputStream();
+        InputStream& is = out->getInputStream();
+        StreamConnectionReader reader;
+
+        PortCommand pc(0,"*");
+        BufferedConnectionWriter bw(out->isTextMode());
+        pc.write(bw);
+        bw.write(os);
+        Bottle resp;
+        reader.reset(is,NULL,r,0,true);
+        bool done = false;
+        while (!done) {
+            resp.read(reader);
+            String str = resp.toString().c_str();
+            if (resp.get(0).asString()!="<ACK>") {
+                printf("%s\n", str.c_str());
+            } else {
+                done = true;
             }
-            bw.write(os);
-            Bottle resp;
-            reader.reset(is,NULL,r,0,true);
-            bool done = false;
-            while (!done) {
-                resp.read(reader);
-                String str = resp.toString().c_str();
-                if (resp.get(0).asString()!="<ACK>") {
-                    printf("%s\n", str.c_str());
-                } else {
-                    done = true;
-                }
-            }
-        } catch (IOException e) {
-            ACE_OS::fprintf(stderr,
-                            "write failed: %s\n",e.toString().c_str());    
         }
         if (out!=NULL) {
             delete out;
@@ -421,40 +419,48 @@ int Companion::sendMessage(const String& port, Writable& writable,
         return 1;
     }
     Route route("admin",port,"text");
-    try {
-        out->open(route);
-        //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
-        // out->isTextMode());
-        BufferedConnectionWriter bw(out->isTextMode());
-        //bw.appendLine(msg);
-        //writable.writeBlock(bw);
-        PortCommand disconnect('\0',"q");
-        bool ok = writable.write(bw);
-        if (!ok) {
-            throw IOException("writer failed");
-        }
-        if (!disconnect.write(bw)) {
-            throw IOException("writer failed");
-        }
 
-        out->write(bw);
-        InputProtocol& ip = out->getInput();
-        ConnectionReader& con = ip.beginRead();
-        Bottle b;
-        b.read(con);
-        b.read(con);
-        output = b.toString().c_str();
-        if (!quiet) {
-            ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
-        }
-        ip.endRead();
-        out->close();
-    } catch (IOException e) {
-        YARP_ERROR(Logger::get(),e.toString() + " <<< exception during message");
+
+    bool ok = out->open(route);
+    if (!ok) {
+        if (!quiet) ACE_OS::fprintf(stderr, "Cannot make connection\n");
+        if (out!=NULL) delete out;
+        return 1;
     }
+    
+    //printf("Route %s TEXT mode %d\n", out->getRoute().toString().c_str(),
+    // out->isTextMode());
+    BufferedConnectionWriter bw(out->isTextMode());
+    //bw.appendLine(msg);
+    //writable.writeBlock(bw);
+    PortCommand disconnect('\0',"q");
+    bool wok = writable.write(bw);
+    if (!wok) {
+        if (!quiet) ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+        if (out!=NULL) delete out;
+        return 1;
+    }
+    if (!disconnect.write(bw)) {
+        if (!quiet) ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+        if (out!=NULL) delete out;
+        return 1;
+    }
+
+    out->write(bw);
+    InputProtocol& ip = out->getInput();
+    ConnectionReader& con = ip.beginRead();
+    Bottle b;
+    b.read(con);
+    b.read(con);
+    output = b.toString().c_str();
+    if (!quiet) {
+        ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
+    }
+    ip.endRead();
+    out->close();
     delete out;
     out = NULL;
-  
+    
     return 0;
 }
 
@@ -589,12 +595,8 @@ class TextReader : public Readable {
 public:
     ConstString str;
     virtual bool read(yarp::os::ConnectionReader& reader) {
-        try {
-            str = reader.expectText();
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+        str = reader.expectText();
+        return reader.isValid();
     }
 
 };
@@ -901,82 +903,72 @@ public:
 
 
 int Companion::read(const char *name, const char *src, bool showEnvelope) {
-    try {
-        BottleReader reader(name,showEnvelope);
-        if (src!=NULL) {
-            Network::connect(src,reader.getName().c_str());
-        }
-        reader.wait();
-        reader.close();
-        return 0;
-    } catch (IOException e) {
-        ACE_OS::fprintf(stderr,"read failed: %s\n",e.toString().c_str());    
+    BottleReader reader(name,showEnvelope);
+    if (src!=NULL) {
+        Network::connect(src,reader.getName().c_str());
     }
-    return 1;
+    reader.wait();
+    reader.close();
+    return 0;
 }
 
 
 
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
-    try {
-        PortCore core;
-        NameClient& nic = NameClient::getNameClient();
-        Address address = nic.registerName(name);
-        if (address.isValid()) {
-            ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
-                            address.getRegName().c_str(),
-                            address.toString().c_str());
-            core.listen(address);
-            core.start();
+    PortCore core;
+    NameClient& nic = NameClient::getNameClient();
+    Address address = nic.registerName(name);
+    if (address.isValid()) {
+        ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
+                        address.getRegName().c_str(),
+                        address.toString().c_str());
+        core.listen(address);
+        core.start();
+    } else {
+        YARP_ERROR(Logger::get(),"could not create port");
+        return 1;
+    }
+    
+    bool raw = true;
+    for (int i=0; i<ntargets; i++) {
+        if (String(targets[i])=="verbatim") {
+            raw = false;
         } else {
-            YARP_ERROR(Logger::get(),"could not create port");
-            return 1;
+            connect(address.getRegName().c_str(),targets[i]);
         }
-
-        bool raw = true;
-        for (int i=0; i<ntargets; i++) {
-            if (String(targets[i])=="verbatim") {
-                raw = false;
-            } else {
-                connect(address.getRegName().c_str(),targets[i]);
+    }
+    
+    
+    while (!feof(stdin)) {
+        String txt = getStdin();
+        if (!feof(stdin)) {
+            if (txt[0]<32 && txt[0]!='\n' && 
+                txt[0]!='\r' && txt[0]!='\0') {
+                break;  // for example, horrible windows ^D
             }
-        }
-
-
-        while (!feof(stdin)) {
-            String txt = getStdin();
-            if (!feof(stdin)) {
-                if (txt[0]<32 && txt[0]!='\n' && 
-                    txt[0]!='\r' && txt[0]!='\0') {
-                    break;  // for example, horrible windows ^D
-                }
-                BottleImpl bot;
-                if (!raw) {
-                    bot.addInt(0);
-                    bot.addString(txt.c_str());
-                } else {
-                    bot.fromString(txt.c_str());
-                }
-                core.send(bot);
-            }
-        }
-
-        if (!raw) {
             BottleImpl bot;
-            bot.addInt(1);
-            bot.addString("<EOF>");
+            if (!raw) {
+                bot.addInt(0);
+                bot.addString(txt.c_str());
+            } else {
+                bot.fromString(txt.c_str());
+            }
             core.send(bot);
         }
-
-        core.close();
-        core.join();
-
-        return 0;
-    } catch (IOException e) {
-        ACE_OS::fprintf(stderr,"write failed: %s\n",e.toString().c_str());    
     }
-    return 1;
+    
+    if (!raw) {
+        BottleImpl bot;
+        bot.addInt(1);
+        bot.addString("<EOF>");
+        core.send(bot);
+    }
+    
+    core.close();
+    core.join();
+    
+    return 0;
 }
 
 
@@ -997,89 +989,89 @@ int Companion::forward(const char *localName, const char *targetName) {
 
 
 int Companion::rpc(const char *connectionName, const char *targetName) {
-    try {
-        NameClient& nic = NameClient::getNameClient();
-        Address address = nic.queryName(targetName);
-        if (!address.isValid()) {
-            YARP_ERROR(Logger::get(),"could not find port");
-            return 1;
-        }
-
-        OutputProtocol *out = Carriers::connect(address);
-        if (out==NULL) {
-            throw IOException("cannot connect to port");
-        }
-        printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
-               address.toString().c_str(),
-               connectionName);
-        Route r(connectionName,targetName,"text_ack");
-        out->open(r);
-        OutputStream& os = out->getOutputStream();
-        InputStream& is = out->getInputStream();
-        StreamConnectionReader reader;
-
-        while (!feof(stdin)) {
-            String txt = getStdin();
-
-            if (!feof(stdin)) {
-                if (txt[0]<32 && txt[0]!='\n' && 
-                    txt[0]!='\r' && txt[0]!='\0') {
-                    break;  // for example, horrible windows ^D
+    NameClient& nic = NameClient::getNameClient();
+    Address address = nic.queryName(targetName);
+    if (!address.isValid()) {
+        YARP_ERROR(Logger::get(),"could not find port");
+        return 1;
+    }
+    
+    OutputProtocol *out = Carriers::connect(address);
+    if (out==NULL) {
+        ACE_OS::fprintf(stderr, "Cannot make connection\n");
+        return 1;
+    }
+    printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
+           address.toString().c_str(),
+           connectionName);
+    Route r(connectionName,targetName,"text_ack");
+    out->open(r);
+    OutputStream& os = out->getOutputStream();
+    InputStream& is = out->getInputStream();
+    StreamConnectionReader reader;
+    
+    while (!feof(stdin)) {
+        String txt = getStdin();
+        
+        if (!feof(stdin)) {
+            if (txt[0]<32 && txt[0]!='\n' && 
+                txt[0]!='\r' && txt[0]!='\0') {
+                break;  // for example, horrible windows ^D
+            }
+            Bottle bot;
+            bot.fromString(txt.c_str());
+            
+            PortCommand pc(0,"d");
+            BufferedConnectionWriter bw(out->isTextMode());
+            bool ok = pc.write(bw);
+            if (!ok) {
+                ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+                if (out!=NULL) delete out;
+                return 1;
+            }
+            ok = bot.write(bw);
+            if (!ok) {
+                ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+                if (out!=NULL) delete out;
+                return 1;
+            }
+            bw.write(os);
+            Bottle resp;
+            TextReader formattedResp;
+            reader.reset(is,NULL,r,0,true);
+            bool done = false;
+            bool first = true;
+            while (!done) {
+                if (reader.isTextMode()) {
+                    formattedResp.read(reader);
+                    resp.fromString(formattedResp.str.c_str());
+                } else {
+                    resp.read(reader);
                 }
-                Bottle bot;
-                bot.fromString(txt.c_str());
-
-                PortCommand pc(0,"d");
-                BufferedConnectionWriter bw(out->isTextMode());
-                bool ok = pc.write(bw);
-                if (!ok) {
-                    throw IOException("writer failed");
-                }
-                ok = bot.write(bw);
-                if (!ok) {
-                    throw IOException("writer failed");
-                }
-                bw.write(os);
-                Bottle resp;
-                TextReader formattedResp;
-                reader.reset(is,NULL,r,0,true);
-                bool done = false;
-                bool first = true;
-                while (!done) {
+                if (String(resp.get(0).asString())=="<ACK>") {
+                    if (first) {
+                        printf("Acknowledged\n");
+                    }
+                    done = true;
+                } else {
+                    ConstString txt;
                     if (reader.isTextMode()) {
-                        formattedResp.read(reader);
-                        resp.fromString(formattedResp.str.c_str());
+                        txt = formattedResp.str;
                     } else {
-                        resp.read(reader);
+                        txt = resp.toString().c_str();
                     }
-                    if (String(resp.get(0).asString())=="<ACK>") {
-                        if (first) {
-                            printf("Acknowledged\n");
-                        }
-                        done = true;
-                    } else {
-                        ConstString txt;
-                        if (reader.isTextMode()) {
-                            txt = formattedResp.str;
-                        } else {
-                            txt = resp.toString().c_str();
-                        }
-                        printf("Response: %s\n", txt.c_str());
-                    }
-                    first = false;
+                    printf("Response: %s\n", txt.c_str());
                 }
+                first = false;
             }
         }
-
-        if (out!=NULL) {
-            delete out;
-            out = NULL;
-        }
-
-        return 0;
-    } catch (IOException e) {
-        ACE_OS::fprintf(stderr,"write failed: %s\n",e.toString().c_str());    
     }
+    
+    if (out!=NULL) {
+        delete out;
+        out = NULL;
+    }
+    
     return 0;
 }
 

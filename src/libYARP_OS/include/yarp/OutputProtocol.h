@@ -27,7 +27,7 @@ public:
 
     virtual ~OutputProtocol() {}
 
-    virtual void open(const Route& route) = 0;
+    virtual bool open(const Route& route) = 0;
     virtual void rename(const Route& route) = 0;
     virtual void close() = 0;
 
@@ -42,6 +42,8 @@ public:
     virtual bool checkStreams() = 0;
 
     virtual void write(SizedWriter& writer) = 0;
+
+    virtual void interrupt() = 0;
 
     // some connections are capable of ping-ponging
     virtual InputProtocol& getInput() = 0;

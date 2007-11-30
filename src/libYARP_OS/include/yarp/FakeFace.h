@@ -20,7 +20,7 @@ namespace yarp {
  */
 class yarp::FakeFace : public Face {
 public:
-    virtual void open(const Address& address);
+    virtual bool open(const Address& address);
     virtual void close();
     virtual InputProtocol *read();
     virtual OutputProtocol *write(const Address& address);

@@ -38,13 +38,15 @@ public:
         happy = true;
         bufferAlerted = bufferAlertNeeded = false;
         multiMode = false;
+        errCount = 0;
+        lastReportTime = 0;
     }
 
-    virtual void open(const Address& remote);
+    virtual bool open(const Address& remote);
 
-    virtual void open(const Address& local, const Address& remote);
+    virtual bool open(const Address& local, const Address& remote);
 
-    virtual void openMcast(const Address& group,
+    virtual bool openMcast(const Address& group,
                            const Address& ipLocal);
 
     virtual int restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
@@ -52,11 +54,11 @@ public:
                               const Address& ipLocal,
                               bool add);
 
-    virtual void join(const Address& group, bool sender,
+    virtual bool join(const Address& group, bool sender,
                       const Address& ipLocal);
 
-    virtual void join(const Address& group, bool sender) {
-        join(group,sender,Address());
+    virtual bool join(const Address& group, bool sender) {
+        return join(group,sender,Address());
     }
 
     virtual ~DgramTwoWayStream();
@@ -113,6 +115,8 @@ private:
     bool bufferAlertNeeded;
     bool bufferAlerted;
     bool multiMode;
+    int errCount;
+    double lastReportTime;
 
     void allocate();
 

@@ -10,6 +10,7 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 
 #include "TestList.h"
 
@@ -78,6 +79,8 @@ public:
         data2.fromString("hello2");
         p1.write();
         
+        Time::delay(0.3);
+
         bot = p2.read();
         checkTrue(bot!=NULL,"BufferedPort message received");
         if (bot!=NULL) {
@@ -92,7 +95,7 @@ public:
 
     virtual void runTests() {
         Network::setLocalMode(true);
-        checkLocal(); // still too experimental
+        checkLocal(); // still rather experimental
         checkAccept();
         Network::setLocalMode(false);
     }

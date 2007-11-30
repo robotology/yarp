@@ -70,6 +70,8 @@ public:
         core.close();
         ct++; // close is an event
 
+        report(0,"finished stress-testing port...");
+
         core.join();
         checkEqual(core.getEventCount(),ct,"Got all events");
 
@@ -93,35 +95,33 @@ public:
         checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
         checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
 
-        try {
-            PortCore sender;
-            PortCore receiver;
-            receiver.setReadHandler(*this);
-            sender.listen(write);
-            receiver.listen(read);
-            sender.start();
-            receiver.start();
-            //Time::delay(1);
-            BottleImpl bot;
-            bot.addInt(0);
-            bot.addString("Hello world");
-            report(0,"sending bottle, should received nothing");
-            expectation = "";
-            sender.send(bot);
-            Time::delay(0.3);
-            checkEqual(receives,0,"nothing received");
-            Companion::connect("/write", "/read");
-            Time::delay(0.3);
-            report(0,"sending bottle, should receive it this time");
-            expectation = bot.toString();
-            sender.send(bot);
-            Time::delay(0.3);
-            checkEqual(receives,1,"something received");
-            sender.close();
-            receiver.close();
-        } catch (IOException e) {
-            report(1,e.toString() + " <<< testBottle got exception");
-        }
+
+        PortCore sender;
+        PortCore receiver;
+        receiver.setReadHandler(*this);
+        sender.listen(write);
+        receiver.listen(read);
+        sender.start();
+        receiver.start();
+        //Time::delay(1);
+        BottleImpl bot;
+        bot.addInt(0);
+        bot.addString("Hello world");
+        report(0,"sending bottle, should received nothing");
+        expectation = "";
+        sender.send(bot);
+        Time::delay(0.3);
+        checkEqual(receives,0,"nothing received");
+        Companion::connect("/write", "/read");
+        Time::delay(0.3);
+        report(0,"sending bottle, should receive it this time");
+        expectation = bot.toString();
+        sender.send(bot);
+        Time::delay(0.3);
+        checkEqual(receives,1,"something received");
+        sender.close();
+        receiver.close();
+
         nic.setFakeMode(false);
     }
 
@@ -142,39 +142,37 @@ public:
         checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
         checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
 
-        try {
-            PortCore sender;
 
-            sender.setWaitBeforeSend(false);
-            sender.setWaitAfterSend(false);
+        PortCore sender;
 
-            PortCore receiver;
-            receiver.setReadHandler(*this);
-            sender.listen(write);
-            receiver.listen(read);
-            sender.start();
-            receiver.start();
-            //Time::delay(1);
-            BottleImpl bot;
-            bot.addInt(0);
-            bot.addString("Hello world");
-            report(0,"sending bottle, should received nothing");
-            expectation = "";
-            sender.send(bot);
-            Time::delay(0.3);
-            checkEqual(receives,0,"nothing received");
-            Companion::connect("/write", "/read");
-            Time::delay(0.3);
-            report(0,"sending bottle, should receive it this time");
-            expectation = bot.toString();
-            sender.send(bot);
-            Time::delay(0.3);
-            checkEqual(receives,1,"something received");
-            sender.close();
-            receiver.close();
-        } catch (IOException e) {
-            report(1,e.toString() + " <<< testBottle got exception");
-        }
+        sender.setWaitBeforeSend(false);
+        sender.setWaitAfterSend(false);
+
+        PortCore receiver;
+        receiver.setReadHandler(*this);
+        sender.listen(write);
+        receiver.listen(read);
+        sender.start();
+        receiver.start();
+        //Time::delay(1);
+        BottleImpl bot;
+        bot.addInt(0);
+        bot.addString("Hello world");
+        report(0,"sending bottle, should received nothing");
+        expectation = "";
+        sender.send(bot);
+        Time::delay(0.3);
+        checkEqual(receives,0,"nothing received");
+        Companion::connect("/write", "/read");
+        Time::delay(0.3);
+        report(0,"sending bottle, should receive it this time");
+        expectation = bot.toString();
+        sender.send(bot);
+        Time::delay(0.3);
+        checkEqual(receives,1,"something received");
+        sender.close();
+        receiver.close();
+
         nic.setFakeMode(false);
     }
 

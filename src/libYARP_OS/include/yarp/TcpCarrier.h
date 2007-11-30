@@ -67,13 +67,15 @@ public:
         return false;
     }
 
-    virtual void respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(Protocol& proto) {
         int cport = proto.getStreams().getLocalAddress().getPort();
         proto.writeYarpInt(cport);
+        return proto.checkStreams();
     }
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
         proto.readYarpInt(); // ignore result
+        return proto.checkStreams();
     }
 
 private:

@@ -96,25 +96,22 @@ public:
         bot.addInt(5);
         bot.addString("hello");
 
-        try {
-            BufferedConnectionWriter bbw(true);
-            bot.write(bbw);
+        BufferedConnectionWriter bbw(true);
+        bot.write(bbw);
       
-            String s;
-            StringInputStream sis;
-            StreamConnectionReader sbr;
+        String s;
+        StringInputStream sis;
+        StreamConnectionReader sbr;
       
-            s = bbw.toString();
-            sis.add(s);
-            Route route;
-            sbr.reset(sis,NULL,route,s.length(),true);
+        s = bbw.toString();
+        sis.add(s);
+        Route route;
+        sbr.reset(sis,NULL,route,s.length(),true);
       
-            BottleImpl bot2;
-            bot2.read(sbr);
-            checkEqual(bot2.toString(),bot.toString(),"to/from stream");
-        } catch (IOException e) {
-            report(1,e.toString() + " <<< exception thrown");
-        }
+        BottleImpl bot2;
+        bot2.read(sbr);
+        checkEqual(bot2.toString(),bot.toString(),"to/from stream");
+
     }
 
     void testTypes() {

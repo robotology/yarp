@@ -195,7 +195,7 @@ public:
         return false;
     }
 
-    virtual void sendHeader(Protocol& proto) {
+    virtual bool sendHeader(Protocol& proto) {
         printf("not yet meant to work\n");
         String target = "GET / HTTP/1.1";
         Bytes b((char*)target.c_str(),8);
@@ -211,37 +211,44 @@ public:
         proto.os().write('\n');
         proto.os().flush();
         */
+        return true;
 
     }
 
-    void expectSenderSpecifier(Protocol& proto);
+    bool expectSenderSpecifier(Protocol& proto);
 
-    void expectReplyToHeader(Protocol& proto) {
+    bool expectReplyToHeader(Protocol& proto) {
         // expect and ignore CONTENT lines
         String result = NetType::readLine(proto.is());
+        return true;
     }
 
 
-    void sendIndex(Protocol& proto) {
+    bool sendIndex(Protocol& proto) {
         // no index
+        return true;
     }
 
-    void expectIndex(Protocol& proto) {
+    bool expectIndex(Protocol& proto) {
         // no index
+        return true;
     }
 
-    void sendAck(Protocol& proto) {
+    bool sendAck(Protocol& proto) {
         // no acknowledgement
+        return true;
     }
 
-    virtual void expectAck(Protocol& proto) {
+    virtual bool expectAck(Protocol& proto) {
         // no acknowledgement
+        return true;
     }
 
-    void respondToHeader(Protocol& proto) {
+    bool respondToHeader(Protocol& proto) {
         HttpTwoWayStream *stream = 
             new HttpTwoWayStream(proto.giveStreams(),input.c_str());
         proto.takeStreams(stream);
+        return true;
     }
 };
 

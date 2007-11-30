@@ -12,6 +12,7 @@
 #include <ace/OS.h>
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
+#include <ace/Thread.h>
 
 using namespace yarp;
 
@@ -33,7 +34,14 @@ void Logger::show(int level, const String& txt) {
     }
     if (parent == NULL) {
         if (level>=low) {
-            ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
+            if (inLevel<=DEBUG) {
+                ACE_OS::fprintf(stderr,"%s(%04x): %s\n",
+                                prefix.c_str(),
+                                (long int)(ACE_Thread::self()),
+                                txt.c_str());
+            } else {
+                ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
+            }
             ACE_OS::fflush(stderr);
         }
     } else {

@@ -21,4 +21,6 @@ void LocalCarrierStream::close() {
         owner = NULL;
         owned->shutdown();
     }
+    done = true;
 }
+

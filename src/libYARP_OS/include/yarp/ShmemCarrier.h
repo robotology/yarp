@@ -135,60 +135,69 @@ public:
     }
     */
 
-    void becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
+    bool becomeShmemVersionHybridStream(Protocol& proto, bool sender) {
         ShmemHybridStream *stream = new ShmemHybridStream();
         YARP_ASSERT(stream!=NULL);
         Address base;
-        try {
-            if (!sender) {
-                ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
-                base = Address(anywhere.get_host_addr(),
-                               anywhere.get_port_number());
-                stream->open(base,sender);
+
+        bool ok = true;
+
+        if (!sender) {
+            ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
+            base = Address(anywhere.get_host_addr(),
+                           anywhere.get_port_number());
+            bool ok = stream->open(base,sender)==0;
+            if (ok) {
                 int myPort = stream->getLocalAddress().getPort();
                 proto.writeYarpInt(myPort);
                 stream->accept();
                 proto.takeStreams(NULL);
                 proto.takeStreams(stream);
-            } else {
-                int altPort = proto.readYarpInt();
-                String myName = proto.getStreams().getLocalAddress().getName();
-                proto.takeStreams(NULL);
-                base = Address(myName,altPort);
-                stream->open(base,sender);
+            }
+        } else {
+            int altPort = proto.readYarpInt();
+            String myName = proto.getStreams().getLocalAddress().getName();
+            proto.takeStreams(NULL);
+            base = Address(myName,altPort);
+            ok = stream->open(base,sender)==0;
+            if (ok) {
                 proto.takeStreams(stream);
             }
-        } catch (IOException e) {
+        }
+
+        if (!ok) {
             delete stream;
             stream = NULL;
-            throw e;
+            return false;
         }
+
+        return true;
     }
 
-    virtual void becomeShmem(Protocol& proto, bool sender) {
+    virtual bool becomeShmem(Protocol& proto, bool sender) {
         if (version==1) {
             // "classic" shmem
             //becomeShmemVersion<ShmemTwoWayStream>(proto,sender);
             //becomeShmemVersionTwoWayStream(proto,sender);
             ACE_OS::printf("Classic shmem no longer exists\n");
             ACE_OS::exit(1);
-
+            return false;
         } else {
             // experimental shmem
             //becomeShmemVersion<ShmemHybridStream>(proto,sender);
-            becomeShmemVersionHybridStream(proto,sender);
+            return becomeShmemVersionHybridStream(proto,sender);
         }
     }
 
-    virtual void respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(Protocol& proto) {
         // i am the receiver
-        becomeShmem(proto,false);
+        return becomeShmem(proto,false);
     }
 
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
         // i am the sender
-        becomeShmem(proto,true);
+        return becomeShmem(proto,true);
     }
 
 };

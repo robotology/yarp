@@ -3,7 +3,7 @@
 # run as ./scripts/ace-helper.sh
 
 VER=5.6.1
-LOCALVER=2
+LOCALVER=3
 
 mkdir -p ace-helper
 cd ace-helper
@@ -43,76 +43,49 @@ fi
 
 cd $YACE
 
-if [ ! -e COPYING ]; then
-    cp ../ACE_wrappers/COPYING .
+if [ ! -e ACE_COPYING ]; then
+    cp ../ACE_wrappers/COPYING ACE_COPYING
 fi
 
-if [ ! -e ace ]; then
-    cp -R ../ACE_wrappers/ace ace
-    rm -rf ace/QoS ace/*Reactor ace/SSL
+if [ ! -e ace_orig ]; then
+    cp -R ../ACE_wrappers/ace ace_orig
+    rm -rf ace_orig/QoS ace/*Reactor ace_orig/SSL
 fi
 
-if [ ! -e CMakeLists.txt ]; then
+if [ ! -e ace_sources.txt ]; then
+    echo "Enumerating sources"
 
-    echo `cat ../ACE_wrappers/ace/Makefile.am | sed "s|^  |  ace/|i"` | sed "s/.*libACE_la_SOURCES = //" | sed "s/libACE_la_LDFLAGS.*//" | sed "s/\\\\/ /g" > inventory.txt
-    src=`cat inventory.txt`
-    rm inventory.txt
+    echo `cat ../ACE_wrappers/ace/Makefile.am | sed "s|^  |  ace/|i"` | sed "s/.*libACE_la_SOURCES = //" | sed "s/libACE_la_LDFLAGS.*//" | sed "s/\\\\/ /g" > ace_sources.txt
+    src=`cat ace_sources.txt`
+fi
+
+if [ ! -e CMakeLists.txt.template ]; then
+    echo "Making template CMakeLists.txt.template, in case stand-alone compile is desired"
+
+    src=`cat ace_sources.txt`
 
     (
 	cat <<EOF 
 PROJECT(ACE4YARP)
 # Search for source code.
-FILE(GLOB_RECURSE folder_source *.cpp *.cc *.c)
-FILE(GLOB_RECURSE folder_header *.h)
+FILE(GLOB_RECURSE folder_source src/libYARP_OS/src/*.cpp src/libYARP_OS/src/*.cc src/libYARP_OS/src/*.c)
+FILE(GLOB_RECURSE folder_header include/*.h)
 SOURCE_GROUP("Source Files" FILES \${folder_source})
 SOURCE_GROUP("Header Files" FILES \${folder_header})
 
-SET(BUILD_SHARED_LIBS ON)
-SET(CONFED FALSE)
-
-IF (MSVC)
-    CONFIGURE_FILE("\${CMAKE_SOURCE_DIR}/ace/config-win32.h"
-                   "\${CMAKE_BINARY_DIR}/ace/config.h" COPYONLY IMMEDIATE)
-    SET(CONFED TRUE)
-ENDIF (MSVC)
-
-IF (UNIX) 
-    IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        CONFIGURE_FILE("\${CMAKE_SOURCE_DIR}/ace/config-linux.h"
-                   "\${CMAKE_BINARY_DIR}/ace/config.h" COPYONLY IMMEDIATE)
-        SET(CONFED TRUE)
-    ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-
-    IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        # should check for right information, but don't have macs to test on
-        # see http://www.cmake.org/Wiki/CMake_Useful_Variables for 
-        # possible variables to test
-        CONFIGURE_FILE("\${CMAKE_SOURCE_DIR}/ace/config-macosx-tiger.h"
-                   "\${CMAKE_BINARY_DIR}/ace/config.h" COPYONLY IMMEDIATE)
-        SET(CONFED TRUE)
-    ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-ENDIF (UNIX)
+INCLUDE_DIRECTORIES(\${PROJECT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(BEFORE \${PROJECT_SOURCE_DIR}/src/libYARP_OS/include)
 
 IF (MINGW)
-	MESSAGE(STATUS "MINGW operation")
-        CONFIGURE_FILE("${CMAKE_SOURCE_DIR}/ace/config-win32.h"
-                   "${CMAKE_BINARY_DIR}/ace/config.h" COPYONLY IMMEDIATE)
-        SET(CONFED TRUE)
-	ADD_DEFINITIONS(-DACE_HAS_EXCEPTIONS -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
-	LINK_LIBRARIES(ws2_32 mswsock netapi32)
+  ADD_DEFINITIONS(-D__MINGW32__ -D__MINGW__)
 ENDIF (MINGW)
 
-IF (NOT CONFED)
-    MESSAGE(FATALERROR "copy ace/config-YOUR-SYSTEM.h to ace/config.h")
-ENDIF (NOT CONFED)
+ADD_LIBRARY(ACE4YARP \${folder_source} \${folder_header})
 
-
-INCLUDE_DIRECTORIES(\${PROJECT_SOURCE_DIR})
 EOF
 	
-	echo "ADD_LIBRARY(ACE4YARP $src \${folder_header})"
 	
-    ) > CMakeLists.txt
+    ) > CMakeLists.txt.template
 
 
 (
@@ -178,12 +151,204 @@ EOF
 ) > ACE4YARPConfig.cmake
 fi
 
+
+if [ ! -e src/libYARP_OS/src ] ; then
+    echo Copying ACE source files
+    src=`cat ace_sources.txt | sed "s|ace/||g"`
+    mkdir -p src/libYARP_OS/src
+    for s in $src; do
+	cp ace_orig/$s src/libYARP_OS/src/_ace_$s
+    done
+fi
+
+if [ ! -e src/libYARP_OS/include/ace ] ; then
+    echo Copying ACE header files
+    mkdir -p src/libYARP_OS/include/ace
+    cp -r ace_orig/* src/libYARP_OS/include/ace
+fi
+
+
+if [ ! -e src/libYARP_OS/include/ace/config.h ] ; then
+    echo Creating simple ACE config.h
+(
+cat <<XXX
+#ifndef __ACE4YARP_INC__
+#define __ACE4YARP_INC__
+
+#ifndef _REENTRANT
+#define _REENTRANT
+#endif
+
+
+// ACE4YARP only has to work on 32-bit Linux and Windows,
+// so we can take some shortcuts
+
+#ifdef CYGWIN
+#ifndef YARP2_CYGWIN
+#define YARP2_CYGWIN
+#endif
+#endif
+
+#ifdef WIN32
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef _WIN32
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef __WIN__
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef __WINDOWS__
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+#ifdef WINDOWS
+#ifndef YARP2_WINDOWS
+#define YARP2_WINDOWS
+#endif
+#endif
+
+
+#ifdef __MINGW__
+#ifndef YARP2_MINGW
+#define YARP2_MINGW
+#endif
+#endif
+
+#ifdef __MINGW32__
+#ifndef YARP2_MINGW
+#define YARP2_MINGW
+#endif
+#endif
+
+#ifdef __LINUX__
+#ifndef YARP2_LINUX
+#define YARP2_LINUX
+#endif
+#endif
+
+#ifdef __linux__
+#ifndef YARP2_LINUX
+#define YARP2_LINUX
+#endif
+#endif
+
+#ifdef __darwin__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef __DARWIN__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef DARWIN
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef MACOSX
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+#ifdef __APPLE__
+#ifndef YARP2_OSX
+#define YARP2_OSX
+#endif
+#endif
+
+
+#ifdef YARP2_WINDOWS
+#ifdef YARP2_MINGW
+#ifndef __MINGW32__
+#define __MINGW32__
+#endif
+#define ACE_HAS_EXCEPTIONS  0
+#define __ACE_INLINE__ 0
+#define ACE_HAS_ACE_TOKEN 0
+#define ACE_HAS_ACE_SVCCONF 0
+#define ACE_BUILD_DLL 0
+#define ACE_HAS_CUSTOM_EXPORT_MACROS 1
+#define ACE_HAS_CUSTOM_MACROS 1
+
+// casino in config-win32-common
+#define ACE_CONFIG_WIN32_H
+#include <ace/config-win32-common.h>
+#undef ACE_CONFIG_WIN32_H
+#ifdef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_Proper_Export_Flag
+# undef ACE_Proper_Import_Flag
+# undef ACE_EXPORT_SINGLETON_DECLARATION
+# undef ACE_EXPORT_SINGLETON_DECLARE
+# undef ACE_IMPORT_SINGLETON_DECLARATION
+# undef ACE_IMPORT_SINGLETON_DECLARE
+#endif
+
+#endif
+#include <ace/config-win32.h>
+#ifndef ACE4YARP_CONFIG_OK
+#define ACE4YARP_CONFIG_OK
+#endif
+#endif
+
+#ifdef YARP2_LINUX
+#include <ace/config-linux.h>
+#ifndef ACE4YARP_CONFIG_OK
+#define ACE4YARP_CONFIG_OK
+#endif
+#endif
+
+
+#ifndef ACE4YARP_CONFIG_OK
+#error "No luck, could not configure ACE4YARP - please compile ACE separately"
+#endif
+
+// Disable G++ (>= 4.x) visibility attributes
+//#ifndef __G4_ISSUE
+//#define __G4_ISSUE
+#if (__GNUC__ > 3)
+#ifdef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_Proper_Export_Flag
+# undef ACE_Proper_Import_Flag
+# undef ACE_EXPORT_SINGLETON_DECLARATION
+# undef ACE_EXPORT_SINGLETON_DECLARE
+# undef ACE_IMPORT_SINGLETON_DECLARATION
+# undef ACE_IMPORT_SINGLETON_DECLARE
+#endif
+#endif  /* __GNU__ > 3 */
+//#endif
+
+#endif
+XXX
+) >> src/libYARP_OS/include/ace/config.h
+fi
+
 cd ..
 
 
 #rm -f $YACE.tar $YACE.tar.gz $YACE.zip
 
 if [ ! -e $YACE.tar.gz ] ; then
+    echo Generating $YACE.tar.gz
     rm -f $YACE.tar $YACE.tar.gz
     tar -cvvf $YACE.tar $YACE
     gzip $YACE.tar
@@ -191,15 +356,15 @@ fi
 
 
 if [ ! -e $YACE.zip ]; then
-    if [ ! -e win ]; then
-	mkdir -p win
-	cd win
-	cp -R ../$YACE $YACE
+    echo Generating $YACE.zip
+    rm -rf win
+    mkdir -p win
+    cd win
+    cp -R ../$YACE $YACE
     # tofrodos - Converts DOS <-> Unix text files, alias tofromdos
-	find $YACE -type f -exec unix2dos {} \;
-	zip -r ../$YACE.zip $YACE
-	cd ..
-    fi
+    find $YACE -type f -exec unix2dos {} \;
+    zip -r ../$YACE.zip $YACE
+    cd ..
 fi
 
 if [ ! -e sent-$YACE.txt ]; then

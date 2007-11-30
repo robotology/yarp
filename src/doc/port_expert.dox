@@ -144,8 +144,10 @@ the yarp::os::Port::setReader() method:
 class DataProcessor : public PortReader {
      virtual bool read(ConnectionReader& connection) {
           Bottle b;
-          b.read(connection);
+          bool ok = b.read(connection);
+          if (!ok) return false;
           // process data in b
+          return true;
      }
 };
 DataProcessor processor;
@@ -224,12 +226,14 @@ If we are using callbacks, our receiver should do something like this:
 class DataProcessor : public PortReader {
      virtual bool read(ConnectionReader& connection) {
           Bottle in, out;
-          in.read(connection);
+          bool ok = in.read(connection);
+          if (!ok) return false;
           ...      // process data "in", prepare "out"
           ConnectionWriter *returnToSender = connection.getWriter();
           if (returnToSender!=NULL) {
 	     out.write(*returnToSender);
           }
+          return true;
      }
 };
 DataProcessor processor;
@@ -341,7 +345,7 @@ public:
   virtual bool read(ConnectionReader& connection) {
     x = connection.expectInt();
     y = connection.expectInt();
-    return true;
+    return !connection.isError();
   }
 };
 \endcode
@@ -390,7 +394,7 @@ The corresponding read method would be:
     if (ct!=2) return false;
     x = connection.expectInt();
     y = connection.expectInt();
-    return true;
+    return !connection.isError();
   }
 \endcode
 

@@ -48,6 +48,8 @@ public:
     virtual void interrupt() {
     }
 
+    virtual bool isOk() = 0;
+
     // These should be called at the beginning and end of logical packets.
     // Streams are encouraged to handle errors and atomicity at the level of 
     // logical packets

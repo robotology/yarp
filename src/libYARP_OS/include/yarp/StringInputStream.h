@@ -79,6 +79,10 @@ public:
         return data;
     }
 
+    virtual bool isOk() {
+        return true;
+    }
+
 private:
     String data;
     unsigned int at;

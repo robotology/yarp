@@ -26,7 +26,7 @@ public:
 
     // all throw IOException
 
-    virtual void open(const Address& address) = 0;
+    virtual bool open(const Address& address) = 0;
     virtual void close() = 0;
     virtual InputProtocol *read() = 0;
     virtual OutputProtocol *write(const Address& address) = 0; 

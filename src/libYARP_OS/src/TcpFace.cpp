@@ -24,16 +24,17 @@ TcpFace::~TcpFace() {
 }
 
 
-void TcpFace::open(const Address& address) {
-    YARP_DEBUG(tcpFaceLog,String("TcpFace opening for address ") + address.toString());
+bool TcpFace::open(const Address& address) {
+    YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toString());
 
     this->address = address;
     ACE_INET_Addr	serverAddr(address.getPort());
     int result = peerAcceptor.open(serverAddr,1);
     if (result==-1) {
-        //printf("*** tcp error %d %d\n", result, errno);
-        throw IOException("cannot listen on specified tcp address");
+        //throw IOException("cannot listen on specified tcp address");
+        return false;
     }
+    return true;
 }
 
 void TcpFace::close() {
@@ -75,10 +76,8 @@ InputProtocol *TcpFace::read() {
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
     YARP_ASSERT(stream!=NULL);
 
-    try {
-        stream->open(peerAcceptor);
-    } catch (IOException e) {
-        YARP_DEBUG(tcpFaceLog,String("exception on tcp stream read: ") + e.toString().c_str());
+    int result = stream->open(peerAcceptor);
+    if (result<0) {
         //ACE_OS::printf("exception on tcp stream read: %s\n", e.toString().c_str());
         stream->close();
         delete stream;

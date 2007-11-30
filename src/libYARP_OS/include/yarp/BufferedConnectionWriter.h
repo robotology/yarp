@@ -206,6 +206,18 @@ public:
         ref = obj;
     }
 
+    virtual bool isValid() {
+        return true;
+    }
+
+    virtual bool isActive() {
+        return true;
+    }
+
+    virtual bool isError() {
+        return false;  // output errors are of no significance at user level
+    }
+
 private:
     ACE_Vector<ManagedBytes *> lst;
     ACE_Vector<ManagedBytes *> header;

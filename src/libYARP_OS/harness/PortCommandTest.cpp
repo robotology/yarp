@@ -24,12 +24,12 @@ public:
 
         PortCommand cmd1('d',"");;
         BufferedConnectionWriter bw(true);
-        cmd1.writeBlock(bw);
+        cmd1.write(bw);
         checkEqual(humanize(bw.toString()),"d\\r\\n","basic data command");
     
         PortCommand cmd2('\0',"/bozo");;
         BufferedConnectionWriter bw2(true);
-        cmd2.writeBlock(bw2);
+        cmd2.write(bw2);
         checkEqual(humanize(bw2.toString()),"/bozo\\r\\n","connect command");
     }
 
@@ -42,7 +42,7 @@ public:
         sis.add("d\r\n");
         Route route;
         br.reset(sis,NULL,route,sis.toString().length(),true);
-        cmd.readBlock(br);
+        cmd.read(br);
         checkEqual('d',cmd.getKey(),"basic data command");
     }
 

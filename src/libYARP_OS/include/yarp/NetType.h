@@ -40,16 +40,19 @@ public:
         return tmp;
     }
 
-    static void netInt(int data, const Bytes& code) {
+    static bool netInt(int data, const Bytes& code) {
         NetType::NetInt32 i = data;
         Bytes b((char*)(&i),sizeof(i));
         if (code.length()!=sizeof(i)) {
-            throw IOException("not enough room for integer");
+            YARP_ERROR(Logger::get(),"not enough room for integer");
+            return false;
         }
         ACE_OS::memcpy(code.get(),b.get(),code.length());
+        return true;
     }
 
-    static String readLine(InputStream& is, int terminal = '\n');
+    static String readLine(InputStream& is, int terminal = '\n',
+                           bool *success = NULL);
 
     static int readFull(InputStream& is, const Bytes& b);
 

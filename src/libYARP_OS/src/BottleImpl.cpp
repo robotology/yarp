@@ -322,7 +322,8 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
     }
     if (storable==NULL) {
         YARP_ERROR(Logger::get(), "BottleImpl reader failed");
-        throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
+        //throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
+        return false;
     }
     storable->read(reader);
     add(storable);
@@ -355,28 +356,30 @@ bool BottleImpl::fromBytes(const Bytes& data) {
     clear();
     dirty = true; // for clarity
 
-    try {
-        if (!nested) {
-
-            clear();
-            specialize(0);
-            
-            int code = reader.expectInt();
-            YMSG(("READ got top level code %d\n", code));
-            code = code & UNIT_MASK;
-            if (code!=0) {
-                specialize(code);
-            }
+    if (!nested) {
+        
+        clear();
+        specialize(0);
+        
+        int code = reader.expectInt();
+        if (reader.isError()) { return false; }
+        YMSG(("READ got top level code %d\n", code));
+        code = code & UNIT_MASK;
+        if (code!=0) {
+            specialize(code);
         }
-        int len = reader.expectInt();
-        YMSG(("READ bottle length %d\n", len));
-        for (int i=0; i<len; i++) {
-            fromBytes(reader);
-        }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " -- bottle reader stopped");
-        return false;
     }
+    int len = reader.expectInt();
+    if (reader.isError()) { return false; }
+    YMSG(("READ bottle length %d\n", len));
+    for (int i=0; i<len; i++) {
+        bool ok = fromBytes(reader);
+        if (!ok) return false;
+    }
+    //} catch (IOException e) {
+    //  YARP_DEBUG(Logger::get(), e.toString() + " -- bottle reader stopped");
+    //  return false;
+
     return true;
 }
 
@@ -399,115 +402,110 @@ int BottleImpl::byteCount() {
 }
 
 bool BottleImpl::write(ConnectionWriter& writer) {
-    try {
-        // could simplify this if knew lengths of blocks up front
-        if (writer.isTextMode()) {
-            //writer.appendLine(toString());
-            writer.appendString(toString().c_str(),'\n');
-        } else {
+    // could simplify this if knew lengths of blocks up front
+    if (writer.isTextMode()) {
+        //writer.appendLine(toString());
+        writer.appendString(toString().c_str(),'\n');
+    } else {
 #ifdef USE_YARP1_PREFIX
-            if (!nested) {
-                String name = "YARP2";
-                writer.appendInt(name.length()+1);
-                writer.appendString(name.c_str(),'\0');
-            }
-#endif
-            synch();
-            /*
-            if (!nested) {
-                // No byte count any more, to facilitate nesting
-                //YMSG(("bottle byte count %d\n",byteCount()));
-                //writer.appendInt(byteCount()+sizeof(NetInt32));
-
-                writer.appendInt(StoreList::code + speciality);
-            }
-            */
-            //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
-            writer.appendBlock((char*)getBytes(),byteCount());
+        if (!nested) {
+            String name = "YARP2";
+            writer.appendInt(name.length()+1);
+            writer.appendString(name.c_str(),'\0');
         }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), String("Bottle write exception: ")+e.toString());
-        return false;
+#endif
+        synch();
+        /*
+          if (!nested) {
+          // No byte count any more, to facilitate nesting
+          //YMSG(("bottle byte count %d\n",byteCount()));
+          //writer.appendInt(byteCount()+sizeof(NetInt32));
+          
+          writer.appendInt(StoreList::code + speciality);
+          }
+        */
+        //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
+        writer.appendBlock((char*)getBytes(),byteCount());
     }
-    return true;
+    return !writer.isError();
 }
 
 
 bool BottleImpl::read(ConnectionReader& reader) {
     bool result = false;
-    try {
-        if (reader.isTextMode()) {
-            String str = reader.expectText().c_str();
-            bool done = (str.length()<=0);
-            while (!done) {
-                if (str[str.length()-1]=='\\') {
-                    str = str.substr(0,str.length()-1);
-                    str += reader.expectText().c_str();
+
+    if (reader.isTextMode()) {
+        String str = reader.expectText().c_str();
+        if (reader.isError()) return false;
+        bool done = (str.length()<=0);
+        while (!done) {
+            if (str[str.length()-1]=='\\') {
+                str = str.substr(0,str.length()-1);
+                str += reader.expectText().c_str();
+                if (reader.isError()) return false;
+            } else {
+                if (isComplete(str.c_str())) {
+                    done = true;
                 } else {
-                    if (isComplete(str.c_str())) {
-                        done = true;
-                    } else {
-                        str += "\n";
-                        str += reader.expectText().c_str();
-                    }
+                    str += "\n";
+                    str += reader.expectText().c_str();
+                    if (reader.isError()) return false;
                 }
             }
-            fromString(str);
-            result = true;
-        } else {
-#if USE_YARP1_PREFIX
-            if (!nested) {
-                int len = reader.expectInt();
-                //String name = reader.expectString(len);
-                String buf((size_t)len);
-                reader.expectBlock((const char *)buf.c_str(),len);
-                String name = buf.c_str();
-            }
-#endif
-            if (!nested) {
-                // no byte length any more to facilitate nesting
-                //reader.expectInt(); // the bottle byte ct; ignored
-
-                clear();
-                specialize(0);
-
-                int code = reader.expectInt();
-                YMSG(("READ got top level code %d\n", code));
-                code = code & UNIT_MASK;
-                if (code!=0) {
-                    specialize(code);
-                }
-            }
-
-            //ManagedBytes b(bct);
-            //reader.expectBlock(b.get(),b.length());
-            //result = fromBytes(b.bytes());
-
-            result = true;
-            clear();
-            dirty = true; // for clarity
-
-            int len = 0;
-            int i = 0;
-            try {
-                len = reader.expectInt();
-                YMSG(("READ got length %d\n", len));
-                for (i=0; i<len; i++) {
-                    fromBytes(reader);
-                }
-            } catch (IOException e) {
-                YARP_DEBUG(Logger::get(), e.toString() + 
-                           " -- bottle reader stopped at " +
-                           NetType::toString(i) + " of " +
-                           NetType::toString(len));
-                result = false;;
-            }
-
-
         }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), String("Bottle read exception: ")+e.toString());
-        // leave result false
+        fromString(str);
+        result = true;
+    } else {
+#if USE_YARP1_PREFIX
+        if (!nested) {
+            int len = reader.expectInt();
+            if (reader.isError()) return false;
+            //String name = reader.expectString(len);
+            String buf((size_t)len);
+            reader.expectBlock((const char *)buf.c_str(),len);
+            if (reader.isError()) return false;
+            String name = buf.c_str();
+        }
+#endif
+        if (!nested) {
+            // no byte length any more to facilitate nesting
+            //reader.expectInt(); // the bottle byte ct; ignored
+            
+            clear();
+            specialize(0);
+            
+            int code = reader.expectInt();
+            if (reader.isError()) return false;
+            YMSG(("READ got top level code %d\n", code));
+            code = code & UNIT_MASK;
+            if (code!=0) {
+                specialize(code);
+            }
+        }
+        
+        //ManagedBytes b(bct);
+        //reader.expectBlock(b.get(),b.length());
+        //result = fromBytes(b.bytes());
+        
+        result = true;
+        clear();
+        dirty = true; // for clarity
+        
+        int len = 0;
+        int i = 0;
+        len = reader.expectInt();
+        if (reader.isError()) return false;
+        YMSG(("READ got length %d\n", len));
+        for (i=0; i<len; i++) {
+            bool ok = fromBytes(reader);
+            if (!ok) return false;
+        }
+        //    } catch (IOException e) {
+        //  YARP_DEBUG(Logger::get(), e.toString() + 
+        //             " -- bottle reader stopped at " +
+        //             NetType::toString(i) + " of " +
+        //             NetType::toString(len));
+        //  result = false;;
     }
     return result;
 }

@@ -74,44 +74,45 @@ public:
         return getName();
     }
 
-    // all remaining may throw IOException
-
     // sender
-    virtual void prepareSend(Protocol& proto) {
+    virtual bool prepareSend(Protocol& proto) {
+        return true;
     }
 
-    virtual void sendHeader(Protocol& proto) {
-        proto.defaultSendHeader();
+    virtual bool sendHeader(Protocol& proto) {
+        return proto.defaultSendHeader();
     }
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
+        return true;
     }
 
-    virtual void sendIndex(Protocol& proto) {
-        proto.defaultSendIndex();
+    virtual bool sendIndex(Protocol& proto) {
+        return proto.defaultSendIndex();
     }
 
     // receiver
-    virtual void expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(Protocol& proto) {
+        return true;
     }
 
     // left abstract, no good default
-    virtual void respondToHeader(Protocol& proto) = 0;
+    virtual bool respondToHeader(Protocol& proto) = 0;
 
-    virtual void expectIndex(Protocol& proto) {
-        proto.defaultExpectIndex();
+    virtual bool expectIndex(Protocol& proto) {
+        return proto.defaultExpectIndex();
     }
 
-    virtual void expectSenderSpecifier(Protocol& proto) {
-        proto.defaultExpectSenderSpecifier();
+    virtual bool expectSenderSpecifier(Protocol& proto) {
+        return proto.defaultExpectSenderSpecifier();
     }
 
-    virtual void sendAck(Protocol& proto) {
-        proto.defaultSendAck();
+    virtual bool sendAck(Protocol& proto) {
+        return proto.defaultSendAck();
     }
 
-    virtual void expectAck(Protocol& proto) {
-        proto.defaultExpectAck();
+    virtual bool expectAck(Protocol& proto) {
+        return proto.defaultExpectAck();
     }
 
     virtual bool isActive() {
@@ -137,12 +138,15 @@ protected:
         Protocol::createYarpNumber(7777+specifier,header);
     }
 
-    virtual void write(Protocol& proto, SizedWriter& writer) {
+    virtual bool write(Protocol& proto, SizedWriter& writer) {
         // default behavior upon a write request
         ACE_UNUSED_ARG(writer);
-        proto.sendIndex();
-        proto.sendContent();
+        bool ok = proto.sendIndex();
+        if (!ok) return false;
+        ok = proto.sendContent();
+        if (!ok) return false;
         // proto.expectAck(); //MOVE ack to after reply, if present
+        return true;
     }
 
 };

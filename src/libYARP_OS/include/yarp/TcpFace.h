@@ -32,7 +32,7 @@ public:
 
     virtual ~TcpFace();
 
-    virtual void open(const Address& address); // throws IOException
+    virtual bool open(const Address& address); // throws IOException
     virtual void close(); // throws IOException
     virtual InputProtocol *read(); // throws IOException
     virtual OutputProtocol *write(const Address& address); // throws IOException

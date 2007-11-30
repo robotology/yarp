@@ -96,7 +96,7 @@ public:
     virtual bool start();
 
     // use port as output
-    void send(Writable& writer, Readable *reader = NULL,
+    bool send(Writable& writer, Readable *reader = NULL,
               Writable *callback = NULL);
 
     // shut down and deconfigure core
@@ -136,7 +136,7 @@ public:
 
     void setReportCallback(yarp::os::PortReport *reporter);
 
-    void adminBlock(ConnectionReader& reader, void *id, OutputStream *os);
+    bool adminBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
 public:
 
@@ -146,7 +146,7 @@ public:
     virtual void removeOutput(const String& dest, void *id, OutputStream *os);
     virtual void removeInput(const String& dest, void *id, OutputStream *os);
     virtual void describe(void *id, OutputStream *os);
-    virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os);
+    virtual bool readBlock(ConnectionReader& reader, void *id, OutputStream *os);
 
 
     // Port events (other than messages)

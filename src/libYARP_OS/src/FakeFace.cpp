@@ -16,8 +16,9 @@ using namespace yarp;
 
 static Logger fakeFaceLog("FakeFace", Logger::get());
 
-void FakeFace::open(const Address& address) {
+bool FakeFace::open(const Address& address) {
     // happy to open without fuss
+    return true;
 }
 
 void FakeFace::close() {

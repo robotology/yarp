@@ -84,7 +84,9 @@ public:
         }
 
         if (closed) {
-            throw IOException("Port::read shutting down");
+            //throw IOException("Port::read shutting down");
+            YARP_DEBUG(Logger::get(),"Port::read shutting down");
+            return false;
         }
 
         stateMutex.wait();
@@ -108,7 +110,9 @@ public:
         if (readResult&&willReply) {
             consume.wait();
             if (closed) {
-                throw IOException("Port::read shutting down");
+                YARP_DEBUG(Logger::get(),"Port::read shutting down");
+                return false;
+                //throw IOException("Port::read shutting down");
             }
             stateMutex.wait();
             ConnectionWriter *writer = reader.getWriter();
@@ -257,33 +261,41 @@ bool Port::open(const Contact& contact, bool registerName) {
                      contact.getCarrier().c_str(),
                      contact.getName().c_str());
     Address address = caddress;
-    try {
-        PortCoreAdapter& core = HELPER(implementation);
-        core.setReadHandler(core);
-        NameClient& nic = NameClient::getNameClient();
-        core.setControlRegistration(registerName);
-        if (registerName) {
-            address = nic.registerName(contact.getName().c_str(),caddress);
-        }
-        success = address.isValid();
 
-        if (success) {
-            success = core.listen(address);
-            if (success) {
-                success = core.start();
-            }
-            YARP_INFO(Logger::get(),
-                      String("Port ") +
-                      address.getRegName() +
-                      " listening at " +
-                      address.toString());
-        }
-    } catch (IOException e) {
-        success = false;
-        //YARP_DEBUG(Logger::get(),e.toString() + " <<< Port::register failed");
-        YARP_ERROR(Logger::get(),String("port ") + contact.getName().c_str() + String(" failed to open: ") + e.toString() + " (" + address.toString() + ")");
+
+    core.setReadHandler(core);
+    NameClient& nic = NameClient::getNameClient();
+    core.setControlRegistration(registerName);
+    if (registerName) {
+        address = nic.registerName(contact.getName().c_str(),caddress);
     }
-    if (!success) {
+    success = address.isValid();
+
+    ConstString blame = "invalid address";
+    if (success) {
+        success = core.listen(address);
+        blame = "address conflict";
+        if (success) {
+            success = core.start();
+            blame = "manager did not start";
+        }
+    }
+    if (success) {
+        YARP_INFO(Logger::get(),
+                  String("Port ") +
+                  address.getRegName() +
+                  " active at " +
+                  address.toString());
+    } else {
+        YARP_ERROR(Logger::get(),
+                   String("Port ") +
+                   contact.getName().c_str() +
+                   " failed to activate" +
+                   (address.isValid()?" at ":"") +
+                   (address.isValid()?address.toString():String("")) +
+                   " (" +
+                   blame.c_str() +
+                   ")");
         close();
     }
     return success;
@@ -336,13 +348,12 @@ bool Port::addOutput(const Contact& contact) {
 bool Port::write(PortWriter& writer, PortWriter *callback) {
     PortCoreAdapter& core = HELPER(implementation);
     bool result = false;
-    try {
-        //WritableAdapter adapter(writer);
-        core.send(writer,NULL,callback);
-        //writer.onCompletion();
-        result = true;
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
+    //WritableAdapter adapter(writer);
+    result = core.send(writer,NULL,callback);
+    //writer.onCompletion();
+    result = true;
+    if (!result) {
+        //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback!=NULL) {
             callback->onCompletion();
         } else {
@@ -360,11 +371,9 @@ bool Port::write(PortWriter& writer, PortReader& reader,
                  PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
     bool result = false;
-    try {
-        core.send(writer,&reader,callback);
-        result = true;
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
+    result = core.send(writer,&reader,callback);
+    if (!result) {
+        //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback!=NULL) {
             callback->onCompletion();
         } else {

@@ -145,29 +145,12 @@ const char *Bottle::toBinary(int *size) {
 
 
 bool Bottle::write(ConnectionWriter& writer) {
-    bool result = false;
-    try {
-        //ConnectionWriterAdapter adapter(writer);
-        result = HELPER(implementation).write(writer);
-        //result = true;
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " <<< Bottle::write saw this");
-        // leave result false
-    }
-    return result;
+    return HELPER(implementation).write(writer);
 }
 
 
 bool Bottle::read(ConnectionReader& reader) {
-    bool result = false;
-    try {
-        //ConnectionReaderAdapter adapter(reader);
-        result = HELPER(implementation).read(reader);
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " <<< Bottle::read saw this");
-        // leave result false
-    }
-    return result;
+    return HELPER(implementation).read(reader);
 }
 
 int Bottle::size() const {

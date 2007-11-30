@@ -31,21 +31,24 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     ACE_OS::signal(SIGPIPE, SIG_IGN);
 
     ThreadImpl *thread = (ThreadImpl *)args;
-    try {
-		bool success=thread->threadInit();
-		thread->notify(success);
-		thread->notifyOpened(success);
-		thread->synchroPost();
-        
-		if (success)
-			{
-				thread->run();
-				thread->threadRelease();
-			}
-    } catch (IOException e) {
-        YARP_ERROR(Logger::get(),String("uncaught exception in thread: ") +
-                   e.toString());
-    }
+
+    YARP_DEBUG(Logger::get(),"Thread starting up");
+
+    bool success=thread->threadInit();
+    thread->notify(success);
+    thread->notifyOpened(success);
+    thread->synchroPost();
+    
+    if (success)
+        {
+            thread->run();
+            thread->threadRelease();
+        }
+
+
+    //YARP_ERROR(Logger::get(),String("uncaught exception in thread: ") +
+    //             e.toString());
+
     ThreadImpl::changeCount(-1);
     YARP_DEBUG(Logger::get(),"Thread shutting down");
     //ACE_Thread::exit();
@@ -146,7 +149,7 @@ void ThreadImpl::threadRelease()
 }
 
 bool ThreadImpl::start() {
-	YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
+	//YARP_DEBUG(Logger::get(),"Calling ThreadImpl::start()");
 
 	closing = false;
     beforeStart();
@@ -165,25 +168,25 @@ bool ThreadImpl::start() {
         needJoin = true;
 
 		// the thread started correctly, wait for the initialization
-		YARP_DEBUG(Logger::get(),"Thread waiting for init");
+		YARP_DEBUG(Logger::get(), "Child thread initializing");
 		synchroWait();
 		if (opened)
 		{
 			ThreadImpl::changeCount(1);
-			YARP_DEBUG(Logger::get(),"Init was successful");
+			YARP_DEBUG(Logger::get(),"Child thread initialized ok");
 			afterStart(true);
 			return true;
 		}
 		else
 		{
-			YARP_DEBUG(Logger::get(),"Init was not successful");
+			YARP_DEBUG(Logger::get(),"Child thread did not initialize ok");
 			//wait for the thread to really exit
 			ThreadImpl::join(-1);
 		}
 	}
 	//the thread did not start, call afterStart() to warn the user
 	YARP_ERROR(Logger::get(),
-               String("Thread did not start: ") +
+               String("Child thread did not start: ") +
                ACE_OS::strerror(ACE_OS::last_error()));
 	afterStart(false);
 	return false;

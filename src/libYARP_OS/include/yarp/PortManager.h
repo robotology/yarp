@@ -62,14 +62,16 @@ public:
                    getName().c_str()));
     }
 
-    virtual void readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+    virtual bool readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
         ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to deal with data\n",
                    getName().c_str()));
+        return false;
     }
 
-    virtual void adminBlock(ConnectionReader& reader, void *id, OutputStream *os) {
+    virtual bool adminBlock(ConnectionReader& reader, void *id, OutputStream *os) {
         ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to deal with admin\n",
                    getName().c_str()));
+        return false;
     }
 
     virtual String getName() {

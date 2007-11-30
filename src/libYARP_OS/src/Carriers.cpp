@@ -68,7 +68,7 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
         }
     }
     ACE_DEBUG((LM_ERROR,"Could not find carrier %s", (name!=NULL)?name->c_str():"[bytes]"));
-    throw IOException("Could not find carrier");
+    //throw IOException("Could not find carrier");
     return NULL;
 }
 
@@ -85,7 +85,7 @@ Carrier *Carriers::chooseCarrier(const Bytes& bytes) {
 Face *Carriers::listen(const Address& address) {
     // for now, only TcpFace exists - otherwise would need to manage 
     // multiple possibilities
-    YARP_DEBUG(carriersLog,"listen called");
+    //YARP_DEBUG(carriersLog,"listen called");
     Face *face = NULL;
     if (address.getCarrierName() == String("fake")) {
         face = new FakeFace();
@@ -93,11 +93,10 @@ Face *Carriers::listen(const Address& address) {
     if (face == NULL) {
         face = new TcpFace();
     }
-    try {
-        face->open(address);
-    } catch (IOException e) {
+    bool ok = face->open(address);
+    if (!ok) {
         delete face;
-        throw e;
+        face = NULL;
     }
     return face;
 }

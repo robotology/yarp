@@ -21,6 +21,8 @@
 #include <yarp/ShiftStream.h>
 #include <yarp/os/Portable.h>
 
+#define throw_IOException(e) YARP_DEBUG(Logger::get(),e)
+
 namespace yarp {
     class Protocol;
 }
@@ -74,17 +76,22 @@ public:
         setRoute(getRoute().addCarrierName(carrierName));
         YARP_ASSERT(delegate==NULL);
         delegate = Carriers::chooseCarrier(carrierName);
+        /*
         if (delegate==NULL) {
             throw new IOException("no such carrier");
         }
-        delegate->prepareSend(*this);
+        */
+        if (delegate!=NULL) {
+            delegate->prepareSend(*this);
+        }
     }
 
-    void defaultExpectSenderSpecifier() {
+    bool defaultExpectSenderSpecifier() {
         int len = 0;
         int r = NetType::readFull(is(),number.bytes());
         if (r!=number.length()) {
-            throw new IOException("did not get sender name length");
+            throw_IOException("did not get sender name length");
+            return false;
         }
         len = NetType::netInt(number.bytes());
         if (len>1000) len = 1000;
@@ -93,49 +100,58 @@ public:
         ManagedBytes b(len+1);
         r = NetType::readFull(is(),Bytes(b.get(),len));
         if (r!=len) {
-            throw new IOException("did not get sender name");
+            throw_IOException("did not get sender name");
+            return false;
         }
         // add null termination for YARP1
         b.get()[len] = '\0';
         String s = b.get();
         setRoute(getRoute().addFromName(s));
+        return true;
     }
 
-    void sendHeader() {
+    bool sendHeader() {
         YARP_ASSERT(delegate!=NULL);
-        delegate->sendHeader(*this);
+        return delegate->sendHeader(*this);
     }
 
-    void defaultSendHeader() {
-        sendProtocolSpecifier();
-        sendSenderSpecifier();
+    bool defaultSendHeader() {
+        bool ok = sendProtocolSpecifier();
+        if (!ok) return false;
+        return sendSenderSpecifier();
     }
 
-    void expectHeader() {
+    bool expectHeader() {
         messageLen = 0;
-        expectProtocolSpecifier();
-        expectSenderSpecifier();
+        bool ok = expectProtocolSpecifier();
+        if (!ok) return false;
+        ok = expectSenderSpecifier();
+        if (!ok) return false;
         YARP_ASSERT(delegate!=NULL);
-        delegate->expectExtraHeader(*this);
+        ok = delegate->expectExtraHeader(*this);
+        return ok;
     }
 
-    void expectReplyToHeader() {
+    bool expectReplyToHeader() {
         YARP_ASSERT(delegate!=NULL);
-        delegate->expectReplyToHeader(*this);
+        return delegate->expectReplyToHeader(*this);
         //writer.reset(delegate->isTextMode());
     }
 
-    void respondToHeader() {
+    bool respondToHeader() {
         YARP_ASSERT(delegate!=NULL);
-        delegate->respondToHeader(*this);
+        bool ok = delegate->respondToHeader(*this);
+        if (!ok) return false;
         os().flush();
+        return os().isOk();
     }
 
     int readYarpInt() {
         int len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
         if (len!=header.length()) {
-            throw IOException("data stream died");
+            throw_IOException("data stream died");
+            return -1;
         }
         return interpretYarpNumber(header.bytes());
     }
@@ -160,7 +176,8 @@ public:
 
     static void createYarpNumber(int x,const Bytes& header) {
         if (header.length()!=8) {
-            throw IOException("wrong header length");
+            ACE_OS::printf("wrong header length");
+            ACE_OS::exit(1);
         }
         char *base = header.get();
         base[0] = 'Y';
@@ -172,89 +189,103 @@ public:
     }
 
 
-    void sendIndex() {
-        ACE_DEBUG((LM_DEBUG,"Protocol::sendIndex for %s", getRoute().toString().c_str()));
+    bool sendIndex() {
+        YARP_DEBUG(Logger::get(), String("Sending a message on connection ") + getRoute().toString());;
         YARP_ASSERT(delegate!=NULL);
-        delegate->sendIndex(*this);
+        return delegate->sendIndex(*this);
     }
 
-    void defaultSendIndex();
+    bool defaultSendIndex();
 
-    void sendContent() {
+    bool sendContent() {
         YARP_ASSERT(writer!=NULL);
         writer->write(os());
         os().flush();
+        return os().isOk();
     }
 
-    void expectIndex() {
+    bool expectIndex() {
         pendingAck = true;
         messageLen = 0;
-        YARP_ASSERT(delegate!=NULL);
         getStreams().beginPacket();
         ref = NULL;
-        delegate->expectIndex(*this);
-        reader.reset(is(),&getStreams(),getRoute(),
-                     messageLen,delegate->isTextMode());
-        if (ref!=NULL) {
-            reader.setReference(ref);
+        bool ok = false;
+        if (delegate!=NULL) {
+            ok = delegate->expectIndex(*this);
         }
+        if (ok) {
+            reader.reset(is(),&getStreams(),getRoute(),
+                         messageLen,delegate->isTextMode());
+            if (ref!=NULL) {
+                reader.setReference(ref);
+            }
+        } else {
+            reader.reset(is(),&getStreams(),getRoute(),0,false);
+        }
+        return true;
     }
 
-    void defaultExpectIndex();
+    bool defaultExpectIndex();
 
-    void respondToIndex() {
+    bool respondToIndex() {
+        return true;
     }
 
-    void expectAck() {
+    bool expectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
-            delegate->expectAck(*this);
+            return delegate->expectAck(*this);
         }
+        return true;
     }
 
-    void defaultExpectAck() {
+    bool defaultExpectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
             int hdr = NetType::readFull(is(),header.bytes());
             if (hdr!=header.length()) {
-                throw IOException("did not get acknowledgement header");
+                throw_IOException("did not get acknowledgement header");
+                return false;
             }
             int len = interpretYarpNumber(header.bytes());
             if (len<0) {
-                throw IOException("acknowledgement header is bad");
+                throw_IOException("acknowledgement header is bad");
+                return false;
             }
             int len2 = NetType::readDiscard(is(),len);
             if (len!=len2) {
-                throw IOException("did not get an acknowledgement of the promised length");
+                throw_IOException("did not get an acknowledgement of the promised length");
+                return false;
             }
         }
+        return true;
     }
 
-    void sendAck() {
+    bool sendAck() {
+        bool ok = true;
         pendingAck = false;
-        YARP_ASSERT(delegate!=NULL);
+        if (delegate==NULL) return false;
         if (delegate->requireAck()) {
-            delegate->sendAck(*this);
+            ok = delegate->sendAck(*this);
         }
         getStreams().endPacket();
+        return true;
     }
 
-    void defaultSendAck();
+    bool defaultSendAck();
 
     void interrupt() {
-        try {
-            if (active) {
-                if (pendingAck) {
-                    sendAck();
-                }
-                shift.getInputStream().interrupt();
-                active = false;
+        if (active) {
+            if (pendingAck) {
+                sendAck();
             }
-        } catch (IOException e) {
-            YARP_DEBUG(Logger::get(),
-                       String("yarp::Protocol::interrupt exception: ") + 
-                       e.toString());
+            shift.getInputStream().interrupt();
+            active = false;
         }
+        //} catch (IOException e) {
+        //  YARP_DEBUG(Logger::get(),
+        //             String("yarp::Protocol::interrupt exception: ") + 
+        //             e.toString());
     }
 
     void close() {
@@ -311,20 +342,27 @@ public:
         return is();
     }
 
+    
     const Address& getRemoteAddress() {
         ACE_DEBUG((LM_ERROR,"Protocol::getRemoteAddress not yet implemented"));
-        throw IOException("getRemoteAddress failed");
+        //throw IOException("getRemoteAddress failed");
+        return nullAddress;
     }
+    
 
 
     ///////////////////////////////////////////////////////////////////////
     // OutputProtocol view
 
-    virtual void open(const Route& route) {
+    virtual bool open(const Route& route) {
         setRoute(route);
         setCarrier(route.getCarrierName());
-        sendHeader();
-        expectReplyToHeader();
+        if (delegate==NULL) {
+            return false;
+        }
+        bool ok = sendHeader();
+        if (!ok) return false;
+        return expectReplyToHeader();
     }
 
     virtual void rename(const Route& route) {
@@ -332,15 +370,20 @@ public:
     }
 
 
-    virtual void open(const String& name) {
+    virtual bool open(const String& name) {
         if (name=="") {
             setCarrier("text");
+            if (delegate!=NULL) {
+                return false;
+            }
             setRoute(Route("no-name","no-name","no-carrier"));
         } else {
             setRoute(getRoute().addToName(name));
-            expectHeader();
-            respondToHeader();
+            bool ok = expectHeader();
+            if (!ok) return false;
+            return respondToHeader();
         }
+        return true;
     }
 
     virtual bool isActive() {
@@ -394,11 +437,13 @@ public:
 
 
     virtual ConnectionReader& beginRead() {
-        expectIndex();
-        respondToIndex();
-        if (altReader!=NULL) {
-            YARP_DEBUG(Logger::get(), "alternate reader in operation");
-            return *altReader;
+        if (delegate!=NULL) {
+            expectIndex();
+            respondToIndex();
+            if (altReader!=NULL) {
+                YARP_DEBUG(Logger::get(), "alternate reader in operation");
+                return *altReader;
+            }
         }
         return reader;
     }
@@ -437,22 +482,25 @@ public:
 
 private:
 
-    void sendProtocolSpecifier() {
+    bool sendProtocolSpecifier() {
         YARP_ASSERT(delegate!=NULL);
         delegate->getHeader(header.bytes());
         os().write(header.bytes());
         os().flush();
+        return os().isOk();
     }
 
-    void expectProtocolSpecifier() {
+    bool expectProtocolSpecifier() {
         int len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
         //ACE_OS::printf("len is %d but header is %d\n", len, header.length());
         if (len==-1) {
-            throw IOException("no connection");
+            throw_IOException("no connection");
+            return false;
         }
         if(len!=header.length()) {
-            throw IOException("data stream died");
+            throw_IOException("data stream died");
+            return false;
         }
         bool already = false;
         if (delegate!=NULL) {
@@ -461,47 +509,50 @@ private:
             }
         }
         if (!already) {
-            try {
-                delegate = Carriers::chooseCarrier(header.bytes());
-            } catch (IOException e) {
+            //try {
+            delegate = Carriers::chooseCarrier(header.bytes());
+            //} catch (IOException e) {
+            if (delegate==NULL) {
                 // carrier not found; send a message
                 String msg = "* Error. Protocol not found.\r\n* Hello. You appear to be trying to communicate with a YARP Port.\r\n* The first 8 bytes sent to a YARP Port are criticial for identifying the\r\n* protocol you wish to speak.\r\n* The first 8 bytes you sent were not associated with any particular protocol.\r\n* If you are a human, try typing \"CONNECT foo\" followed by a <RETURN>.\r\n* The 8 bytes \"CONNECT \" correspond to a simple text-mode protocol.\r\n* Goodbye.\r\n";
                 Bytes b((char*)msg.c_str(),msg.length());
                 os().write(b);
                 os().flush();
-                throw e;
             }
         }
         if (delegate==NULL) {
-            throw IOException("unrecognized protocol");
+            throw_IOException("unrecognized protocol");
+            return false;
         }
         setRoute(getRoute().addCarrierName(delegate->getName()));
         delegate->setParameters(header.bytes());
+        return true;
     }
 
 
-    void sendSenderSpecifier() {
+    bool sendSenderSpecifier() {
         const String& senderName = getRoute().getFromName();
         NetType::netInt(senderName.length()+1,number.bytes());
         os().write(number.bytes());
         Bytes b((char*)senderName.c_str(),senderName.length()+1);
         os().write(b);
         os().flush();
+        return os().isOk();
     }
 
-    void expectSenderSpecifier() {
+    bool expectSenderSpecifier() {
         YARP_ASSERT(delegate!=NULL);
-        delegate->expectSenderSpecifier(*this);
-        ACE_DEBUG((LM_DEBUG,"Sender name is %s",getRoute().getFromName().c_str()));
+        return delegate->expectSenderSpecifier(*this);
+        //ACE_DEBUG((LM_DEBUG,"Sender name is %s",getRoute().getFromName().c_str()));
     }
 
     bool canEscape() { 
-        YARP_ASSERT(delegate!=NULL);
+        if (delegate==NULL) { return true; }
         return delegate->canEscape();
     }
 
     bool isLocal() {
-        YARP_ASSERT(delegate!=NULL);
+        if (delegate==NULL) { return false; }
         return delegate->isLocal();
     }
 
@@ -522,6 +573,7 @@ private:
     StreamConnectionReader reader;
     ConnectionReader *altReader;
     yarp::os::Portable *ref;
+    Address nullAddress;
 };
 
 #endif

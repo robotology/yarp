@@ -180,57 +180,55 @@ bool Network::write(const Contact& contact,
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
 
-    try {
-        const char *connectionName = "anon";
-        ConstString name = contact.getName();
-        const char *targetName = name.c_str();  // use carefully!
-        Address address = Address::fromContact(contact);
-        if (!address.isValid()) {
-            NameClient& nic = NameClient::getNameClient();
-            address = nic.queryName(targetName);
-        }
-        if (!address.isValid()) {
-            YARP_ERROR(Logger::get(),"could not find port");
-            return false;
-        }
-
-        OutputProtocol *out = Carriers::connect(address);
-        if (out==NULL) {
-            YARP_ERROR(Logger::get(),"cannot connect to port");
-            return false;
-        }
-        //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
-        //     address.toString().c_str(),
-        //     connectionName);
-        //Route r(connectionName,targetName,"text_ack");
-        Route r(connectionName,targetName,"text_ack");
-        out->open(r);
-
-        PortCommand pc(0,"d");
-        BufferedConnectionWriter bw(out->isTextMode());
-        bool ok = pc.write(bw);
-        if (!ok) {
-            throw IOException("writer failed");
-        }
-        ok = cmd.write(bw);
-        if (!ok) {
-            throw IOException("writer failed");
-        }
-        bw.setReplyHandler(reply);
-        out->write(bw);
-        //InputProtocol& ip = out->getInput();
-        //ConnectionReader& reader = ip.beginRead();
-        //reply.read(reader);
-        //ip.endRead();
-        if (out!=NULL) {
-            delete out;
-            out = NULL;
-        }
-        return true;
-    } catch (IOException e) {
-        YARP_ERROR(Logger::get(),"write failed");
-        // should deallocate stream if allocated
+    const char *connectionName = "anon";
+    ConstString name = contact.getName();
+    const char *targetName = name.c_str();  // use carefully!
+    Address address = Address::fromContact(contact);
+    if (!address.isValid()) {
+        NameClient& nic = NameClient::getNameClient();
+        address = nic.queryName(targetName);
+    }
+    if (!address.isValid()) {
+        YARP_ERROR(Logger::get(),"could not find port");
         return false;
+    }
+    
+    OutputProtocol *out = Carriers::connect(address);
+    if (out==NULL) {
+        YARP_ERROR(Logger::get(),"cannot connect to port");
+        return false;
+    }
+
+    //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
+    //     address.toString().c_str(),
+    //     connectionName);
+    //Route r(connectionName,targetName,"text_ack");
+    Route r(connectionName,targetName,"text_ack");
+    out->open(r);
+    
+    PortCommand pc(0,"d");
+    BufferedConnectionWriter bw(out->isTextMode());
+    bool ok = pc.write(bw);
+    if (!ok) {
+        YARP_ERROR(Logger::get(),"could not write to connection");
+        if (out!=NULL) delete out;
+        return false;
+    }
+    ok = cmd.write(bw);
+    if (!ok) {
+        YARP_ERROR(Logger::get(),"could not write to connection");
+        if (out!=NULL) delete out;
+        return false;
+    }
+    bw.setReplyHandler(reply);
+    out->write(bw);
+    //InputProtocol& ip = out->getInput();
+    //ConnectionReader& reader = ip.beginRead();
+    //reply.read(reader);
+    //ip.endRead();
+    if (out!=NULL) {
+        delete out;
+        out = NULL;
     }
     return true;
 }

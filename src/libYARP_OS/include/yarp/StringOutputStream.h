@@ -41,6 +41,10 @@ public:
     virtual void close() {
     }
 
+    virtual bool isOk() { 
+        return true;
+    }
+
 private:
     String data;
 };

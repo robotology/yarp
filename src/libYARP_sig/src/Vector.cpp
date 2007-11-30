@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.23 2007-04-03 16:42:23 eshuy Exp $
+// $Id: Vector.cpp,v 1.24 2007-11-30 10:46:21 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -176,27 +176,24 @@ int IteratorOf<T>::done()
 }
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {
-    try {
-        // auto-convert text mode interaction
-        connection.convertTextMode();
-        VectorPortContentHeader header;
-        connection.expectBlock((char*)&header, sizeof(header));
-        if (header.listLen > 0)
-        {
-            if (getListSize() != (int)(header.listLen))
-                resize(header.listLen);
-            const char *ptr = getMemoryBlock();
-            ACE_ASSERT (ptr != 0);
-            int elemSize=getElementSize();
-            connection.expectBlock(ptr, elemSize*header.listLen);
-        }
-        else
-            return false;
-    } catch (yarp::IOException e) {
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+    VectorPortContentHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) return false;
+    if (header.listLen > 0) {
+        if (getListSize() != (int)(header.listLen))
+            resize(header.listLen);
+        const char *ptr = getMemoryBlock();
+        ACE_ASSERT (ptr != 0);
+        int elemSize=getElementSize();
+        ok = connection.expectBlock(ptr, elemSize*header.listLen);
+        if (!ok) return false;
+    } else {
         return false;
     }
 
-    return true;
+    return !connection.isError();
 }
 
 bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
@@ -217,7 +214,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     // let them see something readable.
     connection.convertTextMode();
 
-    return true;
+    return !connection.isError();
 }
 
 
@@ -357,27 +354,23 @@ void Vector::updateGslData()
 }
 
 bool Vector::read(yarp::os::ConnectionReader& connection) {
-    try {
-        // auto-convert text mode interaction
-        connection.convertTextMode();
-        VectorPortContentHeader header;
-        connection.expectBlock((char*)&header, sizeof(header));
-        if (header.listLen > 0)
-        {
-            if (size() != (int)(header.listLen))
-                resize(header.listLen);
-            
-            int k=0;
-            for (k=0;k<header.listLen;k++)
-                   (*this)[k]=connection.expectDouble();
-        }
-        else
-            return false;
-    } catch (yarp::IOException e) {
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+    VectorPortContentHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) return false;
+    if (header.listLen > 0) {
+        if (size() != (int)(header.listLen))
+            resize(header.listLen);
+        
+        int k=0;
+        for (k=0;k<header.listLen;k++)
+            (*this)[k]=connection.expectDouble();
+    } else {
         return false;
     }
 
-    return true;
+    return !connection.isError();
 }
 
 bool Vector::write(yarp::os::ConnectionWriter& connection) {
@@ -396,5 +389,5 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
     // let them see something readable.
     connection.convertTextMode();
 
-    return true;
+    return !connection.isError();
 }

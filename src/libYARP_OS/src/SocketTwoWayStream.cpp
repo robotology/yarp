@@ -28,12 +28,13 @@ int SocketTwoWayStream::open(const Address& address) {
     return result;
 }
 
-void SocketTwoWayStream::open(ACE_SOCK_Acceptor& acceptor) {
+int SocketTwoWayStream::open(ACE_SOCK_Acceptor& acceptor) {
     int result = acceptor.accept(stream);
     if (result>=0) {
         happy = true;
     }
     updateAddresses();
+    return result;
 }
 
 void SocketTwoWayStream::updateAddresses() {

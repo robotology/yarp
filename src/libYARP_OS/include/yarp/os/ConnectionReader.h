@@ -42,8 +42,10 @@ public:
      * Read a block of data from the network connection.
      * @param data Start of the block of data
      * @param len Length of the block of data
+     *
+     * @return true on success
      */
-    virtual void expectBlock(const char *data, int len) = 0;
+    virtual bool expectBlock(const char *data, int len) = 0;
 
     /**
      * Read some text from the network connection.
@@ -124,10 +126,24 @@ public:
     virtual Contact getLocalContact() = 0;
 
     /**
-     * @return true if the reader is valid.  A reader may be invalid
-     * if a connection has closed.
+     * @return true if the reader is valid.  Invalid readers may signal
+     * a shutdown.
      */
     virtual bool isValid() = 0;
+
+    /**
+     * @return true if the reader is active.  Readers become inactive
+     * if the connection they are associated with breaks.
+     */
+    virtual bool isActive() = 0;
+
+    /**
+     * @return true if the reader encountered an error.  Readers can
+     * encounter an error if there is some data loss.  For unreliable
+     * protocols like UDP/Multicast, where losses are not unexpected,
+     * this error flag will be reset for the next incoming message.
+     */
+    virtual bool isError() = 0;
 };
 
 #endif

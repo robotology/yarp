@@ -70,11 +70,12 @@ public:
     }
 
 
-    virtual void sendHeader(Protocol& proto) {
+    virtual bool sendHeader(Protocol& proto) {
         // need to do more than the default
-        proto.defaultSendHeader();
-        YARP_DEBUG(Logger::get(),"Adding extra mcast header");
+        bool ok = proto.defaultSendHeader();
+        if (!ok) return false;
 
+        YARP_DEBUG(Logger::get(),"Adding extra mcast header");
 
         NameClient& nic = NameClient::getNameClient();
         Address addr;
@@ -118,14 +119,17 @@ public:
         block.get()[4] = (char)(port/256);
         proto.os().write(block.bytes());
         mcastAddress = addr;
+        return true;
     }
 
-    virtual void expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(Protocol& proto) {
         YARP_DEBUG(Logger::get(),"Expecting extra mcast header");
         ManagedBytes block(6);
         int len = NetType::readFull(proto.is(),block.bytes());
         if (len!=block.length()) {
-            throw new IOException("problem with MCAST header");
+            //throw new IOException("problem with MCAST header");
+            YARP_ERROR(Logger::get(),"problem with MCAST header");
+            return false;
         }
 
         int ip[] = { 0, 0, 0, 0 };
@@ -144,10 +148,12 @@ public:
         Address addr(add,port,"mcast");
         YARP_DEBUG(Logger::get(),String("got mcast header ") + addr.toString());
         mcastAddress = addr;
+
+        return true;
     }
 
 
-    virtual void becomeMcast(Protocol& proto, bool sender) {
+    virtual bool becomeMcast(Protocol& proto, bool sender) {
         ACE_UNUSED_ARG(sender);
         DgramTwoWayStream *stream = new DgramTwoWayStream();
         YARP_ASSERT(stream!=NULL);
@@ -164,48 +170,50 @@ public:
         }
         */
         proto.takeStreams(NULL); // free up port from tcp
-        try {
-            if (sender) {
-                /*
-                  Multicast behavior seems a bit variable.
-                  We assume here that if packages need to be broadcast
-                  to targets via different network interfaces, that
-                  we'll need to send independently on those two
-                  interfaces.  This may or may not always be the case,
-                  the author doesn't know, so is being cautious.
-                 */
-                key = proto.getRoute().getFromName();
-                if (test) {
-                    key += "/net=";
-                    key += local.getName();
-                }
-                YARP_DEBUG(Logger::get(),
-                           String("multicast key: ") + key);
-                addSender(key);
-            }
 
-            if (isElect()||!sender) {
-                if (test) {
-                    stream->join(mcastAddress,sender,local);
-                } else {
-                    stream->join(mcastAddress,sender);
-                }
+        if (sender) {
+            /*
+              Multicast behavior seems a bit variable.
+              We assume here that if packages need to be broadcast
+              to targets via different network interfaces, that
+              we'll need to send independently on those two
+              interfaces.  This may or may not always be the case,
+              the author doesn't know, so is being cautious.
+            */
+            key = proto.getRoute().getFromName();
+            if (test) {
+                key += "/net=";
+                key += local.getName();
             }
+            YARP_DEBUG(Logger::get(),
+                       String("multicast key: ") + key);
+            addSender(key);
+        }
+        
+        bool ok = true;
+        if (isElect()||!sender) {
+            if (test) {
+                ok = stream->join(mcastAddress,sender,local);
+            } else {
+                ok = stream->join(mcastAddress,sender);
+            }
+        }
       
-        } catch (IOException e) {
+        if (!ok) {
             delete stream;
-            throw e;
+            return false;
         }
         proto.takeStreams(stream);
+        return true;
     }
 
-    virtual void respondToHeader(Protocol& proto) {
-        becomeMcast(proto,false);
+    virtual bool respondToHeader(Protocol& proto) {
+        return becomeMcast(proto,false);
     }
 
 
-    virtual void expectReplyToHeader(Protocol& proto) {
-        becomeMcast(proto,true);
+    virtual bool expectReplyToHeader(Protocol& proto) {
+        return becomeMcast(proto,true);
     }
 
     void addSender(const String& key) {

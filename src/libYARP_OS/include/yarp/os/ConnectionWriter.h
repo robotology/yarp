@@ -117,6 +117,28 @@ public:
      * @return true if the conversion was possible
      */
     virtual bool convertTextMode() = 0;
+
+
+    /**
+     * @return true if the writer is valid.  A writer may be invalid
+     * if a connection has closed.
+     */
+    virtual bool isValid() = 0;
+
+    /**
+     * @return true if the writer is active.  Writers may become inactive
+     * if the connection they are associated with breaks.
+     */
+    virtual bool isActive() = 0;
+
+    /**
+     * @return true if the writer encountered an error.  Writers can
+     * encounter an error if there is some data loss.  For unreliable
+     * protocols like UDP/Multicast, where losses are not unexpected,
+     * this error flag will be reset for the next incoming message.
+     */
+    virtual bool isError() = 0;
+
 };
 
 #endif

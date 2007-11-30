@@ -12,7 +12,7 @@
 using namespace yarp;
 
 
-void Protocol::defaultSendIndex() {
+bool Protocol::defaultSendIndex() {
     YARP_ASSERT(writer!=NULL);
     writeYarpInt(10);
     int len = writer->length();
@@ -27,28 +27,33 @@ void Protocol::defaultSendIndex() {
     }
     NetType::netInt(0,number.bytes());
     os().write(number.bytes());
+    return os().isOk();
 }
 
 
-void Protocol::defaultExpectIndex() {
+bool Protocol::defaultExpectIndex() {
     YARP_DEBUG(Logger::get(),"expecting an index");
     ACE_DEBUG((LM_DEBUG,"Protocol::expectIndex for %s", getRoute().toString().c_str()));
     // expect index header
     int r = NetType::readFull(is(),header.bytes());
     if (r!=header.length()) {
-        throw IOException("broken index");
+        throw_IOException("broken index");
+        return false;
     }
     int len = interpretYarpNumber(header.bytes());
     if (len<0) {
-        throw IOException("broken index - header is not a number");
+        throw_IOException("broken index - header is not a number");
+        return false;
     }
     if (len!=10) {
-        throw IOException("broken index - header is wrong length");
+        throw_IOException("broken index - header is wrong length");
+        return false;
     }
     YARP_DEBUG(Logger::get(),"index coming in happily...");
     r = NetType::readFull(is(),indexHeader.bytes());
     if (r!=indexHeader.length()) {
-        throw IOException("broken index, secondary header");
+        throw_IOException("broken index, secondary header");
+        return false;
     }
     YARP_DEBUG(Logger::get(),"secondary header came in happily...");
     int inLen = (unsigned char)(indexHeader.get()[0]);
@@ -60,7 +65,8 @@ void Protocol::defaultExpectIndex() {
     for (int i=0; i<inLen; i++) {
         int l = NetType::readFull(is(),number.bytes());
         if (l!=number.length()) {
-            throw IOException("bad input block length");
+            throw_IOException("bad input block length");
+            return false;
         }
         int x = NetType::netInt(number.bytes());
         total += x;
@@ -68,7 +74,8 @@ void Protocol::defaultExpectIndex() {
     for (int i2=0; i2<outLen; i2++) {
         int l = NetType::readFull(is(),number.bytes());
         if (l!=number.length()) {
-            throw IOException("bad output block length");
+            throw_IOException("bad output block length");
+            return false;
         }
         int x = NetType::netInt(number.bytes());
         total += x;
@@ -76,12 +83,14 @@ void Protocol::defaultExpectIndex() {
     messageLen = total;
     ACE_DEBUG((LM_DEBUG,"Total message length: %d\n",messageLen));
     YARP_DEBUG(Logger::get(),"got an index");
+    return true;
 }
 
-void Protocol::defaultSendAck() {
+bool Protocol::defaultSendAck() {
     YARP_DEBUG(Logger::get(),"sending an ack");
     if (delegate->requireAck()) {
         writeYarpInt(0);
     }
+    return true;
 }
 

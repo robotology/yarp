@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -849,7 +849,10 @@ public:
         testReaderHandler2();
         testStrictWriter();
         testRecentReader();
-        testUnbufferedClose();
+
+        testUnbufferedClose(); //TODO
+
+
         //testCloseOpenRepeats(); //bring this back soon
 
         //testCounts(); // bring this back soon

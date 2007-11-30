@@ -82,7 +82,7 @@ Address NameServer::registerName(const String& name,
     bool reusablePort = false;
     bool reusableIp = false;
 
-    YARP_DEBUG(Logger::get(),"in registerName...");
+    //YARP_DEBUG(Logger::get(),"in registerName...");
 
     if (name!="...") {
         unregisterName(name);
@@ -127,8 +127,8 @@ Address NameServer::registerName(const String& name,
 
     suggestion = Address(machine,port,carrier,portName);
 
-    YARP_DEBUG(Logger::get(),String("Thinking about registering ") +
-               suggestion.toString());
+    YARP_DEBUG(Logger::get(),String("Registering ") +
+               suggestion.toString() + " for " + suggestion.getRegName());
   
     NameRecord& nameRecord = getNameRecord(suggestion.getRegName());
     nameRecord.setAddress(suggestion,reusablePort,reusableIp);
@@ -280,9 +280,9 @@ String NameServer::cmdRegister(int argc, char *argv[]) {
                                    Address(machine,port,carrier,portName),
                                    remote);
 
-    YARP_DEBUG(Logger::get(), 
-               String("name server register address -- ") +
-               address.toString());
+    //YARP_DEBUG(Logger::get(), 
+    //String("name server register address -- ") +
+    //address.toString());
   
     return terminate(textify(address));
 }
@@ -669,31 +669,25 @@ String NameServer::terminate(const String& str) {
 String NameServer::apply(const String& txt, const Address& remote) {
     String result = "no command given";
     mutex.wait();
-    try {
-        SplitString ss(txt.c_str());
-        if (ss.size()>=2) {
-            String key = ss.get(1);
-            YARP_DEBUG(Logger::get(),String("dispatching to ") + key);
-            ss.set(1,remote.getName().c_str());
-            result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
-                                         (char **)(ss.get()+1));
-            if (result == "") {
-                Bottle b = ndispatcher.dispatch(this,key.c_str(),ss.size()-1,
-                                                (char **)(ss.get()+1));
-                result = b.toString().c_str();
-                if (result!="") {
-                    result = result + "\n";
-                    result = terminate(result);
-                }
+
+    SplitString ss(txt.c_str());
+    if (ss.size()>=2) {
+        String key = ss.get(1);
+        //YARP_DEBUG(Logger::get(),String("dispatching to ") + key);
+        ss.set(1,remote.getName().c_str());
+        result = dispatcher.dispatch(this,key.c_str(),ss.size()-1,
+                                     (char **)(ss.get()+1));
+        if (result == "") {
+            Bottle b = ndispatcher.dispatch(this,key.c_str(),ss.size()-1,
+                                            (char **)(ss.get()+1));
+            result = b.toString().c_str();
+            if (result!="") {
+                result = result + "\n";
+                result = terminate(result);
             }
-            YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
-            YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
         }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(),String("name server sees exception ") + 
-                   e.toString());
-        mutex.post();
-        throw e;
+        //YARP_DEBUG(Logger::get(), String("name server request -- ") + txt);
+        //YARP_DEBUG(Logger::get(), String("name server result  -- ") + result);
     }
     mutex.post();
     return result;
@@ -728,20 +722,23 @@ public:
     }
 
     virtual bool read(ConnectionReader& reader) {
-        try {
-            String ref = "NAME_SERVER ";
-            bool ok = true;
-            String msg = "?";
-            if (ok) {
-                if (reader.isTextMode()) {
-                    msg = ref + reader.expectText().c_str();
-                } else {
-                    // migrate to binary mode support, eventually optimize
-                    Bottle b;
-                    b.read(reader);
-                    msg = ref + b.toString().c_str();
-                }
+        String ref = "NAME_SERVER ";
+        bool ok = true;
+        String msg = "?";
+        bool haveMessage = false;
+        if (ok) {
+            if (reader.isTextMode()) {
+                msg = reader.expectText().c_str();
+            } else {
+                // migrate to binary mode support, eventually optimize
+                Bottle b;
+                b.read(reader);
+                msg = b.toString().c_str();
             }
+            haveMessage = (msg!="");
+            msg = ref + msg;
+        }
+        if (reader.isActive()&&haveMessage) {
             YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
             int index = msg.find("NAME_SERVER");
             if (index==0) {
@@ -769,7 +766,7 @@ public:
                     }
                     tmp += '\r';
                     os->appendString(tmp.c_str(),'\n');
-	
+                    
                     YARP_DEBUG(Logger::get(),
                                String("name server reply is ") + result);
                     String resultSparse = result;
@@ -790,9 +787,6 @@ public:
                     //os->close();
                 }
             }
-        } catch (IOException e) {
-            YARP_DEBUG(Logger::get(),
-                       "Name server ignoring event, normal with old protocol");
         }
         return true;
     }
@@ -810,96 +804,94 @@ public:
 
 
 int NameServer::main(int argc, char *argv[]) {
-
     Network yarp;
 
     // pick an address
     Address suggest("...",0); // suggestion is initially empty
 
-    try {
-
-        if (argc>=1) {
-            if (argc>=2) {
-                suggest = Address(argv[0],NetType::toInt(argv[1]));
-            } else {
-                suggest = Address("...",NetType::toInt(argv[0]));
-            }
+    if (argc>=1) {
+        if (argc>=2) {
+            suggest = Address(argv[0],NetType::toInt(argv[1]));
+        } else {
+            suggest = Address("...",NetType::toInt(argv[0]));
         }
-
-		Property config;
-		config.fromCommand(argc,argv,false);
+    }
     
-		bool bNoAuto=config.check("noauto");
-
-        // see what address is lying around
-        Address prev;
-        NameConfig conf;
-        if (conf.fromFile()) {
-            prev = conf.getAddress();
-        }
-		else if (bNoAuto)
+    Property config;
+    config.fromCommand(argc,argv,false);
+    
+    bool bNoAuto=config.check("noauto");
+    
+    // see what address is lying around
+    Address prev;
+    NameConfig conf;
+    if (conf.fromFile()) {
+        prev = conf.getAddress();
+    }
+    else if (bNoAuto)
 		{
 			YARP_ERROR(Logger::get(), String("Could not find configuration file ") +
-            conf.getConfigFileName());
-
+                       conf.getConfigFileName());
+            
 			return 1;
 		}
     
-        // merge
-        if (prev.isValid()) {
-            if (suggest.getName()=="...") {
-                suggest = Address(prev.getName(),suggest.getPort());
-            }
-            if (suggest.getPort()==0) {
-                suggest = Address(suggest.getName(),prev.getPort());
-            }
-        }
-    
-        // still something not set?
-        if (suggest.getPort()==0) {
-            suggest = Address(suggest.getName(),10000);
-        }
+    // merge
+    if (prev.isValid()) {
         if (suggest.getName()=="...") {
-            // should get my IP
-            suggest = Address(conf.getHostName(),suggest.getPort());
+            suggest = Address(prev.getName(),suggest.getPort());
         }
-    
-        // finally, should make sure IP is local, and if not, correct it
-        if (!conf.isLocalName(suggest.getName())) {
-            YARP_INFO(Logger::get(),"Overriding non-local address for name server");
-            suggest = Address(conf.getHostName(),suggest.getPort());
+        if (suggest.getPort()==0) {
+            suggest = Address(suggest.getName(),prev.getPort());
         }
+    }
     
-        // and save
-        conf.setAddress(suggest);
-        if (!conf.toFile()) {
-            YARP_ERROR(Logger::get(), String("Could not save configuration file ") +
-                       conf.getConfigFileName());
-        }
+    // still something not set?
+    if (suggest.getPort()==0) {
+        suggest = Address(suggest.getName(),10000);
+    }
+    if (suggest.getName()=="...") {
+        // should get my IP
+        suggest = Address(conf.getHostName(),suggest.getPort());
+    }
     
-        MainNameServer name(suggest.getPort() + 2);
-        // register root for documentation purposes
-        name.registerName(conf.getNamespace(),suggest);
-
-        Port server;
-        name.setPort(server);
-        server.setReader(name);
-        server.open(Address(suggest.addRegName(conf.getNamespace())).toContact(),
-                    false);
+    // finally, should make sure IP is local, and if not, correct it
+    if (!conf.isLocalName(suggest.getName())) {
+        YARP_INFO(Logger::get(),"Overriding non-local address for name server");
+        suggest = Address(conf.getHostName(),suggest.getPort());
+    }
+    
+    // and save
+    conf.setAddress(suggest);
+    if (!conf.toFile()) {
+        YARP_ERROR(Logger::get(), String("Could not save configuration file ") +
+                   conf.getConfigFileName());
+    }
+    
+    MainNameServer name(suggest.getPort() + 2);
+    // register root for documentation purposes
+    name.registerName(conf.getNamespace(),suggest);
+    
+    Port server;
+    name.setPort(server);
+    server.setReader(name);
+    bool ok = server.open(Address(suggest.addRegName(conf.getNamespace())).toContact(),
+                          false);
+    if (ok) {
         YARP_DEBUG(Logger::get(), String("Name server listening at ") + 
                    suggest.toString());
-
+        
         ACE_OS::printf("Name server can be browsed at http://%s:%d/\n",
                        suggest.getName().c_str(), suggest.getPort());
-    
+        
         FallbackNameServer fallback(name);
         fallback.start();
-
+        
         // register fallback root for documentation purposes
         name.registerName("fallback",FallbackNameServer::getAddress());
         YARP_INFO(Logger::get(), String("Bootstrap server listening at ") + 
                   FallbackNameServer::getAddress().toString());
-    
+        
         while (true) {
             YARP_DEBUG(Logger::get(),"name server running happily");
             Time::delay(60);
@@ -907,15 +899,15 @@ int NameServer::main(int argc, char *argv[]) {
         server.close();
         fallback.close();
         fallback.join();
-    
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(),e.toString() + " <<< name server exception");
-        YARP_ERROR(Logger::get(), "name server failed to start");
-        YARP_ERROR(Logger::get(), String("   reason for failure is \"") + 
-                   e.toString() + "\"");
-        YARP_ERROR(Logger::get(), "   the name server may already be running?");
+    }
+
+    if (!ok) {
+        YARP_ERROR(Logger::get(), "Name server failed to start");
+        //YARP_ERROR(Logger::get(), String("   reason for failure is \"") + 
+        //e.toString() + "\"");
+        YARP_ERROR(Logger::get(), "Maybe it is already be running?");
         if (suggest.getPort()>0) {
-            YARP_ERROR(Logger::get(), String("   or perhaps another service may already be running on port ") + NetType::toString(suggest.getPort()) + "?");
+            YARP_ERROR(Logger::get(), String("Or perhaps another service may already be running on port ") + NetType::toString(suggest.getPort()) + "?");
         }
         return 1;
     }

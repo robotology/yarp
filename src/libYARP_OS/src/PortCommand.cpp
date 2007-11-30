@@ -12,37 +12,42 @@
 
 using namespace yarp;
 
-void PortCommand::readBlock(ConnectionReader& reader) {
+bool PortCommand::read(ConnectionReader& reader) {
     //ACE_DEBUG((LM_DEBUG,"PortCommand::readBlock"));
     ch = '\0';
     str = "";
     if (!reader.isTextMode()) {
-        reader.expectBlock(header.get(),header.length());
+        bool ok = reader.expectBlock(header.get(),header.length());
+        if (!ok) return false;
         char *base = header.get();
         if (base[4] == '~') {
             ch = base[5];
             if (ch=='\0') {
                 //str = reader.expectString(reader.getSize());
                 str = reader.expectText('\0').c_str();
+                if (reader.isError()) return false;
                 if (str.length()>0) {
                     ch = str[0];
                 }
             }
         } else {
-            throw IOException("bad header in PortCommand::readBlock");
+            //throw IOException("bad header in PortCommand::readBlock");
+            return false;
         }
     } else {
         //ACE_OS::printf("PortCommand::readBlock pre read\n");
         str = reader.expectText().c_str();
+        if (reader.isError()) return false;
         //ACE_OS::printf("PortCommand::readBlock post read\n");
         if (str.length()>0) {
             ch = str[0];
         }
     }
+    return true;
 }
 
-void PortCommand::writeBlock(ConnectionWriter& writer) {
-    ACE_DEBUG((LM_DEBUG,"PortCommand::writeBlock"));
+bool PortCommand::write(ConnectionWriter& writer) {
+    //ACE_DEBUG((LM_DEBUG,"PortCommand::writeBlock"));
     //ACE_OS::printf("Writing port command, text mode %d\n", writer.isTextMode());
     if (!writer.isTextMode()) {
         int len = 0;
@@ -68,6 +73,7 @@ void PortCommand::writeBlock(ConnectionWriter& writer) {
             writer.appendString(str.c_str(),'\n');
         }
     }
+    return !writer.isError();
 }
 
   

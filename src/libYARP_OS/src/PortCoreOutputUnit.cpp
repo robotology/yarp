@@ -62,13 +62,17 @@ void PortCoreOutputUnit::run() {
         phase.post();
     } else {
         phase.post();
+        Route r = getRoute();
+        Logger log(r.toString().c_str(),Logger::get());
         while (!closing) {
+            YARP_DEBUG(log, "PortCoreOutputUnit waiting");
             activate.wait();
-            //YARP_DEBUG(Logger::get(), "request to write");
+            YARP_DEBUG(log, "PortCoreOutputUnit woken");
             if (!closing) {
                 if (sending) {
-                    YARP_DEBUG(Logger::get(), "write something in background");
+                    YARP_DEBUG(log, "write something in background");
                     sendHelper();
+                    YARP_DEBUG(log, "wrote something in background");
                     trackerMutex.wait();
                     if (cachedTracker!=NULL) {
                         void *t = cachedTracker;
@@ -81,9 +85,9 @@ void PortCoreOutputUnit::run() {
                     trackerMutex.post();
                 }
             }
-            YARP_DEBUG(Logger::get(), "wrote something in background");
+            YARP_DEBUG(log, "wrote something in background");
         }
-        YARP_DEBUG(Logger::get(),
+        YARP_DEBUG(log,
                    "PortCoreOutputUnit thread closing");
         sending = false;
     }
@@ -127,27 +131,17 @@ void PortCoreOutputUnit::closeBasic() {
         Route route = op->getRoute();
         if (op->isConnectionless()) {
             YARP_DEBUG(Logger::get(),"asking other side to close, it is connectionless");
-            try {
-                Companion::disconnectInput(route.getToName().c_str(),
-                                           route.getFromName().c_str(),true);
-            } catch (IOException e) {
-                YARP_DEBUG(Logger::get(),e.toString() + 
-                           " <<< exception during request to close input");
-            }
+            Companion::disconnectInput(route.getToName().c_str(),
+                                       route.getFromName().c_str(),true);
         } else {
-            try {
-                if (op->canEscape()) {
-                    BufferedConnectionWriter buf(op->isTextMode());
-                    PortCommand pc('\0',String("q"));
-                    pc.write(buf);
-                    //printf("Asked for %s to close...\n",
-                    //     op->getRoute().toString().c_str());
-                    op->write(buf);
-                    waitForOther = true;
-                }
-            } catch (IOException e) {
-                YARP_DEBUG(Logger::get(),e.toString() + 
-                           " <<< exception for inline request to close input");
+            if (op->canEscape()) {
+                BufferedConnectionWriter buf(op->isTextMode());
+                PortCommand pc('\0',String("q"));
+                pc.write(buf);
+                //printf("Asked for %s to close...\n",
+                //     op->getRoute().toString().c_str());
+                op->write(buf);
+                waitForOther = true;
             }
         }
 
@@ -173,45 +167,48 @@ void PortCoreOutputUnit::closeBasic() {
 
 
     if (op!=NULL) {
-        try {
-            if (waitForOther) {
-                // quit is only acknowledged in certain conditions
-                if (op->isTextMode()&&op->supportReply()) {
-                    InputStream& is = op->getInputStream();
-                    //printf("Waiting for %s to close...\n",
-                    //     op->getRoute().toString().c_str());
-                    ManagedBytes dummy(1);
-                    is.read(dummy.bytes());
-                }
+        if (waitForOther) {
+            // quit is only acknowledged in certain conditions
+            if (op->isTextMode()&&op->supportReply()) {
+                InputStream& is = op->getInputStream();
+                //printf("Waiting for %s to close...\n",
+                //     op->getRoute().toString().c_str());
+                ManagedBytes dummy(1);
+                is.read(dummy.bytes());
             }
-            op->close();
-        } catch (IOException e) { /*ok*/ }
-        try {
-            delete op;
-        } catch (IOException e) { /*ok*/ }
+        }
+        op->close();
+        delete op;
         op = NULL;
     }
 }
 
 void PortCoreOutputUnit::closeMain() {
+    if (finished) return;
+
+    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit closing");
 
     if (running) {
         // give a kick (unfortunately unavoidable)
-        /*
-          if (op!=NULL) {
-          op->interrupt();
-          }
-        */
+
+        if (op!=NULL) {
+            op->interrupt();
+        }
+
         closing = true;
         phase.post();
         activate.post();
         join();
     }
 
+    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit internal join");
+
     closeBasic();
     running = false;
     closing = false;
     finished = true;
+
+    YARP_DEBUG(Logger::get(),"PortCoreOutputUnit closed");
 }
 
 
@@ -223,77 +220,78 @@ Route PortCoreOutputUnit::getRoute() {
 }
 
 void PortCoreOutputUnit::sendHelper() {
-    try {
-        if (op!=NULL) {
-
-            BufferedConnectionWriter buf(op->isTextMode());
-            if (cachedReader!=NULL) {
-                buf.setReplyHandler(*cachedReader);
-            }
-
+    bool done = false;
+    if (op!=NULL) {
+        
+        BufferedConnectionWriter buf(op->isTextMode());
+        if (cachedReader!=NULL) {
+            buf.setReplyHandler(*cachedReader);
+        }
+        
+        
+        if (op->isLocal()) {
+            //buf.setReference((yarp::os::Portable *)cachedWriter);
+            buf.setReference(dynamic_cast<yarp::os::Portable *> 
+                             (cachedWriter));
             
-            if (op->isLocal()) {
-                //buf.setReference((yarp::os::Portable *)cachedWriter);
-                buf.setReference(dynamic_cast<yarp::os::Portable *> 
-                                 (cachedWriter));
-
-                //printf("REF %ld\n", (long int)buf.getReference());
-                op->write(buf);
-                return;
-            }
-
-
+            //printf("REF %ld\n", (long int)buf.getReference());
+            op->write(buf);
+        } else {
+        
+        
             YARP_ASSERT(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
-                throw IOException("writer failed");
-            }
-
+                done = true;
+            } 
+        
             bool suppressReply = (buf.getReplyHandler()==NULL);
-
-            if (op->canEscape()) {
+        
+            if (op->canEscape()&&!done) {
                 buf.addToHeader();
-
+            
                 if (cachedEnvelope!="") {
                     // this will be the new way to signal that replies
                     // are not expected
                     //PortCommand pc('\0', String(suppressReply?"D ":"d ") +
                     //             cachedEnvelope);
                     //pc.writeBlock(buf);
-
+                
                     // This is the backwards-compatible method.
                     // To be used until YARP 2.1.2 is a "long time ago".
                     if (cachedEnvelope=="__ADMIN") {
                         PortCommand pc('a', "");
-                        pc.writeBlock(buf);
+                        pc.write(buf);
                     } else {
                         PortCommand pc('\0', String(suppressReply?"do ":"d ") +
                                        cachedEnvelope);
-                        pc.writeBlock(buf);
+                        pc.write(buf);
                     }
-
+                
                 } else {
                     // this will be the new way to signal that replies
                     // are not expected
                     //PortCommand pc(suppressReply?'D':'d',"");
                     //pc.writeBlock(buf);
-
+                
                     // This is the backwards-compatible method.
                     // To be used until YARP 2.1.2 is a "long time ago".
                     if (suppressReply) {
                         PortCommand pc('\0', "do");
-                        pc.writeBlock(buf);
+                        pc.write(buf);
                     } else {
                         PortCommand pc('d', "");
-                        pc.writeBlock(buf);
+                        pc.write(buf);
                     }
                 }
             }
-
+        }
+        if (!done) {
             op->write(buf);
         }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(), e.toString() + " <<< output exception");
+    }
+    if (done) {
+        //YARP_DEBUG(Logger::get(), e.toString() + " <<< output exception");
         closeBasic();
         finished = true;
         closing = true;

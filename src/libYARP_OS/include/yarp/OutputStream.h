@@ -52,6 +52,7 @@ public:
         write('\n');
     }
 
+    virtual bool isOk() = 0;
 };
 
 #endif

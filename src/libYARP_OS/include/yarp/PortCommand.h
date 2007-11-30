@@ -35,19 +35,8 @@ public:
         this->str = str;
     }
 
-    virtual void readBlock(ConnectionReader& reader);
-
-    virtual void writeBlock(ConnectionWriter& writer);
-
-    virtual bool write(yarp::os::ConnectionWriter& writer) {
-        writeBlock(writer);
-        return true;
-    }
-
-    virtual bool read(yarp::os::ConnectionReader& reader) {
-        readBlock(reader);
-        return true;
-    }
+    virtual bool write(yarp::os::ConnectionWriter& writer);
+    virtual bool read(yarp::os::ConnectionReader& reader);
 
     char getKey() {
         return ch;

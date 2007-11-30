@@ -58,28 +58,28 @@ public:
     }
 
 
-    virtual void respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(Protocol& proto) {
         // I am the receiver
 
         // issue: need a fresh port number...
         DgramTwoWayStream *stream = new DgramTwoWayStream();
         YARP_ASSERT(stream!=NULL);
-        try {
-            Address remote = proto.getStreams().getRemoteAddress();
-            stream->open(remote);
 
-            int myPort = stream->getLocalAddress().getPort();
-            proto.writeYarpInt(myPort);
-      
-            proto.takeStreams(stream);
-
-        } catch (IOException e) {
+        Address remote = proto.getStreams().getRemoteAddress();
+        bool ok = stream->open(remote);
+        if (!ok) {
             delete stream;
-            throw e;
+            return false;
         }
+
+        int myPort = stream->getLocalAddress().getPort();
+        proto.writeYarpInt(myPort);
+        proto.takeStreams(stream);
+
+        return true;
     }
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
         // I am the sender
         int myPort = proto.getStreams().getLocalAddress().getPort();
         String myName = proto.getStreams().getLocalAddress().getName();
@@ -87,17 +87,22 @@ public:
 
         int altPort = proto.readYarpInt();
 
+        if (altPort==-1) {
+            return false;
+        }
+
         DgramTwoWayStream *stream = new DgramTwoWayStream();
         YARP_ASSERT(stream!=NULL);
 
         proto.takeStreams(NULL); // free up port from tcp
-        try {
+        bool ok = 
             stream->open(Address(myName,myPort),Address(altName,altPort));
-        } catch (IOException e) {
+        if (!ok) {
             delete stream;
-            throw e;
+            return false;
         }
         proto.takeStreams(stream);
+        return true;
     }
 
 };

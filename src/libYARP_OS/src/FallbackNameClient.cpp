@@ -19,32 +19,28 @@ using namespace yarp;
 using namespace yarp::os;
 
 void FallbackNameClient::run() {
-    try {
-        NameConfig nc;
-        Address call = FallbackNameServer::getAddress();
-        DgramTwoWayStream send;
-        send.join(call,true);
-        listen.join(call,false);
-        String msg = String("NAME_SERVER query ") + nc.getNamespace();
-        send.beginPacket();
-        send.writeLine(msg);
-        send.flush();
-        send.endPacket();
-        for (int i=0; i<5; i++) {
-            listen.beginPacket();
-            String txt = NetType::readLine(listen);
-            listen.endPacket();
-            if (closed) return;
-            YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
-            if (txt.strstr("registration ")==0) {
-                address = NameClient::extractAddress(txt);
-                YARP_INFO(Logger::get(),String("Received address ") + 
-                          address.toString());
-                return;
-            }
+    NameConfig nc;
+    Address call = FallbackNameServer::getAddress();
+    DgramTwoWayStream send;
+    send.join(call,true);
+    listen.join(call,false);
+    String msg = String("NAME_SERVER query ") + nc.getNamespace();
+    send.beginPacket();
+    send.writeLine(msg);
+    send.flush();
+    send.endPacket();
+    for (int i=0; i<5; i++) {
+        listen.beginPacket();
+        String txt = NetType::readLine(listen);
+        listen.endPacket();
+        if (closed) return;
+        YARP_DEBUG(Logger::get(),String("Fallback name client got ") + txt);
+        if (txt.strstr("registration ")==0) {
+            address = NameClient::extractAddress(txt);
+            YARP_INFO(Logger::get(),String("Received address ") + 
+                      address.toString());
+            return;
         }
-    } catch (IOException e) {
-        YARP_DEBUG(Logger::get(),e.toString() + "<<< Fallback client shutting down with exception");
     }
 }
 
@@ -97,12 +93,8 @@ Address FallbackNameClient::seek() {
         }
         ACE_OS::fprintf(stderr,"\n");
         YARP_INFO(Logger::get(),"No response to search for server");
-        try {
-            seeker.close();
-            seeker.join();
-        } catch (IOException e) {
-            YARP_DEBUG(Logger::get(), e.toString() + " <<< exception while closing seeker");
-        }
+        seeker.close();
+        seeker.join();
     }
     return Address();
 }

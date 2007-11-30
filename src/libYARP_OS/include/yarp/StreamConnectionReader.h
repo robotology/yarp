@@ -40,6 +40,7 @@ public:
         writer = NULL;
         valid = false;
         ref = NULL;
+        err = false;
     }
 
     virtual ~StreamConnectionReader();
@@ -53,49 +54,72 @@ public:
         this->textMode = textMode;
         this->valid = true;
         ref = NULL;
+        err = false;
     }
 
-    virtual void expectBlock(const Bytes& b) {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+    virtual bool expectBlock(const Bytes& b) {
+        if (!isGood()) { 
+            //throw IOException("read from invalid stream"); 
+            return false;
+        }
         YARP_ASSERT(in!=NULL);
         int len = b.length();
-        if (len==0) return;
+        if (len==0) return true;
         if (len<0) { len = messageLen; }
         if (len>0) {
-            NetType::readFull(*in,b);
-            messageLen -= len;
-            return;
+            int rlen = NetType::readFull(*in,b);
+            if (rlen>=0) {
+                messageLen -= len;
+                return true;
+            }
         }
-        throw IOException("expectBlock size conditions failed");
+        err = true;
+        return false;
     }
 
 
     virtual int expectInt() {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+        //if (!isValid()) { throw IOException("read from invalid stream"); }
+        if (!isGood()) { return 0; }
         NetType::NetInt32 x = 0;
         Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        in->read(b);
+        int r = in->read(b);
+        if (r<b.length()) {
+            err = true;
+            return 0;
+        }
         messageLen -= b.length();
         return x;
     }
 
     virtual double expectDouble() {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+        //if (!isValid()) { throw IOException("read from invalid stream"); }
+        if (!isGood()) { return 0; }
         NetType::NetFloat64 x = 0;
         Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        in->read(b);
+        int r = in->read(b);
+        if (r<b.length()) {
+            err = true;
+            return 0;
+        }
         messageLen -= b.length();
         return x;
     }
 
     virtual String expectString(int len) {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+        //if (!isValid()) { throw IOException("read from invalid stream"); }
+        if (!isGood()) { return ""; }
         char *buf = new char[len];
         Bytes b(buf,len);
         YARP_ASSERT(in!=NULL);
-        in->read(b);
+        int r = in->read(b);
+        if (r<b.length()) {
+            err = true;
+            delete[] buf;
+            return "";
+        }
         messageLen -= b.length();
         String s = buf;
         delete[] buf;
@@ -103,9 +127,15 @@ public:
     }
 
     virtual String expectLine() {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+        //if (!isValid()) { throw IOException("read from invalid stream"); }
+        if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
-        String result = NetType::readLine(*in);
+        bool success = false;
+        String result = NetType::readLine(*in,'\n',&success);
+        if (!success) {
+            err = true;
+            return "";
+        }
         messageLen -= result.length()+1;
         return result;
     }
@@ -160,20 +190,38 @@ public:
 
 
 
-    virtual void expectBlock(const char *data, int len) {
-        expectBlock(Bytes((char*)data,len));
+    virtual bool expectBlock(const char *data, int len) {
+        return expectBlock(Bytes((char*)data,len));
     }
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar) {
-        if (!isValid()) { throw IOException("read from invalid stream"); }
+        //if (!isValid()) { throw IOException("read from invalid stream"); }
+        if (!isGood()) { return ""; }
         YARP_ASSERT(in!=NULL);
-        String result = NetType::readLine(*in,terminatingChar);
-        messageLen -= result.length()+1;
+        bool lsuccess = false;
+        String result = NetType::readLine(*in,terminatingChar,&lsuccess);
+        if (lsuccess) {
+            messageLen -= result.length()+1;
+        }
         return ::yarp::os::ConstString(result.c_str());
     }
 
     virtual bool isValid() {
         return valid;
+    }
+
+    virtual bool isError() {
+        return err;
+    }
+
+    virtual bool isActive() {
+        if (!isValid()) return false;
+        if (in!=NULL) {
+            if (in->isOk()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     virtual yarp::os::Portable *getReference() {
@@ -185,6 +233,11 @@ public:
     }
 
 private:
+
+    bool isGood() {
+        return isActive()&&isValid()&&!isError();
+    }
+
     BufferedConnectionWriter *writer;
     StringInputStream altStream;
     InputStream *in;
@@ -192,6 +245,7 @@ private:
     int messageLen;
     bool textMode;
     bool valid;
+    bool err;
     Route route;
     yarp::os::Portable *ref;
 };

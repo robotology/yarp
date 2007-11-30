@@ -1,6 +1,14 @@
 
 INCLUDE(UsePkgConfig)
 
+# Exceptions are being removed from YARP to simplify porting.
+# Set YARP_ADMIN flag to check whether the library is
+# currently clean from exceptions.
+SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
+IF (YARP_ADMIN)
+	ADD_DEFINITIONS("-fno-exceptions")
+ENDIF (YARP_ADMIN)
+
 SET(YARP_DEFINES_ACCUM "-DYARP_PRESENT")
 SET(YARP_DEFINES_ACCUM -D_REENTRANT)
 

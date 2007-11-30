@@ -32,29 +32,33 @@ public:
     }
 
     void check() {
+        /*
         if (stream==NULL) {
             throw IOException("no stream present");
         }
+        */
     }
 
     virtual InputStream& getInputStream() {
         check();
+        if (stream==NULL) return nullStream;
         return stream->getInputStream();
     }
 
     virtual OutputStream& getOutputStream() {
         check();
+        if (stream==NULL) return nullStream;
         return stream->getOutputStream();
     }
 
     virtual const Address& getLocalAddress() {
         check();
-        return stream->getLocalAddress();
+        return (stream==NULL)?nullStream.getLocalAddress():(stream->getLocalAddress());
     }
 
     virtual const Address& getRemoteAddress() {
         check();
-        return stream->getRemoteAddress();
+        return (stream==NULL)?nullStream.getRemoteAddress():(stream->getRemoteAddress());
     }
 
     virtual void close() {
@@ -111,6 +115,7 @@ public:
 
 private:
     TwoWayStream *stream;
+    NullStream nullStream;
 };
 
 #endif

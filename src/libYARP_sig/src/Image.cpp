@@ -815,121 +815,111 @@ public:
 
 bool Image::read(yarp::os::ConnectionReader& connection) {
     
-    try {
-        // auto-convert text mode interaction
-        connection.convertTextMode();
-
-        YARPImagePortContentHeader header;
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+    
+    YARPImagePortContentHeader header;
+    
+    bool ok = connection.expectBlock((char*)&header,sizeof(header));
+    if (!ok) return false;
         
-        connection.expectBlock((char*)&header,sizeof(header));
-        
-        imgPixelCode = header.id;
-
-        int q = getQuantum();
-        if (q==0) {
-            q = YARP_IMAGE_ALIGN;
-        }
-        if (q!=header.quantum) {
-            
-            if ((header.depth*header.width)%q==0) {
-                header.quantum = q;
-            }
-        }
-        
-        if (getPixelCode()!=header.id||q!=header.quantum) {
-            // we're trying to read an incompatible image type
-            // rather than just fail, we'll read it (inefficiently)
-            FlexImage flex;
-            flex.setPixelCode(header.id);
-            flex.setQuantum(header.quantum);
-            flex.resize(header.width,header.height);
-            if (header.width!=0&&header.height!=0) {
-                unsigned char *mem = flex.getRawImage();
-                ACE_ASSERT(mem!=NULL);
-                if (flex.getRawImageSize()!=header.imgSize) {
-                    printf("There is a problem reading an image\n");
-                    printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                           (int)header.width, (int)header.height, 
-                           (int)header.quantum, (int)header.imgSize);
-                    printf("my space: width %d, height %d, quantum %d, size %d\n",
-                           flex.width(), flex.height(), flex.getQuantum(), 
-                           flex.getRawImageSize());
-                }
-                ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
-                try {
-                    connection.expectBlock((char *)flex.getRawImage(),
-                                           flex.getRawImageSize());
-                } catch (IOException e) {
-                    return false;
-                }
-            }
-            copy(flex);
-        } else {
-            ACE_ASSERT(getPixelCode()==header.id);
-            resize(header.width,header.height);
-            unsigned char *mem = getRawImage();
-            if (header.width!=0&&header.height!=0) {
-                ACE_ASSERT(mem!=NULL);
-                if (getRawImageSize()!=header.imgSize) {
-                    printf("There is a problem reading an image\n");
-                    printf("incoming: width %d, height %d, quantum %d, size %d\n",
-                           (int)header.width, (int)header.height, 
-                           (int)header.quantum, (int)header.imgSize);
-                    printf("my space: width %d, height %d, quantum %d, size %d\n",
-                           width(), height(), getQuantum(), getRawImageSize());
-                }
-                ACE_ASSERT(getRawImageSize()==header.imgSize);
-                connection.expectBlock((char *)getRawImage(),getRawImageSize());
-            }
-        }
-        
-    } catch (IOException e) {
-        return false;
+    imgPixelCode = header.id;
+    
+    int q = getQuantum();
+    if (q==0) {
+        q = YARP_IMAGE_ALIGN;
     }
-
-    return true;
+    if (q!=header.quantum) {
+        
+        if ((header.depth*header.width)%q==0) {
+            header.quantum = q;
+        }
+    }
+        
+    if (getPixelCode()!=header.id||q!=header.quantum) {
+        // we're trying to read an incompatible image type
+        // rather than just fail, we'll read it (inefficiently)
+        FlexImage flex;
+        flex.setPixelCode(header.id);
+        flex.setQuantum(header.quantum);
+        flex.resize(header.width,header.height);
+        if (header.width!=0&&header.height!=0) {
+            unsigned char *mem = flex.getRawImage();
+            ACE_ASSERT(mem!=NULL);
+            if (flex.getRawImageSize()!=header.imgSize) {
+                printf("There is a problem reading an image\n");
+                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                       (int)header.width, (int)header.height, 
+                       (int)header.quantum, (int)header.imgSize);
+                printf("my space: width %d, height %d, quantum %d, size %d\n",
+                       flex.width(), flex.height(), flex.getQuantum(), 
+                       flex.getRawImageSize());
+            }
+            ACE_ASSERT(flex.getRawImageSize()==header.imgSize);
+            ok = connection.expectBlock((char *)flex.getRawImage(),
+                                        flex.getRawImageSize());
+            if (!ok) return false;
+        }
+        copy(flex);
+    } else {
+        ACE_ASSERT(getPixelCode()==header.id);
+        resize(header.width,header.height);
+        unsigned char *mem = getRawImage();
+        if (header.width!=0&&header.height!=0) {
+            ACE_ASSERT(mem!=NULL);
+            if (getRawImageSize()!=header.imgSize) {
+                printf("There is a problem reading an image\n");
+                printf("incoming: width %d, height %d, quantum %d, size %d\n",
+                       (int)header.width, (int)header.height, 
+                       (int)header.quantum, (int)header.imgSize);
+                printf("my space: width %d, height %d, quantum %d, size %d\n",
+                       width(), height(), getQuantum(), getRawImageSize());
+            }
+            ACE_ASSERT(getRawImageSize()==header.imgSize);
+            ok = connection.expectBlock((char *)getRawImage(),
+                                        getRawImageSize());
+            if (!ok) return false;
+        }
+    }
+    
+    return !connection.isError();
 }
 
 
 bool Image::write(yarp::os::ConnectionWriter& connection) {
     YARPImagePortContentHeader header;
 
-    try {
-        header.listTag = BOTTLE_TAG_LIST;
-        header.listLen = 4;
-        header.paramNameTag = BOTTLE_TAG_VOCAB;
-        header.paramName = VOCAB3('m','a','t');
-        header.paramIdTag = BOTTLE_TAG_VOCAB;
-        header.id = getPixelCode();
-        header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
-        header.paramListLen = 5;
-        header.depth = getPixelSize();
-        header.imgSize = getRawImageSize();
-        header.quantum = getQuantum();
-        header.width = width();
-        header.height = height();
-        header.paramBlobTag = BOTTLE_TAG_BLOB;
-        header.paramBlobLen = getRawImageSize();
+    header.listTag = BOTTLE_TAG_LIST;
+    header.listLen = 4;
+    header.paramNameTag = BOTTLE_TAG_VOCAB;
+    header.paramName = VOCAB3('m','a','t');
+    header.paramIdTag = BOTTLE_TAG_VOCAB;
+    header.id = getPixelCode();
+    header.paramListTag = BOTTLE_TAG_LIST + BOTTLE_TAG_INT;
+    header.paramListLen = 5;
+    header.depth = getPixelSize();
+    header.imgSize = getRawImageSize();
+    header.quantum = getQuantum();
+    header.width = width();
+    header.height = height();
+    header.paramBlobTag = BOTTLE_TAG_BLOB;
+    header.paramBlobLen = getRawImageSize();
+    
+    connection.appendBlock((char*)&header,sizeof(header));
+    unsigned char *mem = getRawImage();
+    if (header.width!=0&&header.height!=0) {
+        ACE_ASSERT(mem!=NULL);
         
-        connection.appendBlock((char*)&header,sizeof(header));
-        unsigned char *mem = getRawImage();
-        if (header.width!=0&&header.height!=0) {
-            ACE_ASSERT(mem!=NULL);
-            
-            // Note use of external block.  
-            // Implies care needed about ownership.
-            connection.appendExternalBlock((char *)mem,header.imgSize);
-        }
-
-        // if someone is foolish enough to connect in text mode,
-        // let them see something readable.
-        connection.convertTextMode();
-
-        return true;
-    } catch (IOException e) {
-        // miserable failure
+        // Note use of external block.  
+        // Implies care needed about ownership.
+        connection.appendExternalBlock((char *)mem,header.imgSize);
     }
-    return false;
+
+    // if someone is foolish enough to connect in text mode,
+    // let them see something readable.
+    connection.convertTextMode();
+    
+    return !connection.isError();
 }
 
 

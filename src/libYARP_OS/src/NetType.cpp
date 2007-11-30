@@ -13,12 +13,17 @@ using namespace yarp;
 
 // slow implementation - only relevant for textmode operation
 
-String NetType::readLine(InputStream& is, int terminal) {
+String NetType::readLine(InputStream& is, int terminal, bool *success) {
     String buf("");
     bool done = false;
+    if (success!=NULL) *success = true;
     while (!done) {
         //ACE_OS::printf("preget\n");
         int v = is.read();
+        if (v<0) {
+            if (success!=NULL) *success = false;
+            return "";
+        }
         //ACE_OS::printf("got [%d]\n",v);
         char ch = (char)v;
         if (v!=0&&v!='\r'&&v!='\n') {
@@ -28,7 +33,9 @@ String NetType::readLine(InputStream& is, int terminal) {
             done = true;
         }
         if (ch<0) { 
-            throw IOException("readLine failed");
+            //throw IOException("readLine failed");
+            if (success!=NULL) *success = false;
+            return "";
         }
     }
     return buf;

@@ -1,3 +1,11 @@
+2007-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* (many): removed the use of exceptions in port code, to
+	facilitate broader porting of libYARP_OS library.  Note: it is now
+	more important to check return values when reading from a
+	ConnectionReader (or for those methods without a convenient return
+	value, checking that ConnectionReader::isError is not set).
+
 2007-11-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindAce.cmake: make it easier to link ACE statically

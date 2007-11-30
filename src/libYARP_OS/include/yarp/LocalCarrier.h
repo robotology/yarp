@@ -65,13 +65,23 @@ class yarp::LocalCarrierStream : public SocketTwoWayStream {
 private:
     LocalCarrier *owner;
     bool sender;
+    bool done;
 public:
     void attach(LocalCarrier *owner, bool sender) {
         this->owner = owner;
         this->sender = sender;
+        done = false;
+    }
+
+    virtual void interrupt() {
+        done = true;
     }
 
     virtual void close();
+
+    virtual bool isOk() {
+        return !done;
+    }
 
 };
 
@@ -173,7 +183,7 @@ public:
     virtual void setParameters(const Bytes& header) {
     }
 
-    virtual void sendHeader(Protocol& proto) {
+    virtual bool sendHeader(Protocol& proto) {
         portName = proto.getRoute().getFromName();
 
         manager.setSender(this);
@@ -185,9 +195,11 @@ public:
         //printf("sender %ld sees receiver %ld\n", (long int) this,
         //       (long int) peer);
         peerMutex.post();
+
+        return true;
     }
 
-    virtual void expectExtraHeader(Protocol& proto) {
+    virtual bool expectExtraHeader(Protocol& proto) {
         portName = proto.getRoute().getToName();
         // switch over to some local structure to communicate
         peerMutex.wait();
@@ -197,31 +209,22 @@ public:
         //       (long int) peer, peer->portName.c_str());
         proto.setRoute(proto.getRoute().addFromName(peer->portName));
         peerMutex.post();
+
+        return true;
     }
 
-    virtual void becomeLocal(Protocol& proto, bool sender) {
+    virtual bool becomeLocal(Protocol& proto, bool sender) {
         LocalCarrierStream *stream = new LocalCarrierStream();
         if (stream!=NULL) {
             stream->attach(this,sender);
         }
         proto.takeStreams(stream);
-        YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
+        //YARP_ERROR(Logger::get(),"*** don't trust local carrier yet ****");
         //ACE_OS::exit(1);
+        return true;
     }
 
-    virtual void write(Protocol& proto, SizedWriter& writer) {
-        // will need to modify that so that we can work
-        // through a shared object reference instead (the target
-        // is in the same process space as we are)
-
-        // ideally, we'd just pass a reference to the writer object
-        // and have it queried on the other side -- need to work a
-        // bit on how SizedWriter operates so that this becomes efficiently
-        // doable
-
-        //proto.sendIndex();
-        //proto.sendContent();
-        //proto.expectAck();
+    virtual bool write(Protocol& proto, SizedWriter& writer) {
 
         yarp::os::Portable *ref = writer.getReference();
         if (ref!=NULL) {
@@ -237,22 +240,24 @@ public:
             YARP_ERROR(Logger::get(),
                        "local send failed - no object");
         }
+
+        return true;
     }
 
-    virtual void respondToHeader(Protocol& proto) {
+    virtual bool respondToHeader(Protocol& proto) {
         // i am the receiver
 
-        becomeLocal(proto,false);
+        return becomeLocal(proto,false);
     }
 
 
-    virtual void expectReplyToHeader(Protocol& proto) {
+    virtual bool expectReplyToHeader(Protocol& proto) {
         // i am the sender
 
-        becomeLocal(proto,true);
+        return becomeLocal(proto,true);
     }
 
-    virtual void expectIndex(Protocol& proto) {
+    virtual bool expectIndex(Protocol& proto) {
 
         YARP_DEBUG(Logger::get(),"local recv: wait send");
         sent.wait();
@@ -263,7 +268,11 @@ public:
             YARP_DEBUG(Logger::get(),"local recv: received");
         } else {
             YARP_DEBUG(Logger::get(),"local recv: shutdown");
+            proto.is().interrupt();
+            return false;
         }
+
+        return true;
     }
 
     void accept(yarp::os::Portable *ref) {

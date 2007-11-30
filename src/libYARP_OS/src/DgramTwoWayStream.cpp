@@ -26,8 +26,10 @@
 #include <ace/OS_NS_sys_select.h>
 #include <ace/os_include/net/os_if.h>
 
+#include <yarp/os/Time.h>
 
 using namespace yarp;
+using namespace yarp::os;
 
 #define CRC_SIZE 8
 #define READ_SIZE (120000-CRC_SIZE)
@@ -76,15 +78,15 @@ static void addCrc(char *buf, int length, int crcLength, int pct) {
 }
 
 
-void DgramTwoWayStream::open(const Address& remote) {
+bool DgramTwoWayStream::open(const Address& remote) {
     Address local;
     ACE_INET_Addr anywhere((u_short)0, (ACE_UINT32)INADDR_ANY);
     local = Address(anywhere.get_host_addr(),
                     anywhere.get_port_number());
-    open(local,remote);
+    return open(local,remote);
 }
 
-void DgramTwoWayStream::open(const Address& local, const Address& remote) {
+bool DgramTwoWayStream::open(const Address& local, const Address& remote) {
     localAddress = local;
     remoteAddress = remote;
 
@@ -100,7 +102,8 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
                              0,
                              1);
     if (result!=0) {
-        throw IOException("could not open datagram socket");
+        YARP_ERROR(Logger::get(),"could not open datagram socket");
+        return false;
     }
 
     configureSystemBuffers();
@@ -114,6 +117,8 @@ void DgramTwoWayStream::open(const Address& local, const Address& remote) {
                " to " + remote.toString());
 
     allocate();
+
+    return true;
 }
 
 void DgramTwoWayStream::allocate() {
@@ -224,7 +229,7 @@ int DgramTwoWayStream::restrictMcast(ACE_SOCK_Dgram_Mcast * dmcast,
 }
 
 
-void DgramTwoWayStream::openMcast(const Address& group, 
+bool DgramTwoWayStream::openMcast(const Address& group, 
                                   const Address& ipLocal) {
 
     multiMode = true;
@@ -255,7 +260,8 @@ void DgramTwoWayStream::openMcast(const Address& group,
     }
 
     if (result!=0) {
-        throw IOException("could not open multicast datagram socket");
+        YARP_ERROR(Logger::get(),"could not open multicast datagram socket");
+        return false;
     }
 
     configureSystemBuffers();
@@ -265,10 +271,12 @@ void DgramTwoWayStream::openMcast(const Address& group,
     remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
 
     allocate();
+
+    return true;
 }
 
 
-void DgramTwoWayStream::join(const Address& group, bool sender,
+bool DgramTwoWayStream::join(const Address& group, bool sender,
                              const Address& ipLocal) {
     YARP_DEBUG(Logger::get(),String("subscribing to mcast address ") + 
                group.toString() + " for " +
@@ -278,12 +286,12 @@ void DgramTwoWayStream::join(const Address& group, bool sender,
 
     if (sender) {
         if (ipLocal.isValid()) {
-            openMcast(group,ipLocal);
+            return openMcast(group,ipLocal);
         } else {
             // just use udp as normal
-            open(group);
+            return open(group);
         }
-        return;
+        //return;
     }
 
     ACE_SOCK_Dgram_Mcast *dmcast = new ACE_SOCK_Dgram_Mcast;
@@ -317,7 +325,8 @@ void DgramTwoWayStream::join(const Address& group, bool sender,
     configureSystemBuffers();
 
     if (result!=0) {
-        throw IOException("cannot connect to multi-cast address");
+        YARP_ERROR(Logger::get(),"cannot connect to multi-cast address");
+        return false;
     }
     localAddress = group;
     remoteAddress = group;
@@ -325,6 +334,7 @@ void DgramTwoWayStream::join(const Address& group, bool sender,
     remoteHandle.set(remoteAddress.getPort(),remoteAddress.getName().c_str());
 
     allocate();
+    return true;
 }
 
 DgramTwoWayStream::~DgramTwoWayStream() {
@@ -343,48 +353,47 @@ void DgramTwoWayStream::interrupt() {
 
     if (act) {
         if (reader) {
-            try {
-                int ct = 3;
-                while (happy && ct>0) {
-                    ct--;
-                    DgramTwoWayStream tmp;
-                    if (mgram) {
-                        YARP_DEBUG(Logger::get(),
-                                   String("* mcast interrupt, interface ") +
-                                   restrictInterfaceIp.toString().c_str()
-                                   );
-                        tmp.join(localAddress,true,
-                                 restrictInterfaceIp);
-                    } else {
-                        YARP_DEBUG(Logger::get(),"* dgram interrupt");
-                        tmp.open(Address(localAddress.getName(),0),
-                                 localAddress);
-                    }
+            int ct = 3;
+            while (happy && ct>0) {
+                ct--;
+                DgramTwoWayStream tmp;
+                if (mgram) {
                     YARP_DEBUG(Logger::get(),
-                               String("* interrupt state ") +
-                               NetType::toString(interrupting) + " " +
-                               NetType::toString(closed) + " " +
-                               NetType::toString(happy) + " ");
-                    ManagedBytes empty(10);
-                    for (int i=0; i<empty.length(); i++) {
-                        empty.get()[i] = 0;
-                    }
-                    
-                    // don't want this message getting into a valid packet
-                    tmp.pct = -1;
-                    
-                    tmp.write(empty.bytes());
-                    tmp.flush();
-                    tmp.close();
-                    if (happy) {
-                        yarp::os::Time::delay(0.25);
-                    }
+                               String("* mcast interrupt, interface ") +
+                               restrictInterfaceIp.toString().c_str()
+                               );
+                    tmp.join(localAddress,true,
+                             restrictInterfaceIp);
+                } else {
+                    YARP_DEBUG(Logger::get(),"* dgram interrupt");
+                    tmp.open(Address(localAddress.getName(),0),
+                             localAddress);
                 }
-                YARP_DEBUG(Logger::get(),"dgram interrupt done");
-            } catch (IOException e) {
-                YARP_DEBUG(Logger::get(),e.toString() + " <<< closer dgram exception");
+                YARP_DEBUG(Logger::get(),
+                           String("* interrupt state ") +
+                           NetType::toString(interrupting) + " " +
+                           NetType::toString(closed) + " " +
+                           NetType::toString(happy) + " ");
+                ManagedBytes empty(10);
+                for (int i=0; i<empty.length(); i++) {
+                    empty.get()[i] = 0;
+                }
+                
+                // don't want this message getting into a valid packet
+                tmp.pct = -1;
+                
+                tmp.write(empty.bytes());
+                tmp.flush();
+                tmp.close();
+                if (happy) {
+                    yarp::os::Time::delay(0.25);
+                }
             }
-            YARP_DEBUG(Logger::get(),"finished dgram interrupt");
+            YARP_DEBUG(Logger::get(),"dgram interrupt done");
+            //} catch (IOException e) {
+            //YARP_DEBUG(Logger::get(),e.toString() + " <<< closer dgram exception");
+            //}
+            //YARP_DEBUG(Logger::get(),"finished dgram interrupt");
         } 
         mutex.wait();
         interrupting = false;
@@ -497,14 +506,14 @@ int DgramTwoWayStream::read(const Bytes& b) {
             if (altPct!=-1) {
                 pct++;
                 if (!crcOk) {
-                    YARP_ERROR(Logger::get(),
-                               "*** Multicast/UDP packet dropped - checksum error ***");
                     if (bufferAlertNeeded&&!bufferAlerted) {
+                        YARP_ERROR(Logger::get(),
+                                   "*** Multicast/UDP packet dropped - checksum error ***");
                         YARP_INFO(Logger::get(),
                                   "The UDP/MCAST system buffer limit on your system is low.");
                         YARP_INFO(Logger::get(),
                                   "You may get packet loss under heavy conditions.");
-#ifdef YARP2_LINUX
+#ifdef __LINUX__
                         YARP_INFO(Logger::get(),
                                   "To change the buffer limit on linux: sysctl -w net.core.rmem_max=8388608");
                         YARP_INFO(Logger::get(),
@@ -514,11 +523,20 @@ int DgramTwoWayStream::read(const Bytes& b) {
                                   "To change the limit use: systcl for Linux/FreeBSD, ndd for Solaris, no for AIX");
 #endif
                         bufferAlerted = true;
+                    } else {
+                        errCount++;
+                        double now = Time::now();
+                        if (now-lastReportTime>1) {
+                            YARP_ERROR(Logger::get(),
+                                       String("*** ") + NetType::toString(errCount) + " datagram packet(s) dropped - checksum error ***");
+                            lastReportTime = now;
+                            errCount = 0;
+                        }
                     }
                     //readAt = 0;
                     //readAvail = 0;
                     reset();
-                    throw IOException("CRC failure");
+                    //throw IOException("CRC failure");
                     return -1;
                 } else {
                     readAt += CRC_SIZE;
@@ -628,7 +646,8 @@ void DgramTwoWayStream::flush() {
 
         if (len<0) {
             happy = false;
-            throw IOException("DGRAM failed to write");
+            YARP_DEBUG(Logger::get(),"DGRAM failed to write");
+            return;
         }
         writeAt += len;
         writeAvail -= len;

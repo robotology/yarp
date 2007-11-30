@@ -35,7 +35,7 @@ public:
 
     int open(const Address& address);
 
-    void open(ACE_SOCK_Acceptor& acceptor);
+    int open(ACE_SOCK_Acceptor& acceptor);
 
     virtual ~SocketTwoWayStream() {
         close();
@@ -58,9 +58,11 @@ public:
     }
 
     virtual void interrupt() {
+        YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket");
         if (happy) {
             happy = false;
             stream.close_reader();
+            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket reader");
         }
         //stream.close_writer();
         //stream.close();
@@ -74,7 +76,10 @@ public:
     virtual int read(const Bytes& b) {
         if (!isOk()) { return -1; }
         //ACE_OS::printf("STWS::read pre \n");
+        //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv");
         int result = stream.recv_n(b.get(),b.length());
+        //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv done");
+        if (!happy) { return -1; }
         //ACE_OS::printf("socket read %d\n", result);
         //ACE_OS::printf("STWS::read post \n");
         if (result<=0) {
@@ -86,6 +91,7 @@ public:
     }
 
     virtual void write(const Bytes& b) {
+        if (!isOk()) { return; }
         int result = stream.send_n(b.get(),b.length());
         //ACE_OS::printf("socket write %d\n", result);
         if (result<0) {

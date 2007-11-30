@@ -51,20 +51,20 @@ public:
     //virtual void close() = 0; // from ShiftStream
 
     // sender
-    virtual void prepareSend(Protocol& proto) = 0;
-    virtual void sendHeader(Protocol& proto) = 0;
-    virtual void expectReplyToHeader(Protocol& proto) = 0;
-    virtual void sendIndex(Protocol& proto) = 0;
+    virtual bool prepareSend(Protocol& proto) = 0;
+    virtual bool sendHeader(Protocol& proto) = 0;
+    virtual bool expectReplyToHeader(Protocol& proto) = 0;
+    virtual bool sendIndex(Protocol& proto) = 0;
 
-    virtual void write(Protocol& proto, SizedWriter& writer) = 0;
+    virtual bool write(Protocol& proto, SizedWriter& writer) = 0;
 
     // receiver
-    virtual void expectExtraHeader(Protocol& proto) = 0;
-    virtual void respondToHeader(Protocol& proto) = 0;
-    virtual void expectIndex(Protocol& proto) = 0;
-    virtual void expectSenderSpecifier(Protocol& proto) = 0;
-    virtual void sendAck(Protocol& proto) = 0;
-    virtual void expectAck(Protocol& proto) = 0;
+    virtual bool expectExtraHeader(Protocol& proto) = 0;
+    virtual bool respondToHeader(Protocol& proto) = 0;
+    virtual bool expectIndex(Protocol& proto) = 0;
+    virtual bool expectSenderSpecifier(Protocol& proto) = 0;
+    virtual bool sendAck(Protocol& proto) = 0;
+    virtual bool expectAck(Protocol& proto) = 0;
 
     virtual bool isActive() = 0;
 

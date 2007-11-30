@@ -257,9 +257,9 @@ public:
             bool isTag = false;
             bool including = false;
             String buf;
-            try {
-                buf = NetType::readLine(sis);
-            } catch (IOException e) {
+            bool good = true;
+            buf = NetType::readLine(sis,'\n',&good);
+            if (!good) {
                 done = true;
             }
             if (!done) {

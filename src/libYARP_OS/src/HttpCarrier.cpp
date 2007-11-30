@@ -207,7 +207,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
 
 
 
-void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
+bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     proto.setRoute(proto.getRoute().addFromName("web"));
     String remainder = NetType::readLine(proto.is());
     if (!urlDone) {
@@ -298,4 +298,6 @@ void HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     proto.os().write(b2);
     proto.os().flush();
     // Message gets finished by the stream
+
+    return proto.os().isOk();
 }
