@@ -74,8 +74,8 @@ int main(int argc, char *argv[]) {
 
     Property pSink;
     pSink.put("device","wxsdl");
-    pSink.put("width",width);
-    pSink.put("height",height);
+    pSink.put("w",width);
+    pSink.put("h",height);
     sink.open(pSink);
 
     IFrameGrabberImage *iSource;
