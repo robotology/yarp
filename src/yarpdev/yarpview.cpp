@@ -76,6 +76,7 @@ int main(int argc, char *argv[]) {
     pSink.put("device","wxsdl");
     pSink.put("w",width);
     pSink.put("h",height);
+    pSink.put("title",portName.c_str());
     sink.open(pSink);
 
     IFrameGrabberImage *iSource;

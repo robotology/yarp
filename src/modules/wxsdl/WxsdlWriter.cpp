@@ -66,6 +66,7 @@ static int wxsdl_post = 0;
 static bool wxsdl_framed = true;
 static int __width = 200;
 static int __height = 200;
+static ConstString __title = "yarpview!";
 
 static Semaphore mutex(1), finished(0);
 
@@ -371,7 +372,8 @@ END_EVENT_TABLE()
 
 SDLFrame::SDLFrame() {
     // Create the SDLFrame
-    Create(0, IDF_FRAME, wxT("yarpview"), wxDefaultPosition,
+    Create(0, IDF_FRAME, wxString(__title.c_str(),wxConvUTF8), 
+           wxDefaultPosition,
            wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 
            // wxCAPTION | wxSYSTEM_MENU | 
@@ -527,6 +529,10 @@ bool WxsdlWriter::open(yarp::os::Searchable & config) {
     int height = config.check("h",
                               Value(128),
                               "height of viewer").asInt();
+    __title = config.check("title",
+                           Value("yarpview"),
+                           "title of viewer").asString();
+
     __width = width;
     __height = height;
     start();
