@@ -12,6 +12,7 @@
 
 #include <yarp/dev/ServerFrameGrabber.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Semaphore.h>
 
 
 namespace yarp{
@@ -35,19 +36,22 @@ public:
     /**
      * Constructor.
      */
-    RemoteFrameGrabber() {
+    RemoteFrameGrabber() : mutex(1) {
         lastHeight = 0;
         lastWidth = 0;
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
         
+        mutex.wait();
         if (reader.read(true)!=NULL) {
             image = *(reader.lastRead());
             lastHeight = image.height();
             lastWidth = image.width();
+            mutex.post();
             return true;
         }
+        mutex.post();
         return false;
     }
 
@@ -90,7 +94,9 @@ public:
     }
 
     virtual bool close() {
-        return true;;
+        port.close();
+        mutex.wait();
+        return true;
     }
 
     virtual bool setBrightness(double v) {
@@ -133,6 +139,7 @@ private:
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
     yarp::os::ConstString remote;
     yarp::os::ConstString local;
+    yarp::os::Semaphore mutex;
     int lastHeight;
     int lastWidth;
 

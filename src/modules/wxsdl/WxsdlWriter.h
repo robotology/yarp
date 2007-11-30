@@ -22,6 +22,7 @@ namespace yarp {
 }
 
 #include <yarp/dev/AudioVisualInterfaces.h>
+#include <yarp/dev/ServiceInterfaces.h>
 #include <yarp/dev/DeviceDriver.h>
 
 /**
@@ -31,6 +32,7 @@ namespace yarp {
  *
  */
 class yarp::dev::WxsdlWriter : public IFrameWriterImage, 
+            public IService,
             public DeviceDriver, public yarp::os::Thread
 {
 public:
@@ -46,6 +48,10 @@ public:
     virtual bool putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image);
 
     virtual void run();
+
+    virtual bool updateService();
+    
+    virtual bool stopService();
 
 private:
     bool active;

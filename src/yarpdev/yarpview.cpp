@@ -23,53 +23,67 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
+
+class Monitor : public Thread {
+public:
+    IService *service;
+    PolyDriver *closer;
+
+    virtual void run() {
+        bool ok = true;
+        while (ok) {
+            ok = service->updateService();
+            if (!ok) {
+                printf("Monitor alerted of shutdown\n");
+                closer->close();
+            } 
+        }
+    }
+};
+
+
 int main(int argc, char *argv[]) {
     Network yarp;
 
     PolyDriver source, sink;
 
 
-    // initial test configuration - port to ffmpeg
-#if 0
-    Property pSource;
-    pSource.put("device","remote_grabber");
-    pSource.put("local","/foo");
-    source.open(pSource);
+    Property input;
+    input.fromCommand(argc,argv);
 
-    Property pSink;
-    pSink.put("device","ffmpeg_writer");
-    pSink.put("out","test.mpg");
-    pSink.put("framerate",25);
-    sink.open(pSink);
-#endif
+    ConstString portName = input.check("port",
+                                       Value("/yarpview"),
+                                       "name of port").asString();
+    int width = input.check("w",
+                            Value(128),
+                            "width of viewer").asInt();
+    int height = input.check("h",
+                             Value(128),
+                             "height of viewer").asInt();
 
-
-    // second test configuration - test_grabber to wxsdl
-#if 0
-    Property pSource;
-    pSource.put("device","test_grabber");
-    source.open(pSource);
-
-    Property pSink;
-    pSink.put("device","wxsdl");
-    sink.open(pSink);
-#endif
-
+    // common shortcut
+    if (argc==2) {
+        portName = argv[1];
+    }
 
     // actual useful configuration - port to wxsdl
     Property pSource;
     pSource.put("device","remote_grabber");
-    pSource.put("local","/foo");
+    pSource.put("local",portName.c_str());
     source.open(pSource);
 
     Property pSink;
     pSink.put("device","wxsdl");
+    pSink.put("width",width);
+    pSink.put("height",height);
     sink.open(pSink);
 
     IFrameGrabberImage *iSource;
     source.view(iSource);
     IFrameWriterImage *iSink;
     sink.view(iSink);
+    IService *iThread;
+    sink.view(iThread);
 
     bool done = false;
 
@@ -83,6 +97,17 @@ int main(int argc, char *argv[]) {
         done = true;
     }
 
+    //Time::delay(1);
+    //Network::connect("/grabber","/foo");
+
+    Monitor monitor;
+    monitor.service = iThread;
+    monitor.closer = &source;
+    if (iThread!=NULL) {
+        printf("Starting monitor\n");
+        monitor.start();
+    }
+
     ImageOf<PixelRgb> image;
     while (!done) {
         bool ok = iSource->getImage(image);
@@ -93,6 +118,9 @@ int main(int argc, char *argv[]) {
             done = true;
         }
     }
+
+    printf("Stopping monitor\n");
+    monitor.stop();
 
     sink.close();
     source.close();

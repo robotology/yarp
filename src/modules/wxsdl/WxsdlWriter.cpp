@@ -64,6 +64,8 @@ static bool wxsdl_stopped = false;
 static bool wxsdl_drawing = false;
 static int wxsdl_post = 0;
 static bool wxsdl_framed = true;
+static int __width = 200;
+static int __height = 200;
 
 static Semaphore mutex(1), finished(0);
 
@@ -176,13 +178,6 @@ void SDLPanel::onPaint(wxPaintEvent &) {
     // can't draw if the screen doesn't exist yet
     if (screen) {
     
-        // lock the surface if necessary
-        if (SDL_MUSTLOCK(screen)) {
-            if (SDL_LockSurface(screen) < 0) {
-                done = true;
-            }
-        }
-    
         if (!done) {
             // create a bitmap from our pixel data
             wxImage img(screen->w, screen->h, 
@@ -195,16 +190,10 @@ void SDLPanel::onPaint(wxPaintEvent &) {
 
             wxBitmap bmp(img);
                          
-            
-            // unlock the screen
-            if (SDL_MUSTLOCK(screen)) {
-                SDL_UnlockSurface(screen);
-            }
-            
             // paint the screen
             wxBufferedPaintDC dc(this, bmp);
         }
-    }
+    } 
 
     mutex.post();
 
@@ -236,13 +225,6 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
 
     bool done = false;
 
-    // Lock surface if needed
-    if (SDL_MUSTLOCK(screen)) {
-        if (SDL_LockSurface(screen) < 0) {
-            done = true;
-        }
-    }
-    
     if (!done) {
         for (int y = 0; y < hscreen; y++) {
             for (int x = 0; x < wscreen; x++) {
@@ -270,15 +252,15 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
             }
         }
         
-        // Unlock if needed
-        if (SDL_MUSTLOCK(screen)) {
-            SDL_UnlockSurface(screen);
-        }
-
         mutex.post();
+
+        wxMutexGuiEnter();
+        wxPaintEvent paintEv;
+        wxPostEvent(this,paintEv);
+        wxMutexGuiLeave();
         
         // refresh the panel
-        Refresh();
+        //Refresh();
         //Update();
     } else {
 
@@ -475,7 +457,7 @@ public:
 bool SDLApp::OnInit() {
     // create the SDLFrame
     frame = new SDLFrame;
-    frame->SetClientSize(200, 200);
+    frame->SetClientSize(__width, __height);
     frame->Centre();
     frame->Show();
     
@@ -539,7 +521,14 @@ void WxsdlWriter::run() {
 }
 
 bool WxsdlWriter::open(yarp::os::Searchable & config) {
-
+    int width = config.check("w",
+                             Value(128),
+                             "width of viewer").asInt();
+    int height = config.check("h",
+                              Value(128),
+                              "height of viewer").asInt();
+    __width = width;
+    __height = height;
     start();
     return true;
 }
@@ -592,6 +581,17 @@ bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
     mutex.post();
 
     return result;
+}
+
+
+bool WxsdlWriter::updateService() {
+    // could be a lot smarter here...
+    Time::delay(1);
+    return !wxsdl_stopped;
+}
+    
+bool WxsdlWriter::stopService() {
+    return close();
 }
 
 
