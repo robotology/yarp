@@ -358,7 +358,7 @@ IF (COMPILING_ALL_YARP)
    SET(postfix dev)
    AUX_SOURCE_DIRECTORY(harness harnesscode)
    ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
-   TARGET_LINK_LIBRARIES(harness_${postfix} YARP_dev YARP_sig YARP_OS ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS})
+   TARGET_LINK_LIBRARIES(harness_${postfix}  ${YARP_dev_EXT_LIBS} YARP_dev ${YARP_EXTMOD_TARGETS}  YARP_sig YARP_OS ${ACE_LINK_FLAGS})
    GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
    
   # add in standard tests
