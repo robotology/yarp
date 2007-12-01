@@ -1,13 +1,13 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale
+ * Copyright (C) 2007 Lorenzo Natale and Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
 //
-// $Id: ImageFile.h,v 1.11 2006-11-10 10:44:44 eshuy Exp $
+// $Id: ImageFile.h,v 1.12 2007-12-01 18:34:12 eshuy Exp $
 //
 //
 
@@ -39,6 +39,7 @@ namespace yarp {
             // PPM/PGM format
             bool read(ImageOf<PixelRgb>& dest, const char *src);
             bool read(ImageOf<PixelBgr>& dest, const char *src);
+            bool read(ImageOf<PixelRgba>& dest, const char *src);
             bool read(ImageOf<PixelMono>& dest, const char *src);
 
             // plain text format
@@ -47,6 +48,7 @@ namespace yarp {
             // PPM/PGM format
             bool write(const ImageOf<PixelRgb>& src, const char *dest);
             bool write(const ImageOf<PixelBgr>& src, const char *dest);
+            bool write(const ImageOf<PixelRgba>& src, const char *dest);
             bool write(const ImageOf<PixelMono>& src, const char *dest);
 
             // plain text format

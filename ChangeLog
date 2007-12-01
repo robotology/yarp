@@ -1,3 +1,8 @@
+2007-12-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/include/yarp/sig/ImageFile.h: read/write
+	to ImageRgba (but no A channel in ppm format).
+
 2007-11-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCore.cpp: fixed harmless race condition

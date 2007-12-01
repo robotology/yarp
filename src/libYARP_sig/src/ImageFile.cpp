@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: ImageFile.cpp,v 1.19 2007-01-16 18:08:35 eshuy Exp $
+/// $Id: ImageFile.cpp,v 1.20 2007-12-01 18:34:12 eshuy Exp $
 ///
 ///
 
@@ -388,6 +388,16 @@ bool file::read(ImageOf<PixelBgr> & dest, const char *src)
     return ImageReadBGR(dest,src);
 }
 
+bool file::read(ImageOf<PixelRgba> & dest, const char *src)
+{
+	ImageOf<PixelRgb> img2;
+    bool ok = ImageReadRGB(img2,src);
+    if (ok) {
+        dest.copy(img2);
+    }
+    return ok;
+}
+
 bool file::write(const ImageOf<PixelRgb> & src, const char *dest)
 {
     return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(src), dest);
@@ -396,6 +406,13 @@ bool file::write(const ImageOf<PixelRgb> & src, const char *dest)
 bool file::write(const ImageOf<PixelBgr> & src, const char *dest)
 {
     return ImageWriteBGR(const_cast<ImageOf<PixelBgr> &>(src), dest);
+}
+
+bool file::write(const ImageOf<PixelRgba> & src, const char *dest)
+{
+	ImageOf<PixelRgb> img2;
+	img2.copy(src);
+    return ImageWriteRGB(const_cast<ImageOf<PixelRgb> &>(img2), dest);
 }
 
 bool file::read(ImageOf<PixelMono> & dest, const char *src)
