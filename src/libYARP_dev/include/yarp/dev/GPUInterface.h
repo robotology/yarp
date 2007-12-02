@@ -29,6 +29,16 @@ public:
     virtual ~IGPUDevice() {}
 
     /**
+     * It returns the current workspace's width
+     * @return width of current workspace
+     */
+    virtual int width() = 0;
+    /**
+     * It returns the current workspace's height
+     * @return height of current workspace
+     */
+    virtual int height() = 0;
+    /**
      * It changes the dimensions of the current working space (the texture used for communication with the GPU).
      * @param width the new width
      * @param height the new height

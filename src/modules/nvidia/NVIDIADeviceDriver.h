@@ -45,6 +45,14 @@ public:
         return true; // easy
     }
 
+    virtual int width() {
+      return w;
+    }
+
+    virtual int height() {
+      return h;
+    }
+
     virtual void changebpp(int bytespp) {
         if(bytespp==1) {
             oglformat = GL_LUMINANCE;
