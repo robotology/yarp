@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
     ImageOf<PixelRgb> out=img;
 
 
-    // use YARP to create and configure an instance of NVIDIAGPU
+    // use YARP to create and configure an instance of CUDAGPU
     Property config;
     // no arguments, use a default
     char str[80];
