@@ -66,7 +66,10 @@ static int wxsdl_post = 0;
 static bool wxsdl_framed = true;
 static int __width = 200;
 static int __height = 200;
+static int __x = wxDefaultPosition.x;
+static int __y = wxDefaultPosition.y;
 static ConstString __title = "yarpview!";
+static ConstString __clicker = "";
 
 static Semaphore mutex(1), finished(0);
 
@@ -77,8 +80,12 @@ class SDLPanel : public wxPanel {
 private:
     SDL_Surface *screen;
     int wscreen, hscreen;
+    int wwin, hwin;
     //Semaphore mutex;
     bool stopped;
+    BufferedPort<Bottle> clicks;
+    bool clicking;
+    int wshow, hshow;
 
     /**
      * Called to paint the panel.
@@ -95,6 +102,9 @@ private:
      */
     void onIdle(wxIdleEvent &);
     
+
+    void onClick(wxMouseEvent & event);
+
     /**
      * Creates the SDL_Surface used by this SDLPanel.
      */
@@ -135,12 +145,19 @@ BEGIN_EVENT_TABLE(SDLPanel, wxPanel)
     EVT_PAINT(SDLPanel::onPaint)
     EVT_ERASE_BACKGROUND(SDLPanel::onEraseBackground)
     EVT_IDLE(SDLPanel::onIdle)
+    EVT_LEFT_DOWN(SDLPanel::onClick)
 END_EVENT_TABLE()
 
 SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0) {
 
     wscreen = hscreen = 0;
     stopped = false;
+    clicking = false;
+
+    if (__clicker != "") {
+        clicks.open(__clicker);
+        clicking = true;
+    }
 
     /*
     // ensure the size of the wxPanel
@@ -153,10 +170,18 @@ SDLPanel::SDLPanel(wxWindow *parent) : wxPanel(parent, IDP_PANEL), screen(0) {
 }
 
 SDLPanel::~SDLPanel() {
+    if (clicking) {
+        clicks.close();
+    }
     wxsdl_stopped = true;
-    while (wxsdl_drawing) {
+    int ct = 10;
+    while (wxsdl_drawing&&ct>0) {
         printf("sdl panel dying\n");
         Time::delay(0.1);
+        ct--;
+    }
+    if (ct==0) {
+        printf("Huh, that was unusually long...\n");
     }
 
     mutex.wait();
@@ -186,6 +211,8 @@ void SDLPanel::onPaint(wxPaintEvent &) {
 
             int width, height;
             GetClientSize(&width, &height);
+            wwin = width;
+            hwin = height;
 
             img.Rescale(width,height);
 
@@ -207,11 +234,40 @@ void SDLPanel::onIdle(wxIdleEvent &) {
 }
 
 
+void SDLPanel::onClick(wxMouseEvent & event) {
+    if (clicking) {
+        mutex.wait();
+        int cx = event.m_x;
+        int cy = event.m_y;
+        if (wwin!=wshow && wwin!=0) {
+            cx = (int)(cx*(((double)wshow)/wwin));
+        }
+        if (hwin!=hshow && hwin!=0) {
+            cy = (int)(cy*(((double)hshow)/hwin));
+        }
+        mutex.post();
+        /*
+        printf("got clicked %d %d / %d %d / %d %d\n", cx, cy,
+               wwin, hwin,
+               wshow, hshow);
+        */
+        Bottle& bot = clicks.prepare();
+        bot.clear();
+        bot.addInt(cx);
+        bot.addInt(cy);
+        clicks.write();
+    }
+    return;
+}
+
+
 void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
     //printf("low level put image\n");
 
 
     mutex.wait();
+    wshow = image.width();
+    hshow = image.height();
 
     if (stopped||wxsdl_stopped) {
         mutex.post();
@@ -372,8 +428,9 @@ END_EVENT_TABLE()
 
 SDLFrame::SDLFrame() {
     // Create the SDLFrame
+    //printf("position %d %d\n", __x, __y);
     Create(0, IDF_FRAME, wxString(__title.c_str(),wxConvUTF8), 
-           wxDefaultPosition,
+           wxPoint(__x,__y),
            wxDefaultSize, wxDEFAULT_FRAME_STYLE);
 
            // wxCAPTION | wxSYSTEM_MENU | 
@@ -404,7 +461,7 @@ SDLFrame::SDLFrame() {
 }
 
 void SDLFrame::onHelpAbout(wxCommandEvent &) {
-    wxMessageBox(wxT("WxsdlWriter is based on the wx-sdl tutorial\nCopyright (C) 2005,2007 John Ratliff"),
+    wxMessageBox(wxT("WxsdlWriter is based on the wx-sdl tutorial\nCopyright (C) 2005,2007 John Ratliff\nAdaptations to YARP are (C) 2007 Paul Fitzpatrick\nReleased under GPLv2"),
                  wxT("about yarpview"), wxOK | wxICON_INFORMATION);
 }
 
@@ -460,7 +517,7 @@ bool SDLApp::OnInit() {
     // create the SDLFrame
     frame = new SDLFrame;
     frame->SetClientSize(__width, __height);
-    frame->Centre();
+    //frame->Centre();
     frame->Show();
     
     // Our SDLFrame is the Top Window
@@ -490,8 +547,6 @@ int SDLApp::OnRun() {
 }
 
 int SDLApp::OnExit() {
-    int result = 0;
-
     wxsdlStop();
     printf("standard exit\n");
     return wxApp::OnExit();
@@ -526,12 +581,45 @@ bool WxsdlWriter::open(yarp::os::Searchable & config) {
     int width = config.check("w",
                              Value(128),
                              "width of viewer").asInt();
+    if (!config.check("w")) {
+        width = config.check("width",
+                             Value(128),
+                             "width of viewer").asInt();
+    }
     int height = config.check("h",
                               Value(128),
                               "height of viewer").asInt();
+    if (!config.check("h")) {
+        height = config.check("height",
+                              Value(128),
+                              "height of viewer").asInt();
+    }
     __title = config.check("title",
                            Value("yarpview"),
                            "title of viewer").asString();
+    if (!config.check("title")) {
+        __title = config.check("name",
+                               Value("yarpview"),
+                               "titile of viewer").asString();
+    }
+
+    if (config.check("x")) {
+        __x = config.check("x",
+                           Value(0),
+                           "x coordinate of viewer").asInt();
+    }
+
+    if (config.check("y")) {
+        __y = config.check("y",
+                           Value(0),
+                           "y coordinate of viewer").asInt();
+    }
+
+    if (config.check("out")) {
+        __clicker = config.check("out",
+                                 Value(""),
+                                 "port name for clicks").asString();
+    }
 
     __width = width;
     __height = height;

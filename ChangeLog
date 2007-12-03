@@ -1,3 +1,12 @@
+2007-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpdev/yarpview.cpp: now can do everything the GTK+ viewer
+	can do, via the wxsdl module.
+
+	* src/modules/wxsdl/WxsdlWriter.cpp: replicate all the documented
+	flags of the GTK+ viewer: name, width, height, x, y, and out (port 
+	for clicks)
+
 2007-12-02  Giacomo Spigler  <spiglerg@gmail.com>
 	* /modules/cuda, /modules/nvidia, /libYARP_dev/include/yarp/dev/GPUInterface.h : Added width() and height() methods to GPU objects, in order to be able to get current working space's dimensions.
 

@@ -54,12 +54,26 @@ int main(int argc, char *argv[]) {
     ConstString portName = input.check("name",
                                        Value("/yarpview"),
                                        "name of port").asString();
+
+    /*
     int width = input.check("w",
                             Value(128),
                             "width of viewer").asInt();
     int height = input.check("h",
                              Value(128),
                              "height of viewer").asInt();
+
+    if (!input.check("w")) {
+        width = input.check("width",
+                             Value(128),
+                             "width of viewer").asInt();
+    }
+    if (!input.check("h")) {
+        height = input.check("height",
+                              Value(128),
+                              "height of viewer").asInt();
+    }
+    */
 
     // common shortcut
     if (argc==2) {
@@ -72,10 +86,10 @@ int main(int argc, char *argv[]) {
     pSource.put("local",portName.c_str());
     source.open(pSource);
 
-    Property pSink;
+    Property pSink = input;
     pSink.put("device","wxsdl");
-    pSink.put("w",width);
-    pSink.put("h",height);
+    //pSink.put("w",width);
+    //pSink.put("h",height);
     pSink.put("title",portName.c_str());
     sink.open(pSink);
 
