@@ -1,3 +1,9 @@
+2007-12-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/include/yarp/sig/Image.h: propagate origin
+	top-left or bottom-left flag, for better round-tripping with
+	OpenCV.
+
 2007-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpdev/yarpview.cpp: now can do everything the GTK+ viewer

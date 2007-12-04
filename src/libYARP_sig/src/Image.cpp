@@ -74,9 +74,11 @@ protected:
     void _free_data (void);
   
     void _make_independent(); 
-    void _set_ipl_header(int x, int y, int pixel_type, int quantum = 0);
+    void _set_ipl_header(int x, int y, int pixel_type, int quantum,
+                         bool topIsLow);
     void _free_ipl_header();
-    void _alloc_complete(int x, int y, int pixel_type, int quantum = 0);
+    void _alloc_complete(int x, int y, int pixel_type, int quantum,
+                         bool topIsLow);
     void _free_complete();
   
   
@@ -102,16 +104,16 @@ public:
     }
 
     void resize(int x, int y, int pixel_type, 
-                int pixel_size, int quantum);
+                int pixel_size, int quantum, bool topIsLow);
 
     void _alloc_complete_extern(void *buf, int x, int y, int pixel_type,
-                                int quantum);
+                                int quantum, bool topIsLow);
 
 };
 
 
 void ImageStorage::resize(int x, int y, int pixel_type, 
-                          int pixel_size, int quantum) {
+                          int pixel_size, int quantum, bool topIsLow) {
     int need_recreation = 1;
     /*
       if (pImage != NULL) {
@@ -134,7 +136,7 @@ void ImageStorage::resize(int x, int y, int pixel_type,
     if (need_recreation) {
         _free_complete();
         DBGPF1 ACE_OS::printf("HIT recreation for %ld %ld: %d %d %d\n", (long int) this, (long int) pImage, x, y, pixel_type);
-        _alloc_complete (x, y, pixel_type, quantum);
+        _alloc_complete (x, y, pixel_type, quantum, topIsLow);
     }
 }
 
@@ -278,11 +280,12 @@ void ImageStorage::_free_ipl_header()
 }
 
 
-void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum)
+void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum,
+                                   bool topIsLow)
 {
 	_make_independent();
 	_free_complete();
-	_set_ipl_header(x, y, pixel_type, quantum);
+	_set_ipl_header(x, y, pixel_type, quantum, topIsLow);
 	_alloc ();
 	_alloc_data ();
 }
@@ -296,11 +299,13 @@ void ImageStorage::_make_independent()
 }
 
 
-void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
+void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
+                                   bool topIsLow)
 {
     if (quantum==0) {
         quantum = IPL_ALIGN_QWORD;
     }
+    int origin = topIsLow?IPL_ORIGIN_TL:IPL_ORIGIN_BL;
     int implemented_yet = 1;
 	// used to allocate the ipl header.
 	switch (pixel_type)
@@ -313,7 +318,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -333,7 +338,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "RGB",
                                           "RGB",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -351,7 +356,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "RGBA",
                                           "RGBA",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -369,7 +374,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "RGB",
                                           "RGB",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -387,7 +392,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "HSV",
                                           "HSV",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -405,7 +410,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "RGB",
                                           "BGR",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -423,7 +428,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -445,7 +450,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,
-                                          IPL_ORIGIN_TL,
+                                          origin,
                                           quantum,
                                           x,
                                           y,
@@ -463,7 +468,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "RGB",
                                           "RGB",
                                           IPL_DATA_ORDER_PIXEL,	 
-                                          IPL_ORIGIN_TL,			
+                                          origin,			
                                           quantum,		
                                           x,
                                           y,
@@ -486,7 +491,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,
-                                          IPL_ORIGIN_TL,
+                                          origin,
                                           quantum,
                                           x,
                                           y,
@@ -510,7 +515,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,
-                                          IPL_ORIGIN_TL,
+                                          origin,
                                           quantum,
                                           x,
                                           y,
@@ -528,7 +533,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,
-                                          IPL_ORIGIN_TL,
+                                          origin,
                                           quantum,
                                           x,
                                           y,
@@ -549,7 +554,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum)
 	this->quantum = quantum;
 }
 
-void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum)
+void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
 {
     if (quantum==0) {
         quantum = 1;
@@ -558,7 +563,7 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
 
 	_make_independent();
 	_free_complete();
-	_set_ipl_header(x, y, pixel_type, quantum);
+	_set_ipl_header(x, y, pixel_type, quantum, topIsLow);
 	Data = NULL;
 	_alloc_extern (buf);
 	_alloc_data ();
@@ -591,6 +596,7 @@ void Image::initialize() {
     imgPixelSize = imgRowSize = 0;
     imgPixelCode = 0;
     imgQuantum = 0;
+    topIsLow = true;
     implementation = new ImageStorage(*this);
     ACE_ASSERT(implementation!=NULL);
 }
@@ -643,7 +649,8 @@ void Image::resize(int imgWidth, int imgHeight) {
         ((ImageStorage*)implementation)->resize(imgWidth,imgHeight,
                                                 imgPixelCode,
                                                 imgPixelSize,
-                                                imgQuantum);
+                                                imgQuantum,
+                                                topIsLow);
         synchronize();
     }
 }
@@ -974,7 +981,8 @@ void Image::setExternal(void *data, int imgWidth, int imgHeight) {
                                                             imgWidth,
                                                             imgHeight,
                                                             getPixelCode(),
-                                                            imgQuantum);
+                                                            imgQuantum,
+                                                            topIsLow);
     synchronize();
 }
 

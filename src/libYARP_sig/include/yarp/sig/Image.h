@@ -233,17 +233,37 @@ public:
 
     /**
      * Read image from a connection.
-     * return true iff image was read correctly
+     * @return true iff image was read correctly
      */
     virtual bool read(ConnectionReader& connection);
 
     /**
      * Write image to a connection.
-     * return true iff image was written correctly
+     * @return true iff image was written correctly
      */
     virtual bool write(ConnectionWriter& connection);
 
     void setQuantum(int imgQuantum);
+
+    /**
+     * @return true if image has origin at top left (default); in other
+     * words when the y index is low, we are near the top of the image.
+     */
+    bool topIsLowIndex() {
+        return topIsLow;
+    }
+
+    /**
+     * control whether image has origin at top left (default) or bottom
+     * left.  
+     *
+     * @param flag true if image has origin at top left (default),
+     * false if image has origin at bottom left.
+     *
+     */
+    void setTopIsLowIndex(bool flag) {
+        topIsLow = flag;
+    }
 
 protected:
 
@@ -253,7 +273,10 @@ protected:
 
 
 private:
+
     int imgWidth, imgHeight, imgPixelSize, imgRowSize, imgPixelCode, imgQuantum;
+    bool topIsLow;
+
     char **data;
     void *implementation;
 
