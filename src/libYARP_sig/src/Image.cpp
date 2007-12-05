@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta
+ * Copyright (C) 2007 Paul Fitzpatrick, Giorgio Metta
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -117,20 +117,7 @@ public:
 void ImageStorage::resize(int x, int y, int pixel_type, 
                           int pixel_size, int quantum, bool topIsLow) {
     int need_recreation = 1;
-    /*
-      if (pImage != NULL) {
-      if (x == pImage->width && y == pImage->height) {
-      if (pImage->imageSize == row_size * y * pixel_size &&
-	  pImage->imageData != NULL && Data != NULL)
-      {
-	  need_recreation = 0;
-      }
-      }
-      }
-    */
 
-    //YARP_ASSERT(quantum==0 || quantum==YARP_IMAGE_ALIGN);
-    //this->quantum = quantum = YARP_IMAGE_ALIGN;
     if (quantum==0) {
         quantum = YARP_IMAGE_ALIGN;
     }
@@ -174,7 +161,7 @@ void ImageStorage::_alloc_extern (void *buf)
 
     //iplAllocateImage (pImage, 0, 0);
     pImage->imageData = (char*)buf;
-    // HIT probably need to do more for real IPL
+    // probably need to do more for real IPL
   
     //iplSetBorderMode (pImage, IPL_BORDER_CONSTANT, IPL_SIDE_ALL, 0);
 }
@@ -186,17 +173,6 @@ void ImageStorage::_alloc_data (void)
     ACE_ASSERT (pImage != NULL);
 
     ACE_ASSERT(Data==NULL);
-    /*
-      if (Data != NULL)
-      {
-      DBGPF1 printf("HIT Deleting Data\n"), fflush(stdout);
-      //delete[] Data; //HIT2
-      free(Data);
-      Data = NULL;
-      }
-    */
-
-    //int hh = pImage->height * sizeof(char *);
 
     char **ptr = new char *[pImage->height];
 
@@ -206,8 +182,6 @@ void ImageStorage::_alloc_data (void)
 
     ACE_ASSERT (pImage->imageData != NULL);
 
-    //int nPlanes = pImage->nChannels;
-    //int width = pImage->width;
     int height = pImage->height;
 
     char * DataArea = pImage->imageData;
@@ -226,14 +200,11 @@ void ImageStorage::_alloc_data (void)
 
 void ImageStorage::_free (void)
 {
-    //	ACE_ASSERT (pImage != NULL);
     if (pImage != NULL)
         if (pImage->imageData != NULL)
             {
-                //cout << "HIT maybe deleting ipl image" << endl;
                 if (is_owner)
                     {
-                        DBGPF1 cout << "HIT really truly deleting ipl image" << endl;
                         iplDeallocateImage (pImage);
                         if (Data!=NULL)
                             {
@@ -257,14 +228,6 @@ void ImageStorage::_free (void)
 void ImageStorage::_free_data (void)
 {
     ACE_ASSERT(Data==NULL); // Now always free Data at same time
-    // as image buffer, for correct refcounting
-    /*
-      if (Data != NULL)
-      {
-      delete[] Data;
-      }
-      Data = NULL;
-    */
 }
 
 
@@ -300,7 +263,6 @@ void ImageStorage::_alloc_complete(int x, int y, int pixel_type, int quantum,
 
 void ImageStorage::_make_independent()
 {
-	// needs to be filled out once references are permitted -paulfitz
 	// actually I think this isn't really needed -paulfitz
 }
 
@@ -551,7 +513,6 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
 
         default:
             // unknown pixel type. Should revert to a non-IPL mode... how?
-            // LATER: implement this.
             ACE_ASSERT (implemented_yet == 0);
             break;
         }
@@ -580,7 +541,6 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
 
 
 
-// LATER: implement for LINUX.
 int ImageStorage::_pad_bytes (int linesize, int align) const
 {
     return PAD_BYTES (linesize, align);
@@ -716,20 +676,10 @@ int Image::getRawImageSize() const {
 }
 
 void *Image::getIplImage() {
-    // this parameter doesn't seem to get set by YARP.
-    // this set should be moved back to the point of creation,
-    // but I am not sure where that is.
-    ((ImageStorage*)implementation)->pImage->origin = 0;
-
     return ((ImageStorage*)implementation)->pImage;
 }
 
 const void *Image::getIplImage() const {
-    // this parameter doesn't seem to get set by YARP.
-    // this set should be moved back to the point of creation,
-    // but I am not sure where that is.
-    ((ImageStorage*)implementation)->pImage->origin = 0;
-
     return ((const ImageStorage*)implementation)->pImage;
 }
 
@@ -777,14 +727,6 @@ void Image::wrapIplImage(void *iplImage) {
 
 
 
-/*
-  void Image::wrapRawImage(void *buf, int imgWidth, int imgHeight) {
-  fprintf(stderr,"YARP2 version of Image class is not yet implemented\n");
-  }
-*/
-
-
-
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
@@ -793,20 +735,6 @@ class YARPImagePortContentHeader
 {
 public:
 
-    /*
-    // YARP1 codes
-    yarp::os::NetInt32 len;
-    yarp::os::NetInt32 w;
-    yarp::os::NetInt32 id;
-    yarp::os::NetInt32 h;
-    yarp::os::NetInt32 depth;
-    yarp::os::NetInt32 ext1;
-    yarp::os::NetInt32 ext2;
-    //double timestamp;
-    */
-
-    // YARP2 codes
-    //yarp::os::NetInt32 totalLen; // not included any more - redundant
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
     yarp::os::NetInt32 paramNameTag;
