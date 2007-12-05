@@ -1,6 +1,13 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-// based on cvcap_vfw.cpp from the OpenCV library.
-// changes under the GPL. (c) 2007 Paul Fitzpatrick.
+/*
+ * Copyright (C) 2007 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+// based on material from cvcap_vfw.cpp from the OpenCV library.
+// changes are under the GPL.  Statement for original material follows.
 
 
 /*M///////////////////////////////////////////////////////////////////////////////////////
@@ -45,30 +52,28 @@
 //M*/
 
 
+#include <VfwGrabber.h>
+using namespace yarp::dev;
 
 #include <stdio.h>
 
 #include <vfw.h>
-#include <wvfw.h>
-#include <ovfw.h>
-#include <mvfw.h>
 
-#define True 1
+// MINGW headers are incomplete at time of writing
+#ifdef __MINGW__
+#include <vfw_extra_from_wine.h>
+#include <vfw_extra_from_australia.h>
+#include <vfw_extra_from_paulfitz.h>
+#ifndef True
+#define True TRUE
+#endif
+#endif
 
 enum {
-  CV_CAP_PROP_FRAME_HEIGHT,
-  CV_CAP_PROP_FRAME_WIDTH,
-  CV_CAP_PROP_FOURCC,
+    CV_CAP_PROP_FRAME_HEIGHT,
+    CV_CAP_PROP_FRAME_WIDTH,
+    CV_CAP_PROP_FOURCC,
 };
-
-/*
-class IplImage {
-public:
-  int width, height;
-  void *imageData;
-};
-*/
-
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageFile.h>
@@ -78,12 +83,12 @@ typedef yarp::sig::ImageOf<yarp::sig::PixelBgr> Image;
 
 typedef struct CvCaptureCAM_VFW
 {
-  CAPDRIVERCAPS caps;
-  HWND   capWnd;
-  VIDEOHDR* hdr;
-  DWORD  fourcc;
-  HIC    hic;
-  Image frame;
+    CAPDRIVERCAPS caps;
+    HWND   capWnd;
+    VIDEOHDR* hdr;
+    DWORD  fourcc;
+    HIC    hic;
+    Image frame;
 }
 CvCaptureCAM_VFW;
 
@@ -112,75 +117,74 @@ static int icvOpenCAM_VFW( CvCaptureCAM_VFW* capture, int wIndex )
         wIndex = 0;
 
     for( ; wIndex < 10; wIndex++ ) 
-    {
-        if( capGetDriverDescription( wIndex, szDeviceName, 
-            sizeof (szDeviceName), szDeviceVersion, 
-            sizeof (szDeviceVersion))) 
         {
-	  printf("Got something (%s)\n", szDeviceName);
-            hWndC = capCreateCaptureWindow ( "My Own Capture Window", 
-                WS_POPUP | WS_CHILD, 0, 0, 320, 240, 0, 0);
-            if( capDriverConnect (hWndC, wIndex))
-                break;
-            DestroyWindow( hWndC );
-            hWndC = 0;
+            if( capGetDriverDescription( wIndex, szDeviceName, 
+                                         sizeof (szDeviceName), szDeviceVersion, 
+                                         sizeof (szDeviceVersion))) 
+                {
+                    printf("Got something (%s)\n", szDeviceName);
+                    hWndC = capCreateCaptureWindow ( "My Own Capture Window", 
+                                                     WS_POPUP | WS_CHILD, 0, 0, 320, 240, 0, 0);
+                    if( capDriverConnect (hWndC, wIndex))
+                        break;
+                    DestroyWindow( hWndC );
+                    hWndC = 0;
+                }
         }
-    }
     
     capture->capWnd = 0;
     if( hWndC )
-    {
-      printf("got a window\n");
-        capture->capWnd = hWndC;
-        capture->hdr = 0;
-        capture->hic = 0;
-        capture->fourcc = (DWORD)-1;
+        {
+            printf("got a window\n");
+            capture->capWnd = hWndC;
+            capture->hdr = 0;
+            capture->hic = 0;
+            capture->fourcc = (DWORD)-1;
         
-        memset( &capture->caps, 0, sizeof(capture->caps));
-        capDriverGetCaps( hWndC, &capture->caps, sizeof(&capture->caps));
-        ::MoveWindow( hWndC, 0, 0, 320, 240, TRUE );
-        capSetUserData( hWndC, (size_t)capture );
-        capSetCallbackOnFrame( hWndC, FrameCallbackProc ); 
-        CAPTUREPARMS p;
-        capCaptureGetSetup(hWndC,&p,sizeof(CAPTUREPARMS));
-        p.dwRequestMicroSecPerFrame = 66667/2;
-        capCaptureSetSetup(hWndC,&p,sizeof(CAPTUREPARMS));
-        //capPreview( hWndC, 1 );
-        capPreviewScale(hWndC,FALSE);
-        capPreviewRate(hWndC,1);
-    }
+            memset( &capture->caps, 0, sizeof(capture->caps));
+            capDriverGetCaps( hWndC, &capture->caps, sizeof(&capture->caps));
+            ::MoveWindow( hWndC, 0, 0, 320, 240, TRUE );
+            capSetUserData( hWndC, (size_t)capture );
+            capSetCallbackOnFrame( hWndC, FrameCallbackProc ); 
+            CAPTUREPARMS p;
+            capCaptureGetSetup(hWndC,&p,sizeof(CAPTUREPARMS));
+            p.dwRequestMicroSecPerFrame = 66667/2;
+            capCaptureSetSetup(hWndC,&p,sizeof(CAPTUREPARMS));
+            //capPreview( hWndC, 1 );
+            capPreviewScale(hWndC,FALSE);
+            capPreviewRate(hWndC,1);
+        }
     return capture->capWnd != 0;
 }
 
 static  void icvCloseCAM_VFW( CvCaptureCAM_VFW* capture )
 {
     if( capture && capture->capWnd )
-    {
-        capSetCallbackOnFrame( capture->capWnd, NULL ); 
-        capDriverDisconnect( capture->capWnd );
-        DestroyWindow( capture->capWnd );
-        if( capture->hic )
         {
-            ICDecompressEnd( capture->hic );
-            ICClose( capture->hic );
-        }
+            capSetCallbackOnFrame( capture->capWnd, NULL ); 
+            capDriverDisconnect( capture->capWnd );
+            DestroyWindow( capture->capWnd );
+            if( capture->hic )
+                {
+                    ICDecompressEnd( capture->hic );
+                    ICClose( capture->hic );
+                }
 
-        capture->capWnd = 0;
-        capture->hic = 0;
-        capture->hdr = 0;
-        capture->fourcc = 0;
-        //memset( &capture->frame, 0, sizeof(capture->frame));
-    }
+            capture->capWnd = 0;
+            capture->hic = 0;
+            capture->hdr = 0;
+            capture->fourcc = 0;
+        }
 }
 
 
 static int icvGrabFrameCAM_VFW( CvCaptureCAM_VFW* capture )
 {
     if( capture->capWnd )
-    {
-        SendMessage( capture->capWnd, WM_CAP_GRAB_FRAME_NOSTOP, 0, 0 );
-        return 1;
-    }
+        {
+            SendMessage( capture->capWnd, WM_CAP_GRAB_FRAME_NOSTOP, 0, 0 );
+            return 1;
+        }
     return 0;
 }
 
@@ -201,78 +205,78 @@ static BITMAPINFOHEADER icvBitmapHeader( int width, int height, int bpp, int com
 
 static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
 {
-  bool done = false;
+    bool done = false;
     if( capture->capWnd )
-    {
-        BITMAPINFO vfmt;
-        memset( &vfmt, 0, sizeof(vfmt));
-        int sz = capGetVideoFormat( capture->capWnd, &vfmt, sizeof(vfmt));
-
-        if( capture->hdr && capture->hdr->lpData && sz != 0 )
         {
-            long code = ICERR_OK;
-            char* frame_data = (char*)capture->hdr->lpData;
+            BITMAPINFO vfmt;
+            memset( &vfmt, 0, sizeof(vfmt));
+            int sz = capGetVideoFormat( capture->capWnd, &vfmt, sizeof(vfmt));
 
-            if( vfmt.bmiHeader.biCompression != BI_RGB ||
-                vfmt.bmiHeader.biBitCount != 24 )
-            {
-	      printf("funky format\n");
-                BITMAPINFOHEADER& vfmt0 = vfmt.bmiHeader;
-                BITMAPINFOHEADER vfmt1 = icvBitmapHeader( vfmt0.biWidth, vfmt0.biHeight, 24 );
-                code = ICERR_ERROR;
-
-                if( capture->hic == 0 ||
-                    capture->fourcc != vfmt0.biCompression ||
-                    vfmt0.biWidth != capture->frame.width() ||
-                    vfmt0.biHeight != capture->frame.height() )
+            if( capture->hdr && capture->hdr->lpData && sz != 0 )
                 {
-                    if( capture->hic )
-                    {
-                        ICDecompressEnd( capture->hic );
-                        ICClose( capture->hic );
-                    }
-                    capture->hic = ICOpen( MAKEFOURCC('V','I','D','C'),
-                                            vfmt0.biCompression, ICMODE_DECOMPRESS );
-                    if( capture->hic &&
-                        ICDecompressBegin( capture->hic, &vfmt0, &vfmt1 ) == ICERR_OK )
-                    {
+                    long code = ICERR_OK;
+                    char* frame_data = (char*)capture->hdr->lpData;
 
-                        //capture->rgb_frame = cvCreateImage(
-			//  cvSize( vfmt0.biWidth, vfmt0.biHeight ), IPL_DEPTH_8U, 3 );
+                    if( vfmt.bmiHeader.biCompression != BI_RGB ||
+                        vfmt.bmiHeader.biBitCount != 24 )
+                        {
+                            printf("funky format\n");
+                            BITMAPINFOHEADER& vfmt0 = vfmt.bmiHeader;
+                            BITMAPINFOHEADER vfmt1 = icvBitmapHeader( vfmt0.biWidth, vfmt0.biHeight, 24 );
+                            code = ICERR_ERROR;
 
-			capture->frame.resize(vfmt0.biWidth, vfmt0.biHeight);
-                        capture->frame.setTopIsLowIndex(false);
+                            if( capture->hic == 0 ||
+                                capture->fourcc != vfmt0.biCompression ||
+                                vfmt0.biWidth != capture->frame.width() ||
+                                vfmt0.biHeight != capture->frame.height() )
+                                {
+                                    if( capture->hic )
+                                        {
+                                            ICDecompressEnd( capture->hic );
+                                            ICClose( capture->hic );
+                                        }
+                                    capture->hic = ICOpen( MAKEFOURCC('V','I','D','C'),
+                                                           vfmt0.biCompression, ICMODE_DECOMPRESS );
+                                    if( capture->hic &&
+                                        ICDecompressBegin( capture->hic, &vfmt0, &vfmt1 ) == ICERR_OK )
+                                        {
 
-                        code = ICDecompress( capture->hic, 0,
-                                             &vfmt0, capture->hdr->lpData,
-                                             &vfmt1, capture->frame.getRawImage() );
-			if (code == ICERR_OK) {
-			  done = true;
-			}
+                                            //capture->rgb_frame = cvCreateImage(
+                                            //  cvSize( vfmt0.biWidth, vfmt0.biHeight ), IPL_DEPTH_8U, 3 );
 
-                    }
-                }
-            }
+                                            capture->frame.resize(vfmt0.biWidth, vfmt0.biHeight);
+                                            capture->frame.setTopIsLowIndex(false);
+
+                                            code = ICDecompress( capture->hic, 0,
+                                                                 &vfmt0, capture->hdr->lpData,
+                                                                 &vfmt1, capture->frame.getRawImage() );
+                                            if (code == ICERR_OK) {
+                                                done = true;
+                                            }
+
+                                        }
+                                }
+                        }
         
-            if( code == ICERR_OK )
-            {
-	      printf("GOT IMAGE\n");
-	      /*
-	      cvInitImageHeader( &capture->frame,
-				 cvSize(vfmt.bmiHeader.biWidth,
-					vfmt.bmiHeader.biHeight),
-				 IPL_DEPTH_8U, 3, IPL_ORIGIN_BL, 4 );
-	      capture->frame.imageData = capture->frame.imageDataOrigin = frame_data;
-	      */
-	      if (!done) {
-		capture->frame.setExternal(frame_data,
-					   vfmt.bmiHeader.biWidth,
-					   vfmt.bmiHeader.biHeight);
-	      }
-	      return &capture->frame;
-            }
+                    if( code == ICERR_OK )
+                        {
+                            printf("GOT IMAGE\n");
+                            /*
+                              cvInitImageHeader( &capture->frame,
+                              cvSize(vfmt.bmiHeader.biWidth,
+                              vfmt.bmiHeader.biHeight),
+                              IPL_DEPTH_8U, 3, IPL_ORIGIN_BL, 4 );
+                              capture->frame.imageData = capture->frame.imageDataOrigin = frame_data;
+                            */
+                            if (!done) {
+                                capture->frame.setExternal(frame_data,
+                                                           vfmt.bmiHeader.biWidth,
+                                                           vfmt.bmiHeader.biHeight);
+                            }
+                            return &capture->frame;
+                        }
+                }
         }
-    }
 
     return 0;
 }
@@ -281,34 +285,66 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
 static double icvGetPropertyCAM_VFW( CvCaptureCAM_VFW* capture, int property_id )
 {
     switch( property_id )
-    {
-    case CV_CAP_PROP_FRAME_WIDTH:
-        return capture->frame.width();
-    case CV_CAP_PROP_FRAME_HEIGHT:
-        return capture->frame.height();
-    case CV_CAP_PROP_FOURCC:
-        return capture->fourcc;
-    }
+        {
+        case CV_CAP_PROP_FRAME_WIDTH:
+            return capture->frame.width();
+        case CV_CAP_PROP_FRAME_HEIGHT:
+            return capture->frame.height();
+        case CV_CAP_PROP_FOURCC:
+            return capture->fourcc;
+        }
     return 0;
 }
 
 
 
 int main() {
-  CvCaptureCAM_VFW state;
-  int result = icvOpenCAM_VFW(&state,0);
-  if (!result) {
-    printf("failed to find camera\n");
-    return 1;
-  }
-  for (int i=0; i<10; i++) {
-    icvGrabFrameCAM_VFW(&state);
-    Image *img = icvRetrieveFrameCAM_VFW(&state);
+    CvCaptureCAM_VFW state;
+    int result = icvOpenCAM_VFW(&state,0);
+    if (!result) {
+        printf("failed to find camera\n");
+        return 1;
+    }
+    for (int i=0; i<10; i++) {
+        icvGrabFrameCAM_VFW(&state);
+        Image *img = icvRetrieveFrameCAM_VFW(&state);
+        printf("image size %d %d\n", img->width(), img->height());
+        char fname[256];
+        sprintf(fname,"img%06d.ppm",i);
+        yarp::sig::file::write(*img,fname);
+    }
+    icvCloseCAM_VFW(&state);
+    return 0;
+}
+
+
+
+#define HELPER(x) (*((CvCaptureCAM_VFW *)(x)))
+
+bool VfwGrabber::open(yarp::os::Searchable& config) {
+    system_resource = new CvCaptureCAM_VFW;
+    if (system_resource!=NULL) {
+        int result = icvOpenCAM_VFW(&HELPER(system_resource),0);
+        if (!result) {
+            printf("failed to find camera\n");
+            close();
+        }
+    }
+    return system_resource!=NULL;
+}
+
+bool VfwGrabber::close() {
+    if (system_resource!=NULL) {
+        icvCloseCAM_VFW(&HELPER(system_resource));
+        delete &HELPER(system_resource);
+        system_resource = NULL;
+    }
+    return true;
+}
+
+bool VfwGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
+    icvGrabFrameCAM_VFW(&HELPER(system_resource));
+    Image *img = icvRetrieveFrameCAM_VFW(&HELPER(system_resource));
     printf("image size %d %d\n", img->width(), img->height());
-    char fname[256];
-    sprintf(fname,"img%06d.ppm",i);
-    yarp::sig::file::write(*img,fname);
-  }
-  icvCloseCAM_VFW(&state);
-  return 0;
+    return img->width()>0;
 }
