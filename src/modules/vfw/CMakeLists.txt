@@ -1,15 +1,16 @@
 
-PROJECT(test)
-
-SET(YARP_ADMIN $ENV{YARP_ADMIN})
-
-IF (NOT YARP_ADMIN)
-   MESSAGE(ERROR "this device is not ready to build yet")
-ENDIF (NOT YARP_ADMIN)
-
 FIND_PACKAGE(YARP REQUIRED)
 
-INCLUDE_DIRECTORIES(.)
+IF (WINDOWS OR MINGW)
 
-LINK_LIBRARIES(vfw32)
-ADD_EXECUTABLE(vfw_test VfwGrabber.cpp)
+  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  LINK_LIBRARIES(vfw32)
+  ADD_LIBRARY(vfw_grabber VfwGrabber.cpp)
+  LINK_LIBRARIES(vfw_grabber)
+  ADD_EXECUTABLE(vfw_test vfw_test.cpp)
+
+ELSE (WINDOWS OR MINGW)
+
+  MESSAGE(STATUS "not a platform we know to support video for windows")
+
+ENDIF (WINDOWS OR MINGW)

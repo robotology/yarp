@@ -70,7 +70,6 @@ using namespace yarp::dev;
 #endif
 
 #include <yarp/sig/Image.h>
-#include <yarp/sig/ImageFile.h>
 
 typedef yarp::sig::ImageOf<yarp::sig::PixelBgr> Image;
 
@@ -276,7 +275,7 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
 }
 
 
-
+/*
 int main() {
     CvCaptureCAM_VFW state;
     int result = icvOpenCAM_VFW(&state,0);
@@ -295,7 +294,7 @@ int main() {
     icvCloseCAM_VFW(&state);
     return 0;
 }
-
+*/
 
 
 #define HELPER(x) (*((CvCaptureCAM_VFW *)(x)))
@@ -325,5 +324,8 @@ bool VfwGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     icvGrabFrameCAM_VFW(&HELPER(system_resource));
     Image *img = icvRetrieveFrameCAM_VFW(&HELPER(system_resource));
     printf("image size %d %d\n", img->width(), img->height());
+    image.copy(*img);
+    _width = img->width();
+    _height = img->height();
     return img->width()>0;
 }
