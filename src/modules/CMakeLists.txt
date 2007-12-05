@@ -1,0 +1,19 @@
+
+PROJECT(YarpModules)
+
+MESSAGE(STATUS "This is an experimental way to compile devices")
+
+FIND_PACKAGE(YARP REQUIRED)
+
+BEGIN_DEVICE_LIBRARY(mydevices)
+
+#ADD_SUBDIRECTORY(cuda)
+ADD_SUBDIRECTORY(fakebot)
+#ADD_SUBDIRECTORY(nvidia)
+#ADD_SUBDIRECTORY(stage)
+ADD_SUBDIRECTORY(wxsdl)
+
+END_DEVICE_LIBRARY(mydevices)
+
+#_LINK_LIBRARIES(devices)
+#_ADD_EXECUTABLE(devvy bozo2.cpp)
