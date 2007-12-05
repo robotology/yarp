@@ -69,12 +69,6 @@ using namespace yarp::dev;
 #endif
 #endif
 
-enum {
-    CV_CAP_PROP_FRAME_HEIGHT,
-    CV_CAP_PROP_FRAME_WIDTH,
-    CV_CAP_PROP_FOURCC,
-};
-
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageFile.h>
 
@@ -278,21 +272,6 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
                 }
         }
 
-    return 0;
-}
-
-
-static double icvGetPropertyCAM_VFW( CvCaptureCAM_VFW* capture, int property_id )
-{
-    switch( property_id )
-        {
-        case CV_CAP_PROP_FRAME_WIDTH:
-            return capture->frame.width();
-        case CV_CAP_PROP_FRAME_HEIGHT:
-            return capture->frame.height();
-        case CV_CAP_PROP_FOURCC:
-            return capture->fourcc;
-        }
     return 0;
 }
 
