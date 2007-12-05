@@ -53,6 +53,7 @@ public:
     IplImage* pImage;
     char **Data;       // this is not IPL. it's char to maintain IPL compatibility  
     int quantum;
+    bool topIsLow;
 
 protected:
     Image& owner;
@@ -97,6 +98,7 @@ public:
         Data = NULL;
         is_owner = 1;
         quantum = 0;
+        topIsLow = true;
     }
 
     ~ImageStorage() {
@@ -212,7 +214,11 @@ void ImageStorage::_alloc_data (void)
     
     for (int r = 0; r < height; r++)
         {
-            Data[r] = DataArea;
+            if (topIsLow) {
+                Data[r] = DataArea;
+            } else {
+                Data[height-r-1] = DataArea;
+            }
             DataArea += pImage->widthStep;
         }
     DBGPF1 ACE_OS::printf("alloc_data4\n");
@@ -552,6 +558,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
 
 	type_id = pixel_type;
 	this->quantum = quantum;
+    this->topIsLow = topIsLow;
 }
 
 void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_type, int quantum, bool topIsLow)
@@ -560,6 +567,7 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
         quantum = 1;
     }
     this->quantum = quantum;
+    this->topIsLow = topIsLow;
 
 	_make_independent();
 	_free_complete();

@@ -1,3 +1,8 @@
+2007-12-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/Image.cpp (_alloc_data): implement 
+	inversion of row access for bottom-left origin
+
 2007-12-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/Image.h: propagate origin

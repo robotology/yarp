@@ -455,6 +455,41 @@ public:
         checkEqual(img2(4,2).r,10,"r level copied");
     }
 
+    void testOrigin() {
+        report(0,"checking origin...");
+
+        report(0, "testing external image...");
+        unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
+
+        {
+            for (int x=0; x<EXT_WIDTH; x++) {
+                for (int y=0; y<EXT_HEIGHT; y++) {
+                    buf[y][x] = 20;
+                }
+            }
+        }
+
+        ImageOf<PixelMono> img1;
+
+        img1.setTopIsLowIndex(false);
+        img1.setExternal(&buf[0][0],EXT_WIDTH,EXT_HEIGHT);
+
+        checkEqual(img1.width(),EXT_WIDTH,"width check");
+        checkEqual(img1.height(),EXT_HEIGHT,"height check");
+
+        int mismatch = 0;
+        for (int x=0; x<img1.width(); x++) {
+            for (int y=0; y<img1.height(); y++) {
+                img1.pixel(x,y) = 5;
+                if (buf[img1.height()-y-1][x]!=5) {
+                    mismatch++;
+                }
+            }
+        }
+        checkEqual(mismatch,0,"delta check");
+    }
+
+
     virtual void runTests() {
         testCreate();
         bool netMode = Network::setLocalMode(true);
@@ -473,6 +508,7 @@ public:
         testBlank();
         testRgba();
         testRgbInt();
+        testOrigin();
     }
 };
 
