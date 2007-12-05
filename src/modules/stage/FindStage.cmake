@@ -1,5 +1,4 @@
 
-
 ########################################################################
 ## check pkg-config for information, if available
 
@@ -20,6 +19,8 @@ ENDIF(PKGCONFIG_EXECUTABLE)
 
 SET(STAGE_LIBRARY "${STAGE_LINK_FLAGS}")
 SET(STAGE_INCLUDE_DIR "${STAGE_INCLUDE_DIR_GUESS}")
+
+MESSAGE(STATUS "Stage library: ${STAGE_LIBRARY}")
 
 ########################################################################
 ## finished - now just set up flags and complain to user if necessary
