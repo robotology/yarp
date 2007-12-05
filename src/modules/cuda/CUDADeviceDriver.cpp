@@ -137,7 +137,8 @@ void CUDAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
 
     cuMemcpyHtoD((CUdeviceptr)tex, in, size);
 
-    setargument(prg, (int)size);
+    setargument(prg, (int)w);
+    setargument(prg, (int)h);
     setargument(prg, (int)(CUdeviceptr)tex);
     setargument(prg, (int)(CUdeviceptr)oTex);
 
@@ -178,7 +179,8 @@ void CUDAGPU::execute(int prg, unsigned char *in, unsigned char *in2, unsigned c
     cuMemcpyHtoD((CUdeviceptr)tex, in, size);
     cuMemcpyHtoD((CUdeviceptr)tex2, in2, size);
 
-    setargument(prg, (int)size);
+    setargument(prg, (int)w);
+    setargument(prg, (int)h);
     setargument(prg, (int)(CUdeviceptr)tex);
     setargument(prg, (int)(CUdeviceptr)tex2);
     setargument(prg, (int)(CUdeviceptr)oTex);

@@ -85,11 +85,11 @@ public:
     void setargument(int prg, int val);
     void setargument(int prg, float val);
 
-    //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'size', 'in' AND 'out' arrays
+    //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'width', 'height', 'in' AND 'out' arrays
     void execute(int prg, unsigned char *in, unsigned char *out);
     void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *out);
 
-    //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'size', 'in1' 'in2' AND 'out' arrays
+    //THE LAST FRAGMENTPROGRAMS' ARGUMENTS MUST *ALWAYS* BE 'width', 'height', 'in', 'in2' AND 'out' arrays
     void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out);
     void execute(int prg, yarp::sig::Image *in, yarp::sig::Image *in2, yarp::sig::Image *out);
 
