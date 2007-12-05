@@ -234,9 +234,6 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
                                         ICDecompressBegin( capture->hic, &vfmt0, &vfmt1 ) == ICERR_OK )
                                         {
 
-                                            //capture->rgb_frame = cvCreateImage(
-                                            //  cvSize( vfmt0.biWidth, vfmt0.biHeight ), IPL_DEPTH_8U, 3 );
-
                                             capture->frame.setTopIsLowIndex(false);
                                             capture->frame.resize(vfmt0.biWidth, vfmt0.biHeight);
 
@@ -253,14 +250,6 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
         
                     if( code == ICERR_OK )
                         {
-                            printf("GOT IMAGE\n");
-                            /*
-                              cvInitImageHeader( &capture->frame,
-                              cvSize(vfmt.bmiHeader.biWidth,
-                              vfmt.bmiHeader.biHeight),
-                              IPL_DEPTH_8U, 3, IPL_ORIGIN_BL, 4 );
-                              capture->frame.imageData = capture->frame.imageDataOrigin = frame_data;
-                            */
                             if (!done) {
 
                                 capture->frame.setTopIsLowIndex(false);
@@ -276,27 +265,6 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
     return 0;
 }
 
-
-/*
-int main() {
-    CvCaptureCAM_VFW state;
-    int result = icvOpenCAM_VFW(&state,0);
-    if (!result) {
-        printf("failed to find camera\n");
-        return 1;
-    }
-    for (int i=0; i<10; i++) {
-        icvGrabFrameCAM_VFW(&state);
-        Image *img = icvRetrieveFrameCAM_VFW(&state);
-        printf("image size %d %d\n", img->width(), img->height());
-        char fname[256];
-        sprintf(fname,"img%06d.ppm",i);
-        yarp::sig::file::write(*img,fname);
-    }
-    icvCloseCAM_VFW(&state);
-    return 0;
-}
-*/
 
 
 #define HELPER(x) (*((CvCaptureCAM_VFW *)(x)))
@@ -325,7 +293,7 @@ bool VfwGrabber::close() {
 bool VfwGrabber::getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
     icvGrabFrameCAM_VFW(&HELPER(system_resource));
     Image *img = icvRetrieveFrameCAM_VFW(&HELPER(system_resource));
-    printf("image size %d %d\n", img->width(), img->height());
+    //printf("image size %d %d\n", img->width(), img->height());
     image.copy(*img);
     _width = img->width();
     _height = img->height();

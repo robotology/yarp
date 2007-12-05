@@ -26,7 +26,7 @@ int main() {
     for (int i=0; i<15; i++) {
         ImageOf<PixelRgb> img;
         grabber.getImage(img);
-        //printf("image size %d %d\n", img.width(), img.height());
+        printf("image size %d %d\n", img.width(), img.height());
         char fname[256];
         sprintf(fname,"img%06d.ppm",i);
         yarp::sig::file::write(img,fname);
