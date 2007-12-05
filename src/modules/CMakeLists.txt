@@ -15,5 +15,3 @@ ADD_SUBDIRECTORY(wxsdl)
 
 END_DEVICE_LIBRARY(mydevices)
 
-#_LINK_LIBRARIES(devices)
-#_ADD_EXECUTABLE(devvy bozo2.cpp)
