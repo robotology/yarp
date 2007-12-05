@@ -402,11 +402,22 @@ static inline int PAD_BYTES (int len, int pad)
 ///
 ///
 template <class T1, class T2>
-static void CopyPixels(const T1 *src, int q1, T2 *dest, int q2, int w, int h)
+static void CopyPixels(const T1 *osrc, int q1, T2 *odest, int q2, 
+                       int w, int h,
+                       bool flip)
 {
+    const T1 *src = osrc;
+    T2 *dest = odest;
 	const int p1 = PAD_BYTES (w * sizeof(T1), q1);
 	const int p2 = PAD_BYTES (w * sizeof(T2), q2);
+    //const int step1 = w*sizeof(T1) + p1;
+    const int step2 = w*sizeof(T2) + p2;
     DBG printf("q1 %d q2 %d (%dx%d) inc %d %d\n", q1, q2, w, h, p1, p2);
+
+    if (flip) {
+        odest = (T2*)(((char *)odest) + step2*(h-1));
+        dest = odest;
+    }
 
     YARPDummyCopyPixel();
 	for (int i=0; i<h; i++)
@@ -420,24 +431,26 @@ static void CopyPixels(const T1 *src, int q1, T2 *dest, int q2, int w, int h)
                 }
 
             src = (const T1*)(((char *)src) + p1);
-            dest = (T2*)(((char *)dest) + p2);
+            odest = (T2*)(((char *)odest) + step2*(flip?-1:1));
+            dest = odest;
         }
 }
 
 
 #define HASH(id1,id2) ((int)(((int)(id1%65537))*11+((long int)(id2))))
-#define HANDLE_CASE(len,x1,T1,q1,x2,T2,q2) CopyPixels((T1*)x1,q1,(T2*)x2,q2,w,h);
-#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,quantum1,dest,Def_##id2,quantum2); break;
+#define HANDLE_CASE(len,x1,T1,q1,o1,x2,T2,q2,o2) CopyPixels((T1*)x1,q1,(T2*)x2,q2,w,h,o1!=o2);
+#define MAKE_CASE(id1,id2) case HASH(id1,id2): HANDLE_CASE(len,src,Def_##id1,quantum1,topIsLow1,dest,Def_##id2,quantum2,topIsLow2); break;
 #define MAKE_2CASE(id1,id2) MAKE_CASE(id1,id2); MAKE_CASE(id2,id1);
 
 // More elegant ways to do this, but needs to be efficient at pixel level
 void Image::copyPixels(const unsigned char *src, int id1, 
                        char unsigned *dest, int id2, int w, int h,
-                       int imageSize, int quantum1, int quantum2)
+                       int imageSize, int quantum1, int quantum2,
+                       bool topIsLow1, bool topIsLow2)
 {
     DBG printf("copyPixels...\n");
 
-    if (id1==id2&&quantum1==quantum2) {
+    if (id1==id2&&quantum1==quantum2&&topIsLow1==topIsLow2) {
         memcpy(dest,src,imageSize);
         return;
     }

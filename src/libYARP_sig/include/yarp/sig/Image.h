@@ -249,7 +249,7 @@ public:
      * @return true if image has origin at top left (default); in other
      * words when the y index is low, we are near the top of the image.
      */
-    bool topIsLowIndex() {
+    bool topIsLowIndex() const {
         return topIsLow;
     }
 
@@ -285,7 +285,8 @@ private:
 
     void copyPixels(const unsigned char *src, int id1, 
                     unsigned char *dest, int id2, int w, int h,
-                    int imageSize, int quantum1, int quantum2);
+                    int imageSize, int quantum1, int quantum2,
+                    bool topIsLow1, bool topIsLow2);
 };
 
 

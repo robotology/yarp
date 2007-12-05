@@ -458,7 +458,7 @@ public:
     void testOrigin() {
         report(0,"checking origin...");
 
-        report(0, "testing external image...");
+        report(0, "checking origin external image...");
         unsigned char buf[EXT_HEIGHT][EXT_WIDTH];
 
         {
@@ -484,6 +484,31 @@ public:
                 if (buf[img1.height()-y-1][x]!=5) {
                     mismatch++;
                 }
+            }
+        }
+        checkEqual(mismatch,0,"delta check");
+
+        report(0, "checking origin with copy...");
+        ImageOf<PixelInt> img2;
+        ImageOf<PixelInt> img3;
+        img2.setTopIsLowIndex(false);
+        img2.setTopIsLowIndex(true);
+        int ct = 1;
+        for (int x=0; x<img2.width(); x++) {
+            for (int y=0; y<img2.height(); y++) {
+                img2(x,y) = ct;
+                ct++;
+            }
+        }
+        img3.copy(img2);
+        mismatch = 0;
+        ct = 1;
+        for (int x=0; x<img2.width(); x++) {
+            for (int y=0; y<img2.height(); y++) {
+                if (img3(x,y)!=ct) {
+                    mismatch++;
+                }
+                ct++;
             }
         }
         checkEqual(mismatch,0,"delta check");

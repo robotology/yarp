@@ -892,6 +892,9 @@ bool Image::copy(const Image& alt) {
     if (q1==0) { q1 = YARP_IMAGE_ALIGN; }
     if (q2==0) { q2 = YARP_IMAGE_ALIGN; }
 
+    bool o1 = alt.topIsLowIndex();
+    bool o2 = topIsLowIndex();
+
     YARP_ASSERT(width()==alt.width());
     YARP_ASSERT(height()==alt.height());
     if (getPixelCode()==alt.getPixelCode()) {
@@ -903,7 +906,7 @@ bool Image::copy(const Image& alt) {
     copyPixels(alt.getRawImage(),alt.getPixelCode(),
                getRawImage(),getPixelCode(),
                width(),height(),
-               getRawImageSize(),q1,q2);
+               getRawImageSize(),q1,q2,o1,o2);
     ok = true;
     return ok;
 }
