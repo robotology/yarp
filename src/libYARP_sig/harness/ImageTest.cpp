@@ -493,6 +493,7 @@ public:
         ImageOf<PixelInt> img3;
         img2.setTopIsLowIndex(false);
         img2.setTopIsLowIndex(true);
+        img2.resize(50,50);
         int ct = 1;
         for (int x=0; x<img2.width(); x++) {
             for (int y=0; y<img2.height(); y++) {

@@ -237,8 +237,8 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
                                             //capture->rgb_frame = cvCreateImage(
                                             //  cvSize( vfmt0.biWidth, vfmt0.biHeight ), IPL_DEPTH_8U, 3 );
 
-                                            capture->frame.resize(vfmt0.biWidth, vfmt0.biHeight);
                                             capture->frame.setTopIsLowIndex(false);
+                                            capture->frame.resize(vfmt0.biWidth, vfmt0.biHeight);
 
                                             code = ICDecompress( capture->hic, 0,
                                                                  &vfmt0, capture->hdr->lpData,
@@ -262,6 +262,8 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
                               capture->frame.imageData = capture->frame.imageDataOrigin = frame_data;
                             */
                             if (!done) {
+
+                                capture->frame.setTopIsLowIndex(false);
                                 capture->frame.setExternal(frame_data,
                                                            vfmt.bmiHeader.biWidth,
                                                            vfmt.bmiHeader.biHeight);
