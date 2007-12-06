@@ -33,7 +33,12 @@ ENDIF(WIN32 AND CYGWIN)
 
 ## check if we are using the MINGW compiler
 IF(MINGW)
-  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-fvisibility=hidden" "-fvisibility-inlines-hidden" "-fno-exceptions" "-Wpointer-arith" "-Wno-attributes" "-pipe")
+  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-fno-exceptions" "-Wpointer-arith" "-pipe")
+  IF (MSYS)
+    SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
+  ELSE (MSYS)
+    SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} "-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
+  ENDIF (MSYS)
 ENDIF(MINGW)
 
 # check endianness
