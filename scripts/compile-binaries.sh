@@ -21,6 +21,11 @@ if [ ! "k$sver" = "k$cver_min" ] ; then
     exit 1
 fi
 
+if [ ! -e src/libYARP_OS/ace_include/ace ] ; then
+    echo Expect to work with a version of YARP with embedded ACE
+    exit 1
+fi
+
 moved_cache=false
 
 if [ -e CMakeCache.txt ] ; then

@@ -256,6 +256,15 @@ public:
         return write(Contact::byName(port_name),cmd,reply);
     }
 
+    /**
+     *
+     * Check if the YARP Network is up and running.  Basically, 
+     * checks if a yarp name server is running and responding.
+     *
+     * @return true if the YARP Network is active.
+     *
+     */
+    static bool checkNetwork();
 };
 
 #endif

@@ -7,10 +7,12 @@
  */
 
 #include <yarp/Address.h>
+#include <yarp/os/Contact.h>
 
 #include "TestList.h"
 
 using namespace yarp;
+using namespace yarp::os;
 
 class AddressTest : public UnitTest {
 public:
@@ -23,8 +25,35 @@ public:
         checkEqual(txt,"tcp://localhost:10000","string rep example");
     }
 
+    virtual void testCopy() {
+        report(0,"checking address copy");
+        Address address("localhost",10000,"tcp");
+        Address address2;
+        address2 = address;
+        String txt = address2.toString();
+        checkEqual(txt,"tcp://localhost:10000","string rep example");
+
+        Address inv1;
+        address2 = inv1;
+        checkTrue(!inv1.isValid(),"invalid source");
+        checkTrue(!address2.isValid(),"invalid copy");
+    }
+
+    virtual void testContact() {
+        report(0,"checking Contact wrapper");
+        Contact c1;
+        Address inv1;
+        c1 = inv1.toContact();
+        checkTrue(!Contact::invalid().isValid(),"good invalid");
+        checkTrue(!inv1.isValid(),"invalid source");
+        checkTrue(!inv1.toContact().isValid(),"invalid conversion");
+        checkTrue(!c1.isValid(),"invalid copy");
+    }
+
     virtual void runTests() {
         testString();
+        testCopy();
+        testContact();
     }
 };
 

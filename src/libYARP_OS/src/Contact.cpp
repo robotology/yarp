@@ -50,7 +50,7 @@ Contact Contact::empty() {
 
 
 Contact Contact::invalid() {
-    return Contact().addSocket("","",-1);;
+    return Contact().addSocket("","",-1);
 }
 
 
@@ -126,5 +126,5 @@ ConstString Contact::toString() const {
 
 bool Contact::isValid() const {
     Address& addr = HELPER(implementation);
-    return addr.getPort()<0;
+    return addr.getPort()>=0;
 }

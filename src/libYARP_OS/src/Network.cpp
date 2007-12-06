@@ -91,6 +91,7 @@ void Network::fini() {
 Contact Network::queryName(const char *name) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.queryName(name);
+    //printf("address is %s %d\n",address.toString().c_str(), address.isValid());
     return address.toContact();
 }
 
@@ -238,4 +239,11 @@ ConstString Network::getNameServerName() {
     NameConfig nc;
     String name = nc.getNamespace();
     return name.c_str();
+}
+
+
+bool Network::checkNetwork() {
+    Contact c = queryName(getNameServerName());
+    //printf("Contact is %s %d\n", c.toString().c_str(), c.isValid());
+    return c.isValid();
 }

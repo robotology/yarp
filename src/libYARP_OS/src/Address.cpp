@@ -12,6 +12,9 @@ using namespace yarp;
 using namespace yarp::os;
 
 Contact Address::toContact() const {
+    if (!isValid()) {
+        return Contact::invalid();
+    }
     return Contact::byName
         (getRegName().c_str()).addSocket(getCarrierName().c_str(),
                                          getName().c_str(),

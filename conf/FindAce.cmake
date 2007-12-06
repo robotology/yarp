@@ -3,10 +3,16 @@
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
-IF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+IF (BUILTIN_ACE)
 	MESSAGE(STATUS "ACE files have been included within YARP")
+        IF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include/ace")
+	   MESSAGE(FATAL_ERROR "Cannot find builtin ACE headers")
+        ENDIF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include/ace")
+        IF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src")
+	   MESSAGE(FATAL_ERROR "Cannot find builtin ACE sources")
+        ENDIF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src")
 
-	SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include")
+	SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include")
 	IF(UNIX)
 		SET(ACE_LIBRARY "-lm -lpthread -ldl")
 	ENDIF(UNIX)
@@ -15,8 +21,8 @@ IF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
 	ENDIF(MINGW)
 	SET(ACE_LINK_FLAGS ${ACE_LIBRARY})
 	SET(ACE_FOUND TRUE)
-
-ELSE (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+ELSE (BUILTIN_ACE)
+#ELSE (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
 	
 
 ########################################################################
@@ -100,4 +106,5 @@ ELSE (ACE_FOUND)
 	ENDIF (Ace_FIND_REQUIRED)
 ENDIF (ACE_FOUND)
 
-ENDIF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+ENDIF (BUILTIN_ACE)
+#ENDIF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")

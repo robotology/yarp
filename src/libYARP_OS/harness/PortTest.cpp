@@ -184,6 +184,9 @@ public:
         Contact conIn = in.where();
         Contact conOut = out.where();
 
+        checkTrue(conIn.isValid(),"valid address for /in");
+        checkTrue(conOut.isValid(),"valid address for /out");
+
         out.addOutput(Contact::byName("/in").addCarrier("udp"));
         //Time::delay(0.2);
 
