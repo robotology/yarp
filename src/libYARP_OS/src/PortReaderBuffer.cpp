@@ -313,7 +313,8 @@ PortReader *PortReaderBufferBase::readBase() {
 
 bool PortReaderBufferBase::read(ConnectionReader& connection) {
     if (connection.getReference()!=NULL) {
-        //printf("REF %ld\n", (long int)connection.getReference());
+        //printf("REF %ld %d\n", (long int)connection.getReference(),
+        //     connection.isValid());
         return acceptObjectBase(connection.getReference(),NULL);
     }
 

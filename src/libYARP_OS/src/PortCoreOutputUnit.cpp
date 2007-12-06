@@ -235,7 +235,7 @@ void PortCoreOutputUnit::sendHelper() {
                              (cachedWriter));
             
             //printf("REF %ld\n", (long int)buf.getReference());
-            op->write(buf);
+            //op->write(buf); // done later
         } else {
         
         

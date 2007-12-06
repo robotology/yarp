@@ -1,5 +1,8 @@
 2007-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: fix double
+	send for local carrier.
+
 	* src/libYARP_OS/yarp/yarpserver.cpp: added trivial
 	"yarpserver" program that works just like "yarp server"
 	(but is easier for windows users to click on)

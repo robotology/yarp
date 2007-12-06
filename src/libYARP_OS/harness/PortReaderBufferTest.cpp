@@ -78,8 +78,7 @@ public:
         Bottle& data2 = p1.prepare();
         data2.fromString("hello2");
         p1.write();
-        
-        Time::delay(0.3);
+
 
         bot = p2.read();
         checkTrue(bot!=NULL,"BufferedPort message received");
