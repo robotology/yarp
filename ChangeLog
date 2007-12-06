@@ -1,5 +1,9 @@
 2007-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/yarp/yarpserver.cpp: added trivial
+	"yarpserver" program that works just like "yarp server"
+	(but is easier for windows users to click on)
+
 	* src/libYARP_OS/src/Contact.cpp: the isValid() check was a
 	little, how should I say this, completely and utterly wrong.
 

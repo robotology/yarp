@@ -4,6 +4,8 @@ YarpLibrary(YARP_OS os)
 
 # add YARP Network companion executable
 ADD_EXECUTABLE(yarp yarp/yarp.cpp)
+ADD_EXECUTABLE(yarpserver yarp/yarpserver.cpp)
 TARGET_LINK_LIBRARIES(yarp YARP_OS ${ACE_LINK_FLAGS})
-INSTALL_TARGETS(/bin yarp)
+TARGET_LINK_LIBRARIES(yarpserver YARP_OS ${ACE_LINK_FLAGS})
+INSTALL_TARGETS(/bin yarp yarpserver)
  

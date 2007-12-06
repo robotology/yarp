@@ -120,15 +120,9 @@ public:
                            bool silent);
 
 
-private:
-
-    Companion();
-  
     static Companion& getInstance() {
         return instance;
     }
-
-    static Companion instance;
 
     int dispatch(const char *name, int argc, char *argv[]);
 
@@ -173,6 +167,13 @@ private:
     int cmdRun(int argc, char *argv[]);
 
     int cmdNamespace(int argc, char *argv[]);
+
+private:
+
+    Companion();
+  
+    static Companion instance;
+
 
     class Entry {
     public:

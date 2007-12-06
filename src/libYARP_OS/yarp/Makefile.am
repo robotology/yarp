@@ -1,5 +1,5 @@
 
-bin_PROGRAMS = yarp
+bin_PROGRAMS = yarp yarpserver
 
 dist_man_MANS = yarp.1
 
@@ -8,6 +8,12 @@ yarp_SOURCES = yarp.cpp
 yarp_DEPENDENCIES = $(top_builddir)/src/libYARP_OS/src/libYARP_OS.la
 
 yarp_LDADD = $(yarp_DEPENDENCIES)
+
+yarpserver_SOURCES = yarpserver.cpp
+
+yarpserver_DEPENDENCIES = $(top_builddir)/src/libYARP_OS/src/libYARP_OS.la
+
+yarpserver_LDADD = $(yarp_DEPENDENCIES)
 
 INCLUDES = -I$(srcdir)/../include
 
