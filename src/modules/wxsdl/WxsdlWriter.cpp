@@ -194,7 +194,7 @@ SDLPanel::~SDLPanel() {
     mutex.post();
 }
 
-void SDLPanel::onPaint(wxPaintEvent &) {
+void SDLPanel::onPaint(wxPaintEvent& ev) {
     bool done = false;
 
     //printf("taking permit\n");
@@ -220,8 +220,14 @@ void SDLPanel::onPaint(wxPaintEvent &) {
                          
             // paint the screen
             wxBufferedPaintDC dc(this, bmp);
+        } else {
+            wxPaintDC dc(this);
+            dc.Clear();
         }
-    } 
+    } else {
+        wxPaintDC dc(this);
+        dc.Clear();
+    }
 
     mutex.post();
 
@@ -311,14 +317,14 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
         
         mutex.post();
 
+#ifdef WIN32
+        Refresh();
+#else
         wxMutexGuiEnter();
         wxPaintEvent paintEv;
         wxPostEvent(this,paintEv);
         wxMutexGuiLeave();
-        
-        // refresh the panel
-        //Refresh();
-        //Update();
+#endif
     } else {
 
         mutex.post();
