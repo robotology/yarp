@@ -16,7 +16,7 @@ ENDIF (NOT EXISTS ${YARPY_DEV_GEN})
 
 
 # Choose whether to merge library source code.
-#SET(MERGE_DEVICE_LIBS TRUE)
+SET(MERGE_DEVICE_LIBS ${MERGE_DEVICE_LIBS_INIT} CACHE BOOL "Try to pack device libraries together a bit")
 
 SET(DEVICE_PREFIX "yarpdev_")
 
@@ -37,7 +37,7 @@ MACRO(ADD_LIBRARY LIBNAME)
   IF (ENABLE_${MYNAME})
     IF (MERGE_DEVICE_LIBS)
       # this library is not actually needed
-      _ADD_LIBRARY(${MYNAME} ${YARPY_LIB_FLAG} ${ARGN} ${YARPY_DEV_SRC_LIST})
+      #_ADD_LIBRARY(${MYNAME} ${YARPY_LIB_FLAG} ${ARGN} ${YARPY_DEV_SRC_LIST})
       FOREACH(SRC ${ARGN})
         GET_SOURCE_FILE_PROPERTY(SRC2 ${SRC} LOCATION)
         SET(YARPY_SRC_LIST ${YARPY_SRC_LIST} ${SRC2})
