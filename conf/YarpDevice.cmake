@@ -84,6 +84,7 @@ SET(folder_source ${folder_source} ${GEN}/yarpdev.cpp)
 ENDMACRO(YarpDevice)
 
 MACRO(BEGIN_DEVICE_LIBRARY devname)
+  SET(YARPY_DEVICES TRUE)
   MESSAGE(STATUS "starting device library: ${devname}")
   SET(YARPY_DEV_LIB_NAME ${devname})
   FOREACH(arg ${ARGN})
