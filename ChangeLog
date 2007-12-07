@@ -1,3 +1,10 @@
+2007-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: moved
+	this file to ../include/yarp/dev, since it is needed by users
+	of ControlBoardInterfacesImpl.h.  A redirecting file was left 
+	at this location.
+
 2007-12-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: fix double
