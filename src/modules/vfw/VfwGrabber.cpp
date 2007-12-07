@@ -52,6 +52,7 @@
 //M*/
 
 
+#include <windows.h>
 #include <VfwGrabber.h>
 using namespace yarp::dev;
 
