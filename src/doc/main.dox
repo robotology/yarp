@@ -26,9 +26,10 @@
  * \li @subpage yarp_motor_control
  * \li @subpage yarp_cluster
  * \li @subpage dev-how-to
+ * \li @subpage gpu_tutorial
  * \li \ref dev_examples
  * \li @subpage terms "Specification of YARP terms and protocols".
- 
+
 
  *
  * If you're viewing this text online, you can click a "Modules" link
