@@ -80,7 +80,7 @@ Following, it is an example program (to convert RGB images to BW):
 __global__ void FragmentProgram(int w, int h, unsigned char *in, unsigned char *out) {
   int i;
 
-  for(i=threadIdx.x+blockIdx.x; i<w*h; i+=NUMTHREADS*NUMBLOCKS) {
+  for(i=threadIdx.x+blockIdx.x; i<w*h; i+=blockDim.x*gridDim.x) {
     out[i*3]=(in[i*3]+in[i*3+1]+in[i*3+2])/3;
     out[i*3*1]=out[i*3];
     out[i*3*2]=out[i*3];
@@ -88,6 +88,8 @@ __global__ void FragmentProgram(int w, int h, unsigned char *in, unsigned char *
 }
 \endcode
 Let's look at it.
+Just a note, the first two lines are optional: as you can see they are not used by the program, they just tell you the same information you can get with blockDim.x and gridDim.x.
+I've decided to put them here to let you know what the hadware configuration of your threads will be.
 First of all, the number of threads which will run on the GPU is 32, divided into 96 blocks.
 Basically, threads running within the same block can make use of shared memory and other things, but at the moment just think it as a way to increase computing performance.
 These numbers actually must be 32 and 96, and will run well optimized on CUDA supported devices.
