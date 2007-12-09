@@ -1,4 +1,5 @@
-#define NUMTHREADS 384
+#define NUMTHREADS 48
+#define NUMBLOCKS 96
 
 __global__ void FragmentProgram(int w, int h, unsigned char *in, unsigned char *out) {
   int i=0;

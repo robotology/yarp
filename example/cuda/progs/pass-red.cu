@@ -1,4 +1,4 @@
-#define ATHREAD_COUNT 32
+#define ATHREAD_COUNT 48
 #define BLOCKS 96
 
 __global__ void FragmentProgram(int w, int h, unsigned char *in, unsigned char *out) {
