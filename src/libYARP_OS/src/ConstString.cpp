@@ -77,3 +77,11 @@ int ConstString::length() const {
     return HELPER(implementation).length();
 }
 
+ConstString ConstString::operator + (const char *str) const {
+    return (HELPER(implementation) + str).c_str();
+}
+
+ConstString ConstString::operator + (const ConstString& alt) const {
+    return (HELPER(implementation) + HELPER(alt.implementation)).c_str();
+}
+

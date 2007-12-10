@@ -64,6 +64,9 @@ public:
     bool operator ==(const char *str) const;
     bool operator !=(const char *str) const;
 
+    ConstString operator + (const char *str) const;
+    ConstString operator + (const ConstString& alt) const;
+
     int length() const;
 private:
 
