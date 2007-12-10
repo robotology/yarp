@@ -1,5 +1,7 @@
 2007-12-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/firewirecamera/CMakeLists.txt: build update.
+
 	* src/libYARP_dev/src/opencv_grabber/CMakeLists.txt: build update.
 
 	* src/libYARP_dev/src/serial/CMakeLists.txt: build update.

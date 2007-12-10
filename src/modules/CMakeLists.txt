@@ -27,6 +27,8 @@ ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/serial
                  ${CMAKE_CURRENT_BINARY_DIR})
 ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/opencv_grabber
                  ${CMAKE_CURRENT_BINARY_DIR})
+ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/firewirecamera
+                 ${CMAKE_CURRENT_BINARY_DIR})
 END_DEVICE_LIBRARY(yarpmod)
 
 # Done!
