@@ -82,6 +82,10 @@ public:
     void setargument(int prg, char *name, float val);
     void setargument(int prg, char *name, float *vector, int len);
 
+    virtual void setargument(int prg, int val) { };
+    virtual void setargument(int prg, float val) { };
+
+
     void execute(int prg, unsigned char *in, unsigned char *out);
     void execute(int prg, unsigned char *in, unsigned char *in2, unsigned char *out);
 
