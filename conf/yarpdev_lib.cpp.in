@@ -2,7 +2,10 @@
 
 @YARP_CODE_PRE@
 
-void all_add_yarpdevs() {
+// give the function for adding devices a consistent name
+extern "C" void add_@YARP_LIB_NAME@_devices();
+
+void add_@YARP_LIB_NAME@_devices() {
     @YARP_CODE_POST@
 }
 

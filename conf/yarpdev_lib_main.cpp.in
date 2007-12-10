@@ -7,12 +7,12 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
-extern void all_add_yarpdevs();
+extern "C" void add_@YARP_LIB_NAME@_devices();
 
 int main(int argc, char *argv[]) {
 	Network::init();
 
-    all_add_yarpdevs();
+    add_@YARP_LIB_NAME@_devices();
 
     int result = Drivers::yarpdev(argc,argv);
 	Network::fini();
