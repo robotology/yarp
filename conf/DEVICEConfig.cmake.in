@@ -9,6 +9,16 @@
 #   SET(@YARPY_DEV_LIB_NAME@_DIR @YARPY_DEV_DIR@)
 # Or configure an equivalent environment variable, or enter the
 # path in the CMake GUI.
+#
+# In your code, you will need to call this method:
+#   add_@YARPY_DEV_LIB_NAME@_devices();
+# at the beginning of your program to make these devices available.
+# This method is declared in add_@YARPY_DEV_LIB_NAME@_devices.h,
+# or you can just declare it yourself as:
+#   extern "C" void add_@YARPY_DEV_LIB_NAME@_devices()
+# We know this call could be automated in various ways, but 
+# somehow the automation is never as portable as one would hope,
+# so we've skipped that.
 
 IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
 
@@ -17,6 +27,10 @@ IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
   MESSAGE(STATUS "Using @YARPY_DEV_LIB_NAME@")
 
   SET(@YARPY_DEV_LIB_NAME@_LIB_DEPENDS "general;@YARPY_DEV_LIB_NAME@;${@YARPY_DEV_LIB_NAME@_LIB_DEPENDS}")
+
+  SET (@YARPY_DEV_LIB_NAME@_INCLUDE_DIR @YARPY_OUT_DIR@)
+  SET (@YARPY_DEV_LIB_NAME@_HEADER add_@YARPY_DEV_LIB_NAME@_devices.h)
+  SET (@YARPY_DEV_LIB_NAME@_METHOD add_@YARPY_DEV_LIB_NAME@_devices)
 
   SET (@YARPY_DEV_LIB_NAME@_FOUND TRUE)
 

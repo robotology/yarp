@@ -8,7 +8,7 @@ MESSAGE(STATUS "This is an experimental way to compile devices")
 FIND_PACKAGE(YARP REQUIRED)
 
 # Prepare a device library called "yarpmod".
-# A test executable called "test_yarpmod" will also be produced.
+# A test executable called "yarpmoddev" will also be produced.
 BEGIN_DEVICE_LIBRARY(yarpmod)
 ADD_SUBDIRECTORY(cuda)
 ADD_SUBDIRECTORY(fakebot)
