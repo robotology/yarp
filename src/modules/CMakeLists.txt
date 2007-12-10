@@ -38,7 +38,7 @@ END_DEVICE_LIBRARY(yarpmod)
 #   LINK_LIBRARIES(yarpmod)
 #
 # To tell CMake about the location of this file, do:
-#   SET(yarpmod_DIR /home/paulfitz/cvs/yarp2/src/modules)
+#   SET(yarpmod_DIR ${YARP_DIR}/src/modules)
 # Or configure an equivalent environment variable, or enter the
 # path in the CMake GUI.
 
