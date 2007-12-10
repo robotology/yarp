@@ -1,3 +1,13 @@
+2007-12-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/serial/CMakeLists.txt: build mech update.
+
+	* src/libYARP_dev/src/microphone/CMakeLists.txt: build mechanism
+	update.
+
+	* src/libYARP_dev/src/ffmpeg/CMakeLists.txt: updated device for
+	new build mechanism.
+
 2007-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/ControlBoardInterfacesImpl.inl: moved
