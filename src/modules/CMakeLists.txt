@@ -35,6 +35,8 @@ ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/urbtc
                  ${CMAKE_CURRENT_BINARY_DIR})
 ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/jrkerr
                  ${CMAKE_CURRENT_BINARY_DIR})
+ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
+                 ${CMAKE_CURRENT_BINARY_DIR})
 END_DEVICE_LIBRARY(yarpmod)
 
 # Done!
