@@ -28,6 +28,7 @@ ENDIF (BUILTIN_STDC)
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
 SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Do you want to link specific hardware into the device library")
+SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Do you want to build a separate bundle of devices (newer method)")
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 
 SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create lib libYARP_math (experimental)?")
