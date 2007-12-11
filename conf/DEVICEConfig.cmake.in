@@ -40,6 +40,10 @@ IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
     LINK_DIRECTORIES(@YARPY_OUT_DIR@/Release)
   ENDIF (WINDOWS)
 
+  # Maintain a list of all device libraries in use, so that we can
+  # initialize them all.
+  SET (YARP_DEVICE_LIST ${YARP_DEVICE_LIST} @YARPY_DEV_LIB_NAME@)
+
 ENDIF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
 
 

@@ -6,7 +6,8 @@ IF (Ace_FOUND)
   LINK_LIBRARIES(${ACE_LIBRARY})
 
   IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h)
+    PREPARE_DEVICE(serial TYPE ServerSerial INCLUDE yarp/dev/ServerSerial.h
+			  WRAPPER serial)
     PREPARE_DEVICE(serialport TYPE SerialDeviceDriver INCLUDE common/yarp/SerialDeviceDriver.h WRAPPER serial)
   ENDIF (COMPILE_DEVICE_LIBRARY)
 
