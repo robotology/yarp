@@ -1,3 +1,9 @@
+2007-12-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/urbtc/CMakeLists.txt: build update.
+
+	* src/libYARP_dev/src/portaudio/CMakeLists.txt: build update.
+
 2007-12-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/firewirecamera/CMakeLists.txt: build update.
