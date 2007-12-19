@@ -61,6 +61,7 @@ protected:
     yarp::dev::IAmplifierControl    *amp;
     yarp::dev::IControlLimits       *lim;
     yarp::dev::IAxisInfo            *info;
+    yarp::dev::IControlCalibration2   *ical2;
     int nj;
     Vector vect;
 
@@ -118,7 +119,6 @@ public:
  * 
  * Missing: 
  *          torque control, NOT IMPLEMENTED
- *          calibration, tentative implementation, to be improved
  *
  */
 class yarp::dev::ServerControlBoard : 
@@ -131,6 +131,7 @@ class yarp::dev::ServerControlBoard :
             public IAmplifierControl,
             public IControlLimits,
             public IControlCalibration,
+            public IControlCalibration2,
             public IAxisInfo
  // convenient to put these here just to make sure all
  // methods get implemented
@@ -165,6 +166,7 @@ private:
     IAmplifierControl *amp;
     IControlLimits    *lim;
     IControlCalibration *calib;
+    IControlCalibration2 *calib2;
     IAxisInfo          *info;
     // LATER: other interfaces here.
 
@@ -199,6 +201,7 @@ public:
         amp = NULL;
         lim = NULL;
 		calib = NULL;
+        calib2 = NULL;
         info = NULL;
         nj = 0;
         thread_period = 20; // ms.
@@ -322,6 +325,7 @@ public:
             poly.view(amp);
             poly.view(lim);
             poly.view(calib);
+            poly.view(calib2);
             poly.view(info);
         }
 
@@ -1097,7 +1101,7 @@ public:
     
     /**
      * Get the software limits for a particular axis.
-     * @param axis joint number (again... why am I telling you this)
+     * @param axis joint number
      * @param min pointer to store the value of the lower limit
      * @param max pointer to store the value of the upper limit
      * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
@@ -1110,7 +1114,7 @@ public:
         return false;
     }
 
-	/* IControlCalibrationRaw */
+	/* IControlCalibration */
 
     /**
      * Calibrate a single joint, the calibration method accepts a parameter
@@ -1126,37 +1130,38 @@ public:
 		return false;
 	}
 
+    virtual bool calibrate()
+    {
+        if (calib2)
+            return calib2->calibrate();
+        return false;
+    }
+
+    virtual bool park(bool wait=true)
+    {
+        if (calib2)
+            return calib2->park(wait);
+        return false;
+    }
+
+    virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) {
+		if (calib2)
+			return calib2->calibrate2(j, ui, v1, v2, v3);
+		return false;
+	}
+
     /**
      * Check whether the calibration has been completed.
      * @param j is the joint that has started a calibration procedure.
      * @return true/false on success/failure.
      */
     virtual bool done(int j) {
-		if (calib)
-			return calib->done(j);
+		if (calib2)
+			return calib2->done(j);
 		return false;
 	}
-
-    /**
-     * Calibrate the entire robot.
-     * @return true/false on success/failure.
-     */
-	virtual bool calibrate() {
-		if (calib)
-			return calib->calibrate();
-		return false;
-	}
-
-    virtual bool park(bool wait=true)
-    {
-        if (calib)
-            return calib->park(wait);
-        return false;
-    }
-
 
     /* IAxisInfo */
-
     virtual bool getAxisName(int j, yarp::os::ConstString& name) {
         if (info) {
             return info->getAxisName(j, name);
@@ -1193,6 +1198,7 @@ class yarp::dev::RemoteControlBoard :
             public IAmplifierControl,
             public IControlLimits,
             public IAxisInfo,
+            public IControlCalibration2,
 			public DeviceDriver {
 protected:
     Port rpc_p;
@@ -1398,13 +1404,9 @@ public:
     virtual bool open(Searchable& config) {
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
-        // mcast is a pretty bad default here :-( 
-        // often won't work for beginners on a laptop.
-        // suggestion: change carrier default and modify your scripts 
-        // -- paulfitz
         ConstString carrier = 
             config.check("carrier",
-                         Value("mcast"),
+                         Value("tcp"),
                          "default carrier for streaming robot state").asString().c_str();
         if (local != "") {
             String s1 = local;
@@ -1423,13 +1425,7 @@ public:
             s1 += "/rpc:i";
             String s2 = local;
             s2 += "/rpc:o";
-            // connect twice for RPC ports.
-            // (NOTE FROM paulfitz: you don't actually need to connect twice
-            // for rpc, if the rpc commands are being initiated from just
-            // one side)
             Network::connect(s2.c_str(), s1.c_str());
-            // Network::connect(s1.c_str(), s2.c_str()); // went ahead and
-            // removed  --paulfitz
             s1 = remote;
             s1 += "/command:i";
             s2 = local;
@@ -1439,12 +1435,7 @@ public:
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            // mcast is a pretty bad default here :-( 
-            // often won't work for beginners on a laptop
-            // suggestion: change carrier default and modify your scripts 
-            // -- paulfitz
             Network::connect(s1.c_str(), s2.c_str(), carrier);
-            //Network::connect(s1.c_str(), s2.c_str(), "udp");
         }
         
         state_buffer.attach(state_p);
@@ -2254,6 +2245,58 @@ public:
         return false;
     }
 
+    /* IControlCalibration */
+    bool virtual calibrate()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_CALIBRATE);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool virtual park(bool wait=true)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_PARK);
+        cmd.addInt(wait);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_CALIBRATE_JOINT);
+        cmd.addInt(j);
+        cmd.addInt(ui);
+        cmd.addDouble(v1);
+        cmd.addDouble(v2);
+        cmd.addDouble(v3);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;
+    }
+
+    bool virtual done(int j)
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_CALIBRATE_DONE);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;
+    }
+
 };
 
 
@@ -2272,6 +2315,7 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     amp = dynamic_cast<yarp::dev::IAmplifierControl *> (caller);
     lim = dynamic_cast<yarp::dev::IControlLimits *> (caller);
     info = dynamic_cast<yarp::dev::IAxisInfo *> (caller);
+    ical2= dynamic_cast<yarp::dev::IControlCalibration2 *> (caller);
     nj = 0;
 }
 
@@ -2319,6 +2363,54 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
 	    ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
+    case VOCAB_CALIBRATE_JOINT:
+        {
+            rec=true;
+            if (caller->verbose())
+                ACE_OS::printf("Calling calibrate joint\n");
+
+            int j=cmd.get(1).asInt();
+            int ui=cmd.get(2).asInt();
+            double v1=cmd.get(3).asDouble();
+            double v2=cmd.get(4).asDouble();
+            double v3=cmd.get(5).asDouble();
+            if (ical2==0)
+                ACE_OS::printf("Sorry I don't have a IControlCalibration2 interface\n");
+            else
+                ok=ical2->calibrate2(j,ui,v1,v2,v3);
+        }
+        break;
+    case VOCAB_CALIBRATE:
+        {
+            rec=true;
+            if (caller->verbose())
+                ACE_OS::printf("Calling calibrate\n");
+            ok=ical2->calibrate();
+            ok=true; //client would get stuck if ret false
+        }
+        break;
+    case VOCAB_CALIBRATE_DONE:
+        {
+            rec=true;
+            if (caller->verbose())
+                ACE_OS::printf("Calling calibrate done\n");
+            int j=cmd.get(1).asInt();
+            ok=ical2->done(j);
+        }
+        break;
+    case VOCAB_PARK:
+        {
+            rec=true;
+            if (caller->verbose())
+                ACE_OS::printf("Calling park function\n");
+            int flag=cmd.get(1).asInt();
+            if (flag)
+                ok=ical2->park(true);
+            else
+                ok=ical2->park(false);
+            ok=true; //client would get stuck if returning false
+        }
+        break;
     case VOCAB_SET:
         rec = true;
 		if (caller->verbose())

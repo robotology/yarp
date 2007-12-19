@@ -26,6 +26,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IAmplifierControl,
             public IEncoders, 
             public IFrameGrabberImage,
+            public IControlCalibration2,
             public DeviceResponder
 {
 private:
@@ -341,6 +342,18 @@ public:
     virtual bool getAmpStatus(int *st) {
         *st = 0;
         return true;
+    }
+
+    virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3)
+    {
+        fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
+        return true;
+    }
+
+    virtual bool done(int j)
+    {
+        fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
+        return true; 
     }
 };
 

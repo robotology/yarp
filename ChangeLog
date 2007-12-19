@@ -1,3 +1,13 @@
+2007-12-19  Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_dev/src/RemoteControlBoard.cpp:
+	* src/libYARP_dev/include/ControlBoardInterfaces.h: added 
+	remotization of calibration methods.
+
+	* src/modules/FakeBot.h: added fake calibration methods for 
+	testing
+	* example/motorcontrol: test program for remote motorcontrol 
+	devices (e.g. fakebot), useful for debugging/testing.
+
 2007-12-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/urbtc/CMakeLists.txt: build update.

@@ -1385,6 +1385,10 @@ public:
 
 /* Vocabs representing the above interfaces */
 
+#define VOCAB_CALIBRATE_JOINT VOCAB4('c','a','l','j')
+#define VOCAB_CALIBRATE VOCAB3('c','a','l')
+#define VOCAB_CALIBRATE_DONE VOCAB4('c','a','l','d')
+#define VOCAB_PARK VOCAB4('p','a','r','k')
 #define VOCAB_SET VOCAB3('s','e','t')
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
