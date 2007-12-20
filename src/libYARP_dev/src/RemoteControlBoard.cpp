@@ -1132,15 +1132,15 @@ public:
 
     virtual bool calibrate()
     {
-        if (calib2)
-            return calib2->calibrate();
+        if (calib)
+            return calib->calibrate();
         return false;
     }
 
     virtual bool park(bool wait=true)
     {
-        if (calib2)
-            return calib2->park(wait);
+        if (calib)
+            return calib->park(wait);
         return false;
     }
 
