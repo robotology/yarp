@@ -60,8 +60,6 @@ public:
         else
             memset(zeros, 0, sizeof(double)*nj);
 
-       
-
         if (angToEncs!=0)
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
         else
@@ -82,6 +80,7 @@ public:
 				}
 			}
 		}
+
     } 
 
     ~ControlBoardHelper() 
@@ -166,12 +165,14 @@ public:
     inline void posE2A(double enc, int j, double &ang, int &k)
     {
         k=toUser(j);
+
         ang=(enc/angleToEncoders[k])-zeros[k];
     }
 
     inline double posE2A(double enc, int j)
     {
         int k=toUser(j);
+        
         return (enc/angleToEncoders[k])-zeros[k];
     }
 
@@ -1078,10 +1079,12 @@ template <class DERIVED, class IMPLEMENT>
 bool ImplementEncoders<DERIVED, IMPLEMENT>::getEncoders(double *v)
 {
     bool ret;
+    castToMapper(helper)->axes();
+    
     ret=iEncoders->getEncodersRaw(temp);
 
     castToMapper(helper)->posE2A(temp, v);
-    
+
     return ret;
 }
 

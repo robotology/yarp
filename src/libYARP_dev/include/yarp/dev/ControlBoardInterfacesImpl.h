@@ -56,7 +56,7 @@ protected:
      * @return true if uninitialization is executed, false otherwise.
      */
     bool uninitialize ();
-        
+
 public:
     /**
      * Constructor.
@@ -319,7 +319,6 @@ public:
 
     /** Enable the pid computation for a joint*/
     virtual bool setOffset(int j, double v);
-
 };
 
 template <class DERIVED, class IMPLEMENT> 
