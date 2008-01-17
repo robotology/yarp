@@ -3,7 +3,7 @@
 # run as ./scripts/ace-helper.sh
 
 VER=5.6.1
-LOCALVER=4
+LOCALVER=3
 
 mkdir -p ace-helper
 cd ace-helper
@@ -59,6 +59,99 @@ if [ ! -e ace_sources.txt ]; then
     src=`cat ace_sources.txt`
 fi
 
+if [ ! -e CMakeLists.txt.template ]; then
+    echo "Making template CMakeLists.txt.template, in case stand-alone compile is desired"
+
+    src=`cat ace_sources.txt`
+
+    (
+	cat <<EOF 
+PROJECT(ACE4YARP)
+# Search for source code.
+FILE(GLOB_RECURSE folder_source src/libYARP_OS/src/*.cpp src/libYARP_OS/src/*.cc src/libYARP_OS/src/*.c)
+FILE(GLOB_RECURSE folder_header include/*.h)
+SOURCE_GROUP("Source Files" FILES \${folder_source})
+SOURCE_GROUP("Header Files" FILES \${folder_header})
+
+INCLUDE_DIRECTORIES(\${PROJECT_SOURCE_DIR})
+INCLUDE_DIRECTORIES(BEFORE \${PROJECT_SOURCE_DIR}/src/libYARP_OS/include)
+
+IF (MINGW)
+  ADD_DEFINITIONS(-D__MINGW32__ -D__MINGW__)
+ENDIF (MINGW)
+
+ADD_LIBRARY(ACE4YARP \${folder_source} \${folder_header})
+
+EOF
+	
+	
+    ) > CMakeLists.txt.template
+
+
+(
+cat<<EOF
+
+# Usually, all you'll need to do is set the name of your library here.
+# The rest of the file can remain unchanged in most cases.
+SET(LIB_TARGET "ACE4YARP")   # name used in ADD_LIBRARY(...)
+SET(LIB_PKG "ACE4YARP")      # name you want in FIND_PACKAGE(...)
+
+# Write a message, just so user knows what FIND_PACKAGE is calling
+MESSAGE(STATUS "Using \${LIB_PKG}Config.cmake")
+
+# We expect a <LIBRARY>_DIR variable to be available, pointing to
+# the directory with this library in it.
+SET(LIB_DIR \${\${LIB_PKG}_DIR})
+
+# Tell the user what include directories need to be added to use this library.
+SET(\${LIB_PKG}_INCLUDE_DIRS \${LIB_DIR}/include)
+
+
+# Are we compiling as part of the ICub project, or separately?
+IF (NESTED_BUILD)
+
+  # This a global build, so we do not need to supply the full path
+  # and filename(s) of the library.  We can just use the CMake target name.
+  # CMake itself knows what exactly the library is called on this system.
+  SET(\${LIB_PKG}_LIBRARIES \${LIB_TARGET})
+
+ELSE (NESTED_BUILD)
+
+  # this a distributed build, so we have to pin down the library path
+  # and filename exactly.
+
+  FIND_LIBRARY(\${LIB_PKG}_LIBRARIES \${LIB_TARGET} \${LIB_DIR})
+
+  IF (NOT \${LIB_PKG}_LIBRARIES)
+
+    # We may be on a system with "Release" and "Debug" sub-configurations
+    FIND_LIBRARY(\${LIB_PKG}_LIBRARIES_RELEASE \${LIB_TARGET} 
+		 \${LIB_DIR}/Release NO_DEFAULT_PATH)
+    FIND_LIBRARY(\${LIB_PKG}_LIBRARIES_DEBUG \${LIB_TARGET} 
+		 \${LIB_DIR}/Debug NO_DEFAULT_PATH)
+
+    IF (\${LIB_PKG}_LIBRARIES_RELEASE AND NOT \${LIB_PKG}_LIBRARIES_DEBUG)
+	SET(\${LIB_PKG}_LIBRARIES \${\${LIB_PKG}_LIBRARIES_RELEASE} CACHE PATH "release version of library" FORCE)
+    ENDIF (\${LIB_PKG}_LIBRARIES_RELEASE AND NOT \${LIB_PKG}_LIBRARIES_DEBUG)
+
+    IF (\${LIB_PKG}_LIBRARIES_DEBUG AND NOT \${LIB_PKG}_LIBRARIES_RELEASE)
+	SET(\${LIB_PKG}_LIBRARIES \${\${LIB_PKG}_LIBRARIES_DEBUG} CACHE PATH "debug version of library" FORCE)
+    ENDIF (\${LIB_PKG}_LIBRARIES_DEBUG AND NOT \${LIB_PKG}_LIBRARIES_RELEASE)
+
+    IF (\${LIB_PKG}_LIBRARIES_DEBUG AND \${LIB_PKG}_LIBRARIES_RELEASE)
+	SET(\${LIB_PKG}_LIBRARIES 
+			optimized \${\${LIB_PKG}_LIBRARIES_RELEASE}
+			debug \${\${LIB_PKG}_LIBRARIES_DEBUG}  CACHE PATH "debug and release version of library" FORCE)
+    ENDIF (\${LIB_PKG}_LIBRARIES_DEBUG AND \${LIB_PKG}_LIBRARIES_RELEASE)
+
+  ENDIF (NOT \${LIB_PKG}_LIBRARIES)
+
+ENDIF (NESTED_BUILD)
+EOF
+) > ACE4YARPConfig.cmake
+fi
+
+
 if [ ! -e src/libYARP_OS/ace_src ] ; then
     echo Copying ACE source files
     src=`cat ace_sources.txt | sed "s|ace/||g"`
@@ -75,7 +168,7 @@ if [ ! -e src/libYARP_OS/ace_include/ace ] ; then
 fi
 
 
-if [ ! -e src/libYARP_OS/ace_include/ace/config.h ] ; then
+if [ ! -e src/libYARP_OS/include/ace/config.h ] ; then
     echo Creating simple ACE config.h
 (
 cat <<XXX
@@ -246,7 +339,7 @@ cat <<XXX
 
 #endif
 XXX
-) >> src/libYARP_OS/ace_include/ace/config.h
+) >> src/libYARP_OS/include/ace/config.h
 fi
 
 cd ..
