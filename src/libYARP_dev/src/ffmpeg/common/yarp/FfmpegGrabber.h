@@ -10,8 +10,10 @@
 #ifndef FfmpegGrabber_INC
 #define FfmpegGrabber_INC
 
+extern "C" {
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
+}
 
 /*
  * A Yarp 2 frame grabber device driver using ffmpeg to implement

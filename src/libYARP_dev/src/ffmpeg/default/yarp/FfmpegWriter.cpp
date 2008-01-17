@@ -41,8 +41,10 @@
 #include <yarp/sig/all.h>
 #include <yarp/Logger.h>
 
+extern "C" {
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
+}
 
 #include <stdio.h>
 
@@ -521,7 +523,7 @@ void FfmpegWriter::close_video(AVFormatContext *oc, AVStream *st)
 
 bool FfmpegWriter::open(yarp::os::Searchable & config) {
 
-    printf("version number %d\n", LIBAVCODEC_BUILD);
+    //printf("ffmeg version number %d\n", LIBAVCODEC_BUILD);
 
 
     ready = false;
@@ -666,7 +668,11 @@ bool FfmpegWriter::close() {
 
     if (!(fmt->flags & AVFMT_NOFILE)) {
         /* close the output file */
-        //////pfhit url_fclose(&oc->pb);
+#if LIBAVCODEC_BUILD >= 3354624
+        url_fclose(oc->pb);
+#else
+        url_fclose(&oc->pb);
+#endif
     }
 
     /* free the stream */

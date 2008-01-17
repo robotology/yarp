@@ -12,8 +12,10 @@
 #include <yarp/sig/all.h>
 #include <yarp/Logger.h>
 
+extern "C" {
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
+}
 
 #include <stdio.h>
 

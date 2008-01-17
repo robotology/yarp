@@ -10,8 +10,10 @@
 #ifndef FfmpegWriter_INC
 #define FfmpegWriter_INC
 
+extern "C" {
 #include <ffmpeg/avcodec.h>
 #include <ffmpeg/avformat.h>
+}
 
 /*
  * Uses ffmpeg to write images to movie files.
