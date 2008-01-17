@@ -316,6 +316,10 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                             AVFormatContext **ppFormatCtx,
                             AVFormatContext **ppFormatCtx2) {
 
+#ifdef WIN32
+    return false;
+
+#else
 	bool audio = (ppFormatCtx==NULL);
     AVFormatParameters& formatParams = 
         *(audio?(&formatParamsAudio):(&formatParamsVideo));
@@ -382,12 +386,19 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
 
     return ok;
 
+#endif
+
 }
 
 
 
 bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config, 
                                  AVFormatContext **ppFormatCtx) {
+
+#ifdef WIN32
+    return false;
+
+#else
     AVFormatParameters formatParams;
     AVInputFormat *iformat;
     ConstString devname = config.check("devname",
@@ -398,6 +409,7 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
     printf("Checking for digital video in %s\n", devname.c_str());
     return av_open_input_file(ppFormatCtx,
                               "", iformat, 0, &formatParams)==0;
+#endif
 }
 
 

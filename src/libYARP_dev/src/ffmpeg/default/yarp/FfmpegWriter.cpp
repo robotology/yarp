@@ -520,6 +520,10 @@ void FfmpegWriter::close_video(AVFormatContext *oc, AVStream *st)
 /* YARP adaptation */
 
 bool FfmpegWriter::open(yarp::os::Searchable & config) {
+
+    printf("version number %d\n", LIBAVCODEC_BUILD);
+
+
     ready = false;
     savedConfig.fromString(config.toString());
 
@@ -662,7 +666,7 @@ bool FfmpegWriter::close() {
 
     if (!(fmt->flags & AVFMT_NOFILE)) {
         /* close the output file */
-        url_fclose(&oc->pb);
+        //////pfhit url_fclose(&oc->pb);
     }
 
     /* free the stream */
