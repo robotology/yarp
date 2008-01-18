@@ -5,7 +5,13 @@ MESSAGE(STATUS "This is an experimental way to compile devices")
 
 # This directory may be compiled independently of the rest of YARP,
 # so we need to pick up YARP explicitly.
-FIND_PACKAGE(YARP REQUIRED)
+IF (NOT COMPILING_ALL_YARP)
+  FIND_PACKAGE(YARP REQUIRED)
+ELSE (NOT COMPILING_ALL_YARP)
+  INCLUDE(YarpDevice)
+  SET (YARP_DIR ${CMAKE_SOURCE_DIR})
+ENDIF (NOT COMPILING_ALL_YARP)
+
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.

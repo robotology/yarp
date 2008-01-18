@@ -7,7 +7,8 @@ PROJECT(YARP)
 SET(COMPILING_ALL_YARP TRUE)
 
 # Pick up our scripts - they are all in the conf subdirectory
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
+SET(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
+SET(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Set up some large-scale compile options - do you want devices? guis?
 INCLUDE(YarpOptions)

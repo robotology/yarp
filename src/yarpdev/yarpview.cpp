@@ -19,6 +19,8 @@
 #include <yarp/sig/all.h>
 #include <yarp/dev/all.h>
 
+#include "drivers.h"
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
@@ -44,6 +46,8 @@ public:
 
 int main(int argc, char *argv[]) {
     Network yarp;
+    DriverCollection dev;
+    printf("devices %s\b", dev.status().c_str());
 
     PolyDriver source, sink;
 
