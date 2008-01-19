@@ -21,6 +21,7 @@ INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
 ##
 
 ADD_EXECUTABLE(yarpdev yarpdev.cpp)
+TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
 
 ########################################################################
@@ -29,6 +30,7 @@ ADD_EXECUTABLE(yarpdev yarpdev.cpp)
 ##
 
 ADD_EXECUTABLE(yarphear yarphear.cpp)
+TARGET_LINK_LIBRARIES(yarphear YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
 
 ########################################################################
