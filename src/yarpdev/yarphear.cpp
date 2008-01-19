@@ -20,6 +20,8 @@
 
 #include <yarp/sig/SoundFile.h>
 
+#include "drivers.h"
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -176,7 +178,8 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    yarp::dev::DriverCollection dev;
+    yarp::os::Network yarp;
 
     // see if user has supplied audio device
     Property p;
@@ -250,7 +253,6 @@ int main(int argc, char *argv[]) {
 
     echo.close();
 
-    Network::fini();
     return 0;
 }
 

@@ -40,6 +40,7 @@ using namespace yarp::dev;
 void addExternalDevices();
 
 #ifndef YARP_AUTOCONF
+#cmakedefine CREATE_DEVICE_LIBRARY_BUILTINS
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
 #cmakedefine ENABLE_microphone
@@ -310,6 +311,8 @@ void Drivers::init() {
     add(createServerControlBoard());
 
 #ifndef YARP_AUTOCONF
+#ifdef CREATE_DEVICE_LIBRARY_BUILTINS
     addExternalDevices();
+#endif
 #endif
 }

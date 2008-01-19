@@ -14,11 +14,11 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
 
+#include "drivers.h"
+
 int main(int argc, char *argv[]) {
-	yarp::os::Network::init();
-    int result = yarp::dev::Drivers::yarpdev(argc,argv);
-	yarp::os::Network::fini();
-    
-    return result;
+    yarp::dev::DriverCollection dev;
+	yarp::os::Network yarp;
+    return yarp::dev::Drivers::yarpdev(argc,argv);
 }
 

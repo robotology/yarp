@@ -1,22 +1,45 @@
-#MESSAGE(STATUS "yarpdev, INCLUDE -> ${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC}")
-#MESSAGE(STATUS "yarpdev, YARP_dev_EXT_LIBS: " "${YARP_dev_EXT_LIBS}")
-#MESSAGE(STATUS, "yarpdev, LIBS -> YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS")
+
 INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
-#MESSAGE(ERROR, ${YARP_dev_EXT_LIBS})
 LINK_LIBRARIES(YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
-ADD_EXECUTABLE(yarpdev yarpdev.cpp)
-ADD_EXECUTABLE(yarphear yarphear.cpp)
-SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
-IF (YARP_ADMIN)
-  INCLUDE(YarpDevice)
-  IF (CREATE_DEVICE_LIBRARY_MODULES)
+# prepare for devices that are linked externally to libYARP_dev
+INCLUDE(YarpDevice)
+IF (CREATE_DEVICE_LIBRARY_MODULES)
+    # add in device library
     SET(yarpmod_DIR ${CMAKE_BINARY_DIR})
     IMPORT_DEVICES(${CMAKE_BINARY_DIR}/drivers.h yarpmod)
-    INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+ELSE (CREATE_DEVICE_LIBRARY_MODULES)
+    # no device library to import, create blank stup
+    IMPORT_DEVICES(${CMAKE_BINARY_DIR}/drivers.h)
+ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+
+
+########################################################################
+##
+## yarpdev -- command line control of devices
+##
+
+ADD_EXECUTABLE(yarpdev yarpdev.cpp)
+
+
+########################################################################
+##
+## yarphear -- command line access to audio
+##
+
+ADD_EXECUTABLE(yarphear yarphear.cpp)
+
+
+########################################################################
+##
+## yarpview -- visualize image streams
+##
+
+SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
+IF (YARP_ADMIN)
     ADD_EXECUTABLE(yarpview2 yarpview.cpp)
     TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-  ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 ENDIF (YARP_ADMIN)
 
 INSTALL_TARGETS(/bin yarpdev yarphear)
