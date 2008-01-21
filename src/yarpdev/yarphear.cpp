@@ -20,7 +20,7 @@
 
 #include <yarp/sig/SoundFile.h>
 
-#include "drivers.h"
+#include "yarphear_drivers.h"
 
 using namespace yarp::os;
 using namespace yarp::sig;
