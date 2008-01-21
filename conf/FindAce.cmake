@@ -14,8 +14,9 @@ IF (BUILTIN_ACE)
 
 	SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include")
 	IF(UNIX)
-		SET(ACE_LIBRARY "-lm -lpthread -ldl -lrt")
-		# rt may or may not be needed
+		SET(ACE_LIBRARY "-lm -lpthread -ldl")
+		#SET(ACE_LIBRARY "-lm -lpthread -ldl -lrt")
+		# rt may or may not be needed, depends on config...
 	ENDIF(UNIX)
 	IF(MINGW)
 		SET(ACE_LIBRARY m ws2_32 mswsock netapi32 winmm)

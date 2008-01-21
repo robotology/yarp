@@ -12,16 +12,13 @@ ENDIF(WIN32 AND NOT CYGWIN)
 #################################################
 
 
-IF (BUILTIN_STDC)
-IF(CMAKE_COMPILER_IS_GNUCXX)
-  IF(EXISTS libstdc)
-    MESSAGE(STATUS "libstc directory present, compiling libstdc++ in statically")
-    LINK_DIRECTORIES("${PROJECT_SOURCE_DIR}/libstdc")
+SET (STATLIB "${CMAKE_BINARY_DIR}/static_libs")
+IF (EXISTS ${STATLIB})
+    MESSAGE(STATUS "static_libs directory present: ${STATLIB}")
+    LINK_DIRECTORIES(${STATLIB})
     ADD_DEFINITIONS(-static-libgcc)
     SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
-  ENDIF(EXISTS libstdc)
-ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-ENDIF (BUILTIN_STDC)
+ENDIF (EXISTS ${STATLIB})
 
 
 # compile device library by default - safe, since individual devices
