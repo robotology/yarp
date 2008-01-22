@@ -19,7 +19,7 @@
 #include <yarp/sig/all.h>
 #include <yarp/dev/all.h>
 
-#include "viewmod_drivers.h"
+#include "yarpview_drivers.h"
 
 using namespace yarp::os;
 using namespace yarp::sig;
