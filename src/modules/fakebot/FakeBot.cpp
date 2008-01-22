@@ -73,12 +73,12 @@ void scramble(unsigned char& ch, float f) {
 
 
 bool FakeBot::open(yarp::os::Searchable& config) {
-    ConstString backFile = config.check("background",Value(""),
+    ConstString backFile = config.check("background",Value("textures/back.ppm"),
                                         "background image to use").asString();
     if (backFile!="") {
         yarp::sig::file::read(back,backFile.c_str());
     }
-    ConstString foreFile = config.check("target",Value(""),
+    ConstString foreFile = config.check("target",Value("textures/fore.ppm"),
                                         "target image to use").asString();
     if (foreFile!="") {
         yarp::sig::file::read(fore,foreFile.c_str());
