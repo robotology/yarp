@@ -70,6 +70,7 @@ static int __x = wxDefaultPosition.x;
 static int __y = wxDefaultPosition.y;
 static ConstString __title = "yarpview!";
 static ConstString __clicker = "";
+static bool wxsdl_running = false;
 
 static Semaphore mutex(1), finished(0);
 
@@ -269,7 +270,6 @@ void SDLPanel::onClick(wxMouseEvent & event) {
 
 void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
     //printf("low level put image\n");
-
 
     mutex.wait();
     wshow = image.width();
@@ -542,6 +542,10 @@ int SDLApp::OnRun() {
         return -1;
     }
     printf("initialized\n");
+
+    printf("running\n");
+    fflush(stdout);
+    wxsdl_running = true;
     
     // generate an initial idle event to start things
     //wxIdleEvent event;
@@ -656,6 +660,16 @@ bool WxsdlWriter::close() {
 }
   
 bool WxsdlWriter::putImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> & image) {
+
+    // just in case
+    //printf("WAITING for wxsdl\n");
+    if (!wxsdl_running) {
+        //printf("WAITING for wxsdl\n");
+        Time::delay(0.1);
+    }
+    //printf("FINISHED WAITING for wxsdl\n");
+
+
     mutex.wait();
     if (!active) {
         mutex.post();
