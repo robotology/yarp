@@ -269,7 +269,20 @@ void SDLPanel::onClick(wxMouseEvent & event) {
 
 
 void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
+
+    if (image.width()==0) return;
+
+    //printf("%d %d // %d %d\n",
+    //image.width(),image.height(),
+    //wscreen, hscreen);
+    //fflush(stdout);
+
     //printf("low level put image\n");
+
+    if (!wxsdl_running) {
+        //printf("WAITING for wxsdl\n");
+        Time::delay(0.1);
+    }
 
     mutex.wait();
     wshow = image.width();
@@ -287,6 +300,11 @@ void SDLPanel::putImage(ImageOf<PixelRgb>& image) {
     
 
     bool done = false;
+
+    //printf("%d %d // %d %d\n",
+    //image.width(),image.height(),
+    //wscreen, hscreen);
+    //fflush(stdout);
 
     if (!done) {
         for (int y = 0; y < hscreen; y++) {
