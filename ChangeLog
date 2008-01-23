@@ -1,3 +1,10 @@
+2008-01-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/DeviceDriver.cpp: bug when respond()
+	method returned false to signal failure.  This failure
+	message was being treated as a connection problem, which
+	it isn't.
+
 2007-12-19  Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_dev/src/RemoteControlBoard.cpp:
 	* src/libYARP_dev/include/ControlBoardInterfaces.h: added 

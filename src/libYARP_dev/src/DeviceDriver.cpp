@@ -62,7 +62,7 @@ bool DeviceResponder::read(ConnectionReader& connection) {
     Bottle cmd, response;
     if (!cmd.read(connection)) { return false; }
     //printf("command received: %s\n", cmd.toString().c_str());
-    bool result = respond(cmd,response);
+    respond(cmd,response);
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=NULL) {
@@ -83,8 +83,15 @@ bool DeviceResponder::read(ConnectionReader& connection) {
             
             //printf("response sent: %s\n", response.toString().c_str());
         }
+    } else {
+        ConnectionWriter *writer = connection.getWriter();
+        if (writer!=NULL) {
+            response.clear();
+            response.addVocab(Vocab::encode("nak"));
+            response.write(*writer);
+        }
     }
-    return result;
+    return true;
 }
 
 
