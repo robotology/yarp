@@ -2386,7 +2386,6 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
             if (caller->verbose())
                 ACE_OS::printf("Calling calibrate\n");
             ok=ical2->calibrate();
-            ok=true; //client would get stuck if ret false
         }
         break;
     case VOCAB_CALIBRATE_DONE:

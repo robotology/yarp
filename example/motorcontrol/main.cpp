@@ -25,7 +25,7 @@ int main(int argc, const char **argv)
     device.open(p);
     device.view(ical);
 
-    ical->calibrate();
+    //ical->calibrate();
     ical->calibrate2(1,1000,1.1,1.1,1.1);
     ical->done(2);
     ical->park();

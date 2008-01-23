@@ -353,7 +353,7 @@ public:
     virtual bool done(int j)
     {
         fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
-        return true; 
+        return false; 
     }
 };
 
