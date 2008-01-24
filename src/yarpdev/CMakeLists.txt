@@ -25,7 +25,7 @@ ELSE (CREATE_DEVICE_LIBRARY_MODULES)
   TARGET_IMPORT_DEVICES(yarpdev
   		      ${CMAKE_BINARY_DIR}/yarpdev_drivers.h)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+#TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
 
 ########################################################################
@@ -35,13 +35,17 @@ TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIB
 
 ADD_EXECUTABLE(yarphear yarphear.cpp)
 IF (CREATE_DEVICE_LIBRARY_MODULES)
+  BEGIN_DEVICE_LIBRARY(hearmod) 
+  ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/portaudio
+                   ${CMAKE_CURRENT_BINARY_DIR})
+  END_DEVICE_LIBRARY(hearmod)
   TARGET_IMPORT_DEVICES(yarphear
-		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h yarpmod)
+		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h hearmod)
 ELSE (CREATE_DEVICE_LIBRARY_MODULES)
   TARGET_IMPORT_DEVICES(yarphear
 		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-TARGET_LINK_LIBRARIES(yarphear YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+#TARGET_LINK_LIBRARIES(yarphear YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
 
 ########################################################################
@@ -60,7 +64,7 @@ IF (YARP_ADMIN)
     TARGET_IMPORT_DEVICES(yarpview2 
 		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h viewmod)
     TARGET_LINK_LIBRARIES(yarpview2 viewmod)
-    TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+    #TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 ENDIF (YARP_ADMIN)
 
 
