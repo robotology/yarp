@@ -13,6 +13,7 @@
 #include <yarp/StringInputStream.h>
 #include <yarp/NetType.h>
 #include <yarp/NameConfig.h>
+#include <yarp/SplitString.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
@@ -223,13 +224,66 @@ public:
 
 
     bool fromConfigFile(const char *fname,Searchable& env, bool wipe=true) {
+        String searchPath = 
+            env.check("CONFIG_PATH",
+                      Value(""),
+                      "path to search for config files").toString().c_str();
+
+        YARP_DEBUG(Logger::get(),
+                   String("looking for ") + fname + ", search path: " +
+                   searchPath);
+
         ifstream fin(fname);
+
+        String pathPrefix("");
+        if (fin.fail()) {
+            SplitString ss(searchPath.c_str(),';');
+            for (int i=0; i<ss.size(); i++) {
+                String trial = ss.get(i);
+                trial += '/';
+                trial += fname;
+
+                YARP_DEBUG(Logger::get(),
+                           String("looking for ") + fname + " as " +
+                           trial.c_str());
+
+                fin.open(trial.c_str());
+                if (!fin.fail()) { 
+                    pathPrefix = ss.get(i);
+                    pathPrefix += '/';
+                    break; 
+                }
+            }
+        }
+
+        String path("");
+        String sfname = fname;
+        int index = sfname.rfind('/');
+        if (index==-1) {
+            index = sfname.rfind('\\');
+        }
+        if (index!=-1) {
+            path = sfname.substr(0,index);
+        }
+
         String txt;
         if (fin.fail()) {
-            YARP_DEBUG(Logger::get(),String("cannot read from ") +
+            YARP_ERROR(Logger::get(),String("cannot read from ") +
                        fname);
             return false;
         }
+
+        Property envExtended;
+        envExtended.fromString(env.toString());
+        if (path!="") {
+            if (searchPath.length()>0) {
+                searchPath += ";";
+            }
+            searchPath += pathPrefix;
+            searchPath += path;
+            envExtended.put("CONFIG_PATH",searchPath.c_str());
+        }
+
         while (!(fin.eof()||fin.fail())) {
             char buf[1000];
             fin.getline(buf,sizeof(buf));
@@ -238,7 +292,7 @@ public:
                 txt += "\n";
             }
         }
-        fromConfig(txt.c_str(),env,wipe);
+        fromConfig(txt.c_str(),envExtended,wipe);
         return true;
     }
 

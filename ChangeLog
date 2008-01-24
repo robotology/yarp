@@ -1,3 +1,8 @@
+2008-01-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Property.cpp: for Property::fromConfigFile,
+	implement a search path for include directives.
+
 2008-01-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/DeviceDriver.cpp: bug when respond()

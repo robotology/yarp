@@ -28,7 +28,7 @@ public:
 
     String getConfigFileName(const char *stem = NULL);
 
-    bool createPath(const String& fileName, int ignoreLevel = 1);
+    static bool createPath(const String& fileName, int ignoreLevel = 1);
 
     String readConfig(const String& fileName);
 
