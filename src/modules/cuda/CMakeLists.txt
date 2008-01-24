@@ -2,9 +2,10 @@
 FIND_PACKAGE(YARP REQUIRED)
 
 FIND_LIBRARY(lib_cudart cudart)
-FIND_LIBRARY(lib_pthread cuda)
-FIND_LIBRARY(lib_GL cutil)
-FIND_LIBRARY(lib_glut glut)
+FIND_LIBRARY(lib_cuda cuda)
+FIND_LIBRARY(lib_cutil cutil)
+FIND_LIBRARY(lib_GL GL)
+
 
 SET (OK FALSE)
 IF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
@@ -13,7 +14,7 @@ ENDIF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
 
 IF (OK)
 
-  LINK_LIBRARIES(${lib_cudart} ${lib_cuda} ${lib_cutil} ${lib_GL})
+  LINK_LIBRARIES(${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
 
   IF (COMPILE_DEVICE_LIBRARY)
     PREPARE_DEVICE(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
