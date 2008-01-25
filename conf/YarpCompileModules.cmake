@@ -283,7 +283,7 @@ ELSE(EXTERNAL_MODULES)
   WRITE_FILE(${populator} "void add${DISTINCT}ExternalDevices()" APPEND)
   WRITE_FILE(${populator} "{\n//do nothing\n}\n" APPEND)
 ENDIF(EXTERNAL_MODULES)
-IF (EXISTS ${EXTERNAL_MODULES_FILE})
+ENDIF (EXISTS ${EXTERNAL_MODULES_FILE})
 
 SET(PROJECT_NAME "${SAVED_TMP}")
 ################ 
