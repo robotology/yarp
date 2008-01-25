@@ -15,6 +15,11 @@ ADD_DEFINITIONS(${YARP_DEFINES})
 SET(YARP_MODULE_PATH "@CMAKE_MODULE_PATH@")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
 
+# note location of independent yarp modules, if compiled
+IF (NOT yarpmod_DIR)
+  SET(yarpmod_DIR "@CMAKE_BINARY_DIR@")
+ENDIF (NOT yarpmod_DIR)
+
 # make some useful YARP macros available
 IF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
   INCLUDE(YarpDevice)
