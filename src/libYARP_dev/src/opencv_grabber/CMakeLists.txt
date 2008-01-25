@@ -1,3 +1,9 @@
+IF (COMPILE_DEVICE_LIBRARY)
+  PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE common/yarp/OpenCVGrabber.h WRAPPER grabber)
+ENDIF (COMPILE_DEVICE_LIBRARY)
+
+IF (NOT SKIP_opencv_grabber)
+
 FIND_PACKAGE(YARP REQUIRED)
 
 FIND_PACKAGE(OpenCV)
@@ -8,9 +14,7 @@ IF (OpenCV_FOUND)
   INCLUDE_DIRECTORIES(${OPENCV_INCLUDE_DIR})
   LINK_LIBRARIES(${OPENCV_LIBRARIES})
 
-  IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE common/yarp/OpenCVGrabber.h WRAPPER grabber)
-  ENDIF (COMPILE_DEVICE_LIBRARY)
+  #MESSAGE(STATUS "opencv libs ${OPENCV_LIBRARIES}")
 
   ADD_LIBRARY(opencv default/yarp/OpenCVGrabber.cpp common/yarp/OpenCVGrabber.h)
 
@@ -22,3 +26,4 @@ ELSE (OpenCV_FOUND)
 ENDIF (OpenCV_FOUND)
 
 
+ENDIF (NOT SKIP_opencv_grabber)

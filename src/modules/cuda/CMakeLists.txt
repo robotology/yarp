@@ -1,30 +1,34 @@
+IF (COMPILE_DEVICE_LIBRARY)
+  PREPARE_DEVICE(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
+ENDIF (COMPILE_DEVICE_LIBRARY)
 
-FIND_PACKAGE(YARP REQUIRED)
-
-FIND_LIBRARY(lib_cudart cudart)
-FIND_LIBRARY(lib_cuda cuda)
-FIND_LIBRARY(lib_cutil cutil)
-FIND_LIBRARY(lib_GL GL)
+IF (NOT SKIP_cuda)
 
 
-SET (OK FALSE)
-IF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
-  SET (OK TRUE)
-ENDIF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
+  FIND_PACKAGE(YARP REQUIRED)
 
-IF (OK)
+  FIND_LIBRARY(lib_cudart cudart)
+  FIND_LIBRARY(lib_cuda cuda)
+  FIND_LIBRARY(lib_cutil cutil)
+  FIND_LIBRARY(lib_GL GL)
 
-  LINK_LIBRARIES(${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
 
-  IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(cuda TYPE CUDAGPU INCLUDE "CUDADeviceDriver.h")
-  ENDIF (COMPILE_DEVICE_LIBRARY)
+  SET (OK FALSE)
+  IF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
+    SET (OK TRUE)
+  ENDIF(lib_cudart AND lib_cuda AND lib_cutil AND lib_GL)
 
-  ADD_LIBRARY(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
+  IF (OK)
 
-ELSE (OK)
+    LINK_LIBRARIES(${lib_cudart} ${lib_cuda} ${lib_GL} ${lib_cutil})
 
-  MESSAGE(STATUS "could not find all libraries needed by cuda driver")
+    ADD_LIBRARY(ycuda CUDADeviceDriver.cpp CUDADeviceDriver.h FunctionClass.h)
 
-ENDIF (OK)
+  ELSE (OK)
+
+    MESSAGE(STATUS "could not find all libraries needed by cuda driver")
+
+  ENDIF (OK)
+
+ENDIF (NOT SKIP_cuda)
 

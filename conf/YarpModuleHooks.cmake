@@ -12,9 +12,13 @@ IF (NOT COMPILE_DEVICE_LIBRARY)
 
 MACRO(ADD_LIBRARY LIBNAME)
   IF (YARPY_DEVICES)
-    SET(MYNAME "${DEVICE_PREFIX}${LIBNAME}")
-    SET(ENABLE_${MYNAME} TRUE CACHE BOOL "Enable/disable compilation of ${MYNAME}")
-    IF (ENABLE_${MYNAME})
+
+    # no longer control compilation at the library level
+    #SET(MYNAME "${DEVICE_PREFIX}${LIBNAME}")
+    #SET(ENABLE_${MYNAME} TRUE CACHE BOOL "Enable/disable compilation of ${MYNAME}")
+    #SET(YARPY_DEV_ACTIVE ENABLE_${MYNAME})
+
+    IF (YARPY_DEV_ACTIVE)
       SET(YARPY_ACTIVE TRUE)
       IF (MERGE_DEVICE_LIBS)
         # this library is not actually needed
@@ -29,10 +33,10 @@ MACRO(ADD_LIBRARY LIBNAME)
         SET(YARPY_SRC_LIST)
       ENDIF (MERGE_DEVICE_LIBS)
       SET(YARPY_LIB_LIST ${MYNAME} ${YARPY_LIB_LIST})
-    ELSE (ENABLE_${MYNAME})
+    ELSE (YARPY_DEV_ACTIVE)
         SET(YARPY_SRC_LIST)
         SET(YARPY_DEV_LIST)
-    ENDIF (ENABLE_${MYNAME})
+    ENDIF (YARPY_DEV_ACTIVE)
     SET(YARPY_DEV_SRC_LIST)
   ELSE (YARPY_DEVICES)
     # pass on call without looking at it

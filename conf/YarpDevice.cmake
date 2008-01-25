@@ -86,6 +86,7 @@ SET(folder_source ${folder_source} ${GEN}/yarpdev.cpp)
 ENDMACRO(YarpDevice)
 
 MACRO(BEGIN_DEVICE_LIBRARY devname)
+  INCLUDE(UsePkgConfig)
   SET(YARP_KNOWN_DEVICE_LIBS ${YARP_KNOWN_DEVICE_LIBS} ${devname})
   IF (COMPILING_ALL_YARP)
     SET(YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/conf")
@@ -115,7 +116,8 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
   # ---> now always merge.
   SET(MERGE_DEVICE_LIBS TRUE)
   #SET(MERGE_DEVICE_LIBS ${MERGE_DEVICE_LIBS_INIT} CACHE BOOL "Try to pack device libraries together a bit")
-  SET(DEVICE_PREFIX "yarpdev_")
+  SET(DEVICE_PREFIX "${devname}_")
+  #SET(DEVICE_PREFIX "yarpdev_")
   SET(YARPY_LIB_FLAG EXCLUDE_FROM_ALL)
   IF (NOT YARPY_DEV_LIB_NAME)
     SET(YARPY_DEV_LIB_NAME devices)
@@ -135,7 +137,6 @@ ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
 
 MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  MESSAGE(STATUS " +++ added device ${devname} (type <${type}>, header <${include}>, wrapper <${wrapper}>)")
   SET(YARPDEV_NAME "${devname}")
   SET(YARPDEV_TYPE "${type}")
   SET(YARPDEV_INCLUDE "${include}")
@@ -149,8 +150,31 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
      ${fname} @ONLY  IMMEDIATE)
   ###MESSAGE(STATUS "Device ${devname} creation code in ${fname}")
-  SET(YARPY_DEV_SRC_LIST ${YARPY_DEV_SRC_LIST} ${fname})
-  SET(YARPY_DEV_LIST ${YARPY_DEV_LIST} ${devname})
+
+  SET(MYNAME "${DEVICE_PREFIX}${devname}")
+  SET(ENABLE_${MYNAME} FALSE CACHE BOOL "Enable/disable compilation of ${MYNAME}")
+
+  # for user's convience
+  SET(ENABLE_${devname} ${ENABLE_${MYNAME}})
+  IF (ENABLE_${devname})
+    SET(SKIP_${devname} FALSE)
+    SET(SKIP_${MYNAME} FALSE)
+  ELSE (ENABLE_${devname})
+    SET(SKIP_${devname} TRUE)
+    SET(SKIP_${MYNAME} TRUE)
+  ENDIF (ENABLE_${devname})
+
+  IF (ENABLE_${MYNAME})
+    SET(YARPY_DEV_SRC_LIST ${YARPY_DEV_SRC_LIST} ${fname})
+    SET(YARPY_DEV_LIST ${YARPY_DEV_LIST} ${devname})
+    SET(YARPY_DEV_ACTIVE TRUE)
+    MESSAGE(STATUS " +++ device ${devname}, ENABLE_${devname} is set")
+  ELSE (ENABLE_${MYNAME})
+    MESSAGE(STATUS " +++ device ${devname}, SKIP_${devname} is set")
+  ENDIF (ENABLE_${MYNAME})
+
+
+
 ENDMACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
 
 MACRO(PREPARE_DEVICE devname)

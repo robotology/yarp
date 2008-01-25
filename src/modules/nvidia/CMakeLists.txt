@@ -1,26 +1,32 @@
 
-FIND_PACKAGE(YARP REQUIRED)
+IF (COMPILE_DEVICE_LIBRARY)
+  PREPARE_DEVICE(nvidia TYPE NVIDIAGPU INCLUDE "NVIDIADeviceDriver.h")
+ENDIF (COMPILE_DEVICE_LIBRARY)
 
-FIND_LIBRARY(lib_CgGL CgGL)
-FIND_LIBRARY(lib_pthread pthread)
-FIND_LIBRARY(lib_GL GL)
-FIND_LIBRARY(lib_glut glut)
+IF (NOT SKIP_nvidia)
 
-SET (OK FALSE)
+ FIND_PACKAGE(YARP REQUIRED)
 
-IF(lib_CgGL AND lib_pthread AND lib_GL AND lib_glut)
+ FIND_LIBRARY(lib_CgGL CgGL)
+ FIND_LIBRARY(lib_pthread pthread)
+ FIND_LIBRARY(lib_GL GL)
+ FIND_LIBRARY(lib_glut glut)
+
+ SET (OK FALSE)
+
+ IF(lib_CgGL AND lib_pthread AND lib_GL AND lib_glut)
   SET (OK TRUE)
-ENDIF(lib_CgGL AND lib_pthread AND lib_GL AND lib_glut)
+ ENDIF(lib_CgGL AND lib_pthread AND lib_GL AND lib_glut)
 
-IF (NOT WINDOWS)
+ IF (NOT WINDOWS)
   FIND_LIBRARY(lib_GLEW GLEW)
   IF (NOT lib_GLEW)
     SET (OK FALSE)
   ENDIF (NOT lib_GLEW)
-ENDIF (NOT WINDOWS)
+ ENDIF (NOT WINDOWS)
 
 
-IF (OK)
+ IF (OK)
 
   ADD_DEFINITIONS(-DGL_GLEXT_PROTOTYPES -DGLX_GLXEXT_PROTOTYPES)
 
@@ -29,15 +35,12 @@ IF (OK)
     LINK_LIBRARIES(GLEW)
   ENDIF (NOT WINDOWS)	
 
-  IF (COMPILE_DEVICE_LIBRARY)
-    PREPARE_DEVICE(nvidia TYPE NVIDIAGPU INCLUDE "NVIDIADeviceDriver.h")
-  ENDIF (COMPILE_DEVICE_LIBRARY)
-
   ADD_LIBRARY(nvidia NVIDIADeviceDriver.cpp NVIDIADeviceDriver.h FBO_Filter.h)
 
-ELSE (OK)
+ ELSE (OK)
 
   MESSAGE(STATUS "could not find all libraries needed by nvidia driver")
 
-ENDIF (OK)
+ ENDIF (OK)
 
+ENDIF (NOT SKIP_nvidia)
