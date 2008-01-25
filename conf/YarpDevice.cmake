@@ -152,7 +152,10 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   ###MESSAGE(STATUS "Device ${devname} creation code in ${fname}")
 
   SET(MYNAME "${DEVICE_PREFIX}${devname}")
-  SET(ENABLE_${MYNAME} FALSE CACHE BOOL "Enable/disable compilation of ${MYNAME}")
+  IF (NOT COMPILE_BY_DEFAULT)
+    SET (COMPILE_BY_DEFAULT FALSE)
+  ENDIF (NOT COMPILE_BY_DEFAULT)
+  SET(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
 
   # for user's convience
   SET(ENABLE_${devname} ${ENABLE_${MYNAME}})
