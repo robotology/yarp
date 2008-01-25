@@ -35,12 +35,13 @@ ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
 ADD_EXECUTABLE(yarphear yarphear.cpp)
 IF (CREATE_DEVICE_LIBRARY_MODULES)
-  BEGIN_DEVICE_LIBRARY(hearmod) 
-  ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/portaudio
-                   ${CMAKE_CURRENT_BINARY_DIR})
-  END_DEVICE_LIBRARY(hearmod)
+  #BEGIN_DEVICE_LIBRARY(yarphearmod) 
+  #SET(COMPILE_BY_DEFAULT TRUE)
+  #ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/portaudio
+  #                 ${CMAKE_CURRENT_BINARY_DIR})
+  #END_DEVICE_LIBRARY(yarphearmod)
   TARGET_IMPORT_DEVICES(yarphear
-		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h hearmod)
+		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h yarpmod)
 ELSE (CREATE_DEVICE_LIBRARY_MODULES)
   TARGET_IMPORT_DEVICES(yarphear
 		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h)
@@ -56,14 +57,15 @@ ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
 #SET(YARP_ADMIN FALSE)
 IF (YARP_ADMIN)
-    BEGIN_DEVICE_LIBRARY(viewmod) 
-    ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/modules/wxsdl
-                     ${CMAKE_CURRENT_BINARY_DIR})
-    END_DEVICE_LIBRARY(viewmod)
+    #BEGIN_DEVICE_LIBRARY(viewmod) 
+    #SET(COMPILE_BY_DEFAULT TRUE)
+    #ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/modules/wxsdl
+    #                 ${CMAKE_CURRENT_BINARY_DIR})
+    #END_DEVICE_LIBRARY(viewmod)
     ADD_EXECUTABLE(yarpview2 yarpview.cpp)
     TARGET_IMPORT_DEVICES(yarpview2 
-		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h viewmod)
-    TARGET_LINK_LIBRARIES(yarpview2 viewmod)
+		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h yarpmod)
+    #TARGET_LINK_LIBRARIES(yarpview2 yarpmod)
     #TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 ENDIF (YARP_ADMIN)
 
