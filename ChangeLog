@@ -1,5 +1,8 @@
 2008-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpCompileModules.cmake: fixed accidental inhibition of
+	older method of compiling devices.
+
 	* conf/YarpDevice.cmake: better defaults for skipping devices.
 
 2008-01-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
