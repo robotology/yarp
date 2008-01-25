@@ -16,33 +16,47 @@ ENDIF (NOT COMPILING_ALL_YARP)
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.
 BEGIN_DEVICE_LIBRARY(yarpmod)
-ADD_SUBDIRECTORY(cuda)
-ADD_SUBDIRECTORY(fakebot)
-ADD_SUBDIRECTORY(nvidia)
-ADD_SUBDIRECTORY(stage)
-ADD_SUBDIRECTORY(vfw)
-ADD_SUBDIRECTORY(wxsdl)
-# we can include remote directories as well - we specify a 
-# local directory for producing binaries so there is no interference
-# with other possible builds.
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/ffmpeg 
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/microphone 
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/serial 
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/opencv_grabber
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/firewirecamera
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/portaudio
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/urbtc
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/jrkerr
-                 ${CMAKE_CURRENT_BINARY_DIR})
-ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
-                 ${CMAKE_CURRENT_BINARY_DIR})
+  ADD_SUBDIRECTORY(cuda)
+  ADD_SUBDIRECTORY(fakebot)
+  ADD_SUBDIRECTORY(nvidia)
+  ADD_SUBDIRECTORY(stage)
+  ADD_SUBDIRECTORY(vfw)
+  ADD_SUBDIRECTORY(wxsdl)
+  # we can include remote directories as well - we specify a 
+  # local directory for producing binaries so there is no interference
+  # with other possible builds.
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/ffmpeg 
+                   ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/microphone 
+                   ${CMAKE_CURRENT_BINARY_DIR}/microphone)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/serial 
+                   ${CMAKE_CURRENT_BINARY_DIR}/serial)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/opencv_grabber
+                   ${CMAKE_CURRENT_BINARY_DIR}/opencv_grabber)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/firewirecamera
+                   ${CMAKE_CURRENT_BINARY_DIR}/firewirecamera)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/portaudio
+                   ${CMAKE_CURRENT_BINARY_DIR}/portaudio)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/urbtc
+                   ${CMAKE_CURRENT_BINARY_DIR}/urbtc)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/jrkerr
+                   ${CMAKE_CURRENT_BINARY_DIR}/jrkerr)
+  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
+                   ${CMAKE_CURRENT_BINARY_DIR}/dimax_u2c)
+
+  # we can also suck in other device libraries built the same way
+  SET(EXTFILE "${YARP_MODULE_PATH}/ExternalModules.cmake")
+  IF (EXISTS ${EXTFILE})
+    INCLUDE(${EXTFILE})
+    FOREACH(EXTDIR ${EXTERNAL_MODULES})
+      IF (NOT ${EXTDIR}_DIR)
+        SET(${EXTDIR}_DIR ${${EXTDIR}_PATH})
+      ENDIF (NOT ${EXTDIR}_DIR)
+      ADD_SUBDIRECTORY(${${EXTDIR}_DIR}
+                     ${CMAKE_CURRENT_BINARY_DIR}/externals)
+    ENDFOREACH(EXTDIR ${EXTERNAL_MODULES})
+  ENDIF (EXISTS ${EXTFILE})
+
 END_DEVICE_LIBRARY(yarpmod)
 
 # Done!

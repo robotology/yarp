@@ -1,5 +1,8 @@
 2008-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/PopulateDrivers.cpp.in: fixed accidental
+	inhibition of older method of compiling devices.
+
 	* conf/YarpCompileModules.cmake: fixed accidental inhibition of
 	older method of compiling devices.
 

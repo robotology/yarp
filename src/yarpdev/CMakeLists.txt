@@ -25,7 +25,8 @@ ELSE (CREATE_DEVICE_LIBRARY_MODULES)
   TARGET_IMPORT_DEVICES(yarpdev
   		      ${CMAKE_BINARY_DIR}/yarpdev_drivers.h)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-#TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+
+TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
 
 ########################################################################
@@ -63,8 +64,13 @@ IF (YARP_ADMIN)
     #                 ${CMAKE_CURRENT_BINARY_DIR})
     #END_DEVICE_LIBRARY(viewmod)
     ADD_EXECUTABLE(yarpview2 yarpview.cpp)
-    TARGET_IMPORT_DEVICES(yarpview2 
+    IF (CREATE_DEVICE_LIBRARY_MODULES)
+      TARGET_IMPORT_DEVICES(yarpview2 
 		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h yarpmod)
+    ELSE (CREATE_DEVICE_LIBRARY_MODULES)
+      TARGET_IMPORT_DEVICES(yarpview2 
+		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h)
+    ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
     #TARGET_LINK_LIBRARIES(yarpview2 yarpmod)
     #TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 ENDIF (YARP_ADMIN)
