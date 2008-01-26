@@ -9,11 +9,17 @@
 #include <stdlib.h>
 #include <yarp/dev/GPUInterface.h>
 #include <yarp/dev/PolyDriver.h>
-//#include <yarp/dev/Drivers.h>
+
+#ifndef NEW_SYSTEM
+#include <yarp/dev/Drivers.h>
+#endif
+
 #include <yarp/sig/all.h>
 #include <yarp/os/all.h>
 
+#ifdef NEW_SYSTEM
 #include "drivers.h"
+#endif
 
 #include <cv.h>
 #include <cvaux.h>
