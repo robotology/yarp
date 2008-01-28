@@ -1,3 +1,9 @@
+2008-01-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpCompileModules.cmake: change defaults in new method
+	of device compilation to be as much like the old ones as 
+	possible.
+
 2008-01-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/PopulateDrivers.cpp.in: fixed accidental

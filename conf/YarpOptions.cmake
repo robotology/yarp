@@ -27,7 +27,18 @@ ENDIF (EXISTS ${STATLIB})
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
 SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Do you want to link specific hardware into the device library")
-SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Do you want to build a separate bundle of devices (newer method)")
+
+# this no longer seems to be in active use
+MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
+
+SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Build a bundle of devices as modules")
+
+IF (CREATE_DEVICE_LIBRARY_MODULES)
+  SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries")
+
+ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
+
+
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
 
 SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create lib libYARP_math (experimental)?")

@@ -41,6 +41,8 @@ void addExternalDevices();
 
 #ifndef YARP_AUTOCONF
 #cmakedefine EMBED_DEVICE_LIBRARY_CALL
+#cmakedefine CREATE_DEVICE_LIBRARY_MODULES
+#cmakedefine MERGE_DEVICE_LIBRARY_MODULES
 #cmakedefine ENABLE_dragonfly
 #cmakedefine ENABLE_esdMotionControl
 #cmakedefine ENABLE_microphone
@@ -60,6 +62,12 @@ void addExternalDevices();
 #cmakedefine ENABLE_mei
 #cmakedefine ENABLE_urbtc
 #cmakedefine ENABLE_serial
+#endif
+
+#ifdef CREATE_DEVICE_LIBRARY_MODULES
+#ifdef MERGE_DEVICE_LIBRARY_MODULES
+extern "C" void add_yarpmod_devices();
+#endif
 #endif
 
 // add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
@@ -313,6 +321,12 @@ void Drivers::init() {
 #ifndef YARP_AUTOCONF
 #ifdef EMBED_DEVICE_LIBRARY_CALL
     addExternalDevices();
+#endif
+#endif
+
+#ifdef CREATE_DEVICE_LIBRARY_MODULES
+#ifdef MERGE_DEVICE_LIBRARY_MODULES
+    add_yarpmod_devices();
 #endif
 #endif
 }
