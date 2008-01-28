@@ -29,7 +29,7 @@ using namespace yarp::os;
 class yarp::dev::SerialDeviceDriverSettings 
 {
 public:
-    char CommChannel[10]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
+    char CommChannel[100]; // Contains the name of the com port "COM1", "COM2" (windows) or "/etc/stty0", "/dev/stty1" (linux), etc...
     ACE_TTY_IO::Serial_Params SerialParams;
     /** Serial_Params contains the following variables: */
     /** int baudrate; Specifies the baudrate at which the communication port operates. */
