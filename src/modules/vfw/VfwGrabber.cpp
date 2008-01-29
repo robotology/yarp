@@ -86,7 +86,6 @@ typedef struct CvCaptureCAM_VFW
 }
 CvCaptureCAM_VFW;
 
-
 static LRESULT PASCAL FrameCallbackProc( HWND hWnd, VIDEOHDR* hdr ) 
 { 
     CvCaptureCAM_VFW* capture = 0;
@@ -95,6 +94,11 @@ static LRESULT PASCAL FrameCallbackProc( HWND hWnd, VIDEOHDR* hdr )
 
     capture = (CvCaptureCAM_VFW*)capGetUserData(hWnd);
     capture->hdr = hdr;
+
+    printf("Frame arrived!\n");
+
+    //hdr->lpData;
+    //hdr->dwBytesUsed;
 
     return (LRESULT)TRUE; 
 } 

@@ -5,8 +5,13 @@
 // give the function for adding devices a consistent name
 extern "C" void add_@YARP_LIB_NAME@_devices();
 
+static bool @YARP_LIB_NAME@_added = false;
+
 void add_@YARP_LIB_NAME@_devices() {
-    @YARP_CODE_POST@
+    if (!@YARP_LIB_NAME@_added) {
+        @YARP_LIB_NAME@_added = true;
+        @YARP_CODE_POST@
+    }
 }
 
 

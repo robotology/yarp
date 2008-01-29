@@ -1,3 +1,9 @@
+2008-01-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/yarpdev_lib.cpp.in: allow device library initialization
+	to happen multiple times - so clients don't need to know what
+	has already been done implicitly (configuration dependent).
+
 2008-01-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpCompileModules.cmake: change defaults in new method
