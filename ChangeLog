@@ -1,7 +1,8 @@
 2008-01-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpModuleHooks.cmake: fix problem with circular
-	dependency on some versions of cmake.
+	dependency on some versions of cmake, and with library lists
+	leaking into definitions.
 
 2008-01-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
