@@ -1,3 +1,8 @@
+2008-01-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpModuleHooks.cmake: fix problem with circular
+	dependency on some versions of cmake.
+
 2008-01-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/yarpdev_lib.cpp.in: allow device library initialization
