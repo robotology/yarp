@@ -26,12 +26,12 @@ ENDIF (EXISTS ${STATLIB})
 # compile device library by default - safe, since individual devices
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
-SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Do you want to link specific hardware into the device library")
+SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Older method for compiling devices")
 
 # this no longer seems to be in active use
-MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
+# MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
 
-SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Build a bundle of devices as modules")
+SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Newer method for compiling devices")
 
 IF (CREATE_DEVICE_LIBRARY_MODULES)
   SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries")
