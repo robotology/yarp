@@ -87,6 +87,8 @@ ENDMACRO(YarpDevice)
 
 MACRO(BEGIN_DEVICE_LIBRARY devname)
 
+  INCLUDE(YarpLibraryNames)
+
   # reset dependency tracker
   SET(YARPY_LIB_LIST0)
   SET(YARPY_XLIB_LIST0)
