@@ -6,12 +6,10 @@ IF (NOT SKIP_wxsdl)
 
   # make a stand-alone test executable
 
-  FIND_PACKAGE(YARP)
-  FIND_PACKAGE(wxWidgets)
-  FIND_PACKAGE(SDL)
+  FIND_PACKAGE(YARP REQUIRED)
+  FIND_PACKAGE(wxWidgets REQUIRED)
+  FIND_PACKAGE(SDL REQUIRED)
  
-  IF (YARP_FOUND AND wxWidgets_FOUND AND SDL_FOUND)
-
   INCLUDE_DIRECTORIES(${wxWidgets_INCLUDE_DIRS})
   ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
   LINK_LIBRARIES(${wxWidgets_LIBRARIES})
@@ -28,11 +26,5 @@ IF (NOT SKIP_wxsdl)
     ADD_DEFINITIONS(-DWXSDL_MAIN)
     ADD_EXECUTABLE(wxsdl_test  WxsdlWriter.cpp  WxsdlWriter.h)
   ENDIF (NOT COMPILE_DEVICE_LIBRARY)
-
-  ELSE (YARP_FOUND AND wxWidgets_FOUND AND SDL_FOUND)
-
-  MESSAGE(FATAL_ERROR "Cannot find all dependencies for wxsdl device")
-
-  ENDIF (YARP_FOUND AND wxWidgets_FOUND AND SDL_FOUND)
 
 ENDIF(NOT SKIP_wxsdl)
