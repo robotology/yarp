@@ -31,7 +31,7 @@ IF (NOT SKIP_wxsdl)
 
   ELSE (YARP_FOUND AND wxWidgets_FOUND AND SDL_FOUND)
 
-  MESSAGE(STATUS "Cannot find all dependencies for wxsdl device")
+  MESSAGE(FATAL_ERROR "Cannot find all dependencies for wxsdl device")
 
   ENDIF (YARP_FOUND AND wxWidgets_FOUND AND SDL_FOUND)
 
