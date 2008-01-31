@@ -9,20 +9,12 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#ifdef USE_NEW_DEVICE_MECHANISM
-#include "drivers.h"
-#endif
-
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
 
 int main() {
-#ifdef USE_NEW_DEVICE_MECHANISM
-    DriverCollection dev;
-#endif
-
     PolyDriver dd;
     Property fakebot;
     fakebot.put("device","fakebot");
