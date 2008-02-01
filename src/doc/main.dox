@@ -6,9 +6,6 @@
 /**
  * @mainpage Welcome to YARP
  *
- * \image html yarp-small.jpg ""
- * \image latex yarp-small.eps "Welcome to YARP!"
- *
  * @section welcome_topics Topics
  *
  * \li @subpage what_is_yarp "what exactly is YARP"?
@@ -32,26 +29,6 @@
 
 
  *
- * If you're viewing this text online, you can click a "Modules" link
- * at the top of your page to see the most important functionality
- * of YARP broken down category by category.
- *
-
- * @section welcome_disclaimer Ominous but Enigmatic Warning
- *
- * \code
- Through Me Pass into the Painful City,
- Through Me Pass into Eternal Grief,
- Through Me Pass among the Lost People.
- Justice Moved My Master-Builder:
- Heavenly Power First Fashioned Me
- With Highest Wisdom and with Primal Love.
- Before Me Nothing Was Created That
- Was Not Eternal, and I Last Eternally.
- All Hope Abandon, You Who Enter Here.
- * \endcode
- *
-
  */
 
 /**
