@@ -265,6 +265,15 @@ public:
         topIsLow = flag;
     }
 
+
+    /**
+     * Get an array of pointers to the rows of the image.
+     * @return an array of pointers to the rows of the image.
+     */
+    char **getRowArray() {
+        return data;
+    }
+
 protected:
 
     void setPixelCode(int imgPixelCode);
@@ -322,6 +331,7 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
         VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
         VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
+        VOCAB_PIXEL_BGRA = VOCAB4('b','g','r','a'),
         VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
         VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
         VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
@@ -372,6 +382,19 @@ namespace yarp {
       
             PixelRgba() { r = g = b = a = 0; }
             PixelRgba(unsigned char n_r, unsigned char n_g, 
+                      unsigned char n_b, unsigned char n_a)
+            { r = n_r;  g = n_g;  b = n_b; a = n_a; }
+        } /** \cond */ PACKED_FOR_NET /** \endcond */;
+    
+        /**
+         * Packed BGRA pixel type.
+         */
+        struct PixelBgra
+        { 
+            unsigned char b,g,r,a; 
+      
+            PixelBgra() { r = g = b = a = 0; }
+            PixelBgra(unsigned char n_r, unsigned char n_g, 
                       unsigned char n_b, unsigned char n_a)
             { r = n_r;  g = n_g;  b = n_b; a = n_a; }
         } /** \cond */ PACKED_FOR_NET /** \endcond */;
@@ -538,6 +561,7 @@ public: \
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGR,PixelBgr)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_BGRA,PixelBgra)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_SIGNED,PixelMonoSigned)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB_SIGNED,PixelRgbSigned)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO_FLOAT,PixelFloat)

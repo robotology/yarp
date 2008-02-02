@@ -334,6 +334,24 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
                                           NULL);
             break;
 
+        case VOCAB_PIXEL_BGRA:
+            pImage = iplCreateImageHeader(
+                                          4,
+                                          0,
+                                          IPL_DEPTH_8U,			
+                                          "BGRA",
+                                          "BGRA",
+                                          IPL_DATA_ORDER_PIXEL,	 
+                                          origin,			
+                                          quantum,		
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
+
         case VOCAB_PIXEL_RGB_INT:
             pImage = iplCreateImageHeader(
                                           3,
