@@ -1,3 +1,7 @@
+2008-02-03  Giacomo Spigler  <spiglerg@gmail.com>
+
+	* src/modules/CUDA-nvidia: added support to the newly added BGRA pixel type.
+
 2008-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/Image.h: added BGRA type,
