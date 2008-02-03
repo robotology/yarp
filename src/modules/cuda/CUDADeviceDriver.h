@@ -65,7 +65,7 @@ public:
     }
 
     virtual void changetype(int elemtype) {
-        if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR || elemtype==VOCAB_PIXEL_RGBA) {
+        if(elemtype==VOCAB_PIXEL_MONO || elemtype==VOCAB_PIXEL_RGB ||  elemtype==VOCAB_PIXEL_HSV || elemtype==VOCAB_PIXEL_BGR || elemtype==VOCAB_PIXEL_RGBA || elemtype==VOCAB_PIXEL_BGRA) {
           ogltype = GL_UNSIGNED_BYTE;
         } else if(elemtype==VOCAB_PIXEL_INT || elemtype==VOCAB_PIXEL_RGB_INT) {
           ogltype = GL_INT;
