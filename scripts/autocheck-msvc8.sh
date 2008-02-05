@@ -27,7 +27,7 @@ fi
 
 . $YARP_ROOT/scripts/config.sh
 if [ "k$WEB_USER" = "k" ] ; then
-    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+    WEB_USER=`cat $YARP_ROOT/CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
 fi
 echo USER is "$WEB_USER"
 
@@ -41,13 +41,19 @@ else
 	echo "Did not find YARP1"
 fi
 
+curdir=`pwd`
+
 while true; do
 
 rm -f should_report.txt
 
 (
 
+(
+cd $YARP_ROOT
 cvs update -d > cvslog.txt
+cd $curdir
+)
 cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
 
 if egrep "[a-zA-Z]" cvslog2.txt; then
