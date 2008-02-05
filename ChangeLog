@@ -1,5 +1,10 @@
 2008-02-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* scripts/autocheck-msvc8.sh: add script for automatic build
+	that's as close as possible to msvc8 built through GUI.  This is
+	for the test server, which for windows previously used visual studio
+	express with nmake.
+
 	* conf/FindAce.cmake: fix broken case where ace library not found
 	on windows.
 
