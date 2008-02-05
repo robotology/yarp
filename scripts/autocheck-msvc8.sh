@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # compiler/environment specific details
-SOURCE=`cygpath -w $PWD`
 GEN="Visual Studio 8 2005"
 CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
 CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCMAKE_COLOR_MAKEFILE:BOOL=FALSE"
 NORMALIZER="cygpath -m"
+DENORMALIZER="cygpath -w"
 MAKE_CLEAN="echo do not bother cleaning"
 MAKE_BUILD="devenv YARP.sln /Build Debug /Out devenv.txt; cat devenv.txt"
 MAKE_TEST="devenv YARP.sln /Build Debug /Project RUN_TESTS /Out devenv.txt; cat devenv.txt"
@@ -24,6 +24,9 @@ if [ "k$YARP_ROOTY" = "k" ]; then
     export YARP_ROOT="$ydir"
     echo "Guessing YARP_ROOT to be something like $YARP_ROOT"
 fi
+
+SOURCE=`$DENORMALIZER $YARP_ROOT`
+
 
 . $YARP_ROOT/scripts/config.sh
 if [ "k$WEB_USER" = "k" ] ; then
@@ -62,7 +65,7 @@ echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
-"$CMAKE" $CMAKEOPTS -G "$GEN" $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
+"$CMAKE" $CMAKEOPTS -G "$GEN" $SOURCE $YARP_ROOT || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
 
 $MAKE_CLEAN || echo "make clean failed"
 
