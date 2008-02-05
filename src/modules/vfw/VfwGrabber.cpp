@@ -120,7 +120,7 @@ static int icvOpenCAM_VFW( CvCaptureCAM_VFW* capture, int wIndex )
                                          sizeof (szDeviceName), szDeviceVersion, 
                                          sizeof (szDeviceVersion))) 
                 {
-                    printf("Got something (%s)\n", szDeviceName);
+                    printf("Possible input: %s\n", szDeviceName);
                     hWndC = capCreateCaptureWindow ( "My Own Capture Window", 
                                                      WS_POPUP | WS_CHILD, 0, 0, 320, 240, 0, 0);
                     if( capDriverConnect (hWndC, wIndex))
@@ -277,7 +277,10 @@ static Image* icvRetrieveFrameCAM_VFW( CvCaptureCAM_VFW* capture )
 bool VfwGrabber::open(yarp::os::Searchable& config) {
     system_resource = new CvCaptureCAM_VFW;
     if (system_resource!=NULL) {
-        int result = icvOpenCAM_VFW(&HELPER(system_resource),0);
+        int index = config.check("index",
+                                 yarp::os::Value(0),
+                                 "VFW device index").asInt();
+        int result = icvOpenCAM_VFW(&HELPER(system_resource),index);
         if (!result) {
             printf("failed to find camera\n");
             close();
