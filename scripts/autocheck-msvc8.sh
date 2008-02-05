@@ -7,8 +7,8 @@ CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCMAKE_COLOR_MAKEFILE:BOOL=FALSE"
 NORMALIZER="cygpath -m"
 DENORMALIZER="cygpath -w"
 MAKE_CLEAN="echo do not bother cleaning"
-MAKE_BUILD="devenv YARP.sln /Build Debug /Out devenv.txt; cat devenv.txt"
-MAKE_TEST="devenv YARP.sln /Build Debug /Project RUN_TESTS /Out devenv.txt; cat devenv.txt"
+MAKE_BUILD="devenv YARP.sln /Build Debug /Out makelog.txt"
+MAKE_TEST="devenv YARP.sln /Build Debug /Project RUN_TESTS /Out makelog.txt"
 #MAKE_CLEAN="nmake clean"
 #MAKE_BUILD="nmake"
 #MAKE_TEST="nmake test"
@@ -69,17 +69,25 @@ rm -f failure.txt
 
 $MAKE_CLEAN || echo "make clean failed"
 
+rm -f makelog.txt
 if [ ! -e failure.txt ]; then
 	$MAKE_BUILD || ( echo YARP_AUTOCHECK make build failed | tee failure.txt )
+	if [ -e makelog.txt ]; then
+	    cat makelog.txt
+	fi
 fi
 
 echo "Regression tests not run" > testlog.txt
+rm -f makelog.txt
 if [ ! -e failure.txt ]; then
 	# helpful to go offline
 	$GO_OFFLINE
 	(
 	    $MAKE_TEST || ( echo YARP_AUTOCHECK make test failed | tee failure.txt )
 	) | tee testlog.txt
+	if [ -e makelog.txt ]; then
+	    cat makelog.txt
+	fi
 	$GO_ONLINE
 fi
 
