@@ -73,8 +73,10 @@ ENDIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 # Windows needs some extra libraries
 IF (WIN32 AND NOT CYGWIN)
   MESSAGE(STATUS "need to link windows-specific libraries")
-  #LINK_LIBRARIES(winmm)
-  SET(ACE_LIBRARY ${ACE_LIBRARY} winmm)
+  # if ACE found, add winmm dependency
+  IF(ACE_LIBRARY)
+    SET(ACE_LIBRARY ${ACE_LIBRARY} winmm)
+  ENDIF(ACE_LIBRARY)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (MINGW)
