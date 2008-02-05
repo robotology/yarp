@@ -1,6 +1,13 @@
+2008-02-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/opencv_grabber/default/yarp/OpenCVGrabber.cpp: 
+	applied patch from Stefan Freyr Stefansson to use camera index
+	if one is specified.
+
 2008-02-03  Giacomo Spigler  <spiglerg@gmail.com>
 
-	* src/modules/CUDA-nvidia: added support to the newly added BGRA pixel type.
+	* src/modules/CUDA-nvidia: added support to the newly added BGRA 
+	pixel type.
 
 2008-02-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

@@ -101,8 +101,13 @@ bool OpenCVGrabber::open(Searchable & config) {
 
         m_loop = false;
 
+        int camera_idx = 
+            config.check("camera", 
+                         Value(-1), 
+                         "if present, read from camera identified by this index").asInt();
+
         // Try to open a capture object for the first camera
-        m_capture = (void*)cvCaptureFromCAM(-1);
+        m_capture = (void*)cvCaptureFromCAM(camera_idx);
         if (0 == m_capture) {
             printf("Unable to open camera for capture!\n");
             return false;
