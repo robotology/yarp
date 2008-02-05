@@ -5,43 +5,41 @@
 
 /**
  * @mainpage Welcome to YARP
- *
- * YARP stands for Yet Another Robot Platform.  What is it?
- * If data is the bloodstream of your robot, then YARP is
- * the circulatory system.  It isn't the brain.  It isn't 
- * the heart.  But it is pretty useful to have around all
- * the same.
- *
- * For brains and hearts, see our companion project,
- * <a href="http://www.robotcub.org">RobotCub</a>.
- *
- * @section welcome_topics Topics
- *
- * \li @subpage what_is_yarp "what exactly is YARP"?
- * \li @subpage install.
- * \li @subpage yarp "YARP's main command line interface".
- * \li @subpage yarp_code_examples "Some example code". 
- * \li @subpage yarp_os "Overview of the YARP OS library".
- * \li @subpage manual "User Manual".
- *
- * @section welcome_tutorials Tutorials
- *
- * \li @subpage note_ports
- * \li @subpage note_devices
- * \li @subpage port_expert
- * \li @subpage yarp_motor_control
- * \li @subpage yarp_cluster
- * \li @subpage dev-how-to
- * \li @subpage gpu_tutorial
- * \li \ref dev_examples
- * \li @subpage terms "Specification of YARP terms and protocols".
+
+YARP stands for Yet Another Robot Platform.  What is it?
+If data is the bloodstream of your robot, then YARP is
+the circulatory system.  It isn't the brain.  It isn't 
+the heart.  But it is pretty useful to have around all
+the same.
+
+For brains and hearts, see our companion project,
+<a href="http://www.robotcub.org">RobotCub</a>.
+ 
+\li \ref what_is_yarp
+\li \ref install
+\li \ref yarp_cluster
+\li \ref note_ports
+\li \ref note_devices
+\li \ref port_expert
+\li \ref yarp_os "Overview of the YARP OS library"
+\li \ref yarp_code_examples
+\li \ref yarp
+\li \ref yarp_motor_control
+\li \ref dev-how-to
+\li \ref terms
+\li \ref data_rep
+\li \ref yarp_protocol
+\li \ref name_server
+\li \ref gpu_tutorial
+\li \ref dev_examples
+\li \ref yarpdev
 
 
  *
  */
 
 /**
- * @page what_is_yarp What is YARP?
+ * @page what_is_yarp What exactly is YARP?
  *
 
 

@@ -1,10 +1,11 @@
 
 /**
-  @page yarp_code_examples Examples
+  @page yarp_code_examples Some examples
 
 There are many code examples available in the "example/"
 subdirectory of YARP. If you're reading 
-this online, click on the "examples" button on the top right
+this online, click on the
+<a href="examples.html">examples</a> link
 to see many of them.
 
 Here we work through an example of using YARP communication

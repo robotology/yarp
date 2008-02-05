@@ -1,5 +1,5 @@
 /** 
- * @page yarp The standard YARP companion utility
+ * @page yarp The main YARP command-line interface
 
 The command-line utility "yarp" performs a set of useful operations
 for a YARP network.  It can give status information, make and break
