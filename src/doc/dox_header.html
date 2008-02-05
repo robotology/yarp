@@ -35,25 +35,29 @@ li.menu {
    left:0px;
    padding:2em;
    top:0em;
-   width:10em;
+   width:13em;
 }
 
 #content { 
   position: absolute;
-  left:10em; top:0em;
+  left:13em; top:0em;
   padding-left:3em;
   padding-right:3em;
-  padding-bottom:2em;
+  padding-bottom:1em;
   margin-top:1em;
   margin-right:2em;
 }
 
-div.box {
+div.mbox {
   background-color:#EEEEFF;
   border: 1px solid #bbbbff;
-  padding: 0.5ex 0.4em 0.5ex 0.6em;
+  padding: 0.5em 0.5em 0.5em 0.5em;
   margin:1em;
-  width:7em;
+  width: 10em;
+  -moz-border-radius-topleft: 9px;	
+  -moz-border-radius-topright: 9px;
+  -moz-border-radius-bottomleft: 9px;	
+  -moz-border-radius-bottomright: 9px;
 }
 
 div.title { 
@@ -71,13 +75,12 @@ div.title {
 <div id="sidebar"> 
 
 <h2 style="text-align:center;">
-<a href="index.html">
-<img width=100 height=36 src="yarp-yal01-100.png" alt="YARP"><br></a>
+<a href="index.html"><img width=100 height=36 src="yarp-yal01-100.png" alt="YARP"></a><br>
 </h2>
 
 
 
-<div class="box">
+<div class="mbox">
 <div class=title>YARP&nbsp;Manual</div>
 <ul class=menu>
 <li class=menu><a href="index.html">Main&nbsp;Page</a></li>
@@ -88,7 +91,7 @@ div.title {
 </ul>
 </div>
 
-<div class="box">
+<div class="mbox">
 <div class=title>YARP&nbsp;Online</div>
 <ul class=menu>
 <li class=menu><a href="http://eris.liralab.it/yarp">Home&nbsp;Page</a></li>
@@ -99,7 +102,7 @@ div.title {
 </div>
 
 
-<div class="box">
+<div class="mbox">
 <div class=title>Related&nbsp;Links</div>
 <ul class=menu>
 <li class=menu><a href="http://www.robotcub.org">RobotCub</a></li>
