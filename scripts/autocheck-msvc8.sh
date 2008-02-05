@@ -51,7 +51,7 @@ rm -f should_report.txt
 
 (
 cd $YARP_ROOT
-cvs update -d > cvslog.txt
+cvs update -d > $curdir/cvslog.txt
 cd $curdir
 )
 cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
