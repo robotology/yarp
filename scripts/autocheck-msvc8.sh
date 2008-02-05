@@ -65,7 +65,7 @@ echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
-"$CMAKE" $CMAKEOPTS -G "$GEN" $SOURCE $YARP_ROOT || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
+"$CMAKE" $CMAKEOPTS -G "$GEN" $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
 
 $MAKE_CLEAN || echo "make clean failed"
 
