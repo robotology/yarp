@@ -79,6 +79,7 @@ cat cvslog.txt
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
 else
+    echo skip source build
 #    touch build-source.txt
 #    cat conf/build.txt | grep SOURCE | tee build-source-new.txt
 
