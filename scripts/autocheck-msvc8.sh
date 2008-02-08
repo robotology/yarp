@@ -87,6 +87,7 @@ if [ ! -e failure.txt ]; then
 	) | tee testlog.txt
 	if [ -e makelog.txt ]; then
 	    cat makelog.txt
+	    cp makelog.txt testlog.txt
 	fi
 	$GO_ONLINE
 fi
