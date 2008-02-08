@@ -1,13 +1,7 @@
 
 INCLUDE(UsePkgConfig)
 
-# Exceptions are being removed from YARP to simplify porting.
-# Set YARP_ADMIN flag to check whether the library is
-# currently clean from exceptions.
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
-IF (YARP_ADMIN)
-	ADD_DEFINITIONS("-fno-exceptions")
-ENDIF (YARP_ADMIN)
 
 SET(YARP_DEFINES_ACCUM "-DYARP_PRESENT")
 SET(YARP_DEFINES_ACCUM -D_REENTRANT)
@@ -33,7 +27,8 @@ ENDIF(WIN32 AND CYGWIN)
 
 ## check if we are using the MINGW compiler
 IF(MINGW)
-  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-fno-exceptions" "-Wpointer-arith" "-pipe")
+  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
+  # "-fno-exceptions" can be useful too... unless you need exceptions :-)
   IF (MSYS)
     SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
   ELSE (MSYS)
