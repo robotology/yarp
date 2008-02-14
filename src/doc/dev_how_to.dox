@@ -2,6 +2,10 @@
 /**
  * @page dev-how-to Device Drivers How-To
 
+For a more up-to-date method of dealing with devices see:
+
+\li \ref add_a_device
+
 In YARP, a device driver is a class that implements one or more 
 \ref dev_iface "interfaces".
 
