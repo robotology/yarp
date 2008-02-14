@@ -25,7 +25,7 @@ For brains and hearts, see our companion project,
 \li \ref yarp_code_examples
 \li \ref yarp
 \li \ref yarp_motor_control
-\li \ref dev-how-to
+\li \ref add_a_device
 \li \ref terms
 \li \ref data_rep
 \li \ref yarp_protocol
@@ -46,6 +46,7 @@ Here are a collection of tutorials on various topics in YARP.
 
 \li \ref note_ports
 \li \ref note_devices
+\li \ref add_a_device
 \li \ref port_expert
 \li \ref gpu_tutorial
 
