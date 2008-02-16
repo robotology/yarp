@@ -1,4 +1,3 @@
-
 INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
 LINK_LIBRARIES(YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
@@ -10,7 +9,6 @@ IF (CREATE_DEVICE_LIBRARY_MODULES)
     #IMPORT_DEVICES(${CMAKE_BINARY_DIR}/drivers.h yarpmod)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
-
 
 ########################################################################
 ##
@@ -27,7 +25,6 @@ ELSE (CREATE_DEVICE_LIBRARY_MODULES)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
 TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-
 
 ########################################################################
 ##
@@ -48,7 +45,6 @@ ELSE (CREATE_DEVICE_LIBRARY_MODULES)
 		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 #TARGET_LINK_LIBRARIES(yarphear YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-
 
 ########################################################################
 ##
@@ -74,7 +70,5 @@ IF (YARP_ADMIN)
     #TARGET_LINK_LIBRARIES(yarpview2 yarpmod)
     #TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 ENDIF (YARP_ADMIN)
-
-
 
 INSTALL_TARGETS(/bin yarpdev yarphear)
