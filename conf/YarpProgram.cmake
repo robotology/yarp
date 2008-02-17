@@ -1,5 +1,3 @@
-
-
 MACRO(YarpProgram name no_console)
 
 FOREACH(X ${NEED_LIBS})
@@ -7,7 +5,6 @@ FOREACH(X ${NEED_LIBS})
 ENDFOREACH(X ${NEED_LIBS})
 SET(header_path ${CMAKE_SOURCE_DIR}/src/lib${name}/include)
 INCLUDE_DIRECTORIES(${header_path})
-
 
 FILE(GLOB folder_source *.cpp)
 FILE(GLOB folder_header *.h)
@@ -28,6 +25,10 @@ FOREACH(X ${NEED_LIBS})
 ENDFOREACH(X ${NEED_LIBS})
 TARGET_LINK_LIBRARIES(${name} ${ACE_LINK_FLAGS})
 
+# disable a set of warnings due to use of deprecated features/libs.
+IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS /wd4996)
+ENDIF(WIN32 AND NOT CYGWIN)
 
 ENDMACRO(YarpProgram)
 

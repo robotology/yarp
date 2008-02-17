@@ -35,19 +35,15 @@ SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Newer method for compiling d
 
 IF (CREATE_DEVICE_LIBRARY_MODULES)
   SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries")
-
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
-
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
-
 SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create lib libYARP_math (experimental)?")
 
 SET(CREATE_SHARED_LIBRARY FALSE CACHE BOOL "Compile shared libraries rather than linking statically")
 IF (WIN32)
 	MARK_AS_ADVANCED(CREATE_SHARED_LIBRARY)
 ENDIF (WIN32)
-
 
 # Flag for device testing and documentation - not really for end-user,
 # but instead the library developers

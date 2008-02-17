@@ -18,6 +18,7 @@ IF (NOT COMPILING_ALL_YARP)
    #INCLUDE(YarpOptions)
    #INCLUDE(YarpReqLib)
    INCLUDE(UsePkgConfig)
+
    SET(BASE_BINARY_DIR ${CMAKE_BINARY_DIR})
    SET(BASE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
 #   INCLUDE_DIRECTORIES(${BASE_SOURCE_DIR}/src/libYARP_OS/include)
@@ -43,6 +44,7 @@ SET(EXT_LIBS ${})
 SET(ALL_SRC ${})
 
 ##### LOCAL MACROS
+
 MACRO(DD_FIND_LOCAL_LIB var dd LIBS)
   FOREACH(lib ${LIBS})
 	SET(LOCAL_PATH ${BASE_SOURCE_DIR}${REL_DIR}${REL_SRC}${dd}/${OS_TAG}/dd_orig/lib)
@@ -62,11 +64,11 @@ MACRO(DD_FIND_EXTERNAL_LIB var dd LIBS)
   MESSAGE(STATUS "WARNING: ${dd} requires proper installation of: ${LIBS}, YARP assumes you took care of that.")
   SET(EXT_LIBS "${EXT_LIBS};${LIBS}")
 ENDMACRO(DD_FIND_EXTERNAL_LIB)
+
 ##### END  LOCAL MACROS
-
 ### BEGIN PROJECT CODE
-PROJECT(libYARP_dev)
 
+PROJECT(libYARP_dev)
 IF (COMPILING_ALL_YARP)
   SET(PROJECT_NAME YARP_dev)
 ELSE (COMPILING_ALL_YARP)
@@ -77,12 +79,10 @@ ENDIF (COMPILING_ALL_YARP)
 #to this name to compile the debug version)
 # set the OS_TAG variable to "linux" or "winnt"
 YarpTag()
-
 SET(AVAILABLE_DEVICES "") #default is an empty list
-
 SET(AVAILABLE_DEVICES_FILE "${BASE_SOURCE_DIR}${REL_DIR}AvailableDevices.txt")
-
 #MESSAGE(STATUS "checking ${AVAILABLE_DEVICES_FILE}")
+
 IF (EXISTS ${AVAILABLE_DEVICES_FILE})
   IF (CREATE_DEVICE_LIBRARY_BUILTINS)
     INCLUDE(${AVAILABLE_DEVICES_FILE})
@@ -95,6 +95,7 @@ ENDIF (EXISTS ${AVAILABLE_DEVICES_FILE})
 # so the user can enable/disable them. Devices that are disabled are
 # NOT compiled in libYARP_dev. ENABLE_${DD} is also used when CMake
 # generates PopulateDriver.cpp, see below.
+
 FOREACH(DD ${AVAILABLE_DEVICES})
   SET(ENABLE_${DD} FALSE CACHE BOOL "Do you want to add ${DD} to libYARP_dev?")
 ENDFOREACH(DD ${AVAILABLE_DEVICES})
@@ -103,6 +104,7 @@ ENDFOREACH(DD ${AVAILABLE_DEVICES})
 # These modules at the moment are always compiled
 # in libYARP_dev. ENABLE_${AM} (by default true) is used when CMake 
 # generates PopulateDriver.cpp, see below.
+
 FOREACH(AM ${ADDITIONAL_MODULES})
   SET(ENABLE_${AM} TRUE CACHE INTERNAL "Select additional module ${AM}?")
 ENDFOREACH(AM ${ADDITIONAL_MODULES})
@@ -171,7 +173,6 @@ FOREACH(DD ${FOUND_DD})
     SET(EXT_LIBS "${EXT_LIBS};${${uplibname}_LIBRARIES}")
 	#LINK_LIBRARIES(${${uplibname}_LIBRARIES})
   ENDIF(TOKEN STREQUAL YARP_CMAKE)
-
   FILE(GLOB libcode1 ${REL_SRC}${DD}/common/yarp/*.cpp)
   #AUX_SOURCE_DIRECTORY(${REL_SRC}${DD}/common libcode1)
   #MESSAGE(STATUS "Source code for ${DD} is ${libcode1}")
@@ -183,6 +184,7 @@ FOREACH(DD ${FOUND_DD})
   INCLUDE_DIRECTORIES(${BASE_SOURCE_DIR}${REL_DIR}${REL_SRC}${DD}/common)
   INCLUDE_DIRECTORIES(${BASE_SOURCE_DIR}${REL_DIR}${REL_SRC}${DD}/${LOCAL_TAG})
   SET(header_path "${header_path};${BASE_SOURCE_DIR}${REL_DIR}${REL_SRC}${DD}/common")
+
   # header files
   FILE(GLOB_RECURSE tmpHeaders ${REL_SRC}${DD}/${LOCAL_TAG}/yarp/*.h)
   SET(libheaders ${libheaders} ${tmpHeaders})
@@ -194,8 +196,8 @@ ENDFOREACH(DD ${FOUND_DD})
 # This code is part of the new method to add external devices 
 # at this time this is still experimental. It should replace
 # the code above.
-SET(SAVED_TMP "${PROJECT_NAME}")
 
+SET(SAVED_TMP "${PROJECT_NAME}")
 SET(EXTERNAL_MODULES_FILE "${YARP_MODULE_PATH}/ExternalModules.cmake")
 
 IF (NOT COMPILING_ALL_YARP)
@@ -216,7 +218,6 @@ ELSE (CREATE_DEVICE_LIBRARY_MODULES OR NEW_METHOD)
   SET (EMBED_DEVICE_LIBRARY_CALL TRUE)
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES OR NEW_METHOD)
 
-
 IF (CREATE_DEVICE_LIBRARY_BUILTINS)
   SET (EMBED_DEVICE_LIBRARY_CALL TRUE)
 ENDIF (CREATE_DEVICE_LIBRARY_BUILTINS)
@@ -234,19 +235,18 @@ IF (EXTERNAL_MODULES)
   ## parse the list of modules
   FOREACH(MOD ${EXTERNAL_MODULES})
 	SET(MOD_PATH ${${MOD}_PATH})
-
 	IF (EXISTS ${MOD_PATH})
 	  MESSAGE(STATUS "Adding module ${MOD} from ${MOD_PATH}")
-
 	  # search each module for devices
 	  YarpAddExtModule(${MOD} ${MOD_PATH})
 	  
 	  # populate list of header folders
 	  SET(ext_lib_headers "${ext_lib_headers}" "${BASE_BINARY_DIR}/generated_code/${MOD}")
 	  
-        # populate list of projects/targets to be added as "internal" dependencies for 
-        # yarp built-in binaries
+      # populate list of projects/targets to be added as "internal" dependencies for 
+      # yarp built-in binaries
 	  SET(YARP_EXTMOD_TARGETS "${YARP_EXTMOD_TARGETS}" ${MOD})
+
 	  # populate list of libraries, for external programs using yarp
 	  IF (WIN32 AND NOT CYGWIN)
 		SET(libname "${MOD}.lib")
@@ -267,12 +267,11 @@ IF (EXTERNAL_MODULES)
 		ENDFOREACH(dep ${unmet_dependencies})
 		MESSAGE("")
 	  ENDIF (unmet_dependencies)
-	  
 	ELSE (EXISTS ${MOD_PATH})
 	  MESSAGE(SEND_ERROR "${MOD}_PATH is missing or it does not point to a valid path. Check ${EXTERNAL_MODULES_FILE}")
 	  MESSAGE(STATUS "Skipping ${MOD}")
 	ENDIF(EXISTS ${MOD_PATH})
-	
+
   ENDFOREACH(MOD ${EXTERNAL_MODULES})
 ENDIF(EXTERNAL_MODULES)
 
@@ -285,23 +284,21 @@ IF (EXTERNAL_MODULES)
   FOREACH(MOD ${EXTERNAL_MODULES})
 	WRITE_FILE(${populator} "#include \"${MOD}Adder.h\"" APPEND)	
   ENDFOREACH(MOD ${EXTERNAL_MODULES})
-
   WRITE_FILE(${populator} "void add${DISTINCT}ExternalDevices()\n{" APPEND)
-
   FOREACH(MOD ${EXTERNAL_MODULES})
 	WRITE_FILE(${populator} "    add${MOD}();" APPEND)
   ENDFOREACH(MOD ${EXTERNAL_MODULES})
-
   WRITE_FILE(${populator} "}\n" APPEND)
 ELSE(EXTERNAL_MODULES)
   WRITE_FILE(${populator} "void add${DISTINCT}ExternalDevices()" APPEND)
   WRITE_FILE(${populator} "{\n//do nothing\n}\n" APPEND)
 ENDIF(EXTERNAL_MODULES)
+
 ENDIF (HACK_POPULATE_DRIVERS)
 
 SET(PROJECT_NAME "${SAVED_TMP}")
-################ 
 
+################ 
 ##### add include files to project (visual studio)
 # this only works if the files are also included in the project, see
 # ADD_LIBRARY below
@@ -325,6 +322,7 @@ IF(FOUND_ONE)
   ELSE(WIN32 AND NOT CYGWIN)
 	ADD_LIBRARY(${PROJECT_NAME} ${ALL_SRC} ${libheader})
   ENDIF(WIN32 AND NOT CYGWIN)
+
   IF (COMPILING_ALL_YARP)
     TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${EXT_LIBS})
   ENDIF (COMPILING_ALL_YARP)
@@ -335,16 +333,18 @@ IF(FOUND_ONE)
 
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES header_path "${header_path}")
   SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES ext_libs "${EXT_LIBS}")
+
   ### INSTALL RULES ###
   #libYARP_dev.a or YARP_dev.lib will be copied in CMAKE_INSTALL_PREFIX/lib
   INSTALL_TARGETS(/lib ${PROJECT_NAME}) 
   FILE(GLOB installedHeaders include/yarp/dev/*.h) 
+
   #libYARP_dev/include/yarp/dev/*.h will be copied in CMAKE_INSTALL_PREFIX/include/yarp/dev
+
   INSTALL_FILES(/include/yarp/dev FILES ${installedHeaders})
 ENDIF(FOUND_ONE)
 
 # Prepare properties for external users of library
-
 GET_TARGET_PROPERTY(YARP_dev_LIB ${PROJECT_NAME} LOCATION)
 GET_TARGET_PROPERTY(YARP_dev_INC ${PROJECT_NAME} header_path)
 GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS ${PROJECT_NAME} ext_libs)
@@ -354,10 +354,13 @@ IF (WIN32 AND NOT CYGWIN)
   STRING(REPLACE ".lib" "d.lib" libname2 ${libname})
   SET(YARP_dev_LIB "optimized;${libname};debug;${libname2}" CACHE INTERNAL "libraries")
 ENDIF (WIN32 AND NOT CYGWIN)
+
 #SET(YARP_dev_LIB ${YARP_dev_LIB} ${YARP_dev_EXT_LIBS})
+
 IF (NOT YARP_dev_LIB)
   SET(YARP_dev_LIB "")
 ENDIF (NOT YARP_dev_LIB)
+
 IF (NOT YARP_dev_INC)
   SET(YARP_dev_INC "")
 ENDIF (NOT YARP_dev_INC)
@@ -365,13 +368,10 @@ ENDIF (NOT YARP_dev_INC)
 SET(YARP_dev_LIB "${YARP_dev_LIB}" CACHE INTERNAL "libraries")
 SET(YARP_dev_INC "${YARP_dev_INC}" CACHE INTERNAL "include path")
 SET(YARP_dev_EXT_LIBS "${YARP_dev_EXT_LIBS}" CACHE INTERNAL "extra libs")
-
 SET(YARP_EXTMOD_TARGETS "${YARP_EXTMOD_TARGETS}" CACHE INTERNAL "external modules targets")
 SET(YARP_EXTMOD_LIBS "${YARP_EXTMOD_LIBS}" CACHE INTERNAL "external modules libraries")
 
-
 IF (COMPILING_ALL_YARP)
-
    # tests for devices
    SET(postfix dev)
    AUX_SOURCE_DIRECTORY(harness harnesscode)
@@ -384,7 +384,10 @@ IF (COMPILING_ALL_YARP)
    ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
    TARGET_LINK_LIBRARIES(harness_${postfix} YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} ${ACE_LINK_FLAGS} YARP_sig YARP_OS)
    GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
-   
+   IF(WIN32 AND NOT CYGWIN)
+       SET_TARGET_PROPERTIES(harness_${postfix} PROPERTIES COMPILE_FLAGS /wd4996)
+   ENDIF(WIN32 AND NOT CYGWIN)
+
   # add in standard tests
   FOREACH(X ${harnesscode})
     GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
@@ -421,3 +424,7 @@ ENDIF (NOT COMPILING_ALL_YARP)
 #MESSAGE(STATUS "External modules: generated list of targets" "${YARP_EXTMOD_TARGETS}")
 #MESSAGE(STATUS "External modules: generated list of libs" "${YARP_EXTMOD_LIBS}")
 #MESSAGE(STATUS "YARP_dev_EXT_LIBS: " "${YARP_dev_EXT_LIBS}")
+
+IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES COMPILE_FLAGS /wd4996)
+ENDIF(WIN32 AND NOT CYGWIN)

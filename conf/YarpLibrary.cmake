@@ -54,6 +54,9 @@ AUX_SOURCE_DIRECTORY(harness harnesscode)
 ADD_EXECUTABLE(harness_${postfix} ${harnesscode})
 
 TARGET_LINK_LIBRARIES(harness_${postfix} ${name} ${NEED_LIBS} ${ACE_LINK_FLAGS})
+IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(harness_${postfix} PROPERTIES COMPILE_FLAGS /wd4996)
+ENDIF(WIN32 AND NOT CYGWIN)
 
 GET_TARGET_PROPERTY(EXEC harness_${postfix} LOCATION)
 
@@ -73,12 +76,10 @@ INSTALL_FILES(/include/yarp FILES ${header_1})
 FILE(GLOB header_2 include/yarp/${postfix}/*.h)
 INSTALL_FILES(/include/yarp/${postfix} FILES ${header_2})
 
-# pasa addition. still under development.
-#IF (WIN32 AND NOT CYGWIN)
-#  ADD_CUSTOM_COMMAND(TARGET ${name} POST_BUILD COMMAND xcopy ARGS include\\*.h ${CMAKE_INSTALL_PREFIX}\\include\\ /S /C /Y /I)
-#ELSE (WIN32 AND NOT CYGWIN)
-#
-#ENDIF (WIN32 AND NOT CYGWIN)
+# disable a set of warnings due to use of deprecated features/libs.
+IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS /wd4996)
+ENDIF(WIN32 AND NOT CYGWIN)
 
 ENDMACRO(YarpLibrary)
 
