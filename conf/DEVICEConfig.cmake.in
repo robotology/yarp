@@ -10,15 +10,14 @@
 # Or configure an equivalent environment variable, or enter the
 # path in the CMake GUI.
 #
-# In your code, you will need to call this method:
+# In your code, you may need to call this method:
 #   add_@YARPY_DEV_LIB_NAME@_devices();
 # at the beginning of your program to make these devices available.
 # This method is declared in add_@YARPY_DEV_LIB_NAME@_devices.h,
 # or you can just declare it yourself as:
 #   extern "C" void add_@YARPY_DEV_LIB_NAME@_devices()
-# We know this call could be automated in various ways, but 
-# somehow the automation is never as portable as one would hope,
-# so we've skipped that.
+# This call is automated if this library is built in to YARP -
+# see the YARP documentation on adding a device.
 
 IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
 
