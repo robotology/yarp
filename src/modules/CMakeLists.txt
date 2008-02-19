@@ -59,6 +59,15 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
 
 END_DEVICE_LIBRARY(yarpmod)
 
+IF(WIN32 AND NOT CYGWIN)
+    SET_TARGET_PROPERTIES(yarpmod PROPERTIES COMPILE_FLAGS /wd4996)
+ENDIF(WIN32 AND NOT CYGWIN)
+
+INSTALL_TARGETS(/lib yarpmod)
+FILE(GLOB header ${YARP_DIR}/*.h)
+INSTALL_FILES(/include FILES ${header})
+
+
 # Done!
 #
 # To use the library from CMake in your own projects, do:
