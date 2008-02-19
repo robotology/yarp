@@ -1,3 +1,8 @@
+2008-02-19  Lorenzo Natale <nat@liralab.it>
+
+	* conf/DEVICEConfig.cmake wrapped some paths with "" to support the
+	use of blanks in path names on windows.
+
 2008-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/add_a_device.dox: update documentation on how to
