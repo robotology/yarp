@@ -145,6 +145,14 @@ public:
         return Value::getNullValue();
     }
 
+    Bottle& putBottleCompat(const char *key, const Bottle& val) {
+        if (val.get(0).asString()=="=") {
+            Bottle b = val.tail();
+            return putBottle(key,b);
+        }
+        return putBottle(key,val);
+    }
+
     Bottle& putBottle(const char *key, const Bottle& val) {
         PropertyItem *p = getProp(key,true);
         p->singleton = false;
@@ -340,7 +348,8 @@ public:
                                     if (bot.size()>2) {
                                         if (tag!="") {
                                             if (accum.size()>=1) {
-                                                putBottle(tag.c_str(),accum);
+                                                putBottleCompat(tag.c_str(),
+                                                                accum);
                                             }
                                             tag = "";
                                         }                                
@@ -364,7 +373,8 @@ public:
                                         //     accum.toString().c_str());
                                         if (tag!="") {
                                             if (accum.size()>=1) {
-                                                putBottle(tag.c_str(),accum);
+                                                putBottleCompat(tag.c_str(),
+                                                                accum);
                                             }
                                             tag = "";
                                         }                                
@@ -386,7 +396,7 @@ public:
                                     Bottle init;
                                     init.addString(key.c_str());
                                     init.addString(buf.c_str());
-                                    putBottle(key.c_str(),init);
+                                    putBottleCompat(key.c_str(),init);
                                 } else {
                                     target->addString(buf.c_str());
                                 }
@@ -403,7 +413,7 @@ public:
                 bot.fromString(buf.c_str());
                 if (bot.size()>=1) {
                     if (tag=="") {
-                        putBottle(bot.get(0).toString().c_str(),bot);
+                        putBottleCompat(bot.get(0).toString().c_str(),bot);
                     } else {
                         accum.addList().copy(bot);
                     }
@@ -412,7 +422,7 @@ public:
             if (isTag||done) {
                 if (tag!="") {
                     if (accum.size()>=1) {
-                        putBottle(tag.c_str(),accum);
+                        putBottleCompat(tag.c_str(),accum);
                     }
                     tag = "";
                 }
