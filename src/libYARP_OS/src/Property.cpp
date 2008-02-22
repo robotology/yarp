@@ -146,8 +146,10 @@ public:
     }
 
     Bottle& putBottleCompat(const char *key, const Bottle& val) {
-        if (val.get(0).asString()=="=") {
-            Bottle b = val.tail();
+        if (val.get(1).asString()=="=") {
+            Bottle b;
+            b.add(val.get(0));
+            b.append(val.tail().tail());
             return putBottle(key,b);
         }
         return putBottle(key,val);
