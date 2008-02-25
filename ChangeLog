@@ -1,3 +1,11 @@
+2008-02-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/DEVICEConfig.cmake.in: remove unnecessary line that was
+	causing a problem under MSVC.
+
+	* conf/YARPConfig.cmake.in: link yarpmod correctly when using
+	MSVC debug mode.
+
 2008-02-19  Lorenzo Natale <nat@liralab.it>
 
 	* conf/DEVICEConfig.cmake wrapped some paths with "" to support the
