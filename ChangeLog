@@ -1,3 +1,7 @@
+2008-02-26  Lorenzo Natale <nat@liralab.it>
+	* conf/FindGtkPlus.cmake: fixed an apparent bug which caused cmake
+	to pass $GTKPLUS_LIBRARY_DIR as a paramter to the linker.
+	
 2008-02-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/DEVICEConfig.cmake.in: remove unnecessary line that was
