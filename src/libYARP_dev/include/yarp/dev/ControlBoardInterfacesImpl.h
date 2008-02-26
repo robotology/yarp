@@ -39,7 +39,6 @@ protected:
     IPositionControlRaw *iPosition;
     void *helper;
     double *temp;
-        
     /**
      * Initialize the internal data and alloc memory.
      * @param size is the number of controlled axes the driver deals with.

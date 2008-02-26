@@ -16,12 +16,14 @@
 namespace yarp {
     namespace dev {
         class ICanBus;
+        class ICanBufferFactory;
         class CanMessage;
-        class CanMessageBuffer;
+        class CanBuffer;
+        template <class M, class T> class ImplementCanBufferFactory;
     }
 }
 
-class yarp::dev::CanMessage
+class yarp::dev::ICanMessage
 {
  public:
     virtual ~CanMessage(){}
@@ -37,12 +39,12 @@ class yarp::dev::CanMessage
     virtual void setBuffer(unsigned char *)=0;
 };
 
-class yarp::dev::CanMessageBuffer
+class yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
  public:
-    CanMessageBuffer()
+    CanBuffer()
         { data=0; }
 
     void resize(CanMessage **d, int s)
@@ -62,11 +64,68 @@ class yarp::dev::CanMessageBuffer
         }
 };
 
-template class CanBusMessageBufferFactory<class T>
+class yarp::dev::ICanBufferFactory
 {
 public:
-    static CanMessageBuffer createBuffer(int nmessage);
-    static void destroyBuffer(CanMessageBuffer &msgs);
+    virtual ~ICanBufferFactory(){}
+    virtual CanBuffer createBuffer(int nmessage)=0;
+    virtual void destroyBuffer(CanBuffer &msgs)=0;
+};
+
+/**
+ * Implementation of a ICanBufferFactory.
+ * M is the class implementing CanMessage for your type.
+ * IMPL is the internal representation of the can message.
+ */
+template<class M, class IMPL> class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
+{
+public:
+    virtual ~ImplementCanBufferFactory(){}
+
+    virtual CanBuffer createBuffer(int elem)
+    {
+        CanBuffer ret;
+        IMPL *storage=new IMPL[elem];
+        CanMessage **messages=new CanMessage *[elem];
+        M *tmp=new M[elem];
+
+        memset(storage, 0, sizeof(IMPL)*elem);
+    
+        for(int k=0;k<elem;k++)
+            {
+                messages[k]=&tmp[k];
+                messages[k]->setBuffer((unsigned char *)(&storage[k]));
+            }
+
+        ret.resize(messages, elem);
+        return ret;
+    }
+
+    virtual void destroyBuffer(CanBuffer &buffer)
+    {
+        CanMessage **m=buffer.getPointer();
+        IMPL *storage=0;
+        M *msgs=0;
+    
+        if (m==0)
+            {
+                fprintf(stderr, "Warning trying to detroy non valid buffer\n");
+                return;
+            }
+
+        storage=reinterpret_cast<IMPL *>(m[0]->getPointer());
+        msgs=dynamic_cast<M *>(m[0]);
+
+        if ((msgs==0)||(storage==0))
+            {
+                fprintf(stderr, "Warning, troubles destroying memory\n");
+                return;
+            }
+
+        delete [] storage;
+        delete [] msgs;
+        delete [] m;
+    }
 };
 
 
@@ -78,20 +137,18 @@ class yarp::dev::ICanBus
  public:
     virtual ~ICanBus(){}
 
-    virtual CanMessageBuffer createBuffer(int nmessage)=0;
-    virtual void destroyBuffer(CanMessageBuffer &msgs)=0;
 
     virtual bool canSetBaudRate(unsigned int rate)=0;
     virtual bool canGetBaudRate(unsigned int *rate)=0;
     virtual bool canIdAdd(unsigned int id)=0;
     virtual bool canIdDelete(unsigned int id)=0;
 
-    virtual bool canRead(CanMessageBuffer &msgs, 
+    virtual bool canRead(CanBuffer &msgs, 
                          unsigned int size, 
                          unsigned int *read,
                          bool wait=false)=0;
 
-    virtual bool canWrite(const CanMessageBuffer &msgs,
+    virtual bool canWrite(const CanBuffer &msgs,
                           unsigned int size,
                           unsigned int *sent,
                           bool wait=false)=0;
