@@ -1,3 +1,7 @@
+2008-02-26 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_dev/include/yarp/dev/CanBusInterface.h: new can bus
+	virtual interface.
+
 2008-02-26  Lorenzo Natale <nat@liralab.it>
 	* conf/FindGtkPlus.cmake: fixed an apparent bug which caused cmake
 	to pass $GTKPLUS_LIBRARY_DIR as a paramter to the linker.
