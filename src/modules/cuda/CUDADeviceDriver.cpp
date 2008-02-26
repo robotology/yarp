@@ -147,9 +147,12 @@ void CUDAGPU::execute(int prg, unsigned char *in, unsigned char *out) {
     CU_SAFE_CALL(cuFuncSetBlockShape(cf->func, 32, 1, 1));
 
 
-    CU_SAFE_CALL(cuLaunch(cf->func));
+////    CU_SAFE_CALL(cuLaunch(cf->func));
+//warmup?
+//    CU_SAFE_CALL(cuLaunchGrid(cf->func, 96, 1));
 
-    CU_SAFE_CALL(cuCtxSynchronize());
+//    CU_SAFE_CALL(cuCtxSynchronize());
+
 
 //
 //    unsigned int timer = 0;
@@ -190,9 +193,10 @@ void CUDAGPU::execute(int prg, unsigned char *in, unsigned char *in2, unsigned c
     CU_SAFE_CALL(cuFuncSetBlockShape(cf->func, 32, 1, 1));
 
 
-    CU_SAFE_CALL(cuLaunchGrid(cf->func, 96, 1));
+//warmup
+//    CU_SAFE_CALL(cuLaunchGrid(cf->func, 96, 1));
 
-    CU_SAFE_CALL(cuCtxSynchronize());
+//    CU_SAFE_CALL(cuCtxSynchronize());
 
 //
 //    unsigned int timer = 0;
@@ -200,7 +204,7 @@ void CUDAGPU::execute(int prg, unsigned char *in, unsigned char *in2, unsigned c
 //    CUT_SAFE_CALL( cutStartTimer( timer));
 //
 
-    CU_SAFE_CALL(cuLaunch(cf->func));
+    CU_SAFE_CALL(cuLaunchGrid(cf->func, 96, 1));
 
     CU_SAFE_CALL(cuCtxSynchronize());
 
