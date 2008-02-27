@@ -17,11 +17,28 @@ namespace yarp {
     namespace dev {
         class ICanBus;
         class ICanBufferFactory;
+        class ICanBusErrors;
         class CanMessage;
         class CanBuffer;
+        class CanErrors;
         template <class M, class T> class ImplementCanBufferFactory;
     }
 }
+
+class yarp::dev::CanErrors
+{
+public:
+    CanErrors(): 
+        errors(0), busoff(false), overflow(0), inBuffOvr(0), outBuffOvr(0)
+    {
+    }
+
+    int errors;
+    bool busoff;
+    unsigned int overflow;
+    unsigned int inBuffOvr;
+    unsigned int outBuffOvr;
+};
 
 class yarp::dev::CanMessage
 {
@@ -128,7 +145,6 @@ public:
     }
 };
 
-
 /**
  * Interface for a can bus device
  */
@@ -152,6 +168,14 @@ class yarp::dev::ICanBus
                           unsigned int size,
                           unsigned int *sent,
                           bool wait=false)=0;
+};
+
+class yarp::dev::ICanBusErrors
+{
+public:
+    virtual bool canGetErrors(yarp::dev::CanErrors &err)=0;
+
+    virtual ~ICanBusErrors(){}
 };
 
 #endif
