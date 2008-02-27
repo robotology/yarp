@@ -23,7 +23,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::ICanMessage
+class yarp::dev::CanMessage
 {
  public:
     virtual ~CanMessage(){}
