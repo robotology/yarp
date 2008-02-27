@@ -10,16 +10,10 @@
 #include <yarp/dev/GPUInterface.h>
 #include <yarp/dev/PolyDriver.h>
 
-#ifndef NEW_SYSTEM
 #include <yarp/dev/Drivers.h>
-#endif
 
 #include <yarp/sig/all.h>
 #include <yarp/os/all.h>
-
-#ifdef NEW_SYSTEM
-#include "drivers.h"
-#endif
 
 #include <cv.h>
 #include <cvaux.h>
@@ -31,12 +25,6 @@ using namespace yarp::sig::file;
 using namespace yarp::dev;
 
 int main(int argc, char *argv[]) {
-#ifdef NEW_SYSTEM
-    DriverCollection dev;
-    dev.status();
-#endif
-
-
     //Instantiate the GPU driver
     ImageOf<PixelRgb> img;
     yarp::sig::file::read(img, "../dev/image/img0250.ppm");
