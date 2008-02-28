@@ -233,7 +233,7 @@ public:
             Bottle& b = reply_buffer.get();
             b.clear();
 			receive( b ); 
-            /*if(b.size() > 0)*/
+            /*if(b.size() > 0)*/ /* this line was creating a memory leak !! */
             reply_buffer.write();
 			now = Time::now();
             // give other threads the chance to run 
