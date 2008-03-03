@@ -1,4 +1,14 @@
+2008-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpProgram.cmake: "WIN32 AND NOT CYGWIN" -> "MSVC"
+
+	* conf/YarpLibrary.cmake: "WIN32 AND NOT CYGWIN" -> "MSVC"
+
+	* conf/YarpCompileModules.cmake: corrected "WIN32 AND NOT CYGWIN"
+	to "MSVC", which is probably what was intended.
+
 2008-02-26 Lorenzo Natale <nat@liralab.it>
+
 	* src/libYARP_dev/include/yarp/dev/CanBusInterface.h: new can bus
 	virtual interface.
 

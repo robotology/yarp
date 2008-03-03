@@ -26,9 +26,9 @@ ENDFOREACH(X ${NEED_LIBS})
 TARGET_LINK_LIBRARIES(${name} ${ACE_LINK_FLAGS})
 
 # disable a set of warnings due to use of deprecated features/libs.
-IF(WIN32 AND NOT CYGWIN)
+IF(MSVC)
     SET_TARGET_PROPERTIES(${name} PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(WIN32 AND NOT CYGWIN)
+ENDIF(MSVC)
 
 ENDMACRO(YarpProgram)
 
