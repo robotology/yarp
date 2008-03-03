@@ -1,5 +1,11 @@
 2008-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/yarpdev/CMakeLists.txt: "WIN32 AND NOT CYGWIN" -> "MSVC"
+
+	* src/modules/CMakeLists.txt: "WIN32 AND NOT CYGWIN" -> "MSVC"
+
+	* src/libYARP_OS/CMakeLists.txt: "WIN32 AND NOT CYGWIN" -> "MSVC"
+
 	* conf/YarpProgram.cmake: "WIN32 AND NOT CYGWIN" -> "MSVC"
 
 	* conf/YarpLibrary.cmake: "WIN32 AND NOT CYGWIN" -> "MSVC"
