@@ -169,13 +169,11 @@ public:
 int main() {
     Game::getGame().update();
 
-    Network::init();
+    Network yarp;
     //Network::setLocalMode(true);
     ClientFactory factory;
     Game::getGame().main();
   
-    Network::fini();
-
     return 0;
 }
 

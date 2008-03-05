@@ -4,7 +4,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
     
 
     BufferedPort<Bottle> p; // Create a port.
@@ -15,6 +15,5 @@ int main() {
         printf("Got %s\n", b->toString().c_str());
     }
     
-    Network::fini();
     return 0;
 }

@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
-    Network::init();
+    Network yarp;
 	Time::turboBoost();
     
     yarp::String name((size_t)1024);
@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
     if (!dd.isValid()) {
         ACE_OS::printf("Device not available.  Here are the known devices:\n");
         ACE_OS::printf("%s", Drivers::factory().toString().c_str());
-        Network::fini();
         return 1;
     }
 
@@ -453,6 +452,5 @@ ApplicationCleanQuit:
     dd.close();
     delete[] tmp;
 
-    Network::fini();
     return 0;
 }

@@ -5,7 +5,7 @@ using namespace yarp::os;
 
 int main(int argc, char *argv[]) {
 	if (argc!=2) return 1;
-	Network::init();
+	Network yarp;
     
     BufferedPort<Bottle> in;
     in.open(argv[1]);
@@ -17,6 +17,5 @@ int main(int argc, char *argv[]) {
 		printf("at %d\n", count);
 	}
     
-	Network::fini(); 
     return 0;
 }

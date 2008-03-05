@@ -165,7 +165,7 @@ int YarpCImgViewer::main(int argc, char ** argv)
             printf("USAGE: %s --name /USERNAME/port\n", argv[0]);
             return 0;
         }
-    Network::init();
+    Network yarp;
 
     Property options;
     options.fromCommand(argc,argv);
@@ -194,7 +194,6 @@ int YarpCImgViewer::main(int argc, char ** argv)
     else
         ycv.acquire();
 
-    Network::fini();
     return 0;
 }
 

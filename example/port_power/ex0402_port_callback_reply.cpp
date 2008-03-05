@@ -21,7 +21,7 @@ class DataProcessor : public PortReader {
 DataProcessor processor;
 
 int main() {
-    Network::init();
+    Network yarp;
     
     Port p;            // Create a port.
     p.open("/in");     // Give it a name on the network.
@@ -32,6 +32,5 @@ int main() {
         Time::delay(10);
     }
     
-    Network::fini();
     return 0;
 }

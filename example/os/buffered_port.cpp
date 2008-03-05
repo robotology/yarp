@@ -9,7 +9,7 @@ using namespace yarp::os;
 
 int main() {
     // Initialize YARP - some OSes need network and time service initialization
-    Network::init();
+    Network yarp;
 
     // Work locally - don't rely on name server (just for this example).
     // If you have a YARP name server running, you can remove this line.
@@ -58,7 +58,6 @@ int main() {
     Bottle *inBot2 = in.read();
     printf("Bottle 2 is: %s\n", inBot2->toString().c_str());
 
-    Network::fini(); // This is the reverse of Network::init()
     return 0;
 }
 

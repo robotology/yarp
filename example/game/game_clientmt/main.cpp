@@ -203,7 +203,7 @@ int main(int argc, char **argv)
     if (argc!=3)
         return 0;
   
-    Network::init();
+    Network yarp;
 
     MyPlayer *player = new MyPlayer(argv[1], PLAYER_RATE);
   
@@ -256,8 +256,6 @@ int main(int argc, char **argv)
     player->stop();
 
     delete player;
-
-    Network::fini();
 
     return 0;
 }

@@ -51,7 +51,7 @@ int main (void)
 
 
 
-    Network::init();
+    Network yarp;
 
 	BufferedPort<Sound> port;
 	port.setStrict();
@@ -89,7 +89,6 @@ int main (void)
 	//-----------------------------------
 	yarp::os::Network::disconnect("/sound_grabber","/sound_recorder");
 	printf("\n disconnected port\n");
-    Network::fini();
     return 1;
 }
  

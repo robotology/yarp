@@ -4,12 +4,11 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
 
     Network::connect("/target/raw/out","/target/raw/in"); // connect ports.
     // can do the same thing from command line with 
     // "yarp connect /target/raw/out /target/raw/in"
     
-    Network::fini();
     return 0;
 }

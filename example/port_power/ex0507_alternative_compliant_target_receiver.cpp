@@ -7,7 +7,7 @@ using namespace yarp::os;
 #include "TargetVer1b.h"
 
 int main() {
-    Network::init();
+    Network yarp;
     
     Port p;            // Create a port.
     p.open("/target/raw/in");     // Give it a name on the network.
@@ -18,6 +18,5 @@ int main() {
         printf("Got (%d,%d)\n", b.content().x, b.content().y);
     }
     
-    Network::fini();
     return 0;
 }

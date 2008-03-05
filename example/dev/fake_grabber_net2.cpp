@@ -10,7 +10,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 int main() {
-    Network::init();
+    Network yarp;
 
     // give YARP a factory for creating instances of FakeFrameGrabber
     DriverCreator *fakey_factory = 
@@ -34,6 +34,5 @@ int main() {
         Time::delay(5);
     }
 
-    Network::fini();
     return 0;
 }

@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
         printf("  get \"my favorite numbers\"\n");
     }
 
-    Network::init();
+    Network yarp;
 
     Property option;
     option.fromCommand(argc,argv);
@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
         port.reply(response);
     }
 
-    Network::fini();
     return 0;
 }
 

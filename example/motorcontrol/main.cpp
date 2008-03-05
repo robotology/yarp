@@ -13,7 +13,7 @@ using namespace yarp::dev;
  */
 int main(int argc, const char **argv)
 {
-    Network::init();
+    Network yarp;
     IControlCalibration2 *ical;
 
     Property p;
@@ -31,7 +31,6 @@ int main(int argc, const char **argv)
     ical->park();
 
     device.close();
-    Network::fini();
     return 0; 
 }
 

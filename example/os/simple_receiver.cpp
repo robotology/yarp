@@ -7,7 +7,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
     Bottle bot;
     Port input;
     input.open("/receiver");
@@ -16,6 +16,5 @@ int main() {
     input.read(bot);
     printf("Got message: %s\n", bot.toString().c_str());
     input.close();
-    Network::fini();
     return 0;
 }

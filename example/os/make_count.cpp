@@ -5,7 +5,7 @@ using namespace yarp::os;
 
 int main(int argc, char *argv[]) {
     if (argc!=2) return 1;
-    Network::init();
+    Network yarp;
     
     BufferedPort<Bottle> out;
     out.open(argv[1]);
@@ -19,7 +19,5 @@ int main(int argc, char *argv[]) {
 		out.write();
 		Time::delay(1);
     }
-    
-    Network::fini(); 
     return 0;
 }

@@ -12,7 +12,7 @@ class DataPort : public BufferedPort<Bottle> {
 
 
 int main() {
-    Network::init();
+    Network yarp;
     
     DataPort p;
     p.useCallback();  // input should go to onRead() callback
@@ -22,6 +22,5 @@ int main() {
         Time::delay(10);
     }
     
-    Network::fini();
     return 0;
 }

@@ -11,7 +11,7 @@ using namespace yarp::sig;
 using namespace yarp::dev;
 
 int main() {
-    Network::init();
+    Network yarp;
 
     Property config;
     config.fromString("(device grabber) (subdevice ffmpeg_grabber) (name /dev1/image) (name2 /dev1/sound)");
@@ -36,6 +36,5 @@ int main() {
         Time::delay(5);
     }
 
-    Network::fini();
     return 0;
 }

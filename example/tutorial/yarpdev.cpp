@@ -10,12 +10,11 @@ using namespace yarp::os;
 using namespace yarp::dev;
 
 int main(int argc, char *argv[]) {
-	Network::init();
+	Network yarp;
 
     adder();
 
     int result = Drivers::yarpdev(argc,argv);
-	Network::fini();
     
     return result;
 }

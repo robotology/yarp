@@ -4,7 +4,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
 
     Port p;            // Create a port.
     p.open("/in");     // Give it a name on the network.
@@ -17,8 +17,6 @@ int main() {
         out.append(in);
         p.reply(out);    // send reply.
     }
-
-    Network::fini();
 }
 
 

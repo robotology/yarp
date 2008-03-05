@@ -14,7 +14,7 @@ DataProcessor processor;
 
 
 int main() {
-    Network::init();
+    Network yarp;
     
     DataProcessor processor;
     BufferedPort<Bottle> p;
@@ -25,6 +25,5 @@ int main() {
         Time::delay(10);
     }
     
-    Network::fini();
     return 0;
 }

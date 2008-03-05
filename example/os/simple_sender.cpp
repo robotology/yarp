@@ -8,7 +8,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
     Port output;
     output.open("/sender");
     int top = 100;
@@ -26,6 +26,5 @@ int main() {
         Time::delay(1);
     }
     output.close();
-    Network::fini();
     return 0;
 }

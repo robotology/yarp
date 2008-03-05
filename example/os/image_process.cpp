@@ -30,7 +30,7 @@ using namespace yarp::sig::draw;
 int main(int argc, char *argv[]) {
 
     // Initialize network
-    Network::init();
+    Network yarp;
 
     // Make a port for reading and writing images
     BufferedPort<ImageOf<PixelRgb> > port;
@@ -59,6 +59,5 @@ int main(int argc, char *argv[]) {
         port.write();
     }
   
-    Network::fini();
     return 0;
 }

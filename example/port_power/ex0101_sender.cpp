@@ -4,7 +4,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
+    Network yarp;
     
     int ct = 0;
     BufferedPort<Bottle> p; // Create a port.
@@ -22,6 +22,5 @@ int main() {
         Time::delay(1);
     }
 
-    Network::fini();
     return 0;
 }

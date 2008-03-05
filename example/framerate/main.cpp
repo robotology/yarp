@@ -15,7 +15,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
     if (argc==1) {
         printf("This program checks the framerate of an output port\n");
         printf("Call as:\n");
@@ -71,7 +71,6 @@ int main(int argc, char *argv[]) {
             }
         }
     }
-    Network::fini();
     return 0;
 }
 

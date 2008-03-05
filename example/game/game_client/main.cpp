@@ -195,7 +195,7 @@ void mainloop() {
 
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
 
     const char *name = "...";
     if (argc>=2) {
@@ -218,8 +218,6 @@ int main(int argc, char *argv[]) {
 #endif
   
     mainloop();
-
-    Network::fini();
 
     return 0;
 }

@@ -4,8 +4,7 @@
 using namespace yarp::os;
 
 int main() {
-    Network::init();
-    
+    Network yarp;
 
     BufferedPort<Bottle> p; // Create a port.
     p.open("/in");          // Give it a name on the network.
@@ -19,6 +18,5 @@ int main() {
         }
     }
     
-    Network::fini();
     return 0;
 }

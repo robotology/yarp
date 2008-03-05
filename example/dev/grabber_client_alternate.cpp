@@ -16,7 +16,7 @@ using namespace yarp::sig;
  */
 
 int main() {
-    Network::init();
+    Network yarp;
 
     ConstString local = "/client";
     ConstString remote = "/fakey";
@@ -30,6 +30,5 @@ int main() {
     }
     port.close();
 
-    Network::fini();
     return 0;
 }

@@ -5,7 +5,7 @@
 using namespace yarp::os;
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
 
     // port name of "..." means "I don't care, just give me a free name"
     const char *name = "...";
@@ -55,8 +55,6 @@ int main(int argc, char *argv[]) {
         }
     }
     port.close();
-
-    Network::fini();
 
     return 0;
 }

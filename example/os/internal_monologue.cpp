@@ -15,7 +15,7 @@ public:
 };
 
 int main() {
-    Network::init();
+    Network yarp;
     Network::setLocalMode(true); // don't actually need a name server
 
     Input in;
@@ -28,7 +28,6 @@ int main() {
     Bottle b("10 10 20");
     out.write(b);
     
-    Network::fini();
     return 0;
 }
 

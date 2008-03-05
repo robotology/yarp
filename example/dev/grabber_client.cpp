@@ -20,7 +20,7 @@ using namespace yarp::dev;
  */
 
 int main() {
-    Network::init();
+    Network yarp;
 
     Property config;
     config.put("device","remote_grabber"); // device type
@@ -44,6 +44,5 @@ int main() {
 
     dd.close();
 
-    Network::fini();
     return 0;
 }

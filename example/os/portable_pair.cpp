@@ -7,7 +7,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
     Port port;
     PortablePair<Bottle,Vector> pp;
     port.open("/pp");
@@ -29,6 +29,5 @@ int main(int argc, char *argv[]) {
         }
         Time::delay(0.25);
     }
-    Network::fini();
     return 0;
 }

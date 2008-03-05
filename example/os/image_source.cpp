@@ -9,7 +9,7 @@ using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
     BufferedPort<ImageOf<PixelRgb> > port;
 
     Property options;
@@ -28,6 +28,5 @@ int main(int argc, char *argv[]) {
         Time::delay(0.25);
     }
   
-    Network::fini();
     return 0;
 }
