@@ -1,3 +1,18 @@
+2008-03-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/: mass update of examples, to replace use of
+	"Network::init()" and "Network::fini()" with "Network yarp" in
+	main.  The init/fini pair do not always do the right thing on
+	windows if there are local port variables in main, so better to
+	let the final cleanup be done by another local variable (the
+	"yarp" object) with wider scope.  the "yarp" object simply calls
+	init() in its constructor and fini() in its destructor.
+
+2008-03-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpdev/CMakeLists.txt: corrected "WIN32 AND NOT CYGWIN"
+	to "MSVC", which is probably what was intended.
+
 2008-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpdev/CMakeLists.txt: "WIN32 AND NOT CYGWIN" -> "MSVC"
