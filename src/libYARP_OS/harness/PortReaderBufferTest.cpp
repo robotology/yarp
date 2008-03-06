@@ -94,7 +94,10 @@ public:
 
     virtual void runTests() {
         Network::setLocalMode(true);
-        checkLocal(); // still rather experimental
+
+        //checkLocal(); // still rather experimental
+        // in fact too experimental, omit from general builds
+
         checkAccept();
         Network::setLocalMode(false);
     }
