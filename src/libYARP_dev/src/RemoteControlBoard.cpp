@@ -335,6 +335,7 @@ public:
                 ICalibrator *icalibrator;
                 polyCalib.view(icalibrator);
                 calib->setCalibrator(icalibrator);
+                calib2->setCalibrator(icalibrator);
             }
 		        
         // experimental: let it be ok for not all interfaces to be
@@ -1160,6 +1161,24 @@ public:
 			return calib2->done(j);
 		return false;
 	}
+
+    virtual bool abortPark()
+    {
+        fprintf(stderr, "ServerControlBoard::Calling abortPark\n");
+        if (calib2)
+            return calib2->abortPark();
+        return false;
+    }
+
+    virtual bool abortCalibration()
+    {
+         fprintf(stderr, "ServerControlBoard::Calling abortCalibration\n");
+         if (calib2)
+            return calib2->abortCalibration();
+         else
+            fprintf(stderr, "calib2 was null\n");
+        return false;
+    }
 
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name) {
@@ -2255,6 +2274,28 @@ public:
             return true;
         }
         return false;
+    }
+
+    bool virtual abortCalibration()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_ABORTCALIB);
+        bool ok=rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;    
+    }
+
+    bool virtual abortPark()
+    {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_ABORTPARK);
+        bool ok=rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            return true;
+        }
+        return false;    
     }
 
     bool virtual park(bool wait=true)

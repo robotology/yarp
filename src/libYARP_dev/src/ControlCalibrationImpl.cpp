@@ -90,6 +90,22 @@ bool IControlCalibration2::calibrate()
     return ret;
 }
 
+bool IControlCalibration2::abortCalibration()
+{
+    bool ret=false;
+    if (calibrator!=0)
+        ret=calibrator->quitCalibrate();
+    return ret;
+}
+
+bool IControlCalibration2::abortPark()
+{
+    bool ret=false;
+    if (calibrator!=0)
+        ret=calibrator->quitPark();
+    return ret;
+}
+
 bool IControlCalibration2::park(bool wait)
 {
     bool ret=false;

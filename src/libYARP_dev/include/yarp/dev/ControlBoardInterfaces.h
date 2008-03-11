@@ -1271,6 +1271,12 @@ public:
     virtual bool calibrate();
 
     virtual bool park(bool wait=true);
+
+    /* Abort calibration, force the function calibrate() to return.*/
+    virtual bool abortCalibration();
+
+    /* Abort parking, force the function park() to return.*/
+    virtual bool abortPark();
 };
 
 /** 
@@ -1387,6 +1393,8 @@ public:
 
 #define VOCAB_CALIBRATE_JOINT VOCAB4('c','a','l','j')
 #define VOCAB_CALIBRATE VOCAB3('c','a','l')
+#define VOCAB_ABORTCALIB VOCAB4('a','b','c','a')
+#define VOCAB_ABORTPARK VOCAB4('a','b','p','a')
 #define VOCAB_CALIBRATE_DONE VOCAB4('c','a','l','d')
 #define VOCAB_PARK VOCAB4('p','a','r','k')
 #define VOCAB_SET VOCAB3('s','e','t')

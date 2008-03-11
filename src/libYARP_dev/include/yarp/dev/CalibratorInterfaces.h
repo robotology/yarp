@@ -25,6 +25,10 @@ public:
     virtual bool calibrate(DeviceDriver *dd)=0;
     
     virtual bool park(DeviceDriver *dd, bool wait=true)=0;
+
+    virtual bool quitCalibrate()=0;
+    
+    virtual bool quitPark()=0;
 };
 
 #endif
