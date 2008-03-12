@@ -1,3 +1,8 @@
+2008-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpLibraryNames.cmake: include GSL library dependency
+	automatically when libYARP_math is built.
+
 2008-03-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/: mass update of examples, to replace use of
