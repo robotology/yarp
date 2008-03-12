@@ -11,6 +11,7 @@
 #define _YARP2_SERVERSERIAL_
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PolyDriver.h>
@@ -115,7 +116,7 @@ public:
     virtual bool send(const Bottle& msg)
     {
         if(verb)
-            ACE_OS::printf("String to send : %s\n", msg.toString().c_str());
+            printf("ConstString to send : %s\n", msg.toString().c_str());
         if(serial != NULL) {
             serial->send(msg);
             return true;
@@ -127,7 +128,7 @@ public:
     virtual bool send(char *msg, size_t size)
     {
         if(verb)
-            printf("String to send : %s\n", msg);
+            printf("ConstString to send : %s\n", msg);
         if(serial != NULL) {
             serial->send(msg, size);
             return true;
@@ -177,11 +178,11 @@ public:
     {
         verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
-			ACE_OS::printf("running with verbose output\n");
+			printf("running with verbose output\n");
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-            ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
+            printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 Property p;
@@ -195,10 +196,10 @@ public:
                 poly.open(subdevice);
             }
             if (!poly.isValid()) {
-                ACE_OS::printf("cannot make <%s>\n", name->toString().c_str());
+                printf("cannot make <%s>\n", name->toString().c_str());
             }
         } else {
-            ACE_OS::printf("\"--subdevice <name>\" not set for server_serial\n");
+            printf("\"--subdevice <name>\" not set for server_serial\n");
             return false;
         }
 
@@ -206,7 +207,7 @@ public:
             return false;
         }
 
-        String rootName = 
+        ConstString rootName = 
             prop.check("name",Value("/serial"),
                        "prefix for port names").asString().c_str();
         
@@ -228,7 +229,7 @@ public:
 			return true;
         }
 
-        ACE_OS::printf("subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)\n",
+        printf("subdevice <%s> doesn't look like a serial port (no appropriate interfaces were acquired)\n",
                        name->toString().c_str());
         
         return false;
@@ -238,7 +239,7 @@ public:
      * The thread main loop deals with writing on ports here.
      */
     virtual void run() {
-        ACE_OS::printf("Server Serial starting\n");
+        printf("Server Serial starting\n");
         double before, now;
         while (!isStopping()) {
             before = Time::now();
@@ -251,7 +252,7 @@ public:
             // give other threads the chance to run 
             yarp::os::Time::delay(0.010);
         }
-        ACE_OS::printf("Server Serial stopping\n");
+        printf("Server Serial stopping\n");
     }
 };
 
@@ -260,16 +261,22 @@ public:
 
 yarp::dev::ImplementCallbackHelper2::ImplementCallbackHelper2(yarp::dev::ServerSerial *x) {
     ser = dynamic_cast<yarp::dev::ISerialDevice *> (x);
-    ACE_ASSERT (ser != 0);
+    //ACE_ASSERT (ser != 0);
+    if (ser==0) {
+        printf("Could not get serial device\n");
+        exit(1);
+    }
+
+
 }
 
 void yarp::dev::ImplementCallbackHelper2::onRead(Bottle &b) {
-    //ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+    //printf("Data received on the control channel of size: %d\n", v.body.size());
     //	int i;
    if (ser) {
         bool ok = ser->send(b);
         if (!ok)
-            ACE_OS::printf("Problems while trying to send data\n");
+            printf("Problems while trying to send data\n");
     }
 }
 
