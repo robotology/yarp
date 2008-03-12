@@ -1,3 +1,13 @@
+2008-03-12  Giacomo Spigler  <spiglerg@gmail.com>
+	* src/modules/SerialServoBoard: new SerialServo board device driver added.
+	this adds support to the following serial servo controller boards:
+	  -SSC32
+	  -MiniSSC (II)
+	  -Pontech SV203X
+	  -Mondotronic SMI
+	  -Pololu USB 16-Servo Controller
+	  -PicoPic
+
 2008-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpLibraryNames.cmake: include GSL library dependency
