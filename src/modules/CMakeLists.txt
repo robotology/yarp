@@ -22,6 +22,7 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   ADD_SUBDIRECTORY(stage)
   ADD_SUBDIRECTORY(vfw)
   ADD_SUBDIRECTORY(wxsdl)
+  ADD_SUBDIRECTORY(SerialServoBoard)
   # we can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
   # with other possible builds.
