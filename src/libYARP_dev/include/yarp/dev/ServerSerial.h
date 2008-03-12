@@ -124,6 +124,18 @@ public:
             return false;
     }
     
+    virtual bool send(char *msg, size_t size)
+    {
+        if(verb)
+            printf("String to send : %s\n", msg);
+        if(serial != NULL) {
+            serial->send(msg, size);
+            return true;
+        }
+        else
+            return false;
+    }
+
     virtual bool receive(Bottle& msg)
     {
         if(serial != NULL) {

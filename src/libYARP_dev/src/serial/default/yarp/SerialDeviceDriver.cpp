@@ -82,15 +82,26 @@ bool SerialDeviceDriver::close(void) {
 
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
-    ACE_OS::printf("Received string: %s\n", msg.toString().c_str());
-    int message_size = msg.toString().length();
+    ACE_OS::printf("Received string: %s\n", msg.get(0).asString().c_str());
+    int message_size = msg.get(0).asString().length();
     // Write message in the serial device
-    ssize_t bytes_written = _serial_dev.send_n((void *) msg.toString().c_str(), message_size);
+    ssize_t bytes_written = _serial_dev.send_n((void *)msg.get(0).asString().c_str(), message_size);
 
     if (bytes_written == -1)
         ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
     return true;
 } 
+
+bool SerialDeviceDriver::send(char *msg, size_t size)
+{
+    ACE_OS::printf("Received string: %s\n", msg);
+    // Write message in the serial device
+    ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
+
+    if (bytes_written == -1)
+        ACE_ERROR((LM_ERROR, ACE_TEXT ("%p\n"), ACE_TEXT ("send")));
+    return true;
+}
 
 bool SerialDeviceDriver::receive(Bottle& msg)
 {

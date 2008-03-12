@@ -106,6 +106,7 @@ public:
      * @return true on success
      */
     virtual bool send(const Bottle& msg);
+    virtual bool send(char *msg, size_t size);
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.

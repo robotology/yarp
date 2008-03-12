@@ -36,6 +36,7 @@ public:
      * @return true on success
      */
     virtual bool send(const yarp::os::Bottle& msg) = 0;
+    virtual bool send(char *msg, size_t size) = 0;
     //bool putMessage(Bottle& msg, bool waitreply, double replytimeout, Bottle& reply, char *replydelimiter, int replysize );
     /**
      * Gets the existing chars in the receive queue.
