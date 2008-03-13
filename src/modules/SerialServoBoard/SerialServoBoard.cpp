@@ -26,7 +26,20 @@ using namespace yarp::dev;
 
 
 bool SerialServoBoard::getAxes(int *ax) {
-    *ax = 32;
+    if(servoboard==SSC32) {
+        *ax = 32;
+    }else if(servoboard==MINISSC) {
+        *ax = 8;
+    }else if(servoboard==PONTECHSV203X) {
+        *ax = 8;
+    }else if(servoboard==MONDOTRONICSMI) {
+        *ax = 2;
+    }else if(servoboard==POLOLUUSB16) {
+        *ax = 16;
+    }else if(servoboard==PICOPIC) {
+        *ax = 20;
+    }
+
     return true;
 }
 
@@ -159,12 +172,12 @@ bool movessc32(int j, double ref, double *positions, double *speeds, ISerialDevi
 
         sprintf(str, "#%dP%dS%d\r", j, pos, speed);
     }
-    if(j!=0) {
+    //if(j==0) {
         bot.addString(str);
         serial->send(bot);
-    } else {
-        serial->send(str, 2+strlen(str+3));
-    }
+    //} else {
+    //    serial->send(str, 2+strlen(str+3));
+    //}
 
     return true;
 }
