@@ -113,7 +113,27 @@ public:
      */
     void resume();
 
-	
+    /**
+     * Reset thread statistics.
+     */
+    void resetStat();
+
+    /**
+     * Return estimated period since last reset.
+     */
+	double getEstPeriod();
+
+    /**
+     * Return the number of iterations performed since last reset.
+     */
+    unsigned int getIterations();
+
+    /**
+     * Return the estimated duration of the run() function since 
+     * last reset.
+     */
+    double getEstUsed();
+
     /**
      * Called just before a new thread starts.
      */

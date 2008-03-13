@@ -28,64 +28,108 @@ const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the rel
 class RateThreadCallbackAdapter: public ThreadImpl 
 {
 private:
-    ACE_Time_Value period;
+    unsigned int period;
     RateThread& owner; 
     Semaphore mutex;
+    ACE_Time_Value now;
+    ACE_Time_Value sleep;
     ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
-    ACE_Time_Value		est_time;		// thread time
-    ACE_Time_Value		sleep_period;	// thread sleep
+    double    	        sleep_period;	// thread sleep
 
     bool suspended;
+    double totalUsed;      //total time taken iterations
+    unsigned int count;    //number of iterations from last reset
+    double totalT;         //time bw run, accumulated
+    double previousRun;    //time when last iteration started
+    double currentRun;     //time when this iteration started
+    bool scheduleReset; 
+
+    void _resetStat()
+    {
+        totalUsed=0;
+        count=0;
+        totalT=0;
+        scheduleReset=false;
+    }
 
 public:
 
     RateThreadCallbackAdapter(RateThread& owner, int p) : owner(owner) 
     {
-        period.set(0, p*1000);	//period here is usec
+        period=p;
         suspended = false;
+        _resetStat();
     }
+
+    void resetStat()
+    {
+        scheduleReset=true;
+    }
+
+    double getEstPeriod()
+    { 
+        if (count<1)
+            return 0.0;
+        return totalT/(count);
+    }
+    
+    unsigned int getIterations()
+    { return count; }
+
+    double getEstUsed()
+    { 
+        if (count<1)
+            return 0.0;
+        return totalUsed/count;
+    }
+
+    inline double getTime()
+    {        
+#ifdef ACE_WIN32
+        now = ACE_High_Res_Timer::gettimeofday_hr();
+#else
+        now = ACE_OS::gettimeofday ();
+#endif
+        return double(now.sec()) + now.usec() * 1e-6; 
+    }
+
+    inline void sleepThread(double seconds) 
+    {
+        sleep.sec (long(seconds));
+        sleep.usec (long((seconds-long(seconds)) * 1.0e6));
+        ACE_OS::sleep(sleep);
+    }
+
 
     void singleStep()
     {
-        /*
+        currentRun=getTime();
 
-          This code doesn't really seem to take into account time
-          spent by the OS in other threads - am I misreading it?
-          Maybe the goal isn't to deliver an exact framerate?  The
-          yarp::dev::TestFrameGrabber class has some test code that
-          might be useful -paulfitz
+        if (scheduleReset)
+            _resetStat();
 
-		  I do not see much difference between this code and 
-		  yarp::dev::TestFrameGrabber. Both assume the scheduler is
-		  doing its job at the end of the sleep period specified in 
-		  the delay/sleep functions. This is the case if the cpu is 
-		  not overloaded and the sleep period is > than the quantum 
-		  of the realtime clock (not much we can do otherwise...). 
-		  The only difference I see is the here we always call 
-		  sleep() with at least 0, whereas TestFrameGrabber never calls 
-		  delay if the rate is behind the required value. In this respect 
-		  TestFrameGrabber is a little less "nice" to other 
-		  processes/threads in case of cpu overload. 
-		  I hope I'm not missing the point... -nat
-         */
+        if (count>0)
+            totalT+=(currentRun-previousRun)*1000;
+        previousRun=currentRun;
 
-        thread_timer.start();
-        
         if (!suspended)
-            owner.run();
-        
-        thread_timer.stop();
-        
-        thread_timer.elapsed_time(est_time);
-        //             fprintf(stderr, "Elasped: %d %d\n", est_time.usec(), est_time.sec());
-        
+            {   
+                owner.run();
+                count++;
+            }
+
+        double elapsed=getTime()-currentRun;
+        //save last
+        totalUsed+=elapsed*1000;
+
         //compute the sleep time
-        sleep_period = period-est_time;
-        
-        // round to 1ms. I noticed that ACE_OS::sleep() has a different 
-        // 'rounding' behavior depending on the os. This could be an ACE 
-        // problem because win32 and cygwin behaves differently. We should 
-        // check the implementation -- nat
+        if (elapsed*1000<period)
+            sleep_period = period-(elapsed*1000);
+        else
+            sleep_period=0;
+
+        Time::delay(sleep_period/1000.0);
+#if 0
         int us=sleep_period.usec()%1000;
         if (us>=500)
             sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
@@ -94,10 +138,7 @@ public:
         
         if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
             sleep_period.set(0,0);
-        
-        //              fprintf(stderr, "Sleep: %d %d\n", sleep_period.usec(), sleep_period.sec());
-        ACE_OS::sleep(sleep_period);
-        //Time::delay(sleep_period.sec()+sleep_period.usec()/1000000.0);
+#endif
     }
 
     virtual void run() 
@@ -120,13 +161,13 @@ public:
 
     bool setRate(int p)
     {
-        period.set(0, p*1000);	//period here is usec
+        period=p;
         return true;
     }
 
     double getRate()
     {
-        return period.usec()/1000.0;
+        return period;
     }
 
     bool isSuspended()
@@ -176,7 +217,6 @@ bool RateThread::isSuspended()
 {
     return ((RateThreadCallbackAdapter*)implementation)->isSuspended();
 }
-
 bool RateThread::join(double seconds) {
     return ((ThreadImpl*)implementation)->join(seconds);
 }
@@ -207,6 +247,26 @@ void RateThread::suspend()
 void RateThread::resume()
 {
     ((RateThreadCallbackAdapter*)implementation)->resume();
+}
+
+unsigned int RateThread::getIterations()
+{
+    return ((RateThreadCallbackAdapter*)implementation)->getIterations();
+}
+
+double RateThread::getEstPeriod()
+{
+    return ((RateThreadCallbackAdapter*)implementation)->getEstPeriod();
+}
+
+double RateThread::getEstUsed()
+{
+    return ((RateThreadCallbackAdapter*)implementation)->getEstUsed();
+}
+
+void RateThread::resetStat()
+{
+    ((RateThreadCallbackAdapter*)implementation)->resetStat();
 }
 
 bool RateThread::threadInit()
