@@ -1,3 +1,7 @@
+2008-03-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpDevice.cmake: YARP_MODULE_PATH overwritten incorrectly
+
 2008-03-12  Giacomo Spigler  <spiglerg@gmail.com>
 	* src/modules/SerialServoBoard: new SerialServo board device driver added.
 	this adds support to the following serial servo controller boards:
