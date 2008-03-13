@@ -1,5 +1,9 @@
 2008-03-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/CMakeLists.txt: Moved order of compilation of libYARP_math
+	earlier, possible problems compiling harness_dev with some cmake
+	versions otherwise.
+
 	* conf/YarpDevice.cmake: YARP_MODULE_PATH overwritten incorrectly
 
 2008-03-12  Giacomo Spigler  <spiglerg@gmail.com>
