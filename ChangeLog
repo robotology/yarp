@@ -1,3 +1,11 @@
+2008-03-13  Lorenzo Natle <nat@liralab.it>
+
+	* src/libYARP_OS/include/yarp/os/RateThread.h/cpp: added methods
+	to compute thread statistics. Corrected imprecise behavior probably
+	due to ACE timers.
+
+	* example/os/rateThreadTiming.cpp: example to test timing performance
+
 2008-03-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/CMakeLists.txt: Moved order of compilation of libYARP_math
