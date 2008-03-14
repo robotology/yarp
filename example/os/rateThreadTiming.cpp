@@ -10,16 +10,14 @@
 #include <yarp/os/Thread.h>
 
 #include <yarp/sig/Matrix.h>
-#include <yarp/math/Rand.h>
+#include <stdio.h>
 
 using namespace yarp::os;
-using namespace yarp::math;
 using namespace yarp::sig;
 
 const int NROWS=100;
 const int NCOLS=100;
-
-const int THREAD_PERIOD=4;
+const int THREAD_PERIOD=5;
 const int MAIN_WAIT=3;
 
 class Thread1 : public RateThread {
@@ -27,7 +25,7 @@ class Thread1 : public RateThread {
 public:
 	Thread1(int r):RateThread(r){}
     virtual bool threadInit()
-	{
+	{ 
 		printf("Starting thread1\n");
 		return true; 
 	}
@@ -58,7 +56,7 @@ public:
 
         for(int r=0;r<m.rows();r++)
             for(int c=0;c<m.cols();c++)
-                m[r][c]=Rand::scalar(-1,1);
+                m[r][c]=rand();
     }
 
     virtual void threadRelease()
