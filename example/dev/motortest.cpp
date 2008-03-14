@@ -16,7 +16,7 @@ using namespace yarp::dev;
 
 
 int main(int argc, char *argv[]) {
-    Network::init();
+    Network yarp;
 
     if(argc!=7) {
         printf("  Error: correct usage is %s --board BOARD --comport COM --baudrate BAUDRATE\n", argv[0]);
@@ -67,7 +67,6 @@ int main(int argc, char *argv[]) {
 
     dd.close();
 
-    Network::fini();
     return 0;
 }
 
