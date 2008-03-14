@@ -84,7 +84,7 @@ if [ ! -e failure.txt ]; then
 	$GO_OFFLINE
 	(
 	    $MAKE_TEST || ( echo YARP_AUTOCHECK make test failed | tee failure.txt )
-	) | tee makelog.txt
+	)
 	if [ -e makelog.txt ]; then
 	    cat makelog.txt
 	    cp makelog.txt testlog.txt
