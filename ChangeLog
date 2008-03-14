@@ -1,3 +1,13 @@
+2007-03-14  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_OS/include/yarp/ShmemTypes.h : added
+	* src/yarp/libYARP_OS/include/yarp/ShmemInputStream.h : added
+	* src/yarp/libYARP_OS/include/yarp/ShmemOutputStream.h : added
+	* src/yarp/libYARP_OS/include/yarp/ShmemHybridStream.h : modified
+	* src/yarp/libYARP_OS/src/ShmemInputStream.cpp : added
+	* src/yarp/libYARP_OS/src/ShmemOutputStream.cpp : added
+	* src/yarp/libYARP_OS/src/ShmemHybridStream.cpp : modified
+	New version, based on ACE Process Semaphores. Faster. 
+
 2008-03-13  Lorenzo Natle <nat@liralab.it>
 
 	* src/libYARP_OS/include/yarp/os/RateThread.h/cpp: added methods
