@@ -539,3 +539,19 @@ ports. See \link port_expert Port power tutorial\endlink.
 */
 
 
+/**
+ \example cuda/cuda_gpu.cpp
+
+Example showing how to use the CUDA driver to execute custom code onto nVidia graphics cards (for supported cards, try to search on Google something like "cuda supported gpu")
+
+*/
+
+
+/**
+ \example dev/motortest.cpp
+
+Example showing how to use the SerialServoBoard driver AND how to configure and use the IPositionControl interface.
+
+*/
+
+
