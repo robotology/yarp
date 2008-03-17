@@ -12,11 +12,12 @@
 
 #include <ace/ACE.h>
 #include <ace/High_Res_Timer.h>
+#include <ace/Profile_Timer.h>
 
 const int wTimes=11;
 //list of delays to be tested/measured
 const int sleepT[wTimes]={1,2,5,10,15,20,50,100,500,1000,2000};
-const int iterations=10;
+const int iterations=2;
 
 int main()
 {
@@ -24,8 +25,11 @@ int main()
     fprintf(stderr, "Starting ACE timers test\n");
 
     ACE_High_Res_Timer timer;
+    ACE_Profile_Timer profiler;
+    ACE_Profile_Timer::ACE_Elapsed_Time  elTime;
     ACE_hrtime_t usecs;
     ACE_Time_Value sleep;
+    ACE_Time_Value elapsed;
     double avErrors[wTimes];
     
     int i,k;
@@ -42,15 +46,24 @@ int main()
                     req=sleepT[k];
                     sleep.msec(sleepT[k]);
                     
-                    timer.reset();
-                    timer.start();
+                    //timer.reset();
+                    //timer.start();
+                    profiler.start();
                     ACE_OS::sleep(sleep);
-                    timer.stop();
+                    //timer.stop();
+                    profiler.stop();
                     
-                    timer.elapsed_microseconds(usecs);
-                    time=usecs/1000.0;
+                    //timer.elapsed_microseconds(usecs);
+                    //                    timer.elapsed(elapsed);
+                    // timer.elapsedTime();
+                    // time=usecs/1000.0;
+                    profiler.elapsed_time(elTime);
+                    time=elTime.real_time*1000;
+                    //elapsed.sec()*1000;
+                    //elapsed.usec()*1000;
                     avErrors[k]+=fabs(req-time)/iterations;
                     fprintf(stderr, ".");
+                    fprintf(stderr, "%lf\n", time*1000);
                 }
             fprintf(stderr, "Completed %d out of %d\n", i+1, iterations);
         }
