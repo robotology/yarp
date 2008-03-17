@@ -1,7 +1,7 @@
 PROJECT (Examples)
 
 # replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+#SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 
 FIND_PACKAGE(YARP)
 
@@ -18,7 +18,7 @@ ADD_EXECUTABLE(threads threads.cpp)
 ADD_EXECUTABLE(image_process image_process.cpp)
 ADD_EXECUTABLE(image_process_module image_process_module.cpp)
 ADD_EXECUTABLE(ratethread ratethread.cpp)
-ADD_EXECUTABLE(ratethreadtiming rateThreadTiming.cpp)
+#ADD_EXECUTABLE(ratethreadtiming rateThreadTiming.cpp)
 ADD_EXECUTABLE(make_count make_count.cpp)
 ADD_EXECUTABLE(view_count view_count.cpp)
 ADD_EXECUTABLE(browse_bottle browse_bottle.cpp)

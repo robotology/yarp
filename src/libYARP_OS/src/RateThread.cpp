@@ -39,6 +39,7 @@ private:
     bool suspended;
     double totalUsed;      //total time taken iterations
     unsigned int count;    //number of iterations from last reset
+    unsigned int estPIt;   //number of useful iterations for period estimation
     double totalT;         //time bw run, accumulated
     double previousRun;    //time when last iteration started
     double currentRun;     //time when this iteration started
@@ -48,6 +49,7 @@ private:
     {
         totalUsed=0;
         count=0;
+        estPIt=0;
         totalT=0;
         scheduleReset=false;
     }
@@ -68,19 +70,34 @@ public:
 
     double getEstPeriod()
     { 
-        if (count<1)
-            return 0.0;
-        return totalT/(count);
+        double ret;
+        lock();
+        if (estPIt==0)
+            ret=0;
+        else
+            ret=totalT/estPIt;
+        unlock();
+        return ret;
     }
     
     unsigned int getIterations()
-    { return count; }
+    { 
+        lock();
+        unsigned int ret=count;
+        unlock();
+        return ret;
+    }
 
     double getEstUsed()
     { 
+        double ret;
+        lock();
         if (count<1)
-            return 0.0;
-        return totalUsed/count;
+            ret=0.0;
+        else
+            ret=totalUsed/count;
+        unlock();
+        return ret;
     }
 
     inline double getTime()
@@ -103,13 +120,18 @@ public:
 
     void singleStep()
     {
+        lock();
         currentRun=getTime();
 
         if (scheduleReset)
             _resetStat();
 
         if (count>0)
-            totalT+=(currentRun-previousRun)*1000;
+            {
+                totalT+=(currentRun-previousRun)*1000;
+                estPIt++;
+            }
+
         previousRun=currentRun;
 
         if (!suspended)
@@ -128,6 +150,7 @@ public:
         else
             sleep_period=0;
 
+        unlock();
         Time::delay(sleep_period/1000.0);
 #if 0
         int us=sleep_period.usec()%1000;
@@ -145,7 +168,9 @@ public:
     {
         while(!isClosing())
             {
+                //                lock();
                 singleStep();
+                //                unlock();
             }
     }
 

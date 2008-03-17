@@ -32,14 +32,7 @@ public:
 
     virtual void run() 
     {
-        if (getIterations()==3)
-            {
-                double estP=getEstPeriod();
-                fprintf(stderr, "Thread1 est dT:%.3lf[ms]\n", estP*1000);
-                resetStat();
-            }
-
-       printf("Hello, from thread1\n");
+        printf("Hello, from thread1\n");
     }
 
     virtual void threadRelease()
@@ -69,15 +62,6 @@ public:
 
 	virtual void run()
 	{
-        int d=getIterations();
-        fprintf(stderr, "run:%d\n",d);
-        if (d==3)
-            {
-                double estP=getEstPeriod();
-                fprintf(stderr, "Thread2 est dT:%.3lf[ms]\n", estP*1000);
-                resetStat();
-            }
-
 		printf("Hello, from thread2\n");
 	}
 
@@ -95,44 +79,49 @@ int main() {
 
 	printf("Starting threads...\n");
     bool ok=t1.start();
-    //	ok = ok&&t2.start();
+    ok = ok&&t2.start();
 	if (!ok)
-	{
-		printf("One of the thread failed to initialize, returning\n");
-		return -1;
-	}
+        {
+            printf("One of the thread failed to initialize, returning\n");
+            return -1;
+        }
 
     Time::delay(3);
-    printf("suspending threads...\n");
+    printf("Thread1 ran %d times, estimated rate: %.lf[ms]\n", t1.getIterations(), t1.getEstPeriod());
+    printf("Thread2 ran %d times, estimated rate: %.lf[ms]\n", t2.getIterations(), t2.getEstPeriod());
 
+    printf("suspending threads...\n");
 	t1.suspend();
-    //	t2.suspend();
+    t2.suspend();
 
 	printf("Waiting some time");
 	for(int k=1;k<20;k++)
-	{
-		printf(".");
-        fflush(stdout);
-		Time::delay(0.2); //200[ms]
-	}
+        {
+            printf(".");
+            fflush(stdout);
+            Time::delay(0.2); //200[ms]
+        }
 	printf("\n");
+
 
 	printf("Changing thread1 rate to %d[ms]\n", 250);
 	printf("Changing thread2 rate to %d[ms]\n", 500);
 
 	t1.setRate(250);
-    //	t2.setRate(500);
+    t2.setRate(500);
 
 	printf("Resuming threads...\n");
     t1.resetStat();
-    //    t2.resetStat();
+    t2.resetStat();
 	t1.resume();
-    //	t2.resume();
+    t2.resume();
 
 	Time::delay(3);
     
+    printf("Thread1 ran %d times, estimated rate: %.lf[ms]\n", t1.getIterations(), t1.getEstPeriod());
+    printf("Thread2 ran %d times, estimated rate: %.lf[ms]\n", t2.getIterations(), t2.getEstPeriod());
     t1.stop();
-    //	t2.stop();
+    t2.stop();
     printf("stopped\n");
 
     return 0;
