@@ -1,3 +1,7 @@
+2008-03-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: froze version 2.1.9
+
 2007-03-14  Alessandro Scalzo <alessandro@liralab.it>
 	* src/yarp/libYARP_OS/include/yarp/ShmemTypes.h : added
 	* src/yarp/libYARP_OS/include/yarp/ShmemInputStream.h : added
