@@ -19,6 +19,11 @@ const int wTimes=11;
 const int sleepT[wTimes]={1,2,5,10,15,20,50,100,500,1000,2000};
 const int iterations=2;
 
+#include <sys/time.h>
+
+#define RTSC(x)   __asm__ __volatile__ (  "rdtsc"                \
+                                         :"=a" (((unsigned long*)&x)[0]),  \
+                                          "=d" (((unsigned long*)&x)[1]))
 int main()
 {
     ACE::init();
@@ -51,10 +56,18 @@ int main()
                     //timer.reset();
                     //timer.start();
                     //profiler.start();
-                    now1 = ACE_OS::gettimeofday ();
+                    //                    now1 = ACE_OS::gettimeofday ();
+                    
+                    // struct timeval tv1;
+                    // gettimeofday(&tv1,0);
+
+                    long long start;
+                    long long end;
+                    RTSC(start);
+
                     ACE_OS::sleep(sleep);
                     //timer.stop();
-                    profiler.stop();
+                    // profiler.stop();
                     
                     //timer.elapsed_microseconds(usecs);
                     //                    timer.elapsed(elapsed);
@@ -64,9 +77,16 @@ int main()
                     //                    time=elTime.real_time*1000;
                     //elapsed.sec()*1000;
                     //elapsed.usec()*1000;
-                    now2 = ACE_OS::gettimeofday ();
-                    time=(now2.sec()-now1.sec())*1000;
-                    time+=(now2.usec()-now1.usec())/1000;
+                    //                    now2 = ACE_OS::gettimeofday ();
+                    //                    struct timeval tv2;
+                    //                    gettimeofday(&tv2,0);
+                    RTSC(end);
+
+                    //                    time=(now2.sec()-now1.sec())*1000;
+                    //                    time+=(now2.usec()-now1.usec())/1000;
+                    //                    time=(tv2.tv_sec-tv1.tv_sec)*1000;
+                    //                    time+=(tv2.tv_usec-tv1.tv_usec)/1000;
+                    time=(end-start)/(1663*1000);
                     avErrors[k]+=fabs(req-time)/iterations;
                     fprintf(stderr, ".");
                     fprintf(stderr, "%lf\n", time);
