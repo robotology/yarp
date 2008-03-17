@@ -9,7 +9,8 @@ FIND_PACKAGE(Ace REQUIRED)
 
 # Find source code files
 FILE(GLOB HEADERS *.h)
-FILE(GLOB CODE *.cpp)
+#FILE(GLOB CODE *.cpp)
+SET(CODE main.cpp)
 
 # Lay the files out in folders in environments where that makes sense
 # This is completely optional
