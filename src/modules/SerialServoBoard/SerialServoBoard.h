@@ -1,3 +1,10 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2008 Giacomo Spigler
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ */
+
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
