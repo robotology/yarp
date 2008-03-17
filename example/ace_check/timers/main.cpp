@@ -24,6 +24,8 @@ int main()
     ACE::init();
     fprintf(stderr, "Starting ACE timers test\n");
 
+    ACE_Time_Value now1,now2;
+
     ACE_High_Res_Timer timer;
     ACE_Profile_Timer profiler;
     ACE_Profile_Timer::ACE_Elapsed_Time  elTime;
@@ -48,7 +50,8 @@ int main()
                     
                     //timer.reset();
                     //timer.start();
-                    profiler.start();
+                    //profiler.start();
+                    now1 = ACE_OS::gettimeofday ();
                     ACE_OS::sleep(sleep);
                     //timer.stop();
                     profiler.stop();
@@ -57,13 +60,16 @@ int main()
                     //                    timer.elapsed(elapsed);
                     // timer.elapsedTime();
                     // time=usecs/1000.0;
-                    profiler.elapsed_time(elTime);
-                    time=elTime.real_time*1000;
+                    //                    profiler.elapsed_time(elTime);
+                    //                    time=elTime.real_time*1000;
                     //elapsed.sec()*1000;
                     //elapsed.usec()*1000;
+                    now2 = ACE_OS::gettimeofday ();
+                    time=(now2.sec()-now1.sec())*1000;
+                    time+=(now2.usec()-now1.usec())/1000;
                     avErrors[k]+=fabs(req-time)/iterations;
                     fprintf(stderr, ".");
-                    fprintf(stderr, "%lf\n", time*1000);
+                    fprintf(stderr, "%lf\n", time);
                 }
             fprintf(stderr, "Completed %d out of %d\n", i+1, iterations);
         }
