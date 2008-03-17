@@ -56,10 +56,10 @@ int main()
                     //timer.reset();
                     //timer.start();
                     //profiler.start();
-                    now1 = ACE_OS::gettimeofday ();
+                    //now1 = ACE_OS::gettimeofday ();
                     
-                    // struct timeval tv1;
-                    // gettimeofday(&tv1,0);
+                    struct timeval tv1;
+                    gettimeofday(&tv1,0);
 
                     //long long start;
                     //long long end;
@@ -78,14 +78,14 @@ int main()
                     //elapsed.sec()*1000;
                     //elapsed.usec()*1000;
                     now2 = ACE_OS::gettimeofday ();
-                    //                    struct timeval tv2;
-                    //                    gettimeofday(&tv2,0);
+                    struct timeval tv2;
+                    gettimeofday(&tv2,0);
                     //                    RTSC(end);
 
-                    time=(now2.sec()-now1.sec())*1000;
-                    time+=(now2.usec()-now1.usec())/1000;
-                    //                    time=(tv2.tv_sec-tv1.tv_sec)*1000;
-                    //                    time+=(tv2.tv_usec-tv1.tv_usec)/1000;
+                    //time=(now2.sec()-now1.sec())*1000;
+                    //time+=(now2.usec()-now1.usec())/1000;
+                    time=(tv2.tv_sec-tv1.tv_sec)*1000;
+                    time+=(tv2.tv_usec-tv1.tv_usec)/1000;
                     //time=(end-start)/(1663*1000);
                     avErrors[k]+=fabs(req-time)/iterations;
                     fprintf(stderr, ".");
