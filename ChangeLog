@@ -8,9 +8,9 @@
 	* src/yarp/libYARP_OS/src/ShmemHybridStream.cpp : modified
 	New version, based on ACE Process Semaphores. Faster. 
 
-2008-03-13  Lorenzo Natle <nat@liralab.it>
+2008-03-13  Lorenzo Natale <nat@liralab.it>
 
-	* src/libYARP_OS/include/yarp/os/RateThread.h/cpp: added methods
+	* src/libYARP_OS/include/yarp/os/RateThread.h,cpp: added methods
 	to compute thread statistics. Corrected imprecise behavior probably
 	due to ACE timers.
 
