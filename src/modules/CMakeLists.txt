@@ -24,6 +24,7 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   ADD_SUBDIRECTORY(wxsdl)
   ADD_SUBDIRECTORY(SerialServoBoard)
   ADD_SUBDIRECTORY(ffmpeg)
+  ADD_SUBDIRECTORY(opencv)
   # we can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
   # with other possible builds.
@@ -31,8 +32,6 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
                    ${CMAKE_CURRENT_BINARY_DIR}/microphone)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/serial 
                    ${CMAKE_CURRENT_BINARY_DIR}/serial)
-  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/opencv_grabber
-                   ${CMAKE_CURRENT_BINARY_DIR}/opencv_grabber)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/firewirecamera
                    ${CMAKE_CURRENT_BINARY_DIR}/firewirecamera)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/portaudio

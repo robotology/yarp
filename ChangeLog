@@ -1,7 +1,8 @@
 2008-03-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* src/modules/CMakeLists.txt: move ffmpeg device from 
-	src/libYARP_dev/src/ffmpeg
+	* src/modules/CMakeLists.txt: move ffmpeg wrapper from
+	src/libYARP_dev/src/ffmpeg, opencv wrapper from
+	src/libYARP_dev/src/opencv_grabber
 
 	* src/modules/ffmpeg/ffmpeg_api.cpp: deal with changes in ffmpeg
 	library related to image format conversion.
