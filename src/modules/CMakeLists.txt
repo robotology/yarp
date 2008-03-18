@@ -23,11 +23,10 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   ADD_SUBDIRECTORY(vfw)
   ADD_SUBDIRECTORY(wxsdl)
   ADD_SUBDIRECTORY(SerialServoBoard)
+  ADD_SUBDIRECTORY(ffmpeg)
   # we can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
   # with other possible builds.
-  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/ffmpeg 
-                   ${CMAKE_CURRENT_BINARY_DIR}/ffmpeg)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/microphone 
                    ${CMAKE_CURRENT_BINARY_DIR}/microphone)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/serial 
