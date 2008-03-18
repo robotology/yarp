@@ -22,7 +22,7 @@
 
 ************************************************************************/
 
-#include <yarp/MicrophoneDeviceDriver.h>
+#include <MicrophoneDeviceDriver.h>
 #include <yarp/os/all.h>
 #include <ace/Sched_Params.h>
 

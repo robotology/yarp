@@ -6,7 +6,7 @@
  *
  */
 
-#include <yarp/MicrophoneDeviceDriver.h>
+#include <MicrophoneDeviceDriver.h>
 
 #include <stdio.h>
 #include <fcntl.h>
