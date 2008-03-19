@@ -1,11 +1,20 @@
-// Test how ACE timers performs on your system.
-// This is hardware dependent.
+// Test timing on your system, this affects
+// the precision with which you can schedule
+// periodic thread. It boils down to 
+// - how precise are timers
+// - how precise is Sleep()
 // 
-// Performance should degrade for long waiting time. 
-// Expected errors are < 1ms, for sleep in the range 
-// of 1-100 ms, and around 1-3 ms for waits of 1-2 
-// seconds.
+// In general this depends on:
+// - hardware
+// - frequency of the scheduler, in Windows
+// you can change it at runtime (see Time::turboboost())
+// in Linux you have to change a parameter when you
+// compile the kernel (default values have been changed
+// from 100Hz, to 1000Hz and now seems back to 250Hz).
 //
+// With scheduler at 1kHz, expected performances 
+// should around +/- 1-2ms, or better.
+// 
 // March 2008 -- Lorenzo Natale
 
 #include <math.h>
@@ -17,24 +26,17 @@
 const int wTimes=11;
 //list of delays to be tested/measured
 const int sleepT[wTimes]={1,2,5,10,15,20,50,100,500,1000,2000};
-const int iterations=2;
+const int iterations=10;
 
-#include <sys/time.h>
-
-#define RTSC(x)   __asm__ __volatile__ (  "rdtsc"                \
-                                         :"=a" (((unsigned long*)&x)[0]),  \
-                                          "=d" (((unsigned long*)&x)[1]))
 int main()
 {
     ACE::init();
-    fprintf(stderr, "Starting ACE timers test\n");
+    fprintf(stderr, "Starting timing test\n");
 
     ACE_Time_Value now1,now2;
 
     ACE_High_Res_Timer timer;
     ACE_Profile_Timer profiler;
-    ACE_Profile_Timer::ACE_Elapsed_Time  elTime;
-    ACE_hrtime_t usecs;
     ACE_Time_Value sleep;
     ACE_Time_Value elapsed;
     double avErrors[wTimes];
@@ -53,43 +55,16 @@ int main()
                     req=sleepT[k];
                     sleep.msec(sleepT[k]);
                     
-                    //timer.reset();
-                    //timer.start();
-                    //profiler.start();
-                    //now1 = ACE_OS::gettimeofday ();
+                    now1 = ACE_OS::gettimeofday ();
                     
-                    struct timeval tv1;
-                    gettimeofday(&tv1,0);
-
-                    //long long start;
-                    //long long end;
-                    //RTSC(start);
-
                     ACE_OS::sleep(sleep);
-                    //timer.stop();
-                    // profiler.stop();
-                    
-                    //timer.elapsed_microseconds(usecs);
-                    //                    timer.elapsed(elapsed);
-                    // timer.elapsedTime();
-                    // time=usecs/1000.0;
-                    //                    profiler.elapsed_time(elTime);
-                    //                    time=elTime.real_time*1000;
-                    //elapsed.sec()*1000;
-                    //elapsed.usec()*1000;
-                    now2 = ACE_OS::gettimeofday ();
-                    struct timeval tv2;
-                    gettimeofday(&tv2,0);
-                    //                    RTSC(end);
 
-                    //time=(now2.sec()-now1.sec())*1000;
-                    //time+=(now2.usec()-now1.usec())/1000;
-                    time=(tv2.tv_sec-tv1.tv_sec)*1000;
-                    time+=(tv2.tv_usec-tv1.tv_usec)/1000;
-                    //time=(end-start)/(1663*1000);
+                    now2 = ACE_OS::gettimeofday ();
+
+                    time=(now2.sec()-now1.sec())*1000;
+                    time+=(now2.usec()-now1.usec())/1000;
                     avErrors[k]+=fabs(req-time)/iterations;
                     fprintf(stderr, ".");
-                    fprintf(stderr, "%lf\n", time);
                 }
             fprintf(stderr, "Completed %d out of %d\n", i+1, iterations);
         }

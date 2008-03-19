@@ -18,7 +18,7 @@ SOURCE_GROUP("Header Files" FILES ${HEADERS})
 SOURCE_GROUP("Source Files" FILES ${CODE})
 
 # Create our executable
-ADD_EXECUTABLE(checkTimers ${HEADERS} ${CODE})
+ADD_EXECUTABLE(checkTime ${HEADERS} ${CODE})
 
 ADD_DEFINITIONS(-D_REENTRANT)
 
