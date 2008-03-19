@@ -6,9 +6,9 @@ IF(NOT CMAKE_BUILD_TYPE)
 	"Choose the type of build, recommanded options are: Debug or Release")
 ENDIF(NOT CMAKE_BUILD_TYPE)
 # hide variable to WINDOWS users (CMAKE_BUILD_TYPE is not used on win)
-IF (WIN32 AND NOT CYGWIN)
+IF (MSVC)
   MARK_AS_ADVANCED(CMAKE_BUILD_TYPE)
-ENDIF(WIN32 AND NOT CYGWIN)
+ENDIF(MSVC)
 #################################################
 
 
@@ -26,10 +26,9 @@ ENDIF (EXISTS ${STATLIB})
 # compile device library by default - safe, since individual devices
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
-SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Older method for compiling devices")
 
-# should no longer be in active use - hide it
-MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
+# not done any more
+SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE)
 
 SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Newer method for compiling devices")
 

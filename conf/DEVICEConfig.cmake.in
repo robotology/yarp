@@ -33,10 +33,10 @@ IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
   SET (@YARPY_DEV_LIB_NAME@_FOUND TRUE)
 
   LINK_DIRECTORIES("@YARP_DEV_LIB_DIR@")
-  IF (WIN32)
+  IF (MSVC)
     LINK_DIRECTORIES("@YARP_DEV_LIB_DIR@/Debug")
     LINK_DIRECTORIES("@YARP_DEV_LIB_DIR@/Release")
-  ENDIF (WIN32)
+  ENDIF (MSVC)
 
   # Maintain a list of all device libraries in use, so that we can
   # initialize them all.

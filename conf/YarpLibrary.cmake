@@ -22,7 +22,7 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 #INCLUDE(YarpReqLib)
 
-ADD_LIBRARY(${name} ${libcode} ${folder_header})
+ADD_LIBRARY(${name} ${libcode} ${folder_header} ${NEED_SRCS})
 SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 
 SET_TARGET_PROPERTIES(

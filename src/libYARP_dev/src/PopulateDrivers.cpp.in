@@ -13,14 +13,15 @@
  * old time's sake.  It is the template from which
  * "src/libYARP_dev/src_generated/PopulateDrivers.cpp" is produced.
  *
- * See the "Device How To" at http://yarp0.sourceforge.net for details.
+ * In fact you should not need to edit it much anymore; all the
+ * action for new devices has moved to "src/modules/CMakeLists.txt"
  *
  *                                                 - paulfitz
  *
  */
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -43,26 +44,6 @@ void addExternalDevices();
 #cmakedefine EMBED_DEVICE_LIBRARY_CALL
 #cmakedefine CREATE_DEVICE_LIBRARY_MODULES
 #cmakedefine MERGE_DEVICE_LIBRARY_MODULES
-#cmakedefine ENABLE_dragonfly
-#cmakedefine ENABLE_esdMotionControl
-#cmakedefine ENABLE_microphone
-#cmakedefine ENABLE_inertiacube2
-#cmakedefine ENABLE_james
-#cmakedefine ENABLE_XSensMTx
-#cmakedefine ENABLE_portaudio
-#cmakedefine ENABLE_opencv_grabber
-#cmakedefine ENABLE_firewirecamera
-#cmakedefine ENABLE_ffmpeg
-#cmakedefine ENABLE_jrkerr
-#cmakedefine ENABLE_dimax_u2c
-#cmakedefine ENABLE_picolo_grabber
-#cmakedefine ENABLE_fob
-#cmakedefine ENABLE_cyberglove
-#cmakedefine ENABLE_e504
-#cmakedefine ENABLE_joypres
-#cmakedefine ENABLE_mei
-#cmakedefine ENABLE_urbtc
-#cmakedefine ENABLE_serial
 #endif
 
 #ifdef CREATE_DEVICE_LIBRARY_MODULES
@@ -70,91 +51,6 @@ void addExternalDevices();
 extern "C" void add_yarpmod_devices();
 #endif
 #endif
-
-// add header file here, cmakedefine line above (in PopulateDrivers.cpp.in),
-// and factory code below
-#ifdef ENABLE_dragonfly
-#include <yarp/DragonflyDeviceDriver.h>
-#endif
-
-#ifdef ENABLE_esdMotionControl
-#include <yarp/EsdMotionControl.h>
-#include <yarp/EsdMessageSniffer.h>
-#endif
-
-#ifdef ENABLE_microphone
-#include <yarp/MicrophoneDeviceDriver.h>
-#endif
-
-#ifdef ENABLE_inertiacube2
-#include <yarp/InertiaCube2.h>
-#endif
-
-#ifdef ENABLE_james
-#include <yarp/JamesArmCalibrator.h>
-#include <yarp/JamesHead.h>
-// more components might show up here
-#endif
-
-#ifdef ENABLE_XSensMTx
-#include <yarp/XSensMTx.h>
-#endif
-
-#ifdef ENABLE_portaudio
-#include <yarp/PortAudioDeviceDriver.h>
-#endif
-
-#ifdef ENABLE_opencv_grabber
-#include <yarp/OpenCVGrabber.h>
-#endif
-
-#ifdef ENABLE_firewirecamera
-#include <yarp/FirewireCamera.h>
-#endif
-
-#ifdef ENABLE_ffmpeg
-#include <yarp/FfmpegGrabber.h>
-#include <yarp/FfmpegWriter.h>
-#endif
-
-#ifdef ENABLE_jrkerr
-#include <yarp/JrkerrMotionControl.h>
-#endif
-
-#ifdef ENABLE_dimax_u2c
-#include <yarp/DimaxU2C.h>
-#endif
-
-#ifdef ENABLE_mei
-#include <yarp/MEIDeviceDriver.h>
-#endif
-
-#ifdef ENABLE_urbtc
-#include <yarp/UrbtcControl.h>
-#endif
-
-#ifdef ENABLE_serial
-#include <yarp/SerialDeviceDriver.h>
-#include <yarp/dev/ServerSerial.h>
-#endif
-
-// ------------------------ for the mirror acquisition setup
-#ifdef ENABLE_picolo_grabber
-#include <yarp/PicoloDeviceDriver.h>
-#endif
-#ifdef ENABLE_fob
-#include <yarp/FoBDeviceDriver.h>
-#endif
-#ifdef ENABLE_cyberglove
-#include <yarp/CyberGloveDeviceDriver.h>
-#endif
-#ifdef ENABLE_e504
-#include <yarp/E504DeviceDriver.h>
-#endif
-#ifdef ENABLE_joypres
-#include <yarp/JoyPresDeviceDriver.h>
-#endif
-// ------------------------
 
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
@@ -169,123 +65,6 @@ extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
 
 void Drivers::init() {
-#ifdef ENABLE_dragonfly
-    add(new DriverCreatorOf<DragonflyDeviceDriver>("dragonfly",
-                                                   "grabber",
-                                                   "DragonflyDeviceDriver"));
-#endif
-
-#ifdef ENABLE_esdMotionControl
-    add(new DriverCreatorOf<EsdMotionControl>("esd",
-                                              "controlboard",
-                                              "EsdMotionControl"));
-    add(new DriverCreatorOf<EsdMessageSniffer>("esd_sniffer",
-                                              "",
-                                              "EsdMessageSniffer"));
-#endif
-
-#ifdef ENABLE_mei				//Mattia
-    add(new DriverCreatorOf<MEIDeviceDriver>("mei",
-                                              "",
-                                              "MEIDeviceDriver"));
-#endif
-
-#ifdef ENABLE_jrkerr
-    add(new DriverCreatorOf<JrkerrMotionControl>("jrkerr",
-                                              "controlboard",
-                                              "JrkerrMotionControl"));
-#endif
-
-#ifdef ENABLE_microphone
-    add(new DriverCreatorOf<MicrophoneDeviceDriver>("microphone",
-                                                    "grabber",
-                                                    "MicrophoneDeviceDriver"));
-#endif
-
-#ifdef ENABLE_inertiacube2
-    add(new DriverCreatorOf<InertiaCube2>("inertiacube2", 
-                                          "",
-                                          "InertiaCube2"));
-#endif
-
-#ifdef ENABLE_james
-    add(new DriverCreatorOf<JamesArmCalibrator>("jamesarmcalibrator", 
-                                             "",
-                                             "JamesArmCalibrator"));
-    add(new DriverCreatorOf<JamesHead>("jameshead", 
-                                             "",
-                                             "JamesHead"));
-#endif
-
-#ifdef ENABLE_XSensMTx
-    add(new DriverCreatorOf<XSensMTx>("XSensMTx", 
-                                          "inertial",
-                                          "XSensMTx"));
-#endif
-
-#ifdef ENABLE_portaudio
-    add(new DriverCreatorOf<PortAudioDeviceDriver>("portaudio", 
-                                                   "grabber",
-                                                   "PortAudioDeviceDriver"));
-#endif
-
-#ifdef ENABLE_opencv_grabber
-    add(new DriverCreatorOf<OpenCVGrabber>("opencv_grabber", 
-                                           "grabber",
-                                           "OpenCVGrabber"));
-#endif
-
-#ifdef ENABLE_firewirecamera
-    add(new DriverCreatorOf<FirewireCamera>("firewirecamera",
-                                            "grabber",
-                                            "FirewireCamera"));
-#endif
-
-#ifdef ENABLE_ffmpeg
-    add(new DriverCreatorOf<FfmpegGrabber>("ffmpeg_grabber", 
-                                           "grabber",
-                                           "FfmpegGrabber"));
-    add(new DriverCreatorOf<FfmpegWriter>("ffmpeg_writer", 
-                                          "",
-                                          "FfmpegWriter"));
-#endif
-
-#ifdef ENABLE_dimax_u2c
-    add(new DriverCreatorOf<DimaxU2C>("dimax_u2c", 
-                                           "controlboard",
-                                           "DimaxU2C"));
-#endif
-
-#ifdef ENABLE_urbtc
-    add(new DriverCreatorOf<UrbtcControl>("urbtc", 
-                                          "controlboard",
-                                          "UrbtcControl"));
-#endif
-
-#ifdef ENABLE_serial
-    add(new DriverCreatorOf<SerialDeviceDriver>("serialport", 
-                                          	"serial",
-                                          	"SerialDeviceDriver"));
-#endif
-
-// ------------------------ for the mirror acquisition setup
-#ifdef ENABLE_picolo_grabber
- add(new DriverCreatorOf<PicoloDeviceDriver>("picolo", "grabber", "PicoloDeviceDriver"));
-#endif
-#ifdef ENABLE_fob
- add(new DriverCreatorOf<FoBDeviceDriver>("fob", "", "FoBDeviceDriver"));
-#endif
-#ifdef ENABLE_cyberglove
- add(new DriverCreatorOf<CyberGloveDeviceDriver>("cyberglove", "", "CyberGloveDeviceDriver"));
-#endif
-#ifdef ENABLE_e504
- add(new DriverCreatorOf<E504DeviceDriver>("e504", "", "E504DeviceDriver"));
-#endif
-#ifdef ENABLE_joypres
- add(new DriverCreatorOf<JoyPresDeviceDriver>("joypres", "", "JoyPresDeviceDriver"));
-#endif
-
-// ------------------------
 
     add(new DriverCreatorOf<TestFrameGrabber>("test_grabber",
                                               "grabber",
@@ -320,12 +99,6 @@ void Drivers::init() {
                                         "",
                                         "DeviceGroup"));
                                         
-#ifdef ENABLE_serial
-   add(new DriverCreatorOf<ServerSerial>("serial",
-                                            "serial",
-                                            "ServerSerial"));
-#endif
-
     add(createRemoteControlBoard());
     add(createServerControlBoard());
 

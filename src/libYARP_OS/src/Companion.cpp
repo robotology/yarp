@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -705,8 +705,7 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("# Start a project.");
     f.add("PROJECT(${KEYWORD})");    
     f.add("");
-    f.add("# Find YARP.  Point the YARP_BUILD environment variable at your build.");
-    f.add("SET(YARP_DIR \"$ENV{YARP_BUILD}\" CACHE LOCATION \"where is yarp?\")");
+    f.add("# Find YARP.  Point the YARP_DIR environment variable at your build.");
     f.add("FIND_PACKAGE(YARP)");
     f.add("");
     f.add("# Search for source code.");
@@ -715,28 +714,18 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("SOURCE_GROUP(\"Source Files\" FILES ${folder_source})");
     f.add("SOURCE_GROUP(\"Header Files\" FILES ${folder_header})");
     f.add("");
-    f.add("# Check if there are any plugin device subdirectories.");
-    f.add("# Device subdirectories contain a yarpdevice.cmake file.");
-    f.add("FILE(GLOB_RECURSE device_config yarpdevice.cmake)");
-    f.add("IF (device_config)");
-    f.add("  INCLUDE(YarpCompileModules)");
-    f.add("ENDIF (device_config)");
+    f.add("# Automatically add include directories if needed.");
+    f.add("FOREACH(header_file ${folder_header})");
+    f.add("  GET_FILENAME_COMPONENT(p ${header_file} PATH)");
+    f.add("  INCLUDE_DIRECTORIES(${p})");
+    f.add("ENDFOREACH(header_file ${folder_header})");
     f.add("");
-    f.add("# If no devices around, make a single executable");
-    f.add("IF (NOT device_config)");
-    f.add("  # Automatically add include directories if needed.");
-    f.add("  FOREACH(header_file ${folder_header})");
-    f.add("    GET_FILENAME_COMPONENT(p ${header_file} PATH)");
-    f.add("    INCLUDE_DIRECTORIES(${p})");
-    f.add("  ENDFOREACH(header_file ${folder_header})");
-    f.add("");
-    f.add("  # Set up our main executable.");
-    f.add("  IF (folder_source)");
-    f.add("    ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})");
-    f.add("  ELSE (folder_source)");
-    f.add("    MESSAGE(FATAL_ERROR \"No source code files found. Please add something\")");
-    f.add("  ENDIF (folder_source)");
-    f.add("ENDIF (NOT device_config)");
+    f.add("# Set up our main executable.");
+    f.add("IF (folder_source)");
+    f.add("  ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})");
+    f.add("ELSE (folder_source)");
+    f.add("  MESSAGE(FATAL_ERROR \"No source code files found. Please add something\")");
+    f.add("ENDIF (folder_source)");
 
     const char *target = "CMakeLists.txt";
 

@@ -20,10 +20,6 @@ ADD_DEFINITIONS(-DYARP_VERSION="${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_V
 # Configure where the output will go
 INCLUDE(YarpOutput)
 
-# Detect the broad family of driver in use -- "linux" (actually unix) or 
-# "winnt".  This is being phased out.
-INCLUDE(YarpTag)
-
 # get appropriate libraries and settings
 INCLUDE(YarpReqLib)
 

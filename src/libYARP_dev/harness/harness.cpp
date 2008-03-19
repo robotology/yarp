@@ -39,6 +39,10 @@ using namespace std;
 #endif
 
 
+// dummy
+
+extern "C" void add_yarpmod_devices() {
+}
 
 int harness_main(int argc, char *argv[]) {
 #ifdef CHECK_FOR_LEAKS
