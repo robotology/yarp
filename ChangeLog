@@ -3,7 +3,8 @@
 	* src/modules/CMakeLists.txt:  move serial device from
 	src/libYARP_dev/src/serial, portaudio device from
 	src/libYARP_dev/src/portaudio, firewirecamera device from
-	src/libYARP_dev/src/firewirecamera
+	src/libYARP_dev/src/firewirecamera, jrkerr device from
+	src/libYARP_dev/src/jrkerr
 
 2008-03-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
