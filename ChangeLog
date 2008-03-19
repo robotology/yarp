@@ -1,5 +1,8 @@
 2008-03-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/ShmemOutputStream.cpp,ShmemInputStream.cpp:
+	fix sizeof syntax (certain gcc versions choking)
+
 	* src/modules/CMakeLists.txt:  move serial device from
 	src/libYARP_dev/src/serial, portaudio device from
 	src/libYARP_dev/src/portaudio, firewirecamera device from

@@ -34,7 +34,7 @@ bool ShmemInputStream::open(int port,int size)
 	sprintf(obj_name,"%sSHMEM_FILE_%d_%d",temp_dir_path,port,0);
 
 	m_pMap=new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
-		size+sizeof ShmemHeader_t, //int len = -1,
+		size+sizeof(ShmemHeader_t), //int len = -1,
 		O_RDWR, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
@@ -83,7 +83,7 @@ bool ShmemInputStream::Resize()
 	sprintf(file_name,"%sSHMEM_FILE_%d_%d",file_path,m_Port,m_ResizeNum);
 
 	pNewMap=new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
-		m_pHeader->newsize+sizeof ShmemHeader_t, //int len = -1,
+		m_pHeader->newsize+sizeof(ShmemHeader_t), //int len = -1,
 		O_RDWR, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
