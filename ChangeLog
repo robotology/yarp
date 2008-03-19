@@ -17,7 +17,9 @@
 	src/libYARP_dev/src/serial, portaudio device from
 	src/libYARP_dev/src/portaudio, firewirecamera device from
 	src/libYARP_dev/src/firewirecamera, jrkerr device from
-	src/libYARP_dev/src/jrkerr
+	src/libYARP_dev/src/jrkerr, urbtc device from
+	src/libYARP_dev/src/urbtc, dimax_u2c device from
+	src/libYARP_dev/src/dimax_u2c
 
 2008-03-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

@@ -30,13 +30,16 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   ADD_SUBDIRECTORY(portaudio)
   ADD_SUBDIRECTORY(firewirecamera)
   ADD_SUBDIRECTORY(jrkerr)
-  # we can include remote directories as well - we specify a 
+  ADD_SUBDIRECTORY(urbtc)
+  ADD_SUBDIRECTORY(dimax_u2c)
+
+  # We can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
   # with other possible builds.
-  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/urbtc
-                   ${CMAKE_CURRENT_BINARY_DIR}/urbtc)
-  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
-                   ${CMAKE_CURRENT_BINARY_DIR}/dimax_u2c)
+  # Actually, we don't do this anymore, but if we did, here's an
+  # example of how to do it:
+  # ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
+  #                  ${CMAKE_CURRENT_BINARY_DIR}/dimax_u2c)
 
   # we can also suck in other device libraries built the same way
   SET(EXTFILE "${YARP_MODULE_PATH}/ExternalModules.cmake")
