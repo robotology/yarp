@@ -6,7 +6,7 @@
  */
 
 //
-// $Id: FirewireCamera.h,v 1.2 2007-05-22 21:35:51 babybot Exp $
+// $Id: FirewireCamera.h,v 1.1 2008-03-19 15:04:52 eshuy Exp $
 //
 //
 
