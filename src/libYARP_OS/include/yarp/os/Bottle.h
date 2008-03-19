@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -121,6 +121,12 @@ public:
      * @return a reference to the newly added list
      */
     Bottle& addList();
+
+    /**
+     * Removes a Value v from the end of the list and returns this value. 
+     * @return a reference to the newly added list
+     */
+    Value& pop();
 
     /**
      * Reads a Value v from a certain part of the list.  Methods like

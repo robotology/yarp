@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -960,7 +960,18 @@ bool BottleImpl::isList(int index) {
     return false;
 }
 
+Storable& BottleImpl::pop() {
+    if(size() == 0) {
+        return storeNull;
+    }
 
+    int lastIndex = size() - 1;
+    Storable& s = *(content[lastIndex]->cloneStorable());
+    delete content[lastIndex];
+    content.pop_back();
+    dirty = true;
+    return s;
+}
 
 Storable& BottleImpl::get(int index) const {
     if (index>=0 && index<size()) {

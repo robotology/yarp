@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -83,6 +83,10 @@ void Bottle::addString(const char *str) {
 
 Bottle& Bottle::addList() {
     return HELPER(implementation).addList();
+}
+
+Value& Bottle::pop() {
+    return HELPER(implementation).pop();
 }
 
 int Bottle::getInt(int index) {

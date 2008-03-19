@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -366,6 +366,23 @@ public:
         checkEqual(bot1.size(),5,"add two bottles");
     }
 
+    void testStack() {
+        report(0,"testing stack functionality...");
+        Bottle bot;
+        bot.addInt(10);
+        bot.addString("Foo");
+        Bottle& bot2 = bot.addList();
+        bot2.addInt(3);
+        bot.addDouble(2.71828);
+        checkTrue(bot.pop().isDouble(),"popping double");
+        checkEqual(bot.size(),3,"bottle size decreased after pop");
+        checkEqual(bot.pop().asList()->pop().asInt(),3,"popping list and nested int");
+        checkEqual(bot.pop().asString().c_str(),"Foo", "popping string");
+        bot.pop();
+        checkTrue(bot.pop().isNull(), "empty bottle pops null");
+        checkEqual(bot.size(),0,"bottle is empty after popping");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -386,6 +403,7 @@ public:
         testReread();
         testSpecialChars();
         testAppend();
+        testStack();
     }
 
     virtual String getName() {
