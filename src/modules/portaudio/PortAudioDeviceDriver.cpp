@@ -6,7 +6,7 @@
  *
  */
 
-#include <yarp/PortAudioDeviceDriver.h>
+#include <PortAudioDeviceDriver.h>
 
 #include <stdio.h>
 #include <stdlib.h>

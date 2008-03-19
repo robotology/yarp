@@ -27,13 +27,12 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   ADD_SUBDIRECTORY(opencv)
   ADD_SUBDIRECTORY(microphone)
   ADD_SUBDIRECTORY(serial)
+  ADD_SUBDIRECTORY(portaudio)
   # we can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
   # with other possible builds.
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/firewirecamera
                    ${CMAKE_CURRENT_BINARY_DIR}/firewirecamera)
-  ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/portaudio
-                   ${CMAKE_CURRENT_BINARY_DIR}/portaudio)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/urbtc
                    ${CMAKE_CURRENT_BINARY_DIR}/urbtc)
   ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/jrkerr
