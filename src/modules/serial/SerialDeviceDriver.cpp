@@ -6,7 +6,7 @@
  *
  */
 
-#include <yarp/SerialDeviceDriver.h>
+#include <SerialDeviceDriver.h>
 
 #include <stdio.h>
 #include <stdlib.h>
