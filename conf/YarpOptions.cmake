@@ -28,8 +28,8 @@ ENDIF (EXISTS ${STATLIB})
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
 SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE CACHE BOOL "Older method for compiling devices")
 
-# this no longer seems to be in active use
-# MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
+# should no longer be in active use - hide it
+MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY_BUILTINS)
 
 SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Newer method for compiling devices")
 
