@@ -12,7 +12,7 @@
 //#pragma once
 #ifndef __I2C_H__
 #define __I2C_H__
-#include "I2CBridge.h"
+#include "i2cbridge.h"
 
 
 class CI2c

@@ -37,7 +37,7 @@ typedef void*       HANDLE;
 //#include <windef.h>
 
 // For the base types (LONG_PTR)
-#include <BaseTsd.h>
+#include <basetsd.h>
 
 // From WinDef.h
 typedef unsigned long ULONG;

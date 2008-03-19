@@ -5,7 +5,7 @@
  */
 
 #include <iostream>
-#include "../../common/yarp/Servo.h"
+#include "Servo.h"
 
 using namespace std;
 

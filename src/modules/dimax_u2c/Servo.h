@@ -6,8 +6,8 @@
 #ifndef __SERVO_H__
 #define __SERVO_H__
 
-#include "../../winnt/dd_orig/include/I2c.h"
-#include "../../winnt/dd_orig/include/i2cbridge.h"
+#include "I2c.h"
+#include "i2cbridge.h"
 
 #define MEMORY_ADDRESS_LENGTH 0x01
 #define SLAVE_ADDRESS 0x61

@@ -11,9 +11,9 @@
 
 #include <iostream>
 //#include "stdafx.h"
-#include "../dd_orig/include/I2c.h"
-#include "../dd_orig/include/i2cbridge.h"
-#include "../dd_orig/include/u2c_common_func.h"
+#include "I2c.h"
+#include "i2cbridge.h"
+#include "u2c_common_func.h"
 
 //using namespace std;
 

@@ -10,7 +10,7 @@
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 
-#include <yarp/devControlBoardInterfacesImpl.inl>
+#include <yarp/dev/ControlBoardInterfacesImpl.inl>
 #include "DimaxU2C.h"
 
 #define DEFAULT_NUM_MOTORS 16
