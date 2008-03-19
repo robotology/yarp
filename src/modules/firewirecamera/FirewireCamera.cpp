@@ -6,7 +6,7 @@
  *
  */
 
-#include <yarp/FirewireCamera.h>
+#include <FirewireCamera.h>
 
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/DeviceDriver.h>
