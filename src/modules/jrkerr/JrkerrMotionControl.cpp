@@ -11,17 +11,17 @@
 #include <yarp/os/Time.h>
 #include <ace/config.h>
 #include <ace/OS.h>
-#include <ace/Log_msg.h>
+#include <ace/Log_Msg.h>
 #include <ace/Sched_Params.h>
 
 /// specific to this device driver.
 #include "JrkerrMotionControl.h"
-#include "../dd_orig/include/nmccom.h"
-#include "../dd_orig/include/picservo.h"
-#include "../dd_orig/include/sio_util.h"
+#include "nmccom.h"
+#include "picservo.h"
+#include "sio_util.h"
 
 
-#include "../../../ControlBoardInterfacesImpl.inl"
+#include <yarp/dev/ControlBoardInterfacesImpl.inl>
 
 
 typedef int (*PV) (const char *fmt, ...);
