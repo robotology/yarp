@@ -1,8 +1,6 @@
 
 PROJECT(YarpModules)
 
-MESSAGE(STATUS "This is an experimental way to compile devices")
-
 # This directory may be compiled independently of the rest of YARP,
 # so we need to pick up YARP explicitly.
 IF (NOT COMPILING_ALL_YARP)
