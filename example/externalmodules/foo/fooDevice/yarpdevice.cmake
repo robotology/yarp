@@ -1,6 +1,0 @@
-
- SET(YARPDEV_NAMES "foodevice")
- SET(YARPDEV_WRAPPERS "None")
- SET(YARPDEV_INCLUDES "foodevice.h")
- SET(YARPDEV_TYPES "foodevice")
-

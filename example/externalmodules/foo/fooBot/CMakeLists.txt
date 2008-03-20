@@ -1,0 +1,9 @@
+
+IF (COMPILE_DEVICE_LIBRARY)
+  PREPARE_DEVICE(foobot TYPE foobot INCLUDE "foobot.h")
+ENDIF (COMPILE_DEVICE_LIBRARY)
+ 
+IF (NOT SKIP_foobot)
+  FIND_PACKAGE(YARP REQUIRED)
+  ADD_LIBRARY(foobot foobot.cpp foobot.h)
+ENDIF (NOT SKIP_foobot)

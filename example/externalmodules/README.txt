@@ -1,33 +1,22 @@
-This is an example to show how you can add external modules 
-to your yarp repository.
+This is an example to show how you can write external modules.
 
-Here you find a directory structure with two modules 
-(foo and baz) which contains a set of devices (fooBot,
-fooDevice, bazBot, bazDevice).
+Here you find a directory structure with two bundles of devices
+(foo and baz) which contains fooBot, fooDevice, bazBot, bazDevice;
+these are just examples.
 
-Each module will become a separate library, cmake will add code
-to include them to the yarp factory of devices.
+Run cmake, and then the cmake GUI (ccmake on Unix, CMakeSetup.exe on
+Windows).  You should see a list of the available devices: bazDevice,
+bazBot, fooDevice and fooBot. Turn them on and finish the cmake
+process to generate your project/make files.  Then compile, and you
+should get a "foobazdev" program that works just like the "yarpdev"
+program.  In fact, if you do: 
+  ./foobazdev --list 
+you should see all the devices in yarpdev plus the new ones you have
+just added.
 
-What you need to do:
-- Create or edit $YARP_ROOT/conf/ExternalModules.cmake write the 
-following lines:
+If you want these devices to show up in yarpdev itself,
+you can create the file in $YARP_ROOT/conf/ExternalModules.cmake
+following the template in  $YARP_ROOT/conf/ExternalModules.cmake.template,
+or else add subdirectories in $YARP_ROOT/src/modules (edit the
+CMakeLists.txt to enumerate those subdirectories).
 
-SET(EXTERNAL_MODULES bazModule fooModule)
-SET(bazModule_PATH "YARP_ROOT/example/externalmodules/baz")
-SET(fooModule_PATH "YARP_ROOT/example/externalmodules/foo")
-
-Notice that YARP_ROOT here should be substituted with the 
-absolute path to the root of your YARP installation. This value
-tells cmake/yarp the location of each module.
-
-- Run cmake in $YARP_ROOT
-
-New entries should now appear in the list of the available 
-devices. The new devices should be bazDevice, bazBot, fooDevice 
-and fooBot. Turn them on and finish the cmake process to generate
-your project/make files.
-
-- Build yarp.
-
-- Run yarpdev --list, the new devices should appear in the list
-(fooDevice, fooBot, bazDevice and bazBot).

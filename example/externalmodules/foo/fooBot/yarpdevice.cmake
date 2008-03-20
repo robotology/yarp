@@ -1,6 +1,0 @@
-
- SET(YARPDEV_NAMES "foobot")
- SET(YARPDEV_WRAPPERS "None")
- SET(YARPDEV_INCLUDES "foobot.h")
- SET(YARPDEV_TYPES "foobot")
-

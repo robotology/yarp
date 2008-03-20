@@ -1,5 +1,9 @@
 2008-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/externalmodules/: example updated for
+	new mechanism - CMakeLists.txt files added, yardevice.cmake
+	files removed, README.txt updated.
+
 	* src/modules/: removed yarpdevice.cmake files, no longer used.
 
 2008-03-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
