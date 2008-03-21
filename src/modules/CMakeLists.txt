@@ -39,18 +39,25 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   # ADD_SUBDIRECTORY(${YARP_DIR}/src/libYARP_dev/src/dimax_u2c
   #                  ${CMAKE_CURRENT_BINARY_DIR}/dimax_u2c)
 
-  # we can also suck in other device libraries built the same way
-  SET(EXTFILE "${YARP_MODULE_PATH}/ExternalModules.cmake")
-  IF (EXISTS ${EXTFILE})
-    INCLUDE(${EXTFILE})
-    FOREACH(EXTDIR ${EXTERNAL_MODULES})
-      IF (NOT ${EXTDIR}_DIR)
-        SET(${EXTDIR}_DIR ${${EXTDIR}_PATH})
-      ENDIF (NOT ${EXTDIR}_DIR)
-      ADD_SUBDIRECTORY(${${EXTDIR}_DIR}
-                     ${CMAKE_CURRENT_BINARY_DIR}/externals)
-    ENDFOREACH(EXTDIR ${EXTERNAL_MODULES})
-  ENDIF (EXISTS ${EXTFILE})
+  # We can also suck in other device libraries built the same way.
+  # We seek an ExternalModules.cmake file either in the conf directory
+  # or in our build directory
+  SET(EXTFILES "${YARP_MODULE_PATH}/ExternalModules.cmake"
+    "${CMAKE_BINARY_DIR}/ExternalModules.cmake")
+  FOREACH(EXTFILE ${EXTFILES})
+    IF (EXISTS ${EXTFILE})
+      INCLUDE(${EXTFILE})
+      FOREACH(EXTDIR ${EXTERNAL_MODULES})
+        IF (NOT ${EXTDIR}_DIR)
+          SET(${EXTDIR}_DIR ${${EXTDIR}_PATH})
+        ENDIF (NOT ${EXTDIR}_DIR)
+        # make sure path is usable - could have environment variable parts
+        FILE(TO_CMAKE_PATH ${${EXTDIR}_DIR} safe_path)
+        ADD_SUBDIRECTORY(${safe_path}
+                       ${CMAKE_CURRENT_BINARY_DIR}/externals)
+      ENDFOREACH(EXTDIR ${EXTERNAL_MODULES})
+    ENDIF (EXISTS ${EXTFILE})
+  ENDFOREACH(EXTFILE)
 
 END_DEVICE_LIBRARY(yarpmod)
 

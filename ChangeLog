@@ -1,3 +1,11 @@
+2008-03-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/CMakeLists.txt: allow ExternalModules.cmake to
+	be in build directory $YARP_DIR, to allow alternate builds.
+	Clean up paths to external modules in case they have
+	components from environment variables with backslashes (important
+	on windows).
+
 2008-03-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/externalmodules/: example updated for
