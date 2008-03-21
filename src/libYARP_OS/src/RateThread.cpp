@@ -140,7 +140,7 @@ public:
                 owner.run();
             }
         
-        count++
+        count++;
         lock();
         double elapsed=getTime()-currentRun;
         //save last
