@@ -133,13 +133,15 @@ public:
             }
 
         previousRun=currentRun;
+        unlock();
 
         if (!suspended)
             {   
                 owner.run();
-                count++;
             }
-
+        
+        count++
+        lock();
         double elapsed=getTime()-currentRun;
         //save last
         totalUsed+=elapsed*1000;
@@ -168,9 +170,7 @@ public:
     {
         while(!isClosing())
             {
-                //                lock();
                 singleStep();
-                //                unlock();
             }
     }
 
