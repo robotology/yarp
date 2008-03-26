@@ -70,12 +70,13 @@ private:
     
     inline void sleepThread(ACE_Time_Value sleep_period)
     {
+#if 0
         int us=sleep_period.usec()%1000;
         if (us>=500)
             sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
         else
             sleep_period = sleep_period-ACE_Time_Value(0, us);
-        
+#endif   
         if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
             sleep_period.set(0,0);
         ACE_OS::sleep(sleep_period);
@@ -161,11 +162,11 @@ public:
 
         if (count>0)
             {
-                // double saved=adaptedPeriod;
+                //double saved=adaptedPeriod;
                 double dT=(currentRun-previousRun)*1000;
                 totalT+=dT;
-                double error=(static_cast<double>(period)-dT);
-                adaptedPeriod+=error;
+                //double error=(static_cast<double>(period)-dT);
+                //adaptedPeriod+=0.0*error; //not available
                 if (adaptedPeriod<0)
                     adaptedPeriod=0;
 

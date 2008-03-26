@@ -15,10 +15,10 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 
-const int NROWS=100;
-const int NCOLS=100;
+const int NROWS=20;
+const int NCOLS=20;
 const int THREAD_PERIOD=15;
-const int MAIN_WAIT=10;
+const int MAIN_WAIT=100;
 
 class Thread1 : public RateThread {
     Matrix m;
@@ -45,7 +45,7 @@ public:
 
     virtual void run() 
     {
-        if (getIterations()==100)
+        if (getIterations()==10)
             {
                 double estP=getEstPeriod();
                 double estU=getEstUsed();
