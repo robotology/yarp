@@ -29,10 +29,14 @@ class RateThreadCallbackAdapter: public ThreadImpl
 {
 private:
     unsigned int period;
+    double adaptedPeriod;
     RateThread& owner; 
     Semaphore mutex;
     ACE_Time_Value now;
+    ACE_Time_Value currentRunTV;
+    ACE_Time_Value previousRunTV;
     ACE_Time_Value sleep;
+    ACE_Time_Value sleepPeriodTV;
     ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
     double    	        sleep_period;	// thread sleep
 
@@ -52,6 +56,51 @@ private:
         estPIt=0;
         totalT=0;
         scheduleReset=false;
+    }
+
+    inline ACE_Time_Value getAceTime()
+    {
+#ifdef ACE_WIN32
+        now = ACE_High_Res_Timer::gettimeofday_hr();
+#else
+        now = ACE_OS::gettimeofday ();
+#endif
+        return now;
+    }
+    
+    inline void sleepThread(ACE_Time_Value sleep_period)
+    {
+        int us=sleep_period.usec()%1000;
+        if (us>=500)
+            sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
+        else
+            sleep_period = sleep_period-ACE_Time_Value(0, us);
+        
+        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
+            sleep_period.set(0,0);
+        ACE_OS::sleep(sleep_period);
+    }
+    
+    inline double toDouble(const ACE_Time_Value &v)
+    {
+        return double(v.sec()) + v.usec() * 1e-6; 
+    }
+
+    inline double getTime()
+    {        
+#ifdef ACE_WIN32
+        now = ACE_High_Res_Timer::gettimeofday_hr();
+#else
+        now = ACE_OS::gettimeofday ();
+#endif
+        return double(now.sec()) + now.usec() * 1e-6; 
+    }
+
+    inline void sleepThread(double seconds) 
+    {
+        sleep.sec (long(seconds));
+        sleep.usec (long((seconds-long(seconds)) * 1.0e6));
+        ACE_OS::sleep(sleep);
     }
 
 public:
@@ -100,35 +149,27 @@ public:
         return ret;
     }
 
-    inline double getTime()
-    {        
-#ifdef ACE_WIN32
-        now = ACE_High_Res_Timer::gettimeofday_hr();
-#else
-        now = ACE_OS::gettimeofday ();
-#endif
-        return double(now.sec()) + now.usec() * 1e-6; 
-    }
-
-    inline void sleepThread(double seconds) 
-    {
-        sleep.sec (long(seconds));
-        sleep.usec (long((seconds-long(seconds)) * 1.0e6));
-        ACE_OS::sleep(sleep);
-    }
-
 
     void singleStep()
     {
         lock();
-        currentRun=getTime();
-
+        currentRunTV=getAceTime();
+        currentRun=toDouble(currentRunTV);
+        
         if (scheduleReset)
             _resetStat();
 
         if (count>0)
             {
-                totalT+=(currentRun-previousRun)*1000;
+                // double saved=adaptedPeriod;
+                double dT=(currentRun-previousRun)*1000;
+                totalT+=dT;
+                double error=(static_cast<double>(period)-dT);
+                adaptedPeriod+=error;
+                if (adaptedPeriod<0)
+                    adaptedPeriod=0;
+
+                //fprintf(stderr, "dT:%lf, error %lf, adaptedPeriod: %lf, new:%lf\n", dT, error, saved, adaptedPeriod);
                 estPIt++;
             }
 
@@ -142,18 +183,21 @@ public:
         
         count++;
         lock();
-        double elapsed=getTime()-currentRun;
+
+        ACE_Time_Value elapsedTV=getAceTime();
+        double elapsed=toDouble(elapsedTV)-currentRun;
+
         //save last
         totalUsed+=elapsed*1000;
-
-        //compute the sleep time
-        if (elapsed*1000<period)
-            sleep_period = period-(elapsed*1000);
-        else
-            sleep_period=0;
-
         unlock();
-        Time::delay(sleep_period/1000.0);
+
+        //compute sleep time
+        sleepPeriodTV.msec(static_cast<int>(adaptedPeriod+0.5));
+        sleepPeriodTV+=currentRunTV;
+        sleepPeriodTV-=elapsedTV;
+        //        Time::delay(sleep_period/1000.0);
+        sleepThread(sleepPeriodTV);
+        
 #if 0
         int us=sleep_period.usec()%1000;
         if (us>=500)
@@ -168,6 +212,7 @@ public:
 
     virtual void run() 
     {
+        adaptedPeriod=period;
         while(!isClosing())
             {
                 singleStep();
@@ -187,6 +232,7 @@ public:
     bool setRate(int p)
     {
         period=p;
+        adaptedPeriod=period;
         return true;
     }
 

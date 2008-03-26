@@ -57,14 +57,15 @@ int main()
                     
                     now1 = ACE_OS::gettimeofday ();
                     
-                    ACE_OS::sleep(sleep);
+                    //ACE_OS::sleep(sleep);
+                    usleep(sleep.sec()*1000000+sleep.usec()-1000);
 
                     now2 = ACE_OS::gettimeofday ();
 
                     time=(now2.sec()-now1.sec())*1000;
                     time+=(now2.usec()-now1.usec())/1000;
                     avErrors[k]+=fabs(req-time)/iterations;
-                    fprintf(stderr, ".");
+                    fprintf(stderr, "*");
                 }
             fprintf(stderr, "Completed %d out of %d\n", i+1, iterations);
         }

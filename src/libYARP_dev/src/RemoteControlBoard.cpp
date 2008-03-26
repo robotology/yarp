@@ -1449,7 +1449,7 @@ public:
             s1 += "/command:i";
             s2 = local;
             s2 += "/command:o";
-            Network::connect(s2.c_str(), s1.c_str());
+            Network::connect(s2.c_str(), s1.c_str(), carrier);
             s1 = remote;
             s1 += "/state:o";
             s2 = local;
