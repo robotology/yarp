@@ -1,3 +1,8 @@
+2008-03-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Property.cpp: Fix compatibility with ini
+	files that use the "=" symbol in nested sections.
+
 2008-03-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/CMakeLists.txt: allow ExternalModules.cmake to

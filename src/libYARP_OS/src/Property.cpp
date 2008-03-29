@@ -417,7 +417,16 @@ public:
                     if (tag=="") {
                         putBottleCompat(bot.get(0).toString().c_str(),bot);
                     } else {
-                        accum.addList().copy(bot);
+                        if (bot.get(1).asString()=="=") {
+                            Bottle& b = accum.addList();
+                            for (int i=0; i<bot.size(); i++) {
+                                if (i!=1) {
+                                    b.add(bot.get(i));
+                                }
+                            }
+                        } else {
+                            accum.addList().copy(bot);
+                        }
                     }
                 }
             }
