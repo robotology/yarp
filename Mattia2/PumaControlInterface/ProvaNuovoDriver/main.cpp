@@ -125,6 +125,7 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 
 	Matrix TrajMat(4,4);
 	ErrorMatrix.eye();
+	TrajMat.eye();
 
 	int mmForStep=100;
 	int Nstep,distance,AngleStep;
@@ -132,7 +133,7 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 
 		for( i = 0 ; i < 3; i++)
 		{
-			fprintf(Mfp,"\n");
+//			printf("\n");
 			for( j = 0 ; j < 3; j++)
 			{		
 				//matrix1p[i][j]=Actualmatrix2[i][j];
@@ -166,24 +167,84 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 		printf(" \n");
 	}
 
-*/
-//	ErrorMatrixp =  MatrixInverted(matrix2p) * matrix1p;
-	ErrorMatrixp =  MatrixInverted(matrix2p) * matrix1p;
 
-	for( i = 0 ; i < 3; i++)
+
+	printf("\n \n matrix1p\n");
+	for( i=0;i<3;i++)
 	{
-		for( j = 0 ; j < 3; j++)
-			{		
-				ErrorMatrix[i][j]=ErrorMatrixp[i][j];
-			}
+		for( j=0;j<3;j++)
+			{
+			printf("  %lf",matrix1p[i][j]);
+		}
+		printf(" \n");
 	}
+		
+	printf("\n \n matrix2p\n");
+	for( i=0;i<3;i++)
+	{
+		for( j=0;j<3;j++)
+			{
+			printf("  %lf",matrix2p[i][j]);
+		}
+		printf(" \n");
+	}
+		
 
-  		
+*/
+
+
+//ThTrajectoryGenerator
+	ErrorMatrixp =  MatrixInverted(matrix2p) * matrix1p;
+//	ErrorMatrixp =  MatrixInverted(matrix1p) * matrix2p;
+/*
+		printf("\n \n ErrorMatrixp\n");
+	for( i=0;i<3;i++)
+	{
+		for( j=0;j<3;j++)
+			{
+			printf("  %lf",ErrorMatrixp[i][j]);
+		}
+		printf(" \n");
+	}
+*/
+	double det = get_det(( gsl_matrix *) matrix1p.getGslMatrix());
+//				fprintf(Mfp,"\n\n ------inside ThTrajectoryGenerator--------det1  %lf",det);
+			det = get_det(( gsl_matrix *) matrix2p.getGslMatrix());
+//				fprintf(Mfp,"\n\n ------inside ThTrajectoryGenerator--------det2  %lf",det);
+/*
+			fprintf(Mfp,"\n ErrorMatrixp inside ThTrajectoryGenerator ");
+		for( i = 0 ; i < 3; i++)
+		{
+			fprintf(Mfp,"\n");
+			for( j = 0 ; j < 3; j++)
+			{
+					fprintf(Mfp,"  %lf",ErrorMatrixp[i][j]);
+			}
+		}
+*/  		
 	Error3[0] = ErrorMatrix[0][3] =  Actualmatrix2[0][3] - Goalmatrix1[0][3];
 	Error3[1] = ErrorMatrix[1][3] =  Actualmatrix2[1][3] - Goalmatrix1[1][3];
 	Error3[2] = ErrorMatrix[2][3] =  Actualmatrix2[2][3] - Goalmatrix1[2][3];
+
+		for( i = 0 ; i < 3; i++)
+		{
+		
+			for( j = 0 ; j < 3; j++)
+			{
+					ErrorMatrix[i][j] =  ErrorMatrixp[i][j];
+			}
+		}
 /*
-	fprintf(Mfp,"\n ErrorMatrix ");
+	fprintf(Mfp,"\n Trajtmp");
+	for( j = 0 ; j < 4; j++)
+	{		
+			fprintf(Mfp,"  %lf",Trajtmp[j]);
+	}
+
+*/
+
+
+	fprintf(Mfp,"\nThTrajectoryGenerator ErrorMatrix ");
 	for( i = 0 ; i < 4; i++)
 		{
 		fprintf(Mfp,"\n");
@@ -193,7 +254,7 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 			}
 		}
 
-*/
+
 	tmp = dcm2axis(ErrorMatrix);
 	actualtmp = dcm2axis(Actualmatrix2);
 	goaltmp = dcm2axis(Goalmatrix1);
@@ -215,33 +276,46 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 	{		
 			fprintf(Mfp,"  %lf",goaltmp[j]);
 	}
+/*
+	printf("\n tmp");
+	for( j = 0 ; j < 4; j++)
+	{		
+			printf("  %lf",tmp[j]);
+	}
+	printf("\n actualtmp");
+	for( j = 0 ; j < 4; j++)
+	{		
+			printf("  %lf",actualtmp[j]);
+	}
 
-
+	printf("\n goaltmp");
+	for( j = 0 ; j < 4; j++)
+	{		
+			printf("  %lf",goaltmp[j]);
+	}
+*/
 
 	distance = ThVectMagn(Error3);
 
 		//number of steps, it depends on mmForStep
 		Nstep = distance/mmForStep;
-		fprintf(Mfp,"an\n Nstep = %d",Nstep);
+		fprintf(Mfp,"\n\n Nstep = %d",Nstep);
 
-		AngleStep = (int)(tmp[3]/0.2);
+		AngleStep = (int)(tmp[3]/0.4);
 		fprintf(Mfp,"\n AngleStep = %d",AngleStep);
 
 		//calculate the next position using steps
 		//by now we don-t manage orientation
-
+//			printf(" \nTrajtmp");
 			for(i = 0 ; i < 4; i++)
 				{
 					//next postitin of the trajectory is actual position plus a step
 //					TrajMat[i][3]=Actualmatrix2[i][3] + (Goalmatrix1[i][3]-Actualmatrix2[i][3])/Nstep;
 					Trajtmp[i] = actualtmp[i]+(goaltmp[i]-actualtmp[i])/AngleStep;
+//					printf("  %lf",Trajtmp[i]);
 				}
 
-	fprintf(Mfp,"\n Trajtmp");
-	for( j = 0 ; j < 4; j++)
-	{		
-			fprintf(Mfp,"  %lf",Trajtmp[j]);
-	}
+
 
 	
 
@@ -266,6 +340,12 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 					TrajMat[i][3]=Actualmatrix2[i][3] + (Goalmatrix1[i][3]-Actualmatrix2[i][3])/Nstep;
 				}
 
+	fprintf(Mfp,"\n Trajtmp");
+	for( j = 0 ; j < 4; j++)
+	{		
+			fprintf(Mfp,"  %lf",Trajtmp[j]);
+	}
+
 /*
 	printf("\n \n TrajMat2\n");
 	for( i=0;i<4;i++)
@@ -276,13 +356,13 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 		}
 		printf(" \n");
 	}
-	*/
+	
 
 		
 
 
 
-	/*
+	
 		for( j = 0 ; j < 3; j++)
 		{		
 			tmp2[j]=tmp[j+1];
@@ -437,7 +517,7 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 		//if it is close do not use steps
 //			if (distance < mmForStep)TrajMat=Goalmatrix1;
 			if ((Nstep <= 1)&&(AngleStep <= 1))TrajMat=Goalmatrix1;
-/*
+
 			fprintf(Mfp,"\n \n TrajMat\n");
 	for( i=0;i<4;i++)
 	{
@@ -447,9 +527,19 @@ inline	Matrix ThTrajectoryGenerator(Matrix Goalmatrix1, Matrix Actualmatrix2)
 		}
 		fprintf(Mfp," \n");
 	}
+/*
 
+
+	printf("\n \n TrajMat\n");
+	for( i=0;i<4;i++)
+	{
+		for( j=0;j<4;j++)
+			{
+			printf("  %lf",TrajMat[i][j]);
+		}
+		printf(" \n");
+	}
 */
-
 		return TrajMat;
 
 }
@@ -548,10 +638,10 @@ Vector MatrixDiffToVector(Matrix matrix1, Matrix matrix2 )
 	int i,j;
 
 
-//	fprintf(Mfp,"\n matrix1p ");
+//	printf("\n matrix2p ");
 		for( i = 0 ; i < 3; i++)
 		{
-			fprintf(Mfp,"\n");
+//			printf("\n");
 			for( j = 0 ; j < 3; j++)
 			{		
 				matrix1p[i][j]=matrix1[i][j];
@@ -559,48 +649,16 @@ Vector MatrixDiffToVector(Matrix matrix1, Matrix matrix2 )
 				ErrorMatrix[i][j]=0.0;
 				matrix1[i][j]=0.0;
 				matrix2[i][j]=0.0;
-//				fprintf(Mfp,"  %lf",matrix1p[i][j]);
+//				printf("  %lf",matrix2p[i][j]);
 			}
 		}
 
+	
 /*
-	fprintf(Mfp,"\n matrix1p ");
-		for( i = 0 ; i < 3; i++)
-		{
-			fprintf(Mfp,"\n");
-			for( j = 0 ; j < 3; j++)
-			{
-					fprintf(Mfp,"  %lf",matrix1p[i][j]);
-			}
-		}
-		
-	fprintf(Mfp,"\n matrix2p ");
-		for( i = 0 ; i < 3; i++)
-		{
-			fprintf(Mfp,"\n");
-			for( j = 0 ; j < 3; j++)
-			{
-					fprintf(Mfp,"  %lf",matrix2p[i][j]);
-			}
-		}
-*/
-
-//	ErrorMatrix.submatrix(0,0,3,3) =  MatrixInverted(matrix1.submatrix(0,0,3,3)) * matrix2.submatrix(0,0,3,3);
-
-	ErrorMatrixp =  MatrixInverted(matrix2p) * matrix1p;
-/*
-			fprintf(Mfp,"\n ErrorMatrixp ");
-		for( i = 0 ; i < 3; i++)
-		{
-			fprintf(Mfp,"\n");
-			for( j = 0 ; j < 3; j++)
-			{
-					fprintf(Mfp,"  %lf",ErrorMatrixp[i][j]);
-			}
-		}
-
+  //MatrixDiffToVector
 	ErrorMatrixp =  MatrixInverted(matrix1p) * matrix2p;
-	fprintf(Mfp,"\n ErrorMatrixp ");
+*/	ErrorMatrixp =  MatrixInverted(matrix2p) * matrix1p;
+/*	fprintf(Mfp,"\n ErrorMatrixp ");
 		for( i = 0 ; i < 3; i++)
 		{
 			fprintf(Mfp,"\n");
@@ -617,12 +675,16 @@ Vector MatrixDiffToVector(Matrix matrix1, Matrix matrix2 )
 				ErrorMatrix[i][j]=ErrorMatrixp[i][j];
 			}
 		}
-
+/*
   		ErrorMatrix[0][3] =  matrix2[0][3] - matrix1[0][3];
 		ErrorMatrix[1][3] =  matrix2[1][3] - matrix1[1][3];
 		ErrorMatrix[2][3] =  matrix2[2][3] - matrix1[2][3];
- /* 
-		fprintf(Mfp,"\n ErrorMatrix ");
+*/		  		
+		ErrorMatrix[0][3] =  matrix1[0][3] - matrix2[0][3];
+		ErrorMatrix[1][3] =  matrix1[1][3] - matrix2[1][3];
+		ErrorMatrix[2][3] =  matrix1[2][3] - matrix2[2][3];
+  
+		fprintf(Mfp,"\n\nMatrixDiffToVector ErrorMatrix ");
 			for( i = 0 ; i < 4; i++)
 			{
 				fprintf(Mfp,"\n");
@@ -632,7 +694,7 @@ Vector MatrixDiffToVector(Matrix matrix1, Matrix matrix2 )
 				}
 			}
 
-*/
+
 		//tmp = RotMat2Quat(ErrorMatrix);
 		tmp = dcm2axis(ErrorMatrix);
 
@@ -659,14 +721,14 @@ Vector MatrixDiffToVector(Matrix matrix1, Matrix matrix2 )
 		//tmp2 e' l'angolo, tmp0 e' l'asse.
 		//
 		tmp3=tmp2*tmp(3);
-/*
+
 		fprintf(Mfp,"\ntmp3");
 		for( j = 0 ; j < 3; j++)
 		{		
 			fprintf(Mfp,"  %lf",tmp3[j]);
 		}
 
-*/
+
 
 	
 
@@ -987,9 +1049,9 @@ virtual void  initialization(
 
 	safespeed = 300.0;
 	debug = 1;  //time check
-	print = 0;
+	print = 1;
 	checktime = 1;
-	excel = 0;
+	excel = 1;
 
 
 
@@ -1343,7 +1405,7 @@ inline virtual void run() {
 	ThGoalPosition = ThPuma.FwdPuma200Kin(ThAngleGoalPosition);
 
 
-*/
+
 
 //		printf(" \n ThGoalPosition at the beginning\n");
 		for( i=0;i<4;i++)
@@ -1355,7 +1417,7 @@ inline virtual void run() {
 			}
 			printf(" \n");
 		}
-
+*/
 
 		Vector tmp(4);
 
@@ -1375,7 +1437,7 @@ inline virtual void run() {
 		ThGoalPosition[2][3] =  j3;
 		ThGoalPosition[3][3] =  1.0;
 
-
+/*
 		printf("\n ThGoalPosition1\n");
 		for( i=0;i<4;i++)
 		{
@@ -1385,9 +1447,9 @@ inline virtual void run() {
 			}
 			printf(" \n");
 		}
-
+*/
 		ThGoalPosition = axis2dcm4x4(tmp);
-
+/*
 		printf("\n ThActualPosition\n");
 		for( i=0;i<4;i++)
 		{
@@ -1397,14 +1459,14 @@ inline virtual void run() {
 			}
 			printf(" \n");
 		}
-
+*/
   		ThGoalPosition[0][3] =  j1;
 		ThGoalPosition[1][3] =  j2;
 		ThGoalPosition[2][3] =  j3;
 		ThGoalPosition[3][3] =  1.0;
 
 		
-
+/*
 		printf("\n ThGoalPosition3\n");
 
 
@@ -1417,7 +1479,7 @@ inline virtual void run() {
 			printf(" \n");
 		}
 		
-	
+*/	
 		
 		
 		
@@ -1594,10 +1656,10 @@ fprintf(Mfp," \n");
 		
 		}
 	
+
+//	ThGoalPosition = ThPuma.FwdPuma200Kin(ThAngleGoalPosition);
+
 /*
-	ThGoalPosition = ThPuma.FwdPuma200Kin(ThAngleGoalPosition);
-
-
 		  	printf(" \n\n\n ThActualPosition\n");
 		for( i=0;i<4;i++)
 		{
@@ -1618,8 +1680,8 @@ fprintf(Mfp," \n");
 			printf(" \n");
 		}
 
-
-*/			
+*/
+			
 	if (print == 1)
 		{
 		fprintf(Mfp,"\n\n\n\n*************************************************\n ThAngleActualPosition ");
@@ -1637,8 +1699,6 @@ fprintf(Mfp," \n");
 	}
 
 
-
-
 		if (debug == 1)
 		{//5
 			ThisTime = Time::now()-Lasttime;
@@ -1654,6 +1714,19 @@ fprintf(Mfp," \n");
 	//compute trajectory
 	//if the goal is too far a newgoal takes itas place
 	ThTrajectoryGoalPosition = ThTrajectoryGenerator(ThGoalPosition, ThActualPosition);
+/*
+	printf(" \n ThTrajectoryGoalPosition\n");
+	for( i=0;i<4;i++)
+		{
+		for( j=0;j<4;j++)
+				{
+				printf("  %lf",ThTrajectoryGoalPosition[i][j]);
+			}
+			printf(" \n");
+		}
+	
+*/
+
 
 
 		if (debug == 1)
@@ -1678,10 +1751,10 @@ fprintf(Mfp," \n");
 		for( i=0;i<3;i++)printf("%lf  ",ThGoalPosition[i][3]);
 		printf(" \n");
 				
-
+*/
 	if (print == 1)	
 	{
-  	fprintf(Mfp," \n\n\n ThActualPosition\n");
+  	fprintf(Mfp," \n\n***********************************************\n ThActualPosition\n");
 		for( i=0;i<4;i++)
 		{
 			for( j=0;j<4;j++)
@@ -1700,6 +1773,7 @@ fprintf(Mfp," \n");
 			}
 			fprintf(Mfp," \n");
 		}
+	fprintf(Mfp,"\n*********************************************** \n");
 	}
 
 	
@@ -1717,7 +1791,7 @@ fprintf(Mfp," \n");
 				fprintf(Mfp,"  %lf",ThAngleActualPosition[i]);
 			}
 	}
-*/	///////////////////////
+	///////////////////////
 
 	//update jacobian
 	ThJacobian = ThPuma.PumaJac(ThAngleActualPosition);
@@ -1791,7 +1865,7 @@ fprintf(Mfp," \n");
 		}
 
 	//compute distance between actual position and goal position
-	ThMyErr=MatrixDiffToVector(ThActualPosition,ThTrajectoryGoalPosition);
+	ThMyErr=MatrixDiffToVector(ThTrajectoryGoalPosition,ThActualPosition);
 	
 	if (print == 1)	
 	{
@@ -1880,10 +1954,11 @@ fprintf(Mfp," \n");
 		
 		if (print == 1)	
 		{
-		fprintf(Mfp," \n\n ThMyErr");
+//		fprintf(Mfp," \n\n ThMyErr");
+		fprintf(Mfp5," \n\n ThMyErr");
 		for( i = 0 ; i < 6; i++)
 		{
-			fprintf(Mfp,"  %lf",ThMyErr[i]);
+//			fprintf(Mfp,"  %lf",ThMyErr[i]);
 			fprintf(Mfp5,"%lf ",ThMyErr[i]);
 		}
 		fprintf(Mfp5,"\n ");

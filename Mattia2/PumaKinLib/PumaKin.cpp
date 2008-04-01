@@ -530,18 +530,6 @@ Vector dcm2axis(Matrix R)
 	double  pi = M_PI;
 	Vector v(4);
 
-
-/*			printf("\n R ");
-			for(int i = 0 ; i < 3; i++)
-			{
-				printf("\n");
-				for(int j = 0 ; j < 3; j++)
-				{		
-					printf("  %lf",R[i][j]);
-				}
-			}
-*/
-
 	x=R(2,1)-R(1,2);
 	y=R(0,2)-R(2,0);
 	z=R(1,0)-R(0,1);
@@ -3027,8 +3015,8 @@ static void VisGaussJordanSolveDMatrix(Matrix& A)
             for (j = i+1; j < n; j++)
                 if (A[j][i] != 0.0)   // find non-zero entry
                     break;
-            if (j >= n)       // if failed, matrix is singular
-				assert (0);
+             if (j >= n)       // if failed, matrix is singular
+	 			assert (0);
             //throw CVisError("matrix is singular", eviserrorOpFailed,
             //         "VisGaussJordanSolveDMatrix()", __FILE__, __LINE__);
             for (k = i; k < m; k++)
