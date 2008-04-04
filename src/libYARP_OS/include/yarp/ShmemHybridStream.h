@@ -46,8 +46,8 @@ public:
 
 	virtual void interrupt()
 	{
-		printf("INTERRUPT\n");
-		fflush(stdout);
+		//printf("INTERRUPT\n");
+		//fflush(stdout);
 		close(); 
 	}
 
