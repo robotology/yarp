@@ -9,6 +9,39 @@
 
 #include <yarp/ShmemHybridStream.h>
 
+int ShmemHybridStream::open(const Address& yarp_address,bool sender)
+{
+	m_bLinked=false;
+
+	ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getName().c_str());
+
+	if (sender)
+	{				
+		return connect(ace_address);
+	}
+	else
+	{
+		ACE_INET_Addr ace_server_addr(ace_address.get_port_number());
+
+		int result = m_Acceptor.open(ace_server_addr);
+
+		if (result<0)
+		{
+			YARP_ERROR(Logger::get(),String("ShmemHybridStream open result")+NetType::toString(result));
+			return result;
+		}
+
+		m_Acceptor.get_local_addr(ace_server_addr);
+
+		m_LocalAddress = Address(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
+		m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
+
+		return result;
+	}
+
+	return 1;
+}
+
 int ShmemHybridStream::accept()
 {
 	if (m_bLinked) return -1;
@@ -37,7 +70,7 @@ int ShmemHybridStream::accept()
 		return -1;
 	}
 
-	if (!in.open(m_RemoteAddress.getPort()))
+	if (!in.open(m_RemoteAddress.getPort(),&m_SockStream))
 	{
 		YARP_ERROR(Logger::get(),String("ShmemHybridStream can't create shared memory"));
 		close();
@@ -61,6 +94,8 @@ int ShmemHybridStream::accept()
 	}	
 
 	m_bLinked=true;
+
+	m_SockStream.enable(ACE_NONBLOCK);
 
 	return 0;
 }
@@ -106,9 +141,11 @@ int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 		return -1;
 	}
 
-	in.open(m_RemoteAddress.getPort());
+	in.open(m_RemoteAddress.getPort(),&m_SockStream);
 
 	m_bLinked=true;
+
+	m_SockStream.enable(ACE_NONBLOCK);
 
 	return 0;
 }
