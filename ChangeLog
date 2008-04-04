@@ -1,3 +1,14 @@
+2008-04-04  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_OS/include/yarp/ShmemInputStream.h : modified
+	* src/yarp/libYARP_OS/include/yarp/ShmemOutputStream.h : modified
+	* src/yarp/libYARP_OS/include/yarp/ShmemHybridStream.h : modified
+	* src/yarp/libYARP_OS/src/ShmemInputStream.cpp : modified
+	* src/yarp/libYARP_OS/src/ShmemOutputStream.cpp : modified
+	* src/yarp/libYARP_OS/src/ShmemHybridStream.cpp : modified
+	Reimplemented excluding ACE_SV_Semaphore_Complex, because
+	ACE_SV_Semaphore_Complex has a bug (it can fail on acquire()
+	without reasons, ERANGE error).
+
 2008-03-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Property.cpp: Fix compatibility with ini
@@ -76,7 +87,7 @@
 
 	* conf/YarpVersion.cmake: froze version 2.1.9
 
-2007-03-14  Alessandro Scalzo <alessandro@liralab.it>
+2008-03-14  Alessandro Scalzo <alessandro@liralab.it>
 	* src/yarp/libYARP_OS/include/yarp/ShmemTypes.h : added
 	* src/yarp/libYARP_OS/include/yarp/ShmemInputStream.h : added
 	* src/yarp/libYARP_OS/include/yarp/ShmemOutputStream.h : added
