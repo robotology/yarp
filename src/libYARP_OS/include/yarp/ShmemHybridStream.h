@@ -29,79 +29,78 @@ using namespace yarp;
 /**
  * A stream abstraction for shared memory communication.
  */
-class yarp::ShmemHybridStream : public TwoWayStream
+class yarp::ShmemHybridStream : public TwoWayStream, InputStream, OutputStream
 {
 public:
-	ShmemHybridStream()
+	ShmemHybridStream(){ m_bLinked=false; }
+	virtual ~ShmemHybridStream(){ close(); }
+	int open(const Address& yarp_address,bool sender); 
+	int accept();
+
+	virtual void close()
 	{
-	}
-	
-	virtual ~ShmemHybridStream()
-	{
-		close();
-	}
-	
-	void close()
-	{
+		m_bLinked=false;
 		in.close();
 		out.close();
 	}
 
-	void write(const Bytes& b)
+	virtual void interrupt()
 	{
-		out.write(b);
+		printf("INTERRUPT\n");
+		fflush(stdout);
+		close(); 
 	}
 
-	int read(const Bytes& b)
+	virtual void write(const Bytes& b)
 	{
-		return in.read(b);
+		if (!out.write(b)) close();
 	}
 
-	int accept();
-
-	int open(const Address& yarp_address,bool sender) 
+	virtual int read(const Bytes& b)
 	{
-		m_bLinked=false;
-
-		ACE_INET_Addr ace_address(yarp_address.getPort(),yarp_address.getName().c_str());
-
-		if (sender)
-		{				
-			return connect(ace_address);
-		}
-		else
-		{
-			ACE_INET_Addr ace_server_addr(ace_address.get_port_number());
-			//int result = m_Acceptor.open(ace_server_addr,1);
-			int result = m_Acceptor.open(ace_server_addr);
-
-			if (result<0)
-			{
-				YARP_ERROR(Logger::get(),
-                           String("ShmemHybridStream open result")
-                           +NetType::toString(result));
-				return result;
-			}
-
-			m_Acceptor.get_local_addr(ace_server_addr);
-
-			m_LocalAddress = Address(ace_server_addr.get_host_addr(),ace_server_addr.get_port_number());
-			m_RemoteAddress = m_LocalAddress; // finalized in call to accept()
-
-			return result;
-		}
-
-		return 1;
+		int ret=in.read(b);
+		if (ret==-1) close();
+		return ret;
 	}
 
 	// TwoWayStrem implementation
-	virtual InputStream& getInputStream(){ return in; }
-	virtual OutputStream& getOutputStream(){ return out; }
-	virtual bool isOk(){ return m_bLinked; }
+	virtual InputStream& getInputStream(){ return *this; }
+	virtual OutputStream& getOutputStream(){ return *this; }
+	virtual bool isOk(){ return m_bLinked && in.isOk() && out.isOk(); }
 
-	virtual void reset(){}
+	virtual void reset()
+	{
+		//printf("RECEIVED RESET COMMAND\n");
+		//fflush(stdout);
+		close();
+	}
+
 	virtual void beginPacket(){}
 	virtual void endPacket(){}
+
+	virtual const Address& getLocalAddress(){ return m_LocalAddress; }
+	virtual const Address& getRemoteAddress(){ return m_RemoteAddress; }
+
+protected:
+	enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
+	
+	// DATA
+	
+	bool m_bLinked;
+
+	Address m_LocalAddress,m_RemoteAddress;
+	ACE_SOCK_Stream m_SockStream;
+	ACE_SOCK_Acceptor m_Acceptor;
+
+	yarp::ShmemInputStreamImpl in;
+	yarp::ShmemOutputStreamImpl out;
+
+	// FUNCTIONS
+	int connect(const ACE_INET_Addr &address);
+};
+
+#endif
+
 	/*
 	virtual void endPacket()
 	{
@@ -124,29 +123,4 @@ public:
 		m_SendSerializerMutex.post();
 	}
 	*/
-	virtual const Address& getLocalAddress(){ return m_LocalAddress; }
-	virtual const Address& getRemoteAddress(){ return m_RemoteAddress; }
-
-protected:
-	enum {CONNECT=0,ACKNOWLEDGE,READ,WRITE,CLOSE,WAKE_UP_MF,RESIZE};
 	
-	// DATA
-	
-	bool m_bLinked;
-
-	Address m_LocalAddress,m_RemoteAddress;
-	ACE_SOCK_Stream m_SockStream;
-	ACE_SOCK_Acceptor m_Acceptor;
-
-	yarp::ShmemInputStream in;
-	yarp::ShmemOutputStream out;
-
-	// FUNCTIONS
-
-	int connect(const ACE_INET_Addr &address);
-
-	inline void ReadAck(int size);
-	inline void WriteAck(int size);
-};
-
-#endif

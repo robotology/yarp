@@ -11,7 +11,8 @@
 #define __SHMEM_OUTPUT_STREAM__
 
 #include <ace/config.h>
-#include <ace/Process_Semaphore.h>
+#include <ace/Mutex.h>
+#include <ace/Process_Mutex.h>
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Acceptor.h>
 #include <ace/SOCK_Connector.h>
@@ -26,21 +27,21 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
 #include <yarp/Logger.h>
-
 #include <yarp/OutputStream.h>
+
 #include <yarp/ShmemTypes.h>
 
 namespace yarp 
 {
-	class ShmemOutputStream;
+	class ShmemOutputStreamImpl;
 };
 
 using namespace yarp;
 
-class yarp::ShmemOutputStream : public OutputStream
+class yarp::ShmemOutputStreamImpl
 {
 public:
-	ShmemOutputStream()
+	ShmemOutputStreamImpl()
 	{
 		m_bOpen=false;
 
@@ -52,14 +53,14 @@ public:
 		m_Port=0;
 	}
 
-	~ShmemOutputStream()
+	~ShmemOutputStreamImpl()
 	{
 		close();
 	}
 
-	bool isOk() { return m_pMap!=0; }
+	bool isOk() { return m_bOpen; }
 	bool open(int port,int size=SHMEM_DEFAULT_SIZE);
-	void write(const Bytes& b);
+	bool write(const Bytes& b);
 	void close();
 	
 protected:
@@ -69,7 +70,14 @@ protected:
 
 	int m_ResizeNum;
 	int m_Port;
-	ACE_Process_Semaphore *m_pAccessMutex,*m_pWaitDataMutex;
+
+#if defined(_ACE_USE_SV_SEM)
+	ACE_Mutex
+#else
+	ACE_Process_Mutex 
+#endif
+		*m_pAccessMutex,*m_pWaitDataMutex;
+
 	ACE_Shared_Memory *m_pMap;
 	char *m_pData;
 	ShmemHeader_t *m_pHeader;

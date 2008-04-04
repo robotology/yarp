@@ -9,7 +9,7 @@
 
 #include <yarp/ShmemOutputStream.h>
 
-bool ShmemOutputStream::open(int port,int size)
+bool ShmemOutputStreamImpl::open(int port,int size)
 {
 	m_pAccessMutex=m_pWaitDataMutex=0;
 	m_pMap=0;
@@ -19,20 +19,20 @@ bool ShmemOutputStream::open(int port,int size)
 	m_Port=port;
 
 	char obj_name[1024];
-
-#ifdef ACE_LACKS_SYSV_SHMEM
-
 	char temp_dir_path[1024];
+	
 	if (ACE::get_temp_dir(temp_dir_path,1024)==-1)
 	{
 		YARP_ERROR(Logger::get(),"ShmemHybridStream: no temp directory found.");
 		return false;
 	}
 
+#ifdef ACE_LACKS_SYSV_SHMEM
+
 	sprintf(obj_name,"%sSHMEM_FILE_%d_0",temp_dir_path,port);
 
 	m_pMap=new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
-		size+sizeof(ShmemHeader_t), //int len = -1,
+		size+sizeof ShmemHeader_t, //int len = -1,
 		O_RDWR | O_CREAT, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
@@ -47,11 +47,17 @@ bool ShmemOutputStream::open(int port,int size)
 	m_pHeader=(ShmemHeader_t*)m_pMap->malloc();
 	m_pData=(char*)(m_pHeader+1);
 
-	sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
-	m_pAccessMutex=new ACE_Process_Semaphore(1,obj_name);
-
+#ifdef _ACE_USE_SV_SEM
+	sprintf(obj_name,"%sSHMEM_ACCESS_MUTEX_%d",temp_dir_path,port);
+	m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+	sprintf(obj_name,"%sSHMEM_WAITDATA_MUTEX_%d",temp_dir_path,port);
+	m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+#else
+    sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
+	m_pAccessMutex=new ACE_Process_Mutex(obj_name);
 	sprintf(obj_name,"SHMEM_WAITDATA_MUTEX_%d",port);
-	m_pWaitDataMutex=new ACE_Process_Semaphore(0,obj_name);
+	m_pWaitDataMutex=new ACE_Process_Mutex(obj_name);
+#endif
 
 	m_pAccessMutex->acquire();
 
@@ -71,7 +77,7 @@ bool ShmemOutputStream::open(int port,int size)
 	return true;
 }
 
-bool ShmemOutputStream::Resize(int newsize)
+bool ShmemOutputStreamImpl::Resize(int newsize)
 {
 	++m_ResizeNum;
 
@@ -97,7 +103,7 @@ bool ShmemOutputStream::Resize(int newsize)
 	sprintf(file_name,"%sSHMEM_FILE_%d_%d",file_path,m_Port,m_ResizeNum);
 
 	pNewMap=new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
-		newsize+sizeof(ShmemHeader_t), //int len = -1,
+		newsize+sizeof ShmemHeader_t, //int len = -1,
 		O_RDWR | O_CREAT, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
@@ -130,7 +136,7 @@ bool ShmemOutputStream::Resize(int newsize)
 
 	if (m_pHeader->avail)
 	{
-		//distinguere tra uno o due blocchi
+		// one or two blocks in circular queue?
 		if (m_pHeader->tail<m_pHeader->head)
 		{
 			memcpy(pNewData,m_pData+m_pHeader->tail,m_pHeader->avail);
@@ -153,17 +159,19 @@ bool ShmemOutputStream::Resize(int newsize)
 	return true;
 }
 
-void ShmemOutputStream::write(const Bytes& b)
+bool ShmemOutputStreamImpl::write(const Bytes& b)
 {
-	//printf("OUT: m_pAccessMutex->acquire();\n");
-	//fflush(stdout);
+	if (!m_bOpen) return false;
+	
 	m_pAccessMutex->acquire();
+
+	if (!m_bOpen) return false;
 
 	if (m_pHeader->close)
 	{
 		m_pAccessMutex->release();
 		close();
-		return;
+		return false;
 	}
 
 	if (m_pHeader->size-m_pHeader->avail<b.length())
@@ -187,20 +195,18 @@ void ShmemOutputStream::write(const Bytes& b)
 	m_pHeader->head+=b.length();
 	m_pHeader->head%=m_pHeader->size;
 
-	while (m_pHeader->waiting)
+	while (m_pHeader->waiting>0)
 	{
-		//printf("OUT: m_pWaitDataMutex->release();\n");
-		//fflush(stdout);
 		--m_pHeader->waiting;
 		m_pWaitDataMutex->release();
 	}
 
-	//printf("OUT: m_pAccessMutex->release();\n");
-	//fflush(stdout);
 	m_pAccessMutex->release();
+
+	return true;
 }
 
-void ShmemOutputStream::close()
+void ShmemOutputStreamImpl::close()
 {
 	if (!m_bOpen) return;
 

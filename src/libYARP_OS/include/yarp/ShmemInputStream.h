@@ -7,11 +7,12 @@
  *
  */
 
-#ifndef __SHMEM_INPUT_STREAM__
-#define __SHMEM_INPUT_STREAM__
+#ifndef __SHMEM_INPUT_STREAM_IMPL__
+#define __SHMEM_INPUT_STREAM_IMPL__
 
 #include <ace/config.h>
-#include <ace/Process_Semaphore.h>
+#include <ace/Mutex.h>
+#include <ace/Process_Mutex.h>
 #include <ace/SOCK_Stream.h>
 #include <ace/SOCK_Acceptor.h>
 #include <ace/SOCK_Connector.h>
@@ -32,15 +33,15 @@
 
 namespace yarp 
 {
-	class ShmemInputStream;
+	class ShmemInputStreamImpl;
 };
 
 using namespace yarp;
 
-class yarp::ShmemInputStream : public InputStream
+class yarp::ShmemInputStreamImpl
 {
 public:
-	ShmemInputStream()
+	ShmemInputStreamImpl()
 	{
 		m_bOpen=false;
 
@@ -51,31 +52,38 @@ public:
 		m_ResizeNum=0;
 	}
 
-	~ShmemInputStream()
+	~ShmemInputStreamImpl()
 	{
 		close();
 	}
 
-	bool isOk() { return m_pMap!=0; }
-	bool open(int port,int size=SHMEM_DEFAULT_SIZE);
-	int read(const Bytes& b/*,bool bBlocking=true*/);
+	bool isOk() { return m_bOpen; }
+	bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
+	int read(const Bytes& b);
 	void close();
-	
-protected:
-	bool Resize();
-	int read(char *data,int len);
 
+protected:
+	int read(char *data,int len);
+	bool Resize();
 	bool m_bOpen;
 
 	int m_ResizeNum;
 	int m_Port;
 
-	ACE_Process_Semaphore *m_pAccessMutex,*m_pWaitDataMutex;
+#if defined(_ACE_USE_SV_SEM)
+	ACE_Mutex
+#else
+	ACE_Process_Mutex 
+#endif
+		*m_pAccessMutex,*m_pWaitDataMutex;
+	
+	yarp::os::Semaphore m_ReadSerializerMutex;
+
 	ACE_Shared_Memory *m_pMap;
 	char *m_pData;
 	ShmemHeader_t *m_pHeader;
 
-	yarp::os::Semaphore m_SerializerMutex;
+	ACE_SOCK_Stream *m_pSock;
 };
 
 #endif

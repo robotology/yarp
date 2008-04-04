@@ -9,8 +9,10 @@
 
 #include <yarp/ShmemInputStream.h>
 
-bool ShmemInputStream::open(int port,int size)
+bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
 {
+	m_pSock=pSock;
+
 	m_pAccessMutex=m_pWaitDataMutex=0;
 	m_pMap=0;
 	m_pData=0;
@@ -20,9 +22,6 @@ bool ShmemInputStream::open(int port,int size)
 	m_Port=port;
 
 	char obj_name[1024];
-
-#ifdef ACE_LACKS_SYSV_SHMEM
-
 	char temp_dir_path[1024];
 
 	if (ACE::get_temp_dir(temp_dir_path,1024)==-1)
@@ -31,10 +30,12 @@ bool ShmemInputStream::open(int port,int size)
 		return false;
 	}
 
+#ifdef ACE_LACKS_SYSV_SHMEM
+
 	sprintf(obj_name,"%sSHMEM_FILE_%d_%d",temp_dir_path,port,0);
 
 	m_pMap=new ACE_Shared_Memory_MM(obj_name, //const ACE_TCHAR *filename,
-		size+sizeof(ShmemHeader_t), //int len = -1,
+		size+sizeof ShmemHeader_t, //int len = -1,
 		O_RDWR, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
@@ -49,18 +50,26 @@ bool ShmemInputStream::open(int port,int size)
 	m_pHeader=(ShmemHeader_t*)m_pMap->malloc();
 	m_pData=(char*)(m_pHeader+1);
 
-	sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
-	m_pAccessMutex=new ACE_Process_Semaphore(1,obj_name);
-
+#ifdef _ACE_USE_SV_SEM
+	sprintf(obj_name,"%sSHMEM_ACCESS_MUTEX_%d",temp_dir_path,port);
+	m_pAccessMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+	sprintf(obj_name,"%sSHMEM_WAITDATA_MUTEX_%d",temp_dir_path,port);
+	m_pWaitDataMutex=new ACE_Mutex(USYNC_PROCESS,obj_name);
+#else
+    sprintf(obj_name,"SHMEM_ACCESS_MUTEX_%d",port);
+	m_pAccessMutex=new ACE_Process_Mutex(obj_name);
 	sprintf(obj_name,"SHMEM_WAITDATA_MUTEX_%d",port);
-	m_pWaitDataMutex=new ACE_Process_Semaphore(0,obj_name);
+	m_pWaitDataMutex=new ACE_Process_Mutex(obj_name);
+#endif
+
+	m_pWaitDataMutex->acquire();
 
 	m_bOpen=true;
 
 	return true;
 }
 
-bool ShmemInputStream::Resize()
+bool ShmemInputStreamImpl::Resize()
 {
 	++m_ResizeNum;
 
@@ -83,7 +92,7 @@ bool ShmemInputStream::Resize()
 	sprintf(file_name,"%sSHMEM_FILE_%d_%d",file_path,m_Port,m_ResizeNum);
 
 	pNewMap=new ACE_Shared_Memory_MM(file_name, //const ACE_TCHAR *filename,
-		m_pHeader->newsize+sizeof(ShmemHeader_t), //int len = -1,
+		m_pHeader->newsize+sizeof ShmemHeader_t, //int len = -1,
 		O_RDWR, //int flags = O_RDWR | O_CREAT,
 		ACE_DEFAULT_FILE_PERMS, //int mode = ACE_DEFAULT_FILE_PERMS,
 		PROT_RDWR, //int prot = PROT_RDWR,
@@ -116,10 +125,8 @@ bool ShmemInputStream::Resize()
 	return true;
 }
 
-int ShmemInputStream::read(char *data,int len)
+int ShmemInputStreamImpl::read(char *data,int len)
 {
-	//printf("IN: m_pAccessMutex->acquire();\n");
-	//fflush(stdout);
 	m_pAccessMutex->acquire();
 
 	if (m_pHeader->close)
@@ -130,9 +137,6 @@ int ShmemInputStream::read(char *data,int len)
 	}
 
 	while (m_pHeader->resize) Resize();
-
-	//printf ("IN: avail=%d\n",m_pHeader->avail);
-	//fflush(stdout);
 
 	if (m_pHeader->avail<len)
 	{
@@ -157,33 +161,51 @@ int ShmemInputStream::read(char *data,int len)
 	m_pHeader->tail+=len;
 	m_pHeader->tail%=m_pHeader->size;
 
-	//printf("IN: m_pAccessMutex->release();\n");
-	//fflush(stdout);
 	m_pAccessMutex->release();
 
 	return len;
 }
 
-int ShmemInputStream::read(const Bytes& b/*,bool bBlocking=true*/)
+int ShmemInputStreamImpl::read(const Bytes& b)
 {
-	m_SerializerMutex.wait();
+	m_ReadSerializerMutex.wait();
+	
+	if (!m_bOpen)
+	{
+	 	m_ReadSerializerMutex.post();
+	    return -1;
+	}
 
-	char* data=b.get();
+	char *data=b.get(),buf;
 	int len=b.length(),ret;
 
 	while (!(ret=read(data,len)))
 	{
-		//printf("IN: m_pWaitDataMutex->acquire();\n");
-		//fflush(stdout);
-		m_pWaitDataMutex->acquire();
+	    #ifdef _ACE_USE_SV_SEM
+		ACE_Time_Value tv=ACE_OS::gettimeofday();
+		tv.sec(tv.sec()+1);
+	    #else
+	    ACE_Time_Value tv(1);
+	    #endif 
+	    
+	    m_pWaitDataMutex->acquire(tv);
+	    
+		if (!m_pSock->recv(&buf,1))
+		{
+			//printf("STREAM IS BROKEN\n");
+			//fflush(stdout);
+			close();
+			m_ReadSerializerMutex.post();
+			return -1;
+		}
 	}
 
-	m_SerializerMutex.post();
+	m_ReadSerializerMutex.post();
 
 	return ret;
 }
 
-void ShmemInputStream::close()
+void ShmemInputStreamImpl::close()
 {
 	if (!m_bOpen) return;
 
