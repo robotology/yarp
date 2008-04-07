@@ -14,14 +14,18 @@ SET(NEED_LIBS YARP_OS YARP_sig)
 SET(NEED_SRCS ${populator})
 YarpLibrary(YARP_dev dev)
 
-# add in hardware specific tests, if requested
+# Add in hardware specific tests, if requested
 IF (CREATE_BUILTIN_DEVICE_TESTS)
   # add in our tests
   FILE(GLOB inis harness/*.ini)
   FOREACH(X ${inis})
     GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
     GET_FILENAME_COMPONENT(XINI ${X} ABSOLUTE)
-    SET(XDOX ${BASE_BINARY_DIR}/src/libYARP_dev/harness/${XN}.dox)
+    SET(DOC_DIR "${CMAKE_BINARY_DIR}/src/libYARP_dev/harness")
+    IF (NOT EXISTS ${DOC_DIR})
+  	FILE(MAKE_DIRECTORY ${DOC_DIR})
+    ENDIF (NOT EXISTS ${DOC_DIR})
+    SET(XDOX ${DOC_DIR}/${XN}.dox)
     ADD_TEST(device::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
   ENDFOREACH(X ${inis})
 ENDIF (CREATE_BUILTIN_DEVICE_TESTS)
