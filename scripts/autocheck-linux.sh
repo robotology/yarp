@@ -9,6 +9,7 @@ fi
 echo USER is "$WEB_USER"
 
 (
+echo -n
 #echo "SET(EXTERNAL_MODULES iCub)"
 #echo "SET(iCub_DIR \"$PWD/../iCub\")"
 ) > conf/ExternalModules.cmake
