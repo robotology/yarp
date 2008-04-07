@@ -9,8 +9,8 @@ fi
 echo USER is "$WEB_USER"
 
 (
-echo "SET(EXTERNAL_MODULES iCub)"
-echo "SET(iCub_DIR \"$PWD/../iCub\")"
+#echo "SET(EXTERNAL_MODULES iCub)"
+#echo "SET(iCub_DIR \"$PWD/../iCub\")"
 ) > conf/ExternalModules.cmake
 
 #CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY_BUILTINS:BOOL=TRUE -DCREATE_BUILTIN_DEVICE_TESTS:BOOL=TRUE -DENABLE_XSensMTx:BOOL=TRUE -DENABLE_dragonfly:BOOL=TRUE -DENABLE_ffmpeg:BOOL=TRUE -DENABLE_opencv_grabber:BOOL=TRUE -DENABLE_portaudio:BOOL=TRUE -DENABLE_microphone:BOOL=TRUE -DENABLE_esdMotionControl=TRUE"
