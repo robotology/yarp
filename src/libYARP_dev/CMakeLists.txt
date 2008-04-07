@@ -22,7 +22,7 @@ IF (CREATE_BUILTIN_DEVICE_TESTS)
     GET_FILENAME_COMPONENT(XN ${X} NAME_WE)
     GET_FILENAME_COMPONENT(XINI ${X} ABSOLUTE)
     SET(XDOX ${BASE_BINARY_DIR}/src/libYARP_dev/harness/${XN}.dox)
-    ADD_TEST(device::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_${postfix} --file "${XINI}" --doc "${XDOX}")
+    ADD_TEST(device::${XN} ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
   ENDFOREACH(X ${inis})
 ENDIF (CREATE_BUILTIN_DEVICE_TESTS)
 

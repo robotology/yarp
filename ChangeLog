@@ -1,3 +1,8 @@
+2008-04-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/CMakeLists.txt: fix broken regression tests for
+	individual devices/modules.
+
 2008-04-04  Alessandro Scalzo <alessandro@liralab.it>
 	* src/yarp/libYARP_OS/include/yarp/ShmemInputStream.h : modified
 	* src/yarp/libYARP_OS/include/yarp/ShmemOutputStream.h : modified
