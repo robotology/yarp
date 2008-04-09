@@ -46,17 +46,17 @@ SET(ACE_LINK_FLAGS "${ACE_LINK_FLAGS}" CACHE INTERNAL "ace link flags")
 ########################################################################
 ##  general find
 
-FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include $ENV{ACE_ROOT} $ENV{ACE_ROOT}/include ${ACE4YARP_DIR} $ENV{ACE4YARP_DIR} DOC "directory containing ace/*.h for ACE library")
+FIND_PATH(ACE_INCLUDE_DIR ace/ACE.h $ENV{ACE_ROOT} $ENV{ACE_ROOT}/include ${CMAKE_SOURCE_DIR}/../ACE_wrappers/ /usr/include /usr/local/include ${ACE4YARP_DIR} $ENV{ACE4YARP_DIR} DOC "directory containing ace/*.h for ACE library")
 
 # in YARP1, config was in another directory
 SET(ACE_INCLUDE_CONFIG_DIR "" CACHE STRING "location of ace/config.h")
 MARK_AS_ADVANCED(ACE_INCLUDE_CONFIG_DIR)
 
-FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace ACE4YARP PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} ${ACE4YARP_DIR} $ENV{ACE4YARP_DIR} DOC "ACE library file")
+FIND_LIBRARY(ACE_LIBRARY NAMES ACE ace ACE4YARP PATHS $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib ${ACE4YARP_DIR} $ENV{ACE4YARP_DIR} DOC "ACE library file")
 
 IF (WIN32 AND NOT CYGWIN)
 	SET(CMAKE_DEBUG_POSTFIX "d")
-	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} DOC "ACE library file (debug version)")
+	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib DOC "ACE library file (debug version)")
 ENDIF (WIN32 AND NOT CYGWIN)
 
 
