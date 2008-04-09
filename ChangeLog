@@ -1,5 +1,8 @@
 2008-04-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* scripts/make-source-package: update filters after 
+	change in device directories
+
 	* conf/FindAce.cmake: prioritize paths relative to ACE_ROOT 
 	environmental variable, if present -- issue reported by
 	Andrew Dankers.

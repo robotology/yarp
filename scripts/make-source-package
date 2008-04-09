@@ -28,14 +28,9 @@ want_prune=true
 if $want_prune; then
     echo "Directories removed for distribution:" > /tmp/REMOVED
     # certain driver directories are of ambiguous redistribution status
-    for f in src/libYARP_dev/src/XSensMTx src/libYARP_dev/src/inertiacube2 src/libYARP_dev/src/picolo src/libYARP_dev/src/esdMotionControl src/libYARP_dev/src/dimax_u2c src/libYARP_dev/src/serial src/libYARP_dev/src/mei src/libYARP_dev/src/meiMotionControl; do
+    for f in src/modules/dimax_u2c; do
 	echo "  Removed subdirectories of: $f" >> /tmp/REMOVED
 	rm -rf $f/*
-    done
-
-    for f in src/libYARP_dev/src/dragonfly/winnt ; do
-	echo "  Removed directory: $f" >> /tmp/REMOVED
-	rm -rf $f
     done
 
     for f in debian ; do
@@ -43,9 +38,9 @@ if $want_prune; then
 	rm -rf $f
     done
     (
-	cat src/libYARP_dev/AvailableDevices.txt | sed "s/ picolo_grabber//g"  | sed "s/ serial//g"  | sed "s/ esdMotionControl//g"  | sed "s/ XSensMTx//g" | sed "s/ inertiacube2//g" | sed "s/ dimax_u2c//g" | sed "/WIN32/,/UNIX/s/ dragonfly//" | sed "s/ mei//g"
-    ) > /tmp/AvailableDevices.txt
-    cp /tmp/AvailableDevices.txt src/libYARP_dev
+	cat src/modules/CMakeLists.txt | grep -v dimax
+    ) > /tmp/CMakeLists.txt
+    cp /tmp/CMakeLists.txt src/modules
     cp /tmp/REMOVED .
     ./scripts/update-license
     cp license-statement.txt COPYING
