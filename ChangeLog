@@ -1,5 +1,7 @@
 2008-04-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpVersion.cmake: froze version 2.2.0
+
 	* scripts/make-source-package: update filters after 
 	change in device directories
 
