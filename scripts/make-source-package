@@ -28,9 +28,19 @@ want_prune=true
 if $want_prune; then
     echo "Directories removed for distribution:" > /tmp/REMOVED
     # certain driver directories are of ambiguous redistribution status
-    for f in src/modules/dimax_u2c; do
-	echo "  Removed subdirectories of: $f" >> /tmp/REMOVED
-	rm -rf $f/*
+    for f in src/modules/dimax_u2c/blob; do
+	mydir=$PWD
+	cd $f
+	( ls -l `find . -type f | grep -v CVS` ) > /tmp/inventory.txt
+	cd $mydir
+	echo "  Removed: $f" >> /tmp/REMOVED
+	rm -rf $f
+	mkdir -p $f
+	(
+	    echo "Contents of this directory are not known to be redistributable"
+	    echo "What should be here:"
+	    cat /tmp/inventory.txt
+	) > $f/README.TXT
     done
 
     for f in debian ; do
