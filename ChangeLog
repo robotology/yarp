@@ -1,3 +1,10 @@
+2008-04-11 Lorenzo Natale <nat@liralab.it>
+
+	* src/libYARP_sig/include/yarp/sig/Vector.h
+	* src/libYARP_sig/src/Vector.cpp
+	Corrected bug in constructor from double*. Added
+	regression test.
+
 2008-04-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: froze version 2.2.0

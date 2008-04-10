@@ -217,6 +217,11 @@ public:
 
     void checkCopyCtor()
     {
+        report(0, "check creation from double*");
+        double dV[5]={0,1,2,3,4};
+        Vector v1(5,dV);
+        checkEqual(v1.size(),5,"ok");
+
         report(0,"check vectors copy constructor works...");
         Vector v(4);
         v[0]=99;

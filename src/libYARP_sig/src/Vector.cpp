@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.24 2007-11-30 10:46:21 eshuy Exp $
+// $Id: Vector.cpp,v 1.25 2008-04-10 22:46:39 natta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/IOException.h>
@@ -267,6 +267,7 @@ Vector::Vector(size_t s, const double *p)
     for(int k=0; k<storage.size(); k++)
         storage[k]=p[k];
 
+    allocGslData();
     updateGslData();
 }
 

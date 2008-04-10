@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.16 2007-04-19 10:56:37 natta Exp $ 
+// $Id: Matrix.cpp,v 1.17 2008-04-10 22:46:39 natta Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/IOException.h>
@@ -171,7 +171,6 @@ void Matrix::updatePointers()
     {
         matrix[r]=matrix[r-1]+ncols;
     }
-
     updateGslData();
 }
 
