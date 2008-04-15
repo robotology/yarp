@@ -362,7 +362,9 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                          "optional audio device name");
     }
     printf("Device %s\n",v.asString().c_str());
+#ifndef FACTORED_DEVICE
     formatParams.device = strdup(v.asString().c_str());
+#endif
 
     if (audio) {
         formatParams.sample_rate = config.check("audio_rate",
@@ -428,11 +430,18 @@ bool FfmpegGrabber::openFirewire(yarp::os::Searchable & config,
     ConstString devname = config.check("devname",
                                        Value("/dev/dv1394"),
                                        "firewire device name").asString();
+#ifndef FACTORED_DEVICE
     formatParams.device = devname.c_str();
+#endif
     iformat = av_find_input_format("dv1394");
     printf("Checking for digital video in %s\n", devname.c_str());
     return av_open_input_file(ppFormatCtx,
-                              "", iformat, 0, &formatParams)==0;
+#ifndef FACTORED_DEVCE
+                              "",
+#else
+                              strdup(devname.asString().c_str()), 
+#endif
+                              iformat, 0, &formatParams)==0;
 #endif
 }
 
@@ -476,6 +485,9 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
     
     // Register all formats and codecs
     av_register_all();
+#ifdef FACTORED_DEVICE
+    avdevice_register_all();
+#endif
 
     // Open video file
     if (config.check("v4l","if present, read from video4linux") || config.check("v4l2","if present, read from video4linux2")) {

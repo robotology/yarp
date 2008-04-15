@@ -1,5 +1,11 @@
 2008-04-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/FindFFMPEG.cmake: update script to find factored
+	libavdevice library in current ffmpeg.
+
+	* src/modules/ffmpeg/FfmpegGrabber.cpp: update code to work with
+	factored libavdevice library in current ffmpeg.
+
 	* src/modules/CMakeLists.txt: better diagnostics when there are 
 	problems in ExternalModules.cmake
 

@@ -20,12 +20,20 @@ extern "C" {
 #if LIBAVCODEC_VERSION_MAJOR < 51
 #define OLD_FFMPEG
 #else
-#define NO_DEVICE
+// device support got factored out
+#define FACTORED_DEVICE
 #endif
 
 #ifndef OLD_FFMPEG
 extern "C" {
 #include <swscale.h>
+}
+#endif
+
+#ifdef FACTORED_DEVICE
+
+extern "C" {
+#include <avdevice.h>
 }
 #endif
 
