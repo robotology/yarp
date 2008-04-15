@@ -53,6 +53,16 @@ FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
   /usr/local/include/libswscale
 )
 
+FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
+  $ENV{FFMPEG_DIR}
+  $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/include/libavdevice
+  /usr/local/include/libavdevice
+)
+
 IF (FFMPEG_INCLUDE_DIR1)
   IF (FFMPEG_INCLUDE_DIR2)
     IF (FFMPEG_INCLUDE_DIR3)
@@ -69,6 +79,12 @@ IF (FFMPEG_INCLUDE_DIR4)
 	${FFMPEG_INCLUDE_DIR}
 	${FFMPEG_INCLUDE_DIR4})
 ENDIF (FFMPEG_INCLUDE_DIR4)
+
+IF (FFMPEG_INCLUDE_DIR5)
+      SET(FFMPEG_INCLUDE_DIR 
+	${FFMPEG_INCLUDE_DIR}
+	${FFMPEG_INCLUDE_DIR5})
+ENDIF (FFMPEG_INCLUDE_DIR5)
 
 FIND_LIBRARY(FFMPEG_avformat_LIBRARY avformat
   /usr/local/lib
@@ -92,6 +108,13 @@ FIND_LIBRARY(FFMPEG_avutil_LIBRARY avutil
 )
 
 FIND_LIBRARY(FFMPEG_swscale_LIBRARY swscale
+  /usr/local/lib
+  /usr/lib
+  $ENV{FFMPEG_DIR}
+  $ENV{FFMPEG_DIR}/lib
+)
+
+FIND_LIBRARY(FFMPEG_avdevice_LIBRARY avdevice
   /usr/local/lib
   /usr/lib
   $ENV{FFMPEG_DIR}
@@ -123,6 +146,12 @@ IF(FFMPEG_INCLUDE_DIR)
             ${FFMPEG_swscale_LIBRARY}
           )
 	ENDIF(FFMPEG_swscale_LIBRARY)
+	IF(FFMPEG_avdevice_LIBRARY)
+          SET( FFMPEG_LIBRARIES 
+	    ${FFMPEG_LIBRARIES}
+            ${FFMPEG_avdevice_LIBRARY}
+          )
+	ENDIF(FFMPEG_avdevice_LIBRARY)
 	IF(_FFMPEG_z_LIBRARY_)
           SET( FFMPEG_LIBRARIES 
 	    ${FFMPEG_LIBRARIES}
@@ -140,10 +169,12 @@ MARK_AS_ADVANCED(
   FFMPEG_INCLUDE_DIR2
   FFMPEG_INCLUDE_DIR3
   FFMPEG_INCLUDE_DIR4
+  FFMPEG_INCLUDE_DIR5
   FFMPEG_avformat_LIBRARY
   FFMPEG_avcodec_LIBRARY
   FFMPEG_avutil_LIBRARY
   FFMPEG_swscale_LIBRARY
+  FFMPEG_avdevice_LIBRARY
   _FFMPEG_z_LIBRARY_
   )
 

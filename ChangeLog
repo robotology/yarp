@@ -1,3 +1,8 @@
+2008-04-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/CMakeLists.txt: better diagnostics when there are 
+	problems in ExternalModules.cmake
+
 2008-04-11 Lorenzo Natale <nat@liralab.it>
 
 	* src/libYARP_sig/include/yarp/sig/Vector.h
