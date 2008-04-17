@@ -329,9 +329,27 @@ public:
             if (!done) {
                 including = false;
 
-                // this comment filter is not safe for quoting
                 if (buf.strstr("//")!=String::npos) {
-                    buf = buf.substr(0,buf.strstr("//"));
+                    bool quoted = false;
+                    int comment = 0;
+                    for (int i=0; i<buf.length(); i++) {
+                        char ch = buf[i];
+                        if (ch=='\"') { quoted = !quoted; }
+                        if (!quoted) {
+                            if (ch=='/') {
+                                comment++;
+                                if (comment==2) {
+                                    //buf = buf.substr(0,buf.strstr("//"));
+                                    buf = buf.substr(0,i);
+                                    break;
+                                }
+                            } else {
+                                comment = 0;
+                            }
+                        } else {
+                            comment = 0;
+                        }
+                    }
                 }
 
                 // expand any environment references

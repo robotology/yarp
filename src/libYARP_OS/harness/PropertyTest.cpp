@@ -210,6 +210,14 @@ targ $TARGET\n\
         checkEqual(hello.c_str(),"there","individual sections present");
     }
 
+    void checkComment() {
+        report(0,"checking comments");
+        Property p;
+        p.fromConfig("x 10\n// x 11\n");
+        checkEqual(p.find("x").asInt(),10,"comment ignored ok");
+        p.fromConfig("url \"http://www.robotcub.org\"\n");
+        checkEqual(p.find("url").asString().c_str(),"http://www.robotcub.org","url with // passed ok");        
+    }
 
     virtual void checkWipe() {
         report(0,"checking wipe suppression");
@@ -332,6 +340,7 @@ targ $TARGET\n\
         checkBackslashPath();
         checkIncludes();
         checkCommand();
+        checkComment();
     }
 };
 
