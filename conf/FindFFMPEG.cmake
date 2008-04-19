@@ -116,6 +116,7 @@ FIND_LIBRARY(FFMPEG_avutil_LIBRARY avutil
   /usr/lib
 )
 
+IF (NOT DISABLE_SWSCALE)
 FIND_LIBRARY(FFMPEG_swscale_LIBRARY swscale
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
@@ -123,6 +124,7 @@ FIND_LIBRARY(FFMPEG_swscale_LIBRARY swscale
   /usr/local/lib
   /usr/lib
 )
+ENDIF (NOT DISABLE_SWSCALE)
 
 FIND_LIBRARY(FFMPEG_avdevice_LIBRARY avdevice
   $ENV{FFMPEG_DIR}
