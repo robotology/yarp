@@ -10,55 +10,55 @@
 
 # also defined, but not for general use are
 # FFMPEG_avformat_LIBRARY and FFMPEG_avcodec_LIBRARY, where to find the FFMPEG library.
-# This is usefull to do it this way so that we can always add more libraries
+# This is useful to do it this way so that we can always add more libraries
 # if needed to FFMPEG_LIBRARIES if ffmpeg ever changes...
 
 FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
   /usr/include/libavformat
   /usr/local/include/libavformat
 )
 
 FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
   /usr/include/libavutil
   /usr/local/include/libavutil
 )
 
 FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
   /usr/include/libavcodec
   /usr/local/include/libavcodec
 )
 
 FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
   /usr/include/libswscale
   /usr/local/include/libswscale
 )
 
 FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
-  /usr/local/include/ffmpeg
-  /usr/include/ffmpeg
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/include/ffmpeg
+  /usr/local/include/ffmpeg
+  /usr/include/ffmpeg
   /usr/include/libavdevice
   /usr/local/include/libavdevice
 )
