@@ -16,6 +16,7 @@
 FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/libavformat
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -26,6 +27,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
 FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/libavutil
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -36,6 +38,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
 FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/libavcodec
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -46,6 +49,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
 FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/libswscale
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -56,6 +60,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
 FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
+  $ENV{FFMPEG_DIR}/libavdevice
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -87,45 +92,50 @@ IF (FFMPEG_INCLUDE_DIR5)
 ENDIF (FFMPEG_INCLUDE_DIR5)
 
 FIND_LIBRARY(FFMPEG_avformat_LIBRARY avformat
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  $ENV{FFMPEG_DIR}/libavformat
+  /usr/local/lib
+  /usr/lib
 )
 
 FIND_LIBRARY(FFMPEG_avcodec_LIBRARY avcodec
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  $ENV{FFMPEG_DIR}/libavcodec
+  /usr/local/lib
+  /usr/lib
 )
 
 FIND_LIBRARY(FFMPEG_avutil_LIBRARY avutil
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  $ENV{FFMPEG_DIR}/libavutil
+  /usr/local/lib
+  /usr/lib
 )
 
 FIND_LIBRARY(FFMPEG_swscale_LIBRARY swscale
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  $ENV{FFMPEG_DIR}/libswscale
+  /usr/local/lib
+  /usr/lib
 )
 
 FIND_LIBRARY(FFMPEG_avdevice_LIBRARY avdevice
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  $ENV{FFMPEG_DIR}/libavdevice
+  /usr/local/lib
+  /usr/lib
 )
 
 FIND_LIBRARY(_FFMPEG_z_LIBRARY_ z
-  /usr/local/lib
-  /usr/lib
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/lib
+  /usr/local/lib
+  /usr/lib
 )
 
 
