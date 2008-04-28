@@ -46,7 +46,8 @@ public:
         sema.release();
     }
 
-private:
+    //private:
+public:
     ACE_Semaphore sema;
 };
 

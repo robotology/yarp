@@ -21,6 +21,9 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
+        class ImplementPidControlRaw;
+        class ImplementPositionControlRaw;
+        class ImplementEncodersRaw;
     }
 }
 
@@ -653,6 +656,186 @@ public:
     virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3);
 
     virtual bool done(int j);
+};
+
+
+#include <stdio.h>
+inline bool NOT_YET_IMPLEMENTED(const char *func=0)
+{
+    if (func)
+        fprintf(stderr, "%s:", func);
+    else
+        fprintf(stderr, "Function ");
+
+    fprintf(stderr, "not yet implemented\n");
+
+    return false;
+}
+
+
+class yarp::dev::ImplementPidControlRaw: public IPidControlRaw
+{
+public:
+    virtual ~ImplementPidControlRaw(){}
+
+    virtual bool setPidRaw(int j, const Pid &pid)
+    { return NOT_YET_IMPLEMENTED("setPidRaw");}
+
+    virtual bool setPidsRaw(const Pid *pids)
+    { return NOT_YET_IMPLEMENTED("setPidsRaw");}
+
+    virtual bool setReferenceRaw(int j, double ref)
+    { return NOT_YET_IMPLEMENTED("setReferenceRaw");}
+
+    virtual bool setReferencesRaw(const double *refs)
+    { return NOT_YET_IMPLEMENTED("setReferencesRaw");}
+
+    virtual bool setErrorLimitRaw(int j, double limit)
+    { return NOT_YET_IMPLEMENTED("setErrorLimitRaw");}
+
+    virtual bool setErrorLimitsRaw(const double *limits)
+    { return NOT_YET_IMPLEMENTED("setErrorLimitsRaw");}
+
+    virtual bool getErrorRaw(int j, double *err)
+    { return NOT_YET_IMPLEMENTED("getErrorRaw");}
+
+    virtual bool getErrorsRaw(double *errs)
+    { return NOT_YET_IMPLEMENTED("getErrorsRaw");}
+
+    virtual bool getOutputRaw(int j, double *out)
+    { return NOT_YET_IMPLEMENTED("getOutputRaw");}
+
+    virtual bool getOutputsRaw(double *outs)
+    { return NOT_YET_IMPLEMENTED("getOutputsRaw");}
+
+    virtual bool getPidRaw(int j, Pid *pid)
+    { return NOT_YET_IMPLEMENTED("getPidRaw");}
+
+    virtual bool getPidsRaw(Pid *pids)
+    { return NOT_YET_IMPLEMENTED("getPidsRaw");}
+
+    virtual bool getReferenceRaw(int j, double *ref)
+    { return NOT_YET_IMPLEMENTED("getReferenceRaw");}
+
+    virtual bool getReferencesRaw(double *refs)
+    { return NOT_YET_IMPLEMENTED("getReferencesRaw");}
+
+    virtual bool getErrorLimitRaw(int j, double *limit)
+    { return NOT_YET_IMPLEMENTED("getErrorLimitRaw");}
+
+    virtual bool getErrorLimitsRaw(double *limits)
+    { return NOT_YET_IMPLEMENTED("getErrorLimitsRaw");}
+
+    virtual bool resetPidRaw(int j)
+    {return NOT_YET_IMPLEMENTED("resetPidRaw");}
+
+    virtual bool disablePidRaw(int j)
+    {return NOT_YET_IMPLEMENTED("disablePidRaw");}
+
+    virtual bool enablePidRaw(int j)
+    {return NOT_YET_IMPLEMENTED("enablePidRaw");}
+
+    virtual bool setOffsetRaw(int j, double v)
+    {return NOT_YET_IMPLEMENTED("setOffsetRaw");}
+};
+
+class yarp::dev::ImplementPositionControlRaw: public IPositionControlRaw
+{
+public:
+    virtual ~ImplementPositionControlRaw(){}
+
+    virtual bool getAxes(int *ax)
+    {return NOT_YET_IMPLEMENTED("getAxes");}
+
+    virtual bool setPositionMode()
+    {return NOT_YET_IMPLEMENTED("setPositionMode");}
+
+    virtual bool positionMoveRaw(int j, double ref)
+    {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
+
+    virtual bool positionMoveRaw(const double *refs)
+    {return NOT_YET_IMPLEMENTED("positionMoveRaw");}
+
+    virtual bool relativeMoveRaw(int j, double delta)
+    {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
+
+    virtual bool relativeMoveRaw(const double *deltas)
+    {return NOT_YET_IMPLEMENTED("relativeMoveRaw");}
+
+    virtual bool checkMotionDoneRaw(int j, bool *flag)
+    {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
+
+    virtual bool checkMotionDoneRaw(bool *flag)
+    {return NOT_YET_IMPLEMENTED("checkMotionDoneRaw");}
+
+    virtual bool setRefSpeedRaw(int j, double sp)
+    {return NOT_YET_IMPLEMENTED("setRefSpeedRaw");}
+
+    virtual bool setRefSpeedsRaw(const double *spds)
+    {return NOT_YET_IMPLEMENTED("setRefSpeedsRaw");}
+
+    virtual bool setRefAccelerationRaw(int j, double acc)
+    {return NOT_YET_IMPLEMENTED("setRefAccelerationRaw");}
+
+    virtual bool setRefAccelerationsRaw(const double *accs)
+    {return NOT_YET_IMPLEMENTED("setRefAccelerationsRaw");}
+
+    virtual bool getRefSpeedRaw(int j, double *ref)
+    {return NOT_YET_IMPLEMENTED("getRefSpeedRaw");}
+
+    virtual bool getRefSpeedsRaw(double *spds)
+    {return NOT_YET_IMPLEMENTED("getRefSpeesdRaw");}
+
+    virtual bool getRefAccelerationRaw(int j, double *acc)
+    {return NOT_YET_IMPLEMENTED("getRefAccelerationRaw");}
+
+    virtual bool getRefAccelerationsRaw(double *accs)
+    {return NOT_YET_IMPLEMENTED("getRefAccelerationsRaw");}
+
+    virtual bool stopRaw(int j)
+    {return NOT_YET_IMPLEMENTED("stopRaw");}
+
+    virtual bool stopRaw()
+    {return NOT_YET_IMPLEMENTED("stopRaw");}
+};
+
+class yarp::dev::ImplementEncodersRaw: public IEncodersRaw
+{
+public:
+    virtual ~ImplementEncodersRaw(){}
+
+    virtual bool getAxes(int *ax)
+    {return NOT_YET_IMPLEMENTED("getAxes");}
+
+    virtual bool resetEncoderRaw(int j)
+    {return NOT_YET_IMPLEMENTED("resetEncoderRaw");}
+
+    virtual bool resetEncodersRaw()
+    {return NOT_YET_IMPLEMENTED("resetEncodersRaw");}
+
+    virtual bool setEncoderRaw(int j, double val)
+    {return NOT_YET_IMPLEMENTED("setEncoderRaw");}
+
+    virtual bool setEncodersRaw(const double *vals)
+    {return NOT_YET_IMPLEMENTED("setEncodersRaw");}
+
+    virtual bool getEncoderRaw(int j, double *v)
+    {return NOT_YET_IMPLEMENTED("getEncoderRaw");}
+
+    virtual bool getEncodersRaw(double *encs)
+    {return NOT_YET_IMPLEMENTED("getEncodersRaw");}
+
+    virtual bool getEncoderSpeedRaw(int j, double *sp)
+    {return NOT_YET_IMPLEMENTED("getEncoderSpeedRaw");}
+
+    virtual bool getEncoderSpeedsRaw(double *spds)
+    {return NOT_YET_IMPLEMENTED("getEncoderSpeedsRaw");}
+
+    virtual bool getEncoderAccelerationRaw(int j, double *spds)
+    {return NOT_YET_IMPLEMENTED("getEncoderAccelerationRaw");}
+
+    virtual bool getEncoderAccelerationsRaw(double *accs)
+    {return NOT_YET_IMPLEMENTED("getEncoderAccelerationsRaw");}
 };
 
 #endif
