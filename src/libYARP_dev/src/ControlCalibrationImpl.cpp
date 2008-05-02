@@ -21,10 +21,8 @@ IControlCalibration::IControlCalibration()
 
 bool IControlCalibration::setCalibrator(ICalibrator *c)
 {
-    fprintf(stderr, "Setting calibrator\n");
-    if (c!=0)
+     if (c!=0)
         {
-            fprintf(stderr, "Success\n");
             calibrator=c;    
             return true;
         }

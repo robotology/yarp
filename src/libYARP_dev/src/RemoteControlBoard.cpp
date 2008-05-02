@@ -155,7 +155,6 @@ private:
     PortReaderBuffer<Bottle> command_buffer;
 
     PolyDriver poly;
-    PolyDriver polyCalib;
 
     int               nj;
     int               thread_period;
@@ -182,7 +181,6 @@ private:
 
 
         poly.close();
-        polyCalib.close();
 
         return true;
     }
@@ -308,15 +306,6 @@ public:
             control_p.open((rootName+"/command:i").c_str());
             state_p.open((rootName+"/state:o").c_str());
         }
-            
-        if (prop.check("calibrator", name,"calibration device to use, if any"))
-            {
-                Property p;
-                p.fromString(prop.toString());
-                p.put("device",name->toString());
-                polyCalib.open(p);
-            }
-
         if (poly.isValid()) {
             poly.view(pid);
             poly.view(pos);
@@ -328,15 +317,6 @@ public:
             poly.view(calib2);
             poly.view(info);
         }
-
-        // set calibrator //
-        if (polyCalib.isValid())
-            {
-                ICalibrator *icalibrator;
-                polyCalib.view(icalibrator);
-                calib->setCalibrator(icalibrator);
-                calib2->setCalibrator(icalibrator);
-            }
 		        
         // experimental: let it be ok for not all interfaces to be
         // implemented.
