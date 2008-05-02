@@ -1419,24 +1419,41 @@ public:
             state_p.open(s1.c_str());
         }
 
+        bool connectionProblem = false;
         if (remote != "") {
             String s1 = remote;
             s1 += "/rpc:i";
             String s2 = local;
             s2 += "/rpc:o";
-            Network::connect(s2.c_str(), s1.c_str());
+            bool ok = Network::connect(s2.c_str(), s1.c_str());
+            if (!ok) {
+                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                connectionProblem = true;
+            }
             s1 = remote;
             s1 += "/command:i";
             s2 = local;
             s2 += "/command:o";
-            Network::connect(s2.c_str(), s1.c_str(), carrier);
+            ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
+            if (!ok) {
+                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                connectionProblem = true;
+            }
             s1 = remote;
             s1 += "/state:o";
             s2 = local;
             s2 += "/state:i";
-            Network::connect(s1.c_str(), s2.c_str(), carrier);
+            ok = Network::connect(s1.c_str(), s2.c_str(), carrier);
+            if (!ok) {
+                printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
+                connectionProblem = true;
+            }
         }
-        
+
+        if (connectionProblem) {
+            return false;
+        }
+
         state_buffer.attach(state_p);
 		state_buffer.setStrict(false);
         command_buffer.attach(command_p);
