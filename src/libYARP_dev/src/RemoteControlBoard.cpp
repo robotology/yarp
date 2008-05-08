@@ -1111,20 +1111,6 @@ public:
 		return false;
 	}
 
-    virtual bool calibrate()
-    {
-        if (calib)
-            return calib->calibrate();
-        return false;
-    }
-
-    virtual bool park(bool wait=true)
-    {
-        if (calib)
-            return calib->park(wait);
-        return false;
-    }
-
     virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) {
 		if (calib2)
 			return calib2->calibrate2(j, ui, v1, v2, v3);
@@ -1141,24 +1127,6 @@ public:
 			return calib2->done(j);
 		return false;
 	}
-
-    virtual bool abortPark()
-    {
-        fprintf(stderr, "ServerControlBoard::Calling abortPark\n");
-        if (calib2)
-            return calib2->abortPark();
-        return false;
-    }
-
-    virtual bool abortCalibration()
-    {
-         fprintf(stderr, "ServerControlBoard::Calling abortCalibration\n");
-         if (calib2)
-            return calib2->abortCalibration();
-         else
-            fprintf(stderr, "calib2 was null\n");
-        return false;
-    }
 
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name) {
