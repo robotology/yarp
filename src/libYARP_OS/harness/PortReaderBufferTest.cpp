@@ -48,7 +48,7 @@ public:
         
         buffer.read(false);
     }
-  
+
 
     void checkLocal() {
         report(0, "checking local carrier...");

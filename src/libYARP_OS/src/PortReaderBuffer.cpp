@@ -257,6 +257,21 @@ public:
 		this->port = &port;
 		port.setReader(owner);
 	}
+
+    void *acquire() {
+        if (prev!=NULL) {
+            void *result = prev;
+            prev = NULL;
+            return result;
+        }
+        return NULL;
+    }
+
+    void release(void *key) {
+        if (key!=NULL) {
+            pool.addInactivePacket((PortReaderPacket*)key);
+        }
+    }
 };
 
 
@@ -463,6 +478,17 @@ bool PortReaderBufferBase::forgetObjectBase(PortReader *obj,
     return false;
 }
 
+
+
+void *PortReaderBufferBase::acquire() {
+    return HELPER(implementation).acquire();
+}
+
+void PortReaderBufferBase::release(void *key) {
+    HELPER(implementation).stateSema.wait();
+    HELPER(implementation).release(key);
+    HELPER(implementation).stateSema.post();
+}
 
 
 

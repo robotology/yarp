@@ -234,6 +234,16 @@ public:
         port.setReporter(reporter);
     }
 
+    // documented in TypedReader
+    virtual void *acquire() {
+        return reader.acquire();
+    }
+
+    // documented in TypedReader
+    virtual void release(void *handle) {
+        reader.release(handle);
+    }
+
 private:
     // solaris preferred order - strange
     PortWriterBuffer<T> writer;

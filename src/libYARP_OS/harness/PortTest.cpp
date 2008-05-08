@@ -831,6 +831,57 @@ public:
         p2.close();
     }
 
+    virtual void testAcquire() {
+        report(0, "checking acquire/release...");
+
+        BufferedPort<Bottle> in;
+        BufferedPort<Bottle> out;
+        in.setStrict();
+        out.setStrict();
+        in.open("/in");
+        out.open("/out");
+        Network::connect("/out","/in");
+
+        out.prepare().fromString("1");
+        out.write(true);
+        
+        Bottle *bot = in.read();
+        checkTrue(bot!=NULL,"Inserted message received");
+        if (bot!=NULL) {
+            checkEqual(bot->size(),1,"right length");
+        }
+
+        out.prepare().fromString("1 2");
+        out.write(true);
+
+        void *key = in.acquire();
+        Bottle *bot2 = in.read();
+        checkTrue(bot2!=NULL,"Inserted message received");
+        if (bot2!=NULL) {
+            checkEqual(bot2->size(),2,"right length");
+        }
+
+        out.prepare().fromString("1 2 3");
+        out.write(true);
+        
+        void *key2 = in.acquire();
+        Bottle *bot3 = in.read();
+        checkTrue(bot3!=NULL,"Inserted message received");
+        if (bot3!=NULL) {
+            checkEqual(bot3->size(),3,"right length");
+        }
+        if (bot2!=NULL) {
+            checkEqual(bot2->size(),2,"original (2) still ok");
+        }
+        if (bot!=NULL) {
+            checkEqual(bot->size(),1,"original (1) still ok");
+        }
+
+        in.release(key);
+        in.release(key2);
+    }
+
+
 
     virtual void runTests() {
         yarp::NameClient& nic = yarp::NameClient::getNameClient();
@@ -863,6 +914,7 @@ public:
         testReadNoReply();
         testReports();
         testAdmin();
+        testAcquire();
 
         nic.setFakeMode(false);
     }

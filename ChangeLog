@@ -1,4 +1,16 @@
-2008-06-5  Lorenzo Natale  <nat@liralab.it>
+2008-05-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/PortTest.cpp: add regression test
+	for new acquire/release methods.
+
+	* src/libYARP_OS/include/yarp/os/BufferedPort.h: expose
+	new acquire/release methods in normal user interface.
+
+	* src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add 
+	acquire/release methods to allow user to hold onto objects
+	read for as long as they want.
+
+2008-05-06  Lorenzo Natale  <nat@liralab.it>
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h:
 	* src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
 	ImplementPidControlRaw,
