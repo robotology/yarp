@@ -15,6 +15,7 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Stamp.h>
 #include <yarp/String.h>
 #include <yarp/NetType.h>
 
@@ -473,7 +474,9 @@ public:
             // bool ok = enc->getEncoders(&v[0]);
 
             // LATER: deal with the ok == false.
-
+            static yarp::os::Stamp st;
+            st.update();
+            state_p.setEnvelope(st);
             state_buffer.write();
 
             now = Time::now();
