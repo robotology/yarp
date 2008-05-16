@@ -172,13 +172,8 @@ private:
     // LATER: other interfaces here.
 
     bool closeMain() {
-        static int c=0;
-        fprintf(stderr, "CloseMain %d\n",c);
         if (Thread::isRunning()) {
-            fprintf(stderr, "Thread::Stop %d\n",c);
             Thread::stop();
-            fprintf(stderr, "done %d\n", c);
-            c++;
         }
         // close the port connections here!
         rpc_p.close();
