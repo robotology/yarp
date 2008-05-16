@@ -171,10 +171,14 @@ private:
     // LATER: other interfaces here.
 
     bool closeMain() {
+        static int c=0;
+        fprintf(stderr, "CloseMain %d\n",c);
         if (Thread::isRunning()) {
+            fprintf(stderr, "Thread::Stop %d\n",c);
             Thread::stop();
+            fprintf(stderr, "done %d\n", c);
+            c++;
         }
-
         // close the port connections here!
         rpc_p.close();
         control_p.close();
@@ -223,11 +227,8 @@ public:
     }
 
     /**
-
      * Close the device driver by deallocating all resources and closing ports.
-
      * @return true if successful or false otherwise.
-
      */
 
     virtual bool close() {
@@ -236,106 +237,55 @@ public:
 
     }
 
-
-
-
-
     /**
-
      * Open the device driver.
-
      * @param prop is a Searchable object which contains the parameters. 
-
      * Allowed parameters are:
-
      * - verbose or v to print diagnostic information while running.
-
      * - subdevice to specify the name of the wrapped device.
-
      * - name to specify the predix of the port names.
-
      * - calibrator to specify the name of the calibrator object (created through a PolyDriver).
-
      * and all parameters required by the wrapped device driver.
-
      */
-
     virtual bool open(Searchable& prop) {
-
-
-
         bool newInterface = prop.check("single_port","if present, use new simplified port interface");
-
-
-
 		verb = (prop.check("verbose","if present, give detailed output"));
-
 		if (verb)
-
 			ACE_OS::printf("running with verbose output\n");
-
-
 
         thread_period = prop.check("rate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
-
-
         Value *name;
-
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
-
             if (name->isString()) {
-
                 // maybe user isn't doing nested configuration
-
                 Property p;
-
                 p.setMonitor(prop.getMonitor(),
-
                              "subdevice"); // pass on any monitoring
-
                 p.fromString(prop.toString());
-
                 p.put("device",name->toString());
-
                 poly.open(p);
-
             } else {
-
                 Bottle subdevice = prop.findGroup("subdevice").tail();
-
                 poly.open(subdevice);
-
             }
 
             if (!poly.isValid()) {
-
                 ACE_OS::printf("cannot make <%s>\n", name->toString().c_str());
-
             }
 
         } else {
-
             ACE_OS::printf("\"--subdevice <name>\" not set for server_controlboard\n");
-
             return false;
-
         }
-
-
 
         if (!poly.isValid()) {
-
             return false;
-
         }
-
 
 
         String rootName = 
-
             prop.check("name",Value("/controlboard"),
 
                        "prefix for port names").asString().c_str();
