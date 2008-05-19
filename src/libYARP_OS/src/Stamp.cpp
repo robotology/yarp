@@ -60,9 +60,12 @@ int Stamp::getMaxCount() {
 
 void Stamp::update() {
     double now = Time::now();
+/*    
     if (sequenceNumber<0) {
         timeZero = now;
     }
+*/
+
     sequenceNumber++;
     if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
         sequenceNumber = 0;
