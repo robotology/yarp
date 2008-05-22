@@ -1,5 +1,8 @@
 2008-05-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/BufferedPort.h: catch
+	accidental copies of BufferedPort.  Closes bug 1968646.
+
 	* src/libYARP_dev/include/yarp/dev/PolyDriver.h: added private
 	copy constructor / assignment operators to catch accidental
 	copies.  PolyDriver objects cannot be copied. 

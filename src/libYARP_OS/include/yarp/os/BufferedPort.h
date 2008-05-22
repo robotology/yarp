@@ -250,6 +250,15 @@ private:
     Port port;
     PortReaderBuffer<T> reader;
     bool interrupted;
+
+    // forbid this
+    BufferedPort(const BufferedPort& alt) {
+    }
+
+    // forbid this
+    const BufferedPort& operator = (const BufferedPort& alt) {
+        return *this;
+    }
 };
 
 #endif
