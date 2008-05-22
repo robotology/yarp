@@ -1,10 +1,17 @@
+2008-05-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/include/yarp/dev/PolyDriver.h: added private
+	copy constructor / assignment operators to catch accidental
+	copies.  PolyDriver objects cannot be copied. 
+	Closes bug 1968253.
+
 2008-05-19  Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_OS/src/Stamp.cpp: Stamp::update() now stores absolute
 	time.
 
 2008-05-16  Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: added timestamps to 
-	stete:o port
+	state:o port
 
 2008-05-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

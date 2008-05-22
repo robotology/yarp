@@ -176,6 +176,20 @@ private:
     void *system_resource;
 
     bool coreOpen(yarp::os::Searchable& config);
+
+    // private in order to disable copy
+    PolyDriver(const PolyDriver& alt) {
+    }
+
+    // private in order to disable copy
+    const PolyDriver& operator = (const char *alt) {
+        return *this;
+    }
+
+    // private in order to disable copy
+    const PolyDriver& operator = (const PolyDriver& alt) {
+        return *this;
+    }
 };
 
 #endif
