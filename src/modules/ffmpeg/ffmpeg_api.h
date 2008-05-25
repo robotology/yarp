@@ -17,7 +17,7 @@ extern "C" {
 #include <avformat.h>
 }
 
-#if LIBAVCODEC_VERSION_MAJOR < 51
+#if LIBAVCODEC_VERSION_INT < (51<<16)
 #define OLD_FFMPEG
 #else
 // device support got factored out
