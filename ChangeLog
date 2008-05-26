@@ -1,3 +1,8 @@
+2008-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/Doxyfile.part: update list of directories searched 
+	(math library wasn't included).
+
 2008-05-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/ffmpeg/ffmpeg_api.h: refine version identification.
