@@ -1,3 +1,8 @@
+2008-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/profiling/port_latency_st.cpp: add single threaded
+	version of Lorenzo's port latency test.
+
 2008-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/Doxyfile.part: update list of directories searched 

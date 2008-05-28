@@ -7,3 +7,4 @@ FIND_PACKAGE(YARP)
 
 ADD_EXECUTABLE(bottle_test bottle_test.cpp)
 ADD_EXECUTABLE(port_latency  port_latency.cpp)
+ADD_EXECUTABLE(port_latency_st  port_latency_st.cpp)
