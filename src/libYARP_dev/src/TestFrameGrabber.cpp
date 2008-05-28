@@ -18,6 +18,7 @@ using namespace yarp::sig;
 using namespace yarp::sig::draw;
 
 #define VOCAB_BALL VOCAB4('b','a','l','l')
+#define VOCAB_GRID VOCAB4('g','r','i','d')
 
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
@@ -43,6 +44,24 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                 if (dx<0) { bx--; }
                 if (dy>0) { by++; }
                 if (dy<0) { by--; }
+            }
+        }
+        break;
+    case VOCAB_GRID:
+        {
+            int ww = image.width();
+            int hh = image.height();
+            if (ww>1&&hh>1) {
+                for (int x=0; x<ww; x++) {
+                    for (int y=0; y<hh; y++) {
+                        double xx = ((double)x)/(ww-1);
+                        double yy = ((double)y)/(hh-1);
+                        int r = int(0.5+255*xx);
+                        int g = int(0.5+255*yy);
+                        bool act = (y==ct);
+                        image.pixel(x,y) = PixelRgb(r,g,act*255);
+                    }
+                }
             }
         }
         break;
