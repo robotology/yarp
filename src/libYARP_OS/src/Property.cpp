@@ -244,6 +244,7 @@ public:
                    searchPath);
 
         ifstream fin(fname);
+        bool failed=true;
 
         String pathPrefix("");
         if (fin.fail()) {
@@ -257,6 +258,9 @@ public:
                            String("looking for ") + fname + " as " +
                            trial.c_str());
 
+                //without this, consequent open on fin will fail
+                //with no apparent reasons...
+                fin.clear();
                 fin.open(trial.c_str());
                 if (!fin.fail()) { 
                     pathPrefix = ss.get(i);
