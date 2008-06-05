@@ -244,7 +244,6 @@ public:
                    searchPath);
 
         ifstream fin(fname);
-        bool failed=true;
 
         String pathPrefix("");
         if (fin.fail()) {
@@ -336,7 +335,7 @@ public:
                 if (buf.strstr("//")!=String::npos) {
                     bool quoted = false;
                     int comment = 0;
-                    for (int i=0; i<buf.length(); i++) {
+                    for (unsigned int i=0; i<buf.length(); i++) {
                         char ch = buf[i];
                         if (ch=='\"') { quoted = !quoted; }
                         if (!quoted) {

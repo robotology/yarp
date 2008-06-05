@@ -873,78 +873,41 @@ public:
      * @return true/false
      */
     virtual bool resetEncoders() {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_E_RESETS);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
 
-
-
     /**
-
      * Set the value of the encoder for a given joint. 
-
      * @param j encoder number
-
      * @param val new value
-
      * @return true/false on success/failure
-
      */
-
     virtual bool setEncoder(int j, double val) {
-
         return setDouble(VOCAB_ENCODER, j, val);
-
     }
 
-
-
     /**
-
      * Set the value of all encoders.
-
      * @param vals pointer to the new values
-
      * @return true/false
-
      */
-
     virtual bool setEncoders(const double *vals) {
-
         return setDoubleArray(VOCAB_ENCODERS, vals);
-
     }
-
-
 
     /**
-
      * Read the value of an encoder.
-
      * @param j encoder number
-
      * @param v pointer to storage for the return value
-
      * @return true/false, upon success/failure (you knew it, uh?)
-
      */
-
     virtual bool getEncoder(int j, double *v) {
-
         return getDouble(VOCAB_ENCODER, j, v);
-
     }
-
-
 
     /**
      * Read the position of all axes.
@@ -1013,86 +976,45 @@ public:
 
     /* IPositionControl */
 
-
-
     /**
-
      * Get the number of controlled axes. This command asks the number of controlled
-
      * axes for the current physical interface.
-
      * @param ax pointer to storage
-
      * @return true/false.
-
      */
-
     virtual bool getAxes(int *ax) {
-
         return getCommand(VOCAB_AXES, *ax);
-
     }
 
-
-
     /** 
-
      * Set position mode. This command
-
      * is required by control boards implementing different
-
      * control methods (e.g. velocity/torque), in some cases
-
      * it can be left empty.
-
      * return true/false on success/failure
-
      */
-
     virtual bool setPositionMode() {
-
         return setCommand(VOCAB_POSITION_MODE);
-
     }
 
-
-
     /** 
-
      * Set new reference point for a single axis.
-
      * @param j joint number
-
      * @param ref specifies the new ref point
-
      * @return true/false on success/failure
-
      */
-
     virtual bool positionMove(int j, double ref) { 
-
         return setDouble(VOCAB_POSITION_MOVE, j, ref);
-
     }
 
-
-
     /** 
-
      * Set new reference point for all axes.
-
      * @param refs array, new reference points
-
      * @return true/false on success/failure
-
      */
-
     virtual bool positionMove(const double *refs) { 
-
         CommandMessage& c = command_buffer.get();
-
 		c.head.clear();
-
         c.head.addVocab(VOCAB_POSITION_MOVES);
 
         c.body.size(nj);
@@ -1106,39 +1028,22 @@ public:
     }
 
 
-
     /** 
-
      * Set relative position. The command is relative to the 
-
      * current position of the axis.
-
      * @param j joint axis number
-
      * @param delta relative command
-
      * @return true/false on success/failure
-
      */
-
     virtual bool relativeMove(int j, double delta) { 
-
         return setDouble(VOCAB_RELATIVE_MOVE, j, delta); 
-
     }
 
-
-
     /** 
-
      * Set relative position, all joints.
-
      * @param deltas pointer to the relative commands
-
      * @return true/false on success/failure
-
      */
-
     virtual bool relativeMove(const double *deltas) { 
 
         return setDoubleArray(VOCAB_RELATIVE_MOVES, deltas); 
