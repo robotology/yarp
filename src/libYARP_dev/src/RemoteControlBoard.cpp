@@ -664,110 +664,57 @@ public:
         return setDouble(VOCAB_LIM, j, limit);
     }
 
-
-
     /** 
-
      * Get the error limit for the controller on all joints.
-
      * @param limits pointer to the vector with the new limits
-
      * @return true/false on success/failure
-
      */
-
     virtual bool setErrorLimits(const double *limits) {
-
         return setDoubleArray(VOCAB_LIMS, limits);
-
     }
-
-
 
     /** 
-
      * Get the current error for a joint.
-
      * @param j joint number
-
      * @param err pointer to the storage for the return value
-
      * @return true/false on success failure
-
      */
-
     virtual bool getError(int j, double *err) {
-
         return getDouble(VOCAB_ERR, j, err);
-
     }
-
-
 
     /** Get the error of all joints.
-
      * @param errs pointer to the vector that will store the errors
-
      */
-
     virtual bool getErrors(double *errs) {
-
         return getDoubleArray(VOCAB_ERRS, errs);
-
     }
 
-
-
     /** 
-
      * Get the output of the controller (e.g. pwm value)
-
      * @param j joint number
-
      * @param out pointer to storage for return value
-
      * @return success/failure
-
      */
-
     virtual bool getOutput(int j, double *out) {
-
         return getDouble(VOCAB_OUTPUT, j, out);
-
     }
 
-
-
     /** 
-
      * Get the output of the controllers (e.g. pwm value)
-
      * @param outs pinter to the vector that will store the output values
-
      * @return true/false on success/failure
-
      */
-
     virtual bool getOutputs(double *outs) {
-
         return getDoubleArray(VOCAB_OUTPUTS, outs);
-
     }
 
-
-
     /** 
-
      * Get current pid value for a specific joint.
-
      * @param j joint number
-
      * @param pid pointer to storage for the return value.
-
      * @return success/failure
-
      */
-
     virtual bool getPid(int j, Pid *pid) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -788,280 +735,143 @@ public:
             return true;
         }
         return false;
-
     }
 
-
-
     /** 
-
      * Get current pid value for all controlled axes.
-
      * @param pids vector that will store the values of the pids.
-
      * @return success/failure
-
      */
-
     virtual bool getPids(Pid *pids) {
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_PIDS);
-
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             int i;
-
             Bottle& l = *(response.get(2).asList());
-
             if (&l == 0)
-
                 return false;
-
             const int njs = l.size();
-
             ACE_ASSERT (njs == nj);
-
             for (i = 0; i < nj; i++)
-
                 {
-
                     Bottle& m = *(l.get(i).asList());
-
                     if (&m == 0)
-
                         return false;
-
                     pids->kp = m.get(0).asDouble();
-
                     pids->kd = m.get(1).asDouble();
-
                     pids->ki = m.get(2).asDouble();
-
                     pids->max_int = m.get(3).asDouble();
-
                     pids->max_output = m.get(4).asDouble();
-
                     pids->offset = m.get(5).asDouble();
-
                     pids->scale = m.get(6).asDouble();
-
                 }
-
             return true;
-
         }
-
         return false;
-
     }
-
-
 
     /** 
-
      * Get the current reference position of the controller for a specific joint.
-
      * @param j is joint number
-
      * @param ref pointer to storage for return value
-
      * @return true/false on success/failure
-
      */
-
     virtual bool getReference(int j, double *ref) {
-
         return getDouble(VOCAB_REF, j, ref);
-
     }
-
-
 
     /** Get the current reference position of all controllers.
-
      * @param refs vector that will store the output.
-
      */
-
     virtual bool getReferences(double *refs) {
-
         return getDoubleArray(VOCAB_REFS, refs);
-
     }
 
-
-
     /** 
-
      * Get the error limit for the controller on a specific joint
-
      * @param j is the joint number
-
      * @param limit pointer to storage
-
      * @return true/false on success/failure
-
      */
-
     virtual bool getErrorLimit(int j, double *limit) {
-
         return getDouble(VOCAB_LIM, j, limit);
-
     }
 
-
-
     /** 
-
      * Get the error limit for all controllers
-
      * @param limits pointer to the array that will store the output
-
      * @return true/false on success/failure
-
      */
-
     virtual bool getErrorLimits(double *limits) {
-
         return getDoubleArray(VOCAB_LIMS, limits);
-
     }
 
-
-
     /** 
-
      * Reset the controller of a given joint, usually sets the 
-
      * current position of the joint as the reference value for the PID, and resets
-
      * the integrator.
-
      * @param j joint number
-
      * @return true on success, false on failure.
-
      */
-
     virtual bool resetPid(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_RESET);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
 
-
-
     /** 
-
      * Disable the pid computation for a joint
-
      * @param j is the joint number
-
      * @return true/false on success/failure
-
      */
-
     virtual bool disablePid(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_DISABLE);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
-
-
 
     /** 
-
      * Enable the pid computation for a joint
-
      * @param j is the joint number
-
      * @return true/false on success/failure
-
      */
-
     virtual bool enablePid(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_ENABLE);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
-
-
 
     /* IEncoder */
 
-
-
     /**
-
      * Reset encoder, single joint. Set the encoder value to zero 
-
      * @param j is the axis number
-
      * @return true/false on success/failure
-
      */
-
     virtual bool resetEncoder(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_E_RESET);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
 
-
-
     /**
-
      * Reset encoders. Set the encoders value to zero 
-
      * @return true/false
-
      */
-
     virtual bool resetEncoders() {
 
         Bottle cmd, response;
