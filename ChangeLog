@@ -1,10 +1,20 @@
+2008-06-05  Lorenzo Natale  <nat@liralab.it>
+	* src/libYARP_dev/src/RemoteControlBoard.cpp
+	* src/libYARP_dev/src/ServerControlBoard.cpp
+	* src/libYARP_dev/include/yarp/dev/ControlBoardHelpers.h:
+	ServerControlBoard and RemoteControlBoard classes are now
+	in separate files. Code is still quite messy, but improving.
+
+	RemoteControlBoard::getEncoders is now non blocking. This prevents
+	clients from getting stuck when server dies.
+	
 2008-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/profiling/port_latency_st.cpp: add single threaded
 	version of Lorenzo's port latency test.
 
 2008-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
-
+	
 	* conf/Doxyfile.part: update list of directories searched 
 	(math library wasn't included).
 
