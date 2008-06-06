@@ -15,6 +15,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Semaphore.h>
 
 #include <ace/Vector_T.h>
 
@@ -386,6 +387,7 @@ private:
 
     ACE_Vector<Storable*> content;
     ACE_Vector<char> data;
+    yarp::os::Semaphore mutex;
     int speciality;
     bool nested;
     bool dirty;

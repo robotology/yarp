@@ -1,3 +1,9 @@
+2008-06-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/BottleImpl.cpp: temporary Bottle-specific
+	fix for bug 1982162 ("connection lost between one output and
+	two inputs)
+
 2008-06-05  Lorenzo Natale  <nat@liralab.it>
 	* src/libYARP_dev/src/RemoteControlBoard.cpp
 	* src/libYARP_dev/src/ServerControlBoard.cpp
@@ -9,6 +15,9 @@
 	clients from getting stuck when server dies.
 	
 2008-05-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/TestFrameGrabber.cpp: added new [grid]
+	mode to see boundaries of image more clearly.
 
 	* example/profiling/port_latency_st.cpp: add single threaded
 	version of Lorenzo's port latency test.

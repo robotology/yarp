@@ -52,8 +52,7 @@ const int StoreList::code = BOTTLE_TAG_LIST;
 
 yarp::StoreNull BottleImpl::storeNull;
 
-
-BottleImpl::BottleImpl() {
+BottleImpl::BottleImpl() : mutex(1) {
     dirty = true;
     nested = false;
     speciality = 0;
@@ -402,6 +401,7 @@ int BottleImpl::byteCount() {
 }
 
 bool BottleImpl::write(ConnectionWriter& writer) {
+    mutex.wait(); // make ::write thread-safe
     // could simplify this if knew lengths of blocks up front
     if (writer.isTextMode()) {
         //writer.appendLine(toString());
@@ -427,6 +427,7 @@ bool BottleImpl::write(ConnectionWriter& writer) {
         //writer.appendBlockCopy(Bytes((char*)getBytes(),byteCount()));
         writer.appendBlock((char*)getBytes(),byteCount());
     }
+    mutex.post();
     return !writer.isError();
 }
 
