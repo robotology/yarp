@@ -1,5 +1,7 @@
 2008-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/yarpdev/yarpdev.cpp: Fix failure on autoconf builds.
+
 	* src/libYARP_OS/src/NameServer.cpp: multithread the name-server
 	so communication delays with one client do not affect others.
 	Of course, operations on the name database remain atomic.

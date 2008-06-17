@@ -20,7 +20,9 @@
 
 #include <yarp/sig/SoundFile.h>
 
+#ifndef YARP_AUTOCONF
 #include "yarphear_drivers.h"
+#endif
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -178,7 +180,9 @@ public:
 };
 
 int main(int argc, char *argv[]) {
+#ifndef YARP_AUTOCONF
     yarp::dev::DriverCollection dev;
+#endif
     yarp::os::Network yarp;
 
     // see if user has supplied audio device

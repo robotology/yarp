@@ -14,10 +14,14 @@
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
 
+#ifndef YARP_AUTOCONF
 #include "yarpdev_drivers.h"
+#endif
 
 int main(int argc, char *argv[]) {
+#ifndef YARP_AUTOCONF
     yarp::dev::DriverCollection dev;
+#endif
 	yarp::os::Network yarp;
     return yarp::dev::Drivers::yarpdev(argc,argv);
 }
