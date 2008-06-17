@@ -1,3 +1,9 @@
+2008-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameServer.cpp: multithread the name-server
+	so communication delays with one client do not affect others.
+	Of course, operations on the name database remain atomic.
+
 2008-06-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/ShmemOutputStream.cpp: fix "sizeof" syntax

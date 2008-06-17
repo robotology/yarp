@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -335,12 +335,14 @@ String NameServer::cmdRoute(int argc, char *argv[]) {
     argc-=2;
     argv+=2;
 
-    char *altArgv[] = { "local", "shmem", "mcast", "udp", "tcp", "text" };
+    const char *altArgv[] = { 
+        "local", "shmem", "mcast", "udp", "tcp", "text" 
+    };
     int altArgc = 6;
 
     if (argc==0) {
         argc = altArgc;
-        argv = altArgv;
+        argv = (char**)altArgv;
     }
 
 
@@ -667,8 +669,12 @@ Bottle NameServer::botify(const Address& address) {
 }
 
 
-String NameServer::terminate(const String& str) {
+static String ns_terminate(const String& str) {
     return str + "*** end of message";
+}
+
+String NameServer::terminate(const String& str) {
+    return ns_terminate(str);
 }
 
 
@@ -715,16 +721,12 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class MainNameServer : public NameServer, public Readable {
+class MainNameServerWorker : public Readable {
 private:
-    Port *port;
+    NameServer *server;
 public:
-    MainNameServer(int basePort, Port *port = NULL) : port(port) {
-        this->basePort = basePort;
-    }
-
-    void setPort(Port& port) {
-        this->port = &port;
+    MainNameServerWorker(NameServer *server) {
+        this->server = server;
     }
 
     virtual bool read(ConnectionReader& reader) {
@@ -756,12 +758,12 @@ public:
                            remote.toString());
                 YARP_DEBUG(Logger::get(),
                            String("name server request is ") + msg);
-                String result = apply(msg,remote);
+                String result = server->apply(msg,remote);
                 ConnectionWriter *os = reader.getWriter();
                 if (os!=NULL) {
                     if (result=="") {
-                        result = terminate(String("unknown command ") + 
-                                           msg + "\n");
+                        result = ns_terminate(String("unknown command ") + 
+                                              msg + "\n");
                     }
                     // This change is just to make Microsoft Telnet happy
                     String tmp;
@@ -798,11 +800,29 @@ public:
         YTRACE("NameServer::read stop");
         return true;
     }
+};
+
+
+class MainNameServer : public NameServer, public PortReaderCreator {
+private:
+    Port *port;
+public:
+    MainNameServer(int basePort, Port *port = NULL) : port(port) {
+        this->basePort = basePort;
+    }
+
+    void setPort(Port& port) {
+        this->port = &port;
+    }
 
     virtual void onEvent(Bottle& event) {
         if (port!=NULL) {
             port->write(event);
         }
+    }
+
+    virtual PortReader *create() {
+        return new MainNameServerWorker(this);
     }
 };
 
@@ -882,7 +902,7 @@ int NameServer::main(int argc, char *argv[]) {
     
     Port server;
     name.setPort(server);
-    server.setReader(name);
+    server.setReaderCreator(name);
     bool ok = server.open(Address(suggest.addRegName(conf.getNamespace())).toContact(),
                           false);
     if (ok) {
