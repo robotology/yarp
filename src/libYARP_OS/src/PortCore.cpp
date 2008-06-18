@@ -940,7 +940,9 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
             if (unit!=NULL) {
                 if (unit->isOutput() && !unit->isFinished()) {
                     YMSG(("------- -- inc\n"));
+                    packetMutex.wait();
                     packet->inc();
+                    packetMutex.post();
                     YMSG(("------- -- presend\n"));
                     void *out = unit->send(writer,reader,
                                            (callback!=NULL)?callback:(&writer),

@@ -15,6 +15,8 @@
 
 #include <ace/Containers_T.h>
 
+#include <stdio.h>
+
 namespace yarp {
     class PortCorePacket;
     class PortCorePackets;
@@ -127,6 +129,34 @@ public:
         }
         PortCorePacket *next = NULL;
         inactive.get(next);
+        if (next==NULL) {
+            fprintf(stderr,"*** YARP problem\n");
+            fprintf(stderr,"*** There has been a failure in PortCorePackets.\n");
+            fprintf(stderr,"*** This is known to occur when using iCubInterface.\n");
+            fprintf(stderr,"*** Please email the following information to paulfitz@liralab.it:\n");
+            fprintf(stderr,"  number of active packets: %d\n", active.size());
+            fprintf(stderr,"  number of inactive packets: %d\n", inactive.size());
+            fprintf(stderr,"  active packets:\n");
+            for (unsigned int i=0; i<active.size(); i++) {
+                PortCorePacket *p = NULL;
+                active.get(p);
+                fprintf(stderr,"    %ld %ld %ld / %d\n", (long int)p,
+                        (long int)(p->getContent()),
+                        (long int)(p->getCallback()),
+                        p->getCount());
+            }
+            fprintf(stderr,"  inactive packets:\n");
+            for (unsigned int i=0; i<inactive.size(); i++) {
+                PortCorePacket *p = NULL;
+                inactive.get(p);
+                fprintf(stderr,"    %ld %ld %ld / %d\n", (long int)p,
+                        (long int)(p->getContent()),
+                        (long int)(p->getCallback()),
+                        p->getCount());
+            }
+            fflush(stderr);
+            YARP_ASSERT(1==0);
+        }
         YARP_ASSERT(next!=NULL);
         inactive.remove(next);
         active.insert_tail(next);
