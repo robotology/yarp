@@ -29,7 +29,6 @@ namespace yarp {
     }
 }
 
-
 template <class T>
 class yarp::dev::DataSource {
 public:
@@ -37,6 +36,11 @@ public:
     virtual bool getDatum(T& datum) = 0;
 };
 
+class IPreciselyTimed {
+public:
+	virtual yarp::os::Stamp getLastInputStamp() = 0;
+	virtual ~IPreciselyTimed(){}
+};
 
 template <class T>
 class yarp::dev::DataWriter : public yarp::os::Runnable {
@@ -45,13 +49,15 @@ private:
     yarp::os::PortWriterBuffer<T> writer;
     DataSource<T>& dater;
     yarp::os::Stamp stamp;
+	IPreciselyTimed *pPrecTime;
     bool canDrop;
     bool addStamp;
 public:
     DataWriter(yarp::os::Port& port, DataSource<T>& dater, 
                bool canDrop=true,
-               bool addStamp=false) : 
-        port(port), dater(dater), canDrop(canDrop), addStamp(addStamp)
+               bool addStamp=false,
+			   IPreciselyTimed *pt=NULL) : 
+        port(port), dater(dater), canDrop(canDrop), addStamp(addStamp), pPrecTime(pt)
     {
         writer.attach(port);
     }
@@ -60,8 +66,15 @@ public:
         T& datum = writer.get();
         dater.getDatum(datum);
         if (addStamp) {
-            stamp.update();
-            port.setEnvelope(stamp);
+			if (pPrecTime)
+			{
+				stamp=pPrecTime->getLastInputStamp();
+			}
+			else
+			{
+				stamp.update();
+			}
+			port.setEnvelope(stamp);
         }
         writer.write(!canDrop);
     }

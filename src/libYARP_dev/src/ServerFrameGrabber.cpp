@@ -25,6 +25,7 @@ ServerFrameGrabber::ServerFrameGrabber() {
     fgSound = NULL;
     fgAv = NULL;
     fgCtrl = NULL;
+	fgTimed = NULL;
     spoke = false;
     canDrop = true;
     addStamp = false;
@@ -88,6 +89,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
             poly.view(fgAv);
         }
         poly.view(fgCtrl);
+		poly.view(fgTimed);
     }
 
     canDrop = !config.check("no_drop","if present, use strict policy for sending data");
@@ -125,7 +127,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         }
     } else if (fgImage!=NULL) {
         printf("Grabber for images\n");
-        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp));
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgSound!=NULL) {
         printf("Grabber for sound\n");
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));

@@ -109,6 +109,7 @@ private:
     IAudioGrabberSound *fgSound;
     IAudioVisualGrabber *fgAv;
     IFrameGrabberControls *fgCtrl;
+	IPreciselyTimed *fgTimed;
     bool spoke; // location of this variable tickles bug on Solaris/gcc3.2
     bool canDrop;
     bool addStamp;
