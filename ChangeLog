@@ -1,3 +1,10 @@
+2008-06-18  Alessandro Scalzo <alessandro@liralab.it>
+	* src/yarp/libYARP_dev/include/yarp/dev/DataSource.h : modified
+	* src/yarp/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h : modified
+	* src/yarp/libYARP_dev/src/ServerFrameGrabber.cpp : modified
+	IPreciselyTimed interface added. Implemented in DragonflyDeviceDriver
+	in order to provide precise acquisition Stamp.
+
 2008-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpdev/yarpdev.cpp: Fix failure on autoconf builds.
