@@ -57,7 +57,7 @@ public:
                bool canDrop=true,
                bool addStamp=false,
 			   IPreciselyTimed *pt=NULL) : 
-        port(port), dater(dater), canDrop(canDrop), addStamp(addStamp), pPrecTime(pt)
+        port(port), dater(dater), pPrecTime(pt), canDrop(canDrop), addStamp(addStamp)
     {
         writer.attach(port);
     }
