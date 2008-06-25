@@ -30,7 +30,7 @@
 
 	* src/libYARP_OS/src/BottleImpl.cpp: temporary Bottle-specific
 	fix for bug 1982162 ("connection lost between one output and
-	two inputs)
+	two inputs")
 
 2008-06-05  Lorenzo Natale  <nat@liralab.it>
 	* src/libYARP_dev/src/RemoteControlBoard.cpp
