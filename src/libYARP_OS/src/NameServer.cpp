@@ -541,7 +541,9 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' || 
                 prefix[prefix.length()-1]=='/') {
-                response.addList() = botify(rec.getAddress());
+                if (rec.getAddress().isValid()) {
+                    response.addList() = botify(rec.getAddress());
+                }
             }
         }
     }
@@ -601,6 +603,7 @@ yarp::os::Bottle NameServer::ncmdGet(int argc, char *argv[]) {
 String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     String response = "";
 
+    /*
     NameConfig nc;
     for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
         NameRecord& rec = (*it).int_id_;
@@ -618,6 +621,9 @@ String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
             }
         }
     }
+    */
+
+    response = "\"yarp name gc is deprecated; use \"yarp clean\" instead.";
 
     return terminate(response);
 }

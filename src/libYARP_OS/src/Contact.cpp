@@ -10,6 +10,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/Address.h>
 #include <yarp/Logger.h>
+#include <yarp/os/Value.h>
 
 using namespace yarp;
 using namespace yarp::os;
@@ -128,3 +129,17 @@ bool Contact::isValid() const {
     Address& addr = HELPER(implementation);
     return addr.getPort()>=0;
 }
+
+
+Contact Contact::byConfig(Searchable& config) {
+    Contact result;
+    Address& addr = HELPER(result.implementation);
+    int port = config.check("port_number",Value(-1)).asInt();
+    String name = config.check("ip",Value("")).asString().c_str();
+    String regName = config.check("name",Value("")).asString().c_str();
+    String carrier = config.check("carrier",Value("tcp")).asString().c_str();
+    addr = Address(name,port,carrier,regName);
+    return result;
+}
+
+

@@ -1,3 +1,17 @@
+2008-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameServer.cpp: deprecate server-side
+	"yarp name gc" in favor of "yarp clean".
+
+	* src/libYARP_OS/src/Companion.cpp: add "yarp clean" command,
+	a client-side replacement for the server-side "yarp name gc"
+	command.  Both commands ping all listed ports and unregister
+	those that are no longer active.
+
+	* src/libYARP_OS/include/yarp/os/Contact.h: add constructor
+	so Contacts can be configured from Property/Bottles.  Makes
+	it easier to interpret port information sent from name server.
+
 2008-06-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCore.cpp: protect against a potential

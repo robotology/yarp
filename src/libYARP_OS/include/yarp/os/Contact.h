@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -10,6 +10,7 @@
 #define _YARP2_CONTACT_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Searchable.h>
 
 namespace yarp {
     namespace os {
@@ -53,6 +54,17 @@ public:
      * @return the new contact
      */
     static Contact byCarrier(const char *carrier);
+
+
+    /**
+     * Constructor.  Returns a contact configured from the information
+     * in config.  
+     * @param config a Property, Bottle, or other Searchable containing the 
+     * contact configuration.  Key names include "name", "ip", "port_number",
+     * "carrier"
+     * @return the new contact
+     */
+    static Contact byConfig(Searchable& config);
 
 
     /**

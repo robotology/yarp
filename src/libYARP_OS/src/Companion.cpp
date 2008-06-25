@@ -117,6 +117,8 @@ Companion::Companion() {
         "start and stop processes (experimental)");
     add("namespace",  &Companion::cmdNamespace,
         "set or query the name of the yarp name server (default is /root)");
+    add("clean",  &Companion::cmdClean,
+        "try to remove inactive entries from the name server");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -770,6 +772,47 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
     return 0;
 }
 
+
+int Companion::cmdClean(int argc, char *argv[]) {
+    NameClient& nic = NameClient::getNameClient();
+    NameConfig nc;
+    String name = nc.getNamespace();
+    Bottle msg, reply;
+    msg.addString("bot");
+    msg.addString("list");
+    printf("Requesting list of ports from name server\n");
+    Network::write(name.c_str(),
+                   msg,
+                   reply);
+    int ct = reply.size()-1;
+    printf("Got %d port%s\n", ct, (ct!=1)?"s":"");
+    for (int i=1; i<reply.size(); i++) {
+        Bottle *entry = reply.get(i).asList();
+        if (entry!=NULL) {
+            ConstString port = entry->check("name",Value("")).asString();
+            if (port!="" && port!="fallback" && port!=name.c_str()) {
+                printf("Pinging port %s...\n", port.c_str());
+                Contact c = Contact::byConfig(*entry);
+                Address addr = Address::fromContact(c);
+                if (addr.isValid()) {
+                    OutputProtocol *out = Carriers::connect(addr);
+                    if (out==NULL) {
+                        printf("No response, removing port %s\n", port.c_str());
+                        nic.unregisterName(port.c_str());
+                    } else {
+                        delete out;
+                    }
+                }
+            } else {
+                if (port!="") {
+                    printf("Ignoring %s\n", port.c_str());
+                }
+            }
+        }
+    }
+
+    return 0;
+}
 
 
 
