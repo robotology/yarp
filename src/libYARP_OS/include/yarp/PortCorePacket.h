@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -130,10 +130,11 @@ public:
         PortCorePacket *next = NULL;
         inactive.get(next);
         if (next==NULL) {
-            fprintf(stderr,"*** YARP problem\n");
-            fprintf(stderr,"*** There has been a failure in PortCorePackets.\n");
-            fprintf(stderr,"*** This is known to occur when using iCubInterface.\n");
-            fprintf(stderr,"*** Please email the following information to paulfitz@liralab.it:\n");
+            fprintf(stderr,"*** Internal YARP failure.\n");
+            fprintf(stderr,"*** There has been a failure in \"PortCorePackets\".\n");
+            fprintf(stderr,"*** This occurred occasionally in the past due to a bug.\n");
+            fprintf(stderr,"*** That bug was believed to be fixed, but it looks like we were wrong.\n");
+            fprintf(stderr,"*** Please email the following information to paulfitz@alum.mit.edu:\n");
             fprintf(stderr,"  number of active packets: %d\n", active.size());
             fprintf(stderr,"  number of inactive packets: %d\n", inactive.size());
             fprintf(stderr,"  active packets:\n");
