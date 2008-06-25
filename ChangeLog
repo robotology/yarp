@@ -1,5 +1,10 @@
 2008-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YARPConfig.cmake.in: debug-mode device dependencies weren't
+	being propagated in MSVC with CMake 2.6
+
+	* CMakeLists.txt: add some policy flags to make CMake 2.6 happy.
+
 	* src/libYARP_OS/src/NameServer.cpp: deprecate server-side
 	"yarp name gc" in favor of "yarp clean".
 
