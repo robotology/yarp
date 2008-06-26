@@ -1,3 +1,8 @@
+2008-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/Image.cpp: make default IPL type for unknown 
+	16-bit types be unsigned - more likely.
+
 2008-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YARPConfig.cmake.in: debug-mode device dependencies weren't

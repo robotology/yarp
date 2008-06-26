@@ -497,7 +497,7 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             pImage = iplCreateImageHeader(
                                           1,
                                           0,
-                                          IPL_DEPTH_16S,
+                                          IPL_DEPTH_16U,
                                           "GRAY",
                                           "GRAY",
                                           IPL_DATA_ORDER_PIXEL,
