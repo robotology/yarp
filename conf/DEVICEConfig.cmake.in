@@ -36,11 +36,15 @@ IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
   IF (MSVC)
     LINK_DIRECTORIES("@YARP_DEV_LIB_DIR@/Debug")
     LINK_DIRECTORIES("@YARP_DEV_LIB_DIR@/Release")
-    # support standard debug library extension
-    IF (@YARPY_DEV_LIB_NAME@_LIB_DEPENDS)
-      SET (@YARPY_DEV_LIB_NAME@d_LIB_DEPENDS "${@YARPY_DEV_LIB_NAME@_LIB_DEPENDS}")
-    ENDIF (@YARPY_DEV_LIB_NAME@_LIB_DEPENDS)
   ENDIF (MSVC)
+
+  # support standard debug library extension for device library
+  IF (MSVC)
+    SET(CMAKE_DEBUG_POSTFIX "d")
+  ENDIF (MSVC)
+  IF (@YARPY_DEV_LIB_NAME@_LIB_DEPENDS)
+    SET (@YARPY_DEV_LIB_NAME@d_LIB_DEPENDS "${@YARPY_DEV_LIB_NAME@_LIB_DEPENDS}")
+  ENDIF (@YARPY_DEV_LIB_NAME@_LIB_DEPENDS)
 
   # Maintain a list of all device libraries in use, so that we can
   # initialize them all.

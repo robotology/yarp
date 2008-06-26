@@ -6,6 +6,11 @@
 
 MACRO(BEGIN_DEVICE_LIBRARY devname)
 
+  # this is desired behavior for YARP device library bundles
+  IF (MSVC)
+    SET(CMAKE_DEBUG_POSTFIX "d")
+  ENDIF (MSVC)
+
   INCLUDE(YarpLibraryNames)
 
   # reset dependency tracker
