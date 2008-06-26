@@ -1,5 +1,8 @@
 2008-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/DEVICEConfig.cmake.in: deal better with debug-mode library 
+	dependencies for module libraries.
+
 	* src/libYARP_sig/src/Image.cpp: make default IPL type for unknown 
 	16-bit types be unsigned - more likely.
 
