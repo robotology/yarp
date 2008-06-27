@@ -42,15 +42,29 @@ public:
     void checkInt() {
         report(0,"checking integer representation");
         union {
-            int i;
-            unsigned char c[sizeof(int)];
+            YARP_INT32 i;
+            unsigned char c[sizeof(YARP_INT32)];
         } val;
 		NetInt32 i = 258;
-        memcpy((char*)(&val.i),(char*)&i,sizeof(int));
+        checkEqual(sizeof(YARP_INT32),4,"integer size is ok");
+        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT32));
         checkEqual(val.c[0],2,"first byte ok");
         checkEqual(val.c[1],1,"second byte ok");
         checkEqual(val.c[2],0,"third byte ok");
         checkEqual(val.c[3],0,"fourth byte ok");
+    }
+    
+    void checkInt16() {
+        report(0,"checking 16-bit integer representation");
+        union {
+            YARP_INT16 i;
+            unsigned char c[sizeof(YARP_INT16)];
+        } val;
+		NetInt16 i = 258;
+        checkEqual(sizeof(YARP_INT16),2,"integer size is ok");
+        memcpy((char*)(&val.i),(char*)&i,sizeof(YARP_INT16));
+        checkEqual(val.c[0],2,"first byte ok");
+        checkEqual(val.c[1],1,"second byte ok");
     }
     
     void checkFloat() {
@@ -71,6 +85,7 @@ public:
     virtual void runTests() {
         checkCrc();
         checkInt();
+        checkInt16();
         checkFloat();
     }
 };

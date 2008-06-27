@@ -1,3 +1,28 @@
+2008-06-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/NetTypeTest.cpp: add regression
+	test for NetInt16.
+
+	* src/libYARP_sig/src/ImageCopy.cpp: set up mapping from
+	PixelMono16 to all other pixel types, for efficient image
+	copies.
+
+	* src/libYARP_sig/src/Image.cpp: apply patch from
+	Stefan Freyr Stefansson for PixelMono16 type
+
+	* src/libYARP_sig/include/yarp/sig/Image.h: apply patch from
+	Stefan Freyr Stefansson for PixelMono16 type, replacing uint_16
+	type with NetUint16.
+
+	* src/libYARP_OS/include/yarp/os/NetInt32.h: add implementations
+	of little-endian 16-bit signed integers, and 16/32-bit unsigned
+	integers, for use on big-endian systems as NetInt16, NetUint16, and
+	NetUint32 respectively.  On little-endian systems these map
+	to native types instead.
+
+	* conf/YarpReqLib.cmake: get CMake to check for size of 16-bit 
+	integers (needed for portable PixelMono16 type for images).
+
 2008-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/DEVICEConfig.cmake.in: deal better with debug-mode library 

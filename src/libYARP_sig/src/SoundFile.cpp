@@ -30,7 +30,6 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
-typedef short NetInt16; // need to add this to yarp, do right thing everywhere
 typedef NetInt32 FOURCC;
 
 typedef struct CHUNKHDR {

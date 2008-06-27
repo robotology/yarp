@@ -298,6 +298,24 @@ void ImageStorage::_set_ipl_header(int x, int y, int pixel_type, int quantum,
             DBGPF1 ACE_OS::printf("Set init h to %d\n", (long int) pImage->height);
             break;
 
+        case VOCAB_PIXEL_MONO16:
+            pImage = iplCreateImageHeader(
+                                          1,
+                                          0,
+                                          IPL_DEPTH_16U,     
+                                          "GRAY",
+                                          "GRAY",
+                                          IPL_DATA_ORDER_PIXEL,  
+                                          origin,     
+                                          quantum,    
+                                          x,
+                                          y,
+                                          NULL,
+                                          NULL,
+                                          NULL,
+                                          NULL);
+            break;
+            
         case VOCAB_PIXEL_RGB:
             pImage = iplCreateImageHeader(
                                           3,

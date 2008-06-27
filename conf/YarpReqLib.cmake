@@ -51,14 +51,15 @@ ENDIF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
     INCLUDE(CheckTypeSize)
 
+    SET(YARP_INT16)
     SET(YARP_INT32)
     SET(YARP_FLOAT64)
 
     CHECK_TYPE_SIZE("int" SIZEOF_INT)
+    CHECK_TYPE_SIZE("short" SIZEOF_SHORT)
     IF(SIZEOF_INT EQUAL 4)
         SET(YARP_INT32 "int")
     ELSE(SIZEOF_INT EQUAL 4)
-        CHECK_TYPE_SIZE("short" SIZEOF_SHORT)
         IF(SIZEOF_SHORT EQUAL 4)
             SET(YARP_INT32 "short")
         ELSE(SIZEOF_SHORT EQUAL 4)
@@ -69,9 +70,21 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
         ENDIF(SIZEOF_SHORT EQUAL 4)
     ENDIF(SIZEOF_INT EQUAL 4)
 
+    IF(SIZEOF_SHORT EQUAL 2)
+        SET(YARP_INT16 "short")
+    ELSE(SIZEOF_SHORT EQUAL 2)
+        # well, we are in trouble - there's no other native type to get 16 bits
+	MESSAGE(STATUS "Warning: cannot find a 16 bit type on your system")
+	MESSAGE(STATUS "Continuing...")
+    ENDIF(SIZEOF_SHORT EQUAL 2)
+
     IF(YARP_INT32)
         SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_INT32=${YARP_INT32})
     ENDIF(YARP_INT32)
+
+    IF(YARP_INT16)
+        SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_INT16=${YARP_INT16})
+    ENDIF(YARP_INT16)
 
     CHECK_TYPE_SIZE("double" SIZEOF_DOUBLE)
     IF(SIZEOF_DOUBLE EQUAL 8)

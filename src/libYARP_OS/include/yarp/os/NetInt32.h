@@ -37,13 +37,13 @@
 
 namespace yarp {
     namespace os {
-        /**
-         * Definition of the NetInt32 type
-         */
 
 #ifdef YARP_LITTLE_ENDIAN
 
         typedef YARP_INT32 NetInt32;
+        typedef YARP_INT16 NetInt16;
+        typedef unsigned YARP_INT32 NetUint32;
+        typedef unsigned YARP_INT16 NetUint16;
 
 #else
 
@@ -99,6 +99,170 @@ namespace yarp {
                 set(get()-1);
             };
         };
+
+
+        class NetUint32 {
+        private:
+            unsigned YARP_INT32 raw_value;
+            unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const {
+                return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
+            }
+            unsigned YARP_INT32 get() const {
+                return (unsigned YARP_INT32)swap(raw_value);
+            }
+            void set(unsigned YARP_INT32 v) {
+                raw_value = (unsigned YARP_INT32)swap((unsigned YARP_INT32)v);
+            }
+        public:
+            NetUint32() {
+            }
+            NetUint32(unsigned YARP_INT32 val) {
+                set(val);
+            }
+            operator unsigned YARP_INT32() const {
+                return get();
+            }
+            unsigned YARP_INT32 operator+(unsigned YARP_INT32 v) const {
+                return get()+v;
+            }
+            unsigned YARP_INT32 operator-(unsigned YARP_INT32 v) const {
+                return get()-v;
+            }
+            unsigned YARP_INT32 operator*(unsigned YARP_INT32 v) const {
+                return get()*v;
+            }
+            unsigned YARP_INT32 operator/(unsigned YARP_INT32 v) const {
+                return get()/v;
+            }
+            void operator+=(unsigned YARP_INT32 v) {
+                set(get()+v);
+            }
+            void operator-=(unsigned YARP_INT32 v) {
+                set(get()-v);
+            }
+            void operator*=(unsigned YARP_INT32 v) {
+                set(get()*v);
+            }
+            void operator/=(unsigned YARP_INT32 v) {
+                set(get()/v);
+            }
+            void operator++(int) { 
+                set(get()+1);
+            };
+            void operator--(int) { 
+                set(get()-1);
+            };
+        };
+
+
+        class NetInt16 {
+        private:
+            unsigned YARP_INT16 raw_value;
+            unsigned YARP_INT16 swap(unsigned YARP_INT16 x) const {
+                return (x>>8) | ((x<<8) & 0xff00);
+            }
+            YARP_INT16 get() const {
+                return (YARP_INT16)swap(raw_value);
+            }
+            void set(YARP_INT16 v) {
+                raw_value = (YARP_INT16)swap((unsigned YARP_INT16)v);
+            }
+        public:
+            NetInt16() {
+            }
+            NetInt16(YARP_INT16 val) {
+                set(val);
+            }
+            operator YARP_INT16() const {
+                return get();
+            }
+            YARP_INT16 operator+(YARP_INT16 v) const {
+                return get()+v;
+            }
+            YARP_INT16 operator-(YARP_INT16 v) const {
+                return get()-v;
+            }
+            YARP_INT16 operator*(YARP_INT16 v) const {
+                return get()*v;
+            }
+            YARP_INT16 operator/(YARP_INT16 v) const {
+                return get()/v;
+            }
+            void operator+=(YARP_INT16 v) {
+                set(get()+v);
+            }
+            void operator-=(YARP_INT16 v) {
+                set(get()-v);
+            }
+            void operator*=(YARP_INT16 v) {
+                set(get()*v);
+            }
+            void operator/=(YARP_INT16 v) {
+                set(get()/v);
+            }
+            void operator++(int) { 
+                set(get()+1);
+            };
+            void operator--(int) { 
+                set(get()-1);
+            };
+        };
+
+
+        class NetUint16 {
+        private:
+            unsigned YARP_INT16 raw_value;
+            unsigned YARP_INT16 swap(unsigned YARP_INT16 x) const {
+                return (x>>8) | ((x<<8) & 0xff00);
+            }
+            unsigned YARP_INT16 get() const {
+                return (unsigned YARP_INT16)swap(raw_value);
+            }
+            void set(unsigned YARP_INT16 v) {
+                raw_value = (unsigned YARP_INT16)swap((unsigned YARP_INT16)v);
+            }
+        public:
+            NetUint16() {
+            }
+            NetUint16(unsigned YARP_INT16 val) {
+                set(val);
+            }
+            operator unsigned YARP_INT16() const {
+                return get();
+            }
+            unsigned YARP_INT16 operator+(unsigned YARP_INT16 v) const {
+                return get()+v;
+            }
+            unsigned YARP_INT16 operator-(unsigned YARP_INT16 v) const {
+                return get()-v;
+            }
+            unsigned YARP_INT16 operator*(unsigned YARP_INT16 v) const {
+                return get()*v;
+            }
+            unsigned YARP_INT16 operator/(unsigned YARP_INT16 v) const {
+                return get()/v;
+            }
+            void operator+=(unsigned YARP_INT16 v) {
+                set(get()+v);
+            }
+            void operator-=(unsigned YARP_INT16 v) {
+                set(get()-v);
+            }
+            void operator*=(unsigned YARP_INT16 v) {
+                set(get()*v);
+            }
+            void operator/=(unsigned YARP_INT16 v) {
+                set(get()/v);
+            }
+            void operator++(int) { 
+                set(get()+1);
+            };
+            void operator--(int) { 
+                set(get()-1);
+            };
+        };
+
+
 
 #endif
 
@@ -234,85 +398,41 @@ namespace yarp {
 
 #ifdef YARP2_LINUX
         typedef int NetInt32;
+        typedef short NetInt16;
+        typedef unsigned int NetUint32;
+        typedef unsigned short NetUint16;
         //typedef int32_t NetInt32;
 #else
 #  ifdef YARP2_WINDOWS
 #    ifdef __MINGW_H
         typedef int NetInt32;
+        typedef short NetInt16;
+        typedef unsigned int NetUint32;
+        typedef unsigned short NetUint16;
 #    else 
         typedef __int32 NetInt32;
+        typedef __int16 NetInt16;
+        typedef unsigned __int32 NetUint32;
+        typedef unsigned __int16 NetUint16;
 #    endif
 #else
 #  ifdef YARP2_CYGWIN
         typedef int NetInt32;
+        typedef short NetInt16;
+        typedef unsigned int NetUint32;
+        typedef unsigned short NetUint16;
 #  else
 #    ifdef YARP2_OSX
 
-
-        // in general, this has to come before any reference to sys/types.h
-#include <yarp/String.h>
-#include <ace/config.h>
-
-        /* OSX begins*/
 #ifndef YARP_LITTLE_ENDIAN
-#include <sys/types.h>
-        typedef int32_t RawNetInt32;
-        class NetInt32 {
-        private:
-            int32_t raw_value;
-            int32_t swap(uint32_t x) const {
-                return (x>>24) | ((x>>8) & 0xff00) | ((x<<8) & 0xff0000) | (x<<24);
-            }
-            RawNetInt32 get() const {
-                return (int32_t)swap((uint32_t)raw_value);
-            }
-            void set(RawNetInt32 v) {
-                raw_value = (int32_t)swap((uint32_t)v);
-            }
-        public:
-            NetInt32() {
-            }
-            NetInt32(RawNetInt32 val) {
-                set(val);
-            }
-            operator RawNetInt32() const {
-                return get();
-            }
-            RawNetInt32 operator+(RawNetInt32 v) const {
-                return get()+v;
-            }
-            RawNetInt32 operator-(RawNetInt32 v) const {
-                return get()-v;
-            }
-            RawNetInt32 operator*(RawNetInt32 v) const {
-                return get()*v;
-            }
-            RawNetInt32 operator/(RawNetInt32 v) const {
-                return get()/v;
-            }
-            void operator+=(RawNetInt32 v) {
-                set(get()+v);
-            }
-            void operator-=(RawNetInt32 v) {
-                set(get()-v);
-            }
-            void operator*=(RawNetInt32 v) {
-                set(get()*v);
-            }
-            void operator/=(RawNetInt32 v) {
-                set(get()/v);
-            }
-            void operator++(int) { 
-                set(get()+1);
-            };
-            void operator--(int) { 
-                set(get()-1);
-            };
-        };
+#error "OSX PPC compiles only supported with CMake"
 #else
         // not really guaranteed to have this
 #include <sys/types.h>
         typedef int32_t NetInt32;
+        typedef uint32_t NetUint32;
+        typedef int16_t NetInt16;
+        typedef uint16_t NetUint16;
 #endif
         /* OSX ends*/
 
@@ -328,9 +448,12 @@ namespace yarp {
 #    if !(WORDS_BIGENDIAN)
 #if SIZEOF_INT == 4
         typedef int NetInt32;
+        typedef short NetInt16;
+        typedef unsigned int NetUint32;
+        typedef unsigned short NetUint16;
 #else
 #if SIZEOF_SHORT == 4
-        typedef short NetInt32;
+#      error "could not choose NetInt32 type; see yarp/os/NetInt32.h"
 #else
 #      error "could not choose NetInt32 type; see yarp/os/NetInt32.h"
 #endif

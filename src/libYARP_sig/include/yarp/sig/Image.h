@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick, Giorgio Metta
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick, Giorgio Metta
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -329,6 +329,7 @@ enum YarpVocabPixelTypesEnum
     {	 
         VOCAB_PIXEL_INVALID = 0,
         VOCAB_PIXEL_MONO = VOCAB4('m','o','n','o'),
+        VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
         VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
         VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
         VOCAB_PIXEL_BGRA = VOCAB4('b','g','r','a'),
@@ -355,6 +356,11 @@ namespace yarp {
          * Monochrome pixel type.
          */
         typedef unsigned char PixelMono;
+
+        /**
+         * 16-bit monochrome pixel type.
+         */
+        typedef yarp::os::NetUint16 PixelMono16;
 
         /**
          * 32-bit integer pixel type.
@@ -469,10 +475,10 @@ namespace yarp {
  * Typed image class.
  *
  * This is a wrapper over YARPGenericImage providing type security for
- * pixel access.  "T" can be any of sig::PixelMono, sig::PixelRgb, 
- * sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned, sig::PixelRgbSigned, 
- * sig::PixelFloat, sig::PixelRgbFloat, sig::PixelHsvFloat, 
- * sig::PixelInt.
+ * pixel access.  "T" can be any of sig::PixelMono, sig::PixelMono16, 
+ * sig::PixelRgb, sig::PixelHsv, sig::PixelBgr, sig::PixelMonoSigned, 
+ * sig::PixelRgbSigned, sig::PixelFloat, sig::PixelRgbFloat, 
+ * sig::PixelHsvFloat, sig::PixelInt.
  * If ImageOf::copy is called for two such images, a reasonable casting
  * operation will occur if the pixel types are different.
  *
@@ -557,6 +563,7 @@ public: \
 
 
         __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO,PixelMono)
+            __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_MONO16,PixelMono16)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGB,PixelRgb)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_RGBA,PixelRgba)
             __YARPIMAGE_ASSOCIATE_TAG(VOCAB_PIXEL_HSV,PixelHsv)
