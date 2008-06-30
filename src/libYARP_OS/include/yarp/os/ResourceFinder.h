@@ -30,7 +30,7 @@ public:
 
     /**
      *
-     * Request that information be printed to standard output on how
+     * Request that information be printed to the console on how
      * resources are being found.  This is especially useful to
      * understand why resources are *not* found or the wrong resource
      * is picked up.

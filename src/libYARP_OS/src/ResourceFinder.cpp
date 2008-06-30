@@ -18,6 +18,7 @@
 using namespace yarp::os;
 using namespace yarp;
 
+#define RTARGET stderr
 
 class ResourceFinderHelper {
 private:
@@ -47,12 +48,24 @@ public:
 
     bool configureFromPolicy(const char *policyName) {
         this->policyName = policyName;
+        if (verbose) {
+            fprintf(RTARGET,"||| policy set to %s\n", policyName);
+        }
+        String rootVar = String(policyName)+"ROOT";
         const char *result = 
-            ACE_OS::getenv((String(policyName)+"ROOT").c_str());
+            ACE_OS::getenv(rootVar).c_str());
         if (result==NULL) {
             root = "";
+            if (verbose) {
+                fprintf(RTARGET,"||| environment variable %s not set\n", 
+                        rootVar.c_str());
+            }
         } else {
             root = result;
+            if (verbose) {
+                fprintf(RTARGET,"||| %s: %s\n", 
+                        rootVar.c_str(),root.c_str());
+            }
         }
         return true;
     }
