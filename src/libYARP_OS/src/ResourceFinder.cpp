@@ -35,17 +35,12 @@ public:
         apps.addString(appName);
         return true;
     }
-
+    
     bool clearAppNames() {
         apps.clear();
         return true;
     }
-
-    yarp::os::ConstString findFile(const char *name) {
-        printf("Resource Finder not useful yet, hang on\n");
-        return "";
-    }
-
+    
     bool configureFromPolicy(const char *policyName) {
         this->policyName = policyName;
         if (verbose) {
@@ -53,7 +48,7 @@ public:
         }
         String rootVar = String(policyName)+"ROOT";
         const char *result = 
-            ACE_OS::getenv(rootVar).c_str());
+            ACE_OS::getenv(rootVar.c_str());
         if (result==NULL) {
             root = "";
             if (verbose) {
@@ -71,8 +66,13 @@ public:
     }
 
     bool configureFromCommandLine(int argc, char *argv[]) {
-        printf("Resource Finder does not yet accept command line overrides\n");
+        fprintf(RTARGET,"||| warning: not yet using command line overrides\n");
         return true;
+    }
+
+    yarp::os::ConstString findFile(const char *name) {
+        printf("Resource Finder not useful yet, hang on\n");
+        return "";
     }
 
     bool setVerbose(bool verbose) {
@@ -80,6 +80,11 @@ public:
         return this->verbose;
     }
 
+    bool exists(const char *fname) {
+        ACE_stat s;
+        int result = ACE_OS::stat(fname,&s);
+        return (result==0);
+	}
 };
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
