@@ -71,7 +71,10 @@ public:
     }
 
     yarp::os::ConstString findFile(const char *name) {
-        printf("Resource Finder not useful yet, hang on\n");
+        fprintf(RTARGET "||| findFile not really implemented yet...\n");
+        if (exists(name)) {
+            return name;
+        }
         return "";
     }
 
