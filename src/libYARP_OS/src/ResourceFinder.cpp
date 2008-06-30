@@ -71,7 +71,7 @@ public:
     }
 
     yarp::os::ConstString findFile(const char *name) {
-        fprintf(RTARGET "||| findFile not really implemented yet...\n");
+        fprintf(RTARGET, "||| findFile not really implemented yet...\n");
         if (exists(name)) {
             return name;
         }
