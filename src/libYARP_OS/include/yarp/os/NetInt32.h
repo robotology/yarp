@@ -35,6 +35,12 @@
 
 #ifdef YARP_INT32
 
+// to smooth upgrades, when YARP_INT16 hasn't made it into
+// cmake cache for YARP - remove after a month or so from June 2008
+#ifndef YARP_INT16
+#define YARP_INT16 short
+#endif
+
 namespace yarp {
     namespace os {
 
