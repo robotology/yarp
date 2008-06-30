@@ -11,8 +11,12 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/Logger.h>
+#include <yarp/String.h>
+
+#include <ace/OS.h>
 
 using namespace yarp::os;
+using namespace yarp;
 
 
 class ResourceFinderHelper {
@@ -20,7 +24,11 @@ private:
     yarp::os::Bottle apps;
     yarp::os::ConstString root;
     yarp::os::ConstString policyName;
+    bool verbose;
 public:
+    ResourceFinderHelper() {
+        verbose = false;
+    }
 
     bool addAppName(const char *appName) {
         apps.addString(appName);
@@ -39,12 +47,24 @@ public:
 
     bool configureFromPolicy(const char *policyName) {
         this->policyName = policyName;
+        const char *result = 
+            ACE_OS::getenv((String(policyName)+"ROOT").c_str());
+        if (result==NULL) {
+            root = "";
+        } else {
+            root = result;
+        }
         return true;
     }
 
     bool configureFromCommandLine(int argc, char *argv[]) {
         printf("Resource Finder does not yet accept command line overrides\n");
         return true;
+    }
+
+    bool setVerbose(bool verbose) {
+        this->verbose = verbose;
+        return this->verbose;
     }
 
 };
@@ -85,3 +105,6 @@ yarp::os::ConstString ResourceFinder::findFile(const char *name) {
 }
 
 
+bool ResourceFinder::setVerbose(bool verbose) {
+    return HELPER(implementation).setVerbose(verbose);
+}

@@ -40,10 +40,7 @@ public:
      * @return true iff information will be printed
      *
      */
-    bool setVerbose(bool verbose = true) {
-        this->verbose = verbose;
-        return this->verbose;
-    }
+    bool setVerbose(bool verbose = true);
 
     /**
      *
@@ -98,7 +95,6 @@ public:
     yarp::os::ConstString findFile(const char *name);
 
 private:
-    bool verbose;
     void *implementation;
 };
 
