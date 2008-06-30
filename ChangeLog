@@ -1,5 +1,12 @@
 2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Terminator.cpp: Terminators are strange
+	entities.  They tell the name server that they are ports, but
+	don't obey any port protocols. they accept the string "quit", and
+	that is all.  I've now changed them to also accept "CONNECT
+	foo\nd\nquit\n" in preparation for replacing them with real ports
+	in a later version of YARP.
+
 	* src/libYARP_OS/src/ResourceFinder.cpp: basic implementation
 	of policy for finding configuration files.
 

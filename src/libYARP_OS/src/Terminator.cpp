@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta
+ * Copyright (C) 2006, 2008 Giorgio Metta, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -48,7 +48,7 @@ bool Terminator::terminateByName(const char *name) {
     //ACE_OS::printf("address: %s port %d\n",a.getName().c_str(),a.getPort());
     SocketTwoWayStream sock;
     sock.open(a);
-    sock.write(Bytes("quit",4));
+    sock.write(Bytes((char *)"quit",4));
     sock.close();
     return true;
 }
@@ -129,6 +129,34 @@ void Terminee::run() {
             quit = true;
             helper.sock.interrupt();
             helper.acceptor.close();
+        } else {
+            if (helper.data[0] == 'C' &&
+                helper.data[1] == 'O' &&
+                helper.data[2] == 'N' &&
+                helper.data[3] == 'N') {
+                // this is a standard YARP text mode connection
+
+                // read introductory line
+                helper.data[0] = 'x';
+                while (helper.data[0]!='\n') {
+                    helper.sock.read(Bytes(helper.data,1));
+                }
+                // read data tag line
+                helper.data[0] = 'x';
+                while (helper.data[0]!='\n') {
+                    helper.sock.read(Bytes(helper.data,1));
+                }
+                // read actual data
+                helper.sock.read(Bytes(helper.data,4));
+                if (helper.data[0] == 'q' &&
+                    helper.data[1] == 'u' &&
+                    helper.data[2] == 'i' &&
+                    helper.data[3] == 't') {
+                    quit = true;
+                    helper.sock.interrupt();
+                    helper.acceptor.close();
+                }
+            }
         }
     }
 }
