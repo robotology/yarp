@@ -1,5 +1,10 @@
 2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/ResourceFinder.cpp: stub implementation.
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: stub for 
+	tool for helping find configuration files.
+
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h: 
 	adding missing copyright/license statement.
 
