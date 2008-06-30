@@ -1,3 +1,8 @@
+2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h: 
+	adding missing copyright/license statement.
+
 2008-06-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/NetTypeTest.cpp: add regression
