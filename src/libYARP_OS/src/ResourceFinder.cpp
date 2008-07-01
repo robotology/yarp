@@ -10,6 +10,7 @@
 
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Property.h>
 #include <yarp/Logger.h>
 #include <yarp/String.h>
 
@@ -25,6 +26,7 @@ private:
     yarp::os::Bottle apps;
     yarp::os::ConstString root;
     yarp::os::ConstString policyName;
+    yarp::os::Property config;
     bool verbose;
 public:
     ResourceFinderHelper() {
@@ -46,22 +48,38 @@ public:
         if (verbose) {
             fprintf(RTARGET,"||| policy set to %s\n", policyName);
         }
-        String rootVar = String(policyName)+"ROOT";
+        String rootVar = policyName;
         const char *result = 
             ACE_OS::getenv(rootVar.c_str());
         if (result==NULL) {
             root = "";
-            if (verbose) {
-                fprintf(RTARGET,"||| environment variable %s not set\n", 
-                        rootVar.c_str());
-            }
-        } else {
-            root = result;
-            if (verbose) {
-                fprintf(RTARGET,"||| %s: %s\n", 
-                        rootVar.c_str(),root.c_str());
-            }
+            fprintf(RTARGET,"||| environment variable %s not set\n", 
+                    rootVar.c_str());
+            return false;
         }
+        root = result;
+        if (verbose) {
+            fprintf(RTARGET,"||| %s: %s\n", 
+                    rootVar.c_str(),root.c_str());
+        }
+        String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
+        if (verbose) {
+            fprintf(RTARGET,"||| loading policy from %s\n", 
+                    rootConfig.c_str());
+        }
+        bool ok = config.fromConfigFile(rootConfig.c_str());
+        if (!ok) {
+            fprintf(RTARGET,"||| failed to load policy from %s\n", 
+                    rootConfig.c_str());
+            return false;
+        }
+
+        // currently only support "capability" style configuration
+        if (config.check("style",Value("")).asString()!="capability") {
+            fprintf(RTARGET,"||| policy \"style\" can currently only be \"capability\"\n");
+            return false;
+        }
+
         return true;
     }
 
@@ -107,17 +125,22 @@ public:
 
     yarp::os::ConstString findFile(const char *name) {
 
+        ConstString cap = 
+            config.check("capability_directory",Value("app")).asString();
+        ConstString defCap = 
+            config.check("default_capability",Value("default")).asString();
+
         // check current directory
         ConstString str = check("","","",name);
         if (str!="") return str;
 
         // check ROOT/app/default/
-        str = check(root.c_str(),"app","default",name);
+        str = check(root.c_str(),cap,defCap,name);
         if (str!="") return str;
 
         // check app dirs
         for (int i=0; i<apps.size(); i++) {
-            str = check(root.c_str(),"app",apps.get(i).asString().c_str(),
+            str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
                         name);
             if (str!="") return str;
         }
@@ -161,11 +184,11 @@ bool ResourceFinder::configureFromCommandLine(int argc, char *argv[]) {
     return HELPER(implementation).configureFromCommandLine(argc,argv);
 }
 
-bool ResourceFinder::addAppName(const char *appName) {
+bool ResourceFinder::addContext(const char *appName) {
     return HELPER(implementation).addAppName(appName);
 }
 
-bool ResourceFinder::clearAppNames() {
+bool ResourceFinder::clearContext() {
     return HELPER(implementation).clearAppNames();
 }
 

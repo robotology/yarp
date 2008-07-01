@@ -48,17 +48,22 @@ public:
      * variables that are checked, the directories that are searched,
      * and the order of search.
      *
-     * The policy name <P> you supply is currently used as follows:
-     *  - The environment variable <P>_POLICY is checked.  In the
-     *    future, if present this variable will let policy be 
-     *    defined in detail.  For now, it does nothing, and the
-     *    default YARP policy is used, which continues as follows.
-     *  - The environment variable <P>_ROOT is checked.  If present,
-     *    the directory it points to is stored, with <P>_ROOT/app/default
-     *    being added to the search path.
-     *  - Any directory <D> specified by addAppName are added to the 
-     *    search path as <P>_ROOT/app/<D>
-     *  - The current directory is added to the search path.
+     * For a policy <P>, YARP looks for an environment variable of 
+     * that name.  If found, it tries to load the file <P>/<P>.ini
+     * and use this to configure the search policy.
+     *
+     * An example ini file:
+     *
+     * \verbatim
+     * style capability
+     * capability_directory app
+     * default_capability default
+     * \endverbatim
+     *
+     * This would make the default search path include <P>/app/default
+     * and an added context <C> would add <P>/app/<C> to the search path.
+     *
+     * More documentation to come as we develop this class...
      *
      */
     bool configureFromPolicy(const char *policyName);
@@ -83,13 +88,13 @@ public:
         return result;
     }
     
-    bool addAppName(const char *appName);
+    bool addContext(const char *contextName);
 
-    bool clearAppNames();
+    bool clearContext();
 
-    bool setAppName(const char *appName) {
-        clearAppNames();
-        return addAppName(appName);
+    bool setContext(const char *contextName) {
+        clearContext();
+        return addContext(contextName);
     }
 
     yarp::os::ConstString findFile(const char *name);
