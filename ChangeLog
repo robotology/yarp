@@ -1,6 +1,12 @@
+2008-07-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/ffmpeg/ffmpeg_api.cpp: fixed bug remapping formats
+	using newer ffmpeg libraries, oops.
+
 2008-07-02  Giacomo Spigler  <spiglerg@gmail.com>
 
-	* src/modules/cuda/CUDADeviceDriver.cpp: Little modification to add CUDA 2.0 (beta) compatibility.
+	* src/modules/cuda/CUDADeviceDriver.cpp: Little modification to 
+	add CUDA 2.0 (beta) compatibility.
 
 2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

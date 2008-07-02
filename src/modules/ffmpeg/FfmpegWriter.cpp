@@ -51,7 +51,7 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 
-#define DBG if (1)
+#define DBG if (0)
 
 //#define OMIT_AUDIO
 
@@ -404,8 +404,13 @@ void FfmpegWriter::open_video(AVFormatContext *oc, AVStream *st)
         if (!tmp_picture) {
             fprintf(stderr, "Could not allocate temporary picture\n");
             exit(1);
+        } else {
+            DBG printf("Allocated PIX_FMT_RGB24 image of dimensions %dx%d\n",
+                       c->width, c->height);
         }
     }
+
+    DBG printf("Video stream opened\n");
 }
 
 static void fill_rgb_image(AVFrame *pict, int frame_index, int width, 
@@ -429,16 +434,21 @@ static void fill_rgb_image(AVFrame *pict, int frame_index, int width,
 void FfmpegWriter::write_video_frame(AVFormatContext *oc, AVStream *st,
                                      ImageOf<PixelRgb>& img)
 {
+    DBG printf("Writing video stream\n");
+
     int out_size, ret;
     AVCodecContext *c;
 
     c = st->codec;
 
     if (c->pix_fmt != PIX_FMT_RGB24) {
+        DBG printf("Converting to PIX_FMT_RGB24\n");
         fill_rgb_image(tmp_picture, frame_count, c->width, c->height, img);
+        DBG printf("Converting to PIX_FMT_RGB24 (stable_img_convert)\n");
         stable_img_convert((AVPicture *)picture, c->pix_fmt,
                            (AVPicture *)tmp_picture, PIX_FMT_RGB24,
                            c->width, c->height);
+        DBG printf("Converted to PIX_FMT_RGB24\n");
     } else {
         fill_rgb_image(picture, frame_count, c->width, c->height, img);
     }
