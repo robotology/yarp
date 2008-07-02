@@ -31,7 +31,7 @@ bool CUDAGPU::open(int w, int h, int bytespp, int elemtype) {
     this->changetype(elemtype);
 
     if(this->w>0 && this->h>0) {
-      CUT_DEVICE_INIT_DRV(cuDevice);
+      CUT_DEVICE_INIT_DRV(cuDevice, 0, NULL);
 
       CUresult status = cuCtxCreate(&cuContext, 0, cuDevice);
       if(CUDA_SUCCESS != status)
