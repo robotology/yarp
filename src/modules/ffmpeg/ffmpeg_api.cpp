@@ -28,13 +28,15 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
       //printf("Done looking for a context\n");
   }
   if (img_convert_ctx!=NULL) {
-      //printf("software scale: %ld %ld/%ld %d/%d %d\n", 
+      /*
+      printf("software scale: %ld %ld/%ld %d/%d %d\n", 
              (long int)img_convert_ctx,
              (long int)(((AVPicture*)src)->data), 
              (long int)(((AVPicture*)dst)->data),
              ((AVPicture*)src)->linesize[0], 
              ((AVPicture*)dst)->linesize[0], 
              src_height);
+      */
              
       sws_scale(img_convert_ctx, ((AVPicture*)src)->data, 
                 ((AVPicture*)src)->linesize, 0, src_height,
