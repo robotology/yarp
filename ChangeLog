@@ -1,3 +1,7 @@
+2008-07-02  Giacomo Spigler  <spiglerg@gmail.com>
+
+	* src/modules/cuda/CUDADeviceDriver.cpp: Little modification to add CUDA 2.0 (beta) compatibility.
+
 2008-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Terminator.cpp: Terminators are strange
