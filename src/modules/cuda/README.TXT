@@ -5,5 +5,5 @@ CUDADriver:
 
 libraries needed:
   nvidia drivers
-  CUDA >1.0
+  CUDA < 2.0
 
