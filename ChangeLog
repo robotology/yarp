@@ -1,3 +1,7 @@
+2008-07-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: froze version 2.2.1
+
 2008-07-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/ffmpeg/ffmpeg_api.cpp: fixed bug remapping formats
