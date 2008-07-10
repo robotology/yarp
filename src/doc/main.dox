@@ -49,6 +49,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref add_a_device
 \li \ref port_expert
 \li \ref gpu_tutorial
+\li \ref using_cmake
 
  *
  */

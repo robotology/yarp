@@ -1,7 +1,7 @@
 
 /**
  * @page gpu_tutorial Handling NVIDIA GPUs with YARP
-<center>Giacomo Spigler</center>
+\author Giacomo Spigler
 
 \section gpu_tutorial_introduction Introduction
 

@@ -5,7 +5,7 @@
 YARP is available from http://yarp0.sourceforge.net
 
 Here are the steps needed to install it:
-  \li \ref cmake "Install CMake"
+  \li \ref install_cmake "Install CMake"
   \li \ref install_ace "Install ACE"
   \li \ref install_yarp "Get YARP"
  
@@ -13,7 +13,7 @@ We suggest that, if you are a first-time user of YARP, you install
 it on one or two machines first, before trying to set it up for a
 cluster.
 
- * @section cmake Using CMake
+ * @section install_cmake Installing CMake
 
 YARP is for programmers.  We'd like every YARP user all to use the
 development environment you are used to, and not force you to switch

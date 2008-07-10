@@ -2,6 +2,8 @@
 /**
  * @page add_a_device How to add a device to YARP
 
+\author Paul Fitzpatrick
+
 In YARP, a device driver is a class that implements one or more 
 \ref dev_iface "interfaces".
 

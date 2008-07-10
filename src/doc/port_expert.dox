@@ -2,6 +2,8 @@
 /** 
  * @page port_expert Port Power, Going Further with Ports
 
+\author Paul Fitzpatrick
+
 This tutorial builds on the material in \ref note_ports, and takes
 a deeper look at what ports can do for you.
 
