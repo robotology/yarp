@@ -1,5 +1,7 @@
 2008-07-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc/name_server.dox: update the name server documentation.
+
 	* src/doc/using_cmake.dox: add a more extensive cmake tutorial.
 
 2008-07-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
