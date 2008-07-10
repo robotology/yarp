@@ -50,6 +50,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref port_expert
 \li \ref gpu_tutorial
 \li \ref using_cmake
+\li \ref yarp_without_yarp
 
  *
  */
