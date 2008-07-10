@@ -11,13 +11,17 @@ of a Port, you can query the name server to learn how to communicate
 with that Port.
 
 The name server maintains a set of records, whose key is a text
-string.  The contents are at least hostname, socket number, and
-protocol name.  This describes how to contact the port.  There is also
+string.  The rest of the record contains whatever information is
+needed to make an initial connection to a given Port; for tcp this
+is at least a hostname and a socket number.  There is also
 a description of what kinds of connections the port can or is willing
-to participate in.  The set of protocols the port can accept an
-incoming data connection for are named - this is the ``accept'' set.
-The set of protocols the port can create an outgoing data connection
-for are also named - this is the ``offer'' set.
+to participate in after the initial connection.  
+The set of protocols (called ``carrier'' in this context)
+that  the port can accept an
+incoming data connection for are recorded as a set called the ``accept''
+set.
+The set of carries the port can create an outgoing data connection
+for are recorded as a set called the the ``offer'' set.
 
 For example, suppose you want to communicate with a Port called
 ``/write''.  The first step is to ask the name server about this
@@ -39,12 +43,15 @@ The name server should start listening -- if the connection is refused,
 something is wrong.  Once the connection is made, type:
 
 \verbatim
-NAME_SERVER query /write
+CONNECT foo
+d
+query /write
 \endverbatim
 
 The server will respond with something of the form:
 
 \verbatim
+Welcome foo
 registration name /write ip 5.255.112.227 port 10001 type tcp
 *** end of message
 \endverbatim
@@ -59,7 +66,7 @@ manually (usually it is of course done through a library call).
 Telnet to the name server as before, and type:
 
 \verbatim
-NAME_SERVER register /write
+register /write
 \endverbatim
 
 The server will respond with something of the form:
@@ -109,7 +116,7 @@ potential for cross-talk.
 \section protocol_name_query query
 
 \verbatim
-NAME_SERVER query PORT
+query PORT
 \endverbatim
 
 Requests registration information for the named port.  Response is of 
@@ -134,7 +141,7 @@ is omitted, and instead the response is simply:
 \section protocol_name_register register
 
 \verbatim
-NAME_SERVER register PORT
+register PORT
 \endverbatim
 
 Requests creation of registration information for the named port.  
@@ -152,14 +159,14 @@ registration name /write ip 5.255.112.227 port 10001 type tcp
 Optionally, the user can take responsibility for more, and 
 issue commands in one of the following forms:
 \verbatim
-NAME_SERVER register PORT CARRIER
-NAME_SERVER register PORT CARRIER IP
-NAME_SERVER register PORT CARRIER IP NUMBER
+register PORT CARRIER
+register PORT CARRIER IP
+register PORT CARRIER IP NUMBER
 \endverbatim
 Any value (including the port name) can be replaced by ``...'' to leave it 
 up to the name-server to choose it.  For example:
 \verbatim
-NAME_SERVER register ... tcp 127.0.0.1 8080
+register ... tcp 127.0.0.1 8080
 \endverbatim
 Gives something of the form:
 \verbatim
@@ -182,7 +189,7 @@ network is used for connections from one port to another.
 \section protocol_name_unregister unregister
 
 \verbatim
-NAME_SERVER unregister PORT
+unregister PORT
 \endverbatim
 
 Removes registration information for the named port.  
@@ -195,7 +202,7 @@ Response is of the following form:
 \section protocol_name_list list
 
 \verbatim
-NAME_SERVER list
+list
 \endverbatim
 
 Gives registration information of all known ports.
@@ -215,14 +222,14 @@ registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
 \section protocol_name_set set
 
 \verbatim
-NAME_SERVER set PORT PROPERTY VALUE1 VALUE2 ...
+set PORT PROPERTY VALUE1 VALUE2 ...
 \endverbatim
 
 The name server can store extra properties of a port, beyond the
 bare details associated with registration.  The  set command
 is used to do this.  For example, the command:
 \verbatim
-NAME_SERVER set /write offers tcp udp mcast
+set /write offers tcp udp mcast
 \endverbatim
 Gets the following response:
 \verbatim
@@ -243,13 +250,13 @@ lists carriers that an input port can support.
 \section protocol_name_get get
 
 \verbatim
-NAME_SERVER get PORT PROPERTY
+get PORT PROPERTY
 \endverbatim
 
 Gets the values of a stored property. For example, 
 after the set command example shown earlier, the command:
 \verbatim
-NAME_SERVER get /write offers
+get /write offers
 \endverbatim
 Returns the following response:
 \verbatim
@@ -260,13 +267,13 @@ port /write property offers = tcp udp mcast
 \section protocol_name_check check
 
 \verbatim
-NAME_SERVER check PORT PROPERTY VALUE
+check PORT PROPERTY VALUE
 \endverbatim
 
 Checks if a stored property can take the given value. For example, 
 after the set command example shown earlier, the command:
 \verbatim
-NAME_SERVER check /write offers tcp
+check /write offers tcp
 \endverbatim
 Returns the following response:
 \verbatim
@@ -277,7 +284,7 @@ port /write property offers value tcp present true
 \section protocol_name_route route
 
 \verbatim
-NAME_SERVER route PORT1 PORT2
+route PORT1 PORT2
 \endverbatim
 
 Finds a good way to connect an output port to an input port, based
@@ -288,13 +295,39 @@ requires ports to be on the same machine, and `local' requires
 ports to belong to threads with a shared memory space).
 For example, the command:
 \verbatim
-NAME_SERVER route /write /read
+route /write /read
 \endverbatim
 Returns the following response:
 \verbatim
 port /write route /read = shmem://read
 \endverbatim
 Suggesting that shmem is the best carrier to use.
+
+\section name_server_history An older name server protocol
+
+The name server used to use its own non-standard protocol, rather than
+the standard Port protocol.  This older protocol is still supported.
+It is very simple: make a tcp connection, and send commands with
+the string "" prefixed.  For example, if we connect to
+the name server:
+
+\verbatim
+telnet 192.168.0.3 10000
+\endverbatim
+
+And type:
+
+\verbatim
+NAME_SERVER query /write
+\endverbatim
+
+The server will respond with something of the form:
+
+\verbatim
+registration name /write ip 5.255.112.227 port 10001 type tcp
+*** end of message
+\endverbatim
+
 
 
 */
