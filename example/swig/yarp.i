@@ -13,7 +13,9 @@
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
-%include "std_vector.i"
+#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
+  %include "std_vector.i"
+#endif
 
 // Deal with abstract base class problems, where SWIG guesses
 // incorrectly at whether a class can be instantiated or not
@@ -91,8 +93,13 @@
 // Clean up a few unimportant things that give warnings
 
 // abstract methods just confuse SWIG
-%ignore yarp::os::BufferedPort::open; // let Contactable::open show
-%ignore yarp::os::Port::open; // let Contactable::open show
+// We must not do this for allegro
+#if !defined(SWIGALLEGROCL)
+  #if !defined(SWIGCHICKEN)
+    %ignore yarp::os::BufferedPort::open; // let Contactable::open show
+    %ignore yarp::os::Port::open; // let Contactable::open show
+  #endif
+#endif
 // operator= does not get translated well
 %ignore *::operator=;
 %ignore yarp::PortReaderBuffer;
@@ -122,6 +129,7 @@
 #endif
 
 // Bring in the header files that are important to us
+#include <vector>
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
 #include <yarp/dev/all.h>
@@ -157,7 +165,12 @@ typedef int yarp::os::NetInt32;
 %enddef
 %define VOCAB1(a) VOCAB((a),(0),(0),(0))
 %enddef
+#if defined( SWIGALLEGROCL )
+  %include "compat.h"
+#endif
 %include <yarp/os/ConstString.h>
+%include <yarp/os/PortReport.h>
+%include <yarp/os/Contact.h>
 %include <yarp/os/ConnectionReader.h>
 %include <yarp/os/ConnectionWriter.h>
 %include <yarp/os/PortReader.h>
@@ -173,12 +186,12 @@ typedef int yarp::os::NetInt32;
 %include <yarp/os/Contact.h>
 %include <yarp/os/Network.h>
 %include <yarp/os/PortablePair.h>
+%include <yarp/os/PortReaderCreator.h>
+%include <yarp/os/Property.h>
 %include <yarp/os/Port.h>
 %include <yarp/os/Bottle.h>
 %include <yarp/os/PortReaderBuffer.h>
-%include <yarp/os/PortReaderCreator.h>
 %include <yarp/os/PortWriterBuffer.h>
-%include <yarp/os/Property.h>
 %include <yarp/os/Random.h>
 %include <yarp/os/Searchable.h>
 %include <yarp/os/Semaphore.h>
@@ -195,11 +208,13 @@ typedef int yarp::os::NetInt32;
 %include <yarp/dev/ControlBoardInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 
-%template(DVector) std::vector<double>;
-#if defined(SWIGCSHARP)
-	SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+#if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
+  %template(DVector) std::vector<double>;
+  #if defined(SWIGCSHARP)
+  	SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
+  #endif
+  %template(PidVector) std::vector<yarp::dev::Pid>;
 #endif
-%template(PidVector) std::vector<yarp::dev::Pid>;
 
 //////////////////////////////////////////////////////////////////////////
 // Match Java toString behaviour

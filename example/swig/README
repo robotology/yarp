@@ -88,7 +88,7 @@ You should now have cyarp.so and cyarp.scm
 
 Now try:
   chicken cyarp.scm
-  chicken example.scm && gcc example.c cyarp.c cyarp.so -lchicken -o example
+  chicken example.scm && gcc example.c cyarp.c libcyarp.so -lchicken -o example
   ./example
 
 ============================================================================
@@ -138,3 +138,10 @@ See also:
   http://eris.liralab.it/wiki/Calling_yarp_from_Matlab
 for latest tips.
 
+
+============================================================================
+== ALLEGRO INTERFACE
+
+Should taste just like Chicken (see above).  Thanks to Lorenz Moselechner
+for adding this.  There is a patch needed at the time of writing for SWIG
+(July 2008), see *.patch in this directory.
