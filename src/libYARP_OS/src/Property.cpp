@@ -300,10 +300,12 @@ public:
         while (!(fin.eof()||fin.fail())) {
             char buf[1000];
             fin.getline(buf,sizeof(buf));
-            if (!fin.eof()) {
-                txt += buf;
-                txt += "\n";
-            }
+            // REMOVED eof test, so a terminating line without
+            // a newline is still added
+            //if (!fin.eof()) {
+            txt += buf;
+            txt += "\n";
+            //}
         }
         fromConfig(txt.c_str(),envExtended,wipe);
         return true;
