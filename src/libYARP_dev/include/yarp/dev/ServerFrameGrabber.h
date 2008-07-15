@@ -32,18 +32,25 @@ namespace yarp {
 }
 
 #define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
-
+#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
+#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
 #define VOCAB_WHITE VOCAB4('w','h','i','t')
+#define VOCAB_HUE VOCAB3('h','u','e')
+#define VOCAB_SATURATION VOCAB4('s','a','t','u')
+#define VOCAB_GAMMA VOCAB4('g','a','m','m')
 #define VOCAB_SHUTTER VOCAB4('s','h','u','t')
 #define VOCAB_GAIN VOCAB4('g','a','i','n')
+#define VOCAB_IRIS VOCAB4('i','r','i','s')
+//#define VOCAB_TEMPERATURE VOCAB4('t','e','m','p')
+//#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
+//#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
+//#define VOCAB_CAPTURE_QUALITY VOCAB4('q','u','a','l')
+ 
 #define VOCAB_SET VOCAB3('s','e','t')
 #define VOCAB_GET VOCAB3('g','e','t')
 #define VOCAB_IS VOCAB2('i','s')
 #define VOCAB_WIDTH VOCAB1('w')
 #define VOCAB_HEIGHT VOCAB1('h')
-
-
-
 
 /**
  * @ingroup dev_impl_wrapper
@@ -194,49 +201,129 @@ public:
         return fgImage->width();
     }
 
-    virtual bool setBrightness(double v) {
+// set
+	virtual bool setBrightness(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setBrightness(v);
     }
-
+    virtual bool setExposure(double v)
+    {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setExposure(v);
+    }	
+	virtual bool setSharpness(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setSharpness(v);
+    }
+	virtual bool setWhiteBalance(double blue, double red) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setWhiteBalance(blue,red);
+    }
+	virtual bool setHue(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setHue(v);
+    }	
+	virtual bool setSaturation(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setSaturation(v);
+    }
+	virtual bool setGamma(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setGamma(v);
+    }
     virtual bool setShutter(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setShutter(v);
     }
-
-
-	virtual bool setWhiteBalance(double r, double g) {
-
-        if (fgCtrl==NULL) { return false; }
-
-        return fgCtrl->setWhiteBalance(r,g);
-
-    }
-
     virtual bool setGain(double v) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->setGain(v);
     }
+    virtual bool setIris(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setIris(v);
+    }
+    
+    /*
+    virtual bool setTemperature(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setTemperature(v);
+    }
+    virtual bool setWhiteShading(double r,double g,double b) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setWhiteShading(r,g,b);
+    }
+    virtual bool setOpticalFilter(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setOpticalFilter(v);
+    }
+    virtual bool setCaptureQuality(double v) {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->setCaptureQuality(v);
+    }
+    */
 
-    virtual double getBrightness() const {
-        if (fgCtrl==NULL) { return 0; }
+// get
+
+	virtual double getBrightness() const {
+        if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getBrightness();
     }
-
+	virtual double getExposure() const {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->getExposure();
+    }
+	virtual double getSharpness() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getSharpness();
+    }
+    virtual bool getWhiteBalance(double &blue, double &red) const {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->getWhiteBalance(blue,red);
+    }
+	virtual double getHue() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getHue();
+    }	
+	virtual double getSaturation() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getSaturation();
+    }
+	virtual double getGamma() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getGamma();
+    }
     virtual double getShutter() const {
-        if (fgCtrl==NULL) { return 0; }
+        if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getShutter();
     }
-
     virtual double getGain() const {
-        if (fgCtrl==NULL) { return 0; }
+        if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getGain();
     }
-
-    virtual bool getWhiteBalance(double &red, double &green) const {
-        if (fgCtrl==NULL) { return 0; }
-        return fgCtrl->getWhiteBalance(red, green);
+    virtual double getIris() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getIris();
     }
+    
+    /*
+    virtual double getTemperature() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getTemperature();
+    }
+    virtual bool getWhiteShading(double &r, double &g, double &b) const {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->getWhiteShading(r,g,b);
+    }
+    virtual double getOpticalFilter() const {
+        if (fgCtrl==NULL) { return 0.0; }
+        return fgCtrl->getOpticalFilter();
+    }
+    virtual double getCaptureQuality() const {
+        if (fgCtrl==NULL) { return false; }
+        return fgCtrl->getCaptureQuality();
+    }
+    */    
 
     virtual bool startService();
 

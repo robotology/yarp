@@ -34,7 +34,6 @@ ServerFrameGrabber::ServerFrameGrabber() {
     p2 = NULL;
 }
 
-
 bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     if (active) {
         printf("Did you just try to open the same ServerFrameGrabber twice?\n");
@@ -144,14 +143,42 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
                 singleThreaded);
     active = true;
 
+/*
+#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
+#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
+#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
+#define VOCAB_WHITE VOCAB4('w','h','i','t')
+#define VOCAB_HUE VOCAB3('h','u','e')
+#define VOCAB_SATURATION VOCAB4('s','a','t','u')
+#define VOCAB_GAMMA VOCAB4('g','a','m','m')
+#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
+#define VOCAB_GAIN VOCAB4('g','a','i','n')
+#define VOCAB_IRIS VOCAB4('i','r','i','s')
+*/
+
     DeviceResponder::makeUsage();
-    addUsage("[set] [bri] $fBrightness", "set brightness level");
-    addUsage("[set] [gain] $fGain", "set gain level");
-    addUsage("[set] [shut] $fShutter", "set shutter parameter");
-    addUsage("[set] [whit] $fRed $fGreen", "set white balance");
-    addUsage("[get] [bri]", "get brightness level");
-    addUsage("[get] [gain]", "get gain level");
-    addUsage("[get] [shut]", "get shutter parameter");
+    addUsage("[set] [bri] $fBrightness", "set brightness");
+    addUsage("[set] [expo] $fExposure", "set exposure");    
+    addUsage("[set] [shar] $fSharpness", "set sharpness");
+    addUsage("[set] [whit] $fBlue $fRed", "set white balance");    
+    addUsage("[set] [hue] $fHue", "set hue");
+    addUsage("[set] [satu] $fSaturation", "set saturation");    
+    addUsage("[set] [gamm] $fGamma", "set gamma");        
+    addUsage("[set] [shut] $fShutter", "set shutter");        
+    addUsage("[set] [gain] $fGain", "set gain");
+    addUsage("[set] [iris] $fIris", "set iris");
+
+    addUsage("[get] [bri]",  "get brightness");
+    addUsage("[get] [expo]", "get exposure");    
+    addUsage("[get] [shar]", "get sharpness");
+    addUsage("[get] [whit]", "get white balance");    
+    addUsage("[get] [hue]",  "get hue");
+    addUsage("[get] [satu]", "get saturation");    
+    addUsage("[get] [gamm]", "get gamma");        
+    addUsage("[get] [shut]", "get shutter");        
+    addUsage("[get] [gain]", "get gain");
+    addUsage("[get] [iris]", "get iris");
+    
     addUsage("[get] [w]", "get width of image");
     addUsage("[get] [h]", "get height of image");
 
@@ -168,9 +195,34 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
     case VOCAB_SET:
         printf("set command received\n");
         {
-            switch(cmd.get(1).asVocab()) {
-            case VOCAB_BRIGHTNESS:
+            switch(cmd.get(1).asVocab()) 
+			{
+			case VOCAB_BRIGHTNESS:
                 ok = setBrightness(cmd.get(2).asDouble());
+                rec = true;
+                break;
+            case VOCAB_EXPOSURE:
+                ok = setExposure(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_SHARPNESS:
+                ok = setSharpness(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_WHITE:
+				ok = setWhiteBalance(cmd.get(2).asDouble(),cmd.get(3).asDouble());
+                rec = true;
+				break;
+			case VOCAB_HUE:
+                ok = setHue(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_SATURATION:
+                ok = setSaturation(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_GAMMA:
+                ok = setGamma(cmd.get(2).asDouble());
                 rec = true;
                 break;
             case VOCAB_SHUTTER:
@@ -181,11 +233,28 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 ok = setGain(cmd.get(2).asDouble());
                 rec = true;
                 break;
-			case VOCAB_WHITE:
-				ok = setWhiteBalance(cmd.get(2).asDouble(),
-									 cmd.get(3).asDouble());
+            case VOCAB_IRIS:
+                ok = setIris(cmd.get(2).asDouble());
                 rec = true;
-				break;
+                break;
+			/*
+			case VOCAB_TEMPERATURE:
+                ok = setTemperature(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_WHITE_SHADING:
+                ok = setWhiteShading(cmd.get(2).asDouble(),cmd.get(3).asDouble(),cmd.get(4).asDouble());
+                rec = true;
+                break;
+			case VOCAB_OPTICAL_FILTER:
+                ok = setOpticalFilter(cmd.get(2).asDouble());
+                rec = true;
+                break;
+			case VOCAB_CAPTURE_QUALITY:
+                ok = setCaptureQuality(cmd.get(2).asDouble());
+                rec = true;
+                break;
+            */
             }
         }
         break;
@@ -194,12 +263,50 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
         {
             response.addVocab(VOCAB_IS);
             response.add(cmd.get(1));
-            switch(cmd.get(1).asVocab()) {
+            switch(cmd.get(1).asVocab()) 
+            {
             case VOCAB_BRIGHTNESS:
                 ok = true;
                 response.addDouble(getBrightness());
                 rec = true;
                 break;
+            case VOCAB_EXPOSURE:
+                ok = true;
+                response.addDouble(getExposure());
+                rec = true;
+                break;
+            case VOCAB_SHARPNESS:
+                ok = true;
+                response.addDouble(getSharpness());
+                rec = true;
+                break;
+			case VOCAB_WHITE:
+			    {
+			    	ok = true;
+			    	double b=0;
+			    	double r=0;
+    
+			    	getWhiteBalance(b,r);
+			    	response.addDouble(b);
+			    	response.addDouble(r);
+			    	rec=true;
+			    }
+			    break;                
+            case VOCAB_HUE:
+                ok = true;
+                response.addDouble(getHue());
+                rec = true;
+                break;
+            case VOCAB_SATURATION:
+                ok = true;
+                response.addDouble(getSaturation());
+                rec = true;
+                break;   
+            case VOCAB_GAMMA:
+                ok = true;
+                response.addDouble(getGamma());
+                rec = true;
+                break;   
             case VOCAB_SHUTTER:
                 ok = true;
                 response.addDouble(getShutter());
@@ -210,6 +317,23 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 response.addDouble(getGain());
                 rec = true;
                 break;
+            case VOCAB_IRIS:
+                ok = true;
+                response.addDouble(getIris());
+                rec = true;
+                break;
+            /*
+            case VOCAB_CAPTURE_QUALITY:
+                ok = true;
+                response.addDouble(getCaptureQuality());
+                rec = true;
+                break;
+            case VOCAB_OPTICAL_FILTER:
+                ok = true;
+                response.addDouble(getOpticalFilter());
+                rec = true;
+                break;
+            */
             case VOCAB_WIDTH:
                 // normally, this would come from stream information
                 ok = true;
@@ -222,16 +346,6 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
                 response.addInt(height());
                 rec = true;
                 break;
-			case VOCAB_WHITE:
-				ok = true;
-				double r=0;
-				double g=0;
-
-				getWhiteBalance(r, g);
-				response.addDouble(r);
-				response.addDouble(g);
-				rec=true;
-				break;
             }
 
             if (!ok) {

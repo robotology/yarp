@@ -99,40 +99,123 @@ public:
         return true;
     }
 
+/*
+#define VOCAB_BRIGHTNESS VOCAB3('b','r','i')
+#define VOCAB_EXPOSURE VOCAB4('e','x','p','o')
+#define VOCAB_SHARPNESS VOCAB4('s','h','a','r')
+#define VOCAB_WHITE VOCAB4('w','h','i','t')
+#define VOCAB_HUE VOCAB3('h','u','e')
+#define VOCAB_SATURATION VOCAB4('s','a','t','u')
+#define VOCAB_GAMMA VOCAB4('g','a','m','m')
+#define VOCAB_SHUTTER VOCAB4('s','h','u','t')
+#define VOCAB_GAIN VOCAB4('g','a','i','n')
+#define VOCAB_IRIS VOCAB4('i','r','i','s')
+//#define VOCAB_TEMPERATURE VOCAB4('t','e','m','p')
+//#define VOCAB_WHITE_SHADING VOCAB4('s','h','a','d')
+//#define VOCAB_OPTICAL_FILTER VOCAB4('f','i','l','t')
+//#define VOCAB_CAPTURE_QUALITY VOCAB4('q','u','a','l')
+*/
+
     virtual bool setBrightness(double v) {
         return setCommand(VOCAB_BRIGHTNESS,v);
+    }
+    virtual double getBrightness() const {
+        return getCommand(VOCAB_BRIGHTNESS);
+    }
+	virtual bool setExposure(double v) {
+        return setCommand(VOCAB_EXPOSURE,v);
+    }
+    virtual double getExposure() const {
+        return getCommand(VOCAB_EXPOSURE);
+    }
+
+    virtual bool setSharpness(double v) {
+        return setCommand(VOCAB_SHARPNESS,v);
+    }
+    virtual double getSharpness() const {
+        return getCommand(VOCAB_SHARPNESS);
+    }
+
+	virtual bool setWhiteBalance(double blue, double red)
+	{
+		return setCommand(VOCAB_WHITE, blue, red);
+	}
+	virtual bool getWhiteBalance(double &blue, double &red) const
+	{
+		return getCommand(VOCAB_WHITE, blue, red);
+	}
+
+    virtual bool setHue(double v) {
+        return setCommand(VOCAB_HUE,v);
+    }
+    virtual double getHue() const {
+        return getCommand(VOCAB_HUE);
+    }
+
+    virtual bool setSaturation(double v) {
+        return setCommand(VOCAB_SATURATION,v);
+    }
+    virtual double getSaturation() const {
+        return getCommand(VOCAB_SATURATION);
+    }
+
+    virtual bool setGamma(double v) {
+        return setCommand(VOCAB_GAMMA,v);
+    }
+    virtual double getGamma() const {
+        return getCommand(VOCAB_GAMMA);
     }
 
     virtual bool setShutter(double v) {
         return setCommand(VOCAB_SHUTTER,v);
     }
-
-    virtual bool setGain(double v) {
-        return setCommand(VOCAB_GAIN,v);
-    }
-
-    virtual double getBrightness() const {
-        return getCommand(VOCAB_BRIGHTNESS);
-    }
-
     virtual double getShutter() const {
         return getCommand(VOCAB_SHUTTER);
     }
 
+    virtual bool setGain(double v) {
+        return setCommand(VOCAB_GAIN,v);
+    }
     virtual double getGain() const {
         return getCommand(VOCAB_GAIN);
     }
 
-	virtual bool setWhiteBalance(double red, double green)
-	{
-		return setCommand(VOCAB_WHITE, red, green);
-	}
+    virtual bool setIris(double v) {
+        return setCommand(VOCAB_IRIS,v);
+    }
+    virtual double getIris() const {
+        return getCommand(VOCAB_IRIS);
+    }
 
-	virtual bool getWhiteBalance(double &red, double &green) const
-	{
-		return getCommand(VOCAB_WHITE, red, green);
-	}
+    /*
+    virtual bool setTemperature(double v) {
+        return setCommand(VOCAB_TEMPERATURE,v);
+    }
+    virtual double getTemperature() const {
+        return getCommand(VOCAB_TEMPERATURE);
+    }
+    
+    virtual bool setWhiteShading(double r,double g,double b) {
+        return setCommand(VOCAB_WHITE_SHADING,r,g,b);
+    }
+    virtual bool getWhiteShading(double &r,double &g,double &b) const {
+        return getCommand(VOCAB_WHITE_SHADING,r,g,b);
+    }
+  
+    virtual bool setOpticalFilter(double v) {
+        return setCommand(VOCAB_OPTICAL_FILTER,v);
+    }
+    virtual double getOpticalFilter() const {
+        return getCommand(VOCAB_OPTICAL_FILTER);
+    }
 
+	virtual bool setCaptureQuality(double v) {
+        return setCommand(VOCAB_CAPTURE_QUALITY,v);
+    }
+    virtual double getCaptureQuality() const {
+        return getCommand(VOCAB_CAPTURE_QUALITY);
+    }
+    */
 
 private:
     yarp::os::Port port;
@@ -152,12 +235,12 @@ private:
         return true;
     }
 
-	 bool setCommand(int code, double r, double g) {
+	bool setCommand(int code, double b, double r) {
         yarp::os::Bottle cmd;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
-        cmd.addDouble(r);
-		cmd.addDouble(g);
+        cmd.addDouble(b);
+		cmd.addDouble(r);
         port.write(cmd);
         return true;
     }
@@ -171,17 +254,15 @@ private:
         return response.get(2).asDouble();
     }
 
-
-
-	bool getCommand(int code, double &r, double &g) const
+	bool getCommand(int code, double &b, double &r) const
     {
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
         port.write(cmd,response);
         // response should be [cmd] [name] value
-        r=response.get(2).asDouble();
-        g=response.get(3).asDouble();
+        b=response.get(2).asDouble();
+        r=response.get(3).asDouble();
         return true;
     }
 };
