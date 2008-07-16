@@ -33,10 +33,7 @@ Read about and install CMake from here: http://www.cmake.org/
 
 Install CMake from here: http://www.cmake.org/HTML/Download.html
 
-    \li Windows: http://www.cmake.org/files/v2.4/cmake-2.4.2-win32-x86.exe
-    \li OSX Tiger: http://www.cmake.org/files/v2.4/cmake-2.4.2-2-Darwin-universal.dmg
-    \li Generic Linux: http://www.cmake.org/files/v2.4/cmake-2.4.2-Linux-i386.sh
-    \li Debian Linux: apt-get install cmake
+    \li Debian/Ubuntu/... Linux: apt-get install cmake
     \li SUSE Linux: add the GURU YAST repository and use YAST for installing CMake or download directly the rpm from GURU website access 
 
 @subsection cmake_windows CMake in Windows
