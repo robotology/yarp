@@ -1,5 +1,9 @@
 2008-07-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h: fix
+	test framegrabber; someone appears to have randomly changed
+	an interface it implements.
+
 	* src/doc/install.dox: Frank Forster noted that the cmake links
 	here were out of date.
 

@@ -182,6 +182,55 @@ public:
 		return true;
 	}
 
+    virtual bool setExposure(double v) {
+        return true;
+    }
+
+    virtual bool setSharpness(double v) {
+        return true;
+    }
+
+    virtual bool setHue(double v) {
+        return true;
+    }
+
+    virtual bool setSaturation(double v) {
+        return true;
+    }
+
+    virtual bool setIris(double v) {
+        return true;
+    }
+
+    virtual bool setGamma(double v) {
+        return true;
+    }
+
+    virtual double getGamma() const {
+        return 0;
+    }
+
+    virtual double getHue() const {
+        return 0;
+    }
+
+    virtual double getSharpness() const {
+        return 0;
+    }
+
+    virtual double getExposure() const {
+        return 0;
+    }
+
+    virtual double getSaturation() const {
+        return 0;
+    }
+
+    virtual double getIris() const {
+        return 0;
+    }
+    
+
 private:
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 };
