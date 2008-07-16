@@ -1,3 +1,8 @@
+2008-07-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/install.dox: Frank Forster noted that the cmake links
+	here were out of date.
+
 2008-07-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Property.cpp: when reading config
