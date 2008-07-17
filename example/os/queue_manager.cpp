@@ -32,6 +32,7 @@ class QueueManager : public DeviceResponder {
 private:
     BufferedPort<Bottle> port;
     deque<Entry> q;
+    Semaphore mutex;
 
     bool removeName(const char *name) {
         bool acted = false;
@@ -51,6 +52,22 @@ private:
         return acted;
     }
 
+    bool removeName(int index) {
+        bool acted = false;
+        int at = 0;
+        for (deque<Entry>::iterator it=q.begin(); it!=q.end(); it++) {
+            string nname = (*it).name;
+            if (at==index) {
+                acted = true;
+                q.erase(it);
+                // iterators are now invalid
+                break;
+            }
+            at++;
+        }
+        return acted;
+    }
+
     void addQueue(Bottle& status) {
         status.add(Value::makeVocab("q"));
         for (deque<Entry>::iterator it=q.begin(); it!=q.end(); it++) {
@@ -59,7 +76,7 @@ private:
         }
     }
 public:
-    QueueManager() {
+    QueueManager() : mutex(1) {
         attach(port);
         Contact c = Contact::byName("/help");
         c = c.addSocket("tcp","localhost",80);
@@ -81,6 +98,7 @@ public:
 
     virtual bool respond(const yarp::os::Bottle& command, 
                          yarp::os::Bottle& reply) {
+        mutex.wait();
         switch (command.get(0).asVocab()) {
         case VOCAB3('a','d','d'):
             {
@@ -99,20 +117,35 @@ public:
             break;
         case VOCAB3('d','e','l'):
             {
-                string name = command.get(1).asString().c_str();
-                if (name!="") {
-                    bool acted = removeName(name.c_str());
+                if (command.get(1).isInt()) {
+                    int idx = command.get(1).asInt();
+                    bool acted = removeName(idx);
                     if (acted) {
                         reply.clear();
                         reply.add(Value::makeVocab("del"));
-                        reply.addString(name.c_str());
+                        reply.addInt(idx);
                     } else {
                         reply.clear();
                         reply.add(Value::makeVocab("no"));
-                        reply.addString(name.c_str());
+                        reply.addInt(idx);
                     }
                     addQueue(reply);
-                }
+                } else {
+                    string name = command.get(1).asString().c_str();
+                    if (name!="") {
+                        bool acted = removeName(name.c_str());
+                        if (acted) {
+                            reply.clear();
+                            reply.add(Value::makeVocab("del"));
+                            reply.addString(name.c_str());
+                        } else {
+                            reply.clear();
+                            reply.add(Value::makeVocab("no"));
+                            reply.addString(name.c_str());
+                        }
+                        addQueue(reply);
+                    }
+                } 
             }
             break;
         case VOCAB4('l','i','s','t'):
@@ -123,16 +156,20 @@ public:
             break;
         default:
             updateHelp();
+            mutex.post();
             return DeviceResponder::respond(command,reply);
         }
+        mutex.post();
         printf("%s\n", reply.toString().c_str());
         return true;
     }
 
     void update() {
         Bottle& status = port.prepare();
+        mutex.wait();
         status.clear();
         addQueue(status);
+        mutex.post();
         port.write();
     }
 };
