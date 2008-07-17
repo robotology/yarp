@@ -22,4 +22,5 @@ ADD_EXECUTABLE(rateThreadTiming rateThreadTiming.cpp)
 ADD_EXECUTABLE(make_count make_count.cpp)
 ADD_EXECUTABLE(view_count view_count.cpp)
 ADD_EXECUTABLE(browse_bottle browse_bottle.cpp)
+ADD_EXECUTABLE(queue_manager queue_manager.cpp)
 

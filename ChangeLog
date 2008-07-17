@@ -1,3 +1,8 @@
+2008-07-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/os/queue_manager.cpp: added a simple online help
+	queue manager example; might be handy at the summer school.
+
 2008-07-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h: fix
