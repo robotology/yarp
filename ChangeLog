@@ -1,3 +1,22 @@
+2008-06-18 Alessandro Scalzo <alessandro@liralab.it>
+	* yarp2/src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h
+	* yarp2/src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
+	* yarp2/src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
+	* yarp2/src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
+	* yarp2/src/libYARP_dev/src/ServerFrameGrabber.cpp
+	* iCub/src/modules/dragonfly/common/DragonflyDeviceDriver.h
+	* iCub/src/modules/dragonfly/linux/DragonflyDeviceDriver.cpp
+	* iCub/src/modules/dragonfly/winnt/DragonflyDeviceDriver.cpp
+	* iCub/src/modules/dragonfly/linux/FirewireCameraSet.h
+	* iCub/src/modules/dragonfly/linux/FirewireCameraSet.cpp
+	* iCub/src/modules/dragonfly/linux/FirewireCameraDC1394.h
+	* iCub/src/modules/dragonfly/linux/FirewireCameraDC1394-DR2.h
+	* iCub/src/modules/dragonfly/linux/dc1394settings.h
+	* iCub/src/gui/frameGrabberGui/FrameGrabberGUIControl.h
+	Added feature controls in frame grabber devices and GUI interface.
+	Added custom resolutions and Bayer pattern pc-side decoding
+	in Dragonfly 2 devices.
+
 2008-07-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/os/queue_manager.cpp: added a simple online help
