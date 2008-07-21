@@ -146,88 +146,70 @@ public:
         return w;
     }
 
+
     virtual bool setBrightness(double v) {
         return false;
     }
-
+    virtual bool setExposure(double v) {
+        return false;
+    }
+    virtual bool setSharpness(double v) {
+        return false;
+    }    
+    virtual bool setWhiteBalance(double blue, double red){
+	return false;
+    }
+    virtual bool setHue(double v) {
+        return false;
+    }
+    virtual bool setSaturation(double v) {
+        return false;
+    }    
+     virtual bool setGamma(double v) {
+        return false;
+    }    
     virtual bool setShutter(double v) {
         return false;
     }
-
     virtual bool setGain(double v) {
+        return false;
+    }
+    virtual bool setIris(double v) {
         return false;
     }
 
     virtual double getBrightness() const {
-        return 0;
+        return 0.0;
     }
-
-    virtual double getShutter() const {
-        return 0;
-    }
-
-    virtual double getGain() const {
-        return 0;
-    }
-
-	virtual bool setWhiteBalance(double red, double green)
-	{
-		return true;
-	}
-
-	virtual bool getWhiteBalance(double &red, double &green) const 
-	{
-		red=42.0;
-		green=42.0;
-		return true;
-	}
-
-    virtual bool setExposure(double v) {
-        return true;
-    }
-
-    virtual bool setSharpness(double v) {
-        return true;
-    }
-
-    virtual bool setHue(double v) {
-        return true;
-    }
-
-    virtual bool setSaturation(double v) {
-        return true;
-    }
-
-    virtual bool setIris(double v) {
-        return true;
-    }
-
-    virtual bool setGamma(double v) {
-        return true;
-    }
-
-    virtual double getGamma() const {
-        return 0;
-    }
-
-    virtual double getHue() const {
-        return 0;
-    }
-
-    virtual double getSharpness() const {
-        return 0;
-    }
-
     virtual double getExposure() const {
-        return 0;
+        return 0.0;
     }
-
+    virtual double getSharpness() const {
+        return 0.0;
+    }
+    virtual bool getWhiteBalance(double &blue, double &red) const 
+    {
+	red=0.0;
+	blue=0.0;
+	return true;
+    }    
+    virtual double getHue() const {
+        return 0.0;
+    }
     virtual double getSaturation() const {
-        return 0;
+        return 0.0;
     }
-
+    virtual double getGamma() const {
+        return 0.0;
+    }        
+    virtual double getShutter() const {
+        return 0.0;
+    }
+    virtual double getGain() const {
+        return 0.0;
+    }
     virtual double getIris() const {
-        return 0;
+        return 0.0;
     }
     
 
