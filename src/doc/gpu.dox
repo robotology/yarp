@@ -100,6 +100,12 @@ These numbers actually must be 32 and 96, and will run well optimized on CUDA su
 Then, the main function (at the moment just use the main function) has to be named FragmentProgram, and to have a "__global__" before its type.
 Type is not important, so you might always set it to void.
 The FragmentProgram function will run on every GPU's core, executing the same instructions (SIMD approach), but every thread will have its own threadIdx.x identifier.
+At last we have to compile the GPU program into the binary `.cubin` object:
+\code
+nvcc -cubin bw.cu
+\endcode
+
+
 Using this information, and knowing the number of threads currently running, you can write parallel code to run on the GPU, analyzing input data and generating outputs.
 
  *
