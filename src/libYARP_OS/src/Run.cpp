@@ -441,7 +441,7 @@ int Run::runServerBash(ConstString& portname,String& workdir)
 			
 			writeBottleAsFile(script_bottle,script_name);			
 			
-			String command_text="yarp read /"+alias+"/stdin | bash "+script_name+" 2>&1 | yarp write /"+alias+"/stdout";
+			String command_text="yarp read /"+alias+"/stdin 2>&1 | bash "+script_name+" 2>&1 | yarp write /"+alias+"/stdout";
 	        
 	        
 	        String command_name=workdir+"command"+serial_str+".sh";
@@ -473,7 +473,7 @@ int Run::runServerBash(ConstString& portname,String& workdir)
 			for (int s=0; s<command_bottle.size(); ++s)
 				command_text+=String(command_bottle.get(s).toString().c_str())+" ";
 
-			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
+			command_text="yarp read /"+alias+"/stdin 2>&1 | "+command_text+" 2>&1 | yarp write /"+alias+"/stdout";
 	        
 
 	        String command_name=workdir+"command"+serial_str+".sh";
