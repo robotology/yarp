@@ -196,6 +196,8 @@ public:
      */
     bool read(ConnectionReader& reader);
 
+    void onCommencement();
+
     virtual bool check(const char *key) {
         Bottle& val = findGroup(key);
         return !val.isNull();

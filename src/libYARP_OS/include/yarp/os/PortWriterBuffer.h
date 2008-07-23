@@ -56,6 +56,10 @@ public:
         creator.onCompletion(tracker);
     }
 
+    virtual void onCommencement() {
+        writer.onCommencement();
+    }
+
     virtual PortWriter *getInternal() {
         return &writer;
     }

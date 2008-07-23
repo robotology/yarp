@@ -920,7 +920,10 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
     // may need to be two caches.
 
     // for now, just doing a sequential send with no caching.
+    // (mcast protocol can be used to avoid duplicated effort)
     YMSG(("------- send in real\n"));
+
+    writer.onCommencement();
 
     stateMutex.wait();
 

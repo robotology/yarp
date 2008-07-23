@@ -1,3 +1,17 @@
+2008-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/BottleImpl.cpp: updated Bottle/BottleImpl
+	to cache its binary representation before port communication
+	starts.  Removed semaphore that was previously needed to
+	control write access to this cache.
+
+	* src/libYARP_OS/include/yarp/os/PortWriter.h: added onCommencement
+	method that is called just before an object is sent from a 
+	Port to its zero, one, or several recipients.  This is a useful
+	hook for finalizing the representation of the object, since its
+	user has passed control of it to YARP and we know they will
+	not be touching it again.
+
 2008-06-18 Alessandro Scalzo <alessandro@liralab.it>
 	* yarp2/src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h
 	* yarp2/src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h

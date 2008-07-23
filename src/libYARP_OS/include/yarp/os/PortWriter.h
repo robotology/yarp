@@ -46,6 +46,14 @@ public:
      * This is called when the port has finished all writing operations.
      */
     virtual void onCompletion() {}
+
+    /**
+     * This is called when the port is about to begin writing operations.
+     * After this point, the write method may be called zero, once, or
+     * many times by YARP depending on the mix of formats and protocols
+     * in use.
+     */
+    virtual void onCommencement() {}
 };
 
 #endif

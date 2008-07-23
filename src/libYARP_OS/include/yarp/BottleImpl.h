@@ -323,6 +323,8 @@ public:
     virtual bool read(ConnectionReader& connection);
     virtual bool write(ConnectionWriter& connection);
 
+    virtual void onCommencement();
+
     /*
       virtual bool write(ConnectionWriter& writer) {
       writeBlock(writer);
@@ -387,7 +389,6 @@ private:
 
     ACE_Vector<Storable*> content;
     ACE_Vector<char> data;
-    yarp::os::Semaphore mutex;
     int speciality;
     bool nested;
     bool dirty;
