@@ -13,6 +13,8 @@ using namespace yarp::os;
 // 
 // Lorenzo Natale May 2008
 
+#include <ppEventDebugger.h>
+
 class Reader : public TypedReaderCallback<Bottle> {
 public:
     double delay;
@@ -28,6 +30,19 @@ public:
     }
 
     void onRead(Bottle& datum) {
+
+        static ppEventDebugger pp;
+        static bool init=false;
+        
+        if (!init)
+            {
+                pp.open(0x378);
+                init=true;
+            }
+
+        pp.set();
+        pp.reset();
+
         //        if (wait>0)
         //            {
         //                wait--;
@@ -59,7 +74,18 @@ int server(double server_wait)
         b.clear();
         double time=Time::now();
         b.addDouble(time);
+        static ppEventDebugger pp;
+        static bool init=false;
+        
+        if (!init)
+            {
+                pp.open(0x378);
+                init=true;
+            }
+
+        pp.set();
         port.write();
+        pp.reset();
         //give the CPU some time
         Time::delay(server_wait);
         k++;
