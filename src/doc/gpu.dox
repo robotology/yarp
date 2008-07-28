@@ -74,8 +74,6 @@ Now you have a YARP application, but you need some programs to run on the GPU.
 Program's structure has always to be the same (for more information I'd suggest the CUDA programming manual).
 Following, it is an example program (to convert RGB images to BW):
 \code
-#define NUMTHREADS 64
-#define NUMBLOCKS 256
 
 extern "C" {
 
@@ -92,11 +90,11 @@ extern "C" {
 }
 \endcode
 Let's look at it.
-Just a quick note, the first two lines are optional: as you can see they are not used by the program, they just tell you the same information you can get with blockDim.x and gridDim.x.
-I've decided to put them here to let you know what the hadware configuration of your threads will be.
-First of all, the number of threads which will run on the GPU (into each block) is 64, divided into 256 blocks.
-Basically, threads running within the same block can make use of shared memory and other things, but at the moment just think it as a way to increase computing performance.
-These numbers actually must be 32 and 96, and will run well optimized on CUDA supported devices.
+Just a quick note, the software automatically defines some objects, namely `threadIdx`, `blockIdx`, `blockDim` and `gridDim`.
+At the moment, for ease of usage, they are just used 1D, accessed as `threadIdx.x`.
+The first one is the id of the thread which executes the main function (within its current block); the second one is the id of the block within the block grid.
+`blockDim` is the numbe of threads contained in a single block, and `gridDim` is the size of the block grid.
+
 Then, the main function (at the moment just use the main function) has to be named FragmentProgram, and to have a "__global__" before its type.
 Type is not important, so you might always set it to void.
 The FragmentProgram function will run on every GPU's core, executing the same instructions (SIMD approach), but every thread will have its own threadIdx.x identifier.
