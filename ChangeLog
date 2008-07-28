@@ -1,3 +1,10 @@
+2008-07-28  Giacomo Spigler  <spiglerg@gmail.com>
+
+	* src/modules/cuda/*: Now CUDA driver requires two variables to be set with ccmake:
+	-CUDA_NUMTHREADS: the number of threads per block to be run on the GPU
+	-CUDA_NUMTHREADBLOCKS: the number of thread blocks to be run on the GPU
+	With this new format the driver can be tuned for better performance on every CUDA compatible GPU [http://www.nvidia.com/object/cuda_learn_products.html].
+
 2008-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: updated Bottle/BottleImpl
