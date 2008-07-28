@@ -21,6 +21,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/dev/PreciselyTimed.h>
 
 
 namespace yarp
@@ -54,6 +55,7 @@ private:
     bool spoke;
     PolyDriver poly;
     IGenericSensor *IMU; //The inertial device
+    IPreciselyTimed *iTimed;
     yarp::os::Port p;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> writer;
 public:
@@ -64,6 +66,7 @@ public:
     {
         IMU = NULL;
         spoke = false;
+        iTimed=0;
     }
 
     virtual ~ServerInertial() {
@@ -111,6 +114,9 @@ public:
 			}
         if (poly.isValid())
             poly.view(IMU);
+
+        if (poly.isValid())
+            poly.view(iTimed);
 
         if (IMU!=NULL)
             writer.attach(p);
@@ -187,14 +193,16 @@ public:
                     {
                         yarp::os::Bottle& bot = writer.get();
                         getInertial(bot);
+                        yarp::os::Stamp ts=iTimed->getLastInputStamp();
 
                         if (!spoke)
                             {
                                 printf("Writing an Inertial measurement.\n");
                                 spoke = true;
                             }
+
+                        p.setEnvelope(ts);
                         writer.write();
-					
                     }
 
 				/// wait 5 ms.

@@ -14,6 +14,8 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Stamp.h>
 
+#include <yarp/dev/PreciselyTimed.h>
+
 
 // These classes are part of the YARP library implementation,
 // rather than its user interface
@@ -34,12 +36,6 @@ class yarp::dev::DataSource {
 public:
     virtual ~DataSource() {}
     virtual bool getDatum(T& datum) = 0;
-};
-
-class IPreciselyTimed {
-public:
-	virtual yarp::os::Stamp getLastInputStamp() = 0;
-	virtual ~IPreciselyTimed(){}
 };
 
 template <class T>
