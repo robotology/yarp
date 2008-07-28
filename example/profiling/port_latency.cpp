@@ -68,27 +68,37 @@ int server(double server_wait)
     port.open("/profiling/port");
 
     int k=0;
+    const int batchSize=10;
+
     while(true) {
-        printf("Sending frame %d\n", k);
-        Bottle& b = port.prepare();
-        b.clear();
-        double time=Time::now();
-        b.addDouble(time);
+
         static ppEventDebugger pp;
         static bool init=false;
-        
         if (!init)
             {
                 pp.open(0x378);
                 init=true;
             }
 
+        int size=batchSize+1;
+        while(size--)
+            {
+                printf("Sending frame %d\n", k);
+                Bottle& b = port.prepare();
+                b.clear();
+                double time=Time::now();
+                b.addDouble(time);
+
+                pp.set();
+                port.write();
+                pp.reset();
+                //give the CPU some time
+                Time::delay(server_wait);
+                k++;
+            }
         pp.set();
-        port.write();
+        Time::delay(server_wait*10); //wait 10 seconds
         pp.reset();
-        //give the CPU some time
-        Time::delay(server_wait);
-        k++;
     }
     port.close();
     return 0;
