@@ -57,7 +57,7 @@ public:
                 delay+=(now-t)*1000;
                 count++;
                 // remove this to spare cpu time
-                fprintf(stderr, "%lf\n", (now-t)*1000);
+                //                fprintf(stderr, "%lf\n", (now-t)*1000);
             }
         //        else
 
