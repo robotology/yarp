@@ -40,10 +40,9 @@ public:
                 init=true;
             }
 
-        pp.set();
-        pp.set();
-        pp.set();
-        pp.set();
+        int pulseWidth=100;
+        while(pulseWidth--)
+            pp.set();
         pp.reset();
 
         //        if (wait>0)
@@ -71,7 +70,7 @@ int server(double server_wait)
     port.open("/profiling/port");
 
     int k=0;
-    const int batchSize=10;
+    const int batchSize=5;
 
     while(true) {
 
@@ -92,15 +91,18 @@ int server(double server_wait)
                 double time=Time::now();
                 b.addDouble(time);
 
-                pp.set();
-                port.write();
+                int pulseWidth=100;
+                while(pulseWidth--)
+                    pp.set();
+                pp.reset();
+                port.write(true);
                 pp.reset();
                 //give the CPU some time
                 Time::delay(server_wait);
                 k++;
             }
         pp.set();
-        Time::delay(server_wait*10); //wait 10 seconds
+        Time::delay(server_wait*3);
         pp.reset();
     }
     port.close();
