@@ -2,7 +2,8 @@
 
 	* src/libYARP_OS/src/Companion.cpp: "yarp exists" now works
 	also with two arguments.  With two arguments, it tests if 
-	a connection exists between the two ports.
+	a connection exists between the two ports.  With one argument,
+	it does as always (checks if port exists)
 
 	* src/libYARP_OS/src/Network.cpp: implement test for whether
 	a connection exists between two ports.

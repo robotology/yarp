@@ -18,6 +18,7 @@
 #include <yarp/Logger.h>
 #include <yarp/String.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Vocab.h>
 
 #include <yarp/InputStream.h>
 #include <yarp/OutputProtocol.h>
@@ -176,7 +177,8 @@ ConstString Network::readString(bool *eof) {
 
 bool Network::write(const Contact& contact, 
                     PortWriter& cmd,
-                    PortReader& reply) {
+                    PortReader& reply,
+                    bool admin) {
 
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
@@ -207,7 +209,7 @@ bool Network::write(const Contact& contact,
     Route r(connectionName,targetName,"text_ack");
     out->open(r);
     
-    PortCommand pc(0,"d");
+    PortCommand pc(0,admin?"a":"d");
     BufferedConnectionWriter bw(out->isTextMode());
     bool ok = pc.write(bw);
     if (!ok) {
@@ -232,6 +234,29 @@ bool Network::write(const Contact& contact,
         out = NULL;
     }
     return true;
+}
+
+
+bool Network::isConnected(const char *src, const char *dest, bool quiet) {
+    Contact contact = Contact::byName(src);
+    Bottle cmd, reply;
+    cmd.addVocab(Vocab::encode("list"));
+    cmd.addVocab(Vocab::encode("out"));
+    Network::write(contact,cmd,reply,true);
+    for (int i=0; i<reply.size(); i++) {
+        if (reply.get(i).asString()==dest) {
+            if (!quiet) {
+                printf("Connection from %s to %s found\n",
+                       src, dest);
+            }
+            return true;
+        }
+    }
+    if (!quiet) {
+        printf("No connection from %s to %s found\n",
+               src, dest);
+    }
+    return false;
 }
 
 

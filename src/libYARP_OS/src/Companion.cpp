@@ -108,7 +108,7 @@ Companion::Companion() {
     add("ping",  &Companion::cmdPing,
         "get live information about a port");
     add("exists",  &Companion::cmdExists,
-        "check if a port is alive (useful for conditions in scripts)");
+        "check if a port or connection is alive");
     add("wait",  &Companion::cmdWait,
         "wait for a port to be alive");
     add("cmake",  &Companion::cmdMake,
@@ -264,6 +264,10 @@ int Companion::cmdPing(int argc, char *argv[]) {
 int Companion::cmdExists(int argc, char *argv[]) {
     if (argc == 1) {
         return exists(argv[0],true);
+    }
+    if (argc == 2) {
+        bool ok = Network::isConnected(argv[0],argv[1]);
+        return ok?0:1;
     }
 
     ACE_OS::fprintf(stderr,"Please specify a port name\n");
