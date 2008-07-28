@@ -48,6 +48,7 @@ for manual in min; do
     sed "s/.*section.YARP Page.*/%%\\0/" -i refman.tex
     sed "s/.*section.Welcome to YARP.*/%%\\0/" -i refman.tex
     sed "s/\\\\chapter.*/%%\\0/" -i refman.tex
+    sed "s/.*pspicture.*/%%\\0/" -i refman.tex
     sed "s/.*input.index.*/%%\\0/" -i refman.tex
     sed "s/^.include.*/%%\\0/" -i refman.tex
     sed "s/^.input.*/%%\\0/" -i refman.tex
