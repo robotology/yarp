@@ -235,7 +235,9 @@ our printable user manual.
 \li \ref yarp_code_examples
 \li \ref yarp
 \li \ref yarp_motor_control
-\li \ref dev-how-to
+\li \ref port_expert
+\li \ref add_a_device
+\li \ref yarp_without_yarp
 \li \ref terms
 \li \ref data_rep
 \li \ref yarp_protocol
