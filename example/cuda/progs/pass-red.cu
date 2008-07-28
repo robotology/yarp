@@ -1,5 +1,5 @@
-#define ATHREAD_COUNT 32
-#define BLOCKS 96
+#define ATHREAD_COUNT 64
+#define BLOCKS 256
 
 extern "C" {
 
