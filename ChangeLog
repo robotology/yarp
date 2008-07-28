@@ -1,9 +1,21 @@
+2008-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: "yarp exists" now works
+	also with two arguments.  With two arguments, it tests if 
+	a connection exists between the two ports.
+
+	* src/libYARP_OS/src/Network.cpp: implement test for whether
+	a connection exists between two ports.
+
 2008-07-28  Giacomo Spigler  <spiglerg@gmail.com>
 
-	* src/modules/cuda/*: Now CUDA driver requires two variables to be set with ccmake:
+	* src/modules/cuda/*: Now CUDA driver requires two variables to 
+	be set with ccmake:
 	-CUDA_NUMTHREADS: the number of threads per block to be run on the GPU
 	-CUDA_NUMTHREADBLOCKS: the number of thread blocks to be run on the GPU
-	With this new format the driver can be tuned for better performance on every CUDA compatible GPU [http://www.nvidia.com/object/cuda_learn_products.html].
+	With this new format the driver can be tuned for better performance on 
+	every CUDA compatible GPU 
+	[http://www.nvidia.com/object/cuda_learn_products.html].
 
 2008-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -38,6 +50,7 @@
 	Added custom resolutions and Bayer pattern pc-side decoding
 	in Dragonfly 2 devices.
 
+>>>>>>> 1.333
 2008-07-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/os/queue_manager.cpp: added a simple online help

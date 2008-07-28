@@ -71,6 +71,16 @@ public:
                            bool quiet=true);
 
     /**
+     * Check if a connection exists between two ports.
+     * @param src the name of an output port
+     * @param dest the name of an input port
+     * @param quiet suppress messages displayed upon success/failure
+     * @return true if there is a connection
+     */
+    static bool isConnected(const char *src, const char *dest, 
+                            bool quiet=true);
+
+    /**
      * Wait for a port to be ready and responsive.
      * @param port the name of a port
      * @param quiet suppress messages displayed during wait
@@ -233,12 +243,14 @@ public:
      * @param contact the target to communicate with
      * @param cmd the message to send
      * @param reply the response is read here
+     * @param admin true for administrative message, false for regular data
      *
      * @return true on success
      */
     static bool write(const Contact& contact, 
                       PortWriter& cmd,
-                      PortReader& reply);
+                      PortReader& reply,
+                      bool admin = false);
 
     /**
      *
