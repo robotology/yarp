@@ -1,5 +1,3 @@
-#define NUMTHREADS 64
-#define NUMBLOCKS 256
 
 extern "C" {
 
