@@ -101,7 +101,7 @@ int server(double server_wait)
                 k++;
             }
         pp.set();
-        Time::delay(server_wait*20);
+        Time::delay(server_wait*3);
         pp.reset();
     }
     port.close();
