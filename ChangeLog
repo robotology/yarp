@@ -1,3 +1,12 @@
+2008-07-28  Lorenzo Natale <nat@liralab.it>
+	* src/yarp/libYARP_dev/include/yarp/dev/DataSource.h: 
+	removed IPreciselyTimed interface
+	* src/yarp/libYARP_dev/include/yarp/dev/PreciselyTimed.h:
+	added IPreciselyTimedInterface
+	* src/yarp/libYARP_dev/include/yarp/dev/ServerInertial.h
+	* src/yarp/libYARP_dev/src/ServerInertial.cpp: added timestamps in
+	server inertial device.
+
 2008-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp: "yarp exists" now works
