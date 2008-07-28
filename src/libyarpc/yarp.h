@@ -15,6 +15,11 @@
 extern "C" {
 #endif
 
+  typedef struct yarpBottleStruct {
+    void *implementation;
+  } yarpPort;
+  typedef yarpBottle *yarpBottlePtr;
+
   typedef struct yarpPortStruct {
     void *implementation;
   } yarpPort;
