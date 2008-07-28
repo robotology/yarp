@@ -94,7 +94,6 @@ int server(double server_wait)
                 int pulseWidth=100;
                 while(pulseWidth--)
                     pp.set();
-                pp.reset();
                 port.write(true);
                 pp.reset();
                 //give the CPU some time
@@ -102,7 +101,7 @@ int server(double server_wait)
                 k++;
             }
         pp.set();
-        Time::delay(server_wait*3);
+        Time::delay(server_wait*20);
         pp.reset();
     }
     port.close();
