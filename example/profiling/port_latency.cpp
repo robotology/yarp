@@ -41,6 +41,9 @@ public:
             }
 
         pp.set();
+        pp.set();
+        pp.set();
+        pp.set();
         pp.reset();
 
         //        if (wait>0)
