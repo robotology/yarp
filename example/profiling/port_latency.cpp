@@ -82,7 +82,7 @@ int server(double server_wait)
                 init=true;
             }
 
-        int size=batchSize+1;
+        int size=batchSize;
         while(size--)
             {
                 printf("Sending frame %d\n", k);
@@ -100,9 +100,10 @@ int server(double server_wait)
                 Time::delay(server_wait);
                 k++;
             }
-        pp.set();
-        Time::delay(server_wait*3);
-        pp.reset();
+        //        pp.set();
+        //        Time::delay(server_wait*3);
+        //        pp.reset();
+        //        Time::delay(server_wait);
     }
     port.close();
     return 0;
