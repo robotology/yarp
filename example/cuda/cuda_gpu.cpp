@@ -19,6 +19,8 @@
 #include <cvaux.h>
 #include <highgui.h>
 
+#include <cutil.h> //only needed for timing..
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::sig::file;
@@ -60,8 +62,18 @@ int main(int argc, char *argv[]) {
         prog = gpu->load(argv[1]);
     }
     write(out,"test0.ppm");
+
+
+    unsigned int hTimer;
+    cutCreateTimer(&hTimer);
+    cutStartTimer(hTimer);
+
     gpu->execute(prog, &img, &out);
     write(out,"test1.ppm");
+
+    cutStopTimer(hTimer);
+    printf("Processing time: %fms\n", cutGetTimerValue(hTimer));
+
 
     //Show the resulting image onto the screen using OpenCV
     IplImage *cvImage = cvCreateImage(cvSize(out.width(), out.height()),  IPL_DEPTH_8U, 3);
