@@ -12,9 +12,11 @@ using namespace yarp::os;
 // on the same machine.
 // 
 // Lorenzo Natale May 2008
+//
 // Added paralell port code August 2008.
 
 #include <ppEventDebugger.h>
+#include <string>
 
 class Reader : public TypedReaderCallback<Bottle> {
 public:
@@ -65,10 +67,14 @@ public:
     }
 };
 
-int server(double server_wait)
+int server(double server_wait, const std::string &name)
 {
     BufferedPort<Bottle> port;
-    port.open("/profiling/port");
+    std::string portName;
+    portName="/profiling/server/";
+    portName+=name;
+    portName+="/port";
+    port.open(portName.c_str());
 
     int k=0;
     const int batchSize=5;
@@ -110,20 +116,23 @@ int server(double server_wait)
     return 0;
 }
 
-int client(int nframes)
+int client(int nframes, std::string &name)
 {
     Reader reader;
+    std::string portName;
+    portName="/profiling/client/";
+    portName+=name;
+    portName+="/port";
 
     BufferedPort<Bottle> port;
     port.useCallback(reader);
-    port.open("/profiling/port2");
-    while(!Network::connect("/profiling/port","/profiling/port2"))
-        {
-            fprintf(stderr, "Waiting for connection\n");
-            Time::delay(0.5);
-        }
+    port.open(portName.c_str());
 
-    while(reader.count<nframes)
+    bool forever=false;
+    if (nframes=-1)
+        forever=true;
+        
+    while( (reader.count<nframes) || forever)
         {
             //give the CPU some time
             Time::delay(0.5);
@@ -141,8 +150,14 @@ int main(int argc, char **argv) {
     Property p;
     p.fromCommand(argc, argv);
 
+    std::string name;
+    if (p.check("name"))
+        name=p.find("name").asString().c_str();
+    else
+        name="default";
+
     if (p.check("server"))
-        return server(p.find("period").asDouble());
+        return server(p.find("period").asDouble(), name);
     else if (p.check("client"))
-        return client(p.find("nframes").asInt());
+        return client(p.find("nframes").asInt(), name);
 }
