@@ -5,10 +5,7 @@
 
 #include <stdio.h>
 
-#include <yarp/os/RateThread.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Thread.h>
-
+#include <yarp/os/all.h>
 #include <yarp/sig/Matrix.h>
 #include <stdio.h>
 
@@ -18,12 +15,24 @@ using namespace yarp::sig;
 const int NROWS=20;
 const int NCOLS=20;
 const int THREAD_PERIOD=15;
-const int MAIN_WAIT=100;
+const int MAIN_WAIT=10;
+
+/*
+ * We start a thread with a given rate. We let
+ * the thread run for a certain time. We measure
+ * the real period.
+ * Parameters:
+ * --period set the periodicity of the thread (ms).
+ * --time the time we wait before quitting (seconds).
+ *
+ * August 08, Lorenzo Natale.
+ */
 
 class Thread1 : public RateThread {
     Matrix m;
 public:
-	Thread1(int r):RateThread(r){}
+	Thread1(int r=THREAD_PERIOD):RateThread(r){}
+
     virtual bool threadInit()
 	{ 
 		printf("Starting thread1\n");
@@ -65,12 +74,25 @@ public:
 	}
 };
 
-int main() {
-    Thread1 t1(THREAD_PERIOD);
+int main(int argc, char **argv) {
+    Property p;
+    Thread1 t1;
+
+    p.fromCommand(argc, argv);
+
+    int period=p.check("period", Value(THREAD_PERIOD)).asInt();
+    double time=p.check("time", Value(MAIN_WAIT)).asDouble();
+
     Time::turboBoost();
+
+    t1.setRate(period);
+
+    printf("Going to start a thread with period %d[ms]\n", period);
+    printf("Going to wait %.2lf seconds before quitting\n", time);
+
     t1.start(); 
 
-    Time::delay(MAIN_WAIT);
+    Time::delay(time);
 
     t1.stop();
     return 0;
