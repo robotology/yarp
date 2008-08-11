@@ -6,16 +6,13 @@
 #include <stdio.h>
 
 #include <yarp/os/all.h>
-#include <yarp/sig/Matrix.h>
 #include <stdio.h>
 
 using namespace yarp::os;
-using namespace yarp::sig;
 
-const int NROWS=20;
-const int NCOLS=20;
 const int THREAD_PERIOD=15;
 const int MAIN_WAIT=10;
+const double THREAD_CPU_TIME=0.1;
 
 /*
  * We start a thread with a given rate. We let
@@ -24,14 +21,15 @@ const int MAIN_WAIT=10;
  * Parameters:
  * --period set the periodicity of the thread (ms).
  * --time the time we wait before quitting (seconds).
- *
+ * --cpu time spent in thread (percentage)
  * August 08, Lorenzo Natale.
  */
 
 class Thread1 : public RateThread {
-    Matrix m;
+    double cpuUsage;
 public:
-	Thread1(int r=THREAD_PERIOD):RateThread(r){}
+	Thread1(int r=THREAD_PERIOD):RateThread(r)
+    { cpuUsage=0; }
 
     virtual bool threadInit()
 	{ 
@@ -48,8 +46,6 @@ public:
 		else
 			printf("Thread1 did not start\n");
 
-
-        m.resize(NROWS,NCOLS);
 	}
 
     virtual void run() 
@@ -63,29 +59,37 @@ public:
                 resetStat();
             }
 
-        for(int r=0;r<m.rows();r++)
-            for(int c=0;c<m.cols();c++)
-                m[r][c]=rand();
+        double time=getRate()*cpuUsage/1000; //go to seconds
+
+        double start=Time::now();
+        double now=start;
+        while(now-start<time)
+            now=Time::now();
     }
 
     virtual void threadRelease()
 	{
 		printf("Goodbye from thread1\n");
 	}
+
+    void setCpuTime(double t)
+    { cpuUsage=t;}
 };
 
 int main(int argc, char **argv) {
     Property p;
     Thread1 t1;
-
+    
     p.fromCommand(argc, argv);
 
     int period=p.check("period", Value(THREAD_PERIOD)).asInt();
     double time=p.check("time", Value(MAIN_WAIT)).asDouble();
+    double cpuTime=p.check("cpu", Value(THREAD_CPU_TIME)).asDouble();
 
     Time::turboBoost();
 
     t1.setRate(period);
+    t1.setCpuTime(cpuTime);
 
     printf("Going to start a thread with period %d[ms]\n", period);
     printf("Going to wait %.2lf seconds before quitting\n", time);
