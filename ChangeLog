@@ -1,3 +1,6 @@
+2008-8-11 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_OS/include/os/all.h: added RateThread.h
+
 2008-07-28  Lorenzo Natale <nat@liralab.it>
 	* src/yarp/libYARP_dev/include/yarp/dev/DataSource.h: 
 	removed IPreciselyTimed interface
@@ -60,7 +63,6 @@
 	Added custom resolutions and Bayer pattern pc-side decoding
 	in Dragonfly 2 devices.
 
->>>>>>> 1.333
 2008-07-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/os/queue_manager.cpp: added a simple online help
