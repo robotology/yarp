@@ -12,6 +12,7 @@ using namespace yarp::os;
 // on the same machine.
 // 
 // Lorenzo Natale May 2008
+// Added paralell port code August 2008.
 
 #include <ppEventDebugger.h>
 
