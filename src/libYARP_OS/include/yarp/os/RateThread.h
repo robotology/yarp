@@ -124,6 +124,13 @@ public:
 	double getEstPeriod();
 
     /**
+     * Return estimated period since last reset.
+     * @param av: average value
+     * @param std: standard deviation
+     */
+    void getEstPeriod(double &av, double &std);
+
+    /**
      * Return the number of iterations performed since last reset.
      */
     unsigned int getIterations();
@@ -133,6 +140,13 @@ public:
      * last reset.
      */
     double getEstUsed();
+
+    /**
+     * Return estimated duration of the run() function since last reset.
+     * @param av: average value
+     * @param std: standard deviation
+     */
+    void getEstUsed(double &av, double &std);
 
     /**
      * Called just before a new thread starts.

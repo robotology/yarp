@@ -50,16 +50,20 @@ public:
 
     virtual void run() 
     {
-        if (getIterations()==10)
+        if (getIterations()==20)
             {
-                double estP=getEstPeriod();
-                double estU=getEstUsed();
-                fprintf(stderr, "Thread1 est dT:%.3lf[ms]\n", estP);
-                fprintf(stderr, "Thread1 est used:%.3lf[ms]\n", estU);
+                double estP, pStd, estU, uStd;
+                getEstPeriod(estP, pStd);
+                getEstUsed(estU, uStd);
+                fprintf(stderr, "Thread1 est dT:%.3lf[ms] +/- %lf[ms]\n", estP, pStd);
+                fprintf(stderr, "Thread1 est used:%.3lf[ms] +/- %lf[ms]\n", estU, uStd);
                 resetStat();
             }
-
-        double time=getRate()*cpuUsage/1000; //go to seconds
+        
+        static int count=0;
+        count++;
+        double time;
+        time=getRate()*cpuUsage/1000; //go to seconds
 
         double start=Time::now();
         double now=start;

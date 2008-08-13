@@ -45,6 +45,8 @@ private:
     unsigned int count;    //number of iterations from last reset
     unsigned int estPIt;   //number of useful iterations for period estimation
     double totalT;         //time bw run, accumulated
+    double sumTSq;         //cumulative sum sq of estimated period dT
+    double sumUsedSq;      //cumulative sum sq of estimated thread tun
     double previousRun;    //time when last iteration started
     double currentRun;     //time when this iteration started
     bool scheduleReset; 
@@ -55,6 +57,8 @@ private:
         count=0;
         estPIt=0;
         totalT=0;
+        sumUsedSq=0;
+        sumTSq=0;
         scheduleReset=false;
     }
 
@@ -129,6 +133,28 @@ public:
         unlock();
         return ret;
     }
+
+    void getEstPeriod(double &av, double &std)
+    {
+        lock();
+        if (estPIt==0)
+            {
+                av=0;
+                std=0;
+            }
+        else
+            {
+                av=totalT/estPIt;
+                if (estPIt>1)
+                    {
+                        std=sqrt(((1.0/(estPIt-1))*(sumTSq-estPIt*av*av)));
+                    }
+                else
+                    std=0;
+            }
+
+        unlock();
+    }
     
     unsigned int getIterations()
     { 
@@ -150,6 +176,28 @@ public:
         return ret;
     }
 
+    void getEstUsed(double &av, double &std)
+    {
+        lock();
+        if (count<1)
+            {
+                av=0;
+                std=0;
+            }
+        else
+            {
+                av=totalUsed/count;
+                if (count>1)
+                    {
+                        std=sqrt((1.0/(count-1))*(sumUsedSq-count*av*av));
+                    }
+                else
+                    std=0;
+            }
+
+        unlock();
+    }
+
 
     void singleStep()
     {
@@ -164,6 +212,7 @@ public:
             {
                 //double saved=adaptedPeriod;
                 double dT=(currentRun-previousRun)*1000;
+                sumTSq+=dT*dT;
                 totalT+=dT;
                 //double error=(static_cast<double>(period)-dT);
                 //adaptedPeriod+=0.0*error; //not available
@@ -190,25 +239,15 @@ public:
 
         //save last
         totalUsed+=elapsed*1000;
+        sumUsedSq+=elapsed*1000*elapsed*1000;
         unlock();
 
         //compute sleep time
         sleepPeriodTV.msec(static_cast<int>(adaptedPeriod+0.5));
         sleepPeriodTV+=currentRunTV;
         sleepPeriodTV-=elapsedTV;
-        //        Time::delay(sleep_period/1000.0);
+        // Time::delay(sleep_period/1000.0);
         sleepThread(sleepPeriodTV);
-        
-#if 0
-        int us=sleep_period.usec()%1000;
-        if (us>=500)
-            sleep_period = sleep_period+ACE_Time_Value(0, 1000-us);
-        else
-            sleep_period = sleep_period-ACE_Time_Value(0, us);
-        
-        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-            sleep_period.set(0,0);
-#endif
     }
 
     virtual void run() 
@@ -334,6 +373,16 @@ double RateThread::getEstPeriod()
 double RateThread::getEstUsed()
 {
     return ((RateThreadCallbackAdapter*)implementation)->getEstUsed();
+}
+
+void RateThread::getEstPeriod(double &av, double &std)
+{
+    ((RateThreadCallbackAdapter*)implementation)->getEstPeriod(av, std);
+}
+
+void RateThread::getEstUsed(double &av, double &std)
+{
+    ((RateThreadCallbackAdapter*)implementation)->getEstUsed(av,std);
 }
 
 void RateThread::resetStat()

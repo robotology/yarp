@@ -1,5 +1,9 @@
 2008-8-11 Lorenzo Natale <nat@liralab.it>
-	* src/libYARP_OS/include/os/all.h: added RateThread.h
+	* src/libYARP_OS/include/yarp/os/RateThread.h/RateThread.cpp:
+	methods getEstPeriod()/getEstUsed() now returns average and std
+
+2008-8-11 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_OS/include/yarp/os/all.h: added RateThread.h
 
 2008-07-28  Lorenzo Natale <nat@liralab.it>
 	* src/yarp/libYARP_dev/include/yarp/dev/DataSource.h: 
