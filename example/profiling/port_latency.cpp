@@ -19,7 +19,7 @@ using namespace yarp::os;
 // --name: give a name to the port
 // --server: act as a server
 // --client: act as a client
-// --period: if server set the periodicity of the messages
+// --period: if server set the periodicity of the messages [ms]
 // --nframes: if client specifies how many message are received
 // before closing (default: waits forever)
 
@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
         name="default";
 
     if (p.check("server"))
-        return server(p.find("period").asDouble(), name);
+        return server(p.find("period").asDouble()*1000, name);
     else if (p.check("client"))
         return client(p.find("nframes").asInt(), name);
 }
