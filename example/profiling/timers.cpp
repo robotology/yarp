@@ -10,18 +10,41 @@ using namespace yarp::os;
 // 
 // Lorenzo Natale August 2008 (TB improved)
 
+// Parameters:
+// --period: wave period (ms)
+// --time: total time (seconds)
+
 #include <ppEventDebugger.h>
 
 static ppEventDebugger pp(0x378);
 
 int main(int argc, char **argv) 
 {
-    double totalTime=5; //seconds
-    double period=0.01; //s
+    Property p;
+    p.fromCommand(argc, argv);
+
+    double totalTime=-1; //seconds
+    double period=0.1; //s
+
+    if (p.check("period"))
+        period=p.find("period").asDouble()/1000.0;
+    if (p.check("time"))
+        totalTime=p.find("time").asDouble();
+
+    printf("Generating wave with period T=%.2lf[ms]\n", period*1000);
+    if (totalTime!=-1)
+        printf("Waiting %.2lf seconds\n", totalTime);
+    else
+        printf("Waiting forever\n");
+
+    bool forever=false;
+
+    if (totalTime==-1)
+        forever=true;
 
     double start=Time::now();
     double currentIt=start;
-    while(currentIt-start<totalTime)
+    while((currentIt-start<totalTime) || forever)
         {
             currentIt=Time::now();
 
