@@ -8,12 +8,20 @@ using namespace yarp::os;
 // time it takes for the message to be received.
 // Compute average.
 //
-// Time only makes sense if server and client are run
+// Time only makes sense if server and client run
 // on the same machine.
 // 
 // Lorenzo Natale May 2008
 //
 // Added paralell port code August 2008.
+
+// Parameters:
+// --name: give a name to the port
+// --server: act as a server
+// --client: act as a client
+// --period: if server set the periodicity of the messages
+// --nframes: if client specifies how many message are received
+// before closing (default: waits forever)
 
 #include <ppEventDebugger.h>
 #include <string>
@@ -23,12 +31,14 @@ public:
     BufferedPort<Bottle> outPort;
 
     double delay;
+    double delaySq;
     int count;
     int wait;
 public:
     Reader()
     {
         delay=0;
+        delaySq=0;
         count=0;
         // wait some messages before counting
         wait=10;
@@ -37,22 +47,20 @@ public:
     void onRead(Bottle& datum) {
         static ppEventDebugger pp;
         static bool init=false;
-        
+
+        double now=Time::now();
         if (!init)
             {
                 pp.open(0x378);
                 init=true;
             }
 
-        int pulseWidth=100;
-        while(pulseWidth--)
-            pp.set();
+        pp.set();
         pp.reset();
 
-
         double t=datum.get(0).asDouble();
-        double now=Time::now();
         delay+=(now-t)*1000;
+        delaySq+=(delay*delay);
 
         Bottle& b = outPort.prepare();
         b.clear();
@@ -89,9 +97,7 @@ int server(double server_wait, const std::string &name)
         double time=Time::now();
         b.addDouble(time);
 
-        int pulseWidth=100;
-        while(pulseWidth--)
-            pp.set();
+        pp.set();
         port.write(true);
         pp.reset();
         //give the CPU some time
@@ -114,7 +120,6 @@ int client(int nframes, std::string &name)
     port.useCallback(reader);
     port.open(portName.c_str());
 
-
     portName="/profiling/client/";
     portName+=name;
     portName+="/port:o";
@@ -133,8 +138,11 @@ int client(int nframes, std::string &name)
 
     port.close();
 
-    fprintf(stderr, "Received: %d average latency %.3lf[ms]\n", 
-            reader.count, reader.delay/reader.count);
+    double averageLatency=reader.delay/reader.count;
+    double stdLatency=(1.0/(reader.count-1))*(reader.delaySq-reader.count*averageLatency*averageLatency);
+
+    fprintf(stderr, "Received: %d average latency %.3lf+/-%.5lf [ms]\n", 
+            reader.count, averageLatency, stdLatency);
     return 0;
 }
 
