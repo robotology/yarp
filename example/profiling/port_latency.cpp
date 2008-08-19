@@ -1,6 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <stdio.h>
 #include <yarp/os/all.h>
+
+#include <math.h>
+
 using namespace yarp::os;
 
 // Port latency, basic test.
@@ -41,7 +44,7 @@ public:
         delaySq=0;
         count=0;
         // wait some messages before counting
-        wait=10;
+        wait=20;
     }
 
     void onRead(Bottle& datum) {
@@ -145,6 +148,8 @@ int client(int nframes, std::string &name)
 
     double averageLatency=reader.delay/reader.count;
     double stdLatency=(1.0/(reader.count-1))*(reader.delaySq-reader.count*averageLatency*averageLatency);
+
+    stdLatency=sqrt(stdLatency);
 
     fprintf(stderr, "Received: %d average latency %.3lf +/- %.5lf [ms]\n", 
             reader.count, averageLatency, stdLatency);
