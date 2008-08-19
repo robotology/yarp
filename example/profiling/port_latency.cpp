@@ -127,7 +127,7 @@ int client(int nframes, std::string &name)
     reader.outPort.open(portName.c_str());
 
     bool forever=false;
-    if (nframes=-1)
+    if (nframes==-1)
         forever=true;
         
     while( (reader.count<nframes) || forever)
