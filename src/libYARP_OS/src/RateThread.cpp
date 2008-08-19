@@ -10,13 +10,14 @@
 #include <yarp/ThreadImpl.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/Logger.h>
-//#include <ace/Thread_Manager.h>
 #include <ace/Synch.h>
 #include <ace/Time_Value.h>
 #include <ace/High_Res_Timer.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
+
+#include <math.h> //sqrt
 
 //added threadRelease/threadInit methods and synchronization -nat 
 
