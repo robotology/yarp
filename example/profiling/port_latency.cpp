@@ -99,7 +99,7 @@ int server(double server_wait, const std::string &name)
                 init=true;
             }
 
-        printf("Sending frame %d\n", k);
+        //  printf("Sending frame %d\n", k);
         Bottle& b = port.prepare();
         b.clear();
         double time=Time::now();
