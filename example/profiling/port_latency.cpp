@@ -29,6 +29,8 @@ using namespace yarp::os;
 #include <ppEventDebugger.h>
 #include <string>
 
+#include <vector>
+
 class Reader : public TypedReaderCallback<Bottle> {
 public:
     BufferedPort<Bottle> outPort;
@@ -37,6 +39,9 @@ public:
     double delaySq;
     int count;
     int wait;
+
+    std::vector<double> latencies;
+
 public:
     Reader()
     {
@@ -65,9 +70,12 @@ public:
         if (wait<=0)
             {
 
-                delay+=(now-t)*1000;
-                delaySq+=(delay*delay);
+                double dT=(now-t)*1000;
+                delay+=dT;
+                delaySq+=(dT*dT);
                 count++;
+
+                latencies.push_back(dT);
             }
         else
             wait--;
@@ -79,18 +87,28 @@ public:
     }
 };
 
-int server(double server_wait, const std::string &name)
+class serverThread: public RateThread
 {
     BufferedPort<Bottle> port;
-    std::string portName;
-    portName="/profiling/server/";
-    portName+=name;
-    portName+="/port:o";
-    port.open(portName.c_str());
 
-    int k=0;
-    while(true) {
+public:
+    serverThread():RateThread(100)
+    {}
 
+    void open(double period, const std::string &name)
+    {
+        std::string portName;
+        portName="/profiling/server/";
+        portName+=name;
+        portName+="/port:o";
+        port.open(portName.c_str());
+
+        RateThread::setRate(int (period*1000.0+0.5));
+        RateThread::start();
+    }
+
+    void run()
+    {
         static ppEventDebugger pp;
         static bool init=false;
         if (!init)
@@ -104,15 +122,26 @@ int server(double server_wait, const std::string &name)
         b.clear();
         double time=Time::now();
         b.addDouble(time);
-
         pp.set();
         port.write(true);
         pp.reset();
-        //give the CPU some time
-        Time::delay(server_wait);
-        k++;
     }
-    port.close();
+
+    bool releaseThread()
+    {
+        port.close();
+    }
+}; 
+
+int server(double server_wait, const std::string &name)
+{
+    serverThread thread;
+    thread.open(server_wait, name);
+
+    bool forever=true;
+    while(forever)
+        Time::delay(2);
+
     return 0;
 }
 
@@ -146,6 +175,13 @@ int client(int nframes, std::string &name)
 
     port.close();
 
+    std::vector<double>::iterator it=reader.latencies.begin();
+    while(it!=reader.latencies.end())
+        {
+            printf("%lf\n", *it);
+            it++;
+        }
+
     double averageLatency=reader.delay/reader.count;
     double stdLatency=(1.0/(reader.count-1))*(reader.delaySq-reader.count*averageLatency*averageLatency);
 
@@ -172,3 +208,9 @@ int main(int argc, char **argv) {
     else if (p.check("client"))
         return client(p.find("nframes").asInt(), name);
 }
+
+
+
+
+
+
