@@ -59,15 +59,20 @@ public:
         pp.reset();
 
         double t=datum.get(0).asDouble();
-        delay+=(now-t)*1000;
-        delaySq+=(delay*delay);
+        if (wait<=0)
+            {
+
+                delay+=(now-t)*1000;
+                delaySq+=(delay*delay);
+                count++;
+            }
+        else
+            wait--;
 
         Bottle& b = outPort.prepare();
         b.clear();
         b.addDouble(t);
         outPort.write();
-
-        count++;
     }
 };
 
@@ -141,7 +146,7 @@ int client(int nframes, std::string &name)
     double averageLatency=reader.delay/reader.count;
     double stdLatency=(1.0/(reader.count-1))*(reader.delaySq-reader.count*averageLatency*averageLatency);
 
-    fprintf(stderr, "Received: %d average latency %.3lf+/-%.5lf [ms]\n", 
+    fprintf(stderr, "Received: %d average latency %.3lf +/- %.5lf [ms]\n", 
             reader.count, averageLatency, stdLatency);
     return 0;
 }
