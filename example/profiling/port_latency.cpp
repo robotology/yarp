@@ -158,7 +158,7 @@ int main(int argc, char **argv) {
         name="default";
 
     if (p.check("server"))
-        return server(p.find("period").asDouble()*1000, name);
+        return server(p.find("period").asDouble()/1000.0, name);
     else if (p.check("client"))
         return client(p.find("nframes").asInt(), name);
 }
