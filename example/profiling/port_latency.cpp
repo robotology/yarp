@@ -26,19 +26,46 @@ using namespace yarp::os;
 // --nframes: if client specifies how many message are received
 // before closing (default: waits forever)
 
+// our own data type
+class TestData: public yarp::os::Portable
+{
+private:
+    double datum;
+public:
+    virtual bool read(ConnectionReader& connection)
+    {
+        bool ok = connection.expectBlock((char*)&datum, sizeof(double));
+        return ok;
+    }
+
+    virtual bool write(ConnectionWriter& connection)
+    {
+        connection.appendBlock((char*)&datum, sizeof(double));
+        return !connection.isError();
+    }
+
+    double inline get()
+    { return datum; }
+    
+    void inline set(double v)
+    {  datum=v; }
+};
+
 #include <ppEventDebugger.h>
 #include <string>
 
 #include <vector>
 
-class Reader : public TypedReaderCallback<Bottle> {
+class Reader : public BufferedPort<TestData> {
 public:
-    BufferedPort<Bottle> outPort;
+    BufferedPort<TestData> outPort;
 
     double delay;
     double delaySq;
     int count;
     int wait;
+
+    int nframes;
 
     std::vector<double> latencies;
 
@@ -49,14 +76,20 @@ public:
         delaySq=0;
         count=0;
         // wait some messages before counting
-        wait=20;
+        wait=0;
     }
 
-    void onRead(Bottle& datum) {
+    virtual void onRead(TestData &datum)
+    {
+        if (count==nframes)
+            return;
+
         static ppEventDebugger pp;
         static bool init=false;
 
         double now=Time::now();
+        double t=datum.get();
+
         if (!init)
             {
                 pp.open(0x378);
@@ -66,7 +99,10 @@ public:
         pp.set();
         pp.reset();
 
-        double t=datum.get(0).asDouble();
+        TestData &nd=outPort.prepare();
+        nd.set(t);
+        outPort.write();
+
         if (wait<=0)
             {
 
@@ -79,17 +115,12 @@ public:
             }
         else
             wait--;
-
-        Bottle& b = outPort.prepare();
-        b.clear();
-        b.addDouble(t);
-        outPort.write();
     }
 };
 
 class serverThread: public RateThread
 {
-    BufferedPort<Bottle> port;
+    BufferedPort<TestData> port;
 
 public:
     serverThread():RateThread(100)
@@ -118,12 +149,11 @@ public:
             }
 
         //  printf("Sending frame %d\n", k);
-        Bottle& b = port.prepare();
-        b.clear();
+        TestData &datum=port.prepare();
         double time=Time::now();
-        b.addDouble(time);
+        datum.set(time);
         pp.set();
-        port.write(true);
+        port.write();
         pp.reset();
     }
 
@@ -148,14 +178,21 @@ int server(double server_wait, const std::string &name)
 int client(int nframes, std::string &name)
 {
     Reader reader;
+    reader.nframes=nframes;
+
+    bool forever=false;
+    if (nframes==-1)
+        forever=true;
+    else
+        reader.latencies.resize(nframes);
+
     std::string portName;
     portName="/profiling/client/";
     portName+=name;
     portName+="/port:i";
 
-    BufferedPort<Bottle> port;
-    port.useCallback(reader);
-    port.open(portName.c_str());
+    reader.useCallback();
+    reader.open(portName.c_str());
 
     portName="/profiling/client/";
     portName+=name;
@@ -163,17 +200,13 @@ int client(int nframes, std::string &name)
     
     reader.outPort.open(portName.c_str());
 
-    bool forever=false;
-    if (nframes==-1)
-        forever=true;
-        
     while( (reader.count<nframes) || forever)
         {
             //give the CPU some time
             Time::delay(0.5);
         }
 
-    port.close();
+    reader.close();
 
     std::vector<double>::iterator it=reader.latencies.begin();
     while(it!=reader.latencies.end())
