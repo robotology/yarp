@@ -184,7 +184,7 @@ int client(int nframes, std::string &name)
     if (nframes==-1)
         forever=true;
     else
-        reader.latencies.resize(nframes);
+        reader.latencies.reserve(nframes);
 
     std::string portName;
     portName="/profiling/client/";
@@ -209,11 +209,13 @@ int client(int nframes, std::string &name)
     reader.close();
 
     std::vector<double>::iterator it=reader.latencies.begin();
+    FILE *of=fopen("timing.txt", "w");
     while(it!=reader.latencies.end())
         {
-            printf("%lf\n", *it);
+            fprintf(of, "%lf\n", *it);
             it++;
         }
+    fclose(of);
 
     double averageLatency=reader.delay/reader.count;
     double stdLatency=(1.0/(reader.count-1))*(reader.delaySq-reader.count*averageLatency*averageLatency);

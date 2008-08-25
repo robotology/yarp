@@ -15,31 +15,68 @@ using namespace yarp::os;
 
 #include <ppEventDebugger.h>
 
+#include <string>
+#include <vector>
+
+using namespace std;
+
 static ppEventDebugger pp(0x378);
+
+const int THREAD_PERIOD=20;
 
 class ThreadB: public Thread
 {
     Semaphore mutex;
+    int iterations;
+    double stamp;
+    vector<double> measures;
 public:
+
+    int setIterations(int it)
+    {
+        iterations=it;
+        if (iterations>0)
+            measures.reserve(iterations);
+    }
+
     bool threadInit()
     {
         fprintf(stderr, "ThreadB starting\n");
         return true;
     }
 
-    void wakeUp()
+    void wakeUp(double t)
     {
         pp.set();
+        stamp=t;
         mutex.post();
+    }
+
+    void dump(const std::string &filename)
+    {
+        std::vector<double>::iterator it=measures.begin();
+        FILE *fp=fopen(filename.c_str(), "w");
+        while(it!=measures.end())
+            {
+                fprintf(fp, "%lf\n", *it);
+                it++;
+            }
+        fclose(fp);
     }
 
     void run()
     {
         while(!isStopping())
             {
+                static int count=0;
                 mutex.wait();
+                count++;
                 pp.reset();
-                fprintf(stderr, "TheredB::run()\n");
+                if (count<iterations)
+                    {
+                        double dT=(Time::now()-stamp)*1000; //ms
+                        measures.push_back(dT);
+                    }
             }
     }
 
@@ -48,12 +85,14 @@ public:
 class ThreadA: public RateThread
 {
     ThreadB *slave;
+    int iterations;
 
 public:
     ThreadA(int period): RateThread(period)
     {
         slave=0;
     }
+
 
     void setSlave(ThreadB *B)
     {
@@ -68,9 +107,8 @@ public:
 
     void run()
     {
-        fprintf(stderr, "ThreadA run()\n");
         if(slave!=0)
-            slave->wakeUp();
+            slave->wakeUp(Time::now());
     }
 
 };
@@ -78,17 +116,27 @@ public:
 int main(int argc, char **argv) 
 {
     Network yarp;
+    Time::turboBoost();
+    Property p;
+    p.fromCommand(argc, argv);
+
+    int period=p.check("period", Value(THREAD_PERIOD)).asInt();
+    int iterations=p.check("iterations", Value(-1)).asInt();
 
     ThreadB tB;
-    ThreadA tA(1);
+    ThreadA tA(period);
+    tB.setIterations(iterations);
 
     tA.setSlave(&tB);
 
     tB.start();
     tA.start();
 
-    Time::delay(100);
+    double time=(period*(iterations+10))/1000;
+    Time::delay(time);
 
     tB.stop();  //stop B first, important
     tA.stop();
+
+    tB.dump("dump.txt");
 }
