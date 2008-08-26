@@ -14,9 +14,10 @@ using namespace yarp::os;
 // --period: wave period (ms)
 // --time: total time (seconds)
 
+#ifdef USE_PARALLEL_PORT
 #include <ppEventDebugger.h>
-
 static ppEventDebugger pp(0x378);
+#endif
 
 int main(int argc, char **argv) 
 {
@@ -49,8 +50,17 @@ int main(int argc, char **argv)
             currentIt=Time::now();
 
             while((Time::now()-currentIt)<period/2.0)
-                pp.set();
+                {
+#ifdef USE_PARALLEL_PORT
+                    pp.set();
+#endif
+
+                }
             while((Time::now()-currentIt)<period)
-                pp.reset();
+                {
+#ifdef USE_PARALLEL_PORT
+                    pp.reset();
+#endif
+                }
         }
 }

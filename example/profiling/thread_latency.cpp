@@ -13,14 +13,15 @@ using namespace yarp::os;
 // 
 // Lorenzo Natale August 2008
 
-#include <ppEventDebugger.h>
-
 #include <string>
 #include <vector>
 
 using namespace std;
 
+#ifdef USE_PARALLEL_PORT
+#include <ppEventDebugger.h>
 static ppEventDebugger pp(0x378);
+#endif
 
 const int THREAD_PERIOD=20;
 
@@ -47,7 +48,9 @@ public:
 
     void wakeUp(double t)
     {
+#if USE_PARALLEL_PORT
         pp.set();
+#endif
         stamp=t;
         mutex.post();
     }
@@ -71,7 +74,9 @@ public:
                 static int count=0;
                 mutex.wait();
                 count++;
+#ifdef USE_PARALLEL_PORT
                 pp.reset();
+#endif
                 if (count<iterations)
                     {
                         double dT=(Time::now()-stamp)*1000; //ms

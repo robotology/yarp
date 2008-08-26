@@ -51,7 +51,10 @@ public:
     {  datum=v; }
 };
 
+#ifdef USE_PARALLEL_PORT
 #include <ppEventDebugger.h>
+#endif
+
 #include <string>
 
 #include <vector>
@@ -84,20 +87,16 @@ public:
         if (count==nframes)
             return;
 
-        static ppEventDebugger pp;
-        static bool init=false;
 
         double now=Time::now();
         double t=datum.get();
 
-        if (!init)
-            {
-                pp.open(0x378);
-                init=true;
-            }
 
+#ifdef USE_PARALLEL_PORT
+        static ppEventDebugger pp(0x378);
         pp.set();
         pp.reset();
+#endif
 
         TestData &nd=outPort.prepare();
         nd.set(t);
@@ -140,21 +139,20 @@ public:
 
     void run()
     {
-        static ppEventDebugger pp;
-        static bool init=false;
-        if (!init)
-            {
-                pp.open(0x378);
-                init=true;
-            }
 
         //  printf("Sending frame %d\n", k);
         TestData &datum=port.prepare();
         double time=Time::now();
         datum.set(time);
+
+#ifdef USE_PARALLEL_PORT
+        static ppEventDebugger pp(0x378);
         pp.set();
+#endif
         port.write();
+#ifdef USE_PARALLEL_PORT
         pp.reset();
+#endif
     }
 
     bool releaseThread()
