@@ -31,16 +31,45 @@ class TestData: public yarp::os::Portable
 {
 private:
     double datum;
+    unsigned char *payload;
+    unsigned int payloadSize;
+
 public:
+    TestData()
+    {
+        payloadSize=0;
+        payload=0;
+    }
+
+    ~TestData()
+    {
+        if (!payload)
+            delete [] payload;
+    }
+
     virtual bool read(ConnectionReader& connection)
     {
+        unsigned int incoming;
         bool ok = connection.expectBlock((char*)&datum, sizeof(double));
+        ok=ok&&connection.expectBlock((char*)&incoming, sizeof(int));
+
+        //this resize only if needed
+        resize(incoming);
+
+        if (payloadSize>0)
+            ok=ok&&connection.expectBlock((char *)payload, payloadSize);
+
         return ok;
     }
 
     virtual bool write(ConnectionWriter& connection)
     {
         connection.appendBlock((char*)&datum, sizeof(double));
+        connection.appendBlock((char*)&payloadSize, sizeof(int));
+
+        if (payloadSize>0)
+            connection.appendBlock((char *)payload, payloadSize);
+
         return !connection.isError();
     }
 
@@ -49,6 +78,22 @@ public:
     
     void inline set(double v)
     {  datum=v; }
+
+    void inline resize(unsigned int b)
+    {
+        if (b==payloadSize)
+            return; //nothing to do
+
+        if (payload!=0)
+            delete [] payload;
+
+        payloadSize=b;
+
+        if (payloadSize==0)
+            payload=0;
+
+        payload=new unsigned char [payloadSize];
+    }
 };
 
 #ifdef USE_PARALLEL_PORT
@@ -120,10 +165,16 @@ public:
 class serverThread: public RateThread
 {
     BufferedPort<TestData> port;
+    unsigned int payload;
 
 public:
     serverThread():RateThread(100)
     {}
+
+    void setPayload(unsigned int p)
+    {
+        payload=p;
+    }
 
     void open(double period, const std::string &name)
     {
@@ -142,6 +193,7 @@ public:
 
         //  printf("Sending frame %d\n", k);
         TestData &datum=port.prepare();
+        datum.resize(payload);
         double time=Time::now();
         datum.set(time);
 
@@ -161,9 +213,10 @@ public:
     }
 }; 
 
-int server(double server_wait, const std::string &name)
+int server(double server_wait, const std::string &name, unsigned int payload)
 {
     serverThread thread;
+    thread.setPayload(payload);
     thread.open(server_wait, name);
 
     bool forever=true;
@@ -236,8 +289,12 @@ int main(int argc, char **argv) {
     else
         name="default";
 
+    int payload=p.check("payload", Value(1)).asInt();
+
+    printf("Setting payload to %d[bytes]\n", payload);
+
     if (p.check("server"))
-        return server(p.find("period").asDouble()/1000.0, name);
+        return server(p.find("period").asDouble()/1000.0, name, payload);
     else if (p.check("client"))
         return client(p.find("nframes").asInt(), name);
 }
