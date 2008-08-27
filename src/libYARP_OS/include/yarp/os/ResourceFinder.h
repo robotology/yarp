@@ -20,6 +20,8 @@ namespace yarp {
 /**
  *
  * Helper class for finding config files and other external resources.
+ * This is under development at the moment.  See ideas at:
+ * http://eris.liralab.it/wiki/Configuration_and_resource_files
  *
  */
 class yarp::os::ResourceFinder {
@@ -44,7 +46,9 @@ public:
 
     /**
      *
-     * Use a named policy.  Policy can affect the environment
+     * Sets up the finder.  The policyName is used to find
+     * a file containing the default policy for searching
+     * for resource files.  Policy can affect the environment
      * variables that are checked, the directories that are searched,
      * and the order of search.
      *
@@ -63,30 +67,11 @@ public:
      * This would make the default search path include <P>/app/default
      * and an added context <C> would add <P>/app/<C> to the search path.
      *
-     * More documentation to come as we develop this class...
+     * Some elements of policy can be changed from the commandline.
      *
      */
-    bool configureFromPolicy(const char *policyName);
-
-    /**
-     *
-     * Override policy choices (e.g. search path) from command line.
-     *
-     */
-    bool configureFromCommandLine(int argc, char *argv[]);
-
-    /**
-     *
-     * Sets up the finder.  Calls configureFromPolicy and
-     * configureFromCommandLine.
-     *
-     */
-    bool configure(const char *policyName, int argc, char *argv[]) {
-        bool result = configureFromPolicy(policyName);
-        if (!result) return result;
-        result = configureFromCommandLine(argc,argv);
-        return result;
-    }
+    bool configure(const char *policyName, int argc, char *argv[], 
+                   bool skipFirstArgument = true);
     
     bool addContext(const char *contextName);
 
@@ -96,6 +81,13 @@ public:
         clearContext();
         return addContext(contextName);
     }
+
+    bool setDefaultContext(const char *contextName) {
+        clearContext();
+        return addContext(contextName);
+    }
+
+    bool setDefault(const char *key, const char *val);
 
     yarp::os::ConstString findFile(const char *name);
 

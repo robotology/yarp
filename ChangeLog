@@ -1,3 +1,19 @@
+2008-08-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: implement a "yarp resource"
+	command, which uses the ResourceFinder to locate configuration
+	files and other resource files.  Handy for testing your
+	search path.  Run "yarp resource" for some tips on usage.
+
+	* src/libYARP_OS/include/yarp/Companion.h: add hook for
+	"yarp resource" command
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: improve search for 
+	policy file
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: some changes
+	to API, more to come
+
 2008-8-11 Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_OS/include/yarp/os/RateThread.h/RateThread.cpp:
 	methods getEstPeriod()/getEstUsed() now returns average and std

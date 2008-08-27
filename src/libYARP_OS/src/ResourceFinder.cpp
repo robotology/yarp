@@ -11,6 +11,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/Logger.h>
 #include <yarp/String.h>
 
@@ -51,26 +52,55 @@ public:
         String rootVar = policyName;
         const char *result = 
             ACE_OS::getenv(rootVar.c_str());
+        bool needEnv = false;
+#ifdef YARP2_WINDOWS
+        needEnv = true;
+#endif
         if (result==NULL) {
             root = "";
-            fprintf(RTARGET,"||| environment variable %s not set\n", 
-                    rootVar.c_str());
-            return false;
+        } else {
+            root = result;
         }
-        root = result;
-        if (verbose) {
-            fprintf(RTARGET,"||| %s: %s\n", 
-                    rootVar.c_str(),root.c_str());
+        root = config.check(policyName,Value(root)).asString().c_str();
+        if (root == "") {
+            if (verbose||needEnv) {
+                fprintf(RTARGET,"||| environment variable %s not set\n", 
+                        rootVar.c_str());
+            }
+            if (needEnv) {
+                return false;
+            }
+        } else {
+            if (verbose) {
+                fprintf(RTARGET,"||| %s: %s\n", 
+                        rootVar.c_str(),root.c_str());
+            }
         }
+        String checked = "";
         String rootConfig = String(root.c_str()) + "/" + policyName + ".ini";
-        if (verbose) {
-            fprintf(RTARGET,"||| loading policy from %s\n", 
-                    rootConfig.c_str());
+        String altConfig = String("/etc/") + policyName + ".ini";
+        bool ok = false;
+        if (root!="") {
+            if (verbose) {
+                fprintf(RTARGET,"||| loading policy from %s\n", 
+                        rootConfig.c_str());
+            }
+            checked += " " + rootConfig;
+            ok = config.fromConfigFile(rootConfig.c_str());
         }
-        bool ok = config.fromConfigFile(rootConfig.c_str());
+        if (!needEnv) {
+            if (!ok) {
+                if (verbose) {
+                    fprintf(RTARGET,"||| loading policy from %s\n", 
+                            altConfig.c_str());
+                }
+                checked += " " + altConfig;
+                ok = config.fromConfigFile(altConfig.c_str());
+            }
+        }
         if (!ok) {
-            fprintf(RTARGET,"||| failed to load policy from %s\n", 
-                    rootConfig.c_str());
+            fprintf(RTARGET,"||| failed to load policy from%s\n", 
+                    checked.c_str());
             return false;
         }
 
@@ -83,8 +113,38 @@ public:
         return true;
     }
 
-    bool configureFromCommandLine(int argc, char *argv[]) {
-        fprintf(RTARGET,"||| warning: not yet using command line overrides\n");
+    bool configure(const char *policyName, int argc, char *argv[], bool skip) {
+        Property p;
+        p.fromCommand(argc,argv,skip);
+
+        //printf("SETTINGS: %s\n", p.toString().c_str());
+
+        if (p.check("verbose")) {
+            setVerbose(p.check("verbose",Value(1)).asInt());
+        }
+
+        ConstString name = "";
+        if (policyName!=NULL) {
+            name = policyName;
+        }
+        name = p.check("policy",Value(name.c_str())).asString();
+        if (name=="") {
+            fprintf(RTARGET,"||| no policy found\n");
+            return false;
+        }
+
+        config = p;
+        bool result = configureFromPolicy(name.c_str());
+        if (!result) return result;
+
+        if (p.check("context")) {
+            addAppName(p.check("context",Value("default")).asString().c_str());
+        }
+        return true;
+    }
+
+    bool setDefault(const char *key, const char *val) {
+        config.put(key,val);
         return true;
     }
 
@@ -176,12 +236,10 @@ ResourceFinder::~ResourceFinder() {
 }
 
 
-bool ResourceFinder::configureFromPolicy(const char *policyName) {
-    return HELPER(implementation).configureFromPolicy(policyName);
-}
-
-bool ResourceFinder::configureFromCommandLine(int argc, char *argv[]) {
-    return HELPER(implementation).configureFromCommandLine(argc,argv);
+bool ResourceFinder::configure(const char *policyName, int argc, char *argv[],
+                               bool skipFirstArgument) {
+    return HELPER(implementation).configure(policyName,argc,argv,
+                                            skipFirstArgument);
 }
 
 bool ResourceFinder::addContext(const char *appName) {
@@ -191,6 +249,11 @@ bool ResourceFinder::addContext(const char *appName) {
 bool ResourceFinder::clearContext() {
     return HELPER(implementation).clearAppNames();
 }
+
+bool ResourceFinder::setDefault(const char *key, const char *val) {
+    return HELPER(implementation).setDefault(key,val);
+}
+
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name) {
     return HELPER(implementation).findFile(name);

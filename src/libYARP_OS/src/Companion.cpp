@@ -26,6 +26,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Run.h>
+#include <yarp/os/ResourceFinder.h>
+#include <yarp/os/Property.h>
 
 #include <ace/OS.h>
 
@@ -119,6 +121,8 @@ Companion::Companion() {
         "set or query the name of the yarp name server (default is /root)");
     add("clean",  &Companion::cmdClean,
         "try to remove inactive entries from the name server");
+    add("resource",  &Companion::cmdResource,
+        "locates resource files (see ResourceFinder class)");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -819,6 +823,31 @@ int Companion::cmdClean(int argc, char *argv[]) {
 }
 
 
+int Companion::cmdResource(int argc, char *argv[]) {
+    if (argc==0) {
+        printf("Looks for resource files\n");
+        printf("Example usage (from RobotCub project):\n");
+        printf("   yarp resource --policy ICUB_ROOT --find icub.ini\n");
+        printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
+        printf("   yarp resource --policy ICUB_ROOT --ICUB_ROOT /path/to/icub --find icub.ini\n");
+        return 0;
+    }
+    ResourceFinder rf;
+    rf.setVerbose();
+    bool ok = rf.configure("",argc,argv,false);
+    String result = "";
+    if (ok) {
+        Property p;
+        p.fromCommand(argc,argv,false);
+        if (!p.check("find")) {
+            fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
+            return 1;
+        }
+        result = rf.findFile(p.check("find",Value("icub.ini")).asString().c_str());
+    }
+    printf("%s\n",result.c_str());
+    return (result!="")?0:1;
+}
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
     PortCommand pc('\0',slashify(dest));

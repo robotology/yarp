@@ -170,6 +170,8 @@ public:
 
     int cmdClean(int argc, char *argv[]);
 
+    int cmdResource(int argc, char *argv[]);
+
 private:
 
     Companion();
