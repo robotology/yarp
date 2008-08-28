@@ -155,7 +155,9 @@ public:
     }
 
     bool setDefault(const char *key, const char *val) {
-        config.put(key,val);
+        if (!check.find(key)) {
+            config.put(key,val);
+        }
         return true;
     }
 
