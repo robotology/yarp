@@ -140,6 +140,17 @@ public:
         if (p.check("context")) {
             addAppName(p.check("context",Value("default")).asString().c_str());
         }
+
+        config.fromCommand(argc,argv,skip,false);
+        if (config.check("from")) {
+            ConstString from = config.check("from",
+                                            Value("config.ini")).toString();
+            ConstString corrected = findFile(from.c_str());
+            if (corrected!=NULL) {
+                from = corrected;
+            }
+            config.fromConfigFile(from,false);
+        }
         return true;
     }
 
@@ -184,6 +195,16 @@ public:
     }
 
     yarp::os::ConstString findFile(const char *name) {
+        // name is now a key
+        //printf("Status %s\n", config.toString().c_str());
+        //printf("name %s\n", name);
+        ConstString fname = config.check(name,Value(name)).asString();
+        //printf("fname %s\n", fname.c_str());
+        ConstString result = findFileBase(fname);
+        return result;
+    }
+
+    yarp::os::ConstString findFileBase(const char *name) {
 
         ConstString cap = 
             config.check("capability_directory",Value("app")).asString();

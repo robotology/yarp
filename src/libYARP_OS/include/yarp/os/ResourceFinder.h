@@ -89,7 +89,20 @@ public:
 
     bool setDefault(const char *key, const char *val);
 
-    yarp::os::ConstString findFile(const char *name);
+    /**
+     *
+     * Find the full path to a file.  The file is specified by the
+     * name of a key.  The value of the key should be set up either
+     * on the command line, through a loaded config file, or
+     * by a call to setDefault.
+     *
+     * If all else fails, findFile will try interpreting key as
+     * a file name - this is for backwards compatibility
+     * and is behavior that will probably go away - don't
+     * depend on it!
+     *
+     */
+    yarp::os::ConstString findFile(const char *key);
 
 private:
     void *implementation;

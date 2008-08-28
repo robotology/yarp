@@ -825,9 +825,11 @@ int Companion::cmdClean(int argc, char *argv[]) {
 
 int Companion::cmdResource(int argc, char *argv[]) {
     if (argc==0) {
-        printf("Looks for resource files\n");
+        printf("Looks for, and prints the complete path to, resource files.\n");
         printf("Example usage (from RobotCub project):\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini\n");
+        printf("   yarp resource --policy ICUB_ROOT --icub icub.ini --find icub\n");
+        printf("   yarp resource --policy ICUB_ROOT --from config.ini --find icub\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
         printf("   yarp resource --policy ICUB_ROOT --ICUB_ROOT /path/to/icub --find icub.ini\n");
         return 0;
