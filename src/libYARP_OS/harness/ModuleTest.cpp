@@ -11,7 +11,8 @@
 #include <yarp/os/all.h>
 #include <yarp/os/Module.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

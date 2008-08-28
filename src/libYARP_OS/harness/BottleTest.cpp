@@ -18,7 +18,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 
-#include "TestList.h"
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

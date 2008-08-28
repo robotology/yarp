@@ -19,12 +19,13 @@
 #include <yarp/os/BinPortable.h>
 #include <yarp/Logger.h>
 #include <yarp/NetType.h>
+#include <yarp/UnitTest.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReport.h>
 
-#include "TestList.h"
+//#include "TestList.h"
 
 using namespace yarp::os;
 

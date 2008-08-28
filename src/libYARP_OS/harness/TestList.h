@@ -45,6 +45,7 @@ extern yarp::UnitTest& getStampTest();
 extern yarp::UnitTest& getModuleTest();
 extern yarp::UnitTest& getPortReaderBufferTest();
 extern yarp::UnitTest& getNetworkTest();
+extern yarp::UnitTest& getResourceFinderTest();
 
 class yarp::TestList {
 public:
@@ -78,6 +79,7 @@ public:
         root.add(getModuleTest());
         root.add(getPortReaderBufferTest());
         root.add(getNetworkTest());
+        root.add(getResourceFinderTest());
     }
 };
 

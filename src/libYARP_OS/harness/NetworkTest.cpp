@@ -14,7 +14,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Bottle.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

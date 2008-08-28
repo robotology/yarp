@@ -10,7 +10,8 @@
 #include <yarp/String.h>
 #include <yarp/os/Vocab.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp::os;
 using namespace yarp;

@@ -8,7 +8,8 @@
 
 #include <yarp/StringOutputStream.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 

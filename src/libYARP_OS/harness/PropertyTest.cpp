@@ -8,7 +8,8 @@
 
 #include <yarp/os/Property.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 
 #include <ace/OS_NS_stdlib.h>

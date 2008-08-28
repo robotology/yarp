@@ -11,7 +11,8 @@
 
 #include <ace/OS_NS_stdio.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 

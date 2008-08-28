@@ -13,8 +13,8 @@
 #include <yarp/NameClient.h>
 #include <yarp/BottleImpl.h>
 #include <yarp/Companion.h>
-
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

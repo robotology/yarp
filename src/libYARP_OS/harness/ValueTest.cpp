@@ -8,7 +8,8 @@
 
 #include <yarp/os/Value.h>
 
-#include "TestList.h"
+//#include "TestList.h"
+#include <yarp/UnitTest.h>
 
 using namespace yarp;
 using namespace yarp::os;

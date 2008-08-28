@@ -9,7 +9,8 @@
 #include <yarp/Address.h>
 #include <yarp/os/Contact.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

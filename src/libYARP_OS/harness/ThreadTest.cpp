@@ -15,7 +15,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

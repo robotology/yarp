@@ -10,7 +10,8 @@
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
-#include "TestList.h"
+#include <yarp/UnitTest.h>
+//#include "TestList.h"
 
 using namespace yarp;
 using namespace yarp::os;

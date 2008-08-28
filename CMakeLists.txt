@@ -48,3 +48,7 @@ SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
 IF (YARP_ADMIN)
   ADD_CUSTOM_TARGET(dox COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/Doxyfile.part)
 ENDIF (YARP_ADMIN)
+
+# Touch this file when you add/remove files in directories that
+# are scanned for sources.  This will make sure that cmake gets rerun.
+# Touch: 1
