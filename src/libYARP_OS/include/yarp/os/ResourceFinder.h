@@ -74,18 +74,18 @@ public:
     bool configure(const char *policyName, int argc, char *argv[], 
                    bool skipFirstArgument = true);
     
-    bool addContext(const char *contextName);
-
-    bool clearContext();
-
-    bool setContext(const char *contextName) {
+    bool setDefaultContext(const char *contextName) {
         clearContext();
         return addContext(contextName);
     }
 
-    bool setDefaultContext(const char *contextName) {
-        clearContext();
-        return addContext(contextName);
+    /**
+     *
+     * Deprecated name for setDefaultContext
+     *
+     */
+    bool setContext(const char *contextName) {
+        return setDefaultContext(contextName);
     }
 
     bool setDefault(const char *key, const char *val);
@@ -114,6 +114,13 @@ public:
     virtual ConstString toString() const;
 
 private:
+
+    // this might be useful, but is not in spec
+    bool addContext(const char *contextName);
+
+    // this might be useful, but is not in spec
+    bool clearContext();
+
     void *implementation;
 };
 

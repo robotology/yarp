@@ -28,7 +28,7 @@ public:
         report(0,"testing the basics of RF...");
         ResourceFinder rf;
 
-        const char *fname0 = "_yarp_regression_test_rf0.txt";
+        const char *fname0 = "_yarp_regression_test.ini";
         const char *fname1 = "_yarp_regression_test_rf1.txt";
         const char *fname2 = "_yarp_regression_test_rf2.txt";
 
@@ -50,15 +50,28 @@ public:
             fout2.close();
 
             const char *argv[] = { "ignore", 
-                                   "--policy", fname0,
+                                   "--policy", "_yarp_regression_test",
+                                   "--_yarp_regression_test", ".",
                                    "--from", fname1, 
                                    "--verbose", "0",
                                    NULL };
-            int argc = 7;
+            int argc = 9;
 
             rf.configure("",argc,(char **)argv);
             ConstString alt = rf.findFile("alt");
             checkTrue(alt!="","found ini file");
+
+            rf.setDefault("alt2",fname2);
+            alt = rf.findFile("alt2");
+            checkTrue(alt!="","default setting worked");
+
+            rf.setDefault("alt3","_yarp_nonexistent.txt");
+            alt = rf.findFile("alt3");
+            checkTrue(alt=="","cannot find nonexistent files");
+
+            rf.setDefault("alt","_yarp_nonexistent.txt");
+            alt = rf.findFile("alt");
+            checkTrue(alt!="","default setting is safe");
         }
         
     }
