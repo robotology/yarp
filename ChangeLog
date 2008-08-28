@@ -1,5 +1,8 @@
 2008-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/harness/ResourceFinderTest.cpp: start adding
+	regression tests for ResourceFinder
+
 	* src/libYARP_OS/src/ResourceFinder.cpp: implement "--from config.ini"
 	for loading settings into ResourceFinder from a file.  This is
 	like the "--file config.ini" behavior of the Module class and

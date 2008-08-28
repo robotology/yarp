@@ -101,6 +101,15 @@ public:
             }
         }
         if (!ok) {
+            if (verbose) {
+                fprintf(RTARGET,"||| in desperation, loading policy from %s\n",
+                        policyName);
+            }
+            checked += " ";
+            checked += policyName;
+            ok = config.fromConfigFile(policyName);
+        }
+        if (!ok) {
             fprintf(RTARGET,"||| failed to load policy from%s\n", 
                     checked.c_str());
             return false;
