@@ -30,6 +30,8 @@ private:
     yarp::os::Property config;
     bool verbose;
 public:
+    yarp::os::Property& getConfig() { return config; }
+
     ResourceFinderHelper() {
         verbose = false;
     }
@@ -146,7 +148,7 @@ public:
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
             ConstString corrected = findFile(from.c_str());
-            if (corrected!=NULL) {
+            if (corrected!="") {
                 from = corrected;
             }
             config.fromConfigFile(from,false);
@@ -155,7 +157,7 @@ public:
     }
 
     bool setDefault(const char *key, const char *val) {
-        if (!check.find(key)) {
+        if (!config.check(key)) {
             config.put(key,val);
         }
         return true;
@@ -245,6 +247,7 @@ public:
 };
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
+#define CONFIG(x) ((*((ResourceFinderHelper*)(x))).getConfig())
 
 ResourceFinder::ResourceFinder() {
     implementation = new ResourceFinderHelper;
@@ -286,3 +289,31 @@ yarp::os::ConstString ResourceFinder::findFile(const char *name) {
 bool ResourceFinder::setVerbose(bool verbose) {
     return HELPER(implementation).setVerbose(verbose);
 }
+
+
+
+bool ResourceFinder::check(const char *key) {
+    return CONFIG(implementation).check(key);
+}
+
+
+Value& ResourceFinder::find(const char *key) {
+    return CONFIG(implementation).find(key);
+}
+
+
+Bottle& ResourceFinder::findGroup(const char *key) {
+    return CONFIG(implementation).findGroup(key);
+}
+
+
+bool ResourceFinder::isNull() const {
+    return CONFIG(implementation).isNull();
+}
+
+
+ConstString ResourceFinder::toString() const {
+    return CONFIG(implementation).toString();
+}
+
+

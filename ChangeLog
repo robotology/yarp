@@ -5,6 +5,10 @@
 	like the "--file config.ini" behavior of the Module class and
 	yarpdev etc.  The names are inconsistent for complicated reasons.
 
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: make ResourceFinder
+	a regular "Searchable" so that methods like findGroup work.
+
+
 2008-08-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp: implement a "yarp resource"

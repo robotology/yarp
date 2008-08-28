@@ -10,6 +10,7 @@
 #define _YARP2_RESOURCEFINDER_
 
 #include <yarp/os/ConstString.h>
+#include <yarp/os/Searchable.h>
 
 namespace yarp {
     namespace os {
@@ -24,7 +25,7 @@ namespace yarp {
  * http://eris.liralab.it/wiki/Configuration_and_resource_files
  *
  */
-class yarp::os::ResourceFinder {
+class yarp::os::ResourceFinder : public Searchable{
 public:
     ResourceFinder();
 
@@ -103,6 +104,14 @@ public:
      *
      */
     yarp::os::ConstString findFile(const char *key);
+
+
+    // Searchable interface
+    virtual bool check(const char *key);
+    virtual Value& find(const char *key);
+    virtual Bottle& findGroup(const char *key);
+    virtual bool isNull() const;
+    virtual ConstString toString() const;
 
 private:
     void *implementation;
