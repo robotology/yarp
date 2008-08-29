@@ -143,7 +143,10 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
 
 	if (_logpolar)
         {
-            _img.copy(*_inPort.lastRead());
+            yarp::sig::Image *last = _inPort.lastRead();
+            if (last!=NULL) {
+                _img.copy(*last);
+            }
             //_logpolarConversion(_fovea, data);
             exit(1);
         }
@@ -151,7 +154,10 @@ bool YARPImgRecv::GetLastImage(yarp::sig::Image *data)
         {
             if ( (_width != data->width()) || (_height != data->height()) )
                 data->resize(_width, _height);
-            data->copy(*(_inPort.lastRead()));
+            yarp::sig::Image *last = _inPort.lastRead();
+            if (last!=NULL) {
+                data->copy(*last);
+            }
         }
 	
 	return true;

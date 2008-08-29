@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -11,6 +11,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/sig/ImageDraw.h>
+#include <yarp/os/Random.h>
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -19,6 +20,7 @@ using namespace yarp::sig::draw;
 
 #define VOCAB_BALL VOCAB4('b','a','l','l')
 #define VOCAB_GRID VOCAB4('g','r','i','d')
+#define VOCAB_RAND VOCAB4('r','a','n','d')
 
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
@@ -70,6 +72,30 @@ void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
         {
             for (int i=0; i<image.width(); i++) {
                 image.pixel(i,ct).r = 255;
+            }
+        }
+        break;
+    case VOCAB_RAND:
+        {
+            // from Alessandro Scalzo
+
+            static unsigned char r=128,g=128,b=128;
+            
+            int ww = image.width();
+            int hh = image.height();
+            
+            if (ww>1&&hh>1) {
+                for (int x=0; x<ww; x++) {
+                    for (int y=0; y<hh; y++) {
+                        //r+=(rand()%3)-1;
+                        //g+=(rand()%3)-1;
+                        //b+=(rand()%3)-1;
+                        r += Random::uniform(-1,1);
+                        g += Random::uniform(-1,1);
+                        b += Random::uniform(-1,1);
+                        image.pixel(x,y) = PixelRgb(r,g,b);
+                    }
+                }
             }
         }
         break;

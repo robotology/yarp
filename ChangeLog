@@ -1,7 +1,13 @@
 2008-08-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* src/libYARP_OS/harness/DgramTwoWayStreamTest.cpp: stub for
-	testing packet corruption detection.
+	* src/yarp-imageviewer/YARPImgRecv.cpp: add missing checks
+	for success of read on port
+
+	* src/libYARP_dev/src/TestFrameGrabber.cpp: add [rand] mode
+	(based on patch from Alessandro Scalzo)
+
+	* src/libYARP_OS/harness/DgramTwoWayStreamTest.cpp: testing 
+	the detection of corrupted datagrams.
 
 2008-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

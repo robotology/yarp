@@ -98,7 +98,7 @@ public:
         }
         mode = config.check("mode",
                             yarp::os::Value(VOCAB_LINE, true),
-                            "bouncy [ball], scrolly [line], or grid [grid]").asVocab();
+                            "bouncy [ball], scrolly [line], grid [grid], random [rand]").asVocab();
 
 		if (freq!=-1)
 		{
