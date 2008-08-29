@@ -83,6 +83,31 @@ public:
             printf("cannot corrupt nonexistent dgram\n");
         }
     }
+
+    void corruptSwap(int index, int altIndex) {
+        if (index<MAX_PACKET && altIndex<MAX_PACKET) {
+            ManagedBytes tmp(store[index].bytes(),false);
+            tmp.copy();
+            store[index] = ManagedBytes(store[altIndex].bytes(),false);
+            store[index].copy();
+            store[altIndex] = ManagedBytes(tmp.bytes(),false);
+            store[altIndex].copy();
+        } else {
+            printf("cannot corrupt nonexistent dgram\n");
+        }
+    }
+
+    void corruptDrop(int index) {
+        if (index<MAX_PACKET) {
+            for (int i=index; i<cursor-1; i++) {
+                store[i] = ManagedBytes(store[i+1].bytes(),false);
+                store[i].copy();
+            }
+            cursor--;
+        } else {
+            printf("cannot corrupt nonexistent dgram\n");
+        }
+    }
 };
 
 class DgramTwoWayStreamTest : public yarp::UnitTest {
@@ -90,7 +115,7 @@ public:
     virtual yarp::String getName() { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
-        report(0, "checking that normal messages get through");
+        report(0, "checking that dgrams are output sensibly");
 
         DgramTest out;
 
@@ -112,6 +137,7 @@ public:
         ////////////////////////////////////////////////////////////////////
         // Send a multi-dgram message, see if it gets through
 
+        report(0, "checking that dgrams can be reassembled into messages");
         DgramTest in;
         in.openMonitor(sz,sz);
         ManagedBytes recv(200);
@@ -137,6 +163,7 @@ public:
         // Send three messages, see if all get through
         // (just testing the receiver side)
 
+        report(0, "checking reassembly for multiple messages");
         in.clear();
         in.copyMonitor(out);
         in.copyMonitor(out);
@@ -161,40 +188,70 @@ public:
 
         
         ////////////////////////////////////////////////////////////////////
-        // Send three messages, corrupt middle one
+        // Send three messages, corrupt in different ways
 
-        in.clear();
-        in.copyMonitor(out);
-        in.copyMonitor(out);
-        in.copyMonitor(out);
+        for (int problem=0; problem<3; problem++) {
 
-        // corrupt 10th byte of 4th dgram
-        in.corrupt(4,10);
+            in.clear();
+            in.copyMonitor(out);
+            in.copyMonitor(out);
+            in.copyMonitor(out);
 
-        mismatch = false;
-        bool goodRead[4];
-        for (int k=0; k<4; k++) {
-            printf("Iteration %d\n", k);
-            for (int i=0; i<recv.length(); i++) {
-                recv.get()[i] = 0;
-            }
-            in.beginPacket();
-            NetType::readFull(in,recv.bytes());
-            in.endPacket();
+            switch (problem) {
+            case 0:
+                report(0, "reassembly for 3 messages, middle one corrupted");
+                // corrupt 10th byte of 4th dgram
+                in.corrupt(4,10);
+                break;
+            case 1:
+                report(0, "order switched in middle message");
+                // swap 4th and 5th dgram
+                in.corruptSwap(4,5);
+                break;
+            case 2:
+                report(0, "drop dgram in middle message");
+                in.corruptDrop(4);
+                break;
+            };
+
             mismatch = false;
-            for (int i=0; i<recv.length(); i++) {
-                if (recv.get()[i]!=msg.get()[i]) {
-                    printf("Mismatch, at least as early as byte %d\n", i);
-                    mismatch = true;
-                    break;
+            bool goodRead[4];
+            int length[4];
+            for (int k=0; k<4; k++) {
+                //printf("Iteration %d\n", k);
+                for (int i=0; i<recv.length(); i++) {
+                    recv.get()[i] = 0;
                 }
+                in.beginPacket();
+                int len = NetType::readFull(in,recv.bytes());
+                in.endPacket();
+                mismatch = false;
+                for (int i=0; i<recv.length(); i++) {
+                    if (recv.get()[i]!=msg.get()[i]) {
+                        //printf("Mismatch, at least as early as byte %d\n", i);
+                        mismatch = true;
+                        break;
+                    }
+                }
+                goodRead[k] = !mismatch;
+                length[k] = len;
             }
-            goodRead[k] = !mismatch;
+            if (problem!=2) {
+                checkTrue(goodRead[0],"first read should be good");
+                checkTrue(!goodRead[1],"second read should be broken");
+                checkTrue(!goodRead[2],"third read should be broken");
+                checkTrue(goodRead[3],"fourth read should be good again");
+                checkEqual(length[0],recv.length(),"first length should be full");
+                checkEqual(length[1],-1,"second should be error");
+                checkEqual(length[2],-1,"third should be error");
+                checkEqual(length[3],recv.length(),"fourth length should be full");
+            } else {
+                checkTrue(goodRead[0],"first read should be good");
+                checkTrue(!goodRead[1],"second read should be broken");
+                checkTrue(goodRead[2],"third read should be good");
+                checkTrue(!goodRead[3],"fourth read is nothing");
+            }
         }
-        checkTrue(goodRead[0],"first read should be good");
-        checkTrue(!goodRead[1],"second read should be broken");
-        checkTrue(!goodRead[2],"third read should be broken");
-        checkTrue(goodRead[3],"fource read should be good again");
     }
 
     virtual void runTests() {

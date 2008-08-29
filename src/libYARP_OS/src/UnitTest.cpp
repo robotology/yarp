@@ -176,9 +176,9 @@ bool UnitTest::checkEqualImpl(int x, int y,
     ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%d) == %s (%d)",
                     fname, fline, desc, txt1, x, txt2, y);
     if (x==y) {
-        report(0,String("[") + desc + "] passed ok");
+        report(0,String("  [") + desc + "] passed ok");
     } else {
-        report(1,String("FAILURE ") + buf);
+        report(1,String("  FAILURE ") + buf);
     }
     return x==y;
 }
@@ -194,9 +194,9 @@ bool UnitTest::checkEqualImpl(const String& x, const String& y,
                     fname, fline, desc, txt1, humanize(x).c_str(), txt2, humanize(y).c_str());
     bool ok = (x==y);
     if (ok) {
-        report(0,String("[") + desc + "] passed ok");
+        report(0,String("  [") + desc + "] passed ok");
     } else {
-        report(1,String("FAILURE ") + buf);
+        report(1,String("  FAILURE ") + buf);
     }
     return ok;
 }

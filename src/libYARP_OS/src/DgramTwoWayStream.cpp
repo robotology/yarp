@@ -495,7 +495,7 @@ int DgramTwoWayStream::read(const Bytes& b) {
                            " bytes");
             } else {
                 onMonitorInput();
-                printf("Monitored input of %d bytes\n", monitor.length());
+                //printf("Monitored input of %d bytes\n", monitor.length());
                 if (monitor.length()>readBuffer.length()) {
                     printf("Too big!\n");
                     exit(1);
@@ -644,7 +644,7 @@ void DgramTwoWayStream::flush() {
             Bytes b(writeBuffer.get()+writeAt,writeAvail-writeAt);
             monitor = ManagedBytes(b,false);
             monitor.copy();
-            printf("Monitored output of %d bytes\n", monitor.length());
+            //printf("Monitored output of %d bytes\n", monitor.length());
             len = monitor.length();
             onMonitorOutput();
         }
