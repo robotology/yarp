@@ -46,6 +46,7 @@ extern yarp::UnitTest& getModuleTest();
 extern yarp::UnitTest& getPortReaderBufferTest();
 extern yarp::UnitTest& getNetworkTest();
 extern yarp::UnitTest& getResourceFinderTest();
+extern yarp::UnitTest& getDgramTwoWayStreamTest();
 
 class yarp::TestList {
 public:
@@ -80,6 +81,7 @@ public:
         root.add(getPortReaderBufferTest());
         root.add(getNetworkTest());
         root.add(getResourceFinderTest());
+        root.add(getDgramTwoWayStreamTest());
     }
 };
 
