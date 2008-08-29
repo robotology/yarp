@@ -14,7 +14,7 @@
 using namespace yarp;
 using namespace yarp::os;
 
-#define MAX_PACKET 20
+#define MAX_PACKET 100
 
 class DgramTest : public DgramTwoWayStream {
 public:
@@ -30,7 +30,7 @@ public:
     virtual void onMonitorInput() {
         //printf("Waiting for input %d %d\n", readCursor, cursor);
         removeMonitor();
-        if (readCursor<=cursor) {
+        if (readCursor<cursor) {
             setMonitor(store[readCursor].bytes());
             //printf("Gave input of size %d\n", getMonitor().length());
             readCursor++;
@@ -54,6 +54,7 @@ public:
     }
 
     void clear() {
+        readCursor = 0;
         cursor = 0;
     }
 
@@ -62,11 +63,11 @@ public:
     }
 
     void copyMonitor(DgramTest& alt) {
-        cursor = alt.cursor;
         readCursor = 0;
-        for (int i=0; i<cursor; i++) {
-            store[i] = ManagedBytes(alt.get(i),false);
-            store[i].copy();
+        for (int i=0; i<alt.cursor; i++) {
+            store[cursor] = ManagedBytes(alt.get(i),false);
+            store[cursor].copy();
+            cursor++;
         }
         removeMonitor();
     }
@@ -84,7 +85,7 @@ public:
         int sz = 100;
         out.openMonitor(sz,sz);
 
-        ManagedBytes msg(1000);
+        ManagedBytes msg(200);
         for (int i=0; i<msg.length(); i++) {
             msg.get()[i] = i%128;
         }
@@ -93,17 +94,18 @@ public:
         out.flush();
         out.endPacket();
         printf("created %d packets\n", out.size());
-        checkEqual(11,out.size(),"right number of packets");
+        checkEqual(3,out.size(),"right number of packets");
 
         DgramTest in;
         in.openMonitor(sz,sz);
-        ManagedBytes recv(1000);
+        ManagedBytes recv(200);
         for (int i=0; i<recv.length(); i++) {
             recv.get()[i] = 0;
         }
-        in.beginPacket();
         in.copyMonitor(out);
+        in.beginPacket();
         NetType::readFull(in,recv.bytes());
+        in.endPacket();
         bool mismatch = false;
         for (int i=0; i<recv.length(); i++) {
             if (recv.get()[i]!=msg.get()[i]) {
@@ -113,8 +115,29 @@ public:
             }
         }
         checkFalse(mismatch,"received what is sent");
-        in.endPacket();
 
+        in.clear();
+        in.copyMonitor(out);
+        in.copyMonitor(out);
+        in.copyMonitor(out);
+        mismatch = false;
+        for (int k=0; k<3; k++) {
+            for (int i=0; i<recv.length(); i++) {
+                recv.get()[i] = 0;
+            }
+            in.beginPacket();
+            NetType::readFull(in,recv.bytes());
+            in.endPacket();
+            for (int i=0; i<recv.length(); i++) {
+                if (recv.get()[i]!=msg.get()[i]) {
+                    printf("Mismatch, at least as early as byte %d\n", i);
+                    mismatch = true;
+                    break;
+                }
+            }
+        }
+        checkFalse(mismatch,"multiple messages ok");
+        
     }
 
     virtual void runTests() {
