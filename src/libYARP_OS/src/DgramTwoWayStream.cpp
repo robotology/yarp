@@ -121,7 +121,7 @@ bool DgramTwoWayStream::open(const Address& local, const Address& remote) {
     return true;
 }
 
-void DgramTwoWayStream::allocate() {
+void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     int _read_size = READ_SIZE+CRC_SIZE;
     int _write_size = WRITE_SIZE+CRC_SIZE;
 
@@ -142,6 +142,16 @@ void DgramTwoWayStream::allocate() {
         }
         YARP_INFO(Logger::get(),String("Datagram packet size set to ") +
                   NetType::toString(_read_size));
+    }
+    if (readSize!=0) {
+        _read_size = readSize;
+        YARP_INFO(Logger::get(),String("Datagram read size reset to ") +
+                  NetType::toString(_read_size));
+    }
+    if (writeSize!=0) {
+        _write_size = writeSize;
+        YARP_INFO(Logger::get(),String("Datagram write size reset to ") +
+                  NetType::toString(_write_size));
     }
     readBuffer.allocate(_read_size);
     writeBuffer.allocate(_write_size);
@@ -454,7 +464,7 @@ int DgramTwoWayStream::read(const Bytes& b) {
             readAt = 0;
 
 
-            YARP_ASSERT(dgram!=NULL);
+            //YARP_ASSERT(dgram!=NULL);
             //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
             int result = -1;
             if (mgram && restrictInterfaceIp.isValid()) { 
@@ -474,7 +484,7 @@ int DgramTwoWayStream::read(const Bytes& b) {
                            String("MCAST Got ") + NetType::toString(result) +
                            " bytes");
                 
-            } else {
+            } else if (dgram!=NULL) {
                 ACE_INET_Addr dummy((u_short)0, (ACE_UINT32)INADDR_ANY);
                 YARP_ASSERT(dgram!=NULL);
                 //YARP_DEBUG(Logger::get(),"DGRAM Waiting for something!");
@@ -483,6 +493,15 @@ int DgramTwoWayStream::read(const Bytes& b) {
                 YARP_DEBUG(Logger::get(),
                            String("DGRAM Got ") + NetType::toString(result) +
                            " bytes");
+            } else {
+                onMonitorInput();
+                printf("Monitored input of %d bytes\n", monitor.length());
+                if (monitor.length()>readBuffer.length()) {
+                    printf("Too big!\n");
+                    exit(1);
+                }
+                memcpy(readBuffer.get(),monitor.get(),monitor.length());
+                result = monitor.length();
             }
 
 
@@ -604,7 +623,7 @@ void DgramTwoWayStream::flush() {
 
     while (writeAvail>0) {
         int writeAt = 0;
-        YARP_ASSERT(dgram!=NULL);
+        //YARP_ASSERT(dgram!=NULL);
         int len = 0;
 
         if (mgram!=NULL) {
@@ -613,7 +632,7 @@ void DgramTwoWayStream::flush() {
                        String("MCAST - wrote ") +
                        NetType::toString(len) + " bytes"
                        );
-        } else {
+        } else if (dgram!=NULL) {
             len = dgram->send(writeBuffer.get()+writeAt,writeAvail-writeAt,
                               remoteHandle);
             YARP_DEBUG(Logger::get(),
@@ -621,6 +640,13 @@ void DgramTwoWayStream::flush() {
                        NetType::toString(len) + " bytes to " +
                        remoteAddress.toString()
                        );
+        } else {
+            Bytes b(writeBuffer.get()+writeAt,writeAvail-writeAt);
+            monitor = ManagedBytes(b,false);
+            monitor.copy();
+            printf("Monitored output of %d bytes\n", monitor.length());
+            len = monitor.length();
+            onMonitorOutput();
         }
         //if (len>WRITE_SIZE*0.75) {
         if (len>writeBuffer.length()*0.75) {
@@ -690,4 +716,14 @@ void DgramTwoWayStream::endPacket() {
         pct = 0;
     }
 }
+
+Bytes DgramTwoWayStream::getMonitor() {
+    return monitor.bytes();
+}
+
+
+void DgramTwoWayStream::removeMonitor() {
+    monitor.clear();
+}
+
 

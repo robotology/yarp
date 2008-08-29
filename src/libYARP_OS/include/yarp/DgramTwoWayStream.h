@@ -42,6 +42,11 @@ public:
         lastReportTime = 0;
     }
 
+    virtual bool openMonitor(int readSize=0, int writeSize=0) {
+        allocate(readSize,writeSize);
+        return true;
+    }
+
     virtual bool open(const Address& remote);
 
     virtual bool open(const Address& local, const Address& remote);
@@ -101,8 +106,21 @@ public:
 
     virtual void endPacket();
 
-private:
+    Bytes getMonitor();
 
+    void setMonitor(const Bytes& data) {
+        monitor = ManagedBytes(data,false);
+        monitor.copy();
+    }
+
+    void removeMonitor();
+
+    virtual void onMonitorInput() {}
+
+    virtual void onMonitorOutput() {}
+
+private:
+    ManagedBytes monitor;
     bool closed, interrupting, reader, writer;
     ACE_SOCK_Dgram *dgram;
     ACE_SOCK_Dgram_Mcast *mgram;
@@ -118,7 +136,7 @@ private:
     int errCount;
     double lastReportTime;
 
-    void allocate();
+    void allocate(int readSize=0, int writeSize=0);
 
     void configureSystemBuffers();
 };
