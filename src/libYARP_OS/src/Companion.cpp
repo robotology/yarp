@@ -845,7 +845,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
             fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
             return 1;
         }
-        result = rf.findFile(p.check("find",Value("icub.ini")).asString().c_str());
+        result = String(rf.findFile(p.check("find",Value("icub.ini")).asString().c_str()));
     }
     printf("%s\n",result.c_str());
     return (result!="")?0:1;
