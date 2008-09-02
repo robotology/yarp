@@ -25,6 +25,8 @@
  * To kill all commands/scripts on a server: $ yarp run --on SERVERPORT --killall
  * 
  * To clean shutdown a server:				 $ yarp run --on SERVERPORT --exit
+ * 
+ * Append --verbose to get debug messages.
  */
 
 #ifndef _YARP2_RUN_

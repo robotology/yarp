@@ -1,3 +1,9 @@
+2008-09-02 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_os/src/Run.cpp:
+	added --verbose method, removed debug messages and a 
+	bunch of carriage returns. Old, unused, run code moved
+	to Run.bak
+
 2008-08-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarp-imageviewer/YARPImgRecv.cpp: add missing checks
