@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+#include <ace/OS.h>
+#include <ace/Log_Msg.h>
+
 #include <yarp/String.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/BufferedPort.h>
@@ -14,8 +17,28 @@ using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::sig;
 
+static bool terminated=false;
+
+static void handler (int) {
+    static int ct = 0;
+    ct++;    
+
+    fprintf(stderr, "[try %d of %d] Asking to shut down smoothly\n",ct, 3);
+    terminated = true;
+    if (ct>2)
+    {
+        fprintf(stderr, "[try %d of %d] OK asking to abort...\n", ct, 3);
+        exit(-1);
+    }
+}
+
 int main(int argc, char *argv[]) {
     Network yarp;
+
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+
+
     if (argc==1) {
         printf("This program checks the framerate of an output port\n");
         printf("Call as:\n");
@@ -52,13 +75,13 @@ int main(int argc, char *argv[]) {
     double prev = 0;
     int ct = 0;
     bool spoke = false;
-    while (true) {
+    while (!terminated) {
         Bottle *bot = port.read(true);
         double now = Time::now()-first;
         ct++;
         if (now-prev>=2) {
             double period = (now-prev)/ct;
-            printf("Period is %g ms per message, freq is %g (%d messages in %g seconds)\n",
+            printf("Period is %g ms per message, freq is %g (%d mgs in %g secs)\n",
                    period*1000, 1/period, ct, now-prev);
             ct = 0;
             prev = now;
