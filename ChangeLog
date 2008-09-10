@@ -1,8 +1,18 @@
+2008-09-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarp-imageviewer/gCamView.cpp: tighten up yarpview some
+	more; it is still reported to be flakey.
+
 2008-09-02 Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_os/src/Run.cpp:
 	added --verbose method, removed debug messages and a 
 	bunch of carriage returns. Old, unused, run code moved
 	to Run.bak
+
+2008-09-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: note fix for assignment
+	problem reported by yianding.
 
 2008-08-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
