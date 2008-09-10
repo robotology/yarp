@@ -44,8 +44,10 @@ static gint timeout_CB (gpointer data)
 	if ( (!_freezed) && getImage() )
         {
             int imageWidth, imageHeight, pixbufWidth, pixbufHeight;
+            _semaphore.wait();
             imageWidth = _inputImg.width();
             imageHeight = _inputImg.height();
+            _semaphore.post();
             pixbufWidth = gdk_pixbuf_get_width(frame);
             pixbufHeight = gdk_pixbuf_get_height(frame);
             if ( (imageWidth != pixbufWidth) || (imageHeight != pixbufHeight) )
@@ -87,10 +89,14 @@ static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 
             _semaphore.wait();
             yarpImage2pixbuf(&_inputImg, frame);
-            _semaphore.post();
- 
             imageWidth = _inputImg.width();
             imageHeight = _inputImg.height();
+            _semaphore.post();
+            
+            if (imageWidth==0||imageHeight==0) {
+                return TRUE;
+            }
+ 
             areaWidth = event->area.width;
             areaHeight = event->area.height;
 
@@ -185,9 +191,13 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 static gint menuImageSize_CB(GtkWidget *widget, gpointer data)
 {
 	int targetWidth, targetHeight;
+    _semaphore.wait();
 	targetWidth = _inputImg.width();
 	targetHeight = _inputImg.height();
-	gtk_window_resize(GTK_WINDOW(mainWindow), targetWidth, (targetHeight+_occupiedHeight));
+    _semaphore.post();
+    if (targetWidth!=0&&targetHeight!=0) {
+        gtk_window_resize(GTK_WINDOW(mainWindow), targetWidth, (targetHeight+_occupiedHeight));
+    }
 	return TRUE;
 }
 
@@ -197,15 +207,19 @@ static gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
 	int imgWidth, imgHeight;
 	int targetWidth, targetHeight;
 	int daWidth, daHeight;
+    _semaphore.wait();
 	imgWidth = _inputImg.width();
 	imgHeight = _inputImg.height();
-	daWidth = da->allocation.width;
-	daHeight = da->allocation.height;
-	ratio = double(imgWidth) / double(imgHeight);
-	targetWidth = int(double(daHeight) * ratio);
-	targetHeight = daHeight;
-	// TO DO : resize DrawingArea Directly
-	gtk_window_resize(GTK_WINDOW(mainWindow), targetWidth, (targetHeight+_occupiedHeight));
+    _semaphore.post();
+    if (imgWidth!=0&&imgHeight!=0) {
+        daWidth = da->allocation.width;
+        daHeight = da->allocation.height;
+        ratio = double(imgWidth) / double(imgHeight);
+        targetWidth = int(double(daHeight) * ratio);
+        targetHeight = daHeight;
+        // TO DO : resize DrawingArea Directly
+        gtk_window_resize(GTK_WINDOW(mainWindow), targetWidth, (targetHeight+_occupiedHeight));
+    }
 	return TRUE;
 }
 

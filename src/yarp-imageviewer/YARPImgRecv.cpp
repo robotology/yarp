@@ -122,6 +122,8 @@ bool YARPImgRecv::Update()
 	PortType::ContentType *content = _inPort.read(0);
 
 	if (content==NULL) {
+        _width = 0;
+        _height = 0;
         return false;
     }
     
