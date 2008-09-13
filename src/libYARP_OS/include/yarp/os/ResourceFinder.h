@@ -11,6 +11,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>
+#include <yarp/os/Value.h>
 
 namespace yarp {
     namespace os {
