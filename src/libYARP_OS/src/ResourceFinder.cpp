@@ -152,6 +152,7 @@ public:
         if (!result) return result;
 
         if (p.check("context")) {
+            clearAppNames();
             addAppName(p.check("context",Value("default")).asString().c_str());
         }
 
