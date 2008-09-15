@@ -153,7 +153,12 @@ public:
 
         if (p.check("context")) {
             clearAppNames();
-            addAppName(p.check("context",Value("default")).asString().c_str());
+            ConstString c = p.check("context",Value("default")).asString();
+            addAppName(c.c_str());
+            if (verbose) {
+                fprintf(RTARGET,"||| added context %s\n", 
+                        c.c_str());
+            }
         }
 
         config.fromCommand(argc,argv,skip,false);
@@ -201,6 +206,16 @@ public:
             }
         }
         s = s + name;
+
+        String user = base3;
+        if (user.length()>=2) {
+            if (user[0]=='.'&&(user[1]=='/'||user[1]=='\\')) {
+            s = user + "/" + name;
+            }
+        } else if (user=='.') {
+            s = user + "/" + name;
+        }
+
         if (verbose) {
             fprintf(RTARGET,"||| checking %s\n", s.c_str());
         }
@@ -232,16 +247,16 @@ public:
         ConstString str = check("","","",name);
         if (str!="") return str;
 
-        // check ROOT/app/default/
-        str = check(root.c_str(),cap,defCap,name);
-        if (str!="") return str;
-
         // check app dirs
         for (int i=0; i<apps.size(); i++) {
             str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
                         name);
             if (str!="") return str;
         }
+
+        // check ROOT/app/default/
+        str = check(root.c_str(),cap,defCap,name);
+        if (str!="") return str;
 
         fprintf(RTARGET,"||| did not find %s\n", name);
         return "";
