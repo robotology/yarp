@@ -26,6 +26,7 @@ class ResourceFinderHelper {
 private:
     yarp::os::Bottle apps;
     yarp::os::ConstString root;
+    yarp::os::ConstString configFilePath;
     yarp::os::ConstString policyName;
     yarp::os::Property config;
     bool verbose;
@@ -44,6 +45,19 @@ public:
     bool clearAppNames() {
         apps.clear();
         return true;
+    }
+
+    static ConstString extractPath(const char *fname) {
+        String s = fname;
+        int n = s.rfind('/');
+        if (n == -1) {
+            n = s.rfind('\\');
+        }
+        if (n != -1) {
+            s[n] = '\0';
+            return ConstString(s.c_str());
+        }
+        return "";
     }
     
     bool configureFromPolicy(const char *policyName) {
@@ -173,6 +187,8 @@ public:
             if (corrected!="") {
                 from = corrected;
             }
+            ConstString fromPath = extractPath(from.c_str());
+            configFilePath = fromPath;
             config.fromConfigFile(from,false);
         }
         return true;
@@ -250,6 +266,11 @@ public:
         // check current directory
         ConstString str = check("","","",name);
         if (str!="") return str;
+
+        if (configFilePath!="") {
+            ConstString str = check(configFilePath.c_str(),"","",name);
+            if (str!="") return str;
+        }
 
         // check app dirs
         for (int i=0; i<apps.size(); i++) {

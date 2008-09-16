@@ -1,7 +1,9 @@
 2008-09-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: fix problem
-	with configuration options getting lost.
+	with configuration options getting lost.  Add path
+	for default config file to search path.
+
 
 	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
 	setDefaultConfigFile method, to specify a default for
