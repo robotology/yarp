@@ -91,6 +91,10 @@ public:
 
     bool setDefault(const char *key, const char *val);
 
+    bool setDefaultConfigFile(const char *fname) {
+        return setDefault("from",fname);
+    }
+
     /**
      *
      * Find the full path to a file.  The file is specified by the

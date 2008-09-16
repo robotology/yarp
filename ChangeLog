@@ -1,3 +1,12 @@
+2008-09-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: fix problem
+	with configuration options getting lost.
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
+	setDefaultConfigFile method, to specify a default for
+	--from.
+
 2008-09-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: if "--context" is 

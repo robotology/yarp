@@ -88,7 +88,7 @@ public:
                         rootConfig.c_str());
             }
             checked += " " + rootConfig;
-            ok = config.fromConfigFile(rootConfig.c_str());
+            ok = config.fromConfigFile(rootConfig.c_str(),false);
         }
         if (!needEnv) {
             if (!ok) {
@@ -97,7 +97,7 @@ public:
                             altConfig.c_str());
                 }
                 checked += " " + altConfig;
-                ok = config.fromConfigFile(altConfig.c_str());
+                ok = config.fromConfigFile(altConfig.c_str(),false);
             }
         }
         /*
@@ -147,7 +147,7 @@ public:
             return false;
         }
 
-        config = p;
+        config.fromString(p.toString().c_str(),false);
         bool result = configureFromPolicy(name.c_str());
         if (!result) return result;
 
@@ -165,6 +165,10 @@ public:
         if (config.check("from")) {
             ConstString from = config.check("from",
                                             Value("config.ini")).toString();
+            if (verbose) {
+                fprintf(RTARGET,"||| default config file specified as %s\n", 
+                        from.c_str());
+            }
             ConstString corrected = findFile(from.c_str());
             if (corrected!="") {
                 from = corrected;
