@@ -222,7 +222,7 @@ public:
         } else {
             reader.reset(is(),&getStreams(),getRoute(),0,false);
         }
-        return true;
+        return ok;
     }
 
     bool defaultExpectIndex();
@@ -438,7 +438,16 @@ public:
 
     virtual ConnectionReader& beginRead() {
         if (delegate!=NULL) {
-            expectIndex();
+            bool ok = false;
+            while (!ok) {
+                ok = expectIndex();
+                if (!ok) {
+                    if (!is().isOk()) {
+                        // go ahead, we'll be shutting down...
+                        ok = true;
+                    }
+                }
+            }
             respondToIndex();
             if (altReader!=NULL) {
                 YARP_DEBUG(Logger::get(), "alternate reader in operation");
