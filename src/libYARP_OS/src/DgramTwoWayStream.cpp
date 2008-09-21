@@ -592,6 +592,9 @@ void DgramTwoWayStream::write(const Bytes& b) {
     if (reader) {
         return;
     }
+    if (writeBuffer.get()==NULL) {
+        return;
+    }
 
     Bytes local = b;
     while (local.length()>0) {
@@ -614,6 +617,10 @@ void DgramTwoWayStream::write(const Bytes& b) {
 
 
 void DgramTwoWayStream::flush() {
+    if (writeBuffer.get()==NULL) {
+        return;
+    }
+
     // should set CRC
     if (writeAvail<=CRC_SIZE) {
         return;

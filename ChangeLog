@@ -1,3 +1,8 @@
+2008-09-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/DgramTwoWayStream.cpp: deal with writes
+	on a connection that has not yet been opened.
+
 2008-09-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/Protocol.h: fix expectIndex; it
