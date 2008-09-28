@@ -82,8 +82,8 @@ extern "C" {
 
     for(i=threadIdx.x+blockIdx.x; i<w*h; i+=blockDim.x*gridDim.x) {
       out[i*3]=(in[i*3]+in[i*3+1]+in[i*3+2])/3;
-      out[i*3*1]=out[i*3];
-      out[i*3*2]=out[i*3];
+      out[i*3+1]=out[i*3];
+      out[i*3+2]=out[i*3];
     }
   }
 
