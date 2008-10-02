@@ -1,0 +1,37 @@
+/** 
+ * @page carrier_config Configuring YARP Carriers
+
+Every YARP connection has a specific type of carrier associated
+with it.  This corresponds roughly to the "transport" used to
+carry data.  For example there is the tcp carrier, the udp carrier,
+the mcast (multi-cast) carrier.  For each transport, there can
+be several variants of carrier.  For example, across tcp, there
+can be the basic binary-mode tcp carrier, or the text (text-mode)
+carrier, or the fast_tcp carrier which takes some shortcuts for 
+speed.
+
+Here we look at configuration issues that arise for individual
+carriers.
+
+\section carrier_tcp tcp carrier
+
+This is the default carrier for YARP connections.  It doesn't
+really need much configuration.  For two ports, /src and /dest,
+you can establish a tcp connection between them by typing:
+\verbatim
+yarp connect /src /dest
+\endverbatim
+or equivalently:
+\verbatim
+yarp connect /src /dest tcp
+\endverbatim
+
+If the two ports are on separate computers connected by multiple
+networks, the network the connection uses may not be the one you'd
+prefer.  If you want to control this, you can prepend
+"/net=IP-PREFIX/" to the target port name.  For example, a name such
+as "/net=196/write" means "connect to the port named /write using the
+network with ip addresses beginning with 196''.  See \ref yarp_uri.
+
+*
+*/

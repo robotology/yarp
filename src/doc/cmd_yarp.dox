@@ -697,6 +697,8 @@ This suggests that shmem is the best carrier to use.
 
 \section name_gc yarp name gc
 
+THIS COMMAND IS DEPRECATED, use \ref yarp_clean instead.
+
 \verbatim
 yarp name gc
 \endverbatim
@@ -705,7 +707,8 @@ This requests that the server "garbage collect" any
 registered ports that are no longer responding.
 This is useful for cleaning up registrations corresponding
 to programs that have crashed or been terminated 
-abruptly.
+abruptly.  THIS COMMAND IS DEPRECATED, use \ref yarp_clean 
+instead.
 
 
 \section companion_extended An extended example
