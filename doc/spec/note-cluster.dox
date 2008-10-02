@@ -144,6 +144,14 @@ necessary on MS-Windows.
 There are a lot more suggestions for Linux here:
 - http://wwwx.cs.unc.edu/~sparkst/howto/network_tuning.php
 
+\section yarp_cluster_tweak YARP connection problems
+
+If you are confident of your network, but are having trouble with
+making a YARP connection of some kind, read about that kind of
+connection in \ref carrier_config and see if there's a tweak that
+can be made.  There are some parameters you can control for
+the \ref carrier_config_udp and \ref carrier_config_mcast.
+
 \section yarp_cluster_code Relevant source code
 
 In case you need to fix something, the relevant source code in YARP is:
@@ -151,7 +159,7 @@ In case you need to fix something, the relevant source code in YARP is:
 - src/libYARP_OS/include/yarp/os/DgramTwoWayStream.h 
 - src/libYARP_OS/src/DgramTwoWayStream.cpp
 
-We appreciate patches to these files. We only have one network to test
+We appreciate patches to these files. We only have a few networks to test
 on, and this topic can be quite network-dependent and subtle.
 
 
