@@ -1,3 +1,11 @@
+2008-10-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/name_server.dox: small update to yarp namespace
+	documentation.
+
+	* src/doc/cmd_yarp.dox: big update to documentation for yarp
+	command.
+
 2008-09-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/DgramTwoWayStream.cpp: deal with writes

@@ -20,6 +20,7 @@ Here are the ways you can call yarp:
 - \ref yarp_read
 - \ref yarp_write
 - \ref yarp_rpc
+- \ref yarp_forward
 - \ref yarp_server
 - \ref yarp_check
 - \ref yarp_terminate
@@ -27,6 +28,10 @@ Here are the ways you can call yarp:
 - \ref yarp_exists
 - \ref yarp_wait
 - \ref yarp_cmake
+- \ref yarp_run
+- \ref yarp_namespace
+- \ref yarp_clean
+- \ref yarp_resource
 \endif
 
 @section yarp_base yarp
@@ -112,6 +117,12 @@ server.  The file can be modified by hand, but will be overwritten
 if the name server does not respond and is discovered running somewhere
 else.  You are also free to delete the file, which will force
 autodetection of the server.
+
+The name of this file will be different if \ref name_server_namespaces
+"namespaces" are in use.  The file will be in the same directory, but
+its name will be the name of the namespace, with all non-alphanumeric
+characters replaced by "_", and ".conf" appended.
+
 
 @section yarp_check yarp check
 
@@ -228,6 +239,36 @@ Response: *** end of message
 \endverbatim
 See \ref yarp_name for other commands the name server responds to.
 
+
+\section yarp_forward yarp forward
+
+\verbatim
+yarp forward LOCAL_PORT REMOTE_PORT
+\endverbatim
+
+This is a tool for monitoring RPC connections.  Suppose port
+/controller sends commands to /motor, using RPC in order to get
+replies, and for debugging we would like to see those commands/replies
+without changing code.  For streaming data, we could simply add an
+extra connection to a test port.  But for an RPC connection, this
+doesn't work.  "yarp forward" lets us set up a man-in-the-middle
+which passes commands and replies to and fro, while printing
+them out for us to see.
+
+If we have an RPC connection like this:
+\verbatim
+yarp connect /controller /motor
+\endverbatim
+
+Then we can put a forwarder in the middle like this:
+\verbatim
+yarp forward /middle /motor
+yarp connect /controller /middle
+\endverbatim
+
+This command is experimental and will probably be generalized in 
+future.
+
 \section yarp_connect yarp connect
 
 \verbatim
@@ -298,6 +339,12 @@ whether the process that owns the port is running.  It is designed for
 use in scripts -- nothing is printed, the result is encoded in the
 return value of the program (0 = port exists).
 
+A variant of this command checks if a connection between two ports
+exists:
+
+\verbatim
+yarp exists /SOURCE_PORT /TARGET_PORT
+\endverbatim
 
 \section yarp_wait yarp wait
 
@@ -319,7 +366,64 @@ Experimental.  Generates a "CMakeLists.txt" that is suitable for
 compiling code for YARP, including new devices.  It is intended to
 help experienced users get started on new projects quickly.
 
+\section yarp_run yarp run
 
+\verbatim
+yarp run --server SERVERPORT
+yarp run --on SERVERPORT --as TAG --script SCRIPTNAME
+yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
+yarp run --on SERVERPORT --kill TAG
+yarp run --on SERVERPORT --killall
+yarp run --on SERVERPORT --exit
+\endverbatim
+
+A way of running programs on a set of machines on a closed network.
+See Run class for documentation.
+
+
+\section yarp_namespace yarp namespace
+
+\verbatim
+yarp namespace
+yarp namespace /namespace
+\endverbatim
+
+The yarp name server started by \ref yarp_server "yarp server" has
+a port name associated with it.  By default, this is "/root".  This
+can be changed, and it is useful to do so when a single network
+is shared by people working on non-overlapping projects involving
+YARP.
+
+Type "yarp namespace" to report the current namespace.
+
+Type "yarp namespace /my/space" to set the namespace to "/my/space".
+
+See \ref name_server_namespaces "About YARP Namespaces" for (important)
+details on how to use namespaces.
+
+\section yarp_clean yarp clean
+
+\verbatim
+yarp clean
+\endverbatim
+
+This command gets a list of all registered ports from the name server,
+and checks them one by one to see if they are responding (using \ref
+yarp_exists).  If they do not respond within a few seconds
+they are unregistered (using \ref name_unregister).
+
+If you run into troubles with this command seeming to hang on a port
+name (in fact it is a very loooooong timeout), you may want to
+\ref name_unregister "unregister" that port name yourself.
+
+\section yarp_resource yarp resource
+
+\verbatim
+  yarp resource --policy POLICY --find CONFIG.ini
+\endverbatim
+
+An experimental tool for finding configuration files and other resource
+files.  For details, see the yarp::os::ResourceFinder class.
 
 \section yarp_name yarp name
 

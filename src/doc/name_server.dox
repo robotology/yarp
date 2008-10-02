@@ -310,6 +310,11 @@ that looks like this:
 This gives the machine and socket-port that the name server is assumed
 to be running on.
 
+(The name of this file will be different if 
+\ref name_server_namespaces "namespaces"
+are in use.  You can always determine the name of this file
+and its expected location by typing \ref yarp_conf).
+
 If this file does not exist, or is incorrect, yarp utilities will
 attempt to contact the nameserver using multi-cast broadcasts to
 224.2.1.1 port 10001 (this is a YARP2 feature, not available in
@@ -398,7 +403,10 @@ Now "yarp where" should start working, and if you type:
   yarp check
 \endverbatim
 it should work, and you should see ports being registered on your personal 
-name server.
+name server.  If it does not work (perhaps you are on a wireless network,
+or multicast search is failing for some other reason), type "yarp conf" and
+edit/create the named file in the same way as described in
+\ref name_server_discovery.
 
 To switch back to using the main name server, type:
 \verbatim
