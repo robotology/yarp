@@ -1,3 +1,8 @@
+2008-10-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/cmd_yarp.dox: document that "yarp name gc" is
+	deprecated, and encourage use of "yarp clean" instead.
+
 2008-10-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/name_server.dox: small update to yarp namespace
