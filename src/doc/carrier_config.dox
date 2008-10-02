@@ -28,6 +28,7 @@ carriers.
 - \ref carrier_config_local
 - \ref carrier_config_text
 - \ref carrier_config_text_ack
+- \ref carrier_config_fast_tcp
 \endif
 
 \section carrier_config_tcp tcp carrier
@@ -192,6 +193,19 @@ program.  Text-mode messages are particularly easy to read
 This type of connection has acknowledgements to the
 sender of data received, unlike the
 \ref carrier_config_text "text carrier".
+
+
+\section carrier_config_fast_tcp fast_tcp (tcp without acknowledgement) carrier
+
+You can establish a binary-mode tcp connection without acknowledgements
+between two ports /src and /dest by typing:
+\verbatim
+yarp connect /src /dest fast_tcp
+\endverbatim
+
+This can be useful to get a bit more speed in cases where flow is
+producer-limited, not consumer-limited.  In general though it
+is safer to use the regular \ref carrier_config_tcp "tcp carrier".
 
 
 *
