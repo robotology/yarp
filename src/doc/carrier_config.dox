@@ -13,7 +13,7 @@ speed.
 Here we look at configuration issues that arise for individual
 carriers.
 
-\section carrier_tcp tcp carrier
+\section carrier_config_tcp tcp carrier
 
 This is the default carrier for YARP connections.  It doesn't
 really need much configuration.  For two ports, /src and /dest,
