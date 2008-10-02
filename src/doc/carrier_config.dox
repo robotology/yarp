@@ -1,5 +1,7 @@
 /** 
- * @page carrier_config Configuring YARP Carriers
+ * @page carrier_config Configuring YARP Connections
+
+@author Paul Fitzpatrick
 
 Every YARP connection has a specific type of carrier associated
 with it.  This corresponds roughly to the "transport" used to
@@ -12,6 +14,17 @@ speed.
 
 Here we look at configuration issues that arise for individual
 carriers.
+
+\if MAN_PAGE_COND
+\else
+- \ref carrier_config_tcp
+- \ref carrier_config_udp
+- \ref carrier_config_mcast
+- \ref carrier_config_shmem
+- \ref carrier_config_local
+- \ref carrier_config_text
+- \ref carrier_config_text_ack
+\endif
 
 \section carrier_config_tcp tcp carrier
 
@@ -32,6 +45,150 @@ prefer.  If you want to control this, you can prepend
 "/net=IP-PREFIX/" to the target port name.  For example, a name such
 as "/net=196/write" means "connect to the port named /write using the
 network with ip addresses beginning with 196''.  See \ref yarp_uri.
+
+\section carrier_config_udp udp carrier
+
+You can establish a UDP connection between two ports /src and /dest by
+typing:
+\verbatim
+yarp connect /src /dest udp
+\endverbatim
+
+The udp carrier is unreliable (by the nature of the underlying UDP
+protocol).  However, on a local network under controlled conditions
+UDP can be a very efficient method for moving data.
+
+The udp carrier is unidirectional; it should be used for streaming
+messages rather than RPC (remote procedure call) send/reply sequences.
+
+YARP will discard messages with corrupted, missing, duplicated, or
+out-of-order parts, so the only problem you should have is messages
+simply failing to arrive.
+
+If you have multiple networks, you can control which networks
+individual connections use with the same method described for 
+the \ref carrier_config_tcp "tcp carrier".
+
+The steps described in \ref yarp_cluster are very important
+if you will be sending large YARP messages using udp.
+
+Large messages are broken into a series of datagrams.  You can control
+the size of those datagrams in bytes by setting the environment
+variable YARP_DGRAM_SIZE (to control both udp and multicast together)
+or YARP_UDP_SIZE (to control just udp datagram size).  The right
+setting for this number depends a lot on what you want to do.  It is
+worth experimenting across quite a large range, say from 5000 to
+120000 or more.
+
+\section carrier_config_mcast mcast (multicast) carrier
+
+You can establish a multicast connection between two ports /src and /dest 
+by typing:
+\verbatim
+yarp connect /src /dest mcast
+\endverbatim
+
+CAREFUL: multicast is not supported by all all network hardware, and
+even when it is, support can be a bit hit-and-miss.
+
+For multiple ports reading from the same source, YARP will map 
+these logical connections to a single multicasting source.
+
+The mcast carrier is unreliable (by the nature of the underlying
+multicast protocol).  However, on a local network under controlled
+conditions multicast can be a very efficient method for moving data.
+
+The mcast carrier is unidirectional; it should be used for streaming
+messages rather than RPC (remote procedure call) send/reply sequences.
+
+YARP will discard messages with corrupted, missing, duplicated, or
+out-of-order parts, so the only problem you should have is messages
+simply failing to arrive.
+
+If you have multiple networks, you can control which networks
+individual connections use with the same method described for 
+the \ref carrier_config_tcp "tcp carrier".
+
+The steps described in \ref yarp_cluster are very important
+if you will be sending large YARP messages using mcast.
+
+Large messages are broken into a series of datagrams.  You can control
+the size of those datagrams in bytes by setting the environment
+variable YARP_DGRAM_SIZE (to control both udp and multicast together)
+or YARP_MCAST_SIZE (to control just multicast datagram size).  The
+right setting for this number depends a lot on what you want to do.
+It is worth experimenting across quite a large range, say from 5000 to
+120000 or more.
+
+\section carrier_config_shmem shmem (shared memory) carrier
+
+You can establish a shared memory connection between two 
+ports /src and /dest by typing:
+\verbatim
+yarp connect /src /dest shmem
+\endverbatim
+
+CAREFUL: Such connections will not work unless the source and
+destination ports are on the same machine.  That is the nature
+of shared memory.
+
+The author of this documentation is not aware of any configuration
+options for this carrier.
+
+
+\section carrier_config_local local (within-process) carrier
+
+You can establish a connection via shared process memory between two 
+ports /src and /dest by typing:
+\verbatim
+yarp connect /src /dest local
+\endverbatim
+
+CAREFUL: Such connections will not work unless the source and
+destination ports belong to the same process.
+
+CAREFUL: This carrier is experimental.  Please report any problems
+you encounter.
+
+For ports that are in control of message allocation and reuse
+(i.e. BufferedPort ports), this is a very efficient carrier.
+The messages held by source and destination ports are placed
+into a merged pool with zero copies needed.
+
+\section carrier_config_text text (text-mode across tcp) carrier
+
+You can establish a text-mode connection between two 
+ports /src and /dest by typing:
+\verbatim
+yarp connect /src /dest text
+\endverbatim
+
+This is a reliable TCP connection.  This is useful if the destination port
+is not actually a YARP port, but a socket being read by a non-YARP
+program.  Text-mode messages are particularly easy to read
+(see \ref yarp_without_yarp).
+
+This type of connection does not contain acknowledgements to the
+sender of data received.  If this is a problem, use the
+\ref carrier_config_text_ack "text_ack carrier".
+
+\section carrier_config_text_ack text_ack (text-mode across tcp with acknowledgement) carrier
+
+You can establish a text-mode connection between two 
+ports /src and /dest by typing:
+\verbatim
+yarp connect /src /dest text_ack
+\endverbatim
+
+This is a reliable TCP connection.  This is useful if the destination port
+is not actually a YARP port, but a socket being read by a non-YARP
+program.  Text-mode messages are particularly easy to read
+(see \ref yarp_without_yarp).
+
+This type of connection has acknowledgements to the
+sender of data received, unlike the
+\ref carrier_config_text "text carrier".
+
 
 *
 */
