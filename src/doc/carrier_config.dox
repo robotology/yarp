@@ -14,7 +14,7 @@ speed.
 
 Before using carriers other than the default, please do make sure you
 understand the performance of your network and check that it is 
-configures well - see \ref yarp_cluster.
+configured well - see \ref yarp_cluster.
 
 Here we look at configuration issues that arise for individual
 carriers.
