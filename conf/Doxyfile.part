@@ -494,7 +494,6 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = src/libYARP_OS/include/yarp/os \
-			 src/libYARP_OS/include/yarp/peer \
                          src/libYARP_sig/include/yarp/sig \
                          src/libYARP_dev/include/yarp/dev \
                          src/libYARP_math/include/yarp/math \
