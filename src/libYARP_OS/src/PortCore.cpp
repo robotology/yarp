@@ -8,7 +8,7 @@
 
 #include <yarp/InputProtocol.h>
 #include <yarp/Logger.h>
-#include <yarp/PortCore.h>
+#include <yarp/os/impl/PortCore.h>
 #include <yarp/BufferedConnectionWriter.h>
 #include <yarp/NameClient.h>
 #include <yarp/PortCoreInputUnit.h>
@@ -32,6 +32,7 @@
 
 using namespace yarp;
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 /*
   Phases:
