@@ -25,8 +25,6 @@
  * To kill all commands/scripts on a server: $ yarp run --on SERVERPORT --killall
  * 
  * To clean shutdown a server:				 $ yarp run --on SERVERPORT --exit
- * 
- * Append --verbose to get debug messages.
  */
 
 #ifndef _YARP2_RUN_
@@ -64,6 +62,7 @@ protected:
 	#endif
 	static int runConnect(Searchable& config);
 	static int runClient(Searchable& config);
+	static int report(Searchable& config);
 };
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/

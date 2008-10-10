@@ -1,3 +1,11 @@
+
+2008-10-10 Alessandro Scalzo <alessandro@liralab.it>
+	* yarp2/src/libYARP_OS/src/Run.cpp
+	* yarp2/src/libYARP_OS/include/yarp/os/Run.h
+	Messages added, --report command added,
+	--workdir <working directory> running option
+	added.
+
 2008-10-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/cmd_yarp.dox: document that "yarp name gc" is
