@@ -15,6 +15,14 @@ namespace yarp {
     typedef ACE_String_Base<char> String;
 }
 
+namespace yarp {
+    namespace os {
+        namespace impl {
+            using yarp::String;
+        }
+    }
+}
+
 //#undef main //undef ace floating defines
 
 #endif

@@ -15,5 +15,13 @@ namespace yarp {
     using yarp::os::Bytes;
 }
 
+namespace yarp {
+    namespace os {
+        namespace impl {
+            using yarp::os::Bytes;
+        }
+    }
+}
+
 #endif
 
