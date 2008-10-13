@@ -12,6 +12,7 @@
 //#include "TestList.h"
 
 using namespace yarp;
+using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {
 public:

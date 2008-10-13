@@ -10,6 +10,7 @@
 #include <yarp/McastCarrier.h>
 
 using namespace yarp;
+using namespace yarp::os::impl;
 
 ElectionOf<McastCarrier> McastCarrier::caster;
 
