@@ -9,6 +9,9 @@
 
 #include <yarp/ShmemHybridStream.h>
 
+using namespace yarp;
+using namespace yarp::os::impl;
+
 int ShmemHybridStream::open(const Address& yarp_address,bool sender)
 {
 	m_bLinked=false;

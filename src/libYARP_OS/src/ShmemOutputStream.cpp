@@ -9,6 +9,9 @@
 
 #include <yarp/ShmemOutputStream.h>
 
+using namespace yarp;
+using namespace yarp::os::impl;
+
 bool ShmemOutputStreamImpl::open(int port,int size)
 {
 	m_pAccessMutex=m_pWaitDataMutex=0;

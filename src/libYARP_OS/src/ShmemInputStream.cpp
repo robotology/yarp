@@ -9,6 +9,9 @@
 
 #include <yarp/ShmemInputStream.h>
 
+using namespace yarp;
+using namespace yarp::os::impl;
+
 bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)
 {
 	m_pSock=pSock;
