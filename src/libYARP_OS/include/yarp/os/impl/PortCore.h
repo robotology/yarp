@@ -35,9 +35,9 @@ namespace yarp {
          */
         namespace impl {
             class PortCore;
+            class PortCoreUnit;
         }
     }
-    class PortCoreUnit;
 }
 
 /**
@@ -259,13 +259,13 @@ public:
     /**
      * Add another output to the port.
      */
-    void addOutput(yarp::OutputProtocol *op);
+    void addOutput(OutputProtocol *op);
 
 private:
 
     // internal maintenance of sub units
 
-    ACE_Vector<yarp::PortCoreUnit *> units;
+    ACE_Vector<PortCoreUnit *> units;
 
     // only called in "finished" phase
     void closeUnits();
@@ -300,7 +300,7 @@ private:
     int events;
     int connectionListeners;
     int inputCount, outputCount;
-    yarp::PortCorePackets packets;
+    PortCorePackets packets;
     yarp::String envelope;
 
     void closeMain();

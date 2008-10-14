@@ -21,6 +21,7 @@
 
 using namespace yarp;
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 
 //#define YMSG(x) ACE_OS::printf x;
@@ -50,7 +51,7 @@ const int StoreList::code = BOTTLE_TAG_LIST;
 #define GROUP_MASK (BOTTLE_TAG_LIST)
 
 
-yarp::StoreNull BottleImpl::storeNull;
+yarp::os::impl::StoreNull BottleImpl::storeNull;
 
 BottleImpl::BottleImpl() {
     dirty = true;

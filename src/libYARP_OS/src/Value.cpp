@@ -14,6 +14,7 @@
 
 using namespace yarp::os;
 using namespace yarp;
+using namespace yarp::os::impl;
 
 Value *Value::makeInt(int x) {
     return new StoreInt(x);
