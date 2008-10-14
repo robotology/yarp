@@ -1,3 +1,14 @@
+2008-10-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Run.cpp: move from use of String to
+	ConstString.
+
+	* src/libYARP_OS/include/yarp/os/Run.h: remove use of
+	(ACE-dependent) String class in a header file that should be free
+	of ACE dependencies.
+
+	* src/libYARP_sig/src/Matrix.cpp: fix fault detection on
+	read/write
 
 2008-10-10 Alessandro Scalzo <alessandro@liralab.it>
 	* yarp2/src/libYARP_OS/src/Run.cpp
