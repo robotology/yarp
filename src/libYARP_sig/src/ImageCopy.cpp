@@ -7,11 +7,11 @@
  */
 
 
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::sig;
 
 #define DBG if(0)

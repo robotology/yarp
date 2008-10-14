@@ -7,8 +7,8 @@
  */
 
 
-#include <yarp/String.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <iostream>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
@@ -44,7 +44,7 @@ public:
     }
 
     ConstString toString() {
-        yarp::String s;
+        String s;
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
             ConstString name = delegates[i]->getName();
@@ -79,7 +79,7 @@ public:
     DriverCreator *find(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
-            yarp::String s = delegates[i]->toString().c_str();
+            String s = delegates[i]->toString().c_str();
             if (s==name) {
                 return delegates[i];
             }
@@ -90,7 +90,7 @@ public:
     bool remove(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
-            yarp::String s = delegates[i]->toString().c_str();
+            String s = delegates[i]->toString().c_str();
             if (s==name) {
                 delete delegates[i];
                 delegates[i] = NULL;
@@ -303,7 +303,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     if (dd.isValid()) {
         Value *v;
         // default to /argv[0]/quit
-        yarp::String s("/");
+        String s("/");
         s += argv[0];
         s += "/quit";
         if (options.check("name", v)) {

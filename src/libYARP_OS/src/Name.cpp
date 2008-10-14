@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/Name.h>
+#include <yarp/os/impl/Name.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 Name::Name(const String& txt) {
     this->txt = txt;

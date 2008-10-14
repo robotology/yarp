@@ -9,9 +9,9 @@
 #ifndef _YARP2_HTTPCARRIER_
 #define _YARP2_HTTPCARRIER_
 
-#include <yarp/TcpCarrier.h>
-#include <yarp/NameClient.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/TcpCarrier.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NetType.h>
 
 namespace yarp {
     namespace os {

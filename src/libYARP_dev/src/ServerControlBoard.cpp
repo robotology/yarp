@@ -16,8 +16,8 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/String.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/NetType.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -35,6 +35,7 @@ namespace yarp{
 }
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 using namespace yarp::dev;
 using namespace yarp::sig;
 

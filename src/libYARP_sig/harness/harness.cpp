@@ -7,16 +7,16 @@
  */
 
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
-#include <yarp/Logger.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/NetInt32.h>
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 #ifdef YARP2_LINUX

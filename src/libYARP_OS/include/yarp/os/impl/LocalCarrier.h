@@ -9,10 +9,10 @@
 #ifndef _YARP2_LOCALCARRIER_
 #define _YARP2_LOCALCARRIER_
 
-#include <yarp/AbstractCarrier.h>
+#include <yarp/os/impl/AbstractCarrier.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Portable.h>
-#include <yarp/SocketTwoWayStream.h>
+#include <yarp/os/impl/SocketTwoWayStream.h>
 
 namespace yarp {
     namespace os {

@@ -9,13 +9,13 @@
 // added threadRelease/threadInit methods, synchronization and 
 // init failure notification -nat 
 
-#include <yarp/ThreadImpl.h>
-#include <yarp/SemaphoreImpl.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/IOException.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
 SemaphoreImpl ThreadImpl::threadMutex(1);

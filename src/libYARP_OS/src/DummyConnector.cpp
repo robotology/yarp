@@ -8,12 +8,12 @@
 
 
 #include <yarp/os/DummyConnector.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/StringInputStream.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/StringInputStream.h>
 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class DummyConnectorHelper {

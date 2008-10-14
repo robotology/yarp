@@ -7,11 +7,11 @@
  */
 
 
-#include <yarp/String.h>
-#include <yarp/Logger.h>
-#include <yarp/UnitTest.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
@@ -23,7 +23,7 @@
 #include <fstream>
 #include <iostream>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 

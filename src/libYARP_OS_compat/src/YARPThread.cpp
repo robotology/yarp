@@ -9,17 +9,17 @@
 ///
 /// based on Id: YARPThread.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
-/// $Id: YARPThread.cpp,v 1.3 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: YARPThread.cpp,v 1.4 2008-10-14 15:56:48 eshuy Exp $
 ///
 ///
 
-#include <yarp/ThreadImpl.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/Logger.h>
 
 #define DEBUG_H_INC
 #include <yarp/YARPThread.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 const size_t DEFAULT_THREAD_STACK_SIZE = 8000;
 

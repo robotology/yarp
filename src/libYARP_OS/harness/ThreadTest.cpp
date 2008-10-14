@@ -10,15 +10,15 @@
 // thread init success/failure notification, for thread and runnable classes
 // -nat
 
-#include <yarp/ThreadImpl.h>
+#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
@@ -244,7 +244,7 @@ public:
         gotCount = 0;
     }
 
-    virtual yarp::String getName() { return "ThreadTest"; }
+    virtual String getName() { return "ThreadTest"; }
 
     void testIsRunning()
     {

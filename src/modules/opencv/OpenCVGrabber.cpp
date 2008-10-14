@@ -21,7 +21,7 @@
 // before Yarp's.
 #define YARP_CVTYPES_H_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
@@ -49,7 +49,7 @@
 
 
 // Explicitly declare the types we are using after all includes
-using yarp::String;
+using yarp::os::impl::String;
 
 using yarp::dev::DeviceDriver;
 using yarp::dev::DriverCreatorOf;

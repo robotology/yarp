@@ -9,11 +9,11 @@
 #ifndef _YARP2_NETTYPE_
 #define _YARP2_NETTYPE_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/Bytes.h>
-#include <yarp/InputStream.h>
-#include <yarp/IOException.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <ace/OS_NS_stdlib.h>
 

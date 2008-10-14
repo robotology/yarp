@@ -8,11 +8,11 @@
 
 
 #include <yarp/os/Contact.h>
-#include <yarp/Address.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Value.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

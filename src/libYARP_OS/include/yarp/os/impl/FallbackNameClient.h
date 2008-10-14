@@ -9,9 +9,9 @@
 #ifndef _YARP2_FALLBACKNAMECLIENT_
 #define _YARP2_FALLBACKNAMECLIENT_
 
-#include <yarp/ThreadImpl.h>
-#include <yarp/Address.h>
-#include <yarp/DgramTwoWayStream.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
     namespace os {

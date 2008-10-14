@@ -6,15 +6,15 @@
  *
  */
 
-#include <yarp/FakeTwoWayStream.h>
-#include <yarp/Protocol.h>
+#include <yarp/os/impl/FakeTwoWayStream.h>
+#include <yarp/os/impl/Protocol.h>
 
 #include <ace/OS_NS_stdio.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class ProtocolTest : public UnitTest {
 public:

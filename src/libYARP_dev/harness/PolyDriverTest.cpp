@@ -6,19 +6,20 @@
  *
  */
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
 #include "TestList.h"
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::dev;
 
-class PolyDriverTest : public yarp::UnitTest {
+class PolyDriverTest : public UnitTest {
 public:
-    virtual yarp::String getName() { return "PolyDriverTest"; }
+    virtual String getName() { return "PolyDriverTest"; }
 
     void testBasic() {
         report(0,"a very basic driver instantiation test");
@@ -45,7 +46,7 @@ public:
 
 static PolyDriverTest thePolyDriverTest;
 
-yarp::UnitTest& getPolyDriverTest() {
+UnitTest& getPolyDriverTest() {
     return thePolyDriverTest;
 }
 

@@ -9,12 +9,12 @@
 #ifndef _YARP2_NAMESERVER_
 #define _YARP2_NAMESERVER_
 
-#include <yarp/String.h>
-#include <yarp/Address.h>
-#include <yarp/Logger.h>
-#include <yarp/Dispatcher.h>
-#include <yarp/NetType.h>
-#include <yarp/SplitString.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/Dispatcher.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/SplitString.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>

@@ -7,11 +7,11 @@
  */
 
 
-#include <yarp/String.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/ConstString.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

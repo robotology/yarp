@@ -7,14 +7,14 @@
  */
 
 
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <ace/OS.h>
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 #include <ace/Thread.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 Logger Logger::root("yarp");
 

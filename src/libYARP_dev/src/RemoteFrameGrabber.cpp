@@ -7,7 +7,7 @@
  */
 
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>

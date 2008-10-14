@@ -9,7 +9,7 @@
 #ifndef _YARP2_DISPATCHER_
 #define _YARP2_DISPATCHER_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>

@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/NameConfig.h>
-#include <yarp/SplitString.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/os/Bottle.h>
 
 #include <ace/OS_NS_stdlib.h>
@@ -26,7 +26,7 @@ using namespace std;
 #include <fstream.h>
 #endif
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define CONF_FILENAME YARP_CONFIG_FILENAME

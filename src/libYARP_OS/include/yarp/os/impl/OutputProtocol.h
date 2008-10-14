@@ -9,9 +9,9 @@
 #ifndef _YARP2_OUTPUTPROTOCOL_
 #define _YARP2_OUTPUTPROTOCOL_
 
-#include <yarp/Route.h>
+#include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/SizedWriter.h>
+#include <yarp/os/impl/SizedWriter.h>
 
 namespace yarp {
     namespace os {

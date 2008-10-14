@@ -10,8 +10,8 @@
 #ifndef _YARP2_UDPCARRIER_
 #define _YARP2_UDPCARRIER_
 
-#include <yarp/AbstractCarrier.h>
-#include <yarp/DgramTwoWayStream.h>
+#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
 
 namespace yarp {
     namespace os {

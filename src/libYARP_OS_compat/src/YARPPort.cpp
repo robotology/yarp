@@ -9,7 +9,7 @@
 
 
 ///
-/// $Id: YARPPort.cpp,v 1.8 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: YARPPort.cpp,v 1.9 2008-10-14 15:56:48 eshuy Exp $
 //
 /// Based on: Id: YARPPort.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 //
@@ -25,10 +25,10 @@
 
 
 
-#include <yarp/PortCore.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/PortReaderBuffer.h>
@@ -36,7 +36,7 @@
 #define DEBUG_H_INC
 #include <yarp/YARPPort.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

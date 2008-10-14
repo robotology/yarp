@@ -9,12 +9,12 @@
 #ifndef _YARP2_CARRIERS_
 #define _YARP2_CARRIERS_
 
-#include <yarp/String.h>
-#include <yarp/Bytes.h>
-#include <yarp/Address.h>
-#include <yarp/Face.h>
-#include <yarp/OutputProtocol.h>
-#include <yarp/Carrier.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/Bytes.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/Face.h>
+#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/impl/Carrier.h>
 
 #include <ace/Vector_T.h>
 

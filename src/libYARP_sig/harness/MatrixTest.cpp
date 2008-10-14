@@ -6,7 +6,7 @@
 */
 
 #include <yarp/sig/Matrix.h>
-#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Port.h>
@@ -19,7 +19,7 @@
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::sig;
 

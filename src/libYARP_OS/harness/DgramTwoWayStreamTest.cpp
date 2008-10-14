@@ -6,12 +6,12 @@
  *
  */
 
-#include <yarp/DgramTwoWayStream.h>
-#include <yarp/String.h>
-#include <yarp/UnitTest.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/NetType.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define MAX_PACKET 100
@@ -110,9 +110,9 @@ public:
     }
 };
 
-class DgramTwoWayStreamTest : public yarp::UnitTest {
+class DgramTwoWayStreamTest : public UnitTest {
 public:
-    virtual yarp::String getName() { return "DgramTwoWayStreamTest"; }
+    virtual String getName() { return "DgramTwoWayStreamTest"; }
 
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");
@@ -261,7 +261,7 @@ public:
 
 static DgramTwoWayStreamTest theDgramTwoWayStreamTest;
 
-yarp::UnitTest& getDgramTwoWayStreamTest() {
+UnitTest& getDgramTwoWayStreamTest() {
     return theDgramTwoWayStreamTest;
 }
 

@@ -9,7 +9,7 @@
 #ifndef _YARP2_SIZEDWRITER_
 #define _YARP2_SIZEDWRITER_
 
-#include <yarp/OutputStream.h>
+#include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/PortReader.h>
 
 namespace yarp {

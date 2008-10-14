@@ -9,16 +9,16 @@
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/Bottle.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
@@ -86,7 +86,7 @@ public:
     }
 
     virtual void runTests() {
-        yarp::NameClient& nic = yarp::NameClient::getNameClient();
+        NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
         testInt();
         testText();

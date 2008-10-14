@@ -9,9 +9,9 @@
 #ifndef _YARP2_CARRIER_
 #define _YARP2_CARRIER_
 
-#include <yarp/ShiftStream.h>
+#include <yarp/os/impl/ShiftStream.h>
 #include <yarp/Bytes.h>
-#include <yarp/SizedWriter.h>
+#include <yarp/os/impl/SizedWriter.h>
 
 namespace yarp {
     namespace os {
@@ -29,16 +29,16 @@ namespace yarp {
  * that goes through the same phases can be described as a Carrier and
  * then made available (through the Carriers class) for connections.
  */
-class yarp::os::impl::Carrier : public yarp::ShiftStream {
+class yarp::os::impl::Carrier : public ShiftStream {
 public:
 
 
     virtual Carrier *create() = 0;
 
-    virtual yarp::String getName() = 0;
-    virtual bool checkHeader(const yarp::Bytes& header) = 0;
-    virtual void setParameters(const yarp::Bytes& header) = 0;
-    virtual void getHeader(const yarp::Bytes& header) = 0;
+    virtual String getName() = 0;
+    virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
+    virtual void setParameters(const yarp::os::Bytes& header) = 0;
+    virtual void getHeader(const yarp::os::Bytes& header) = 0;
 
 
     virtual bool isConnectionless() = 0;
@@ -60,7 +60,7 @@ public:
     virtual bool expectReplyToHeader(Protocol& proto) = 0;
     virtual bool sendIndex(Protocol& proto) = 0;
 
-    virtual bool write(Protocol& proto, yarp::SizedWriter& writer) = 0;
+    virtual bool write(Protocol& proto, SizedWriter& writer) = 0;
 
     // receiver
     virtual bool expectExtraHeader(Protocol& proto) = 0;
@@ -72,7 +72,7 @@ public:
 
     virtual bool isActive() = 0;
 
-    virtual yarp::String toString() = 0;
+    virtual String toString() = 0;
 };
 
 #endif

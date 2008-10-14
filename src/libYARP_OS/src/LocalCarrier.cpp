@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/LocalCarrier.h>
+#include <yarp/os/impl/LocalCarrier.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 LocalCarrierManager LocalCarrier::manager;
 

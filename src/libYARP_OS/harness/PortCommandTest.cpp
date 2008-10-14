@@ -6,15 +6,15 @@
  *
  */
 
-#include <yarp/PortCommand.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StringInputStream.h>
-#include <yarp/StreamConnectionReader.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class PortCommandTest : public UnitTest {
 public:

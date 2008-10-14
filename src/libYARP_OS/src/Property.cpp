@@ -9,11 +9,11 @@
 
 #include <yarp/os/Property.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/Logger.h>
-#include <yarp/StringInputStream.h>
-#include <yarp/NetType.h>
-#include <yarp/NameConfig.h>
-#include <yarp/SplitString.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/SplitString.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
@@ -27,7 +27,7 @@ using namespace std;
 #include <fstream.h>
 #endif
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class PropertyItem {

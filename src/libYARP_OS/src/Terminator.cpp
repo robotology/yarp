@@ -11,17 +11,17 @@
 #include <ace/OS.h>
 #include <ace/Log_Msg.h>
 
-#include <yarp/Address.h>
-#include <yarp/SocketTwoWayStream.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
-#include <yarp/PortCommand.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/SocketTwoWayStream.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/PortCommand.h>
 
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Network.h>
 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 bool Terminator::terminateByName(const char *name) {

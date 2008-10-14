@@ -9,8 +9,8 @@
 #ifndef _YARP2_ABSTRACTCARRIER_
 #define _YARP2_ABSTRACTCARRIER_
 
-#include <yarp/Carrier.h>
-#include <yarp/Protocol.h>
+#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/impl/Protocol.h>
 
 namespace yarp {
     namespace os {
@@ -24,20 +24,20 @@ namespace yarp {
  * A starter class for implementing simple carriers.
  * It implements reasonable default behavior.
  */
-class yarp::os::impl::AbstractCarrier : public yarp::Carrier {
+class yarp::os::impl::AbstractCarrier : public Carrier {
 public:
 
-    virtual yarp::Carrier *create() = 0;
+    virtual Carrier *create() = 0;
 
-    virtual yarp::String getName() = 0;
+    virtual String getName() = 0;
 
-    virtual bool checkHeader(const yarp::Bytes& header) = 0;
+    virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
 
-    virtual void setParameters(const yarp::Bytes& header) {
+    virtual void setParameters(const yarp::os::Bytes& header) {
         // default - no parameters
     }
 
-    virtual void getHeader(const yarp::Bytes& header) = 0;
+    virtual void getHeader(const yarp::os::Bytes& header) = 0;
 
 
     virtual bool isConnectionless() {
@@ -74,7 +74,7 @@ public:
         return false;
     }
 
-    virtual yarp::String toString() {
+    virtual String toString() {
         return getName();
     }
 
@@ -138,11 +138,11 @@ protected:
         return x;
     }
 
-    void createStandardHeader(int specifier,const yarp::Bytes& header) {
+    void createStandardHeader(int specifier,const yarp::os::Bytes& header) {
         Protocol::createYarpNumber(7777+specifier,header);
     }
 
-    virtual bool write(Protocol& proto, yarp::SizedWriter& writer) {
+    virtual bool write(Protocol& proto, SizedWriter& writer) {
         // default behavior upon a write request
         ACE_UNUSED_ARG(writer);
         bool ok = proto.sendIndex();

@@ -6,13 +6,13 @@
  *
  */
 
-#include <yarp/Address.h>
+#include <yarp/os/impl/Address.h>
 #include <yarp/os/Contact.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class AddressTest : public UnitTest {

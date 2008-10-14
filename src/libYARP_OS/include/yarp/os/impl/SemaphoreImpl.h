@@ -11,7 +11,7 @@
 
 #include <ace/Synch.h>
 
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
 namespace yarp {
     namespace os {

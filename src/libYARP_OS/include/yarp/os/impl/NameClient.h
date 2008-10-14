@@ -9,7 +9,7 @@
 #ifndef _YARP2_NAMECLIENT_
 #define _YARP2_NAMECLIENT_
 
-#include <yarp/Address.h>
+#include <yarp/os/impl/Address.h>
 #include <yarp/os/Bottle.h>
 
 namespace yarp {

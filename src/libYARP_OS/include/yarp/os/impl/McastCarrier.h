@@ -9,15 +9,15 @@
 #ifndef _YARP2_MCASTCARRIER_
 #define _YARP2_MCASTCARRIER_
 
-#include <yarp/AbstractCarrier.h>
-#include <yarp/UdpCarrier.h>
-#include <yarp/DgramTwoWayStream.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/AbstractCarrier.h>
+#include <yarp/os/impl/UdpCarrier.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/Logger.h>
 
-#include <yarp/Election.h>
-#include <yarp/SplitString.h>
-#include <yarp/NameClient.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/Election.h>
+#include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <stdio.h>
 

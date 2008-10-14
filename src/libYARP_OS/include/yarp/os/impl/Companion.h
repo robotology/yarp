@@ -9,7 +9,7 @@
 #ifndef _YARP2_COMPANION_
 #define _YARP2_COMPANION_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/Writable.h>
 
 #include <ace/Hash_Map_Manager.h>

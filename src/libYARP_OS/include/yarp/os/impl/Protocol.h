@@ -9,16 +9,16 @@
 #ifndef _YARP2_PROTOCOL_
 #define _YARP2_PROTOCOL_
 
-#include <yarp/Carrier.h>
-#include <yarp/Logger.h>
-#include <yarp/String.h>
-#include <yarp/TwoWayStream.h>
-#include <yarp/Carriers.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
+#include <yarp/os/impl/Carrier.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/ManagedBytes.h>
-#include <yarp/NetType.h>
-#include <yarp/ShiftStream.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/ShiftStream.h>
 #include <yarp/os/Portable.h>
 
 #define throw_IOException(e) YARP_DEBUG(Logger::get(),e)
@@ -35,7 +35,7 @@ namespace yarp {
  * Connection Communication choreographer.  Handles a single YARP connection,
  * and insulates ports from the details of the particular Carrier in use.
  */
-class yarp::os::impl::Protocol : public yarp::OutputProtocol, public yarp::InputProtocol {
+class yarp::os::impl::Protocol : public OutputProtocol, public InputProtocol {
 public:
 
     // everything could throw IOException
@@ -43,7 +43,7 @@ public:
     /**
      * This becomes owner of shiftstream
      */
-    Protocol(yarp::TwoWayStream *stream) : 
+    Protocol(TwoWayStream *stream) : 
         log(Logger::get()), header(8), number(4), indexHeader(10) {
         shift.takeStream(stream);
         active = true;
@@ -68,18 +68,18 @@ public:
         closeHelper();
     }
 
-    void setRoute(const yarp::Route& route) {
+    void setRoute(const Route& route) {
         this->route = route;
     }
 
-    const yarp::Route& getRoute() {
+    const Route& getRoute() {
         return route;
     }
 
-    void setCarrier(const yarp::String& carrierName) {
+    void setCarrier(const String& carrierName) {
         setRoute(getRoute().addCarrierName(carrierName));
         YARP_ASSERT(delegate==NULL);
-        delegate = yarp::Carriers::chooseCarrier(carrierName);
+        delegate = Carriers::chooseCarrier(carrierName);
         /*
         if (delegate==NULL) {
             throw new IOException("no such carrier");
@@ -92,24 +92,24 @@ public:
 
     bool defaultExpectSenderSpecifier() {
         int len = 0;
-        int r = yarp::NetType::readFull(is(),number.bytes());
+        int r = NetType::readFull(is(),number.bytes());
         if (r!=number.length()) {
             throw_IOException("did not get sender name length");
             return false;
         }
-        len = yarp::NetType::netInt(number.bytes());
+        len = NetType::netInt(number.bytes());
         if (len>1000) len = 1000;
         if (len<1) len = 1;
         // expect a string -- these days null terminated, but not in YARP1
         yarp::os::ManagedBytes b(len+1);
-        r = yarp::NetType::readFull(is(),Bytes(b.get(),len));
+        r = NetType::readFull(is(),Bytes(b.get(),len));
         if (r!=len) {
             throw_IOException("did not get sender name");
             return false;
         }
         // add null termination for YARP1
         b.get()[len] = '\0';
-        yarp::String s = b.get();
+        String s = b.get();
         setRoute(getRoute().addFromName(s));
         return true;
     }
@@ -151,7 +151,7 @@ public:
     }
 
     int readYarpInt() {
-        int len = yarp::NetType::readFull(is(),header.bytes());
+        int len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
         if (len!=header.length()) {
             throw_IOException("data stream died");
@@ -171,7 +171,7 @@ public:
             if (base[0]=='Y' && base[1]=='A' &&
                 base[6]=='R' && base[7]=='P') {
                 Bytes b2(b.get()+2,4);
-                int x = yarp::NetType::netInt(b2);
+                int x = NetType::netInt(b2);
                 return x;
             }
         }
@@ -189,7 +189,7 @@ public:
         base[6] = 'R';
         base[7] = 'P';
         yarp::os::Bytes code(base+2,4);
-        yarp::NetType::netInt(x,code);
+        NetType::netInt(x,code);
     }
 
 
@@ -246,7 +246,7 @@ public:
     bool defaultExpectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
-            int hdr = yarp::NetType::readFull(is(),header.bytes());
+            int hdr = NetType::readFull(is(),header.bytes());
             if (hdr!=header.length()) {
                 throw_IOException("did not get acknowledgement header");
                 return false;
@@ -256,7 +256,7 @@ public:
                 throw_IOException("acknowledgement header is bad");
                 return false;
             }
-            int len2 = yarp::NetType::readDiscard(is(),len);
+            int len2 = NetType::readDiscard(is(),len);
             if (len!=len2) {
                 throw_IOException("did not get an acknowledgement of the promised length");
                 return false;
@@ -288,7 +288,7 @@ public:
         }
         //} catch (IOException e) {
         //  YARP_DEBUG(Logger::get(),
-        //             String("yarp::Protocol::interrupt exception: ") + 
+        //             String("Protocol::interrupt exception: ") + 
         //             e.toString());
     }
 
@@ -315,39 +315,39 @@ public:
         //YARP_DEBUG(Logger::get(),"Protocol object closed");
     }
 
-    yarp::TwoWayStream& getStreams() {
+    TwoWayStream& getStreams() {
         return shift;
     }
 
-    void takeStreams(yarp::TwoWayStream *streams) {
+    void takeStreams(TwoWayStream *streams) {
         shift.takeStream(streams);
         if (streams!=NULL) {
             active = true;
         }
     }
 
-    yarp::TwoWayStream *giveStreams() {
+    TwoWayStream *giveStreams() {
         return shift.giveStream();
     }
 
-    yarp::OutputStream& os() {
+    OutputStream& os() {
         return shift.getOutputStream();
     }
 
-    yarp::InputStream& is() {
+    InputStream& is() {
         return shift.getInputStream();
     }
 
-    yarp::OutputStream& getOutputStream() {
+    OutputStream& getOutputStream() {
         return os();
     }
 
-    yarp::InputStream& getInputStream() {
+    InputStream& getInputStream() {
         return is();
     }
 
     
-    const yarp::Address& getRemoteAddress() {
+    const Address& getRemoteAddress() {
         ACE_DEBUG((LM_ERROR,"Protocol::getRemoteAddress not yet implemented"));
         //throw IOException("getRemoteAddress failed");
         return nullAddress;
@@ -358,7 +358,7 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // OutputProtocol view
 
-    virtual bool open(const yarp::Route& route) {
+    virtual bool open(const Route& route) {
         setRoute(route);
         setCarrier(route.getCarrierName());
         if (delegate==NULL) {
@@ -369,12 +369,12 @@ public:
         return expectReplyToHeader();
     }
 
-    virtual void rename(const yarp::Route& route) {
+    virtual void rename(const Route& route) {
         setRoute(route);
     }
 
 
-    virtual bool open(const yarp::String& name) {
+    virtual bool open(const String& name) {
         if (name=="") {
             setCarrier("text");
             if (delegate!=NULL) {
@@ -431,11 +431,11 @@ public:
         this->writer = NULL;
     }
 
-    virtual yarp::OutputProtocol& getOutput() {
+    virtual OutputProtocol& getOutput() {
         return *this;
     }
 
-    virtual yarp::InputProtocol& getInput() {
+    virtual InputProtocol& getInput() {
         return *this;
     }
 
@@ -504,7 +504,7 @@ private:
     }
 
     bool expectProtocolSpecifier() {
-        int len = yarp::NetType::readFull(is(),header.bytes());
+        int len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
         //ACE_OS::printf("len is %d but header is %d\n", len, header.length());
         if (len==-1) {
@@ -523,7 +523,7 @@ private:
         }
         if (!already) {
             //try {
-            delegate = yarp::Carriers::chooseCarrier(header.bytes());
+            delegate = Carriers::chooseCarrier(header.bytes());
             //} catch (IOException e) {
             if (delegate==NULL) {
                 // carrier not found; send a message
@@ -544,8 +544,8 @@ private:
 
 
     bool sendSenderSpecifier() {
-        const yarp::String& senderName = getRoute().getFromName();
-        yarp::NetType::netInt(senderName.length()+1,number.bytes());
+        const String& senderName = getRoute().getFromName();
+        NetType::netInt(senderName.length()+1,number.bytes());
         os().write(number.bytes());
         yarp::os::Bytes b((char*)senderName.c_str(),senderName.length()+1);
         os().write(b);
@@ -573,20 +573,20 @@ private:
 
     int messageLen;
     bool pendingAck;
-    yarp::Logger& log;
+    Logger& log;
     yarp::os::ManagedBytes header;
     yarp::os::ManagedBytes number;
     yarp::os::ManagedBytes indexHeader;
-    yarp::ShiftStream shift;
+    ShiftStream shift;
     bool active;
     Carrier *delegate;
-    yarp::Route route;
+    Route route;
     //BufferedConnectionWriter writer;
-    yarp::SizedWriter *writer;
-    yarp::StreamConnectionReader reader;
+    SizedWriter *writer;
+    StreamConnectionReader reader;
     yarp::os::ConnectionReader *altReader;
     yarp::os::Portable *ref;
-    yarp::Address nullAddress;
+    Address nullAddress;
 };
 
 #endif

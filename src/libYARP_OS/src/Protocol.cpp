@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/Protocol.h>
+#include <yarp/os/impl/Protocol.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 bool Protocol::defaultSendIndex() {

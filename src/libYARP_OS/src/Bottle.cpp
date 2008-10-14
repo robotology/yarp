@@ -6,13 +6,13 @@
  *
  */
 
-#include <yarp/BottleImpl.h>
-#include <yarp/Logger.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/IOException.h>
 
 #include <yarp/os/Bottle.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class NullBottle : public Bottle {

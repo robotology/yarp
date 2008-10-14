@@ -9,11 +9,11 @@
 #ifndef _YARP2_INPUTPROTOCOL_
 #define _YARP2_INPUTPROTOCOL_
 
-#include <yarp/Address.h>
-#include <yarp/Route.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/Route.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/InputStream.h>
-#include <yarp/OutputStream.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/OutputStream.h>
 
 namespace yarp {
     namespace os {

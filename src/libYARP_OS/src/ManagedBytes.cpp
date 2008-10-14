@@ -11,7 +11,6 @@
 
 #include <yarp/os/ManagedBytes.h>
 
-using namespace yarp;
 using namespace yarp::os;
 
 void ManagedBytes::copy() {

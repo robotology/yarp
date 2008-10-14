@@ -9,13 +9,13 @@
 #ifndef _YARP2_SHMEMCARRIER_
 #define _YARP2_SHMEMCARRIER_
 
-#include <yarp/AbstractCarrier.h>
+#include <yarp/os/impl/AbstractCarrier.h>
 
 // removing old shmem version
-// #include <yarp/ShmemTwoWayStream.h>
+// #include <yarp/os/impl/ShmemTwoWayStream.h>
 
 // new shmem implementation from Alessandro
-#include <yarp/ShmemHybridStream.h>
+#include <yarp/os/impl/ShmemHybridStream.h>
 
 #include <ace/OS.h>
 

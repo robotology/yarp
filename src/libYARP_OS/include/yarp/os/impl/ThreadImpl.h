@@ -11,8 +11,8 @@
 #ifndef _YARP2_THREADIMPL_
 #define _YARP2_THREADIMPL_
 
-#include <yarp/Runnable.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/impl/Runnable.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <ace/Thread.h>
 

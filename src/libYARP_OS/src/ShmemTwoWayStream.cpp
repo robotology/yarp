@@ -13,9 +13,9 @@
 
 #if 0
 
-#include <yarp/ShmemTwoWayStream.h>
-#include <yarp/NetType.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/ShmemTwoWayStream.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Time.h>
 
 #include <ace/INET_Addr.h>
@@ -23,7 +23,7 @@
 // shmem buffer size
 #define INIT_SHMEM_BUFFER (1000000)
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 int ShmemTwoWayStream::open(const Address& address, bool sender) {

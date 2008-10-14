@@ -9,8 +9,8 @@
 #ifndef _YARP2_NAMECONFIG_
 #define _YARP2_NAMECONFIG_
 
-#include <yarp/String.h>
-#include <yarp/Address.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Address.h>
 
 namespace yarp {
     namespace os {

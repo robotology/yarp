@@ -13,8 +13,8 @@
  *
  */
 
-#include <yarp/NetType.h>
-#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageDraw.h>
 #include <yarp/os/Network.h>
@@ -25,7 +25,7 @@
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::sig::draw;
 using namespace yarp::os;

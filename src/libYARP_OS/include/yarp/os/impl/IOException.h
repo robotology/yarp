@@ -9,7 +9,7 @@
 #ifndef _YARP2_IOEXCEPTION_
 #define _YARP2_IOEXCEPTION_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {

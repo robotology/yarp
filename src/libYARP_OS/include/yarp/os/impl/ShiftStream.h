@@ -9,8 +9,8 @@
 #ifndef _YARP2_SHIFTSTREAM_
 #define _YARP2_SHIFTSTREAM_
 
-#include <yarp/TwoWayStream.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/IOException.h>
 
 namespace yarp {
     namespace os {

@@ -7,13 +7,13 @@
  */
 
 #include <ace/OS.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 

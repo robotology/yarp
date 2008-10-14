@@ -9,9 +9,9 @@
 #ifndef _YARP2_SHMEMTWOWAYSTREAM_
 #define _YARP2_SHMEMTWOWAYSTREAM_
 
-#include <yarp/TwoWayStream.h>
-#include <yarp/IOException.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <ace/config.h>
 #include <ace/MEM_Acceptor.h>

@@ -6,16 +6,16 @@
  *
  */
 
-#include <yarp/NameServer.h>
-#include <yarp/Logger.h>
-#include <yarp/PortCore.h>
-#include <yarp/SplitString.h>
-#include <yarp/NetType.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/NameServer.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/ManagedBytes.h>
-#include <yarp/NameConfig.h>
-#include <yarp/FallbackNameServer.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/FallbackNameServer.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
 #include <yarp/os/Port.h>
@@ -25,7 +25,7 @@
 
 #include <ace/Containers_T.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 //#define YMSG(x) ACE_OS::printf x;
@@ -727,7 +727,7 @@ bool NameServer::apply(const Bottle& cmd, Bottle& result,
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class MainNameServerWorker : public Readable {
+class MainNameServerWorker : public PortReader {
 private:
     NameServer *server;
 public:

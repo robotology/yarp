@@ -7,7 +7,7 @@
  */
 
 ///
-/// $Id: IplImage.cpp,v 1.7 2007-03-16 15:49:37 eshuy Exp $
+/// $Id: IplImage.cpp,v 1.8 2008-10-14 15:56:49 eshuy Exp $
 ///
 ///
 
@@ -17,9 +17,9 @@
 
 #include <ace/OS.h>
 #include <yarp/sig/IplImage.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
-//using namespace yarp;
+//using namespace yarp::os::impl;
 //using namespace yarp::sig;
 
 static int implemented_yet = 1;

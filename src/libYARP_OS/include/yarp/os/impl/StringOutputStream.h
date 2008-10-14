@@ -9,8 +9,8 @@
 #ifndef _YARP2_STRINGOUTPUTSTREAM_
 #define _YARP2_STRINGOUTPUTSTREAM_
 
-#include <yarp/OutputStream.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {

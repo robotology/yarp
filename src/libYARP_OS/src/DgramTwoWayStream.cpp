@@ -7,12 +7,12 @@
  */
 
 
-#include <yarp/DgramTwoWayStream.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
 
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
-#include <yarp/NetType.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
@@ -28,7 +28,7 @@
 
 #include <yarp/os/Time.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define CRC_SIZE 8

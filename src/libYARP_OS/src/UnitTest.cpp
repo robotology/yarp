@@ -7,13 +7,13 @@
  */
 
 
-#include <yarp/UnitTest.h>
-#include <yarp/Logger.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/IOException.h>
 
 #include <ace/OS_NS_stdio.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 UnitTest *UnitTest::theRoot = NULL;
 

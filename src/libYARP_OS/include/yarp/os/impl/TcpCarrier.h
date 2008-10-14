@@ -35,7 +35,7 @@ public:
         return new TcpCarrier(requireAckFlag);
     }
 
-    virtual yarp::String getName() {
+    virtual String getName() {
         return requireAckFlag?"tcp":"fast_tcp";
     }
 

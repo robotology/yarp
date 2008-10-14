@@ -7,20 +7,20 @@
  */
 
 
-#include <yarp/Companion.h>
-#include <yarp/NameClient.h>
-#include <yarp/Logger.h>
-#include <yarp/PortCommand.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PortCommand.h>
 
-#include <yarp/Carriers.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/PortCore.h>
-#include <yarp/BottleImpl.h>
+#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
-#include <yarp/NameServer.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/NameServer.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
@@ -39,7 +39,7 @@ using namespace std;
 #include <fstream.h>
 #endif
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 Companion Companion::instance;
@@ -584,7 +584,7 @@ int Companion::cmdServer(int argc, char *argv[]) {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class CompanionCheckHelper : public Readable {
+class CompanionCheckHelper : public PortReader {
 public:
     BottleImpl bot;
     bool got;
@@ -601,7 +601,7 @@ public:
     }
 };
 
-class TextReader : public Readable {
+class TextReader : public PortReader {
 public:
     ConstString str;
     virtual bool read(yarp::os::ConnectionReader& reader) {
@@ -890,7 +890,7 @@ int Companion::disconnectInput(const char *src, const char *dest,
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 // just a temporary implementation until real ports are available
-class BottleReader : public Readable {
+class BottleReader : public PortReader {
 private:
     PortCore core;
     SemaphoreImpl done;

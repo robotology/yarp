@@ -9,7 +9,7 @@
 #ifndef _YARP2_ADDRESS_
 #define _YARP2_ADDRESS_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>
 
 #include <ace/OS_NS_stdlib.h>
@@ -32,7 +32,7 @@ namespace yarp {
  */
 class yarp::os::impl::Address {
 private:
-    yarp::String name, carrier, regName;
+    String name, carrier, regName;
     int port;
 public:
 
@@ -44,7 +44,7 @@ public:
      * @param name Machine name - could be a hostname or ip address.
      * @param port Port number for socket communication.
      */
-    Address(yarp::String name,
+    Address(String name,
             int port) {
         this->name = name;
         this->port = port;
@@ -58,9 +58,9 @@ public:
      * @param port Port number for socket communication.
      * @param carrier The raw protocol used for communication.
      */
-    Address(yarp::String name,
+    Address(String name,
             int port,
-            yarp::String carrier) {
+            String carrier) {
         this->name = name;
         this->port = port;
         this->carrier = carrier;
@@ -74,10 +74,10 @@ public:
      * @param carrier The raw protocol used for communication.
      * @param regName A name associated with this address in the global name server.
      */
-    Address(yarp::String name,
+    Address(String name,
             int port,
-            yarp::String carrier,
-            yarp::String regName) {
+            String carrier,
+            String regName) {
         this->name = name;
         this->port = port;
         this->carrier = carrier;
@@ -114,7 +114,7 @@ public:
      * Get machine name.
      * @return Machine name - could be a hostname or ip address.
      */
-    const yarp::String& getName() const {
+    const String& getName() const {
         return name;
     }
 
@@ -131,7 +131,7 @@ public:
      * Get protocol.
      * @return The raw protocol used for communication.
      */
-    const yarp::String& getCarrierName() const {
+    const String& getCarrierName() const {
         return carrier;
     }
 
@@ -139,7 +139,7 @@ public:
      * Get registered name.
      * @return The name associated with this address in the global name server.
      */
-    const yarp::String& getRegName() const {
+    const String& getRegName() const {
         return regName;
     }
 
@@ -148,7 +148,7 @@ public:
      * (host 127.0.0.1, port 10001, protocol udp)
      * @return Textual representation of address.
      */
-    yarp::String toString() const {
+    String toString() const {
         char buf[100];
         ACE_OS::itoa(port,buf,10);
         return carrier + "://" + name + ":" + buf;

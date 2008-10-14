@@ -12,13 +12,13 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/NetInt32.h>
-#include <yarp/Logger.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/String.h>
 
 #include <ace/OS.h>
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 #define RTARGET stderr
 

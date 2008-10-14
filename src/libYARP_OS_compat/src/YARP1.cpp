@@ -7,12 +7,12 @@
  */
 
 
-#include <yarp/Logger.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameConfig.h>
 
 // some small yarp 1 compatibility issues
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 void set_yarp_debug(int x, int y) {

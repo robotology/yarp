@@ -7,14 +7,14 @@
  */
 
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Vocab.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class VocabTest : public UnitTest {
 public:

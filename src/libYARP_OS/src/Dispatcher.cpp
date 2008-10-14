@@ -7,7 +7,7 @@
  */
 
 
-#include <yarp/Dispatcher.h>
+#include <yarp/os/impl/Dispatcher.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 

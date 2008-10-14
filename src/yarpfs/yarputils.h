@@ -19,8 +19,8 @@
 //#include <fcntl.h>
 
 #include <yarp/os/all.h>
-#include <yarp/NameClient.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <string>
 #include <signal.h>
@@ -28,7 +28,7 @@
 #include <ace/Containers_T.h>
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace std;
 
 

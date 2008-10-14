@@ -7,14 +7,14 @@
  */
 
 
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/NetType.h>
-#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 
 #include <yarp/os/Bottle.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {

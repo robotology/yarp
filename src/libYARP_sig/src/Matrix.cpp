@@ -6,10 +6,10 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.17 2008-04-10 22:46:39 natta Exp $ 
+// $Id: Matrix.cpp,v 1.18 2008-10-14 15:56:49 eshuy Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
@@ -20,7 +20,7 @@
 #include <ace/Vector_T.h>
 
 using namespace yarp::sig;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 #define RES(v) ((ACE_Vector<T> *)v)
 #define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
@@ -43,30 +43,27 @@ public:
 #include <yarp/os/begin_pack_for_net.h>
 
 bool Matrix::read(yarp::os::ConnectionReader& connection) {
-    try {
-        // auto-convert text mode interaction
-        connection.convertTextMode();
-        MatrixPortContentHeader header;
-        connection.expectBlock((char*)&header, sizeof(header));
-        int r=rows();
-        int c=cols();
-        if (header.listLen > 0)
+    // auto-convert text mode interaction
+    connection.convertTextMode();
+    MatrixPortContentHeader header;
+    bool ok = connection.expectBlock((char*)&header, sizeof(header));
+    if (!ok) return false;
+    int r=rows();
+    int c=cols();
+    if (header.listLen > 0)
         {
             if ( (r*c) != (int)(header.listLen))
-            {
-                resize(header.rows, header.cols);
-            }
-
+                {
+                    resize(header.rows, header.cols);
+                }
+            
             int l=0;
             double *tmp=data();
             for(l=0;l<header.listLen;l++)
                 tmp[l]=connection.expectDouble();
         }
-        else
-            return false;
-    } catch (yarp::IOException e) {
+    else
         return false;
-    }
 
     return true;
 }
@@ -96,8 +93,8 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
 }
 
 /// vector implementations
-#include <yarp/String.h>
-using namespace yarp;
+#include <yarp/os/impl/String.h>
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 /**

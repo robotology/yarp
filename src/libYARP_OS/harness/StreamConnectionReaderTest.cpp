@@ -6,14 +6,14 @@
  *
  */
 
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/StringInputStream.h>
-#include <yarp/StringOutputStream.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/StringOutputStream.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class StreamConnectionReaderTest : public UnitTest {
 public:

@@ -6,14 +6,14 @@
  *
  */
 
-#include <yarp/String.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/os/Property.h>
 
 using namespace yarp::dev;
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 

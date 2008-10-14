@@ -21,12 +21,12 @@
 #include <yarp/YARPSemaphore.h>
 #include <yarp/YARPThread.h>
 
-#include <yarp/NameClient.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Time.h>
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class HeaderCompatibilityTest : public UnitTest {
 public:

@@ -9,8 +9,8 @@
 #ifndef _YARP2_STRINGINPUTSTREAM_
 #define _YARP2_STRINGINPUTSTREAM_
 
-#include <yarp/InputStream.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/IOException.h>
 
 namespace yarp {
     namespace os {

@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Paul Fitzpatrick - Alessandro Scalzo
+ * Copyright (C) 2007 Alessandro Scalzo, Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -54,12 +54,14 @@ public:
 
 protected:
 	static void printHelp();
-	static bool checkBash(String& workdir);
+	static bool checkBash(const ConstString& workdir);
 	static int run();
-	static int runServerBash(ConstString& portname,String& workdir);
-	#ifdef WIN32
-	static int runServerDos(ConstString& portname,String& workdir);
-	#endif
+	static int runServerBash(const ConstString& portname,
+                             const ConstString& workdir);
+#ifdef WIN32
+	static int runServerDos(const ConstString& portname,
+                            const ConstString& workdir);
+#endif
 	static int runConnect(Searchable& config);
 	static int runClient(Searchable& config);
 	static int report(Searchable& config);

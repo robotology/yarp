@@ -9,7 +9,7 @@
 #ifndef _YARP2_TEXTCARRIER_
 #define _YARP2_TEXTCARRIER_
 
-#include <yarp/TcpCarrier.h>
+#include <yarp/os/impl/TcpCarrier.h>
 
 namespace yarp {
     namespace os {

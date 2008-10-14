@@ -9,10 +9,10 @@
 #ifndef _YARP2_PORTCOREOUTPUTUNIT_
 #define _YARP2_PORTCOREOUTPUTUNIT_
 
-#include <yarp/PortCore.h>
-#include <yarp/PortCoreUnit.h>
-#include <yarp/Logger.h>
-#include <yarp/OutputProtocol.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/PortCoreUnit.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/OutputProtocol.h>
 
 namespace yarp {
     namespace os {

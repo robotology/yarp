@@ -8,10 +8,10 @@
 
 
 #include <yarp/os/Semaphore.h>
-#include <yarp/Logger.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 Semaphore::Semaphore(int initialCount) {

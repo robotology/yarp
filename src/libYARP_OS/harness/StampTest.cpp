@@ -8,18 +8,18 @@
 
 #include <math.h>
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <yarp/os/Stamp.h>
 #include <yarp/os/all.h>
 
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class StampTest : public UnitTest {

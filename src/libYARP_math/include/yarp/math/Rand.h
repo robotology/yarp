@@ -13,19 +13,23 @@
 
 namespace yarp
 {
-    class RandScalar;
-    class RandnScalar;
-    class RandVector;
     namespace math
     {
         class Rand;
+
+        namespace impl {
+            class RandScalar;
+            class RandnScalar;
+            class RandVector;
+            class RandnVector;
+        }
     }
 };
 
 /**
 * A random number generator, uniform in the range 0-1.
 */
-class yarp::RandScalar
+class yarp::math::impl::RandScalar
 {
     static const int NTAB=32;
     int idum;
@@ -73,10 +77,10 @@ public:
 /**
 * A class to generate random vectors, uniform distribution.
 */
-class yarp::RandVector
+class yarp::math::impl::RandVector
 {
     yarp::sig::Vector data;
-    yarp::RandScalar rnd;
+    RandScalar rnd;
 
 private:
     RandVector(const RandVector &l);
@@ -95,7 +99,7 @@ public:
 /**
 * A random number generator, normal distribution.
 */
-class yarp::RandnScalar
+class yarp::math::impl::RandnScalar
 {
 private:
     inline void boxMuller();
@@ -143,10 +147,10 @@ public:
 /**
 * A class to generate random vectors, normal distribution.
 */
-class RandnVector
+class yarp::math::impl::RandnVector
 {
     yarp::sig::Vector data;
-    yarp::RandnScalar rnd;
+    RandnScalar rnd;
     RandnVector(const RandnVector &l){};
 
 public:

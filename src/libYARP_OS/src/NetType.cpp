@@ -6,10 +6,10 @@
  *
  */
 
-#include <yarp/NetType.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/ManagedBytes.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 // slow implementation - only relevant for textmode operation
 

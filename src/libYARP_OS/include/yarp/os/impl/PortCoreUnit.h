@@ -9,8 +9,8 @@
 #ifndef _YARP2_PORTCOREUNIT_
 #define _YARP2_PORTCOREUNIT_
 
-#include <yarp/PortCore.h>
-#include <yarp/ThreadImpl.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 namespace yarp {
     namespace os {

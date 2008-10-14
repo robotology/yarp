@@ -9,7 +9,7 @@
 #ifndef _YARP2_TESTLIST_
 #define _YARP2_TESTLIST_
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 namespace yarp {
     class TestList;

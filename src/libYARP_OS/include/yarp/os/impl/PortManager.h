@@ -9,11 +9,11 @@
 #ifndef _YARP2_PORTMANAGER_
 #define _YARP2_PORTMANAGER_
 
-#include <yarp/String.h>
-#include <yarp/OutputStream.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/PortReport.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <ace/OS_NS_stdio.h>
 

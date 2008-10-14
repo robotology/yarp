@@ -7,9 +7,9 @@
 *
 */
 
-#include <yarp/ShmemInputStream.h>
+#include <yarp/os/impl/ShmemInputStream.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
 bool ShmemInputStreamImpl::open(int port,ACE_SOCK_Stream *pSock,int size)

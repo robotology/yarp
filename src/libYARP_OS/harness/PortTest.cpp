@@ -7,8 +7,8 @@
  */
 
 #include <yarp/os/Port.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Semaphore.h>
@@ -17,9 +17,9 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BinPortable.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
@@ -28,10 +28,8 @@
 //#include "TestList.h"
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
-using yarp::String;
-using yarp::NetType;
-using yarp::Logger;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -56,11 +54,11 @@ public:
 
 class ServiceTester : public Portable {
 public:
-    yarp::UnitTest& owner;
+    UnitTest& owner;
     Bottle send, receive;
     int ct;
 
-    ServiceTester(yarp::UnitTest& owner) : owner(owner) {}
+    ServiceTester(UnitTest& owner) : owner(owner) {}
 
     virtual bool write(ConnectionWriter& connection) {
         ct = 0;
@@ -171,9 +169,9 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
-class PortTest : public yarp::UnitTest {
+class PortTest : public UnitTest {
 public:
-    virtual yarp::String getName() { return "PortTest"; }
+    virtual String getName() { return "PortTest"; }
 
     void testOpen() {
         report(0,"checking opening and closing ports");
@@ -885,7 +883,7 @@ public:
 
 
     virtual void runTests() {
-        yarp::NameClient& nic = yarp::NameClient::getNameClient();
+        NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
 
         testOpen();
@@ -923,7 +921,7 @@ public:
 
 static PortTest thePortTest;
 
-yarp::UnitTest& getPortTest() {
+UnitTest& getPortTest() {
     return thePortTest;
 }
 

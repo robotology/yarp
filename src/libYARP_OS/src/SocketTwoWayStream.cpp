@@ -7,12 +7,12 @@
  */
 
 
-#include <yarp/SocketTwoWayStream.h>
+#include <yarp/os/impl/SocketTwoWayStream.h>
 
 #include <ace/INET_Addr.h>
 #include <ace/OS.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 int SocketTwoWayStream::open(const Address& address) {
     if (address.getPort()==-1) {

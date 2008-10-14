@@ -8,11 +8,11 @@
 
 
 #include <yarp/os/Time.h>
-#include <yarp/PortCoreInputUnit.h>
-#include <yarp/PortCommand.h>
-#include <yarp/Logger.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/Name.h>
+#include <yarp/os/impl/PortCoreInputUnit.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/Name.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/PortReport.h>
 
@@ -21,7 +21,7 @@
 //#define YTRACE(x) YMSG(("at %s\n",x))
 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 bool PortCoreInputUnit::start() {

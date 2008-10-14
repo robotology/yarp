@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.h,v 1.25 2008-04-10 22:46:39 natta Exp $
+// $Id: Vector.h,v 1.26 2008-10-14 15:56:49 eshuy Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -20,14 +20,17 @@
 * \file Vector.h contains the definition of a Vector type 
 */
 namespace yarp {
-    class VectorBase;
-    template<class T> class VectorImpl;
-    template<class T> class IteratorOf;
-    template<class T> class VectorOf;
 
     namespace sig {
+        namespace impl {
+            class VectorBase;
+            template<class T> class VectorImpl;
+            template<class T> class IteratorOf;
+        }
+
         //class Vector
         class Vector;
+        template<class T> class VectorOf;
     }
 }
 
@@ -38,7 +41,7 @@ namespace yarp {
 * read/write methods. Warning: the current implementation assumes the same 
 * representation for data type (endianess).
 */
-class yarp::VectorBase:public yarp::os::Portable
+class yarp::sig::impl::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const =0;
@@ -73,7 +76,7 @@ public:
 * - use operator= to copy Vectors
 */
 template<class T> 
-class yarp::VectorImpl
+class yarp::sig::impl::VectorImpl
 {
 public:
     /**
@@ -167,7 +170,7 @@ public:
     /**
     * Be friendly with your iterator.
     */
-    friend class yarp::IteratorOf<T>;
+    friend class yarp::sig::impl::IteratorOf<T>;
 
 private:
     void *aceVector;
@@ -185,38 +188,39 @@ private:
 * same data representation (endianess) between machines.
 */
 template<class T>
-class yarp::VectorOf: public yarp::VectorImpl<T>, public yarp::VectorBase
+class yarp::sig::VectorOf : public yarp::sig::impl::VectorImpl<T>, 
+            public yarp::sig::impl::VectorBase
 {
     T *first;
     T *last;
 
     inline void _updatePointers()
     {
-        int lastIndex=VectorImpl<T>::size()-1;
+        int lastIndex=yarp::sig::impl::VectorImpl<T>::size()-1;
         if (lastIndex<0)
             lastIndex=0;
 
-        first=&VectorImpl<T>::operator[](0);
-        last=&VectorImpl<T>::operator[](lastIndex);
+        first=&yarp::sig::impl::VectorImpl<T>::operator[](0);
+        last=&yarp::sig::impl::VectorImpl<T>::operator[](lastIndex);
     }
 
 public:
-    VectorOf():VectorImpl<T>()
+    VectorOf():yarp::sig::impl::VectorImpl<T>()
     {}
 
-    VectorOf(size_t size):VectorImpl<T>(size)
+    VectorOf(size_t size):yarp::sig::impl::VectorImpl<T>(size)
     {
         _updatePointers();
     }
 
-    VectorOf(const VectorOf &r):VectorImpl<T>(r)
+    VectorOf(const VectorOf &r):yarp::sig::impl::VectorImpl<T>(r)
     {
         _updatePointers();
     }
 
     const VectorOf<T> &operator=(const VectorOf<T> &r)
     {
-        VectorImpl<T>::operator =(r);
+        yarp::sig::impl::VectorImpl<T>::operator =(r);
         _updatePointers();
         return *this;
     }
@@ -228,7 +232,7 @@ public:
 
     virtual int getListSize() const
     {
-        return VectorImpl<T>::size();
+        return yarp::sig::impl::VectorImpl<T>::size();
     }
 
     virtual const char *getMemoryBlock() const
@@ -249,25 +253,25 @@ public:
     virtual void resize(size_t size)
     {
         T def;
-        VectorImpl<T>::resize(size, def);
+        yarp::sig::impl::VectorImpl<T>::resize(size, def);
         _updatePointers();
     }
 
     void resize(size_t size, const T&def)
     {
-        VectorImpl<T>::resize(size, def);
+        yarp::sig::impl::VectorImpl<T>::resize(size, def);
         _updatePointers();
     }
 
     inline void push_back (const T &elem)
     {
-        VectorImpl<T>::push_back(elem);
+        yarp::sig::impl::VectorImpl<T>::push_back(elem);
         _updatePointers();
     }
 
     inline void pop_back (void)
     {
-        VectorImpl<T>::pop_back();
+        yarp::sig::impl::VectorImpl<T>::pop_back();
         _updatePointers();
     }
 
@@ -319,7 +323,7 @@ public:
 * @return a reference to the requested element.
 */
 template<class T>
-class yarp::IteratorOf
+class yarp::sig::impl::IteratorOf
 {
 private:
     void *aceVectorIterator;
@@ -360,7 +364,7 @@ public:
 * a port. Use the [] and () operator for single element 
 * access.
 */
-class yarp::sig::Vector:public yarp::os::Portable
+class yarp::sig::Vector : public yarp::os::Portable
 {
     void *gslData;
     VectorOf<double> storage;

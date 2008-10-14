@@ -11,14 +11,14 @@
  * \infile Tests for math.
  */
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/math/Math.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/math/Rand.h>
 #include <yarp/math/SVD.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
 

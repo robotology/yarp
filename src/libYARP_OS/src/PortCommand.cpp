@@ -6,11 +6,11 @@
  *
  */
 
-#include <yarp/PortCommand.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 bool PortCommand::read(ConnectionReader& reader) {
     //ACE_DEBUG((LM_DEBUG,"PortCommand::readBlock"));

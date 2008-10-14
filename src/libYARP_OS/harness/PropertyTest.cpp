@@ -8,7 +8,7 @@
 
 #include <yarp/os/Property.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
 
@@ -22,7 +22,7 @@ using namespace std;
 #endif
 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class PropertyTest : public UnitTest {

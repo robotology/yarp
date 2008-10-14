@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/McastCarrier.h>
+#include <yarp/os/impl/McastCarrier.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
 ElectionOf<McastCarrier> McastCarrier::caster;

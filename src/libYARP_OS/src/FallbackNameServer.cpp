@@ -8,13 +8,13 @@
 
 
 
-#include <yarp/FallbackNameServer.h>
-#include <yarp/DgramTwoWayStream.h>
-#include <yarp/NetType.h>
-#include <yarp/NameServer.h>
+#include <yarp/os/impl/FallbackNameServer.h>
+#include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameServer.h>
 #include <yarp/Bytes.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 const Address FallbackNameServer::mcastLastResort("224.2.1.1",10001,
                                                   "mcast","fallback");

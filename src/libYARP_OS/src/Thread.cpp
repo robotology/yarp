@@ -8,10 +8,10 @@
 
 
 #include <yarp/os/Thread.h>
-#include <yarp/ThreadImpl.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/Logger.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class ThreadCallbackAdapter : public ThreadImpl {

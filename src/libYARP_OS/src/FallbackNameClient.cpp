@@ -7,15 +7,15 @@
  */
 
 
-#include <yarp/FallbackNameClient.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
-#include <yarp/NameClient.h>
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/FallbackNameClient.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Time.h>
-#include <yarp/FallbackNameServer.h>
+#include <yarp/os/impl/FallbackNameServer.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 void FallbackNameClient::run() {

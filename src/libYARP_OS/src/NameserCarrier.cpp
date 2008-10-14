@@ -6,5 +6,5 @@
  *
  */
 
-#include <yarp/NameserCarrier.h>
+#include <yarp/os/impl/NameserCarrier.h>
 

@@ -8,7 +8,7 @@
 
 
 #include <yarp/sig/Vector.h>
-#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Port.h>
@@ -20,7 +20,7 @@
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -261,7 +261,7 @@ public:
         checkTrue(ok,"elements match");
 
         report(0,"check bug #1601862...");
-        std::vector<sig::Vector> myList; //using stl vector
+        std::vector<Vector> myList; //using stl vector
         Vector v3(10);
         myList.push_back(v3);
         // this segfaults on linux

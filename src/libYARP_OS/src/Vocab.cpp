@@ -7,11 +7,11 @@
  */
 
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Vocab.h>
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 NetInt32 Vocab::encode(const char *str) {
     String s(str);

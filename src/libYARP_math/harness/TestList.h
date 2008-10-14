@@ -9,18 +9,22 @@
 #ifndef _YARP2_MATHTESTLIST_
 #define _YARP2_MATHTESTLIST_
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 namespace yarp {
-    class TestList;
+    namespace os {
+        namespace impl {
+            class TestList;
+        }
+    }
 }
 
 //
 // need to made one function for each new test, and add to collectTests()
 // method.
-extern yarp::UnitTest& getMathTest();
+extern yarp::os::impl::UnitTest& getMathTest();
 
-class yarp::TestList {
+class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();

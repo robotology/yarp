@@ -9,9 +9,9 @@
 #ifndef _YARP2_FAKETWOWAYSTREAM_
 #define _YARP2_FAKETWOWAYSTREAM_
 
-#include <yarp/TwoWayStream.h>
-#include <yarp/StringInputStream.h>
-#include <yarp/StringOutputStream.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/StringOutputStream.h>
 
 namespace yarp {
     namespace os {

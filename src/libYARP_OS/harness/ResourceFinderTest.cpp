@@ -7,10 +7,11 @@
  */
 
 #include <yarp/os/ResourceFinder.h>
-#include <yarp/String.h>
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/UnitTest.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 // does ACE require new c++ header files or not?
 #if ACE_HAS_STANDARD_CPP_LIBRARY
@@ -20,9 +21,9 @@ using namespace std;
 #include <fstream.h>
 #endif
 
-class ResourceFinderTest : public yarp::UnitTest {
+class ResourceFinderTest : public UnitTest {
 public:
-    virtual yarp::String getName() { return "ResourceFinderTest"; }
+    virtual String getName() { return "ResourceFinderTest"; }
 
     void testBasics() {
         report(0,"testing the basics of RF...");
@@ -83,7 +84,7 @@ public:
 
 static ResourceFinderTest theResourceFinderTest;
 
-yarp::UnitTest& getResourceFinderTest() {
+UnitTest& getResourceFinderTest() {
     return theResourceFinderTest;
 }
 

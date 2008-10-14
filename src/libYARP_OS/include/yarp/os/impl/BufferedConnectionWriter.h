@@ -10,11 +10,11 @@
 #define _YARP2_BUFFEREDBLOCKWRITER_
 
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/SizedWriter.h>
+#include <yarp/os/impl/SizedWriter.h>
 #include <yarp/ManagedBytes.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
-#include <yarp/StringOutputStream.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/StringOutputStream.h>
 
 #include <ace/Vector_T.h>
 

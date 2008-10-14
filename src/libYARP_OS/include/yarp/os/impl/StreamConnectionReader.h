@@ -9,15 +9,15 @@
 #ifndef _YARP2_STREAMBLOCKREADER_
 #define _YARP2_STREAMBLOCKREADER_
 
-#include <yarp/InputStream.h>
-#include <yarp/TwoWayStream.h>
-#include <yarp/StringInputStream.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/ConnectionReader.h>
-#include <yarp/IOException.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/Bytes.h>
-#include <yarp/Logger.h>
-#include <yarp/Route.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/Route.h>
 #include <yarp/os/Contact.h>
 
 namespace yarp {

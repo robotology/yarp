@@ -9,18 +9,18 @@
 ///
 /// based on Id: YARPSemaphore.cpp,v 2.0 2005/11/06 22:21:26 gmetta Exp
 
-/// $Id: YARPSemaphore.cpp,v 1.3 2006-10-24 16:43:50 eshuy Exp $
+/// $Id: YARPSemaphore.cpp,v 1.4 2008-10-14 15:56:48 eshuy Exp $
 ///
 ///
 
 
-#include <yarp/SemaphoreImpl.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/Logger.h>
 
 #define DEBUG_H_INC
 #include <yarp/YARPSemaphore.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 // skip a level of indirection
 #define Semaphore SemaphoreImpl

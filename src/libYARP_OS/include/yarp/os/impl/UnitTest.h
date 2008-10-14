@@ -9,7 +9,7 @@
 #ifndef _YARP2_UNITTEST_
 #define _YARP2_UNITTEST_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <ace/Vector_T.h>
 

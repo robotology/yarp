@@ -7,14 +7,14 @@
  */
 
 
-#include <yarp/TcpFace.h>
-#include <yarp/Logger.h>
-#include <yarp/SocketTwoWayStream.h>
-#include <yarp/Protocol.h>
+#include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/SocketTwoWayStream.h>
+#include <yarp/os/impl/Protocol.h>
 
 #include <ace/OS_NS_stdio.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 static Logger tcpFaceLog("TcpFace", Logger::get());
 

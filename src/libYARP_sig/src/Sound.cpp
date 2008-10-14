@@ -7,7 +7,7 @@
  */
 
 
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/Image.h>
@@ -16,7 +16,7 @@
 
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 #define HELPER(x) (*((FlexImage*)(x)))
 

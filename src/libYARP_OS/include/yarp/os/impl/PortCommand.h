@@ -13,7 +13,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/ManagedBytes.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {

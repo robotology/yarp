@@ -6,16 +6,16 @@
  *
  */
 
-#include <yarp/NameClient.h>
-#include <yarp/Logger.h>
-#include <yarp/TcpFace.h>
-#include <yarp/NetType.h>
-#include <yarp/NameServer.h>
-#include <yarp/NameConfig.h>
-#include <yarp/FallbackNameClient.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameServer.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/Network.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 /**

@@ -9,7 +9,7 @@
 #ifndef _YARP2_BOTTLEIMPL_
 #define _YARP2_BOTTLEIMPL_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
@@ -20,7 +20,7 @@
 #include <ace/Vector_T.h>
 
 #include <yarp/os/Bottle.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 
 namespace yarp {
     namespace os {

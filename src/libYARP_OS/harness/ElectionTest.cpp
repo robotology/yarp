@@ -6,12 +6,12 @@
  *
  */
 
-#include <yarp/Election.h>
+#include <yarp/os/impl/Election.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
 class ElectionTest : public UnitTest {

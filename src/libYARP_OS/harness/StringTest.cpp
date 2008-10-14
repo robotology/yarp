@@ -7,12 +7,12 @@
  */
 
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class StringTest : public UnitTest {
 public:

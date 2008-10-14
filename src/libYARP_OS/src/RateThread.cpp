@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/ThreadImpl.h>
+#include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/RateThread.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/Logger.h>
 #include <ace/Synch.h>
 #include <ace/Time_Value.h>
 #include <ace/High_Res_Timer.h>
@@ -21,7 +21,7 @@
 
 //added threadRelease/threadInit methods and synchronization -nat 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the release (20 sec)

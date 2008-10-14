@@ -9,46 +9,50 @@
 #ifndef _YARP2_TESTLIST_
 #define _YARP2_TESTLIST_
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 namespace yarp {
-    class TestList;
+    namespace os {
+        namespace impl {
+            class TestList;
+        }
+    }
 }
 
 // need to made one function for each new test, and add to collectTests()
 // method
-extern yarp::UnitTest& getBottleTest();
-extern yarp::UnitTest& getStringTest();
-extern yarp::UnitTest& getAddressTest();
-extern yarp::UnitTest& getStringInputStreamTest();
-extern yarp::UnitTest& getTimeTest();
-extern yarp::UnitTest& getThreadTest();
-extern yarp::UnitTest& getPortCommandTest();
-extern yarp::UnitTest& getStringOutputStreamTest();
-extern yarp::UnitTest& getStreamConnectionReaderTest();
-extern yarp::UnitTest& getBufferedConnectionWriterTest();
-extern yarp::UnitTest& getProtocolTest();
-extern yarp::UnitTest& getNameServerTest();
-extern yarp::UnitTest& getPortCoreTest();
-extern yarp::UnitTest& getElectionTest();
-extern yarp::UnitTest& getNameConfigTest();
-extern yarp::UnitTest& getPortTest();
-extern yarp::UnitTest& getNetTypeTest();
-extern yarp::UnitTest& getBinPortableTest();
-extern yarp::UnitTest& getPropertyTest();
-extern yarp::UnitTest& getVocabTest();
-extern yarp::UnitTest& getValueTest();
-extern yarp::UnitTest& getPortablePairTest();
-extern yarp::UnitTest& getTerminatorTest();
-extern yarp::UnitTest& getRateThreadTest();
-extern yarp::UnitTest& getStampTest();
-extern yarp::UnitTest& getModuleTest();
-extern yarp::UnitTest& getPortReaderBufferTest();
-extern yarp::UnitTest& getNetworkTest();
-extern yarp::UnitTest& getResourceFinderTest();
-extern yarp::UnitTest& getDgramTwoWayStreamTest();
+extern yarp::os::impl::UnitTest& getBottleTest();
+extern yarp::os::impl::UnitTest& getStringTest();
+extern yarp::os::impl::UnitTest& getAddressTest();
+extern yarp::os::impl::UnitTest& getStringInputStreamTest();
+extern yarp::os::impl::UnitTest& getTimeTest();
+extern yarp::os::impl::UnitTest& getThreadTest();
+extern yarp::os::impl::UnitTest& getPortCommandTest();
+extern yarp::os::impl::UnitTest& getStringOutputStreamTest();
+extern yarp::os::impl::UnitTest& getStreamConnectionReaderTest();
+extern yarp::os::impl::UnitTest& getBufferedConnectionWriterTest();
+extern yarp::os::impl::UnitTest& getProtocolTest();
+extern yarp::os::impl::UnitTest& getNameServerTest();
+extern yarp::os::impl::UnitTest& getPortCoreTest();
+extern yarp::os::impl::UnitTest& getElectionTest();
+extern yarp::os::impl::UnitTest& getNameConfigTest();
+extern yarp::os::impl::UnitTest& getPortTest();
+extern yarp::os::impl::UnitTest& getNetTypeTest();
+extern yarp::os::impl::UnitTest& getBinPortableTest();
+extern yarp::os::impl::UnitTest& getPropertyTest();
+extern yarp::os::impl::UnitTest& getVocabTest();
+extern yarp::os::impl::UnitTest& getValueTest();
+extern yarp::os::impl::UnitTest& getPortablePairTest();
+extern yarp::os::impl::UnitTest& getTerminatorTest();
+extern yarp::os::impl::UnitTest& getRateThreadTest();
+extern yarp::os::impl::UnitTest& getStampTest();
+extern yarp::os::impl::UnitTest& getModuleTest();
+extern yarp::os::impl::UnitTest& getPortReaderBufferTest();
+extern yarp::os::impl::UnitTest& getNetworkTest();
+extern yarp::os::impl::UnitTest& getResourceFinderTest();
+extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 
-class yarp::TestList {
+class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();

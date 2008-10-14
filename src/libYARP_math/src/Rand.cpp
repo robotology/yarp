@@ -22,9 +22,10 @@
 #define EPS 1.2e-7
 #define RNMX (1.0-EPS)
 
-using namespace yarp;
+using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::math;
+using namespace yarp::math::impl;
 
 class ThreadSafeRandScalar : public RandScalar
 {

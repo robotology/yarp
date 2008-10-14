@@ -10,12 +10,12 @@
 #include <yarp/os/PortWriterBuffer.h>
 #include <yarp/os/Port.h>
 
-#include <yarp/Logger.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
 
-#include <yarp/PortCorePacket.h>
+#include <yarp/os/impl/PortCorePacket.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

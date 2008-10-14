@@ -6,11 +6,11 @@
  *
  */
 
-#include <yarp/HttpCarrier.h>
+#include <yarp/os/impl/HttpCarrier.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Property.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

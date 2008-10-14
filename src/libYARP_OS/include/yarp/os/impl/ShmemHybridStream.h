@@ -10,12 +10,12 @@
 #ifndef __SHMEM_HYBRID_STREAM__
 #define __SHMEM_HYBRID_STREAM__
 
-#include <yarp/InputStream.h>
-#include <yarp/OutputStream.h>
-#include <yarp/TwoWayStream.h>
-#include <yarp/IOException.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 
 namespace yarp {
     namespace os {
@@ -25,8 +25,8 @@ namespace yarp {
     }
 };
 
-#include <yarp/ShmemInputStream.h>
-#include <yarp/ShmemOutputStream.h>
+#include <yarp/os/impl/ShmemInputStream.h>
+#include <yarp/os/impl/ShmemOutputStream.h>
 
 
 /**
@@ -95,8 +95,8 @@ protected:
 	ACE_SOCK_Stream m_SockStream;
 	ACE_SOCK_Acceptor m_Acceptor;
 
-	yarp::ShmemInputStreamImpl in;
-	yarp::ShmemOutputStreamImpl out;
+	ShmemInputStreamImpl in;
+	ShmemOutputStreamImpl out;
 
 	// FUNCTIONS
 	int connect(const ACE_INET_Addr &address);

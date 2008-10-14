@@ -7,9 +7,9 @@
  */
 
 
-#include <yarp/Logger.h>
-#include <yarp/NameClient.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/Companion.h>
 
 #include <yarp/os/Network.h>
 

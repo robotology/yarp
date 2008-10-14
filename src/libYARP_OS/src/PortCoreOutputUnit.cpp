@@ -11,19 +11,19 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/PortReport.h>
-#include <yarp/PortCoreOutputUnit.h>
-#include <yarp/PortCommand.h>
-#include <yarp/Logger.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/Name.h>
-#include <yarp/Companion.h>
+#include <yarp/os/impl/PortCoreOutputUnit.h>
+#include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/Name.h>
+#include <yarp/os/impl/Companion.h>
 
 
 #define YMSG(x) ACE_OS::printf x;
 #define YTRACE(x) YMSG(("at %s\n",x))
 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

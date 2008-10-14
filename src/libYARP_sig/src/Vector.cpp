@@ -6,10 +6,10 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.25 2008-04-10 22:46:39 natta Exp $
+// $Id: Vector.cpp,v 1.26 2008-10-14 15:56:49 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
-#include <yarp/IOException.h>
+#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
@@ -18,7 +18,8 @@
 #include <ace/Vector_T.h>
 
 using namespace yarp::sig;
-using namespace yarp;
+using namespace yarp::os::impl;
+using namespace yarp::sig::impl;
 
 #define RES(v) ((ACE_Vector<T> *)v)
 #define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
@@ -218,16 +219,16 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 }
 
 
-template class yarp::VectorImpl<double>;
-template class yarp::VectorImpl<int>;
-template class yarp::VectorImpl<char>;
-template class yarp::VectorImpl<float>;
-template class yarp::VectorOf<double>;
-template class yarp::IteratorOf<double>;
+template class VectorImpl<double>;
+template class VectorImpl<int>;
+template class VectorImpl<char>;
+template class VectorImpl<float>;
+template class VectorOf<double>;
+template class IteratorOf<double>;
 
 /// vector implementations
-#include <yarp/String.h>
-using namespace yarp;
+#include <yarp/os/impl/String.h>
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 /**

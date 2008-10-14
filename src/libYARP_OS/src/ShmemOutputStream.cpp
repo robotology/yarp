@@ -7,9 +7,9 @@
 *
 */
 
-#include <yarp/ShmemOutputStream.h>
+#include <yarp/os/impl/ShmemOutputStream.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
 bool ShmemOutputStreamImpl::open(int port,int size)

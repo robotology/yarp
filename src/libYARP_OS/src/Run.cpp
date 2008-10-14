@@ -13,8 +13,8 @@
 #include <ace/Process.h>
 #include <ace/Vector_T.h>
 #include <stdio.h>
-#include <yarp/Companion.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/all.h>
 #include <yarp/os/Run.h>
 
@@ -30,7 +30,7 @@ using namespace std;
 BOOL WINAPI KillProcessEx(IN DWORD dwProcessId,IN BOOL bTree);
 #endif
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define DBG if (true)
@@ -38,7 +38,7 @@ using namespace yarp::os;
 class TProcess
 {
 public:
-	TProcess(String& tmpdir)
+	TProcess(const char *tmpdir)
 	{
 		m_tmpdir=tmpdir;
 		m_Pid=-1;
@@ -326,7 +326,7 @@ protected:
 class TProcessVector
 {
 public:
-	TProcessVector(String& tmpdir)
+	TProcessVector(const char *tmpdir)
 	{
 	    m_tmpdir=tmpdir;
 		m_nProcesses=0;
@@ -450,7 +450,7 @@ public:
 			return -1;
 		}
 
-		TProcess* pChild=new TProcess(m_tmpdir);
+		TProcess* pChild=new TProcess(m_tmpdir.c_str());
 		
 		m_apChilds[m_nProcesses]=pChild;
 		pid_t pid=pChild->Spawn(options,name,serial,bWait);
@@ -563,21 +563,21 @@ public:
     }
 };
 
-int Run::runServerBash(ConstString& portname,String& tmpdir) 
+int Run::runServerBash(const ConstString& portname,const ConstString& tmpdir) 
 {
-	#ifdef WIN32
-	String tmpdir_dos=tmpdir;
+#ifdef WIN32
+	String tmpdir_dos=tmpdir.c_str();
 
 	for (unsigned int i=0; i<tmpdir.length(); ++i)
 	{
 		if (tmpdir[i]=='/') tmpdir_dos[i]='\\';
 	}
-	#endif
+#endif
 
 	Port port;
 	port.open(portname);
 
-	TProcessVector pv(tmpdir);
+	TProcessVector pv(tmpdir.c_str());
 
 	bool bRun=true;
 
@@ -600,13 +600,15 @@ int Run::runServerBash(ConstString& portname,String& tmpdir)
 		{
 			Bottle script_bottle; 
 			script_bottle.append(msg.findGroup("script").tail());	
-			String script_name=tmpdir+"script"+serial_str+".sh";
+			String script_name=tmpdir.c_str();
+            script_name = script_name+"script"+serial_str+".sh";
 			
 			writeBottleAsFile(script_bottle,script_name);			
 			
 			String command_text="yarp read /"+alias+"/stdin 2>&1 | bash "+script_name+" 2>&1 | yarp write /"+alias+"/stdout";
 	        
-	        String command_name=tmpdir+"command"+serial_str+".sh";
+	        String command_name=tmpdir.c_str();
+            command_name = command_name+"command"+serial_str+".sh";
 	        	
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
@@ -645,7 +647,8 @@ int Run::runServerBash(ConstString& portname,String& tmpdir)
 
 			command_text="yarp read /"+alias+"/stdin 2>&1 | "+command_text+" 2>&1 | yarp write /"+alias+"/stdout";
 	        
-	        String command_name=tmpdir+"command"+serial_str+".sh";
+	        String command_name=tmpdir.c_str();
+            command_name=command_name+"command"+serial_str+".sh";
 
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
@@ -744,7 +747,7 @@ int Run::runServerBash(ConstString& portname,String& tmpdir)
 			result=true;
 			
 			ACE_Process_Options rmdir_opt;
-			rmdir_opt.command_line("%s",("rm -rf "+tmpdir).c_str());
+			rmdir_opt.command_line("%s%s","rm -rf ",tmpdir.c_str());
 			ACE_Process rmdir_proc;
 			rmdir_proc.spawn(rmdir_opt);
 			rmdir_proc.wait();
@@ -769,7 +772,7 @@ int Run::runServerBash(ConstString& portname,String& tmpdir)
 }
 
 #ifdef WIN32
-int Run::runServerDos(ConstString& portname,String& tmpdir) 
+int Run::runServerDos(const ConstString& portname,const ConstString& tmpdir) 
 {
 	Port port;
 	port.open(portname);
@@ -781,7 +784,7 @@ int Run::runServerDos(ConstString& portname,String& tmpdir)
 	int serial=0;
 	char intbuff[16];
 
-	String tmpdir_dos=tmpdir;
+	String tmpdir_dos=tmpdir.c_str();
 	
 	for (unsigned int i=0; i<tmpdir.length(); ++i)
 	{
@@ -1061,14 +1064,14 @@ int Run::runClient(Searchable& config)
 	return 0;
 }
 
-bool Run::checkBash(String& tmpdir)
+bool Run::checkBash(const ConstString& tmpdir)
 {
-	FILE* fCheck=fopen((tmpdir+"checkbash.sh").c_str(),"wc");
+	FILE* fCheck=fopen((String(tmpdir.c_str())+"checkbash.sh").c_str(),"wc");
 	fprintf(fCheck,"printf \"hello I am bash\n\"");
 	fclose(fCheck);
 
 	ACE_Process_Options options;
-	options.command_line("%s",("bash "+tmpdir+"checkbash.sh").c_str());
+	options.command_line("%s",("bash "+String(tmpdir.c_str())+"checkbash.sh").c_str());
 	ACE_Process proc;
 	pid_t pid=proc.spawn(options);
 	proc.wait();
@@ -1133,23 +1136,23 @@ int Run::main(int argc, char *argv[])
 		
 		int ret=-1;
 
-		if (checkBash(tmpdir))
+		if (checkBash(tmpdir.c_str()))
 		{
 			printf("bash server found\n");
-			ret=runServerBash(portname,tmpdir);
+			ret=runServerBash(portname.c_str(),tmpdir.c_str());
 		}
-		#ifdef WIN32
+#ifdef WIN32
 		else
 		{
 			printf("bash not available, running DOS server\n");
-			ret=runServerDos(portname,tmpdir);
+			ret=runServerDos(portname.c_str(),tmpdir.c_str());
 		}
-		#else
+#else
 		else
 		{
 			printf("ERROR: no bash, no dos, who am I???\n");
 		}
-		#endif
+#endif
 		
 		return ret;
 	} 

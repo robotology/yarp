@@ -9,15 +9,15 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Port.h>
-#include <yarp/PortCore.h>
-#include <yarp/Logger.h>
-#include <yarp/NameClient.h>
+#include <yarp/os/impl/PortCore.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 
@@ -31,7 +31,7 @@ private:
     bool readResult, readActive, readBackground, willReply, closed, opened;
     bool replyDue;
     SemaphoreImpl produce, consume;
-    ReadableCreator *recReadCreator;
+    PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
 public:
     PortCoreAdapter(Port& owner) : 
@@ -182,7 +182,7 @@ public:
         stateMutex.post();
     }
 
-    void configReadCreator(ReadableCreator& creator) {
+    void configReadCreator(PortReaderCreator& creator) {
         recReadCreator = &creator;
         setReadCreator(creator);
     }
@@ -196,7 +196,7 @@ public:
         return readDelegate;
     }
 
-    ReadableCreator *checkReadCreator() {
+    PortReaderCreator *checkReadCreator() {
         return recReadCreator;
     }
 

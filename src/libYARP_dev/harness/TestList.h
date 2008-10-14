@@ -9,17 +9,21 @@
 #ifndef _YARP2_TESTLIST_
 #define _YARP2_TESTLIST_
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 namespace yarp {
-    class TestList;
+    namespace os {
+        namespace impl {
+            class TestList;
+        }
+    }
 }
 
 // need to made one function for each new test, and add to collectTests()
 // method
-extern yarp::UnitTest& getPolyDriverTest();
+extern yarp::os::impl::UnitTest& getPolyDriverTest();
 
-class yarp::TestList {
+class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();

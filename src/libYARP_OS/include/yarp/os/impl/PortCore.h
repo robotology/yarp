@@ -9,14 +9,14 @@
 #ifndef _YARP2_PORTCORE_
 #define _YARP2_PORTCORE_
 
-#include <yarp/ThreadImpl.h>
-#include <yarp/SemaphoreImpl.h>
-#include <yarp/Carriers.h>
-#include <yarp/Address.h>
-#include <yarp/PortManager.h>
+#include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/PortManager.h>
 #include <yarp/Readable.h>
 #include <yarp/Writable.h>
-#include <yarp/PortCorePacket.h>
+#include <yarp/os/impl/PortCorePacket.h>
 
 #include <yarp/os/PortReport.h>
 
@@ -49,7 +49,7 @@ namespace yarp {
  * result in data being sent to all the outgoing connections.
  * This class is used to construct yarp::os::Port and yarp::os::BufferedPort.
  */
-class yarp::os::impl::PortCore : public yarp::ThreadImpl, public yarp::PortManager, public yarp::Readable {
+class yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
 public:
 
     /**
@@ -85,7 +85,7 @@ public:
     /**
      * Begin service at a given address.
      */
-    bool listen(const yarp::Address& address);
+    bool listen(const Address& address);
 
     /**
      * Check if a message is currently being sent.
@@ -105,12 +105,12 @@ public:
     /**
      * Set a callback for incoming data.
      */
-    void setReadHandler(yarp::Readable& reader);
+    void setReadHandler(yarp::os::PortReader& reader);
 
     /**
      * Set a callback for creating callbacks for incoming data.
      */
-    void setReadCreator(yarp::ReadableCreator& creator);
+    void setReadCreator(yarp::os::PortReaderCreator& creator);
 
     /**
      * Usually this class will handle "handshaking" - establishing
@@ -140,7 +140,7 @@ public:
     /**
      * Callback for data.
      */
-    virtual bool read(yarp::ConnectionReader& reader) {
+    virtual bool read(yarp::os::ConnectionReader& reader) {
         // does nothing by default
         return true;
     }
@@ -156,8 +156,9 @@ public:
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
      */
-    bool send(yarp::Writable& writer, yarp::Readable *reader = NULL,
-              yarp::Writable *callback = NULL);
+    bool send(yarp::os::PortWriter& writer, 
+              yarp::os::PortReader *reader = NULL,
+              yarp::os::PortWriter *callback = NULL);
 
     /**
      * Shut down port.
@@ -177,14 +178,14 @@ public:
     /**
      * Get the address associated with the port.
      */
-    const yarp::Address& getAddress() const {
+    const Address& getAddress() const {
         return address;
     }
 
     /**
      * Get the creator of callbacks.
      */
-    yarp::ReadableCreator *getReadCreator() {
+    yarp::os::PortReaderCreator *getReadCreator() {
         return readableCreator;
     }
 
@@ -196,19 +197,19 @@ public:
     /**
      * Set some extra meta data to pass along with the message
      */
-    bool setEnvelope(yarp::Writable& envelope);
+    bool setEnvelope(yarp::os::PortWriter& envelope);
 
     /**
      * Set some extra meta data to pass along with the message
      */
-    void setEnvelope(const yarp::String& envelope);
+    void setEnvelope(const String& envelope);
 
-    yarp::String getEnvelope();
+    String getEnvelope();
 
     /**
      * Get any meta data associated with the last message received
      */
-    bool getEnvelope(yarp::Readable& envelope);
+    bool getEnvelope(yarp::os::PortReader& envelope);
 
     /**
      * Normally the port will unregister its name with the name server
@@ -237,17 +238,18 @@ public:
     /**
      * Process an administrative message.
      */
-    bool adminBlock(yarp::ConnectionReader& reader, void *id, yarp::OutputStream *os);
+    bool adminBlock(yarp::os::ConnectionReader& reader, void *id, 
+                    OutputStream *os);
 
 public:
 
     // PortManager interface, exposed to inputs
 
-    virtual void addOutput(const yarp::String& dest, void *id, yarp::OutputStream *os);
-    virtual void removeOutput(const yarp::String& dest, void *id, yarp::OutputStream *os);
-    virtual void removeInput(const yarp::String& dest, void *id, yarp::OutputStream *os);
-    virtual void describe(void *id, yarp::OutputStream *os);
-    virtual bool readBlock(yarp::ConnectionReader& reader, void *id, yarp::OutputStream *os);
+    virtual void addOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeOutput(const String& dest, void *id, OutputStream *os);
+    virtual void removeInput(const String& dest, void *id, OutputStream *os);
+    virtual void describe(void *id, OutputStream *os);
+    virtual bool readBlock(yarp::os::ConnectionReader& reader, void *id, OutputStream *os);
 
 
     /**
@@ -277,20 +279,20 @@ private:
     void reapUnits();
 
     // only called in "running" phase
-    void addInput(yarp::InputProtocol *ip);
+    void addInput(InputProtocol *ip);
 
-    bool removeUnit(const yarp::Route& route, bool synch = false);
+    bool removeUnit(const Route& route, bool synch = false);
 
 private:
 
     // main internal PortCore state and operations
-    yarp::SemaphoreImpl stateMutex, packetMutex, connectionChange;
-    yarp::Logger log;
-    yarp::Face *face;
-    yarp::String name;
-    yarp::Address address;
-    yarp::Readable *reader;
-    yarp::ReadableCreator *readableCreator;
+    SemaphoreImpl stateMutex, packetMutex, connectionChange;
+    Logger log;
+    Face *face;
+    String name;
+    Address address;
+    yarp::os::PortReader *reader;
+    yarp::os::PortReaderCreator *readableCreator;
     yarp::os::PortReport *eventReporter;
     bool listening, running, starting, closing, finished, autoHandshake;
     bool finishing;
@@ -301,7 +303,7 @@ private:
     int connectionListeners;
     int inputCount, outputCount;
     PortCorePackets packets;
-    yarp::String envelope;
+    String envelope;
 
     void closeMain();
 

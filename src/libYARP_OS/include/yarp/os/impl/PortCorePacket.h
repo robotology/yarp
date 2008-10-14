@@ -10,8 +10,8 @@
 #define _YARP2_PORTCOREPACKET_
 
 #include <yarp/Writable.h>
-#include <yarp/Logger.h>
-#include <yarp/NetType.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 
 #include <ace/Containers_T.h>
 

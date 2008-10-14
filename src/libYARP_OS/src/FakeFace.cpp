@@ -7,12 +7,12 @@
  */
 
 
-#include <yarp/FakeFace.h>
-#include <yarp/Logger.h>
-#include <yarp/Protocol.h>
-#include <yarp/FakeTwoWayStream.h>
+#include <yarp/os/impl/FakeFace.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/FakeTwoWayStream.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 static Logger fakeFaceLog("FakeFace", Logger::get());
 

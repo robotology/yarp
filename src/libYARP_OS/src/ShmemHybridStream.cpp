@@ -7,9 +7,8 @@
  *
  */
 
-#include <yarp/ShmemHybridStream.h>
+#include <yarp/os/impl/ShmemHybridStream.h>
 
-using namespace yarp;
 using namespace yarp::os::impl;
 
 int ShmemHybridStream::open(const Address& yarp_address,bool sender)
@@ -103,7 +102,7 @@ int ShmemHybridStream::accept()
 	return 0;
 }
 
-int yarp::ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
+int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 {
 	if (m_bLinked) return -1;
 

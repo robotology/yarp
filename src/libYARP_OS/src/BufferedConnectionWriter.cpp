@@ -7,10 +7,10 @@
  */
 
 
-#include <yarp/BufferedConnectionWriter.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

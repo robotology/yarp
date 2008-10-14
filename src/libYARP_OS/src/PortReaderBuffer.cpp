@@ -11,13 +11,13 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Thread.h>
 
-#include <yarp/Logger.h>
-#include <yarp/SemaphoreImpl.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/SemaphoreImpl.h>
 
 #include <ace/Vector_T.h>
 #include <ace/Containers_T.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

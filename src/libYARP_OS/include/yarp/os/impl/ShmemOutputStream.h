@@ -26,10 +26,10 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/Time.h>
-#include <yarp/Logger.h>
-#include <yarp/OutputStream.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/OutputStream.h>
 
-#include <yarp/ShmemTypes.h>
+#include <yarp/os/impl/ShmemTypes.h>
 
 namespace yarp {
     namespace os {

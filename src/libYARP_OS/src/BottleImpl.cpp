@@ -7,11 +7,11 @@
  */
 
 
-#include <yarp/BottleImpl.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/StringOutputStream.h>
-#include <yarp/StringInputStream.h>
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/impl/StringInputStream.h>
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat64.h>
@@ -19,7 +19,7 @@
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 

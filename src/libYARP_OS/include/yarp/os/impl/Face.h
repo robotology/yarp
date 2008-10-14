@@ -9,9 +9,9 @@
 #ifndef _YARP2_FACE_
 #define _YARP2_FACE_
 
-#include <yarp/Address.h>
-#include <yarp/InputProtocol.h>
-#include <yarp/OutputProtocol.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/InputProtocol.h>
+#include <yarp/os/impl/OutputProtocol.h>
 
 namespace yarp {
     namespace os {

@@ -12,7 +12,7 @@
 
 #include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 

@@ -9,9 +9,9 @@
 #ifndef _YARP2_TWOWAYSTREAM_
 #define _YARP2_TWOWAYSTREAM_
 
-#include <yarp/Address.h>
-#include <yarp/InputStream.h>
-#include <yarp/OutputStream.h>
+#include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/OutputStream.h>
 
 namespace yarp {
     namespace os {

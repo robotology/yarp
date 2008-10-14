@@ -6,14 +6,14 @@
  *
  */
 
-#include <yarp/NetType.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class NetTypeTest : public UnitTest {

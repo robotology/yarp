@@ -7,20 +7,20 @@
  */
 
 
-#include <yarp/BottleImpl.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/FakeTwoWayStream.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/FakeTwoWayStream.h>
+#include <yarp/os/impl/Logger.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 

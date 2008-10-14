@@ -6,17 +6,17 @@
  *
  */
 
-#include <yarp/InputProtocol.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/InputProtocol.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCore.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/NameClient.h>
-#include <yarp/PortCoreInputUnit.h>
-#include <yarp/PortCoreOutputUnit.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/Name.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/PortCoreInputUnit.h>
+#include <yarp/os/impl/PortCoreOutputUnit.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/Name.h>
 
-#include <yarp/Companion.h>
+#include <yarp/os/impl/Companion.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
@@ -30,7 +30,7 @@
 #define YMSG(x)
 #define YTRACE(x) 
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 

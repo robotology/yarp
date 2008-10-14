@@ -9,7 +9,7 @@
 #ifndef _YARP2_LOGGER_
 #define _YARP2_LOGGER_
 
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 
 #include <ace/Log_Msg.h>
 #include <ace/Log_Record.h>
@@ -118,7 +118,7 @@ private:
     void exit(int result);
 
     static Logger root;
-    yarp::String prefix;
+    String prefix;
     Logger *parent;
     int verbose;
     int low;

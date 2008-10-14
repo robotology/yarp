@@ -6,9 +6,9 @@
  *
  */
 
-#include <yarp/Address.h>
+#include <yarp/os/impl/Address.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 Contact Address::toContact() const {

@@ -25,9 +25,11 @@ namespace yarp {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         template <class T> class TypedReaderThread;
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+        namespace impl {
+            class PortReaderBufferBase;
+            class PortReaderBufferBaseCreator;
+        }
     }
-    class PortReaderBufferBase;
-    class PortReaderBufferBaseCreator;
 }
 
 
@@ -179,14 +181,14 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class yarp::PortReaderBufferBaseCreator {
+class yarp::os::impl::PortReaderBufferBaseCreator {
 public:
     virtual ~PortReaderBufferBaseCreator() {}
 
     virtual yarp::os::PortReader *create() = 0;
 };
 
-class yarp::PortReaderBufferBase : public yarp::os::PortReader
+class yarp::os::impl::PortReaderBufferBase : public yarp::os::PortReader
 {
 public:
     PortReaderBufferBase(unsigned int maxBuffer) : 
@@ -316,7 +318,7 @@ template <class T>
 class yarp::os::PortReaderBuffer : 
     public yarp::os::TypedReader<T>,
             public yarp::os::LocalReader<T>,
-            public yarp::PortReaderBufferBaseCreator {
+            public yarp::os::impl::PortReaderBufferBaseCreator {
 public:
 
     /**
@@ -470,7 +472,7 @@ public:
 
 
 private:
-    yarp::PortReaderBufferBase implementation;
+    yarp::os::impl::PortReaderBufferBase implementation;
     bool autoDiscard;
     T *last;
     TypedReaderThread<T> *reader;

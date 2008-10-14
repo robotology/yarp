@@ -10,14 +10,14 @@
 // thread init success/failure notification -nat
 
 #include <yarp/os/RateThread.h>
-#include <yarp/NameServer.h>
+#include <yarp/os/impl/NameServer.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class RateThreadTest : public UnitTest {

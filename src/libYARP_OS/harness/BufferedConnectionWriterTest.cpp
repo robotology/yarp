@@ -6,13 +6,13 @@
  *
  */
 
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StringOutputStream.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StringOutputStream.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class BufferedConnectionWriterTest : public UnitTest {
 public:

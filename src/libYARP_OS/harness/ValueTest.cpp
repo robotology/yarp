@@ -9,9 +9,9 @@
 #include <yarp/os/Value.h>
 
 //#include "TestList.h"
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class ValueTest : public UnitTest {

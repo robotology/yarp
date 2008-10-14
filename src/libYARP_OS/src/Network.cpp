@@ -12,24 +12,24 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/Companion.h>
-#include <yarp/NameClient.h>
-#include <yarp/NameConfig.h>
-#include <yarp/Logger.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
 
-#include <yarp/InputStream.h>
-#include <yarp/OutputProtocol.h>
-#include <yarp/Carriers.h>
-#include <yarp/IOException.h>
-#include <yarp/BufferedConnectionWriter.h>
-#include <yarp/StreamConnectionReader.h>
-#include <yarp/Route.h>
-#include <yarp/PortCommand.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+#include <yarp/os/impl/Route.h>
+#include <yarp/os/impl/PortCommand.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 bool Network::connect(const char *src, const char *dest, 

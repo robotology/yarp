@@ -6,12 +6,12 @@
  *
  */
 
-#include <yarp/StringInputStream.h>
+#include <yarp/os/impl/StringInputStream.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class StringInputStreamTest : public UnitTest {
 public:

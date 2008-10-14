@@ -7,25 +7,25 @@
  */
 
 
-#include <yarp/Carriers.h>
-#include <yarp/Logger.h>
-#include <yarp/TcpFace.h>
-#include <yarp/FakeFace.h>
-#include <yarp/TcpCarrier.h>
-#include <yarp/TextCarrier.h>
-#include <yarp/UdpCarrier.h>
-#include <yarp/McastCarrier.h>
-#include <yarp/ShmemCarrier.h>
-#include <yarp/LocalCarrier.h>
-#include <yarp/NameserCarrier.h>
-#include <yarp/HttpCarrier.h>
+#include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/TcpFace.h>
+#include <yarp/os/impl/FakeFace.h>
+#include <yarp/os/impl/TcpCarrier.h>
+#include <yarp/os/impl/TextCarrier.h>
+#include <yarp/os/impl/UdpCarrier.h>
+#include <yarp/os/impl/McastCarrier.h>
+#include <yarp/os/impl/ShmemCarrier.h>
+#include <yarp/os/impl/LocalCarrier.h>
+#include <yarp/os/impl/NameserCarrier.h>
+#include <yarp/os/impl/HttpCarrier.h>
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 static Logger carriersLog("Carriers", Logger::get());
 
-Carriers yarp::Carriers::instance;
+Carriers Carriers::instance;
 
 Carriers::Carriers() {
     delegates.push_back(new HttpCarrier());

@@ -6,12 +6,12 @@
  *
  */
 
-#include <yarp/NameConfig.h>
+#include <yarp/os/impl/NameConfig.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 
 class NameConfigTest : public UnitTest {
 public:

@@ -7,13 +7,13 @@
  */
 
 
-#include <yarp/BottleImpl.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Value.h>
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
 Value *Value::makeInt(int x) {

@@ -6,8 +6,8 @@
  *
  */
 
-#include <yarp/String.h>
-#include <yarp/Logger.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
 
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DeviceGroup.h>

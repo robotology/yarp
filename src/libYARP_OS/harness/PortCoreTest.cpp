@@ -6,20 +6,20 @@
  *
  */
 
-#include <yarp/PortCore.h>
+#include <yarp/os/impl/PortCore.h>
 #include <yarp/os/Time.h>
-#include <yarp/Carriers.h>
+#include <yarp/os/impl/Carriers.h>
 #include <yarp/Readable.h>
-#include <yarp/NameClient.h>
-#include <yarp/BottleImpl.h>
-#include <yarp/Companion.h>
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/Companion.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
-class PortCoreTest : public UnitTest, public Readable {
+class PortCoreTest : public UnitTest, public PortReader {
 public:
     virtual String getName() { return "PortCoreTest"; }
 

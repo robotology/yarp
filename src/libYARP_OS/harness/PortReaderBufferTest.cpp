@@ -12,10 +12,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 
-#include <yarp/UnitTest.h>
+#include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
-using namespace yarp;
+using namespace yarp::os::impl;
 using namespace yarp::os;
 
 class PortReaderBufferTest : public UnitTest {
