@@ -399,7 +399,7 @@ void PortReaderBufferBase::setAutoRelease(bool flag) {
     exit(1);
 }
 
-void PortReaderBufferBase::attachBase(yarp::os::Port& port) {
+void PortReaderBufferBase::attachBase(Port& port) {
     HELPER(implementation).attach(port);
 }
 

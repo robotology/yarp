@@ -97,5 +97,47 @@ public:
     virtual double getGain() const {
         return 0;
     }
+
+
+
+    virtual bool setExposure(double v) {
+        return false;
+    }
+    virtual bool setSharpness(double v) {
+        return false;
+    }    
+    virtual bool setHue(double v) {
+        return false;
+    }
+    virtual bool setSaturation(double v) {
+        return false;
+    }    
+     virtual bool setGamma(double v) {
+        return false;
+    }    
+    virtual bool setIris(double v) {
+        return false;
+    }
+
+    virtual double getExposure() const {
+        return 0.0;
+    }
+    virtual double getSharpness() const {
+        return 0.0;
+    }
+    virtual double getHue() const {
+        return 0.0;
+    }
+    virtual double getSaturation() const {
+        return 0.0;
+    }
+    virtual double getGamma() const {
+        return 0.0;
+    }        
+    virtual double getIris() const {
+        return 0.0;
+    }
+    
+
 };
 

@@ -1,5 +1,14 @@
 2008-10-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/rand/rand.cpp: correct out-of-date example (Rand was
+	moved from namespace yarp::sig to yarp::math).
+
+	* scripts/compile-examples: update dumb test script to make sure
+	the examples all still compile.
+
+	* example/dev/FakeFrameGrabber2.h: add some missing functions
+	that were added to a base class.
+
 	* src/libYARP_OS/src/Run.cpp: move from use of String to
 	ConstString.
 

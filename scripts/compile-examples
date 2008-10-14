@@ -1,17 +1,17 @@
 
-echo "Make sure you call this is ./scripts/compile-examples"
+echo "Make sure you call this as ./scripts/compile-examples"
 
 cd example || exit 1
 
 BASE=$PWD
 # go through all directories, except yarp1
-for f in `find . -iname "CMakeLists.txt" | sed "s/.*yarp1.*//"`; do
+for f in `find . -iname "CMakeLists.txt" | grep -v "yarp1" | grep -v "cuda" | grep -v gtkmm | grep -v imagemagick | grep -v nvidia`; do
     dir=`dirname $f`
     echo $dir
     cd $BASE
     cd $dir
-    rm -f CMakeCache.txt
+#    rm -f CMakeCache.txt
     cmake . || exit 1
-    make clean
+#    make clean
     make || exit 1
 done

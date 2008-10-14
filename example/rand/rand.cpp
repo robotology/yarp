@@ -1,9 +1,9 @@
 #include <yarp/sig/Vector.h>
-#include <yarp/sig/Rand.h>
+#include <yarp/math/Rand.h>
 #include <stdio.h>
 
-using namespace yarp;
 using namespace yarp::sig;
+using namespace yarp::math;
 
 int main(int argc, const char **)
 {
