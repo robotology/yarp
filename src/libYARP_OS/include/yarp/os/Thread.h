@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -149,6 +149,20 @@ public:
      * @return an identifier that is different for each thread within a process
      */
     long int getKey();
+
+    /**
+     * Set the priority of the thread, if the OS supports that.
+     * @param priority the new priority of the thread.
+     * @return -1 if the priority cannot be set.
+     */
+    int setPriority(int priority);
+
+    /**
+     * Query the current priority of the thread, if the OS supports that.
+     * @return the priority of the thread.
+     */
+    int getPriority();
+
 
 private:
     bool join(double seconds = -1);

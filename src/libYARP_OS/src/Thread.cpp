@@ -116,3 +116,15 @@ int Thread::getCount() {
 long int Thread::getKey() {
     return ((ThreadImpl*)implementation)->getKey();
 }
+
+
+int Thread::setPriority(int priority) {
+    return ((ThreadImpl*)implementation)->setPriority(priority);
+}
+
+
+int Thread::getPriority() {
+    return ((ThreadImpl*)implementation)->getPriority();
+}
+
+

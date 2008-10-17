@@ -41,6 +41,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     
     if (success)
         {
+            thread->setPriority();
             thread->run();
             thread->threadRelease();
         }
@@ -64,6 +65,7 @@ ThreadImpl::ThreadImpl() {
     active = false;
     closing = false;
     needJoin = false;
+    defaultPriority = -1;
     setOptions();
 }
 
@@ -73,6 +75,7 @@ ThreadImpl::ThreadImpl(Runnable *target) {
     active = false;
     closing = false;
     needJoin = false;
+    defaultPriority = -1;
     setOptions();
 }
 
@@ -225,4 +228,23 @@ void ThreadImpl::changeCount(int delta) {
     threadMutex.post();
 }
 
+int ThreadImpl::setPriority(int priority) {
+    if (priority==-1) {
+        priority = defaultPriority;
+    } else {
+        defaultPriority = priority;
+    }
+    if (active && priority!=-1) {
+        return ACE_Thread::setprio(hid, priority);
+    }
+    return -1;
+}
+
+int ThreadImpl::getPriority() {
+    int prio = -1;
+    if (active) {
+        ACE_Thread::getprio(hid, prio);
+    }
+	return prio;
+}
 

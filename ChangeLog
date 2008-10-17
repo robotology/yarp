@@ -1,5 +1,8 @@
 2008-10-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/ThreadImpl.cpp: add setPriority/getPriority
+	functions (they just map onto ACE's implementation).
+
 	* src/libYARP_OS/src/Thread.cpp: fix for bug
 	2168847 ("Thread::onStop() problem").  Thanks to Alexandre
 	Bernardino for reporting this.

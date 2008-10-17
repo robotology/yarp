@@ -71,7 +71,11 @@ public:
 	void synchroWait();
 	void synchroPost();
 
+    int setPriority(int priority = -1);
+    int getPriority();
+
 private:
+    int defaultPriority;
     int stackSize;
     ACE_hthread_t hid;
     ACE_thread_t id;
