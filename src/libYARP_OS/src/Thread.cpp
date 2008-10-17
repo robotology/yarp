@@ -50,6 +50,7 @@ public:
 Thread::Thread() {
     implementation = new ThreadCallbackAdapter(*this);
     YARP_ASSERT(implementation!=NULL);
+    stopping = false;
 }
 
 
@@ -62,10 +63,12 @@ Thread::~Thread() {
 
 
 bool Thread::join(double seconds) {
-    return ((ThreadImpl*)implementation)->join(seconds);
+    bool result = ((ThreadImpl*)implementation)->join(seconds);
+    return result;
 }
 
 bool Thread::stop() {
+    stopping = true;
     ((ThreadImpl*)implementation)->close();
     return true;
 }
@@ -81,11 +84,13 @@ void Thread::onStop()
 }
 
 bool Thread::start() {
+    stopping = false;
     return ((ThreadImpl*)implementation)->start();
 }
 
 bool Thread::isStopping() {
-    return ((ThreadImpl*)implementation)->isClosing();
+    //return ((ThreadImpl*)implementation)->isClosing();
+    return stopping;
 }
 
 bool Thread::isRunning() {

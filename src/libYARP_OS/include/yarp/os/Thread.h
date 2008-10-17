@@ -155,6 +155,7 @@ private:
 
 
     void *implementation;
+    bool stopping;
 };
 
 #endif
