@@ -41,6 +41,7 @@ using namespace std;
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+using namespace yarp;
 
 Companion Companion::instance;
 

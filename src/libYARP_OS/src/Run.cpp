@@ -810,12 +810,12 @@ int Run::runServerDos(const ConstString& portname,const ConstString& tmpdir)
 
 			Bottle script_bottle; 
 			script_bottle.append(msg.findGroup("script").tail());	
-			String script_name=tmpdir+"script"+serial_str+".bat";
+			String script_name=String(tmpdir.c_str())+"script"+serial_str+".bat";
 			
 			writeBottleAsFile(script_bottle,script_name);			
 			String command_text="yarp read /"+alias+"/stdin | "+tmpdir_dos+"script"+serial_str+".bat | yarp write /"+alias+"/stdout";
 	        
-	        String command_name=tmpdir+"cmd"+serial_str+".bat";
+	        String command_name=String(tmpdir.c_str())+"cmd"+serial_str+".bat";
 	        	
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());
@@ -852,7 +852,7 @@ int Run::runServerDos(const ConstString& portname,const ConstString& tmpdir)
 
 			command_text="yarp read /"+alias+"/stdin | "+command_text+" | yarp write /"+alias+"/stdout";
 
-	        String command_name=tmpdir+"cmd"+serial_str+".bat";
+	        String command_name=String(tmpdir.c_str())+"cmd"+serial_str+".bat";
 
 			FILE *command_file=fopen(command_name.c_str(),"wc");
 			fprintf(command_file,"%s\n",command_text.c_str());

@@ -11,6 +11,7 @@
 #include <yarp/os/impl/NetType.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 bool PortCommand::read(ConnectionReader& reader) {
     //ACE_DEBUG((LM_DEBUG,"PortCommand::readBlock"));

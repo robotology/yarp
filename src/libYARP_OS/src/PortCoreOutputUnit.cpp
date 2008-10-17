@@ -25,6 +25,7 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+using namespace yarp;
 
 
 bool PortCoreOutputUnit::start() {
