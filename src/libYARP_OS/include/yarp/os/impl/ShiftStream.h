@@ -21,26 +21,32 @@ namespace yarp {
 }
 
 /**
- * Container for a replacable I/O stream.
- * Classes implementing this interface can 
- * have their streams "borrowed" or replaced.
+ * A container for a stream, allowing the stream implementation to
+ * be replaced when needed.  This is important in YARP since 
+ * connections "bootstrap" from an initial stream type to 
+ * an optimized stream type with user-preferred properties and
+ * trade-offs.
  */
 class yarp::os::impl::ShiftStream : public TwoWayStream {
 public:
+    /**
+     * Constructor.
+     */
     ShiftStream() {
         stream = NULL;
     }
 
+    /**
+     * Destructor.
+     */
     virtual ~ShiftStream() {
         close();
     }
 
-    void check() {
-        /*
-        if (stream==NULL) {
-            throw IOException("no stream present");
-        }
-        */
+    /**
+     * Perform maintenance actions, if needed.
+     */
+    virtual void check() {
     }
 
     virtual InputStream& getInputStream() {
@@ -73,21 +79,39 @@ public:
         }
     }
 
+    /**
+     * Wrap the supplied stream.  If a stream is already wrapped,
+     * it will be closed and destroyed.
+     * @param stream the stream to wrap.
+     */
     virtual void takeStream(TwoWayStream *stream) {
         close();
         this->stream = stream;
     }
 
+    /**
+     * Removes the wrapped stream and returns it.  
+     * The caller will be responsible for closing the stream.  
+     * @return the wrapped stream (which after this call will be the
+     * caller's responsibility).
+     */
     virtual TwoWayStream *giveStream() {
         TwoWayStream *result = stream;
         stream = NULL;
         return result;
     }
 
+    /**
+     * @return the wrapped stream (which after this call will remain
+     * this container's responsibility - compare with giveStream).
+     */
     virtual TwoWayStream *getStream() {
         return stream;
     }
 
+    /**
+     * @return true if there is no wrapped stream.
+     */
     virtual bool isEmpty() {
         return stream==NULL;
     }
