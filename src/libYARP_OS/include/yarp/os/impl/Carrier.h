@@ -29,7 +29,7 @@ namespace yarp {
  * that goes through the same phases can be described as a Carrier and
  * then made available (through the Carriers class) for connections.
  */
-class yarp::os::impl::Carrier : public ShiftStream {
+class yarp::os::impl::Carrier {
 public:
 
 
@@ -73,6 +73,10 @@ public:
     virtual bool isActive() = 0;
 
     virtual String toString() = 0;
+
+    virtual void close() {
+    }
+
 };
 
 #endif

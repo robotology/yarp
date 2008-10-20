@@ -1,3 +1,9 @@
+2008-10-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/Carrier.h: simplify
+	inheritance tree for Carrier class by removing unused dependency
+	on ShiftStream.  This is part of a documentation clean up.
+
 2008-10-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/ThreadImpl.cpp: add setPriority/getPriority
