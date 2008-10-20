@@ -23,33 +23,90 @@ namespace yarp {
 }
 
 /**
- * An object containing an InputStream + OutputStream pair.
+ * A stream which can be asked to perform bidirectional communication.
+ * It need not actually be capable of communication in both directions,
+ * in which case it should fail if requested to communicate in an
+ * unsupported direction.
  */
 class yarp::os::impl::TwoWayStream {
 public:
+    /**
+     * Destructor.
+     */
     virtual ~TwoWayStream() {
     }
 
-    virtual InputStream& getInputStream() = 0; // throws
-    virtual OutputStream& getOutputStream() = 0; // throws
+    /**
+     * Get an InputStream to read from.
+     *
+     * @return the InputStream associated with this object.
+     */
+    virtual InputStream& getInputStream() = 0;
 
-    virtual const Address& getLocalAddress() = 0; // throws
-    virtual const Address& getRemoteAddress() = 0; // throws
+    /**
+     * Get an OutputStream to write to.
+     *
+     * @return the InputStream associated with this object.
+     */
+    virtual OutputStream& getOutputStream() = 0;
 
+    /**
+     * Get the address of the local side of the stream.
+     *
+     * @return the address of the local side of the stream.
+     * The address will be tagged as invalid if the stream is not set up.
+     */
+    virtual const Address& getLocalAddress() = 0;
+
+    /**
+     * Get the address of the remote side of the stream.
+     *
+     * @return the address of the remote side of the stream.
+     * The address will be tagged as invalid if the stream is not set up.
+     */
+    virtual const Address& getRemoteAddress() = 0;
+
+    /**
+     * Check that the stream is valid.
+     * @return true if the stream is valid.
+     */
     virtual bool isOk() = 0;
 
+    /**
+     * Reset the stream.
+     */
     virtual void reset() = 0;
 
-    virtual void close() = 0; // throws
+    /**
+     * Close the stream.
+     */
+    virtual void close() = 0;
 
     // These should be called at the beginning and end of logical packets.
     // Streams are encouraged to handle errors and atomicity at the level of 
     // logical packets
+
+    /**
+     * 
+     * Mark the beginning of a logical packet.  This is a unit that 
+     * should be treated in an atomic fashion by YARP.  If any part
+     * is corrupted, the whole should be dropped.
+     *
+     */
     virtual void beginPacket() = 0;
+
+    /**
+     * 
+     * Mark the end of a logical packet (see beginPacket).
+     *
+     */
     virtual void endPacket() = 0;
 };
 
 
+/**
+ * A "null" stream, always invalid.
+ */
 class yarp::os::impl::NullStream : public TwoWayStream,
             public InputStream, public OutputStream {
 private:
