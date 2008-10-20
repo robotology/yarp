@@ -23,21 +23,59 @@ namespace yarp {
 }
 
 /**
- * Class representing one specific protocol for sending and receiving
- * YARP messages.  YARP communication occurs through a series of
- * defined phases that make it easy to duplicate output.  Any process
- * that goes through the same phases can be described as a Carrier and
- * then made available (through the Carriers class) for connections.
+ *
+ * A base class for connection types (tcp, mcast, shmem, ...).
+ *
  */
 class yarp::os::impl::Carrier {
 public:
 
 
+    /**
+     *
+     * Factory method.  Get a new object of the same type as this one.
+     *
+     * @return a new object of the same type as this one.
+     *
+     */
     virtual Carrier *create() = 0;
 
+    /**
+     * @return the name of this carrier ("tcp", "mcast", "shmem", ...)
+     */
     virtual String getName() = 0;
+
+    /**
+     *
+     * Given the first 8 bytes received on a connection, decide if
+     * this is the right carrier type to use for the rest of the
+     * connection.  For example the "text" carrier looks for the
+     * 8-byte sequence "CONNECT ".  See the YARP protocol documentation
+     * for all the sequences in use here.  In general you are free to
+     * add your own.
+     *
+     * @param header a buffer holding the first 8 bytes received on the connection
+     * @return true if this is the carrier to use.
+     *
+     */
     virtual bool checkHeader(const yarp::os::Bytes& header) = 0;
+
+    /**
+     *
+     * Configure this carrier based on the first 8 bytes of the 
+     * connection.  This will only be called if checkHeader passed.
+     * @param header a buffer holding the first 8 bytes received on the connection
+     *
+     */
     virtual void setParameters(const yarp::os::Bytes& header) = 0;
+
+    /**
+     *
+     * Provide 8 bytes describing this connection sufficiently to 
+     * allow the other side of a connection to select it.
+     * @param header a buffer to hold the first 8 bytes to send on a connection
+     *
+     */
     virtual void getHeader(const yarp::os::Bytes& header) = 0;
 
 
