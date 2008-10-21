@@ -1,5 +1,7 @@
 2008-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc/carrier_expert.dox: start tutorial on creating carriers.
+
 	* example/carrier/main.cpp: add example of creating a trivial
 	new carrier.
 
