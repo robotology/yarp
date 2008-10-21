@@ -27,17 +27,69 @@ namespace yarp {
 }
 
 /**
- * This class is the starting point for all communication.
+ * Collection of carriers, a singleton. 
+ * This is the starting point for creating connections
+ * between ports.
  */
 class yarp::os::impl::Carriers {
 public:
+
+    /**
+     *
+     * Select a carrier by name.
+     *
+     * @param name the name of the desired carrier.
+     * @return the desired carrier, or NULL if not found.
+     *
+     */
     static Carrier *chooseCarrier(const String& name);
+
+    /**
+     *
+     * Select a carrier by 8-byte header.
+     *
+     * @param bytes the 8-byte header describing the desired carrier.
+     * @return the desired carrier, or NULL if not found.
+     *
+     */
     static Carrier *chooseCarrier(const Bytes& bytes);
 
-    static Face *listen(const Address& address); // throws IOException
-    static OutputProtocol *connect(const Address& address); // throws IOException
+    /**
+     *
+     * Create a "proto-carrier" interface object that waits for
+     * incoming connections prior to a carrier being selected via
+     * handshaking.
+     *
+     * Currently, this is always a tcp server socket.  There is no
+     * reason why it couldn't be any kind of stream, and this would be
+     * the method to change if you want to do something imaginative
+     * here.
+     *
+     * @param address the address (including initial carrier type) to
+     * listen to.
+     *
+     * @return the interface object.
+     *
+     */
+    static Face *listen(const Address& address);
 
-    // msvc seems to want the destructor public, even for static private instance
+    /**
+     *
+     * Initiate a connection to an address.
+     *
+     * @param address the address (including desired carrier type) to
+     * connect to.
+     *
+     * @return the protocol object.
+     *
+     */
+    static OutputProtocol *connect(const Address& address);
+
+    /**
+     *
+     * Destructor.
+     *
+     */
     virtual ~Carriers();
 
 private:
