@@ -1,0 +1,32 @@
+
+/** 
+ * @page carrier_expert Creating carriers for new kinds of connections
+
+\author Paul Fitzpatrick
+
+THIS TUTORIAL IS UNDER DEVELOPMENT (October, 2008)
+
+In YARP, ports talk to each other via connections.  Types of connections
+are called "carriers".  See \ref carrier_config for information about
+how to configure connections using existing carriers.  Here, we are going
+to look at creating new kinds of carriers.  Why might you want to do this?
+
+ \li You need to use a kind of network that YARP doesn't 
+     currently support.  For example, we don't currently have
+     support for QNX message passing.
+
+ \li You don't like some aspect of YARP's current carriers.  No problem,
+     just make your own variation and plug it in.  (Please call it a 
+     different name though so as not to destroy the possibility of
+     interoperation).  If it works well, please consider telling us 
+     about it.
+
+ \li You want to support direct interoperation with your middleware.
+
+\section carrier_expert_classes Important classes
+
+ \li yarp::os::impl::Carrier
+ \li yarp::os::impl::Carriers
+
+*/
+
