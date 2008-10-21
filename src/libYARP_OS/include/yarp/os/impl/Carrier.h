@@ -41,7 +41,10 @@ public:
     virtual Carrier *create() = 0;
 
     /**
-     * @return the name of this carrier ("tcp", "mcast", "shmem", ...)
+     *
+     * Get the name of this carrier ("tcp", "mcast", "shmem", ...)
+     *
+     * @return the name of this carrier
      */
     virtual String getName() = 0;
 
@@ -79,18 +82,89 @@ public:
     virtual void getHeader(const yarp::os::Bytes& header) = 0;
 
 
+    /**
+     *
+     * Check if this carrier is connectionless (like udp, mcast)
+     * or connection based (like tcp).  This flag is used
+     * by YARP to determine whether the connection can carry RPC
+     * traffic, that is, messages with replies.  Replies are not
+     * supported by YARP on connectionless carriers.
+     *
+     * @return true if carrier is connectionless
+     *
+     */
     virtual bool isConnectionless() = 0;
+
+
+    /**
+     *
+     * Check if reading is implemented for this carrier.
+     *
+     * @return true if carrier can read messages
+     *
+     */
     virtual bool canAccept() = 0;
+
+    /**
+     *
+     * Check if writing is implemented for this carrier.
+     *
+     * @return true if carrier can write messages
+     *
+     */
     virtual bool canOffer() = 0;
+
+    /**
+     *
+     * Check if carrier is textual in nature
+     *
+     * @return true if carrier is text-based
+     *
+     */
     virtual bool isTextMode() = 0;
+
+    /**
+     *
+     * Check if carrier can encode administrative messages, as opposed
+     * to just user data.  The word escape is used in the sense of
+     * escape character or escape sequence here.
+     *
+     * @return true if carrier can encode administrative messages
+     *
+     */
     virtual bool canEscape() = 0;
+
+    /**
+     *
+     * Check if carrier has flow control, requiring sent messages
+     * to be acknowledged by recipient.
+     *
+     * @return true if carrier requires acknowledgement.
+     *
+     */
     virtual bool requireAck() = 0;
+
+    /**
+     *
+     * This flag is used by YARP to determine whether the connection
+     * can carry RPC traffic, that is, messages with replies.
+     *
+     * @return true if carrier supports replies
+     *
+     */
     virtual bool supportReply() = 0;
+
+    /**
+     *
+     * Check if carrier operates within a single process.  In such a 
+     * case, YARP connections may get completely reorganized in order
+     * to optimize them.
+     *
+     * @return true if carrier will only operate within a single process
+     *
+     */
     virtual bool isLocal() = 0;
 
-    // all remaining may throw IOException
-
-    //virtual void close() = 0; // from ShiftStream
 
     // sender
     virtual bool prepareSend(Protocol& proto) = 0;
