@@ -24,7 +24,19 @@ namespace yarp {
 
 /**
  *
- * A base class for connection types (tcp, mcast, shmem, ...).
+ * A base class for connection types (tcp, mcast, shmem, ...) which are
+ * called carriers in YARP.
+ *
+ * The methods prepareSend, sendHeader, expectReplyToHeader,
+ * sendIndex, expectAck, and write are important on the originating
+ * side of a connection.
+ *
+ * The methods expectExtraHeader, respondToHeader, expectIndex,
+ * expectSenderSpecifier, and sendAck are important on the
+ * receiving side of a connection.
+ *
+ * To understand the protocol phases involved, see see \ref yarp_protocol.
+ * 
  *
  */
 class yarp::os::impl::Carrier {
@@ -166,26 +178,128 @@ public:
     virtual bool isLocal() = 0;
 
 
-    // sender
+    /**
+     *
+     * Perform any initialization needed before writing on a connection.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool prepareSend(Protocol& proto) = 0;
+
+    /**
+     *
+     * Write a header appropriate to the carrier to the connection,
+     * followed by any carrier-specific data (must communicate at least
+     * the name of the originating port, if there is one).
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool sendHeader(Protocol& proto) = 0;
+
+    /**
+     *
+     * Process reply to header, if one is expected for this carrier.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool expectReplyToHeader(Protocol& proto) = 0;
+
+    /**
+     *
+     * Send a message header, if one is needed for this carrier.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool sendIndex(Protocol& proto) = 0;
 
+    /**
+     *
+     * Write a message.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool write(Protocol& proto, SizedWriter& writer) = 0;
 
-    // receiver
+    /**
+     *
+     * Receive any carrier-specific header.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool expectExtraHeader(Protocol& proto) = 0;
+
+    /**
+     *
+     * Respond to the header.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool respondToHeader(Protocol& proto) = 0;
+
+    /**
+     *
+     * Expect a message header, if there is one for this carrier.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool expectIndex(Protocol& proto) = 0;
+
+    /**
+     *
+     * Expect the name of the sending port.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool expectSenderSpecifier(Protocol& proto) = 0;
+
+    /**
+     *
+     * Send an acknowledgement, if needed for this carrier.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool sendAck(Protocol& proto) = 0;
+
+    /**
+     *
+     * Receive an acknowledgement, if expected for this carrier.
+     *
+     * @param proto the protocol object, which tracks connection state
+     * @return true on success, false on failure
+     */
     virtual bool expectAck(Protocol& proto) = 0;
 
+    /**
+     *
+     * Check if carrier is alive and error free.
+     *
+     * @return true if carrier is active.
+     *
+     */
     virtual bool isActive() = 0;
 
+    /**
+     *
+     * Get name of carrier.
+     *
+     * @return name of carrier.
+     */
     virtual String toString() = 0;
 
+    /**
+     *
+     * Close the carrier.
+     */
     virtual void close() {
     }
 
