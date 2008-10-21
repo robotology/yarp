@@ -4,8 +4,6 @@
 
 \author Paul Fitzpatrick
 
-THIS TUTORIAL IS UNDER DEVELOPMENT (October, 2008)
-
 In YARP, ports talk to each other via connections.  Types of connections
 are called "carriers".  See \ref carrier_config for information about
 how to configure connections using existing carriers.  Here, we are going
@@ -25,8 +23,15 @@ to look at creating new kinds of carriers.  Why might you want to do this?
 
 \section carrier_expert_classes Important classes
 
+Here are the classes to start with.
+
  \li yarp::os::impl::Carrier
  \li yarp::os::impl::Carriers
+
+\section carrier_expert_example An example
+
+See example/carrier/main.cpp
+
 
 */
 

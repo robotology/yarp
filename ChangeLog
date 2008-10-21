@@ -1,3 +1,8 @@
+2008-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/carrier/main.cpp: add example of creating a trivial
+	new carrier.
+
 2008-10-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/Carrier.h: simplify

@@ -92,6 +92,19 @@ public:
      */
     virtual ~Carriers();
 
+
+    /**
+     *
+     * Add a new connection type.
+     *
+     * @param carrier a prototype of the desired connection type.
+     * The YARP library will be responsible for destroying it on shutdown.
+     *
+     * @return true on success.
+     *
+     */
+    static bool addCarrierPrototype(Carrier *carrier);
+
 private:
     ACE_Vector<Carrier *> delegates;
 

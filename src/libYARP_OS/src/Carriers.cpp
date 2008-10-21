@@ -108,3 +108,9 @@ OutputProtocol *Carriers::connect(const Address& address) {
 }
 
 
+bool Carriers::addCarrierPrototype(Carrier *carrier) {
+    getInstance().delegates.push_back(carrier);
+    return true;
+}
+
+
