@@ -21,8 +21,6 @@ to look at creating new kinds of carriers.  Why might you want to do this?
 
  \li You want to support direct interoperation with your middleware.
 
-\section carrier_expert_classes Important classes
-
 \section carrier_expert_preliminaries Coding preliminaries
 
 The implementation of carriers is in the namespace yarp::os::impl,
@@ -37,6 +35,8 @@ to take some care to make sure that the ACE header files on your
 system match those used to compile YARP.  If you are having trouble,
 search for the "ACE4YARP" package and try using that
 (see http://eris.liralab.it/wiki/ACE4YARP for details).
+
+\section carrier_expert_classes Important classes
 
 You should skim the documentation of the following classes:
 
