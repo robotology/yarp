@@ -38,12 +38,12 @@ system match those used to compile YARP.  If you are having trouble,
 search for the "ACE4YARP" package and try using that
 (see http://eris.liralab.it/wiki/ACE4YARP for details).
 
-Here are the classes to start with.
+You should skim the documentation of the following classes:
 
  \li yarp::os::impl::Carrier
  \li yarp::os::impl::Carriers
 
-You can include them in your code as follows:
+You'll be able to include them in your code as follows:
 
 \code
 #include <yarp/os/impl/Carrier.h>
