@@ -54,7 +54,9 @@ using namespace yarp::os::impl;
 
 \section carrier_expert_example An example
 
-See example/carrier/carrier_stub.cpp
+See example/carrier/carrier_stub.cpp:
+
+\include example/carrier/carrier_stub.cpp
 
 
 */
