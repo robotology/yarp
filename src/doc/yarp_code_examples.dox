@@ -553,7 +553,7 @@ Example showing how to use the CUDA driver to execute custom code onto nVidia gr
 Example showing how to use the SerialServoBoard driver AND how to configure and use the IPositionControl interface.
 
 /**
- \example carrier/main.cpp
+ \example carrier/carrier_stub.cpp
 
 Example showing how to add a new carrier to YARP.
 
