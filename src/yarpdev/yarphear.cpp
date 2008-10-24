@@ -25,6 +25,7 @@
 #endif
 
 using namespace yarp::os;
+using namespace yarp::os::impl; // yarphear uses something from the impl namespace, is this correct?
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
