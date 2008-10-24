@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.26 2008-10-14 15:56:49 eshuy Exp $
+// $Id: Vector.cpp,v 1.27 2008-10-24 23:30:41 gmetta Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/impl/IOException.h>
@@ -218,13 +218,20 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     return !connection.isError();
 }
 
+// pasa added this, MSC seems to complain otherwise (admitting it was tested/compiled on gcc already).
+namespace yarp {
+    namespace sig {
+        namespace impl {
+            template class VectorImpl<double>;
+            template class VectorImpl<int>;
+            template class VectorImpl<char>;
+            template class VectorImpl<float>;
+            template class IteratorOf<double>;
+        }
+    template class VectorOf<double>;
+    }
+}
 
-template class VectorImpl<double>;
-template class VectorImpl<int>;
-template class VectorImpl<char>;
-template class VectorImpl<float>;
-template class VectorOf<double>;
-template class IteratorOf<double>;
 
 /// vector implementations
 #include <yarp/os/impl/String.h>
