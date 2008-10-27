@@ -251,6 +251,65 @@ public:
         checkTrue(ok,"elements match");   
     }
 
+    void checkSubmatrix()
+    {
+        report(0,"check function Matrix::submatrix works...");
+        const int R=10;
+        const int C=20;
+        Matrix m(R,C);
+
+        int r=0;
+        int c=0;
+        int kk=0;
+        for(r=0; r<R; r++)
+            for (c=0; c<C; c++)
+                m[r][c]=kk++;
+
+        report(0,"extracting submatrix...");
+        int r1=5;
+        int r2=8;
+        int c1=4;
+        int c2=8;
+        Matrix m2=m.submatrix(r1, r2, c1, c2);
+
+        checkEqual(r2-r1+1,m2.rows(),"rows matches");
+        checkEqual(c2-c1+1,m2.cols(),"cols matches");
+        
+        kk=r1*C+c1;
+        bool ok=true;
+        for(r=0; r<m2.rows(); r++)
+        {
+            int cc=kk;
+            for(c=0;c<m2.cols();c++)
+            {
+                if (m2[r][c]!=cc++)
+                    ok=false;
+            }
+            kk+=C;
+        }
+
+        checkTrue(ok,"elements match");
+
+        report(0,"extracting full size matrix...");
+        Matrix m3=m.submatrix(0, R-1, 0, C-1);
+        checkEqual(R,m3.rows(),"rows matches");
+        checkEqual(C,m3.cols(),"cols matches");
+
+        kk=0;
+        ok=true;
+        for(r=0; r<m3.rows(); r++)
+        {
+            int cc=kk;
+            for(c=0;c<m3.cols();c++)
+            {
+                if (m3[r][c]!=cc++)
+                    ok=false;
+            }
+            kk+=C;
+        }
+        checkTrue(ok,"elements match");
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         checkCopyCtor();
@@ -259,6 +318,7 @@ public:
         checkOperators();
         checkGsl();
         Network::setLocalMode(false);
+        checkSubmatrix();
     }
 };
 

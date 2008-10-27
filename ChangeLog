@@ -1,3 +1,8 @@
+2008-10-27  Lorenzo Natale <nat@liralab.it>
+
+	* src/YARP_sig/include/yarp/sig/Matirx.h: corrected bug in submatrix function,
+	added regression test.
+
 2008-10-24  Lorenzo Natale <nat@liralab.it>
 
 	* src/YARP_dev/include/yarp/dev/Attachable.h: new interface for an attachable device

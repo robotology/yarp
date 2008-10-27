@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.18 2008-10-14 15:56:49 eshuy Exp $ 
+// $Id: Matrix.cpp,v 1.19 2008-10-27 19:00:43 natta Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/impl/IOException.h>
@@ -41,6 +41,25 @@ public:
 /// network stuff
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/begin_pack_for_net.h>
+
+bool yarp::sig::submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2)
+{
+    double *t=out.data();
+    const double *i=in.data()+in.cols()*r1+c1;
+    const int offset=in.cols()-(c2-c1+1);
+
+    for(int r=0;r<=(r2-r1);r++)
+    {
+        for(int c=0;c<=(c2-c1);c++)
+        {
+            *t++=*i++;
+        }
+        i+=offset;
+    }
+
+    return true;
+}
+
 
 bool Matrix::read(yarp::os::ConnectionReader& connection) {
     // auto-convert text mode interaction
@@ -133,25 +152,6 @@ ConstString Matrix::toString() const
     ret+=tmp;
 
     return ConstString(ret.c_str());
-}
-
-Matrix Matrix::submatrix(int r1, int c1, int r2, int c2) const
-{
-    Matrix ret;
-    ret.resize(r2-r1, c2-c1);
-
-    int rr=0;
-    int cc=0;
-    for(int r=r1; r<r2; r++)
-    {
-        for(int c=c1;c<c2;c++)
-        {
-            ret[rr][cc]=(*this)[r][c];
-            cc++;
-        }
-        rr++;
-    }
-    return ret;
 }
 
 void Matrix::updatePointers()

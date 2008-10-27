@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.h,v 1.15 2007-04-19 10:56:37 natta Exp $ 
+// $Id: Matrix.h,v 1.16 2008-10-27 19:00:32 natta Exp $ 
 
 #ifndef _YARP2_MATRIX_
 #define _YARP2_MATRIX_
@@ -25,6 +25,11 @@ namespace yarp {
     }
 }
 
+namespace yarp {
+    namespace sig {
+        bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
+    }
+}
 
 /**
 * \ingroup sig_class
@@ -58,7 +63,7 @@ private:
 
 public:
     Matrix():
-          first(0),
+      first(0),
           matrix(0),
           nrows(0),
           ncols(0)
@@ -187,14 +192,23 @@ public:
       const Matrix &diagonal(const Vector &d);
 
       /**
-      * Extract a submatrix from (r1,c1 to r2,c2)
-      * @param r1 start point row
-      * @param c1 start point col
-      * @param r2 end point row
-      * @param c2 end point col
+      * Extract a submatrix from (r1,c1) to (r2,c2) (extremes included), as in 
+      * Matlab B=A(r1:r2, c1:c2).
+      *
+      * @param r1 start row
+      * @param c1 start column
+      * @param r2 end row
+      * @param c2 end column
       * @return the sumbatrix
       */
-      Matrix submatrix(int r1, int c1, int r2, int c2) const;
+      Matrix submatrix(int r1, int r2, int c1, int c2) const
+      {
+          Matrix ret;
+          ret.resize(r2-r1+1, c2-c1+1);
+
+          yarp::sig::submatrix((*this), ret, r1, r2, c1, c2);
+          return ret;
+      }
 
       /**
       * Get a row of the matrix as a vector.
