@@ -51,12 +51,51 @@ You'll be able to include them in your code as follows:
 using namespace yarp::os::impl;
 \endcode
 
-
 \section carrier_expert_example An example
 
-See example/carrier/carrier_stub.cpp:
+Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp):
 
 \include example/carrier/carrier_stub.cpp
+
+The key steps are:
+
+ \li We create a new class for our new carrier, by subclassing something descended from yarp::os::impl::Carrier (in this case yarp::os::impl::TextCarrier).
+
+ \li We make whatever customizations we want to that carrier.  It is very
+ important to override the "factory" method Carrier::create to return
+ an instance of our new class.  We also define the name associated with
+ our class by overriding Carrier::getName.
+
+ \li At the start of our program, we register an instance of that class 
+ in a call to Carriers::addCarrierPrototype.
+
+Having taken those steps, we can make connections using our new carrier
+(called "test" in the example code):
+
+\code
+Network::connect(...,...,"test");
+\endcode
+
+To make connections of this type from the command line with the 
+\ref yarp "yarp companion" (the "yarp" command), you need to insert your 
+carrier in the YARP library, or else compile a customized version of 
+the companion.  Here is the companion's source code in its entirety:
+
+\code
+#include <yarp/os/Network.h>
+using namespace yarp::os;
+int main(int argc, char *argv[]) {
+    Network yarp;
+    return Network::main(argc,argv);
+}
+\endcode
+
+So there isn't much to it to just insert a call to 
+Carriers::addCarrierPrototype in there.  Otherwise, to put
+the new carrier in the YARP library proper, do a little pattern-matching
+in the constructor for the yarp::os::impl::Carriers class
+at src/libYARP_OS/src/Carriers.cpp.
+
 
 
 */

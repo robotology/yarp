@@ -303,6 +303,13 @@ public:
     virtual void close() {
     }
 
+    /**
+     *
+     * Destructor.
+     *
+     */
+    virtual ~Carrier() {
+    }
 };
 
 #endif
