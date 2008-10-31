@@ -15,6 +15,14 @@ the same.
 For brains and hearts, see our companion project,
 <a href="http://www.robotcub.org">RobotCub</a>.
 
+More specifically, YARP supports building a robot control system as a
+\ref note_ports "collection of programs communicating" in a
+peer-to-peer way, with a \ref carrier_config "family of connection
+types" that meet the diverse, sometimes contradictory, and always
+changing needs of advanced robotics.  We also encourage compilation
+and use of hardware devices in a future-proof way.  Our strategic goal
+is to increase the longevity of robot software projects [1].
+
 Getting set up:
 \li \ref what_is_yarp
 \li \ref install
@@ -40,6 +48,8 @@ Communication protocols:
 \li \ref data_rep
 \li \ref yarp_protocol
 \li \ref name_server
+
+[1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://eris.liralab.it/yarp/media/humantech07towards.pdf
 
 
  *
