@@ -51,9 +51,11 @@ You'll be able to include them in your code as follows:
 using namespace yarp::os::impl;
 \endcode
 
-\section carrier_expert_example An example
+\section carrier_expert_example A basic example
 
-Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp):
+Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp).  The change is very small; we name our new carrier "test" (as 
+opposed to "text") and change its identifying 8-byte header from 
+"CONNECT " to "TESTTEST".
 
 \include example/carrier/carrier_stub.cpp
 

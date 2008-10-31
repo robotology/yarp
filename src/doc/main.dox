@@ -14,26 +14,32 @@ the same.
 
 For brains and hearts, see our companion project,
 <a href="http://www.robotcub.org">RobotCub</a>.
- 
+
+Getting set up:
 \li \ref what_is_yarp
 \li \ref install
 \li \ref yarp_cluster
+\li \ref yarp
+
+Programming:
 \li \ref note_ports
 \li \ref note_devices
 \li \ref port_expert
-\li \ref carrier_config
-\li \ref yarp_os "Overview of the YARP OS library"
-\li \ref yarp_code_examples
-\li \ref yarp
+\li \ref yarp_code_examples "List of code examples"
+
+Working with devices:
+\li \ref yarpdev
 \li \ref yarp_motor_control
+\li \ref gpu_tutorial
+\li \ref dev_examples
 \li \ref add_a_device
+
+Communication protocols:
+\li \ref carrier_config
 \li \ref terms
 \li \ref data_rep
 \li \ref yarp_protocol
 \li \ref name_server
-\li \ref gpu_tutorial
-\li \ref dev_examples
-\li \ref yarpdev
 
 
  *
