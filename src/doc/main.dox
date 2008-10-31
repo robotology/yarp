@@ -43,11 +43,11 @@ Working with devices:
 \li \ref add_a_device
 
 Communication protocols:
+\li \ref yarp_protocol
+\li \ref data_rep
+\li \ref name_server
 \li \ref carrier_config
 \li \ref terms
-\li \ref data_rep
-\li \ref yarp_protocol
-\li \ref name_server
 
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://eris.liralab.it/yarp/media/humantech07towards.pdf
 

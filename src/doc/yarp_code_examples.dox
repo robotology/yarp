@@ -24,11 +24,10 @@ Here's an example CMakeLists.txt file to help with compiling
 if you use CMake
  (of course
 you can compile any way you like, you don't have to use CMake).
-You can set the YARP_ROOT environment variable to point to
-your YARP installation, or give the path through the CMake GUI.
+Make sure you set the YARP_DIR environment variable to point to
+where you compiled YARP (or give the path through the CMake GUI).
 
 \verbatim
-SET(YARP_DIR "$ENV{YARP_ROOT}" CACHE LOCATION "where is yarp?")
 FIND_PACKAGE(YARP)
 ADD_EXECUTABLE(simple_sender simple_sender.cpp)
 ADD_EXECUTABLE(simple_receiver simple_receiver.cpp)
