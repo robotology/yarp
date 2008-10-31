@@ -34,6 +34,7 @@ Programming:
 \li \ref note_devices
 \li \ref port_expert
 \li \ref yarp_code_examples
+\li \ref using_cmake
 
 Working with devices:
 \li \ref yarpdev
@@ -47,6 +48,7 @@ Communication protocols:
 \li \ref data_rep
 \li \ref name_server
 \li \ref carrier_config
+\li \ref carrier_expert
 \li \ref terms
 
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://eris.liralab.it/yarp/media/humantech07towards.pdf
@@ -256,6 +258,8 @@ our printable user manual.
 \li \ref port_expert
 \li \ref add_a_device
 \li \ref yarp_without_yarp
+\li \ref carrier_config
+\li \ref carrier_expert
 \li \ref terms
 \li \ref data_rep
 \li \ref yarp_protocol
