@@ -69,8 +69,35 @@ IF (CREATE_CHICKEN)
 ENDIF (CREATE_CHICKEN)
 
 IF (CREATE_ALLEGRO)
-   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify")
-   SWIG_ADD_MODULE(liballegroyarp allegrocl yarp.i)
+    set( CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}" )
+    set( ALLEGRO_INSTALL_PREFIX "/usr/local/lib/allegro/site" CACHE PATH "Install path prefix of allegro bindings." )
+    set( ALLEGRO_ASDF_SYSTEMS "${ALLEGRO_INSTALL_PREFIX}/../asdf-systems" CACHE PATH "Path to register asdf file." )
+
+    set( allegro_PROJ_FILE
+        allegro/yarp.asd )
+
+    set( allegro_SRC_FILE
+        yarp.cl )
+
+    set( allegro_LIBS
+        yarp-allegro.so )
+
+    set(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-identifier-converter;lispify")
+    swig_add_module(yarp-allegro allegrocl yarp.i)
+
+    string( REGEX REPLACE "\\.cl" ".lisp" allegro_DEST_FILE ${allegro_SRC_FILE})
+    install( FILES ${CMAKE_CURRENT_SOURCE_DIR}/${allegro_PROJ_FILE} DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp )
+    install( FILES
+        ${CMAKE_CURRENT_BINARY_DIR}/${allegro_SRC_FILE}
+        DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp/src
+        RENAME ${allegro_DEST_FILE} )
+    install( FILES ${CMAKE_CURRENT_BINARY_DIR}/${allegro_LIBS} DESTINATION ${ALLEGRO_INSTALL_PREFIX}/yarp/lib/ )
+
+    if( UNIX )
+        install( CODE
+            "execute_process( COMMAND \"mkdir\" \"-p\" \"${ALLEGRO_ASDF_SYSTEMS}\"
+                              COMMAND \"ln\" \"-s\" \"${ALLEGRO_INSTALL_PREFIX}/yarp/yarp.asd\" \"${ALLEGRO_ASDF_SYSTEMS}\" )" )
+    endif( UNIX )
 ENDIF (CREATE_ALLEGRO)
 
 IF (CREATE_TCL)
