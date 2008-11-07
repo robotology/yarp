@@ -14,6 +14,9 @@
 
 namespace yarp
 {
+     /**
+     * Mathematical operations, mostly a GSL wrapper.
+     */
     namespace math 
     {
         /**
