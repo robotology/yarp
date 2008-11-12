@@ -20,8 +20,6 @@ CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY_MODULES:BOOL=TRUE -DC
 
 export YARP_ROOT=$PWD
 
-while true; do
-
 rm -f should_report.txt
 
 (
@@ -100,6 +98,3 @@ if [ -e should_report.txt ]; then
 	timeout 600 scp report-decor.txt $WEB_USER@$WEB_SERVER:$WEB_DIR/report-yarp2-linux.txt
 fi
 
-sleep 600
-
-done
