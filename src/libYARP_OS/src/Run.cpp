@@ -1093,8 +1093,16 @@ void Run::printHelp()
 int Run::main(int argc, char *argv[]) 
 {
     Property config;
-
     config.fromCommand(argc,argv,false);
+
+    fprintf(stderr, "First I'm going to check the network\n");
+    bool net=Network::checkNetwork();
+    if (!net)
+    {
+        fprintf(stderr, "No yarp network found, returning\n");
+        return -1;
+    }
+
 
 	if (config.check("help"))
 	{
