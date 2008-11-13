@@ -280,6 +280,15 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         verbose = true;
         //options.setMonitor(&monitor,"top-level");
     }
+
+    // we now need network
+    bool ret=Network::checkNetwork();
+    if (!ret)
+    {
+        fprintf(stderr, "YARP network not available, chech if yarp server is reachable\n");
+        return -1;
+    }
+
     PolyDriver dd(options);
     if (verbose) {
         toDox(dd,cout);
