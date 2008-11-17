@@ -1,3 +1,11 @@
+2008-11-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/allegro/yarp.asd: patch from Lorenz M\"{o}senlechner
+	for Allegro Lisp.
+
+	* example/swig/CMakeLists.txt: patch from Lorenz M\"{o}senlechner
+	for Allegro Lisp.
+
 2008-10-27  Lorenzo Natale <nat@liralab.it>
 
 	* src/YARP_sig/include/yarp/sig/Matirx.h: corrected bug in submatrix function,
@@ -209,7 +217,7 @@
 	user has passed control of it to YARP and we know they will
 	not be touching it again.
 
-2008-06-18 Alessandro Scalzo <alessandro@liralab.it>
+2008-07-18 Alessandro Scalzo <alessandro@liralab.it>
 	* yarp2/src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h
 	* yarp2/src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
 	* yarp2/src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
