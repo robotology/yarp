@@ -1067,7 +1067,7 @@ int Run::runClient(Searchable& config)
 bool Run::checkBash(const ConstString& tmpdir)
 {
 	FILE* fCheck=fopen((String(tmpdir.c_str())+"checkbash.sh").c_str(),"wc");
-	fprintf(fCheck,"printf \"hello I am bash\n\"");
+	//fprintf(fCheck,"printf \"hello I am bash\n\"");
 	fclose(fCheck);
 
 	ACE_Process_Options options;
@@ -1145,7 +1145,7 @@ int Run::main(int argc, char *argv[])
 
 		if (checkBash(tmpdir.c_str()))
 		{
-			printf("bash server found\n");
+			//printf("bash server found\n");
 			ret=runServerBash(portname.c_str(),tmpdir.c_str());
 		}
 #ifdef WIN32
