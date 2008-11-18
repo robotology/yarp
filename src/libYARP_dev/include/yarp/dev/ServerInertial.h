@@ -193,7 +193,11 @@ public:
                     {
                         yarp::os::Bottle& bot = writer.get();
                         getInertial(bot);
-                        yarp::os::Stamp ts=iTimed->getLastInputStamp();
+						yarp::os::Stamp ts;
+						if (iTimed)
+							ts=iTimed->getLastInputStamp();
+						else
+							ts.update();
 
                         if (!spoke)
                             {
