@@ -1,3 +1,7 @@
+2008-11-19  Lorenzo Natale <nat@liralab.it>
+
+	* removed print in Run.cpp.
+
 2008-11-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/allegro/yarp.asd: patch from Lorenz M\"{o}senlechner
