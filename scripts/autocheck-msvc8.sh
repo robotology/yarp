@@ -46,7 +46,7 @@ fi
 
 curdir=`pwd`
 
-while true; do
+#hile true; do
 
 rm -f should_report.txt
 
@@ -128,6 +128,6 @@ fi
 
 #./scripts/update-web-wrapper
 
-sleep 600
+#sleep 600
 
-done
+#done

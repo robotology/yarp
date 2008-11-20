@@ -23,8 +23,6 @@ else
 	echo "Did not find YARP1"
 fi
 
-while true; do
-
 rm -f should_report.txt
 
 (
@@ -92,6 +90,3 @@ fi
 
 ./scripts/update-web-wrapper
 
-sleep 600
-
-done
