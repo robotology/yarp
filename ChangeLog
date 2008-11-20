@@ -1,6 +1,10 @@
+2008-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: freezing version 2.2.2
+
 2008-11-19  Lorenzo Natale <nat@liralab.it>
 
-	* removed print in Run.cpp.
+	* src/YARP_OS/src/Run.cpp: removed print in Run.cpp.
 
 2008-11-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
