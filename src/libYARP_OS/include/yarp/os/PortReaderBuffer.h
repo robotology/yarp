@@ -102,6 +102,11 @@ public:
 
 
     /**
+     * Abort any read operation currently in progress.
+     */
+    virtual void interrupt() = 0;
+
+    /**
      * Get the last data returned by read()
      * @return pointer to last data returned by read(), or NULL on failure.
      */
@@ -119,6 +124,11 @@ public:
      * @param callback the object whose onRead method will be called with data
      */
     virtual void useCallback(TypedReaderCallback<T>& callback) = 0;
+
+    /**
+     * Remove a callback set up with useCallback()
+     */
+    virtual void disableCallback() = 0;
 
     /**
      * Check how many messages are waiting to be read.
@@ -235,6 +245,8 @@ public:
 
     yarp::os::PortReader *readBase();
 
+    void interrupt();
+
     unsigned int getMaxBuffer() {
         return maxBuffer;
     }
@@ -298,6 +310,12 @@ public:
                                      *reader);
                 }
             }
+        }
+    }
+
+    virtual void onStop() {
+        if (reader!=0/*NULL*/) {
+            reader->interrupt();
         }
     }
 };
@@ -386,6 +404,11 @@ public:
         }
         return last;
     }
+    
+    // documented in TypedReader
+    void interrupt() {
+        implementation.interrupt();
+    }
 
     // documented in TypedReader
     T *lastRead() {
@@ -408,6 +431,14 @@ public:
             reader = 0/*NULL*/;
         }
         reader = new TypedReaderThread<T>(*this,callback);
+    }
+
+    void disableCallback() {
+        if (reader!=0/*NULL*/) {
+            reader->stop();
+            delete reader;
+            reader = 0/*NULL*/;
+        }
     }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

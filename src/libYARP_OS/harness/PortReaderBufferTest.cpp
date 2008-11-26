@@ -18,6 +18,20 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+
+class PortReaderBufferTestHelper : public BufferedPort<Bottle> {
+public:
+    int count;
+
+    PortReaderBufferTestHelper() {
+        count = 0;
+    }
+
+    void onRead(Bottle& datum) {
+        count += datum.size();
+    }
+};
+
 class PortReaderBufferTest : public UnitTest {
 public:
     virtual String getName() { return "PortReaderBufferTest"; }
@@ -93,6 +107,41 @@ public:
         //p2.close();
     }
 
+    void checkCallback() {
+        report(0, "checking callback...");
+        BufferedPort<Bottle> out;
+        PortReaderBufferTestHelper in;
+        out.open("/out");
+        in.open("/in");
+        in.useCallback();
+        Network::connect("/out","/in");
+        Network::sync("/out");
+        Network::sync("/in");
+        out.prepare().fromString("1 2 3");
+        out.write();
+        int rep = 0;
+        while (in.count==0 && rep<10) {
+            Time::delay(0.1);
+            rep++;
+        }
+        checkEqual(in.count,3,"got message #1");
+        in.disableCallback();
+        out.prepare().fromString("1 2 3 4");
+        out.write();
+        Bottle *datum = in.read();
+        checkTrue(datum!=NULL, "got message #2");
+        checkEqual(datum->size(),4,"message is ok");
+        in.useCallback();
+        in.count = 0;
+        out.prepare().fromString("1 2 3 4 5");
+        out.write();
+        rep = 0;
+        while (in.count==0 && rep<10) {
+            Time::delay(0.1);
+            rep++;
+        }
+        checkEqual(in.count,5,"got message #3");
+    }
     virtual void runTests() {
         Network::setLocalMode(true);
 
@@ -100,6 +149,7 @@ public:
         // in fact too experimental, omit from general builds
 
         checkAccept();
+        checkCallback();
         Network::setLocalMode(false);
     }
 };

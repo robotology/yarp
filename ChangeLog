@@ -1,3 +1,9 @@
+2008-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add 
+	disableCallback method (thanks Andreu Corominas Murtra for
+	the suggestion)
+
 2008-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: freezing version 2.2.2

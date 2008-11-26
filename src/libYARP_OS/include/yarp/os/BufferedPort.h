@@ -203,6 +203,10 @@ public:
         reader.useCallback(*this);
     }
 
+    void disableCallback() {
+        reader.disableCallback();
+    }
+
     // documented in Contactable
     virtual bool setEnvelope(PortWriter& envelope) {
         return port.setEnvelope(envelope);

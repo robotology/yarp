@@ -305,6 +305,12 @@ int PortReaderBufferBase::check() {
     return count;
 }
 
+
+void PortReaderBufferBase::interrupt() {
+    // give read a chance
+    HELPER(implementation).contentSema.post();
+}
+
 PortReader *PortReaderBufferBase::readBase() {
     HELPER(implementation).contentSema.wait();
     HELPER(implementation).stateSema.wait();
