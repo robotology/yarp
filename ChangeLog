@@ -1,3 +1,8 @@
+2008-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/os/playback.cpp: show an example of relaying messages
+	with unknown format.
+
 2008-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/PortReaderBuffer.h: add 
