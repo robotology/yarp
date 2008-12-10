@@ -183,8 +183,17 @@ MACRO(IMPORT_DEVICES hdr)
         FIND_PACKAGE(${libname})
       ENDIF (KNOWN)
     ENDIF (NOT COMPILING_ALL_YARP)
-    LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
-  ENDFOREACH (libname ${ARGN})
+
+	# Dec08 -- nat removes:
+	# LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
+	# adds:
+	IF(MSVC)
+      LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
+	ELSE(MSVC)
+	  LINK_LIBRARIES(optimized ${libname} debug ${libname})
+	ENDIF(MSVC)
+  
+ENDFOREACH (libname ${ARGN})
   SET(YARP_CODE_PRE)
   SET(YARP_CODE_POST)
 #  FOREACH(dev ${YARP_DEVICE_LIST})

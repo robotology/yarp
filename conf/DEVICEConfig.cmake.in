@@ -46,7 +46,7 @@ IF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
   # Maintain a list of all device libraries in use, so that we can
   # initialize them all.
   SET (YARP_DEVICE_LIST ${YARP_DEVICE_LIST} @YARPY_DEV_LIB_NAME@)
-#  MESSAGE(STATUS "**** List of device libraries: ${YARP_DEVICE_LIST}")
+  # MESSAGE(STATUS "**** List of device libraries: ${YARP_DEVICE_LIST}")
 
 ENDIF (NOT @YARPY_DEV_LIB_NAME@_FOUND)
 

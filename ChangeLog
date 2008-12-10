@@ -1,3 +1,8 @@
+2008-12-10 Lorenzo Natale <nat@liralab.it>
+	* conf/YarpDevice.cmake, conf/YarpModuleHooks.cmake:
+	fixed Debug/Release problems when building external modules library, 
+	changes commented in code.
+
 2008-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/os/playback.cpp: show an example of relaying messages
@@ -27,7 +32,7 @@
 
 2008-10-27  Lorenzo Natale <nat@liralab.it>
 
-	* src/YARP_sig/include/yarp/sig/Matirx.h: corrected bug in submatrix function,
+	* src/YARP_sig/include/yarp/sig/Matrix.h: corrected bug in submatrix function,
 	added regression test.
 
 2008-10-24  Lorenzo Natale <nat@liralab.it>
