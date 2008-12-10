@@ -28,7 +28,7 @@ rm -f should_report.txt
 (
 
 cvs update -d > cvslog.txt
-cat cvslog.txt | grep -v "cvs update" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
+cat cvslog.txt | grep -v "cvs -q update -Pd" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
 
 if egrep "[a-zA-Z]" cvslog2.txt; then
 
