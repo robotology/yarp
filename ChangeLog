@@ -1,3 +1,9 @@
+2008-12-11 Lorenzo Natale <nat@liralab.it>
+	* src/libYARP_OS/src/Terminator.cpp
+	* src/libYARP_OS/include/yarp/os/Terminator.h
+	fixed bug in ~Terminee() that caused occasional deadlock
+	when the object was destoyed without it received a quit message
+
 2008-12-10 Lorenzo Natale <nat@liralab.it>
 	* conf/YarpDevice.cmake, conf/YarpModuleHooks.cmake:
 	fixed Debug/Release problems when building external modules library, 

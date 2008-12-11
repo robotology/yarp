@@ -9,7 +9,7 @@
 #ifndef __TERMINATORH__
 #define __TERMINATORH__
 
-// $Id: Terminator.h,v 1.10 2006-10-24 19:14:48 eshuy Exp $
+// $Id: Terminator.h,v 1.11 2008-12-11 18:55:46 natta Exp $
 
 
 #include <yarp/os/Thread.h>
@@ -72,21 +72,32 @@ public:
 
     virtual void run();
 
-
-    // LATER: mustQuitBlocking() to wait on a semaphore.
+    /**
+     * Call this method to wait for a quit message.
+     * @return true if a quit message has been received
+     */
+    bool waitQuit() const
+    {
+        // not yet implemented
+        return false;
+    }
 
     /**
      * Call this method to see whether a quit message has
      * been received.
      * @return true is a quit has been received, false otherwise.
      */
-    bool mustQuit() const { return quit; }
+    bool mustQuit() const 
+    { return quit; }
 
     /**
      * Check whether the message mechanism is ok.
      * @return true if ok, false otherwise.
      */
     bool isOk() const { return ok; }
+    
+    //added to better handle destruction (Lorenzo).
+    void onStop();
 };
 
 

@@ -53,10 +53,6 @@ bool Terminator::terminateByName(const char *name) {
     return true;
 }
 
-
-
-
-
 class TermineeHelper {
 public:
     ACE_INET_Addr addr;
@@ -98,15 +94,26 @@ Terminee::Terminee(const char *name) {
     ok = true;
 }
 
+void Terminee::onStop()
+{
+    TermineeHelper& helper = HELPER(implementation);
+    helper.sock.interrupt();
+    helper.acceptor.close();
+}
 
 Terminee::~Terminee() {
     TermineeHelper& helper = HELPER(implementation);
     if (!quit) {
         Terminator::terminateByName(helper.registeredName.c_str());
     }
-    helper.sock.interrupt();
-    helper.acceptor.close();
-    stop();
+    
+    // no longer needed, see onClose(), this better handles quit
+    // (fixed bug on destructor) -- Lorenzo
+    // helper.sock.interrupt();
+    // helper.acceptor.close();
+    
+    // important: stop before deleting "implementation"
+    stop(); 
     Network::unregisterName(helper.registeredName.c_str());
 
     if (implementation!=NULL) {
