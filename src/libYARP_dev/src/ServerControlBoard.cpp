@@ -161,9 +161,9 @@ private:
             Thread::stop();
         }
         // close the port connections here!
-        rpc_p.close();
         control_p.close();
         state_p.close();
+        rpc_p.close();
 
         poly.close();
         return true;

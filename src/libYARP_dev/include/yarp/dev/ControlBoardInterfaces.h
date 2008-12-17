@@ -1338,7 +1338,7 @@ public:
      * @param axis joint number (again... why am I telling you this)
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
-     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimits(int axis, double *min, double *max)=0;
 };
@@ -1367,7 +1367,7 @@ public:
      * @param axis joint number (again... why am I telling you this)
      * @param pointer to store the value of the lower limit
      * @param pointer to store the value of the upper limit
-     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+     * @return true if everything goes fine, false otherwise.
      */
     virtual bool getLimitsRaw(int axis, double *min, double *max)=0;
 };

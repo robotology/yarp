@@ -27,6 +27,7 @@ class yarp::dev::FakeBot : public DeviceDriver,
             public IEncoders, 
             public IFrameGrabberImage,
             public IControlCalibration2,
+            public IControlLimits,
             public DeviceResponder
 {
 private:
@@ -247,6 +248,7 @@ public:
         if (j<njoints) {
             (*v) = loc[j];
         }
+        
         return true;
     }
 
@@ -354,6 +356,20 @@ public:
     {
         fprintf(stderr , "FakeBot: calibration done on joint %d.\n", j);
         return true; 
+    }
+
+    virtual bool getLimits(int axis, double *min, double *max)
+    {
+        fprintf(stderr, "FakeBot: get limits\n");
+        *min=0;
+        *max=0;
+        return true;
+    }
+    
+    virtual bool setLimits(int axis, double min, double max)
+    {
+        fprintf(stderr, "FakeBot: set limits\n");
+        return true;
     }
 };
 
