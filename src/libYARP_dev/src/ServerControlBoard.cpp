@@ -234,7 +234,7 @@ public:
 		if (verb)
 			ACE_OS::printf("running with verbose output\n");
 
-        thread_period = prop.check("rate", 20, "thread rate in ms. for streaming encoder data").asInt();
+        thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {

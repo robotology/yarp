@@ -25,6 +25,11 @@
 #include <yarp/dev/ControlBoardHelpers.h>
 
 #include <yarp/sig/Vector.h>
+#include <yarp/os/Semaphore.h>
+
+#include <yarp/os/Time.h>
+
+#include <string>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -36,6 +41,146 @@ namespace yarp{
         class RemoteControlBoard;
     }
 }
+
+class StateInputPort:public BufferedPort<yarp::sig::Vector>
+{
+    yarp::sig::Vector last;
+    Semaphore mutex;
+    double deltaT;
+    double deltaTMax;
+    double deltaTMin;
+    double prev;
+    double now;
+    
+    bool valid;
+    int count;
+public:
+
+    inline void resetStat()
+    {
+        mutex.wait();
+        count=0;
+        deltaT=0;
+        deltaTMax=0;
+        deltaTMin=1e22;
+        now=Time::now();
+        prev=now;
+        mutex.post();
+    }
+
+    StateInputPort()
+    {
+        valid=false;
+        resetStat();
+    }
+
+    virtual void onRead(yarp::sig::Vector &v)
+    {
+        now=Time::now();
+        mutex.wait();
+
+        if (count>0)
+            {
+                double tmpDT=now-prev;
+                deltaT+=tmpDT;
+                if (tmpDT>deltaTMax)
+                    deltaTMax=tmpDT;
+                if (tmpDT<deltaTMin)
+                    deltaTMin=tmpDT;
+            }
+
+        prev=now;
+        count++;
+
+        valid=true;
+        last=v;
+        mutex.post();
+    }
+
+    inline bool getLast(yarp::sig::Vector &n)
+    {
+        mutex.wait();
+        if (valid)
+            n=last;
+        mutex.post();
+
+        return valid;
+    }
+    inline int getIterations()
+    {
+        mutex.wait();
+        int ret=count;
+        mutex.post();
+        return ret;
+    }
+
+    // time is in ms
+    void getEstFrequency(int &ite, double &av, double &min, double &max)
+    {
+        mutex.wait();
+        ite=count;
+        min=deltaTMin*1000;
+        max=deltaTMax*1000;
+        if (count<1)
+            {
+                av=0;
+            }
+        else
+            {
+                av=deltaT/count;
+            }
+        av=av*1000;
+        mutex.post();
+    }
+
+};
+
+
+#include <yarp/os/RateThread.h>
+
+using namespace yarp::os;
+
+const int DIAGNOSTIC_THREAD_RATE=1000;
+
+class DiagnosticThread: public RateThread
+{
+    StateInputPort *owner;
+    std::string ownerName;
+
+public:
+    DiagnosticThread(int r): RateThread(r)
+    { owner=0; }
+
+    void setOwner(StateInputPort *o) 
+    {
+        owner=o; 
+        ownerName=owner->getName().c_str();
+    }
+    
+    void run()
+    {
+        if (owner!=0)
+            {
+                if (owner->getIterations()>100)
+                    {
+                        int it;
+                        double av;
+                        double max;
+                        double min;
+                        owner->getEstFrequency(it, av, min, max);
+                        owner->resetStat();
+                        printf("%s: %d msgs av:%.2lf min:%.2lf max:%.2lf [ms]\n",
+                               ownerName.c_str(),
+                               it, 
+                               av, 
+                               min, 
+                               max);
+                    }
+                
+            }
+    }
+
+};
 
 /**
  * @ingroup dev_impl_wrapper
@@ -56,9 +201,12 @@ class yarp::dev::RemoteControlBoard :
 protected:
     Port rpc_p;
     Port command_p;
-    Port state_p;
+    DiagnosticThread *diagnosticThread;
+    // Port state_p;
 
     PortReaderBuffer<yarp::sig::Vector> state_buffer;
+    // BufferedPort<yarp::sig::Vector> state_p;
+    StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
 
     String remote;
@@ -71,11 +219,8 @@ protected:
      * @return true/false on success/failure.
      */
     bool setCommand(int code) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(code);
 
         bool ok = rpc_p.write(cmd, response);
@@ -85,470 +230,262 @@ protected:
 
 
     /** 
-
      * Send a SET command and an additional double valued variable 
-
      * and then wait for a reply.
-
      * @param code is the command to send.
-
      * @param v is a double valued parameter.
-
      * @return true/false on success/failure.
-
      */
-
     bool setCommand(int code, double v) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(code);
-
         cmd.addDouble(v);
 
         bool ok = rpc_p.write(cmd, response);
 
         return CHECK_FAIL(ok, response);
-
     }
 
 
 
     /**
-
      * Send a SET command with an additional integer valued variable
-
      * and then wait for a reply.
-
      * @param code is the command to send.
-
      * @param v is an integer valued parameter.
-
      * @return true/false on success/failure.
-
      */
 
     bool setCommand(int code, int v) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(code);
-
         cmd.addInt(v);
 
         bool ok = rpc_p.write(cmd, response);
 
         return CHECK_FAIL(ok, response);
-
     }
 
 
-
     /**
-
      * Send a GET command expecting a double value in return.
-
      * @param code is the Vocab code of the GET command.
-
      * @param v is a reference to the return variable.
-
      * @return true/false on success/failure.
-
      */
-
     bool getCommand(int code, double& v) const {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(code);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             // response should be [cmd] [name] value
-
             v = response.get(2).asDouble();
-
             return true;
-
         }
 
         return false;
-
     }
 
 
 
     /**
-
      * Send a GET command expecting an integer value in return.
-
      * @param code is the Vocab code of the GET command.
-
      * @param v is a reference to the return variable.
-
      * @return true/false on success/failure.
-
      */
-
     bool getCommand(int code, int& v) const {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(code);
-
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             // response should be [cmd] [name] value
-
             v = response.get(2).asInt();
-
             return true;
-
         }
-
         return false;
-
     }
-
-
 
     /**
-
      * Helper method to set a double value to a single axis.
-
      * @param code is the name of the command to be transmitted
-
      * @param j is the axis
-
      * @param val is the double value
-
      * @return true/false on success/failure
-
      */
-
     bool setDouble (int code, int j, double val) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(code);
-
         cmd.addInt(j);
-
         cmd.addDouble(val);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
-
 
 
     /** 
-
      * Helper method used to set an array of double to all axes.
-
      * @param v is the command to set
-
      * @param val is the double array (of length nj)
-
      * @return true/false on success/failure
-
      */
-
     bool setDoubleArray(int v, const double *val) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(v);
-
         Bottle& l = cmd.addList();
-
         int i;
-
         for (i = 0; i < nj; i++)
-
             l.addDouble(val[i]);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
 
 
-
     /**
-
      * Helper method used to get a double value from the remote peer.
-
      * @param v is the command to query for
-
      * @param j is the axis number
-
      * @param val is the return value
-
      * @return true/false on success/failure
-
      */
 
     bool getDouble(int v, int j, double *val) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(v);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             // ok
-
             *val = response.get(2).asDouble();
-
             return true;
-
         }
-
         return false;
-
     }
 
-
-
     /**
-
      * Helper method to get an array of double from the remote peer.
-
      * @param v is the name of the command
-
      * @param val is the array of double
-
      * @return true/false on success/failure
-
      */
-
     bool getDoubleArray(int v, double *val) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(v);
-
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             int i;
-
             Bottle& l = *(response.get(2).asList());
-
             if (&l == 0)
-
                 return false;
 
-
-
             int njs = l.size();
-
             ACE_ASSERT (nj == njs);
-
             for (i = 0; i < nj; i++)
-
                 val[i] = l.get(i).asDouble();
-
             return true;
-
         }
-
-
-
         return false;
-
     }
-
-
 
 public:
-
     /**
-
      * Constructor.
-
      */
-
     RemoteControlBoard() { 
-
         nj = 0;
-
     }
 
-
-
     /**
-
      * Destructor.
-
      */
-
     virtual ~RemoteControlBoard() {
-
     }
-
 
 
     /**
-
      * Default open.
-
      * @return always true.
-
      */
-
     virtual bool open() {
-
         return true;
-
     }
-
-
 
     virtual bool open(Searchable& config) {
-
         remote = config.find("remote").asString().c_str();
-
         local = config.find("local").asString().c_str();
 
         ConstString carrier = 
-
             config.check("carrier",
-
                          Value("tcp"),
-
                          "default carrier for streaming robot state").asString().c_str();
 
         if (local != "") {
-
             String s1 = local;
-
             s1 += "/rpc:o";
-
             rpc_p.open(s1.c_str());
-
             s1 = local;
-
             s1 += "/command:o";
-
             command_p.open(s1.c_str());
-
             s1 = local;
-
             s1 += "/state:i";
-
             state_p.open(s1.c_str());
 
+            //new code
+            state_p.useCallback();
         }
 
-
-
         bool connectionProblem = false;
-
         if (remote != "") {
-
             String s1 = remote;
-
             s1 += "/rpc:i";
-
             String s2 = local;
-
             s2 += "/rpc:o";
-
             bool ok = Network::connect(s2.c_str(), s1.c_str());
-
             if (!ok) {
-
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
-
                 connectionProblem = true;
-
             }
-
             s1 = remote;
-
             s1 += "/command:i";
-
             s2 = local;
-
             s2 += "/command:o";
-
             ok = Network::connect(s2.c_str(), s1.c_str(), carrier);
-
             if (!ok) {
-
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
-
                 connectionProblem = true;
-
             }
 
             s1 = remote;
-
             s1 += "/state:o";
-
             s2 = local;
-
             s2 += "/state:i";
 
             ok = Network::connect(s1.c_str(), s2.c_str(), carrier);
 
             if (!ok) {
-
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
-
                 connectionProblem = true;
-
             }
-
         }
-
-
 
         if (connectionProblem) {
-
             return false;
-
         }
 
-
-
-        state_buffer.attach(state_p);
-
+        //        state_buffer.attach(state_p);
 		state_buffer.setStrict(false);
-
         command_buffer.attach(command_p);
-
-
 
         bool ok = getCommand(VOCAB_AXES, nj);
 
@@ -561,6 +498,12 @@ public:
             return false;
         }
 
+        if (config.check("diagnostic"))
+            {
+                diagnosticThread = new DiagnosticThread(DIAGNOSTIC_THREAD_RATE);
+                diagnosticThread->setOwner(&state_p);
+                diagnosticThread->start();
+            }
         return true;
     }
 
@@ -569,6 +512,13 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close() {
+
+        if (diagnosticThread!=0)
+            {
+                diagnosticThread->stop();
+                delete diagnosticThread;
+            }
+
         rpc_p.close();
         command_p.close();
         state_p.close();
@@ -920,17 +870,27 @@ public:
         // for example clients should never block when the server
         // dies.
         // --nat
-        Vector *v = state_buffer.read(false);
-        if (v != NULL) {
+        //        Vector *v = state_buffer.read(false);
+        //        Vector *v=state_p.read(false);
+        // old code:
+        //        if (v != NULL) {
+        //            ACE_ASSERT (v->size() == nj);
+        //            ACE_OS::memcpy (encs, &(v->operator [](0)), sizeof(double)*nj);
+        //            return true;
 
-            ACE_ASSERT (v->size() == nj);
-            ACE_OS::memcpy (encs, &(v->operator [](0)), sizeof(double)*nj);
-            return true;
+        //        }
+        // return false;
 
-        }
-        return false;
+        // new code:
+        static Vector tmp(nj);
+        bool ret=state_p.getLast(tmp);
+        if (ret)
+            {
+                ACE_ASSERT (tmp.size() == nj);
+                ACE_OS::memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+            }
+        return ret;
     }
-
 
     /**
      * Read the istantaneous speed of an axis.
@@ -1054,810 +1014,439 @@ public:
 
 
     /** Check if the current trajectory is terminated. Non blocking.
-
      * @return true if the trajectory is terminated, false otherwise
-
      */
-
     virtual bool checkMotionDone(int j, bool *flag) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_MOTION_DONE);
-
         cmd.addInt(j);
 
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             *flag = (bool)(response.get(2).asInt());
-
             return true;
-
         }
-
         return false;
-
     }
 
 
 
     /** Check if the current trajectory is terminated. Non blocking.
-
      * @return true if the trajectory is terminated, false otherwise
-
      */
-
     virtual bool checkMotionDone(bool *flag) { 
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_MOTION_DONES);
-
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             *flag = (bool)(response.get(2).asInt());
-
 			return true;
-
         }
 
         return false;
-
     }
 
 
 
     /** 
-
      * Set reference speed for a joint, this is the speed used during the
-
      * interpolation of the trajectory.
-
      * @param j joint number
-
      * @param sp speed value
-
      * @return true/false upon success/failure
-
      */
 
     virtual bool setRefSpeed(int j, double sp) { 
-
         return setDouble(VOCAB_REF_SPEED, j, sp);
-
     }
 
 
 
     /** 
-
      * Set reference speed on all joints. These values are used during the
-
      * interpolation of the trajectory.
-
      * @param spds pointer to the array of speed values.
-
      * @return true/false upon success/failure
-
      */
-
     virtual bool setRefSpeeds(const double *spds) { 
-
         return setDoubleArray(VOCAB_REF_SPEEDS, spds);
-
     }
 
-
-
     /** 
-
      * Set reference acceleration for a joint. This value is used during the
-
      * trajectory generation.
-
      * @param j joint number
-
      * @param acc acceleration value
-
      * @return true/false upon success/failure
-
      */
-
     virtual bool setRefAcceleration(int j, double acc) {
-
         return setDouble(VOCAB_REF_ACCELERATION, j, acc);
-
     }
 
-
-
     /** 
-
      * Set reference acceleration on all joints. This is the valure that is
-
      * used during the generation of the trajectory.
-
      * @param accs pointer to the array of acceleration values
-
      * @return true/false upon success/failure
-
      */
-
     virtual bool setRefAccelerations(const double *accs) { 
-
         return setDoubleArray(VOCAB_REF_ACCELERATIONS, accs);
-
     }
 
-
-
     /** 
-
      * Get reference speed for a joint. Returns the speed used to 
-
      * generate the trajectory profile.
-
      * @param j joint number
-
      * @param ref pointer to storage for the return value
-
      * @return true/false on success or failure
-
      */
-
     virtual bool getRefSpeed(int j, double *ref) {
-
         return getDouble(VOCAB_REF_SPEED, j, ref);
-
     }
 
-
-
     /** 
-
      * Get reference speed of all joints. These are the  values used during the
-
      * interpolation of the trajectory.
-
      * @param spds pointer to the array that will store the speed values.
-
      */
-
     virtual bool getRefSpeeds(double *spds) {
-
         return getDoubleArray(VOCAB_REF_SPEEDS, spds);
-
     }
 
-
-
     /** 
-
      * Get reference acceleration for a joint. Returns the acceleration used to 
-
      * generate the trajectory profile.
-
      * @param j joint number
-
      * @param acc pointer to storage for the return value
-
      * @return true/false on success/failure
-
      */
-
     virtual bool getRefAcceleration(int j, double *acc) {
-
         return getDouble(VOCAB_REF_ACCELERATION, j, acc);
-
     }
 
 
-
     /** 
-
      * Get reference acceleration of all joints. These are the values used during the
-
      * interpolation of the trajectory.
-
      * @param accs pointer to the array that will store the acceleration values.
-
      * @return true/false on success or failure 
-
      */
-
     virtual bool getRefAccelerations(double *accs) { 
-
         return getDoubleArray(VOCAB_REF_ACCELERATIONS, accs);
-
     }
 
-
-
     /** 
-
      * Stop motion, single joint
-
      * @param j joint number
-
      * @return true/false on success/failure
-
      */
-
     virtual bool stop(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_STOP);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
-
-
 
     /** 
-
      * Stop motion, multiple joints 
-
      * @return true/false on success/failure
-
      */
-
     virtual bool stop() { 
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_STOPS);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
-
     }
-
-
 
     /* IVelocityControl */
-
-
-
     /** 
-
      * Set new reference speed for a single axis.
-
      * @param j joint number
-
      * @param v specifies the new ref speed
-
      * @return true/false on success/failure
-
      */
-
     virtual bool velocityMove(int j, double v) {
-
         return setDouble(VOCAB_VELOCITY_MOVE, j, v);
-
     }
 
-
-
     /**
-
      * Set a new reference speed for all axes.
-
      * @param v is a vector of double representing the requested speed.
-
      * @return true/false on success/failure.
-
      */
-
     virtual bool velocityMove(const double *v) {
-
         CommandMessage& c = command_buffer.get();
-
 		c.head.clear();
-
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
-
         c.body.size(nj);
-
         ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
-
         command_buffer.write();
-
         return true;
-
     }
-
-
 
     /**
-
      * Set the controller to velocity mode.
-
      * @return true/false on success/failure.
-
      */
-
     virtual bool setVelocityMode() {
-
         return setCommand(VOCAB_VELOCITY_MODE);
-
     }
-
-
 
     /* IAmplifierControl */
 
-
-
     /** 
-
      * Enable the amplifier on a specific joint. Be careful, check that the output
-
      * of the controller is appropriate (usually zero), to avoid 
-
      * generating abrupt movements.
-
      * @return true/false on success/failure
-
      */
-
     virtual bool enableAmp(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_AMP_ENABLE);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
-
         return CHECK_FAIL(ok, response);
 
     }
 
-
-
 	virtual bool setOffset(int j, double v)
-
 	{
-
 		Bottle cmd, response;
-
 		cmd.addVocab(VOCAB_SET);
-
 		cmd.addVocab(VOCAB_OFFSET);
-
 		cmd.addInt(j);
-
 		cmd.addDouble(v);
 
-
-
 		bool ok = rpc_p.write(cmd, response);
-
 		return CHECK_FAIL(ok, response);
-
 	}
 
-
-
     /** 
-
      * Disable the amplifier on a specific joint. All computations within the board
-
      * will be carried out normally, but the output will be disabled.
-
      * @return true/false on success/failure
-
      */
 
     virtual bool disableAmp(int j) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_AMP_DISABLE);
-
         cmd.addInt(j);
 
         bool ok = rpc_p.write(cmd, response);
 
         return CHECK_FAIL(ok, response);
-
     }
-
-
 
     /**
-
      * Read the electric current going to all motors.
-
      * @param vals pointer to storage for the output values
-
      * @return hopefully true, false in bad luck.
-
      */
-
     virtual bool getCurrents(double *vals) {
-
         return getDoubleArray(VOCAB_AMP_CURRENTS, vals);
-
     }
-
-
 
     /** 
-
      * Read the electric current going to a given motor.
-
      * @param j motor number
-
      * @param val pointer to storage for the output value
-
      * @return probably true, might return false in bad time
-
      */
-
     virtual bool getCurrent(int j, double *val) {
-
         return getDouble(VOCAB_AMP_CURRENT, j, val);
-
     }
 
-
-
     /**
-
      * Set the maximum electric current going to a given motor. The behavior 
-
      * of the board/amplifier when this limit is reached depends on the
-
      * implementation.
-
      * @param j motor number
-
      * @param v the new value
-
      * @return probably true, might return false in bad time
-
      */
-
     virtual bool setMaxCurrent(int j, double v) {
-
         return setDouble(VOCAB_AMP_MAXCURRENT, j, v);
-
     }
 
-
-
     /**
-
      * Get the status of the amplifiers, coded in a 32 bits integer for
-
      * each amplifier (at the moment contains only the fault, it will be 
-
      * expanded in the future).
-
      * @param st pointer to storage
-
      * @return true in good luck, false otherwise.
-
      */
-
     virtual bool getAmpStatus(int *st) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_AMP_STATUS);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             *st = response.get(2).asInt();
-
             return true;
-
         }
 
         return false;        
-
     }
-
-
 
     /* IControlLimits */
 
-
-
     /**
-
      * Set the software limits for a particular axis, the behavior of the
-
      * control card when these limits are exceeded, depends on the implementation.
-
      * @param axis joint number
-
      * @param min the value of the lower limit
-
      * @param max the value of the upper limit
-
      * @return true or false on success or failure
-
      */
-
     virtual bool setLimits(int axis, double min, double max) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_SET);
-
         cmd.addVocab(VOCAB_LIMITS);
-
         cmd.addInt(axis);
-
         cmd.addDouble(min);
-
         cmd.addDouble(max);
 
         bool ok = rpc_p.write(cmd, response);
 
         return CHECK_FAIL(ok, response);
-
     }
 
-    
-
     /**
-
      * Get the software limits for a particular axis.
-
      * @param axis joint number
-
      * @param min pointer to store the value of the lower limit
-
      * @param max pointer to store the value of the upper limit
-
      * @return true if everything goes fine, false if something bad happens
-
      */
-
     virtual bool getLimits(int axis, double *min, double *max) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_LIMITS);
-
         cmd.addInt(axis);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             *min = response.get(2).asDouble();
-
             *max = response.get(3).asDouble();
-
             return true;
-
         }
-
         return false;
-
     }
-
-
-
-
-
-
 
     /* IAxisInfo */
-
-    
-
     virtual bool getAxisName(int j, yarp::os::ConstString& name) {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_GET);
-
         cmd.addVocab(VOCAB_INFO_NAME);
-
         cmd.addInt(j);
-
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             name = response.get(2).asString();
-
             return true;
-
         }
-
         return false;
-
     }
-
-
 
     /* IControlCalibration */
-
     bool virtual calibrate()
-
     {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_CALIBRATE);
-
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             return true;
-
         }
 
         return false;
-
     }
-
-
 
     bool virtual abortCalibration()
-
     {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_ABORTCALIB);
-
         bool ok=rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             return true;
-
         }
-
         return false;    
-
     }
-
-
 
     bool virtual abortPark()
-
     {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_ABORTPARK);
-
         bool ok=rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
 
             return true;
-
         }
 
         return false;    
-
     }
 
-
-
     bool virtual park(bool wait=true)
-
     {
-
         Bottle cmd, response;
-
         cmd.addVocab(VOCAB_PARK);
-
         cmd.addInt(wait);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             return true;
-
         }
 
         return false;
-
     }
 
-
-
     bool virtual calibrate2(int j, unsigned int ui, double v1, double v2, double v3)
-
     {
-
         Bottle cmd, response;
 
         cmd.addVocab(VOCAB_CALIBRATE_JOINT);
-
         cmd.addInt(j);
-
         cmd.addInt(ui);
-
         cmd.addDouble(v1);
-
         cmd.addDouble(v2);
-
         cmd.addDouble(v3);
 
         bool ok = rpc_p.write(cmd, response);
 
         if (CHECK_FAIL(ok, response)) {
-
             return true;
-
         }
-
         return false;
-
     }
 
-
-
     bool virtual done(int j)
-
     {
-
         Bottle cmd, response;
 
         cmd.addVocab(VOCAB_CALIBRATE_DONE);
-
         cmd.addInt(j);
 
         bool ok = rpc_p.write(cmd, response);
-
         if (CHECK_FAIL(ok, response)) {
-
             return true;
-
         }
 
         return false;
-
     }
-
-
-
 };
 // implementation of CommandsHelper
-
 
 yarp::dev::DriverCreator *createRemoteControlBoard() {
     return new DriverCreatorOf<RemoteControlBoard>("remote_controlboard", 
