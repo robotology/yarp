@@ -14,6 +14,7 @@
 #include <yarp/os/Property.h> 
 #include <yarp/os/Network.h> 
 
+#include "YarpImage2Pixbuf.h"
 
 // Image Receiver
 extern YARPImgRecv *ptr_imgRecv;
@@ -43,22 +44,22 @@ static gint timeout_CB (gpointer data)
 {
 	if ( (!_freezed) && getImage() )
         {
-            int imageWidth, imageHeight, pixbufWidth, pixbufHeight;
-            _semaphore.wait();
-            imageWidth = _inputImg.width();
-            imageHeight = _inputImg.height();
-            _semaphore.post();
-            pixbufWidth = gdk_pixbuf_get_width(frame);
-            pixbufHeight = gdk_pixbuf_get_height(frame);
-            if ( (imageWidth != pixbufWidth) || (imageHeight != pixbufHeight) )
-                {
-                    g_object_unref(frame);
-                    frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
-                }
-            _frameN++;	
+            //             int imageWidth, imageHeight, pixbufWidth, pixbufHeight;
+            //             _semaphore.wait();
+            //            imageWidth = _inputImg.width();
+            //            imageHeight = _inputImg.height();
+            //            _semaphore.post();
+            //            pixbufWidth = gdk_pixbuf_get_width(frame);
+            //            pixbufHeight = gdk_pixbuf_get_height(frame);
+            //            if ( (imageWidth != pixbufWidth) || (imageHeight != pixbufHeight) )
+            //                            {
+            //                    g_object_unref(frame);
+            //                    frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
+            //            }
+            //            _frameN++;	
             gtk_widget_queue_draw (da);
-            if (_savingSet)
-                saveCurrentFrame();
+            //            if (_savingSet)
+            //                saveCurrentFrame();
         }
 
 	return TRUE;
@@ -88,7 +89,7 @@ static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
             unsigned int imageWidth, imageHeight, areaWidth, areaHeight;
 
             _semaphore.wait();
-            yarpImage2pixbuf(&_inputImg, frame);
+            yarpImage2Pixbuf(&_inputImg, frame);
             imageWidth = _inputImg.width();
             imageHeight = _inputImg.height();
             _semaphore.post();
@@ -99,6 +100,15 @@ static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
  
             areaWidth = event->area.width;
             areaHeight = event->area.height;
+
+            unsigned int pixbufWidth=gdk_pixbuf_get_width(frame);
+            unsigned int pixbufHeight=gdk_pixbuf_get_height(frame);
+
+            if ((imageWidth!=pixbufWidth) || (imageHeight!=pixbufHeight))
+                {
+                    g_object_unref(frame);
+                    frame=gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
+                }
 
             if ( (areaWidth != imageWidth) || (areaHeight != imageHeight) )
                 {
@@ -591,7 +601,7 @@ GtkWidget* createMainWindow(void)
 	gtk_widget_size_request(menubar, &actualSize);
 	// Drawing Area : here the image will be drawed
 	da = gtk_drawing_area_new ();
-	g_signal_connect (da, "expose_event", G_CALLBACK (expose_CB), NULL);
+    g_signal_connect (da, "expose_event", G_CALLBACK (expose_CB), NULL);
 	if (_options.outputEnabled == 1)
         {
             g_signal_connect (da, "button_press_event", G_CALLBACK (clickDA_CB), NULL);
@@ -606,10 +616,10 @@ GtkWidget* createMainWindow(void)
 	gtk_widget_size_request(statusbar, &actualSize);
 	_occupiedHeight += 2*(actualSize.height);
 
-	frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, _options.windWidth, _options.windHeight);
+    frame = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, _options.windWidth, _options.windHeight);
 	// TimeOut used to refresh the screen
-	timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
-	
+    timeout_ID = gtk_timeout_add (_options.refreshTime, timeout_CB, NULL);
+
 	return window;
 }
 
@@ -637,47 +647,6 @@ bool getImage()
 	return ret;
 }
 
-
-bool yarpImage2pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg, 
-                      GdkPixbuf* destPixbuf)
-{
-	// il pixbuf deve essere già allocato e di dimensioni opportune
-	guchar *dst_data;
-	char *src_data;
-	unsigned int rowstride;
-	guchar *p_dst;
-	char *p_src;
-	unsigned int width, height;
-	unsigned int n_channels;
-	yarp::sig::PixelRgb srcPixel;
-	unsigned int dst_size_in_memory;
-	unsigned int src_line_size;
-
-	dst_data = gdk_pixbuf_get_pixels(destPixbuf);
-	width = sourceImg->width();
-	height = sourceImg->height();
-	rowstride = gdk_pixbuf_get_rowstride (destPixbuf);
-	n_channels = gdk_pixbuf_get_n_channels (destPixbuf);
-	dst_size_in_memory = rowstride * height;
-	src_line_size = sourceImg->getRowSize(); //GetAllocatedLineSize();
-	src_data = (char *) sourceImg->getRawImage(); //GetRawBuffer();
-
-	if ( src_line_size == rowstride)
-        {
-            ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
-        }
-	else
-        {
-            for (int i=0; i < (int)height; i++)
-                {
-                    p_dst = dst_data + i * rowstride;
-                    p_src = src_data + i * src_line_size;
-                    ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
-                }
-        }
-
-	return true;
-}
 
 
 void setOptions(yarp::os::Searchable& options) {
@@ -951,7 +920,9 @@ int myMain(int argc, char* argv[])
 	// All GTK applications must have a gtk_main(). Control ends here
 	// and waits for an event to occur (like a key press or
 	// mouse event).
+
 	gtk_main ();
+
     yarp::os::Network::fini();
 
     return 0;
