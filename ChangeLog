@@ -1,3 +1,9 @@
+2008-12-30 Lorenzo Natale <nat@liralab.it>
+	* src/yarpview:
+	started reorganization and update of yarpview, at the moment
+	the new version is compiled only if an appropriate flag is 
+	selected in cmake.
+	
 2008-12-11 Lorenzo Natale <nat@liralab.it>
 	* src/libYARP_OS/src/Terminator.cpp
 	* src/libYARP_OS/include/yarp/os/Terminator.h

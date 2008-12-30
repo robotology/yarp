@@ -43,6 +43,24 @@ yarp::os::Bottle _outBottle;
 
 pgmOptions _options;
 
+GtkWidget *saveSingleDialog;
+GtkWidget *saveSetDialog;
+GtkWidget *menubar;
+GtkWidget *fileMenu, *imageMenu, *helpMenu;
+GtkWidget *fileItem, *imageItem, *helpItem;
+GtkWidget *fileSingleItem, *fileSetItem, *fileQuitItem;
+GtkWidget *imageSizeItem, *imageRatioItem, *imageFreezeItem, *imageFramerateItem, *imageIntervalItem;
+GtkWidget *helpAboutItem;
+// StatusBar
+GtkWidget *statusbar;
+GtkWidget *fpsStatusBar;
+GtkWidget *fpsStatusBar2;
+
+guint timeout_ID;
+guint timeout_update_ID;
+
+// static ViewerWidgets _widgets;
+ViewerResources _resources;
 
 static void createObjects() {
     ptr_inputPort = new BufferedPort<yarp::sig::FlexImage>;
@@ -86,7 +104,7 @@ gboolean forceDraw(gpointer data)
     return FALSE; //removed from the queue if returning false
 }
 
-static gint timeout_update_CB(gpointer data)
+gint timeout_update_CB(gpointer data)
 {
     double av, max, min;
     portFpsData.getStats(av, min, max);
@@ -115,7 +133,7 @@ static gint timeout_update_CB(gpointer data)
     return TRUE;
 }
 
-static gint timeout_CB (gpointer data)
+gint timeout_CB (gpointer data)
 {
    	//_resources.invalidateDrawArea();
 
@@ -123,7 +141,7 @@ static gint timeout_CB (gpointer data)
 }
 
 
-static gboolean delete_event( GtkWidget *widget, GdkEvent *event, gpointer data )
+gboolean delete_event( GtkWidget *widget, GdkEvent *event, gpointer data )
 {
 	// If you return FALSE in the "delete_event" signal handler,
     // GTK will emit the "destroy" signal. Returning TRUE means
@@ -137,7 +155,7 @@ static gboolean delete_event( GtkWidget *widget, GdkEvent *event, gpointer data 
 
 }
 
-static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
+gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
  	if ((_resources.frame) && (mainWindow))
         {
@@ -147,14 +165,14 @@ static gint expose_CB (GtkWidget *widget, GdkEventExpose *event, gpointer data)
 	return TRUE;
 }
 
-static gint menuFileQuit_CB(GtkWidget *widget, gpointer data)
+gint menuFileQuit_CB(GtkWidget *widget, gpointer data)
 {
 	cleanExit();
  
 	return TRUE;
 }
 
-static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
+gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 {
 #if GTK_CHECK_VERSION(2,6,0)
 	const gchar *authors[] = 
@@ -198,7 +216,7 @@ static gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 }
 
 
-static gint menuImageSize_CB(GtkWidget *widget, gpointer data)
+gint menuImageSize_CB(GtkWidget *widget, gpointer data)
 {
 	int targetWidth, targetHeight;
     targetWidth = _resources.width();
@@ -209,7 +227,7 @@ static gint menuImageSize_CB(GtkWidget *widget, gpointer data)
 	return TRUE;
 }
 
-static gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
+gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
 {
 	double ratio;
 	int imgWidth, imgHeight;
@@ -231,7 +249,7 @@ static gint menuImageRatio_CB(GtkWidget *widget, gpointer data)
 	return TRUE;
 }
 
-static gint menuImageInterval_CB(GtkWidget *widget, gpointer data)
+gint menuImageInterval_CB(GtkWidget *widget, gpointer data)
 {
 	GtkWidget *dialog;
 	double interval;
@@ -254,7 +272,7 @@ static gint menuImageInterval_CB(GtkWidget *widget, gpointer data)
 	return TRUE;
 }
 
-static gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
         {
@@ -270,7 +288,7 @@ static gint menuFileSingle_CB(GtkWidget *widget, GdkEventExpose *event, gpointer
 	return TRUE;
 }
 
-static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 #if GTK_CHECK_VERSION(2,6,0)
 
@@ -290,7 +308,7 @@ static gint menuFileSet_CB(GtkWidget *widget, GdkEventExpose *event, gpointer da
 	return TRUE;
 }
 
-static gint menuImageFreeze_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+gint menuImageFreeze_CB(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
         {
@@ -303,42 +321,42 @@ static gint menuImageFreeze_CB(GtkWidget *widget, GdkEventExpose *event, gpointe
 	return TRUE;
 }
 
-static gint saveSingleDelete_CB (GtkWidget *widget, gpointer data)
+gint saveSingleDelete_CB (GtkWidget *widget, gpointer data)
 {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSingleItem), FALSE);
 
 	return (TRUE);
 }
 
-static gint saveSetDelete_CB (GtkWidget *widget, gpointer data)
+gint saveSetDelete_CB (GtkWidget *widget, gpointer data)
 {
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(fileSetItem), FALSE);
 
 	return (TRUE);
 }
 
-static gint saveSingleClicked_CB(GtkWidget *widget, gpointer data)
+gint saveSingleClicked_CB(GtkWidget *widget, gpointer data)
 {
 	saveCurrentFrame();
 	
 	return (TRUE);
 }
 
-static gint saveSetStartClicked_CB(GtkWidget *widget, gpointer data)
+gint saveSetStartClicked_CB(GtkWidget *widget, gpointer data)
 {
 	_savingSet = true;
 		
 	return (TRUE);
 }
 
-static gint saveSetStopClicked_CB(GtkWidget *widget, gpointer data)
+gint saveSetStopClicked_CB(GtkWidget *widget, gpointer data)
 {
 	_savingSet = false;
 		
 	return (TRUE);
 }
 
-static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
+gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 {
 	GtkWidget *dialog;
 	GtkWidget *hbox;
@@ -389,7 +407,7 @@ static gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
 	return (TRUE);
 }
 
-static gint clickDA_CB (GtkWidget *widget, GdkEventButton *event, gpointer data)
+gint clickDA_CB (GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
 	int imageX, imageY;
 	int clickX, clickY;
@@ -806,7 +824,6 @@ bool openPorts()
 
 void closePorts()
 {
-	bool ret = false;
     ptr_inputPort->close();
 
 	if (_options.outputEnabled == 1)

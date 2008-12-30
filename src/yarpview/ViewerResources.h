@@ -167,7 +167,6 @@ public:
         return ret;
     }
 
-
     GdkPixbuf *frame;
     GtkWidget *drawArea;
     FpsStats  *fpsData;
@@ -179,4 +178,4 @@ public:
  };
 
 
-#endif __VIEWERRESOURCES__
+#endif
