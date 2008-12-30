@@ -18,7 +18,11 @@ SUBDIRS(yarpdev)
 
 IF (CREATE_GUIS)
   IF (GtkPlus_FOUND)
+	IF (COMPILE_NEW_YARPVIEW)
+		SUBDIRS(YARPVIEW)
+	ELSE(COMPILE_NEW_YARPVIEW)
       SUBDIRS(yarp-imageviewer)
+	ENDIF(COMPILE_NEW_YARPVIEW)
   ENDIF (GtkPlus_FOUND)
 # GtkMM GUIs have been moved to the iCub repository
 #  IF (GtkMM_FOUND)
