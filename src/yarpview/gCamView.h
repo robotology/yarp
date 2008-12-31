@@ -19,13 +19,9 @@
 // YARP Includes - Class Specific
 //=============================================================================
 #include <yarp/sig/Image.h>
-//#include <yarp/YARPImageFile.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/BufferedPort.h>
-//#include <yarp/YARPParseParameters.h>
-//#include <yarp/YARPConfigFile.h>
-//#include <yarp/YARPBottleContent.h>
 //=============================================================================
 // GTK Includes 
 //=============================================================================
@@ -65,6 +61,10 @@ gint saveSetDelete_CB(GtkWidget *widget, gpointer data);
 gint saveSingleClicked_CB(GtkWidget *widget, gpointer data);
 gint saveSetStartClicked_CB(GtkWidget *widget, gpointer data);
 gint saveSetStopClicked_CB(GtkWidget *widget, gpointer data);
+
+void setTimedMode(guint dT);
+
+void setSynchroMode();
 
 //-------------------------------------------------
 // Non Modal Dialogs

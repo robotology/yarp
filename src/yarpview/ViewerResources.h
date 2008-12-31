@@ -17,7 +17,19 @@ public:
         frame=0;
         drawArea=0;
         fpsData=0;
+        scaledFrame=0;
         freezed=false;
+        windowH=0;
+        windowW=0;
+    }
+
+    ~ViewerResources()
+    {
+        if (frame)
+            g_object_unref(frame);
+
+        if (scaledFrame)
+            g_object_unref(scaledFrame);
     }
 
     bool attach(FpsStats *d)
@@ -50,107 +62,96 @@ public:
             gtk_widget_queue_draw (drawArea);
     }
 
-   void draw(bool force=false)
-    {
-        if ( (!force) && freezed)
-            return;
-
-       if (fpsData!=0)
-            fpsData->update(yarp::os::Time::now());
-
-       draw(drawArea, 0, 0, drawArea->allocation.width, drawArea->allocation.height);
-    }
-
-    void draw(GtkWidget *widget,
-              unsigned int areaX, unsigned int areaY, unsigned int areaW, unsigned int areaH)
-    {
-        unsigned int pixbufWidth=gdk_pixbuf_get_width(frame);
-        unsigned int pixbufHeight=gdk_pixbuf_get_height(frame);
-
-        lock();
-
-        unsigned int imageWidth = yimage.width();
-        unsigned int imageHeight = yimage.height();
-        
-        if (imageWidth==0)
-        {
-            unlock();
-            return; //nothing to draw
-        }
-        if (imageHeight==0)
-        {
-            unlock(); 
-            return; //nothing to draw
-        } 
-        
-        if ((imageWidth!=pixbufWidth) || (imageHeight!=pixbufHeight))
-                {
-                    g_object_unref(frame);
-                    frame=gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, imageWidth, imageHeight);
-                }
-
-        yarpImage2Pixbuf(&yimage, frame);
-        unlock();
-
-        if ( (areaW==pixbufWidth) && (areaH==pixbufHeight))
-          _draw(frame, widget, areaX, areaY, areaW, areaH);
-        else
-          _scaleAndDraw(frame, widget, areaX, areaY, areaW, areaH);
-    }
-
-    void _scaleAndDraw(GdkPixbuf *frame, GtkWidget *widget,
-                      unsigned int areaX, unsigned int areaY, unsigned int areaW, unsigned int areaH)
+    void draw(GtkWidget *widget, 
+        unsigned int areaX,
+        unsigned int areaY,
+        unsigned int areaW,
+        unsigned int areaH,
+        bool force=false
+        )
     {
         guchar *pixels;
         unsigned int rowstride;
-        GdkPixbuf *scaledFrame;
+
+        lock();
+        if ( (!force) && freezed)
+        {
+            unlock();
+            return;
+        }
+
+        unsigned int imageH=yimage.height();
+        unsigned int imageW=yimage.width();
+
+        if ((imageH==0) || (imageW==0))
+        {
+            //nothing to draw
+            unlock();
+            return;
+        }
+
+        if (fpsData!=0)
+            fpsData->update(yarp::os::Time::now());
+
+        if (!frame)
+            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageH, imageW);
+
+        //first rescale frame depending on image size
+        unsigned int frameH=gdk_pixbuf_get_height(frame);
+        unsigned int frameW=gdk_pixbuf_get_width(frame);
+
+        if ( (frameH!=imageH) || (frameW!=imageW) || !frame)
+        {
+            if (frame)
+                g_object_unref(frame);
+
+            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageH, imageW);
+        }
+
+        //copy to frame
+        yarpImage2Pixbuf(&yimage, frame);
+
+        if (scaledFrame)
+            g_object_unref(scaledFrame);
+
         scaledFrame = gdk_pixbuf_scale_simple(frame,
-                                              areaW,
-                                              areaH,
-                                              GDK_INTERP_BILINEAR); // Best quality
-                    //GDK_INTERP_NEAREST); // Best speed
+            windowW,
+            windowH,
+            GDK_INTERP_BILINEAR); // Best quality
 
-                    pixels = gdk_pixbuf_get_pixels (scaledFrame);
-                    rowstride = gdk_pixbuf_get_rowstride(scaledFrame);
-                    gdk_draw_rgb_image (widget->window,
-                                        widget->style->black_gc,
-                                        areaX, areaY,
-                                        areaW, areaH,
-                                        GDK_RGB_DITHER_NORMAL,
-                                        pixels,
-                                        rowstride);
-                    g_object_unref(scaledFrame);
-    }
-			
-    void _draw(GdkPixbuf *frame,
-              GtkWidget *widget,
-              unsigned int areaX, unsigned int areaY, unsigned int areaW, unsigned int areaH)
-    {
-            guchar *pixels;
-            unsigned int rowstride;
-
-            pixels = gdk_pixbuf_get_pixels (frame);
-            rowstride = gdk_pixbuf_get_rowstride(frame);
-            gdk_draw_rgb_image (widget->window,
-                                  widget->style->black_gc,
-                                  areaX, areaY,
-                                  areaW, areaH,
-                                  GDK_RGB_DITHER_NORMAL,
-                                  pixels,
-                                  rowstride);
+        pixels = gdk_pixbuf_get_pixels (scaledFrame);
+        rowstride = gdk_pixbuf_get_rowstride(scaledFrame);
+        gdk_draw_rgb_image (widget->window,
+            widget->style->black_gc,
+            areaX, areaY,
+            windowW, windowH,
+            GDK_RGB_DITHER_NORMAL,
+            pixels,
+            rowstride);
+        unlock();
     }
 
     void pushImage(yarp::sig::FlexImage &n)
     {
         if (freezed)
             return;
-        
+
         lock();
         yimage.copy(n);
         unlock();
     }
 
-    unsigned int height()
+    void configure(GtkWidget *widget,
+        unsigned int width,
+        unsigned int height)
+    {
+        lock();
+        windowW=width;
+        windowH=height;
+        unlock();
+    }
+
+    unsigned int imageHeight()
     {
         lock();
         unsigned int ret=yimage.height();
@@ -159,7 +160,7 @@ public:
         return ret;
     }
 
-    unsigned int width()
+    unsigned int imageWidth()
     {
         lock();
         unsigned int ret=yimage.width();
@@ -167,15 +168,22 @@ public:
         return ret;
     }
 
-    GdkPixbuf *frame;
     GtkWidget *drawArea;
+
+private:
+    GdkPixbuf *frame;
+    GdkPixbuf *scaledFrame;
+ 
     FpsStats  *fpsData;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> yimage;
 
     bool freezed;
 
+    unsigned int windowW;
+    unsigned int windowH;
+
     yarp::os::Semaphore mutex;
- };
+};
 
 
 #endif

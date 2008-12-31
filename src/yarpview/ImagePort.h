@@ -23,6 +23,8 @@ public:
     bool attach(ViewerResources *v);
     bool attach(FpsStats *v);
 
+    void mustDraw(bool f);
+
     virtual void onRead(yarp::sig::FlexImage &img);
  
     void resetStats();
@@ -37,6 +39,7 @@ private:
     double maxDT;
     double minDT;
     double accDT;
+    bool mustDrawF;
 };
 
 #endif

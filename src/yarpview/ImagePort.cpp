@@ -24,6 +24,7 @@ InputCallback::InputCallback()
 {
     viewer=0;
     fpsData=0;
+    mustDrawF=false;
 }
 
 InputCallback::~InputCallback()
@@ -40,12 +41,13 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
     {
             viewer->pushImage(img);
 
-            g_idle_add(forceDraw, 0);
- //         viewer->draw(mainWindow);
- //         viewer->invalidateDrawArea();
-
-            // fprintf(stderr, ".");
-    }
+            if (mustDrawF)
+            {
+                gdk_threads_enter();
+                viewer->invalidateDrawArea();
+                gdk_threads_leave ();
+            }
+      }
 }
 
 bool InputCallback::attach(ViewerResources *v)
@@ -64,4 +66,9 @@ bool InputCallback::attach(FpsStats *v)
     fpsData=v;
     
     return true;
+}
+
+void InputCallback::mustDraw(bool f)
+{
+    mustDrawF=f;
 }
