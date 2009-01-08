@@ -41,10 +41,6 @@ FIND_LIBRARY(GTK_gobject_LIBRARY
   NAMES gobject-2.0
   PATHS $ENV{GTK_BASEPATH}/lib)
 
-FIND_LIBRARY(GTK_thread_lib
-	NAMES gthread-2.0
-	PATHS $ENV{GTK_BASEPATH}/lib)
-
 # GTK_INCLUDE_DIR   - Directories to include to use GTK
 # GTK_LINK_FLAGS    - Files to link against to use GTK
 # GTK_FOUND         - If false, don't try to use GTK
@@ -70,7 +66,6 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
 	  ${GTK_glib_LIBRARY}
 	  ${GTK_gdk-pixbuf_LIBRARY}
 	  ${GTK_gobject_LIBRARY}
-	  ${GTK_thread_lib})
 ENDIF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
 	AND GTK_glib_INCLUDE_PATH AND GTK_pango_INCLUDE_PATH
 	AND GTK_atk_INCLUDE_PATH AND GTK_glib-config_INCLUDE_PATH

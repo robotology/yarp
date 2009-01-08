@@ -108,6 +108,11 @@ IF (CREATE_GUIS)
   IF (NOT GtkPlus_FOUND)
 	MESSAGE(STATUS " gtk+ not found, won't compile dependent tools")
   ENDIF (NOT GtkPlus_FOUND)
+
+  FIND_PACKAGE(Gthread)
+  IF (NOT Gthread_FOUND)
+	MESSAGE(STATUS " gthread not found, won't compile dependent tools")
+  ENDIF(NOT Gthread_FOUND)
 # GtkMM dependencies moving to iCub
 #  FIND_PACKAGE(GtkMM)
 #  IF(NOT GtkMM_FOUND)
