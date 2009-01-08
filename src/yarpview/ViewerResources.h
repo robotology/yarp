@@ -94,7 +94,7 @@ public:
             fpsData->update(yarp::os::Time::now());
 
         if (!frame)
-            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageH, imageW);
+            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageW, imageH);
 
         //first rescale frame depending on image size
         unsigned int frameH=gdk_pixbuf_get_height(frame);
@@ -105,7 +105,7 @@ public:
             if (frame)
                 g_object_unref(frame);
 
-            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageH, imageW);
+            frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageW, imageH);
         }
 
         //copy to frame
@@ -138,6 +138,7 @@ public:
 
         lock();
         yimage.copy(n);
+        //fprintf(stderr, "%d %d\n", yimage.height(), yimage.width());
         unlock();
     }
 

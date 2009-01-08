@@ -252,7 +252,7 @@ gint menuImageSize_CB(GtkWidget *widget, gpointer data)
         unsigned int daW=_resources.drawArea->allocation.width;
 
         //trick: we compute the new size of the window by difference
-        
+
         unsigned int newHeight=(windowH-daH)+targetHeight;
         unsigned int newWidth=(windowW-daW)+targetWidth;
         gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);
