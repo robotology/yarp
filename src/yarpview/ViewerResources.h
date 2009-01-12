@@ -169,6 +169,14 @@ public:
         return ret;
     }
 
+    bool getLastImage(yarp::sig::ImageOf<yarp::sig::PixelRgb> &i)
+    {
+        lock();
+        i=yimage;
+        unlock();
+        return true;
+    }
+
     GtkWidget *drawArea;
 
 private:

@@ -10,6 +10,8 @@
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Time.h>
 
+#include <string>
+
 #include "ViewerResources.h"
 
 class FpsStats;

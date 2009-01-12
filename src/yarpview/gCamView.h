@@ -88,7 +88,7 @@ GtkWidget* createMainWindow(void);
 //-------------------------------------------------
 bool getImage();
 void parseOptFile(char *fileName);
-void parseParameters(int argc, char *argv[]);
+bool parseParameters(int argc, char *argv[]);
 void saveOptFile(char *fileName);
 void saveCurrentFrame();
 void setOptionsToDefault();
@@ -96,6 +96,8 @@ bool openPorts();
 void closePorts();
 bool setUp();
 void cleanExit();
+
+void printHelp();
 
 //-------------------------------------------------
 // Global Variables
@@ -117,11 +119,10 @@ struct mOptions
 	int				posY;
 	char			fileName[256];
 	int				saveOnExit;
-	int				logpolar;
-	int				fovea;
 	char			outPortName[256];
 	char			outNetworkName[256];
 	int				outputEnabled;
+    bool            synch;
 };
 typedef struct mOptions pgmOptions;
 

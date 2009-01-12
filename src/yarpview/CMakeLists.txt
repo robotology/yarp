@@ -16,7 +16,7 @@ IF (WIN32 AND NOT CYGWIN)
   YarpProgram(yarpview CONSOLE) #damn!
   INSTALL_TARGETS(/bin yarpview)
 ELSE (WIN32 AND NOT CYGWIN)
-  YarpProgram(yarpview CONSOLE)
+  YarpProgram(yarpview NO_CONSOLE)
   INSTALL_TARGETS(/bin yarpview)
 ENDIF (WIN32 AND NOT CYGWIN)
 

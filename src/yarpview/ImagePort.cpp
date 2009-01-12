@@ -20,6 +20,8 @@ using namespace yarp::os;
 
 #include "gCamView.h"
 
+#include <sstream>
+
 InputCallback::InputCallback()
 {
     viewer=0;
@@ -47,7 +49,7 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
                 viewer->invalidateDrawArea();
                 gdk_threads_leave ();
             }
-      }
+       }
 }
 
 bool InputCallback::attach(ViewerResources *v)

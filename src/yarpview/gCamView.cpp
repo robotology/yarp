@@ -2,6 +2,8 @@
 
 /*
  * Copyright (C) 2006 Matteo Brunettini
+ * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count 
+ * and synchronous display. 
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -20,12 +22,15 @@
 
 #include <yarp/os/BufferedPort.h>
 
+#include <string>
+#include <sstream>
+
 using namespace yarp::os;
 
 GtkWidget *mainWindow=0;
 
-BufferedPort<yarp::sig::FlexImage> *ptr_inputPort;
-InputCallback *ptr_portCallback;
+BufferedPort<yarp::sig::FlexImage> *ptr_inputPort=0;
+InputCallback *ptr_portCallback=0;
 
 FpsStats displayFpsData;
 FpsStats portFpsData;
@@ -35,11 +40,9 @@ int _frameN;
 // Save Set of Images mode
 bool _savingSet;
 // Output Point Port
-yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort;
+yarp::os::BufferedPort<yarp::os::Bottle> *_pOutPort=0;
 // Output Bottle Container
 yarp::os::Bottle _outBottle;
-
-bool synchroDisplay=false;
 
 pgmOptions _options;
 
@@ -69,11 +72,13 @@ static void createObjects() {
 }
 
 static void deleteObjects() {
-    delete ptr_inputPort;
-    delete ptr_portCallback;
+    if (ptr_inputPort!=0)
+        delete ptr_inputPort;
+    if (ptr_portCallback!=0)
+        delete ptr_portCallback;
 }
 
-void periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH)
+inline void periodToFreq(double avT, double mT, double MT, double &avH, double &mH, double &MH)
 {
 //    avH=1000*avT;
 //    mH=1000*mT;
@@ -201,7 +206,7 @@ gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 #if GTK_CHECK_VERSION(2,6,0)
 	const gchar *authors[] = 
         {
-            "EmmeBi",
+            "Yarp developers",
             NULL
         };
 	const gchar *license =
@@ -225,10 +230,10 @@ gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
 		"ONNECTION WITH THE SOFTWARE.\n";
 
 	gtk_show_about_dialog(GTK_WINDOW(mainWindow),
-                          "name", "gview",
-                          "version", "0.9",
+                          "name", "yarpview",
+                          "version", "1.1",
                           "license", license,
-                          "website", "http://www.liralab.it",
+                          "website", "http://sourceforge.net/projects/yarp0",
                           "comments", "Program to display images received on a port.",
                           "authors", authors,
                           NULL);
@@ -325,12 +330,12 @@ gint menuSynchroDisplay_CB(GtkWidget *widget, GdkEventExpose *event, gpointer da
 	if ( gtk_check_menu_item_get_active (GTK_CHECK_MENU_ITEM(widget)) ) 
         {
             setSynchroMode(); 
-            synchroDisplay=true;
+            _options.synch=true;
         } 
     else 
         {
             setTimedMode(_options.refreshTime);
-            synchroDisplay=false;
+            _options.synch=false;
         }
 	return TRUE;
 }
@@ -423,7 +428,7 @@ gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
         {
             _options.refreshTime = (int) gtk_spin_button_get_value (GTK_SPIN_BUTTON(spinner));
             
-            if (!synchroDisplay)
+            if (!_options.synch)
                 setTimedMode(_options.refreshTime);
 
             gchar *msg;
@@ -707,76 +712,49 @@ GtkWidget* createMainWindow(void)
 	return window;
 }
 
-//-------------------------------------------------
-// Service Fuctions
-//-------------------------------------------------
-void saveCurrentFrame()
-{
-	char fileName[256];
-	sprintf(fileName,"%03d.ppm",_frameN);
-//	_imgRecv.SaveLastImage(fileName);
-}
-
 void setOptions(yarp::os::Searchable& options) {
     // switch to subsections if available
-    yarp::os::Searchable *network = &options.findGroup("NETWORK");
-    yarp::os::Searchable *window = &options.findGroup("WINDOW");
-    yarp::os::Searchable *program = &options.findGroup("PROGRAM");
-
-    if (network->isNull()) { network = &options; }
-    if (window->isNull()) { window = &options; }
-    if (program->isNull()) { program = &options; }
-
     yarp::os::Value *val;
-    if (network->check("PortName",val)||network->check("name",val)) {
+    if (options.check("PortName",val)||options.check("name",val)) {
         ACE_OS::sprintf(_options.portName, val->asString().c_str());
     }
-    if (network->check("NetName",val)||network->check("n",val)) {
+    if (options.check("NetName",val)||options.check("n",val)) {
         ACE_OS::sprintf(_options.networkName, val->asString().c_str());
     }
-    if (network->check("OutPortName",val)||network->check("out",val)) {
+    if (options.check("OutPortName",val)||options.check("out",val)) {
         ACE_OS::sprintf(_options.outPortName, val->asString().c_str());
     }
-    if (network->check("OutNetName",val)||network->check("neto",val)) {
+    if (options.check("OutNetName",val)||options.check("neto",val)) {
         ACE_OS::sprintf(_options.outNetworkName, val->asString().c_str());
     }
-    if (network->check("RefreshTime",val)||network->check("p",val)) {
+    if (options.check("RefreshTime",val)||options.check("p",val)) {
         _options.refreshTime = val->asInt();
     }
-    if (window->check("PosX",val)||window->check("x",val)) {
+    if (options.check("PosX",val)||options.check("x",val)) {
         _options.posX = val->asInt();
     }
-    if (window->check("PosY",val)||window->check("y",val)) {
+    if (options.check("PosY",val)||options.check("y",val)) {
         _options.posY = val->asInt();
     }
-    if (window->check("Width",val)||window->check("w",val)) {
+    if (options.check("Width",val)||options.check("w",val)) {
         _options.windWidth = val->asInt();
     }
-    if (window->check("Height",val)||window->check("h",val)) {
+    if (options.check("Height",val)||options.check("h",val)) {
         _options.windHeight = val->asInt();
     }
-    if (program->check("OutputEnabled",val)) {
+    if (options.check("OutputEnabled",val)) {
         _options.outputEnabled = val->asInt();
     }
-    if (program->check("out",val)) {
+    if (options.check("out",val)) {
         _options.outputEnabled = true;
     }
-    if (program->check("SaveOptions",val)||program->check("saveoptions",val)) {
+    if (options.check("SaveOptions",val)||options.check("saveoptions",val)) {
         _options.outputEnabled = val->asInt();
     }
-    if (program->check("Logpolar",val)||program->check("l",val)) {
-        _options.logpolar = val->asInt();
+    if (options.check("synch"))
+    {
+        _options.synch=true;
     }
-    if (program->check("Fovea",val)||program->check("f",val)) {
-        _options.fovea = val->asInt();
-    }
-}
-
-void parseOptFile(char *fileName)
-{
-    yarp::os::Property options;
-    options.fromConfigFile(fileName);
-    setOptions(options);
 }
 
 void saveOptFile(char *fileName)
@@ -788,29 +766,32 @@ void saveOptFile(char *fileName)
             g_print("ERROR: Impossible to save to option file.\n");
             return;
         }
-    ACE_OS::fprintf(optFile,"[NETWORK]\n" );
     ACE_OS::fprintf(optFile,"PortName %s\n", _options.portName);
     ACE_OS::fprintf(optFile,"NetName %s\n", _options.networkName);
     ACE_OS::fprintf(optFile,"OutPortName %s\n", _options.outPortName);
     ACE_OS::fprintf(optFile,"OutNetName %s\n", _options.outNetworkName);
-    ACE_OS::fprintf(optFile,"[WINDOW]\n" );
     ACE_OS::fprintf(optFile,"RefreshTime %d\n", _options.refreshTime);
     ACE_OS::fprintf(optFile,"PosX %d\n", _options.posX);
     ACE_OS::fprintf(optFile,"PosY %d\n", _options.posY);
     ACE_OS::fprintf(optFile,"Width %d\n", _options.windWidth);
     ACE_OS::fprintf(optFile,"Height %d\n", _options.windHeight);
-    ACE_OS::fprintf(optFile,"[PROGRAM]\n" );
     ACE_OS::fprintf(optFile,"OutputEnables %d\n", _options.outputEnabled);
     ACE_OS::fprintf(optFile,"SaveOptions %d\n", _options.saveOnExit);
-    ACE_OS::fprintf(optFile,"Logpolar %d\n", _options.logpolar);
-    ACE_OS::fprintf(optFile,"Fovea %d\n", _options.fovea);
-	
+    ACE_OS::fprintf(optFile,"synch %d\n", _options.synch);
     ACE_OS::fclose(optFile);
 }
 
-void parseParameters(int argc, char* argv[])
+bool parseParameters(int argc, char* argv[])
 {
     yarp::os::Property options;
+    if (argc==2)
+    {
+        if (std::string(argv[1])==std::string("--help"))
+        {
+            printHelp();
+            return false;
+        }
+    }
     if (argc==2) {
         // user did not use flags, just gave a port name
         // might as well allow this
@@ -819,13 +800,14 @@ void parseParameters(int argc, char* argv[])
         options.fromCommand(argc,argv);
     }
     setOptions(options);
+    return true;
 }
 
 void setOptionsToDefault()
 {
 	// Options defaults
 	_options.refreshTime = 100;
-	ACE_OS::sprintf(_options.portName,"/yarpview/i:img");
+    ACE_OS::sprintf(_options.portName,"/yarpview/img:i");
 	ACE_OS::sprintf(_options.networkName, "default");
 	ACE_OS::sprintf(_options.outPortName,"/yarpview/o:point");
 	ACE_OS::sprintf(_options.outNetworkName, "default");
@@ -836,9 +818,6 @@ void setOptionsToDefault()
 	_options.posY = 100;
 	ACE_OS::sprintf(_options.fileName,"yarpview.conf");
 	_options.saveOnExit = 0;
-	_options.logpolar = 0;
-	_options.fovea = 0;
-
 }
 
 bool openPorts()
@@ -849,7 +828,8 @@ bool openPorts()
 
     if (!ret)
     {
-        fprintf(stderr, "Error: port failed to open, quitting\n");
+        g_print("Error: port failed to open, quitting.\n");
+        return false;
     }
 
 	if (_options.outputEnabled == 1)
@@ -873,6 +853,7 @@ bool openPorts()
 
 void closePorts()
 {
+
     ptr_inputPort->close();
 
 	if (_options.outputEnabled == 1)
@@ -907,7 +888,7 @@ void cleanExit()
 
 int myMain(int argc, char* argv[])
 {
-    yarp::os::Network::init();
+    yarp::os::Network yarp;
 
     //initialize threads in gtk, copied almost verbatim from
     // http://library.gnome.org/devel/gdk/unstable/gdk-Threads.htm
@@ -921,12 +902,12 @@ int myMain(int argc, char* argv[])
 	_savingSet = false;
 	timeout_ID = 0;
 	setOptionsToDefault();
-	// Parse option file parameters
-	parseOptFile(_options.fileName);
 	// Parse command line parameters
-	parseParameters(argc, argv);
+	if (!parseParameters(argc, argv))
+        goto exitRoutine;
 	
-    openPorts();
+    if (!openPorts())
+        goto exitRoutine;
 
   	// This is called in all GTK applications. Arguments are parsed
 	// from the command line and are returned to the application.
@@ -954,17 +935,20 @@ int myMain(int argc, char* argv[])
     ptr_portCallback->attach(&portFpsData);
     ptr_inputPort->useCallback(*ptr_portCallback);
 
-    if (synchroDisplay)
+    if (_options.synch)
     {
         setSynchroMode();
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(synchroDisplayItem), true);
     }
     else
     {
         setTimedMode(_options.refreshTime);
+        gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM(synchroDisplayItem), false);
     }
 
    	gtk_main ();
 
+exitRoutine:
     // leave critical section here. From example
     // http://library.gnome.org/devel/gdk/unstable/gdk-Threads.htm
     gdk_threads_leave ();
@@ -975,11 +959,10 @@ int myMain(int argc, char* argv[])
 
     deleteObjects();
 
-    yarp::os::Network::fini();
     return 0;
 }
 
-#ifdef NOWIN32
+#ifdef NO_WIN32
 #include <windows.h>
 // win32 non-console applications define WinMain as the
 // entry point for the linker
@@ -996,3 +979,39 @@ int main(int argc, char* argv[])
     return myMain(argc, argv);
 }
 #endif
+
+
+void printHelp()
+{
+    g_print("yarpview usage:\n");
+    g_print("--name: input port name (default: /yarpview/img:i)\n");
+    g_print("--x: x position of the window in the screen\n");
+    g_print("--y: y position of the window in the screen\n");
+    g_print("--w, --h: size of the window, weight and height\n");
+    g_print("--p: refresh time [ms]");
+    g_print("--synch: synchronous display, every image received by the input port is displayed\n");
+    g_print("--out: output port name (no default is given, if this option is not specified the port is not created)\n");
+    g_print("--neto: output network\n");
+    g_print("--neti: input network\n");
+}
+
+#include <yarp/sig/ImageFile.h>
+void saveCurrentFrame()
+{
+    static unsigned int count=0;
+    std::string tmp;
+    tmp="frame";
+    std::stringstream lStream;
+    lStream.fill('0');
+    lStream.width(3);
+    lStream << count;
+    tmp+=lStream.str();
+    tmp+=".ppm";
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> frame;
+
+    if (_resources.getLastImage(frame))
+    {
+        yarp::sig::file::write(frame, tmp.c_str());
+        count++;
+    }
+}
