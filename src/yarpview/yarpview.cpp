@@ -962,7 +962,7 @@ exitRoutine:
     return 0;
 }
 
-#ifdef WIN32
+#ifdef NO_WIN32
 #include <windows.h>
 // win32 non-console applications define WinMain as the
 // entry point for the linker
