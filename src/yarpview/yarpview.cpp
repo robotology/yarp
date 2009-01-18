@@ -11,7 +11,7 @@
 // gCamView.cpp : Defines the entry point for the application.
 //
 
-#include "gCamView.h"
+#include "yarpview.h"
 #include "FpsStats.h"
 
 #include <yarp/os/Property.h> 
@@ -962,7 +962,7 @@ exitRoutine:
     return 0;
 }
 
-#ifdef NO_WIN32
+#ifdef WIN32
 #include <windows.h>
 // win32 non-console applications define WinMain as the
 // entry point for the linker
