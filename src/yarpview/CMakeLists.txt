@@ -12,8 +12,7 @@ INCLUDE_DIRECTORIES(${GTHREAD_INCLUDE_DIR})
 SET(NEED_LIBS YARP_OS YARP_sig)
 
 IF (WIN32 AND NOT CYGWIN)
-  #YarpProgram(yarpview NO_CONSOLE) #damn!
-  YarpProgram(yarpview CONSOLE) #damn!
+  YarpProgram(yarpview NO_CONSOLE)
   INSTALL_TARGETS(/bin yarpview)
 ELSE (WIN32 AND NOT CYGWIN)
   YarpProgram(yarpview NO_CONSOLE)
