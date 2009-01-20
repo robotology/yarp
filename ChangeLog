@@ -1,3 +1,15 @@
+2009-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: when a message fails
+	to be written because the carrier has dropped, then break the
+	connection.  (Occasional messaging problems in unreliable
+	protocols like udp/mcast should not lead to a dropped carrier.
+	This is a fix for the "Port disconnect event problem" reported by
+	Marco Barbosa on robotcub-hackers mailing list.
+
+	* src/libYARP_OS/include/yarp/os/impl/Protocol.h: propagate
+	failure of communication to deactivation of carrier.
+
 2009-01-08 Lorenzo Natale <nat@liralab.it>
 	* conf/FindGthread.cmake
 	* conf/YarpReqLib.cmake

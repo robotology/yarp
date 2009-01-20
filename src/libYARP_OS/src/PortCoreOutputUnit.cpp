@@ -288,7 +288,12 @@ void PortCoreOutputUnit::sendHelper() {
             }
         }
         if (!done) {
-            op->write(buf);
+            if (op->isActive()) {
+                op->write(buf);
+            } 
+            if (!op->isActive()) {
+                done = true;
+            }
         }
     }
     if (done) {

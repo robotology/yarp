@@ -392,7 +392,7 @@ public:
 
     virtual bool isActive() {
         YARP_ASSERT(delegate!=NULL);
-        return delegate->isActive();
+        return delegate->isActive() && checkStreams();
     }
 
     virtual bool isTextMode() {
