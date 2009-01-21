@@ -21,6 +21,7 @@ class DataProcessor : public TypedReaderCallback<Bottle>, public PortReader {
         if (returnToSender!=NULL) {
             out.write(*returnToSender);
         }
+        return true;
     }
 };
 DataProcessor processor;

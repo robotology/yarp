@@ -8,7 +8,8 @@ class DataProcessor : public PortReader {
           Bottle b;
           b.read(connection);
           // process data in b
-          printf("Got %s\n", b.toString().c_str());                
+          printf("Got %s\n", b.toString().c_str());      
+          return true;
      }
 };
 DataProcessor processor;
