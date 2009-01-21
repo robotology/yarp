@@ -16,6 +16,7 @@ class DataProcessor : public PortReader {
         if (returnToSender!=NULL) {
             out.write(*returnToSender);
         }
+        return true;
     }
 };
 DataProcessor processor;
