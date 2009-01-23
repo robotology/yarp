@@ -896,6 +896,8 @@ int myMain(int argc, char* argv[])
     gdk_threads_init ();
     gdk_threads_enter ();
 
+    gtk_init (&argc, &argv);
+
     createObjects();
 
     _frameN = 0;
@@ -912,9 +914,7 @@ int myMain(int argc, char* argv[])
   	// This is called in all GTK applications. Arguments are parsed
 	// from the command line and are returned to the application.
 
-    gtk_init (&argc, &argv);
-
-	// create a new window
+    // create a new window
     mainWindow = createMainWindow();
 	
 	// Non Modal Dialogs
@@ -962,7 +962,7 @@ exitRoutine:
     return 0;
 }
 
-#ifdef WIN32
+#ifdef YARP_WIN32_NOCONSOLE
 #include <windows.h>
 // win32 non-console applications define WinMain as the
 // entry point for the linker

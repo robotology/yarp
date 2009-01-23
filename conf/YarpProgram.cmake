@@ -14,7 +14,12 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 IF (${no_console} STREQUAL NO_CONSOLE)
   #WIN32 in windows creates an application without
   #console, this flag is probably ignored in linux
-  ADD_EXECUTABLE(${name} WIN32 ${folder_source} ${folder_header}) 
+  IF (WIN32 AND NOT CYGWIN)
+      ADD_DEFINITIONS(-DYARP_WIN32_NOCONSOLE)
+	ADD_EXECUTABLE(${name} WIN32 ${folder_source} ${folder_header})
+  ELSE(WIN32 AND NOT CYGWIN)
+	ADD_EXECUTABLE(${name} ${folder_source} ${folder_header})
+  ENDIF(WIN32 AND NOT CYGWIN)
 ELSE (${no_console} STREQUAL NO_CONSOLE)
   ADD_EXECUTABLE(${name} ${folder_source} ${folder_header})
 ENDIF (${no_console} STREQUAL NO_CONSOLE)
