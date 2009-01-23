@@ -18,7 +18,7 @@
 
 using namespace yarp::os;
 
-#include "gCamView.h"
+#include "yarpview.h"
 
 #include <sstream>
 
