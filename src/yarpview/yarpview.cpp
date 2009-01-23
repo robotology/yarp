@@ -717,6 +717,7 @@ void setOptions(yarp::os::Searchable& options) {
     yarp::os::Value *val;
     if (options.check("PortName",val)||options.check("name",val)) {
         ACE_OS::sprintf(_options.portName, val->asString().c_str());
+        fprintf(stderr, "testing name:\n", val->asString().c_str());
     }
     if (options.check("NetName",val)||options.check("n",val)) {
         ACE_OS::sprintf(_options.networkName, val->asString().c_str());
@@ -896,7 +897,7 @@ int myMain(int argc, char* argv[])
     gdk_threads_init ();
     gdk_threads_enter ();
 
-    gtk_init (&argc, &argv);
+
 
     createObjects();
 
@@ -904,7 +905,9 @@ int myMain(int argc, char* argv[])
 	_savingSet = false;
 	timeout_ID = 0;
 	setOptionsToDefault();
-	// Parse command line parameters
+	// Parse command line parameters, do this before
+    // calling gtk_init(argc, argv) otherwise weird things 
+    // happens
 	if (!parseParameters(argc, argv))
         goto exitRoutine;
 	
@@ -913,6 +916,7 @@ int myMain(int argc, char* argv[])
 
   	// This is called in all GTK applications. Arguments are parsed
 	// from the command line and are returned to the application.
+    gtk_init (&argc, &argv);
 
     // create a new window
     mainWindow = createMainWindow();
