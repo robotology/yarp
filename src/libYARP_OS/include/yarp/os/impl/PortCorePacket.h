@@ -142,7 +142,9 @@ public:
             fprintf(stderr,"  number of active packets: %d\n", active.size());
             fprintf(stderr,"  number of inactive packets: %d\n", inactive.size());
             fprintf(stderr,"  active packets:\n");
-            for (unsigned int i=0; i<active.size(); i++) {
+
+            unsigned int i=0;
+            for (i=0; i<active.size(); i++) {
                 PortCorePacket *p = NULL;
                 active.get(p);
                 fprintf(stderr,"    %ld %ld %ld / %d\n", (long int)p,
@@ -151,7 +153,7 @@ public:
                         p->getCount());
             }
             fprintf(stderr,"  inactive packets:\n");
-            for (unsigned int i=0; i<inactive.size(); i++) {
+            for (i=0; i<inactive.size(); i++) {
                 PortCorePacket *p = NULL;
                 inactive.get(p);
                 fprintf(stderr,"    %ld %ld %ld / %d\n", (long int)p,
