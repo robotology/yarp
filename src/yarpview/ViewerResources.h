@@ -11,6 +11,27 @@
 
 class ViewerResources
 {
+private:
+    GdkPixbuf *frame;
+    GdkPixbuf *scaledFrame;
+ 
+    FpsStats  *fpsData;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> yimage;
+
+    bool freezed;
+
+    bool origSize;
+
+    unsigned int windowW;
+    unsigned int windowH;
+
+    yarp::os::Semaphore mutex;
+
+ public:
+
+    GtkWidget *drawArea;
+    GtkWidget *mainWindow;
+
 public:
     ViewerResources()
     {
@@ -62,14 +83,38 @@ public:
             gtk_widget_queue_draw (drawArea);
     }
 
+    void resizeWindow()
+        {
+            int targetWidth, targetHeight;
+            targetWidth = imageWidth();
+            targetHeight = imageHeight();
+            if (targetWidth!=0&&targetHeight!=0) {
+                unsigned int windowH=mainWindow->allocation.height;
+                unsigned int windowW=mainWindow->allocation.width;
+                unsigned int daH=drawArea->allocation.height;
+                unsigned int daW=drawArea->allocation.width;
+
+                //trick: we compute the new size of the window by difference
+                
+                unsigned int newHeight=(windowH-daH)+targetHeight;
+                unsigned int newWidth=(windowW-daW)+targetWidth;
+                gtk_window_resize(GTK_WINDOW(mainWindow), newWidth, newHeight);
+            }
+        }
+
     void draw(GtkWidget *widget, 
         unsigned int areaX,
         unsigned int areaY,
         unsigned int areaW,
         unsigned int areaH,
-        bool force=false
-        )
+        bool force=false)
     {
+
+        lock();
+        if (origSize)
+            resizeWindow();
+        unlock();
+
         guchar *pixels;
         unsigned int rowstride;
 
@@ -177,21 +222,17 @@ public:
         return true;
     }
 
-    GtkWidget *drawArea;
+    void lockSize()
+        {
+            origSize=true;
+        }
 
-private:
-    GdkPixbuf *frame;
-    GdkPixbuf *scaledFrame;
- 
-    FpsStats  *fpsData;
-    yarp::sig::ImageOf<yarp::sig::PixelRgb> yimage;
+    void unlockSize()
+        {
+            origSize=false;
+        }
 
-    bool freezed;
 
-    unsigned int windowW;
-    unsigned int windowH;
-
-    yarp::os::Semaphore mutex;
 };
 
 

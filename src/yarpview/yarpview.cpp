@@ -670,6 +670,7 @@ GtkWidget* createMainWindow(void)
 
 	// Drawing Area : we draw the image here
     _resources.drawArea = gtk_drawing_area_new ();
+    _resources.mainWindow=mainWindow;
     _resources.attach(&displayFpsData);
 
     g_signal_connect (GTK_OBJECT(_resources.drawArea),"configure_event",
