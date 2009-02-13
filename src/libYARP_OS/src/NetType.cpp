@@ -16,6 +16,7 @@ using namespace yarp::os::impl;
 String NetType::readLine(InputStream& is, int terminal, bool *success) {
     String buf("");
     bool done = false;
+    int esc = 0;
     if (success!=NULL) *success = true;
     while (!done) {
         //ACE_OS::printf("preget\n");
@@ -26,13 +27,28 @@ String NetType::readLine(InputStream& is, int terminal, bool *success) {
         }
         //ACE_OS::printf("got [%d]\n",v);
         char ch = (char)v;
+        if (v=='\\') {
+            esc++;
+        }
         if (v!=0&&v!='\r'&&v!='\n') {
-            buf += ch;
+            if (v!='\\'||esc>=2) {
+                while (esc) {
+                    buf += '\\';
+                    esc--;
+                }
+            }
+            if (v!='\\') {
+                buf += ch;
+            }
         }
         if (ch==terminal) {
-            done = true;
+            if (!esc) {
+                done = true;
+            } else {
+                esc = 0;
+            }
         }
-        if (ch<0) { 
+        if (v<0) { 
             //throw IOException("readLine failed");
             if (success!=NULL) *success = false;
             return "";

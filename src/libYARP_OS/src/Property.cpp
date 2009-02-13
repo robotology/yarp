@@ -358,7 +358,7 @@ public:
                 }
 
                 // expand any environment references
-                buf = expand(buf.c_str(),env).c_str();
+                buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf[0]=='[') {
                     int stop = buf.strstr("]");
@@ -500,7 +500,7 @@ public:
     }
 
     // expand any environment variables found
-    ConstString expand(const char *txt, Searchable& env) {
+    ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         String input = txt;
         if (input.strstr("$")<0) {
@@ -554,7 +554,10 @@ public:
                     //printf("VARIABLE %s\n", var.c_str());
                     String add = NameConfig::getEnv(var);
                     if (add=="") {
-                        add = env.find(var.c_str()).asString().c_str();
+                        add = env.find(var.c_str()).toString().c_str();
+                    }
+                    if (add=="") {
+                        add = env2.find(var.c_str()).toString().c_str();
                     }
                     if (add=="") {
                         if (var=="__YARP__") {
@@ -562,6 +565,7 @@ public:
                         }
                     }
                     output += add;
+                    var = "";
                     if (varHasParen && (ch=='}'||ch==')')) {
                         continue;
                         // don't need current char

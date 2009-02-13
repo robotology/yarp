@@ -134,6 +134,13 @@ public:
         Property p7;
     }
 
+    void checkLineBreak() {
+        report(0,"checking line break");
+        Property p;
+        p.fromConfig("x to\\\ny 20\n");
+        checkFalse(p.check("y"),"ran on ok");
+        checkEqual(p.findGroup("x").get(1).asString().c_str(),"toy","splice ok");
+    }
 
     virtual void checkCopy() {
         report(0,"checking copy");
@@ -183,6 +190,14 @@ targ $TARGET\n\
 ",env);
         checkEqual(p.find("targ").asString().c_str(),"Earth",
                    "environment addition");
+
+        p.fromConfig("\
+x 10\n\
+y 20\n\
+check $x $y\n\
+");
+        checkEqual(p.findGroup("check").get(1).asInt(),10,"local x is ok");
+        checkEqual(p.findGroup("check").get(2).asInt(),20,"local y is ok");
     }
 
 
@@ -342,6 +357,7 @@ targ $TARGET\n\
         checkIncludes();
         checkCommand();
         checkComment();
+        checkLineBreak();
     }
 };
 
