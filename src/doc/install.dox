@@ -129,10 +129,9 @@ details so you don't have to.
 @subsection intro_install_ace The general approach to installing ACE
 
 
-\li Download ACE here: http://deuce.doc.wustl.edu/Download.html
-\li For Windows, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.zip
-\li For all others, we suggest: http://deuce.doc.wustl.edu/ACE-5.5.tar.gz
-\li (and for Debian Linux, we suggest: "apt-get install libace-dev") 
+\li Download ACE here: http://download.dre.vanderbilt.edu/
+\li For Debian Linux, we suggest: "apt-get install libace-dev"
+\li For Windows and  other system we suggest the latest stable release (ACE-5.6.zip/ACE-5.6.tar.gz)
 
 Compile ACE using our summary instructions, below, or through the 
 official method given here: 

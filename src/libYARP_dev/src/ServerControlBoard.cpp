@@ -229,8 +229,7 @@ public:
      * and all parameters required by the wrapped device driver.
      */
     virtual bool open(Searchable& prop) {
-        bool newInterface = prop.check("single_port","if present, use new simplified port interface");
-		verb = (prop.check("verbose","if present, give detailed output"));
+ 	verb = (prop.check("verbose","if present, give detailed output"));
 		if (verb)
 			ACE_OS::printf("running with verbose output\n");
 
@@ -273,23 +272,9 @@ public:
 
 
 
-       if (newInterface) {
-
-            command_buffer.attach(rpc_p);
-
-            command_reader.attach(command_buffer);
-
-            state_buffer.attach(rpc_p);
-
-            rpc_p.open(rootName.c_str());
-
-        } else {
-
-            // attach readers.
-
-            //rpc_p.setReader(command_reader);
-
-            // changed so that streaming input accepted if offered
+        // attach readers.
+        //rpc_p.setReader(command_reader);
+        // changed so that streaming input accepted if offered
 
             command_buffer.attach(rpc_p);
 
@@ -315,8 +300,7 @@ public:
 
             state_p.open((rootName+"/state:o").c_str());
 
-        }
-
+ 
         if (poly.isValid()) {
 
             poly.view(pid);

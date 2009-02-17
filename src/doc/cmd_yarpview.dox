@@ -3,8 +3,6 @@
  * @page yarpview The YARP image viewer
 
 This is for viewing images transmitted in standard network format.
-Written by Matteo Brunettini.  See source code for documentation :-).
-Some very basic documentation follows.
 
 @section yarpview_base yarpview /PORTNAME
 This is the most common usage.  Starts up a viewer, listing with
@@ -18,7 +16,6 @@ yarp connect /grabber /PORTNAME
 \endverbatim
 
 This usage is a shorthand for "yarpview --name /PORTNAME".
-
 
 @section yarpview_click yarpview --name /PORTNAME --out /CLICK
 
@@ -40,5 +37,24 @@ Adding these options will place the viewer at the specified location.
 
 Adding these options will create the viewer with the specified size.
 
+@section yarpview_framerate Setting the framerate
+
+To set the framerate with which the viewer updates the image:
+
+\verbatim
+yarpview --p framerate
+\endverbatim
+
+Newer versions of yarpview: you can ask yarpview to display all images that are received on the port:
+\verbatim
+yarpview --synch
+\endverbatim
+
+In this way (if there is enough CPU time free) all images received from the port will be 
+displayed in the screen. This is useful if you do not want to lose frames.
+
+@section yarpview_help yarpview --help
+Print a simple help with all parameters and their usage. This is available only if yarpview
+has access to a console (it depends on the OS).
  */
 
