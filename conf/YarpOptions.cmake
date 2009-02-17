@@ -24,7 +24,7 @@ ENDIF (EXISTS ${STATLIB})
 
 
 SET(COMPILE_NEW_YARPVIEW FALSE CACHE BOOL "Do you want to compile the new yarpview?")
-MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
+#MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
 
 # compile device library by default - safe, since individual devices
 # are added on request
