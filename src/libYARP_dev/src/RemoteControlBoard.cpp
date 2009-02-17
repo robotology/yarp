@@ -100,12 +100,14 @@ public:
     inline bool getLast(yarp::sig::Vector &n)
     {
         mutex.wait();
-        if (valid)
+        int ret=valid;
+        if (ret)
             n=last;
         mutex.post();
 
-        return valid;
+        return ret;
     }
+
     inline int getIterations()
     {
         mutex.wait();
