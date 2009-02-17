@@ -1,4 +1,8 @@
-#include "YarpImage2Pixbuf.h"
+﻿#include "YarpImage2Pixbuf.h"
+
+// gdk seems to clash with ace (gdk is included in YarpImage2Pixbuf.h)
+// undefining this symbol solves the problem
+#undef pipe
 #include "ace/OS.h"
 
 bool yarpImage2Pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg, 
