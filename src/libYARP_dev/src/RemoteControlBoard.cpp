@@ -453,7 +453,8 @@ public:
             s1 += "/rpc:i";
             String s2 = local;
             s2 += "/rpc:o";
-            bool ok = Network::connect(s2.c_str(), s1.c_str());
+            bool ok = false;
+            ok=Network::connect(s2.c_str(), s1.c_str());
             if (!ok) {
                 printf("Problem connecting to %s, is the remote device available?\n", s1.c_str());
                 connectionProblem = true;
@@ -490,7 +491,6 @@ public:
         command_buffer.attach(command_p);
 
         bool ok = getCommand(VOCAB_AXES, nj);
-
         if (nj==0) {
             ok = false;
         }
@@ -884,10 +884,13 @@ public:
         // return false;
 
         // new code:
-        static Vector tmp(nj);
+        Vector tmp(nj);
         bool ret=state_p.getLast(tmp);
         if (ret)
             {
+                if (tmp.size() != nj)
+                    fprintf(stderr, "tmp.size: %d  nj %d\n", tmp.size(), nj);
+
                 ACE_ASSERT (tmp.size() == nj);
                 ACE_OS::memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
             }
