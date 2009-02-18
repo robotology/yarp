@@ -1,9 +1,6 @@
 ﻿#include "YarpImage2Pixbuf.h"
 
-// ace seems to clash with gdk (included in YarpImage2Pixbuf.h)
-// undefining "pipe" solve the problem
-#undef pipe 
-#include "ace/OS.h"
+#include <string.h>
 
 bool yarpImage2Pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg, 
                       GdkPixbuf* destPixbuf)
@@ -31,7 +28,7 @@ bool yarpImage2Pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
 
 	if ( src_line_size == rowstride)
         {
-            ACE_OS::memcpy(dst_data, src_data, dst_size_in_memory);
+            memcpy(dst_data, src_data, dst_size_in_memory);
         }
 	else
         {
@@ -39,7 +36,7 @@ bool yarpImage2Pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg,
                 {
                     p_dst = dst_data + i * rowstride;
                     p_src = src_data + i * src_line_size;
-                    ACE_OS::memcpy(p_dst, p_src, (n_channels*width));
+                    memcpy(p_dst, p_src, (n_channels*width));
                 }
         }
 
