@@ -39,8 +39,25 @@ public:
         checkTrue(result,"close reported successful");
     }
 
+    void testMonitor() {
+        report(0,"test monitoring");
+        PolyDriver dd;
+        Property p;
+        p.put("device","grabber");
+        p.put("subdevice","test_grabber");
+        p.put("verbose",1);
+        bool result;
+        result = dd.open(p);
+        checkTrue(result,"open reported successful");
+        Bottle opts = dd.getOptions();
+        checkTrue(opts.size()>0,"some options reported");
+        //printf("Opts: %s\n", opts.toString().c_str());
+        dd.close();
+    }
+
     virtual void runTests() {
         testBasic();
+        testMonitor();
     }
 };
 
