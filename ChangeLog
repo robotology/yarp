@@ -1,3 +1,14 @@
+2009-02-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/Drivers.cpp: D'oh! ACE String::strstr
+	function now returns unsigned ints, so a filter for an unwanted
+	option was always returning true.  "yarpdev --device foo --verbose"
+	now works again.
+
+	* src/libYARP_dev/harness/PolyDriverTest.cpp: regression test
+	for drivers reporting options ("yarpdev --device foo --verbose" is
+	currently not reporting options correctly).
+
 2009-02-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/NetType.cpp: improve text-mode continuation

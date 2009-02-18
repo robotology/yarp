@@ -152,7 +152,7 @@ static void toDox(PolyDriver& dd, ostream& os) {
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
         String name = order.get(i).toString().c_str();
-        if (name=="wrapped"||(name.strstr(".wrapped")>=0)) {
+        if (name=="wrapped"||(name.strstr(".wrapped")!=String::npos)) {
             continue;
         }
         ConstString desc = dd.getComment(name.c_str());
