@@ -3,7 +3,8 @@
 	* src/libYARP_dev/src/Drivers.cpp: D'oh! ACE String::strstr
 	function now returns unsigned ints, so a filter for an unwanted
 	option was always returning true.  "yarpdev --device foo --verbose"
-	now works again.
+	now works again.  Thanks to Frank Forster for reporting this
+	problem.
 
 	* src/libYARP_dev/harness/PolyDriverTest.cpp: regression test
 	for drivers reporting options ("yarpdev --device foo --verbose" is
