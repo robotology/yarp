@@ -1,4 +1,4 @@
-﻿#include "YarpImage2Pixbuf.h"
+#include "YarpImage2Pixbuf.h"
 
 #include <string.h>
 
