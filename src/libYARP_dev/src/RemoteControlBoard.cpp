@@ -23,6 +23,7 @@
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
+#include <yarp/dev/PreciselyTimed.h>
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
@@ -46,6 +47,7 @@ class StateInputPort:public BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector last;
     Semaphore mutex;
+    Stamp lastStamp;
     double deltaT;
     double deltaTMax;
     double deltaTMin;
@@ -94,15 +96,19 @@ public:
 
         valid=true;
         last=v;
+        getEnvelope(lastStamp);
         mutex.post();
     }
 
-    inline bool getLast(yarp::sig::Vector &n)
+    inline bool getLast(yarp::sig::Vector &n, Stamp &stmp)
     {
         mutex.wait();
         int ret=valid;
         if (ret)
-            n=last;
+            {
+                n=last;
+                stmp = lastStamp;
+            }
         mutex.post();
 
         return ret;
@@ -197,6 +203,7 @@ class yarp::dev::RemoteControlBoard :
             public IAmplifierControl,
             public IControlLimits,
             public IAxisInfo,
+            public IPreciselyTimed,
             public IControlCalibration2,
 			public DeviceDriver {
 
@@ -213,6 +220,8 @@ protected:
 
     String remote;
     String local;
+    Stamp lastStamp;
+    Semaphore mutex;
     int nj;
 
     /** 
@@ -885,7 +894,9 @@ public:
 
         // new code:
         Vector tmp(nj);
-        bool ret=state_p.getLast(tmp);
+        mutex.wait();
+        bool ret=state_p.getLast(tmp, lastStamp);
+        mutex.post();
         if (ret)
             {
                 if (tmp.size() != nj)
@@ -938,6 +949,18 @@ public:
 
     }
 
+    /* IPreciselyTimed */
+    /**
+     * Get the time stamp for the last read data
+     * @return last time stamp.
+     */
+    virtual Stamp getLastInputStamp() {
+        Stamp ret;
+        mutex.wait();
+        ret = lastStamp;
+        mutex.post();
+        return ret;
+    }    
 
 
     /* IPositionControl */
