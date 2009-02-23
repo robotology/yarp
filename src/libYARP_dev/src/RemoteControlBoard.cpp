@@ -258,7 +258,6 @@ protected:
      * @param v is an integer valued parameter.
      * @return true/false on success/failure.
      */
-
     bool setCommand(int code, int v) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -292,8 +291,6 @@ protected:
 
         return false;
     }
-
-
 
     /**
      * Send a GET command expecting an integer value in return.
@@ -506,6 +503,9 @@ public:
                 diagnosticThread->setOwner(&state_p);
                 diagnosticThread->start();
             }
+        else
+            diagnosticThread=0;
+
         return true;
     }
 
