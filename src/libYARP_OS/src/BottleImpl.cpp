@@ -647,9 +647,24 @@ String StoreDouble::toStringFlex() const {
     char buf[256];
     ACE_OS::sprintf(buf,"%f",x);
     String str(buf);
+
+    // YARP Bug 2526259: Locale settings influence YARP behavior
+    // Need to deal with alternate versions of the decimal point.
+#ifdef LC_NUMERIC
+ 	struct lconv * lc=localeconv();
+ 	unsigned int offset = str.strstr(lc->decimal_point);
+ 	if (offset!=String::npos){
+ 		str[offset]='.';
+ 	} else {
+        str += ".0";
+    }
+#else
+    // maintain old YARP behavior if locale info not available
     if (str.strstr(".")==String::npos) {
         str += ".0";
     }
+#endif
+
     int ct = 0;
     for (int i=str.length()-1; i>=0; i--) {
         if (str[i]!='0') {
@@ -668,7 +683,19 @@ String StoreDouble::toStringFlex() const {
 }
 
 void StoreDouble::fromString(const String& src) {
+    // YARP Bug 2526259: Locale settings influence YARP behavior
+    // Need to deal with alternate versions of the decimal point.
+#ifdef LC_NUMERIC
+    String tmp = src;
+    unsigned int offset = tmp.strstr(".");
+    if (offset!=String::npos) {
+ 		struct lconv *lc = localeconv();
+ 		tmp[offset] = lc->decimal_point[0];
+    }
+    x = ACE_OS::strtod(tmp.c_str(),NULL);
+#else
     x = ACE_OS::strtod(src.c_str(),NULL);
+#endif
 }
 
 bool StoreDouble::read(ConnectionReader& reader) {

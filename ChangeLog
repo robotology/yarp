@@ -1,3 +1,11 @@
+2009-02-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/BottleImpl.cpp: Fix based on patch submitted
+	by dantard for YARP Bug 2526259: "Locale settings influence YARP
+	behavior".  Serialization of decimal point in string versions
+	of Bottle format didn't work right when the local decimal point
+	was not a "."
+
 2009-02-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/Drivers.cpp: D'oh! ACE String::strstr
