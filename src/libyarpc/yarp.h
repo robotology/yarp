@@ -34,12 +34,25 @@ extern "C" {
     } yarpContact;
     typedef yarpContact *yarpContactPtr;
 
-    // opaque implementation of bottles
-    typedef struct yarpBottleStruct {
+    typedef struct yarpReaderStruct {
         void *implementation;
-    } yarpBottle;
-    typedef yarpBottle *yarpBottlePtr;
-    
+    } yarpReader;
+    typedef yarpReader *yarpReaderPtr;
+
+    typedef struct yarpWriterStruct {
+        void *implementation;
+    } yarpWriter;
+    typedef yarpWriter *yarpWriterPtr;
+
+    // any and all fields may be null
+    typedef struct yarpPortableStruct {
+        int (*read) (yarpReaderPtr connection);
+        int (*write) (yarpWriterPtr connection);
+        int (*onCompletion) ();
+        int (*onCommencement) ();
+    } yarpPortable;
+    typedef yarpPortable *yarpPortablePtr;
+
     // Network functions
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
@@ -49,13 +62,28 @@ extern "C" {
     YARP_DECLARE(void) yarpPortFree(yarpPortPtr port);
     YARP_DECLARE(int) yarpPortOpen(yarpPortPtr port, yarpContactPtr contact);
     YARP_DECLARE(int) yarpPortClose(yarpPortPtr port);
+    YARP_DECLARE(int) yarpPortWrite(yarpPortPtr port, 
+                                    yarpPortablePtr msg);
+    YARP_DECLARE(int) yarpPortRead(yarpPortPtr port, 
+                                   yarpPortablePtr msg,
+                                   int willReply);
+    YARP_DECLARE(int) yarpPortReply(yarpPortPtr port, 
+                                    yarpPortablePtr msg);
+    YARP_DECLARE(int) yarpPortWriteWithReply(yarpPortPtr port, 
+                                             yarpPortablePtr msg,
+                                             yarpPortablePtr reply);
 
     // Contact functions
     YARP_DECLARE(yarpContactPtr) yarpContactCreate();
+    YARP_DECLARE(void) yarpContactFree(yarpContactPtr contact);
     YARP_DECLARE(int) yarpContactSetName(yarpContactPtr contact,
                                          const char *name);
-    YARP_DECLARE(void) yarpContactFree(yarpContactPtr contact);
 
+    // Reader functions
+    YARP_DECLARE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data);
+
+    // Writer functions
+    YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
 
 #ifdef __cplusplus
 }

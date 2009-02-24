@@ -20,5 +20,7 @@ using namespace yarp::os;
 #define YARP_PORT(s) (*((Port*)(s->implementation)))
 #define YARP_CONTACT(s) (*((Contact*)(s->implementation)))
 #define YARP_NETWORK(s) (*((Network*)(s->implementation)))
+#define YARP_READER(s) (*((ConnectionReader*)(s->implementation)))
+#define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
 
 #endif
