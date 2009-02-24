@@ -22,5 +22,6 @@ using namespace yarp::os;
 #define YARP_NETWORK(s) (*((Network*)(s->implementation)))
 #define YARP_READER(s) (*((ConnectionReader*)(s->implementation)))
 #define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
+#define YARP_PORTABLE(s) (*((Portable*)(s->implementation)))
 
 #endif

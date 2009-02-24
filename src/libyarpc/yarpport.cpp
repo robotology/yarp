@@ -12,38 +12,6 @@
 #include "yarpimpl.h"
 
 
-class PortableAdaptor : public Portable {
-private:
-    yarpPortablePtr ref;
-public:
-    PortableAdaptor(yarpPortablePtr ref) : ref(ref) {}
-
-    virtual bool read(ConnectionReader& connection) {
-        if (ref->read==NULL) return false;
-        yarpReader reader;
-        reader.implementation = &connection;
-        return (ref->read(&reader)==0);
-    }
-
-    virtual bool write(ConnectionWriter& connection) {
-        if (ref->write==NULL) return false;
-        yarpWriter writer;
-        writer.implementation = &connection;
-        return (ref->write(&writer)==0);
-    }
-
-    virtual void onCommencement() {
-        if (ref->onCommencement==NULL) return;
-        ref->onCommencement();
-    }
-
-    virtual void onCompletion() {
-        if (ref->onCompletion==NULL) return;
-        ref->onCompletion();
-    }
-};
-
-
 YARP_DEFINE(yarpPortPtr) yarpPortCreate(yarpNetworkPtr network) {
     yarpPortPtr port = new yarpPort;
     if (port!=NULL) {
@@ -56,6 +24,21 @@ YARP_DEFINE(yarpPortPtr) yarpPortCreate(yarpNetworkPtr network) {
     return port;
 }
 
+
+YARP_DEFINE(yarpPortPtr) yarpPortCreateOpen(yarpNetworkPtr network,
+                                            const char *name) {
+    yarpPortPtr port = yarpPortCreate(network);
+    if (port==NULL) return NULL;
+    int result = yarpPortOpen(port,name);
+    if (result<0) {
+        delete port;
+        port = NULL;
+        return NULL;
+    }
+    return port;
+}
+
+
 YARP_DEFINE(void) yarpPortFree(yarpPortPtr port) {
     if (port!=NULL) {
         if (port->implementation!=NULL) {
@@ -66,7 +49,13 @@ YARP_DEFINE(void) yarpPortFree(yarpPortPtr port) {
     }
 }
 
-YARP_DEFINE(int) yarpPortOpen(yarpPortPtr port, yarpContactPtr contact) {
+YARP_DEFINE(int) yarpPortOpen(yarpPortPtr port, const char *name) {
+    YARP_OK(port);
+    bool ok = YARP_PORT(port).open(name);
+    return ok?0:-1;
+}
+
+YARP_DEFINE(int) yarpPortOpenEx(yarpPortPtr port, yarpContactPtr contact) {
     YARP_OK(port);
     YARP_OK(contact);
     bool ok = YARP_PORT(port).open(YARP_CONTACT(contact));
@@ -79,14 +68,18 @@ YARP_DEFINE(int) yarpPortClose(yarpPortPtr port) {
     return 0;
 }
 
+YARP_DEFINE(int) yarpPortEnableBackgroundWrite(yarpPortPtr port,
+                                               int writeInBackgroundFlag) {
+    YARP_OK(port);
+    YARP_PORT(port).enableBackgroundWrite(writeInBackgroundFlag);
+    return 0;
+}
 
 YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port, 
                                yarpPortablePtr msg) {
     YARP_OK(port);
-    if (msg==NULL) return -1;
-    if (msg->write==NULL) return -1;
-    PortableAdaptor adapt(msg);
-    return YARP_PORT(port).write(adapt)?0:-1;
+    YARP_OK(msg);
+    return YARP_PORT(port).write(YARP_PORTABLE(msg))?0:-1;
 }
 
 
@@ -94,20 +87,16 @@ YARP_DEFINE(int) yarpPortRead(yarpPortPtr port,
                               yarpPortablePtr msg,
                               int willReply) {
     YARP_OK(port);
-    if (msg==NULL) return -1;
-    if (msg->read==NULL) return -1;
-    PortableAdaptor adapt(msg);
-    return YARP_PORT(port).read(adapt,willReply)?0:-1;
+    YARP_OK(msg);
+    return YARP_PORT(port).read(YARP_PORTABLE(msg),willReply)?0:-1;
 }
 
 
 YARP_DEFINE(int) yarpPortReply(yarpPortPtr port, 
                                yarpPortablePtr msg) {
     YARP_OK(port);
-    if (msg==NULL) return -1;
-    if (msg->write==NULL) return -1;
-    PortableAdaptor adapt(msg);
-    return YARP_PORT(port).reply(adapt)?0:-1;
+    YARP_OK(msg);
+    return YARP_PORT(port).reply(YARP_PORTABLE(msg))?0:-1;
 }
 
 
@@ -115,12 +104,7 @@ YARP_DEFINE(int) yarpPortWriteWithReply(yarpPortPtr port,
                                         yarpPortablePtr msg,
                                         yarpPortablePtr reply) {
     YARP_OK(port);
-    if (msg==NULL) return -1;
-    if (reply==NULL) return -1;
-    if (msg->write==NULL) return -1;
-    if (reply->read==NULL) return -1;
-    PortableAdaptor adapt1(msg), adapt2(reply);
-    return YARP_PORT(port).write(adapt1,adapt2)?0:-1;
+    return YARP_PORT(port).write(YARP_PORTABLE(msg),YARP_PORTABLE(reply))?0:-1;
 }
 
 

@@ -44,24 +44,39 @@ extern "C" {
     } yarpWriter;
     typedef yarpWriter *yarpWriterPtr;
 
-    // any and all fields may be null
     typedef struct yarpPortableStruct {
-        int (*read) (yarpReaderPtr connection);
+        void *implementation;
         int (*write) (yarpWriterPtr connection);
-        int (*onCompletion) ();
-        int (*onCommencement) ();
+        int (*read) (yarpReaderPtr connection);
+        int (*onCompletion)();
+        int (*onCommencement)();
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 
     // Network functions
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
+    YARP_DECLARE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
+                                              int isLocal);
+    // if carrier is NULL, connection type is tcp
+    YARP_DECLARE(int) yarpNetworkConnect(yarpNetworkPtr network, 
+                                         const char *src,
+                                         const char *dest,
+                                         const char *carrier);
+    YARP_DECLARE(int) yarpNetworkDisonnect(yarpNetworkPtr network, 
+                                           const char *src,
+                                           const char *dest);
 
     // Port functions
     YARP_DECLARE(yarpPortPtr) yarpPortCreate(yarpNetworkPtr network);
+    YARP_DECLARE(yarpPortPtr) yarpPortCreateOpen(yarpNetworkPtr network,
+                                                 const char *name);
     YARP_DECLARE(void) yarpPortFree(yarpPortPtr port);
-    YARP_DECLARE(int) yarpPortOpen(yarpPortPtr port, yarpContactPtr contact);
+    YARP_DECLARE(int) yarpPortOpen(yarpPortPtr port, const char *name);
+    YARP_DECLARE(int) yarpPortOpenEx(yarpPortPtr port, yarpContactPtr contact);
     YARP_DECLARE(int) yarpPortClose(yarpPortPtr port);
+    YARP_DECLARE(int) yarpPortEnableBackgroundWrite(yarpPortPtr port,
+                                                    int writeInBackgroundFlag);
     YARP_DECLARE(int) yarpPortWrite(yarpPortPtr port, 
                                     yarpPortablePtr msg);
     YARP_DECLARE(int) yarpPortRead(yarpPortPtr port, 
@@ -84,6 +99,16 @@ extern "C" {
 
     // Writer functions
     YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
+
+    // Portable functions
+    
+    YARP_DECLARE(yarpPortablePtr) yarpPortableCreate();
+    YARP_DECLARE(void) yarpPortableFree(yarpPortablePtr portable);
+    YARP_DECLARE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection));
+    YARP_DECLARE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection));
+    YARP_DECLARE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)());
+    YARP_DECLARE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)());
+
 
 #ifdef __cplusplus
 }

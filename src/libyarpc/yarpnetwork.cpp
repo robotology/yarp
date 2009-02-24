@@ -33,3 +33,32 @@ YARP_DEFINE(void) yarpNetworkFree(yarpNetworkPtr network) {
         delete network;
     }
 }
+
+YARP_DEFINE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
+                                         int isLocal) {
+    YARP_OK(network);
+    YARP_NETWORK(network).setLocalMode(isLocal);
+    return 0;
+}
+
+
+YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network, 
+                                    const char *src,
+                                    const char *dest,
+                                    const char *carrier) {
+    YARP_OK(network);
+    YARP_NETWORK(network).connect(src,dest,carrier);
+    return 0;
+}
+
+
+YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
+                                    const char *src,
+                                    const char *dest) {
+    YARP_OK(network);
+    YARP_NETWORK(network).disconnect(src,dest);
+    return 0;
+}
+
+
+
