@@ -4,6 +4,8 @@
  * Copyright (C) 2008, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
+ * This is a plain C interface to YARP.  It is as yet incomplete.
+ *
  */
 
 #ifndef YET_ANOTHER_ROBOT_PLATFORM_CVERSION_INC
