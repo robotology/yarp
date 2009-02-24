@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2008 Paul Fitzpatrick
+ * Copyright (C) 2008, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -10,7 +10,7 @@
 #define YET_ANOTHER_ROBOT_PLATFORM_INC
 
 // leave hook for elaborating declarations
-#define YARP_DECLARE(rt) rt
+#define YARP_DECLARE(return_type) return_type
 
 #ifdef __cplusplus
 extern "C" {
