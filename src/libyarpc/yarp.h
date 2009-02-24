@@ -9,26 +9,53 @@
 #ifndef YET_ANOTHER_ROBOT_PLATFORM_INC
 #define YET_ANOTHER_ROBOT_PLATFORM_INC
 
+// leave hook for elaborating declarations
 #define YARP_DECLARE(rt) rt
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-  typedef struct yarpBottleStruct {
-    void *implementation;
-  } yarpPort;
-  typedef yarpBottle *yarpBottlePtr;
+    // opaque implementation of network
+    typedef struct yarpNetworkStruct {
+        void *implementation;
+    } yarpNetwork;
+    typedef yarpNetwork *yarpNetworkPtr;
+    
+    // opaque implementation of ports
+    typedef struct yarpPortStruct {
+        void *implementation;
+    } yarpPort;
+    typedef yarpPort *yarpPortPtr;
+    
+    // opaque implementation of contacts
+    typedef struct yarpContactStruct {
+        void *implementation;
+    } yarpContact;
+    typedef yarpContact *yarpContactPtr;
 
-  typedef struct yarpPortStruct {
-    void *implementation;
-  } yarpPort;
-  typedef yarpPort *yarpPortPtr;
+    // opaque implementation of bottles
+    typedef struct yarpBottleStruct {
+        void *implementation;
+    } yarpBottle;
+    typedef yarpBottle *yarpBottlePtr;
+    
+    // Network functions
+    YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
+    YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
 
-  YARP_DECLARE(yarpPortPtr) yarpPortCreate();
-  YARP_DECLARE(void) yarpPortDestroy(yarpPortPtr port);
-  YARP_DECLARE(int) yarpPortOpen(yarpPortPtr port, const char *name);
-  YARP_DECLARE(int) yarpPortClose(yarpPortPtr port);
+    // Port functions
+    YARP_DECLARE(yarpPortPtr) yarpPortCreate(yarpNetworkPtr network);
+    YARP_DECLARE(void) yarpPortFree(yarpPortPtr port);
+    YARP_DECLARE(int) yarpPortOpen(yarpPortPtr port, yarpContactPtr contact);
+    YARP_DECLARE(int) yarpPortClose(yarpPortPtr port);
+
+    // Contact functions
+    YARP_DECLARE(yarpContactPtr) yarpContactCreate();
+    YARP_DECLARE(int) yarpContactSetName(yarpContactPtr contact,
+                                         const char *name);
+    YARP_DECLARE(void) yarpContactFree(yarpContactPtr contact);
+
 
 #ifdef __cplusplus
 }
