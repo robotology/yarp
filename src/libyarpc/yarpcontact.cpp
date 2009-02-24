@@ -11,6 +11,11 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
+    /**
+     *
+     * Create an empty contact.
+     *
+     */
 YARP_DEFINE(yarpContactPtr) yarpContactCreate() {
     yarpContactPtr contact = new yarpContact;
     if (contact!=NULL) {
@@ -24,6 +29,11 @@ YARP_DEFINE(yarpContactPtr) yarpContactCreate() {
 }
 
 
+    /**
+     *
+     * Destroy a contact.
+     *
+     */
 YARP_DEFINE(void) yarpContactFree(yarpContactPtr contact) {
     if (contact!=NULL) {
         if (contact->implementation!=NULL) {
@@ -34,6 +44,11 @@ YARP_DEFINE(void) yarpContactFree(yarpContactPtr contact) {
     }
 }
 
+    /**
+     *
+     * Set the port name of a contact.
+     *
+     */
 YARP_DEFINE(int) yarpContactSetName(yarpContactPtr contact,
                                     const char *name) {
     YARP_OK(contact);

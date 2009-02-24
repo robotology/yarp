@@ -44,6 +44,12 @@ public:
 
 
 
+    /**
+     *
+     * Create a portable structure, that is a bundle of serialization-related
+     * callbacks.
+     *
+     */
 YARP_DEFINE(yarpPortablePtr) yarpPortableCreate() {
     yarpPortablePtr portable = new yarpPortable;
     if (portable!=NULL) {
@@ -61,6 +67,11 @@ YARP_DEFINE(yarpPortablePtr) yarpPortableCreate() {
 }
 
 
+    /**
+     *
+     * Destroy a portable structure.
+     *
+     */
 YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
     if (portable!=NULL) {
         if (portable->implementation!=NULL) {
@@ -71,22 +82,42 @@ YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
     }
 }
 
+    /**
+     *
+     * set the write handler of a portable structure.
+     *
+     */
 YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection)) {
     YARP_OK(portable);    
     portable->write = write;
 }
 
+    /**
+     *
+     * set the read handler of a portable structure.
+     *
+     */
 YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection)) {
     YARP_OK(portable);
     portable->read = read;
 }
 
 
+    /**
+     *
+     * set the onCompletion handler of a portable structure.
+     *
+     */
 YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)()) {
     YARP_OK(portable);
     portable->onCompletion = onCompletion;
 }
 
+    /**
+     *
+     * set the onCommencement handler of a portable structure.
+     *
+     */
 YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)()) {
     YARP_OK(portable);
     portable->onCommencement = onCommencement;

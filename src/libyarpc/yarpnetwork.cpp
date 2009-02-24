@@ -11,6 +11,11 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
+    /**
+     * Create a network.  There should typically be one of 
+     * these in a program using YARP.  You need one of these in order
+     * to create ports.
+     */
 YARP_DEFINE(yarpNetworkPtr) yarpNetworkCreate() {
     yarpNetworkPtr network = new yarpNetwork;
     if (network!=NULL) {
@@ -24,6 +29,9 @@ YARP_DEFINE(yarpNetworkPtr) yarpNetworkCreate() {
 }
 
 
+    /**
+     * Destroy a network.
+     */
 YARP_DEFINE(void) yarpNetworkFree(yarpNetworkPtr network) {
     if (network!=NULL) {
         if (network->implementation!=NULL) {
@@ -34,6 +42,9 @@ YARP_DEFINE(void) yarpNetworkFree(yarpNetworkPtr network) {
     }
 }
 
+    /**
+     * Put a network in local mode (no YARP name server needed).
+     */
 YARP_DEFINE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
                                          int isLocal) {
     YARP_OK(network);
@@ -42,6 +53,12 @@ YARP_DEFINE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
 }
 
 
+    /**
+     *
+     * Connect two ports with a specified carrier (connection type).
+     * If the carrier is NULL, the connection will be of type tcp.
+     *
+     */
 YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network, 
                                     const char *src,
                                     const char *dest,
@@ -52,6 +69,11 @@ YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network,
 }
 
 
+    /**
+     *
+     * Disconnect two ports from each other.
+     *
+     */
 YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
                                     const char *src,
                                     const char *dest) {

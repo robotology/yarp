@@ -11,6 +11,11 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
+    /**
+     *
+     * Read an integer from a connection.
+     *
+     */
 YARP_DEFINE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data) {
     YARP_OK(reader);
     int x = YARP_READER(reader).expectInt();
