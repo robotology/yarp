@@ -121,9 +121,9 @@ extern "C" {
      * Disconnect two ports from each other.
      *
      */
-    YARP_DECLARE(int) yarpNetworkDisonnect(yarpNetworkPtr network, 
-                                           const char *src,
-                                           const char *dest);
+    YARP_DECLARE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
+                                            const char *src,
+                                            const char *dest);
 
 
     /**
