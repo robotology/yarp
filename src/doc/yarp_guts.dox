@@ -1,0 +1,48 @@
+/** 
+ * @page yarp_guts A trip through the guts of YARP
+
+@author Paul Fitzpatrick
+
+How does YARP work, you ask?  Here's a narrative with pointers
+to the implementation classes.
+
+@subsection Port creation
+
+Every yarp::os::Port or yarp::os::BufferedPort contains exactly one
+yarp::os::impl::PortCore object. This is the main coordinator for
+communication.  Every yarp::os::impl::PortCore, on start-up, initiates
+one yarp::os::impl::Face object.  This object is currently always
+of type yarp::os::impl::TcpFace, which represents a server socket.
+
+The PortCore creates a thread to listen to the Face (the server socket).
+Any initial communication with the port is made via the Face.
+
+The PortCore maintains a list of yarp::os::impl::PortCoreUnit objects.
+These represent incoming and outgoing connections.  When a request is
+received via the Face to connect to some other port, the first
+step is to create a new PortCoreUnit (either a 
+yarp::os::impl::PortCoreInputUnit or a yarp::os::impl::PortCoreOutputUnit).
+Depending on the configuration of the port, a new thread may be created
+to service that unit.  Inputs always get a new thread.  Outputs get
+a new thread only if requested (see yarp::os::Port::enableBackgroundWrite;
+this is called for BufferedPorts by default).
+
+When the Face object receives a communication from the outside world, 
+it wraps it in a Protocol object.  Concretely, this means that the TcpFace 
+server socket takes each socket it receives and gives it to the PortCore
+as a Protocol object, which then creates a PortCoreUnit to manage
+that Protocol object.  The abstraction is important here because
+one of the first steps of the YARP network protocol allows connections
+to switch from whatever the carrier used to establish
+the connection is (TCP) to something different for transmitting
+payloads (multicast, shared memory, etc).
+The Protocol object is either
+yarp::os::impl::InputProtocol or yarp::os::impl::OutputProtocol
+(in fact both of these are interfaces implemented by a single 
+class, yarp::os::impl::Protocol, but most of YARP does not know that).
+
+The Protocol object deals with switching to a particular carrier, and
+the details of the YARP network protocol.
+
+*
+*/

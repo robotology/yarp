@@ -71,6 +71,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref using_cmake
 \li \ref yarp_without_yarp
 \li \ref carrier_expert
+\li \ref yarp_guts
 
  *
  */
