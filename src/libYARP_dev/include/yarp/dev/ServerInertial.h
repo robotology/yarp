@@ -223,7 +223,7 @@ public:
     {
         yarp::os::Bottle cmd, response;
         cmd.read(connection);
-        printf("command received: %s\n", cmd.toString().c_str());
+        // printf("command received: %s\n", cmd.toString().c_str());
 
 
             
