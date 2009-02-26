@@ -139,8 +139,8 @@ public:
             fprintf(stderr,"*** This occurred occasionally in the past due to a bug.\n");
             fprintf(stderr,"*** That bug was believed to be fixed, but it looks like we were wrong.\n");
             fprintf(stderr,"*** Please email the following information to paulfitz@alum.mit.edu:\n");
-            fprintf(stderr,"  number of active packets: %d\n", active.size());
-            fprintf(stderr,"  number of inactive packets: %d\n", inactive.size());
+            fprintf(stderr,"  number of active packets: %u\n", active.size());
+            fprintf(stderr,"  number of inactive packets: %u\n", inactive.size());
             fprintf(stderr,"  active packets:\n");
 
             unsigned int i=0;
