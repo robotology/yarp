@@ -4,9 +4,10 @@
 @author Paul Fitzpatrick
 
 How does YARP work, you ask?  Here's a narrative with pointers
-to the implementation classes.
+to the implementation classes.  Most folks will never need to
+read this.
 
-@subsection Port creation
+@subsection yarp_guts_create Port creation
 
 Every yarp::os::Port or yarp::os::BufferedPort contains exactly one
 yarp::os::impl::PortCore object. This is the main coordinator for
@@ -26,6 +27,8 @@ Depending on the configuration of the port, a new thread may be created
 to service that unit.  Inputs always get a new thread.  Outputs get
 a new thread only if requested (see yarp::os::Port::enableBackgroundWrite;
 this is called for BufferedPorts by default).
+
+@subsection yarp_guts_connect Connection creation
 
 When the Face object receives a communication from the outside world, 
 it wraps it in a Protocol object.  Concretely, this means that the TcpFace 
