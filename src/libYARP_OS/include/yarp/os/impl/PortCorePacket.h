@@ -139,8 +139,12 @@ public:
             fprintf(stderr,"*** This occurred occasionally in the past due to a bug.\n");
             fprintf(stderr,"*** That bug was believed to be fixed, but it looks like we were wrong.\n");
             fprintf(stderr,"*** Please email the following information to paulfitz@alum.mit.edu:\n");
-            fprintf(stderr,"  number of active packets: %d\n", active.size());
-            fprintf(stderr,"  number of inactive packets: %d\n", inactive.size());
+            //warning: casting size_t to unsigned int to remove annoying warning
+            //did not find a better way to handle this that was portable across
+            //different compilers (%z does not seem to be supported in gcc 4.1 
+            //or msvc). Lorenzo
+            fprintf(stderr,"  number of active packets: %u\n", (unsigned int) active.size());
+            fprintf(stderr,"  number of inactive packets: %u\n", (unsigned int) inactive.size());
             fprintf(stderr,"  active packets:\n");
 
             unsigned int i=0;
