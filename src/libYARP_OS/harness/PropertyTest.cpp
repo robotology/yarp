@@ -343,6 +343,10 @@ check $x $y\n\
         }
     }
 
+    virtual void checkMonitor() {
+        report(0,"checking monitoring");
+    }
+
     virtual void runTests() {
         checkPutGet();
         checkExternal();
@@ -358,6 +362,7 @@ check $x $y\n\
         checkCommand();
         checkComment();
         checkLineBreak();
+        checkMonitor();
     }
 };
 

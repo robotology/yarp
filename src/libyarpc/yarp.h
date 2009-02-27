@@ -87,6 +87,16 @@ extern "C" {
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 
+    /**
+     *
+     * Plain C string structure.  This structure represents strings.
+     *
+     */
+    typedef struct yarpStringStruct {
+        void *implementation;
+    } yarpString;
+    typedef yarpString *yarpStringPtr;
+    
 
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
@@ -124,7 +134,13 @@ extern "C" {
                                          const char *name);
 
 
+    YARP_DECLARE(int) yarpReaderExpectBlock(yarpReaderPtr reader, const char *data, int len); //TODO
+    YARP_DECLARE(int) yarpReaderExpectText(yarpReaderPtr reader,  //TODO
+                                           yarpStringPtr str,
+                                           const char *terminal); // \n if NULL
     YARP_DECLARE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data);
+    YARP_DECLARE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data); //TODO
+    YARP_DECLARE(int) yarpReaderIsTextMode(yarpReaderPtr reader); //TODO
 
     YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
 
@@ -134,6 +150,11 @@ extern "C" {
     YARP_DECLARE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection));
     YARP_DECLARE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)());
     YARP_DECLARE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)());
+
+    YARP_DECLARE(yarpStringPtr) yarpStringCreate(); //TODO
+    YARP_DECLARE(void) yarpStringFree(yarpStringPtr str); //TODO
+    YARP_DECLARE(const char *) yarpStringToC(yarpStringPtr str); //TODO
+    YARP_DECLARE(int) yarpStringFromC(yarpStringPtr str, const char *c); //TODO
 
 
 #ifdef __cplusplus

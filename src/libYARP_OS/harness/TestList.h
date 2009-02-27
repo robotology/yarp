@@ -51,6 +51,7 @@ extern yarp::os::impl::UnitTest& getPortReaderBufferTest();
 extern yarp::os::impl::UnitTest& getNetworkTest();
 extern yarp::os::impl::UnitTest& getResourceFinderTest();
 extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
+extern yarp::os::impl::UnitTest& getSemaphoreTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -86,6 +87,7 @@ public:
         root.add(getNetworkTest());
         root.add(getResourceFinderTest());
         root.add(getDgramTwoWayStreamTest());
+        root.add(getSemaphoreTest());
     }
 };
 

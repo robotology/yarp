@@ -51,4 +51,4 @@ ENDIF (YARP_ADMIN)
 
 # Touch this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun.
-# Touch: 1 2
+# Touch: 1 2 3

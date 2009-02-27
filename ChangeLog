@@ -1,3 +1,9 @@
+2009-02-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/SemaphoreTest.cpp: add a basic test
+	for semaphore functionality.  Seem to be having difficulties
+	with the ACE version packaged on Ubuntu 8.10.
+
 2009-02-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: Fix based on patch submitted

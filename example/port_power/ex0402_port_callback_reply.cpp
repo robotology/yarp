@@ -15,6 +15,9 @@ class DataProcessor : public PortReader {
         ConnectionWriter *returnToSender = connection.getWriter();
         if (returnToSender!=NULL) {
             out.write(*returnToSender);
+            printf("Sent reply %s\n",out.toString().c_str());
+        } else {
+            printf("Problem getting return object\n");
         }
         return true;
     }
