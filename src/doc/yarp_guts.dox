@@ -3,11 +3,30 @@
 
 @author Paul Fitzpatrick
 
-How does YARP work, you ask?  Here's a narrative with pointers
-to the implementation classes.  Most folks will never need to
-read this.
+This is a boring, mind-numbing tutorial full of information
+most folks will never need.  Enjoy!
 
-@subsection yarp_guts_create Port creation
+The goal of the tutorial is to help people find their way
+around the internals of the YARP implementation.
+
+@section yarp_guts_summary Summary of important classes
+
+For every port, there is a yarp::os::impl::PortCore object.
+
+For every connection between two ports, there is a 
+yarp::os::impl::PortCoreOutputUnit held in a list by the
+source port's PortCore, and a yarp::os::impl::PortCoreInputUnit held in
+a list by the output port's PortCore.
+
+Every PortCoreUnit has a yarp::os::impl::Protocol object that
+manages the details of YARP's network protocol.
+
+The Protocol object uses a yarp::os::impl::Carrier object
+(yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
+manage the peculiarities of particular connection types.
+
+
+@section yarp_guts_create Port creation
 
 Every yarp::os::Port or yarp::os::BufferedPort contains exactly one
 yarp::os::impl::PortCore object. This is the main coordinator for
@@ -28,7 +47,7 @@ to service that unit.  Inputs always get a new thread.  Outputs get
 a new thread only if requested (see yarp::os::Port::enableBackgroundWrite;
 this is called for BufferedPorts by default).
 
-@subsection yarp_guts_connect Connection creation
+@section yarp_guts_connect Connection creation
 
 When the Face object receives a communication from the outside world, 
 it wraps it in a Protocol object.  Concretely, this means that the TcpFace 
@@ -44,7 +63,8 @@ yarp::os::impl::InputProtocol or yarp::os::impl::OutputProtocol
 (in fact both of these are interfaces implemented by a single 
 class, yarp::os::impl::Protocol, but most of YARP does not know that).
 
-The Protocol object deals with switching to a particular carrier, and
+The Protocol object deals with switching to a particular carrier
+(implemented by sub-types of yarp::os::impl::Carrier), and
 the details of the YARP network protocol.
 
 *
