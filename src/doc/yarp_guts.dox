@@ -25,6 +25,93 @@ The Protocol object uses a yarp::os::impl::Carrier object
 (yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
 manage the peculiarities of particular connection types.
 
+Here's an example diagram of four ports.  Port 1 is connected by 
+multicast to ports 2 and 3, and by tcp to port 4.
+
+  \dot
+  digraph guts_example1 {
+      node [shape=box, fontname=Helvetica, fontsize=10];
+      edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
+
+      subgraph cluster_guts_port1 {
+		label = "Port 1";
+		color = "blue"; style = "dashed";
+
+		portcore1 [ label="PortCore", shape=ellipse ];
+		portcoreoutputunit11 [ label="PortCoreOutputUnit", shape=ellipse ];
+		portcoreoutputunit12 [ label="PortCoreOutputUnit", shape=ellipse ];
+		portcoreoutputunit13 [ label="PortCoreOutputUnit", shape=ellipse ];
+		outputprotocol11 [ label="OutputProtocol", shape=ellipse ];
+		outputprotocol12 [ label="OutputProtocol", shape=ellipse ];
+		outputprotocol13 [ label="OutputProtocol", shape=ellipse ];
+		mcastcarrier11 [ label="McastCarrier", shape=ellipse ];
+		mcastcarrier12 [ label="McastCarrier", shape=ellipse ];
+		tcpcarrier13 [ label="TcpCarrier", shape=ellipse ];
+	}
+
+      subgraph cluster_guts_port2 {
+		label = "Port 2";
+		color = "blue"; style = "dashed";
+
+		portcore2 [ label="PortCore", shape=ellipse ];
+		inputprotocol2 [ label="InputProtocol", shape=ellipse ];
+		mcastcarrier2 [ label="McastCarrier", shape=ellipse ];
+		portcoreinputunit2 [ label="PortCoreInputUnit", shape=ellipse ];
+	}
+
+      subgraph cluster_guts_port3 {
+		label = "Port 3";
+		color = "blue"; style = "dashed";
+
+		portcore3 [ label="PortCore", shape=ellipse ];
+		inputprotocol3 [ label="InputProtocol", shape=ellipse ];
+		mcastcarrier3 [ label="McastCarrier", shape=ellipse ];
+		portcoreinputunit3 [ label="PortCoreInputUnit", shape=ellipse ];
+	}
+
+      subgraph cluster_guts_port4 {
+		label = "Port 4";
+		color = "blue"; style = "dashed";
+
+		portcore4 [ label="PortCore", shape=ellipse ];
+		inputprotocol4 [ label="InputProtocol", shape=ellipse ];
+		tcpcarrier4 [ label="TcpCarrier", shape=ellipse ];
+		portcoreinputunit4 [ label="PortCoreInputUnit", shape=ellipse ];
+	}
+
+      portcore1 -> portcoreoutputunit11;
+      portcore1 -> portcoreoutputunit12;
+      portcore1 -> portcoreoutputunit13;
+      portcoreoutputunit11 -> outputprotocol11;
+      portcoreoutputunit12 -> outputprotocol12;
+      portcoreoutputunit13 -> outputprotocol13;
+      outputprotocol11 -> mcastcarrier11;
+      outputprotocol12 -> mcastcarrier12;
+      outputprotocol13 -> tcpcarrier13;
+
+      mcastcarrier11 -> mcastcarrier2;
+      mcastcarrier12 -> mcastcarrier3;
+      tcpcarrier13 -> tcpcarrier4;
+
+      mcastcarrier2 -> inputprotocol2;
+      mcastcarrier3 -> inputprotocol3;
+      tcpcarrier4 -> inputprotocol4;
+
+      inputprotocol2 -> portcoreinputunit2;
+      inputprotocol3 -> portcoreinputunit3;
+      inputprotocol4 -> portcoreinputunit4;
+
+      portcoreinputunit2 -> portcore2;
+      portcoreinputunit3 -> portcore3;
+      portcoreinputunit4 -> portcore4;
+
+      fontname=Helvetica;
+      fontsize=10;
+      label = "A four-port example";
+		color = "blue"; style = "dashed";
+  }
+  \enddot
+
 
 @section yarp_guts_create Port creation
 
@@ -66,6 +153,15 @@ class, yarp::os::impl::Protocol, but most of YARP does not know that).
 The Protocol object deals with switching to a particular carrier
 (implemented by sub-types of yarp::os::impl::Carrier), and
 the details of the YARP network protocol.
+
+@section yarp_guts_mcast Multicast elections
+
+The two McastCarrier objects owned by Port 1
+in the figure above "conspire" behind the
+scenes to make sure only one of them sends data, but as far as the
+rest of YARP is concerned there's nothing special about them.
+This conspiracy is implemented via a global yarp::os::impl::Election
+object.
 
 *
 */
