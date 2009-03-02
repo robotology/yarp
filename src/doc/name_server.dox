@@ -131,6 +131,8 @@ is omitted, and instead the response is simply:
 *** end of message
 \endverbatim
 
+See \ref protocol_name_bot_query "bot query" for a version of this
+command that is easier to use in automation.
 
 
 \section protocol_name_register register
@@ -212,6 +214,8 @@ registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
 *** end of message
 \endverbatim
 
+See \ref protocol_name_bot_list "bot list" for a version of this
+command that is easier to use in automation.
 
 
 \section protocol_name_set set
@@ -296,6 +300,40 @@ Returns the following response:
 port /write route /read = shmem://read
 \endverbatim
 Suggesting that shmem is the best carrier to use.
+
+\section protocol_name_bot_query bot query
+
+\verbatim
+bot query /PORT
+\endverbatim
+
+Returns information about a port in an easy-to-parse,
+Bottle-compatible format.  Less easy to read for a human, but much
+better for automation.
+
+The return format is a list with the string "port" as its 
+first item, followed by one sub-list containing a series of key-value 
+pairs.  One important key is "name", whose value is the name of the port.
+If the port requested does not exist, this key will not be present, and
+instead there will be an error key.
+
+\section protocol_name_bot_list bot list
+
+\verbatim
+bot list
+bot list /PREFIX
+\endverbatim
+
+Returns a list of ports in an easy-to-parse, Bottle-compatible
+format.  Less easy to read for a human, but much better for 
+automation.
+
+The return format is a list with the string "ports" as its 
+first item, followed by one sub-list for each matching port
+(if /PREFIX is supplied, this is all ports named /PREFIX or
+/PREFIX/*; if no prefix is supplied, it is all ports).
+The sublist contains a series of key-value pairs.  One
+important key is "name", whose value is the name of the port.
 
 \section name_server_discovery Finding the name server
 
