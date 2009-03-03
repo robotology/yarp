@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -11,7 +11,9 @@
 
 #include <ace/Synch.h>
 
+#include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 
 namespace yarp {
     namespace os {
@@ -37,7 +39,7 @@ public:
         if (result!=-1) return;
         int ct = 100;
         while (result == -1 && ct>=0) {
-            YARP_ERROR(Logger::get(), "semaphore wait failed - gdb problem, or bad YARP+ACE flags");
+            YARP_ERROR(Logger::get(), String("semaphore wait failed (errno ") + + NetType::toString(ACE_OS::last_error()) + String("- gdb problem, or bad YARP+ACE flags"));
             result = sema.acquire();
             ct--;
         }
