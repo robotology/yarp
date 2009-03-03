@@ -34,9 +34,17 @@ public:
     // blocking wait
     void wait() {
         int result = sema.acquire();
-        while (result == -1) {
+        if (result!=-1) return;
+        int ct = 100;
+        while (result == -1 && ct>=0) {
             YARP_ERROR(Logger::get(), "semaphore wait failed - gdb problem, or bad YARP+ACE flags");
             result = sema.acquire();
+            ct--;
+        }
+        if (result==-1) {
+            YARP_ERROR(Logger::get(), "semaphore wait failed");
+        } else {
+            YARP_ERROR(Logger::get(), "semaphore wait eventually succeeded");
         }
     }
 
