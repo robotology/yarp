@@ -35,7 +35,7 @@ public:
     void wait() {
         int result = sema.acquire();
         while (result == -1) {
-            YARP_DEBUG(Logger::get(), "semaphore wait failed - could be gdb attaching");
+            YARP_ERROR(Logger::get(), "semaphore wait failed - gdb problem, or bad YARP+ACE flags");
             result = sema.acquire();
         }
     }

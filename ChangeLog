@@ -1,3 +1,8 @@
+2009-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h: make
+	semaphore failures more visible.
+
 2009-02-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/SemaphoreTest.cpp: add a basic test
