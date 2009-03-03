@@ -1,5 +1,8 @@
 2009-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/swig/CMakeLists.txt: check for minimum swig version;
+	patch from Alexis Maldonado.
+
 	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h: make
 	semaphore failures more visible.
 
