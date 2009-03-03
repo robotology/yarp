@@ -39,7 +39,7 @@ public:
         if (result!=-1) return;
         int ct = 100;
         while (result == -1 && ct>=0) {
-            YARP_ERROR(Logger::get(), String("semaphore wait failed (errno ") + + NetType::toString(ACE_OS::last_error()) + String("- gdb problem, or bad YARP+ACE flags"));
+            YARP_ERROR(Logger::get(), yarp::os::impl::String("semaphore wait failed (errno ") + (yarp::os::impl::NetType::toString(ACE_OS::last_error())) + yarp::os::impl::String("); gdb problem, or bad YARP+ACE flags"));
             result = sema.acquire();
             ct--;
         }
