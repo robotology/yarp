@@ -1,3 +1,10 @@
+2009-03-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpOptions.cmake: add an option to replace ACE-based
+	implementation of yarp::os::impl::String with a std::string
+	typedef. This is useful for some debugging I'm doing, and is
+	an option we had often talked about adding in the past.
+
 2009-03-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/CMakeLists.txt: check for minimum swig version;

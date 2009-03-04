@@ -151,7 +151,7 @@ Address NameServer::registerName(const String& name,
 Address NameServer::queryName(const String& name) {
     String base = name;
     String pat = "";
-    if (name.strstr("/net=") == 0) {
+    if (YARP_STRSTR(name,"/net=") == 0) {
         int patStart = 5;
         int patEnd = name.find('/',patStart);
         if (patEnd>=patStart) {
@@ -179,7 +179,7 @@ Address NameServer::queryName(const String& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const String& name, 
                                                   bool create) {
-    ACE_Hash_Map_Entry<String,NameRecord> *entry = NULL;
+    ACE_Hash_Map_Entry<YARP_KEYED_STRING,NameRecord> *entry = NULL;
     int result = nameMap.find(name,entry);
     if (result==-1) {
         if (!create) {
@@ -196,7 +196,7 @@ NameServer::NameRecord *NameServer::getNameRecord(const String& name,
 
 NameServer::HostRecord *NameServer::getHostRecord(const String& name,
                                                   bool create) {
-    ACE_Hash_Map_Entry<String,HostRecord> *entry = NULL;
+    ACE_Hash_Map_Entry<YARP_KEYED_STRING,HostRecord> *entry = NULL;
     int result = hostMap.find(name,entry);
     if (result==-1) {
         if (!create) {

@@ -197,14 +197,14 @@ private:
         }
     };
 
-    ACE_Hash_Map_Manager<String,Entry,ACE_Null_Mutex> action;
+    ACE_Hash_Map_Manager<YARP_KEYED_STRING,Entry,ACE_Null_Mutex> action;
     ACE_Vector<String> names;
     ACE_Vector<String> tips;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {
         Entry e(name,fn);
-        action.bind(String(name),e);
+        action.bind(YARP_KEYED_STRING(name),e);
         // maintain a record of order of keys
         names.push_back(String(name));
         if (tip!=NULL) {

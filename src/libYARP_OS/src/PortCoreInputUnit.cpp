@@ -168,10 +168,10 @@ void PortCoreInputUnit::run() {
             man.addOutput(cmd.getText(),id,os);
             break;
         case '!':
-            man.removeOutput(cmd.getText().substring(1,String::npos),id,os);
+            man.removeOutput(cmd.getText().substr(1,String::npos),id,os);
             break;
         case '~':
-            man.removeInput(cmd.getText().substring(1,String::npos),id,os);
+            man.removeInput(cmd.getText().substr(1,String::npos),id,os);
             break;
         case '*':
             man.describe(id,os);

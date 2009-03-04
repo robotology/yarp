@@ -34,7 +34,7 @@ void HttpTwoWayStream::apply(char ch) {
         Address addr = NameClient::extractAddress(part);
         if (addr.isValid()) {
             if (addr.getCarrierName()=="tcp"&&
-                (addr.getRegName().strstr("/quit")==String::npos)) {
+                (YARP_STRSTR(addr.getRegName(),"/quit")==String::npos)) {
                 proc += "<a href=\"http://";
                 proc += addr.getName();
                 proc += ":";

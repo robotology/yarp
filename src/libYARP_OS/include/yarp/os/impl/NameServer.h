@@ -28,6 +28,7 @@
 #undef main
 #endif
 
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -129,7 +130,7 @@ private:
         }
 
         bool release(const String& name) {
-            if (name.strstr(prefix)==0) {
+            if (YARP_STRSTR(name,prefix)==0) {
                 String num = name.substr(prefix.length());
                 int x = NetType::toInt(num);
                 ReusableRecord<int>::release(x);
@@ -239,7 +240,7 @@ private:
             String base = "";
             bool needSpace = false;
             for (unsigned int i=0; i<prop.size(); i++) {
-                if (prop[i].strstr(str)==0) {
+                if (YARP_STRSTR(prop[i],str)==0) {
                     if (needSpace) base += " ";
                     base += prop[i];
                     needSpace = true;
@@ -265,7 +266,7 @@ private:
         Address address;
         bool reusablePort;
         bool reusableIp;
-        ACE_Hash_Map_Manager<String,PropertyRecord,ACE_Null_Mutex> propMap;
+        ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyRecord,ACE_Null_Mutex> propMap;
     public:
         NameRecord() : propMap(5) {
             reusableIp = false;
@@ -306,7 +307,7 @@ private:
 
 
         PropertyRecord *getPR(const String& key, bool create = true) {
-            ACE_Hash_Map_Entry<String,PropertyRecord> *entry = NULL;
+            ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyRecord> *entry = NULL;
             int result = propMap.find(key,entry);
             if (result==-1 && create) {
                 PropertyRecord blank;
@@ -379,10 +380,10 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    typedef ACE_Hash_Map_Manager<String,NameRecord,ACE_Null_Mutex> NameMapHash;
+    typedef ACE_Hash_Map_Manager<YARP_KEYED_STRING,NameRecord,ACE_Null_Mutex> NameMapHash;
 
     NameMapHash nameMap;
-    ACE_Hash_Map_Manager<String,HostRecord,ACE_Null_Mutex> hostMap;
+    ACE_Hash_Map_Manager<YARP_KEYED_STRING,HostRecord,ACE_Null_Mutex> hostMap;
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
   

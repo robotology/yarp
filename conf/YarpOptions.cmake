@@ -51,3 +51,6 @@ ENDIF (WIN32)
 # but instead the library developers
 SET(CREATE_BUILTIN_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create tests for builtin devices")
 MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
+
+SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string?")
+MARK_AS_ADVANCED(USE_STL_STRING)

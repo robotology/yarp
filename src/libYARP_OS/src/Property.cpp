@@ -46,14 +46,14 @@ public:
 
 class PropertyHelper {
 public:
-    ACE_Hash_Map_Manager<String,PropertyItem,ACE_Null_Mutex> data;
+    ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyItem,ACE_Null_Mutex> data;
     Property& owner;
 
     PropertyHelper(Property& owner) : owner(owner) {}
 
     PropertyItem *getPropNoCreate(const char *key) const {
         String n(key);
-        ACE_Hash_Map_Entry<String,PropertyItem> *entry = NULL;
+        ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyItem> *entry = NULL;
         int result = data.find(n,entry);
         if (result==-1) {
             return NULL;
@@ -65,7 +65,7 @@ public:
     
     PropertyItem *getProp(const char *key, bool create = true) {
         String n(key);
-        ACE_Hash_Map_Entry<String,PropertyItem> *entry = NULL;
+        ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyItem> *entry = NULL;
         int result = data.find(n,entry);
         if (result==-1) {
             if (!create) {
@@ -210,7 +210,7 @@ public:
                 tag = work;
                 accum.clear();
             } else {
-                if (work.strstr("\\")!=String::npos) {
+                if (YARP_STRSTR(work,"\\")!=String::npos) {
                     // Specifically when reading from the command
                     // line, we will allow windows-style paths.
                     // Hence we have to break the "\" character
@@ -334,7 +334,7 @@ public:
             if (!done) {
                 including = false;
 
-                if (buf.strstr("//")!=String::npos) {
+                if (YARP_STRSTR(buf,"//")!=String::npos) {
                     bool quoted = false;
                     int comment = 0;
                     for (unsigned int i=0; i<buf.length(); i++) {
@@ -361,10 +361,10 @@ public:
                 buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf[0]=='[') {
-                    int stop = buf.strstr("]");
+                    int stop = YARP_STRSTR(buf,"]");
                     if (stop>=0) {
                         buf = buf.substr(1,stop-1);
-                        int space = buf.strstr(" ");
+                        int space = YARP_STRSTR(buf," ");
                         if (space>=0) {
                             Bottle bot(buf.c_str());
                             if (bot.size()>1) {
@@ -490,7 +490,7 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (ACE_Hash_Map_Manager<String,PropertyItem,ACE_Null_Mutex>::iterator
+        for (ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyItem,ACE_Null_Mutex>::iterator
                  it = data.begin(); it!=data.end(); it++) {
             PropertyItem& rec = (*it).int_id_;
             Bottle& sub = bot.addList();
@@ -503,7 +503,7 @@ public:
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         String input = txt;
-        if (input.strstr("$")<0) {
+        if (YARP_STRSTR(input,"$")<0) {
             // no variables present for sure
             return txt;
         }

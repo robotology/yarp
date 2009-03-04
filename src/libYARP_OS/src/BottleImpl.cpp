@@ -23,6 +23,13 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
+#if YARP_USE_STL_STRING
+//#define YARP_STRSTR(haystack,needle) haystack.find(needle)
+#define YARP_STRINIT(len) ((size_t) len),0
+#else
+//#define YARP_STRSTR(haystack,needle) haystack.strstr(needle)
+#define YARP_STRINIT(len) ((size_t) len)
+#endif
 
 //#define YMSG(x) ACE_OS::printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))
@@ -117,7 +124,7 @@ void BottleImpl::smartAdd(const String& str) {
 
         if (numberLike && ((ch>='0'&&ch<='9')||ch=='+'||ch=='-'||ch=='.') &&
             (ch!='.'||str.length()>1)) {
-            if (str.strstr(".")==String::npos) {
+            if (YARP_STRSTR(str,".")==String::npos) {
                 s = new StoreInt(0);
             } else {
                 s = new StoreDouble(0);
@@ -334,7 +341,8 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
 
 void BottleImpl::fromBinary(const char *text, int len) {
     String wrapper;
-    wrapper.set(text,len,0);
+    //wrapper.set(text,len,0);
+    YARP_STRSET(wrapper,text,len,0);
     StringInputStream sis;
     sis.add(wrapper);
     StreamConnectionReader reader;
@@ -347,7 +355,8 @@ void BottleImpl::fromBinary(const char *text, int len) {
 
 bool BottleImpl::fromBytes(const Bytes& data) {
     String wrapper;
-    wrapper.set(data.get(),data.length(),0);
+    //wrapper.set(data.get(),data.length(),0);
+    YARP_STRSET(wrapper,data.get(),data.length(),0);
     StringInputStream sis;
     sis.add(wrapper);
     StreamConnectionReader reader;
@@ -467,7 +476,7 @@ bool BottleImpl::read(ConnectionReader& reader) {
             int len = reader.expectInt();
             if (reader.isError()) return false;
             //String name = reader.expectString(len);
-            String buf((size_t)len);
+            String buf(YARP_STRINIT(len));
             reader.expectBlock((const char *)buf.c_str(),len);
             if (reader.isError()) return false;
             String name = buf.c_str();
@@ -652,7 +661,7 @@ String StoreDouble::toStringFlex() const {
     // Need to deal with alternate versions of the decimal point.
 #ifdef LC_NUMERIC
  	struct lconv * lc=localeconv();
- 	unsigned int offset = str.strstr(lc->decimal_point);
+ 	unsigned int offset = YARP_STRSTR(str,lc->decimal_point);
  	if (offset!=String::npos){
  		str[offset]='.';
  	} else {
@@ -660,7 +669,7 @@ String StoreDouble::toStringFlex() const {
     }
 #else
     // maintain old YARP behavior if locale info not available
-    if (str.strstr(".")==String::npos) {
+    if (YARP_STRSTR(str,".")==String::npos) {
         str += ".0";
     }
 #endif
@@ -687,7 +696,7 @@ void StoreDouble::fromString(const String& src) {
     // Need to deal with alternate versions of the decimal point.
 #ifdef LC_NUMERIC
     String tmp = src;
-    unsigned int offset = tmp.strstr(".");
+    unsigned int offset = YARP_STRSTR(tmp,".");
     if (offset!=String::npos) {
  		struct lconv *lc = localeconv();
  		tmp[offset] = lc->decimal_point[0];
@@ -820,7 +829,7 @@ void StoreString::fromStringNested(const String& src) {
 
 bool StoreString::read(ConnectionReader& reader) {
     int len = reader.expectInt();
-    String buf((size_t)len);
+    String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
     x = buf.c_str();
     //x = reader.expectString(len);
@@ -857,11 +866,12 @@ String StoreBlob::toStringNested() const {
 
 void StoreBlob::fromString(const String& src) {
     Bottle bot(src.c_str());
-    String buf((size_t)(bot.size()));
+    String buf(YARP_STRINIT(bot.size()));
     for (int i=0; i<bot.size(); i++) {
         buf[i] = (char)((unsigned char)(bot.get(i).asInt()));
     }
-    x.set(buf.c_str(),bot.size(),1);
+    //x.set(buf.c_str(),bot.size(),1);
+    YARP_STRSET(x,buf.c_str(),bot.size(),1);
 }
 
 void StoreBlob::fromStringNested(const String& src) {
@@ -877,9 +887,10 @@ void StoreBlob::fromStringNested(const String& src) {
 
 bool StoreBlob::read(ConnectionReader& reader) {
     int len = reader.expectInt();
-    String buf((size_t)len);
+    String buf(YARP_STRINIT(len));
     reader.expectBlock((const char *)buf.c_str(),len);
-    x.set(buf.c_str(),(size_t)len,1);
+    //x.set(buf.c_str(),(size_t)len,1);
+    YARP_STRSET(x,buf.c_str(),(size_t)len,1);
     return true;
 }
 

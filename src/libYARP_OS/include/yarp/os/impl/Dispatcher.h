@@ -45,7 +45,7 @@ private:
         }
     };
 
-    ACE_Hash_Map_Manager<String,Entry,ACE_Null_Mutex> action;
+    ACE_Hash_Map_Manager<YARP_KEYED_STRING,Entry,ACE_Null_Mutex> action;
     ACE_Vector<String> names;
 
 public:

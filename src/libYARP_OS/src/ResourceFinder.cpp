@@ -232,7 +232,7 @@ public:
             if (user[0]=='.'&&(user[1]=='/'||user[1]=='\\')) {
             s = user + "/" + name;
             }
-        } else if (user=='.') {
+        } else if (user==".") {
             s = user + "/" + name;
         }
 

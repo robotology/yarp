@@ -24,7 +24,7 @@ Election::~Election() {
 
 
 Election::PeerRecord *Election::getRecord(const String& key, bool create) {
-    ACE_Hash_Map_Entry<String,Election::PeerRecord> *entry = NULL;
+    ACE_Hash_Map_Entry<YARP_KEYED_STRING,Election::PeerRecord> *entry = NULL;
     int result = nameMap.find(key,entry);
     if (result==-1 && create) {
         nameMap.bind(key,Election::PeerRecord());

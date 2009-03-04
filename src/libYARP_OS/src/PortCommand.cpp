@@ -69,7 +69,9 @@ bool PortCommand::write(ConnectionWriter& writer) {
         }
     } else {
         if (ch!='\0') {
-            writer.appendString(String(ch).c_str(),'\n');
+            char buf[] = "X";
+            buf[0] = ch;
+            writer.appendString(String(buf).c_str(),'\n');
         } else {
             writer.appendString(str.c_str(),'\n');
         }

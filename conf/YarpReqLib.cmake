@@ -47,6 +47,14 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
     ENDIF(${IS_BIG_ENDIAN})
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 
+# check if we want yarp String to be std::string
+IF (USE_STL_STRING)
+  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_USE_STL_STRING=1)
+  MESSAGE(STATUS "Using std::string")
+ENDIF (USE_STL_STRING)
+
+
+
 # get an int32 type
 IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
     INCLUDE(CheckTypeSize)

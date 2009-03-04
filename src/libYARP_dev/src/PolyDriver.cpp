@@ -39,7 +39,7 @@ public:
         prefix += ".";
 
         key = prefix + key;
-        if (key.substr(0,1)=='.') {
+        if (key.substr(0,1)==".") {
             key = key.substr(1,key.length());
         }
 

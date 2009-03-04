@@ -60,7 +60,7 @@ private:
     };
 
 
-    ACE_Hash_Map_Manager<String,PeerRecord,ACE_Null_Mutex> nameMap;
+    ACE_Hash_Map_Manager<YARP_KEYED_STRING,PeerRecord,ACE_Null_Mutex> nameMap;
     long ct;
 
     PeerRecord *getRecord(const String& key, bool create = false);

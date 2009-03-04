@@ -43,7 +43,7 @@ Value *Value::makeVocab(const char *str) {
 
 Value *Value::makeBlob(void *data, int length) {
     String s;
-    s.set((char*)data,length,0);
+    YARP_STRSET(s,(char*)data,length,0);
     return new StoreBlob(s);
 }
 
