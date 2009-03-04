@@ -115,7 +115,7 @@ void BottleImpl::smartAdd(const String& str) {
             }
         }
 
-        if (numberLike && (ch>='0'&&ch<='9'||ch=='+'||ch=='-'||ch=='.') &&
+        if (numberLike && ((ch>='0'&&ch<='9')||ch=='+'||ch=='-'||ch=='.') &&
             (ch!='.'||str.length()>1)) {
             if (str.strstr(".")==String::npos) {
                 s = new StoreInt(0);
