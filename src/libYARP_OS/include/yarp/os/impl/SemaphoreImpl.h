@@ -9,6 +9,14 @@
 #ifndef _YARP2_SEMAPHOREIMPL_
 #define _YARP2_SEMAPHOREIMPL_
 
+#ifdef __linux__
+#define YARP_USE_NATIVE_POSIX_SEMA
+#endif
+
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#include <semaphore.h>
+#endif
+
 #include <ace/Synch.h>
 
 #include <yarp/os/impl/String.h>
@@ -28,13 +36,27 @@ namespace yarp {
  */
 class yarp::os::impl::SemaphoreImpl {
 public:
-    SemaphoreImpl(int initialCount = 1) : sema(initialCount) {
+    SemaphoreImpl(int initialCount = 1) 
+#ifndef YARP_USE_NATIVE_POSIX_SEMA
+        : sema(initialCount) 
+#endif
+    {
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+        sem_init(&sema,0,initialCount);
+#endif
     }
 
-    virtual ~SemaphoreImpl() {}
+    virtual ~SemaphoreImpl() {
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+        sem_destroy(&sema);
+#endif
+    }
 
     // blocking wait
     void wait() {
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+        sem_wait(&sema);
+#else
         int result = sema.acquire();
         if (result!=-1) return;
         int ct = 100;
@@ -48,20 +70,33 @@ public:
         } else {
             YARP_ERROR(Logger::get(), "semaphore wait eventually succeeded");
         }
+#endif
     }
 
     // polling wait
     bool check() {
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+        return sem_trywait(&sema)==0;
+#else
         return (sema.tryacquire()<0)?0:1;
+#endif
     }
 
     // increment
     void post() {
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+        sem_post(&sema);
+#else
         sema.release();
+#endif
     }
 
 private:
+#ifdef YARP_USE_NATIVE_POSIX_SEMA
+    sem_t sema;
+#else
     ACE_Semaphore sema;
+#endif
 };
 
 #endif
