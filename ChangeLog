@@ -1,3 +1,9 @@
+2009-03-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpLibrary.cmake: include yarp/os/impl, yarp/sig/impl,
+	yarp/dev/impl header files in INSTALL target.  Thanks to
+	Gianluca for pointing out this was not happening.
+
 2009-03-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpOptions.cmake: add an option to replace ACE-based

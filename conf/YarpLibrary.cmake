@@ -75,6 +75,8 @@ FILE(GLOB header_1 include/yarp/*.h)
 INSTALL_FILES(/include/yarp FILES ${header_1})
 FILE(GLOB header_2 include/yarp/${postfix}/*.h)
 INSTALL_FILES(/include/yarp/${postfix} FILES ${header_2})
+FILE(GLOB header_3 include/yarp/${postfix}/impl/*.h)
+INSTALL_FILES(/include/yarp/${postfix}/impl FILES ${header_3})
 
 # disable a set of warnings due to use of deprecated features/libs.
 IF(MSVC)
