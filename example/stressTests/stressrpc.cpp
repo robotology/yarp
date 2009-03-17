@@ -25,14 +25,23 @@ int main(int argc, char **argv)
     printf("Going to stress rpc connections to the robot\n");
     printf("Run as --id unique-id\n");
     printf("Optionally:\n");
-    printf("add --part robot-part\n");
-    printf("add --prot protocol\n");
+    printf("--part robot-part\n");
+    printf("--prot protocol\n");
+    printf("--time dt (seconds)\n");
 
     Property parameters;
     parameters.fromCommand(argc, argv);
 
     ConstString part=parameters.find("part").asString();
     int id=parameters.find("id").asInt();
+    double time=0;
+    if (parameters.check("time"))
+        {
+            time=parameters.find("time").asDouble();
+        }
+    else
+        time=-1;
+
     ConstString protocol;
     if (parameters.check("prot"))
     {
@@ -87,7 +96,10 @@ int main(int argc, char **argv)
     encoders.resize(nj);
 
     int count=0;
-    while(true)
+    bool done=false;
+    double startT=Time::now();
+    double now=0;
+    while((!done) || (time==-1))
         {
             count++;
             double v;
@@ -108,7 +120,13 @@ int main(int argc, char **argv)
             fprintf(stderr, "%u\n", count);
 
             Time::delay(0.1);
+
+            now=Time::now();
+            if ((now-startT)>time)
+                done=true;
         }
+
+    printf("bye bye from %d\n", id);
     
     return 0;
 }
