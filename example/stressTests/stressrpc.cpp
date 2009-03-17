@@ -24,7 +24,9 @@ int main(int argc, char **argv)
 
     printf("Going to stress rpc connections to the robot\n");
     printf("Run as --id unique-id\n");
-    printf("Optionally, add --part robot-part\n");
+    printf("Optionally:\n");
+    printf("add --part robot-part\n");
+    printf("add --prot protocol\n");
 
     Property parameters;
     parameters.fromCommand(argc, argv);
