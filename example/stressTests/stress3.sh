@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Running yarpdev"
-yarpdev --device controlboard --subdevice fakebot &
+yarpdev --device controlboard --subdevice test_motor &
 
 sleep 1
 
