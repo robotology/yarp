@@ -21,6 +21,7 @@ namespace yarp{
         class IFrameGrabberImage;
         class IFrameGrabber;
         class IFrameGrabberControls;
+		class IFrameGrabberControlsDC1394;
         class FrameGrabberOpenParameters;
         class IFrameWriterImage;
     }
@@ -243,54 +244,54 @@ public:
      * Read the brightness parameter.
      * @return the current brightness value.
      */
-	virtual double getBrightness() const=0;
+	virtual double getBrightness()=0;
     /**
      * Read the exposure parameter.
      * @return the current exposure value.
      */
-	virtual double getExposure() const=0;
+	virtual double getExposure()=0;
     /**
      * Read the sharpness parameter.
      * @return the current sharpness value.
      */	
-	virtual double getSharpness() const=0;
+	virtual double getSharpness()=0;
 	/**
      * Read the white balance parameters.
      * @param blue reference to return value for the red parameter.
 	 * @param red reference to return value for the green parameter.
 	 * @return true/false.
      */
-    virtual bool getWhiteBalance(double &blue, double &red) const=0;
+    virtual bool getWhiteBalance(double &blue, double &red)=0;
     /**
      * Read the hue parameter.
      * @return the current hue value.
      */	
-	virtual double getHue() const=0;
+	virtual double getHue()=0;
     /**
      * Read the saturation parameter.
      * @return the current saturation value.
      */	
-	virtual double getSaturation() const=0;
+	virtual double getSaturation()=0;
     /**
      * Read the gamma parameter.
      * @return the current gamma value.
      */	
-	virtual double getGamma() const=0;
+	virtual double getGamma()=0;
     /**
      * Read the shutter parameter.
      * @return the current shutter value.
      */
-    virtual double getShutter() const=0;
+    virtual double getShutter()=0;
     /**
      * Read the gain parameter.
      * @return the current gain value.
      */
-    virtual double getGain() const=0;
+    virtual double getGain()=0;
     /**
      * Read the iris parameter.
      * @return the current iris value.
      */
-    virtual double getIris() const=0;
+    virtual double getIris()=0;
     
     // not implemented
     //virtual double getTemperature() const=0;
@@ -298,4 +299,95 @@ public:
     //virtual double getOpticalFilter() const=0;
     //virtual double getCaptureQuality() const=0;
 };
+
+class yarp::dev::IFrameGrabberControlsDC1394 : public yarp::dev::IFrameGrabberControls
+{
+public:	
+	// 00 01 02
+	virtual bool hasFeatureDC1394(int feature)=0;//{ return true; }
+	virtual bool setFeatureDC1394(int feature,double value)=0;//{ return true; }
+	virtual double getFeatureDC1394(int feature)=0;//{ return 0.5; }
+
+	// 03 04 05 	
+	virtual bool hasOnOffDC1394(int feature)=0;//{ return true; }
+	virtual bool setActiveDC1394(int feature, bool onoff)=0;//{ return true; }
+	virtual bool getActiveDC1394(int feature)=0;//{ return true; }
+	
+	// 06 07 08 09 10 11
+	virtual bool hasAutoDC1394(int feature)=0;//{ return true; }
+	virtual bool hasManualDC1394(int feature)=0;//{ return true; }
+	virtual bool hasOnePushDC1394(int feature)=0;//{ return true; }
+	virtual bool setModeDC1394(int feature, bool auto_onoff)=0;//{ return true; }
+	virtual bool getModeDC1394(int feature)=0;//{ return true; }
+	virtual bool setOnePushDC1394(int feature)=0;//{ return true; }
+
+	// 12 13 14 
+	virtual unsigned int getVideoModeMaskDC1394()=0;//{ return 0xFFFFFFFF; }
+	virtual unsigned int getVideoModeDC1394()=0;//{ return 0; }
+	virtual bool setVideoModeDC1394(int video_mode)=0;//{ return true; }
+
+	// 15 16 17
+	virtual unsigned int getFPSMaskDC1394()=0;//{ return 0xFFFFFFFF; }
+	virtual unsigned int getFPSDC1394()=0;//{ return 0; }
+	virtual bool setFPSDC1394(int fps)=0;//{ return true; }
+
+	// 18 19
+	virtual unsigned int getISOSpeedDC1394()=0;//{ return 0; }
+	virtual bool setISOSpeedDC1394(int speed)=0;//{ return true; }
+
+	// 20 21 22
+	virtual unsigned int getColorCodingMaskDC1394(unsigned int video_mode)=0;//{ return 0xFFFFFFFF; }
+	virtual unsigned int getColorCodingDC1394()=0;//{ return 0; }
+	virtual bool setColorCodingDC1394(int coding)=0;//{ return true; }
+
+	// 23 24
+	virtual bool setWhiteBalanceDC1394(double b, double r)=0;//{ return true; }
+	virtual bool getWhiteBalanceDC1394(double &b, double &r)=0;
+    /*{
+        b=r=0.5;
+        return true;
+    }*/
+
+	// 25 26 27
+	virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep)=0;
+	/*{
+		xdim=324; ydim=244; xstep=2; ystep=2;
+		return true;
+	}*/
+	virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim)=0;
+	/*{
+		xdim=324; ydim=244;
+		return true;
+	}*/
+	virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim)=0;//{ return true; }
+
+	// 28
+	virtual bool setOperationModeDC1394(bool b1394b)=0;//{ return true; }
+	// 29
+	virtual bool getOperationModeDC1394()=0;//{ return true; } 
+	// 30
+	virtual bool setTransmissionDC1394(bool bTxON)=0;//{ return true; }
+	// 31
+	virtual bool getTransmissionDC1394()=0;//{ return true; }
+	// 32
+	//virtual bool setBayerDC1394(bool bON)=0;//{ return true; }
+	// 33
+	//virtual bool getBayerDC1394()=0;//{ return true; }
+
+	// 34 35 36 37
+	virtual bool setBroadcastDC1394(bool onoff)=0;//{ return true; }
+	virtual bool setDefaultsDC1394()=0;//{ return true; }
+	virtual bool setResetDC1394()=0;//{ return true; }
+	virtual bool setPowerDC1394(bool onoff)=0;//{ return true; }
+
+	// 38
+	virtual bool setCaptureDC1394(bool bON)=0;//{ return true; }
+
+	// 39
+	virtual unsigned int getBytesPerPacketDC1394()=0;//{ return 0; }
+
+	// 40
+	virtual bool setBytesPerPacketDC1394(unsigned int bpp)=0;//{ return true; }
+};
+
 #endif

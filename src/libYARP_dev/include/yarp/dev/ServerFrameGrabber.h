@@ -52,6 +52,60 @@ namespace yarp {
 #define VOCAB_WIDTH VOCAB1('w')
 #define VOCAB_HEIGHT VOCAB1('h')
 
+#define VOCAB_DRHASFEA VOCAB4('D','R','2','a') // 00
+#define VOCAB_DRSETVAL VOCAB4('D','R','2','b') // 01
+#define VOCAB_DRGETVAL VOCAB4('D','R','2','c') // 02
+
+#define VOCAB_DRHASACT VOCAB4('D','R','2','d') // 03
+#define VOCAB_DRSETACT VOCAB4('D','R','2','e') // 04
+#define VOCAB_DRGETACT VOCAB4('D','R','2','f') // 05
+
+#define VOCAB_DRHASMAN VOCAB4('D','R','2','g') // 06
+#define VOCAB_DRHASAUT VOCAB4('D','R','2','h') // 07
+#define VOCAB_DRHASONP VOCAB4('D','R','2','i') // 08
+#define VOCAB_DRSETMOD VOCAB4('D','R','2','j') // 09
+#define VOCAB_DRGETMOD VOCAB4('D','R','2','k') // 10
+#define VOCAB_DRSETONP VOCAB4('D','R','2','l') // 11
+
+// masks
+#define VOCAB_DRGETMSK VOCAB4('D','R','2','m') // 12
+#define VOCAB_DRGETVMD VOCAB4('D','R','2','n') // 13
+#define VOCAB_DRSETVMD VOCAB4('D','R','2','o') // 14
+
+#define VOCAB_DRGETFPM VOCAB4('D','R','2','p') // 15
+#define VOCAB_DRGETFPS VOCAB4('D','R','2','q') // 16
+#define VOCAB_DRSETFPS VOCAB4('D','R','2','r') // 17
+
+#define VOCAB_DRGETISO VOCAB4('D','R','2','s') // 18
+#define VOCAB_DRSETISO VOCAB4('D','R','2','t') // 19
+
+#define VOCAB_DRGETCCM VOCAB4('D','R','2','u') // 20
+#define VOCAB_DRGETCOD VOCAB4('D','R','2','v') // 21
+#define VOCAB_DRSETCOD VOCAB4('D','R','2','w') // 22
+
+#define VOCAB_DRSETWHB VOCAB4('D','R','2','x') // 23
+#define VOCAB_DRGETWHB VOCAB4('D','R','2','y') // 24
+
+#define VOCAB_DRGETF7M VOCAB4('D','R','2','z') // 25
+#define VOCAB_DRGETWF7 VOCAB4('D','R','2','A') // 26
+#define VOCAB_DRSETWF7 VOCAB4('D','R','2','B') // 27
+
+#define VOCAB_DRSETOPM VOCAB4('D','R','2','C') // 28
+#define VOCAB_DRGETOPM VOCAB4('D','R','2','D') // 29
+#define VOCAB_DRSETTXM VOCAB4('D','R','2','E') // 30
+#define VOCAB_DRGETTXM VOCAB4('D','R','2','F') // 31
+//#define VOCAB_DRSETBAY VOCAB4('D','R','2','G') // 32
+//#define VOCAB_DRGETBAY VOCAB4('D','R','2','H') // 33
+
+#define VOCAB_DRSETBCS VOCAB4('D','R','2','I') // 34
+#define VOCAB_DRSETDEF VOCAB4('D','R','2','J') // 35
+#define VOCAB_DRSETRST VOCAB4('D','R','2','K') // 36
+#define VOCAB_DRSETPWR VOCAB4('D','R','2','L') // 37
+
+#define VOCAB_DRSETCAP VOCAB4('D','R','2','M') // 38
+#define VOCAB_DRSETBPP VOCAB4('D','R','2','N') // 39
+#define VOCAB_DRGETBPP VOCAB4('D','R','2','O') // 40
+
 /**
  * @ingroup dev_impl_wrapper
  *
@@ -265,43 +319,43 @@ public:
 
 // get
 
-	virtual double getBrightness() const {
+	virtual double getBrightness() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getBrightness();
     }
-	virtual double getExposure() const {
+	virtual double getExposure() {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->getExposure();
     }
-	virtual double getSharpness() const {
+	virtual double getSharpness() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getSharpness();
     }
-    virtual bool getWhiteBalance(double &blue, double &red) const {
+    virtual bool getWhiteBalance(double &blue, double &red) {
         if (fgCtrl==NULL) { return false; }
         return fgCtrl->getWhiteBalance(blue,red);
     }
-	virtual double getHue() const {
+	virtual double getHue() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getHue();
     }	
-	virtual double getSaturation() const {
+	virtual double getSaturation() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getSaturation();
     }
-	virtual double getGamma() const {
+	virtual double getGamma() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getGamma();
     }
-    virtual double getShutter() const {
+    virtual double getShutter() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getShutter();
     }
-    virtual double getGain() const {
+    virtual double getGain() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getGain();
     }
-    virtual double getIris() const {
+    virtual double getIris() {
         if (fgCtrl==NULL) { return 0.0; }
         return fgCtrl->getIris();
     }
