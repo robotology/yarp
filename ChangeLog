@@ -1,3 +1,13 @@
+2009-03-18 Alessandro Scalzo <alessandro@liralab.it>
+	* src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
+	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
+	* src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
+	* src/libYARP_dev/include/yarp/dev/TestFrameGrabber.h
+	* src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.cpp
+
+	Added support for new iCub/src/modules/dragonfly2 driver
+	and iCub/src/gui/frameGrabberGui2 remote GUI.
+
 2009-03-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h: undo
