@@ -59,16 +59,16 @@ int main(int argc, char **argv)
     cback.open("/callback");
     cback.useCallback();
 
-    bool done=true;
+    bool done=false;
     while(!done)
     {
+        Time::delay(1);
         cback.lock();
         Bottle b=cback.get();
         cback.unlock();
         fprintf(stderr, "Main got: %s\n", b.toString().c_str());
         if (b.get(0).asString()=="quit")
             done=true;
-        Time::delay(1);
     }
     
     
