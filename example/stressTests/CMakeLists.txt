@@ -11,3 +11,4 @@ PROJECT (stressTests)
 FIND_PACKAGE(YARP)
 
 ADD_EXECUTABLE(stressrpc stressrpc.cpp)
+ADD_EXECUTABLE(callback  callback.cpp)
