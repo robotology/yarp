@@ -26,7 +26,7 @@ public:
 	{
         mutex.wait(); 
         Datum=v;
-        //  Time::delay(5);
+        //Time::delay(5);
         mutex.post();
         fprintf(stderr, "Callback got: %s\n",Datum.toString().c_str());
     }
@@ -59,7 +59,7 @@ int main(int argc, char **argv)
     cback.open("/callback");
     cback.useCallback();
 
-    bool done=false;
+    bool done=true;
     while(!done)
     {
         cback.lock();
