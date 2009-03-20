@@ -28,6 +28,7 @@ int main(int argc, char **argv)
     printf("--part robot-part\n");
     printf("--prot protocol\n");
     printf("--time dt (seconds)\n");
+    printf("--robot name \n");
 
     Property parameters;
     parameters.fromCommand(argc, argv);
@@ -50,14 +51,32 @@ int main(int argc, char **argv)
     else
         protocol="tcp";
 
+    ConstString rname;
+    if (parameters.check("robot"))
+    {
+        rname=parameters.find("robot").asString();
+    }
+    else
+        rname="controlboard";
+
     PolyDriver dd;
     Property p;
 
     Random::seed((unsigned int)Time::now());
      
-    string remote="/controlboard";
-    remote+=part;
-    string local="/controlboard/stress";
+    string remote=string("/")+rname.c_str();
+    if (part!="")
+        {
+            remote+=string("/");
+            remote+=part;
+        }
+    string local=string("/")+string(rname.c_str());
+    if (part!="")
+        {
+            local+=string("/");
+            local+=part;
+        }
+    local+=string("/stress");
 
     stringstream lStream; 
     lStream << id;
@@ -107,14 +126,18 @@ int main(int argc, char **argv)
             
             for(jj=0; jj<nj; jj++)
                 {
-                    ienc->getEncoder(jj, encoders.data()+jj);
-            //            iamp->enableAmp(jj);
-            //            ilim->setLimits(jj, 0, 0);
-            //            double max;
-            //            double min;
-            //            ilim->getLimits(jj, &min, &max);
-                    Pid pid;
-                    ipid->getPid(jj, &pid);
+                    //    ienc->getEncoder(jj, encoders.data()+jj);
+                    //    iamp->enableAmp(jj);
+                    //    ilim->setLimits(jj, 0, 0);
+                    //    double max;
+                    //    double min;
+                    //    ilim->getLimits(jj, &min, &max);
+                    fprintf(stderr, ".");
+                    // Pid pid;
+                    // ipid->getPid(jj, &pid);
+                    bool done;
+                    ipos->checkMotionDone(jj, &done);
+                    fprintf(stderr, "#\n");
                 }
 
             fprintf(stderr, "%u\n", count);

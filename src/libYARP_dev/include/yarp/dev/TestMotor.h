@@ -17,6 +17,8 @@
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
 
+#include <yarp/os/Time.h>
+
 namespace yarp {
     namespace dev {
         class TestMotor;
@@ -34,9 +36,11 @@ class yarp::dev::TestMotor : public DeviceDriver,
 private:
     int njoints;
     yarp::sig::Vector pos, speed, acc;
+    double delay;
 public:
     TestMotor() {
         njoints = 1;
+        delay=0;
     }
 
     virtual bool getAxes(int *ax) {
@@ -55,6 +59,8 @@ public:
             speed[i] = 0;
             acc[i] = 0;
         }
+
+        delay=config.check("delay",yarp::os::Value(0), "delay in each call for debugging purpose, in ms").asInt();
         return true;
     }
 
@@ -95,7 +101,7 @@ public:
 
 
     virtual bool checkMotionDone(int j, bool *flag) {
-        Time::delay(80/1000.0);
+        yarp::os::Time::delay(delay/1000.0);
         return true;
     }
 
