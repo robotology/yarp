@@ -95,6 +95,7 @@ public:
 
 
     virtual bool checkMotionDone(int j, bool *flag) {
+        Time::delay(80/1000.0);
         return true;
     }
 
