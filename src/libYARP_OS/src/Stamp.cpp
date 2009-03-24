@@ -65,7 +65,7 @@ void Stamp::update() {
     if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
         sequenceNumber = 0;
     }
-    timeStamp = now-timeZero;
+    timeStamp = now;
 }
 
 void Stamp::update(double time) {
@@ -74,5 +74,18 @@ void Stamp::update(double time) {
     if (sequenceNumber>getMaxCount()||sequenceNumber<0) {
         sequenceNumber = 0;
     }
-    timeStamp = time-timeZero;
+    timeStamp = time;
 }
+
+Stamp::Stamp(int count, double time)
+{
+    sequenceNumber = count;
+    timeStamp = time;
+}
+
+Stamp::Stamp()
+{
+    sequenceNumber = -1;
+    timeStamp = 0;
+}
+

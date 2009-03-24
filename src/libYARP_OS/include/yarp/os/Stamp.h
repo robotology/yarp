@@ -26,16 +26,12 @@ namespace yarp {
 class yarp::os::Stamp : public Portable {
 private:
     NetInt32 sequenceNumber;
-    NetFloat64 timeStamp, timeZero;
+    NetFloat64 timeStamp;
 public:
     /**
      * Constuct an invalid Stamp.
      */
-    Stamp() {
-        sequenceNumber = -1;
-        timeStamp = 0;
-        timeZero = 0;
-    }
+    Stamp();
 
     /**
      * Constuct a Stamp with a given sequence number and time.
@@ -43,11 +39,7 @@ public:
      * @param time the time stamp (in seconds, relative to an arbitrary
      * zero time)
      */
-    Stamp(int count, double time) :
-        sequenceNumber(count),
-        timeStamp(time) {
-        timeZero = 0;
-    }
+    Stamp(int count, double time);
 
     /**
      * @return the sequence number
