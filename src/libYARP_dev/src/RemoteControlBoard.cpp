@@ -24,6 +24,7 @@
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
+#include <yarp/os/Stamp.h>
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
@@ -41,6 +42,19 @@ namespace yarp{
     namespace dev {
         class RemoteControlBoard;
     }
+}
+
+inline bool getTimeStamp(Bottle &bot, Stamp &st)
+{
+    if (bot.get(3).asVocab()==VOCAB_TIMESTAMP)
+        {
+            //yup! we have a timestamp
+            int fr=bot.get(4).asInt();
+            double ts=bot.get(5).asDouble();
+            st=Stamp(fr,ts);
+            return true;
+        }
+    return false;
 }
 
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
@@ -220,7 +234,7 @@ protected:
 
     String remote;
     String local;
-    Stamp lastStamp;
+    mutable Stamp lastStamp;
     Semaphore mutex;
     int nj;
 
@@ -286,7 +300,8 @@ protected:
      * @return true/false on success/failure.
      */
     bool getCommand(int code, double& v) const {
-        Bottle cmd, response;
+        Bottle cmd;
+        Bottle response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
 
@@ -295,6 +310,8 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // response should be [cmd] [name] value
             v = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
             return true;
         }
 
@@ -316,6 +333,9 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // response should be [cmd] [name] value
             v = response.get(2).asInt();
+
+            getTimeStamp(response, lastStamp);
+
             return true;
         }
         return false;
@@ -375,6 +395,9 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
+
             return true;
         }
         return false;
@@ -401,6 +424,9 @@ protected:
             ACE_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
+
+            getTimeStamp(response, lastStamp);
+
             return true;
         }
         return false;
