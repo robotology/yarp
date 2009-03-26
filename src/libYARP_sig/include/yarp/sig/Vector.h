@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.h,v 1.26 2008-10-14 15:56:49 eshuy Exp $
+// $Id: Vector.h,v 1.27 2009-03-26 13:15:44 natta Exp $
 
 #ifndef _YARP2_VECTOR_
 #define _YARP2_VECTOR_
@@ -428,7 +428,7 @@ public:
     void resize(size_t s)
     {
         storage.resize(s,0.0);
-        allocGslData();
+        //allocGslData();
         updateGslData();
     }
 
@@ -440,7 +440,7 @@ public:
     void resize(size_t size, const double &def)
     {
         storage.resize(size, def);
-        allocGslData();
+        //allocGslData();
         updateGslData();
     }
 
