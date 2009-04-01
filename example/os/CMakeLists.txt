@@ -24,4 +24,5 @@ ADD_EXECUTABLE(view_count view_count.cpp)
 ADD_EXECUTABLE(browse_bottle browse_bottle.cpp)
 ADD_EXECUTABLE(queue_manager queue_manager.cpp)
 ADD_EXECUTABLE(playback playback.cpp)
+ADD_EXECUTABLE(listports listports.cpp)
 
