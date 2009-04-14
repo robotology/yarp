@@ -96,6 +96,8 @@ Companion::Companion() {
         "read from the network and print to standard output");
     add("write",      &Companion::cmdWrite,
         "write to the network from standard input");
+	add("readwrite",  &Companion::cmdReadWrite,
+        "read from the network and print to standard output, write to the network from standard input");
     add("rpc",        &Companion::cmdRpc,
         "read/write commands to a port, in standard format");
     add("forward",        &Companion::cmdForward,
@@ -968,6 +970,27 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
+
+int Companion::cmdReadWrite(int argc, char *argv[])
+{
+	if (argc<2) 
+	{
+        ACE_OS::fprintf(stderr, "Please supply the read and write port names\n");
+        return 1;
+    }
+
+	const char *read_port_name=argv[0];
+	const char *write_port_name=argv[1];
+
+    BottleReader reader(read_port_name,false);
+    
+	int ret=write(write_port_name,0,NULL);
+
+    reader.wait();
+    reader.close();
+
+	return ret;
+}
 
 
 int Companion::read(const char *name, const char *src, bool showEnvelope) {

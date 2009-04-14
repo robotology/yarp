@@ -150,6 +150,8 @@ public:
 
     int cmdWrite(int argc, char *argv[]);
 
+	int cmdReadWrite(int argc, char *argv[]);
+
     int cmdRpc(int argc, char *argv[]);
 
     int cmdForward(int argc, char *argv[]);

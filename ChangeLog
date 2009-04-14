@@ -1,3 +1,11 @@
+2009-04-14 Alessandro Scalzo <alessandro@liralab.it>
+	* src/libYARP_OS/include/yarp/os/Run.h
+	* src/libYARP_OS/include/yarp/os/impl/Companion.h
+	* src/libYARP_dev/src/Run.cpp
+	* src/libYARP_dev/src/Companion.cp
+
+	The new yarp run.
+
 2009-03-18 Alessandro Scalzo <alessandro@liralab.it>
 	* src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
 	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
