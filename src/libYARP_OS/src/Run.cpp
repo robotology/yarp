@@ -545,8 +545,8 @@ void Run::Help()
 {
     fprintf(stderr,"USAGE:\n\n");
     fprintf(stderr,"yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST]\nrun a command on SERVERPORT server\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT --cmd COMMAND [ARGLIST]\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
     fprintf(stderr,"run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --kill TAG\nkill TAG command\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
@@ -704,7 +704,7 @@ bool Run::ExecuteCmdAndStdio(Bottle& msg)
 								TRUE,          // handles are inherited 
 								0,             // creation flags 
 								NULL,          // use parent's environment 
-								NULL,          // use parent's current directory 
+								msg.check("workdir")?msg.find("workdir").asString().c_str():NULL, // working directory
 								&cmd_startup_info,   // STARTUPINFO pointer 
 								&cmd_process_info);  // receives PROCESS_INFORMATION 
 
@@ -764,7 +764,7 @@ bool Run::ExecuteCmd(Bottle& msg)
 								TRUE,          // handles are inherited 
 								0,             // creation flags 
 								NULL,          // use parent's environment 
-								NULL,          // use parent's current directory 
+								msg.check("workdir")?msg.find("workdir").asString().c_str():NULL, // working directory 
 								&cmd_startup_info,   // STARTUPINFO pointer 
 								&cmd_process_info);  // receives PROCESS_INFORMATION 
 
@@ -990,6 +990,11 @@ bool Run::ExecuteCmdAndStdio(Bottle& msg)
 				REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
 				REDIRECT_TO(STDOUT_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 				REDIRECT_TO(STDERR_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
+				
+				if (msg.check("workdir"))
+			    {
+			        chdir(msg.find("workdir").asString().c_str());
+			    }
 
 				execvp(arg_str[0],arg_str);
 
@@ -1056,10 +1061,12 @@ bool Run::ExecuteCmd(Bottle& msg)
 		}
 		arg_str[nargs]=0;
         
-		execvp(arg_str[0],arg_str);
-		//char *env[]={"PWD=/home/ale/Desktop","PATH=$PATH",NULL};
-		//execve(arg_str[0],arg_str,env);
-		
+        if (msg.check("workdir"))
+		{
+		    chdir(msg.find("workdir").asString().c_str());
+		}
+        
+		execvp(arg_str[0],arg_str);	
 		
 		for (int s=0; s<command.size(); ++s)
 			delete [] arg_str[s];

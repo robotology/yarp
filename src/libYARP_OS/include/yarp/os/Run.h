@@ -15,7 +15,7 @@
  * 
  * To run a server on a machine:             $ yarp run --server SERVERPORT
  *
- * To run a command by the remote server:    $ yarp run --on SERVERPORT --as TAG [--stdio SERVERPORT] --cmd COMMAND [ARGLIST]
+ * To run a command by the remote server:    $ yarp run --on SERVERPORT --as TAG [--stdio SERVERPORT] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]
  * 
  * To kill a command:						 $ yarp run --on SERVERPORT --kill TAG
  *
