@@ -351,6 +351,10 @@ int Run::Server()
 
 	// yarp read | command | yarp write
 
+	#if !defined(WIN32) && !defined(WIN64)
+	signal(SIGCHLD,SIG_IGN); // avoid zombies
+	#endif
+
     while (bRun) 
 	{
 		Bottle msg,output;
