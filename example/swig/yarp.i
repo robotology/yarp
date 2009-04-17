@@ -570,3 +570,14 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
 	}
 }
  	  	 
+%extend yarp::sig::Image {
+	void setExternal(long int mem, int w, int h) {
+		self->setExternal((void*)mem, w, h);
+        }
+}
+
+%extend yarp::sig::Image {
+    void setExternal(long long mem, int w, int h) {
+        self->setExternal((void*)mem, w, h);
+        }
+}
