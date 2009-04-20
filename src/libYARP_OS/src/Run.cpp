@@ -341,7 +341,12 @@ void Run::SendMsg(Bottle& msg,ConstString target)
         printf("%s",response.get(s).toString().c_str());
     printf("\n");
 }
-
+/*
+void sigchild_handler(int sig)
+{
+	printf("SIGCHLD received %d\n",sig);
+}
+*/
 int Run::Server()
 {
 	Port port;
@@ -353,6 +358,7 @@ int Run::Server()
 
 	#if !defined(WIN32) && !defined(WIN64)
 	signal(SIGCHLD,SIG_IGN); // avoid zombies
+	//signal(SIGCHLD,sigchild_handler);
 	#endif
 
     while (bRun) 
@@ -977,7 +983,7 @@ bool Run::ExecuteCmdAndStdio(Bottle& msg)
 		        Bottle command=msg.findGroup("cmd");
 		        command=command.tail();
         
-                char *cmd_str=new char[command.get(0).toString().length()];
+                char *cmd_str=new char[command.get(0).toString().length()+1];
                 strcpy(cmd_str,command.get(0).toString().c_str());
                 int nargs=CountArgs(cmd_str);
                 String *Args=new String[nargs];
@@ -986,7 +992,7 @@ bool Run::ExecuteCmdAndStdio(Bottle& msg)
 		        char **arg_str=new char*[nargs+1];
 		        for (int s=0; s<nargs; ++s)
 		        {
-		        	arg_str[s]=new char[Args[s].length()];
+		        	arg_str[s]=new char[Args[s].length()+1];
 		        	strcpy(arg_str[s],Args[s].c_str());
 		        }
 		        arg_str[nargs]=0;
@@ -1051,7 +1057,7 @@ bool Run::ExecuteCmd(Bottle& msg)
 		Bottle command=msg.findGroup("cmd");
 		command=command.tail();
         
-        char *cmd_str=new char[command.get(0).toString().length()];
+        char *cmd_str=new char[command.get(0).toString().length()+1];
         strcpy(cmd_str,command.get(0).toString().c_str());
         int nargs=CountArgs(cmd_str);
         String *Args=new String[nargs];
@@ -1060,7 +1066,7 @@ bool Run::ExecuteCmd(Bottle& msg)
 		char **arg_str=new char*[nargs+1];
 		for (int s=0; s<nargs; ++s)
 		{
-			arg_str[s]=new char[Args[s].length()];
+			arg_str[s]=new char[Args[s].length()+1];
 			strcpy(arg_str[s],Args[s].c_str());
 		}
 		arg_str[nargs]=0;
