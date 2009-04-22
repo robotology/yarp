@@ -1,3 +1,8 @@
+2009-04-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: patch from Philipp Robbel to 
+	fix swig wrapping for Port::write with two arguments.
+	
 2009-04-14 Alessandro Scalzo <alessandro@liralab.it>
 	* src/libYARP_OS/include/yarp/os/Run.h
 	* src/libYARP_OS/include/yarp/os/impl/Companion.h
