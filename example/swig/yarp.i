@@ -328,9 +328,14 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
 		return self->write(*((PortWriter*)(&data)));
 	}
     
-    bool write(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data) {
+	bool write(yarp::sig::ImageOf<yarp::sig::PixelFloat>& data) {
 		return self->write(*((PortWriter*)(&data)));
 	}
+
+	bool write(Bottle& data1, Bottle& data2) {
+	    return self->write(*((PortWriter*)(&data1)), *((PortReader*)(&data2)));
+	}
+
 }
 
 
