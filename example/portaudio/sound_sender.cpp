@@ -14,13 +14,13 @@ int main(int argc, char *argv[]) {
 
     // Open the network
     Network yarp;
-    BufferedPort<Sound> p;
+    Port p;
     p.open("/sender");
 
-    // Get an audio read device.
+    // Get a portaudio read device.
     Property conf;
     conf.put("device","portaudio");
-    conf.put("read", 1);
+    conf.put("read", "");
     PolyDriver poly(conf);
     IAudioGrabberSound *get;
 
@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
     }
 
     //Grab and send
+    Sound s;
     while (true)
       {
-	Sound& s = p.prepare();
 	get->getSound(s);
-	p.write();
+	p.write(s);
       }
     return 0;
 }

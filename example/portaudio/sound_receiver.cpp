@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     Network yarp;
     BufferedPort<Sound> p;
     p.open("/receiver");
-    Network::connect("/sender","/receiver");
+    Network::connect("/sender", "/receiver");
 
     // Get an audio write device.
     Property conf;
