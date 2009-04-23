@@ -35,7 +35,7 @@ public:
      */
     virtual ~ICartesianControl() {}
 
-    /*
+    /**
     * Move the end effector to a specified pose (position
     * and orientation) in cartesian space.
     * @param xd: a 3-d vector which contains the desired position x,y,z
@@ -45,7 +45,7 @@ public:
     */
     virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od)=0;
 
-    /*
+    /**
     * Move the end effector to a specified position in cartesian space, 
     * ignore the orientation.
     * @param xd: a 3-d vector which contains the desired position x,y,z
@@ -53,7 +53,7 @@ public:
     */
     virtual bool goToPosition(const yarp::sig::Vector &xd)=0;
 
-    /*
+    /**
     * Get the current pose.
     * @param x: a 3-d vector which is filled with the actual position x,y,z (meters)
     * @param od: a 4-d vector which is filled with the actual orientation
@@ -67,7 +67,7 @@ public:
     */
     virtual bool checkMotionDone(bool *f)=0;
 
-    /*
+    /**
     * Set the duration of the trajectory.
     * @param t: time (seconds).
     * @return true/false on success/failure.
