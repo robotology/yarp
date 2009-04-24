@@ -20,6 +20,7 @@ int main(int argc, char *argv[]) {
     // Get an audio write device.
     Property conf;
     conf.put("device","portaudio");
+    conf.put("samples", "4096");
     conf.put("write", "1");
     PolyDriver poly(conf);
     IAudioRender *put;
