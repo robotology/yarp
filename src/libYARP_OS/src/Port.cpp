@@ -103,11 +103,12 @@ public:
             readDelegate = NULL;
             writeDelegate = NULL;
         }
+        bool result = readResult;
         stateMutex.post();
         if (!readBackground) {
             produce.post();
         }
-        if (readResult&&willReply) {
+        if (result&&willReply) {
             consume.wait();
             if (closed) {
                 YARP_DEBUG(Logger::get(),"Port::read shutting down");
@@ -117,12 +118,12 @@ public:
             stateMutex.wait();
             ConnectionWriter *writer = reader.getWriter();
             if (writer!=NULL) {
-                readResult = writeDelegate->write(*writer);
+                result = readResult = writeDelegate->write(*writer);
             }
             stateMutex.post();
             produce.post();
         }
-        return readResult;
+        return result;
     }
 
     bool read(PortReader& reader, bool willReply = false) {

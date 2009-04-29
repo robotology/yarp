@@ -205,13 +205,13 @@ void PortCoreInputUnit::run() {
                     }
                 }
                 if (localReader) {
-                    bool ok = localReader->read(br);
+                    /*bool ok =*/ localReader->read(br);
                     if (!br.isActive()) { done = true; break; }
-                    if (!ok) continue;
+                    //if (!ok) continue;
                 } else {
-                    bool ok = man.readBlock(br,id,os);
+                    /*bool ok =*/ man.readBlock(br,id,os);
                     if (!br.isActive()) { done = true; break; }
-                    if (!ok) continue;
+                    //if (!ok) continue;
                 }
             }
             /*
