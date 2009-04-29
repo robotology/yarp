@@ -1,5 +1,10 @@
 2009-04-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/PortCore.cpp: bugfix: when closing
+	a port, and shutting down connections, deal correctly with
+	disconnections that fail because the port on the other 
+	side no longer exists.  
+
 	* src/libYARP_OS/src/PortCoreInputUnit.cpp: bugfix: when
 	"success" flag of a read was clobbered (see below), the port 
 	would fail to correctly move on to the next payload.

@@ -286,9 +286,14 @@ void PortCore::closeMain() {
         if (!done) {
             YARP_DEBUG(log,String("requesting removal of connection from ")+
                        removeName);
-            yarp::os::Network::disconnect(removeName.c_str(),
-                                          getName().c_str(),
-										  true);
+            int result = Companion::disconnect(removeName.c_str(),
+                                               getName().c_str(),
+                                               true);
+            if (result!=0) {
+                Companion::disconnectInput(getName().c_str(),
+                                           removeName.c_str(),
+                                           true);
+            }
             prevName = removeName;
         }
     }
