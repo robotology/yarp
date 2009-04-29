@@ -17,6 +17,8 @@ a look at the output of ps (this is the undefined behavior I see)
 
 ====================================================================
 
+Lorenzo:
+
 I have uploaded a stressrpcMD.cpp (MD is for motion done). If you run 
 the test_motor device like this:
 
@@ -51,3 +53,12 @@ was more important than it is... I don't know.
 Anyway let's first see if you can reproduce the problem... it might be 
 machine dependent.
 
+====================================================================
+
+Paul:
+
+I've added a stress test that doesn't use the controlboard: "smallrpc"
+  smallrpc --server
+  smallrpc --client --name /client0
+  smallrpc --client --name /client1
+  smallrpc --client --name /client2

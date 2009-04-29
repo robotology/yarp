@@ -10,5 +10,6 @@ FIND_PACKAGE(YARP)
 
 ADD_EXECUTABLE(stressrpc stressrpc.cpp)
 ADD_EXECUTABLE(stressrpcMD stressrpcMD.cpp)
-ADD_EXECUTABLE(callback  callback.cpp)
+ADD_EXECUTABLE(callback callback.cpp)
+ADD_EXECUTABLE(smallrpc smallrpc.cpp)
 
