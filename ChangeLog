@@ -113,7 +113,7 @@
 	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: when a message fails
 	to be written because the carrier has dropped, then break the
 	connection.  (Occasional messaging problems in unreliable
-	protocols like udp/mcast should not lead to a dropped carrier.
+	protocols like udp/mcast should not lead to a dropped carrier).
 	This is a fix for the "Port disconnect event problem" reported by
 	Marco Barbosa on robotcub-hackers mailing list.
 
