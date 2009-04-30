@@ -349,7 +349,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         if (service!=NULL) {
             double now = Time::now();
             if (now-startTime>dnow) {
-                fprintf(stderr, "yarpdev: device active...\n");
+                printf("yarpdev: device active...\n");
+                fflush(stdout);
                 startTime += dnow;
             }
             // we requested single threading, so need to
@@ -357,7 +358,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
             service->updateService();
         } else {
             // we don't need to do anything
-            fprintf(stderr, "yarpdev: device active in background...\n");
+            printf("yarpdev: device active in background...\n");
+            fflush(stdout);
             Time::delay(dnow);
         }
     }
