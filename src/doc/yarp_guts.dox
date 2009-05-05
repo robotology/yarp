@@ -3,13 +3,37 @@
 
 @author Paul Fitzpatrick
 
-This is a boring, mind-numbing tutorial full of information
-most folks will never need.  Enjoy!
-
 The goal of the tutorial is to help people find their way
 around the internals of the YARP implementation.
+Most people will never need to read it.
+It could be useful if you want to extend or modify YARP in
+radical ways.
 
-@section yarp_guts_summary Summary of important classes
+Beware: classes that are deemed to be "internal" (basically, anything in
+namespace yarp::os::impl, yarp::sig::impl, etc) are more likely to
+change as time goes by than other classes.
+
+@section yarp_guts_facade Behind the facade
+
+Many YARP user-facing classes have private implementations, that is they 
+follow this pattern:
+
+\code
+class UserFacingClass {
+   ...
+private:
+  void *implementation;
+};
+\endcode
+
+There are two reasons for this.  One is ABI stability, so that 
+significant changes can 
+safely be made to the underlying implementation.
+But the main reason for this is to insulate regular users of YARP from 
+ACE header files.  We use the ACE library because of its portability,
+but it can turn proper compilation into an art-form.
+
+@section yarp_guts_summary Summary of important implementation classes
 
 For every port, there is a yarp::os::impl::PortCore object.
 
