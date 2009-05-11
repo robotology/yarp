@@ -11,6 +11,9 @@
 // gCamView.cpp : Defines the entry point for the application.
 //
 
+#include <ace/config.h>
+#include <ace/OS.h>
+
 #include "yarpview.h"
 #include "FpsStats.h"
 
