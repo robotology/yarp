@@ -70,7 +70,7 @@ if [ "k$OS" = "kCygwin" ]; then
 	echo "ACE_ROOT is $ACE_ROOT"
 	export ACE_ROOT=$ACE_ROOT
 	GEN="NMake Makefiles"
-	CMAKE="/cygdrive/c/Program Files/CMake 2.4/bin/cmake.exe"
+	CMAKE="/cygdrive/c/Program Files/CMake 2.6/bin/cmake.exe"
 	"$CMAKE" -G "$GEN" ../pruned-repository
 	nmake package_source
 	rm -f $BASE/*.zip
