@@ -721,7 +721,7 @@ void setOptions(yarp::os::Searchable& options) {
     yarp::os::Value *val;
     if (options.check("PortName",val)||options.check("name",val)) {
         ACE_OS::sprintf(_options.portName, val->asString().c_str());
-        fprintf(stderr, "testing name:\n", val->asString().c_str());
+        fprintf(stderr, "testing name: %s\n", val->asString().c_str());
     }
     if (options.check("NetName",val)||options.check("n",val)) {
         ACE_OS::sprintf(_options.networkName, val->asString().c_str());
