@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Matrix.cpp,v 1.19 2008-10-27 19:00:43 natta Exp $ 
+// $Id: Matrix.cpp,v 1.20 2009-05-12 16:02:29 eshuy Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/os/impl/IOException.h>
@@ -30,10 +30,14 @@ using namespace yarp::os::impl;
 class MatrixPortContentHeader
 {
 public:
+    yarp::os::NetInt32 outerListTag;
+    yarp::os::NetInt32 outerListLen;
+    yarp::os::NetInt32 rowsTag;
+    yarp::os::NetInt32 rows;
+    yarp::os::NetInt32 colsTag;
+    yarp::os::NetInt32 cols;
     yarp::os::NetInt32 listTag;
     yarp::os::NetInt32 listLen;
-    yarp::os::NetInt32 rows;
-    yarp::os::NetInt32 cols;
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
@@ -92,6 +96,10 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     MatrixPortContentHeader header;
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
+    header.outerListTag = BOTTLE_TAG_LIST;
+    header.outerListLen = 3;
+    header.rowsTag = BOTTLE_TAG_INT;
+    header.colsTag = BOTTLE_TAG_INT;
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
     header.rows=rows();
     header.cols=cols();

@@ -11,6 +11,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/DummyConnector.h>
 
 #include <yarp/gsl_compatibility.h>
 
@@ -251,6 +252,18 @@ public:
         checkTrue(ok,"elements match");   
     }
 
+    void checkBottle() {
+        report(0,"check bottle compatibility...");
+        Bottle b("2 3 (0.0 1.1 2.2 3.3 4.4 5.5)");
+        Matrix m;
+        DummyConnector con;
+        b.write(con.getWriter());
+        m.read(con.getReader());
+        checkEqual(m.rows(),2,"row size correct");
+        checkEqual(m.cols(),3,"col size correct");
+        checkTrue(m[1][2]>5 && m[1][2]<6, "content is sane");
+    }
+
     void checkSubmatrix()
     {
         report(0,"check function Matrix::submatrix works...");
@@ -317,6 +330,7 @@ public:
         checkSendReceive();
         checkOperators();
         checkGsl();
+        checkBottle();
         Network::setLocalMode(false);
         checkSubmatrix();
     }
