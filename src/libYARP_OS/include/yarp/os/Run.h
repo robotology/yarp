@@ -88,7 +88,7 @@ public:
 	#endif
 
 protected:
-	static void Help();
+	static void Help(const char* msg="");
 	static int Server();
 	static int SendToServer(Property& config);
 	static Bottle SendMsg(Bottle& msg,ConstString target);

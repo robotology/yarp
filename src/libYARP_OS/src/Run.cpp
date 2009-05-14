@@ -944,10 +944,10 @@ int Run::Server()
 	Run::m_ProcessVector.Killall();
 	
 	#if defined(WIN32) || defined(WIN64)
-	printf("Server mutex.wait()\n");
+	//printf("Server mutex.wait()\n");
 	Run::m_ProcessVector.mutex.wait();
 	if (Run::hZombieHunter) TerminateThread(Run::hZombieHunter,0);
-	printf("Server mutex.post()\n");
+	//printf("Server mutex.post()\n");
 	Run::m_ProcessVector.mutex.post();
 	if (Run::aHandlesVector) delete [] Run::aHandlesVector;
 	#endif
@@ -966,12 +966,16 @@ int Run::SendToServer(Property& config)
 	//
 	if (config.check("cmd") && config.check("stdio"))
 	{
+		if (config.find("stdio")=="") { Help("SYNTAX ERROR: missing remote stdio server\n"); return -1; }
+		if (config.find("cmd")=="")   { Help("SYNTAX ERROR: missing command\n"); return -1; }
+		if (!config.check("as") || config.find("as")=="") { Help("SYNTAX ERROR: missing tag\n"); return -1; }
+		if (!config.check("on") || config.find("on")=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+
 		msg.addList()=config.findGroup("stdio");
 		msg.addList()=config.findGroup("cmd");
-		if (!config.check("as")) { Help(); return -1; }
 		msg.addList()=config.findGroup("as");
-		if (!config.check("on")) { Help(); return -1; }
 		msg.addList()=config.findGroup("on");
+		
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
 		if (config.check("geometry")) msg.addList()=config.findGroup("geometry");
 
@@ -986,10 +990,13 @@ int Run::SendToServer(Property& config)
 	//
 	if (config.check("cmd"))
 	{                
+		if (config.find("cmd").asString()=="")   { Help("SYNTAX ERROR: missing command\n"); return -1; }
+		if (!config.check("as") || config.find("as").asString()=="") { Help("SYNTAX ERROR: missing tag\n"); return -1; }
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+
 		msg.addList()=config.findGroup("cmd");
-		if (!config.check("as")) { Help(); return -1; }
 		msg.addList()=config.findGroup("as");
-		if (!config.check("on")) { Help(); return -1; }
+
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
 
 		SendMsg(msg,config.find("on").asString());
@@ -1000,8 +1007,12 @@ int Run::SendToServer(Property& config)
 	// client -> cmd server
 	if (config.check("kill")) 
 	{ 
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		if (config.findGroup("kill").get(1).asString()=="")  { Help("SYNTAX ERROR: missing tag\n"); return -1; }
+		if (config.findGroup("kill").get(2).asInt()==0)	  { Help("SYNTAX ERROR: missing signum\n"); return -1; }
+
 		msg.addList()=config.findGroup("kill");
-        if (!config.check("on")) { Help(); return -1; }
+		
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1010,8 +1021,11 @@ int Run::SendToServer(Property& config)
 	// client -> cmd server
 	if (config.check("sigterm")) 
 	{ 
+		if (config.find("sigterm").asString()=="") { Help("SYNTAX ERROR: missing tag"); return -1; }
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		
 		msg.addList()=config.findGroup("sigterm");
-        if (!config.check("on")) { Help(); return -1; }
+		
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1020,8 +1034,10 @@ int Run::SendToServer(Property& config)
 	// client -> cmd server
 	if (config.check("sigtermall")) 
 	{ 
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		
 		msg.addList()=config.findGroup("sigtermall");
-        if (!config.check("on")) { Help(); return -1; }
+       
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1029,8 +1045,10 @@ int Run::SendToServer(Property& config)
 
 	if (config.check("ps"))
 	{
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		
 		msg.addList()=config.findGroup("ps");
-        if (!config.check("on")) { Help(); return -1; }
+       
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1038,8 +1056,11 @@ int Run::SendToServer(Property& config)
 
 	if (config.check("isrunning"))
 	{
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		if (config.find("isrunning").asString()=="") { Help("SYNTAX ERROR: missing tag\n"); return -1; }
+
 		msg.addList()=config.findGroup("isrunning");
-        if (!config.check("on")) { Help(); return -1; }
+		
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1047,8 +1068,10 @@ int Run::SendToServer(Property& config)
 
 	if (config.check("exit"))
 	{
+		if (!config.check("on") || config.find("on").asString()=="") { Help("SYNTAX ERROR: missing remote server\n"); return -1; }
+		
 		msg.addList()=config.findGroup("exit");
-        if (!config.check("on")) { Help(); return -1; }
+        
 		SendMsg(msg,config.find("on").asString());
 
 		return 0;
@@ -1057,18 +1080,20 @@ int Run::SendToServer(Property& config)
 	return 0;
 }
 
-void Run::Help()
+void Run::Help(const char *msg)
 {
-    fprintf(stderr,"USAGE:\n\n");
+	fprintf(stderr,msg);
+    fprintf(stderr,"\nUSAGE:\n\n");
     fprintf(stderr,"yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
     fprintf(stderr,"run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --kill TAG\nkill TAG command\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
 	fprintf(stderr,"yarp run --on SERVERPORT --sigtermall\nterminate all commands\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --ps\nreport commands running on SERVERPORT\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --exit\nstop SERVERPORT server\n\n");              
+	fprintf(stderr,"yarp run --on SERVERPORT --isrunning TAG\nTAG command is running?\n\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --exit\nstop SERVERPORT server\n\n");  
 }
 
 /////////////////////////
