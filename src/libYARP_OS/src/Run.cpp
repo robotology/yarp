@@ -674,7 +674,9 @@ bool Run::isRunning(const String &node, String &keyv)
     Network::disconnect(port.getName().c_str(),node.c_str());
     port.close();
 
-	return bool(response.get(0).asInt());
+	if (!response.size()) return false;
+
+	return response.get(0).asString()=="running";
 }
 
 // end API
@@ -918,7 +920,7 @@ int Run::Server()
 		if (msg.check("isrunning"))
 		{
 		    String alias(msg.find("isrunning").asString());
-			output.addInt(int(m_ProcessVector.IsRunning(alias)));
+			output.addString(m_ProcessVector.IsRunning(alias)?"running":"not running");
 			port.reply(output);
 			continue;
 		}
@@ -979,9 +981,9 @@ int Run::SendToServer(Property& config)
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
 		if (config.check("geometry")) msg.addList()=config.findGroup("geometry");
 
-		SendMsg(msg,config.find("stdio").asString());
-
-		return 0;
+		Bottle response=SendMsg(msg,config.find("stdio").asString());
+		if (!response.size()) return -1;
+		return response.get(0).asInt()>0?0:2;
 	}
 	
 	// DON'T USE A RUN SERVER TO MANAGE STDIO
@@ -999,9 +1001,9 @@ int Run::SendToServer(Property& config)
 
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
 
-		SendMsg(msg,config.find("on").asString());
-		
-		return 0;
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
+		return response.get(0).asInt()>0?0:2;
 	}
 	
 	// client -> cmd server
@@ -1013,9 +1015,9 @@ int Run::SendToServer(Property& config)
 
 		msg.addList()=config.findGroup("kill");
 		
-		SendMsg(msg,config.find("on").asString());
-
-		return 0;
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
+		return response.get(0).asString()=="kill OK"?0:2;
 	}
 
 	// client -> cmd server
@@ -1026,9 +1028,9 @@ int Run::SendToServer(Property& config)
 		
 		msg.addList()=config.findGroup("sigterm");
 		
-		SendMsg(msg,config.find("on").asString());
-
-		return 0;
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
+		return response.get(0).asString()=="sigterm OK"?0:2;
 	}
 
 	// client -> cmd server
@@ -1038,8 +1040,8 @@ int Run::SendToServer(Property& config)
 		
 		msg.addList()=config.findGroup("sigtermall");
        
-		SendMsg(msg,config.find("on").asString());
-
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
 		return 0;
 	}
 
@@ -1049,8 +1051,8 @@ int Run::SendToServer(Property& config)
 		
 		msg.addList()=config.findGroup("ps");
        
-		SendMsg(msg,config.find("on").asString());
-
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
 		return 0;
 	}
 
@@ -1061,9 +1063,9 @@ int Run::SendToServer(Property& config)
 
 		msg.addList()=config.findGroup("isrunning");
 		
-		SendMsg(msg,config.find("on").asString());
-
-		return 0;
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
+		return response.get(0).asString()=="running"?0:2;
 	}
 
 	if (config.check("exit"))
@@ -1072,8 +1074,8 @@ int Run::SendToServer(Property& config)
 		
 		msg.addList()=config.findGroup("exit");
         
-		SendMsg(msg,config.find("on").asString());
-
+		Bottle response=SendMsg(msg,config.find("on").asString());
+		if (!response.size()) return -1;
 		return 0;
 	}
 
