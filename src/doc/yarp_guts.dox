@@ -48,7 +48,8 @@ yarp::os::impl::PortCoreOutputUnit object held in a list by the
 source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
 object held in a list by the output port's PortCore.
 
-Every PortCoreUnit has a yarp::os::impl::Protocol object that
+Every PortCoreUnit has a yarp::os::impl::InputProtocol
+or yarp::os::impl::OutputProtocol object that
 manages the overall phases of YARP's network protocol.
 
 The Protocol object uses a yarp::os::impl::Carrier object
