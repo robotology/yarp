@@ -29,25 +29,34 @@ private:
 There are two reasons for this.  One is ABI stability, so that 
 significant changes can 
 safely be made to the underlying implementation.
-But the main reason for this is to insulate regular users of YARP from 
-ACE header files.  We use the ACE library because of its portability,
+Another reason is to insulate regular users of YARP from 
+ACE header files.  We use the ACE library in the implementation
+of YARP because of its portability,
 but it can turn proper compilation into an art-form.
+We don't want to force our users to deal with that (and 
+don't want to deal with the confused emails they will send
+us).  So we use ACE in the YARP implementation, but do not 
+reference it in user-facing header files.
 
 @section yarp_guts_summary Summary of important implementation classes
 
 For every port, there is a yarp::os::impl::PortCore object.
+The user-facing yarp::os::Port class is a superficial wrapper around this.
 
 For every connection between two ports, there is a 
-yarp::os::impl::PortCoreOutputUnit held in a list by the
-source port's PortCore, and a yarp::os::impl::PortCoreInputUnit held in
-a list by the output port's PortCore.
+yarp::os::impl::PortCoreOutputUnit object held in a list by the
+source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
+object held in a list by the output port's PortCore.
 
 Every PortCoreUnit has a yarp::os::impl::Protocol object that
-manages the details of YARP's network protocol.
+manages the overall phases of YARP's network protocol.
 
 The Protocol object uses a yarp::os::impl::Carrier object
 (yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
-manage the peculiarities of particular connection types.
+manage the peculiarities of particular connection types.  This 
+carrier can be replaced during the operation of a connection.
+Typically, connections start with a TcpCarrier, and then switch
+(after hand-shaking) to whatever carrier the user has selected.
 
 Here's an example diagram of four ports.  Port 1 is connected by 
 multicast to ports 2 and 3, and by tcp to port 4.
@@ -135,6 +144,11 @@ multicast to ports 2 and 3, and by tcp to port 4.
 		color = "blue"; style = "dashed";
   }
   \enddot
+
+This diagram shows object ownership, but omits other relationships.
+For example, all McastCarrier objects acting as outputs for the 
+same PortCore work together so that data only gets sent once on 
+a shared logical bus.  See \ref yarp_guts_mcast. 
 
 
 @section yarp_guts_create Port creation
