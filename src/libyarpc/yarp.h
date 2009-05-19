@@ -97,6 +97,16 @@ extern "C" {
     } yarpString;
     typedef yarpString *yarpStringPtr;
     
+    /**
+     *
+     * Plain C semaphore structure.  This structure represents semaphores.
+     *
+     */
+    typedef struct yarpSemaphoreStruct {
+        void *implementation;
+    } yarpSemaphore;
+    typedef yarpSemaphore *yarpSemaphorePtr;
+    
 
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
@@ -151,10 +161,16 @@ extern "C" {
     YARP_DECLARE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)());
     YARP_DECLARE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)());
 
-    YARP_DECLARE(yarpStringPtr) yarpStringCreate(); //TODO
-    YARP_DECLARE(void) yarpStringFree(yarpStringPtr str); //TODO
-    YARP_DECLARE(const char *) yarpStringToC(yarpStringPtr str); //TODO
-    YARP_DECLARE(int) yarpStringFromC(yarpStringPtr str, const char *c); //TODO
+    YARP_DECLARE(yarpStringPtr) yarpStringCreate();
+    YARP_DECLARE(void) yarpStringFree(yarpStringPtr str);
+    YARP_DECLARE(const char *) yarpStringToC(yarpStringPtr str);
+    YARP_DECLARE(int) yarpStringFromC(yarpStringPtr str, const char *c);
+
+    YARP_DECLARE(yarpSemaphorePtr) yarpSemaphoreCreate(int initial);
+    YARP_DECLARE(void) yarpSemaphoreFree(yarpSemaphorePtr sema);
+    YARP_DECLARE(int) yarpSemaphoreWait(yarpSemaphorePtr sema);
+    YARP_DECLARE(int) yarpSemaphorePost(yarpSemaphorePtr sema);
+    YARP_DECLARE(int) yarpSemaphoreCheck(yarpSemaphorePtr sema);
 
 
 #ifdef __cplusplus

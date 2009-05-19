@@ -57,6 +57,7 @@ YARP_DEFINE(yarpPortablePtr) yarpPortableCreate() {
         if (portable->implementation==NULL) {
             delete portable;
             portable = NULL;
+            return portable;
         }
         portable->read = NULL;
         portable->write = NULL;
