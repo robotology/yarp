@@ -132,6 +132,219 @@ in the constructor for the yarp::os::impl::Carriers class
 at src/libYARP_OS/src/Carriers.cpp.
 
 
+\section carrier_expert_custom Customizing behavior
+
+The previous example just shows enough to make a carrier that is a small
+tweak of an existing one, but doesn't help much with setting up a completely
+new carrier.
+
+For that, we need to make a subclass of yarp::os::impl::Carrier.  There's 
+a lot of methods that we need to specify.  First, some easy ones:
+
+<dl>
+
+<dt>Carrier::create</dt>
+<dd>A factory method - just return a new instance of your carrier.</dd>
+
+<dt>Carrier::getName</dt>
+
+<dd>Give the human-readable name of your carrier - this is how you
+would select it in "yarp connect /from /to CARRIERNAME" for example.</dd>
+
+<dt>Carrier::isConnectionless</dt>
+
+<dd>Return a flag specifying whether your carrier is "connection-based"
+or "connectionless" in the tcp/udp sense.  If connectionless, YARP will
+assume, for example, that failures of the connection on one side may not 
+be noticed on the other side, and take appropriate action.
+</dd>
+
+<dt>Carrier::canAccept</dt>
+
+<dd>Return true if your implementation can handle being the destination
+of a connection. Normally this should be true.</dd>
+
+<dt>Carrier::canOffer</dt>
+
+<dd>Return true if your implementation can handle being the initiator
+of a connection. Normally this should be true.</dd>
+
+<dt>Carrier::isTextMode</dt>
+
+<dd>Return true if your carrier is text-mode, for human reading/writing.
+YARP will use textual variants of its administrative messages if this is
+the case, and objects that serialize using the YARP standard "bottle" 
+format (see \ref data_rep) will serialize in text form.
+</dd>
+
+<dt>Carrier::canEscape</dt>
+
+<dd>Return true if your carrier has a way of distinguishing user payload
+data from administrative headers.  If false, YARP will not try to send any
+administrative headers on your carrier (e.g. disconnection requests, for
+example).  Normally this should be true.
+</dd>
+
+<dt>Carrier::requireAck</dt>
+
+<dd>Does you want YARP to use flow control?  If this is set, YARP
+will attempt to send an acknowledgement back to the sender after receiving
+data, even in streaming operation.</dd>
+
+<dt>Carrier::supportReply</dt>
+
+<dd>Does your carrier support bidirectional communication?</dd>
+
+<dt>Carrier::isLocal</dt>
+
+<dd>Is your carrier process-local?  That is, it can only used by threads
+sharing the same memory space?  This should normally be false (but, if true,
+YARP will make a lot of optimizations obviously).</dd>
+
+<dt>Carrier::toString</dt>
+
+<dd>Give a textual representation of the state of the carrier.  There
+is no standard for this, it is not much used.</dd>
+
+</dl>
+
+Okay, that's a lot of stuff, but it is all "meta-data" - it describes
+your carrier, but doesn't implement it.  It is important to get right 
+though since it controls how YARP will use your carrier.
+
+Now let us get down to implementation.  It might be worth having
+\ref yarp_protocol open on a page beside this one.  Basically,
+a connection in YARP has several phases:
+
+<ul>
+
+
+<li>Initiation phase - an initial connection is been made.</li>
+
+<li>Header phase - the initiator of the connection sends an 8 byte
+"magic number" identifying the desired carrier type.  The recipient
+of the connection waits for that 8 byte number.  Once that is done,
+the carrier implementer is free to add on any further information
+they'd like to send.  Carriers are strongly encouraged to send
+the name of the port associated with the initiator of the connection,
+but are free to do this however they like.</li>
+
+<li>Header reply phase - an opportunity for the recipient to talk back
+to the initiator, if needed.  Carriers are free to do what they want
+here, including extended bidirectional communication.</li>
+
+<li>Index phase - when the user (or YARP wants) to send data over the
+connection, the carrier is given the opportunity to send some
+prior information (for example, lengths).</li>
+
+<li>Payload data phase - here the carrier encodes user (or YARP) data.</li>
+
+<li>Acknowledgement phase - if the carrier wants acknowledgements to
+happen, this is when YARP will request them.  If a reply from the other
+side is expected, this will happen before the acknowledgement.
+</li>
+
+<li>...and we loop back to the index phase.</li>
+
+</ul>
+
+\section carrier_expert_header_phase The header and header reply phase
+
+The first set of methods needed are those to create or check the 8-byte
+"magic number" identifying the carrier type.  We label the methods
+as INITIATOR for methods that matter on the side that initiates
+a connection, and RECIPIENT for the other side.
+
+<dl>
+
+<dt>Carrier::getHeader (INITIATOR)</dt>
+
+<dd>Place an 8-byte "magic number" describing the carrier in the block
+of memory provided.</dd>
+
+<dt>Carrier::checkHeader (RECIPIENT)</dt>
+
+<dd>Check whether the "magic number" passed describes your carrier.</dd>
+
+<dt>Carrier::setParameters (RECIPIENT)</dt>
+
+<dd>Configure the carrier based on parameters that might be 
+embedded within the "magic number" passed.  You can assume that
+the Carrier::checkHeader test has already succeeded.  For carriers
+with no variants, this method will do nothing.
+</dd>
+
+</dl>
+
+Now we need to set up a series of callbacks which are invoked 
+during the header and header reply phases.
+
+<dl>
+
+<dt>Carrier::prepareSend (INITIATOR)</dt>
+
+<dd>Called just before we start writing on a connection. It is fine
+to do nothing here, this method is not really needed and is there
+for historical reasons.</dd>
+
+<dt>Carrier::sendHeader (INITIATOR)</dt>
+
+<dd>Finally, we send some data!
+This method should first send the 8 bytes determined by Carrier::getHeader.
+The "proto" object you are passed has an OutputStream object accessible
+as Protocol::os() upon which you can write (you are
+passed a protocol object as an argument in this
+and most other callbacks).  Be sure to flush after writing
+these 8 bytes.  After that, you're free to send anything else you feel
+you need to.  You should definitely pass the name of the originating port, 
+if there is one, so that the recipient knows who it is talking to.
+You can get that information from proto.getRoute().getFromName()
+(Protocol::getRoute(), Route::getFromName()).
+</dd>
+
+<dt>Carrier::expectSenderSpecifier (RECIPIENT)</dt>
+
+<dd>
+On the receiving side, the first 8 bytes are received by YARP
+and used to set up your carrier (via Carrier::checkHeader and
+Carrier::setParameters).  After that is done, the
+Carrier::expectSenderSpecifier is called.  Your job is to pick up
+the name of the originating port, however you chose to send it in
+Carrier::sendHeader, and then inform YARP about it by
+calling proto.setRoute(proto.getRoute().addFromName(PORT_NAME)).
+You have access to an InputStream as proto.is()
+[SIDE NOTE: yes, the API between Carrier and Protocol is a bit
+cumbersome and over-exposes the implementation.  Sorry!]
+</dd>
+
+<dt>Carrier::expectExtraHeader (RECIPIENT)</dt>
+
+<dd>
+Called after Carrier::expectSenderSpecifier.  You can process
+more header information here if there is any.
+</dd>
+
+<dt>Carrier::respondToHeader (RECIPIENT)</dt>
+
+<dd>
+An opportunity to send data back to the initiator, if needed.
+Use the proto.os() stream.  Fine to do nothing.
+</dd>
+
+<dt>Carrier::expectReplyToHeader (INITIATOR)</dt>
+
+<dd>
+If the recipient does Carrier::respondToHeader, the initiator
+needs to read that data here.  Further rounds of handshaking are
+possible, but not formalized with callbacks - just do matching read/write
+sequences in Carrier::respondToHeader and Carrier::expectReplyToHeader.
+</dd>
+
+</dl>
+
+Okay!  We are all set up!
+
+[MORE TO COME]
 
 */
 
