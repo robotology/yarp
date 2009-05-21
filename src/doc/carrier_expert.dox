@@ -11,7 +11,9 @@ to look at creating new kinds of carriers.  Why might you want to do this?
 
  \li You need to use a kind of network that YARP doesn't 
      currently support.  For example, we don't currently have
-     support for QNX message passing.
+     support for QNX message passing (even though, years ago, that
+     was the very first carrier supported by YARP - we remember it
+     fondly).
 
  \li You don't like some aspect of YARP's current carriers.  No problem,
      just make your own variation and plug it in.  (Please call it a 
@@ -19,7 +21,8 @@ to look at creating new kinds of carriers.  Why might you want to do this?
      interoperation).  If it works well, please consider telling us 
      about it.
 
- \li You want to support direct interoperation with your middleware.
+ \li You want to support network-level interoperation with non-YARP based
+     programs.
 
 \section carrier_expert_preliminaries Coding preliminaries
 
@@ -32,9 +35,7 @@ user API).
 Header files for implementation classes may have dependencies on 
 header files from the ACE library.  This means that you need
 to take some care to make sure that the ACE header files on your
-system match those used to compile YARP.  If you are having trouble,
-search for the "ACE4YARP" package and try using that
-(see http://eris.liralab.it/wiki/ACE4YARP for details).
+system match those used to compile YARP.  
 
 \section carrier_expert_classes Important classes
 
@@ -51,7 +52,39 @@ You'll be able to include them in your code as follows:
 using namespace yarp::os::impl;
 \endcode
 
-\section carrier_expert_example A basic example
+\section carrier_expert_basics The basics
+
+A few things you need to know.  An important property of YARP carriers is that they do not need
+to be constant throughout a connection.  So, for example, a connection may begin using a TCP
+carrier (and in practice all connections currently do in fact start with TCP, though this is not
+required), and then switch to something more efficient after some handshaking. So watch out for 
+that.  In the \ref yarp_guts "YARP Guts" tutorial, you can see a little more
+how a carrier and connections relate.
+
+When a port is registered with the YARP name server, an initial carrier type is specified.
+For example, the port associated with the name server itself might be registered as:
+
+\verbatim
+  registration name /root ip 192.168.1.3 port 10000 type tcp
+\endverbatim
+
+The "tcp" type specified there does not necessarily mean that this port can only accept "tcp" carriers,
+it just means that that is how one should begin a connection to this port.
+
+The first eight bytes sent on a connection are special in YARP.  They act as a "magic number"
+for identifying the carrier to switch to.  Some flags for identifying variants of a carrier
+might be included as well.  This is a lot like how common file formats work and other network
+protocols work.  See \ref yarp_protocol for a table of "official" YARP magic numbers.
+
+Once you've made up a new eight-byte sequence to name your new
+carrier, you then have a huge amount of freedom in how it works.  The
+abstract phases of YARP communication are specified, but their
+representation "on the wire" is basically up to you.  This means you
+have a decent shot at matching some other protocol you might have to
+interface with.  Even the required eight-byte sequence requirement can
+be loosened, with a bit of care.
+
+\section carrier_expert_example A first example
 
 Here is a example that takes an existing carrier, the \ref carrier_config_text "ordinary text-mode carrier", and modifies it slightly (see example/carrier/carrier_stub.cpp).  The change is very small; we name our new carrier "test" (as 
 opposed to "text") and change its identifying 8-byte header from 

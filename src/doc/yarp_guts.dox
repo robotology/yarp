@@ -146,7 +146,7 @@ multicast to ports 2 and 3, and by tcp to port 4.
   }
   \enddot
 
-This diagram shows object ownership, but omits other relationships.
+This diagram shows logical data flow, but omits other relationships.
 For example, all McastCarrier objects acting as outputs for the 
 same PortCore work together so that data only gets sent once on 
 a shared logical bus.  See \ref yarp_guts_mcast. 
