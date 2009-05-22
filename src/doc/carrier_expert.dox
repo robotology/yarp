@@ -330,6 +330,17 @@ more header information here if there is any.
 <dd>
 An opportunity to send data back to the initiator, if needed.
 Use the proto.os() stream.  Fine to do nothing.
+
+This is also the moment to optionally drop the current input/output
+streams associated with the connection (probably TCP) and create
+an entirely different set (e.g. MCAST, UDP, SHMEM, or whatever kind
+of communication you are going to use).  The easiest way to 
+do that is to create suitable yarp::os::impl::InputStream and
+yarp::os::impl::OutputStream implementations, and then substitute 
+them in by calling proto.takeStreams (see 
+yarp::os::impl::Protocol::takeStreams).  Look at UdpCarrier.h
+or McastCarrier.h for examples.
+
 </dd>
 
 <dt>yarp::os::impl::Carrier::expectReplyToHeader (INITIATOR)</dt>
@@ -340,13 +351,124 @@ needs to read that data here.  Further rounds of handshaking are
 possible, but not formalized with callbacks - just do matching read/write
 sequences in yarp::os::impl::Carrier::respondToHeader and 
 yarp::os::impl::Carrier::expectReplyToHeader.
+
+This is also the moment for the initiator to optionally switch streams,
+in the same way as the recipient does in respondToHeader.
+
+</dd>
+
+
+<dt>yarp::os::impl::Carrier::isActive</dt>
+
+<dd>
+Return true if your carrier should be given data to transmit, or false
+if it should be ignored.  Almost always, returning true is what you want.
+However if there is a low-level implementation of broadcasting that you
+can exploit (as for multicast carrier), a set of "logical" connections
+may be identical underneath - so this method can be useful to avoid 
+duplicate messages.
+
+If you didn't understand that, don't worry - just return true.
 </dd>
 
 </dl>
 
 Okay!  We are all set up!
 
-[MORE TO COME]
+\section carrier_expert_payload_phase The index, payload, and ack stage
+
+The methods we've defined so far are sufficient to get through
+setting up a connection to use our new carrier, and switching our
+input/output stream implementation if needed.  Now, we just need
+to push any data we are asked to transmit.
+
+One note: we've talked about an INITIATOR and a RECIPIENT carrier,
+based on who started the connection.  After our carriers exchange
+payload data, you should not assume that the carriers retain the
+same identity.  YARP reserves the right to switch around which 
+carrier is the initiator (there is a port-level command to do this).
+However, you can assume that there is always exactly one initiator.
+
+When it comes time
+to send/receive payload data, YARP will call one of the following
+commands:
+
+<dl>
+
+<dt>yarp::os::impl::Carrier::write (INITIATOR)</dt>
+
+<dd>
+Here, you are given the usual "proto" protocol object, and
+an extra yarp::os::impl::SizedWriter object that knows about 
+the size of what is to be sent, and also its content.
+
+Note: historically, the write operation was broken down into an
+index phase first, with yarp::os::impl::Carrier::sendIndex.
+You still have to define that method, but it can do nothing.
+The write method is guaranteed to be called first.
+
+The last act of the write method should call in turn
+the write method on the SizedWriter object, passing the 
+output stream associated with the protocol object.
+</dd>
+
+<dt>yarp::os::impl::Carrier::expectIndex (RECIPIENT)</dt>
+
+<dd>
+On the receiving side, this method should wait for a message
+to arrive.  If you wrote the message with some kind of 
+header, you could go ahead and consume that now.
+
+After expectIndex, YARP will do one or a series of reads
+from the input stream associated with the protocol object
+to acquire the actual payload.  You are not responsible for
+that, unlike on the writing side - there is a small
+asymmetry here.
+</dd>
+
+</dl>
+
+Ok, at this point user data has been transmitted!  
+Note that if you want to transform how user data itself is expressed,
+you need to do that with a custom InputStream/OutputStream class.
+
+If your 
+carrier will send/expect acknowledgements of data transmission,
+you should define the following two methods appropriately - 
+otherwise they should do nothing:
+
+<dl>
+
+<dt>yarp::os::impl::Carrier::sendAck (RECIPIENT)</dt>
+
+<dd>
+Prepare and send an acknowledgement message to the output stream
+associated with the protocol object.
+</dd>
+
+<dt>yarp::os::impl::Carrier::expectAck (INITIATOR)</dt>
+
+<dd>
+Wait for and read an acknowledgement message from the input stream
+associated with the protocol object.
+</dd>
+
+</dl>
+
+At this point, YARP will call write/expectIndex methods again, and 
+we loop.
+
+\section carrier_expert_packets An important detail: packets
+
+YARP divides transmitted data into logical packets.  If your streams encounter
+a non-disastrous failure while sending data, they are expected to have a mechanism
+for skipping to the next logical packet.  Your streams are informed about
+packet boundaries through the startPacket/endPacket methods.
+
+If your streams are connection-based, you can ignore this, but if they 
+are connectionless then it is important.
+Take a look at the UDP/MCAST streams (yarp::os::impl::DgramTwoWayStream) 
+implementation, and the DgramTwoWayStreamTest.cpp regression tests.
 
 */
 
