@@ -303,7 +303,7 @@ You can get that information from proto.getRoute().getFromName()
 (yarp::os::impl::Protocol::getRoute(), yarp::os::impl::Route::getFromName()).
 </dd>
 
-<dt>Carrier::expectSenderSpecifier (RECIPIENT)</dt>
+<dt>yarp::os::impl::Carrier::expectSenderSpecifier (RECIPIENT)</dt>
 
 <dd>
 On the receiving side, the first 8 bytes are received by YARP
