@@ -97,12 +97,12 @@ The key steps are:
  \li We create a new class for our new carrier, by subclassing something descended from yarp::os::impl::Carrier (in this case yarp::os::impl::TextCarrier).
 
  \li We make whatever customizations we want to that carrier.  It is very
- important to override the "factory" method Carrier::create to return
+ important to override the "factory" method yarp::os::impl::Carrier::create to return
  an instance of our new class.  We also define the name associated with
- our class by overriding Carrier::getName.
+ our class by overriding yarp::os::impl::Carrier::getName.
 
  \li At the start of our program, we register an instance of that class 
- in a call to Carriers::addCarrierPrototype.
+ in a call to yarp::os::impl::Carriers::addCarrierPrototype.
 
 Having taken those steps, we can make connections using our new carrier
 (called "test" in the example code):
@@ -143,15 +143,15 @@ a lot of methods that we need to specify.  First, some easy ones:
 
 <dl>
 
-<dt>Carrier::create</dt>
+<dt>yarp::os::impl::Carrier::create</dt>
 <dd>A factory method - just return a new instance of your carrier.</dd>
 
-<dt>Carrier::getName</dt>
+<dt>yarp::os::impl::Carrier::getName</dt>
 
 <dd>Give the human-readable name of your carrier - this is how you
 would select it in "yarp connect /from /to CARRIERNAME" for example.</dd>
 
-<dt>Carrier::isConnectionless</dt>
+<dt>yarp::os::impl::Carrier::isConnectionless</dt>
 
 <dd>Return a flag specifying whether your carrier is "connection-based"
 or "connectionless" in the tcp/udp sense.  If connectionless, YARP will
@@ -159,17 +159,17 @@ assume, for example, that failures of the connection on one side may not
 be noticed on the other side, and take appropriate action.
 </dd>
 
-<dt>Carrier::canAccept</dt>
+<dt>yarp::os::impl::Carrier::canAccept</dt>
 
 <dd>Return true if your implementation can handle being the destination
 of a connection. Normally this should be true.</dd>
 
-<dt>Carrier::canOffer</dt>
+<dt>yarp::os::impl::Carrier::canOffer</dt>
 
 <dd>Return true if your implementation can handle being the initiator
 of a connection. Normally this should be true.</dd>
 
-<dt>Carrier::isTextMode</dt>
+<dt>yarp::os::impl::Carrier::isTextMode</dt>
 
 <dd>Return true if your carrier is text-mode, for human reading/writing.
 YARP will use textual variants of its administrative messages if this is
@@ -177,7 +177,7 @@ the case, and objects that serialize using the YARP standard "bottle"
 format (see \ref data_rep) will serialize in text form.
 </dd>
 
-<dt>Carrier::canEscape</dt>
+<dt>yarp::os::impl::Carrier::canEscape</dt>
 
 <dd>Return true if your carrier has a way of distinguishing user payload
 data from administrative headers.  If false, YARP will not try to send any
@@ -185,23 +185,23 @@ administrative headers on your carrier (e.g. disconnection requests, for
 example).  Normally this should be true.
 </dd>
 
-<dt>Carrier::requireAck</dt>
+<dt>yarp::os::impl::Carrier::requireAck</dt>
 
 <dd>Does you want YARP to use flow control?  If this is set, YARP
 will attempt to send an acknowledgement back to the sender after receiving
 data, even in streaming operation.</dd>
 
-<dt>Carrier::supportReply</dt>
+<dt>yarp::os::impl::Carrier::supportReply</dt>
 
 <dd>Does your carrier support bidirectional communication?</dd>
 
-<dt>Carrier::isLocal</dt>
+<dt>yarp::os::impl::Carrier::isLocal</dt>
 
 <dd>Is your carrier process-local?  That is, it can only used by threads
 sharing the same memory space?  This should normally be false (but, if true,
 YARP will make a lot of optimizations obviously).</dd>
 
-<dt>Carrier::toString</dt>
+<dt>yarp::os::impl::Carrier::toString</dt>
 
 <dd>Give a textual representation of the state of the carrier.  There
 is no standard for this, it is not much used.</dd>
@@ -257,16 +257,16 @@ a connection, and RECIPIENT for the other side.
 
 <dl>
 
-<dt>Carrier::getHeader (INITIATOR)</dt>
+<dt>yarp::os::impl::Carrier::getHeader (INITIATOR)</dt>
 
 <dd>Place an 8-byte "magic number" describing the carrier in the block
 of memory provided.</dd>
 
-<dt>Carrier::checkHeader (RECIPIENT)</dt>
+<dt>yarp::os::impl::Carrier::checkHeader (RECIPIENT)</dt>
 
 <dd>Check whether the "magic number" passed describes your carrier.</dd>
 
-<dt>Carrier::setParameters (RECIPIENT)</dt>
+<dt>yarp::os::impl::Carrier::setParameters (RECIPIENT)</dt>
 
 <dd>Configure the carrier based on parameters that might be 
 embedded within the "magic number" passed.  You can assume that
@@ -281,63 +281,65 @@ during the header and header reply phases.
 
 <dl>
 
-<dt>Carrier::prepareSend (INITIATOR)</dt>
+<dt>yarp::os::impl::Carrier::prepareSend (INITIATOR)</dt>
 
 <dd>Called just before we start writing on a connection. It is fine
 to do nothing here, this method is not really needed and is there
 for historical reasons.</dd>
 
-<dt>Carrier::sendHeader (INITIATOR)</dt>
+<dt>yarp::os::impl::Carrier::sendHeader (INITIATOR)</dt>
 
 <dd>Finally, we send some data!
-This method should first send the 8 bytes determined by Carrier::getHeader.
+This method should first send the 8 bytes determined by 
+yarp::os::impl::Carrier::getHeader.
 The "proto" object you are passed has an OutputStream object accessible
-as Protocol::os() upon which you can write (you are
+as yarp::os::impl::Protocol::os() upon which you can write (you are
 passed a protocol object as an argument in this
 and most other callbacks).  Be sure to flush after writing
 these 8 bytes.  After that, you're free to send anything else you feel
 you need to.  You should definitely pass the name of the originating port, 
 if there is one, so that the recipient knows who it is talking to.
 You can get that information from proto.getRoute().getFromName()
-(Protocol::getRoute(), Route::getFromName()).
+(yarp::os::impl::Protocol::getRoute(), yarp::os::impl::Route::getFromName()).
 </dd>
 
 <dt>Carrier::expectSenderSpecifier (RECIPIENT)</dt>
 
 <dd>
 On the receiving side, the first 8 bytes are received by YARP
-and used to set up your carrier (via Carrier::checkHeader and
-Carrier::setParameters).  After that is done, the
-Carrier::expectSenderSpecifier is called.  Your job is to pick up
+and used to set up your carrier (via yarp::os::impl::Carrier::checkHeader and
+yarp::os::impl::Carrier::setParameters).  After that is done, the
+yarp::os::impl::Carrier::expectSenderSpecifier is called.  Your job is to pick up
 the name of the originating port, however you chose to send it in
-Carrier::sendHeader, and then inform YARP about it by
+yarp::os::impl::Carrier::sendHeader, and then inform YARP about it by
 calling proto.setRoute(proto.getRoute().addFromName(PORT_NAME)).
 You have access to an InputStream as proto.is()
 [SIDE NOTE: yes, the API between Carrier and Protocol is a bit
 cumbersome and over-exposes the implementation.  Sorry!]
 </dd>
 
-<dt>Carrier::expectExtraHeader (RECIPIENT)</dt>
+<dt>yarp::os::impl::Carrier::expectExtraHeader (RECIPIENT)</dt>
 
 <dd>
-Called after Carrier::expectSenderSpecifier.  You can process
+Called after yarp::os::impl::Carrier::expectSenderSpecifier.  You can process
 more header information here if there is any.
 </dd>
 
-<dt>Carrier::respondToHeader (RECIPIENT)</dt>
+<dt>yarp::os::impl::Carrier::respondToHeader (RECIPIENT)</dt>
 
 <dd>
 An opportunity to send data back to the initiator, if needed.
 Use the proto.os() stream.  Fine to do nothing.
 </dd>
 
-<dt>Carrier::expectReplyToHeader (INITIATOR)</dt>
+<dt>yarp::os::impl::Carrier::expectReplyToHeader (INITIATOR)</dt>
 
 <dd>
-If the recipient does Carrier::respondToHeader, the initiator
+If the recipient does yarp::os::impl::Carrier::respondToHeader, the initiator
 needs to read that data here.  Further rounds of handshaking are
 possible, but not formalized with callbacks - just do matching read/write
-sequences in Carrier::respondToHeader and Carrier::expectReplyToHeader.
+sequences in yarp::os::impl::Carrier::respondToHeader and 
+yarp::os::impl::Carrier::expectReplyToHeader.
 </dd>
 
 </dl>
