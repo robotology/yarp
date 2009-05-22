@@ -1,3 +1,8 @@
+2009-05-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/carrier_expert.dox: start fleshing out the documentation
+	on how new carriers can be made.
+
 2009-05-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/src/Matrix.cpp: fix for Matrix serialization,
