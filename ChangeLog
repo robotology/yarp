@@ -1,3 +1,7 @@
+2009-05-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: freeze version 2.2.3
+
 2009-05-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/carrier_expert.dox: start fleshing out the documentation
