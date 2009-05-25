@@ -1,3 +1,12 @@
+2009-05-25 Lorenzo Natale <nat@liralab.it>
+	* src/YARP_dev/include/yarp/dev/Attachable.h removed
+	* src/libYARP_dev/include/yarp/dev/Wrapper.h:
+	* src/libYARP_dev/include/yarp/dev/PolyDriverDescriptor.h
+	* src/libYARP_dev/include/yarp/dev/PolyDriverList.h
+	IWrapper and IMultipleWrapper interfaces, plus support classes
+
+	* example/attachable: example files
+
 2009-05-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: freeze version 2.2.3

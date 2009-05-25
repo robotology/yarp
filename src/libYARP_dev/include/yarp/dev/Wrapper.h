@@ -6,13 +6,13 @@
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
 */
 
-#ifndef __YARPATTACHABLEINTERFACE__
-#define __YARPATTACHABLEINTERFACE__
+#ifndef __YARPWRAPPERINTERFACE__
+#define __YARPWRAPPERINTERFACE__
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/PolyDriverList.h>
 
-/*! \file Attachable.h define the interface for an attachable object*/
+/*! \file Wrapper.h define the interface for an attachable object*/
 
 namespace yarp {
     namespace dev {
