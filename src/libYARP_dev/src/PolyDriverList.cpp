@@ -23,7 +23,12 @@ PolyDriverDescriptor *PolyDriverList::operator[](int k)
     return &(*RES(aceVector))[k];
 }
 
-int PolyDriverList::size()
+const PolyDriverDescriptor *PolyDriverList::operator[] (int k) const
+{
+    return &(*RES(aceVector))[k];
+}
+
+int PolyDriverList::size() const
 {
     return RES(aceVector)->size();
 }

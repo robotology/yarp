@@ -24,8 +24,10 @@ public:
     ~PolyDriverList();
 
     PolyDriverDescriptor *operator[](int k);
+
+    const PolyDriverDescriptor *operator[] (int k) const;
  
-    int size();
+    int size() const;
     
     void push(PolyDriver *p, const char *k);
 
