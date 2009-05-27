@@ -7,4 +7,4 @@ FIND_PACKAGE(YARP)
 
 ADD_EXECUTABLE(carrier_stub carrier_stub.cpp)
 
-ADD_EXECUTABLE(carrier_all carrier_all.cpp)
+ADD_EXECUTABLE(carrier_human carrier_human.cpp)
