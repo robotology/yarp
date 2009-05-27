@@ -15,6 +15,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Time.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 
 using namespace yarp::os::impl;
@@ -62,6 +63,20 @@ public:
             consume.post();
             consume.post();
             stateMutex.post();
+        }
+    }
+
+    void finishWriting() {
+        if (isWriting()) {
+            double start = Time::now();
+            double pause = 0.01;
+            do {
+                Time::delay(pause);
+                pause *= 2;
+            } while (isWriting() && (Time::now()-start<3));
+            if (isWriting()) {
+                YARP_ERROR(Logger::get(), "Closing port that was sending data (slowly)");
+            }
         }
     }
 
@@ -306,6 +321,7 @@ bool Port::open(const Contact& contact, bool registerName) {
 void Port::close() {
     PortCoreAdapter& core = HELPER(implementation);
     core.finishReading();
+    core.finishWriting();
     core.close();
     core.join();
 

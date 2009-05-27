@@ -148,10 +148,7 @@ public:
     void enableBackgroundWrite(bool backgroundFlag);
 
 
-    /**
-     * report whether the port is currently writing data.
-     * @result true iff the port is writing in the background.
-     */
+    // documented in Contactable
     bool isWriting();
 
     // documented in Contactable

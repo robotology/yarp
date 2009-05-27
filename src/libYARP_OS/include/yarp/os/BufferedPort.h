@@ -229,6 +229,11 @@ public:
     }
 
     // documented in Contactable
+    bool isWriting() {
+        return port.isWriting();
+    }
+
+    // documented in Contactable
     virtual void getReport(PortReport& reporter) {
         port.getReport(reporter);
     }

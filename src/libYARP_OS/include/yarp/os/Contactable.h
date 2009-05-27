@@ -201,6 +201,13 @@ public:
      *
      */
     virtual void setReporter(PortReport& reporter) = 0;
+
+
+    /**
+     * Report whether the port is currently writing data.
+     * @result true iff the port is writing in the background.
+     */
+    virtual bool isWriting() = 0;
 };
 
 #endif
