@@ -474,7 +474,7 @@ implementation, and the DgramTwoWayStreamTest.cpp regression tests.
 
 Here's code to create a completely new carrier called "human".
 It relies on a human reading information on one terminal and
-typing it on another.
+typing it on another (see example/carrier/carrier_human.cpp).
 
 \include example/carrier/carrier_human.cpp
 
