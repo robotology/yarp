@@ -172,28 +172,77 @@ public:
         return Address(name,port,carrier,regName);
     }
 
+    /**
+     * Add a machine name to an address.
+     * @param name The machine name to add.
+     * @return A new address with the desired field added.
+     */
     Address addName(const String& name) const {
         return Address(name,port,carrier,regName);
     }
 
+    /**
+     * Add a carrier name to an address.
+     * @param carrier The carrier name to add.
+     * @return A new address with the desired field added.
+     */
     Address addCarrier(const String& carrier) const {
         return Address(name,port,carrier,regName);
     }
 
+    /**
+     * Add socket information to an address.
+     * @param carrier The carrier name to add.
+     * @param name The machine name to add.
+     * @param port The port number to add.
+     * @return A new address with the desired fields added.
+     */
     Address addSocket(const String& carrier, const String& name,
                       int port) const {
         return Address(name,port,carrier,regName);
     }
 
+    /**
+     *
+     * Check if address contains a registered port name.
+     *
+     * @return true iff address contains a registered port name.
+     *
+     */
     bool hasRegName() const {
         return regName != "";
     }
 
+    /**
+     *
+     * Check if address contains a carrier name.
+     *
+     * @return true iff address contains a carrier name.
+     *
+     */
     bool hasCarrierName() const {
         return carrier != "";
     }
 
+    /**
+     *
+     * Convert address to Contact, a simple wrapper
+     *
+     * @return the address expressed as a contact
+     *
+     */
     yarp::os::Contact toContact() const;
+
+    /**
+     *
+     *
+     * Convert Contact to an Address
+     *
+     * @param contact the Contact to convert
+     *
+     * @return the Contact expressed as a Address
+     *
+     */
     static Address fromContact(const yarp::os::Contact& contact);
 };
 

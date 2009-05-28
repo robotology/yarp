@@ -27,35 +27,84 @@ namespace yarp {
 class yarp::os::impl::OutputStream {
 public:
 
+    /**
+     *
+     * Destructor
+     *
+     */
     virtual ~OutputStream() { }
-
-    // These should be called at the beginning and end of logical packets.
-    // Streams are encouraged to handle errors and atomicity at the level of 
-    // logical packets
-    //virtual void beginPacket() {}
-    //virtual void endPacket() {}
-
-    virtual void write(char ch) { // throws
+    
+    /**
+     *
+     * Write a single byte to the stream.  By default, this 
+     * calls write(const Bytes& b) to do its work.
+     *
+     * @param ch the byte to write
+     *
+     */
+    virtual void write(char ch) {
         write(Bytes(&ch,1));
     }
 
-    virtual void write(const Bytes& b, int offset, int len) { // throws
+    /**
+     *
+     * Write a block of bytes to the stream.  By default, this 
+     * calls write(const Bytes& b) to do its work.
+     *
+     * @param b the bytes to write
+     * @param offset an offset within the block to start at
+     * @param len the number of bytes to write
+     *
+     */
+    virtual void write(const Bytes& b, int offset, int len) {
         write(Bytes(b.get()+offset,len));
     }
 
+    /**
+     *
+     * Write a block of bytes to the stream.
+     *
+     * @param b the bytes to write
+     *
+     */
     virtual void write(const Bytes& b) = 0;
 
+    /**
+     *
+     * Terminate the stream.
+     *
+     */
     virtual void close() = 0;
 
+    /**
+     *
+     * Make sure all pending write operations are finished.
+     *
+     */
     virtual void flush() {
     }
 
+    /**
+     *
+     * Write some text followed by a line feed.  By default,
+     * this calls write(const Bytes& b) to do its work.
+     *
+     * @param data the text to write
+     *
+     */
     virtual void writeLine(const String& data) {
         Bytes b((char*)(data.c_str()),data.length());
         write(b);
         write('\n');
     }
 
+    /**
+     *
+     * Check if the stream is ok or in an error state.
+     *
+     * @return true iff the stream is ok
+     *
+     */
     virtual bool isOk() = 0;
 };
 

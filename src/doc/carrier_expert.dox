@@ -43,12 +43,20 @@ You should skim the documentation of the following classes:
 
  \li yarp::os::impl::Carrier
  \li yarp::os::impl::Carriers
+ \li yarp::os::impl::InputStream
+ \li yarp::os::impl::OutputStream
+ \li yarp::os::impl::TwoWayStream
+ \li yarp::os::impl::AddressStream
 
 You'll be able to include them in your code as follows:
 
 \code
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Carriers.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/impl/Address.h>
 using namespace yarp::os::impl;
 \endcode
 

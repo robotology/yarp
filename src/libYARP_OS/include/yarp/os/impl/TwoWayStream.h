@@ -67,8 +67,11 @@ public:
     virtual const Address& getRemoteAddress() = 0;
 
     /**
-     * Check that the stream is valid.
-     * @return true if the stream is valid.
+     *
+     * Check if the stream is ok or in an error state.
+     *
+     * @return true iff the stream is ok
+     *
      */
     virtual bool isOk() = 0;
 
@@ -78,13 +81,11 @@ public:
     virtual void reset() = 0;
 
     /**
-     * Close the stream.
+     *
+     * Terminate the stream.
+     *
      */
     virtual void close() = 0;
-
-    // These should be called at the beginning and end of logical packets.
-    // Streams are encouraged to handle errors and atomicity at the level of 
-    // logical packets
 
     /**
      * 
