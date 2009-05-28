@@ -476,7 +476,7 @@ Here's code to create a completely new carrier called "human".
 It relies on a human reading information on one terminal and
 typing it on another.
 
-\include example/carrier/carrier_stub.cpp
+\include example/carrier/carrier_human.cpp
 
 
 */
