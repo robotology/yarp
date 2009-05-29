@@ -484,7 +484,79 @@ Here's code to create a completely new carrier called "human".
 It relies on a human reading information on one terminal and
 typing it on another (see example/carrier/carrier_human.cpp).
 
+  \dot
+  digraph carrier_expert_figure1 {
+      graph [ rankdir = "LR" ];
+      node [shape=box, fontname=Helvetica, fontsize=10];
+      edge [fontname=Helvetica, fontsize=10, arrowhead="open", style="solid"];
+
+      subgraph cluster_carrier_expert_figure1_app1 {
+		label = "Test Server";
+		color = "blue"; style = "dashed";
+
+		port1 [ label="Server Port", shape=ellipse ];
+	}
+
+      subgraph cluster_carrier_expert_figure1_app2 {
+		label = "Test Client";
+		color = "blue"; style = "dashed";
+
+		port2 [ label="Client Port", shape=ellipse ];
+	}
+
+      port1 -> port2 [label = "Human Carrier"];
+
+      fontname=Helvetica;
+      fontsize=10;
+      label = "Human-carrier connection";
+		color = "blue"; style = "dashed";
+  }
+  \enddot
+
 \include example/carrier/carrier_human.cpp
+
+Here's how the carrier works.
+
+In one terminal we run the test program as a "client" that will sit and
+wait for a message:
+\verbatim
+./carrier_human --client
+\endverbatim
+Here's what we see:
+\verbatim
+yarp: Port /test/in active at tcp://192.168.1.3:10002
+\endverbatim
+
+Now in another terminal
+we run the test program as a "server" that will connect to the client
+and then try to send it the message "1 2 3":
+\verbatim
+./carrier_human --server
+\endverbatim
+Here's what we see:
+\verbatim
+yarp: Port /test/out active at tcp://192.168.1.3:10012
+yarp: Sending output from /test/out to /test/in using human
+Packet begins
+*** TYPE THIS ON THE OTHER TERMINAL: human says do
+*** TYPE THIS ON THE OTHER TERMINAL: 1 2 3
+Packet ends
+*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:
+\endverbatim
+
+And on the client side here's what we see:
+\verbatim
+yarp: Receiving input from /test/out to /test/in using human
+Packet begins
+*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:
+\endverbatim
+
+What has happened is that the server has made a connection to the
+client, and then switched over to using our "human" protocol for
+transmitting data.  This protocol relies on reading and writing
+instructions to the console for a human to follow.  If we follow
+those instructions exactly, and in order, the program will 
+successfully complete just as for any other carrier.
 
 
 */
