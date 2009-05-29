@@ -72,7 +72,7 @@ public:
     * @param t: time (seconds).
     * @return true/false on success/failure.
     */
-    virtual bool setTrajTime(double t)=0
+    virtual bool setTrajTime(double t)=0;
 };
 
 #endif
