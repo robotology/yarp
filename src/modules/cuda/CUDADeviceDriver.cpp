@@ -31,7 +31,7 @@ bool CUDAGPU::open(int w, int h, int bytespp, int elemtype) {
     this->changetype(elemtype);
 
     if(this->w>0 && this->h>0) {
-      #if CUDA_VERSION==2000
+      #if CUDA_VERSION>=2000
         CUT_DEVICE_INIT_DRV(cuDevice, 0, NULL);
       #else
         CUT_DEVICE_INIT_DRV(cuDevice);
