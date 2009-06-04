@@ -4,22 +4,18 @@
 
 \author Paul Fitzpatrick
 
-In YARP, ports talk to each other via connections.  Types of connections
-are called "carriers".  See \ref carrier_config for information about
+In YARP, ports talk to each other via connections.  Connection data is
+carried by TCP by default, but this can be switched very easily to other
+"carriers".  See \ref carrier_config for information about
 how to configure connections using existing carriers.  Here, we are going
-to look at creating new kinds of carriers.  Why might you want to do this?
+to look at creating entirely new kinds of carriers.  
+Why might you want to do this?
 
- \li You need to use a kind of network that YARP doesn't 
-     currently support.  For example, we don't currently have
-     support for QNX message passing (even though, years ago, that
-     was the very first carrier supported by YARP - we remember it
-     fondly).
+ \li You need to use an unusual kind of network that no YARP user has
+     yet worked with.
 
  \li You don't like some aspect of YARP's current carriers.  No problem,
-     just make your own variation and plug it in.  (Please call it a 
-     different name though so as not to destroy the possibility of
-     interoperation).  If it works well, please consider telling us 
-     about it.
+     just make your own variation and plug it in.
 
  \li You want to support network-level interoperation with non-YARP based
      programs.
