@@ -49,7 +49,7 @@ and see if stuff happens.
 
 
 ============================================================================
-== PYTHON, PERL, TCL INTERFACES
+== PYTHON, PERL, TCL, RUBY INTERFACES
 
 Run:
   ccmake .
@@ -61,9 +61,10 @@ You should now have libraries called
 + libyarp.so 
 + and/or _yarp.so 
 + and/or cyarp.so
++ and/or yarp.so
 Or on windows, the equivalent DLLs.
 
-Now try to run example.pl and/or example.py and/or example.tcl
+Now try to run example.pl and/or example.py and/or example.tcl and/or Ruby.
 
 For TCL, on windows, look at example.tcl and uncomment the line referring
 to a .dll, and comment the line referring to a .so

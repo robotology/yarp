@@ -11,6 +11,7 @@ SET(CREATE_CSHARP FALSE CACHE BOOL "Do you want to create the CSharp interface")
 SET(CREATE_ALLEGRO FALSE CACHE BOOL "Do you want to create the Allegro Common Lisp interface")
 
 SET(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
+SET(CREATE_RUBY FALSE CACHE BOOL "Do you want to create the Ruby interface")
 
 
 
@@ -126,4 +127,12 @@ IF (CREATE_CSHARP)
       SWIG_ADD_MODULE(libsharpyarp csharp yarp.i)
    ENDIF (WIN32 AND NOT CYGWIN)
 ENDIF (CREATE_CSHARP)
+
+IF (CREATE_RUBY)
+   FIND_PACKAGE(Ruby)
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+   INCLUDE_DIRECTORIES(${RUBY_INCLUDE_PATH})
+   SWIG_ADD_MODULE(yarp ruby yarp.i)
+   SWIG_LINK_LIBRARIES(yarp ${RUBY_LIBRARY})
+ENDIF (CREATE_RUBY)
 
