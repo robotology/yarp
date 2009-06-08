@@ -1,4 +1,17 @@
+2009-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/CMakeLists.txt: place YARP Java classes in package
+	called yarp (thanks Severin Lemaignan).
+
+	* example/swig/example.rb, example/swig/CMakeLists.txt:
+	added Ruby wrappers and test program  (thanks Severin Lemaignan
+	for suggestion).
+
 2009-05-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/carrier/carrier_human.cpp: more complete example
+	for creating a new carrier.  See corresponding tutorial,
+	in src/doc/carrier_expert.dox
 
 	* src/libYARP_OS/src/Port.cpp: if a port is sending data,
 	give it a chance to finish before closing (thanks to Pablo
