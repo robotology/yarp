@@ -249,7 +249,7 @@ public:
     void testIsRunning()
     {
         report(0, "testing isRunning function");
-        Thread0 foo;
+        ThreadDelay foo;
         foo.start();
         checkTrue(foo.isRunning(), "thread is running");
         foo.stop(); //calls join

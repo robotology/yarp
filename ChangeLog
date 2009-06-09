@@ -1,3 +1,9 @@
+2009-06-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/ThreadTest.cpp: regression test for
+	isRunning() was not quite right, it could fail even for 
+	correct behavior.
+
 2009-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/CMakeLists.txt: place YARP Java classes in package
