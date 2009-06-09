@@ -84,7 +84,9 @@ private:
     bool closing;
     bool needJoin;
     Runnable *delegate;
-	ACE_Auto_Event synchro;	// event for init synchro
+
+	SemaphoreImpl synchro;
+	//ACE_Auto_Event synchro;	// event for init synchro
 
     static int threadCount;
     static SemaphoreImpl threadMutex;

@@ -60,7 +60,7 @@ static unsigned __stdcall theExecutiveBranch (void *args)
 }
 
 
-ThreadImpl::ThreadImpl() {
+ThreadImpl::ThreadImpl() : synchro(0) {
     delegate = NULL;
     active = false;
     closing = false;
@@ -70,7 +70,7 @@ ThreadImpl::ThreadImpl() {
 }
 
 
-ThreadImpl::ThreadImpl(Runnable *target) {
+ThreadImpl::ThreadImpl(Runnable *target) : synchro(0) {
     delegate = target;
     active = false;
     closing = false;
@@ -202,7 +202,7 @@ void ThreadImpl::synchroWait()
 
 void ThreadImpl::synchroPost()
 {
-	synchro.signal();
+	synchro.post();
 }
 
 void ThreadImpl::notify(bool s)
