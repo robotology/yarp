@@ -12,9 +12,9 @@
 // There is a problem with YARP+ACE semaphores on some Linux distributions,
 // where semaphores fail to work correctly.
 // A hack to fix this problem is to uncomment the three lines below --paulfitz
-//#ifdef __linux__
-//#define YARP_USE_NATIVE_POSIX_SEMA
-//#endif
+#ifdef __linux__
+#define YARP_USE_NATIVE_POSIX_SEMA
+#endif
 
 #ifdef YARP_USE_NATIVE_POSIX_SEMA
 #include <semaphore.h>
