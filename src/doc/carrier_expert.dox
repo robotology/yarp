@@ -32,10 +32,15 @@ further.  Before you can make a carrier, you need to have a "stream"
 class (implementing yarp::os::impl::TwoWayStream) that supports
 shipping raw data back and forth on that network.  You don't need 
 to worry about YARP protocol issues when making this class, it is
-just about being able to read and write raw data. Currently, you'll
-need to squeeze any addressing information for your network
-into the yarp::os::impl::Address class, watch out for that.
-This restriction should be lifted soon.
+just about being able to read and write raw data. 
+
+If you want to replace TCP entirely, for the initial handshaking
+done when setting up a connection, you'll need to do a bit more
+work. You'll need to squeeze any addressing information for your 
+network into the yarp::os::impl::Address class, watch out for that
+(or else you can extend that class).  And you'll need to implement
+a subclass of yarp::os::impl::Face that operates like 
+yarp::os::impl::TcpFace.
 
 
 \section carrier_expert_preliminaries Coding preliminaries

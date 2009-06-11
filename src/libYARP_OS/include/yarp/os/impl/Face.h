@@ -22,17 +22,53 @@ namespace yarp {
 }
 
 /**
- * A way to communicate with a port.
+ * The initial point-of-contact with a port.
  */
 class yarp::os::impl::Face {
 public:
-    virtual ~Face() {} // destructors must be virtual
+    /**
+     * Destructor.
+     */
+    virtual ~Face() {}
 
-    // all throw IOException
-
+    /**
+     *
+     * Start listening to the given address.
+     *
+     * @param address the parameters needed for listening.  E.g. for TCP,
+     * this would contain a socket number.
+     *
+     * @return true on success.
+     *
+     */
     virtual bool open(const Address& address) = 0;
+
+    /**
+     *
+     * Stop listening.
+     *
+     */
     virtual void close() = 0;
+
+    /**
+     *
+     * Block and wait for someone to talk to us.
+     *
+     * @return a protocol object for talking to someone, or NULL on failure.
+     *
+     */
     virtual InputProtocol *read() = 0;
+
+    /**
+     *
+     * Try to reach out and talk to someone.
+     *
+     * @param address parameters describing destination.  For example, for
+     * TCP this would contain a machine name/IP address, and a socket number.
+     *
+     * @return a protocol object to talk with, or NULL on failure.
+     *
+     */
     virtual OutputProtocol *write(const Address& address) = 0; 
 };
 
