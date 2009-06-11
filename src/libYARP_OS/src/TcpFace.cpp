@@ -43,28 +43,6 @@ void TcpFace::close() {
 
 void TcpFace::closeFace() {
     peerAcceptor.close();
-
-    /*
-      if (!closed) {
-      closed = true;
-      OutputProtocol *op = NULL;
-      try {
-      op = write(address);
-      //ACE_OS::printf("write done, gave %ld\n", (long int)op);
-      if (op!=NULL) {
-      op->close();
-      }
-      } catch (IOException e) {
-      // no problem
-      ACE_OS::printf("exception during write\n");
-      }
-      if (op!=NULL) {
-      delete op;
-      op = NULL;
-      }
-      peerAcceptor.close();
-      }
-    */
 }
 
 
