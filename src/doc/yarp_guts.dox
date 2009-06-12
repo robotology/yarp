@@ -43,10 +43,11 @@ reference it in user-facing header files.
 For every port, there is a yarp::os::impl::PortCore object.
 The user-facing yarp::os::Port class is a superficial wrapper around this.
 
-For every connection between two ports, there is a 
+For every connection between two ports (call them the source port
+and the target port), there is a 
 yarp::os::impl::PortCoreOutputUnit object held in a list by the
 source port's PortCore, and a yarp::os::impl::PortCoreInputUnit 
-object held in a list by the output port's PortCore.
+object held in a list by the target port's PortCore.
 
 Every PortCoreUnit has a yarp::os::impl::InputProtocol
 or yarp::os::impl::OutputProtocol object that
