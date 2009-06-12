@@ -53,9 +53,10 @@ Every PortCoreUnit has a yarp::os::impl::InputProtocol
 or yarp::os::impl::OutputProtocol object that
 manages the overall phases of YARP's network protocol.
 
-The Protocol object uses a yarp::os::impl::Carrier object
+The Protocol object delegates to an
+object from the yarp::os::impl::Carrier family
 (yarp::os::impl::TcpCarrier, yarp::os::impl::McastCarrier, ...) to 
-manage the peculiarities of particular connection types.  This 
+manage the peculiarities of a particular connection type.  This 
 carrier can be replaced during the operation of a connection.
 Typically, connections start with a TcpCarrier, and then switch
 (after hand-shaking) to whatever carrier the user has selected.
