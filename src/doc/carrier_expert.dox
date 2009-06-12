@@ -37,10 +37,12 @@ just about being able to read and write raw data.
 If you want to replace TCP entirely, for the initial handshaking
 done when setting up a connection, you'll need to do a bit more
 work. You'll need to squeeze any addressing information for your 
-network into the yarp::os::impl::Address class, watch out for that
+network into the yarp::os::impl::Address class
 (or else you can extend that class).  And you'll need to implement
 a subclass of yarp::os::impl::Face that operates like 
-yarp::os::impl::TcpFace.
+yarp::os::impl::TcpFace.  So that's a bit more work.  I wouldn't 
+recommend that being the first new carrier you make, try something
+simpler first to get used to how things work.
 
 
 \section carrier_expert_preliminaries Coding preliminaries

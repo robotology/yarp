@@ -141,7 +141,7 @@ multicast to ports 2 and 3, and by tcp to port 4.
 
       fontname=Helvetica;
       fontsize=10;
-      label = "A four-port example";
+      label = "A four-port example, arrows show data flow";
 		color = "blue"; style = "dashed";
   }
   \enddot
