@@ -1,3 +1,10 @@
+import yarp.Network;
+import yarp.ImageRgb;
+import yarp.Time;
+import yarp.Property;
+import yarp.BufferedPortImageRgb;
+import yarp.PolyDriver;
+import yarp.IFrameGrabberImage;
 
 class Example3 {
 

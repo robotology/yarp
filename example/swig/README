@@ -48,6 +48,14 @@ Try running:
 and see if stuff happens.
 
 
+Note from Sebastien Wrede:
+
+  "... we had some problems due to a segmentation fault in
+  libjyarp.so (in some generated JNI function) using SWIG 1.3.35 and gcc
+  (Ubuntu 4.3.2-1ubuntu12). I'm not sure whether I missed something, but
+  adding -fno-strict-aliasing to the compile flags in our build system
+  solved the problem."
+
 ============================================================================
 == PYTHON, PERL, TCL, RUBY INTERFACES
 

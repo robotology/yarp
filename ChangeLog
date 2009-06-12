@@ -1,3 +1,9 @@
+2009-06-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/: lots of updates to make Java examples work again
+	after yarp classes were moved into a package (thank you Sebastian 
+	Wrede!)
+
 2009-06-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/ThreadImpl.h: avoid using

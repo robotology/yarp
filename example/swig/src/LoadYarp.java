@@ -1,3 +1,5 @@
+import yarp.Network;
+
 //run this to load the yarp library and initialize the network in Java
 
 class LoadYarp{

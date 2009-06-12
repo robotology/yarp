@@ -1,3 +1,7 @@
+import yarp.Network;
+import yarp.ImageRgb;
+import yarp.Time;
+import yarp.BufferedPortImageRgb;
 
 
 class Example2 {

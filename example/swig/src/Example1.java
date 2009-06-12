@@ -1,4 +1,7 @@
-
+import yarp.Network;
+import yarp.Bottle;
+import yarp.Time;
+import yarp.Port;
 
 class Example1 {
 

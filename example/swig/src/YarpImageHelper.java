@@ -1,3 +1,6 @@
+import yarp.PixelRgb;
+import yarp.ImageRgb;
+import yarp.ImageFloat;
 
 /** 
  * Helper class to convert YARP image to Matlab matrices (images).
