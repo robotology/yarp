@@ -120,7 +120,7 @@ public:
         out.prepare().fromString("1 2 3");
         out.write();
         int rep = 0;
-        while (in.count==0 && rep<10) {
+        while (in.count==0 && rep<50) {
             Time::delay(0.1);
             rep++;
         }
@@ -136,7 +136,7 @@ public:
         out.prepare().fromString("1 2 3 4 5");
         out.write();
         rep = 0;
-        while (in.count==0 && rep<10) {
+        while (in.count==0 && rep<50) {
             Time::delay(0.1);
             rep++;
         }
