@@ -64,7 +64,7 @@ public:
 
     /**
     * Get the current DOF configuration of the limb.
-    * @param dof: a vector which is filled with the actual DOF 
+    * @param curDof: a vector which is filled with the actual DOF 
     *           configuration.
     * \note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
@@ -72,16 +72,16 @@ public:
     *       otherwise.
     * @return true/false on success/failure.
     */
-    virtual bool getDOF(yarp::sig::Vector &dof)=0;
+    virtual bool getDOF(yarp::sig::Vector &curDof)=0;
 
     /**
     * Set a new DOF configuration for the limb.
     * @param newDof: a vector which contains the new DOF 
     *            configuration.
-    * @param curDof: a vector which is filled with the actual DOF 
-    *              configuration (it may differ from newDof due to
-    *              the presence of some internal limb's
-    *              constraints).
+    * @param curDof: a vector where the DOF configuration is 
+    *              returned as it has been processed after the
+    *              request (it may differ from newDof due to the
+    *              presence of some internal limb's constraints).
     * \note Eeach vector's position shall contain 1 if the 
     *       associated joint has to be controlled, 0 otherwise.
     * @return true/false on success/failure.
