@@ -68,7 +68,7 @@ public:
     *           configuration.
     * \note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
-    *       associated joint is controllable (i.e. it is a DOF), 0
+    *       associated joint is controlled (i.e. it is a DOF), 0
     *       otherwise.
     * @return true/false on success/failure.
     */
@@ -76,12 +76,17 @@ public:
 
     /**
     * Set a new DOF configuration for the limb.
-    * @param dof: a vector which contains the new DOF configuration.
+    * @param newDof: a vector which contains the new DOF 
+    *            configuration.
+    * @param curDof: a vector which is filled with the actual DOF 
+    *              configuration (it may differ from newDof due to
+    *              the presence of some internal limb's
+    *              constraints).
     * \note Eeach vector's position shall contain 1 if the 
     *       associated joint has to be controlled, 0 otherwise.
     * @return true/false on success/failure.
     */
-    virtual bool setDOF(const yarp::sig::Vector &dof)=0;
+    virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
 
     /** Check if the current trajectory is terminated. Non blocking.
     * @return true if the trajectory is terminated, false otherwise
