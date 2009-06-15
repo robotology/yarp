@@ -1,3 +1,8 @@
+2009-06-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/Vector.cpp: improve read() method to 
+	do a sanity check, for better error recovery (thanks Arjan Gijsberts)
+
 2009-06-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/PortReaderBufferTest.cpp: increase

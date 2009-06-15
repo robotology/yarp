@@ -6,7 +6,7 @@
 *
 */
 
-// $Id: Vector.cpp,v 1.27 2008-10-24 23:30:41 gmetta Exp $
+// $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/impl/IOException.h>
@@ -182,7 +182,8 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0) {
+    if (header.listLen > 0 && 
+        header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
         if (getListSize() != (int)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
@@ -368,7 +369,8 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     VectorPortContentHeader header;
     bool ok = connection.expectBlock((char*)&header, sizeof(header));
     if (!ok) return false;
-    if (header.listLen > 0) {
+    if (header.listLen > 0 && 
+        header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
         if (size() != (int)(header.listLen))
             resize(header.listLen);
         
