@@ -200,7 +200,7 @@ public:
 
         if (pKill)
         {
-            pKill->Kill();
+            pKill->Kill(signum);
             return true;
         }
         
