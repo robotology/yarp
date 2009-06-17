@@ -38,7 +38,9 @@ protected:
     String mcastName;
     String key;
 
-    static ElectionOf<McastCarrier> caster;
+    static ElectionOf<McastCarrier> *caster;
+
+    static ElectionOf<McastCarrier>& getCaster();
 
 public:
 
@@ -51,7 +53,7 @@ public:
             bool elect = isElect();
             addRemove(key);
             if (elect) {
-                McastCarrier *peer = caster.getElect(key);
+                McastCarrier *peer = getCaster().getElect(key);
                 if (peer==NULL) {
                     // time to remove registration
                     NameClient& nic = NameClient::getNameClient();
@@ -89,7 +91,7 @@ public:
             proto.getRoute().getFromName() +
             "/net=" + alt.getName();
         //printf("Key should be %s\n", altKey.c_str());
-        McastCarrier *elect = caster.getElect(altKey);
+        McastCarrier *elect = getCaster().getElect(altKey);
         if (elect!=NULL) {
             YARP_DEBUG(Logger::get(),"picking up peer mcast name");
             addr = elect->mcastAddress;
@@ -221,15 +223,15 @@ public:
     }
 
     void addSender(const String& key) {
-        caster.add(key,this);
+        getCaster().add(key,this);
     }
   
     void addRemove(const String& key) {
-        caster.remove(key,this);
+        getCaster().remove(key,this);
     }
   
     bool isElect() {
-        void *elect = caster.getElect(key);
+        void *elect = getCaster().getElect(key);
         //void *elect = caster.getElect(mcastAddress.toString());
         return elect==this || elect==NULL;
     }

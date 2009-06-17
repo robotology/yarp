@@ -1,3 +1,9 @@
+2009-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/McastCarrier.h: allocate
+	global mcast election object only if mcast is actually used.
+	ACE's hash objects are quite large!
+
 2009-06-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/src/Vector.cpp: improve read() method to 
