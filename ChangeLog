@@ -17,12 +17,15 @@
 2009-06-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/ThreadImpl.h: avoid using
-	ACE_Auto_Event class, in favor of Semaphores - just because
-	they have been more tested against different ACE builds.
+	ACE_Auto_Event class, in favor of Semaphores - just because they
+	have been more tested against different ACE builds.  Thanks to
+	Alejandro R. Mosteo for drawing attention to ThreadTest problems
+	in bug report #2801261
 
 	* src/libYARP_OS/harness/ThreadTest.cpp: regression test for
 	isRunning() was not quite right, it could fail even for 
-	correct behavior.
+	correct behavior.  Thanks to Alejandro R. Mosteo for drawing
+	attention to ThreadTest problems in bug report #2801261
 
 2009-06-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
