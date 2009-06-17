@@ -1320,8 +1320,8 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::uninitialize ()
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementControlLimits<DERIVED, IMPLEMENT>::setLimits(int j, double min, double max)
 {
-    double minEnc;
-    double maxEnc;
+    double minEnc=0;
+    double maxEnc=0;
 
     int k=0;
     castToMapper(helper)->posA2E(min, j, minEnc, k);
@@ -1341,8 +1341,8 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>::setLimits(int j, double min, do
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementControlLimits<DERIVED, IMPLEMENT>::getLimits(int j, double *min, double *max)
 {
-    double minEnc;
-    double maxEnc;
+    double minEnc=0;
+    double maxEnc=0;
 
     int k=castToMapper(helper)->toHw(j);
     bool ret=iLimits->getLimitsRaw(k, &minEnc, &maxEnc);
