@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta, Lorenzo Natale
+ * Copyright (C) 2006, 2008, 2009 Lorenzo Natale
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -658,7 +658,68 @@ public:
     virtual bool done(int j);
 };
 
+#if 0
+class yarp::dev::ImplementTorqueControl
+{
+protected:
+    TorqueControlRaw *iTorqueRaw;
+    void *helper;
+    double *temp;
 
+    /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @param enc is an array containing the encoder to angles conversion factors.
+     * @param zos is an array containing the zeros of the encoders.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+    bool initialize (int size, const int *amap, const double *enc, const double *zos);
+          
+    /**
+     * Clean up internal data and memory.
+     * @return true if uninitialization is executed, false otherwise.
+     */
+    bool uninitialize ();
+
+public:
+    /* Constructor.
+     * @param y is the pointer to the class instance inheriting from this 
+     *  implementation.
+     */
+    ImplementTorqueControl(ImplementTorqueControlRaw *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementTorqueControl();
+
+    virtual bool getAxes(int *ax);
+    virtual bool setTorqueMode();
+    virtual double getRefTorque(int j);
+    virtual void getRefTorques(double *t);
+    virtual bool setTorques(const double *t);
+    virtual void setTorque(int j, double t);
+    virtual bool setTorquePid(int j, const Pid &pid);
+    virtual bool setTorquePids(const Pid *pids);
+    virtual bool setTorqueErrorLimit(int j, double limit);
+    virtual bool setTorqueErrorLimits(const double *limits);
+    virtual bool getTorqueError(int j, double *err);
+    virtual bool getTorqueErrors(double *errs);
+    virtual bool getOutput(int j, double *out);
+    virtual bool getOutputs(double *outs);
+    virtual bool getTorquePid(int j, Pid *pid);
+    virtual bool getTorquePids(Pid *pids);
+    virtual bool getTorqueReference(int j, double *ref);
+    virtual bool getTorqueReferences(double *refs);
+    virtual bool getTorqueErrorLimit(int j, double *limit);
+    virtual bool getTorqueErrorLimits(double *limits);
+    virtual bool resetTorquePid(int j);
+    virtual bool disableTorquePid(int j);
+    virtual bool enableTorquePid(int j);
+    virtual bool setTorqueOffset(int j, double v);
+};
+#endif
 /** 
  * Stub implementation of IPidControlRaw interface. 
  * Inherit from this class if you want a stub implementation

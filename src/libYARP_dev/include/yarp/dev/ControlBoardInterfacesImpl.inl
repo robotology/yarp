@@ -11,7 +11,7 @@
 
 // Be careful: this file contains template implementations and is included by translation
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
-// avoid repetations.
+// avoid multiple definitions.
 
 #include <ace/Log_Msg.h>
 #include <stdio.h>
