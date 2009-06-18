@@ -104,6 +104,7 @@ public:
     *              presence of some internal limb's constraints).
     * \note Eeach vector's position shall contain 1 if the 
     *       associated joint has to be controlled, 0 otherwise.
+    * \note This is a blocking call. 
     * @return true/false on success/failure.
     */
     virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
