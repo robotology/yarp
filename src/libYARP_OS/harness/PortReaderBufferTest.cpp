@@ -127,14 +127,14 @@ public:
         checkEqual(in.count,3,"got message #1");
         in.disableCallback();
         out.prepare().fromString("1 2 3 4");
-        out.write();
+        out.write(true);
         Bottle *datum = in.read();
         checkTrue(datum!=NULL, "got message #2");
         checkEqual(datum->size(),4,"message is ok");
         in.useCallback();
         in.count = 0;
         out.prepare().fromString("1 2 3 4 5");
-        out.write();
+        out.write(true);
         rep = 0;
         while (in.count==0 && rep<50) {
             Time::delay(0.1);

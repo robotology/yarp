@@ -1,5 +1,11 @@
 2009-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/harness/PortReaderBufferTest.cpp: mistake
+	in test: messages in checkCallback need to be send with "strict"
+	flag set, to be sure they don't get dropped.  Thanks to
+	Alejandro R. Mosteo for drawing attention to PortReaderBufferTest
+	problem.
+
 	* src/libYARP_OS/include/yarp/os/impl/McastCarrier.h: allocate
 	global mcast election object only if mcast is actually used.
 	ACE's hash objects are quite large!
