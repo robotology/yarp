@@ -801,7 +801,7 @@ public:
      * it can be left empty.
      * @return true/false on success failure
      */
-    virtual bool setTorqueMode()=0;
+    virtual bool setTorqueModeRaw()=0;
 
     /** Get the value of the torque on a given joint.
      * @param j joint number

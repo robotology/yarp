@@ -21,6 +21,7 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration;
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
+        class ImplementTorqueControl;
         class StubImplPidControlRaw;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
@@ -658,13 +659,13 @@ public:
     virtual bool done(int j);
 };
 
-#if 0
-class yarp::dev::ImplementTorqueControl
+class yarp::dev::ImplementTorqueControl: public ITorqueControl 
 {
 protected:
-    TorqueControlRaw *iTorqueRaw;
+    yarp::dev::ITorqueControlRaw *iTorqueRaw;
     void *helper;
     double *temp;
+    Pid *tmpPids;
 
     /**
      * Initialize the internal data and alloc memory.
@@ -687,7 +688,7 @@ public:
      * @param y is the pointer to the class instance inheriting from this 
      *  implementation.
      */
-    ImplementTorqueControl(ImplementTorqueControlRaw *y);
+    ImplementTorqueControl(yarp::dev::ITorqueControlRaw *y);
         
     /**
      * Destructor. Perform uninitialize if needed.
@@ -719,7 +720,7 @@ public:
     virtual bool enableTorquePid(int j);
     virtual bool setTorqueOffset(int j, double v);
 };
-#endif
+
 /** 
  * Stub implementation of IPidControlRaw interface. 
  * Inherit from this class if you want a stub implementation
