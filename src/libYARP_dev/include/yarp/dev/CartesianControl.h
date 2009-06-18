@@ -36,6 +36,35 @@ public:
     virtual ~ICartesianControl() {}
 
     /**
+    * Set the controller in tracking or non-tracking mode.
+    * @param f: true for tracking mode, false otherwise. 
+    * \note In tracking mode when the controller reachs the target, 
+    *       it keeps on running in order to mantain the limb in the
+    *       desired pose. In non-tracking mode the controller
+    *       releases the limb as soon as the desired pose is
+    *       reached.
+    * @return true/false on success/failure.
+    */
+    virtual bool setTrackingMode(const bool f)=0;
+
+    /**
+    * Get the current controller mode.
+    * @param f: here is returned true if controller is in tracking 
+    *         mode, false otherwise.
+    * @return true/false on success/failure.
+    */
+    virtual bool getTrackingMode(bool *f)=0;
+
+    /**
+    * Get the current pose.
+    * @param x: a 3-d vector which is filled with the actual position x,y,z (meters)
+    * @param od: a 4-d vector which is filled with the actual orientation
+    * using axis-angle representation xa, ya, za, theta (meters and degrees).
+    * @return true/false on success/failure.
+    */
+    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
     * Move the end effector to a specified pose (position
     * and orientation) in cartesian space.
     * @param xd: a 3-d vector which contains the desired position x,y,z
@@ -52,15 +81,6 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool goToPosition(const yarp::sig::Vector &xd)=0;
-
-    /**
-    * Get the current pose.
-    * @param x: a 3-d vector which is filled with the actual position x,y,z (meters)
-    * @param od: a 4-d vector which is filled with the actual orientation
-    * using axis-angle representation xa, ya, za, theta (meters and degrees).
-    * @return true/false on success/failure.
-    */
-    virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
     * Get the current DOF configuration of the limb.
@@ -88,10 +108,12 @@ public:
     */
     virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
 
-    /** Check if the current trajectory is terminated. Non blocking.
-    * @return true if the trajectory is terminated, false otherwise
+    /**
+    * Get the current trajectory duration.
+    * @param t: time (seconds).
+    * @return true/false on success/failure.
     */
-    virtual bool checkMotionDone(bool *f)=0;
+    virtual bool getTrajTime(double *t)=0;
 
     /**
     * Set the duration of the trajectory.
@@ -100,12 +122,19 @@ public:
     */
     virtual bool setTrajTime(const double t)=0;
 
-    /**
-    * Get the current trajectory duration.
-    * @param t: time (seconds).
-    * @return true/false on success/failure.
+    /** Check if the current trajectory is terminated. Non blocking.
+    * @param f: where the result is returned.
+    * @return true if the trajectory is terminated, false otherwise
     */
-    virtual bool getTrajTime(double *t)=0;
+    virtual bool checkMotionDone(bool *f)=0;
+
+    /** Ask for an immediate stop motion.
+    * @param f: true if soon afterwards the control has to be 
+    *         released (direct switch to non-tracking mode), false
+    *         if the current mode has to be kept.
+    * @return true if the trajectory is terminated, false otherwise
+    */
+    virtual bool stopControl(const bool f);
 };
 
 #endif
