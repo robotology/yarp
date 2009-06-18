@@ -135,7 +135,7 @@ public:
     *         if the current mode has to be kept.
     * @return true if the trajectory is terminated, false otherwise
     */
-    virtual bool stopControl(const bool f);
+    virtual bool stopControl(const bool f)=0;
 };
 
 #endif
