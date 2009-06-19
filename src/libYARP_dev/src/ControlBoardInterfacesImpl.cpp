@@ -99,18 +99,19 @@ bool ImplementTorqueControl::setTorqueMode()
     return iTorqueRaw->setTorqueModeRaw();
 }
 
-double ImplementTorqueControl::getRefTorque(int j)
+bool ImplementTorqueControl::getRefTorque(int j, double *r)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
 
-    return iTorqueRaw->getRefTorqueRaw(k);
+    return iTorqueRaw->getRefTorqueRaw(k, r);
 }
 
-void ImplementTorqueControl::getRefTorques(double *t)
+bool ImplementTorqueControl::getRefTorques(double *t)
 {
-    iTorqueRaw->getRefTorquesRaw(temp);
+    bool ret = iTorqueRaw->getRefTorquesRaw(temp);
     castToMapper(helper)->toUser(temp,t);
+	return ret;
 }
 
 bool ImplementTorqueControl::setTorques(const double *t)
@@ -119,7 +120,7 @@ bool ImplementTorqueControl::setTorques(const double *t)
     return iTorqueRaw->setTorquesRaw(temp);
 }
 
-void ImplementTorqueControl::setTorque(int j, double t)
+bool ImplementTorqueControl::setTorque(int j, double t)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
@@ -152,6 +153,13 @@ bool ImplementTorqueControl::setTorqueErrorLimit(int j, double limit)
     int k;
     k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->setTorqueErrorLimitRaw(k, limit);
+}
+
+bool ImplementTorqueControl::getTorqueErrorLimit(int j, double *limit)
+{
+	int k;
+    k=castToMapper(helper)->toHw(j);
+    return iTorqueRaw->getTorqueErrorLimitRaw(k, limit);
 }
 
 bool ImplementTorqueControl::setTorqueErrorLimits(const double *limits)
@@ -206,19 +214,6 @@ bool ImplementTorqueControl::getTorquePids(Pid *pids)
         pids[tmp]=tmpPids[j];
     }
 
-    return ret;
-}
-
-bool ImplementTorqueControl::getTorqueReference(int j, double *ref)
-{
-    int k=castToMapper(helper)->toHw(j);    
-    return iTorqueRaw->getTorqueReferenceRaw(k, ref);
-}
-
-bool ImplementTorqueControl::getTorqueReferences(double *refs)
-{
-    int ret=iTorqueRaw->getTorqueReferencesRaw(temp);
-    castToMapper(helper)->toUser(temp, refs);
     return ret;
 }
 
