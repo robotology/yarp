@@ -833,14 +833,14 @@ public:
      * @param t pointer to the array of torque values
      * @return true/false
      */
-    virtual bool getTorqueRefsRaw(double *t)=0;
+    virtual bool getRefTorquesRaw(double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).
      * @param j joint number
      * @param t new value
      */
-    virtual bool getTorqueRefRaw(int j, double *t)=0;
+    virtual bool getRefTorqueRaw(int j, double *t)=0;
 
      /** Set new pid value for a joint axis.
      * @param j joint number
@@ -1532,7 +1532,7 @@ public:
      * @param t pointer to the array of torque values
      * @return true/false
      */
-    virtual bool getTorqueRefs(double *t)=0;
+    virtual bool getRefTorques(double *t)=0;
 
     /** Set the reference value of the torque for a given joint.
      * This is NOT the feedback (see getTorque instead).

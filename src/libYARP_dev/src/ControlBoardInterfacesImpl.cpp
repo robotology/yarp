@@ -104,12 +104,12 @@ bool ImplementTorqueControl::getTorqueRef(int j, double *r)
     int k;
     k=castToMapper(helper)->toHw(j);
 
-    return iTorqueRaw->getTorqueRefRaw(k, r);
+    return iTorqueRaw->getRefTorqueRaw(k, r);
 }
 
-bool ImplementTorqueControl::getTorqueRefs(double *t)
+bool ImplementTorqueControl::getRefTorques(double *t)
 {
-    bool ret = iTorqueRaw->getTorqueRefsRaw(temp);
+    bool ret = iTorqueRaw->getRefTorquesRaw(temp);
     castToMapper(helper)->toUser(temp,t);
 	return ret;
 }
