@@ -803,16 +803,18 @@ public:
      */
     virtual bool setTorqueModeRaw()=0;
 
-    /** Get the value of the torque on a given joint.
+    /** Get the value of the torque on a given joint (this is the
+     * feedback if you have a torque sensor).
      * @param j joint number
      * @return torque value
      */
-    virtual bool getRefTorqueRaw(int j, double *t)=0;
+    virtual bool getTorqueRaw(int j, double *t)=0;
 
-    /** Get the value of the torque for all joints.
+    /** Get the value of the torque for all joints (this is 
+     * the feedback if you have torque sensors).
      * @param t pointer to the array that will store the output
      */
-    virtual bool getRefTorquesRaw(double *t)=0;
+    virtual bool getTorquesRaw(double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
@@ -825,6 +827,20 @@ public:
      * @param t new value
      */
     virtual bool setTorqueRaw(int j, double t)=0;
+
+    /** Get the reference value of the torque for all joints.
+     * This is NOT the feedback (see getTorques instead).
+     * @param t pointer to the array of torque values
+     * @return true/false
+     */
+    virtual bool getTorqueRefsRaw(double *t)=0;
+
+    /** Set the reference value of the torque for a given joint.
+     * This is NOT the feedback (see getTorque instead).
+     * @param j joint number
+     * @param t new value
+     */
+    virtual bool getTorqueRefRaw(int j, double *t)=0;
 
      /** Set new pid value for a joint axis.
      * @param j joint number
@@ -1511,16 +1527,19 @@ public:
      */
     virtual bool setTorqueMode()=0;
 
-    /** Get the value of the torque on a given joint.
-     * @param j joint number
-     * @param t torque value
+   /** Get the reference value of the torque for all joints.
+     * This is NOT the feedback (see getTorques instead).
+     * @param t pointer to the array of torque values
+     * @return true/false
      */
-    virtual bool getRefTorque(int j, double *t)=0;
+    virtual bool getTorqueRefs(double *t)=0;
 
-    /** Get the value of the torque for all joints.
-     * @param t pointer to the array that will store the output
+    /** Set the reference value of the torque for a given joint.
+     * This is NOT the feedback (see getTorque instead).
+     * @param j joint number
+     * @param t new value
      */
-    virtual bool getRefTorques(double *t)=0;
+    virtual bool getTorqueRef(int j, double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
@@ -1540,6 +1559,19 @@ public:
      * @return true/false on success/failure
      */
     virtual bool setTorquePid(int j, const Pid &pid)=0;
+
+    /** Get the value of the torque on a given joint (this is the
+     * feedback if you have a torque sensor).
+     * @param j joint number
+     * @return torque value
+     */
+    virtual bool getTorque(int j, double *t)=0;
+
+    /** Get the value of the torque for all joints (this is 
+     * the feedback if you have torque sensors).
+     * @param t pointer to the array that will store the output
+     */
+    virtual bool getTorques(double *t)=0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids

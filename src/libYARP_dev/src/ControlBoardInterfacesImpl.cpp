@@ -99,17 +99,17 @@ bool ImplementTorqueControl::setTorqueMode()
     return iTorqueRaw->setTorqueModeRaw();
 }
 
-bool ImplementTorqueControl::getRefTorque(int j, double *r)
+bool ImplementTorqueControl::getTorqueRef(int j, double *r)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
 
-    return iTorqueRaw->getRefTorqueRaw(k, r);
+    return iTorqueRaw->getTorqueRefRaw(k, r);
 }
 
-bool ImplementTorqueControl::getRefTorques(double *t)
+bool ImplementTorqueControl::getTorqueRefs(double *t)
 {
-    bool ret = iTorqueRaw->getRefTorquesRaw(temp);
+    bool ret = iTorqueRaw->getTorqueRefsRaw(temp);
     castToMapper(helper)->toUser(temp,t);
 	return ret;
 }
@@ -125,6 +125,20 @@ bool ImplementTorqueControl::setTorque(int j, double t)
     int k;
     k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->setTorqueRaw(k, t);
+}
+
+bool ImplementTorqueControl::getTorques(double *t)
+{
+    bool ret = iTorqueRaw->getTorquesRaw(temp);
+    castToMapper(helper)->toUser(temp, t);
+    return ret;
+}
+
+bool ImplementTorqueControl::getTorque(int j, double *t)
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iTorqueRaw->getTorqueRaw(k, t);
 }
 
 bool ImplementTorqueControl::setTorquePid(int j, const Pid &pid)
