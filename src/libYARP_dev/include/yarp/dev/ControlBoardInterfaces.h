@@ -807,12 +807,12 @@ public:
      * @param j joint number
      * @return torque value
      */
-    virtual double getRefTorqueRaw(int j)=0;
+    virtual bool getRefTorqueRaw(int j, double *t)=0;
 
     /** Get the value of the torque for all joints.
      * @param t pointer to the array that will store the output
      */
-    virtual void getRefTorquesRaw(double *t)=0;
+    virtual bool getRefTorquesRaw(double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
@@ -824,7 +824,7 @@ public:
      * @param j joint number
      * @param t new value
      */
-    virtual void setTorqueRaw(int j, double t)=0;
+    virtual bool setTorqueRaw(int j, double t)=0;
 
      /** Set new pid value for a joint axis.
      * @param j joint number
@@ -888,18 +888,6 @@ public:
      * @return success/failure
      */
     virtual bool getTorquePidsRaw(Pid *pids)=0;
-
-    /** Get the current reference position of the controller for a specific joint.
-     * @param j joint number
-     * @param ref pointer to storage for return value
-     * @return reference value 
-     */
-    virtual bool getTorqueReferenceRaw(int j, double *ref)=0;
-
-    /** Get the current reference position of all controllers.
-     * @param refs vector that will store the output.
-     */
-    virtual bool getTorqueReferencesRaw(double *refs)=0;
 
     /** Get the torque error limit for the controller on a specific joint
      * @param j joint number
