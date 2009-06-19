@@ -1726,7 +1726,7 @@ public:
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')
 
 #define VOCAB_TIMESTAMP VOCAB4('t','s','t','a')
-
+#define VOCAB_TORQUE VOCAB4('t','o','r','q')
 
 #endif
 
