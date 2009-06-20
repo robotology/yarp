@@ -88,8 +88,8 @@ public:
     *           configuration.
     * \note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
-    *       associated joint is controlled (i.e. it is a DOF), 0
-    *       otherwise.
+    *       associated joint is controlled (i.e. it is an actuated
+    *       DOF), 0 otherwise.
     * @return true/false on success/failure.
     */
     virtual bool getDOF(yarp::sig::Vector &curDof)=0;
@@ -103,7 +103,7 @@ public:
     *              request (it may differ from newDof due to the
     *              presence of some internal limb's constraints).
     * \note Eeach vector's position shall contain 1 if the 
-    *       associated joint has to be controlled, 0 otherwise.
+    *       associated joint can be actuated, 0 otherwise.
     * \note This is a blocking call. 
     * @return true/false on success/failure.
     */
