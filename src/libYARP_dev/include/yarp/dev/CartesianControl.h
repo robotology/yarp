@@ -133,7 +133,7 @@ public:
     * @param f: true if soon afterwards the control has to be 
     *         released (direct switch to non-tracking mode), false
     *         if the current mode has to be kept.
-    * @return true if the trajectory is terminated, false otherwise
+    * @return true/false on success/failure.
     */
     virtual bool stopControl(const bool f)=0;
 };
