@@ -114,8 +114,8 @@ public:
     * Get the current range for the axis.
     * @param axis: joint index (regardless if it is actuated or 
     *            not).
-    * @param min: where the minimum value is returned.
-    * @param max: where the maximum value is returned.
+    * @param min: where the minimum value is returned [deg].
+    * @param max: where the maximum value is returned [deg].
     * @return true/false on success/failure. 
     */
     virtual bool getLimits(int axis, double *min, double *max)=0;
@@ -125,8 +125,8 @@ public:
     * subset of the real control limits. 
     * @param axis: joint index (regardless it it is actuated or 
     *            not).
-    * @param min: the new minimum value. 
-    * @param max: the new maximum value. 
+    * @param min: the new minimum value [deg]. 
+    * @param max: the new maximum value [deg]. 
     * @return true/false on success/failure. 
     */
     virtual bool setLimits(int axis, const double min, const double max)=0;
