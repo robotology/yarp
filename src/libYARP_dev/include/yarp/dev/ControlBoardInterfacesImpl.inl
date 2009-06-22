@@ -1196,7 +1196,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>::calibrate(int j, double p)
 
     return iCalibrate->calibrateRaw(k, p);
 }
-
+ 
 template <class DERIVED, class IMPLEMENT> 
 bool ImplementControlCalibration<DERIVED, IMPLEMENT>::done(int j)
 {
