@@ -90,9 +90,9 @@
 2009-05-08 Alessandro Scalzo <alessandro@liralab.it>
 	* src/libYARP_OS/include/yarp/os/Run.h
 	* src/libYARP_dev/src/Run.cpp
-	* scr/yarprun/
+	* src/yarprun/
 
-	Zombie mangement added, APIs.
+	Zombie management added, APIs.
 	yarprun executable added.
 
 2009-04-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
