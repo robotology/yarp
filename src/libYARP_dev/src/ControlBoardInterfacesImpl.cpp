@@ -53,6 +53,7 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=0;
     temp=0;
+    tmpPids=0;
 }
 
 ImplementTorqueControl::~ImplementTorqueControl()
