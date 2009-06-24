@@ -7,11 +7,11 @@
 #include <iostream>
 #include <vector>
 
-#include <yarp/dev/Attachable.h>
+#include <yarp/dev/Wrapper.h>
 
 using namespace yarp::dev;
 
-class MyWrapper: public IMultipleAttachable, public DeviceDriver
+class MyWrapper: public IMultipleWrapper, public DeviceDriver
 {
     PolyDriverList drivers;
 
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     wrapper.open(config);
 
     //attach devices, first get interface
-    IMultipleAttachable *iat;
+    IMultipleWrapper *iat;
     wrapper.view(iat);
     
     PolyDriverList list;
