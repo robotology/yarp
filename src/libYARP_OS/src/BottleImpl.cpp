@@ -96,7 +96,7 @@ void BottleImpl::smartAdd(const String& str) {
         int periodCount = 0;
         for (int i=0; i<(int)str.length(); i++) {
             char ch2 = str[i];
-            if (ch=='.') {
+            if (ch2=='.') {
                 periodCount++;
                 if (periodCount>1) {
                     numberLike = false;

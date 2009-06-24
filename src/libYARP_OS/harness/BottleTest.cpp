@@ -383,6 +383,15 @@ public:
         checkEqual(bot.size(),0,"bottle is empty after popping");
     }
 
+    void testTypeDetection() {
+        report(0,"test type detection...");
+        Bottle bot;
+        bot.fromString("hello ip 10.0.0.10");
+        checkEqual(bot.size(),3,"right length");
+        checkTrue(bot.get(2).isString(),"right type");
+        checkEqual(bot.get(2).asString().c_str(),"10.0.0.10","multiple period test");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -404,6 +413,7 @@ public:
         testSpecialChars();
         testAppend();
         testStack();
+        testTypeDetection();
     }
 
     virtual String getName() {

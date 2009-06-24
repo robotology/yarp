@@ -1,3 +1,13 @@
+2009-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/BottleImpl.cpp: fix bug in smartAdd() method 
+	that failed to correctly interpret sequences with multiple periods
+	as strings (e.g. IP addresses).
+
+	* src/libYARP_OS/harness/BottleTest.cpp: add test for correct
+	interpretation of IPv4 addresses as strings.
+		
+
 2009-06-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/PortReaderBufferTest.cpp: mistake
