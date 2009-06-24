@@ -692,7 +692,6 @@ public:
     virtual bool getOutputs(double *outs) {
 
         if (pid)
-
             return pid->getOutputs(outs);
 
         ACE_OS::memset(outs, 0, sizeof(double)*nj);

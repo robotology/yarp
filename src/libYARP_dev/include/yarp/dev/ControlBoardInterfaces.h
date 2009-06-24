@@ -885,12 +885,12 @@ public:
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getOutputRaw(int j, double *out)=0;
+    virtual bool getTorquePidOutputRaw(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      */
-    virtual bool getOutputsRaw(double *outs)=0;
+    virtual bool getTorquePidOutputsRaw(double *outs)=0;
 
     /** Get current pid value for a specific joint.
      * @param j joint number
@@ -1609,12 +1609,12 @@ public:
      * @param out pointer to storage for return value
      * @return success/failure
      */
-    virtual bool getOutput(int j, double *out)=0;
+    virtual bool getTorquePidOutput(int j, double *out)=0;
 
     /** Get the output of the controllers (e.g. pwm value)
      * @param outs pinter to the vector that will store the output values
      */
-    virtual bool getOutputs(double *outs)=0;
+    virtual bool getTorquePidOutputs(double *outs)=0;
 
     /** Get current pid value for a specific joint.
      * @param j joint number

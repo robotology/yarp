@@ -197,15 +197,15 @@ bool ImplementTorqueControl::getTorqueErrors(double *errs)
     return ret;
 }
     
-bool ImplementTorqueControl::getOutput(int j, double *out)
+bool ImplementTorqueControl::getTorquePidOutput(int j, double *out)
 {
     int k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->getOutputRaw(k, out);
+    return iTorqueRaw->getTorquePidOutputRaw(k, out);
 }
 
-bool ImplementTorqueControl::getOutputs(double *outs)
+bool ImplementTorqueControl::getTorquePidOutputs(double *outs)
 {
-    bool ret=iTorqueRaw->getOutputsRaw(temp);
+    bool ret=iTorqueRaw->getTorquePidOutputsRaw(temp);
     castToMapper(helper)->toUser(temp, outs);
     return ret;
 }

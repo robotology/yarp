@@ -709,8 +709,8 @@ public:
     virtual bool setTorqueErrorLimits(const double *limits);
     virtual bool getTorqueError(int j, double *err);
     virtual bool getTorqueErrors(double *errs);
-    virtual bool getOutput(int j, double *out);
-    virtual bool getOutputs(double *outs);
+    virtual bool getTorquePidOutput(int j, double *out);
+    virtual bool getTorquePidOutputs(double *outs);
     virtual bool getTorquePid(int j, Pid *pid);
     virtual bool getTorquePids(Pid *pids);
     virtual bool getTorqueErrorLimit(int j, double *limit);
