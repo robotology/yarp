@@ -68,7 +68,7 @@ Contact Contact::byCarrier(const char *carrier) {
     return result;
 }
 
-Contact Contact::addCarrier(const char *carrier) {
+Contact Contact::addCarrier(const char *carrier) const {
     Contact result;
     HELPER(result.implementation) = HELPER(implementation).addCarrier(carrier);
     return result;
@@ -86,7 +86,7 @@ Contact Contact::bySocket(const char *carrier,
 
 Contact Contact::addSocket(const char *carrier, 
                            const char *machineName,
-                           int portNumber) {
+                           int portNumber) const {
     Contact result;
     HELPER(result.implementation) = HELPER(implementation).addSocket(carrier,
                                                                      machineName,

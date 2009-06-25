@@ -72,7 +72,7 @@ public:
      * @param carrier the carrier to add
      * @return the new contact
      */
-    Contact addCarrier(const char *carrier);
+    Contact addCarrier(const char *carrier) const;
 
     /**
      * Constructor for a socket contact.  
@@ -100,7 +100,7 @@ public:
      */
     Contact addSocket(const char *carrier, 
                       const char *host,
-                      int portNumber);
+                      int portNumber) const;
 
     /**
      * Copy constructor.

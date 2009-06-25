@@ -1,3 +1,8 @@
+2009-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Contact.h: tag const methods
+	as such.
+
 2009-06-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/NameServer.h: add hook to
