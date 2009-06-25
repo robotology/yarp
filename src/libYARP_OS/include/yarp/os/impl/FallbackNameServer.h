@@ -17,7 +17,7 @@ namespace yarp {
     namespace os {
         namespace impl {
             class FallbackNameServer;
-            class NameServer;
+            class NameServerStub;
         }
     }
 }
@@ -28,7 +28,7 @@ namespace yarp {
  */
 class yarp::os::impl::FallbackNameServer : public ThreadImpl {
 public:
-    FallbackNameServer(NameServer& owner) : owner(owner) {
+    FallbackNameServer(NameServerStub& owner) : owner(owner) {
         closed = false;
     }
 
@@ -40,7 +40,7 @@ public:
     }
 
 private:
-    NameServer& owner;
+    NameServerStub& owner;
     static const Address mcastLastResort;
     DgramTwoWayStream listen;
     bool closed;

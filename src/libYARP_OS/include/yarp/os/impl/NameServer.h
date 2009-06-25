@@ -33,14 +33,24 @@ namespace yarp {
     namespace os {
         namespace impl {
             class NameServer;
+            class NameServerStub;
         }
     }
 }
 
+
+/**
+ * Stub for a YARP2-conforming name server.
+ */
+class yarp::os::impl::NameServerStub {
+public:
+    virtual String apply(const String& txt, const Address& remote) = 0;
+};
+
 /**
  * Implementation of a YARP2-conforming name server.
  */
-class yarp::os::impl::NameServer {
+class yarp::os::impl::NameServer : public NameServerStub {
 public:
 
     NameServer() : nameMap(17), hostMap(17), mutex(1) {
@@ -70,7 +80,7 @@ public:
 
     static int main(int argc, char *argv[]);
 
-    String apply(const String& txt, const Address& remote);
+    virtual String apply(const String& txt, const Address& remote);
 
     bool apply(const yarp::os::Bottle& cmd, yarp::os::Bottle& result,
                const Address& remote);

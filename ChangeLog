@@ -1,3 +1,8 @@
+2009-06-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/NameServer.h: add hook to
+	allow reuse of fallback multicast name server
+
 2009-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: fix bug in smartAdd() method 

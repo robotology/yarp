@@ -36,7 +36,8 @@ void FallbackNameServer::run() {
         if (listen.isOk()&&!closed) {
             YARP_DEBUG(Logger::get(),String("Fallback server got ") + msg);
             if (YARP_STRSTR(msg,"NAME_SERVER ") == 0) {
-                String result = owner.apply(msg);
+                Address addr;
+                String result = owner.apply(msg,addr);
                 //Bytes b((char*)(result.c_str()),result.length());
                 send.beginPacket();
                 send.writeLine(result);
