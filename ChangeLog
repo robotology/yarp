@@ -1,3 +1,8 @@
+2009-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Run.cpp: fix some small problems with using
+	g++ on win32.
+
 2009-06-25  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Contact.h: tag const methods

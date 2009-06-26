@@ -23,7 +23,11 @@ BOOL KILL(HANDLE pid,int signum=SIGTERM)
 #define CLOSE(h) CloseHandle(h)
 HANDLE Run::hZombieHunter=NULL;
 HANDLE* Run::aHandlesVector=NULL;
+#ifndef __GNUC__
 DWORD WINAPI ZombieHunter(__in  LPVOID lpParameter)
+#else
+DWORD WINAPI ZombieHunter(LPVOID lpParameter)
+#endif
 {
 	DWORD nCount;
 
@@ -1124,7 +1128,7 @@ void Run::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
 // CMD SERVER
 int Run::ExecuteCmdAndStdio(Bottle& msg)
 {
-	String alias=msg.find("as").asString();
+	String alias=msg.find("as").asString().c_str();
 
 	// PIPES
 	SECURITY_ATTRIBUTES pipe_sec_attr; 
@@ -1288,8 +1292,9 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	// EVERYTHING IS ALL RIGHT
 
 	fprintf(stderr,"executed\n");
+    String stdio = msg.find("stdio").asString().c_str();
 	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(command_text,alias,m_PortName,
-						cmd_process_info.hProcess,String(msg.find("stdio").asString()),&m_StdioVector,
+						cmd_process_info.hProcess,stdio,&m_StdioVector,
 						stdin_process_info.hProcess,stdout_process_info.hProcess,
 						read_from_pipe_stdin_to_cmd,write_to_pipe_stdin_to_cmd,
 						read_from_pipe_cmd_to_stdout,write_to_pipe_cmd_to_stdout,
@@ -1300,7 +1305,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 
 int Run::ExecuteCmd(Bottle& msg)
 {
-	String alias=msg.find("as").asString();
+	String alias=msg.find("as").asString().c_str();
 
 	// RUN COMMAND
 	PROCESS_INFORMATION cmd_process_info;
@@ -1347,7 +1352,7 @@ int Run::ExecuteCmd(Bottle& msg)
 // STDIO SERVER
 int Run::UserStdio(Bottle& msg)
 {
-	String alias=msg.find("as").asString();
+	String alias=msg.find("as").asString().c_str();
 
 	// create yarp read and yarp write client processes
 	// RUN STDOUT
