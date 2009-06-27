@@ -56,4 +56,9 @@ libraries.
     An example of image sharing between opencv and yarp
 
 * matrices
-    Examples of out to use matrices and vectors in YARP.
+    Examples of how to use matrices and vectors in YARP.
+
+* cartesiancontrol
+    Examples of how to use proper interface to command
+    the robot in the cartesian space.
+
