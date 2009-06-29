@@ -109,6 +109,23 @@ public:
         return fake;
     }
 
+
+    void setScan(bool allow = true) {
+        allowScan = allow;
+    }
+
+    void setSave(bool allow = true) {
+        allowSaveScan = allow;
+    }
+
+    bool didScan() {
+        return reportScan;
+    }
+
+    bool didSave() {
+        return reportSaveScan;
+    }
+
     virtual ~NameClient();
 
 
@@ -127,6 +144,10 @@ private:
     String process;
     bool fake;
     NameServer *fakeServer;
+    bool allowScan;
+    bool allowSaveScan;
+    bool reportScan;
+    bool reportSaveScan;
 
     static NameClient *instance;
 };

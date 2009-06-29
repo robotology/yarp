@@ -1,11 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007, 2008 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2008, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
 
+#include <stdio.h>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
@@ -82,10 +83,12 @@ Companion::Companion() {
         "get this list");
     add("version",    &Companion::cmdVersion,
         "get version information");
+    add("detect",     &Companion::cmdDetect,
+        "search for the yarp name server");
     add("where",      &Companion::cmdWhere,
         "report where the yarp name server is running");
     add("conf",       &Companion::cmdConf,
-        "report what configuration file is being used");
+        "report location of configuration file, and optionally fix it");
     add("name",       &Companion::cmdName,
         "send commands to the yarp name server");
     add("connect",    &Companion::cmdConnect,
@@ -354,14 +357,63 @@ int Companion::cmdName(int argc, char *argv[]) {
 
 int Companion::cmdConf(int argc, char *argv[]) {
     NameConfig nc;
-    ACE_OS::printf("%s\n",nc.getConfigFileName().c_str());
-    return 0;
+    if (argc==0) {
+        ACE_OS::printf("%s\n",nc.getConfigFileName().c_str());
+        return 0;
+    }
+    if (argc==2) {
+        nc.fromFile();
+        Address prev = nc.getAddress();
+        Address next(String(argv[0]),atoi(argv[1]));
+        nc.setAddress(next);
+        nc.toFile();
+        nc.fromFile();
+        Address current = nc.getAddress();
+        printf("Configuration file:\n");
+        printf("  %s\n",nc.getConfigFileName().c_str());
+        if (prev.isValid()) {
+            printf("Stored:\n");
+            printf("  host %s port number %d\n",prev.getName().c_str(),
+                   prev.getPort());
+        }
+        if (current.isValid()) {
+            printf("Now stores:\n");
+            printf("  host %s port number %d\n",current.getName().c_str(),
+                   current.getPort());
+        } else {
+            printf("is not valid!\n");
+            printf("Expected:\n");
+            printf("  yarp conf [ip address] [port number]\n");
+            printf("For example:\n");
+            printf("  yarp conf 192.168.0.1 10000\n");
+            return 1;
+        }
+        return 0;
+    }
+    if (argc==1) {
+        if (String(argv[0])=="--clean") {
+            nc.toFile(true);
+            printf("Cleared configuration file:\n");
+            printf("  %s\n",nc.getConfigFileName().c_str());
+            return 0;
+        }
+    }
+    printf("Command not understood\n");
+    return 1;
 }
 
 
 int Companion::cmdWhere(int argc, char *argv[]) {
     NameConfig nc;
     NameClient& nic = NameClient::getNameClient();
+    nc.fromFile();
+    if (nc.getAddress().isValid()) {
+        printf("Looking for name server on %s, port number %d\n",
+               nc.getAddress().getName().c_str(),
+               nc.getAddress().getPort());
+        printf("If there is a long delay, try:\n");
+        printf("  yarp conf --clean\n");
+    }
     Address address = nic.queryName(nc.getNamespace());
     if (address.isValid()) {
         ACE_OS::printf("Name server %s is available at ip %s port %d\n",
@@ -371,18 +423,48 @@ int Companion::cmdWhere(int argc, char *argv[]) {
                        nc.getNamespace().c_str(),
                        address.getName().c_str(), address.getPort());
     } else {
-        ACE_OS::printf("\n");
-        ACE_OS::printf("*** Name server not found ***\n");
-        ACE_OS::printf("It is either not available, or cannot be found automatically.\n");
-        ACE_OS::printf("\n");
-        ACE_OS::printf("Some network setups make automatic detection of the server hard.\n");
-        ACE_OS::printf("Suggestion: edit this configuration file:\n");
-        ACE_OS::printf("   ");
-        cmdConf(argc,argv);
-        ACE_OS::printf("Find out the IP address of your yarp name server (for example, 192.168.0.1)\n");
-        ACE_OS::printf("and the socket port number (usually 10000).\n");
-        ACE_OS::printf("Then write that in the configuration file like this:\n");
-        ACE_OS::printf("  192.168.0.1 10000\n");
+        NameConfig conf;
+        bool haveFile = conf.fromFile();
+        Address address = conf.getAddress();
+
+        printf("\n");
+        printf("=========================================================\n");
+        printf("==\n");
+        printf("== PROBLEM\n");
+        if (haveFile) {
+            printf("== No valid address for a YARP name server is available.\n");
+            printf("== The following is the configured address:\n");
+            printf("==   host %s port number %d\n", address.getName().c_str(),
+                   address.getPort());
+            printf("But a name server was not found at this address.\n");
+        } else {
+            printf("== No address for a YARP name server is available.\n");
+            printf("== A configuration file giving the location of the \n");
+            printf("== YARP name server is required, but was not found.\n");
+        }
+        printf("==\n");
+        printf("== SHORT SOLUTION\n");
+        printf("== Do:\n");
+        printf("== $ yarp detect --write\n");
+        printf("==\n");
+        printf("== DETAILED SOLUTION\n");
+        printf("== To try to fix this problem automatically, do:\n");
+        printf("== $ yarp detect --write\n");
+        printf("== This will search your network for a nameserver\n");
+        printf("== and then write the result to a configuration file.\n");
+        printf("== If you know the address of the name server, you\n");
+        printf("== can bypass this search by doing:\n");
+        printf("== $ yarp conf [ip address] [port number]\n");
+        printf("== If you would like to search the network for a\n");
+        printf("== nameserver but *not* automatically update the\n");
+        printf("== configuration file, do:\n");
+        printf("== $ yarp detect\n");
+        printf("== Or to determine the name of the required\n");
+        printf("== configuration file for manual viewing/editing, do:\n");
+        printf("== $ yarp conf\n");
+        printf("==\n");
+        printf("=========================================================\n");
+
         return 1;
     }
     return 0;
@@ -853,6 +935,97 @@ int Companion::cmdResource(int argc, char *argv[]) {
     printf("%s\n",result.c_str());
     return (result!="")?0:1;
 }
+
+
+
+int Companion::cmdDetect(int argc, char *argv[]) {
+    NameConfig nc;
+    NameClient& nic = NameClient::getNameClient();
+    nc.fromFile();
+    nic.setScan();
+    if (argc>0) {
+        if (String(argv[0])=="--write") {
+            nic.setSave();
+        } else {
+            YARP_ERROR(Logger::get(), "Argument not understood");
+            return 1;
+        }
+    }
+    if (nc.getAddress().isValid()) {
+        printf("Checking for name server at ip %s port %d\n",
+               nc.getAddress().getName().c_str(),
+               nc.getAddress().getPort());
+        printf("If there is a long delay, try:\n");
+        printf("  yarp conf --clean\n");
+    }
+    Address address = nic.queryName(nc.getNamespace());
+    if (address.isValid()) {
+        printf("\n");
+        printf("=========================================================\n");
+        printf("==\n");
+        printf("== FOUND\n");
+        printf("== %s is available at ip %s port %d\n",
+               nc.getNamespace().c_str(),
+               address.getName().c_str(), address.getPort());
+        printf("== %s can be browsed at http://%s:%d/\n",
+               nc.getNamespace().c_str(),
+               address.getName().c_str(), address.getPort());
+        if (nic.didScan()&&!nic.didSave()) {
+            printf("== \n");
+            printf("== WARNING\n");
+            printf("== This address was found by scanning the network, but\n");
+            printf("== has not been saved to a configuration file.\n");
+            printf("== Regular YARP programs will not be able to use the \n");
+            printf("== name server until this address is saved.  To do so:\n");
+            printf("==   yarp detect --write\n");
+        }
+        if (nic.didSave()) {
+            printf("== \n");
+            printf("== Address saved.\n");
+            printf("== YARP programs will now be able to use the name server.\n");
+        }
+        printf("== \n");
+        printf("=========================================================\n");
+    } else {
+        printf("\n");
+        printf("=========================================================\n");
+        printf("==\n");
+        printf("== PROBLEM\n");
+        printf("== No valid YARP name server was found.\n");
+        printf("==\n");
+        printf("== TIPS\n");
+        printf("== #1 Make sure a YARP name server is running.\n");
+        printf("== A command for starting the server is:\n");
+        printf("== $ yarp server\n");
+        printf("==\n");
+        printf("== #2 Make sure the YARP name server is running in the\n");
+        printf("== same namespace as you.  Your namespace is set as:\n");
+        printf("==   %s\n", nc.getNamespace().c_str());
+        printf("== You can change your namespace to /EXAMPLE by doing:\n");
+        printf("==   yarp namespace /EXAMPLE\n");
+        printf("== You can check your namespace by doing:\n");
+        printf("==   yarp namespace\n");
+        printf("==\n");
+        printf("== #3 Find out the ip address and port number the YARP\n");
+        printf("== name server is running on, and do:\n");
+        printf("== $ yarp conf [ip address] [port number]\n");
+        printf("== This information is printed out when the server is\n");
+        printf("== started.\n");
+        printf("==\n");
+        printf("== #4 To determine the name of the required configuration\n");
+        printf("== file for manual viewing/editing, do:\n");
+        printf("== $ yarp conf\n");
+        printf("== The simplest possible configuration file would look\n");
+        printf("== like something this:\n");
+        printf("==   192.168.0.1 10000\n");
+        printf("==\n");
+        printf("=========================================================\n");
+        return 1;
+    }
+    return 0;
+}
+
+
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
     PortCommand pc('\0',slashify(dest));

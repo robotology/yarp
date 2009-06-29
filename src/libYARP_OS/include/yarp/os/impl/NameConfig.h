@@ -40,7 +40,7 @@ public:
 
     bool fromFile();
 
-    bool toFile();
+    bool toFile(bool clean = false);
 
     void setAddress(const Address& address);
 

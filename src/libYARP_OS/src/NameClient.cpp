@@ -139,17 +139,26 @@ String NameClient::send(const String& cmd, bool multi) {
             retried = true;
         }
         if (ip==NULL) {
-            YARP_INFO(Logger::get(),"no connection to nameserver");
+            YARP_INFO(Logger::get(),"No connection to nameserver");
+            if (!allowScan) {
+                YARP_INFO(Logger::get(),"*** try running: yarp detect ***");
+            }
             Address alt;
             if (!isFakeMode()) {
-                YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
-                alt = FallbackNameClient::seek();
+                if (allowScan) {
+                    YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
+                    reportScan = true;
+                    alt = FallbackNameClient::seek();
+                }
             }
             if (alt.isValid()) {
-                NameConfig nc;
-                nc.setAddress(alt);
-                nc.toFile();
                 address = alt;
+                if (allowSaveScan) {
+                    reportSaveScan = true;
+                    NameConfig nc;
+                    nc.setAddress(alt);
+                    nc.toFile();
+                }
                 ip = face.write(getAddress());
                 if (ip==NULL) {
                     YARP_ERROR(Logger::get(),
@@ -280,6 +289,10 @@ NameServer& NameClient::getServer() {
 
 
 NameClient::NameClient() {
+    allowScan = false;
+    allowSaveScan = false;
+    reportScan = false;
+    reportSaveScan = false;
     NameConfig conf;
     address = Address();
     process = NetType::toString(ACE_OS::getpid());

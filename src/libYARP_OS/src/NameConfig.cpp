@@ -149,15 +149,17 @@ bool NameConfig::fromFile() {
 }
 
 
-bool NameConfig::toFile() {
+bool NameConfig::toFile(bool clean) {
     String fname = getConfigFileName();
     if (fname!="") {
         String txt = "";
-        txt += address.getName() + " " + NetType::toString(address.getPort()) + 
-            "\n\n";
-        txt += "// start network description, don't forget to separate \"Node=\" and names with space\n";
-        txt += "[NETWORK_DESCRIPTION]\n";
-        txt += "[END]\n";
+        if (!clean) {
+            txt += address.getName() + " " + NetType::toString(address.getPort()) + 
+                "\n\n";
+            txt += "// start network description, don't forget to separate \"Node=\" and names with space\n";
+            txt += "[NETWORK_DESCRIPTION]\n";
+            txt += "[END]\n";
+        }
         return writeConfig(fname,txt);
     }
     return false;

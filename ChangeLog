@@ -1,3 +1,12 @@
+2009-06-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: add "yarp detect" command
+	to scan for nameserver in a controlled way, and give
+	debugging tips for when problems arise..
+
+	* src/libYARP_OS/src/NameClient.cpp: stop ports from 
+	automatically scanning for nameserver if they cannot find it.
+
 2009-06-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Run.cpp: fix some small problems with using

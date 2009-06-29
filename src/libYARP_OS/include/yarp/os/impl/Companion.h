@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2008 Paul Fitzpatrick
+ * Copyright (C) 2006, 2008, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -177,6 +177,8 @@ public:
     int cmdClean(int argc, char *argv[]);
 
     int cmdResource(int argc, char *argv[]);
+
+    int cmdDetect(int argc, char *argv[]);
 
 private:
 
