@@ -623,7 +623,7 @@ String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
     }
     */
 
-    response = "\"yarp name gc\" is deprecated; use \"yarp clean\" instead.\n";
+    response = "No cleaning done.\n";
 
     return terminate(response);
 }

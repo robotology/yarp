@@ -102,6 +102,11 @@ public:
             addr = nic.registerName("...",
                                     Address("...",0,"mcast","..."));
             mcastName = addr.getRegName();
+            if (addr.isValid()) {
+                // mark owner of mcast address
+                nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owns " + mcastName);
+                //nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owned_by " + mcastName);
+            }
         }
          
         int ip[] = { 224, 3, 1, 1 };

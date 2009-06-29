@@ -884,16 +884,20 @@ int Companion::cmdClean(int argc, char *argv[]) {
         if (entry!=NULL) {
             ConstString port = entry->check("name",Value("")).asString();
             if (port!="" && port!="fallback" && port!=name.c_str()) {
-                printf("Pinging port %s...\n", port.c_str());
                 Contact c = Contact::byConfig(*entry);
-                Address addr = Address::fromContact(c);
-                if (addr.isValid()) {
-                    OutputProtocol *out = Carriers::connect(addr);
-                    if (out==NULL) {
-                        printf("No response, removing port %s\n", port.c_str());
-                        nic.unregisterName(port.c_str());
-                    } else {
-                        delete out;
+                if (c.getCarrier()=="mcast") {
+                    printf("Skipping mcast port %s...\n", port.c_str());
+                } else {
+                    Address addr = Address::fromContact(c);
+                    printf("Pinging port %s...\n", port.c_str());
+                    if (addr.isValid()) {
+                        OutputProtocol *out = Carriers::connect(addr);
+                        if (out==NULL) {
+                            printf("No response, removing port %s\n", port.c_str());
+                            nic.unregisterName(port.c_str());
+                        } else {
+                            delete out;
+                        }
                     }
                 }
             } else {
@@ -903,6 +907,10 @@ int Companion::cmdClean(int argc, char *argv[]) {
             }
         }
     }
+    printf("Giving name server a chance to do garbage collection:\n");
+    String cmd = "NAME_SERVER gc";
+    String result = nic.send(cmd);
+    ACE_OS::printf("%s",result.c_str());
 
     return 0;
 }
