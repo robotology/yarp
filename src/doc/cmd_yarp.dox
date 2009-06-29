@@ -13,6 +13,7 @@ Here are the ways you can call yarp:
 - \ref yarp_help
 - \ref yarp_version
 - \ref yarp_where
+- \ref yarp_detect
 - \ref yarp_conf
 - \ref yarp_name
 - \ref yarp_connect
@@ -81,7 +82,6 @@ of correct configuration.
 
 \section yarp_where yarp where
 
-
 This will report where the name server is believed to be running; for 
 example:
 
@@ -97,9 +97,31 @@ yarp name query /root
 \endverbatim
 will get the same information.  See \ref name_query.
 
+This command used to search for the name server if needed, but now
+you need to explicitly request that with the \ref name_detect command.
+
+
+\section yarp_detect yarp detect
+
+\verbatim
+  yarp detect
+  yarp detect --write
+\endverbatim
+
+This will search for the YARP name server using multicast.
+
+With the "--write" option, a configuration file will be
+written with the address for the name server, if found.
+This will let regular YARP programs find the name server.
+
 
 \section yarp_conf yarp conf
 
+\verbatim
+  yarp conf
+  yarp conf --clean
+  yarp conf IP SOCKETPORT
+\endverbatim
 
 This will report the location of
 the file in which the name server location is configured.
@@ -123,6 +145,11 @@ The name of this file will be different if \ref name_server_namespaces
 its name will be the name of the namespace, with all non-alphanumeric
 characters replaced by "_", and ".conf" appended.
 
+With the "--clean" option, the configuration file will be set to a
+blank, empty state.
+
+If an ip address and socket port number for the name server are supplied, 
+the configuration file will be rewritten to contain that information.
 
 @section yarp_check yarp check
 

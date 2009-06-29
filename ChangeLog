@@ -1,5 +1,8 @@
 2009-06-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc/cmd_yarp.dox: update documentation for yarp 
+	companion program for commands "yarp where/detect/conf".
+
 	* src/libYARP_OS/src/Companion.cpp: add "yarp detect" command
 	to scan for nameserver in a controlled way, and give
 	debugging tips for when problems arise..
