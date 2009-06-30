@@ -1,3 +1,9 @@
+2009-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/src/ImageCopy.cpp: small patch to deal 
+	correctly with PixelMono16 type on big-endian systems.
+	Thanks to Giovanni Saponaro for testing on Mac OSX (PPC).
+
 2009-06-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/cmd_yarp.dox: update documentation for yarp 

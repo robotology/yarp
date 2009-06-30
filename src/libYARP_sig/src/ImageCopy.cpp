@@ -508,7 +508,9 @@ SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_BGRA)
     dest->r = dest->g = dest->b = (char)*src;
 dest->a = 255;
 SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_RGB_INT)
-    dest->r = dest->g = dest->b = *src;
+    dest->r = dest->g = dest->b = (int)((unsigned) *src);
+SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_INT)
+  *dest = (int)((unsigned) *src);
 SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_BGR)
     dest->r = dest->g = dest->b = (char)*src;
 SPECIAL_COPY(VOCAB_PIXEL_MONO16,VOCAB_PIXEL_HSV)
