@@ -211,7 +211,15 @@ public:
     virtual const char *asBlob() const         { return x.c_str(); }
     virtual int asBlobLength() const     { return x.length(); }
     static const int code;
-    virtual void copy(const Storable& alt) { x = alt.asBlob(); }
+    virtual void copy(const Storable& alt) { 
+        if (alt.isBlob()) {
+            String tmp;
+            YARP_STRSET(tmp,(char*)alt.asBlob(),alt.asBlobLength(),0);
+            x = tmp;
+        } else {
+            x = String();
+        }
+    }
 };
 
 class yarp::os::impl::StoreDouble : public Storable {

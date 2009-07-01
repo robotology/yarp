@@ -1,3 +1,12 @@
+2009-07-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/BottleImpl.h: fix
+	for blob copy bug, #2815097 submitted by Alejandro R. Mosteo
+
+	* src/libYARP_OS/harness/BottleTest.cpp: added regression
+	test for blobs with internal nulls, based on bug
+	#2815097 submitted by Alejandro R. Mosteo (thanks!)
+
 2009-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/src/ImageCopy.cpp: small patch to deal 

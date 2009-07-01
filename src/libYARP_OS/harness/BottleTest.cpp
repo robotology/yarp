@@ -252,6 +252,14 @@ public:
         checkTrue(bot.get(0).isBlob(),"blob present");
         checkEqual(bot.get(0).asBlobLength(),3,"blob length");
         checkEqual(bot.get(0).asBlob()[1],42, "blob match");
+
+        report(0,"testing blob with internal null...");
+        char blob[12]="hello\0world";
+        const Value v ((void*)blob, sizeof(blob));
+        checkEqual(12,v.asBlobLength(),"value length");
+        Bottle b;
+        b.add(v);
+        checkEqual(12,b.get(0).asBlobLength(),"length within bottle");
     }
 
     void testStandard() {
