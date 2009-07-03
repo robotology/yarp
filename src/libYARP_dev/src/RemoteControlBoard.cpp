@@ -461,7 +461,7 @@ public:
 
         ConstString carrier = 
             config.check("carrier",
-                         Value("tcp"),
+                         Value("udp"),
                          "default carrier for streaming robot state").asString().c_str();
 
         if (local != "") {
