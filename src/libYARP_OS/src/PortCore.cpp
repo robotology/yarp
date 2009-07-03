@@ -1139,6 +1139,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         case VOCAB2('i','n'):
             {
                 ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
                 for (unsigned int i2=0; i2<units.size(); i2++) {
                     PortCoreUnit *unit = units[i2];
                     if (unit!=NULL) {
@@ -1158,12 +1159,14 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         }
                     }
                 }
+                stateMutex.post();
             }
             break;
         case VOCAB3('o','u','t'):
         default:
             {
                 ConstString target = cmd.get(2).asString();
+                stateMutex.wait();
                 for (unsigned int i=0; i<units.size(); i++) {
                     PortCoreUnit *unit = units[i];
                     if (unit!=NULL) {
@@ -1183,6 +1186,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         }
                     }
                 }
+                stateMutex.post();
             }
         }
         break;
