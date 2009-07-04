@@ -58,7 +58,4 @@ libraries.
 * matrices
     Examples of how to use matrices and vectors in YARP.
 
-* cartesiancontrol
-    Examples of how to use proper interface to command
-    the robot in the cartesian space.
 
