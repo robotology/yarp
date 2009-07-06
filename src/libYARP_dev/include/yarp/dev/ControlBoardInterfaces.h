@@ -52,6 +52,7 @@ namespace yarp {
 #define VOCAB_CM_TORQUE VOCAB3('c','m','t')
 #define VOCAB_CM_POSITION VOCAB3('c','m','p')
 #define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
+#define VOCAB_CMD_UNKNOWN VOCAB4('c','m','u','k')
 
 /**
  * @ingroup dev_iface_motor

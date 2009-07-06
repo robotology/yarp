@@ -22,6 +22,7 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
         class ImplementTorqueControl;
+        class ImplementControlMode;
         class StubImplPidControlRaw;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
@@ -657,6 +658,21 @@ public:
     virtual bool calibrate2(int axis, unsigned int type, double p1, double p2, double p3);
 
     virtual bool done(int j);
+};
+
+class yarp::dev::ImplementControlMode: public IControlMode
+{
+    void *helper;
+    yarp::dev::IControlModeRaw *raw;
+public:
+    bool initialize(int k, const int *amap);
+    bool uninitialize();
+    ImplementControlMode(IControlModeRaw *v);
+    ~ImplementControlMode();
+    bool setTorqueMode(int j);
+    bool setPositionMode(int j);
+    bool setVelocityMode(int j);
+    bool getControlMode(int j, int *f);
 };
 
 class yarp::dev::ImplementTorqueControl: public ITorqueControl 

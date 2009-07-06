@@ -48,6 +48,69 @@ bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
     return false;
 }
 
+ImplementControlMode::ImplementControlMode(IControlModeRaw *r)
+{
+    raw=0;
+    helper=0;
+}
+
+bool ImplementControlMode::initialize(int size, const int *amap)
+{
+    if (helper!=0)
+        return false;
+    
+    double *dummy=new double [size];
+    for(int k=0;k<size;k++)
+        dummy[k]=0;
+
+    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    ACE_ASSERT (helper != 0);
+
+    delete [] dummy;
+    return true;
+}
+
+ImplementControlMode::~ImplementControlMode()
+{
+    uninitialize();
+}
+
+bool ImplementControlMode::uninitialize ()
+{
+    if (helper!=0)
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
+ 
+    return true;
+}
+
+bool ImplementControlMode::setPositionMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setPositionModeRaw(k);
+}
+
+bool ImplementControlMode::setVelocityMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setVelocityModeRaw(k);
+}
+
+bool ImplementControlMode::setTorqueMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setTorqueModeRaw(k);
+}
+
+bool ImplementControlMode::getControlMode(int j, int *f)
+{
+    int mode;
+    int k=castToMapper(helper)->toHw(j);
+    return raw->getControlModeRaw(k, &mode);
+}
+
 ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
 {
     iTorqueRaw = tq;
