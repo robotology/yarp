@@ -1539,7 +1539,7 @@ public:
      * @param j joint number
      * @param t new value
      */
-    virtual bool getTorqueRef(int j, double *t)=0;
+    virtual bool getRefTorque(int j, double *t)=0;
 
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values

@@ -697,7 +697,7 @@ public:
 
     virtual bool getAxes(int *ax);
     virtual bool setTorqueMode();
-    virtual bool getTorqueRef(int j, double *);
+    virtual bool getRefTorque(int j, double *);
     virtual bool getRefTorques(double *t);
     virtual bool setTorques(const double *t);
     virtual bool setTorque(int j, double t);
