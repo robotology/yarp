@@ -36,10 +36,79 @@ namespace yarp {
         class IControlCalibration2Raw;
         class IControlCalibration;
         class IControlCalibration2;
+        class IControlModeRaw;
+        class IControlMode;
         class IAxisInfo;
     }
 }
 
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for a generic control board device implementing a PID controller.
+ */
+
+#define VOCAB_CM_TORQUE VOCAB3('c','m','t')
+#define VOCAB_CM_POSITION VOCAB3('c','m','p')
+#define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for setting control mode in control board. See IControlMode for 
+ * more documentation.
+ */
+class yarp::dev::IControlModeRaw
+{
+public:
+    virtual ~IControlModeRaw(){}
+
+    virtual bool setPositionModeRaw(int j)=0;
+    virtual bool setVelocityModeRaw(int j)=0;
+    virtual bool setTorqueModeRaw(int j)=0;
+    virtual bool getControlModeRaw(int j, int *mode)=0;
+};
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for setting control mode in control board.
+ */
+class yarp::dev::IControlMode
+{
+public:
+    virtual ~IControlMode(){}
+
+    /*
+    * Set position mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setPositionMode(int j)=0;
+
+    /*
+    * Set velocity mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setVelocityMode(int j)=0;
+
+    /*
+    * Set torque mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setTorqueMode(int j)=0;
+
+    /*
+    * Get the current control mode.
+    * @param j: joint number
+    * @param mode: a vocab of the current control mode for joint j.
+    * @return: true/false success failure.
+    */
+    virtual bool getControlMode(int j, int *mode)=0;
+};
 
 /**
  * @ingroup dev_iface_motor

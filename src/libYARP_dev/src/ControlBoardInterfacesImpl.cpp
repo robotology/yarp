@@ -100,7 +100,7 @@ bool ImplementTorqueControl::setTorqueMode()
     return iTorqueRaw->setTorqueModeRaw();
 }
 
-bool ImplementTorqueControl::getTorqueRef(int j, double *r)
+bool ImplementTorqueControl::getRefTorque(int j, double *r)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
