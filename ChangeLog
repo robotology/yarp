@@ -1,3 +1,9 @@
+2009-07-07 Lorenzo Natale <nat@robotcub.org>
+	* src/libYARP_dev/src/include/yarp/dev/ControlBoardInterfaces.h
+        * src/libYARP_dev/dev/src/RemoteControlBoard.cpp:
+	cleaned code and added IControlMode interface, ITorqueControl
+        IControlModeRaw, ITorqueControlRaw
+
 2009-07-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCore.cpp: fix administration interface
