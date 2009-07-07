@@ -1817,6 +1817,14 @@ public:
 
 #define VOCAB_TIMESTAMP VOCAB4('t','s','t','a')
 #define VOCAB_TORQUE VOCAB4('t','o','r','q')
+#define VOCAB_TORQUE_MODE VOCAB4('t','r','q','d')
+#define VOCAB_TRQS VOCAB4('t','r','q','s')
+#define VOCAB_TRQ  VOCAB3('t','r','q')
+
+//interface
+#define VOCAB_ICONTROLMODE VOCAB4('i','c','m','d');
+#define VOCAB_POSITION VOCAB3('p','o','s');
+#define VOCAB_VELOCITY VOCAB3('v','e','l');
 
 #endif
 
