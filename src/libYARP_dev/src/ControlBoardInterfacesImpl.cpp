@@ -50,7 +50,7 @@ bool StubImplPidControlRaw::NOT_YET_IMPLEMENTED(const char *func)
 
 ImplementControlMode::ImplementControlMode(IControlModeRaw *r)
 {
-    raw=0;
+    raw=r;
     helper=0;
 }
 
@@ -106,9 +106,8 @@ bool ImplementControlMode::setTorqueMode(int j)
 
 bool ImplementControlMode::getControlMode(int j, int *f)
 {
-    int mode;
     int k=castToMapper(helper)->toHw(j);
-    return raw->getControlModeRaw(k, &mode);
+    return raw->getControlModeRaw(k, f);
 }
 
 ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)

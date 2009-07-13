@@ -301,11 +301,7 @@ protected:
         }
         return false;    
     }
-    /** 
-    * Send a SET command without parameters and wait for a reply.
-    * @param code is the command Vocab identifier.
-    * @return true/false on success/failure.
-    */
+
     bool set1V(int code) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -315,14 +311,7 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    /** 
-    * Send a SET command and an additional double valued variable 
-    * and then wait for a reply.
-    * @param code is the command to send.
-    * @param v is a double valued parameter.
-    * @return true/false on success/failure.
-    */
-    bool set1V2D(int code, double v)
+     bool set1V2D(int code, double v)
     {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -334,13 +323,6 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    /**
-    * Send a SET command with an additional integer valued variable
-    * and then wait for a reply.
-    * @param code is the command to send.
-    * @param v is an integer valued parameter.
-    * @return true/false on success/failure.
-    */
     bool set1V1I(int code, int v) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -352,12 +334,6 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    /**
-    * Send a GET command expecting a double value in return.
-    * @param code is the Vocab code of the GET command.
-    * @param v is a reference to the return variable.
-    * @return true/false on success/failure.
-    */
     bool get1V1D(int code, double& v) const {
         Bottle cmd;
         Bottle response;
@@ -377,12 +353,6 @@ protected:
         return false;
     }
 
-    /**
-    * Send a GET command expecting a double value in return.
-    * @param code is the Vocab code of the GET command.
-    * @param v is a reference to the return variable.
-    * @return true/false on success/failure.
-    */
     bool get1V1I(int code, int& v) const {
         Bottle cmd;
         Bottle response;
@@ -398,17 +368,10 @@ protected:
             getTimeStamp(response, lastStamp);
             return true;
         }
-
         return false;
     }
     
-    /**
-    * Send a GET command expecting an integer value in return.
-    * @param code is the Vocab code of the GET command.
-    * @param v is a reference to the return variable.
-    * @return true/false on success/failure.
-    */
-    bool get1V1D(int code, int& v) const {
+     bool get1V1D(int code, int& v) const {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(code);
@@ -425,14 +388,7 @@ protected:
         return false;
     }
 
-    /**
-    * Helper method to set a double value to a single axis.
-    * @param code is the name of the command to be transmitted
-    * @param j is the axis
-    * @param val is the double value
-    * @return true/false on success/failure
-    */
-    bool set1V1I1D(int code, int j, double val) {
+     bool set1V1I1D(int code, int j, double val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(code);
@@ -455,12 +411,6 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    /** 
-    * Helper method used to set an array of double to all axes.
-    * @param v is the command to set
-    * @param val is the double array (of length nj)
-    * @return true/false on success/failure
-    */
     bool set1VDA(int v, const double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
@@ -507,13 +457,6 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    /**
-    * Helper method used to get a double value from the remote peer.
-    * @param v is the command to query for
-    * @param j is the axis number
-    * @param val is the return value
-    * @return true/false on success/failure
-    */
     bool get1V1I1D(int v, int j, double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -564,14 +507,7 @@ protected:
         return false;
     }
 
-    /**
-    * Helper method used to get a double value from the remote peer.
-    * @param v is the command to query for
-    * @param j is the axis number
-    * @param val is the return value
-    * @return true/false on success/failure
-    */
-    bool get1V1I1B(int v, int j, bool &val) {
+   bool get1V1I1B(int v, int j, bool &val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
@@ -598,12 +534,6 @@ protected:
         return false;
     }
 
-    /**
-    * Helper method to get an array of double from the remote peer.
-    * @param v is the name of the command
-    * @param val is the array of double
-    * @return true/false on success/failure
-    */
     bool get1VDA(int v, double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -627,12 +557,6 @@ protected:
         return false;
     }
 
-    /**
-    * Helper method to get an array of double from the remote peer.
-    * @param v is the name of the command
-    * @param val is the array of double
-    * @return true/false on success/failure
-    */
     bool get2VDA(int v1, int v2, double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
@@ -1681,11 +1605,10 @@ public:
         bool ok = rpc_p.write(cmd, resp);
 
         if ( (resp.get(0).asVocab()==VOCAB_IS)
-            &&(resp.get(1).asInt()==j)
-            &&(resp.get(2).asVocab()==VOCAB_CM_CONTROL_MODE))
+             &&(resp.get(1).asVocab()==VOCAB_CM_CONTROL_MODE))
         {
             ok=ok&&true;
-            *mode=resp.get(3).asVocab();
+            *mode=resp.get(2).asVocab();
         }
 
         return ok;
