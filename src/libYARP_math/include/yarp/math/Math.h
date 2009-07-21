@@ -107,6 +107,21 @@ namespace yarp
         * @param c number of columns
         */
         yarp::sig::Matrix zeros(int r, int c);
+
+        /**
+        * Invert a square matrix using LU-decomposition.
+        * @param in square matrix
+        * @return the inverse of the matrix
+        */
+        yarp::sig::Matrix luinv(const yarp::sig::Matrix& in);
+
+        /**
+        * Invert a symmetric and positive definite matrix using Cholesky 
+        * decomposition. 
+        * @param in symmetric and positive definite matrix
+        * @return the inverse of the matrix
+        */
+        yarp::sig::Matrix chinv(const yarp::sig::Matrix& in);
     }
 }
 

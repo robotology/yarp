@@ -140,6 +140,33 @@ public:
         printf("%s\n", M.toString().c_str());
         printf("%s\n", T.toString().c_str());
     }
+    
+    void matrixInv() {
+        report(0,"checking matrix inversions...");
+        Matrix A(4,4);
+        int counter = 1;
+        for(int r = 0; r < A.rows(); r++) {
+            for(int c = 0; c < A.cols(); c++) {
+                A(r, c) = counter++ + (r == c ? 1 : 0);
+            }
+        }
+        Matrix Ainv = luinv(A);
+        Matrix I = A * Ainv;
+        printf("luinv: %s\n", I.toString().c_str());
+        
+        /*  [ 2 1 0 0 ]^-1   [ 1 -1  1 -1 ]
+         *  [ 1 2 1 0 ]      [-1  2 -2  2 ]
+         *  [ 0 1 2 1 ]    = [ 1 -2  3 -3 ]
+         *  [ 0 0 1 1 ]      [-1  2 -3  4 ]
+         */
+        Matrix B = zeros(4,4);
+        B(0,0) = B(1,1) = B(2,2) = 2;
+        B(0,1) = B(1,0) = B(1,2) = B(2,1) = B(2,3) = B(3,2) = B(3,3) = 1;
+        Matrix Binv = chinv(B);
+        I = B * Binv;
+        printf("chinv: %s\n", I.toString().c_str());
+        
+    }
 
     virtual void runTests() 
     {
@@ -148,6 +175,7 @@ public:
         matrixOps();
         vectMatrix();
         svd();
+        matrixInv();
     }
 };
 

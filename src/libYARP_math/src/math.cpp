@@ -14,6 +14,8 @@
 #include <gsl/gsl_vector_double.h>
 #include <gsl/gsl_blas.h>
 
+#include <gsl/gsl_linalg.h>
+
 gsl_vector_view getView(const yarp::sig::Vector &v)
 {
     gsl_vector_view ret=gsl_vector_view_array(const_cast<double *>(v.data()), v.size());
@@ -150,3 +152,30 @@ Vector yarp::math::operator*(const yarp::sig::Matrix &m, const yarp::sig::Vector
 
     return ret;
 }
+
+Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
+    int m = in.rows();
+    int n = in.cols();
+    int sign = 0;
+    // assert m == n?
+
+    Matrix LU(in);
+    Matrix ret(m, n);
+    gsl_permutation* permidx = gsl_permutation_calloc(m);
+
+    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
+    gsl_linalg_LU_invert((gsl_matrix *) LU.getGslMatrix(), permidx, 
+        (gsl_matrix *) ret.getGslMatrix());
+
+    return ret;
+}
+
+Matrix yarp::math::chinv(const yarp::sig::Matrix& in) {
+    Matrix ret(in);
+
+    gsl_linalg_cholesky_decomp((gsl_matrix *) ret.getGslMatrix());
+    gsl_linalg_cholesky_invert((gsl_matrix *) ret.getGslMatrix());
+        
+    return ret;
+}
+
