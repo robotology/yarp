@@ -159,12 +159,14 @@ public:
          *  [ 0 1 2 1 ]    = [ 1 -2  3 -3 ]
          *  [ 0 0 1 1 ]      [-1  2 -3  4 ]
          */
+        /* See note in math.cpp implementation of chinv
         Matrix B = zeros(4,4);
         B(0,0) = B(1,1) = B(2,2) = 2;
         B(0,1) = B(1,0) = B(1,2) = B(2,1) = B(2,3) = B(3,2) = B(3,3) = 1;
         Matrix Binv = chinv(B);
         I = B * Binv;
         printf("chinv: %s\n", I.toString().c_str());
+        */
         
     }
 

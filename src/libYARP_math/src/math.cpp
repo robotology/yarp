@@ -170,6 +170,7 @@ Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
     return ret;
 }
 
+/* depends on GSL 1.12, put back in when verified that 1.12 is standard
 Matrix yarp::math::chinv(const yarp::sig::Matrix& in) {
     Matrix ret(in);
 
@@ -178,4 +179,4 @@ Matrix yarp::math::chinv(const yarp::sig::Matrix& in) {
         
     return ret;
 }
-
+*/

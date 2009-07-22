@@ -121,7 +121,7 @@ namespace yarp
         * @param in symmetric and positive definite matrix
         * @return the inverse of the matrix
         */
-        yarp::sig::Matrix chinv(const yarp::sig::Matrix& in);
+        //yarp::sig::Matrix chinv(const yarp::sig::Matrix& in);
     }
 }
 
