@@ -3,6 +3,16 @@
 	* src/libYARP_OS/src/Bottle.cpp: remove incorrect return on
 	void method (thanks to David Vernon).
 
+2009-07-21  Arjan Gijsberts  <arjan@liralab.it>
+
+	* src/libYARP_math/src/math.cpp
+	* src/libYARP_math/include/yarp/math/Math.h
+	* src/libYARP_math/harness/MathTest.cpp
+	Added 'luinv' function for square matrix inversion using LU decomposition.
+	Added 'chinv' function for positive definite matrix inversion using 
+	Cholesky decomposition. This function depends on GSL 1.12 and is commented 
+	out until this version is installed on most target machines.
+
 2009-07-07 Lorenzo Natale <nat@robotcub.org>
 	* src/libYARP_dev/src/include/yarp/dev/ControlBoardInterfaces.h
         * src/libYARP_dev/dev/src/RemoteControlBoard.cpp:
