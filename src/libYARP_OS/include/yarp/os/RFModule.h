@@ -3,26 +3,19 @@
 #ifndef __YARP2_RFMODULE__
 #define __YARP2_RFMODULE__
 
-#include <yarp/os/IConfig.h>
-#include <yarp/os/Bottle.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/BufferedPort.h>
-#include <yarp/os/Property.h>
-#include <yarp/os/all.h>
-
 
 namespace yarp {
     namespace os {
-        class Module;
+        class RFModule;
     }
 }
 
 /**
  * 
- * A base-class for standard Yarp modules.  This class 
- * is similar to a Module, but it adds support for the ResourceFinder 
- * class.
+ * Disclaimer: this is currently under development. A new base-class 
+ * for standard Yarp modules.  This class is similar to a Module, but 
+ * it adds support for the ResourceFinder class.
  * Follow verbatim from the Module documentation. If you're building a 
  * large system and want to regularize how parts of your system are
  * configured and run, this class may be helpful to you.  Modules are
@@ -181,6 +174,18 @@ public:
      * @return true on success.
      */
     virtual bool attachTerminal();
+
+    /*
+    * Open function. This is called automatically when you either call
+    * openFromCommand() or runModule(). Override this to receive parameters
+    * passed to your module.
+    * @param rf a ResourceFinder object initialized from data passed 
+    * in argc/argv from openFromCommand() or runModule(). You can customize
+    * the behavior of the ResourceFinder object by first calling setDefaultContext
+    * and setDefaultConfigFile().
+    */
+    virtual bool open(const yarp::os::ResourceFinder &rf)
+    { return true; }
 
     /**
      * Return name of module, as set with --name flag or setName().
