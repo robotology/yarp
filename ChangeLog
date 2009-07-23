@@ -1,3 +1,8 @@
+2009-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Bottle.cpp: remove incorrect return on
+	void method (thanks to David Vernon).
+
 2009-07-07 Lorenzo Natale <nat@robotcub.org>
 	* src/libYARP_dev/src/include/yarp/dev/ControlBoardInterfaces.h
         * src/libYARP_dev/dev/src/RemoteControlBoard.cpp:

@@ -154,7 +154,7 @@ bool Bottle::write(ConnectionWriter& writer) {
 
 
 void Bottle::onCommencement() {
-    return HELPER(implementation).onCommencement();
+    HELPER(implementation).onCommencement();
 }
 
 bool Bottle::read(ConnectionReader& reader) {
