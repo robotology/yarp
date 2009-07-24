@@ -1094,7 +1094,7 @@ void Run::Help(const char *msg)
     fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
     fprintf(stderr,"run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --kill TAG\nkill TAG command\n\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --kill TAG SIGNUM\nsend SIGNUM signal to TAG command\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
 	fprintf(stderr,"yarp run --on SERVERPORT --sigtermall\nterminate all commands\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --ps\nreport commands running on SERVERPORT\n\n");
