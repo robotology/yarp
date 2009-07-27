@@ -1,3 +1,9 @@
+2009-07-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: reveal
+	inadvertently hidden Searchable::check() methods (thanks
+	to Jonas Ruesch for pointing out problem).
+
 2009-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Bottle.cpp: remove incorrect return on

@@ -118,6 +118,7 @@ public:
     virtual bool isNull() const;
     virtual ConstString toString() const;
 
+    using Searchable::check;
 private:
 
     // this might be useful, but is not in spec
