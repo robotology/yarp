@@ -3,13 +3,22 @@
 #ifndef __YARP2_RFMODULE__
 #define __YARP2_RFMODULE__
 
+/*
+ * Author: Lorenzo Natale.
+ * (C) 2009 The Robotcub consortium
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ */
+
 #include <yarp/os/Port.h>
+#include <yarp/os/PortReaderBuffer.h>
+#include <yarp/os/ResourceFinder.h>
 
 namespace yarp {
     namespace os {
         class RFModule;
     }
 }
+
 
 /**
  * 
@@ -23,12 +32,12 @@ public:
     /**
      * Constructor.
      */
-    Module();
+    RFModule();
 
     /**
      * Destructor.
      */
-    virtual ~Module();
+    virtual ~RFModule();
 
 
     /**
@@ -54,7 +63,6 @@ public:
      */
     virtual bool updateModule()=0;
 
-
     /**
      *
      * Calls updateModule() until that returns false.
@@ -62,67 +70,26 @@ public:
      * seconds.  Be aware that the the respond() command could be 
      * asycnhronously at any time, if there is input from the 
      * standard input or a port connected via attach().
-     * @return true on success
+     * @return 0 on success
      *
      */
-    virtual bool runModule();
+    virtual int runModule();
 
     /**
-     * Simple helper method to call openFromCommand(), then runModule().
-     * Most modules that run as a single executable will want to do this.
-     * Their main() method would be something like:
-     * \code
-     *    int main(int argc, char *argv[]) {
-     *        Network yarp;
-     *        YourModule module;
-     *        return module.runModule(argc,argv);
-     *    }
-     * \endcode
-     * @param argc the number of arguments
-     * @param argv the list of arguments
-     * @param policy name of the policy to use by the Resource Finder.
+     * Simple helper method to call configure(), then runModule().
+     * @param rf a previously initialized ResourceFinder
      * @return 0 upon success, non-zero upon failure
      */
-    virtual int runModule(int argc, char *argv[], const char *policy=0);
+    virtual int runModule(yarp::os::ResourceFinder &rf);
 
     /**
-     * Pass a list of command line arguments. These
-     * will be passed verbatim to a RF with the
-     * result of calling the open() function. The 
-     * user should overwrite this function.
+     * Pass a ResourceFinder object to the module. This will be passed
+     * on to the open() function.
      * Also calls attachTerminal().
-     * @param argc the number of arguments
-     * @param argv the list of arguments
-     * @param policy name of the policy to use by the resource finder
+     * @param rf a previously initialized ResourceFinder
      * @return true/false upon success/failure
      */
-    virtual bool openFromCommand(int argc, char *argv[], const char *policy=0);
-
-
-     /**
-     *
-     * Request that information be printed to the console on how
-     * resources are being found.  This is especially useful to
-     * understand why resources are *not* found or the wrong resource
-     * is picked up.
-     *
-     * @param verbose set/suppress printing of information
-     *
-     * @return true iff information will be printed
-     *
-     */
-    bool setVerbose(bool verbose = true);
-    
-    /*
-    * Set default configuration files. Passed to the resource finder
-    * class.
-    */
-    bool setDefaultConfigFile(const char *fname);
-
-    /*
-    * Set detaulf context. Passed to the resource finder class.
-    */
-    bool setDefaultContext(const char *contextName);
+    virtual bool configure(yarp::os::ResourceFinder &rf);
 
     /**
      * Respond to a message.  You can override this to respond
@@ -142,18 +109,7 @@ public:
      * @param port the port to attach
      * @return true if port was attached correctly.
      */
-    virtual bool attach(Port& port);
-
-    /**
-     * Make any input from a BufferedPort or PortReaderBuffer object go to 
-     * the respond() method.
-     * @param port the port or buffer to attach
-     * @param handleStream control whether streaming messages (messages that
-     * don't expect replies) are also sent to respond().  If they are,
-     * replies will be discarded.
-     * @return true if port was attached correctly.
-     */
-    virtual bool attach(TypedReader<Bottle>& port, bool handleStream = false);
+    virtual bool attach(yarp::os::Port& source);
 
     /**
      * Make any input from standard input (usually the keyboard) go to
@@ -162,24 +118,52 @@ public:
      */
     virtual bool attachTerminal();
 
+    /**
+     * Detach terminal.
+     */
+    virtual bool detachTerminal();
+
     /*
     * Open function. This is called automatically when you either call
-    * openFromCommand() or runModule(). Override this to receive parameters
-    * passed to your module.
-    * @param rf a ResourceFinder object initialized from data passed 
-    * in argc/argv from openFromCommand() or runModule(). You can customize
-    * the behavior of the ResourceFinder object by first calling setDefaultContext
-    * and setDefaultConfigFile().
+    * openFromCommand() or runModule(). Override this to receive a Resource
+    * finder object to configure your module.
+    * @param rf a ResourceFinder object, passed from the configure method.
+    * @return true/false on success failure.
     */
     virtual bool open(const yarp::os::ResourceFinder &rf)
     { return true; }
 
-    /**
+     /*
+    * Close function. This is called automatically when the module closes. 
+    * Override this to perform memory cleanup or other activities.
+    */
+    virtual void close()
+    {}
+
+
+    /*
+    * Ask the module to stop.
+    * @param wait: specifies if stop should block and wait termination. Not 
+    * implemented yet.
+    */
+    void stop(bool wait=false)
+    {
+        stopFlag=true;
+    }
+
+    /*
+    * Check if the module should stop.
+    * @return true/false if the module should stop or not.
+    */
+    bool isStopping()
+    { return stopFlag; }
+
+     /**
      * Return name of module, as set with --name flag or setName().
      * @param subName get nested name with this at the end
      * @return the name of the module
      */
-    ConstString getName(const char *subName = 0/*NULL*/);
+    ConstString getName(const char *subName = 0);
 
     /**
      * Set the name of the module.
@@ -189,6 +173,7 @@ public:
         this->name = name;
     }
 
+
     /**
      * Wrapper around respond() that is guaranteed to process system messages.
      */
@@ -197,7 +182,10 @@ public:
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 private:
-    Property& getState() { return state; }
+    ResourceFinder resourceFinder;
+    void *implementation;
+    bool stopFlag;
+    ConstString name;
 
     virtual bool basicRespond(const Bottle& command, Bottle& reply);
 };
