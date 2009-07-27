@@ -119,6 +119,7 @@ public:
     virtual ConstString toString() const;
 
     using Searchable::check;
+    using Searchable::findGroup;
 private:
 
     // this might be useful, but is not in spec
