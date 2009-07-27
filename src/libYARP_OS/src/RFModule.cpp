@@ -12,6 +12,8 @@ using namespace yarp;
 class RFModuleHelper : public yarp::os::PortReader, public Thread
 {    
 private:
+    bool attachedToPort;
+    bool attachedTerminal;
     RFModule& owner;
 
 public:
@@ -23,7 +25,7 @@ public:
      */
     virtual bool read(yarp::os::ConnectionReader& connection);
 
-    RFModuleHelper(RFModule& owner) : owner(owner) {}
+    RFModuleHelper(RFModule& owner) : owner(owner), attachedToPort(false), attachedTerminal(false) {}
     
     virtual void run() {
         printf("Listening to terminal (type \"quit\" to stop module)\n");
@@ -56,12 +58,27 @@ public:
 
     bool attach(yarp::os::Port& source) 
     {
+        if (attachedTerminal)
+        {
+            fprintf(stderr, "Warning, reading from terminal, cannot read from port\n");
+            return false;
+        }
+
+        attachedToPort=true;
         source.setReader(*this);
         return true;
     }
 
     bool attachTerminal()
     {
+        if (attachedToPort)
+        {
+            fprintf(stderr, "Warning, reading from port, cannot read from terminal\n");
+            return false;
+        }
+
+        attachedTerminal=true;
+
         Thread::start();
         return true;
     }
