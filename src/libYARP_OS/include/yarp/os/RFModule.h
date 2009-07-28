@@ -65,8 +65,9 @@ public:
 
     /**
      *
-     * Calls updateModule() until that returns false.
-     * updateModule() is called every getPeriod()
+     * Calls updateModule() until that returns false. Make sure 
+     * you first configure your module by calling the configure()
+     * function. updateModule() is then called every getPeriod()
      * seconds.  Be aware that the the respond() command could be 
      * asycnhronously at any time, if there is input from the 
      * standard input or a port connected via attach().
@@ -76,15 +77,15 @@ public:
     virtual int runModule();
 
     /**
-     * Simple helper method to call configure(), then runModule().
+     * Simple helper method to call configure() and then runModule().
      * @param rf a previously initialized ResourceFinder
      * @return 0 upon success, non-zero upon failure
      */
     virtual int runModule(yarp::os::ResourceFinder &rf);
 
     /**
-     * Pass a ResourceFinder object to the module. This will be passed
-     * on to the open() function.
+     * Configure the module, pass a ResourceFinder object to the module. 
+     * This will be passed untouched on to the open() function.
      * Also calls attachTerminal().
      * @param rf a previously initialized ResourceFinder
      * @return true/false upon success/failure
