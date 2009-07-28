@@ -179,7 +179,7 @@ bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     case VOCAB4('e','x','i','t'):
     case VOCAB3('b','y','e'):
         reply.addVocab(Vocab::encode("bye"));
-        stop(false);
+        stop(false); //calls interruptModule()
    //     interruptModule();
         return true;
     default:

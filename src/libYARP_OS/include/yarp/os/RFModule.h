@@ -44,7 +44,7 @@ public:
      *
      * You can override this to control the approximate periodicity at which
      * updateModule() is called by runModule().  By default, it returns
-     * 0 (no delay).
+     * 0 (no delay). Time here is in seconds.
      * @return the desired period between successive calls to updateModule()
      * 
      */
@@ -133,8 +133,25 @@ public:
     virtual bool open(const yarp::os::ResourceFinder &rf)
     { return true; }
 
+      /**
+     *
+     * Try to halt any ongoing operations by threads managed by the module.
+     * This is called anynchronously just after a quit command is received.
+     * By default it does nothing - you may want to override this.
+     * If you have created any ports, and have any threads that are 
+     * might be blocked on reading data from those ports, this is a 
+     * good place to add calls to BufferedPort::interrupt() or
+     * Port::interrupt().
+     * @return true if there was no catastrophic failure
+     *
+     */
+    virtual bool interruptModule() {
+        return false;
+    }
+
      /*
-    * Close function. This is called automatically when the module closes. 
+    * Close function. This is called automatically when the module closes, after
+    * the last call to updateModule.
     * Override this to perform memory cleanup or other activities.
     */
     virtual void close()
@@ -149,6 +166,8 @@ public:
     void stop(bool wait=false)
     {
         stopFlag=true;
+        if (!interruptModule())
+            fprintf(stderr, "interruptModule() returned an error there could be problems shutting down the module\n");
     }
 
     /*
