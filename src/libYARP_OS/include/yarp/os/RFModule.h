@@ -139,7 +139,7 @@ public:
     *
     */
     virtual bool interruptModule() {
-        return false;
+        return true;
     }
 
     /*
