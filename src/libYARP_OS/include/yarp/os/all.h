@@ -38,5 +38,6 @@
 #include <yarp/os/Value.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Module.h>
+#include <yarp/os/RFModule.h>
 #include <yarp/os/DummyConnector.h>
 
