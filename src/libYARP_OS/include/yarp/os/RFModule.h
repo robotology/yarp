@@ -23,7 +23,7 @@ namespace yarp {
 /**
  * 
  * Disclaimer: this is currently under development. A new base-class 
- * for standard Yarp modules.  This class is similar to a Module, but 
+ * for standard YARP modules.  This class is similar to a Module, but 
  * it adds support for the ResourceFinder class.
  */
 class yarp::os::RFModule {
@@ -143,8 +143,8 @@ public:
 
     /*
     * Ask the module to stop.
-    * @param wait: specifies if stop should block and wait termination. Not 
-    * implemented yet.
+    * @param wait: specifies if stop should block and wait termination. This is
+    * not implemented yet.
     */
     void stop(bool wait=false)
     {

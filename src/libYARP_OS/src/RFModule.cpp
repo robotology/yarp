@@ -5,9 +5,37 @@
 #include <yarp/os/Network.h>
 
 #include <ace/OS.h>
+#include <ace/Time_Value.h>
+#include <ace/High_Res_Timer.h>
 
 using namespace yarp::os;
 using namespace yarp;
+
+//time helper functions
+
+inline ACE_Time_Value getTime()
+{
+    ACE_Time_Value now;
+#ifdef ACE_WIN32
+    now = ACE_High_Res_Timer::gettimeofday_hr();
+#else
+    now = ACE_OS::gettimeofday ();
+#endif
+    return now;
+}
+
+inline void sleepThread(ACE_Time_Value sleep_period)
+{
+    if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
+        sleep_period.set(0,0);
+    ACE_OS::sleep(sleep_period);
+}
+
+inline double toDouble(const ACE_Time_Value &v)
+{
+    return double(v.sec()) + v.usec() * 1e-6; 
+}
+
 
 class RFModuleHelper : public yarp::os::PortReader, public Thread
 {    
@@ -58,12 +86,6 @@ public:
 
     bool attach(yarp::os::Port& source) 
     {
-        if (attachedTerminal)
-        {
-            fprintf(stderr, "Warning, reading from terminal, cannot read from port\n");
-            return false;
-        }
-
         attachedToPort=true;
         source.setReader(*this);
         return true;
@@ -71,16 +93,15 @@ public:
 
     bool attachTerminal()
     {
-        if (attachedToPort)
-        {
-            fprintf(stderr, "Warning, reading from port, cannot read from terminal\n");
-            return false;
-        }
-
         attachedTerminal=true;
 
         Thread::start();
         return true;
+    }
+
+    bool isTerminalAttached()
+    {
+        return attachedTerminal;
     }
 
     bool detachTerminal()
@@ -215,13 +236,34 @@ int RFModule::runModule() {
     }
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
-    while (updateModule()) {
-        if (isStopping()) break;
-        Time::delay(getPeriod());
+    bool loop=true;
+
+    ACE_Time_Value currentRunTV;
+    ACE_Time_Value elapsedTV;
+    ACE_Time_Value sleepPeriodTV;
+
+    while (loop) {
+        currentRunTV=getTime();
+        loop=updateModule();
+        elapsedTV=getTime();
+
+        if (isStopping())
+            loop=false;
+
+        sleepPeriodTV.msec(static_cast<int>(getPeriod()*1000+0.5));
+        sleepPeriodTV+=currentRunTV;
+        sleepPeriodTV-=elapsedTV;
+        sleepThread(sleepPeriodTV);
     }
 
     ACE_OS::printf("Module closing\n");
-    detachTerminal();
+    if (HELPER(implementation).isTerminalAttached())
+    {
+        ACE_OS::fprintf(stderr, "Warning: module attached to terminal calling exit() to quit\n");
+        ACE_OS::exit(1); //one day this will hopefully go away, now only way to stop 
+        detachTerminal();    
+    }
+
     close();
     ACE_OS::printf("Module finished\n");
     return 0;
