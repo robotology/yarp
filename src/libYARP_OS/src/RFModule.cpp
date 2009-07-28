@@ -179,7 +179,7 @@ bool RFModule::basicRespond(const Bottle& command, Bottle& reply) {
     case VOCAB4('e','x','i','t'):
     case VOCAB3('b','y','e'):
         reply.addVocab(Vocab::encode("bye"));
-        stop(false); //calls interruptModule()
+        stopModule(false); //calls interruptModule()
    //     interruptModule();
         return true;
     default:
@@ -212,7 +212,7 @@ static void handler (int) {
                    ct);
     if (module!=0)
     {
-        module->stop(false);
+        module->stopModule(false);
     }
   //  if (module!=NULL) {
   //      Bottle cmd, reply;
@@ -226,7 +226,6 @@ static void handler (int) {
 
 int RFModule::runModule() {
     stopFlag=false;
-    attachTerminal();
 
     if (module==NULL) {
         module = this;
@@ -277,12 +276,6 @@ int RFModule::runModule(yarp::os::ResourceFinder &rf) {
     }
     bool ok = runModule();
     return ok?0:1;
-}
-
-bool RFModule::configure(yarp::os::ResourceFinder &rf)
-{
-    //pass it on to user open function
-    return open(resourceFinder);
 }
 
 ConstString RFModule::getName(const char *subName) {
