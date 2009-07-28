@@ -1,5 +1,8 @@
 2009-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/modules/opencv/OpenCVGrabber.cpp: use CV_CAP_ANY,
+	"any" camera is 0 rather than -1 now (thanks Sebastien Gay).
+
 	* src/libYARP_OS/src/HttpCarrier.cpp: silly bug in http
 	interface to ports, "send data" form used wrong IP (thanks
 	Stephane Lallee).

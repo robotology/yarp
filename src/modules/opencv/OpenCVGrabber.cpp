@@ -73,6 +73,10 @@ using namespace yarp::dev;
 
 #define DBG if (0)
 
+#ifndef CV_CAP_ANY
+#define CV_CAP_ANY (-1)
+#endif
+
 bool OpenCVGrabber::open(Searchable & config) {
     // Release any previously allocated resources, just in case
     close();
@@ -103,7 +107,7 @@ bool OpenCVGrabber::open(Searchable & config) {
 
         int camera_idx = 
             config.check("camera", 
-                         Value(-1), 
+                         Value(CV_CAP_ANY), 
                          "if present, read from camera identified by this index").asInt();
 
         // Try to open a capture object for the first camera
