@@ -40,10 +40,9 @@ inline double toDouble(const ACE_Time_Value &v)
 class RFModuleHelper : public yarp::os::PortReader, public Thread
 {    
 private:
+    RFModule& owner;
     bool attachedToPort;
     bool attachedTerminal;
-    RFModule& owner;
-
 public:
      /**
      * Handler for reading messages from the network, and passing 
@@ -200,12 +199,11 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 
 
 static RFModule *module = 0;
-static bool terminated = false;
 static void handler (int) {
     static int ct = 0;
     ct++;
     if (ct>3) {
-        ACE_OS::printf("Aborting...\n");
+        ACE_OS::printf("Aborting (calling exit())...\n");
         ACE_OS::exit(1);
     }
     ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
@@ -227,14 +225,17 @@ static void handler (int) {
 int RFModule::runModule() {
     stopFlag=false;
 
+    //set up signal handlers for catching ctr-c
     if (module==NULL) {
         module = this;
-        //module = &HELPER(implementation);
-    } else {
+    } 
+    else {
         ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
     }
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+    
+    //setting up main loop
     bool loop=true;
 
     ACE_Time_Value currentRunTV;
