@@ -1,5 +1,9 @@
 2009-07-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/HttpCarrier.cpp: silly bug in http
+	interface to ports, "send data" form used wrong IP (thanks
+	Stephane Lallee).
+
 	* example/swig/CMakeLists.txt: update module name in csharp,
 	to make Windows happy (thanks Stephane Lallee).
 

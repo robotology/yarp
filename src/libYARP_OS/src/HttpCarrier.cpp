@@ -176,6 +176,7 @@ HttpTwoWayStream::HttpTwoWayStream(TwoWayStream *delegate, const char *txt) :
 
     String from = "<input type=text name=data value=\"";
     from += quoteFree(sData.c_str());
+
     from += "\"><input type=submit value=\"send data\"></form></p>\n"; 
     from += "<pre>\n";
     Bytes b2((char*)from.c_str(),from.length());
@@ -290,7 +291,7 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += "</p>\n"; 
     from += "<p>\n"; 
     from += "<form method=\"post\" action=\"http://";
-    from += home.getName();
+    from += me.getName();
     from += ":";
     from += NetType::toString(me.getPort());
     from += "\">";
