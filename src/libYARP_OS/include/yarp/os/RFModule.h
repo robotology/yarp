@@ -146,9 +146,10 @@ public:
     * Close function. This is called automatically when the module closes, after
     * the last call to updateModule.
     * Override this to perform memory cleanup or other activities.
+    * @return true/false on success failure.
     */
-    virtual void close()
-    {}
+    virtual bool close()
+    { return true; }
 
 
     /*
