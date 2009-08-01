@@ -176,6 +176,7 @@ private:
     bool addStamp;
     bool active;
     bool singleThreaded;
+
 public:
     /**
      * Constructor.

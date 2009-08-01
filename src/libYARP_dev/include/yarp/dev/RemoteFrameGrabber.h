@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2009 The RobotCub Consortium
+ * Authors: Paul Fitzpatrick, Alessandro Scalzo
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
  */
 
 
@@ -43,7 +43,6 @@ public:
     }
 
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) {
-        
         mutex.wait();
         if (reader.read(true)!=NULL) {
             image = *(reader.lastRead());
@@ -56,6 +55,7 @@ public:
         return false;
     }
 
+    // this is bad!
     virtual int height() const {
         return lastHeight;
     }
@@ -96,7 +96,7 @@ public:
 
     virtual bool close() {
         port.close();
-        mutex.wait();
+//        mutex.wait();   // why does it need this?
         return true;
     }
 
@@ -269,7 +269,7 @@ protected:
 };
 
 
-class yarp::dev::RemoteFrameGrabberDC1394 : virtual public IFrameGrabberControlsDC1394, virtual public yarp::dev::RemoteFrameGrabber
+class yarp::dev::RemoteFrameGrabberDC1394 : public IFrameGrabberControlsDC1394, public yarp::dev::RemoteFrameGrabber
 {
 public:
 	RemoteFrameGrabberDC1394() : RemoteFrameGrabber(){}
