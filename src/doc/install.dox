@@ -129,9 +129,8 @@ details so you don't have to.
 @subsection intro_install_ace The general approach to installing ACE
 
 
-\li Download ACE here: http://download.dre.vanderbilt.edu/
-\li For Debian Linux, we suggest: "apt-get install libace-dev"
-\li For Windows and  other system we suggest the latest stable release (ACE-5.6.zip/ACE-5.6.tar.gz)
+\li For Ubuntu and other deb-based systems, we suggest you install the "libace-dev" package (on rpm-based systems, try libace-devel).
+\li For Windows and other systems we suggest the latest stable release (ACE-5.6.zip/ACE-5.6.tar.gz).  Download ACE here: http://download.dre.vanderbilt.edu/
 
 Compile ACE using our summary instructions, below, or through the 
 official method given here: 
@@ -256,6 +255,8 @@ YARP can be downloaded from:
 or installed from CVS by following the instructions at:
 
 - http://sourceforge.net/cvs/?group_id=62418
+
+(we are moving to SVN - please check http://eris.liralab.it/wiki/YARP_from_SVN for the latest instructions until this documentation is updated).
 
 with modulename "yarp2" to get the code.  You can compile it with CMake.  
 Documentation is built periodically on the website.
