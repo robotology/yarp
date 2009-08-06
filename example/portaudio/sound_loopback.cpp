@@ -5,7 +5,7 @@
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
-
+  
 int main(int argc, char *argv[]) {
 
     // Get an audio device.
