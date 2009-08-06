@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
-
+ 
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
