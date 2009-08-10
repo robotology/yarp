@@ -54,7 +54,7 @@ if [ ! -e failure.txt ]; then
 	ipconfig /renew
 fi
 
-cat cvslog.txt
+cat svnlog.txt
 
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
@@ -73,7 +73,7 @@ else
 fi
 
 else
-	echo "Nothing new in CVS"
+	echo "Nothing new in svn"
 fi
 
 ) | tee report.txt
