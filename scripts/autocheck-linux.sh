@@ -27,7 +27,7 @@ rm -f should_report.txt
 timeout 600 svn update > svnlog.txt
 cat svnlog.txt | grep -v "svn update " | egrep -v "^\? " | egrep -v "^M " | tee svnlog2.txt
 
-if egrep "[a-zA-Z]" cvslog2.txt; then
+if egrep "[a-zA-Z]" svnlog2.txt; then
 
 SOURCE=$PWD
 

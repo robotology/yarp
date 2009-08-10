@@ -3,9 +3,9 @@
 # run as ./scripts/autocheck-windows.sh
 
 . ./scripts/config.sh
-if [ "k$WEB_USER" = "k" ] ; then
-    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
-fi
+#if [ "k$WEB_USER" = "k" ] ; then
+#    WEB_USER=`cat CVS/Root | sed "s/^:[^:]*://" | sed "s/[^a-z].*//"`
+#fi
 echo USER is "$WEB_USER"
 
 SOURCE=`cygpath -w $PWD`
@@ -27,10 +27,10 @@ rm -f should_report.txt
 
 (
 
-cvs update -d > cvslog.txt
-cat cvslog.txt | grep -v "cvs -q update -Pd" | egrep -v "^\? " | egrep -v "^M " | tee cvslog2.txt
+timeout 600 svn update > svnlog.txt
+cat svnlog.txt | grep -v "svn update " | egrep -v "^\? " | egrep -v "^M " | tee svnlog2.txt
 
-if egrep "[a-zA-Z]" cvslog2.txt; then
+if egrep "[a-zA-Z]" svnlog2.txt; then
 
 echo Working in directory $SOURCE | tee should_report.txt
 
