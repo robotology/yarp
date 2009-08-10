@@ -223,7 +223,14 @@ public:
     const void *getIplImage() const;
 
     /**
-     * Act as a wrapper around an IPL/OpenCV image.
+     * Act as a wrapper around an IPL/OpenCV image.  The wrapped
+     * image needs to exist for the rest of the lifetime of
+     * this oboject.  Be careful if you use this method on objects 
+     * read from or written to a BufferedPort, since the lifetime
+     * of such objects can be longer than you expect (see the
+     * documentation for yarp::os::BufferedPort::read, 
+     * yarp::os::BufferedPort::prepare, and yarp::os::BufferedPort::write).
+     *
      * @param iplImage pointer to an IplImage structure
      */
     void wrapIplImage(void *iplImage);
