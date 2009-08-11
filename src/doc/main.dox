@@ -82,10 +82,10 @@ Here are a collection of tutorials on various topics in YARP.
  *
 
 
-YARP is plumbing for robot software.  It is a set of 
-libraries, protocols, and tools to keep modules and devices 
-cleanly decoupled.  It is reluctant middleware, with no desire
-or expectation to be in control of your system.
+YARP is plumbing for robot software.  It is a set of libraries,
+protocols, and tools to keep modules and devices cleanly decoupled.
+It is reluctant middleware, with no desire or expectation to be in
+control of your system.  YARP is definitely not an operating system.
 
 Robot projects are often evolutionary dead ends, with the software and
 hardware they produce disappearing without trace afterwards.  Common
