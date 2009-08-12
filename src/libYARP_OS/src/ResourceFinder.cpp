@@ -190,8 +190,8 @@ public:
             ConstString fromPath = extractPath(from.c_str());
             configFilePath = fromPath;
             config.fromConfigFile(from,false);
+            config.fromCommand(argc,argv,skip,false);
         }
-        config.fromCommand(argc,argv,skip,false);
         return true;
     }
 
