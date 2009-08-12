@@ -1,5 +1,9 @@
 2009-08-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/yarpserver/: initial checkin of new yarp server version,
+	"yarpserver3".  This is not yet the default server, and won't be
+	for a while.
+
 	* src/libYARP_OS/src/ResourceFinder.cpp: allow for multiple
 	fallback directories (default_capability) in the resource finder
 	policy file.
