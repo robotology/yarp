@@ -1,3 +1,13 @@
+2009-08-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/ResourceFinder.cpp: give ultimate priority
+	over config settings to the command line in all circumstances
+	(thanks David Vernon).
+
+	* src/libYARP_OS/harness/ResourceFinderTest.cpp: regression test
+	to make sure command line can override config files for config
+	settings.
+	
 2009-08-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/Image.h: include a warning
