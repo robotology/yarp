@@ -261,8 +261,8 @@ public:
 
         ConstString cap = 
             config.check("capability_directory",Value("app")).asString();
-        ConstString defCap = 
-            config.check("default_capability",Value("default")).asString();
+        Bottle defCaps =
+            config.findGroup("default_capability").tail();
 
         // check current directory
         ConstString str = check("","","",name);
@@ -281,8 +281,11 @@ public:
         }
 
         // check ROOT/app/default/
-        str = check(root.c_str(),cap,defCap,name);
-        if (str!="") return str;
+        for (int i=0; i<defCaps.size(); i++) {
+            str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
+                        name);
+            if (str!="") return str;
+        }
 
         fprintf(RTARGET,"||| did not find %s\n", name);
         return "";

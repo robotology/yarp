@@ -1,5 +1,9 @@
 2009-08-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/ResourceFinder.cpp: allow for multiple
+	fallback directories (default_capability) in the resource finder
+	policy file.
+
 	* src/libYARP_OS/src/ResourceFinder.cpp: give ultimate priority
 	over config settings to the command line in all circumstances
 	(thanks David Vernon).
