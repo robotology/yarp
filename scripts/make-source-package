@@ -5,7 +5,7 @@
 ORG=$PWD
 BASE=$PWD/source-package
 
-#mkdir -p $BASE/repository
+mkdir -p $BASE
 
 rm -rf $BASE/repository
 cd $BASE/
