@@ -5,19 +5,23 @@
 ORG=$PWD
 BASE=$PWD/source-package
 
-mkdir -p $BASE/repository
+#mkdir -p $BASE/repository
 
-if [ ! -e $BASE/repository/CVS ]; then
-    cp -R CVS $BASE/repository/CVS
-fi
+rm -rf $BASE/repository
+cd $BASE/
+svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 repository
+
+#if [ ! -e $BASE/repository/CVS ]; then
+#    cp -R CVS $BASE/repository/CVS
+#fi
 
 # skip cvs update if nocvs specified
-if [ ! "nocvs" = "$1" ]; then
-    echo "CVS update"
-    cd $BASE/repository
-    cvs update -d
-
-fi
+#if [ ! "nocvs" = "$1" ]; then
+#    echo "CVS update"
+#    cd $BASE/repository
+#    cvs update -d
+#
+#fi
 
 
 rm -rf $BASE/pruned-repository
@@ -31,7 +35,7 @@ if $want_prune; then
     for f in src/modules/dimax_u2c/blob; do
 	mydir=$PWD
 	cd $f
-	( ls -l `find . -type f | grep -v CVS` ) > /tmp/inventory.txt
+	( ls -l `find . -type f | grep -v .svn` ) > /tmp/inventory.txt
 	cd $mydir
 	echo "  Removed: $f" >> /tmp/REMOVED
 	rm -rf $f
