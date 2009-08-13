@@ -79,10 +79,10 @@ String NameConfig::getConfigFileName(const char *stem) {
         //conf = root + "/conf/" + fname;
         // users of YARP_CONF want /conf postfix removed
         conf = root + "/" + fname;
-    } else if (home!="") {
-        conf = home + "/.yarp/conf/" + fname;
     } else if (homepath!="") {
         conf = getEnv("HOMEDRIVE") + homepath + "\\yarp\\conf\\" + fname;
+    } else if (home!="") {
+        conf = home + "/.yarp/conf/" + fname;
     } else {
         YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
         ACE_OS::exit(1);
