@@ -4,6 +4,8 @@ real database (sqlite) to maintain the state of the yarp network.
 It has the functionality of the standard name server, but is not well 
 tested.
 
+It is NOT yet integrated into the main YARP build.
+
 ====================================================================
 COMPILATION
 ===========

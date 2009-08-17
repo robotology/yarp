@@ -56,6 +56,11 @@ IF (CREATE_JAVA)
       SET_TARGET_PROPERTIES(${target_name} PROPERTIES 
                             LINK_FLAGS "--add-stdcall-alias")
    ENDIF (MINGW)
+   ## the following is based on:
+   ## http://www.cmake.org/pipermail/cmake/2007-September/016343.html
+   IF(APPLE)
+     SET_TARGET_PROPERTIES(${target_name} PROPERTIES SUFFIX ".jnilib")
+   ENDIF(APPLE)
 ENDIF (CREATE_JAVA)
 
 IF (CREATE_PYTHON)

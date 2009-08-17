@@ -36,6 +36,12 @@ Now either do something like one of:
   setenv LD_LIBRARY_PATH $PWD:$LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
 Or move libjyarp.so into a directory in your library path.
+If you are planning to just use Java via Matlab, you could instead
+add to your matlab classpath.txt file:
+  .../example/swig/build
+(replace "..." with the path to YARP).  You can find out where this
+file is by typing in Matlab:
+  which classpath.txt
 
 Now try building the examples using ant by typing:
   ant

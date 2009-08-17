@@ -1,5 +1,11 @@
 2009-08-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* example/swig/CMakeLists.txt: add patch from Dimitry Ognibene,
+	java libraries need to have suffix .jnilib on OSX
+
+	* example/swig/README: add doc patch from Dimitry Ognibene for 
+	Java+Matlab
+
 	* README: add doc patch from Dimitry Ognibene for OSX
 
 2009-08-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
