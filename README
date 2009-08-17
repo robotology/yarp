@@ -91,6 +91,17 @@ your PATH environment variable in other for YARP executables to be
 able to run.
 
 
+For OSX/gcc, a note from Dimitri Ognibene:
+------------------------------------------
+
+(from http://groups.google.com/group/comp.soft-sys.ace/browse_thread/thread/c8fdbd72b3938149) 
+create an $ACE_ROOT/ace/config.h file with this content:
+
+#define ACE_LACKS_UNSETENV 
+#define ACE_LACKS_ISCTYPE 
+#define ACE_NEEDS_DL_UNDERSCORE 
+#include "ace/config-macosx-tiger.h" 
+
 ===============================================================================
 
 CMAKE
