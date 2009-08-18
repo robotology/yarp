@@ -7,7 +7,7 @@ if $USE_SOURCEFORGE; then
     WEB_SERVER=yarp0.sourceforge.net
     WEB_DIR=/home/groups/y/ya/yarp0/htdocs
 else
-    WEB_USER=$USER
+    WEB_USER=babybot
     WEB_SERVER=eris.liralab.it
     WEB_DIR=/var/www/html/yarp
 fi

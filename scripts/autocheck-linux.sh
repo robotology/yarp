@@ -55,7 +55,7 @@ if [ ! -e failure.txt ]; then
     ) 2>&1 | tee testlog.txt
 fi
 
-cat cvslog.txt
+cat svnlog.txt
 
 if [ -e failure.txt ]; then
 	echo YARP_AUTOCHECK at least one failure happened
