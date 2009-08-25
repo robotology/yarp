@@ -42,6 +42,9 @@ if ($txt=~/academic free/i || $quiet) {
 if ($txt =~ /license/i || $txt =~ /copyright/i) {
 }
 
+$txt =~ s/The RobotCub Consortium/RobotCub Consortium/g;
+$txt =~ s/Robotcub Consortium/RobotCub Consortium/g;
+
 $txt =~ s/.*GNU General Public License, version 2 or.*/CopyPolicy: Released under the terms of the GNU GPL v2.0./;
  
 if ($txt=~/CopyPolicy\:\s*(.*)/i) {
