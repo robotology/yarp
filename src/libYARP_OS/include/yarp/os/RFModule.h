@@ -5,7 +5,7 @@
 
 /*
 * Author: Lorenzo Natale.
-* (C) 2009 The Robotcub consortium
+* Copyright (C) 2009 The Robotcub consortium
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
 */
 
