@@ -287,21 +287,28 @@ NameServer& NameClient::getServer() {
 }
 
 
+bool NameClient::updateAddress() {
+    NameConfig conf;
+    address = Address();
+    if (conf.fromFile()) {
+        address = conf.getAddress();
+        return true;
+    }
+    return false;
+}
+
 
 NameClient::NameClient() {
     allowScan = false;
     allowSaveScan = false;
     reportScan = false;
     reportSaveScan = false;
-    NameConfig conf;
-    address = Address();
     process = NetType::toString(ACE_OS::getpid());
-    if (conf.fromFile()) {
-        address = conf.getAddress();
-    } else {
+    if (!updateAddress()) {
         YARP_ERROR(Logger::get(),"Cannot find name server");
         //address = Address("localhost",10000);
     }
+
     YARP_DEBUG(Logger::get(),String("name server address is ") + 
                address.toString());
     fake = false;

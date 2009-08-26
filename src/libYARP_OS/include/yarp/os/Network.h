@@ -90,6 +90,10 @@ public:
 
     /**
      * The standard main method for the YARP companion utility.
+     * This method is not thread-safe; it initializes and shuts
+     * down YARP, the effect of which varies between operating
+     * systems.  Do not call this method if there are  other
+     * threads using YARP.
      * @param argc argument count
      * @param argv command line arguments
      * @return 0 on success, non-zero on failure
@@ -209,6 +213,17 @@ public:
 
 
     /**
+     * Set the name of the port associated with the nameserver (usually
+     * "/root", but this can be overwritten by the "yarp namespace" 
+     * command).  This method is not thread-safe.  Do not call this command 
+     * while ports are being registered/unregistered or connections are
+     * being made/broken in another thread.
+     * @return true on success
+     */
+    static bool setNameServerName(const char *name);
+
+
+    /**
      * Chooses whether communication is process-local.
      * Call this with flag=true to avoid ever consulting an
      * external nameserver.
@@ -277,6 +292,7 @@ public:
      *
      */
     static bool checkNetwork();
+
 };
 
 #endif

@@ -1,3 +1,10 @@
+2009-08-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Network.h: add setNameServerName
+	method for changing namespaces within a program (note: be very
+	careful if you do this!)  Thanks Kyron Du Casse for prompting
+	this.
+
 2009-08-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/CMakeLists.txt: add patch from Dimitry Ognibene,

@@ -267,6 +267,15 @@ ConstString Network::getNameServerName() {
 }
 
 
+bool Network::setNameServerName(const char *name) {
+    NameConfig nc;
+    String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
+    nc.writeConfig(fname,String(name));
+    NameClient& client = NameClient::getNameClient();
+    return client.updateAddress();
+}
+
+
 bool Network::checkNetwork() {
     Contact c = queryName(getNameServerName());
     //printf("Contact is %s %d\n", c.toString().c_str(), c.isValid());

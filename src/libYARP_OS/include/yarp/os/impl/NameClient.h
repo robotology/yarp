@@ -126,6 +126,8 @@ public:
         return reportSaveScan;
     }
 
+    bool updateAddress();
+
     virtual ~NameClient();
 
 
