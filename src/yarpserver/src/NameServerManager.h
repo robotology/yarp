@@ -23,9 +23,9 @@
 class NameServerManager : public NameService, 
                           public yarp::os::PortReaderCreator {
 private:
+    NameService& ns;
     yarp::os::Port *port;
     yarp::os::Semaphore mutex;
-    NameService& ns;
 public:
     NameServerManager(NameService& ns, 
                       yarp::os::Port *port = NULL) : ns(ns),

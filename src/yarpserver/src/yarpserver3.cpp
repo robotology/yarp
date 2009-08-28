@@ -34,31 +34,36 @@ int main(int argc, char *argv[]) {
  \\ V // _ \\ | |_) | |_) |\n\
   | |/ ___ \\|  _ <|  __/ \n\
   |_/_/   \\_\\_| \\_\\_|    \n\n");
- 
 
+    Property options;
+    options.fromCommand(argc,argv);
+    ConstString dbFilename = options.check("db",Value("yarp.db")).asString();
+    ConstString ip = options.check("ip",Value("...")).asString();
+    int sock = options.check("socket",Value(10000)).asInt();
+
+    printf("Database: %s (change with \"--db newname.db\")\n", 
+           dbFilename.c_str());
+    printf("IP address: %s (change with \"--ip N.N.N.N\")\n", 
+           (ip=="...")?"default":ip.c_str());
+    printf("Port number: %d (change with \"--socket NNNNN\")\n", sock);
+    
     Network yarp;
 
-    int sock = 0;
-    const char *ip = "...";
     bool reset = false;
-    if (argc>=2) {
-        sock = atoi(argv[1]);
-        if (argc>=3) {
-            ip = (const char *)argv[2];
-        }
-        fprintf(stderr,"Arguments supplied; database needs to be reset.\n");
+    if (options.check("ip")||options.check("socket")) {
+        fprintf(stderr,"Database needs to be reset, IP or port number set.\n");
         reset = true;
     }
 
     TripleSourceCreator db;
-    TripleSource *pmem = db.open("yarp.db",reset);
+    TripleSource *pmem = db.open(dbFilename.c_str(),reset);
     if (pmem == NULL) {
         fprintf(stderr,"Aborting, database failed to open.\n");
         return 1;
     }
 
     Contact contact = 
-        Contact::byName("...").addSocket("tcp",ip,sock);
+        Contact::byName("...").addSocket("tcp",ip.c_str(),sock);
     
     BootstrapServer::configFileBootstrap(contact);
 
@@ -86,9 +91,9 @@ int main(int argc, char *argv[]) {
     // these registrations are more complete.
     Network::registerContact(contact);
     Network::registerContact(fallback.where());
-
+    
     while (true) {
-        Time::delay(60);
+        Time::delay(600);
         printf("Name server running happily\n");
     }
     server.close();

@@ -137,7 +137,7 @@ public:
             printf("Error in query\n");
         }
         while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
-            int id = sqlite3_column_int(statement,0);
+            //int id = sqlite3_column_int(statement,0);
             char *ns = (char *)sqlite3_column_text(statement,1);
             char *name = (char *)sqlite3_column_text(statement,2);
             char *value = (char *)sqlite3_column_text(statement,3);

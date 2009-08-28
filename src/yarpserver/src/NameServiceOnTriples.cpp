@@ -428,8 +428,7 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     }
     printf("%s%s\n", 
            prefix.c_str(),
-           cmd.toString().c_str(),
-           remote.toString().c_str());
+           cmd.toString().c_str());
 
 
     TripleSource& mem = *db;

@@ -1,5 +1,12 @@
 2009-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/CMakeLists.txt: add option to compile new yarp server
+	version to the global build.  To use the new yarp server,
+	turn on the "CREATE_YARPSERVER3" flag during configuration,
+	and run it as "yarpserver3".  The current yarp server is 
+	still compiled and is still available as "yarp server" or
+	"yarpserver"
+
 	* src/libYARP_OS/include/yarp/os/impl/StringOutputStream.h: fix
 	inefficient append operation.
 
