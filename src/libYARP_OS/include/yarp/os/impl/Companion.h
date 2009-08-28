@@ -180,6 +180,10 @@ public:
 
     int cmdDetect(int argc, char *argv[]);
 
+    int cmdSubscribe(int argc, char *argv[]);
+    int cmdUnsubscribe(int argc, char *argv[]);
+    int cmdAnnounce(int argc, char *argv[]);
+
 private:
 
     Companion();

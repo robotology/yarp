@@ -29,7 +29,7 @@ private:
 public:
     NameServerManager(NameService& ns, 
                       yarp::os::Port *port = NULL) : ns(ns),
-						     port(port), mutex(1) {
+                                                     port(port), mutex(1) {
     }
 
     void setPort(yarp::os::Port& port) {
@@ -37,6 +37,7 @@ public:
     }
 
     virtual void onEvent(yarp::os::Bottle& event) {
+        ns.onEvent(event);
         if (port!=NULL) {
             port->write(event);
         }
@@ -46,13 +47,19 @@ public:
         return new NameServerConnectionHandler(this);
     }
 
+    virtual void lock() {
+        mutex.wait();
+    }
+
+    virtual void unlock() {
+        mutex.post();
+    }
+
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event, 
                        yarp::os::Contact& remote) {
-        mutex.wait();
         bool ok = ns.apply(cmd,reply,event,remote);
-        mutex.post();
         return ok;
     }
 };

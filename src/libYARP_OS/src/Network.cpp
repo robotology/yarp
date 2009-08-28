@@ -267,6 +267,13 @@ ConstString Network::getNameServerName() {
 }
 
 
+Contact Network::getNameServerContact() {
+    NameClient& nic = NameClient::getNameClient();
+    return nic.getAddress().toContact();
+}
+
+
+
 bool Network::setNameServerName(const char *name) {
     NameConfig nc;
     String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);

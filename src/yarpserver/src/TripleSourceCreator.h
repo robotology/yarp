@@ -25,7 +25,7 @@ public:
     }
 
     virtual ~TripleSourceCreator() {
-        if (implementation==NULL) {
+        if (implementation!=NULL) {
             close();
         }
     }

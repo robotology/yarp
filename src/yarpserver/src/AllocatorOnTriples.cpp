@@ -72,6 +72,11 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     // unlike standard yarp name server, port number allocation
     // is global across the network, rather than per machine.
 
+    // we also try to keep port numbers stable for port names,
+    // when possible.
+
+    string npref = "";
+    int pref = -1;
     string nstring = "";
     int number = -1;
     Triple t;
@@ -79,11 +84,17 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
     TripleContext context;
     context.setRid(db->find(t,NULL));
     if (context.rid>=0) {
-        t.setNsNameValue("alloc","*","free");
+        t.setNsNameValue("prefer","*",c.getName().c_str());
         list<Triple> match = db->query(t,&context);
         if (match.size()>0) {
-            nstring = match.begin()->name;
-            number = atoi(nstring.c_str());
+            npref = match.begin()->name;
+            pref = atoi(npref.c_str());
+            t.setNsNameValue("alloc",npref.c_str(),"in_use");
+            match = db->query(t,&context);
+            if (match.size()==0) {
+                nstring = npref;
+                number = pref;
+            }
         }
     }
 
@@ -99,24 +110,37 @@ Contact AllocatorOnTriples::completePortNumber(const Contact& c) {
                 regid = config.minPortNumber-1;
             }
         }
-        regid++;
         if (regid>=config.maxPortNumber && config.maxPortNumber!=0) {
-            fprintf(stderr,"Ran out of port numbers\n");
-            fprintf(stderr,"* Make sure ports/programs get closed properly.\n");
-            fprintf(stderr,"* If programs terminate without closing ports, run \"yarp clean\" from time to time..\n");
-            exit(1);
+            if (nstring == "") {
+                t.setNsNameValue("alloc","*","free");
+                list<Triple> match = db->query(t,&context);
+                if (match.size()>0) {
+                    nstring = match.begin()->name;
+                    number = atoi(nstring.c_str());
+                }
+            }
+            if (nstring=="") {
+                fprintf(stderr,"Ran out of port numbers\n");
+                fprintf(stderr,"* Make sure ports/programs get closed properly.\n");
+                fprintf(stderr,"* If programs terminate without closing ports, run \"yarp clean\" from time to time..\n");
+                exit(1);
+            }
+        } else {
+            regid++;
+            Triple t;
+            char buf[256];
+            sprintf(buf,"%d",regid);
+            t.setNsNameValue("alloc","regid",buf);
+            db->update(t,NULL);
+            t.setNsNameValue("alloc","regid","*");
+            context.setRid(db->find(t,NULL));
+            nstring = buf;
+            number = regid;
         }
-        Triple t;
-        char buf[256];
-        sprintf(buf,"%d",regid);
-        nstring = buf;
-        number = regid;
-        t.setNsNameValue("alloc","regid",buf);
-        db->update(t,NULL);
-        t.setNsNameValue("alloc","regid","*");
-        context.setRid(db->find(t,NULL));
     }
     t.setNsNameValue("alloc",nstring.c_str(),"in_use");
+    db->update(t,&context);
+    t.setNsNameValue("prefer",nstring.c_str(),c.getName().c_str());
     db->update(t,&context);
      
     return c.addSocket(c.getCarrier().c_str(),

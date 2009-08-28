@@ -16,6 +16,8 @@
 #include "AllocatorOnTriples.h"
 #include "NameServerManager.h"
 #include "BootstrapServer.h"
+#include "SubscriberOnSql.h"
+#include "ComposedNameService.h"
 
 using namespace yarp::os;
 using namespace std;
@@ -37,12 +39,17 @@ int main(int argc, char *argv[]) {
 
     Property options;
     options.fromCommand(argc,argv);
-    ConstString dbFilename = options.check("db",Value("yarp.db")).asString();
+    ConstString dbFilename = options.check("portdb",
+                                           Value("ports.db")).asString();
+    ConstString subdbFilename = options.check("subdb",
+                                              Value("subs.db")).asString();
     ConstString ip = options.check("ip",Value("...")).asString();
     int sock = options.check("socket",Value(10000)).asInt();
 
-    printf("Database: %s (change with \"--db newname.db\")\n", 
+    printf("Port database: %s (change with \"--portdb newports.db\")\n", 
            dbFilename.c_str());
+    printf("Subscription database: %s (change with \"--subdb newsubs.db\")\n", 
+           subdbFilename.c_str());
     printf("IP address: %s (change with \"--ip N.N.N.N\")\n", 
            (ip=="...")?"default":ip.c_str());
     printf("Port number: %d (change with \"--socket NNNNN\")\n", sock);
@@ -58,7 +65,13 @@ int main(int argc, char *argv[]) {
     TripleSourceCreator db;
     TripleSource *pmem = db.open(dbFilename.c_str(),reset);
     if (pmem == NULL) {
-        fprintf(stderr,"Aborting, database failed to open.\n");
+        fprintf(stderr,"Aborting, ports database failed to open.\n");
+        return 1;
+    }
+
+    SubscriberOnSql subscriber;
+    if (!subscriber.open(subdbFilename.c_str())) {
+        fprintf(stderr,"Aborting, subscription database failed to open.\n");
         return 1;
     }
 
@@ -72,7 +85,8 @@ int main(int argc, char *argv[]) {
     config.maxPortNumber = contact.getPort()+9999;
     AllocatorOnTriples alloc(pmem,config);
     NameServiceOnTriples ns(pmem,&alloc);
-    NameServerManager name(ns);
+    ComposedNameService combo(subscriber,ns);
+    NameServerManager name(combo);
     BootstrapServer fallback(name);
 
     Port server;

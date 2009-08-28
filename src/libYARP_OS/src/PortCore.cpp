@@ -87,9 +87,11 @@ bool PortCore::listen(const Address& address) {
         return false;
     }
 
+    bool announce = false;
     if (face!=NULL) {
         listening = true;
         success = true;
+        announce = true;
     }
 
     if (success) {
@@ -97,6 +99,18 @@ bool PortCore::listen(const Address& address) {
     }
 
     stateMutex.post();
+
+    if (announce) {
+        ConstString serverName = Network::getNameServerName();
+        ConstString portName = address.getRegName().c_str();
+        if (serverName!=portName) {
+            Bottle cmd, reply;
+            cmd.addString("announce");
+            cmd.addString(portName.c_str());
+            Network::write(Network::getNameServerContact(),
+                           cmd, reply);
+        }
+    }
 
     // we have either entered listening phase (face=valid, listening=true)
     // or remained in dormant phase

@@ -129,6 +129,12 @@ Companion::Companion() {
         "try to remove inactive entries from the name server");
     add("resource",  &Companion::cmdResource,
         "locates resource files (see ResourceFinder class)");
+    add("subscribe", &Companion::cmdSubscribe,
+        "not yet implemented");
+    add("unsubscribe", &Companion::cmdUnsubscribe,
+        "not yet implemented");
+    add("announce", &Companion::cmdAnnounce,
+        "not yet implemented");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -1033,6 +1039,71 @@ int Companion::cmdDetect(int argc, char *argv[]) {
     return 0;
 }
 
+int Companion::cmdSubscribe(int argc, char *argv[]) {
+    Bottle cmd, reply;
+    cmd.add("subscribe");
+    for (int i=0; i<argc; i++) {
+        cmd.add(argv[i]);
+    }
+    Network::write(Network::getNameServerContact(),
+                   cmd,
+                   reply);
+    bool fail = reply.get(0).toString()=="fail";
+    if (fail) {
+        printf("Subscription failed.\n");
+        return 1;
+    }
+    if (reply.get(0).toString()!="ok") {
+        Bottle subs = reply.tail();
+        for (int i=0; i<subs.size(); i++) {
+            Bottle *b = subs.get(i).asList();
+            if (b!=NULL) {
+                printf("Subscription %s -> %s", 
+                       b->check("src",Value("?")).asString().c_str(),
+                       b->check("dest",Value("?")).asString().c_str());
+                ConstString carrier = b->check("carrier",Value("")).asString();
+                if (carrier!="") {
+                    printf(" (%s)", carrier.c_str());
+                }
+                printf("\n");
+            }
+        }
+        if (subs.size()==0) {
+            printf("No subscriptions.\n");
+        }
+    }
+    return 0;
+}
+
+
+int Companion::cmdUnsubscribe(int argc, char *argv[]) {
+    Bottle cmd, reply;
+    cmd.add("unsubscribe");
+    for (int i=0; i<argc; i++) {
+        cmd.add(argv[i]);
+    }
+    Network::write(Network::getNameServerContact(),
+                   cmd,
+                   reply);
+    bool ok = reply.get(0).toString()=="ok";
+    if (!ok) {
+        printf("Unsubscription failed.\n");
+    }
+    return ok?0:1;
+}
+
+
+int Companion::cmdAnnounce(int argc, char *argv[]) {
+    Bottle cmd, reply;
+    cmd.add("announce");
+    for (int i=0; i<argc; i++) {
+        cmd.add(argv[i]);
+    }
+    Network::write(Network::getNameServerContact(),
+                   cmd,
+                   reply);
+    return 0;
+}
 
 
 int Companion::connect(const char *src, const char *dest, bool silent) {

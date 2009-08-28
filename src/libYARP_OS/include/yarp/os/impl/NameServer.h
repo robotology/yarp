@@ -373,6 +373,7 @@ private:
     String cmdRegister(int argc, char *argv[]);
     String cmdQuery(int argc, char *argv[]);
     String cmdUnregister(int argc, char *argv[]);
+    String cmdAnnounce(int argc, char *argv[]);
     String cmdHelp(int argc, char *argv[]);
     String cmdSet(int argc, char *argv[]);
     String cmdGet(int argc, char *argv[]);

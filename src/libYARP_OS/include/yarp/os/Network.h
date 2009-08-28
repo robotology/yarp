@@ -211,6 +211,14 @@ public:
      */
     static ConstString getNameServerName();
 
+    /**
+     * Get the contact information for the port associated with the nameserver
+     * (usually "/root", but this can be overwritten by the "yarp namespace" 
+     * command).
+     * @return contact informatoin for the port associated with the nameserver
+     */
+    static Contact getNameServerContact();
+
 
     /**
      * Set the name of the port associated with the nameserver (usually

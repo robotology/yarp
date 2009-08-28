@@ -41,25 +41,39 @@ TripleSource *TripleSourceCreator::open(const char *filename, bool fresh) {
     }
 
 
-    const char *query = "CREATE TABLE IF NOT EXISTS tags (\n\
+    const char *create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
 	id INTEGER PRIMARY KEY,\n\
 	rid INTEGER,\n\
 	ns TEXT,\n\
 	name TEXT,\n\
 	value TEXT);";
 
-    // TODO: add indices, e.g.:
-    //CREATE INDEX tagsNs ON tags (ns);
-    //CREATE INDEX tagsNsName ON tags (ns,name);
-    //CREATE INDEX tagsName ON tags (name);
-
-
-    result = sqlite3_exec(db, query, NULL, NULL, NULL);
+    result = sqlite3_exec(db, create_main_table, NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up database tables\n");
         exit(1);
     }
+
+    /*
+    const char *create_subscribe_table = "CREATE TABLE IF NOT EXISTS subscribe (\n\
+	id INTEGER PRIMARY KEY,\n\
+	source TEXT,\n\
+	dest TEXT,\n\
+	carrier TEXT);";
+
+    result = sqlite3_exec(db, create_subscribe_table, NULL, NULL, NULL);
+    if (result!=SQLITE_OK) {
+        sqlite3_close(db);
+        fprintf(stderr,"Failed to set up database tables\n");
+        exit(1);
+    }
+    */
+
+    // TODO: add indices, e.g.:
+    //CREATE INDEX tagsNs ON tags (ns);
+    //CREATE INDEX tagsNsName ON tags (ns,name);
+    //CREATE INDEX tagsName ON tags (name);
 
     implementation = db;
     accessor = new SqliteTripleSource(db);

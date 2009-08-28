@@ -246,6 +246,7 @@ void NameServer::setup() {
     dispatcher.add("route", &NameServer::cmdRoute);
     dispatcher.add("gc", &NameServer::cmdGarbageCollect);
     dispatcher.add("bot", &NameServer::cmdBot);
+    dispatcher.add("announce", &NameServer::cmdAnnounce);
 
     ndispatcher.add("list", &NameServer::ncmdList);
     ndispatcher.add("query", &NameServer::ncmdQuery);
@@ -320,6 +321,14 @@ String NameServer::cmdUnregister(int argc, char *argv[]) {
     return terminate(textify(address));
 }
 
+
+String NameServer::cmdAnnounce(int argc, char *argv[]) {
+    // ignore source
+    argc--;
+    argv++;
+
+    return terminate("ok\n");
+}
 
 String NameServer::cmdRoute(int argc, char *argv[]) {
     // ignore source

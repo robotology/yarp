@@ -25,6 +25,9 @@ public:
                        yarp::os::Contact& remote) = 0;
 
     virtual void onEvent(yarp::os::Bottle& event) {}
+
+    virtual void lock() {}
+    virtual void unlock() {}
 };
 
 #endif

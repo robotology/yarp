@@ -415,13 +415,13 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
                                  yarp::os::Bottle& event,
                                  yarp::os::Contact& remote) {
     ConstString key = cmd.get(0).asString();
-    ConstString prefix = "* ";
+    ConstString prefix = " * ";
     
     if (key=="register") {
         lastRegister = cmd.get(1).asString().c_str();
     } else if (key=="set") {
         if (cmd.get(1).asString()==lastRegister.c_str()) {
-            prefix = "  + ";
+            prefix = "   + ";
         }
     } else {
         lastRegister = "";

@@ -45,6 +45,7 @@ public:
         if (!ok) return false;
         yarp::os::Contact remote;
         remote = reader.getRemoteContact();
+        service->lock();
         ok = service->apply(cmd,reply,event,remote);
         for (int i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
@@ -52,6 +53,7 @@ public:
                 service->onEvent(*e);
             }
         }
+        service->unlock();
         if (writer==NULL) {
             writer = reader.getWriter();
         }
