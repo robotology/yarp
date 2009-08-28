@@ -42,7 +42,8 @@ Bottle::Bottle(const Bottle& bottle) {
 const Bottle& Bottle::operator = (const Bottle& bottle) {
     if (bottle.isNull()) {
     } else {
-        fromString(bottle.toString().c_str());
+        //fromString(bottle.toString().c_str());
+        copy(bottle);
     }
     return *this;
 }
