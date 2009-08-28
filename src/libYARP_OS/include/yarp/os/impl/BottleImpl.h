@@ -39,6 +39,12 @@ namespace yarp {
 }
 
 
+/**
+ *
+ * A single item in a Bottle.  This extends the public yarp::os::Value 
+ * interface with some implementation-specific details.
+ *
+ */
 class yarp::os::impl::Storable : public yarp::os::Value {
 public:
     virtual bool isInt() const     { return false; }
@@ -74,10 +80,29 @@ public:
         return cloneStorable();
     }
 
-
+    /**
+     *
+     * Destructor.
+     *
+     */
     virtual ~Storable() {}
 
+    /**
+     *
+     * Initialize from a string representation, assuming that any
+     * syntax around this representation such as braces or
+     * parentheses has already been consumed.
+     *
+     */
     virtual void fromString(const String& src) = 0;
+
+    /**
+     *
+     * Initialize from a string representation.  This should consume
+     * any syntax around that representation such as braces or
+     * parentheses.
+     *
+     */
     virtual void fromStringNested(const String& src) {
         fromString(src);
     }
@@ -86,14 +111,42 @@ public:
         return yarp::os::ConstString(toStringFlex().c_str());
     }
 
+    /**
+     *
+     * Synonym for toString(), but with the internal String class
+     * rather than ConstString.
+     *
+     */
     virtual String toStringFlex() const = 0;
+
+    /**
+     *
+     * Create string representation, including any syntax that should
+     * wrap it such as braces or parentheses.
+     *
+     */
     virtual String toStringNested() const { return toStringFlex(); }
 
-    //virtual int getCode() = 0;
+    /**
+     *
+     * Factory method.
+     *
+     */
     virtual Storable *createStorable() const = 0;
 
+    /**
+     *
+     * Synonym for asString(), but with the internal String class
+     * rather than ConstString.
+     *
+     */
     virtual String asStringFlex() const { return ""; }
 
+    /**
+     *
+     * Typed synonym for clone()
+     *
+     */
     virtual Storable *cloneStorable() const {
         Storable *item = createStorable();
         YARP_ASSERT(item!=NULL);
@@ -101,8 +154,18 @@ public:
         return item;
     }
 
+    /**
+     *
+     * Become a copy of the passed item.
+     *
+     */
     virtual void copy(const Storable& alt) = 0;
 
+    /**
+     *
+     * Return a code describing this item, used in serializing bottles.
+     *
+     */
     virtual int subCode() const {
         return 0;
     }
@@ -111,6 +174,11 @@ public:
 };
 
 
+/**
+ *
+ * An empty item.
+ *
+ */
 class yarp::os::impl::StoreNull : public Storable {
 public:
     StoreNull() { }
@@ -126,6 +194,11 @@ public:
 };
 
 
+/**
+ *
+ * An integer item.
+ *
+ */
 class yarp::os::impl::StoreInt : public Storable {
 private:
     int x;
@@ -146,6 +219,11 @@ public:
     virtual void copy(const Storable& alt) { x = alt.asInt(); }
 };
 
+/**
+ *
+ * A vocabulary item.
+ *
+ */
 class yarp::os::impl::StoreVocab : public Storable {
 private:
     int x;
@@ -168,6 +246,11 @@ public:
     virtual void copy(const Storable& alt) { x = alt.asVocab(); }
 };
 
+/**
+ *
+ * A string item.
+ *
+ */
 class yarp::os::impl::StoreString : public Storable {
 private:
     String x;
@@ -191,6 +274,11 @@ public:
     virtual void copy(const Storable& alt) { x = alt.asString().c_str(); }
 };
 
+/**
+ *
+ * A binary blob item.
+ *
+ */
 class yarp::os::impl::StoreBlob : public Storable {
 private:
     String x;
@@ -222,6 +310,11 @@ public:
     }
 };
 
+/**
+ *
+ * A floating point number item.
+ *
+ */
 class yarp::os::impl::StoreDouble : public Storable {
 private:
     double x;
@@ -244,6 +337,11 @@ public:
 };
 
 
+/**
+ *
+ * A nested list of items.
+ *
+ */
 class yarp::os::impl::StoreList : public Storable {
 private:
     yarp::os::Bottle content;
