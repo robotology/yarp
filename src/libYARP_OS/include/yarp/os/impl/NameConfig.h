@@ -52,7 +52,7 @@ public:
 
     Address getAddress();
 
-    String getNamespace();
+    String getNamespace(bool refresh = false);
 
     static String getEnv(const String& key);
 

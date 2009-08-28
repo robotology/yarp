@@ -258,8 +258,8 @@ void NameConfig::setAddress(const Address& address) {
 }
 
 
-String NameConfig::getNamespace() {
-    if (space=="") {
+String NameConfig::getNamespace(bool refresh) {
+    if (space==""||refresh) {
         String fname = getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
         Bottle bot(readConfig(fname).c_str());
         space = bot.get(0).asString().c_str();

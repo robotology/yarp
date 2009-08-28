@@ -271,6 +271,7 @@ bool Network::setNameServerName(const char *name) {
     NameConfig nc;
     String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     nc.writeConfig(fname,String(name));
+    nc.getNamespace(true);
     NameClient& client = NameClient::getNameClient();
     return client.updateAddress();
 }

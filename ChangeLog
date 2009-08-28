@@ -1,5 +1,8 @@
 2009-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/NameConfig.cpp: tweaked setNameServerName
+	to remove another source of cached namespaces
+
 	* src/CMakeLists.txt: add option to compile new yarp server
 	version to the global build.  To use the new yarp server,
 	turn on the "CREATE_YARPSERVER3" flag during configuration,
