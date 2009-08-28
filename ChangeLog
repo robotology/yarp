@@ -1,5 +1,11 @@
 2009-08-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/impl/StringOutputStream.h: fix
+	inefficient append operation.
+
+	* src/libYARP_OS/include/yarp/os/impl/BufferedConnectionWriter.h: 
+	add an optimization for messages with lots of small parts.
+
 	* example/swig/CMakeLists.txt: fix directory creation for Java
 	wrappers (thanks to Jonas Ruesch)
 

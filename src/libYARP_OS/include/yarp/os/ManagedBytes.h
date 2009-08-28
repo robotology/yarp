@@ -30,6 +30,7 @@ public:
     ManagedBytes() {
         b = Bytes(0/*NULL*/,0);
         owned = false;
+        use = -1;
     }
 
     /**
@@ -40,6 +41,7 @@ public:
     ManagedBytes(const Bytes& ext, bool owned = false) {
         b = ext;
         this->owned = owned;
+        use = -1;
     }
 
     /**
@@ -49,6 +51,7 @@ public:
      */
     ManagedBytes(const ManagedBytes& alt) {
         b = alt.b;
+        use = alt.use;
         owned = false;
         if (alt.owned) {
             copy();
@@ -64,6 +67,7 @@ public:
     const ManagedBytes& operator = (const ManagedBytes& alt) {
         clear();
         b = alt.b;
+        use = alt.use;
         owned = false;
         if (alt.owned) {
             copy();
@@ -82,6 +86,7 @@ public:
         Network::assertion(buf!=0/*NULL*/);
         b = Bytes(buf,len);
         owned = true;
+        use = -1;
     }
 
     /**
@@ -94,6 +99,7 @@ public:
         char *buf = new char[len];
         b = Bytes(buf,len);
         owned = true;
+        use = -1;
     }
 
     /**
@@ -106,6 +112,14 @@ public:
      */
     int length() const {
         return b.length();
+    }
+
+    /**
+     * @return length of used portion of data block - by default, this
+     * is the same as length(), unless setUsed() is called
+     */
+    int used() const {
+        return (use==-1)?length():use;
     }
 
     /**
@@ -133,6 +147,7 @@ public:
             owned = 0;
         }
         b = Bytes(0/*NULL*/,0);
+        use = -1;
     }
 
     /**
@@ -142,9 +157,35 @@ public:
         return b;
     }
 
+    
+    /**
+     * @return description of used portion of data block associated 
+     * with this object
+     */
+    Bytes usedBytes() {
+        return Bytes(get(),used());
+    }
+
+
+    /**
+     *
+     * explicitly declare how many of the bytes are in use.
+     *
+     * @param used byte count (-1 to set to full length of data block)
+     *
+     * @return a confirmation of the number of bytes declared to be in use.
+     *
+     */
+    int setUsed(int used = -1) {
+        use = used;
+        return this->used();
+    }
+    
+
 private:
     Bytes b;
     bool owned;
+    int use;
 };
 
 #endif

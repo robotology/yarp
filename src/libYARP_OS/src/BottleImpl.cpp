@@ -533,7 +533,6 @@ void BottleImpl::synch() {
             YMSG(("bottle code %d\n",StoreList::code + subCode()));
         }
         data.clear();
-        //StringOutputStream sos;
         BufferedConnectionWriter writer;
         if (!nested) {
             writer.appendInt(StoreList::code + speciality);
@@ -555,20 +554,9 @@ void BottleImpl::synch() {
             }
             s->write(writer);
         }
-        //buf.write(sos);
         String str = writer.toString();
-        //int extra = 0;
-        //if (!nested) {
-        //  extra = sizeof(NetInt32);
-        //}
         data.resize(str.length(),' ');
         memcpy(&data[0],str.c_str(),str.length());
-        /*
-        if (!nested) {
-            Bytes b(&data[0],sizeof(NetInt32));
-            NetType::netInt(StoreList::code + speciality,b);
-        }
-        */
         dirty = false;
     }
 }

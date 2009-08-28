@@ -36,10 +36,12 @@ public:
 
 
     virtual void write(const Bytes& b) { // throws
-        //ACE_DEBUG((LM_DEBUG,"StringOutputStream::write"));
-        for (int i=0; i<b.length(); i++) {
-            data += b.get()[i];
-        }
+        String tmp;
+        YARP_STRSET(tmp,(char*)b.get(),b.length(),0);
+        data += tmp;
+        //for (int i=0; i<b.length(); i++) {
+        //data += b.get()[i];
+        //}
     }
 
     virtual void close() {
