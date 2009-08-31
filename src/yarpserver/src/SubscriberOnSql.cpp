@@ -137,16 +137,13 @@ bool SubscriberOnSql::welcome(const char *port) {
         char *src = (char *)sqlite3_column_text(statement,1);
         char *dest = (char *)sqlite3_column_text(statement,2);
         char *carrier = (char *)sqlite3_column_text(statement,5);
-
-        printf("SHOULD CHECK SUBSCRIPTION %s %s %s, BUT DO NOT\n",
-               src, dest, carrier);
-
         NameStore *store = getStore();
         if (store!=NULL) {
             Contact csrc = store->query(src);
             Contact cdest = store->query(dest);
             if (csrc.isValid()&&cdest.isValid()) {
-                printf("Ready! %s %s\n", csrc.toString().c_str(),
+                printf("==> trigger subscription %s %s\n", 
+                       csrc.toString().c_str(),
                        cdest.toString().c_str());
                 connect(csrc,cdest,carrier);
             }

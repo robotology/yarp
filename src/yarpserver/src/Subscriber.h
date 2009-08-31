@@ -91,15 +91,11 @@ public:
     }
 
     virtual void onEvent(yarp::os::Bottle& event) {
-        // put this in for compatibility with old YARP modules -
-        // remove after some time, once all ports generate announce
-        // messages
-
-        yarp::os::ConstString tag = event.get(0).toString();
-        yarp::os::ConstString port = event.get(1).toString();
-        if (tag=="add") {
-            welcome(port.c_str());
-        }
+        //yarp::os::ConstString tag = event.get(0).toString();
+        //yarp::os::ConstString port = event.get(1).toString();
+        //if (tag=="add") {
+        //welcome(port.c_str());
+        //}
     }
 };
 
