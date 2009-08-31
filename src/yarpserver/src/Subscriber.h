@@ -10,6 +10,7 @@
 #define YARPDB_SUBSCRIBER_INC
 
 #include "NameService.h"
+#include "ConnectThread.h"
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
@@ -20,7 +21,21 @@
  *
  */
 class Subscriber : public NameService {
+private:
+    NameStore *store;
+    ConnectManager manager;
 public:
+    Subscriber() : store(0/*NULL*/) {}
+
+    void setStore(NameStore& store) { this->store = &store; }
+    NameStore *getStore() { return store; }
+
+    void connect(const yarp::os::Contact& src,
+                 const yarp::os::Contact& dest,
+                 const yarp::os::ConstString& carrier) {
+        manager.connect(src,dest,carrier);
+    }
+
     virtual bool addSubscription(const char *src,
                                  const char *dest,
                                  const char *carrier) = 0;

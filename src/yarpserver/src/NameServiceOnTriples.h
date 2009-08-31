@@ -48,7 +48,7 @@ public:
  * An implementation of name service operators on a triple store.
  *
  */
-class NameServiceOnTriples : public NameService {
+class NameServiceOnTriples : public NameService, public NameStore {
 private:
     TripleSource *db;
     Allocator *alloc;
@@ -62,6 +62,8 @@ public:
     yarp::os::Contact query(const char *portName, 
                             NameTripleState& act,
                             const char *prefix);
+
+    virtual yarp::os::Contact query(const char *portName);
 
     bool cmdQuery(NameTripleState& act);
 

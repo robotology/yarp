@@ -67,6 +67,15 @@ Contact NameServiceOnTriples::query(const char *portName,
 }
 
 
+yarp::os::Contact NameServiceOnTriples::query(const char *port) {
+    Bottle cmd,reply,event;
+    Contact remote;
+    TripleSource& mem = *db;
+    NameTripleState act(cmd,reply,event,remote,mem);
+    return query(port,act,"");
+}
+
+
 bool NameServiceOnTriples::cmdQuery(NameTripleState& act) {
     ConstString port = act.cmd.get(1).asString();
 

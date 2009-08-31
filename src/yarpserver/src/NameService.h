@@ -30,4 +30,15 @@ public:
     virtual void unlock() {}
 };
 
+/**
+ *
+ * Abstract interface for a database of port names.
+ *
+ */
+class NameStore {
+public:
+    virtual ~NameStore() {}
+    virtual yarp::os::Contact query(const char *name) = 0;
+};
+
 #endif
