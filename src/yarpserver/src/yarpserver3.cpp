@@ -50,6 +50,7 @@ int main(int argc, char *argv[]) {
            dbFilename.c_str());
     printf("Subscription database: %s (change with \"--subdb newsubs.db\")\n", 
            subdbFilename.c_str());
+    printf("Make sure these databases are not on NFS.\n");
     printf("IP address: %s (change with \"--ip N.N.N.N\")\n", 
            (ip=="...")?"default":ip.c_str());
     printf("Port number: %d (change with \"--socket NNNNN\")\n", sock);

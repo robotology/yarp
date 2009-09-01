@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This shell script will only work if "server_peek" is compiled
+
 case "$1" in
     "reset")
 	rm -f yarp.db
