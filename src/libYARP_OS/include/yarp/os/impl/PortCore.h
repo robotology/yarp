@@ -263,6 +263,10 @@ public:
      */
     void addOutput(OutputProtocol *op);
 
+    virtual bool removeIO(const Route& route, bool synch) {
+        return removeUnit(route,synch);
+    }
+
 private:
 
     // internal maintenance of sub units

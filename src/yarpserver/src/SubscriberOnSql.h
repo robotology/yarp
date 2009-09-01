@@ -34,8 +34,7 @@ public:
     bool close();
 
     virtual bool addSubscription(const char *src,
-                                 const char *dest,
-                                 const char *carrier);
+                                 const char *dest);
 
     virtual bool removeSubscription(const char *src,
                                     const char *dest);
@@ -44,6 +43,9 @@ public:
                                    yarp::os::Bottle& reply);
 
     virtual bool welcome(const char *port);
+
+    bool checkSubscription(const char *src, const char *dest,
+                           const char *srcFull, const char *destFull);
 
     void setVerbose(bool verbose) {
         this->verbose = verbose;

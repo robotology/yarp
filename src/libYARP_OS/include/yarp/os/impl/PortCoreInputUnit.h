@@ -88,6 +88,7 @@ private:
     bool closing, finished, running;
     String name;
     Readable *localReader;
+    Route officialRoute;
 
     void closeMain();
 };

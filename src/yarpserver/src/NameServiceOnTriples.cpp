@@ -10,7 +10,9 @@
 #include <stdlib.h>
 
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Network.h>
 #include "NameServiceOnTriples.h"
+#include "ParseName.h"
 
 using namespace yarp::os;
 using namespace std;
@@ -79,6 +81,11 @@ yarp::os::Contact NameServiceOnTriples::query(const char *port) {
 bool NameServiceOnTriples::cmdQuery(NameTripleState& act) {
     ConstString port = act.cmd.get(1).asString();
 
+    ParseName parser;
+    parser.apply(port.c_str());
+    port = parser.getPortName();
+
+    /*
     // port names may be prefixed - sort that out
     string base = port.c_str();
     string pat = "";
@@ -91,6 +98,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act) {
         }
         port = base.c_str();
     }
+    */
 
     if (act.reply.size()==0 && !act.bottleMode) {
         act.reply.addString("old");
@@ -98,7 +106,7 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act) {
     Bottle& q=(act.bottleMode&&!act.nestedMode)?
         act.reply :
         act.reply.addList();
-    Contact c = query(port.c_str(),act,pat.c_str());
+    Contact c = query(port.c_str(),act,parser.getNetworkChoice());
     string host = c.getHost().c_str();
     string carrier = c.getCarrier().c_str();
     int sock = c.getPort();
@@ -152,6 +160,24 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
     if (result!=-1) {
+        // Hmm, we already have a registration.
+        // This could be fine - maybe program crashed or was abruptly
+        // terminated.  Classically, that is what YARP would assume.
+        // Now, let us try checking instead to see if there is a port
+        // alive at the registered address.  Note that this can lead
+        // to delays...
+        Contact c = query(port.c_str());
+        if (c.isValid()) {
+            Bottle cmd("[ver]"), reply;
+            bool ok = Network::write(c,cmd,reply,true,true);
+            if (ok) {
+                // oops! there is a live port!
+                // give back a blank query
+                act.cmd.fromString("query");
+                return cmdQuery(act);
+            }
+        }
+
         cmdUnregister(act);
         act.reply.clear();
     }

@@ -18,6 +18,7 @@
 #include "BootstrapServer.h"
 #include "SubscriberOnSql.h"
 #include "ComposedNameService.h"
+#include "ParseName.h"
 
 using namespace yarp::os;
 using namespace std;

@@ -267,13 +267,15 @@ public:
      * @param cmd the message to send
      * @param reply the response is read here
      * @param admin true for administrative message, false for regular data
+     * @param quiet true to suppress error messages
      *
      * @return true on success
      */
     static bool write(const Contact& contact, 
                       PortWriter& cmd,
                       PortReader& reply,
-                      bool admin = false);
+                      bool admin = false,
+                      bool quiet = false);
 
     /**
      *

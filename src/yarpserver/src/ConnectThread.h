@@ -20,16 +20,12 @@
 class ConnectThread : public yarp::os::Thread {
 public:
     yarp::os::Contact src;
-    yarp::os::Contact dest;
-    yarp::os::ConstString carrier;
+    yarp::os::ConstString dest;
 
     virtual void run() {
         yarp::os::Bottle cmd, reply;
         cmd.addVocab(VOCAB3('a','d','d'));
-        cmd.addString(dest.getName());
-        if (carrier!="") {
-            cmd.addString(carrier);
-        }
+        cmd.addString(dest.c_str());
         yarp::os::Network::write(src,
                                  cmd,
                                  reply,
@@ -54,8 +50,7 @@ public:
     }
 
     void connect(const yarp::os::Contact& src,
-                 const yarp::os::Contact& dest,
-                 const yarp::os::ConstString& carrier) {
+                 const yarp::os::ConstString& dest) {
         ConnectThread *t = 0/*NULL*/;
         for (std::list<ConnectThread *>::iterator it = con.begin();
              it != con.end(); it++) {
@@ -73,7 +68,6 @@ public:
         }
         t->src = src;
         t->dest = dest;
-        t->carrier = carrier;
         t->start();
     }
 };

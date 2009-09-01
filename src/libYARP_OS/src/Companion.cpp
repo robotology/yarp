@@ -129,12 +129,6 @@ Companion::Companion() {
         "try to remove inactive entries from the name server");
     add("resource",  &Companion::cmdResource,
         "locates resource files (see ResourceFinder class)");
-    add("subscribe", &Companion::cmdSubscribe,
-        "not yet implemented");
-    add("unsubscribe", &Companion::cmdUnsubscribe,
-        "not yet implemented");
-    add("announce", &Companion::cmdAnnounce,
-        "not yet implemented");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -567,6 +561,14 @@ int Companion::sendMessage(const String& port, Writable& writable,
 
 
 int Companion::cmdConnect(int argc, char *argv[]) {
+    bool persist = false;
+    if (argc>0) {
+        if (ConstString(argv[0])=="--persist") {
+            persist = true;
+            argv++;
+            argc--;
+        }
+    }
     if (argc<2||argc>3) {
         ACE_OS::fprintf(stderr, "Currently must have two/three arguments, a sender port and receiver port (and an optional protocol)\n");
         return 1;
@@ -579,14 +581,23 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         dest = String(proto) + ":/" + slashify(dest);
     }
 
-    // this should not be needed any more
-    //disconnectInput(argv[1],src,true); // in connectionless cases
+    if (persist) {
+        return subscribe(src,dest.c_str());
+    }
 
     return connect(src,dest.c_str());
 }
 
 
 int Companion::cmdDisconnect(int argc, char *argv[]) {
+    bool persist = false;
+    if (argc>0) {
+        if (ConstString(argv[0])=="--persist") {
+            persist = true;
+            argv++;
+            argc--;
+        }
+    }
     if (argc!=2) {
         ACE_OS::fprintf(stderr, "Must have two arguments, a sender port and receiver port\n");
         return 1;
@@ -594,6 +605,9 @@ int Companion::cmdDisconnect(int argc, char *argv[]) {
 
     const char *src = argv[0];
     const char *dest = argv[1];
+    if (persist) {
+        return unsubscribe(src,dest);
+    }
     return disconnect(src,dest);
 }
 
@@ -1039,12 +1053,11 @@ int Companion::cmdDetect(int argc, char *argv[]) {
     return 0;
 }
 
-int Companion::cmdSubscribe(int argc, char *argv[]) {
+int Companion::subscribe(const char *src, const char *dest) {
     Bottle cmd, reply;
     cmd.add("subscribe");
-    for (int i=0; i<argc; i++) {
-        cmd.add(argv[i]);
-    }
+    cmd.add(src);
+    cmd.add(dest);
     Network::write(Network::getNameServerContact(),
                    cmd,
                    reply);
@@ -1053,7 +1066,7 @@ int Companion::cmdSubscribe(int argc, char *argv[]) {
         printf("Subscription failed.\n");
         return 1;
     }
-    if (reply.get(0).toString()!="ok") {
+    if (reply.get(0).toString()=="subscriptions") {
         Bottle subs = reply.tail();
         for (int i=0; i<subs.size(); i++) {
             Bottle *b = subs.get(i).asList();
@@ -1071,17 +1084,18 @@ int Companion::cmdSubscribe(int argc, char *argv[]) {
         if (subs.size()==0) {
             printf("No subscriptions.\n");
         }
+    } else if (reply.get(0).toString()!="ok") {
+        printf("This name server does not support subscriptions\n");
     }
     return 0;
 }
 
 
-int Companion::cmdUnsubscribe(int argc, char *argv[]) {
+int Companion::unsubscribe(const char *src, const char *dest) {
     Bottle cmd, reply;
     cmd.add("unsubscribe");
-    for (int i=0; i<argc; i++) {
-        cmd.add(argv[i]);
-    }
+    cmd.add(src);
+    cmd.add(dest);
     Network::write(Network::getNameServerContact(),
                    cmd,
                    reply);
@@ -1093,6 +1107,7 @@ int Companion::cmdUnsubscribe(int argc, char *argv[]) {
 }
 
 
+/*
 int Companion::cmdAnnounce(int argc, char *argv[]) {
     Bottle cmd, reply;
     cmd.add("announce");
@@ -1104,6 +1119,7 @@ int Companion::cmdAnnounce(int argc, char *argv[]) {
                    reply);
     return 0;
 }
+*/
 
 
 int Companion::connect(const char *src, const char *dest, bool silent) {

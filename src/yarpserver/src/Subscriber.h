@@ -31,14 +31,12 @@ public:
     NameStore *getStore() { return store; }
 
     void connect(const yarp::os::Contact& src,
-                 const yarp::os::Contact& dest,
-                 const yarp::os::ConstString& carrier) {
-        manager.connect(src,dest,carrier);
+                 const yarp::os::ConstString& dest) {
+        manager.connect(src,dest);
     }
 
     virtual bool addSubscription(const char *src,
-                                 const char *dest,
-                                 const char *carrier) = 0;
+                                 const char *dest) = 0;
 
     virtual bool removeSubscription(const char *src,
                                     const char *dest) = 0;
@@ -60,11 +58,9 @@ public:
         if (tag=="subscribe") {
             yarp::os::ConstString src = cmd.get(1).asString();
             yarp::os::ConstString dest = cmd.get(2).asString();
-            yarp::os::ConstString carrier = cmd.get(3).asString();
             if (dest!="") {
                 ok = addSubscription(src,
-                                     dest,
-                                     carrier);
+                                     dest);
                 reply.clear();
                 reply.addVocab(ok?VOCAB2('o','k'):VOCAB4('f','a','i','l'));
                 return ok;

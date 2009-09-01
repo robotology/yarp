@@ -60,6 +60,10 @@ public:
                    getName().c_str(),
                    dest.c_str()));
     }
+
+    virtual bool removeIO(const Route& route, bool synch = false) {
+        return false;
+    }
   
     virtual void describe(void *id, OutputStream *os) {
         ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to describe itself\n",

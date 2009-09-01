@@ -178,7 +178,8 @@ ConstString Network::readString(bool *eof) {
 bool Network::write(const Contact& contact, 
                     PortWriter& cmd,
                     PortReader& reply,
-                    bool admin) {
+                    bool admin,
+                    bool quiet) {
 
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
@@ -192,13 +193,17 @@ bool Network::write(const Contact& contact,
         address = nic.queryName(targetName);
     }
     if (!address.isValid()) {
-        YARP_ERROR(Logger::get(),"could not find port");
+        if (!quiet) {
+            YARP_ERROR(Logger::get(),"could not find port");
+        }
         return false;
     }
     
     OutputProtocol *out = Carriers::connect(address);
     if (out==NULL) {
-        YARP_ERROR(Logger::get(),"cannot connect to port");
+        if (!quiet) {
+            YARP_ERROR(Logger::get(),"cannot connect to port");
+        }
         return false;
     }
 
@@ -213,13 +218,17 @@ bool Network::write(const Contact& contact,
     BufferedConnectionWriter bw(out->isTextMode());
     bool ok = pc.write(bw);
     if (!ok) {
-        YARP_ERROR(Logger::get(),"could not write to connection");
+        if (!quiet) {
+            YARP_ERROR(Logger::get(),"could not write to connection");
+        }
         if (out!=NULL) delete out;
         return false;
     }
     ok = cmd.write(bw);
     if (!ok) {
-        YARP_ERROR(Logger::get(),"could not write to connection");
+        if (!quiet) {
+            YARP_ERROR(Logger::get(),"could not write to connection");
+        }
         if (out!=NULL) delete out;
         return false;
     }

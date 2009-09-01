@@ -78,6 +78,15 @@ void PortCoreInputUnit::run() {
             done = true;
         } else {
             route = ip->getRoute();
+
+            // just before going official, tag any lurking inputs from
+            // the same source as undesired
+            if (Name(route.getFromName()).isRooted()) {
+                getOwner().removeIO(Route(route.getFromName(),
+                                          route.getToName(),"*"),true);
+            }
+            officialRoute = route;
+
             String msg = String("Receiving input from ") + 
                 route.getFromName() + " to " + route.getToName() + 
                 " using " +
@@ -415,10 +424,13 @@ void PortCoreInputUnit::closeMain() {
 
 
 Route PortCoreInputUnit::getRoute() {
+    return officialRoute;
+    /*
     if (ip!=NULL) {
         return ip->getRoute();
     }
     return PortCoreUnit::getRoute();
+    */
 }
 
 

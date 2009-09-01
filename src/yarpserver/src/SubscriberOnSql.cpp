@@ -11,6 +11,7 @@
 
 #include "sqlite3.h"
 #include "SubscriberOnSql.h"
+#include "ParseName.h"
 
 #ifndef WIN32
 #include <unistd.h>
@@ -51,8 +52,7 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
 	src TEXT,\n\
 	dest TEXT,\n\
 	srcFull TEXT,\n\
-	destFull TEXT,\n\
-	carrier TEXT);";
+	destFull TEXT);";
 
     result = sqlite3_exec(db, create_subscribe_table, NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
@@ -76,16 +76,17 @@ bool SubscriberOnSql::close() {
 }
 
 bool SubscriberOnSql::addSubscription(const char *src,
-                                      const char *dest,
-                                      const char *carrier) {
+                                      const char *dest) {
     removeSubscription(src,dest);
+    ParseName psrc, pdest;
+    psrc.apply(src);
+    pdest.apply(dest);
     char *msg = NULL;
-    char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull,carrier) VALUES(%Q,%Q,%Q,%Q,%Q)", 
+    char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull) VALUES(%Q,%Q,%Q,%Q)", 
+                                  psrc.getPortName().c_str(),
+                                  pdest.getPortName().c_str(),
                                   src,
-                                  dest,
-                                  src,
-                                  dest,
-                                  carrier);
+                                  dest);
     if (verbose) {
         printf("Query: %s\n", query);
     }
@@ -99,14 +100,23 @@ bool SubscriberOnSql::addSubscription(const char *src,
         }
     }
     sqlite3_free(query);
+    if (ok) {
+        checkSubscription(psrc.getPortName().c_str(),
+                          pdest.getPortName().c_str(),
+                          src,
+                          dest);
+    }
     return ok;
 }
 
 bool SubscriberOnSql::removeSubscription(const char *src,
                                          const char *dest) {
+    ParseName psrc, pdest;
+    psrc.apply(src);
+    pdest.apply(dest);
     char *query = sqlite3_mprintf("DELETE FROM subscriptions WHERE src = %Q AND dest = %Q",
-                                  src,
-                                  dest);
+                                  psrc.getPortName().c_str(),
+                                  pdest.getPortName().c_str());
     if (verbose) {
         printf("Query: %s\n", query);
     }
@@ -136,23 +146,30 @@ bool SubscriberOnSql::welcome(const char *port) {
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
         char *src = (char *)sqlite3_column_text(statement,1);
         char *dest = (char *)sqlite3_column_text(statement,2);
-        char *carrier = (char *)sqlite3_column_text(statement,5);
-        NameStore *store = getStore();
-        if (store!=NULL) {
-            Contact csrc = store->query(src);
-            Contact cdest = store->query(dest);
-            if (csrc.isValid()&&cdest.isValid()) {
-                printf("==> trigger subscription %s %s\n", 
-                       csrc.toString().c_str(),
-                       cdest.toString().c_str());
-                connect(csrc,cdest,carrier);
-            }
-        }
-
+        char *srcFull = (char *)sqlite3_column_text(statement,3);
+        char *destFull = (char *)sqlite3_column_text(statement,4);
+        checkSubscription(src,dest,srcFull,destFull);
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
 
+    return false;
+}
+
+bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
+                                        const char *srcFull,
+                                        const char *destFull) {
+    NameStore *store = getStore();
+    if (store!=NULL) {
+        Contact csrc = store->query(src);
+        Contact cdest = store->query(dest);
+        if (csrc.isValid()&&cdest.isValid()) {
+            printf("==> trigger subscription %s %s\n", 
+                   srcFull, destFull);
+            connect(csrc,destFull);
+            return true;
+        }
+    }
     return false;
 }
 
