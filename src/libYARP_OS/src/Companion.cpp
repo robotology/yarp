@@ -570,6 +570,13 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         }
     }
     if (argc<2||argc>3) {
+        if (persist&&argc<2) {
+            if (argc==0) {
+                return subscribe(NULL,NULL);
+            } else {
+                return subscribe(argv[0],NULL);
+            }
+        }
         ACE_OS::fprintf(stderr, "Currently must have two/three arguments, a sender port and receiver port (and an optional protocol)\n");
         return 1;
     }
@@ -1056,14 +1063,14 @@ int Companion::cmdDetect(int argc, char *argv[]) {
 int Companion::subscribe(const char *src, const char *dest) {
     Bottle cmd, reply;
     cmd.add("subscribe");
-    cmd.add(src);
-    cmd.add(dest);
-    Network::write(Network::getNameServerContact(),
-                   cmd,
-                   reply);
+    if (src!=NULL) { cmd.add(src); }
+    if (dest!=NULL) { cmd.add(dest); }
+    bool ok = Network::write(Network::getNameServerContact(),
+                             cmd,
+                             reply);
     bool fail = reply.get(0).toString()=="fail";
     if (fail) {
-        printf("Subscription failed.\n");
+        printf("Persistent connection operation failed.\n");
         return 1;
     }
     if (reply.get(0).toString()=="subscriptions") {
@@ -1071,7 +1078,7 @@ int Companion::subscribe(const char *src, const char *dest) {
         for (int i=0; i<subs.size(); i++) {
             Bottle *b = subs.get(i).asList();
             if (b!=NULL) {
-                printf("Subscription %s -> %s", 
+                printf("Persistent connection %s -> %s", 
                        b->check("src",Value("?")).asString().c_str(),
                        b->check("dest",Value("?")).asString().c_str());
                 ConstString carrier = b->check("carrier",Value("")).asString();
@@ -1082,10 +1089,10 @@ int Companion::subscribe(const char *src, const char *dest) {
             }
         }
         if (subs.size()==0) {
-            printf("No subscriptions.\n");
+            printf("No persistent connections.\n");
         }
-    } else if (reply.get(0).toString()!="ok") {
-        printf("This name server does not support subscriptions\n");
+    } else if (ok&&reply.get(0).toString()!="ok") {
+        printf("This name server does not support persistent connections.\n");
     }
     return 0;
 }
