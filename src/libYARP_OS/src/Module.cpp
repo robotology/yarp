@@ -396,7 +396,9 @@ ConstString Module::getName(const char *subName) {
         return name;
     }
     String base = name.c_str();
-    base += "/";
+    if (subName[0]!='/') {
+      base += "/";
+    }
     base += subName;
     return base.c_str();
 }
