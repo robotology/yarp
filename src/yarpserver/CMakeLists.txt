@@ -15,6 +15,7 @@ ENDIF (NOT WIN32)
 ADD_EXECUTABLE(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerConnectionHandler.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerManager.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp)
 TARGET_LINK_LIBRARIES(yarpserver3 yarpserversql)
 TARGET_LINK_LIBRARIES(yarpserver3 YARP_OS)
+INSTALL_TARGETS(/lib yarpserversql)
 INSTALL_TARGETS(/bin yarpserver3)
 
 ###############################################################
