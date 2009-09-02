@@ -46,6 +46,7 @@ int main(int argc, char *argv[]) {
                                               Value("subs.db")).asString();
     ConstString ip = options.check("ip",Value("...")).asString();
     int sock = options.check("socket",Value(10000)).asInt();
+    bool cautious = options.check("cautious");
 
     printf("Port database: %s (change with \"--portdb newports.db\")\n", 
            dbFilename.c_str());
@@ -65,7 +66,7 @@ int main(int argc, char *argv[]) {
     }
 
     TripleSourceCreator db;
-    TripleSource *pmem = db.open(dbFilename.c_str(),reset);
+    TripleSource *pmem = db.open(dbFilename.c_str(),cautious,reset);
     if (pmem == NULL) {
         fprintf(stderr,"Aborting, ports database failed to open.\n");
         return 1;

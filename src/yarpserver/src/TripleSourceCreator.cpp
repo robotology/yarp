@@ -16,8 +16,12 @@
 #define access(f,a) _access(f,a)
 #endif
 
+#include <string>
+using namespace std;
 
-TripleSource *TripleSourceCreator::open(const char *filename, bool fresh) {
+TripleSource *TripleSourceCreator::open(const char *filename, 
+                                        bool cautious,
+                                        bool fresh) {
     sqlite3 *db = NULL;
     if (fresh) {
         int result = access(filename,F_OK);
@@ -41,14 +45,16 @@ TripleSource *TripleSourceCreator::open(const char *filename, bool fresh) {
     }
 
 
-    const char *create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
+    string create_main_table = "CREATE TABLE IF NOT EXISTS tags (\n\
 	id INTEGER PRIMARY KEY,\n\
 	rid INTEGER,\n\
 	ns TEXT,\n\
 	name TEXT,\n\
-	value TEXT);";
+	value TEXT);\n\
+    PRAGMA synchronous=";
+    create_main_table = create_main_table + (cautious?"FULL":"OFF") + ";\n";
 
-    result = sqlite3_exec(db, create_main_table, NULL, NULL, NULL);
+    result = sqlite3_exec(db, create_main_table.c_str(), NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up database tables\n");

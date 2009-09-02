@@ -30,7 +30,9 @@ public:
         }
     }
 
-    TripleSource *open(const char *filename, bool fresh = false);
+    TripleSource *open(const char *filename, 
+                       bool cautious = false,
+                       bool fresh = false);
 
     bool close();
 

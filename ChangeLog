@@ -1,5 +1,8 @@
 2009-09-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/yarpserver/src/TripleSourceCreator.cpp: make caution level
+	for database flushes an option.
+
 	* src/yarpserver/CMakeLists.txt: add install target for
 	library associated with new name server (thanks Alexis
 	Maldonado)
