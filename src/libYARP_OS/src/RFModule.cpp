@@ -285,7 +285,6 @@ ConstString RFModule::getName(const char *subName) {
     }
     
     String base = name.c_str();
-<<<<<<< .mine
 
     // Support legacy behavior, check is a "/" needs to be
     // appended before subName.
@@ -297,11 +296,6 @@ ConstString RFModule::getName(const char *subName) {
         base += "/";
     }
     
-=======
-    if (subName[0]!='/') {
-      base += "/";
-    }
->>>>>>> .r7423
     base += subName;
     return base.c_str();
 }
