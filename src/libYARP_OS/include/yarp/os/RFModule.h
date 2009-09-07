@@ -172,7 +172,14 @@ public:
     { return stopFlag; }
 
     /**
-    * Return name of module, as set with --name flag or setName().
+    * Return name of module, as set with setName(). If a string
+    * is passed to the function, it gets concatenated to the module name. 
+    * This function can be useful to form port names used by the module.
+    * Important: strings are concatenated "as they are", no slashes are appended 
+    * at the beginning of the strings (note: this is different from the previous
+    * implementation of getName() in the Module class). To support legacy code
+    * the function will make sure subName contains a trailing slash (this 
+    * behavior is deprecated and will disappear).
     * @param subName get nested name with this at the end
     * @return the name of the module
     */
