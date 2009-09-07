@@ -283,10 +283,25 @@ ConstString RFModule::getName(const char *subName) {
     if (subName==0) {
         return name;
     }
+    
     String base = name.c_str();
+<<<<<<< .mine
+
+    // Support legacy behavior, check is a "/" needs to be
+    // appended before subName.
+    if (subName[0]=='/')
+    {
+        ACE_OS::printf("WARNING: subName in getName() does not begin with \"/\" this suggest you might be expect getName() to follow a deprecated behavior\n");
+        ACE_OS::printf("I am now adding \"/\" between %s and %s but you should not rely on this.", name.c_str(), subName);
+        
+        base += "/";
+    }
+    
+=======
     if (subName[0]!='/') {
       base += "/";
     }
+>>>>>>> .r7423
     base += subName;
     return base.c_str();
 }
