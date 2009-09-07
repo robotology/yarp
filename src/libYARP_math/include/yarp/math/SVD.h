@@ -45,8 +45,10 @@ namespace yarp
         /**
         * Perform moore-penrose pinv on a NxM
         * matrix.
+        * @param in the matrix to be processed
+        * @param tol tolerance on singular values to be considered as zero
         */
-        yarp::sig::Matrix pinv(const yarp::sig::Matrix &in);
+        yarp::sig::Matrix pinv(const yarp::sig::Matrix &in, double tol=0);
     }
 }
 

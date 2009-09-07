@@ -74,7 +74,7 @@ void yarp::math::SVDJacobi(const Matrix &in,
 * a NxM matrix. 
 * 
 */
-Matrix yarp::math::pinv(const Matrix &in)
+Matrix yarp::math::pinv(const Matrix &in, double tol)
 {
 	int m = in.rows();
 	int n = in.cols();
@@ -89,7 +89,7 @@ Matrix yarp::math::pinv(const Matrix &in)
 	{
 		for(int r=0;r<n;r++)
 		{
-			if ( r==c && Sdiag(c)!=0 )
+			if ( r==c && Sdiag(c)> tol)
 				Spinv(r,c) = 1/Sdiag(c);
 			else
 				Spinv(r,c) = 0;
