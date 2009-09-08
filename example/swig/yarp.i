@@ -9,7 +9,11 @@
 //  + use of templates
 
 
+#ifdef SWIGPYTHON
+%module(directors="1") yarpswig
+#else
 %module yarpswig
+#endif
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
@@ -197,9 +201,24 @@ typedef int yarp::os::NetInt32;
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
 %include <yarp/os/Time.h>
+
+%define MAKE_COMMS(name)
+%feature("notabstract") yarp::os::BufferedPort<name>;
+%feature("notabstract") BufferedPort ## name;
+%feature("director") yarp::os::TypedReaderCallback<name>;
+%feature("director") yarp::os::TypedReaderCallback<yarp::os::name>;
+%template(TypedReader ## name) yarp::os::TypedReader<name>;
+%template(name ## Callback) yarp::os::TypedReaderCallback<name>;
+%template(BufferedPort ## name) yarp::os::BufferedPort<name>;
+%feature("notabstract") yarp::os::BufferedPort<name>;
+%feature("notabstract") BufferedPort ## name;
+%enddef
+
+MAKE_COMMS(Property)
+MAKE_COMMS(Bottle)
+
 %include <yarp/sig/Image.h>
 %include <yarp/sig/Sound.h>
-%template(BottleCallback) yarp::os::TypedReaderCallback<yarp::os::Bottle>;
 %include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
@@ -246,19 +265,6 @@ typedef int yarp::os::NetInt32;
 //   BufferedPortImageRgb = BufferedPort<ImageOf<PixelRgb> >
 //   BufferedPortBottle = BufferedPort<Bottle>
 //   BufferedPortProperty = BufferedPort<Property>
-
-%define MAKE_COMMS(name)
-%feature("notabstract") yarp::os::BufferedPort<name>;
-%feature("notabstract") BufferedPort ## name;
-%template(TypedReader ## name) yarp::os::TypedReader<name>;
-%template(TypedReaderCallback ## name) yarp::os::TypedReaderCallback<name>;
-%template(BufferedPort ## name) yarp::os::BufferedPort<name>;
-%feature("notabstract") yarp::os::BufferedPort<name>;
-%feature("notabstract") BufferedPort ## name;
-%enddef
-
-MAKE_COMMS(Property)
-MAKE_COMMS(Bottle)
 
 
 // Now we do ImageRgb - it is a little trickey
