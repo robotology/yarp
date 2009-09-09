@@ -1,3 +1,8 @@
+2009-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: enable callbacks for "BottleCallback" 
+	(yarp::os::TypedReaderCallback<yarp::os::Bottle>) class in python.
+
 2009-09-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpserver/src/TripleSourceCreator.cpp: make caution level
