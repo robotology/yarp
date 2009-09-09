@@ -1,3 +1,11 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+* Author: Lorenzo Natale.
+* Copyright (C) 2009 The Robotcub consortium
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*/
+
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
@@ -10,6 +18,8 @@
 
 using namespace yarp::os;
 using namespace yarp;
+
+
 
 //time helper functions
 
