@@ -1,8 +1,15 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+/*
+* Author: Lorenzo Natale.
+* Copyright (C) 2009 The Robotcub consortium
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*/
+
 #include <yarp/dev/PolyDriverList.h>
 
 #include <ace/config.h>
 #include <ace/Vector_T.h>
+
 
 #define RES(v) ((ACE_Vector<PolyDriverDescriptor> *)v)
 
