@@ -1,3 +1,7 @@
+2009-09-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: freeze YARP version 2.2.4
+
 2009-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: enable callbacks for "BottleCallback" 
