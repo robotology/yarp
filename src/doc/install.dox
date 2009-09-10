@@ -252,24 +252,14 @@ YARP can be downloaded from:
 
 - http://yarp0.sourceforge.net/
 
-or installed from CVS by following the instructions at:
+or installed from SVN by following the instructions at:
 
-- http://sourceforge.net/cvs/?group_id=62418
-
-(we are moving to SVN - please check http://eris.liralab.it/wiki/YARP_from_SVN for the latest instructions until this documentation is updated).
+- http://sourceforge.net/svn/?group_id=62418
 
 with modulename "yarp2" to get the code.  You can compile it with CMake.  
 Documentation is built periodically on the website.
 
-Here's a summary of the commands needed if you have command-line cvs:
-
-\verbatim
-  cvs -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 login
-  cvs -z3 -d:pserver:anonymous@yarp0.cvs.sourceforge.net:/cvsroot/yarp0 co -P yarp2
-\endverbatim
-
-The code should appear in a subdirectory called yarp2.  See yarp2/README for compilation tips.
-
+See yarp2/README for compilation tips.
 
 
  */
