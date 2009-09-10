@@ -1,6 +1,8 @@
 2009-09-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* conf/YarpVersion.cmake: freeze YARP version 2.2.4
+	* conf/YarpVersion.cmake: freeze YARP version 2.2.4. Acknowledge
+	committers found in svn logs that don't have ChangeLog entries:
+	Giorgio Metta, Ugo Pattacini, Francesco Nori
 
 2009-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
@@ -741,9 +743,7 @@
 
 2008-07-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
-	* conf/YarpVersion.cmake: froze version 2.2.1.  Acknowledge
-	committers found in svn logs that don't have ChangeLog entries:
-	Giorgio Metta, Ugo Pattacini, Francesco Nori
+	* conf/YarpVersion.cmake: froze version 2.2.1.
 
 2008-07-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
