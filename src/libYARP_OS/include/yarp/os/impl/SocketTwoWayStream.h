@@ -12,6 +12,7 @@
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/NetInt32.h>
 
 #include <ace/config.h>
 #include <ace/SOCK_Acceptor.h>
@@ -69,6 +70,9 @@ public:
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket reader");
             stream.close_writer();
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket writer");
+#ifdef YARP2_WINDOWS
+            stream.close();
+#endif
         }
         //stream.close_writer();
         //stream.close();
