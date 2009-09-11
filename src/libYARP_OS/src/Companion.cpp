@@ -1355,87 +1355,102 @@ int Companion::forward(const char *localName, const char *targetName) {
 
 
 int Companion::rpc(const char *connectionName, const char *targetName) {
-    NameClient& nic = NameClient::getNameClient();
-    Address address = nic.queryName(targetName);
-    if (!address.isValid()) {
-        YARP_ERROR(Logger::get(),"could not find port");
-        return 1;
-    }
-    
-    OutputProtocol *out = Carriers::connect(address);
-    if (out==NULL) {
-        ACE_OS::fprintf(stderr, "Cannot make connection\n");
-        return 1;
-    }
-    printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
-           address.toString().c_str(),
-           connectionName);
-    Route r(connectionName,targetName,"text_ack");
-    out->open(r);
-    OutputStream& os = out->getOutputStream();
-    InputStream& is = out->getInputStream();
-    StreamConnectionReader reader;
-    
+
+    bool firstTimeRound = true;
+
     while (!feof(stdin)) {
-        String txt = getStdin();
+        NameClient& nic = NameClient::getNameClient();
+        Address address = nic.queryName(targetName);
+        if (!address.isValid()) {
+            YARP_ERROR(Logger::get(),"could not find port");
+            return 1;
+        }
         
-        if (!feof(stdin)) {
-            if (txt[0]<32 && txt[0]!='\n' && 
-                txt[0]!='\r' && txt[0]!='\0') {
-                break;  // for example, horrible windows ^D
-            }
-            Bottle bot;
-            bot.fromString(txt.c_str());
+        OutputProtocol *out = Carriers::connect(address);
+        if (out==NULL) {
+            ACE_OS::fprintf(stderr, "Cannot make connection\n");
+            return 1;
+        }
+        if (!firstTimeRound) {
+            printf("Target disappeared, reconnecting...\n");
+        }
+        firstTimeRound = false;
+        printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
+               address.toString().c_str(),
+               connectionName);
+        Route r(connectionName,targetName,"text_ack");
+        out->open(r);
+        OutputStream& os = out->getOutputStream();
+        InputStream& is = out->getInputStream();
+        StreamConnectionReader reader;
+
+        bool err = false;
+        while (!err&&!feof(stdin)) {
+            String txt = getStdin();
             
-            PortCommand pc(0,"d");
-            BufferedConnectionWriter bw(out->isTextMode());
-            bool ok = pc.write(bw);
-            if (!ok) {
-                ACE_OS::fprintf(stderr, "Cannot write on connection\n");
-                if (out!=NULL) delete out;
-                return 1;
-            }
-            ok = bot.write(bw);
-            if (!ok) {
-                ACE_OS::fprintf(stderr, "Cannot write on connection\n");
-                if (out!=NULL) delete out;
-                return 1;
-            }
-            bw.write(os);
-            Bottle resp;
-            TextReader formattedResp;
-            reader.reset(is,NULL,r,0,true);
-            bool done = false;
-            bool first = true;
-            while (!done) {
-                if (reader.isTextMode()) {
-                    formattedResp.read(reader);
-                    resp.fromString(formattedResp.str.c_str());
-                } else {
-                    resp.read(reader);
+            if (!feof(stdin)) {
+                if (txt[0]<32 && txt[0]!='\n' && 
+                    txt[0]!='\r' && txt[0]!='\0') {
+                    break;  // for example, horrible windows ^D
                 }
-                if (String(resp.get(0).asString())=="<ACK>") {
-                    if (first) {
-                        printf("Acknowledged\n");
+                Bottle bot;
+                bot.fromString(txt.c_str());
+                
+                PortCommand pc(0,"d");
+                BufferedConnectionWriter bw(out->isTextMode());
+                bool ok = pc.write(bw);
+                if (!ok) {
+                    ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+                    if (out!=NULL) delete out;
+                    return 1;
+                }
+                ok = bot.write(bw);
+                if (!ok) {
+                    ACE_OS::fprintf(stderr, "Cannot write on connection\n");
+                    if (out!=NULL) delete out;
+                    return 1;
+                }
+                bw.write(os);
+                Bottle resp;
+                TextReader formattedResp;
+                reader.reset(is,NULL,r,0,true);
+                bool done = false;
+                bool first = true;
+                while (!done) {
+                    if (reader.isError()) {
+                        err = true;
+                        done = true;
+                        break;
                     }
-                    done = true;
-                } else {
-                    ConstString txt;
                     if (reader.isTextMode()) {
-                        txt = formattedResp.str;
+                        formattedResp.read(reader);
+                        resp.fromString(formattedResp.str.c_str());
                     } else {
-                        txt = resp.toString().c_str();
+                        resp.read(reader);
                     }
-                    printf("Response: %s\n", txt.c_str());
+                    if (String(resp.get(0).asString())=="<ACK>") {
+                        if (first) {
+                            printf("Acknowledged\n");
+                        }
+                        done = true;
+                    } else {
+                        ConstString txt;
+                        if (reader.isTextMode()) {
+                            txt = formattedResp.str;
+                        } else {
+                            txt = resp.toString().c_str();
+                        }
+                        printf("Response: %s\n", txt.c_str());
+                    }
+                    first = false;
                 }
-                first = false;
             }
         }
-    }
-    
-    if (out!=NULL) {
-        delete out;
-        out = NULL;
+        
+        if (out!=NULL) {
+            delete out;
+            out = NULL;
+        }
     }
     
     return 0;

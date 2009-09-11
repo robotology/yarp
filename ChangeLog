@@ -1,3 +1,11 @@
+2009-09-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/SocketTwoWayStream.h: more
+	aggressive port interruption to make Windows happy.
+
+	* src/libYARP_OS/src/Companion.cpp: make "yarp rpc" behave
+	better when target disappears.
+
 2009-09-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: freeze YARP version 2.2.4. Acknowledge
