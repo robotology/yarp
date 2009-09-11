@@ -70,6 +70,8 @@ public:
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket reader");
             stream.close_writer();
             YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket writer");
+            stream.close();
+            YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ interrupting socket fully");
         }
         //stream.close_writer();
         //stream.close();

@@ -46,7 +46,7 @@ void SocketTwoWayStream::updateAddresses() {
     stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
     struct linger lval;
-    lval.l_onoff = 0;
+    lval.l_onoff = 1;
     lval.l_linger = 0;
     stream.set_option (ACE_IPPROTO_TCP, SO_LINGER, &lval,
                        sizeof(linger));
