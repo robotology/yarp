@@ -12,4 +12,4 @@ ADD_EXECUTABLE(stressrpc stressrpc.cpp)
 ADD_EXECUTABLE(stressrpcMD stressrpcMD.cpp)
 ADD_EXECUTABLE(callback callback.cpp)
 ADD_EXECUTABLE(smallrpc smallrpc.cpp)
-
+ADD_EXECUTABLE(windows1 windows1.cpp)
