@@ -11,6 +11,9 @@
 
 #include <ace/INET_Addr.h>
 #include <ace/OS.h>
+#include <ace/os_include/netinet/os_tcp.h>
+#include <ace/os_include/os_netdb.h>
+
 
 using namespace yarp::os::impl;
 
@@ -42,8 +45,11 @@ void SocketTwoWayStream::updateAddresses() {
     int one = 1;
     stream.set_option (ACE_IPPROTO_TCP, TCP_NODELAY, &one,
                        sizeof(int));
-    stream.set_option (ACE_IPPROTO_TCP, SO_LINGER, &zero,
-                       sizeof(int));
+    struct linger lval;
+    lval.l_onoff = 0;
+    lval.l_linger = 0;
+    stream.set_option (ACE_IPPROTO_TCP, SO_LINGER, &lval,
+                       sizeof(linger));
     ACE_INET_Addr local, remote;
     stream.get_local_addr(local);
     stream.get_remote_addr(remote);
