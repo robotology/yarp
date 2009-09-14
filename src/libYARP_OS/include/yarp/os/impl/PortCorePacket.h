@@ -134,11 +134,12 @@ public:
         PortCorePacket *next = NULL;
         inactive.get(next);
         if (next==NULL) {
-            fprintf(stderr,"*** Internal YARP failure.\n");
-            fprintf(stderr,"*** There has been a failure in \"PortCorePackets\".\n");
-            fprintf(stderr,"*** This occurred occasionally in the past due to a bug.\n");
-            fprintf(stderr,"*** That bug was believed to be fixed, but it looks like we were wrong.\n");
-            fprintf(stderr,"*** Please email the following information to paulfitz@alum.mit.edu:\n");
+            fprintf(stderr,"*** YARP consistency check failed.\n");
+            fprintf(stderr,"*** There has been a low-level failure in \"PortCorePackets\".\n");
+            fprintf(stderr,"*** This typically occurs when ports are accessed in a non-threadsafe way.\n");
+            fprintf(stderr,"*** If you need help debugging, email paulfitz@alum.mit.edu\n");
+
+            /*
             //warning: casting size_t to unsigned int to remove annoying warning
             //did not find a better way to handle this that was portable across
             //different compilers (%z does not seem to be supported in gcc 4.1 
@@ -166,6 +167,7 @@ public:
                         p->getCount());
             }
             fflush(stderr);
+            */
             YARP_ASSERT(1==0);
         }
         YARP_ASSERT(next!=NULL);
