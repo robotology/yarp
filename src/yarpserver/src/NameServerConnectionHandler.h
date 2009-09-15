@@ -76,9 +76,13 @@ public:
                             writer->appendString(s.c_str());
                         }
                     } else {
-                        yarp::os::Bottle b;
-                        b.add(v);
-                        b.write(*writer);
+                        if (v.isString()) {
+                            writer->appendString(v.asString().c_str());
+                        } else {
+                            yarp::os::Bottle b;
+                            b.add(v);
+                            b.write(*writer);
+                        }
                     }
                 }
                 writer->appendString("*** end of message");

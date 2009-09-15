@@ -445,11 +445,34 @@ bool NameServiceOnTriples::cmdGc(NameTripleState& act) {
 }
 
 
+bool NameServiceOnTriples::cmdHelp(NameTripleState& act) {
+    Bottle& bot = act.reply;
+    if (!act.bottleMode) {
+        bot.addString("old");
+        bot.addString("Here are some ways to use the name server:");
+    }
+    bot.addString("+ help");
+    bot.addString("+ list");
+    bot.addString("+ register $portname");
+    bot.addString("+ register $portname $carrier $ipAddress $portNumber");
+    bot.addString("  (if you want a field set automatically, write '...')");
+    bot.addString("+ unregister $portname");
+    bot.addString("+ query $portname");
+    bot.addString("+ set $portname $property $value");
+    bot.addString("+ get $portname $property");
+    bot.addString("+ check $portname $property");
+    bot.addString("+ match $portname $property $prefix");
+    bot.addString("+ route $port1 $port2");
+    return true;
+}
+
+
+
 bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd, 
                                  yarp::os::Bottle& reply, 
                                  yarp::os::Bottle& event,
                                  yarp::os::Contact& remote) {
-    ConstString key = cmd.get(0).asString();
+    ConstString key = cmd.get(0).toString();
     ConstString prefix = " * ";
     
     if (key=="register") {
@@ -501,6 +524,8 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
         return cmdRoute(act);
     } else if (key=="gc") {
         return cmdGc(act);
+    } else if (key=="help") {
+        return cmdHelp(act);
     } else {
         // not understood
         act.reply.addString("old");

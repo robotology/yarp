@@ -2,7 +2,13 @@
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sqlite)
 
-INCLUDE_DIRECTORIES(${YARP_OS_INC})
+IF (YARP_OS_INC)
+  INCLUDE_DIRECTORIES(${YARP_OS_INC})
+  SET(TEST_BUILD FALSE)
+ELSE (YARP_OS_INC)
+  FIND_PACKAGE(YARP)
+  SET(TEST_BUILD TRUE)
+ENDIF (YARP_OS_INC)
 
 ADD_LIBRARY(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
 
@@ -19,9 +25,10 @@ INSTALL_TARGETS(/lib yarpserversql)
 INSTALL_TARGETS(/bin yarpserver3)
 
 ###############################################################
-## Some extra test programs, commented out for now
+## Some extra test programs
 
-#ADD_EXECUTABLE(server_peek src/server_peek.cpp)
-#TARGET_LINK_LIBRARIES(server_peek triplesql)
-
-#ADD_EXECUTABLE(server_test src/server_test.cpp)
+IF (TEST_BUILD)
+  ADD_EXECUTABLE(server_peek src/server_peek.cpp)
+  TARGET_LINK_LIBRARIES(server_peek yarpserversql)
+  ADD_EXECUTABLE(server_test src/server_test.cpp)
+ENDIF (TEST_BUILD)

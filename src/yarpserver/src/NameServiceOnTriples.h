@@ -83,6 +83,8 @@ public:
 
     bool cmdGc(NameTripleState& act);
 
+    bool cmdHelp(NameTripleState& act);
+
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
