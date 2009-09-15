@@ -24,7 +24,11 @@ namespace yarp {
     }
 }
 
-
+/**
+ *
+ * Coordinate ports communicating locally within a process.
+ *
+ */
 class yarp::os::impl::LocalCarrierManager {
 private:
     yarp::os::Semaphore senderMutex, receiverMutex, received;
@@ -65,6 +69,11 @@ public:
 };
 
 
+/**
+ *
+ * A stream for communicating locally within a process.
+ *
+ */
 class yarp::os::impl::LocalCarrierStream : public SocketTwoWayStream {
 private:
     LocalCarrier *owner;
@@ -89,6 +98,11 @@ public:
 
 };
 
+/**
+ *
+ * A carrier for communicating locally within a process.
+ *
+ */
 class yarp::os::impl::LocalCarrier : public AbstractCarrier {
 protected:
     bool doomed;

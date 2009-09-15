@@ -26,6 +26,11 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * A single message, potentially being transmitted on multiple connections.
+ *
+ */
 class yarp::os::impl::PortCorePacket {
 public:
     PortCorePacket *prev_, *next_;
@@ -107,6 +112,11 @@ public:
     }
 };
 
+/**
+ *
+ * A collection of messages being transmitted over connections.
+ *
+ */
 class yarp::os::impl::PortCorePackets {
 private:
     ACE_Double_Linked_List<PortCorePacket> inactive, active;
