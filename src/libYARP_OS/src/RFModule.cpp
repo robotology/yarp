@@ -2,7 +2,8 @@
 
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2009 The Robotcub consortium
+* Copyright (C) 2006 The Robotcub consortium
+* Based on code by Paul Fitzpatrick 2007.
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
 */
 
@@ -269,7 +270,16 @@ int RFModule::runModule() {
     ACE_OS::printf("Module closing\n");
     if (HELPER(implementation).isTerminalAttached())
     {
-        ACE_OS::fprintf(stderr, "Warning: module attached to terminal calling exit() to quit\n");
+        ACE_OS::fprintf(stderr, "WARNING: module attached to terminal calling exit() to quit.\n");
+        ACE_OS::fprintf(stderr, "You should be aware that this is not a good way to stop a module. Effects will be:\n");
+        ACE_OS::fprintf(stderr, "- the module close() funciton will NOT be called\n");
+        ACE_OS::fprintf(stderr, "- class destructors will NOT be called\n");
+        ACE_OS::fprintf(stderr, "- code in the main after runModule() will NOT be executed\n");
+        ACE_OS::fprintf(stderr, "This happens because in your module you called attachTerminal() and we don't have a portable way to quit");
+        ACE_OS::fprintf(stderr, " a module that is listening to the terminal.\n");
+        ACE_OS::fprintf(stderr, "At the moment the only way to have the module quit correctly is to avoid listening to terminal");
+        ACE_OS::fprintf(stderr, "(i.e. do not call attachTerminal()).\n");
+        ACE_OS::fprintf(stderr, "This will also make this annoying message go away.\n");
         ACE_OS::exit(1); //one day this will hopefully go away, now only way to stop 
         detachTerminal();    
     }
