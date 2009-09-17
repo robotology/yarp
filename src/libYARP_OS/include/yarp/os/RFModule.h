@@ -5,7 +5,8 @@
 
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2009 The Robotcub consortium
+* Copyright (C) 2006 The Robotcub consortium
+* Based on code by Paul Fitzpatrick 2007.
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
 */
 
