@@ -119,12 +119,12 @@ public:
     * the respond() method.  The reply will be send to standard output.
     * @return true on success.
     */
-    virtual bool attachTerminal();
+    bool attachTerminal();
 
     /**
     * Detach terminal.
     */
-    virtual bool detachTerminal();
+    bool detachTerminal();
 
     /**
     *
