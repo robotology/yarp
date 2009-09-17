@@ -8,4 +8,4 @@ to make life simple.  Binary data could be sent with a bit more work.
 Example usage:
   yarpserver
   yarp read /read
-  ./yarprpc /read "10 20 30"    # these numbers should appear on yarp read
+  ./yarprpc.py /read "10 20 30"    # these numbers should appear on yarp read
