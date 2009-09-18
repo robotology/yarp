@@ -20,6 +20,10 @@
 #define access(f,a) _access(f,a)
 #endif
 
+#ifndef F_OK
+#define F_OK 0
+#endif
+
 #define SQLDB(x) ((sqlite3*)(x))
 
 using namespace yarp::os;

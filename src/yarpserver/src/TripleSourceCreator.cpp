@@ -16,6 +16,10 @@
 #define access(f,a) _access(f,a)
 #endif
 
+#ifndef F_OK
+#define F_OK 0
+#endif
+
 #include <string>
 using namespace std;
 

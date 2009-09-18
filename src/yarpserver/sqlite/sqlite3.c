@@ -90021,6 +90021,7 @@ SQLITE_PRIVATE const char sqlite3IsEbcdicIdChar[] = {
 */
 SQLITE_PRIVATE int sqlite3GetToken(const unsigned char *z, int *tokenType){
   int i, c;
+  int n = 0;
   switch( *z ){
     case ' ': case '\t': case '\n': case '\f': case '\r': {
       testcase( z[0]==' ' );
@@ -90231,7 +90232,6 @@ SQLITE_PRIVATE int sqlite3GetToken(const unsigned char *z, int *tokenType){
     case '@':  /* For compatibility with MS SQL Server */
     case ':': {
       testcase( z[0]=='$' );  testcase( z[0]=='@' );  testcase( z[0]==':' );
-      int n = 0;
       *tokenType = TK_VARIABLE;
       for(i=1; (c=z[i])!=0; i++){
         if( IdChar(c) ){

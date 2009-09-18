@@ -1,3 +1,14 @@
+2009-09-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpserver/src/SubscriberOnSql.cpp: define F_OK if needed
+	(thanks Philipp Robbel)
+	
+	* src/yarpserver/src/TripleSourceCreator.cpp: define F_OK if needed
+	(thanks Philipp Robbel)
+
+	* src/yarpserver/sqlite/sqlite3.c: move variable declaration
+	where strict C compilation is happy (thanks Philipp Robbel)
+
 2009-09-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/SocketTwoWayStream.h: more
