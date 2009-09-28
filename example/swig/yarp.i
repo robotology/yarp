@@ -277,14 +277,31 @@ typedef yarp::os::TypedReaderCallback<ImageRgb> TypedReaderCallbackImageRgb;
 typedef yarp::os::BufferedPort<ImageRgb> BufferedPortImageRgb;
 %}
 
+%{
+typedef yarp::sig::ImageOf<yarp::sig::PixelRgba> ImageRgba;
+typedef yarp::os::TypedReader<ImageRgba> TypedReaderImageRgba;
+typedef yarp::os::TypedReaderCallback<ImageRgba> TypedReaderCallbackImageRgba;
+typedef yarp::os::BufferedPort<ImageRgba> BufferedPortImageRgba;
+%}
+
 %feature("notabstract") ImageRgb;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
 %feature("notabstract") BufferedPortImageRgb;
+
+%feature("notabstract") ImageRgba;
+%feature("notabstract") yarp::os::BufferedPort<ImageRgba>;
+%feature("notabstract") BufferedPortImageRgba;
 
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 %template(TypedReaderCallbackImageRgb) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
 %template(BufferedPortImageRgb) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
+
+
+%template(ImageRgba) yarp::sig::ImageOf<yarp::sig::PixelRgba>;
+%template(TypedReaderImageRgba) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
+%template(TypedReaderCallbackImageRgba) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
+%template(BufferedPortImageRgba) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
 
 
 // Now we do ImageFloat - it is a little trickey too..
