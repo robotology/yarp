@@ -1,3 +1,8 @@
+2009-10-01  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add findPath
+	method for finding directories.
+
 2009-09-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpserver/src/SubscriberOnSql.cpp: define F_OK if needed

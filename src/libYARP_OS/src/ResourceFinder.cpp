@@ -206,7 +206,8 @@ public:
     yarp::os::ConstString check(const char *base1, 
                                 const char *base2, 
                                 const char *base3, 
-                                const char *name) {
+                                const char *name,
+                                bool isDir) {
         String s = "";
         if (base1!=NULL) {
             s = base1;
@@ -240,11 +241,17 @@ public:
         if (verbose) {
             fprintf(RTARGET,"||| checking %s\n", s.c_str());
         }
-        if (exists(s.c_str())) {
+        if (exists(s.c_str(),isDir)) {
             fprintf(RTARGET,"||| found %s\n", s.c_str());
             return s.c_str();
         }
         return "";
+    }
+
+    yarp::os::ConstString findPath(const char *name) {
+        ConstString fname = config.check(name,Value(name)).asString();
+        ConstString result = findFileBase(fname,true);
+        return result;
     }
 
     yarp::os::ConstString findFile(const char *name) {
@@ -253,11 +260,11 @@ public:
         //printf("name %s\n", name);
         ConstString fname = config.check(name,Value(name)).asString();
         //printf("fname %s\n", fname.c_str());
-        ConstString result = findFileBase(fname);
+        ConstString result = findFileBase(fname,false);
         return result;
     }
 
-    yarp::os::ConstString findFileBase(const char *name) {
+    yarp::os::ConstString findFileBase(const char *name, bool isDir) {
 
         ConstString cap = 
             config.check("capability_directory",Value("app")).asString();
@@ -265,25 +272,25 @@ public:
             config.findGroup("default_capability").tail();
 
         // check current directory
-        ConstString str = check("","","",name);
+        ConstString str = check("","","",name,isDir);
         if (str!="") return str;
 
         if (configFilePath!="") {
-            ConstString str = check(configFilePath.c_str(),"","",name);
+            ConstString str = check(configFilePath.c_str(),"","",name,isDir);
             if (str!="") return str;
         }
 
         // check app dirs
         for (int i=0; i<apps.size(); i++) {
             str = check(root.c_str(),cap,apps.get(i).asString().c_str(),
-                        name);
+                        name,isDir);
             if (str!="") return str;
         }
 
         // check ROOT/app/default/
         for (int i=0; i<defCaps.size(); i++) {
             str = check(root.c_str(),cap,defCaps.get(i).asString().c_str(),
-                        name);
+                        name,isDir);
             if (str!="") return str;
         }
 
@@ -296,10 +303,27 @@ public:
         return this->verbose;
     }
 
-    bool exists(const char *fname) {
+    bool exists(const char *fname, bool isDir) {
         ACE_stat s;
         int result = ACE_OS::stat(fname,&s);
-        return (result==0);
+        if (result!=0) {
+            return false;
+        }
+        if (!isDir) {
+            // if not required to be a directory, pass anything.
+            return true;
+        }
+        
+        // ACE doesn't seem to help us interpret the results of stat
+        // in a portable fashion.
+
+        ACE_DIR *dir = ACE_OS::opendir(fname);
+        if (dir!=NULL) {
+            ACE_OS::closedir(dir);
+            dir = NULL;
+            return true;
+        }
+        return false;
 	}
 };
 
@@ -340,6 +364,10 @@ bool ResourceFinder::setDefault(const char *key, const char *val) {
 
 yarp::os::ConstString ResourceFinder::findFile(const char *name) {
     return HELPER(implementation).findFile(name);
+}
+
+yarp::os::ConstString ResourceFinder::findPath(const char *name) {
+    return HELPER(implementation).findPath(name);
 }
 
 

@@ -948,6 +948,7 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("Looks for, and prints the complete path to, resource files.\n");
         printf("Example usage (from RobotCub project):\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini\n");
+        printf("   yarp resource --policy ICUB_ROOT --find config --dir\n");
         printf("   yarp resource --policy ICUB_ROOT --icub icub.ini --find icub\n");
         printf("   yarp resource --policy ICUB_ROOT --from config.ini --find icub\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
@@ -961,11 +962,16 @@ int Companion::cmdResource(int argc, char *argv[]) {
     if (ok) {
         Property p;
         p.fromCommand(argc,argv,false);
+        bool dir = p.check("dir");
         if (!p.check("find")) {
             fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
             return 1;
         }
-        result = String(rf.findFile(p.check("find",Value("icub.ini")).asString().c_str()));
+        if (dir) {
+            result = String(rf.findPath(p.check("find",Value("config")).asString().c_str()));
+        } else {
+            result = String(rf.findFile(p.check("find",Value("icub.ini")).asString().c_str()));
+        }
     }
     printf("%s\n",result.c_str());
     return (result!="")?0:1;

@@ -110,6 +110,21 @@ public:
      */
     yarp::os::ConstString findFile(const char *key);
 
+    /**
+     *
+     * Expand a partial path to a full path.  The path is specified by the
+     * name of a key.  The value of the key should be set up either
+     * on the command line, through a loaded config file, or
+     * by a call to setDefault.
+     *
+     * If all else fails, findPath will try interpreting key as
+     * a path - this is for backwards compatibility
+     * and is behavior that will probably go away - don't
+     * depend on it!
+     *
+     */
+    yarp::os::ConstString findPath(const char *key);
+
 
     // Searchable interface
     virtual bool check(const char *key);
