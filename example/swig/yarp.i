@@ -9,11 +9,7 @@
 //  + use of templates
 
 
-#ifdef SWIGPYTHON
 %module(directors="1") yarpswig
-#else
-%module yarpswig
-#endif
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
