@@ -36,12 +36,6 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     SET(YARPY_DEV_LIB_NAME ${devname})
     SET(YARPY_DEVICES TRUE)
 
-    FOREACH(arg ${ARGN})
-      SET(MERGE_DEVICE_LIBS_INIT FALSE)
-      IF (arg STREQUAL "MERGE")
-        SET(MERGE_DEVICE_LIBS_INIT TRUE)
-      ENDIF (arg STREQUAL "MERGE")
-    ENDFOREACH(arg ${ARGN})
     # commands seem to lurk even if variables are removed
     IF (COMMAND END_DEVICE_LIBRARY)
       SET(YARPY_DEVICES_INSTALLED TRUE)
@@ -53,8 +47,6 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     ENDIF (NOT EXISTS ${YARPY_DEV_GEN})
     # Choose whether to merge library source code.
     # ---> now always merge.
-    SET(MERGE_DEVICE_LIBS TRUE)
-    #SET(MERGE_DEVICE_LIBS ${MERGE_DEVICE_LIBS_INIT} CACHE BOOL "Try to pack device libraries together a bit")
     SET(DEVICE_PREFIX "${devname}_")
     #SET(DEVICE_PREFIX "yarpdev_")
     SET(YARPY_LIB_FLAG EXCLUDE_FROM_ALL)

@@ -19,7 +19,8 @@ SET(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # Set up some large-scale compile options - do you want devices? guis?
 INCLUDE(YarpOptions)
 
-# Get the current yarp version
+# Get the current yarp version.  Really this should be placed into
+# a generated header file.
 INCLUDE(YarpVersion)
 ADD_DEFINITIONS(-DYARP_VERSION="${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
@@ -49,6 +50,7 @@ IF (YARP_ADMIN)
   ADD_CUSTOM_TARGET(dox COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/Doxyfile.part)
 ENDIF (YARP_ADMIN)
 
-# Touch this file when you add/remove files in directories that
-# are scanned for sources.  This will make sure that cmake gets rerun.
+# Modify this file when you add/remove files in directories that
+# are scanned for sources.  This will make sure that cmake gets rerun
+# for everybody.
 # Touch: 1 2 3

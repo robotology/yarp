@@ -1,5 +1,8 @@
 2009-10-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpModuleHooks.cmake: simplifying and documenting
+	the YARP device compilation process
+
 	* example/swig/yarp.i: make callback support via directors
 	apply to all wrappers, not just python wrappers
 
