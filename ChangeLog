@@ -1,3 +1,7 @@
+2009-10-10  Arjan Gijsberts  <arjan@liralab.it>
+	* examples/swig/CMakeLists.txt: enabled threads directive and 
+	added installation support for Python wrapper 
+
 2009-10-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpModuleHooks.cmake: simplifying and documenting

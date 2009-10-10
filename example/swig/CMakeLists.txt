@@ -64,10 +64,20 @@ IF (CREATE_JAVA)
 ENDIF (CREATE_JAVA)
 
 IF (CREATE_PYTHON)
-   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
+   SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
    FIND_PACKAGE(PythonLibs)
    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
    SWIG_ADD_MODULE(yarp python yarp.i)
+   # uncomment if we want a debug version of the library
+   #ADD_DEFINITIONS(-DPy_DEBUG)
+
+   # installation path is determined reliably on most platforms using distutils
+   FIND_PACKAGE(PythonInterp)
+   EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} 
+                   -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}')" 
+                   OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
+   INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/yarp.py ${CMAKE_CURRENT_SOURCE_DIR}/_yarp.so 
+           DESTINATION ${PYTHON_INSTDIR} )
 ENDIF (CREATE_PYTHON)
 
 IF (CREATE_PERL)
