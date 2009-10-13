@@ -10,9 +10,7 @@ YARP stands for Yet Another Robot Platform.  What is it?
 If data is the bloodstream of your robot, then YARP is
 the circulatory system.  It isn't the brain.  It isn't 
 the heart.  But it is pretty useful to have around all
-the same.
-
-(For brains and hearts, see our companion project,
+the same. (For brains and hearts, see our companion project,
 <a href="http://www.robotcub.org">RobotCub</a>)
 
 More specifically, YARP supports building a robot control system as a
@@ -22,6 +20,9 @@ that meet the diverse, sometimes contradictory, and always
 changing needs of advanced robotics.  We also encourage compilation
 and use of hardware devices in a future-proof way.  Our strategic goal
 is to increase the longevity of robot software projects [1].
+
+We try to make it easy to use a YARP-based system without you 
+yourself needing to use YARP.
 
 Getting set up:
 \li \ref what_is_yarp

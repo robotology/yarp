@@ -280,13 +280,45 @@ d
 \endverbatim
 
 This sets the position of the 5 motors, and then checks the position of 
-the third one (index 2).  The reponses are something like:
+the third one (index 2).  The responses are something like:
 
 \verbatim
 [ok]
 [is] [enc] -10.0 [ok]
 \endverbatim
 
+
+\section yarp_without_yarp_python_rpc Writing commands from code
+
+Here is a python program for sending a command to a YARP port and
+receiving a response.  The program does not use the YARP library (of
+course it is perfectly possible to use YARP from
+python/perl/ruby/tcl/... directly, this is just to show that you don't
+have to). First it sends a query to the name server to find the
+address of the port whose name is passed as the first argument to the
+program.  Then it sends the string specified as the second argument to
+the program to that address, and prints the response.
+
+\include example/external/python/yarprpc.py
+
+The program assumes that the name server is running on the local
+machine, at socket port number 10000.  If not, it is best to
+add the following "find_name_server.py" module for reading the
+address of the server from YARP configuration files:
+
+\include example/external/python/find_name_server.py
+
+Here's an example of using the program assuming it is called "yarprpc.py":
+
+\verbatim
+# check number of axes on simulated motor controlboard
+python yarprpc.py /motor/rpc:i "[get] [axes]"
+[is] [axes] 5 [ok]
+
+# move joint 0 on simulated motor controlboard
+python yarprpc.py /motor/rpc:i "[set] [pos] 0 45.0"
+[ok]
+\endverbatim
 
 \section yarp_without_yarp_listening Listening to a Port's owner
 
