@@ -76,7 +76,7 @@ EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 # UserDoc_modules.dox UserDoc_sig.dox UserDoc_dev.dox
 EXAMPLE_PATH           = example/
-EXAMPLE_PATTERNS       = *.cpp *.h *.txt
+EXAMPLE_PATTERNS       = *.cpp *.h *.txt *.py
 EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = src/doc/
 INPUT_FILTER           = 

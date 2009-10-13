@@ -4,6 +4,12 @@
 #  END_DEVICE_LIBRARY(devname)
 # etc.
 
+#########################################################################
+# BEGIN_DEVICE_LIBRARY macro calls YARP_PREPARE_DEVICES if this is
+# the outermost device library block, otherwise it propagates
+# all collected information to the device library block that wraps
+# it.
+#
 MACRO(BEGIN_DEVICE_LIBRARY devname)
 
   # this is desired behavior for YARP device library bundles
@@ -43,12 +49,9 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
 
     SET(YARPY_DEV_GEN ${CMAKE_BINARY_DIR}/generated_code)
     IF (NOT EXISTS ${YARPY_DEV_GEN})
-  	FILE(MAKE_DIRECTORY ${YARPY_DEV_GEN})
+      FILE(MAKE_DIRECTORY ${YARPY_DEV_GEN})
     ENDIF (NOT EXISTS ${YARPY_DEV_GEN})
-    # Choose whether to merge library source code.
-    # ---> now always merge.
     SET(DEVICE_PREFIX "${devname}_")
-    #SET(DEVICE_PREFIX "yarpdev_")
     SET(YARPY_LIB_FLAG EXCLUDE_FROM_ALL)
     IF (NOT YARPY_DEV_LIB_NAME)
       SET(YARPY_DEV_LIB_NAME devices)
@@ -60,7 +63,9 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     IF (NOT YARPY_DEVICES_INSTALLED)
       MESSAGE(STATUS "adding hooks for device library compilation")
       SET(YARPY_DEVICES_INSTALLED TRUE)
-      INCLUDE(YarpModuleHooks)
+      IF (NOT COMPILE_DEVICE_LIBRARY)
+        INCLUDE(YarpModuleHooks)
+      ENDIF (NOT COMPILE_DEVICE_LIBRARY)
     ENDIF (NOT YARPY_DEVICES_INSTALLED)
 
     SET(COMPILE_DEVICE_LIBRARY TRUE)
@@ -89,7 +94,7 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   ENDIF(NOT fdir)
   SET(fname ${fdir}/yarpdev_add_${devname}.cpp)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
-     ${fname} @ONLY  IMMEDIATE)
+    ${fname} @ONLY  IMMEDIATE)
   ###MESSAGE(STATUS "Device ${devname} creation code in ${fname}")
 
   SET(MYNAME "${DEVICE_PREFIX}${devname}")
@@ -176,31 +181,31 @@ MACRO(IMPORT_DEVICES hdr)
       ENDIF (KNOWN)
     ENDIF (NOT COMPILING_ALL_YARP)
 
-	# Dec08 -- nat removes:
-	# LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
-	# adds:
-	IF(MSVC)
+    # Dec08 -- nat removes:
+    # LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
+    # adds:
+    IF(MSVC)
       LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
-	ELSE(MSVC)
-	  LINK_LIBRARIES(optimized ${libname} debug ${libname})
-	ENDIF(MSVC)
-  
-ENDFOREACH (libname ${ARGN})
+    ELSE(MSVC)
+      LINK_LIBRARIES(optimized ${libname} debug ${libname})
+    ENDIF(MSVC)
+    
+  ENDFOREACH (libname ${ARGN})
   SET(YARP_CODE_PRE)
   SET(YARP_CODE_POST)
-#  FOREACH(dev ${YARP_DEVICE_LIST})
+  #  FOREACH(dev ${YARP_DEVICE_LIST})
   FOREACH(dev ${ARGN})
     SET(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_${dev}_devices();")
     SET(YARP_CODE_POST "${YARP_CODE_POST}\n        add_${dev}_devices();")
   ENDFOREACH(dev ${})
   SET(YARP_LIB_NAME ${YARPY_DEV_LIB_NAME})
   CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_import.h.in
-     ${hdr} @ONLY  IMMEDIATE)
+    ${hdr} @ONLY  IMMEDIATE)
   MESSAGE(STATUS "generated ${hdr}")
   IF (YARP_LIBRARIES)
-        LINK_LIBRARIES(${YARP_LIBRARIES})
+    LINK_LIBRARIES(${YARP_LIBRARIES})
   ELSE (YARP_LIBRARIES)
-        LINK_LIBRARIES(YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+    LINK_LIBRARIES(YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
   ENDIF (YARP_LIBRARIES)
 ENDMACRO(IMPORT_DEVICES hdr)
 
@@ -228,11 +233,11 @@ MACRO(TARGET_IMPORT_DEVICES target hdr)
   ENDFOREACH(dev ${})
   SET(YARP_LIB_NAME ${YARPY_DEV_LIB_NAME})
   CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_import.h.in
-     ${hdr} @ONLY  IMMEDIATE)
+    ${hdr} @ONLY  IMMEDIATE)
   MESSAGE(STATUS "generated ${hdr}")
   IF (YARP_LIBRARIES)
-        TARGET_LINK_LIBRARIES(${target} ${YARP_LIBRARIES})
+    TARGET_LINK_LIBRARIES(${target} ${YARP_LIBRARIES})
   ELSE (YARP_LIBRARIES)
-        TARGET_LINK_LIBRARIES(${target} YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
+    TARGET_LINK_LIBRARIES(${target} YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
   ENDIF (YARP_LIBRARIES)
 ENDMACRO(TARGET_IMPORT_DEVICES target hdr)
