@@ -5,7 +5,7 @@ import re
 import sys
 
 if len(sys.argv)!=3:
-    print 'Call as:\n  %s /port/name \"message to send\"'%sys.argv[0]
+    print 'Call as:\n  %s /port/to/write/to \"message to send\"'%sys.argv[0]
     exit(1)
 
 try:
