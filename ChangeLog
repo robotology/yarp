@@ -206,7 +206,7 @@
 
 	* src/libYARP_OS/src/Companion.cpp: add "yarp detect" command
 	to scan for nameserver in a controlled way, and give
-	debugging tips for when problems arise..
+	debugging tips for when problems arise.
 
 	* src/libYARP_OS/src/NameClient.cpp: stop ports from 
 	automatically scanning for nameserver if they cannot find it.
