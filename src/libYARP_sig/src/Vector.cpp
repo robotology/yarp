@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2007 Lorenzo Natale
+* Author: Lorenzo Natale.
+* Copyright (C) 2007 The Robotcub consortium
 * CopyPolicy: Released under the terms of the GNU GPL v2.0.
-*
 */
 
 // $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $
