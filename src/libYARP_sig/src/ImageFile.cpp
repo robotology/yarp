@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale, Giorgio Metta, Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Author: Lorenzo Natale, Giorgio Metta and Paul Fitzpatrick.
+* Copyright (C) 2006 The Robotcub consortium
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*/
 
 ///
 /// $Id: ImageFile.cpp,v 1.20 2007-12-01 18:34:12 eshuy Exp $
