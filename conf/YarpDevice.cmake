@@ -5,21 +5,35 @@
 # etc.
 
 #########################################################################
-# BEGIN_DEVICE_LIBRARY macro calls YARP_PREPARE_DEVICES if this is
-# the outermost device library block, otherwise it propagates
-# all collected information to the device library block that wraps
-# it.
+# BEGIN_DEVICE_LIBRARY macro makes sure that all the cmake hooks
+# needed for creating a device library are in place.  Those hooks
+# are defined in YarpModuleHooks.cmake
 #
 MACRO(BEGIN_DEVICE_LIBRARY devname)
 
-  # this is desired behavior for YARP device library bundles
+  # YARP device library bundles should take a "d" suffix for debug
+  # versions.
   IF (MSVC)
     SET(CMAKE_DEBUG_POSTFIX "d")
   ENDIF (MSVC)
 
+  # Dependencies on YARP of individual device modules via
+  # FIND_PACKAGE(YARP) will be optimized by substituting directly
+  # the names of the YARP libraries.
   INCLUDE(YarpLibraryNames)
 
-  # reset dependency tracker
+  # This is a collection of variable used to track all sorts of
+  # resources as a device module is created.  For example, when
+  # in a device module there is a line like:
+  #    LINK_LIBRARIES(foo bar)
+  # then instead of those libraries being linked, they are
+  # appended to one of these variables.  Similarly for definitions,
+  # include paths, source files, etc.  In the end, a single 
+  # library target is created based on all this material.
+  # This has the down-side that device module CMakeLists.txt
+  # files should not get too fancy, and the up-side that
+  # those files can be read and written with basic knowledge
+  # of CMake.
   SET(YARPY_LIB_LIST0)
   SET(YARPY_XLIB_LIST0)
   SET(YARPY_SRC_LIST0)
@@ -28,7 +42,16 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
   SET(YARPY_DEF_LIST0)
   SET(YARPY_DEV_LIST0)
 
-  IF (NOT YARPY_DEVICES)
+  # If we are nested inside a larger device block, we don't
+  # have to do much.  If we are the outermost device block,
+  # then we need to set up everything.
+  IF (YARPY_DEVICES)
+
+    MESSAGE(STATUS "nested library ${devname}")
+    SET(DEVICE_PREFIX "${devname}_")
+
+  ELSE (YARPY_DEVICES)
+
     INCLUDE(UsePkgConfig)
     SET(YARP_KNOWN_DEVICE_LIBS ${YARP_KNOWN_DEVICE_LIBS} ${devname})
     IF (COMPILING_ALL_YARP)
@@ -72,12 +95,7 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
 
     SET(YARPY_MASTER_DEVICE ${devname})
 
-  ELSE (NOT YARPY_DEVICES)
-
-    MESSAGE(STATUS "nested library ${devname}")
-    SET(DEVICE_PREFIX "${devname}_")
-
-  ENDIF (NOT YARPY_DEVICES)
+  ENDIF (YARPY_DEVICES)
 
 ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
 
