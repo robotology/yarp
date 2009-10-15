@@ -61,13 +61,12 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
   # files should not get too fancy, and the up-side that
   # those files can be read and written with basic knowledge
   # of CMake.
-  SET(YARPY_LIB_LIST0)
-  SET(YARPY_XLIB_LIST0)
-  SET(YARPY_SRC_LIST0)
-  SET(YARPY_INC_LIST0)
-  SET(YARPY_LNK_LIST0)
-  SET(YARPY_DEF_LIST0)
-  SET(YARPY_DEV_LIST0)
+  SET(YARPY_LIB_LIST0) # List of libraries linked
+  SET(YARPY_SRC_LIST0) # List of source files added
+  SET(YARPY_INC_LIST0) # List of include directories added
+  SET(YARPY_LNK_LIST0) # List of link directories added
+  SET(YARPY_DEF_LIST0) # List of definitions added
+  SET(YARPY_DEV_LIST0) # List of device names
 
   # If we are nested inside a larger device block, we don't
   # have to do much.  If we are the outermost device block,
