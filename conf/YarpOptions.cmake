@@ -30,17 +30,14 @@ SET(COMPILE_NEW_YARPVIEW TRUE CACHE BOOL "Do you want to compile the new yarpvie
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
 
-# not done any more
-SET(CREATE_DEVICE_LIBRARY_BUILTINS FALSE)
-
-SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Newer method for compiling devices")
+SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Compile device modules")
 
 IF (CREATE_DEVICE_LIBRARY_MODULES)
-  SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries")
+  SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries (so they do not need to be linked separately)")
 ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
 SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
-SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create lib libYARP_math (experimental)?")
+SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create math library libYARP_math")
 
 SET(CREATE_SHARED_LIBRARY FALSE CACHE BOOL "Compile shared libraries rather than linking statically")
 IF (WIN32)
@@ -52,5 +49,5 @@ ENDIF (WIN32)
 SET(CREATE_BUILTIN_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create tests for builtin devices")
 MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
 
-SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string?")
+SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string? (default is to use the ACE string class)")
 MARK_AS_ADVANCED(USE_STL_STRING)
