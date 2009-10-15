@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick and Lorenzo Natale
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Author: Lorenzo Natale and Paul Fitzpatrick.
+* Copyright (C) 2006 The Robotcub consortium
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*/
 
 // added threadRelease/threadInit methods, synchronization and 
 // init failure notification -nat 
