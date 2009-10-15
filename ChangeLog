@@ -1,3 +1,10 @@
+2009-10-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpModuleHooks.cmake: fix bug introduced while 
+	"cleaning" up this code; a wrapper was added for 
+	the TARGET_LINK_LIBRARIES method, but an internal use of 
+	this method got caught where it should not have.
+
 2009-10-10  Arjan Gijsberts  <arjan@liralab.it>
 	* examples/swig/CMakeLists.txt: enabled threads directive and 
 	added installation support for Python wrapper 
