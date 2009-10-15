@@ -1,8 +1,35 @@
 
-# a set of macros for building bundles of devices
-#  BEGIN_DEVICE_LIBRARY(devname)
-#  END_DEVICE_LIBRARY(devname)
-# etc.
+#########################################################################
+##
+## Yet Another Device Compiling Monster
+##
+## This file, along with YarpModuleHooks.cmake, provides a set of macros
+## for building bundles of devices.
+##  BEGIN_DEVICE_LIBRARY(libname)
+##  END_DEVICE_LIBRARY(libname)
+## etc.
+##
+## CMake commands that lie between BEGIN_DEVICE_LIBRARY and 
+## END_DEVICE_LIBRARY will be intercepted (see YarpModuleHooks.cmake)
+## and any source files that reference, libraries they link, directories
+## they add to the include path, and definitions they add will all be
+## put in a big list and used to compile a single library called 
+## <libname>.
+##
+## Some extra generated files will be included as well in the library
+## in order to facilitate access to devices.
+##
+## For each device <devname> that gets compiled, there will be a:
+##   yarpdev_add_<devname>.cpp
+## file that contains a method called:
+##   extern "C" void add_<devname>();
+## which adds that device into the YARP list of device factories.
+## For each device bundle/library there will be a:
+##   add_<libname>.cpp
+## with a method called:
+##   extern "C" void add_<libname>_devices();
+## which calls add the add_*() methods for devices within that bundle.
+##
 
 #########################################################################
 # BEGIN_DEVICE_LIBRARY macro makes sure that all the cmake hooks
