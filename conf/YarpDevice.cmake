@@ -52,7 +52,11 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
 
   ELSE (YARPY_DEVICES)
 
+    # Support pkgconfig usage
     INCLUDE(UsePkgConfig)
+
+    # Record name of device, in case user wants to import it later
+    # using TARGET_IMPORT_DEVICES
     SET(YARP_KNOWN_DEVICE_LIBS ${YARP_KNOWN_DEVICE_LIBS} ${devname})
     IF (COMPILING_ALL_YARP)
       SET(YARP_MODULE_PATH "${CMAKE_SOURCE_DIR}/conf")
@@ -61,14 +65,11 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
         SET(YARP_MODULE_PATH "${YARP_ROOT}/conf")
       ENDIF (NOT YARP_MODULE_PATH)
     ENDIF (COMPILING_ALL_YARP)
+
+    # Declare that we are starting to compile the given device bundle
     MESSAGE(STATUS "starting device library: ${devname}")
     SET(YARPY_DEV_LIB_NAME ${devname})
     SET(YARPY_DEVICES TRUE)
-
-    # commands seem to lurk even if variables are removed
-    IF (COMMAND END_DEVICE_LIBRARY)
-      SET(YARPY_DEVICES_INSTALLED TRUE)
-    ENDIF (COMMAND END_DEVICE_LIBRARY)
 
     SET(YARPY_DEV_GEN ${CMAKE_BINARY_DIR}/generated_code)
     IF (NOT EXISTS ${YARPY_DEV_GEN})
@@ -83,6 +84,12 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     SET(YARPY_DEV_LIST)
     SET(YARPY_DEV_SRC_LIST)
 
+    # Check if hooks have been added
+    IF (COMMAND END_DEVICE_LIBRARY)
+      SET(YARPY_DEVICES_INSTALLED TRUE)
+    ENDIF (COMMAND END_DEVICE_LIBRARY)
+
+    # If hooks have not been added, add them
     IF (NOT YARPY_DEVICES_INSTALLED)
       MESSAGE(STATUS "adding hooks for device library compilation")
       SET(YARPY_DEVICES_INSTALLED TRUE)
@@ -91,37 +98,68 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
       ENDIF (NOT COMPILE_DEVICE_LIBRARY)
     ENDIF (NOT YARPY_DEVICES_INSTALLED)
 
+    # Set a flag to let individual modules know that they are being
+    # compiled as part of a bundle, and not standalone.  Developers
+    # use this flag to inhibit compilation of test programs and 
+    # the like.
     SET(COMPILE_DEVICE_LIBRARY TRUE)
 
+    # Record the name of this outermost device bundle (needed because
+    # nesting is allowed)
     SET(YARPY_MASTER_DEVICE ${devname})
 
   ENDIF (YARPY_DEVICES)
 
 ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
 
+
+
+#########################################################################
+# ADD_DEVICE_NORMALIZED macro is an internal command to convert a 
+# device declaration to code, and to set up CMake flags for controlling
+# compilation of that device.  This macro is called be PREPARE_DEVICE
+# which is the documented, user-facing macro.  PREPARE_DEVICE parses
+# a flexible set of arguments, then passes them to ADD_DEVICE_NORMALIZED
+# in a clean canonical order.
+#
 MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
+
+  # Append the current source directory to the set of include paths.
+  # Developers seem to expect #include "foo.h" to work if foo.h is
+  # in their module directory.
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+
+  # Figure out a decent filename for the code we are about to 
+  # generate.  If all else fails, the code will get dumped in
+  # the current binary directory.
+  SET(fdir ${YARPY_DEV_GEN})
+  IF(NOT fdir)
+    SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
+  ENDIF(NOT fdir)
+
+  # We'll be expanding the code in conf/yarpdev_helper.cpp.in using 
+  # the following variables:
+
   SET(YARPDEV_NAME "${devname}")
   SET(YARPDEV_TYPE "${type}")
   SET(YARPDEV_INCLUDE "${include}")
   SET(YARPDEV_WRAPPER "${wrapper}")
   SET(ENABLE_YARPDEV_NAME "1")
-  SET(fdir ${YARPY_DEV_GEN})
-  IF(NOT fdir)
-    SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
-  ENDIF(NOT fdir)
+
+  # Go ahead and prepare some code to wrap this device.  
   SET(fname ${fdir}/yarpdev_add_${devname}.cpp)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
     ${fname} @ONLY  IMMEDIATE)
-  ###MESSAGE(STATUS "Device ${devname} creation code in ${fname}")
-
+ 
+  # Set up a flag to enable/disable compilation of this device.
   SET(MYNAME "${DEVICE_PREFIX}${devname}")
   IF (NOT COMPILE_BY_DEFAULT)
     SET (COMPILE_BY_DEFAULT FALSE)
   ENDIF (NOT COMPILE_BY_DEFAULT)
   SET(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
 
-  # for user's convience
+  # Set some convenience variables based on whether the device
+  # is enabled or disabled.
   SET(ENABLE_${devname} ${ENABLE_${MYNAME}})
   IF (ENABLE_${devname})
     SET(SKIP_${devname} FALSE)
@@ -131,6 +169,8 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
     SET(SKIP_${MYNAME} TRUE)
   ENDIF (ENABLE_${devname})
 
+  # If the device is enabled, add the appropriate source code into
+  # the device library source list.
   IF (ENABLE_${MYNAME})
     SET(YARPY_DEV_SRC_LIST ${YARPY_DEV_SRC_LIST} ${fname})
     SET(YARPY_DEV_LIST ${YARPY_DEV_LIST} ${devname})
@@ -140,10 +180,21 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
     MESSAGE(STATUS " +++ device ${devname}, SKIP_${devname} is set")
   ENDIF (ENABLE_${MYNAME})
 
-
+  # We are done!
 
 ENDMACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
 
+
+
+#########################################################################
+# PREPARE_DEVICE macro lets a developer declare a device using a 
+# statement like:
+#    PREPARE_DEVICE(foo TYPE FooDriver INCLUDE FooDriver.h)
+# or
+#    PREPARE_DEVICE(moto TYPE Moto INCLUDE moto.h WRAPPER controlboard)
+# This macro is just a simple parser and calls ADD_DEVICE_NORMALIZED to
+# do the actual work.
+#
 MACRO(PREPARE_DEVICE devname)
   SET(EXPECT_TYPE FALSE)
   SET(EXPECT_INCLUDE FALSE)
@@ -183,6 +234,12 @@ MACRO(PREPARE_DEVICE devname)
   ENDIF(THE_TYPE AND THE_INCLUDE)
 ENDMACRO(PREPARE_DEVICE devname)
 
+
+
+#########################################################################
+# IMPORT_DEVICES macro will link named device libraries, and generate
+# a header file that makes all its devices accessible.
+#
 MACRO(IMPORT_DEVICES hdr)
   FOREACH (libname ${ARGN})
     IF (NOT COMPILING_ALL_YARP)
@@ -199,9 +256,6 @@ MACRO(IMPORT_DEVICES hdr)
       ENDIF (KNOWN)
     ENDIF (NOT COMPILING_ALL_YARP)
 
-    # Dec08 -- nat removes:
-    # LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
-    # adds:
     IF(MSVC)
       LINK_LIBRARIES(optimized ${libname} debug ${libname}d)
     ELSE(MSVC)
@@ -209,9 +263,9 @@ MACRO(IMPORT_DEVICES hdr)
     ENDIF(MSVC)
     
   ENDFOREACH (libname ${ARGN})
+
   SET(YARP_CODE_PRE)
   SET(YARP_CODE_POST)
-  #  FOREACH(dev ${YARP_DEVICE_LIST})
   FOREACH(dev ${ARGN})
     SET(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_${dev}_devices();")
     SET(YARP_CODE_POST "${YARP_CODE_POST}\n        add_${dev}_devices();")
@@ -228,6 +282,12 @@ MACRO(IMPORT_DEVICES hdr)
 ENDMACRO(IMPORT_DEVICES hdr)
 
 
+
+#########################################################################
+# TARGET_IMPORT_DEVICES macro will link named device libraries against
+# a specific target, and generated a header file that makes all its 
+# devices accessible.
+#
 MACRO(TARGET_IMPORT_DEVICES target hdr)
   FOREACH (libname ${ARGN})
     IF (NOT COMPILING_ALL_YARP)
