@@ -497,7 +497,6 @@ int Companion::sendMessage(const String& port, Writable& writable,
     output = "";
     NameClient& nic = NameClient::getNameClient();
     Address srcAddress = nic.queryName(port);
-    //Address srcAddress("localhost",9999,"tcp");
     if (!srcAddress.isValid()) {
         if (!quiet) {
             ACE_OS::fprintf(stderr, "Cannot find port named %s\n", port.c_str());

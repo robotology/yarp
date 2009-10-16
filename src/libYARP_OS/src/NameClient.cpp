@@ -306,7 +306,6 @@ NameClient::NameClient() {
     process = NetType::toString(ACE_OS::getpid());
     if (!updateAddress()) {
         YARP_ERROR(Logger::get(),"Cannot find name server");
-        //address = Address("localhost",10000);
     }
 
     YARP_DEBUG(Logger::get(),String("name server address is ") + 

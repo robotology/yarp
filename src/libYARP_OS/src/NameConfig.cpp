@@ -189,7 +189,7 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
 String NameConfig::getHostName() {
     // try to pick a good host identifier
 
-    String result = "localhost";
+    String result = "127.0.0.1";
 
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
@@ -228,7 +228,7 @@ bool NameConfig::isLocalName(const String& name) {
     }
 
     // just in case
-    if (name=="localhost") { result = true; }
+    if (name=="localhost"||name=="127.0.0.1") { result = true; }
 
     return result;
 }
