@@ -127,7 +127,7 @@ String NameClient::send(const String& cmd, bool multi) {
 
         if (isFakeMode()) {
             //YARP_DEBUG(Logger::get(),"fake mode nameserver");
-            return getServer().apply(cmd,Address("localhost",10000,"tcp")) + "\n";
+            return getServer().apply(cmd,Address("127.0.0.1",10000,"tcp")) + "\n";
         }
         
         TcpFace face;
@@ -202,7 +202,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
         return getServer().apply(cmd,reply,
-                                 Address("localhost",10000,"tcp"));
+                                 Address("127.0.0.1",10000,"tcp"));
     } else {
         ConstString server = Network::getNameServerName();
         return Network::write(server,cmd,reply);

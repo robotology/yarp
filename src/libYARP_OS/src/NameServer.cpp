@@ -115,7 +115,7 @@ Address NameServer::registerName(const String& name,
         if (carrier!="mcast") {
             if (remote=="...") {
                 YARP_ERROR(Logger::get(),"remote machine name was not found!  can only guess it is local...");
-                machine = "localhost";
+                machine = "127.0.0.1";
             } else {
                 machine = remote; 
             }
