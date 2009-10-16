@@ -21,12 +21,12 @@ public:
 
     void checkRegister() {
         report(0,"checking register...");
-        Address address("localhost",9999,"tcp");
+        Address address("127.0.0.1",9999,"tcp");
         NameServer ns;
         ns.registerName("/foo",address);
         Address a1 = ns.queryName("/foo");
         checkEqual(a1.isValid(),true,"recover address");
-        checkEqual(a1.getName(),"localhost","machine name matches");
+        checkEqual(a1.getName(),"127.0.0.1","machine name matches");
         Address a2 = ns.queryName("/bar");
         checkEqual(a2.isValid(),false,"non-existent address");
     }
@@ -35,11 +35,11 @@ public:
         report(0,"checking client interface...");
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
-        Address address("localhost",9999,"tcp");
+        Address address("127.0.0.1",9999,"tcp");
         nic.registerName("/foo2",address);
         Address a1 = nic.queryName("/foo2");
         checkEqual(a1.isValid(),true,"recover address");
-        checkEqual(a1.getName(),"localhost","machine name matches");
+        checkEqual(a1.getName(),"127.0.0.1","machine name matches");
         Address a2 = nic.queryName("/bar2");
         checkEqual(a2.isValid(),false,"non-existent address");
         nic.setFakeMode(false);
@@ -49,7 +49,7 @@ public:
         report(0,"checking dud connections don't affect memory...");
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(fake);
-        Address address("localhost",9999,"tcp");
+        Address address("127.0.0.1",9999,"tcp");
         nic.registerName("/foo2",address);
         Companion::connect("/junk","/junk2",true);
         Companion::connect("/foo2","/junk2",true);

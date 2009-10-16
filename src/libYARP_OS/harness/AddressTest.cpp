@@ -21,18 +21,18 @@ public:
 
     virtual void testString() {
         report(0,"checking string representation");
-        Address address("localhost",10000,"tcp");
+        Address address("127.0.0.1",10000,"tcp");
         String txt = address.toString();
-        checkEqual(txt,"tcp://localhost:10000","string rep example");
+        checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
     }
 
     virtual void testCopy() {
         report(0,"checking address copy");
-        Address address("localhost",10000,"tcp");
+        Address address("127.0.0.1",10000,"tcp");
         Address address2;
         address2 = address;
         String txt = address2.toString();
-        checkEqual(txt,"tcp://localhost:10000","string rep example");
+        checkEqual(txt,"tcp://127.0.0.1:10000","string rep example");
 
         Address inv1;
         address2 = inv1;

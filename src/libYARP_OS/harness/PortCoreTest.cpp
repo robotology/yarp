@@ -46,7 +46,7 @@ public:
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
 
-        Address address("localhost",9999,"tcp","/port");
+        Address address("127.0.0.1",9999,"tcp","/port");
         PortCore core;
         core.listen(address);
         core.start();
@@ -88,9 +88,9 @@ public:
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
 
-        Address write = nic.registerName("/write",Address("localhost",9999,"tcp"));
-        Address read = nic.registerName("/read",Address("localhost",9998,"tcp"));
-        Address fake = Address("localhost",9997,"tcp");
+        Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
+        Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
+        Address fake = Address("127.0.0.1",9997,"tcp");
 
         checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
         checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
@@ -135,9 +135,9 @@ public:
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
 
-        Address write = nic.registerName("/write",Address("localhost",9999,"tcp"));
-        Address read = nic.registerName("/read",Address("localhost",9998,"tcp"));
-        Address fake = Address("localhost",9997,"tcp");
+        Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
+        Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
+        Address fake = Address("127.0.0.1",9997,"tcp");
 
         checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
         checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
