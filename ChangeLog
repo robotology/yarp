@@ -1,3 +1,10 @@
+2009-10-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameClient.cpp: remove dependency on
+	"localhost" being correctly set - this leads to hard to debug
+	problems if it is not set.  You still need the loopback device 
+	though.
+
 2009-10-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpModuleHooks.cmake: fix bug introduced while 
