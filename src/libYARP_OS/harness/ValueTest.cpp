@@ -31,9 +31,9 @@ public:
         Value v2(10);
         Value v3 = v2;
         checkEqual(v3.asInt(),10,"copy integer");
-        v3 = v;
-        checkTrue(v3.isList(),"list copied");
-        checkEqual(v3.asList()->get(1).asInt(),2,"right integer present");
+        Value v4 = v;
+        checkTrue(v4.isList(),"list copied");
+        checkEqual(v4.asList()->get(1).asInt(),2,"right integer present");
 
         Bottle b("(x 10) (y 42)");
         checkEqual(b.check("x",Value(5)).asInt(),10,"default not used");

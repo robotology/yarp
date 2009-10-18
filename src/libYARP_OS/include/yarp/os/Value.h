@@ -44,6 +44,7 @@ private:
     void setProxy(Value *proxy);
     void ok() const;
 
+
 public:
 
     /**
@@ -297,6 +298,8 @@ public:
      * @return the standard type code of the value.
      */
     virtual int getCode() const { ok(); return proxy->getCode(); }
+
+    virtual bool isLeaf() const { return false; }
 
     /**
      * Create an integer Value

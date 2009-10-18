@@ -95,13 +95,28 @@ void Value::ok() const {
 
 
 Value::Value(const Value& alt) {
+    printf("HELLO2\n");
     proxy = 0;
     setProxy(alt.clone());
 }
 
 
 const Value& Value::operator = (const Value& alt) {
-    setProxy(alt.clone());
+    if (proxy==0) {
+        if (isLeaf()) {
+            // we are guaranteed to be a Storable
+            ((Storable*)this)->copy(*((Storable*)alt.proxy));
+        } else {
+            setProxy(alt.clone());
+        }
+    } else {
+        if (alt.proxy) {
+            // proxies are guaranteed to be Storable
+            ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
+        } else {
+            setProxy(NULL);
+        }
+    }
     return *this;
 }
 

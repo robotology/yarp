@@ -1,9 +1,18 @@
+2009-10-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/BottleTest.cpp: add regression test
+	for Value assignment operator.
+
+	* src/libYARP_OS/src/Value.cpp: make Value assignment operator
+	work as expected (thanks Philipp Robbel).
+
 2009-10-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/NameClient.cpp: remove dependency on
 	"localhost" being correctly set - this leads to hard to debug
 	problems if it is not set.  You still need the loopback device 
-	though.
+	though (thanks Andrew Stout, Baris Akgun for 64-bit Ubuntu
+	9.04 reports).
 
 2009-10-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

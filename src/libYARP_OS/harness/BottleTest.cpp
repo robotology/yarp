@@ -400,6 +400,14 @@ public:
         checkEqual(bot.get(2).asString().c_str(),"10.0.0.10","multiple period test");
     }
 
+    void testModify() {
+        report(0,"test bottle modification...");
+        Bottle b;
+        b.addInt(3);
+        b.get(0) = 5;
+        checkEqual(b.get(0).asInt(),5,"assignment works");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -422,6 +430,7 @@ public:
         testAppend();
         testStack();
         testTypeDetection();
+        testModify();
     }
 
     virtual String getName() {

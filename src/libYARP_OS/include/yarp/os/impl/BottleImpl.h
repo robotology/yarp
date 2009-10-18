@@ -171,6 +171,8 @@ public:
     }
 
 
+    virtual bool isLeaf() const { return true; }
+
 };
 
 
