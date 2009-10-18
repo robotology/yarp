@@ -405,6 +405,7 @@ public:
         Bottle b;
         b.addInt(3);
         b.get(0) = 5;
+        b.hasChanged();
         checkEqual(b.get(0).asInt(),5,"assignment works");
     }
 

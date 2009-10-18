@@ -496,6 +496,10 @@ public:
     // check if a piece of text is a completed bottle
     static bool isComplete(const char *txt);
 
+    void hasChanged() {
+        dirty = true;
+    }
+
 private:
     static StoreNull storeNull;
 

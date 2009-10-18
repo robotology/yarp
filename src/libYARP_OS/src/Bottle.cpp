@@ -166,6 +166,10 @@ int Bottle::size() const {
     return HELPER(implementation).size();
 }
 
+void Bottle::hasChanged() {
+    return HELPER(implementation).hasChanged();
+}
+
 void Bottle::specialize(int subCode) {
     HELPER(implementation).specialize(subCode);
 }

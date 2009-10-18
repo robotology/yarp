@@ -289,6 +289,15 @@ public:
     void setNested(bool nested);
 #endif
 
+    /**
+     *
+     * Declare that the content of the Bottle has been changed.  It is
+     * important to call this if you modify an individual element of the
+     * Bottle through assignment, so that serialization happens correctly.
+     *
+     */
+    void hasChanged();
+
 
 private:
 
@@ -377,6 +386,7 @@ private:
     //virtual Bottle *asList() { 
     //  return this; 
     //}
+
 
 
 };
