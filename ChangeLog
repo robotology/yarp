@@ -1,5 +1,8 @@
 2009-10-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Bottle.cpp: give user a way to tag Bottles
+	as modified externally (so serialization can happen correctly).
+
 	* src/libYARP_OS/harness/BottleTest.cpp: add regression test
 	for Value assignment operator.
 
