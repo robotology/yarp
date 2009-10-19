@@ -95,7 +95,6 @@ void Value::ok() const {
 
 
 Value::Value(const Value& alt) {
-    printf("HELLO2\n");
     proxy = 0;
     setProxy(alt.clone());
 }
