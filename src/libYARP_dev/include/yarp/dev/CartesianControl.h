@@ -23,7 +23,7 @@ namespace yarp {
 
 
 /**
- * @ingroup dev_icartesianControl
+ * @ingroup dev_iface_motor
  *
  * Interface for a cartesian controller.
  */
