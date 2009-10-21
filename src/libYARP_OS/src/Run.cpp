@@ -1254,23 +1254,40 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 
 
 	Bottle command_bottle=msg.findGroup("cmd").tail();
-    String command_text;
+	String command_text;
 
 	for (int s=0; s<command_bottle.size(); ++s)
 		command_text+=String(command_bottle.get(s).toString().c_str())+" ";
 
 	printf("\nSTARTING: %s\n\n",command_text.c_str());
 
+	bool bWorkdir=msg.check("workdir");
+	String sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)command_text.c_str(), // command line 
+								(char*)(sWorkdir+command_text).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
 								0,             // creation flags 
-								NULL,          // use parent's environment 
-								msg.check("workdir")?msg.find("workdir").asString().c_str():NULL, // working directory
+								NULL, // use parent's environment 
+								bWorkdir?sWorkdir.c_str():NULL, // working directory
 								&cmd_startup_info,   // STARTUPINFO pointer 
 								&cmd_process_info);  // receives PROCESS_INFORMATION 
+
+	if (!bSuccess && bWorkdir)
+	{
+			bSuccess=CreateProcess(NULL,	// command name
+									(char*)command_text.c_str(), // command line 
+									NULL,          // process security attributes 
+									NULL,          // primary thread security attributes 
+									TRUE,          // handles are inherited 
+									0,             // creation flags 
+									NULL,          // use parent's environment 
+									sWorkdir.c_str(), // working directory 
+									&cmd_startup_info,   // STARTUPINFO pointer 
+									&cmd_process_info);  // receives PROCESS_INFORMATION 
+	}
 
 	if (!bSuccess)
 	{
@@ -1323,16 +1340,33 @@ int Run::ExecuteCmd(Bottle& msg)
 
 	printf("\nSTARTING: %s\n\n",command_text.c_str());
 
+	bool bWorkdir=msg.check("workdir");
+	String sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+
 	bool bSuccess=CreateProcess(NULL,	// command name
-								(char*)command_text.c_str(), // command line 
+								(char*)(sWorkdir+command_text).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
 								0,             // creation flags 
 								NULL,          // use parent's environment 
-								msg.check("workdir")?msg.find("workdir").asString().c_str():NULL, // working directory 
+								bWorkdir?sWorkdir.c_str():NULL, // working directory 
 								&cmd_startup_info,   // STARTUPINFO pointer 
 								&cmd_process_info);  // receives PROCESS_INFORMATION 
+
+	if (!bSuccess && bWorkdir)
+	{
+			bSuccess=CreateProcess(NULL,	// command name
+									(char*)command_text.c_str(), // command line 
+									NULL,          // process security attributes 
+									NULL,          // primary thread security attributes 
+									TRUE,          // handles are inherited 
+									0,             // creation flags 
+									NULL,          // use parent's environment 
+									sWorkdir.c_str(), // working directory 
+									&cmd_startup_info,   // STARTUPINFO pointer 
+									&cmd_process_info);  // receives PROCESS_INFORMATION 
+	}
 
 	if (!bSuccess)
 	{
