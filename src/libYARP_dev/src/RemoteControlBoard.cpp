@@ -57,6 +57,8 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
     return false;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector last;
@@ -156,6 +158,8 @@ public:
     }
 
 };
+
+#endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 
 #include <yarp/os/RateThread.h>
