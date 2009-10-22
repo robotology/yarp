@@ -157,6 +157,12 @@ private:
     // LATER: other interfaces here.
 
     bool closeMain() {
+
+        // interrupt the ports
+        control_p.interrupt();
+        state_p.interrupt();
+        rpc_p.interrupt();
+
         if (Thread::isRunning()) {
             Thread::stop();
         }

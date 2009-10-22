@@ -1,3 +1,9 @@
+2009-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ServerControlBoard.cpp: add explicit
+	port interrupts when closing the device, in case there is
+	a slow blocked transaction.
+
 2009-10-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Bottle.cpp: give user a way to tag Bottles
