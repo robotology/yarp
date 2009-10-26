@@ -71,18 +71,6 @@ bool PortCore::listen(const Address& address) {
 
     face = Carriers::listen(address);
 
-    /*
-    } catch (IOException e) {
-        //YMSG(("listen failed: %s\n",e.toString().c_str()));
-        if (face!=NULL) {
-            face->close();
-            delete face;
-        }
-        stateMutex.post();
-        throw e;
-    }
-    */
-
     if (face==NULL) {
         return false;
     }
@@ -155,10 +143,6 @@ void PortCore::run() {
         // block and wait for an event
         InputProtocol *ip = NULL;
         ip = face->read();
-        //YARP_DEBUG(log,"PortCore got something");
-        //} catch (IOException e) {
-        //YMSG(("read failed: %s\n",e.toString().c_str()));
-        //}
 
         // got an event, but before processing it, we check whether
         // we should shut down
@@ -168,12 +152,10 @@ void PortCore::run() {
         }
         shouldStop |= closing;
         events++;
-        //YMSG(("*** event count boost to %d\n", events));
         stateMutex.post();
 
         if (!shouldStop) {
             // process event
-            //YMSG(("PortCore::run got something, but no processing yet\n"));
             if (ip!=NULL) {
                 addInput(ip);
             }
@@ -332,10 +314,6 @@ void PortCore::closeMain() {
         }
         stateMutex.post();
         if (!done) {
-            // stray debugging message
-			//printf("SHOULD remove %s for %s\n", 
-            //  removeRoute.toString().c_str(),
-            //	getName().c_str());
 			removeUnit(removeRoute,true);
         }
     }
@@ -441,7 +419,6 @@ void PortCore::closeUnits() {
         }
     }
     units.clear();
-    //YMSG(("closeUnits: there are now %d units\n", units.size()));
 }
 
 void PortCore::reapUnits() {
@@ -631,12 +608,10 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
         }
     }
     stateMutex.post();
-    //YARP_DEBUG(log,"should I reap?");
     if (needReap) {
         YARP_DEBUG(log,"one or more connections need prodding to die");
         // death will happen in due course; we can speed it up a bit
         // by waking up the grim reaper
-        //YARP_DEBUG(log,"reaping - send message...");
         OutputProtocol *op = face->write(address);
         if (op!=NULL) {
             op->close();
@@ -649,7 +624,6 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
             // wait until disconnection process is complete
             bool cont = false;
             do {
-                //printf("Waiting for close to finish...\n");
                 stateMutex.wait();
                 cont = isUnit(route);
                 if (cont) {
@@ -660,7 +634,6 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
                     connectionChange.wait();
                 }
             } while (cont);
-            //printf("Waited for close to finish...\n");
         }
     }
     return needReap;
@@ -897,7 +870,6 @@ void PortCore::report(const PortInfo& info) {
     // kept constant over the lifetime of the input/output threads.
 
     if (eventReporter!=NULL) {
-        //printf("call to PortCore::report for [%s]\n", info.message.c_str());
         eventReporter->report(info);
     }
 }
@@ -933,7 +905,6 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
 
     String envelopeString = envelope;
-    //envelope = ""; // let user control wiping
 
     // pass the data to all output units.
     // for efficiency, it should be converted to block form first.
@@ -991,9 +962,7 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
         packetMutex.post();
         YMSG(("------- packed\n"));
     }
-    //writer.onCompletion();
     YMSG(("------- send out\n"));
-    //packetMutex.post();
     stateMutex.post();
     YMSG(("------- send out real\n"));
 
@@ -1014,18 +983,6 @@ bool PortCore::isWriting() {
                 if (unit->isOutput() && !unit->isFinished()) {
                     if (unit->isBusy()) {
                         writing = true;
-                    } else {
-						// not needed anymore, done by callback
-						/*
-                          void *tracker = unit->takeTracker();
-                          if (tracker!=NULL) {
-                          //YARP_INFO(log,"tracker returned...");
-                          packetMutex.wait();
-                          ((PortCorePacket *)tracker)->dec();
-                          packets.checkPacket((PortCorePacket *)tracker);
-                          packetMutex.post();
-                          }
-						*/
                     }
                 }
             }
@@ -1040,7 +997,6 @@ bool PortCore::isWriting() {
 
 int PortCore::getInputCount() {
     cleanUnits();
-    //describe(NULL,NULL);
     stateMutex.wait();
     int result = inputCount;
     stateMutex.post();
@@ -1101,7 +1057,6 @@ bool PortCore::getEnvelope(Readable& envelope) {
     StreamConnectionReader sbr;
     Route route;
     sbr.reset(sis,NULL,route,0,true);
-    //this->envelope = ""; // let user control wiping
     return envelope.read(sbr);
 }
 
