@@ -89,12 +89,12 @@ public:
      * shown
      * @return 0 on success, non-zero on failure
      */
-    static int read(const char *name, const char *src = NULL,
-                    bool showEnvelope = false);
+    int read(const char *name, const char *src = NULL,
+             bool showEnvelope = false);
 
-    static int write(const char *name, int ntargets, char *targets[]);
+    int write(const char *name, int ntargets, char *targets[]);
 
-    static int rpc(const char *connectionName, const char *targetName);
+    int rpc(const char *connectionName, const char *targetName);
 
     static int forward(const char *localName, const char *targetName);
 
@@ -154,6 +154,8 @@ public:
 
     int cmdRpc(int argc, char *argv[]);
 
+    int cmdRpcServer(int argc, char *argv[]);
+
     int cmdForward(int argc, char *argv[]);
 
     int cmdRegression(int argc, char *argv[]);
@@ -208,6 +210,7 @@ private:
     ACE_Hash_Map_Manager<YARP_KEYED_STRING,Entry,ACE_Null_Mutex> action;
     ACE_Vector<String> names;
     ACE_Vector<String> tips;
+    bool adminMode;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {

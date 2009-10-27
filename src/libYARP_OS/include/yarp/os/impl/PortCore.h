@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2009 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -74,6 +74,7 @@ public:
         outputCount = inputCount = 0;
         controlRegistration = true;
         interruptible = true;
+        autoOutput = true;
         eventReporter = NULL;
     }
 
@@ -241,6 +242,16 @@ public:
     bool adminBlock(yarp::os::ConnectionReader& reader, void *id, 
                     OutputStream *os);
 
+
+    /**
+     * Determine whether output should be automatically generated
+     * from input (default is that it is not)
+     *
+     */
+    void setAutoOutput(bool autoOutput) {
+        this->autoOutput = autoOutput;
+    }
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -303,6 +314,7 @@ private:
     bool waitBeforeSend, waitAfterSend;
     bool controlRegistration;
     bool interruptible;
+    bool autoOutput;
     int events;
     int connectionListeners;
     int inputCount, outputCount;

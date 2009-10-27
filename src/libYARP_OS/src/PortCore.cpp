@@ -890,7 +890,27 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
     if (this->reader!=NULL) {
         interruptible = false; // no mutexing; user of interrupt() has to be
                                // careful
-        result = this->reader->read(reader);
+
+        bool haveOutputs = (outputCount!=0); // no mutexing, but failure
+        // modes give fine behavior
+
+        if (autoOutput&&haveOutputs) {
+            // Normally, yarp doesn't pay attention to the content of 
+            // messages received by the client.  Likewise, the content
+            // of replies are not monitored.  However it may sometimes 
+            // be useful this traffic.
+
+            ConnectionRecorder recorder;
+            recorder.init(reader);
+            result = this->reader->read(recorder);
+            recorder.fini();
+            // send off a log of this transaction to whoever wants it
+            send(recorder);
+        } else {
+            // YARP is not needed as a middleman
+            result = this->reader->read(reader);
+        }
+
         interruptible = true;
     } else {
         // read and ignore

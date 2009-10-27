@@ -1,3 +1,28 @@
+2009-10-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: added rpcserver command:
+	  yarp rpcserver /rpc/server/name
+	This makes a trivial rpc server that is useful for testing.
+	It waits for messages, and then replies with whatever you
+	type on the console.
+
+	* src/libYARP_OS/src/Companion.cpp: add "admin" option for
+	using the port administrative interface.  So:
+	  yarp admin rpc /port/name
+	will now send administrative rather than data messages to 
+	that port.  To get a list of administrative commands, type:
+	  help
+	while running "yarp admin rpc /port/name".  The admin
+	option also works for:
+	  yarp admin write /write/name /target/name
+
+	* src/libYARP_OS/src/PortCore.cpp: add option for storing and
+	forwarding RPC methods for debugging.  This is controlled by
+	Port::setAutoOutputMode.  If set, then RPC transactions on
+	input ports will be written to any connected output forms
+	in Bottle-compatible form:
+	  [rpc] (<input message>) (<reply message>)
+
 2009-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/ServerControlBoard.cpp: add explicit

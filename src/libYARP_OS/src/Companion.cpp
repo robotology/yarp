@@ -79,6 +79,7 @@ static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
 
 
 Companion::Companion() {
+    adminMode = false;
     add("help",       &Companion::cmdHelp,
         "get this list");
     add("version",    &Companion::cmdVersion,
@@ -103,6 +104,8 @@ Companion::Companion() {
         "read from the network and print to standard output, write to the network from standard input");
     add("rpc",        &Companion::cmdRpc,
         "read/write commands to a port, in standard format");
+    add("rpcserver",  &Companion::cmdRpcServer,
+        "make a test RPC server to receive and reply to Bottle-format messages");
     add("forward",        &Companion::cmdForward,
         "forward commands to a port, in standard format (experimental)");
     add("regression", &Companion::cmdRegression,
@@ -158,13 +161,21 @@ int Companion::main(int argc, char *argv[]) {
         ACE_OS::printf("Call with the argument \"help\" to see a list of ways to use this program.\n");
         return 0;
     }
-    
+
+    Companion& instance = getInstance();
     int verbose = 0;
+    bool adminMode = false;
     bool more = true;
     while (more && argc>0) {
         more = false;
         if (String(argv[0]) == String("verbose")) {
             verbose++;
+            argc--;
+            argv++;
+            more = true;
+        }
+        if (String(argv[0]) == String("admin")) {
+            adminMode = true;
             argc--;
             argv++;
             more = true;
@@ -182,8 +193,8 @@ int Companion::main(int argc, char *argv[]) {
     const char *cmd = argv[0];
     argc--;
     argv++;
-    
-    return getInstance().dispatch(cmd,argc,argv);
+    instance.adminMode = adminMode;
+    return instance.dispatch(cmd,argc,argv);
     
     /*
     } catch (IOException e) {
@@ -471,7 +482,9 @@ int Companion::cmdWhere(int argc, char *argv[]) {
 }
 
 int Companion::cmdHelp(int argc, char *argv[]) {
-    ACE_OS::printf("Here are arguments you can give this program:\n");
+    ACE_OS::printf("Usage:\n");
+    ACE_OS::printf("  <yarp> [verbose] [admin] command arg1 arg2 ...\n");
+    ACE_OS::printf("Here are commands you can use:\n");
     for (unsigned i=0; i<names.size(); i++) {
         String name = names[i];
         const String& tip = tips[i];
@@ -649,6 +662,31 @@ int Companion::cmdWrite(int argc, char *argv[]) {
 
     const char *src = argv[0];
     return write(src,argc-1,argv+1);
+}
+
+
+int Companion::cmdRpcServer(int argc, char *argv[]) {
+    if (argc<1) {
+        ACE_OS::fprintf(stderr, "Please supply port name\n");
+        return 1;
+    }
+
+    const char *name = argv[0];
+
+    Port port;
+    port.open(name);
+
+    while (true) {
+        printf("Waiting for a message...\n");
+        Bottle cmd;
+        Bottle response;
+        port.read(cmd,true);
+        printf("Message: %s\n", cmd.toString().c_str());
+        printf("Reply: ");
+        String txt = getStdin();
+        response.fromString(txt.c_str());
+        port.reply(response);
+    }
 }
 
 
@@ -1300,6 +1338,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         YARP_ERROR(Logger::get(),"could not create port");
         return 1;
     }
+
+    if (adminMode) {
+        Bottle b("__ADMIN");
+        core.setEnvelope(b);
+    }
     
     bool raw = true;
     for (int i=0; i<ntargets; i++) {
@@ -1401,7 +1444,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                 Bottle bot;
                 bot.fromString(txt.c_str());
                 
-                PortCommand pc(0,"d");
+                PortCommand pc(0,adminMode?"a":"d");
                 BufferedConnectionWriter bw(out->isTextMode());
                 bool ok = pc.write(bw);
                 if (!ok) {

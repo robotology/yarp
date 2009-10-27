@@ -10,11 +10,13 @@
 #define _YARP2_BUFFEREDCONNECTIONWRITER_
 
 #include <yarp/os/ConnectionWriter.h>
+#include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/SizedWriter.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/Vocab.h>
 
 #include <ace/Vector_T.h>
 #include <ace/OS_NS_stdlib.h>
@@ -23,6 +25,7 @@ namespace yarp {
     namespace os {
         namespace impl {
             class BufferedConnectionWriter;
+            class ConnectionRecorder;
             using yarp::os::ConnectionWriter;
             using yarp::os::ConnectionReader;
         }
@@ -164,6 +167,19 @@ public:
         return textMode;
     }
 
+    bool write(ConnectionWriter& connection) {
+		unsigned int i;
+        for (i=0; i<header.size(); i++) {
+            ManagedBytes& b = *(header[i]);
+            connection.appendBlock(b.get(),b.used());
+        }
+        for (i=0; i<lst.size(); i++) {
+            ManagedBytes& b = *(lst[i]);
+            connection.appendBlock(b.get(),b.used());
+        }
+        return !connection.isError();
+    }
+
     void write(OutputStream& os) {
 		unsigned int i;
         for (i=0; i<header.size(); i++) {
@@ -242,6 +258,8 @@ public:
 
     virtual bool convertTextMode();
 
+    bool forceConvertTextMode();
+
     void addToHeader() {
         stopPool();
         target = &header;
@@ -279,6 +297,197 @@ private:
     bool textMode;
     yarp::os::Portable *ref;
 };
+
+
+/**
+ * A helper for recording entire message/reply transactions
+ */
+class yarp::os::impl::ConnectionRecorder : public ConnectionReader, 
+            public ConnectionWriter, public yarp::os::PortWriter {
+private:
+    ConnectionReader *reader;
+    ConnectionWriter *writer;
+    BufferedConnectionWriter readerStore;
+    BufferedConnectionWriter writerStore;
+    bool writing;
+    bool wrote;
+public:
+    ConnectionRecorder() {
+        reader = NULL;
+        writing = false;
+        wrote = false;
+    }
+
+    /**
+     *
+     * Call this to wrap a specific ConnectionReader.
+     *
+     */
+    void init(ConnectionReader& wrappedReader) {
+        reader = &wrappedReader;
+        if (reader->isTextMode()) {
+            reader->convertTextMode();
+        }
+        writing = false;
+    }
+
+    /**
+     *
+     * Call this when all reading/writing has been done.
+     *
+     */
+    void fini() {
+        if (writing) {
+            if (writer->isTextMode()) {
+                writer->convertTextMode();
+            }
+            writing = false;
+        }
+    }
+
+    virtual bool expectBlock(const char *data, int len) {
+        bool ok = reader->expectBlock(data,len);
+        if (ok) {
+            readerStore.appendBlock(data,len);
+        }
+        return ok;
+    }
+
+    virtual ConstString expectText(int terminatingChar) {
+        ConstString str = reader->expectText(terminatingChar);
+        readerStore.appendString(str.c_str(),terminatingChar);
+        return str;
+    }
+
+    virtual int expectInt() {
+        int x = reader->expectInt();
+        readerStore.appendInt(x);
+        return x;
+    }
+
+    virtual double expectDouble() {
+        double x = reader->expectDouble();
+        readerStore.appendDouble(x);
+        return x;
+    }
+
+    virtual bool isTextMode() {
+        return false;
+    }
+
+    virtual bool convertTextMode() {
+        return false;
+    }
+
+    virtual int getSize() {
+        return reader->getSize();
+    }
+
+
+    virtual ConnectionWriter *getWriter() {
+        writer = reader->getWriter();
+        writing = true;
+        wrote = true;
+        return this;
+    }
+
+    virtual Portable *getReference() {
+        return reader->getReference();
+    }
+
+    virtual Contact getRemoteContact() {
+        return reader->getRemoteContact();
+    }
+
+    virtual Contact getLocalContact() {
+        return reader->getLocalContact();
+    }
+
+    virtual bool isValid() {
+        // shared
+        if (writing) {
+            return writer->isValid();
+        }
+        return reader->isValid();
+    }
+
+    virtual bool isActive() {
+        // shared
+        if (writing) {
+            return writer->isActive();
+        }
+        return reader->isActive();
+    }
+
+    virtual bool isError() {
+        // shared
+        if (writing) {
+            return writer->isError();
+        }
+        return reader->isError();
+    }
+
+
+    virtual void appendBlock(const char *data, int len) {
+        writer->appendBlock(data,len);
+        writerStore.appendBlock(data,len);
+    }
+
+    virtual void appendInt(int data) {
+        writer->appendInt(data);
+        writerStore.appendInt(data);
+    }
+
+    virtual void appendDouble(double data) {
+        writer->appendDouble(data);
+        writerStore.appendDouble(data);
+    }
+
+    virtual void appendString(const char *str, int terminate) {
+        writer->appendString(str,terminate);
+        writerStore.appendString(str,terminate);
+    }
+
+    virtual void appendExternalBlock(const char *data, int len) {
+        writer->appendExternalBlock(data,len);
+        writerStore.appendExternalBlock(data,len);
+    }
+
+    virtual void declareSizes(int argc, int *argv) {
+        writer->declareSizes(argc,argv);
+    }
+
+    virtual void setReplyHandler(PortReader& reader) {
+        writer->setReplyHandler(reader);
+    }
+
+    virtual void setReference(Portable *obj) {
+        writer->setReference(obj);
+    }
+
+    virtual bool write(ConnectionWriter& connection) {
+        if (hasReply()) {
+            connection.appendInt(BOTTLE_TAG_LIST); // nested structure
+            connection.appendInt(3);               // with three elements
+            connection.appendInt(BOTTLE_TAG_VOCAB);
+            connection.appendInt(VOCAB3('r','p','c'));
+            bool ok = readerStore.write(connection);
+            if (ok) {
+                writerStore.write(connection);
+            }
+            return ok;
+        } else {
+            return readerStore.write(connection);
+        }
+    }
+
+
+    BufferedConnectionWriter& getMessage() { return readerStore; }
+    BufferedConnectionWriter& getReply() { return writerStore; }
+    bool hasReply() { return wrote; }
+};
+
+
 
 #endif
 

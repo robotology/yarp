@@ -26,3 +26,13 @@ bool BufferedConnectionWriter::convertTextMode() {
 }
 
 
+
+bool BufferedConnectionWriter::forceConvertTextMode() {
+    bool mode = textMode;
+    textMode = true;
+    convertTextMode();
+    textMode = mode;
+    return true;
+}
+
+

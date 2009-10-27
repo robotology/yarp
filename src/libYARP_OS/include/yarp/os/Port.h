@@ -181,6 +181,18 @@ public:
      */
     void setAdminMode(bool adminMode = true);
 
+    /**
+     *
+     * Turn on/off automatic output generation.  When this mode
+     * is on, port output will be generated from its input.
+     * This is primarily of use for RPC ports, so that replies
+     * sent to their inputs can be monitored.
+     *
+     * @param autoOutput automatic output flag
+     *
+     */
+    void setOutputMode(bool autoOutput = true);
+
 private:
     void *implementation;
 
