@@ -245,7 +245,7 @@ using namespace yarp::os;
 ConstString Vector::toString()
 {
     String ret = "";
-    char tmp[80];
+    char tmp[512];
     int c=0;
     for(c=0;c<length()-1;c++)
     {

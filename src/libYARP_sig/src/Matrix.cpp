@@ -130,7 +130,7 @@ using namespace yarp::os;
 ConstString Matrix::toString() const
 {
     String ret;
-    char tmp[80];
+    char tmp[512];
     int c=0;
     int r=0;
     for(r=0;r<rows()-1;r++)

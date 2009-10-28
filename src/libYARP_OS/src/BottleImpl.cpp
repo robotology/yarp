@@ -641,7 +641,7 @@ bool StoreVocab::write(ConnectionWriter& writer) {
 // StoreDouble
 
 String StoreDouble::toStringFlex() const {
-    char buf[256];
+    char buf[512];
     ACE_OS::sprintf(buf,"%f",x);
     String str(buf);
 

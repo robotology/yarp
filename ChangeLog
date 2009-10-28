@@ -1,3 +1,10 @@
+2009-10-28  Arjan Gijsberts  <arjan@liralab.it>
+	* src/libYARP_OS/src/BottleImpl.cpp
+	* src/libYARP_sig/src/Vector.cpp
+	* src/libYARP_sig/src/Matrix.cpp
+	Increased buffers to 512 bytes to prevent buffer overflows when 
+	printing (large) floating point numbers.
+
 2009-10-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp: added rpcserver command:
