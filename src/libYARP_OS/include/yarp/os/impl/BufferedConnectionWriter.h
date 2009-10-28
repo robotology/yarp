@@ -323,8 +323,8 @@ public:
      * Call this to wrap a specific ConnectionReader.
      *
      */
-    void init(ConnectionReader& wrappedReader) {
-        reader = &wrappedReader;
+    void init(ConnectionReader *wrappedReader) {
+        reader = wrappedReader;
         if (reader->isTextMode()) {
             reader->convertTextMode();
         }

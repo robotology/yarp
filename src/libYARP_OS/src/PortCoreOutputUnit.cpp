@@ -100,6 +100,9 @@ void PortCoreOutputUnit::runSimulation() {
 
     if (op!=NULL) {
         Route route = op->getRoute();
+        setMode();
+        getOwner().reportUnit(this,true);
+
         String msg = String("Sending output from ") + 
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
@@ -152,6 +155,8 @@ void PortCoreOutputUnit::closeBasic() {
         if (Name(route.getToName()).isRooted()) {
             YARP_INFO(Logger::get(), msg);
         }
+
+        getOwner().reportUnit(this,false);
 
         // Report the disappearing connection
         PortInfo info;

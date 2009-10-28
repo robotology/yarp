@@ -45,12 +45,10 @@ public:
         closed(false),
         opened(false),
         replyDue(false),
-        autoSet(false),
         produce(0), consume(0),
         recReadCreator(NULL),
         recWaitAfterSend(-1)
     {
-        setAutoOutput(true);
     }
 
     void openable() {
@@ -232,15 +230,6 @@ public:
     void setOpen(bool opened) {
         this->opened = opened;
     }
-
-    void setAutoOutput2(bool mode, bool user) {
-        if (user) {
-            autoSet = true;
-            setAutoOutput(mode);
-        } else if (!autoSet) {
-            setAutoOutput(mode);
-        }
-    }
 };
 
 // implementation is a PortCoreAdapter
@@ -377,7 +366,6 @@ bool Port::addOutput(const Contact& contact) {
  */
 bool Port::write(PortWriter& writer, PortWriter *callback) {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setAutoOutput2(false,false);
     bool result = false;
     //WritableAdapter adapter(writer);
     result = core.send(writer,NULL,callback);
@@ -401,7 +389,6 @@ bool Port::write(PortWriter& writer, PortWriter *callback) {
 bool Port::write(PortWriter& writer, PortReader& reader, 
                  PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setAutoOutput2(false,false);
     bool result = false;
     result = core.send(writer,&reader,callback);
     if (!result) {
@@ -451,7 +438,6 @@ void Port::setReaderCreator(PortReaderCreator& creator) {
 
 void Port::enableBackgroundWrite(bool backgroundFlag) {
     PortCoreAdapter& core = HELPER(implementation);
-    core.setAutoOutput2(false,false);
     core.configWaitAfterSend(!backgroundFlag);
 }
 
@@ -508,7 +494,3 @@ void Port::setAdminMode(bool adminMode) {
 
 
 
-void Port::setOutputMode(bool autoOutput) {
-    PortCoreAdapter& core = HELPER(implementation);
-    core.setAutoOutput2(autoOutput,true);
-}

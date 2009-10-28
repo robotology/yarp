@@ -50,6 +50,8 @@ public:
      */
     Address toAddress() const;
 
+    String getCarrierModifier(const char *mod, bool *hasModifier = NULL);
+
 private:
     String txt;
 };

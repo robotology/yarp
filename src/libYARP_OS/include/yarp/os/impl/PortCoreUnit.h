@@ -11,6 +11,8 @@
 
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Name.h>
 
 namespace yarp {
     namespace os {
@@ -30,6 +32,7 @@ class yarp::os::impl::PortCoreUnit : public ThreadImpl {
 public:
     PortCoreUnit(PortCore& owner) : owner(owner) {
         doomed = false;
+        hasMode = false;
     }
 
     virtual ~PortCoreUnit() {
@@ -78,12 +81,26 @@ public:
         return false;
     }
 
+    void setMode() {
+        Name name(getRoute().getCarrierName() + String("://test"));
+        mode = name.getCarrierModifier("log",&hasMode);
+    }
+
+    String getMode(bool *hasMode = NULL) {
+        if (hasMode!=NULL) {
+            *hasMode = this->hasMode;
+        }
+        return (this->hasMode)?mode:"";
+    }
+
 protected:
     PortCore& getOwner() { return owner; }
 
 private:
     PortCore& owner;
     bool doomed;
+    String mode;
+    bool hasMode;
 };
 
 #endif

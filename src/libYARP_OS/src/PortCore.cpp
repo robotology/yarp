@@ -456,7 +456,7 @@ void PortCore::cleanUnits() {
         for (unsigned int i=0; i<units.size(); i++) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
-                YARP_DEBUG(log,String("| checking connection ") + unit->getRoute().toString());
+                YARP_DEBUG(log,String("| checking connection ") + unit->getRoute().toString() + " " + unit->getMode());
                 if (unit->isFinished()) {
                     String con = unit->getRoute().toString();
                     YARP_DEBUG(log,String("|   removing connection ") + con);
@@ -895,18 +895,18 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
         bool haveOutputs = (outputCount!=0); // no mutexing, but failure
         // modes give fine behavior
 
-        if (autoOutput&&haveOutputs) {
+        if (logNeeded&&haveOutputs) {
             // Normally, yarp doesn't pay attention to the content of 
             // messages received by the client.  Likewise, the content
             // of replies are not monitored.  However it may sometimes 
             // be useful this traffic.
 
             ConnectionRecorder recorder;
-            recorder.init(reader);
+            recorder.init(&reader);
             result = this->reader->read(recorder);
             recorder.fini();
             // send off a log of this transaction to whoever wants it
-            send(recorder);
+            sendHelper(recorder,PORTCORE_SEND_LOG);
         } else {
             // YARP is not needed as a middleman
             result = this->reader->read(reader);
@@ -924,7 +924,21 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 
 
 bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
+    if (!logNeeded) {
+        return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
+    }
+    // logging is desired, so we need to wrap up and log this send
+    // (and any reply it gets)
 
+    // NOT IMPLEMENTED YET
+
+    return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
+}
+
+bool PortCore::sendHelper(Writable& writer, 
+                          int mode, Readable *reader, Writable *callback) {
+
+    int logCount = 0;
     String envelopeString = envelope;
 
     // pass the data to all output units.
@@ -955,24 +969,31 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
             PortCoreUnit *unit = units[i];
             if (unit!=NULL) {
                 if (unit->isOutput() && !unit->isFinished()) {
-                    YMSG(("------- -- inc\n"));
-                    packetMutex.wait();
-                    packet->inc();
-                    packetMutex.post();
-                    YMSG(("------- -- presend\n"));
-                    void *out = unit->send(writer,reader,
-                                           (callback!=NULL)?callback:(&writer),
-                                           (void *)packet,
-                                           envelopeString,
-                                           waitAfterSend,waitBeforeSend);
-                    YMSG(("------- -- send\n"));
-                    if (out!=NULL) {
-                        packetMutex.wait();
-                        ((PortCorePacket *)out)->dec();
-                        packets.checkPacket((PortCorePacket *)out);
-                        packetMutex.post();
+                    bool log = (unit->getMode()!="");
+                    bool ok = (mode==PORTCORE_SEND_NORMAL)?(!log):(log);
+                    if (log) {
+                        logCount++;
                     }
-                    YMSG(("------- -- dec\n"));
+                    if (ok) {
+                        YMSG(("------- -- inc\n"));
+                        packetMutex.wait();
+                        packet->inc();
+                        packetMutex.post();
+                        YMSG(("------- -- presend\n"));
+                        void *out = unit->send(writer,reader,
+                                               (callback!=NULL)?callback:(&writer),
+                                               (void *)packet,
+                                               envelopeString,
+                                               waitAfterSend,waitBeforeSend);
+                        YMSG(("------- -- send\n"));
+                        if (out!=NULL) {
+                            packetMutex.wait();
+                            ((PortCorePacket *)out)->dec();
+                            packets.checkPacket((PortCorePacket *)out);
+                            packetMutex.post();
+                        }
+                        YMSG(("------- -- dec\n"));
+                    }
                 }
             }
         }
@@ -984,6 +1005,11 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
         YMSG(("------- packed\n"));
     }
     YMSG(("------- send out\n"));
+    if (mode==PORTCORE_SEND_LOG) {
+        if (logCount==0) {
+            logNeeded = false;
+        }
+    }
     stateMutex.post();
     YMSG(("------- send out real\n"));
 
@@ -1194,5 +1220,11 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
     return true;
 }
 
-
-
+void PortCore::reportUnit(PortCoreUnit *unit, bool active) {
+    if (unit!=NULL) {
+        bool isLog = (unit->getMode()!="");
+        if (isLog) {
+            logNeeded = true;
+        }
+    }
+}

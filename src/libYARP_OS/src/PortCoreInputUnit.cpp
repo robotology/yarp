@@ -86,6 +86,8 @@ void PortCoreInputUnit::run() {
                                           route.getToName(),"*"),true);
             }
             officialRoute = route;
+            setMode();
+            getOwner().reportUnit(this,true);
 
             String msg = String("Receiving input from ") + 
                 route.getFromName() + " to " + route.getToName() + 
@@ -326,6 +328,8 @@ void PortCoreInputUnit::run() {
 		} else {
 	        YARP_DEBUG(Logger::get(),"PortCoreInputUnit (unrooted) shutting down");
 		}
+
+        getOwner().reportUnit(this,false);
 
         if (wasNoticed) {
             // Report the disappearing connection

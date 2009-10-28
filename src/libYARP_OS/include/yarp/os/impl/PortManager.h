@@ -21,6 +21,7 @@ namespace yarp {
     namespace os {
         namespace impl {
             class PortManager;
+            class PortCoreUnit;
         }
     }
 }
@@ -89,6 +90,8 @@ public:
     virtual void setEnvelope(const String& envelope) = 0;
 
     virtual void report(const yarp::os::PortInfo& info) = 0;
+
+    virtual void reportUnit(PortCoreUnit *unit, bool active) = 0;
 
 protected:
     bool hasOutput() {

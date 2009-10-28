@@ -42,3 +42,27 @@ Address Name::toAddress() const {
 }
 
 
+String Name::getCarrierModifier(const char *mod, bool *hasModifier) {
+    bool ok = false;
+    String work = txt;
+    unsigned int mid = YARP_STRSTR(work,":/");
+    if (mid!=String::npos && mid>0) {
+        work = work.substr(0,mid);
+        String target = String("+")+mod+".";
+        unsigned int modLoc = YARP_STRSTR(work,target.c_str());
+        if (modLoc!=String::npos) {
+            work = work.substr(modLoc+target.length(),work.length());
+            unsigned int endLoc = YARP_STRSTR(work,"+");
+            if (endLoc!=String::npos) {
+                work = work.substr(0,endLoc);
+            }
+            ok = true;
+        }
+    }
+    if (hasModifier!=NULL) {
+        *hasModifier = ok;
+    }
+    return ok?work:"";
+}
+
+

@@ -40,6 +40,9 @@ namespace yarp {
     }
 }
 
+#define PORTCORE_SEND_NORMAL 1
+#define PORTCORE_SEND_LOG 2
+
 /**
  * This is the heart of a yarp port.  It is the thread manager.
  * All other port components are insulated from threading.
@@ -74,8 +77,8 @@ public:
         outputCount = inputCount = 0;
         controlRegistration = true;
         interruptible = true;
-        autoOutput = true;
         eventReporter = NULL;
+        logNeeded = false;
     }
 
     /**
@@ -152,7 +155,7 @@ public:
     virtual bool start();
 
     /**
-     * Send a message.
+     * Send a normal message.
      * @param writer the message
      * @param reader where to direct replies
      * @param callback who to call onCompletion() on when message sent.
@@ -160,6 +163,17 @@ public:
     bool send(yarp::os::PortWriter& writer, 
               yarp::os::PortReader *reader = NULL,
               yarp::os::PortWriter *callback = NULL);
+
+    /**
+     * Send a message with a specific mode (normal or log).
+     * @param writer the message
+     * @param reader where to direct replies
+     * @param callback who to call onCompletion() on when message sent.
+     */
+    bool sendHelper(yarp::os::PortWriter& writer, 
+                    int mode,
+                    yarp::os::PortReader *reader = NULL,
+                    yarp::os::PortWriter *callback = NULL);
 
     /**
      * Shut down port.
@@ -243,15 +257,6 @@ public:
                     OutputStream *os);
 
 
-    /**
-     * Determine whether output should be automatically generated
-     * from input (default is that it is not)
-     *
-     */
-    void setAutoOutput(bool autoOutput) {
-        this->autoOutput = autoOutput;
-    }
-
 public:
 
     // PortManager interface, exposed to inputs
@@ -277,6 +282,8 @@ public:
     virtual bool removeIO(const Route& route, bool synch) {
         return removeUnit(route,synch);
     }
+
+    virtual void reportUnit(PortCoreUnit *unit, bool active);
 
 private:
 
@@ -314,10 +321,10 @@ private:
     bool waitBeforeSend, waitAfterSend;
     bool controlRegistration;
     bool interruptible;
-    bool autoOutput;
     int events;
     int connectionListeners;
     int inputCount, outputCount;
+    bool logNeeded;
     PortCorePackets packets;
     String envelope;
 
