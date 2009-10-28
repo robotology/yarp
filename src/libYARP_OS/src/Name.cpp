@@ -26,8 +26,8 @@ bool Name::isRooted() const {
 
 
 Address Name::toAddress() const {
-    int mid = YARP_STRSTR(txt,":/");
-    if (mid!=-1 && mid>0) {
+    unsigned int mid = YARP_STRSTR(txt,":/");
+    if (mid!=String::npos && mid>0) {
         String first = txt.substr(0,mid);
         String second = txt.substr(mid+2);
         if (first.length()>=2) {

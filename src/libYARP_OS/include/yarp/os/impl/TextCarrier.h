@@ -87,7 +87,7 @@ public:
         String target = getSpecifierName();
         Bytes b((char*)target.c_str(),8);
         proto.os().write(b);
-        String from = proto.getRoute().getFromName();
+        String from = proto.getSenderSpecifier();
         Bytes b2((char*)from.c_str(),from.length());
         proto.os().write(b2);
         proto.os().write('\r');

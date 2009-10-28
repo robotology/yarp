@@ -50,6 +50,16 @@ Carriers::~Carriers() {
 }
 
 Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
+    String s;
+    if (name!=NULL) {
+        s = *name;
+        unsigned int i = YARP_STRSTR(s,"+");
+        if (i!=String::npos) {
+            s[i] = '\0';
+            s = s.c_str();
+            name = &s;
+        }
+    }
     for (unsigned int i=0; i<delegates.size(); i++) {
         Carrier& c = *delegates[i];
         bool match = false;

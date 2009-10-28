@@ -68,9 +68,7 @@ public:
         closeHelper();
     }
 
-    void setRoute(const Route& route) {
-        this->route = route;
-    }
+    void setRoute(const Route& route);
 
     const Route& getRoute() {
         return route;
@@ -80,11 +78,6 @@ public:
         setRoute(getRoute().addCarrierName(carrierName));
         YARP_ASSERT(delegate==NULL);
         delegate = Carriers::chooseCarrier(carrierName);
-        /*
-        if (delegate==NULL) {
-            throw new IOException("no such carrier");
-        }
-        */
         if (delegate!=NULL) {
             delegate->prepareSend(*this);
         }
@@ -358,16 +351,7 @@ public:
     ///////////////////////////////////////////////////////////////////////
     // OutputProtocol view
 
-    virtual bool open(const Route& route) {
-        setRoute(route);
-        setCarrier(route.getCarrierName());
-        if (delegate==NULL) {
-            return false;
-        }
-        bool ok = sendHeader();
-        if (!ok) return false;
-        return expectReplyToHeader();
-    }
+    virtual bool open(const Route& route);
 
     virtual void rename(const Route& route) {
         setRoute(route);
@@ -493,6 +477,8 @@ public:
         this->ref = ref;
     }
 
+    String getSenderSpecifier();
+
 private:
 
     bool sendProtocolSpecifier() {
@@ -544,7 +530,8 @@ private:
 
 
     bool sendSenderSpecifier() {
-        const String& senderName = getRoute().getFromName();
+        const String senderName = getSenderSpecifier();
+        //const String& senderName = getRoute().getFromName();
         NetType::netInt(senderName.length()+1,number.bytes());
         os().write(number.bytes());
         yarp::os::Bytes b((char*)senderName.c_str(),senderName.length()+1);

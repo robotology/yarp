@@ -8,8 +8,24 @@
 
 
 #include <yarp/os/impl/Protocol.h>
+#include <yarp/os/Bottle.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
+
+
+bool Protocol::open(const Route& route) {
+    setRoute(route);
+    setCarrier(route.getCarrierName());
+    if (delegate==NULL) {
+        return false;
+    }
+    bool ok = sendHeader();
+    if (!ok) {
+        return false;
+    }
+    return expectReplyToHeader();
+}
 
 
 bool Protocol::defaultSendIndex() {
@@ -93,4 +109,57 @@ bool Protocol::defaultSendAck() {
     }
     return true;
 }
+
+void Protocol::setRoute(const Route& route) {
+    Route r = route;
+
+    // First, make sure route is canonicalized.
+    // If there are qualifiers in the source name, propagate them
+    // to the carrier.
+    String from = r.getFromName();
+    String carrier = r.getCarrierName();
+    if (YARP_STRSTR(from," ")!=String::npos) {
+        Bottle b(from.c_str());
+        if (b.size()>1) {
+            r = r.addFromName(b.get(0).toString().c_str());
+            for (int i=1; i<b.size(); i++) {
+                Value& v = b.get(i);
+                Bottle *lst = v.asList();
+                if (lst!=NULL) {
+                    carrier = carrier + "+" + lst->get(0).toString().c_str() +
+                        "." + lst->get(1).toString().c_str();
+                } else {
+                    carrier = carrier + "+" + v.toString().c_str();
+                }
+            }
+            r = r.addCarrierName(carrier);
+        }
+    }
+
+    this->route = r;
+}
+
+
+String Protocol::getSenderSpecifier() {
+    Route r = getRoute();
+    String from = r.getFromName();
+    String carrier = r.getCarrierName();
+    unsigned int start = YARP_STRSTR(carrier,"+");
+    if (start!=String::npos) {
+        from += " (";
+        for (unsigned int i=start+1; i<carrier.length(); i++) {
+            char ch = carrier[i];
+            if (ch=='+') {
+                from += ") (";
+            } else if (ch=='.') {
+                from += " ";
+            } else {
+                from += ch;
+            }
+        }
+        from += ")";
+    }
+    return from;
+}
+
 

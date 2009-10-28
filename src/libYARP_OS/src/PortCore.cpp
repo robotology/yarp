@@ -665,8 +665,9 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
         OutputProtocol *op = NULL;
         op = Carriers::connect(address);
         if (op!=NULL) {
-            bool ok = op->open(Route(getName(),address.getRegName(),
-                                     parts.hasCarrierName()?parts.getCarrierName():"tcp"));
+            Route r = Route(getName(),address.getRegName(),
+                            parts.hasCarrierName()?parts.getCarrierName():"tcp");
+            bool ok = op->open(r);
             if (!ok) {
                 YARP_DEBUG(log,"open route error");            
                 delete op;
