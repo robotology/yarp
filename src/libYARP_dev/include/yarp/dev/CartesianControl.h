@@ -10,7 +10,6 @@
 #define __YARPCARTESIANCONTROLINTERFACES__
 
 #include <yarp/dev/DeviceDriver.h>
-
 #include <yarp/sig/Vector.h>
 
 /*! \file CartesianController.h define control board standard interfaces*/
@@ -69,18 +68,22 @@ public:
     * and orientation) in cartesian space.
     * @param xd: a 3-d vector which contains the desired position x,y,z
     * @param od: a 4-d vector which contains the desired orientation
-    * using axis-angle representation (xa, ya, za, theta).
+    * using axis-angle representation (xa, ya, za, theta). 
+    * @param t: set the trajectory duration time (seconds). If t<=0 
+    *         (as by default) the current execution time is kept.
     * @return true/false on success/failure.
     */
-    virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od)=0;
+    virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od, const double t=0.0)=0;
 
     /**
     * Move the end effector to a specified position in cartesian space, 
     * ignore the orientation.
-    * @param xd: a 3-d vector which contains the desired position x,y,z
+    * @param xd: a 3-d vector which contains the desired position x,y,z 
+    * @param t: set the trajectory duration time (seconds). If t<=0 
+    *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure.
     */
-    virtual bool goToPosition(const yarp::sig::Vector &xd)=0;
+    virtual bool goToPosition(const yarp::sig::Vector &xd, const double t=0.0)=0;
 
     /**
     * Get the current DOF configuration of the limb.
