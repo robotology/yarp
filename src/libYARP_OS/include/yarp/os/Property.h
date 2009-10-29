@@ -166,6 +166,11 @@ public:
     void fromCommand(int argc, char *argv[], bool skipFirst=true,
                      bool wipe=true);
 
+    void fromCommand(int argc, const char *argv[], bool skipFirst=true,
+                     bool wipe=true) {
+        fromCommand(argc,(char **)argv,skipFirst,wipe);
+    }
+
     /**
      * Interprets a file as a list of properties. 
      * For example, for a file containing:

@@ -18,7 +18,7 @@
 using namespace std;
 using namespace yarp::sig;
 
-static void warn(char *message)
+static void warn(const char *message)
 {
 	ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
 }

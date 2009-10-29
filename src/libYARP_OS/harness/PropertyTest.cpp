@@ -86,7 +86,7 @@ public:
         checkEqual(p.find("testing").asString().c_str(),"left","good key after copy");
 
         Property p3;
-        char *args[] = {"CMD","--size","10","20","--mono","on"};
+        const char *args[] = {"CMD","--size","10","20","--mono","on"};
         p3.fromCommand(5,args);
         Bottle bot(p3.toString().c_str());
         checkEqual(bot.size(),2,"right number of terms");
@@ -117,7 +117,7 @@ public:
 
         report(0,"command line style string");
         Property p6;
-        char *strs[] = { "program", "--name", "/foo" };
+        const char *strs[] = { "program", "--name", "/foo" };
         p6.fromCommand(3,strs);
         checkEqual(p6.find("name").asString().c_str(),"/foo",
                    "command line name");
@@ -250,7 +250,7 @@ check $x $y\n\
         report(0,"checking backslash path behavior");
         Property p;
         ConstString target = "conf\\brains-brains.ini";
-        char *argv[] = {
+        const char *argv[] = {
             "PROGRAM NAME",
             "--file",
             (char*)target.c_str()
@@ -323,7 +323,7 @@ check $x $y\n\
 
     virtual void checkCommand() {
         report(0,"checking command line parsing");
-        char *argv[] = { 
+        const char *argv[] = { 
             "program",
             "--on",
             "/server",

@@ -1,3 +1,10 @@
+2009-10-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/harness/PropertyTest.cpp
+	* src/libYARP_sig/src/Image.cpp
+	* src/libYARP_sig/src/ImageFile.cpp: deal with const char *
+	conversions.
+
 2009-10-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/Protocol.h: propagate
