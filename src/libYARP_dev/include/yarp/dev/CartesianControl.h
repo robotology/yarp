@@ -155,12 +155,11 @@ public:
     virtual bool checkMotionDone(bool *f)=0;
 
     /** Ask for an immediate stop motion.
-    * @param f: true if soon afterwards the control has to be 
-    *         released (direct switch to non-tracking mode), false
-    *         if the current mode has to be kept.
-    * @return true/false on success/failure.
+    * \note the control is completely release, i.e. a direct switch 
+    *       to non-tracking mode is executed.     
+    * @return true/false on success/failure. 
     */
-    virtual bool stopControl(const bool f)=0;
+    virtual bool stopControl()=0;
 };
 
 #endif
