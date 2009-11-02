@@ -22,7 +22,6 @@ INCLUDE(YarpOptions)
 # Get the current yarp version.  Really this should be placed into
 # a generated header file.
 INCLUDE(YarpVersion)
-ADD_DEFINITIONS(-DYARP_VERSION="${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}")
 
 # Configure where the output will go
 INCLUDE(YarpOutput)

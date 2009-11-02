@@ -144,10 +144,12 @@ String Protocol::getSenderSpecifier() {
     Route r = getRoute();
     String from = r.getFromName();
     String carrier = r.getCarrierName();
-    unsigned int start = YARP_STRSTR(carrier,"+");
+    YARP_STRING_INDEX start = YARP_STRSTR(carrier,"+");
     if (start!=String::npos) {
         from += " (";
-        for (unsigned int i=start+1; i<carrier.length(); i++) {
+        for (YARP_STRING_INDEX i=start+1; 
+             i<(YARP_STRING_INDEX)carrier.length(); 
+             i++) {
             char ch = carrier[i];
             if (ch=='+') {
                 from += ") (";

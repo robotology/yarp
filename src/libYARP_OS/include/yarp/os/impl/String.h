@@ -22,6 +22,7 @@ namespace yarp {
 
 #define YARP_STRSTR(haystack,needle) (haystack).find(needle)
 #define YARP_STRSET(str,cstr,len,owned) str = std::string(cstr,len)
+typedef size_t YARP_STRING_INDEX;
 
 class __KeyedString : public yarp::os::impl::String {
 public:
@@ -57,6 +58,7 @@ namespace yarp {
 #define YARP_STRSTR(haystack,needle) (haystack).strstr(needle)
 #define YARP_STRSET(str,cstr,len,owned) str.set(cstr,len,owned)
 typedef yarp::os::impl::String YARP_KEYED_STRING;
+typedef ssize_t YARP_STRING_INDEX;
 
 #endif
 

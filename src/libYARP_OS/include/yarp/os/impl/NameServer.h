@@ -44,6 +44,7 @@ namespace yarp {
  */
 class yarp::os::impl::NameServerStub {
 public:
+    virtual ~NameServerStub() {}
     virtual String apply(const String& txt, const Address& remote) = 0;
 };
 

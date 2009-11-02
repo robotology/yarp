@@ -115,7 +115,7 @@ public:
     bool read(PortReader& reader, bool willReply = false);
 
     /**
-     * Send an object as a reply to an object real from the port.
+     * Send an object as a reply to an object read from the port.
      * Only call this method if you set the willReply flag to 
      * true when you called Port::read.
      * @param writer any object that knows how to write itself to a
@@ -136,7 +136,7 @@ public:
      * given its own reader.  Handy if you care about the identity
      * of the receiver.
      *
-     * @param creator the "factor" for creating PortReader object
+     * @param creator the "factory" for creating PortReader object
      */
     void setReaderCreator(PortReaderCreator& creator);
 

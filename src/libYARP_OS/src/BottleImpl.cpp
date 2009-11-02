@@ -649,7 +649,7 @@ String StoreDouble::toStringFlex() const {
     // Need to deal with alternate versions of the decimal point.
 #ifdef LC_NUMERIC
  	struct lconv * lc=localeconv();
- 	unsigned int offset = YARP_STRSTR(str,lc->decimal_point);
+ 	YARP_STRING_INDEX offset = YARP_STRSTR(str,lc->decimal_point);
  	if (offset!=String::npos){
  		str[offset]='.';
  	} else {
@@ -684,7 +684,7 @@ void StoreDouble::fromString(const String& src) {
     // Need to deal with alternate versions of the decimal point.
 #ifdef LC_NUMERIC
     String tmp = src;
-    unsigned int offset = YARP_STRSTR(tmp,".");
+    YARP_STRING_INDEX offset = YARP_STRSTR(tmp,".");
     if (offset!=String::npos) {
  		struct lconv *lc = localeconv();
  		tmp[offset] = lc->decimal_point[0];
