@@ -219,7 +219,6 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     return !connection.isError();
 }
 
-// pasa added this, MSC seems to complain otherwise (admitting it was tested/compiled on gcc already).
 namespace yarp {
     namespace sig {
         namespace impl {
