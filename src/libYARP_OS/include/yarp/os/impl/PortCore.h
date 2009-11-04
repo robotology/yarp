@@ -40,8 +40,14 @@ namespace yarp {
     }
 }
 
-#define PORTCORE_SEND_NORMAL 1
-#define PORTCORE_SEND_LOG 2
+#define PORTCORE_SEND_NORMAL (1)
+#define PORTCORE_SEND_LOG (2)
+
+// some flags for restricting port behavior
+#define PORTCORE_IS_UNRESTRICTED (0)
+#define PORTCORE_IS_RPC (1)
+#define PORTCORE_IS_INPUT (2)
+#define PORTCORE_IS_OUTPUT (4)
 
 /**
  * This is the heart of a yarp port.  It is the thread manager.
@@ -79,12 +85,27 @@ public:
         interruptible = true;
         eventReporter = NULL;
         logNeeded = false;
+        flags = PORTCORE_IS_UNRESTRICTED;
     }
 
     /**
      * Destructor.
      */
     virtual ~PortCore();
+
+    /**
+     * Configure the port to meet certain restrictions in behavior.
+     */
+    void setFlags(int flags) {
+        this->flags = flags;
+    }
+
+    /**
+     * Check current configuration of port.
+     */
+    int getFlags() {
+        return flags;
+    }
 
     /**
      * Begin service at a given address.
@@ -324,6 +345,7 @@ private:
     int events;
     int connectionListeners;
     int inputCount, outputCount;
+    int flags;
     bool logNeeded;
     PortCorePackets packets;
     String envelope;

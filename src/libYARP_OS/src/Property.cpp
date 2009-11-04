@@ -49,7 +49,9 @@ public:
     ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyItem,ACE_Null_Mutex> data;
     Property& owner;
 
-    PropertyHelper(Property& owner) : owner(owner) {}
+    PropertyHelper(Property& owner, int hash_size) : 
+        data((hash_size==0)?ACE_DEFAULT_MAP_SIZE:hash_size),
+        owner(owner) {}
 
     PropertyItem *getPropNoCreate(const char *key) const {
         String n(key);
@@ -594,21 +596,21 @@ public:
 #define HELPER(x) (*((PropertyHelper*)(x)))
 
 
-Property::Property() {
-    implementation = new PropertyHelper(*this);
+Property::Property(int hash_size) {
+    implementation = new PropertyHelper(*this,hash_size);
     YARP_ASSERT(implementation!=NULL);
 }
 
 
 Property::Property(const char *str) {
-    implementation = new PropertyHelper(*this);
+    implementation = new PropertyHelper(*this,0);
     YARP_ASSERT(implementation!=NULL);
     fromString(str);
 }
 
 
 Property::Property(const Property& prop) {
-    implementation = new PropertyHelper(*this);
+    implementation = new PropertyHelper(*this,0);
     YARP_ASSERT(implementation!=NULL);
     fromString(prop.toString());
 }

@@ -1126,6 +1126,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[list] [in] $sourcePort # give details for input");
         result.addString("[list] [out] $targetPort # give details for output");
         result.addString("[ver] # report protocol version information");
+        //result.addString("[get] # list property values available");
+        //result.addString("[get] $prop # get value of property");
+        //result.addString("[set] $prop # set value of property");
         break;
     case VOCAB3('v','e','r'):
         // This version number is for the network protocol.
@@ -1133,7 +1136,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addVocab(Vocab::encode("ver"));
         result.addInt(1);
         result.addInt(2);
-        result.addInt(2);
+        result.addInt(3);
         break;
     case VOCAB3('a','d','d'):
         {

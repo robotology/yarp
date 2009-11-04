@@ -47,6 +47,9 @@ public:
 
     // documentation provided in Contactable
     virtual bool open(const char *name) {
+        port.setInputMode(true);
+        port.setOutputMode(false);
+        port.setRpcMode(true);
         return port.open(name);
     }
 

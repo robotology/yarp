@@ -42,8 +42,14 @@ public:
 
     /**
      * Constructor.
+     *
+     * @param hash_size a scalar controlling efficiency of the
+     * hash map storing the data.  Set to 0 for default size.
+     * The bigger this number, the more memory used, but the
+     * more efficient the map.
+     *
      */
-    Property();
+    Property(int hash_size = 0);
 
     /**
      * Initialize from a string, using fromString().

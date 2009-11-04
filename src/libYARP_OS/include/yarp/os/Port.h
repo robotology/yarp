@@ -181,6 +181,36 @@ public:
      */
     void setAdminMode(bool adminMode = true);
 
+    /**
+     *
+     * Configure the port to allow or forbid inputs.  By default,
+     * ports allow anything.
+     *
+     * @param expectInput set to true if this port will be used for input
+     *
+     */
+    void setInputMode(bool expectInput);
+
+    /**
+     *
+     * Configure the port to allow or forbid outputs.  By default,
+     * ports allow anything.
+     *
+     * @param expectOutput set to true if this port will be used for output
+     *
+     */
+    void setOutputMode(bool expectOutput);
+
+    /**
+     *
+     * Configure the port to be RPC only.  By default all ports can be
+     * used for RPC or streaming communication.
+     *
+     * @param expectRpc set to true if this port will be used for RPC only
+     *
+     */
+    void setRpcMode(bool expectRpc);
+
 private:
     void *implementation;
 

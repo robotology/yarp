@@ -1,3 +1,23 @@
+2009-11-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/RpcServer.h: add a stub for 
+	an RPC client specialization of Ports.  This adds no new 
+	behavior, except to let the user declare that a port should
+	only be used as an RPC client.  This will let YARP give better
+	warnings/errors.
+
+	* src/libYARP_OS/include/yarp/os/RpcClient.h: add a stub for 
+	an RPC client specialization of Ports.  This adds no new 
+	behavior, except to let the user declare that a port should
+	only be used as an RPC client.  This will let YARP give better
+	warnings/errors.
+
+	* src/libYARP_OS/include/yarp/os/Port.h: add flags for tagging
+	ports as input, output, and rpc based.
+
+	* src/libYARP_OS/include/yarp/os/Property.h: make hash size
+	of property objects configurable.
+
 2009-10-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/PropertyTest.cpp

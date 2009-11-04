@@ -25,6 +25,10 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/PortReport.h>
 
+// Test that these compile - no functional tests yet
+#include <yarp/os/RpcClient.h>
+#include <yarp/os/RpcServer.h>
+
 //#include "TestList.h"
 
 using namespace yarp::os;
