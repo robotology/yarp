@@ -1,5 +1,9 @@
 2009-11-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/PortCore.cpp: start enforcing some RPC
+	contraints.  These only apply to users of the 
+	RpcServer/RpcClient classes.
+
 	* src/libYARP_OS/include/yarp/os/RpcServer.h: add a stub for 
 	an RPC client specialization of Ports.  This adds no new 
 	behavior, except to let the user declare that a port should

@@ -44,7 +44,7 @@ namespace yarp {
 #define PORTCORE_SEND_LOG (2)
 
 // some flags for restricting port behavior
-#define PORTCORE_IS_UNRESTRICTED (0)
+#define PORTCORE_IS_NULL (0)
 #define PORTCORE_IS_RPC (1)
 #define PORTCORE_IS_INPUT (2)
 #define PORTCORE_IS_OUTPUT (4)
@@ -81,11 +81,12 @@ public:
         reader = NULL;
         readableCreator = NULL;
         outputCount = inputCount = 0;
+        dataOutputCount = 0;
         controlRegistration = true;
         interruptible = true;
         eventReporter = NULL;
         logNeeded = false;
-        flags = PORTCORE_IS_UNRESTRICTED;
+        flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
     }
 
     /**
@@ -344,7 +345,7 @@ private:
     bool interruptible;
     int events;
     int connectionListeners;
-    int inputCount, outputCount;
+    int inputCount, outputCount, dataOutputCount;
     int flags;
     bool logNeeded;
     PortCorePackets packets;

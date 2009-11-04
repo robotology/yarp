@@ -449,6 +449,7 @@ void PortCore::reapUnits() {
 void PortCore::cleanUnits() {
     int updatedInputCount = 0;
     int updatedOutputCount = 0;
+    int updatedDataOutputCount = 0;
     YARP_DEBUG(log,"/ routine check of connections to this port begins");
     stateMutex.wait();
     if (!finished) {
@@ -469,6 +470,9 @@ void PortCore::cleanUnits() {
                     if (!unit->isDoomed()) {
                         if (unit->isOutput()) {
                             updatedOutputCount++;
+                            if (unit->getMode()=="") {
+                                updatedDataOutputCount++;
+                            }
                         }
                         if (unit->isInput()) {
                             if (unit->getRoute().getFromName()!="admin") {
@@ -496,6 +500,7 @@ void PortCore::cleanUnits() {
     }
     inputCount = updatedInputCount;
     outputCount = updatedOutputCount;
+    dataOutputCount = updatedDataOutputCount;
     stateMutex.post();
     YARP_DEBUG(log,"\\ routine check of connections to this port ends");
 }
@@ -662,23 +667,51 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
         // source and destination
         removeUnit(Route(getName(),address.getRegName(),"*"),true);
 
-        OutputProtocol *op = NULL;
-        op = Carriers::connect(address);
-        if (op!=NULL) {
-            Route r = Route(getName(),address.getRegName(),
-                            parts.hasCarrierName()?parts.getCarrierName():"tcp");
-            bool ok = op->open(r);
-            if (!ok) {
-                YARP_DEBUG(log,"open route error");            
-                delete op;
-                op = NULL;
+        Route r = Route(getName(),address.getRegName(),
+                        parts.hasCarrierName()?parts.getCarrierName():"tcp");
+
+        bool allowed = true;
+
+        // apply any restrictions on the port
+        int f = getFlags();
+        bool allow_output = (f&PORTCORE_IS_OUTPUT);
+        bool rpc = (f&PORTCORE_IS_RPC);
+        Name name(r.getCarrierName() + String("://test"));
+        String mode = name.getCarrierModifier("log");
+        bool is_log = (mode!="");
+        String err = "";
+        if (!allow_output) {
+            if (!is_log) {
+                err = "Outputs not allowed";
+                allowed = false;
+            }
+        } else if (rpc) {
+            if (dataOutputCount>=1 && !is_log) {
+                err = "RPC output already connected";
+                allowed = false;
             }
         }
-        if (op!=NULL) {
-            addOutput(op);
-            bw.appendLine(String("Added output connection from ") + getName() + " to " + dest);
+        
+        if (!allowed) {
+            bw.appendLine(err);
         } else {
-            bw.appendLine(String("Cannot connect to ") + dest);
+            OutputProtocol *op = NULL;
+            op = Carriers::connect(address);
+            if (op!=NULL) {
+                
+                bool ok = op->open(r);
+                if (!ok) {
+                    YARP_DEBUG(log,"open route error");            
+                    delete op;
+                    op = NULL;
+                }
+            }
+            if (op!=NULL) {
+                addOutput(op);
+                bw.appendLine(String("Added output connection from ") + getName() + " to " + dest);
+            } else {
+                bw.appendLine(String("Cannot connect to ") + dest);
+            }
         }
     } else {
         bw.appendLine(String("Do not know how to connect to ") + dest);
