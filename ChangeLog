@@ -1,5 +1,8 @@
 2009-11-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/CMakeLists.txt: remove YARP1 compatibility libraries
+	as a build option.
+
 	* example/swig/yarp.i: apply C# support patch from Stephane
 	Lallee (thanks Stephane!).  Also added better translation of
 	the reply method.
