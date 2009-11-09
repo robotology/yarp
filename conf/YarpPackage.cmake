@@ -18,16 +18,7 @@ SET(CPACK_SOURCE_PACKAGE_FILE_NAME
 
 IF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
 
-#  if you are trying to distribute, this is useful, but not otherwise
-#  IF (WIN32 AND NOT CYGWIN)
-#    INCLUDE(YarpInstallRequiredSystemLibraries)
-#    INSTALL_FILES(/bin .dll ${ACE_LIBRARY} ${ACE_DEBUG_LIBRARY})
-#    # just in case it is needed and not present
-#    INSTALL_FILES(/bin FILES ${CMAKE_SOURCE_DIR}/conf/Microsoft.VC80.CRT.manifest)
-#  ENDIF (WIN32 AND NOT CYGWIN)
-
   SET(CPACK_PACKAGE_EXECUTABLES "yarp" "yarp")
   INCLUDE(CPack)
-
 
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake")
