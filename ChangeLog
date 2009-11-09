@@ -1,7 +1,9 @@
 2009-11-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: apply C# support patch from Stephane
-	Lallee (thanks Stephane!)
+	Lallee (thanks Stephane!).  Also added better translation of
+	the reply method.
+	
 
 2009-11-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
