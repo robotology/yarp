@@ -17,6 +17,29 @@
   %include "std_vector.i"
 #endif
 
+#if defined(SWIGCSHARP)
+    // there's a big CSHARP virtual/override muddle
+    // we just bypass the issue for now
+    %csmethodmodifiers write "public new";
+    %csmethodmodifiers check "public new";
+    %csmethodmodifiers check "public new";
+    %csmethodmodifiers find "public new";
+    %csmethodmodifiers findGroup "public new";
+    %csmethodmodifiers toString "public new";
+    %csmethodmodifiers lastRead "public new";
+    %csmethodmodifiers isClosed "public new";
+    %csmethodmodifiers read "public new";
+    %csmethodmodifiers setReplier "public new";
+    %csmethodmodifiers onRead "public virtual";
+    %csmethodmodifiers getPendingReads "public new";
+    %csmethodmodifiers setStrict "public new";
+    %csmethodmodifiers useCallback "public new";
+    %csmethodmodifiers onCommencement "public virtual";
+    %csmethodmodifiers disableCallback "public virtual";
+    %csmethodmodifiers acquire "public virtual";
+    %csmethodmodifiers release "public virtual";
+#endif
+
 // Deal with abstract base class problems, where SWIG guesses
 // incorrectly at whether a class can be instantiated or not
 %feature("notabstract") Port;

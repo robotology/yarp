@@ -1,7 +1,8 @@
 
 This directory is for producing SWIG interfaces to YARP.
 
-This lets you run YARP from Java, Python, Perl, Tcl, Chicken, C#, Matlab.
+This lets you run YARP from Java, Python, Perl, Tcl, Chicken, C#, Ruby,
+Matlab.
 
 Note that while we try to preserve YARP as close to its original form
 as possible, some classes and methods had to be changed because
@@ -115,11 +116,13 @@ And set "CREATE_CSHARP" to true.
 Run:
   make
 
-You should now have libyarp.so and a whole lot of .cs files
+You should now have libyarp.so or yarp.so (on Linux, presumably a .dll
+on windows) and a whole lot of .cs files
 
-Now either do something like one of:
+On Linux, now either do something like one of:
   setenv LD_LIBRARY_PATH $PWD:$LD_LIBRARY_PATH
   export LD_LIBRARY_PATH=$PWD:$LD_LIBRARY_PATH
+On Windows, put all this stuff in your path.
 
 There used be some issues that are now fixed; solution preserved
 just in case they recur
@@ -137,10 +140,16 @@ OLD> PidVector class.  One solution is to just remove that and all
 OLD> references to it.
 
 Now try:
-  mcs -out:example.exe *.cs
-or whatever your compiler is.  If it works, then:
+  gmcs -out:example.exe *.cs
+or whatever your compiler is (the mcs compiler is in the debian/ubuntu
+"mono-gmcs" package).  If it works, then:
   ./example.exe
 should do something yarpy.
+
+NOTE:
+Different compilers need the library to be called different things.
+If you have yarp.so, try copying it to libyarp.so, or vice versa,
+if you run into trouble.
 
 
 ============================================================================
