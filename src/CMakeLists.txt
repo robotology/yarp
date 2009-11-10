@@ -25,7 +25,7 @@ IF (CREATE_GUIS)
 		SUBDIRS(yarpview)
 	  ENDIF(Gthread_FOUND)
 	ELSE(COMPILE_NEW_YARPVIEW)
-      SUBDIRS(yarp-imageviewer)
+      SUBDIRS(yarpview_old)
 	ENDIF(COMPILE_NEW_YARPVIEW)
   ENDIF (GtkPlus_FOUND)
 # GtkMM GUIs have been moved to the iCub repository
