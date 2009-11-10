@@ -5,7 +5,7 @@
 
 	* src/libYARP_OS/src/Property.cpp: make exception for treatment
 	of "\" characters in environment variables, to allow windows
-	paths to work.
+	paths to work (thanks David Vernon!)
 
 2009-11-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
