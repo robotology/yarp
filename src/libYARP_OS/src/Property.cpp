@@ -566,6 +566,19 @@ public:
                             add = "1";
                         }
                     }
+                    if (YARP_STRSTR(add,"\\")!=String::npos) {
+                        // Specifically when reading from the command
+                        // line, we will allow windows-style paths.
+                        // Hence we have to break the "\" character
+                        String buf = "";
+                        for (unsigned int i=0; i<add.length(); i++) {
+                            buf += add[i];
+                            if (add[i]=='\\') {
+                                buf += add[i];
+                            }
+                        }
+                        add = buf;
+                    }
                     output += add;
                     var = "";
                     if (varHasParen && (ch=='}'||ch==')')) {

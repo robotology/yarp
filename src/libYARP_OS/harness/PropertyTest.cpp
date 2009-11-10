@@ -185,11 +185,15 @@ yarp3 pre_${__YARP__}_post\n\
 
         Property env;
         env.put("TARGET","Earth");
+        env.put("WIN_PATH","c:\\foo");
         p.fromConfig("\
 targ $TARGET\n\
+path $WIN_PATH\n\
 ",env);
         checkEqual(p.find("targ").asString().c_str(),"Earth",
                    "environment addition");
+        checkEqual(p.find("path").asString().c_str(),"c:\\foo",
+                   "path interpretation");
 
         p.fromConfig("\
 x 10\n\
