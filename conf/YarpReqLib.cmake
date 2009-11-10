@@ -3,6 +3,11 @@ INCLUDE(UsePkgConfig)
 
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
 
+IF (YARP_ADMIN)
+  # be very serious about warnings if in admin mode
+  ADD_DEFINITIONS(-Werror -Wfatal-errors)
+ENDIF (YARP_ADMIN)
+
 SET(YARP_DEFINES_ACCUM "-DYARP_PRESENT")
 SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} "-D_REENTRANT")
 
