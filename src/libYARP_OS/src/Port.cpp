@@ -494,8 +494,8 @@ void Port::setAdminMode(bool adminMode) {
 
 
 #define SET_FLAG(implementation,mask,val) \
-  HELPER(implementation).setFlags(HELPER(implementation).getFlags() & \
-  (~mask) + val?mask:0)
+  HELPER(implementation).setFlags((HELPER(implementation).getFlags() & \
+  (~mask)) + (val?mask:0))
 
 void Port::setInputMode(bool expectInput) {
     SET_FLAG(implementation,PORTCORE_IS_INPUT,expectInput);
