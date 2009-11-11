@@ -157,12 +157,14 @@ ENDIF (ACE_DEBUG_FOUND)
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIR})
 INCLUDE_DIRECTORIES(${ACE_INCLUDE_CONFIG_DIR})
 
-IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
-  INCLUDE(YarpCheckTypeSize) # regular script does not do C++ types
-  SET(CMAKE_EXTRA_INCLUDE_FILES ace/config.h ace/String_Base_Const.h)
-  YARP_CHECK_TYPE_SIZE(ACE_String_Base_Const::size_type SIZE_TYPE)
-  SET(CMAKE_EXTRA_INCLUDE_FILES) 
-ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
+IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
+  IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
+    INCLUDE(YarpCheckTypeSize) # regular script does not do C++ types
+    SET(CMAKE_EXTRA_INCLUDE_FILES ace/config.h ace/String_Base_Const.h)
+    YARP_CHECK_TYPE_SIZE(ACE_String_Base_Const::size_type SIZE_TYPE)
+    SET(CMAKE_EXTRA_INCLUDE_FILES) 
+  ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
+ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
 
 IF (HAVE_SIZE_TYPE)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_ACE_HAS_SIZE_TYPE)
