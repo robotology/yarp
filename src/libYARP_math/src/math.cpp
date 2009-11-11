@@ -112,8 +112,8 @@ Matrix yarp::math::operator*(const double k, const Matrix &M)
 
     Matrix res(rows,cols);
 
-    for (unsigned int r=0; r<rows; r++)
-        for (unsigned int c=0; c<cols; c++)
+    for (int r=0; r<rows; r++)
+        for (int c=0; c<cols; c++)
             res(r,c)=k*M(r,c);
 
     return res;
@@ -132,7 +132,7 @@ Vector yarp::math::operator*(const Vector &a, const Vector &b)
 
     Vector res(n);
 
-    for (unsigned int i=0; i<n; i++)
+    for (int i=0; i<n; i++)
         res[i]=a[i]*b[i];
 
     return res;
@@ -146,7 +146,7 @@ Vector yarp::math::operator/(const Vector &a, const Vector &b)
 
     Vector res(n);
 
-    for (unsigned int i=0; i<n; i++)
+    for (int i=0; i<n; i++)
         res[i]=a[i]/b[i];
 
     return res;
