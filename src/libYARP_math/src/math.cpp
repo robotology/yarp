@@ -94,7 +94,7 @@ Vector yarp::math::operator*(double k, const Vector &b)
     return operator*(b,k);
 }
 
-Matrix yarp::math::operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b)
+Matrix yarp::math::operator*(const Matrix &a, const Matrix &b)
 {
     Matrix c(a.rows(), b.cols());
     cblas_dgemm (CblasRowMajor, CblasNoTrans, CblasNoTrans, 
@@ -103,6 +103,53 @@ Matrix yarp::math::operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix
                    c.data(), c.cols());
 
     return c;
+}
+
+Matrix yarp::math::operator*(const double k, const Matrix &M)
+{
+    int rows=M.rows();
+    int cols=M.cols();
+
+    Matrix res(rows,cols);
+
+    for (unsigned int r=0; r<rows; r++)
+        for (unsigned int c=0; c<cols; c++)
+            res(r,c)=k*M(r,c);
+
+    return res;
+}
+
+Matrix yarp::math::operator*(const Matrix &M, const double k)
+{
+    return operator*(k,M);
+}
+
+Vector yarp::math::operator*(const Vector &a, const Vector &b)
+{
+    int na=a.length();
+    int nb=b.length();
+    int n =na>nb?nb:na;
+
+    Vector res(n);
+
+    for (unsigned int i=0; i<n; i++)
+        res[i]=a[i]*b[i];
+
+    return res;
+}
+
+Vector yarp::math::operator/(const Vector &a, const Vector &b)
+{
+    int na=a.length();
+    int nb=b.length();
+    int n =na>nb?nb:na;
+
+    Vector res(n);
+
+    for (unsigned int i=0; i<n; i++)
+        res[i]=a[i]/b[i];
+
+    return res;
 }
 
 Matrix yarp::math::eye(int r, int c)

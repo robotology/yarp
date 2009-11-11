@@ -87,6 +87,38 @@ namespace yarp
         yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
 
         /**
+       * Scalar-matrix product operator. 
+       * @param k a scalar
+       * @param M a matrix
+       * @return k*M
+       */
+        yarp::sig::Matrix operator*(const double k, const yarp::sig::Matrix &M);
+               
+        /**
+       * Matrix-scalar product operator. 
+       * @param M a matrix
+       * @param k a scalar
+       * @return M*k
+       */
+        yarp::sig::Matrix operator*(const yarp::sig::Matrix &M, const double k);
+        
+        /**
+       * Vector-vector element-wise product operator. 
+       * @param a a vector
+       * @param b a vector
+       * @return a.*b (matlab notation)
+       */
+        yarp::sig::Vector operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+                
+        /**
+       * Vector-vector element-wise division operator. 
+       * @param a a vector
+       * @param b a vector
+       * @return a./b (matlab notation)
+       */
+        yarp::sig::Vector operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
         * Creates a vector of zeros.
         * @param s the size of the new vector
         * @return a copy of the new vector
