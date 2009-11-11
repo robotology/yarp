@@ -58,11 +58,11 @@ namespace yarp {
 #define YARP_STRSTR(haystack,needle) (haystack).strstr(needle)
 #define YARP_STRSET(str,cstr,len,owned) str.set(cstr,len,owned)
 typedef yarp::os::impl::String YARP_KEYED_STRING;
-//#ifdef ACE_STRING_BASE_CONST_H
-//typedef yarp::os::impl::String::size_type YARP_STRING_INDEX;
-//#else
+#ifdef YARP_ACE_HAS_SIZE_TYPE
+typedef yarp::os::impl::String::size_type YARP_STRING_INDEX;
+#else
 typedef ssize_t YARP_STRING_INDEX;
-//#endif
+#endif
 
 #endif
 
