@@ -59,7 +59,8 @@ public:
     * Get the current pose. [do not wait for reply]
     * @param x: a 3-d vector which is filled with the actual position x,y,z (meters)
     * @param od: a 4-d vector which is filled with the actual orientation
-    * using axis-angle representation xa, ya, za, theta (meters and degrees). 
+    * using axis-angle representation xa, ya, za, theta (meters and 
+    * radians). 
     * @return true/false on success/failure.
     */
     virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
@@ -107,6 +108,23 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool goToPositionSync(const yarp::sig::Vector &xd, const double t=0.0)=0;
+
+    /**
+    * Get the actual desired pose and joints configuration as result
+    * of kinematic inversion. [wait for reply] 
+    * @param xdcap: a 3-d vector which is filled with the actual 
+    *          desired position x,y,z (meters); it may differ from
+    *          the commanded xd.
+    * @param odcap: a 4-d vector which is filled with the actual 
+    * desired orientation using axis-angle representation xa, ya, 
+    * za, theta (meters and radians); it may differ from the 
+    * commanded od. 
+    * @param qdcap: the joints configuration through which the
+    *             couple (xdcap,odcap) is achieved (radians).
+    * @return true/false on success/failure.
+    */
+    virtual bool getDesired(yarp::sig::Vector &xdcap, yarp::sig::Vector &odcap,
+                            yarp::sig::Vector &qdcap)=0;
 
     /**
     * Get the current DOF configuration of the limb. [wait for
