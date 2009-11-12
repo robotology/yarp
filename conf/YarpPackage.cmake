@@ -12,7 +12,7 @@ SET(CPACK_SOURCE_PACKAGE_FILE_NAME
 
 
 #  if you are making debian packages, this is useful, but not otherwise
-#CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/control.in
+#CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/control.in
 #               ${CMAKE_BINARY_DIR}/DEBIAN/control @ONLY IMMEDIATE)
 #INSTALL_FILES(/doc/DEBIAN FILES ${CMAKE_BINARY_DIR}/DEBIAN/control)
 
