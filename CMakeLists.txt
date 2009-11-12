@@ -46,7 +46,7 @@ INCLUDE(YarpPackage)
 # let's not make a big deal of it for now.
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
 IF (YARP_ADMIN)
-  ADD_CUSTOM_TARGET(dox COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/Doxyfile.part)
+  ADD_CUSTOM_TARGET(dox COMMAND doxygen ${PROJECT_SOURCE_DIR}/conf/doxygen/Doxyfile.part)
 ENDIF (YARP_ADMIN)
 
 # Modify this file when you add/remove files in directories that

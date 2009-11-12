@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # doxygen for man pages
-doxygen conf/Doxyfile.man
+doxygen conf/doxygen/Doxyfile.man
 
 echo "This script is no longer needed"
 echo "Man pages are built using doxygen"
