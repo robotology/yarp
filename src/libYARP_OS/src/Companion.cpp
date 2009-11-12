@@ -32,9 +32,9 @@
 
 #include <ace/OS.h>
 
-#include <yarp/conf/system.h>
+//#include <yarp/conf/system.h>
 #ifdef YARP_CMAKE_CONFIG
-#include <yarp/conf/version.h>
+//#include <yarp/conf/version.h>
 #else
 // we do not have configuration information, disable some features.
 #endif
