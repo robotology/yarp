@@ -1,7 +1,0 @@
-
-deb:
-	@echo no deb packaging needed here
-
-dox:
-	@echo no doxygen here
-
