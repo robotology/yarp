@@ -5,6 +5,26 @@
 
 #define YARP_CMAKE_CONFIG
 
+#ifdef YARP_INT32
+#undef YARP_INT32
+#endif
+
+#ifdef YARP_INT16
+#undef YARP_INT16
+#endif
+
+#ifdef YARP_FLOAT64
+#undef YARP_FLOAT64
+#endif
+
+#ifdef YARP_BIG_ENDIAN
+#undef YARP_BIG_ENDIAN
+#endif
+
+#ifdef YARP_LITTLE_ENDIAN
+#undef YARP_LITTLE_ENDIAN
+#endif
+
 #define YARP_INT32 ${YARP_INT32}
 #define YARP_INT16 ${YARP_INT16}
 #define YARP_FLOAT64 ${YARP_FLOAT64}

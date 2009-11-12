@@ -9,6 +9,9 @@ ENDFOREACH(X ${NEED_LIBS})
 SET(header_path ${CMAKE_SOURCE_DIR}/src/lib${name}/include)
 INCLUDE_DIRECTORIES("${header_path}")
 
+# pick up any generated header files
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
+
 #AUX_SOURCE_DIRECTORY(src libcode)
 FILE(GLOB_RECURSE folder_source src/*.cpp)
 IF (BUILTIN_ACE)

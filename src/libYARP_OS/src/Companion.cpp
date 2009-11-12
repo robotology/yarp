@@ -32,9 +32,9 @@
 
 #include <ace/OS.h>
 
-//#include <yarp/conf/system.h>
+#include <yarp/conf/system.h>
 #ifdef YARP_CMAKE_CONFIG
-//#include <yarp/conf/version.h>
+#include <yarp/conf/version.h>
 #else
 // we do not have configuration information, disable some features.
 #endif
@@ -1539,7 +1539,7 @@ String Companion::readString(bool *eof) {
 
 String Companion::version() {
 #ifdef YARP_VERSION
-    return "2"; //YARP_VERSION;
+    return YARP_VERSION;
 #else
     return "2";
 #endif
