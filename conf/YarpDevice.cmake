@@ -163,7 +163,7 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
     SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF(NOT fdir)
 
-  # We'll be expanding the code in conf/yarpdev_helper.cpp.in using 
+  # We'll be expanding the code in template/yarpdev_helper.cpp.in using 
   # the following variables:
 
   SET(YARPDEV_NAME "${devname}")
@@ -174,7 +174,7 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
 
   # Go ahead and prepare some code to wrap this device.  
   SET(fname ${fdir}/yarpdev_add_${devname}.cpp)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_helper.cpp.in
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_helper.cpp.in
     ${fname} @ONLY  IMMEDIATE)
  
   # Set up a flag to enable/disable compilation of this device.
@@ -297,7 +297,7 @@ MACRO(IMPORT_DEVICES hdr)
     SET(YARP_CODE_POST "${YARP_CODE_POST}\n        add_${dev}_devices();")
   ENDFOREACH(dev ${})
   SET(YARP_LIB_NAME ${YARPY_DEV_LIB_NAME})
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_import.h.in
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_import.h.in
     ${hdr} @ONLY  IMMEDIATE)
   MESSAGE(STATUS "generated ${hdr}")
   IF (YARP_LIBRARIES)
