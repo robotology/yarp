@@ -1539,7 +1539,7 @@ String Companion::readString(bool *eof) {
 
 String Companion::version() {
 #ifdef YARP_VERSION
-    return YARP_VERSION;
+    return "2"; //YARP_VERSION;
 #else
     return "2";
 #endif
