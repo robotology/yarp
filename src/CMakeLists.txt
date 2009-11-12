@@ -1,3 +1,7 @@
+
+# pick up any generated header files
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
+
 SUBDIRS(libYARP_OS libYARP_sig)
 
 SET(CREATE_YARPSERVER3 FALSE CACHE BOOL "Do you want to compile yarpserver3 (experimental)")

@@ -19,6 +19,7 @@
 // little-endian type called e.g. ___my_system_int32, you can replace
 // this whole file with:
 //    typedef ___my_system_int32 NetInt32;
+//    typedef ___my_system_int16 NetInt16;
 //
 ////////////////////////////////////////////////////////////////////////
 
@@ -27,11 +28,12 @@
 ////////////////////////////////////////////////////////////////////////
 //
 // If we are compiling with CMake, we should have all the information
-// we need.
+// we need in yarp/conf/system.h
 //   YARP_INT32 should be a 32-bit integer
 //   YARP_BIG_ENDIAN should be defined if we are big endian
 //   YARP_LITTLE_ENDIAN should be defined if we are little endian
 
+#include <yarp/conf/system.h>
 
 #ifdef YARP_INT32
 

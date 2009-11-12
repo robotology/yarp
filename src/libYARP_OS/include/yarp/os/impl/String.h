@@ -46,6 +46,8 @@ typedef __KeyedString YARP_KEYED_STRING;
 
 #else
 
+#include <yarp/conf/system.h>
+
 #include <ace/String_Base.h>
 namespace yarp {
     namespace os {
@@ -58,7 +60,7 @@ namespace yarp {
 #define YARP_STRSTR(haystack,needle) (haystack).strstr(needle)
 #define YARP_STRSET(str,cstr,len,owned) str.set(cstr,len,owned)
 typedef yarp::os::impl::String YARP_KEYED_STRING;
-#ifdef YARP_ACE_HAS_SIZE_TYPE
+#ifdef YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
 typedef yarp::os::impl::String::size_type YARP_STRING_INDEX;
 #else
 typedef ssize_t YARP_STRING_INDEX;
