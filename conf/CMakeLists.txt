@@ -18,7 +18,7 @@ FOREACH(conf version system options)
 ENDFOREACH(conf)
 
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/YARPConfig.cmake.in
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 
 # There are several macros we would like to have available
