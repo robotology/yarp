@@ -11,7 +11,7 @@ INCLUDE(YarpLibraryNames)
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 FOREACH(conf version system options)
   SET(outconf ${CMAKE_BINARY_DIR}/include/yarp/conf/${conf}.h)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/yarp_config_${conf}.h.in
+  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
                  ${outconf} IMMEDIATE)
   MESSAGE(STATUS "generated ${outconf}")
   INSTALL_FILES(/include/yarp/conf FILES ${outconf})
