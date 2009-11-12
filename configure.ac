@@ -5,7 +5,7 @@ AC_PREREQ(2.5)
 AC_INIT(yarp, 2.2.5.0, [paulfitz@alum.mit.edu])
 AC_CONFIG_SRCDIR([src/libYARP_OS/src/Address.cpp])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([src/libYARP_OS/include/yarp/conf/yarp_config.h])
+AM_CONFIG_HEADER([src/libYARP_OS/include/yarp/conf/system.h])
 
 # we need to be reentrant
 CPPFLAGS="$CPPFLAGS -D_REENTRANT"

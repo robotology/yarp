@@ -32,6 +32,13 @@
 
 #include <ace/OS.h>
 
+#include <yarp/conf/system.h>
+#ifdef YARP_CMAKE_CONFIG
+#include <yarp/conf/version.h>
+#else
+// we do not have configuration information, disable some features.
+#endif
+
 // does ACE require new c++ header files or not?
 #if ACE_HAS_STANDARD_CPP_LIBRARY
 #include <fstream>
@@ -1530,12 +1537,9 @@ String Companion::readString(bool *eof) {
     return txt;
 }
 
-#define yarp_stringify(s) yarp_xstringify(s)
-#define yarp_xstringify(s) #s
-
 String Companion::version() {
 #ifdef YARP_VERSION
-    return yarp_stringify(YARP_VERSION);
+    return YARP_VERSION;
 #else
     return "2";
 #endif
