@@ -336,7 +336,7 @@ MACRO(TARGET_IMPORT_DEVICES target hdr)
     SET(YARP_CODE_POST "${YARP_CODE_POST}\n        add_${dev}_devices();")
   ENDFOREACH(dev ${})
   SET(YARP_LIB_NAME ${YARPY_DEV_LIB_NAME})
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/yarpdev_import.h.in
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_import.h.in
     ${hdr} @ONLY  IMMEDIATE)
   MESSAGE(STATUS "generated ${hdr}")
   IF (YARP_LIBRARIES)
