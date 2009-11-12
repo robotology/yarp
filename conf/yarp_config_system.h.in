@@ -1,0 +1,18 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+#ifndef YARP_CONFIG_SYSTEM_H
+#define YARP_CONFIG_SYSTEM_H
+
+#define YARP_INT32 ${YARP_INT32}
+#define YARP_INT16 ${YARP_INT16}
+#define YARP_FLOAT64 ${YARP_FLOAT64}
+
+#cmakedefine YARP_BIG_ENDIAN
+#cmakedefine YARP_LITTLE_ENDIAN
+
+#cmakedefine YARP_USE_STL_STRING
+#cmakedefine YARP_USE_ACE_STRING
+
+#cmakedefine YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
+
+#endif

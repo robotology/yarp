@@ -1,3 +1,11 @@
+2009-11-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/CMakeLists.txt: start recording flags and options in
+	header files, rather than just in YARPConfig.cmake.  This 
+	makes those options easier to access without using cmake.
+	Header files are created as yarp/config/(version|options|system).h 
+	initially in the include subdirectory of the binary directory.
+
 2009-11-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/PropertyTest.cpp: add regression test
