@@ -190,6 +190,22 @@ public:
     */
     virtual bool setTrajTime(const double t)=0;
 
+    /**
+    * Return tolerance for in-target check. [wait for reply]
+    * \note The trajectory is supposed to be completed as soon as 
+    *       norm(xd-end_effector)<tol.
+    * @return tolerance.
+    */
+    virtual bool getInTargetTol(double *tol)=0;
+
+    /**
+    * Set tolerance for in-target check. [wait for reply]
+    * \note The trajectory is supposed to be completed as soon as 
+    *       norm(xd-end_effector)<tol.
+    * @param tol is the tolerance.
+    */
+    virtual bool setInTargetTol(const double tol)=0;
+
     /** Check if the current trajectory is terminated. [wait for
     *   reply]
     * @param f: where the result is returned.
