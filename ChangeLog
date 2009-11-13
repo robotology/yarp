@@ -1,9 +1,9 @@
 2009-11-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_math/CMakeLists.txt: applied patch by
-	Arjan Gijsberts to allow Atlas math to be used instead
-	of GSL.  Just turn on the "USE_ATLAS" flag when
-	configuring.  Thanks a lot Arjan!
+	Arjan Gijsberts to allow Atlas BLAS to be used for GSL.
+	Just turn on the "USE_ATLAS" flag when 	configuring.  
+	Thanks a lot Arjan!
 
 2009-11-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

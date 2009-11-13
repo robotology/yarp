@@ -3,22 +3,14 @@
 
 #include <iostream>
 
-#include <time.h>
-
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Math.h>
 #include <yarp/math/Rand.h>
+#include <yarp/os/Time.h>
 
 // check if ATLAS is in use
 #include <yarp/conf/options.h>
-
-static double _time() {
-    struct timespec time;
-    clock_gettime(CLOCK_REALTIME, &time);
-    return (double) (time.tv_sec + ((double) time.tv_nsec / 1.0E9));
-}
-
 
 void fillMatrix(yarp::sig::Matrix& mat) {
     for(int r = 0; r < mat.rows(); r++) {
@@ -43,7 +35,8 @@ int main(int argc, char** argv) {
     std::cout << "YARP math is not yet configured to use Atlas Blas" << std::endl;
     std::cout << "Doing so would give faster results" << std::endl;
 #endif
-    int times = 1;
+    int vec_times = 1000;
+    int mat_times = 1;
     int vec_size = 1000000;
     int mat_size = 1000;
     double t1, t2;
@@ -52,43 +45,43 @@ int main(int argc, char** argv) {
     yarp::sig::Matrix mat = yarp::sig::Matrix(mat_size, mat_size);
     yarp::sig::Vector matvec = yarp::sig::Vector(mat_size);
 
-    t1 = _time();
+    t1 = yarp::os::Time::now();
     fillVector(vec);
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Filling random vector(" << vec.size() << "): " << (t2 - t1) << std::endl;
 
-    t1 = _time();
+    t1 = yarp::os::Time::now();
     fillMatrix(mat);
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Filling random matrix(" << mat.rows() << "," << mat.cols() << "): " << (t2 - t1) << std::endl;
     fillVector(matvec);
 
-    t1 = _time();
-    for(int i = 0; i < times; i++) {
+    t1 = yarp::os::Time::now();
+    for(int i = 0; i < vec_times; i++) {
         double t = yarp::math::dot(vec, vec);
     }
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Vector dot product: " << (t2 - t1) << std::endl;
 
-    t1 = _time();
-    for(int i = 0; i < times; i++) {
+    t1 = yarp::os::Time::now();
+    for(int i = 0; i < vec_times; i++) {
         yarp::sig::Vector t = yarp::math::operator*(mat, matvec);
     }
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Matrix/Vector product: " << (t2 - t1) << std::endl;
 
-    t1 = _time();
-    for(int i = 0; i < times; i++) {
+    t1 = yarp::os::Time::now();
+    for(int i = 0; i < mat_times; i++) {
         yarp::sig::Matrix t = yarp::math::operator*(mat, mat);
     }
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Matrix/Matrix product: " << (t2 - t1) << std::endl;
 
-    t1 = _time();
-    for(int i = 0; i < times; i++) {
+    t1 = yarp::os::Time::now();
+    for(int i = 0; i < mat_times; i++) {
         yarp::sig::Matrix t = yarp::math::luinv(mat);
     }
-    t2 = _time();
+    t2 = yarp::os::Time::now();
     std::cout << "Matrix inverse: " << (t2 - t1) << std::endl;
 
 }
