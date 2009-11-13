@@ -8,6 +8,9 @@ PROJECT(configuration)
 ## Remember: on Linux order does matter!
 INCLUDE(YarpLibraryNames)
 
+# rename a few flags
+SET(YARP_USE_ATLAS ${USE_ATLAS})
+
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
 FOREACH(conf version system options)
   SET(outconf ${CMAKE_BINARY_DIR}/include/yarp/conf/${conf}.h)

@@ -10,6 +10,9 @@
 #include <yarp/math/Math.h>
 #include <yarp/math/Rand.h>
 
+// check if ATLAS is in use
+#include <yarp/conf/options.h>
+
 static double _time() {
     struct timespec time;
     clock_gettime(CLOCK_REALTIME, &time);
@@ -33,7 +36,13 @@ void fillVector(yarp::sig::Vector& vec) {
 }
 
 int main(int argc, char** argv) {
-    std::cout << "YARP Atlas Blas test" << std::endl;
+    std::cout << "YARP math test" << std::endl;
+#ifdef YARP_USE_ATLAS
+    std::cout << "Using Atlas Blas" << std::endl;
+#else
+    std::cout << "YARP math is not yet configured to use Atlas Blas" << std::endl;
+    std::cout << "Doing so would give faster results" << std::endl;
+#endif
     int times = 1;
     int vec_size = 1000000;
     int mat_size = 1000;

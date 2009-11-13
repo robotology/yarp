@@ -4,5 +4,6 @@
 #define YARP_CONFIG_OPTIONS_H
 
 #cmakedefine YARP_HAS_MATH_LIB
+#cmakedefine YARP_USE_ATLAS
 
 #endif
