@@ -1,3 +1,15 @@
+2009-11-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_math/CMakeLists.txt: applied patch by
+	Arjan Gijsberts to allow Atlas math to be used instead
+	of GSL.  Just turn on the "USE_ATLAS" flag when
+	configuring.  Thanks a lot Arjan!
+
+2009-11-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/math/benchmark.cpp: Added math benchmark from 
+	Arjan Gijsberts.
+
 2009-11-12  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/CMakeLists.txt: start recording flags and options in
