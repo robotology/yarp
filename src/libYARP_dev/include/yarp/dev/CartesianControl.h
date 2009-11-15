@@ -120,7 +120,7 @@ public:
     * za, theta (meters and radians); it may differ from the 
     * commanded od. 
     * @param qdcap: the joints configuration through which the
-    *             couple (xdcap,odcap) is achieved (radians).
+    *             couple (xdcap,odcap) is achieved (degrees).
     * @return true/false on success/failure.
     */
     virtual bool getDesired(yarp::sig::Vector &xdcap, yarp::sig::Vector &odcap,
