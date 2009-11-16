@@ -68,10 +68,11 @@ $policy =~ s/^\s+//g;
 
 if ($copyright eq "default") {
     # no copyright statement - only accept for example code
-    if (!($fname =~ /example\//)) {
-	$copyright = "unknown";
-	$report = "skipped";
-    }
+    # update: now putting copyright statement in example code
+    #if (!($fname =~ /example\//)) {
+    $copyright = "unknown";
+    $report = "skipped";
+    #}
 }
 
 if ($policy ne "default" || $copyright ne "default") {
