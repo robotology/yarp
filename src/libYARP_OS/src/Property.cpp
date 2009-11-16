@@ -400,8 +400,13 @@ public:
                                         //     accum.toString().c_str());
                                         if (tag!="") {
                                             if (accum.size()>=1) {
+                                                Bottle b;
+                                                b.addString(tag.c_str());
+                                                //Bottle& subList = b.addList();
+                                                //subList.copy(accum);
+                                                b.append(accum);
                                                 putBottleCompat(tag.c_str(),
-                                                                accum);
+                                                                b);
                                             }
                                             tag = "";
                                         }                                

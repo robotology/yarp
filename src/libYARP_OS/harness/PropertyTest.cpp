@@ -301,6 +301,8 @@ check $x $y\n\
             p.fromConfigFile(fname2);
             checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
             checkEqual(p.find("y").asInt(),2,"y is ok");
+            checkEqual(p.findGroup("base").toString().c_str(),
+                       "base (x 1)","expected external structure");
         }
 
         {

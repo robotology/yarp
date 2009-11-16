@@ -1,3 +1,12 @@
+2009-11-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/harness/PropertyTest.cpp: expanded regression test
+	for include syntax.
+
+	* src/libYARP_OS/src/Property.cpp: fix tagged includes (the syntax
+	[include TAG "filename.ini] was not doing what it should have).
+	Thanks Christian Wressnegger for reporting this!
+
 2009-11-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_math/CMakeLists.txt: applied patch by
