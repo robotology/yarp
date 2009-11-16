@@ -1,4 +1,6 @@
-
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Alexandre Bernardino, Paul Fitzpatrick, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.

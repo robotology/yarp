@@ -52,5 +52,23 @@ if $problem; then
     exit 1
 fi
 
+author_count=`wc -l < $tmp2`
+author_word="Authors"
+if [ "k$author_count" = "k1" ]; then
+    author_word="Author"
+fi
+
+author_list=`python -c "import sys; print ', '.join([x.rstrip('\n\r') for x in sys.stdin.readlines()])" < $tmp2`
+echo "Suggested preamble (needs verification):"
+echo "# Copyright: (C) 2009 RobotCub Consortium"
+echo "# $author_word: $author_list"
+echo "# CopyPolicy: Released under the terms of the GNU GPL v2.0."
+echo " "
+
+echo "/*"
+echo " * Copyright: (C) 2009 RobotCub Consortium"
+echo " * $author_word: $author_list"
+echo " * CopyPolicy: Released under the terms of the GNU GPL v2.0."
+echo " */"
 
 

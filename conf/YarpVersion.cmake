@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 # This file is the official location of the current YARP version number.
 # Please do not add extra numerals in this file or change its formatting.

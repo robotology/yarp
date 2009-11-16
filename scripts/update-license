@@ -10,7 +10,8 @@ echo -n | tee license-changes.txt
 echo -n | tee license-good.txt
 echo -n | tee license-odd.txt
 
-for f in `find . -type f -not -wholename "*.svn*" -not -wholename "*~" -not -iname "license*.txt" -not -iname "*.jpg"  -not -iname "*.png"   -not -iname "*.ppm" `; do
+for f in `find . -type f -iname "CMakeLists.txt" -or  -iname "*.cmake" `; do
+#for f in `find . -type f -not -wholename "*.svn*" -not -wholename "*~" -not -iname "license*.txt" -not -iname "*.jpg"  -not -iname "*.png"   -not -iname "*.ppm" `; do
     #ignore=`echo "$f" | grep -q dd_orig && echo true || echo false`
     ignore=false
     if $ignore ; then

@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 PROJECT(configuration)
 
 #GET_TARGET_PROPERTY(YARP_dev_LIB YARP_dev LOCATION)

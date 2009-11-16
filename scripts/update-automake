@@ -3,7 +3,7 @@
 # run as ./scripts/update-automake
 
 # official YARP number is in $YARP_ROOT/conf/YarpVersion.cmake
-version=`cat conf/YarpVersion.cmake | egrep --only-matching "[0-9]"`
+version=`cat conf/YarpVersion.cmake | grep -v "#" | egrep --only-matching "[0-9]"`
 version=`echo $version | sed 's/ /./g'`
 
 

@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 MACRO(YarpLibrary name postfix)
 

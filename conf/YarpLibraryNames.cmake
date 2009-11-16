@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 IF(YARP_HAS_MATH_LIB)
 IF(USE_ATLAS)
 SET(YARP_LIBRARIES "${YARP_dev_LIB};${YARP_EXTMOD_LIBS};${YARP_dev_EXT_LIBS};${YARP_math_LIB};${ATLAS_CBLAS_LIBRARY};${ATLAS_ATLAS_LIBRARY};${GSL_LIBRARY};${YARP_sig_compat_LIB};${YARP_OS_compat_LIB};${YARP_sig_LIB};${YARP_OS_LIB};${ACE_LIB}")
