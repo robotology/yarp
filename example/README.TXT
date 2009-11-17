@@ -36,10 +36,6 @@ libraries.
 
     Tests the remote framegrabber device
 
-* yarp1
-
-    Test that yarp version 1 code still compiles
-    
 * dev_check
 
     Tests the YARP factories for producing interfaces to 
