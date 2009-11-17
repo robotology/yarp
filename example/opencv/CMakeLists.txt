@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 # replace "..." with the path to your YARP binaries if needed
 SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")

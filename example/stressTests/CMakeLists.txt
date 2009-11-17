@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 cmake_minimum_required(VERSION 2.4)
 
 if(COMMAND cmake_policy)

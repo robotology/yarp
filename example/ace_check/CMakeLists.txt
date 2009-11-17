@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 # This is a small project to check if ace is working
 PROJECT(ace_check)
 

@@ -1,4 +1,7 @@
-
+# Copyright: (C) 2009 RobotCub Consortium
+# Author:  Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(meiMotionControl TYPE MEIMotionControl INCLUDE MEIMotionControl.h WRAPPER controlboard)
 ENDIF (COMPILE_DEVICE_LIBRARY)

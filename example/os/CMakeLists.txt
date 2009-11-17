@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Giacomo Spigler
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 PROJECT (Examples)
 
 # replace "..." with the path to your YARP binaries if needed

@@ -1,4 +1,7 @@
-
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(pumacalibrator TYPE PumaCalibrator INCLUDE PumaCalibrator.h )
 ENDIF (COMPILE_DEVICE_LIBRARY)

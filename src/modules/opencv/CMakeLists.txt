@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(opencv_grabber TYPE OpenCVGrabber INCLUDE OpenCVGrabber.h WRAPPER grabber)
 ENDIF (COMPILE_DEVICE_LIBRARY)

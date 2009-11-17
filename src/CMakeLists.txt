@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 # pick up any generated header files
 INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)

@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(ffmpeg_grabber TYPE FfmpegGrabber INCLUDE FfmpegGrabber.h WRAPPER grabber)
   PREPARE_DEVICE(ffmpeg_writer TYPE FfmpegWriter INCLUDE FfmpegWriter.h)

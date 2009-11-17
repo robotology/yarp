@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 # If being compiled as part of a library, create a "factory" for each
 # of our devices - just one in this case, "vfw_grabber", created by
 # making an instance of VfwGrabber (declared in VfwGrabber.h).

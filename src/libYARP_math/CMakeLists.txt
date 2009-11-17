@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 SET(NEED_LIBS YARP_OS YARP_sig)
 
 SET(USE_ATLAS FALSE CACHE BOOL "Select true to link to Atlas for BLAS")

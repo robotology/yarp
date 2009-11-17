@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 PROJECT (Carrier)
 
 # replace "..." with the path to your YARP binaries if needed
