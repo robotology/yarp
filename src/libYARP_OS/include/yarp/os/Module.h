@@ -89,7 +89,8 @@ public:
      * If you have created any ports, and have any threads that are 
      * might be blocked on reading data from those ports, this is a 
      * good place to add calls to BufferedPort::interrupt() or
-     * Port::interrupt().
+     * Port::interrupt().  Don't assume this method will always be
+     * called on shutdown, or if called will complete before shutdown.
      * @return true if there was no catastrophic failure
      *
      */
