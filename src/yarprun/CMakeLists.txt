@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Alessandro Scalzo
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ 
 INCLUDE_DIRECTORIES(${YARP_OS_INC})
 LINK_LIBRARIES(YARP_OS)
 
