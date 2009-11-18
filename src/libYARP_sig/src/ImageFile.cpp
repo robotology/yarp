@@ -11,9 +11,11 @@
 ///
 ///
 
-#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
+#include <ace/OS_NS_stdlib.h>
 #include <ace/Log_Msg.h>
 #include <yarp/sig/ImageFile.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace std;
 using namespace yarp::sig;
@@ -103,7 +105,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
             } else {
                 buf[idx] = ch;
                 idx++;
-                assert(((unsigned int)idx)<sizeof(buf));
+                YARP_ASSERT(((unsigned int)idx)<sizeof(buf));
                 blank = 0;
             }
         }

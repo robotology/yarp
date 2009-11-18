@@ -30,7 +30,8 @@
 #include <yarp/String.h>
 #include <yarp/Logger.h>
 #include <yarp/os/Bottle.h>
-#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
+#include <ace/OS_NS_stdlib.h>
 
 using namespace yarp;
 using namespace yarp::os;

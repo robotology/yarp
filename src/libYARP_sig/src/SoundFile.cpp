@@ -20,7 +20,7 @@
 // Copyright: 1998,1999 Heiko Eissfeldt
 
 
-#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/SoundFile.h>

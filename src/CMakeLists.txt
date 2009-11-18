@@ -34,6 +34,8 @@ IF (CREATE_GUIS)
 	ELSE(COMPILE_NEW_YARPVIEW)
       SUBDIRS(yarpview_old)
 	ENDIF(COMPILE_NEW_YARPVIEW)
+  ELSE (GtkPlus_FOUND)
+      MESSAGE(ERROR " Gtk not found ")
   ENDIF (GtkPlus_FOUND)
 # GtkMM GUIs have been moved to the iCub repository
 #  IF (GtkMM_FOUND)

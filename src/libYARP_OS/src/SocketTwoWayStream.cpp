@@ -10,7 +10,7 @@
 #include <yarp/os/impl/SocketTwoWayStream.h>
 
 #include <ace/INET_Addr.h>
-#include <ace/OS.h>
+//#include <ace/OS.h>
 #include <ace/os_include/netinet/os_tcp.h>
 #include <ace/os_include/os_netdb.h>
 

@@ -10,6 +10,7 @@
 #define YARPDB_SQLITELIVETRIPLE_INC
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #include "sqlite3.h"
 #include "Triple.h"

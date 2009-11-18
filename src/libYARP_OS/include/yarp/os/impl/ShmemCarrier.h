@@ -17,7 +17,7 @@
 // new shmem implementation from Alessandro
 #include <yarp/os/impl/ShmemHybridStream.h>
 
-#include <ace/OS.h>
+//#include <ace/OS.h>
 
 namespace yarp {
     namespace os {

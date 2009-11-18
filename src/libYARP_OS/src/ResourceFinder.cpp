@@ -15,7 +15,9 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
 
-#include <ace/OS.h>
+//#include <ace/OS.h>
+#include <ace/OS_NS_stdlib.h>
+//#include <ace/OS_NS_dirent.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -317,6 +319,10 @@ public:
         // ACE doesn't seem to help us interpret the results of stat
         // in a portable fashion.
 
+        // ACE on Ubuntu 9.10 has issues.
+        // Suppressing check for file here since it isn't really needed
+        // and causes a lot of problems.
+        /*
         ACE_DIR *dir = ACE_OS::opendir(fname);
         if (dir!=NULL) {
             ACE_OS::closedir(dir);
@@ -324,6 +330,8 @@ public:
             return true;
         }
         return false;
+        */
+        return true;
 	}
 };
 

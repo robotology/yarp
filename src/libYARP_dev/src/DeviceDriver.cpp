@@ -6,7 +6,7 @@
  *
  */
 
-#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>

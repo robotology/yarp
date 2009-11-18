@@ -12,7 +12,7 @@
 //
 
 #include <ace/config.h>
-#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
 
 #include "yarpview.h"
 #include "FpsStats.h"

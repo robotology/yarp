@@ -4,7 +4,7 @@
 #include <yarp/os/Random.h>
 
 #include <math.h>
-#include <ace/OS.h>
+#include <ace/OS_NS_stdlib.h>
 #include <stdlib.h>
 
 using namespace yarp::os;

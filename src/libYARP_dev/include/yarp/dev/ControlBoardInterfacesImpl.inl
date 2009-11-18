@@ -15,7 +15,8 @@
 
 #include <ace/Log_Msg.h>
 #include <stdio.h>
-#include <ace/OS.h>
+#include <ace/OS_NS_stdlib.h>
+#include <ace/OS_NS_stdio.h>
 
 /*
  * simple helper template to alloc memory.

@@ -1088,7 +1088,7 @@ int Run::SendToServer(Property& config)
 
 void Run::Help(const char *msg)
 {
-	fprintf(stderr,msg);
+	fprintf(stderr,"%s",msg);
     fprintf(stderr,"\nUSAGE:\n\n");
     fprintf(stderr,"yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
