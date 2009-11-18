@@ -1,4 +1,4 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+/// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
  * Copyright (C) 2008 Paul Fitzpatrick
@@ -6,6 +6,7 @@
  *
  */
 
+#include <ace/config.h>
 #include <stdio.h>
 
 #include <yarp/os/ResourceFinder.h>
@@ -15,8 +16,8 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
 
-//#include <ace/OS.h>
 #include <ace/OS_NS_stdlib.h>
+#include <ace/OS_NS_sys_stat.h>
 //#include <ace/OS_NS_dirent.h>
 
 using namespace yarp::os;

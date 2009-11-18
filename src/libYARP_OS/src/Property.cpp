@@ -18,6 +18,7 @@
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
 //#include <ace/OS.h>
+#include <ace/OS_NS_ctype.h>
 
 // does ACE require new c++ header files or not?
 #if ACE_HAS_STANDARD_CPP_LIBRARY

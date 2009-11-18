@@ -46,6 +46,7 @@ typedef __KeyedString YARP_KEYED_STRING;
 
 #else
 
+#include <ace/config.h>
 #include <yarp/conf/system.h>
 
 #include <ace/String_Base.h>
