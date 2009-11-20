@@ -1,5 +1,8 @@
 2009-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/UsePkgConfig.cmake: use "modern" (>= cmake 2.4) pkg-config
+	tests when available.
+
 	* conf/YarpModuleHooks.cmake: merge libYARP_dev material into
 	yarpmod when devices are to be loaded automatically.  Otherwise
 	there is a circular dependency between libYARP_dev and yarpmod
