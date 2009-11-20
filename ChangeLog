@@ -1,3 +1,9 @@
+2009-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindGtkPlus.cmake: pass along the GTKPLUS_LIBRARY_DIR
+	setting, needed for some setups (thanks Giovanni Saponaro,
+	Frank Forster, Gianluca Massera).
+
 2009-11-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/harness/PropertyTest.cpp: expanded regression test
