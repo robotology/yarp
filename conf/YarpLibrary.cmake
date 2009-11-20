@@ -25,7 +25,18 @@ SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 #INCLUDE(YarpReqLib)
 
-ADD_LIBRARY(${name} ${libcode} ${folder_header} ${NEED_SRCS})
+IF (DUMMY_SRCS)
+  MESSAGE(STATUS "Dummy library, using ${DUMMY_SRCS}")
+  ADD_LIBRARY(${name} ${DUMMY_SRCS})
+  SET(SRC_LIST)
+  FOREACH(SRC ${libcode} ${folder_header} ${NEED_SRCS})
+    GET_SOURCE_FILE_PROPERTY(SRC2 ${SRC} LOCATION)
+    SET(SRC_LIST ${SRC_LIST} ${SRC2})
+  ENDFOREACH(SRC ${ARGN})
+  SET_TARGET_PROPERTIES(${name} PROPERTIES merge_srcs "${SRC_LIST}")
+ELSE (DUMMY_SRCS)
+  ADD_LIBRARY(${name} ${libcode} ${folder_header} ${NEED_SRCS})
+ENDIF (DUMMY_SRCS)
 SET_TARGET_PROPERTIES(${name} PROPERTIES header_path ${header_path})
 
 SET_TARGET_PROPERTIES(

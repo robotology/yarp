@@ -16,6 +16,10 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
 
 SET(NEED_LIBS YARP_OS YARP_sig)
 SET(NEED_SRCS ${populator})
+IF (MERGE_DEVICE_LIBRARY_MODULES)
+  SET(DUMMY_SRCS "${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/Dummy.cpp")
+  LINK_LIBRARIES(yarpmod)
+ENDIF (MERGE_DEVICE_LIBRARY_MODULES)
 YarpLibrary(YARP_dev dev)
 
 # Add in hardware specific tests, if requested

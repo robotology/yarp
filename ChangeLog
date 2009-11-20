@@ -1,5 +1,10 @@
 2009-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpModuleHooks.cmake: merge libYARP_dev material into
+	yarpmod when devices are to be loaded automatically.  Otherwise
+	there is a circular dependency between libYARP_dev and yarpmod
+	that causes occasional problems.
+
 	* conf/FindGtkPlus.cmake: pass along the GTKPLUS_LIBRARY_DIR
 	setting, needed for some setups (thanks Giovanni Saponaro,
 	Frank Forster, Gianluca Massera).

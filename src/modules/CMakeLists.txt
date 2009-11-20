@@ -13,6 +13,10 @@ ELSE (NOT COMPILING_ALL_YARP)
   SET (YARP_DIR ${CMAKE_SOURCE_DIR})
 ENDIF (NOT COMPILING_ALL_YARP)
 
+IF (MERGE_DEVICE_LIBRARY_MODULES)
+  # add in the content of YARP_dev
+  GET_TARGET_PROPERTY(MERGE_SRCS YARP_dev merge_srcs)
+ENDIF (MERGE_DEVICE_LIBRARY_MODULES)
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.
