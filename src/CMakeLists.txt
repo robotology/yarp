@@ -22,7 +22,6 @@ IF (MERGE_DEVICE_LIBRARY_MODULES AND CREATE_DEVICE_LIBRARY_MODULES)
   # libYARP_dev and yarpmod need to be created, and would have
   # a circular dependency if compiled separately.
   # Solution: empty out libYARP_dev and put it in yarpmod
-  MESSAGE(STATUS "Mergible")
   SET(YARP_MERGING TRUE)
   SUBDIRS(libYARP_dev)
   SUBDIRS(modules)
