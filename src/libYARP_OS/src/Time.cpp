@@ -10,6 +10,8 @@
 #include <yarp/os/Time.h>
 
 //#include <ace/OS.h>
+#include <ace/OS_NS_unistd.h>
+
 #include <ace/High_Res_Timer.h>
 
 #ifdef ACE_WIN32

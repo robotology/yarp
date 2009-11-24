@@ -14,6 +14,10 @@
 #include <yarp/os/Network.h>
 
 //#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
+#include <ace/OS_NS_unistd.h> 
+#include <ace/OS_NS_signal.h>
+
 #include <ace/Time_Value.h>
 #include <ace/High_Res_Timer.h>
 
