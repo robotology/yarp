@@ -1,3 +1,7 @@
+2009-11-25  Lorenzo Natale <nat@liralab.it>
+
+	* yarp/os/Os.h/Os.cpp: simple wrappers for some functions in ACE_OS.
+
 2009-11-25  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/YarpReqLib.cmake: fix newline problem in definition list
