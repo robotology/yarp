@@ -19,6 +19,9 @@
 #include <yarp/dev/Drivers.h>
 
 //#include <ace/OS.h>
+#include <ace/OS_NS_stdio.h>
+#include <ace/OS_NS_unistd.h> 
+#include <ace/OS_NS_signal.h>
 #include <ace/Vector_T.h>
 #include <stdio.h>
 #include <stdlib.h>
