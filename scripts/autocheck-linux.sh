@@ -14,8 +14,6 @@ echo -n
 #echo "SET(iCub_DIR \"$PWD/../iCub\")"
 ) > conf/ExternalModules.cmake
 
-#CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY_BUILTINS:BOOL=TRUE -DCREATE_BUILTIN_DEVICE_TESTS:BOOL=TRUE -DENABLE_XSensMTx:BOOL=TRUE -DENABLE_dragonfly:BOOL=TRUE -DENABLE_ffmpeg:BOOL=TRUE -DENABLE_opencv_grabber:BOOL=TRUE -DENABLE_portaudio:BOOL=TRUE -DENABLE_microphone:BOOL=TRUE -DENABLE_esdMotionControl=TRUE"
-
 CMAKEOPTS="-DCREATE_GUIS:BOOL=TRUE -DCREATE_DEVICE_LIBRARY_MODULES:BOOL=TRUE -DCREATE_BUILTIN_DEVICE_TESTS:BOOL=TRUE -DENABLE_yarpmod_ffmpeg:BOOL=TRUE -DENABLE_yarpmod_opencv:BOOL=TRUE -DENABLE_yarpmod_portaudio:BOOL=TRUE -DENABLE_yarpmod_microphone:BOOL=TRUE  -DCREATE_YARPSERVER3:BOOL=TRUE"
 
 export YARP_ROOT=$PWD
@@ -35,19 +33,22 @@ echo Working in directory $SOURCE | tee should_report.txt
 
 rm -f CMakeCache.txt
 rm -f failure.txt
+rm -f testlog.txt
 echo running cmake $CMAKEOPTS $SOURCE
 cmake $CMAKEOPTS $SOURCE || ( echo YARP_AUTOCHECK cmake configure failed | tee failure.txt )
 echo repeating cmake $SOURCE
 cmake $SOURCE
 # there seems to be a bug in cmake 2.5 with add_definitions 
 
-make clean || echo "make clean failed"
+make clean || (echo "make clean failed" )
 
 if [ ! -e failure.txt ]; then
-	make || ( echo YARP_AUTOCHECK make compile failed | tee failure.txt )
+	(
+	    make || ( echo YARP_AUTOCHECK make compile failed | tee failure.txt ) 
+	)
 fi
 
-echo "Regression tests not run" > testlog.txt
+echo "Regression tests not run" >> testlog.txt
 if [ ! -e failure.txt ]; then
     (
 	rm -f src/libYARP_dev/harness/*.dox
@@ -86,7 +87,7 @@ else
 	./scripts/autocheck-doc
 fi
 
-) | tee report.txt
+) 2>&1 | tee report.txt
 
 if [ -e should_report.txt ]; then
 	date > report-decor.txt
