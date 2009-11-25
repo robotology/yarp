@@ -12,6 +12,7 @@
 #include <ace/OS_NS_stdio.h>
 #include <ace/OS_NS_unistd.h> 
 #include <ace/OS_NS_signal.h>
+#include <ace/OS_NS_fcntl.h>
 
 void *yarp::os::signal(int signum, void (*sighandler)(int))
 {
