@@ -1,3 +1,8 @@
+2009-11-25  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/YarpReqLib.cmake: fix newline problem in definition list
+	that shows up with cmake 2.4-5 (debian etch)
+
 2009-11-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/UsePkgConfig.cmake: use "modern" (>= cmake 2.4) pkg-config

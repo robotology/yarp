@@ -12,11 +12,14 @@ IF (YARP_ADMIN)
 ENDIF (YARP_ADMIN)
 
 SET(YARP_DEFINES_ACCUM "-DYARP_PRESENT")
+ADD_DEFINITIONS(-DYARP_PRESENT)
 SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} "-D_REENTRANT")
+ADD_DEFINITIONS(-D_REENTRANT)
 
 # on windows, we have to tell ace how it was compiled
 IF (WIN32 AND NOT CYGWIN)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DWIN32 -D_WINDOWS)
+  ADD_DEFINITIONS(-DWIN32 -D_WINDOWS)
 ELSE (WIN32 AND NOT CYGWIN)
   # flush out warnings for those who want to see everything.
   # this used to be conditional on YARP_ADMIN, but really no good
@@ -31,16 +34,20 @@ ENDIF (WIN32 AND NOT CYGWIN)
 ## check if we are on cygwin
 IF(WIN32 AND CYGWIN)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DCYGWIN)
+  ADD_DEFINITIONS(-DCYGWIN)
 ENDIF(WIN32 AND CYGWIN)
 
 ## check if we are using the MINGW compiler
 IF(MINGW)
   SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
+  ADD_DEFINITIONS(-D__MINGW__ -D__MINGW32__ "-mms-bitfields" "-mthreads" "-Wpointer-arith" "-pipe")
   # "-fno-exceptions" can be useful too... unless you need exceptions :-)
   IF (MSYS)
     SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
+    ADD_DEFINITIONS(-D__ACE_INLINE__ -DACE_HAS_ACE_TOKEN -DACE_HAS_ACE_SVCCONF -DACE_BUILD_DLL)
   ELSE (MSYS)
     SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} "-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
+    ADD_DEFINITIONS("-fvisibility=hidden" "-fvisibility-inlines-hidden" "-Wno-attributes")
   ENDIF (MSYS)
 ENDIF(MINGW)
 
@@ -50,18 +57,15 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
     TEST_BIG_ENDIAN(IS_BIG_ENDIAN)
     IF(${IS_BIG_ENDIAN})
         # this flag has been moved to generated file yarp/conf/system.h
-	#SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_BIG_ENDIAN)
 	SET(YARP_BIG_ENDIAN 1)
     ELSE(${IS_BIG_ENDIAN})
         # this flag has been moved to generated file yarp/conf/system.h
-	#SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_LITTLE_ENDIAN)
 	SET(YARP_LITTLE_ENDIAN 1)
     ENDIF(${IS_BIG_ENDIAN})
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 
 # check if we want yarp String to be std::string
 IF (USE_STL_STRING)
-  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_USE_STL_STRING=1)
   MESSAGE(STATUS "Using std::string")
   SET(YARP_USE_STL_STRING 1)
 ELSE (USE_STL_STRING)
@@ -100,16 +104,6 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
 	MESSAGE(STATUS "Continuing...")
     ENDIF(SIZEOF_SHORT EQUAL 2)
 
-    # this flag has been moved to generated file yarp/conf/system.h
-    #IF(YARP_INT32)
-    #    SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_INT32=${YARP_INT32})
-    #ENDIF(YARP_INT32)
-
-    # this flag has been moved to generated file yarp/conf/system.h
-    #IF(YARP_INT16)
-    #    SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_INT16=${YARP_INT16})
-    #ENDIF(YARP_INT16)
-
     CHECK_TYPE_SIZE("double" SIZEOF_DOUBLE)
     IF(SIZEOF_DOUBLE EQUAL 8)
         SET(YARP_FLOAT64 "double")
@@ -118,11 +112,6 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
             SET(YARP_FLOAT64 "float")
         ENDIF(SIZEOF_FLOAT EQUAL 8)
     ENDIF(SIZEOF_DOUBLE EQUAL 8)
-
-    # this flag has been moved to generated file yarp/conf/system.h
-    #IF(YARP_FLOAT64)
-    #    SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_FLOAT64=${YARP_FLOAT64})
-    #ENDIF(YARP_FLOAT64)
 
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
 
@@ -138,14 +127,7 @@ IF (CREATE_GUIS)
   IF (NOT Gthread_FOUND)
 	MESSAGE(STATUS " gthread not found, won't compile dependent tools")
   ENDIF(NOT Gthread_FOUND)
-# GtkMM dependencies moving to iCub
-#  FIND_PACKAGE(GtkMM)
-#  IF(NOT GtkMM_FOUND)
-#        MESSAGE(STATUS " gtkmm not found, won't compile dependent tools")
-#  ENDIF(NOT GtkMM_FOUND)
 ENDIF (CREATE_GUIS)
-
-#MESSAGE(STATUS "defs ${YARP_DEFINES_ACCUM}")
 
 SET(YARP_HAS_MATH_LIB  FALSE)
 
@@ -179,22 +161,9 @@ IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
   ENDIF(EXISTS "${CMAKE_ROOT}/Modules/CheckTypeSize.cmake")
 ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
 
-# this flag has been moved to generated file yarp/conf/system.h
-#IF (HAVE_SIZE_TYPE)
-#  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_ACE_HAS_SIZE_TYPE)
-#ELSE (HAVE_SIZE_TYPE)
-#  SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_ACE_HAS_NO_SIZE_TYPE)
-#ENDIF (HAVE_SIZE_TYPE)
-
-# YARP version number has been moved to generated file yarp/conf/version.h
-#SET(YARP_DEFINES_ACCUM ${YARP_DEFINES_ACCUM} -DYARP_VERSION=${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH})
-
 # give a readout of defines
 SET(YARP_DEFINES ${YARP_DEFINES_ACCUM} CACHE STRING "Definitions needed when compiling with YARP")
 MARK_AS_ADVANCED(YARP_DEFINES)
-
-ADD_DEFINITIONS(${YARP_DEFINES_ACCUM})
-
 
 # make this visual studio specific, otherwise see warnings on e.g. OSX
 # that these directories don't exist
