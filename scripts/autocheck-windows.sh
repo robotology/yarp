@@ -76,7 +76,7 @@ else
 	echo "Nothing new in svn"
 fi
 
-) | tee report.txt
+) 2>&1 | tee report.txt
 
 if [ -e should_report.txt ]; then
 	date > report-decor.txt
