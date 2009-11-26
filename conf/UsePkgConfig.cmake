@@ -1,5 +1,8 @@
 
-IF (EXISTS "${CMAKE_ROOT}/Modules/FindPkgConfig.cmake")
+# pkg-config showed up in CMake 2.4, was not solid before 2.4-7 or 
+# thereabouts (newline problems).
+
+IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
   INCLUDE(FindPkgConfig)
   MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
     SET(YARP_PKG CONFIG_${_package})
@@ -12,7 +15,8 @@ IF (EXISTS "${CMAKE_ROOT}/Modules/FindPkgConfig.cmake")
   SET (PKGCONFIG_EXECUTABLE TRUE)
 
 
-ELSE (EXISTS "${CMAKE_ROOT}/Modules/FindPkgConfig.cmake")
+ELSE (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
+  MESSAGE(STATUS "Old CMake pkg-config support")
 
 # SOURCE: KDE
 # File: [SVN] / trunk / KDE / kdesdk / cmake / modules / UsePkgConfig.cmake
@@ -82,13 +86,14 @@ MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
 		SET(${_link_DIR} "")
 	ENDIF(_MODERN_PKGCONFIG)
 
+      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags OUTPUT_VARIABLE ${_cflags} )
+
 	IF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.1)
 	      STRING(REGEX REPLACE "\n" " " ${_link_FLAGS} "${${_link_FLAGS}}")
 	      STRING(REGEX REPLACE "\n" " " ${_link_DIR} "${${_link_DIR}}")
 	      STRING(REGEX REPLACE "\n" " " ${_include_DIR} "${${_include_DIR}}")
+	      STRING(REGEX REPLACE "\n" " " ${_cflags} "${${_cflags}}")
 	ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.1)
-
-      EXEC_PROGRAM(${PKGCONFIG_EXECUTABLE} ARGS ${_package} --cflags OUTPUT_VARIABLE ${_cflags} )
 
     ENDIF(NOT _return_VALUE)
 
@@ -96,4 +101,4 @@ MACRO(PKGCONFIG _package _include_DIR _link_DIR _link_FLAGS _cflags)
 
 ENDMACRO(PKGCONFIG _include_DIR _link_DIR _link_FLAGS _cflags)
 
-ENDIF (EXISTS "${CMAKE_ROOT}/Modules/FindPkgConfig.cmake")
+ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
