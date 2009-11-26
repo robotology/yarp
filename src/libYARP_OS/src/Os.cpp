@@ -16,14 +16,14 @@
 #include <ace/OS_NS_sys_stat.h>
 
 
-void *yarp::os::signal(int signum, void (*sighandler)(int))
+yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHandler sighandler)
 {
 	switch (signum)
 	{
 		case yarp::os::YARP_SIGINT:
-			return ACE_OS::signal(SIGINT, (ACE_SignalHandler) sighandler);
+            return ACE_OS::signal(SIGINT, (ACE_SignalHandler) sighandler);
 		case yarp::os::YARP_SIGTERM:
-			return ACE_OS::signal(SIGTERM, (ACE_SignalHandler) sighandler);
+            return ACE_OS::signal(SIGTERM, (ACE_SignalHandler) sighandler);
 		default:
 			return 0; //signal not implemented yet
 	}

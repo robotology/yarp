@@ -24,7 +24,8 @@ namespace yarp {
 		* @param signum: signal number (e.g. SIGTERM/SIGINT) to handle
 		* @param sighandler: handler function
 		*/
-		void *signal(int signum, void (*sighandler)(int));
+        typedef void(*YarpSignalHandler)(int);
+		YarpSignalHandler signal(int signum, YarpSignalHandler sig);
 
 		/**
 		* Wrapper for ACE_OS::exit().
