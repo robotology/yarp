@@ -1,5 +1,10 @@
 2009-11-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add a
+	command to support finding the first existing directory
+	in the search path, following Christian Wressnegger's
+	use case on the robotcub-hackers mailing list.
+
 	* src/libYARP_OS/src/BottleImpl.cpp: fix bug in parsing
 	scientific notation (thanks Sergey Skachek).
 

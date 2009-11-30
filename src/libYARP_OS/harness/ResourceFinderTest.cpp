@@ -73,6 +73,8 @@ public:
             rf.setDefault("alt","_yarp_nonexistent.txt");
             alt = rf.findFile("alt");
             checkTrue(alt!="","default setting is safe");
+
+            checkTrue(rf.findPath()!="","existing path found");
         }
         
     }

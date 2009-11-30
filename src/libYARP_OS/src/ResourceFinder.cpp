@@ -257,6 +257,11 @@ public:
         return result;
     }
 
+    yarp::os::ConstString findPath() {
+        ConstString result = findFileBase("",true);
+        return result;
+    }
+
     yarp::os::ConstString findFile(const char *name) {
         // name is now a key
         //printf("Status %s\n", config.toString().c_str());
@@ -377,6 +382,10 @@ yarp::os::ConstString ResourceFinder::findFile(const char *name) {
 
 yarp::os::ConstString ResourceFinder::findPath(const char *name) {
     return HELPER(implementation).findPath(name);
+}
+
+yarp::os::ConstString ResourceFinder::findPath() {
+    return HELPER(implementation).findPath();
 }
 
 

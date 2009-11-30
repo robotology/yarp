@@ -125,6 +125,13 @@ public:
      */
     yarp::os::ConstString findPath(const char *key);
 
+    /**
+     *
+     * Find the first existing directory in the search path.
+     *
+     */
+    yarp::os::ConstString findPath();
+
 
     // Searchable interface
     virtual bool check(const char *key);
