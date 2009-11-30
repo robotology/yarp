@@ -43,7 +43,7 @@ cd windows
 echo "Working in $PWD"
 if [ ! -e $NAME-svn_r$REV ]; then
 	rm -rf $SVN_NAME
-	svn export -r $REV --native-eol CRLF $URL || exit 1
+	svn export -r $REV $URL --native-eol CRLF || exit 1
 	if [ -f $SVN_NAME ]; then
 	    mkdir $NAME-svn_r$REV || exit 1
 	fi
