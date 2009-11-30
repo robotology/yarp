@@ -1,3 +1,11 @@
+2009-11-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/BottleImpl.cpp: fix bug in parsing
+	scientific notation (thanks Sergey Skachek).
+
+	* src/libYARP_OS/harness/BottleTest.cpp: test parsing of
+	scientific notation.
+
 2009-11-25  Lorenzo Natale <nat@liralab.it>
 
 	* yarp/os/Os.h/Os.cpp: simple wrappers for some functions in ACE_OS.

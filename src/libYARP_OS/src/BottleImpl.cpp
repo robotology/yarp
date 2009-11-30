@@ -94,13 +94,18 @@ void BottleImpl::smartAdd(const String& str) {
         bool preamble = true;
         bool hexActive = false;
         int periodCount = 0;
+        bool hasPeriodOrE = false;
         for (int i=0; i<(int)str.length(); i++) {
             char ch2 = str[i];
             if (ch2=='.') {
+                hasPeriodOrE = true;
                 periodCount++;
                 if (periodCount>1) {
                     numberLike = false;
                 }
+            }
+            if (ch2=='e'||ch2=='E') {
+                hasPeriodOrE = true;
             }
             if (preamble) {
                 if (ch2=='x'||ch2=='X') {
@@ -115,6 +120,7 @@ void BottleImpl::smartAdd(const String& str) {
             }
             preamble = false;
             if (!((ch2>='0'&&ch2<='9')||ch2=='.'||ch2=='e'||ch2=='E'||
+                  ch2=='+'||ch2=='-'||
                   (hexActive&&((ch2>='a'&&ch2<='f')||
                                  (ch2>='A'&&ch2<='F'))))) {
                 numberLike = false;
@@ -124,7 +130,7 @@ void BottleImpl::smartAdd(const String& str) {
 
         if (numberLike && ((ch>='0'&&ch<='9')||ch=='+'||ch=='-'||ch=='.') &&
             (ch!='.'||str.length()>1)) {
-            if (YARP_STRSTR(str,".")==String::npos) {
+            if (!hasPeriodOrE) {
                 s = new StoreInt(0);
             } else {
                 s = new StoreDouble(0);

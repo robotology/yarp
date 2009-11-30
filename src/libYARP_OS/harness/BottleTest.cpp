@@ -29,6 +29,10 @@ static double myfabs(double x) {
     return -x;
 }
 
+static bool similar(double x, double y, double eps) {
+    return myfabs(x-y)<eps;
+}
+
 class BottleTest : public UnitTest {
 public:
     void testSize() {
@@ -409,6 +413,21 @@ public:
         checkEqual(b.get(0).asInt(),5,"assignment works");
     }
 
+    void testScientific() {
+        report(0,"test scientific notation...");
+        Bottle b;
+        b.fromString("10.0e5");
+        checkTrue(similar(b.get(0).asDouble(),10e5, 1),
+                  "positive positive lower case");
+        b.fromString("10.0e-2");
+        checkTrue(similar(b.get(0).asDouble(),10e-2, 1e-2),
+                  "positive negative lower case");
+        b.fromString("1E-8");
+        checkTrue(b.get(0).isDouble(),"type check");
+        checkTrue(similar(b.get(0).asDouble(),1e-8, 1e-9),
+                  "positive negative upper case");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -432,6 +451,7 @@ public:
         testStack();
         testTypeDetection();
         testModify();
+        testScientific();
     }
 
     virtual String getName() {
