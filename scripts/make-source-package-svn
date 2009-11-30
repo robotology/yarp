@@ -1,0 +1,67 @@
+#!/bin/bash
+
+# run as ./scripts/make-source-package
+
+ORG=$PWD
+BASE=$PWD/source-package
+URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
+NAME=yarp
+REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
+SVN_NAME=$(basename $URL)
+
+if [ "k$REV" = "k" ] ; then
+	echo SVN revision number not found
+	exit 1
+fi
+
+mkdir -p $BASE
+cd $BASE
+mkdir -p unix
+cd unix
+echo "Working in $PWD"
+if [ ! -e $NAME-svn_r$REV ]; then
+	rm -rf $SVN_NAME
+	svn export -r $REV $URL || exit 1
+	if [ -f $SVN_NAME ]; then
+	    mkdir $NAME-svn_r$REV || exit 1
+	fi
+	mv $SVN_NAME $NAME-svn_r$REV || exit 1
+	rm -f *.tar.gz
+else
+	echo "Unix checkout exists"
+fi
+if [ ! -e $NAME-svn_r$REV.tar.gz ]; then
+	echo "Making $NAME-svn_r$REV.tar.gz"
+	tar cvzf $NAME-svn_r$REV.tar.gz $NAME-svn_r$REV || exit 1
+else
+	echo "Unix tarball exists"
+fi
+
+cd $BASE
+mkdir -p windows
+cd windows
+echo "Working in $PWD"
+if [ ! -e $NAME-svn_r$REV ]; then
+	rm -rf $SVN_NAME
+	svn export -r $REV --native-eol CRLF $URL || exit 1
+	if [ -f $SVN_NAME ]; then
+	    mkdir $NAME-svn_r$REV || exit 1
+	fi
+	mv $SVN_NAME $NAME-svn_r$REV || exit 1
+	rm -f *.zip
+else
+	echo "Windows checkout exists"
+fi
+
+if [ ! -e $NAME-svn_r$REV.zip ]; then
+	echo "Making $NAME-svn_r$REV.zip"
+	zip $NAME-svn_r$REV $NAME-svn_r$REV || exit 1
+else
+	echo "Windows zip exists"
+fi
+
+cd $BASE
+echo "==================================================================="
+echo $PWD
+find . -maxdepth 2
+
