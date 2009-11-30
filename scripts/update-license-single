@@ -42,8 +42,8 @@ if ($txt=~/academic free/i || $quiet) {
 if ($txt =~ /license/i || $txt =~ /copyright/i) {
 }
 
-$txt =~ s/The RobotCub Consortium/RobotCub Consortium/g;
-$txt =~ s/Robotcub Consortium/RobotCub Consortium/g;
+$txt =~ s/The RobotCub Consortium\.?/RobotCub Consortium/ig;
+$txt =~ s/Robotcub Consortium\.?/RobotCub Consortium/ig;
 
 $txt =~ s/.*GNU General Public License, version 2 or.*/CopyPolicy: Released under the terms of the GNU GPL v2.0./;
  
@@ -59,12 +59,21 @@ if ($copyright eq "unknown") {
     }    
 }
 
+if ($txt =~ /(The author disclaims copyright to this source code)/) {
+    $copyright = $1;
+}
+
+if ($txt =~ /here is a blessing/) {
+    $policy = "In place of a legal notice, a blessing is given."
+}
+
 $copyright =~ s/\s+$//g;
 $copyright =~ s/^\s+//g;
 $copyright =~ s/\xa9/\(C\)/g;
 $policy =~ s/\s+$//g;
 $policy =~ s/^\s+//g;
 
+$copyright =~ s/Alex Bernardino/Alexandre Bernardino/;
 
 if ($copyright eq "default") {
     # no copyright statement - only accept for example code
