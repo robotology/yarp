@@ -7,7 +7,7 @@ for f in `find source-package/windows -type f -exec file {} \; | grep -v CRLF | 
     prop=`$cmd`
     if [ "k$prop" = "k" ]; then
 	echo "*** Should set EOL style"
-	svn propset svn:eol-style native $f
+	#svn propset svn:eol-style native $f
     else 
 	echo ">>> $prop"
     fi

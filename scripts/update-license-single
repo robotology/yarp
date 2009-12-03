@@ -15,7 +15,7 @@ my $std_license = "
 print "$fname\n";
 
 my $txt = "";
-open(FIN,"<$fname");
+open(FIN,"<license_check/$fname");
 while (<FIN>) {
     $txt .= $_;
 }

@@ -9,7 +9,6 @@ files follows.
 Copyright 2005 2006 2007 2008 2009:
   Alessandro Scalzo
   Alexandre Bernardino
-  Alex Bernardino
   Arjan Gijsberts
   Assif Mirza
   Carlos Beltran-Gonzalez
@@ -26,4 +25,88 @@ Copyright 2005 2006 2007 2008 2009:
   Mike P. Blow
   Paul Fitzpatrick
   RobotCub Consortium
+
+Certain files are integrated in YARP from other sources with
+compatible licenses.  Here is a list of these files and a summary of
+their copyright.  See the individual files for more details.
+
+src/yarpserver/sqlite/sqlite3.c
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/yarpserver/sqlite/sqlite3.h
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/libYARP_OS/src/Random.cpp
+  Copyright: 1994, Everett F. Carter Jr.
+  CopyPolicy: Preserve copyright notice
+
+src/libYARP_sig/include/yarp/sig/IplImage.h
+  Copyright: (C) 2000, Intel Corporation, all rights reserved.
+  CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
+
+src/libYARP_sig/src/SoundFile.cpp
+  Copyright: 1998,1999 Heiko Eissfeldt
+  CopyPolicy: GNU Public License 2 applies
+
+src/modules/urbtc/kernel_module/urobotc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.c
+  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/jrkerr/picservo.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/nmccom.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/sio_util.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/picservo.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/nmccom.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/sio_util.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/vfw/vfw_extra_from_australia.h
+  Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
+  CopyPolicy: Released under the terms of the GNU GPL v2. or later
+
+src/modules/vfw/vfw_extra_from_wine.h
+  Copyright: (C) 2007 the Wine project
+  CopyPolicy: Released under the terms of the GNU GPL v2.1. or later
+
+src/modules/dimax_u2c/i2cbridge.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/I2c.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/u2c_common_func.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/I2c.cpp
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
 
