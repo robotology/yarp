@@ -32,7 +32,7 @@ private:
     bool readResult, readActive, readBackground, willReply, closed, opened;
     bool replyDue;
     bool autoSet;
-    SemaphoreImpl produce, consume;
+    SemaphoreImpl produce, consume, readBlock;
     PortReaderCreator *recReadCreator;
     int recWaitAfterSend;
 public:
@@ -45,7 +45,7 @@ public:
         closed(false),
         opened(false),
         replyDue(false),
-        produce(0), consume(0),
+        produce(0), consume(0), readBlock(1),
         recReadCreator(NULL),
         recWaitAfterSend(-1)
     {
@@ -84,6 +84,8 @@ public:
 
     virtual bool read(ConnectionReader& reader) {
         // called by comms code
+        readBlock.wait();
+
         if (!reader.isValid()) {
             // termination
             stateMutex.wait();
@@ -92,6 +94,7 @@ public:
             }
             stateMutex.post();
             produce.post();
+            readBlock.post();
             return false;
         } 
 
@@ -103,6 +106,7 @@ public:
         if (closed) {
             //throw IOException("Port::read shutting down");
             YARP_DEBUG(Logger::get(),"Port::read shutting down");
+            readBlock.post();
             return false;
         }
 
@@ -129,6 +133,7 @@ public:
             consume.wait();
             if (closed) {
                 YARP_DEBUG(Logger::get(),"Port::read shutting down");
+                readBlock.post();
                 return false;
                 //throw IOException("Port::read shutting down");
             }
@@ -140,6 +145,7 @@ public:
             stateMutex.post();
             produce.post();
         }
+        readBlock.post();
         return result;
     }
 

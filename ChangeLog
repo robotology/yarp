@@ -1,3 +1,9 @@
+2009-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Port.cpp: deal correctly with reads that
+	arrive while a reply is being made to another message, using 
+	the read(*,true) ... reply(*) mechanism (thanks Ugo, Lorenzo!)
+
 2009-11-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add a
