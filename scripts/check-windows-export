@@ -1,0 +1,20 @@
+#!/bin/bash
+
+for f in `find source-package/windows -type f -exec file {} \; | grep -v CRLF | grep -v "image data" | grep -v "video:" | grep -v "archive data" | grep -v "archive" | grep -v executable | grep -v ostscript | sed "s/:.*//" | sed "s|.*yarp-svn_r[0-9]*/||"`; do
+    echo "Checking $f"
+    cmd="svn propget svn:eol-style $f"
+    echo $cmd
+    prop=`$cmd`
+    if [ "k$prop" = "k" ]; then
+	echo "*** Should set EOL style"
+	svn propset svn:eol-style native $f
+    else 
+	echo ">>> $prop"
+    fi
+done
+
+
+
+
+
+

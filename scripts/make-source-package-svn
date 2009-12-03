@@ -6,7 +6,11 @@ ORG=$PWD
 BASE=$PWD/source-package
 URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
 NAME=yarp
-REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
+if [ "k$1" = "k" ] ; then
+    REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
+else
+    REV=$1
+fi
 SVN_NAME=$(basename $URL)
 
 if [ "k$REV" = "k" ] ; then
