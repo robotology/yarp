@@ -2,6 +2,19 @@
 
 # run as ./scripts/make-source-package
 
+function prune {
+    cd $1
+    for f in debian src/modules/dimax_u2c/blob; do
+	echo "Removing $f"
+	rm -rf $f
+    done
+    (
+	cat src/modules/CMakeLists.txt | grep -v dimax
+    ) > /tmp/CMakeLists.txt
+    cp /tmp/CMakeLists.txt src/modules
+    cd ..
+}
+
 ORG=$PWD
 BASE=$PWD/source-package
 URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
@@ -18,25 +31,46 @@ if [ "k$REV" = "k" ] ; then
 	exit 1
 fi
 
+echo "Working with revision $REV"
+
 mkdir -p $BASE
+cd $BASE
+mkdir -p config
+cd config
+cp $ORG/conf/YarpVersion.cmake .
+(
+cat <<EOF
+cmake_minimum_required(VERSION 2.6)
+PROJECT(test)
+SET(CMAKE_MODULE_PATH \${PROJECT_SOURCE_DIR})
+INCLUDE(YarpVersion)
+MESSAGE(STATUS "Version is \${YARP_VERSION_MAJOR}.\${YARP_VERSION_MINOR}.\${YARP_VERSION_PATCH}\${YARP_VERSION_MODIFIER}")
+EOF
+) > CMakeLists.txt
+YARP_VERSION=`cmake . | grep "Version is " | sed "s/.*Version is //"`
+echo "YARP version detected as $YARP_VERSION"
 cd $BASE
 mkdir -p unix
 cd unix
-echo "Working in $PWD"
-if [ ! -e $NAME-svn_r$REV ]; then
+#PACKAGE="$NAME-svn_r$REV"
+PACKAGE="yarp-$YARP_VERSION"
+echo "Working in $PWD, making $PACKAGE"
+
+if [ ! -e $PACKAGE ]; then
 	rm -rf $SVN_NAME
 	svn export -r $REV $URL || exit 1
 	if [ -f $SVN_NAME ]; then
-	    mkdir $NAME-svn_r$REV || exit 1
+	    mkdir $PACKAGE || exit 1
 	fi
-	mv $SVN_NAME $NAME-svn_r$REV || exit 1
+	mv $SVN_NAME $PACKAGE || exit 1
+	prune $PACKAGE || exit 1
 	rm -f *.tar.gz
 else
 	echo "Unix checkout exists"
 fi
-if [ ! -e $NAME-svn_r$REV.tar.gz ]; then
-	echo "Making $NAME-svn_r$REV.tar.gz"
-	tar cvzf $NAME-svn_r$REV.tar.gz $NAME-svn_r$REV || exit 1
+if [ ! -e $PACKAGE.tar.gz ]; then
+	echo "Making $PACKAGE.tar.gz"
+	tar cvzf $PACKAGE.tar.gz $PACKAGE || exit 1
 else
 	echo "Unix tarball exists"
 fi
@@ -45,21 +79,22 @@ cd $BASE
 mkdir -p windows
 cd windows
 echo "Working in $PWD"
-if [ ! -e $NAME-svn_r$REV ]; then
+if [ ! -e $PACKAGE ]; then
 	rm -rf $SVN_NAME
 	svn export -r $REV $URL --native-eol CRLF || exit 1
 	if [ -f $SVN_NAME ]; then
-	    mkdir $NAME-svn_r$REV || exit 1
+	    mkdir $PACKAGE || exit 1
 	fi
-	mv $SVN_NAME $NAME-svn_r$REV || exit 1
+	mv $SVN_NAME $PACKAGE || exit 1
+	prune $PACKAGE || exit 1
 	rm -f *.zip
 else
 	echo "Windows checkout exists"
 fi
 
-if [ ! -e $NAME-svn_r$REV.zip ]; then
-	echo "Making $NAME-svn_r$REV.zip"
-	zip $NAME-svn_r$REV $NAME-svn_r$REV || exit 1
+if [ ! -e $PACKAGE.zip ]; then
+	echo "Making $PACKAGE.zip"
+	zip -r $PACKAGE.zip $PACKAGE || exit 1
 else
 	echo "Windows zip exists"
 fi
