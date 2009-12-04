@@ -1,15 +1,17 @@
 #!/bin/bash
 
 PROTOCOLS="tcp udp"
-PAYLOAD="8192 16384 32768 65536 131072 262144 524288 1048576"
-PL_VERBOSE=( 8k 16k 32k 64k 128k 256k 512k 1M )
-NFRAMES=10
+PAYLOAD="8192 16384 524288 1048576"
+# 32768 65536 131072 262144 524288 1048576"
+PL_VERBOSE=( 8k 16k 512k 1M) 
+#32k 64k 128k 256k 512k 1M )
+NFRAMES=1000
 
 CLIENT_PORT=/profiling/client/end/port:i
 SERVER_PORT=/profiling/server/default/port:o
 
 #MACHINES=( icub-b1 )
-MACHINES=( )
+MACHINES=( pc104 )
 
 case $1 in
     killall)
@@ -17,7 +19,7 @@ case $1 in
 		for machine in ${MACHINES[@]}
 		  do
 		  echo "Killing client on $machine"
-		  yarp run --on /$machine --kill profTag 
+		  yarp run --on /$machine --kill profTag 9
 		  echo echo "done"
 		done
 		
@@ -81,7 +83,7 @@ case $1 in
 				for machine in ${MACHINES[@]}
 				do
 					echo "Killing client on $machine"
-					yarp run --on /$machine --kill profTag 
+					yarp run --on /$machine --kill profTag 9
 					echo echo "done"
 				done
 
