@@ -11,7 +11,7 @@ export PATH=$PATH:$YARP_ROOT/bin:$ICUB_ROOT/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ACE_ROOT/lib
 PROTOCOLS="tcp udp"
 RATES="5 10 20 30 40 50 60 70 80 90 100 200 300 400 500 1000 2000"
-NFRAMES=1000
+NFRAMES=2000
 
 CLIENT_PORT=/profiling/client/end/port:i
 SERVER_PORT=/profiling/server/default/port:o
