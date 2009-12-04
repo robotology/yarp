@@ -9,7 +9,7 @@ CLIENT_PORT=/profiling/client/end/port:i
 SERVER_PORT=/profiling/server/default/port:o
 
 #MACHINES=( icub-b1 )
-MACHINES=( pc104 )
+MACHINES=( icub-b12 )
 
 case $1 in
     killall)
@@ -63,14 +63,20 @@ case $1 in
 
 				yarp wait $CLIENT_PORT
 
-				if [ "$numMachines" -gt 1 ]; then
-					lastMachine=${MACHINES[($numMachines)-1]}
-					yarp connect /profiling/client/$lastMachine/port:o $CLIENT_PORT $protocol
-					fistMachine=${MACHINES[0]}
-					yarp connect $SERVER_PORT /profiling/client/$fistMachine/port:i $protocol
-				else
-					yarp connect $SERVER_PORT $CLIENT_PORT $protocol
-				fi
+
+				lastMachine=${MACHINES[($numMachines)-1]}
+				yarp connect /profiling/client/$lastMachine/port:o $CLIENT_PORT
+				fistMachine=${MACHINES[0]}
+				yarp connect $SERVER_PORT /profiling/client/$fistMachine/port:i
+
+#				if [ "$numMachines" -gt 1 ]; then
+#					lastMachine=${MACHINES[($numMachines)-1]}
+#					yarp connect /profiling/client/$lastMachine/port:o $CLIENT_PORT $protocol
+#					fistMachine=${MACHINES[0]}
+#					yarp connect $SERVER_PORT /profiling/client/$fistMachine/port:i $protocol
+#				else
+#					yarp connect $SERVER_PORT $CLIENT_PORT $protocol
+#				fi
 
 				echo "Now waiting for test"
 				wait $jobClient
