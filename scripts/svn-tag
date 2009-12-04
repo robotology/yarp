@@ -1,0 +1,1 @@
+svn copy https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.2.5 -m "yarp release 2.2.5"

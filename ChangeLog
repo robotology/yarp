@@ -1,3 +1,7 @@
+2009-12-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* doc/download.html: release yarp-2.2.5
+
 2009-12-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Port.cpp: deal correctly with reads that

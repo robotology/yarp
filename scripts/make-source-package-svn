@@ -17,52 +17,60 @@ function prune {
 
 ORG=$PWD
 BASE=$PWD/source-package
-URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
-NAME=yarp
-if [ "k$1" = "k" ] ; then
-    REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
-else
-    REV=$1
-fi
-SVN_NAME=$(basename $URL)
-
-if [ "k$REV" = "k" ] ; then
-	echo SVN revision number not found
-	exit 1
-fi
-
-echo "Working with revision $REV"
-
 mkdir -p $BASE
 cd $BASE
-mkdir -p config
-cd config
-cp $ORG/conf/YarpVersion.cmake .
-(
-cat <<EOF
-cmake_minimum_required(VERSION 2.6)
-PROJECT(test)
-SET(CMAKE_MODULE_PATH \${PROJECT_SOURCE_DIR})
-INCLUDE(YarpVersion)
-MESSAGE(STATUS "Version is \${YARP_VERSION_MAJOR}.\${YARP_VERSION_MINOR}.\${YARP_VERSION_PATCH}\${YARP_VERSION_MODIFIER}")
+
+if [ "k$1" = "k" ] ; then
+  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2
+  NAME=yarp
+  #REV=$(svn info $URL|grep "^Last Changed Rev:"|sed -e 's|.*:\s*||')
+  SVN_NAME=$(basename $URL)
+
+  #if [ "k$REV" = "k" ] ; then
+  #	echo SVN revision number not found
+  #	exit 1
+  #fi
+
+  #echo "Working with revision $REV"
+
+  mkdir -p config
+  cd config
+  cp $ORG/conf/YarpVersion.cmake .
+  (
+  cat <<EOF
+  cmake_minimum_required(VERSION 2.6)
+  PROJECT(test)
+  SET(CMAKE_MODULE_PATH \${PROJECT_SOURCE_DIR})
+  INCLUDE(YarpVersion)
+  MESSAGE(STATUS "Version is \${YARP_VERSION_MAJOR}.\${YARP_VERSION_MINOR}.\${YARP_VERSION_PATCH}\${YARP_VERSION_MODIFIER}")
 EOF
-) > CMakeLists.txt
-YARP_VERSION=`cmake . | grep "Version is " | sed "s/.*Version is //"`
-echo "YARP version detected as $YARP_VERSION"
+  ) > CMakeLists.txt
+  YARP_VERSION=`cmake . | grep "Version is " | sed "s/.*Version is //"`
+  echo "YARP version detected as $YARP_VERSION"
+  PACKAGE="yarp-$YARP_VERSION"
+
+else
+
+  URL=https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$1
+  PACKAGE="$1"
+  SVN_NAME="$1"
+
+fi
+
 cd $BASE
 mkdir -p unix
 cd unix
-#PACKAGE="$NAME-svn_r$REV"
-PACKAGE="yarp-$YARP_VERSION"
 echo "Working in $PWD, making $PACKAGE"
 
 if [ ! -e $PACKAGE ]; then
 	rm -rf $SVN_NAME
-	svn export -r $REV $URL || exit 1
-	if [ -f $SVN_NAME ]; then
+	svn export $URL || exit 1
+	if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
+	  if [ -f $SVN_NAME ]; then
 	    mkdir $PACKAGE || exit 1
-	fi
-	mv $SVN_NAME $PACKAGE || exit 1
+	  fi
+	  mv $SVN_NAME $PACKAGE || exit 1
+        fi
 	prune $PACKAGE || exit 1
 	rm -f *.tar.gz
 else
@@ -81,11 +89,13 @@ cd windows
 echo "Working in $PWD"
 if [ ! -e $PACKAGE ]; then
 	rm -rf $SVN_NAME
-	svn export -r $REV $URL --native-eol CRLF || exit 1
-	if [ -f $SVN_NAME ]; then
-	    mkdir $PACKAGE || exit 1
-	fi
-	mv $SVN_NAME $PACKAGE || exit 1
+	svn export $URL --native-eol CRLF || exit 1
+	if [ ! "k$SVN_NAME" = "k$PACKAGE" ]; then
+	  if [ -f $SVN_NAME ]; then
+	      mkdir $PACKAGE || exit 1
+	  fi
+	  mv $SVN_NAME $PACKAGE || exit 1
+        fi
 	prune $PACKAGE || exit 1
 	rm -f *.zip
 else
