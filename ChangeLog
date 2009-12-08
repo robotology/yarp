@@ -1,3 +1,8 @@
+2009-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Port.cpp: display temporary port names
+	correctly when they fail to open (thanks Philipp Robbel).
+
 2009-12-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* doc/download.html: release yarp-2.2.5

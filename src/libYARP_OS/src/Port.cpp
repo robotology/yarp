@@ -313,7 +313,7 @@ bool Port::open(const Contact& contact, bool registerName) {
     } else {
         YARP_ERROR(Logger::get(),
                    String("Port ") +
-                   contact.getName().c_str() +
+                   (address.isValid()?(address.getRegName().c_str()):(contact.getName().c_str())) +
                    " failed to activate" +
                    (address.isValid()?" at ":"") +
                    (address.isValid()?address.toString():String("")) +
