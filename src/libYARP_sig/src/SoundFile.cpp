@@ -148,7 +148,8 @@ bool yarp::sig::file::read(Sound& dest, const char *src) {
     */
 
     ManagedBytes bytes(expect);
-    fread(bytes.get(),bytes.length(),1,fp);
+    ACE_OS::fread(bytes.get(),bytes.length(),1,fp);
+
     NetInt16 *data = (NetInt16*)bytes.get();
     int ct = 0;
     for (int i=0; i<samples; i++) {

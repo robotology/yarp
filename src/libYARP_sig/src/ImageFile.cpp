@@ -215,7 +215,10 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
 	ungetc(ch, fp);
 
 	/// LATER: not portable?
-	fscanf(fp, "%d%d%d", width, height, &maxval);
+	int n=fscanf(fp, "%d%d%d", width, height, &maxval);
+    if (n!=3)
+        return false;
+
 	ACE_OS::fgetc(fp);
 	if (maxval != 255)
         {
