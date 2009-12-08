@@ -78,7 +78,7 @@ IF (CREATE_PYTHON)
    # installation path is determined reliably on most platforms using distutils
    FIND_PACKAGE(PythonInterp)
    EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} 
-                   -c "from distutils import sysconfig; print sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}')" 
+                   -c "from distutils import sysconfig; print(sysconfig.get_python_lib(1,0,prefix='${CMAKE_INSTALL_PREFIX}'))" 
                    OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
    INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/yarp.py ${CMAKE_CURRENT_SOURCE_DIR}/_yarp.so 
            DESTINATION ${PYTHON_INSTDIR} )
