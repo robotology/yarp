@@ -1487,12 +1487,13 @@ void Run::CleanZombies(int* pZombies,int nZombies)
 
 int Run::ExecuteCmdAndStdio(Bottle& msg)
 {
+    int ret;
 	String alias(msg.find("as").asString());
 
 	int  pipe_stdin_to_cmd[2];
-	pipe(pipe_stdin_to_cmd);
+	ret=pipe(pipe_stdin_to_cmd);
 	int  pipe_cmd_to_stdout[2];
-	pipe(pipe_cmd_to_stdout);
+	ret=pipe(pipe_cmd_to_stdout);
 
 	int pid_stdout=fork();
 
@@ -1604,12 +1605,13 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 				REDIRECT_TO(STDOUT_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 				REDIRECT_TO(STDERR_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 				
+                int ret;
 				if (msg.check("workdir"))
 			    {
-			        chdir(msg.find("workdir").asString().c_str());
+			        ret=chdir(msg.find("workdir").asString().c_str());
 			    }
 
-				int ret=execvp(arg_str[0],arg_str);
+				ret=execvp(arg_str[0],arg_str);
 
         		for (int s=0; s<command.size(); ++s)
         			delete [] arg_str[s];
@@ -1678,13 +1680,14 @@ int Run::ExecuteCmd(Bottle& msg)
 			strcpy(arg_str[s],Args[s].c_str());
 		}
 		arg_str[nargs]=0;
-        
+    
+        int ret;
         if (msg.check("workdir"))
 		{
-		    chdir(msg.find("workdir").asString().c_str());
+		    ret=chdir(msg.find("workdir").asString().c_str());
 		}
         
-		int ret=execvp(arg_str[0],arg_str);	
+		ret=execvp(arg_str[0],arg_str);	
 		
 		for (int s=0; s<command.size(); ++s)
 			delete [] arg_str[s];
