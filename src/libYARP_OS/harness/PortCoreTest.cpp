@@ -43,8 +43,6 @@ public:
 
     void testStartStop() {
         report(0,"checking start/stop works (requires free port 9999)...");
-        NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
 
         Address address("127.0.0.1",9999,"tcp","/port");
         PortCore core;
@@ -74,8 +72,6 @@ public:
 
         core.join();
         checkEqual(core.getEventCount(),ct,"Got all events");
-
-        nic.setFakeMode(false);
     }
 
 
@@ -86,7 +82,6 @@ public:
         receives = 0;
 
         NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
 
         Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
         Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
@@ -122,7 +117,6 @@ public:
         sender.close();
         receiver.close();
 
-        nic.setFakeMode(false);
     }
 
 
@@ -133,7 +127,6 @@ public:
         receives = 0;
 
         NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
 
         Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
         Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
@@ -172,15 +165,15 @@ public:
         checkEqual(receives,1,"something received");
         sender.close();
         receiver.close();
-
-        nic.setFakeMode(false);
     }
 
 
     virtual void runTests() {
+        Network::setLocalMode(true);
         testStartStop();
         testBottle();
         testBackground();
+        Network::setLocalMode(false);
     }
 };
 

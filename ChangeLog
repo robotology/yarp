@@ -1,8 +1,14 @@
+2009-12-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCore.cpp: suppress port startup
+	announcements to name server when only a fake name server
+	is available (thanks Philipp Robbel).
+
 2009-12-08  Arjan Gijsberts  <arjan@liralab.it>
 
 	* example/swig/CMakeLists.txt: use parentheses for print 
 	statement in embedded Python script to be compatible with 
-	Python 3.0.
+	Python 3.0. (thanks Severin Lemaignan for report)
 
 2009-12-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

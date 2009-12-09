@@ -60,6 +60,7 @@ public:
      * @return the address of the name server
      */
     Address getAddress() {
+        setup();
         return address;
     }
 
@@ -234,8 +235,11 @@ private:
     bool allowSaveScan;
     bool reportScan;
     bool reportSaveScan;
+    bool isSetup;
 
     static NameClient *instance;
+
+    void setup();
 };
 
 #endif

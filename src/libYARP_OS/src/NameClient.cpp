@@ -117,6 +117,7 @@ Address NameClient::extractAddress(const String& txt) {
 
 
 String NameClient::send(const String& cmd, bool multi) {
+    setup();
     bool retried = false;
     bool retry = false;
     String result;
@@ -199,6 +200,7 @@ String NameClient::send(const String& cmd, bool multi) {
 
 
 bool NameClient::send(Bottle& cmd, Bottle& reply) {
+    setup();
     if (isFakeMode()) {
         YARP_DEBUG(Logger::get(),"fake mode nameserver");
         return getServer().apply(cmd,reply,
@@ -304,12 +306,19 @@ NameClient::NameClient() {
     reportScan = false;
     reportSaveScan = false;
     process = NetType::toString(ACE_OS::getpid());
-    if (!updateAddress()) {
-        YARP_ERROR(Logger::get(),"Cannot find name server");
-    }
-
-    YARP_DEBUG(Logger::get(),String("name server address is ") + 
-               address.toString());
+    isSetup = false;
     fake = false;
     fakeServer = NULL;
+}
+
+void NameClient::setup() {
+    if ((!fake)&&(!isSetup)) {
+        if (!updateAddress()) {
+            YARP_ERROR(Logger::get(),"Cannot find name server");
+        }
+        
+        YARP_DEBUG(Logger::get(),String("name server address is ") + 
+                   address.toString());
+        isSetup = true;
+    }
 }

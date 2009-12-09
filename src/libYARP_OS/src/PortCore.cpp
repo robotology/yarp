@@ -89,14 +89,17 @@ bool PortCore::listen(const Address& address) {
     stateMutex.post();
 
     if (announce) {
-        ConstString serverName = Network::getNameServerName();
-        ConstString portName = address.getRegName().c_str();
-        if (serverName!=portName) {
-            Bottle cmd, reply;
-            cmd.addString("announce");
-            cmd.addString(portName.c_str());
-            Network::write(Network::getNameServerContact(),
-                           cmd, reply);
+        NameClient& nic = NameClient::getNameClient();
+        if (!nic.isFakeMode()) {
+            ConstString serverName = Network::getNameServerName();
+            ConstString portName = address.getRegName().c_str();
+            if (serverName!=portName) {
+                Bottle cmd, reply;
+                cmd.addString("announce");
+                cmd.addString(portName.c_str());
+                Network::write(Network::getNameServerContact(),
+                               cmd, reply);
+            }
         }
     }
 
