@@ -4,6 +4,9 @@
 
 PROJECT(YarpModules)
 
+INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
+LINK_LIBRARIES(YARP_dev YARP_sig YARP_OS)
+
 # This directory may be compiled independently of the rest of YARP,
 # so we need to pick up YARP explicitly.
 IF (NOT COMPILING_ALL_YARP)

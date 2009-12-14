@@ -1,3 +1,9 @@
+2009-12-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/CMakeLists.txt: make sure includes and libraries
+	are available to yarpmod under all compilation options
+	(thanks "Breno")
+
 2009-12-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCore.cpp: suppress port startup
