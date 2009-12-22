@@ -58,7 +58,7 @@ public:
 
 	}
 
-    int setIterations(int it)
+    void setIterations(int it)
     { 
         iterations=it;
         if (iterations>0)

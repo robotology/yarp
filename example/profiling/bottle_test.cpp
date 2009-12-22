@@ -3,7 +3,7 @@
 #include <yarp/os/all.h>
 using namespace yarp::os;
 
-int net_test() {
+void net_test() {
     Network yarp;
 
     yarp.setLocalMode(true);
@@ -29,7 +29,7 @@ int net_test() {
     port2.close();
 }
 
-int copy_test() {
+void copy_test() {
     Bottle a, b, c;
     for (int i=0; i<1000; i++) {
         a.add(Value(i));

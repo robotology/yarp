@@ -145,7 +145,7 @@ public:
 
         TestData &nd=outPort.prepare();
         nd.set(t);
-        outPort.write();
+        outPort.write(true);
 
         if (wait<=0)
             {
@@ -201,7 +201,7 @@ public:
         static ppEventDebugger pp(0x378);
         pp.set();
 #endif
-        port.write();
+        port.write(true);
 #ifdef USE_PARALLEL_PORT
         pp.reset();
 #endif
