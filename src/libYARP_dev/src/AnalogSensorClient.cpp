@@ -241,7 +241,7 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     }
     inputPort.useCallback();
     
-    bool ok=Network::connect(remote.c_str(), local.c_str());
+    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
     
     if (!ok)
     {
