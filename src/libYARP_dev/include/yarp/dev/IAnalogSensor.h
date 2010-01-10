@@ -13,16 +13,12 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
+
+
 /*! \file IAnalogSensor.h analog sensor interface */
 namespace yarp {
     namespace dev {
         class IAnalogSensor;
-        enum
-        {
-            AS_OK=1,
-            AS_OFV=2,
-            AS_TIMEOUT=3
-        }
     }
 }
 
@@ -35,11 +31,18 @@ namespace yarp {
 class yarp::dev::IAnalogSensor
 {
 public:
+    enum
+    {
+        AS_OK=0,
+        AS_ERROR=1,
+        AS_TIMEOUT=2
+    };
+
     virtual ~IAnalogSensor(){}
 
     /* Read a vector from the sensor.
      * @param out a vector containing the sensor's last readings.
-     * @return AS_OK or return code. AS_OVF if overflow ocurred, AS_TIMEOUT if the sensor timed-out.
+     * @return AS_OK or return code. AS_TIMEOUT if the sensor timed-out.
      **/
     virtual int read(yarp::sig::Vector &out)=0;
    

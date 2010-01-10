@@ -64,6 +64,7 @@ extern "C" void add_yarpmod_devices();
 
 extern DriverCreator *createRemoteControlBoard();
 extern DriverCreator *createServerControlBoard();
+extern DriverCreator *createAnalogSensorClient();
 
 void Drivers::init() {
 
@@ -102,6 +103,7 @@ void Drivers::init() {
                                         
     add(createRemoteControlBoard());
     add(createServerControlBoard());
+    add(createAnalogSensorClient());
 
 #ifndef YARP_AUTOCONF
 #ifdef EMBED_DEVICE_LIBRARY_CALL
