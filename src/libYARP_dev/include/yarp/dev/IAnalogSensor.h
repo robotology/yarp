@@ -35,7 +35,8 @@ public:
     {
         AS_OK=0,
         AS_ERROR=1,
-        AS_TIMEOUT=2
+        AS_OVF=2,
+        AS_TIMEOUT=3
     };
 
     virtual ~IAnalogSensor(){}
