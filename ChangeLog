@@ -1,3 +1,6 @@
+2010-01-10 Lorenzo Natale <nat@liralab.it>
+    * libYARP_dev: added new IAnalogSensor/AnalogSensorClient.
+
 2009-12-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/CMakeLists.txt: make sure includes and libraries
