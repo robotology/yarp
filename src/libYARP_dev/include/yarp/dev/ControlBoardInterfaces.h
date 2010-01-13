@@ -57,26 +57,26 @@ public:
     /*
     * Command direct output value to joint j.
     */
-    bool setOutputRaw(int j, double v);
+    virtual bool setOutputRaw(int j, double v)=0;
 
     /*
     * Command direct output value to all joints.
     */
-    bool setOutputsRaw(const double *v);
+    virtual bool setOutputsRaw(const double *v)=0;
 
     /*
     * Get the controller current output values.
     */ 
-    bool getOutputsRaw(double *v);
+    virtual bool getOutputsRaw(double *v)=0;
 
     /*
     * Get the controller current output for joint j.
     */
-    bool getOutputRaw(int j, double *v);
+    virtual bool getOutputRaw(int j, double *v)=0;
     /*
     * Enable open loop mode.
     */
-    bool setOpenLoopModeRaw(int j);
+    virtual bool setOpenLoopModeRaw(int j)=0;
 };
 
 
@@ -93,27 +93,27 @@ public:
     /*
     * Command direct output value to joint j.
     */
-    bool setOutput(int j, double v);
+    virtual bool setOutput(int j, double v)=0;
 
     /*
     * Command direct output value to all joints.
     */
-    bool setOutputs(const double *v);
+    virtual bool setOutputs(const double *v)=0;
 
     /*
     * Get current output command for joint j.
     */
-    bool getOutput(int j, double *v);
+    virtual bool getOutput(int j, double *v)=0;
 
     /*
     * Get current output command, all joints.
     */
-    bool getOutputs(double *v);
+    virtual bool getOutputs(double *v)=0;
 
      /*
     * Enable open loop mode.
     */
-    bool setOpenLoopMode(int j);
+    virtual bool setOpenLoopMode(int j)=0;
 };
 
 

@@ -1703,6 +1703,15 @@ public:
 
         return ok;
     }
+
+    bool setOutput(int j, double v)
+    {return true; }
+
+    bool setOutputs(const double *v)
+    {return true; }
+
+
+
 };
 // implementation of CommandsHelper
 
