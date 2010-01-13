@@ -1871,6 +1871,6 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
    else
        response.addVocab(VOCAB_OK);
     return ok;
-
+}
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
-S
+

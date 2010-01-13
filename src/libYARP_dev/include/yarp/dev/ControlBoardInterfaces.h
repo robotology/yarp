@@ -23,6 +23,8 @@ namespace yarp {
         class IPositionControl;
         class IEncodersRaw;
         class IEncoders;
+        class IOpenLoopControlRaw;
+        class IOpenLoopControl;
         class ITorqueControlRaw;
         class ITorqueControl;
         class IVelocityControlRaw;
@@ -41,6 +43,77 @@ namespace yarp {
         class IAxisInfo;
     }
 }
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for commanding directly the output of a motor controller.
+ */
+
+#define VOCAB_OL_INTERFACE VOCAB3('o','l','i')
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for controlling the output of a motor control device.
+ */
+class yarp::dev::IOpenLoopControlRaw
+{
+public:
+    virtual ~IOpenLoopControlRaw(){}
+
+    /*
+    * Command direct output value to joint j.
+    */
+    bool setOutputRaw(int j, double v);
+
+    /*
+    * Command direct output value to all joints.
+    */
+    bool setOutputsRaw(double *v);
+
+    /*
+    * Enable open loop mode.
+    */
+    bool setOpenLoopModeRaw(int j);
+};
+
+
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for controlling the output of a motor control device.
+ */
+class yarp::dev::IOpenLoopControl
+{
+public:
+    virtual ~IOpenLoopControl(){}
+
+    /*
+    * Command direct output value to joint j.
+    */
+    bool setOutput(int j, double v);
+
+    /*
+    * Command direct output value to all joints.
+    */
+    bool setOutputs(const double *v);
+
+    /*
+    * Get current output command for joint j.
+    */
+    bool getOutput(int j, double *v);
+
+    /*
+    * Get current output command, all joints.
+    */
+    bool getOutputs(double *v);
+
+     /*
+    * Enable open loop mode.
+    */
+    bool setOpenLoopMode(int j);
+};
 
 
 /**

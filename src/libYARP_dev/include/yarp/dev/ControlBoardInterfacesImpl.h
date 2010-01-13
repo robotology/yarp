@@ -23,6 +23,7 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
         class ImplementTorqueControl;
         class ImplementControlMode;
+        class ImplementOpenLoopControl;
         class StubImplPidControlRaw;
         class StubImplPositionControlRaw;
         class StubImplEncodersRaw;
@@ -736,6 +737,24 @@ public:
     virtual bool enableTorquePid(int j);
     virtual bool setTorqueOffset(int j, double v);
 };
+
+
+class yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
+{
+    void *helper;
+    yarp::dev::IOpenLoopControlRaw *raw;
+public:
+    bool initialize(int k, const int *amap);
+    bool uninitialize();
+    ImplementOpenLoopControl(IOpenLoopControlRaw *v);
+    ~ImplementOpenLoopControl();
+    bool setOutput(int j);
+    bool setOutputs(int j);
+    bool setOpenLoopControlMode(int j);
+    bool getOutput(int j, double *v);
+    bool getOutputs(double *v);
+};
+
 
 /** 
  * Stub implementation of IPidControlRaw interface. 

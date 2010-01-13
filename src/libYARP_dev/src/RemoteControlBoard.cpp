@@ -405,7 +405,7 @@ protected:
 
         return false;
     }
-    
+
     /**
     * Send a GET command expecting an integer value in return.
     * @param code is the Vocab code of the GET command.
@@ -477,7 +477,7 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-      bool set2VDA(int v1, int v2, const double *val) {
+    bool set2VDA(int v1, int v2, const double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
@@ -1568,14 +1568,14 @@ public:
         cmd.addVocab(VOCAB_PID);
         cmd.addInt(j);
 
-		Bottle& b = cmd.addList();
-		b.addDouble(pid.kp);
-		b.addDouble(pid.kd);
-		b.addDouble(pid.ki);
-		b.addDouble(pid.max_int);
-		b.addDouble(pid.max_output);
-		b.addDouble(pid.offset);
-		b.addDouble(pid.scale);
+        Bottle& b = cmd.addList();
+        b.addDouble(pid.kp);
+        b.addDouble(pid.kd);
+        b.addDouble(pid.ki);
+        b.addDouble(pid.max_int);
+        b.addDouble(pid.max_output);
+        b.addDouble(pid.offset);
+        b.addDouble(pid.scale);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
