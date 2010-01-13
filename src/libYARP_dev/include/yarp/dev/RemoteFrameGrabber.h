@@ -394,7 +394,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETMSK);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 13
 	virtual unsigned int getVideoModeDC1394()
@@ -402,7 +402,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETVMD);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 14
 	virtual bool setVideoModeDC1394(int video_mode)
@@ -420,7 +420,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETFPM);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 16
 	virtual unsigned int getFPSDC1394()
@@ -428,7 +428,7 @@ public:
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETFPS);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 17
 	virtual bool setFPSDC1394(int fps)
@@ -446,7 +446,7 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETISO);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 19
 	virtual bool setISOSpeedDC1394(int speed)
@@ -465,7 +465,7 @@ public:
         cmd.addVocab(VOCAB_DRGETCCM);
         cmd.addInt(video_mode);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 21
 	virtual unsigned int getColorCodingDC1394()
@@ -473,7 +473,7 @@ public:
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETCOD);
         port.write(cmd,response);
-		return return response.get(0).asInt()!=0? true:false;
+		return response.get(0).asInt()!=0? true:false;
 	}
 	// 22
 	virtual bool setColorCodingDC1394(int coding)
@@ -512,7 +512,7 @@ public:
         cmd.addVocab(VOCAB_DRGETF7M);
         port.write(cmd,response);
         
-		xdim=return response.get(0).asInt()!=0? true:false;
+		xdim=response.get(0).asInt();
 		ydim=response.get(1).asInt();
 		xstep=response.get(2).asInt();
 		ystep=response.get(3).asInt();
@@ -524,7 +524,7 @@ public:
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETWF7);
         port.write(cmd,response);
-		xdim=return response.get(0).asInt()!=0? true:false;
+		xdim=response.get(0).asInt();
 		ydim=response.get(1).asInt();
 		return true;
 	}
@@ -554,7 +554,7 @@ public:
         yarp::os::Bottle cmd,response;
         cmd.addVocab(VOCAB_DRGETOPM);
         port.write(cmd,response);
-        return return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt()!=0? true:false;
 	}
 
 	// 30
@@ -572,7 +572,7 @@ public:
         yarp::os::Bottle cmd,response;
         cmd.addVocab(VOCAB_DRGETTXM);
         port.write(cmd,response);
-        return return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt()!=0? true:false;
 	}
 	/*
 	// 32
@@ -590,7 +590,7 @@ public:
         yarp::os::Bottle cmd,response;
         cmd.addVocab(VOCAB_DRGETBAY);
         port.write(cmd,response);
-        return return response.get(0).asInt()!=0? true:false;
+        return response.get(0).asInt()!=0? true:false;
 	}
 	*/
 	// 34
@@ -654,7 +654,7 @@ public:
         yarp::os::Bottle cmd,response;
         cmd.addVocab(VOCAB_DRGETBPP);
         port.write(cmd,response);
-        return (unsigned int)return response.get(0).asInt()!=0? true:false;
+        return (unsigned int) response.get(0).asInt();
 	}
 
 
