@@ -324,7 +324,6 @@ bool ImplementTorqueControl::setTorqueOffset(int j, double v)
     return iTorqueRaw->setTorqueOffsetRaw(k, v);
 }
 
-#if 0
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
 {
@@ -364,25 +363,25 @@ bool ImplementOpenLoopControl::uninitialize ()
     return true;
 }
 
-bool ImplementOpenLoopControl::setOutput(int j)
+bool ImplementOpenLoopControl::setOutput(int j, double v)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return raw->setOutputRaw(k);
+    return raw->setOutputRaw(k, v);
 }
 
 bool ImplementOpenLoopControl::setOutputs(const double *v)
 {
-    int k=castToMapper(helper)->toHw(v, dummy);
+    castToMapper(helper)->toHw(v, dummy);
 
     return raw->setOutputsRaw(dummy);
 }
 
-bool ImplementOpenLoopControl::setOpenLoopMode(int j)
+bool ImplementOpenLoopControl::setOpenLoopControlMode(int j)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return raw->setOpenLoopModeRaw(k);
+    return raw->setOpenLoopControlModeRaw(k);
 }
 
 bool ImplementOpenLoopControl::getOutputs(double *v)
@@ -400,4 +399,3 @@ bool ImplementOpenLoopControl::getOutput(int j, double *v)
     return raw->getOutputRaw(k, v);
 }
 
-#endif 

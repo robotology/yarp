@@ -47,14 +47,6 @@ namespace yarp {
 /**
  * @ingroup dev_iface_motor
  *
- * Interface for commanding directly the output of a motor controller.
- */
-
-#define VOCAB_OL_INTERFACE VOCAB3('o','l','i')
-
-/**
- * @ingroup dev_iface_motor
- *
  * Interface for controlling the output of a motor control device.
  */
 class yarp::dev::IOpenLoopControlRaw
@@ -70,12 +62,21 @@ public:
     /*
     * Command direct output value to all joints.
     */
-    bool setOutputsRaw(double *v);
+    bool setOutputsRaw(const double *v);
 
+    /*
+    * Get the controller current output values.
+    */ 
+    bool getOutputsRaw(double *v);
+
+    /*
+    * Get the controller current output for joint j.
+    */
+    bool getOutputRaw(int j, double *v);
     /*
     * Enable open loop mode.
     */
-    bool setOpenLoopModeRaw(int j);
+    bool setOpenLoopControlModeRaw(int j);
 };
 
 
@@ -112,7 +113,7 @@ public:
      /*
     * Enable open loop mode.
     */
-    bool setOpenLoopMode(int j);
+    bool setOpenLoopControlMode(int j);
 };
 
 
@@ -126,6 +127,7 @@ public:
 #define VOCAB_CM_POSITION VOCAB3('c','m','p')
 #define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
 #define VOCAB_CM_UNKNOWN VOCAB4('c','m','u','k')
+#define VOCAB_CM_OPENLOOP VOCAB4('c','m','o','l')
 #define VOCAB_CM_CONTROL_MODE VOCAB4('c','m','o','d')
 
 /**

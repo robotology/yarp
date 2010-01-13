@@ -225,6 +225,7 @@ class yarp::dev::RemoteControlBoard :
     public IControlCalibration2,
     public ITorqueControl,
     public IControlMode,
+    public IOpenLoopControl,
     public DeviceDriver 
 {
 protected:
@@ -1695,6 +1696,11 @@ public:
         }
 
         return ok;
+    }
+
+    bool setOpenLoopControlMode(int j)
+    {
+       return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j);
     }
 };
 // implementation of CommandsHelper

@@ -1,4 +1,7 @@
 2010-01-10 Lorenzo Natale <nat@liralab.it>
+    * libYARP_dev: added new IOpenLoopControlRaw/IOpenLoopControl interfaces and implementation class.
+    
+2010-01-10 Lorenzo Natale <nat@liralab.it>
     * libYARP_dev: added new IAnalogSensor/AnalogSensorClient.
 
 2009-12-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>

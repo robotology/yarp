@@ -743,13 +743,14 @@ class yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
 {
     void *helper;
     yarp::dev::IOpenLoopControlRaw *raw;
+    double *dummy;
 public:
     bool initialize(int k, const int *amap);
     bool uninitialize();
     ImplementOpenLoopControl(IOpenLoopControlRaw *v);
     ~ImplementOpenLoopControl();
-    bool setOutput(int j);
-    bool setOutputs(int j);
+    bool setOutput(int j, double v);
+    bool setOutputs(const double *v);
     bool setOpenLoopControlMode(int j);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
