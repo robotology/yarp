@@ -324,6 +324,7 @@ bool ImplementTorqueControl::setTorqueOffset(int j, double v)
     return iTorqueRaw->setTorqueOffsetRaw(k, v);
 }
 
+#if 0
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
 {
@@ -399,3 +400,4 @@ bool ImplementOpenLoopControl::getOutput(int j, double *v)
     return raw->getOutputRaw(k, v);
 }
 
+#endif 
