@@ -1709,7 +1709,20 @@ public:
     { return set1V1I1D(VOCAB_OUTPUT, j, v); }
 
     bool setOutputs(const double *v)
-    { return set1VDA(VOCAB_OUTPUT, v); }
+    {
+        CommandMessage& c = command_buffer.get();
+        c.head.clear();
+        c.head.addVocab(VOCAB_OUTPUTS);
+
+        c.body.size(nj);
+
+        ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
+
+        command_buffer.write();
+
+        return true;
+
+    }
 };
 
 // implementation of CommandsHelper
