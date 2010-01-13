@@ -1704,15 +1704,14 @@ public:
         return ok;
     }
 
+    
     bool setOutput(int j, double v)
-    {return true; }
+    { return set1V1I1D(VOCAB_OUTPUT, j, v); }
 
     bool setOutputs(const double *v)
-    {return true; }
-
-
-
+    { return set1VDA(VOCAB_OUTPUT, v); }
 };
+
 // implementation of CommandsHelper
 
 yarp::dev::DriverCreator *createRemoteControlBoard() {

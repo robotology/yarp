@@ -123,6 +123,7 @@ public:
  * Interface for a generic control board device implementing a PID controller.
  */
 
+#define VOCAB_CM_IDLE VOCAB3('c','m','i')
 #define VOCAB_CM_TORQUE VOCAB3('c','m','t')
 #define VOCAB_CM_POSITION VOCAB3('c','m','p')
 #define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
