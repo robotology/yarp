@@ -1677,6 +1677,12 @@ public:
     bool setTorqueMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_TORQUE, j); }
 
+    bool setOpenLoopMode(int j)
+    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
+
+    bool setOpenLoopControlMode(int j)
+    {  return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
+
     bool getControlMode(int j, int *mode)
     { 
         Bottle cmd, resp;
@@ -1696,11 +1702,6 @@ public:
         }
 
         return ok;
-    }
-
-    bool setOpenLoopControlMode(int j)
-    {
-       return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j);
     }
 };
 // implementation of CommandsHelper
