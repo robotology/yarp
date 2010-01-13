@@ -144,6 +144,7 @@ public:
     virtual bool setPositionModeRaw(int j)=0;
     virtual bool setVelocityModeRaw(int j)=0;
     virtual bool setTorqueModeRaw(int j)=0;
+    virtual bool setOpenLoopModeRaw(int j)=0;
     virtual bool getControlModeRaw(int j, int *mode)=0;
 };
 
@@ -177,6 +178,13 @@ public:
     * @return: true/false success failure.
     */
     virtual bool setTorqueMode(int j)=0;
+
+    /*
+    * Set open loop mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setOpenLoopMode(int j)=0;
 
     /*
     * Get the current control mode.
