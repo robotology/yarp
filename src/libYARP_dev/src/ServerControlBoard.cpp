@@ -1,10 +1,10 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Giorgio Metta
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *
- */
+* Copyright (C) 2006 Giorgio Metta
+* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+*
+*/
 
 #include <ace/config.h>
 #include <ace/OS_NS_stdio.h>
@@ -40,8 +40,8 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 /**
- * Callback implementation after buffered input.
- */
+* Callback implementation after buffered input.
+*/
 class yarp::dev::ImplementCallbackHelper: public TypedReaderCallback<CommandMessage> {
 protected:
     IPositionControl *pos;
@@ -49,22 +49,22 @@ protected:
 
 public:
     /**
-     * Constructor.
-     * @param x is the instance of the container class using the callback.
-     */
+    * Constructor.
+    * @param x is the instance of the container class using the callback.
+    */
     ImplementCallbackHelper(yarp::dev::ServerControlBoard *x);
 
     /**
-     * Callback function.
-     * @param v is the Vector being received.
-     */
+    * Callback function.
+    * @param v is the Vector being received.
+    */
     virtual void onRead(CommandMessage& v);
 };
 
 /**
- * Helper object for reading config commands for the ServerControlBoard
- * class.
- */
+* Helper object for reading config commands for the ServerControlBoard
+* class.
+*/
 class yarp::dev::CommandsHelper : public DeviceResponder {
 protected:
     yarp::dev::ServerControlBoard   *caller;
@@ -82,51 +82,51 @@ protected:
 
 public:
     /**
-     * Constructor.
-     * @param x is the pointer to the instance of the object that uses the CommandsHelper.
-     * This is required to recover the pointers to the interfaces that implement the responses
-     * to the commands.
-     */
+    * Constructor.
+    * @param x is the pointer to the instance of the object that uses the CommandsHelper.
+    * This is required to recover the pointers to the interfaces that implement the responses
+    * to the commands.
+    */
     CommandsHelper(yarp::dev::ServerControlBoard *x);
 
     virtual bool respond(const Bottle& cmd, Bottle& response);
 
     /**
-     * Initialize the internal data.
-     * @return true/false on success/failure
-     */
+    * Initialize the internal data.
+    * @return true/false on success/failure
+    */
     virtual bool initialize();
 };
 
 /*
- * Implement the server side of a remote
- * control board device driver. The device contains three ports:
- * - rpc_p handling the configuration interfaces of the robot
- * - state_p streaming information about the current state of the robot
- * - control_p receiving a stream of control commands (e.g. position)
- * 
- * Missing: 
- *          torque control, NOT IMPLEMENTED
- *
- */
+* Implement the server side of a remote
+* control board device driver. The device contains three ports:
+* - rpc_p handling the configuration interfaces of the robot
+* - state_p streaming information about the current state of the robot
+* - control_p receiving a stream of control commands (e.g. position)
+* 
+* Missing: 
+*          torque control, NOT IMPLEMENTED
+*
+*/
 class yarp::dev::ServerControlBoard : 
     public DeviceDriver, 
-            public Thread,
-            public IPidControl,
-            public IPositionControl,
-            public IVelocityControl,
-            public IEncoders,
-            public IAmplifierControl,
-            public IControlLimits,
-            public IControlCalibration,
-            public IControlCalibration2,
-            public IAxisInfo
- // convenient to put these here just to make sure all
- // methods get implemented
+    public Thread,
+    public IPidControl,
+    public IPositionControl,
+    public IVelocityControl,
+    public IEncoders,
+    public IAmplifierControl,
+    public IControlLimits,
+    public IControlCalibration,
+    public IControlCalibration2,
+    public IAxisInfo
+    // convenient to put these here just to make sure all
+    // methods get implemented
 {
 private:
-	bool spoke;
-	bool verb;
+    bool spoke;
+    bool verb;
 
     Port rpc_p;     // RPC to configure the robot
     Port state_p;   // out port to read the state
@@ -177,8 +177,8 @@ private:
 
 public:
     /**
-     * Constructor.
-     */
+    * Constructor.
+    */
     ServerControlBoard() : callback_impl(this), command_reader(this)
     {
         pid = NULL;
@@ -187,12 +187,12 @@ public:
         enc = NULL;
         amp = NULL;
         lim = NULL;
-		calib = NULL;
+        calib = NULL;
         calib2 = NULL;
         info = NULL;
         nj = 0;
         thread_period = 20; // ms.
-		verb = false;
+        verb = false;
     }
 
     virtual ~ServerControlBoard() {
@@ -200,23 +200,23 @@ public:
     }
 
     /**
-     * Return the value of the verbose flag.
-     * @return the verbose flag.
-     */
+    * Return the value of the verbose flag.
+    * @return the verbose flag.
+    */
     bool verbose() const { return verb; }
 
     /**
-     * Default open() method.
-     * @return always false since initialization requires certain parameters.
-     */
+    * Default open() method.
+    * @return always false since initialization requires certain parameters.
+    */
     virtual bool open() {
         return false;
     }
 
     /**
-     * Close the device driver by deallocating all resources and closing ports.
-     * @return true if successful or false otherwise.
-     */
+    * Close the device driver by deallocating all resources and closing ports.
+    * @return true if successful or false otherwise.
+    */
 
     virtual bool close() {
 
@@ -225,19 +225,19 @@ public:
     }
 
     /**
-     * Open the device driver.
-     * @param prop is a Searchable object which contains the parameters. 
-     * Allowed parameters are:
-     * - verbose or v to print diagnostic information while running.
-     * - subdevice to specify the name of the wrapped device.
-     * - name to specify the predix of the port names.
-     * - calibrator to specify the name of the calibrator object (created through a PolyDriver).
-     * and all parameters required by the wrapped device driver.
-     */
+    * Open the device driver.
+    * @param prop is a Searchable object which contains the parameters. 
+    * Allowed parameters are:
+    * - verbose or v to print diagnostic information while running.
+    * - subdevice to specify the name of the wrapped device.
+    * - name to specify the predix of the port names.
+    * - calibrator to specify the name of the calibrator object (created through a PolyDriver).
+    * and all parameters required by the wrapped device driver.
+    */
     virtual bool open(Searchable& prop) {
- 	verb = (prop.check("verbose","if present, give detailed output"));
-		if (verb)
-			ACE_OS::printf("running with verbose output\n");
+        verb = (prop.check("verbose","if present, give detailed output"));
+        if (verb)
+            ACE_OS::printf("running with verbose output\n");
 
         thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
@@ -248,7 +248,7 @@ public:
                 // maybe user isn't doing nested configuration
                 Property p;
                 p.setMonitor(prop.getMonitor(),
-                             "subdevice"); // pass on any monitoring
+                    "subdevice"); // pass on any monitoring
                 p.fromString(prop.toString());
                 p.put("device",name->toString());
                 poly.open(p);
@@ -273,26 +273,26 @@ public:
         String rootName = 
             prop.check("name",Value("/controlboard"),
 
-                       "prefix for port names").asString().c_str();
+            "prefix for port names").asString().c_str();
 
         // attach readers.
         //rpc_p.setReader(command_reader);
         // changed so that streaming input accepted if offered
-            command_buffer.attach(rpc_p);
-            command_reader.attach(command_buffer);
+        command_buffer.attach(rpc_p);
+        command_reader.attach(command_buffer);
 
-            // attach buffers.
-            state_buffer.attach(state_p);
-            control_buffer.attach(control_p);
-            // attach callback.
-            control_buffer.useCallback(callback_impl);
-    
-            rpc_p.open((rootName+"/rpc:i").c_str());
-            control_p.open((rootName+"/command:i").c_str());
+        // attach buffers.
+        state_buffer.attach(state_p);
+        control_buffer.attach(control_p);
+        // attach callback.
+        control_buffer.useCallback(callback_impl);
 
-            state_p.open((rootName+"/state:o").c_str());
+        rpc_p.open((rootName+"/rpc:i").c_str());
+        control_p.open((rootName+"/command:i").c_str());
 
-         if (poly.isValid()) {
+        state_p.open((rootName+"/state:o").c_str());
+
+        if (poly.isValid()) {
             poly.view(pid);
             poly.view(pos);
             poly.view(vel);
@@ -304,7 +304,7 @@ public:
             poly.view(info);
         }
 
-	
+
         // experimental: let it be ok for not all interfaces to be
         // implemented.
 
@@ -313,11 +313,11 @@ public:
 
         /*
         if (pid != NULL &&
-            pos != NULL &&
-            vel != NULL &&
-            enc != NULL &&
-            amp != NULL &&
-            lim != NULL) {
+        pos != NULL &&
+        vel != NULL &&
+        enc != NULL &&
+        amp != NULL &&
+        lim != NULL) {
         */
 
         if (pos!=NULL||vel!=NULL) {
@@ -342,7 +342,7 @@ public:
         }
 
         ACE_OS::printf("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n",
-                      name->toString().c_str());
+            name->toString().c_str());
 
         return false;
 
@@ -350,8 +350,8 @@ public:
 
 
     /**
-     * The thread main loop deals with writing on ports here.
-     */
+    * The thread main loop deals with writing on ports here.
+    */
     virtual void run() {
         ACE_OS::printf("Server control board starting\n");
         double before, now;
@@ -374,7 +374,7 @@ public:
 
             if ((now-before)*1000 < thread_period) {
                 const double k = double(thread_period)/1000.0-(now-before);
-			    Time::delay(k);
+                Time::delay(k);
             }
             else {
                 ACE_OS::printf("Can't comply with the %d ms period\n", thread_period);
@@ -385,10 +385,10 @@ public:
 
     /* IPidControl */
     /** Set new pid value for a joint axis.
-     * @param j joint number
-     * @param p new pid value
-     * @return true/false on success/failure
-     */
+    * @param j joint number
+    * @param p new pid value
+    * @return true/false on success/failure
+    */
     virtual bool setPid(int j, const Pid &p) {
         if (pid)
             return pid->setPid(j, p);
@@ -396,9 +396,9 @@ public:
     }
 
     /** Set new pid value on multiple axes.
-     * @param ps pointer to a vector of pids
-     * @return true/false upon success/failure
-     */
+    * @param ps pointer to a vector of pids
+    * @return true/false upon success/failure
+    */
     virtual bool setPids(const Pid *ps) {
         if (pid)
             return pid->setPids(ps);
@@ -406,14 +406,14 @@ public:
     }
 
     /** Set the controller reference point for a given axis.
-     * Warning this method can result in very large torques 
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
-     * Have a look at other interfaces (e.g. position control).
-     * @param j joint number
-     * @param ref new reference point
-     * @return true/false upon success/failure
-     */
+    * Warning this method can result in very large torques 
+    * and should be used carefully. If you do not understand
+    * this warning you should avoid using this method. 
+    * Have a look at other interfaces (e.g. position control).
+    * @param j joint number
+    * @param ref new reference point
+    * @return true/false upon success/failure
+    */
     virtual bool setReference(int j, double ref) {
         if (pid)
             return pid->setReference(j, ref);
@@ -421,13 +421,13 @@ public:
     }
 
     /** Set the controller reference points, multiple axes.
-     * Warning this method can result in very large torques 
-     * and should be used carefully. If you do not understand
-     * this warning you should avoid using this method. 
-     * Have a look at other interfaces (e.g. position control).
-     * @param refs pointer to the vector that contains the new reference points.
-     * @return true/false upon success/failure
-     */
+    * Warning this method can result in very large torques 
+    * and should be used carefully. If you do not understand
+    * this warning you should avoid using this method. 
+    * Have a look at other interfaces (e.g. position control).
+    * @param refs pointer to the vector that contains the new reference points.
+    * @return true/false upon success/failure
+    */
     virtual bool setReferences(const double *refs) {
         if (pid)
             return pid->setReferences(refs);
@@ -435,10 +435,10 @@ public:
     }
 
     /** Set the error limit for the controller on a specifi joint
-     * @param j joint number
-     * @param limit limit value
-     * @return true/false on success/failure
-     */
+    * @param j joint number
+    * @param limit limit value
+    * @return true/false on success/failure
+    */
     virtual bool setErrorLimit(int j, double limit) {
         if (pid)
             return pid->setErrorLimit(j, limit);
@@ -447,9 +447,9 @@ public:
 
 
     /** Get the error limit for the controller on all joints.
-     * @param limits pointer to the vector with the new limits
-     * @return true/false on success/failure
-     */
+    * @param limits pointer to the vector with the new limits
+    * @return true/false on success/failure
+    */
     virtual bool setErrorLimits(const double *limits) {
         if (pid)
             return pid->setErrorLimits(limits);
@@ -457,10 +457,10 @@ public:
     }
 
     /** Get the current error for a joint.
-     * @param j joint number
-     * @param err pointer to the storage for the return value
-     * @return true/false on success failure
-     */
+    * @param j joint number
+    * @param err pointer to the storage for the return value
+    * @return true/false on success failure
+    */
     virtual bool getError(int j, double *err) {
         if (pid)
             return pid->getError(j, err);
@@ -469,9 +469,9 @@ public:
     }
 
     /** Get the error of all joints.
-     * @param errs pointer to the vector that will store the errors.
-     * @return true/false on success/failure.
-     */
+    * @param errs pointer to the vector that will store the errors.
+    * @return true/false on success/failure.
+    */
     virtual bool getErrors(double *errs) {
         if (pid)
             return pid->getErrors(errs);
@@ -480,10 +480,10 @@ public:
     }
 
     /** Get the output of the controller (e.g. pwm value)
-     * @param j joint number
-     * @param out pointer to storage for return value
-     * @return success/failure
-     */
+    * @param j joint number
+    * @param out pointer to storage for return value
+    * @return success/failure
+    */
     virtual bool getOutput(int j, double *out) {
         if (pid)
             return pid->getOutput(j, out);
@@ -492,28 +492,28 @@ public:
     }
 
     /** Get the output of the controllers (e.g. pwm value)
-     * @param outs pinter to the vector that will store the output values
-     */
+    * @param outs pinter to the vector that will store the output values
+    */
     virtual bool getOutputs(double *outs) {
         if (pid)
-           return pid->getOutputs(outs);
+            return pid->getOutputs(outs);
         ACE_OS::memset(outs, 0, sizeof(double)*nj);
         return false;
     }
 
-	virtual bool setOffset(int j, double v)
-	{
-		if (pid)
-			return pid->setOffset(j,v);
-		
-		return false;
-	}
+    virtual bool setOffset(int j, double v)
+    {
+        if (pid)
+            return pid->setOffset(j,v);
+
+        return false;
+    }
 
     /** Get current pid value for a specific joint.
-     * @param j joint number
-     * @param p pointer to storage for the return value.
-     * @return success/failure
-     */
+    * @param j joint number
+    * @param p pointer to storage for the return value.
+    * @return success/failure
+    */
     virtual bool getPid(int j, Pid *p) {
         if (pid)
             return pid->getPid(j, p);
@@ -522,9 +522,9 @@ public:
     }
 
     /** Get current pid value for a specific joint.
-     * @param pids vector that will store the values of the pids.
-     * @return success/failure
-     */
+    * @param pids vector that will store the values of the pids.
+    * @return success/failure
+    */
     virtual bool getPids(Pid *pids) {
         if (pid)
             return pid->getPids(pids);
@@ -533,10 +533,10 @@ public:
     }
 
     /** Get the current reference position of the controller for a specific joint.
-     * @param j joint number
-     * @param ref pointer to storage for return value
-     * @return reference value 
-     */
+    * @param j joint number
+    * @param ref pointer to storage for return value
+    * @return reference value 
+    */
     virtual bool getReference(int j, double *ref) {
         if (pid)
             return pid->getReference(j, ref);
@@ -545,8 +545,8 @@ public:
     }
 
     /** Get the current reference position of all controllers.
-     * @param refs vector that will store the output.
-     */
+    * @param refs vector that will store the output.
+    */
     virtual bool getReferences(double *refs) {
         if (pid)
             return pid->getReferences(refs);
@@ -555,10 +555,10 @@ public:
     }
 
     /** Get the error limit for the controller on a specific joint
-     * @param j joint number
-     * @param limit pointer to storage
-     * @return success/failure
-     */
+    * @param j joint number
+    * @param limit pointer to storage
+    * @return success/failure
+    */
     virtual bool getErrorLimit(int j, double *limit) {
         if (pid)
             return pid->getErrorLimit(j, limit);
@@ -567,9 +567,9 @@ public:
     }
 
     /** Get the error limit for all controllers
-     * @param limits pointer to the array that will store the output
-     * @return success or failure
-     */
+    * @param limits pointer to the array that will store the output
+    * @return success or failure
+    */
     virtual bool getErrorLimits(double *limits) {
         if (pid)
             return pid->getErrorLimits(limits);
@@ -578,11 +578,11 @@ public:
     }
 
     /** Reset the controller of a given joint, usually sets the 
-     * current position of the joint as the reference value for the PID, and resets
-     * the integrator.
-     * @param j joint number
-     * @return true on success, false on failure.
-     */
+    * current position of the joint as the reference value for the PID, and resets
+    * the integrator.
+    * @param j joint number
+    * @return true on success, false on failure.
+    */
     virtual bool resetPid(int j) {
         if (pid)
             return pid->resetPid(j);
@@ -590,10 +590,10 @@ public:
     }
 
     /** 
-     * Disable the pid computation for a joint 
-     * @param j is the axis number
-     * @return true if successful, false on failure
-     **/
+    * Disable the pid computation for a joint 
+    * @param j is the axis number
+    * @return true if successful, false on failure
+    **/
     virtual bool disablePid(int j) {
         if (pid)
             return pid->disablePid(j);
@@ -601,10 +601,10 @@ public:
     }
 
     /** 
-     * Enable the pid computation for a joint
-     * @param j is the axis number
-     * @return true/false on success/failure
-     */
+    * Enable the pid computation for a joint
+    * @param j is the axis number
+    * @return true/false on success/failure
+    */
     virtual bool enablePid(int j) {
         if (pid)
             return pid->enablePid(j);
@@ -613,11 +613,11 @@ public:
 
     /* IPositionControl */
     /**
-     * Get the number of controlled axes. This command asks the number of controlled
-     * axes for the current physical interface.
-     * @param ax pointer to storage
-     * @return true/false.
-     */
+    * Get the number of controlled axes. This command asks the number of controlled
+    * axes for the current physical interface.
+    * @param ax pointer to storage
+    * @return true/false.
+    */
     virtual bool getAxes(int *ax) {
         if (pos) 
             return pos->getAxes(ax);
@@ -628,12 +628,12 @@ public:
     }
 
     /** 
-     * Set position mode. This command
-     * is required by control boards implementing different
-     * control methods (e.g. velocity/torque), in some cases
-     * it can be left empty.
-     * return true/false on success/failure
-     */
+    * Set position mode. This command
+    * is required by control boards implementing different
+    * control methods (e.g. velocity/torque), in some cases
+    * it can be left empty.
+    * return true/false on success/failure
+    */
     virtual bool setPositionMode() {
         if (pos)
             return pos->setPositionMode();
@@ -641,11 +641,11 @@ public:
     }
 
     /** 
-     * Set new reference point for a single axis.
-     * @param j joint number
-     * @param ref specifies the new ref point
-     * @return true/false on success/failure
-     */
+    * Set new reference point for a single axis.
+    * @param j joint number
+    * @param ref specifies the new ref point
+    * @return true/false on success/failure
+    */
     virtual bool positionMove(int j, double ref) { 
         if (pos)
             return pos->positionMove(j, ref);
@@ -653,22 +653,22 @@ public:
     }
 
     /** Set new reference point for all axes.
-     * @param refs array, new reference points.
-     * @return true/false on success/failure
-     */
+    * @param refs array, new reference points.
+    * @return true/false on success/failure
+    */
 
-   virtual bool positionMove(const double *refs) {
+    virtual bool positionMove(const double *refs) {
         if (pos)
             return pos->positionMove(refs);
         return false;
     }
 
     /** Set relative position. The command is relative to the 
-     * current position of the axis.
-     * @param j joint axis number
-     * @param delta relative command
-     * @return true/false on success/failure
-     */
+    * current position of the axis.
+    * @param j joint axis number
+    * @param delta relative command
+    * @return true/false on success/failure
+    */
     virtual bool relativeMove(int j, double delta) {
         if (pos)
             return pos->relativeMove(j, delta);
@@ -676,9 +676,9 @@ public:
     }
 
     /** Set relative position, all joints.
-     * @param deltas pointer to the relative commands
-     * @return true/false on success/failure
-     */
+    * @param deltas pointer to the relative commands
+    * @return true/false on success/failure
+    */
     virtual bool relativeMove(const double *deltas) {
         if (pos)
             return pos->relativeMove(deltas);
@@ -686,11 +686,11 @@ public:
     }
 
     /** 
-     * Check if the current trajectory is terminated. Non blocking.
-     * @param j the axis
-     * @param flag true if the trajectory is terminated, false otherwise
-     * @return false on failure
-     */
+    * Check if the current trajectory is terminated. Non blocking.
+    * @param j the axis
+    * @param flag true if the trajectory is terminated, false otherwise
+    * @return false on failure
+    */
     virtual bool checkMotionDone(int j, bool *flag) {
         if (pos)
             return pos->checkMotionDone(j, flag);
@@ -699,10 +699,10 @@ public:
     }
 
     /** 
-     * Check if the current trajectory is terminated. Non blocking.
-     * @param flag true if the trajectory is terminated, false otherwise
-     * @return false on failure
-     */
+    * Check if the current trajectory is terminated. Non blocking.
+    * @param flag true if the trajectory is terminated, false otherwise
+    * @return false on failure
+    */
     virtual bool checkMotionDone(bool *flag) { 
         if (pos)
             return pos->checkMotionDone(flag);
@@ -711,11 +711,11 @@ public:
     }
 
     /** Set reference speed for a joint, this is the speed used during the
-     * interpolation of the trajectory.
-     * @param j joint number
-     * @param sp speed value
-     * @return true/false upon success/failure
-     */
+    * interpolation of the trajectory.
+    * @param j joint number
+    * @param sp speed value
+    * @return true/false upon success/failure
+    */
     virtual bool setRefSpeed(int j, double sp) {
         if (pos) 
             return pos->setRefSpeed(j, sp);
@@ -723,10 +723,10 @@ public:
     }
 
     /** Set reference speed on all joints. These values are used during the
-     * interpolation of the trajectory.
-     * @param spds pointer to the array of speed values.
-     * @return true/false upon success/failure
-     */
+    * interpolation of the trajectory.
+    * @param spds pointer to the array of speed values.
+    * @return true/false upon success/failure
+    */
     virtual bool setRefSpeeds(const double *spds) {
         if (pos)
             return pos->setRefSpeeds(spds);
@@ -734,11 +734,11 @@ public:
     }
 
     /** Set reference acceleration for a joint. This value is used during the
-     * trajectory generation.
-     * @param j joint number
-     * @param acc acceleration value
-     * @return true/false upon success/failure
-     */
+    * trajectory generation.
+    * @param j joint number
+    * @param acc acceleration value
+    * @return true/false upon success/failure
+    */
     virtual bool setRefAcceleration(int j, double acc) {
         if (pos)
             return pos->setRefAcceleration(j, acc);
@@ -746,10 +746,10 @@ public:
     }
 
     /** Set reference acceleration on all joints. This is the valure that is
-     * used during the generation of the trajectory.
-     * @param accs pointer to the array of acceleration values
-     * @return true/false upon success/failure
-     */
+    * used during the generation of the trajectory.
+    * @param accs pointer to the array of acceleration values
+    * @return true/false upon success/failure
+    */
     virtual bool setRefAccelerations(const double *accs) {
         if (pos)
             return pos->setRefAccelerations(accs);
@@ -757,11 +757,11 @@ public:
     }
 
     /** Get reference speed for a joint. Returns the speed used to 
-     * generate the trajectory profile.
-     * @param j joint number
-     * @param ref pointer to storage for the return value
-     * @return true/false on success or failure
-     */
+    * generate the trajectory profile.
+    * @param j joint number
+    * @param ref pointer to storage for the return value
+    * @return true/false on success or failure
+    */
     virtual bool getRefSpeed(int j, double *ref) {
         if (pos)
             return pos->getRefSpeed(j, ref);
@@ -770,10 +770,10 @@ public:
     }
 
     /** Get reference speed of all joints. These are the  values used during the
-     * interpolation of the trajectory.
-     * @param spds pointer to the array that will store the speed values.
-     * @return true/false on success/failure.
-     */
+    * interpolation of the trajectory.
+    * @param spds pointer to the array that will store the speed values.
+    * @return true/false on success/failure.
+    */
     virtual bool getRefSpeeds(double *spds) {
         if (pos)
             return pos->getRefSpeeds(spds);
@@ -782,10 +782,10 @@ public:
     }
 
     /** Get reference acceleration for a joint. Returns the acceleration used to 
-     * generate the trajectory profile.
-     * @param j joint number
-     * @param acc pointer to storage for the return value
-     * @return true/false on success/failure
+    * generate the trajectory profile.
+    * @param j joint number
+    * @param acc pointer to storage for the return value
+    * @return true/false on success/failure
     */
     virtual bool getRefAcceleration(int j, double *acc) {
         if (pos)
@@ -796,9 +796,9 @@ public:
 
     /** Get reference acceleration of all joints. These are the values used during the
     * interpolation of the trajectory.
-     * @param accs pointer to the array that will store the acceleration values.
-     * @return true/false on success or failure 
-     */
+    * @param accs pointer to the array that will store the acceleration values.
+    * @return true/false on success or failure 
+    */
     virtual bool getRefAccelerations(double *accs) {
         if (pos)
             return pos->getRefAccelerations(accs);
@@ -807,9 +807,9 @@ public:
     }
 
     /** Stop motion, single joint
-     * @param j joint number
-     * @return true/false on success/failure
-     */
+    * @param j joint number
+    * @return true/false on success/failure
+    */
     virtual bool stop(int j) {
         if (pos)
             return pos->stop(j);
@@ -817,9 +817,9 @@ public:
     }
 
     /** 
-     * Stop motion, multiple joints 
-     * @return true/false on success/failure
-     */
+    * Stop motion, multiple joints 
+    * @return true/false on success/failure
+    */
     virtual bool stop() {
         if (pos)
             return pos->stop();
@@ -829,11 +829,11 @@ public:
     /* IVelocityControl */
 
     /** 
-     * Set new reference speed for a single axis.
-     * @param j joint number
-     * @param v specifies the new ref speed
-     * @return true/false on success/failure
-     */
+    * Set new reference speed for a single axis.
+    * @param j joint number
+    * @param v specifies the new ref speed
+    * @return true/false on success/failure
+    */
     virtual bool velocityMove(int j, double v) {
         if (vel)
             return vel->velocityMove(j, v);
@@ -841,10 +841,10 @@ public:
     }
 
     /**
-     * Set a new reference speed for all axes.
-     * @param v is a vector of double representing the requested speed.
-     * @return true/false on success/failure.
-     */
+    * Set a new reference speed for all axes.
+    * @param v is a vector of double representing the requested speed.
+    * @return true/false on success/failure.
+    */
     virtual bool velocityMove(const double *v) {
         if (vel)
             return vel->velocityMove(v);
@@ -852,9 +852,9 @@ public:
     }
 
     /**
-     * Set the controller to velocity mode.
-     * @return true/false on success/failure.
-     */
+    * Set the controller to velocity mode.
+    * @return true/false on success/failure.
+    */
     virtual bool setVelocityMode() {
         if (vel)
             return vel->setVelocityMode();
@@ -864,10 +864,10 @@ public:
     /* IEncoders */
 
     /**
-     * Reset encoder, single joint. Set the encoder value to zero 
-     * @param j is the axis number
-     * @return true/false on success/failure
-     */
+    * Reset encoder, single joint. Set the encoder value to zero 
+    * @param j is the axis number
+    * @return true/false on success/failure
+    */
     virtual bool resetEncoder(int j) {
         if (enc)
             return enc->resetEncoder(j);
@@ -875,9 +875,9 @@ public:
     }
 
     /**
-     * Reset encoders. Set the encoder values to zero for all axes
-     * @return true/false
-     */
+    * Reset encoders. Set the encoder values to zero for all axes
+    * @return true/false
+    */
     virtual bool resetEncoders() {
         if (enc)
             return enc->resetEncoders();
@@ -885,11 +885,11 @@ public:
     }
 
     /**
-     * Set the value of the encoder for a given joint. 
-     * @param j encoder number
-     * @param val new value
-     * @return true/false
-     */
+    * Set the value of the encoder for a given joint. 
+    * @param j encoder number
+    * @param val new value
+    * @return true/false
+    */
     virtual bool setEncoder(int j, double val) {
         if (enc)
             return enc->setEncoder(j, val);
@@ -897,10 +897,10 @@ public:
     }
 
     /**
-     * Set the value of all encoders.
-     * @param vals pointer to the new values
-     * @return true/false
-     */
+    * Set the value of all encoders.
+    * @param vals pointer to the new values
+    * @return true/false
+    */
     virtual bool setEncoders(const double *vals) {
         if (enc)
             return enc->setEncoders(vals);
@@ -908,11 +908,11 @@ public:
     }
 
     /**
-     * Read the value of an encoder.
-     * @param j encoder number
-     * @param v pointer to storage for the return value
-     * @return true/false, upon success/failure (you knew it, uh?)
-     */
+    * Read the value of an encoder.
+    * @param j encoder number
+    * @param v pointer to storage for the return value
+    * @return true/false, upon success/failure (you knew it, uh?)
+    */
     virtual bool getEncoder(int j, double *v) {
         if (enc)
             return enc->getEncoder(j, v);
@@ -921,10 +921,10 @@ public:
     }
 
     /**
-     * Read the position of all axes.
-     * @param encs pointer to the array that will contain the output
-     * @return true/false on success/failure
-     */
+    * Read the position of all axes.
+    * @param encs pointer to the array that will contain the output
+    * @return true/false on success/failure
+    */
     virtual bool getEncoders(double *encs) {
         if (enc)
             return enc->getEncoders(encs);
@@ -933,35 +933,35 @@ public:
     }
 
     /**
-     * Read the istantaneous speed of an axis.
-     * @param j axis number
-     * @param sp pointer to storage for the output
-     * @return true if successful, false ... otherwise.
-     */
+    * Read the istantaneous speed of an axis.
+    * @param j axis number
+    * @param sp pointer to storage for the output
+    * @return true if successful, false ... otherwise.
+    */
     virtual bool getEncoderSpeed(int j, double *sp) {
-       if (enc)
-           return enc->getEncoderSpeed(j, sp);
+        if (enc)
+            return enc->getEncoderSpeed(j, sp);
         *sp = 0.0;
         return false;
     }
 
     /**
-     * Read the instantaneous speed of all axes.
-     * @param spds pointer to storage for the output values
-     * @return guess what? (true/false on success or failure).
-     */
+    * Read the instantaneous speed of all axes.
+    * @param spds pointer to storage for the output values
+    * @return guess what? (true/false on success or failure).
+    */
     virtual bool getEncoderSpeeds(double *spds) {
         if (enc)
             return enc->getEncoderSpeeds(spds);
         ACE_OS::memset(spds, 0, sizeof(double)*nj);
         return false;
     }
-    
+
     /**
-     * Read the instantaneous acceleration of an axis.
-     * @param j axis number
-     * @param acc pointer to the array that will contain the output
-     */
+    * Read the instantaneous acceleration of an axis.
+    * @param j axis number
+    * @param acc pointer to the array that will contain the output
+    */
     virtual bool getEncoderAcceleration(int j, double *acc) {
         if (enc)
             return enc->getEncoderAcceleration(j, acc);
@@ -970,10 +970,10 @@ public:
     }
 
     /**
-     * Read the istantaneous acceleration of all axes.
-     * @param accs pointer to the array that will contain the output
-     * @return true if all goes well, false if anything bad happens. 
-     */
+    * Read the istantaneous acceleration of all axes.
+    * @param accs pointer to the array that will contain the output
+    * @return true if all goes well, false if anything bad happens. 
+    */
     virtual bool getEncoderAccelerations(double *accs) {
         if (enc)
             return enc->getEncoderAccelerations(accs);
@@ -984,11 +984,11 @@ public:
     /* IAmplifierControl */
 
     /** 
-     * Enable the amplifier on a specific joint. Be careful, check that the output
-     * of the controller is appropriate (usually zero), to avoid 
-     * generating abrupt movements.
-     * @return true/false on success/failure
-     */
+    * Enable the amplifier on a specific joint. Be careful, check that the output
+    * of the controller is appropriate (usually zero), to avoid 
+    * generating abrupt movements.
+    * @return true/false on success/failure
+    */
     virtual bool enableAmp(int j) {
         if (amp)
             return amp->enableAmp(j);
@@ -996,10 +996,10 @@ public:
     }
 
     /** 
-     * Disable the amplifier on a specific joint. All computations within the board
-     * will be carried out normally, but the output will be disabled.
-     * @return true/false on success/failure
-     */
+    * Disable the amplifier on a specific joint. All computations within the board
+    * will be carried out normally, but the output will be disabled.
+    * @return true/false on success/failure
+    */
     virtual bool disableAmp(int j) {
         if (amp)
             return amp->disableAmp(j);
@@ -1007,25 +1007,25 @@ public:
     }
 
     /**
-     * Read the electric current going to all motors.
-     * @param vals pointer to storage for the output values
-     * @return hopefully true, false in bad luck.
-     */
+    * Read the electric current going to all motors.
+    * @param vals pointer to storage for the output values
+    * @return hopefully true, false in bad luck.
+    */
     virtual bool getCurrents(double *vals) {
         if (amp)
             return amp->getCurrents(vals);
         ACE_OS::memset(vals, 0, sizeof(double)*nj);
 
-      return false;
+        return false;
 
-   }
+    }
 
-   /**
-     * Read the electric current going to a given motor.
-     * @param j motor number
-     * @param val pointer to storage for the output value
-     * @return probably true, might return false in bad times
-     */
+    /**
+    * Read the electric current going to a given motor.
+    * @param j motor number
+    * @param val pointer to storage for the output value
+    * @return probably true, might return false in bad times
+    */
     virtual bool getCurrent(int j, double *val) {
         if (amp)
             return amp->getCurrent(j, val);
@@ -1034,14 +1034,14 @@ public:
     }
 
 
-   /**
-     * Set the maximum electric current going to a given motor. The behavior 
-     * of the board/amplifier when this limit is reached depends on the
-     * implementation.
-     * @param j motor number
-     * @param v the new value
-     * @return probably true, might return false in bad times
-     */
+    /**
+    * Set the maximum electric current going to a given motor. The behavior 
+    * of the board/amplifier when this limit is reached depends on the
+    * implementation.
+    * @param j motor number
+    * @param v the new value
+    * @return probably true, might return false in bad times
+    */
     virtual bool setMaxCurrent(int j, double v) {
         if (amp)
             return amp->setMaxCurrent(j, v);
@@ -1049,12 +1049,12 @@ public:
     }
 
     /**
-     * Get the status of the amplifiers, coded in a 32 bits integer for
-     * each amplifier (at the moment contains only the fault, it will be 
-     * expanded in the future).
-     * @param st pointer to storage
-     * @return true in good luck, false otherwise.
-     */
+    * Get the status of the amplifiers, coded in a 32 bits integer for
+    * each amplifier (at the moment contains only the fault, it will be 
+    * expanded in the future).
+    * @param st pointer to storage
+    * @return true in good luck, false otherwise.
+    */
     virtual bool getAmpStatus(int *st) {
         if (amp)
             return amp->getAmpStatus(st);
@@ -1065,26 +1065,26 @@ public:
     /* IControlLimits */
 
     /**
-     * Set the software limits for a particular axis, the behavior of the
-     * control card when these limits are exceeded, depends on the implementation.
-     * @param axis joint number (why am I telling you this)
-     * @param min the value of the lower limit
-     * @param max the value of the upper limit
-     * @return true or false on success or failure
-     */ 
+    * Set the software limits for a particular axis, the behavior of the
+    * control card when these limits are exceeded, depends on the implementation.
+    * @param axis joint number (why am I telling you this)
+    * @param min the value of the lower limit
+    * @param max the value of the upper limit
+    * @return true or false on success or failure
+    */ 
     virtual bool setLimits(int axis, double min, double max) {
         if (lim)
             return lim->setLimits(axis, min, max);
         return false;
     }
-    
+
     /**
-     * Get the software limits for a particular axis.
-     * @param axis joint number
-     * @param min pointer to store the value of the lower limit
-     * @param max pointer to store the value of the upper limit
-     * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
-     */
+    * Get the software limits for a particular axis.
+    * @param axis joint number
+    * @param min pointer to store the value of the lower limit
+    * @param max pointer to store the value of the upper limit
+    * @return true if everything goes fine, false if something bad happens (yes, sometimes life is tough)
+    */
     virtual bool getLimits(int axis, double *min, double *max) {
         if (lim)
             return lim->getLimits(axis, min, max);
@@ -1093,38 +1093,38 @@ public:
         return false;
     }
 
-	/* IControlCalibration */
+    /* IControlCalibration */
 
     /**
-     * Calibrate a single joint, the calibration method accepts a parameter
-     * that is used to accomplish various things internally and is implementation
-     * dependent.
-     * @param j the axis number.
-     * @param p is a double value that is passed to the calibration procedure.
-     * @return true/false on success/failure.
-     */
+    * Calibrate a single joint, the calibration method accepts a parameter
+    * that is used to accomplish various things internally and is implementation
+    * dependent.
+    * @param j the axis number.
+    * @param p is a double value that is passed to the calibration procedure.
+    * @return true/false on success/failure.
+    */
     virtual bool calibrate(int j, double p) {
-		if (calib)
-			return calib->calibrate(j, p);
-		return false;
-	}
+        if (calib)
+            return calib->calibrate(j, p);
+        return false;
+    }
 
     virtual bool calibrate2(int j, unsigned int ui, double v1, double v2, double v3) {
-		if (calib2)
-			return calib2->calibrate2(j, ui, v1, v2, v3);
-		return false;
-	}
+        if (calib2)
+            return calib2->calibrate2(j, ui, v1, v2, v3);
+        return false;
+    }
 
     /**
-     * Check whether the calibration has been completed.
-     * @param j is the joint that has started a calibration procedure.
-     * @return true/false on success/failure.
-     */
+    * Check whether the calibration has been completed.
+    * @param j is the joint that has started a calibration procedure.
+    * @return true/false on success/failure.
+    */
     virtual bool done(int j) {
-		if (calib2)
-			return calib2->done(j);
-		return false;
-	}
+        if (calib2)
+            return calib2->done(j);
+        return false;
+    }
 
     /* IAxisInfo */
     virtual bool getAxisName(int j, yarp::os::ConstString& name) {
@@ -1138,8 +1138,8 @@ public:
 // needed for the driver factory.
 yarp::dev::DriverCreator *createServerControlBoard() {
     return new DriverCreatorOf<ServerControlBoard>("controlboard", 
-                                                   "controlboard",
-                                                   "ServerControlBoard");
+        "controlboard",
+        "ServerControlBoard");
 }
 
 inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerControlBoard *x) {
@@ -1169,8 +1169,8 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
             if (!ok)
                 ACE_OS::printf("Issues while trying to start a position move\n");
         }
-    }
-        break;
+                               }
+                               break;
 
     case VOCAB_VELOCITY_MODE:
     case VOCAB_VELOCITY_MOVES: {
@@ -1183,13 +1183,13 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
             if (!ok)
                 ACE_OS::printf("Issues while trying to start a velocity move\n");
         }
-    }
-        break;
+                               }
+                               break;
 
     default: {
         ACE_OS::printf("Unrecognized message while receiving on command port\n");
-    }
-        break;
+             }
+             break;
     }
 
     //    ACE_OS::printf("v: ");
@@ -1236,11 +1236,11 @@ bool yarp::dev::CommandsHelper::initialize() {
         args = args + "$f" + NetType::toString(i);
     }
     addUsage((String("[set] [poss] (")+args+")").c_str(), 
-             "command the position of all axes");
+        "command the position of all axes");
     addUsage((String("[set] [rels] (")+args+")").c_str(), 
-             "command the relative position of all axes");
+        "command the relative position of all axes");
     addUsage((String("[set] [vmos] (")+args+")").c_str(), 
-             "command the velocity of all axes");
+        "command the velocity of all axes");
 
     addUsage("[set] [aen] $iAxisNumber", "enable (amplifier for) the given axis");
     addUsage("[set] [adi] $iAxisNumber", "disable (amplifier for) the given axis");
@@ -1251,75 +1251,79 @@ bool yarp::dev::CommandsHelper::initialize() {
 }
 
 bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd, 
-                                        yarp::os::Bottle& response) {
+                                        yarp::os::Bottle& response) 
+{
     bool ok = false;
     bool rec = false; // is the command recognized?
-	if (caller->verbose())
-	    ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
+    if (caller->verbose())
+        ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
-    case VOCAB_CALIBRATE_JOINT:
-        {
-            rec=true;
-            if (caller->verbose())
-                ACE_OS::printf("Calling calibrate joint\n");
+case VOCAB_CALIBRATE_JOINT:
+    {
+        rec=true;
+        if (caller->verbose())
+            ACE_OS::printf("Calling calibrate joint\n");
 
-            int j=cmd.get(1).asInt();
-            int ui=cmd.get(2).asInt();
-            double v1=cmd.get(3).asDouble();
-            double v2=cmd.get(4).asDouble();
-            double v3=cmd.get(5).asDouble();
-            if (ical2==0)
-                ACE_OS::printf("Sorry I don't have a IControlCalibration2 interface\n");
-            else
-                ok=ical2->calibrate2(j,ui,v1,v2,v3);
-        }
-        break;
-    case VOCAB_CALIBRATE:
+        int j=cmd.get(1).asInt();
+        int ui=cmd.get(2).asInt();
+        double v1=cmd.get(3).asDouble();
+        double v2=cmd.get(4).asDouble();
+        double v3=cmd.get(5).asDouble();
+        if (ical2==0)
+            ACE_OS::printf("Sorry I don't have a IControlCalibration2 interface\n");
+        else
+            ok=ical2->calibrate2(j,ui,v1,v2,v3);
+    }
+    break;
+case VOCAB_CALIBRATE:
+    {
+        rec=true;
+        if (caller->verbose())
+            ACE_OS::printf("Calling calibrate\n");
+        ok=ical2->calibrate();
+    }
+    break;
+case VOCAB_CALIBRATE_DONE:
+    {
+        rec=true;
+        if (caller->verbose())
+            ACE_OS::printf("Calling calibrate done\n");
+        int j=cmd.get(1).asInt();
+        ok=ical2->done(j);
+    }
+    break;
+case VOCAB_PARK:
+    {
+        rec=true;
+        if (caller->verbose())
+            ACE_OS::printf("Calling park function\n");
+        int flag=cmd.get(1).asInt();
+        if (flag)
+            ok=ical2->park(true);
+        else
+            ok=ical2->park(false);
+        ok=true; //client would get stuck if returning false
+    }
+    break;
+case VOCAB_SET:
+    rec = true;
+    if (caller->verbose())
+        ACE_OS::printf("set command received\n");
+    {
+        switch(cmd.get(1).asVocab()) 
         {
-            rec=true;
-            if (caller->verbose())
-                ACE_OS::printf("Calling calibrate\n");
-            ok=ical2->calibrate();
-        }
-        break;
-    case VOCAB_CALIBRATE_DONE:
-        {
-            rec=true;
-            if (caller->verbose())
-                ACE_OS::printf("Calling calibrate done\n");
-            int j=cmd.get(1).asInt();
-            ok=ical2->done(j);
-        }
-        break;
-    case VOCAB_PARK:
-        {
-            rec=true;
-            if (caller->verbose())
-                ACE_OS::printf("Calling park function\n");
-            int flag=cmd.get(1).asInt();
-            if (flag)
-                ok=ical2->park(true);
-            else
-                ok=ical2->park(false);
-            ok=true; //client would get stuck if returning false
-        }
-        break;
-    case VOCAB_SET:
-        rec = true;
-		if (caller->verbose())
-			ACE_OS::printf("set command received\n");
-        {
-            switch(cmd.get(1).asVocab()) {
-			case VOCAB_OFFSET:{
-			    double v;
+        case VOCAB_OFFSET:
+            {
+                double v;
                 int j = cmd.get(2).asInt();
                 Bottle& b = *(cmd.get(3).asList());
                 v=b.get(0).asDouble();
                 ok = pid->setOffset(j, v);
-			}
-                break;
-            case VOCAB_PID: {
+            }
+            break;
+        case VOCAB_PID: 
+            {
                 Pid p;
                 int j = cmd.get(2).asInt();
                 Bottle& b = *(cmd.get(3).asList());
@@ -1332,9 +1336,10 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 p.scale = b.get(6).asDouble();
                 ok = pid->setPid(j, p);
             }
-                break;
+            break;
 
-            case VOCAB_PIDS: {
+        case VOCAB_PIDS: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1342,27 +1347,29 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 Pid *p = new Pid[njs];
                 ACE_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
-                    {
-                        Bottle& c = *(b.get(i).asList());
-                        p[i].kp = c.get(0).asDouble();
-                        p[i].kd = c.get(1).asDouble();
-                        p[i].ki = c.get(2).asDouble();
-                        p[i].max_int = c.get(3).asDouble();
-                        p[i].max_output = c.get(4).asDouble();
-                        p[i].offset = c.get(5).asDouble();
-                        p[i].scale = c.get(6).asDouble();
-                    }
+                {
+                    Bottle& c = *(b.get(i).asList());
+                    p[i].kp = c.get(0).asDouble();
+                    p[i].kd = c.get(1).asDouble();
+                    p[i].ki = c.get(2).asDouble();
+                    p[i].max_int = c.get(3).asDouble();
+                    p[i].max_output = c.get(4).asDouble();
+                    p[i].offset = c.get(5).asDouble();
+                    p[i].scale = c.get(6).asDouble();
+                }
                 ok = pid->setPids(p);
                 delete[] p;
             }
-                break;
+            break;
 
-            case VOCAB_REF: {
+        case VOCAB_REF: 
+            {
                 ok = pid->setReference (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_REFS: {
+        case VOCAB_REFS: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1374,14 +1381,16 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = pid->setReferences (p);
                 delete[] p;
             }
-                break;
+            break;
 
-            case VOCAB_LIM: {
+        case VOCAB_LIM: 
+            {
                 ok = pid->setErrorLimit (cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_LIMS: {
+        case VOCAB_LIMS: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1393,45 +1402,52 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = pid->setErrorLimits (p);
                 delete[] p;                
             }
-                break;
+            break;
 
-            case VOCAB_RESET: {
+        case VOCAB_RESET: 
+            {
                 ok = pid->resetPid (cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_DISABLE: {
-                ok = pid->disablePid (cmd.get(2).asInt());
-            }
-                break;
+        case VOCAB_DISABLE: {
+            ok = pid->disablePid (cmd.get(2).asInt());
+                            }
+                            break;
 
-            case VOCAB_ENABLE: {
+        case VOCAB_ENABLE: 
+            {
                 ok = pid->enablePid (cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_VELOCITY_MODE: {
+        case VOCAB_VELOCITY_MODE: 
+            {
                 ok = vel->setVelocityMode();
             }
-                break;
+            break;
 
-            case VOCAB_VELOCITY_MOVE: {
+        case VOCAB_VELOCITY_MOVE: 
+            {
                 ok = vel->velocityMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_POSITION_MODE: {
+        case VOCAB_POSITION_MODE: 
+            {
                 ok = pos->setPositionMode();
             }
-                break;
+            break;
 
-            case VOCAB_POSITION_MOVE: {
+        case VOCAB_POSITION_MOVE: 
+            {
                 ok = pos->positionMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-                // this operation is also available on "command" port
-            case VOCAB_POSITION_MOVES: {
+            // this operation is also available on "command" port
+        case VOCAB_POSITION_MOVES: 
+            {
                 Bottle *b = cmd.get(2).asList();
                 int i;
                 if (b==NULL) break;
@@ -1444,11 +1460,13 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 if (pos!=NULL) {
                     ok = pos->positionMove(&vect[0]);
                 }
-            }
-                break;
 
-                // this operation is also available on "command" port
-            case VOCAB_VELOCITY_MOVES: {
+            }
+            break;
+
+            // this operation is also available on "command" port
+        case VOCAB_VELOCITY_MOVES: 
+            {
 
                 Bottle *b = cmd.get(2).asList();
                 int i;
@@ -1462,14 +1480,16 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                     ok = vel->velocityMove(&vect[0]);
                 }
             }
-                break;
+            break;
 
-            case VOCAB_RELATIVE_MOVE: {
+        case VOCAB_RELATIVE_MOVE: 
+            {
                 ok = pos->relativeMove(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_RELATIVE_MOVES: {
+        case VOCAB_RELATIVE_MOVES: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1481,14 +1501,16 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = pos->relativeMove(p);
                 delete[] p;                
             }
-                break;
+            break;
 
-            case VOCAB_REF_SPEED: {
+        case VOCAB_REF_SPEED:
+            {
                 ok = pos->setRefSpeed(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_REF_SPEEDS: {
+        case VOCAB_REF_SPEEDS:
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1500,14 +1522,16 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = pos->setRefSpeeds(p);
                 delete[] p;                
             }
-                break;
+            break;
 
-            case VOCAB_REF_ACCELERATION: {
+        case VOCAB_REF_ACCELERATION: 
+            {
                 ok = pos->setRefAcceleration(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_REF_ACCELERATIONS: {
+        case VOCAB_REF_ACCELERATIONS: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1519,34 +1543,40 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = pos->setRefAccelerations(p);
                 delete[] p;                
             }
-                break;
+            break;
 
-            case VOCAB_STOP: {
+        case VOCAB_STOP:
+            {
                 ok = pos->stop(cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_STOPS: {
+        case VOCAB_STOPS: 
+            {
                 ok = pos->stop();
             }
-                break;
+            break;
 
-            case VOCAB_E_RESET: {
+        case VOCAB_E_RESET: 
+            {
                 ok = enc->resetEncoder(cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_E_RESETS: {
+        case VOCAB_E_RESETS: 
+            {
                 ok = enc->resetEncoders();
             }
-                break;
+            break;
 
-            case VOCAB_ENCODER: {
+        case VOCAB_ENCODER: 
+            {
                 ok = enc->setEncoder(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_ENCODERS: {
+        case VOCAB_ENCODERS: 
+            {
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
@@ -1558,318 +1588,351 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
                 ok = enc->setEncoders(p);
                 delete[] p;                
             }
-                break;
+            break;
 
-            case VOCAB_AMP_ENABLE: {
+        case VOCAB_AMP_ENABLE:
+            {
                 ok = amp->enableAmp(cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_AMP_DISABLE: {
+        case VOCAB_AMP_DISABLE:
+            {
                 ok = amp->disableAmp(cmd.get(2).asInt());
             }
-                break;
+            break;
 
-            case VOCAB_AMP_MAXCURRENT: {
+        case VOCAB_AMP_MAXCURRENT: 
+            {
                 ok = amp->setMaxCurrent(cmd.get(2).asInt(), cmd.get(3).asDouble());
             }
-                break;
+            break;
 
-            case VOCAB_LIMITS: {
+        case VOCAB_LIMITS: 
+            {
                 ok = lim->setLimits(cmd.get(2).asInt(), cmd.get(3).asDouble(), cmd.get(4).asDouble());
             }
-                break; 
+            break; 
 
-            default:
-                ACE_OS::printf("received an unknown command after a VOCAB_SET\n");
-                break;
-            }
+        default:
+            ACE_OS::printf("received an unknown command after a VOCAB_SET\n");
+            break;
         }
-        break;
+    }
+    break;
 
-    case VOCAB_GET:
-        rec = true;
-		if (caller->verbose())
-			ACE_OS::printf("get command received\n");
+case VOCAB_GET:
+    rec = true;
+    if (caller->verbose())
+        ACE_OS::printf("get command received\n");
 
+    {
+        int tmp = 0;
+        double dtmp = 0.0;
+        response.addVocab(VOCAB_IS);
+        response.add(cmd.get(1));
+        switch(cmd.get(1).asVocab()) {
+case VOCAB_ERR: 
+    {
+        ok = pid->getError(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
+
+case VOCAB_ERRS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pid->getErrors(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
+
+case VOCAB_OUTPUT: 
+    {
+        ok = pid->getOutput(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
+
+case VOCAB_OUTPUTS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pid->getOutputs(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
+
+case VOCAB_PID: 
+    {
+        Pid p;
+        ok = pid->getPid(cmd.get(2).asInt(), &p);
+        Bottle& b = response.addList();
+        b.addDouble(p.kp);
+        b.addDouble(p.kd);
+        b.addDouble(p.ki);
+        b.addDouble(p.max_int);
+        b.addDouble(p.max_output);
+        b.addDouble(p.offset);
+        b.addDouble(p.scale);
+    }
+    break;
+
+case VOCAB_PIDS: 
+    {
+        Pid *p = new Pid[nj];
+        ACE_ASSERT (p != NULL);
+        ok = pid->getPids(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
         {
-            int tmp = 0;
-            double dtmp = 0.0;
-            response.addVocab(VOCAB_IS);
-            response.add(cmd.get(1));
-            switch(cmd.get(1).asVocab()) {
-            case VOCAB_ERR: {
-                ok = pid->getError(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+            Bottle& c = b.addList();
+            c.addDouble(p[i].kp);
+            c.addDouble(p[i].kd);
+            c.addDouble(p[i].ki);
+            c.addDouble(p[i].max_int);
+            c.addDouble(p[i].max_output);
+            c.addDouble(p[i].offset);
+            c.addDouble(p[i].scale);
+        }
+        delete[] p;              
+    }
+    break;
 
-            case VOCAB_ERRS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pid->getErrors(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_REFERENCE: 
+    {
+        ok = pid->getReference(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_OUTPUT: {
-                ok = pid->getOutput(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_REFERENCES: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pid->getReferences(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_OUTPUTS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pid->getOutputs(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_LIM: 
+    {
+        ok = pid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_PID: {
-                Pid p;
-                ok = pid->getPid(cmd.get(2).asInt(), &p);
-                Bottle& b = response.addList();
-                b.addDouble(p.kp);
-                b.addDouble(p.kd);
-                b.addDouble(p.ki);
-                b.addDouble(p.max_int);
-                b.addDouble(p.max_output);
-                b.addDouble(p.offset);
-                b.addDouble(p.scale);
-            }
-                break;
+case VOCAB_LIMS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pid->getErrorLimits(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_PIDS: {
-                Pid *p = new Pid[nj];
-                ACE_ASSERT (p != NULL);
-                ok = pid->getPids(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    {
-                        Bottle& c = b.addList();
-                        c.addDouble(p[i].kp);
-                        c.addDouble(p[i].kd);
-                        c.addDouble(p[i].ki);
-                        c.addDouble(p[i].max_int);
-                        c.addDouble(p[i].max_output);
-                        c.addDouble(p[i].offset);
-                        c.addDouble(p[i].scale);
-                    }
-                delete[] p;
-            }
-                break;
+case VOCAB_AXES:
+    ok = pos->getAxes(&tmp);
+    response.addInt(tmp);
+    break;
 
-            case VOCAB_REFERENCE: {
-                ok = pid->getReference(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_MOTION_DONE: 
+    {
+        bool x = false;;
+        ok = pos->checkMotionDone(cmd.get(2).asInt(), &x);
+        response.addInt(x);
+    }
+    break;
 
-            case VOCAB_REFERENCES: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pid->getReferences(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_MOTION_DONES: 
+    {
+        bool x = false;
+        ok = pos->checkMotionDone(&x);
+        response.addInt(x);
+    }
+    break;
 
-            case VOCAB_LIM: {
-                ok = pid->getErrorLimit(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_REF_SPEED: 
+    {
+        ok = pos->getRefSpeed(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_LIMS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pid->getErrorLimits(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_REF_SPEEDS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pos->getRefSpeeds(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_AXES:
-                ok = pos->getAxes(&tmp);
-                response.addInt(tmp);
-                break;
+case VOCAB_REF_ACCELERATION:
+    {
+        ok = pos->getRefAcceleration(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_MOTION_DONE: {
-                bool x = false;;
-                ok = pos->checkMotionDone(cmd.get(2).asInt(), &x);
-                response.addInt(x);
-            }
-                break;
+case VOCAB_REF_ACCELERATIONS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = pos->getRefAccelerations(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_MOTION_DONES: {
-				bool x = false;
-                ok = pos->checkMotionDone(&x);
-				response.addInt(x);
-            }
-                break;
+case VOCAB_ENCODER: 
+    {
+        ok = enc->getEncoder(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_REF_SPEED: {
-                ok = pos->getRefSpeed(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_ENCODERS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = enc->getEncoders(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_REF_SPEEDS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pos->getRefSpeeds(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_ENCODER_SPEED: 
+    {
+        ok = enc->getEncoderSpeed(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
 
-            case VOCAB_REF_ACCELERATION: {
-                ok = pos->getRefAcceleration(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+    }
+    break;
 
-            case VOCAB_REF_ACCELERATIONS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = pos->getRefAccelerations(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_ENCODER_SPEEDS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = enc->getEncoderSpeeds(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_ENCODER: {
-                ok = enc->getEncoder(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_ENCODER_ACCELERATION: 
+    {
+        ok = enc->getEncoderAcceleration(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-            case VOCAB_ENCODERS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = enc->getEncoders(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_ENCODER_ACCELERATIONS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = enc->getEncoderAccelerations(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_ENCODER_SPEED: {
-                ok = enc->getEncoderSpeed(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
+case VOCAB_AMP_CURRENT: 
+    {
+        ok = amp->getCurrent(cmd.get(2).asInt(), &dtmp);
+        response.addDouble(dtmp);
+    }
+    break;
 
-           }
-               break;
+case VOCAB_AMP_CURRENTS: 
+    {
+        double *p = new double[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = amp->getCurrents(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addDouble(p[i]);
+        delete[] p;
+    }
+    break;
 
-            case VOCAB_ENCODER_SPEEDS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = enc->getEncoderSpeeds(p);
-                Bottle& b = response.addList();
-               int i;
-                for (i = 0; i < nj; i++)
-                  b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_AMP_STATUS: 
+    {
+        ok = amp->getAmpStatus(&tmp);
+        response.addInt(tmp);
+    }
+    break;
 
-            case VOCAB_ENCODER_ACCELERATION: {
-                ok = enc->getEncoderAcceleration(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
+case VOCAB_LIMITS: 
+    {
+        double min = 0.0, max = 0.0;
+        ok = lim->getLimits(cmd.get(2).asInt(), &min, &max);
+        response.addDouble(min);
+        response.addDouble(max);
+    }
+    break;
 
-            case VOCAB_ENCODER_ACCELERATIONS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = enc->getEncoderAccelerations(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
+case VOCAB_INFO_NAME: 
+    {
+        ConstString name = "undocumented";
+        ok = info->getAxisName(cmd.get(2).asInt(),name);
+        response.addString(name.c_str());
+    }
+    break;
+default:
+    ACE_OS::printf("received an unknown request after a VOCAB_GET\n");
+    break;
+        }
+    }
+    break;
+    }
 
-            case VOCAB_AMP_CURRENT: {
-                ok = amp->getCurrent(cmd.get(2).asInt(), &dtmp);
-                response.addDouble(dtmp);
-            }
-                break;
-
-            case VOCAB_AMP_CURRENTS: {
-                double *p = new double[nj];
-                ACE_ASSERT(p!=NULL);
-                ok = amp->getCurrents(p);
-                Bottle& b = response.addList();
-                int i;
-                for (i = 0; i < nj; i++)
-                    b.addDouble(p[i]);
-                delete[] p;
-            }
-                break;
-
-            case VOCAB_AMP_STATUS: {
-                ok = amp->getAmpStatus(&tmp);
-                response.addInt(tmp);
-            }
-                break;
-
-            case VOCAB_LIMITS: {
-                double min = 0.0, max = 0.0;
-                ok = lim->getLimits(cmd.get(2).asInt(), &min, &max);
-                response.addDouble(min);
-                response.addDouble(max);
-            }
-                break;
-
-            case VOCAB_INFO_NAME: {
-                ConstString name = "undocumented";
-                ok = info->getAxisName(cmd.get(2).asInt(),name);
-                response.addString(name.c_str());
-            }
-               break;
-           default:
-               ACE_OS::printf("received an unknown request after a VOCAB_GET\n");
-               break;
-           }
-       }
-       break;
-   }
     if (!rec) {
-       ok = DeviceResponder::respond(cmd,response);
-   }
+        ok = DeviceResponder::respond(cmd,response);
+    }
+
     if (!ok) {
-       // failed thus send only a VOCAB back.
-       response.clear();
-       response.addVocab(VOCAB_FAILED);
-   }
-   else
-       response.addVocab(VOCAB_OK);
+        // failed thus send only a VOCAB back.
+        response.clear();
+        response.addVocab(VOCAB_FAILED);
+    }
+    else
+        response.addVocab(VOCAB_OK);
     return ok;
 }
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
