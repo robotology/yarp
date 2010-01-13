@@ -377,11 +377,11 @@ bool ImplementOpenLoopControl::setOutputs(const double *v)
     return raw->setOutputsRaw(dummy);
 }
 
-bool ImplementOpenLoopControl::setOpenLoopControlMode(int j)
+bool ImplementOpenLoopControl::setOpenLoopMode(int j)
 {
     int k=castToMapper(helper)->toHw(j);
 
-    return raw->setOpenLoopControlModeRaw(k);
+    return raw->setOpenLoopModeRaw(k);
 }
 
 bool ImplementOpenLoopControl::getOutputs(double *v)

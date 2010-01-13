@@ -751,7 +751,7 @@ public:
     ~ImplementOpenLoopControl();
     bool setOutput(int j, double v);
     bool setOutputs(const double *v);
-    bool setOpenLoopControlMode(int j);
+    bool setOpenLoopMode(int j);
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
 };

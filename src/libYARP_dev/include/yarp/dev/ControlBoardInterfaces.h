@@ -76,7 +76,7 @@ public:
     /*
     * Enable open loop mode.
     */
-    bool setOpenLoopControlModeRaw(int j);
+    bool setOpenLoopModeRaw(int j);
 };
 
 
@@ -113,7 +113,7 @@ public:
      /*
     * Enable open loop mode.
     */
-    bool setOpenLoopControlMode(int j);
+    bool setOpenLoopMode(int j);
 };
 
 
