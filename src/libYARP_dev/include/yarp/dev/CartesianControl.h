@@ -167,7 +167,7 @@ public:
     *       user may specify the following:
     * \f[ 
     *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
     *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
     *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
     *     weights (the operation \f$ \otimes \f$ represents the
@@ -188,11 +188,11 @@ public:
     *       user may specify the following:
     * \f[ 
     *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
     *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
     *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
     *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors).  
+    *     element-wise multiplication between vectors). 
     */
     virtual bool setRestPos(const yarp::sig::Vector &newRestPos, yarp::sig::Vector &curRestPos)=0;
 
@@ -206,11 +206,11 @@ public:
     *       user may specify the following:
     * \f[ 
     *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
     *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
     *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
     *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors).  
+    *     element-wise multiplication between vectors). 
     */
     virtual bool getRestWeights(yarp::sig::Vector &curRestWeights)=0;
 
@@ -227,11 +227,11 @@ public:
     *       user may specify the following:
     * \f[ 
     *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
     *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
     *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
     *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors).  
+    *     element-wise multiplication between vectors). 
     */
     virtual bool setRestWeights(const yarp::sig::Vector &newRestWeights, yarp::sig::Vector &curRestWeights)=0;
 
