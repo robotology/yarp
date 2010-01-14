@@ -75,7 +75,8 @@ public:
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure.
     */
-    virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od, const double t=0.0)=0;
+    virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
+                          const double t=0.0)=0;
 
     /**
     * Move the end effector to a specified position in cartesian space, 
@@ -97,7 +98,8 @@ public:
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure.
     */
-    virtual bool goToPoseSync(const yarp::sig::Vector &xd, const yarp::sig::Vector &od, const double t=0.0)=0;
+    virtual bool goToPoseSync(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
+                              const double t=0.0)=0;
 
     /**
     * Move the end effector to a specified position in cartesian space, 
@@ -154,6 +156,84 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
+
+    /**
+    * Get the current joints rest postion. [wait for reply]
+    * @param curRestPos: a vector which is filled with the current 
+    *                  joints rest position components in degrees.
+    * @return true/false on success/failure. 
+    *  
+    * \note While solving the inverse kinematic, as secondary task 
+    *       user may specify the following:
+    * \f[ 
+    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
+    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
+    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
+    *     weights (the operation \f$ \otimes \f$ represents the
+    *     element-wise multiplication between vectors). 
+    */
+    virtual bool getRestPos(yarp::sig::Vector &curRestPos)=0;
+
+    /**
+    * Set a new joints rest postion. [wait for reply] 
+    * @param newRestPos: a vector which contains the new joints rest
+    *                  position components in degrees.
+    * @param curRestPos: a vector which is filled with the current 
+    *           joints rest position components in degrees as result
+    *           from thresholding with joints bounds.
+    * @return true/false on success/failure. 
+    *  
+    * \note While solving the inverse kinematic, as secondary task 
+    *       user may specify the following:
+    * \f[ 
+    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
+    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
+    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
+    *     weights (the operation \f$ \otimes \f$ represents the
+    *     element-wise multiplication between vectors).  
+    */
+    virtual bool setRestPos(const yarp::sig::Vector &newRestPos, yarp::sig::Vector &curRestPos)=0;
+
+    /**
+    * Get the current joints rest weights. [wait for reply]
+    * @param curRestWeights: a vector which is filled with the 
+    *                  current joints rest weights.
+    * @return true/false on success/failure. 
+    *  
+    * \note While solving the inverse kinematic, as secondary task 
+    *       user may specify the following:
+    * \f[ 
+    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
+    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
+    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
+    *     weights (the operation \f$ \otimes \f$ represents the
+    *     element-wise multiplication between vectors).  
+    */
+    virtual bool getRestWeights(yarp::sig::Vector &curRestWeights)=0;
+
+    /**
+    * Set a new joints rest postion. [wait for reply] 
+    * @param newRestWeights: a vector which contains the new joints 
+    *                  rest weights.
+    * @param curRestWeights: a vector which is filled with the 
+    *           current joints rest weights as result from
+    *           saturation (w>=0.0).
+    * @return true/false on success/failure. 
+    *  
+    * \note While solving the inverse kinematic, as secondary task 
+    *       user may specify the following:
+    * \f[ 
+    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
+    *          R^n}\left(\dots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}\mathbf{q}\right)\right\|^2\right),
+    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
+    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
+    *     weights (the operation \f$ \otimes \f$ represents the
+    *     element-wise multiplication between vectors).  
+    */
+    virtual bool setRestWeights(const yarp::sig::Vector &newRestWeights, yarp::sig::Vector &curRestWeights)=0;
 
     /**
     * Get the current range for the axis. [wait for reply]
@@ -222,4 +302,5 @@ public:
 };
 
 #endif
+
 
