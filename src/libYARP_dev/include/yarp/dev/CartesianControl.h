@@ -163,15 +163,10 @@ public:
     *                  joints rest position components in degrees.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, as secondary task 
-    *       user may specify the following:
-    * \f[ 
-    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
-    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
-    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
-    *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors). 
+    * \note While solving the inverse kinematic, the user may 
+    *       specify a secondary task that minimizes against a joints
+    *       rest position; further, each rest component may be
+    *       weighted differently providing the weights vector.
     */
     virtual bool getRestPos(yarp::sig::Vector &curRestPos)=0;
 
@@ -184,15 +179,10 @@ public:
     *           from thresholding with joints bounds.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, as secondary task 
-    *       user may specify the following:
-    * \f[ 
-    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
-    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
-    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
-    *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors). 
+    * \note While solving the inverse kinematic, the user may 
+    *       specify a secondary task that minimizes against a joints
+    *       rest position; further, each rest component may be
+    *       weighted differently providing the weights vector.
     */
     virtual bool setRestPos(const yarp::sig::Vector &newRestPos, yarp::sig::Vector &curRestPos)=0;
 
@@ -202,15 +192,10 @@ public:
     *                  current joints rest weights.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, as secondary task 
-    *       user may specify the following:
-    * \f[ 
-    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
-    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
-    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
-    *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors). 
+    * \note While solving the inverse kinematic, the user may 
+    *       specify a secondary task that minimizes against a joints
+    *       rest position; further, each rest component may be
+    *       weighted differently providing the weights vector.
     */
     virtual bool getRestWeights(yarp::sig::Vector &curRestWeights)=0;
 
@@ -223,15 +208,10 @@ public:
     *           saturation (w>=0.0).
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, as secondary task 
-    *       user may specify the following:
-    * \f[ 
-    *   \mathbf{q}=\arg\min_{\mathbf{q}\in
-    *          R^n}\left(\ldots+\mathit{w}\cdot\frac{1}{2}\left\|\mathbf{w}_{rest}\otimes\left(\mathbf{q}_{rest}-\mathbf{q}\right)\right\|^2\right),
-    *   \f] <br/> where \f$ \mathbf{q}_{rest} \f$ is the joint rest
-    *     position and \f$ \mathbf{w}_{rest} \f$ the joint rest
-    *     weights (the operation \f$ \otimes \f$ represents the
-    *     element-wise multiplication between vectors). 
+    * \note While solving the inverse kinematic, the user may 
+    *       specify a secondary task that minimizes against a joints
+    *       rest position; further, each rest component may be
+    *       weighted differently providing the weights vector.
     */
     virtual bool setRestWeights(const yarp::sig::Vector &newRestWeights, yarp::sig::Vector &curRestWeights)=0;
 
