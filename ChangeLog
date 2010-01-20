@@ -1,8 +1,18 @@
+2010-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: freeze version 2.2.6
+
 2010-01-10 Lorenzo Natale <nat@liralab.it>
-    * libYARP_dev: added new IOpenLoopControlRaw/IOpenLoopControl interfaces and implementation class.
+	* libYARP_dev: added new IOpenLoopControlRaw/IOpenLoopControl interfaces and implementation class.
     
 2010-01-10 Lorenzo Natale <nat@liralab.it>
-    * libYARP_dev: added new IAnalogSensor/AnalogSensorClient.
+	* libYARP_dev: added new IAnalogSensor/AnalogSensorClient.
+
+2009-12-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/CMakeLists.txt: remove accidental
+	circular dependency between libYARP_dev and yarpmod
+	(thanks Baris Akgun)
 
 2009-12-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

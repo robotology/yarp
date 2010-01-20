@@ -62,6 +62,20 @@ How to make a YARP release:
 
   ./scripts/update-automake 
 
+* New instructions:
+
+  rm -rf license_check
+  ./scripts/update-license
+  # check license-statement.txt for sanity
+
+
+
+
+===
+
+OLD INSTRUCTIONS:
+
+
 * Add a line to the bottom of conf/build.txt (follow the pattern) and
   commit all to CVS.  This makes the test servers (re)generate zips 
   and tars for the selected version number, placing them in:
