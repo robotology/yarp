@@ -1,3 +1,9 @@
+2010-01-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindAce.cmake: explicitly link pthread along with ACE,
+	to keep GoLD happy for users of that linker (thanks Radu
+	Bogdan Rusu)
+
 2010-01-20  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: freeze version 2.2.6

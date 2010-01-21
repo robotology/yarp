@@ -72,6 +72,12 @@ IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
   SET(ACE_LIBRARY ${ACE_LIBRARY} socket rt nsl)
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 
+# ACE package doesn't specify that pthread and rt are needed, which is 
+# a problem for users of GoLD.  Link pthread (just on Linux for now).
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  SET(ACE_LIBRARY ${ACE_LIBRARY} pthread rt)
+ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+
 # Windows needs some extra libraries
 IF (WIN32 AND NOT CYGWIN)
   MESSAGE(STATUS "need to link windows-specific libraries")
