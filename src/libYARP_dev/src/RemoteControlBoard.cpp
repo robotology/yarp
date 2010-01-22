@@ -123,9 +123,12 @@ public:
         last=v;
         getEnvelope(lastStamp);
         //////////////// HANDLE TIMEOUT
-        //check that timestamp are available
-        if (lastStamp.getTime()==0)
-            lastStamp.update();
+        //check that timestamp are available        
+        if (!lastStamp.isValid())
+        {
+            Stamp tmpStamp(0,now);    
+            lastStamp=tmpStamp;
+        }
         mutex.post();
     }
 
