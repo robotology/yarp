@@ -5,16 +5,22 @@
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
+SET(BUILTIN_ACE FALSE CACHE INTERNAL "compile ACE with YARP")
+MARK_AS_ADVANCED(BUILTIN_ACE)
+SET(BUILTIN_ACE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src" CACHE INTERNAL "compile ACE source with YARP")
+SET(BUILTIN_ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include" CACHE INTERNAL "include ACE headers with YARP")
+MARK_AS_ADVANCED(BUILTIN_ACE_DIR)
+
 IF (BUILTIN_ACE)
 	MESSAGE(STATUS "ACE files have been included within YARP")
-        IF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include/ace")
+        IF (NOT EXISTS "${BUILTIN_ACE_INCLUDE_DIR}/ace")
 	   MESSAGE(FATAL_ERROR "Cannot find builtin ACE headers")
-        ENDIF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include/ace")
-        IF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src")
+        ENDIF (NOT EXISTS "${BUILTIN_ACE_INCLUDE_DIR}/ace")
+        IF (NOT EXISTS "${BUILTIN_ACE_SOURCE_DIR}")
 	   MESSAGE(FATAL_ERROR "Cannot find builtin ACE sources")
-        ENDIF (NOT EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src")
+        ENDIF (NOT EXISTS "${BUILTIN_ACE_SOURCE_DIR}")
 
-	SET(ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include")
+	SET(ACE_INCLUDE_DIR "${BUILTIN_ACE_INCLUDE_DIR}")
 	IF(UNIX)
 		SET(ACE_LIBRARY "-lm -lpthread -ldl")
 		#SET(ACE_LIBRARY "-lm -lpthread -ldl -lrt")
