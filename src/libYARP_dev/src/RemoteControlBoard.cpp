@@ -59,7 +59,7 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-const int TIMEOUT=200; //ms
+const double TIMEOUT=0.01;
 
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
 {
@@ -104,7 +104,7 @@ public:
         if (count>0)
         {
             double tmpDT=now-prev;
-            if (tmpDT>TIMEOUT*1000)
+            if (tmpDT>TIMEOUT)
                 timeout=true;
             else
                 timeout=false;
@@ -124,15 +124,15 @@ public:
         getEnvelope(lastStamp);
         //////////////// HANDLE TIMEOUT
         //check that timestamp are available
-        //if lastStamp.getTime()==0 
-        //  lastStamp.setTime(now);
+        if (lastStamp.getTime()==0)
+            lastStamp.update();
         mutex.post();
     }
 
     inline bool getLast(yarp::sig::Vector &n, Stamp &stmp)
     {
         mutex.wait();
-        bool ret=(valid&&timeout);
+        bool ret=(valid&&!timeout);
         if (ret)
         {
             n=last;
@@ -1142,11 +1142,6 @@ public:
         bool ret=state_p.getLast(tmp, lastStamp);
         mutex.post();
 
-        ////////////////////////// HANDLE TIMEOUT
-        // double now=Time::now();
-        // if (now-lastStamp.getTime()>TIMEOUT)
-            ///return false
-
         if (ret)
         {
             if (tmp.size() != nj)
@@ -1154,7 +1149,13 @@ public:
 
             ACE_ASSERT (tmp.size() == nj);
             ACE_OS::memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+
+            ////////////////////////// HANDLE TIMEOUT
+            // fill the vector anyway
+            if (Time::now()-lastStamp.getTime()>TIMEOUT)
+                ret=false;
         }
+
         return ret;
     }
 
