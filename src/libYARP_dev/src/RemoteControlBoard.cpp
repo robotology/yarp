@@ -59,6 +59,8 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
+const int TIMEOUT=200; //ms
+
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
 {
     yarp::sig::Vector last;
@@ -71,6 +73,7 @@ class StateInputPort:public BufferedPort<yarp::sig::Vector>
     double now;
 
     bool valid;
+    bool timeout;
     int count;
 public:
 
@@ -83,6 +86,7 @@ public:
         deltaTMin=1e22;
         now=Time::now();
         prev=now;
+        timeout=true;
         mutex.post();
     }
 
@@ -100,6 +104,11 @@ public:
         if (count>0)
         {
             double tmpDT=now-prev;
+            if (tmpDT>TIMEOUT*1000)
+                timeout=true;
+            else
+                timeout=false;
+
             deltaT+=tmpDT;
             if (tmpDT>deltaTMax)
                 deltaTMax=tmpDT;
@@ -119,7 +128,7 @@ public:
     inline bool getLast(yarp::sig::Vector &n, Stamp &stmp)
     {
         mutex.wait();
-        int ret=valid;
+        bool ret=(valid&&timeout);
         if (ret)
         {
             n=last;
