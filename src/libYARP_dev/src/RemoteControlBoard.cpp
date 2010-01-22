@@ -122,6 +122,10 @@ public:
         valid=true;
         last=v;
         getEnvelope(lastStamp);
+        //////////////// HANDLE TIMEOUT
+        //check that timestamp are available
+        //if lastStamp.getTime()==0 
+        //  lastStamp.setTime(now);
         mutex.post();
     }
 
@@ -1137,6 +1141,12 @@ public:
         mutex.wait();
         bool ret=state_p.getLast(tmp, lastStamp);
         mutex.post();
+
+        ////////////////////////// HANDLE TIMEOUT
+        // double now=Time::now();
+        // if (now-lastStamp.getTime()>TIMEOUT)
+            ///return false
+
         if (ret)
         {
             if (tmp.size() != nj)
