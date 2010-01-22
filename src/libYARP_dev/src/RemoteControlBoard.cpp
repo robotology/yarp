@@ -73,7 +73,6 @@ class StateInputPort:public BufferedPort<yarp::sig::Vector>
     double now;
 
     bool valid;
-    bool timeout;
     int count;
 public:
 
@@ -86,7 +85,6 @@ public:
         deltaTMin=1e22;
         now=Time::now();
         prev=now;
-        timeout=true;
         mutex.post();
     }
 
@@ -104,11 +102,6 @@ public:
         if (count>0)
         {
             double tmpDT=now-prev;
-            if (tmpDT>TIMEOUT)
-                timeout=true;
-            else
-                timeout=false;
-
             deltaT+=tmpDT;
             if (tmpDT>deltaTMax)
                 deltaTMax=tmpDT;
@@ -122,11 +115,10 @@ public:
         valid=true;
         last=v;
         getEnvelope(lastStamp);
-        //////////////// HANDLE TIMEOUT
         //check that timestamp are available        
         if (!lastStamp.isValid())
         {
-            Stamp tmpStamp(0,now);    
+            Stamp tmpStamp(0,now);
             lastStamp=tmpStamp;
         }
         mutex.post();
@@ -135,7 +127,7 @@ public:
     inline bool getLast(yarp::sig::Vector &n, Stamp &stmp)
     {
         mutex.wait();
-        bool ret=(valid&&!timeout);
+        bool ret=valid;
         if (ret)
         {
             n=last;
