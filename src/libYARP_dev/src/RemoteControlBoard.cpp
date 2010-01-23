@@ -117,10 +117,7 @@ public:
         getEnvelope(lastStamp);
         //check that timestamp are available        
         if (!lastStamp.isValid())
-        {
-            Stamp tmpStamp(0,now);
-            lastStamp=tmpStamp;
-        }
+            lastStamp.update(now);
         mutex.post();
     }
 
