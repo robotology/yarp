@@ -5,11 +5,12 @@
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
-SET(BUILTIN_ACE FALSE CACHE INTERNAL "compile ACE with YARP")
+SET(BUILTIN_ACE FALSE CACHE BOOL "compile ACE with YARP")
 MARK_AS_ADVANCED(BUILTIN_ACE)
-SET(BUILTIN_ACE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src" CACHE INTERNAL "compile ACE source with YARP")
-SET(BUILTIN_ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include" CACHE INTERNAL "include ACE headers with YARP")
-MARK_AS_ADVANCED(BUILTIN_ACE_DIR)
+SET(BUILTIN_ACE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_src" CACHE STRING "compile ACE source with YARP")
+SET(BUILTIN_ACE_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/src/libYARP_OS/ace_include" CACHE STRING "include ACE headers with YARP")
+MARK_AS_ADVANCED(BUILTIN_ACE_SOURCE_DIR)
+MARK_AS_ADVANCED(BUILTIN_ACE_INCLUDE_DIR)
 
 IF (BUILTIN_ACE)
 	MESSAGE(STATUS "ACE files have been included within YARP")
