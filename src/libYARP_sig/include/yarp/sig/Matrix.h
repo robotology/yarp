@@ -174,6 +174,22 @@ public:
       void zero();
 
       /**
+      * Set a row of the matrix copying the values from a vector: the vector lenght must be equal to the number of columns of the matrix.
+      * @param row the row number
+      * @param a vector which contains the desired values for the row
+      * @return true if operation succeeds, false if not
+      */
+      bool setRow(int row, const Vector r);
+
+	  /**
+      * Set a column of the matrix copying the values from a vector: the vector lenght must be equal to the number of rows of the matrix.
+      * @param col the column number
+      * @param c a vector which contains the desired values for the column
+      * @return true if operation succeeds, false if not
+      */
+      bool setCol(int col, const Vector c);
+
+      /**
       * Return the transposed of the matrix. 
       * @return the transposed copy of the matrix.
       */

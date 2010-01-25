@@ -341,3 +341,25 @@ void Matrix::updateGslData()
     tmp->size1=rows();
     tmp->size2=cols();
 }
+
+bool Matrix::setRow(int row, const Vector &r)
+{
+    if((row<0) || (row>nrows) || (r.length() != ncols))
+		 return false;
+
+    for(int c=0;c<ncols;c++)
+        (*this)[row][c]=r[c];
+
+    return true;
+}
+
+bool Matrix::setCol(int col, const Vector &c)
+{
+	if((col<0) || (col>ncols) || (c.length() != nrows))
+		 return false; 
+
+    for(int r=0;r<nrows;r++)
+        (*this)[r][col]=c[r];
+
+    return true;
+}
