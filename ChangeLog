@@ -1,3 +1,8 @@
+2010-01-25  Serena Ivaldi  <serena.ivaldi@iit.it>
+
+	* src/libYARP_sig/include/yarp/sig/Matrix.h src/libYARP_sig/src/Matrix.cpp:
+    added setRow/setCol methods
+    
 2010-01-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindAce.cmake: explicitly link pthread along with ACE,
