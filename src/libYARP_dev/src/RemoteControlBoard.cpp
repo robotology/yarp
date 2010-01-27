@@ -121,14 +121,15 @@ public:
         mutex.post();
     }
 
-    inline bool getLast(yarp::sig::Vector &n, Stamp &stmp)
+    inline bool getLast(yarp::sig::Vector &n, Stamp &stmp, double &localArrivalTime)
     {
         mutex.wait();
         bool ret=valid;
         if (ret)
         {
             n=last;
-            stmp = lastStamp;
+            stmp=lastStamp;
+            localArrivalTime=now;
         }
         mutex.post();
 
@@ -1130,8 +1131,10 @@ public:
     virtual bool getEncoders(double *encs) {
         // particular case, does not use RPC
         Vector tmp(nj);
+        double localArrivalTime=0.0;
+
         mutex.wait();
-        bool ret=state_p.getLast(tmp, lastStamp);
+        bool ret=state_p.getLast(tmp,lastStamp,localArrivalTime);
         mutex.post();
 
         if (ret)
@@ -1144,7 +1147,7 @@ public:
 
             ////////////////////////// HANDLE TIMEOUT
             // fill the vector anyway
-            if (Time::now()-lastStamp.getTime()>TIMEOUT)
+            if (Time::now()-localArrivalTime>TIMEOUT)
                 ret=false;
         }
 
