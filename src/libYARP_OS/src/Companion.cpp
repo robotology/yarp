@@ -1309,7 +1309,8 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
     BottleReader reader(read_port_name,false);
     
-	int ret=write(write_port_name,0,NULL);
+    char *verbatim="verbatim";
+	int ret=write(write_port_name,1,&verbatim);
 
     reader.wait();
     reader.close();
