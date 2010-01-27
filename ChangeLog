@@ -1,3 +1,8 @@
+2010-01-27  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp:
+    timeout handling bug fix
+
 2010-01-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp: added "yarp quiet" option,
