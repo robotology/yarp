@@ -181,6 +181,12 @@ int Companion::main(int argc, char *argv[]) {
             argv++;
             more = true;
         }
+        if (String(argv[0]) == String("quiet")) {
+            verbose--;
+            argc--;
+            argv++;
+            more = true;
+        }
         if (String(argv[0]) == String("admin")) {
             adminMode = true;
             argc--;
@@ -188,7 +194,7 @@ int Companion::main(int argc, char *argv[]) {
             more = true;
         }
     }
-    if (verbose>0) {
+    if (verbose!=0) {
         Logger::get().setVerbosity(verbose);
     }
     
@@ -345,7 +351,8 @@ int Companion::wait(const char *target, bool silent) {
     while (!done) {
         if (ct%10==1) {
             if (!silent) {
-                ACE_OS::fprintf(stderr,"Waiting for %s...\n", target);
+                YARP_SPRINTF1(Logger::get(),info,
+                              "Waiting for %s...\n", target);
             }
         }
         ct++;
@@ -369,7 +376,7 @@ int Companion::cmdName(int argc, char *argv[]) {
     }
     NameClient& nic = NameClient::getNameClient();
     String result = nic.send(cmd);
-    ACE_OS::printf("%s",result.c_str());
+    YARP_SPRINTF1(Logger::get(),info,"%s",result.c_str());
     return 0;
 }
 
@@ -568,7 +575,8 @@ int Companion::sendMessage(const String& port, Writable& writable,
     b.read(con);
     output = b.toString().c_str();
     if (!quiet) {
-        ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
+        //ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
+        YARP_SPRINTF1(Logger::get(),info,"%s\n", b.toString().c_str());
     }
     ip.endRead();
     out->close();
@@ -1233,9 +1241,10 @@ public:
         env = showEnvelope;
         core.setReadHandler(*this);
         if (address.isValid()) {
-            ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
-                            address.getRegName().c_str(),
-                            address.toString().c_str());
+            YARP_SPRINTF2(Logger::get(),info,
+                          "Port %s listening at %s\n", 
+                          address.getRegName().c_str(),
+                          address.toString().c_str());
             core.listen(address);
             core.start();
         } else {
@@ -1309,8 +1318,8 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
     BottleReader reader(read_port_name,false);
     
-    char *verbatim="verbatim";
-	int ret=write(write_port_name,1,&verbatim);
+    const char *verbatim[] = { "verbatim", NULL };
+	int ret = write(write_port_name,1,(char**)&verbatim);
 
     reader.wait();
     reader.close();
@@ -1337,9 +1346,10 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.registerName(name);
     if (address.isValid()) {
-        ACE_OS::fprintf(stderr,"Port %s listening at %s\n", 
-                        address.getRegName().c_str(),
-                        address.toString().c_str());
+        YARP_SPRINTF2(Logger::get(),info,
+                      "Port %s listening at %s\n", 
+                      address.getRegName().c_str(),
+                      address.toString().c_str());
         core.listen(address);
         core.start();
     } else {

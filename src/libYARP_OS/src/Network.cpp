@@ -74,11 +74,18 @@ void Network::init() {
     ACE_OS::signal(SIGPIPE, SIG_IGN);
 
     ACE::init();
-    String verbose = NameConfig::getEnv("YARP_VERBOSE");
-    Bottle b(verbose.c_str());
-    if (b.get(0).asInt()>0) {
-        YARP_INFO(Logger::get(), "YARP_VERBOSE environment variable is set");
-        Logger::get().setVerbosity(b.get(0).asInt());
+    String quiet = NameConfig::getEnv("YARP_QUIET");
+    Bottle b2(quiet.c_str());
+    if (b2.get(0).asInt()>0) {
+        Logger::get().setVerbosity(-b2.get(0).asInt());
+    } else {
+        String verbose = NameConfig::getEnv("YARP_VERBOSE");
+        Bottle b(verbose.c_str());
+        if (b.get(0).asInt()>0) {
+            YARP_INFO(Logger::get(), 
+                      "YARP_VERBOSE environment variable is set");
+            Logger::get().setVerbosity(b.get(0).asInt());
+        }
     }
     Logger::get().setPid();
 	// make sure system is actually able to do things fast

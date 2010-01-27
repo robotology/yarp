@@ -67,7 +67,9 @@ How to make a YARP release:
   rm -rf license_check
   ./scripts/update-license
   # check license-statement.txt for sanity
-
+  cp license-statement.txt COPYING
+  svn copy https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.X.X -m "yarp release 2.X.X"
+  ./scripts/make-source-package-svn 2.2.6
 
 
 

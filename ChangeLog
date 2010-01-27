@@ -1,3 +1,16 @@
+2010-01-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: added "yarp quiet" option,
+	e.g. "yarp quiet read /read".  This is the opposite of the
+	existing "yarp verbose" option.  The effect is the same as
+	setting the YARP_QUIET environment variable.
+
+	* src/libYARP_OS/src/Network.cpp: added "YARP_QUIET" environment
+	variable.  If set to 1, no messages should be emitted by YARP.
+	Note to developers - please use YARP_ERROR/YARP_DEBUG/YARP_INFO
+	macros for all messages so that users can control their
+	appearance.
+
 2010-01-27 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/Companion.cpp
 	* src/libYARP_OS/src/Run.cpp
