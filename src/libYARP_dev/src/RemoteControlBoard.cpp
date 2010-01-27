@@ -59,7 +59,7 @@ inline bool getTimeStamp(Bottle &bot, Stamp &st)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-const double TIMEOUT=0.01;
+const double TIMEOUT=0.5;
 
 class StateInputPort:public BufferedPort<yarp::sig::Vector>
 {
