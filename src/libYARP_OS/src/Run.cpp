@@ -1152,7 +1152,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(String("yarp write /")+alias+"/stdout verbatim").c_str(), // command line 
+								(char*)(String("yarp quiet write /")+alias+"/stdout verbatim").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1164,6 +1164,8 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	if (!bSuccess)
 	{
+        DWORD lastErr=GetLastError();
+
 		fprintf(stderr,"ERROR: can't fork stdout\n");
 		
 		CloseHandle(write_to_pipe_stdin_to_cmd);
@@ -1186,7 +1188,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)(String("yarp read /")+alias+"/stdin").c_str(), // command line 
+								(char*)(String("yarp quiet read /")+alias+"/stdin").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1198,6 +1200,8 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	if (!bSuccess)
 	{
+        DWORD lastErr=GetLastError();
+
 		fprintf(stderr,"ERROR: can't fork stdin\n");
 
 		TerminateProcess(stdout_process_info.hProcess,-1);
@@ -1290,6 +1294,8 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	if (!bSuccess)
 	{
+        DWORD lastErr=GetLastError();
+
 		fprintf(stderr,"ERROR: can't fork cmd\n");
 
 		TerminateProcess(stdout_process_info.hProcess,-1);
@@ -1369,6 +1375,8 @@ int Run::ExecuteCmd(Bottle& msg)
 
 	if (!bSuccess)
 	{
+        DWORD lastErr=GetLastError();
+
 		fprintf(stderr,"ERROR: can't fork cmd\n");
 		
 		return -1;
@@ -1398,7 +1406,7 @@ int Run::UserStdio(Bottle& msg)
 	stdio_startup_info.wShowWindow=SW_SHOWNOACTIVATE;
 	stdio_startup_info.dwFlags=STARTF_USESHOWWINDOW;
 
-	String command_line=String("yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
+	String command_line=String("yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
 								(char*)command_line.c_str(), // command line 
@@ -1510,7 +1518,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarp","yarp","write",(String("/")+alias+"/"+"stdout").c_str(),NULL);
+		int ret=execlp("yarp","yarp","quiet","write",(String("/")+alias+"/"+"stdout").c_str(),NULL);
 		exit(ret);
 	}
 
@@ -1534,7 +1542,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 		{
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarp","yarp","read",(String("/")+alias+"/"+"stdin").c_str(),NULL);
+			int ret=execlp("yarp","yarp","quiet","read",(String("/")+alias+"/"+"stdin").c_str(),NULL);
 			exit(ret);
 		}
 
@@ -1613,7 +1621,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 				ret=execvp(arg_str[0],arg_str);
 
         		for (int s=0; s<command.size(); ++s)
-        			delete [] arg_str[s];
+        		delete [] arg_str[s];
         		delete [] arg_str;
         		delete [] Args;
         		delete [] cmd_str;		        
@@ -1689,7 +1697,7 @@ int Run::ExecuteCmd(Bottle& msg)
 		ret=execvp(arg_str[0],arg_str);	
 		
 		for (int s=0; s<command.size(); ++s)
-			delete [] arg_str[s];
+		delete [] arg_str[s];
 		delete [] arg_str;
 		delete [] Args;
 		delete [] cmd_str;
@@ -1732,11 +1740,11 @@ int Run::UserStdio(Bottle& msg)
 		if (msg.check("geometry"))
 		{
 			String geometry(msg.find("geometry").asString());
-			ret=execlp("xterm","xterm","-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","readwrite",(String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			ret=execlp("xterm","xterm","-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",(String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
 		}
 		else
 		{
-			ret=execlp("xterm","xterm","-title",alias.c_str(),"-e","yarp","readwrite",(String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			ret=execlp("xterm","xterm","-title",alias.c_str(),"-e","yarp","quiet","readwrite",(String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
 		}
 		
 		exit(ret);
