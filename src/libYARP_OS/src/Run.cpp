@@ -760,7 +760,6 @@ int Run::main(int argc, char *argv[])
 		std::cout<<"Program echo starting...\n";
 		while(true)
 		{
-
 			std::cin>>line;
 			std::cout<<line<<"\n";
 		}
@@ -1153,7 +1152,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(String("yarp write /")+alias+"/stdout").c_str(), // command line 
+								(char*)(String("yarp write /")+alias+"/stdout verbatim").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
