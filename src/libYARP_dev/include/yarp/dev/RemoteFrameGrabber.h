@@ -394,7 +394,10 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETMSK);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+        
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 13
 	virtual unsigned int getVideoModeDC1394()
@@ -402,7 +405,10 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETVMD);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 14
 	virtual bool setVideoModeDC1394(int video_mode)
@@ -420,7 +426,10 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETFPM);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 16
 	virtual unsigned int getFPSDC1394()
@@ -428,7 +437,10 @@ public:
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETFPS);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 17
 	virtual bool setFPSDC1394(int fps)
@@ -446,7 +458,10 @@ public:
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETISO);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 19
 	virtual bool setISOSpeedDC1394(int speed)
@@ -465,7 +480,10 @@ public:
         cmd.addVocab(VOCAB_DRGETCCM);
         cmd.addInt(video_mode);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 21
 	virtual unsigned int getColorCodingDC1394()
@@ -473,7 +491,10 @@ public:
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETCOD);
         port.write(cmd,response);
-		return response.get(0).asInt()!=0? true:false;
+
+        // I'll bite your sweet little fingers ^__^
+        return (unsigned)response.get(0).asInt();	
+        //return response.get(0).asInt()!=0? true:false;
 	}
 	// 22
 	virtual bool setColorCodingDC1394(int coding)
@@ -654,7 +675,7 @@ public:
         yarp::os::Bottle cmd,response;
         cmd.addVocab(VOCAB_DRGETBPP);
         port.write(cmd,response);
-        return (unsigned int) response.get(0).asInt();
+        return (unsigned)response.get(0).asInt();
 	}
 
 
