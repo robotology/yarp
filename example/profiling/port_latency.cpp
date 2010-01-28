@@ -101,7 +101,7 @@ public:
         for(int k=0;k<payloadSize;k++)
         {
             unsigned int rnd=rand();
-            payload[k]=rnd;
+            payload[k]=rnd; //paranoid
         }
         
     }
