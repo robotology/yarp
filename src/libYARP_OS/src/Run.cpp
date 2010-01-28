@@ -1518,7 +1518,7 @@ int Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarp","yarp","quiet","write",(String("/")+alias+"/"+"stdout").c_str(),NULL);
+		int ret=execlp("yarp","yarp","quiet","write",(String("/")+alias+"/"+"stdout").c_str(),"verbatim",NULL);
 		exit(ret);
 	}
 
