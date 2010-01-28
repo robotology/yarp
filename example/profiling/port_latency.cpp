@@ -4,6 +4,8 @@
 
 #include <math.h>
 
+#include <time.h>
+
 using namespace yarp::os;
 
 // Port latency, basic test.
@@ -92,7 +94,15 @@ public:
         if (payloadSize==0)
             payload=0;
 
+
         payload=new unsigned char [payloadSize];
+        srand (time(NULL));
+        for(int k=0;k<payloadSize;k++)
+        {
+            unsigned int rnd=rand();
+            payload[k]=rnd;
+        }
+        
     }
 };
 
