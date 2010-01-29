@@ -1,9 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /* 
- * Copyright (C) 2006 RobotCub Consortium, European Commission FP6 Project IST-004370
- * Author: Paul Fitzpatrick, Alessandro Scalzo
- * email: paulfitz@alum.mit.edu, alessandro.scalzo@iit.it
+ * Copyright (C) 2010 RobotCub Consortium, European Commission FP6 Project IST-004370
+ * Author: Alessandro Scalzo
+ * email: alessandro.scalzo@iit.it
  * website: www.robotcub.org
  * Permission is granted to copy, distribute, and/or modify this program
  * under the terms of the GNU General Public License, version 2 or any
@@ -23,7 +23,7 @@
 
 #include <yarp/dev/TestFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>
-#include <yarp/dev/RemoteFrameGrabber.h>
+#include <yarp/dev/RemoteFrameGrabberDC1394.h>
 #include <yarp/dev/PolyDriver.h>
 
 using namespace yarp::os;
