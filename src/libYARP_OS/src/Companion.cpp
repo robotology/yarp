@@ -376,7 +376,7 @@ int Companion::cmdName(int argc, char *argv[]) {
     }
     NameClient& nic = NameClient::getNameClient();
     String result = nic.send(cmd);
-    YARP_SPRINTF1(Logger::get(),info,"%s",result.c_str());
+    printf("%s",result.c_str());
     return 0;
 }
 
