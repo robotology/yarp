@@ -95,7 +95,6 @@ public:
         if (payloadSize==0)
             payload=0;
 
-
         payload=new unsigned char [payloadSize];
         srand (time(NULL));
         for(int k=0;k<payloadSize;k++)
@@ -300,12 +299,24 @@ int main(int argc, char **argv) {
     else
         name="default";
 
-    int payload=p.check("payload", Value(1)).asInt();
-
-    printf("Setting payload to %d[bytes]\n", payload);
-
     if (p.check("server"))
-        return server(p.find("period").asDouble()/1000.0, name, payload);
+        {
+
+            int payload=p.check("payload", Value(1)).asInt();
+
+            printf("Setting payload to %d[bytes]\n", payload);
+
+            int dataSize=sizeof(int)+sizeof(double);
+            if (payload>dataSize)
+                payload-=dataSize;
+            else
+                {
+                    fprintf(stderr, "Error: payload must be > %d", dataSize);
+                    return -1;
+                }
+
+            return server(p.find("period").asDouble()/1000.0, name, payload);
+        }
     else if (p.check("client"))
         return client(p.find("nframes").asInt(), name);
 }
