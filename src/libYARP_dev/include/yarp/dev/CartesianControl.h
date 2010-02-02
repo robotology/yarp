@@ -73,7 +73,9 @@ public:
     * using axis-angle representation (xa, ya, za, theta). 
     * @param t: set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept.
-    * @return true/false on success/failure.
+    * @return true/false on success/failure. 
+    *  
+    * @note intended for streaming mode. 
     */
     virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
                           const double t=0.0)=0;
@@ -84,7 +86,9 @@ public:
     * @param xd: a 3-d vector which contains the desired position x,y,z 
     * @param t: set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept. 
-    * @return true/false on success/failure.
+    * @return true/false on success/failure. 
+    *  
+    * @note intended for streaming mode. 
     */
     virtual bool goToPosition(const yarp::sig::Vector &xd, const double t=0.0)=0;
 
@@ -266,7 +270,7 @@ public:
     */
     virtual bool setInTargetTol(const double tol)=0;
 
-    /** Check if the current trajectory is terminated. [wait for
+    /** Check once if the current trajectory is terminated. [wait for
     *   reply]
     * @param f: where the result is returned.
     * @return true if the trajectory is terminated, false otherwise
@@ -274,7 +278,7 @@ public:
     virtual bool checkMotionDone(bool *f)=0;
 
     /** Ask for an immediate stop motion. [wait for reply]
-    * \note the control is completely release, i.e. a direct switch 
+    * \note the control is completely released, i.e. a direct switch 
     *       to non-tracking mode is executed.     
     * @return true/false on success/failure. 
     */
