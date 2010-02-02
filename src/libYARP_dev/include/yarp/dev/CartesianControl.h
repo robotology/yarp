@@ -118,19 +118,19 @@ public:
     /**
     * Get the actual desired pose and joints configuration as result
     * of kinematic inversion. [wait for reply] 
-    * @param xdcap: a 3-d vector which is filled with the actual 
+    * @param xdhat: a 3-d vector which is filled with the actual 
     *          desired position x,y,z (meters); it may differ from
     *          the commanded xd.
-    * @param odcap: a 4-d vector which is filled with the actual 
+    * @param odhat: a 4-d vector which is filled with the actual 
     * desired orientation using axis-angle representation xa, ya, 
     * za, theta (meters and radians); it may differ from the 
     * commanded od. 
-    * @param qdcap: the joints configuration through which the
+    * @param qdhat: the joints configuration through which the
     *             couple (xdcap,odcap) is achieved (degrees).
     * @return true/false on success/failure.
     */
-    virtual bool getDesired(yarp::sig::Vector &xdcap, yarp::sig::Vector &odcap,
-                            yarp::sig::Vector &qdcap)=0;
+    virtual bool getDesired(yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
+                            yarp::sig::Vector &qdhat)=0;
 
     /**
     * Get the current DOF configuration of the limb. [wait for
