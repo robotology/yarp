@@ -96,13 +96,18 @@ public:
             payload=0;
 
         payload=new unsigned char [payloadSize];
-        srand (time(NULL));
-        for(int k=0;k<payloadSize;k++)
+        srand (static_cast<unsigned int> (time(0)));
+        for(unsigned int k=0;k<payloadSize;k++)
         {
             unsigned int rnd=rand();
             payload[k]=rnd; //paranoid
         }
         
+    }
+
+    unsigned int getPayloadSize()
+    {
+        return payloadSize;
     }
 };
 
@@ -113,6 +118,18 @@ public:
 #include <string>
 
 #include <vector>
+
+struct Report
+{
+    Report(double t, unsigned int pl)
+    {
+        dt=t;
+        payload=pl;
+    }
+
+    double dt;
+    unsigned int payload;
+};
 
 class Reader : public BufferedPort<TestData> {
 public:
@@ -125,7 +142,7 @@ public:
 
     int nframes;
 
-    std::vector<double> latencies;
+    std::vector<Report> latencies;
 
 public:
     Reader()
@@ -144,7 +161,8 @@ public:
 
 
         double now=Time::now();
-        double t=datum.get();
+        double origT=datum.get();
+        unsigned int pl=datum.getPayloadSize();
 
 
 #ifdef USE_PARALLEL_PORT
@@ -154,18 +172,18 @@ public:
 #endif
 
         TestData &nd=outPort.prepare();
-        nd.set(t);
+        nd.set(origT);
         outPort.write(true);
 
         if (wait<=0)
             {
 
-                double dT=(now-t)*1000;
+                double dT=(now-origT)*1000;
                 delay+=dT;
                 delaySq+=(dT*dT);
                 count++;
 
-                latencies.push_back(dT);
+                latencies.push_back(Report(dT, pl));
             }
         else
             wait--;
@@ -269,11 +287,11 @@ int client(int nframes, std::string &name)
 
     reader.close();
 
-    std::vector<double>::iterator it=reader.latencies.begin();
+    std::vector<Report>::iterator it=reader.latencies.begin();
     FILE *of=fopen("timing.txt", "w");
     while(it!=reader.latencies.end())
         {
-            fprintf(of, "%lf\n", *it);
+            fprintf(of, "%u %lf\n", (*it).payload, (*it).dt);
             it++;
         }
     fclose(of);
