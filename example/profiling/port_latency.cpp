@@ -173,6 +173,7 @@ public:
 
         TestData &nd=outPort.prepare();
         nd.set(origT);
+        nd.resize(pl);
         outPort.write(true);
 
         if (wait<=0)

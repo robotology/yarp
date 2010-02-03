@@ -8,7 +8,7 @@ NFRAMES=1000
 CLIENT_PORT=/profiling/client/end/port:i
 SERVER_PORT=/profiling/server/default/port:o
 
-MACHINES=( icub-b2)
+MACHINES=( icub-b12 )
 #MACHINES=( pc104 )
 
 case $1 in
