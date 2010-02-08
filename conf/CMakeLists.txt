@@ -15,9 +15,9 @@ INCLUDE(YarpLibraryNames)
 # rename a few flags
 SET(YARP_USE_ATLAS ${USE_ATLAS})
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/include)
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
 FOREACH(conf version system options)
-  SET(outconf ${CMAKE_BINARY_DIR}/include/yarp/conf/${conf}.h)
+  SET(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
                  ${outconf} IMMEDIATE)
   MESSAGE(STATUS "generated ${outconf}")
