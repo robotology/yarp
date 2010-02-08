@@ -83,6 +83,7 @@ int main(int argc, char *argv[]) {
             double period = (now-prev)/ct;
             printf("Period is %g ms per message, freq is %g (%d mgs in %g secs)\n",
                    period*1000, 1/period, ct, now-prev);
+            fflush(stdout);
             ct = 0;
             prev = now;
             spoke = false;
@@ -90,6 +91,7 @@ int main(int argc, char *argv[]) {
         if (bot!=NULL) {
             if (!spoke) {
                 printf("Got something with %d top-level elements\n", bot->size());
+                fflush(stdout);
                 spoke = true;
             }
         }
