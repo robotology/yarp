@@ -54,3 +54,5 @@ MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
 
 SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string? (default is to use the ACE string class)")
 MARK_AS_ADVANCED(USE_STL_STRING)
+
+INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
