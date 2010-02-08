@@ -19,12 +19,18 @@ using namespace yarp::sig;
 
 static bool terminated=false;
 
+BufferedPort<Bottle> *iPort=0;
+
 static void handler (int) {
     static int ct = 0;
     ct++;    
 
     fprintf(stderr, "[try %d of %d] Asking to shut down smoothly\n",ct, 3);
     terminated = true;
+
+    if (iPort!=0)
+        iPort->interrupt();
+
     if (ct>2)
     {
         fprintf(stderr, "[try %d of %d] OK asking to abort...\n", ct, 3);
@@ -48,6 +54,7 @@ int main(int argc, char *argv[]) {
     }
 
     BufferedPort<Bottle> port;
+    iPort=&port; //give pointer to port to signal handler (used to interrupt port at shutdown
 
     // get options
     Property opt;
@@ -96,6 +103,7 @@ int main(int argc, char *argv[]) {
             }
         }
     }
+    iPort=0; //just in case
 
     return 0;
 }
