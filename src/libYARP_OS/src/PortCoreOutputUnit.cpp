@@ -296,7 +296,7 @@ void PortCoreOutputUnit::sendHelper() {
             if (op->isActive()) {
                 op->write(buf);
             } 
-            if (!op->isActive()) {
+            if (!op->isOk()) {
                 done = true;
             }
         }

@@ -1,3 +1,8 @@
+2010-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: fix regression
+	in multicast behavior.
+
 2010-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/CMakeLists.txt: avoid obscure conflict between
