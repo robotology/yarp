@@ -134,7 +134,10 @@ void PortCoreOutputUnit::closeBasic() {
     if (op!=NULL) {
         Route route = op->getRoute();
         if (op->isConnectionless()) {
-            YARP_DEBUG(Logger::get(),"asking other side to close, it is connectionless");
+            YARP_SPRINTF1(Logger::get(),
+                         debug,
+                         "output for route %s asking other side to close, since it is connectionless",
+                         route.toString().c_str());
             Companion::disconnectInput(route.getToName().c_str(),
                                        route.getFromName().c_str(),true);
         } else {

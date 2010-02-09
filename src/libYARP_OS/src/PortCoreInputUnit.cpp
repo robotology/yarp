@@ -82,6 +82,12 @@ void PortCoreInputUnit::run() {
             // just before going official, tag any lurking inputs from
             // the same source as undesired
             if (Name(route.getFromName()).isRooted()) {
+                YARP_SPRINTF3(Logger::get(),
+                              debug,
+                              "Port %s starting up, flushing routes %s->*->%s",
+                              getOwner().getName().c_str(),
+                              route.getFromName().c_str(),
+                              route.getToName().c_str());
                 getOwner().removeIO(Route(route.getFromName(),
                                           route.getToName(),"*"),true);
             }
@@ -176,12 +182,30 @@ void PortCoreInputUnit::run() {
         
         switch (key) {
         case '/':
+            YARP_SPRINTF3(Logger::get(),
+                          debug,
+                          "Port command (%s): %s should add connection: %s",
+                          route.toString().c_str(),
+                          getOwner().getName().c_str(), 
+                          cmd.getText().c_str());
             man.addOutput(cmd.getText(),id,os);
             break;
         case '!':
+            YARP_SPRINTF3(Logger::get(),
+                          debug,
+                          "Port command (%s): %s should remove output: %s",
+                          route.toString().c_str(),
+                          getOwner().getName().c_str(), 
+                          cmd.getText().c_str());
             man.removeOutput(cmd.getText().substr(1,String::npos),id,os);
             break;
         case '~':
+            YARP_SPRINTF3(Logger::get(),
+                          debug,
+                          "Port command (%s): %s should remove input: %s",
+                          route.toString().c_str(),
+                          getOwner().getName().c_str(), 
+                          cmd.getText().c_str());
             man.removeInput(cmd.getText().substr(1,String::npos),id,os);
             break;
         case '*':
