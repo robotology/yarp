@@ -15,4 +15,7 @@ SET(YARP_INCLUDES "${ACE_INCLUDE_DIR};${YARP_OS_INC};${YARP_sig_INC};${YARP_dev_
 ENDIF(YARP_HAS_MATH_LIB)
 
 # pick up auto-generated headers as well
-SET(YARP_INCLUDES "${YARP_INCLUDES};${CMAKE_BINARY_DIR}/include")
+# removed this -- Lorenzo
+#SET(YARP_INCLUDES "${YARP_INCLUDES};${CMAKE_BINARY_DIR}/include")
+# added this -- Lorenzo
+SET(YARP_INCLUDES "${YARP_INCLUDES};${CMAKE_BINARY_DIR}/generated_include")

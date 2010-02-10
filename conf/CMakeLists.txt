@@ -24,6 +24,7 @@ FOREACH(conf version system options)
   INSTALL_FILES(/include/yarp/conf FILES ${outconf})
 ENDFOREACH(conf)
 
+# fix newly added generated_include directory -- Lorenzo 
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)

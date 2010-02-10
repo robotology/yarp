@@ -1,3 +1,8 @@
+2010-02-10 Lorenzo Natale <lorenzo.natale@iit.it>
+	* conf/YarpLibraryNames.cmake:
+	fixed YARP_INCLUDES, removed $YARP_DIR/include
+	added $YARP_DIR/generated_include
+	
 2010-02-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: fix regression
