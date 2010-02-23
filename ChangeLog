@@ -1,3 +1,10 @@
+2010-02-23 Arjan Gijsberts <arjan@liralab.it>
+	* src/libYARP_math/include/yarp/math/Math.h
+	* src/libYARP_math/src/math.cpp
+	* src/libYARP_math/harness/MathTest.cpp
+	Added yarp::math::det to calculate the determinant of a 
+	matrix and the related regression test.
+
 2010-02-10 Lorenzo Natale <lorenzo.natale@iit.it>
 	* conf/YarpLibraryNames.cmake:
 	fixed YARP_INCLUDES, removed $YARP_DIR/include
@@ -456,10 +463,11 @@
 	* src/libYARP_math/src/math.cpp
 	* src/libYARP_math/include/yarp/math/Math.h
 	* src/libYARP_math/harness/MathTest.cpp
-	Added 'luinv' function for square matrix inversion using LU decomposition.
+	Added 'luinv' function for square matrix inversion using LU 
+	decomposition.
 	Added 'chinv' function for positive definite matrix inversion using 
-	Cholesky decomposition. This function depends on GSL 1.12 and is commented 
-	out until this version is installed on most target machines.
+	Cholesky decomposition. This function depends on GSL 1.12 and is 
+	commented out until this version is installed on most target machines.
 
 2009-07-07 Lorenzo Natale <nat@robotcub.org>
 	* src/libYARP_dev/src/include/yarp/dev/ControlBoardInterfaces.h

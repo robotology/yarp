@@ -139,6 +139,12 @@ namespace yarp
         * @param c number of columns
         */
         yarp::sig::Matrix zeros(int r, int c);
+        
+        /**
+        * Computes the determinant of a matrix.
+        * @param in the matrix
+        */
+        double det(const yarp::sig::Matrix& in);
 
         /**
         * Invert a square matrix using LU-decomposition.

@@ -200,6 +200,22 @@ Vector yarp::math::operator*(const yarp::sig::Matrix &m, const yarp::sig::Vector
     return ret;
 }
 
+double yarp::math::det(const yarp::sig::Matrix& in) {
+    int m = in.rows();
+    double ret;
+    int sign = 0;
+
+    Matrix LU(in);
+  
+    gsl_permutation* permidx = gsl_permutation_calloc(m);
+    gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
+    ret = gsl_linalg_LU_det((gsl_matrix *) LU.getGslMatrix(), sign); 
+    gsl_permutation_free(permidx);
+    
+    return ret;
+}
+
+
 Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
     int m = in.rows();
     int n = in.cols();
@@ -213,7 +229,7 @@ Matrix yarp::math::luinv(const yarp::sig::Matrix& in) {
     gsl_linalg_LU_decomp((gsl_matrix *) LU.getGslMatrix(), permidx, &sign);
     gsl_linalg_LU_invert((gsl_matrix *) LU.getGslMatrix(), permidx, 
         (gsl_matrix *) ret.getGslMatrix());
-
+    gsl_permutation_free(permidx);
     return ret;
 }
 

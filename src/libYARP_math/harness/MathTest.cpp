@@ -169,6 +169,36 @@ public:
         */
         
     }
+    
+    void matrixDet() {
+        report(0,"checking matrix determinant...");
+        Matrix A(4,4);
+        A(0,0) = 2;
+        A(0,1) = 3;
+        A(0,2) = 5;
+        A(0,3) = 7;
+
+        A(1,0) = 4;
+        A(1,1) = 7;
+        A(1,2) = 2;
+        A(1,3) = 9;
+
+        A(2,0) = 5;
+        A(2,1) = 5;
+        A(2,2) = 6;
+        A(2,3) = 8;
+
+        A(3,0) = 1;
+        A(3,1) = 1;
+        A(3,2) = 4;
+        A(3,3) = 7;
+        
+        double val = det(A);
+        bool ok = ((val - -163) < 1e-10 && (-163 - val) < 1e-10);
+        checkTrue(ok, "Matrix determinant works");
+        printf("det: %g\n", val);
+    
+    }
 
     virtual void runTests() 
     {
@@ -178,6 +208,7 @@ public:
         vectMatrix();
         svd();
         matrixInv();
+        matrixDet();
     }
 };
 
