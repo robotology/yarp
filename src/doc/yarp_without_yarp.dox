@@ -1,4 +1,10 @@
 
+/*
+ * Copyright (C) 2010 RobotCub Consortium
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
 /** 
  * @page yarp_without_yarp YARP without YARP
 
