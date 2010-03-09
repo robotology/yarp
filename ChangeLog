@@ -1,5 +1,8 @@
 2010-03-09  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
+	* src/doc/yarp_config_files.dox: start a tutorial on yarp
+	config files.
+
 	* src/libYARP_OS/src/Companion.cpp: make it easier to test
 	config file parsing with the "yarp resource" command.
 

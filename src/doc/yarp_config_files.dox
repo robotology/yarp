@@ -1,0 +1,79 @@
+
+/*
+ * Copyright (C) 2010 RobotCub Consortium
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+/** 
+ * @page yarp_config_files YARP config files
+
+\author Paul Fitzpatrick
+
+This tutorial covers how to write and read config files 
+in YARP's native format.
+
+In summary, YARP uses a variant
+of <a href="http://en.wikipedia.org/wiki/INI_file">INI files</a>,
+without the "=" signs.
+
+
+\section yarp_config_file_basics The basics
+
+YARP config files translate into yarp::os::Property objects, using
+the yarp::os::Property::fromConfigFile command.
+
+Suppose we have a file called config.ini containing:
+\code
+width 10
+height 15
+\endcode
+And we do the following in code:
+\code
+#include <yarp/os/Property.h>
+...
+yarp::os::Property prop;
+prop.fromConfigFile("config.ini");
+\endcode
+then the Property object will end up being the mapping
+{width => 10, height => 15}.
+In other words:
+\code
+prop.find("width").asInt() // gives 10
+prop.find("height").asInt() // gives 15
+\endcode
+Lines of the form "[NAME]" will result in nested subproperties.
+For example, for a file containing:
+\code
+[SIZE]
+width 10
+height 15
+[APPEARANCE]
+color red
+\endcode
+the Property object will now contain the mapping
+{SIZE => {width=>10, height=>15}, APPEARANCE => {color=>red}}".
+In other words:
+\code
+prop.findGroup("SIZE").find("width").asInt() // gives 10
+prop.findGroup("APPEARANCE").find("color").asString() // gives red
+\endcode
+
+\section yarp_config_file_nesting Nesting configuration files
+
+It is possible to nest configuration files.  To include
+the configuration file "preamble.ini" inside another one, 
+do:
+\code
+[include "preamble.ini"]
+\endcode
+This will insert the content of preamble.ini as if cut-and-pasted.
+If you would rather have the content included within a subsection
+called FOO, do instead:
+\code
+[include FOO "preamble.ini"]
+\endcode
+
+ *
+ */
+
