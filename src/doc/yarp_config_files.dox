@@ -74,7 +74,7 @@ called FOO, do instead:
 [include FOO "preamble.ini"]
 \endcode
 
-\section yarp_config_file_lists Section lists
+\section yarp_config_file_lists Section collections
 
 Occasionally a config file needs a list of sections containing
 similar entries.  One convenient way to achieve that is with
@@ -100,25 +100,14 @@ geom -0.7 0.3
 color_correct 0.0 0.0 0.0
 \endcode
 
-So we have a handy "camera" list that gives us the names of the 
+So we have a handy "camera" list accessible
+as prop.findGroup("camera").tail() that gives us the names of the 
 camera-related groups.
 
-This syntax is limited, though.  For subsections of this kind,
-consider using \ref yarp_config_file_nesting "nested configuration files".
+This syntax is limited, though.  
+Consider nesting instead 
+using \ref yarp_config_file_nesting "nested configuration files".
 
-\section yarp_config_file_equals Compatibility with other INI readers
-
-Occasionally it is nice to be able to read YARP config files from
-other systems (e.g. Python has an INI reader).  Your best bet to
-do that is to include an equals sign between keys and values, with
-spaces around the equals.  YARP will accept and ignore this, and
-it will make other readers happier.  For YARP, these two lines are
-equivalent:
-\code
-x 10
-x = 10
-\encode
-Don't forget the spaces though!
 
 \section yarp_config_file_comments Comments in config files
 
@@ -156,6 +145,20 @@ is the same as:
 encoders (1 2 3 4 5 6 7 8)
 \endcode
 
+\section yarp_config_file_lists List syntax
+
+Values in a config file can be any type supported by yarp::os::Bottle.
+That includes lists, which are surrounded by parentheses and 
+have spaces (not commas!) between items:
+\code
+example_list (1 2 3)
+nested_list (foo (red (255 0 0)) (green (0 255 0)))
+\endcode
+
+Binary blobs are also supported, and are expressed as lists of
+space-separated numbers surrounded by square parentheses.
+
+
 \section yarp_config_file_find find versus findGroup
 
 The yarp::os::Property::fromConfigFile has two main commands for
@@ -180,13 +183,8 @@ SIZE (width 10) (height 15)
 APPEARANCE (color red)
 \endcode
 
-[The list syntax for config files is that of yarp::os::Bottle.  Items
-are separated by spaces, nested lists are surrounded by regular
-parentheses, and binary blobs are represented as lists of numbers
-surrounded by square parentheses.  Any level of nesting is permitted]
-
-Likewise, every line of
-a configuration file can be interpreted as a list.  For example,
+Every line of
+a configuration file can also be interpreted as a list.  For example,
 the line:
 \code
 key val1 val2 val3
@@ -203,6 +201,20 @@ key (val1 val2 val3)
 \endcode
 Then prop.find("key") returns ("val1","val2","val3") as would be
 expected.
+
+\section yarp_config_file_equals Compatibility with other INI readers
+
+Occasionally it is nice to be able to read YARP config files from
+other systems (e.g. Python has an INI reader).  Your best bet to
+do that is to include an equals sign between keys and values, with
+spaces around the equals.  YARP will accept and ignore this, and
+it will make other readers happier.  For YARP, these two lines are
+equivalent:
+\code
+x 10
+x = 10
+\encode
+Don't forget the spaces though!
 
 
  *
