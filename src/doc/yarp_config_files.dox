@@ -15,7 +15,7 @@ in YARP's native format.
 
 In summary, YARP uses a variant
 of <a href="http://en.wikipedia.org/wiki/INI_file">INI files</a>,
-without the "=" signs.
+without the "=" signs (unless \ref yarp_config_file_equals "you really want them").
 
 
 \section yarp_config_file_basics The basics
@@ -73,6 +73,118 @@ called FOO, do instead:
 \code
 [include FOO "preamble.ini"]
 \endcode
+
+\section yarp_config_file_lists Section lists
+
+Occasionally a config file needs a list of sections containing
+similar entries.  One convenient way to achieve that is with
+a "section prefix".  For example:
+\code
+[camera left]
+geom 0.7 0.3
+color_correct 0.01 0.0 -0.1
+[camera right]
+geom -0.7 0.3
+color_correct 0.0 0.0 0.0
+\endcode
+
+This configuration file is equivalent to:
+
+\code
+camera left right
+[left]
+geom 0.7 0.3
+color_correct 0.01 0.0 -0.1
+[right]
+geom -0.7 0.3
+color_correct 0.0 0.0 0.0
+\endcode
+
+So we have a handy "camera" list that gives us the names of the 
+camera-related groups.
+
+This syntax is limited, though.  For subsections of this kind,
+consider using \ref yarp_config_file_nesting "nested configuration files".
+
+\section yarp_config_file_equals Compatibility with other INI readers
+
+Occasionally it is nice to be able to read YARP config files from
+other systems (e.g. Python has an INI reader).  Your best bet to
+do that is to include an equals sign between keys and values, with
+spaces around the equals.  YARP will accept and ignore this, and
+it will make other readers happier.  For YARP, these two lines are
+equivalent:
+\code
+x 10
+x = 10
+\encode
+Don't forget the spaces though!
+
+\section yarp_config_file_comments Comments in config files
+
+Use the # character, or //, as your prefer.
+\code
+# this is a comment
+// this is also a comment
+\endcode
+
+\section yarp_config_file_quoting Quoting in config files
+
+Keys, values, and section
+names containing spaces or special characters
+should be surrounded by double-quotes, for example:
+\code
+"a string that looks like a list" = "(1 2 3)"
+\endcode
+maps the string "a string that looks like a list" to the
+string "(1 2 3)".
+
+If the quote character needs to be included in a string it
+can be itself quoted by preceding it with a backslash character.
+
+\section yarp_config_file_find find versus findGroup
+
+The yarp::os::Property::fromConfigFile has two main commands for
+accessing information from a configuration file: find, and findGroup.
+
+Normally, you use yarp::os::Property::findGroup to access a section by
+its name, and then yarp::os::Property::find to access a value by
+its key.
+
+Sections are really just a special syntax for lists.  For 
+example:
+\code
+[SIZE]
+width 10
+height 15
+[APPEARANCE]
+color red
+\endcode
+is the same as writing:
+\code
+SIZE (width 10) (height 15)
+APPEARANCE (color red)
+\endcode
+
+Likewise, every line of
+a configuration file can be interpreted as a list.  For example,
+the line:
+\code
+key val1 val2 val3
+\endcode
+is a list with four elements ("key", "val1", "val2", "val3").
+Calling prop.findGroup("key") will return that list of four elements.
+Calling prop.find("key") only really makes sense for single-valued
+cases; it returns the second element of any list.
+For this case, it would return "val1", which is not very
+helpful.  Unless you have a specific reason not to,
+it is generally better to write lists like this:
+\code
+key (val1 val2 val3)
+\endcode
+Then prop.find("key") returns ("val1","val2","val3") as would be
+expected.
+
 
  *
  */
