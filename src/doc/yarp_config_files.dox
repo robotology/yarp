@@ -134,13 +134,27 @@ Keys, values, and section
 names containing spaces or special characters
 should be surrounded by double-quotes, for example:
 \code
-"a string that looks like a list" = "(1 2 3)"
+"a long key whose string value looks like a list" "(1 2 3)"
 \endcode
-maps the string "a string that looks like a list" to the
+maps the string "a long key whose string value looks like a list" to the
 string "(1 2 3)".
 
 If the quote character needs to be included in a string it
 can be itself quoted by preceding it with a backslash character.
+
+\section yarp_config_file_continue Continuing across lines
+
+A long line can be continued on the next line by breaking the
+line up with a backslash character directly before the end of line.
+For example:
+\code
+encoders (1 2 3 4 \
+5 6 7 8)
+\endcode
+is the same as:
+\code
+encoders (1 2 3 4 5 6 7 8)
+\endcode
 
 \section yarp_config_file_find find versus findGroup
 
@@ -165,6 +179,11 @@ is the same as writing:
 SIZE (width 10) (height 15)
 APPEARANCE (color red)
 \endcode
+
+[The list syntax for config files is that of yarp::os::Bottle.  Items
+are separated by spaces, nested lists are surrounded by regular
+parentheses, and binary blobs are represented as lists of numbers
+surrounded by square parentheses.  Any level of nesting is permitted]
 
 Likewise, every line of
 a configuration file can be interpreted as a list.  For example,
