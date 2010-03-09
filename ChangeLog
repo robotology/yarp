@@ -1,3 +1,8 @@
+2010-03-09  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: make it easier to test
+	config file parsing with the "yarp resource" command.
+
 2010-02-23 Arjan Gijsberts <arjan@liralab.it>
 	* src/libYARP_math/include/yarp/math/Math.h
 	* src/libYARP_math/src/math.cpp

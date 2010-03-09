@@ -1005,27 +1005,40 @@ int Companion::cmdResource(int argc, char *argv[]) {
         printf("   yarp resource --policy ICUB_ROOT --from config.ini --find icub\n");
         printf("   yarp resource --policy ICUB_ROOT --find icub.ini --verbose 1\n");
         printf("   yarp resource --policy ICUB_ROOT --ICUB_ROOT /path/to/icub --find icub.ini\n");
+        printf("If a policy file is required, be sure to specify --strict\n");
+        printf("To show what a config file loads as, specify --show\n");
         return 0;
     }
     ResourceFinder rf;
     rf.setVerbose();
     bool ok = rf.configure("",argc,argv,false);
     String result = "";
+    Property p;
+    p.fromCommand(argc,argv,false);
+    bool dir = p.check("dir");
+    if (!p.check("find")) {
+        fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
+        return 1;
+    }
     if (ok) {
-        Property p;
-        p.fromCommand(argc,argv,false);
-        bool dir = p.check("dir");
-        if (!p.check("find")) {
-            fprintf(stderr,"Please specify a file to find, e.g. --find icub.ini\n");
-            return 1;
-        }
         if (dir) {
             result = String(rf.findPath(p.check("find",Value("config")).asString().c_str()));
         } else {
             result = String(rf.findFile(p.check("find",Value("icub.ini")).asString().c_str()));
         }
+    } else {
+        if (p.check("strict")) {
+            return 1;
+        }
+        fprintf(stderr,"No policy, continuing without search (specify --strict to avoid this)...\n");
+        result = p.check("find",Value("config.ini")).asString().c_str();
     }
     printf("%s\n",result.c_str());
+    if (p.check("show")) {
+        Property p2;
+        p2.fromConfigFile(result.c_str());
+        printf(">>> %s\n", p2.toString().c_str());
+    }
     return (result!="")?0:1;
 }
 
