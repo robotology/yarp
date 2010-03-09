@@ -168,6 +168,16 @@ Normally, you use yarp::os::Property::findGroup to access a section by
 its name, and then yarp::os::Property::find to access a value by
 its key.
 
+One gotcha: if you want to iterate through all the items in a group,
+be careful: the first item in the group is its key.  If you want
+to get rid of that, use:
+\code
+prop.findGroup("key").tail()
+\endcode
+Or start your index at 1 rather than 0.
+
+\section yarp_config_file_representation Underlying representation
+
 Sections are really just a special syntax for lists.  For 
 example:
 \code
