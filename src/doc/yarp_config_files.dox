@@ -223,7 +223,7 @@ equivalent:
 \code
 x 10
 x = 10
-\encode
+\endcode
 Don't forget the spaces though!
 
 
