@@ -10,39 +10,72 @@
 
 \author Paul Fitzpatrick
 
-This tutorial covers how to write and read config files 
+This tutorial covers how to write and read configuration files 
 in YARP's native format.
 
 In summary, YARP uses a variant
 of <a href="http://en.wikipedia.org/wiki/INI_file">INI files</a>,
 without the "=" signs (unless \ref yarp_config_file_equals "you really want them").
 
-
-\section yarp_config_file_basics The basics
-
 YARP config files translate into yarp::os::Property objects, using
 the yarp::os::Property::fromConfigFile command.
 
-Suppose we have a file called config.ini containing:
+
+\section yarp_config_file_basics A minimal config file
+
+Here is a minimal config file, say "config.ini" (the extension
+doesn't matter but .ini or .conf is common):
 \code
 width 10
 height 15
 \endcode
-And we do the following in code:
+
+The format of each line is the same as that of the 
+string representation of the yarp::os::Bottle class,
+defined here: \ref data_rep.
+
+This config file contains two groups, one called "width", and 
+the other called "height".
+
+\section yarp_config_file_reading Reading the minimal config file
+We could read the example config file in \ref yarp_config_file_basics,
+by doing the following in code:
 \code
 #include <yarp/os/Property.h>
-...
-yarp::os::Property prop;
-prop.fromConfigFile("config.ini");
+int main() {
+  yarp::os::Property prop;
+  prop.fromConfigFile("config.ini");
+  return 0;
+}
 \endcode
-then the Property object will end up being the mapping
-{width => 10, height => 15}.
-In other words:
+The Property object prop will contain all the groups in the configuration 
+file.  The groups can be accessed by iterating, or by using the
+yarp::os::Property::findGroup command.
 \code
-prop.find("width").asInt() // gives 10
-prop.find("height").asInt() // gives 15
+prop.findGroup("width")  // gives the list [width,10]
+prop.findGroup("height") // gives the list [height,15]
 \endcode
-Lines of the form "[NAME]" will result in nested subproperties.
+In general, the list of values associated with a group can be found 
+with the tail command:
+\code
+prop.findGroup("width").tail() // gives the list [10]
+\endcode
+Since it is common to use groups of two elements to represent
+simple key-value pairs, there is a shorthand command
+yarp::os::Property::find to get the second element of a group directly.
+It returns a yarp::os::Value object which can easily be converted to
+regular C types.
+\code
+prop.find("width").asInt()  // gives the integer 10
+prop.find("height").asInt() // gives the integer 15
+\endcode
+
+\section yarp_config_file_add_section A config file with sections
+
+Configuration files often need to have nesting, with 
+values organized into sections.
+Special tags of the form "[NAME]" are one way to achieve this
+with YARP config files (or INI-style configuration files in general).  
 For example, for a file containing:
 \code
 [SIZE]
@@ -51,18 +84,34 @@ height 15
 [APPEARANCE]
 color red
 \endcode
-the Property object will now contain the mapping
-{SIZE => {width=>10, height=>15}, APPEARANCE => {color=>red}}".
-In other words:
+the Property object we read in code will now contain the 
+two groups "SIZE" and "APPEARANCE", which will have "width", "height",
+and "color" groups nested within them.  In other words:
 \code
 prop.findGroup("SIZE").find("width").asInt() // gives 10
-prop.findGroup("APPEARANCE").find("color").asString() // gives red
+prop.findGroup("APPEARANCE").find("color").asString() // gives "red"
 \endcode
+
+In fact, in YARP config files, the above structure could also be written as:
+\code
+SIZE (width 10) (height 15)
+APPEARANCE (color red)
+\endcode
+This is exactly equivalent.
+
+Here is the rule.  Any list on a separate line in a configuration
+file, with any degree of nesting, is a group.  That means it can be
+found using the findGroup/find commands, with its name being given by
+its first element.  Any sublists within that group can be found
+recursively in code using findGroup/find, again with their names being
+given by their first element.
+
+For those familiar with Lisp, think <a href="http://en.wikipedia.org/wiki/S-expression">S-expressions</a>, and try not to shudder at seeing them used in INI files.
+
 
 \section yarp_config_file_nesting Nesting configuration files
 
-It is possible to nest configuration files.  To include
-the configuration file "preamble.ini" inside another one, 
+To include one configuration file, say "preamble.ini", inside another one, 
 do:
 \code
 [include "preamble.ini"]
@@ -73,6 +122,30 @@ called FOO, do instead:
 \code
 [include FOO "preamble.ini"]
 \endcode
+This last form will result in any sections within preamble.ini 
+being nested within FOO.
+
+For example, if preamble.ini is:
+\code
+alpha 0.5
+[tweaks]
+pnudge 10 -10
+\endcode
+Then with a config.ini of:
+\code
+x 10
+y 10
+[include "preamble.ini"]
+\endcode
+we end up with top-level groups of x, y, alpha, and tweaks.
+With a config.ini of:
+\code
+x 10
+y 10
+[include setup "preamble.ini"]
+\endcode
+we end up with top-level groups of x, y, and setup (alpha and tweaks
+are nested within setup).
 
 \section yarp_config_file_lists Section collections
 
@@ -177,21 +250,6 @@ prop.findGroup("key").tail()
 Or start your index at 1 rather than 0.
 
 \section yarp_config_file_representation Underlying representation
-
-Sections are really just a special syntax for lists.  For 
-example:
-\code
-[SIZE]
-width 10
-height 15
-[APPEARANCE]
-color red
-\endcode
-is the same as writing:
-\code
-SIZE (width 10) (height 15)
-APPEARANCE (color red)
-\endcode
 
 Every line of
 a configuration file can also be interpreted as a list.  For example,
