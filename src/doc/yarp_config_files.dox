@@ -38,7 +38,7 @@ This config file contains two groups, one called "width", and
 the other called "height".
 
 \section yarp_config_file_reading Reading the minimal config file
-We could read the example config file in \ref yarp_config_file_basics,
+We could read the example config file in \ref yarp_config_file_basics "the above section",
 by doing the following in code:
 \code
 #include <yarp/os/Property.h>
@@ -50,10 +50,12 @@ int main() {
 \endcode
 The Property object prop will contain all the groups in the configuration 
 file.  The groups can be accessed by iterating, or by using the
-yarp::os::Property::findGroup command.
+yarp::os::Property::findGroup command.  This takes a keyword as an 
+argument, and returns the group that has that keyword as its first 
+element.
 \code
-prop.findGroup("width")  // gives the list [width,10]
-prop.findGroup("height") // gives the list [height,15]
+prop.findGroup("width")  // gives the group [width,10] as a list
+prop.findGroup("height") // gives the group [height,15] as a list
 \endcode
 In general, the list of values associated with a group can be found 
 with the tail command:
