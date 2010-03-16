@@ -5,7 +5,13 @@
 PROJECT(YarpModules)
 
 INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
-LINK_LIBRARIES(YARP_dev YARP_sig YARP_OS)
+IF (WIN32 AND NOT CYGWIN)
+  LINK_LIBRARIES(optimized YARP_dev debug YARP_devd)
+  LINK_LIBRARIES(optimized YARP_sig debug YARP_sigd)
+  LINK_LIBRARIES(optimized YARP_OS debug YARP_OSd)
+ELSE (WIN32 AND NOT CYGWIN)
+  LINK_LIBRARIES(YARP_dev YARP_sig YARP_OS)
+ENDIF (WIN32 AND NOT CYGWIN)
 
 # This directory may be compiled independently of the rest of YARP,
 # so we need to pick up YARP explicitly.
