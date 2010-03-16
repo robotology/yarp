@@ -2,6 +2,10 @@
 
 	* src/yarpserver/src/SqliteTripleSource.h: eliminate use of
 	unprotected sprintf.
+	
+	* src/CMakeLists.txt, src/modules/CMakeLists.txt: improve
+	dependencies produced by export_library_dependencies on
+	Windows when using Visual Studio.
 
 2010-03-09  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
