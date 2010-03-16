@@ -1,3 +1,8 @@
+2010-03-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/yarpserver/src/SqliteTripleSource.h: eliminate use of
+	unprotected sprintf.
+
 2010-03-09  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/doc/yarp_config_files.dox: start a tutorial on yarp

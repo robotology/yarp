@@ -16,6 +16,12 @@
 #include "Triple.h"
 #include "TripleSource.h"
 
+#if WIN32
+#define safe_printf sprintf_s
+#else
+#define safe_printf snprintf
+#endif 
+
 /**
  *
  * Sqlite database, viewed as a collection of triples.  These are the
@@ -166,7 +172,7 @@ public:
         int rid = (context!=NULL)?context->rid:-1;
         char buf[100] = "NULL";
         if (rid!=-1) {
-            sprintf(buf,"%d",rid);
+            safe_printf(buf,100,"%d",rid);
         }
         return buf;
     }
