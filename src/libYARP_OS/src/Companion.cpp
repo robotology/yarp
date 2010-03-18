@@ -1389,7 +1389,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         String txt = getStdin();
         if (!feof(stdin)) {
             if (txt[0]<32 && txt[0]!='\n' && 
-                txt[0]!='\r' && txt[0]!='\0') {
+                txt[0]!='\r' && txt[0]!='\0' && txt[0]!='\t') {
                 break;  // for example, horrible windows ^D
             }
             BottleImpl bot;
