@@ -13,14 +13,20 @@ ADD_DEFINITIONS(${GTHREAD_C_FLAGS})
 LINK_LIBRARIES(${GTHREAD_LINK_FLAGS})
 INCLUDE_DIRECTORIES(${GTHREAD_INCLUDE_DIR})
 
-# set up to use libYARP_*
-SET(NEED_LIBS YARP_OS YARP_sig)
+GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
+INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+
+FILE(GLOB folder_source *.cpp)
+FILE(GLOB folder_header *.h)
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
 
 IF (WIN32 AND NOT CYGWIN)
-  YarpProgram(yarpview NO_CONSOLE)
-  INSTALL_TARGETS(/bin yarpview)
+  ADD_EXECUTABLE(yarpview WIN32 ${folder_source} ${folder_header})
 ELSE (WIN32 AND NOT CYGWIN)
-  YarpProgram(yarpview NO_CONSOLE)
-  INSTALL_TARGETS(/bin yarpview)
+  ADD_EXECUTABLE(yarpview ${folder_source} ${folder_header})
 ENDIF (WIN32 AND NOT CYGWIN)
 
+TARGET_LINK_LIBRARIES(yarpview YARP_sig)
+
+INSTALL_TARGETS(/bin yarpview)

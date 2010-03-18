@@ -2,6 +2,19 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
  
-SET(NEED_LIBS YARP_OS)
-YarpLibrary(YARP_sig sig)
+PROJECT(YARP_sig)
 
+FILE(GLOB folder_source src/*.cpp)
+FILE(GLOB_RECURSE folder_header include/*.h)
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
+
+SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${PROJECT_SOURCE_DIR}/include)
+GET_PROPERTY(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+
+ADD_LIBRARY(YARP_sig ${folder_source} ${folder_header})
+TARGET_LINK_LIBRARIES(YARP_sig YARP_OS)
+
+SET_PROPERTY(TARGET YARP_sig PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

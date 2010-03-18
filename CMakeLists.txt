@@ -2,58 +2,59 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.0.5)
+cmake_minimum_required(VERSION 2.6)
 
-PROJECT(YARP)
-
-# set some CMake policy flags (for CMake version 2.6)
-IF (COMMAND cmake_policy)
-  cmake_policy(SET CMP0005 OLD)  # use 2.4 behavior for ADD_DEFINITIONS
-  cmake_policy(SET CMP0003 NEW)  # don't do funky lib path things
-ENDIF (COMMAND cmake_policy)
+project(YARP)
 
 # set a flag so sub-directories know that are being compiled
 # en masse as opposed to as individuals
-SET(COMPILING_ALL_YARP TRUE)
+set(COMPILING_ALL_YARP TRUE)
 
 # Pick up our scripts - they are all in the conf subdirectory
-SET(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
-SET(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
+set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # Set up some large-scale compile options - do you want devices? guis?
-INCLUDE(YarpOptions)
+include(YarpOptions)
 
 # Get the current yarp version.  Really this should be placed into
 # a generated header file.
-INCLUDE(YarpVersion)
+include(YarpVersion)
 
 # Configure where the output will go
-INCLUDE(YarpOutput)
+include(YarpOutput)
 
 # get appropriate libraries and settings
-INCLUDE(YarpReqLib)
+include(YarpReqLib)
 
 # define useful macros for sub-libraries and programs
-INCLUDE(YarpLibrary)
-INCLUDE(YarpProgram)
+#INCLUDE(YarpLibrary)
+#INCLUDE(YarpProgram)
 
 # turn on testing
-ENABLE_TESTING()
+enable_testing()
+
+set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+set_property(GLOBAL PROPERTY YARP_TREE_LIBRARIES)
 
 # declare active subdirectories
-SUBDIRS(src conf)
+add_subdirectory(conf)
+ADD_SUBDIRECTORY(src)
+
+get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+message(STATUS "Include dirs ${YARP_TREE_INCLUDE_DIRS}")
 
 # set up some packaging properties
-INCLUDE(YarpPackage)
+include(YarpPackage)
 
 # make doc target - we could check whether doxygen is present, but
 # let's not make a big deal of it for now.
-SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
-IF (YARP_ADMIN)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/doxygen/Doxyfile.part.template
+set(YARP_ADMIN "$ENV{YARP_ADMIN}")
+if (YARP_ADMIN)
+  configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/Doxyfile.part.template
                  ${CMAKE_BINARY_DIR}/dox/Doxyfile.part IMMEDIATE)
-  ADD_CUSTOM_TARGET(dox COMMAND doxygen ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
-ENDIF (YARP_ADMIN)
+  add_custom_target(dox COMMAND doxygen ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
+endif ()
 
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun

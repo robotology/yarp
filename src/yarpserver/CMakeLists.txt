@@ -1,18 +1,12 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
- 
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sqlite)
 
-IF (YARP_OS_INC)
-  INCLUDE_DIRECTORIES(${YARP_OS_INC})
-  SET(TEST_BUILD FALSE)
-ELSE (YARP_OS_INC)
-  FIND_PACKAGE(YARP)
-  SET(TEST_BUILD TRUE)
-ENDIF (YARP_OS_INC)
+GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 
 ADD_LIBRARY(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
 

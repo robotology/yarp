@@ -1,8 +1,18 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
- 
-SET(NEED_LIBS YARP_OS YARP_sig)
+
+PROJECT(YARP_math)
+
+FILE(GLOB folder_source src/*.cpp)
+FILE(GLOB_RECURSE folder_header include/*.h)
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
+
+SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${PROJECT_SOURCE_DIR}/include)
+GET_PROPERTY(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 
 SET(USE_ATLAS FALSE CACHE BOOL "Select true to link to Atlas for BLAS")
 IF(USE_ATLAS)
@@ -12,6 +22,9 @@ ELSE(USE_ATLAS)
    LINK_LIBRARIES(optimized ${GSL_LIBRARIES} debug ${GSL_LIBRARIES})
 ENDIF(USE_ATLAS)
 
-YarpLibrary(YARP_math math)
-
 INCLUDE_DIRECTORIES(${GSL_INCLUDE_DIRS})
+
+ADD_LIBRARY(YARP_math ${folder_source} ${folder_header})
+TARGET_LINK_LIBRARIES(YARP_math YARP_OS)
+
+SET_PROPERTY(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

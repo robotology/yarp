@@ -2,18 +2,25 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-SET(NEED_LIBS "")
-YarpLibrary(YARP_OS os)
+PROJECT(YARP_OS)
 
-# add YARP Network companion executable
+FILE(GLOB folder_source src/*.cpp)
+FILE(GLOB_RECURSE folder_header include/*.h)
+SOURCE_GROUP("Source Files" FILES ${folder_source})
+SOURCE_GROUP("Header Files" FILES ${folder_header})
+
+SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${PROJECT_SOURCE_DIR}/include)
+GET_PROPERTY(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+
+ADD_LIBRARY(YARP_OS ${folder_source} ${folder_header})
 ADD_EXECUTABLE(yarp yarp/yarp.cpp)
 ADD_EXECUTABLE(yarpserver yarp/yarpserver.cpp)
+
 TARGET_LINK_LIBRARIES(yarp YARP_OS ${ACE_LINK_FLAGS})
 TARGET_LINK_LIBRARIES(yarpserver YARP_OS ${ACE_LINK_FLAGS})
-INSTALL_TARGETS(/bin yarp yarpserver)
 
-IF(MSVC)
-    SET_TARGET_PROPERTIES(yarp PROPERTIES COMPILE_FLAGS /wd4996)
-    SET_TARGET_PROPERTIES(yarpserver PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(MSVC)
- 
+SET_PROPERTY(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+
+INSTALL_TARGETS(/bin yarp yarpserver)

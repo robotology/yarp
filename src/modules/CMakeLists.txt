@@ -4,28 +4,10 @@
 
 PROJECT(YarpModules)
 
-INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
-IF (WIN32 AND NOT CYGWIN)
-  LINK_LIBRARIES(optimized YARP_dev debug YARP_devd)
-  LINK_LIBRARIES(optimized YARP_sig debug YARP_sigd)
-  LINK_LIBRARIES(optimized YARP_OS debug YARP_OSd)
-ELSE (WIN32 AND NOT CYGWIN)
-  LINK_LIBRARIES(YARP_dev YARP_sig YARP_OS)
-ENDIF (WIN32 AND NOT CYGWIN)
-
-# This directory may be compiled independently of the rest of YARP,
-# so we need to pick up YARP explicitly.
-IF (NOT COMPILING_ALL_YARP)
-  FIND_PACKAGE(YARP REQUIRED)
-ELSE (NOT COMPILING_ALL_YARP)
-  INCLUDE(YarpDevice)
+INCLUDE(YarpDevice)
+IF (NOT YARP_DIR)
   SET (YARP_DIR ${CMAKE_SOURCE_DIR})
-ENDIF (NOT COMPILING_ALL_YARP)
-
-IF (MERGE_DEVICE_LIBRARY_MODULES)
-  # add in the content of YARP_dev
-  GET_TARGET_PROPERTY(MERGE_SRCS YARP_dev merge_srcs)
-ENDIF (MERGE_DEVICE_LIBRARY_MODULES)
+ENDIF (NOT YARP_DIR)
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.

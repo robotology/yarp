@@ -2,20 +2,18 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-PROJECT(configuration)
-
-#GET_TARGET_PROPERTY(YARP_dev_LIB YARP_dev LOCATION)
-#GET_TARGET_PROPERTY(YARP_dev_INC YARP_dev header_path)
-#GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS YARP_dev ext_libs)
-# actually device stuff isn't set up yet
 
 ## Remember: on Linux order does matter!
-INCLUDE(YarpLibraryNames)
+#INCLUDE(YarpLibraryNames)
+
+MESSAGE(STATUS "in conf")
 
 # rename a few flags
 SET(YARP_USE_ATLAS ${USE_ATLAS})
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
+SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${CMAKE_BINARY_DIR}/generated_include)
+
 FOREACH(conf version system options)
   SET(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
