@@ -13,13 +13,8 @@ FOREACH(conf version system options)
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
                  ${outconf} IMMEDIATE)
   MESSAGE(STATUS "generated ${outconf}")
-  INSTALL_FILES(/include/yarp/conf FILES ${outconf})
+  INSTALL(FILES ${outconf} COMPONENT development DESTINATION include/yarp/conf)
 ENDFOREACH(conf)
-
-# fix newly added generated_include directory -- Lorenzo 
-
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 
 # There are several macros we would like to have available
 # for user

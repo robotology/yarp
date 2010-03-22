@@ -41,8 +41,14 @@ set_property(GLOBAL PROPERTY YARP_TREE_LIBRARIES)
 add_subdirectory(conf)
 ADD_SUBDIRECTORY(src)
 
-get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-message(STATUS "Include dirs ${YARP_TREE_INCLUDE_DIRS}")
+get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+message(STATUS "In-tree includes: ${YARP_INCLUDES}")
+
+get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
+
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 
 # set up some packaging properties
 include(YarpPackage)
@@ -56,7 +62,10 @@ if (YARP_ADMIN)
   add_custom_target(dox COMMAND doxygen ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
 endif ()
 
+INSTALL(EXPORT YARP DESTINATION lib/YARP)
+
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun
 # for everybody.
 # Touch: 1 2 3
+

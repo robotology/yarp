@@ -27,11 +27,12 @@ ENDIF (EXISTS ${STATLIB})
 
 
 SET(COMPILE_NEW_YARPVIEW TRUE CACHE BOOL "Do you want to compile the new yarpview?")
-#MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
+MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
 
 # compile device library by default - safe, since individual devices
 # are added on request
 SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
+MARK_AS_ADVANCED(CREATE_DEVICE_LIBRARY)
 
 SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Compile device modules")
 
@@ -55,4 +56,3 @@ MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
 SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string? (default is to use the ACE string class)")
 MARK_AS_ADVANCED(USE_STL_STRING)
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
