@@ -2,12 +2,6 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-
-## Remember: on Linux order does matter!
-#INCLUDE(YarpLibraryNames)
-
-MESSAGE(STATUS "in conf")
-
 # rename a few flags
 SET(YARP_USE_ATLAS ${USE_ATLAS})
 
