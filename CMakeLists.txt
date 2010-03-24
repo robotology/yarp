@@ -6,10 +6,6 @@ cmake_minimum_required(VERSION 2.6)
 
 project(YARP)
 
-# set a flag so sub-directories know that are being compiled
-# en masse as opposed to as individuals
-set(COMPILING_ALL_YARP TRUE)
-
 # Pick up our scripts - they are all in the conf subdirectory
 set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
