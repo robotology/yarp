@@ -16,8 +16,8 @@ include(YarpOptions)
 # Get the current YARP version.
 include(YarpVersion)
 
-# get appropriate libraries and settings
-include(YarpReqLib)
+# Check system types, find necessary libraries.
+include(YarpSystemCheck)
 
 # turn on testing
 enable_testing()
