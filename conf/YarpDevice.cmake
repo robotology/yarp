@@ -47,11 +47,6 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     SET(CMAKE_DEBUG_POSTFIX "d")
   ENDIF (MSVC)
 
-  # Dependencies on YARP of individual device modules via
-  # FIND_PACKAGE(YARP) will be optimized by substituting directly
-  # the names of the YARP libraries.
-  INCLUDE(YarpLibraryNames)
-
   # This is a collection of variable used to track all sorts of
   # resources as a device module is created.  For example, when
   # in a device module there is a line like:

@@ -1,7 +1,7 @@
 IF(UNIX)
  INCLUDE(FindPkgConfig)
  if (PKG_CONFIG_FOUND)
-   pkg_check_modules(GTKPLUS "gthread-2.0")
+   pkg_check_modules(GTHREAD "gthread-2.0")
    if (GTHREAD_FOUND)
      set(GTHREAD_INCLUDE_DIR ${GTHREAD_INCLUDE_DIRS})
      set(GTHREAD_LIBRARY_DIR ${GTHREAD_LIBRARY_DIRS})

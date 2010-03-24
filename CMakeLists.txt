@@ -23,7 +23,7 @@ include(YarpReqLib)
 enable_testing()
 
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-set_property(GLOBAL PROPERTY YARP_TREE_LIBRARIES)
+set_property(GLOBAL PROPERTY YARP_LIBS)
 
 # declare active subdirectories
 add_subdirectory(conf)

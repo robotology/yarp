@@ -19,7 +19,7 @@ ENDFOREACH(conf)
 # There are several macros we would like to have available
 # for user
 
-FOREACH(conf YarpDevice.cmake YarpLibraryNames.cmake YarpModuleHooks.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindAce.cmake)
+FOREACH(conf YarpDevice.cmake YarpModuleHooks.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindAce.cmake)
   CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/${conf}
                  ${CMAKE_BINARY_DIR}/conf/${conf} COPYONLY IMMEDIATE)
 ENDFOREACH(conf)
