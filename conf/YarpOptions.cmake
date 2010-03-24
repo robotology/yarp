@@ -4,6 +4,27 @@
 
 
 #########################################################################
+# Control where libraries and executables are placed
+
+SET(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+MESSAGE(STATUS "Libraries are placed in ${LIBRARY_OUTPUT_PATH}")
+MESSAGE(STATUS "Executables are placed in ${EXECUTABLE_OUTPUT_PATH}")
+# Make sure the directories actually exist
+MAKE_DIRECTORY(${LIBRARY_OUTPUT_PATH})
+MAKE_DIRECTORY(${EXECUTABLE_OUTPUT_PATH})
+MARK_AS_ADVANCED(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+MARK_AS_ADVANCED(CMAKE_BACKWARDS_COMPATIBILITY)
+IF (MSVC)
+  # See the Debug/Release subdirectories - is there a more systematic
+  # way to do this?
+  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib 
+    ${CMAKE_BINARY_DIR}/lib/Debug 
+    ${CMAKE_BINARY_DIR}/lib/Release)
+ENDIF (MSVC)
+
+
+#########################################################################
 # Encourage user to specify build type.
 
 IF(NOT CMAKE_BUILD_TYPE)
@@ -65,6 +86,10 @@ IF (WIN32)
   MARK_AS_ADVANCED(CREATE_SHARED_LIBRARY)
 ENDIF (WIN32)
 
+IF(CREATE_SHARED_LIBRARY)
+	SET(BUILD_SHARED_LIBS ON)
+ENDIF(CREATE_SHARED_LIBRARY)
+
 
 #########################################################################
 # Control whether yarp::os::impl::String should be std::string or opaque
@@ -74,6 +99,13 @@ ENDIF (WIN32)
 
 SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string? (default is to use the ACE string class)")
 MARK_AS_ADVANCED(USE_STL_STRING)
+
+IF (USE_STL_STRING)
+  MESSAGE(STATUS "Using std::string")
+  SET(YARP_USE_STL_STRING 1)
+ELSE (USE_STL_STRING)
+  SET(YARP_USE_ACE_STRING 1)
+ENDIF (USE_STL_STRING)
 
 
 #########################################################################

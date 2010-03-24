@@ -13,19 +13,11 @@ set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 # Set up some large-scale compile options - do you want devices? guis?
 include(YarpOptions)
 
-# Get the current yarp version.  Really this should be placed into
-# a generated header file.
+# Get the current YARP version.
 include(YarpVersion)
-
-# Configure where the output will go
-include(YarpOutput)
 
 # get appropriate libraries and settings
 include(YarpReqLib)
-
-# define useful macros for sub-libraries and programs
-#INCLUDE(YarpLibrary)
-#INCLUDE(YarpProgram)
 
 # turn on testing
 enable_testing()

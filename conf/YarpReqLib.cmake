@@ -2,7 +2,9 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-INCLUDE(UsePkgConfig)
+
+#########################################################################
+# Unsorted material
 
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
 
@@ -56,14 +58,6 @@ IF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
 	SET(YARP_LITTLE_ENDIAN 1)
     ENDIF(${IS_BIG_ENDIAN})
 ENDIF(EXISTS "${CMAKE_ROOT}/Modules/TestBigEndian.cmake")
-
-# check if we want yarp String to be std::string
-IF (USE_STL_STRING)
-  MESSAGE(STATUS "Using std::string")
-  SET(YARP_USE_STL_STRING 1)
-ELSE (USE_STL_STRING)
-  SET(YARP_USE_ACE_STRING 1)
-ENDIF (USE_STL_STRING)
 
 
 # get an int32 type
@@ -160,17 +154,6 @@ ENDIF (${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION} GREATER 2.5)
 SET(YARP_DEFINES ${YARP_DEFINES_ACCUM} CACHE STRING "Definitions needed when compiling with YARP")
 MARK_AS_ADVANCED(YARP_DEFINES)
 
-# make this visual studio specific, otherwise see warnings on e.g. OSX
-# that these directories don't exist
-IF (MSVC)
-  # msvc problems...
-  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib ${CMAKE_BINARY_DIR}/lib/Debug ${CMAKE_BINARY_DIR}/lib/Release)
-ENDIF (MSVC)
 
-
-# acan't do this on windows without a lot of mess
-IF(CREATE_SHARED_LIBRARY)
-	SET(BUILD_SHARED_LIBS ON)
-ENDIF(CREATE_SHARED_LIBRARY)
 
 
