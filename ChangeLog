@@ -1,3 +1,8 @@
+2010-03-24 Lorenzo Natale <lorenzo.natale@iit.it>
+	* src/libYARP_sig/src/Matrix.cpp
+    * src/libYARP_sig/include/yarp/sig/Matrix.h
+        Matrix::transposed() is now a const method
+        
 2010-03-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/yarpserver/src/SqliteTripleSource.h: eliminate use of

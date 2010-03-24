@@ -193,7 +193,7 @@ public:
       * Return the transposed of the matrix. 
       * @return the transposed copy of the matrix.
       */
-      Matrix transposed();
+      Matrix transposed() const;
 
       /**
       * Build an identity matrix, don't resize.
