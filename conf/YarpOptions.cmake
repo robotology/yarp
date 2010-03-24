@@ -118,9 +118,6 @@ MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
 #########################################################################
 # Defunct options to be removed
 
-SET(COMPILE_NEW_YARPVIEW TRUE CACHE BOOL "Do you want to compile the new yarpview?")
-MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
-
 # set a flag so sub-directories know that are being compiled
 # en masse as opposed to as individuals
 set(COMPILING_ALL_YARP TRUE)
