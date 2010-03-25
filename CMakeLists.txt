@@ -37,6 +37,8 @@ message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
+               
+EXPORT(TARGETS ${YARP_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 
 # set up some packaging properties
 include(YarpPackage)
