@@ -5,7 +5,7 @@
 using namespace std;
 using namespace yarp::os;
 
-int main(int argc, char *argv) {
+int main(int argc, char *argv[]) {
     Network yarp;
     BufferedPort<Bottle> port;
     port.open("/summer");
