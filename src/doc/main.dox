@@ -81,6 +81,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref gpu_tutorial
 \li \ref carrier_expert
 \li \ref yarp_guts
+\li \ref rpc_ports
 
  *
  */
