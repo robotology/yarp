@@ -19,6 +19,8 @@
  */
 class NameService {
 public:
+    virtual ~NameService() {}
+
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,

@@ -46,6 +46,9 @@ public:
         reset();
     }
 
+    virtual ~TripleSource() {
+    }
+
     virtual void reset() {
         verbose = 0;
     }
