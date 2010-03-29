@@ -19,13 +19,13 @@ that message.  Historically, YARP has stressed streaming communication
 robust and scalable control logic.  However, RPC definitely has
 its place, and this tutorial describes how to do it in YARP.
 
-\subsection rpc_ports_basics RPC using regular YARP ports
+\section rpc_ports_basics RPC using regular YARP ports
 
 The basic mechanism for getting replies with YARP is described in 
 the \ref port_expert_reply "getting replies" section of the
 \ref port_expert "Port Power" tutorial.
 
-\subsection rpc_ports_special RPC using specialized YARP ports
+\section rpc_ports_special RPC using specialized YARP ports
 
 If you intend to use ports for RPC alone, you can use
 the yarp::os::RpcClient and yarp::os::RpcServer classes.
@@ -34,7 +34,7 @@ except that streaming operation is prohibited.
 By using these classes, YARP can check for accidental
 misusage of the ports, and give more helpful error messages.
 
-\subsection rpc_ports_sniffing Monitoring RPC communication
+\section rpc_ports_sniffing Monitoring RPC communication
 
 Normal streaming communication in YARP is very easy to monitor,
 just connect another port to the sender.  For RPC communication,
