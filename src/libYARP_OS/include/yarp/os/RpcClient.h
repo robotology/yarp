@@ -103,6 +103,41 @@ public:
     bool write(PortWriter& writer, PortReader& reader) const {
         return port.write(writer,reader);
     }
+
+    // documented in Contactable
+    virtual bool setEnvelope(PortWriter& envelope) {
+        return port.setEnvelope(envelope);
+    }
+
+    // documented in Contactable
+    virtual bool getEnvelope(PortReader& envelope) {
+        return port.getEnvelope(envelope);
+    }
+
+    // documented in Contactable
+    virtual int getInputCount() {
+        return port.getInputCount();
+    }
+
+    // documented in Contactable
+    virtual int getOutputCount() {
+        return port.getOutputCount();
+    }
+
+    // documented in Contactable
+    virtual void getReport(PortReport& reporter) {
+        getReport(reporter);
+    }
+
+    // documented in Contactable
+    virtual void setReporter(PortReport& reporter) {
+        setReporter(reporter);
+    }
+
+    // documented in Contactable
+    virtual bool isWriting() {
+        return isWriting();
+    }
     
 private:
     // an RpcClient may be implemented with a regular port

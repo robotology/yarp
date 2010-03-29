@@ -1,5 +1,8 @@
 2010-03-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/all.h: add RpcClient and
+	RpcServer to the standard set of includes.
+
 	* src/libYARP_OS/src/Companion.cpp: allow carriers to be 
 	specified either on source or destination port in "yarp
 	connect"
