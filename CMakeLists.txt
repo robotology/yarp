@@ -19,43 +19,50 @@ include(YarpVersion)
 # Check system types, find necessary libraries.
 include(YarpSystemCheck)
 
-# turn on testing
+# Turn on testing
 enable_testing()
 
+# The YARP build is fairly flexible, so we need to accumulate some
+# information about what libraries are being built (and their dependencies),
+# along with the include path.
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 
-# declare active subdirectories
+# build some configuration header files
 add_subdirectory(conf)
-ADD_SUBDIRECTORY(src)
 
+# build the main libraries and utilities
+add_subdirectory(src)
+
+# Now, let's see what we built, and record it to facilitate in-tree 
+# (uninstalled) use of YARP.
 get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-message(STATUS "In-tree includes: ${YARP_INCLUDES}")
-
 get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+message(STATUS "In-tree includes: ${YARP_INCLUDES}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-               
-EXPORT(TARGETS ${YARP_LIBRARIES} FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
+export(TARGETS ${YARP_LIBRARIES} 
+	       FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 
-# set up some packaging properties
+# Set up a configuration file for installed use of YARP
+install(EXPORT YARP DESTINATION lib/YARP)
+
+# Set up some packaging properties (for generating tarballs etc)
 include(YarpPackage)
 
-# make doc target - we could check whether doxygen is present, but
-# let's not make a big deal of it for now.
-set(YARP_ADMIN "$ENV{YARP_ADMIN}")
-if (YARP_ADMIN)
+# Make documentation target, documentation goes in doc subdirectory
+# of build.
+find_program(DOXYGEN_EXE NAMES doxygen)
+mark_as_advanced(DOXYGEN_EXE)
+if (DOXYGEN_EXE)
   configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/Doxyfile.part.template
                  ${CMAKE_BINARY_DIR}/dox/Doxyfile.part IMMEDIATE)
-  add_custom_target(dox COMMAND doxygen ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
+  add_custom_target(dox COMMAND ${DOXYGEN_EXE} ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
 endif ()
-
-INSTALL(EXPORT YARP DESTINATION lib/YARP)
 
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun
 # for everybody.
 # Touch: 1 2 3
-
