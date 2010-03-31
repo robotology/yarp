@@ -2,32 +2,25 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Alessandro Scalzo
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-ADD_SUBDIRECTORY(libYARP_OS)
+add_subdirectory(libYARP_OS)
 
-ADD_SUBDIRECTORY(libYARP_sig)
+add_subdirectory(libYARP_sig)
 
-ADD_SUBDIRECTORY(libYARP_dev)
+add_subdirectory(libYARP_dev)
 
 # Device related libraries / executables
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-  ADD_SUBDIRECTORY(modules)
-ELSE (CREATE_DEVICE_LIBRARY_MODULES)
-  ADD_SUBDIRECTORY(yarpdev)
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
+if (CREATE_DEVICE_LIBRARY_MODULES)
+  add_subdirectory(modules)
+else (CREATE_DEVICE_LIBRARY_MODULES)
+  add_subdirectory(yarpdev)
+endif (CREATE_DEVICE_LIBRARY_MODULES)
 
-SET(CREATE_YARPSERVER3 FALSE CACHE BOOL "Do you want to compile yarpserver3?")
-IF (CREATE_YARPSERVER3)
-  ADD_SUBDIRECTORY(yarpserver)
-ENDIF (CREATE_YARPSERVER3)
+add_subdirectory(yarpserver)
 
-IF (YARP_HAS_MATH_LIB)
-  ADD_SUBDIRECTORY(libYARP_math)
-ENDIF(YARP_HAS_MATH_LIB)
+add_subdirectory(libYARP_math)
 
-ADD_SUBDIRECTORY(yarprun)
+add_subdirectory(yarprun)
 
-IF (CREATE_GUIS)
-  ADD_SUBDIRECTORY(yarpview)
-ENDIF (CREATE_GUIS)
+add_subdirectory(yarpview)
 
 

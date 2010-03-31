@@ -65,19 +65,6 @@ ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
 
 #########################################################################
-# Control compilation of GUI code (now just yarpview, other parts
-# were moved to iCub project)
-
-SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
-
-
-#########################################################################
-# Control compilation of math library
-
-SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create math library libYARP_math")
-
-
-#########################################################################
 # Control whether libraries are shared or static.
 # This option isn't really usable on windows right now.
 

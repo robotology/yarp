@@ -73,21 +73,6 @@ ENDIF (CREATE_GUIS)
 
 
 #########################################################################
-# Get Math libraries if needed - this should move to math directory
-
-SET(YARP_HAS_MATH_LIB FALSE)
-
-IF (CREATE_LIB_MATH)
-FIND_PACKAGE(GSL REQUIRED)
-IF (NOT GSL_FOUND)
-	MESSAGE(STATUS "GSL not found, won't compile libYARP_math")
-ELSE (NOT GSL_FOUND)
-	SET(YARP_HAS_MATH_LIB TRUE)
-ENDIF (NOT GSL_FOUND)
-ENDIF(CREATE_LIB_MATH)
-
-
-#########################################################################
 # Set up compile flags, and configure ACE
 
 SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
