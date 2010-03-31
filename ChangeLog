@@ -1,3 +1,17 @@
+2010-03-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/all.h: add RpcClient and
+	RpcServer to the standard set of includes.
+
+	* src/libYARP_OS/src/Companion.cpp: allow carriers to be 
+	specified either on source or destination port in "yarp
+	connect"
+
+2010-03-24 Lorenzo Natale <lorenzo.natale@iit.it>
+	* src/libYARP_sig/src/Matrix.cpp
+    * src/libYARP_sig/include/yarp/sig/Matrix.h
+        Matrix::transposed() is now a const method
+        
 2010-03-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/yarpserver/src/SqliteTripleSource.h: eliminate use of

@@ -35,7 +35,7 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
         if (result==0) {
             fprintf(stderr,"Database needs to be recreated.\n");
             fprintf(stderr,"Please move %s out of the way.\n", filename);
-            return NULL;
+            return false;
         }
 
     }

@@ -31,6 +31,8 @@ public:
  */
 class Allocator {
 public:
+    virtual ~Allocator() {}
+
     virtual yarp::os::Contact completePortName(const yarp::os::Contact& c)=0;
 
     virtual yarp::os::Contact completeSocket(const yarp::os::Contact& c)=0;

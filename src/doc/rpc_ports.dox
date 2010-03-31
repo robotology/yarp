@@ -1,0 +1,123 @@
+
+/*
+ * Copyright (C) 2010 RobotCub Consortium
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+/** 
+ * @page rpc_ports Specialized RPC ports
+
+\author Paul Fitzpatrick
+
+RPC stands for "Remote Procedure Call", and in YARP is used to
+refer to communication that consists of a message and a reply to
+that message.  Historically, YARP has stressed streaming communication
+(without replies) because in our experience it leads to more 
+robust and scalable control logic.  However, RPC definitely has
+its place, and this tutorial describes how to do it in YARP.
+
+\section rpc_ports_basics RPC using regular YARP ports
+
+The basic mechanism for getting replies with YARP is described in 
+the \ref port_expert_reply "getting replies" section of the
+\ref port_expert "Port Power" tutorial.  The RPC ports are a 
+thin wrapper around regular ports, for the purpose of 
+restricting flexibility rather than increasing it.
+
+\section rpc_ports_special RPC using specialized YARP ports
+
+If you intend to use ports for RPC alone, you can use
+the yarp::os::RpcClient and yarp::os::RpcServer classes.
+These are just like the regular yarp::os::Port class,
+except that streaming operation is prohibited.
+By using these classes, YARP can check for accidental
+misusage of the ports, and give more helpful error messages.
+
+Here is an example server:
+\include example/os/rpc_server.cpp
+
+And here is a client to go with it:
+\include example/os/rpc_server.cpp
+
+The server and client communicate with yarp::os::Bottle objects
+here, but as usual anything that implements yarp::os::Portable
+can be used.
+
+\section rpc_ports_sniffing Monitoring RPC communication
+
+Normal streaming communication in YARP is very easy to monitor,
+just connect another port to the sender.  For RPC communication,
+we have to be a bit more careful, since senders are affected
+by receivers.
+
+Suppose the server and client above are running (the source
+code is in example/os/rpc_server.cpp and example/os/rpc_client.cpp),
+in two separate terminals, as follows:
+\verbatim
+./rpc_server /server
+./rpc_client /client /server
+\endverbatim
+Here we have named the server port "/server" and the client port "/client".
+Every second or so, the client sends a message to the server with 
+a count in it, and the server replies with "you said" followed
+by that message.
+
+How can we monitor this traffic remotely?  Normally, if we wanted
+to monitor the output of port /foo, we would just do something like:
+\verbatim
+yarp read /read /foo
+\endverbatim
+This would create a port called "/read", and make a connection from
+"/foo" to "/read".  For streaming communication, that works fine,
+since streaming ports will send copies of messages to every connected
+port.  But for RPC, this does not work, since neither the server
+nor the client expect to broadcast messages this way.
+
+The solution is to tell YARP the purpose of the connection we are making,
+so that it can distinguish (in this case) logging traffic from regular
+traffic.  We can do this with a carrier modifier.  To monitor
+traffic on our server, it suffices to do:
+\verbatim
+yarp read /read tcp+log.in://server
+\endverbatim
+
+This syntax needs a little explanation.  It is equivalent to:
+\verbatim
+yarp read /read
+yarp connect /server /read tcp+log.in
+\endverbatim
+
+The "yarp connect" utility is used
+like this:
+\verbatim
+yarp connect /source /target [protocol]
+\endverbatim
+
+The protocol in this case is specified to be tcp (which is the default),
+but with an added "+log.in" decoration.  This is a "carrier modifier"
+that tells YARP that the connection has a special purpose, in this
+case to log traffic that targets the source port.  Without that
+modifier, this connection would be forbidden if the RPC port is already
+connected to a client, and even if it were allowed it would misbehave
+(the source port would expect replies from it!)
+
+The output shown by the "yarp read" command will be something like this:
+\verbatim
+[rpc] (COUNT 29) (you said COUNT 29)
+[rpc] (COUNT 30) (you said COUNT 30)
+[rpc] (COUNT 31) (you said COUNT 31)
+[rpc] (COUNT 32) (you said COUNT 32)
+[rpc] (COUNT 33) (you said COUNT 33)
+[rpc] (COUNT 34) (you said COUNT 34)
+[rpc] (COUNT 35) (you said COUNT 35)
+[rpc] (COUNT 36) (you said COUNT 36)
+\endverbatim
+The first element is a tag for RPC traffic.  The second element is
+a nested list describing the input received by the port.
+The third element is a nested list describing the corresponding
+output produced by the port.
+
+ *
+ */
+

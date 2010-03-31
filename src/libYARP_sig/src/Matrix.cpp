@@ -222,7 +222,7 @@ void Matrix::zero()
     }
 }
 
-Matrix Matrix::transposed()
+Matrix Matrix::transposed() const
 {
     Matrix ret;
     ret.resize(ncols, nrows);

@@ -29,4 +29,6 @@ ADD_EXECUTABLE(browse_bottle browse_bottle.cpp)
 ADD_EXECUTABLE(queue_manager queue_manager.cpp)
 ADD_EXECUTABLE(playback playback.cpp)
 ADD_EXECUTABLE(listports listports.cpp)
+ADD_EXECUTABLE(rpc_server rpc_server.cpp)
+ADD_EXECUTABLE(rpc_client rpc_client.cpp)
 

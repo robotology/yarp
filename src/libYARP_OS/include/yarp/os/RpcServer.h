@@ -98,10 +98,17 @@ public:
      * @param reader any object that knows how to read itself from a
      * network connection - see for example Bottle
      * to it.
-     * @param willReply you must set this to true if you intend to call reply()
+     * @param willReply you must set this to true if you intend to call reply().
+     * For an RpcServer port, you must always call reply().  So this flag must
+     * always be set to true.  It is here for consistency with the API
+     * for yarp::os::Port
      * @return true iff the object is successfully read
      */
     bool read(PortReader& reader, bool willReply) {
+        if (!willReply) {
+            // this is an error for RpcServer
+            return false;
+        }
         return port.read(reader,true);
     }
 
@@ -138,6 +145,40 @@ public:
         port.setReaderCreator(creator);
     }
 
+    // documented in Contactable
+    virtual bool setEnvelope(PortWriter& envelope) {
+        return port.setEnvelope(envelope);
+    }
+
+    // documented in Contactable
+    virtual bool getEnvelope(PortReader& envelope) {
+        return port.getEnvelope(envelope);
+    }
+
+    // documented in Contactable
+    virtual int getInputCount() {
+        return port.getInputCount();
+    }
+
+    // documented in Contactable
+    virtual int getOutputCount() {
+        return port.getOutputCount();
+    }
+
+    // documented in Contactable
+    virtual void getReport(PortReport& reporter) {
+        getReport(reporter);
+    }
+
+    // documented in Contactable
+    virtual void setReporter(PortReport& reporter) {
+        setReporter(reporter);
+    }
+
+    // documented in Contactable
+    virtual bool isWriting() {
+        return isWriting();
+    }
     
 private:
     // an RpcServer may be implemented with a regular port

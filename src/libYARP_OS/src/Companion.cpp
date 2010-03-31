@@ -12,6 +12,7 @@
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/Name.h>
 
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
@@ -1201,9 +1202,23 @@ int Companion::cmdAnnounce(int argc, char *argv[]) {
 
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
-    PortCommand pc('\0',slashify(dest));
+    int err = 0;
     String result = "";
-    int err = sendMessage(src,pc,result,silent);
+    Address srcAddr = Name(src).toAddress();
+    Address destAddr = Name(dest).toAddress();
+    if (destAddr.getCarrierName()=="" &&
+        srcAddr.getCarrierName()!="") {
+        // old behavior unhelpful; move modifier from src to dest in
+        // this case
+        String newDest = srcAddr.getCarrierName() + ":/" + slashify(dest);
+        String newSrc = slashify(srcAddr.getRegName());
+        PortCommand pc('\0',slashify(newDest));
+        err = sendMessage(newSrc.c_str(),pc,result,silent);
+    } else {
+        // do not risk changing old behavior
+        PortCommand pc('\0',slashify(dest));
+        err = sendMessage(src,pc,result,silent);
+    }
     if (err==0) {
         err = 1;
         //printf("RESULT is %s err is %d\n", result.c_str(), err);
@@ -1389,7 +1404,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         String txt = getStdin();
         if (!feof(stdin)) {
             if (txt[0]<32 && txt[0]!='\n' && 
-                txt[0]!='\r' && txt[0]!='\0') {
+                txt[0]!='\r' && txt[0]!='\0' && txt[0]!='\t') {
                 break;  // for example, horrible windows ^D
             }
             BottleImpl bot;
