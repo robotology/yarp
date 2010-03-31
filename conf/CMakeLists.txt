@@ -2,9 +2,6 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-# rename a few flags
-SET(YARP_USE_ATLAS ${USE_ATLAS})
-
 SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${CMAKE_BINARY_DIR}/generated_include)
 
