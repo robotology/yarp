@@ -1,15 +1,13 @@
-# Copyright: (C) 2009 RobotCub Consortium
+# Copyright: (C) 2009, 2010 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 IF (NOT YARP_FOUND)
 
-MESSAGE(STATUS "Using YARP")
-
-SET(YARP_LIBRARIES "@YARP_LIBRARIES@" CACHE INTERNAL "Libraries needed for YARP")
-SET(YARP_INCLUDES "@YARP_INCLUDES@" CACHE INTERNAL "Include directories needed for YARP")
-SET(YARP_DEFINES "@YARP_DEFINES@" CACHE INTERNAL "Definitions needed for YARP")
-#MESSAGE(STATUS "**** YARP_LIBRARIES: ${YARP_LIBRARIES}")
+SET(YARP_LIBRARIES @YARP_LIBRARIES@)
+SET(YARP_INCLUDE_DIRS @YARP_INCLUDES@)
+SET(YARP_DEFINES @YARP_DEFINES@) # only needed if you use ACE directly
+SET(YARP_MODULE_PATH @CMAKE_MODULE_PATH@)
 
 # Pull in any dependencies that YARP libraries have
 INCLUDE("@CMAKE_BINARY_DIR@/YARPDependencies.cmake")
@@ -17,18 +15,29 @@ INCLUDE("@CMAKE_BINARY_DIR@/YARPDependencies.cmake")
 SET(CREATE_DEVICE_LIBRARY_MODULES @CREATE_DEVICE_LIBRARY_MODULES@)
 SET(MERGE_DEVICE_LIBRARY_MODULES @MERGE_DEVICE_LIBRARY_MODULES@)
 
-LINK_LIBRARIES(${YARP_LIBRARIES})
-INCLUDE_DIRECTORIES(${YARP_INCLUDES})
-ADD_DEFINITIONS(${YARP_DEFINES})
+# YARP used to automatically link and include itself.
+# We are migrating to more normal behavior.
+IF (YARP_AUTO_LINK)
+  MESSAGE(STATUS "Using YARP with automatic linking.")
+  MESSAGE(STATUS "Warning: this option will be going away in later versions of YARP")
+  MESSAGE(STATUS "You can instead add these lines after FIND_PACKAGE(YARP):")
+  MESSAGE(STATUS "  LINK_LIBRARIES(\${YARP_LIBRARIES})")
+  MESSAGE(STATUS "  INCLUDE_DIRECTORIES(\${YARP_INCLUDE_DIRS})")
+  LINK_LIBRARIES(${YARP_LIBRARIES})
+  INCLUDE_DIRECTORIES(${YARP_INCLUDES})
+  ADD_DEFINITIONS(${YARP_DEFINES})
+  SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
 
-# pick up YARP's helper modules
-SET(YARP_MODULE_PATH "@CMAKE_MODULE_PATH@")
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
-
-# make some useful YARP macros available
-IF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
-  INCLUDE(YarpDevice)
-ENDIF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
+  # make some useful YARP macros available
+  IF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
+    INCLUDE(YarpDevice)
+  ENDIF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
+ELSE (YARP_AUTO_LINK)
+  IF (NOT YARP_NO_AUTO_LINK)
+    OPTION(YARP_AUTO_LINK "Automatically link/include YARP libraries?" FALSE)
+    MESSAGE(STATUS "Using YARP without automatic linking (set YARP_AUTO_LINK for that)")
+  ENDIF (NOT YARP_NO_AUTO_LINK)
+ENDIF (YARP_AUTO_LINK)
 
 # pass along some flags that may be useful.
 SET(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)

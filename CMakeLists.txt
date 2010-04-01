@@ -27,6 +27,7 @@ enable_testing()
 # along with the include path.
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
+set_property(GLOBAL PROPERTY YARP_DEFS)
 
 # build some configuration header files
 add_subdirectory(conf)
@@ -38,6 +39,7 @@ add_subdirectory(src)
 # (uninstalled) use of YARP.
 get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
 message(STATUS "In-tree includes: ${YARP_INCLUDES}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
