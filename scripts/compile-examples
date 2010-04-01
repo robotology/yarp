@@ -11,6 +11,7 @@ BASE=$PWD
 for f in `find . -iname "CMakeLists.txt" | grep -v "yarp1" | grep -v "cuda" | grep -v gtkmm | grep -v imagemagick | grep -v nvidia`; do
     dir=`dirname $f`
     echo $dir
+    rm -f $BASE/$dir/CMakeCache.txt
     chk=/tmp/build_`echo $dir | sed "s/[^a-z]/_/g"`.chk
     echo "Testing for $chk"
     if [ ! -e $chk ]; then

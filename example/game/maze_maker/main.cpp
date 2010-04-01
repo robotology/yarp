@@ -1,5 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <fstream>
 
 #include <yarp/os/all.h>
