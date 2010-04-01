@@ -2,12 +2,16 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+# Make sure that YARP_DIR is set in your environment to wherever you 
+# compiled YARP.
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
 PROJECT(PortPower)
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
-
-FIND_PACKAGE(YARP)
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
 
 FILE(GLOB_RECURSE examples *.cpp)
 

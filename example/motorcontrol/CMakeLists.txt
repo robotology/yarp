@@ -2,12 +2,13 @@
 # Authors: Lorenzo Natale, Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-PROJECT (Examples)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+PROJECT (MotorExample)
 
-FIND_PACKAGE(YARP)
-  ADD_EXECUTABLE(motorcontrol main.cpp)
-ENDIF(GSL_FOUND)
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+
+ADD_EXECUTABLE(motorcontrol main.cpp)
+TARGET_LINK_LIBRARIES(motorcontrol ${YARP_LIBRARIES})
 

@@ -14,8 +14,6 @@
 #include <yarp/dev/FrameGrabberInterfaces.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 
-#include <yarp/Logger.h>
-
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace yarp::sig;
@@ -74,7 +72,6 @@ public:
 
 
 int main() {
-    //yarp::Logger::get().setVerbosity(100);
     Network::setLocalMode(true);
 
     FakeFrameGrabber fake;

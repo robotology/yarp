@@ -2,6 +2,8 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
 # This is a small project to check if ace is working
 PROJECT(ace_check)
 

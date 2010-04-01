@@ -10,6 +10,13 @@ project(YARP)
 set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
+# The YARP build is fairly flexible, so we need to accumulate some
+# information about what libraries are being built (and their dependencies),
+# along with the include path.
+set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+set_property(GLOBAL PROPERTY YARP_LIBS)
+set_property(GLOBAL PROPERTY YARP_DEFS)
+
 # Set up some large-scale compile options - do you want devices? guis?
 include(YarpOptions)
 
@@ -22,13 +29,6 @@ include(YarpSystemCheck)
 # Turn on testing
 enable_testing()
 
-# The YARP build is fairly flexible, so we need to accumulate some
-# information about what libraries are being built (and their dependencies),
-# along with the include path.
-set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-set_property(GLOBAL PROPERTY YARP_LIBS)
-set_property(GLOBAL PROPERTY YARP_DEFS)
-
 # build some configuration header files
 add_subdirectory(conf)
 
@@ -40,6 +40,7 @@ add_subdirectory(src)
 get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
 get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
 message(STATUS "In-tree includes: ${YARP_INCLUDES}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 

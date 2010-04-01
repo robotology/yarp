@@ -1,11 +1,9 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
 
-#include <ace/OS.h>
-#include <ace/Log_Msg.h>
-
-#include <yarp/String.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Property.h>
@@ -13,7 +11,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 
-using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::sig;
 
@@ -41,8 +38,8 @@ static void handler (int) {
 int main(int argc, char *argv[]) {
     Network yarp;
 
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
+    signal(SIGINT, handler);
+    signal(SIGTERM, handler);
 
 
     if (argc==1) {
@@ -63,7 +60,7 @@ int main(int argc, char *argv[]) {
     // name port
     Value *val;
     Value *prot;
-    String local = "/get_image";
+    ConstString local = "/get_image";
     if (opt.check("local",val)) {
         local = val->asString().c_str();
     }

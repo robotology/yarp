@@ -16,11 +16,11 @@
 #include "Player.h"
 
 #include <yarp/os/all.h>
-#include <yarp/String.h>
+#include <string>
 
 using namespace yarp::os;
-using namespace yarp;
 
+typedef std::string String;
 
 
 Semaphore clientMutex(1);

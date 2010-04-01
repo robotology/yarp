@@ -2,21 +2,19 @@
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-PROJECT (Examples)
+# Make sure that YARP_DIR is set in your environment to wherever you 
+# compiled YARP.
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-FIND_PACKAGE(YARP)
-#FIND_PACKAGE(GSL)
-#IF(GSL_FOUND)
-#  INCLUDE_DIRECTORIES(${GSL_INCLUDE_DIR})
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
+PROJECT (Matrix)
+
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
+
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
   
-  ADD_EXECUTABLE(basic_ops basic_ops.cpp)
-  ADD_EXECUTABLE(gsl_example gsl_example.cpp)
-
-#  TARGET_LINK_LIBRARIES(gsl_example ${GSL_LIBRARIES})
-#  TARGET_LINK_LIBRARIES(basic_ops ${GSL_LIBRARIES})
-#ENDIF(GSL_FOUND)
+ADD_EXECUTABLE(basic_ops basic_ops.cpp)
+ADD_EXECUTABLE(gsl_example gsl_example.cpp)
 

@@ -2,11 +2,15 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+# Make sure that YARP_DIR is set in your environment to wherever you 
+# compiled YARP.
 
-FIND_PACKAGE(YARP)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 PROJECT(remote_check)
 
 ADD_EXECUTABLE(remote_check main.cpp)
+TARGET_LINK_LIBRARIES(remote_check ${YARP_LIBRARIES})
