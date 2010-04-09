@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <string.h>
+#include <sys/stat.h>
 
 #ifdef WIN32
 #include <winsock2.h>
@@ -32,13 +33,139 @@
 static int yarp_is_initialized = 0;
 static yarpAddress yarp_server;
 
+
+static int file_exists(const char *fname) {
+    struct stat s;
+    int result = stat(fname,&s);
+    return result==0;
+}
+
+int find_name_server(int verbose) {
+    char path[1000];
+    char buf[1000];
+    char current_namespace[1000] = "/root";
+    char server_filename[1000] = "yarp.conf";
+    char full_server_filename[1000];
+    char namespace_filename[1000];
+    FILE *fin;
+    int i;
+    int len;
+    int in_group = 0;
+    int group = 0;
+    const char *first;
+    const char *second;
+#ifdef WIN32
+    const char *sep = "\\";
+#else
+    const char *sep = "/";
+#endif
+    if (getenv("YARP_CONF")!=NULL) {
+        safe_printf(path,sizeof(path),"%s",getenv("YARP_CONF"));
+    } else if (getenv("HOMEDIR")!=NULL) {
+        safe_printf(path,sizeof(path),"%s%s%s%s%s",
+                    getenv("HOMEDIR"),sep,"yarp",sep,"conf");
+    } else if (getenv("HOME")!=NULL) {
+        safe_printf(path,sizeof(path),"%s%s%s%s%s",
+                    getenv("HOME"),sep,".yarp",sep,"conf");
+    } else {
+        if (verbose) {
+            printf("Please set YARP_CONF to the location reported by this command:\n");
+            printf("  yarp conf\n");
+        }
+        return -1;
+    }
+    if (verbose) {
+        fprintf(stderr,"YARP config file should be present in %s\n", path);
+    }
+    safe_printf(namespace_filename,sizeof(namespace_filename),"%s%s%s",
+                path,sep,"yarp_namespace.conf");
+    if (file_exists(namespace_filename)) {
+        fin = fopen(namespace_filename,"r");
+        if (fin==NULL) {
+            if (verbose) {
+                fprintf(stderr,"Cannot read %s\n", namespace_filename);
+            }
+            return -1;
+        }
+        fgets(current_namespace,sizeof(current_namespace),fin);
+        fclose(fin);
+        if (verbose) {
+            fprintf(stderr,"Namespace set to %s\n", current_namespace);
+        }
+        for (i=0; i<strlen(current_namespace)+1; i++) {
+            char ch = current_namespace[i];
+            if (ch<32) {
+                ch = '\0';
+            }
+            server_filename[i] = (ch=='/')?'_':ch;
+        }
+        strncat(server_filename,".conf",sizeof(server_filename));
+    } else {
+        if (verbose) {
+            fprintf(stderr,"Using default namespace %s\n", current_namespace);
+        }
+    }
+    safe_printf(full_server_filename,sizeof(full_server_filename),
+                "%s%s%s",path,sep,server_filename);
+    if (verbose) {
+        fprintf(stderr,"Expect name server information in %s\n", 
+                server_filename);
+    }
+    fin = fopen(full_server_filename,"r");
+    if (fin==NULL) {
+        if (verbose) {
+            fprintf(stderr,"Cannot read %s\n", full_server_filename);
+        }
+        return -1;
+    }
+    fgets(buf,sizeof(buf),fin);
+    fclose(fin);
+    len = strlen(buf);
+    for (i=0; i<len; i++) {
+        if (buf[i]==' '||buf[i]=='\t') {
+            buf[i] = '\0';
+            in_group = 0;
+        } else {
+            if (!in_group) {
+                if (group==0) {
+                    first = buf+i;
+                } else if (group==1) {
+                    second = buf+i;
+                }
+                group++;
+                in_group = 1;
+            }
+        }
+    }
+    if (first==NULL||second==NULL) {
+        if (verbose) {
+            fprintf(stderr,"Cannot parse %s\n", full_server_filename);
+        }
+        return -1;
+    }
+    strncpy(yarp_server.host,first,sizeof(yarp_server.host));
+    yarp_server.port_number = atoi(second);
+    if (verbose) {
+        fprintf(stderr,"Name server should be at %s:%d\n",yarp_server.host,
+                yarp_server.port_number);
+    }
+    if (yarp_server.port_number==0) {
+        fprintf(stderr,"Oops, that does not look right...\n");
+        return -1;
+    }
+    return 0;
+}
+
 yarpAddressPtr yarp_init() {
+    int res;
+#ifdef WIN32
+    int     wsaRc;
+    WSADATA wsaData;
+#endif
     if (yarp_is_initialized) {
         return &yarp_server;
     }
 #ifdef WIN32
-    int     wsaRc;
-    WSADATA wsaData;
     if(wsaRc=WSAStartup(0x0101, &wsaData)) {
         perror("WinSock init");
     }
@@ -47,11 +174,13 @@ yarpAddressPtr yarp_init() {
         perror("wsaData.wVersion");
     }
 #endif
-
-    // these lines should actually consult yarp config files, this
-    // assumes the name server is on the local machine
     strncpy(yarp_server.host,"127.0.0.1",sizeof(yarp_server.host));
     yarp_server.port_number = 10000;
+    res = find_name_server(0);
+    if (res<0) {
+        find_name_server(1);
+        exit(1);
+    }
     yarp_is_initialized = 1;
     return &yarp_server;
 }
