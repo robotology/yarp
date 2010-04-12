@@ -45,13 +45,19 @@ get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
 message(STATUS "In-tree includes: ${YARP_INCLUDES}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
+set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-export(TARGETS ${YARP_LIBRARIES} 
-	       FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
+export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
 # Set up a configuration file for installed use of YARP
-install(EXPORT YARP DESTINATION lib/YARP)
+set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/lib/YARP/YARP.cmake)
+set(YARP_INCLUDES ${CMAKE_INSTALL_PREFIX}/include)
+set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib/YARP)
+install(EXPORT YARP COMPONENT configuration DESTINATION lib/YARP)
 
 # Set up some packaging properties (for generating tarballs etc)
 include(YarpPackage)
