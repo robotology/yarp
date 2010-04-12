@@ -24,4 +24,5 @@ add_subdirectory(yarprun)
 
 add_subdirectory(yarpview)
 
+add_subdirectory(yarphear)
 
