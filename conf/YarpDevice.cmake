@@ -1,6 +1,39 @@
+# Copyright: (C) 2009, 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 #########################################################################
-# BEGIN_DEVICE_LIBRARY macro makes sure that all the cmake hooks
+##
+## Yet Another Device Compiling Monster, But Smaller This Time
+##
+## This file provides a set of macros for building bundles of devices.
+##  BEGIN_DEVICE_LIBRARY(libname)
+##  END_DEVICE_LIBRARY(libname)
+## etc.
+##
+## Any ADD_LIBRARY commands that lie between BEGIN_DEVICE_LIBRARY and 
+## END_DEVICE_LIBRARY will be intercepted, in order to track the 
+## list of libraries created.  There are all linked together by
+## a single library with the specified name.
+##
+## Some extra generated files will be included as well in the library
+## in order to facilitate access to devices.
+##
+## For each device <devname> that gets compiled, there will be a:
+##   yarpdev_add_<devname>.cpp
+## file that contains a method called:
+##   extern "C" void add_<devname>();
+## which adds that device into the YARP list of device factories.
+## For each device bundle/library there will be a:
+##   add_<libname>.cpp
+## with a method called:
+##   extern "C" void add_<libname>_devices();
+## which calls all the add_*() methods for devices within that bundle.
+##
+
+
+#########################################################################
+# BEGIN_DEVICE_LIBRARY macro makes sure that all the hooks
 # needed for creating a device library are in place.
 #
 MACRO(BEGIN_DEVICE_LIBRARY devname)
@@ -188,8 +221,8 @@ ENDMACRO(PREPARE_DEVICE devname)
 
 
 
-
-
+#########################################################################
+## Deprecated
 MACRO(TARGET_IMPORT_DEVICES target hdr)
   MESSAGE(STATUS "[TARGET_]IMPORT_DEVICES macro has been deprecated")
   MESSAGE(STATUS "Instead just link against the device library, and in code do:")
@@ -201,6 +234,8 @@ MACRO(TARGET_IMPORT_DEVICES target hdr)
 ENDMACRO(TARGET_IMPORT_DEVICES target hdr)
 
 
+#########################################################################
+## Deprecated
 MACRO(IMPORT_DEVICES hdr)
   TARGET_IMPORT_DEVICES(the_device_library_name ${hdr})
 ENDMACRO(IMPORT_DEVICES hdr)
@@ -208,7 +243,7 @@ ENDMACRO(IMPORT_DEVICES hdr)
 
 
 #########################################################################
-# Redefine ADD_LIBRARY
+# Lightly redefine ADD_LIBRARY
 #
 MACRO(ADD_LIBRARY LIBNAME)
   IF (NOT YARPY_DEVICES)
