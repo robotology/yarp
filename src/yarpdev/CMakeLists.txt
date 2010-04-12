@@ -3,9 +3,9 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 
-GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
-INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
-ADD_EXECUTABLE(yarpdev yarpdev.cpp)
-TARGET_LINK_LIBRARIES(yarpdev YARP_dev)
+get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
+add_executable(yarpdev yarpdev.cpp)
+target_link_libraries(yarpdev YARP_dev)
 
-INSTALL(TARGETS yarpdev COMPONENT utilities DESTINATION bin)
+install(TARGETS yarpdev COMPONENT utilities DESTINATION bin)

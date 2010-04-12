@@ -2,28 +2,30 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-PROJECT(YARP_OS)
+project(YARP_OS)
 
-FILE(GLOB folder_source src/*.cpp)
-FILE(GLOB_RECURSE folder_header include/*.h)
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+file(GLOB folder_source src/*.cpp)
+file(GLOB_RECURSE folder_header include/*.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
-SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${PROJECT_SOURCE_DIR}/include)
-GET_PROPERTY(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-ADD_LIBRARY(YARP_OS ${folder_source} ${folder_header})
-INSTALL(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib)
-SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
+add_library(YARP_OS ${folder_source} ${folder_header})
+install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib)
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
 
-ADD_EXECUTABLE(yarp yarp/yarp.cpp)
-ADD_EXECUTABLE(yarpserver yarp/yarpserver.cpp)
+add_executable(yarp yarp/yarp.cpp)
+target_link_libraries(yarp YARP_OS ${ACE_LINK_FLAGS})
 
-TARGET_LINK_LIBRARIES(yarp YARP_OS ${ACE_LINK_FLAGS})
-TARGET_LINK_LIBRARIES(yarpserver YARP_OS ${ACE_LINK_FLAGS})
+add_executable(yarpserver yarp/yarpserver.cpp)
+target_link_libraries(yarpserver YARP_OS ${ACE_LINK_FLAGS})
 
-SET_PROPERTY(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
-INSTALL(TARGETS yarp yarpserver COMPONENT utilities DESTINATION bin)
+install(TARGETS yarp yarpserver COMPONENT utilities DESTINATION bin)
+
+install(DIRECTORY include/yarp/os COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)

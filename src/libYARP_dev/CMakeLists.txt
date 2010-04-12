@@ -2,28 +2,29 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
  
-PROJECT(libYARP_dev)
+project(libYARP_dev)
 
-FILE(GLOB folder_source src/*.cpp)
-FILE(GLOB_RECURSE folder_header include/*.h)
-SOURCE_GROUP("Source Files" FILES ${folder_source})
-SOURCE_GROUP("Header Files" FILES ${folder_header})
+file(GLOB folder_source src/*.cpp)
+file(GLOB_RECURSE folder_header include/*.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
-SET(populator ${CMAKE_BINARY_DIR}/src/libYARP_dev/src_generated/PopulateDrivers.cpp)
+set(populator ${CMAKE_BINARY_DIR}/src/libYARP_dev/src_generated/PopulateDrivers.cpp)
 
-SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${PROJECT_SOURCE_DIR}/include)
-GET_PROPERTY(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
+configure_file(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/PopulateDrivers.cpp.in
   ${populator} @ONLY  IMMEDIATE)
 
 
-ADD_LIBRARY(YARP_dev ${folder_source} ${folder_header} ${populator})
-TARGET_LINK_LIBRARIES(YARP_dev YARP_sig YARP_OS)
-INSTALL(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION lib)
-SET_PROPERTY(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
+add_library(YARP_dev ${folder_source} ${folder_header} ${populator})
+target_link_libraries(YARP_dev YARP_sig YARP_OS)
+install(TARGETS YARP_dev EXPORT YARP COMPONENT runtime DESTINATION lib)
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 
-SET_PROPERTY(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
+install(DIRECTORY include/yarp/dev COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)

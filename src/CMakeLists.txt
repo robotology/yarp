@@ -9,6 +9,7 @@ add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_dev)
 
 # Device related libraries / executables
+option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 if (CREATE_DEVICE_LIBRARY_MODULES)
   add_subdirectory(modules)
 else (CREATE_DEVICE_LIBRARY_MODULES)

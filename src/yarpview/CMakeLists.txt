@@ -6,6 +6,16 @@ option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
 if (CREATE_GUIS)
 
+  FIND_PACKAGE(GtkPlus)
+  IF (NOT GtkPlus_FOUND)
+	MESSAGE(STATUS " gtk+ not found, won't compile dependent tools")
+  ENDIF (NOT GtkPlus_FOUND)
+
+  FIND_PACKAGE(Gthread)
+  IF (NOT Gthread_FOUND)
+	MESSAGE(STATUS " gthread not found, won't compile dependent tools")
+  ENDIF(NOT Gthread_FOUND)
+
   # set up to use GTK+
   ADD_DEFINITIONS(${GTKPLUS_C_FLAGS})
   LINK_LIBRARIES(${GTKPLUS_LINK_FLAGS})

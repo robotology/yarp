@@ -18,13 +18,13 @@ set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
-# Set up some project options
+# Set up some compilation options
 include(YarpOptions)
 
-# Get the current YARP version.
+# Get the current YARP version
 include(YarpVersion)
 
-# Check system types, find necessary libraries.
+# Check system types, find necessary libraries
 include(YarpSystemCheck)
 
 # Turn on testing
