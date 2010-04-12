@@ -12,12 +12,13 @@ set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
 # The YARP build is fairly flexible, so we need to accumulate some
 # information about what libraries are being built (and their dependencies),
-# along with the include path.
+# along with the include path.  We'll be passing that along to clients
+# using YARP without a global install.
 set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 set_property(GLOBAL PROPERTY YARP_LIBS)
 set_property(GLOBAL PROPERTY YARP_DEFS)
 
-# Set up some large-scale compile options - do you want devices? guis?
+# Set up some project options
 include(YarpOptions)
 
 # Get the current YARP version.
@@ -57,13 +58,7 @@ include(YarpPackage)
 
 # Make documentation target, documentation goes in doc subdirectory
 # of build.
-find_program(DOXYGEN_EXE NAMES doxygen)
-mark_as_advanced(DOXYGEN_EXE)
-if (DOXYGEN_EXE)
-  configure_file(${CMAKE_SOURCE_DIR}/conf/doxygen/Doxyfile.part.template
-                 ${CMAKE_BINARY_DIR}/dox/Doxyfile.part IMMEDIATE)
-  add_custom_target(dox COMMAND ${DOXYGEN_EXE} ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
-endif ()
+include(YarpDoc)
 
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun
