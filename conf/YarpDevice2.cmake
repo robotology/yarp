@@ -56,6 +56,17 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
 
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
+
+    get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+    if (YARP_TREE_INCLUDE_DIRS)
+      set (YARP_FOUND TRUE)
+      get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+      get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+      get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+    else (YARP_TREE_INCLUDE_DIRS)
+      find_package(YARP REQUIRED)
+    endif (YARP_TREE_INCLUDE_DIRS)
 
   ENDIF (YARPY_DEVICES)
 
@@ -71,8 +82,6 @@ ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
 # in a clean canonical order.
 #
 MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
-
-  MESSAGE(STATUS " + Generating code for device [${devname}] type [${type}] include [${include}] wrapper [${wrapper}]")
 
   # Append the current source directory to the set of include paths.
   # Developers seem to expect #include "foo.h" to work if foo.h is
@@ -123,6 +132,8 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   # the device library source list.
   IF (ENABLE_${MYNAME})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_INCLUDE_DIRS 
+      ${CMAKE_CURRENT_SOURCE_DIR})
     SET(YARPY_DEV_ACTIVE TRUE)
     MESSAGE(STATUS " +++ device ${devname}, ENABLE_${devname} is set")
   ELSE (ENABLE_${MYNAME})

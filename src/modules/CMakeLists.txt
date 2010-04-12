@@ -4,16 +4,7 @@
 
 project(YarpModules)
 
-OPTION(YARP_NEW_DEV "Use new new device compilation" FALSE)
-IF (YARP_NEW_DEV)
-  include(YarpDevice2)
-  set (YARP_FOUND TRUE)
-  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-  get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-  get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
-ELSE (YARP_NEW_DEV)
-  include(YarpDevice)
-ENDIF (YARP_NEW_DEV)
+include(YarpDevice2)
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.
