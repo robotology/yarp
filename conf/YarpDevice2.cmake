@@ -55,6 +55,7 @@ MACRO(BEGIN_DEVICE_LIBRARY devname)
     SET(YARPY_MASTER_DEVICE ${devname})
 
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)
 
   ENDIF (YARPY_DEVICES)
 
@@ -121,8 +122,7 @@ MACRO(ADD_DEVICE_NORMALIZED devname type include wrapper)
   # If the device is enabled, add the appropriate source code into
   # the device library source list.
   IF (ENABLE_${MYNAME})
-    SET(YARPY_DEV_SRC_LIST ${YARPY_DEV_SRC_LIST} ${fname})
-    SET(YARPY_DEV_LIST ${YARPY_DEV_LIST} ${devname})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
     SET(YARPY_DEV_ACTIVE TRUE)
     MESSAGE(STATUS " +++ device ${devname}, ENABLE_${devname} is set")
   ELSE (ENABLE_${MYNAME})
