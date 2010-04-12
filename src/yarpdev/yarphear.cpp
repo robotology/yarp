@@ -20,16 +20,14 @@
 
 #include <yarp/sig/SoundFile.h>
 
-#ifndef YARP_AUTOCONF
-#include "yarphear_drivers.h"
-#endif
-
 using namespace yarp::os;
 using namespace yarp::os::impl; // yarphear uses something from the impl namespace, is this correct?
 using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 
+// We need the yarpmod bundle of devices
+YARP_DECLARE_DEVICES(yarpmod)
 
 int padding = 0;
 
@@ -181,10 +179,8 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-#ifndef YARP_AUTOCONF
-    yarp::dev::DriverCollection dev;
-#endif
     yarp::os::Network yarp;
+    YARP_REGISTER_DEVICES(yarpmod);
 
     // see if user has supplied audio device
     Property p;
