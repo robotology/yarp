@@ -40,6 +40,10 @@ IF (NOT YARP_FOUND)
       MESSAGE(STATUS "Using YARP without automatic linking (set YARP_AUTO_LINK for that)")
     ENDIF (NOT YARP_NO_AUTO_LINK)
   ENDIF (YARP_AUTO_LINK)
+
+  MACRO(BEGIN_DEVICE_LIBRARY devname)
+    MESSAGE(FATAL_ERROR "YARP device library code now needs to be included with INCLUDE(${YARP_MODULE_PATH}/YarpDevice.cmake)")
+  ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
   #
   # BACKWARDS-COMPATIBILITY SECTION ENDS
   #######################################################################
