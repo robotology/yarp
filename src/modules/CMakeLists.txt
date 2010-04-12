@@ -4,10 +4,16 @@
 
 project(YarpModules)
 
-include(YarpDevice)
-if (NOT YARP_DIR)
-  set (YARP_DIR ${CMAKE_SOURCE_DIR})
-endif (NOT YARP_DIR)
+OPTION(YARP_NEW_DEV "Use new new device compilation" FALSE)
+IF (YARP_NEW_DEV)
+  include(YarpDevice2)
+  set (YARP_FOUND TRUE)
+  get_property(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+  get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+  get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+ELSE (YARP_NEW_DEV)
+  include(YarpDevice)
+ENDIF (YARP_NEW_DEV)
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.
@@ -64,24 +70,5 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   endforeach(EXTFILE)
 
 END_DEVICE_LIBRARY(yarpmod)
-
-if(MSVC)
-    set_target_properties(yarpmod PROPERTIES COMPILE_FLAGS /wd4996)
-endif(MSVC)
-
-install(TARGETS yarpmod COMPONENT devices DESTINATION lib)
-file(GLOB header ${YARP_DIR}/*.h)
-install_files(/include FILES ${header})
-
-
-# Done!
-#
-# To use the library from CMake in your own projects, do:
-#   FIND_PACKAGE(yarpmod)
-#   LINK_LIBRARIES(yarpmod)
-#
-# To tell CMake about the location of this file, do:
-#   SET(yarpmod_DIR ${YARP_DIR}/src/modules)
-# Or configure an equivalent environment variable, or enter the
-# path in the CMake GUI.
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 
