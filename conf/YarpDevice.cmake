@@ -32,6 +32,11 @@
 ##
 
 
+IF (COMMAND END_DEVICE_LIBRARY)
+  MESSAGE(STATUS "Skipping YarpDevice.cmake, already included")
+ELSE (COMMAND END_DEVICE_LIBRARY)
+
+
 #########################################################################
 # BEGIN_DEVICE_LIBRARY macro makes sure that all the hooks
 # needed for creating a device library are in place.
@@ -309,3 +314,13 @@ MACRO(END_DEVICE_LIBRARY devname)
     SET(YARPY_DEVICES FALSE) # neutralize redefined methods 
   ENDIF ("${devname}" STREQUAL "${YARPY_MASTER_DEVICE}")
 ENDMACRO(END_DEVICE_LIBRARY devname)
+
+MACRO(ADD_DEVICE_LIBRARY_EXECUTABLE exename devname)
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
+    ${YARPY_DEV_GEN}/yarpdev_${devname}.cpp @ONLY  IMMEDIATE)
+    ADD_EXECUTABLE(${exename} ${YARPY_DEV_GEN}/yarpdev_${devname}.cpp)
+    TARGET_LINK_LIBRARIES(${exename} ${devname})
+ENDMACRO(ADD_DEVICE_LIBRARY_EXECUTABLE)
+
+
+ENDIF (COMMAND END_DEVICE_LIBRARY)
