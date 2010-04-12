@@ -1,8 +1,7 @@
 
 #########################################################################
 # BEGIN_DEVICE_LIBRARY macro makes sure that all the cmake hooks
-# needed for creating a device library are in place.  Those hooks
-# are defined in YarpModuleHooks.cmake
+# needed for creating a device library are in place.
 #
 MACRO(BEGIN_DEVICE_LIBRARY devname)
 

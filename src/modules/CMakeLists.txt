@@ -4,7 +4,7 @@
 
 project(YarpModules)
 
-include(YarpDevice2)
+include(YarpDevice)
 
 # Prepare a device library called "yarpmod".
 # A test executable called "yarpmoddev" will also be produced.
