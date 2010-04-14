@@ -1,0 +1,10 @@
+option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
+if (CREATE_OPTIONAL_CARRIERS)
+  include(YarpPlugin)
+  BEGIN_PLUGIN_LIBRARY(yarpcar)
+  add_subdirectory(human_carrier)
+  END_PLUGIN_LIBRARY(yarpcar)
+  install(TARGETS yarpcar ${yarpcar_LIBRARIES} EXPORT YARP 
+          COMPONENT runtime DESTINATION lib)
+  set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
+endif (CREATE_OPTIONAL_CARRIERS)
