@@ -24,7 +24,6 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(jrkerr)
   add_subdirectory(urbtc)
   add_subdirectory(dimax_u2c)
-  add_subdirectory(human_carrier)
 
   # We can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference

@@ -7,15 +7,9 @@
  */
 
 #define ENABLE_@YARPDEV_NAME@ (@ENABLE_YARPDEV_NAME@)
-#define YARPDEV_CATEGORY_@YARPDEV_CATEGORY@ 1
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
-
-#ifdef YARPDEV_CATEGORY_carrier
-#include <yarp/os/impl/Carriers.h>
-using namespace yarp::os::impl;
-#endif
 
 #include <@YARPDEV_INCLUDE@>
 
@@ -24,15 +18,11 @@ using namespace yarp::dev;
 
 void add_@YARPDEV_NAME@() {
 #if ENABLE_@YARPDEV_NAME@
-#ifdef YARPDEV_CATEGORY_carrier
-    Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
-#else
     DriverCreator *factory = 
         new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
                                            "@YARPDEV_WRAPPER@",
                                            "@YARPDEV_TYPE@");
     Drivers::factory().add(factory); // hand factory over to YARP
-#endif
 #endif
 }
 

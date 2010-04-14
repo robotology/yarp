@@ -106,7 +106,7 @@ MACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper category)
     SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF(NOT fdir)
 
-  # We'll be expanding the code in template/yarpdev_helper.cpp.in using 
+  # We'll be expanding the code in template/yarp_plugin_*.cpp.in using 
   # the following variables:
 
   SET(YARPDEV_NAME "${devname}")
@@ -118,7 +118,7 @@ MACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper category)
 
   # Go ahead and prepare some code to wrap this device.  
   SET(fname ${fdir}/yarpdev_add_${devname}.cpp)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_helper.cpp.in
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
     ${fname} @ONLY  IMMEDIATE)
  
   # Set up a flag to enable/disable compilation of this device.
@@ -284,14 +284,14 @@ MACRO(YARP_PREPARE_PLUGINS)
   ENDFOREACH()
 
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
-    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_devices.cpp @ONLY  IMMEDIATE)
+    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.cpp @ONLY  IMMEDIATE)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
-    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_devices.h @ONLY  IMMEDIATE)
+    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.h @ONLY  IMMEDIATE)
 
   get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
   get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
   include_directories(${YARP_INCLUDE_DIRS} ${dirs})
-  _ADD_LIBRARY(${YARPY_MASTER_DEVICE} ${code} ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_devices.cpp)
+  _ADD_LIBRARY(${YARPY_MASTER_DEVICE} ${code} ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.cpp)
   target_link_libraries(${YARPY_MASTER_DEVICE} ${YARP_LIBRARIES})
   get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
   target_link_libraries(${YARPY_MASTER_DEVICE} ${libs})
