@@ -1,0 +1,7 @@
+
+PREPARE_CARRIER(human_carrier TYPE HumanCarrier INCLUDE HumanCarrier.h)
+
+#FIND_PACKAGE(YARP REQUIRED)
+#INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+#ADD_LIBRARY(human_carrier HumanCarrier.h)
+#TARGET_LINK_LIBRARIES(human_carrier ${YARP_LIBRARIES})

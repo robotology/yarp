@@ -4,11 +4,10 @@
 
 project(YarpModules)
 
-include(YarpDevice)
+include(YarpPlugin)
 
-# Prepare a device library called "yarpmod".
-# A test executable called "yarpmoddev" will also be produced.
-BEGIN_DEVICE_LIBRARY(yarpmod)
+# Prepare a plugin library called "yarpmod".
+BEGIN_PLUGIN_LIBRARY(yarpmod)
   add_subdirectory(cuda)
   add_subdirectory(fakebot)
   add_subdirectory(nvidia)
@@ -25,6 +24,7 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
   add_subdirectory(jrkerr)
   add_subdirectory(urbtc)
   add_subdirectory(dimax_u2c)
+  add_subdirectory(human_carrier)
 
   # We can include remote directories as well - we specify a 
   # local directory for producing binaries so there is no interference
@@ -60,6 +60,6 @@ BEGIN_DEVICE_LIBRARY(yarpmod)
     endif (EXISTS ${EXTFILE})
   endforeach(EXTFILE)
 
-END_DEVICE_LIBRARY(yarpmod)
+END_PLUGIN_LIBRARY(yarpmod)
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 
