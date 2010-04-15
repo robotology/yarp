@@ -3,6 +3,11 @@
 	* src/libYARP_OS/src/Carriers.cpp: add experimental MPI
 	carrier from Daniel Krieg (thanks Daniel!)
 
+2010-04-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/CMakeLists.txt: small fix for CMake 2.8, remove use
+	of deprecated SUB_DIRS
+
 2010-03-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/all.h: add RpcClient and
@@ -17,6 +22,12 @@
     * src/libYARP_sig/include/yarp/sig/Matrix.h
         Matrix::transposed() is now a const method
         
+2010-03-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: tab at the start of a line was
+	mistakenly interpreted as a termination character in "yarp
+	write" (thanks to Lorenzo Natale for reporting this)
+
 2010-03-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/yarpserver/src/SqliteTripleSource.h: eliminate use of
