@@ -12,31 +12,10 @@
 #include <yarp/os/impl/MpiCarrier.h>
 
 using namespace yarp::os::impl;
-
-
-int MpiCarrier::port_counter = 0;
-
-MpiCarrier::MpiCarrier() {
-    if (MpiCarrier::port_counter == 0) {
-        char*** mpi_carrier_argv = NULL;
-        int mpi_carrier_argc[1] = {0};
-        MPI_Init(mpi_carrier_argc, mpi_carrier_argv);
-    }
-    MpiCarrier::port_counter++;
+MpiCarrier::MpiCarrier() : stream(NULL) {    
 }
 
 MpiCarrier::~MpiCarrier() {
-    MpiCarrier::port_counter--;
-    printf("CARRIER dtor\n");
-    delete stream;
-    if (MpiCarrier::port_counter == 0) {
-        printf("finalize\n");
-        
-        MPI_Finalize();
-    }
-    printf("carrier dying\n");
-    
-
 }
 
 void  MpiCarrier::getHeader(const Bytes& header) {
@@ -75,6 +54,8 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.os().write('\r');
     proto.os().write('\n');
     
+    // We need to initialize MPI before first instanciation of MpiStream
+    MpiStream::increase_counter();
     stream = new MpiStream(true);
     char* port = stream->getPortName();
     Bytes b3(port,strlen(port));
@@ -95,6 +76,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
  bool MpiCarrier::respondToHeader(Protocol& proto) {
     // SWITCH TO NEW STREAM TYPE
+    MpiStream::increase_counter();
     stream = new MpiStream();
     stream->connect(port);
     proto.takeStreams(stream);
@@ -107,6 +89,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.takeStreams(stream);
     return true;
 }
+
 
 #else
 

@@ -13,7 +13,10 @@
 
 using namespace yarp::os::impl;
 
-MpiStream::MpiStream(bool server) {
+
+int MpiStream::stream_counter = 0;
+
+MpiStream::MpiStream(bool server) : terminate(false) {
     readBuffer = NULL;
     reset();
     Port = MPI_COMM_SELF;
@@ -23,8 +26,31 @@ MpiStream::MpiStream(bool server) {
 }
 MpiStream::~MpiStream() {
     printf("STREAM dtor\n");
+    decrease_counter();
     printf("stream dying \n");
 }
+
+void MpiStream::increase_counter() {
+    printf("inc stream counter: %d\n", MpiStream::stream_counter);
+    // We need to initialize MPI
+    if (MpiStream::stream_counter == 0) {
+        char*** mpi_carrier_argv = NULL;
+        int mpi_carrier_argc[1] = {0};
+        MPI_Init(mpi_carrier_argc, mpi_carrier_argv);
+    }
+    MpiStream::stream_counter++;
+}
+
+void MpiStream::decrease_counter() {
+    printf("dec stream counter: %d\n", MpiStream::stream_counter);
+    MpiStream::stream_counter--;
+    if (MpiStream::stream_counter == 0) {
+        MPI_Finalize();
+    }
+    
+}
+
+
 void MpiStream::connect(String port) {
     memcpy(port_name, port.c_str(), port.length());        
     port_name[port.length()] = '\0';
@@ -43,6 +69,10 @@ char* MpiStream::getPortName() {
 
  void MpiStream::close() {
     // nothing to do
+    printf("disconnecting\n");
+    // to be protected by mutex???
+    terminate = true;
+    MPI_Comm_disconnect(&intercomm);
     printf("bye bye\n");
 }
 
@@ -53,7 +83,7 @@ bool MpiStream::isOk() {
 
  void MpiStream::interrupt() {
      printf("try interupt\n");
-    MPI_Comm_disconnect(&intercomm);
+    close();
 }
 
 /////////////////////////////////////////////////
@@ -64,17 +94,26 @@ int MpiStream::read(const Bytes& b) {
         // get new data
         reset();
         int size;
-        MPI_Bcast(&size, 1, MPI_INT, 0, intercomm);
+        int available = 0;
+        int tag = 0;
+        MPI_Status status;
+        //MPI_(&size, 1, MPI_INT, 0, intercomm);
+        while (!available) {
+            if (terminate)
+                return 0;
+            MPI_Iprobe(0, tag, intercomm, &available, &status);
+        }
+        MPI_Get_count(&status, MPI_BYTE, &size);
         if (size == b.length()) {
             // size of received data matches expected data
             // do not use buffer, but write directly
-            MPI_Bcast(b.get(), size, MPI_BYTE, 0, intercomm);
+            MPI_Recv(b.get(), size, MPI_BYTE, 0, tag, intercomm, &status);
             return size;
         }
         else {
             // allocate new buffer
             readBuffer = new char[size];
-            MPI_Bcast(readBuffer, size, MPI_BYTE, 0, intercomm);
+            MPI_Recv(readBuffer, size, MPI_BYTE, 0, tag, intercomm, &status);
             //printf("got new msg of size %d\n", size);
             readAvail = size;
             readAt = 0;
@@ -100,8 +139,8 @@ int MpiStream::read(const Bytes& b) {
 
 void MpiStream::write(const Bytes& b) {
     int size = b.length();
-    MPI_Bcast(&size, 1, MPI_INT, MPI_ROOT, intercomm );
-    MPI_Bcast(b.get(), size, MPI_BYTE, MPI_ROOT, intercomm );
+    //MPI_Bcast(&size, 1, MPI_INT, MPI_ROOT, intercomm );
+    MPI_Send(b.get(), size, MPI_BYTE, 0, 0, intercomm );
 }
 
 /////////////////////////////////////////////////
@@ -134,6 +173,8 @@ void MpiStream::beginPacket() {
 void MpiStream::endPacket() {
      // nothing to do
 }
+
+
 
 #else
 

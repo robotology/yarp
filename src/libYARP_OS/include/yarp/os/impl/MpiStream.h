@@ -30,9 +30,13 @@ namespace yarp {
 }
 
 /**
- *
  * Send data via MPI.
  *
+ * Uses the dynamic process management from the MPI-2 standard to
+ * set up a communicator between the two processes.
+ *
+ * @bug No proper disconnection.
+ * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiStream : public TwoWayStream, public InputStream, public OutputStream {
 private:
@@ -41,6 +45,8 @@ private:
     char port_name[MPI_MAX_PORT_NAME];
     int readAvail, readAt;
     char* readBuffer;
+    static int stream_counter;
+    bool terminate;
 public:
     MpiStream(bool server=false);
     ~MpiStream();
@@ -59,6 +65,9 @@ public:
     virtual void reset();
     virtual void beginPacket();
     virtual void endPacket();
+
+    static void increase_counter();
+    static void decrease_counter();
 
 private:
     Address local, remote;

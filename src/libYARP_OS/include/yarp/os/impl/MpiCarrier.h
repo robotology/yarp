@@ -25,12 +25,15 @@ namespace yarp {
     }
 }
 
-
+/**
+ * Communicating between two ports via MPI.
+ *
+ * @warning Seems to work, but still experimental.
+ */
 class yarp::os::impl::MpiCarrier : public AbstractCarrier {
 private:
     MpiStream* stream;
     String port;
-    static int port_counter;
 public:
     MpiCarrier();
     ~MpiCarrier();
@@ -43,7 +46,7 @@ public:
         return false;}
         
     virtual bool canEscape() {
-        return false;}
+        return true;}
     virtual bool supportReply() {
         return false;}
         
