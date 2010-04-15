@@ -3,7 +3,21 @@
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 SET(NEED_LIBS "")
+
+OPTION(CREATE_MPI_CARRIER "Support communication via MPI" OFF)
+
+IF (CREATE_MPI_CARRIER)
+  ### Search for mpi library to support MpiStream
+  FIND_PACKAGE(MPI REQUIRED)
+  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
+  ADD_DEFINITIONS(-DCREATE_MPI_CARRIER)
+ENDIF (CREATE_MPI_CARRIER)
+
+
 YarpLibrary(YARP_OS os)
+
+### link yarp_os lib against mpi
+TARGET_LINK_LIBRARIES(YARP_OS ${MPI_LIBRARIES})
 
 # add YARP Network companion executable
 ADD_EXECUTABLE(yarp yarp/yarp.cpp)
