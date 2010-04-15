@@ -15,9 +15,16 @@
 extern "C" void PLUGIN_INIT_FUNCTION();
 #endif
 
+#ifdef PLUGIN_INIT_FUNCTION2
+extern "C" void PLUGIN_INIT_FUNCTION2();
+#endif
+
 extern "C" void yarpCustomInit() {
 #ifdef PLUGIN_INIT_FUNCTION
   PLUGIN_INIT_FUNCTION();
+#endif
+#ifdef PLUGIN_INIT_FUNCTION2
+  PLUGIN_INIT_FUNCTION2();
 #endif
 }
 
