@@ -4,10 +4,12 @@
 
 # libraries
 add_subdirectory(libYARP_OS)
+add_subdirectory(carriers)
 add_subdirectory(libYARP_sig)
+add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 add_subdirectory(modules)
-add_subdirectory(libYARP_math)
+add_subdirectory(libYARP_init)
 
 # executables
 add_subdirectory(yarp)

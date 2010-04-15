@@ -41,7 +41,7 @@ if (CREATE_GUIS)
     ADD_EXECUTABLE(yarpview ${folder_source} ${folder_header})
   ENDIF (WIN32 AND NOT CYGWIN)
 
-  TARGET_LINK_LIBRARIES(yarpview YARP_sig)
+  TARGET_LINK_LIBRARIES(yarpview YARP_sig YARP_init)
 
   INSTALL(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
