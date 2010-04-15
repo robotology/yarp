@@ -53,7 +53,7 @@ public:
 
     virtual int read(const Bytes& b) {
         if (interrupting) { return -1; }
-        while (inputCache.size() < b.length()) {
+        while (inputCache.size() < (unsigned int)b.length()) {
             cout << "*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:"
                  << endl;
             char buf[1000];

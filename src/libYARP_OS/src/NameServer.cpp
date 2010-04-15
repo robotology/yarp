@@ -847,7 +847,7 @@ public:
 
 
 int NameServer::main(int argc, char *argv[]) {
-    Network yarp;
+    //Network yarp;
 
     // pick an address
     Address suggest("...",0); // suggestion is initially empty

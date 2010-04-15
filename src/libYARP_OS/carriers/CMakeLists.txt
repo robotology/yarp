@@ -4,7 +4,6 @@ if (CREATE_OPTIONAL_CARRIERS)
   BEGIN_PLUGIN_LIBRARY(yarpcar)
   add_subdirectory(human_carrier)
   END_PLUGIN_LIBRARY(yarpcar)
-  install(TARGETS yarpcar ${yarpcar_LIBRARIES} EXPORT YARP 
-          COMPONENT runtime DESTINATION lib)
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpcar ${yarpcar_LIBRARIES})
+  install(TARGETS yarpcar ${yarpcar_LIBRARIES} EXPORT YARP COMPONENT runtime DESTINATION lib)
 endif (CREATE_OPTIONAL_CARRIERS)

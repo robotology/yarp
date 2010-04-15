@@ -91,14 +91,14 @@ bool PortCore::listen(const Address& address) {
     if (announce) {
         NameClient& nic = NameClient::getNameClient();
         if (!nic.isFakeMode()) {
-            ConstString serverName = Network::getNameServerName();
+            ConstString serverName = NetworkBase::getNameServerName();
             ConstString portName = address.getRegName().c_str();
             if (serverName!=portName) {
                 Bottle cmd, reply;
                 cmd.addString("announce");
                 cmd.addString(portName.c_str());
-                Network::write(Network::getNameServerContact(),
-                               cmd, reply);
+                NetworkBase::write(NetworkBase::getNameServerContact(),
+                                   cmd, reply);
             }
         }
     }

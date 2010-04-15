@@ -35,7 +35,7 @@ using namespace yarp::os;
 extern "C" void yarpCustomInit();
 extern "C" void yarpCustomFini();
 
-bool Network::connect(const char *src, const char *dest, 
+bool NetworkBase::connect(const char *src, const char *dest, 
                       const char *carrier, bool quiet) {
     int result = -1;
     if (carrier!=NULL) {
@@ -50,12 +50,12 @@ bool Network::connect(const char *src, const char *dest,
 }
 
 
-bool Network::disconnect(const char *src, const char *dest, bool quiet) {
+bool NetworkBase::disconnect(const char *src, const char *dest, bool quiet) {
     int result = Companion::disconnect(src,dest,quiet);
     return result == 0;
 }
 
-bool Network::sync(const char *port, bool quiet) {
+bool NetworkBase::sync(const char *port, bool quiet) {
     //if (!result) {
     int result = Companion::wait(port,quiet);
     //}
@@ -66,12 +66,12 @@ bool Network::sync(const char *port, bool quiet) {
 }
 
 
-int Network::main(int argc, char *argv[]) {
+int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc,argv);
 }
 
 
-void Network::init() {
+void NetworkBase::initMinimum() {
 
     // Broken pipes need to be dealt with through other means
     ACE_OS::signal(SIGPIPE, SIG_IGN);
@@ -97,12 +97,12 @@ void Network::init() {
     yarpCustomInit();
 }
 
-void Network::fini() {
+void NetworkBase::finiMinimum() {
     yarpCustomFini();
     ACE::fini();
 }
 
-Contact Network::queryName(const char *name) {
+Contact NetworkBase::queryName(const char *name) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.queryName(name);
     //printf("address is %s %d\n",address.toString().c_str(), address.isValid());
@@ -110,35 +110,35 @@ Contact Network::queryName(const char *name) {
 }
 
 
-Contact Network::registerName(const char *name) {
+Contact NetworkBase::registerName(const char *name) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.registerName(name);
     return address.toContact();
 }
 
 
-Contact Network::registerContact(const Contact& contact) {
+Contact NetworkBase::registerContact(const Contact& contact) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.registerName(contact.getName().c_str(),
                                        Address::fromContact(contact));
     return address.toContact();
 }
 
-Contact Network::unregisterName(const char *name) {
+Contact NetworkBase::unregisterName(const char *name) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.unregisterName(name);
     return address.toContact();
 }
 
 
-Contact Network::unregisterContact(const Contact& contact) {
+Contact NetworkBase::unregisterContact(const Contact& contact) {
     NameClient& nic = NameClient::getNameClient();
     Address address = nic.unregisterName(contact.getName().c_str());
     return address.toContact();
 }
 
 
-bool Network::setProperty(const char *name,
+bool NetworkBase::setProperty(const char *name,
                           const char *key,
                           const Value& value) {
     Bottle command;
@@ -154,7 +154,7 @@ bool Network::setProperty(const char *name,
 }
 
 
-Value *Network::getProperty(const char *name, const char *key) {
+Value *NetworkBase::getProperty(const char *name, const char *key) {
     Bottle command;
     command.addString("bot");
     command.addString("get");
@@ -167,7 +167,7 @@ Value *Network::getProperty(const char *name, const char *key) {
 }
 
 
-bool Network::setLocalMode(bool flag) {
+bool NetworkBase::setLocalMode(bool flag) {
     NameClient& nic = NameClient::getNameClient();
     bool state = nic.isFakeMode();
     nic.setFakeMode(flag);
@@ -175,20 +175,20 @@ bool Network::setLocalMode(bool flag) {
 }
 
 
-void Network::assertion(bool shouldBeTrue) {
+void NetworkBase::assertion(bool shouldBeTrue) {
     // could replace with ACE assertions, except should not 
     // evaporate in release mode
     YARP_ASSERT(shouldBeTrue);
 }
 
 
-ConstString Network::readString(bool *eof) {
+ConstString NetworkBase::readString(bool *eof) {
     return ConstString(Companion::readString(eof).c_str());
 }
 
 
 
-bool Network::write(const Contact& contact, 
+bool NetworkBase::write(const Contact& contact, 
                     PortWriter& cmd,
                     PortReader& reply,
                     bool admin,
@@ -259,12 +259,12 @@ bool Network::write(const Contact& contact,
 }
 
 
-bool Network::isConnected(const char *src, const char *dest, bool quiet) {
+bool NetworkBase::isConnected(const char *src, const char *dest, bool quiet) {
     Contact contact = Contact::byName(src);
     Bottle cmd, reply;
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode("out"));
-    Network::write(contact,cmd,reply,true);
+    NetworkBase::write(contact,cmd,reply,true);
     for (int i=0; i<reply.size(); i++) {
         if (reply.get(i).asString()==dest) {
             if (!quiet) {
@@ -282,21 +282,21 @@ bool Network::isConnected(const char *src, const char *dest, bool quiet) {
 }
 
 
-ConstString Network::getNameServerName() {
+ConstString NetworkBase::getNameServerName() {
     NameConfig nc;
     String name = nc.getNamespace();
     return name.c_str();
 }
 
 
-Contact Network::getNameServerContact() {
+Contact NetworkBase::getNameServerContact() {
     NameClient& nic = NameClient::getNameClient();
     return nic.getAddress().toContact();
 }
 
 
 
-bool Network::setNameServerName(const char *name) {
+bool NetworkBase::setNameServerName(const char *name) {
     NameConfig nc;
     String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     nc.writeConfig(fname,String(name));
@@ -306,7 +306,7 @@ bool Network::setNameServerName(const char *name) {
 }
 
 
-bool Network::checkNetwork() {
+bool NetworkBase::checkNetwork() {
     Contact c = queryName(getNameServerName());
     //printf("Contact is %s %d\n", c.toString().c_str(), c.isValid());
     return c.isValid();

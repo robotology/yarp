@@ -157,7 +157,7 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
 
 
 int Companion::main(int argc, char *argv[]) {
-    Network yarp;
+    //Network yarp;
     //ACE::init();
 
     // eliminate 0th arg, the program name
@@ -301,7 +301,7 @@ int Companion::cmdExists(int argc, char *argv[]) {
         return exists(argv[0],true);
     }
     if (argc == 2) {
-        bool ok = Network::isConnected(argv[0],argv[1]);
+        bool ok = NetworkBase::isConnected(argv[0],argv[1]);
         return ok?0:1;
     }
 
@@ -798,7 +798,7 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     bool faking = false;
     if (!address.isValid()) {
         YARP_INFO(log,"=== NO NAME SERVER!  Switching to local, fake mode");
-        Network::setLocalMode(true);
+        NetworkBase::setLocalMode(true);
         address = nic.registerName("...");
         faking = true;
     }
@@ -954,9 +954,9 @@ int Companion::cmdClean(int argc, char *argv[]) {
     msg.addString("bot");
     msg.addString("list");
     printf("Requesting list of ports from name server\n");
-    Network::write(name.c_str(),
-                   msg,
-                   reply);
+    NetworkBase::write(name.c_str(),
+                       msg,
+                       reply);
     int ct = reply.size()-1;
     printf("Got %d port%s\n", ct, (ct!=1)?"s":"");
     for (int i=1; i<reply.size(); i++) {
@@ -1137,9 +1137,9 @@ int Companion::subscribe(const char *src, const char *dest) {
     cmd.add("subscribe");
     if (src!=NULL) { cmd.add(src); }
     if (dest!=NULL) { cmd.add(dest); }
-    bool ok = Network::write(Network::getNameServerContact(),
-                             cmd,
-                             reply);
+    bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                 cmd,
+                                 reply);
     bool fail = reply.get(0).toString()=="fail";
     if (fail) {
         printf("Persistent connection operation failed.\n");
@@ -1175,30 +1175,15 @@ int Companion::unsubscribe(const char *src, const char *dest) {
     cmd.add("unsubscribe");
     cmd.add(src);
     cmd.add(dest);
-    Network::write(Network::getNameServerContact(),
-                   cmd,
-                   reply);
+    NetworkBase::write(NetworkBase::getNameServerContact(),
+                       cmd,
+                       reply);
     bool ok = reply.get(0).toString()=="ok";
     if (!ok) {
         printf("Unsubscription failed.\n");
     }
     return ok?0:1;
 }
-
-
-/*
-int Companion::cmdAnnounce(int argc, char *argv[]) {
-    Bottle cmd, reply;
-    cmd.add("announce");
-    for (int i=0; i<argc; i++) {
-        cmd.add(argv[i]);
-    }
-    Network::write(Network::getNameServerContact(),
-                   cmd,
-                   reply);
-    return 0;
-}
-*/
 
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
@@ -1359,7 +1344,7 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 int Companion::read(const char *name, const char *src, bool showEnvelope) {
     BottleReader reader(name,showEnvelope);
     if (src!=NULL) {
-        Network::connect(src,reader.getName().c_str());
+        NetworkBase::connect(src,reader.getName().c_str());
     }
     reader.wait();
     reader.close();
@@ -1435,7 +1420,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
 int Companion::forward(const char *localName, const char *targetName) {
     Port p;
     p.open(localName);
-    Network::connect(localName,targetName);
+    NetworkBase::connect(localName,targetName);
     while (true) {
         Bottle in, out;
         p.read(in,true);

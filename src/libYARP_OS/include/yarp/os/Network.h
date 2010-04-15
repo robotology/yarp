@@ -20,6 +20,7 @@
 
 namespace yarp {
     namespace os {
+        class NetworkBase;
         class Network;
     }
 }
@@ -27,26 +28,21 @@ namespace yarp {
 /**
  * \ingroup comm_class
  *
- * Utilities for manipulating the YARP network.
+ * Utilities for manipulating the YARP network, excluding initialization
+ * and shutdown.
  */
-class yarp::os::Network {
+class yarp::os::NetworkBase {
 public:
     /**
-     * Constructor.  Configures process to use the YARP network.
-     * Can be more convenient to use than calling Network::init()
-     * directly, since it will clean things up with a call to
-     * Network::fini() automatically.
+     * Basic system initialization, not including plugins.
      */
-    Network() {
-        Network::init();
-    }
+    static void initMinimum();
+
 
     /**
-     * Destructor.  Disconnects from the YARP network.
+     * Deinitialization, excluding plugins.
      */
-    virtual ~Network() {
-        Network::fini();
-    }
+    static void finiMinimum();
 
     /**
      * Request that an output port connect to an input port.
@@ -100,23 +96,6 @@ public:
      */
     static int main(int argc, char *argv[]);
 
-
-    /**
-     * Initialization.  On some operating systems, there are certain
-     * start-up tasks that need to be performed, and this method does
-     * them.  It is a good idea to call this method near the start of
-     * your program, and to call Network::fini towards the end.
-     */
-    static void init();
-
-
-    /**
-     * Deinitialization.  On some operating systems, there are certain
-     * shut-down tasks that need to be performed, and this method does
-     * them.  It is a good idea to call Netork::init near the start of
-     * your program, and to call this method towards the end.
-     */
-    static void fini();
 
     /**
      * An assertion.  Should be true.  If false, this will be
@@ -302,6 +281,50 @@ public:
      *
      */
     static bool checkNetwork();
+
+};
+
+/**
+ * \ingroup comm_class
+ *
+ * Utilities for manipulating the YARP network, including initialization
+ * and shutdown.
+ */
+class yarp::os::Network : public NetworkBase {
+public:
+    /**
+     * Constructor.  Configures process to use the YARP network.
+     * Can be more convenient to use than calling Network::init()
+     * directly, since it will clean things up with a call to
+     * Network::fini() automatically.
+     */
+    Network() {
+        Network::init();
+    }
+
+    /**
+     * Destructor.  Disconnects from the YARP network.
+     */
+    virtual ~Network() {
+        Network::fini();
+    }
+
+    /**
+     * Initialization.  On some operating systems, there are certain
+     * start-up tasks that need to be performed, and this method does
+     * them.  It is a good idea to call this method near the start of
+     * your program, and to call Network::fini towards the end.
+     */
+    static void init();
+
+
+    /**
+     * Deinitialization.  On some operating systems, there are certain
+     * shut-down tasks that need to be performed, and this method does
+     * them.  It is a good idea to call Netork::init near the start of
+     * your program, and to call this method towards the end.
+     */
+    static void fini();
 
 };
 

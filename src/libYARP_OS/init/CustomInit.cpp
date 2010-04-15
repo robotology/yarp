@@ -6,6 +6,8 @@
  *
  */
 
+#include <yarp/os/Network.h>
+
 // customizable initialization and shutdown functions
 
 #ifdef PLUGIN_INIT_FUNCTION
@@ -19,5 +21,18 @@ extern "C" void yarpCustomInit() {
 }
 
 extern "C" void yarpCustomFini() {
+}
+
+
+
+void yarp::os::Network::init() {
+    initMinimum();
+    yarpCustomInit();
+}
+
+
+void yarp::os::Network::fini() {
+    yarpCustomFini();
+    finiMinimum();
 }
 

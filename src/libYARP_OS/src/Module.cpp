@@ -82,7 +82,7 @@ public:
         printf("Listening to terminal (type \"quit\" to stop module)\n");
         bool isEof = false;
         while (!(isEof||isStopping()||owner.isStopping())) {
-            ConstString str = Network::readString(&isEof);
+            ConstString str = NetworkBase::readString(&isEof);
             if (!isEof) {
                 Bottle cmd(str.c_str());
                 Bottle reply;

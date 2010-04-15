@@ -83,7 +83,7 @@ public:
      */
     ManagedBytes(int len) {
         char *buf = new char[len];
-        Network::assertion(buf!=0/*NULL*/);
+        NetworkBase::assertion(buf!=0/*NULL*/);
         b = Bytes(buf,len);
         owned = true;
         use = -1;
