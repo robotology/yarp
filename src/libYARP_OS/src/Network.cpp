@@ -99,6 +99,7 @@ void NetworkBase::initMinimum() {
 
 void NetworkBase::finiMinimum() {
     yarpCustomFini();
+    Carriers::getInstance().clear();
     ACE::fini();
 }
 

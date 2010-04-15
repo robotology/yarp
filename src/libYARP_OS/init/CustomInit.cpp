@@ -6,6 +6,7 @@
  *
  */
 
+#include <stdio.h>
 #include <yarp/os/Network.h>
 
 // customizable initialization and shutdown functions

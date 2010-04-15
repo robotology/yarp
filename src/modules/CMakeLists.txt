@@ -2,6 +2,9 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Giacomo Spigler
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
+if (CREATE_DEVICE_LIBRARY_MODULES)
+
 project(YarpModules)
 
 include(YarpPlugin)
@@ -62,3 +65,4 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
 END_PLUGIN_LIBRARY(yarpmod)
 set_property(GLOBAL APPEND PROPERTY YARP_LIBS yarpmod ${yarpmod_LIBRARIES})
 
+endif (CREATE_DEVICE_LIBRARY_MODULES)
