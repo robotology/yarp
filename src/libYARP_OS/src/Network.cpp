@@ -32,6 +32,9 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
+extern "C" int __yarp_is_initialized;
+int __yarp_is_initialized = 0;
+
 bool NetworkBase::connect(const char *src, const char *dest, 
                       const char *carrier, bool quiet) {
     int result = -1;
@@ -305,4 +308,9 @@ bool NetworkBase::checkNetwork() {
     Contact c = queryName(getNameServerName());
     //printf("Contact is %s %d\n", c.toString().c_str(), c.isValid());
     return c.isValid();
+}
+
+
+bool NetworkBase::initialized() {
+    return __yarp_is_initialized>0;
 }

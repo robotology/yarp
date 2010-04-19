@@ -28,19 +28,27 @@ extern "C" void yarpCustomInit() {
 #endif
 }
 
+extern "C" int __yarp_is_initialized;
+
 extern "C" void yarpCustomFini() {
 }
 
 
 
 void yarp::os::Network::init() {
-    initMinimum();
-    yarpCustomInit();
+    if (__yarp_is_initialized==0) {
+        initMinimum();
+        yarpCustomInit();
+    }
+    __yarp_is_initialized++;
 }
 
 
 void yarp::os::Network::fini() {
-    yarpCustomFini();
-    finiMinimum();
+    if (__yarp_is_initialized>0) {
+        yarpCustomFini();
+        finiMinimum();
+        __yarp_is_initialized--;
+    }
 }
 

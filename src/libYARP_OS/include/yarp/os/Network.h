@@ -282,6 +282,15 @@ public:
      */
     static bool checkNetwork();
 
+    /**
+     *
+     * Returns true if YARP has been fully initialized.
+     *
+     * @return true if YARP has been initialized (by creating a 
+     * yarp::os::Network object or calling yarp::os::Network::init).
+     *
+     */
+    static bool initialized();
 };
 
 /**

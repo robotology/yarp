@@ -50,6 +50,11 @@ PortCore::~PortCore() {
 bool PortCore::listen(const Address& address) {
     bool success = false;
 
+    if (!NetworkBase::initialized()) {
+        YARP_ERROR(log, "YARP not initialized; create a yarp::os::Network object before using ports");
+        return false;
+    }
+
     YTRACE("PortCore::listen");
 
     if (!address.isValid()) {
