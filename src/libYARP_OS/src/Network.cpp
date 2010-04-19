@@ -32,9 +32,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-extern "C" void yarpCustomInit();
-extern "C" void yarpCustomFini();
-
 bool NetworkBase::connect(const char *src, const char *dest, 
                       const char *carrier, bool quiet) {
     int result = -1;
@@ -93,12 +90,9 @@ void NetworkBase::initMinimum() {
     Logger::get().setPid();
 	// make sure system is actually able to do things fast
 	Time::turboBoost();
-
-    yarpCustomInit();
 }
 
 void NetworkBase::finiMinimum() {
-    yarpCustomFini();
     Carriers::getInstance().clear();
     ACE::fini();
 }
