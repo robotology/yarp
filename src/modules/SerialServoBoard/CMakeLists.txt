@@ -11,7 +11,9 @@ IF (NOT SKIP_SerialServoBoard)
 
   FIND_PACKAGE(YARP REQUIRED)
 
+  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
   ADD_LIBRARY(ySerialServoBoard SerialServoBoard.cpp SerialServoBoard.h)
+  TARGET_LINK_LIBRARIES(ySerialServoBoard ${YARP_LIBRARIES})
 
 
 ENDIF (NOT SKIP_SerialServoBoard)

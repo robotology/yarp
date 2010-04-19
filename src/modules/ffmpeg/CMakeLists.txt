@@ -21,12 +21,13 @@ FIND_PACKAGE(FFMPEG REQUIRED)
 IF (FFMPEG_FOUND)
 
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${FFMPEG_INCLUDE_DIR})
-  LINK_LIBRARIES(${FFMPEG_LIBRARIES})
+  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+  LINK_LIBRARIES(${FFMPEG_LIBRARIES} ${YARP_LIBRARIES})
   IF (MINGW)
     LINK_LIBRARIES(ws2_32)
   ENDIF (MINGW)
 
-  ADD_LIBRARY(ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
+  ADD_LIBRARY(yarp_ffmpeg FfmpegGrabber.cpp FfmpegWriter.cpp FfmpegGrabber.h FfmpegWriter.h ffmpeg_api.h ffmpeg_api.cpp)
 
 ELSE (FFMPEG_FOUND)
 

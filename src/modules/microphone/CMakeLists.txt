@@ -19,8 +19,10 @@ IF (UNIX OR WIN32)
   ENDIF (WIN32)
 
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
+  INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+  LINK_LIBRARIES(${YARP_LIBRARIES})
 
-  ADD_LIBRARY(microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
+  ADD_LIBRARY(yarp_microphone ${SYS}MicrophoneDeviceDriver.cpp MicrophoneDeviceDriver.h)
 
 ELSE (UNIX OR WIN32)
 
