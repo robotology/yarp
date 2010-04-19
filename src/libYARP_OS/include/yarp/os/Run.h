@@ -84,7 +84,8 @@ public:
 	static HANDLE hZombieHunter;
 	static HANDLE *aHandlesVector;
 	#else
-	static void CleanZombies(int *pZombies,int nZombies);
+	//static void CleanZombies(int *pZombies,int nZombies);
+    static void CleanZombies();   
 	#endif
 
 protected:
@@ -92,9 +93,9 @@ protected:
 	static int Server();
 	static int SendToServer(Property& config);
 	static Bottle SendMsg(Bottle& msg,ConstString target);
-	static int ExecuteCmdAndStdio(Bottle& msg);
-	static int ExecuteCmd(Bottle& msg);
-	static int UserStdio(Bottle& msg);
+	static Bottle ExecuteCmdAndStdio(Bottle& msg);
+	static Bottle ExecuteCmd(Bottle& msg);
+	static Bottle UserStdio(Bottle& msg);
 
 	static inline bool IS_PARENT_OF(int pid){ return pid>0; }
 	static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
