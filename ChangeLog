@@ -1,3 +1,9 @@
+2010-04-15 Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/Run.cpp
+	* src/libYARP_OS/include/yarp/os/Run.h
+	Added xterm LIBPATH bug workaround
+	Added error messages
+
 2010-04-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Carriers.cpp: add experimental MPI
