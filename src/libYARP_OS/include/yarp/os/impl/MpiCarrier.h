@@ -34,6 +34,7 @@ class yarp::os::impl::MpiCarrier : public AbstractCarrier {
 private:
     MpiStream* stream;
     String port;
+    String name;
 public:
     MpiCarrier();
     ~MpiCarrier();

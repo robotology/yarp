@@ -40,18 +40,26 @@ namespace yarp {
  */
 class yarp::os::impl::MpiStream : public TwoWayStream, public InputStream, public OutputStream {
 private:
-    MPI_Comm intercomm, Port;
+    MPI_Comm intercomm, initial_comm;
+    // MPI_Comm Port;
     int rank;
     char port_name[MPI_MAX_PORT_NAME];
+    char unique_id[10+MPI_MAX_PROCESSOR_NAME];
     int readAvail, readAt;
     char* readBuffer;
     static int stream_counter;
     bool terminate;
+    String name;
 public:
-    MpiStream(bool server=false);
+    MpiStream(String name, bool server=false);
     ~MpiStream();
-    void connect(String port);
-    void accept();
+    bool connect(String port);
+    bool accept();
+    /**
+     * Check if both ports are within the same process.
+     */
+    void checkLocal(String other);
+    String getUID() { return String(unique_id);}
     char* getPortName();
     virtual void close();
     virtual bool isOk();
@@ -66,8 +74,8 @@ public:
     virtual void beginPacket();
     virtual void endPacket();
 
-    static void increase_counter();
-    static void decrease_counter();
+    void increase_counter();
+    void decrease_counter();
 
 private:
     Address local, remote;

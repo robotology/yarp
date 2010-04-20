@@ -16,22 +16,43 @@ using namespace yarp::os::impl;
 
 int MpiStream::stream_counter = 0;
 
-MpiStream::MpiStream(bool server) : terminate(false) {
+MpiStream::MpiStream(String n, bool server) : terminate(false), name(n) {
     readBuffer = NULL;
     reset();
-    Port = MPI_COMM_SELF;
+
+    // Port = MPI_COMM_SELF;
+    increase_counter();
+
+    // Create a unique identifier to prevent intra-process use of MPI
+    int length = 0;
+    MPI_Get_processor_name(unique_id, &length);
+    sprintf(unique_id + length, "____pid____%d", getpid());
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] Unique id: %s\n", name.c_str(), unique_id);
+#endif
+
+   initial_comm = MPI_COMM_SELF;
     if (server) {
         MPI_Open_port(MPI_INFO_NULL, port_name);
     }
 }
 MpiStream::~MpiStream() {
-    printf("STREAM dtor\n");
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Destructor called\n");
+#endif
     decrease_counter();
-    printf("stream dying \n");
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Destructed!!!\n");
+#endif
 }
 
 void MpiStream::increase_counter() {
-    printf("inc stream counter: %d\n", MpiStream::stream_counter);
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Increase stream counter from %d\n", MpiStream::stream_counter);
+#endif
     // We need to initialize MPI
     if (MpiStream::stream_counter == 0) {
         char*** mpi_carrier_argv = NULL;
@@ -42,38 +63,85 @@ void MpiStream::increase_counter() {
 }
 
 void MpiStream::decrease_counter() {
-    printf("dec stream counter: %d\n", MpiStream::stream_counter);
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Decrease stream counter from %d\n", MpiStream::stream_counter);
+#endif
     MpiStream::stream_counter--;
     if (MpiStream::stream_counter == 0) {
+#ifdef MPI_DEBUG
+        printf("[MpiStream] ");
+        printf("Stream counter equals 0; calling MPI_Finalize... ");
+#endif
         MPI_Finalize();
+#ifdef MPI_DEBUG
+        printf("Done\n");
+#endif
     }
     
 }
+void MpiStream::checkLocal(String other) {
+    printf("!!!!!!!!!! ----- !!!!!!!!!!!\n");
+    printf("!!!!!!!!!!! %s = ", unique_id);
+    printf("%s", String(unique_id).c_str());
+    if (other == String(unique_id)) {
+        printf("ERROR: MpiStream does not support process local communication\n");
+        throw;
+    }
+}
 
-
-void MpiStream::connect(String port) {
+bool MpiStream::connect(String port) {
     memcpy(port_name, port.c_str(), port.length());        
     port_name[port.length()] = '\0';
-    MPI_Comm_connect( port_name, MPI_INFO_NULL, 0, MPI_COMM_SELF,  &intercomm ); 
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Waiting for accept\n");
+#endif
+    // TODO: check for connection failure
+    MPI_Comm_connect( port_name, MPI_INFO_NULL, 0, initial_comm,  &intercomm ); 
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Connection established\n");
+#endif
     //MPI_Intercomm_merge(intercomm, true, &Port);
     //Port = intercomm;
+
+    return true;
 }
-void MpiStream::accept() {
-    MPI_Comm_accept( port_name, MPI_INFO_NULL, 0, MPI_COMM_SELF, &intercomm );
+bool MpiStream::accept() {
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Waiting for connect\n");
+#endif
+    // TODO: check for connection failure
+    MPI_Comm_accept( port_name, MPI_INFO_NULL, 0, initial_comm, &intercomm );
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Connection accepted \n");
+#endif
+    MPI_Close_port(port_name);
     //MPI_Intercomm_merge( intercomm, false, &Port);
     //Port = intercomm;
+
+    return true;
 }
 char* MpiStream::getPortName() {
     return port_name;
 }
 
- void MpiStream::close() {
+void MpiStream::close() {
     // nothing to do
-    printf("disconnecting\n");
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Trying to close; calling MPI disconnect\n");
+#endif
     // to be protected by mutex???
     terminate = true;
     MPI_Comm_disconnect(&intercomm);
-    printf("bye bye\n");
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Successfully disconnected\n");
+#endif
 }
 
 bool MpiStream::isOk() {
@@ -82,7 +150,10 @@ bool MpiStream::isOk() {
 }
 
  void MpiStream::interrupt() {
-     printf("try interupt\n");
+#ifdef MPI_DEBUG
+    printf("[MpiStream @ %s] ", name.c_str());
+    printf("Trying to interrupt\n");
+#endif
     close();
 }
 
@@ -140,7 +211,15 @@ int MpiStream::read(const Bytes& b) {
 void MpiStream::write(const Bytes& b) {
     int size = b.length();
     //MPI_Bcast(&size, 1, MPI_INT, MPI_ROOT, intercomm );
-    MPI_Send(b.get(), size, MPI_BYTE, 0, 0, intercomm );
+    MPI_Request request;
+    MPI_Status status;
+    int flag = 0;
+    MPI_Isend(b.get(), size, MPI_BYTE, 0, 0, intercomm, &request );
+    while(flag == 0) {
+        if (terminate)
+            break;
+        MPI_Test(&request, &flag, &status);
+    }
 }
 
 /////////////////////////////////////////////////
