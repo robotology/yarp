@@ -858,7 +858,7 @@ void Run::Help(const char *msg)
     fprintf(stderr,"\nUSAGE:\n\n");
     fprintf(stderr,"yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--hold] [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
     fprintf(stderr,"run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --kill TAG SIGNUM\nsend SIGNUM signal to TAG command\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
@@ -1805,10 +1805,11 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
-		//int null_file=open("/dev/null",O_WRONLY); 
-        //REDIRECT_TO(STDOUT_FILENO,null_file);
-		//REDIRECT_TO(STDERR_FILENO,null_file);
-		//close(null_file);
+        int saved_stderr=dup(STDERR_FILENO);
+		int null_file=open("/dev/null",O_WRONLY); 
+        REDIRECT_TO(STDOUT_FILENO,null_file);
+		REDIRECT_TO(STDERR_FILENO,null_file);
+		close(null_file);
         
         char *cmd_c_str=new char[commandString.length()+1];
         strcpy(cmd_c_str,commandString.c_str());
@@ -1837,8 +1838,6 @@ Bottle Run::ExecuteCmd(Bottle& msg)
         if (ret==YARPRUN_ERROR)
 	    {
 	        int error=errno;
-	        //REDIRECT_TO(STDOUT_FILENO,pipe_child_to_parent[WRITE_TO_PIPE]);
-		    //REDIRECT_TO(STDERR_FILENO,pipe_child_to_parent[WRITE_TO_PIPE]);
             String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
             out+=String("Can't execute command because ")+strerror(error)+"\n";
 	     
@@ -1846,6 +1845,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	        fprintf(out_to_parent,out.c_str());
 	        fflush(out_to_parent);
 	        fclose(out_to_parent);
+
+		    REDIRECT_TO(STDERR_FILENO,saved_stderr);
 	        fprintf(stderr,out.c_str());
             fflush(stderr);
 	    }
