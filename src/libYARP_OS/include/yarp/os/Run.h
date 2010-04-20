@@ -15,17 +15,19 @@
  * 
  * To run a server on a machine:             $ yarp run --server SERVERPORT
  *
- * To run a command by the remote server:    $ yarp run --on SERVERPORT --as TAG [--stdio SERVERPORT [--hold]] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]
+ * To run a command by the remote server:    $ yarp run --on SERVERPORT --as TAG [--stdio SERVERPORT [--hold] [--geometry WxH+X+Y]] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]
  * 
- * To kill a command:						 $ yarp run --on SERVERPORT --kill SIGNAL TAG
+ * To kill a command:						 $ yarp run --on SERVERPORT --kill TAG SIGNUM
  *
  * To terminate a command:				     $ yarp run --on SERVERPORT --sigterm TAG
  *
- * To kill all commands on a server:         $ yarp run --on SERVERPORT --killall
+ * To terminate all commands on a server:    $ yarp run --on SERVERPORT --sigtermall
  * 
  * To shutdown a server:				     $ yarp run --on SERVERPORT --exit
  *
  * To get a report from a server             $ yarp run --on SERVERPORT --ps
+ *
+ * To check if a command is running          $ yarp run --on SERVERPORT --isrunning TAG
  */
 
 #ifndef _YARP2_RUN_
