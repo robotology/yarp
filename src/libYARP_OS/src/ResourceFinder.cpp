@@ -245,7 +245,9 @@ public:
             fprintf(RTARGET,"||| checking %s\n", s.c_str());
         }
         if (exists(s.c_str(),isDir)) {
-            fprintf(RTARGET,"||| found %s\n", s.c_str());
+            if (verbose) {
+                fprintf(RTARGET,"||| found %s\n", s.c_str());
+            }
             return s.c_str();
         }
         return "";
