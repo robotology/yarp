@@ -19,12 +19,20 @@ int yarp_is_valid(yarpConnection connection);
 void yarp_disconnect(yarpConnection connection);
 
 int yarp_send(yarpConnection connection, const char *msg);
+int yarp_send_binary(yarpConnection connection, const char *msg, int len);
 int yarp_receive(yarpConnection connection, char *buf, int len);
 int yarp_receive_line(yarpConnection connection, char *buf, int len);
+int yarp_receive_binary(yarpConnection connection, char *buf, int len);
+
+int yarp_receive_data_header(yarpConnection connection);
 
 int yarp_parse_registration(yarpAddressPtr address, char *buf);
 int yarp_port_lookup(yarpAddressPtr address, const char *port_name);
 
 int yarp_rpc(yarpAddressPtr address, const char *msg, char *buf, int len);
 
+int yarp_read_int(const char *buf, int len);
+
 yarpConnection yarp_prepare_to_read(yarpAddressPtr address);
+
+yarpConnection yarp_prepare_to_read_binary(yarpAddressPtr address);

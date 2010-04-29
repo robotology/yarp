@@ -248,8 +248,13 @@ void yarp_disconnect(yarpConnection connection) {
 
 
 int yarp_send(yarpConnection connection, const char *msg) {
+    return yarp_send_binary(connection,msg,strlen(msg));
+}
+
+
+int yarp_send_binary(yarpConnection connection, const char *msg, int len) {
 	// send a message to the server PORT on machine HOST
-	if (send(SOCK_CAST(connection), msg, strlen(msg), 0) == -1) {
+	if (send(SOCK_CAST(connection), msg, len, 0) == -1) {
 		perror("send");
 		exit(1);
 	}
@@ -280,6 +285,22 @@ int yarp_receive_line(yarpConnection connection, char *buf, int len) {
                 buf[i] = '\0';
                 return 0;
             }
+        }
+        buf += res;
+        len -= res;
+    }
+    return res;
+}
+
+
+int yarp_receive_binary(yarpConnection connection, char *buf, int len) {
+    int i;
+    int res = 0;
+    while (len>0) {
+        res = yarp_receive(connection,buf,len);
+        if (res<=0) {
+            res = -1;
+            break;
         }
         buf += res;
         len -= res;
@@ -383,4 +404,129 @@ yarpConnection yarp_prepare_to_read(yarpAddressPtr address) {
     yarp_send(con,"r\n"); // reverse the connection
     return con;
 }
+
+yarpConnection yarp_prepare_to_read_binary(yarpAddressPtr address) {
+    yarpConnection con = yarp_connect(address);
+    char ibuf[1000];
+    if (!yarp_is_valid(con)) {
+        printf("Cannot open connection\n");
+        exit(1);
+    }
+
+    // Following tcp protocol documented at: 
+    //   http://eris.liralab.it/yarpdoc/yarp_protocol.html
+
+    // Send header to select connection type.
+    // this header is for fast_tcp, so we don't have to deal with flow control
+    char hdr[8] = {'Y','A',0x64, 0x1E, 0, 0,'R','P'}; 
+    yarp_send_binary(con,hdr,8);
+
+    // Send name of our port - there is none, so send a name that
+    // does not start with "/"
+    char port[8] = {4,0,0,0,'m','i','n',0};
+    yarp_send_binary(con,port,8);
+    hdr[7] = '\0';
+
+    // Check for acknowledgement
+    yarp_receive_binary(con,hdr,8);
+    if (hdr[7]!='P') {
+        printf("Cannot make connection handshake\n");
+        exit(1);
+    }
+
+    // Send header for payload (a command to reverse connection)
+    char load_hdr[8] = {'Y','A',10, 0, 0, 0,'R','P'};
+    yarp_send_binary(con,load_hdr,8);
+    char load_hdr2[10] = { 1, 1, 255, 255, 255, 255, 255, 255, 255, 255 };
+    yarp_send_binary(con,load_hdr2,10);
+    char load_len[4] = { 8, 0, 0, 0 };
+    yarp_send_binary(con,load_len,4);
+    char reply_len[4] = { 0, 0, 0, 0 };
+    yarp_send_binary(con,reply_len,4);
+
+    // send data - this is a command to reverse the connection for reading
+    char command_reverse[8] = { 0, 0, 0, 0, '~', 'r', 0, 1 };
+    yarp_send_binary(con,command_reverse,8);
+
+    return con;
+}
+
+int yarp_receive_data_header(yarpConnection con) {
+    int i;
+    char load_hdr_ref[8] = {'Y','A',10, 0, 0, 0,'R','P'};
+    char load_hdr[8] = {0,0,0,0,0,0,0,0};
+    yarp_receive_binary(con,load_hdr,8);
+    for (i=0; i<8; i++) {
+        if (load_hdr[i]!=load_hdr_ref[i]) {
+            printf("Unexpected data received");
+            exit(1);
+        }
+    }
+    char load_hdr2[10];
+    load_hdr2[1] = 0;
+    yarp_receive_binary(con,load_hdr2,10);
+    if (load_hdr2[1]!=1) {
+        printf("Corrupt data received");
+        exit(1);
+    }
+    int blocks = load_hdr2[0];
+    int len = 0;
+    unsigned char load_len[4];
+    int port_message_len = 0;
+    for (i=0; i<blocks; i++) {
+        yarp_receive_binary(con,(char *)load_len,4);
+        len += load_len[0] + (load_len[1]<<8) + (load_len[2]<<16) + 
+            (load_len[3]<<24);
+        if (i==0) {
+            port_message_len = len;
+        }
+    }
+    yarp_receive_binary(con,load_len,4);
+    for (i=0; i<4; i++) {
+        if (load_len[i]!=0) {
+            printf("Unexpected lengths received");
+            exit(1);
+        }
+    }
+    
+    // extract the port header part
+    char command_header[8];
+    command_header[4] = '\0';
+    yarp_receive_binary(con,command_header,8);
+    len -= 8;
+    port_message_len -= 8;
+    if (command_header[4]!='~') {
+        printf("Unexpected port command received\n");
+        exit(1);
+    }
+    char cmd[256] = "?";
+    cmd[0] = command_header[5];
+    if (cmd[0]=='\0') {
+        if (port_message_len>sizeof(cmd)) {
+            printf("Port command too big\n");
+            exit(1);
+        }
+        yarp_receive_binary(con,cmd,port_message_len);
+        len -= port_message_len;
+    }
+    if (cmd[0]!='d') {
+        printf("Unexpected port command : %s\n", cmd);
+        exit(1);
+    }
+
+    return len;
+}
+
+
+int yarp_read_int(const char *buf, int len) {
+    int x;
+    unsigned char *ubuf = (unsigned char *)buf;
+    if (len!=4) {
+        printf("Cannot read integers with %d bytes\n", len);
+    }
+    // this could be optimized away on little-endian machines!
+    x = ubuf[0] + (ubuf[1]<<8) + (ubuf[2]<<16) + (ubuf[3]<<24);
+    return x;
+}
+
 
