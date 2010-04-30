@@ -6,10 +6,33 @@
 ##
 ## Yet Another Device Compiling Monster, But Smaller This Time
 ##
-## This file provides a set of macros for building bundles of devices.
+## This file provides a set of macros for building bundles of plugins.
+## Sample use:
+##
 ##  BEGIN_PLUGIN_LIBRARY(libname)
+##    ADD_SUBDIRECTORY(plugin1)
+##    ADD_SUBDIRECTORY(plugin2)
 ##  END_PLUGIN_LIBRARY(libname)
-## etc.
+##  ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
+##
+## This sample would create two targets, libname (a library) and
+## libnamedev (an executable).  
+##
+## The library links with every library in the subdirectories 
+## (which can be made individually optional using CMake options),
+## and provides a method to initialize them all.
+##
+## The executable is a test program that links and initializes
+## all plugins.
+##
+## Plugins come in two types, carriers and devices.
+## To let YARP know how to initialize them, add lines like 
+## this in the CMakeLists.txt files the plugin subdirectories:
+##
+##   PREPARE_DEVICE(microphone TYPE MicrophoneDeviceDriver 
+##                  INCLUDE MicrophoneDeviceDriver.h WRAPPER grabber)
+## (the WRAPPER is optional), or:
+##   PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
 ##
 
 IF (COMMAND END_PLUGIN_LIBRARY)
