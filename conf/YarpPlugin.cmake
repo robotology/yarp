@@ -324,6 +324,23 @@ MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename devname)
     TARGET_LINK_LIBRARIES(${exename} ${devname})
 ENDMACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
+# support old style library
+MACRO(END_DEVICE_LIBRARY devname)
+  END_PLUGIN_LIBRARY(${devname})
+  ADD_PLUGIN_LIBRARY_EXECUTABLE(${devname}dev ${devname})
+ENDMACRO(END_DEVICE_LIBRARY)
+
+# More old style support
+MACRO(IMPORT_DEVICES hdr devname)
+  SET(libname ${devname})
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.h
+    ${hdr} @ONLY IMMEDIATE)
+  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.cmake
+    ${CMAKE_BINARY_DIR}/${devname}Config.cmake @ONLY IMMEDIATE)
+  #SET(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/old_conf ${CMAKE_MODULE_PATH})
+ENDMACRO(IMPORT_DEVICES)
+
 
 ENDIF (COMMAND END_PLUGIN_LIBRARY)
+
 
