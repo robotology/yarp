@@ -522,6 +522,10 @@ useful for transmitting images or sound.  For that, we need a binary
 protocol; at this point there's no avoiding reading hairy documentation
 like \ref yarp_protocol and writing some code.
 
+UPDATE: there is now sample C code for reading binary data (images 
+in particular) in the directory example/external/c - there are also
+examples in C that translate the python examples above.
+
  *
  */
 
