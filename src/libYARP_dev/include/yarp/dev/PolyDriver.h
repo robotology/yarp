@@ -25,6 +25,7 @@ namespace yarp {
  */
 class yarp::dev::PolyDriver : public DeviceDriver {
 public:
+    using DeviceDriver::open;
 
     /**
      * Constructor.
