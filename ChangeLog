@@ -1,3 +1,8 @@
+2010-05-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/YarpVersion.cmake: bump version up to 2.2.7, probably
+	last release before a biggish CMake reorganization.
+
 2010-04-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/ResourceFinder.cpp: fix "found"
