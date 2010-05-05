@@ -29,17 +29,18 @@ if (YARP_HAS_MATH_LIB)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
 
   set(YARP_USE_ATLAS FALSE CACHE BOOL "Select true to link to Atlas for BLAS")
+  set(MATH_LIB_EXTRAS)
   if(YARP_USE_ATLAS)
      find_package(Atlas)
-     link_libraries(${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY} ${GSL_LIBRARIES})
+     set(MATH_LIB_EXTRAS ${ATLAS_CBLAS_LIBRARY} ${ATLAS_ATLAS_LIBRARY} ${GSL_LIBRARIES})
   else(YARP_USE_ATLAS)
-     link_libraries(${GSL_LIBRARIES})
+     set(MATH_LIB_EXTRAS ${GSL_LIBRARIES})
   endif(YARP_USE_ATLAS)
 
   include_directories(${GSL_INCLUDE_DIRS})
 
   add_library(YARP_math ${folder_source} ${folder_header})
-  target_link_libraries(YARP_math YARP_OS)
+  target_link_libraries(YARP_math YARP_sig YARP_OS ${MATH_LIB_EXTRAS})
   install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION lib)
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
 
