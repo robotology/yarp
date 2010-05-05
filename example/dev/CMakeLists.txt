@@ -2,10 +2,11 @@
 # Authors: Paul Fitzpatrick, Giacomo Spigler
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
+cmake_minimum_required(VERSION 2.6)
 
-FIND_PACKAGE(YARP)
+FIND_PACKAGE(YARP REQUIRED)
+LINK_LIBRARIES(${YARP_LIBRARIES})
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(grabber_client grabber_client.cpp)
 ADD_EXECUTABLE(grabber_client_alternate grabber_client_alternate.cpp)

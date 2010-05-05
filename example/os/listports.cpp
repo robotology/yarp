@@ -1,5 +1,4 @@
 #include <yarp/os/all.h>
-#include <yarp/os/impl/NameConfig.h>
 #include <iostream>
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -9,8 +8,7 @@ using namespace std;
 int main(int argc, char *argv[]) {
     Network yarp;
 
-    NameConfig nc;
-    String name = nc.getNamespace();
+    ConstString name = yarp.getNameServerName();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");

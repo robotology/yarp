@@ -443,11 +443,11 @@ public:
 			port.open("...");
 			for (int i=0; i<20; ++i)
 			{
-			    if (Network::connect(port.getName().c_str(),m_stdio.c_str())) break;
+			    if (NetworkBase::connect(port.getName().c_str(),m_stdio.c_str())) break;
 			    yarp::os::Time::delay(1.0);
 			}
 			port.write(msg);
-			Network::disconnect(port.getName().c_str(),m_stdio.c_str());
+			NetworkBase::disconnect(port.getName().c_str(),m_stdio.c_str());
 			port.close();
 		}
 	}
@@ -474,7 +474,7 @@ int Run::main(int argc, char *argv[])
 {
 	m_PortName="";
 
-    if (!Network::checkNetwork())
+    if (!NetworkBase::checkNetwork())
     {
 		fprintf(stderr,"ERROR: no yarp network found.\n");
         return YARPRUN_ERROR;
@@ -552,12 +552,12 @@ Bottle Run::SendMsg(Bottle& msg,ConstString target)
     port.open("...");
     for (int i=0; i<20; ++i)
 	{
-	    if (Network::connect(port.getName().c_str(),target.c_str())) break;
+	    if (NetworkBase::connect(port.getName().c_str(),target.c_str())) break;
 	    yarp::os::Time::delay(1.0);
 	}
 	Bottle response;
     port.write(msg,response);
-    Network::disconnect(port.getName().c_str(),target.c_str());
+    NetworkBase::disconnect(port.getName().c_str(),target.c_str());
     port.close();
 	
     int size=response.size();
@@ -1013,10 +1013,10 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	bool bConnR=false,bConnW=false;
 	for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 	{ 	    
-	    if (!bConnW && Network::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
+	    if (!bConnW && NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
 	        bConnW=true;
 			        
-	    if (!bConnR && Network::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
+	    if (!bConnR && NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
 	        bConnR=true;
 	        
 	    if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
@@ -1034,8 +1034,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		if (bConnW) Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		if (bConnR) Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		if (bConnW) NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		if (bConnR) NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 
 		TerminateProcess(stdout_process_info.hProcess,YARPRUN_ERROR);
 		CloseHandle(stdout_process_info.hProcess);
@@ -1120,8 +1120,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 
         CloseHandle(write_to_pipe_stdin_to_cmd);
 		CloseHandle(read_from_pipe_stdin_to_cmd);
@@ -1475,11 +1475,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 		    { 
-			    if (!bConnW && Network::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
+			    if (!bConnW && NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
 			    {
 			        bConnW=true;
 			    }    
-		        if (!bConnR && Network::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
+		        if (!bConnR && NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
 		        {
 		            bConnR=true;
 		        }
@@ -1487,13 +1487,13 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
 		    }
 		    
-		    //bool bConnW=Network::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());       
-		    //bool bConnR=Network::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		    //bool bConnW=NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());       
+		    //bool bConnR=NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 		    
 		    if (!(bConnR&&bConnW))
 		    {				
-		        if (bConnW) Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		        if (bConnR) Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		        if (bConnW) NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		        if (bConnR) NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 		        
 	            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\n";
                 out+="Can't connect stdio\n";
@@ -1534,8 +1534,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            fflush(to_yarp_stdout);
 	            fclose(to_yarp_stdout);
 	            
-	            Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		        Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+	            NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		        NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 
 				KILL(pid_stdout);
 				KILL(pid_stdin);
@@ -1586,8 +1586,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	                fprintf(stderr,out.c_str());
                     fflush(stderr);
                     
-                    Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		            Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+                    NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 	            }
 
         		for (int s=0; s<nargs; ++s) delete [] arg_str[s];
@@ -1627,8 +1627,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            if (out.length()>0)
 	            {
 	                result.addInt(YARPRUN_ERROR);
-	                Network::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		            Network::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+	                NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 	            }
 	            else
 	            {
@@ -2051,11 +2051,11 @@ int Run::ps(const String &node,std::list<std::string> &processes)
     port.open("...");
     for (int i=0; i<20; ++i)
 	{
-	    if (Network::connect(port.getName().c_str(),node.c_str())) break;
+	    if (NetworkBase::connect(port.getName().c_str(),node.c_str())) break;
 	    yarp::os::Time::delay(1.0);
 	}
     port.write(msg,response);
-    Network::disconnect(port.getName().c_str(),node.c_str());
+    NetworkBase::disconnect(port.getName().c_str(),node.c_str());
     port.close();
 
 	processes.clear();
@@ -2089,11 +2089,11 @@ bool Run::isRunning(const String &node, String &keyv)
     port.open("...");
     for (int i=0; i<20; ++i)
 	{
-	    if (Network::connect(port.getName().c_str(),node.c_str())) break;
+	    if (NetworkBase::connect(port.getName().c_str(),node.c_str())) break;
 	    yarp::os::Time::delay(1.0);
 	}
     port.write(msg,response);
-    Network::disconnect(port.getName().c_str(),node.c_str());
+    NetworkBase::disconnect(port.getName().c_str(),node.c_str());
     port.close();
 
 	if (!response.size()) return false;

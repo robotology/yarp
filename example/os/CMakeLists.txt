@@ -2,12 +2,15 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Giacomo Spigler
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+cmake_minimum_required(VERSION 2.6)
+
 PROJECT (Examples)
 
-# replace "..." with the path to your YARP binaries if needed
-#SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
-
-FIND_PACKAGE(YARP)
+# Be sure to set YARP_DIR environment variable if YARP is not installed
+# somewhere findable.
+FIND_PACKAGE(YARP REQUIRED)
+LINK_LIBRARIES(${YARP_LIBRARIES})
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 ADD_EXECUTABLE(bottle_add bottle_add.cpp)
 ADD_EXECUTABLE(simple_sender simple_sender.cpp)

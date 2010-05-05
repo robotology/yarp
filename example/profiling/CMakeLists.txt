@@ -17,7 +17,10 @@ SET(CMAKE_CXX_FLAGS_PROFILING "-pg" CACHE STRING "profiling flags")
 # Then run with gprof prefix, e.g. "gprof ./bottle_test > result.txt"
 # Look at output and think.
 
-FIND_PACKAGE(YARP)
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
+
 FIND_PACKAGE(ICUB)
 
 IF (USE_PARALLEL_PORT)

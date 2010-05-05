@@ -4,19 +4,6 @@
  * Welcome to the "PopulateDrivers" source file, where factories
  * are created for YARP device drivers.
  *
- * The file "src/libYARP_dev/src_generated/PopulateDrivers.cpp"
- * is a generated file, and you should not edit it!
- *
- * The file "src/libYARP_dev/src/PopulateDrivers.cpp.in"
- * is a human-written file.  Edit it to your heart's content,
- * and then edit it a little bit more, and then again for
- * old time's sake.  It is the template from which
- * "src/libYARP_dev/src_generated/PopulateDrivers.cpp" is produced.
- *
- * In fact you should not need to edit it much anymore; all the
- * action for new devices has moved to "src/modules/CMakeLists.txt"
- *
- *                                                 - paulfitz
  *
  */
 
@@ -37,21 +24,26 @@ using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::dev;
 
-// this is an automatically configured file
+
+// NONE of this stuff is relevant anymore -- begins
 
 void addExternalDevices();
 
-#ifndef YARP_AUTOCONF
-#cmakedefine EMBED_DEVICE_LIBRARY_CALL
-#cmakedefine CREATE_DEVICE_LIBRARY_MODULES
-#cmakedefine MERGE_DEVICE_LIBRARY_MODULES
-#endif
+//#ifndef YARP_AUTOCONF
+//#cmakedefine EMBED_DEVICE_LIBRARY_CALL
+//#cmakedefine CREATE_DEVICE_LIBRARY_MODULES
+//#cmakedefine MERGE_DEVICE_LIBRARY_MODULES
+//#endif
 
-#ifdef CREATE_DEVICE_LIBRARY_MODULES
+#ifdef CREATE_DEVICE_LIBRARY_MODULES_DISABLE
 #ifdef MERGE_DEVICE_LIBRARY_MODULES
 extern "C" void add_yarpmod_devices();
 #endif
 #endif
+
+// NONE of this stuff is relevant anymore -- ends
+
+
 
 #include <yarp/dev/RemoteFrameGrabber.h>
 #include <yarp/dev/ServerFrameGrabber.h>

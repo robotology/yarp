@@ -1,3 +1,9 @@
+2010-05-05  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/CMakeLists.txt and lots of others: big cmake clean-up.
+	Report breakage please!  In case you need a working YARP in
+	a hurry, use revision r7841 (svn update -r 7841)
+	
 2010-05-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/YarpVersion.cmake: bump version up to 2.2.7, probably

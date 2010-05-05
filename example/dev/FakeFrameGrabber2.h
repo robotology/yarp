@@ -79,22 +79,22 @@ public:
         return false;
     }
 
-	virtual bool getWhiteBalance(double &red, double &green) const
+	virtual bool getWhiteBalance(double &red, double &green)
 	{
 		red=0;
 		green=0;
 		return false;
 	}
 
-    virtual double getBrightness() const {
+    virtual double getBrightness() {
         return brightness;
     }
 
-    virtual double getShutter() const {
+    virtual double getShutter() {
         return 0;
     }
 
-    virtual double getGain() const {
+    virtual double getGain() {
         return 0;
     }
 
@@ -119,22 +119,22 @@ public:
         return false;
     }
 
-    virtual double getExposure() const {
+    virtual double getExposure() {
         return 0.0;
     }
-    virtual double getSharpness() const {
+    virtual double getSharpness() {
         return 0.0;
     }
-    virtual double getHue() const {
+    virtual double getHue() {
         return 0.0;
     }
-    virtual double getSaturation() const {
+    virtual double getSaturation() {
         return 0.0;
     }
-    virtual double getGamma() const {
+    virtual double getGamma() {
         return 0.0;
     }        
-    virtual double getIris() const {
+    virtual double getIris() {
         return 0.0;
     }
     

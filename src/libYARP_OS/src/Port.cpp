@@ -362,8 +362,8 @@ Contact Port::where() const {
 
 bool Port::addOutput(const Contact& contact) {
     Contact me = where();
-    return Network::connect(me.getName().c_str(),
-                            contact.toString().c_str());
+    return NetworkBase::connect(me.getName().c_str(),
+                                contact.toString().c_str());
 }
 
 

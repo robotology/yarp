@@ -95,6 +95,13 @@ public:
 
     /**
      *
+     * Remove all carriers.
+     *
+     */
+    void clear();
+
+    /**
+     *
      * Add a new connection type.
      *
      * @param carrier a prototype of the desired connection type.
@@ -105,15 +112,16 @@ public:
      */
     static bool addCarrierPrototype(Carrier *carrier);
 
+    static Carriers& getInstance() {
+        return instance;
+    }
+
 private:
     ACE_Vector<Carrier *> delegates;
 
     Carriers();
   
     static Carriers instance;
-    static Carriers& getInstance() {
-        return instance;
-    }
 
     Carrier *chooseCarrier(const String * name, const Bytes * bytes);  
 };

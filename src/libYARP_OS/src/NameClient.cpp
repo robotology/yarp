@@ -206,8 +206,8 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
         return getServer().apply(cmd,reply,
                                  Address("127.0.0.1",10000,"tcp"));
     } else {
-        ConstString server = Network::getNameServerName();
-        return Network::write(server,cmd,reply);
+        ConstString server = NetworkBase::getNameServerName();
+        return NetworkBase::write(server,cmd,reply);
     }
 }
 

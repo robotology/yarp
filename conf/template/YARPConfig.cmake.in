@@ -1,54 +1,59 @@
-# Copyright: (C) 2009 RobotCub Consortium
+# Copyright: (C) 2009, 2010 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 IF (NOT YARP_FOUND)
 
-MESSAGE(STATUS "Using YARP")
+  # Give the details of YARP libraries, include path etc.
+  SET(YARP_LIBRARIES @YARP_LIBRARIES@)
+  SET(YARP_INCLUDE_DIRS @YARP_INCLUDES@)
+  SET(YARP_DEFINES @YARP_DEFINES@) # only needed if you use ACE directly
+  SET(YARP_MODULE_PATH @YARP_MODULE_PATH@)
 
-SET(YARP_LIBRARIES "@YARP_LIBRARIES@" CACHE INTERNAL "Libraries needed for YARP")
-SET(YARP_INCLUDES "@YARP_INCLUDES@" CACHE INTERNAL "Include directories needed for YARP")
-SET(YARP_DEFINES "@YARP_DEFINES@" CACHE INTERNAL "Definitions needed for YARP")
-#MESSAGE(STATUS "**** YARP_LIBRARIES: ${YARP_LIBRARIES}")
+  # Pull in any dependencies that YARP libraries may have.
+  INCLUDE(@YARP_DEPENDENCY_FILE@)
 
-SET(CREATE_DEVICE_LIBRARY_MODULES @CREATE_DEVICE_LIBRARY_MODULES@)
-SET(MERGE_DEVICE_LIBRARY_MODULES @MERGE_DEVICE_LIBRARY_MODULES@)
-
-LINK_LIBRARIES(${YARP_LIBRARIES})
-INCLUDE_DIRECTORIES(${YARP_INCLUDES})
-ADD_DEFINITIONS(${YARP_DEFINES})
-
-# pick up YARP's helper modules
-SET(YARP_MODULE_PATH "@CMAKE_MODULE_PATH@")
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
-
-# note location of independent yarp modules, if compiled
-IF (NOT yarpmod_DIR)
-  SET(yarpmod_DIR "@CMAKE_BINARY_DIR@")
-ENDIF (NOT yarpmod_DIR)
-
-# make some useful YARP macros available
-IF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
-  INCLUDE(YarpDevice)
-ENDIF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
-
-# merge device modules if desired
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-  IF (MERGE_DEVICE_LIBRARY_MODULES)
-    FIND_PACKAGE(yarpmod)
-    IF (MSVC)
-      LINK_LIBRARIES(optimized yarpmod debug yarpmodd)
-      SET (yarpmodd_LIB_DEPENDS "${yarpmod_LIB_DEPENDS}")
-    ELSE (MSVC)
-      LINK_LIBRARIES(yarpmod)
-    ENDIF (MSVC)
+  #######################################################################
+  # BACKWARDS-COMPATIBILITY SECTION
+  #
+  # YARP used to automatically link and include itself.
+  # We are migrating to more normal behavior.
+  #
+  IF (YARP_AUTO_LINK)
+    MESSAGE(STATUS "Using YARP with automatic linking.")
+    MESSAGE(STATUS "Warning: this option will be going away in later versions of YARP")
+    MESSAGE(STATUS "You can instead add these lines after FIND_PACKAGE(YARP):")
+    MESSAGE(STATUS "  LINK_LIBRARIES(\${YARP_LIBRARIES})")
+    MESSAGE(STATUS "  INCLUDE_DIRECTORIES(\${YARP_INCLUDE_DIRS})")
     LINK_LIBRARIES(${YARP_LIBRARIES})
-  ENDIF (MERGE_DEVICE_LIBRARY_MODULES)
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
+    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+    ADD_DEFINITIONS(${YARP_DEFINES})
+    SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
 
-# pass along some flags that may be useful.
-SET(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
-SET(YARP_USE_ATLAS @YARP_USE_ATLAS@)
+    # make some useful YARP macros available
+    IF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
+      INCLUDE(YarpDevice)
+    ENDIF (EXISTS ${YARP_MODULE_PATH}/YarpDevice.cmake)
+  ELSE (YARP_AUTO_LINK)
+    IF (NOT YARP_NO_AUTO_LINK)
+      OPTION(YARP_AUTO_LINK "Automatically link/include YARP libraries?" FALSE)
+      MESSAGE(STATUS "Using YARP without automatic linking (set YARP_AUTO_LINK for that)")
+    ENDIF (NOT YARP_NO_AUTO_LINK)
+  ENDIF (YARP_AUTO_LINK)
 
-SET (YARP_FOUND TRUE)
+  MACRO(BEGIN_DEVICE_LIBRARY devname)
+    MESSAGE(STATUS "YARP device library code now needs to be included with INCLUDE(${YARP_MODULE_PATH}/YarpPlugin.cmake), letting this go for now...")
+    INCLUDE(YarpPlugin)
+    BEGIN_PLUGIN_LIBRARY(${devname})
+  ENDMACRO(BEGIN_DEVICE_LIBRARY devname)
+  #
+  # BACKWARDS-COMPATIBILITY SECTION ENDS
+  #######################################################################
+
+  # Pass along some compilation options that may be useful for clients
+  # to check.
+  SET(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
+  SET(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option
+
+  SET (YARP_FOUND TRUE)
 ENDIF (NOT YARP_FOUND)

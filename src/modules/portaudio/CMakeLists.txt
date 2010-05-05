@@ -9,6 +9,8 @@ ENDIF (COMPILE_DEVICE_LIBRARY)
 IF (NOT SKIP_portaudio)
 
 FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
 
 INCLUDE(UsePkgConfig)
 FIND_PACKAGE(PortAudio)
@@ -18,7 +20,7 @@ IF (PortAudio_FOUND)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR} ${PortAudio_INCLUDE_DIR})
   LINK_LIBRARIES(${PortAudio_LIBRARIES})
 
-  ADD_LIBRARY(portaudio PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
+  ADD_LIBRARY(yarp_portaudio PortAudioDeviceDriver.cpp PortAudioDeviceDriver.h)
 
 ELSE (PortAudio_FOUND)
 

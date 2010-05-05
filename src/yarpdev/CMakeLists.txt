@@ -2,87 +2,13 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-INCLUDE_DIRECTORIES(${YARP_OS_INC} ${YARP_sig_INC} ${YARP_dev_INC})
-LINK_LIBRARIES(YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
 
-# prepare for devices that are linked externally to libYARP_dev
-INCLUDE(YarpDevice)
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-    # add in device library
-    SET(yarpmod_DIR ${CMAKE_BINARY_DIR})
-    #IMPORT_DEVICES(${CMAKE_BINARY_DIR}/drivers.h yarpmod)
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR})
+get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_dev PROPERTY INCLUDE_DIRS)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
+add_executable(yarpdev yarpdev.cpp)
+target_link_libraries(yarpdev YARP_init YARP_dev)
+if (CREATE_DEVICE_LIBRARY_MODULES)
+  target_link_libraries(yarpdev yarpmod)
+endif(CREATE_DEVICE_LIBRARY_MODULES)
 
-########################################################################
-##
-## yarpdev -- command line control of devices
-##
-
-ADD_EXECUTABLE(yarpdev yarpdev.cpp)
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-  TARGET_IMPORT_DEVICES(yarpdev
-  		      ${CMAKE_BINARY_DIR}/yarpdev_drivers.h yarpmod)
-ELSE (CREATE_DEVICE_LIBRARY_MODULES)
-  TARGET_IMPORT_DEVICES(yarpdev
-  		      ${CMAKE_BINARY_DIR}/yarpdev_drivers.h)
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-
-TARGET_LINK_LIBRARIES(yarpdev YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-IF(MSVC)
-    SET_TARGET_PROPERTIES(yarpdev PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(MSVC)
-
-########################################################################
-##
-## yarphear -- command line access to audio
-##
-
-ADD_EXECUTABLE(yarphear yarphear.cpp)
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-  #BEGIN_DEVICE_LIBRARY(yarphearmod) 
-  #SET(COMPILE_BY_DEFAULT TRUE)
-  #ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/libYARP_dev/src/portaudio
-  #                 ${CMAKE_CURRENT_BINARY_DIR})
-  #END_DEVICE_LIBRARY(yarphearmod)
-  TARGET_IMPORT_DEVICES(yarphear
-		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h yarpmod)
-ELSE (CREATE_DEVICE_LIBRARY_MODULES)
-  TARGET_IMPORT_DEVICES(yarphear
-		      ${CMAKE_BINARY_DIR}/yarphear_drivers.h)
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-#TARGET_LINK_LIBRARIES(yarphear YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-IF(MSVC)
-    SET_TARGET_PROPERTIES(yarphear PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(MSVC)
-
-########################################################################
-##
-## yarpview -- visualize image streams
-##
-
-SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
-#SET(YARP_ADMIN FALSE)
-IF (YARP_ADMIN)
-    #BEGIN_DEVICE_LIBRARY(viewmod) 
-    #SET(COMPILE_BY_DEFAULT TRUE)
-    #ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/src/modules/wxsdl
-    #                 ${CMAKE_CURRENT_BINARY_DIR})
-    #END_DEVICE_LIBRARY(viewmod)
-    ADD_EXECUTABLE(yarpview2 yarpview.cpp)
-    IF (CREATE_DEVICE_LIBRARY_MODULES)
-      TARGET_IMPORT_DEVICES(yarpview2 
-		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h yarpmod)
-    ELSE (CREATE_DEVICE_LIBRARY_MODULES)
-      TARGET_IMPORT_DEVICES(yarpview2 
-		          ${CMAKE_BINARY_DIR}/yarpview_drivers.h)
-    ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
-    #TARGET_LINK_LIBRARIES(yarpview2 yarpmod)
-    #TARGET_LINK_LIBRARIES(yarpview2 YARP_dev ${YARP_EXTMOD_TARGETS} ${YARP_dev_EXT_LIBS} YARP_sig YARP_OS)
-    IF(MSVC)
-        SET_TARGET_PROPERTIES(yarpview2 PROPERTIES COMPILE_FLAGS /wd4996)
-    ENDIF(MSVC)
-    
-ENDIF (YARP_ADMIN)
-
-INSTALL_TARGETS(/bin yarpdev yarphear)
+install(TARGETS yarpdev COMPONENT utilities DESTINATION bin)

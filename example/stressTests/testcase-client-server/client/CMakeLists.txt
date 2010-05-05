@@ -1,10 +1,12 @@
 SET(PROJECTNAME collatzClient)
 PROJECT(${PROJECTNAME})
 
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.6)
 
 # Add Yarp to the "packages" used by this project.
-FIND_PACKAGE(YARP)
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
 
 # Find .cpp and .h automatically. This is a bit lazy,
 # and in principle it would be better to list these files

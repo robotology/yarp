@@ -2,57 +2,100 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-##################################################
-#ask user to specify build type (linux only)
-IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE "Release" CACHE STRING 
+
+#########################################################################
+# Control where libraries and executables are placed
+
+set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR}/lib)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+message(STATUS "Libraries are placed in ${LIBRARY_OUTPUT_PATH}")
+message(STATUS "Executables are placed in ${EXECUTABLE_OUTPUT_PATH}")
+# Make sure the directories actually exist
+make_directory(${LIBRARY_OUTPUT_PATH})
+make_directory(${EXECUTABLE_OUTPUT_PATH})
+mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
+mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
+if (MSVC)
+  # See the Debug/Release subdirectories - is there a more systematic
+  # way to do this?
+  LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib 
+    ${CMAKE_BINARY_DIR}/lib/Debug 
+    ${CMAKE_BINARY_DIR}/lib/Release)
+endif (MSVC)
+
+
+#########################################################################
+# Encourage user to specify build type.
+
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING 
 	"Choose the type of build, recommanded options are: Debug or Release")
-ENDIF(NOT CMAKE_BUILD_TYPE)
-# hide variable to WINDOWS users (CMAKE_BUILD_TYPE is not used on win)
-IF (MSVC)
-  MARK_AS_ADVANCED(CMAKE_BUILD_TYPE)
-ENDIF(MSVC)
-#################################################
+endif(NOT CMAKE_BUILD_TYPE)
+# Hide variable to MSVC users, since it is not needed
+if (MSVC)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
+endif(MSVC)
 
 
-SET (STATLIB "${CMAKE_BINARY_DIR}/static_libs")
-IF (EXISTS ${STATLIB})
+#########################################################################
+# Simplify compilation of portable binaries.
+# To make very portable YARP binaries, put a subdirectory called
+# "static_libs" in the build directory, and place any libraries
+# (such as libstdc++.a) that should be linked statically there.
+
+set (STATLIB "${CMAKE_BINARY_DIR}/static_libs")
+if (EXISTS ${STATLIB})
     MESSAGE(STATUS "static_libs directory present: ${STATLIB}")
     LINK_DIRECTORIES(${STATLIB})
     ADD_DEFINITIONS(-static-libgcc)
     SET(CMAKE_CXX_LINK_EXECUTABLE "${CMAKE_CXX_LINK_EXECUTABLE} -static-libgcc")
     FILE(GLOB statlibs ${STATLIB}/*.a)
     LINK_LIBRARIES(${statlibs})
-ENDIF (EXISTS ${STATLIB})
+endif (EXISTS ${STATLIB})
 
 
-SET(COMPILE_NEW_YARPVIEW TRUE CACHE BOOL "Do you want to compile the new yarpview?")
-#MARK_AS_ADVANCED(COMPILE_NEW_YARPVIEW)
+#########################################################################
+# Control whether libraries are shared or static.
+# This option isn't really usable on windows right now.
 
-# compile device library by default - safe, since individual devices
-# are added on request
-SET(CREATE_DEVICE_LIBRARY TRUE CACHE BOOL "Do you want to compile the device library")
+option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" FALSE)
+if (WIN32)
+  mark_as_advanced(CREATE_SHARED_LIBRARY)
+endif (WIN32)
 
-SET(CREATE_DEVICE_LIBRARY_MODULES FALSE CACHE BOOL "Compile device modules")
+if(CREATE_SHARED_LIBRARY)
+	set(BUILD_SHARED_LIBS ON)
+endif(CREATE_SHARED_LIBRARY)
 
-IF (CREATE_DEVICE_LIBRARY_MODULES)
-  SET(MERGE_DEVICE_LIBRARY_MODULES TRUE CACHE BOOL "Merge devices with YARP libraries (so they do not need to be linked separately)")
-ENDIF (CREATE_DEVICE_LIBRARY_MODULES)
 
-SET(CREATE_GUIS FALSE CACHE BOOL "Do you want to compile GUIs")
-SET(CREATE_LIB_MATH FALSE CACHE BOOL "Create math library libYARP_math")
+#########################################################################
+# Control whether yarp::os::impl::String should be std::string or opaque
+# Not an important option for end users yet.  In principle 
+# yarp::os::ConstString could now be set to std::string, if YARP
+# ever decides to accept STL as a dependency.
 
-SET(CREATE_SHARED_LIBRARY FALSE CACHE BOOL "Compile shared libraries rather than linking statically")
-IF (WIN32)
-	MARK_AS_ADVANCED(CREATE_SHARED_LIBRARY)
-ENDIF (WIN32)
+option(USE_STL_STRING "Do you want the yarp String class to be std::string? (default is to use the ACE string class)" OFF)
+mark_as_advanced(USE_STL_STRING)
 
-# Flag for device testing and documentation - not really for end-user,
-# but instead the library developers
-SET(CREATE_BUILTIN_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create tests for builtin devices")
-MARK_AS_ADVANCED(CREATE_BUILTIN_DEVICE_TESTS CREATE_DEVICE_LIBRARY)
+if (USE_STL_STRING)
+  message(STATUS "Using std::string")
+  set(YARP_USE_STL_STRING 1)
+else (USE_STL_STRING)
+  set(YARP_USE_ACE_STRING 1)
+endif (USE_STL_STRING)
 
-SET(USE_STL_STRING FALSE CACHE BOOL "Do you want the yarp String class to be std::string? (default is to use the ACE string class)")
-MARK_AS_ADVANCED(USE_STL_STRING)
 
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
+#########################################################################
+# Control compilation of device tests.
+# Not really for end-user, but instead for the library developers
+set(CREATE_BUILTIN_DEVICE_TESTS FALSE CACHE BOOL "Do you want to create tests for builtin devices")
+mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
+
+
+#########################################################################
+# Defunct options to be removed
+
+# set a flag so sub-directories know that are being compiled
+# en masse as opposed to as individuals
+set(COMPILING_ALL_YARP TRUE)
+

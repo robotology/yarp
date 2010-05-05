@@ -114,7 +114,7 @@ Terminee::~Terminee() {
     
     // important: stop before deleting "implementation"
     stop(); 
-    Network::unregisterName(helper.registeredName.c_str());
+    NetworkBase::unregisterName(helper.registeredName.c_str());
 
     if (implementation!=NULL) {
         delete &HELPER(implementation);

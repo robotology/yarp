@@ -7,6 +7,7 @@
  */
 
 #include <yarp/os/impl/String.h>
+#include <yarp/os/Network.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
 
@@ -54,8 +55,10 @@ public:
     }
 
     virtual void runTests() {
+        Network::setLocalMode(true);
         testBasic();
         testMonitor();
+        Network::setLocalMode(false);
     }
 };
 

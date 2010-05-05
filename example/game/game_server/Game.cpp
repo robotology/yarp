@@ -16,6 +16,9 @@
 using namespace yarp::os;
 
 // last minute need for random number...
+#ifndef _REENTRANT
+#define _REENTRANT
+#endif
 #include <ace/OS.h>
 static double ranf () {
     return double (ACE_OS::rand ()) / double (RAND_MAX);

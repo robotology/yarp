@@ -1,59 +1,70 @@
-# Copyright: (C) 2009 RobotCub Consortium
+# Copyright: (C) 2009, 2010 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.0.5)
+cmake_minimum_required(VERSION 2.6)
 
-PROJECT(YARP)
-
-# set some CMake policy flags (for CMake version 2.6)
-IF (COMMAND cmake_policy)
-  cmake_policy(SET CMP0005 OLD)  # use 2.4 behavior for ADD_DEFINITIONS
-  cmake_policy(SET CMP0003 NEW)  # don't do funky lib path things
-ENDIF (COMMAND cmake_policy)
-
-# set a flag so sub-directories know that are being compiled
-# en masse as opposed to as individuals
-SET(COMPILING_ALL_YARP TRUE)
+project(YARP)
 
 # Pick up our scripts - they are all in the conf subdirectory
-SET(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
-SET(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
+set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
+set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
 
-# Set up some large-scale compile options - do you want devices? guis?
-INCLUDE(YarpOptions)
+# The YARP build is fairly flexible, so we need to accumulate some
+# information about what libraries are being built (and their dependencies),
+# along with the include path.  We'll be passing that along to clients
+# using YARP without a global install.
+set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+set_property(GLOBAL PROPERTY YARP_LIBS)
+set_property(GLOBAL PROPERTY YARP_DEFS)
 
-# Get the current yarp version.  Really this should be placed into
-# a generated header file.
-INCLUDE(YarpVersion)
+# Set up some compilation options
+include(YarpOptions)
 
-# Configure where the output will go
-INCLUDE(YarpOutput)
+# Get the current YARP version
+include(YarpVersion)
 
-# get appropriate libraries and settings
-INCLUDE(YarpReqLib)
+# Check system types, find necessary libraries
+include(YarpSystemCheck)
 
-# define useful macros for sub-libraries and programs
-INCLUDE(YarpLibrary)
-INCLUDE(YarpProgram)
+# Turn on testing
+enable_testing()
 
-# turn on testing
-ENABLE_TESTING()
+# build some configuration header files
+add_subdirectory(conf)
 
-# declare active subdirectories
-SUBDIRS(src conf)
+# build the main libraries and utilities
+add_subdirectory(src)
 
-# set up some packaging properties
-INCLUDE(YarpPackage)
+# Now, let's see what we built, and record it to facilitate in-tree 
+# (uninstalled) use of YARP.
+get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
+get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
+message(STATUS "In-tree includes: ${YARP_INCLUDES}")
+message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
-# make doc target - we could check whether doxygen is present, but
-# let's not make a big deal of it for now.
-SET(YARP_ADMIN "$ENV{YARP_ADMIN}")
-IF (YARP_ADMIN)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/doxygen/Doxyfile.part.template
-                 ${CMAKE_BINARY_DIR}/dox/Doxyfile.part IMMEDIATE)
-  ADD_CUSTOM_TARGET(dox COMMAND doxygen ${CMAKE_BINARY_DIR}/dox/Doxyfile.part)
-ENDIF (YARP_ADMIN)
+set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
+export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
+
+# Set up a configuration file for installed use of YARP
+set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/lib/YARP/YARP.cmake)
+set(YARP_INCLUDES ${CMAKE_INSTALL_PREFIX}/include)
+set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
+               ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib/YARP)
+install(EXPORT YARP COMPONENT configuration DESTINATION lib/YARP)
+
+# Set up some packaging properties (for generating tarballs etc)
+include(YarpPackage)
+
+# Make documentation target, documentation goes in doc subdirectory
+# of build.
+include(YarpDoc)
 
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun

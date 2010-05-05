@@ -1,39 +1,25 @@
-# Copyright: (C) 2009 RobotCub Consortium
+# Copyright: (C) 2009, 2010 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-PROJECT(configuration)
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${CMAKE_BINARY_DIR}/generated_include)
 
-#GET_TARGET_PROPERTY(YARP_dev_LIB YARP_dev LOCATION)
-#GET_TARGET_PROPERTY(YARP_dev_INC YARP_dev header_path)
-#GET_TARGET_PROPERTY(YARP_dev_EXT_LIBS YARP_dev ext_libs)
-# actually device stuff isn't set up yet
-
-## Remember: on Linux order does matter!
-INCLUDE(YarpLibraryNames)
-
-# rename a few flags
-SET(YARP_USE_ATLAS ${USE_ATLAS})
-
-INCLUDE_DIRECTORIES(${CMAKE_BINARY_DIR}/generated_include)
-FOREACH(conf version system options)
-  SET(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
+foreach(conf version system options)
+  set(outconf ${CMAKE_BINARY_DIR}/generated_include/yarp/conf/${conf}.h)
+  configure_file(${CMAKE_SOURCE_DIR}/conf/template/yarp_config_${conf}.h.in
                  ${outconf} IMMEDIATE)
-  MESSAGE(STATUS "generated ${outconf}")
-  INSTALL_FILES(/include/yarp/conf FILES ${outconf})
-ENDFOREACH(conf)
+  message(STATUS "generated ${outconf}")
+  install(FILES ${outconf} COMPONENT development DESTINATION include/yarp/conf)
+endforeach(conf)
 
-# fix newly added generated_include directory -- Lorenzo 
+# There are several macros we traditionally make available to
+# users of YARP.
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
-               ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
-
-# There are several macros we would like to have available
-# for user
-
-FOREACH(conf YarpDevice.cmake YarpLibraryNames.cmake YarpModuleHooks.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindAce.cmake)
-  CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/conf/${conf}
+foreach(conf YarpPlugin.cmake YarpDevice.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindAce.cmake)
+  configure_file(${CMAKE_SOURCE_DIR}/conf/${conf}
                  ${CMAKE_BINARY_DIR}/conf/${conf} COPYONLY IMMEDIATE)
-ENDFOREACH(conf)
+  install(FILES ${CMAKE_BINARY_DIR}/conf/${conf} COMPONENT scripts 
+	  DESTINATION share/yarp/cmake) # there is probably a better place
+endforeach(conf)
 

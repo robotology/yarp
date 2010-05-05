@@ -17,12 +17,12 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 
 int main(int argc, char *argv[]) {
+    Network yarp;
+
     // call the yarp standard companion name server
-    ACE::init();
     argc--;
     argv++;
     int result = Companion::getInstance().cmdServer(argc,argv);
-    ACE::fini();
     return result;
 }
 

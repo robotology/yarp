@@ -54,6 +54,10 @@ Carriers::Carriers() {
 }
 
 Carriers::~Carriers() {
+    clear();
+}
+
+void Carriers::clear() {
     ACE_Vector<Carrier *>& lst = delegates;
     for (unsigned int i=0; i<lst.size(); i++) {
         delete lst[i];

@@ -9,6 +9,7 @@ ENDIF (COMPILE_DEVICE_LIBRARY)
 IF (NOT SKIP_opencv_grabber)
 
 FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 FIND_PACKAGE(OpenCV)
 
@@ -20,7 +21,7 @@ IF (OpenCV_FOUND)
 
   #MESSAGE(STATUS "opencv libs ${OPENCV_LIBRARIES}")
 
-  ADD_LIBRARY(opencv OpenCVGrabber.cpp OpenCVGrabber.h)
+  ADD_LIBRARY(yarp_opencv OpenCVGrabber.cpp OpenCVGrabber.h)
 
 
 ELSE (OpenCV_FOUND)

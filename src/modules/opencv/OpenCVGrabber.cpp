@@ -29,7 +29,6 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
-#include <yarp/os/Network.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
 
@@ -58,7 +57,6 @@ using yarp::dev::IFrameGrabberImage;
 using yarp::dev::PolyDriver;
 
 using yarp::os::ConstString;
-using yarp::os::Network;
 using yarp::os::Property;
 using yarp::os::Searchable;
 using yarp::os::Value;
@@ -266,60 +264,5 @@ bool OpenCVGrabber::getImage(ImageOf<PixelRgb> & image) {
 
 }
 
-
-
-
-
-/**
- * Test program for the OpenCV based image grabber driver.
- *
- * @param argc Length of the argv array.
- * @param argv Canonical command-line argumnent array.
- */
-/*
-  int main(int argc, char ** argv)
-  {
-  // Initialize the network system, some platforms need this
-  Network::init();
-
-
-  // Give Yarp a factory for creating OpenCV grabbers
-  Drivers::factory().add(new DriverCreatorOf<OpenCVGrabber>("opencv_grabber",
-  "grabber",
-  "OpenCVGrabber"));
-
-  // Get a property container from the command line args
-  Property config;
-  config.fromCommand(argc, argv);
-  // Add some values that will always be present
-  config.put("device", "grabber");
-  config.put("subdevice", "opencv_grabber");
-  // Require a port name on the command line
-  if ( ! config.check("name")) {
-  printf("Please specify a port name: test_cv_grabber --name /port\n");
-  return 1;
-  }
-
-
-  // Create a networked driver wrapper for an OpenCV grabber
-  PolyDriver poly(config);
-  if ( ! poly.isValid()) {
-  printf("Device cration and configuration failed!\n");
-  return 1;
-  }
-
-  // Let the device run until a key is pressed
-  printf("Network device is active...\n");
-  getchar();
-
-
-  // Network finalization
-  Network::fini();
-
-  printf("Exiting...\n");
-  return 0;
-
-  }
-*/
 
 // End: OpenCVGrabber.cpp

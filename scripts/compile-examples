@@ -1,17 +1,25 @@
+#!/bin/bash
 
 echo "Make sure you call this as ./scripts/compile-examples"
+
+BUILDER=$PWD/example_build
 
 cd example || exit 1
 
 BASE=$PWD
-# go through all directories, except yarp1
+# go through all the commonly used directories
 for f in `find . -iname "CMakeLists.txt" | grep -v "yarp1" | grep -v "cuda" | grep -v gtkmm | grep -v imagemagick | grep -v nvidia`; do
     dir=`dirname $f`
     echo $dir
-    cd $BASE
-    cd $dir
-#    rm -f CMakeCache.txt
-    cmake . || exit 1
-#    make clean
-    make || exit 1
+    rm -f $BASE/$dir/CMakeCache.txt
+    chk=/tmp/build_`echo $dir | sed "s/[^a-z]/_/g"`.chk
+    echo "Testing for $chk"
+    if [ ! -e $chk ]; then
+      rm -rf $BUILDER
+      mkdir -p $BUILDER
+      cd $BUILDER || exit 1
+      cmake $BASE/$dir || exit 1
+      make || exit 1
+    fi
+    echo "ok" > $chk
 done

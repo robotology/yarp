@@ -2,15 +2,13 @@
 # Author: Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-cmake_minimum_required(VERSION 2.4)
-
-if(COMMAND cmake_policy)
- cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
+cmake_minimum_required(VERSION 2.6)
 
 PROJECT (stressTests)
 
-FIND_PACKAGE(YARP)
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+LINK_LIBRARIES(${YARP_LIBRARIES})
 
 ADD_EXECUTABLE(stressrpc stressrpc.cpp)
 ADD_EXECUTABLE(stressrpcMD stressrpcMD.cpp)

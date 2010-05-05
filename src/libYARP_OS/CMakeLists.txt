@@ -2,39 +2,28 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-SET(NEED_LIBS "")
+project(YARP_OS)
 
-OPTION(CREATE_MPI_CARRIER "Support communication via MPI" OFF)
+file(GLOB folder_source src/*.cpp)
+file(GLOB_RECURSE folder_header include/*.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
-IF (CREATE_MPI_CARRIER)
-  # Search for mpi library to support MpiStream
-  FIND_PACKAGE(MPI REQUIRED)
-  INCLUDE_DIRECTORIES(${MPI_INCLUDE_PATH})
-  ADD_DEFINITIONS(-DCREATE_MPI_CARRIER)
+IF (BUILTIN_ACE)
+    MESSAGE(STATUS "Adding ACE material in YARP_OS library")
+    FILE(GLOB_RECURSE folder_source_ace ${BUILTIN_ACE_SOURCE_DIR}/*.cpp)
+    SET(folder_source ${folder_source} ${folder_source_ace})
+ENDIF (BUILTIN_ACE)
 
-  # include print statements for debugging purpose
-  OPTION(MPI_DEBUG_MSG "Turn on status messages for MPI Carrier" OFF)
-  IF (MPI_DEBUG_MSG)
-    ADD_DEFINITIONS(-DMPI_DEBUG)
-  ENDIF (MPI_DEBUG_MSG)
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${PROJECT_SOURCE_DIR}/include)
+get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-ENDIF (CREATE_MPI_CARRIER)
+add_library(YARP_OS ${folder_source} ${folder_header})
+install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib)
+set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
+set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
+install(DIRECTORY include/yarp/os COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
 
-YarpLibrary(YARP_OS os)
-
-# link yarp_os lib against mpi
-TARGET_LINK_LIBRARIES(YARP_OS ${MPI_LIBRARIES})
-
-# add YARP Network companion executable
-ADD_EXECUTABLE(yarp yarp/yarp.cpp)
-ADD_EXECUTABLE(yarpserver yarp/yarpserver.cpp)
-TARGET_LINK_LIBRARIES(yarp YARP_OS ${ACE_LINK_FLAGS})
-TARGET_LINK_LIBRARIES(yarpserver YARP_OS ${ACE_LINK_FLAGS})
-INSTALL_TARGETS(/bin yarp yarpserver)
-
-IF(MSVC)
-    SET_TARGET_PROPERTIES(yarp PROPERTIES COMPILE_FLAGS /wd4996)
-    SET_TARGET_PROPERTIES(yarpserver PROPERTIES COMPILE_FLAGS /wd4996)
-ENDIF(MSVC)
- 

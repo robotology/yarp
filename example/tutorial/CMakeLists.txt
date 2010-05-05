@@ -2,8 +2,13 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
-FIND_PACKAGE(YARP)
+# Make sure that YARP_DIR is set in your environment to wherever you 
+# compiled YARP.
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
+
+FIND_PACKAGE(YARP REQUIRED)
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 # Start a project.
 PROJECT(run_fakebot)
@@ -21,6 +26,7 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/fakebot)
 # Set up our main executable.
 IF (folder_source)
   ADD_EXECUTABLE(run_fakebot ${folder_source} ${folder_header})
+  TARGET_LINK_LIBRARIES(run_fakebot ${YARP_LIBRARIES})
 ELSE (folder_source)
   MESSAGE(FATAL_ERROR "No source code files found. Please add something")
 ENDIF (folder_source)

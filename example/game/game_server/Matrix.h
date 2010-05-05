@@ -2,7 +2,6 @@
 #ifndef MATRIX_H
 #define MATRIX_H
 
-
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
 #include <assert.h>
