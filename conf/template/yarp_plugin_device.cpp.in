@@ -1,0 +1,28 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright: (C) 2009 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ */
+
+#define ENABLE_@YARPDEV_NAME@ (@ENABLE_YARPDEV_NAME@)
+
+#include <yarp/os/Network.h>
+#include <yarp/dev/Drivers.h>
+
+#include <@YARPDEV_INCLUDE@>
+
+using namespace yarp::os;
+using namespace yarp::dev;
+
+void add_@YARPDEV_NAME@() {
+#if ENABLE_@YARPDEV_NAME@
+    DriverCreator *factory = 
+        new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
+                                           "@YARPDEV_WRAPPER@",
+                                           "@YARPDEV_TYPE@");
+    Drivers::factory().add(factory); // hand factory over to YARP
+#endif
+}
+

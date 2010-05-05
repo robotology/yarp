@@ -1,0 +1,3 @@
+FIND_PACKAGE(YARP)
+LINK_LIBRARIES(@libname@)
+SET(@libname@_FOUND TRUE)
