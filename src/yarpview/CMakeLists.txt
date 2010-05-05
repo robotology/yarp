@@ -36,7 +36,7 @@ if (CREATE_GUIS)
   SOURCE_GROUP("Header Files" FILES ${folder_header})
 
   IF (WIN32 AND NOT CYGWIN)
-    ADD_DEFINITION(-DYARP_WIN32_NOCONSOLE)
+    ADD_DEFINITIONS(-DYARP_WIN32_NOCONSOLE)
     ADD_EXECUTABLE(yarpview WIN32 ${folder_source} ${folder_header})
   ELSE (WIN32 AND NOT CYGWIN)
     ADD_EXECUTABLE(yarpview ${folder_source} ${folder_header})
