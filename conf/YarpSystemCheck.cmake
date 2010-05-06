@@ -68,7 +68,9 @@ endif (YARP_ADMIN)
 
 add_definitions(-DYARP_PRESENT)
 add_definitions(-D_REENTRANT)
-set_property(GLOBAL APPEND PROPERTY YARP_DEFS -D_REENTRANT)
+# due to cmake 2.6.0 bug, cannot use APPEND here
+# set_property(GLOBAL APPEND PROPERTY YARP_DEFS -D_REENTRANT)
+set_property(GLOBAL PROPERTY YARP_DEFS -D_REENTRANT)
 
 # on windows, we have to tell ace how it was compiled
 if (WIN32 AND NOT CYGWIN)
