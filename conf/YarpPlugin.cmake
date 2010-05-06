@@ -110,7 +110,6 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
   # Developers seem to expect #include "foo.h" to work if foo.h is
   # in their module directory.
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   # Figure out a decent filename for the code we are about to 
   # generate.  If all else fails, the code will get dumped in
@@ -253,7 +252,9 @@ MACRO(ADD_LIBRARY LIBNAME)
       endif()
     endforeach()
     if (NOT IS_IMPORTED)
-      _ADD_LIBRARY(${LIBNAME} ${ARGN})
+      get_property(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+      _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+      set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
       set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
       if (YARP_TREE_INCLUDE_DIRS)
         install(TARGETS ${LIBNAME} EXPORT YARP COMPONENT runtime 
@@ -304,8 +305,9 @@ macro(END_PLUGIN_LIBRARY bundle_name)
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
     get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
-    include_directories(${YARP_INCLUDE_DIRS} ${dirs})
+    #get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
+    #include_directories(${YARP_INCLUDE_DIRS} ${dirs})
+    include_directories(${YARP_INCLUDE_DIRS})
     _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
     get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
