@@ -17,7 +17,7 @@ mark_as_advanced(LIBRARY_OUTPUT_PATH EXECUTABLE_OUTPUT_PATH)
 mark_as_advanced(CMAKE_BACKWARDS_COMPATIBILITY)
 if (MSVC)
   # See the Debug/Release subdirectories - is there a more systematic
-  # way to do this?
+  # way to do this?  Is this still needed?
   LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib 
     ${CMAKE_BINARY_DIR}/lib/Debug 
     ${CMAKE_BINARY_DIR}/lib/Release)
