@@ -23,7 +23,7 @@ namespace yarp {
 
 // Make devices in a library available for use via yarp::dev::PolyDriver
 #define YARP_DECLARE_DEVICES(name) extern "C" void add_ ## name ## _devices();
-#define YARP_REGISTER_DEVICES(name) add_ ## name ## _devices()
+#define YARP_REGISTER_DEVICES(name) add_ ## name ## _devices();
 
 /**
  * A base class for factories that create driver objects.
