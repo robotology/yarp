@@ -2,7 +2,10 @@
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
-set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+# Cannot APPEND here due to CMake 2.6.0 bug
+#set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+#  ${CMAKE_BINARY_DIR}/generated_include)
+set_property(GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS 
   ${CMAKE_BINARY_DIR}/generated_include)
 
 foreach(conf version system options)
