@@ -36,6 +36,10 @@ add_subdirectory(conf)
 # build the main libraries and utilities
 add_subdirectory(src)
 
+# Output configuration files describing how YARP was built, and how
+# its libraries may be linked against and used.
+include(YarpDescribe)
+
 # Now, let's see what we built, and record it to facilitate in-tree 
 # (uninstalled) use of YARP.
 get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
