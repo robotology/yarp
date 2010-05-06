@@ -285,7 +285,6 @@ MACRO(ADD_LIBRARY LIBNAME)
     endforeach()
     if (NOT IS_IMPORTED)
       _ADD_LIBRARY(${LIBNAME} ${ARGN})
-      message(STATUS "Recording a plugin library component, ${LIBNAME}")
       set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
       if (YARP_TREE_INCLUDE_DIRS)
         install(TARGETS ${LIBNAME} EXPORT YARP COMPONENT runtime 
