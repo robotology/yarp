@@ -4,8 +4,6 @@
 
 #########################################################################
 ##
-## Yet Another Device Compiling Monster, But Smaller This Time
-##
 ## This file provides a set of macros for building bundles of plugins.
 ## Sample use:
 ##
@@ -15,8 +13,8 @@
 ##  END_PLUGIN_LIBRARY(libname)
 ##  ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
 ##
-## This sample would create two targets, libname (a library) and
-## libnamedev (an executable).  
+## This sample would create two CMake targets, "libname" (a library) 
+## and libnamedev (an executable).  
 ##
 ## The library links with every library in the subdirectories 
 ## (which can be made individually optional using CMake options),
@@ -34,57 +32,49 @@
 ## (the WRAPPER is optional), or:
 ##   PREPARE_CARRIER(new_carrier TYPE TheCarrier INCLUDE ...)
 ##
+#########################################################################
 
-IF (COMMAND END_PLUGIN_LIBRARY)
-  MESSAGE(STATUS "Skipping YarpPlugin.cmake, already included")
-ELSE (COMMAND END_PLUGIN_LIBRARY)
 
+## Skip this whole file if it has already been included
+IF (NOT COMMAND END_PLUGIN_LIBRARY)
 
 #########################################################################
 # BEGIN_PLUGIN_LIBRARY macro makes sure that all the hooks
 # needed for creating a plugin library are in place.
 #
-MACRO(BEGIN_PLUGIN_LIBRARY devname)
+MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
-  # If we are nested inside a larger device block, we don't
-  # have to do much.  If we are the outermost device block,
+  # If we are nested inside a larger plugin block, we don't
+  # have to do much.  If we are the outermost plugin block,
   # then we need to set up everything.
-  IF (YARPY_DEVICES)
+  IF (YARP_PLUGIN_MODE)
 
-    MESSAGE(STATUS "nested library ${devname}")
+    MESSAGE(STATUS "nested library ${bundle_name}")
 
-  ELSE (YARPY_DEVICES)
+  ELSE (YARP_PLUGIN_MODE)
 
-    # Declare that we are starting to compile the given device bundle
-    MESSAGE(STATUS "starting plugin library: ${devname}")
-    SET(YARPY_DEV_LIB_NAME ${devname})
-    SET(YARPY_DEVICES TRUE)
+    # Declare that we are starting to compile the given plugin library
+    MESSAGE(STATUS "starting plugin library: ${bundle_name}")
+    SET(YARP_PLUGIN_LIB_NAME ${bundle_name})
+    SET(YARP_PLUGIN_MODE TRUE)
 
-    SET(YARPY_DEV_GEN ${CMAKE_BINARY_DIR}/generated_code)
-    IF (NOT EXISTS ${YARPY_DEV_GEN})
-      FILE(MAKE_DIRECTORY ${YARPY_DEV_GEN})
-    ENDIF (NOT EXISTS ${YARPY_DEV_GEN})
-    SET(DEVICE_PREFIX "${devname}_")
-    SET(YARPY_LIB_FLAG EXCLUDE_FROM_ALL)
-    IF (NOT YARPY_DEV_LIB_NAME)
-      SET(YARPY_DEV_LIB_NAME devices)
-    ENDIF (NOT YARPY_DEV_LIB_NAME)
-
-    # Check if hooks have been added
-    IF (COMMAND END_DEVICE_LIBRARY)
-      SET(YARPY_DEVICES_INSTALLED TRUE)
-    ENDIF (COMMAND END_DEVICE_LIBRARY)
+    SET(YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
+    IF (NOT EXISTS ${YARP_PLUGIN_GEN})
+      FILE(MAKE_DIRECTORY ${YARP_PLUGIN_GEN})
+    ENDIF (NOT EXISTS ${YARP_PLUGIN_GEN})
+    SET(YARP_PLUGIN_PREFIX "${bundle_name}_")
+    SET(YARP_PLUGIN_LIB_FLAG EXCLUDE_FROM_ALL)
 
     # Set a flag to let individual modules know that they are being
     # compiled as part of a bundle, and not standalone.  Developers
     # use this flag to inhibit compilation of test programs and 
     # the like.
-    SET(COMPILE_DEVICE_LIBRARY TRUE)
+    SET(COMPILE_DEVICE_LIBRARY TRUE) # legacy flag
     SET(COMPILE_PLUGIN_LIBRARY TRUE)
 
     # Record the name of this outermost device bundle (needed because
     # nesting is allowed)
-    SET(YARPY_MASTER_DEVICE ${devname})
+    SET(YARP_PLUGIN_MASTER ${bundle_name})
 
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_DEVICES)
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)
@@ -101,9 +91,9 @@ MACRO(BEGIN_PLUGIN_LIBRARY devname)
       find_package(YARP REQUIRED)
     endif (YARP_TREE_INCLUDE_DIRS)
 
-  ENDIF (YARPY_DEVICES)
+  ENDIF (YARP_PLUGIN_MODE)
 
-ENDMACRO(BEGIN_PLUGIN_LIBRARY devname)
+ENDMACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
 
 #########################################################################
@@ -114,7 +104,7 @@ ENDMACRO(BEGIN_PLUGIN_LIBRARY devname)
 # a flexible set of arguments, then passes them to ADD_PLUGIN_NORMALIZED
 # in a clean canonical order.
 #
-MACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper category)
+MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
 
   # Append the current source directory to the set of include paths.
   # Developers seem to expect #include "foo.h" to work if foo.h is
@@ -125,7 +115,7 @@ MACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper category)
   # Figure out a decent filename for the code we are about to 
   # generate.  If all else fails, the code will get dumped in
   # the current binary directory.
-  SET(fdir ${YARPY_DEV_GEN})
+  SET(fdir ${YARP_PLUGIN_GEN})
   IF(NOT fdir)
     SET(fdir ${CMAKE_CURRENT_BINARY_DIR})
   ENDIF(NOT fdir)
@@ -133,57 +123,57 @@ MACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper category)
   # We'll be expanding the code in template/yarp_plugin_*.cpp.in using 
   # the following variables:
 
-  SET(YARPDEV_NAME "${devname}")
+  SET(YARPDEV_NAME "${plugin_name}")
   SET(YARPDEV_TYPE "${type}")
   SET(YARPDEV_INCLUDE "${include}")
   SET(YARPDEV_WRAPPER "${wrapper}")
   SET(YARPDEV_CATEGORY "${category}")
   SET(ENABLE_YARPDEV_NAME "1")
 
-  # Go ahead and prepare some code to wrap this device.  
-  SET(fname ${fdir}/yarpdev_add_${devname}.cpp)
+  # Go ahead and prepare some code to wrap this plugin.  
+  SET(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
     ${fname} @ONLY  IMMEDIATE)
  
-  # Set up a flag to enable/disable compilation of this device.
-  SET(MYNAME "${DEVICE_PREFIX}${devname}")
+  # Set up a flag to enable/disable compilation of this plugin.
+  SET(MYNAME "${YARP_PLUGIN_PREFIX}${plugin_name}")
   IF (NOT COMPILE_BY_DEFAULT)
     SET (COMPILE_BY_DEFAULT FALSE)
   ENDIF (NOT COMPILE_BY_DEFAULT)
   SET(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
 
-  # Set some convenience variables based on whether the device
+  # Set some convenience variables based on whether the plugin
   # is enabled or disabled.
-  SET(ENABLE_${devname} ${ENABLE_${MYNAME}})
-  IF (ENABLE_${devname})
-    SET(SKIP_${devname} FALSE)
+  SET(ENABLE_${plugin_name} ${ENABLE_${MYNAME}})
+  IF (ENABLE_${plugin_name})
+    SET(SKIP_${plugin_name} FALSE)
     SET(SKIP_${MYNAME} FALSE)
-  ELSE (ENABLE_${devname})
-    SET(SKIP_${devname} TRUE)
+  ELSE (ENABLE_${plugin_name})
+    SET(SKIP_${plugin_name} TRUE)
     SET(SKIP_${MYNAME} TRUE)
-  ENDIF (ENABLE_${devname})
+  ENDIF (ENABLE_${plugin_name})
 
-  # If the device is enabled, add the appropriate source code into
-  # the device library source list.
+  # If the plugin is enabled, add the appropriate source code into
+  # the library source list.
   IF (ENABLE_${MYNAME})
-    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_DEVICES ${devname})
+    set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_DEVICES ${plugin_name})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
     set_property(GLOBAL APPEND PROPERTY YARP_BUNDLE_INCLUDE_DIRS 
       ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
-    SET(YARPY_DEV_ACTIVE TRUE)
-    MESSAGE(STATUS " +++ plugin ${devname}, ENABLE_${devname} is set")
+    SET(YARP_PLUGIN_ACTIVE TRUE)
+    MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
   ELSE (ENABLE_${MYNAME})
-    MESSAGE(STATUS " +++ plugin ${devname}, SKIP_${devname} is set")
+    MESSAGE(STATUS " +++ plugin ${plugin_name}, SKIP_${plugin_name} is set")
   ENDIF (ENABLE_${MYNAME})
 
   # We are done!
 
-ENDMACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper)
+ENDMACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper)
 
 
 
 #########################################################################
-# PREPARE_PLUGIN macro lets a developer declare a device using a 
+# PREPARE_PLUGIN macro lets a developer declare a plugin using a 
 # statement like:
 #    PREPARE_PLUGIN(foo TYPE FooDriver INCLUDE FooDriver.h)
 # or
@@ -191,7 +181,7 @@ ENDMACRO(ADD_PLUGIN_NORMALIZED devname type include wrapper)
 # This macro is just a simple parser and calls ADD_PLUGIN_NORMALIZED to
 # do the actual work.
 #
-MACRO(PREPARE_PLUGIN devname)
+MACRO(PREPARE_PLUGIN plugin_name)
   SET(EXPECT_TYPE FALSE)
   SET(EXPECT_INCLUDE FALSE)
   SET(THE_TYPE "")
@@ -228,15 +218,15 @@ MACRO(PREPARE_PLUGIN devname)
     ENDIF(arg STREQUAL "CATEGORY")
   ENDFOREACH(arg ${ARGN})
   IF(THE_TYPE AND THE_INCLUDE)
-    ADD_PLUGIN_NORMALIZED(${devname} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
+    ADD_PLUGIN_NORMALIZED(${plugin_name} ${THE_TYPE} ${THE_INCLUDE} "${THE_WRAPPER}" "${THE_CATEGORY}")
   ELSE(THE_TYPE AND THE_INCLUDE)
-    MESSAGE(STATUS "Not enough information to create ${devname}")
+    MESSAGE(STATUS "Not enough information to create ${plugin_name}")
     MESSAGE(STATUS "  type:    ${THE_TYPE}")
     MESSAGE(STATUS "  include: ${THE_INCLUDE}")
     MESSAGE(STATUS "  wrapper: ${THE_WRAPPER}")
     MESSAGE(STATUS "  category: ${THE_CATEGORY}")
   ENDIF(THE_TYPE AND THE_INCLUDE)
-ENDMACRO(PREPARE_PLUGIN devname)
+ENDMACRO(PREPARE_PLUGIN plugin_name)
 
 MACRO(PREPARE_DEVICE)
   PREPARE_PLUGIN(${ARGN} CATEGORY device)
@@ -249,34 +239,13 @@ ENDMACRO(PREPARE_CARRIER)
 
 
 #########################################################################
-## Deprecated
-MACRO(TARGET_IMPORT_DEVICES target hdr)
-  MESSAGE(STATUS "[TARGET_]IMPORT_DEVICES macro has been deprecated")
-  MESSAGE(STATUS "Instead just link against the device library, and in code do:")
-  MESSAGE(STATUS "#include <yarp/dev/all.h>")
-  MESSAGE(STATUS "YARP_DECLARE_DEVICES(${target});")
-  MESSAGE(STATUS "...")
-  MESSAGE(STATUS "   Network yarp;")
-  MESSAGE(STATUS "   YARP_REGISTER_DEVICES(${devices});")
-ENDMACRO(TARGET_IMPORT_DEVICES target hdr)
-
-
-#########################################################################
-## Deprecated
-MACRO(IMPORT_DEVICES hdr)
-  TARGET_IMPORT_DEVICES(the_device_library_name ${hdr})
-ENDMACRO(IMPORT_DEVICES hdr)
-
-
-
-#########################################################################
 # Lightly redefine ADD_LIBRARY
 #
 MACRO(ADD_LIBRARY LIBNAME)
-  IF (NOT YARPY_DEVICES)
+  IF (NOT YARP_PLUGIN_MODE)
     # pass on call without looking at it
     _ADD_LIBRARY(${LIBNAME} ${ARGN})
-  ELSE (NOT YARPY_DEVICES)
+  ELSE (NOT YARP_PLUGIN_MODE)
     set(IS_IMPORTED FALSE)
     foreach(arg ${ARGN})
       if ("${arg}" STREQUAL "IMPORTED")
@@ -291,7 +260,7 @@ MACRO(ADD_LIBRARY LIBNAME)
                 DESTINATION lib)
       endif (YARP_TREE_INCLUDE_DIRS)
     endif (NOT IS_IMPORTED)
-  ENDIF (NOT YARPY_DEVICES)
+  ENDIF (NOT YARP_PLUGIN_MODE)
 ENDMACRO(ADD_LIBRARY LIBNAME)
 
 
@@ -299,11 +268,11 @@ ENDMACRO(ADD_LIBRARY LIBNAME)
 # Lightly redefine FIND_PACKAGE
 #
 MACRO(FIND_PACKAGE LIBNAME)
-  IF (NOT YARPY_DEVICES)
+  IF (NOT YARP_PLUGIN_MODE)
     # pass on call without looking at it
     _FIND_PACKAGE(${LIBNAME} ${ARGN})
-  ELSE (NOT YARPY_DEVICES)
-  ENDIF (NOT YARPY_DEVICES)
+  ELSE (NOT YARP_PLUGIN_MODE)
+  ENDIF (NOT YARP_PLUGIN_MODE)
     IF ("${LIBNAME}" STREQUAL "YARP")
       # Skipping requests for YARP, we already have it
     ELSE ("${LIBNAME}" STREQUAL "YARP")
@@ -312,75 +281,49 @@ MACRO(FIND_PACKAGE LIBNAME)
 ENDMACRO(FIND_PACKAGE LIBNAME)
 
 
-#########################################################################
-# YARP_PREPARE_PLUGINS macro creates generated code for enumerating
-# plugins, and adds a library containing all device code.
-#
-MACRO(YARP_PREPARE_PLUGINS)
-  SET(YARP_LIB_NAME ${YARPY_MASTER_DEVICE})
-
-  get_property(devs GLOBAL PROPERTY YARP_BUNDLE_DEVICES)
-  SET(YARP_CODE_PRE)
-  SET(YARP_CODE_POST)
-  FOREACH(dev ${devs})
-    SET(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_${dev}();")
-    SET(YARP_CODE_POST "${YARP_CODE_POST}\n    add_${dev}();")
-  ENDFOREACH()
-
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
-    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.cpp @ONLY  IMMEDIATE)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
-    ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.h @ONLY  IMMEDIATE)
-
-  get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-  get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
-  include_directories(${YARP_INCLUDE_DIRS} ${dirs})
-  _ADD_LIBRARY(${YARPY_MASTER_DEVICE} ${code} ${YARPY_DEV_GEN}/add_${YARPY_MASTER_DEVICE}_plugins.cpp)
-  target_link_libraries(${YARPY_MASTER_DEVICE} ${YARP_LIBRARIES})
-  get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
-  target_link_libraries(${YARPY_MASTER_DEVICE} ${libs})
-  set(${YARPY_MASTER_DEVICE}_LIBRARIES ${libs})
-ENDMACRO(YARP_PREPARE_PLUGINS)
-
 
 #########################################################################
-# END_PLUGIN_LIBRARY macro calls YARP_PREPARE_PLUGINS if this is
-# the outermost device library block, otherwise it propagates
-# all collected information to the device library block that wraps
+# END_PLUGIN_LIBRARY macro prepares a plugin library if this is
+# the outermost plugin library block, otherwise it propagates
+# all collected information to the plugin library block that wraps
 # it.
 #
-MACRO(END_PLUGIN_LIBRARY devname)
-  MESSAGE(STATUS "ending plugin library: ${devname}")
-  IF ("${devname}" STREQUAL "${YARPY_MASTER_DEVICE}")
-    YARP_PREPARE_PLUGINS()   # generate device library
-    SET(YARPY_DEVICES FALSE) # neutralize redefined methods 
-  ENDIF ("${devname}" STREQUAL "${YARPY_MASTER_DEVICE}")
-ENDMACRO(END_PLUGIN_LIBRARY devname)
+macro(END_PLUGIN_LIBRARY bundle_name)
+  message(STATUS "ending plugin library: ${bundle_name}")
+  if ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
+    set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
+    get_property(devs GLOBAL PROPERTY YARP_BUNDLE_DEVICES)
+    set(YARP_CODE_PRE)
+    set(YARP_CODE_POST)
+    foreach(dev ${devs})
+      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_${dev}();")
+      set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_${dev}();")
+    endforeach()
+    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
+      ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
+    configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
+      ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
+    get_property(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
+    include_directories(${YARP_INCLUDE_DIRS} ${dirs})
+    _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
+    target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
+    get_property(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+    target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
+    set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
+    set(YARP_PLUGIN_MODE FALSE) # neutralize redefined methods 
+  endif ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
+endmacro(END_PLUGIN_LIBRARY bundle_name)
 
-MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename devname)
+MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
-    ${YARPY_DEV_GEN}/yarpdev_${devname}.cpp @ONLY  IMMEDIATE)
-    ADD_EXECUTABLE(${exename} ${YARPY_DEV_GEN}/yarpdev_${devname}.cpp)
-    TARGET_LINK_LIBRARIES(${exename} ${devname})
+    ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
+    ADD_EXECUTABLE(${exename} ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp)
+    TARGET_LINK_LIBRARIES(${exename} ${bundle_name})
 ENDMACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE)
 
-# support old style library
-MACRO(END_DEVICE_LIBRARY devname)
-  END_PLUGIN_LIBRARY(${devname})
-  ADD_PLUGIN_LIBRARY_EXECUTABLE(${devname}dev ${devname})
-ENDMACRO(END_DEVICE_LIBRARY)
 
-# More old style support
-MACRO(IMPORT_DEVICES hdr devname)
-  SET(libname ${devname})
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.h
-    ${hdr} @ONLY IMMEDIATE)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_compat_plugin.cmake
-    ${CMAKE_BINARY_DIR}/${devname}Config.cmake @ONLY IMMEDIATE)
-  #SET(CMAKE_MODULE_PATH ${CMAKE_BINARY_DIR}/old_conf ${CMAKE_MODULE_PATH})
-ENDMACRO(IMPORT_DEVICES)
-
-
-ENDIF (COMMAND END_PLUGIN_LIBRARY)
+## We skipped this whole file if it was already included
+ENDIF (NOT COMMAND END_PLUGIN_LIBRARY)
 
 
