@@ -19,7 +19,7 @@ namespace yarp {
 		};
 
 		/**
-		* Wapper for the ACE_OS::signal signal.
+		* Wrapper for the ACE_OS::signal signal.
 		* Attach a function handler to a signal.
 		* @param signum: signal number (e.g. SIGTERM/SIGINT) to handle
 		* @param sighandler: handler function
