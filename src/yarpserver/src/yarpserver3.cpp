@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
     config.minPortNumber = contact.getPort()+2;
     config.maxPortNumber = contact.getPort()+9999;
     AllocatorOnTriples alloc(pmem,config);
-    NameServiceOnTriples ns(pmem,&alloc);
+    NameServiceOnTriples ns(pmem,&alloc,contact);
     subscriber.setStore(ns);
     ComposedNameService combo(subscriber,ns);
     NameServerManager name(combo);

@@ -53,9 +53,12 @@ private:
     TripleSource *db;
     Allocator *alloc;
     std::string lastRegister;
+    yarp::os::Contact serverContact;
 public:
     NameServiceOnTriples(TripleSource *db,
-                         Allocator *alloc) : db(db), alloc(alloc) {
+                         Allocator *alloc,
+                         const yarp::os::Contact& serverContact) : 
+        db(db), alloc(alloc), serverContact(serverContact) {
         lastRegister = "";
     }
 

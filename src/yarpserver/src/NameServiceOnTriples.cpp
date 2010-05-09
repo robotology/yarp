@@ -11,6 +11,7 @@
 
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Time.h>
 #include "NameServiceOnTriples.h"
 #include "ParseName.h"
 
@@ -169,7 +170,13 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         Contact c = query(port.c_str());
         if (c.isValid()) {
             Bottle cmd("[ver]"), reply;
-            bool ok = Network::write(c,cmd,reply,true,true);
+            double timeout = 5.0;
+            double pre = Time::now();
+            bool ok = Network::write(c,cmd,reply,true,true,timeout);
+            double post = Time::now();
+            if (post-pre>timeout-1) {
+                ok = true;
+            }
             if (ok) {
                 // oops! there is a live port!
                 // give back a blank query
@@ -181,10 +188,9 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         cmdUnregister(act);
         act.reply.clear();
     }
-    
-    Contact current = query(port.c_str(),act,"");
 
     act.reply.addString("old");
+    
     int at = 2;
     int sock = -1;
     ConstString carrier = "...";
@@ -201,7 +207,9 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         at++;
     }
     if (machine == "...") {
-        if (carrier!="mcast") {
+        if (carrier=="topic") {
+            machine = serverContact.getHost().c_str();
+        } else if (carrier!="mcast") {
             string remote = act.remote.getHost().c_str();
             if (remote==""||remote=="...") {
                 fprintf(stderr,"Not detecting real remote machine name, guessing local\n");
@@ -214,6 +222,10 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     if (act.cmd.size()>at) {
         sock = act.cmd.get(at).asInt();
         at++;
+    } else {
+        if (carrier=="topic") {
+            sock = serverContact.getPort();
+        }
     }
     if (port=="...") {
         Contact c = Contact::byName(port.c_str()).addSocket(carrier.c_str(),machine.c_str(),sock);

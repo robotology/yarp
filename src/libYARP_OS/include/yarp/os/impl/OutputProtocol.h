@@ -56,6 +56,8 @@ public:
     // direct access
     virtual OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;
+
+    virtual bool setTimeout(double timeout) = 0;
 };
 
 #endif

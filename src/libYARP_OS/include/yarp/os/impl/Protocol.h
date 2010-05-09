@@ -339,7 +339,6 @@ public:
         return is();
     }
 
-    
     const Address& getRemoteAddress() {
         ACE_DEBUG((LM_ERROR,"Protocol::getRemoteAddress not yet implemented"));
         //throw IOException("getRemoteAddress failed");
@@ -482,6 +481,12 @@ public:
     }
 
     String getSenderSpecifier();
+
+    virtual bool setTimeout(double timeout) {
+        bool ok = os().setWriteTimeout(timeout);
+        if (!ok) return false;
+        return is().setReadTimeout(timeout);
+    }
 
 private:
 

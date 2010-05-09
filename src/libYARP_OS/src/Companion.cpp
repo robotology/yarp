@@ -577,7 +577,7 @@ int Companion::sendMessage(const String& port, Writable& writable,
     output = b.toString().c_str();
     if (!quiet) {
         //ACE_OS::fprintf(stderr,"%s\n", b.toString().c_str());
-        YARP_SPRINTF1(Logger::get(),info,"%s\n", b.toString().c_str());
+        YARP_SPRINTF1(Logger::get(),info,"%s", b.toString().c_str());
     }
     ip.endRead();
     out->close();
@@ -1355,24 +1355,12 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
 
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
-    PortCore core;
-    NameClient& nic = NameClient::getNameClient();
-    Address address = nic.registerName(name);
-    if (address.isValid()) {
-        YARP_SPRINTF2(Logger::get(),info,
-                      "Port %s listening at %s", 
-                      address.getRegName().c_str(),
-                      address.toString().c_str());
-        core.listen(address);
-        core.start();
-    } else {
-        YARP_ERROR(Logger::get(),"could not create port");
+    Port port;
+    if (!port.open(name)) {
         return 1;
     }
-
     if (adminMode) {
-        Bottle b("__ADMIN");
-        core.setEnvelope(b);
+        port.setAdminMode();
     }
     
     bool raw = true;
@@ -1380,7 +1368,11 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         if (String(targets[i])=="verbatim") {
             raw = false;
         } else {
-            connect(address.getRegName().c_str(),targets[i]);
+            if (connect(port.getName().c_str(),targets[i],true)!=0) {
+                if (connect(port.getName().c_str(),targets[i],false)!=0) {
+                    return 1;
+                }
+            }
         }
     }
     
@@ -1399,7 +1391,8 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             } else {
                 bot.fromString(txt.c_str());
             }
-            core.send(bot);
+            //core.send(bot);
+            port.write(bot);
         }
     }
     
@@ -1407,11 +1400,13 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
         BottleImpl bot;
         bot.addInt(1);
         bot.addString("<EOF>");
-        core.send(bot);
+        //core.send(bot);
+        port.write(bot);
     }
     
-    core.close();
-    core.join();
+    //core.close();
+    //core.join();
+    port.close();
     
     return 0;
 }

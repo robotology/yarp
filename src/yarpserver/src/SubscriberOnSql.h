@@ -44,6 +44,12 @@ public:
 
     virtual bool welcome(const char *port);
 
+    virtual bool setTopic(const char *port, bool active);
+
+    bool transitiveWelcome(const char *topic,
+                           const char *src, const char *dest,
+                           const char *srcFull, const char *destFull);
+
     bool checkSubscription(const char *src, const char *dest,
                            const char *srcFull, const char *destFull);
 

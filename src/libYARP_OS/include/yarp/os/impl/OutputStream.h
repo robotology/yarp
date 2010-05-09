@@ -106,6 +106,14 @@ public:
      *
      */
     virtual bool isOk() = 0;
+
+    /**
+     * 
+     * Set activity timeout.  Support for this is optional. 0 = wait forever.
+     * @return true iff timeout is supported.
+     *
+     */
+    virtual bool setWriteTimeout(double timeout) { return false; }
 };
 
 #endif

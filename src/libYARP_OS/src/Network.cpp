@@ -187,10 +187,11 @@ ConstString NetworkBase::readString(bool *eof) {
 
 
 bool NetworkBase::write(const Contact& contact, 
-                    PortWriter& cmd,
-                    PortReader& reply,
-                    bool admin,
-                    bool quiet) {
+                        PortWriter& cmd,
+                        PortReader& reply,
+                        bool admin,
+                        bool quiet,
+                        double timeout) {
 
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
@@ -217,6 +218,9 @@ bool NetworkBase::write(const Contact& contact,
         }
         return false;
     }
+    if (timeout>0) {
+        out->setTimeout(timeout);
+    }
 
     //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
     //     address.toString().c_str(),
@@ -224,7 +228,7 @@ bool NetworkBase::write(const Contact& contact,
     //Route r(connectionName,targetName,"text_ack");
     Route r(connectionName,targetName,"text_ack");
     out->open(r);
-    
+
     PortCommand pc(0,admin?"a":"d");
     BufferedConnectionWriter bw(out->isTextMode());
     bool ok = pc.write(bw);

@@ -19,6 +19,7 @@
 #include <ace/SOCK_Connector.h>
 #include <ace/SOCK_Stream.h>
 #include <ace/Log_Msg.h>
+#include <ace/Time_Value.h>
 
 namespace yarp {
     namespace os {
@@ -36,6 +37,8 @@ class yarp::os::impl::SocketTwoWayStream : public TwoWayStream,
 public:
     SocketTwoWayStream() {
         happy = false;
+        haveReadTimeout = false;
+        haveWriteTimeout = false;
     }
 
     int open(const Address& address);
@@ -86,7 +89,12 @@ public:
         if (!isOk()) { return -1; }
         //ACE_OS::printf("STWS::read pre \n");
         //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv");
-        int result = stream.recv_n(b.get(),b.length());
+        int result;
+        if (haveReadTimeout) {
+            result = stream.recv_n(b.get(),b.length(),&readTimeout);
+        } else {
+            result = stream.recv_n(b.get(),b.length());
+        }
         //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv done");
         if (!happy) { return -1; }
         //ACE_OS::printf("socket read %d\n", result);
@@ -101,7 +109,12 @@ public:
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
-        int result = stream.send_n(b.get(),b.length());
+        int result;
+        if (haveWriteTimeout) {
+            result = stream.send_n(b.get(),b.length(),&writeTimeout);
+        } else {
+            result = stream.send_n(b.get(),b.length());
+        }
         //ACE_OS::printf("socket write %d\n", result);
         if (result<0) {
             happy = false;
@@ -125,8 +138,32 @@ public:
 
     virtual void endPacket() { }
 
+    virtual bool setWriteTimeout(double timeout) { 
+        if (timeout<1e-12) { 
+            haveWriteTimeout = false; 
+        } else {
+            writeTimeout.set(timeout);
+            haveWriteTimeout = true; 
+        }
+        return true; 
+    }
+
+    virtual bool setReadTimeout(double timeout) { 
+        if (timeout<1e-12) { 
+            haveReadTimeout = false; 
+        } else {
+            readTimeout.set(timeout);
+            haveReadTimeout = true; 
+        }
+        return true; 
+    }
+
 private:
     ACE_SOCK_Stream stream;
+    bool haveWriteTimeout;
+    ACE_Time_Value writeTimeout;
+    bool haveReadTimeout;
+    ACE_Time_Value readTimeout;
     Address localAddress, remoteAddress;
     bool happy;
     void updateAddresses();

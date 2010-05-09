@@ -61,8 +61,19 @@ bool SubscriberOnSql::open(const char *filename, bool fresh) {
     result = sqlite3_exec(db, create_subscribe_table, NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
         sqlite3_close(db);
-        fprintf(stderr,"Failed to set up database tables\n");
-	exit(1);
+        fprintf(stderr,"Failed to set up subscriptions table\n");
+        exit(1);
+    }
+
+    const char *create_topic_table = "CREATE TABLE IF NOT EXISTS topics (\n\
+	id INTEGER PRIMARY KEY,\n\
+	topic TEXT);";
+
+    result = sqlite3_exec(db, create_topic_table, NULL, NULL, NULL);
+    if (result!=SQLITE_OK) {
+        sqlite3_close(db);
+        fprintf(stderr,"Failed to set up topics table\n");
+        exit(1);
     }
 
     implementation = db;
@@ -138,20 +149,25 @@ bool SubscriberOnSql::removeSubscription(const char *src,
 bool SubscriberOnSql::welcome(const char *port) {
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
-    query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port, port);
+    //query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port, port);
+    query = sqlite3_mprintf("SELECT src,dest,srcFull,destFull FROM subscriptions WHERE src = %Q OR dest= %Q UNION SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (s1.dest = t.topic AND s2.src = t.topic) AND (s1.src = %Q OR s2.dest = %Q)",port, port, port, port);
+    // 
     if (verbose) {
         printf("Query: %s\n", query);
     }
     int result = sqlite3_prepare_v2(SQLDB(implementation),query,-1,&statement,
                                     NULL);
     if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+        const char *msg = sqlite3_errmsg(SQLDB(implementation));
+        if (msg!=NULL) {
+            fprintf(stderr,"Error: %s\n", msg);
+        }
     }
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
-        char *src = (char *)sqlite3_column_text(statement,1);
-        char *dest = (char *)sqlite3_column_text(statement,2);
-        char *srcFull = (char *)sqlite3_column_text(statement,3);
-        char *destFull = (char *)sqlite3_column_text(statement,4);
+        char *src = (char *)sqlite3_column_text(statement,0);
+        char *dest = (char *)sqlite3_column_text(statement,1);
+        char *srcFull = (char *)sqlite3_column_text(statement,2);
+        char *destFull = (char *)sqlite3_column_text(statement,3);
         checkSubscription(src,dest,srcFull,destFull);
     }
     sqlite3_finalize(statement);
@@ -159,6 +175,7 @@ bool SubscriberOnSql::welcome(const char *port) {
 
     return false;
 }
+
 
 bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
                                         const char *srcFull,
@@ -168,10 +185,14 @@ bool SubscriberOnSql::checkSubscription(const char *src,const char *dest,
         Contact csrc = store->query(src);
         Contact cdest = store->query(dest);
         if (csrc.isValid()&&cdest.isValid()) {
-            printf("==> trigger subscription %s %s\n", 
-                   srcFull, destFull);
-            connect(csrc,destFull);
-            return true;
+            bool srcTopic = (csrc.getCarrier()=="topic");
+            bool destTopic = (cdest.getCarrier()=="topic");
+            if (!(srcTopic||destTopic)) {
+                printf("==> trigger subscription %s %s\n", 
+                       srcFull, destFull);
+                connect(csrc,destFull);
+                return true;
+            }
         }
     }
     return false;
@@ -219,3 +240,74 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
 
     return true;
 }
+
+
+bool SubscriberOnSql::setTopic(const char *port, bool active) {
+    char *query = sqlite3_mprintf("DELETE FROM topics WHERE topic = %Q",
+                                  port);
+    if (verbose) {
+        printf("Query: %s\n", query);
+    }
+    int result = sqlite3_exec(SQLDB(implementation), query, NULL, NULL, NULL);
+    bool ok = true;
+    if (result!=SQLITE_OK) {
+        printf("Error in query\n");
+        ok = false;
+    }
+    sqlite3_free(query);
+
+    if (active) {
+        char *msg = NULL;
+        char *query = sqlite3_mprintf("INSERT INTO topics (topic) VALUES(%Q)", 
+                                      port);
+        if (verbose) {
+            printf("Query: %s\n", query);
+        }
+        bool ok = true;
+        int result = sqlite3_exec(SQLDB(implementation), query, 
+                                  NULL, NULL, &msg);
+        if (result!=SQLITE_OK) {
+            result = false;
+            if (msg!=NULL) {
+                fprintf(stderr,"Error: %s\n", msg);
+                sqlite3_free(msg);
+            }
+        }
+        sqlite3_free(query);
+
+        if (ok) {
+            // go ahead and connect anything needed
+            sqlite3_stmt *statement = NULL;
+            char *query = NULL;
+            query = sqlite3_mprintf("SELECT s1.src, s2.dest, s1.srcFull, s2.destFull FROM subscriptions s1, subscriptions s2, topics t WHERE (t.topic = %Q AND s1.dest = t.topic AND s2.src = t.topic)", port);
+            if (verbose) {
+                printf("Query: %s\n", query);
+            }
+            int result = sqlite3_prepare_v2(SQLDB(implementation),query,-1,
+                                            &statement,
+                                            NULL);
+            if (result!=SQLITE_OK) {
+                const char *msg = sqlite3_errmsg(SQLDB(implementation));
+                if (msg!=NULL) {
+                    fprintf(stderr,"Error: %s\n", msg);
+                }
+            }
+            while (result == SQLITE_OK && 
+                   sqlite3_step(statement) == SQLITE_ROW) {
+                char *src = (char *)sqlite3_column_text(statement,0);
+                char *dest = (char *)sqlite3_column_text(statement,1);
+                char *srcFull = (char *)sqlite3_column_text(statement,2);
+                char *destFull = (char *)sqlite3_column_text(statement,3);
+                checkSubscription(src,dest,srcFull,destFull);
+            }
+            sqlite3_finalize(statement);
+            sqlite3_free(query);
+        }
+
+        return ok;
+    }
+
+    return ok;
+}
+
+

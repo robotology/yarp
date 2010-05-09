@@ -251,6 +251,7 @@ public:
      * @param reply the response is read here
      * @param admin true for administrative message, false for regular data
      * @param quiet true to suppress error messages
+     * @param timeout activity timeout in seconds
      *
      * @return true on success
      */
@@ -258,7 +259,8 @@ public:
                       PortWriter& cmd,
                       PortReader& reply,
                       bool admin = false,
-                      bool quiet = false);
+                      bool quiet = false,
+                      double timeout = -1);
 
     /**
      *

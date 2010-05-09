@@ -46,13 +46,16 @@ public:
 
     virtual bool welcome(const char *port) = 0;
 
+    virtual bool setTopic(const char *port, bool active) = 0;
+
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
                        yarp::os::Contact& remote) {
         yarp::os::ConstString tag = cmd.get(0).asString();
         bool ok = false;
-        if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce") {
+        if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
+            tag=="topic"||tag=="untopic") {
             printf("-> %s\n", cmd.toString().c_str());
         }
         if (tag=="subscribe") {
@@ -83,6 +86,18 @@ public:
             reply.addVocab(VOCAB2('o','k'));
             return true;
         }
+        if (tag=="topic") {
+            bool result = setTopic(cmd.get(1).asString().c_str(),true);
+            reply.clear();
+            reply.addVocab(replyCode(result));
+            return true;
+        }
+        if (tag=="untopic") {
+            bool result = setTopic(cmd.get(1).asString().c_str(),false);
+            reply.clear();
+            reply.addVocab(replyCode(result));
+            return true;
+        }
         return ok;
     }
 
@@ -92,6 +107,10 @@ public:
         //if (tag=="add") {
         //welcome(port.c_str());
         //}
+    }
+
+    int replyCode(bool flag) {
+        return flag?VOCAB2('o','k'):VOCAB4('f','a','i','l');
     }
 };
 
