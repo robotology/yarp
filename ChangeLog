@@ -1,3 +1,8 @@
+2010-05-10  Ugo Pattacini <ugo.pattacini@iit.it>
+
+	* src/libYARP_DEV/include/yarp/dev/GazeControl.h: added the interface
+    for the control of the gaze.
+
 2010-05-05  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/CMakeLists.txt and lots of others: big cmake clean-up.
