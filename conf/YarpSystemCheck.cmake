@@ -120,4 +120,6 @@ if (MSVC)
   # ACE uses a bunch of functions MSVC warns about.
   # The warnings make sense in general, but not in this case.
   add_definitions(-D_CRT_SECURE_NO_DEPRECATE=1)
+  # Traditionally, we add "d" postfix to debug libraries
+  set(CMAKE_DEBUG_POSTFIX "d")
 endif (MSVC)
