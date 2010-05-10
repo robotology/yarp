@@ -48,6 +48,8 @@ public:
 
     virtual bool setTopic(const char *port, bool active) = 0;
 
+    virtual bool listTopics(yarp::os::Bottle& topics) = 0;
+
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
@@ -87,10 +89,16 @@ public:
             return true;
         }
         if (tag=="topic") {
-            bool result = setTopic(cmd.get(1).asString().c_str(),true);
-            reply.clear();
-            reply.addVocab(replyCode(result));
-            return true;
+            if (cmd.size()>=2) {
+                bool result = setTopic(cmd.get(1).asString().c_str(),true);
+                reply.clear();
+                reply.addVocab(replyCode(result));
+                return true;
+            } else {
+                reply.clear();
+                listTopics(reply);
+                return true;
+            }
         }
         if (tag=="untopic") {
             bool result = setTopic(cmd.get(1).asString().c_str(),false);

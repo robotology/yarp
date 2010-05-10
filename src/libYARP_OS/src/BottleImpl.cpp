@@ -1047,6 +1047,8 @@ yarp::os::Bottle& BottleImpl::addList() {
 
 
 void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
+    if (len==0) return;
+
     const BottleImpl *src = &alt;
     BottleImpl tmp;
     if (&alt == this) {

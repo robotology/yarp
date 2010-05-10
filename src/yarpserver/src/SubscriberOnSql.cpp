@@ -203,23 +203,27 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
     sqlite3_stmt *statement = NULL;
     char *query = NULL;
     if (ConstString(port)!="") {
-        query = sqlite3_mprintf("SELECT * FROM subscriptions WHERE src = %Q OR dest= %Q",port,port);
+        query = sqlite3_mprintf("SELECT s.srcFull, s.DestFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest) FROM subscriptions s WHERE s.src = %Q OR s.dest= %Q ORDER BY s.src, s.dest",port,port);
     } else {
-        query = sqlite3_mprintf("SELECT * FROM subscriptions");
+        query = sqlite3_mprintf("SELECT s.srcFull, s.destFull, EXISTS(SELECT topic FROM topics WHERE topic = s.src), EXISTS(SELECT topic FROM topics WHERE topic = s.dest) FROM subscriptions s ORDER BY s.src, s.dest");
     }
     if (verbose) {
         printf("Query: %s\n", query);
     }
     int result = sqlite3_prepare_v2(SQLDB(implementation),query,-1,&statement,
                                     NULL);
-    if (result!=SQLITE_OK) {
-        printf("Error in query\n");
+   if (result!=SQLITE_OK) {
+        const char *msg = sqlite3_errmsg(SQLDB(implementation));
+        if (msg!=NULL) {
+            fprintf(stderr,"Error: %s\n", msg);
+        }
     }
     reply.addString("subscriptions");
     while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
-        char *src = (char *)sqlite3_column_text(statement,1);
-        char *dest = (char *)sqlite3_column_text(statement,2);
-        char *carrier = (char *)sqlite3_column_text(statement,5);
+        char *src = (char *)sqlite3_column_text(statement,0);
+        char *dest = (char *)sqlite3_column_text(statement,1);
+        int srcTopic = sqlite3_column_int(statement,2);
+        int destTopic = sqlite3_column_int(statement,3);
         Bottle& b = reply.addList();
         b.addString("subscription");
         Bottle bsrc;
@@ -228,12 +232,15 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
         Bottle bdest;
         bdest.addString("dest");
         bdest.addString(dest);
-        Bottle bcarrier;
-        bcarrier.addString("carrier");
-        bcarrier.addString(carrier);
         b.addList() = bsrc;
         b.addList() = bdest;
-        b.addList() = bcarrier;
+        if (srcTopic||destTopic) {
+            Bottle btopic;
+            btopic.addString("topic");
+            btopic.addInt(srcTopic);
+            btopic.addInt(destTopic);
+            b.addList() = btopic;
+        }
     }
     sqlite3_finalize(statement);
     sqlite3_free(query);
@@ -308,6 +315,29 @@ bool SubscriberOnSql::setTopic(const char *port, bool active) {
     }
 
     return ok;
+}
+
+
+bool SubscriberOnSql::listTopics(yarp::os::Bottle& topics) {
+    sqlite3_stmt *statement = NULL;
+    char *query = NULL;
+    query = sqlite3_mprintf("SELECT topic FROM topics");
+    if (verbose) {
+        printf("Query: %s\n", query);
+    }
+    int result = sqlite3_prepare_v2(SQLDB(implementation),query,-1,&statement,
+                                    NULL);
+    if (result!=SQLITE_OK) {
+        printf("Error in query\n");
+    }
+    while (result == SQLITE_OK && sqlite3_step(statement) == SQLITE_ROW) {
+        char *topic = (char *)sqlite3_column_text(statement,0);
+        topics.addString(topic);
+    }
+    sqlite3_finalize(statement);
+    sqlite3_free(query);
+
+    return true;
 }
 
 

@@ -46,6 +46,8 @@ public:
 
     virtual bool setTopic(const char *port, bool active);
 
+    virtual bool listTopics(yarp::os::Bottle& topics);
+
     bool transitiveWelcome(const char *topic,
                            const char *src, const char *dest,
                            const char *srcFull, const char *destFull);

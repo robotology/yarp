@@ -140,6 +140,8 @@ Companion::Companion() {
         "try to remove inactive entries from the name server");
     add("resource",  &Companion::cmdResource,
         "locates resource files (see ResourceFinder class)");
+    add("topic",  &Companion::cmdTopic,
+        "set a topic name");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -239,60 +241,61 @@ int Companion::cmdTerminate(int argc, char *argv[]) {
 int Companion::cmdPing(int argc, char *argv[]) {
     if (argc == 1) {
         char *targetName = argv[0];
-        const char *connectionName = "<ping>";
-        OutputProtocol *out = NULL;
-
-        NameClient& nic = NameClient::getNameClient();
-        Address address = nic.queryName(targetName);
-        if (!address.isValid()) {
-            YARP_ERROR(Logger::get(),"could not find port");
-            return 1;
-        }
-            
-        out = Carriers::connect(address);
-        if (out==NULL) {
-            YARP_ERROR(Logger::get(),"port found, but cannot connect");
-            return 1;
-        }
-        /*
-          printf("RPC connection to %s at %s (connection name %s)\n", 
-          targetName, 
-          address.toString().c_str(),
-          connectionName);
-        */
-        Route r(connectionName,targetName,"text_ack");
-        bool ok = out->open(r);
-        if (!ok) {
-            YARP_ERROR(Logger::get(),"could not connect to port");
-            return 1;
-        }
-        OutputStream& os = out->getOutputStream();
-        InputStream& is = out->getInputStream();
-        StreamConnectionReader reader;
-
-        PortCommand pc(0,"*");
-        BufferedConnectionWriter bw(out->isTextMode());
-        pc.write(bw);
-        bw.write(os);
-        Bottle resp;
-        reader.reset(is,NULL,r,0,true);
-        bool done = false;
-        while (!done) {
-            resp.read(reader);
-            String str = resp.toString().c_str();
-            if (resp.get(0).asString()!="<ACK>") {
-                printf("%s\n", str.c_str());
-            } else {
-                done = true;
-            }
-        }
-        if (out!=NULL) {
-            delete out;
-        }
-        return 0;
+        return ping(targetName,false);
     }
     ACE_OS::fprintf(stderr,"Please specify a port name\n");
     return 1;
+}
+
+int Companion::ping(const char *port, bool quiet) {
+
+    const char *connectionName = "<ping>";
+    OutputProtocol *out = NULL;
+    
+    NameClient& nic = NameClient::getNameClient();
+    Address address = nic.queryName(port);
+    if (!address.isValid()) {
+        if (!quiet) {
+            YARP_ERROR(Logger::get(),"could not find port");
+        }
+        return 1;
+    }
+            
+    out = Carriers::connect(address);
+    if (out==NULL) {
+        YARP_ERROR(Logger::get(),"port found, but cannot connect");
+        return 1;
+    }
+    Route r(connectionName,port,"text_ack");
+    bool ok = out->open(r);
+    if (!ok) {
+        YARP_ERROR(Logger::get(),"could not connect to port");
+        return 1;
+    }
+    OutputStream& os = out->getOutputStream();
+    InputStream& is = out->getInputStream();
+    StreamConnectionReader reader;
+    
+    PortCommand pc(0,"*");
+    BufferedConnectionWriter bw(out->isTextMode());
+    pc.write(bw);
+    bw.write(os);
+    Bottle resp;
+    reader.reset(is,NULL,r,0,true);
+    bool done = false;
+    while (!done) {
+        resp.read(reader);
+        String str = resp.toString().c_str();
+        if (resp.get(0).asString()!="<ACK>") {
+            printf("%s\n", str.c_str());
+        } else {
+            done = true;
+        }
+    }
+    if (out!=NULL) {
+        delete out;
+    }
+    return 0;
 }
 
 
@@ -589,6 +592,8 @@ int Companion::sendMessage(const String& port, Writable& writable,
 
 
 int Companion::cmdConnect(int argc, char *argv[]) {
+    int argc_org = argc;
+    char **argv_org = argv;
     bool persist = false;
     if (argc>0) {
         if (ConstString(argv[0])=="--persist") {
@@ -603,6 +608,15 @@ int Companion::cmdConnect(int argc, char *argv[]) {
                 return subscribe(NULL,NULL);
             } else {
                 return subscribe(argv[0],NULL);
+            }
+        }
+        if (argc<2) {
+            if (argc==0) {
+                return subscribe(NULL,NULL);
+            } else {
+                int result = ping(argv[0],true);
+                int result2 = subscribe(argv[0],NULL);
+                return (result==0)?result2:result;
             }
         }
         ACE_OS::fprintf(stderr, "Currently must have two/three arguments, a sender port and receiver port (and an optional protocol)\n");
@@ -620,7 +634,14 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         return subscribe(src,dest.c_str());
     }
 
-    return connect(src,dest.c_str());
+    int result = connect(src,dest.c_str());
+    printf("For connection for ports that don't exist yet, or connections to topics, do:\n");
+    printf("  yarp connect --persist");
+    for (int i=0; i<argc_org; i++) {
+        printf(" %s", argv_org[i]);
+    }
+    printf("\n");
+    return result;
 }
 
 
@@ -1150,9 +1171,16 @@ int Companion::subscribe(const char *src, const char *dest) {
         for (int i=0; i<subs.size(); i++) {
             Bottle *b = subs.get(i).asList();
             if (b!=NULL) {
-                printf("Persistent connection %s -> %s", 
+                Bottle& topic = b->findGroup("topic");
+                const char *srcTopic = "";
+                const char *destTopic = "";
+                if (topic.get(1).asInt()) srcTopic=" (topic)";
+                if (topic.get(2).asInt()) destTopic=" (topic)";
+                printf("Persistent connection %s%s -> %s%s", 
                        b->check("src",Value("?")).asString().c_str(),
-                       b->check("dest",Value("?")).asString().c_str());
+                       srcTopic,
+                       b->check("dest",Value("?")).asString().c_str(),
+                       destTopic);
                 ConstString carrier = b->check("carrier",Value("")).asString();
                 if (carrier!="") {
                     printf(" (%s)", carrier.c_str());
@@ -1339,6 +1367,70 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
 	return ret;
 }
+
+
+int Companion::cmdTopic(int argc, char *argv[]) {
+    int mode = 1;
+    if (argc>=1) {
+        if (ConstString(argv[0]) == "--remove") {
+            mode = -1;
+            argc--;
+            argv++;
+        }
+        if (ConstString(argv[0]) == "--list") {
+            Bottle cmd, reply;
+            cmd.addString("topic");
+            bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                         cmd,
+                                         reply,
+                                         false,
+                                         true);
+            if (!ok) {
+                ACE_OS::fprintf(stderr, "Failed to read topic list\n");
+                return 1;
+            }
+            if (reply.size()==0) {
+                printf("No topics\n");
+            } else {
+                printf("Topics: %s\n", reply.toString().c_str());
+            }
+            return 0;
+        }
+    }
+	if (argc<1) 
+	{
+        ACE_OS::fprintf(stderr, "Please supply the topic name\n");
+        ACE_OS::fprintf(stderr, "(Or: '--list' to list all topics)\n");
+        ACE_OS::fprintf(stderr, "(Or: '--remove <topic>' to remove a topic)\n");
+        return 1;
+    }
+
+    Bottle cmd, reply;
+    ConstString act = (mode==1)?"create":"delete";
+    cmd.addString((mode==1)?"topic":"untopic");
+    if (ConstString(argv[0])!="--list") {
+        cmd.addString(argv[0]);
+    }
+    bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                 cmd,
+                                 reply,
+                                 false,
+                                 true);
+    if (ok) {
+        ok = reply.get(0).asVocab()==VOCAB2('o','k');
+    }
+    if (!ok) {
+        ACE_OS::fprintf(stderr, "Failed to %s topic %s:\n  %s\n",
+                        act.c_str(), argv[0], reply.toString().c_str());
+        ACE_OS::fprintf(stderr, "  Topics are only supported by yarpserver3.\n");
+        return 1;
+    } else {
+        ACE_OS::fprintf(stdout, "Topic %s %sd\n", argv[0], act.c_str());
+    }
+    
+    return ok?0:1;
+}
+
 
 
 int Companion::read(const char *name, const char *src, bool showEnvelope) {
