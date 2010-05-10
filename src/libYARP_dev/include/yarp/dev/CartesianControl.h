@@ -12,7 +12,7 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-/*! \file CartesianController.h define control board standard interfaces*/
+/*! \file CartesianController.h define control board standard interfaces */
 
 namespace yarp {
     namespace dev {
@@ -57,7 +57,8 @@ public:
 
     /**
     * Get the current pose. [do not wait for reply]
-    * @param x: a 3-d vector which is filled with the actual position x,y,z (meters)
+    * @param x: a 3-d vector which is filled with the actual 
+    *         position x,y,z (meters).
     * @param od: a 4-d vector which is filled with the actual orientation
     * using axis-angle representation xa, ya, za, theta (meters and 
     * radians). 
@@ -83,7 +84,8 @@ public:
     /**
     * Move the end effector to a specified position in cartesian space, 
     * ignore the orientation. [do not wait for reply]
-    * @param xd: a 3-d vector which contains the desired position x,y,z 
+    * @param xd: a 3-d vector which contains the desired position 
+    *          x,y,z (meters).
     * @param t: set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure. 
@@ -95,7 +97,8 @@ public:
     /**
     * Move the end effector to a specified pose (position
     * and orientation) in cartesian space. [wait for reply]
-    * @param xd: a 3-d vector which contains the desired position x,y,z
+    * @param xd: a 3-d vector which contains the desired position 
+    *          x,y,z (meters).
     * @param od: a 4-d vector which contains the desired orientation
     * using axis-angle representation (xa, ya, za, theta). 
     * @param t: set the trajectory duration time (seconds). If t<=0 
@@ -108,7 +111,8 @@ public:
     /**
     * Move the end effector to a specified position in cartesian space, 
     * ignore the orientation. [wait for reply]
-    * @param xd: a 3-d vector which contains the desired position x,y,z 
+    * @param xd: a 3-d vector which contains the desired position 
+    *          x,y,z (meters).
     * @param t: set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure.
@@ -273,7 +277,7 @@ public:
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
     * @param f: where the result is returned.
-    * @return true if the trajectory is terminated, false otherwise
+    * @return true/false on success/failure.
     */
     virtual bool checkMotionDone(bool *f)=0;
 

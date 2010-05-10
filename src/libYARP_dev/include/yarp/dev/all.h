@@ -13,6 +13,7 @@
 #include<yarp/dev/AudioGrabberInterfaces.h>
 #include<yarp/dev/AudioVisualInterfaces.h>
 #include<yarp/dev/CalibratorInterfaces.h>
+#include<yarp/dev/CartesianControl.h>
 #include<yarp/dev/ControlBoardInterfaces.h>
 #include<yarp/dev/ControlBoardInterfacesImpl.h>
 #include<yarp/dev/ControlBoardPid.h>
@@ -20,6 +21,7 @@
 #include<yarp/dev/DeviceDriver.h>
 #include<yarp/dev/Drivers.h>
 #include<yarp/dev/FrameGrabberInterfaces.h>
+#include<yarp/dev/GazeControl.h>
 #include<yarp/dev/GenericSensorInterfaces.h>
 #include<yarp/dev/PolyDriver.h>
 #include<yarp/dev/RemoteFrameGrabber.h>
