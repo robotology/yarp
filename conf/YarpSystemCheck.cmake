@@ -116,6 +116,8 @@ set(CMAKE_EXTRA_INCLUDE_FILES)
 set(CMAKE_REQUIRED_INCLUDES)
 set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
 
-
-
-
+if (MSVC)
+  # ACE uses a bunch of functions MSVC warns about.
+  # The warnings make sense in general, but not in this case.
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE=1)
+endif (MSVC)
