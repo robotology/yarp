@@ -35,6 +35,27 @@ public:
     virtual ~IGazeControl() {}
 
     /**
+    * Set the controller in tracking or non-tracking mode. [wait for
+    * reply] 
+    * @param f: true for tracking mode, false otherwise. 
+    * \note In tracking mode when the controller reachs the target, 
+    *       it keeps on running in order to mantain the gaze on
+    *       target. In non-tracking mode the controller releases the
+    *       control of the head as soon as the desired target is
+    *       reached.
+    * @return true/false on success/failure.
+    */
+    virtual bool setTrackingMode(const bool f)=0;
+
+    /**
+    * Get the current controller mode. [wait for reply]
+    * @param f: here is returned true if controller is in tracking 
+    *         mode, false otherwise.
+    * @return true/false on success/failure. 
+    */
+    virtual bool getTrackingMode(bool *f)=0;
+
+    /**
     * Get the current fixation point. [do not wait for reply]
     * @param fp: a 3-d vector which is filled with the actual 
     *         fixation point x,y,z (meters).
