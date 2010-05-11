@@ -107,9 +107,9 @@ public:
     *         (meters). A default value of 1.0 is assumed.
     * @return true/false on success/failure. 
     */
-    virtual bool lookAtMonoPixels(const int camSel,
-                                  const yarp::sig::Vector &px,
-                                  const double z=1.0)=0;
+    virtual bool lookAtMonoPixel(const int camSel,
+                                 const yarp::sig::Vector &px,
+                                 const double z=1.0)=0;
 
     /**
     * Move the gaze to a location specified by two pixels 
