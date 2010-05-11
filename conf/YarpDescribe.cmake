@@ -6,7 +6,10 @@
 # ("uninstalled") use of YARP.
 get_property(YARP_INCLUDES GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 get_property(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
-get_property(YARP_DEFINES GLOBAL PROPERTY YARP_DEFS)
+# Oops, cannot use YARP_DEFINES name, conflicts with an old variable
+# that might be lurking in CMakeCache.txt as people upgrade.  Insert 
+# an "_ALL_" for now.
+get_property(YARP_ALL_DEFINES GLOBAL PROPERTY YARP_DEFS)
 get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
 message(STATUS "In-tree includes: ${YARP_INCLUDES}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")

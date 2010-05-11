@@ -7,7 +7,7 @@ IF (NOT YARP_FOUND)
   # Give the details of YARP libraries, include path etc.
   SET(YARP_LIBRARIES @YARP_LIBRARIES@)
   SET(YARP_INCLUDE_DIRS @YARP_INCLUDES@)
-  SET(YARP_DEFINES @YARP_DEFINES@) # only needed if you use ACE directly
+  SET(YARP_DEFINES @YARP_ALL_DEFINES@) # only needed if you use ACE directly
   SET(YARP_MODULE_PATH @YARP_MODULE_PATH@)
 
   # Pull in any dependencies that YARP libraries may have.
