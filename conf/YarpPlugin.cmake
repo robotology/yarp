@@ -40,6 +40,7 @@ IF (NOT COMMAND END_PLUGIN_LIBRARY)
 
 # Helper macro to work around a bug in set_property in cmake 2.6.0
 MACRO(get_property_fix localname _global _property varname)
+  set(_exists_chk)
   get_property(_exists_chk GLOBAL PROPERTY ${varname})
   if (_exists_chk)
     set(${localname} ${_exists_chk})
