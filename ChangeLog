@@ -1,3 +1,7 @@
+2010-05-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/FindOpenCV.cmake: freshen OpenCV search script.
+
 2010-05-10  Ugo Pattacini <ugo.pattacini@iit.it>
 
 	* src/libYARP_DEV/include/yarp/dev/GazeControl.h: added the interface
