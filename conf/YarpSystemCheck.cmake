@@ -95,18 +95,7 @@ if(MINGW)
   endif (MSYS)
 endif(MINGW)
 
-find_package(Ace REQUIRED)
-
-if (ACE_DEBUG_FOUND)
- link_libraries(optimized ${ACE_LIBRARY} debug ${ACE_DEBUG_LIBRARY})
- set(ACE_LIB optimized ${ACE_LIBRARY} debug ${ACE_DEBUG_LIBRARY} CACHE INTERNAL "libraries")
-else (ACE_DEBUG_FOUND)
- link_LIBRARIES(${ACE_LIBRARY})
- set(ACE_LIB ${ACE_LIBRARY} CACHE INTERNAL "libraries")
-endif (ACE_DEBUG_FOUND)
-
-include_directories(${ACE_INCLUDE_DIR})
-include_directories(${ACE_INCLUDE_CONFIG_DIR})
+find_package(ACE REQUIRED)
 
 include(YarpCheckTypeSize) # regular script does not do C++ types
 set(CMAKE_EXTRA_INCLUDE_FILES ace/config.h ace/String_Base_Const.h)

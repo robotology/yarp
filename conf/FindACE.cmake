@@ -2,6 +2,12 @@
 # Authors: Alexandre Bernardino, Paul Fitzpatrick, Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
+# Variables set:
+#   ACE_FOUND
+#   ACE_LIBRARIES
+#   ACE_INCLUDE_DIRS
+
+
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
@@ -132,17 +138,28 @@ IF (ACE_DEBUG_LIBRARY)
 ENDIF (ACE_DEBUG_LIBRARY)
 
 IF (ACE_FOUND)
-	IF (NOT Ace_FIND_QUIETLY)
+	IF (NOT ACE_FIND_QUIETLY)
 		MESSAGE(STATUS "Found ACE library: ${ACE_LIBRARY} (${CMAKE_SYSTEM_NAME})")
 		MESSAGE(STATUS "Found ACE include: ${ACE_INCLUDE_DIR}")
-	ENDIF (NOT Ace_FIND_QUIETLY)
+	ENDIF (NOT ACE_FIND_QUIETLY)
 ELSE (ACE_FOUND)
-	IF (Ace_FIND_REQUIRED)
+	IF (ACE_FIND_REQUIRED)
 		MESSAGE(FATAL_ERROR "Could not find ACE")
-	ENDIF (Ace_FIND_REQUIRED)
+	ENDIF (ACE_FIND_REQUIRED)
 ENDIF (ACE_FOUND)
 
 ENDIF (BUILTIN_ACE)
-#ENDIF (EXISTS "${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/ace")
+
+if (ACE_DEBUG_FOUND)
+  set(ACE_LIBRARY optimized ${ACE_LIBRARY} debug ${ACE_DEBUG_LIBRARY})
+endif (ACE_DEBUG_FOUND)
+
 
 SET(Ace_FOUND ${ACE_FOUND})
+if (NOT ACE_LIBRARIES)
+  set(ACE_LIBRARIES ${ACE_LIBRARY})
+endif (NOT ACE_LIBRARIES)
+if (NOT ACE_INCLUDE_DIRS)
+  set(ACE_INCLUDE_DIRS ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
+endif (NOT ACE_INCLUDE_DIRS)
+

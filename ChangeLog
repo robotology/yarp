@@ -1,6 +1,10 @@
 2010-05-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
+	* conf/FindACE.cmake: renamed from FindAce.cmake for 
+	consistency.  Provides ACE_FOUND, ACE_LIBRARIES, ACE_INCLUDE_DIRS.
+
 	* conf/FindOpenCV.cmake: freshen OpenCV search script.
+	Provides OpenCV_FOUND, OpenCV_LIBRARIES, OpenCV_INCLUDE_DIRS.
 
 2010-05-10  Ugo Pattacini <ugo.pattacini@iit.it>
 

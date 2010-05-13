@@ -19,8 +19,10 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
   ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_OS ${folder_source} ${folder_header})
+target_link_libraries(YARP_OS ${ACE_LIBRARIES})
 install(TARGETS YARP_OS EXPORT YARP COMPONENT runtime DESTINATION lib)
 # Cannot APPEND here due to CMake 2.6.0 bug
 #set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_OS)
