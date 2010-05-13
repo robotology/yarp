@@ -62,6 +62,19 @@ and something typed on the "yarp write" console will appear on the
 
 If either program is killed and restarted, the connection will reappear.
 
+\section persistent_connections_list Listing persistent connections
+
+To view all persistent connections, type:
+\verbatim
+yarp connect --persist
+\endverbatim
+
+To view all persistent connections involving a particular
+port, type:
+\verbatim
+yarp connect --persist /port
+\endverbatim
+
 \section persistent_connections_remove Getting rid of a persistent connection
 
 To stop the automatic creation of connections between two ports /src and
@@ -118,6 +131,20 @@ yarp connect /src3 /dest3
 (if carriers are specified in the persistent connections, the carriers for 
 outgoing connections from the topic are respected and those for
 incoming connections to the topic are ignored).
+
+\section persistent_connections_topics_list Listing topics
+
+To get a list of all topics, do:
+\verbatim
+yarp topic --list
+\endverbatim
+
+\section persistent_connections_topics_remove Removing topics
+
+To remove a topic, do:
+\verbatim
+yarp topic --remove /topic
+\endverbatim
 
 
  *
