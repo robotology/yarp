@@ -1,0 +1,125 @@
+
+/*
+ * Copyright (C) 2010 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+/** 
+ * @page persistent_connections Persistent connections
+
+\author Paul Fitzpatrick
+
+When a connection is made between two YARP ports, that connection
+lasts until it is explicitly disconnected by user action, or until one
+of the ports is closed.
+
+It is also possible to specify connections that should be made
+whenever possible.  These are called "persistent connections"
+and are supported by yarpserver version 3 and above.  Make sure you
+choose to compile yarpserver3 when building YARP if you wish to
+use this feature.
+
+Normally, to connect two ports from the command line, you do:
+\verbatim
+yarp connect <source-port> <target-port> [optional-carrier]
+\endverbatim
+for example:
+\verbatim
+yarp connect /src /dest mcast
+\endverbatim
+If both the /src and /dest ports exist, this will create a connection
+between them that will last until it is disconnected by a matching call
+to "yarp disconnect", or until one of the ports closes.
+
+To create a persistent connection, you instead do:
+\verbatim
+yarp connect --persist <source-port> <target-port> [optional-carrier]
+\endverbatim
+for example:
+\verbatim
+yarp --persist connect /src /dest mcast
+\endverbatim
+This command will succeed even if /src or /dest do not exist at the moment.
+Whenever a port called /src or /dest is created, YARP will check
+if it is possible to create this connection, and do so if it can.
+
+
+\section persistent_connections_example An example of a persistent connection
+
+For example, suppose we do:
+\verbatim
+yarp connect --persist /write /read
+\endverbatim
+And then in two terminals we do:
+\verbatim
+yarp write /write
+yarp read /read
+\endverbatim
+The "yarp write" and "yarp read" programs will be connected automatically,
+and something typed on the "yarp write" console will appear on the
+"yarp read" console.
+
+If either program is killed and restarted, the connection will reappear.
+
+\section persistent_connections_remove Getting rid of a persistent connection
+
+To stop the automatic creation of connections between two ports /src and
+/dest, do:
+\verbatim
+yarp disconnect --persist /src /dest
+\endverbatim
+
+\section persistent_connections_topics Persistence via topics
+
+It is occasionally useful to view a collection of ports as a single
+"topic" to read from or write to.  
+A topic can be created in YARP
+by doing:
+\verbatim
+yarp topic <topic-name>
+\endverbatim
+For example:
+\verbatim
+yarp topic /topic
+\endverbatim
+A topic can be thought of as a repeater port; anything it receives
+from any of its inputs, it resends to all its outputs.
+This bus-like behavior is often useful, but a bit inefficient.
+So in fact YARP topics are entirely virtual, with their
+effect achieved via direct connections between the ports connected
+to the virtual topic port.
+
+To be concrete, here's how topics work.
+Persistent connections can be made between ports and a topic:
+\verbatim
+yarp connect --persist /src1 /topic
+yarp connect --persist /src2 /topic
+yarp connect --persist /src3 /topic
+yarp connect --persist /topic /dest1
+yarp connect --persist /topic /dest2
+yarp connect --persist /topic /dest3
+\endverbatim
+Every input to the topic will be connected to every output from the 
+topic.  For example, if all of the ports /src1, /src2, /dest1,
+and /dest2 exist, then the following connections will be made and
+maintained:
+\verbatim
+yarp connect /src1 /dest1
+yarp connect /src1 /dest2
+yarp connect /src1 /dest3
+yarp connect /src2 /dest1
+yarp connect /src2 /dest2
+yarp connect /src2 /dest3
+yarp connect /src3 /dest1
+yarp connect /src3 /dest2
+yarp connect /src3 /dest3
+\endverbatim
+(if carriers are specified in the persistent connections, the carriers for 
+outgoing connections from the topic are respected and those for
+incoming connections to the topic are ignored).
+
+
+ *
+ */
+
