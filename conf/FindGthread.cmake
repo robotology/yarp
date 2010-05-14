@@ -32,7 +32,7 @@ IF(UNIX)
  SET(GTHREAD_INCLUDE_DIR "${GTHREAD_INCLUDE_DIR}" CACHE INTERNAL "gthread include directory")
 
  
- SET(Gthread_LIBRARIES "${GTHREAD_LDLINK_FLAGS_FLAGS}" CACHE INTERNAL "gthread link flags")
+ SET(Gthread_LIBRARIES "${GTHREAD_LDFLAGS}" CACHE INTERNAL "gthread link flags")
  SET(Gthread_C_FLAGS "${GTHREAD_C_FLAGS}" CACHE INTERNAL "gthread include flags")
  SET(Gthread_INCLUDE_DIRS "${GTHREAD_INCLUDE_DIRS}" CACHE INTERNAL "gthread include directory")
 
