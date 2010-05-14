@@ -10,6 +10,7 @@ foreach(test_family ${targets})
   GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
                PROPERTY INCLUDE_DIRS)
   INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+  include_directories(${ACE_INCLUDE_DIRS})
   set(EXE harness_${test_family})
   string(TOLOWER ${EXE} EXE)
   add_executable(${EXE} ${harness_code})
