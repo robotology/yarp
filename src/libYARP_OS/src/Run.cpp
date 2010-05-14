@@ -414,10 +414,21 @@ public:
 	
 	virtual void Clean()
 	{
-		if (m_pid_stdin)  KILL(m_pid_stdin);
-		if (m_pid_stdout) KILL(m_pid_stdout);
-		m_pid_cmd=m_pid_stdin=m_pid_stdout=0;
-		
+	    m_pid_cmd=0;
+	
+		if (m_pid_stdin)
+		{  
+		    KILL(m_pid_stdin);
+		    waitpid(m_pid_stdin,0,0);
+		    m_pid_stdin=0;
+		}
+		if (m_pid_stdout)
+	    {
+	        KILL(m_pid_stdout);
+	        waitpid(m_pid_stdout,0,0);
+	        m_pid_stdout=0;
+	    }
+
 		if (m_write_to_pipe_stdin_to_cmd)   CLOSE(m_write_to_pipe_stdin_to_cmd);
 		if (m_read_from_pipe_stdin_to_cmd)  CLOSE(m_read_from_pipe_stdin_to_cmd);
 		if (m_write_to_pipe_cmd_to_stdout)  CLOSE(m_write_to_pipe_cmd_to_stdout);
@@ -1361,7 +1372,7 @@ void Run::CleanZombies()
 Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 {
 	String alias(msg.find("as").asString());
-	String cmd_str(msg.find("cmd").toString());
+	String commandString(msg.find("cmd").toString());
     String stdio_str(msg.find("stdio").asString());
 
 	int  pipe_stdin_to_cmd[2];
@@ -1484,7 +1495,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		            bConnR=true;
 		        }
 		        
-		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
+		        if (!bConnW || !bConnR)
+		        { 
+		            fprintf(stderr,"retry %d\n",i);
+		            yarp::os::Time::delay(1.0);
+		        }
 		    }
 		    
 		    //bool bConnW=NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());       
@@ -1520,7 +1535,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			{				
                 int error=errno;
 		     	
-		        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+cmd_str+"\n";
+		        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
                 out+=String("Can't fork command process because ")+strerror(error)+"\n";
 	            
 			    Bottle result;
@@ -1548,23 +1563,30 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			}
 
 			if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
-			{                
-                int nargs=cmd_str.length();
+			{                        
+                char *cmd_c_str=new char[commandString.length()+1];
+                strcpy(cmd_c_str,commandString.c_str());
+                int nargs=CountArgs(cmd_c_str);
                 String *Args=new String[nargs];
-                ParseCmd(cmd_str.c_str(),Args);
+                ParseCmd(cmd_c_str,Args);
+                delete [] cmd_c_str;
         
-		        char **arg_str=new char*[nargs+1];
+	            char **arg_str=new char*[nargs+1];
 		        for (int s=0; s<nargs; ++s)
 		        {
-		        	arg_str[s]=new char[Args[s].length()+1];
-		        	strcpy(arg_str[s],Args[s].c_str());
+			        arg_str[s]=new char[Args[s].length()+1];
+			        strcpy(arg_str[s],Args[s].c_str());
 		        }
 		        arg_str[nargs]=0;
-        
+    
+                delete [] Args;
+
+			    //setvbuf(stdout,NULL,_IONBF,0);
+
 				REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
 				REDIRECT_TO(STDOUT_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 				REDIRECT_TO(STDERR_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
-				
+	           
 				if (msg.check("workdir"))
 			    {
 			        chdir(msg.find("workdir").asString().c_str());
@@ -1572,11 +1594,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 				int ret=execvp(arg_str[0],arg_str);   
 
+                fflush(stdout);
+                fflush(stderr);
+
                 if (ret==YARPRUN_ERROR)
 	            {
 	                int error=errno;
 	                
-                    String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+cmd_str+"\n";
+                    String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
                     out+=String("Can't execute command because ")+strerror(error)+"\n";
                     
                 	FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
@@ -1590,9 +1615,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		            NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
 	            }
 
-        		for (int s=0; s<nargs; ++s) delete [] arg_str[s];
+        		for (int s=0; s<nargs; ++s)
+        		{
+        		    delete [] arg_str[s];
+        		}
         		delete [] arg_str;
-        		delete [] Args;  
 
 				exit(ret);
 			}
@@ -1601,7 +1628,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			{
 				m_ProcessVector.Add(
 				    new YarpRunCmdWithStdioInfo(
-				        cmd_str,alias,m_PortName,
+				        commandString,alias,m_PortName,
 				        pid_cmd,stdio_str,&m_StdioVector,
 					    pid_stdin,pid_stdout,
 					    pipe_stdin_to_cmd[READ_FROM_PIPE],pipe_stdin_to_cmd[WRITE_TO_PIPE],
@@ -1646,7 +1673,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 				    */
 	                
 	                result.addInt(pid_cmd);
-	                out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+cmd_str+" pid="+String(pidstr)+"\n";
+	                out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+String(pidstr)+"\n";
 	            }
 	            
 	            result.addString(out.c_str());
@@ -1699,6 +1726,8 @@ Bottle Run::UserStdio(Bottle& msg)
 
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
+        setvbuf(stdout,NULL,_IONBF,0);
+
 		if (msg.check("geometry"))
 		{
 	        String geometry(msg.find("geometry").asString());
@@ -1712,6 +1741,9 @@ Bottle Run::UserStdio(Bottle& msg)
 			//          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
 			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
+		
+		fflush(stdout);
+		fflush(stderr);
 		
 		if (ret==YARPRUN_ERROR)
 		{
