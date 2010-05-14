@@ -13,7 +13,6 @@ set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS
   ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
-include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_sig ${folder_source} ${folder_header})
 target_link_libraries(YARP_sig YARP_OS)
