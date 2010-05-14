@@ -1,3 +1,23 @@
+# Tried to make variables uniform with cmake "standards"
+# Now set GtkPlus_* variables (respect capitalization rule).
+# Maintain backwards compatibiliy.
+# Lorenzo Natale 14/05/2010
+#
+# On exit set:
+# GtkPlus_FOUND
+# GtkPlus_LIBRARIES
+# GtkPlus_INCLUDE_DIRS
+#
+# Old variables:
+#
+# GTKPLUS_FOUND
+# GTKPLUS_LIBRARY_DIR 
+# GTKPLUS_LINK_FLAGS
+# GTKPLUS_C_FLAGS
+# GTKPLUS_INCLUDE_DIR
+#
+
+
 IF(UNIX)
   INCLUDE(FindPkgConfig)
   if (PKG_CONFIG_FOUND)
