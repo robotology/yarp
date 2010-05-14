@@ -1,5 +1,9 @@
 2010-05-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/doc/yarp_config_files.dox: update config file documentation
+	to include [include category_name section_name "filename.ini"]
+	syntax.
+
 	* src/libYARP_OS/src/Property.cpp: allow usage of 
 	[include category_name section_name "filename.ini"] in
 	configuration files.  This acts as if the material in

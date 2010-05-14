@@ -188,6 +188,23 @@ Consider nesting instead
 using \ref yarp_config_file_nesting "nested configuration files".
 
 
+\section yarp_config_file_lists Combining section collections and includes
+
+As of YARP 2.2.8, section collections and include file features can be 
+combined.  In other words, one can have a configuration file like this:
+\code
+[include camera left "cam_left.ini"]
+[include camera right "cam_right.ini"]
+\endcode
+This takes the material in "cam_left.ini" and places it in a section
+called "left", and similarly places the material in "cam_right.ini"
+in a section called "right", and then creates a group called "camera"
+equivalent to the following line:
+\code
+camera left right
+\endcode
+
+
 \section yarp_config_file_comments Comments in config files
 
 Use the # character, or //, as your prefer.
