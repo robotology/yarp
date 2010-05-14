@@ -380,11 +380,35 @@ public:
                                                                 accum);
                                             }
                                             tag = "";
-                                        }                                
-                                        ConstString subName = 
-                                            bot.get(1).toString();
-                                        ConstString fname = 
-                                            bot.get(2).toString();
+                                        }
+                                        ConstString subName, fname;
+                                        if (bot.size()==3) {
+                                            // [include section "filename"]
+                                            subName = bot.get(1).toString();
+                                            fname = bot.get(2).toString();
+                                        } else if (bot.size()==4) {
+                                            // [include type section "filename"]
+                                            ConstString key;
+                                            key = bot.get(1).toString();
+                                            subName = bot.get(2).toString();
+                                            fname = bot.get(3).toString();
+                                            Bottle *target = 
+                                                getBottle(key.c_str());
+                                            if (target==NULL) {
+                                                Bottle init;
+                                                init.addString(key.c_str());
+                                                init.addString(subName.c_str());
+                                                putBottleCompat(key.c_str(),
+                                                                init);
+                                            } else {
+                                                target->addString(subName.c_str());
+                                            }
+                                        } else {
+                                            YARP_ERROR(Logger::get(),
+                                                       String("bad include"));
+                                            return;
+                                        }
+
 
                                         Property p;
                                         if (getBottle(subName)!=NULL) {

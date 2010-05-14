@@ -1,3 +1,11 @@
+2010-05-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Property.cpp: allow usage of 
+	[include category_name section_name "filename.ini"] in
+	configuration files.  This acts as if the material in
+	"filename.ini" was included in a section called
+	[category_name section_name]
+
 2010-05-13  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/FindACE.cmake: renamed from FindAce.cmake for 
