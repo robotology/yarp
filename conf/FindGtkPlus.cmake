@@ -31,8 +31,20 @@ IF(UNIX)
  SET(GTKPLUS_INCLUDE_DIR "${GTKPLUS_INCLUDE_DIR}" CACHE INTERNAL "gtk+ include directory")
  SET(GTKPLUS_LIBRARY_DIR "${GTKPLUS_LIBRARY_DIR}" CACHE INTERNAL "gtk+ library directory")
 
+ SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE INTERNAL "gtk+ link flags")
+ SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE INTERNAL "gtk+ include directory")
+
+ # message(STATUS "Libraries --> ${GtkPlus_LIBRARIES}")
+ # message(STATUS "IncludeDirs --> ${GtkPlus_INCLUDE_DIRS}")
+ # message(STATUS "LinkFlags --> ${GTKPLUS_LINK_DIR}")
+ # message(STATUS "CFlags --> ${GTKPLUS_C_FLAGS}")
+ 
  #ADD_DEFINITIONS(${GTKPLUS_C_FLAGS})
  #LINK_LIBRARIES(${GTKPLUS_LINK_FLAGS})
+
+ SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
+ SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
+
 
  IF (GTKPLUS_C_FLAGS)
  	SET(GtkPlus_FOUND TRUE)
@@ -41,4 +53,17 @@ IF(UNIX)
  ENDIF (GTKPLUS_C_FLAGS)
 ELSE (UNIX)
  	FIND_PACKAGE(GtkWin32) 
+ 	
+ 	SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
+   SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
+
+	if (GTK_FOUND)
+		set(GtkPlus_FOUND TRUE)
+		set(GtkPlus_LIBRARIES "${GTK_LIBRARIES}" CACHE STRING "gtk+ link flags")
+   	set(GtkPlus_INCLUDE_DIRS "${GTK_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
+	endif (GTK_FOUND)
+	
 ENDIF (UNIX)
+
+
+
