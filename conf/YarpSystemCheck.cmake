@@ -108,7 +108,10 @@ set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
 if (MSVC)
   # ACE uses a bunch of functions MSVC warns about.
   # The warnings make sense in general, but not in this case.
-  add_definitions(-D_CRT_SECURE_NO_DEPRECATE=1)
+  # this gets rids of deprecated unsafe crt functions
+  add_definitions(-D_CRT_SECURE_NO_DEPRECATE)
+  # this gets rid of warning about deprecated POSIX names
+  add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
   # Traditionally, we add "d" postfix to debug libraries
   set(CMAKE_DEBUG_POSTFIX "d")
 endif (MSVC)
