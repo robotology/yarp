@@ -67,6 +67,7 @@
 %ignore *::setKd(double);
 %ignore *::setScale(double);
 %ignore *::setOffset(double);
+%rename(open_str) yarp::dev::PolyDriver::open(const char *txt);
 
 #if defined(SWIGCSHARP)
 	// there's a big CSHARP virtual/override muddle
