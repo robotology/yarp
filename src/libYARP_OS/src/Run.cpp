@@ -15,7 +15,7 @@
 
 #if defined(WIN32) || defined(WIN64)
 #define SIGKILL 0
-BOOL KILL(HANDLE pid,int signum=SIGTERM) 
+BOOL KILL(HANDLE pid,int signum=SIGTERM,bool wait=false) 
 { 
     BOOL bRet=TerminateProcess(pid,0);
     CloseHandle(pid);
