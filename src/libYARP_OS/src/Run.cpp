@@ -63,7 +63,7 @@ int KILL(int pid,int signum=SIGTERM,bool wait=false)
     return ret; 
 }
 void sigchild_handler(int sig)
-{    
+{   
     Run::CleanZombies();
 }
 #endif
@@ -274,6 +274,8 @@ public:
 	#else
 	void CleanZombies()
 	{	
+	    yarp::os::Time::delay(1.0); 
+	
 		mutex.wait();
 
         YarpRunProcInfo **apZombie=new YarpRunProcInfo*[m_nProcesses];
@@ -419,25 +421,33 @@ public:
 	
 	virtual void Clean()
 	{
-	    m_pid_cmd=0;
-	
-		if (m_pid_stdin)
-		{  
-		    KILL(m_pid_stdin,SIGTERM,true);
-		    m_pid_stdin=0;
-		}
-		if (m_pid_stdout)
-	    {
-	        KILL(m_pid_stdout,SIGTERM,true);
-	        m_pid_stdout=0;
-	    }
-
+	    fflush(stdout);
+	    fflush(stderr);
+	    
 		if (m_write_to_pipe_stdin_to_cmd)   CLOSE(m_write_to_pipe_stdin_to_cmd);
 		if (m_read_from_pipe_stdin_to_cmd)  CLOSE(m_read_from_pipe_stdin_to_cmd);
 		if (m_write_to_pipe_cmd_to_stdout)  CLOSE(m_write_to_pipe_cmd_to_stdout);
 		if (m_read_from_pipe_cmd_to_stdout) CLOSE(m_read_from_pipe_cmd_to_stdout);
 		m_write_to_pipe_stdin_to_cmd=m_read_from_pipe_stdin_to_cmd=0;
 		m_write_to_pipe_cmd_to_stdout=m_read_from_pipe_cmd_to_stdout=0;
+	
+	    NetworkBase::disconnect((String("/")+m_alias+"/stdout").c_str(),(String("/")+m_alias+"/user/stdout").c_str());
+	    NetworkBase::disconnect((String("/")+m_alias+"/user/stdin").c_str(),(String("/")+m_alias+"/stdin").c_str());
+	
+	    m_pid_cmd=0;
+	
+		if (m_pid_stdin)
+		{  
+		    KILL(m_pid_stdin,SIGTERM,true);
+		    fprintf(stderr,"KILLING stdin (%d)\n",m_pid_stdin);
+		    m_pid_stdin=0;
+		}
+		if (m_pid_stdout)
+	    {
+	        KILL(m_pid_stdout,SIGTERM,true);
+	        fprintf(stderr,"KILLING stdout (%d)\n",m_pid_stdout);
+	        m_pid_stdout=0;
+	    }
 
 		TerminateStdio();
 	}
@@ -709,7 +719,7 @@ int Run::Server()
 		}
 
 		if (msg.check("killstdio"))
-		{
+		{		    
 		    fprintf(stderr,"Run::Server() killstdio(%s)\n",msg.find("killstdio").asString().c_str());
 		    String alias(msg.find("killstdio").asString());
 			m_StdioVector.Kill(alias);
@@ -1434,6 +1444,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	if (IS_PARENT_OF(pid_stdout))
 	{
+	    fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdout pid=%d\n",m_PortName.c_str(),alias.c_str(),pid_stdout);
+	
 		int pid_stdin=fork();
 
 		if (IS_INVALID(pid_stdin))
@@ -1486,6 +1498,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		{
 			// connect yarp read and write
 			
+			fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdin pid=%d\n",m_PortName.c_str(),alias.c_str(),pid_stdin);
+			
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 		    { 
@@ -1498,11 +1512,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		            bConnR=true;
 		        }
 		        
-		        if (!bConnW || !bConnR)
-		        { 
-		            fprintf(stderr,"retry %d\n",i);
-		            yarp::os::Time::delay(1.0);
-		        }
+		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
 		    }
 		    
 		    //bool bConnW=NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());       
@@ -1584,7 +1594,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
     
                 delete [] Args;
 
-			    //setvbuf(stdout,NULL,_IONBF,0);
+			    setvbuf(stdout,NULL,_IONBF,0);
 
 				REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
 				REDIRECT_TO(STDOUT_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
@@ -1725,8 +1735,8 @@ Bottle Run::UserStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
 		int ret;
-        String command=String("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
-
+        //String command=String("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        //String command=String("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);
@@ -1734,15 +1744,15 @@ Bottle Run::UserStdio(Bottle& msg)
 		if (msg.check("geometry"))
 		{
 	        String geometry(msg.find("geometry").asString());
-			//ret=execlp("xterm","xterm","-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			//          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
-			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
+			          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			//ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		else
 		{
-			//ret=execlp("xterm","xterm","-hold","-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			//          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
-			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
+			          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			//ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		
 		fflush(stdout);
