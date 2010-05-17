@@ -56,7 +56,12 @@ DWORD WINAPI ZombieHunter(LPVOID lpParameter)
 #define PID int
 #define FDESC int
 int CLOSE(int h){ return close(h)==0; }
-int KILL(int pid,int signum=SIGTERM){ return !kill(pid,signum); }
+int KILL(int pid,int signum=SIGTERM,bool wait=false)
+{ 
+    int ret=!kill(pid,signum);
+    if (wait) waitpid(pid,0,0);
+    return ret; 
+}
 void sigchild_handler(int sig)
 {    
     Run::CleanZombies();
@@ -418,14 +423,12 @@ public:
 	
 		if (m_pid_stdin)
 		{  
-		    KILL(m_pid_stdin);
-		    waitpid(m_pid_stdin,0,0);
+		    KILL(m_pid_stdin,SIGTERM,true);
 		    m_pid_stdin=0;
 		}
 		if (m_pid_stdout)
 	    {
-	        KILL(m_pid_stdout);
-	        waitpid(m_pid_stdout,0,0);
+	        KILL(m_pid_stdout,SIGTERM,true);
 	        m_pid_stdout=0;
 	    }
 
