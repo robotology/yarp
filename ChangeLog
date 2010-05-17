@@ -1,3 +1,11 @@
+2010-05-17 Daniel Krieg  <krieg@fias.uni-frankfurt.de>
+
+    * src/carriers/mpi_carrier/src/MpiStream.cpp: fixed thread
+    problem -> now requesting MPI_THREAD_MULTIPLE level. Regarding
+    OpenMPI faq thread support not intensively tested; I would recommend
+    MPICH2 as mpi implementation.
+    Preventing Mpi now from busy polling via non-blocking communcation.
+
 2010-05-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: deal with conflict in PolyDriver::open

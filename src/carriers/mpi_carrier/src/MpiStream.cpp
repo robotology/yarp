@@ -10,11 +10,12 @@
 #ifdef CREATE_MPI_CARRIER
 
 #include <yarp/os/impl/MpiStream.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;
 
 
-int MpiStream::stream_counter = 0;
+int MpiStream::stream_counter = -1;
 
 MpiStream::MpiStream(String n, bool server) : terminate(false), name(n) {
     readBuffer = NULL;
@@ -54,10 +55,17 @@ void MpiStream::increase_counter() {
     printf("Increase stream counter from %d\n", MpiStream::stream_counter);
 #endif
     // We need to initialize MPI
-    if (MpiStream::stream_counter == 0) {
-        char*** mpi_carrier_argv = NULL;
-        int mpi_carrier_argc[1] = {0};
-        MPI_Init(mpi_carrier_argc, mpi_carrier_argv);
+    if (MpiStream::stream_counter == -1) {
+        int provided;
+        // We need full multithread support for MPI
+        int requested = MPI_THREAD_MULTIPLE;
+        MPI_Init_thread(NULL, NULL, requested , &provided);
+        if (provided > requested) {
+            printf("MPI thread level error: requested %d, provided %d\n", requested, provided);
+            throw;
+        }
+        // Only initialize once; counter does not decrease below zero
+        MpiStream::stream_counter = 0;
     }
     MpiStream::stream_counter++;
 }
@@ -68,6 +76,11 @@ void MpiStream::decrease_counter() {
     printf("Decrease stream counter from %d\n", MpiStream::stream_counter);
 #endif
     MpiStream::stream_counter--;
+    ACE_ASSERT(MpiStream::stream_counter >= 0);
+    /*
+    * Don't call MPI_Finalize (at least not here)
+    * Maybe we want to recreate a connection...
+    
     if (MpiStream::stream_counter == 0) {
 #ifdef MPI_DEBUG
         printf("[MpiStream] ");
@@ -78,12 +91,10 @@ void MpiStream::decrease_counter() {
         printf("Done\n");
 #endif
     }
+    */
     
 }
 void MpiStream::checkLocal(String other) {
-    printf("!!!!!!!!!! ----- !!!!!!!!!!!\n");
-    printf("!!!!!!!!!!! %s = ", unique_id);
-    printf("%s", String(unique_id).c_str());
     if (other == String(unique_id)) {
         printf("ERROR: MpiStream does not support process local communication\n");
         throw;
@@ -168,11 +179,16 @@ int MpiStream::read(const Bytes& b) {
         int available = 0;
         int tag = 0;
         MPI_Status status;
-        //MPI_(&size, 1, MPI_INT, 0, intercomm);
-        while (!available) {
+        while (true) {
             if (terminate)
                 return 0;
+            // Check for a message
             MPI_Iprobe(0, tag, intercomm, &available, &status);
+            if (available)
+                break;
+            // Prevent the busy polling which hurts
+            // performance in the oversubscription scenario
+            Time::yield();
         }
         MPI_Get_count(&status, MPI_BYTE, &size);
         if (size == b.length()) {
@@ -214,11 +230,22 @@ void MpiStream::write(const Bytes& b) {
     MPI_Request request;
     MPI_Status status;
     int flag = 0;
+    //MPI_Send(b.get(), size, MPI_BYTE, 0, 0, intercomm);
+    
     MPI_Isend(b.get(), size, MPI_BYTE, 0, 0, intercomm, &request );
-    while(flag == 0) {
+    while(true) {
+        /*
+        // TODO: Need to implement a mechanism for breaking!!
         if (terminate)
             break;
+        */
+        // Check if message has been received
         MPI_Test(&request, &flag, &status);
+        if (flag)
+            break;
+        // Prevent the busy polling which hurts
+        // performance in the oversubscription scenario
+        Time::yield();
     }
 }
 
