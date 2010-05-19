@@ -6,39 +6,9 @@
  * author Alessandro Scalzo alessandro@liralab.it
  */
 
-/**
- * @class Run
- *
- * @brief Run
- *
- * yarp run provides a server able to run/kill commands on a remote machine.
- * 
- * To run a server on a machine:             $ yarp run --server SERVERPORT
- *
- * To run a command by the remote server:    $ yarp run --on SERVERPORT --as TAG [--stdio SERVERPORT [--hold] [--geometry WxH+X+Y]] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]
- * 
- * To kill a command:						 $ yarp run --on SERVERPORT --kill TAG SIGNUM
- *
- * To terminate a command:				     $ yarp run --on SERVERPORT --sigterm TAG
- *
- * To terminate all commands on a server:    $ yarp run --on SERVERPORT --sigtermall
- * 
- * To shutdown a server:				     $ yarp run --on SERVERPORT --exit
- *
- * To get a report from a server             $ yarp run --on SERVERPORT --ps
- *
- * To check if a command is running          $ yarp run --on SERVERPORT --isrunning TAG
- */
-
 #ifndef _YARP2_RUN_
 #define _YARP2_RUN_
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-//#include <ace/config.h>
-//#include <ace/OS.h>
-//#include <ace/Process.h>
-//#include <ace/Vector_T.h>
 #include <stdio.h>
 #include <list>
 #include <string>
@@ -63,20 +33,117 @@ using namespace yarp::os;
 class YarpRunInfoVector;
 
 /**
- * Starting and stopping processes.
+ * yarprun provides a client-server environment that is able to run, 
+ * kill and monitor applications commands on a remote machine, with the
+ * same syntax and behaviour in Windows and Linux.
+ *
+ * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
+ * If a yarprun server is running on each machine, distributed applications can be remotely launched, 
+ * monitored and terminated by yarprun commands.
+ * 
+ * - To run a yarprun server on a machine:             
+ *      $ yarprun --server /SERVERPORT
+ * 
+ * /SERVERPORT must be unique and identifies the remote machine. 
+ *
+ * - The basic command to run a command/application on a remote machine is:
+ *      $ yarprun --on /SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
+ *
+ * /SERVERPORT is the name of the server that actually runs the command
+ * TAG identifies the application process set, and must be unique
+ * COMMAND is the application that has to be executed, followed by the optional argument list
+ * 
+ * Some options can be added to the basic format of yarprun:
+ *      $ yarprun --on /SERVERPORT1 --as TAG --cmd COMMAND [ARGLIST] --stdio /SERVERPORT2
+ *
+ * opens a remote shell window where the stdin, stdout and stderr of the application will be redirected.
+ * /SERVERPORT2 specifies the machine where the IO shell will be executed, and can be either a remote machine or
+ * be equal to /SERVERPORT1 itself.
+ * 
+ * If --stdio is specified, there are two useful sub-options (linux only):
+ * - --hold keep the stdio window open even if the command is terminated or aborted. 
+ * - --geometry WxH+X+Y set the stdio window size and position. Example: --geometry 320x240+80+20
+ *
+ * Other yarprun commands:
+ *
+ * - To terminate an application, the yarprun syntax is:
+ *      $ yarprun --on /SERVERPORT --sigterm TAG
+ *
+ * - To send a signal to an application (usually SIGKILL) use:
+ *      $ yarprun --on /SERVERPORT --kill TAG SIGNUM
+ *
+ * - To terminate all the applications managed by a yarprun server, use:
+ *      $ yarprun --on /SERVERPORT --sigtermall
+ *
+ * - To check if an application is still running on a yarprun server, use:
+ *      $ yarprun --on /SERVERPORT --isrunning TAG
+ *
+ * - To get a report of applications running on a yarprun server, use:
+ *      $ yarprun --on /SERVERPORT --ps
+ *
+ * - To shutdown a yarprun server, use:
+ *      $ yarprun --on /SERVERPORT --exit
+ *
  */
 class yarp::os::Run 
 {
 public:
 	// API
+    
+    /**
+     * Launch a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param command is the command to be executed by the remote server. It can include
+     * an argument list and different options, in the standard yarp Property key/value mode:
+     * - name COMMAND_NAME 
+     * - parameters ARGUMENT_LIST (optional)
+     * - stdio /SERVERPORT (optional)
+     * - geometry WxH+X+Y (optional)
+     * - hold (optional)
+     * @param keyv is the tag that will identify the running application. It must be unique in the network.
+     * @return 0=success -1=failed.
+     */
 	static int start(const String &node, Property &command, String &keyv);
+    /**
+     * Terminate an application running on a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param keyv is the tag that identifies the running application. It must be unique in the network.
+     * @return 0=success -1=failed.
+     */
 	static int sigterm(const String &node, const String &keyv);
+    /**
+     * Terminate all applications running on a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @return 0=success -1=failed.
+     */
 	static int sigterm(const String &node);
+    /**
+     * Send a SIGNAL to an application running on a yarprun server (Linux only).
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param keyv is the tag that identifies the running application. It must be unique in the network.
+     * @param s is the SIGNAL number.
+     * @return 0=success -1=failed.
+     */
 	static int kill(const String &node, const String &keyv,int s);
+    /**
+     * Get a report of all applications running on a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param processes is a list of applications running on the remote yarprun server.
+     * @return 0=success -1=failed.
+     */
 	static int ps(const String &node,std::list<std::string> &processes);
+    /**
+     * Report if an application is still running on a yarprun server.
+     * @param node is the yarprun server port name. It must be unique in the network.
+     * @param keyv is the tag that identifies the application. It must be unique in the network.
+     * @return true=running false=terminated.
+     */
 	static bool isRunning(const String &node, String &keyv);
 
-	////////////////////////////////////////
+    // end API
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
     static int main(int argc, char *argv[]);
 	static Port *pServerPort;
 	static YarpRunInfoVector m_ProcessVector;
@@ -86,7 +153,6 @@ public:
 	static HANDLE hZombieHunter;
 	static HANDLE *aHandlesVector;
 	#else
-	//static void CleanZombies(int *pZombies,int nZombies);
     static void CleanZombies();   
 	#endif
 
@@ -105,8 +171,8 @@ protected:
 
 	static String m_PortName;
 	static YarpRunInfoVector m_StdioVector;
-};
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
+};
 
 #endif
