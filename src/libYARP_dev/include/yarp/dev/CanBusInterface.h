@@ -28,7 +28,7 @@ namespace yarp {
 class yarp::dev::CanErrors
 {
 public:
-    CanErrors(): 
+    CanErrors()
      {
         txCanErrors=0;     //can device tx errors
         rxCanErrors=0;     //can device rx errors
