@@ -29,15 +29,23 @@ class yarp::dev::CanErrors
 {
 public:
     CanErrors(): 
-        errors(0), busoff(false), overflow(0), inBuffOvr(0), outBuffOvr(0)
-    {
+     {
+        txCanErrors=0;     //can device tx errors
+        rxCanErrors=0;     //can device rx errors
+        busoff=false;         //bus off
+        rxCanFifoOvr=0;   // can device rx overflow
+        txCanFifoOvr=0;   // can device tx overflow
+        txBufferOvr=0;    // tx buffer overflow
+        rxBufferOvr=0;    // rx buffer overflow
     }
 
-    int errors;
-    bool busoff;
-    unsigned int overflow;
-    unsigned int inBuffOvr;
-    unsigned int outBuffOvr;
+    int txCanErrors;     //can device tx errors
+    int rxCanErrors;     //can device rx errors
+    bool busoff;         //bus off
+    unsigned int rxCanFifoOvr;   // can device rx overflow
+    unsigned int txCanFifoOvr;   // can device tx overflow
+    unsigned int txBufferOvr;    // tx buffer overflow
+    unsigned int rxBufferOvr;    // rx buffer overflow
 };
 
 class yarp::dev::CanMessage
