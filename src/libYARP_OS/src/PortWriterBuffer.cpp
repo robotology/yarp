@@ -31,6 +31,7 @@ public:
     }
 
     virtual ~PortWriterBufferBaseHelper() {
+        release();
         finishWrites();
         stateSema.wait();
     }
@@ -60,6 +61,13 @@ public:
     }
 
     void *get() {
+        if (callback!=NULL) {
+            // (Safe to check outside mutex)
+            // oops, there is already a prepared and unwritten
+            // object.  best remove it.
+            YARP_DEBUG(Logger::get(), "releasing unused buffer");
+            release();
+        }
         stateSema.wait();
         PortCorePacket *packet = packets.getFreePacket();
         YARP_ASSERT(packet!=NULL);
@@ -77,6 +85,18 @@ public:
         current = packet->getContent();
         callback = packet->getCallback();
         return callback;
+    }
+
+    bool release() {
+        stateSema.wait();
+        PortWriter *cback = callback;
+        current = NULL;
+        callback = NULL;
+        stateSema.post();
+        if (cback!=NULL) {
+            cback->onCompletion();
+        }
+        return cback!=NULL;
     }
 
     virtual void onCompletion(void *tracker) {
@@ -107,6 +127,8 @@ public:
         stateSema.wait();
         PortWriter *active = current;
         PortWriter *cback = callback;
+        current = NULL;
+        callback = NULL;
         stateSema.post();
         if (active!=NULL && port!=NULL) {
             outCt++;
@@ -151,6 +173,10 @@ PortWriterBufferBase::~PortWriterBufferBase() {
 
 void *PortWriterBufferBase::getContent() {
     return HELPER(implementation).get();
+}
+
+bool PortWriterBufferBase::releaseContent() {
+    return HELPER(implementation).release();
 }
 
 

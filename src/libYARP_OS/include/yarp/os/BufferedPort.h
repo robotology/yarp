@@ -125,6 +125,18 @@ public:
         return writer.get();
     }
 
+
+    /**
+     *
+     * Give the last prepared object back to YARP without writing it.
+     *
+     * @return true if there was a prepared object to return.
+     *
+     */
+    bool unprepare() {
+        return writer.unprepare();
+    }
+
     /**
      * Write the current object being returned by BufferedPort::prepare.
      * That object should no longer be touched by the user of this class --

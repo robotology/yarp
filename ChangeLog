@@ -1,3 +1,10 @@
+2010-05-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/BufferedPort.h: added
+	unprepare method for situation where an object is prepared
+	for writing, and then user decides not to write after all.
+	Also improved default behavior in this case.
+
 2010-05-17 Daniel Krieg  <krieg@fias.uni-frankfurt.de>
 
     * src/carriers/mpi_carrier/src/MpiStream.cpp: fixed thread

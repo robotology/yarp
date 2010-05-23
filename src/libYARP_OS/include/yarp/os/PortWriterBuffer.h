@@ -76,6 +76,8 @@ public:
 
     void *getContent();
 
+    bool releaseContent();
+
     int getCount();
 
     void attach(Port& port);
@@ -126,7 +128,18 @@ public:
     }
 
     /**
-     * A synonym of PortWriterBuffer::write.
+     *
+     * Give the last prepared object back to YARP without writing it.
+     *
+     * @return true if there was a prepared object to return.
+     *
+     */
+    bool unprepare() {
+        return releaseContent;
+    }
+
+    /**
+     * A synonym of PortWriterBuffer::prepare.
      * @return the next object that will be written
      */
     T& get() {
