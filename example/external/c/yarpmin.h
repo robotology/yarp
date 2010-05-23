@@ -32,6 +32,7 @@ int yarp_port_lookup(yarpAddressPtr address, const char *port_name);
 int yarp_rpc(yarpAddressPtr address, const char *msg, char *buf, int len);
 
 int yarp_read_int(const char *buf, int len);
+int yarp_write_int(char *buf, int len, int x);
 
 yarpConnection yarp_prepare_to_read(yarpAddressPtr address);
 

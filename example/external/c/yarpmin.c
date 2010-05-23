@@ -523,10 +523,25 @@ int yarp_read_int(const char *buf, int len) {
     unsigned char *ubuf = (unsigned char *)buf;
     if (len!=4) {
         printf("Cannot read integers with %d bytes\n", len);
+        return 0;
     }
     // this could be optimized away on little-endian machines!
     x = ubuf[0] + (ubuf[1]<<8) + (ubuf[2]<<16) + (ubuf[3]<<24);
     return x;
 }
 
+
+int yarp_write_int(char *buf, int len, int x) {
+    unsigned char *ubuf = (unsigned char *)buf;
+    if (len!=4) {
+        printf("Cannot write integers with %d bytes\n", len);
+        return -1;
+    }
+    // this could be optimized away on little-endian machines!
+    ubuf[0] = x&0xff;
+    ubuf[1] = (x>>8)&0xff;
+    ubuf[2] = (x>>16)&0xff;
+    ubuf[3] = (x>>24)&0xff;
+    return 0;
+}
 
