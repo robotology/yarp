@@ -135,7 +135,7 @@ public:
      *
      */
     bool unprepare() {
-        return releaseContent;
+        return releaseContent();
     }
 
     /**
