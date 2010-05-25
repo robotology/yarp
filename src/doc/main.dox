@@ -15,21 +15,25 @@
 
 YARP stands for Yet Another Robot Platform.  What is it?
 If data is the bloodstream of your robot, then YARP is
-the circulatory system.  It isn't the brain.  It isn't 
-the heart.  But it is pretty useful to have around all
-the same. (For brains and hearts, see our companion project,
-<a href="http://www.robotcub.org">RobotCub</a>)
+the circulatory system.
 
 More specifically, YARP supports building a robot control system as a
 \ref note_ports "collection of programs" communicating in a
 peer-to-peer way, with a \ref carrier_config "family of connection types" 
-that meet the diverse, sometimes contradictory, and always
-changing needs of advanced robotics.  We also encourage compilation
-and use of hardware devices in a future-proof way.  Our strategic goal
+(tcp, udp, multicast, local, MPI, ...) that can be swapped in and out to
+match your network.  We also support similarly flexible interfacing 
+with hardware devices.  Our strategic goal
 is to increase the longevity of robot software projects [1].
 
-We try to make it easy to use a YARP-based system without you 
-yourself needing to use YARP.
+YARP is <i>not</i> an operating system for your robot.
+We figure you already have an operating system, or perhaps several.
+Nor does it do package management.  We figure you
+already have a package manager that you're happy with.
+To avoid lock-in, we've put a lot of thought into making it easy to 
+interoperate with YARP-using programs without yourself necessarily 
+having to use YARP -- see the \ref yarp_without_yarp "YARP without YARP" 
+tutorial (plus C and Python examples within the example/external 
+subdirectory of the YARP source code).
 
 Getting set up:
 \li \ref what_is_yarp

@@ -14,16 +14,23 @@ This tutorial
 covers how to communicate with a YARP Port without using
 the YARP library.  You might want to do this when trying 
 to hook up some on your non-YARP-using code with a YARP
-robot.
+robot.  Or you may just want to know that users of your
+robot will have this option in future.
+
 YARP Ports can be communicated with in a choice of protocols.
 Some of those protocols are very simple, simple enough
 to use without any code or to implement yourself in your own code.  
 
-You will need the "telnet" program or an equivalent for this tutorial.
+The tutorial has two parts.  
+For the first part,
+you will need the "telnet" program or an equivalent for this tutorial.
 It is used just as a way to create a socket from the command-line; we don't
-rely on any special parts of the telnet protocol.  This tutorial
-should be equally useful for those implementing communication with
-YARP using their own socket library in their favorite language.
+rely on any special parts of the telnet protocol.  
+For the second part, we use a few lines of python to repeat the steps 
+done manually with telnet.  There are examples of 
+interoperating with YARP from other languages in the example/external 
+subdirectory of the YARP source code (YARP can also be used directly
+from many languages via SWIG, but that is a different topic).
 
 
 \section yarp_without_yarp_test Test scenario
@@ -522,7 +529,7 @@ useful for transmitting images or sound.  For that, we need a binary
 protocol; at this point there's no avoiding reading hairy documentation
 like \ref yarp_protocol and writing some code.
 
-UPDATE: there is now sample C code for reading binary data (images 
+There is sample C code for reading binary data (images 
 in particular) in the directory example/external/c - there are also
 examples in C that translate the python examples above.
 
