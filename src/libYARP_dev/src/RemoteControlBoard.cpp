@@ -609,6 +609,35 @@ protected:
         return false;
     }
 
+	/**
+    * Helper method to get an array of integers from the remote peer.
+    * @param v is the name of the command
+    * @param val is the array of double
+    * @return true/false on success/failure
+    */
+    bool get1VIA(int v, int *val) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+
+            int njs = l.size();
+            ACE_ASSERT (nj == njs);
+            for (i = 0; i < nj; i++)
+                val[i] = l.get(i).asInt();
+
+            getTimeStamp(response, lastStamp);
+
+            return true;
+        }
+        return false;
+    }
+
     /**
     * Helper method to get an array of double from the remote peer.
     * @param v is the name of the command
@@ -1493,7 +1522,7 @@ public:
     * @return true in good luck, false otherwise.
     */
     virtual bool getAmpStatus(int *st) {
-        return get1V1I(VOCAB_AMP_STATUS, *st);     
+        return get1VIA(VOCAB_AMP_STATUS, st);     
     }
 
     /* IControlLimits */
