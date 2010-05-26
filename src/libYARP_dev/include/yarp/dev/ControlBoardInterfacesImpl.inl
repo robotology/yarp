@@ -5,6 +5,8 @@
  *
  */
 
+// removed references to ACE
+
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 
 #include <math.h>
@@ -13,10 +15,16 @@
 // units that use the template (e.g. .cpp files). Avoid putting here non-template functions to
 // avoid multiple definitions.
 
-#include <ace/Log_Msg.h>
-#include <stdio.h>
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_stdio.h>
+//#include <ace/Log_Msg.h>
+//#include <stdio.h>
+//#include <ace/OS_NS_stdlib.h>
+//#include <ace/OS_NS_stdio.h>
+
+#include <string.h> // for memset
+#include <stdlib.h> // for exit
+#include <stdio.h> // for printf
+#define ACE_ASSERT(x) { if (!(x)) { printf("memory allocation failure\n"); exit(1); } }
+#define ACE_OS
 
 /*
  * simple helper template to alloc memory.
