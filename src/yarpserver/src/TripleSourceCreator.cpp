@@ -60,6 +60,10 @@ TripleSource *TripleSourceCreator::open(const char *filename,
 
     result = sqlite3_exec(db, create_main_table.c_str(), NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
+        const char *msg = sqlite3_errmsg(db);
+        if (msg!=NULL) {
+            fprintf(stderr,"Error in %s: %s\n", filename, msg);
+        }
         sqlite3_close(db);
         fprintf(stderr,"Failed to set up database tables\n");
         exit(1);
