@@ -32,11 +32,7 @@ using namespace yarp::os;
 
 class YarpRunInfoVector;
 
-/**
- * yarprun provides a client-server environment that is able to run, 
- * kill and monitor applications commands on a remote machine, with the
- * same syntax and behaviour in Windows and Linux.
- *
+/*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.
  * If a yarprun server is running on each machine, distributed applications can be remotely launched, 
  * monitored and terminated by yarprun commands.
@@ -84,6 +80,12 @@ class YarpRunInfoVector;
  * - To shutdown a yarprun server, use:
  *      $ yarprun --on /SERVERPORT --exit
  *
+ */
+
+/**
+ * \class yarp::os::Run
+ * \brief yarprun provides the APIs to a client-server environment that is able to run, 
+ * kill and monitor applications commands on a remote machin in Windows and Linux.
  */
 class yarp::os::Run 
 {
