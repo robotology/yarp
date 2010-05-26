@@ -1,3 +1,8 @@
+2010-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/PortWriterBuffer.cpp: correct counting
+	mistake when recycling unwritten objects.  Thanks Ugo!
+
 2010-05-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/BufferedPort.h: added

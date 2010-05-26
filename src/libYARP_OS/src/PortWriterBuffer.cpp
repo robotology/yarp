@@ -94,6 +94,9 @@ public:
         callback = NULL;
         stateSema.post();
         if (cback!=NULL) {
+            stateSema.wait();
+            outCt++;
+            stateSema.post();
             cback->onCompletion();
         }
         return cback!=NULL;
@@ -131,7 +134,9 @@ public:
         callback = NULL;
         stateSema.post();
         if (active!=NULL && port!=NULL) {
+            stateSema.wait();
             outCt++;
+            stateSema.post();
             port->write(*active,cback);
         } 
     }
