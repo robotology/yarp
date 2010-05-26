@@ -401,18 +401,9 @@ help experienced users get started on new projects quickly.
 
 \section yarp_run yarp run
 
-\verbatim
-yarp run --server SERVERPORT
-yarp run --on SERVERPORT --as TAG --script SCRIPTNAME
-yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST]
-yarp run --on SERVERPORT --kill TAG
-yarp run --on SERVERPORT --killall
-yarp run --on SERVERPORT --exit
-\endverbatim
+yarprun provides a client-server environment that is able to run, kill and monitor applications on a remote machine, with the same syntax and behaviour in Windows and Linux.
 
-A way of running programs on a set of machines on a closed network.
-See Run class for documentation.
-
+See \ref yarprun for documentation.
 
 \section yarp_namespace yarp namespace
 
