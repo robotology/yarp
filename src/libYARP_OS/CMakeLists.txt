@@ -16,10 +16,10 @@ IF (BUILTIN_ACE)
 ENDIF (BUILTIN_ACE)
 
 set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
-  ${PROJECT_SOURCE_DIR}/include
-  ${ACE_INCLUDE_DIRS})
+  ${PROJECT_SOURCE_DIR}/include)
 get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${ACE_INCLUDE_DIRS})
 
 add_library(YARP_OS ${folder_source} ${folder_header})
 target_link_libraries(YARP_OS ${ACE_LIBRARIES})
