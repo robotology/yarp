@@ -24,7 +24,6 @@
 #include <stdlib.h> // for exit
 #include <stdio.h> // for printf
 #define ACE_ASSERT(x) { if (!(x)) { printf("memory allocation failure\n"); exit(1); } }
-#define ACE_OS
 
 /*
  * simple helper template to alloc memory.
@@ -34,7 +33,7 @@ inline T* allocAndCheck(int size)
 {
     T* t = new T[size];
     ACE_ASSERT (t != 0);
-    ACE_OS::memset(t, 0, sizeof(T) * size);
+    memset(t, 0, sizeof(T) * size);
     return t;
 }
 
