@@ -25,26 +25,28 @@ match your network.  We also support similarly flexible interfacing
 with hardware devices.  Our strategic goal
 is to increase the longevity of robot software projects [1].
 
-YARP is <i>not</i> an operating system for your robot.
-We figure you already have an operating system, or perhaps several.
-Nor does it do package management.  We figure you
-already have a package manager that you're happy with.
-To avoid lock-in, we've put a lot of thought into making it easy to 
-interoperate with YARP-using programs without yourself necessarily 
-having to use YARP -- see the \ref yarp_without_yarp "YARP without YARP" 
-tutorial (plus C and Python examples within the example/external 
-subdirectory of the YARP source code).
+YARP is <i>not</i> an operating system for your robot.  We figure you
+already have an operating system, or perhaps several.  Nor does it do
+package management (we like the package managers we have).  We're not
+out for world domination.  It is easy to interoperate with YARP-using
+programs without yourself necessarily having to use YARP -- see the
+\ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
+in C++, with a core that uses no external libraries, not even the standard
+template libraries, with the exception of a small portion of <a
+href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> for portability (and
+this portion can easily be embedded).  YARP is free and open, under
+the GPL (*).
 
 Getting set up:
-\li \ref what_is_yarp
 \li \ref install
 \li \ref yarp_cluster
 \li \ref yarp
 
 Programming:
+\li \ref yarp_cmake_hello
 \li \ref note_ports
-\li \ref note_devices
 \li \ref port_expert
+\li \ref note_devices
 \li \ref yarp_code_examples
 \li \ref using_cmake
 
@@ -63,8 +65,12 @@ Communication protocols:
 \li \ref carrier_expert
 \li \ref terms
 
+More information:
+\li \ref what_is_yarp
+
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://eris.liralab.it/yarp/media/humantech07towards.pdf
 
+(*) Want to vote for a different license?  <a href="http://eris.liralab.it/wiki/Robotcub-hackers">Write to us</a>.
 
  *
  */

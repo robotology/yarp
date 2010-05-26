@@ -9,6 +9,12 @@ network friendly to UDP and multicast. But if you find yourself
 spending a lot of time on this, you may need to reconsider whether you
 have made the right choice of protocol.
 
+NOTE: if you are just getting started with YARP, you 
+don't need to look at any of this yet!  It only matters when you
+are working with a cluster of computers using unreliable protocols,
+or run into bandwidth problems.  But it is important to remember that
+this page is here for when you need it.
+
 @section yarp_cluster_iperf iperf is your friend
 
 If you are doing any non-trivial networking, you need to learn how
