@@ -11,6 +11,7 @@
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -23,6 +24,10 @@ public:
 
     EventTestHelper() : done(0), x() {
         state = 1;
+    }
+
+    ~EventTestHelper() {
+        stop();
     }
 
     virtual void run() {
@@ -39,6 +44,10 @@ public:
     Semaphore done;
 
     EventTestHelper2(Event& x) : x(x), done(0) {
+    }
+
+    ~EventTestHelper2() {
+        stop();
     }
 
     virtual void run() {
@@ -82,7 +91,6 @@ public:
         if (h2.done.check()) ct++;
         checkEqual(ct,1,"just one awoke");
         x.signal();
-        Time::delay(0.5);
     }
 
     void checkMultipleWakeup() {
