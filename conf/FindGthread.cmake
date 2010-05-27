@@ -42,17 +42,28 @@ IF(UNIX)
  ELSE (GTHREAD_C_FLAGS)
 	SET(Gthread_FOUND FALSE)
  ENDIF (GTHREAD_C_FLAGS)
+ 
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
+
+
 ELSE (UNIX)
   FIND_LIBRARY(GTK_thread_lib
 	NAMES gthread-2.0
 	PATHS $ENV{GTK_BASEPATH}/lib)
+  
+  SET(Gthread_INCLUDE_DIRS "")
+  
   IF (GTK_thread_lib)
     SET(Gthread_FOUND TRUE)
     SET(Gthread_LIBRARIES
 	  ${GTK_thread_lib})
   ENDIF(GTK_thread_lib)
-ENDIF (UNIX)
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES)
+
+ENDIF (UNIX)
+
+
 
