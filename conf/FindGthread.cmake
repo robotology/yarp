@@ -53,4 +53,6 @@ ELSE (UNIX)
   ENDIF(GTK_thread_lib)
 ENDIF (UNIX)
 
+INCLUDE(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
 

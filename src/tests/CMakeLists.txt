@@ -7,9 +7,10 @@ endif (YARP_HAS_MATH_LIB)
 
 foreach(test_family ${targets})
   file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp)
-  GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
+  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
                PROPERTY INCLUDE_DIRS)
-  INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+  include_directories(${YARP_TREE_INCLUDE_DIRS})
+  include_directories(${ACE_INCLUDE_DIRS})
   set(EXE harness_${test_family})
   string(TOLOWER ${EXE} EXE)
   add_executable(${EXE} ${harness_code})

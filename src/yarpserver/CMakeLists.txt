@@ -6,25 +6,24 @@ option(CREATE_YARPSERVER3 "Do you want to compile yarpserver3?" FALSE)
 
 if (CREATE_YARPSERVER3)
 
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-  INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/sqlite)
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sqlite)
+  include_directories(${ACE_INCLUDE_DIRS})
 
-  GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
-  INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
+  include_directories(${YARP_TREE_INCLUDE_DIRS})
 
-  ADD_LIBRARY(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
+  add_library(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
 
-  IF (NOT WIN32)
-    TARGET_LINK_LIBRARIES(yarpserversql pthread dl)
-  ENDIF (NOT WIN32)
+  if (NOT WIN32)
+    target_link_libraries(yarpserversql pthread dl)
+  endif (NOT WIN32)
 
-  # Find YARP.  Point the YARP_DIR environment variable at your build.
-  # FIND_PACKAGE(YARP)
-  ADD_EXECUTABLE(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerConnectionHandler.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerManager.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp)
-  TARGET_LINK_LIBRARIES(yarpserver3 yarpserversql)
-  TARGET_LINK_LIBRARIES(yarpserver3 YARP_init)
-  INSTALL_TARGETS(/lib yarpserversql)
-  INSTALL_TARGETS(/bin yarpserver3)
+  add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerConnectionHandler.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerManager.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp)
+  target_link_libraries(yarpserver3 yarpserversql)
+  target_link_libraries(yarpserver3 YARP_init)
+  install_targets(/lib yarpserversql)
+  install_targets(/bin yarpserver3)
 
   ###############################################################
   ## Some extra test programs

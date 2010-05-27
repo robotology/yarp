@@ -6,15 +6,8 @@ option(CREATE_GUIS "Do you want to compile GUIs" OFF)
 
 if (CREATE_GUIS)
 
-  FIND_PACKAGE(GtkPlus)
-  IF (NOT GtkPlus_FOUND)
-	MESSAGE(STATUS " gtk+ not found, won't compile dependent tools")
-  ENDIF (NOT GtkPlus_FOUND)
-
-  FIND_PACKAGE(Gthread)
-  IF (NOT Gthread_FOUND)
-	MESSAGE(STATUS " gthread not found, won't compile dependent tools")
-  ENDIF(NOT Gthread_FOUND)
+  FIND_PACKAGE(GtkPlus REQUIRED)
+  FIND_PACKAGE(Gthread REQUIRED)
 
   # set up to use GTK+
   #ADD_DEFINITIONS(${GTKPLUS_C_FLAGS})
@@ -29,6 +22,8 @@ if (CREATE_GUIS)
 
   GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_sig PROPERTY INCLUDE_DIRS)
   INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
+
+  INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
 
   FILE(GLOB folder_source *.cpp)
   FILE(GLOB folder_header *.h)
