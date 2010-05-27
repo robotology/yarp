@@ -52,6 +52,7 @@ extern yarp::os::impl::UnitTest& getNetworkTest();
 extern yarp::os::impl::UnitTest& getResourceFinderTest();
 extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 extern yarp::os::impl::UnitTest& getSemaphoreTest();
+extern yarp::os::impl::UnitTest& getEventTest();
 
 class yarp::os::impl::TestList {
 public:
@@ -88,6 +89,7 @@ public:
         root.add(getResourceFinderTest());
         root.add(getDgramTwoWayStreamTest());
         root.add(getSemaphoreTest());
+        root.add(getEventTest());
     }
 };
 

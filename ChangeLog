@@ -1,3 +1,8 @@
+2010-05-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Event.h: add wrapper
+	for ACE_Event class.
+
 2010-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortWriterBuffer.cpp: correct counting

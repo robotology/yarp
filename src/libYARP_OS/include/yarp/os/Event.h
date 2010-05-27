@@ -1,0 +1,74 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2010 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+#ifndef _YARP2_EVENT_
+#define _YARP2_EVENT_
+
+namespace yarp {
+    namespace os {
+        class Event;
+    }
+}
+
+/**
+ * \ingroup key_class
+ *
+ * A class for thread synchronization and mutual exclusion.
+ * An event can in a signaled or reset state.  Threads
+ * can wait for an event to enter a signaled state.
+ *
+ */
+class yarp::os::Event {
+public:
+
+    /**
+     * Constructor.  Sets the initial value of the counter.
+     * @param autoResetAfterWait if set, reset() will be called 
+     * automatically after wait().
+     */
+    Event(bool autoResetAfterWait = true);
+
+    /**
+     * Destructor.
+     */
+    virtual ~Event();
+
+    /**
+     *
+     * Wait for the event to be signaled.  If the event was created
+     * with autoResetAfterWait set, then after a wait the
+     * event will automatically be reset.  That means that any
+     * other thread waiting for the same event will not be woken up
+     * by the signal that wakes up this call to wait().
+     *
+     */
+    void wait();
+
+
+    /**
+     * Put the event in a signaled state. A thread wait()ing for
+     * the event will will wake up.  If the event was created
+     * with autoResetAfterWait set, then at most one thread
+     * will wake up (and then automatically reset the event),
+     * otherwise all waiting threads will wake up.
+     *
+     */
+    void signal();
+
+    /**
+     *
+     * Put the event in a reset state.
+     *
+     */
+    void reset();
+
+private:
+    void *implementation;
+};
+
+#endif
