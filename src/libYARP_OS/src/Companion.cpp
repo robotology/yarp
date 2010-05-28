@@ -639,7 +639,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
 
     int result = connect(src,dest.c_str());
     if (result!=0) {
-        printf("For connection for ports that don't exist yet, or connections to topics, do:\n");
+        printf("For connection to ports that don't exist yet, or connections to topics, do:\n");
         printf("  yarp connect --persist");
         for (int i=0; i<argc_org; i++) {
             printf(" %s", argv_org[i]);
