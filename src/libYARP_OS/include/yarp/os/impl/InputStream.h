@@ -95,6 +95,16 @@ public:
      */
     virtual int read(const Bytes& b) = 0;
 
+
+    /**
+     *
+     * Like read, but solicit partial responses.
+     *
+     */
+    virtual int partialRead(const Bytes& b) {
+        return read(b);
+    }
+
     /**
      *
      * Terminate the stream.

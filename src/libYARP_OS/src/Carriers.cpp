@@ -140,3 +140,6 @@ bool Carriers::addCarrierPrototype(Carrier *carrier) {
 }
 
 
+bool Carrier::reply(Protocol& proto, SizedWriter& writer) {
+    return proto.defaultReply(writer);
+}

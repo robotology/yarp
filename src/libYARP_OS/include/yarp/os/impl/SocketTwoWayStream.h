@@ -87,22 +87,32 @@ public:
 
     virtual int read(const Bytes& b) {
         if (!isOk()) { return -1; }
-        //ACE_OS::printf("STWS::read pre \n");
-        //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv");
         int result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(),b.length(),&readTimeout);
         } else {
             result = stream.recv_n(b.get(),b.length());
         }
-        //YARP_DEBUG(Logger::get(),"^^^^^^^^^^^ recv done");
         if (!happy) { return -1; }
-        //ACE_OS::printf("socket read %d\n", result);
-        //ACE_OS::printf("STWS::read post \n");
         if (result<=0) {
             happy = false;
             YARP_DEBUG(Logger::get(),"bad socket read");
-            //throw IOException("input socket died");
+        }
+        return result;
+    }
+
+    virtual int partialRead(const Bytes& b) {
+        if (!isOk()) { return -1; }
+        int result;
+        if (haveReadTimeout) {
+            result = stream.recv(b.get(),b.length(),&readTimeout);
+        } else {
+            result = stream.recv(b.get(),b.length());
+        }
+        if (!happy) { return -1; }
+        if (result<=0) {
+            happy = false;
+            YARP_DEBUG(Logger::get(),"bad socket read");
         }
         return result;
     }

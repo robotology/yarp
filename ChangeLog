@@ -1,5 +1,11 @@
 2010-05-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/carriers/xmlrpc_carrier/XmlRpcCarrier.h: basic XML/RPC
+	carrier.  Experimental, but already sufficient to interoperate
+	with the XmlRpc++ library's "Hello" server and client.  Not
+	intended for high bandwidth uses.  Carrier name for
+	"yarp connect" is "xmlrpc"
+
 	* src/libYARP_OS/include/yarp/os/Event.h: add wrapper
 	for ACE_Event class.
 

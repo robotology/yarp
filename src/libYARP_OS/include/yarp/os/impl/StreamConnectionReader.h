@@ -23,6 +23,7 @@
 namespace yarp {
     namespace os {
         namespace impl {
+            class Protocol;
             class StreamConnectionReader;
             class BufferedConnectionWriter;
         }
@@ -45,6 +46,7 @@ public:
         valid = false;
         ref = NULL;
         err = false;
+        protocol = NULL;
     }
 
     virtual ~StreamConnectionReader();
@@ -59,6 +61,10 @@ public:
         this->valid = true;
         ref = NULL;
         err = false;
+    }
+
+    void setProtocol(Protocol *protocol) {
+        this->protocol = protocol;
     }
 
     virtual bool expectBlock(const Bytes& b) {
@@ -247,6 +253,7 @@ private:
     StringInputStream altStream;
     InputStream *in;
     TwoWayStream *str;
+    Protocol *protocol;
     int messageLen;
     bool textMode;
     bool valid;

@@ -225,6 +225,9 @@ public:
      */
     virtual bool write(Protocol& proto, SizedWriter& writer) = 0;
 
+
+    virtual bool reply(Protocol& proto, SizedWriter& writer);
+
     /**
      *
      * Receive any carrier-specific header.

@@ -54,6 +54,7 @@ public:
         writer = NULL;
         altReader = NULL;
         ref = NULL;
+        reader.setProtocol(this);
     }
 
     virtual ~Protocol() {
@@ -416,6 +417,16 @@ public:
             expectAck(); //MOVE ack to after reply, if present
         }
         this->writer = NULL;
+    }
+
+    void reply(SizedWriter& writer) {
+        delegate->reply(*this,writer);
+    }
+
+    
+    bool defaultReply(SizedWriter& writer) {
+        writer.write(os());
+        return os().isOk();
     }
 
     virtual OutputProtocol& getOutput() {

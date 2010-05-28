@@ -111,7 +111,9 @@ Companion::Companion() {
 	add("readwrite",  &Companion::cmdReadWrite,
         "read from the network and print to standard output, write to the network from standard input");
     add("rpc",        &Companion::cmdRpc,
-        "read/write commands to a port, in standard format");
+        "write commands to a port, and read replies, without creating a port");
+    add("rpc2",        &Companion::cmdRpc2,
+        "write commands to a port, and read replies, from a port");
     add("rpcserver",  &Companion::cmdRpcServer,
         "make a test RPC server to receive and reply to Bottle-format messages");
     add("forward",        &Companion::cmdForward,
@@ -741,6 +743,38 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     }
 
     return rpc(src,dest);
+}
+
+
+int Companion::cmdRpc2(int argc, char *argv[]) {
+    if (argc<1) {
+        ACE_OS::fprintf(stderr, "Please supply remote port name, and local port name\n");
+        return 1;
+    }
+
+    const char *dest = argv[0];
+    const char *src = "...";
+    if (argc>1) {
+        src = argv[1];
+    }
+
+    Port p;
+    bool ok = p.open(src);
+    if (ok) {
+        NetworkBase::connect(p.getName().c_str(),dest);
+    }
+    while(ok) {
+        String txt = getStdin();
+        if (feof(stdin)) {
+            break;
+        }
+        Bottle cmd(txt.c_str()),reply;
+        ok = p.write(cmd,reply);
+        if (ok) {
+            printf("%s\n", reply.toString().c_str());
+        }
+    }
+    return 0;
 }
 
 

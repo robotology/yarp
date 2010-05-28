@@ -154,6 +154,8 @@ public:
 
     int cmdRpc(int argc, char *argv[]);
 
+    int cmdRpc2(int argc, char *argv[]);
+
     int cmdRpcServer(int argc, char *argv[]);
 
     int cmdForward(int argc, char *argv[]);

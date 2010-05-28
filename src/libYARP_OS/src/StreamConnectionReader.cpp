@@ -11,6 +11,7 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
+#include <yarp/os/impl/Protocol.h>
 
 #include <yarp/os/Bottle.h>
 
@@ -34,7 +35,11 @@ yarp::os::ConnectionWriter *StreamConnectionReader::getWriter() {
 void StreamConnectionReader::flushWriter() {
     if (writer!=NULL) {
         if (str!=NULL) {
-            writer->write(str->getOutputStream());
+            if (protocol!=NULL) {
+                protocol->reply(*writer);
+            } else {
+                writer->write(str->getOutputStream());
+            }
             writer->clear();
         }
     }
