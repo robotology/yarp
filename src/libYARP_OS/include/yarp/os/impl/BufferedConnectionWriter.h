@@ -210,7 +210,7 @@ public:
             ManagedBytes& b = *(header[index]);
             return (const char *)b.get();
         }
-        ManagedBytes& b = *(lst[index]);
+        ManagedBytes& b = *(lst[index-header.size()]);
         return (const char *)b.get();
     }
 
