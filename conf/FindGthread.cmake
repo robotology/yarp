@@ -15,6 +15,8 @@
 # GTHREAD_INCLUDE_DIR
 #
 
+INCLUDE(FindPackageHandleStandardArgs)
+
 IF(UNIX)
  INCLUDE(FindPkgConfig)
  if (PKG_CONFIG_FOUND)
@@ -43,7 +45,6 @@ IF(UNIX)
 	SET(Gthread_FOUND FALSE)
  ENDIF (GTHREAD_C_FLAGS)
  
-INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
 
 
@@ -60,7 +61,6 @@ ELSE (UNIX)
 	  ${GTK_thread_lib})
   ENDIF(GTK_thread_lib)
 
-INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES)
 
 ENDIF (UNIX)
