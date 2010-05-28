@@ -19,6 +19,7 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/BottleImpl.h>
+#include <yarp/os/impl/Name.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/impl/NameServer.h>
@@ -111,9 +112,9 @@ Companion::Companion() {
 	add("readwrite",  &Companion::cmdReadWrite,
         "read from the network and print to standard output, write to the network from standard input");
     add("rpc",        &Companion::cmdRpc,
-        "write commands to a port, and read replies, without creating a port");
-    add("rpc2",        &Companion::cmdRpc2,
-        "write commands to a port, and read replies, from a port");
+        "write commands to a port, and read replies");
+    //add("rpc2",        &Companion::cmdRpc2,
+    //"write commands to a port, and read replies, from a port");
     add("rpcserver",  &Companion::cmdRpcServer,
         "make a test RPC server to receive and reply to Bottle-format messages");
     add("forward",        &Companion::cmdForward,
@@ -732,17 +733,21 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
 int Companion::cmdRpc(int argc, char *argv[]) {
     if (argc<1) {
         ACE_OS::fprintf(stderr, "Please supply remote port name\n");
-        ACE_OS::fprintf(stderr, "(and, optionally, a name for this connection)\n");
+        ACE_OS::fprintf(stderr, "(and, optionally, a name for this connection or port)\n");
         return 1;
     }
 
     const char *dest = argv[0];
-    const char *src = "anon_rpc";
-    if (argc>1) {
-        src = argv[1];
+    const char *src;
+    Address address = Name(dest).toAddress();
+    if (address.getCarrierName()=="") {
+        // no need for a port
+        src = "anon_rpc";
+        if (argc>1) { src = argv[1]; }
+        return rpc(src,dest);
     }
+    return cmdRpc2(argc,argv);
 
-    return rpc(src,dest);
 }
 
 

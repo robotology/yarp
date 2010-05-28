@@ -3,9 +3,20 @@
 	* src/carriers/xmlrpc_carrier/XmlRpcCarrier.h: basic XML/RPC
 	carrier.  Experimental, but already sufficient to interoperate
 	with the XmlRpc++ library's "Hello" server and client.  Not
-	intended for high bandwidth uses.  Carrier name for
-	"yarp connect" is "xmlrpc"
-
+	intended for high bandwidth uses.  Carrier name is "xmlrpc".
+	XML structures are converted to Bottle-compatible form.
+	Here's a quick test against ROS, which uses XML/RPC for some 
+	APIs. Assumes roscore and "talker.cpp" tutorial example running:
+	  yarp name register /roscore tcp localhost 11311
+	  echo "lookupNode dummy_id /talker" | yarp rpc xmlrpc://roscore
+            >> prints: 1 "node api" "http://contact:37291/"
+	  yarp name register /talker tcp localhost 37291
+	  echo "requestTopic dummy_id /chatter ((TCPROS))" | yarp rpc xmlrpc://talker
+	    >> prints: 1 "" (TCPROS contact 38265)
+	  yarp name register /talker/chatter tcp localhost 38265
+	At that point we stop since port number 38265 talks the TCPROS 
+	protocol, rather than XMLRPC.
+	
 	* src/libYARP_OS/include/yarp/os/Event.h: add wrapper
 	for ACE_Event class.
 
