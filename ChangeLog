@@ -1,3 +1,12 @@
+2010-05-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ServerControlBoard.cpp: add 
+	stream_state option to turn on/off streaming of encoder 
+	state for default controlboard network wrapper.  E.g.:
+	  yarpdev --device test_motor --stream_state 0
+	(Do yarpdev --device test_motor --verbose for details.)
+	Thanks Ze Ji for the suggestion.
+
 2010-05-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/carriers/xmlrpc_carrier/XmlRpcCarrier.h: basic XML/RPC

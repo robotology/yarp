@@ -241,6 +241,8 @@ public:
 
         thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
+        bool stream_state = prop.check("stream_state", 1, "whether to stream state (1) or not (0)").asInt();
+
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
             ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
@@ -337,7 +339,9 @@ public:
 
             // initialization.
             command_reader.initialize();
-            start();
+            if (stream_state) {
+                start();
+            }
             return true;
         }
 
