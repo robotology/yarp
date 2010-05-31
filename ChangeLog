@@ -1,3 +1,8 @@
+2010-05-31  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* src/libYARP_OS/include/yarp/os/Network.h: Companion::exists()
+    exported up to NetworkBase class level. 
+
 2010-05-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/ServerControlBoard.cpp: add 

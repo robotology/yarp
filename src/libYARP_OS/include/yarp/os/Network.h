@@ -81,6 +81,14 @@ public:
                             bool quiet=true);
 
     /**
+     * Check for a port to be ready and responsive.
+     * @param port the name of a port
+     * @param quiet suppress messages displayed during exists
+     * @return true on success, false on failure
+     */
+    static bool exists(const char *port, bool quiet=true);
+
+	/**
      * Wait for a port to be ready and responsive.
      * @param port the name of a port
      * @param quiet suppress messages displayed during wait
@@ -88,7 +96,7 @@ public:
      */
     static bool sync(const char *port, bool quiet=true);
 
-    /**
+	/**
      * The standard main method for the YARP companion utility.
      * This method is not thread-safe; it initializes and shuts
      * down YARP, the effect of which varies between operating

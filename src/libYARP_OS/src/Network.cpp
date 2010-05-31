@@ -55,6 +55,15 @@ bool NetworkBase::disconnect(const char *src, const char *dest, bool quiet) {
     return result == 0;
 }
 
+bool NetworkBase::exists(const char *port, bool quiet) {
+    int result = Companion::exists(port,quiet);
+    if (result==0) {
+        Companion::poll(port,true);
+    }
+    return result == 0;
+}
+
+
 bool NetworkBase::sync(const char *port, bool quiet) {
     //if (!result) {
     int result = Companion::wait(port,quiet);
@@ -64,7 +73,6 @@ bool NetworkBase::sync(const char *port, bool quiet) {
     }
     return result == 0;
 }
-
 
 int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc,argv);
