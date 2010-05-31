@@ -395,6 +395,11 @@ is interpreted as a string S.
 - S is `q': the specific connection that the command is received on
    should now shut down.
 
+- S is `a': this is like `d', signalling that data should be expected,
+  but the data will not be passed on to the client of the port.
+  Instead it will be processed internally according to \ref port_admin.
+  This is a more user-friendly interface for communicating with a port.
+
 
 Alternatively, with the ``text'' carrier, we send a string terminated
 in `\\n'.  This is the string S.  The first letter is copied

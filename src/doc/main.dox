@@ -93,6 +93,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref yarp_guts
 \li \ref rpc_ports
 \li \ref persistent_connections
+\li \ref port_admin
 
  *
  */

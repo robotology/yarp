@@ -1,0 +1,93 @@
+/*
+ * Copyright (C) 2010 Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
+
+/** 
+ * @page port_admin The administrative interface to YARP ports
+
+\author Paul Fitzpatrick
+
+Most of the time, YARP ports are conduits for messages.
+Users write messages to ports, and read messages from ports,
+and the ports themselves don't inspect the content of those
+messages.
+
+In some cases, though, you may find yourself wishing to talk
+to a port itself, in order to query it about its state, or to
+request it to take some action (such as making or breaking a 
+connection).  There is a low level protocol for this, but it
+is somewhat arcane (see \ref yarp_protocol_port).
+
+To send an administrative message to a port is simple.  
+From the commandline, just use "yarp admin write" or
+"yarp admin rpc" instead of "yarp write" or "yarp rpc":
+\verbatim
+  echo "[list] [in]" | yarp admin rpc /port_name
+\endverbatim
+This will list all the inputs to the port /port_name.  The square
+brackets may be omitted in the current implementation of YARP.
+
+From code, set the "admin" flag in yarp::os::Network::write, or call
+yarp::os::Port::setAdminMode.  Messages can be read/written as regular
+yarp::os::Bottle objects.  Nothing else is needed.
+
+Here are the things you can do using the administrative
+interface:
+
+- port_admin_help
+- port_admin_add
+- port_admin_del
+- port_admin_list
+- port_admin_ver
+
+@section port_admin_help
+
+\verbatim
+[help]
+\endverbatim
+
+Lists all the available administration commands.
+
+
+@section port_admin_add
+
+\verbatim
+[add] /port/name
+[add] /port/name carrier
+\endverbatim
+
+Add an output to the specified port, using a given carrier (tcp, udp, etc.)
+
+
+@section port_admin_del
+
+\verbatim
+[del] /port/name
+\endverbatim
+
+Remove an output to the specified port.
+
+
+@section port_admin_list
+
+\verbatim
+[list] [in]
+[list] [out]
+\endverbatim
+
+List input or output connections.
+
+
+@section port_admin_ver
+
+\verbatim
+[ver]
+\endverbatim
+
+Report the version of the port protocol in operation.
+
+
+*
+*/
