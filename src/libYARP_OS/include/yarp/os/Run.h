@@ -10,11 +10,8 @@
 #define _YARP2_RUN_
 
 #include <stdio.h>
-#include <list>
-#include <string>
-#include <yarp/os/impl/Companion.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/all.h>
+#include <ace/Vector_T.h>
 
 namespace yarp {
   namespace os {
@@ -105,20 +102,20 @@ public:
      * @param keyv is the tag that will identify the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int start(const String &node, Property &command, String &keyv);
+	static int start(const ConstString &node, Property &command, ConstString &keyv);
     /**
      * Terminate an application running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the running application. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int sigterm(const String &node, const String &keyv);
+	static int sigterm(const ConstString &node, const ConstString &keyv);
     /**
      * Terminate all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @return 0=success -1=failed.
      */
-	static int sigterm(const String &node);
+	static int sigterm(const ConstString &node);
     /**
      * Send a SIGNAL to an application running on a yarprun server (Linux only).
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -126,21 +123,21 @@ public:
      * @param s is the SIGNAL number.
      * @return 0=success -1=failed.
      */
-	static int kill(const String &node, const String &keyv,int s);
+	static int kill(const ConstString &node, const ConstString &keyv,int s);
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param processes is a list of applications running on the remote yarprun server.
      * @return 0=success -1=failed.
      */
-	static int ps(const String &node,std::list<std::string> &processes);
+    static int ps(const ConstString &node,ACE_Vector<ConstString> &processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
      * @param keyv is the tag that identifies the application. It must be unique in the network.
      * @return true=running false=terminated.
      */
-	static bool isRunning(const String &node, String &keyv);
+	static bool isRunning(const ConstString &node, ConstString &keyv);
 
     // end API
 
@@ -171,7 +168,7 @@ protected:
 	static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
 	static inline bool IS_INVALID(int pid){ return pid<0; }
 
-	static String m_PortName;
+	static ConstString m_PortName;
 	static YarpRunInfoVector m_StdioVector;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
