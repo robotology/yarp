@@ -36,11 +36,11 @@ yarp::os::Bottle objects.  Nothing else is needed.
 Here are the things you can do using the administrative
 interface:
 
-- port_admin_help
-- port_admin_add
-- port_admin_del
-- port_admin_list
-- port_admin_ver
+- \ref port_admin_help
+- \ref port_admin_add
+- \ref port_admin_del
+- \ref port_admin_list
+- \ref port_admin_ver
 
 @section port_admin_help
 
