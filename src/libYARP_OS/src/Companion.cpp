@@ -89,62 +89,61 @@ static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
 
 Companion::Companion() {
     adminMode = false;
-    add("help",       &Companion::cmdHelp,
-        "get this list");
-    add("version",    &Companion::cmdVersion,
-        "get version information");
-    add("detect",     &Companion::cmdDetect,
-        "search for the yarp name server");
-    add("where",      &Companion::cmdWhere,
-        "report where the yarp name server is running");
-    add("conf",       &Companion::cmdConf,
-        "report location of configuration file, and optionally fix it");
-    add("name",       &Companion::cmdName,
-        "send commands to the yarp name server");
-    add("connect",    &Companion::cmdConnect,
-        "create a connection between two ports");
-    add("disconnect", &Companion::cmdDisconnect,
-        "remove a connection between two ports");
-    add("read",       &Companion::cmdRead,
-        "read from the network and print to standard output");
-    add("write",      &Companion::cmdWrite,
-        "write to the network from standard input");
-	add("readwrite",  &Companion::cmdReadWrite,
-        "read from the network and print to standard output, write to the network from standard input");
-    add("rpc",        &Companion::cmdRpc,
-        "write commands to a port, and read replies");
-    //add("rpc2",        &Companion::cmdRpc2,
-    //"write commands to a port, and read replies, from a port");
-    add("rpcserver",  &Companion::cmdRpcServer,
-        "make a test RPC server to receive and reply to Bottle-format messages");
-    add("forward",        &Companion::cmdForward,
-        "forward commands to a port, in standard format (experimental)");
-    add("regression", &Companion::cmdRegression,
-        "run regression tests, if linked");
-    add("server",     &Companion::cmdServer,
-        "run yarp name server");
     add("check",      &Companion::cmdCheck,
         "run a simple sanity check to see if yarp is working");
-    add("terminate",  &Companion::cmdTerminate,
-        "terminate a yarp-terminate-aware process by name");
-    add("ping",  &Companion::cmdPing,
-        "get live information about a port");
-    add("exists",  &Companion::cmdExists,
-        "check if a port or connection is alive");
-    add("wait",  &Companion::cmdWait,
-        "wait for a port to be alive");
-    add("cmake",  &Companion::cmdMake,
-        "create files to help compiling YARP projects");
-    add("run",  &Companion::cmdRun,
-        "start and stop processes (experimental)");
-    add("namespace",  &Companion::cmdNamespace,
-        "set or query the name of the yarp name server (default is /root)");
     add("clean",  &Companion::cmdClean,
         "try to remove inactive entries from the name server");
+    add("cmake",  &Companion::cmdMake,
+        "create files to help compiling YARP projects");
+    add("conf",       &Companion::cmdConf,
+        "report location of configuration file, and optionally fix it");
+    add("connect",    &Companion::cmdConnect,
+        "create a connection between two ports");
+    add("detect",     &Companion::cmdDetect,
+        "search for the yarp name server");
+    add("disconnect", &Companion::cmdDisconnect,
+        "remove a connection between two ports");
+    add("exists",  &Companion::cmdExists,
+        "check if a port or connection is alive");
+    add("forward",        &Companion::cmdForward,
+        "forward commands to a port, in standard format (experimental)");
+    add("help",       &Companion::cmdHelp,
+        "get this list");
+    add("name",       &Companion::cmdName,
+        "send commands to the yarp name server");
+    add("namespace",  &Companion::cmdNamespace,
+        "set or query the name of the yarp name server (default is /root)");
+    add("ping",  &Companion::cmdPing,
+        "get live information about a port");
+    add("read",       &Companion::cmdRead,
+        "read from the network and print to standard output");
+    // not really very useful
+	//add("readwrite",  &Companion::cmdReadWrite,
+    //"read from the network and print to standard output, write to the network from standard input");
+    add("regression", &Companion::cmdRegression,
+        "run regression tests, if linked");
     add("resource",  &Companion::cmdResource,
         "locates resource files (see ResourceFinder class)");
+    add("rpc",        &Companion::cmdRpc,
+        "write commands to a port, and read replies");
+    add("rpcserver",  &Companion::cmdRpcServer,
+        "make a test RPC server to receive and reply to Bottle-format messages");
+    add("run",  &Companion::cmdRun,
+        "start and stop processes");
+    add("server",     &Companion::cmdServer,
+        "run yarp name server"); 
+    add("terminate",  &Companion::cmdTerminate,
+        "terminate a yarp-terminate-aware process by name");
     add("topic",  &Companion::cmdTopic,
         "set a topic name");
+    add("version",    &Companion::cmdVersion,
+        "get version information");
+    add("wait",  &Companion::cmdWait,
+        "wait for a port to be alive");
+    add("where",      &Companion::cmdWhere,
+        "report where the yarp name server is running");
+    add("write",      &Companion::cmdWrite,
+        "write to the network from standard input");
 }
 
 int Companion::dispatch(const char *name, int argc, char *argv[]) {
@@ -936,33 +935,39 @@ int Companion::cmdMake(int argc, char *argv[]) {
     f.add("# It assumes you want to build an executable from source code in ");
     f.add("# the current directory.");
     f.add("# Replace \"yarpy\" with whatever your executable should be called.");
-    f.add("# There's some stuff to make compiling devices easier too.");
-    f.add("SET(KEYWORD \"yarpy\")");
+    f.add("");
+    f.add("cmake_minimum_required(VERSION 2.6)");
+    f.add("");
+    f.add("set(KEYWORD \"yarpy\")");
     f.add("");
     f.add("# Start a project.");
-    f.add("PROJECT(${KEYWORD})");    
+    f.add("project(${KEYWORD})");    
     f.add("");
     f.add("# Find YARP.  Point the YARP_DIR environment variable at your build.");
-    f.add("FIND_PACKAGE(YARP)");
+    f.add("find_package(YARP REQUIRED)");
     f.add("");
     f.add("# Search for source code.");
-    f.add("FILE(GLOB folder_source *.cpp *.cc *.c)");
-    f.add("FILE(GLOB folder_header *.h)");
-    f.add("SOURCE_GROUP(\"Source Files\" FILES ${folder_source})");
-    f.add("SOURCE_GROUP(\"Header Files\" FILES ${folder_header})");
+    f.add("file(GLOB folder_source *.cpp *.cc *.c)");
+    f.add("file(GLOB folder_header *.h)");
+    f.add("source_group(\"Source Files\" FILES ${folder_source})");
+    f.add("source_group(\"Header Files\" FILES ${folder_header})");
     f.add("");
     f.add("# Automatically add include directories if needed.");
-    f.add("FOREACH(header_file ${folder_header})");
-    f.add("  GET_FILENAME_COMPONENT(p ${header_file} PATH)");
-    f.add("  INCLUDE_DIRECTORIES(${p})");
-    f.add("ENDFOREACH(header_file ${folder_header})");
+    f.add("foreach(header_file ${folder_header})");
+    f.add("  get_filename_component(p ${header_file} PATH)");
+    f.add("  include_directories(${p})");
+    f.add("endforeach(header_file ${folder_header})");
+    f.add("");
+    f.add("# Inclue any directories needed for YARP");
+    f.add("include_directories(${YARP_INCLUDE_DIRS})");
     f.add("");
     f.add("# Set up our main executable.");
-    f.add("IF (folder_source)");
-    f.add("  ADD_EXECUTABLE(${KEYWORD} ${folder_source} ${folder_header})");
-    f.add("ELSE (folder_source)");
-    f.add("  MESSAGE(FATAL_ERROR \"No source code files found. Please add something\")");
-    f.add("ENDIF (folder_source)");
+    f.add("if (folder_source)");
+    f.add("  add_executable(${KEYWORD} ${folder_source} ${folder_header})");
+    f.add("  target_link_libraries(${KEYWORD} ${YARP_LIBRARIES})");
+    f.add("else (folder_source)");
+    f.add("  message(FATAL_ERROR \"No source code files found. Please add something\")");
+    f.add("endif (folder_source)");
 
     const char *target = "CMakeLists.txt";
 

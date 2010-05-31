@@ -17,28 +17,39 @@ For an example of usage, see this section: \ref companion_extended.
 Here are the ways you can call yarp:
 - \ref yarp_base
 - \ref yarp_help
-- \ref yarp_version
-- \ref yarp_where
-- \ref yarp_detect
-- \ref yarp_conf
-- \ref yarp_name
-- \ref yarp_connect
-- \ref yarp_disconnect
-- \ref yarp_read
-- \ref yarp_write
-- \ref yarp_rpc
-- \ref yarp_forward
-- \ref yarp_server
+
 - \ref yarp_check
-- \ref yarp_terminate
-- \ref yarp_ping
-- \ref yarp_exists
-- \ref yarp_wait
-- \ref yarp_cmake
-- \ref yarp_run
-- \ref yarp_namespace
 - \ref yarp_clean
+- \ref yarp_cmake
+- \ref yarp_conf
+- \ref yarp_connect
+- \ref yarp_detect
+- \ref yarp_disconnect
+- \ref yarp_exists
+- \ref yarp_forward
+- \ref yarp_help
+- \ref yarp_name
+- \ref name_check
+- \ref name_get
+- \ref name_list
+- \ref name_register
+- \ref name_set
+- \ref name_unregister
+- \ref yarp_namespace
+- \ref yarp_ping
+- \ref yarp_read
+- \ref yarp_regression
 - \ref yarp_resource
+- \ref yarp_rpc
+- \ref yarp_rpcserver
+- \ref yarp_run
+- \ref yarp_server
+- \ref yarp_terminate
+- \ref yarp_topic
+- \ref yarp_version
+- \ref yarp_wait
+- \ref yarp_where
+- \ref yarp_write
 \endif
 
 @section yarp_base yarp
@@ -53,75 +64,66 @@ Call with the argument "help" to see a list of ways to use this program.
 \endverbatim
 
 
-@section yarp_help yarp help
-
-This lists a human-readable summary of the 
-ways the utility can be used.  It is a short 
-version of what you are reading right now.
 
 
-@section yarp_server yarp server
+@section yarp_check yarp check
 
-\verbatim
-  yarp server
-  yarp server SOCKETPORT
-  yarp server IP SOCKETPORT
-\endverbatim
-
-This starts a name server running on the current machine, optionally
-specifying the socket-port to listen to (default whatever was used in
-the previous invocation, as recorded in a configuration file, or 10000
-if this is the first time to run).
-Also, the IP by which the name server should be identified can
-optionally be specified (default is a fairly random choice of
-the IPs associated with the current machine).
-
-The address of the name server can be determined using
-\ref yarp_where.  The address is cached in a configuration
-file - see \ref yarp_conf.
-
-If possible, a fallback multi-cast server will be started with IP
-224.2.1.1 and port number 10001.  The purpose of this server is 
-to allow yarp processes to find the yarp name server in the absence
-of correct configuration.
-
-
-\section yarp_where yarp where
-
-This will report where the name server is believed to be running; for 
-example:
+Does some sanity tests of your setup.  If you run "yarp server" in
+one terminal, and then run this command ("yarp check") in another,
+you should see something like:
 
 \verbatim
-Name server is available at ip 15.255.112.22 port 10000
-Name server can be browsed at http://15.255.112.22:10000/
+yarp: ==================================================================
+yarp: === Trying to register some ports
+yarp: ==================================================================
+yarp: === Trying to connect some ports
+yarp: Receiving input from /tmp/port/2 to /tmp/port/1 using tcp
+yarp: Sending output from /tmp/port/2 to /tmp/port/1 using tcp
+yarp: ==================================================================
+yarp: === Trying to write some data
+yarp: ==================================================================
+yarp: === Trying to read some data
+yarp: *** Read number 42
+yarp: ==================================================================
+yarp: === Trying to close some ports
+yarp: Removing input from /tmp/port/2 to /tmp/port/1
+yarp: Removing output from /tmp/port/2 to /tmp/port/1
+yarp: *** YARP seems okay!
 \endverbatim
 
-The name server registers this address with itself under the name "/root".
-So typing:
+
+
+@section yarp_clean yarp clean
+
 \verbatim
-yarp name query /root
+yarp clean
 \endverbatim
-will get the same information.  See \ref name_query.
 
-This command used to search for the name server if needed, but now
-you need to explicitly request that with the \ref name_detect command.
+This command gets a list of all registered ports from the name server,
+and checks them one by one to see if they are responding (using \ref
+yarp_exists).  If they do not respond within a few seconds
+they are unregistered (using \ref name_unregister).
+
+If you run into troubles with this command seeming to hang on a port
+name (in fact it is a very loooooong timeout), you may want to
+\ref name_unregister "unregister" that port name yourself.
 
 
-\section yarp_detect yarp detect
+
+@section yarp_cmake yarp cmake
 
 \verbatim
-  yarp detect
-  yarp detect --write
+yarp cmake
 \endverbatim
 
-This will search for the YARP name server using multicast.
-
-With the "--write" option, a configuration file will be
-written with the address for the name server, if found.
-This will let regular YARP programs find the name server.
+Generates a "CMakeLists.txt" that is suitable for
+compiling code with YARP.  It is intended to
+help new users get started on new projects quickly.
 
 
-\section yarp_conf yarp conf
+
+
+@section yarp_conf yarp conf
 
 \verbatim
   yarp conf
@@ -157,129 +159,89 @@ blank, empty state.
 If an ip address and socket port number for the name server are supplied, 
 the configuration file will be rewritten to contain that information.
 
-@section yarp_check yarp check
 
-Does some sanity tests of your setup.  If you run "yarp server" in
-one terminal, and then run this command ("yarp check") in another,
-you should see something like:
 
-\verbatim
-yarp: ==================================================================
-yarp: === Trying to register some ports
-yarp: ==================================================================
-yarp: === Trying to connect some ports
-yarp: Receiving input from /tmp/port/2 to /tmp/port/1 using tcp
-yarp: Sending output from /tmp/port/2 to /tmp/port/1 using tcp
-yarp: ==================================================================
-yarp: === Trying to write some data
-yarp: ==================================================================
-yarp: === Trying to read some data
-yarp: *** Read number 42
-yarp: ==================================================================
-yarp: === Trying to close some ports
-yarp: Removing input from /tmp/port/2 to /tmp/port/1
-yarp: Removing output from /tmp/port/2 to /tmp/port/1
-yarp: *** YARP seems okay!
-\endverbatim
 
-\section yarp_version yarp version
-
-This will report on the yarp version available.  Example:
+@section yarp_connect yarp connect
 
 \verbatim
-YARP Companion utility version 2.0 implemented in C++
+yarp connect OUTPUT_PORT INPUT_PORT
+yarp connect OUTPUT_PORT INPUT_PORT CARRIER
 \endverbatim
 
+This will request the specified output port to send its output in 
+future to the specified input port.
+Optionally, the carrier to be used can be added as an extra argument
+(e.g. tcp, udp, mcast, ...).
 
-\section yarp_read yarp read
+
+
+
+
+@section yarp_detect yarp detect
 
 \verbatim
-yarp read INPUT_PORT [envelope]
-yarp read INPUT_PORT [envelope] OUTPUT_PORT
+  yarp detect
+  yarp detect --write
 \endverbatim
 
-This will create an input port of the specified name.  It will
-then loop, 
-reading ``yarp bottles'' (a simple serialized list) and printing their content
-to standard output.  This simple utility is intended for use in testing, and
-getting familiar with using YARP.
+This will search for the YARP name server using multicast.
 
-For example, if you run "yarp server" in one terminal, "yarp read
-/read" in another, and "yarp write /write verbatim /read" in another,
-then everything you type on the "write" terminal will be echoed on the
-"read" terminal.
+With the "--write" option, a configuration file will be
+written with the address for the name server, if found.
+This will let regular YARP programs find the name server.
 
-Specifying an OUTPUT_PORT tries to connect that port to the current one.
 
-Adding the "envelope" tag will request display of any envelope information
-included in the message, such as timestamps.  Such information may
-or may not be present, and is ignored if you do not specify this tag.
 
-\section yarp_write yarp write
+
+@section yarp_disconnect yarp disconnect
 
 \verbatim
-yarp write OUTPUT_PORT [verbatim]
-yarp write OUTPUT_PORT [verbatim] INPUT_PORT1 INPUT_PORT2 ...
+yarp disconnect OUTPUT_PORT INPUT_PORT
 \endverbatim
 
-This will create an output port of the specified name.  It will then
-loop, reading from standard input and writing yarp bottles.
-Optionally, a list of input ports to connect to automatically can be
-appended to the command.  This simple utility is intended for use in
-testing, and getting familiar with using YARP.
-
-If the "verbatim" keyword is included after the OUTPUT_PORT name,
-then input from standard input will be transmitted as a string,
-rather than as a bottle.  This will preserve the exact text
-with whitespace and quoting.  Otherwise the input is interpreted
-as a list of values that are transmitted in a standard network
-format that will not preserve whitespace, quoting, and other
-features.
-
-For example, if you run "yarp server" in one terminal, "yarp read
-/read" in another, and "yarp write /write verbatim /read" in another,
-then everything you type on the "write" terminal will be echoed on the
-"read" terminal.
+This will request the specified output port to cease sending its output to
+the specified input port.
 
 
-\section yarp_rpc yarp rpc
+
+
+
+@section yarp_exists yarp exists
 
 \verbatim
-yarp rpc TARGET_PORT
-yarp rpc TARGET_PORT CONNECTION_NAME
+yarp exists /PORT
 \endverbatim
 
-This will send a message to the target port and expect a response.
-Useful only if you have a port that actually will respond.  Ports
-associated with devices may behave like this.  You may optionally
-specify the name for the connection.  "RPC" stands for Remote
-Procedure Call.
+Check if a port is alive.  This can be useful as a quick test of
+whether the process that owns the port is running.  It is designed for
+use in scripts -- nothing is printed, the result is encoded in the
+return value of the program (0 = port exists).
 
-An example of a port that will respond to RPC is the yarp server.
-For example, if you run:
+A variant of this command checks if a connection between two ports
+exists:
+
 \verbatim
-yarp rpc /root
+yarp exists /SOURCE_PORT /TARGET_PORT
 \endverbatim
-and type:
-\verbatim
-list
-\endverbatim
-you'll receive a response like:
-\verbatim
-Response: registration name /root ip 192.168.0.204 port 10000 type tcp
-Response: registration name fallback ip 224.2.1.1 port 10001 type mcast
-Response: *** end of message
-\endverbatim
-See \ref yarp_name for other commands the name server responds to.
 
 
-\section yarp_forward yarp forward
+
+
+
+@section yarp_forward yarp forward
 
 \verbatim
 yarp forward LOCAL_PORT REMOTE_PORT
 \endverbatim
 
-This is a tool for monitoring RPC connections.  Suppose port
+This was a tool for monitoring RPC connections.  It is now 
+DEPRECATED, because there is a better way to achieve the
+same result using carrier modifiers (just do 
+"yarp connect /rpc_port tcp+log.in://debug_port"
+to get a log of incoming messages and replies).
+
+Documentation for the DEPRECATED method: suppose port
 /controller sends commands to /motor, using RPC in order to get
 replies, and for debugging we would like to see those commands/replies
 without changing code.  For streaming data, we could simply add an
@@ -299,157 +261,19 @@ yarp forward /middle /motor
 yarp connect /controller /middle
 \endverbatim
 
-This command is experimental and will probably be generalized in 
-future.
-
-\section yarp_connect yarp connect
-
-\verbatim
-yarp connect OUTPUT_PORT INPUT_PORT
-yarp connect OUTPUT_PORT INPUT_PORT CARRIER
-\endverbatim
-
-This will request the specified output port to send its output in 
-future to the specified input port.
-Optionally, the carrier to be used can be added as an extra argument
-(e.g. tcp, udp, mcast, ...).
-
-\section yarp_disconnect yarp disconnect
-
-\verbatim
-yarp disconnect OUTPUT_PORT INPUT_PORT
-\endverbatim
-
-This will request the specified output port to cease sending its output to
-the specified input port.
-
-\section yarp_connect yarp connect
-
-\verbatim
-yarp connect OUTPUT_PORT INPUT_PORT
-yarp connect OUTPUT_PORT INPUT_PORT CARRIER
-\endverbatim
-
-This will request the specified output port to send its output in 
-future to the specified input port.
-Optionally, the carrier to be used can be added as an extra argument
-(e.g. tcp, udp, mcast, ...).
-
-\section yarp_terminate yarp terminate
-
-\verbatim
-yarp terminate /PORTNAME
-\endverbatim
-
-This will request the specified output to interrupt the process it
-belongs to.  In general, this requires active cooperation from that
-process, so it may or may not function.  Currently will work for the
-".../quit" ports created by the yarpdev process.
-
-\section yarp_ping yarp ping
-
-\verbatim
-yarp ping /PORT
-\endverbatim
-
-Get information about the specified port.  Result will be something
-like:
-
-\verbatim
-This is "/port" at "tcp://192.168.0.5:10012"
-There is an output connection from "/write" to "/read" using tcp
-There is an input connection from "<ping>" to "/write" using text_ack
-\endverbatim
-
-\section yarp_exists yarp exists
-
-\verbatim
-yarp exists /PORT
-\endverbatim
-
-Check if a port is alive.  This can be useful as a quick test of
-whether the process that owns the port is running.  It is designed for
-use in scripts -- nothing is printed, the result is encoded in the
-return value of the program (0 = port exists).
-
-A variant of this command checks if a connection between two ports
-exists:
-
-\verbatim
-yarp exists /SOURCE_PORT /TARGET_PORT
-\endverbatim
-
-\section yarp_wait yarp wait
-
-\verbatim
-yarp wait /PORT
-\endverbatim
-
-Waits for the named port to come into existence.  Terminates when
-"yarp exists /PORT" would return true.  This can be useful in scripts.
 
 
-\section yarp_cmake yarp cmake
 
-\verbatim
-yarp cmake
-\endverbatim
+@section yarp_help yarp help
 
-Experimental.  Generates a "CMakeLists.txt" that is suitable for
-compiling code for YARP, including new devices.  It is intended to
-help experienced users get started on new projects quickly.
+This lists a human-readable summary of the 
+ways the utility can be used.  It is a short 
+version of what you are reading right now.
 
-\section yarp_run yarp run
 
-yarprun provides a client-server environment that is able to run, kill and monitor applications on a remote machine, with the same syntax and behaviour in Windows and Linux.
 
-See \ref yarprun for documentation.
 
-\section yarp_namespace yarp namespace
-
-\verbatim
-yarp namespace
-yarp namespace /namespace
-\endverbatim
-
-The yarp name server started by \ref yarp_server "yarp server" has
-a port name associated with it.  By default, this is "/root".  This
-can be changed, and it is useful to do so when a single network
-is shared by people working on non-overlapping projects involving
-YARP.
-
-Type "yarp namespace" to report the current namespace.
-
-Type "yarp namespace /my/space" to set the namespace to "/my/space".
-
-See \ref name_server_namespaces "About YARP Namespaces" for (important)
-details on how to use namespaces.
-
-\section yarp_clean yarp clean
-
-\verbatim
-yarp clean
-\endverbatim
-
-This command gets a list of all registered ports from the name server,
-and checks them one by one to see if they are responding (using \ref
-yarp_exists).  If they do not respond within a few seconds
-they are unregistered (using \ref name_unregister).
-
-If you run into troubles with this command seeming to hang on a port
-name (in fact it is a very loooooong timeout), you may want to
-\ref name_unregister "unregister" that port name yourself.
-
-\section yarp_resource yarp resource
-
-\verbatim
-  yarp resource --policy POLICY --find CONFIG.ini
-\endverbatim
-
-An experimental tool for finding configuration files and other resource
-files.  For details, see the yarp::os::ResourceFinder class.
-
-\section yarp_name yarp name
+@section yarp_name yarp name
 
 \verbatim
 yarp name COMMAND ARG_1 ARG_2 ...
@@ -514,7 +338,11 @@ NAME_SERVER list
 \endverbatim
 
 
-\section name_help yarp name help
+
+
+
+
+@section name_help yarp name help
 
 This will list the commands available from the name server.
 For example, our current implementation gives:
@@ -534,7 +362,11 @@ Here are some ways to use the name server:
 *** end of message
 \endverbatim
 
-\section name_query yarp name query
+
+
+
+
+@section name_query yarp name query
 
 \verbatim
 yarp name query PORT
@@ -559,7 +391,10 @@ is omitted, and instead the response is simply:
 
 
 
-\section name_register yarp name register
+
+
+
+@section name_register yarp name register
 
 \verbatim
 yarp name register PORT
@@ -603,9 +438,7 @@ That is important for the purposes of controlling which
 network is used for connections from one port to another.
 
 
-
-
-\section name_unregister yarp name unregister
+@section name_unregister yarp name unregister
 
 \verbatim
 yarp name unregister PORT
@@ -618,7 +451,7 @@ Response is of the following form:
 \endverbatim
 
 
-\section name_list yarp name list
+@section name_list yarp name list
 
 Gives registration information of all known ports.
 Response is of the following form:
@@ -634,7 +467,7 @@ registration name /tmp/port/1 ip 130.251.4.159 port 10001 type tcp
 
 
 
-\section name_set yarp name set
+@section name_set yarp name set
 
 \verbatim
 yarp name set PORT PROPERTY VALUE1 VALUE2 ...
@@ -660,9 +493,7 @@ lists carriers that an input port can support.
 
 
 
-
-
-\section name_get yarp name get
+@section name_get yarp name get
 
 \verbatim
 yarp name get PORT PROPERTY
@@ -679,7 +510,8 @@ port /write property offers = tcp udp mcast
 \endverbatim
 
 
-\section name_check yarp name check
+
+@section name_check yarp name check
 
 \verbatim
 yarp name check PORT PROPERTY VALUE
@@ -696,7 +528,8 @@ port /write property offers value tcp present true
 \endverbatim
 
 
-\section name_route yarp name route
+
+@section name_route yarp name route
 
 \verbatim
 yarp name route PORT1 PORT2
@@ -719,7 +552,8 @@ port /write route /read = shmem://read
 This suggests that shmem is the best carrier to use.
 
 
-\section name_gc yarp name gc
+
+@section name_gc yarp name gc
 
 THIS COMMAND IS DEPRECATED, use \ref yarp_clean instead.
 
@@ -735,7 +569,337 @@ abruptly.  THIS COMMAND IS DEPRECATED, use \ref yarp_clean
 instead.
 
 
-\section companion_extended An extended example
+
+
+@section yarp_namespace yarp namespace
+
+\verbatim
+yarp namespace
+yarp namespace /namespace
+\endverbatim
+
+The yarp name server started by \ref yarp_server "yarp server" has
+a port name associated with it.  By default, this is "/root".  This
+can be changed, and it is useful to do so when a single network
+is shared by people working on non-overlapping projects involving
+YARP.
+
+Type "yarp namespace" to report the current namespace.
+
+Type "yarp namespace /my/space" to set the namespace to "/my/space".
+
+See \ref name_server_namespaces "About YARP Namespaces" for (important)
+details on how to use namespaces.
+
+
+
+
+@section yarp_ping yarp ping
+
+\verbatim
+yarp ping /PORT
+\endverbatim
+
+Get information about the specified port.  Result will be something
+like:
+
+\verbatim
+This is "/port" at "tcp://192.168.0.5:10012"
+There is an output connection from "/write" to "/read" using tcp
+There is an input connection from "<ping>" to "/write" using text_ack
+\endverbatim
+
+
+
+
+@section yarp_read yarp read
+
+\verbatim
+yarp read INPUT_PORT [envelope]
+yarp read INPUT_PORT [envelope] OUTPUT_PORT
+\endverbatim
+
+This will create an input port of the specified name.  It will
+then loop, 
+reading ``yarp bottles'' (a simple serialized list) and printing their content
+to standard output.  This simple utility is intended for use in testing, and
+getting familiar with using YARP.
+
+For example, if you run "yarp server" in one terminal, "yarp read
+/read" in another, and "yarp write /write verbatim /read" in another,
+then everything you type on the "write" terminal will be echoed on the
+"read" terminal.
+
+Specifying an OUTPUT_PORT tries to connect that port to the current one.
+
+Adding the "envelope" tag will request display of any envelope information
+included in the message, such as timestamps.  Such information may
+or may not be present, and is ignored if you do not specify this tag.
+
+
+
+@section yarp_regression yarp regression
+
+\verbatim
+  yarp regression 
+  yarp regression <ClassName>Test
+\endverbatim
+
+Runs all tests or a specified test, if the YARP regression tests are
+linked.  Normally, there are separate programs called "harness_os",
+"harness_sig", etc that have groups of YARP tests linked.  So running:
+
+\verbatim
+  harness_os regression 
+\endverbatim
+
+will run all tests related to libYARP_OS.  The main
+YARP executable "yarp" does not usually have any tests linked.
+
+
+
+@section yarp_resource yarp resource
+
+\verbatim
+  yarp resource --policy POLICY --find CONFIG.ini
+\endverbatim
+
+An experimental tool for finding configuration files and other resource
+files.  For details, see the yarp::os::ResourceFinder class.
+
+
+
+
+
+@section yarp_rpc yarp rpc
+
+\verbatim
+yarp rpc /TARGET_PORT
+yarp rpc /TARGET_PORT /LOCAL_NAME
+\endverbatim
+
+This will send a message to the target port and expect a response.
+Useful only if you have a port that actually will respond.  Ports
+associated with devices may behave like this.  You may optionally
+specify the name for the connection.  "RPC" stands for Remote
+Procedure Call.
+
+An example of a port that will respond to RPC is the yarp server.
+For example, if you run:
+\verbatim
+yarp rpc /root
+\endverbatim
+and type:
+\verbatim
+list
+\endverbatim
+you'll receive a response like:
+\verbatim
+Response: registration name /root ip 192.168.0.204 port 10000 type tcp
+Response: registration name fallback ip 224.2.1.1 port 10001 type mcast
+Response: *** end of message
+\endverbatim
+See \ref yarp_name for other commands the name server responds to.
+
+
+
+
+
+
+@section yarp_rpcserver yarp rpcserver
+
+\verbatim
+yarp rpcserver /PORT_NAME
+\endverbatim
+
+This creates a test RPC server.  It will accept incoming commands, and
+then pause for you to type the response (in standard Bottle text format).
+
+
+
+
+@section yarp_run yarp run
+
+yarprun provides a client-server environment that is able to run, kill and monitor applications on a remote machine, with the same syntax and behaviour in Windows and Linux.
+
+See \ref yarprun for documentation.
+
+
+
+
+
+
+@section yarp_server yarp server
+
+\verbatim
+  yarp server
+  yarp server SOCKETPORT
+  yarp server IP SOCKETPORT
+\endverbatim
+
+This starts a name server running on the current machine, optionally
+specifying the socket-port to listen to (default whatever was used in
+the previous invocation, as recorded in a configuration file, or 10000
+if this is the first time to run).
+Also, the IP by which the name server should be identified can
+optionally be specified (default is a fairly random choice of
+the IPs associated with the current machine).
+
+The address of the name server can be determined using
+\ref yarp_where.  The address is cached in a configuration
+file - see \ref yarp_conf.
+
+If possible, a fallback multi-cast server will be started with IP
+224.2.1.1 and port number 10001.  The purpose of this server is 
+to allow yarp processes to find the yarp name server in the absence
+of correct configuration.
+
+
+
+
+@section yarp_terminate yarp terminate
+
+\verbatim
+yarp terminate /PORTNAME
+\endverbatim
+
+This will request the specified output to interrupt the process it
+belongs to.  In general, this requires active cooperation from that
+process, so it may or may not function.  Currently will work for the
+".../quit" ports created by the yarpdev process.
+
+
+
+@section yarp_topic yarp topic
+
+\verbatim
+yarp topic /TOPIC_NAME
+yarp topic --remove /TOPIC_NAME
+yarp topc --list
+\endverbatim
+
+Activates a topic name.  If the latest yarp name server, yarpserver3,
+is in use, then that topic name will act as a virtual repeater port.
+If a persistent connection exists between ports /A, /B and /C and /TOPIC, 
+and from
+/TOPIC to /X, /Y, and /Z, then ports /X, /Y, and /Z will each receive input 
+from all of /A, /B, and /C.  See \ref persistent_connections.
+
+
+
+
+
+@section yarp_version yarp version
+
+This will report on the yarp version available.  Example:
+
+\verbatim
+YARP Companion utility version 2.0 implemented in C++
+\endverbatim
+
+
+
+
+
+
+
+
+
+
+
+@section yarp_wait yarp wait
+
+\verbatim
+yarp wait /PORT
+\endverbatim
+
+Waits for the named port to come into existence.  Terminates when
+"yarp exists /PORT" would return true.  This can be useful in scripts.
+
+
+
+
+
+
+
+
+
+
+
+@section yarp_where yarp where
+
+This will report where the name server is believed to be running; for 
+example:
+
+\verbatim
+Name server is available at ip 15.255.112.22 port 10000
+Name server can be browsed at http://15.255.112.22:10000/
+\endverbatim
+
+The name server registers this address with itself under the name "/root".
+So typing:
+\verbatim
+yarp name query /root
+\endverbatim
+will get the same information.  See \ref name_query.
+
+This command used to search for the name server if needed, but now
+you need to explicitly request that with the \ref name_detect command.
+
+
+
+
+
+
+
+
+
+@section yarp_write yarp write
+
+\verbatim
+yarp write OUTPUT_PORT [verbatim]
+yarp write OUTPUT_PORT [verbatim] INPUT_PORT1 INPUT_PORT2 ...
+\endverbatim
+
+This will create an output port of the specified name.  It will then
+loop, reading from standard input and writing yarp bottles.
+Optionally, a list of input ports to connect to automatically can be
+appended to the command.  This simple utility is intended for use in
+testing, and getting familiar with using YARP.
+
+If the "verbatim" keyword is included after the OUTPUT_PORT name,
+then input from standard input will be transmitted as a string,
+rather than as a bottle.  This will preserve the exact text
+with whitespace and quoting.  Otherwise the input is interpreted
+as a list of values that are transmitted in a standard network
+format that will not preserve whitespace, quoting, and other
+features.
+
+For example, if you run "yarp server" in one terminal, "yarp read
+/read" in another, and "yarp write /write verbatim /read" in another,
+then everything you type on the "write" terminal will be echoed on the
+"read" terminal.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@section companion_extended An extended example
 
 Start five terminals, called A-E.  Do the following:
 \verbatim
