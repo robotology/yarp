@@ -42,7 +42,7 @@ interface:
 - \ref port_admin_list
 - \ref port_admin_ver
 
-@section port_admin_help
+@section port_admin_help help
 
 \verbatim
 [help]
@@ -51,7 +51,7 @@ interface:
 Lists all the available administration commands.
 
 
-@section port_admin_add
+@section port_admin_add add
 
 \verbatim
 [add] /port/name
@@ -61,7 +61,7 @@ Lists all the available administration commands.
 Add an output to the specified port, using a given carrier (tcp, udp, etc.)
 
 
-@section port_admin_del
+@section port_admin_del del
 
 \verbatim
 [del] /port/name
@@ -70,7 +70,7 @@ Add an output to the specified port, using a given carrier (tcp, udp, etc.)
 Remove an output to the specified port.
 
 
-@section port_admin_list
+@section port_admin_list list
 
 \verbatim
 [list] [in]
@@ -80,7 +80,7 @@ Remove an output to the specified port.
 List input or output connections.
 
 
-@section port_admin_ver
+@section port_admin_ver ver
 
 \verbatim
 [ver]
