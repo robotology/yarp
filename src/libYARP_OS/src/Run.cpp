@@ -5,10 +5,6 @@
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  */
 
-#include <string>
-#include <iostream>
-#include <vector>
-
 #include <yarp/os/Run.h>
 
 #define YARPRUN_ERROR -1
@@ -72,7 +68,7 @@ class YarpRunProcInfo
 {
 public:
     #if defined(WIN32) || defined(WIN64)
-	YarpRunProcInfo(String& command,String& alias,String& on,PID pid_cmd,int ps_id)
+	YarpRunProcInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,int ps_id)
 	{ 
 		m_command=command;
 		m_alias=alias;
@@ -83,7 +79,7 @@ public:
 		m_bHold=false;
 	}
     #else
-	YarpRunProcInfo(String& command,String& alias,String& on,PID pid_cmd,bool hold)
+	YarpRunProcInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,bool hold)
 	{ 
 	    m_bHold=hold;
 	
@@ -97,7 +93,7 @@ public:
 	
 	virtual ~YarpRunProcInfo(){ /*Kill(SIGKILL);*/ }
 
-	virtual bool Match(String& alias){ return m_alias==alias; }
+	virtual bool Match(ConstString& alias){ return m_alias==alias; }
 
 	virtual bool Kill(int signum=SIGTERM)
 	{	    
@@ -128,7 +124,7 @@ public:
 	
 protected:
 	PID m_pid_cmd;
-	String m_command,m_alias,m_on;
+	ConstString m_command,m_alias,m_on;
 
 	// windows only
 	int m_ps_id;
@@ -184,7 +180,7 @@ public:
 		return true;
 	}
 
-	int Kill(String& alias,int signum=SIGTERM)
+	int Kill(ConstString& alias,int signum=SIGTERM)
 	{
 		mutex.wait();
 
@@ -345,7 +341,7 @@ public:
 		return ps;
 	}
 
-	bool IsRunning(String &alias)
+	bool IsRunning(ConstString &alias)
 	{
 		mutex.wait();
 
@@ -399,7 +395,7 @@ protected:
 class YarpRunCmdWithStdioInfo : public YarpRunProcInfo
 {
 public:
-	YarpRunCmdWithStdioInfo(String& command,String& alias,String& on,PID pid_cmd,String& stdio_server,YarpRunInfoVector* pStdioVector,
+	YarpRunCmdWithStdioInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,ConstString& stdio_server,YarpRunInfoVector* pStdioVector,
 					   PID pid_stdin,PID pid_stdout,
 		               FDESC read_from_pipe_stdin_to_cmd,FDESC write_to_pipe_stdin_to_cmd,
 					   FDESC read_from_pipe_cmd_to_stdout,FDESC write_to_pipe_cmd_to_stdout,int ps_id)
@@ -431,8 +427,8 @@ public:
 		m_write_to_pipe_stdin_to_cmd=m_read_from_pipe_stdin_to_cmd=0;
 		m_write_to_pipe_cmd_to_stdout=m_read_from_pipe_cmd_to_stdout=0;
 	
-	    NetworkBase::disconnect((String("/")+m_alias+"/stdout").c_str(),(String("/")+m_alias+"/user/stdout").c_str());
-	    NetworkBase::disconnect((String("/")+m_alias+"/user/stdin").c_str(),(String("/")+m_alias+"/stdin").c_str());
+	    NetworkBase::disconnect((ConstString("/")+m_alias+"/stdout").c_str(),(ConstString("/")+m_alias+"/user/stdout").c_str());
+	    NetworkBase::disconnect((ConstString("/")+m_alias+"/user/stdin").c_str(),(ConstString("/")+m_alias+"/stdin").c_str());
 	
 	    m_pid_cmd=0;
 	
@@ -461,7 +457,7 @@ public:
 		else
 		{
 			Bottle msg;
-			msg.fromString((String("(killstdio ")+m_alias+")").c_str());
+			msg.fromString((ConstString("(killstdio ")+m_alias+")").c_str());
 
 			Port port;
 			port.open("...");
@@ -478,7 +474,7 @@ public:
 
 protected:
 	PID m_pid_stdin,m_pid_stdout;
-	String m_stdio;
+	ConstString m_stdio;
 	FDESC m_write_to_pipe_stdin_to_cmd,m_read_from_pipe_stdin_to_cmd;
 	FDESC m_write_to_pipe_cmd_to_stdout,m_read_from_pipe_cmd_to_stdout;
 
@@ -491,7 +487,7 @@ protected:
 
 YarpRunInfoVector Run::m_ProcessVector;
 YarpRunInfoVector Run::m_StdioVector;
-String Run::m_PortName;
+ConstString Run::m_PortName;
 Port* Run::pServerPort=0;
 
 int Run::main(int argc, char *argv[]) 
@@ -509,16 +505,18 @@ int Run::main(int argc, char *argv[])
 
 	if (config.check("echo"))
 	{
-		std::string line;
-		std::cout<<"Program echo starting...\n";
+		char line[1024];
+		fprintf(stderr,"Program echo started.\n");
+        fflush(stderr);
 		while(true)
 		{
-			std::cin>>line;
-			std::cout<<line<<"\n";
+			scanf("%s",line);
+			fprintf(stderr,"%s\n",line);
+            fflush(stderr);
 		}
 		return 0;
 	}
-	
+
 	if (config.check("segfault"))
 	{
 	    fprintf(stderr,"writing to forbidden location\n");
@@ -549,7 +547,7 @@ int Run::main(int argc, char *argv[])
 	// SERVER
     if (config.check("server")) 
 	{
-		m_PortName=String(config.find("server").asString());
+		m_PortName=ConstString(config.find("server").asString());
 		return Server();
 	} 
 
@@ -636,14 +634,14 @@ int Run::Server()
 			ConstString on_port=msg.find("on").asString();
 
 			// AM I THE CMD OR/AND STDIO SERVER?
-			if (m_PortName==String(stdio_port)) // stdio
+			if (m_PortName==ConstString(stdio_port)) // stdio
 			{
 			    output=UserStdio(msg);
 			    
 				if (output.get(0).asInt()>0)
                 {
                     Bottle res;
-				    if (m_PortName==String(on_port))
+				    if (m_PortName==ConstString(on_port))
 				    {
                         // execute command here
 					    res=ExecuteCmdAndStdio(msg);
@@ -658,7 +656,7 @@ int Run::Server()
                     output=res;
 				}
 			}
-			else if (m_PortName==String(on_port)) // cmd
+			else if (m_PortName==ConstString(on_port)) // cmd
 			{
 				output=ExecuteCmdAndStdio(msg);				
 			}
@@ -680,7 +678,7 @@ int Run::Server()
 
 		if (msg.check("kill"))
 		{
-			String alias(msg.findGroup("kill").get(1).asString());
+			ConstString alias(msg.findGroup("kill").get(1).asString());
 			int sig=msg.findGroup("kill").get(2).asInt();
 			output.addString(m_ProcessVector.Kill(alias,sig)?"kill OK":"kill FAILED");
 			port.reply(output);
@@ -689,7 +687,7 @@ int Run::Server()
 		
 	    if (msg.check("sigterm"))
 		{
-		    String alias(msg.find("sigterm").asString());
+		    ConstString alias(msg.find("sigterm").asString());
 			output.addString(m_ProcessVector.Kill(alias)?"sigterm OK":"sigterm FAILED");
 			port.reply(output);
 			continue;
@@ -712,7 +710,7 @@ int Run::Server()
 
 		if (msg.check("isrunning"))
 		{
-		    String alias(msg.find("isrunning").asString());
+		    ConstString alias(msg.find("isrunning").asString());
 			output.addString(m_ProcessVector.IsRunning(alias)?"running":"not running");
 			port.reply(output);
 			continue;
@@ -721,7 +719,7 @@ int Run::Server()
 		if (msg.check("killstdio"))
 		{		    
 		    fprintf(stderr,"Run::Server() killstdio(%s)\n",msg.find("killstdio").asString().c_str());
-		    String alias(msg.find("killstdio").asString());
+		    ConstString alias(msg.find("killstdio").asString());
 			m_StdioVector.Kill(alias);
 			continue;
 		}
@@ -918,7 +916,7 @@ void Run::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
 // CMD SERVER
 Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 {
-	String alias=msg.find("as").asString().c_str();
+	ConstString alias=msg.find("as").asString().c_str();
 
 	// PIPES
 	SECURITY_ATTRIBUTES pipe_sec_attr; 
@@ -943,7 +941,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(String("yarp quiet write /")+alias+"/stdout verbatim").c_str(), // command line 
+								(char*)(ConstString("yarp quiet write /")+alias+"/stdout verbatim").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -965,8 +963,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout pid="+pidstr+"\n";
-        out+=String("Can't execute stdout because ")+errorMsg+"\n";
+        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout pid="+pidstr+"\n"
+                       +ConstString("Can't execute stdout because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -993,7 +991,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)(String("yarp quiet read /")+alias+"/stdin").c_str(), // command line 
+								(char*)(ConstString("yarp quiet read /")+alias+"/stdin").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1015,8 +1013,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin pid="+pidstr+"\n";
-        out+=String("Can't execute stdin because ")+errorMsg+"\n";
+        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin pid="+pidstr+"\n"
+                       +ConstString("Can't execute stdin because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -1037,10 +1035,10 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	bool bConnR=false,bConnW=false;
 	for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 	{ 	    
-	    if (!bConnW && NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
+	    if (!bConnW && NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str()))
 	        bConnW=true;
 			        
-	    if (!bConnR && NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
+	    if (!bConnR && NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str()))
 	        bConnR=true;
 	        
 	    if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
@@ -1051,15 +1049,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	    Bottle result;
         result.addInt(YARPRUN_ERROR);
 
-        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\n";
-        out+="Can't connect stdio\n";
+        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
 		
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		if (bConnW) NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		if (bConnR) NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		if (bConnW) NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		if (bConnR) NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 
 		TerminateProcess(stdout_process_info.hProcess,YARPRUN_ERROR);
 		CloseHandle(stdout_process_info.hProcess);
@@ -1087,16 +1084,20 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	cmd_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	Bottle command_bottle=msg.findGroup("cmd").tail();
-	String command_text;
 
+    ConstString *pCommandText=NULL;
 	for (int s=0; s<command_bottle.size(); ++s)
-		command_text+=String(command_bottle.get(s).toString().c_str())+" ";
+    {
+        ConstString tmpStr=pCommandText?(*pCommandText)+command_bottle.get(s).toString()+ConstString(" "):command_bottle.get(s).toString()+ConstString(" ");
+		if (pCommandText) delete pCommandText;
+        pCommandText=new ConstString(tmpStr);
+    }
 
 	bool bWorkdir=msg.check("workdir");
-	String sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+	ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)(sWorkdir+command_text).c_str(), // command line 
+								(char*)(sWorkdir+*pCommandText).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1109,7 +1110,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (!bSuccess && bWorkdir)
 	{
 			bSuccess=CreateProcess(NULL,	// command name
-									(char*)command_text.c_str(), // command line 
+									(char*)(pCommandText->c_str()), // command line 
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
@@ -1133,19 +1134,19 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
         result.addInt(YARPRUN_ERROR);
 
         DWORD nBytes;
-        String line=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+command_text+"pid="+pidstr+"\n";
-        String out=line;
-        WriteFile(write_to_pipe_cmd_to_stdout,line.c_str(),line.length(),&nBytes,0);
-        out+=line=String("Can't execute command because ")+errorMsg+"\n";
-        WriteFile(write_to_pipe_cmd_to_stdout,line.c_str(),line.length(),&nBytes,0);
+        ConstString line1=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
+        WriteFile(write_to_pipe_cmd_to_stdout,line1.c_str(),line1.length(),&nBytes,0);
+        ConstString line2=ConstString("Can't execute command because ")+errorMsg+"\n";
+        WriteFile(write_to_pipe_cmd_to_stdout,line1.c_str(),line2.length(),&nBytes,0);
         FlushFileBuffers(write_to_pipe_cmd_to_stdout);
 
+        ConstString out=line1+line2;
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 
         CloseHandle(write_to_pipe_stdin_to_cmd);
 		CloseHandle(read_from_pipe_stdin_to_cmd);
@@ -1157,6 +1158,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		TerminateProcess(stdin_process_info.hProcess,YARPRUN_ERROR);
 		CloseHandle(stdin_process_info.hProcess);
 
+        if (pCommandText) delete pCommandText;
+
 	    return result;
 	}
 
@@ -1164,8 +1167,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	// EVERYTHING IS ALL RIGHT
 
-    String stdio = msg.find("stdio").asString().c_str();
-	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(command_text,alias,m_PortName,
+    ConstString stdio = msg.find("stdio").asString().c_str();
+	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(*pCommandText,alias,m_PortName,
 						cmd_process_info.hProcess,stdio,&m_StdioVector,
 						stdin_process_info.hProcess,stdout_process_info.hProcess,
 						read_from_pipe_stdin_to_cmd,write_to_pipe_stdin_to_cmd,
@@ -1176,15 +1179,18 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
-    String out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+command_text+"pid="+pidstr+"\n";
+    ConstString out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
     result.addString(out.c_str());
     fprintf(stderr,out.c_str());
+
+    if (pCommandText) delete pCommandText;
+
 	return result;
 }
 
 Bottle Run::ExecuteCmd(Bottle& msg)
 {
-	String alias=msg.find("as").asString().c_str();
+	ConstString alias=msg.find("as").asString().c_str();
 
 	// RUN COMMAND
 	PROCESS_INFORMATION cmd_process_info;
@@ -1195,16 +1201,20 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	cmd_startup_info.cb=sizeof(STARTUPINFO); 
 
 	Bottle command_bottle=msg.findGroup("cmd").tail();
-    String command_text;
-
+    
+    ConstString *pCommandText=NULL;
 	for (int s=0; s<command_bottle.size(); ++s)
-		command_text+=String(command_bottle.get(s).toString().c_str())+" ";
+    {
+        ConstString tmpStr=pCommandText?(*pCommandText)+command_bottle.get(s).toString()+ConstString(" "):command_bottle.get(s).toString()+ConstString(" ");
+		if (pCommandText) delete pCommandText;
+        pCommandText=new ConstString(tmpStr);
+    }
 
 	bool bWorkdir=msg.check("workdir");
-	String sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+	ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
 	bool bSuccess=CreateProcess(NULL,	// command name
-								(char*)(sWorkdir+command_text).c_str(), // command line 
+								(char*)(sWorkdir+*pCommandText).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1217,7 +1227,7 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	if (!bSuccess && bWorkdir)
 	{
 			bSuccess=CreateProcess(NULL,	// command name
-									(char*)command_text.c_str(), // command line 
+									(char*)(pCommandText->c_str()), // command line 
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
@@ -1240,8 +1250,10 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+command_text+" pid="+pidstr+"\n";
-        out+=String("Can't execute command because ")+errorMsg+"\n";
+        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+" pid="+pidstr+"\n"
+                       +ConstString("Can't execute command because ")+errorMsg+"\n";
+
+        if (pCommandText) delete pCommandText; 
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -1252,13 +1264,14 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
 	// EVERYTHING IS ALL RIGHT
 
-	m_ProcessVector.Add(new YarpRunProcInfo(command_text,alias,m_PortName,cmd_process_info.hProcess,cmd_process_info.dwProcessId));
+	m_ProcessVector.Add(new YarpRunProcInfo(*pCommandText,alias,m_PortName,cmd_process_info.hProcess,cmd_process_info.dwProcessId));
 
     char pidstr[16];
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
-    String out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+command_text+"pid="+pidstr+"\n";
+    ConstString out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
+    if (pCommandText) delete pCommandText;
     fprintf(stderr,out.c_str());
 	return result;
 }
@@ -1266,7 +1279,7 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 // STDIO SERVER
 Bottle Run::UserStdio(Bottle& msg)
 {
-	String alias=msg.find("as").asString().c_str();
+	ConstString alias=msg.find("as").asString().c_str();
 
 	// create yarp read and yarp write client processes
 	// RUN STDOUT
@@ -1279,7 +1292,7 @@ Bottle Run::UserStdio(Bottle& msg)
 	stdio_startup_info.wShowWindow=SW_SHOWNOACTIVATE;
 	stdio_startup_info.dwFlags=STARTF_USESHOWWINDOW;
 
-	String command_line=String("yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
+	ConstString command_line=ConstString("yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
 								(char*)command_line.c_str(), // command line 
@@ -1295,13 +1308,13 @@ Bottle Run::UserStdio(Bottle& msg)
 	Bottle result;
     char pidstr[16];
 	sprintf(pidstr,"%d",stdio_process_info.dwProcessId);
-	String out;
+	ConstString out;
 
     if (bSuccess)
     {
         m_StdioVector.Add(new YarpRunProcInfo(command_line,alias,m_PortName,stdio_process_info.hProcess,stdio_process_info.dwProcessId));
         result.addInt(stdio_process_info.dwProcessId);
-        out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd=CMD pid="+pidstr+"\n";
+        out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=CMD pid="+pidstr+"\n";
     }
     else
 	{
@@ -1310,8 +1323,8 @@ Bottle Run::UserStdio(Bottle& msg)
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,error,0,errorMsg,1024,NULL);
         
         result.addInt(YARPRUN_ERROR);
-        out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio pid="+pidstr+"\n";
-        out+=String("Can't open stdio window because ")+errorMsg+"\n";
+        out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio pid="+pidstr+"\n"
+           +ConstString("Can't open stdio window because ")+errorMsg+"\n";
 	}
 
     result.addString(out.c_str());
@@ -1355,20 +1368,20 @@ int CountArgs(char *str)
     return nargs;
 }
 
-void ParseCmd(const char* str,String* args)
+void ParseCmd(char* cmd_str,char** arg_str)
 {
     int nargs=0;
     
-    for (bool bSpace=*str==' '; *str; ++str)
+    for (bool bSpace=true; *cmd_str; ++cmd_str)
     {
-        if (*str!=' ')
+        if (*cmd_str!=' ')
         {
-            if (bSpace) ++nargs;
+            if (bSpace) arg_str[nargs++]=cmd_str;
             bSpace=false;
-            args[nargs]+=*str;
         }
         else
         {
+            *cmd_str=0;
             bSpace=true;
         }
     }
@@ -1384,9 +1397,9 @@ void Run::CleanZombies()
 
 Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 {
-	String alias(msg.find("as").asString());
-	String commandString(msg.find("cmd").toString());
-    String stdio_str(msg.find("stdio").asString());
+	ConstString alias(msg.find("as").asString());
+	ConstString commandString(msg.find("cmd").toString());
+    ConstString stdio_str(msg.find("stdio").asString());
 
 	int  pipe_stdin_to_cmd[2];
 	pipe(pipe_stdin_to_cmd);
@@ -1402,8 +1415,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	{
 	    int error=errno;
 	    
-		String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n";
-        out+=String("Can't fork stdout process because ")+strerror(error)+"\n";
+		ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
+		               +ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
         
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
@@ -1422,14 +1435,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarp","yarp","quiet","write",(String("/")+alias+"/"+"stdout").c_str(),"verbatim",NULL);
+		int ret=execlp("yarp","yarp","quiet","write",(ConstString("/")+alias+"/"+"stdout").c_str(),"verbatim",NULL);
 	    
 	    if (ret==YARPRUN_ERROR)
 	    {
 	        int error=errno;
 	        
-            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n";
-            out+=String("Can't execute stdout because ")+strerror(error)+"\n";
+            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
+                           +ConstString("Can't execute stdout because ")+strerror(error)+"\n";
 	        
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1452,8 +1465,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		{		    
             int error=errno;
                         
-            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n";
-            out+=String("Can't fork stdin process because ")+strerror(error)+"\n";
+            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
+                           +ConstString("Can't fork stdin process because ")+strerror(error)+"\n";
 
 		    Bottle result;
             result.addInt(YARPRUN_ERROR);            
@@ -1474,14 +1487,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		{
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarp","yarp","quiet","read",(String("/")+alias+"/"+"stdin").c_str(),NULL);
+			int ret=execlp("yarp","yarp","quiet","read",(ConstString("/")+alias+"/"+"stdin").c_str(),NULL);
 			
 		    if (ret==YARPRUN_ERROR)
 	        {
 	            int error=errno;
 	                
-                String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n";
-                out+=String("Can't execute stdin because ")+strerror(error)+"\n";
+                ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
+                               +ConstString("Can't execute stdin because ")+strerror(error)+"\n";
                 
                 FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	            fprintf(out_to_parent,out.c_str());
@@ -1503,11 +1516,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 		    { 
-			    if (!bConnW && NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str()))
+			    if (!bConnW && NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str()))
 			    {
 			        bConnW=true;
 			    }    
-		        if (!bConnR && NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str()))
+		        if (!bConnR && NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str()))
 		        {
 		            bConnR=true;
 		        }
@@ -1515,16 +1528,15 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
 		    }
 		    
-		    //bool bConnW=NetworkBase::connect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());       
-		    //bool bConnR=NetworkBase::connect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		    //bool bConnW=NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());       
+		    //bool bConnR=NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 		    
 		    if (!(bConnR&&bConnW))
 		    {				
-		        if (bConnW) NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		        if (bConnR) NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+		        if (bConnW) NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		        if (bConnR) NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 		        
-	            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\n";
-                out+="Can't connect stdio\n";
+	            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
 	           
 	           	Bottle result;
 				result.addInt(YARPRUN_ERROR);
@@ -1548,8 +1560,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			{				
                 int error=errno;
 		     	
-		        String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
-                out+=String("Can't fork command process because ")+strerror(error)+"\n";
+		        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                               +ConstString("Can't fork command process because ")+strerror(error)+"\n";
 	            
 			    Bottle result;
                 result.addInt(YARPRUN_ERROR);	            
@@ -1562,8 +1574,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            fflush(to_yarp_stdout);
 	            fclose(to_yarp_stdout);
 	            
-	            NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		        NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+	            NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		        NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 
 				KILL(pid_stdout);
 				KILL(pid_stdin);
@@ -1577,23 +1589,13 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 			if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 			{                        
-                char *cmd_c_str=new char[commandString.length()+1];
-                strcpy(cmd_c_str,commandString.c_str());
-                int nargs=CountArgs(cmd_c_str);
-                String *Args=new String[nargs];
-                ParseCmd(cmd_c_str,Args);
-                delete [] cmd_c_str;
-        
-	            char **arg_str=new char*[nargs+1];
-		        for (int s=0; s<nargs; ++s)
-		        {
-			        arg_str[s]=new char[Args[s].length()+1];
-			        strcpy(arg_str[s],Args[s].c_str());
-		        }
-		        arg_str[nargs]=0;
-    
-                delete [] Args;
-
+                char *cmd_str=new char[commandString.length()+1];
+                strcpy(cmd_str,commandString.c_str());
+                int nargs=CountArgs(cmd_str);
+                char **arg_str=new char*[nargs+1];
+                ParseCmd(cmd_str,arg_str);
+                arg_str[nargs]=0;
+                
 			    setvbuf(stdout,NULL,_IONBF,0);
 
 				REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
@@ -1614,8 +1616,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            {
 	                int error=errno;
 	                
-                    String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
-                    out+=String("Can't execute command because ")+strerror(error)+"\n";
+                    ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                                   +ConstString("Can't execute command because ")+strerror(error)+"\n";
                     
                 	FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	                fprintf(out_to_parent,out.c_str());
@@ -1624,14 +1626,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	                fprintf(stderr,out.c_str());
                     fflush(stderr);
                     
-                    NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		            NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+                    NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 	            }
 
-        		for (int s=0; s<nargs; ++s)
-        		{
-        		    delete [] arg_str[s];
-        		}
+        		delete [] cmd_str;
         		delete [] arg_str;
 
 				exit(ret);
@@ -1652,7 +1651,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 				    
 	            char pidstr[16];
 	            sprintf(pidstr,"%d",pid_cmd);
-	            String out;
+	            ConstString *pOut=NULL;
 	            Bottle result;
 	            
 	            FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
@@ -1660,15 +1659,23 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
                 for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	            {
-	                out+=String(buff);
+	                ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
+	                if (pOut) delete pOut;
+	                pOut=new ConstString(tmpStr);
 	            }
 	            fclose(in_from_child);
 	             
-	            if (out.length()>0)
+	            if (pOut && pOut->length()==0)
+	            {
+	                delete pOut;
+	                pOut=NULL;
+	            }
+	             
+	            if (pOut)
 	            {
 	                result.addInt(YARPRUN_ERROR);
-	                NetworkBase::disconnect((String("/")+alias+"/stdout").c_str(),(String("/")+alias+"/user/stdout").c_str());
-		            NetworkBase::disconnect((String("/")+alias+"/user/stdin").c_str(),(String("/")+alias+"/stdin").c_str());
+	                NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
 	            }
 	            else
 	            {
@@ -1686,15 +1693,17 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 				    */
 	                
 	                result.addInt(pid_cmd);
-	                out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+String(pidstr)+"\n";
+	                pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+ConstString(pidstr)+"\n");
 	            }
 	            
-	            result.addString(out.c_str());
-	            fprintf(stderr,out.c_str());
+	            result.addString(pOut->c_str());
+	            fprintf(stderr,pOut->c_str());
                 fflush(stderr);
- 
+  
                 CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
+ 
+                delete pOut;
                 
 		        return result;
 			}
@@ -1709,7 +1718,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 Bottle Run::UserStdio(Bottle& msg)
 {
-	String alias(msg.find("as").asString());
+	ConstString alias(msg.find("as").asString());
 
 	int  pipe_child_to_parent[2];
 	pipe(pipe_child_to_parent);
@@ -1720,8 +1729,8 @@ Bottle Run::UserStdio(Bottle& msg)
 	{
 		int error=errno;
 	    
-		String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n";
-        out+=String("Can't fork stdout process because ")+strerror(error)+"\n";
+		ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n"
+                       +ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
         
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
@@ -1735,23 +1744,23 @@ Bottle Run::UserStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
 		int ret;
-        //String command=String("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
-        //String command=String("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        //ConstString command=ConstString("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        //ConstString command=ConstString("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);
 
 		if (msg.check("geometry"))
 		{
-	        String geometry(msg.find("geometry").asString());
+	        ConstString geometry(msg.find("geometry").asString());
 			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			          (ConstString("/")+alias+"/user/stdout").c_str(),(ConstString("/")+alias+"/user/stdin").c_str(),NULL);
 			//ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		else
 		{
 			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (String("/")+alias+"/user/stdout").c_str(),(String("/")+alias+"/user/stdin").c_str(),NULL);
+			          (ConstString("/")+alias+"/user/stdout").c_str(),(ConstString("/")+alias+"/user/stdin").c_str(),NULL);
 			//ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		
@@ -1761,8 +1770,8 @@ Bottle Run::UserStdio(Bottle& msg)
 		if (ret==YARPRUN_ERROR)
 		{
 		    int error=errno;
-            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=xterm\n";
-            out+=String("Can't execute command because ")+strerror(error)+"\n";
+            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=xterm\n"
+                           +ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1777,42 +1786,52 @@ Bottle Run::UserStdio(Bottle& msg)
 
 	if (IS_PARENT_OF(pid_cmd))
 	{
-	    String rwCmd=String("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
+	    ConstString rwCmd=ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
 		m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	    
 	    char pidstr[16];
 	    sprintf(pidstr,"%d",pid_cmd);
 	    
 	    Bottle result;
-	    String out;
+	    ConstString *pOut=NULL;
 	    
 	    FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
 	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
         for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	    {
-	        out+=String(buff);
+	        ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
+	        if (pOut) delete pOut;
+	        pOut=new ConstString(tmpStr);
 	    }
 	    fclose(in_from_child);
 	    
-	    if (out.length()>0)
+	    if (pOut && pOut->length()==0)
+	    {
+	        delete pOut;
+	        pOut=NULL;
+	    }
+	    
+	    if (pOut)
 	    {
 	        result.addInt(YARPRUN_ERROR);
 	    }
 	    else
 	    {
-	        //String rwCmd=String("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin"; 
+	        //ConstString rwCmd=ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin"; 
 	        //m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	        result.addInt(pid_cmd);
-	        out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd=xterm pid="+String(pidstr)+"\n";
-	        fprintf(stderr,out.c_str());
+	        pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=xterm pid="+ConstString(pidstr)+"\n");
+	        fprintf(stderr,pOut->c_str());
             fflush(stderr);
 	    }
 	    
-	    result.addString(out.c_str());
+	    result.addString(pOut->c_str());
  
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
+                
+        delete pOut;
                 
 		return result;
 	}
@@ -1824,8 +1843,8 @@ Bottle Run::UserStdio(Bottle& msg)
 
 Bottle Run::ExecuteCmd(Bottle& msg)
 {
-	String alias(msg.find("as").asString());
-	String commandString(msg.find("cmd").toString());
+	ConstString alias(msg.find("as").asString());
+	ConstString commandString(msg.find("cmd").toString());
 
 	int  pipe_child_to_parent[2];
 	pipe(pipe_child_to_parent);
@@ -1836,8 +1855,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	{
 	    int error=errno;
 	    	     	
-	    String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
-        out+=String("Can't fork command process because ")+strerror(error)+"\n";
+	    ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                       +ConstString("Can't fork command process because ")+strerror(error)+"\n";
 	            
 		Bottle result;
         result.addInt(YARPRUN_ERROR);	            
@@ -1852,27 +1871,17 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	{
         int saved_stderr=dup(STDERR_FILENO);
 		int null_file=open("/dev/null",O_WRONLY); 
-        REDIRECT_TO(STDOUT_FILENO,null_file);
-		REDIRECT_TO(STDERR_FILENO,null_file);
+        //REDIRECT_TO(STDOUT_FILENO,null_file);
+		//REDIRECT_TO(STDERR_FILENO,null_file);
 		close(null_file);
         
-        char *cmd_c_str=new char[commandString.length()+1];
-        strcpy(cmd_c_str,commandString.c_str());
-        int nargs=CountArgs(cmd_c_str);
-        String *Args=new String[nargs];
-        ParseCmd(cmd_c_str,Args);
-        delete [] cmd_c_str;
+        char *cmd_str=new char[commandString.length()+1];
+        strcpy(cmd_str,commandString.c_str());
+        int nargs=CountArgs(cmd_str);
+        char **arg_str=new char*[nargs+1];
+        ParseCmd(cmd_str,arg_str);
+        arg_str[nargs]=0;
         
-	    char **arg_str=new char*[nargs+1];
-		for (int s=0; s<nargs; ++s)
-		{
-			arg_str[s]=new char[Args[s].length()+1];
-			strcpy(arg_str[s],Args[s].c_str());
-		}
-		arg_str[nargs]=0;
-    
-        delete [] Args;
-    
         if (msg.check("workdir"))
 		{
 		    chdir(msg.find("workdir").asString().c_str());
@@ -1883,8 +1892,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
         if (ret==YARPRUN_ERROR)
 	    {
 	        int error=errno;
-            String out=String("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n";
-            out+=String("Can't execute command because ")+strerror(error)+"\n";
+            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                           +ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1896,10 +1905,7 @@ Bottle Run::ExecuteCmd(Bottle& msg)
             fflush(stderr);
 	    }
 
-		for (int s=0; s<nargs; ++s) 
-		{
-		    delete [] arg_str[s];
-		}
+		delete [] cmd_str;
 		delete [] arg_str;
 
 		exit(ret);
@@ -1913,18 +1919,26 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	    sprintf(pidstr,"%d",pid_cmd);
 
         Bottle result;
-        String out;
+        ConstString *pOut=NULL;
          
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
 	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
         for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	    {
-	        out+=String(buff);
+	        ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
+	        if (pOut) delete pOut;
+	        pOut=new ConstString(tmpStr);
 	    }
 	    fclose(in_from_child);
 	    
-	    if (out.length()>0)
+	    if (pOut && pOut->length()==0)
+	    {
+	        delete pOut;
+	        pOut=NULL;
+	    }
+	    
+	    if (pOut)
 	    {
 	        result.addInt(YARPRUN_ERROR);
 	    }
@@ -1932,15 +1946,17 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	    {
 	        //m_ProcessVector.Add(new YarpRunProcInfo(commandString,alias,m_PortName,pid_cmd,false));
 	        result.addInt(pid_cmd);
-	        out=String("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+String(pidstr)+"\n";
-	        fprintf(stderr,out.c_str());
+	        pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+ConstString(pidstr)+"\n");
+	        fprintf(stderr,pOut->c_str());
             fflush(stderr);
 	    }
 	    
-	    result.addString(out.c_str());
+	    result.addString(pOut->c_str());
  
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
+                
+        delete pOut;
                 
 		return result;
 	}
@@ -1956,7 +1972,7 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 // API
 /////////////////////////////////////////////////////////////////
 
-int Run::start(const String &node,Property &command,String &keyv)
+int Run::start(const ConstString &node,Property &command,ConstString &keyv)
 {
 	Bottle msg,grp,response;
 	
@@ -1965,11 +1981,11 @@ int Run::start(const String &node,Property &command,String &keyv)
 	grp.addString(node.c_str());
 	msg.addList()=grp;
 
-	String dest_srv=node;
+	ConstString dest_srv=node;
 
 	if (command.check("stdio"))
 	{
-		dest_srv=String(command.find("stdio").asString());
+		dest_srv=ConstString(command.find("stdio").asString());
 
 		grp.clear();
 		grp.addString("stdio");
@@ -2009,12 +2025,12 @@ int Run::start(const String &node,Property &command,String &keyv)
 
 	char buff[16];
 	sprintf(buff,"%d",response.get(0).asInt());
-    keyv=String(buff);
+    keyv=ConstString(buff);
 
 	return response.get(0).asInt()>0?0:YARPRUN_ERROR;
 }
 
-int Run::sigterm(const String &node, const String &keyv)
+int Run::sigterm(const ConstString &node, const ConstString &keyv)
 {
 	Bottle msg,grp,response;
 	
@@ -2035,7 +2051,7 @@ int Run::sigterm(const String &node, const String &keyv)
 	return response.get(0).asString()=="sigterm OK"?0:YARPRUN_ERROR;
 }
 
-int Run::sigterm(const String &node)
+int Run::sigterm(const ConstString &node)
 {
 	Bottle msg,grp,response;
 	
@@ -2055,7 +2071,7 @@ int Run::sigterm(const String &node)
 	return response.get(0).asString()=="sigtermall OK"?0:YARPRUN_ERROR;
 }
 
-int Run::kill(const String &node, const String &keyv,int s)
+int Run::kill(const ConstString &node, const ConstString &keyv,int s)
 {
 	Bottle msg,grp,response;
 	
@@ -2077,7 +2093,7 @@ int Run::kill(const String &node, const String &keyv,int s)
 	return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
 }
 
-int Run::ps(const String &node,std::list<std::string> &processes)
+int Run::ps(const ConstString &node,ACE_Vector<ConstString> &processes)
 {
 	Bottle msg,grp,response;
 	
@@ -2108,13 +2124,13 @@ int Run::ps(const String &node,std::list<std::string> &processes)
 	for (int i=0; i<response.size(); ++i)
 	{
 		sprintf(buff,"%d",response.get(i).find("pid").asInt());
-		processes.push_back(std::string(buff));
+		processes.push_back(ConstString(buff));
 	}
 
 	return 0;
 }
 
-bool Run::isRunning(const String &node, String &keyv)
+bool Run::isRunning(const ConstString &node, ConstString &keyv)
 {
 	Bottle msg,grp,response;
 	
