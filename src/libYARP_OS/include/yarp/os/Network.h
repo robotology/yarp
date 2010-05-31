@@ -83,7 +83,7 @@ public:
     /**
      * Check for a port to be ready and responsive.
      * @param port the name of a port
-     * @param quiet suppress messages displayed during exists
+     * @param quiet suppress messages displayed during check
      * @return true on success, false on failure
      */
     static bool exists(const char *port, bool quiet=true);
