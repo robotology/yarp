@@ -49,6 +49,8 @@ DWORD WINAPI ZombieHunter(LPVOID lpParameter)
 }
 #else
 #include <signal.h>
+#include <unistd.h>
+#include <fcntl.h>
 #define PID int
 #define FDESC int
 int CLOSE(int h){ return close(h)==0; }
