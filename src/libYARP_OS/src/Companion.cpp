@@ -117,7 +117,7 @@ Companion::Companion() {
         "get live information about a port");
     add("read",       &Companion::cmdRead,
         "read from the network and print to standard output");
-    // not really very useful
+    // needed by yarprun --stdio
 	add("readwrite",  &Companion::cmdReadWrite,
         "read from the network and print to standard output, write to the network from standard input");
     add("regression", &Companion::cmdRegression,
