@@ -5,50 +5,32 @@
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  */
 
+#include <stdio.h>
+#include <signal.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Run.h>
 
 #define YARPRUN_ERROR -1
 
 #if defined(WIN32) || defined(WIN64)
 #define SIGKILL 0
-BOOL KILL(HANDLE pid,int signum=SIGTERM,bool wait=false) 
+bool KILL(HANDLE pid,int signum=SIGTERM,bool wait=false) 
 { 
     BOOL bRet=TerminateProcess(pid,0);
     CloseHandle(pid);
-    return bRet;
+    return bRet?true:false;
 }
 #define PID HANDLE
 #define FDESC HANDLE
 #define CLOSE(h) CloseHandle(h)
-HANDLE Run::hZombieHunter=NULL;
-HANDLE* Run::aHandlesVector=NULL;
+HANDLE /*yarp::os::Run::*/hZombieHunter=NULL;
+HANDLE* /*yarp::os::Run::*/aHandlesVector=NULL;
 #ifndef __GNUC__
-DWORD WINAPI ZombieHunter(__in  LPVOID lpParameter)
+DWORD WINAPI ZombieHunter(__in  LPVOID lpParameter);
 #else
-DWORD WINAPI ZombieHunter(LPVOID lpParameter)
+DWORD WINAPI ZombieHunter(LPVOID lpParameter);
 #endif
-{
-	DWORD nCount;
-
-	while (true)
-	{
-		Run::GetHandles(Run::aHandlesVector,nCount);
-
-		if (nCount)
-		{
-			WaitForMultipleObjects(nCount,Run::aHandlesVector,FALSE,INFINITE);
-		}
-		else
-		{
-			Run::hZombieHunter=NULL;
-			return 0;
-		}
-	}
-
-	return 0;
-}
 #else
-#include <signal.h>
 #include <unistd.h>
 #include <fcntl.h>
 #define PID int
@@ -62,7 +44,7 @@ int KILL(int pid,int signum=SIGTERM,bool wait=false)
 }
 void sigchild_handler(int sig)
 {   
-    Run::CleanZombies();
+    yarp::os::Run::CleanZombies();
 }
 #endif
 
@@ -70,7 +52,7 @@ class YarpRunProcInfo
 {
 public:
     #if defined(WIN32) || defined(WIN64)
-	YarpRunProcInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,int ps_id)
+	YarpRunProcInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,int ps_id)
 	{ 
 		m_command=command;
 		m_alias=alias;
@@ -81,7 +63,7 @@ public:
 		m_bHold=false;
 	}
     #else
-	YarpRunProcInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,bool hold)
+	YarpRunProcInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,bool hold)
 	{ 
 	    m_bHold=hold;
 	
@@ -95,7 +77,7 @@ public:
 	
 	virtual ~YarpRunProcInfo(){ /*Kill(SIGKILL);*/ }
 
-	virtual bool Match(ConstString& alias){ return m_alias==alias; }
+	virtual bool Match(yarp::os::ConstString& alias){ return m_alias==alias; }
 
 	virtual bool Kill(int signum=SIGTERM)
 	{	    
@@ -126,7 +108,7 @@ public:
 	
 protected:
 	PID m_pid_cmd;
-	ConstString m_command,m_alias,m_on;
+	yarp::os::ConstString m_command,m_alias,m_on;
 
 	// windows only
 	int m_ps_id;
@@ -167,14 +149,14 @@ public:
 		}
 
 		#if defined(WIN32) || defined(WIN64)
-		if (Run::hZombieHunter) TerminateThread(Run::hZombieHunter,0);
+        if (hZombieHunter) TerminateThread(hZombieHunter,0);
 		#endif
 
 		m_apList[m_nProcesses++]=process;
 		//fprintf(stderr,"Processes in list %d\n",m_nProcesses);
 
 		#if defined(WIN32) || defined(WIN64)
-		Run::hZombieHunter=CreateThread(0,0,ZombieHunter,0,0,0);
+        hZombieHunter=CreateThread(0,0,ZombieHunter,0,0,0);
 		#endif
 
 		mutex.post();
@@ -182,7 +164,7 @@ public:
 		return true;
 	}
 
-	int Kill(ConstString& alias,int signum=SIGTERM)
+	int Kill(yarp::os::ConstString& alias,int signum=SIGTERM)
 	{
 		mutex.wait();
 
@@ -305,11 +287,11 @@ public:
 	}
 	#endif
 
-	Bottle PS()
+    yarp::os::Bottle PS()
 	{
 		mutex.wait();
 
-		Bottle ps,line,grp;
+        yarp::os::Bottle ps,line,grp;
 
 		for (int i=0; i<m_nProcesses; ++i) if (m_apList[i])
 		{
@@ -343,7 +325,7 @@ public:
 		return ps;
 	}
 
-	bool IsRunning(ConstString &alias)
+	bool IsRunning(yarp::os::ConstString &alias)
 	{
 		mutex.wait();
 
@@ -397,7 +379,7 @@ protected:
 class YarpRunCmdWithStdioInfo : public YarpRunProcInfo
 {
 public:
-	YarpRunCmdWithStdioInfo(ConstString& command,ConstString& alias,ConstString& on,PID pid_cmd,ConstString& stdio_server,YarpRunInfoVector* pStdioVector,
+	YarpRunCmdWithStdioInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,yarp::os::ConstString& stdio_server,YarpRunInfoVector* pStdioVector,
 					   PID pid_stdin,PID pid_stdout,
 		               FDESC read_from_pipe_stdin_to_cmd,FDESC write_to_pipe_stdin_to_cmd,
 					   FDESC read_from_pipe_cmd_to_stdout,FDESC write_to_pipe_cmd_to_stdout,int ps_id)
@@ -429,8 +411,8 @@ public:
 		m_write_to_pipe_stdin_to_cmd=m_read_from_pipe_stdin_to_cmd=0;
 		m_write_to_pipe_cmd_to_stdout=m_read_from_pipe_cmd_to_stdout=0;
 	
-	    NetworkBase::disconnect((ConstString("/")+m_alias+"/stdout").c_str(),(ConstString("/")+m_alias+"/user/stdout").c_str());
-	    NetworkBase::disconnect((ConstString("/")+m_alias+"/user/stdin").c_str(),(ConstString("/")+m_alias+"/stdin").c_str());
+        yarp::os::NetworkBase::disconnect((yarp::os::ConstString("/")+m_alias+"/stdout").c_str(),(yarp::os::ConstString("/")+m_alias+"/user/stdout").c_str());
+        yarp::os::NetworkBase::disconnect((yarp::os::ConstString("/")+m_alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+m_alias+"/stdin").c_str());
 	
 	    m_pid_cmd=0;
 	
@@ -458,25 +440,25 @@ public:
 		}
 		else
 		{
-			Bottle msg;
-			msg.fromString((ConstString("(killstdio ")+m_alias+")").c_str());
+            yarp::os::Bottle msg;
+			msg.fromString((yarp::os::ConstString("(killstdio ")+m_alias+")").c_str());
 
-			Port port;
+            yarp::os::Port port;
 			port.open("...");
 			for (int i=0; i<20; ++i)
 			{
-			    if (NetworkBase::connect(port.getName().c_str(),m_stdio.c_str())) break;
+                if (yarp::os::NetworkBase::connect(port.getName().c_str(),m_stdio.c_str())) break;
 			    yarp::os::Time::delay(1.0);
 			}
 			port.write(msg);
-			NetworkBase::disconnect(port.getName().c_str(),m_stdio.c_str());
+            yarp::os::NetworkBase::disconnect(port.getName().c_str(),m_stdio.c_str());
 			port.close();
 		}
 	}
 
 protected:
 	PID m_pid_stdin,m_pid_stdout;
-	ConstString m_stdio;
+	yarp::os::ConstString m_stdio;
 	FDESC m_write_to_pipe_stdin_to_cmd,m_read_from_pipe_stdin_to_cmd;
 	FDESC m_write_to_pipe_cmd_to_stdout,m_read_from_pipe_cmd_to_stdout;
 
@@ -487,12 +469,12 @@ protected:
 // OS INDEPENDENT FUNCTIONS
 ///////////////////////////
 
-YarpRunInfoVector Run::m_ProcessVector;
-YarpRunInfoVector Run::m_StdioVector;
-ConstString Run::m_PortName;
-Port* Run::pServerPort=0;
+YarpRunInfoVector yarp::os::Run::m_ProcessVector;
+YarpRunInfoVector yarp::os::Run::m_StdioVector;
+yarp::os::ConstString yarp::os::Run::m_PortName;
+yarp::os::Port* yarp::os::Run::pServerPort=0;
 
-int Run::main(int argc, char *argv[]) 
+int yarp::os::Run::main(int argc, char *argv[]) 
 {
 	m_PortName="";
 
@@ -549,7 +531,7 @@ int Run::main(int argc, char *argv[])
 	// SERVER
     if (config.check("server")) 
 	{
-		m_PortName=ConstString(config.find("server").asString());
+		m_PortName=yarp::os::ConstString(config.find("server").asString());
 		return Server();
 	} 
 
@@ -570,7 +552,7 @@ int Run::main(int argc, char *argv[])
     return 0;
 }
 
-Bottle Run::SendMsg(Bottle& msg,ConstString target)
+yarp::os::Bottle yarp::os::Run::SendMsg(Bottle& msg,yarp::os::ConstString target)
 {
 	Port port;
     port.open("...");
@@ -599,15 +581,15 @@ Bottle Run::SendMsg(Bottle& msg,ConstString target)
 
 void sigint_handler(int sig)
 {
-	if (Run::pServerPort)
+	if (yarp::os::Run::pServerPort)
 	{
-		Port *pClose=Run::pServerPort;
-		Run::pServerPort=0;
+		yarp::os::Port *pClose=yarp::os::Run::pServerPort;
+		yarp::os::Run::pServerPort=0;
 		pClose->close();
 	}
 }
 
-int Run::Server()
+int yarp::os::Run::Server()
 {
 	Port port;
 	port.open(m_PortName.c_str());
@@ -632,18 +614,18 @@ int Run::Server()
 		// command with stdio management
 		if (msg.check("stdio") && msg.check("cmd"))
 		{
-			ConstString stdio_port=msg.find("stdio").asString();
-			ConstString on_port=msg.find("on").asString();
+			yarp::os::ConstString stdio_port=msg.find("stdio").asString();
+			yarp::os::ConstString on_port=msg.find("on").asString();
 
 			// AM I THE CMD OR/AND STDIO SERVER?
-			if (m_PortName==ConstString(stdio_port)) // stdio
+			if (m_PortName==yarp::os::ConstString(stdio_port)) // stdio
 			{
 			    output=UserStdio(msg);
 			    
 				if (output.get(0).asInt()>0)
                 {
                     Bottle res;
-				    if (m_PortName==ConstString(on_port))
+				    if (m_PortName==yarp::os::ConstString(on_port))
 				    {
                         // execute command here
 					    res=ExecuteCmdAndStdio(msg);
@@ -658,7 +640,7 @@ int Run::Server()
                     output=res;
 				}
 			}
-			else if (m_PortName==ConstString(on_port)) // cmd
+			else if (m_PortName==yarp::os::ConstString(on_port)) // cmd
 			{
 				output=ExecuteCmdAndStdio(msg);				
 			}
@@ -680,7 +662,7 @@ int Run::Server()
 
 		if (msg.check("kill"))
 		{
-			ConstString alias(msg.findGroup("kill").get(1).asString());
+			yarp::os::ConstString alias(msg.findGroup("kill").get(1).asString());
 			int sig=msg.findGroup("kill").get(2).asInt();
 			output.addString(m_ProcessVector.Kill(alias,sig)?"kill OK":"kill FAILED");
 			port.reply(output);
@@ -689,7 +671,7 @@ int Run::Server()
 		
 	    if (msg.check("sigterm"))
 		{
-		    ConstString alias(msg.find("sigterm").asString());
+		    yarp::os::ConstString alias(msg.find("sigterm").asString());
 			output.addString(m_ProcessVector.Kill(alias)?"sigterm OK":"sigterm FAILED");
 			port.reply(output);
 			continue;
@@ -712,7 +694,7 @@ int Run::Server()
 
 		if (msg.check("isrunning"))
 		{
-		    ConstString alias(msg.find("isrunning").asString());
+		    yarp::os::ConstString alias(msg.find("isrunning").asString());
 			output.addString(m_ProcessVector.IsRunning(alias)?"running":"not running");
 			port.reply(output);
 			continue;
@@ -721,7 +703,7 @@ int Run::Server()
 		if (msg.check("killstdio"))
 		{		    
 		    fprintf(stderr,"Run::Server() killstdio(%s)\n",msg.find("killstdio").asString().c_str());
-		    ConstString alias(msg.find("killstdio").asString());
+		    yarp::os::ConstString alias(msg.find("killstdio").asString());
 			m_StdioVector.Kill(alias);
 			continue;
 		}
@@ -741,19 +723,19 @@ int Run::Server()
 	
 	#if defined(WIN32) || defined(WIN64)
 	Run::m_ProcessVector.mutex.wait();
-	if (Run::hZombieHunter) TerminateThread(Run::hZombieHunter,0);
+	if (hZombieHunter) TerminateThread(hZombieHunter,0);
 	
 	Run::m_ProcessVector.mutex.post();
-	if (Run::aHandlesVector) delete [] Run::aHandlesVector;
+	if (aHandlesVector) delete [] aHandlesVector;
 	#endif
 
 	return 0;
 }
 
 // CLIENT
-int Run::SendToServer(Property& config)
+int yarp::os::Run::SendToServer(yarp::os::Property& config)
 {
-	Bottle msg;
+	yarp::os::Bottle msg;
 
 	// USE A YARP RUN SERVER TO MANAGE STDIO
 	//
@@ -876,7 +858,7 @@ int Run::SendToServer(Property& config)
 	return 0;
 }
 
-void Run::Help(const char *msg)
+void yarp::os::Run::Help(const char *msg)
 {
 	fprintf(stderr,"%s",msg);
     fprintf(stderr,"\nUSAGE:\n\n");
@@ -900,25 +882,46 @@ void Run::Help(const char *msg)
 
 #if defined(WIN32) || defined(WIN64)
 
-void Run::GetHandles(HANDLE* &lpHandles,DWORD &nCount)
+#ifndef __GNUC__
+DWORD WINAPI ZombieHunter(__in  LPVOID lpParameter)
+#else
+DWORD WINAPI ZombieHunter(LPVOID lpParameter)
+#endif
 {
-	if (lpHandles)
+	DWORD nCount;
+
+	while (true)
 	{
-		delete [] lpHandles;
-		lpHandles=0;
+	    if (aHandlesVector)
+	    {
+		    delete [] aHandlesVector;
+		    aHandlesVector=0;
+	    }
+	    nCount=0;
+
+	    aHandlesVector=new HANDLE[yarp::os::Run::m_ProcessVector.Size()+yarp::os::Run::m_StdioVector.Size()];
+
+	    yarp::os::Run::m_ProcessVector.GetHandles(aHandlesVector,nCount);
+	    yarp::os::Run::m_StdioVector.GetHandles(aHandlesVector,nCount);
+
+		if (nCount)
+		{
+			WaitForMultipleObjects(nCount,aHandlesVector,FALSE,INFINITE);
+		}
+		else
+		{
+			hZombieHunter=NULL;
+			return 0;
+		}
 	}
-	nCount=0;
 
-	lpHandles=new HANDLE[m_ProcessVector.Size()+m_StdioVector.Size()];
-
-	m_ProcessVector.GetHandles(lpHandles,nCount);
-	m_StdioVector.GetHandles(lpHandles,nCount);
+	return 0;
 }
 
 // CMD SERVER
-Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 {
-	ConstString alias=msg.find("as").asString().c_str();
+	yarp::os::ConstString alias=msg.find("as").asString().c_str();
 
 	// PIPES
 	SECURITY_ATTRIBUTES pipe_sec_attr; 
@@ -943,7 +946,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(ConstString("yarp quiet write /")+alias+"/stdout verbatim").c_str(), // command line 
+								(char*)(yarp::os::ConstString("yarp quiet write /")+alias+"/stdout verbatim").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -965,8 +968,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout pid="+pidstr+"\n"
-                       +ConstString("Can't execute stdout because ")+errorMsg+"\n";
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout pid="+pidstr+"\n"
+                       +yarp::os::ConstString("Can't execute stdout because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -993,7 +996,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)(ConstString("yarp quiet read /")+alias+"/stdin").c_str(), // command line 
+								(char*)(yarp::os::ConstString("yarp quiet read /")+alias+"/stdin").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1015,8 +1018,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin pid="+pidstr+"\n"
-                       +ConstString("Can't execute stdin because ")+errorMsg+"\n";
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin pid="+pidstr+"\n"
+                       +yarp::os::ConstString("Can't execute stdin because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -1037,10 +1040,10 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	bool bConnR=false,bConnW=false;
 	for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 	{ 	    
-	    if (!bConnW && NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str()))
+	    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 	        bConnW=true;
 			        
-	    if (!bConnR && NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str()))
+	    if (!bConnR && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str()))
 	        bConnR=true;
 	        
 	    if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
@@ -1051,14 +1054,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	    Bottle result;
         result.addInt(YARPRUN_ERROR);
 
-        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
 		
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		if (bConnW) NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		if (bConnR) NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+		if (bConnW) NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		if (bConnR) NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 
 		TerminateProcess(stdout_process_info.hProcess,YARPRUN_ERROR);
 		CloseHandle(stdout_process_info.hProcess);
@@ -1087,19 +1090,19 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	Bottle command_bottle=msg.findGroup("cmd").tail();
 
-    ConstString *pCommandText=NULL;
+    yarp::os::impl::String tmpStr;
 	for (int s=0; s<command_bottle.size(); ++s)
     {
-        ConstString tmpStr=pCommandText?(*pCommandText)+command_bottle.get(s).toString()+ConstString(" "):command_bottle.get(s).toString()+ConstString(" ");
-		if (pCommandText) delete pCommandText;
-        pCommandText=new ConstString(tmpStr);
+        tmpStr+=command_bottle.get(s).toString()+yarp::os::ConstString(" ");
     }
 
+    yarp::os::ConstString commandText(tmpStr.c_str());
+
 	bool bWorkdir=msg.check("workdir");
-	ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+	yarp::os::ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
 	bSuccess=CreateProcess(NULL,	// command name
-								(char*)(sWorkdir+*pCommandText).c_str(), // command line 
+								(char*)(sWorkdir+commandText).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1112,7 +1115,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (!bSuccess && bWorkdir)
 	{
 			bSuccess=CreateProcess(NULL,	// command name
-									(char*)(pCommandText->c_str()), // command line 
+									(char*)(commandText.c_str()), // command line 
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
@@ -1136,19 +1139,19 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
         result.addInt(YARPRUN_ERROR);
 
         DWORD nBytes;
-        ConstString line1=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
+        yarp::os::ConstString line1=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+"pid="+pidstr+"\n";
         WriteFile(write_to_pipe_cmd_to_stdout,line1.c_str(),line1.length(),&nBytes,0);
-        ConstString line2=ConstString("Can't execute command because ")+errorMsg+"\n";
+        yarp::os::ConstString line2=yarp::os::ConstString("Can't execute command because ")+errorMsg+"\n";
         WriteFile(write_to_pipe_cmd_to_stdout,line1.c_str(),line2.length(),&nBytes,0);
         FlushFileBuffers(write_to_pipe_cmd_to_stdout);
 
-        ConstString out=line1+line2;
+        yarp::os::ConstString out=line1+line2;
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
         fflush(stderr);
 
-		NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+		NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 
         CloseHandle(write_to_pipe_stdin_to_cmd);
 		CloseHandle(read_from_pipe_stdin_to_cmd);
@@ -1160,8 +1163,6 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		TerminateProcess(stdin_process_info.hProcess,YARPRUN_ERROR);
 		CloseHandle(stdin_process_info.hProcess);
 
-        if (pCommandText) delete pCommandText;
-
 	    return result;
 	}
 
@@ -1169,8 +1170,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	// EVERYTHING IS ALL RIGHT
 
-    ConstString stdio = msg.find("stdio").asString().c_str();
-	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(*pCommandText,alias,m_PortName,
+    yarp::os::ConstString stdio = msg.find("stdio").asString().c_str();
+	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(commandText,alias,m_PortName,
 						cmd_process_info.hProcess,stdio,&m_StdioVector,
 						stdin_process_info.hProcess,stdout_process_info.hProcess,
 						read_from_pipe_stdin_to_cmd,write_to_pipe_stdin_to_cmd,
@@ -1181,18 +1182,16 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
-    ConstString out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
+    yarp::os::ConstString out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+"pid="+pidstr+"\n";
     result.addString(out.c_str());
     fprintf(stderr,out.c_str());
-
-    if (pCommandText) delete pCommandText;
 
 	return result;
 }
 
-Bottle Run::ExecuteCmd(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 {
-	ConstString alias=msg.find("as").asString().c_str();
+	yarp::os::ConstString alias=msg.find("as").asString().c_str();
 
 	// RUN COMMAND
 	PROCESS_INFORMATION cmd_process_info;
@@ -1204,19 +1203,19 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
 	Bottle command_bottle=msg.findGroup("cmd").tail();
     
-    ConstString *pCommandText=NULL;
+    yarp::os::impl::String tmpStr;
 	for (int s=0; s<command_bottle.size(); ++s)
     {
-        ConstString tmpStr=pCommandText?(*pCommandText)+command_bottle.get(s).toString()+ConstString(" "):command_bottle.get(s).toString()+ConstString(" ");
-		if (pCommandText) delete pCommandText;
-        pCommandText=new ConstString(tmpStr);
+        tmpStr+=command_bottle.get(s).toString()+yarp::os::ConstString(" ");
     }
 
-	bool bWorkdir=msg.check("workdir");
-	ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+    yarp::os::ConstString commandText(tmpStr.c_str());
 
-	bool bSuccess=CreateProcess(NULL,	// command name
-								(char*)(sWorkdir+*pCommandText).c_str(), // command line 
+	bool bWorkdir=msg.check("workdir");
+	yarp::os::ConstString sWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
+
+	BOOL bSuccess=CreateProcess(NULL,	// command name
+								(char*)(sWorkdir+commandText).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1229,7 +1228,7 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	if (!bSuccess && bWorkdir)
 	{
 			bSuccess=CreateProcess(NULL,	// command name
-									(char*)(pCommandText->c_str()), // command line 
+									(char*)(commandText.c_str()), // command line 
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
@@ -1252,10 +1251,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
         result.addInt(YARPRUN_ERROR);
 
-        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+" pid="+pidstr+"\n"
-                       +ConstString("Can't execute command because ")+errorMsg+"\n";
-
-        if (pCommandText) delete pCommandText; 
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+" pid="+pidstr+"\n"
+                       +yarp::os::ConstString("Can't execute command because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
         fprintf(stderr,out.c_str());
@@ -1266,22 +1263,21 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 
 	// EVERYTHING IS ALL RIGHT
 
-	m_ProcessVector.Add(new YarpRunProcInfo(*pCommandText,alias,m_PortName,cmd_process_info.hProcess,cmd_process_info.dwProcessId));
+	m_ProcessVector.Add(new YarpRunProcInfo(commandText,alias,m_PortName,cmd_process_info.hProcess,cmd_process_info.dwProcessId));
 
     char pidstr[16];
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
-    ConstString out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+*pCommandText+"pid="+pidstr+"\n";
-    if (pCommandText) delete pCommandText;
+    yarp::os::ConstString out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+"pid="+pidstr+"\n";
     fprintf(stderr,out.c_str());
 	return result;
 }
 
 // STDIO SERVER
-Bottle Run::UserStdio(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 {
-	ConstString alias=msg.find("as").asString().c_str();
+	yarp::os::ConstString alias=msg.find("as").asString().c_str();
 
 	// create yarp read and yarp write client processes
 	// RUN STDOUT
@@ -1294,7 +1290,7 @@ Bottle Run::UserStdio(Bottle& msg)
 	stdio_startup_info.wShowWindow=SW_SHOWNOACTIVATE;
 	stdio_startup_info.dwFlags=STARTF_USESHOWWINDOW;
 
-	ConstString command_line=ConstString("yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
+	yarp::os::ConstString command_line=yarp::os::ConstString("yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
 								(char*)command_line.c_str(), // command line 
@@ -1310,13 +1306,13 @@ Bottle Run::UserStdio(Bottle& msg)
 	Bottle result;
     char pidstr[16];
 	sprintf(pidstr,"%d",stdio_process_info.dwProcessId);
-	ConstString out;
+	yarp::os::ConstString out;
 
     if (bSuccess)
     {
         m_StdioVector.Add(new YarpRunProcInfo(command_line,alias,m_PortName,stdio_process_info.hProcess,stdio_process_info.dwProcessId));
         result.addInt(stdio_process_info.dwProcessId);
-        out=ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=CMD pid="+pidstr+"\n";
+        out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=CMD pid="+pidstr+"\n";
     }
     else
 	{
@@ -1325,8 +1321,8 @@ Bottle Run::UserStdio(Bottle& msg)
         FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM,NULL,error,0,errorMsg,1024,NULL);
         
         result.addInt(YARPRUN_ERROR);
-        out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio pid="+pidstr+"\n"
-           +ConstString("Can't open stdio window because ")+errorMsg+"\n";
+        out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio pid="+pidstr+"\n"
+           +yarp::os::ConstString("Can't open stdio window because ")+errorMsg+"\n";
 	}
 
     result.addString(out.c_str());
@@ -1389,7 +1385,7 @@ void ParseCmd(char* cmd_str,char** arg_str)
     }
 }
 
-void Run::CleanZombies()
+void yarp::os::Run::CleanZombies()
 {
 	m_ProcessVector.CleanZombies();
 	m_StdioVector.CleanZombies();
@@ -1397,11 +1393,11 @@ void Run::CleanZombies()
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
-Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 {
-	ConstString alias(msg.find("as").asString());
-	ConstString commandString(msg.find("cmd").toString());
-    ConstString stdio_str(msg.find("stdio").asString());
+	yarp::os::ConstString alias(msg.find("as").asString());
+	yarp::os::ConstString commandString(msg.find("cmd").toString());
+    yarp::os::ConstString stdio_str(msg.find("stdio").asString());
 
 	int  pipe_stdin_to_cmd[2];
 	pipe(pipe_stdin_to_cmd);
@@ -1417,8 +1413,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	{
 	    int error=errno;
 	    
-		ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
-		               +ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
+		yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
+		               +yarp::os::ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
         
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
@@ -1437,14 +1433,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarp","yarp","quiet","write",(ConstString("/")+alias+"/"+"stdout").c_str(),"verbatim",NULL);
+		int ret=execlp("yarp","yarp","quiet","write",(yarp::os::ConstString("/")+alias+"/"+"stdout").c_str(),"verbatim",NULL);
 	    
 	    if (ret==YARPRUN_ERROR)
 	    {
 	        int error=errno;
 	        
-            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
-                           +ConstString("Can't execute stdout because ")+strerror(error)+"\n";
+            yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
+                           +yarp::os::ConstString("Can't execute stdout because ")+strerror(error)+"\n";
 	        
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1467,8 +1463,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		{		    
             int error=errno;
                         
-            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
-                           +ConstString("Can't fork stdin process because ")+strerror(error)+"\n";
+            yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
+                           +yarp::os::ConstString("Can't fork stdin process because ")+strerror(error)+"\n";
 
 		    Bottle result;
             result.addInt(YARPRUN_ERROR);            
@@ -1489,14 +1485,14 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		{
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarp","yarp","quiet","read",(ConstString("/")+alias+"/"+"stdin").c_str(),NULL);
+			int ret=execlp("yarp","yarp","quiet","read",(yarp::os::ConstString("/")+alias+"/"+"stdin").c_str(),NULL);
 			
 		    if (ret==YARPRUN_ERROR)
 	        {
 	            int error=errno;
 	                
-                ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
-                               +ConstString("Can't execute stdin because ")+strerror(error)+"\n";
+                yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdin\n"
+                               +yarp::os::ConstString("Can't execute stdin because ")+strerror(error)+"\n";
                 
                 FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	            fprintf(out_to_parent,out.c_str());
@@ -1518,11 +1514,11 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
 		    { 
-			    if (!bConnW && NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str()))
+			    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 			    {
 			        bConnW=true;
 			    }    
-		        if (!bConnR && NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str()))
+		        if (!bConnR && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str()))
 		        {
 		            bConnR=true;
 		        }
@@ -1530,15 +1526,15 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
 		    }
 		    
-		    //bool bConnW=NetworkBase::connect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());       
-		    //bool bConnR=NetworkBase::connect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+		    //bool bConnW=NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());       
+		    //bool bConnR=NetworkBase::connect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 		    
 		    if (!(bConnR&&bConnW))
 		    {				
-		        if (bConnW) NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		        if (bConnR) NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+		        if (bConnW) NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		        if (bConnR) NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 		        
-	            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
+	            yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
 	           
 	           	Bottle result;
 				result.addInt(YARPRUN_ERROR);
@@ -1562,8 +1558,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 			{				
                 int error=errno;
 		     	
-		        ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
-                               +ConstString("Can't fork command process because ")+strerror(error)+"\n";
+		        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                               +yarp::os::ConstString("Can't fork command process because ")+strerror(error)+"\n";
 	            
 			    Bottle result;
                 result.addInt(YARPRUN_ERROR);	            
@@ -1576,8 +1572,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            fflush(to_yarp_stdout);
 	            fclose(to_yarp_stdout);
 	            
-	            NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		        NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+	            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		        NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 
 				KILL(pid_stdout);
 				KILL(pid_stdin);
@@ -1618,8 +1614,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            {
 	                int error=errno;
 	                
-                    ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
-                                   +ConstString("Can't execute command because ")+strerror(error)+"\n";
+                    yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                                   +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
                     
                 	FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	                fprintf(out_to_parent,out.c_str());
@@ -1628,8 +1624,8 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	                fprintf(stderr,out.c_str());
                     fflush(stderr);
                     
-                    NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		            NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+                    NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 	            }
 
         		delete [] cmd_str;
@@ -1653,7 +1649,7 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 				    
 	            char pidstr[16];
 	            sprintf(pidstr,"%d",pid_cmd);
-	            ConstString *pOut=NULL;
+	            yarp::os::impl::String out;
 	            Bottle result;
 	            
 	            FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
@@ -1661,23 +1657,15 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 	            fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
                 for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	            {
-	                ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
-	                if (pOut) delete pOut;
-	                pOut=new ConstString(tmpStr);
+	                out+=yarp::os::ConstString(buff);
 	            }
 	            fclose(in_from_child);
 	             
-	            if (pOut && pOut->length()==0)
-	            {
-	                delete pOut;
-	                pOut=NULL;
-	            }
-	             
-	            if (pOut)
+	            if (out.length()>0)
 	            {
 	                result.addInt(YARPRUN_ERROR);
-	                NetworkBase::disconnect((ConstString("/")+alias+"/stdout").c_str(),(ConstString("/")+alias+"/user/stdout").c_str());
-		            NetworkBase::disconnect((ConstString("/")+alias+"/user/stdin").c_str(),(ConstString("/")+alias+"/stdin").c_str());
+	                NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+		            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 	            }
 	            else
 	            {
@@ -1695,32 +1683,32 @@ Bottle Run::ExecuteCmdAndStdio(Bottle& msg)
 				    */
 	                
 	                result.addInt(pid_cmd);
-	                pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+ConstString(pidstr)+"\n");
+	                out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()
+	                   +" alias="+alias.c_str()+" cmd="+commandString.c_str()+" pid="
+	                   +pidstr+"\n";
 	            }
 	            
-	            result.addString(pOut->c_str());
-	            fprintf(stderr,pOut->c_str());
+	            result.addString(out.c_str());
+	            fprintf(stderr,out.c_str());
                 fflush(stderr);
   
                 CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
                 CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
- 
-                delete pOut;
                 
 		        return result;
 			}
 		}
 	}
 
-    Bottle result;
+    yarp::os::Bottle result;
     result.addInt(YARPRUN_ERROR);
     result.addString("I should never reach this point!!!\n");
 	return result;
 }
 
-Bottle Run::UserStdio(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 {
-	ConstString alias(msg.find("as").asString());
+	yarp::os::ConstString alias(msg.find("as").asString());
 
 	int  pipe_child_to_parent[2];
 	pipe(pipe_child_to_parent);
@@ -1731,8 +1719,8 @@ Bottle Run::UserStdio(Bottle& msg)
 	{
 		int error=errno;
 	    
-		ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n"
-                       +ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
+		yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n"
+                       +yarp::os::ConstString("Can't fork stdout process because ")+strerror(error)+"\n";
         
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
@@ -1746,23 +1734,23 @@ Bottle Run::UserStdio(Bottle& msg)
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
 		int ret;
-        //ConstString command=ConstString("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
-        //ConstString command=ConstString("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        //yarp::os::ConstString command=yarp::os::ConstString("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        //yarp::os::ConstString command=yarp::os::ConstString("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);
 
 		if (msg.check("geometry"))
 		{
-	        ConstString geometry(msg.find("geometry").asString());
+	        yarp::os::ConstString geometry(msg.find("geometry").asString());
 			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (ConstString("/")+alias+"/user/stdout").c_str(),(ConstString("/")+alias+"/user/stdin").c_str(),NULL);
+			          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
 			//ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		else
 		{
 			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (ConstString("/")+alias+"/user/stdout").c_str(),(ConstString("/")+alias+"/user/stdin").c_str(),NULL);
+			          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
 			//ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		
@@ -1772,8 +1760,8 @@ Bottle Run::UserStdio(Bottle& msg)
 		if (ret==YARPRUN_ERROR)
 		{
 		    int error=errno;
-            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=xterm\n"
-                           +ConstString("Can't execute command because ")+strerror(error)+"\n";
+            yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=xterm\n"
+                           +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1788,52 +1776,42 @@ Bottle Run::UserStdio(Bottle& msg)
 
 	if (IS_PARENT_OF(pid_cmd))
 	{
-	    ConstString rwCmd=ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
+	    yarp::os::ConstString rwCmd=yarp::os::ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
 		m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	    
 	    char pidstr[16];
 	    sprintf(pidstr,"%d",pid_cmd);
 	    
 	    Bottle result;
-	    ConstString *pOut=NULL;
+	    yarp::os::impl::String out;
 	    
 	    FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
 	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
         for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	    {
-	        ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
-	        if (pOut) delete pOut;
-	        pOut=new ConstString(tmpStr);
+	        out+=yarp::os::ConstString(buff);
 	    }
 	    fclose(in_from_child);
 	    
-	    if (pOut && pOut->length()==0)
-	    {
-	        delete pOut;
-	        pOut=NULL;
-	    }
-	    
-	    if (pOut)
+	    if (out.length()>0)
 	    {
 	        result.addInt(YARPRUN_ERROR);
 	    }
 	    else
 	    {
-	        //ConstString rwCmd=ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin"; 
+	        //yarp::os::ConstString rwCmd=yarp::os::ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin"; 
 	        //m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	        result.addInt(pid_cmd);
-	        pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=xterm pid="+ConstString(pidstr)+"\n");
-	        fprintf(stderr,pOut->c_str());
+	        out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()+" alias="+alias.c_str()+" cmd=xterm pid="+pidstr+"\n";
+	        fprintf(stderr,out.c_str());
             fflush(stderr);
 	    }
 	    
-	    result.addString(pOut->c_str());
+	    result.addString(out.c_str());
  
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
-                
-        delete pOut;
                 
 		return result;
 	}
@@ -1843,10 +1821,10 @@ Bottle Run::UserStdio(Bottle& msg)
 	return result;
 }
 
-Bottle Run::ExecuteCmd(Bottle& msg)
+yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 {
-	ConstString alias(msg.find("as").asString());
-	ConstString commandString(msg.find("cmd").toString());
+	yarp::os::ConstString alias(msg.find("as").asString());
+	yarp::os::ConstString commandString(msg.find("cmd").toString());
 
 	int  pipe_child_to_parent[2];
 	pipe(pipe_child_to_parent);
@@ -1857,8 +1835,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	{
 	    int error=errno;
 	    	     	
-	    ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
-                       +ConstString("Can't fork command process because ")+strerror(error)+"\n";
+	    yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                       +yarp::os::ConstString("Can't fork command process because ")+strerror(error)+"\n";
 	            
 		Bottle result;
         result.addInt(YARPRUN_ERROR);	            
@@ -1873,8 +1851,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	{
         int saved_stderr=dup(STDERR_FILENO);
 		int null_file=open("/dev/null",O_WRONLY); 
-        //REDIRECT_TO(STDOUT_FILENO,null_file);
-		//REDIRECT_TO(STDERR_FILENO,null_file);
+        REDIRECT_TO(STDOUT_FILENO,null_file);
+		REDIRECT_TO(STDERR_FILENO,null_file);
 		close(null_file);
         
         char *cmd_str=new char[commandString.length()+1];
@@ -1894,8 +1872,8 @@ Bottle Run::ExecuteCmd(Bottle& msg)
         if (ret==YARPRUN_ERROR)
 	    {
 	        int error=errno;
-            ConstString out=ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
-                           +ConstString("Can't execute command because ")+strerror(error)+"\n";
+            yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                           +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
 	        fprintf(out_to_parent,out.c_str());
@@ -1921,26 +1899,18 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	    sprintf(pidstr,"%d",pid_cmd);
 
         Bottle result;
-        ConstString *pOut=NULL;
+        yarp::os::impl::String out;
          
         FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
 	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
         for (char buff[1024]; fgets(buff,1024,in_from_child);)
 	    {
-	        ConstString tmpStr=pOut?(*pOut)+ConstString(buff):ConstString(buff);
-	        if (pOut) delete pOut;
-	        pOut=new ConstString(tmpStr);
+	        out+=yarp::os::impl::String(buff);
 	    }
 	    fclose(in_from_child);
 	    
-	    if (pOut && pOut->length()==0)
-	    {
-	        delete pOut;
-	        pOut=NULL;
-	    }
-	    
-	    if (pOut)
+	    if (out.length()>0)
 	    {
 	        result.addInt(YARPRUN_ERROR);
 	    }
@@ -1948,17 +1918,15 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 	    {
 	        //m_ProcessVector.Add(new YarpRunProcInfo(commandString,alias,m_PortName,pid_cmd,false));
 	        result.addInt(pid_cmd);
-	        pOut=new ConstString(ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+" pid="+ConstString(pidstr)+"\n");
-	        fprintf(stderr,pOut->c_str());
+	        out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()+" alias="+alias.c_str()+" cmd="+commandString.c_str()+" pid="+pidstr+"\n";
+	        fprintf(stderr,out.c_str());
             fflush(stderr);
 	    }
 	    
-	    result.addString(pOut->c_str());
+	    result.addString(out.c_str());
  
         CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
         CLOSE(pipe_child_to_parent[WRITE_TO_PIPE]);
-                
-        delete pOut;
                 
 		return result;
 	}
@@ -1974,20 +1942,20 @@ Bottle Run::ExecuteCmd(Bottle& msg)
 // API
 /////////////////////////////////////////////////////////////////
 
-int Run::start(const ConstString &node,Property &command,ConstString &keyv)
+int yarp::os::Run::start(const yarp::os::ConstString &node,Property &command,yarp::os::ConstString &keyv)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
 	grp.addString(node.c_str());
 	msg.addList()=grp;
 
-	ConstString dest_srv=node;
+	yarp::os::ConstString dest_srv=node;
 
 	if (command.check("stdio"))
 	{
-		dest_srv=ConstString(command.find("stdio").asString());
+		dest_srv=yarp::os::ConstString(command.find("stdio").asString());
 
 		grp.clear();
 		grp.addString("stdio");
@@ -2027,14 +1995,14 @@ int Run::start(const ConstString &node,Property &command,ConstString &keyv)
 
 	char buff[16];
 	sprintf(buff,"%d",response.get(0).asInt());
-    keyv=ConstString(buff);
+    keyv=yarp::os::ConstString(buff);
 
 	return response.get(0).asInt()>0?0:YARPRUN_ERROR;
 }
 
-int Run::sigterm(const ConstString &node, const ConstString &keyv)
+int yarp::os::Run::sigterm(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
@@ -2053,9 +2021,9 @@ int Run::sigterm(const ConstString &node, const ConstString &keyv)
 	return response.get(0).asString()=="sigterm OK"?0:YARPRUN_ERROR;
 }
 
-int Run::sigterm(const ConstString &node)
+int yarp::os::Run::sigterm(const yarp::os::ConstString &node)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
@@ -2073,9 +2041,9 @@ int Run::sigterm(const ConstString &node)
 	return response.get(0).asString()=="sigtermall OK"?0:YARPRUN_ERROR;
 }
 
-int Run::kill(const ConstString &node, const ConstString &keyv,int s)
+int yarp::os::Run::kill(const yarp::os::ConstString &node, const yarp::os::ConstString &keyv,int s)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
@@ -2095,9 +2063,9 @@ int Run::kill(const ConstString &node, const ConstString &keyv,int s)
 	return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
 }
 
-int Run::ps(const ConstString &node,ACE_Vector<ConstString> &processes)
+int yarp::os::Run::ps(const yarp::os::ConstString &node,yarp::os::ConstString** &processes,int &num_processes)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
@@ -2121,20 +2089,23 @@ int Run::ps(const ConstString &node,ACE_Vector<ConstString> &processes)
     NetworkBase::disconnect(port.getName().c_str(),node.c_str());
     port.close();
 
-	processes.clear();
+    num_processes=response.size();
+
+    processes=new yarp::os::ConstString*[num_processes];
+
 	char buff[16];
-	for (int i=0; i<response.size(); ++i)
+	for (int i=0; i<num_processes; ++i)
 	{
 		sprintf(buff,"%d",response.get(i).find("pid").asInt());
-		processes.push_back(ConstString(buff));
+		processes[i]=new yarp::os::ConstString(buff);
 	}
 
 	return 0;
 }
 
-bool Run::isRunning(const ConstString &node, ConstString &keyv)
+bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv)
 {
-	Bottle msg,grp,response;
+	yarp::os::Bottle msg,grp,response;
 	
 	grp.clear();
 	grp.addString("on");
