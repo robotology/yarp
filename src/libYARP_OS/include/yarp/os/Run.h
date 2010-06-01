@@ -9,18 +9,13 @@
 #ifndef _YARP2_RUN_
 #define _YARP2_RUN_
 
-#include <stdio.h>
 #include <yarp/os/all.h>
-#include <ace/Vector_T.h>
 
 namespace yarp {
   namespace os {
     class Run;
   }
 }
-
-using namespace yarp::os::impl;
-using namespace yarp::os;
 
 // watch out for ACE randomly redefining main, depending on configuration
 #ifdef main
@@ -127,10 +122,12 @@ public:
     /**
      * Get a report of all applications running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
-     * @param processes is a list of applications running on the remote yarprun server.
+     * @param processes is a list of applications running on the remote yarprun server. It must not be allocated
+     * and it is responsability of the caller to delete it.
+     * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-    static int ps(const ConstString &node,ACE_Vector<ConstString> &processes);
+    static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.
@@ -146,14 +143,14 @@ public:
     static int main(int argc, char *argv[]);
 	static Port *pServerPort;
 	static YarpRunInfoVector m_ProcessVector;
+    static YarpRunInfoVector m_StdioVector;
 
-	#if defined(WIN32) || defined(WIN64)
-	static void GetHandles(HANDLE* &lpHandles,DWORD &nCount);
-	static HANDLE hZombieHunter;
-	static HANDLE *aHandlesVector;
-	#else
+#if defined(WIN32) || defined(WIN64)
+	//static HANDLE hZombieHunter;
+	//static HANDLE *aHandlesVector;
+#else
     static void CleanZombies();   
-	#endif
+#endif
 
 protected:
 	static void Help(const char* msg="");
@@ -169,7 +166,6 @@ protected:
 	static inline bool IS_INVALID(int pid){ return pid<0; }
 
 	static ConstString m_PortName;
-	static YarpRunInfoVector m_StdioVector;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
