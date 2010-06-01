@@ -118,8 +118,8 @@ Companion::Companion() {
     add("read",       &Companion::cmdRead,
         "read from the network and print to standard output");
     // not really very useful
-	//add("readwrite",  &Companion::cmdReadWrite,
-    //"read from the network and print to standard output, write to the network from standard input");
+	add("readwrite",  &Companion::cmdReadWrite,
+        "read from the network and print to standard output, write to the network from standard input");
     add("regression", &Companion::cmdRegression,
         "run regression tests, if linked");
     add("resource",  &Companion::cmdResource,
