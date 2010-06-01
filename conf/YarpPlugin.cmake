@@ -195,9 +195,9 @@ ENDMACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper)
 #########################################################################
 # PREPARE_PLUGIN macro lets a developer declare a plugin using a 
 # statement like:
-#    PREPARE_PLUGIN(foo TYPE FooDriver INCLUDE FooDriver.h)
+#    PREPARE_PLUGIN(foo CATEGORY device TYPE FooDriver INCLUDE FooDriver.h)
 # or
-#    PREPARE_PLUGIN(moto TYPE Moto INCLUDE moto.h WRAPPER controlboard)
+#    PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
 # This macro is just a simple parser and calls ADD_PLUGIN_NORMALIZED to
 # do the actual work.
 #
