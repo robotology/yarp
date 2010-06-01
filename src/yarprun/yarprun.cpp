@@ -15,6 +15,6 @@
 
 int main(int argc, char *argv[]) 
 {
-    Network yarp;
+    yarp::os::Network yarp;
     return yarp::os::Run::main(argc,argv);
 }
