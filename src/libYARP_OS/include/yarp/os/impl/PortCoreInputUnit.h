@@ -31,9 +31,9 @@ public:
     // specifically for managing input connections
 
     PortCoreInputUnit(PortCore& owner, InputProtocol *ip, 
-                      bool autoHandshake) : 
+                      bool autoHandshake, bool reversed) : 
         PortCoreUnit(owner), ip(ip), phase(1), access(1),
-        autoHandshake(autoHandshake) {
+        autoHandshake(autoHandshake), reversed(reversed) {
 
         YARP_ASSERT(ip!=NULL);
         closing = false;
@@ -89,6 +89,7 @@ private:
     String name;
     Readable *localReader;
     Route officialRoute;
+    bool reversed;
 
     void closeMain();
 };

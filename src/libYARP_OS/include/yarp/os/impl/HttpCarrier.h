@@ -153,6 +153,9 @@ public:
                 // make sure it isn't a YARP XMLRPC post
                 ok = !checkHeader(header,"POST /RP");
             }
+        } else {
+            // make sure it isn't a MJPEG stream get
+            ok = !checkHeader(header,"GET /?ac");
         }
         return ok;
     }

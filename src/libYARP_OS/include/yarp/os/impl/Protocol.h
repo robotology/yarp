@@ -77,10 +77,11 @@ public:
 
     void setCarrier(const String& carrierName) {
         setRoute(getRoute().addCarrierName(carrierName));
-        YARP_ASSERT(delegate==NULL);
-        delegate = Carriers::chooseCarrier(carrierName);
-        if (delegate!=NULL) {
-            delegate->prepareSend(*this);
+        if (delegate==NULL) {
+            delegate = Carriers::chooseCarrier(carrierName);
+            if (delegate!=NULL) {
+                delegate->prepareSend(*this);
+            }
         }
     }
 
@@ -576,7 +577,10 @@ private:
         return delegate->isLocal();
     }
 
-
+    bool isPush() {
+        if (delegate==NULL) { return true; }
+        return delegate->isPush();
+    }
 
     int messageLen;
     bool pendingAck;

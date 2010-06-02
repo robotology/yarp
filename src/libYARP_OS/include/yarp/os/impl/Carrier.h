@@ -180,6 +180,21 @@ public:
 
     /**
      *
+     * Check if carrier is "push" or "pull" style.  Push means that
+     * the side that initiates a connection is also the one that will 
+     * sending of data or commands.  All native YARP connections are
+     * like this.  A "pull" style is equivalent to automatically sending
+     * a "reverse connection" port command at the start of the connection.
+     *
+     * @return true if carrier is "push" style, false if "pull" style
+     *
+     */
+    virtual bool isPush() {
+        return true;
+    }
+
+    /**
+     *
      * Perform any initialization needed before writing on a connection.
      *
      * @param proto the protocol object, which tracks connection state

@@ -518,7 +518,7 @@ void PortCore::cleanUnits() {
 void PortCore::addInput(InputProtocol *ip) {
     YARP_ASSERT(ip!=NULL);
     stateMutex.wait();
-    PortCoreUnit *unit = new PortCoreInputUnit(*this,ip,autoHandshake);
+    PortCoreUnit *unit = new PortCoreInputUnit(*this,ip,autoHandshake,false);
     YARP_ASSERT(unit!=NULL);
     unit->start();
   
@@ -715,7 +715,24 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
                 }
             }
             if (op!=NULL) {
-                addOutput(op);
+                if (op->isPush()) {
+                    addOutput(op);
+                } else {
+                    /* IP=OP */
+                    // reverse route
+                    op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+                    InputProtocol *ip =  &(op->getInput());
+                    stateMutex.wait();
+                    if (!finished) {
+                        PortCoreUnit *unit = new PortCoreInputUnit(*this,ip,
+                                                                   true,
+                                                                   true);
+                        YARP_ASSERT(unit!=NULL);
+                        unit->start();
+                        units.push_back(unit);
+                    }
+                    stateMutex.post();
+                }
                 bw.appendLine(String("Added output connection from ") + getName() + " to " + dest);
             } else {
                 bw.appendLine(String("Cannot connect to ") + dest);

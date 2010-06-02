@@ -71,7 +71,10 @@ void PortCoreInputUnit::run() {
     PortCommand cmd;
     
     if (autoHandshake) {
-        bool ok = ip->open(getName().c_str());
+        bool ok = true;
+        if (!reversed) {
+            ip->open(getName().c_str());
+        }
         if (!ok) {
             YARP_DEBUG(Logger::get(),String("new input connection to ")+
                        getOwner().getName()+ " is broken");
@@ -126,6 +129,20 @@ void PortCoreInputUnit::run() {
         bool ok = ip->open(""); // anonymous connection
         route = ip->getRoute();
         if (!ok) {
+            done = true;
+        }
+    }
+
+    if (!reversed) {
+        if (!ip->isPush()) {
+            /* IP=OP */
+            OutputProtocol *op = &(ip->getOutput());
+            Route r = op->getRoute();
+            // reverse route
+            op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+                    
+            getOwner().addOutput(op);
+            ip = NULL;
             done = true;
         }
     }
@@ -265,8 +282,9 @@ void PortCoreInputUnit::run() {
             break;
         case 'r':
             /*
-              In YARP implementation, OP = IP.
-              This is the one place we use that information.
+              In YARP implementation, OP=IP.
+              (This information is used rarely, and when used
+              is tagged with OP=IP keyword)
               If it were not true, memory alloc would need to
               reorganized here
             */

@@ -45,6 +45,8 @@ public:
     // can metadata (port-level comms) be inserted?  if not,there is only data.
     virtual bool canEscape() = 0;
 
+    virtual bool isPush() = 0;
+
     virtual bool checkStreams() = 0;
 
     virtual void resetStreams() = 0;
