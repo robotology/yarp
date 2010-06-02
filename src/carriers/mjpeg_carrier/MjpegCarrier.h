@@ -6,7 +6,7 @@
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/NetType.h>
-//#include "MjpegStream.h"
+#include "MjpegStream.h"
 
 #include <string.h>
 
@@ -141,7 +141,7 @@ Expires: Mon, 3 Jan 2000 12:34:56 GMT\n\
 Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross;\n\n";
         Bytes b((char*)target.c_str(),strlen(target.c_str()));
         proto.os().write(b);
-        sender = false;
+        sender = true; // this is a pull connection, not a push
         //MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
         //if (stream==NULL) { return false; }
         //proto.takeStreams(stream);
@@ -156,10 +156,10 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross;\n\n";
             printf("Got response to header: %s\n", txt.c_str());
         } while (txt!="");
 
-        sender = true;
-        //MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
-        //if (stream==NULL) { return false; }
-        //proto.takeStreams(stream);
+        sender = false;
+        MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
+        if (stream==NULL) { return false; }
+        proto.takeStreams(stream);
         printf("Carrier not fully implemented yet...\n");
         return true;
     }

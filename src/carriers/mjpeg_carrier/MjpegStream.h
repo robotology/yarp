@@ -33,13 +33,6 @@ public:
     MjpegStream(TwoWayStream *delegate, bool sender) : sender(sender) {
         this->delegate = delegate;
         firstRound = true;
-        if (sender) {
-            // add a stream ...
-            BufferedConnectionWriter writer(false);
-            PortCommand pc('r',"");
-            pc.write(writer);
-            sis.add(pc.toString());
-        }
     }
 
     virtual ~MjpegStream() {

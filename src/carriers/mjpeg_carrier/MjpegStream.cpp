@@ -1,32 +1,27 @@
 #include "MjpegStream.h"
 
+#include <yarp/os/Image.h>
+
 using namespace yarp::os::impl;
+using namespace yarp::sig;
 using namespace std;
 
 int MjpegStream::read(const Bytes& b) {
+  if (sis.toString().length()==0) {
+    // add a test image ...
+    ImageOf<PixelRgb> img;
+    img.resize(8,8);
+    img.zero();
+    BufferedConnectionWriter writer(false);
+    img.write(writer);
+    sis.add(writer.toString());
+  }
   int result = sis.read(b);
   if (result>0) {
     printf("RETURNING %d bytes\n", result);
     return result;
   }
-  if (result==0) {
-    printf("Reading...\n");
-    if (sender) {
-      //
-    } else {
-      //
-    }
-    if (firstRound) {
-      if (sender) {
-	//
-      } else {
-	//
-      }
-      firstRound = false;
-    }
-  }
-  printf("RETURNING %d bytes\n", result);
-  return (result>0)?result:-1;
+  return -1;
 }
 
 
