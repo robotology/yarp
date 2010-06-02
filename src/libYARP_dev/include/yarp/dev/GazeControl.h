@@ -92,7 +92,7 @@ public:
     * in the absolute reference frame [do not wait for reply] 
     * @param ang: a 3-d vector which contains the desired gazing 
     *         angles (azimuth/elevation/vergence) expressed in the
-    *         absolute reference frame.
+    *         absolute reference frame (degrees).
     * @return true/false on success/failure. 
     *  
     * @note The absolute reference frame for the azimuth/elevation 
@@ -106,7 +106,7 @@ public:
     * in the relative reference frame [do not wait for reply] 
     * @param ang: a 3-d vector which contains the desired gazing 
     *         angles (azimuth/elevation/vergence) expressed in the
-    *         relative reference frame.
+    *         relative reference frame (degrees).
     * @return true/false on success/failure. 
     *  
     * @note The relative reference frame for the azimuth/elevation 
