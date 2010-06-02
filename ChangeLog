@@ -1,3 +1,26 @@
+2010-06-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/carriers/mjpeg_carrier/MjpegCarrier.h: first pass at
+	a carrier for reading writing images over mjpeg-over-http.
+	Optional plugin, you need to select it in CMake.
+	Works enough to read from mjpeg_streamer, and stream to
+	supporting browsers (mozilla etc).  Example 1: if mjpeg_streamer
+	is serving on port 8080, do:
+	  yarp name register /streamer tcp ... 8080
+	then:
+	  yarpview /view
+	then:
+	  yarp connect /view /streamer mjpeg
+	CAREFUL! The connect order is reversed to what you might expect
+	because this is a "pull" protocol rather than a "push" protocol.
+	Example 2: if "yarpdev --device test_grabber --name /grabber" is
+	serving images you'd like to see in a browser, do:
+	  yarp query /grabber
+	get the IP and port number, e.g. 127.0.0.1 and 10012, then in
+	your browser visit something like:
+	  http://127.0.0.1:10012/?action=stream
+	Thanks to Philipp Robbel for suggesting better mjpeg support.
+
 2010-05-31  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* src/libYARP_OS/include/yarp/os/Network.h: Companion::exists()

@@ -95,7 +95,7 @@ public:
                 return false;
             }
         }
-        printf("Got header\n");
+        //printf("Got header\n");
         return true;
     }
 
@@ -126,26 +126,28 @@ public:
         String txt;
         do {
             txt = NetType::readLine(proto.is());
-            printf("Got rest of header: %s\n", txt.c_str());
+            //printf("Got rest of header: %s\n", txt.c_str());
         } while (txt!="");
         return true;
     }
 
     bool respondToHeader(Protocol& proto) {
-        String target = "HTTP/1.0 200 OK\n\
-Connection: close\n\
-Server: yarp/mjpeg_carrier/0.1\n\
-Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\n\
-Pragma: no-cache\n\
-Expires: Mon, 3 Jan 2000 12:34:56 GMT\n\
-Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross;\n\n";
+        String target = "HTTP/1.0 200 OK\r\n\
+Connection: close\r\n\
+Server: yarp/mjpeg_carrier/0.1\r\n\
+Cache-Control: no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0\r\n\
+Pragma: no-cache\r\n\
+Expires: Mon, 3 Jan 2000 12:34:56 GMT\r\n\
+Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
+\r\n\
+--boundarydonotcross\r\n";
         Bytes b((char*)target.c_str(),strlen(target.c_str()));
         proto.os().write(b);
         sender = true; // this is a pull connection, not a push
         //MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
         //if (stream==NULL) { return false; }
         //proto.takeStreams(stream);
-        printf("Carrier not fully implemented yet...\n");
+        printf("*** mjpeg carrier is *very* experimental\n");
         return true;
     }
 
@@ -153,14 +155,14 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross;\n\n";
         String txt;
         do {
             txt = NetType::readLine(proto.is());
-            printf("Got response to header: %s\n", txt.c_str());
+            //printf("Got response to header: %s\n", txt.c_str());
         } while (txt!="");
 
         sender = false;
         MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
         if (stream==NULL) { return false; }
         proto.takeStreams(stream);
-        printf("Carrier not fully implemented yet...\n");
+        printf("*** mjpeg carrier is *very* experimental\n");
         return true;
     }
 

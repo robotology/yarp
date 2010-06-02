@@ -10,6 +10,9 @@
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/ManagedBytes.h>
+#include <yarp/sig/Image.h>
+#include <yarp/sig/ImageNetworkHeader.h>
 
 namespace yarp {
     namespace os {
@@ -27,12 +30,21 @@ private:
     TwoWayStream *delegate;
     StringInputStream sis;
     StringOutputStream sos;
+    yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
+    yarp::sig::ImageNetworkHeader imgHeader;
+    yarp::os::ManagedBytes cimg;
+    int phase;
+    char *cursor;
+    int remaining;
     bool sender;
     bool firstRound;
 public:
     MjpegStream(TwoWayStream *delegate, bool sender) : sender(sender) {
         this->delegate = delegate;
         firstRound = true;
+        phase = 0;
+        cursor = NULL;
+        remaining = 0;
     }
 
     virtual ~MjpegStream() {

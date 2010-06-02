@@ -19,6 +19,7 @@
 #include <yarp/os/impl/IOException.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/IplImage.h>
+#include <yarp/sig/ImageNetworkHeader.h>
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
@@ -763,41 +764,12 @@ void Image::wrapIplImage(void *iplImage) {
 
 
 
-
-#include <yarp/os/NetInt32.h>
-#include <yarp/os/begin_pack_for_net.h>
-
-class YARPImagePortContentHeader
-{
-public:
-
-    yarp::os::NetInt32 listTag;
-    yarp::os::NetInt32 listLen;
-    yarp::os::NetInt32 paramNameTag;
-    yarp::os::NetInt32 paramName;
-    yarp::os::NetInt32 paramIdTag;
-    yarp::os::NetInt32 id;
-    yarp::os::NetInt32 paramListTag;
-    yarp::os::NetInt32 paramListLen;
-    yarp::os::NetInt32 depth;
-    yarp::os::NetInt32 imgSize;
-    yarp::os::NetInt32 quantum;
-    yarp::os::NetInt32 width;
-    yarp::os::NetInt32 height;
-    yarp::os::NetInt32 paramBlobTag;
-    yarp::os::NetInt32 paramBlobLen;
-
-} PACKED_FOR_NET;
-
-#include <yarp/os/end_pack_for_net.h>
-
-
 bool Image::read(yarp::os::ConnectionReader& connection) {
     
     // auto-convert text mode interaction
     connection.convertTextMode();
     
-    YARPImagePortContentHeader header;
+    ImageNetworkHeader header;
     
     bool ok = connection.expectBlock((char*)&header,sizeof(header));
     if (!ok) return false;
@@ -866,8 +838,9 @@ bool Image::read(yarp::os::ConnectionReader& connection) {
 
 
 bool Image::write(yarp::os::ConnectionWriter& connection) {
-    YARPImagePortContentHeader header;
-
+    ImageNetworkHeader header;
+    header.setFromImage(*this);
+    /*
     header.listTag = BOTTLE_TAG_LIST;
     header.listLen = 4;
     header.paramNameTag = BOTTLE_TAG_VOCAB;
@@ -883,6 +856,7 @@ bool Image::write(yarp::os::ConnectionWriter& connection) {
     header.height = height();
     header.paramBlobTag = BOTTLE_TAG_BLOB;
     header.paramBlobLen = getRawImageSize();
+    */
     
     connection.appendBlock((char*)&header,sizeof(header));
     unsigned char *mem = getRawImage();
