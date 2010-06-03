@@ -103,12 +103,13 @@ int MjpegStream::read(const Bytes& b) {
     s = NetType::readLine(delegate->getInputStream());
     if (s!="Content-Type: image/jpeg") {
       printf("Unknown content type - %s\n", s.c_str());
-      return -1;
+      continue;
     }
     s = NetType::readLine(delegate->getInputStream());
     Bottle b(s.c_str());
     if (b.get(0).asString()!="Content-Length:") {
       printf("Expected Content-Length: got - %s\n", b.get(0).asString().c_str());
+      continue;
     }
     int len = b.get(1).asInt();
     //printf("Length is %d\n", len);
