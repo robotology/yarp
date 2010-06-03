@@ -238,11 +238,6 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool stopControl()=0;
-
-    /** Resume the gaze controller. [wait for reply]
-    * @return true/false on success/failure. 
-    */
-    virtual bool resumeControl()=0;
 };
 
 #endif
