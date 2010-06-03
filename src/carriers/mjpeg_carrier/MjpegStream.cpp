@@ -30,16 +30,19 @@ void net_error_exit (j_common_ptr cinfo) {
   longjmp(myerr->setjmp_buffer, 1);
 }
 
-
-
 boolean fill_net_input_buffer (j_decompress_ptr cinfo)
 {
   /* The whole JPEG data is expected to reside in the supplied memory
    * buffer, so any request for more data beyond the given buffer size
    * is treated as an error.
    */
-  printf("net input image fail\n");
-  exit(1);
+  JOCTET *mybuffer = (JOCTET *) cinfo->client_data;
+  fprintf(stderr, "JPEG data unusually large\n");
+  /* Insert a fake EOI marker */
+  mybuffer[0] = (JOCTET) 0xFF;
+  mybuffer[1] = (JOCTET) JPEG_EOI;
+  cinfo->src->next_input_byte = mybuffer;
+  cinfo->src->bytes_in_buffer = 2;
   return TRUE;
 }
 
@@ -121,6 +124,8 @@ int MjpegStream::read(const Bytes& b) {
     NetType::readFull(delegate->getInputStream(),cimg.bytes());
     struct jpeg_decompress_struct cinfo;
     struct net_error_mgr jerr;
+    JOCTET error_buffer[4];
+    cinfo.client_data = &error_buffer;
     cinfo.err = jpeg_std_error(&jerr.pub);
     jerr.pub.error_exit = net_error_exit;
 
