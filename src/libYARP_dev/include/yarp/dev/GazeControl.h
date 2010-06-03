@@ -233,8 +233,7 @@ public:
     */
     virtual bool checkMotionDone(bool *f)=0;
 
-    /** Ask for an immediate stop motion and suspend the gaze
-    *   controller. [wait for reply]
+    /** Ask for an immediate stop of the motion. [wait for reply]
     * @return true/false on success/failure. 
     */
     virtual bool stopControl()=0;
