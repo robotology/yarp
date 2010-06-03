@@ -3,17 +3,33 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
+#include <yarp/os/impl/Logger.h>
+
 #include <jpeglib.h>
+#include <setjmp.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace std;
+
+struct net_error_mgr {
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+};
+typedef struct net_error_mgr *net_error_ptr;
 
 typedef jpeg_source_mgr *net_src_ptr;
 
 void init_net_source (j_decompress_ptr cinfo) {
   //net_src_ptr src = (net_src_ptr) cinfo->src;
 }
+
+void net_error_exit (j_common_ptr cinfo) {
+  net_error_ptr myerr = (net_error_ptr) cinfo->err;
+  (*cinfo->err->output_message) (cinfo);
+  longjmp(myerr->setjmp_buffer, 1);
+}
+
 
 
 boolean fill_net_input_buffer (j_decompress_ptr cinfo)
@@ -78,7 +94,7 @@ int MjpegStream::read(const Bytes& b) {
       phase = 0;
     }
   }
-  if (phase==0) {
+  while (phase==0 && delegate->getInputStream().isOk()) {
     String s = "";
     do {
       s = NetType::readLine(delegate->getInputStream());
@@ -103,8 +119,16 @@ int MjpegStream::read(const Bytes& b) {
     cimg.allocate(len);
     NetType::readFull(delegate->getInputStream(),cimg.bytes());
     struct jpeg_decompress_struct cinfo;
-    struct jpeg_error_mgr jerr;
-    cinfo.err = jpeg_std_error(&jerr);
+    struct net_error_mgr jerr;
+    cinfo.err = jpeg_std_error(&jerr.pub);
+    jerr.pub.error_exit = net_error_exit;
+
+    if (setjmp(jerr.setjmp_buffer)) {
+      YARP_ERROR(Logger::get(),"Skipping a problematic JPEG frame");
+      jpeg_destroy_decompress(&cinfo);
+      continue;
+    }
+
     jpeg_create_decompress(&cinfo);
     jpeg_net_src(&cinfo,cimg.get(),cimg.length());
     jpeg_read_header(&cinfo, TRUE);

@@ -31,6 +31,16 @@ Content-Length: %d\r\n\r\n", len);
     Bytes hbuf(hdr,strlen(hdr));
     p->os().write(hbuf);
     Bytes buf((char *)data,len);
+    /*
+      // add corruption now and then, for testing.
+    static int ct = 0;
+    ct++;
+    if (ct==50) {
+        printf("Adding corruption\n");
+        buf.get()[0] = 'z';
+        ct = 0;
+    }
+    */
     p->os().write(buf);
     sprintf(hdr,"\r\n--boundarydonotcross\r\n");
     Bytes hbuf2(hdr,strlen(hdr));
