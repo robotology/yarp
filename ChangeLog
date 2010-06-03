@@ -15,7 +15,7 @@
 	because this is a "pull" protocol rather than a "push" protocol.
 	Example 2: if "yarpdev --device test_grabber --name /grabber" is
 	serving images you'd like to see in a browser, do:
-	  yarp query /grabber
+	  yarp name query /grabber
 	get the IP and port number, e.g. 127.0.0.1 and 10012, then in
 	your browser visit something like:
 	  http://127.0.0.1:10012/?action=stream
