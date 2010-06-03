@@ -10,8 +10,6 @@
 
 \author Paul Fitzpatrick
 
-THIS PAGE IS INCOMPLETE, APOLOGIES...
-
 In YARP, a "plugin" is an implementation of some service for which
 there are many choices and alternatives.  There are two basic types of
 plugin for YARP: devices and carriers.  Devices implement 
@@ -33,126 +31,18 @@ Let's take the FakeFrameGrabber example device developed in \ref note_devices
 and turn it into a plugin.  Make a directory called "fake_grabber"
 (or whatever you like), and add the following
 as "fake_grabber/FakeFrameGrabber.h".
-
-\code
-#include <yarp/os/all.h>
-#include <yarp/dev/all.h>
-class FakeFrameGrabber : public IFrameGrabberImage, 
-			 public yarp::dev::DeviceDriver {
-private:
-    int w, int h;
-public:
-    FakeFrameGrabber() {
-	h = w = 0;
-    }
-
-    bool open(int w, int h) {
-	this->w = w;
-	this->h = h;
-	return w>0 && h>0;
-    }
-
-    virtual bool open(yarp::os::Searchable& config) { 
-	// extract width and height configuration, if present
-	// otherwise use 128x128
-	int desiredWidth = config.check("w",Value(128)).asInt();
-	int desiredHeight = config.check("h",Value(128)).asInt();
-	return open(desiredWidth,desiredHeight);
-    }
-
-    virtual bool close() { 
-	return true; // easy
-    }
-
-    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
-
-    virtual int height() const {
-	return h;
-    }
-
-    virtual int width() const {
-	return w;
-    }
-};
-\endcode
+\include example/plugins/userlib/fake_grabber/FakeFrameGrabber.h
 
 And add this as "fake_grabber/FakeFrameGrabber.cpp":
+\include example/plugins/userlib/fake_grabber/FakeFrameGrabber.h
 
-\code
-#include "FakeFrameGrabber.h"
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
-bool FakeFrameGrabber::getImage(ImageOf<PixelRgb>& image) {
-	Time::delay(0.5);  // simulate waiting for hardware to report
-	image.resize(w,h);
-	image.zero();
-	return true;
-}
-\endcode
-
-Here's a quick test program for the device, call it "fake_grabber/fake_grabber_test.cpp":
-
-\code
-#include <stdio.h>
-#include "FakeFrameGrabber.h"
-using namespace yarp::os;
-using namespace yarp::sig;
-using namespace yarp::dev;
-int main(int argc, char *argv[]) {
-  DriverCreator *fake_factory = 
-    new DriverCreatorOf<FakeFrameGrabber>("fake_grabber","grabber","FakeFrameGrabber");
-  Drivers::factory().add(fake_factory); // hand factory over to YARP
-
-  PolyDriver dd("fake_grabber");
-  if (!dd.isValid()) {
-    printf("fake_grabber not available\n");
-    exit(1);
-  }
-  IFrameGrabberImage *grabber;
-  dd.view(grabber);
-  if (grabber==NULL) {
-    printf("*** Device failed to supply images\n");
-    return 1;
-  }
-  printf("*** Device can supply images\n");
-  ImageOf<PixelRgb> img;
-  if (grabber->getImage(img)) {
-    printf("*** Got a %dx%d image\n", img.width(), img.height());
-  } else {
-    printf("Failed to read an image\n");
-    return 1;
-  }
-  return 0;
-}
-\endcode
+Here's a quick test program for the device, call it "fake_grabber/test_fake_grabber.cpp":
+\include example/plugins/userlib/fake_grabber/test_fake_grabber.cpp
 
 YARP plugins need a CMakeLists.txt that says how to build them.  The
 CMakeLists.txt is written in the following style (this 
 would be "fake_grabber/CMakeLists.txt"):
-
-\verbatim
-  cmake_require_minimum(VERSION 2.6)
-  if (COMPILE_PLUGIN_LIBRARY)
-    # Declare a device called "foo", with C++ type "FooDriver" defined
-    # in FooDriver.h.  This code sets up an CMake option, and prepares
-    # some initialization boilerplate code if needed.
-    # If the device is not selected, "SKIP_foo" will be defined.
-    PREPARE_PLUGIN(fake_grabber CATEGORY device TYPE FakeFrameGrabber INCLUDE FakeFrameGrabber.h WRAPPER grabber)
-  endif (COMPILE_DEVICE_LIBRARY)
-  if (NOT SKIP_foo)
-    # Find any libraries needed - just YARP for this example
-    find_package(YARP REQUIRED)
-    include_directories(${YARP_INCLUDE_DIRS})
-    # ... find and use other needed libraries ...
-    add_library(fake_grabber FakeFrameGrabber.cpp FakeFrameGrabber.h)
-    target_link_libraries(fake_grabber ${YARP_LIBRARIES})
-    if (NOT COMPILE_PLUGIN_LIBRARY)
-      add_executable(test_fake_grabber test_fake_grabber.cpp)
-      target_link_libraries(test_fake_grabber fake_grabber)
-    endif (NOT COMPILE_DEVICE_LIBRARY)
-  endif (NOT SKIP_foo)
-\endverbatim
+\include example/plugins/userlib/fake_grabber/CMakeLists.txt
 
 This style is used so that individual plugin directories can be
 compiled standalone for testing purposes, but will also work
@@ -196,33 +86,18 @@ helper functions for this.  We'll just have one plugin for
 now, the fake_grabber device.
 Here's the modified
 "userlib/CMakeLists.txt" file:
-
-\verbatim
-cmake_minimum_required(VERSION 2.6)
-find_package(YARP REQUIRED)
-include_directories(${YARP_INCLUDE_DIRS})
-include(${YARP_MODULE_PATH}/YarpPlugin.cmake)
-begin_plugin_library(userlib)
-add_subdirectory(fake_grabber)
-end_plugin_library(userlib)
-add_executable(test_userlib test_userlib.cpp)
-target_link_libraries(test_userlib ${YARP_LIBRARIES})
-target_link_libraries(test_userlib userlib)
-\endverbatim
+\include example/plugin/userlib/CMakeLists.txt
 
 This assumes that we have moved "fake_grabber" into the "userlib" 
 directory.
 
 Now, let's update our test program, "userlib/test_userlib.cpp":
-\code
-#include <stdio.h>
-#include <yarp/dev/all.h>
-using namespace yarp::dev;
-int main(int argc, char *argv[]) {
-  printf("Test program stub\n");
-  return 0;
-}
-\endcode
+\include example/plugin/userlib/test_userlib.cpp
+
+We can now use cmake to configure and build, either in the "userlib"
+directory, or in the "userlib/fake_grabber" directory.  These files
+are available in the YARP source package, under the directory
+"example/plugins".
 
  *
  */

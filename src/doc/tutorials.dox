@@ -17,7 +17,7 @@ Here are a collection of tutorials on various topics in YARP.
 \li \ref yarp_without_yarp
 \li \ref note_devices
 \li \ref add_a_plugin
-\li \ref add_a_device
+\li (older method) \ref add_a_device
 \li \ref gpu_tutorial
 \li \ref carrier_expert
 \li \ref yarp_guts
