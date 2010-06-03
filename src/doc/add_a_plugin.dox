@@ -31,18 +31,18 @@ Let's take the FakeFrameGrabber example device developed in \ref note_devices
 and turn it into a plugin.  Make a directory called "fake_grabber"
 (or whatever you like), and add the following
 as "fake_grabber/FakeFrameGrabber.h".
-\include example/plugins/userlib/fake_grabber/FakeFrameGrabber.h
+\include example/plugin/userlib/fake_grabber/FakeFrameGrabber.h
 
 And add this as "fake_grabber/FakeFrameGrabber.cpp":
-\include example/plugins/userlib/fake_grabber/FakeFrameGrabber.h
+\include example/plugin/userlib/fake_grabber/FakeFrameGrabber.h
 
 Here's a quick test program for the device, call it "fake_grabber/test_fake_grabber.cpp":
-\include example/plugins/userlib/fake_grabber/test_fake_grabber.cpp
+\include example/plugin/userlib/fake_grabber/test_fake_grabber.cpp
 
 YARP plugins need a CMakeLists.txt that says how to build them.  The
 CMakeLists.txt is written in the following style (this 
 would be "fake_grabber/CMakeLists.txt"):
-\include example/plugins/userlib/fake_grabber/CMakeLists.txt
+\include example/plugin/userlib/fake_grabber/CMakeLists.txt
 
 This style is used so that individual plugin directories can be
 compiled standalone for testing purposes, but will also work
