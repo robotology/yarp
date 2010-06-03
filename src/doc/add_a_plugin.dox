@@ -49,12 +49,7 @@ compiled standalone for testing purposes, but will also work
 when bundled into a larger library.  If we configure and compile
 this directory, we get a test program that we can run straight 
 away.  If it works, then we could immediately plug this device into
-YARP.  In directory ${YARP_ROOT}/src/modules/CMakeLists.txt, there
-is a list of device directories.  We just add another line to
-insert fake_grabber.  There is no requirement that the fake_grabber
-subdirectory be in any particular location.  Similarly, carriers
-can be added in $YARP_ROOT/src/carriers/CMakeLists.txt.
-Or we can make our own plugin library, and leave YARP untouched.
+YARP. 
 
 
 \section add_a_plugin_userlib Making a plugin library
@@ -98,6 +93,14 @@ We can now use cmake to configure and build, either in the "userlib"
 directory, or in the "userlib/fake_grabber" directory.  These files
 are available in the YARP source package, under the directory
 "example/plugins".
+
+\section add_a_plugin_in_yarp Adding a plugin into YARP
+
+ In directory ${YARP_ROOT}/src/modules/CMakeLists.txt, there
+is a list of device directories.  We could just add another line to
+insert fake_grabber.  There is no requirement that the fake_grabber
+subdirectory be in any particular location.  Similarly, carriers
+can be added in $YARP_ROOT/src/carriers/CMakeLists.txt.
 
  *
  */
