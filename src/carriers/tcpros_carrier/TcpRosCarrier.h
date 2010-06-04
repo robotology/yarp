@@ -22,12 +22,14 @@ private:
     bool sender;
     int headerLen1;
     int headerLen2;
+    bool isService;
 public:
     TcpRosCarrier() {
         firstRound = true;
         sender = false;
         headerLen1 = 0;
         headerLen2 = 0;
+        isService = false;
     }
 
     virtual Carrier *create() {
@@ -67,8 +69,9 @@ public:
     }
 
     virtual bool isPush() {
-        // if topic-like, false ; if service-like, true!
-        return false;
+        // if topic-like, pull ; if service-like, push!
+        printf("tcpros push? %d\n", isService);
+        return isService;
     }
 
     virtual bool isLocal() {

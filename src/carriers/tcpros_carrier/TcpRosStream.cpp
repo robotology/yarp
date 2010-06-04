@@ -17,6 +17,15 @@ int TcpRosStream::read(const Bytes& b) {
     }
   }
   if (phase==0) {
+    if (expectTwiddle) {
+      // I have no idea what this is yet, but let's consume it for now.
+      // It is probably frightfully important.
+      char twiddle[1];
+      Bytes twiddle_buf(twiddle,1);
+      NetType::readFull(delegate->getInputStream(),twiddle_buf);
+      printf("Twiddle was %d\n", (int)twiddle[0]);
+    }
+
     char mlen[4];
     Bytes mlen_buf(mlen,4);
     int res = NetType::readFull(delegate->getInputStream(),mlen_buf);

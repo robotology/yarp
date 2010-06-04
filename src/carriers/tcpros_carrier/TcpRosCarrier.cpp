@@ -48,6 +48,7 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
     if (modeValue=="") {
         mode = "service";
         modeValue = n.getCarrierModifier("service");
+        isService = true;
     }
     if (modeValue=="") {
         printf("need to be a service or topic, this will break\n");
@@ -105,9 +106,14 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
 
-    // we are a pull stream
-    sender = false;
-    TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender);
+    isService = (header.data.find("request_type")!=header.data.end());
+    printf("tcpros %s mode\n", isService?"service":"topic");
+
+    // we may be a pull stream
+    sender = isService;
+    TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
+                                            isService);
+
     if (stream==NULL) { return false; }
     proto.takeStreams(stream);
     printf("tcpros carrier not implemented yet\n");        

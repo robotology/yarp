@@ -29,11 +29,14 @@ private:
     char *cursor;
     int remaining;
     int phase;
+    bool expectTwiddle;
 public:
-    TcpRosStream(TwoWayStream *delegate, bool sender) : sender(sender) {
+    TcpRosStream(TwoWayStream *delegate, bool sender,
+                 bool service) : sender(sender) {
         this->delegate = delegate;
         firstRound = true;
         phase = 0;
+        expectTwiddle = service&&sender;
     }
 
     virtual ~TcpRosStream() {

@@ -23,9 +23,7 @@ APIs. Assumes roscore and "talker.cpp" tutorial example running:
 
   yarp name register /talker/chatter tcp ... 38265
 
-At that point we stop since port number 38265 talks the TCPROS 
-protocol, rather than XMLRPC.
-
+now we switch over to tcpros_carrier...
 
 reading from ros publishers:
 ----------------------------
@@ -45,8 +43,6 @@ sorts; easy to do, but punting for now...
 
 writing to ros subscribers:
 ---------------------------
-
-tcpros_carrier cannot quite write to ros subscribers just yet.
 
 Start a writer (or make a program with an output port):
   yarp write /write
@@ -93,15 +89,22 @@ to give blob data.  On the "yarp write" terminal, do:
   [type] {4 0 0 0 97 32 97 0}
 
 The 4-bytes string "a a" (with a null termination) should appear
-on the listener terminal.
+on the listener terminal.  Actually I don't think ROS wants the
+null.
 
 
 writing to ros services
 -----------------------
 
-this is actually a much easier case (data flow is same direction
-as yarp), but not done yet.  I did a quick proof of concept and
-it is very doable...
+v1=`echo "lookupNode dummy_caller_id /add_two_ints_server" | yarp rpc xmlrpc://roscore | sed "s/.*://" | sed "s|/.*||"`
+yarp name unregister /add_two_ints_server
+yarp name register /add_two_ints_server tcp localhost $v1
+v2=`echo "requestTopic dummy /add_two_ints ((TCPROS))" | yarp rpc xmlrpc://add_two_ints_server | sed "s/.* //" | sed "s/[^0-9]//"`
+yarp name unregister /adder
+yarp name register /adder tcp localhost $v2
+
+ echo "{ 8 0 0 0   0 0 0 0   2 0 0 0   0 0 0 0}" | yarp rpc tcpros+service./add_two_ints://adder )
+# get back { 10 0 0 0 0 0 0 0 }, which is 8 + 2
 
 
 
