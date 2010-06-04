@@ -20,27 +20,38 @@ void toXmlRpcValue(Value& vin, XmlRpcValue& vout) {
     } else if (vin.isList()) {
         Bottle *bot = vin.asList();
         bool struc = true;
-        for (int i=0; i<bot->size(); i++) {
-            Value& vi = bot->get(i);
-            if (!vi.isList()) {
-                struc = false;
-                break;
-            }
-            if (vi.asList()->size()!=2) {
-                struc = false;
-                break;
+        int offset = 0;
+        ConstString tag = bot->get(0).asString();
+        if (tag=="list") {
+            struc = false;
+            offset = 1;
+        } else if (tag=="dict") {
+            struc = true;
+            offset = 1;
+        } else {
+            // auto-detect
+            for (int i=0; i<bot->size(); i++) {
+                Value& vi = bot->get(i);
+                if (!vi.isList()) {
+                    struc = false;
+                    break;
+                }
+                if (vi.asList()->size()!=2) {
+                    struc = false;
+                    break;
+                }
             }
         }
         if (struc) {
             vout = XmlRpcValue();
-            for (int i=0; i<bot->size(); i++) {
+            for (int i=offset; i<bot->size(); i++) {
                 Bottle *boti = bot->get(i).asList();
                 XmlRpcValue& vouti=vout[boti->get(0).toString()]=XmlRpcValue();
                 toXmlRpcValue(boti->get(1),vouti);
             }
         } else {
             vout = XmlRpcValue();
-            for (int i=0; i<bot->size(); i++) {
+            for (int i=offset; i<bot->size(); i++) {
                 XmlRpcValue& vouti = vout[i] = XmlRpcValue();
                 toXmlRpcValue(bot->get(i),vouti);
             }

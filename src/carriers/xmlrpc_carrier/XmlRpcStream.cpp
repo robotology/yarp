@@ -9,7 +9,7 @@ using namespace XmlRpc;
 using namespace std;
 
 
-Value toValue(XmlRpcValue& v) {
+Value toValue(XmlRpcValue& v, bool outer) {
   int t = v.getType();
   switch (t) {
   case XmlRpcValue::TypeInt:
@@ -28,7 +28,16 @@ Value toValue(XmlRpcValue& v) {
       for (int i=0; i<v.size(); i++) {
 	XmlRpcValue& v2 = v[i];
 	if (v2.getType()!=XmlRpcValue::TypeInvalid) {
-	  bot->add(toValue(v2));
+	  Value v = toValue(v2,false);
+	  if (i==0) {
+	    ConstString tag = v.asString();
+	    if (tag=="list"||tag=="dict") {
+	      if (!outer) {
+		bot->addString("list");
+	      }
+	    }
+	  }
+	  bot->add(v);
 	}
       }
       return vbot;
@@ -39,6 +48,7 @@ Value toValue(XmlRpcValue& v) {
       Value vbot;
       Bottle *bot = vbot.asList();
       XmlRpcValue::ValueStruct& vals = v;
+      bot->addString("dict");
       for (XmlRpcValue::ValueStruct::iterator it = vals.begin();
 	   it!= vals.end();
 	   it++) {
@@ -46,7 +56,7 @@ Value toValue(XmlRpcValue& v) {
 	Bottle& sub = bot->addList();
 	sub.addString(it->first.c_str());
 	if (v2.getType()!=XmlRpcValue::TypeInvalid) {
-	  sub.add(toValue(v2));
+	  sub.add(toValue(v2,false));
 	}
       }
       return vbot;
@@ -108,7 +118,7 @@ int XmlRpcStream::read(const Bytes& b) {
 	  prefix += " ";
 	}
 	//printf("xmlrpc block is %s\n", xresult.toXml().c_str());
-	Value v = toValue(xresult);
+	Value v = toValue(xresult,true);
 	if (!v.isNull()) {
 	  sis.reset((prefix + v.toString().c_str() + "\n").c_str());
 	} else {
