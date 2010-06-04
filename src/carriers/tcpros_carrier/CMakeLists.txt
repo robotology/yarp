@@ -11,4 +11,8 @@ if (NOT SKIP_tcpros_carrier)
     TcpRosStream.h TcpRosStream.cpp
     RosHeader.h RosHeader.cpp
     BlobHeader.h)
+  target_link_libraries(rostcp_carrier ${YARP_LIBRARIES})
+
+  add_executable(yarpros yarpros.cpp)
+  target_link_libraries(yarpros YARP_init ${YARP_LIBRARIES})
 endif (NOT SKIP_tcpros_carrier)
