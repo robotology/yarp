@@ -89,9 +89,7 @@ public:
 
     virtual bool checkHeader(const Bytes& header);
 
-    virtual void setParameters(const Bytes& header) {
-        // no parameters - no carrier variants
-    }
+    virtual void setParameters(const Bytes& header);
 
     // Now, the initial hand-shaking
 
@@ -146,7 +144,6 @@ public:
     virtual bool expectAck(Protocol& proto) {
         return true;
     }
-
 };
 
 #endif

@@ -88,9 +88,12 @@ Now type this to "yarp rpcserver" and hit return:
   [type] 1 "" (TCPROS YOURHOSTNAME 10015)
 
 Done!  The subscriber should now have connected with our /write
-port, and be waiting for us to give it data.
+port, and be waiting for us to give it data.  Currently, we need
+to give blob data.  On the "yarp write" terminal, do:
+  [type] {4 0 0 0 97 32 97 0}
 
-BUT WE DON'T YET SEND IT RIGHT - no ROS headers etc.
+The 4-bytes string "a a" (with a null termination) should appear
+on the listener terminal.
 
 
 writing to ros services

@@ -57,6 +57,8 @@ string RosHeader::writeHeader() {
 
 
 bool RosHeader::readHeader(const string& bin) {
+    data.clear();
+
     unsigned int len = bin.length();
     char *at = (char*) bin.c_str();
 
@@ -66,7 +68,14 @@ bool RosHeader::readHeader(const string& bin) {
         at += 4;
         len -= 4;
         string keyval(at,slen);
-        printf("keyval %s\n", keyval.c_str());
+        size_t delim = keyval.find_first_of("=",0);
+        if (delim == string::npos) {
+            fprintf(stderr, "warning: corrupt ROS header\n");
+        }
+        string key = keyval.substr(0,delim);
+        string val = keyval.substr(delim+1);
+        printf("key %s => val %s\n", key.c_str(), val.c_str());
+        data[key] = val;
         at += slen;
         len -= slen;
     }
