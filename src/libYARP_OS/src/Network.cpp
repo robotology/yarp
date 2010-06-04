@@ -326,3 +326,8 @@ bool NetworkBase::checkNetwork() {
 bool NetworkBase::initialized() {
     return __yarp_is_initialized>0;
 }
+
+
+void NetworkBase::setVerbosity(int verbosity) {
+    Logger::get().setVerbosity(verbosity);
+}

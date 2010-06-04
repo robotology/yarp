@@ -305,6 +305,15 @@ public:
      *
      */
     static bool initialized();
+
+    /**
+     *
+     * Set level of verbosity of YARP messages.
+     *
+     * @param verbosity -1 inhibits messages, 0 is normal, 1 is verbose
+     *
+     */
+    static void setVerbosity(int verbosity);
 };
 
 /**
