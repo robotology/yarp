@@ -20,10 +20,14 @@ class yarp::os::impl::TcpRosCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
+    int headerLen1;
+    int headerLen2;
 public:
     TcpRosCarrier() {
         firstRound = true;
         sender = false;
+        headerLen1 = 0;
+        headerLen2 = 0;
     }
 
     virtual Carrier *create() {
@@ -62,9 +66,9 @@ public:
         return true;
     }
 
-    // The initiator of a tcpros topic connection may not retain the initiative.
-    virtual bool autoReverse() {
-        return true;
+    virtual bool isPush() {
+        // if topic-like, false ; if service-like, true!
+        return false;
     }
 
     virtual bool isLocal() {
@@ -83,18 +87,7 @@ public:
         }
     }
 
-    virtual bool checkHeader(const Bytes& header) {
-        if (header.length()!=8) {
-            return false;
-        }
-        const char *target = "NONONONO";
-        for (int i=0; i<8; i++) {
-            if (header.get()[i] != target[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
+    virtual bool checkHeader(const Bytes& header);
 
     virtual void setParameters(const Bytes& header) {
         // no parameters - no carrier variants
@@ -107,14 +100,7 @@ public:
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto) {
-        // NO HEADER -- WAIT
-
-        //String target = "NONONONO";
-        //Bytes b((char*)target.c_str(),8);
-        //proto.os().write(b);
-        return true;
-    }
+    virtual bool sendHeader(Protocol& proto);
 
     virtual bool expectSenderSpecifier(Protocol& proto);
 
@@ -132,14 +118,7 @@ public:
         return true;
     }
 
-    virtual bool expectReplyToHeader(Protocol& proto) {
-        sender = true;
-        //TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender);
-        //if (stream==NULL) { return false; }
-        //proto.takeStreams(stream);
-        printf("tcpros carrier not implemented yet\n");        
-        return true;
-    }
+    virtual bool expectReplyToHeader(Protocol& proto);
 
     virtual bool isActive() {
         return true;

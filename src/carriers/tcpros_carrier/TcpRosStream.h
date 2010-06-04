@@ -6,8 +6,7 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
-#include <yarp/os/impl/StringInputStream.h>
-#include <yarp/os/impl/StringOutputStream.h>
+#include "BlobHeader.h"
 
 namespace yarp {
     namespace os {
@@ -17,20 +16,24 @@ namespace yarp {
     }
 }
 
+
 class yarp::os::impl::TcpRosStream : public TwoWayStream, 
                                      public InputStream,
                                      public OutputStream
 {
 private:
     TwoWayStream *delegate;
-    StringInputStream sis;
-    StringOutputStream sos;
     bool sender;
     bool firstRound;
+    BlobNetworkHeader header;
+    char *cursor;
+    int remaining;
+    int phase;
 public:
     TcpRosStream(TwoWayStream *delegate, bool sender) : sender(sender) {
         this->delegate = delegate;
         firstRound = true;
+        phase = 0;
     }
 
     virtual ~TcpRosStream() {

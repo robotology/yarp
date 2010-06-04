@@ -70,9 +70,8 @@ public:
     }
 
     virtual void getHeader(const Bytes& header) {
-        // for now, expect XMLRPC++, which posts with uri /RPC2
-        const char *target = "POST /RP";
-        for (int i=0; i<8 && i<header.length(); i++) {
+        const char *target = "POST /RC";
+        for (int i=0; i<6 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }
@@ -82,8 +81,8 @@ public:
         if (header.length()!=8) {
             return false;
         }
-        const char *target = "POST /RP";
-        for (int i=0; i<8; i++) {
+        const char *target = "POST /";
+        for (int i=0; i<6; i++) {
             if (header.get()[i] != target[i]) {
                 return false;
             }

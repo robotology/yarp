@@ -63,7 +63,7 @@ void HttpTwoWayStream::apply(char ch) {
                 // translate this to a form
                 if (part[0]=='+') { part[0] = ' '; }
                 String org = part;
-                part = "<p><form method=post>";
+                part = "<p><form method=post action='/form'>";
 				unsigned int i=0;
                 for (i=0; i<org.length(); i++) {
                     if (org[i]=='"') {
@@ -294,7 +294,7 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     from += me.getName();
     from += ":";
     from += NetType::toString(me.getPort());
-    from += "\">";
+    from += "/form\">";
     Bytes b2((char*)from.c_str(),from.length());
     proto.os().write(b2);
     proto.os().flush();

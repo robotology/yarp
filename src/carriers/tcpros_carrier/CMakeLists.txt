@@ -9,5 +9,6 @@ if (NOT SKIP_tcpros_carrier)
   add_library(rostcp_carrier 
     TcpRosCarrier.h TcpRosCarrier.cpp
     TcpRosStream.h TcpRosStream.cpp
-    RosHeader.h RosHeader.cpp)
+    RosHeader.h RosHeader.cpp
+    BlobHeader.h)
 endif (NOT SKIP_tcpros_carrier)

@@ -148,11 +148,9 @@ public:
     virtual bool checkHeader(const Bytes& header) {
         bool ok = checkHeader(header,"GET /");
         if (!ok) {
-            ok = checkHeader(header,"POST /");
-            if (ok) {
-                // make sure it isn't a YARP XMLRPC post
-                ok = !checkHeader(header,"POST /RP");
-            }
+            // http carrier accepts POST /form but not general posts
+            // (leave that to xmlrpc carrier)
+            ok = checkHeader(header,"POST /fo");
         } else {
             // make sure it isn't a MJPEG stream get
             ok = !checkHeader(header,"GET /?ac");

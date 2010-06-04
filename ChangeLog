@@ -1,5 +1,10 @@
 2010-06-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/carriers/tcpros_carrier/CMakeLists.txt: implemented
+	rudimentary (untyped) reading from ROS publishers.  Be sure
+	to read src/carriers/tcpros_carrier/README.TXT if you are 
+	tempted to play, this is not user-friendly stuff yet.
+
 	* src/tests/CMakeLists.txt: freshen generation of device
 	invocation examples (thanks Andrew Stout!)
 
