@@ -26,6 +26,7 @@ namespace yarp {
  * Byte order in image header for network transmission.
  *
  */
+#include <yarp/os/begin_pack_for_net.h>
 class yarp::sig::ImageNetworkHeader
 {
 public:
@@ -65,7 +66,6 @@ public:
     }
 
 } PACKED_FOR_NET;
-
 #include <yarp/os/end_pack_for_net.h>
 
 #endif
