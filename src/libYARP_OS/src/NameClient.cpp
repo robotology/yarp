@@ -215,6 +215,35 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 Address NameClient::queryName(const String& name) {
     String np = getNamePart(name);
+    size_t i1 = YARP_STRSTR(np,":");
+    if (i1!=String::npos) {
+        int digits = 0;
+        int nondigits = 0;
+        size_t i2 = i1;
+        for (size_t i=i1+1; i<np.length(); i++) {
+            if (np[i]=='/') break;
+            if (np[i]>='0'&&np[i]<='9') {
+                digits++;
+                i2 = i;
+            } else {
+                nondigits++;
+            }
+        }
+        if (digits>0 && nondigits==0) {
+            // looks like we don't need to query this one, it is set
+            // up for us
+            String portnum = np.substr(i1+1,i2-i1);
+            String hostname = np.substr(1,i1-1);
+            //printf("hostname %s portnum is %s\n", 
+            //     hostname.c_str(),
+            //     portnum.c_str());
+            Address addr(hostname,NetType::toInt(portnum),
+                         "tcp",
+                         np);
+            return addr;
+        }
+    }
+
     //if (isFakeMode()) {
     //return getServer().queryName(np);
     //}
