@@ -734,12 +734,17 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
 int Companion::cmdRpc(int argc, char *argv[]) {
     if (argc<1) {
         ACE_OS::fprintf(stderr, "Please supply remote port name\n");
+
         ACE_OS::fprintf(stderr, "(and, optionally, a name for this connection or port)\n");
+        ACE_OS::fprintf(stderr, "You can also do \"yarp rpc --client /port\" to make a port for connecting later\n");
         return 1;
     }
 
     const char *dest = argv[0];
     const char *src;
+    if (String(dest)=="--client") {
+        return cmdRpc2(argc,argv);
+    }
     Address address = Name(dest).toAddress();
     if (address.getCarrierName()=="") {
         // no need for a port
@@ -767,7 +772,9 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     Port p;
     bool ok = p.open(src);
     if (ok) {
-        NetworkBase::connect(p.getName().c_str(),dest);
+        if (String(dest)!="--client") {
+            NetworkBase::connect(p.getName().c_str(),dest);
+        }
     }
     while(ok) {
         String txt = getStdin();
@@ -1574,13 +1581,15 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         NameClient& nic = NameClient::getNameClient();
         Address address = nic.queryName(targetName);
         if (!address.isValid()) {
-            YARP_ERROR(Logger::get(),"could not find port");
+            YARP_ERROR(Logger::get(),"Could not connect to port.");
+            YARP_ERROR(Logger::get(),"If you want to *make* a port, precede port name with --client");
             return 1;
         }
         
         OutputProtocol *out = Carriers::connect(address);
         if (out==NULL) {
             ACE_OS::fprintf(stderr, "Cannot make connection\n");
+            YARP_ERROR(Logger::get(),"If you want to *make* a port, precede port name with --client");
             return 1;
         }
         if (!firstTimeRound) {
