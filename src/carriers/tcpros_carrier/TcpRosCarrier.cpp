@@ -116,7 +116,6 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
 
     if (stream==NULL) { return false; }
     proto.takeStreams(stream);
-    printf("tcpros carrier not implemented yet\n");        
     
     return proto.is().isOk();
 }

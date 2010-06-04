@@ -115,7 +115,6 @@ public:
         //TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender);
         //if (stream==NULL) { return false; }
         //proto.takeStreams(stream);
-        printf("tcpros carrier not implemented yet\n");        
         return true;
     }
 
