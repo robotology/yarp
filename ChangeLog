@@ -1,3 +1,8 @@
+2010-06-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/tests/CMakeLists.txt: freshen generation of device
+	invocation examples (thanks Andrew Stout!)
+
 2010-06-03  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/carriers/mjpeg_carrier/MjpegCarrier.cpp: add basic

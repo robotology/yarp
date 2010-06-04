@@ -22,4 +22,21 @@ foreach(test_family ${targets})
   endforeach()
 endforeach()
 
+# Add in hardware specific tests, if requested
+option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
+mark_as_advanced(CREATE_PLUGIN_TESTS)
+if (CREATE_PLUGIN_TESTS)
+  # add in our tests
+  file(GLOB inis ../libYARP_dev/harness/*.ini)
+  foreach(X ${inis})
+    get_filename_component(XN ${X} NAME_WE)
+    get_filename_component(XINI ${X} ABSOLUTE)
+    # need to cache examples for reference
+    set(DOC_DIR "${CMAKE_SOURCE_DIR}/src/doc/device_invocation")
+    set(XDOX ${DOC_DIR}/${XN}.dox)
+    add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
+  endforeach(X ${inis})
+endif (CREATE_PLUGIN_TESTS)
+
+
 # touch 1

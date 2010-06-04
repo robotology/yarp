@@ -198,9 +198,13 @@ int main(int argc, char *argv[]) {
 
 
     if (dest!="") {
-        ofstream fout(dest.c_str());
+        String dest2 = dest.c_str();
+        if (result!=0) {
+            dest2 += ".fail";
+        }
+        ofstream fout(dest2.c_str());
         if (!fout.good()) {
-            printf("Problem writing to %s\n", dest.c_str());
+            printf("Problem writing to %s\n", dest2.c_str());
             exit(1);
         }
         fout << "/**" << endl;
@@ -271,6 +275,6 @@ int main(int argc, char *argv[]) {
     }
 
     // just checking for crashes, not device creation
-    return 0; //result;
+    return result; //result;
 }
 
