@@ -1,3 +1,12 @@
+Most of the knowledge in this README is now encapsulated in the "yarpros"
+program.  Run it without arguments for a list of what is possible now.
+
+ROS data is represented in YARP as blobs.  As a user, when you read or
+write to a port, the data you'll get is exactly as ROS's message/service
+types would suggest, preceded by a 12-byte header (see BlobHeader.h).
+This header is "virtual", it is just for compatibility with the YARP 
+Bottle serialization format.
+
 Reminders to myself of the state of this carrier...
 End-users should wait until everything is neatly wrapped up :-)
   -paulfitz

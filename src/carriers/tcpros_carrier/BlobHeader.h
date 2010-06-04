@@ -14,6 +14,7 @@ public:
     yarp::os::NetInt32 blobLen;
 
     void init(int len) {
+        // state that the following data is a list containing 1 blob
         listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_BLOB;
         listLen = 1;
         blobLen = len;

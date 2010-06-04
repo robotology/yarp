@@ -1,5 +1,34 @@
 2010-06-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/carriers/tcpros_carrier/yarpros.cpp: small helper program
+	for hooking up yarp ports and ROS entities, to the extent
+	currently possible.
+
+          yarpros roscore <hostname> <port number>
+          -- tell yarp how to reach the ros master
+          -- example: yarpros roscore 192.168.0.1 11311
+
+          yarpros read <yarpname> <nodename> <topicname>
+          -- read to a YARP port from a ROS node's contribution to a topic
+          -- example: yarpros read /read /talker /chatter
+
+          yarpros write <yarpname> <nodename> <topicname>
+          -- write from a YARP port to a ROS node's subscription to a topic
+          -- example: yarpros write /write /listener /chatter
+
+          yarpros rpc <yarpname> <nodename> <servicename>
+          -- write/read from a YARP port to a ROS node's named service
+          -- example: yarpros rpc /rpc /add_two_ints_server /add_two_ints
+
+	When using yarp read/write/rpc in combination with these,
+	remember to use blob format for messages, since there is
+	no type information yet.  E.G.
+           [terminal 1] yarp rpc --client /rpc
+	   [terminal 2] yarpros rpc /rpc /add_two_ints_server /add_two_ints
+	   [terminal 1, type] {8 0 0 0 0 0 0 0   4 0 0 0 0 0 0 0}
+	   [terminal 1, see]  {12 0 0 0 0 0 0 0}
+	here you are reading/writing 64-bit integers by hand :-)
+	
 	* src/carriers/tcpros_carrier/TcpRosCarrier.cpp: implemented
 	rudimentary writing to ROS subscribers, and writing to ROS
 	services.  Be sure to read src/carriers/tcpros_carrier/README.TXT
