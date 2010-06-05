@@ -9,17 +9,12 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
 
-// does ACE require new c++ header files or not?
-#if ACE_HAS_STANDARD_CPP_LIBRARY
-#include <fstream>
-using namespace std;
-#else
-#include <fstream.h>
-#endif
+#include <stdio.h>
 
 class ResourceFinderTest : public UnitTest {
 public:
@@ -36,19 +31,24 @@ public:
         // create some test files
 
         {
-            ofstream fout0(fname0);
-            fout0 << "style capability" << endl;
-            fout0 << "capability_directory \".\"" << endl;
-            fout0 << "default_capability \".\"" << endl;
-            fout0.close();
+            FILE *fout = fopen(fname0,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"style capability\n");
+            fprintf(fout,"capability_directory \".\"\n");
+            fprintf(fout,"default_capability \".\"\n");
+            fclose(fout);
+            fout = NULL;
 
-            ofstream fout1(fname1);
-            fout1 << "alt " << fname2 << endl;
-            fout1.close();
+            fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"alt %s\n", fname2);
+            fclose(fout);
+            fout = NULL;
 
-            ofstream fout2(fname2);
-            fout2 << "x 14" << endl;
-            fout2.close();
+            fout = fopen(fname2,"w");
+            fprintf(fout,"x 14\n");
+            fclose(fout);
+            fout = NULL;
 
             const char *argv[] = { "ignore", 
                                    "--policy", "_yarp_regression_test",
@@ -88,15 +88,18 @@ public:
         // create some test files
 
         {
-            ofstream fout0(fname0);
-            fout0 << "style capability" << endl;
-            fout0 << "capability_directory \".\"" << endl;
-            fout0 << "default_capability \".\"" << endl;
-            fout0.close();
+            FILE *fout = fopen(fname0,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"style capability\n");
+            fprintf(fout,"capability_directory \".\"\n");
+            fprintf(fout,"default_capability \".\"\n");
+            fclose(fout);
+            fout = NULL;
 
-            ofstream fout1(fname1);
-            fout1 << "x 14" << endl;
-            fout1.close();
+            fout = fopen(fname1,"w");
+            fprintf(fout,"x 14\n");
+            fclose(fout);
+            fout = NULL;
 
             const char *argv[] = { "ignore", 
                                    "--policy", "_yarp_regression_test",

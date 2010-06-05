@@ -9,18 +9,11 @@
 #include <yarp/os/Property.h>
 
 #include <yarp/os/impl/UnitTest.h>
-//#include "TestList.h"
-
+#include <yarp/os/impl/Logger.h>
 
 #include <ace/OS_NS_stdlib.h>
-// does ACE require new c++ header files or not?
-#if ACE_HAS_STANDARD_CPP_LIBRARY
-#include <fstream>
-using namespace std;
-#else
-#include <fstream.h>
-#endif
 
+#include <stdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -275,13 +268,19 @@ check $x $y\n\
         // create some test files
 
         {
-            ofstream fout1(fname1);
-            fout1 << "x 1" << endl;
-            fout1.close();
-            ofstream fout2(fname2);
-            fout2 << "[include " << fname1 << "]" << endl;
-            fout2 << "y 2" << endl;
-            fout2.close();
+            FILE *fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 1\n");
+            fclose(fout);
+            fout = NULL;
+
+            fout = fopen(fname2,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"[include %s]\n",fname1);
+            fprintf(fout,"y 2\n");
+            fclose(fout);
+            fout = NULL;
+
             Property p;
             p.fromConfigFile(fname2);
             checkEqual(p.find("x").asInt(),1,"x is ok");
@@ -290,6 +289,20 @@ check $x $y\n\
 
 
         {
+            FILE *fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 1\n");
+            fclose(fout);
+            fout = NULL;
+
+            fout = fopen(fname2,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"[include base %s]\n",fname1);
+            fprintf(fout,"y 2\n");
+            fclose(fout);
+            fout = NULL;
+
+            /*
             ofstream fout1(fname1);
             fout1 << "x 1" << endl;
             fout1.close();
@@ -297,6 +310,7 @@ check $x $y\n\
             fout2 << "[include base " << fname1 << "]" << endl;
             fout2 << "y 2" << endl;
             fout2.close();
+            */
             Property p;
             p.fromConfigFile(fname2);
             checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
@@ -306,17 +320,23 @@ check $x $y\n\
         }
 
         {
-            ofstream fout1(fname1);
-            fout1 << "x 1" << endl;
-            fout1.close();
-            ofstream fout2(fname2);
-            fout2 << "[base]" << endl;
-            fout2 << "w 4" << endl;
-            fout2 << "[base]" << endl;
-            fout2 << "z 3" << endl;
-            fout2 << "[include base " << fname1 << "]" << endl;
-            fout2 << "y 2" << endl;
-            fout2.close();
+            FILE *fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 1\n");
+            fclose(fout);
+            fout = NULL;
+
+            fout = fopen(fname2,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"[base]\n");
+            fprintf(fout,"w 4\n");
+            fprintf(fout,"[base]\n");
+            fprintf(fout,"z 3\n");
+            fprintf(fout,"[include base %s]\n",fname1);
+            fprintf(fout,"y 2\n");
+            fclose(fout);
+            fout = NULL;
+
             Property p;
             p.fromConfigFile(fname2);
             checkEqual(p.findGroup("base").find("x").asInt(),1,"x is ok");
@@ -326,16 +346,22 @@ check $x $y\n\
         }
 
         {
-            ofstream fout1(fname1);
-            fout1 << "x 1" << endl;
-            fout1.close();
-            ofstream fout2(fname2);
-            fout2 << "[b1]" << endl;
-            fout2 << "z 3" << endl;
-            fout2 << "[include base b1 " << fname1 << "]" << endl;
-            fout2 << "[include base b2 " << fname1 << "]" << endl;
-            fout2 << "y 2" << endl;
-            fout2.close();
+            FILE *fout = fopen(fname1,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"x 1\n");
+            fclose(fout);
+            fout = NULL;
+
+            fout = fopen(fname2,"w");
+            YARP_ASSERT(fout!=NULL);
+            fprintf(fout,"[b1]\n");
+            fprintf(fout,"z 3\n");
+            fprintf(fout,"[include base b1 %s]\n",fname1);
+            fprintf(fout,"[include base b2 %s]\n",fname1);
+            fprintf(fout,"y 2\n");
+            fclose(fout);
+            fout = NULL;
+
             Property p;
             p.fromConfigFile(fname2);
             checkEqual(p.findGroup("b1").find("x").asInt(),1,"x is ok");
