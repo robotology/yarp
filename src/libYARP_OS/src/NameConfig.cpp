@@ -18,13 +18,7 @@
 #include <ace/INET_Addr.h>
 #include <ace/Sock_Connect.h>
 
-// does ACE require new c++ header files or not?
-#if ACE_HAS_STANDARD_CPP_LIBRARY
-#include <fstream>
-using namespace std;
-#else
-#include <fstream.h>
-#endif
+#include <stdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -120,19 +114,15 @@ bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
 }
 
 String NameConfig::readConfig(const String& fileName) {
-    ifstream fin(fileName.c_str());
-    if (fin.eof()||fin.fail()) {
-        return "";
-    }
+    char buf[25600];
+    FILE *fin = fopen(fileName.c_str(),"r");
+    if (fin==NULL) return "";
     String result = "";
-    while (!(fin.eof()||fin.bad())) {
-        char buf[25600];
-        fin.getline(buf,sizeof(buf),'\n');
-        if (!fin.bad()) {
-            result += buf;
-            result += "\n";
-        }
+    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+        result += buf;
     }
+    fclose(fin);
+    fin = NULL;
     return result;
 }
 
@@ -175,13 +165,12 @@ bool NameConfig::writeConfig(const String& fileName, const String& text) {
     if (!createPath(fileName)) {
         return false;
     }
-    ofstream fout(fileName.c_str());
-    if (fout.fail()) {
-        return false;
-    }
-    fout << text.c_str();
-    fout.close();
-    return !fout.fail();
+    FILE *fout = fopen(fileName.c_str(),"w");
+    if (fout==NULL) return false;
+    fprintf(fout,"%s",text.c_str());
+    fclose(fout);
+    fout = NULL;
+    return true;
 }
 
 

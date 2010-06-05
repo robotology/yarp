@@ -41,13 +41,7 @@
 // we do not have configuration information, disable some features.
 #endif
 
-// does ACE require new c++ header files or not?
-#if ACE_HAS_STANDARD_CPP_LIBRARY
-#include <fstream>
-using namespace std;
-#else
-#include <fstream.h>
-#endif
+#include <stdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -79,11 +73,13 @@ static String getStdin() {
 }
 
 static void writeBottleAsFile(const char *fileName, const Bottle& bot) {
-    ofstream fout(fileName);
+    FILE *fout = fopen(fileName,"w");
+    if (fout==NULL) return;
     for (int i=0; i<bot.size(); i++) {
-        fout << bot.get(i).toString().c_str() << endl;
+        fprintf(fout,"%s\n",bot.get(i).toString().c_str());
     }
-    fout.close();
+    fclose(fout);
+    fout = NULL;
 }
 
 
@@ -978,10 +974,11 @@ int Companion::cmdMake(int argc, char *argv[]) {
 
     const char *target = "CMakeLists.txt";
 
-    ifstream fin(target);
-    if (!fin.fail()) {
+    FILE *fin = fopen(target,"r");
+    if (fin!=NULL) {
         printf("File %s already exists, please remove it first\n", target);
-        fin.close();
+        fclose(fin);
+        fin = NULL;
         return 1;
     }
 

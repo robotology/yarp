@@ -4,7 +4,9 @@ cwd=`pwd`
 
 # fetch minimum part of ACE for YARP
 if [ ! -e ace ]; then
-    svn co svn://svn.dre.vanderbilt.edu/DOC/Middleware/trunk/ACE/ace ace
+    # *should* be safe to remove revision - please periodically update it
+    # to known good revisions.
+    svn co -r 90429 svn://svn.dre.vanderbilt.edu/DOC/Middleware/trunk/ACE/ace ace
 else
     cd ace; svn up; cd ..
 fi
@@ -54,6 +56,21 @@ cat <<EOF
 # undef ACE_IMPORT_SINGLETON_DECLARE
 #endif
 #endif  /* __GNU__ > 3 */
+/* eliminate all stray usage of C++ header files in ACE */
+#ifdef ACE_HAS_STDCPP_STL_INCLUDES
+#undef ACE_HAS_STDCPP_STL_INCLUDES
+#endif
+#ifndef ACE_LACKS_IOSTREAM_TOTALLY 
+#define ACE_LACKS_IOSTREAM_TOTALLY 
+#endif
+#ifdef ACE_HAS_CPP98_IOSTREAMS
+#undef ACE_HAS_CPP98_IOSTREAMS
+#endif
+#ifdef ACE_USES_CLASSIC_SVC_CONF
+#undef ACE_USES_CLASSIC_SVC_CONF
+#endif
+#define ACE_USES_CLASSIC_SVC_CONF 0
+/* done eliminating all stray usage of C++ header files in ACE */
 #endif
 EOF
 ) > config.h

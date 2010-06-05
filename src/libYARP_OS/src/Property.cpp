@@ -20,13 +20,7 @@
 //#include <ace/OS.h>
 #include <ace/OS_NS_ctype.h>
 
-// does ACE require new c++ header files or not?
-#if ACE_HAS_STANDARD_CPP_LIBRARY
-#include <fstream>
-using namespace std;
-#else
-#include <fstream.h>
-#endif
+#include <stdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -246,10 +240,10 @@ public:
                    String("looking for ") + fname + ", search path: " +
                    searchPath);
 
-        ifstream fin(fname);
-
         String pathPrefix("");
-        if (fin.fail()) {
+
+        FILE *fin = fopen(fname,"r");
+        if (fin==NULL) {
             SplitString ss(searchPath.c_str(),';');
             for (int i=0; i<ss.size(); i++) {
                 String trial = ss.get(i);
@@ -260,11 +254,8 @@ public:
                            String("looking for ") + fname + " as " +
                            trial.c_str());
 
-                //without this, consequent open on fin will fail
-                //with no apparent reasons...
-                fin.clear();
-                fin.open(trial.c_str());
-                if (!fin.fail()) { 
+                fin = fopen(trial.c_str(),"r");
+                if (fin!=NULL) {
                     pathPrefix = ss.get(i);
                     pathPrefix += '/';
                     break; 
@@ -283,7 +274,7 @@ public:
         }
 
         String txt;
-        if (fin.fail()) {
+        if (fin==NULL) {
             YARP_ERROR(Logger::get(),String("cannot read from ") +
                        fname);
             return false;
@@ -300,15 +291,9 @@ public:
             envExtended.put("CONFIG_PATH",searchPath.c_str());
         }
 
-        while (!(fin.eof()||fin.fail())) {
-            char buf[1000];
-            fin.getline(buf,sizeof(buf));
-            // REMOVED eof test, so a terminating line without
-            // a newline is still added
-            //if (!fin.eof()) {
+        char buf[25600];
+        while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
             txt += buf;
-            txt += "\n";
-            //}
         }
         fromConfig(txt.c_str(),envExtended,wipe);
         return true;
