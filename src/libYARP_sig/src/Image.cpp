@@ -36,9 +36,6 @@ using namespace yarp::os;
 #define DBGPF1 if (0)
 
 
-#include <iostream>
-using namespace std;
-
 using namespace yarp::sig;
 
 inline int PAD_BYTES (int len, int pad)

@@ -25,7 +25,6 @@
 #include <ace/Vector_T.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iostream>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -146,11 +145,9 @@ DeviceDriver *Drivers::open(yarp::os::Searchable& prop) {
 
 
 // helper method for "yarpdev" body
-static void toDox(PolyDriver& dd, ostream& os) {
-    os << "===============================================================" 
-       << endl;
-    os << "== Options checked by device:" << endl;
-    os << "== " << endl;
+static void toDox(PolyDriver& dd, FILE *os) {
+    fprintf(os,"===============================================================\n");
+    fprintf(os,"== Options checked by device:\n== \n");
 
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
@@ -188,11 +185,10 @@ static void toDox(PolyDriver& dd, ostream& os) {
             out += "\n    ";
             out += desc.c_str();
         }
-        os << out.c_str() << endl;
+        fprintf(os,"%s\n", out.c_str());
     }
-    os << "==" << endl;
-    os << "===============================================================" 
-       << endl;
+    fprintf(os,"==\n");
+    fprintf(os,"===============================================================\n");
 }
 
 
@@ -294,7 +290,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
 
     PolyDriver dd(options);
     if (verbose) {
-        toDox(dd,cout);
+        toDox(dd,stdout);
     }
     if (!dd.isValid()) {
         printf("yarpdev: ***ERROR*** device not available.\n");

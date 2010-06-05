@@ -14,7 +14,7 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 
-#include <vector>
+//#include <vector>
 
 #include <yarp/gsl_compatibility.h>
 
@@ -261,10 +261,8 @@ public:
         checkTrue(ok,"elements match");
 
         report(0,"check bug #1601862...");
-        std::vector<Vector> myList; //using stl vector
         Vector v3(10);
-        myList.push_back(v3);
-        // this segfaults on linux
+        Vector v4 = v3;
     }
 
     void checkOperators()

@@ -2,7 +2,7 @@
 
 	* scripts/fetch-ace.sh: Change ACE configuration when bundled
 	with YARP to facilitate compiling YARP with gcc (as opposed
-	to g++).  The libYARP_OS library and the yarp executable make
+	to g++).  The core yarp libraries and executables make
 	no use of C++ libraries, and so can be compiled without 
 	linking to libstdc++.  This can be handy for avoiding conflicts
 	with different versions of this library.  Steps:
@@ -13,7 +13,7 @@
 	  mkdir static_libs
 	  cp `g++ -print-file-name=libsupc++.a` static_libs
 	  CXX=gcc CC=gcc cmake ../..
-	  make yarp
+	  make
 	  ldd bin/yarp  # should not contain libstdc++.so
 
 2010-06-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>

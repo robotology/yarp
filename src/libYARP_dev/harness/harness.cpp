@@ -20,8 +20,7 @@
 
 #include "TestList.h"
 
-#include <fstream>
-#include <iostream>
+#include <stdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -84,6 +83,18 @@ int harness_main(int argc, char *argv[]) {
 
 
 static String getFile(const char *fname) {
+    char buf[25600];
+    FILE *fin = fopen(fname,"r");
+    if (fin==NULL) return "";
+    String result = "";
+    while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
+        result += buf;
+    }
+    fclose(fin);
+    fin = NULL;
+    return result;
+
+    /*
     ifstream fin(fname);
     String txt;
     if (fin.fail()) {
@@ -98,13 +109,13 @@ static String getFile(const char *fname) {
         }
     }
     return txt;
+    */
 }
 
 
-static void toDox(PolyDriver& dd, ostream& os) {
-    os << "<table>" << endl;
-    os << "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>"
-       << endl;
+static void toDox(PolyDriver& dd, FILE *os) {
+    fprintf(os, "<table>\n");
+    fprintf(os, "<tr><td>PROPERTY</td><td>DESCRIPTION</td><td>DEFAULT</td></tr>\n");
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
         String name = order.get(i).toString().c_str();
@@ -121,9 +132,9 @@ static void toDox(PolyDriver& dd, ostream& os) {
         out += "</td><td>";
         out += def.c_str();
         out += "</td></tr>";
-        os << out.c_str() << endl;
+        fprintf(os,"%s\n",out.c_str());
     }
-    os << "</table>" << endl;
+    fprintf(os, "</table>\n");
 }
 
 int main(int argc, char *argv[]) {
@@ -202,71 +213,44 @@ int main(int argc, char *argv[]) {
         if (result!=0) {
             dest2 += ".fail";
         }
-        ofstream fout(dest2.c_str());
-        if (!fout.good()) {
+        FILE *fout = fopen(dest2.c_str(),"w");
+        if (fout==NULL) {
             printf("Problem writing to %s\n", dest2.c_str());
             exit(1);
         }
-        fout << "/**" << endl;
-        fout << " * \\ingroup dev_examples" << endl;
-        fout << " *" << endl;
-        fout << " * \\defgroup " 
-             << exampleName.c_str() 
-             << " Example for " 
-             << deviceName.c_str()
-             << " ("
-             << exampleName.c_str() 
-             << ")"
-             << endl;
-        fout << endl;
-        fout << "Instantiates "
-             << "\\ref cmd_device_"
-             << deviceName.c_str()
-             << " \""
-             << deviceName.c_str()
-             << "\""
-             << " device implemented by yarp::dev::"
-             << codeName.c_str()
-             << "."
-             << endl;
-        fout << "\\verbatim" << endl;
-        fout << getFile(fileName).c_str();
-        fout << "\\endverbatim" << endl;
-        fout << endl;
-        fout << "If this text is saved in a file called "
-             << shortFileName.c_str()
-             << " then the device can be created by doing:"
-             << endl;
-        fout << "\\verbatim" << endl;
-        fout << "yarpdev "
-             << "--file "
-             << shortFileName.c_str()
-             << endl;
-        fout << "\\endverbatim" << endl;
-        fout << "Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:" << endl;
-        fout << endl;
-        fout << "\\code" << endl;
-        fout << "Property p;" << endl;
-        fout << "p.fromConfigFile(\"" << shortFileName.c_str() << "\");" << endl;
-        fout << "// of course you could construct the Property object on-the-fly" << endl;
-        fout << "PolyDriver dev;" << endl;
-        fout << "dev.open(p);" << endl;
-        fout << "if (dev.isValid()) { /* use the device via view method */ }" 
-             << endl;
-        fout << "\\endcode" << endl;
-        fout << "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example" << endl;
-        fout << endl;
+        fprintf(fout,"/**\n");
+        fprintf(fout," * \\ingroup dev_examples\n");
+        fprintf(fout," *\n");
+        fprintf(fout," * \\defgroup %s Example for %s (%s)\n\n",
+                exampleName.c_str(),
+                deviceName.c_str(),
+                exampleName.c_str());
+        fprintf(fout, "Instantiates \\ref cmd_device_%s \"%s\" device implemented by yarp::dev::%s.\n",
+                deviceName.c_str(), deviceName.c_str(), codeName.c_str());
+        fprintf(fout, "\\verbatim\n%s\\endverbatim\n",
+                getFile(fileName).c_str());
+        fprintf(fout, "If this text is saved in a file called %s then the device can be created by doing:\n",
+                shortFileName.c_str());
+        fprintf(fout, "\\verbatim\nyarpdev --file %s\n\\endverbatim\n",
+                shortFileName.c_str());
+        fprintf(fout, "Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:\n");
+        fprintf(fout, "\\code\n");
+        fprintf(fout, "Property p;\n");
+        fprintf(fout, "p.fromConfigFile(\"%s\");\n",
+                shortFileName.c_str());
+        fprintf(fout, "// of course you could construct the Property object on-the-fly\n");
+        fprintf(fout, "PolyDriver dev;\n");
+        fprintf(fout, "dev.open(p);\n");
+        fprintf(fout, "if (dev.isValid()) { /* use the device via view method */ }\n" );
+        fprintf(fout, "\\endcode\n");
+        fprintf(fout, "Here is a list of properties checked when starting up a device based on this configuration file.  Note that which properties are checked can depend on whether other properties are present.  In some cases properties can also vary between operating systems.  So this is just an example\n\n");
         toDox(dd,fout);
-        fout << endl;
-        fout << "\\sa ";
-        fout << "yarp::dev::"
-             << codeName.c_str()
-             << endl;
-        fout << endl;
-        fout << " */" << endl;
-        fout.close();
+        fprintf(fout, "\n\\sa yarp::dev::%s\n\n",
+                codeName.c_str());
+        fprintf(fout, " */\n");
+        fclose(fout);
+        fout = NULL;
     }
-
 
     if (ok) {
         YARP_DEBUG(Logger::get(), "harness closing...");

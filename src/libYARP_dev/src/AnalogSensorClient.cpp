@@ -20,8 +20,6 @@
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
 
-#include <iostream>
-
 namespace yarp {
     namespace dev { 
         class AnalogSensorClient;
@@ -225,18 +223,18 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
 
     if (local=="")
     {
-        std::cerr<<"AnalogSensorClient::open() error you have to provide valid local name"<<std::endl;
+        fprintf(stderr,"AnalogSensorClient::open() error you have to provide valid local name\n");
         return false;
     }
     if (remote=="")
     {
-        std::cerr<<"AnalogSensorClient::open() error you have to provide valid remote name"<<std::endl;
+        fprintf(stderr,"AnalogSensorClient::open() error you have to provide valid remote name\n");
         return false;
     }
 
     if (!inputPort.open(local.c_str()))
     {
-        std::cerr<<"AnalogSensorClient::open() error could not open port, check network"<<std::endl;
+        fprintf(stderr,"AnalogSensorClient::open() error could not open port, check network\n");
         return false;
     }
     inputPort.useCallback();
@@ -245,7 +243,7 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
     
     if (!ok)
     {
-        std::cerr<<"AnalogSensorClient::open() error could not connect to "<< remote.c_str() << std::endl;
+        fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote.c_str());
         return false;
     }
 
