@@ -31,8 +31,6 @@
 
 #include <yarp/os/Time.h>
 
-#include <string>
-
 using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace yarp::dev;
@@ -177,7 +175,7 @@ const int DIAGNOSTIC_THREAD_RATE=1000;
 class DiagnosticThread: public RateThread
 {
     StateInputPort *owner;
-    std::string ownerName;
+    ConstString ownerName;
 
 public:
     DiagnosticThread(int r): RateThread(r)
