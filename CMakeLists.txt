@@ -6,8 +6,6 @@ cmake_minimum_required(VERSION 2.6)
 
 project(YARP)
 
-SET(YARP_DEFINES "HELLO" CACHE STRING "Testing" DOC "HELLO")
-
 # Pick up our CMake scripts - they are all in the conf subdirectory.
 set(YARP_MODULE_PATH ${PROJECT_SOURCE_DIR}/conf)
 set(CMAKE_MODULE_PATH ${YARP_MODULE_PATH})
