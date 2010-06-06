@@ -9,12 +9,12 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
-#include <yarp/os/impl/String.h>
+#include <yarp/os/ConstString.h>
 
 YARP_DEFINE(yarpStringPtr) yarpStringCreate() {
     yarpStringPtr str = new yarpString;
     if (str!=NULL) {
-        str->implementation = new yarp::os::impl::String();
+        str->implementation = new yarp::os::ConstString();
         if (str->implementation==NULL) {
             delete str;
             str = NULL;
@@ -27,7 +27,7 @@ YARP_DEFINE(yarpStringPtr) yarpStringCreate() {
 YARP_DEFINE(void) yarpStringFree(yarpStringPtr str) {
     if (str!=NULL) {
         if (str->implementation!=NULL) {
-            delete (yarp::os::impl::String*)(str->implementation);
+            delete (yarp::os::ConstString*)(str->implementation);
             str->implementation = NULL;
         }
         delete str;
@@ -38,7 +38,7 @@ YARP_DEFINE(void) yarpStringFree(yarpStringPtr str) {
 YARP_DEFINE(const char *) yarpStringToC(yarpStringPtr str) {
     if (str!=NULL) {
         if (str->implementation!=NULL) {
-            return ((yarp::os::impl::String*)(str->implementation))->c_str();
+            return ((yarp::os::ConstString*)(str->implementation))->c_str();
         }
     }
     return NULL;
@@ -48,7 +48,7 @@ YARP_DEFINE(const char *) yarpStringToC(yarpStringPtr str) {
 YARP_DEFINE(int) yarpStringFromC(yarpStringPtr str, const char *c) {
     if (str!=NULL) {
         if (str->implementation!=NULL) {
-            (*((yarp::os::impl::String*)(str->implementation))) = c;
+            (*((yarp::os::ConstString*)(str->implementation))) = c;
             return 0;
         }
     }

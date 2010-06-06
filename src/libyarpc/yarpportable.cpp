@@ -91,6 +91,7 @@ YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
 YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection)) {
     YARP_OK(portable);    
     portable->write = write;
+    return 0;
 }
 
     /**
@@ -101,6 +102,7 @@ YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*wri
 YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection)) {
     YARP_OK(portable);
     portable->read = read;
+    return 0;
 }
 
 
@@ -112,6 +114,7 @@ YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read
 YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)()) {
     YARP_OK(portable);
     portable->onCompletion = onCompletion;
+    return 0;
 }
 
     /**
@@ -122,6 +125,7 @@ YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, in
 YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)()) {
     YARP_OK(portable);
     portable->onCommencement = onCommencement;
+    return 0;
 }
 
 
