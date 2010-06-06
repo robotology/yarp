@@ -29,7 +29,7 @@ if (CREATE_YARPC)
   if (NOT CREATE_YARPC_STANDALONE)
     target_link_libraries(yarpc libYARP_init)
   else (NOT CREATE_YARPC_STANDALONE)
-    target_link_libraries(yarpc pthread)
+    target_link_libraries(yarpc pthread m dl rt)
   endif (NOT CREATE_YARPC_STANDALONE)
 
   add_executable(yarpc_test1 test1.cpp)
