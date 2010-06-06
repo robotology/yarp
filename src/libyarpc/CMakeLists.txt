@@ -12,13 +12,22 @@ if (CREATE_YARPC)
 
   set(YARP_COPY_SRC)
   if (CREATE_YARPC_STANDALONE)
-    # we had best be be fully stand-alone to not depend on C++ ABI.
+    # in some cases, want to be fully stand-alone to not depend on C++ ABI.
     get_property(os_src TARGET YARP_OS PROPERTY SOURCES)
     get_property(sig_src TARGET YARP_sig PROPERTY SOURCES)
     get_property(dev_src TARGET YARP_dev PROPERTY SOURCES)
     get_property(init_src TARGET YARP_init PROPERTY SOURCES)
     set(YARP_COPY_SRC ${os_src} ${sig_src} ${dev_src} ${init_src})
     include_directories(${ACE_INCLUDE_DIRS})
+    if (EXISTS ${CMAKE_BINARY_DIR}/libsupc++)
+      file(GLOB supcxx ${CMAKE_BINARY_DIR}/libsupc++/*.cc)
+      set(YARP_COPY_SRC ${YARP_COPY_SRC} ${supcxx})
+      foreach (src ${YARP_COPY_SRC})
+        set_property(SOURCE ${src} APPEND PROPERTY COMPILE_FLAGS 
+	  "-fvisibility=hidden")
+      endforeach ()
+      include_directories(${CMAKE_BINARY_DIR}/libsupc++)
+    endif ()
   endif (CREATE_YARPC_STANDALONE)
 
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)

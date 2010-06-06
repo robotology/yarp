@@ -9,7 +9,7 @@
 	  cd $YARP_ROOT
 	  mkdir -p build/no_cxx_lib
 	  cd build/no_cxx_lib
-	  ../../scripts/fetch_ace.sh
+	  ../../scripts/fetch-ace.sh
 	  mkdir static_libs
 	  cp `g++ -print-file-name=libsupc++.a` static_libs
 	  CXX=gcc CC=gcc cmake ../..
