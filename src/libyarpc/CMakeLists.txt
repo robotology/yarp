@@ -33,9 +33,9 @@ if (CREATE_YARPC)
   endif (NOT CREATE_YARPC_STANDALONE)
 
   add_executable(yarpc_test1 test1.cpp)
-  target_link_libraries(test1 yarpc)
+  target_link_libraries(yarpc_test1 yarpc)
 
   add_executable(yarpc_test2 test2.cpp)
-  target_link_libraries(test2 yarpc)
+  target_link_libraries(yarpc_test2 yarpc)
 
 endif (CREATE_YARPC)
