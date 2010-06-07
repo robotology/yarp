@@ -121,8 +121,9 @@ YARP_DEFINE(int) yarpPortEnableBackgroundWrite(yarpPortPtr port,
 YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port, 
                                yarpPortablePtr msg) {
     YARP_OK(port);
-    YARP_OK(msg);
-    return YARP_PORT(port).write(YARP_PORTABLE(msg))?0:-1;
+    Portable *amsg = MAKE_PORTABLE(msg);
+    YARP_OK0(amsg);
+    return YARP_PORT(port).write(*amsg)?0:-1;
 }
 
 
@@ -138,8 +139,9 @@ YARP_DEFINE(int) yarpPortRead(yarpPortPtr port,
                               yarpPortablePtr msg,
                               int willReply) {
     YARP_OK(port);
-    YARP_OK(msg);
-    return YARP_PORT(port).read(YARP_PORTABLE(msg),willReply)?0:-1;
+    Portable *amsg = MAKE_PORTABLE(msg);
+    YARP_OK0(amsg);
+    return YARP_PORT(port).read(*amsg,willReply)?0:-1;
 }
 
 
@@ -151,8 +153,9 @@ YARP_DEFINE(int) yarpPortRead(yarpPortPtr port,
 YARP_DEFINE(int) yarpPortReply(yarpPortPtr port, 
                                yarpPortablePtr msg) {
     YARP_OK(port);
-    YARP_OK(msg);
-    return YARP_PORT(port).reply(YARP_PORTABLE(msg))?0:-1;
+    Portable *amsg = MAKE_PORTABLE(msg);
+    YARP_OK0(amsg);
+    return YARP_PORT(port).reply(*amsg)?0:-1;
 }
 
 
@@ -165,7 +168,11 @@ YARP_DEFINE(int) yarpPortWriteWithReply(yarpPortPtr port,
                                         yarpPortablePtr msg,
                                         yarpPortablePtr reply) {
     YARP_OK(port);
-    return YARP_PORT(port).write(YARP_PORTABLE(msg),YARP_PORTABLE(reply))?0:-1;
+    Portable *amsg = MAKE_PORTABLE(msg);
+    YARP_OK0(amsg);
+    Portable *areply = MAKE_PORTABLE(reply);
+    YARP_OK0(areply);
+    return YARP_PORT(port).write(*amsg,*areply)?0:-1;
 }
 
 

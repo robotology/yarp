@@ -12,12 +12,12 @@
 
 int testResult = 0;
 
-int testWrite(yarpWriterPtr connection) {
+int testWrite(yarpWriterPtr connection, void *ptr) {
     printf("Writing an integer\n");
     return yarpWriterAppendInt(connection,15);
 }
 
-int testRead(yarpReaderPtr connection) {
+int testRead(yarpReaderPtr connection, void *ptr) {
     printf("Reading an integer\n");
     return yarpReaderExpectInt(connection,&testResult);
 }
@@ -48,22 +48,25 @@ int main(int argc, char *argv[]) {
     result = yarpPortEnableBackgroundWrite(port1,1);
     if (result<0) return -1;
 
-    yarpPortablePtr writer = yarpPortableCreate();
-    if (writer==NULL) return -1;
-    yarpPortableSetWriteHandler(writer,testWrite);
-
-    yarpPortablePtr reader = yarpPortableCreate();
-    if (reader==NULL) return -1;
-    yarpPortableSetReadHandler(reader,testRead);
-
+    yarpPortableCallbacks wcallbacks, rcallbacks;
+    yarpPortableCallbacksInit(&wcallbacks);
+    yarpPortableCallbacksInit(&rcallbacks);
+    wcallbacks.write = testWrite;
+    rcallbacks.read = testRead;
+    yarpPortable writer, reader;
+    yarpPortableInit(&writer);
+    yarpPortableInit(&reader);
+    writer.callbacks = &wcallbacks;
+    reader.callbacks = &rcallbacks;
+    
     printf("Writing (in background)...\n");
 
-    result = yarpPortWrite(port1,writer);
+    result = yarpPortWrite(port1,&writer);
     if (result<0) return -1;
 
     printf("Reading...\n");
 
-    result = yarpPortRead(port2,reader,0);
+    result = yarpPortRead(port2,&reader,0);
     if (result<0) return -1;
 
     printf("After read, received %d\n", testResult);
@@ -79,11 +82,8 @@ int main(int argc, char *argv[]) {
     result = yarpPortClose(port2);
     if (result<0) return -1;
 
-    yarpPortableFree(reader);
-    reader = NULL;
-
-    yarpPortableFree(writer);
-    writer = NULL;
+    yarpPortableFini(&writer);
+    yarpPortableFini(&reader);
 
     yarpPortFree(port1);
     port1 = NULL;

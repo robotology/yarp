@@ -23,11 +23,17 @@ namespace yarpcxx {
 class yarpcxx::os::Portable {
 public:
     Portable() {
-        handle.implementation = this;
-        handle.write = __impl_write;
-        handle.read = __impl_read;
-        handle.onCompletion = __impl_onCompletion;
-        handle.onCommencement = __impl_onCommencement;
+        callbacks.write = __impl_write;
+        callbacks.read = __impl_read;
+        callbacks.onCompletion = __impl_onCompletion;
+        callbacks.onCommencement = __impl_onCommencement;
+        yarpPortableInit(&handle);
+        handle.callbacks = &callbacks;
+        handle.client = this;
+    }
+    
+    virtual ~Portable() {
+        yarpPortableFini(&handle);
     }
 
     virtual bool write(ConnectionWriter& connection) { return false; }
@@ -38,34 +44,30 @@ public:
 
     virtual void onCompletion() {}
 
-    virtual ~Portable() {
-    }
-
     yarpPortablePtr getHandle() {
         return &handle;
     }
 private:
+    yarpPortableCallbacks callbacks; // in fact only need one of these
     yarpPortable handle;
 
-    static int __impl_write(yarpWriterPtr connection, void *impl) {
+    static int __impl_write(yarpWriterPtr connection, void *client) {
         ConnectionWriter wrap(connection);
-        printf("impl is %ld\n", (void*)impl);
-        return ((Portable*)impl)->write(wrap);
+        return !((Portable*)client)->write(wrap);
     }
 
-    static int __impl_read(yarpReaderPtr connection, void *impl) {
+    static int __impl_read(yarpReaderPtr connection, void *client) {
         ConnectionReader wrap(connection);
-        printf("impl is %ld\n", (void*)impl);
-        return ((Portable*)impl)->read(wrap);
+        return !((Portable*)client)->read(wrap);
     }
 
-    static int __impl_onCommencement(void *impl) {
-        ((Portable*)impl)->onCommencement();
+    static int __impl_onCommencement(void *client) {
+        ((Portable*)client)->onCommencement();
         return 0;
     }
 
-    static int __impl_onCompletion(void *impl) {
-        ((Portable*)impl)->onCompletion();
+    static int __impl_onCompletion(void *client) {
+        ((Portable*)client)->onCompletion();
         return 0;
     }
 };

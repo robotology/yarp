@@ -74,16 +74,28 @@ extern "C" {
 
     /**
      *
+     * Plain C portable callback structure.  This structure holds
+     * callbacks for connecting between two ports.
+     *
+     */
+    typedef struct yarpPortableCallbacksStruct {
+        int (*write) (yarpWriterPtr connection, void *client);
+        int (*read) (yarpReaderPtr connection, void *client);
+        int (*onCompletion)(void *client);
+        int (*onCommencement)(void *client);
+    } yarpPortableCallbacks;
+    typedef yarpPortableCallbacks *yarpPortableCallbacksPtr;
+
+    /**
+     *
      * Plain C portable structure.  This structure represents how to
      * serialize data to and from a connection between two ports.
      *
      */
     typedef struct yarpPortableStruct {
-        void *implementation;
-        int (*write) (yarpWriterPtr connection, void *implementation);
-        int (*read) (yarpReaderPtr connection, void *implementation);
-        int (*onCompletion)(void *implementation);
-        int (*onCommencement)(void *implementation);
+        void *adaptor;
+        void *client;
+        yarpPortableCallbacksPtr callbacks;
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 
@@ -154,12 +166,16 @@ extern "C" {
 
     YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
 
-    YARP_DECLARE(yarpPortablePtr) yarpPortableCreate();
-    YARP_DECLARE(void) yarpPortableFree(yarpPortablePtr portable);
-    YARP_DECLARE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection));
-    YARP_DECLARE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection));
-    YARP_DECLARE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)());
-    YARP_DECLARE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)());
+    YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable);
+    YARP_DECLARE(int) yarpPortableFini(yarpPortablePtr portable);
+    YARP_DECLARE(int) yarpPortableCallbacksInit(yarpPortableCallbacksPtr callbacks);
+
+    /*
+    YARP_DECLARE(int) yarpPortableCallbacksSetWrite(yarpPortableCallbacksPtr portable, int (*write) (yarpWriterPtr connection, void *ptr));
+    YARP_DECLARE(int) yarpPortableCallbacksSetRead(yarpPortableCallbacksPtr portable, int (*read) (yarpReaderPtr connection, void *ptr));
+    YARP_DECLARE(int) yarpPortableCallbacksSetOnCompletion(yarpPortableCallbacksPtr portable, int(*onCompletion)(void *ptr));
+    YARP_DECLARE(int) yarpPortableCallbacksSetOnCommencement(yarpPortableCallbacksPtr portable, int(*onCommencement)(void *ptr));
+    */
 
     YARP_DECLARE(yarpStringPtr) yarpStringCreate();
     YARP_DECLARE(void) yarpStringFree(yarpStringPtr str);

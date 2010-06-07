@@ -32,8 +32,6 @@ public:
 };
 
 int main(int argc, char *argv[]) {
-    int result = 0;
-
     printf("This test creates two ports and writes from one to the other.\n");
     printf("Make sure no other YARP programs are running.\n");
     printf("(or else remove the yarpNetworkSetLocalMode line)\n");
@@ -48,7 +46,11 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    yarp.connect("/test1","test2",NULL);
+    ok = yarp.connect("/test1","/test2",NULL);
+    if (!ok) {
+        printf("failed to connect ports\n");
+        return 1;
+    }
 
     p1.enableBackgroundWrite(true);
 

@@ -11,76 +11,52 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
-class PortableAdaptor : public Portable {
-private:
-    yarpPortablePtr ref;
-public:
-    PortableAdaptor(yarpPortablePtr ref) : ref(ref) {}
-
-    virtual bool read(ConnectionReader& connection) {
-        if (ref->read==NULL) return false;
-        yarpReader reader;
-        reader.implementation = &connection;
-        return (ref->read(&reader,ref->implementation)==0);
-    }
-
-    virtual bool write(ConnectionWriter& connection) {
-        if (ref->write==NULL) return false;
-        yarpWriter writer;
-        writer.implementation = &connection;
-        return (ref->write(&writer,ref->implementation)==0);
-    }
-
-    virtual void onCommencement() {
-        if (ref->onCommencement==NULL) return;
-        ref->onCommencement(ref->implementation);
-    }
-
-    virtual void onCompletion() {
-        if (ref->onCompletion==NULL) return;
-        ref->onCompletion(ref->implementation);
-    }
-};
-
-
 
     /**
      *
-     * Create a portable structure, that is a bundle of serialization-related
-     * callbacks.
+     * Initialize a portable structure.
      *
      */
-YARP_DEFINE(yarpPortablePtr) yarpPortableCreate() {
-    yarpPortablePtr portable = new yarpPortable;
+YARP_DEFINE(int) yarpPortableInit(yarpPortablePtr portable) {
     if (portable!=NULL) {
-        portable->implementation = new PortableAdaptor(portable);
-        if (portable->implementation==NULL) {
-            delete portable;
-            portable = NULL;
-            return portable;
-        }
-        portable->read = NULL;
-        portable->write = NULL;
-        portable->onCompletion = NULL;
-        portable->onCommencement = NULL;
+        portable->adaptor = NULL;
+        portable->client = NULL;
+        portable->callbacks = NULL;
     }
-    return portable;
+    return 0;
 }
 
 
     /**
      *
-     * Destroy a portable structure.
+     * Finalize a portable structure.
      *
      */
-YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
+YARP_DEFINE(int) yarpPortableFini(yarpPortablePtr portable) {
     if (portable!=NULL) {
-        if (portable->implementation!=NULL) {
-            delete (Portable*)(portable->implementation);
-            portable->implementation = NULL;
+        if (portable->adaptor!=NULL) {
+            delete (YarpImplPortableAdaptor*)(portable->adaptor);
+            portable->adaptor = NULL;
         }
-        delete portable;
+        portable->client = NULL;
+        portable->callbacks = NULL;
     }
+    return 0;
+}
+
+    /**
+     *
+     * Initialize a portable callbacks structure.
+     *
+     */
+YARP_DEFINE(int) yarpPortableCallbacksInit(yarpPortableCallbacksPtr callbacks) {
+    if (callbacks!=NULL) {
+        callbacks->read = NULL;
+        callbacks->write = NULL;
+        callbacks->onCompletion = NULL;
+        callbacks->onCommencement = NULL;
+    }
+    return 0;
 }
 
     /**
@@ -88,22 +64,28 @@ YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
      * set the write handler of a portable structure.
      *
      */
+/*
 YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection, void *impl)) {
-    YARP_OK(portable);    
-    portable->write = write;
+    YARP_OK(portable);
+    YARP_OK(portable->callbacks);
+    portable->callbacks->write = write;
     return 0;
 }
+*/
 
     /**
      *
      * set the read handler of a portable structure.
      *
      */
+/*
 YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection, void *impl)) {
     YARP_OK(portable);
-    portable->read = read;
+    YARP_OK(portable->callbacks);
+    portable->callbacks->read = read;
     return 0;
 }
+*/
 
 
     /**
@@ -111,21 +93,27 @@ YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read
      * set the onCompletion handler of a portable structure.
      *
      */
+/*
 YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)(void *impl)) {
     YARP_OK(portable);
-    portable->onCompletion = onCompletion;
+    YARP_OK(portable->callbacks);
+    portable->callback->onCompletion = onCompletion;
     return 0;
 }
+*/
 
     /**
      *
      * set the onCommencement handler of a portable structure.
      *
      */
+/*
 YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)(void *impl)) {
     YARP_OK(portable);
-    portable->onCommencement = onCommencement;
+    YARP_OK(portable->callbacks);
+    portable->callbacks->onCommencement = onCommencement;
     return 0;
 }
+*/
 
 
