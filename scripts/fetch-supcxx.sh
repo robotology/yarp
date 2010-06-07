@@ -11,16 +11,4 @@ sed -i "s/<exception>/<exception>\n#include <cstddef>\n/" libsupc++/new
 # internal exceptions thrown by ace or yarp anyway...
 sed -i "s|dem = __cxa_demangle|//dem = __cxa_demangle|" libsupc++/vterminate.cc
 
-svn checkout svn://gcc.gnu.org/svn/gcc/$base/gcc gcctmp --depth empty
-cd gcctmp
-svn up unwind-pe.h
-cd ..
-mv gcctmp/unwind-pe.h libsupc++
-rm -rf gcctmp
-
-#svn checkout svn://gcc.gnu.org/svn/gcc/$base/libiberty libiberty
-#cd libiberty
-#cp cp-demangle.c cp-demangle.h demangle.h libiberty.h ansidecl.h ../libsupc++
-#cd ..
-
-
+svn export svn://gcc.gnu.org/svn/gcc/$base/gcc/unwind-pe.h libsupc++/unwind-pe.h
