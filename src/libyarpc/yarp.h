@@ -80,10 +80,10 @@ extern "C" {
      */
     typedef struct yarpPortableStruct {
         void *implementation;
-        int (*write) (yarpWriterPtr connection);
-        int (*read) (yarpReaderPtr connection);
-        int (*onCompletion)();
-        int (*onCommencement)();
+        int (*write) (yarpWriterPtr connection, void *implementation);
+        int (*read) (yarpReaderPtr connection, void *implementation);
+        int (*onCompletion)(void *implementation);
+        int (*onCommencement)(void *implementation);
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 

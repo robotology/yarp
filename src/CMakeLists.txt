@@ -11,6 +11,7 @@ add_subdirectory(modules)
 add_subdirectory(carriers)
 add_subdirectory(libYARP_init)
 add_subdirectory(libyarpc)
+add_subdirectory(libyarpcxx)
 
 # executables
 add_subdirectory(yarp)

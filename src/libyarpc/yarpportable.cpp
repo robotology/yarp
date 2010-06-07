@@ -21,24 +21,24 @@ public:
         if (ref->read==NULL) return false;
         yarpReader reader;
         reader.implementation = &connection;
-        return (ref->read(&reader)==0);
+        return (ref->read(&reader,ref->implementation)==0);
     }
 
     virtual bool write(ConnectionWriter& connection) {
         if (ref->write==NULL) return false;
         yarpWriter writer;
         writer.implementation = &connection;
-        return (ref->write(&writer)==0);
+        return (ref->write(&writer,ref->implementation)==0);
     }
 
     virtual void onCommencement() {
         if (ref->onCommencement==NULL) return;
-        ref->onCommencement();
+        ref->onCommencement(ref->implementation);
     }
 
     virtual void onCompletion() {
         if (ref->onCompletion==NULL) return;
-        ref->onCompletion();
+        ref->onCompletion(ref->implementation);
     }
 };
 
@@ -88,7 +88,7 @@ YARP_DEFINE(void) yarpPortableFree(yarpPortablePtr portable) {
      * set the write handler of a portable structure.
      *
      */
-YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection)) {
+YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*write) (yarpWriterPtr connection, void *impl)) {
     YARP_OK(portable);    
     portable->write = write;
     return 0;
@@ -99,7 +99,7 @@ YARP_DEFINE(int) yarpPortableSetWriteHandler(yarpPortablePtr portable, int (*wri
      * set the read handler of a portable structure.
      *
      */
-YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection)) {
+YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read) (yarpReaderPtr connection, void *impl)) {
     YARP_OK(portable);
     portable->read = read;
     return 0;
@@ -111,7 +111,7 @@ YARP_DEFINE(int) yarpPortableSetReadHandler(yarpPortablePtr portable, int (*read
      * set the onCompletion handler of a portable structure.
      *
      */
-YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)()) {
+YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, int(*onCompletion)(void *impl)) {
     YARP_OK(portable);
     portable->onCompletion = onCompletion;
     return 0;
@@ -122,7 +122,7 @@ YARP_DEFINE(int) yarpPortableSetOnCompletionHandler(yarpPortablePtr portable, in
      * set the onCommencement handler of a portable structure.
      *
      */
-YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)()) {
+YARP_DEFINE(int) yarpPortableSetOnCommencementHandler(yarpPortablePtr portable, int(*onCommencement)(void *impl)) {
     YARP_OK(portable);
     portable->onCommencement = onCommencement;
     return 0;
