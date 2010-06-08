@@ -83,6 +83,8 @@ extern "C" {
         int (*read) (yarpReaderPtr connection, void *client);
         int (*onCompletion)(void *client);
         int (*onCommencement)(void *client);
+        //void * (*create)(void *client);
+        //void (*destroy)(void *instance, void *client);
     } yarpPortableCallbacks;
     typedef yarpPortableCallbacks *yarpPortableCallbacksPtr;
 
@@ -108,6 +110,29 @@ extern "C" {
         void *implementation;
     } yarpString;
     typedef yarpString *yarpStringPtr;
+    
+    /**
+     *
+     * Plain C thread callback structure.
+     *
+     */
+    typedef struct yarpThreadCallbacksStruct {
+        int (*run) (void *client);
+        int (*afterStart) (int success, void *client);
+        int (*onStop) (void *client);
+    } yarpThreadCallbacks;
+    typedef yarpThreadCallbacks *yarpThreadCallbacksPtr;
+
+    /**
+     *
+     * Plain C thread structure.  This structure represents threads.
+     *
+     */
+    typedef struct yarpThreadStruct {
+        void *implementation;
+        yarpThreadCallbacksPtr callbacks;
+    } yarpThread;
+    typedef yarpThread *yarpThreadPtr;
     
     /**
      *
@@ -188,6 +213,13 @@ extern "C" {
     YARP_DECLARE(int) yarpSemaphorePost(yarpSemaphorePtr sema);
     YARP_DECLARE(int) yarpSemaphoreCheck(yarpSemaphorePtr sema);
 
+    YARP_DECLARE(int) yarpThreadCallbacksInit(yarpThreadCallbacksPtr callbacks);
+
+    YARP_DECLARE(int) yarpThreadInit(yarpThreadPtr thread,
+                                     yarpThreadCallbacksPtr callbacks);
+    YARP_DECLARE(int) yarpThreadFini(yarpThreadPtr thread);
+    YARP_DECLARE(int) yarpThreadStart(yarpThreadPtr thread);
+    YARP_DECLARE(int) yarpThreadStop(yarpThreadPtr thread);
 
 #ifdef __cplusplus
 }

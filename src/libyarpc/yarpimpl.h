@@ -24,6 +24,7 @@ using namespace yarp::os;
 #define YARP_READER(s) (*((ConnectionReader*)(s->implementation)))
 #define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
 #define YARP_STRING(s) (*((ConstString*)(s->implementation)))
+#define YARP_THREAD(s) (*((Thread*)(s->implementation)))
 
 class YarpImplPortableAdaptor : public yarp::os::Portable {
 private:
