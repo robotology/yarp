@@ -1,3 +1,9 @@
+2010-06-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/FindGtkPlus.cmake: apply OSX patch from Gianluca Massera
+
+	* conf/FindGthread.cmake: apply OSX patch from Gianluca Massera
+
 2010-06-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* scripts/fetch-ace.sh: Change ACE configuration when bundled

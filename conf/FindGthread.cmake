@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Alessandro Scalzo, Lorenzo Natale, Paul Fitzpatrick, Gianluca Massera
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 # Tried to make variables uniform with cmake "standards"
 # Now set Gthread_* variables (respect capitalization rule).
 # Maintain backwards compatibiliy.
@@ -29,14 +33,23 @@ IF(UNIX)
    endif (GTHREAD_FOUND)
  endif (PKG_CONFIG_FOUND)
  
+ IF (APPLE)
+  ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
+  ### The following setup is relative to the official GTK package for mac os-x
+  SET( GTHREAD_INCLUDE_DIR "/Library/Frameworks/GLib.framework/Headers" )
+  SET( GTHREAD_LIBRARY_DIR " " )
+  SET( GTHREAD_LINK_FLAGS "-framework GLib" )
+  SET( GTHREAD_C_FLAGS " " )
+ ENDIF (APPLE)
+
  SET(GTHREAD_LINK_FLAGS "${GTHREAD_LINK_FLAGS}" CACHE INTERNAL "gthread link flags")
  SET(GTHREAD_C_FLAGS "${GTHREAD_C_FLAGS}" CACHE INTERNAL "gthread include flags")
  SET(GTHREAD_INCLUDE_DIR "${GTHREAD_INCLUDE_DIR}" CACHE INTERNAL "gthread include directory")
 
  
- SET(Gthread_LIBRARIES "${GTHREAD_LDFLAGS}" CACHE INTERNAL "gthread link flags")
+ SET(Gthread_LIBRARIES "${GTHREAD_LINK_FLAGS}" CACHE INTERNAL "gthread link flags")
  SET(Gthread_C_FLAGS "${GTHREAD_C_FLAGS}" CACHE INTERNAL "gthread include flags")
- SET(Gthread_INCLUDE_DIRS "${GTHREAD_INCLUDE_DIRS}" CACHE INTERNAL "gthread include directory")
+ SET(Gthread_INCLUDE_DIRS "${GTHREAD_INCLUDE_DIR}" CACHE INTERNAL "gthread include directory")
 
 
  IF (GTHREAD_C_FLAGS)

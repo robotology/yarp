@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Alessandro Scalzo, Lorenzo Natale, Paul Fitzpatrick, Gianluca Massera
+# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
 # Tried to make variables uniform with cmake "standards"
 # Now set GtkPlus_* variables (respect capitalization rule).
 # Maintain backwards compatibiliy.
@@ -30,21 +34,17 @@ IF(UNIX)
     endif (GTKPLUS_FOUND)
   endif (PKG_CONFIG_FOUND)
 
-#IF (APPLE)
-	# there is a problem with some versions of pkg-config introducing
-	# newline characters that don't get cleaned up in some versions
-	# of cmake.  No time to fix this now...
-	# the same problem seems to happen also on Linux/Debian (ask Giorgio Metta).
-#The following IF appends /usr/lib as a link flag, this
-#asks the linker to link a directory, which is wrong and causes a link error.
-#It looks more correct to remove the command completely. Another option is 
-#to add -L${GTKPLUS_LIBRARY_DIR} instead of ${GTKPLUS_LIBRARY_DIR}
-#
-#	IF (GTKPLUS_LIBRARY_DIR)
-#	SET(GTKPLUS_LINK_FLAGS "${GTKPLUS_LINK_FLAGS} ${GTKPLUS_LIBRARY_DIR}")
-#	ENDIF (GTKPLUS_LIBRARY_DIR)
+ IF (APPLE)
+   ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
+   ### The following setup is relative to the official GTK package for mac os-x
+   SET( GTKPLUS_INCLUDE_DIR "/Library/Frameworks/Gtk.framework/Headers;/Library/Frameworks/GLib.framework/Headers;/Library/Frameworks/Cairo.framework/Headers;" 
+)
+   SET( GTKPLUS_LIBRARY_DIR " " )
+   SET( GTKPLUS_LINK_FLAGS "-framework Gtk -framework GLib" )
+   SET( GTKPLUS_C_FLAGS " " )
+ ENDIF (APPLE)
 
-#ENDIF (APPLE)
+
 
  SET(GTKPLUS_LINK_FLAGS "${GTKPLUS_LINK_FLAGS}" CACHE INTERNAL "gtk+ link flags")
  SET(GTKPLUS_C_FLAGS "${GTKPLUS_C_FLAGS}" CACHE INTERNAL "gtk+ include flags")
@@ -59,9 +59,6 @@ IF(UNIX)
  #message(STATUS "LinkFlags --> ${GTKPLUS_LINK_DIR}")
  #message(STATUS "CFlags --> ${GTKPLUS_C_FLAGS}")
  
- #ADD_DEFINITIONS(${GTKPLUS_C_FLAGS})
- #LINK_LIBRARIES(${GTKPLUS_LINK_FLAGS})
-
  SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
  SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
 
