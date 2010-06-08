@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2009 Paul Fitzpatrick
+ * Copyright (C) 2009, 2010 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
  *
  */
@@ -23,7 +23,7 @@ using namespace yarp::os;
 #define YARP_NETWORK(s) (*((Network*)(s->implementation)))
 #define YARP_READER(s) (*((ConnectionReader*)(s->implementation)))
 #define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
-#define YARP_PORTABLE(s) (*((Portable*)(s->implementation)))
+#define YARP_STRING(s) (*((ConstString*)(s->implementation)))
 
 class YarpImplPortableAdaptor : public yarp::os::Portable {
 private:
@@ -65,7 +65,6 @@ public:
     }
 };
 
-//#define YARP_PORTABLE(s) (*((Portable*)(s->implementation)))
 #define MAKE_PORTABLE(s) (YarpImplPortableAdaptor::checkPortable(s))
 
 #endif

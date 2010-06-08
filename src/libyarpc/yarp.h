@@ -156,13 +156,13 @@ extern "C" {
                                          const char *name);
 
 
-    YARP_DECLARE(int) yarpReaderExpectBlock(yarpReaderPtr reader, const char *data, int len); //TODO
-    YARP_DECLARE(int) yarpReaderExpectText(yarpReaderPtr reader,  //TODO
+    YARP_DECLARE(int) yarpReaderExpectBlock(yarpReaderPtr reader, const char *data, int len);
+    YARP_DECLARE(int) yarpReaderExpectText(yarpReaderPtr reader,
                                            yarpStringPtr str,
-                                           const char *terminal); // \n if NULL
+                                           char terminal);
     YARP_DECLARE(int) yarpReaderExpectInt(yarpReaderPtr reader, int *data);
-    YARP_DECLARE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data); //TODO
-    YARP_DECLARE(int) yarpReaderIsTextMode(yarpReaderPtr reader); //TODO
+    YARP_DECLARE(int) yarpReaderExpectDouble(yarpReaderPtr reader, double *data);
+    YARP_DECLARE(int) yarpReaderIsTextMode(yarpReaderPtr reader);
 
     YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
 

@@ -11,7 +11,6 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
-
     /**
      *
      * Initialize a portable structure.
