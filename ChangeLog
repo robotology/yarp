@@ -1,5 +1,8 @@
 2010-06-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
+	* conf/YarpPlugin.cmake: improve internal documentation of
+	plugin system
+
 	* conf/FindGtkPlus.cmake: apply OSX patch from Gianluca Massera
 
 	* conf/FindGthread.cmake: apply OSX patch from Gianluca Massera

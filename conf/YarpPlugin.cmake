@@ -10,18 +10,22 @@
 ##  BEGIN_PLUGIN_LIBRARY(libname)
 ##    ADD_SUBDIRECTORY(plugin1)
 ##    ADD_SUBDIRECTORY(plugin2)
+##    ...
 ##  END_PLUGIN_LIBRARY(libname)
 ##  ADD_PLUGIN_LIBRARY_EXECUTABLE(libnamedev libname)
 ##
 ## This sample would create two CMake targets, "libname" (a library) 
-## and libnamedev (an executable).  
+## and libnamedev (an executable).  It also defines a list:
+##   ${libname_LIBRARIES}
+## which contains a list of all library targets created within
+## the plugin directories plugin1, plugin2, ...
 ##
-## The library links with every library in the subdirectories 
+## The "libname" library links with every library in the subdirectories 
 ## (which can be made individually optional using CMake options),
 ## and provides a method to initialize them all.
 ##
 ## The executable is a test program that links and initializes
-## all plugins.
+## the "libname" library, making the plugins accessible.
 ##
 ## Plugins come in two types, carriers and devices.
 ## To let YARP know how to initialize them, add lines like 
@@ -38,7 +42,13 @@
 ## Skip this whole file if it has already been included
 IF (NOT COMMAND END_PLUGIN_LIBRARY)
 
-# Helper macro to work around a bug in set_property in cmake 2.6.0
+
+
+#########################################################################
+# get_property_fix: this is a small workaround for a bug in 
+# the get_property macro in cmake 2.6.0.  It makes sure that reading
+# an empty list from a property works correctly.
+#
 MACRO(get_property_fix localname _global _property varname)
   set(_exists_chk)
   get_property(_exists_chk GLOBAL PROPERTY ${varname})
@@ -49,7 +59,13 @@ MACRO(get_property_fix localname _global _property varname)
   endif (_exists_chk)
 ENDMACRO(get_property_fix)
 
-# Helper macro to work around a bug in set_property in cmake 2.6.0
+
+
+#########################################################################
+# set_property_fix: this is a small workaround for a bug in 
+# the set_property macro in cmake 2.6.0.  It makes sure that appending
+# to an empty list works correctly.
+#
 MACRO(set_property_fix _global _property _append varname)
   get_property(_append_chk GLOBAL PROPERTY ${varname})
   if (_append_chk)
@@ -59,51 +75,67 @@ MACRO(set_property_fix _global _property _append varname)
   endif (_append_chk)
 ENDMACRO(set_property_fix)
 
+
+
 #########################################################################
-# BEGIN_PLUGIN_LIBRARY macro makes sure that all the hooks
-# needed for creating a plugin library are in place.
+# BEGIN_PLUGIN_LIBRARY: this macro makes sure that all the hooks
+# needed for creating a plugin library are in place.  Between
+# this call, and a subsequent call to END_PLUGIN_LIBRARY, the
+# YARP_PLUGIN_MODE variable is set.  While this mode is set,
+# any library targets created are tracked in a global list.
+# Calls to this macro may be nested.
 #
 MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
-  # If we are nested inside a larger plugin block, we don't
-  # have to do much.  If we are the outermost plugin block,
-  # then we need to set up everything.
   IF (YARP_PLUGIN_MODE)
 
+    # If we are nested inside a larger plugin block, we don't
+    # have to do anything.
     MESSAGE(STATUS "nested library ${bundle_name}")
 
   ELSE (YARP_PLUGIN_MODE)
 
-    # Declare that we are starting to compile the given plugin library
-    MESSAGE(STATUS "starting plugin library: ${bundle_name}")
-    SET(YARP_PLUGIN_LIB_NAME ${bundle_name})
+    # If we are the outermost plugin block, then we need to set up 
+    # everything for tracking the plugins within that block.
+
+    # Make a record of the fact that we are now within a plugin
     SET(YARP_PLUGIN_MODE TRUE)
 
+    # Declare that we are starting to compile the given plugin library
+    MESSAGE(STATUS "starting plugin library: ${bundle_name}")
+
+    # Prepare a directory for automatically generated boilerplate code.
     SET(YARP_PLUGIN_GEN ${CMAKE_BINARY_DIR}/generated_code)
     IF (NOT EXISTS ${YARP_PLUGIN_GEN})
       FILE(MAKE_DIRECTORY ${YARP_PLUGIN_GEN})
     ENDIF (NOT EXISTS ${YARP_PLUGIN_GEN})
+
+    # Choose a prefix for CMake options related to this library
     SET(YARP_PLUGIN_PREFIX "${bundle_name}_")
-    SET(YARP_PLUGIN_LIB_FLAG EXCLUDE_FROM_ALL)
 
     # Set a flag to let individual modules know that they are being
     # compiled as part of a bundle, and not standalone.  Developers
     # use this flag to inhibit compilation of test programs and 
     # the like.
-    SET(COMPILE_DEVICE_LIBRARY TRUE) # legacy flag
     SET(COMPILE_PLUGIN_LIBRARY TRUE)
+    SET(COMPILE_DEVICE_LIBRARY TRUE) # an old name for the flag
 
-    # Record the name of this outermost device bundle (needed because
-    # nesting is allowed)
+    # Record the name of the plugin library name
     SET(YARP_PLUGIN_MASTER ${bundle_name})
 
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_DEVICES)
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
+    # Set some properties to an empty state
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
 
+    # One glitch is that if plugins are used within YARP, rather
+    # than in an external library, then "find_package(YARP)" will
+    # not work correctly yet.  We simulate the operation of 
+    # find_package(YARP) here if needed, using properties
+    # maintained during the YARP build.
     get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
     if (YARP_TREE_INCLUDE_DIRS)
+      # Simulate the operation of find_package(YARP)
       set (YARP_FOUND TRUE)
       get_property_fix(YARP_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
       get_property_fix(YARP_LIBRARIES GLOBAL PROPERTY YARP_LIBS)
@@ -176,10 +208,8 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
   IF (ENABLE_${MYNAME})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_DEVICES ${plugin_name})
+    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
     set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_INCLUDE_DIRS 
-      ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/include)
     SET(YARP_PLUGIN_ACTIVE TRUE)
     MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
   ELSE (ENABLE_${MYNAME})
@@ -248,10 +278,24 @@ MACRO(PREPARE_PLUGIN plugin_name)
   ENDIF(THE_TYPE AND THE_INCLUDE)
 ENDMACRO(PREPARE_PLUGIN plugin_name)
 
+
+
+#########################################################################
+# PREPARE_DEVICE macro lets a developer declare a device plugin using a 
+# statement like:
+#    PREPARE_PLUGIN(moto CATEGORY device TYPE Moto INCLUDE moto.h WRAPPER controlboard)
+#
 MACRO(PREPARE_DEVICE)
   PREPARE_PLUGIN(${ARGN} CATEGORY device)
 ENDMACRO(PREPARE_DEVICE)
 
+
+
+#########################################################################
+# PREPARE_CARRIER macro lets a developer declare a carrier plugin using a 
+# statement like:
+#    PREPARE_CARRIER(foo TYPE FooCarrier INCLUDE FooCarrier.h)
+#
 MACRO(PREPARE_CARRIER)
   PREPARE_PLUGIN(${ARGN} CATEGORY carrier)
 ENDMACRO(PREPARE_CARRIER)
@@ -259,13 +303,16 @@ ENDMACRO(PREPARE_CARRIER)
 
 
 #########################################################################
-# Lightly redefine ADD_LIBRARY
+# Lightly redefine ADD_LIBRARY to track plugin libraries.  We want to
+# be later able to link against them all as a group.
 #
 MACRO(ADD_LIBRARY LIBNAME)
   IF (NOT YARP_PLUGIN_MODE)
-    # pass on call without looking at it
+    # when not compiling a plugin library, revert to normal operation
     _ADD_LIBRARY(${LIBNAME} ${ARGN})
   ELSE (NOT YARP_PLUGIN_MODE)
+    # we check to see if the ADD_LIBRARY call is an import, and ignore
+    # if so - we don't need to do anything about imports.
     set(IS_IMPORTED FALSE)
     foreach(arg ${ARGN})
       if ("${arg}" STREQUAL "IMPORTED")
@@ -273,11 +320,17 @@ MACRO(ADD_LIBRARY LIBNAME)
       endif()
     endforeach()
     if (NOT IS_IMPORTED)
+      # The user is adding a bone-fide plugin library.  We add it,
+      # while inserting any generated source code needed for initialization.
       get_property_fix(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
       _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
+      # Reset the list of generated source code to empty.
       set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
+      # Add the library to the list of plugin libraries.
       set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
       if (YARP_TREE_INCLUDE_DIRS)
+        # If compiling YARP, we go ahead and set up installing this
+        # target.  It isn't safe to do this outside of YARP though.
         install(TARGETS ${LIBNAME} EXPORT YARP COMPONENT runtime 
                 DESTINATION lib)
       endif (YARP_TREE_INCLUDE_DIRS)
@@ -286,8 +339,12 @@ MACRO(ADD_LIBRARY LIBNAME)
 ENDMACRO(ADD_LIBRARY LIBNAME)
 
 
+
 #########################################################################
-# Lightly redefine FIND_PACKAGE
+# Lightly redefine FIND_PACKAGE to skip calls to FIND_PACKAGE(YARP).
+# YARP dependencies are guaranteed to have already been satisfied.
+# And if we are compiling YARP, the use of FIND_PACKAGE(YARP) will lead
+# to problems.
 #
 MACRO(FIND_PACKAGE LIBNAME)
   IF (NOT YARP_PLUGIN_MODE)
@@ -305,16 +362,18 @@ ENDMACRO(FIND_PACKAGE LIBNAME)
 
 
 #########################################################################
-# END_PLUGIN_LIBRARY macro prepares a plugin library if this is
+# END_PLUGIN_LIBRARY macro finalizes a plugin library if this is
 # the outermost plugin library block, otherwise it propagates
 # all collected information to the plugin library block that wraps
 # it.
 #
 macro(END_PLUGIN_LIBRARY bundle_name)
   message(STATUS "ending plugin library: ${bundle_name}")
+  # make sure we are the outermost plugin library, if nesting is present.
   if ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
+    # generate code to call all plugin initializers
     set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
-    get_property_fix(devs GLOBAL PROPERTY YARP_BUNDLE_DEVICES)
+    get_property_fix(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
     set(YARP_CODE_PRE)
     set(YARP_CODE_POST)
     foreach(dev ${devs})
@@ -326,18 +385,24 @@ macro(END_PLUGIN_LIBRARY bundle_name)
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
     get_property_fix(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
-    #get_property(dirs GLOBAL PROPERTY YARP_BUNDLE_INCLUDE_DIRS)
-    #include_directories(${YARP_INCLUDE_DIRS} ${dirs})
     include_directories(${YARP_INCLUDE_DIRS})
+    # add the library initializer code
     _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
     get_property_fix(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
+    # give user access to a list of all the plugin libraries
     set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})
     set(YARP_PLUGIN_MODE FALSE) # neutralize redefined methods 
   endif ("${bundle_name}" STREQUAL "${YARP_PLUGIN_MASTER}")
 endmacro(END_PLUGIN_LIBRARY bundle_name)
 
+
+
+#########################################################################
+# ADD_PLUGIN_LIBRARY_EXECUTABLE macro expands a simple test program
+# for a named device library.
+#
 MACRO(ADD_PLUGIN_LIBRARY_EXECUTABLE exename bundle_name)
   CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarpdev_lib_main.cpp.in
     ${YARP_PLUGIN_GEN}/yarpdev_${bundle_name}.cpp @ONLY  IMMEDIATE)
