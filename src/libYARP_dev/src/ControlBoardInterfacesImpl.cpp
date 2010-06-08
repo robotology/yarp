@@ -64,7 +64,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
 
     delete [] dummy;
     return true;
@@ -129,12 +129,12 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
 
     tmpPids=new Pid[size];
-    ACE_ASSERT (tmpPids!=0);
+    _YARP_ASSERT (tmpPids!=0);
 
     return true;
 }
@@ -341,7 +341,7 @@ bool ImplementOpenLoopControl::initialize(int size, const int *amap)
         dummy[k]=0;
 
     helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT(helper != 0);
 
     delete [] dummy;
     return true;

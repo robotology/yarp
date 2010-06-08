@@ -23,7 +23,7 @@
 #include <string.h> // for memset
 #include <stdlib.h> // for exit
 #include <stdio.h> // for printf
-#define ACE_ASSERT(x) { if (!(x)) { printf("memory allocation failure\n"); exit(1); } }
+#define _YARP_ASSERT(x) { if (!(x)) { printf("memory allocation failure\n"); exit(1); } }
 
 /*
  * simple helper template to alloc memory.
@@ -32,7 +32,7 @@ template <class T>
 inline T* allocAndCheck(int size)
 {
     T* t = new T[size];
-    ACE_ASSERT (t != 0);
+    _YARP_ASSERT (t != 0);
     memset(t, 0, sizeof(T) * size);
     return t;
 }
@@ -110,7 +110,7 @@ public:
         axisMap=new int [nj];
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
-        ACE_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0);
+        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0);
 
         return true;
     }
@@ -559,9 +559,9 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
 
     return true;
 }
@@ -606,9 +606,9 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
 
     return true;
 }
@@ -738,11 +738,11 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
     tmpPids=new Pid[size];
-    ACE_ASSERT (tmpPids != 0);
+    _YARP_ASSERT (tmpPids != 0);
     
     return true;
 }
@@ -1001,9 +1001,9 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
     return true;
 }
 
@@ -1173,9 +1173,9 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
     return true;
 }
 
@@ -1238,9 +1238,9 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
         return false;
     
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
     return true;
 }
 
@@ -1303,9 +1303,9 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     temp=new double [size];
-    ACE_ASSERT (temp != 0);
+    _YARP_ASSERT (temp != 0);
     return true;
 }
 
@@ -1394,11 +1394,11 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
     helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
-    ACE_ASSERT (helper != 0);
+    _YARP_ASSERT (helper != 0);
     dTemp=new double[size];
-    ACE_ASSERT (dTemp != 0);
+    _YARP_ASSERT (dTemp != 0);
     iTemp=new int[size];
-    ACE_ASSERT (iTemp != 0);
+    _YARP_ASSERT (iTemp != 0);
     
     return true;
 }
