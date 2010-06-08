@@ -4,16 +4,20 @@
 option(CREATE_YARPCXX "Compile experimental stable C++ library" FALSE)
 mark_as_advanced(CREATE_YARPCXX)
 
-project(yarpcxx)
+if (CREATE_YARPCXX)
 
-# pick up yarp.h
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libyarpc)
+  project(yarpcxx)
 
-# pick up experimental C++ headers
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+  # pick up yarp.h
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libyarpc)
 
-add_executable(yarpcxx_test1 yarpcxx_test1.cpp)
-target_link_libraries(yarpcxx_test1 yarpc)
+  # pick up experimental C++ headers
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(yarpcxx_test2 yarpcxx_test2.cpp)
-target_link_libraries(yarpcxx_test2 yarpc)
+  add_executable(yarpcxx_test1 yarpcxx_test1.cpp)
+  target_link_libraries(yarpcxx_test1 yarpc)
+
+  add_executable(yarpcxx_test2 yarpcxx_test2.cpp)
+  target_link_libraries(yarpcxx_test2 yarpc)
+
+endif ()
