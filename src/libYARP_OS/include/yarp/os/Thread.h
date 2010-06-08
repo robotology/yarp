@@ -27,7 +27,7 @@ class yarp::os::Thread {
 public:
 
     /**
-     * Constructor.  Thread begins in a dormat state.  Call Thread::start
+     * Constructor.  Thread begins in a dormant state.  Call Thread::start
      * to get things going.
      */
     Thread();
