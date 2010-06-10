@@ -19,6 +19,7 @@
 
 #include <yarp/os/Terminator.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
 
 
 using namespace yarp::os::impl;
@@ -43,16 +44,23 @@ bool Terminator::terminateByName(const char *name) {
         s += "/";
         s += name;
     }
-    NameClient& namer = NameClient::getNameClient();
-    Address a = namer.queryName(s);
-    //ACE_OS::printf("address: %s port %d\n",a.getName().c_str(),a.getPort());
-    SocketTwoWayStream sock;
-    sock.open(a);
-    sock.write(Bytes((char *)"quit",4));
-    sock.close();
+
+    Bottle cmd("quit"), reply;
+    Contact c = NetworkBase::queryName(s.c_str());
+    if (!c.isValid()) {
+        fprintf(stderr,"Terminator port not found\n");
+        return false;
+    }
+    ContactStyle style;
+    style.quiet = false;
+    style.carrier = "text";
+    style.expectReply = false;
+    NetworkBase::write(c,cmd,reply,style);
+
     return true;
 }
 
+/*
 class TermineeHelper {
 public:
     ACE_INET_Addr addr;
@@ -62,6 +70,11 @@ public:
     String registeredName;
 };
 #define HELPER(x) (*((TermineeHelper*)(x)))
+*/
+
+#define TermineeHelper Port
+#define HELPER(x) (*((TermineeHelper*)(x)))
+
 
 Terminee::Terminee(const char *name) {
     ok = false;
@@ -77,6 +90,7 @@ Terminee::Terminee(const char *name) {
         s += name;
     }
     
+    /*
     NameClient& namer = NameClient::getNameClient();
     Address suggest = Address("...",0,"quit",s);
     Address a = namer.registerName(s,suggest);
@@ -89,22 +103,37 @@ Terminee::Terminee(const char *name) {
     helper.addr.set(a.getPort());
     helper.acceptor.open(helper.addr, 1);
     helper.registeredName = name;
-    quit = false;
-    start();
-    ok = true;
+    */
+
+    implementation = new TermineeHelper();
+    YARP_ASSERT(implementation!=NULL);
+    TermineeHelper& helper = HELPER(implementation);
+    ok = helper.open(s.c_str());
+    if (!ok) {
+        quit = true;
+        fprintf(stderr,"Kill port conflict: make sure you supply a distinct --name /PORTNAME\n");
+    } else {
+        quit = false;
+        start();
+        ok = true;
+    }
 }
 
 void Terminee::onStop()
 {
     TermineeHelper& helper = HELPER(implementation);
+    /*
     helper.sock.interrupt();
     helper.acceptor.close();
+    */
+    helper.close();
 }
 
 Terminee::~Terminee() {
     TermineeHelper& helper = HELPER(implementation);
     if (!quit) {
-        Terminator::terminateByName(helper.registeredName.c_str());
+        //Terminator::terminateByName(helper.registeredName.c_str());
+        Terminator::terminateByName(helper.getName().c_str());
     }
     
     // no longer needed, see onClose(), this better handles quit
@@ -114,7 +143,8 @@ Terminee::~Terminee() {
     
     // important: stop before deleting "implementation"
     stop(); 
-    NetworkBase::unregisterName(helper.registeredName.c_str());
+    //NetworkBase::unregisterName(helper.registeredName.c_str());
+    //NetworkBase::unregisterName(helper.registeredName.c_str());
 
     if (implementation!=NULL) {
         delete &HELPER(implementation);
@@ -125,6 +155,12 @@ Terminee::~Terminee() {
 void Terminee::run() {
     TermineeHelper& helper = HELPER(implementation);
     while (!isStopping() && !quit) {
+        Bottle cmd;
+        helper.read(cmd);
+        if (cmd.get(0).asString()=="quit") {
+            quit = true;
+        }
+        /*
         helper.sock.open(helper.acceptor);
         Address a = helper.sock.getRemoteAddress();
         //ACE_OS::printf("incoming data: %s %d\n", a.getName().c_str(), a.getPort());
@@ -165,5 +201,6 @@ void Terminee::run() {
                 }
             }
         }
+        */
     }
 }

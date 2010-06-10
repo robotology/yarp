@@ -197,9 +197,7 @@ ConstString NetworkBase::readString(bool *eof) {
 bool NetworkBase::write(const Contact& contact, 
                         PortWriter& cmd,
                         PortReader& reply,
-                        bool admin,
-                        bool quiet,
-                        double timeout) {
+                        const ContactStyle& style) {
 
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
@@ -213,7 +211,7 @@ bool NetworkBase::write(const Contact& contact,
         address = nic.queryName(targetName);
     }
     if (!address.isValid()) {
-        if (!quiet) {
+        if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not find port");
         }
         return false;
@@ -221,27 +219,24 @@ bool NetworkBase::write(const Contact& contact,
     
     OutputProtocol *out = Carriers::connect(address);
     if (out==NULL) {
-        if (!quiet) {
+        if (!style.quiet) {
             YARP_ERROR(Logger::get(),"cannot connect to port");
         }
         return false;
     }
-    if (timeout>0) {
-        out->setTimeout(timeout);
+    if (style.timeout>0) {
+        out->setTimeout(style.timeout);
     }
 
-    //printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
-    //     address.toString().c_str(),
-    //     connectionName);
-    //Route r(connectionName,targetName,"text_ack");
-    Route r(connectionName,targetName,"text_ack");
+    Route r(connectionName,targetName,
+            (style.carrier!="")?style.carrier.c_str():"text_ack");
     out->open(r);
 
-    PortCommand pc(0,admin?"a":"d");
+    PortCommand pc(0,style.admin?"a":"d");
     BufferedConnectionWriter bw(out->isTextMode());
     bool ok = pc.write(bw);
     if (!ok) {
-        if (!quiet) {
+        if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not write to connection");
         }
         if (out!=NULL) delete out;
@@ -249,18 +244,16 @@ bool NetworkBase::write(const Contact& contact,
     }
     ok = cmd.write(bw);
     if (!ok) {
-        if (!quiet) {
+        if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not write to connection");
         }
         if (out!=NULL) delete out;
         return false;
     }
-    bw.setReplyHandler(reply);
+    if (style.expectReply) {
+        bw.setReplyHandler(reply);
+    }
     out->write(bw);
-    //InputProtocol& ip = out->getInput();
-    //ConnectionReader& reader = ip.beginRead();
-    //reply.read(reader);
-    //ip.endRead();
     if (out!=NULL) {
         delete out;
         out = NULL;

@@ -14,13 +14,11 @@ source $YARP_ROOT/example/dev/movie/tiny.avi
 name /visual
 name2 /audio
 \endverbatim
-
 If this text is saved in a file called grabber_audiovisual.ini then the device can be created by doing:
 \verbatim
 yarpdev --file grabber_audiovisual.ini
 \endverbatim
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
-
 \code
 Property p;
 p.fromConfigFile("grabber_audiovisual.ini");

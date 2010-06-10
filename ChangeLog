@@ -1,3 +1,10 @@
+2010-06-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Terminator.cpp: make "Terminee" ports be
+	just regular ports.  Network-compatible with previous terminator 
+	protocol.  Give error for conflicting terminees (thanks
+	Philipp Robbel).
+
 2010-06-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/YarpPlugin.cmake: improve internal documentation of

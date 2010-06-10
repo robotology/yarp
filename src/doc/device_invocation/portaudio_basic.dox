@@ -9,13 +9,11 @@ Instantiates \ref cmd_device_portaudio "portaudio" device implemented by yarp::d
 device portaudio
 read
 \endverbatim
-
 If this text is saved in a file called portaudio_basic.ini then the device can be created by doing:
 \verbatim
 yarpdev --file portaudio_basic.ini
 \endverbatim
 Of course, the configuration could be passed just as command line options, or as a yarp::os::Property object in a program:
-
 \code
 Property p;
 p.fromConfigFile("portaudio_basic.ini");

@@ -22,12 +22,36 @@ namespace yarp {
     namespace os {
         class NetworkBase;
         class Network;
+        class ContactStyle;
     }
 }
 
 // Make plugins in a library available for use
 #define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _devices();
 #define YARP_REGISTER_PLUGINS(name) add_ ## name ## _devices();
+
+/**
+ * \ingroup comm_class
+ *
+ * Preferences for how to communicate with a contact.
+ *
+ */
+class yarp::os::ContactStyle {
+public:
+    bool admin;
+    bool quiet;
+    double timeout;
+    ConstString carrier;
+    bool expectReply;
+
+    ContactStyle() {
+        admin = false;
+        quiet = false;
+        timeout = -1;
+        carrier = "";
+        expectReply = true;
+    }
+};
 
 /**
  * \ingroup comm_class
@@ -268,7 +292,31 @@ public:
                       PortReader& reply,
                       bool admin = false,
                       bool quiet = false,
-                      double timeout = -1);
+                      double timeout = -1) {
+        ContactStyle style;
+        style.admin = admin;
+        style.quiet = quiet;
+        style.timeout = -1;
+        return write(contact,cmd,reply,style);
+    }
+
+
+    /**
+     * Variant write method with options bundled into a 
+     * yarp::os::ContactStyle (there was getting to be too many of
+     * them).
+     *
+     * @param contact the target to communicate with
+     * @param cmd the message to send
+     * @param reply the response if any is read here
+     * @param style options for the connection
+     *
+     * @return true on success
+     */
+    static bool write(const Contact& contact, 
+                      PortWriter& cmd,
+                      PortReader& reply,
+                      const ContactStyle& style);
 
     /**
      *

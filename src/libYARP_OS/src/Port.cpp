@@ -320,7 +320,6 @@ bool Port::open(const Contact& contact, bool registerName) {
                    " (" +
                    blame.c_str() +
                    ")");
-        close();
     }
     return success;
 }

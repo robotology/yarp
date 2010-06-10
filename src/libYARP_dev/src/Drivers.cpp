@@ -322,11 +322,11 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         terminee = new Terminee(s.c_str());
         terminatorKey = s.c_str();
         if (terminee == 0) {
-            printf("Can't allocate terminator socket port\n");
+            printf("Can't allocate terminator port\n");
             return 1;
         }
         if (!terminee->isOk()) {
-            printf("Failed to create terminator socket port\n");
+            printf("Failed to create terminator port\n");
             return 1;
         }
     }
