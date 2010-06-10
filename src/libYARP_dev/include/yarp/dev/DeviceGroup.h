@@ -41,10 +41,7 @@ public:
         return closeMain();
     }
 
-    virtual bool startService() {
-        // please call updateService
-        return false;
-    }
+    virtual bool startService();
 
     virtual bool stopService() {
         return close();

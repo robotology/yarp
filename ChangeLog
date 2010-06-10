@@ -1,5 +1,9 @@
 2010-06-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/DeviceGroup.cpp: remove unnecessary 
+	polling if all devices within a group are backgrounded
+	(thanks Philipp Robbel).
+
 	* src/libYARP_OS/src/Terminator.cpp: make "Terminee" ports be
 	just regular ports.  Network-compatible with previous terminator 
 	protocol.  Give error for conflicting terminees (thanks

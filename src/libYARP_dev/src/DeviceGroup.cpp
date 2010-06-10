@@ -81,7 +81,10 @@ private:
     ACE_Vector<bool> needDrive;
     Semaphore mutex;
 public:
+    bool needDriveSummary;
+
     DeviceGroupHelper() : mutex(1) {
+        needDriveSummary = false;
     }
 
     void clear() {
@@ -138,7 +141,7 @@ public:
         names.push_back(ConstString(name));
         IService *service = NULL;
         pd->view(service);
-        bool backgrounded = false;
+        bool backgrounded = true;
         if (service!=NULL) {
             backgrounded = service->startService();
             if (backgrounded) {
@@ -149,6 +152,7 @@ public:
             }
         }
         needDrive.push_back(!backgrounded);
+        needDriveSummary = needDriveSummary || (!backgrounded);
         Drivers::factory().add(new LinkCreator(name,*pd));
         return true;
     }
@@ -169,7 +173,6 @@ bool DeviceGroup::open(yarp::os::Searchable& config) {
 
     if (config.check("part","a list of section names, with each section containing a device")) {
         Bottle bot = config.findGroup("part").tail();
-        printf("Hmm, seems to be an assembly\n");
         printf("Assembly of: %s\n", bot.toString().c_str());
         for (int i=0; i<bot.size(); i++) {
             ConstString name = bot.get(i).asString();
@@ -225,6 +228,10 @@ bool DeviceGroup::closeMain() {
     source.close();
     sink.close();
     return true;
+}
+
+bool DeviceGroup::startService() {
+    return !HELPER(implementation).needDriveSummary;
 }
 
 
