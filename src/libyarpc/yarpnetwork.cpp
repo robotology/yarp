@@ -11,6 +11,8 @@
 #include "yarp.h"
 #include "yarpimpl.h"
 
+static yarpNetworkPtr __yarp_network;
+
     /**
      * Create a network.  There should typically be one of 
      * these in a program using YARP.  You need one of these in order
@@ -18,6 +20,7 @@
      */
 YARP_DEFINE(yarpNetworkPtr) yarpNetworkCreate() {
     yarpNetworkPtr network = new yarpNetwork;
+    __yarp_network = network;
     if (network!=NULL) {
         network->implementation = new Network();
         if (network->implementation==NULL) {
@@ -26,6 +29,11 @@ YARP_DEFINE(yarpNetworkPtr) yarpNetworkCreate() {
         }
     }
     return network;
+}
+
+
+YARP_DEFINE(yarpNetworkPtr) yarpNetworkGet() {
+    return __yarp_network;
 }
 
 
@@ -47,7 +55,6 @@ YARP_DEFINE(void) yarpNetworkFree(yarpNetworkPtr network) {
      */
 YARP_DEFINE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
                                          int isLocal) {
-    YARP_OK(network);
     YARP_NETWORK(network).setLocalMode(isLocal);
     return 0;
 }
@@ -63,7 +70,6 @@ YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network,
                                     const char *src,
                                     const char *dest,
                                     const char *carrier) {
-    YARP_OK(network);
     YARP_NETWORK(network).connect(src,dest,carrier);
     return 0;
 }
@@ -77,7 +83,6 @@ YARP_DEFINE(int) yarpNetworkConnect(yarpNetworkPtr network,
 YARP_DEFINE(int) yarpNetworkDisconnect(yarpNetworkPtr network, 
                                     const char *src,
                                     const char *dest) {
-    YARP_OK(network);
     YARP_NETWORK(network).disconnect(src,dest);
     return 0;
 }

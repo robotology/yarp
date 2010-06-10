@@ -28,12 +28,13 @@ public:
         yarpNetworkFree(impl);
     }
 
-    bool setLocalMode(int isLocal) {
-        return yarpNetworkSetLocalMode(impl,isLocal) == 0;
+    static bool setLocalMode(int isLocal) {
+        return yarpNetworkSetLocalMode(NULL,isLocal) == 0;
     }
 
-    bool connect(const char *src, const char *dest, const char *carrier) {
-        return yarpNetworkConnect(impl,src,dest,carrier) == 0;
+    static bool connect(const char *src, const char *dest, 
+                        const char *carrier=NULL) {
+        return yarpNetworkConnect(NULL,src,dest,carrier) == 0;
     }
 private:
     yarpNetworkPtr impl;

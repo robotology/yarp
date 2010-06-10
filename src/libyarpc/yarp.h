@@ -165,6 +165,7 @@ extern "C" {
 
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
     YARP_DECLARE(void) yarpNetworkFree(yarpNetworkPtr network);
+    YARP_DECLARE(yarpNetworkPtr) yarpNetworkGet();
     YARP_DECLARE(int) yarpNetworkSetLocalMode(yarpNetworkPtr network,
                                               int isLocal);
     YARP_DECLARE(int) yarpNetworkConnect(yarpNetworkPtr network, 

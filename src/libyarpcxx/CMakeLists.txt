@@ -28,6 +28,9 @@ if (CREATE_YARPC)
     add_executable(yarpcxx_test_simple_sender ${EXAMPLE_DIR}/os/simple_sender.cpp)
     target_link_libraries(yarpcxx_test_simple_sender yarpc)
  
+    add_executable(yarpcxx_test_simple_receiver ${EXAMPLE_DIR}/os/simple_receiver.cpp)
+    target_link_libraries(yarpcxx_test_simple_receiver yarpc)
+ 
   endif ()
 
 endif ()
