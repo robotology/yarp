@@ -55,6 +55,7 @@ public:
         altReader = NULL;
         ref = NULL;
         reader.setProtocol(this);
+        envelope = "";
     }
 
     virtual ~Protocol() {
@@ -500,6 +501,14 @@ public:
         return is().setReadTimeout(timeout);
     }
 
+    virtual void setEnvelope(const String& str) {
+        envelope = str;
+    }
+
+    const String& getEnvelope() {
+        return envelope;
+    }
+
 private:
 
     bool sendProtocolSpecifier() {
@@ -598,6 +607,7 @@ private:
     yarp::os::ConnectionReader *altReader;
     yarp::os::Portable *ref;
     Address nullAddress;
+    String envelope;
 };
 
 #endif

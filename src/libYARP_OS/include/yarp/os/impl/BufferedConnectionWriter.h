@@ -481,7 +481,6 @@ public:
         }
     }
 
-
     BufferedConnectionWriter& getMessage() { return readerStore; }
     BufferedConnectionWriter& getReply() { return writerStore; }
     bool hasReply() { return wrote; }

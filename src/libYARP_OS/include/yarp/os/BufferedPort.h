@@ -97,6 +97,9 @@ public:
         port.interrupt();
     }
 
+    /**
+     * Get the number of objects ready to be read.
+     */
     virtual int getPendingReads() {
         return reader.getPendingReads();
     }
@@ -227,7 +230,7 @@ public:
 
     // documented in Contactable
     virtual bool getEnvelope(PortReader& envelope) {
-        return port.getEnvelope(envelope);
+        return reader.getEnvelope(envelope);
     }
 
     // documented in Contactable

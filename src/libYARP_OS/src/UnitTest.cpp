@@ -183,6 +183,25 @@ bool UnitTest::checkEqualImpl(int x, int y,
     return x==y;
 }
 
+bool UnitTest::checkEqualishImpl(double x, double y, 
+                                 const char *desc,
+                                 const char *txt1,
+                                 const char *txt2,
+                                 const char *fname,
+                                 int fline) {
+    char buf[1000];
+    ACE_OS::sprintf(buf, "in file %s:%d [%s] %s (%g) == %s (%g)",
+                    fname, fline, desc, txt1, x, txt2, y);
+    bool ok = (fabs(x-y)<0.0001);
+    if (ok) {
+        report(0,String("  [") + desc + "] passed ok");
+    } else {
+        report(1,String("  FAILURE ") + buf);
+    }
+    return ok;
+}
+
+
 bool UnitTest::checkEqualImpl(const String& x, const String& y,
                               const char *desc,
                               const char *txt1,

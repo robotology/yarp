@@ -11,11 +11,13 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/Bytes.h>
 
 namespace yarp {
     namespace os {
         class ConnectionReader;
         class ConnectionWriter;
+        class PortReader;
         class Portable;
     }
 
@@ -96,6 +98,13 @@ public:
      * @return An object that permits replies, or NULL if this cannot be done.
      */
     virtual ConnectionWriter *getWriter() = 0;
+
+    /**
+     *
+     * Read a message envelope, if available.
+     *
+     */
+    virtual Bytes readEnvelope() { return Bytes(0,0); }
 
 
     /**

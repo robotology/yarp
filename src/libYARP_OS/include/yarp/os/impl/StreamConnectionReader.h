@@ -243,6 +243,8 @@ public:
         ref = obj;
     }
 
+    virtual Bytes readEnvelope();
+
 private:
 
     bool isGood() {

@@ -14,6 +14,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputStream.h>
+#include <yarp/os/impl/String.h>
 
 namespace yarp {
     namespace os {
@@ -59,6 +60,8 @@ public:
     virtual OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;
     virtual const Address& getRemoteAddress() = 0;
+
+    virtual void setEnvelope(const String& str) = 0;
 };
 
 #endif

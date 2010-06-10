@@ -38,7 +38,6 @@ public:
      * @return true iff the object is successfully read
      */
     virtual bool read(ConnectionReader& connection) = 0;
-
 };
 
 #endif

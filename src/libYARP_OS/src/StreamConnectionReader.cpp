@@ -69,3 +69,12 @@ bool StreamConnectionReader::convertTextMode() {
 }
 
 
+Bytes StreamConnectionReader::readEnvelope() {
+    if (protocol==NULL) {
+        return Bytes(0,0);
+    }
+    const String& env = protocol->getEnvelope();
+    return Bytes((char*)env.c_str(),env.length());
+}
+
+

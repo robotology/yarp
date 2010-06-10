@@ -77,19 +77,23 @@ public:
         Bottle& outBot2 = out.prepare();
         outBot2.fromString("2 3 5 7 11");
         Stamp stamp2(55,4.0);
-        out.setEnvelope(stamp);
+        out.setEnvelope(stamp2);
         out.writeStrict();                 // writeStrict() will wait for any
+
+        do {
+            Time::delay(0.1);
+        } while (in.getPendingReads()<2);
 
         // Read the first object
         in.read();
         Stamp inStamp;
         in.getEnvelope(inStamp);
-        checkTrue(fabs(inStamp.getTime()-1)<0.0001,"time stamp 1 read");
+        checkEqualish(inStamp.getTime(),1,"time stamp 1 read");
 
         // Read the second object
         in.read();
         in.getEnvelope(inStamp);
-        checkTrue(fabs(inStamp.getTime()-1)<0.0001,"time stamp 2 read");
+        checkEqualish(inStamp.getTime(),4,"time stamp 2 read");
     }
 
     virtual void runTests() {

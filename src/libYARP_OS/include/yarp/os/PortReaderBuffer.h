@@ -14,6 +14,7 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/LocalReader.h>
+#include <yarp/os/Bottle.h>
 
 #include <stdio.h>
 
@@ -265,6 +266,7 @@ public:
     virtual bool forgetObjectBase(yarp::os::PortReader *obj,
                                   yarp::os::PortWriter *wrapper);
 
+    virtual bool getEnvelope(PortReader& envelope);
 
     // user takes control of the current read object
     void *acquire();
@@ -471,6 +473,10 @@ public:
 
     void setReplier(PortReader& reader) {
         implementation.setReplier(reader);
+    }
+
+    virtual bool getEnvelope(PortReader& envelope) {
+        return implementation.getEnvelope(envelope);
     }
 
 	bool isClosed() {

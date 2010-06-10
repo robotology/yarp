@@ -63,6 +63,13 @@ public:
                         const char *fname,
                         int fline);
 
+    bool checkEqualishImpl(double x, double y, 
+                           const char *desc,
+                           const char *txt1,
+                           const char *txt2,
+                           const char *fname,
+                           int fline);
+
     bool checkEqualImpl(const String& x, const String& y,
                         const char *desc,
                         const char *txt1,
@@ -84,6 +91,7 @@ private:
 // add info 
 
 #define checkEqual(x,y,desc) checkEqualImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
+#define checkEqualish(x,y,desc) checkEqualishImpl(x,y,desc,#x,#y,__FILE__,__LINE__)
 #define checkTrue(x,desc) checkEqualImpl((x)?true:false,true,desc,#x,"true",__FILE__,__LINE__)
 #define checkFalse(x,desc) checkEqualImpl((x)?true:false,false,desc,#x,"false",__FILE__,__LINE__)
 

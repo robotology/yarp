@@ -13,6 +13,8 @@
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
 
 #include <ace/Vector_T.h>
 #include <ace/Containers_T.h>
@@ -28,6 +30,8 @@ public:
 
     // if non-null, contains a buffer that the packet owns
     PortReader *reader;
+
+    String envelope;
 
     // if nun-null, refers to an external buffer
     // by convention, overrides reader
@@ -53,6 +57,7 @@ public:
             reader = NULL;
         }
         writer = NULL;
+        envelope = "";
     }
 
     PortReader *getReader() {
@@ -65,7 +70,6 @@ public:
         this->reader = reader;
     }
 
-
     PortReader *getExternal() {
         return external;
     }
@@ -74,6 +78,10 @@ public:
         resetExternal();
         this->external = reader;
         this->writer = writer;
+    }
+
+    void setEnvelope(const Bytes& bytes) {
+        envelope.set(bytes.get(),bytes.length(),1);
     }
 
     void resetExternal() {
@@ -239,6 +247,21 @@ public:
         return prev;
     }
 
+
+    bool getEnvelope(PortReader& envelope) {
+        if (prev==NULL) {
+            return false;
+        }
+        StringInputStream sis;
+        sis.add(prev->envelope.c_str());
+        sis.add("\r\n");
+        StreamConnectionReader sbr;
+        Route route;
+        sbr.reset(sis,NULL,route,0,true);
+        return envelope.read(sbr);
+        return true;
+    }
+
     PortReaderPacket *dropContent() {
         // don't affect "prev"
         PortReaderPacket *drop = NULL;
@@ -362,6 +385,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     if (connection.isValid()) {
         YARP_ASSERT(reader->getReader()!=NULL);
         ok = reader->getReader()->read(connection);
+        reader->setEnvelope(connection.readEnvelope());
 	} else {
 		// this is a disconnection
 		// don't talk to this port ever again
@@ -395,6 +419,7 @@ bool PortReaderBufferBase::read(ConnectionReader& connection) {
     }
     return ok;
 }
+
 
 
 void PortReaderBufferBase::setAutoRelease(bool flag) {
@@ -497,7 +522,9 @@ void PortReaderBufferBase::release(void *key) {
 }
 
 
-
+bool PortReaderBufferBase::getEnvelope(PortReader& envelope) {
+    return HELPER(implementation).getEnvelope(envelope);
+}
 
 
 void typedReaderMissingCallback() {
