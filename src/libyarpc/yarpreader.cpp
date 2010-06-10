@@ -68,12 +68,12 @@ YARP_DEFINE(int) yarpReaderExpectBlock(yarpReaderPtr reader,
 
     /**
      *
-     * Check if connection is text-mode (0 = success = true)
+     * Check if connection is text-mode
      *
      */
 YARP_DEFINE(int) yarpReaderIsTextMode(yarpReaderPtr reader) {
     YARP_OK(reader);
-    return !YARP_READER(reader).isTextMode();
+    return YARP_READER(reader).isTextMode();
 }
 
 

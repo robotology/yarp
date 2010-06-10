@@ -46,8 +46,10 @@ public:
     }
 
     bool isTextMode() {
-        return !yarpReaderIsTextMode(impl);
+        return (bool)yarpReaderIsTextMode(impl);
     }
+
+    yarpReaderPtr getHandle() { return impl; }
 private:
     yarpReaderPtr impl;
 };

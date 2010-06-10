@@ -24,6 +24,8 @@ public:
     bool appendInt(int x) {
         return yarpWriterAppendInt(impl,x)==0;
     }
+
+    yarpWriterPtr getHandle() { return impl; }
 private:
     yarpWriterPtr impl;
 };

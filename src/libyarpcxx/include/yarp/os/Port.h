@@ -11,6 +11,8 @@
 
 #include <yarp/yarpcxx.h>
 
+#include <yarp/os/Portable.h>
+
 namespace yarpcxx {
     namespace os {
         class Port;

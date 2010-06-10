@@ -123,7 +123,8 @@ YARP_DEFINE(int) yarpPortWrite(yarpPortPtr port,
     YARP_OK(port);
     Portable *amsg = MAKE_PORTABLE(msg);
     YARP_OK0(amsg);
-    return YARP_PORT(port).write(*amsg)?0:-1;
+    int result = YARP_PORT(port).write(*amsg)?0:-1;
+    return result;
 }
 
 

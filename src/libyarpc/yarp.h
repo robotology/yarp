@@ -83,8 +83,10 @@ extern "C" {
         int (*read) (yarpReaderPtr connection, void *client);
         int (*onCompletion)(void *client);
         int (*onCommencement)(void *client);
-        //void * (*create)(void *client);
-        //void (*destroy)(void *instance, void *client);
+        void *unused1;
+        void *unused2;
+        void *unused3;
+        void *unused4;
     } yarpPortableCallbacks;
     typedef yarpPortableCallbacks *yarpPortableCallbacksPtr;
 
@@ -95,9 +97,9 @@ extern "C" {
      *
      */
     typedef struct yarpPortableStruct {
-        void *adaptor;
-        void *client;
-        yarpPortableCallbacksPtr callbacks;
+        void *client;            // user pointer, will be untouched
+        void *implementation;    // private
+        void *adaptor;           // private 
     } yarpPortable;
     typedef yarpPortable *yarpPortablePtr;
 
@@ -118,8 +120,13 @@ extern "C" {
      */
     typedef struct yarpThreadCallbacksStruct {
         int (*run) (void *client);
-        int (*afterStart) (int success, void *client);
-        int (*onStop) (void *client);
+        void (*beforeStart) (void *client);
+        void (*afterStart) (int success, void *client);
+        void (*onStop) (void *client);
+        int (*threadInit) (void *client);
+        void (*threadRelease) (void *client);
+        void *unused4;
+        void *unused5;
     } yarpThreadCallbacks;
     typedef yarpThreadCallbacks *yarpThreadCallbacksPtr;
 
@@ -130,6 +137,7 @@ extern "C" {
      */
     typedef struct yarpThreadStruct {
         void *implementation;
+        void *client;
         yarpThreadCallbacksPtr callbacks;
     } yarpThread;
     typedef yarpThread *yarpThreadPtr;
@@ -143,6 +151,16 @@ extern "C" {
         void *implementation;
     } yarpSemaphore;
     typedef yarpSemaphore *yarpSemaphorePtr;
+    
+    /**
+     *
+     * Plain C bottle structure.  This structure represents YARP bottles.
+     * Note that you can send/receive Bottle-formatted messages without
+     * using this structure.
+     *
+     */
+    typedef yarpPortable yarpBottle;
+    typedef yarpBottle *yarpBottlePtr;
     
 
     YARP_DECLARE(yarpNetworkPtr) yarpNetworkCreate();
@@ -191,9 +209,15 @@ extern "C" {
 
     YARP_DECLARE(int) yarpWriterAppendInt(yarpWriterPtr c, int data);
 
-    YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable);
+    YARP_DECLARE(int) yarpPortableInit(yarpPortablePtr portable, 
+                                       yarpPortableCallbacksPtr callbacks);
+
     YARP_DECLARE(int) yarpPortableFini(yarpPortablePtr portable);
+
     YARP_DECLARE(int) yarpPortableCallbacksInit(yarpPortableCallbacksPtr callbacks);
+    YARP_DECLARE(int) yarpPortableCallbacksComplete(yarpPortableCallbacksPtr callbacks);
+    YARP_DECLARE(int) yarpPortableCallbacksInstall(yarpPortableCallbacksPtr callbacks);
+    YARP_DECLARE(yarpPortableCallbacksPtr) yarpPortableCallbacksGet();
 
     /*
     YARP_DECLARE(int) yarpPortableCallbacksSetWrite(yarpPortableCallbacksPtr portable, int (*write) (yarpWriterPtr connection, void *ptr));
@@ -220,6 +244,21 @@ extern "C" {
     YARP_DECLARE(int) yarpThreadFini(yarpThreadPtr thread);
     YARP_DECLARE(int) yarpThreadStart(yarpThreadPtr thread);
     YARP_DECLARE(int) yarpThreadStop(yarpThreadPtr thread);
+    YARP_DECLARE(int) yarpThreadIsStopping(yarpThreadPtr thread);
+
+    YARP_DECLARE(void) yarpTimeDelay(double seconds);
+    YARP_DECLARE(double) yarpTimeNow();
+    YARP_DECLARE(void) yarpTimeYield();
+
+    YARP_DECLARE(int) yarpBottleInit(yarpBottlePtr bottle);
+    YARP_DECLARE(int) yarpBottleFini(yarpBottlePtr bottle);
+    YARP_DECLARE(void) yarpBottleAddInt(yarpBottlePtr bottle, int x);
+    YARP_DECLARE(void) yarpBottleAddDouble(yarpBottlePtr bottle, double x);
+    YARP_DECLARE(void) yarpBottleAddString(yarpBottlePtr bottle, const char *x);
+    YARP_DECLARE(int) yarpBottleWrite(yarpBottlePtr bottle, yarpWriterPtr connection);
+    YARP_DECLARE(int) yarpBottleRead(yarpBottlePtr bottle, yarpReaderPtr connection);
+    YARP_DECLARE(int) yarpBottleToString(yarpBottlePtr bottle,
+                                         yarpStringPtr result);
 
 #ifdef __cplusplus
 }

@@ -54,10 +54,8 @@ int main(int argc, char *argv[]) {
     wcallbacks.write = testWrite;
     rcallbacks.read = testRead;
     yarpPortable writer, reader;
-    yarpPortableInit(&writer);
-    yarpPortableInit(&reader);
-    writer.callbacks = &wcallbacks;
-    reader.callbacks = &rcallbacks;
+    yarpPortableInit(&writer,&wcallbacks);
+    yarpPortableInit(&reader,&rcallbacks);
     
     printf("Writing (in background)...\n");
 

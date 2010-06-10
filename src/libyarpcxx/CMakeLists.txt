@@ -20,6 +20,13 @@ if (CREATE_YARPC)
 
     add_executable(yarpcxx_test2 yarpcxx_test2.cpp)
     target_link_libraries(yarpcxx_test2 yarpc)
+
+    set(EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/example)
+    add_executable(yarpcxx_test_threads ${EXAMPLE_DIR}/os/threads.cpp)
+    target_link_libraries(yarpcxx_test_threads yarpc)
+
+    add_executable(yarpcxx_test_simple_sender ${EXAMPLE_DIR}/os/simple_sender.cpp)
+    target_link_libraries(yarpcxx_test_simple_sender yarpc)
  
   endif ()
 

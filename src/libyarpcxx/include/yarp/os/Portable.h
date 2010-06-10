@@ -23,12 +23,13 @@ namespace yarpcxx {
 class yarpcxx::os::Portable {
 public:
     Portable() {
+        yarpPortableCallbacks callbacks;
         callbacks.write = __impl_write;
         callbacks.read = __impl_read;
         callbacks.onCompletion = __impl_onCompletion;
         callbacks.onCommencement = __impl_onCommencement;
-        yarpPortableInit(&handle);
-        handle.callbacks = &callbacks;
+        yarpPortableCallbacksInstall(&callbacks);
+        yarpPortableInit(&handle,NULL);
         handle.client = this;
     }
     
@@ -48,7 +49,6 @@ public:
         return &handle;
     }
 private:
-    yarpPortableCallbacks callbacks; // in fact only need one of these
     yarpPortable handle;
 
     static int __impl_write(yarpWriterPtr connection, void *client) {

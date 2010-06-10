@@ -72,6 +72,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    p1.close();
+    p2.close();
+    
     return 0;
 }
 

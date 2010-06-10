@@ -18,6 +18,8 @@ using namespace yarp::os;
 
 #define YARP_OK0(s) if(s==NULL) return -1;
 #define YARP_OK(s) if(s->implementation==NULL) return -1;
+#define YARP_COK(s) if(s->client==NULL) return -1;
+//#define YARP_POK(s) if(s->portable.implementation==NULL) return -1;
 #define YARP_PORT(s) (*((Port*)(s->implementation)))
 #define YARP_CONTACT(s) (*((Contact*)(s->implementation)))
 #define YARP_NETWORK(s) (*((Network*)(s->implementation)))
@@ -25,35 +27,41 @@ using namespace yarp::os;
 #define YARP_WRITER(s) (*((ConnectionWriter*)(s->implementation)))
 #define YARP_STRING(s) (*((ConstString*)(s->implementation)))
 #define YARP_THREAD(s) (*((Thread*)(s->implementation)))
+#define YARP_BOTTLE(s) (*((Bottle*)(s->implementation)))
 
 class YarpImplPortableAdaptor : public yarp::os::Portable {
 private:
     yarpPortablePtr ref;
+    yarpPortableCallbacksPtr callbacks;
 public:
-    YarpImplPortableAdaptor(yarpPortablePtr ref) : ref(ref) {}
+    YarpImplPortableAdaptor(yarpPortablePtr ref,
+                            yarpPortableCallbacksPtr c = NULL) : ref(ref) {
+        if (c==NULL) {
+            callbacks = yarpPortableCallbacksGet();
+        } else {
+            yarpPortableCallbacksComplete(c);
+            callbacks = c;
+        }
+    }
 
     virtual bool read(yarp::os::ConnectionReader& connection) {
-        if (ref->callbacks->read==NULL) return false;
         yarpReader reader;
         reader.implementation = &connection;
-        return (ref->callbacks->read(&reader,ref->client)==0);
+        return (callbacks->read(&reader,ref->client)==0);
     }
 
     virtual bool write(yarp::os::ConnectionWriter& connection) {
-        if (ref->callbacks->write==NULL) return false;
         yarpWriter writer;
         writer.implementation = &connection;
-        return (ref->callbacks->write(&writer,ref->client)==0);
+        return (callbacks->write(&writer,ref->client)==0);
     }
 
     virtual void onCommencement() {
-        if (ref->callbacks->onCommencement==NULL) return;
-        ref->callbacks->onCommencement(ref->client);
+        callbacks->onCommencement(ref->client);
     }
 
     virtual void onCompletion() {
-        if (ref->callbacks->onCompletion==NULL) return;
-        ref->callbacks->onCompletion(ref->client);
+        callbacks->onCompletion(ref->client);
     }
 
     static Portable *checkPortable(yarpPortablePtr ref) {
@@ -61,8 +69,9 @@ public:
             if (ref->adaptor==NULL) {
                 ref->adaptor = new YarpImplPortableAdaptor(ref);
             }
+            return (Portable *)ref->adaptor;
         }
-        return (Portable *)ref->adaptor;
+        return NULL;
     }
 };
 

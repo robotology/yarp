@@ -31,6 +31,10 @@ public:
         yarpStringFree(impl);
     }
 
+    const char *c_str() {
+        return yarpStringToC(getHandle());
+    }
+
     yarpStringPtr getHandle() {
         return impl;
     }
