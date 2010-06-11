@@ -43,6 +43,30 @@ cat <<EOF
 
 
 #ifdef WIN32
+
+#ifdef __MINGW32__
+#define ACE_HAS_EXCEPTIONS  0
+#define __ACE_INLINE__ 0
+#define ACE_HAS_ACE_TOKEN 0
+#define ACE_HAS_ACE_SVCCONF 0
+#define ACE_BUILD_DLL 0
+#define ACE_HAS_CUSTOM_EXPORT_MACROS 1
+#define ACE_HAS_CUSTOM_MACROS 1
+
+// casino in config-win32-common
+#define ACE_CONFIG_WIN32_H
+#include <ace/config-win32-common.h>
+#undef ACE_CONFIG_WIN32_H
+#ifdef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_HAS_CUSTOM_EXPORT_MACROS
+# undef ACE_Proper_Export_Flag
+# undef ACE_Proper_Import_Flag
+# undef ACE_EXPORT_SINGLETON_DECLARATION
+# undef ACE_EXPORT_SINGLETON_DECLARE
+# undef ACE_IMPORT_SINGLETON_DECLARATION
+# undef ACE_IMPORT_SINGLETON_DECLARE
+#endif
+#endif
 #include <ace/config-win32.h>
 #define ACE4YARP_DONE
 #endif
