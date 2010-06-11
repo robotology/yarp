@@ -22,12 +22,12 @@ if (CREATE_YARPC)
     if (EXISTS ${CMAKE_BINARY_DIR}/libsupc++)
       file(GLOB supcxx ${CMAKE_BINARY_DIR}/libsupc++/*.cc)
       set(YARP_COPY_SRC ${YARP_COPY_SRC} ${supcxx})
-      foreach (src ${YARP_COPY_SRC})
-        set_property(SOURCE ${src} APPEND PROPERTY COMPILE_FLAGS 
-	  "-fvisibility=hidden")
-      endforeach ()
       include_directories(${CMAKE_BINARY_DIR}/libsupc++)
     endif ()
+    foreach (src ${YARP_COPY_SRC})
+      set_property(SOURCE ${src} APPEND PROPERTY COMPILE_FLAGS 
+         "-fvisibility=hidden")
+    endforeach ()
   endif (CREATE_YARPC_STANDALONE)
 
   get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
