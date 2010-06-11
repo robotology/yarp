@@ -36,11 +36,20 @@ cp -u -R $cwd/ace/os_include $cwd/ace4yarp/include/ace/os_include
 
 # configure for Linux and YARP usage.
 cd $cwd/ace4yarp/include/ace
-if [ ! -e config.h ]; then
 (
 cat <<EOF
 #ifndef ACE4YARP_CONFIG_H
 #define ACE4YARP_CONFIG_H
+
+
+#ifdef WIN32
+#include <ace/config-win32.h>
+#define ACE4YARP_DONE
+#endif
+
+
+// default: Linux
+#ifndef ACE4YARP_DONE
 #define ACE_HAS_NONSTATIC_OBJECT_MANAGER
 #define ACE_DOESNT_INSTANTIATE_NONSTATIC_OBJECT_MANAGER
 #define ACE_LACKS_ACE_SVCCONF
@@ -72,6 +81,10 @@ cat <<EOF
 #define ACE_USES_CLASSIC_SVC_CONF 0
 /* done eliminating all stray usage of C++ header files in ACE */
 #endif
+
+
+
+#endif
 EOF
 ) > config.h
-fi
+
