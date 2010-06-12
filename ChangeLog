@@ -1,5 +1,9 @@
 2010-06-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/BufferedPort.h: keep envelope
+	information properly associated with queued messages
+	(thanks Daniel Krieg)
+
 	* src/libYARP_dev/src/DeviceGroup.cpp: remove unnecessary 
 	polling if all devices within a group are backgrounded
 	(thanks Philipp Robbel).
