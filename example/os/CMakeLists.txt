@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Giacomo Spigler
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
 

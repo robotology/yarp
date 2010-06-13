@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Author: Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 

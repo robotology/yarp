@@ -3,7 +3,7 @@
 /*
  * Author: Daniel Krieg krieg@fias.uni-frankfurt.de
  * Copyright (C) 2010 Daniel Krieg
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
 

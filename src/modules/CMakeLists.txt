@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Giacomo Spigler
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 if (CREATE_DEVICE_LIBRARY_MODULES)

@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Giorgio Metta, Lorenzo Natale
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(pumacalibrator TYPE PumaCalibrator INCLUDE PumaCalibrator.h )

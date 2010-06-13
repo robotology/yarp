@@ -2,7 +2,7 @@
 /*
 * Author: Lorenzo Natale.
 * Copyright (C) 2009 The Robotcub consortium
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 #include <yarp/dev/PolyDriverList.h>

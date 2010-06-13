@@ -3,7 +3,7 @@
 /*
 * Author: Lorenzo Natale.
 * Copyright (C) 2007 The Robotcub consortium
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 // $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $

@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2007 Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  * Originally based on "wx-sdl tutorial v1.1", copyright follows
  *

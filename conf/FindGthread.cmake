@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Alessandro Scalzo, Lorenzo Natale, Paul Fitzpatrick, Gianluca Massera
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # Tried to make variables uniform with cmake "standards"
 # Now set Gthread_* variables (respect capitalization rule).

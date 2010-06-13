@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2009 Paul Fitzpatrick
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  * This is a C++ wrapper of the plain C interface to YARP. 
  * It is as yet uncomplete.

@@ -3,7 +3,7 @@
 /*
 * Copyright (C) 2008 RobotCub Consortium
 * Authors: Lorenzo Natale
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 #ifndef __YARPWRAPPERINTERFACE__

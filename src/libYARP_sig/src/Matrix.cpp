@@ -3,7 +3,7 @@
 /*
 * Author: Lorenzo Natale.
 * Copyright (C) 2007 The Robotcub consortium
-* CopyPolicy: Released under the terms of the GNU GPL v2.0.
+* CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 // $Id: Matrix.cpp,v 1.20 2009-05-12 16:02:29 eshuy Exp $ 

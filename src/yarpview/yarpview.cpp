@@ -4,7 +4,7 @@
  * Copyright (C) 2006 Matteo Brunettini
  * Lorenzo Natale, 2008. Added multithread support, cleaned code, added fps count 
  * and synchronous display. 
- * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
 
@@ -213,7 +213,7 @@ gint menuHelpAbout_CB(GtkWidget *widget, gpointer data)
             NULL
         };
 	const gchar *license =
-		"Released under the terms of the GNU GPL v2.0.\n"
+		"Released under the terms of the LGPLv2.1 or later, see LGPL.TXT\n"
 		"The complete license description is contained in the\n"
 		"COPYING file included in this distribution.\n"
 		"Please refer to this file for complete\n"

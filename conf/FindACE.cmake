@@ -1,6 +1,6 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Alexandre Bernardino, Paul Fitzpatrick, Lorenzo Natale
-# CopyPolicy: Released under the terms of the GNU GPL v2.0.
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # Variables set:
 #   ACE_FOUND
