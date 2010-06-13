@@ -36,7 +36,7 @@ Anyway, a selection between these two Time Stamps is available
 for the user through --rxTime option. 
  
 \section lib_sec Libraries 
-YARP libraries and OpenCV (if found)
+YARP libraries and OpenCV 2.0 (if found)
 
 \section parameters_sec Parameters
 --name \e portname 
@@ -106,7 +106,9 @@ Linux and Windows.
 On Linux platforms, in order to have the video acquisition 
 properly working you should check that OpenCV finds the ffmpeg
 package correctly installed: the quickest way to achieve that is 
-to install the ffmepg prior to the OpenCV installation. 
+to install the ffmpeg before OpenCV through apt-get command. 
+However, the integration with ffmpeg package seems working ok 
+only with OpenCV 2.0 versions and above. 
 
 \section example_sec Example
 By launching the following command: 
