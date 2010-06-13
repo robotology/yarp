@@ -108,7 +108,7 @@ properly working you should check that OpenCV finds the ffmpeg
 package correctly installed: the quickest way to achieve that is 
 to install the ffmpeg before OpenCV through apt-get command. 
 However, the integration with ffmpeg package seems working ok 
-only with OpenCV 2.0 versions and above. 
+only with OpenCV version 2.0 and above. 
 
 \section example_sec Example
 By launching the following command: 
