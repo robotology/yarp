@@ -10,17 +10,13 @@ __  __ ___     ____   ____  ___
 YARP is a library and toolkit for communication and device interfaces,
 developed by humanoid robotics researchers but useful beyond that field.
 
-Material included in YARP is copyright its authors -- please read COPYING
-for use, distribution, and modification rights.
+Material included in YARP is copyright its authors.  YARP is released
+under the terms of the LGPL v2.1 or later.  See COPYING for details.
 
-*** YARP is now released under the terms in LGPL.TXT.  We are in the 
-process of updating out documentation to this effect, excuse this
-transition period.  You can read about this change on the robotcub-hackers
-mailing list.  There may be small parts of YARP that need to remain 
-under the GPL due to used libraries, so watch out for that if you
-use YARP under the LGPL immediately. ***
-
-See AUTHORS for a list of contributors to YARP.
+Certain optional parts of YARP have dependencies that have more 
+requirements than the LGPL:
+ + libYARP_math uses the GNU Scientific Library, under the GPL.
+ + devices urbtc, vfw, dimax_u2c have components that are under the GPL.
 
 ===============================================================================
 

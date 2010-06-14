@@ -1,17 +1,19 @@
 Unless otherwise stated, files in YARP are:
-  Copyright: 2006 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-  Released under the GNU GPL, version 2 - see GPL.TXT for details.
+  Copyright: 2010 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+  Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 Contributed files in YARP are copyright of their authors, and
 released under the same license.  The author list for contributed
 files follows.
 
-Copyright 2005 2006 2007 2008 2009 2010:
+Copyright 2002 2003 2005 2006 2007 2008 2009 2010:
   Alessandro Scalzo
   Alexandre Bernardino
   Arjan Gijsberts
   Assif Mirza
   Carlos Beltran-Gonzalez
+  Chris Morley
+  Daniel Krieg
   Eric Mislivec
   Freyr Magnusson
   Giacomo Spigler
@@ -25,6 +27,7 @@ Copyright 2005 2006 2007 2008 2009 2010:
   Mike P. Blow
   Paul Fitzpatrick
   RobotCub Consortium
+  by Chris Morley
 
 Certain files are integrated in YARP from other sources with
 compatible licenses.  Here is a list of these files and a summary of
@@ -45,10 +48,6 @@ src/libYARP_OS/src/Random.cpp
 src/libYARP_sig/include/yarp/sig/IplImage.h
   Copyright: (C) 2000, Intel Corporation, all rights reserved.
   CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
-
-src/libYARP_sig/src/SoundFile.cpp
-  Copyright: 1998,1999 Heiko Eissfeldt
-  CopyPolicy: GNU Public License 2 applies
 
 src/modules/urbtc/kernel_module/urobotc.h
   Copyright: (C) 2007 iXs Research Corp
