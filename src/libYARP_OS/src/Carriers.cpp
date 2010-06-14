@@ -20,14 +20,7 @@
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
 
-#ifdef CREATE_MPI_CARRIER
-// ----------------------------
-//include new MpiCarrier
-#include <yarp/os/impl/MpiCarrier.h>
-#endif
-
 using namespace yarp::os::impl;
-
 
 static Logger carriersLog("Carriers", Logger::get());
 
@@ -45,12 +38,6 @@ Carriers::Carriers() {
     delegates.push_back(new UdpCarrier());
     delegates.push_back(new TextCarrier());
     delegates.push_back(new TextCarrier(true));
-
-#ifdef CREATE_MPI_CARRIER
-    // ----------------------------
-    // publish MpiCarrier
-    delegates.push_back(new MpiCarrier());
-#endif
 }
 
 Carriers::~Carriers() {

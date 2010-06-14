@@ -94,6 +94,12 @@ Contact Contact::addSocket(const char *carrier,
     return result;
 }
 
+Contact Contact::addName(const char *name) const {
+    Contact result;
+    HELPER(result.implementation) = HELPER(implementation).addRegName(name);
+    return result;
+}
+
 
 ConstString Contact::getName() const {
     return HELPER(implementation).getRegName().c_str();
@@ -123,6 +129,71 @@ ConstString Contact::toString() const {
     }
     return ConstString(result.c_str());
 }
+
+
+Contact Contact::fromString(const char *txt) {
+    ConstString str(txt);
+    Contact c;
+    ConstString::size_type start = 0;
+    ConstString::size_type base = str.find("://");
+    ConstString::size_type offset = 2;
+    if (base==ConstString::npos) {
+        base = str.find(":/");
+        offset = 1;
+    }
+    if (base!=ConstString::npos) {
+        c = Contact::byCarrier(str.substr(0,base));
+        start = base+offset;
+        // check if we have a direct machine:NNN syntax
+        ConstString::size_type colon = ConstString::npos;
+        int mode = 0;
+        int nums = 0;
+        ConstString::size_type i;
+        for (i=start+1; i<str.length(); i++) {
+            char ch = str[i];
+            if (ch==':') {
+                if (mode == 0) {
+                    colon = i;
+                    mode = 1;
+                    continue;
+                } else {
+                    mode = -1;
+                    break;
+                }
+            }
+            if (ch=='/') {
+                break;
+            }
+            if (mode==1) {
+                if (ch>='0'&&ch<='9') {
+                    nums++;
+                    continue;
+                } else {
+                    mode = -1;
+                    break;
+                }
+            }
+        }
+        if (mode==1 && nums>=1) {
+            // yes, machine:nnn
+            ConstString machine = str.substr(start+1,colon-start-1);
+            ConstString portnum = str.substr(colon+1, nums);
+            c = c.addSocket(c.getCarrier().c_str(),
+                            machine,
+                            atoi(portnum.c_str()));
+            start = i;
+        } /* else if (mode==0) {
+            ConstString machine = str.substr(start+1,i-start-1);
+            c = c.addSocket(c.getCarrier().c_str(),
+                            machine,
+                            -1);
+            start = i;
+            }*/
+    }
+    c = c.addName(str.substr(start).c_str());
+    return c;
+}
+
 
 
 bool Contact::isValid() const {

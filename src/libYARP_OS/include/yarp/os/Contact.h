@@ -102,6 +102,14 @@ public:
                       const char *host,
                       int portNumber) const;
 
+
+    /**
+     *
+     * Add the name of a contact.
+     *
+     */
+    Contact addName(const char *name) const;
+
     /**
      * Copy constructor.
      * @param alt the contact to copy
@@ -154,6 +162,14 @@ public:
      * @return a textual representation of the contact.
      */
     ConstString toString() const;
+
+
+    /**
+     * Parse a textual representation of a contact.
+     * @param txt the text to parse
+     * @return the contact
+     */
+    static Contact fromString(const char *txt);
 
     /**
      * Checks if a contact is tagged as valid.

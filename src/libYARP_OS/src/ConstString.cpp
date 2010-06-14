@@ -18,6 +18,7 @@ using namespace yarp::os;
 // implementation is a String
 #define HELPER(x) (*((String*)(x)))
 
+int ConstString::npos = -1;
 
 ConstString::ConstString() {
     implementation = new String;
@@ -85,3 +86,10 @@ ConstString ConstString::operator + (const ConstString& alt) const {
     return (HELPER(implementation) + HELPER(alt.implementation)).c_str();
 }
 
+int ConstString::find(const char *needle) const {
+    return (int)YARP_STRSTR(HELPER(implementation),needle);
+}
+
+ConstString ConstString::substr(int start, int n) const {
+    return ConstString(HELPER(implementation).substr(start,n).c_str());
+}

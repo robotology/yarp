@@ -68,6 +68,14 @@ public:
     ConstString operator + (const ConstString& alt) const;
 
     int length() const;
+
+    int find(const char *needle) const;
+
+    ConstString substr(int start = 0, int n = -1) const;
+
+    static int npos;
+
+    typedef int size_type;
 private:
 
     void *implementation;
