@@ -17,6 +17,9 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
 // 
 
+// Summary for YARP:
+// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 #if defined(_MSC_VER)
 # pragma warning(disable:4786)    // identifier was truncated in debug info
 #endif

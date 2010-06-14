@@ -3,6 +3,9 @@
 #define _XMLRPCEXCEPTION_H_
 //
 // XmlRpc++ Copyright (c) 2002-2003 by Chris Morley
+// Summary for YARP:
+// Copyright: 2002, 2003 Chris Morley
+// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 //
 #if defined(_MSC_VER)
 # pragma warning(disable:4786)    // identifier was truncated in debug info

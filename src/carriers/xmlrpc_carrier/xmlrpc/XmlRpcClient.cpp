@@ -1,4 +1,8 @@
 
+// Summary for YARP:
+// Copyright: 2002, 2003 Chris Morley
+// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 #include "XmlRpcClient.h"
 
 #include "XmlRpcSocket.h"

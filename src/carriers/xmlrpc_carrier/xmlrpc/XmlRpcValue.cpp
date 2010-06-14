@@ -1,8 +1,15 @@
+// Summary for YARP:
+// Copyright: 2002, 2003 Chris Morley
+// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 #include "XmlRpcValue.h"
 #include "XmlRpcException.h"
 #include "XmlRpcUtil.h"
-#include "base64.h"
+
+// base64.h removed - not clear that it is "really" under LGPL license.
+// origin seems to be this:
+//   http://www.codeguru.com/cpp/cpp/cpp_mfc/article.php/c4095/
+//#include "base64.h"
 
 #ifndef MAKEDEPEND
 # include <iostream>
@@ -416,6 +423,10 @@ namespace XmlRpc {
   // Base64
   bool XmlRpcValue::binaryFromXml(std::string const& valueXml, int* offset)
   {
+    printf("binaryFromXml disabled until license of base64.h determined\n");
+    exit(1);
+    return false;
+    /*
     size_t valueEnd = valueXml.find('<', *offset);
     if (valueEnd == std::string::npos)
       return false;     // No end tag;
@@ -433,11 +444,16 @@ namespace XmlRpc {
 
     *offset += int(asString.length());
     return true;
+    */
   }
 
 
   std::string XmlRpcValue::binaryToXml() const
   {
+    printf("binaryToXml disabled until license of base64.h determined\n");
+    exit(1);
+    return false;
+    /*
     // convert to base64
     std::vector<char> base64data;
     int iostatus = 0;
@@ -452,6 +468,7 @@ namespace XmlRpc {
     xml += BASE64_ETAG;
     xml += VALUE_ETAG;
     return xml;
+    */
   }
 
 
@@ -562,8 +579,12 @@ namespace XmlRpc {
         {
           int iostatus = 0;
           std::ostreambuf_iterator<char> out(os);
+	  /*
           base64<char> encoder;
           encoder.put(_value.asBinary->begin(), _value.asBinary->end(), out, iostatus, base64<>::crlf());
+	  */
+	  printf("base64 disabled until license of base64.h determined\n");
+	  exit(1);
           break;
         }
       case TypeArray:
