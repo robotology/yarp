@@ -3,18 +3,7 @@
 /* 
  * Copyright (C) 2009 RobotCub Consortium, European Commission FP6 Project IST-004370
  * Author Matteo Brunettini
- * website: www.robotcub.org
- * Permission is granted to copy, distribute, and/or modify this program
- * under the terms of the GNU General Public License, version 2 or any
- * later version published by the Free Software Foundation.
- *
- * A copy of the license can be found at
- * http://www.robotcub.org/icub/license/gpl.txt
- *
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General
- * Public License for more details
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
 #include "YarpImage2Pixbuf.h"
@@ -24,7 +13,7 @@
 bool yarpImage2Pixbuf(yarp::sig::ImageOf<yarp::sig::PixelRgb> *sourceImg, 
                       GdkPixbuf* destPixbuf)
 {
-	// il pixbuf deve essere gi√† allocato e di dimensioni opportune
+	// il pixbuf deve essere gia`† allocato e di dimensioni opportune
 	guchar *dst_data;
 	char *src_data;
 	unsigned int rowstride;

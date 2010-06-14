@@ -45,7 +45,7 @@ if ($txt =~ /license/i || $txt =~ /copyright/i) {
 $txt =~ s/The RobotCub Consortium\.?/RobotCub Consortium/ig;
 $txt =~ s/Robotcub Consortium\.?/RobotCub Consortium/ig;
 
-$txt =~ s/.*GNU General Public License, version 2 or.*/CopyPolicy: Released under the terms of the GNU GPL v2.0./;
+#$txt =~ s/.*GNU General Public License, version 2 or.*/CopyPolicy: Released under the terms of the GNU GPL v2.0./;
  
 if ($txt=~/CopyPolicy\:\s*(.*)/i) {
     $policy = $1;
@@ -104,7 +104,7 @@ if ($report ne "skipped") {
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);
-    if ($policy =~ /GNU GPL v2.0/) {
+    if ($policy =~ /Released under the terms of the LGPLv2.1 or later, see LGPL.TXT/) {
 	open(FOUT,">>license-good.txt");
 	print FOUT $txt;
 	close(FOUT);

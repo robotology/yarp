@@ -42,8 +42,8 @@ echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq |
 
 cat<<EOF
 Unless otherwise stated, files in YARP are:
-  Copyright: 2006 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
-  Released under the GNU GPL, version 2 - see GPL.TXT for details.
+  Copyright: 2010 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+  Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 Contributed files in YARP are copyright of their authors, and
 released under the same license.  The author list for contributed
