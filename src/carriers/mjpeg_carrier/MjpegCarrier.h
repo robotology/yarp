@@ -199,6 +199,7 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         return true;
     }
 
+    virtual String getBootstrapCarrierName() { return ""; }
 };
 
 #endif

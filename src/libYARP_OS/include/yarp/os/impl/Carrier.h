@@ -328,6 +328,22 @@ public:
      */
     virtual ~Carrier() {
     }
+
+    /**
+     *
+     * Get the name of the carrier that should be used prior to
+     * handshaking, if a port is registered with this carrier as its
+     * default carrier.  Normally, this should be "tcp".
+     *
+     * For carriers intended to interoperate with foreign ports not
+     * capable of initiating streams, the bootstrap carrier name
+     * should be left blank.  YARP may use that fact to arrange for
+     * alternate methods of initiating a stream.
+     *
+     * @return the name of the bootstrap carrier
+     */
+    virtual String getBootstrapCarrierName() { return "tcp"; }
+
 };
 
 #endif
