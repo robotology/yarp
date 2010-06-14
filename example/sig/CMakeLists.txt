@@ -1,0 +1,10 @@
+# Copyright: (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+cmake_minimum_required(VERSION 2.6)
+
+FIND_PACKAGE(YARP REQUIRED)
+LINK_LIBRARIES(${YARP_LIBRARIES})
+INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
+
+ADD_EXECUTABLE(wav_test wav_test.cpp)
