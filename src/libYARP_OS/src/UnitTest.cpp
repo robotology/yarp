@@ -12,6 +12,7 @@
 #include <yarp/os/impl/IOException.h>
 
 #include <ace/OS_NS_stdio.h>
+#include <math.h>
 
 using namespace yarp::os::impl;
 
