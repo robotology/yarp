@@ -595,6 +595,50 @@ static bool needsLookup(const Contact& contact) {
     return true;
 }
 
+
+static int enactConnection(Property& config,
+                           const Contact& src,
+                           const Contact& dest,
+                           const ContactStyle& style) {
+    bool disconnect = config.check("disconnect");
+    int act = disconnect?VOCAB3('d','e','l'):VOCAB3('a','d','d');
+
+    // Let's ask the destination to connect to the source.
+    // We assume the YARP carrier will reverse the connection if
+    // appropriate.
+    Bottle cmd, reply;
+    cmd.addVocab(act);
+    Contact c = dest;
+    if (style.carrier!="") {
+        c = c.addCarrier(style.carrier);
+    }
+    if (!disconnect) {
+        cmd.addString(c.toString());
+    } else {
+        cmd.addString(c.getName());
+    }
+    ContactStyle rpc;
+    rpc.admin = true;
+    rpc.quiet = style.quiet;
+    NetworkBase::write(src,cmd,reply,rpc);
+    bool ok = false;
+    ConstString msg = "";
+    if (reply.get(0).isInt()) {
+        ok = (reply.get(0).asInt()==0);
+        msg = reply.get(1).asString();
+    } else {
+        // older protocol
+        msg = reply.get(0).asString();
+        ok = msg[0]=='A'||msg[0]=='R';
+    }
+    if (!style.quiet) {
+        fprintf(stderr,"%s %s",
+                ok?"Success:":"Failure:",
+                msg.c_str());
+    }
+    return ok?0:1;
+}
+
 /*
 
    Connect two ports, bearing in mind that one of them may not be 
@@ -613,8 +657,6 @@ static bool needsLookup(const Contact& contact) {
   */
 
 static int metaConnect(Property& config) {
-    printf("META CONNECT called with %s\n", config.toString().c_str());
-    
     ContactStyle style;
     if (config.check("quiet")) { style.quiet = true; }
     if (!(config.check("src")&&config.check("dest"))) {
@@ -627,26 +669,34 @@ static int metaConnect(Property& config) {
     // get the expressed contacts, without name server input
     Contact dynamicSrc = Contact::fromString(src);
     Contact dynamicDest = Contact::fromString(dest);
+
+    bool topical = false;
+    if (dynamicSrc.getCarrier()=="topic" || 
+        dynamicDest.getCarrier()=="topic") {
+        topical = true;
+    }
     
     // fetch completed contacts from name server, if needed
     Contact staticSrc;
     Contact staticDest;
-    if (needsLookup(dynamicSrc)) {
-        staticSrc = NetworkBase::queryName(src);
+    if (needsLookup(dynamicSrc)&&!topical) {
+        staticSrc = NetworkBase::queryName(dynamicSrc.getName());
         if (!staticSrc.isValid()) {
             if (!style.quiet) {
-                fprintf(stderr, "problem looking up src port\n");
+                fprintf(stderr, "Failure: could not find source port %s\n",
+                        src.c_str());
             }
             return 1;
         }
     } else {
         staticSrc = dynamicSrc;
     }
-    if (needsLookup(dynamicDest)) {
-        staticDest = NetworkBase::queryName(dest);
+    if (needsLookup(dynamicDest)&&!topical) {
+        staticDest = NetworkBase::queryName(dynamicDest.getName());
         if (!staticDest.isValid()) {
             if (!style.quiet) {
-                fprintf(stderr, "problem looking up dest port\n");
+                fprintf(stderr, "Failure: could not find destination port %s\n",
+                        dest.c_str());
             }
             return 1;
         }
@@ -654,88 +704,138 @@ static int metaConnect(Property& config) {
         staticDest = dynamicDest;
     }
 
+    ConstString carrierConstraint = "";
+
     // see if we can do business with the source port
     bool srcIsCompetent = false;
-    Carrier *srcCarrier = 
-        Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
-    if (srcCarrier!=NULL) {
-        String srcBootstrap = srcCarrier->getBootstrapCarrierName();
-        if (srcBootstrap!="") {
-            srcIsCompetent = true;
+    bool srcIsTopic = false;
+    if (staticSrc.getCarrier()!="topic") {
+        if (!topical) {
+            Carrier *srcCarrier = 
+                Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+            if (srcCarrier!=NULL) {
+                String srcBootstrap = srcCarrier->getBootstrapCarrierName();
+                if (srcBootstrap!="") {
+                    srcIsCompetent = true;
+                } else {
+                    carrierConstraint = staticSrc.getCarrier();
+                }
+            }
         }
+    } else {
+        srcIsTopic = true;
     }
 
     // see if we can do business with the destination port
     bool destIsCompetent = false;
-    Carrier *destCarrier = 
-        Carriers::chooseCarrier(staticDest.getCarrier().c_str());
-    if (destCarrier!=NULL) {
-        String destBootstrap = destCarrier->getBootstrapCarrierName();
-        if (destBootstrap!="") {
-            destIsCompetent = true;
+    bool destIsTopic = false;
+    if (staticDest.getCarrier()!="topic") {
+        if (!topical) {
+            Carrier *destCarrier = 
+                Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+            if (destCarrier!=NULL) {
+                String destBootstrap = destCarrier->getBootstrapCarrierName();
+                if (destBootstrap!="") {
+                    destIsCompetent = true;
+                } else {
+                    carrierConstraint = staticDest.getCarrier();
+                }
+            }
         }
+    } else {
+        destIsTopic = true;
     }
 
-    if (srcIsCompetent&&destIsCompetent) {
-        // Classic case.  Let's ask the source to connect to the dest
+    if (srcIsTopic||destIsTopic) {
+        printf("how topical!\n");
         Bottle cmd, reply;
-        cmd.addVocab(VOCAB3('a','d','d'));
-        ConstString fullDest = dest;
+        cmd.add("subscribe");
         if (style.carrier!="") {
-            fullDest = style.carrier + ":/" + 
-                Companion::slashify(dest.c_str()).c_str();
+            if (srcIsTopic) {
+                dynamicDest = dynamicDest.addCarrier(style.carrier);
+            } else {
+                dynamicSrc = dynamicSrc.addCarrier(style.carrier);
+            }
         }
-        cmd.addString(fullDest);
-        ContactStyle rpc;
-        rpc.admin = true;
-        rpc.quiet = style.quiet;
-        NetworkBase::write(staticSrc,cmd,reply,rpc);
+        cmd.add(dynamicSrc.toString().c_str());
+        cmd.add(dynamicDest.toString().c_str());
+        bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                     cmd,
+                                     reply);
+        bool fail = (reply.get(0).toString()=="fail")||!ok;
+        if (fail) {
+            if (!style.quiet) {
+                fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
+            }
+            return 1;
+        }
         if (!style.quiet) {
-            printf(">>> %s\n", reply.toString().c_str());
+            fprintf(stderr,"Success: connection to topic added.\n");
         }
-        // need error checking...
         return 0;
     }
 
-    printf("Non classic connection staticSrc %s staticDest %s\n",
-           staticSrc.toString().c_str(),
-           staticDest.toString().c_str());
-
-    // should deal with topic case here ...
-    // ... and be done by here
-
-    if (destIsCompetent) {
-        // Let's ask the destination to connect to the source.
-        // We assume the YARP carrier will reverse the connection if
-        // appropriate.
-        Bottle cmd, reply;
-        cmd.addVocab(VOCAB3('a','d','d'));
-        ConstString fullSrc = src;
-        if (style.carrier=="") {
-            style.carrier = staticSrc.getCarrier();
-        }
-        if (style.carrier!="") {
-            fullSrc = style.carrier + ":/" + 
-                Companion::slashify(src.c_str()).c_str();
-        }
-        cmd.addString(fullSrc);
-        ContactStyle rpc;
-        rpc.admin = true;
-        rpc.quiet = style.quiet;
-        NetworkBase::write(staticDest,cmd,reply,rpc);
-        if (!style.quiet) {
-            printf(">>> %s\n", reply.toString().c_str());
-        }
-        // need error checking...
-        return 0;
+    if (dynamicSrc.getCarrier()!="") {
+        style.carrier = dynamicSrc.getCarrier();
     }
-    
-    fprintf(stderr,"No method known to request either the src or dest to start a connection\n");
+
+    if (dynamicDest.getCarrier()!="") {
+        style.carrier = dynamicDest.getCarrier();
+    }
+
+
+    if (style.carrier!="" && carrierConstraint!="") {
+        if (style.carrier!=carrierConstraint) {
+            fprintf(stderr,"Failure: conflict between %s and %s\n",
+                    style.carrier.c_str(),
+                    carrierConstraint.c_str());
+            return 1;
+        }
+    }
+    if (carrierConstraint!="") {
+        style.carrier = carrierConstraint;
+    }
+    if (style.carrier=="") {
+        style.carrier = staticDest.getCarrier();
+    }
+    if (style.carrier=="") {
+        style.carrier = staticSrc.getCarrier();
+    }
+
+    bool connectionIsPush = false;
+    bool connectionIsPull = false;
+    if (style.carrier!="topic") {
+        Carrier *connectionCarrier = 
+            Carriers::chooseCarrier(style.carrier.c_str());
+        if (connectionCarrier!=NULL) {
+            connectionIsPush = connectionCarrier->isPush();
+            connectionIsPull = !connectionIsPush;
+        }
+    }
+
+    /*
+    printf("carrier %s competent %d %d / pull %d push %d\n",
+           style.carrier.c_str(),
+           srcIsCompetent, destIsCompetent,
+           connectionIsPull, connectionIsPush);
+    */
+
+    if (srcIsCompetent&&connectionIsPush) {
+        // Classic case.  
+        Contact c = Contact::fromString(dest);
+        return enactConnection(config,staticSrc,c,style);
+    }
+    if (destIsCompetent&&connectionIsPull) {
+        Contact c = Contact::fromString(src);
+        return enactConnection(config,staticDest,c,style);
+    }
+
+    fprintf(stderr,"Failure: no method known to initiate such a connection\n");
 
     return 1;
 }
 
-static int metaConnect(int argc, char *argv[]) {
+static int metaConnect(int argc, char *argv[], bool disconnect) {
     // parse arguments
     Property p;
     p.fromCommand(argc,argv,false);
@@ -761,6 +861,9 @@ static int metaConnect(int argc, char *argv[]) {
             }
         }
     }
+    if (disconnect) {
+        p.put("disconnect",1);
+    }
 
     // okay, we have our arguments.
     // now, to work
@@ -780,8 +883,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         } else if (ConstString(argv[0])=="--meta") {
             argv++;
             argc--;
-            printf("*** experimental connection procedure\n");
-            return metaConnect(argc,argv);
+            return metaConnect(argc,argv,false);
         }
     }
     if (argc<2||argc>3) {

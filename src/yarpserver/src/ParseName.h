@@ -30,6 +30,10 @@ public:
     yarp::os::ConstString getNetworkChoice() {
         return networkChoice;
     }
+
+    void resetCarrier() {
+        carrier = "";
+    }
 };
 
 #endif

@@ -10,6 +10,7 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/os/Value.h>
 
 using namespace yarp::os::impl;
@@ -102,7 +103,16 @@ Contact Contact::addName(const char *name) const {
 
 
 ConstString Contact::getName() const {
-    return HELPER(implementation).getRegName().c_str();
+    Address& addr = HELPER(implementation);
+    String name = addr.getRegName();
+    if (name == "") {
+        String host = addr.getName();
+        if (host!="") {
+            name = String("/") + host + ":" + 
+                NetType::toString(addr.getPort());
+        }
+    }
+    return name.c_str();
 }
 
 
@@ -123,11 +133,11 @@ int Contact::getPort() const {
 
 ConstString Contact::toString() const {
     Address& addr = HELPER(implementation);
-    String result = addr.getRegName();
+    ConstString result = getName();
     if (addr.getCarrierName()!="") {
-        result = addr.getCarrierName() + ":/" + result;
+        return ConstString((addr.getCarrierName() + ":/" + result.c_str()).c_str());
     }
-    return ConstString(result.c_str());
+    return result;
 }
 
 

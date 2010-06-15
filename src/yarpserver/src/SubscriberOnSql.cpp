@@ -96,6 +96,14 @@ bool SubscriberOnSql::addSubscription(const char *src,
     ParseName psrc, pdest;
     psrc.apply(src);
     pdest.apply(dest);
+    if (psrc.getCarrier()=="topic") {
+        setTopic(psrc.getPortName().c_str(),true);
+        psrc.resetCarrier();
+    }
+    if (pdest.getCarrier()=="topic") {
+        setTopic(pdest.getPortName().c_str(),true);
+        pdest.resetCarrier();
+    }
     char *msg = NULL;
     char *query = sqlite3_mprintf("INSERT INTO subscriptions (src,dest,srcFull,destFull) VALUES(%Q,%Q,%Q,%Q)", 
                                   psrc.getPortName().c_str(),
@@ -250,6 +258,8 @@ bool SubscriberOnSql::listSubscriptions(const char *port,
 
 
 bool SubscriberOnSql::setTopic(const char *port, bool active) {
+    // needs optimization!
+
     char *query = sqlite3_mprintf("DELETE FROM topics WHERE topic = %Q",
                                   port);
     if (verbose) {

@@ -733,7 +733,7 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
                     }
                     stateMutex.post();
                 }
-                bw.appendLine(String("Added output connection from ") + getName() + " to " + dest);
+                bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
             } else {
                 bw.appendLine(String("Cannot connect to ") + dest);
             }
@@ -1178,7 +1178,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
         result.addString("[help] # give this help");
         result.addString("[add] $targetPort # add an output connection");
         result.addString("[add] $targetPort $carrier # add an output with a given protocol");
-        result.addString("[del] $targetPort # remove an output connection");
+        result.addString("[del] $targetPort # remove an input or output connection");
         result.addString("[list] [in] # list input connections");
         result.addString("[list] [out] # list output connections");
         result.addString("[list] [in] $sourcePort # give details for input");
@@ -1204,12 +1204,29 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 output = carrier + ":/" + output;
             }
             addOutput(output,id,&cache);
-            result.addString(cache.toString().c_str());
+            String r = cache.toString();
+            int v = (r[0]=='A')?0:-1;
+            result.addInt(v);
+            result.addString(r.c_str());
         }
         break;
     case VOCAB3('d','e','l'):
-        removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
-        result.addString(cache.toString().c_str());
+        {
+            removeOutput(String(cmd.get(1).asString().c_str()),id,&cache);
+            String r1 = cache.toString();
+            cache.reset();
+            removeInput(String(cmd.get(1).asString().c_str()),id,&cache);
+            String r2 = cache.toString();
+            int v = (r1[0]=='R'||r2[0]=='R')?0:-1;
+            result.addInt(v);
+            if (r1[0]=='R' && r2[0]!='R') {
+                result.addString(r1.c_str());
+            } else if (r1[0]!='R' && r2[0]=='R') {
+                result.addString(r2.c_str());
+            } else {
+                result.addString((r1 + r2).c_str());
+            }
+        }
         break;
     case VOCAB4('l','i','s','t'):
         switch (cmd.get(1).asVocab()) {

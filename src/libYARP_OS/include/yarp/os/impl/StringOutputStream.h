@@ -34,6 +34,10 @@ public:
         return data;
     }
 
+    void reset() {
+        data = "";
+    }
+
 
     virtual void write(const Bytes& b) { // throws
         String tmp;
