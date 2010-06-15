@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007, 2008, 2009 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -589,6 +589,185 @@ int Companion::sendMessage(const String& port, Writable& writable,
 }
 
 
+static bool needsLookup(const Contact& contact) {
+    if (contact.getHost()!="") return false;
+    if (contact.getCarrier()=="topic") return false;
+    return true;
+}
+
+/*
+
+   Connect two ports, bearing in mind that one of them may not be 
+   a regular YARP port.
+
+   Normally, YARP sends a request to the source port asking it to
+   connect to the destination port.  But the source port may not
+   be capable of initiating connections, in which case we can
+   request the destination port to connect to the source (this
+   is appropriate for carriers that can reverse the initiative).
+
+   The source or destination could also be topic ports, which are
+   entirely virtual.  In that case, we just need to tell the name
+   server, and it will take care of the details.
+
+  */
+
+static int metaConnect(Property& config) {
+    printf("META CONNECT called with %s\n", config.toString().c_str());
+    
+    ContactStyle style;
+    if (config.check("quiet")) { style.quiet = true; }
+    if (!(config.check("src")&&config.check("dest"))) {
+        printf("Need a src and dest\n");
+        return 1;
+    }
+    ConstString src = config.find("src").asString();
+    ConstString dest = config.find("dest").asString();
+
+    // get the expressed contacts, without name server input
+    Contact dynamicSrc = Contact::fromString(src);
+    Contact dynamicDest = Contact::fromString(dest);
+    
+    // fetch completed contacts from name server, if needed
+    Contact staticSrc;
+    Contact staticDest;
+    if (needsLookup(dynamicSrc)) {
+        staticSrc = NetworkBase::queryName(src);
+        if (!staticSrc.isValid()) {
+            if (!style.quiet) {
+                fprintf(stderr, "problem looking up src port\n");
+            }
+            return 1;
+        }
+    } else {
+        staticSrc = dynamicSrc;
+    }
+    if (needsLookup(dynamicDest)) {
+        staticDest = NetworkBase::queryName(dest);
+        if (!staticDest.isValid()) {
+            if (!style.quiet) {
+                fprintf(stderr, "problem looking up dest port\n");
+            }
+            return 1;
+        }
+    } else {
+        staticDest = dynamicDest;
+    }
+
+    // see if we can do business with the source port
+    bool srcIsCompetent = false;
+    Carrier *srcCarrier = 
+        Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+    if (srcCarrier!=NULL) {
+        String srcBootstrap = srcCarrier->getBootstrapCarrierName();
+        if (srcBootstrap!="") {
+            srcIsCompetent = true;
+        }
+    }
+
+    // see if we can do business with the destination port
+    bool destIsCompetent = false;
+    Carrier *destCarrier = 
+        Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+    if (destCarrier!=NULL) {
+        String destBootstrap = destCarrier->getBootstrapCarrierName();
+        if (destBootstrap!="") {
+            destIsCompetent = true;
+        }
+    }
+
+    if (srcIsCompetent&&destIsCompetent) {
+        // Classic case.  Let's ask the source to connect to the dest
+        Bottle cmd, reply;
+        cmd.addVocab(VOCAB3('a','d','d'));
+        ConstString fullDest = dest;
+        if (style.carrier!="") {
+            fullDest = style.carrier + ":/" + 
+                Companion::slashify(dest.c_str()).c_str();
+        }
+        cmd.addString(fullDest);
+        ContactStyle rpc;
+        rpc.admin = true;
+        rpc.quiet = style.quiet;
+        NetworkBase::write(staticSrc,cmd,reply,rpc);
+        if (!style.quiet) {
+            printf(">>> %s\n", reply.toString().c_str());
+        }
+        // need error checking...
+        return 0;
+    }
+
+    printf("Non classic connection staticSrc %s staticDest %s\n",
+           staticSrc.toString().c_str(),
+           staticDest.toString().c_str());
+
+    // should deal with topic case here ...
+    // ... and be done by here
+
+    if (destIsCompetent) {
+        // Let's ask the destination to connect to the source.
+        // We assume the YARP carrier will reverse the connection if
+        // appropriate.
+        Bottle cmd, reply;
+        cmd.addVocab(VOCAB3('a','d','d'));
+        ConstString fullSrc = src;
+        if (style.carrier=="") {
+            style.carrier = staticSrc.getCarrier();
+        }
+        if (style.carrier!="") {
+            fullSrc = style.carrier + ":/" + 
+                Companion::slashify(src.c_str()).c_str();
+        }
+        cmd.addString(fullSrc);
+        ContactStyle rpc;
+        rpc.admin = true;
+        rpc.quiet = style.quiet;
+        NetworkBase::write(staticDest,cmd,reply,rpc);
+        if (!style.quiet) {
+            printf(">>> %s\n", reply.toString().c_str());
+        }
+        // need error checking...
+        return 0;
+    }
+    
+    fprintf(stderr,"No method known to request either the src or dest to start a connection\n");
+
+    return 1;
+}
+
+static int metaConnect(int argc, char *argv[]) {
+    // parse arguments
+    Property p;
+    p.fromCommand(argc,argv,false);
+    if (!(p.check("src")&&p.check("dest"))) {
+        if (argc>=2) {
+            ConstString carrier = "";
+            if (argc>=3) {
+                if (argv[argc-1][0]!='/') {
+                    carrier = argv[argc-1];
+                    Contact c = Contact::fromString(carrier);
+                    if (c.getCarrier()=="") {
+                        argc--;
+                    } else {
+                        carrier = "";
+                    }
+                }
+            }
+            p.fromCommand(argc-2,argv,false);
+            p.put("src",argv[argc-2]);
+            p.put("dest",argv[argc-1]);
+            if (carrier!="") {
+                p.put("carrier",carrier.c_str());
+            }
+        }
+    }
+
+    // okay, we have our arguments.
+    // now, to work
+    return metaConnect(p);
+}
+
+
 int Companion::cmdConnect(int argc, char *argv[]) {
     int argc_org = argc;
     char **argv_org = argv;
@@ -598,6 +777,11 @@ int Companion::cmdConnect(int argc, char *argv[]) {
             persist = true;
             argv++;
             argc--;
+        } else if (ConstString(argv[0])=="--meta") {
+            argv++;
+            argc--;
+            printf("*** experimental connection procedure\n");
+            return metaConnect(argc,argv);
         }
     }
     if (argc<2||argc>3) {
