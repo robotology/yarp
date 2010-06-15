@@ -32,7 +32,7 @@ in C++, with a core that uses no external libraries, not even the standard
 template libraries, with the exception of a small portion of <a
 href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> for portability (and
 this portion can easily be embedded).  YARP is free and open, under
-the GPL (*).
+the LGPL (*).
 
 Getting set up:
 \li \ref install
@@ -67,7 +67,7 @@ More information:
 
 [1] Towards Long-Lived Robot Genes.  Paul Fitzpatrick, Giorgio Metta, and Lorenzo Natale.  Robotics and Autonomous Systems, 56(1):29-45. Online at http://eris.liralab.it/yarp/media/humantech07towards.pdf
 
-(*) Want to vote for a different license?  <a href="http://eris.liralab.it/wiki/Robotcub-hackers">Write to us</a>.
+(*) Certain optional plugin devices, carriers, or libraries are under the GPL.
 
  *
  */
