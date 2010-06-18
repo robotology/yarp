@@ -11,28 +11,29 @@ else
     cd ace; svn up; cd ..
 fi
 
+rm -rf $cwd/ace4yarp
 mkdir -p $cwd/ace4yarp/src
 mkdir -p $cwd/ace4yarp/include/ace
 # Some .cpp files are sources and some are just templates.
 # We separate them now in order to make building without MPC easier.
-for f in `cat $cwd/ace/ace.mpc | sed '1,/Source_Files.ACE_COMPONENTS/ d' | sed '/\}/,$ d'`; do
-    cp -u $cwd/ace/$f $cwd/ace4yarp/src
+for f in `cat $cwd/ace/ace.mpc | sed '1,/Source_Files.ACE_COMPONENTS/ d' | sed '/}/,$ d'`; do
+    cp $cwd/ace/$f $cwd/ace4yarp/src
 done
-for f in `cat $cwd/ace/ace.mpc | sed '1,/Template_Files/ d' | sed '/\}/,$ d'`; do
-    cp -u $cwd/ace/$f $cwd/ace4yarp/include/ace
+for f in `cat $cwd/ace/ace.mpc | sed '1,/Template_Files/ d' | sed '/}/,$ d'`; do
+    cp $cwd/ace/$f $cwd/ace4yarp/include/ace
 done
-for f in `cat $cwd/ace/ace.mpc | sed '1,/Inline_Files/ d' | sed '/\}/,$ d'`; do
-    cp -u $cwd/ace/$f $cwd/ace4yarp/include/ace
+for f in `cat $cwd/ace/ace.mpc | sed '1,/Inline_Files/ d' | sed '/}/,$ d'`; do
+    cp $cwd/ace/$f $cwd/ace4yarp/include/ace
 done
-for f in `cat $cwd/ace/ace.mpc | sed '1,/Header_Files/ d' | sed '/\}/,$ d' | grep "\.h" | grep -v "config\.h"`; do
-    cp -u $cwd/ace/$f $cwd/ace4yarp/include/ace
+for f in `cat $cwd/ace/ace.mpc | sed '1,/Header_Files/ d' | sed '/}/,$ d' | grep "\.h" | grep -v "config\.h"`; do
+    cp $cwd/ace/$f $cwd/ace4yarp/include/ace
 done
-cp -u $cwd/ace/*.h $cwd/ace4yarp/include/ace
-cp -u $cwd/ace/*.inl $cwd/ace4yarp/include/ace
-for f in `cat $cwd/ace/svcconf.mpb | sed '1,/Source_Files.ACE_COMPONENTS/ d' | sed '/\}/,$ d'`; do
-    cp -u $cwd/ace/$f $cwd/ace4yarp/src
+cp $cwd/ace/*.h $cwd/ace4yarp/include/ace
+cp $cwd/ace/*.inl $cwd/ace4yarp/include/ace
+for f in `cat $cwd/ace/svcconf.mpb | sed '1,/Source_Files.ACE_COMPONENTS/ d' | sed '/}/,$ d'`; do
+    cp $cwd/ace/$f $cwd/ace4yarp/src
 done
-cp -u -R $cwd/ace/os_include $cwd/ace4yarp/include/ace/os_include
+cp -R $cwd/ace/os_include $cwd/ace4yarp/include/ace/os_include
 
 # configure for Linux and YARP usage.
 cd $cwd/ace4yarp/include/ace
@@ -70,6 +71,34 @@ cat <<EOF
 #include <ace/config-win32.h>
 #define ACE4YARP_DONE
 #endif
+
+
+
+#if defined(__APPLE__)
+#  include <AvailabilityMacros.h>
+#  if defined(MAC_OS_X_VERSION_10_6)
+#    include <ace/config-macosx-snowleopard.h>
+#    define ACE4YARP_DONE
+#  endif
+#  if defined(MAC_OS_X_VERSION_10_5) && !defined(ACE4YARP_DONE)
+#    include <ace/config-macosx-leopard.h>
+#    define ACE4YARP_DONE
+#  endif
+#  if defined(MAC_OS_X_VERSION_10_4) && !defined(ACE4YARP_DONE)
+#    include <ace/config-macosx-tiger.h>
+#    define ACE4YARP_DONE
+#  endif
+#  if defined(MAC_OS_X_VERSION_10_3) && !defined(ACE4YARP_DONE)
+#    include <ace/config-macosx-panther.h>
+#    define ACE4YARP_DONE
+#  endif
+#  if defined(MAC_OS_X_VERSION_10_2) && !defined(ACE4YARP_DONE)
+#    include <ace/config-macosx.h>
+#    define ACE4YARP_DONE
+#  endif
+#endif
+
+
 
 
 // default: Linux
