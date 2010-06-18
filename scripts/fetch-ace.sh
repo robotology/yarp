@@ -75,6 +75,8 @@ cat <<EOF
 
 
 #if defined(__APPLE__)
+#  define ACE_GCC_HAS_TEMPLATE_INSTANTIATION_VISIBILITY_ATTRS 0
+#  define ACE_HAS_CUSTOM_EXPORT_MACROS 0
 #  include <AvailabilityMacros.h>
 #  if defined(MAC_OS_X_VERSION_10_6)
 #    include <ace/config-macosx-snowleopard.h>
@@ -95,6 +97,9 @@ cat <<EOF
 #  if defined(MAC_OS_X_VERSION_10_2) && !defined(ACE4YARP_DONE)
 #    include <ace/config-macosx.h>
 #    define ACE4YARP_DONE
+#  endif
+#  ifdef ACE_HAS_CUSTOM_EXPORT_MACROS
+#    undef ACE_HAS_CUSTOM_EXPORT_MACROS
 #  endif
 #endif
 
