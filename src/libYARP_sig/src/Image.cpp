@@ -12,13 +12,13 @@
 
 */
 
+#include <yarp/sig/IplImage.h>
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/IOException.h>
 #include <yarp/sig/Image.h>
-#include <yarp/sig/IplImage.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
 #include <yarp/os/Bottle.h>

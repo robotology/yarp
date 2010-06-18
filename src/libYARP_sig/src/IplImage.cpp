@@ -11,12 +11,12 @@
 ///
 ///
 
+#include <yarp/sig/IplImage.h>
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
 //#include <ace/OS.h>
-#include <yarp/sig/IplImage.h>
 #include <yarp/os/impl/Logger.h>
 
 //using namespace yarp::os::impl;
