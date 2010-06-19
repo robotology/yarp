@@ -93,6 +93,13 @@ mark_as_advanced(CREATE_BUILTIN_DEVICE_TESTS)
 
 
 #########################################################################
+# Control submission of reports
+option(ENABLE_DASHBOARD_SUBMIT "Allow submission of builds to http://my.cdash.org/index.php?project=YARP" OFF)
+if (ENABLE_DASHBOARD_SUBMIT)
+  include(Dart)
+endif (ENABLE_DASHBOARD_SUBMIT)
+
+#########################################################################
 # Defunct options to be removed
 
 # set a flag so sub-directories know that are being compiled
