@@ -23,7 +23,13 @@ int SocketTwoWayStream::open(const Address& address) {
     }
     ACE_SOCK_Connector connector;
     ACE_INET_Addr addr(address.getPort(),address.getName().c_str());
-    int result = connector.connect(stream,addr,0,ACE_Addr::sap_any,1);
+    ACE_Time_Value openTimeout;
+    ACE_Time_Value *timeout = NULL;
+    if (address.hasTimeout()) {
+        openTimeout.set(address.getTimeout());
+        timeout = &openTimeout;
+    }
+    int result = connector.connect(stream,addr,timeout,ACE_Addr::sap_any,1);
     if (result>=0) {
         happy = true;
     }

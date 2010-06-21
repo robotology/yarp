@@ -34,6 +34,7 @@ class yarp::os::impl::Address {
 private:
     String name, carrier, regName;
     int port;
+    float timeout;
 public:
 
 
@@ -50,6 +51,7 @@ public:
         this->port = port;
         this->carrier = "tcp";
         this->regName = "";
+        this->timeout = -1;
     }
 
     /**
@@ -65,6 +67,7 @@ public:
         this->port = port;
         this->carrier = carrier;
         this->regName = "";
+        this->timeout = -1;
     }
 
     /**
@@ -82,6 +85,7 @@ public:
         this->port = port;
         this->carrier = carrier;
         this->regName = regName;
+        this->timeout = -1;
     }
 
     /**
@@ -93,6 +97,7 @@ public:
         port = alt.port;
         carrier = alt.carrier;
         regName = alt.regName;
+        this->timeout = -1;
     }
 
     const Address& operator = (const Address& alt) {
@@ -100,6 +105,7 @@ public:
         port = alt.port;
         carrier = alt.carrier;
         regName = alt.regName;
+        timeout = alt.timeout;
         return *this;
     }
 
@@ -108,6 +114,7 @@ public:
      */
     Address() {
         port = -1;
+        timeout = -1;
     }
 
     /**
@@ -222,6 +229,18 @@ public:
      */
     bool hasCarrierName() const {
         return carrier != "";
+    }
+
+    bool hasTimeout() const {
+        return timeout >= 0;
+    }
+
+    void setTimeout(float timeout) {
+        this->timeout = timeout;
+    }
+
+    float getTimeout() const {
+        return timeout;
     }
 
     /**

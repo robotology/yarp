@@ -175,7 +175,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
             bool ok = Network::write(c,cmd,reply,true,true,timeout);
             double post = Time::now();
             if (post-pre>timeout-1) {
-                ok = true;
+                ok = false;
             }
             if (ok) {
                 // oops! there is a live port!
