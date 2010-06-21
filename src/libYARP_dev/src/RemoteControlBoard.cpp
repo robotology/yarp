@@ -387,7 +387,7 @@ protected:
     }
 
     /**
-    * Send a GET command expecting a double value in return.
+    * Send a GET command expecting an integer value in return.
     * @param code is the Vocab code of the GET command.
     * @param v is a reference to the return variable.
     * @return true/false on success/failure.
@@ -408,29 +408,6 @@ protected:
             return true;
         }
 
-        return false;
-    }
-
-    /**
-    * Send a GET command expecting an integer value in return.
-    * @param code is the Vocab code of the GET command.
-    * @param v is a reference to the return variable.
-    * @return true/false on success/failure.
-    */
-    bool get1V1D(int code, int& v) const {
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(code);
-        bool ok = rpc_p.write(cmd, response);
-
-        if (CHECK_FAIL(ok, response)) {
-            // response should be [cmd] [name] value
-            v = response.get(2).asInt();
-
-            getTimeStamp(response, lastStamp);
-
-            return true;
-        }
         return false;
     }
 
@@ -532,6 +509,30 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
+
+     /**
+    * Helper method used to get an integer value from the remote peer.
+    * @param v is the command to query for
+    * @param j is the axis number
+    * @param val is the return value
+    * @return true/false on success/failure
+    */
+    bool get1V1I1I(int v, int j, int *val) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            // ok
+            *val = response.get(2).asInt();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -1521,6 +1522,16 @@ public:
     */
     virtual bool getAmpStatus(int *st) {
         return get1VIA(VOCAB_AMP_STATUS, st);     
+    }
+
+    /* Get the status of a single amplifier, coded in a 32 bits integer
+     * @param j joint number
+     * @param st storage for return value
+     * @return true/false success failure.
+     */
+    virtual bool getAmpStatus(int j, int *st)
+    {
+        return get1V1I1I(VOCAB_AMP_STATUS_SINGLE, j, st);
     }
 
     /* IControlLimits */

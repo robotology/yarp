@@ -1,3 +1,15 @@
+2010-06-21 Lorenzo Natale <lorenzo.natale@iit.it>
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.inl
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+    * src/libYARP_dev/src/ServerControlBoard.cpp
+    * src/modules/fakebot/FakeBot.h
+    
+    Added getAmpStatus(int, int*)/getAmpStatusRaw() for single joint to interface.
+    Fixed modules using it.
+
+
 2010-06-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/BufferedPort.h: keep envelope

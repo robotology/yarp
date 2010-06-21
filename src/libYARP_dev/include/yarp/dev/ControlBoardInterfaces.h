@@ -1332,6 +1332,13 @@ public:
      * @return true in good luck, false otherwise.
      */
     virtual bool getAmpStatus(int *st)=0;
+
+     /* Get the status of a single amplifier, coded in a 32 bits integer
+     * @param j joint number
+     * @param st storage for return value
+     * @return true/false success failure.
+     */
+    virtual bool getAmpStatus(int j, int *v)=0;
 };
 
 /**
@@ -1386,9 +1393,16 @@ public:
      * each amplifier (at the moment contains only the fault, it will be 
      * expanded in the future).
      * @param st pointer to storage
-     * @return true in good luck, false otherwise.
+     * @return true/false success failure.
      */
     virtual bool getAmpStatusRaw(int *st)=0;
+
+    /* Get the status of a single amplifier, coded in a 32 bits integer
+     * @param j joint number
+     * @param st storage for return value
+     * @return true/false success failure.
+     */
+    virtual bool getAmpStatusRaw(int j, int *st)=0;
 };
 
 /** 
@@ -1893,6 +1907,7 @@ public:
 #define VOCAB_AMP_CURRENTS VOCAB4('a','c','u','s')
 #define VOCAB_AMP_MAXCURRENT VOCAB4('m','a','x','c')
 #define VOCAB_AMP_STATUS VOCAB4('a','s','t','a')
+#define VOCAB_AMP_STATUS_SINGLE VOCAB4('a','s','t','s')
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')

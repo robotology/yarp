@@ -1066,6 +1066,13 @@ public:
         return false;
     }
 
+    virtual bool getAmpStatus(int j, int *v)
+    {
+        if (amp)
+            return amp->getAmpStatus(j, v);
+        return false;
+    }
+
     /* IControlLimits */
 
     /**
@@ -1897,8 +1904,22 @@ case VOCAB_AMP_CURRENTS:
 
 case VOCAB_AMP_STATUS: 
     {
-        ok = amp->getAmpStatus(&tmp);
-        response.addInt(tmp);
+        int *p = new int[nj];
+        ACE_ASSERT(p!=NULL);
+        ok = amp->getAmpStatus(p);
+        Bottle& b = response.addList();
+        int i;
+        for (i = 0; i < nj; i++)
+            b.addInt(p[i]);
+        delete[] p;
+    }
+    break;
+
+case VOCAB_AMP_STATUS_SINGLE: 
+    {
+        int itmp=0;
+        ok = amp->getAmpStatus(cmd.get(2).asInt(),  &tmp);
+        response.addInt(itmp);
     }
     break;
 

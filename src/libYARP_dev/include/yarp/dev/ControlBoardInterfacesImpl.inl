@@ -1475,4 +1475,14 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int *st)
 
     return ret;
 }
+
+template <class DERIVED, class IMPLEMENT> 
+bool ImplementAmplifierControl<DERIVED, IMPLEMENT>::getAmpStatus(int k, int *st)
+{
+    int j=castToMapper(helper)->toHw(k);
+    bool ret=iAmplifier->getAmpStatusRaw(j, st);
+
+    return ret;
+}
+
 /////////////////////////////

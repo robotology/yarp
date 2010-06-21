@@ -618,6 +618,8 @@ public:
      * @return true in good luck, false otherwise.
      */
     virtual bool getAmpStatus(int *st);
+
+    virtual bool getAmpStatus(int j, int *st);
 };
 
 template <class DERIVED, class IMPLEMENT> 

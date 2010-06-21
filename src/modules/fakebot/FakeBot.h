@@ -346,6 +346,12 @@ public:
         return true;
     }
 
+    virtual bool getAmpStatus(int k, int *v)
+    {
+        *v=0;
+        return true;
+    }
+
     virtual bool calibrate2(int j, unsigned int iv, double v1, double v2, double v3)
     {
         fprintf(stderr, "FakeBot: calibrating joint %d with parameters %u %lf %lf %lf\n", j, iv, v1, v2, v3);
