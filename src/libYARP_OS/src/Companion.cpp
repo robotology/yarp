@@ -302,7 +302,7 @@ int Companion::cmdExists(int argc, char *argv[]) {
         return exists(argv[0],true);
     }
     if (argc == 2) {
-        bool ok = NetworkBase::isConnected(argv[0],argv[1]);
+        bool ok = NetworkBase::isConnected(argv[0],argv[1],false);
         return ok?0:1;
     }
 
@@ -463,7 +463,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
             printf("== The following is the configured address:\n");
             printf("==   host %s port number %d\n", address.getName().c_str(),
                    address.getPort());
-            printf("But a name server was not found at this address.\n");
+            printf("== But a name server was not found at this address.\n");
         } else {
             printf("== No address for a YARP name server is available.\n");
             printf("== A configuration file giving the location of the \n");
@@ -589,252 +589,7 @@ int Companion::sendMessage(const String& port, Writable& writable,
 }
 
 
-static bool needsLookup(const Contact& contact) {
-    if (contact.getHost()!="") return false;
-    if (contact.getCarrier()=="topic") return false;
-    return true;
-}
-
-
-static int enactConnection(Property& config,
-                           const Contact& src,
-                           const Contact& dest,
-                           const ContactStyle& style) {
-    bool disconnect = config.check("disconnect");
-    int act = disconnect?VOCAB3('d','e','l'):VOCAB3('a','d','d');
-
-    // Let's ask the destination to connect to the source.
-    // We assume the YARP carrier will reverse the connection if
-    // appropriate.
-    Bottle cmd, reply;
-    cmd.addVocab(act);
-    Contact c = dest;
-    if (style.carrier!="") {
-        c = c.addCarrier(style.carrier);
-    }
-    if (!disconnect) {
-        cmd.addString(c.toString());
-    } else {
-        cmd.addString(c.getName());
-    }
-    ContactStyle rpc;
-    rpc.admin = true;
-    rpc.quiet = style.quiet;
-    NetworkBase::write(src,cmd,reply,rpc);
-    bool ok = false;
-    ConstString msg = "";
-    if (reply.get(0).isInt()) {
-        ok = (reply.get(0).asInt()==0);
-        msg = reply.get(1).asString();
-    } else {
-        // older protocol
-        msg = reply.get(0).asString();
-        ok = msg[0]=='A'||msg[0]=='R';
-    }
-    if (!style.quiet) {
-        fprintf(stderr,"%s %s",
-                ok?"Success:":"Failure:",
-                msg.c_str());
-    }
-    return ok?0:1;
-}
-
 /*
-
-   Connect two ports, bearing in mind that one of them may not be 
-   a regular YARP port.
-
-   Normally, YARP sends a request to the source port asking it to
-   connect to the destination port.  But the source port may not
-   be capable of initiating connections, in which case we can
-   request the destination port to connect to the source (this
-   is appropriate for carriers that can reverse the initiative).
-
-   The source or destination could also be topic ports, which are
-   entirely virtual.  In that case, we just need to tell the name
-   server, and it will take care of the details.
-
-  */
-
-static int metaConnect(Property& config) {
-    ContactStyle style;
-    if (config.check("quiet")) { style.quiet = true; }
-    if (!(config.check("src")&&config.check("dest"))) {
-        printf("Need a src and dest\n");
-        return 1;
-    }
-    ConstString src = config.find("src").asString();
-    ConstString dest = config.find("dest").asString();
-
-    // get the expressed contacts, without name server input
-    Contact dynamicSrc = Contact::fromString(src);
-    Contact dynamicDest = Contact::fromString(dest);
-
-    bool topical = false;
-    if (dynamicSrc.getCarrier()=="topic" || 
-        dynamicDest.getCarrier()=="topic") {
-        topical = true;
-    }
-    
-    // fetch completed contacts from name server, if needed
-    Contact staticSrc;
-    Contact staticDest;
-    if (needsLookup(dynamicSrc)&&!topical) {
-        staticSrc = NetworkBase::queryName(dynamicSrc.getName());
-        if (!staticSrc.isValid()) {
-            if (!style.quiet) {
-                fprintf(stderr, "Failure: could not find source port %s\n",
-                        src.c_str());
-            }
-            return 1;
-        }
-    } else {
-        staticSrc = dynamicSrc;
-    }
-    if (needsLookup(dynamicDest)&&!topical) {
-        staticDest = NetworkBase::queryName(dynamicDest.getName());
-        if (!staticDest.isValid()) {
-            if (!style.quiet) {
-                fprintf(stderr, "Failure: could not find destination port %s\n",
-                        dest.c_str());
-            }
-            return 1;
-        }
-    } else {
-        staticDest = dynamicDest;
-    }
-
-    ConstString carrierConstraint = "";
-
-    // see if we can do business with the source port
-    bool srcIsCompetent = false;
-    bool srcIsTopic = false;
-    if (staticSrc.getCarrier()!="topic") {
-        if (!topical) {
-            Carrier *srcCarrier = 
-                Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
-            if (srcCarrier!=NULL) {
-                String srcBootstrap = srcCarrier->getBootstrapCarrierName();
-                if (srcBootstrap!="") {
-                    srcIsCompetent = true;
-                } else {
-                    carrierConstraint = staticSrc.getCarrier();
-                }
-            }
-        }
-    } else {
-        srcIsTopic = true;
-    }
-
-    // see if we can do business with the destination port
-    bool destIsCompetent = false;
-    bool destIsTopic = false;
-    if (staticDest.getCarrier()!="topic") {
-        if (!topical) {
-            Carrier *destCarrier = 
-                Carriers::chooseCarrier(staticDest.getCarrier().c_str());
-            if (destCarrier!=NULL) {
-                String destBootstrap = destCarrier->getBootstrapCarrierName();
-                if (destBootstrap!="") {
-                    destIsCompetent = true;
-                } else {
-                    carrierConstraint = staticDest.getCarrier();
-                }
-            }
-        }
-    } else {
-        destIsTopic = true;
-    }
-
-    if (srcIsTopic||destIsTopic) {
-        printf("how topical!\n");
-        Bottle cmd, reply;
-        cmd.add("subscribe");
-        if (style.carrier!="") {
-            if (srcIsTopic) {
-                dynamicDest = dynamicDest.addCarrier(style.carrier);
-            } else {
-                dynamicSrc = dynamicSrc.addCarrier(style.carrier);
-            }
-        }
-        cmd.add(dynamicSrc.toString().c_str());
-        cmd.add(dynamicDest.toString().c_str());
-        bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
-                                     cmd,
-                                     reply);
-        bool fail = (reply.get(0).toString()=="fail")||!ok;
-        if (fail) {
-            if (!style.quiet) {
-                fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
-            }
-            return 1;
-        }
-        if (!style.quiet) {
-            fprintf(stderr,"Success: connection to topic added.\n");
-        }
-        return 0;
-    }
-
-    if (dynamicSrc.getCarrier()!="") {
-        style.carrier = dynamicSrc.getCarrier();
-    }
-
-    if (dynamicDest.getCarrier()!="") {
-        style.carrier = dynamicDest.getCarrier();
-    }
-
-
-    if (style.carrier!="" && carrierConstraint!="") {
-        if (style.carrier!=carrierConstraint) {
-            fprintf(stderr,"Failure: conflict between %s and %s\n",
-                    style.carrier.c_str(),
-                    carrierConstraint.c_str());
-            return 1;
-        }
-    }
-    if (carrierConstraint!="") {
-        style.carrier = carrierConstraint;
-    }
-    if (style.carrier=="") {
-        style.carrier = staticDest.getCarrier();
-    }
-    if (style.carrier=="") {
-        style.carrier = staticSrc.getCarrier();
-    }
-
-    bool connectionIsPush = false;
-    bool connectionIsPull = false;
-    if (style.carrier!="topic") {
-        Carrier *connectionCarrier = 
-            Carriers::chooseCarrier(style.carrier.c_str());
-        if (connectionCarrier!=NULL) {
-            connectionIsPush = connectionCarrier->isPush();
-            connectionIsPull = !connectionIsPush;
-        }
-    }
-
-    /*
-    printf("carrier %s competent %d %d / pull %d push %d\n",
-           style.carrier.c_str(),
-           srcIsCompetent, destIsCompetent,
-           connectionIsPull, connectionIsPush);
-    */
-
-    if (srcIsCompetent&&connectionIsPush) {
-        // Classic case.  
-        Contact c = Contact::fromString(dest);
-        return enactConnection(config,staticSrc,c,style);
-    }
-    if (destIsCompetent&&connectionIsPull) {
-        Contact c = Contact::fromString(src);
-        return enactConnection(config,staticDest,c,style);
-    }
-
-    fprintf(stderr,"Failure: no method known to initiate such a connection\n");
-
-    return 1;
-}
-
 static int metaConnect(int argc, char *argv[], bool disconnect) {
     // parse arguments
     Property p;
@@ -869,22 +624,24 @@ static int metaConnect(int argc, char *argv[], bool disconnect) {
     // now, to work
     return metaConnect(p);
 }
-
+*/
 
 int Companion::cmdConnect(int argc, char *argv[]) {
-    int argc_org = argc;
-    char **argv_org = argv;
+    //int argc_org = argc;
+    //char **argv_org = argv;
     bool persist = false;
     if (argc>0) {
         if (ConstString(argv[0])=="--persist") {
             persist = true;
             argv++;
             argc--;
-        } else if (ConstString(argv[0])=="--meta") {
+        } 
+        /*else if (ConstString(argv[0])=="--meta") {
             argv++;
             argc--;
             return metaConnect(argc,argv,false);
         }
+        */
     }
     if (argc<2||argc>3) {
         if (persist&&argc<2) {
@@ -918,16 +675,7 @@ int Companion::cmdConnect(int argc, char *argv[]) {
         return subscribe(src,dest.c_str());
     }
 
-    int result = connect(src,dest.c_str());
-    if (result!=0) {
-        printf("For connection to ports that don't exist yet, or connections to topics, do:\n");
-        printf("  yarp connect --persist");
-        for (int i=0; i<argc_org; i++) {
-            printf(" %s", argv_org[i]);
-        }
-        printf("\n");
-    }
-    return result;
+    return connect(src,dest.c_str(),false);
 }
 
 
@@ -1551,6 +1299,9 @@ int Companion::unsubscribe(const char *src, const char *dest) {
 
 
 int Companion::connect(const char *src, const char *dest, bool silent) {
+    bool ok = NetworkBase::connect(src,dest,NULL,silent);
+    return ok?0:1;
+    /*
     int err = 0;
     String result = "";
     Address srcAddr = Name(src).toAddress();
@@ -1579,6 +1330,7 @@ int Companion::connect(const char *src, const char *dest, bool silent) {
         }
     }
     return err;
+    */
 }
 
 
@@ -1588,8 +1340,10 @@ int Companion::poll(const char *target, bool silent) {
 }
 
 int Companion::disconnect(const char *src, const char *dest, bool silent) {
-    PortCommand pc('\0',String("!")+dest);
-    return sendMessage(src,pc,silent);
+    //PortCommand pc('\0',String("!")+dest);
+    //return sendMessage(src,pc,silent);
+    bool ok = NetworkBase::disconnect(src,dest,silent);
+    return ok?0:1;
 }
 
 int Companion::disconnectInput(const char *src, const char *dest,

@@ -5,7 +5,7 @@
 using namespace yarp::os;
 
 #define N 6
-#define R 12
+#define R 5
 
 class Count {
 public:
@@ -103,5 +103,17 @@ int main(int argc, char *argv[]) {
         subs[i].stop();
     }
     counter.show();
+
+    for (int i=0; i<N; i++) {
+        for (int j=0; j<N; j++) {
+            if (!NetworkBase::isConnected(pubs[i].p.getName(),
+                                          subs[i].p.getName())) {
+                printf(" *** failed to connect %s -> %s\n",
+                       pubs[i].p.getName().c_str(),
+                       subs[i].p.getName().c_str());
+            }
+        }
+    }
+
     return 0;
 }

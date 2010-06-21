@@ -283,7 +283,8 @@ public:
 
     // PortManager interface, exposed to inputs
 
-    virtual void addOutput(const String& dest, void *id, OutputStream *os);
+    virtual void addOutput(const String& dest, void *id, OutputStream *os,
+                           bool onlyIfNeeded);
     virtual void removeOutput(const String& dest, void *id, OutputStream *os);
     virtual void removeInput(const String& dest, void *id, OutputStream *os);
     virtual void describe(void *id, OutputStream *os);
@@ -325,7 +326,8 @@ private:
     // only called in "running" phase
     void addInput(InputProtocol *ip);
 
-    bool removeUnit(const Route& route, bool synch = false);
+    bool removeUnit(const Route& route, bool synch = false, 
+                    bool *except = NULL);
 
 private:
 

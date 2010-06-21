@@ -43,7 +43,8 @@ public:
         this->name = name;
     }
 
-    virtual void addOutput(const String& dest, void *id, OutputStream *os) {
+    virtual void addOutput(const String& dest, void *id, OutputStream *os,
+                           bool onlyIfNeeded = false) {
         ACE_OS::printf("ADDOUTPUT\n");
         ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to addOutput [%s]\n",
                    getName().c_str(),

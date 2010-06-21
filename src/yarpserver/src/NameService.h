@@ -30,17 +30,9 @@ public:
 
     virtual void lock() {}
     virtual void unlock() {}
+
+    virtual void goPublic() {}
 };
 
-/**
- *
- * Abstract interface for a database of port names.
- *
- */
-class NameStore {
-public:
-    virtual ~NameStore() {}
-    virtual yarp::os::Contact query(const char *name) = 0;
-};
 
 #endif

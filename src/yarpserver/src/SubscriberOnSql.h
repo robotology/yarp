@@ -11,6 +11,8 @@
 
 #include "Subscriber.h"
 
+#include <yarp/os/Semaphore.h>
+
 /**
  *
  * Interface for maintaining persistent connections using SQL.
@@ -18,7 +20,7 @@
  */
 class SubscriberOnSql : public Subscriber {
 public:
-    SubscriberOnSql() {
+    SubscriberOnSql() : mutex(1) {
         implementation = 0/*NULL*/;
         verbose = false;
     }
@@ -42,7 +44,11 @@ public:
     virtual bool listSubscriptions(const char *port,
                                    yarp::os::Bottle& reply);
 
-    virtual bool welcome(const char *port);
+    virtual bool welcome(const char *port, int activity);
+
+    bool hookup(const char *port);
+
+    bool breakdown(const char *port);
 
     virtual bool setTopic(const char *port, bool active);
 
@@ -55,6 +61,10 @@ public:
     bool checkSubscription(const char *src, const char *dest,
                            const char *srcFull, const char *destFull);
 
+    bool breakSubscription(const char *dropper,
+                           const char *src, const char *dest,
+                           const char *srcFull, const char *destFull);
+
     void setVerbose(bool verbose) {
         this->verbose = verbose;
     }
@@ -62,6 +72,7 @@ public:
 private:
     void *implementation;
     bool verbose;
+    yarp::os::Semaphore mutex;
 };
 
 

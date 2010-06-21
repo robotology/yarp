@@ -38,7 +38,8 @@ TripleSource *TripleSourceCreator::open(const char *filename,
     }
     int result = sqlite3_open_v2(filename,
                                  &db,
-                                 SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE,
+                                 SQLITE_OPEN_READWRITE|SQLITE_OPEN_CREATE|
+                                 SQLITE_OPEN_NOMUTEX,
                                  NULL);
     if (result!=SQLITE_OK) {
         fprintf(stderr,"Failed to open database %s\n", filename);

@@ -76,6 +76,8 @@ public:
     static int npos;
 
     typedef int size_type;
+
+    static ConstString toString(int x);
 private:
 
     void *implementation;

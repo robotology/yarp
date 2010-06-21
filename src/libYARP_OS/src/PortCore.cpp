@@ -577,12 +577,17 @@ bool PortCore::isUnit(const Route& route) {
 }
 
 
-bool PortCore::removeUnit(const Route& route, bool synch) {
+bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
     // a request to remove a unit
     // this is the trickiest case, since any thread could here
     // affect any other thread
 
-    YARP_DEBUG(log,String("asked to remove connection ") + route.toString());
+    if (except!=NULL) {
+        YARP_DEBUG(log,String("asked to remove connection in the way of ") + route.toString());
+        *except = false;
+    } else {
+        YARP_DEBUG(log,String("asked to remove connection ") + route.toString());
+    }
 
     // how about waking up the manager to do this?
     stateMutex.wait();
@@ -601,7 +606,14 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
                     ok = ok && (route.getToName()==alt.getToName());
                 }
                 if (route.getCarrierName()!=wild) {
-                    ok = ok && (route.getCarrierName()==alt.getCarrierName());
+                    if (except==NULL) {
+                        ok = ok && (route.getCarrierName()==alt.getCarrierName());
+                    } else {
+                        if (route.getCarrierName()==alt.getCarrierName()) {
+                            *except = true;
+                            ok = false;
+                        }
+                    }
                 }
 	
                 if (ok) {
@@ -662,7 +674,8 @@ bool PortCore::removeUnit(const Route& route, bool synch) {
 //
 
 
-void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
+void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
+                         bool onlyIfNeeded) {
     YARP_DEBUG(log,String("asked to add output to ")+
                dest);
 
@@ -673,7 +686,20 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os) {
     if (address.isValid()) {
         // as a courtesy, remove any existing connections between 
         // source and destination
-        removeUnit(Route(getName(),address.getRegName(),"*"),true);
+        if (onlyIfNeeded) {
+            bool except = false;
+            removeUnit(Route(getName(),address.getRegName(),
+                             address.getCarrierName()),true,&except);
+            if (except) {
+                // connection already present
+                YARP_DEBUG(log,String("output already present to ")+
+                           dest);
+                bw.appendLine(String("Desired connection already present from ") + getName() + " to " + dest);
+                return;
+            }
+        } else {
+            removeUnit(Route(getName(),address.getRegName(),"*"),true);
+        }
 
         Route r = Route(getName(),address.getRegName(),
                         parts.hasCarrierName()?parts.getCarrierName():"tcp");
@@ -1203,7 +1229,7 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
             if (carrier!="") {
                 output = carrier + ":/" + output;
             }
-            addOutput(output,id,&cache);
+            addOutput(output,id,&cache,false);
             String r = cache.toString();
             int v = (r[0]=='A')?0:-1;
             result.addInt(v);

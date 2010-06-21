@@ -9,6 +9,7 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/NetType.h>
 #include <yarp/os/ConstString.h>
 
 using namespace yarp::os::impl;
@@ -93,3 +94,9 @@ int ConstString::find(const char *needle) const {
 ConstString ConstString::substr(int start, int n) const {
     return ConstString(HELPER(implementation).substr(start,n).c_str());
 }
+
+
+ConstString ConstString::toString(int x) {
+    return ConstString(NetType::toString(x).c_str());
+}
+

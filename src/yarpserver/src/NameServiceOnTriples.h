@@ -12,6 +12,9 @@
 #include "NameService.h"
 #include "TripleSource.h"
 #include "Allocator.h"
+#include "Subscriber.h"
+#include <yarp/os/NameStore.h>
+#include <yarp/os/Semaphore.h>
 
 /**
  *
@@ -48,27 +51,39 @@ public:
  * An implementation of name service operators on a triple store.
  *
  */
-class NameServiceOnTriples : public NameService, public NameStore {
+class NameServiceOnTriples : public NameService, public yarp::os::NameStore {
 private:
     TripleSource *db;
     Allocator *alloc;
+    Subscriber *subscriber;
     std::string lastRegister;
     yarp::os::Contact serverContact;
+    yarp::os::Semaphore mutex;
+    bool gonePublic;
 public:
     NameServiceOnTriples(TripleSource *db,
                          Allocator *alloc,
                          const yarp::os::Contact& serverContact) : 
-        db(db), alloc(alloc), serverContact(serverContact) {
+        db(db), alloc(alloc), serverContact(serverContact), mutex(1) {
         lastRegister = "";
+        subscriber = NULL;
+        gonePublic = false;
+    }
+
+    void setSubscriber(Subscriber *subscriber) {
+        this->subscriber = subscriber;
     }
 
     yarp::os::Contact query(const char *portName, 
                             NameTripleState& act,
-                            const char *prefix);
+                            const char *prefix,
+                            bool nested = false);
+
+    virtual bool announce(const char *name, int activity);
 
     virtual yarp::os::Contact query(const char *portName);
 
-    bool cmdQuery(NameTripleState& act);
+    bool cmdQuery(NameTripleState& act, bool nested = false);
 
     bool cmdRegister(NameTripleState& act);
 
@@ -92,6 +107,11 @@ public:
                        yarp::os::Bottle& reply, 
                        yarp::os::Bottle& event,
                        yarp::os::Contact& remote);
+
+    virtual void goPublic() {
+        gonePublic = true;
+    }
+
 };
 
 

@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/NameStore.h>
 
 namespace yarp {
     namespace os {
@@ -215,6 +216,13 @@ public:
 
     virtual ~NameClient();
 
+    void queryBypass(NameStore *store) {
+        altStore = store;
+    }
+
+    NameStore *getQueryBypass() {
+        return altStore;
+    }
 
 private:
     NameClient();
@@ -236,6 +244,7 @@ private:
     bool reportScan;
     bool reportSaveScan;
     bool isSetup;
+    NameStore *altStore;
 
     static NameClient *instance;
 

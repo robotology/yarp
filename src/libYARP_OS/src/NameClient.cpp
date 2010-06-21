@@ -121,6 +121,9 @@ String NameClient::send(const String& cmd, bool multi) {
     bool retried = false;
     bool retry = false;
     String result;
+    Address server = getAddress();
+    float timeout = 10;
+    server.setTimeout(timeout);
 
     do {
 
@@ -135,7 +138,7 @@ String NameClient::send(const String& cmd, bool multi) {
         YARP_DEBUG(Logger::get(),String("connecting to ") + getAddress().toString());
         OutputProtocol *ip = NULL;
         if (!retry) {
-            ip = face.write(getAddress());
+            ip = face.write(server);
         } else {
             retried = true;
         }
@@ -160,7 +163,9 @@ String NameClient::send(const String& cmd, bool multi) {
                     nc.setAddress(alt);
                     nc.toFile();
                 }
-                ip = face.write(getAddress());
+                server = getAddress();
+                server.setTimeout(timeout);
+                ip = face.write(server);
                 if (ip==NULL) {
                     YARP_ERROR(Logger::get(),
                                "no connection to nameserver, scanning mcast");
@@ -242,6 +247,11 @@ Address NameClient::queryName(const String& name) {
                          np);
             return addr;
         }
+    }
+
+    if (altStore!=NULL) {
+        Contact c = altStore->query(np.c_str());
+        return Address::fromContact(c);
     }
 
     //if (isFakeMode()) {
@@ -338,6 +348,7 @@ NameClient::NameClient() {
     isSetup = false;
     fake = false;
     fakeServer = NULL;
+    altStore = NULL;
 }
 
 void NameClient::setup() {

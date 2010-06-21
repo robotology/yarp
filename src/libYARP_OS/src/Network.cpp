@@ -35,9 +35,319 @@ using namespace yarp::os;
 extern "C" int __yarp_is_initialized;
 int __yarp_is_initialized = 0;
 
+
+static bool needsLookup(const Contact& contact) {
+    if (contact.getHost()!="") return false;
+    if (contact.getCarrier()=="topic") return false;
+    return true;
+}
+
+#define ENACT_CONNECT 1
+#define ENACT_DISCONNECT 2
+#define ENACT_EXISTS 3
+
+static int noteDud(const Contact& src) {
+    //printf("DUD %s\n", src.toString().c_str());
+    NameClient& nic = NameClient::getNameClient();
+    NameStore *store = nic.getQueryBypass();
+    if (store!=NULL) {
+        return store->announce(src.getName().c_str(),0);
+    }
+    Bottle cmd, reply;
+    cmd.addString("announce");
+    cmd.addString(src.getName().c_str());
+    cmd.addInt(0);
+    bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                 cmd,
+                                 reply);
+    return ok?0:1;
+ }
+
+static int enactConnection(const Contact& src,
+                           const Contact& dest,
+                           const ContactStyle& style,
+                           int mode,
+                           bool reversed) {
+    /*
+    printf("CON %s %s %d\n", src.toString().c_str(),
+           dest.toString().c_str(),
+           mode);
+    */
+    ContactStyle rpc;
+    rpc.admin = true;
+    rpc.quiet = style.quiet;
+
+    if (mode==ENACT_EXISTS) {
+        Bottle cmd, reply;
+        cmd.addVocab(Vocab::encode("list"));
+        cmd.addVocab(Vocab::encode(reversed?"in":"out"));
+        cmd.addString(dest.getName().c_str());
+        YARP_SPRINTF2(Logger::get(),debug,"asking %s: %s",
+                      src.toString().c_str(), cmd.toString().c_str());
+        bool ok = NetworkBase::write(src,cmd,reply,rpc);
+        if (!ok) {
+            noteDud(src);
+            return 1;
+        }
+        if (reply.check("carrier")) {
+            if (!style.quiet) {
+                printf("Connection found between %s and %s\n",
+                       src.getName().c_str(), dest.getName().c_str());
+            }
+            return 0;
+        }
+        return 1;
+    }
+
+    int act = (mode==ENACT_DISCONNECT)?VOCAB3('d','e','l'):VOCAB3('a','d','d');
+
+    // Let's ask the destination to connect/disconnect to the source.
+    // We assume the YARP carrier will reverse the connection if
+    // appropriate when connecting.
+    Bottle cmd, reply;
+    cmd.addVocab(act);
+    Contact c = dest;
+    if (style.carrier!="") {
+        c = c.addCarrier(style.carrier);
+    }
+    if (mode!=ENACT_DISCONNECT) {
+        cmd.addString(c.toString());
+    } else {
+        cmd.addString(c.getName());
+    }
+    YARP_SPRINTF2(Logger::get(),debug,"asking %s: %s",
+                  src.toString().c_str(), cmd.toString().c_str());
+    bool ok = NetworkBase::write(src,cmd,reply,rpc);
+    if (!ok) {
+        noteDud(src);
+        return 1;
+    }
+    ok = false;
+    ConstString msg = "";
+    if (reply.get(0).isInt()) {
+        ok = (reply.get(0).asInt()==0);
+        msg = reply.get(1).asString();
+    } else {
+        // older protocol
+        msg = reply.get(0).asString();
+        ok = msg[0]=='A'||msg[0]=='R';
+    }
+    if (mode==ENACT_DISCONNECT && !ok) {
+        msg = "no such connection\n";
+    }
+    if (mode==ENACT_CONNECT && !ok) {
+        noteDud(dest);
+    }
+    if (!style.quiet) {
+        fprintf(stderr,"%s %s",
+                ok?"Success:":"Failure:",
+                msg.c_str());
+    }
+    return ok?0:1;
+}
+
+/*
+
+   Connect two ports, bearing in mind that one of them may not be 
+   a regular YARP port.
+
+   Normally, YARP sends a request to the source port asking it to
+   connect to the destination port.  But the source port may not
+   be capable of initiating connections, in which case we can
+   request the destination port to connect to the source (this
+   is appropriate for carriers that can reverse the initiative).
+
+   The source or destination could also be topic ports, which are
+   entirely virtual.  In that case, we just need to tell the name
+   server, and it will take care of the details.
+
+  */
+
+static int metaConnect(const char *csrc,
+                       const char *cdest,
+                       ContactStyle style,
+                       int mode) {
+    ConstString src = csrc;
+    ConstString dest = cdest;
+
+    // get the expressed contacts, without name server input
+    Contact dynamicSrc = Contact::fromString(src);
+    Contact dynamicDest = Contact::fromString(dest);
+
+    bool topical = false;
+    if (dynamicSrc.getCarrier()=="topic" || 
+        dynamicDest.getCarrier()=="topic") {
+        topical = true;
+    }
+    
+    // fetch completed contacts from name server, if needed
+    Contact staticSrc;
+    Contact staticDest;
+    if (needsLookup(dynamicSrc)&&!topical) {
+        staticSrc = NetworkBase::queryName(dynamicSrc.getName());
+        if (!staticSrc.isValid()) {
+            if (!style.quiet) {
+                fprintf(stderr, "Failure: could not find source port %s\n",
+                        src.c_str());
+            }
+            return 1;
+        }
+    } else {
+        staticSrc = dynamicSrc;
+    }
+    if (needsLookup(dynamicDest)&&!topical) {
+        staticDest = NetworkBase::queryName(dynamicDest.getName());
+        if (!staticDest.isValid()) {
+            if (!style.quiet) {
+                fprintf(stderr, "Failure: could not find destination port %s\n",
+                        dest.c_str());
+            }
+            return 1;
+        }
+    } else {
+        staticDest = dynamicDest;
+    }
+
+    ConstString carrierConstraint = "";
+
+    // see if we can do business with the source port
+    bool srcIsCompetent = false;
+    bool srcIsTopic = false;
+    if (staticSrc.getCarrier()!="topic") {
+        if (!topical) {
+            Carrier *srcCarrier = 
+                Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+            if (srcCarrier!=NULL) {
+                String srcBootstrap = srcCarrier->getBootstrapCarrierName();
+                if (srcBootstrap!="") {
+                    srcIsCompetent = true;
+                } else {
+                    carrierConstraint = staticSrc.getCarrier();
+                }
+            }
+        }
+    } else {
+        srcIsTopic = true;
+    }
+
+    // see if we can do business with the destination port
+    bool destIsCompetent = false;
+    bool destIsTopic = false;
+    if (staticDest.getCarrier()!="topic") {
+        if (!topical) {
+            Carrier *destCarrier = 
+                Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+            if (destCarrier!=NULL) {
+                String destBootstrap = destCarrier->getBootstrapCarrierName();
+                if (destBootstrap!="") {
+                    destIsCompetent = true;
+                } else {
+                    carrierConstraint = staticDest.getCarrier();
+                }
+            }
+        }
+    } else {
+        destIsTopic = true;
+    }
+
+    if (srcIsTopic||destIsTopic) {
+        Bottle cmd, reply;
+        if (mode==ENACT_CONNECT) {
+            cmd.add("subscribe");
+        } else if (mode==ENACT_DISCONNECT) {
+            cmd.add("unsubscribe");
+        } else {
+            fprintf(stderr,"Failure: cannot check subscriptions yet\n");
+            return 1;
+        }
+        if (style.carrier!="") {
+            if (srcIsTopic) {
+                dynamicDest = dynamicDest.addCarrier(style.carrier);
+            } else {
+                dynamicSrc = dynamicSrc.addCarrier(style.carrier);
+            }
+        }
+        cmd.add(dynamicSrc.toString().c_str());
+        cmd.add(dynamicDest.toString().c_str());
+        bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
+                                     cmd,
+                                     reply);
+        bool fail = (reply.get(0).toString()=="fail")||!ok;
+        if (fail) {
+            if (!style.quiet) {
+                fprintf(stderr,"Failure: name server did not accept connection to topic.\n");
+            }
+            return 1;
+        }
+        if (!style.quiet) {
+            fprintf(stderr,"Success: connection to topic added.\n");
+        }
+        return 0;
+    }
+
+    if (dynamicSrc.getCarrier()!="") {
+        style.carrier = dynamicSrc.getCarrier();
+    }
+
+    if (dynamicDest.getCarrier()!="") {
+        style.carrier = dynamicDest.getCarrier();
+    }
+
+
+    if (style.carrier!="" && carrierConstraint!="") {
+        if (style.carrier!=carrierConstraint) {
+            fprintf(stderr,"Failure: conflict between %s and %s\n",
+                    style.carrier.c_str(),
+                    carrierConstraint.c_str());
+            return 1;
+        }
+    }
+    if (carrierConstraint!="") {
+        style.carrier = carrierConstraint;
+    }
+    if (style.carrier=="") {
+        style.carrier = staticDest.getCarrier();
+    }
+    if (style.carrier=="") {
+        style.carrier = staticSrc.getCarrier();
+    }
+
+    bool connectionIsPush = false;
+    bool connectionIsPull = false;
+    if (style.carrier!="topic") {
+        Carrier *connectionCarrier = 
+            Carriers::chooseCarrier(style.carrier.c_str());
+        if (connectionCarrier!=NULL) {
+            connectionIsPush = connectionCarrier->isPush();
+            connectionIsPull = !connectionIsPush;
+        }
+    }
+
+    if (srcIsCompetent&&connectionIsPush) {
+        // Classic case.  
+        Contact c = Contact::fromString(dest);
+        return enactConnection(staticSrc,c,style,mode,false);
+    }
+    if (destIsCompetent&&connectionIsPull) {
+        Contact c = Contact::fromString(src);
+        return enactConnection(staticDest,c,style,mode,true);
+    }
+
+    fprintf(stderr,"Failure: no method known to initiate such a connection\n");
+
+    return 1;
+}
+
+
 bool NetworkBase::connect(const char *src, const char *dest, 
                       const char *carrier, bool quiet) {
-    int result = -1;
+    ContactStyle style;
+    style.quiet = quiet;
+    if (carrier!=NULL) {
+        style.carrier = carrier;
+    }
+    int result = metaConnect(src,dest,style,ENACT_CONNECT);
+    /*
     if (carrier!=NULL) {
         // prepend carrier
         String fullDest = String(carrier) + ":/" + Companion::slashify(dest);
@@ -45,15 +355,21 @@ bool NetworkBase::connect(const char *src, const char *dest,
     } else {
         result = Companion::connect(src,dest,quiet);
     }
+    */
     return result == 0;
 
 }
 
 
 bool NetworkBase::disconnect(const char *src, const char *dest, bool quiet) {
-    int result = Companion::disconnect(src,dest,quiet);
+    //int result = Companion::disconnect(src,dest,quiet);
+    //return result == 0;
+    ContactStyle style;
+    style.quiet = quiet;
+    int result = metaConnect(src,dest,style,ENACT_DISCONNECT);
     return result == 0;
 }
+
 
 bool NetworkBase::exists(const char *port, bool quiet) {
     int result = Companion::exists(port,quiet);
@@ -212,7 +528,9 @@ bool NetworkBase::write(const Contact& contact,
     }
     if (!address.isValid()) {
         if (!style.quiet) {
-            YARP_ERROR(Logger::get(),"could not find port");
+            YARP_SPRINTF1(Logger::get(),error,
+                          "cannot find port %s",
+                          targetName);
         }
         return false;
     }
@@ -223,7 +541,9 @@ bool NetworkBase::write(const Contact& contact,
     OutputProtocol *out = Carriers::connect(address);
     if (out==NULL) {
         if (!style.quiet) {
-            YARP_ERROR(Logger::get(),"cannot connect to port");
+            YARP_SPRINTF1(Logger::get(),error,
+                          "cannot connect to port %s",
+                          targetName);
         }
         return false;
     }
@@ -266,7 +586,19 @@ bool NetworkBase::write(const Contact& contact,
 
 
 bool NetworkBase::isConnected(const char *src, const char *dest, bool quiet) {
-    Contact contact = Contact::byName(src);
+    ContactStyle style;
+    style.quiet = quiet;
+    int result = metaConnect(src,dest,style,ENACT_EXISTS);
+    if (result!=0) {
+        if (!quiet) {
+            printf("No connection from %s to %s found\n",
+                   src, dest);
+        }
+    }
+    return result == 0;
+
+    /*
+    Contact contact = Contact::fromString(src);
     Bottle cmd, reply;
     cmd.addVocab(Vocab::encode("list"));
     cmd.addVocab(Vocab::encode("out"));
@@ -285,6 +617,7 @@ bool NetworkBase::isConnected(const char *src, const char *dest, bool quiet) {
                src, dest);
     }
     return false;
+    */
 }
 
 
@@ -327,3 +660,10 @@ bool NetworkBase::initialized() {
 void NetworkBase::setVerbosity(int verbosity) {
     Logger::get().setVerbosity(verbosity);
 }
+
+void NetworkBase::queryBypass(NameStore *store) {
+    NameClient& client = NameClient::getNameClient();
+    client.queryBypass(store);
+}
+
+

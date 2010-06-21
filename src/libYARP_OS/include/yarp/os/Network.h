@@ -12,6 +12,8 @@
 #include <yarp/os/Contact.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Property.h>
+#include <yarp/os/NameStore.h>
 
 //protects against some dangerous ACE macros
 #ifdef main
@@ -296,7 +298,7 @@ public:
         ContactStyle style;
         style.admin = admin;
         style.quiet = quiet;
-        style.timeout = -1;
+        style.timeout = timeout;
         return write(contact,cmd,reply,style);
     }
 
@@ -362,6 +364,13 @@ public:
      *
      */
     static void setVerbosity(int verbosity);
+
+    /**
+     *
+     * Redirect queries to another source.
+     *
+     */
+    static void queryBypass(NameStore *store);
 };
 
 /**

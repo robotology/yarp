@@ -14,6 +14,7 @@
 
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/NameStore.h>
 
 /**
  *
@@ -22,17 +23,30 @@
  */
 class Subscriber : public NameService {
 private:
-    NameStore *store;
+    yarp::os::NameStore *store;
     ConnectManager manager;
 public:
     Subscriber() : store(0/*NULL*/) {}
 
-    void setStore(NameStore& store) { this->store = &store; }
-    NameStore *getStore() { return store; }
+    void setStore(yarp::os::NameStore& store) { this->store = &store; }
+    yarp::os::NameStore *getStore() { return store; }
 
+    /*
     void connect(const yarp::os::Contact& src,
                  const yarp::os::ConstString& dest) {
         manager.connect(src,dest);
+    }
+    */
+
+    void connect(const char *src,
+                 const char *dest) {
+        manager.connect(src,dest);
+    }
+
+    void disconnect(const char *src,
+                    const char *dest,
+                    bool srcDrop) {
+        manager.disconnect(src,dest,srcDrop);
     }
 
     virtual bool addSubscription(const char *src,
@@ -44,7 +58,7 @@ public:
     virtual bool listSubscriptions(const char *src,
                                    yarp::os::Bottle& reply) = 0;
 
-    virtual bool welcome(const char *port) = 0;
+    virtual bool welcome(const char *port, int activity) = 0;
 
     virtual bool setTopic(const char *port, bool active) = 0;
 
@@ -83,7 +97,11 @@ public:
             return ok;
         }
         if (tag=="announce") {
-            welcome(cmd.get(1).asString().c_str());
+            if (cmd.get(2).isInt()) {
+                welcome(cmd.get(1).asString().c_str(),cmd.get(2).asInt()?1:0);
+            } else {
+                welcome(cmd.get(1).asString().c_str(),true);
+            }
             reply.clear();
             reply.addVocab(VOCAB2('o','k'));
             return true;

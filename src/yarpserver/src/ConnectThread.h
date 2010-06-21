@@ -14,22 +14,58 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Semaphore.h>
 
 #include <list>
 
 class ConnectThread : public yarp::os::Thread {
 public:
-    yarp::os::Contact src;
+    bool needed;
+    bool positive;
+    int ct;
+    yarp::os::Semaphore& mutex;
+
+    //yarp::os::Contact src;
+    yarp::os::ConstString src;
     yarp::os::ConstString dest;
 
+    ConnectThread(yarp::os::Semaphore& mutex) : mutex(mutex) {
+        needed = true;
+        ct = 0;
+        positive = true;
+    }
+
     virtual void run() {
-        yarp::os::Bottle cmd, reply;
-        cmd.addVocab(VOCAB3('a','d','d'));
-        cmd.addString(dest.c_str());
-        yarp::os::Network::write(src,
-                                 cmd,
-                                 reply,
-                                 true);
+        do {
+            mutex.wait();
+            if (ct==0) {
+                needed = false;
+            }
+            ct--;
+            mutex.post();
+            /*
+            printf(" ]]] con %s %s / %d %d\n", src.c_str(),
+                   dest.c_str(),
+                   ct,
+                   needed);
+            */
+            if (!needed) { break; }
+            if (positive) {
+                if (!yarp::os::NetworkBase::isConnected(src,dest)) {
+                    printf("   (((Trying to connect %s and %s)))\n", 
+                           src.c_str(),
+                           dest.c_str());
+                    yarp::os::NetworkBase::connect(src,dest);
+                }
+            } else {
+                if (yarp::os::NetworkBase::isConnected(src,dest)) {
+                    printf("   (((Trying to disconnect %s and %s)))\n", 
+                           src.c_str(),
+                           dest.c_str());
+                    yarp::os::NetworkBase::disconnect(src,dest);
+                }
+            }
+        } while (true);
     }
 };
 
@@ -37,7 +73,11 @@ public:
 class ConnectManager {
 private:
     std::list<ConnectThread *> con;
+    yarp::os::Semaphore mutex;
 public:
+
+    ConnectManager() : mutex(1) {
+    }
 
     virtual ~ConnectManager() {
         for (std::list<ConnectThread *>::iterator it = con.begin();
@@ -49,29 +89,65 @@ public:
         con.clear();
     }
 
-    void connect(const yarp::os::Contact& src,
-                 const yarp::os::ConstString& dest) {
+    void disconnect(const char *src,
+                    const char *dest,
+                    bool srcDrop) {
+        connect(src,dest,false);
+    }
+
+    void connect(const char *src,
+                 const char *dest,
+                 bool positive = true) {
+        //printf("  ??? %s %s\n", src, dest);
         ConnectThread *t = 0/*NULL*/;
-        for (std::list<ConnectThread *>::iterator it = con.begin();
-             it != con.end(); it++) {
+        //printf("***** %d threads\n", con.size());
+        std::list<ConnectThread *>::iterator it = con.begin();
+        bool already = false;
+        while (it != con.end()) {
             if ((*it)!=0/*NULL*/) {
-                if (!(*it)->isRunning()) {
-                    t = (*it);
-                    t->stop();
-                    break;
+                if (!(*it)->needed) {
+                    if (t==NULL) {
+                        //printf("***** reusing a thread\n");
+                        t = (*it);
+                        t->stop();
+                    } else {
+                        //printf("***** deleting a thread\n");
+                        (*it)->stop();
+                        delete (*it);
+                        it = con.erase(it);
+                        continue;
+                    }
+                } else {
+                    if ((*it)->src == src && (*it)->dest == dest) {
+                        mutex.wait();
+                        /*
+                        printf("??? prethread %d %d\n", (*it)->needed,
+                               (*it)->ct);
+                        */
+                        if ((*it)->needed) {
+                            (*it)->ct++;
+                            already = true;
+                        }
+                        mutex.post();
+                    }
                 }
             }
+            it++;
         }
-        if (t==NULL) {
-            t = new ConnectThread();
-            con.push_back(t);
+        if (!already) {
+            if (t==NULL) {
+                t = new ConnectThread(mutex);
+                con.push_back(t);
+            }
+            t->src = src;
+            t->dest = dest;
+            t->ct = 1;
+            t->needed = true;
+            t->positive = positive;
+            t->start();
         }
-        t->src = src;
-        t->dest = dest;
-        t->start();
     }
 };
 
 
 #endif
-
