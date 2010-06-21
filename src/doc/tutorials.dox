@@ -5,25 +5,43 @@
  */
 
 /**
- * @page tutorials Tutorials
+ * @page tutorials YARP Tutorials
  *
 
 Here are a collection of tutorials on various topics in YARP.
 
+Using YARP and CMake in your projects:
+\li \ref yarp_cmake_hello
+
+Using YARP ports for communication:
 \li \ref note_ports
-\li \ref using_cmake
-\li \ref yarp_config_files
 \li \ref port_expert
-\li \ref yarp_without_yarp
-\li \ref note_devices
-\li \ref add_a_plugin
-\li (older method) \ref add_a_device
-\li \ref gpu_tutorial
+\li \ref carrier_config
 \li \ref carrier_expert
-\li \ref yarp_guts
 \li \ref rpc_ports
+\li \ref yarp_without_yarp
 \li \ref persistent_connections
 \li \ref port_admin
+
+Using YARP devices:
+\li \ref note_devices
+\li \ref yarpdev
+\li \ref yarp_motor_control
+\li \ref dev_examples
+\li \ref add_a_plugin (older method: \ref add_a_device)
+\li \ref yarp_config_files
+
+Communication protocol details:
+\li \ref yarp_protocol
+\li \ref data_rep
+\li \ref name_server
+\li \ref terms
+
+Sundry miscellaneous:
+\li \ref yarp_code_examples
+\li \ref gpu_tutorial
+\li \ref yarp_guts
+\li \ref using_cmake
 
  *
  */

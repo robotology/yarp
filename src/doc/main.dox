@@ -41,26 +41,11 @@ Getting set up:
 
 Programming:
 \li \ref yarp_cmake_hello
+\li \ref tutorials
+
+Highlights:
 \li \ref note_ports
-\li \ref port_expert
 \li \ref note_devices
-\li \ref yarp_code_examples
-\li \ref using_cmake
-
-Working with devices:
-\li \ref yarpdev
-\li \ref yarp_motor_control
-\li \ref gpu_tutorial
-\li \ref dev_examples
-\li \ref add_a_device
-
-Communication protocols:
-\li \ref yarp_protocol
-\li \ref data_rep
-\li \ref name_server
-\li \ref carrier_config
-\li \ref carrier_expert
-\li \ref terms
 
 More information:
 \li \ref what_is_yarp
