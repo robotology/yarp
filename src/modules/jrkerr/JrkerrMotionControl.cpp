@@ -1273,6 +1273,12 @@ bool JrkerrMotionControl::getAmpStatusRaw(int *st)
 	return NOT_YET_IMPLEMENTED("getAmpStatusRaw");
 }
 
+bool JrkerrMotionControl::getAmpStatusRaw(int j, int *st)
+{
+	return NOT_YET_IMPLEMENTED("getAmpStatusRaw");
+}
+
+
 bool JrkerrMotionControl::setLimitsRaw(int axis, double min, double max)
 {
 	_mutex.wait();
