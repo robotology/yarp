@@ -215,7 +215,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
 
 Address NameClient::queryName(const String& name) {
     String np = getNamePart(name);
-    size_t i1 = YARP_STRSTR(np,":");
+    YARP_STRING_INDEX i1 = YARP_STRSTR(np,":");
     if (i1!=String::npos) {
         int digits = 0;
         int nondigits = 0;
