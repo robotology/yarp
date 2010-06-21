@@ -1898,6 +1898,20 @@ bool MEIMotionControl::getAmpStatusRaw(int *st)
 	
 }
 
+bool MEIMotionControl::getAmpStatusRaw(int i, int *st)				
+{
+
+	MEIResources& r = RES(system_resources);
+	short value;
+
+    if (i<r.getJoints())
+        st[i]=get_amp_enable(i, &value);
+
+    *st=value;
+
+	return true;	
+}
+
 bool MEIMotionControl::setLimitsRaw(int axis, double min, double max)	
 {
 		
