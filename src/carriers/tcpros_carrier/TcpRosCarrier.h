@@ -18,6 +18,7 @@ namespace yarp {
     namespace os {
         namespace impl {
             class TcpRosCarrier;
+            class RosSrvCarrier;
         }
     }
 }
@@ -28,6 +29,7 @@ private:
     bool sender;
     int headerLen1;
     int headerLen2;
+protected:
     bool isService;
 public:
     TcpRosCarrier() {
@@ -43,7 +45,7 @@ public:
     }
 
     virtual String getName() {
-        return "tcpros";
+        return isService?"rossrv":"tcpros";
     }
 
     virtual bool isConnectionless() {
@@ -151,6 +153,20 @@ public:
 
     virtual bool expectAck(Protocol& proto) {
         return true;
+    }
+};
+
+/*
+ *
+ * Set up an explicit service carrier, so that we know the 
+ * direction of data flow as early as possible.  Its name
+ * is "rossrv" (see TcpRosCarrier::getName)
+ *
+ */
+class yarp::os::impl::RosSrvCarrier : public TcpRosCarrier {
+public:
+    RosSrvCarrier() {
+        isService = true;
     }
 };
 

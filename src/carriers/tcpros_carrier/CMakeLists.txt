@@ -1,5 +1,6 @@
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(tcpros_carrier TYPE TcpRosCarrier INCLUDE TcpRosCarrier.h)
+  prepare_carrier(rossrv_carrier TYPE RosSrvCarrier INCLUDE TcpRosCarrier.h)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_tcpros_carrier)
