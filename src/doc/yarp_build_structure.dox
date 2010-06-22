@@ -1,0 +1,88 @@
+/*
+ * Copyright (C) 2010 RobotCub Consortium
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/** 
+ * @page yarp_build_structure YARP's own build structure
+
+@author Paul Fitzpatrick
+
+For the reference of YARP developers, and the curious, here is a 
+sketch of how YARP builds, including plugins.
+
+The YARP project is profoundly grateful to the creators of CMake,
+for finally giving us a sane way to build a cross-platform library.
+
+@section yarp_build_structure_main The main CMakeLists.txt
+
+The main CMakeLists.txt file for YARP is simple. It does the following:
+ \li Sets the CMAKE_MODULE_PATH to pick up scripts in the "conf" directory.
+ \li Initializes some empty lists: YARP_TREE_INCLUDE_DIRS, YARP_LIBS, YARP_DEFS. These will be used to keep track of paths to header files, names of library targets, and extra compiler definitions needed.
+ \li Includes the conf/YarpOptions.cmake file, to define general configuration options.  See \ref yarp_build_structure_options.
+ \li Includes the conf/YarpVersion.cmake file, to define the current YARP version.   See \ref yarp_build_structure_version.
+ \li Includes the conf/YarpSystemCheck.cmake file, to get properties of the system YARP is being compiled on.
+ \li Enables the CMake "test" target.
+ \li Enters the "conf" directory for some preliminary code generation.
+ \li Enters the "src" directory to set up compilation targets.
+ \li Includes the conf/YarpDescribe.cmake file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
+ \li Includes the conf/YarpPackage.cmake file, which sets up targets for packaging YARP as a tarball, zip, etc.
+ \li Includes the conf/YarpDoc.cmake file, which sets up a target for generating YARP's documentation.
+
+There are a few lines at the bottom of the CMakeLists.txt file that look
+like this:
+\verbose
+# Modify this file when you add/remove files in directories that
+# are scanned for sources.  This will make sure that cmake gets rerun
+# for everybody.
+# Touch: 1 2 3
+\endverbose
+When new source files are added to YARP, and no CMakeLists.txt file is
+modified in so doing, it is wise to add another arbitrary number to 
+the "Touch" line.  We've been lazy in YARP and let CMake scan for 
+source files rather than listing them all explicitly.  Without the
+"touch" line, users could end up with broken builds if they do an "svn update",
+receive a new source file added by someone else, and don't run cmake.
+
+@section yarp_build_structure_options YarpOptions
+
+First we set up:
+ \li The CMake LIBRARY_OUTPUT_PATH variable (set to the "lib" directory).
+ \li The CMake EXECUTABLE_OUTPUT_PATH variable (set to the "bin" directory).
+ \li The CMake CMAKE_BUILD_TYPE variable (debug, release, etc).
+
+[ADVANCED] Then we check if the "static_libs" directory exists.  If
+so, any static libraries within it are unconditionally linked.  This
+is handy for building stand-alone binaries that link everything they
+need.  Done carefully, such binaries can be used on different machines
+in the same general OS family.
+
+Now we prepare some options for the user.  Some may be hidden
+as "advanced" options.
+\li The CREATE_SHARED_LIBRARY option - if set to true, shared libraries
+ (.so/.dll/.dylib/...) will be built, instead of static.
+\li [ADVANCED] The USE_STL_STRING option - internally, YARP uses an 
+ ACE string class.  This can be toggled to std::string if desired.
+\li [ADVANCED] The CREATE_BUILTIN_DEVICE_TESTS option - normally, YARP 
+ won't test devices, but if you turn this flag on it will attempt some
+ device tests.  This has the side-benefit of being useful for building 
+ documentation about those devices, by probing their "open" method with 
+ verbose turned on.
+\li The ENABLE_DASHBOARD_SUBMIT flag - if enabled, builds and tests can
+ be submitted to the YARP online dashboard.
+\li The COMPILING_ALL_YARP flag - this is always true, and is there so
+ that any YARP plugin can determine that it is currently being compiled as 
+ part of YARP.
+
+@section yarp_build_structure_version YarpVersion
+
+This is a very simple file, defining a version number for YARP.
+YARP versioning is as follows:
+\li YARP_VERSION_MAJOR - has only changed once or twice, ever.
+\li YARP_VERSION_MINOR - changes perhaps once every year or two.
+\li YARP_VERSION_PATCH - changes with every release.
+\li YARP_VERSION_MODIFIER - rarely used, other than to signal unofficial release candidates.
+
+*
+*/

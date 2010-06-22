@@ -37,10 +37,13 @@ Communication protocol details:
 \li \ref name_server
 \li \ref terms
 
-Sundry miscellaneous:
+YARP implementation:
+\li \ref yarp_guts
+\li \ref yarp_build_structure
+
+More, more, more:
 \li \ref yarp_code_examples
 \li \ref gpu_tutorial
-\li \ref yarp_guts
 \li \ref using_cmake
 
  *
