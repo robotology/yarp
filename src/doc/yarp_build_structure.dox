@@ -9,6 +9,9 @@
 
 @author Paul Fitzpatrick
 
+*** under construction ***
+*** insert animated gif of man digging ***
+
 For the reference of YARP developers, and the curious, here is a 
 sketch of how YARP builds, including plugins.
 
@@ -20,9 +23,9 @@ for finally giving us a sane way to build a cross-platform library.
 The main CMakeLists.txt file for YARP is simple. It does the following:
  \li Sets the CMAKE_MODULE_PATH to pick up scripts in the "conf" directory.
  \li Initializes some empty lists: YARP_TREE_INCLUDE_DIRS, YARP_LIBS, YARP_DEFS. These will be used to keep track of paths to header files, names of library targets, and extra compiler definitions needed.
- \li Includes the conf/YarpOptions.cmake file, to define general configuration options.  See \ref yarp_build_structure_options.
- \li Includes the conf/YarpVersion.cmake file, to define the current YARP version.   See \ref yarp_build_structure_version.
- \li Includes the conf/YarpSystemCheck.cmake file, to get properties of the system YARP is being compiled on.
+ \li Includes the \ref yarp_build_structure_options "conf/YarpOptions.cmake" file, to define general configuration options.
+ \li Includes the \ref yarp_build_structure_version "conf/YarpVersion.cmake" file, to define the current YARP version.
+ \li Includes the \ref yarp_build_structure_system_check "conf/YarpSystemCheck.cmake" file, to get properties of the system YARP is being compiled on.
  \li Enables the CMake "test" target.
  \li Enters the "conf" directory for some preliminary code generation.
  \li Enters the "src" directory to set up compilation targets.
@@ -32,12 +35,12 @@ The main CMakeLists.txt file for YARP is simple. It does the following:
 
 There are a few lines at the bottom of the CMakeLists.txt file that look
 like this:
-\verbose
+\verbatim
 # Modify this file when you add/remove files in directories that
 # are scanned for sources.  This will make sure that cmake gets rerun
 # for everybody.
 # Touch: 1 2 3
-\endverbose
+\endverbatim
 When new source files are added to YARP, and no CMakeLists.txt file is
 modified in so doing, it is wise to add another arbitrary number to 
 the "Touch" line.  We've been lazy in YARP and let CMake scan for 
@@ -45,7 +48,7 @@ source files rather than listing them all explicitly.  Without the
 "touch" line, users could end up with broken builds if they do an "svn update",
 receive a new source file added by someone else, and don't run cmake.
 
-@section yarp_build_structure_options YarpOptions
+@section yarp_build_structure_options conf/YarpOptions.cmake
 
 First we set up:
  \li The CMake LIBRARY_OUTPUT_PATH variable (set to the "lib" directory).
@@ -75,7 +78,7 @@ as "advanced" options.
  that any YARP plugin can determine that it is currently being compiled as 
  part of YARP.
 
-@section yarp_build_structure_version YarpVersion
+@section yarp_build_structure_version conf/YarpVersion.cmake
 
 This is a very simple file, defining a version number for YARP.
 YARP versioning is as follows:
@@ -83,6 +86,41 @@ YARP versioning is as follows:
 \li YARP_VERSION_MINOR - changes perhaps once every year or two.
 \li YARP_VERSION_PATCH - changes with every release.
 \li YARP_VERSION_MODIFIER - rarely used, other than to signal unofficial release candidates.
+
+@section yarp_build_structure_system_check conf/YarpSystemCheck.cmake
+
+Here we probe for some system properties needed to compile YARP correctly.
+We set up compiler flags reflecting those properties.
+\li We set YARP_BIG_ENDIAN/YARP_LITTLE_ENDIAN depending on the order
+of bytes in integers.  For example, if the number 42, expressed as a 
+four byte integer is "42 0 0 0", then YARP_LITTLE_ENDIAN is set.
+If instead it is "0 0 0 42", then YARP_BIG_ENDIAN is set.  This
+will affect the implementation of the yarp::os::NetInt32 type.
+On little endian systems, NetInt32 maps straight onto native integers.
+On big endian systems, NetInt32 is a class that simulates little endian
+integers.
+\li We figure out an appropriate native type for 16-bit integers,
+32-bit integers, and 64-bit floating point numbers.  The types are stored
+in YARP_INT16, YARP_INT32, and YARP_FLOAT64 respectively.
+\li If the YARP_ADMIN environment flag is set, we turn on some more 
+aggressive warnings and errors in the compiler.  YARP developers should
+generally have this flag set if possible.
+\li We define YARP_PRESENT for compilation.  This definition is unused.
+\li We define _REENTRANT, for thread-safe C library calls.
+\li Compiler flags that may also be needed by users are recorded in a 
+ global property "YARP_DEFS" for later export.
+\li If on Windows, compiling natively, we make sure WIN32 and _WINDOWS are set (ACE relies on them).
+\li If on Windows, compiling under Cygwin, we define CYGWIN (ACE needs this).
+\li If using MINGW and/or MSYS, we set appropriate flags.
+\li We attempt to locate the ACE library using the conf/FindACE.cmake script.
+\li We check whether the type ACE_String_Base_Const::size_type exists. Older
+ACE versions didn't have this type, newer versions do.  If it is present,
+it must be used, but there's no obvious way to check for it in code,
+so we need to explicitly test for it.
+\li Under MSVC, we turn off a set of warnings that ACE triggers.  The warnings
+are for deprecated functions that ACE provides wrappers for.
+\li Under MSVC, we set CMAKE_DEBUG_POSTFIX to "d", to add "d" to library 
+names in debug mode.  This is just a convention.
 
 *
 */
