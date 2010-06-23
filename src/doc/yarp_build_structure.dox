@@ -27,8 +27,8 @@ The main CMakeLists.txt file for YARP is simple. It does the following:
  \li Includes the \ref yarp_build_structure_version "conf/YarpVersion.cmake" file, to define the current YARP version.
  \li Includes the \ref yarp_build_structure_system_check "conf/YarpSystemCheck.cmake" file, to get properties of the system YARP is being compiled on.
  \li Enables the CMake "test" target.
- \li Enters the "conf" directory for some preliminary code generation.
- \li Enters the "src" directory to set up compilation targets.
+ \li Enters the \ref yarp_build_structure_conf "conf" directory for some preliminary code generation.
+ \li Enters the src directory to set up compilation targets.
  \li Includes the conf/YarpDescribe.cmake file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
  \li Includes the conf/YarpPackage.cmake file, which sets up targets for packaging YARP as a tarball, zip, etc.
  \li Includes the conf/YarpDoc.cmake file, which sets up a target for generating YARP's documentation.
@@ -121,6 +121,17 @@ so we need to explicitly test for it.
 are for deprecated functions that ACE provides wrappers for.
 \li Under MSVC, we set CMAKE_DEBUG_POSTFIX to "d", to add "d" to library 
 names in debug mode.  This is just a convention.
+
+@section yarp_build_structure_conf conf/CMakeLists.txt
+
+Here we generate some header files to hold configuration options.
+\li A subdirectory "generated_include" of the build directory is created.
+We add that directory to "YARP_TREE_INCLUDE_DIRS", which will
+become a list of the paths to all header files needed by YARP.
+\li We instantate conf/template/yarp_config_options.h.in in generated_include/yarp/conf/yarp_config_options.h.  This holds general compile options.
+\li We instantate conf/template/yarp_config_version.h.in in generated_include/yarp/conf/yarp_config_version.h.  This holds a representation of the YARP version number.
+\li We instantate conf/template/yarp_config_system.h.in in generated_include/yarp/conf/yarp_config_system.h.  This holds some facts about the system upon which YARP is being built.
+\li We copy many macros from the "conf" directory in the source to a "conf" directory in the build, since they may be useful for users (library find scripts etc).
 
 *
 */
