@@ -96,6 +96,10 @@ generally match the name before .html you see in your browsers.
     <ul>
     <li> \ref yarp_build_structure_modules
     </ul>
+  <li> src/carriers
+    <ul>
+    <li> \ref yarp_build_structure_carriers
+    </ul>
   </ul>
 </ul>
 
@@ -229,7 +233,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 (license note: the GSL is under the GPL, not the LGPL, so enabling this 
 option places YARP under the GPL).
 \li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
-\li carriers - optional plugin network protocols.
+\li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
 \li libYARP_init - a tiny wrapper that initializes all optional modules 
 and carriers.
 \li libyarpc - an experimental C API to YARP.
@@ -378,7 +382,11 @@ links against YARP_sig and YARP_OS.
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
 This is one of a pair of directories in YARP that contain optional
-plugins (the other is src/carriers).  Plugins in YARP are 
+plugins (the other is
+\ref yarp_build_structure_carriers "src/carriers").  
+This directory is devoted to
+devices, while the carriers directory is devoted to network protocols.
+Plugins in YARP are 
 handled using a set of macros defined in
 \ref yarp_build_structure_plugin "conf/YarpPlugin.cmake".  Thes macros
 allow us to create a library (in this case "yarpmod")
@@ -413,6 +421,25 @@ There is some moderately complicated code in this file that looks
 for extra devices listed in an "ExternalModules.cmake" file.
 This is an old mechanism that continues to be supported but for
 which there is not much need any more.
+
+@section yarp_build_structure_carriers src/carriers/CMakeLists.txt
+
+This directory is for network protocol plugins.  It works just
+like the \ref yarp_build_structure_modules "src/modules" directory,
+except that it makes the "yarpcar" library target rather than
+the "yarpmod" library target.
+
+The yarpcar target links against YARP_OS, YARP_sig, YARP_dev,
+yarpmod, and their dependencies. 
+At first glance this may seem excessive, and that YARP_OS
+would suffice.  However, there are some important cases to 
+consider:
+\li We may want network protocols specialized for media.
+For example the optional "mjpeg_carrier" is intended to transport
+an image stream.  So it is good to have YARP_sig available.
+\li We may want access to special devices in order to 
+implement new protocols.  This hasn't happened yet, but YARP is
+ready!
 
 @section yarp_build_structure_plugin conf/YarpPlugin.cmake
 
