@@ -54,6 +54,9 @@ can be compiled under the same constraints).
 and all the goodies.  In fact, they should.  That's a separate issue from
 what a library that aims at being portable (especially in binary form)
 should do.
+\li Documentation is produced using doxygen.  Extended tutorials like this
+one are to be found in src/doc/[filename].dox, where the filename should
+generally match the name before .html you see in your browsers.
 
 @section yarp_build_structure_index (Partial) index
 <ul>
@@ -73,6 +76,22 @@ should do.
 <li> src
   <ul>
   <li> \ref yarp_build_structure_src
+  <li> src/libYARP_OS
+    <ul>
+    <li> \ref yarp_build_structure_yarpos
+    </ul>
+  <li> src/libYARP_sig
+    <ul>
+    <li> \ref yarp_build_structure_yarpsig
+    </ul>
+  <li> src/libYARP_math
+    <ul>
+    <li> \ref yarp_build_structure_yarpmath
+    </ul>
+  <li> src/libYARP_dev
+    <ul>
+    <li> \ref yarp_build_structure_yarpdev
+    </ul>
   <li> src/modules
     <ul>
     <li> \ref yarp_build_structure_modules
@@ -201,14 +220,14 @@ become a list of the paths to all header files needed by YARP.
 
 This file is a simple list of subdirectories, for all the parts of YARP.
 At the time of writing, these are the following - libraries first:
-\li libYARP_OS - this contains the basic YARP implementation of ports,
+\li \ref yarp_build_structure_yarpos "libYARP_OS" - this contains the basic YARP implementation of ports,
 threads, etc.
-\li libYARP_sig - signal processing: images, sound, vectors, and the like.
+\li \ref yarp_build_structure_yarpsig "libYARP_sig" - signal processing: images, sound, vectors, and the like.
 Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
-\li libYARP_math - an optional wrapper around the GNU Scientific Library
+\li \ref yarp_build_structure_yarpmath "libYARP_math" - an optional wrapper around the GNU Scientific Library.
+\li \ref yarp_build_structure_yarpdev "libYARP_dev" - device management.
 (license note: the GSL is under the GPL, not the LGPL, so enabling this 
 option places YARP under the GPL).
-\li libYARP_dev - device management.
 \li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
 \li carriers - optional plugin network protocols.
 \li libYARP_init - a tiny wrapper that initializes all optional modules 
@@ -285,6 +304,76 @@ build based on a clean export from svn before doing this.
 Here we check if the "doxygen" program is available, and if so we
 set up a documentation-generating target called "dox".  This is
 used to build YARP's documentation.
+
+@section yarp_build_structure_yarpos src/libYARP_OS/CMakeLists.txt
+
+This sets up the YARP_OS target, which is the core YARP library.
+Source code is in the src subdirectory, header files are in the
+include subdirectory.
+
+If the "BUILTIN_ACE" flag is set, we expect to find source for ACE
+in the directory specified by BUILTIN_ACE_SOURCE_DIR.  We add this
+source on to YARP source files and compile it as part of the YARP_OS
+target.
+
+Our include directory is appended to the YARP_TREE_INCLUDE_DIRS
+global property for reference by later targets.
+
+We place everything in YARP_TREE_INCLUDE_DIRS in our include path.
+At this stage, that should be just our own include directory,
+and the directory in which generated header files lie
+(see \ref yarp_build_structure_conf).  We also add ACE's include path.
+
+We go ahead and create the YARP_OS target, linking it against
+all ACE libraries (ACE itself and system dependencies - pthread,
+rt, etc, or whatever the FindACE script decided was needed).
+
+We set up installation, and add the target name to the YARP_LIBS 
+global property for later reference.  We also set a property
+"INCLUDE_DIRS" of the YARP_OS target, to hold its include
+path for later reference.
+
+@section yarp_build_structure_yarpsig src/libYARP_sig/CMakeLists.txt
+
+This sets up the YARP_sig target, for signal processing.
+Source code is in the src subdirectory, header files are in the
+include subdirectory.  Our include directory is appended to the 
+YARP_TREE_INCLUDE_DIRS global property for reference by later targets.
+
+We place everything in YARP_TREE_INCLUDE_DIRS in our include path.
+We also add ACE's include path, since we use ACE in our implementation.
+
+We create the YARP_sig target, linking it against YARP_OS.
+
+We set up installation, and add the target name to the YARP_LIBS 
+global property for later reference.  We also set a property
+"INCLUDE_DIRS" of the YARP_sig target, to hold its include
+path for later reference.
+
+@section yarp_build_structure_yarpmath src/libYARP_math/CMakeLists.txt
+
+We follow the pattern of \ref yarp_build_structure_yarpsig
+to create the YARP_math library, 
+for mathematical operations.  There are a few wrinkles:
+\li YARP_math is optional.  We create an option CREATE_LIB_MATH
+which defaults to FALSE.  If FALSE, this target is skipped.
+\li YARP_math depends on GSL.  We use the conf/FindGSL.cmake script to 
+track this dependency down.
+\li YARP_math optionally can use Atlas with GSL to improve performance
+further.  We create an option YARP_USE_ATLAS that default to FALSE.
+\li If YARP_USE_ATLAS is set to TRUE, we use the conf/FindAtlas.cmake
+script to track this dependency down.
+\li Depending on the options, we store the names of the extra libraries 
+needed in MATH_LIB_EXTRAS.
+
+The YARP_math target is linked against YARP_sig and YARP_OS, and against
+MATH_LIB_EXTRAS.
+
+@section yarp_build_structure_yarpdev src/libYARP_dev/CMakeLists.txt
+
+We follow exactly the pattern of \ref yarp_build_structure_yarpsig
+to create the YARP_dev library, for device management.  YARP_dev
+links against YARP_sig and YARP_OS.
 
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
