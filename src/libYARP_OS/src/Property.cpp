@@ -295,6 +295,8 @@ public:
         while(fgets(buf, sizeof(buf)-1, fin) != NULL) {
             txt += buf;
         }
+        fclose(fin);
+        fin = NULL;
         fromConfig(txt.c_str(),envExtended,wipe);
         return true;
     }

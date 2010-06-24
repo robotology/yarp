@@ -1,3 +1,9 @@
+2010-06-24  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/Property.cpp: add missing fclose, caused
+	by botched conversion of fstream to stdio - thanks Gianluca
+	Massera!
+
 2010-06-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/stressTests/stress_name_server/stress_name_server.cpp:
