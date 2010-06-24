@@ -28,7 +28,7 @@ The main CMakeLists.txt file for YARP is simple. It does the following:
  \li Includes the \ref yarp_build_structure_system_check "conf/YarpSystemCheck.cmake" file, to get properties of the system YARP is being compiled on.
  \li Enables the CMake "test" target.
  \li Enters the \ref yarp_build_structure_conf "conf" directory for some preliminary code generation.
- \li Enters the src directory to set up compilation targets.
+ \li Enters the \ref yarp_build_structure_src "src" directory to set up compilation targets.
  \li Includes the conf/YarpDescribe.cmake file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
  \li Includes the conf/YarpPackage.cmake file, which sets up targets for packaging YARP as a tarball, zip, etc.
  \li Includes the conf/YarpDoc.cmake file, which sets up a target for generating YARP's documentation.
@@ -132,6 +132,41 @@ become a list of the paths to all header files needed by YARP.
 \li We instantate conf/template/yarp_config_version.h.in in generated_include/yarp/conf/yarp_config_version.h.  This holds a representation of the YARP version number.
 \li We instantate conf/template/yarp_config_system.h.in in generated_include/yarp/conf/yarp_config_system.h.  This holds some facts about the system upon which YARP is being built.
 \li We copy many macros from the "conf" directory in the source to a "conf" directory in the build, since they may be useful for users (library find scripts etc).
+
+@section yarp_build_structure_src src/CMakeLists.txt
+
+This file is a simple list of subdirectories, for all the parts of YARP.
+At the time of writing, these are the following - libraries first:
+\li libYARP_OS - this contains the basic YARP implementation of ports,
+threads, etc.
+\li libYARP_sig - signal processing: images, sound, vectors, and the like.
+Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
+\li libYARP_math - an optional wrapper around the GNU Scientific Library
+(license note: the GSL is under the GPL, not the LGPL, so enabling this 
+option places YARP under the GPL).
+\li libYARP_dev - device management.
+\li modules - optional plugin devices (some under non-LGPL licenses).
+\li carriers - optional plugin network protocols.
+\li libYARP_init - a tiny wrapper that initializes all optional modules 
+and carriers.
+\li libyarpc - an experimental C API to YARP.
+\li libyarpcxx - an experimental C++ interface to YARP that is a simple
+wrapper around libyarpc.  These two experimental libraries together make
+it easier to build very portable binary libraries for YARP.
+
+And then executables:
+\li yarp - the main command line interface to YARP.
+\li yarpserver - home of the experimental yarpserver3 program, a YARP
+name server based on Sqlite.
+\li yarprun - a tool for starting/stopping programs across the network.
+\li yarpview - a viewer for YARP image streams.
+\li yarphear - a way to listen to YARP audio streams.
+\li yarpdev - the main command line interface for YARP devices.
+
+And finally tests:
+\li tests - this directory pulls in regression tests from throughout the
+build.
+
 
 *
 */
