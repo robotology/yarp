@@ -55,6 +55,31 @@ and all the goodies.  In fact, they should.  That's a separate issue from
 what a library that aims at being portable (especially in binary form)
 should do.
 
+@section yarp_build_structure_index (Partial) index
+<ul>
+<li> \ref yarp_build_structure_main
+<li> conf
+  <ul>
+  <li> \ref yarp_build_structure_conf
+  <li> \ref yarp_build_structure_options
+  <li> \ref yarp_build_structure_version
+  <li> \ref yarp_build_structure_system_check
+  <li> \ref yarp_build_structure_describe
+  <li> \ref yarp_build_structure_package
+  <li> \ref yarp_build_structure_doc
+  <li> \ref yarp_build_structure_plugin
+  <li> conf/templates
+  </ul>
+<li> src
+  <ul>
+  <li> \ref yarp_build_structure_src
+  <li> src/modules
+    <ul>
+    <li> \ref yarp_build_structure_modules
+    </ul>
+  </ul>
+</ul>
+
 @section yarp_build_structure_main The main CMakeLists.txt
 
 The main CMakeLists.txt file for YARP is simple. It does the following:
