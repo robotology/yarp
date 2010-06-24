@@ -18,6 +18,43 @@ sketch of how YARP builds, including plugins.
 The YARP project is profoundly grateful to the creators of CMake,
 for finally giving us a sane way to build a cross-platform library.
 
+@section yarp_build_structure_big Some big picture notes
+
+Before getting into the details, here are a few general notes on YARP's 
+source code and build:
+\li YARP is often used without installation.  It can be used either
+directly from its build directory ("in-tree use"), or via an install.
+\li Although not required, YARP is designed with out-of-source builds
+in mind.  The description from here on assumes you are doing that.
+\li Each YARP library has its own set of header files, kept 
+separate in the source but laid out so that they can be folded together
+after installation.  By convention, YARP header files are accessed
+from C++ as "#include <yarp/os/...>", "#include <yarp/sig/...>" etc.
+The header file locations are chosen
+to allow the difference between in-tree and installed operation to
+be hidden.  For in-tree use, we have an include path of 
+src/libYARP_OS/include, src/libYARP_sig/include, ...  For installed 
+use, the include path collapses to just one directory, [prefix]/include.
+This is the reason for the apparent redundancy in header file paths,
+e.g. src/libYARP_OS/include/yarp/os/Port.h - it seems strange
+to have to include "yarp" and "os" in when compiling "libYARP_OS", but
+in the big picture it makes sense.
+\li Header files in "impl" directories are not intended for use outside
+of YARP.  They are accessible during in-tree use, but not after installation.
+If there's a good reason to install them, let us know though!
+\li YARP uses ACE in its implementation, but does not expose that use in any
+public header files (anything not in an "impl" directory).  Doing so 
+causes all sorts of arcane problems.  YARP developers should take care to
+maintain this constraint.
+\li YARP uses no standard C++ libraries in its core libraries.  STL is not
+used, nor is fstream/iostream/...  Nor are exceptions used.  YARP developers 
+should take care to maintain this constraint.  (ACE in turn
+can be compiled under the same constraints).
+\li *Users* of YARP are of course free to use the STL, exceptions,
+and all the goodies.  In fact, they should.  That's a separate issue from
+what a library that aims at being portable (especially in binary form)
+should do.
+
 @section yarp_build_structure_main The main CMakeLists.txt
 
 The main CMakeLists.txt file for YARP is simple. It does the following:
@@ -29,9 +66,11 @@ The main CMakeLists.txt file for YARP is simple. It does the following:
  \li Enables the CMake "test" target.
  \li Enters the \ref yarp_build_structure_conf "conf" directory for some preliminary code generation.
  \li Enters the \ref yarp_build_structure_src "src" directory to set up compilation targets.
- \li Includes the conf/YarpDescribe.cmake file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
- \li Includes the conf/YarpPackage.cmake file, which sets up targets for packaging YARP as a tarball, zip, etc.
- \li Includes the conf/YarpDoc.cmake file, which sets up a target for generating YARP's documentation.
+ \li Includes the \ref yarp_build_structure_describe "conf/YarpDescribe.cmake" file, to store information about how YARP is configured.  This is important to make YARP easier to use from external projects.
+ \li Includes the \ref yarp_build_structure_package "conf/YarpPackage.cmake" file, which sets up targets for packaging YARP as a tarball, zip, etc.
+ \li Includes the \ref yarp_build_structure_doc "conf/YarpDoc.cmake" file, which sets up a target for generating YARP's documentation.
+
+And we're done!
 
 There are a few lines at the bottom of the CMakeLists.txt file that look
 like this:
@@ -145,7 +184,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 (license note: the GSL is under the GPL, not the LGPL, so enabling this 
 option places YARP under the GPL).
 \li libYARP_dev - device management.
-\li modules - optional plugin devices (some under non-LGPL licenses).
+\li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
 \li carriers - optional plugin network protocols.
 \li libYARP_init - a tiny wrapper that initializes all optional modules 
 and carriers.
@@ -167,6 +206,136 @@ And finally tests:
 \li tests - this directory pulls in regression tests from throughout the
 build.
 
+@section yarp_build_structure_describe conf/YarpDescribe.cmake
+
+Our job here is to capture everything a project that uses YARP will 
+need to know, and export that.  We need to deal with two important 
+cases: where YARP is used directly from its build directory 
+(without an install), or where YARP is installed in system directories.
+
+First we set up some variables:
+\li We set YARP_INCLUDES from the global property YARP_TREE_INCLUDE_DIRS.
+All libraries configured to build will have appended the *internal* paths 
+they need here.  These paths are important for using YARP without an 
+install.
+\li We set YARP_LIBRARIES from the global property YARP_LIBS.  All libraries
+configured to build will have appended their target name here.
+\li We set YARP_ALL_DEFINES from the global property YARP_DEFS.  This has
+any special compiler flags needed by the configured build.
+\li We set YARP_HAS_MATH_LIB to true if the math library was configured to
+build.
+
+We now generate three files in the build directory:
+\li YARPConfig.cmake - this is an important file for using YARP directly
+from its build directory without an install.  If the YARP_DIR environment
+variable is set to the build directory, A CMake
+call to "FIND_PACKAGE(YARP)" will find this file and 
+pull in everything it needs to know about YARP.
+The template for this file is conf/template/YARPConfig.cmake.in. 
+It stores the variables we set up above, tries to read YARPDependencies.cmake
+(see next file), and does some backwards-compatibility gymnastics.
+\li YARPDependencies.cmake - this contains information about the dependencies
+of all YARP targets.  It is generated by the CMake "EXPORT" command.
+\li YARPConfigForInstall.cmake - this is an alternate version of 
+YARPConfig.cmake, appropriate after an install. After installation, it would 
+be placed into [prefix]/lib/YARP/YARPConfig.cmake.  An equivalent of 
+YARPDependencies.cmake would also be generated upon an installation, in
+[prefix]/lib/YARP/YARP.cmake.  This is generated using the CMake
+"INSTALL(EXPORT ...)" command
+Again, these are locations that 
+"FIND_PACKAGE(YARP)" can pick up automatically.
+
+@section yarp_build_structure_package conf/YarpPackage.cmake 
+
+CMake comes with a companion utility CPack for generating tarballs,
+zip files, Windows installers, etc.  This file sets some simple
+variables (project name, version number, license, etc) and puts CPack
+to work.  The line "INCLUDE(CPack)" creates new targets: package and
+package_source.  They are ludicrously easy to use, just "make package"
+or "make package_source".  It is a good idea to work from a clean
+build based on a clean export from svn before doing this.
+
+@section yarp_build_structure_doc conf/YarpDoc.cmake
+
+Here we check if the "doxygen" program is available, and if so we
+set up a documentation-generating target called "dox".  This is
+used to build YARP's documentation.
+
+@section yarp_build_structure_modules src/modules/CMakeLists.txt
+
+This is one of a pair of directories in YARP that contain optional
+plugins (the other is src/carriers).  Plugins in YARP are 
+handled using a set of macros defined in
+\ref yarp_build_structure_plugin "conf/YarpPlugin.cmake".  Thes macros
+allow us to create a library (in this case "yarpmod")
+containing a lot of optional components using code like this:
+\verbatim
+BEGIN_PLUGIN_LIBRARY(yarpmod)
+  add_subdirectory(cuda)
+  add_subdirectory(fakebot)
+  ...
+END_PLUGIN_LIBRARY(yarpmod)
+\endverbatim
+The key thing to know is that the "yarpmod" library is a regular
+CMake library target, containing some automatically generated code
+for initialization, and it has been linked to any and all libraries
+created in the listed subdirectories.  We are given 
+a list of the linked libraries as ${yarpmod_LIBRARIES}.  
+The generated code for this library and the plugins within it
+will be placed in a "generated_code" subdirectory of the build.
+
+We add the yarpmod library and the ${yarpmod_LIBRARIES} list to
+the global property YARP_LIBS.  This is a variable keeping track
+of all the libraries that are configurated to be compiled.
+It is needed by \ref yarp_build_structure_describe.
+
+We tell CMake that, upon installing, the yarpmod library should go to 
+[prefix]/lib.  We cannot tell it to install the ${yarpmod_LIBRARIES},
+since CMake requires that installation should be set up within
+the CMake script that creates the target.  YarpPlugin.cmake currently
+sets up the install (this may change soon).
+
+There is some moderately complicated code in this file that looks
+for extra devices listed in an "ExternalModules.cmake" file.
+This is an old mechanism that continues to be supported but for
+which there is not much need any more.
+
+@section yarp_build_structure_plugin conf/YarpPlugin.cmake
+
+Here we define macros for creating a "plugin" library that links
+to many optional components.
+
+Here are the "user-facing" macros:
+\li BEGIN_PLUGIN_LIBRARY(lib_name): this sets a flag called YARP_PLUGIN_MODE
+to true, which activates a change of behavior of calls to ADD_LIBRARY and
+FIND_PACKAGE (see below).
+\li END_PLUGIN_LIBRARY(lib_name): this turns off YARP_PLUGIN_MODE,
+and sets up a library target called lib_name that links to all libraries
+created after the corresponding call to BEGIN_PLUGIN_LIBRARY.  This
+target contains a small piece of generated code to activate all
+plugins configured to compile.
+\li ADD_PLUGIN_LIBRARY_EXECUTABLE(exec_name lib_name): this creates a
+simple test program called exec_name for the plugin library lib_name.
+\li PREPARE_DEVICE(dev_name TYPE DeviceClass INCLUDE DeviceClass.h WRAPPER wrapper_name): this generates a CMake flag to select compilation of a
+device called "dev_name".  If that CMake flag is turned on, then
+this macro generates some code to initialize the named device.  That
+code will be included in the next library created (see the ADD_LIBRARY
+override below).
+\li PREPARE_CARRIER(carrier_name TYPE CarrierClass INCLUDE CarrierClass.h):
+this works exactly like PREPARE_DEVICE, except the template for the
+generated code is different.
+
+For implementation we also override the following CMake macros:
+\li FIND_PACKAGE - we intercept calls to FIND_PACKAGE(YARP), since these won't
+work before YARP is compiled.  Such calls are bypassed, and always succeed.  
+Otherwise, FIND_PACKAGE's behavior is entirely unchanged.
+\li ADD_LIBRARY - we intercept all ADD_LIBRARY calls. If they are not 
+import operations (which continue unchanged), then we add the name of
+the target to a global list, and call the regular ADD_LIBRARY implementation
+with any extra generated code appended to the list of 
+source code.  Generated code will be present if calls to 
+PREPARE_DEVICE/PREPARE_CARRIER have been made.  If compiling YARP,
+we set up installation of the library target.
 
 *
 */
