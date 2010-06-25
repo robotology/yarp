@@ -48,21 +48,13 @@ for finally giving us a sane way to build a cross-platform library.
 <li> src
   <ul>
   <li> \ref yarp_build_structure_src
-  <li> src/libYARP_OS
+  <li> src/libYARP_*
     <ul>
     <li> \ref yarp_build_structure_yarpos
-    </ul>
-  <li> src/libYARP_sig
-    <ul>
     <li> \ref yarp_build_structure_yarpsig
-    </ul>
-  <li> src/libYARP_math
-    <ul>
     <li> \ref yarp_build_structure_yarpmath
-    </ul>
-  <li> src/libYARP_dev
-    <ul>
     <li> \ref yarp_build_structure_yarpdev
+    <li> \ref yarp_build_structure_yarpinit
     </ul>
   <li> src/modules
     <ul>
@@ -247,7 +239,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 option places YARP under the GPL).
 \li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
-\li libYARP_init - a tiny wrapper that initializes all optional modules 
+\li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules 
 and carriers.
 \li libyarpc - an experimental C API to YARP.
 \li libyarpcxx - an experimental C++ interface to YARP that is a simple
@@ -391,6 +383,18 @@ MATH_LIB_EXTRAS.
 We follow exactly the pattern of \ref yarp_build_structure_yarpsig
 to create the YARP_dev library, for device management.  YARP_dev
 links against YARP_sig and YARP_OS.
+
+@section yarp_build_structure_yarpinit src/libYARP_init/CMakeLists.txt
+
+This is a tiny library.  Its role is to make sure that all the
+optional parts of YARP get initialized in user code.  To
+avoid circular library dependencies, which can cause mayhem in some
+configurations, it is important the YARP is initialized directly
+by the user.  YARP_init solves this problem by defining 
+yarp::os::Network::init and yarp::os::Network::fini at the last
+possible minute (and *definitely* not in libYARP_OS).  All the
+other libraries in YARP use yarp::os::NetworkBase rather than
+yarp::os::Network - NetworkBase is Network without init and fini.
 
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
