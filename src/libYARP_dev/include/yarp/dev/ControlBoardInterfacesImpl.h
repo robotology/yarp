@@ -673,6 +673,7 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
     bool setTorqueMode(int j);
+	bool setImpedanceMode(int j);
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool getControlMode(int j, int *f);

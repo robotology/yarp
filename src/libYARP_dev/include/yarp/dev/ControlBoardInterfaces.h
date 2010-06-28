@@ -129,6 +129,7 @@ public:
 #define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
 #define VOCAB_CM_UNKNOWN VOCAB4('c','m','u','k')
 #define VOCAB_CM_OPENLOOP VOCAB4('c','m','o','l')
+#define VOCAB_CM_IMPEDANCE VOCAB4('c','m','m','p')
 #define VOCAB_CM_CONTROL_MODE VOCAB4('c','m','o','d')
 
 /**
@@ -145,6 +146,7 @@ public:
     virtual bool setPositionModeRaw(int j)=0;
     virtual bool setVelocityModeRaw(int j)=0;
     virtual bool setTorqueModeRaw(int j)=0;
+	virtual bool setImpedanceModeRaw(int j)=0;
     virtual bool setOpenLoopModeRaw(int j)=0;
     virtual bool getControlModeRaw(int j, int *mode)=0;
 };
@@ -179,6 +181,13 @@ public:
     * @return: true/false success failure.
     */
     virtual bool setTorqueMode(int j)=0;
+
+	/*
+    * Set impedance mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setImpedanceMode(int j)=0;
 
     /*
     * Set open loop mode, single axis.

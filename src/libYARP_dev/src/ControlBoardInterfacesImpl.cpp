@@ -104,6 +104,12 @@ bool ImplementControlMode::setTorqueMode(int j)
     return raw->setTorqueModeRaw(k);
 }
 
+bool ImplementControlMode::setImpedanceMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setImpedanceModeRaw(k);
+}
+
 bool ImplementControlMode::getControlMode(int j, int *f)
 {
     int k=castToMapper(helper)->toHw(j);

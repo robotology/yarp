@@ -1730,6 +1730,9 @@ public:
     bool setTorqueMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_TORQUE, j); }
 
+	bool setImpedanceMode(int j)
+    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE, j); }
+
     bool setOpenLoopMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
 
