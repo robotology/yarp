@@ -301,3 +301,4 @@ root of your gtk+ installation), activates the cache variable CREATE_GUIS
 files (click on configure a couple of times). If you installed gtk+ correctly
 everything should work fine, otherwise cmake will ask you to locate a few
 header files and libraries.
+
