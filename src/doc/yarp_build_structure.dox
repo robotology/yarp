@@ -235,10 +235,8 @@ At the time of writing, these are the following - libraries first:
 threads, etc.
 \li \ref yarp_build_structure_yarpsig "libYARP_sig" - signal processing: images, sound, vectors, and the like.
 Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
-\li \ref yarp_build_structure_yarpmath "libYARP_math" - an optional wrapper around the GNU Scientific Library.
+\li \ref yarp_build_structure_yarpmath "libYARP_math" - an optional wrapper around the GNU Scientific Library.  (license note: the GSL is under the GPL, not the LGPL, so enabling this option places YARP under the GPL).
 \li \ref yarp_build_structure_yarpdev "libYARP_dev" - device management.
-(license note: the GSL is under the GPL, not the LGPL, so enabling this 
-option places YARP under the GPL).
 \li \ref yarp_build_structure_modules "modules" - optional plugin devices (some under non-LGPL licenses).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
 \li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules 
@@ -269,7 +267,7 @@ cases: where YARP is used directly from its build directory
 (without an install), or where YARP is installed in system directories.
 
 First we set up some variables:
-\li We set YARP_INCLUDES from the global property YARP_TREE_INCLUDE_DIRS.
+\li We set YARP_INCLUDE_DIRS from the global property YARP_TREE_INCLUDE_DIRS.
 All libraries configured to build will have appended the *internal* paths 
 they need here.  These paths are important for using YARP without an 
 install.
