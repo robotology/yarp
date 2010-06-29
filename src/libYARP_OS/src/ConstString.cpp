@@ -33,6 +33,12 @@ ConstString::ConstString(const char *str) {
 }
 
 
+ConstString::ConstString(const char *str, int len) {
+    implementation = new String(str,len);
+    YARP_ASSERT(implementation!=NULL);
+}
+
+
 ConstString::~ConstString() {
     if (implementation!=NULL) {
         delete (String*)implementation;
@@ -77,6 +83,10 @@ bool ConstString::operator !=(const char *str) const {
 
 int ConstString::length() const {
     return HELPER(implementation).length();
+}
+
+ConstString ConstString::operator + (char ch) const {
+    return (HELPER(implementation) + ch).c_str();
 }
 
 ConstString ConstString::operator + (const char *str) const {

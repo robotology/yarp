@@ -29,10 +29,17 @@ public:
     ConstString();
 
     /**
-     * Constructor.  Stores a copy of the specified string.
+     * Constructor.  Stores a copy of the null-terminated specified string.
      * @param str the string to copy
      */
     ConstString(const char *str);
+
+    /**
+     * Constructor.  Stores a copy of the specified string.
+     * @param str the string to copy
+     * @param len number of bytes to copy
+     */
+    ConstString(const char *str, int len);
 
     /**
      * Destructor.
@@ -64,6 +71,7 @@ public:
     bool operator ==(const char *str) const;
     bool operator !=(const char *str) const;
 
+    ConstString operator + (char ch) const;
     ConstString operator + (const char *str) const;
     ConstString operator + (const ConstString& alt) const;
 
