@@ -62,6 +62,8 @@ public:
     virtual const Address& getRemoteAddress() = 0;
 
     virtual void setEnvelope(const String& str) = 0;
+
+    virtual bool setTimeout(double timeout) = 0;
 };
 
 #endif

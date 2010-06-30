@@ -73,8 +73,10 @@ bool PortCore::listen(const Address& address) {
     YARP_ASSERT(face==NULL);
     this->address = address;
     setName(address.getRegName());
-
-    face = Carriers::listen(address);
+    if (timeout>0) {
+        this->address.setTimeout(timeout);
+    }
+    face = Carriers::listen(this->address);
 
     if (face==NULL) {
         return false;
@@ -157,6 +159,9 @@ void PortCore::run() {
         stateMutex.wait();
         if (ip!=NULL) {
             YARP_DEBUG(log,"PortCore received something");
+            if (timeout>0) {
+                ip->setTimeout(timeout);
+            }
         }
         shouldStop |= closing;
         events++;
@@ -730,8 +735,14 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
             bw.appendLine(err);
         } else {
             OutputProtocol *op = NULL;
+            if (timeout>0) {
+                address.setTimeout(timeout);
+            }
             op = Carriers::connect(address);
             if (op!=NULL) {
+                if (timeout>0) {
+                    op->setTimeout(timeout);
+                }
                 
                 bool ok = op->open(r);
                 if (!ok) {
@@ -1022,6 +1033,7 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
 bool PortCore::sendHelper(Writable& writer, 
                           int mode, Readable *reader, Writable *callback) {
 
+    bool all_ok = true;
     int logCount = 0;
     String envelopeString = envelope;
 
@@ -1076,6 +1088,11 @@ bool PortCore::sendHelper(Writable& writer,
                             packets.checkPacket((PortCorePacket *)out);
                             packetMutex.post();
                         }
+                        if (waitAfterSend) {
+                            if (unit->isFinished()) {
+                                all_ok = false;
+                            }
+                        }
                         YMSG(("------- -- dec\n"));
                     }
                 }
@@ -1097,7 +1114,7 @@ bool PortCore::sendHelper(Writable& writer,
     stateMutex.post();
     YMSG(("------- send out real\n"));
 
-    return true;
+    return all_ok;
 }
 
 

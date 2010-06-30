@@ -211,6 +211,19 @@ public:
      */
     void setRpcMode(bool expectRpc);
 
+    /**
+     *
+     * Set a timeout on network operations.  Use a negative number
+     * to wait forever (this is the default behavior).  Call this
+     * method early, since it won't affect connections that have 
+     * already been made.
+     *
+     * @param timeout number of seconds to wait for individual network
+     * operations to complete (negative to wait forever).
+     *
+     */
+    void setTimeout(float timeout);
+
 private:
     void *implementation;
 

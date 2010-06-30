@@ -87,6 +87,7 @@ public:
         eventReporter = NULL;
         logNeeded = false;
         flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
+        timeout = -1;
     }
 
     /**
@@ -308,6 +309,10 @@ public:
 
     virtual void reportUnit(PortCoreUnit *unit, bool active);
 
+    void setTimeout(float timeout) {
+        this->timeout = timeout;
+    }
+
 private:
 
     // internal maintenance of sub units
@@ -328,6 +333,7 @@ private:
 
     bool removeUnit(const Route& route, bool synch = false, 
                     bool *except = NULL);
+
 
 private:
 
@@ -352,6 +358,7 @@ private:
     bool logNeeded;
     PortCorePackets packets;
     String envelope;
+    float timeout;
 
     void closeMain();
 

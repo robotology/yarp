@@ -375,7 +375,6 @@ bool Port::write(PortWriter& writer, PortWriter *callback) {
     //WritableAdapter adapter(writer);
     result = core.send(writer,NULL,callback);
     //writer.onCompletion();
-    result = true;
     if (!result) {
         //YARP_DEBUG(Logger::get(), e.toString() + " <<<< Port::write saw this");
         if (callback!=NULL) {
@@ -513,3 +512,9 @@ void Port::setOutputMode(bool expectOutput) {
 void Port::setRpcMode(bool expectRpc) {
     SET_FLAG(implementation,PORTCORE_IS_RPC,expectRpc);
 }
+
+void Port::setTimeout(float timeout) {
+    HELPER(implementation).setTimeout(timeout);
+}
+
+

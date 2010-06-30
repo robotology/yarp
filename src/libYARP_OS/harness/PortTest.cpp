@@ -885,6 +885,18 @@ public:
     }
 
 
+    virtual void testTimeout() {
+        report(0,"check N second timeout...");
+        Port a;
+        Port b;
+        a.setTimeout(0.5);
+        a.open("/a");
+        b.open("/b");
+        NetworkBase::connect("/a","/b");
+        Bottle msg("hello"), reply;
+        bool ok = a.write(msg,reply);
+        checkFalse(ok,"send failed correctly");
+    }
 
     virtual void runTests() {
         NameClient& nic = NameClient::getNameClient();
@@ -918,6 +930,8 @@ public:
         testReports();
         testAdmin();
         testAcquire();
+
+        testTimeout();
 
         nic.setFakeMode(false);
     }
