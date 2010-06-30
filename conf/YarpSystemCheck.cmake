@@ -115,3 +115,9 @@ if (MSVC)
   # Traditionally, we add "d" postfix to debug libraries
   set(CMAKE_DEBUG_POSTFIX "d")
 endif (MSVC)
+
+# Translate the names of some YARP options, for yarp_config_options.h.in
+# and YARPConfig.cmake.in
+set (YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})
+set (YARP_HAS_NAME_LIB ${CREATE_YARPSERVER3})
+

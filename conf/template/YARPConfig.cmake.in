@@ -53,6 +53,7 @@ IF (NOT YARP_FOUND)
   # Pass along some compilation options that may be useful for clients
   # to check.
   SET(YARP_HAS_MATH_LIB @YARP_HAS_MATH_LIB@)
+  SET(YARP_HAS_NAME_LIB @YARP_HAS_NAME_LIB@)
   SET(YARP_USE_ATLAS @YARP_USE_ATLAS@) # This is a math library option
 
   SET (YARP_FOUND TRUE)
