@@ -15,6 +15,12 @@ sketch of how YARP builds, including plugins.
 The YARP project is profoundly grateful to the creators of CMake,
 for finally giving us a sane way to build a cross-platform library.
 
+Suggested ways to use this document:
+  \li Look at \ref yarp_build_structure_src to pick out the 
+general area you are interested in (e.g. modules/carriers).
+  \li Or find a specific file or directory of interest using
+ the \ref yarp_build_structure_index "index".
+
 @section yarp_build_structure_index Index
 <ul>
 <li> \ref yarp_build_structure_big
@@ -501,6 +507,36 @@ Here is a list of small code templates used by YarpPlugin.cmake:
 \li \ref yarp_build_structure_template_libcpp - instantiation code for a plugin library.
 \li \ref yarp_build_structure_template_libh - declaration for a plugin library instantiation function.
 \li \ref yarp_build_structure_template_exec - template for a plugin library test program.
+
+Within YARP, the \ref yarp_build_structure_modules "modules"
+and \ref yarp_build_structure_carriers "carriers" libraries
+are initialized by \ref yarp_build_structure_yarpinit "libYARP_init".
+
+The plugin macros can also be used outside of YARP to create
+a library of plugins.  The behavior of those macros changes in the
+following respects:
+ \li Installation of targets - when used outside of YARP, it is 
+up to the programmer to set up installation of targets.  Which is
+good, because YARP probably wouldn't do it the way you'd like.
+ \li Calling FIND_PACKAGE(YARP) - within YARP, lines like this are
+simulated, because YARP does not exist yet.  Outside of YARP, such
+calls to FIND_PACKAGE behave normally.
+ \li Library initialization - when used outside of YARP, it is
+up to the programmer to set up initialization of the plugin library.
+
+To help with the last point, two macros are declared in
+yarp/os/Network.h:
+\verbatim
+// Make plugins in a library available for use
+#define YARP_DECLARE_PLUGINS(name) extern "C" void add_ ## name ## _devices();
+#define YARP_REGISTER_PLUGINS(name) add_ ## name ## _devices();
+\endverbatim
+The programmer should use YARP_DECLARE_PLUGINS(<library_name>) to
+declare their library's initialization function, and then execute
+YARP_REGISTER_PLUGINS(<library_name>) to actually call that function.
+See \ref yarp_build_structure_template_libh.  Note that the name
+of the library initialization function may change in future versions
+of YARP, so it is best to use these macros.
 
 @section yarp_build_structure_template_options conf/template/yarp_config_options.h.in
 
