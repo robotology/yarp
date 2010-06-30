@@ -9,7 +9,7 @@
 #ifndef YARPDB_SUBSCRIBER_INC
 #define YARPDB_SUBSCRIBER_INC
 
-#include "NameService.h"
+#include <yarp/name/NameService.h>
 #include "ConnectThread.h"
 
 #include <yarp/os/ConstString.h>
@@ -21,7 +21,7 @@
  * Abstract interface for maintaining persistent connections.
  *
  */
-class Subscriber : public NameService {
+class Subscriber : public yarp::name::NameService {
 private:
     yarp::os::NameStore *store;
     ConnectManager manager;

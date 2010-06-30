@@ -10,8 +10,11 @@ if (CREATE_YARPSERVER3)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/sqlite)
   include_directories(${ACE_INCLUDE_DIRS})
 
+  set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include)
   get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
   add_library(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
 
@@ -19,7 +22,7 @@ if (CREATE_YARPSERVER3)
     target_link_libraries(yarpserversql pthread dl)
   endif (NOT WIN32)
 
-  add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerConnectionHandler.h ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServerManager.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp)
+  add_executable(yarpserver3 ${CMAKE_CURRENT_SOURCE_DIR}/src/yarpserver3.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/NameServiceOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.h ${CMAKE_CURRENT_SOURCE_DIR}/src/BootstrapServer.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/Allocator.h ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/AllocatorOnTriples.h ${CMAKE_CURRENT_SOURCE_DIR}/src/Subscriber.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.h ${CMAKE_CURRENT_SOURCE_DIR}/src/SubscriberOnSql.cpp ${CMAKE_CURRENT_SOURCE_DIR}/src/ComposedNameService.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ConnectThread.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.h ${CMAKE_CURRENT_SOURCE_DIR}/src/ParseName.cpp)
   target_link_libraries(yarpserver3 yarpserversql)
   target_link_libraries(yarpserver3 YARP_init)
   install_targets(/lib yarpserversql)

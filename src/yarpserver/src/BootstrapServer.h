@@ -11,7 +11,7 @@
 
 #include <yarp/os/Contact.h>
 
-#include "NameService.h"
+#include <yarp/name/NameService.h>
 
 /**
  *
@@ -22,7 +22,7 @@ class BootstrapServer {
 private:
     void *implementation;
 public:
-    BootstrapServer(NameService& owner);
+    BootstrapServer(yarp::name::NameService& owner);
 
     virtual ~BootstrapServer();
 

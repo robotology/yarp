@@ -11,16 +11,18 @@
 
 #include <yarp/os/all.h>
 
+#include <yarp/name/NameServerManager.h>
+
 #include "TripleSourceCreator.h"
 #include "NameServiceOnTriples.h"
 #include "AllocatorOnTriples.h"
-#include "NameServerManager.h"
 #include "BootstrapServer.h"
 #include "SubscriberOnSql.h"
 #include "ComposedNameService.h"
 #include "ParseName.h"
 
 using namespace yarp::os;
+using namespace yarp::name;
 using namespace std;
 
 int main(int argc, char *argv[]) {

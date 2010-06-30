@@ -9,19 +9,26 @@
 #ifndef YARPDB_NAMESERVERMANAGER_INC
 #define YARPDB_NAMESERVERMANAGER_INC
 
-#include "NameServerConnectionHandler.h"
+#include <yarp/name/NameServerConnectionHandler.h>
 
 #include <yarp/os/PortReaderCreator.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Port.h>
+
+
+namespace yarp {
+    namespace name {
+        class NameServerManager;
+    }
+}
 
 /**
  *
  * Manage the name server.
  *
  */
-class NameServerManager : public NameService, 
-                          public yarp::os::PortReaderCreator {
+class yarp::name::NameServerManager : public NameService, 
+                                      public yarp::os::PortReaderCreator {
 private:
     NameService& ns;
     yarp::os::Port *port;

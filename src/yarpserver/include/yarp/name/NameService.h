@@ -12,12 +12,18 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 
+namespace yarp {
+    namespace name {
+        class NameService;
+    }
+}
+
 /**
  *
  * Abstract interface for a name server operator.
  *
  */
-class NameService {
+class yarp::name::NameService {
 public:
     virtual ~NameService() {}
 

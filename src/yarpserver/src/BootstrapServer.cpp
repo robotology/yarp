@@ -11,10 +11,12 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/all.h>
 
+#include <yarp/name/NameServerConnectionHandler.h>
+
 #include "BootstrapServer.h"
-#include "NameServerConnectionHandler.h"
 
 using namespace yarp::os;
+using namespace yarp::name;
 using namespace yarp::os::impl;
 
 /**

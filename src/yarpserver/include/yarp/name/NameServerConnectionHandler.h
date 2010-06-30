@@ -9,25 +9,29 @@
 #ifndef YARPDB_NAMESERVERCONNECTIONHANDLER_INC
 #define YARPDB_NAMESERVERCONNECTIONHANDLER_INC
 
-#include <stdio.h>
-
-#include <string>
-
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/ConstString.h>
 #include <yarp/os/Time.h>
 
-#include "NameService.h"
+#include <yarp/name/NameService.h>
+
+namespace yarp {
+    namespace name {
+        class NameServerConnectionHandler;
+    }
+}
+
 
 /**
  *
  * Manage a single connection to the name server.
  *
  */
-class NameServerConnectionHandler : public yarp::os::PortReader {
+class yarp::name::NameServerConnectionHandler : public yarp::os::PortReader {
 private:
     NameService *service;
 public:
@@ -36,11 +40,11 @@ public:
     }
 
     virtual bool read(yarp::os::ConnectionReader& reader) {
-        return apply(reader,NULL);
+        return apply(reader,0/*NULL*/);
     }
 
     virtual bool apply(yarp::os::ConnectionReader& reader,
-                       yarp::os::ConnectionWriter *writer = NULL) {
+                       yarp::os::ConnectionWriter *writer = 0/*NULL*/) {
         yarp::os::Bottle cmd, reply, event;
         bool ok = cmd.read(reader);
         if (!ok) return false;
@@ -50,31 +54,37 @@ public:
         ok = service->apply(cmd,reply,event,remote);
         for (int i=0; i<event.size(); i++) {
             yarp::os::Bottle *e = event.get(i).asList();
-            if (e!=NULL) {
+            if (e!=0/*NULL*/) {
                 service->onEvent(*e);
             }
         }
         service->unlock();
-        if (writer==NULL) {
+        if (writer==0/*NULL*/) {
             writer = reader.getWriter();
         }
-        if (writer!=NULL) {
+        if (writer!=0/*NULL*/) {
             //printf("sending reply %s\n", reply.toString().c_str());
             if (reply.get(0).toString()=="old") {
                 // support old name server messages
                 for (int i=1; i<reply.size(); i++) {
                     yarp::os::Value& v = reply.get(i);
                     if (v.isList()) {
-                        std::string s = v.asList()->toString().c_str();
-                        
-                        // old name server messages don't do quotes
-                        for (int i=s.length()-1; i>=0; i--) {
-                            if (s[i]=='\"') {
-                                s.erase(i,1);
+                        yarp::os::ConstString si = v.asList()->toString();
+                        char *buf = (char*)si.c_str();
+                        int idx = 0;
+                        // old name server messages don't have quotes,
+                        // so we strip them.
+                        for (int i=0; i<si.length(); i++) {
+                            if (si[i]!='\"') {
+                                if (idx!=i) {
+                                    buf[idx] = si[i];
+                                }
+                                idx++;
                             }
                         }
-                        if (s.length()>0) {
-                            writer->appendString(s.c_str());
+                        yarp::os::ConstString so(si.c_str(),idx);
+                        if (so.length()>0) {
+                            writer->appendString(so.c_str());
                         }
                     } else {
                         if (v.isString()) {

@@ -9,7 +9,7 @@
 #ifndef YARPDB_DBNAMESERVICE_INC
 #define YARPDB_DBNAMESERVICE_INC
 
-#include "NameService.h"
+#include <yarp/name/NameService.h>
 #include "TripleSource.h"
 #include "Allocator.h"
 #include "Subscriber.h"
@@ -51,7 +51,8 @@ public:
  * An implementation of name service operators on a triple store.
  *
  */
-class NameServiceOnTriples : public NameService, public yarp::os::NameStore {
+class NameServiceOnTriples : public yarp::name::NameService, 
+                             public yarp::os::NameStore {
 private:
     TripleSource *db;
     Allocator *alloc;

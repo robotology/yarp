@@ -11,15 +11,20 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
+#include <yarp/name/NameService.h>
 
-#include "NameService.h"
+namespace yarp {
+    namespace name {
+        class ComposedNameService;
+    }
+}
 
 /**
  *
  * Compose two name services into one.
  *
  */
-class ComposedNameService : public NameService {
+class yarp::name::ComposedNameService : public NameService {
 public:
     ComposedNameService(NameService& ns1,NameService& ns2):ns1(ns1),ns2(ns2) {
     }
