@@ -13,7 +13,7 @@
 
 #include <yarp/name/NameServerConnectionHandler.h>
 
-#include "BootstrapServer.h"
+#include <yarp/name/BootstrapServer.h>
 
 using namespace yarp::os;
 using namespace yarp::name;

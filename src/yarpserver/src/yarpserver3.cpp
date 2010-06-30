@@ -12,11 +12,11 @@
 #include <yarp/os/all.h>
 
 #include <yarp/name/NameServerManager.h>
+#include <yarp/name/BootstrapServer.h>
 
 #include "TripleSourceCreator.h"
 #include "NameServiceOnTriples.h"
 #include "AllocatorOnTriples.h"
-#include "BootstrapServer.h"
 #include "SubscriberOnSql.h"
 #include "ComposedNameService.h"
 #include "ParseName.h"

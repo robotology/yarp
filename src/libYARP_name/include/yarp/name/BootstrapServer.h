@@ -13,16 +13,22 @@
 
 #include <yarp/name/NameService.h>
 
+namespace yarp {
+    namespace name {
+        class BootstrapServer;
+    }
+}
+
 /**
  *
  * Multicast and file-based mechanisms for finding the name server.
  *
  */
-class BootstrapServer {
+class yarp::name::BootstrapServer {
 private:
     void *implementation;
 public:
-    BootstrapServer(yarp::name::NameService& owner);
+    BootstrapServer(NameService& owner);
 
     virtual ~BootstrapServer();
 
