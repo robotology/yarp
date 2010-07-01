@@ -1,3 +1,7 @@
+2010-07-01  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/YarpVersion.cmake: bump version: yarp-2.3.0
+
 2010-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Port.h: add setTimeout flag
