@@ -6,13 +6,12 @@ Contributed files in YARP are copyright of their authors, and
 released under the same license.  The author list for contributed
 files follows.
 
-Copyright 2002 2003 2005 2006 2007 2008 2009 2010:
+Copyright 2005 2006 2007 2008 2009 2010:
   Alessandro Scalzo
   Alexandre Bernardino
   Arjan Gijsberts
   Assif Mirza
   Carlos Beltran-Gonzalez
-  Chris Morley
   Daniel Krieg
   Eric Mislivec
   Freyr Magnusson
@@ -107,4 +106,84 @@ src/modules/dimax_u2c/u2c_common_func.h
 src/modules/dimax_u2c/I2c.cpp
   Copyright: (C)2004 Dimax ( http://www.xdimax.com )
   CopyPolicy: GPL
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
+  Copyright: (c) 2002-2003 by Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
+  Copyright: (c) 2002-2003 by Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcException.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
