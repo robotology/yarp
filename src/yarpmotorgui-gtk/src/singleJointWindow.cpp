@@ -319,9 +319,15 @@ bool partMover::entry_update(partMover *currentPart)
           gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Torque2:");
 		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 		  break;
-	  case VOCAB_CM_IMPEDANCE:
+	  case VOCAB_CM_IMPEDANCE_POS:
 		  pColor=&color_indaco;
-		  strcat(frame_title," (IMPEDANCE)");
+		  strcat(frame_title," (IMPEDANCE POS)");
+  		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+	  break;
+  	  case VOCAB_CM_IMPEDANCE_VEL:
+		  pColor=&color_indaco;
+		  strcat(frame_title," (IMPEDANCE VEL)");
   		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
 		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 	  break;

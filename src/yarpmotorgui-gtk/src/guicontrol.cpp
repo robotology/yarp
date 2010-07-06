@@ -110,12 +110,24 @@ static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* current
 	{
 	}
 }
-static void guiControl::radio_click_imp(GtkWidget* radio , gtkClassData* currentClassData)
+static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* currentClassData)
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
 	{
-		fprintf(stderr, "joint: %d in IMPEDANCE mode!\n", *joint);
-		icntrl->setImpedanceMode(*joint);
+		fprintf(stderr, "joint: %d in IMPEDANCE POSITION mode!\n", *joint);
+		icntrl->setImpedancePositionMode(*joint);
+	}
+	else
+	{
+	}
+}
+
+static void guiControl::radio_click_imp_vel(GtkWidget* radio , gtkClassData* currentClassData)
+{
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	{
+		fprintf(stderr, "joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
+		icntrl->setImpedanceVelocityMode(*joint);
 	}
 	else
 	{
@@ -138,8 +150,11 @@ void guiControl::update_menu(int control_mode)
 	  case VOCAB_CM_TORQUE:
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_trq),true);
 	  break;
-	  case VOCAB_CM_IMPEDANCE:
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp),true);
+	  case VOCAB_CM_IMPEDANCE_POS:
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_pos),true);
+	  break;
+	  case VOCAB_CM_IMPEDANCE_VEL:
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON(radiobutton_mode_imp_vel),true);
 	  break;
 
 	  default:
@@ -185,7 +200,8 @@ void guiControl::guiControl(void *button, void* data)
   radiobutton_mode_pos  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "position");
   radiobutton_mode_vel  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "velocity");
   radiobutton_mode_trq  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "torque");
-  radiobutton_mode_imp  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance");
+  radiobutton_mode_imp_pos  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance position");
+  radiobutton_mode_imp_vel  = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "impedance velocity");
   radiobutton_mode_open = gtk_radio_button_new_with_label_from_widget  (GTK_RADIO_BUTTON (radiobutton_mode_idl), "openloop");
 
   gtk_fixed_put	(GTK_FIXED(inv), label_title,  10,  10    );
@@ -193,8 +209,9 @@ void guiControl::guiControl(void *button, void* data)
   gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_pos,  10, 50    );
   gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_vel,  10, 70    );
   gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_trq,  10, 90    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_imp,  10, 110    );
-  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_open,  10, 130    );
+  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_imp_pos,  10, 110    );
+  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_imp_vel,  10, 130    );
+  gtk_fixed_put	(GTK_FIXED(inv), radiobutton_mode_open,  10, 150    );
 
   int control_mode=VOCAB_CM_UNKNOWN;
   bool ret = icntrl->getControlMode(*joint, &control_mode);
@@ -205,7 +222,8 @@ void guiControl::guiControl(void *button, void* data)
   g_signal_connect (radiobutton_mode_pos,  "clicked",G_CALLBACK (radio_click_pos), &radiobutton_mode_pos);
   g_signal_connect (radiobutton_mode_vel,  "clicked",G_CALLBACK (radio_click_vel), &radiobutton_mode_vel);
   g_signal_connect (radiobutton_mode_trq,  "clicked",G_CALLBACK (radio_click_trq), &radiobutton_mode_trq);
-  g_signal_connect (radiobutton_mode_imp,  "clicked",G_CALLBACK (radio_click_imp), &radiobutton_mode_imp);
+  g_signal_connect (radiobutton_mode_imp_pos,  "clicked",G_CALLBACK (radio_click_imp_pos), &radiobutton_mode_imp_pos);
+  g_signal_connect (radiobutton_mode_imp_vel,  "clicked",G_CALLBACK (radio_click_imp_vel), &radiobutton_mode_imp_vel);
   g_signal_connect (radiobutton_mode_open, "clicked",G_CALLBACK (radio_click_open), &radiobutton_mode_open);
 
   //connection to the destroyer

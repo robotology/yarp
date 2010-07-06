@@ -33,6 +33,7 @@ class partMover{
   IAmplifierControl *amp;
   IPidControl *pid;
   ITorqueControl *trq;
+  IImpedanceControl *imp;
   IControlLimits *lim;
   IControlCalibration2 *cal;
   IControlMode *ctrlmode;
@@ -134,6 +135,7 @@ class partMover{
   inline IAmplifierControl* get_IAmplifierControl () {return amp;}
   inline IPidControl* get_IPidControl () {return pid;}
   inline ITorqueControl* get_ITorqueControl () {return trq;}
+  inline IImpedanceControl* get_IImpedanceControl () {return imp;}
   inline IControlMode* get_IControlMode () {return ctrlmode;}
 };
 
@@ -148,7 +150,8 @@ struct gtkClassData
 #define MODE_POSITION 				0x01
 #define MODE_VELOCITY				0x02
 #define MODE_TORQUE					0x03
-#define MODE_IMPEDANCE				0x04
+#define MODE_IMPEDANCE_POS			0x04
+#define MODE_IMPEDANCE_VEL			0x05
 #define MODE_CALIB_ABS_POS_SENS		0x10
 #define MODE_CALIB_HARD_STOPS		0x20
 #define MODE_HANDLE_HARD_STOPS		0x30

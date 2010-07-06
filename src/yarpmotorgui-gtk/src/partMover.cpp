@@ -45,6 +45,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
   ok &= partDd->view(trq);
   if (!ok)
     fprintf(stderr, "...trq was not ok.\n");
+  ok &= partDd->view(imp);
+  if (!ok)
+    fprintf(stderr, "...imp was not ok.\n");
   ok &= partDd->view(ctrlmode);
   if (!ok)
 	fprintf(stderr, "...ctrlmode was not ok.\n");

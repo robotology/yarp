@@ -26,6 +26,7 @@ namespace guiPidTrq
 
 	static int * joint = NULL;
 	static ITorqueControl *iTrq = NULL;
+	static IImpedanceControl *iImp = NULL;
 
 	void guiPidTrq(void *button, void* data);
 	void destroy_main (GtkWindow *window,	gpointer   user_data);

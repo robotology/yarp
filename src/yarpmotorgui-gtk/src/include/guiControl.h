@@ -13,7 +13,8 @@ namespace guiControl
 	static GtkWidget *radiobutton_mode_pos = NULL;
 	static GtkWidget *radiobutton_mode_vel = NULL;
 	static GtkWidget *radiobutton_mode_trq = NULL;
-	static GtkWidget *radiobutton_mode_imp = NULL;
+	static GtkWidget *radiobutton_mode_imp_pos = NULL;
+	static GtkWidget *radiobutton_mode_imp_vel = NULL;
 	static GtkWidget *radiobutton_mode_open = NULL;
 
 	static int * joint = NULL;
@@ -32,7 +33,8 @@ namespace guiControl
 	static void radio_click_pos (GtkWidget* radio , gtkClassData* currentClassData);
 	static void radio_click_vel (GtkWidget* radio , gtkClassData* currentClassData);
 	static void radio_click_trq (GtkWidget* radio , gtkClassData* currentClassData);
-	static void radio_click_imp (GtkWidget* radio , gtkClassData* currentClassData);
+	static void radio_click_imp_pos (GtkWidget* radio , gtkClassData* currentClassData);
+	static void radio_click_imp_vel (GtkWidget* radio , gtkClassData* currentClassData);
 	static void radio_click_open(GtkWidget* radio , gtkClassData* currentClassData);	
 };
 
