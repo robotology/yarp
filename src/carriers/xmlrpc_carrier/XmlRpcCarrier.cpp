@@ -90,6 +90,7 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
     if (header[0]=='q') {
         body = "yarp.quit";
         // XMLRPC does not need a quit message, this should get stripped
+        return false;
     }
     Bottle *bot = v.asList();
     //Bottle aux;
@@ -124,19 +125,21 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
             fprintf(stderr, "XmlRpcCarrier fail, %s:%d\n", __FILE__, __LINE__);
             return false;
         }
-        if (firstRound) {
-            for (int i=0; i<(int)req.length(); i++) {
-                if (req[i] == '\n') {
-                    start++;
-                    break;
-                }
+        for (int i=0; i<(int)req.length(); i++) {
+            if (req[i] == '\n') {
                 start++;
+                break;
             }
-            firstRound = false;
+            start++;
         }
+        if (!firstRound) {
+            Bytes b((char*)http.c_str(),http.length());
+            proto.os().write(b);
+        }
+        firstRound = false;
     }
     Bytes b((char*)req.c_str()+start,req.length()-start);
-    printf("WRITING [%s]\n", req.c_str()+start);
+    //printf("WRITING [%s]\n", req.c_str()+start);
     proto.os().write(b);
 
     return proto.os().isOk();
@@ -144,18 +147,18 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
 
 
 bool XmlRpcCarrier::reply(Protocol& proto, SizedWriter& writer) {
-    printf("Preparing for write\n");
+    //printf("Preparing for write\n");
     return write(proto,writer);
 }
 
 
 bool XmlRpcCarrier::sendHeader(Protocol& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
-    printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
+    //printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
     String pathValue = n.getCarrierModifier("path");
     String target = "POST /RPC";
     if (pathValue!="") {
-        printf("FOUND PATH %s\n", pathValue.c_str());
+        //printf("FOUND PATH %s\n", pathValue.c_str());
         target = "POST /";
         target += pathValue;
         // on the wider web, we should provide real host names
@@ -163,8 +166,9 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
         host = nc.queryName(proto.getRoute().getToName());
     }
     target += " HTTP/1.1\n";
+    http = target;
     Bytes b((char*)target.c_str(),target.length());
-    printf("SENDING HEADER [%s]\n", target.c_str());
+    //printf("SENDING HEADER [%s]\n", target.c_str());
     proto.os().write(b);
     return true;
 }

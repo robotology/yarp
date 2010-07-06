@@ -12,6 +12,7 @@
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Protocol.h>
 #include <yarp/os/impl/Address.h>
+#include <yarp/os/impl/String.h>
 #include "XmlRpcStream.h"
 
 namespace yarp {
@@ -22,11 +23,33 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * This carrier enables XML/RPC message transmission.
+ *
+ * Example: at the time of writing, there is a public XML/RPC server at
+ *   http://phpxmlrpc.sourceforge.net/server.php
+ * which has several methods. One is called "examples.addtwo" and expects 
+ * two integers and returns an integer.  So we can do:
+ *
+ *   yarp name register /webserve xmlrpc+path.server.php phpxmlrpc.sourceforge.net 80
+ *
+ * The "80" corresponds to the usual http port number.  
+ * The "xmlrpc+path.server.php" means "use xmlrpc carrier, and use a request
+ * path of server.php".  Often this path can be omitted, but is important
+ * for this particular server.
+ *
+ * Then:
+ *   echo "examples.addtwo 10 20" | yarp rpc /webserve
+ * will produce the output "30" if the server still exists.
+ *
+ */
 class yarp::os::impl::XmlRpcCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
     Address host;
+    String http;
 public:
     XmlRpcCarrier() {
         firstRound = true;
