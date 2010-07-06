@@ -104,10 +104,16 @@ bool ImplementControlMode::setTorqueMode(int j)
     return raw->setTorqueModeRaw(k);
 }
 
-bool ImplementControlMode::setImpedanceMode(int j)
+bool ImplementControlMode::setImpedancePositionMode(int j)
 {
     int k=castToMapper(helper)->toHw(j);
-    return raw->setImpedanceModeRaw(k);
+    return raw->setImpedancePositionModeRaw(k);
+}
+
+bool ImplementControlMode::setImpedanceVelocityMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setImpedanceVelocityModeRaw(k);
 }
 
 bool ImplementControlMode::getControlMode(int j, int *f)
@@ -330,6 +336,77 @@ bool ImplementTorqueControl::setTorqueOffset(int j, double v)
     return iTorqueRaw->setTorqueOffsetRaw(k, v);
 }
 
+/////////////// implement ImplementImpedanceControl
+ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
+{
+    iImpedanceRaw=r;
+    helper=0;
+}
+
+bool ImplementImpedanceControl::initialize(int size, const int *amap)
+{
+    if (helper!=0)
+        return false;
+    
+    double *dummy=new double [size];
+    for(int k=0;k<size;k++)
+        dummy[k]=0;
+
+    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    _YARP_ASSERT (helper != 0);
+
+    delete [] dummy;
+    return true;
+}
+
+ImplementImpedanceControl::~ImplementImpedanceControl()
+{
+    uninitialize();
+}
+
+bool ImplementImpedanceControl::uninitialize ()
+{
+    if (helper!=0)
+    {
+        delete castToMapper(helper);
+        helper=0;
+    }
+ 
+    return true;
+}
+
+bool ImplementImpedanceControl::getAxes(int *axes)
+{
+    return iImpedanceRaw->getAxes(axes);
+}
+
+bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping, double offset)
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iImpedanceRaw->setImpedanceRaw(k, stiffness, damping, offset);
+}
+
+bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping, double *offset)
+{
+	int k;
+    k=castToMapper(helper)->toHw(j);
+    return iImpedanceRaw->getImpedanceRaw(k, stiffness, damping, offset);
+}
+
+bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iImpedanceRaw->setImpedanceOffsetRaw(k, offset);
+}
+
+bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
+{
+	int k;
+    k=castToMapper(helper)->toHw(j);
+    return iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
+}
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
 {

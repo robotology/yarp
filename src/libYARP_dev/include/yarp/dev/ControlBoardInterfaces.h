@@ -27,6 +27,8 @@ namespace yarp {
         class IOpenLoopControl;
         class ITorqueControlRaw;
         class ITorqueControl;
+		class IImpedanceControlRaw;
+        class IImpedanceControl;
         class IVelocityControlRaw;
         class IVelocityControl;
         class IAmplifierControlRaw;
@@ -129,7 +131,8 @@ public:
 #define VOCAB_CM_VELOCITY VOCAB3('c','m','v')
 #define VOCAB_CM_UNKNOWN VOCAB4('c','m','u','k')
 #define VOCAB_CM_OPENLOOP VOCAB4('c','m','o','l')
-#define VOCAB_CM_IMPEDANCE VOCAB4('c','m','m','p')
+#define VOCAB_CM_IMPEDANCE_POS VOCAB4('c','m','i','p')
+#define VOCAB_CM_IMPEDANCE_VEL VOCAB4('c','m','i','v')
 #define VOCAB_CM_CONTROL_MODE VOCAB4('c','m','o','d')
 
 /**
@@ -146,7 +149,8 @@ public:
     virtual bool setPositionModeRaw(int j)=0;
     virtual bool setVelocityModeRaw(int j)=0;
     virtual bool setTorqueModeRaw(int j)=0;
-	virtual bool setImpedanceModeRaw(int j)=0;
+	virtual bool setImpedancePositionModeRaw(int j)=0;
+	virtual bool setImpedanceVelocityModeRaw(int j)=0;
     virtual bool setOpenLoopModeRaw(int j)=0;
     virtual bool getControlModeRaw(int j, int *mode)=0;
 };
@@ -183,11 +187,18 @@ public:
     virtual bool setTorqueMode(int j)=0;
 
 	/*
-    * Set impedance mode, single axis.
+    * Set impedance position mode, single axis.
     * @param j: joint number
     * @return: true/false success failure.
     */
-    virtual bool setImpedanceMode(int j)=0;
+    virtual bool setImpedancePositionMode(int j)=0;
+
+	/*
+    * Set impedance velocity mode, single axis.
+    * @param j: joint number
+    * @return: true/false success failure.
+    */
+    virtual bool setImpedanceVelocityMode(int j)=0;
 
     /*
     * Set open loop mode, single axis.
@@ -1103,6 +1114,47 @@ public:
 /**
  * @ingroup dev_iface_motor
  *
+ * Interface for control boards implementing impedance control.
+ */
+class yarp::dev::IImpedanceControlRaw
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IImpedanceControlRaw() {}
+
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *ax) = 0;
+
+	/** Get current impedance parameters (stiffness,damping,offset) for a specific joint.
+     * @return success/failure
+     */
+	virtual bool getImpedanceRaw(int j, double *stiffness, double *damping, double *offset)=0;
+
+	/** Set current impedance parameters (stiffness,damping,offset) for a specific joint.
+     * @return success/failure
+     */
+	virtual bool setImpedanceRaw(int j, double stiffness, double damping, double offset)=0;
+
+	/** Set current force Offset for a specific joint.
+    * @return success/failure
+    */
+	virtual bool setImpedanceOffsetRaw(int j, double offset)=0;
+
+	/** Set current force Offset for a specific joint.
+    * @return success/failure
+    */
+	virtual bool getImpedanceOffsetRaw(int j, double* offset)=0;
+};
+
+/**
+ * @ingroup dev_iface_motor
+ *
  * Control board, encoder interface.
  */
 class yarp::dev::IEncodersRaw
@@ -1838,6 +1890,46 @@ public:
     virtual bool setTorqueOffset(int j, double v)=0;
 };
 
+/**
+ * @ingroup dev_iface_motor
+ *
+ * Interface for control boards implementing impedance control.
+ */
+class yarp::dev::IImpedanceControl
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IImpedanceControl() {}
+
+    /**
+     * Get the number of controlled axes. This command asks the number of controlled
+     * axes for the current physical interface.
+     * @return the number of controlled axes.
+     */
+    virtual bool getAxes(int *ax) = 0;
+
+	/** Get current impedance gains (stiffness,damping,offset) for a specific joint.
+     * @return success/failure
+     */
+	virtual bool getImpedance(int j, double *stiffness, double *damping, double *offset)=0;
+
+	/** Set current impedance gains (stiffness,damping,offset) for a specific joint.
+     * @return success/failure
+     */
+	virtual bool setImpedance(int j, double stiffness, double damping, double offset)=0;
+
+	/** Set current force Offset for a specific joint.
+    * @return success/failure
+    */
+	virtual bool setImpedanceOffset(int j, double offset)=0;
+
+	/** Set current force Offset for a specific joint.
+    * @return success/failure
+    */
+	virtual bool getImpedanceOffset(int j, double* offset)=0;
+};
 
 /* Vocabs representing the above interfaces */
 
@@ -1929,8 +2021,11 @@ public:
 #define VOCAB_TORQUE_MODE VOCAB4('t','r','q','d')
 #define VOCAB_TRQS VOCAB4('t','r','q','s')
 #define VOCAB_TRQ  VOCAB3('t','r','q')
+#define VOCAB_IMP_PARAM   VOCAB3('i','p','r')
+#define VOCAB_IMP_OFFSET  VOCAB3('i','o','f')
 
 //interface
+#define VOCAB_IMPEDANCE VOCAB4('i','i','m','p')
 #define VOCAB_ICONTROLMODE VOCAB4('i','c','m','d')
 #define VOCAB_POSITION VOCAB3('p','o','s')
 #define VOCAB_VELOCITY VOCAB3('v','e','l')

@@ -228,6 +228,7 @@ class yarp::dev::RemoteControlBoard :
     public IPreciselyTimed,
     public IControlCalibration2,
     public ITorqueControl,
+	public IImpedanceControl,
     public IControlMode,
     public IOpenLoopControl,
     public DeviceDriver 
@@ -1693,6 +1694,76 @@ public:
         return false;
     }
 
+	bool getImpedance(int j, double *stiffness, double *damping, double *offset)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_IMP_PARAM);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            *stiffness = l.get(0).asDouble();
+            *damping   = l.get(1).asDouble();
+            *offset    = l.get(2).asDouble();
+            return true;
+        }
+        return false;
+    }
+
+	bool getImpedanceOffset(int j, double *offset)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_OFFSET);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            *offset    = l.get(0).asDouble();
+            return true;
+        }
+        return false;
+    }
+
+	bool setImpedance(int j, double stiffness, double damping, double offset)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_IMP_PARAM);
+        cmd.addInt(j);
+
+        Bottle& b = cmd.addList();
+        b.addDouble(stiffness);
+        b.addDouble(damping);
+        b.addDouble(offset);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+	bool setImpedanceOffset(int j, double offset)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_OFFSET);
+        cmd.addInt(j);
+
+        Bottle& b = cmd.addList();
+        b.addDouble(offset);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
     bool getTorquePids(Pid *pids)
     {
         bool ret=true;
@@ -1730,8 +1801,11 @@ public:
     bool setTorqueMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_TORQUE, j); }
 
-	bool setImpedanceMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE, j); }
+	bool setImpedancePositionMode(int j)
+    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE_POS, j); }
+
+	bool setImpedanceVelocityMode(int j)
+    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE_VEL, j); }
 
     bool setOpenLoopMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }

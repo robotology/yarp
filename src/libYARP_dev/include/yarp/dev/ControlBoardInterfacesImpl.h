@@ -22,6 +22,7 @@ namespace yarp{
         template <class DERIVED, class IMPLEMENT> class ImplementControlLimits;
         template <class DERIVED, class IMPLEMENT> class ImplementControlCalibration2;
         class ImplementTorqueControl;
+		class ImplementImpedanceControl;
         class ImplementControlMode;
         class ImplementOpenLoopControl;
         class StubImplPidControlRaw;
@@ -673,7 +674,8 @@ public:
     ImplementControlMode(IControlModeRaw *v);
     ~ImplementControlMode();
     bool setTorqueMode(int j);
-	bool setImpedanceMode(int j);
+	bool setImpedancePositionMode(int j);
+	bool setImpedanceVelocityMode(int j);
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool getControlMode(int j, int *f);
@@ -741,6 +743,44 @@ public:
     virtual bool setTorqueOffset(int j, double v);
 };
 
+class yarp::dev::ImplementImpedanceControl: public IImpedanceControl 
+{
+protected:
+    yarp::dev::IImpedanceControlRaw *iImpedanceRaw;
+    void *helper;
+
+    /**
+     * Initialize the internal data and alloc memory.
+     * @param size is the number of controlled axes the driver deals with.
+     * @param amap is a lookup table mapping axes onto physical drivers.
+     * @return true if initialized succeeded, false if it wasn't executed, or assert.
+     */
+    bool initialize (int size, const int *amap);
+          
+    /**
+     * Clean up internal data and memory.
+     * @return true if uninitialization is executed, false otherwise.
+     */
+    bool uninitialize ();
+
+public:
+    /* Constructor.
+     * @param y is the pointer to the class instance inheriting from this 
+     *  implementation.
+     */
+    ImplementImpedanceControl(yarp::dev::IImpedanceControlRaw *y);
+        
+    /**
+     * Destructor. Perform uninitialize if needed.
+     */
+    virtual ~ImplementImpedanceControl();
+
+    virtual bool getAxes(int *ax);
+    virtual bool getImpedance(int j, double *stiffness, double *damping, double *offset);
+    virtual bool setImpedance(int j, double  stiffness, double  damping, double  offset);
+	virtual bool setImpedanceOffset(int j, double offset);
+	virtual bool getImpedanceOffset(int j, double* offset);
+};
 
 class yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
 {
