@@ -1642,8 +1642,7 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                address.toString().c_str(),
                connectionName);
         String carrier = address.getCarrierName();
-        Route r(connectionName,targetName,
-                (carrier!="")?carrier.c_str():"text_ack");
+        Route r(connectionName,targetName,"text_ack");
         out->open(r);
         OutputStream& os = out->getOutputStream();
         InputStream& is = out->getInputStream();

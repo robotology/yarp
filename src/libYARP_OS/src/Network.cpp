@@ -11,6 +11,7 @@
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
+#include <yarp/os/Thread.h>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
@@ -413,6 +414,13 @@ void NetworkBase::initMinimum() {
                       "YARP_VERBOSE environment variable is set");
             Logger::get().setVerbosity(b.get(0).asInt());
         }
+    }
+    String stack = NameConfig::getEnv("YARP_STACK_SIZE");
+    if (stack!="") {
+        int sz = atoi(stack.c_str());
+        Thread::setDefaultStackSize(sz);
+        YARP_SPRINTF1(Logger::get(), info,
+                      "YARP_STACK_SIZE set to %d", sz);
     }
     Logger::get().setPid();
 	// make sure system is actually able to do things fast

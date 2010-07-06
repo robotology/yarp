@@ -127,4 +127,8 @@ int Thread::getPriority() {
     return ((ThreadImpl*)implementation)->getPriority();
 }
 
+void Thread::setDefaultStackSize(int stackSize) {
+    ThreadImpl::setDefaultStackSize(stackSize);
+}
+
 

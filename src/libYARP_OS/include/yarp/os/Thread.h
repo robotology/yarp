@@ -131,7 +131,7 @@ public:
     bool isRunning();
 
     /**
-     * Set the stack size the the new thread.  Must be called before
+     * Set the stack size for the new thread.  Must be called before
      * Thread::start
      * @param stackSize the desired stack size in bytes (if 0, uses
      *                  a reasonable default)
@@ -163,6 +163,16 @@ public:
      */
     int getPriority();
 
+
+    /**
+     *
+     * Set the default stack size for all threads created after this
+     * point.  A value of 0 will use a reasonable default.
+     *
+     * @param stackSize the desired stack size in bytes.
+     *
+     */
+    static void setDefaultStackSize(int stackSize);
 
 private:
     bool join(double seconds = -1);

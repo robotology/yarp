@@ -74,6 +74,8 @@ public:
     int setPriority(int priority = -1);
     int getPriority();
 
+    static void setDefaultStackSize(int stackSize);
+
 private:
     int defaultPriority;
     int stackSize;
@@ -89,6 +91,7 @@ private:
 	//ACE_Auto_Event synchro;	// event for init synchro
 
     static int threadCount;
+    static int defaultStackSize;
     static SemaphoreImpl threadMutex;
 	bool initWasSuccessful;
 

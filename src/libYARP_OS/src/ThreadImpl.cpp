@@ -18,6 +18,7 @@
 using namespace yarp::os::impl;
 
 int ThreadImpl::threadCount = 0;
+int ThreadImpl::defaultStackSize = 0;
 SemaphoreImpl ThreadImpl::threadMutex(1);
 
 
@@ -156,6 +157,10 @@ bool ThreadImpl::start() {
 
 	closing = false;
     beforeStart();
+    size_t s = stackSize;
+    if (s==0) {
+        s = (size_t)defaultStackSize;
+    }
     int result = ACE_Thread::spawn((ACE_THR_FUNC)theExecutiveBranch,
                                    (void *)this,
                                    THR_JOINABLE | THR_NEW_LWP,
@@ -163,7 +168,7 @@ bool ThreadImpl::start() {
                                    &hid,
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
-                                   (size_t)stackSize);
+                                   s);
 
 	if (result==0)
 	{
@@ -248,3 +253,6 @@ int ThreadImpl::getPriority() {
 	return prio;
 }
 
+void ThreadImpl::setDefaultStackSize(int stackSize) {
+    defaultStackSize = stackSize;
+}
