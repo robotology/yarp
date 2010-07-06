@@ -8,6 +8,8 @@
 
 #include "XmlRpcCarrier.h"
 #include <yarp/os/impl/StringOutputStream.h>
+#include <yarp/os/impl/Name.h>
+#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Bottle.h>
 
 #include "XmlRpc.h"
@@ -106,8 +108,8 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
     //printf("xmlrpc block to write is %s\n", args.toXml().c_str());
     std::string req;
     if (sender) {
-        const Address& addr = proto.getStreams().getRemoteAddress();
-        XmlRpcClient c(addr.getName().c_str(),addr.getPort());
+        const Address& addr = host.isValid()?host:proto.getStreams().getRemoteAddress();
+        XmlRpcClient c(addr.getName().c_str(),(addr.getPort()>0)?addr.getPort():80);
         c.generateRequest(methodName.c_str(),args);
         req = c.getRequest();
     } else {
@@ -123,18 +125,18 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
             return false;
         }
         if (firstRound) {
-            const char *target = "POST /RP";
-            for (int i=0; i<8; i++) {
-                if (req[i] != target[i]) {
-                    fprintf(stderr, "XmlRpcCarrier fail, %s:%d\n", __FILE__, __LINE__);
-                    return false;
+            for (int i=0; i<(int)req.length(); i++) {
+                if (req[i] == '\n') {
+                    start++;
+                    break;
                 }
+                start++;
             }
-            start = 8;
             firstRound = false;
         }
     }
-    Bytes b((char*)req.c_str()+start,req.length());
+    Bytes b((char*)req.c_str()+start,req.length()-start);
+    printf("WRITING [%s]\n", req.c_str()+start);
     proto.os().write(b);
 
     return proto.os().isOk();
@@ -142,7 +144,27 @@ bool XmlRpcCarrier::write(Protocol& proto, SizedWriter& writer) {
 
 
 bool XmlRpcCarrier::reply(Protocol& proto, SizedWriter& writer) {
+    printf("Preparing for write\n");
     return write(proto,writer);
 }
 
 
+bool XmlRpcCarrier::sendHeader(Protocol& proto) {
+    Name n(proto.getRoute().getCarrierName() + "://test");
+    printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
+    String pathValue = n.getCarrierModifier("path");
+    String target = "POST /RPC";
+    if (pathValue!="") {
+        printf("FOUND PATH %s\n", pathValue.c_str());
+        target = "POST /";
+        target += pathValue;
+        // on the wider web, we should provide real host names
+        NameClient& nc = NameClient::getNameClient();
+        host = nc.queryName(proto.getRoute().getToName());
+    }
+    target += " HTTP/1.1\n";
+    Bytes b((char*)target.c_str(),target.length());
+    printf("SENDING HEADER [%s]\n", target.c_str());
+    proto.os().write(b);
+    return true;
+}

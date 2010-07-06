@@ -777,6 +777,11 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     }
     Address address = Name(dest).toAddress();
     if (address.getCarrierName()=="") {
+        NameClient& nic = NameClient::getNameClient();
+        address = nic.queryName(dest);
+    }
+    if (address.getCarrierName()==""||
+        address.getCarrierName()=="tcp") {
         // no need for a port
         src = "anon_rpc";
         if (argc>1) { src = argv[1]; }
@@ -1636,7 +1641,9 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
         printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
                address.toString().c_str(),
                connectionName);
-        Route r(connectionName,targetName,"text_ack");
+        String carrier = address.getCarrierName();
+        Route r(connectionName,targetName,
+                (carrier!="")?carrier.c_str():"text_ack");
         out->open(r);
         OutputStream& os = out->getOutputStream();
         InputStream& is = out->getInputStream();

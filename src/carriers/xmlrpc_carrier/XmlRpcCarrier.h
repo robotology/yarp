@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/Carrier.h>
 #include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/Address.h>
 #include "XmlRpcStream.h"
 
 namespace yarp {
@@ -25,6 +26,7 @@ class yarp::os::impl::XmlRpcCarrier : public Carrier {
 private:
     bool firstRound;
     bool sender;
+    Address host;
 public:
     XmlRpcCarrier() {
         firstRound = true;
@@ -76,14 +78,13 @@ public:
     }
 
     virtual void getHeader(const Bytes& header) {
-        const char *target = "POST /RC";
-        for (int i=0; i<6 && i<header.length(); i++) {
+        const char *target = "POST /RP";
+        for (int i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }
 
     virtual bool checkHeader(const Bytes& header) {
-        // for now, expect XMLRPC++, which posts with uri /RPC2
         if (header.length()!=8) {
             return false;
         }
@@ -108,12 +109,7 @@ public:
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto) {
-        String target = "POST /RP";
-        Bytes b((char*)target.c_str(),8);
-        proto.os().write(b);
-        return true;
-    }
+    virtual bool sendHeader(Protocol& proto);
 
     virtual bool expectSenderSpecifier(Protocol& proto);
 
