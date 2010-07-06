@@ -15,6 +15,8 @@ extern "C" {
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
+#include <yarp/os/impl/Name.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 
@@ -162,4 +164,21 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
 
 bool MjpegCarrier::reply(Protocol& proto, SizedWriter& writer) {
     return false;
+}
+
+
+bool MjpegCarrier::sendHeader(Protocol& proto) {
+    Name n(proto.getRoute().getCarrierName() + "://test");
+    String pathValue = n.getCarrierModifier("path");
+    String target = "GET /?action=stream\n\n";
+    if (pathValue!="") {
+        target = "GET /";
+        target += pathValue;
+    }
+
+
+    target += " HTTP/1.1\n\n";
+    Bytes b((char*)target.c_str(),target.length());
+    proto.os().write(b);
+    return true;
 }

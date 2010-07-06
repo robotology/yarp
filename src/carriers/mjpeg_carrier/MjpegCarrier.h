@@ -24,6 +24,24 @@ namespace yarp {
     }
 }
 
+/**
+ *
+ * A carrier for sending/receiving images via mjpeg over http.
+ *
+ * Picking a random webcam stream:
+ *  http://cam.mauirealestate.net:8010/axis-cgi/mjpg/video.cgi?resolution=320x240
+ * (it will probably be dead by the time you read this, but finding others
+ * is easy...)
+ * Register this:
+ *   yarp name register /webcam mjpeg+path.axis-cgi/mjpg/video.cgi?resolution=320x240 cam.mauirealestate.net 8010
+ * Make a viewer:
+ *   yarpview /view
+ * Connect:
+ *   yarp connect /webcam /view
+ * You can also view yarp image ports from a browser.  Do a "yarp name query /portname" to find their port number NNN, then go to:
+ *   http://localhost:NNN/?output=stream
+ *
+ */
 class yarp::os::impl::MjpegCarrier : public Carrier {
 private:
     bool firstRound;
@@ -117,12 +135,7 @@ public:
         return true;
     }
 
-    virtual bool sendHeader(Protocol& proto) {
-        String target = "GET /?action=stream HTTP/1.1\n\n";
-        Bytes b((char*)target.c_str(),strlen(target.c_str()));
-        proto.os().write(b);
-        return true;
-    }
+    virtual bool sendHeader(Protocol& proto);
 
     virtual bool expectSenderSpecifier(Protocol& proto) {
         return true;
@@ -153,7 +166,6 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         //MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
         //if (stream==NULL) { return false; }
         //proto.takeStreams(stream);
-        printf("*** mjpeg carrier is *very* experimental\n");
         return true;
     }
 
@@ -168,7 +180,6 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
         if (stream==NULL) { return false; }
         proto.takeStreams(stream);
-        printf("*** mjpeg carrier is *very* experimental\n");
         return true;
     }
 

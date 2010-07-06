@@ -111,7 +111,7 @@ int MjpegStream::read(const Bytes& b) {
         do {
             s = NetType::readLine(delegate->getInputStream());
             //printf("Read %s\n", s.c_str());
-        } while (s[0]!='-');
+        } while (s[0]!='-' && delegate->getInputStream().isOk());
         s = NetType::readLine(delegate->getInputStream());
         if (s!="Content-Type: image/jpeg") {
             printf("Unknown content type - %s\n", s.c_str());
