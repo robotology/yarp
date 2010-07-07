@@ -31,7 +31,6 @@ int TcpRosStream::read(const Bytes& b) {
             char twiddle[1];
             Bytes twiddle_buf(twiddle,1);
             NetType::readFull(delegate->getInputStream(),twiddle_buf);
-            printf("Twiddle was %d\n", (int)twiddle[0]);
         }
 
         char mlen[4];
@@ -44,10 +43,17 @@ int TcpRosStream::read(const Bytes& b) {
         }
         int len = NetType::netInt(mlen_buf);
         //printf("Unit length %d\n", len);
-        header.init(len);
-        phase = 1;
-        cursor = (char*) &header;
-        remaining = sizeof(header);
+
+        if (raw) {
+            phase = 2;
+            cursor = NULL;
+            remaining = header.blobLen;
+        } else {
+            header.init(len);
+            phase = 1;
+            cursor = (char*) &header;
+            remaining = sizeof(header);
+        }
     }
     if (remaining>0) {
         if (cursor!=NULL) {

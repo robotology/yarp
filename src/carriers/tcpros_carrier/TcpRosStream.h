@@ -30,6 +30,7 @@ class yarp::os::impl::TcpRosStream : public TwoWayStream,
 private:
     TwoWayStream *delegate;
     bool sender;
+    bool raw;
     bool firstRound;
     BlobNetworkHeader header;
     char *cursor;
@@ -38,7 +39,7 @@ private:
     bool expectTwiddle;
 public:
     TcpRosStream(TwoWayStream *delegate, bool sender,
-                 bool service) : sender(sender) {
+                 bool service, bool raw) : sender(sender), raw(raw) {
         this->delegate = delegate;
         firstRound = true;
         phase = 0;

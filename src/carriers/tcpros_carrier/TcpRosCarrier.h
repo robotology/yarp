@@ -29,6 +29,7 @@ private:
     bool sender;
     int headerLen1;
     int headerLen2;
+    bool raw;
 protected:
     bool isService;
 public:
@@ -38,6 +39,7 @@ public:
         headerLen1 = 0;
         headerLen2 = 0;
         isService = false;
+        raw = false;
     }
 
     virtual Carrier *create() {
