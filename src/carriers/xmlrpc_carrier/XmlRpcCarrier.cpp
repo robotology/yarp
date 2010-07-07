@@ -156,7 +156,7 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
     Name n(proto.getRoute().getCarrierName() + "://test");
     //printf("ROUTE is %s\n", proto.getRoute().toString().c_str());
     String pathValue = n.getCarrierModifier("path");
-    String target = "POST /RPC";
+    String target = "POST /RPC2";
     if (pathValue!="") {
         //printf("FOUND PATH %s\n", pathValue.c_str());
         target = "POST /";
