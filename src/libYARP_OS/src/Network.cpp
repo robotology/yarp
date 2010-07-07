@@ -324,6 +324,22 @@ static int metaConnect(const char *csrc,
         }
     }
 
+    /*
+    printf("Status competence %d:%d push %d pull %d\n",
+           srcIsCompetent,
+           destIsCompetent,
+           connectionIsPush,
+           connectionIsPull);
+    */
+
+    /*
+      // desperation
+    if (!(srcIsCompetent||destIsCompetent)) {
+        srcIsCompetent = true;
+        destIsCompetent = true;
+    }
+    */
+
     if (srcIsCompetent&&connectionIsPush) {
         // Classic case.  
         Contact c = Contact::fromString(dest);
