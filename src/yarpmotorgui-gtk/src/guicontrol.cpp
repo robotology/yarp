@@ -56,7 +56,7 @@ void guiControl::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX
 
 static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in IDLE mode!\n", *joint);
 		fprintf(stderr, "(DEBUG: not using iCntrl interface\n", *joint);
@@ -69,7 +69,7 @@ static void guiControl::radio_click_idl(GtkWidget* radio , gtkClassData* current
 }
 static void guiControl::radio_click_open(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in OPENLOOP mode!\n", *joint);
 		icntrl->setOpenLoopMode(*joint);
@@ -80,7 +80,7 @@ static void guiControl::radio_click_open(GtkWidget* radio , gtkClassData* curren
 }
 static void guiControl::radio_click_pos(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in POSITION mode!\n", *joint);
 		icntrl->setPositionMode(*joint);
@@ -91,7 +91,7 @@ static void guiControl::radio_click_pos(GtkWidget* radio , gtkClassData* current
 }
 static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "(DEBUG: velocity conttol not yet implemented\n", *joint);
 	}
@@ -101,7 +101,7 @@ static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* current
 }
 static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in TORQUE mode!\n", *joint);
 		icntrl->setTorqueMode(*joint);
@@ -112,7 +112,7 @@ static void guiControl::radio_click_trq(GtkWidget* radio , gtkClassData* current
 }
 static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in IMPEDANCE POSITION mode!\n", *joint);
 		icntrl->setImpedancePositionMode(*joint);
@@ -124,7 +124,7 @@ static void guiControl::radio_click_imp_pos(GtkWidget* radio , gtkClassData* cur
 
 static void guiControl::radio_click_imp_vel(GtkWidget* radio , gtkClassData* currentClassData)
 {
-	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio))==true)
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
 		fprintf(stderr, "joint: %d in IMPEDANCE VELOCITY mode!\n", *joint);
 		icntrl->setImpedanceVelocityMode(*joint);

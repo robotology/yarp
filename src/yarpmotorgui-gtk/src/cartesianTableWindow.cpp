@@ -89,7 +89,7 @@ int get_cartesian_index_selection(cartesianMover *cm)
   treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
   GtkTreeModel* myModel = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
 	
-  bool selected = gtk_tree_selection_get_selected (treeSelection, NULL, &iter);
+  bool selected = (gtk_tree_selection_get_selected (treeSelection, NULL, &iter)?true:false);
   //gchar *buffer[10000];
   //gtk_tree_model_get(myModel, &iter, 0, buffer, -1);
 	
@@ -120,7 +120,7 @@ void cartesianMover::cartesian_line_click(GtkTreeView *tree_view, GtkTreePath *p
 
   ICartesianControl *icrt = cm->crt;
   int *i = gtk_tree_path_get_indices (path);
-  double currPos[NUMBER_OF_CARTESIAN_COORDINATES];
+  //double currPos[NUMBER_OF_CARTESIAN_COORDINATES];
 
   Vector x;
   Vector axis;

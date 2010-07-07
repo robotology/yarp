@@ -314,7 +314,7 @@ int partMover::get_index_selection(partMover *currentPart)
   treeSelection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree_view));
   GtkTreeModel* myModel = gtk_tree_view_get_model(GTK_TREE_VIEW(tree_view));
 	
-  bool selected = gtk_tree_selection_get_selected (treeSelection, NULL, &iter);
+  bool selected = (gtk_tree_selection_get_selected (treeSelection, NULL, &iter)?true:false);
   //gchar *buffer[10000];
   //gtk_tree_model_get(myModel, &iter, 0, buffer, -1);
 	
