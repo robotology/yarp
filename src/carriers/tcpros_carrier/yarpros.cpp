@@ -20,15 +20,13 @@ bool rpc(const char *target,
          const char *carrier,
          PortWriter& writer,
          PortReader& reader) {
-    Port p;
-    Network::setVerbosity(-1);
-    p.open("...");
-    bool ok = Network::connect(p.getName(),target,carrier);
-    if (ok) {
-        ok = p.write(writer,reader);
-    }
-    p.close();
-    Network::setVerbosity(0);
+    Contact c = Network::queryName(target);
+    if (!c.isValid()) return false;
+    ContactStyle style;
+    style.quiet = false;
+    style.timeout = 4;
+    style.carrier = carrier;
+    bool ok = Network::write(c,writer,reader,style);
     return ok;
 }
 
@@ -160,6 +158,7 @@ bool RosLookup::lookupTopic(const char *name) {
     Bottle& lst = req.addList();
     Bottle& sublst = lst.addList();
     sublst.addString("TCPROS");
+    //printf("Sending [%s] to %s\n", req.toString().c_str(),toString().c_str());
     rpc(toString().c_str(),"xmlrpc",req,reply);
     if (reply.get(0).asInt()!=1) {
         printf("Failure looking up topic %s: %s\n", name, reply.toString().c_str());
@@ -196,13 +195,14 @@ void usage(const char *action,
 }
 
 bool register_port(const char *name,
+                   const char *carrier,
                    const char *hostname,
                    int portnum,
                    PortReader& reply) {
     Bottle req;
     req.addString("register");
     req.addString(name);
-    req.addString("tcp");
+    req.addString(carrier);
     req.addString(hostname);
     req.addInt(portnum);
     return Network::write(Network::getNameServerContact(),
@@ -216,6 +216,7 @@ int main(int argc, char *argv[]) {
         printf("Here are some things you can do:\n");
         usage("roscore <hostname> <port number>","tell yarp how to reach the ros master","roscore 192.168.0.1 11311");
         usage("import <name>","import a ROS name into YARP","import /talker");
+        usage("import <yarpname> <nodename> <topicname>","import a ROS node/topic pair as a port","import /talker /talker /chatter");
         usage("read <yarpname> <nodename> <topicname>","read to a YARP port from a ROS node's contribution to a topic","read /read /talker /chatter");
         usage("write <yarpname> <nodename> <topicname>","write from a YARP port to a ROS node's subscription to a topic","write /write /listener /chatter");
         usage("rpc <yarpname> <nodename> <servicename>","write/read from a YARP port to a ROS node's named service","rpc /rpc /add_two_ints_server /add_two_ints");
@@ -239,26 +240,53 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         Bottle reply;
-        register_port(ROSCORE_PORT, cmd.get(1).asString(), cmd.get(2).asInt(), 
+        register_port(ROSCORE_PORT, "xmlrpc",
+                      cmd.get(1).asString(), cmd.get(2).asInt(), 
                       reply);
         printf("%s\n", reply.toString().c_str());
         return 0;
     } else if (tag=="import") {
-        if (!cmd.get(1).isString()) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
-            return 1;
-        }
         Bottle req, reply;
-        RosLookup lookup;
-        bool ok = lookup.lookupCore(cmd.get(1).asString());
-        if (ok) {
-            register_port(cmd.get(1).asString().c_str(),
+        if (cmd.size()==2) {
+            if (!cmd.get(1).isString()) {
+                fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+                return 1;
+            }
+            RosLookup lookup;
+            bool ok = lookup.lookupCore(cmd.get(1).asString());
+            if (ok) {
+                register_port(cmd.get(1).asString().c_str(),
+                              "xmlrpc",
+                              lookup.hostname.c_str(),
+                              lookup.portnum,
+                              reply);
+                printf("%s\n",reply.toString().c_str());
+            }
+            return ok?0:1;
+        } else if (cmd.size()==4) {
+            ConstString yarp_port = cmd.get(1).asString();
+            ConstString ros_port = cmd.get(2).asString();
+            ConstString topic = cmd.get(3).asString();
+            RosLookup lookup;
+            printf("  * looking up ros node %s\n", ros_port.c_str());
+            bool ok = lookup.lookupCore(ros_port.c_str());
+            if (!ok) return 1;
+            printf("  * found ros node %s\n", ros_port.c_str());
+            printf("  * looking up topic %s\n", topic.c_str());
+            ok = lookup.lookupTopic(topic.c_str());
+            if (!ok) return 1;
+            printf("  * found topic %s\n", topic.c_str());
+            register_port(yarp_port.c_str(),
+                          (string("tcpros+topic.")+topic.c_str()).c_str(),
                           lookup.hostname.c_str(),
                           lookup.portnum,
                           reply);
-            printf("%s\n",reply.toString().c_str());
+            return ok?0:1;
+            
+        } else {
+            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+            return 1;
         }
-        return ok?0:1;
     } else if (tag=="read") {
         if (!cmd.size()==4) {
             fprintf(stderr,"wrong syntax, run with no arguments for help\n");
@@ -268,13 +296,20 @@ int main(int argc, char *argv[]) {
         ConstString ros_port = cmd.get(2).asString();
         ConstString topic = cmd.get(3).asString();
         RosLookup lookup;
+        printf("  * looking up ros node %s\n", ros_port.c_str());
         bool ok = lookup.lookupCore(ros_port.c_str());
         if (!ok) return 1;
+        printf("  * found ros node %s\n", ros_port.c_str());
+        printf("  * looking up topic %s\n", topic.c_str());
         ok = lookup.lookupTopic(topic.c_str());
         if (!ok) return 1;
-        yarp.connect(yarp_port.c_str(),
-                     lookup.toString().c_str(),
-                     (string("tcpros+topic.")+topic.c_str()).c_str());
+        printf("  * found topic %s\n", topic.c_str());
+        ConstString src = lookup.toString().c_str();
+        ConstString dest = yarp_port;
+        ConstString carrier = (string("tcpros+topic.")+topic.c_str()).c_str();
+        printf("  * yarp connect %s %s %s\n",
+               src.c_str(), dest.c_str(), carrier.c_str());
+        yarp.connect(src.c_str(),dest.c_str(),carrier.c_str());
         return ok?0:1;
     } else if (tag=="write") {
         if (!cmd.size()==4) {

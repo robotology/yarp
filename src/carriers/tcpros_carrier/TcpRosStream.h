@@ -12,6 +12,7 @@
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
+#include <yarp/os/ManagedBytes.h>
 #include "BlobHeader.h"
 
 namespace yarp {
@@ -30,16 +31,17 @@ class yarp::os::impl::TcpRosStream : public TwoWayStream,
 private:
     TwoWayStream *delegate;
     bool sender;
-    bool raw;
+    int raw;
     bool firstRound;
     BlobNetworkHeader header;
+    ManagedBytes scan;
     char *cursor;
     int remaining;
     int phase;
     bool expectTwiddle;
 public:
     TcpRosStream(TwoWayStream *delegate, bool sender,
-                 bool service, bool raw) : sender(sender), raw(raw) {
+                 bool service, int raw) : sender(sender), raw(raw) {
         this->delegate = delegate;
         firstRound = true;
         phase = 0;

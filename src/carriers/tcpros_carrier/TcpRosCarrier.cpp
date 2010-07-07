@@ -63,8 +63,11 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
     }
     String rawValue = n.getCarrierModifier("raw");
     if (rawValue=="1") {
-        raw = true;
+        raw = 1;
         dbg_printf("Raw mode requested\n");
+    } else if (rawValue=="0") {
+        raw = 0;
+        dbg_printf("Cooked mode requested\n");
     }
 
     RosHeader header;

@@ -29,7 +29,7 @@ private:
     bool sender;
     int headerLen1;
     int headerLen2;
-    bool raw;
+    int raw;
 protected:
     bool isService;
 public:
@@ -39,7 +39,7 @@ public:
         headerLen1 = 0;
         headerLen2 = 0;
         isService = false;
-        raw = false;
+        raw = -1;
     }
 
     virtual Carrier *create() {
@@ -80,7 +80,6 @@ public:
 
     virtual bool isPush() {
         // if topic-like, pull ; if service-like, push!
-        printf("tcpros push? %d\n", isService);
         return isService;
     }
 
@@ -156,6 +155,8 @@ public:
     virtual bool expectAck(Protocol& proto) {
         return true;
     }
+
+    virtual String getBootstrapCarrierName() { return ""; }
 };
 
 /*
