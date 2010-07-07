@@ -93,7 +93,8 @@ static void guiControl::radio_click_vel(GtkWidget* radio , gtkClassData* current
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(radio)))
 	{
-		fprintf(stderr, "(DEBUG: velocity conttol not yet implemented\n", *joint);
+		fprintf(stderr, "joint: %d in VELOCITY mode!\n", *joint);
+		icntrl->setVelocityMode(*joint);
 	}
 	else
 	{
