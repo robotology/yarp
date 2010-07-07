@@ -1,8 +1,5 @@
-
 #include <ros/ros.h>
-#include <waggler/VVLCommand.h>
-#include <sstream>
-
+#include <yarpros_examples/VVLCommand.h>
 #include <stdio.h>
 
 #define BOTTLE_TAG_INT 1
@@ -14,7 +11,6 @@
 #define VOCAB(a,b,c,d) ((((int)(d))<<24)+(((int)(c))<<16)+(((int)(b))<<8)+((int)(a)))
 
 int main(int argc, char** argv) {
-  printf("Will soon be modifying this to send arm commands to icub\n");
   int joint_count = 4;
   if (argc>1) {
     joint_count = atoi(argv[1]);
@@ -23,7 +19,7 @@ int main(int argc, char** argv) {
 
   ros::init(argc, argv, "waggler");
   ros::NodeHandle n;
-  ros::Publisher chatter_pub = n.advertise<waggler::VVLCommand>("pos_cmd", 100);
+  ros::Publisher waggler_pub = n.advertise<yarpros_examples::VVLCommand>("pos_cmd", 100);
   ros::Rate loop_rate(1);
 
   int count = 0;
@@ -35,7 +31,7 @@ int main(int argc, char** argv) {
     }
     joints[0] = 5*(count%10);
 
-    waggler::VVLCommand msg;
+    yarpros_examples::VVLCommand msg;
     msg.list_tag = BOTTLE_TAG_LIST;
     msg.list_len = 3;
     msg.vocab_set_tag = BOTTLE_TAG_VOCAB;
@@ -47,7 +43,7 @@ int main(int argc, char** argv) {
     for (int i=0; i<joint_count; i++) {
       msg.setpoint_list[i] = joints[i];
     }
-    chatter_pub.publish(msg);
+    waggler_pub.publish(msg);
     ROS_INFO("I published a command");
     ros::spinOnce();
     loop_rate.sleep();
