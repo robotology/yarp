@@ -184,6 +184,7 @@ public:
         return true;
     }
 
+    virtual String getBootstrapCarrierName() { return ""; }
 };
 
 #endif
