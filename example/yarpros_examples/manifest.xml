@@ -1,0 +1,16 @@
+<package>
+  <description brief="yarpros_examples">
+
+     YARP/ROS interoperability
+
+  </description>
+  <author>Paul Fitzpatrick</author>
+  <license>LGPLv2.1</license>
+  <review status="unreviewed" notes=""/>
+  <depend package="std_msgs"/>
+  <depend package="rospy"/>
+  <depend package="roscpp"/>
+
+</package>
+
+

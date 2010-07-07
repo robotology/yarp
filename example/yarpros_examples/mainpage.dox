@@ -1,0 +1,41 @@
+/**
+\mainpage
+\htmlinclude manifest.html
+
+\b waggler is a test program for YARP/ROS interoperability.
+
+waggler is written in unmodified ROS, and does not use YARP.  It publishes
+a stream of position control commands that are suitable for hooking up
+to YARP controlboard implementations (e.g. the iCub robot, or the
+test_motor device).  They can also be streamed to "yarp read".
+
+Make sure when compiling YARP you enable the TCPROS and XMLRPC carriers.
+Then run waggler.  Then do:
+\verbatim
+  # tell yarp where roscore is
+  yarpros roscore localhost 11311  # replace localhost as appropriate
+  # register the topic pos_cmd on node waggler as a virtual port
+  # called /waggler
+  yarpros import /waggler /waggler /pos_cmd
+  # run this in a separate terminal if you don't have the simulator
+  yarp read /read  
+  # now hook things up!
+  yarp connect /waggler /read
+\endverbatim
+
+
+\section codeapi Code API
+
+<!--
+Provide links to specific auto-generated API documentation within your
+package that is of particular interest to a reader. Doxygen will
+document pretty much every part of your code, so do your best here to
+point the reader to the actual API.
+
+If your codebase is fairly large or has different sets of APIs, you
+should use the doxygen 'group' tag to keep these APIs together. For
+example, the roscpp documentation has 'libros' group.
+-->
+
+
+*/
