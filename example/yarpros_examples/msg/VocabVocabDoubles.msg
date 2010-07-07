@@ -5,10 +5,10 @@
 
 int32 list_tag          # set to 256    (BOTTLE_TAG_LIST)
 int32 list_len          # set to 3      (3 elements in list)
-int32 vocab_set_tag     # set to 9      (BOTTLE_TAG_VOCAB)
-int32 vocab_set         # set to (256^2)*'s' + 256*'e' + 't'
-int32 vocab_poss_tag    # set to 9      (BOTTLE_TAG_VOCAB)
-int32 vocab_poss        # set to (256^3)*'p' + (256^2)*'o' + 256*'s' + 's'
-int32 setpoint_list_tag # set to 256+10 (BOTTLE_TAG_LIST+BOTTLE_TAG_DOUBLE)
+int32 vocab1_tag        # set to 9      (BOTTLE_TAG_VOCAB)
+int32 vocab1_val        # set to (256^2)*'s' + 256*'e' + 't'
+int32 vocab2_tag        # set to 9      (BOTTLE_TAG_VOCAB)
+int32 vocab2_val        # set to (256^3)*'p' + (256^2)*'o' + 256*'s' + 's'
+int32 setpoints_tag     # set to 256+10 (BOTTLE_TAG_LIST+BOTTLE_TAG_DOUBLE)
 
-float64[] setpoint_list
+float64[] setpoints
