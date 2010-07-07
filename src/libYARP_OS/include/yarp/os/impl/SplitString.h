@@ -69,7 +69,12 @@ public:
         unsigned int i;
         for (i=0; i<strlen(command)+1; i++) {
             if (at<MAX_ARG_CT) {
+                // yarpserver3 can deal with quoting.
+                // old yarpserver just gets confused.
                 char ch = command[i];
+                if (ch=='\"') {
+                    ch = ' ';
+                }
                 if (ch>=32||ch=='\0'||ch=='\n') {
                     if (ch==splitter||ch=='\n') {
                         ch = '\0';
