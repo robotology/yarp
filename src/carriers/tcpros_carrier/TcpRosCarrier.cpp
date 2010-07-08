@@ -59,7 +59,10 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
         isService = true;
     }
     if (modeValue=="") {
-        printf("need to be a service or topic, this will break\n");
+        printf("*** no topic or service specified!\n");
+        mode = "topic";
+        modeValue = "notopic";
+        isService = false;
     }
     String rawValue = n.getCarrierModifier("raw");
     if (rawValue=="1") {
@@ -76,7 +79,8 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
     //header.data["type"] = "std_msgs/String";
     header.data[mode.c_str()] = modeValue.c_str();
     header.data["md5sum"] = "*";
-    header.data["callerid"] = "/not/valid/at/all/i/am/afraid/old/chum";
+    header.data["callerid"] = proto.getRoute().getFromName().c_str();
+    //"/not/valid/at/all/i/am/afraid/old/chum";
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
     char *at = (char*)header_len.c_str();
@@ -153,6 +157,12 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     }
     RosHeader header;
     header.readHeader(string(m.get(),m.length()));
+
+    if (header.data.find("callerid")!=header.data.end()) {
+        proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
+    } else {
+        proto.setRoute(proto.getRoute().addFromName("tcpros"));
+    }
 
     // let's just ignore everything that is sane and holy, and
     // send the same header right back
