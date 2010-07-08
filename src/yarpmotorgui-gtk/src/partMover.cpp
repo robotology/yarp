@@ -130,9 +130,19 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
       gtk_container_add (GTK_CONTAINER (top_hbox), inv1);
 		
       double positions[MAX_NUMBER_OF_JOINTS];
-		
-      while (!iencs->getEncoders(positions))
-	Time::delay(0.001);
+	
+	  bool ret=false;
+	  do 
+	  {
+		ret=iencs->getEncoders(positions);
+		if (!ret)
+		{
+		  fprintf(stderr, "%s iencs->getEncoders() failed\n", partName);
+		  Time::delay(1);
+		}
+	  }
+      while (!ret);
+	
       double min = 0;
       double max = 100;
       char buffer[40] = {'i', 'n', 'i', 't'};
