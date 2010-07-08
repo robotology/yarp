@@ -343,19 +343,14 @@ ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
     helper=0;
 }
 
-bool ImplementImpedanceControl::initialize(int size, const int *amap)
+bool ImplementImpedanceControl::initialize(int size, const int *amap, const double *enc, const double *zos)
 {
     if (helper!=0)
         return false;
-    
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
     _YARP_ASSERT (helper != 0);
 
-    delete [] dummy;
     return true;
 }
 
@@ -384,6 +379,16 @@ bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double dam
 {
     int k;
     k=castToMapper(helper)->toHw(j);
+	if (castToMapper(helper)->angleToEncoders[j] > 0) 
+		{
+			stiffness = abs (stiffness);
+			damping   = abs (damping);
+		}
+	else
+		{
+			stiffness = -abs (stiffness);
+			damping   = -abs (damping);
+		}
     return iImpedanceRaw->setImpedanceRaw(k, stiffness, damping, offset);
 }
 
@@ -391,7 +396,10 @@ bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *d
 {
 	int k;
     k=castToMapper(helper)->toHw(j);
-    return iImpedanceRaw->getImpedanceRaw(k, stiffness, damping, offset);
+    bool ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping, offset);
+	*stiffness = abs (*stiffness);
+	*damping   = abs (*damping);
+	return ret;
 }
 
 bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
