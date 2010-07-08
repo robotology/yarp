@@ -79,6 +79,7 @@ bool PortCore::listen(const Address& address) {
     face = Carriers::listen(this->address);
 
     if (face==NULL) {
+        stateMutex.post();
         return false;
     }
 

@@ -95,8 +95,7 @@ public:
      * @return true if ok, false otherwise.
      */
     bool isOk() const { return ok; }
-    
-    //added to better handle destruction (Lorenzo).
+
     void onStop();
 };
 

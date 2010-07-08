@@ -195,7 +195,13 @@ static void toDox(PolyDriver& dd, FILE *os) {
 static ConstString terminatorKey = "";
 static bool terminated = false;
 static void handler (int) {
+    static double handleTime = -100;
     static int ct = 0;
+    double now = Time::now();
+    if (now-handleTime<1) {
+        return;
+    }
+    handleTime = now;
     ct++;
     if (ct>3) {
         printf("Aborting...\n");
@@ -206,7 +212,10 @@ static void handler (int) {
                ct,
                terminatorKey.c_str());
         terminated = true;
-        //Terminator::terminateByName(terminatorKey.c_str());
+        Terminator::terminateByName(terminatorKey.c_str());
+    } else {
+        printf("Aborting...\n");
+        ACE_OS::exit(1);
     }
 }
 
@@ -310,10 +319,15 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     Terminee *terminee = 0;
     if (dd.isValid()) {
         Value *v;
-        // default to /argv[0]/quit
-        String s("/");
-        s += argv[0];
-        s += "/quit";
+        String s("/yarpdev/quit");
+        if (options.check("device", v)) {
+            if (v->isString()) {
+                s.clear();
+                s += "/";
+                s += v->toString().c_str();
+                s += "/quit";
+            }
+        }
         if (options.check("name", v)) {
             s.clear();
             s += v->toString().c_str();
@@ -323,10 +337,16 @@ int Drivers::yarpdev(int argc, char *argv[]) {
         terminatorKey = s.c_str();
         if (terminee == 0) {
             printf("Can't allocate terminator port\n");
+            terminatorKey = "";
+            dd.close();
             return 1;
         }
         if (!terminee->isOk()) {
             printf("Failed to create terminator port\n");
+            terminatorKey = "";
+            delete terminee;
+            terminee = NULL;
+            dd.close();
             return 1;
         }
     }

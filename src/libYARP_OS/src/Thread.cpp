@@ -35,7 +35,9 @@ public:
     }
 
     virtual void close() {
-        owner.onStop();
+        if (isRunning()) {
+            owner.onStop();
+        }
         ThreadImpl::close();
     }
 
