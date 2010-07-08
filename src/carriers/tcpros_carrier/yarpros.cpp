@@ -14,18 +14,43 @@
 using namespace yarp::os;
 using namespace std;
 
-#define ROSCORE_PORT "/roscore"
+static Contact roscoreFromEnv() {
+    ConstString addr = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    Contact c = Contact::fromString(addr.c_str());
+    if (c.isValid()) {
+        c = c.addCarrier("xmlrpc");
+    }
+    return c;
+}
+
+static ConstString roscore() {
+    static ConstString addr = "/roscore";
+    static bool checkedEnv = false;
+    if (!checkedEnv) {
+        Contact c = roscoreFromEnv();
+        if (c.isValid()) {
+            addr = c.toString();
+        }
+        checkedEnv = true;
+    }
+    //printf("ROSCORE %s\n", addr.c_str());
+    return addr;
+}
+
+#define ROSCORE_PORT roscore()
 
 bool rpc(const char *target,
          const char *carrier,
          PortWriter& writer,
          PortReader& reader) {
-    Contact c = Network::queryName(target);
+    Contact c = NetworkBase::queryName(target);
+    printf("contact %s for %s\n", c.toString().c_str(), target);
     if (!c.isValid()) return false;
     ContactStyle style;
     style.quiet = false;
     style.timeout = 4;
     style.carrier = carrier;
+    printf("RPC to %s\n", c.toString().c_str());
     bool ok = Network::write(c,writer,reader,style);
     return ok;
 }
@@ -159,6 +184,7 @@ bool RosLookup::lookupTopic(const char *name) {
     Bottle& sublst = lst.addList();
     sublst.addString("TCPROS");
     //printf("Sending [%s] to %s\n", req.toString().c_str(),toString().c_str());
+    Contact c = Contact::fromString(toString().c_str());
     rpc(toString().c_str(),"xmlrpc",req,reply);
     if (reply.get(0).asInt()!=1) {
         printf("Failure looking up topic %s: %s\n", name, reply.toString().c_str());
@@ -214,7 +240,8 @@ int main(int argc, char *argv[]) {
     if (argc<=1) {
         printf("Hello, good evening, and welcome to yarpros\n");
         printf("Here are some things you can do:\n");
-        usage("roscore <hostname> <port number>","tell yarp how to reach the ros master","roscore 192.168.0.1 11311");
+        usage("roscore <hostname> <port number>","set yarp port /roscore to point to the ros master","roscore 192.168.0.1 11311");
+        usage("roscore","set yarp port /roscore to equal ROS_MASTER_URI","roscore");
         usage("import <name>","import a ROS name into YARP","import /talker");
         usage("import <yarpname> <nodename> <topicname>","import a ROS node/topic pair as a port","import /talker /talker /chatter");
         usage("read <yarpname> <nodename> <topicname>","read to a YARP port from a ROS node's contribution to a topic","read /read /talker /chatter");
@@ -235,15 +262,28 @@ int main(int argc, char *argv[]) {
     ConstString tag = cmd.get(0).asString();
 
     if (tag=="roscore") {
-        if (!(cmd.get(1).isString()&&cmd.get(2).isInt())) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
-            return 1;
+        if (cmd.size()>1) {
+            if (!(cmd.get(1).isString()&&cmd.get(2).isInt())) {
+                fprintf(stderr,"wrong syntax, run with no arguments for help\n");
+                return 1;
+            }
+            Bottle reply;
+            register_port("/roscore", "xmlrpc",
+                          cmd.get(1).asString(), cmd.get(2).asInt(), 
+                          reply);
+            printf("%s\n", reply.toString().c_str());
+        } else {
+            Bottle reply;
+            Contact c = roscoreFromEnv();
+            if (!c.isValid()) {
+                fprintf(stderr,"cannot find roscore, is ROS_MASTER_URI set?\n");
+                return 1;
+            }
+            register_port("/roscore", "xmlrpc",
+                          c.getHost(), c.getPort(), 
+                          reply);
+            printf("%s\n", reply.toString().c_str());
         }
-        Bottle reply;
-        register_port(ROSCORE_PORT, "xmlrpc",
-                      cmd.get(1).asString(), cmd.get(2).asInt(), 
-                      reply);
-        printf("%s\n", reply.toString().c_str());
         return 0;
     } else if (tag=="import") {
         Bottle req, reply;

@@ -151,6 +151,10 @@ Contact Contact::fromString(const char *txt) {
         base = str.find(":/");
         offset = 1;
     }
+    if (base==ConstString::npos) {
+        base = str.find("/");
+        offset = 0;
+    }
     if (base!=ConstString::npos) {
         c = Contact::byCarrier(str.substr(0,base));
         start = base+offset;
@@ -184,6 +188,7 @@ Contact Contact::fromString(const char *txt) {
                 }
             }
         }
+        //printf("Mode %d nums %d\n", mode, nums);
         if (mode==1 && nums>=1) {
             // yes, machine:nnn
             ConstString machine = str.substr(start+1,colon-start-1);
@@ -200,7 +205,10 @@ Contact Contact::fromString(const char *txt) {
             start = i;
             }*/
     }
-    c = c.addName(str.substr(start).c_str());
+    ConstString rname = str.substr(start);
+    if (rname!="/") {
+        c = c.addName(rname.c_str());
+    }
     return c;
 }
 

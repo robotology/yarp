@@ -80,7 +80,7 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
             return c.create();
         }
     }
-    ACE_DEBUG((LM_ERROR,"Could not find carrier %s", (name!=NULL)?name->c_str():"[bytes]"));
+    ACE_DEBUG((LM_ERROR,"Could not find carrier \"%s\"", (name!=NULL)?name->c_str():"[bytes]"));
     //throw IOException("Could not find carrier");
     return NULL;
 }

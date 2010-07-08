@@ -26,8 +26,11 @@ using namespace yarp::os;
 #define CONF_FILENAME YARP_CONFIG_FILENAME
 
 
-String NameConfig::getEnv(const String& key) {
+String NameConfig::getEnv(const String& key, bool *found) {
     const char *result = ACE_OS::getenv(key.c_str());
+    if (found != NULL) {
+        *found = (result!=NULL);
+    }
     if (result == NULL) {
         return "";
     }

@@ -371,6 +371,18 @@ public:
      *
      */
     static void queryBypass(NameStore *store);
+
+    /**
+     *
+     * Read a variable from the environment.
+     *
+     * @param key the variable to read
+     * @param found an optional variable to set to true iff variable is found
+     * @result the value of the environment variable, or "" if not found
+     *
+     */
+    static ConstString getEnvironment(const char *key,
+                                      bool *found = 0/*NULL*/);
 };
 
 /**

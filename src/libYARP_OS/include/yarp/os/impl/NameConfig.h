@@ -54,7 +54,7 @@ public:
 
     String getNamespace(bool refresh = false);
 
-    static String getEnv(const String& key);
+    static String getEnv(const String& key, bool *found = 0/*NULL*/);
 
 private:
     Address address;

@@ -29,6 +29,7 @@
 #include <yarp/os/impl/StreamConnectionReader.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/impl/PortCommand.h>
+#include <yarp/os/impl/NameConfig.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -216,8 +217,10 @@ static int metaConnect(const char *csrc,
     bool srcIsTopic = false;
     if (staticSrc.getCarrier()!="topic") {
         if (!topical) {
-            Carrier *srcCarrier = 
-                Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+            Carrier *srcCarrier = NULL;
+            if (staticSrc.getCarrier()!="") {
+                srcCarrier = Carriers::chooseCarrier(staticSrc.getCarrier().c_str());
+            }
             if (srcCarrier!=NULL) {
                 String srcBootstrap = srcCarrier->getBootstrapCarrierName();
                 if (srcBootstrap!="") {
@@ -236,8 +239,10 @@ static int metaConnect(const char *csrc,
     bool destIsTopic = false;
     if (staticDest.getCarrier()!="topic") {
         if (!topical) {
-            Carrier *destCarrier = 
-                Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+            Carrier *destCarrier = NULL;
+            if (staticDest.getCarrier()!="") {
+                destCarrier = Carriers::chooseCarrier(staticDest.getCarrier().c_str());
+            }
             if (destCarrier!=NULL) {
                 String destBootstrap = destCarrier->getBootstrapCarrierName();
                 if (destBootstrap!="") {
@@ -690,4 +695,9 @@ void NetworkBase::queryBypass(NameStore *store) {
     client.queryBypass(store);
 }
 
+
+ConstString NetworkBase::getEnvironment(const char *key,
+                                        bool *found) {
+    return NameConfig::getEnv(key,found).c_str();
+}
 
