@@ -755,7 +755,7 @@ protected:
      * @param amap is a lookup table mapping axes onto physical drivers.
      * @return true if initialized succeeded, false if it wasn't executed, or assert.
      */
-    bool initialize (int size, const int *amap);
+    bool initialize (int size, const int *amap, const double *enc, const double *zos);
           
     /**
      * Clean up internal data and memory.
