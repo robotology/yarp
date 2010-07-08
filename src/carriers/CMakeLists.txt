@@ -1,6 +1,7 @@
 option(CREATE_OPTIONAL_CARRIERS "Compile some optional carriers" FALSE)
 if (CREATE_OPTIONAL_CARRIERS)
   include(YarpPlugin)
+  include_directories(${ACE_INCLUDE_DIRS})
   BEGIN_PLUGIN_LIBRARY(yarpcar)
     add_subdirectory(human_carrier)
     add_subdirectory(mpi_carrier)

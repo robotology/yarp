@@ -63,8 +63,9 @@ static void initWinSock()
 static inline bool
 nonFatalError()
 {
-  int err = XmlRpcSocket::getError();
-  return (err == EINPROGRESS || err == EAGAIN || err == EWOULDBLOCK || err == EINTR);
+  //int err = XmlRpcSocket::getError();
+  //return (err == EINPROGRESS || err == EAGAIN || err == EWOULDBLOCK || err == EINTR);
+	return false; // do not need this for YARP, and causes problems on windows
 }
 
 
