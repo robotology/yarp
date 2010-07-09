@@ -8,6 +8,7 @@
 
 #include "TcpRosCarrier.h"
 #include "RosHeader.h"
+#include "RosSlave.h"
 
 #include <string>
 #include <map>
@@ -288,4 +289,72 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
 bool TcpRosCarrier::reply(Protocol& proto, SizedWriter& writer) {
     // don't need to do anything special for now.
     return proto.defaultReply(writer);
+}
+
+
+int TcpRosCarrier::connect(const yarp::os::Contact& src,
+                           const yarp::os::Contact& dest,
+                           const yarp::os::ContactStyle& style,
+                           int mode,
+                           bool reversed) {
+    switch (mode) {
+    case YARP_ENACT_DISCONNECT:
+        printf("tcpros disconnect not implemented yet in this direction \n");
+        return -1;
+        break;
+    case YARP_ENACT_EXISTS:
+        printf("tcpros connection check not implemented yet in this direction \n");
+        return -1;
+        break;
+    }
+
+    if (!reversed) return -1;
+
+    Contact fullDest = dest;
+    if (fullDest.getPort()<=0) {
+        fullDest = NetworkBase::queryName(fullDest.getName().c_str());
+    }
+
+    Contact fullSrc = src;
+    if (fullSrc.getPort()<=0) {
+        fullSrc = NetworkBase::queryName(fullSrc.getName().c_str());
+    }
+
+    Name n((style.carrier + "://test").c_str());
+    ConstString mode = "topic";
+    ConstString topic = n.getCarrierModifier("topic").c_str();
+    if (topic=="") {
+        printf("Warning, no topic!\n");
+        topic = "notopic";
+    }
+
+    RosSlave slave(false);
+    dbg_printf("Starting temporary slave\n");
+    slave.start(fullDest.getHost(),fullDest.getPort());
+    Contact addr_slave = slave.where();
+    Bottle cmd, reply;
+    cmd.addString("publisherUpdate");
+    cmd.addString("dummy_id");
+    cmd.addString(topic);
+    Bottle& lst = cmd.addList();
+    char buf[1000];
+    sprintf(buf,"http://%s:%d/", addr_slave.getHost().c_str(), 
+            addr_slave.getPort());
+    lst.addString(buf);
+    ContactStyle req;
+    req.carrier = "xmlrpc";
+    req.timeout = 4;
+    req.quiet = false;
+    bool ok = NetworkBase::write(fullSrc,cmd,reply,req);
+    dbg_printf("%s\n",reply.toString().c_str());
+    if (!ok) {
+        fprintf(stderr, "error talking to %s\n", fullSrc.toString().c_str());
+    }
+    slave.stop();
+    if (!slave.isOk()) {
+        fprintf(stderr, "Problem: did not get a callback from ROS - can happen if connection already exists.\n");
+        ok = false;
+    }
+
+    return ok?0:1;
 }

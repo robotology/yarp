@@ -88,7 +88,7 @@ public:
     }
 
     virtual String toString() {
-        return "tcpros_carrier";
+        return isService?"rossrv_carrier":"tcpros_carrier";
     }
 
     virtual void getHeader(const Bytes& header) {
@@ -157,6 +157,13 @@ public:
     }
 
     virtual String getBootstrapCarrierName() { return ""; }
+
+    virtual int connect(const yarp::os::Contact& src,
+                        const yarp::os::Contact& dest,
+                        const yarp::os::ContactStyle& style,
+                        int mode,
+                        bool reversed);
+
 };
 
 /*
@@ -170,6 +177,10 @@ class yarp::os::impl::RosSrvCarrier : public TcpRosCarrier {
 public:
     RosSrvCarrier() {
         isService = true;
+    }
+
+    virtual Carrier *create() {
+        return new RosSrvCarrier();
     }
 };
 

@@ -11,6 +11,8 @@ if (NOT SKIP_tcpros_carrier)
     TcpRosCarrier.h TcpRosCarrier.cpp
     TcpRosStream.h TcpRosStream.cpp
     RosHeader.h RosHeader.cpp
+    RosSlave.h
+    RosLookup.h RosLookup.cpp
     BlobHeader.h)
   target_link_libraries(rostcp_carrier ${YARP_LIBRARIES})
 
