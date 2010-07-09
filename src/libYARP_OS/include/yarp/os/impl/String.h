@@ -21,6 +21,7 @@ namespace yarp {
 }
 
 #define YARP_STRSTR(haystack,needle) (haystack).find(needle)
+#define YARP_STRSTR_OFFSET(haystack,needle,offset) (haystack).find_first_of(needle,offset)
 #define YARP_STRSET(str,cstr,len,owned) str = std::string(cstr,len)
 typedef size_t YARP_STRING_INDEX;
 
@@ -59,6 +60,7 @@ namespace yarp {
 }
 
 #define YARP_STRSTR(haystack,needle) (haystack).strstr(needle)
+#define YARP_STRSTR_OFFSET(haystack,needle,offset) (haystack).find(needle,offset)
 #define YARP_STRSET(str,cstr,len,owned) str.set(cstr,len,owned)
 typedef yarp::os::impl::String YARP_KEYED_STRING;
 #ifdef YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
