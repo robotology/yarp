@@ -78,6 +78,7 @@ public:
     int length() const;
 
     int find(const char *needle) const;
+    int find(const char *needle, int start) const;
 
     ConstString substr(int start = 0, int n = -1) const;
 

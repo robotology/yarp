@@ -101,6 +101,12 @@ int ConstString::find(const char *needle) const {
     return (int)YARP_STRSTR(HELPER(implementation),needle);
 }
 
+int ConstString::find(const char *needle, int start) const {
+    return (int)YARP_STRSTR_OFFSET(HELPER(implementation),needle,
+                                   (YARP_STRING_INDEX)start);
+}
+
+
 ConstString ConstString::substr(int start, int n) const {
     return ConstString(HELPER(implementation).substr(start,n).c_str());
 }
