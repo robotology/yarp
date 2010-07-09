@@ -88,6 +88,7 @@ public:
         logNeeded = false;
         flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
         timeout = -1;
+        verbosity = 1;
     }
 
     /**
@@ -313,6 +314,14 @@ public:
         this->timeout = timeout;
     }
 
+    void setVerbosity(int level) {
+        verbosity = level;
+    }
+
+    int getVerbosity() {
+        return verbosity;
+    }
+
 private:
 
     // internal maintenance of sub units
@@ -355,6 +364,7 @@ private:
     int connectionListeners;
     int inputCount, outputCount, dataOutputCount;
     int flags;
+    int verbosity;
     bool logNeeded;
     PortCorePackets packets;
     String envelope;

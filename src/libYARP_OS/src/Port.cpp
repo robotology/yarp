@@ -305,11 +305,13 @@ bool Port::open(const Contact& contact, bool registerName) {
         }
     }
     if (success) {
-        YARP_INFO(Logger::get(),
-                  String("Port ") +
-                  address.getRegName() +
-                  " active at " +
-                  address.toString());
+        if (core.getVerbosity()>=1) {
+            YARP_INFO(Logger::get(),
+                      String("Port ") +
+                      address.getRegName() +
+                      " active at " +
+                      address.toString());
+        }
     } else {
         YARP_ERROR(Logger::get(),
                    String("Port ") +
@@ -515,6 +517,14 @@ void Port::setRpcMode(bool expectRpc) {
 
 void Port::setTimeout(float timeout) {
     HELPER(implementation).setTimeout(timeout);
+}
+
+void Port::setVerbosity(int level) {
+    HELPER(implementation).setVerbosity(level);
+}
+
+int Port::getVerbosity() {
+    return HELPER(implementation).getVerbosity();
 }
 
 

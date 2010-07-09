@@ -224,6 +224,21 @@ public:
      */
     void setTimeout(float timeout);
 
+    /**
+     *
+     * Set whether the port should issue messages about its operations.
+     * @param level verbosity level, -1 to inhibit messages.
+     *
+     */
+    void setVerbosity(int level);
+
+    /**
+     *
+     * @return port verbosity level.
+     *
+     */
+    int getVerbosity();
+
 private:
     void *implementation;
 
