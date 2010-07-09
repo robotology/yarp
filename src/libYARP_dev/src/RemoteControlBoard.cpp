@@ -1807,10 +1807,10 @@ public:
 	bool setImpedanceVelocityMode(int j)
     { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE_VEL, j); }
 
-    bool setOpenLoopMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
+    bool setOpenLoopMode()
+    { return set1V(VOCAB_OPENLOOP_MODE); }
 
-    bool setOpenLoopControlMode(int j)
+    bool setOpenLoopMode(int j)
     {  return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
 
     bool getControlMode(int j, int *mode)

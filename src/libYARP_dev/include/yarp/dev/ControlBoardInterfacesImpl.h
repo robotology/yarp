@@ -676,6 +676,7 @@ public:
     bool setTorqueMode(int j);
 	bool setImpedancePositionMode(int j);
 	bool setImpedanceVelocityMode(int j);
+	bool setOpenLoopMode(int j);
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool getControlMode(int j, int *f);
@@ -794,7 +795,7 @@ public:
     ~ImplementOpenLoopControl();
     bool setOutput(int j, double v);
     bool setOutputs(const double *v);
-    bool setOpenLoopMode(int j);
+    bool setOpenLoopMode();
     bool getOutput(int j, double *v);
     bool getOutputs(double *v);
 };
@@ -917,8 +918,8 @@ public:
     virtual bool getAxes(int *ax)
     {return NOT_YET_IMPLEMENTED("getAxes");}
 
-    virtual bool setPositionMode()
-    {return NOT_YET_IMPLEMENTED("setPositionMode");}
+    virtual bool setPositionModeRaw()
+    {return NOT_YET_IMPLEMENTED("setPositionModeRaw");}
 
     virtual bool positionMoveRaw(int j, double ref)
     {return NOT_YET_IMPLEMENTED("positionMoveRaw");}

@@ -78,7 +78,7 @@ public:
     /*
     * Enable open loop mode.
     */
-    virtual bool setOpenLoopModeRaw(int j)=0;
+    virtual bool setOpenLoopModeRaw()=0;
 };
 
 
@@ -115,7 +115,7 @@ public:
      /*
     * Enable open loop mode.
     */
-    virtual bool setOpenLoopMode(int j)=0;
+    virtual bool setOpenLoopMode()=0;
 };
 
 
@@ -525,7 +525,7 @@ public:
      * it can be left empty.
      * return true/false on success failure
      */
-    virtual bool setPositionMode()=0;
+    virtual bool setPositionModeRaw()=0;
 
     /** Set new reference point for a single axis.
      * @param j joint number
@@ -803,7 +803,7 @@ public:
      * it can be left empty.
      * @return true/false on success failure
      */
-    virtual bool setVelocityMode()=0;
+    virtual bool setVelocityModeRaw()=0;
 
     /**
      * Start motion at a given speed, single joint.
@@ -2012,6 +2012,9 @@ public:
 
 // interface IControlLimits sets/gets
 #define VOCAB_LIMITS VOCAB4('l','l','i','m')
+
+// interface OpenLoop Mode
+#define VOCAB_OPENLOOP_MODE VOCAB4('o','l','p','d')
 
 // interface IAxisInfo
 #define VOCAB_INFO_NAME VOCAB4('n','a','m','e')

@@ -1,3 +1,12 @@
+2010-07-09  Marco Randazzo  <marco.randazzo@iit.it>
+
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
+    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.inl
+    * src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
+    * src/libYARP_dev/src/RemoteControlBoard.cpp
+	Fixed the signature of various functions related to IOpenLoopControl.
+	
 2010-07-08  Marco Randazzo  <marco.randazzo@iit.it>
 
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h

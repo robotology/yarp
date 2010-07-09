@@ -104,6 +104,12 @@ bool ImplementControlMode::setTorqueMode(int j)
     return raw->setTorqueModeRaw(k);
 }
 
+bool ImplementControlMode::setOpenLoopMode(int j)
+{
+    int k=castToMapper(helper)->toHw(j);
+    return raw->setOpenLoopModeRaw(k);
+}
+
 bool ImplementControlMode::setImpedancePositionMode(int j)
 {
     int k=castToMapper(helper)->toHw(j);
@@ -468,11 +474,9 @@ bool ImplementOpenLoopControl::setOutputs(const double *v)
     return raw->setOutputsRaw(dummy);
 }
 
-bool ImplementOpenLoopControl::setOpenLoopMode(int j)
+bool ImplementOpenLoopControl::setOpenLoopMode()
 {
-    int k=castToMapper(helper)->toHw(j);
-
-    return raw->setOpenLoopModeRaw(k);
+    return raw->setOpenLoopModeRaw();
 }
 
 bool ImplementOpenLoopControl::getOutputs(double *v)
