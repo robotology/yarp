@@ -44,10 +44,6 @@ static bool needsLookup(const Contact& contact) {
     return true;
 }
 
-#define ENACT_CONNECT 1
-#define ENACT_DISCONNECT 2
-#define ENACT_EXISTS 3
-
 static int noteDud(const Contact& src) {
     //printf("DUD %s\n", src.toString().c_str());
     NameClient& nic = NameClient::getNameClient();
@@ -79,7 +75,7 @@ static int enactConnection(const Contact& src,
     rpc.admin = true;
     rpc.quiet = style.quiet;
 
-    if (mode==ENACT_EXISTS) {
+    if (mode==YARP_ENACT_EXISTS) {
         Bottle cmd, reply;
         cmd.addVocab(Vocab::encode("list"));
         cmd.addVocab(Vocab::encode(reversed?"in":"out"));
@@ -101,7 +97,7 @@ static int enactConnection(const Contact& src,
         return 1;
     }
 
-    int act = (mode==ENACT_DISCONNECT)?VOCAB3('d','e','l'):VOCAB3('a','d','d');
+    int act = (mode==YARP_ENACT_DISCONNECT)?VOCAB3('d','e','l'):VOCAB3('a','d','d');
 
     // Let's ask the destination to connect/disconnect to the source.
     // We assume the YARP carrier will reverse the connection if
@@ -112,7 +108,7 @@ static int enactConnection(const Contact& src,
     if (style.carrier!="") {
         c = c.addCarrier(style.carrier);
     }
-    if (mode!=ENACT_DISCONNECT) {
+    if (mode!=YARP_ENACT_DISCONNECT) {
         cmd.addString(c.toString());
     } else {
         cmd.addString(c.getName());
@@ -134,10 +130,10 @@ static int enactConnection(const Contact& src,
         msg = reply.get(0).asString();
         ok = msg[0]=='A'||msg[0]=='R';
     }
-    if (mode==ENACT_DISCONNECT && !ok) {
+    if (mode==YARP_ENACT_DISCONNECT && !ok) {
         msg = "no such connection\n";
     }
-    if (mode==ENACT_CONNECT && !ok) {
+    if (mode==YARP_ENACT_CONNECT && !ok) {
         noteDud(dest);
     }
     if (!style.quiet) {
@@ -258,9 +254,9 @@ static int metaConnect(const char *csrc,
 
     if (srcIsTopic||destIsTopic) {
         Bottle cmd, reply;
-        if (mode==ENACT_CONNECT) {
+        if (mode==YARP_ENACT_CONNECT) {
             cmd.add("subscribe");
-        } else if (mode==ENACT_DISCONNECT) {
+        } else if (mode==YARP_ENACT_DISCONNECT) {
             cmd.add("unsubscribe");
         } else {
             fprintf(stderr,"Failure: cannot check subscriptions yet\n");
@@ -320,9 +316,9 @@ static int metaConnect(const char *csrc,
 
     bool connectionIsPush = false;
     bool connectionIsPull = false;
+    Carrier *connectionCarrier = NULL;
     if (style.carrier!="topic") {
-        Carrier *connectionCarrier = 
-            Carriers::chooseCarrier(style.carrier.c_str());
+        connectionCarrier = Carriers::chooseCarrier(style.carrier.c_str());
         if (connectionCarrier!=NULL) {
             connectionIsPush = connectionCarrier->isPush();
             connectionIsPull = !connectionIsPush;
@@ -355,7 +351,28 @@ static int metaConnect(const char *csrc,
         return enactConnection(staticDest,c,style,mode,true);
     }
 
-    fprintf(stderr,"Failure: no method known to initiate such a connection\n");
+    int result = -1;
+    if (connectionCarrier!=NULL) {
+        if (!connectionIsPull) {
+            Contact c = Contact::fromString(dest);
+            result = connectionCarrier->connect(staticSrc,c,style,mode,false);
+        } else {
+            Contact c = Contact::fromString(src);
+            result = connectionCarrier->connect(staticDest,c,style,mode,true);
+        }
+    }
+    if (result!=-1) {
+        if (!style.quiet) {
+            if (result==0) {
+                printf("Success: added connection using custom carrier method\n");
+            } else {
+                printf("Failure: custom carrier method did not work\n");
+            }
+        }
+        return result;
+    }
+
+    fprintf(stderr,"Failure: no method known for this connection type\n");
 
     return 1;
 }
@@ -368,7 +385,7 @@ bool NetworkBase::connect(const char *src, const char *dest,
     if (carrier!=NULL) {
         style.carrier = carrier;
     }
-    int result = metaConnect(src,dest,style,ENACT_CONNECT);
+    int result = metaConnect(src,dest,style,YARP_ENACT_CONNECT);
     /*
     if (carrier!=NULL) {
         // prepend carrier
@@ -388,7 +405,7 @@ bool NetworkBase::disconnect(const char *src, const char *dest, bool quiet) {
     //return result == 0;
     ContactStyle style;
     style.quiet = quiet;
-    int result = metaConnect(src,dest,style,ENACT_DISCONNECT);
+    int result = metaConnect(src,dest,style,YARP_ENACT_DISCONNECT);
     return result == 0;
 }
 
@@ -617,7 +634,7 @@ bool NetworkBase::write(const Contact& contact,
 bool NetworkBase::isConnected(const char *src, const char *dest, bool quiet) {
     ContactStyle style;
     style.quiet = quiet;
-    int result = metaConnect(src,dest,style,ENACT_EXISTS);
+    int result = metaConnect(src,dest,style,YARP_ENACT_EXISTS);
     if (result!=0) {
         if (!quiet) {
             printf("No connection from %s to %s found\n",

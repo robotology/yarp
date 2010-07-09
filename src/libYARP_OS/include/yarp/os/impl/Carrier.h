@@ -10,8 +10,15 @@
 #define _YARP2_CARRIER_
 
 #include <yarp/os/impl/ShiftStream.h>
-#include <yarp/Bytes.h>
 #include <yarp/os/impl/SizedWriter.h>
+#include <yarp/os/Bytes.h>
+#include <yarp/os/Contact.h>
+#include <yarp/os/Network.h>
+
+#define YARP_ENACT_CONNECT 1
+#define YARP_ENACT_DISCONNECT 2
+#define YARP_ENACT_EXISTS 3
+
 
 namespace yarp {
     namespace os {
@@ -344,6 +351,25 @@ public:
      */
     virtual String getBootstrapCarrierName() { return "tcp"; }
 
+    /**
+     *
+     * Some carrier types may require special connection logic.
+     * This can be implemented here.  Normally this is not necessary.
+     *
+     * @param src Initiator of the connection
+     * @param dest Destination of the connection
+     * @param style Options for connection
+     * @param mode YARP_ENACT_CONNECT / YARP_ENACT_DISCONNECT / YARP_ENACT_EXISTS
+     * @param reversed true for pull connections, false for push connections
+     * @result -1 if no attempt made to connect, 0 on success, 1 on failure
+     */
+    virtual int connect(const yarp::os::Contact& src,
+                        const yarp::os::Contact& dest,
+                        const yarp::os::ContactStyle& style,
+                        int mode,
+                        bool reversed) {
+        return -1;
+    }
 };
 
 #endif
