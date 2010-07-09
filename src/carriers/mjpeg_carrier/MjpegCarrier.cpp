@@ -6,11 +6,22 @@
  *
  */
 
-#include "MjpegCarrier.h"
 
+#include <stdio.h>
+
+#ifdef WIN32
+#define INT32 long  // jpeg's definition
+#define QGLOBAL_H 1
+#endif
 extern "C" {
 #include <jpeglib.h>
 }
+#ifdef WIN32
+#undef INT32
+#undef QGLOBAL_H
+#endif
+
+#include "MjpegCarrier.h"
 
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
@@ -19,6 +30,8 @@ extern "C" {
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
+
+#define dbg_printf if (0) printf
 
 typedef struct {
     struct jpeg_destination_mgr pub;
@@ -31,11 +44,17 @@ typedef struct {
 typedef net_destination_mgr *net_destination_ptr;
 
 void send_net_data(JOCTET *data, int len, void *client) {
-    //printf("Send %d bytes\n", len);
+    dbg_printf("Send %d bytes\n", len);
     Protocol *p = (Protocol *)client;
     char hdr[1000];
-    sprintf(hdr,"Content-Type: image/jpeg\r\n\
-Content-Length: %d\r\n\r\n", len);
+	sprintf(hdr,"\n");
+	const char *brk = "\n";
+	if (hdr[1]=='\0') {
+		brk = "\r\n";
+	}
+	dbg_printf("Using terminator %s\n",(hdr[1]=='\0')?"\\r\\n":"\\n");
+    sprintf(hdr,"Content-Type: image/jpeg%s\
+Content-Length: %d%s%s", brk, len, brk, brk);
     Bytes hbuf(hdr,strlen(hdr));
     p->os().write(hbuf);
     Bytes buf((char *)data,len);
@@ -50,7 +69,7 @@ Content-Length: %d\r\n\r\n", len);
     }
     */
     p->os().write(buf);
-    sprintf(hdr,"\r\n--boundarydonotcross\r\n");
+    sprintf(hdr,"%s--boundarydonotcross%s",brk,brk);
     Bytes hbuf2(hdr,strlen(hdr));
     p->os().write(hbuf2);
 
@@ -125,7 +144,7 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
             img_len = writer.length(i)-len;
         }
     }
-    //printf("Passing on a %dx%d image\n", hdr.width, hdr.height);
+    dbg_printf("Passing on a %dx%d image\n", hdr.width, hdr.height);
     if (hdr.imgSize!=img_len) {
         printf(" size mismatch\n");
         //exit(1);
@@ -150,9 +169,11 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
     cinfo.in_color_space = JCS_RGB;
     jpeg_set_defaults(&cinfo); 
     //jpeg_set_quality(&cinfo, 85, TRUE);
+	dbg_printf("Starting to compress...\n");
     jpeg_start_compress(&cinfo, TRUE);
+	dbg_printf("Done compressing (height %d)\n", cinfo.image_height);
     while (cinfo.next_scanline < cinfo.image_height) {
-        //printf("Writing row %d...\n", cinfo.next_scanline);
+        dbg_printf("Writing row %d...\n", cinfo.next_scanline);
         row_pointer[0] = data + cinfo.next_scanline * row_stride;
         jpeg_write_scanlines(&cinfo, row_pointer, 1);
     }
@@ -175,8 +196,6 @@ bool MjpegCarrier::sendHeader(Protocol& proto) {
         target = "GET /";
         target += pathValue;
     }
-
-
     target += " HTTP/1.1\n\n";
     Bytes b((char*)target.c_str(),target.length());
     proto.os().write(b);

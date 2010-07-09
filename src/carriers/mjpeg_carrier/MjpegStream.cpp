@@ -6,6 +6,21 @@
  *
  */
 
+#include <stdio.h>
+
+#ifdef WIN32
+#define INT32 long  // jpeg's definition
+#define QGLOBAL_H 1
+#endif
+extern "C" {
+#include <jpeglib.h>
+}
+#ifdef WIN32
+#undef INT32
+#undef QGLOBAL_H
+#endif
+
+#include <setjmp.h>
 
 #include "MjpegStream.h"
 
@@ -14,8 +29,6 @@
 
 #include <yarp/os/impl/Logger.h>
 
-#include <jpeglib.h>
-#include <setjmp.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
@@ -97,6 +110,7 @@ void jpeg_net_src (j_decompress_ptr cinfo, char *buf, int buflen)
 
 
 int MjpegStream::read(const Bytes& b) {
+	bool debug = false;
     if (remaining==0) {
         if (phase==1) {
             phase = 2;
@@ -110,24 +124,26 @@ int MjpegStream::read(const Bytes& b) {
         String s = "";
         do {
             s = NetType::readLine(delegate->getInputStream());
-            //printf("Read %s\n", s.c_str());
+            if (debug) printf("Read %s\n", s.c_str());
         } while (s[0]!='-' && delegate->getInputStream().isOk());
         s = NetType::readLine(delegate->getInputStream());
         if (s!="Content-Type: image/jpeg") {
             printf("Unknown content type - %s\n", s.c_str());
             continue;
         }
+        if (debug) printf("Read content type - %s\n", s.c_str());
         s = NetType::readLine(delegate->getInputStream());
+        if (debug) printf("Read content length - %s\n", s.c_str());
         Bottle b(s.c_str());
         if (b.get(0).asString()!="Content-Length:") {
             printf("Expected Content-Length: got - %s\n", b.get(0).asString().c_str());
             continue;
         }
         int len = b.get(1).asInt();
-        //printf("Length is %d\n", len);
+        if (debug) printf("Length is %d\n", len);
         do {
             s = NetType::readLine(delegate->getInputStream());
-            //printf("Read %s\n", s.c_str());
+            if (debug) printf("Read %s\n", s.c_str());
         } while (s[0]!='\0');
         cimg.allocate(len);
         NetType::readFull(delegate->getInputStream(),cimg.bytes());
@@ -148,8 +164,7 @@ int MjpegStream::read(const Bytes& b) {
         jpeg_net_src(&cinfo,cimg.get(),cimg.length());
         jpeg_read_header(&cinfo, TRUE);
         jpeg_calc_output_dimensions(&cinfo);
-        //printf("Got image %dx%d\n", cinfo.output_width,
-        //cinfo.output_height);
+        if (debug) printf("Got image %dx%d\n", cinfo.output_width, cinfo.output_height);
         img.resize(cinfo.output_width,cinfo.output_height);
         jpeg_start_decompress(&cinfo);
         //int row_stride = cinfo.output_width * cinfo.output_components;
@@ -161,7 +176,7 @@ int MjpegStream::read(const Bytes& b) {
             jpeg_read_scanlines(&cinfo, lines, 1);
             at++;
         }
-        //printf("Read image!\n");
+        if (debug) printf("Read image!\n");
         jpeg_finish_decompress(&cinfo);
         jpeg_destroy_decompress(&cinfo);
         imgHeader.setFromImage(img);
