@@ -182,19 +182,32 @@ String NameConfig::getHostName() {
     // try to pick a good host identifier
 
     String result = "127.0.0.1";
+    bool loopback = true;
 
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
+    // Pick an IP address.
+    // Prefer non-local addresses, then shorter addresses.
+    // Avoid ::1 and the like.
     if (ACE::get_ip_interfaces(count,ips)>=0) {
         for (size_t i=0; i<count; i++) {
             String ip = ips[i].get_host_addr();
             YARP_DEBUG(Logger::get(), String("scanning network interface ") +
                        ip);
-            if (result=="localhost") {
-                result = ip; // can't be worse
+            bool take = false;
+            if (ip[0]!=':') {
+                if (result=="localhost") {
+                    take = true; // can't be worse
+                }
+                if (loopback) {
+                    take = true; // can't be worse
+                } else if (ip.length()<result.length()) {
+                    take = true;
+                }
             }
-            if (result=="127.0.0.1") {
-                result = ip; // can't be worse
+            if (take) {
+                result = ip;
+                loopback = ips[i].is_loopback();
             }
         }
         delete[] ips;
