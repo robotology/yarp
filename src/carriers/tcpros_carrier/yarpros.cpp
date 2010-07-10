@@ -47,8 +47,7 @@ void show_usage() {
     // READ and WRITE not needed any more - can be done via registration
     //usage("read <yarpname> <nodename> <topicname>","read to a YARP port from a ROS node's contribution to a topic","read /read /talker /chatter");
     //usage("write <yarpname> <nodename> <topicname>","write from a YARP port to a ROS node's subscription to a topic","write /write /listener /chatter");
-
-    usage("rpc <yarpname> <nodename> <servicename>","write/read from a YARP port to a ROS node's named service","rpc /rpc /add_two_ints_server /add_two_ints");
+    //usage("rpc <yarpname> <nodename> <servicename>","write/read from a YARP port to a ROS node's named service","rpc /rpc /add_two_ints_server /add_two_ints");
     printf("Here are some general options:\n");
     usage("--verbose","give verbose output for debugging",NULL);
 }
