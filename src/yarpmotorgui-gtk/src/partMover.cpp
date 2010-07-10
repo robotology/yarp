@@ -137,12 +137,13 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 		ret=iencs->getEncoders(positions);
 		if (!ret)
 		{
-		  fprintf(stderr, "%s iencs->getEncoders() failed\n", partName);
+		  fprintf(stderr, "%s iencs->getEncoders() failed, retrying...\n", partName);
 		  Time::delay(1);
 		}
 	  }
       while (!ret);
 	
+	  fprintf(stderr, "%s iencs->getEncoders() ok!\n", partName);
       double min = 0;
       double max = 100;
       char buffer[40] = {'i', 'n', 'i', 't'};
