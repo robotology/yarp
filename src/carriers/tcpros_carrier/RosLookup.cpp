@@ -11,13 +11,18 @@
 using namespace yarp::os;
 
 static bool rpc(const Contact& c,
-         const char *carrier,
-         PortWriter& writer,
-         PortReader& reader) {
+                const char *carrier,
+                Bottle& writer,
+                Bottle& reader,
+                bool verbose) {
     ContactStyle style;
     style.quiet = false;
     style.timeout = 4;
     style.carrier = carrier;
+    if (verbose) {
+        printf("  > sending to [%s] %s\n", c.toString().c_str(),
+               writer.toString().c_str());
+    }
     bool ok = Network::write(c,writer,reader,style);
     return ok;
 }
@@ -27,7 +32,7 @@ bool RosLookup::lookupCore(const char *name) {
     req.addString("lookupNode");
     req.addString("dummy_id");
     req.addString(name);
-    rpc(getRosCoreAddress(), "xmlrpc", req, reply);
+    rpc(getRosCoreAddress(), "xmlrpc", req, reply, verbose);
     if (reply.get(0).asInt()!=1) {
         fprintf(stderr, "Failure: %s\n", reply.toString().c_str());
         return false;
@@ -54,7 +59,7 @@ bool RosLookup::lookupCore(const char *name) {
     portnum = vportnum.asInt();
     if (verbose) printf("%s\n", reply.toString().c_str());
     valid = (portnum!=0);
-    rpc(getRosCoreAddress(), "xmlrpc", req, reply);
+    rpc(getRosCoreAddress(), "xmlrpc", req, reply, verbose);
     return valid;
 }
 
@@ -73,7 +78,7 @@ bool RosLookup::lookupTopic(const char *name) {
     sublst.addString("TCPROS");
     //printf("Sending [%s] to %s\n", req.toString().c_str(),toString().c_str());
     Contact c = Contact::fromString(toString().c_str());
-    rpc(c,"xmlrpc",req,reply);
+    rpc(c,"xmlrpc",req,reply, verbose);
     if (reply.get(0).asInt()!=1) {
         fprintf(stderr,"Failure looking up topic %s: %s\n", name, reply.toString().c_str());
         return false;

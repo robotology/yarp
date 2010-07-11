@@ -52,6 +52,16 @@ void show_usage() {
     usage("--verbose","give verbose output for debugging",NULL);
 }
 
+bool announce_port(const char *name,
+                   PortReader& reply) {
+    Bottle req;
+    req.addString("announce");
+    req.addString(name);
+    return Network::write(Network::getNameServerContact(),
+                          req,
+                          reply);
+}
+
 bool register_port(const char *name,
                    const char *carrier,
                    const char *hostname,
@@ -63,10 +73,16 @@ bool register_port(const char *name,
     req.addString(carrier);
     req.addString(hostname);
     req.addInt(portnum);
-    return Network::write(Network::getNameServerContact(),
-                          req,
-                          reply);
+    bool ok = Network::write(Network::getNameServerContact(),
+                             req,
+                             reply);
+    if (ok) {
+        Bottle reply2;
+        announce_port(name,reply2);
+    }
+    return ok;
 }
+
 
 int main(int argc, char *argv[]) {
     if (argc<=1) {
@@ -211,86 +227,7 @@ int main(int argc, char *argv[]) {
     } else {
         fprintf(stderr,"unknown command, run with no arguments for help\n");
         return 1;
-    }
-
-    /*
-    else if (tag=="read") {
-        if (!cmd.size()==4) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
-            return 1;
-        }
-        ConstString yarp_port = cmd.get(1).asString();
-        ConstString ros_port = cmd.get(2).asString();
-        ConstString topic = cmd.get(3).asString();
-        RosLookup lookup(verbose);
-        if (verbose) printf("  * looking up ros node %s\n", ros_port.c_str());
-        bool ok = lookup.lookupCore(ros_port.c_str());
-        if (!ok) return 1;
-        if (verbose) printf("  * found ros node %s\n", ros_port.c_str());
-        if (verbose) printf("  * looking up topic %s\n", topic.c_str());
-        ok = lookup.lookupTopic(topic.c_str());
-        if (!ok) return 1;
-        if (verbose) printf("  * found topic %s\n", topic.c_str());
-        ConstString src = lookup.toString().c_str();
-        ConstString dest = yarp_port;
-        ConstString carrier = (string("tcpros+topic.")+topic.c_str()).c_str();
-        printf("yarp connect %s %s %s\n",
-               src.c_str(), dest.c_str(), carrier.c_str());
-        yarp.connect(src.c_str(),dest.c_str(),carrier.c_str());
-        return ok?0:1;
-    } else if (tag=="write") {
-        if (!cmd.size()==4) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
-            return 1;
-        }
-        ConstString yarp_port = cmd.get(1).asString();
-        ConstString ros_port = cmd.get(2).asString();
-        ConstString topic = cmd.get(3).asString();
-        RosLookup lookup(verbose);
-        bool ok = lookup.lookupCore(ros_port.c_str());
-        if (!ok) return 1;
-        Contact addr_writer = yarp.queryName(yarp_port);
-        if (!addr_writer.isValid()) {
-            fprintf(stderr,"cannot find yarp port %s\n", yarp_port.c_str());
-            return 1;
-        }
-        RosSlave slave(verbose);
-        if (verbose) printf("Starting temporary slave\n");
-        slave.start(addr_writer.getHost(),addr_writer.getPort());
-        Contact addr_slave = slave.where();
-        Bottle cmd, reply;
-        cmd.addString("publisherUpdate");
-        cmd.addString("dummy_id");
-        cmd.addString(topic);
-        Bottle& lst = cmd.addList();
-        char buf[1000];
-        sprintf(buf,"http://%s:%d/", addr_slave.getHost().c_str(), 
-                addr_slave.getPort());
-        lst.addString(buf);
-        rpc(lookup.toContact("xmlrpc"),"xmlrpc",cmd,reply);
-        printf("%s\n",reply.toString().c_str());
-        slave.stop();
-        return 0;
-    } else if (tag=="rpc") {
-        if (!cmd.size()==4) {
-            fprintf(stderr,"wrong syntax, run with no arguments for help\n");
-            return 1;
-        }
-        ConstString yarp_port = cmd.get(1).asString();
-        ConstString ros_port = cmd.get(2).asString();
-        ConstString service = cmd.get(3).asString();
-        RosLookup lookup(verbose);
-        bool ok = lookup.lookupCore(ros_port.c_str());
-        if (!ok) return 1;
-        ok = lookup.lookupTopic(service.c_str());
-        if (!ok) return 1;
-        yarp.connect(yarp_port.c_str(),
-                     lookup.toString().c_str(),
-                     (string("tcpros+service.")+service.c_str()).c_str());
-        return ok?0:1;
-    }
-    */
-  
+    }  
     return 0;
 }
 

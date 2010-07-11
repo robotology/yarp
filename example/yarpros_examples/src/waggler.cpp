@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
 
   ros::init(argc, argv, "waggler");
   ros::NodeHandle n;
-  ros::Publisher waggler_pub = n.advertise<yarpros_examples::VocabVocabDoubles>("pos_cmd", 100);
-  ros::Rate loop_rate(1);
+  ros::Publisher waggler_pub = n.advertise<yarpros_examples::VocabVocabDoubles>("pos", 100);
+  ros::Rate loop_rate(0.25);
 
   int count = 0;
   while (ros::ok()) {
@@ -37,7 +37,9 @@ int main(int argc, char** argv) {
     for (int i=0; i<joint_count; i++) {
       msg.setpoints[i] = 0;
     }
-    msg.setpoints[0] = 5*(count%10);
+    msg.setpoints[0] = -50*(count%2);
+    msg.setpoints[1] = 50*(count%2);
+    msg.setpoints[3] = 25*(count%4);
 
     waggler_pub.publish(msg);
     ROS_INFO("I published a command");
