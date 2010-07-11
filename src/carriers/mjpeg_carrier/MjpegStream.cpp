@@ -128,6 +128,7 @@ int MjpegStream::read(const Bytes& b) {
         } while (s[0]!='-' && delegate->getInputStream().isOk());
         s = NetType::readLine(delegate->getInputStream());
         if (s!="Content-Type: image/jpeg") {
+            if (!delegate->getInputStream().isOk()) break;
             printf("Unknown content type - %s\n", s.c_str());
             continue;
         }
@@ -136,6 +137,7 @@ int MjpegStream::read(const Bytes& b) {
         if (debug) printf("Read content length - %s\n", s.c_str());
         Bottle b(s.c_str());
         if (b.get(0).asString()!="Content-Length:") {
+            if (!delegate->getInputStream().isOk()) break;
             printf("Expected Content-Length: got - %s\n", b.get(0).asString().c_str());
             continue;
         }
@@ -155,7 +157,9 @@ int MjpegStream::read(const Bytes& b) {
         jerr.pub.error_exit = net_error_exit;
 
         if (setjmp(jerr.setjmp_buffer)) {
-            YARP_ERROR(Logger::get(),"Skipping a problematic JPEG frame");
+            if (delegate->getInputStream().isOk()) {
+                YARP_ERROR(Logger::get(),"Skipping a problematic JPEG frame");
+            }
             jpeg_destroy_decompress(&cinfo);
             continue;
         }
