@@ -321,7 +321,6 @@ int TcpRosCarrier::connect(const yarp::os::Contact& src,
     }
 
     Name n((style.carrier + "://test").c_str());
-    ConstString mode = "topic";
     ConstString topic = n.getCarrierModifier("topic").c_str();
     if (topic=="") {
         printf("Warning, no topic!\n");
