@@ -44,11 +44,11 @@ public:
 
     void setAddress(const Address& address);
 
-    String getHostName();
+    static String getHostName();
 
     static String getIps();
 
-    bool isLocalName(const String& name);
+    static bool isLocalName(const String& name);
 
     Address getAddress();
 
