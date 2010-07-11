@@ -44,10 +44,6 @@ void show_usage() {
     usage("service <yarp> <node> <service>","register a ROS service <node>/<service> pair as a port called <port>","service /adder /add_two_ints_server /add_two_ints");
     usage("node <name>","register a ROS node name with YARP","node /talker");
 
-    // READ and WRITE not needed any more - can be done via registration
-    //usage("read <yarpname> <nodename> <topicname>","read to a YARP port from a ROS node's contribution to a topic","read /read /talker /chatter");
-    //usage("write <yarpname> <nodename> <topicname>","write from a YARP port to a ROS node's subscription to a topic","write /write /listener /chatter");
-    //usage("rpc <yarpname> <nodename> <servicename>","write/read from a YARP port to a ROS node's named service","rpc /rpc /add_two_ints_server /add_two_ints");
     printf("Here are some general options:\n");
     usage("--verbose","give verbose output for debugging",NULL);
 }
@@ -67,11 +63,12 @@ bool register_port(const char *name,
                    const char *hostname,
                    int portnum,
                    PortReader& reply) {
+    ConstString ip = Contact::convertHostToIp(hostname);
     Bottle req;
     req.addString("register");
     req.addString(name);
     req.addString(carrier);
-    req.addString(hostname);
+    req.addString(ip);
     req.addInt(portnum);
     bool ok = Network::write(Network::getNameServerContact(),
                              req,
