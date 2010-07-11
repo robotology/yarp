@@ -179,6 +179,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         // Now, let us try checking instead to see if there is a port
         // alive at the registered address.  Note that this can lead
         // to delays...
+#if 0
         Contact c = query(port.c_str());
         if (c.isValid()) {
             if (gonePublic) {
@@ -207,7 +208,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
                 }
             }
         }
-
+#endif
         cmdUnregister(act);
         act.reply.clear();
     }
@@ -301,7 +302,7 @@ bool NameServiceOnTriples::announce(const char *name, int activity) {
 
 bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     ConstString port = act.cmd.get(1).asString();
-    printf(" - unregister %s\n", port.c_str());
+    //printf(" - unregister %s\n", port.c_str());
     announce(port.c_str(),-1);
     mutex.wait();
     Contact contact = query(port.c_str(),act,"",true);
