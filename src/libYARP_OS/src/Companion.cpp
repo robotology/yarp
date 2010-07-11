@@ -7,6 +7,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
@@ -1377,11 +1378,15 @@ public:
         env = showEnvelope;
         core.setReadHandler(*this);
         if (address.isValid()) {
+            bool ok = core.listen(address);
+            if (!ok) {
+                printf("Address conflict!\n");
+                exit(1);
+            }
             YARP_SPRINTF2(Logger::get(),info,
                           "Port %s listening at %s", 
                           address.getRegName().c_str(),
                           address.toString().c_str());
-            core.listen(address);
             core.start();
         } else {
             YARP_ERROR(Logger::get(),"could not create port");
