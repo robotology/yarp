@@ -189,7 +189,7 @@ String NameClient::send(const String& cmd, bool multi) {
                 break;
             }
             if (line.length()>1) {
-                if (line[0] == '*') {
+                if (line[0] == '*'||line[0] == '[') {
                     more = false;
                 }
             }
