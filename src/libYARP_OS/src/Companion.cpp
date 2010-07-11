@@ -1260,11 +1260,11 @@ int Companion::subscribe(const char *src, const char *dest) {
         for (int i=0; i<subs.size(); i++) {
             Bottle *b = subs.get(i).asList();
             if (b!=NULL) {
-                Bottle& topic = b->findGroup("topic");
+                //Bottle& topic = b->findGroup("topic");
                 const char *srcTopic = "";
                 const char *destTopic = "";
-                if (topic.get(1).asInt()) srcTopic=" (topic)";
-                if (topic.get(2).asInt()) destTopic=" (topic)";
+                //if (topic.get(1).asInt()) srcTopic=" (topic)";
+                //if (topic.get(2).asInt()) destTopic=" (topic)";
                 printf("Persistent connection %s%s -> %s%s", 
                        b->check("src",Value("?")).asString().c_str(),
                        srcTopic,
