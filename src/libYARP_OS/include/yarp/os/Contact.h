@@ -110,6 +110,14 @@ public:
      */
     Contact addName(const char *name) const;
 
+
+    /**
+     *
+     * If the host is a machine name, convert it to a plausible IP address.
+     *
+     */
+    static ConstString convertHostToIp(const char *name);
+
     /**
      * Copy constructor.
      * @param alt the contact to copy

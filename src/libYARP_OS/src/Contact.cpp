@@ -11,7 +11,10 @@
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Value.h>
+
+#include <ace/INET_Addr.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -229,6 +232,17 @@ Contact Contact::byConfig(Searchable& config) {
     String carrier = config.check("carrier",Value("tcp")).asString().c_str();
     addr = Address(name,port,carrier,regName);
     return result;
+}
+
+
+ConstString Contact::convertHostToIp(const char *name) {
+    ACE_INET_Addr addr((u_short)0,name);
+    char buf[256];
+    addr.get_host_addr(buf,sizeof(buf));
+    if (NameConfig::isLocalName(buf)) {
+        return NameConfig::getHostName().c_str();
+    }
+    return buf;
 }
 
 
