@@ -207,7 +207,15 @@ String NameConfig::getHostName() {
             }
             if (take) {
                 result = ip;
+#if defined (ACE_HAS_IPV6)
                 loopback = ips[i].is_loopback();
+#else
+                loopback = false;
+                if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
+                    ip == "127.0.1.1") {
+                    loopback = true;
+                }
+#endif
             }
         }
         delete[] ips;
