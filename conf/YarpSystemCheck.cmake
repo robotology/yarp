@@ -100,10 +100,19 @@ find_package(ACE REQUIRED)
 include(YarpCheckTypeSize) # regular script does not do C++ types
 set(CMAKE_EXTRA_INCLUDE_FILES ace/config.h ace/String_Base_Const.h)
 set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
 yarp_check_type_size(ACE_String_Base_Const::size_type SIZE_TYPE)
 set(CMAKE_EXTRA_INCLUDE_FILES) 
 set(CMAKE_REQUIRED_INCLUDES)
+set(CMAKE_REQUIRED_LIBRARIES)
 set(YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE ${HAVE_SIZE_TYPE})
+
+include(YarpCheckStructHasMember)
+set(CMAKE_REQUIRED_INCLUDES ${ACE_INCLUDE_DIR} ${ACE_INCLUDE_CONFIG_DIR})
+set(CMAKE_REQUIRED_LIBRARIES ${ACE_LIBRARIES})
+yarp_check_struct_has_member("ACE_INET_Addr" is_loopback ace/INET_Addr.h YARP_ACE_ADDR_HAS_LOOPBACK_METHOD) 
+set(CMAKE_EXTRA_INCLUDE_FILES) 
+set(CMAKE_REQUIRED_LIBRARIES)
 
 if (MSVC)
   # ACE uses a bunch of functions MSVC warns about.

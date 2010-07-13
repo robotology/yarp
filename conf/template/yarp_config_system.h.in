@@ -42,5 +42,6 @@
 #cmakedefine YARP_USE_ACE_STRING
 
 #cmakedefine YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE
+#cmakedefine YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
 
 #endif

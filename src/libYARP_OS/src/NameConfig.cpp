@@ -19,6 +19,7 @@
 #include <ace/Sock_Connect.h>
 
 #include <stdio.h>
+#include <yarp/conf/system.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -207,7 +208,7 @@ String NameConfig::getHostName() {
             }
             if (take) {
                 result = ip;
-#if defined (ACE_HAS_IPV6)
+#ifdef YARP_ACE_ADDR_HAS_LOOPBACK_METHOD
                 loopback = ips[i].is_loopback();
 #else
                 loopback = false;
