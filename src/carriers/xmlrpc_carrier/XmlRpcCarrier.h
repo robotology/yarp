@@ -40,7 +40,8 @@ namespace yarp {
  * for this particular server.
  *
  * Then:
- *   echo "examples.addtwo 10 20" | yarp rpc /webserve
+ *   $ yarp rpc /webserve
+ *     examples.addtwo 10 20
  * will produce the output "30" if the server still exists.
  *
  */
