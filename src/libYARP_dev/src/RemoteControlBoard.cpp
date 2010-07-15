@@ -1609,10 +1609,10 @@ public:
     bool getRefTorques(double *t)
     { return get2VDA(VOCAB_TORQUE, VOCAB_REFS, t); }
 
-    bool setTorques(const double *t)
+    bool setRefTorques(const double *t)
     { return set2VDA(VOCAB_TORQUE, VOCAB_REFS, t); }
 
-    bool setTorque(int j, double v)
+    bool setRefTorque(int j, double v)
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v); }
 
     bool setTorquePid(int j, const Pid &pid)

@@ -195,17 +195,17 @@ bool ImplementTorqueControl::getRefTorques(double *t)
 	return ret;
 }
 
-bool ImplementTorqueControl::setTorques(const double *t)
+bool ImplementTorqueControl::setRefTorques(const double *t)
 {
     castToMapper(helper)->toHw(t, temp);
-    return iTorqueRaw->setTorquesRaw(temp);
+    return iTorqueRaw->setRefTorquesRaw(temp);
 }
 
-bool ImplementTorqueControl::setTorque(int j, double t)
+bool ImplementTorqueControl::setRefTorque(int j, double t)
 {
     int k;
     k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setTorqueRaw(k, t);
+    return iTorqueRaw->setRefTorqueRaw(k, t);
 }
 
 bool ImplementTorqueControl::getTorques(double *t)
