@@ -1,12 +1,3 @@
-2010-07-19  Marco Randazzo  <marco.randazzo@iit.it>
-    * src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
-	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.inl
-	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.cpp
-	changes to ControlBoardHelper constructor that now requires the two new parameters:
-	- const int *trqId
-	- const int *trqChan
-	in order to implement the force sensors axis map.
-	
 2010-07-14  Marco Randazzo  <marco.randazzo@iit.it>
 
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
