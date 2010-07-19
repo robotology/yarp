@@ -59,14 +59,10 @@ bool ImplementControlMode::initialize(int size, const int *amap)
     if (helper!=0)
         return false;
     
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap, 0,0,0,0));
     _YARP_ASSERT (helper != 0);
 
-    delete [] dummy;
     return true;
 }
 
@@ -141,12 +137,12 @@ ImplementTorqueControl::~ImplementTorqueControl()
     uninitialize();
 }
 
-bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos)
+bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const int *trqId, const int *trqChan)
 {
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, trqId, trqChan));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -354,7 +350,7 @@ bool ImplementImpedanceControl::initialize(int size, const int *amap, const doub
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, 0,0));
     _YARP_ASSERT (helper != 0);
 
     return true;
@@ -432,16 +428,11 @@ bool ImplementOpenLoopControl::initialize(int size, const int *amap)
 {
     if (helper!=0)
         return false;
-    
-    double *dummy=new double [size];
-    for(int k=0;k<size;k++)
-        dummy[k]=0;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap, 0,0,0,0));
     _YARP_ASSERT(helper != 0);
 
-    delete [] dummy;
-    return true;
+	return true;
 }
 
 ImplementOpenLoopControl::~ImplementOpenLoopControl()

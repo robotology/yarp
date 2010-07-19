@@ -52,11 +52,14 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs): zeros(0), 
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const int *trqId, const int *trqChan): 
+	    zeros(0), 
         signs(0),
         axisMap(0),
         invAxisMap(0),
-        angleToEncoders(0)
+        angleToEncoders(0),
+		torqueSensorId(0),
+		torqueSensorChan(0)
     {
         nj=n;
         alloc(n);
@@ -72,6 +75,16 @@ public:
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
         else
             memset(angleToEncoders, 0, sizeof(double)*nj);
+
+        if (trqId!=0)
+            memcpy(torqueSensorId, trqId, sizeof(int)*nj);
+        else
+            memset(torqueSensorId, 0, sizeof(int)*nj);
+
+        if (trqChan!=0)
+            memcpy(torqueSensorChan, trqChan, sizeof(int)*nj);
+        else
+            memset(torqueSensorChan, 0, sizeof(int)*nj);
 
         // invert the axis map
    		memset (invAxisMap, 0, sizeof(int) * nj);
@@ -110,7 +123,9 @@ public:
         axisMap=new int [nj];
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
-        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0);
+		torqueSensorId=new int [nj];
+        torqueSensorChan=new int [nj];
+        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && torqueSensorId != 0 && torqueSensorChan != 0);
 
         return true;
     }
@@ -122,6 +137,8 @@ public:
         checkAndDestroy<int> (axisMap);
         checkAndDestroy<int> (invAxisMap);
         checkAndDestroy<double> (angleToEncoders);
+		checkAndDestroy<int> (torqueSensorId);
+        checkAndDestroy<int> (torqueSensorChan);
         return true;
     }
 
@@ -373,6 +390,8 @@ public:
 	int *axisMap;
 	int *invAxisMap;
 	double *angleToEncoders;
+	int *torqueSensorId;
+	int *torqueSensorChan;
 };
 
 inline ControlBoardHelper *castToMapper(void *p)
@@ -558,7 +577,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -605,7 +624,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -737,7 +756,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1000,7 +1019,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1172,7 +1191,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1237,7 +1256,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1302,7 +1321,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1393,7 +1412,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0,0));
     _YARP_ASSERT (helper != 0);
     dTemp=new double[size];
     _YARP_ASSERT (dTemp != 0);
