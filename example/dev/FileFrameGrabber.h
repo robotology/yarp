@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
+#include <yarp/dev/all.h>
 
 class FileFrameGrabber : public yarp::dev::IFrameGrabberImage, 
                          public yarp::dev::DeviceDriver {

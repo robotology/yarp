@@ -1,10 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
-
-#ifdef main
-#undef main //just in case
-#endif
+#include <yarp/dev/all.h>
 
 class FakeFrameGrabber : public yarp::dev::IFrameGrabberImage, 
                          public yarp::dev::IFrameGrabberControls, 
