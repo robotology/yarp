@@ -1,5 +1,8 @@
 2010-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/modules/opencv/CMakeLists.txt: add missing link command
+	(thanks again Juan!)
+
 	* example/dev/FakeFrameGrabber.h: add missing header file
 	(thanks Juan G Victores)
 
