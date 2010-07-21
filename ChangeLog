@@ -1,3 +1,8 @@
+2010-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/dev/FakeFrameGrabber.h: add missing header file
+	(thanks Juan G Victores)
+
 2010-07-14  Marco Randazzo  <marco.randazzo@iit.it>
 
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
