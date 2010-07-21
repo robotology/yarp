@@ -1,5 +1,9 @@
 2010-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpOptions.cmake: ENABLE_FORCE_RPATH option for setting
+	rpath - applied patch from Alexis Maldonado.  Purpose:
+	ROS-friendliness.
+
 	* src/modules/opencv/CMakeLists.txt: add missing link command
 	(thanks again Juan!)
 

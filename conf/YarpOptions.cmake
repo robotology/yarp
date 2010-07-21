@@ -99,10 +99,27 @@ if (ENABLE_DASHBOARD_SUBMIT)
   include(Dart)
 endif (ENABLE_DASHBOARD_SUBMIT)
 
+
+#########################################################################
+# Control setting an rpath
+option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables." FALSE)
+mark_as_advanced(ENABLE_FORCE_RPATH)
+
+if (ENABLE_FORCE_RPATH)
+  set(FORCE_RPATH "${CMAKE_INSTALL_PREFIX}/lib" CACHE STRING 
+	"The rpath for the executables.")
+endif ()
+
+
+
+
 #########################################################################
 # Defunct options to be removed
 
 # set a flag so sub-directories know that are being compiled
 # en masse as opposed to as individuals
 set(COMPILING_ALL_YARP TRUE)
+
+
+
 

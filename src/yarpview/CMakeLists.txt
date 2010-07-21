@@ -39,6 +39,10 @@ if (CREATE_GUIS)
 
   TARGET_LINK_LIBRARIES(yarpview YARP_sig YARP_init)
 
+  if (ENABLE_FORCE_RPATH)
+    set_target_properties( yarpview PROPERTIES INSTALL_RPATH ${FORCE_RPATH} )
+  endif ()
+
   INSTALL(TARGETS yarpview COMPONENT utilities DESTINATION bin)
 
 endif(CREATE_GUIS)
