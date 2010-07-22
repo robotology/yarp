@@ -1,3 +1,8 @@
+2010-07-22  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* example/swig/CMakeLists.txt: fix out-of-source python build
+	(thanks Tomassino Ferrauto)
+
 2010-07-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpOptions.cmake: ENABLE_FORCE_RPATH option for setting
