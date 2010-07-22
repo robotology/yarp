@@ -88,13 +88,13 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
     RosHeader::appendInt(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
-               header_len.length());
+               (int)header_len.length());
     
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_serial).c_str(),
-               header_serial.length());
+               (int)header_serial.length());
     Bytes b2((char*)header_serial.c_str(),header_serial.length());
     proto.os().write(b2);
 
@@ -174,47 +174,15 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     RosHeader::appendInt(at,header_serial.length());
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_len).c_str(),
-               header_len.length());
+               (int)header_len.length());
     
     Bytes b1((char*)header_len.c_str(),header_len.length());
     proto.os().write(b1);
     dbg_printf("Writing %s -- %d bytes\n", 
                RosHeader::showMessage(header_serial).c_str(),
-               header_serial.length());
+               (int)header_serial.length());
     Bytes b2((char*)header_serial.c_str(),header_serial.length());
     proto.os().write(b2);
-
-    /*
-    {
-    char mlen[4];
-    Bytes mlen_buf(mlen,4);
-    NetType::netInt(8,mlen_buf);
-    proto.os().write(mlen_buf);
-    NetType::netInt(4,mlen_buf);
-    proto.os().write(mlen_buf);
-    mlen[0] = 'y';
-    mlen[1] = 'r';
-    mlen[2] = 'p';
-    mlen[3] = '\0';
-    proto.os().write(mlen_buf);
-    printf("Sent dummy data 1\n");
-    }
-
-    {
-    char mlen[4];
-    Bytes mlen_buf(mlen,4);
-    NetType::netInt(8,mlen_buf);
-    proto.os().write(mlen_buf);
-    NetType::netInt(4,mlen_buf);
-    proto.os().write(mlen_buf);
-    mlen[0] = 'y';
-    mlen[1] = 'r';
-    mlen[2] = 'p';
-    mlen[3] = '\0';
-    proto.os().write(mlen_buf);
-    printf("Sent dummy data 2\n");
-    }
-    */
 
     return true;
 }

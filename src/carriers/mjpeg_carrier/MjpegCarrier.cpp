@@ -9,6 +9,12 @@
 
 #include <stdio.h>
 
+
+/*
+  On Windows, libjpeg does some slightly odd-ball stuff, including
+  unconditionally defining INT32 to be "long".  This needs to
+  be worked around.  Work around begins...
+ */
 #ifdef WIN32
 #define INT32 long  // jpeg's definition
 #define QGLOBAL_H 1
@@ -20,6 +26,10 @@ extern "C" {
 #undef INT32
 #undef QGLOBAL_H
 #endif
+/*
+  work around ends.
+ */
+
 
 #include "MjpegCarrier.h"
 
@@ -27,6 +37,8 @@ extern "C" {
 #include <yarp/sig/ImageNetworkHeader.h>
 
 #include <yarp/os/impl/Name.h>
+
+#include "WireImage.h"
 
 using namespace yarp::os::impl;
 using namespace yarp::sig;
@@ -122,38 +134,14 @@ void jpeg_net_dest(j_compress_ptr cinfo) {
 }
 
 bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
-    ImageNetworkHeader hdr;
-    char *header_buf = (char*)(&hdr);
-    int header_len = sizeof(hdr);
-    const char *img_buf = NULL;
-    int img_len = 0;
-    for (int i=0; i<writer.length(); i++) {
-        const char *data = writer.data(i);
-        int len = writer.length(i);
-        //printf("block %d length %d\n", i, len);
-        if (header_len<len) {
-            len = header_len;
-        }
-        if (len>0) {
-            memcpy(header_buf,data,len);
-            header_len -= len;
-            header_buf += len;
-        }
-        if (header_len == 0) {
-            img_buf = data+len;
-            img_len = writer.length(i)-len;
-        }
-    }
-    dbg_printf("Passing on a %dx%d image\n", hdr.width, hdr.height);
-    if (hdr.imgSize!=img_len) {
-        printf(" size mismatch\n");
-        //exit(1);
-        return false;
-    }
-    int w = hdr.width;
-    int h = hdr.height;
-    int row_stride = hdr.imgSize/hdr.height;
-    JOCTET *data = (JOCTET*)img_buf;
+    WireImage rep;
+    FlexImage *img = rep.checkForImage(writer);
+
+    if (img==NULL) return false;
+    int w = img->width();
+    int h = img->height();
+    int row_stride = img->getRowSize();
+    JOCTET *data = (JOCTET*)img->getRawImage();
 
 	JSAMPROW row_pointer[1];
 
@@ -180,7 +168,7 @@ bool MjpegCarrier::write(Protocol& proto, SizedWriter& writer) {
     jpeg_finish_compress(&cinfo);
     jpeg_destroy_compress(&cinfo);
 
-    return true; //proto.os().isOk();
+    return true;
 }
 
 bool MjpegCarrier::reply(Protocol& proto, SizedWriter& writer) {
