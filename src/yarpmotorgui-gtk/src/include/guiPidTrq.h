@@ -34,6 +34,8 @@ namespace guiPidTrq
 	void send_pid (GtkButton *button, Pid *pid);
 	void displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
 	void changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label);
+	void displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
+	void changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label);
 };
 
 #endif
