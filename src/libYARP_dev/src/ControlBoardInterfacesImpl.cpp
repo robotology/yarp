@@ -63,7 +63,7 @@ bool ImplementControlMode::initialize(int size, const int *amap)
     for(int k=0;k<size;k++)
         dummy[k]=0;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
     _YARP_ASSERT (helper != 0);
 
     delete [] dummy;
@@ -141,12 +141,12 @@ ImplementTorqueControl::~ImplementTorqueControl()
     uninitialize();
 }
 
-bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos)
+bool ImplementTorqueControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
 {
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -183,29 +183,34 @@ bool ImplementTorqueControl::setTorqueMode()
 bool ImplementTorqueControl::getRefTorque(int j, double *r)
 {
     int k;
+	bool ret;
+	double torque;
     k=castToMapper(helper)->toHw(j);
-
-    return iTorqueRaw->getRefTorqueRaw(k, r);
+    ret = iTorqueRaw->getRefTorqueRaw(k, &torque);
+	*r=castToMapper(helper)->trqS2N(torque, k);
+	return ret;
 }
 
 bool ImplementTorqueControl::getRefTorques(double *t)
 {
-    bool ret = iTorqueRaw->getRefTorquesRaw(temp);
-    castToMapper(helper)->toUser(temp,t);
+    bool ret;
+	ret = iTorqueRaw->getRefTorquesRaw(temp);
+	castToMapper(helper)->trqS2N(temp,t);
 	return ret;
 }
 
 bool ImplementTorqueControl::setRefTorques(const double *t)
 {
-    castToMapper(helper)->toHw(t, temp);
+    castToMapper(helper)->trqN2S(t, temp);
     return iTorqueRaw->setRefTorquesRaw(temp);
 }
 
 bool ImplementTorqueControl::setRefTorque(int j, double t)
 {
     int k;
-    k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->setRefTorqueRaw(k, t);
+	double sens;
+	castToMapper(helper)->trqN2S(t,j,sens,k);
+    return iTorqueRaw->setRefTorqueRaw(k, sens);
 }
 
 bool ImplementTorqueControl::getTorques(double *t)
@@ -266,15 +271,20 @@ bool ImplementTorqueControl::setTorqueErrorLimits(const double *limits)
 bool ImplementTorqueControl::getTorqueError(int j, double *err)
 {
     int k;
+	bool ret;
+	double temp;
     k=castToMapper(helper)->toHw(j);
-    return iTorqueRaw->getTorqueErrorRaw(k, err);
+    ret = iTorqueRaw->getTorqueErrorRaw(k, &temp);
+	*err=castToMapper(helper)->trqS2N(temp, k);
+	return ret;
 }
 
 bool ImplementTorqueControl::getTorqueErrors(double *errs)
 {
-    bool ret=iTorqueRaw->getTorqueErrorsRaw(temp);
-    castToMapper(helper)->toUser(temp, errs);
-    return ret;
+    bool ret;
+	ret = iTorqueRaw->getTorqueErrorsRaw(temp);
+	castToMapper(helper)->trqS2N(temp, errs);
+	return ret;
 }
     
 bool ImplementTorqueControl::getTorquePidOutput(int j, double *out)
@@ -349,12 +359,12 @@ ImplementImpedanceControl::ImplementImpedanceControl(IImpedanceControlRaw *r)
     helper=0;
 }
 
-bool ImplementImpedanceControl::initialize(int size, const int *amap, const double *enc, const double *zos)
+bool ImplementImpedanceControl::initialize(int size, const int *amap, const double *enc, const double *zos, const double *nw)
 {
     if (helper!=0)
         return false;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos, nw));
     _YARP_ASSERT (helper != 0);
 
     return true;
@@ -384,18 +394,23 @@ bool ImplementImpedanceControl::getAxes(int *axes)
 bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping, double offset)
 {
     int k;
-    k=castToMapper(helper)->toHw(j);
-	if (castToMapper(helper)->angleToEncoders[j] > 0) 
+	double stiff;
+	double damp;
+	double off;
+	castToMapper(helper)->impN2S(stiffness,j,stiff,k);
+	castToMapper(helper)->impN2S(damping,j,damp,k);
+	castToMapper(helper)->trqN2S(offset,j,off,k);
+	/*if (castToMapper(helper)->angleToEncoders[j] > 0) 
 		{
-			stiffness = abs (stiffness);
-			damping   = abs (damping);
+			stiff = fabs (stiff);
+			damp   = fabs (damping);
 		}
 	else
 		{
-			stiffness = -abs (stiffness);
-			damping   = -abs (damping);
-		}
-    return iImpedanceRaw->setImpedanceRaw(k, stiffness, damping, offset);
+			stiff = -fabs (stiff);
+			damp   = -fabs (damp);
+		}*/
+    return iImpedanceRaw->setImpedanceRaw(k, stiff, damp, off);
 }
 
 bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping, double *offset)
@@ -403,23 +418,30 @@ bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *d
 	int k;
     k=castToMapper(helper)->toHw(j);
     bool ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping, offset);
-	*stiffness = abs (*stiffness);
-	*damping   = abs (*damping);
+	*stiffness = (castToMapper(helper)->impS2N(*stiffness, k));
+	*damping   = (castToMapper(helper)->impS2N(*damping, k));
+	*offset    = (castToMapper(helper)->trqS2N(*offset,k));
+	//prevent negative stiffness
+	*stiffness = fabs (*stiffness);
+	*damping   = fabs (*damping);
 	return ret;
 }
 
 bool ImplementImpedanceControl::setImpedanceOffset(int j, double offset)
 {
     int k;
-    k=castToMapper(helper)->toHw(j);
-    return iImpedanceRaw->setImpedanceOffsetRaw(k, offset);
+	double off;
+	castToMapper(helper)->trqN2S(offset,j,off,k);
+    return iImpedanceRaw->setImpedanceOffsetRaw(k, off);
 }
 
 bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 {
 	int k;
     k=castToMapper(helper)->toHw(j);
-    return iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
+    bool ret = iImpedanceRaw->getImpedanceOffsetRaw(k, offset);
+	*offset    = (castToMapper(helper)->trqS2N(*offset,k));
+	return ret;
 }
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
@@ -437,7 +459,7 @@ bool ImplementOpenLoopControl::initialize(int size, const int *amap)
     for(int k=0;k<size;k++)
         dummy[k]=0;
 
-    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy));
+    helper=(void *)(new ControlBoardHelper(size, amap, dummy, dummy, dummy));
     _YARP_ASSERT(helper != 0);
 
     delete [] dummy;

@@ -52,11 +52,12 @@ inline void checkAndDestroy(T* &p) {
 class ControlBoardHelper
 {
 public:
-    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs): zeros(0), 
+    ControlBoardHelper(int n, const int *aMap, const double *angToEncs, const double *zs, const double *nw): zeros(0), 
         signs(0),
         axisMap(0),
         invAxisMap(0),
-        angleToEncoders(0)
+        angleToEncoders(0),
+		newtonsToSensors(0)
     {
         nj=n;
         alloc(n);
@@ -72,6 +73,11 @@ public:
             memcpy(angleToEncoders, angToEncs, sizeof(double)*nj);
         else
             memset(angleToEncoders, 0, sizeof(double)*nj);
+
+		if (nw!=0)
+            memcpy(newtonsToSensors, nw, sizeof(double)*nj);
+        else
+            memset(newtonsToSensors, 0, sizeof(double)*nj);
 
         // invert the axis map
    		memset (invAxisMap, 0, sizeof(int) * nj);
@@ -110,7 +116,8 @@ public:
         axisMap=new int [nj];
         invAxisMap=new int [nj];
         angleToEncoders=new double [nj];
-        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0);
+		newtonsToSensors=new double [nj];
+        _YARP_ASSERT(zeros != 0 && signs != 0 && axisMap != 0 && invAxisMap != 0 && angleToEncoders != 0 && newtonsToSensors != 0);
 
         return true;
     }
@@ -122,6 +129,7 @@ public:
         checkAndDestroy<int> (axisMap);
         checkAndDestroy<int> (invAxisMap);
         checkAndDestroy<double> (angleToEncoders);
+		checkAndDestroy<double> (newtonsToSensors);
         return true;
     }
 
@@ -182,6 +190,102 @@ public:
         int k=toUser(j);
         
         return (enc/angleToEncoders[k])-zeros[k];
+    }
+
+	inline void impN2S(double newtons, int j, double &sens, int &k)
+    {
+        sens=newtons*newtonsToSensors[j]/angleToEncoders[j];
+        k=toHw(j);
+    }
+
+    inline double impN2S(double newtons, int j)
+    {
+        return newtons*newtonsToSensors[j]/angleToEncoders[j];
+    }
+
+    inline void impN2S(const double *newtons, double *sens)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            impN2S(newtons[j], j, tmp, index);
+            sens[index]=tmp;
+        }
+	}
+
+    inline void trqN2S(double newtons, int j, double &sens, int &k)
+    {
+        sens=newtons*newtonsToSensors[j];
+        k=toHw(j);
+    }
+
+    inline double trqN2S(double newtons, int j)
+    {
+        return newtons*newtonsToSensors[j];
+    }
+
+	//map a vector, convert from newtons to sensors
+    inline void trqN2S(const double *newtons, double *sens)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            trqN2S(newtons[j], j, tmp, index);
+            sens[index]=tmp;
+        }
+    }
+
+	//map a vector, convert from sensor to newtons
+    inline void trqS2N(const double *sens, double *newtons)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            trqS2N(sens[j], j, tmp, index);
+            newtons[index]=tmp;
+        }
+    }
+
+	inline void trqS2N(double sens, int j, double &newton, int &k)
+    {
+        k=toUser(j);
+
+        newton=(sens/newtonsToSensors[k]);
+    }
+
+    inline double trqS2N(double sens, int j)
+    {
+        int k=toUser(j);
+        
+        return (sens/newtonsToSensors[k]);
+    }
+
+	inline void impS2N(const double *sens, double *newtons)
+    {
+        double tmp;
+        int index;
+        for(int j=0;j<nj;j++)
+        {
+            impS2N(sens[j], j, tmp, index);
+            newtons[index]=tmp;
+        }
+    }
+
+	inline void impS2N(double sens, int j, double &newton, int &k)
+    {
+        k=toUser(j);
+
+        newton=(sens/newtonsToSensors[k]*angleToEncoders[k]);
+    }
+
+    inline double impS2N(double sens, int j)
+    {
+        int k=toUser(j);
+        
+        return (sens/newtonsToSensors[k]*angleToEncoders[k]);
     }
 
     inline void velA2E(double ang, int j, double &enc, int &k)
@@ -373,6 +477,7 @@ public:
 	int *axisMap;
 	int *invAxisMap;
 	double *angleToEncoders;
+	double *newtonsToSensors;
 };
 
 inline ControlBoardHelper *castToMapper(void *p)
@@ -558,7 +663,7 @@ bool ImplementPositionControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -605,7 +710,7 @@ bool ImplementVelocityControl<DERIVED, IMPLEMENT>:: initialize (int size, const 
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -737,7 +842,7 @@ bool ImplementPidControl<DERIVED, IMPLEMENT>:: initialize (int size, const int *
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1000,7 +1105,7 @@ bool ImplementEncoders<DERIVED, IMPLEMENT>:: initialize (int size, const int *am
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1172,7 +1277,7 @@ bool ImplementControlCalibration<DERIVED, IMPLEMENT>:: initialize (int size, con
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1237,7 +1342,7 @@ bool ImplementControlCalibration2<DERIVED, IMPLEMENT>:: initialize (int size, co
     if (helper!=0)
         return false;
     
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1302,7 +1407,7 @@ bool ImplementControlLimits<DERIVED, IMPLEMENT>:: initialize (int size, const in
     
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
@@ -1393,7 +1498,7 @@ bool ImplementAmplifierControl<DERIVED, IMPLEMENT>:: initialize (int size, const
     
     // not sure if fix from next line to the line after is correct, hope so
     //helper=(void *)(new ControlBoardHelper(size, amap, enc, zeros));
-    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos));
+    helper=(void *)(new ControlBoardHelper(size, amap, enc, zos,0));
     _YARP_ASSERT (helper != 0);
     dTemp=new double[size];
     _YARP_ASSERT (dTemp != 0);

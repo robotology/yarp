@@ -1,3 +1,11 @@
+2010-07-23  Marco Randazzo  <marco.randazzo@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.inl
+	* src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
+	ControlBoardHelper class now stores the conversion factor for joint torque sensors
+
 2010-07-23  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/libYARP_OS/src/Property.cpp: support multi-line lists
