@@ -1,3 +1,14 @@
+2010-07-23  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* src/libYARP_OS/src/Property.cpp: support multi-line lists
+	in config files without requiring "\" at the end of lines.
+	So:
+	   mymatrix ((1 2 3)
+	             (4 5 6)
+	             (7 8 9))
+	will work as expected.  Successive lines are appended until
+	all parentheses and quotes are balanced.
+
 2010-07-22  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* example/swig/CMakeLists.txt: fix out-of-source python build

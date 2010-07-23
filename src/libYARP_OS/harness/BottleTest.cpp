@@ -428,6 +428,13 @@ public:
                   "positive negative upper case");
     }
 
+    void testContinuation() {
+        report(0,"test continuation...");
+        Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
+        checkEqual(b.find("x").asList()->size(),6,"x has right length");
+        checkEqual(b.find("y").asList()->size(),2,"y has right length");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -452,6 +459,7 @@ public:
         testTypeDetection();
         testModify();
         testScientific();
+        testContinuation();
     }
 
     virtual String getName() {
