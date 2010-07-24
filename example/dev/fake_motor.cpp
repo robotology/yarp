@@ -6,6 +6,7 @@
  *
  */
 
+#include <yarp/os/all.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>
@@ -216,6 +217,7 @@ void testMotor(PolyDriver& driver) {
 }
 
 int main(int argc, char *argv[]) {
+    yarp::os::Network yarp;
     Drivers::factory().add(new DriverCreatorOf<FakeMotor>("motor", 
                                                           "controlboard",
                                                           "FakeMotor"));
