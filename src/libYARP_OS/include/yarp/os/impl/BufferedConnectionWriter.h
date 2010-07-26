@@ -196,6 +196,10 @@ public:
         return header.size()+lst.size();
     }
 
+    virtual int headerLength() {
+        return header.size();
+    }
+
     virtual int length(int index) {
         if (index<(int)header.size()) {
             ManagedBytes& b = *(header[index]);
