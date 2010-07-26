@@ -38,6 +38,8 @@ public:
 
     virtual int length() = 0;
 
+    virtual int headerLength() = 0;
+
     virtual int length(int index) = 0;
 
     virtual const char *data(int index) = 0;
