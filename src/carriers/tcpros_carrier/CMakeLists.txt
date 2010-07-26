@@ -7,6 +7,8 @@ if (NOT SKIP_tcpros_carrier)
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  get_property(WIRE_INCLUDE_DIRS TARGET wire_rep_utils PROPERTY INCLUDE_DIRS)
+  include_directories(${WIRE_INCLUDE_DIRS})
   add_library(rostcp_carrier 
     TcpRosCarrier.h TcpRosCarrier.cpp
     TcpRosStream.h TcpRosStream.cpp
