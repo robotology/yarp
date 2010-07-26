@@ -53,7 +53,7 @@ void guiPidTrq::send_pid (GtkButton *button, Pid *pid)
 
   double stiff_val=atof(gtk_entry_get_text((GtkEntry*) imp_stiffDes));
   double damp_val=atof(gtk_entry_get_text((GtkEntry*) imp_dampDes));
-  double offset_val=0;
+  double offset_val=atof(gtk_entry_get_text((GtkEntry*) imp_offDes));
   iImp->setImpedance(*joint,  stiff_val,  damp_val,  offset_val);
   iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
 
@@ -61,6 +61,8 @@ void guiPidTrq::send_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) imp_stiffEntry,  buffer);
   sprintf(buffer, "%3.3f", damp_val);
   gtk_entry_set_text((GtkEntry*) imp_dampEntry,  buffer);
+  sprintf(buffer, "%3.3f", offset_val);
+  gtk_entry_set_text((GtkEntry*) imp_offEntry,  buffer);
 }
 
 //*********************************************************************************
@@ -71,8 +73,8 @@ void guiPidTrq::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
   gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_widget_set_size_request 	(frame, 130, 60);
+  gtk_widget_set_size_request 	(entry, 60, 20);
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
   sprintf(buffer, "%d", k);
@@ -88,8 +90,8 @@ void guiPidTrq::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int p
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
   gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_widget_set_size_request 	(frame, 130, 60);
+  gtk_widget_set_size_request 	(entry, 60, 20);
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
   sprintf(buffer, "%3.3f", k);
@@ -105,8 +107,8 @@ void guiPidTrq::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX,
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
   gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_widget_set_size_request 	(frame, 130, 60);
+  gtk_widget_set_size_request 	(entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
   sprintf(buffer, "%d", k);
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
@@ -121,8 +123,8 @@ void guiPidTrq::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int po
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
   gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+20);
-  gtk_widget_set_size_request 	(frame, 120, 60);
-  gtk_widget_set_size_request 	(entry, 50, 20);
+  gtk_widget_set_size_request 	(frame, 130, 60);
+  gtk_widget_set_size_request 	(entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
   sprintf(buffer, "%3.3f", k);
   gtk_entry_set_text((GtkEntry*) entry,  buffer);
@@ -169,55 +171,62 @@ void guiPidTrq::guiPidTrq(void *button, void* data)
   displayPidValue((int) myPid.kp, inv, trq_kpEntry, 0, 0, "Current Torque Kp");
   //kp desired
   trq_kpDes   =  gtk_entry_new();
-  changePidValue((int) myPid.kp, inv, trq_kpDes, 100, 0, "Desired Torque Kp");
+  changePidValue((int) myPid.kp, inv, trq_kpDes, 110, 0, "Desired Torque Kp");
   //kd
   trq_kdEntry   =  gtk_entry_new();
   displayPidValue((int) myPid.kd, inv, trq_kdEntry, 0, 70, "Current Torque Kd");
   //kd desired
   trq_kdDes   =  gtk_entry_new();
-  changePidValue((int) myPid.kd, inv, trq_kdDes, 100, 70, "Desired Torque Kd");
+  changePidValue((int) myPid.kd, inv, trq_kdDes, 110, 70, "Desired Torque Kd");
   //ki
   trq_kiEntry   =  gtk_entry_new();
   displayPidValue((int) myPid.ki, inv, trq_kiEntry, 0, 140, "Current Torque Ki");
   //ki desired
   trq_kiDes   =  gtk_entry_new();
-  changePidValue((int) myPid.ki, inv, trq_kiDes, 100, 140, "Desired Torque Ki");
+  changePidValue((int) myPid.ki, inv, trq_kiDes, 110, 140, "Desired Torque Ki");
   //scale
   trq_scaleEntry   =  gtk_entry_new();
   displayPidValue((int) myPid.scale, inv, trq_scaleEntry, 0, 210, "Current Torque shift");
   //scale desired
   trq_scaleDes   =  gtk_entry_new();
-  changePidValue((int) myPid.scale, inv, trq_scaleDes, 100, 210, "Desired Torque shift");
+  changePidValue((int) myPid.scale, inv, trq_scaleDes, 110, 210, "Desired Torque shift");
   //offset
   trq_offsetEntry   =  gtk_entry_new();
   displayPidValue((int) myPid.offset, inv, trq_offsetEntry, 0, 280, "Current Torque offset");
   //offset desired
   trq_offsetDes   =  gtk_entry_new();
-  changePidValue((int) myPid.offset, inv, trq_offsetDes, 100, 280, "Desired Torque offset");
+  changePidValue((int) myPid.offset, inv, trq_offsetDes, 110, 280, "Desired Torque offset");
 
   //stiffness
   imp_stiffEntry = gtk_entry_new();
   displayPidValue(stiff_val, inv, imp_stiffEntry, 0, 360, "Current Joint stiffness");
   //stiffness desired
   imp_stiffDes   =  gtk_entry_new();
-  changePidValue(stiff_val, inv, imp_stiffDes, 100, 360, "Desired Joint stiffness");
+  changePidValue(stiff_val, inv, imp_stiffDes, 110, 360, "Desired Joint stiffness");
 
   //damping
   imp_dampEntry = gtk_entry_new();
   displayPidValue(damp_val, inv, imp_dampEntry, 0, 430, "Current Joint damping");
   //damping desired
   imp_dampDes   =  gtk_entry_new();
-  changePidValue(damp_val, inv, imp_dampDes, 100, 430, "Desired Joint damping");
+  changePidValue(damp_val, inv, imp_dampDes, 110, 430, "Desired Joint damping");
+
+  //offset
+  imp_offEntry = gtk_entry_new();
+  displayPidValue(damp_val, inv, imp_offEntry, 0, 500, "Current Joint Force off");
+  //offset desired
+  imp_offDes   =  gtk_entry_new();
+  changePidValue(damp_val, inv, imp_offDes, 110, 500, "Desired Joint Force off");
 
   //Send
   buttonSend = gtk_button_new_with_mnemonic ("Send");
-  gtk_fixed_put	(GTK_FIXED(inv), buttonSend, 0, 520);
+  gtk_fixed_put	(GTK_FIXED(inv), buttonSend, 0, 590);
   g_signal_connect (buttonSend, "clicked", G_CALLBACK (send_pid), &myPid);
   gtk_widget_set_size_request     (buttonSend, 120, 25);
 
   //Close
   buttonClose = gtk_button_new_with_mnemonic ("Close");
-  gtk_fixed_put	(GTK_FIXED(inv), buttonClose, 120, 520);
+  gtk_fixed_put	(GTK_FIXED(inv), buttonClose, 120, 590);
   g_signal_connect (buttonClose, "clicked", G_CALLBACK (destroy_win), trq_winPid);
   gtk_widget_set_size_request     (buttonClose, 120, 25);
 

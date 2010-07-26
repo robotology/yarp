@@ -15,6 +15,7 @@ namespace guiPidTrq
 	static GtkWidget *trq_offsetDes = NULL;
 	static GtkWidget *imp_stiffDes = NULL;
 	static GtkWidget *imp_dampDes = NULL;
+	static GtkWidget *imp_offDes = NULL;
 
 	static GtkWidget *trq_kpEntry = NULL;
 	static GtkWidget *trq_kdEntry = NULL;
@@ -23,6 +24,7 @@ namespace guiPidTrq
 	static GtkWidget *trq_offsetEntry = NULL;
 	static GtkWidget *imp_stiffEntry = NULL;
 	static GtkWidget *imp_dampEntry = NULL;
+	static GtkWidget *imp_offEntry = NULL;
 
 	static int * joint = NULL;
 	static ITorqueControl *iTrq = NULL;
