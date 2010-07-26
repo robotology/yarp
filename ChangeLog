@@ -1,3 +1,8 @@
+2010-07-26  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/CartesianControl.h: added two more methods
+	
+
 2010-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpview/ImagePort.cpp: bring back broken save-image-set function
