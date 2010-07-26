@@ -253,7 +253,8 @@ public:
 
     /**
     * Set the duration of the trajectory. [wait for reply]
-    * @param t: time (seconds).
+    * @param t: the memory location where the time is returned 
+    *         (seconds).
     * @return true/false on success/failure. 
     */
     virtual bool setTrajTime(const double t)=0;
@@ -262,7 +263,8 @@ public:
     * Return tolerance for in-target check. [wait for reply]
     * \note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
-    * @return tolerance.
+    * @param tol: the memory location where tolerance is returned. 
+    * @return true/false on success/failure.
     */
     virtual bool getInTargetTol(double *tol)=0;
 
@@ -270,9 +272,33 @@ public:
     * Set tolerance for in-target check. [wait for reply]
     * \note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
-    * @param tol is the tolerance.
+    * @param tol: tolerance. 
+    * @return true/false on success/failure. 
     */
     virtual bool setInTargetTol(const double tol)=0;
+
+    /**
+    * Return joints velocities. [wait for reply] 
+    * @param qdot: the vector containing the joints velocities 
+    *             [deg/s] sent to the robot by the controller.
+    * @return true/false on success/failure.
+    */
+    virtual bool getJointsVelocities(yarp::sig::Vector &qdot)=0;
+
+    /**
+    * Return velocities of the end-effector in the task space. [wait
+    * for reply] 
+    * @param xdot: the 3-d vector containing the derivative of 
+    *             x,y,z position [m/s] of the end-effector while
+    *             moving in the task space as result of the
+    *             commanded joints velocities.
+    * @param odot: the 4-d vector containing the derivative of 
+    *             end-effector orientation [rad/s] while moving in
+    *             the task space as result of the commanded joints
+    *             velocities.
+    * @return true/false on success/failure.
+    */
+    virtual bool getTaskVelocities(yarp::sig::Vector &xdot, yarp::sig::Vector &odot)=0;
 
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
