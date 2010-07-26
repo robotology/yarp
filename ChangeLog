@@ -1,3 +1,8 @@
+2010-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpview/ImagePort.cpp: bring back broken save-image-set function
+	
+
 2010-07-23  Marco Randazzo  <marco.randazzo@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h

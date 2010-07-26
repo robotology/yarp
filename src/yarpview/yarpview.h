@@ -60,6 +60,8 @@ void setTimedMode(guint dT);
 
 void setSynchroMode();
 
+void saveImageNow();
+
 //-------------------------------------------------
 // Non Modal Dialogs
 //-------------------------------------------------

@@ -48,6 +48,11 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
             {
                 gdk_threads_enter();
                 viewer->invalidateDrawArea();
+                saveImageNow();
+                gdk_threads_leave ();
+            } else {
+                gdk_threads_enter();
+                saveImageNow();
                 gdk_threads_leave ();
             }
        }

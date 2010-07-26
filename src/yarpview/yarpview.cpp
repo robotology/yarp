@@ -103,6 +103,14 @@ inline void periodToFreq(double avT, double mT, double MT, double &avH, double &
         mH=0;
 }
 
+
+void saveImageNow() {
+    if (_savingSet) {
+        saveCurrentFrame();
+    }
+}
+
+
 //-------------------------------------------------
 // Main Window Callbacks
 //-------------------------------------------------
