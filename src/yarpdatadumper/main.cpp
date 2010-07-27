@@ -3,7 +3,7 @@
 
 \defgroup dataDumper dataDumper
  
-Acquires and stores Vectors or Images and Videos from a YARP 
+Acquires and stores Bottles or Images and Videos from a YARP 
 port. 
 
 Copyright (C) 2008 RobotCub Consortium
@@ -17,14 +17,14 @@ CopyPolicy: Released under the terms of the GNU GPL v2.0.
 \section intro_sec Description
 
 When launched, the service monitors the presence of incoming 
-data (vectors or images) and stores it within a folder called 
+data (bottles or images) and stores it within a folder called 
 with the same name as the service port (or with a proper suffix 
 appended if other data is present in the current path). In this 
 folder the file 'data.log' contains the information (taken from 
 the envelope field of the port) line by line as follows: 
  
 \code 
-[pck id] [time stamp] [vector (or image_file_name)] 
+[pck id] [time stamp] [bottle content (or image_file_name)] 
    0       1.234         0 1 2 3 ...
    1       1.235         4 5 6 7 ...
    ...     ...           ...
@@ -46,8 +46,8 @@ YARP libraries and OpenCV 2.0 (if found)
  
 --type \e datatype 
 - The parameter \e datatype selects the type of items to be 
-  stored. It can be \e vector, \e image or \e video; if not
-  specified \e vector is assumed. Note that images are stored as
+  stored. It can be \e bottle, \e image or \e video; if not
+  specified \e bottle is assumed. Note that images are stored as
   ppm files. If \e video is choosen then only the file
   'video.avi' is produced neither 'data.log' nor the single
   images. The data type \e video is available iff OpenCV is
@@ -62,7 +62,7 @@ YARP libraries and OpenCV 2.0 (if found)
 --downsample \e n 
 - With this option it is possible to reduce the storing rate by 
   a factor \e n, i.e. the parameter \e n specifies how many
-  items (vectors or images) shall be skipped after one
+  items (bottles or images) shall be skipped after one
   acquisition.
 
 --rxTime
@@ -144,9 +144,9 @@ This file can be edited at \in src/dataDumper/main.cpp.
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/Thread.h>
+#include <yarp/os/RateThread.h>
 #include <yarp/os/Time.h>
-#include <yarp/sig/Vector.h>
+#include <yarp/os/Bottle.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/Os.h>
@@ -170,7 +170,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 
 
-typedef enum { vect, image } DumpType;
+typedef enum { bottle, image } DumpType;
 
 // Abstract object definition for queueing
 class DumpObj
@@ -182,18 +182,18 @@ public:
 };
 
 
-// Specialization for Vector object
-class DumpVect : public DumpObj
+// Specialization for Bottle object
+class DumpBottle : public DumpObj
 {
 private:
-    Vector *p;
+    Bottle *p;
 
 public:
-    DumpVect() { p=new Vector(); }
-    DumpVect(const DumpVect &obj) { p=new Vector(*(obj.p)); }
-    DumpVect(const Vector &v) { p=new Vector(v); }
-    const DumpVect &operator=(const DumpVect &obj) { *p=*(obj.p); return *this; }
-    ~DumpVect() { delete p; }
+    DumpBottle() { p=new Bottle; }
+    DumpBottle(const DumpBottle &obj) { p=new Bottle(*(obj.p)); }
+    DumpBottle(const Bottle &b) { p=new Bottle(b); }
+    const DumpBottle &operator=(const DumpBottle &obj) { *p=*(obj.p); return *this; }
+    ~DumpBottle() { delete p; }
 
     virtual const string toFile(const char *dirName, unsigned int cnt)
     {
@@ -206,10 +206,10 @@ public:
     virtual void *getPtr() { return NULL; }
 };
 
-// Object creator of type Vector - overloaded
-DumpObj *factory(Vector& obj)
+// Object creator of type Bottle - overloaded
+DumpObj *factory(Bottle& obj)
 {
-    DumpVect *p=new DumpVect(obj);
+    DumpBottle *p=new DumpBottle(obj);
     return p;
 }
 
@@ -332,7 +332,7 @@ private:
 
 
 
-class DumpThread : public Thread
+class DumpThread : public RateThread
 {
 private:
     DumpQueue     &buf;
@@ -355,7 +355,7 @@ private:
 
 public:
     DumpThread(DumpQueue &Q, const char *_dirName, int szToWrite, bool _saveData, bool _videoOn) :
-               buf(Q), blockSize(szToWrite), saveData(_saveData), videoOn(_videoOn)
+               RateThread(50), buf(Q), blockSize(szToWrite), saveData(_saveData), videoOn(_videoOn)
     {
         strcpy(dirName,_dirName);
         strcpy(logFile,dirName);        
@@ -391,91 +391,86 @@ public:
 
     virtual void run()
     {
-        while (!isStopping())
+        bool writeToDisk=false;
+
+        buf.lock();
+        unsigned int sz=buf.size(); //!!! access to size must be proteceted: problem spotted with Linux stl
+        buf.unlock();
+
+        // each 10 seconds it issues a writeToDisk command straightaway
+        double curTime=Time::now();
+        if (curTime-oldTime>10.0)
         {
-            bool writeToDisk=false;
+            writeToDisk=sz>0;
+            oldTime=curTime;
+        }
 
-            buf.lock();
-            unsigned int sz=buf.size(); //!!! access to size must be proteceted: problem spotted with Linux stl
-            buf.unlock();
+        // it performs the writeToDisk on command or as soon as
+        // the queue size is greater than the given threshold
+        if (sz>blockSize || writeToDisk)
+        {
+            static unsigned int cumulSize=0;
 
-            // each 10 seconds it issues a writeToDisk command straightaway
-            double curTime=Time::now();
-            if (curTime-oldTime>10.0)
+        #ifdef ADD_VIDEO
+            // extract images parameters just once
+            if (doImgParamsExtraction && sz>1)
             {
-				writeToDisk=sz>0;
-                oldTime=curTime;
+                buf.lock();
+                DumpItem itemFront=buf.front();
+                DumpItem itemEnd=buf.back();
+                buf.unlock();
+
+                int fps;
+                int frameW=((IplImage*)itemEnd.obj->getPtr())->width;
+                int frameH=((IplImage*)itemEnd.obj->getPtr())->height;                    
+
+                double dt=itemEnd.timeStamp-itemFront.timeStamp;
+                if (dt<=0.0)
+                    fps=25; // default
+                else
+                {
+                    double _fps=sz/dt;
+                    fps=(int)_fps;
+
+                    if (_fps-fps>=0.5)
+                        fps++;
+                }
+
+                videoWriter=cvCreateVideoWriter(videoFile,CV_FOURCC('D','I','V','X'),
+                                                fps,cvSize(frameW,frameH),true);
+
+                doImgParamsExtraction=false;
+                doSaveFrame=true;
             }
+        #endif
 
-            // it performs the writeToDisk on command or as soon as
-            // the queue size is greater than the given threshold
-            if (sz>blockSize || writeToDisk)
+            // save to disk
+            for (unsigned int i=0; i<sz; i++)
             {
-                static unsigned int cumulSize=0;
+                buf.lock();
+                DumpItem item=buf.front();
+                buf.unlock();
+
+                if (saveData)
+                {
+                    fout << item.seqNumber << '\t' << fixed << item.timeStamp << '\t';
+                    fout << item.obj->toFile(dirName,counter++) << endl;
+                }
 
             #ifdef ADD_VIDEO
-                // extract images parameters just once
-                if (doImgParamsExtraction && sz>1)
-                {
-                    buf.lock();
-                    DumpItem itemFront=buf.front();
-                    DumpItem itemEnd=buf.back();
-                    buf.unlock();
-
-                    int fps;
-                    int frameW=((IplImage*)itemEnd.obj->getPtr())->width;
-                    int frameH=((IplImage*)itemEnd.obj->getPtr())->height;                    
-
-                    double dt=itemEnd.timeStamp-itemFront.timeStamp;
-                    if (dt<=0.0)
-                        fps=25; // default
-                    else
-                    {
-                        double _fps=sz/dt;
-                        fps=(int)_fps;
-
-                        if (_fps-fps>=0.5)
-                            fps++;
-                    }
-
-                    videoWriter=cvCreateVideoWriter(videoFile,CV_FOURCC('D','I','V','X'),
-                                                    fps,cvSize(frameW,frameH),true);
-
-                    doImgParamsExtraction=false;
-                    doSaveFrame=true;
-                }
+                if (doSaveFrame)
+                    cvWriteFrame(videoWriter,(IplImage*)item.obj->getPtr());
             #endif
 
-                // save to disk
-                for (unsigned int i=0; i<sz; i++)
-                {
-                    buf.lock();
-                    DumpItem item=buf.front();
-                    buf.unlock();
+                delete item.obj;
 
-                    if (saveData)
-                    {
-                        fout << item.seqNumber << '\t' << fixed << item.timeStamp << '\t';
-                        fout << item.obj->toFile(dirName,counter++) << endl;
-                    }
-
-                #ifdef ADD_VIDEO
-                    if (doSaveFrame)
-                        cvWriteFrame(videoWriter,(IplImage*)item.obj->getPtr());
-                #endif
-
-                    delete item.obj;
-
-                    buf.lock();
-                    buf.pop_front();
-                    buf.unlock();
-                }
-
-                cumulSize+=sz;
-                cout << sz << " items stored [cumul #: " << cumulSize << "]" << endl;
+                buf.lock();
+                buf.pop_front();
+                buf.unlock();
             }
 
-            Time::delay(0.05);
+            cumulSize+=sz;
+            cout << sz << " items stored [cumul #: " << cumulSize << "]" << endl;
         }
     }
 
@@ -499,16 +494,16 @@ class DumpModule: public RFModule
 {
 private:
     DumpQueue                    *q;
-    DumpPort<Vector>             *p_vect;
+    DumpPort<Bottle>             *p_bottle;
     DumpPort<ImageOf<PixelBgr> > *p_image;
     DumpThread                   *t;
-    Port                         rpcPort;
-    DumpType                     T;
-    bool                         saveData;
-    bool                         videoOn;
-    bool                         rxTime;
-    unsigned int                 dwnsample;
-    char                         portName[255];
+    Port                          rpcPort;
+    DumpType                      type;
+    bool                          saveData;
+    bool                          videoOn;
+    bool                          rxTime;
+    unsigned int                  dwnsample;
+    char                          portName[255];
 
 public:
     DumpModule() { }
@@ -537,11 +532,11 @@ public:
             string optTypeName;
             optTypeName=rf.find("type").asString().c_str();
 
-            if (optTypeName=="vector")
-                T=vect;
+            if (optTypeName=="bottle")
+                type=bottle;
             else if (optTypeName=="image")
             {    
-                T=image;
+                type=image;
             #ifdef ADD_VIDEO
                 if (rf.check("addVideo"))
                     videoOn=true;
@@ -550,7 +545,7 @@ public:
         #ifdef ADD_VIDEO
             else if (optTypeName=="video")
             {    
-                T=image;
+                type=image;
                 videoOn=true;
                 saveData=false;
             }
@@ -562,7 +557,7 @@ public:
             }
         }
         else
-            T=vect;
+            type=bottle;
 
         if (rf.check("downsample"))
             dwnsample=rf.find("downsample").asInt();
@@ -601,11 +596,11 @@ public:
             return false;
         }
 
-        if (T==vect)
+        if (type==bottle)
         {
-            p_vect=new DumpPort<Vector>(*q,dwnsample,rxTime);
-            p_vect->useCallback();
-            p_vect->open(portName);
+            p_bottle=new DumpPort<Bottle>(*q,dwnsample,rxTime);
+            p_bottle->useCallback();
+            p_bottle->open(portName);
         }
         else
         {
@@ -630,11 +625,11 @@ public:
     {
         t->stop();
 
-        if (T==vect)
+        if (type==bottle)
         {
-            p_vect->interrupt();
-            p_vect->close();
-            delete p_vect;
+            p_bottle->interrupt();
+            p_bottle->close();
+            delete p_bottle;
         }
         else
         {
@@ -686,10 +681,10 @@ int main(int argc, char *argv[])
         cout << "Options:" << endl << endl;
         cout << "\t--name    port:\tservice port name (default: /dump)"                            << endl;        
     #ifdef ADD_VIDEO
-        cout << "\t--type     typ:\ttype of the data to be dumped [vector(default), image, video]" << endl;
+        cout << "\t--type     typ:\ttype of the data to be dumped [bottle(default), image, video]" << endl;
         cout << "\t--addVideo    :\tproduce video as well (if image is selected)"                  << endl;
     #else
-        cout << "\t--type     typ:\ttype of the data to be dumped [vector(default), image]"        << endl;
+        cout << "\t--type     typ:\ttype of the data to be dumped [bottle(default), image]"        << endl;
     #endif
         cout << "\t--downsample n:\tdownsample rate (default: 1 => downsample disabled)"           << endl;
         cout << "\t--rxTime      :\tdumps the receiver time instead of the sender time"            << endl;
