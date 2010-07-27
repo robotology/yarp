@@ -18,10 +18,10 @@ foreach(test_family ${targets})
   # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
   # builds.
   GET_TARGET_PROPERTY(EXELOC ${EXE} LOCATION_RELEASE)
-  message(STATUS "Exeloc: ${EXELOC}")
+  #message(STATUS "Exeloc: ${EXELOC}")
   foreach(test ${harness_code})
     get_filename_component(XN ${test} NAME_WE)
-	message(STATUS ${XN})
+	#message(STATUS ${XN})
     add_test("${test_family}::${XN}" ${EXELOC} regression ${XN})
   endforeach()
 endforeach()
