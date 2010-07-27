@@ -23,6 +23,10 @@ namespace yarp {
     }
 }
 
+#define TCPROS_TRANSLATE_INHIBIT (-1)
+#define TCPROS_TRANSLATE_UNKNOWN (0)
+#define TCPROS_TRANSLATE_IMAGE (1)
+
 class yarp::os::impl::TcpRosCarrier : public Carrier {
 private:
     bool firstRound;
@@ -30,6 +34,7 @@ private:
     int headerLen1;
     int headerLen2;
     int raw;
+    int translate;
 protected:
     bool isService;
 public:
@@ -40,6 +45,7 @@ public:
         headerLen2 = 0;
         isService = false;
         raw = -1;
+        translate = TCPROS_TRANSLATE_UNKNOWN;
     }
 
     virtual Carrier *create() {

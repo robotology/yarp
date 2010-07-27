@@ -9,6 +9,7 @@
 #include "TcpRosCarrier.h"
 #include "RosHeader.h"
 #include "RosSlave.h"
+#include "WireImage.h"
 
 #include <string>
 #include <map>
@@ -19,6 +20,7 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
+using namespace yarp::sig;
 using namespace std;
 
 #define dbg_printf if (0) printf
@@ -188,6 +190,29 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
 }
 
 bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
+
+    if (translate==TCPROS_TRANSLATE_UNKNOWN) {
+        WireImage wi;
+        FlexImage *img = wi.checkForImage(writer);
+        if (img) {
+            translate = TCPROS_TRANSLATE_IMAGE;
+        } else {
+            translate = TCPROS_TRANSLATE_INHIBIT;
+        }
+    }
+
+    switch (translate) {
+    case TCPROS_TRANSLATE_IMAGE:
+        {
+            WireImage wi;
+            FlexImage *img = wi.checkForImage(writer);
+            if (img==NULL) {
+                fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
+                return false;
+            }
+        }
+        break;
+    }
 
     // For now, we will require objects being written to be either:
     //   + raw data

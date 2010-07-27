@@ -34,8 +34,6 @@ class yarp::os::impl::SizedWriter {
 public:
     virtual ~SizedWriter() {}
 
-    virtual void write(OutputStream& os) = 0;
-
     virtual int length() = 0;
 
     virtual int headerLength() = 0;
@@ -47,6 +45,13 @@ public:
     virtual PortReader *getReplyHandler() = 0;
     
     virtual yarp::os::Portable *getReference() = 0;
+
+    virtual void write(OutputStream& os) {
+        for (int i=0; i<length(); i++) {
+            Bytes b((char*)data(i),length(i));
+            os.write(b);
+        }
+    }
 };
 
 #endif
