@@ -91,6 +91,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
       sliderArray    = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
       sliderVelArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
       currPosArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
+	  currTrqArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
+	  currPosArrayLbl = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
+	  currTrqArrayLbl = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
       inPosArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  frameColorBack = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  frame_slider1 = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
@@ -186,6 +189,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  else
 	    sliderArray[k]    =  gtk_hscale_new_with_range(1, 2, 1);
 	  currPosArray[k]   =  gtk_entry_new();
+	  currTrqArray[k]   =  gtk_entry_new();
+  	  currPosArrayLbl[k]  =  gtk_label_new("deg");
+	  currTrqArrayLbl[k]  =  gtk_label_new("Nm");
 	  inPosArray[k]     = gtk_entry_new();
 
 	  sliderVelArray[k] =  gtk_hscale_new_with_range(1, 100, 1);
@@ -212,8 +218,11 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider1[k],  60, 10    );
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderArray[k],    65, 20    );
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderVelArray[k], 65, 20+50 );
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95, 20+100);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65, 20+100);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95, 15+100);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   95, 35+100);
+  	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145, 15+103);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   145, 35+103);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65, 15+100);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider2[k],  60, 60    );
 
 	  int buttonDist= 24;
@@ -231,7 +240,8 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  gtk_widget_set_size_request 	(frame_slider1[k], 110, 50);
 	  gtk_widget_set_size_request   (frameColorBack[k], width, height);
 	  gtk_widget_set_size_request 	(sliderArray[k], 90, 40);
-	  gtk_widget_set_size_request 	(currPosArray[k], 70, 20);
+	  gtk_widget_set_size_request 	(currPosArray[k], 50, 20);
+	  gtk_widget_set_size_request 	(currTrqArray[k], 50, 20);
 	  gtk_widget_set_size_request 	(inPosArray[k], 20, 20);
 	  gtk_widget_set_size_request 	(homeArray[k], 50, 25);
 	  gtk_widget_set_size_request 	(disableArray[k], 50, 25);
@@ -262,6 +272,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  myClassData1->partPointer = this;
 
 	  gtk_editable_set_editable ((GtkEditable*) currPosArray[k], FALSE);
+	  gtk_editable_set_editable ((GtkEditable*) currTrqArray[k], FALSE);
 	  gtk_editable_set_editable ((GtkEditable*) inPosArray[k], FALSE);
 
 	  //Velocity commands update

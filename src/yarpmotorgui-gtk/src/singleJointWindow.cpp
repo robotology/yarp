@@ -228,8 +228,10 @@ bool partMover::entry_update(partMover *currentPart)
   
   IPositionControl *ipos = currentPart->pos;
   IEncoders *iiencs = currentPart->iencs;
+  ITorqueControl *itrq = currentPart->trq;
 
-  GtkEntry **entry = (GtkEntry **) currentPart->currPosArray;
+  GtkEntry **pos_entry = (GtkEntry **) currentPart->currPosArray;
+  GtkEntry **trq_entry = (GtkEntry **) currentPart->currTrqArray;
   GtkEntry **inEntry = (GtkEntry **) currentPart->inPosArray;
   GtkWidget **colorback = (GtkWidget **) currentPart->frameColorBack;
 
@@ -240,6 +242,7 @@ bool partMover::entry_update(partMover *currentPart)
   char frame_title [255];
 
   double positions[MAX_NUMBER_OF_JOINTS];
+  double torques[MAX_NUMBER_OF_JOINTS];
   int k;
   int NUMBER_OF_JOINTS;
   bool done = false;
@@ -255,6 +258,8 @@ bool partMover::entry_update(partMover *currentPart)
 
   while(!iiencs->getEncoders(positions))
     Time::delay(0.001);
+  while(!itrq->getTorques(torques))
+	Time::delay(0.001);
   
   //tmp
   //fprintf(stderr, "Number of joints is: %d\n", NUMBER_OF_JOINTS);
@@ -267,7 +272,9 @@ bool partMover::entry_update(partMover *currentPart)
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
     {
       sprintf(buffer, "%.1f", positions[k]);  
-      gtk_entry_set_text((GtkEntry*) entry[k],  buffer);
+      gtk_entry_set_text((GtkEntry*) pos_entry[k],  buffer);
+      sprintf(buffer, "%.3f", torques[k]);  
+	  gtk_entry_set_text((GtkEntry*) trq_entry[k],  buffer);
     }
   //update all joint sliders
   for (k = 0; k < NUMBER_OF_JOINTS; k++) 

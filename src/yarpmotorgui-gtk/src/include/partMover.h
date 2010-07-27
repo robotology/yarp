@@ -50,6 +50,9 @@ class partMover{
   GtkWidget **sliderVelArray;
   GtkWidget **sliderArray;
   GtkWidget **currPosArray;
+  GtkWidget **currTrqArray;
+  GtkWidget **currPosArrayLbl;
+  GtkWidget **currTrqArrayLbl;
   GtkWidget **inPosArray;
   GtkWidget **frameColorBack;
   GtkWidget **frame_slider1;
