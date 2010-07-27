@@ -213,10 +213,10 @@ void guiPidTrq::guiPidTrq(void *button, void* data)
 
   //offset
   imp_offEntry = gtk_entry_new();
-  displayPidValue(damp_val, inv, imp_offEntry, 0, 500, "Current Joint Force off");
+  displayPidValue(offset_val, inv, imp_offEntry, 0, 500, "Current Joint Force off");
   //offset desired
   imp_offDes   =  gtk_entry_new();
-  changePidValue(damp_val, inv, imp_offDes, 110, 500, "Desired Joint Force off");
+  changePidValue(offset_val, inv, imp_offDes, 110, 500, "Desired Joint Force off");
 
   //Send
   buttonSend = gtk_button_new_with_mnemonic ("Send");
