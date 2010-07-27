@@ -166,6 +166,7 @@
 // Bring in the main important namespace
 using namespace yarp::os;
 using namespace yarp::sig;
+using namespace yarp::sig::file;
 using namespace yarp::dev;
 %}
 
@@ -238,6 +239,7 @@ MAKE_COMMS(Property)
 MAKE_COMMS(Bottle)
 
 %include <yarp/sig/Image.h>
+%include <yarp/sig/ImageFile.h>
 %include <yarp/sig/Sound.h>
 %include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
