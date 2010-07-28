@@ -1734,7 +1734,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
 		int ret;
-        //yarp::os::ConstString command=yarp::os::ConstString("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
+        yarp::os::ConstString command=yarp::os::ConstString("/bin/bash -l -c \"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
         //yarp::os::ConstString command=yarp::os::ConstString("\"yarp quiet readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
@@ -1743,15 +1743,15 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 		if (msg.check("geometry"))
 		{
 	        yarp::os::ConstString geometry(msg.find("geometry").asString());
-			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
-			//ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
+			//ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
+			//          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		else
 		{
-			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
-			          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
-			//ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
+			//ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e","yarp","quiet","readwrite",
+			//          (yarp::os::ConstString("/")+alias+"/user/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-title",alias.c_str(),"-e",command.c_str(),NULL);
 		}
 		
 		fflush(stdout);
