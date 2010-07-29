@@ -596,6 +596,7 @@ int yarp::os::Run::Server()
 	pServerPort=&port;
 
 	signal(SIGINT,sigint_handler);
+	signal(SIGTERM,sigint_handler);
 
 	#if !defined(WIN32) && !defined(WIN64)
 	signal(SIGCHLD,sigchild_handler); 
