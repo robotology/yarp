@@ -128,6 +128,16 @@ bool ImplementControlMode::getControlMode(int j, int *f)
     return raw->getControlModeRaw(k, f);
 }
 
+bool ImplementControlMode::getControlModes(int *modes)
+{
+	int nj = castToMapper(helper)->axes();
+    int *tmp=new int [nj];
+    bool ret=raw->getControlModesRaw(tmp);
+    castToMapper(helper)->toUser(tmp, modes);
+	delete [] tmp;
+    return ret;
+}
+
 ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
 {
     iTorqueRaw = tq;
@@ -308,7 +318,7 @@ bool ImplementTorqueControl::getTorquePid(int j, Pid *pid)
 
 bool ImplementTorqueControl::getTorquePids(Pid *pids)
 {
-    int ret=iTorqueRaw->getTorquePidsRaw(tmpPids);
+    bool ret=iTorqueRaw->getTorquePidsRaw(tmpPids);
 
     int tmp=0;
     int nj=castToMapper(helper)->axes();
@@ -324,7 +334,7 @@ bool ImplementTorqueControl::getTorquePids(Pid *pids)
 
 bool ImplementTorqueControl::getTorqueErrorLimits(double *limits)
 {
-    int ret=iTorqueRaw->getTorqueErrorLimitsRaw(temp);
+    bool ret=iTorqueRaw->getTorqueErrorLimitsRaw(temp);
     castToMapper(helper)->toUser(temp, limits);
     return ret;
 }

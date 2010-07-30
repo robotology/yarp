@@ -133,7 +133,8 @@ public:
 #define VOCAB_CM_OPENLOOP VOCAB4('c','m','o','l')
 #define VOCAB_CM_IMPEDANCE_POS VOCAB4('c','m','i','p')
 #define VOCAB_CM_IMPEDANCE_VEL VOCAB4('c','m','i','v')
-#define VOCAB_CM_CONTROL_MODE VOCAB4('c','m','o','d')
+#define VOCAB_CM_CONTROL_MODE  VOCAB4('c','m','o','d')
+#define VOCAB_CM_CONTROL_MODES VOCAB4('c','m','d','s')
 
 /**
  * @ingroup dev_iface_motor
@@ -153,6 +154,7 @@ public:
 	virtual bool setImpedanceVelocityModeRaw(int j)=0;
     virtual bool setOpenLoopModeRaw(int j)=0;
     virtual bool getControlModeRaw(int j, int *mode)=0;
+	virtual bool getControlModesRaw(int* modes)=0;
 };
 
 /**
@@ -214,6 +216,13 @@ public:
     * @return: true/false success failure.
     */
     virtual bool getControlMode(int j, int *mode)=0;
+
+    /*
+    * Get the current control mode (multiple joints).
+    * @param modes: a vector containing vocabs for the current control modes of the joints.
+    * @return: true/false success failure.
+    */
+    virtual bool getControlModes(int *modes)=0;
 };
 
 /**

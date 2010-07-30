@@ -680,6 +680,7 @@ public:
     bool setPositionMode(int j);
     bool setVelocityMode(int j);
     bool getControlMode(int j, int *f);
+	bool getControlModes(int *modes);
 };
 
 class yarp::dev::ImplementTorqueControl: public ITorqueControl 

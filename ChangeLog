@@ -1,3 +1,11 @@
+2010-07-28  Marco Randazzo  <marco.randazzo@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
+	* src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
+	* src/libYARP_dev/src/RemoteControlBoard.cpp
+	added method getControlModes() (multiple joint)
+	
 2010-07-26  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/CartesianControl.h: added two more methods

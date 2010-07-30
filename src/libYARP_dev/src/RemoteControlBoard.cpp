@@ -1830,11 +1830,34 @@ public:
             ok=ok&&true;
             *mode=resp.get(3).asVocab();
         }
-
         return ok;
     }
 
-    
+    bool getControlModes(int *modes)
+    { 
+        Bottle cmd, resp;
+        cmd.addVocab(VOCAB_ICONTROLMODE);
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_CM_CONTROL_MODES);
+
+        bool ok = rpc_p.write(cmd, resp);
+
+        if ( (resp.get(0).asVocab()==VOCAB_IS) &&(resp.get(1).asVocab()==VOCAB_CM_CONTROL_MODES))
+        {
+            ok=ok&&true;
+			Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
+                return false;
+
+            int njs = l.size();
+            ACE_ASSERT (nj == njs);
+            for (int i = 0; i < nj; i++)
+                modes[i] = l.get(i).asVocab();
+        }
+
+        return ok;
+    }
+  
     bool setOutput(int j, double v)
     { return set1V1I1D(VOCAB_OUTPUT, j, v); }
 
