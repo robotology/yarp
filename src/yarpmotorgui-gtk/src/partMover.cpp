@@ -11,6 +11,7 @@
 
 partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, ResourceFinder *fnd)
 {
+  first_time=true;
 
   finder = fnd;
 

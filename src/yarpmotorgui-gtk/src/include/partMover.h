@@ -106,6 +106,7 @@ class partMover{
   GtkWidget *button7;
   GtkWidget *button8;
   ResourceFinder *finder;
+  bool      first_time;
 
   char *partLabel;
   bool interfaceError;

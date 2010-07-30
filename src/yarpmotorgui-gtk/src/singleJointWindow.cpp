@@ -224,15 +224,15 @@ bool partMover::entry_update(partMover *currentPart)
 
   static int slowSwitcher = 0;
 
-  IControlMode *ictrl = currentPart->ctrlmode;
-  
-  IPositionControl *ipos = currentPart->pos;
-  IEncoders *iiencs = currentPart->iencs;
-  ITorqueControl *itrq = currentPart->trq;
+  IControlMode     *ictrl = currentPart->ctrlmode;
+  IPositionControl  *ipos = currentPart->pos;
+  IEncoders       *iiencs = currentPart->iencs;
+  ITorqueControl    *itrq = currentPart->trq;
+  IAmplifierControl *iamp = currentPart->amp;
 
-  GtkEntry **pos_entry = (GtkEntry **) currentPart->currPosArray;
-  GtkEntry **trq_entry = (GtkEntry **) currentPart->currTrqArray;
-  GtkEntry **inEntry = (GtkEntry **) currentPart->inPosArray;
+  GtkEntry * *pos_entry = (GtkEntry **)  currentPart->currPosArray;
+  GtkEntry  **trq_entry = (GtkEntry **)  currentPart->currTrqArray;
+  GtkEntry    **inEntry = (GtkEntry **)  currentPart->inPosArray;
   GtkWidget **colorback = (GtkWidget **) currentPart->frameColorBack;
 
   GtkWidget **sliderAry = currentPart->sliderArray;
@@ -243,10 +243,13 @@ bool partMover::entry_update(partMover *currentPart)
 
   double positions[MAX_NUMBER_OF_JOINTS];
   double torques[MAX_NUMBER_OF_JOINTS];
+  static int controlModes[MAX_NUMBER_OF_JOINTS];
+  static int controlModesOld[MAX_NUMBER_OF_JOINTS];
+
   int k;
   int NUMBER_OF_JOINTS;
   bool done = false;
-  static int control_mode=0;
+  bool ret = false;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
   if (NUMBER_OF_JOINTS == 0)
@@ -280,99 +283,113 @@ bool partMover::entry_update(partMover *currentPart)
   for (k = 0; k < NUMBER_OF_JOINTS; k++) 
     if(POS_UPDATE[k])
       gtk_range_set_value((GtkRange*)sliderAry[k],  positions[k]);
-      
 
-
-  //update just one checkMotion done to safe badwidth
+  // *** update the checkMotionDone box section ***
+  // (only one at a time in order to save badwidth)
   k = slowSwitcher%NUMBER_OF_JOINTS;
-  sprintf(frame_title,"Joint %d ",k );
   slowSwitcher++;
   ipos->checkMotionDone(k, &done);
-
   if (!done)
       gtk_entry_set_text((GtkEntry*) inEntry[k],  " "); 
   else
       gtk_entry_set_text((GtkEntry*) inEntry[k],  "@");
   
-  bool ret = ictrl->getControlMode(k, &control_mode);
-  //control_mode++; if (control_mode>4) control_mode=0;
-  switch (control_mode)
+  // *** update the controlMode section ***
+  // the new icubinterface does not increase the bandwidth consumption
+  ret = true;
+  ret=ictrl->getControlModes(controlModes);
+  /*for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
-	  case VOCAB_CM_IDLE:
-		  pColor=&color_yellow;
-  		  strcat(frame_title," (IDLE)");
-  	      gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-	  case VOCAB_CM_POSITION:
-		  pColor=&color_green;
-		  strcat(frame_title," (POSITION)");
-	      gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"Position:");
-          gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Velocity:");
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-	  case VOCAB_CM_VELOCITY:
-		  pColor=&color_blue;
-		  strcat(frame_title," (VELOCITY)");
-		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-	  case VOCAB_CM_TORQUE:
-		  pColor=&color_pink;
-		  strcat(frame_title," (TORQUE)");
-  		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"Torque:");
-          gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Torque2:");
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-		  break;
-	  case VOCAB_CM_IMPEDANCE_POS:
-		  pColor=&color_indaco;
-		  strcat(frame_title," (IMPEDANCE POS)");
-  		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-  	  case VOCAB_CM_IMPEDANCE_VEL:
-		  pColor=&color_indaco;
-		  strcat(frame_title," (IMPEDANCE VEL)");
-  		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-	  case VOCAB_CM_OPENLOOP:
-		  pColor=&color_white;
-		  strcat(frame_title," (OPENLOOP)");
-  		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-	  default:
-	  case VOCAB_CM_UNKNOWN:
-		  pColor=&color_grey;
-		  strcat(frame_title," (UNKNOWN)");
-		  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-	  break;
-  }
+	  ret &= ictrl->getControlMode(k, &controlModes[k]);
+      //controlModes[k]=VOCAB_CM_IDLE;
+  }*/
 
-// 		  pColor=&color_blue;
-//		  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
-
-  IAmplifierControl *iamp =  currentPart->amp;
   
-  int curr_amp_status=0;
-  int amp_status[100]; //fix this!!!
-  for (int i=0; i<100; i++) amp_status[i]=0;
-  iamp->getAmpStatus(amp_status); //fix this!!!
-  curr_amp_status=amp_status[k]; //fix this!!!
- // fprintf(stderr, "FAULT : %x %x\n", amp_status[k], amp_status[k] & 0xFF);
-  if ((amp_status[k] & 0xFF)!=0)
+  if (ret==false) fprintf(stderr,"ictrl->getControlMode failed\n" );
+  for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
-//	  fprintf(stderr, "FAULT DETECTED: %x\n", curr_amp_status);
-	 pColor=&color_red;
-	 strcat(frame_title," (FAULT)");
-	 gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-	 gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+	  if (currentPart->first_time==false && controlModes[k] == controlModesOld[k]) continue;
+//fprintf(stderr,"**\n" );
+	  controlModesOld[k]=controlModes[k];
+	  sprintf(frame_title,"Joint %d ",k );
+
+	  switch (controlModes[k])
+	  {
+		  case VOCAB_CM_IDLE:
+			  pColor=&color_yellow;
+  			  strcat(frame_title," (IDLE)");
+  			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+		  case VOCAB_CM_POSITION:
+			  pColor=&color_green;
+			  strcat(frame_title," (POSITION)");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"Position:");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Velocity:");
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+		  case VOCAB_CM_VELOCITY:
+			  pColor=&color_blue;
+			  strcat(frame_title," (VELOCITY)");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+		  case VOCAB_CM_TORQUE:
+			  pColor=&color_pink;
+			  strcat(frame_title," (TORQUE)");
+  			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider1[k]),"Torque:");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->frame_slider2[k]),"Torque2:");
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+			  break;
+		  case VOCAB_CM_IMPEDANCE_POS:
+			  pColor=&color_indaco;
+			  strcat(frame_title," (IMPEDANCE POS)");
+  			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+  		  case VOCAB_CM_IMPEDANCE_VEL:
+			  pColor=&color_indaco;
+			  strcat(frame_title," (IMPEDANCE VEL)");
+  			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+		  case VOCAB_CM_OPENLOOP:
+			  pColor=&color_white;
+			  strcat(frame_title," (OPENLOOP)");
+  			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+		  default:
+		  case VOCAB_CM_UNKNOWN:
+			  pColor=&color_grey;
+			  strcat(frame_title," (UNKNOWN)");
+			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		  break;
+	  }
+
+	  //  pColor=&color_blue;
+	  //  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+	  
+	  int curr_amp_status=0;
+	  int amp_status[60];                             //fix this!!!
+	  for (int i=0; i<60; i++) amp_status[i]=0;       //fix this!!!
+	  iamp->getAmpStatus(amp_status);                 //fix this!!!
+	  curr_amp_status=amp_status[k];                  //fix this!!!
+	  //fprintf(stderr, "FAULT : %x %x\n", amp_status[k], amp_status[k] & 0xFF);
+	  if ((amp_status[k] & 0xFF)!=0)
+	  {
+	     //fprintf(stderr, "FAULT DETECTED: %x\n", curr_amp_status);
+		 pColor=&color_red;
+		 strcat(frame_title," (FAULT)");
+		 gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+		 gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+	  }
   }
 
+  currentPart->first_time =false;
   return true;
 	
 }
