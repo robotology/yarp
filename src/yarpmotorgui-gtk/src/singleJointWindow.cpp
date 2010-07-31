@@ -259,10 +259,13 @@ bool partMover::entry_update(partMover *currentPart)
 	  return true;
   }
 
+  for (k = 0; k < NUMBER_OF_JOINTS; k++) torques[k]=0;
+
   while(!iiencs->getEncoders(positions))
     Time::delay(0.001);
-  while(!itrq->getTorques(torques))
-	Time::delay(0.001);
+  //while(!itrq->getTorques(torques))
+	//Time::delay(0.001);
+  itrq->getTorques(torques);
   
   //tmp
   //fprintf(stderr, "Number of joints is: %d\n", NUMBER_OF_JOINTS);
@@ -382,10 +385,10 @@ bool partMover::entry_update(partMover *currentPart)
 	  if ((amp_status[k] & 0xFF)!=0)
 	  {
 	     //fprintf(stderr, "FAULT DETECTED: %x\n", curr_amp_status);
-		 pColor=&color_red;
-		 strcat(frame_title," (FAULT)");
-		 gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
-		 gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
+		 //pColor=&color_red;
+		 //strcat(frame_title," (FAULT)");
+		 //gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
+		 //gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 	  }
   }
 
