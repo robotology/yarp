@@ -265,13 +265,6 @@ bool partMover::entry_update(partMover *currentPart)
     Time::delay(0.001);
   itrq->getTorques(torques);
   
-  //tmp
-  //fprintf(stderr, "Number of joints is: %d\n", NUMBER_OF_JOINTS);
-  //for (int i = 0; i < NUMBER_OF_JOINTS; i++)
-  //  fprintf(stderr, "%.1f ", positions[i]);
-  //fprintf(stderr, "\n");
-  //endtmp
-
   //update all joints positions
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
     {
