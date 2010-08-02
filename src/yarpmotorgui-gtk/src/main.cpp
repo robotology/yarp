@@ -243,7 +243,8 @@ static void myMain2(GtkButton *button,	int *position)
     yarp::os::Network::init();
 
     //retrieve robot name
-    sprintf(&robotName[0], "%s", gtk_entry_get_text((GtkEntry *)(robotNameBox)));
+    robotName = gtk_entry_get_text((GtkEntry *)(robotNameBox));
+    //sprintf(&robotName[0], "%s", gtk_entry_get_text((GtkEntry *)(robotNameBox)));
   
     gtk_widget_destroy (window);
     window = NULL;

@@ -263,8 +263,6 @@ bool partMover::entry_update(partMover *currentPart)
 
   while(!iiencs->getEncoders(positions))
     Time::delay(0.001);
-  //while(!itrq->getTorques(torques))
-	//Time::delay(0.001);
   itrq->getTorques(torques);
   
   //tmp
@@ -299,20 +297,13 @@ bool partMover::entry_update(partMover *currentPart)
   
   // *** update the controlMode section ***
   // the new icubinterface does not increase the bandwidth consumption
-  ret = true;
+  // ret = true; useless guys!
   ret=ictrl->getControlModes(controlModes);
-  /*for (k = 0; k < NUMBER_OF_JOINTS; k++)
-  {
-	  ret &= ictrl->getControlMode(k, &controlModes[k]);
-      //controlModes[k]=VOCAB_CM_IDLE;
-  }*/
-
   
   if (ret==false) fprintf(stderr,"ictrl->getControlMode failed\n" );
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
   {
 	  if (currentPart->first_time==false && controlModes[k] == controlModesOld[k]) continue;
-//fprintf(stderr,"**\n" );
 	  controlModesOld[k]=controlModes[k];
 	  sprintf(frame_title,"Joint %d ",k );
 
@@ -381,7 +372,8 @@ bool partMover::entry_update(partMover *currentPart)
 	  for (int i=0; i<60; i++) amp_status[i]=0;       //fix this!!!
 	  iamp->getAmpStatus(amp_status);                 //fix this!!!
 	  curr_amp_status=amp_status[k];                  //fix this!!!
-	  //fprintf(stderr, "FAULT : %x %x\n", amp_status[k], amp_status[k] & 0xFF);
+
+#if 0
 	  if ((amp_status[k] & 0xFF)!=0)
 	  {
 	     //fprintf(stderr, "FAULT DETECTED: %x\n", curr_amp_status);
@@ -390,6 +382,7 @@ bool partMover::entry_update(partMover *currentPart)
 		 //gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
 		 //gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 	  }
+#endif
   }
 
   currentPart->first_time =false;
