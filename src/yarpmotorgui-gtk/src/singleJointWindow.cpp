@@ -247,7 +247,7 @@ bool partMover::entry_update(partMover *currentPart)
   static int controlModesOld[MAX_NUMBER_OF_JOINTS];
 
   int k;
-  int NUMBER_OF_JOINTS;
+  int NUMBER_OF_JOINTS=0;
   bool done = false;
   bool ret = false;
   ipos->getAxes(&NUMBER_OF_JOINTS);
@@ -261,8 +261,8 @@ bool partMover::entry_update(partMover *currentPart)
 
   for (k = 0; k < NUMBER_OF_JOINTS; k++) torques[k]=0;
 
-  while(!iiencs->getEncoders(positions))
-    Time::delay(0.001);
+  if (!iiencs->getEncoders(positions)) 
+	  return true;
   itrq->getTorques(torques);
   
   //update all joints positions
