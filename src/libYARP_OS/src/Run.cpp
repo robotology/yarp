@@ -2209,15 +2209,32 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
 #define TA_SUCCESS_CLEAN 1
 #define TA_SUCCESS_KILL  2
 
-BOOL CALLBACK TerminateAppEnum( HWND hwnd, LPARAM lParam )
+class TerminateParams
 {
-	DWORD dwID ;
+public:
+    TerminateParams(DWORD id)
+    {
+        nWin=0;
+        dwID=id;
+    }
 
+    ~TerminateParams(){}
+
+    int nWin;
+    DWORD dwID;
+};
+
+BOOL CALLBACK TerminateAppEnum(HWND hwnd,LPARAM lParam)
+{
+    TerminateParams* params=(TerminateParams*)lParam;
+
+    DWORD dwID;
 	GetWindowThreadProcessId(hwnd,&dwID) ;
 
-	if (dwID==(DWORD)lParam)
+	if (dwID==params->dwID)
 	{
-		PostMessage(hwnd,WM_CLOSE,0,0) ;
+        params->nWin++;
+		PostMessage(hwnd,WM_CLOSE,0,0);
 	}
 
 	return TRUE ;
@@ -2257,12 +2274,28 @@ bool TERMINATE(PID dwPID)
 
 	// TerminateAppEnum() posts WM_CLOSE to all windows whose PID
 	// matches your process's.
-	EnumWindows((WNDENUMPROC)TerminateAppEnum,(LPARAM)dwPID);
 
-	// Wait on the handle. If it signals, great. If it times out,
-	// then you kill it.
-	if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
-	{
+    TerminateParams params(dwPID);
+
+	EnumWindows((WNDENUMPROC)TerminateAppEnum,(LPARAM)&params);
+
+    if (params.nWin)
+    {
+        if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
+	    {
+            dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
+            fprintf(stdout,"%d brutally terminated by TerminateProcess\n",dwPID);
+            fflush(stdout);
+        }
+        else
+	    {
+		    dwRet=TA_SUCCESS_CLEAN;
+            fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
+            fflush(stdout);
+	    }
+    }
+    else
+    {
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
 
         if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
@@ -2277,13 +2310,7 @@ bool TERMINATE(PID dwPID)
             fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);
             fflush(stdout);
         }
-	}
-	else
-	{
-		dwRet=TA_SUCCESS_CLEAN;
-        fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
-        fflush(stdout);
-	}
+    }
 
 	CloseHandle(hProc);
 
