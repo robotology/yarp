@@ -913,6 +913,8 @@ void yarp::os::Run::Help(const char *msg)
 
 // WINDOWS
 
+//#define CREATE_NEW_PROCESS_GROUP 0
+
 #if defined(WIN32) || defined(WIN64)
 
 #ifndef __GNUC__
@@ -983,7 +985,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
-								0,             // creation flags 
+								CREATE_NEW_PROCESS_GROUP, // creation flags 
 								NULL,          // use parent's environment 
 								NULL,          // use parent's current directory 
 								&stdout_startup_info,   // STARTUPINFO pointer 
@@ -1033,7 +1035,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
-								0,             // creation flags 
+								CREATE_NEW_PROCESS_GROUP, // creation flags 
 								NULL,          // use parent's environment 
 								NULL,          // use parent's current directory 
 								&stdin_startup_info,   // STARTUPINFO pointer 
@@ -1139,7 +1141,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
-								0,             // creation flags 
+								CREATE_NEW_PROCESS_GROUP, // creation flags 
 								NULL, // use parent's environment 
 								bWorkdir?sWorkdir.c_str():NULL, // working directory
 								&cmd_startup_info,   // STARTUPINFO pointer 
@@ -1152,7 +1154,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
-									0,             // creation flags 
+									CREATE_NEW_PROCESS_GROUP, // creation flags 
 									NULL,          // use parent's environment 
 									sWorkdir.c_str(), // working directory 
 									&cmd_startup_info,   // STARTUPINFO pointer 
@@ -1260,7 +1262,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
-								0,             // creation flags 
+								CREATE_NEW_PROCESS_GROUP, // creation flags 
 								NULL,          // use parent's environment 
 								bWorkdir?sWorkdir.c_str():NULL, // working directory 
 								&cmd_startup_info,   // STARTUPINFO pointer 
@@ -1273,7 +1275,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 									NULL,          // process security attributes 
 									NULL,          // primary thread security attributes 
 									TRUE,          // handles are inherited 
-									0,             // creation flags 
+									CREATE_NEW_PROCESS_GROUP, // creation flags 
 									NULL,          // use parent's environment 
 									sWorkdir.c_str(), // working directory 
 									&cmd_startup_info,   // STARTUPINFO pointer 
@@ -2261,14 +2263,25 @@ bool TERMINATE(PID dwPID)
 	// then you kill it.
 	if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
 	{
-		dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
-        fprintf(stdout,"%d brutally terminated\n",dwPID);
-        fflush(stdout);
+        GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
+
+        if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
+	    {
+		    dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
+            fprintf(stdout,"%d brutally terminated by TerminateProcess\n",dwPID);
+            fflush(stdout);
+        }
+        else
+        {
+            dwRet=TA_SUCCESS_KILL;
+            fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);
+            fflush(stdout);
+        }
 	}
 	else
 	{
 		dwRet=TA_SUCCESS_CLEAN;
-        fprintf(stdout,"%d clean terminated\n",dwPID);
+        fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
         fflush(stdout);
 	}
 
