@@ -13,18 +13,20 @@
 #define YARPRUN_ERROR -1
 
 #if defined(WIN32) || defined(WIN64)
+typedef DWORD PID;
+typedef HANDLE FDESC;
+typedef HANDLE STDIO;
 #define SIGKILL 0
-bool KILL(HANDLE pid,int signum=SIGTERM,bool wait=false) 
+bool KILL(HANDLE handle,int signum=SIGTERM,bool wait=false) 
 { 
-    BOOL bRet=TerminateProcess(pid,0);
-    CloseHandle(pid);
+    BOOL bRet=TerminateProcess(handle,0);
+    CloseHandle(handle);
     return bRet?true:false;
 }
-#define PID HANDLE
-#define FDESC HANDLE
+bool TERMINATE(PID pid); 
 #define CLOSE(h) CloseHandle(h)
-HANDLE /*yarp::os::Run::*/hZombieHunter=NULL;
-HANDLE* /*yarp::os::Run::*/aHandlesVector=NULL;
+HANDLE  hZombieHunter=NULL;
+HANDLE* aHandlesVector=NULL;
 #ifndef __GNUC__
 DWORD WINAPI ZombieHunter(__in  LPVOID lpParameter);
 #else
@@ -33,8 +35,10 @@ DWORD WINAPI ZombieHunter(LPVOID lpParameter);
 #else
 #include <unistd.h>
 #include <fcntl.h>
-#define PID int
-#define FDESC int
+typedef int PID;
+typedef int FDESC;
+typedef void* HANDLE;
+typedef PID STDIO;
 int CLOSE(int h){ return close(h)==0; }
 int KILL(int pid,int signum=SIGTERM,bool wait=false)
 { 
@@ -51,40 +55,40 @@ void sigchild_handler(int sig)
 class YarpRunProcInfo
 {
 public:
-    #if defined(WIN32) || defined(WIN64)
-	YarpRunProcInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,int ps_id)
+	YarpRunProcInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,HANDLE handle_cmd,bool hold)
 	{ 
 		m_command=command;
 		m_alias=alias;
 		m_on=on;
 		m_pid_cmd=pid_cmd;
+		m_handle_cmd=handle_cmd;
+		m_bHold=hold;
+	}
 
-		m_ps_id=ps_id;
-		m_bHold=false;
-	}
-    #else
-	YarpRunProcInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,bool hold)
-	{ 
-	    m_bHold=hold;
-	
-		m_command=command;
-		m_alias=alias;
-		m_on=on;
-		m_pid_cmd=pid_cmd;
-        m_ps_id=(int)m_pid_cmd;
-	}
-    #endif
-	
 	virtual ~YarpRunProcInfo(){ /*Kill(SIGKILL);*/ }
 
 	virtual bool Match(yarp::os::ConstString& alias){ return m_alias==alias; }
 
 	virtual bool Kill(int signum=SIGTERM)
-	{	    
-		if (m_pid_cmd && !m_bHold)
+	{	
+        #if defined(WIN32) || defined(WIN64)
+        if (m_handle_cmd)
+        {
+            if (signum==SIGKILL)
+            {
+                return KILL(m_handle_cmd,signum);
+            }
+            else
+            {
+                return TERMINATE(m_pid_cmd);
+            }
+        }
+        #else
+        if (m_pid_cmd && !m_bHold)
 	    {
 		    return KILL(m_pid_cmd,signum);
 		}
+        #endif
 		       
 		return true;
 	}
@@ -100,20 +104,19 @@ public:
 	    
 		#if defined(WIN32) || defined(WIN64)
 			DWORD status;
-			return (::GetExitCodeProcess(m_pid_cmd,&status)&&status==STILL_ACTIVE);
+			return (::GetExitCodeProcess(m_handle_cmd,&status) && status==STILL_ACTIVE);
 		#else
 			return !kill(m_pid_cmd,0);
 		#endif
 	}
 	
 protected:
+	yarp::os::ConstString m_command;
+	yarp::os::ConstString m_alias;
+	yarp::os::ConstString m_on;
 	PID m_pid_cmd;
-	yarp::os::ConstString m_command,m_alias,m_on;
-
-	// windows only
-	int m_ps_id;
-	
-	bool m_bHold;
+	HANDLE m_handle_cmd; // only windows
+	bool m_bHold; // only linux
 
 	friend class YarpRunInfoVector; 
 };
@@ -125,14 +128,21 @@ public:
 	{
 		m_nProcesses=0;
 		
-		for (int i=0; i<MAX_PROCESSES; ++i) 
+		for (int i=0; i<MAX_PROCESSES; ++i)
+		{
 			m_apList[i]=0;
+		}
 	}
 
 	~YarpRunInfoVector()
 	{
-		for (int i=0; i<MAX_PROCESSES; ++i) 
-			if (m_apList[i]) delete m_apList[i];
+		for (int i=0; i<MAX_PROCESSES; ++i)
+		{
+			if (m_apList[i])
+			{
+				delete m_apList[i];
+			}
+		}
 	}
 
 	int Size(){ return m_nProcesses; }
@@ -186,7 +196,7 @@ public:
 
 		for (int k=0; k<nKill; ++k)
 		{
-		    fprintf(stderr,"KILLING  %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_ps_id);
+		    fprintf(stderr,"KILLING  %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
 		    aKill[k]->Kill(signum);
 		}
         
@@ -217,7 +227,7 @@ public:
 		
 		for (int k=0; k<nKill; ++k)
 		{
-		    fprintf(stderr,"KILLING %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_ps_id);
+		    fprintf(stderr,"KILLING %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
 		    aKill[k]->Kill(signum);
 		}
 		
@@ -235,7 +245,7 @@ public:
 		{
 			if (!m_apList[i]->IsActive())
 			{
-				fprintf(stderr,"CLEAN-UP %s (%d)\n",m_apList[i]->m_alias.c_str(),m_apList[i]->m_ps_id);
+				fprintf(stderr,"CLEAN-UP %s (%d)\n",m_apList[i]->m_alias.c_str(),m_apList[i]->m_pid_cmd);
 				m_apList[i]->Clean();
 				delete m_apList[i];
 				m_apList[i]=0;
@@ -245,7 +255,9 @@ public:
 		Pack();
 		
 		for (int i=0; i<m_nProcesses; ++i)
-			lpHandles[nCount+i]=m_apList[i]->m_pid_cmd;
+		{
+			lpHandles[nCount+i]=m_apList[i]->m_handle_cmd;
+		}
 
 		nCount+=m_nProcesses;
 
@@ -299,7 +311,7 @@ public:
 
 			grp.clear();
 			grp.addString("pid");
-			grp.addInt(m_apList[i]->m_ps_id);
+			grp.addInt(m_apList[i]->m_pid_cmd);
 			line.addList()=grp;
 
 			grp.clear();
@@ -360,10 +372,17 @@ protected:
 		int tot=0;
 
 		for (int i=0; i<m_nProcesses; ++i)
-			if (m_apList[i]) m_apList[tot++]=m_apList[i];
-		
+		{
+			if (m_apList[i])
+			{
+				m_apList[tot++]=m_apList[i];
+			}
+		}
+
 		for (int i=tot; i<m_nProcesses; ++i)
+		{
 			m_apList[i]=0;
+		}
 
 		m_nProcesses=tot;
 		
@@ -379,11 +398,21 @@ protected:
 class YarpRunCmdWithStdioInfo : public YarpRunProcInfo
 {
 public:
-	YarpRunCmdWithStdioInfo(yarp::os::ConstString& command,yarp::os::ConstString& alias,yarp::os::ConstString& on,PID pid_cmd,yarp::os::ConstString& stdio_server,YarpRunInfoVector* pStdioVector,
-					   PID pid_stdin,PID pid_stdout,
-		               FDESC read_from_pipe_stdin_to_cmd,FDESC write_to_pipe_stdin_to_cmd,
-					   FDESC read_from_pipe_cmd_to_stdout,FDESC write_to_pipe_cmd_to_stdout,int ps_id)
-		: YarpRunProcInfo(command,alias,on,pid_cmd,false)
+	YarpRunCmdWithStdioInfo(yarp::os::ConstString& command,
+                            yarp::os::ConstString& alias,
+                            yarp::os::ConstString& on,
+                            PID pid_cmd,
+                            yarp::os::ConstString& stdio_server,
+                            YarpRunInfoVector* pStdioVector,
+                            STDIO pid_stdin,
+                            STDIO pid_stdout,
+                            FDESC read_from_pipe_stdin_to_cmd,
+                            FDESC write_to_pipe_stdin_to_cmd,
+                            FDESC read_from_pipe_cmd_to_stdout,
+                            FDESC write_to_pipe_cmd_to_stdout,
+                            HANDLE handle_cmd,
+                            bool hold)
+        : YarpRunProcInfo(command,alias,on,pid_cmd,handle_cmd,hold)
 	{
 		m_pid_stdin=pid_stdin;
 		m_pid_stdout=pid_stdout;
@@ -457,10 +486,13 @@ public:
 	}
 
 protected:
-	PID m_pid_stdin,m_pid_stdout;
+	STDIO m_pid_stdin;
+    STDIO m_pid_stdout;
 	yarp::os::ConstString m_stdio;
-	FDESC m_write_to_pipe_stdin_to_cmd,m_read_from_pipe_stdin_to_cmd;
-	FDESC m_write_to_pipe_cmd_to_stdout,m_read_from_pipe_cmd_to_stdout;
+	FDESC m_write_to_pipe_stdin_to_cmd;
+    FDESC m_read_from_pipe_stdin_to_cmd;
+	FDESC m_write_to_pipe_cmd_to_stdout;
+    FDESC m_read_from_pipe_cmd_to_stdout;
 
 	YarpRunInfoVector *m_pStdioVector;
 };
@@ -1172,12 +1204,20 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	// EVERYTHING IS ALL RIGHT
 
     yarp::os::ConstString stdio = msg.find("stdio").asString().c_str();
-	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(commandText,alias,m_PortName,
-						cmd_process_info.hProcess,stdio,&m_StdioVector,
-						stdin_process_info.hProcess,stdout_process_info.hProcess,
-						read_from_pipe_stdin_to_cmd,write_to_pipe_stdin_to_cmd,
-						read_from_pipe_cmd_to_stdout,write_to_pipe_cmd_to_stdout,
-						cmd_process_info.dwProcessId));
+	m_ProcessVector.Add(new YarpRunCmdWithStdioInfo(commandText,
+                                                    alias,
+                                                    m_PortName,
+						                            cmd_process_info.dwProcessId,
+                                                    stdio,
+                                                    &m_StdioVector,
+                                                    stdin_process_info.hProcess,
+                                                    stdout_process_info.hProcess,
+						                            read_from_pipe_stdin_to_cmd,
+                                                    write_to_pipe_stdin_to_cmd,
+						                            read_from_pipe_cmd_to_stdout,
+                                                    write_to_pipe_cmd_to_stdout,
+						                            cmd_process_info.hProcess,
+                                                    false));
 
     char pidstr[16];
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
@@ -1264,7 +1304,12 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 
 	// EVERYTHING IS ALL RIGHT
 
-	m_ProcessVector.Add(new YarpRunProcInfo(commandText,alias,m_PortName,cmd_process_info.hProcess,cmd_process_info.dwProcessId));
+	m_ProcessVector.Add(new YarpRunProcInfo(commandText,
+                                            alias,
+                                            m_PortName,
+                                            cmd_process_info.dwProcessId,
+                                            cmd_process_info.hProcess,
+                                            false));
 
     char pidstr[16];
 	sprintf(pidstr,"%d",cmd_process_info.dwProcessId);
@@ -1304,6 +1349,9 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 								&stdio_startup_info,   // STARTUPINFO pointer 
 								&stdio_process_info);  // receives PROCESS_INFORMATION 
 
+
+	stdio_process_info.hProcess;
+	
 	Bottle result;
     char pidstr[16];
 	sprintf(pidstr,"%d",stdio_process_info.dwProcessId);
@@ -1311,7 +1359,13 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 
     if (bSuccess)
     {
-        m_StdioVector.Add(new YarpRunProcInfo(command_line,alias,m_PortName,stdio_process_info.hProcess,stdio_process_info.dwProcessId));
+        m_StdioVector.Add(new YarpRunProcInfo(command_line,
+                                              alias,
+                                              m_PortName,
+                                              stdio_process_info.dwProcessId,
+                                              stdio_process_info.hProcess,
+                                              false));
+
         result.addInt(stdio_process_info.dwProcessId);
         out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd=CMD pid="+pidstr+"\n";
     }
@@ -1639,12 +1693,20 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			{
 				m_ProcessVector.Add(
 				    new YarpRunCmdWithStdioInfo(
-				        commandString,alias,m_PortName,
-				        pid_cmd,stdio_str,&m_StdioVector,
-					    pid_stdin,pid_stdout,
-					    pipe_stdin_to_cmd[READ_FROM_PIPE],pipe_stdin_to_cmd[WRITE_TO_PIPE],
-					    pipe_cmd_to_stdout[READ_FROM_PIPE],pipe_cmd_to_stdout[WRITE_TO_PIPE],
-					    pid_cmd
+				        commandString,
+				        alias,
+				        m_PortName,
+				        pid_cmd,
+				        stdio_str,
+				        &m_StdioVector,
+					    pid_stdin,
+					    pid_stdout,
+					    pipe_stdin_to_cmd[READ_FROM_PIPE],
+					    pipe_stdin_to_cmd[WRITE_TO_PIPE],
+					    pipe_cmd_to_stdout[READ_FROM_PIPE],
+					    pipe_cmd_to_stdout[WRITE_TO_PIPE],
+					    NULL,
+					    false
 					)
 				);
 				    
@@ -1778,7 +1840,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	if (IS_PARENT_OF(pid_cmd))
 	{
 	    yarp::os::ConstString rwCmd=yarp::os::ConstString("xterm -e /bin/bash -l -c yarp readwrite /")+alias+"/user/stdout /"+alias+"/user/stdin";
-		m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
+		m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,NULL,msg.check("hold")));
 	    
 	    char pidstr[16];
 	    sprintf(pidstr,"%d",pid_cmd);
@@ -1894,7 +1956,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 
 	if (IS_PARENT_OF(pid_cmd))
 	{
-		m_ProcessVector.Add(new YarpRunProcInfo(commandString,alias,m_PortName,pid_cmd,false));
+		m_ProcessVector.Add(new YarpRunProcInfo(commandString,alias,m_PortName,pid_cmd,NULL,false));
 		
 	    char pidstr[16];
 	    sprintf(pidstr,"%d",pid_cmd);
@@ -2137,3 +2199,82 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
 }
 
 // end API
+
+
+#if defined(WIN32) || defined(WIN64)
+
+#define TA_FAILED        0
+#define TA_SUCCESS_CLEAN 1
+#define TA_SUCCESS_KILL  2
+
+BOOL CALLBACK TerminateAppEnum( HWND hwnd, LPARAM lParam )
+{
+	DWORD dwID ;
+
+	GetWindowThreadProcessId(hwnd,&dwID) ;
+
+	if (dwID==(DWORD)lParam)
+	{
+		PostMessage(hwnd,WM_CLOSE,0,0) ;
+	}
+
+	return TRUE ;
+}
+
+/*----------------------------------------------------------------
+Purpose:
+Shut down a 32-Bit Process
+
+Parameters:
+dwPID
+Process ID of the process to shut down.
+
+dwTimeout
+Wait time in milliseconds before shutting down the process.
+
+Return Value:
+TA_FAILED - If the shutdown failed.
+TA_SUCCESS_CLEAN - If the process was shutdown using WM_CLOSE.
+TA_SUCCESS_KILL - if the process was shut down with TerminateProcess().
+----------------------------------------------------------------*/ 
+bool TERMINATE(PID dwPID) 
+{
+    static const DWORD dwTimeout=6000;
+
+	HANDLE hProc;
+	DWORD dwRet;
+
+	// If we can't open the process with PROCESS_TERMINATE rights,
+	// then we give up immediately.
+	hProc=OpenProcess(SYNCHRONIZE|PROCESS_TERMINATE,FALSE,dwPID);
+
+	if (hProc==NULL)
+	{
+		return false;
+	}
+
+	// TerminateAppEnum() posts WM_CLOSE to all windows whose PID
+	// matches your process's.
+	EnumWindows((WNDENUMPROC)TerminateAppEnum,(LPARAM)dwPID);
+
+	// Wait on the handle. If it signals, great. If it times out,
+	// then you kill it.
+	if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
+	{
+		dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
+        fprintf(stdout,"%d brutally terminated\n",dwPID);
+        fflush(stdout);
+	}
+	else
+	{
+		dwRet=TA_SUCCESS_CLEAN;
+        fprintf(stdout,"%d clean terminated\n",dwPID);
+        fflush(stdout);
+	}
+
+	CloseHandle(hProc);
+
+    return dwRet?true:false;
+}
+
+#endif
