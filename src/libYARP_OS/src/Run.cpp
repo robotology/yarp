@@ -74,7 +74,7 @@ public:
         #if defined(WIN32) || defined(WIN64)
         if (m_handle_cmd)
         {
-            if (signum==SIGKILL)
+            if (signum==9)
             {
                 return KILL(m_handle_cmd,signum);
             }
