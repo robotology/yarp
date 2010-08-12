@@ -1,3 +1,7 @@
+2010-08-12 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+    
+    * added scripts/yarp_completion for tab-completion in bash
+
 2010-07-28  Marco Randazzo  <marco.randazzo@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h

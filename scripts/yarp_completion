@@ -1,0 +1,131 @@
+### call "yarp name list" and extract all available ports
+_get_yarp_ports() {
+    echo $(yarp name list 2>/dev/null | grep registration | awk '{print $3 }'| grep ^\/ )
+}
+
+### call "yarp run --on 'server' --ps" and extract all available tags
+_get_yarprun_tags() {
+    echo $(yarp run --on $1 --ps 2>&1 | grep "^(pid" | sed  's/(//g;s/)//g' | awk '{print $4 }' )
+}
+
+
+_yarp() 
+{
+    COMPREPLY=()
+    #local cur="${COMP_WORDS[COMP_CWORD]}"
+    cur=`_get_cword`
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [ $COMP_CWORD -ge 2 ]; then
+        local pprev="${COMP_WORDS[COMP_CWORD-2]}"
+    fi
+    local command="${COMP_WORDS[1]}"
+    local cmds="check clean conf connect detect disconnect exists help name namespace ping read rpc rpcserver run server terminate version wait where write"
+    local carrier="tcp mpi"
+
+    completion=""
+    if [ $COMP_CWORD -eq 1 ]; then
+        ### first option => possible commands
+        completion="${cmds}"
+    else
+        case "${command}" in
+            connect|disconnect)
+                if [ $COMP_CWORD -le 3 ]; then
+                    ### complete source and destination ports
+                    completion=$(_get_yarp_ports)
+                else
+                    completion="${carrier}"
+                fi
+                ;;
+            write)
+                if [ $COMP_CWORD -eq 3 ]; then
+                    ### complete destination port
+                    completion=$(_get_yarp_ports)
+                fi
+                ;;
+            run)
+                ### handle with yarprun completion
+                ### offset of 1 for additional command
+                _yarprun 1
+               ;;
+            exists|ping|rpc|terminate|wait)
+                if [ $COMP_CWORD -eq 2 ]; then
+                    completion=$(_get_yarp_ports)
+                fi
+                ;;
+            detect)
+                if [ $COMP_CWORD -eq 2 ]; then completion="--write"; fi ;;
+            name)
+                ### TODO: add more nameserver commands if needed
+                if [ $COMP_CWORD -eq 2 ]; then completion="list"; fi ;;
+            conf)
+                if [ $COMP_CWORD -eq 2 ]; then completion="--clean"; fi ;;
+             *)
+                ;;
+        esac
+
+    fi
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+        
+}
+
+_yarprun() {
+    COMPREPLY=()
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
+    if [ $COMP_CWORD -ge 2 ]; then
+        local pprev="${COMP_WORDS[COMP_CWORD-2]}"
+    fi
+    local command="${COMP_WORDS[1]}"
+    local run_cmds1=" --hold --cmd --geometry --stdio --as --workdir"
+    local run_cmds2="--kill --sigterm --sigtermall --ps --isrunning --exit"
+
+    completion=""
+
+    ### check offset (if called from "yarp run" instead of "yarprun")
+    ### default 0
+    offset=${1:-0}
+
+    if [ $COMP_CWORD -eq $((1+$offset)) ]; then
+        ### first options (either start new server or send command to exisiting one)
+        completion="--on --server"
+    else
+        if [ $COMP_CWORD -ge $((2+$offset)) -a "${COMP_WORDS[$((1+$offset))]}" == "--on" ]; then
+            server=${COMP_WORDS[$((2+$offset))]}
+            case "$prev" in
+                "--on"|"--stdio")
+                    ### complete server or stdio port
+                    completion=$(_get_yarp_ports)
+                    ;;
+                "--kill"|"--sigterm"|"--isrunning")
+                    ### complete tags running on server
+                    completion=$(_get_yarprun_tags $server)
+                    ;;
+                "--hold")
+                    completion="$run_cmds1"
+                    ;;
+                *)
+                    ### options with user input
+                    case "$pprev" in
+                        ### complete after user input has been entered
+                        "--on")
+                            completion="$run_cmds1 $run_cmds2"
+                            ;;
+                        "--cmd"|"--geometry"|"--stdio"|"--as"|"--workdir")
+                            completion="$run_cmds1"
+                            ;;
+                    esac
+                    ;;
+            esac
+        fi
+    fi
+    
+    COMPREPLY=( $(compgen -W "${completion}" -- ${cur}) )
+
+    return 0
+}
+ 
+complete -F _yarp yarp
+complete -F _yarprun yarprun
+
