@@ -16,11 +16,13 @@
 typedef DWORD PID;
 typedef HANDLE FDESC;
 typedef HANDLE STDIO;
-#define SIGKILL 0
+#define SIGKILL 9
 bool KILL(HANDLE handle,int signum=SIGTERM,bool wait=false) 
 { 
     BOOL bRet=TerminateProcess(handle,0);
     CloseHandle(handle);
+    fprintf(stdout,"brutally terminated by CTRL_BREAK_EVENT\n");
+    fflush(stdout);
     return bRet?true:false;
 }
 bool TERMINATE(PID pid); 
@@ -72,16 +74,13 @@ public:
 	virtual bool Kill(int signum=SIGTERM)
 	{	
         #if defined(WIN32) || defined(WIN64)
-        if (m_handle_cmd)
+        if (signum==SIGKILL)
         {
-            if (signum==9)
-            {
-                return KILL(m_handle_cmd,signum);
-            }
-            else
-            {
-                return TERMINATE(m_pid_cmd);
-            }
+            if (m_handle_cmd) return KILL(m_handle_cmd,signum);
+        }
+        else
+        {
+            if (m_pid_cmd) return TERMINATE(m_pid_cmd);
         }
         #else
         if (m_pid_cmd && !m_bHold)
@@ -2281,35 +2280,17 @@ bool TERMINATE(PID dwPID)
 
     if (params.nWin)
     {
-        if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
-	    {
-            dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
-            fprintf(stdout,"%d brutally terminated by TerminateProcess\n",dwPID);
-            fflush(stdout);
-        }
-        else
-	    {
-		    dwRet=TA_SUCCESS_CLEAN;
-            fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
-            fflush(stdout);
-	    }
+		dwRet=TA_SUCCESS_CLEAN;
+        fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
+        fflush(stdout);
     }
     else
     {
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
 
-        if (WaitForSingleObject(hProc,dwTimeout)!=WAIT_OBJECT_0)
-	    {
-		    dwRet=(TerminateProcess(hProc,0)?TA_SUCCESS_KILL:TA_FAILED);
-            fprintf(stdout,"%d brutally terminated by TerminateProcess\n",dwPID);
-            fflush(stdout);
-        }
-        else
-        {
-            dwRet=TA_SUCCESS_KILL;
-            fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);
-            fflush(stdout);
-        }
+        dwRet=TA_SUCCESS_KILL;
+        fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);
+        fflush(stdout);
     }
 
 	CloseHandle(hProc);
