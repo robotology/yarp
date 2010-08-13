@@ -1,3 +1,9 @@
+2010-08-13 Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/Run.cpp
+	Added clean process termination features
+	- WM_CLOSE message to Win applications
+        - CTRL_BREAK_EVENT to console applications
+
 2010-08-12 Daniel Krieg <krieg@fias.uni-frankfurt.de>
     
     * added scripts/yarp_completion for tab-completion in bash
