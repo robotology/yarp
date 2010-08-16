@@ -35,6 +35,12 @@ public:
         }
         Time::delay(1.4);
 
+#if WIN32
+        // Lorenzo: skip test because it caused deadlock and slowed 
+        // down automatic tests (I could not change the default ctest timeout
+        // of 1500s).
+        report(1,"failed to receive the quit message");
+#else
         ACE_OS::printf("sending quit message: ");
         if (Terminator::terminateByName("/tmp/quit"))
             ACE_OS::printf("ok\n");
@@ -42,7 +48,7 @@ public:
             ACE_OS::printf("failed\n");
             report(1,"failed to set termination connection");
         }
-        Time::delay(0.5);
+        Time::delay(1);
 
         ACE_OS::printf("quit flag was set properly: ");
         if (!terminee.mustQuit()) {
@@ -52,6 +58,7 @@ public:
         else {
             ACE_OS::printf("ok\n");
         }
+#endif 
     }
 
     virtual void runTests() {
