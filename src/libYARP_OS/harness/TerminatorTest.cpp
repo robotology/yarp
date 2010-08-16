@@ -23,6 +23,13 @@ public:
 
     virtual void testTerminationPair() {
         report(0,"checking terminator connection");
+
+#if WIN32
+        // Lorenzo: skip test because it caused deadlock and slowed 
+        // down automatic tests (I could not change the default ctest timeout
+        // of 1500s).
+        report(1,"testTerminationPair fails");
+#else
         Network::setLocalMode(true);
 
         ACE_OS::printf("registering port name: ");
@@ -35,12 +42,7 @@ public:
         }
         Time::delay(1.4);
 
-#if WIN32
-        // Lorenzo: skip test because it caused deadlock and slowed 
-        // down automatic tests (I could not change the default ctest timeout
-        // of 1500s).
-        report(1,"failed to receive the quit message");
-#else
+
         ACE_OS::printf("sending quit message: ");
         if (Terminator::terminateByName("/tmp/quit"))
             ACE_OS::printf("ok\n");
