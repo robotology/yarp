@@ -121,6 +121,10 @@ public:
      */
     inline int getQuantum() const { return imgQuantum; }
 
+   /**
+     * Returns the number of padding bytes.
+     * @return number of bytes of the row padding.
+     */
     inline int getPadding() const 
     {
         const int ret=imgRowSize-imgWidth*imgPixelSize;
@@ -202,8 +206,16 @@ public:
      */
     void setExternal(void *data, int imgWidth, int imgHeight);
 
+    /**
+    * Access to the internal image buffer.
+    * @return pointer to the internal image buffer.
+    */
     unsigned char *getRawImage() const;
 
+    /**
+    * Access to the internal buffer size information (this is how much memory has been allocated for the image).
+    * @return size of the internal buffer in bytes including padding.
+    */
     int getRawImageSize() const;
 
     /**
