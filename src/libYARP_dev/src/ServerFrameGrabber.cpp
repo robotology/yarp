@@ -407,24 +407,29 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
 			case VOCAB_DRGETF7M: // VOCAB_DRGETF7M 25
 				{
-					unsigned int xstep,ystep,xdim,ydim;
-					fgCtrlDC1394->getFormat7MaxWindowDC1394(xdim,ydim,xstep,ystep);
+					unsigned int xstep,ystep,xdim,ydim,xoffstep,yoffstep;
+					fgCtrlDC1394->getFormat7MaxWindowDC1394(xdim,ydim,xstep,ystep,xoffstep,yoffstep);
 					response.addInt(xdim);
 					response.addInt(ydim);
 					response.addInt(xstep);
 					response.addInt(ystep);
+					response.addInt(xoffstep);
+					response.addInt(yoffstep);
 				}
 				return true;
 			case VOCAB_DRGETWF7: // VOCAB_DRGETWF7 26
 				{
 					unsigned int xdim,ydim;
-					fgCtrlDC1394->getFormat7WindowDC1394(xdim,ydim);
+                    int x0,y0;
+					fgCtrlDC1394->getFormat7WindowDC1394(xdim,ydim,x0,y0);
 					response.addInt(xdim);
 					response.addInt(ydim);
+                    response.addInt(x0);
+					response.addInt(y0);
 				}
 				return true;
 			case VOCAB_DRSETWF7: // VOCAB_DRSETWF7 27
-				response.addInt(int(fgCtrlDC1394->setFormat7WindowDC1394(cmd.get(1).asInt(),cmd.get(2).asInt())));
+				response.addInt(int(fgCtrlDC1394->setFormat7WindowDC1394(cmd.get(1).asInt(),cmd.get(2).asInt(),cmd.get(3).asInt(),cmd.get(4).asInt())));
                 return true;
 			case VOCAB_DRSETOPM: // VOCAB_DRSETOPM 28
 				response.addInt(int(fgCtrlDC1394->setOperationModeDC1394(bool(cmd.get(1).asInt()))));
