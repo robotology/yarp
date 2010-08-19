@@ -1,3 +1,11 @@
+2010-08-19 Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_dev/src/ServerFrameGrabber.cpp
+	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
+	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabberDC1394.h
+	* src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
+
+	Added image offset control to dragonfly2 device.
+
 2010-08-13 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/Run.cpp
 	Added clean process termination features
