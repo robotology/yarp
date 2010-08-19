@@ -349,17 +349,17 @@ public:
     }*/
 
 	// 25 26 27
-	virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep)=0;
+	virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep)=0;
 	/*{
 		xdim=324; ydim=244; xstep=2; ystep=2;
 		return true;
 	}*/
-	virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim)=0;
+	virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim,int &x0,int &y0)=0;
 	/*{
 		xdim=324; ydim=244;
 		return true;
 	}*/
-	virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim)=0;//{ return true; }
+	virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim,int x0,int y0)=0;//{ return true; }
 
 	// 28
 	virtual bool setOperationModeDC1394(bool b1394b)=0;//{ return true; }

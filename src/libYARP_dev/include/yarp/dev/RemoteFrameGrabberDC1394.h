@@ -317,7 +317,7 @@ public:
     }
 
 	// 25
-	virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep)
+	virtual bool getFormat7MaxWindowDC1394(unsigned int &xdim,unsigned int &ydim,unsigned int &xstep,unsigned int &ystep,unsigned int &xoffstep,unsigned int &yoffstep)
 	{
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETF7M);
@@ -327,25 +327,31 @@ public:
 		ydim=response.get(1).asInt();
 		xstep=response.get(2).asInt();
 		ystep=response.get(3).asInt();
+        xoffstep=response.get(4).asInt();
+		yoffstep=response.get(5).asInt();
 		return response.get(0).asInt()!=0? true:false;
 	}
 	// 26
-	virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim)
+	virtual bool getFormat7WindowDC1394(unsigned int &xdim,unsigned int &ydim,int &x0,int &y0)
 	{
 		yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRGETWF7);
         port.write(cmd,response);
 		xdim=response.get(0).asInt();
 		ydim=response.get(1).asInt();
+        x0=response.get(2).asInt();
+		y0=response.get(3).asInt();
 		return response.get(0).asInt()!=0? true:false;
 	}
 	// 27
-	virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim)
+	virtual bool setFormat7WindowDC1394(unsigned int xdim,unsigned int ydim,int x0,int y0)
 	{
         yarp::os::Bottle cmd, response;
         cmd.addVocab(VOCAB_DRSETWF7);
 		cmd.addInt(xdim);
 		cmd.addInt(ydim);
+        cmd.addInt(x0);
+		cmd.addInt(y0);
         port.write(cmd,response);
 		return response.get(0).asInt()!=0? true:false;
 	}
