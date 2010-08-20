@@ -38,11 +38,11 @@ using namespace yarp::os;
 
 using namespace yarp::sig;
 
-inline int PAD_BYTES (int len, int pad)
-{
-	const int rem = len % pad;
-	return (rem != 0) ? (pad - rem) : rem;
-}
+//inline int PAD_BYTES (int len, int pad)
+//{
+//	const int rem = len % pad;
+//	return (rem != 0) ? (pad - rem) : rem;
+//}
 
 
 
@@ -577,7 +577,7 @@ void ImageStorage::_alloc_complete_extern(void *buf, int x, int y, int pixel_typ
 
 int ImageStorage::_pad_bytes (int linesize, int align) const
 {
-    return PAD_BYTES (linesize, align);
+    return yarp::sig::PAD_BYTES (linesize, align);
 }
 
 

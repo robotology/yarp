@@ -20,6 +20,17 @@ namespace yarp {
         class Image;
         class FlexImage;
         template <class T> class ImageOf;
+
+        /**
+         * computes the padding of YARP images.
+         * @param len is the row length in bytes
+         * @param pad is the desired padding (e.g. 8 bytes)
+         * @return the number of extra bytes to add at the end of the image row
+         */
+        inline int PAD_BYTES (int len, int pad) {
+	        const int rem = len % pad;
+	        return (rem != 0) ? (pad - rem) : rem;
+        }
     }
 }
 
