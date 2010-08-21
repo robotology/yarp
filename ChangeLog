@@ -1,3 +1,14 @@
+2010-08-22  Arjan Gijsberts  <arjan@liralab.it>
+	* src/libYARP_OS/harness/BottleTest.cpp
+	* src/libYARP_OS/include/yarp/os/Bottle.h
+	* src/libYARP_OS/include/yarp/os/impl/BottleImpl.h
+	* src/libYARP_OS/src/Bottle.cpp
+	* src/libYARP_OS/src/BottleImpl.cpp
+
+	Bottle::pop() incorrectly returned references, triggering an 
+	assertion problem in the copy constructor of Value (thanks 
+	to Anne van Rossum for reporting the bug!)
+	
 2010-08-21  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/libYARP_OS/include/yarp/os/Value.h: fix problem copying
