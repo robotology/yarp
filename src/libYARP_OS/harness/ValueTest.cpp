@@ -38,6 +38,11 @@ public:
         Bottle b("(x 10) (y 42)");
         checkEqual(b.check("x",Value(5)).asInt(),10,"default not used");
         checkEqual(b.check("xx",Value(5)).asInt(),5,"default used");
+
+        Value& vnull = Value::getNullValue();
+        Value vnull2(vnull);
+        checkTrue(vnull.isNull(), "null check 1 ok");
+        checkTrue(vnull2.isNull(), "null check 2 ok");
     }
 
     virtual void runTests() {

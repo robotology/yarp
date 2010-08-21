@@ -53,6 +53,7 @@ public:
     virtual bool isList() const    { return false; }
     virtual bool isVocab() const   { return false; }
     virtual bool isBlob() const    { return false; }
+    virtual bool isNull() const    { return false; }
 
     virtual int asInt() const            { return 0; }
     virtual int asVocab() const          { return 0; }

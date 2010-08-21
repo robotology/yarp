@@ -299,6 +299,8 @@ public:
      */
     virtual int getCode() const { ok(); return proxy->getCode(); }
 
+    virtual bool isNull() const  { ok(); return proxy->isNull(); }
+
     virtual bool isLeaf() const { return false; }
 
     /**

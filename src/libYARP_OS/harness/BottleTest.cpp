@@ -261,8 +261,11 @@ public:
         char blob[12]="hello\0world";
         const Value v ((void*)blob, sizeof(blob));
         checkEqual(12,v.asBlobLength(),"value length");
+        checkFalse(v.isNull(),"value non-null");
         Bottle b;
         b.add(v);
+        checkEqual(b.size(),1,"insertion happened");
+        checkTrue(b.get(0).isBlob(),"insertion is right type");
         checkEqual(12,b.get(0).asBlobLength(),"length within bottle");
     }
 
