@@ -385,15 +385,23 @@ public:
         report(0,"testing stack functionality...");
         Bottle bot;
         bot.addInt(10);
+        bot.addInt(11);
         bot.addString("Foo");
         Bottle& bot2 = bot.addList();
         bot2.addInt(3);
         bot.addDouble(2.71828);
         checkTrue(bot.pop().isDouble(),"popping double");
-        checkEqual(bot.size(),3,"bottle size decreased after pop");
+        checkEqual(bot.size(),4,"bottle size decreased after pop");
         checkEqual(bot.pop().asList()->pop().asInt(),3,"popping list and nested int");
         checkEqual(bot.pop().asString().c_str(),"Foo", "popping string");
-        bot.pop();
+        Value val;
+        val = bot.pop();
+        checkTrue(val.isInt(), "popped value is of type int");
+        checkEqual(val.asInt(), 11, "popped value is integer 11");
+        val = bot.pop();
+        checkTrue(val.isInt(), "popped value is of type int");
+        checkEqual(val.asInt(), 10, "popped value is integer 10");
+        val = bot.pop();
         checkTrue(bot.pop().isNull(), "empty bottle pops null");
         checkEqual(bot.size(),0,"bottle is empty after popping");
     }

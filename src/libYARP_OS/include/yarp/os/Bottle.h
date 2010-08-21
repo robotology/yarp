@@ -124,9 +124,9 @@ public:
 
     /**
      * Removes a Value v from the end of the list and returns this value. 
-     * @return a reference to the value popped from the end of the bottle
+     * @return the value popped from the end of the bottle
      */
-    Value& pop();
+    Value pop();
 
     /**
      * Reads a Value v from a certain part of the list.  Methods like

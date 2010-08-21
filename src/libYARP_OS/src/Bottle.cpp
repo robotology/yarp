@@ -86,8 +86,12 @@ Bottle& Bottle::addList() {
     return HELPER(implementation).addList();
 }
 
-Value& Bottle::pop() {
-    return HELPER(implementation).pop();
+Value Bottle::pop() {
+    Storable* stb = HELPER(implementation).pop();
+    Value val(*stb);
+    // here we take responsibility for deallocation of the Storable instance
+    delete stb;
+    return val;
 }
 
 int Bottle::getInt(int index) {

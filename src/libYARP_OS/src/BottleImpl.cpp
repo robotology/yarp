@@ -998,17 +998,17 @@ bool BottleImpl::isList(int index) {
     return false;
 }
 
-Storable& BottleImpl::pop() {
+Storable *BottleImpl::pop() {
+    Storable* stb = NULL;
     if(size() == 0) {
-        return storeNull;
+        stb = new StoreNull();
+    } else {
+        stb = content[size() - 1];
+        content.pop_back();
+        dirty = true;
     }
-
-    int lastIndex = size() - 1;
-    Storable& s = *(content[lastIndex]->cloneStorable());
-    delete content[lastIndex];
-    content.pop_back();
-    dirty = true;
-    return s;
+    YARP_ASSERT(stb!=NULL);
+    return stb;
 }
 
 Storable& BottleImpl::get(int index) const {

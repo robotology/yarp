@@ -399,7 +399,7 @@ public:
     bool isDouble(int index);
     bool isList(int index);
 
-    Storable& pop();
+    Storable *pop();
 
     int getInt(int index);
     yarp::os::ConstString getString(int index);
