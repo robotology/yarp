@@ -261,6 +261,7 @@ public:
 
     yarp::os::ConstString findPath() {
         ConstString result = findFileBase("",true);
+		if (result=="") result = ".";
         return result;
     }
 
@@ -282,6 +283,7 @@ public:
             config.findGroup("default_capability").tail();
 
         // check current directory
+		if (name==""&&isDir) return ".";
         ConstString str = check("","","",name,isDir);
         if (str!="") return str;
 
