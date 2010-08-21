@@ -1,3 +1,8 @@
+2010-08-21  Paul Fitzpatrick  <paulfitz@sigmund>
+
+	* conf/FindACE.cmake: fix interface to output of
+	scripts/fetch-ace.sh under windows.
+
 2010-08-19 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_dev/src/ServerFrameGrabber.cpp
 	* src/libYARP_dev/include/yarp/dev/RemoteFrameGrabber.h
