@@ -283,7 +283,7 @@ public:
             config.findGroup("default_capability").tail();
 
         // check current directory
-		if (name==""&&isDir) return ".";
+		if (ConstString(name)==""&&isDir) return ".";
         ConstString str = check("","","",name,isDir);
         if (str!="") return str;
 
