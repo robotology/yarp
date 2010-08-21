@@ -1,5 +1,10 @@
 2010-08-21  Paul Fitzpatrick  <paulfitz@sigmund>
 
+	* src/libYARP_OS/src/Terminator.cpp: fix interrupt behavior on
+	windows.
+
+2010-08-21  Paul Fitzpatrick  <paulfitz@sigmund>
+
 	* conf/FindACE.cmake: fix interface to output of
 	scripts/fetch-ace.sh under windows.
 

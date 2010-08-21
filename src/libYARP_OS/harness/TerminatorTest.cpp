@@ -24,7 +24,7 @@ public:
     virtual void testTerminationPair() {
         report(0,"checking terminator connection");
 
-#if WIN32
+#if WIN32NURG
         // Lorenzo: skip test because it caused deadlock and slowed 
         // down automatic tests (I could not change the default ctest timeout
         // of 1500s).
@@ -40,7 +40,7 @@ public:
             ACE_OS::printf("failed\n");
             report(1,"failed to set terminator socket");
         }
-        Time::delay(1.4);
+        //Time::delay(1.4);
 
 
         ACE_OS::printf("sending quit message: ");
@@ -50,7 +50,7 @@ public:
             ACE_OS::printf("failed\n");
             report(1,"failed to set termination connection");
         }
-        Time::delay(1);
+        //Time::delay(1);
 
         ACE_OS::printf("quit flag was set properly: ");
         if (!terminee.mustQuit()) {

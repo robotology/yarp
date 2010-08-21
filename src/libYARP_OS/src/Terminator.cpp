@@ -52,8 +52,8 @@ bool Terminator::terminateByName(const char *name) {
     }
     ContactStyle style;
     style.quiet = false;
-    style.carrier = "text";
-    style.expectReply = false;
+    style.carrier = "text_ack";
+    style.expectReply = true;
     NetworkBase::write(c,cmd,reply,style);
 
     return true;
@@ -93,6 +93,7 @@ Terminee::Terminee(const char *name) {
 void Terminee::onStop()
 {
     TermineeHelper& helper = HELPER(implementation);
+	quit = true;
     helper.interrupt();
 }
 
@@ -114,7 +115,10 @@ void Terminee::run() {
     TermineeHelper& helper = HELPER(implementation);
     while (!isStopping() && !quit) {
         Bottle cmd, reply;
-        helper.read(cmd,true);
+        bool ok = helper.read(cmd,true);
+		if (!ok) {
+			continue;
+		}
         if (cmd.get(0).asString()=="quit") {
             quit = true;
             reply.addVocab(VOCAB2('o','k'));
