@@ -8,3 +8,7 @@
 
 #include <yarp/os/impl/NameserCarrier.h>
 
+// just to keep linkers from complaining about empty archive
+bool dummyNameserCarrierMethod() {
+    return false;
+}

@@ -13,5 +13,8 @@
 
 using namespace yarp::os;
 
-
+// just to keep linkers from complaining about empty archive
+bool dummyIConfigMethod() {
+    return false;
+}
 

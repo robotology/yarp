@@ -582,7 +582,7 @@ bool NetworkBase::write(const Contact& contact,
     }
     
     if (style.timeout>0) {
-        address.setTimeout(style.timeout);
+        address.setTimeout((float)style.timeout);
     }
     OutputProtocol *out = Carriers::connect(address);
     if (out==NULL) {

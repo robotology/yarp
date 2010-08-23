@@ -19,3 +19,8 @@ using namespace yarp::dev;
 using namespace yarp::sig;
 
 // should move more of implementation into this file
+
+// just to keep linkers from complaining about empty archive
+bool dummyRemoteFrameGrabberMethod() {
+    return false;
+}
