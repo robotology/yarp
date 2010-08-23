@@ -1,3 +1,8 @@
+2010-08-23  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* scripts/debian: moved from original location, since they are just
+	in the way for packagers (thanks Anne van Rossum)
+
 2010-08-22  Arjan Gijsberts  <arjan@liralab.it>
 	* src/libYARP_OS/harness/BottleTest.cpp
 	* src/libYARP_OS/include/yarp/os/Bottle.h
