@@ -187,7 +187,7 @@ public:
             Address remote = str->getRemoteAddress();
             return remote.addRegName(route.getFromName()).toContact();
         }
-        return yarp::os::Contact::invalid();
+        return yarp::os::Contact::byCarrier(route.getCarrierName().c_str()).addName(route.getFromName().c_str());
     }
 
     virtual yarp::os::Contact getLocalContact() {
