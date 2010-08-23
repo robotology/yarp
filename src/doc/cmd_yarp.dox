@@ -488,7 +488,7 @@ such properties.
 
 There are some special properties used by YARP.  Property ``ips''
 can list multiple identifiers of a machine.  Property ``offers''
-lists carriers that an output port can support.  Propery ``accepts''
+lists carriers that an output port can support.  Property ``accepts''
 lists carriers that an input port can support.
 
 
