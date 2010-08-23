@@ -117,11 +117,18 @@ public:
 
     /**
      * Access the object which will be transmitted by the next call to 
-     * BufferedPort::write.
+     * yarp::os::BufferedPort::write.
      * The object can safely be modified by the user of this class, to
      * prepare it.  Extra objects will be created or reused as 
      * necessary depending on the state of communication with the
-     * output(s) of the port.
+     * output(s) of the port.  Be careful!  If prepare() gives you
+     * a reused object, it is up to the user to clear the object if that is
+     * appropriate.  
+     * If you are sending yarp::os::Bottle objects, you may want to call
+     * yarp::os::Bottle::clear(), for example.
+     * YARP doesn't clear objects for you, since there are many
+     * cases in which overwriting old data is suffient and reallocation
+     * of memory would be unnecessary and inefficient.
      * @return the next object that will be written
      */
     T& prepare() {
