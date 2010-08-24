@@ -1719,7 +1719,7 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_IMPEDANCE);
-        cmd.addVocab(VOCAB_OFFSET);
+        cmd.addVocab(VOCAB_IMP_OFFSET);
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
@@ -1754,7 +1754,7 @@ public:
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_IMPEDANCE);
-        cmd.addVocab(VOCAB_OFFSET);
+        cmd.addVocab(VOCAB_IMP_OFFSET);
         cmd.addInt(j);
 
         Bottle& b = cmd.addList();

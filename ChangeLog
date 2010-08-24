@@ -1,3 +1,7 @@
+2010-08-24  Marco Randazzo  <marco.randazzo@iit.it>
+	* src/libYARP_dev/src/RemoteControlBoard.cpp
+	fixed a bug related to methods getImpedanceOffset() setImpedanceOffset()
+	
 2010-08-23  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* scripts/debian: moved from original location, since they are just
