@@ -1,5 +1,11 @@
 #!/usr/bin/perl
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+# Sort a list of names, used by "who_wrote"
+
 use Lingua::EN::NameParse;
 
 sub by_last_name {

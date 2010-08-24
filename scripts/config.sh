@@ -1,4 +1,8 @@
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 USE_SOURCEFORGE=false
 
 if $USE_SOURCEFORGE; then

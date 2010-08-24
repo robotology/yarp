@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Lorenzo Natale, Giorgio Metta
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # run as ./scripts/autocheck-generic-unix.sh
 
 . ./scripts/config.sh

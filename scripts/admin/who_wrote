@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+# Guess at who wrote a file in the YARP repository, based on 
+# its subversion log.
+
+# Usage:
+#   ./scripts/admin/who_wrote <filename>
+#
+ 
+
 usernames=`svn log -q $1 | cut --delimiter="|" --fields 2 | grep -v "\-\-\-\-\-" | sort | uniq`
 
 tmp="/tmp/who_wrote_usernames.txt"
@@ -44,7 +56,7 @@ for username in $usernames; do
 done
 
 # must have Lingua::EN::NameParse (apt-cache search nameparse | grep perl)
-cat $tmp | sort | uniq | ./scripts/namesort | tee $tmp2
+cat $tmp | sort | uniq | ./scripts/admin/namesort | tee $tmp2
 
 if $problem; then
     echo "NEED to fix:"
@@ -60,15 +72,15 @@ fi
 
 author_list=`python -c "import sys; print ', '.join([x.rstrip('\n\r') for x in sys.stdin.readlines()])" < $tmp2`
 echo "Suggested preamble (needs verification):"
-echo "# Copyright: (C) 2009 RobotCub Consortium"
+echo "# Copyright: (C) 2010 RobotCub Consortium"
 echo "# $author_word: $author_list"
-echo "# CopyPolicy: Released under the terms of the GNU GPL v2.0."
+echo "# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT"
 echo " "
 
 echo "/*"
-echo " * Copyright: (C) 2009 RobotCub Consortium"
+echo " * Copyright: (C) 2010 RobotCub Consortium"
 echo " * $author_word: $author_list"
-echo " * CopyPolicy: Released under the terms of the GNU GPL v2.0."
+echo " * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT"
 echo " */"
 
 

@@ -1,10 +1,14 @@
 #!/bin/bash
 
-# run as ./scripts/make-source-package
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+# run as ./scripts/admin/make-source-package-svn
 
 function prune {
     cd $1
-    for f in debian src/modules/dimax_u2c/blob; do
+    for f in scripts/debian scripts/junkyard src/modules/dimax_u2c/blob; do
 	echo "Removing $f"
 	rm -rf $f
     done

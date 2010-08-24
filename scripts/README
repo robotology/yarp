@@ -1,4 +1,24 @@
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+Useful scripts:
+
+* yarp_completion - bash completion, from Daniel Krieg.
+
+* fetch-ace.sh - embed ACE within YARP, which leads to simpler compilation
+  on several platforms.
+
+All other scripts are administrative in nature, and not useful for
+end-users.
+
+##########################################################################
+##
+## Old information follows
+##
+##########################################################################
+
 The scripts in this directory are for maintaining the YARP repository.
 They are not part of YARP itself.  So if you are not a maintainer of YARP,
 you don't need to care about them.

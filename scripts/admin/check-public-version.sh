@@ -1,7 +1,11 @@
 
 #!/bin/bash
 
-# run as ./scripts/check-public-version.sh
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+# run as ./scripts/admin/check-public-version.sh
 
 # default version to test - override by passing in an argument
 ver="2.1.5"

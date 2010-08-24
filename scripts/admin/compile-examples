@@ -1,6 +1,10 @@
 #!/bin/bash
 
-echo "Make sure you call this as ./scripts/compile-examples"
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+echo "Make sure you call this as ./scripts/admin/compile-examples"
 
 BUILDER=$PWD/example_build
 

@@ -1,7 +1,11 @@
 #!/bin/sh
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 echo "Puts license text in order."
-echo "Make sure you run this as ./scripts/update-license"
+echo "Make sure you run this as ./scripts/admin/update-license"
 
 if true; then
 
@@ -12,8 +16,10 @@ echo -n | tee license-odd.txt
 
 mkdir -p license_check
 svn export src license_check/src
+#svn export scripts license_check/scripts
 
 for f in `cd license_check; find src -type f -iname "*.cpp" -or  -iname "*.c" -or  -iname "*.h" | grep -v "/ace_"`; do
+#for f in `cd license_check; find scripts -type f `; do
 #for f in `find . -type f -iname "CMakeLists.txt" -or  -iname "*.cmake" `; do
 #for f in `find . -type f -not -wholename "*.svn*" -not -wholename "*~" -not -iname "license*.txt" -not -iname "*.jpg"  -not -iname "*.png"   -not -iname "*.ppm"  -not -iname "*.eps" `; do
     #ignore=`echo "$f" | grep -q dd_orig && echo true || echo false`
@@ -21,7 +27,7 @@ for f in `cd license_check; find src -type f -iname "*.cpp" -or  -iname "*.c" -o
     if $ignore ; then
 	echo ignored $f >> license-changes.txt
     else
-	./scripts/update-license-single $f
+	./scripts/admin/update-license-single $f
     fi
 done
 
