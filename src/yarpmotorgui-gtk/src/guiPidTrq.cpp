@@ -157,6 +157,12 @@ void guiPidTrq::guiPidTrq(void *button, void* data)
   iTrq->getTorquePid(*joint, &myPid);
   iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
 
+#if 0
+  //ImpedanceOffset test
+  iImp->setImpedanceOffset(*joint, 0.2); 
+  iImp->getImpedanceOffset(*joint, &offset_val);
+#endif
+
   //adding a popup window
   trq_winPid = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   char title[255];
