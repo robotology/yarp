@@ -111,7 +111,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         p2 = new Port;
         YARP_ASSERT(p2!=NULL);
         p2->open(config.check("name2",Value("/grabber2"),
-                              "Name of second port to send data on, when audio and images sent seperately").asString());
+                              "Name of second port to send data on, when audio and images sent separately").asString());
     }
         
     if (fgAv!=NULL) {
