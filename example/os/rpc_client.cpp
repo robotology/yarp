@@ -1,6 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Authors: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+/*
 
 This is an example of using a specialized RpcClient port to send
 messages and receive replies.  Regular YARP ports can do this as well,

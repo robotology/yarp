@@ -1,6 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+/*
 
 This is an example of reading messages without knowing anything about
 them.  It makes a port which, if you send messages to it, will be
