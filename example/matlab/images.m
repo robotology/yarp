@@ -1,3 +1,7 @@
+% Copyright: (C) 2010 RobotCub Consortium
+% Authors: Lorenzo Natale
+% CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 % Example code to show how to read an image from a YARP source and
 % handle it within matlab -- nat Sept 06
 

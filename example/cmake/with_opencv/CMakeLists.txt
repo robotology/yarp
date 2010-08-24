@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Lorenzo Natale, Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
   CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
   # execute YarpConfig.cmake

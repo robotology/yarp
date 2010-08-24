@@ -1,3 +1,10 @@
+
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 // Test timing on your system, this affects
 // the precision with which you can schedule
 // periodic thread. It boils down to 

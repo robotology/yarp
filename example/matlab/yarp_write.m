@@ -1,3 +1,8 @@
+
+% Copyright: (C) 2010 RobotCub Consortium
+% Authors: Lorenzo Natale
+% CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 % show how to call YARP from Matlab.
 % Write a bottle (quivalent to yarp write)
 % -nat

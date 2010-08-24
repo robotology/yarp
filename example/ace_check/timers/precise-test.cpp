@@ -1,3 +1,10 @@
+
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Authors: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 // Example code to test timers in Linux (and ACE), 
 // run as sudo.
 // 

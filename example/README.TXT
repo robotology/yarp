@@ -51,7 +51,7 @@ libraries.
 * opencv
     An example of image sharing between opencv and yarp
 
-* matrices
+* matrix
     Examples of how to use matrices and vectors in YARP.
 
 
