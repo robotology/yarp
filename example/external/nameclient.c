@@ -1,6 +1,12 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-// This program based on contributions from Paul Fitzpatrick, Jose Gaspar
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
+// Thanks to Jose Gaspar for his help with this code.
 
 // If you are on Windows, make sure WIN32 is defined.
 // otherwise, we assume UNIX.

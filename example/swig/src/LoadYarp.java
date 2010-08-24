@@ -1,3 +1,9 @@
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Lorenzo Natale, Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 import yarp.Network;
 
 //run this to load the yarp library and initialize the network in Java

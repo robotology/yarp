@@ -1,5 +1,9 @@
 #!/usr/bin/tclsh
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # You may have to fix this up, depending on your OS
 # I don't really know anything about TCL
 # Use .so version for linux, .dll version for windows

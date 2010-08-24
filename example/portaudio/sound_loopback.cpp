@@ -1,3 +1,9 @@
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Authors: Paul Fitzpatrick, Francesco Nori
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include <stdio.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>

@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 CMAKE_MINIMUM_REQUIRED(VERSION 2.0)
 
 PROJECT(yarp_without_yarp_in_c)

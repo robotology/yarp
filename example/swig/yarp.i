@@ -1,3 +1,7 @@
+// Copyright: (C) 2010 RobotCub Consortium
+// Author: Paul Fitzpatrick
+// CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 //////////////////////////////////////////////////////////////////////////
 // 
 // This is a configuration file to explain YARP to SWIG

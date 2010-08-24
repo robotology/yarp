@@ -1,3 +1,10 @@
+
+/*
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include <yarp/os/all.h>
 #include <yarp/math/Rand.h>
 #include <yarp/name/all.h>

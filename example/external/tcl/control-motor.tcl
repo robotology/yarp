@@ -1,5 +1,9 @@
 #!/usr/bin/tclsh
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # This is a simple demo program for interacting with YARP from TCL.
 # It assumes you have some robot real or simulated to communicate with.
 #
