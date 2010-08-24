@@ -30,13 +30,13 @@
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/NameConfig.h>
+#include <yarp/os/impl/ThreadImpl.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
 extern "C" int __yarp_is_initialized;
 int __yarp_is_initialized = 0;
-
 
 static bool needsLookup(const Contact& contact) {
     if (contact.getHost()!="") return false;
@@ -718,3 +718,10 @@ ConstString NetworkBase::getEnvironment(const char *key,
     return NameConfig::getEnv(key,found).c_str();
 }
 
+void NetworkBase::lock() {
+    ThreadImpl::threadMutex.wait();
+}
+
+void NetworkBase::unlock() {
+    ThreadImpl::threadMutex.post();
+}

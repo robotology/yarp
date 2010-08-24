@@ -76,6 +76,8 @@ public:
 
     static void setDefaultStackSize(int stackSize);
 
+    static SemaphoreImpl threadMutex;
+
 private:
     int defaultPriority;
     int stackSize;
@@ -92,7 +94,6 @@ private:
 
     static int threadCount;
     static int defaultStackSize;
-    static SemaphoreImpl threadMutex;
 	bool initWasSuccessful;
 
 };

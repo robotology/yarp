@@ -383,6 +383,16 @@ public:
      */
     static ConstString getEnvironment(const char *key,
                                       bool *found = 0/*NULL*/);
+
+    /**
+     * Call wait() on a global mutual-exclusion semaphore allocated by YARP.
+     */
+    static void lock();
+
+    /**
+     * Call post() on a global mutual-exclusion semaphore allocated by YARP.
+     */
+    static void unlock();
 };
 
 /**

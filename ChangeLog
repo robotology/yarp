@@ -1,3 +1,9 @@
+2010-08-24  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/Election.cpp: fix a race condition in
+	multicast channel allocation (thanks Vadim Tikhanoff and
+	Francesco Rea).
+
 2010-08-24  Marco Randazzo  <marco.randazzo@iit.it>
 	* src/libYARP_dev/src/RemoteControlBoard.cpp
 	fixed a bug related to methods getImpedanceOffset() setImpedanceOffset()

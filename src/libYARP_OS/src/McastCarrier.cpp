@@ -9,18 +9,24 @@
 #include <stdlib.h>
 #include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/Network.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 ElectionOf<McastCarrier> *McastCarrier::caster = NULL;
 
 ElectionOf<McastCarrier>& McastCarrier::getCaster() {
+    NetworkBase::lock();
     if (caster==NULL) {
         caster = new ElectionOf<McastCarrier>;
+        NetworkBase::unlock();
         if (caster==NULL) {
             YARP_ERROR(Logger::get(), "No memory for McastCarrier::caster");
             exit(1);
         }
+    } else {
+        NetworkBase::unlock();
     }
     return *caster;
 }

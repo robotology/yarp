@@ -14,6 +14,8 @@
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
 
+#include <yarp/os/Semaphore.h>
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -32,11 +34,12 @@ class yarp::os::impl::Election {
 private:
     typedef void *voidPtr;
 
+    yarp::os::Semaphore mutex;
+
     class PeerRecord {
-    protected:
+    public:
         ACE_Hash_Map_Manager<void *,bool,ACE_Null_Mutex> peerSet;
 
-    public:
         PeerRecord() {
         }
 
