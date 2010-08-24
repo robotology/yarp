@@ -12,7 +12,7 @@ public:
 
   virtual void run() {
     Network::connect(name,"/reader","mcast");
-    for (int i=0; i<10; i++) {
+    for (int i=0; i<50; i++) {
       Bottle& b = port.prepare();
       b.clear();
       b.addString(name);
@@ -48,24 +48,36 @@ public:
 
 int main() {
   Network yarp;
-  Reader reader;
-  Port p;
-  p.setReader(reader);
-  p.open("/reader");
-  Porter writer[N];
-  for (int i=0; i<N; i++) {
-    ConstString name = ConstString("/writer/") + ConstString::toString(i);
-    writer[i].name = name;
-    writer[i].port.open(name);
+
+  for (int k=0; k<100; k++) {
+
+    printf("\n\n\n==========================================\n");
+    printf("Start up round %d\n", k);
+
+    {
+      Reader reader;
+      Port p;
+      p.setReader(reader);
+      p.open("/reader");
+      Porter writer[N];
+      for (int i=0; i<N; i++) {
+	ConstString name = ConstString("/writer/") + ConstString::toString(i);
+	writer[i].name = name;
+	writer[i].port.open(name);
+      }
+      for (int i=0; i<N; i++) {
+	writer[i].start();
+      }
+      Time::delay(20);
+      printf("Shutting down\n");
+      for (int i=0; i<N; i++) {
+	writer[i].stop();
+      }
+    }
+
+    printf("Shut down %d\n", k);
   }
-  for (int i=0; i<N; i++) {
-    writer[i].start();
-  }
-  Time::delay(20);
-  printf("Shutting down\n");
-  for (int i=0; i<N; i++) {
-    writer[i].stop();
-  }
+
   return 0;
 }
 
