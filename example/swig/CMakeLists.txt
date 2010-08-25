@@ -49,11 +49,7 @@ IF (CREATE_JAVA)
    SET(CMAKE_SWIG_FLAGS "-package;yarp;-Wall;-module;yarp")
    FIND_PACKAGE(JNI REQUIRED)
    INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
-   IF (WIN32 AND NOT CYGWIN)
-      SET(target_name jyarp)
-   ELSE(WIN32 AND NOT CYGWIN)
-      SET(target_name libjyarp)
-   ENDIF (WIN32 AND NOT CYGWIN)
+   SET(target_name jyarp)
    SWIG_ADD_MODULE(${target_name} java yarp.i)
 
    # issue on MINGW where C++ name-mangling prevents java finding methods

@@ -1,4 +1,8 @@
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 echo " "
 echo Make sure yarp server is running.
 echo This script hits it with lots of registers/unregisters

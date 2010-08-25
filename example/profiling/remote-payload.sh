@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 PROTOCOLS="tcp udp"
 PAYLOAD="125 250 500 1000 2000 4000 8000 16000 32000 64000 128000 256000 512000 1000000 2000000 4000000" 
 PL_VERBOSE=(125 250 500 1k 2k 4k 8k 16k 32k 64k 128k 256k 512k 1M 2M 4M)

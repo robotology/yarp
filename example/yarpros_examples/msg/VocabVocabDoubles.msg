@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # The port we are communicating with can accept many kinds of commands.
 # We set up a header here to make it clear we want to do the equivalent of:
 #   [set] [poss] (1.0 2.0 3.0 4.0)

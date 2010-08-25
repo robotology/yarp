@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 This is an example to show how you can write external modules.
 
 Here you find a directory structure with two bundles of devices

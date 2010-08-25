@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 export ACE_ROOT=/home/icub/Code/ACE_wrappers
 export YARP_DIR=/home/icub/Code/yarp2
 export YARP_ROOT=$YARP_DIR
