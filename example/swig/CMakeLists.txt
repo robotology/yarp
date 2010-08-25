@@ -17,12 +17,6 @@ SET(CREATE_ALLEGRO FALSE CACHE BOOL "Do you want to create the Allegro Common Li
 SET(CREATE_TCL FALSE CACHE BOOL "Do you want to create the TCL interface")
 SET(CREATE_RUBY FALSE CACHE BOOL "Do you want to create the Ruby interface")
 
-
-
-
-# small update to FindJNI
-SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
-
 FIND_PACKAGE(SWIG REQUIRED)
 INCLUDE(${SWIG_USE_FILE})
 MESSAGE(STATUS "${SWIG_USE_FILE}")

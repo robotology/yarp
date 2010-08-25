@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
   cmake_minimum_required(VERSION 2.6)
   if (COMPILE_PLUGIN_LIBRARY)
     # Declare a device called "fake_grabber", with C++ type 
