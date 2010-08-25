@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Ze Ji 
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ 
 # Try to find ftdi
 # Once done this will define
 #

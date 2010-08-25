@@ -1,4 +1,6 @@
-
+# Copyright (C) 2010 Ze Ji
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ 
 IF (COMPILE_DEVICE_LIBRARY)
   PREPARE_DEVICE(dynamixelAX12Ftdi TYPE DynamixelAX12FtdiDriver INCLUDE "DynamixelAX12FtdiDriver.h" WRAPPER controlboard)
 ENDIF (COMPILE_DEVICE_LIBRARY)

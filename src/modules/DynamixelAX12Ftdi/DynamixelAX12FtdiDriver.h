@@ -1,4 +1,12 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
 /*
+ * Copyright (C) 2010 Ze Ji
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+ 
+ /*
  * Yarp Driver for Dynamixel AX-12, controlled using USB to Dynamixel Adapter
  * The default IDs for the motors are for Kaspar robot. As different robots would have different settings,
  * it is necessary to define the IDs, this can be done via a configuration file. In this example, check the
