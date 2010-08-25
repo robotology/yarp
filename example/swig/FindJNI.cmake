@@ -37,6 +37,7 @@ SET(JAVA_AWT_INCLUDE_DIRECTORIES
   /opt/sun-jdk-1.5.0.04/include
   /usr/java/include
   /usr/lib/jvm/java-1.5.0-sun-1.5.0.06/include
+  /usr/lib/jvm/java-6-sun-1.6.0.20/include
   )
 
 FOREACH(JAVA_PROG "${JAVA_RUNTIME}" "${JAVA_COMPILE}" "${JAVA_ARCHIVE}")
