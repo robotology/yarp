@@ -1,3 +1,9 @@
+#!/bin/bash
+
+# Copyright: (C) 2010 Daniel Krieg
+# Author: Daniel Krieg <krieg@fias.uni-frankfurt.de>
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 ### call "yarp name list" and extract all available ports
 _get_yarp_ports() {
     echo $(yarp name list 2>/dev/null | grep registration | awk '{print $3 }'| grep ^\/ )
@@ -78,7 +84,7 @@ _yarprun() {
         local pprev="${COMP_WORDS[COMP_CWORD-2]}"
     fi
     local command="${COMP_WORDS[1]}"
-    local run_cmds1=" --hold --cmd --geometry --stdio --as --workdir"
+    local run_cmds1="--cmd --as --geometry --hold --stdio --workdir"
     local run_cmds2="--kill --sigterm --sigtermall --ps --isrunning --exit"
 
     completion=""
