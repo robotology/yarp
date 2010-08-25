@@ -224,6 +224,8 @@ static int metaConnect(const char *csrc,
                 } else {
                     carrierConstraint = staticSrc.getCarrier();
                 }
+                delete srcCarrier;
+                srcCarrier = NULL;
             }
         }
     } else {
@@ -246,6 +248,8 @@ static int metaConnect(const char *csrc,
                 } else {
                     carrierConstraint = staticDest.getCarrier();
                 }
+                delete destCarrier;
+                destCarrier = NULL;
             }
         }
     } else {
@@ -341,17 +345,20 @@ static int metaConnect(const char *csrc,
     }
     */
 
+    int result = -1;
+
     if (srcIsCompetent&&connectionIsPush) {
         // Classic case.  
         Contact c = Contact::fromString(dest);
+        if (connectionCarrier!=NULL) delete connectionCarrier;
         return enactConnection(staticSrc,c,style,mode,false);
     }
     if (destIsCompetent&&connectionIsPull) {
         Contact c = Contact::fromString(src);
+        if (connectionCarrier!=NULL) delete connectionCarrier;
         return enactConnection(staticDest,c,style,mode,true);
     }
 
-    int result = -1;
     if (connectionCarrier!=NULL) {
         if (!connectionIsPull) {
             Contact c = Contact::fromString(dest);
@@ -360,6 +367,10 @@ static int metaConnect(const char *csrc,
             Contact c = Contact::fromString(src);
             result = connectionCarrier->connect(staticDest,c,style,mode,true);
         }
+    }
+    if (connectionCarrier!=NULL) {
+        delete connectionCarrier;
+        connectionCarrier = NULL;
     }
     if (result!=-1) {
         if (!style.quiet) {
@@ -467,6 +478,7 @@ void NetworkBase::initMinimum() {
 
 void NetworkBase::finiMinimum() {
     Carriers::getInstance().clear();
+    NameClient::removeNameClient();
     ACE::fini();
 }
 
