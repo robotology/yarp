@@ -255,6 +255,11 @@ bool Port::open(const char *name) {
 
 bool Port::open(const Contact& contact, bool registerName) {
 
+    if (!NetworkBase::initialized()) {
+        YARP_ERROR(Logger::get(), "YARP not initialized; create a yarp::os::Network object before using ports");
+        return false;
+    }
+
     // Allow for open() to be called safely many times on the same Port
     PortCoreAdapter *currentCore = &(HELPER(implementation));
     if (currentCore->isOpened()) {

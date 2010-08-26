@@ -1,5 +1,11 @@
 2010-08-26  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
+	* src/libYARP_OS/src/Carriers.cpp, Network.cpp: make a fix that
+	may help with bug #615420 of MORSE (thanks for reporting from
+	Gilberto Echeverria, Arnaud Degroote, Breno Carneiro Pinheiro).
+	The Blender game engine initializes/finalizes python modules in an
+	odd way.
+
 	* src/libYARP_OS/CMakeLists.txt: (and many other files) 
 	added code to respect LIB_SUFFIX setting, so on 64-bit
 	systems libraries can be installed directly to lib64

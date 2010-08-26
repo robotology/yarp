@@ -112,16 +112,16 @@ public:
      */
     static bool addCarrierPrototype(Carrier *carrier);
 
-    static Carriers& getInstance() {
-        return instance;
-    }
+    static Carriers& getInstance();
+
+    static void removeInstance();
 
 private:
     ACE_Vector<Carrier *> delegates;
 
     Carriers();
   
-    static Carriers instance;
+    static Carriers *yarp_carriers_instance;
 
     Carrier *chooseCarrier(const String * name, const Bytes * bytes);  
 };

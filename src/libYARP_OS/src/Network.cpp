@@ -474,10 +474,13 @@ void NetworkBase::initMinimum() {
     Logger::get().setPid();
 	// make sure system is actually able to do things fast
 	Time::turboBoost();
+
+    // prepare carriers
+    Carriers::getInstance();
 }
 
 void NetworkBase::finiMinimum() {
-    Carriers::getInstance().clear();
+    Carriers::removeInstance();
     NameClient::removeNameClient();
     ACE::fini();
 }

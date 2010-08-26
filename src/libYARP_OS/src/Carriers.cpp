@@ -24,7 +24,7 @@ using namespace yarp::os::impl;
 
 static Logger carriersLog("Carriers", Logger::get());
 
-Carriers Carriers::instance;
+Carriers *Carriers::yarp_carriers_instance = NULL;
 
 Carriers::Carriers() {
     delegates.push_back(new HttpCarrier());
@@ -129,4 +129,20 @@ bool Carriers::addCarrierPrototype(Carrier *carrier) {
 
 bool Carrier::reply(Protocol& proto, SizedWriter& writer) {
     return proto.defaultReply(writer);
+}
+
+Carriers& Carriers::getInstance() {
+    if (yarp_carriers_instance == NULL) {
+        yarp_carriers_instance = new Carriers();
+        YARP_ASSERT(yarp_carriers_instance!=NULL);
+    }
+    return *yarp_carriers_instance;
+}
+
+
+void Carriers::removeInstance() {
+    if (yarp_carriers_instance != NULL) {
+        delete yarp_carriers_instance;
+        yarp_carriers_instance = NULL;
+    }
 }

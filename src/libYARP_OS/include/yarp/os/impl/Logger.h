@@ -142,7 +142,8 @@ private:
 #define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d); log.mode(_yarp_buf); }
 #define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); log.mode(_yarp_buf); }
 
-#define YARP_ASSERT(x) if (!(x)) { ACE_OS::printf("Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); ACE_OS::exit(1); }
+void yarp_print_trace(FILE *out, const char *file, int line);
+#define YARP_ASSERT(x) if (!(x)) { ACE_OS::printf("Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); yarp_print_trace(stdout,__FILE__,__LINE__); ACE_OS::exit(1); }
 
 
 #endif
