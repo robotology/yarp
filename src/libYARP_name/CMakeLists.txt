@@ -19,7 +19,7 @@ project(YARP_name)
 
   add_library(YARP_name ${folder_source} ${folder_header})
   target_link_libraries(YARP_name YARP_OS)
-  install(TARGETS YARP_name EXPORT YARP COMPONENT runtime DESTINATION lib)
+  install(TARGETS YARP_name EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_name)
 
   set_property(TARGET YARP_name PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

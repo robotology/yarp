@@ -20,10 +20,10 @@ configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
 # Set up a configuration file for installed use of YARP
-set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/lib/YARP/YARP.cmake)
+set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/YARP/YARP.cmake)
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib/YARP)
-install(EXPORT YARP COMPONENT configuration DESTINATION lib/YARP)
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)
+install(EXPORT YARP COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)

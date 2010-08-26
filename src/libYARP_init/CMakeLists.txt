@@ -10,7 +10,7 @@ include_directories(${YARP_TREE_INCLUDE_DIRS})
 
 add_library(YARP_init ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp)
 target_link_libraries(YARP_init ${YARP_TREE_LIBRARIES})
-install(TARGETS YARP_init EXPORT YARP COMPONENT runtime DESTINATION lib)
+install(TARGETS YARP_init EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
 
 if (CREATE_OPTIONAL_CARRIERS)
   set_property(SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/src/CustomInit.cpp 

@@ -41,7 +41,7 @@ if (YARP_HAS_MATH_LIB)
 
   add_library(YARP_math ${folder_source} ${folder_header})
   target_link_libraries(YARP_math YARP_sig YARP_OS ${MATH_LIB_EXTRAS})
-  install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION lib)
+  install(TARGETS YARP_math EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
   set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_math)
 
   set_property(TARGET YARP_math PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})

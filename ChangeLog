@@ -1,3 +1,10 @@
+2010-08-26  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* src/libYARP_OS/CMakeLists.txt: (and many other files) 
+	added code to respect LIB_SUFFIX setting, so on 64-bit
+	systems libraries can be installed directly to lib64
+	(thanks Anne van Rossum)
+
 2010-08-25  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/src/Network.cpp: clean up global name client
