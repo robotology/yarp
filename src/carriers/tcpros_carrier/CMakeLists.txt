@@ -16,6 +16,7 @@ if (NOT SKIP_tcpros_carrier)
     RosSlave.h
     RosLookup.h RosLookup.cpp
     BlobHeader.h)
+  target_link_libraries(rostcp_carrier wire_rep_utils)
   target_link_libraries(rostcp_carrier ${YARP_LIBRARIES})
 
   add_executable(yarpros yarpros.cpp)

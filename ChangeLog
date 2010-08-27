@@ -1,5 +1,9 @@
 2010-08-27  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
+	* src/carriers/tcpros_carrier/CMakeLists.txt: make tcpros_carrier's
+	dependency on wire_rep_utils explicit, to fix static library
+	build (thanks Giorgio Metta).
+
 	* example/yayarpview: add copyright/license for Renaud Detry's code.
 
 2010-08-26  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
