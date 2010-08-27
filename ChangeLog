@@ -17,6 +17,12 @@
 	object, and temporary carrier objects in metaConnect (thanks 
 	Vadim Tikhanoff for catching these!).
 
+2010-08-24  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* scripts: clean up directory, in preparation for a release
+	with full copyright/license info (thanks Anne van Rossum for
+	prompting this).
+
 2010-08-24  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/src/Election.cpp: fix a race condition in
