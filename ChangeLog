@@ -1,3 +1,7 @@
+2010-08-27  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* example/yayarpview: add copyright/license for Renaud Detry's code.
+
 2010-08-26  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/libYARP_OS/src/Carriers.cpp, Network.cpp: make a fix that
