@@ -1006,7 +1006,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
                        +yarp::os::ConstString("Can't execute stdout because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 		CloseHandle(write_to_pipe_stdin_to_cmd);
@@ -1056,7 +1056,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
                        +yarp::os::ConstString("Can't execute stdin because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 		TerminateProcess(stdout_process_info.hProcess,YARPRUN_ERROR);
@@ -1091,7 +1091,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
         yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=connect\nCan't connect stdio\n";
 		
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 		if (bConnW) NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
@@ -1181,7 +1181,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 
         yarp::os::ConstString out=line1+line2;
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 		NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
@@ -1226,7 +1226,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
     result.addInt(cmd_process_info.dwProcessId);
     yarp::os::ConstString out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+"pid="+pidstr+"\n";
     result.addString(out.c_str());
-    fprintf(stderr,out.c_str());
+    fprintf(stderr,"%s",out.c_str());
 
 	return result;
 }
@@ -1297,7 +1297,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
                        +yarp::os::ConstString("Can't execute command because ")+errorMsg+"\n";
 
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 	    return result;
@@ -1317,7 +1317,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
     Bottle result;
     result.addInt(cmd_process_info.dwProcessId);
     yarp::os::ConstString out=yarp::os::ConstString("STARTED: server=")+m_PortName+" alias="+alias+" cmd="+commandText+"pid="+pidstr+"\n";
-    fprintf(stderr,out.c_str());
+    fprintf(stderr,"%s",out.c_str());
 	return result;
 }
 
@@ -1382,7 +1382,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	}
 
     result.addString(out.c_str());
-    fprintf(stderr,out.c_str());
+    fprintf(stderr,"%s",out.c_str());
     fflush(stderr);
 
 	return result;	
@@ -1475,7 +1475,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
 		CLOSE(pipe_stdin_to_cmd[0]);
@@ -1499,10 +1499,10 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                            +yarp::os::ConstString("Can't execute stdout because ")+strerror(error)+"\n";
 	        
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
-	        fprintf(out_to_parent,out.c_str());
+	        fprintf(out_to_parent,"%s",out.c_str());
 	        fflush(out_to_parent);
 	        fclose(out_to_parent);
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
             fflush(stderr);
 	    }
 	    
@@ -1525,7 +1525,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		    Bottle result;
             result.addInt(YARPRUN_ERROR);            
             result.addString(out.c_str());
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
 		    fflush(stderr);
 		    
 		    KILL(pid_stdout);
@@ -1551,10 +1551,10 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                                +yarp::os::ConstString("Can't execute stdin because ")+strerror(error)+"\n";
                 
                 FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
-	            fprintf(out_to_parent,out.c_str());
+	            fprintf(out_to_parent,"%s",out.c_str());
 	            fflush(out_to_parent);
 	            fclose(out_to_parent);
-	            fprintf(stderr,out.c_str());
+	            fprintf(stderr,"%s",out.c_str());
                 fflush(stderr);
 	        }
 			
@@ -1595,7 +1595,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	           	Bottle result;
 				result.addInt(YARPRUN_ERROR);
 	            result.addString(out.c_str());
-	            fprintf(stderr,out.c_str());
+	            fprintf(stderr,"%s",out.c_str());
 	            fflush(stderr); 
 	             
 	            KILL(pid_stdout);
@@ -1620,11 +1620,11 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			    Bottle result;
                 result.addInt(YARPRUN_ERROR);	            
 	            result.addString(out.c_str());
-	            fprintf(stderr,out.c_str());
+	            fprintf(stderr,"%s",out.c_str());
 	            fflush(stderr);
 
 	            FILE* to_yarp_stdout=fdopen(pipe_cmd_to_stdout[WRITE_TO_PIPE],"w");
-	            fprintf(to_yarp_stdout,out.c_str());
+	            fprintf(to_yarp_stdout,"%s",out.c_str());
 	            fflush(to_yarp_stdout);
 	            fclose(to_yarp_stdout);
 	            
@@ -1674,10 +1674,10 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                                    +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
                     
                 	FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
-	                fprintf(out_to_parent,out.c_str());
+	                fprintf(out_to_parent,"%s",out.c_str());
 	                fflush(out_to_parent);
 	                fclose(out_to_parent);
-	                fprintf(stderr,out.c_str());
+	                fprintf(stderr,"%s",out.c_str());
                     fflush(stderr);
                     
                     NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
@@ -1753,7 +1753,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            }
 	            
 	            result.addString(out.c_str());
-	            fprintf(stderr,out.c_str());
+	            fprintf(stderr,"%s",out.c_str());
                 fflush(stderr);
   
                 CLOSE(pipe_child_to_parent[READ_FROM_PIPE]);
@@ -1789,7 +1789,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
         Bottle result;
         result.addInt(YARPRUN_ERROR);		
         result.addString(out.c_str());
-        fprintf(stderr,out.c_str());
+        fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 	
 		return result;
@@ -1828,10 +1828,10 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
                            +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
-	        fprintf(out_to_parent,out.c_str());
+	        fprintf(out_to_parent,"%s",out.c_str());
 	        fflush(out_to_parent);
 	        fclose(out_to_parent);
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
             fflush(stderr);
 		}
 		
@@ -1868,7 +1868,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	        //m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	        result.addInt(pid_cmd);
 	        out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()+" alias="+alias.c_str()+" cmd=xterm pid="+pidstr+"\n";
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
             fflush(stderr);
 	    }
 	    
@@ -1905,7 +1905,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 		Bottle result;
         result.addInt(YARPRUN_ERROR);	            
 	    result.addString(out.c_str());
-	    fprintf(stderr,out.c_str());
+	    fprintf(stderr,"%s",out.c_str());
 	    fflush(stderr);
 		
 		return result;
@@ -1940,12 +1940,12 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
                            +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
-	        fprintf(out_to_parent,out.c_str());
+	        fprintf(out_to_parent,"%s",out.c_str());
 	        fflush(out_to_parent);
 	        fclose(out_to_parent);
 
 		    REDIRECT_TO(STDERR_FILENO,saved_stderr);
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
             fflush(stderr);
 	    }
 
@@ -1983,7 +1983,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 	        //m_ProcessVector.Add(new YarpRunProcInfo(commandString,alias,m_PortName,pid_cmd,false));
 	        result.addInt(pid_cmd);
 	        out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()+" alias="+alias.c_str()+" cmd="+commandString.c_str()+" pid="+pidstr+"\n";
-	        fprintf(stderr,out.c_str());
+	        fprintf(stderr,"%s",out.c_str());
             fflush(stderr);
 	    }
 	    
