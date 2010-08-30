@@ -88,7 +88,7 @@ public:
         // We should check if img properties have changed.  But we don't.
         ros_seq_stamp.seq = seq;
         ros_seq_stamp.sec = (int)(t);
-        ros_seq_stamp.nsec = (t-(int)t)*1e9;
+        ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
     virtual int length() { return 3; }
