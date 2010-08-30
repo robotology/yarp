@@ -27,3 +27,10 @@ configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
 install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)
 install(EXPORT YARP COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)
+
+foreach(lib ${YARP_LIBRARIES})
+  set_target_properties(${lib} PROPERTIES VERSION ${YARP_GENERIC_VERSION}
+	SOVERSION ${YARP_GENERIC_SOVERSION})
+endforeach()
+
+

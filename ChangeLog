@@ -1,3 +1,8 @@
+2010-08-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/YarpDescribe.cmake, conf/YarpVersion.cmake: bring back 
+	sonames (thanks Anne van Rossum)
+
 2010-08-27  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/carriers/tcpros_carrier/CMakeLists.txt: make tcpros_carrier's
