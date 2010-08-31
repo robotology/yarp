@@ -27,7 +27,7 @@ namespace yarp {
  * This class is under development - it is just a stub for now.
  *
  */
-class yarp::os::PortInfo {
+class YARP_OS_API yarp::os::PortInfo {
 public:
     PortInfo() {
         tag = PORTINFO_NULL;

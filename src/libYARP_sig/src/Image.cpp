@@ -17,7 +17,6 @@
 #include <ace/OS_NS_stdio.h>
 
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
@@ -29,7 +28,6 @@
 #include <assert.h>
 
 
-using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::os;
 

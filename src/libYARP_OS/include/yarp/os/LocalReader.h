@@ -23,7 +23,7 @@ namespace yarp {
  *
  */
 template <class T>
-class yarp::os::LocalReader {
+class YARP_OS_API yarp::os::LocalReader {
 public:
 
     virtual ~LocalReader() {}

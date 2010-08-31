@@ -27,7 +27,7 @@ namespace yarp {
 * for standard YARP modules.  This class is similar to a Module, but 
 * it adds support for the ResourceFinder class.
 */
-class yarp::os::RFModule {
+class YARP_OS_API yarp::os::RFModule {
 
 public:
     /**

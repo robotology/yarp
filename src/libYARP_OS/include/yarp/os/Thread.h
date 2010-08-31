@@ -11,6 +11,7 @@
 #ifndef _YARP2_THREAD_
 #define _YARP2_THREAD_
 
+#include <yarp/os/api.h>
 
 namespace yarp {
     namespace os {
@@ -23,7 +24,7 @@ namespace yarp {
  *
  * An abstraction for a thread of execution.
  */
-class yarp::os::Thread {
+class YARP_OS_API yarp::os::Thread {
 public:
 
     /**

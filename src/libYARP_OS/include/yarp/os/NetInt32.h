@@ -9,6 +9,7 @@
 #ifndef _YARP2_NETINT32_
 #define _YARP2_NETINT32_
 
+#include <yarp/os/api.h>
 
 ////////////////////////////////////////////////////////////////////////
 //
@@ -55,7 +56,7 @@ namespace yarp {
 
 #else
 
-        class NetInt32 {
+        class YARP_OS_API NetInt32 {
         private:
             unsigned YARP_INT32 raw_value;
             unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const {
@@ -109,7 +110,7 @@ namespace yarp {
         };
 
 
-        class NetUint32 {
+        class YARP_OS_API NetUint32 {
         private:
             unsigned YARP_INT32 raw_value;
             unsigned YARP_INT32 swap(unsigned YARP_INT32 x) const {
@@ -163,7 +164,7 @@ namespace yarp {
         };
 
 
-        class NetInt16 {
+        class YARP_OS_API NetInt16 {
         private:
             unsigned YARP_INT16 raw_value;
             unsigned YARP_INT16 swap(unsigned YARP_INT16 x) const {
@@ -217,7 +218,7 @@ namespace yarp {
         };
 
 
-        class NetUint16 {
+        class YARP_OS_API NetUint16 {
         private:
             unsigned YARP_INT16 raw_value;
             unsigned YARP_INT16 swap(unsigned YARP_INT16 x) const {

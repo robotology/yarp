@@ -9,6 +9,8 @@
 #ifndef _YARP2_CONNECTIONWRITER_
 #define _YARP2_CONNECTIONWRITER_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class ConnectionWriter;
@@ -24,7 +26,7 @@ namespace yarp {
  *
  * @see Port, PortWriter, ConnectionReader
  */
-class yarp::os::ConnectionWriter {
+class YARP_OS_API yarp::os::ConnectionWriter {
 public:
 
     /**

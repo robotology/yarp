@@ -9,6 +9,8 @@
 #ifndef _YARP2_TIME_
 #define _YARP2_TIME_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class Time;
@@ -20,7 +22,7 @@ namespace yarp {
  *
  * Services related to time -- delay, current time.
  */
-class yarp::os::Time {
+class YARP_OS_API yarp::os::Time {
 public:
     /**
      * Wait for a certain number of seconds.  This may be fractional.

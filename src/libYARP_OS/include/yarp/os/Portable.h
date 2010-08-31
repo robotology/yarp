@@ -25,7 +25,7 @@ namespace yarp {
  * and be written to the YARP network.  It is a simple union of
  * PortReader and PortWriter.
  */
-class yarp::os::Portable : public PortReader, public PortWriter {
+class YARP_OS_API yarp::os::Portable : public PortReader, public PortWriter {
 public:
     // reiterate the inherited virtual methods, just as a reminder
 

@@ -18,4 +18,12 @@
 #  endif
 #endif
 
+#ifndef YARP_init_API
+#  ifdef YARP_init_EXPORTS
+#    define YARP_init_API YARP_EXPORT
+#  else
+#     define YARP_init_API YARP_IMPORT
+#  endif
+#endif
+
 #endif

@@ -22,7 +22,7 @@ namespace yarp {
  * An abstraction for a block of bytes, with optional
  * responsibility for allocating/destroying that block.
  */
-class yarp::os::ManagedBytes {
+class YARP_OS_API yarp::os::ManagedBytes {
 public:
     /**
      * Constructor.  No data present.

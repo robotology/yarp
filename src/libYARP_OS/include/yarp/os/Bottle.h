@@ -45,7 +45,7 @@ namespace yarp {
  * will eventually wash ashore somewhere else.  In the very early days
  * of YARP, that is what communication felt like.
  */
-class yarp::os::Bottle : public Portable, public Searchable {
+class YARP_OS_API yarp::os::Bottle : public Portable, public Searchable {
 public:
     using Searchable::check;
     using Searchable::findGroup;

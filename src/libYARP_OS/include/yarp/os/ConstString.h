@@ -9,6 +9,8 @@
 #ifndef _YARP2_CONSTSTRING_
 #define _YARP2_CONSTSTRING_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class ConstString;
@@ -20,7 +22,7 @@ namespace yarp {
  * to avoid forcing you to use the same string implementation
  * we do.
  */
-class yarp::os::ConstString {
+class YARP_OS_API yarp::os::ConstString {
 public:
   
     /**
@@ -74,6 +76,10 @@ public:
     ConstString operator + (char ch) const;
     ConstString operator + (const char *str) const;
     ConstString operator + (const ConstString& alt) const;
+
+    const ConstString& operator += (char ch);
+    const ConstString& operator += (const char *str);
+    const ConstString& operator += (const ConstString& alt);
 
     int length() const;
 

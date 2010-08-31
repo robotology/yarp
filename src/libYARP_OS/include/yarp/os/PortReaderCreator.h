@@ -31,7 +31,7 @@ namespace yarp {
  * via that connection will be channeled appropriately.
  *
  */
-class yarp::os::PortReaderCreator {
+class YARP_OS_API yarp::os::PortReaderCreator {
 public:
 
     /**

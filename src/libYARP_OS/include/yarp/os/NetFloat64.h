@@ -56,7 +56,7 @@ namespace yarp {
             YARP_FLOAT64 d;
             unsigned char c[8];
         };
-        class NetFloat64 {
+        class YARP_OS_API NetFloat64 {
         private:
             double raw_value;
             double swap(double x) const {
@@ -158,7 +158,7 @@ namespace yarp {
             double d;
             unsigned char c[8];
         };
-        class NetFloat64 {
+        class YARP_OS_API NetFloat64 {
         private:
             double raw_value;
             double swap(double x) const {

@@ -25,7 +25,7 @@ namespace yarp {
  *
  * An abstraction for a periodic thread.
  */
-class yarp::os::RateThread {
+class YARP_OS_API yarp::os::RateThread {
 public:
 
     /**
@@ -171,7 +171,7 @@ private:
  * This class takes a Runnable instance and wraps a thread around it.
  * This class is under development - API may change a lot.
  */
-class yarp::os::RateThreadWrapper : public RateThread {
+class YARP_OS_API yarp::os::RateThreadWrapper : public RateThread {
 private:
     Runnable *helper;
     int owned;

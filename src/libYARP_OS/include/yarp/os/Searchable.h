@@ -23,7 +23,7 @@ namespace yarp {
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class yarp::os::SearchReport {
+class YARP_OS_API yarp::os::SearchReport {
 public:
     ConstString key;
     ConstString value;
@@ -42,7 +42,7 @@ public:
     }
 };
 
-class yarp::os::SearchMonitor {
+class YARP_OS_API yarp::os::SearchMonitor {
 public:
     virtual ~SearchMonitor() {}
     virtual void report(const SearchReport& report, const char *context) = 0;
@@ -61,7 +61,7 @@ public:
  * @see Property Bottle Value
  *
  */
-class yarp::os::Searchable {
+class YARP_OS_API yarp::os::Searchable {
 private:
     SearchMonitor *monitor;
     ConstString monitorContext;

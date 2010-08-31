@@ -36,7 +36,7 @@ namespace yarp {
  * on the Yarp name server and can be queried by the client to send the 
  * termination message.
  */
-class yarp::os::Terminator {
+class YARP_OS_API yarp::os::Terminator {
 public:
     /** 
      * Send a quit message to a specific socket port.
@@ -51,7 +51,7 @@ public:
  * A class that can be polled to see whether the process has been 
  * asked to quit gracefully.
  */ 
-class yarp::os::Terminee : public yarp::os::Thread {
+class YARP_OS_API yarp::os::Terminee : public yarp::os::Thread {
 protected:
     void *implementation;
     volatile bool quit;

@@ -24,7 +24,7 @@ namespace yarp {
  * Use the factory  methods (Contact::byName, Contact::bySocket etc.) 
  * to create Contact objects.
  */
-class yarp::os::Contact {
+class YARP_OS_API yarp::os::Contact {
 public:
 
     /**

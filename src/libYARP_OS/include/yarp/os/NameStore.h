@@ -23,7 +23,7 @@ namespace yarp {
  * Abstract interface for a database of port names.
  *
  */
-class yarp::os::NameStore {
+class YARP_OS_API yarp::os::NameStore {
 public:
     virtual ~NameStore() {}
     virtual Contact query(const char *name) = 0;

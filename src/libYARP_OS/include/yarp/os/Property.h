@@ -34,7 +34,7 @@ namespace yarp {
  * Property objects can be searched efficiently.
  *
  */
-class yarp::os::Property : public Searchable, public Portable {
+class YARP_OS_API yarp::os::Property : public Searchable, public Portable {
 
 public:
     using Searchable::check;

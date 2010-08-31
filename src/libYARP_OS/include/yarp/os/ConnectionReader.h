@@ -31,7 +31,7 @@ namespace yarp {
  *
  * @see Port, PortReader, ConnectionWriter
  */
-class yarp::os::ConnectionReader {
+class YARP_OS_API yarp::os::ConnectionReader {
 public:
 
     /**

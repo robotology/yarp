@@ -2,16 +2,15 @@
 
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2007 The Robotcub consortium
+* Copyright (C) 2007 The RobotCub Consortium
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 // $Id: Matrix.cpp,v 1.20 2009-05-12 16:02:29 eshuy Exp $ 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 
 #include <yarp/gsl_compatibility.h>
@@ -20,7 +19,7 @@
 #include <ace/Vector_T.h>
 
 using namespace yarp::sig;
-using namespace yarp::os::impl;
+using namespace yarp::os;
 
 #define RES(v) ((ACE_Vector<T> *)v)
 #define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
@@ -119,17 +118,12 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
     return true;
 }
 
-/// vector implementations
-#include <yarp/os/impl/String.h>
-using namespace yarp::os::impl;
-using namespace yarp::os;
-
 /**
 * Quick implementation, space for improvement.
 */
 ConstString Matrix::toString() const
 {
-    String ret;
+    ConstString ret;
     char tmp[512];
     int c=0;
     int r=0;
@@ -159,7 +153,7 @@ ConstString Matrix::toString() const
     //ret.append(tmp, strlen(tmp));
     ret+=tmp;
 
-    return ConstString(ret.c_str());
+    return ret;
 }
 
 void Matrix::updatePointers()

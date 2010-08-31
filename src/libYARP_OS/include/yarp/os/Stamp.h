@@ -23,7 +23,7 @@ namespace yarp {
 /**
  * An abstraction for a time stamp and/or sequence number.
  */
-class yarp::os::Stamp : public Portable {
+class YARP_OS_API yarp::os::Stamp : public Portable {
 private:
     NetInt32 sequenceNumber;
     NetFloat64 timeStamp;
@@ -93,7 +93,7 @@ public:
 /**
  * A base class for objects with time stamps and/or sequence numbers.
  */
-class yarp::os::Stamped {
+class YARP_OS_API yarp::os::Stamped {
 public:
     virtual ~Stamped() {}
 

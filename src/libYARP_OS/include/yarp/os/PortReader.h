@@ -23,7 +23,7 @@ namespace yarp {
  * the network, such as Bottle objects.
  * @see Port, PortWriter
  */
-class yarp::os::PortReader {
+class YARP_OS_API yarp::os::PortReader {
 public:
 
     /**

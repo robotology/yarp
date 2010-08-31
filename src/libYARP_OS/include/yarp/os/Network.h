@@ -38,7 +38,7 @@ namespace yarp {
  * Preferences for how to communicate with a contact.
  *
  */
-class yarp::os::ContactStyle {
+class YARP_OS_API yarp::os::ContactStyle {
 public:
     bool admin;
     bool quiet;
@@ -61,7 +61,7 @@ public:
  * Utilities for manipulating the YARP network, excluding initialization
  * and shutdown.
  */
-class yarp::os::NetworkBase {
+class YARP_OS_API yarp::os::NetworkBase {
 public:
     /**
      * Basic system initialization, not including plugins.
@@ -401,7 +401,7 @@ public:
  * Utilities for manipulating the YARP network, including initialization
  * and shutdown.
  */
-class yarp::os::Network : public NetworkBase {
+class YARP_init_API yarp::os::Network : public NetworkBase {
 public:
     /**
      * Constructor.  Configures process to use the YARP network.

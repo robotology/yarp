@@ -22,10 +22,8 @@ namespace yarp {
  * receive connections from multiple clients, and to reply to them via
  * those connections.
  *
- * THIS IS SUBJECT TO CHANGE in interface and implementation.
- *
  */
-class yarp::os::RpcServer : public Contactable {
+class YARP_OS_API yarp::os::RpcServer : public Contactable {
 public:
     using Contactable::open;
 

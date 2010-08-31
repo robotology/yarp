@@ -11,6 +11,7 @@
 
 #include <yarp/os/Portable.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/sig/api.h>
 
 namespace yarp {
     /**
@@ -44,7 +45,7 @@ namespace yarp {
  * with other image classes in other libraries, particularly IPL-derived
  * libraries such as OpenCV.
  */
-class yarp::sig::Image : public yarp::os::Portable {
+class YARP_sig_API yarp::sig::Image : public yarp::os::Portable {
 
 public:
 

@@ -21,10 +21,8 @@ namespace yarp {
  * A port that is specialized as an RPC client.  That is, it expects to
  * connect to a single server, and receive replies on the same connection.
  *
- * THIS IS SUBJECT TO CHANGE in interface and implementation.
- *
  */
-class yarp::os::RpcClient : public Contactable {
+class YARP_OS_API yarp::os::RpcClient : public Contactable {
 public:
     using Contactable::open;
 

@@ -2,14 +2,13 @@
 
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2007 The Robotcub consortium
+* Copyright (C) 2007 The RobotCub Consortium
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
 
 // $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $
 
 #include <yarp/sig/Vector.h>
-#include <yarp/os/impl/IOException.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
@@ -18,7 +17,7 @@
 #include <ace/Vector_T.h>
 
 using namespace yarp::sig;
-using namespace yarp::os::impl;
+using namespace yarp::os;
 using namespace yarp::sig::impl;
 
 #define RES(v) ((ACE_Vector<T> *)v)
@@ -232,18 +231,12 @@ namespace yarp {
     }
 }
 
-
-/// vector implementations
-#include <yarp/os/impl/String.h>
-using namespace yarp::os::impl;
-using namespace yarp::os;
-
 /**
 * Quick implementation, space for improvement.
 */
 ConstString Vector::toString()
 {
-    String ret = "";
+    ConstString ret = "";
     char tmp[512];
     int c=0;
     for(c=0;c<length()-1;c++)
@@ -258,7 +251,7 @@ ConstString Vector::toString()
         //ret.append(tmp, strlen(tmp));
         ret+=tmp;
     }
-    return ConstString(ret.c_str());
+    return ret;
 }
 
 const Vector &Vector::operator=(const Vector &r)

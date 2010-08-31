@@ -97,6 +97,21 @@ ConstString ConstString::operator + (const ConstString& alt) const {
     return (HELPER(implementation) + HELPER(alt.implementation)).c_str();
 }
 
+const ConstString& ConstString::operator += (char ch) {
+    HELPER(implementation) += ch;
+    return *this;
+}
+
+const ConstString& ConstString::operator += (const char *str) {
+    HELPER(implementation) += str;
+    return *this;
+}
+
+const ConstString& ConstString::operator += (const ConstString& alt) {
+    HELPER(implementation) += HELPER(alt.implementation);
+    return *this;
+}
+
 int ConstString::find(const char *needle) const {
     return (int)YARP_STRSTR(HELPER(implementation),needle);
 }

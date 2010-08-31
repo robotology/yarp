@@ -26,7 +26,7 @@ namespace yarp {
  * files, command line options, or GUIs.
  *
  */
-class yarp::os::IConfig {
+class YARP_OS_API yarp::os::IConfig {
 public:
 
     /**

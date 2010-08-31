@@ -9,6 +9,8 @@
 #ifndef _YARP2_SEMAPHORE_
 #define _YARP2_SEMAPHORE_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class Semaphore;
@@ -25,7 +27,7 @@ namespace yarp {
  * for another thread to first increment it.  This is a 
  * useful primitive for regulating thread interaction.
  */
-class yarp::os::Semaphore {
+class YARP_OS_API yarp::os::Semaphore {
 public:
 
     /**

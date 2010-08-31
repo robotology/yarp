@@ -9,6 +9,7 @@
 #ifndef _YARP2_RANDOM_
 #define _YARP2_RANDOM_
 
+#include <yarp/os/api.h>
 
 /**
  * \file Random.h Contains methods and classes for generating random
@@ -27,7 +28,7 @@ namespace yarp {
  *
  * A collection of basic random number generation algorithms.
  */
-class yarp::os::Random {
+class YARP_OS_API yarp::os::Random {
 public:
 	/**
 	 * Generates a random number in the range 0 to 1.

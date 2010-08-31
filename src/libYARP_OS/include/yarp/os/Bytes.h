@@ -9,6 +9,7 @@
 #ifndef _YARP2_BYTES_
 #define _YARP2_BYTES_
 
+#include <yarp/os/api.h>
 
 namespace yarp {
     namespace os {
@@ -22,7 +23,7 @@ namespace yarp {
  * responsible for allocating or destroying those bytes, just
  * recording their location.
  */
-class yarp::os::Bytes {
+class YARP_OS_API yarp::os::Bytes {
 public:
     /**
      * Default constructor.  No data present.

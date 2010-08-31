@@ -3,9 +3,11 @@
 #ifndef __YARPOSH__
 #define __YARPOSH__
 
+#include <yarp/os/api.h>
+
 /*
 * Copyright (C) 2009 RobotCub Consortium
-* Author: Lorenzo natale
+* Author: Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 *
 */
@@ -25,30 +27,30 @@ namespace yarp {
 		* @param sighandler: handler function
 		*/
         typedef void(*YarpSignalHandler)(int);
-		YarpSignalHandler signal(int signum, YarpSignalHandler sig);
+		YARP_OS_API YarpSignalHandler signal(int signum, YarpSignalHandler sig);
 
 		/**
 		* Wrapper for ACE_OS::exit().
 		*/
-		void exit(int v);
+		YARP_OS_API void exit(int v);
 
 		/**
 		* Wrapper for ACE_OS::getenv().
 		* @param v: string that containt the environment variable name
 		* @return the value corresponding to the envarionment variable v
 		*/
-		const char *getenv(const char *v);
+		YARP_OS_API const char *getenv(const char *v);
 
 		/**
 		* Wrapper for ACE_OS::mkdir(). Create a directory.
 		* @param p: name of the new directory.
 		*/
-		int mkdir(const char *p);
+		YARP_OS_API int mkdir(const char *p);
 
 		/**
 		* Wrapper for ACE_OS::stat() function.
 		*/
-		int stat(const char *f);
+		YARP_OS_API int stat(const char *f);
 	}	     
 }
 

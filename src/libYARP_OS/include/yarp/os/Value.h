@@ -37,7 +37,7 @@ namespace yarp {
  * find anything in them unless they are actually a list.
  *
  */
-class yarp::os::Value : public Portable, public Searchable {
+class YARP_OS_API yarp::os::Value : public Portable, public Searchable {
 private:
     Value *proxy;
 

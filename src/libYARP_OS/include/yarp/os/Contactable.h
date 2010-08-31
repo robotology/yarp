@@ -29,7 +29,7 @@ namespace yarp {
  * An abstract port.  Anything that can be expressed via a Contact.
  *
  */
-class yarp::os::Contactable {
+class YARP_OS_API yarp::os::Contactable {
 
 public:
 

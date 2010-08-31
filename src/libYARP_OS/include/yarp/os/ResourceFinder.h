@@ -22,11 +22,9 @@ namespace yarp {
 /**
  *
  * Helper class for finding config files and other external resources.
- * This is under development at the moment.  See ideas at:
- * http://eris.liralab.it/wiki/Configuration_and_resource_files
  *
  */
-class yarp::os::ResourceFinder : public Searchable{
+class YARP_OS_API yarp::os::ResourceFinder : public Searchable{
 public:
     ResourceFinder();
 

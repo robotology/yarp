@@ -9,6 +9,8 @@
 #ifndef _YARP2_EVENT_
 #define _YARP2_EVENT_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class Event;
@@ -23,7 +25,7 @@ namespace yarp {
  * can wait for an event to enter a signaled state.
  *
  */
-class yarp::os::Event {
+class YARP_OS_API yarp::os::Event {
 public:
 
     /**

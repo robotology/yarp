@@ -51,7 +51,7 @@ namespace yarp {
  * traverse the network will be human readable/writable.
  *
  */
-class yarp::os::Vocab {
+class YARP_OS_API yarp::os::Vocab {
 public:
     /**
      * Convert a string into a vocabulary identifier.  If the string

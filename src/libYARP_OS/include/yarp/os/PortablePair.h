@@ -23,7 +23,7 @@ namespace yarp {
  * Handy for adding general-purpose headers, for example.
  */
 template <class HEAD, class BODY>
-class yarp::os::PortablePair : public Portable {
+class YARP_OS_API yarp::os::PortablePair : public Portable {
 public:
     /**
      * An object of the first type (HEAD).

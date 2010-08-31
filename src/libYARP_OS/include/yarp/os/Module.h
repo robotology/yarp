@@ -40,7 +40,7 @@ namespace yarp {
  * attachTerminal().
  *
  */
-class yarp::os::Module : public IConfig {
+class YARP_OS_API yarp::os::Module : public IConfig {
 
 public:
     /**

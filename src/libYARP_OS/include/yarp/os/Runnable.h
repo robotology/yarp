@@ -11,6 +11,8 @@
 #ifndef _YARP2_OS_RUNNABLE_
 #define _YARP2_OS_RUNNABLE_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class Runnable;
@@ -20,7 +22,7 @@ namespace yarp {
 /**
  * A class that can be managed by another thread.
  */
-class yarp::os::Runnable {
+class YARP_OS_API yarp::os::Runnable {
 public:
     virtual ~Runnable() {}
 

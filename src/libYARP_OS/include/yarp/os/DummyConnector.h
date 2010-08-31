@@ -36,7 +36,7 @@ namespace yarp {
  * \author Freyr Magnusson
  *
  */
-class yarp::os::DummyConnector {
+class YARP_OS_API yarp::os::DummyConnector {
 public:
     /**
      * Default constructor. TextMode set to false.
