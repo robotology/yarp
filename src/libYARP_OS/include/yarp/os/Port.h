@@ -9,6 +9,7 @@
 #ifndef _YARP2_PORT_
 #define _YARP2_PORT_
 
+#include <yarp/os/api.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Contactable.h>
 #include <yarp/os/PortReader.h>
@@ -35,7 +36,7 @@ namespace yarp {
  * For examples and help, see: \ref what_is_a_port
  *
  */
-class yarp::os::Port : public Contactable {
+class YARP_OS_API yarp::os::Port : public Contactable {
 
 public:
     using Contactable::open;

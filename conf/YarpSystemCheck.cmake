@@ -125,6 +125,18 @@ if (MSVC)
   set(CMAKE_DEBUG_POSTFIX "d")
 endif (MSVC)
 
+option(YARP_CLEAN_API "Filter out non-public symbols (experimental)" FALSE)
+mark_as_advanced(YARP_CLEAN_API)
+if (YARP_CLEAN_API)
+  if(CMAKE_COMPILER_IS_GNUCXX)
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("-fvisibility=hidden" GCC_HAS_VISIBILITY)
+    if (GCC_HAS_VISIBILITY)
+      add_definitions(-fvisibility=hidden)
+    endif ()
+  endif ()
+endif ()
+
 # Translate the names of some YARP options, for yarp_config_options.h.in
 # and YARPConfig.cmake.in
 set (YARP_HAS_MATH_LIB ${CREATE_LIB_MATH})
