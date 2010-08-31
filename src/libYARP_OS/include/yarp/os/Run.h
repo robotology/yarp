@@ -138,6 +138,19 @@ public:
 
     // end API
 
+    /**
+     *
+     * Send a property object to a run server, bundling up all the
+     * settings usually specified on the command line.  See the
+     * documentation for the "yarprun" command.
+     *
+     * @param config the property object to send.
+     *
+     * @return 0 on success, -1 on failure
+     *
+     */
+	static int sendToServer(Property& config);
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
     static int main(int argc, char *argv[]);
@@ -155,7 +168,6 @@ public:
 protected:
 	static void Help(const char* msg="");
 	static int Server();
-	static int SendToServer(Property& config);
 	static Bottle SendMsg(Bottle& msg,ConstString target);
 	static Bottle ExecuteCmdAndStdio(Bottle& msg);
 	static Bottle ExecuteCmd(Bottle& msg);

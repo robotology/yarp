@@ -576,7 +576,7 @@ int yarp::os::Run::main(int argc, char *argv[])
 	 || config.check("isrunning")
 	 || config.check("ps"))
 	{ 
-        return SendToServer(config);
+        return sendToServer(config);
     }
 
 	Help();
@@ -765,7 +765,7 @@ int yarp::os::Run::Server()
 }
 
 // CLIENT
-int yarp::os::Run::SendToServer(yarp::os::Property& config)
+int yarp::os::Run::sendToServer(yarp::os::Property& config)
 {
 	yarp::os::Bottle msg;
 

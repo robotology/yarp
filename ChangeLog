@@ -1,3 +1,8 @@
+2010-08-31  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Run.h: make sendToServer
+	public (Anne van Rossum has established a use-case for it).
+
 2010-08-30  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/YarpDescribe.cmake, conf/YarpVersion.cmake: bring back 
