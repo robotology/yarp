@@ -25,7 +25,7 @@ namespace yarp {
  *
  * A generic interface to serial port devices.
  */
-class yarp::dev::ISerialDevice
+class YARP_dev_API yarp::dev::ISerialDevice
 {
 public:
     virtual ~ISerialDevice(){}

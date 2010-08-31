@@ -25,7 +25,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::CanErrors
+class YARP_dev_API yarp::dev::CanErrors
 {
 public:
     CanErrors()
@@ -48,7 +48,7 @@ public:
     unsigned int rxBufferOvr;    // rx buffer overflow
 };
 
-class yarp::dev::CanMessage
+class YARP_dev_API yarp::dev::CanMessage
 {
  public:
     virtual ~CanMessage(){}
@@ -64,7 +64,7 @@ class yarp::dev::CanMessage
     virtual void setBuffer(unsigned char *)=0;
 };
 
-class yarp::dev::CanBuffer
+class YARP_dev_API yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
@@ -89,7 +89,7 @@ class yarp::dev::CanBuffer
         }
 };
 
-class yarp::dev::ICanBufferFactory
+class YARP_dev_API yarp::dev::ICanBufferFactory
 {
 public:
     virtual ~ICanBufferFactory(){}
@@ -102,7 +102,8 @@ public:
  * M is the class implementing CanMessage for your type.
  * IMPL is the internal representation of the can message.
  */
-template<class M, class IMPL> class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
+template<class M, class IMPL> 
+class YARP_dev_API yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
 {
 public:
     virtual ~ImplementCanBufferFactory(){}
@@ -156,7 +157,7 @@ public:
 /**
  * Interface for a can bus device
  */
-class yarp::dev::ICanBus
+class YARP_dev_API yarp::dev::ICanBus
 {
  public:
     virtual ~ICanBus(){}
@@ -178,7 +179,7 @@ class yarp::dev::ICanBus
                           bool wait=false)=0;
 };
 
-class yarp::dev::ICanBusErrors
+class YARP_dev_API yarp::dev::ICanBusErrors
 {
 public:
     virtual bool canGetErrors(yarp::dev::CanErrors &err)=0;

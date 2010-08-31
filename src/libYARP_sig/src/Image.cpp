@@ -16,7 +16,7 @@
 #include <ace/OS_NS_stdlib.h>
 #include <ace/OS_NS_stdio.h>
 
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
@@ -32,9 +32,6 @@ using namespace yarp::sig;
 using namespace yarp::os;
 
 #define DBGPF1 if (0)
-
-
-using namespace yarp::sig;
 
 //inline int PAD_BYTES (int len, int pad)
 //{

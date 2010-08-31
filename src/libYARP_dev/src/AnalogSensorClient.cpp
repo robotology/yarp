@@ -15,7 +15,6 @@
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IAnalogSensor.h>
 #include <yarp/sig/Vector.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
 #include <yarp/dev/PolyDriver.h>
@@ -181,8 +180,8 @@ class yarp::dev::AnalogSensorClient: public DeviceDriver,
 {
 protected:
     InputPortProcessor inputPort;
-    yarp::os::impl::String local;
-    yarp::os::impl::String remote;
+    ConstString local;
+    ConstString remote;
     Stamp lastTs; //used by IPreciselyTimed
 public:
 

@@ -35,8 +35,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-extern "C" int __yarp_is_initialized;
-int __yarp_is_initialized = 0;
+static int __yarp_is_initialized = 0;
 
 static bool needsLookup(const Contact& contact) {
     if (contact.getHost()!="") return false;
@@ -444,45 +443,60 @@ int NetworkBase::main(int argc, char *argv[]) {
     return Companion::main(argc,argv);
 }
 
+int NetworkBase::runNameServer(int argc, char *argv[]) {
+    Network yarp;
+    // call the yarp standard companion name server
+    argc--;
+    argv++;
+    int result = Companion::getInstance().cmdServer(argc,argv);
+    return result;
+}
+
+
 
 void NetworkBase::initMinimum() {
-
-    // Broken pipes need to be dealt with through other means
-    ACE_OS::signal(SIGPIPE, SIG_IGN);
-
-    ACE::init();
-    String quiet = NameConfig::getEnv("YARP_QUIET");
-    Bottle b2(quiet.c_str());
-    if (b2.get(0).asInt()>0) {
-        Logger::get().setVerbosity(-b2.get(0).asInt());
-    } else {
-        String verbose = NameConfig::getEnv("YARP_VERBOSE");
-        Bottle b(verbose.c_str());
-        if (b.get(0).asInt()>0) {
-            YARP_INFO(Logger::get(), 
-                      "YARP_VERBOSE environment variable is set");
-            Logger::get().setVerbosity(b.get(0).asInt());
-        }
-    }
-    String stack = NameConfig::getEnv("YARP_STACK_SIZE");
-    if (stack!="") {
-        int sz = atoi(stack.c_str());
-        Thread::setDefaultStackSize(sz);
-        YARP_SPRINTF1(Logger::get(), info,
-                      "YARP_STACK_SIZE set to %d", sz);
-    }
-    Logger::get().setPid();
-	// make sure system is actually able to do things fast
-	Time::turboBoost();
-
-    // prepare carriers
-    Carriers::getInstance();
+   if (__yarp_is_initialized==0) {
+       // Broken pipes need to be dealt with through other means
+       ACE_OS::signal(SIGPIPE, SIG_IGN);
+       
+       ACE::init();
+       String quiet = NameConfig::getEnv("YARP_QUIET");
+       Bottle b2(quiet.c_str());
+       if (b2.get(0).asInt()>0) {
+           Logger::get().setVerbosity(-b2.get(0).asInt());
+       } else {
+           String verbose = NameConfig::getEnv("YARP_VERBOSE");
+           Bottle b(verbose.c_str());
+           if (b.get(0).asInt()>0) {
+               YARP_INFO(Logger::get(), 
+                         "YARP_VERBOSE environment variable is set");
+               Logger::get().setVerbosity(b.get(0).asInt());
+           }
+       }
+       String stack = NameConfig::getEnv("YARP_STACK_SIZE");
+       if (stack!="") {
+           int sz = atoi(stack.c_str());
+           Thread::setDefaultStackSize(sz);
+           YARP_SPRINTF1(Logger::get(), info,
+                         "YARP_STACK_SIZE set to %d", sz);
+       }
+       Logger::get().setPid();
+       // make sure system is actually able to do things fast
+       Time::turboBoost();
+       
+       // prepare carriers
+       Carriers::getInstance();
+   }
+   __yarp_is_initialized++;
 }
 
 void NetworkBase::finiMinimum() {
-    Carriers::removeInstance();
-    NameClient::removeNameClient();
-    ACE::fini();
+    if (__yarp_is_initialized==1) {
+        Carriers::removeInstance();
+        NameClient::removeNameClient();
+        ACE::fini();
+    }
+    if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
 
 Contact NetworkBase::queryName(const char *name) {

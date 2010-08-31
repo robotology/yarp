@@ -11,6 +11,8 @@
 
 #include <yarp/sig/Sound.h>
 
+#include <yarp/dev/api.h>
+
 namespace yarp {
     namespace dev {
         class IAudioGrabberSound;
@@ -23,7 +25,7 @@ namespace yarp {
  *
  * Read a YARP-format sound block from a device.
  */
-class yarp::dev::IAudioGrabberSound
+class YARP_dev_API yarp::dev::IAudioGrabberSound
 {
 public:
     /**
@@ -41,7 +43,7 @@ public:
 };
 
 
-class yarp::dev::IAudioRender
+class YARP_dev_API yarp::dev::IAudioRender
 {
 public:
     /**

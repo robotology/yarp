@@ -29,7 +29,7 @@ namespace yarp {
  * A base class for factories that create driver objects.
  * The DriverCreatorOf class is probably what you want.
  */
-class yarp::dev::DriverCreator {
+class YARP_dev_API yarp::dev::DriverCreator {
 public:
     /**
      * Destructor.
@@ -84,7 +84,7 @@ public:
  * A factory for creating driver objects of a particular type.
  */
 template <class T>
-class yarp::dev::DriverCreatorOf : public DriverCreator {
+class YARP_dev_API yarp::dev::DriverCreatorOf : public DriverCreator {
 private:
     yarp::os::ConstString desc, wrap, code;
 public:
@@ -140,7 +140,7 @@ public:
  * There is only one instance of the Drivers class.  Call 
  * Drivers::factory() to get that instance.
  */
-class yarp::dev::Drivers {
+class YARP_dev_API yarp::dev::Drivers {
 public:
     /**
      * Get the global factory for devices.

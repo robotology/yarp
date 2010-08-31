@@ -32,7 +32,7 @@ namespace yarp {
  * Implements the IFrameGrabberImage and IFrameGrabberControls
  * interfaces.
  */
-class yarp::dev::TestFrameGrabber : public DeviceDriver, 
+class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver, 
             public IFrameGrabberImage, public IFrameGrabberControls {
 private:
     int ct;

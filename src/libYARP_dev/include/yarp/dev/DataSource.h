@@ -16,7 +16,6 @@
 
 #include <yarp/dev/PreciselyTimed.h>
 
-
 // These classes are part of the YARP library implementation,
 // rather than its user interface
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

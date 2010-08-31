@@ -7,16 +7,14 @@
  */
 
 
-#include <yarp/os/impl/Logger.h>
-
 #include <yarp/sig/Sound.h>
 #include <yarp/sig/Image.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/PortablePair.h>
+#include <yarp/os/Log.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 #define HELPER(x) (*((FlexImage*)(x)))
 
@@ -82,7 +80,7 @@ int Sound::get(int location, int channel) const {
     if (bytesPerSample==2) {
         return *((NetInt32 *)addr);
     }
-    YARP_INFO(Logger::get(),"sound only implemented for 16 bit samples");
+    YARP_LOG_INFO("sound only implemented for 16 bit samples");
     return 0;
 }
 
@@ -93,7 +91,7 @@ void Sound::set(int value, int location, int channel) {
         *((NetInt32 *)addr) = value;
         return;
     }
-    YARP_INFO(Logger::get(),"sound only implemented for 16 bit samples");
+    YARP_LOG_INFO("sound only implemented for 16 bit samples");
 }
 
 int Sound::getFrequency() const {

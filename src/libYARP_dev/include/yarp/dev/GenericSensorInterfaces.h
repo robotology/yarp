@@ -25,7 +25,7 @@ namespace yarp {
  *
  * A generic interface to sensors -- gyro, a/d converters etc.
  */
-class yarp::dev::IGenericSensor
+class YARP_dev_API yarp::dev::IGenericSensor
 {
 public:
     virtual ~IGenericSensor(){}

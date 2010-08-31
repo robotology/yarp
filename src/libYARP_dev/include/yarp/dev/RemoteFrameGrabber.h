@@ -29,7 +29,7 @@ namespace yarp{
  * the network protocol used.
  *
  */
-class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
+class YARP_dev_API yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
             public IFrameGrabberControls,
             public DeviceDriver {
 

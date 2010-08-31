@@ -17,7 +17,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::PolyDriverList
+class YARP_dev_API yarp::dev::PolyDriverList
 {
 public:
     PolyDriverList();

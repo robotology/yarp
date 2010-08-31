@@ -83,3 +83,20 @@ void Logger::exit(int level) {
 void Logger::setPid() {
     pid = ACE_OS::getpid();
 }
+
+
+void __yarp_error(const char *str) {
+    YARP_ERROR(Logger::get(),str);
+}
+
+void __yarp_warn(const char *str) {
+    YARP_WARN(Logger::get(),str);
+}
+
+void __yarp_info(const char *str) {
+    YARP_INFO(Logger::get(),str);
+}
+
+void __yarp_debug(const char *str) {
+    YARP_DEBUG(Logger::get(),str);
+}

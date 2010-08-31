@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <yarp/os/Network.h>
 
+static int __custom_yarp_is_initialized = 0;
+
 // customizable initialization and shutdown functions
 
 #ifdef PLUGIN_INIT_FUNCTION
@@ -36,19 +38,19 @@ extern "C" void yarpCustomFini() {
 
 
 void yarp::os::Network::init() {
-    if (__yarp_is_initialized==0) {
+    if (__custom_yarp_is_initialized==0) {
         initMinimum();
         yarpCustomInit();
     }
-    __yarp_is_initialized++;
+    __custom_yarp_is_initialized++;
 }
 
 
 void yarp::os::Network::fini() {
-    if (__yarp_is_initialized>0) {
+    if (__custom_yarp_is_initialized==1) {
         yarpCustomFini();
         finiMinimum();
-        __yarp_is_initialized--;
     }
+    if (__custom_yarp_is_initialized>0) __custom_yarp_is_initialized--;
 }
 

@@ -15,7 +15,7 @@
 #include <ace/OS_NS_stdlib.h>
 #include <ace/Log_Msg.h>
 #include <yarp/sig/ImageFile.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
 
 using namespace std;
 using namespace yarp::sig;

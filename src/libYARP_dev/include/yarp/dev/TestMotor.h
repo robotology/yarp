@@ -31,7 +31,7 @@ namespace yarp {
  * A fake motor control board for testing.
  * Implements the IPositionControl and IEncoders interfaces.
  */
-class yarp::dev::TestMotor : public DeviceDriver, 
+class YARP_dev_API yarp::dev::TestMotor : public DeviceDriver, 
             public IPositionControl, public IEncoders {
 private:
     int njoints;

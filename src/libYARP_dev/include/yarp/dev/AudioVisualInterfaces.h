@@ -29,7 +29,7 @@ namespace yarp{
  *
  * Read a YARP-format image and sound from a device.
  */
-class yarp::dev::IAudioVisualGrabber
+class YARP_dev_API yarp::dev::IAudioVisualGrabber
 {
 public:
     /**
@@ -54,7 +54,7 @@ public:
  *
  * Write a YARP-format image and sound to a device.
  */
-class yarp::dev::IFrameWriterAudioVisual
+class YARP_dev_API yarp::dev::IFrameWriterAudioVisual
 {
 public:
     /**
@@ -81,7 +81,7 @@ public:
  * check what they actually have.
  *
  */
-class yarp::dev::IAudioVisualStream {
+class YARP_dev_API yarp::dev::IAudioVisualStream {
 public:
     /**
      * Destructor.

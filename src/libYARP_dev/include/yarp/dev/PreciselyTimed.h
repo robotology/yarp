@@ -13,13 +13,15 @@
 
 #include <yarp/os/Stamp.h>
 
+#include <yarp/dev/api.h>
+
 namespace yarp{
     namespace dev{
         class IPreciselyTimed;
     }
 }
 
-class yarp::dev::IPreciselyTimed {
+class YARP_dev_API yarp::dev::IPreciselyTimed {
 public:
     /**
     * Return the time stamp relative to the last acquisition.

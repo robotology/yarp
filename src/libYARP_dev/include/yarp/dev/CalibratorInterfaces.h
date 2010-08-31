@@ -17,7 +17,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::ICalibrator
+class YARP_dev_API yarp::dev::ICalibrator
 {
 public:
     virtual ~ICalibrator(){}

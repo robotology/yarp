@@ -26,7 +26,8 @@ namespace yarp{
  * Tries to connect the output of one device to the input of another.
  *
  */
-class yarp::dev::DevicePipe : public DeviceDriver, public IService {
+class YARP_dev_API yarp::dev::DevicePipe : public DeviceDriver, 
+                                           public IService {
 
 public:
     virtual bool open(yarp::os::Searchable& config);

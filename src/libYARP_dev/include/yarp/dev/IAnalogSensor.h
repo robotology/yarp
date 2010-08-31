@@ -28,7 +28,7 @@ namespace yarp {
  * A generic interface to sensors (gyro, a/d converters). Similar to
  * IGenerisSensor, but includes error handling.
  */
-class yarp::dev::IAnalogSensor
+class YARP_dev_API yarp::dev::IAnalogSensor
 {
 public:
     enum

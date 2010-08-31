@@ -6,17 +6,14 @@
  *
  */
 
-#include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Logger.h>
-
+#include <stdio.h>
+#include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/DeviceGroup.h>
-#include <yarp/os/Time.h>
-#include <yarp/os/Semaphore.h>
-#include <stdio.h>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
-
 
 #include <ace/Vector_T.h>
 

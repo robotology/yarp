@@ -24,7 +24,7 @@ namespace yarp {
  *
  * A generic interface to GPU port devices.
  */
-class yarp::dev::IGPUDevice {
+class YARP_dev_API yarp::dev::IGPUDevice {
 public:
     virtual ~IGPUDevice() {}
 

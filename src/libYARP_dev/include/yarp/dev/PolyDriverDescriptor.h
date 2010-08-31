@@ -17,7 +17,7 @@ namespace yarp {
     }
 }
 
-class yarp::dev::PolyDriverDescriptor
+class YARP_dev_API yarp::dev::PolyDriverDescriptor
 {
 public:
     /* pointer to the polydriver */

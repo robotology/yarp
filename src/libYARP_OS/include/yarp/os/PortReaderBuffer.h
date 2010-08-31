@@ -35,7 +35,7 @@ namespace yarp {
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-extern void typedReaderMissingCallback();
+YARP_OS_API void typedReaderMissingCallback();
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
 /**
@@ -192,14 +192,14 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-class yarp::os::impl::PortReaderBufferBaseCreator {
+class YARP_OS_API yarp::os::impl::PortReaderBufferBaseCreator {
 public:
     virtual ~PortReaderBufferBaseCreator() {}
 
     virtual yarp::os::PortReader *create() = 0;
 };
 
-class yarp::os::impl::PortReaderBufferBase : public yarp::os::PortReader
+class YARP_OS_API yarp::os::impl::PortReaderBufferBase : public yarp::os::PortReader
 {
 public:
     PortReaderBufferBase(unsigned int maxBuffer) : 

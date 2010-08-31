@@ -23,7 +23,7 @@ namespace yarp {
  *
  * A container for a device driver.
  */
-class yarp::dev::PolyDriver : public DeviceDriver {
+class YARP_dev_API yarp::dev::PolyDriver : public DeviceDriver {
 public:
     using DeviceDriver::open;
 

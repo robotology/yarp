@@ -40,7 +40,7 @@ namespace yarp
 /**
  * Callback implementation after buffered input.
  */
-class yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
+class YARP_dev_API yarp::dev::ImplementCallbackHelper2 : public TypedReaderCallback<Bottle> {
 protected:
     ISerialDevice *ser;
     
@@ -72,7 +72,7 @@ public:
  *
  * @author Alex Bernardino
  */
-class yarp::dev::ServerSerial : public DeviceDriver, public ISerialDevice, 
+class YARP_dev_API yarp::dev::ServerSerial : public DeviceDriver, public ISerialDevice, 
 			                    private Thread
 {
 private:

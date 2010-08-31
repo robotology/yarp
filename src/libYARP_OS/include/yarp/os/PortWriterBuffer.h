@@ -65,7 +65,7 @@ public:
     }
 };
 
-class yarp::os::PortWriterBufferBase {
+class YARP_OS_API yarp::os::PortWriterBufferBase {
 public:
     PortWriterBufferBase();
 

@@ -149,7 +149,7 @@ namespace yarp {
  * </TABLE>
  *
  */
-class yarp::dev::ServerFrameGrabber : public DeviceDriver, 
+class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver, 
             public DeviceResponder,
             public IFrameGrabberImage,
             public IAudioGrabberSound,

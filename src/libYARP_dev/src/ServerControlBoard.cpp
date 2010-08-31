@@ -16,8 +16,6 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/impl/String.h>
-#include <yarp/os/impl/NetType.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -272,10 +270,10 @@ public:
             return false;
         }
 
-        String rootName = 
+        ConstString rootName = 
             prop.check("name",Value("/controlboard"),
 
-            "prefix for port names").asString().c_str();
+            "prefix for port names").asString();
 
         // attach readers.
         //rpc_p.setReader(command_reader);
@@ -1239,18 +1237,18 @@ bool yarp::dev::CommandsHelper::initialize() {
     addUsage("[get] [enc] $iAxisNumber", "get the encoder value for an axis");
 
 
-    String args;
+    ConstString args;
     for (int i=0; i<nj; i++) {
         if (i>0) {
             args += " ";
         }
-        args = args + "$f" + NetType::toString(i);
+        args = args + "$f" + ConstString::toString(i);
     }
-    addUsage((String("[set] [poss] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [poss] (")+args+")").c_str(), 
         "command the position of all axes");
-    addUsage((String("[set] [rels] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [rels] (")+args+")").c_str(), 
         "command the relative position of all axes");
-    addUsage((String("[set] [vmos] (")+args+")").c_str(), 
+    addUsage((ConstString("[set] [vmos] (")+args+")").c_str(), 
         "command the velocity of all axes");
 
     addUsage("[set] [aen] $iAxisNumber", "enable (amplifier for) the given axis");

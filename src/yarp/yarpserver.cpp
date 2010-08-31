@@ -7,22 +7,11 @@
  */
 
 
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/Companion.h>
-
 #include <yarp/os/Network.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 
 int main(int argc, char *argv[]) {
-    Network yarp;
-
-    // call the yarp standard companion name server
-    argc--;
-    argv++;
-    int result = Companion::getInstance().cmdServer(argc,argv);
-    return result;
+    return Network::runNameServer(argc,argv);
 }
 

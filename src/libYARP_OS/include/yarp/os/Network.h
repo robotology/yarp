@@ -126,7 +126,7 @@ public:
      * The standard main method for the YARP companion utility.
      * This method is not thread-safe; it initializes and shuts
      * down YARP, the effect of which varies between operating
-     * systems.  Do not call this method if there are  other
+     * systems.  Do not call this method if there are other
      * threads using YARP.
      * @param argc argument count
      * @param argv command line arguments
@@ -134,6 +134,15 @@ public:
      */
     static int main(int argc, char *argv[]);
 
+    /**
+     * Run a basic YARP name server.
+     *
+     * @param argc argument count
+     * @param argv command line arguments
+     * @return 0 on success, non-zero on failure
+     *
+     */
+    static int runNameServer(int argc, char *argv[]);
 
     /**
      * An assertion.  Should be true.  If false, this will be

@@ -25,7 +25,7 @@ namespace yarp {
  * mean they do something for remote users, with minimal interaction
  * with their creator other than initial configuration).
  */
-class yarp::dev::IService {
+class YARP_dev_API yarp::dev::IService {
 public:
     virtual ~IService() {}
 

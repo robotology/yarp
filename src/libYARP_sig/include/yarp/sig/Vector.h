@@ -16,6 +16,8 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConstString.h>
 
+#include <yarp/sig/api.h>
+
 /**
 * \file Vector.h contains the definition of a Vector type 
 */
@@ -41,7 +43,7 @@ namespace yarp {
 * read/write methods. Warning: the current implementation assumes the same 
 * representation for data type (endianess).
 */
-class yarp::sig::impl::VectorBase : public yarp::os::Portable
+class YARP_sig_API yarp::sig::impl::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const =0;
@@ -76,7 +78,7 @@ public:
 * - use operator= to copy Vectors
 */
 template<class T> 
-class yarp::sig::impl::VectorImpl
+class YARP_sig_API yarp::sig::impl::VectorImpl
 {
 public:
     /**
@@ -364,7 +366,7 @@ public:
 * a port. Use the [] and () operator for single element 
 * access.
 */
-class yarp::sig::Vector : public yarp::os::Portable
+class YARP_sig_API yarp::sig::Vector : public yarp::os::Portable
 {
     void *gslData;
     VectorOf<double> storage;

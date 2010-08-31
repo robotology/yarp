@@ -16,8 +16,6 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
-#include <yarp/os/impl/String.h>
-#include <yarp/os/impl/NetType.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
@@ -244,8 +242,8 @@ protected:
     StateInputPort state_p;
     PortWriterBuffer<CommandMessage> command_buffer;
 
-    String remote;
-    String local;
+    ConstString remote;
+    ConstString local;
     mutable Stamp lastStamp;
     Semaphore mutex;
     int nj;
@@ -745,7 +743,7 @@ public:
             "default carrier for streaming robot state").asString().c_str();
 
         if (local != "") {
-            String s1 = local;
+            ConstString s1 = local;
             s1 += "/rpc:o";
             rpc_p.open(s1.c_str());
             s1 = local;
@@ -761,9 +759,9 @@ public:
 
         bool connectionProblem = false;
         if (remote != "") {
-            String s1 = remote;
+            ConstString s1 = remote;
             s1 += "/rpc:i";
-            String s2 = local;
+            ConstString s2 = local;
             s2 += "/rpc:o";
             bool ok = false;
             ok=Network::connect(s2.c_str(), s1.c_str());

@@ -16,6 +16,8 @@
 #include <ace/Log_Msg_Callback.h>
 #include <ace/OS_NS_stdio.h>
 
+#include <yarp/os/Log.h>
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -129,7 +131,7 @@ private:
 // also, make a printf-style adaptor since c++ is a bit of a pain to 
 // build strings in.
 #define YARP_ERROR(log,x) log.error(x)
-#define YARP_WARN(log,x)  log.warn(x)
+#define YARP_WARN(log,x)  log.warning(x)
 #define YARP_INFO(log,x)  log.info(x)
 #define YARP_DEBUG(log,x) log.debug(x)
 #define YARP_FAIL(log,x)  log.fail(x)
@@ -142,8 +144,6 @@ private:
 #define YARP_SPRINTF4(log,mode,msg,a,b,c,d)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d); log.mode(_yarp_buf); }
 #define YARP_SPRINTF5(log,mode,msg,a,b,c,d,e)  { char _yarp_buf[YARP_LONGEST_MESSAGE]; ACE_OS::snprintf(_yarp_buf,YARP_LONGEST_MESSAGE,msg,a,b,c,d,e); log.mode(_yarp_buf); }
 
-void yarp_print_trace(FILE *out, const char *file, int line);
-#define YARP_ASSERT(x) if (!(x)) { ACE_OS::printf("Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); yarp_print_trace(stdout,__FILE__,__LINE__); ACE_OS::exit(1); }
 
 
 #endif

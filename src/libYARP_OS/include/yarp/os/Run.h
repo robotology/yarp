@@ -79,7 +79,7 @@ class YarpRunInfoVector;
  * \brief yarprun provides the APIs to a client-server environment that is able to run, 
  * kill and monitor applications commands on a remote machin in Windows and Linux.
  */
-class yarp::os::Run 
+class YARP_OS_API yarp::os::Run 
 {
 public:
 	// API

@@ -7,8 +7,7 @@
  */
 
 
-#include <yarp/os/impl/String.h>
-#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Log.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
@@ -26,7 +25,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-using namespace yarp::os::impl;
 using namespace yarp::os;
 using namespace yarp::dev;
 using namespace std;
@@ -46,30 +44,30 @@ public:
     }
 
     ConstString toString() {
-        String s;
+        ConstString s;
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
             ConstString name = delegates[i]->getName();
             ConstString wrapper = delegates[i]->getWrapper();
             s += "Device \"";
-            s += delegates[i]->getName().c_str();
+            s += delegates[i]->getName();
             s += "\"";
             s += ",";
             s += " C++ class ";
-            s += delegates[i]->getCode().c_str();
+            s += delegates[i]->getCode();
             s += ", ";
             if (wrapper=="") {
                 s += "has no network wrapper";
             } else if (wrapper!=name) {
                 s += "wrapped by \"";
-                s += delegates[i]->getWrapper().c_str();
+                s += delegates[i]->getWrapper();
                 s += "\"";
             } else {
                 s += "is a network wrapper.";
             }
             s += "\n";
         }
-        return ConstString(s.c_str());
+        return s;
     }
 
     void add(DriverCreator *creator) {
@@ -81,7 +79,7 @@ public:
     DriverCreator *find(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
-            String s = delegates[i]->toString().c_str();
+            ConstString s = delegates[i]->toString();
             if (s==name) {
                 return delegates[i];
             }
@@ -92,7 +90,7 @@ public:
     bool remove(const char *name) {
         for (unsigned int i=0; i<delegates.size(); i++) {
             if (delegates[i]==NULL) continue;
-            String s = delegates[i]->toString().c_str();
+            ConstString s = delegates[i]->toString();
             if (s==name) {
                 delete delegates[i];
                 delegates[i] = NULL;
@@ -151,15 +149,15 @@ static void toDox(PolyDriver& dd, FILE *os) {
 
     Bottle order = dd.getOptions();
     for (int i=0; i<order.size(); i++) {
-        String name = order.get(i).toString().c_str();
-        if (name=="wrapped"||(YARP_STRSTR(name,".wrapped")!=String::npos)) {
+        ConstString name = order.get(i).toString();
+        if (name=="wrapped"||(name.find(".wrapped")!=ConstString::npos)) {
             continue;
         }
         ConstString desc = dd.getComment(name.c_str());
         Value def = dd.getDefaultValue(name.c_str());
         Value actual = dd.getValue(name.c_str());
-        String out = "";
-        out += name.c_str();
+        ConstString out = "";
+        out += name;
         if (!actual.isNull()) {
             if (actual.toString()!="") {
                 out += "=";
@@ -319,18 +317,18 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     Terminee *terminee = 0;
     if (dd.isValid()) {
         Value *v;
-        String s("/yarpdev/quit");
+        ConstString s("/yarpdev/quit");
         if (options.check("device", v)) {
             if (v->isString()) {
-                s.clear();
+                s = "";
                 s += "/";
-                s += v->toString().c_str();
+                s += v->toString();
                 s += "/quit";
             }
         }
         if (options.check("name", v)) {
-            s.clear();
-            s += v->toString().c_str();
+            s = "";
+            s += v->toString();
             s += "/quit";
         }
         terminee = new Terminee(s.c_str());

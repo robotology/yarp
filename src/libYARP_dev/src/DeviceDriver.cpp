@@ -7,7 +7,6 @@
  */
 
 #include <ace/OS_NS_stdio.h>
-#include <yarp/os/impl/String.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Vocab.h>
 
@@ -25,7 +24,7 @@ void DeviceResponder::addUsage(const char *txt, const char *explain) {
     examples.add(txt); //Value::makeList(txt));
     explains.add((explain!=NULL)?explain:"");
     details.add(Value::makeList(txt));
-    String more = String("   ") + explain;
+    ConstString more = ConstString("   ") + explain;
     details.add(more.c_str());
 }
 

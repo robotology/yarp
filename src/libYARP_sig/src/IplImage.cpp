@@ -11,16 +11,11 @@
 ///
 ///
 
-#include <yarp/sig/IplImage.h>
-#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
-//#include <ace/OS.h>
-#include <yarp/os/impl/Logger.h>
-
-//using namespace yarp::os::impl;
-//using namespace yarp::sig;
+#include <yarp/os/Log.h>
+#include <yarp/sig/IplImage.h>
 
 static int implemented_yet = 1;
 

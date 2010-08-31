@@ -15,6 +15,8 @@
 #include <yarp/os/Property.h>
 #include <yarp/os/IConfig.h>
 
+#include <yarp/dev/api.h>
+
 namespace yarp {
     /**
      * An interface for the device drivers 
@@ -30,7 +32,7 @@ namespace yarp {
  *
  * Interface implemented by all device drivers.
  */
-class yarp::dev::DeviceDriver : public yarp::os::IConfig
+class YARP_dev_API yarp::dev::DeviceDriver : public yarp::os::IConfig
 {
 public:
     /**
@@ -71,7 +73,7 @@ public:
  * respond to new messages.  You don't need to use this class --
  * the network format of messages is defined independently of it.
  */
-class yarp::dev::DeviceResponder : public yarp::os::PortReader,
+class YARP_dev_API yarp::dev::DeviceResponder : public yarp::os::PortReader,
             public yarp::os::TypedReaderCallback<yarp::os::Bottle>
 {
 

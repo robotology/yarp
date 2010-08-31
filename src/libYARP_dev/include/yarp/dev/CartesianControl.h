@@ -26,7 +26,7 @@ namespace yarp {
  *
  * Interface for a cartesian controller.
  */
-class yarp::dev::ICartesianControl
+class YARP_dev_API yarp::dev::ICartesianControl
 {
 public:
     /**

@@ -26,7 +26,8 @@ namespace yarp{
  * Lets you make a bunch of devices as a group.
  *
  */
-class yarp::dev::DeviceGroup : public DeviceDriver, public IService {
+class YARP_dev_API yarp::dev::DeviceGroup : public DeviceDriver, 
+                                            public IService {
 
 public:
     DeviceGroup() {
