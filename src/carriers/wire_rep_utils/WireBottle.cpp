@@ -11,8 +11,10 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/impl/NetType.h>
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 static NetInt32 getInt(char *cursor) {
     NetInt32 *icursor = (NetInt32 *)cursor;
@@ -87,5 +89,45 @@ static char *checkBottle(char *cursor, int& remaining, int ct, int list_tag) {
 bool WireBottle::checkBottle(void *cursor, int len) {
     int rem = len;
     return ::checkBottle((char *)cursor,rem,1,0)!=NULL;
+}
+
+bool WireBottle::extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
+                                       SizedWriterTail& dest) {
+    int total_len = 0;
+    for (int i=0; i<src.length(); i++) {
+        total_len += src.length(i);
+    }
+    bool has_header = false;
+    int payload_index = 0;
+    int payload_offset = 0;
+    int remaining = total_len;
+    if (src.length(0)>=12) {
+        // could this be a Bottle compatible blob?
+        char *base = (char*)src.data(0);
+        Bytes b1(base,4);
+        Bytes b2(base+4,4);
+        Bytes b3(base+8,4);
+        int i1 = NetType::netInt(b1);
+        int i2 = NetType::netInt(b2);
+        int i3 = NetType::netInt(b3);
+        //dbg_printf(">>> %d %d %d\n", i1, i2, i3);
+        if (i1==BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
+            if (i2==1) {
+                if (i3==total_len - 12) {
+                    // good enough
+                    //dbg_printf("Header detected\n");
+                    has_header = true;
+                    payload_index = 0;
+                    payload_offset = 12;
+                    remaining -= payload_offset;
+                }
+            }
+        }
+    }
+    if (has_header) {
+        dest.setDelegate(&src,payload_index,payload_offset);
+        return true;
+    }
+    return false;
 }
 
