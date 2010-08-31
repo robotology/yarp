@@ -63,11 +63,10 @@ if (WIN32)
   mark_as_advanced(CREATE_SHARED_LIBRARY)
 endif (WIN32)
 
-if(CREATE_SHARED_LIBRARY)
-	set(BUILD_SHARED_LIBS ON)
-	set(YARP_DLL ON)
-endif(CREATE_SHARED_LIBRARY)
-
+if (CREATE_SHARED_LIBRARY)
+  set(BUILD_SHARED_LIBS ON)
+  set(YARP_DLL ON)
+endif()
 
 #########################################################################
 # Control whether yarp::os::impl::String should be std::string or opaque

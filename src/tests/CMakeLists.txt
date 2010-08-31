@@ -1,46 +1,51 @@
 
-set(targets OS sig dev)
-get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
-if (YARP_HAS_MATH_LIB)
-  set(targets ${targets} math)
-endif (YARP_HAS_MATH_LIB)
+option(YARP_COMPILE_TESTS "Compile YARP tests" FALSE)
 
-foreach(test_family ${targets})
-  file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp)
-  get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
-               PROPERTY INCLUDE_DIRS)
-  include_directories(${YARP_TREE_INCLUDE_DIRS})
-  include_directories(${ACE_INCLUDE_DIRS})
-  set(EXE harness_${test_family})
-  string(TOLOWER ${EXE} EXE)
-  add_executable(${EXE} ${harness_code})
-  target_link_libraries(${EXE} YARP_init YARP_${test_family})
-  # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
-  # builds.
-  GET_TARGET_PROPERTY(EXELOC ${EXE} LOCATION_RELEASE)
-  #message(STATUS "Exeloc: ${EXELOC}")
-  foreach(test ${harness_code})
-    get_filename_component(XN ${test} NAME_WE)
-	#message(STATUS ${XN})
-    add_test("${test_family}::${XN}" ${EXELOC} regression ${XN})
+if (YARP_COMPILE_TESTS)
+
+  set(targets OS sig dev)
+  get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
+  if (YARP_HAS_MATH_LIB)
+    set(targets ${targets} math)
+  endif (YARP_HAS_MATH_LIB)
+
+  foreach(test_family ${targets})
+    file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp)
+    get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
+                 PROPERTY INCLUDE_DIRS)
+    include_directories(${YARP_TREE_INCLUDE_DIRS})
+    include_directories(${ACE_INCLUDE_DIRS})
+    set(EXE harness_${test_family})
+    string(TOLOWER ${EXE} EXE)
+    add_executable(${EXE} ${harness_code})
+    target_link_libraries(${EXE} YARP_init YARP_${test_family})
+    # added by Lorenzo, to fix windows problem. I assume we test RELEASE 
+    # builds.
+    GET_TARGET_PROPERTY(EXELOC ${EXE} LOCATION_RELEASE)
+    #message(STATUS "Exeloc: ${EXELOC}")
+    foreach(test ${harness_code})
+      get_filename_component(XN ${test} NAME_WE)
+  	#message(STATUS ${XN})
+      add_test("${test_family}::${XN}" ${EXELOC} regression ${XN})
+    endforeach()
   endforeach()
-endforeach()
 
-# Add in hardware specific tests, if requested
-option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
-mark_as_advanced(CREATE_PLUGIN_TESTS)
-if (CREATE_PLUGIN_TESTS)
-  # add in our tests
-  file(GLOB inis ../libYARP_dev/harness/*.ini)
-  foreach(X ${inis})
-    get_filename_component(XN ${X} NAME_WE)
-    get_filename_component(XINI ${X} ABSOLUTE)
-    # need to cache examples for reference
-    set(DOC_DIR "${CMAKE_SOURCE_DIR}/src/doc/device_invocation")
-    set(XDOX ${DOC_DIR}/${XN}.dox)
-    add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
-  endforeach(X ${inis})
-endif (CREATE_PLUGIN_TESTS)
+  # Add in hardware specific tests, if requested
+  option(CREATE_PLUGIN_TESTS "Compile plugin tests" FALSE)
+  mark_as_advanced(CREATE_PLUGIN_TESTS)
+  if (CREATE_PLUGIN_TESTS)
+    # add in our tests
+    file(GLOB inis ../libYARP_dev/harness/*.ini)
+    foreach(X ${inis})
+      get_filename_component(XN ${X} NAME_WE)
+      get_filename_component(XINI ${X} ABSOLUTE)
+      # need to cache examples for reference
+      set(DOC_DIR "${CMAKE_SOURCE_DIR}/src/doc/device_invocation")
+      set(XDOX ${DOC_DIR}/${XN}.dox)
+      add_test(device::${XN} ${CMAKE_COMMAND} -E chdir ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness ${EXECUTABLE_OUTPUT_PATH}/harness_dev --file "${XINI}" --doc "${XDOX}")
+    endforeach(X ${inis})
+  endif (CREATE_PLUGIN_TESTS)
 
+endif (YARP_COMPILE_TESTS)
 
 # touch 1

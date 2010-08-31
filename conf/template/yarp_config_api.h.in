@@ -36,9 +36,8 @@ recommended usage of this header within YARP is:
 // YARP_DLL: defined if YARP is compiled as DLLs
 #cmakedefine YARP_DLL
 
-// YARP_CLEAN_API: define if YARP is configured to apply API declarations.
-// (currently by default it is NOT, since this is experimental).
-#cmakedefine YARP_CLEAN_API
+// YARP_FILTER_API: define if YARP is configured to apply API declarations.
+#cmakedefine YARP_FILTER_API
 
 #if defined _WIN32 || defined __CYGWIN__
 #  define YARP_HELPER_DLL_IMPORT __declspec(dllimport)
@@ -56,7 +55,7 @@ recommended usage of this header within YARP is:
 #  endif
 #endif
 
-#if defined YARP_DLL && defined YARP_CLEAN_API
+#if defined YARP_DLL && defined YARP_FILTER_API
 #  define YARP_EXPORT YARP_HELPER_DLL_EXPORT
 #  define YARP_IMPORT YARP_HELPER_DLL_IMPORT
 #  define YARP_LOCAL YARP_HELPER_DLL_LOCAL

@@ -9,9 +9,10 @@
 
 #include <yarp/os/impl/UnitTest.h>
 
-#include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/Companion.h>
+//#include <yarp/os/impl/Logger.h>
+//#include <yarp/os/impl/NameClient.h>
+//#include <yarp/os/impl/Companion.h>
+
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 
@@ -45,16 +46,16 @@ int main(int argc, char *argv[]) {
 
     if (argc>1) {
         int verbosity = 0;
-        while (String(argv[1])==String("verbose")) {
+        while (ConstString(argv[1])=="verbose") {
             verbosity++;
             argc--;
             argv++;
         }
         if (verbosity>0) {
-            Logger::get().setVerbosity(verbosity);
+            Network::setVerbosity(verbosity);
         }
     
-        if (String(argv[1])==String("regression")) {
+        if (ConstString(argv[1])=="regression") {
             done = true;
             UnitTest::startTestSystem();
             TestList::collectTests();  // just in case automation doesn't work
@@ -64,11 +65,10 @@ int main(int argc, char *argv[]) {
                 result = UnitTest::getRoot().run();
             }
             UnitTest::stopTestSystem();
-            NameClient::removeNameClient();
         }
     } 
     if (!done) {
-        Companion::main(argc,argv);
+        Network::main(argc,argv);
     }
 
     return result;
