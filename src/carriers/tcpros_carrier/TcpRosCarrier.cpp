@@ -190,73 +190,60 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
 }
 
 bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
+    SizedWriter *flex_writer = &writer;
 
+    // At startup, we check for what kind of messages are going
+    // through, and prepare an appropriate byte-rejiggering if
+    // needed.
     if (translate==TCPROS_TRANSLATE_UNKNOWN) {
-        WireImage wi;
         FlexImage *img = wi.checkForImage(writer);
         if (img) {
             translate = TCPROS_TRANSLATE_IMAGE;
-        } else {
-            translate = TCPROS_TRANSLATE_INHIBIT;
+            ConstString frame = "/frame";
+            ri.init(*img,frame);
+        } else { 
+            if (WireBottle::extractBlobFromBottle(writer,wt)) {
+                translate = TCPROS_TRANSLATE_BOTTLE_BLOB;
+            } else {
+                translate = TCPROS_TRANSLATE_INHIBIT;
+            }
         }
     }
 
+    // Apply byte-rejiggering if needed.
     switch (translate) {
     case TCPROS_TRANSLATE_IMAGE:
         {
-            WireImage wi;
             FlexImage *img = wi.checkForImage(writer);
             if (img==NULL) {
                 fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
                 return false;
             }
+            ri.update(img,seq,Time::now());
+            seq++;
+            flex_writer = &ri;
+        }
+        break;
+    case TCPROS_TRANSLATE_BOTTLE_BLOB:
+        {
+            if (!WireBottle::extractBlobFromBottle(writer,wt)) {
+                fprintf(stderr, "TCPROS Expected a bottle blob, but did not get one.\n");
+                return false;
+            }
+            flex_writer = &wt;
         }
         break;
     }
 
-    // For now, we will require objects being written to be either:
-    //   + raw data
-    //   + raw data, with a Bottle compatible blob header.
-
-    dbg_printf("write called\n");
-
-    if (writer.length()<1) {
+    if (flex_writer->length()<1) {
         fprintf(stderr,"tcpros_carrier given no data\n");
         return false;
     }
     
-    int total_len = 0;
-    for (int i=0; i<writer.length(); i++) {
-        total_len += writer.length(i);
-    }
-    bool has_header = false;
-    int payload_index = 0;
-    int payload_offset = 0;
-    int remaining = total_len;
-    if (writer.length(0)>=12) {
-        // could this be a Bottle compatible blob?
-        char *base = (char*)writer.data(0);
-        Bytes b1(base,4);
-        Bytes b2(base+4,4);
-        Bytes b3(base+8,4);
-        int i1 = NetType::netInt(b1);
-        int i2 = NetType::netInt(b2);
-        int i3 = NetType::netInt(b3);
-        dbg_printf(">>> %d %d %d\n", i1, i2, i3);
-        if (i1==BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
-            if (i2==1) {
-                if (i3==total_len - 12) {
-                    // good enough
-                    dbg_printf("Header detected\n");
-                    has_header = true;
-                    payload_index = 0;
-                    payload_offset = 12;
-                    remaining -= payload_offset;
-                }
-            }
-        }
-    }
 
+    flex_writer->write(proto.os());
+
+    /*
     dbg_printf("sending length %d\n", remaining);
 
     NetInt32 len_out = remaining;
@@ -273,9 +260,10 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         }
         payload_offset = 0;
     }
+    */
 
     dbg_printf("done sending\n");
-    
+
     return proto.getStreams().isOk();
 }
 

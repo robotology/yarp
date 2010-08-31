@@ -13,6 +13,8 @@
 #include <yarp/os/impl/Protocol.h>
 
 #include "TcpRosStream.h"
+#include "WireImage.h"
+#include "WireBottle.h"
 
 namespace yarp {
     namespace os {
@@ -26,6 +28,7 @@ namespace yarp {
 #define TCPROS_TRANSLATE_INHIBIT (-1)
 #define TCPROS_TRANSLATE_UNKNOWN (0)
 #define TCPROS_TRANSLATE_IMAGE (1)
+#define TCPROS_TRANSLATE_BOTTLE_BLOB (2)
 
 class yarp::os::impl::TcpRosCarrier : public Carrier {
 private:
@@ -35,6 +38,10 @@ private:
     int headerLen2;
     int raw;
     int translate;
+    WireImage wi;
+    RosWireImage ri;
+    SizedWriterTail wt;
+    int seq;
 protected:
     bool isService;
 public:
@@ -46,6 +53,7 @@ public:
         isService = false;
         raw = -1;
         translate = TCPROS_TRANSLATE_UNKNOWN;
+        seq = 0;
     }
 
     virtual Carrier *create() {
