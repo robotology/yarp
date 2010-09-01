@@ -11,23 +11,22 @@
 ///
 ///
 
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_stdlib.h>
-#include <ace/Log_Msg.h>
 #include <yarp/sig/ImageFile.h>
 #include <yarp/os/Log.h>
+
+#include <stdio.h>
 
 using namespace std;
 using namespace yarp::sig;
 
 static void warn(const char *message)
 {
-	ACE_OS::fprintf(stderr, "pgm/ppm: Error - %s\n", message);
+	fprintf(stderr, "pgm/ppm: Error - %s\n", message);
 }
 
 
 bool file::write(const ImageOf<PixelFloat>& src, const char *dest) {
-	FILE *fp = ACE_OS::fopen(dest, "w");
+	FILE *fp = fopen(dest, "w");
     if (fp==NULL) {
         return false;
     }
@@ -45,7 +44,7 @@ bool file::write(const ImageOf<PixelFloat>& src, const char *dest) {
 bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
     int hh = 0, ww = 0;
 
-	FILE *fp = ACE_OS::fopen(src, "r");
+	FILE *fp = fopen(src, "r");
     if (fp==NULL) {
         return false;
     }
@@ -72,7 +71,7 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
         }
     }
     fclose(fp);
-	fp = ACE_OS::fopen(src, "rb");
+	fp = fopen(src, "rb");
     if (fp==NULL) {
         return false;
     }
@@ -116,24 +115,24 @@ bool file::read(ImageOf<PixelFloat>& dest, const char *src) {
 
 static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 {
-	FILE *fp = ACE_OS::fopen(filename, "wb");
+	FILE *fp = fopen(filename, "wb");
 	if (!fp) 
         {
-            ACE_OS::printf("cannot open file %s for writing\n", filename);
+            printf("cannot open file %s for writing\n", filename);
             return false;
         }
 	else
         {
             const int inc = rowSize; ////YARPSimpleOperation::ComputePadding (w, YarpImageAlign) + w;
 
-            ACE_OS::fprintf(fp, "P5\n%d %d\n%d\n", w, h, 255);
+            fprintf(fp, "P5\n%d %d\n%d\n", w, h, 255);
             for (int i = 0; i < h; i++)
                 {
-                    ACE_OS::fwrite((void *) src, 1, (size_t) w, fp);
+                    fwrite((void *) src, 1, (size_t) w, fp);
                     src += inc;
                 }
 
-            ACE_OS::fclose(fp);
+            fclose(fp);
         }
 
 	return true;
@@ -141,25 +140,25 @@ static bool SavePGM(char *src, const char *filename, int h, int w, int rowSize)
 
 static bool SavePPM(char *src, const char *filename, int h, int w, int rowSize)
 {
-	FILE *fp = ACE_OS::fopen(filename, "wb");
+	FILE *fp = fopen(filename, "wb");
 	if (!fp) 
         {
-            ACE_OS::printf("cannot open file %s for writing\n", filename);
+            printf("cannot open file %s for writing\n", filename);
             return false;
         }
 	else
         {
             const int inc = rowSize;//YARPSimpleOperation::ComputePadding (w*3, YarpImageAlign) + w * 3;
 
-            ACE_OS::fprintf(fp, "P6\n%d %d\n%d\n", w, h, 255);
+            fprintf(fp, "P6\n%d %d\n%d\n", w, h, 255);
             for (int i = 0; i < h; i++)
                 {
-                    ACE_OS::fwrite((void *) src, 1, (size_t) (w*3), fp);
+                    fwrite((void *) src, 1, (size_t) (w*3), fp);
                     src += inc;
                 }
 
             ///ACE_OS::fwrite((void *) src, 1, (size_t) (h*w*3), fp);
-            ACE_OS::fclose(fp);
+            fclose(fp);
         }
 
 	return true;
@@ -184,15 +183,15 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
 	if (ch=='6') *color = 1;
 
 	// skip comments
-	ch = ACE_OS::fgetc(fp);
+	ch = fgetc(fp);
 	while (ch == '#')
         {
             do 
                 {
-                    ch = ACE_OS::fgetc(fp);
+                    ch = fgetc(fp);
                 } 
             while (ch != '\n');   
-            ch = ACE_OS::fgetc(fp);    
+            ch = fgetc(fp);    
         }
 	/*
       while (ch=='\n' || ch=='\r')
@@ -202,12 +201,12 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
       ungetc(ch,fp);
 	*/
 
-	while(!isdigit(ch))
+	while(ch<'0'&&ch>'9'&&ch!=-1)
         {
-            ch = ACE_OS::fgetc(fp);
+            ch = fgetc(fp);
         }
 
-	if (!isdigit(ch)) //die("cannot read header information from pgm/ppm file");
+	if (ch<'0'&&ch>'9')
         {
             warn("cannot read header information from pgm/ppm file");
             return false;
@@ -219,7 +218,7 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
     if (n!=3)
         return false;
 
-	ACE_OS::fgetc(fp);
+	fgetc(fp);
 	if (maxval != 255)
         {
             //die("image is not true-color (24 bit); read failed");
@@ -234,24 +233,24 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 {
    	int width, height, color, num, size;
     FILE *fp=0;
-	fp = ACE_OS::fopen(filename, "rb");
+	fp = fopen(filename, "rb");
 
     if(fp==0)
         {
-            ACE_OS::fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
+            fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;
         }
 
 	if (!ReadHeader(fp, &height, &width, &color))
         {
-            ACE_OS::fclose (fp);
-            ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
+            fclose (fp);
+            fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
             return false;
         }
     if (!color)
         {
-            ACE_OS::fclose(fp);
-            ACE_OS::fprintf(stderr, "File is grayscale, conversion not yet supported\n");
+            fclose(fp);
+            fprintf(stderr, "File is grayscale, conversion not yet supported\n");
             return false;
         }
 	
@@ -266,11 +265,11 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += ACE_OS::fread((void *) dst, 1, (size_t) w, fp);
+            num += fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
     
-	ACE_OS::fclose(fp);
+	fclose(fp);
 
 	return true;
 }
@@ -279,24 +278,24 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 {
    	int width, height, color, num, size;
     FILE *fp=0;
-	fp = ACE_OS::fopen(filename, "rb");
+	fp = fopen(filename, "rb");
 
     if(fp==0)
         {
-            ACE_OS::fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
+            fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;
         }
 
 	if (!ReadHeader(fp, &height, &width, &color))
         {
-            ACE_OS::fclose (fp);
-            ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
+            fclose (fp);
+            fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
             return false;
         }
     if (!color)
         {
-            ACE_OS::fclose(fp);
-            ACE_OS::fprintf(stderr, "File is grayscale, conversion not yet supported\n");
+            fclose(fp);
+            fprintf(stderr, "File is grayscale, conversion not yet supported\n");
             return false;
         }
 	
@@ -312,11 +311,11 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += ACE_OS::fread((void *) dst, 1, (size_t) w, fp);
+            num += fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
 
-	ACE_OS::fclose(fp);
+	fclose(fp);
 	
 	return img.copy(tmpImg);
 }
@@ -325,24 +324,24 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 {
    	int width, height, color, num, size;
     FILE *fp=0;
-	fp = ACE_OS::fopen(filename, "rb");
+	fp = fopen(filename, "rb");
 
     if(fp==0)
         {
-            ACE_OS::fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
+            fprintf(stderr, "Error opening %s, check if file exists.\n", filename);
             return false;
         }
 
 	if (!ReadHeader(fp, &height, &width, &color))
         {
-            ACE_OS::fclose (fp);
-            ACE_OS::fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
+            fclose (fp);
+            fprintf(stderr, "Error reading header, is file a valid ppm/pgm?\n");
             return false;
         }
     if (color)
         {
-            ACE_OS::fclose(fp);
-            ACE_OS::fprintf(stderr, "File is color, conversion not yet supported\n");
+            fclose(fp);
+            fprintf(stderr, "File is color, conversion not yet supported\n");
             return false;
         }
 	
@@ -357,11 +356,11 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += ACE_OS::fread((void *) dst, 1, (size_t) w, fp);
+            num += fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
 
-	ACE_OS::fclose(fp);
+	fclose(fp);
 
     return true;
 }
