@@ -1,5 +1,5 @@
 
-option(YARP_COMPILE_TESTS "Compile YARP tests" FALSE)
+option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
 
 if (YARP_COMPILE_TESTS)
 
