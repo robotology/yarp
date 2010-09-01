@@ -177,6 +177,14 @@ using namespace yarp::dev;
 
 // Now we parse the original header files
 // Redefine a few things that SWIG currently chokes on
+%define YARP_OS_API
+%enddef
+%define YARP_sig_API
+%enddef
+%define YARP_dev_API
+%enddef
+%define YARP_init_API
+%enddef
 %define _YARP2_NETINT32_
 %enddef
 typedef int yarp::os::NetInt32;
