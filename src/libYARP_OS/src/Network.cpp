@@ -444,7 +444,6 @@ int NetworkBase::main(int argc, char *argv[]) {
 }
 
 int NetworkBase::runNameServer(int argc, char *argv[]) {
-    Network yarp;
     // call the yarp standard companion name server
     argc--;
     argv++;
