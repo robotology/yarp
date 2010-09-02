@@ -16,7 +16,6 @@
 
 #include <stdio.h>
 
-using namespace std;
 using namespace yarp::sig;
 
 static void warn(const char *message)
