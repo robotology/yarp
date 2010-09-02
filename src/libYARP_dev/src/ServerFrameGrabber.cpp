@@ -136,8 +136,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     }
 
     singleThreaded = 
-        (bool)config.check("single_threaded",
-                           "if present, operate in single threaded mode");
+        config.check("single_threaded",
+                     "if present, operate in single threaded mode")!=0;
     thread.open(config.check("framerate",Value("0")).asDouble(),
                 singleThreaded);
     active = true;
@@ -332,7 +332,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addInt(int(fgCtrlDC1394->hasOnOffDC1394(cmd.get(1).asInt())));
 				return true;
 			case VOCAB_DRSETACT: // VOCAB_DRSETACT 04
-				response.addInt(int(fgCtrlDC1394->setActiveDC1394(cmd.get(1).asInt(),bool(cmd.get(2).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setActiveDC1394(cmd.get(1).asInt(),(cmd.get(2).asInt()!=0))));
                 return true;
 			case VOCAB_DRGETACT: // VOCAB_DRGETACT 05
 				response.addInt(int(fgCtrlDC1394->getActiveDC1394(cmd.get(1).asInt())));
@@ -348,7 +348,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addInt(int(fgCtrlDC1394->hasOnePushDC1394(cmd.get(1).asInt())));
 				return true;
 			case VOCAB_DRSETMOD: // VOCAB_DRSETMOD 09
-				response.addInt(int(fgCtrlDC1394->setModeDC1394(cmd.get(1).asInt(),bool(cmd.get(2).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setModeDC1394(cmd.get(1).asInt(),(cmd.get(2).asInt()!=0))));
                 return true;
 			case VOCAB_DRGETMOD: // VOCAB_DRGETMOD 10
 				response.addInt(int(fgCtrlDC1394->getModeDC1394(cmd.get(1).asInt())));
@@ -431,14 +431,14 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addInt(int(fgCtrlDC1394->setFormat7WindowDC1394(cmd.get(1).asInt(),cmd.get(2).asInt(),cmd.get(3).asInt(),cmd.get(4).asInt())));
                 return true;
 			case VOCAB_DRSETOPM: // VOCAB_DRSETOPM 28
-				response.addInt(int(fgCtrlDC1394->setOperationModeDC1394(bool(cmd.get(1).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setOperationModeDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRGETOPM: // VOCAB_DRGETOPM 29
 				response.addInt(fgCtrlDC1394->getOperationModeDC1394());
 				return true;
 
 			case VOCAB_DRSETTXM: // VOCAB_DRSETTXM 30
-				response.addInt(int(fgCtrlDC1394->setTransmissionDC1394(bool(cmd.get(1).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setTransmissionDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRGETTXM: // VOCAB_DRGETTXM 31
 				response.addInt(fgCtrlDC1394->getTransmissionDC1394());
@@ -452,7 +452,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				return true;
 			*/
 			case VOCAB_DRSETBCS: // VOCAB_DRSETBCS 34
-				response.addInt(int(fgCtrlDC1394->setBroadcastDC1394(bool(cmd.get(1).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setBroadcastDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRSETDEF: // VOCAB_DRSETDEF 35
 				response.addInt(int(fgCtrlDC1394->setDefaultsDC1394()));
@@ -461,10 +461,10 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 				response.addInt(int(fgCtrlDC1394->setResetDC1394()));
                 return true;
 			case VOCAB_DRSETPWR: // VOCAB_DRSETPWR 37
-				response.addInt(int(fgCtrlDC1394->setPowerDC1394(bool(cmd.get(1).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setPowerDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRSETCAP: // VOCAB_DRSETCAP 38
-				response.addInt(int(fgCtrlDC1394->setCaptureDC1394(bool(cmd.get(1).asInt()))));
+				response.addInt(int(fgCtrlDC1394->setCaptureDC1394(cmd.get(1).asInt()!=0)));
                 return true;
 			case VOCAB_DRSETBPP: // VOCAB_DRSETCAP 39
 				response.addInt(int(fgCtrlDC1394->setBytesPerPacketDC1394(cmd.get(1).asInt())));	
