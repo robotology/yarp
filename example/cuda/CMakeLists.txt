@@ -1,3 +1,6 @@
+# Copyright (C) 2007 Giacomo Spigler
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # replace with the path to your YARP binaries if needed
 SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
 

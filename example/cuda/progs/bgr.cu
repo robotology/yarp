@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2007 Giacomo Spigler
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
 
 extern "C" {
 
