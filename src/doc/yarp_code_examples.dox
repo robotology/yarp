@@ -9,9 +9,8 @@
 
 There are many code examples available in the "example/"
 subdirectory of YARP. If you're reading 
-this online, click on the
-<a href="examples.html">examples</a> link
-to see many of them.
+this online, click on the \ref examples "examples"
+link to see many of them.
 
 Here we work through an example of using YARP communication
 between programs.  We will have two programs, a sender and receiver,
