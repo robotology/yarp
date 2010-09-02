@@ -585,11 +585,13 @@ INPUT                  = ${CMAKE_SOURCE_DIR}/src/libYARP_OS/include/yarp/os \
                          ${CMAKE_SOURCE_DIR}/src/libYARP_sig/include/yarp/sig \
                          ${CMAKE_SOURCE_DIR}/src/libYARP_dev/include/yarp/dev \
                          ${CMAKE_SOURCE_DIR}/src/libYARP_math/include/yarp/math \
+                         ${CMAKE_SOURCE_DIR}/src/libYARP_name/include/yarp/name \
                          ${CMAKE_SOURCE_DIR}/src/libYARP_dev/src \
                          ${CMAKE_SOURCE_DIR}/src/libyarpc \
+                         ${CMAKE_SOURCE_DIR}/src/libyarpcxx \
                          ${CMAKE_SOURCE_DIR}/src/modules \
+                         ${CMAKE_SOURCE_DIR}/src/carriers \
                          ${CMAKE_SOURCE_DIR}/doc/spec \
-                         ${CMAKE_SOURCE_DIR}/src/libYARP_dev/harness \
                          ${CMAKE_SOURCE_DIR}/src/doc
 
 # This tag can be used to specify the character encoding of the source files

@@ -17,6 +17,11 @@ namespace yarp
     {
         class Rand;
 
+        /**
+         *
+         * Some helpers for internal use by yarp::math classes.
+         *
+         */
         namespace impl {
             class RandScalar;
             class RandnScalar;

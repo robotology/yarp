@@ -40,6 +40,7 @@ general area you are interested in (e.g. modules/carriers).
     <li> \ref yarp_build_structure_template_options
     <li> \ref yarp_build_structure_template_version
     <li> \ref yarp_build_structure_template_system
+    <li> \ref yarp_build_structure_template_api
     <li> \ref yarp_build_structure_template_yarpconfig
     <li> \ref yarp_build_structure_template_carrier
     <li> \ref yarp_build_structure_template_device
@@ -58,6 +59,7 @@ general area you are interested in (e.g. modules/carriers).
     <li> \ref yarp_build_structure_yarpmath
     <li> \ref yarp_build_structure_yarpdev
     <li> \ref yarp_build_structure_yarpinit
+    <li> \ref yarp_build_structure_yarpname
     </ul>
   <li> src/modules
     <ul>
@@ -247,6 +249,7 @@ Intended mostly to be easy to connect with other libraries (e.g. OpenCV).
 \li \ref yarp_build_structure_carriers "carriers" - optional plugin network protocols.
 \li \ref yarp_build_structure_yarpinit "libYARP_init" - a tiny wrapper that initializes all optional modules 
 and carriers.
+\li \ref yarp_build_structure_yarpname "libYARP_name" - a library to help in construction of name servers. It is compiled if CREATE_YARPSERVER3 is set.
 \li libyarpc - an experimental C API to YARP.
 \li libyarpcxx - an experimental C++ interface to YARP that is a simple
 wrapper around libyarpc.  These two experimental libraries together make
@@ -401,6 +404,12 @@ yarp::os::Network::init and yarp::os::Network::fini at the last
 possible minute (and *definitely* not in libYARP_OS).  All the
 other libraries in YARP use yarp::os::NetworkBase rather than
 yarp::os::Network - NetworkBase is Network without init and fini.
+
+@section yarp_build_structure_yarpname src/libYARP_name/CMakeLists.txt
+
+We follow the pattern of \ref yarp_build_structure_yarpsig
+to create the YARP_name library (at the time of writing, compilation
+is conditional on the CREATE_YARPSERVER3 flag). 
 
 @section yarp_build_structure_modules src/modules/CMakeLists.txt
 
@@ -573,6 +582,18 @@ or STL strings, and YARP_USE_ACE_STRING_BASE_CONST_SIZE_TYPE, an
 awkward detail about ACE's string class.
 \sa \ref yarp_build_structure_conf
 \sa \ref yarp_build_structure_system_check
+
+@section yarp_build_structure_template_api conf/template/yarp_config_api.h.in
+
+This is the template for a generated header file built during
+configuration.
+It is placed in generated_include/yarp/conf/api.h,
+and should be accessed as "#include <yarp/conf/api.h>".
+It holds macros for defining the public API to YARP, if YARP has
+been configured build as a shared library and the YARP_CLEAN_API
+flag has been turned on.
+\sa \ref yarp_build_structure_conf
+\sa \ref yarp_build_structure_options
 
 @section yarp_build_structure_template_yarpconfig conf/template/YARPConfig.cmake.in
 

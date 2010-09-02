@@ -24,6 +24,11 @@
 namespace yarp {
 
     namespace sig {
+        /**
+         *
+         * Some helpers for internal use by yarp::sig classes.
+         *
+         */
         namespace impl {
             class VectorBase;
             template<class T> class VectorImpl;

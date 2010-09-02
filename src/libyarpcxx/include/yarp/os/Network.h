@@ -11,7 +11,17 @@
 
 #include <yarp/yarpcxx.h>
 
+/**
+ *
+ * C++ wrappers around an experimental C interface to YARP.
+ *
+ */
 namespace yarpcxx {
+    /**
+     *
+     * C++ wrappers around an experimental C interface to yarp::os.
+     *
+     */
     namespace os {
         class Network;
     }
