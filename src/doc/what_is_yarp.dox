@@ -44,7 +44,7 @@ communities with idiosyncratic requirements, such as ourselves.
 YARP is written by and for researchers in robotics, particularly
 humanoid robotics, who find themselves with a complicated pile of
 hardware to control with an equally complicated pile of
-software. At the time of writing (2050*), running decent visual,
+software. At the time of writing (*), running decent visual,
 auditory, and tactile perception while performing elaborate motor
 control in real-time requires a lot of computation. The easiest and
 most scalable way to do this right now is to have a cluster of
@@ -107,8 +107,12 @@ or a static library.
 Finally, you can prepare configuration files for an entirely
 new robotic platform.
 
+
+(*) We wrote this years and years ago, but in fact this statement
+doesn't seem to depend on the time of writing.  The software expands
+to fill the cycles available, and then some.
+
  *
-(*) Just joking.
  *
  *
  */
