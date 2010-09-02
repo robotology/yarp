@@ -1,4 +1,7 @@
 <application>
+ <!-- Copyright: (C) 2010 RobotCub Consortium -->
+ <!-- Authors: Lorenzo Natale -->
+ <!-- CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT -->
 	<name>mcast Test 2 -- Single source multiple targets</name>
 	<module>
 	<name>yarpdev</name>

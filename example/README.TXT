@@ -1,3 +1,6 @@
+# Copyright: (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale, Ugo Pattacini
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 This directory is reserved for examples of the use of YARP and related
 libraries.
