@@ -1,5 +1,8 @@
 ; -*- Mode: Lisp; Syntax: ANSI-Common-Lisp; Base: 10 -*-
 
+;; Copyright: (C) 2008 Lorenz Mosenlechner
+;; CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 ;(in-package "LOGGING-DB")
 
 ;; *****************************************************************************
@@ -11,9 +14,9 @@
   :author "Lorenz Mösenlechner <moesenle@cs.tum.edu>"
   :version "1.0"
   :maintainer "Lorenz Mösenlechner <moesenle@cs.tum.edu>"
-  :licence "GPL v2"
-  :description "Library for Pose transformation"
-  :long-description "Library for Pose transformation"
+  :licence "LGPL v2.1 or later"
+  :description "YARP wrappers"
+  :long-description "YARP wrappers"
 
   :depends-on ()
 
