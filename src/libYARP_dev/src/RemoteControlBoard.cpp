@@ -6,9 +6,8 @@
 *
 */
 
-#include <ace/config.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/Log_Msg.h>
+#include <string.h>
+
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -16,21 +15,19 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Semaphore.h>
+#include <yarp/os/Log.h>
+
+#include <yarp/sig/Vector.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/dev/PreciselyTimed.h>
-#include <yarp/os/Stamp.h>
 
-#include <yarp/sig/Vector.h>
-#include <yarp/os/Semaphore.h>
-
-#include <yarp/os/Time.h>
 
 using namespace yarp::os;
-using namespace yarp::os::impl;
 using namespace yarp::dev;
 using namespace yarp::sig;
 
@@ -625,7 +622,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            ACE_ASSERT (nj == njs);
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asInt();
 
@@ -654,7 +651,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            ACE_ASSERT (nj == njs);
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
 
@@ -684,7 +681,7 @@ protected:
                 return false;
 
             int njs = l.size();
-            ACE_ASSERT (nj == njs);
+            YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
 
@@ -806,7 +803,7 @@ public:
         }
 
         if (!ok) {
-            ACE_OS::printf("Problems with obtaining the number of controlled axes\n");
+            printf("Problems with obtaining the number of controlled axes\n");
             return false;
         }
 
@@ -1019,7 +1016,7 @@ public:
             if (&l == 0)
                 return false;
             const int njs = l.size();
-            ACE_ASSERT (njs == nj);
+            YARP_ASSERT (njs == nj);
             for (i = 0; i < nj; i++)
             {
                 Bottle& m = *(l.get(i).asList());
@@ -1169,8 +1166,8 @@ public:
             if (tmp.size() != nj)
                 fprintf(stderr, "tmp.size: %d  nj %d\n", tmp.size(), nj);
 
-            ACE_ASSERT (tmp.size() == nj);
-            ACE_OS::memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
+            YARP_ASSERT (tmp.size() == nj);
+            memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
             ////////////////////////// HANDLE TIMEOUT
             // fill the vector anyway
@@ -1279,7 +1276,7 @@ public:
 
         c.body.size(nj);
 
-        ACE_OS::memcpy(&(c.body[0]), refs, sizeof(double)*nj);
+        memcpy(&(c.body[0]), refs, sizeof(double)*nj);
 
         command_buffer.write();
 
@@ -1444,7 +1441,7 @@ public:
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
         c.body.size(nj);
-        ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
         command_buffer.write();
         return true;
     }
@@ -1848,7 +1845,7 @@ public:
                 return false;
 
             int njs = l.size();
-            ACE_ASSERT (nj == njs);
+            YARP_ASSERT (nj == njs);
             for (int i = 0; i < nj; i++)
                 modes[i] = l.get(i).asVocab();
         }
@@ -1867,7 +1864,7 @@ public:
 
         c.body.size(nj);
 
-        ACE_OS::memcpy(&(c.body[0]), v, sizeof(double)*nj);
+        memcpy(&(c.body[0]), v, sizeof(double)*nj);
 
         command_buffer.write();
 

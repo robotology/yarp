@@ -1,3 +1,12 @@
+2010-09-03  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: as for
+	ServerControlBoard.cpp
+
+	* src/libYARP_dev/src/ServerControlBoard.cpp: adapt to
+	recent elimination of indirect ACE dependencies (thanks
+	Ugo Pattacini)
+
 2010-09-01  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* example/swig/yarp.i: tell swig not to freak out about

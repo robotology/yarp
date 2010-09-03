@@ -6,9 +6,8 @@
 *
 */
 
-#include <ace/config.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/Log_Msg.h>
+#include <string.h>
+
 #include <yarp/os/PortablePair.h>
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Time.h>
@@ -16,13 +15,14 @@
 #include <yarp/os/Thread.h>
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Stamp.h>
+#include <yarp/os/Log.h>
+
+#include <yarp/sig/Vector.h>
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ControlBoardInterfacesImpl.h>
 #include <yarp/dev/ControlBoardHelpers.h>
-
-#include <yarp/sig/Vector.h>
 
 namespace yarp{
     namespace dev {
@@ -235,7 +235,7 @@ public:
     virtual bool open(Searchable& prop) {
         verb = (prop.check("verbose","if present, give detailed output"));
         if (verb)
-            ACE_OS::printf("running with verbose output\n");
+            printf("running with verbose output\n");
 
         thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
@@ -243,7 +243,7 @@ public:
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
-            ACE_OS::printf("Subdevice %s\n", name->toString().c_str());
+            printf("Subdevice %s\n", name->toString().c_str());
             if (name->isString()) {
                 // maybe user isn't doing nested configuration
                 Property p;
@@ -258,11 +258,11 @@ public:
             }
 
             if (!poly.isValid()) {
-                ACE_OS::printf("cannot make <%s>\n", name->toString().c_str());
+                printf("cannot make <%s>\n", name->toString().c_str());
             }
 
         } else {
-            ACE_OS::printf("\"--subdevice <name>\" not set for server_controlboard\n");
+            printf("\"--subdevice <name>\" not set for server_controlboard\n");
             return false;
         }
 
@@ -323,14 +323,14 @@ public:
         if (pos!=NULL||vel!=NULL) {
             if (pos!=NULL) {
                 if (!pos->getAxes(&nj)) {
-                    ACE_OS::printf ("problems: controlling 0 axes\n");
+                    printf ("problems: controlling 0 axes\n");
                     return false;
                 }
             }
 
             if (vel!=NULL) {
                 if (!vel->getAxes(&nj)) {
-                    ACE_OS::printf ("problems: controlling 0 axes\n");
+                    printf ("problems: controlling 0 axes\n");
                     return false;
                 }
             }
@@ -343,7 +343,7 @@ public:
             return true;
         }
 
-        ACE_OS::printf("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n",
+        printf("subdevice <%s> doesn't look like a control board (no appropriate interfaces were acquired)\n",
             name->toString().c_str());
 
         return false;
@@ -355,7 +355,7 @@ public:
     * The thread main loop deals with writing on ports here.
     */
     virtual void run() {
-        ACE_OS::printf("Server control board starting\n");
+        printf("Server control board starting\n");
         double before, now;
         while (!isStopping()) {
             before = Time::now();
@@ -379,10 +379,10 @@ public:
                 Time::delay(k);
             }
             else {
-                ACE_OS::printf("Can't comply with the %d ms period\n", thread_period);
+                printf("Can't comply with the %d ms period\n", thread_period);
             }
         }
-        ACE_OS::printf("Server control board stopping\n");
+        printf("Server control board stopping\n");
     }
 
     /* IPidControl */
@@ -477,7 +477,7 @@ public:
     virtual bool getErrors(double *errs) {
         if (pid)
             return pid->getErrors(errs);
-        ACE_OS::memset (errs, 0, sizeof(double)*nj);
+        memset (errs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -499,7 +499,7 @@ public:
     virtual bool getOutputs(double *outs) {
         if (pid)
             return pid->getOutputs(outs);
-        ACE_OS::memset(outs, 0, sizeof(double)*nj);
+        memset(outs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -519,7 +519,7 @@ public:
     virtual bool getPid(int j, Pid *p) {
         if (pid)
             return pid->getPid(j, p);
-        ACE_OS::memset(p, 0, sizeof(Pid));
+        memset(p, 0, sizeof(Pid));
         return false;
     }
 
@@ -530,7 +530,7 @@ public:
     virtual bool getPids(Pid *pids) {
         if (pid)
             return pid->getPids(pids);
-        ACE_OS::memset(pids, 0, sizeof(Pid)*nj);
+        memset(pids, 0, sizeof(Pid)*nj);
         return false;
     }
 
@@ -552,7 +552,7 @@ public:
     virtual bool getReferences(double *refs) {
         if (pid)
             return pid->getReferences(refs);
-        ACE_OS::memset(refs, 0, sizeof(double)*nj);
+        memset(refs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -575,7 +575,7 @@ public:
     virtual bool getErrorLimits(double *limits) {
         if (pid)
             return pid->getErrorLimits(limits);
-        ACE_OS::memset(limits, 0, sizeof(double)*nj);
+        memset(limits, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -779,7 +779,7 @@ public:
     virtual bool getRefSpeeds(double *spds) {
         if (pos)
             return pos->getRefSpeeds(spds);
-        ACE_OS::memset(spds, 0, sizeof(double)*nj);
+        memset(spds, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -804,7 +804,7 @@ public:
     virtual bool getRefAccelerations(double *accs) {
         if (pos)
             return pos->getRefAccelerations(accs);
-        ACE_OS::memset(accs, 0, sizeof(double)*nj);
+        memset(accs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -930,7 +930,7 @@ public:
     virtual bool getEncoders(double *encs) {
         if (enc)
             return enc->getEncoders(encs);
-        ACE_OS::memset(encs, 0, sizeof(double)*nj);
+        memset(encs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -955,7 +955,7 @@ public:
     virtual bool getEncoderSpeeds(double *spds) {
         if (enc)
             return enc->getEncoderSpeeds(spds);
-        ACE_OS::memset(spds, 0, sizeof(double)*nj);
+        memset(spds, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -979,7 +979,7 @@ public:
     virtual bool getEncoderAccelerations(double *accs) {
         if (enc)
             return enc->getEncoderAccelerations(accs);
-        ACE_OS::memset(accs, 0, sizeof(double)*nj);
+        memset(accs, 0, sizeof(double)*nj);
         return false;
     }
 
@@ -1016,7 +1016,7 @@ public:
     virtual bool getCurrents(double *vals) {
         if (amp)
             return amp->getCurrents(vals);
-        ACE_OS::memset(vals, 0, sizeof(double)*nj);
+        memset(vals, 0, sizeof(double)*nj);
 
         return false;
 
@@ -1153,64 +1153,64 @@ yarp::dev::DriverCreator *createServerControlBoard() {
 
 inline yarp::dev::ImplementCallbackHelper::ImplementCallbackHelper(yarp::dev::ServerControlBoard *x) {
     pos = dynamic_cast<yarp::dev::IPositionControl *> (x);
-    ACE_ASSERT (pos != 0);
+    YARP_ASSERT (pos != 0);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (x);
-    ACE_ASSERT (vel != 0);
+    YARP_ASSERT (vel != 0);
 }
 
 
 inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
-    //ACE_OS::printf("Data received on the control channel of size: %d\n", v.body.size());
+    //printf("Data received on the control channel of size: %d\n", v.body.size());
     //	int i;
 
     Bottle& b = v.head;
-    //ACE_OS::printf("bottle: %s\n", b.toString().c_str());
+    //printf("bottle: %s\n", b.toString().c_str());
     switch (b.get(0).asVocab()) {
     case VOCAB_POSITION_MODE: 
     case VOCAB_POSITION_MOVES: {
-        //            ACE_OS::printf("Received a position command\n");
+        //            printf("Received a position command\n");
         //			for (i = 0; i < v.body.size(); i++)
-        //				ACE_OS::printf("%.2f ", v.body[i]);
-        //			ACE_OS::printf("\n");
+        //				printf("%.2f ", v.body[i]);
+        //			printf("\n");
 
         if (pos) {
             bool ok = pos->positionMove(&(v.body[0]));
             if (!ok)
-                ACE_OS::printf("Issues while trying to start a position move\n");
+                printf("Issues while trying to start a position move\n");
         }
                                }
                                break;
 
     case VOCAB_VELOCITY_MODE:
     case VOCAB_VELOCITY_MOVES: {
-        //          ACE_OS::printf("Received a velocity command\n");
+        //          printf("Received a velocity command\n");
         //			for (i = 0; i < v.body.size(); i++)
-        //				ACE_OS::printf("%.2f ", v.body[i]);
-        //			ACE_OS::printf("\n");
+        //				printf("%.2f ", v.body[i]);
+        //			printf("\n");
         if (vel) {
             bool ok = vel->velocityMove(&(v.body[0]));
             if (!ok)
-                ACE_OS::printf("Issues while trying to start a velocity move\n");
+                printf("Issues while trying to start a velocity move\n");
         }
                                }
                                break;
 
     default: {
-        ACE_OS::printf("Unrecognized message while receiving on command port\n");
+        printf("Unrecognized message while receiving on command port\n");
              }
              break;
     }
 
-    //    ACE_OS::printf("v: ");
+    //    printf("v: ");
     //    int i;
     //    for (i = 0; i < (int)v.size(); i++)
-    //        ACE_OS::printf("%.3f ", v[i]);
-    //    ACE_OS::printf("\n");
+    //        printf("%.3f ", v[i]);
+    //    printf("\n");
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) { 
-    ACE_ASSERT (x != NULL);
+    YARP_ASSERT (x != NULL);
     caller = x; 
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
     pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
@@ -1265,14 +1265,14 @@ bool yarp::dev::CommandsHelper::respond(const yarp::os::Bottle& cmd,
     bool ok = false;
     bool rec = false; // is the command recognized?
     if (caller->verbose())
-        ACE_OS::printf("command received: %s\n", cmd.toString().c_str());
+        printf("command received: %s\n", cmd.toString().c_str());
     int code = cmd.get(0).asVocab();
     switch (code) {
 case VOCAB_CALIBRATE_JOINT:
     {
         rec=true;
         if (caller->verbose())
-            ACE_OS::printf("Calling calibrate joint\n");
+            printf("Calling calibrate joint\n");
 
         int j=cmd.get(1).asInt();
         int ui=cmd.get(2).asInt();
@@ -1280,7 +1280,7 @@ case VOCAB_CALIBRATE_JOINT:
         double v2=cmd.get(4).asDouble();
         double v3=cmd.get(5).asDouble();
         if (ical2==0)
-            ACE_OS::printf("Sorry I don't have a IControlCalibration2 interface\n");
+            printf("Sorry I don't have a IControlCalibration2 interface\n");
         else
             ok=ical2->calibrate2(j,ui,v1,v2,v3);
     }
@@ -1289,7 +1289,7 @@ case VOCAB_CALIBRATE:
     {
         rec=true;
         if (caller->verbose())
-            ACE_OS::printf("Calling calibrate\n");
+            printf("Calling calibrate\n");
         ok=ical2->calibrate();
     }
     break;
@@ -1297,7 +1297,7 @@ case VOCAB_CALIBRATE_DONE:
     {
         rec=true;
         if (caller->verbose())
-            ACE_OS::printf("Calling calibrate done\n");
+            printf("Calling calibrate done\n");
         int j=cmd.get(1).asInt();
         ok=ical2->done(j);
     }
@@ -1306,7 +1306,7 @@ case VOCAB_PARK:
     {
         rec=true;
         if (caller->verbose())
-            ACE_OS::printf("Calling park function\n");
+            printf("Calling park function\n");
         int flag=cmd.get(1).asInt();
         if (flag)
             ok=ical2->park(true);
@@ -1318,7 +1318,7 @@ case VOCAB_PARK:
 case VOCAB_SET:
     rec = true;
     if (caller->verbose())
-        ACE_OS::printf("set command received\n");
+        printf("set command received\n");
     {
         switch(cmd.get(1).asVocab()) 
         {
@@ -1352,9 +1352,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 Pid *p = new Pid[njs];
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                 {
                     Bottle& c = *(b.get(i).asList());
@@ -1382,9 +1382,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pid->setReferences (p);
@@ -1403,9 +1403,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pid->setErrorLimits (p);
@@ -1461,7 +1461,7 @@ case VOCAB_SET:
                 int i;
                 if (b==NULL) break;
                 const int njs = b->size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 vect.size(nj);
                 for (i = 0; i < njs; i++) {
                     vect[i] = b->get(i).asDouble();
@@ -1481,7 +1481,7 @@ case VOCAB_SET:
                 int i;
                 if (b==NULL) break;
                 const int njs = b->size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 vect.size(nj);
                 for (i = 0; i < njs; i++)
                     vect[i] = b->get(i).asDouble();
@@ -1502,9 +1502,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->relativeMove(p);
@@ -1523,9 +1523,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefSpeeds(p);
@@ -1544,9 +1544,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = pos->setRefAccelerations(p);
@@ -1589,9 +1589,9 @@ case VOCAB_SET:
                 Bottle& b = *(cmd.get(2).asList());
                 int i;
                 const int njs = b.size();
-                ACE_ASSERT (njs == nj);
+                YARP_ASSERT (njs == nj);
                 double *p = new double[njs];    // LATER: optimize to avoid allocation. 
-                ACE_ASSERT (p != NULL);
+                YARP_ASSERT (p != NULL);
                 for (i = 0; i < njs; i++)
                     p[i] = b.get(i).asDouble();
                 ok = enc->setEncoders(p);
@@ -1624,7 +1624,7 @@ case VOCAB_SET:
             break; 
 
         default:
-            ACE_OS::printf("received an unknown command after a VOCAB_SET\n");
+            printf("received an unknown command after a VOCAB_SET\n");
             break;
         }
     }
@@ -1633,7 +1633,7 @@ case VOCAB_SET:
 case VOCAB_GET:
     rec = true;
     if (caller->verbose())
-        ACE_OS::printf("get command received\n");
+        printf("get command received\n");
 
     {
         int tmp = 0;
@@ -1651,7 +1651,7 @@ case VOCAB_ERR:
 case VOCAB_ERRS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pid->getErrors(p);
         Bottle& b = response.addList();
         int i;
@@ -1671,7 +1671,7 @@ case VOCAB_OUTPUT:
 case VOCAB_OUTPUTS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pid->getOutputs(p);
         Bottle& b = response.addList();
         int i;
@@ -1699,7 +1699,7 @@ case VOCAB_PID:
 case VOCAB_PIDS: 
     {
         Pid *p = new Pid[nj];
-        ACE_ASSERT (p != NULL);
+        YARP_ASSERT (p != NULL);
         ok = pid->getPids(p);
         Bottle& b = response.addList();
         int i;
@@ -1728,7 +1728,7 @@ case VOCAB_REFERENCE:
 case VOCAB_REFERENCES: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pid->getReferences(p);
         Bottle& b = response.addList();
         int i;
@@ -1748,7 +1748,7 @@ case VOCAB_LIM:
 case VOCAB_LIMS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pid->getErrorLimits(p);
         Bottle& b = response.addList();
         int i;
@@ -1789,7 +1789,7 @@ case VOCAB_REF_SPEED:
 case VOCAB_REF_SPEEDS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pos->getRefSpeeds(p);
         Bottle& b = response.addList();
         int i;
@@ -1809,7 +1809,7 @@ case VOCAB_REF_ACCELERATION:
 case VOCAB_REF_ACCELERATIONS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = pos->getRefAccelerations(p);
         Bottle& b = response.addList();
         int i;
@@ -1829,7 +1829,7 @@ case VOCAB_ENCODER:
 case VOCAB_ENCODERS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = enc->getEncoders(p);
         Bottle& b = response.addList();
         int i;
@@ -1850,7 +1850,7 @@ case VOCAB_ENCODER_SPEED:
 case VOCAB_ENCODER_SPEEDS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = enc->getEncoderSpeeds(p);
         Bottle& b = response.addList();
         int i;
@@ -1870,7 +1870,7 @@ case VOCAB_ENCODER_ACCELERATION:
 case VOCAB_ENCODER_ACCELERATIONS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = enc->getEncoderAccelerations(p);
         Bottle& b = response.addList();
         int i;
@@ -1890,7 +1890,7 @@ case VOCAB_AMP_CURRENT:
 case VOCAB_AMP_CURRENTS: 
     {
         double *p = new double[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = amp->getCurrents(p);
         Bottle& b = response.addList();
         int i;
@@ -1903,7 +1903,7 @@ case VOCAB_AMP_CURRENTS:
 case VOCAB_AMP_STATUS: 
     {
         int *p = new int[nj];
-        ACE_ASSERT(p!=NULL);
+        YARP_ASSERT(p!=NULL);
         ok = amp->getAmpStatus(p);
         Bottle& b = response.addList();
         int i;
@@ -1938,7 +1938,7 @@ case VOCAB_INFO_NAME:
     }
     break;
 default:
-    ACE_OS::printf("received an unknown request after a VOCAB_GET\n");
+    printf("received an unknown request after a VOCAB_GET\n");
     break;
         }
     }
