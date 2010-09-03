@@ -446,6 +446,28 @@ public:
         checkEqual(b.find("y").asList()->size(),2,"y has right length");
     }
 
+    void testAssignment() {
+        report(0,"test assignment...");
+        Bottle b("x (1 2\n3 4\n5 6)\ny (1 2)");
+        Bottle b2;
+        b2 = b;
+        checkEqual(b2.size(),4,"initial copy ok");
+        b2 = b2;
+        checkEqual(b2.size(),4,"re-copy ok");
+        Bottle b3("zig zag");
+        b2.clear();
+        checkFalse(b2.isNull(),"have a non-null bottle");
+        checkEqual(b2.size(),0,"have an empty bottle");
+        b3 = b2;
+        checkFalse(b3.isNull(),"copied a non-null bottle");
+        printf("B3 is %s\n", b3.toString().c_str());
+        checkEqual(b3.size(),0,"copied an empty bottle");
+        Bottle& nullBot = b.findGroup("zig");
+        checkTrue(nullBot.isNull(),"have a null bottle");
+        b = nullBot;
+        checkFalse(b.isNull(),"failed, as expected");
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -471,6 +493,7 @@ public:
         testModify();
         testScientific();
         testContinuation();
+        testAssignment();
     }
 
     virtual String getName() {

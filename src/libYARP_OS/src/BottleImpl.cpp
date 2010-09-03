@@ -1047,7 +1047,10 @@ yarp::os::Bottle& BottleImpl::addList() {
 
 
 void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
-    if (len==0) return;
+    if (len==0) {
+        clear();
+        return;
+    }
 
     const BottleImpl *src = &alt;
     BottleImpl tmp;
@@ -1065,8 +1068,10 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
     if (first>top) { first = top; }
     if (last>top) { last = top; }
 
-    for (int i=first; i<=last; i++) {
-        add(src->get(i).cloneStorable());
+    if (last>=0) {
+        for (int i=first; i<=last; i++) {
+            add(src->get(i).cloneStorable());
+        }
     }
 }
 

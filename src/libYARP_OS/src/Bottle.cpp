@@ -40,11 +40,7 @@ Bottle::Bottle(const Bottle& bottle) {
 }
 
 const Bottle& Bottle::operator = (const Bottle& bottle) {
-    if (bottle.isNull()) {
-    } else {
-        //fromString(bottle.toString().c_str());
-        copy(bottle);
-    }
+    copy(bottle);
     return *this;
 }
 
@@ -191,6 +187,9 @@ void Bottle::setNested(bool nested) {
 
 
 void Bottle::copy(const Bottle& alt, int first, int len) {
+    if (alt.isNull()) {
+        YARP_LOG_ERROR("Tried to copy a null Bottle - do not do this");
+    }
     HELPER(implementation).copyRange(HELPER(alt.implementation),
                                      first,
                                      len);
