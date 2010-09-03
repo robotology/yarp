@@ -1,7 +1,7 @@
 2010-09-03  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: correctly copy an
-	empty Bottle (thanks Ugo Pattacini)
+	empty Bottle (thanks Carlo Ciliberto, Ugo Pattacini)
 
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: as for
 	ServerControlBoard.cpp
