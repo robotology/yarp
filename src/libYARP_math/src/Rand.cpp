@@ -1,11 +1,5 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
-/*
- * Copyright (C) 2007 Lorenzo Natale
- * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
- *
- */
-
 #include <yarp/os/Semaphore.h>
 #include <yarp/math/Rand.h>
 #include <time.h>
