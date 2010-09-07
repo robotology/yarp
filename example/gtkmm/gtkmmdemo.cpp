@@ -1,8 +1,17 @@
+
 /*
-    Example glade application. By Giorgio.
+ * Copyright: (C) 2010 RobotCub Consortium
+ * Author: Giorgio Metta
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-// real code here!
+/*
+    Example glade application. By Giorgio.
+    Originally based on:
+       http://www.pebble.org.uk/programming/libglademm_simple
+    Rewritten to support multithreading.
+ */
+
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
@@ -14,9 +23,6 @@
 
 #include <yarp/os/all.h>
 
-// a class for managing the main widget (approach copied from 
-// http://www.pebble.org.uk/programming/libglademm_simple).
-//
 class MainWindow {
 public:
     explicit MainWindow(Glib::RefPtr<Gnome::Glade::Xml> refXml);
