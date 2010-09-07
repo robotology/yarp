@@ -15,16 +15,20 @@ int stable_img_convert (AVPicture *dst, int dst_pix_fmt,
 #ifdef OLD_FFMPEG
   return img_convert(dst,dst_pix_fmt,src,src_pix_fmt,src_width,src_height);
 #else
-  int w = src_width;
-  int h = src_height;
   static struct SwsContext *img_convert_ctx = NULL;
   if (img_convert_ctx==NULL) {
       //printf("Looking for a context\n");
       img_convert_ctx = sws_getContext(src_width, src_height,
-                                       src_pix_fmt, 
+                                       (PixelFormat)src_pix_fmt, 
                                        src_width, src_height,
-                                       dst_pix_fmt, 
-                                       0, NULL, NULL, NULL);
+                                       (PixelFormat)dst_pix_fmt, 
+#ifdef SWS_BILINEAR
+                                       SWS_BILINEAR, 
+#else
+                                       0,
+#endif
+                                       NULL, NULL, NULL);
+
       //printf("Done looking for a context\n");
   }
   if (img_convert_ctx!=NULL) {

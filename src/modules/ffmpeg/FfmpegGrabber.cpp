@@ -128,7 +128,7 @@ public:
                   const char *name) {
         // Find the first stream
         int videoStream=-1;
-        for(int i=0; i<pFormatCtx->nb_streams; i++)
+        for(int i=0; i<(int)(pFormatCtx->nb_streams); i++)
             if(pFormatCtx->streams[i]->codec->codec_type==code)
                 {
                     videoStream=i;
