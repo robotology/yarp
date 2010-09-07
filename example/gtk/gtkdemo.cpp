@@ -1,115 +1,186 @@
-
-/*
-  Example taken from GTK+ 2.0 Tutorial.
-    http://www.gtk.org/tutorial/
-
-  Copyright information from tutorial:
-    Copyright (C) 1997 Ian Main.
-    Copyright (C) 1998-2002 Tony Gale.
-    Permission is granted to make and distribute verbatim copies of this 
-    manual provided the copyright notice and this permission notice are 
-    preserved on all copies.
-    (see http://www.gtk.org/tutorial/ for more details)
+/* GTK - The GIMP Toolkit
+ * Copyright (C) 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
-// Summary for YARP
-// CopyPolicy: Tutorial copies permitted, preserve notices.
-// Copyright:  1997 Ian Main, 1998-2002 Tony Gale.
 
+// Summary for YARP
+// CopyPolicy: GPLv2 or later
+// Copyright: 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
+
+#include <stdlib.h>
 #include <gtk/gtk.h>
 
-/* Our callback.
- * The data passed to this function is printed to stdout */
-static void callback( GtkWidget *widget,
-                      gpointer   data )
+/* Backing pixmap for drawing area */
+static GdkPixmap *pixmap = NULL;
+
+/* Create a new backing pixmap of the appropriate size */
+static gboolean configure_event( GtkWidget         *widget,
+                                 GdkEventConfigure *event )
 {
-    g_print ("Hello again - %s was pressed\n", (char *) data);
+  if (pixmap)
+    g_object_unref (pixmap);
+
+  pixmap = gdk_pixmap_new (widget->window,
+			   widget->allocation.width,
+			   widget->allocation.height,
+			   -1);
+  gdk_draw_rectangle (pixmap,
+		      widget->style->white_gc,
+		      TRUE,
+		      0, 0,
+		      widget->allocation.width,
+		      widget->allocation.height);
+
+  return TRUE;
 }
 
-/* This callback quits the program */
-static gboolean delete_event( GtkWidget *widget,
-                              GdkEvent  *event,
-                              gpointer   data )
+/* Redraw the screen from the backing pixmap */
+static gboolean expose_event( GtkWidget      *widget,
+                              GdkEventExpose *event )
 {
-    gtk_main_quit ();
-    return FALSE;
+  gdk_draw_drawable (widget->window,
+		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+		     pixmap,
+		     event->area.x, event->area.y,
+		     event->area.x, event->area.y,
+		     event->area.width, event->area.height);
+
+  return FALSE;
 }
 
-int main( int   argc,
+/* Draw a rectangle on the screen */
+static void draw_brush( GtkWidget *widget,
+                        gdouble    x,
+                        gdouble    y)
+{
+  GdkRectangle update_rect;
+
+  update_rect.x = x - 5;
+  update_rect.y = y - 5;
+  update_rect.width = 10;
+  update_rect.height = 10;
+  gdk_draw_rectangle (pixmap,
+		      widget->style->black_gc,
+		      TRUE,
+		      update_rect.x, update_rect.y,
+		      update_rect.width, update_rect.height);
+  gtk_widget_queue_draw_area (widget, 
+		              update_rect.x, update_rect.y,
+		              update_rect.width, update_rect.height);
+}
+
+static gboolean button_press_event( GtkWidget      *widget,
+                                    GdkEventButton *event )
+{
+  if (event->button == 1 && pixmap != NULL)
+    draw_brush (widget, event->x, event->y);
+
+  return TRUE;
+}
+
+static gboolean motion_notify_event( GtkWidget *widget,
+                                     GdkEventMotion *event )
+{
+  int x, y;
+  GdkModifierType state;
+
+  if (event->is_hint)
+    gdk_window_get_pointer (event->window, &x, &y, &state);
+  else
+    {
+      x = event->x;
+      y = event->y;
+      state = event->state;
+    }
+    
+  if (state & GDK_BUTTON1_MASK && pixmap != NULL)
+    draw_brush (widget, x, y);
+  
+  return TRUE;
+}
+
+void quit ()
+{
+  exit (0);
+}
+
+int main( int   argc, 
           char *argv[] )
 {
-    GtkWidget *window;
-    GtkWidget *button;
-    GtkWidget *table;
+  GtkWidget *window;
+  GtkWidget *drawing_area;
+  GtkWidget *vbox;
 
-    gtk_init (&argc, &argv);
+  GtkWidget *button;
 
-    /* Create a new window */
-    window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_init (&argc, &argv);
 
-    /* Set the window title */
-    gtk_window_set_title (GTK_WINDOW (window), "Table");
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_widget_set_name (window, "Test Input");
 
-    /* Set a handler for delete_event that immediately
-     * exits GTK. */
-    g_signal_connect (G_OBJECT (window), "delete_event",
-                      G_CALLBACK (delete_event), NULL);
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (window), vbox);
+  gtk_widget_show (vbox);
 
-    /* Sets the border width of the window. */
-    gtk_container_set_border_width (GTK_CONTAINER (window), 20);
+  g_signal_connect (G_OBJECT (window), "destroy",
+                    G_CALLBACK (quit), NULL);
 
-    /* Create a 2x2 table */
-    table = gtk_table_new (2, 2, TRUE);
+  /* Create the drawing area */
 
-    /* Put the table in the main window */
-    gtk_container_add (GTK_CONTAINER (window), table);
+  drawing_area = gtk_drawing_area_new ();
+  gtk_widget_set_size_request (GTK_WIDGET (drawing_area), 200, 200);
+  gtk_box_pack_start (GTK_BOX (vbox), drawing_area, TRUE, TRUE, 0);
 
-    /* Create first button */
-    button = gtk_button_new_with_label ("button 1");
+  gtk_widget_show (drawing_area);
 
-    /* When the button is clicked, we call the "callback" function
-     * with a pointer to "button 1" as its argument */
-    g_signal_connect (G_OBJECT (button), "clicked",
-	              G_CALLBACK (callback), (gpointer) "button 1");
+  /* Signals used to handle backing pixmap */
 
+  g_signal_connect (G_OBJECT (drawing_area), "expose_event",
+		    G_CALLBACK (expose_event), NULL);
+  g_signal_connect (G_OBJECT (drawing_area),"configure_event",
+		    G_CALLBACK (configure_event), NULL);
 
-    /* Insert button 1 into the upper left quadrant of the table */
-    gtk_table_attach_defaults (GTK_TABLE (table), button, 0, 1, 0, 1);
+  /* Event signals */
 
-    gtk_widget_show (button);
+  g_signal_connect (G_OBJECT (drawing_area), "motion_notify_event",
+		    G_CALLBACK (motion_notify_event), NULL);
+  g_signal_connect (G_OBJECT (drawing_area), "button_press_event",
+		    G_CALLBACK (button_press_event), NULL);
 
-    /* Create second button */
+  gtk_widget_set_events (drawing_area, GDK_EXPOSURE_MASK
+			 | GDK_LEAVE_NOTIFY_MASK
+			 | GDK_BUTTON_PRESS_MASK
+			 | GDK_POINTER_MOTION_MASK
+			 | GDK_POINTER_MOTION_HINT_MASK);
 
-    button = gtk_button_new_with_label ("button 2");
+  /* .. And a quit button */
+  button = gtk_button_new_with_label ("Quit");
+  gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
 
-    /* When the button is clicked, we call the "callback" function
-     * with a pointer to "button 2" as its argument */
-    g_signal_connect (G_OBJECT (button), "clicked",
-                      G_CALLBACK (callback), (gpointer) "button 2");
-    /* Insert button 2 into the upper right quadrant of the table */
-    gtk_table_attach_defaults (GTK_TABLE (table), button, 1, 2, 0, 1);
+  g_signal_connect_swapped (G_OBJECT (button), "clicked",
+			    G_CALLBACK (gtk_widget_destroy),
+			    G_OBJECT (window));
+  gtk_widget_show (button);
 
-    gtk_widget_show (button);
+  gtk_widget_show (window);
 
-    /* Create "Quit" button */
-    button = gtk_button_new_with_label ("Quit");
+  gtk_main ();
 
-    /* When the button is clicked, we call the "delete_event" function
-     * and the program exits */
-    g_signal_connect (G_OBJECT (button), "clicked",
-                      G_CALLBACK (delete_event), NULL);
-
-    /* Insert the quit button into the both 
-     * lower quadrants of the table */
-    gtk_table_attach_defaults (GTK_TABLE (table), button, 0, 2, 1, 2);
-
-    gtk_widget_show (button);
-
-    gtk_widget_show (table);
-    gtk_widget_show (window);
-
-    gtk_main ();
-
-    return 0;
+  return 0;
 }
 
