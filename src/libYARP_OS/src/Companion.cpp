@@ -32,6 +32,7 @@
 #include <yarp/os/Run.h>
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Ping.h>
 
 //#include <ace/OS.h>
 
@@ -238,11 +239,43 @@ int Companion::cmdTerminate(int argc, char *argv[]) {
 
 
 int Companion::cmdPing(int argc, char *argv[]) {
+    bool time = false;
+    bool rate = false;
+    if (argc>=1) {
+        while (argv[0][0]=='-') {
+            if (ConstString(argv[0])=="--time") {
+                time = true;
+            } else {
+                YARP_LOG_ERROR("Unrecognized option");
+                argc = 1;
+            }
+            argc--;
+            argv++;
+        }
+    }
     if (argc == 1) {
         char *targetName = argv[0];
+        if (time) {
+            printf("Timing communication with %s...\n", targetName);
+            Ping ping;
+            ping.setTarget(targetName);
+            for (int i=0; i<10; i++) {
+                ping.apply();
+                ping.report();
+                Time::delay(0.25);
+            }
+            return 0;
+        } 
+        if (rate) {
+            printf("Measuring rate of output from %s...\n", targetName);
+            printf("Oops, not implemented yet, use $YARP_ROOT/example/framerate/ for now\n");
+            return 1;
+        }
         return ping(targetName,false);
-    }
-    ACE_OS::fprintf(stderr,"Please specify a port name\n");
+    } 
+    ACE_OS::fprintf(stderr,"Usage:\n");
+    ACE_OS::fprintf(stderr,"  yarp ping /port\n");
+    ACE_OS::fprintf(stderr,"  yarp ping --time /port\n");
     return 1;
 }
 

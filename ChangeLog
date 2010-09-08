@@ -1,3 +1,9 @@
+2010-09-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/Ping.cpp: add a utility for doing some basic
+	measurement of port connection-communicate-disconnection times.
+	Callable as "yarp ping --time /PORT"
+
 2010-09-03  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: correctly copy an
