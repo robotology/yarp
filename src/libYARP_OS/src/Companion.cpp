@@ -245,6 +245,8 @@ int Companion::cmdPing(int argc, char *argv[]) {
         while (argv[0][0]=='-') {
             if (ConstString(argv[0])=="--time") {
                 time = true;
+            } else if (ConstString(argv[0])=="--rate") {
+                rate = true;
             } else {
                 YARP_LOG_ERROR("Unrecognized option");
                 argc = 1;
@@ -260,7 +262,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
             Ping ping;
             ping.setTarget(targetName);
             for (int i=0; i<10; i++) {
-                ping.apply();
+                ping.connect();
                 ping.report();
                 Time::delay(0.25);
             }
@@ -268,7 +270,9 @@ int Companion::cmdPing(int argc, char *argv[]) {
         } 
         if (rate) {
             printf("Measuring rate of output from %s...\n", targetName);
-            printf("Oops, not implemented yet, use $YARP_ROOT/example/framerate/ for now\n");
+            Ping ping;
+            ping.setTarget(targetName);
+            ping.sample();
             return 1;
         }
         return ping(targetName,false);
@@ -276,6 +280,7 @@ int Companion::cmdPing(int argc, char *argv[]) {
     ACE_OS::fprintf(stderr,"Usage:\n");
     ACE_OS::fprintf(stderr,"  yarp ping /port\n");
     ACE_OS::fprintf(stderr,"  yarp ping --time /port\n");
+    ACE_OS::fprintf(stderr,"  yarp ping --rate /port\n");
     return 1;
 }
 

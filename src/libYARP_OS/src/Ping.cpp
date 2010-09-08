@@ -12,6 +12,8 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Log.h>
+#include <yarp/os/Bottle.h>
+#include <yarp/os/Semaphore.h>
 
 using namespace yarp::os;
 
@@ -21,8 +23,8 @@ using namespace yarp::os;
 #define safe_printf snprintf
 #endif 
 
-void Ping::apply() {
-    last.clear();
+void Ping::connect() {
+    lastConnect.clear();
     double start = Time::now();
     Contact c = NetworkBase::queryName(target);
     double afterQuery = Time::now();
@@ -39,24 +41,27 @@ void Ping::apply() {
         YARP_LOG_ERROR("Port did not respond as expected");
     }
     double stop = Time::now();
-    last.totalTime.add(stop-start);
-    last.targetTime.add(stop-afterQuery);
-    accum.add(last);
+    lastConnect.totalTime.add(stop-start);
+    lastConnect.targetTime.add(stop-afterQuery);
+    accumConnect.add(lastConnect);
 }
 
 void Ping::report() {
-    printf("Ping #%d:\n", (int)(accum.targetTime.count()+0.5));
-    int space = 14;
-    int decimal = 5;
-    printf("  %s connection time (%s with name lookup)\n",
-           renderTime(last.targetTime.mean(),space,decimal).c_str(), 
-           renderTime(last.totalTime.mean(),space,decimal).c_str());
-    if (accum.totalTime.count()>1) {
-    printf("  %s +/- %s on average (%s +/- %s with name lookup)\n",
-           renderTime(accum.targetTime.mean(),space,decimal).c_str(), 
-           renderTime(accum.targetTime.deviation(),space,decimal).c_str(), 
-           renderTime(accum.totalTime.mean(),space,decimal).c_str(),
-           renderTime(accum.totalTime.deviation(),space,decimal).c_str());
+    int ping = (int)(accumConnect.targetTime.count()+0.5);
+    if (ping>0) {
+        printf("Ping #%d:\n", (int)(accumConnect.targetTime.count()+0.5));
+        int space = 14;
+        int decimal = 5;
+        printf("  %s connection time (%s with name lookup)\n",
+               renderTime(lastConnect.targetTime.mean(),space,decimal).c_str(), 
+               renderTime(lastConnect.totalTime.mean(),space,decimal).c_str());
+        if (accumConnect.totalTime.count()>1) {
+            printf("  %s +/- %s on average (%s +/- %s with name lookup)\n",
+                   renderTime(accumConnect.targetTime.mean(),space,decimal).c_str(), 
+                   renderTime(accumConnect.targetTime.deviation(),space,decimal).c_str(), 
+                   renderTime(accumConnect.totalTime.mean(),space,decimal).c_str(),
+                   renderTime(accumConnect.totalTime.deviation(),space,decimal).c_str());
+        }
     }
 }
 
@@ -85,4 +90,50 @@ ConstString Ping::renderTime(double t, int space, int decimal) {
     return buf;
 }
 
+
+class PingSampler : public PortReader {
+public:
+    Semaphore mutex;
+    int ct;
+    double lastTime;
+    Stat period;
+
+    PingSampler() : mutex(1) { ct = 0; lastTime = 0; }
+
+    virtual bool read(ConnectionReader& connection) {
+        double now = Time::now();
+        Bottle b;
+        bool ok = b.read(connection);
+        if (ok) {
+            mutex.wait();
+            ct++;
+            if (ct>1) {
+                double dt = now - lastTime;
+                period.add(dt);
+            }
+            lastTime = now;
+            printf("Period is %g +/- %g (%d)\n",
+                   period.mean(),
+                   period.deviation(),
+                   ct);
+            mutex.post();
+        }
+        return ok;
+    }
+};
+
+void Ping::sample() {
+    Port p;
+    PingSampler sampler;
+    p.setReader(sampler);
+    p.open("...");
+    printf("Pausing for 5 seconds...\n");
+    NetworkBase::connect(target,p.getName());
+    Time::delay(5);
+    p.close();
+    printf("Period is %g +/- %g (%d)\n",
+           sampler.period.mean(),
+           sampler.period.deviation(),
+           sampler.ct);
+}
 

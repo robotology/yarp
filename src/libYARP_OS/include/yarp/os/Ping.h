@@ -15,7 +15,8 @@
 namespace yarp {
     namespace os {
         class Stat;
-        class PingResult;
+        class ConnectResult;
+        class RateResult;
         class Ping;
     }
 }
@@ -82,7 +83,7 @@ private:
     double mu, sigma;
 };
 
-class yarp::os::PingResult {
+class yarp::os::ConnectResult {
 public:
     Stat totalTime;  // total includes name server lookups
     Stat targetTime; // all time involving the target port
@@ -92,11 +93,25 @@ public:
         targetTime.clear();
     }
 
-    void add(const PingResult& alt) {
+    void add(const ConnectResult& alt) {
         totalTime.add(alt.totalTime);
         targetTime.add(alt.targetTime);
     }
 };
+
+class yarp::os::RateResult {
+public:
+    Stat period;
+
+    void clear() {
+        period.clear();
+    }
+
+    void add(const RateResult& alt) {
+        period.add(alt.period);
+    }
+};
+
 
 /**
  *
@@ -117,19 +132,21 @@ public:
         return true;
     }
 
-    void apply();
+    void connect();
+
+    void sample();
 
     void clear() {
-        last.clear();
-        accum.clear();
+        lastConnect.clear();
+        accumConnect.clear();
     }
 
-    PingResult getLastResult() {
-        return last;
+    ConnectResult getLastConnect() {
+        return lastConnect;
     }
 
-    PingResult getAverageResult() {
-        return accum;
+    ConnectResult getAverageConnect() {
+        return accumConnect;
     }
 
     void report();
@@ -138,8 +155,9 @@ public:
 
 private:
     ConstString target;
-    PingResult last, accum;
+    ConnectResult lastConnect, accumConnect;
 };
+
 
 #endif
 
