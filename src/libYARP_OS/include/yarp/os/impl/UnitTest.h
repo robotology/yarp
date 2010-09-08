@@ -80,9 +80,9 @@ public:
     String humanize(const String& txt);
 
 private:
+    UnitTest *parent;
     ACE_Vector<UnitTest *> subTests;
     bool hasProblem;
-    UnitTest *parent;
     static UnitTest *theRoot;
 
     void count(int severity);
