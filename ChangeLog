@@ -1,3 +1,11 @@
+2010-09-08  Lorenzo Natale  <lorenzo.natale@iit.it>
+   * src/libYARP_math/src/Rand.cpp
+   * src/libYARP_math/include/yarp/math/Rand.h
+   * src/libYARP_math/harness/MathTest.cpp:
+   
+   Modified random generation routines to use gsl, updated doxygen and 
+   regression tests.
+
 2010-09-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/src/Ping.cpp: add a utility for doing some basic

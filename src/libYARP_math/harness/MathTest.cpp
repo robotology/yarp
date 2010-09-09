@@ -38,6 +38,86 @@ public:
 		Matrix mt=m.transposed();
 	}
 
+    void rand()
+    {
+        report(0,"checking random  number generation...");
+        //we check the impl class since all the others relay on that
+        Rand::init(10);
+
+        const int N=10000;
+
+        printf("Going to generate %d numbers, normally distributed in the range [0-1]...", N);
+
+        Vector rv=Rand::vector(N);
+
+        printf("done!\n");
+        printf("Now performing some *basic* tests on the sequence\n");
+        //now we can perform clever tests to determine if the numbers we generated are good...
+        double min=1e10;
+        double max=0.0;
+        double average=0.0;
+        int k=0;
+        for(k=0;k<N;k++)
+        {
+            if (rv[k]>max)
+                max=rv[k];
+            if (rv[k]<min)
+                min=rv[k];
+
+            average+=rv[k];
+        }
+        average/=N;
+        
+        //computing std
+        double std=0.0;
+        for(k=0;k<N;k++)
+        {
+            std+=(rv[k]-average)*(rv[k]-average);
+        }
+        std/=N-1;
+        std=sqrt(std);
+
+        printf("Maximum value was: %lf\n", max);
+        printf("Minimum value was: %lf\n", min);
+        printf("Average was: %lf, std was: %lf\n", average, std);
+
+
+        checkTrue(max<=1.0, "sequence is <= 1");
+        checkTrue(max>=0.0, "sequence is >= 0");
+
+        bool avGood=false;
+        bool stdGood=false;
+
+        // 0.01 looks like a reasonable threhold, no particular reasons
+        if (fabs(average-0.5)<0.01)
+            avGood=true;
+        if (fabs(std-0.28)<0.01)
+            stdGood=true;
+
+        checkTrue(avGood, "average is ~0.5");
+        checkTrue(stdGood, "std is ~0.28");
+
+        Rand::init(123);
+        Vector v1=Rand::vector(N);
+        Rand::init(123);
+        Vector v2=Rand::vector(N);
+
+        //check that v1 and v2 are equal
+        checkTrue(v1==v2, "checking that the same seed produces identical sequences");
+
+        Rand::init(456);
+        Vector v3=Rand::vector(N);
+        bool tmp=(v1==v3);
+        checkTrue(!tmp, "checking that different seeds generate different sequences");
+
+        Rand::init();
+        Vector v4=Rand::vector(N);
+        Rand::init();
+        Vector v5=Rand::vector(N);
+        tmp=(v1==v3);
+        checkTrue(!tmp, "checking default seed initialization for two sequences");
+    }
+
     void vectorOps()
     {
         report(0,"checking vector operators...");
@@ -52,16 +132,16 @@ public:
         c=a+b;
 
         double acc=c[0]+c[1]+c[2];
-        checkTrue(acc==6, "operator+ on vectors works");
+        checkTrue(acc==6, "operator+ on vectors");
         
         c=a-b;
         acc=c[0]+c[1]+c[2];
-        checkTrue(acc==0,  "operator- on vectors works");
+        checkTrue(acc==0,  "operator- on vectors");
 
         a=2;
         b=2;
         acc=dot(a,b);
-        checkTrue(acc==12,  "dot product on vectors works");
+        checkTrue(acc==12,  "dot product on vectors");
 
         //scalar mult
         a=1;
@@ -69,9 +149,9 @@ public:
         Vector m2=3*a;
 
         acc=m1[0]+m1[1]+m1[2];
-        checkTrue(acc==9, "operator* works");
+        checkTrue(acc==9, "operator*");
         acc=m2[0]+m2[1]+m2[2];
-        checkTrue(acc==9, "operator* works");
+        checkTrue(acc==9, "operator*");
     }
 
     void vectMatrix()
@@ -95,9 +175,9 @@ public:
         ret2(2)=0;
 
         a1=v1*m;
-        checkTrue((ret1==a1), "Vector by Matrix mult works");
+        checkTrue((ret1==a1), "Vector by Matrix multiplication");
         a2=m*v2;
-        checkTrue((ret2==a2), "Matrix by Vector mult works");
+        checkTrue((ret2==a2), "Matrix by Vector multiplication");
     }
 
     void matrixOps()
@@ -114,7 +194,7 @@ public:
         exp=24; //expected result
         
         bool ret=(exp==C);
-        checkTrue(ret, "Matrix::operator* works");
+        checkTrue(ret, "Matrix::operator*");
     }
 
     void svd()
@@ -202,6 +282,7 @@ public:
 
     virtual void runTests() 
     {
+        rand();
         checkMiscOperations();
         vectorOps();
         matrixOps();
