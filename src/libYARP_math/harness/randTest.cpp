@@ -18,6 +18,8 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 
+#include <math.h>
+
 using namespace yarp::os::impl;
 using namespace yarp::sig;
 using namespace yarp::math;
