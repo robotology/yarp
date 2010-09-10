@@ -63,6 +63,8 @@ public:
     /**
     * Generate a randomly generated number, drawn from
     * a normal distribution.
+    * @param u mean of the distribution, default 0.0
+    * @param sigma sigma of the distribution, default 1.0
     * @return the random number.
     */
     double get(double u=0.0, double sigma=1.0);
