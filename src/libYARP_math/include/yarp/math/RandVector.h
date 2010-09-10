@@ -1,0 +1,49 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Author: Lorenzo Natale
+ * Copyright (C) 2007, 2010 The RobotCub Consortium
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+#ifndef __YARP_MATH_RANDVECTOR__
+#define __YARP_MATH_RANDVECTOR__
+
+#include <yarp/sig/Vector.h>
+#include <yarp/math/RandScalar.h>
+
+namespace yarp {
+    namespace math { 
+        namespace impl {
+            class RandVector;
+        }
+    }
+}
+
+/**
+* A class to generate random vectors, uniform distribution.
+* Internally uses the RandScalar class.
+*/
+class yarp::math::impl::RandVector
+{
+    yarp::sig::Vector data;
+    RandScalar rnd;
+
+private:
+    RandVector(const RandVector &l);
+
+public:
+    RandVector(int s);
+
+    void resize(int s);
+    void init();
+    void init(int seed);
+
+    const yarp::sig::Vector &get();
+    const yarp::sig::Vector &get(const yarp::sig::Vector &min, const yarp::sig::Vector &max);
+};
+
+#endif
+
+

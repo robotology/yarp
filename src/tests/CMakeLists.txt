@@ -10,7 +10,7 @@ if (YARP_COMPILE_TESTS)
   endif (YARP_HAS_MATH_LIB)
 
   foreach(test_family ${targets})
-    file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp)
+    file(GLOB harness_code ../libYARP_${test_family}/harness/*.cpp ../libYARP_${test_family}/harness/*.h)
     get_property(YARP_TREE_INCLUDE_DIRS TARGET YARP_${test_family} 
                  PROPERTY INCLUDE_DIRS)
     include_directories(${YARP_TREE_INCLUDE_DIRS})

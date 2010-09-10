@@ -1,3 +1,10 @@
+2010-09-10  Lorenzo Natale  <lorenzo.natale@iit.it>
+   * src/libYARP_math/
+   
+   Split classes into files for better code organization. Use gsl for
+   normal distribution, added support for normal distributions and matrix
+   generation.
+   
 2010-09-08  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/src/Rand.cpp
    * src/libYARP_math/include/yarp/math/Rand.h
