@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(mjpeg_carrier TYPE MjpegCarrier INCLUDE MjpegCarrier.h)
 endif (COMPILE_PLUGIN_LIBRARY)

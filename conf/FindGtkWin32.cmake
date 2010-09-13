@@ -1,5 +1,10 @@
 #
 # Searches and hopefully finds gtk on windows -- by nat.
+
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 # Assumes that the environment variable GTK_BASEPATH is set to the place
 # where GTK libs have been unpacked/installed. This is the default 
 # behavior of glade for win32, users that want to install gtk manually

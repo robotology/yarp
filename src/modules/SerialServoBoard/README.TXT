@@ -1,3 +1,5 @@
+# Copyright (C) 2008 Giacomo Spigler
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 SerialServoBoard:
   Driver to interface with the following Servo Control Boards, for home-based (cheap) Robotics:

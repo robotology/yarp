@@ -1,3 +1,7 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 find_program(DOXYGEN_EXE NAMES doxygen)
 mark_as_advanced(DOXYGEN_EXE)
 if (DOXYGEN_EXE)

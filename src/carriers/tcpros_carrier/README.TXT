@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 Most of the knowledge in this README is now encapsulated in the "yarpros"
 program.  Run it without arguments for a list of what is possible now.
 

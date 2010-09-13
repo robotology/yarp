@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 This is a start at a C interface to YARP.
 
 It is a step towards enabling a more stable ABI.

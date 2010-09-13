@@ -1,3 +1,6 @@
+# Copyright: (C) 2009 RobotCub Consortium
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 YARP2 DRIVER FOR JRKERR CONTROL BOARDS
 WIN32 VERSION - STILL INCOMPLETE
 

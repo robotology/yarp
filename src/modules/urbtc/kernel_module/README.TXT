@@ -1,3 +1,6 @@
+# Copyright (C) 2007 iXs Research Corp
+# CopyPolicy: Released under the terms of the GNU GPL version 2
+
 Here are the sources for the urbtc kernel module located.
  
 Compile it with the makefile included and load the module urbtc.ko

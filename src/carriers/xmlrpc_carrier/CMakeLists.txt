@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(xmlrpc_carrier TYPE XmlRpcCarrier INCLUDE XmlRpcCarrier.h)
 endif (COMPILE_PLUGIN_LIBRARY)

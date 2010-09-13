@@ -1,3 +1,7 @@
+# Copyright: (C) 2009, 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 ## Skip this whole file if it has already been included
 IF (NOT COMMAND END_PLUGIN_LIBRARY)
 

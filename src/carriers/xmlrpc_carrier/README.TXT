@@ -1,3 +1,5 @@
+# Copyright (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 
 XMLRPC to Bottle translation:

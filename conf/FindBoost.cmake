@@ -7,11 +7,10 @@
 #  BOOST_DEFINITIONS - Compiler switches required for using Boost
 #
 #  Copyright (c) 2006 Andreas Schneider <mail@cynapses.org>
+#  CopyPolicy: BSD
 #
 #  Redistribution and use is allowed according to the terms of the New
 #  BSD license.
-#  For details see the accompanying COPYING-CMAKE-SCRIPTS file.
-#
 
 
 if (BOOST_LIBRARIES AND BOOST_INCLUDE_DIRS)

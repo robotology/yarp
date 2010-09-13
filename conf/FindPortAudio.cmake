@@ -1,3 +1,6 @@
+# Copyright: (C) 2008 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Hatice Kose-Bagci
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 # hacked together for unix by Paul Fitzpatrick
 # updated to work on windows by Hatice Kose-Bagci

@@ -1,5 +1,11 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
+/*
+ * Copyright: (C) 2009 RobotCub Consortium
+ * Author: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ */
+
 #include <yarp/os/ConstString.h>
 #include <yarp/dev/Drivers.h>
 #include <yarp/dev/PolyDriver.h>

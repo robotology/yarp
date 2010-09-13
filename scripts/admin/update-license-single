@@ -29,6 +29,7 @@ my $report = "skipped";
 
 my $policy = "unknown";
 my $copyright = "unknown";
+my $authors = "";
 
 my $quiet = 1;
 if ($txt=~/license/i || $txt=~/copyright/i || $txt=~/rights/i) {
@@ -73,6 +74,19 @@ if ($txt =~ /here is a blessing/) {
     $policy = "In place of a legal notice, a blessing is given."
 }
 
+if ($policy =~ /unknown/) {
+    if ($txt =~ /Everyone is permitted to copy and distribute verbatim copies/) {
+	$policy = "copying and distributing verbatim copies allowed";
+    }
+}
+
+if ($copyright =~ /RobotCub/i) {
+    if ($txt =~ /authors?: *([^ \n\r].*[^ \n\r])/i) {
+	$authors = $1;
+	$authors =~ s/[^ \n\r]*\@[^ \n\r]*//g;
+    }
+}
+
 $copyright =~ s/\s+$//g;
 $copyright =~ s/^\s+//g;
 $copyright =~ s/\xa9/\(C\)/g;
@@ -106,7 +120,11 @@ $txt2 = $txt;
 
 #system "echo \"$report $fname\" >> license-changes.txt";
 if ($report ne "skipped") {
-    my $txt = "$fname\n  Copyright: $copyright\n  CopyPolicy: $policy\n\n";
+    my $authortxt = "";
+    if ($authors ne "") {
+	$authortxt = "  Authors: $authors\n";
+    }
+    my $txt = "$fname\n  Copyright: $copyright\n$authortxt  CopyPolicy: $policy\n\n";
     open(FOUT,">>license-changes.txt");
     print FOUT $txt;
     close(FOUT);

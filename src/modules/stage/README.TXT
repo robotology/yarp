@@ -1,3 +1,5 @@
+# Copyright: 2008 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 stage:
   Driver for a robot in the stage simulator (of player/stage fame).

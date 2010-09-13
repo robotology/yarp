@@ -1,4 +1,7 @@
-# FROM CMake
+
+# Copyright: 2007-2009 Kitware, Inc.
+# CopyPolicy: BSD
+
 # Forked to deal with C++
 
 # - Check sizeof a type

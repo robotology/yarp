@@ -1,6 +1,7 @@
 Driver for Serial communications.
 
-Alex Bernardino, Carlos Beltran, May 2007.
+Copyright: Alex Bernardino, Carlos Beltran, May 2007.
+CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 This driver creates an OS independent serial communications driver for YARP. We exploit the capacity of ACE (Adaptive Communications Environment) to provide serial communications.
 

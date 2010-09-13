@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 if (COMPILE_PLUGIN_LIBRARY)
   prepare_carrier(tcpros_carrier TYPE TcpRosCarrier INCLUDE TcpRosCarrier.h)
   prepare_carrier(rossrv_carrier TYPE RosSrvCarrier INCLUDE TcpRosCarrier.h)

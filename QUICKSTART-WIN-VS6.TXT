@@ -1,3 +1,7 @@
+# Copyright: (C) 2007 RobotCub Consortium
+# Authors: Claudio Castellini, Giorgio Metta
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 --------------------
 a simple yarp2 HOWTO
 --------------------

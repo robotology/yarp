@@ -14,15 +14,12 @@ echo -n | tee license-changes.txt
 echo -n | tee license-good.txt
 echo -n | tee license-odd.txt
 
-mkdir -p license_check
-svn export src license_check/src
-#svn export scripts license_check/scripts
+rm -rf license_check
+#mkdir -p license_check
+#svn export src license_check/src
+svn export . license_check
 
-for f in `cd license_check; find src -type f -iname "*.cpp" -or  -iname "*.c" -or  -iname "*.h" | grep -v "/ace_"`; do
-#for f in `cd license_check; find scripts -type f `; do
-#for f in `find . -type f -iname "CMakeLists.txt" -or  -iname "*.cmake" `; do
-#for f in `find . -type f -not -wholename "*.svn*" -not -wholename "*~" -not -iname "license*.txt" -not -iname "*.jpg"  -not -iname "*.png"   -not -iname "*.ppm"  -not -iname "*.eps" `; do
-    #ignore=`echo "$f" | grep -q dd_orig && echo true || echo false`
+for f in `cd license_check; find . -type f -iname "*.cpp" -or  -iname "*.c" -or  -iname "*.h" -or -iname "*.txt" -or -iname "*.cmake" | grep -v "/ace_" | grep -v "/maze.txt"`; do
     ignore=false
     if $ignore ; then
 	echo ignored $f >> license-changes.txt
@@ -37,9 +34,12 @@ fi
 # license-odd.txt has everything else
 
 # Gather information on main GPL material
-cat license-good.txt  | grep "Copyright:" | sort | uniq > license-gpl.txt
-GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" ) < license-gpl.txt`
-echo $GPL_PEOPLE | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | sort | uniq | grep "." | tee license-gpl-people.txt
+cat license-good.txt  | grep "Copyright:" > license-gpl.txt
+cat license-good.txt  | grep "Authors:" | sed "s/\.$//" > author-gpl.txt
+GPL_PEOPLE=`( sed "s/.*[0-9][0-9][0-9][0-9] */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" | grep -i "[a-z]" ) < license-gpl.txt`
+GPL_AUTHOR=`( sed "s/.*: */ , /g" | sed "s/ and / , /g" | sed "s/ \& / , /g" | sed "s/ - / , /g" | grep -i "[a-z]" ) < author-gpl.txt`
+echo $GPL_PEOPLE | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." | tee license-gpl-people.txt
+echo $GPL_AUTHOR | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." | tee license-gpl-author.txt
 GPL_YEARS=`(sed "s/\-[^ ]*//g" | sed "s/[^0-9 ]/ /g" ) < license-gpl.txt`
 echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "20" | tee license-gpl-years.txt
 
@@ -51,21 +51,25 @@ Unless otherwise stated, files in YARP are:
   Copyright: 2010 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
-Contributed files in YARP are copyright of their authors, and
-released under the same license.  The author list for contributed
-files follows.
+The list of authors for YARP, ordered by file count, is:
 
 EOF
+( cat license-gpl-author.txt license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" | grep -v "RobotCub Consortium" ) | sed "s/^/  /"
 
-echo -n "Copyright "
+cat<<EOF
+
+The list of copyright holders for YARP is:
+EOF
+
+echo -n "  Copyright "
 echo -n `cat license-gpl-years.txt`
-echo ":"
-cat license-gpl-people.txt | sed "s/^/  /"
+echo ""
+( cat license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" ) | sed "s/^/  /"
 echo ""
 
 cat<<EOF
 Certain files are integrated in YARP from other sources with
-compatible licenses.  Here is a list of these files and a summary of
+friendly licenses.  Here is a list of these files and a summary of
 their copyright.  See the individual files for more details.
 
 EOF

@@ -1,3 +1,8 @@
+# Copyright (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick, Lorenzo Natale
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+
 ## This file should be placed in the root directory of your project.
 ## Then modify the CMakeLists.txt file in the root directory of your
 ## project to incorporate the testing dashboard.
