@@ -43,6 +43,8 @@ echo $GPL_AUTHOR | perl -ne "print join(\"\\n\",split(/ *, */,\$_))" | grep "." 
 GPL_YEARS=`(sed "s/\-[^ ]*//g" | sed "s/[^0-9 ]/ /g" ) < license-gpl.txt`
 echo $GPL_YEARS | perl -ne "print join(\"\\n\",split(/ +/,\$_))" | sort | uniq | grep "20" | tee license-gpl-years.txt
 
+grep -i -o "\[thanks [^]]*\]" ChangeLog | sed "s/^.thanks //i" | sed "s/\]//" > license-thanked.txt
+
 # Construct license report
 (
 
@@ -51,10 +53,15 @@ Unless otherwise stated, files in YARP are:
   Copyright: 2010 Paul Fitzpatrick, Giorgio Metta, Lorenzo Natale
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
-The list of authors for YARP, ordered by file count, is:
-
+The list of authors for YARP (ordered by file count) is:
 EOF
 ( cat license-gpl-author.txt license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" | grep -v "RobotCub Consortium" ) | sed "s/^/  /"
+
+cat<<EOF
+
+The list of people thanked in the ChangeLog (ordered by mention count) is:
+EOF
+( cat license-thanked.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] // " ) | sed "s/^/  /"
 
 cat<<EOF
 
