@@ -4,6 +4,7 @@
 #include <string.h>
 
 const int UPDATE_TIME = 200;   //update time in ms
+#define DEBUG_GUI 0
 
 /*
  * Disable PID
@@ -243,6 +244,8 @@ bool partMover::entry_update(partMover *currentPart)
 
   double positions[MAX_NUMBER_OF_JOINTS];
   double torques[MAX_NUMBER_OF_JOINTS];
+  double max_torques[MAX_NUMBER_OF_JOINTS];
+  double min_torques[MAX_NUMBER_OF_JOINTS];
   static int controlModes[MAX_NUMBER_OF_JOINTS];
   static int controlModesOld[MAX_NUMBER_OF_JOINTS];
 
@@ -259,11 +262,19 @@ bool partMover::entry_update(partMover *currentPart)
 	  return true;
   }
 
-  for (k = 0; k < NUMBER_OF_JOINTS; k++) torques[k]=0;
+  for (k = 0; k < NUMBER_OF_JOINTS; k++) 
+  {
+	  max_torques[k]=0;
+	  min_torques[k]=0;
+	  torques[k]=0;
+  }
 
   if (!iiencs->getEncoders(positions)) 
 	  return true;
   itrq->getTorques(torques);
+#if DEBUG_GUI
+  itrq->getTorqueRanges(min_torques,max_torques);
+#endif
   
   //update all joints positions
   for (k = 0; k < NUMBER_OF_JOINTS; k++)
@@ -282,12 +293,16 @@ bool partMover::entry_update(partMover *currentPart)
   // (only one at a time in order to save badwidth)
   k = slowSwitcher%NUMBER_OF_JOINTS;
   slowSwitcher++;
+#if DEBUG_GUI
+  gtk_entry_set_text((GtkEntry*) inEntry[k],  "off");
+#else
   ipos->checkMotionDone(k, &done);
   if (!done)
       gtk_entry_set_text((GtkEntry*) inEntry[k],  " "); 
   else
       gtk_entry_set_text((GtkEntry*) inEntry[k],  "@");
-  
+#endif
+
   // *** update the controlMode section ***
   // the new icubinterface does not increase the bandwidth consumption
   // ret = true; useless guys!
