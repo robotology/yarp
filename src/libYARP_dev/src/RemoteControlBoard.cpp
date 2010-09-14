@@ -618,7 +618,7 @@ protected:
         cmd.addInt(j);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            val = (bool)(response.get(2).asInt());
+            val = (response.get(2).asInt()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }
@@ -631,7 +631,7 @@ protected:
         cmd.addVocab(v);
         bool ok = rpc_p.write(cmd, response);
         if (CHECK_FAIL(ok, response)) {
-            val = (bool)(response.get(2).asInt());
+            val = (response.get(2).asInt()!=0);
             getTimeStamp(response, lastStamp);
             return true;
         }

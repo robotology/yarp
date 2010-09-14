@@ -239,7 +239,7 @@ public:
 
         thread_period = prop.check("threadrate", 20, "thread rate in ms. for streaming encoder data").asInt();
 
-        bool stream_state = prop.check("stream_state", 1, "whether to stream state (1) or not (0)").asInt();
+        bool stream_state = (prop.check("stream_state", 1, "whether to stream state (1) or not (0)").asInt()!=0);
 
         Value *name;
         if (prop.check("subdevice",name,"name of specific control device to wrap")) {
