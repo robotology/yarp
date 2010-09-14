@@ -13,7 +13,7 @@
 using namespace yarp::math;
  
 /* should be thread safe, from gsl */
-yarp::math::impl::RandnScalar theRandnScalar;
+yarp::math::RandnScalar theRandnScalar;
 
 double NormRand::scalar(double u, double sigma)
 {
