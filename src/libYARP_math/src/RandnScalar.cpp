@@ -20,7 +20,6 @@
 
 using namespace yarp::sig;
 using namespace yarp::math;
-using namespace yarp::math::impl;
 
 inline gsl_rng *implementation(void *t)
 {

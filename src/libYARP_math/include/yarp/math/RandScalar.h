@@ -12,9 +12,7 @@
 
 namespace yarp {
     namespace math { 
-        namespace impl {
             class RandScalar;
-        }
     }
 }
 
@@ -44,7 +42,7 @@ namespace yarp {
 * for more information.
 * 
 */
-class yarp::math::impl::RandScalar
+class yarp::math::RandScalar
 {
     void *impl;
     int seed;

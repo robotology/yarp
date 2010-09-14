@@ -1,3 +1,8 @@
+2010-09-14  Lorenzo Natale  <lorenzo.natale@iit.it>
+   * src/libYARP_math/
+   
+   RandScalar and RandnScalar moved to yarp::math from yarp::math::impl.
+   
 2010-09-14  Marco Randazzo <marco.randazzo@iit.it>
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
@@ -5,7 +10,7 @@
 	* src/libYARP_dev/src/RemoteControlBoard.cpp
 	
 	Added two new methods to torqueControl interface: getTorqueRange(), getTorqueRanges()
-	
+
 2010-09-10  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/
    

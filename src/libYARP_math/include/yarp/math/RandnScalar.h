@@ -14,9 +14,7 @@
 
 namespace yarp {
     namespace math { 
-        namespace impl {
             class RandnScalar;
-        }
     }
 }
 
@@ -24,7 +22,7 @@ namespace yarp {
 * A random number generator, normal distribution.
 * Uses the RandScalar class and the Box-Muller algorithm.
 */
-class yarp::math::impl::RandnScalar
+class yarp::math::RandnScalar
 {
     void *impl;
     long seed;
