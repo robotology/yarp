@@ -1000,6 +1000,21 @@ public:
      */
     virtual bool getTorquesRaw(double *t)=0;
 
+    /** Get the full scale of the torque sensor of a given joint
+     * @param j joint number
+     * @param min minimum torque of the joint j
+     * @param max maximum torque of the joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRangeRaw(int j, double *min, double *max)=0;
+
+    /** Get the full scale of the torque sensors of all joints
+     * @param min pointer to the array that will store minimum torques of the joints
+     * @param max pointer to the array that will store maximum torques of the joints
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRangesRaw(double *min, double *max)=0;
+
     /** Set the reference value of the torque for all joints.
      * @param t pointer to the array of torque values
      * @return true/false
@@ -1802,7 +1817,7 @@ public:
     /** Get the value of the torque on a given joint (this is the
      * feedback if you have a torque sensor).
      * @param j joint number
-     * @return torque value
+     * @return true/false on success/failure
      */
     virtual bool getTorque(int j, double *t)=0;
 
@@ -1811,6 +1826,21 @@ public:
      * @param t pointer to the array that will store the output
      */
     virtual bool getTorques(double *t)=0;
+
+    /** Get the full scale of the torque sensor of a given joint
+     * @param j joint number
+     * @param min minimum torque of the joint j
+     * @param max maximum torque of the joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRange(int j, double *min, double *max)=0;
+
+    /** Get the full scale of the torque sensors of all joints
+     * @param min pointer to the array that will store minimum torques of the joints
+     * @param max pointer to the array that will store maximum torques of the joints
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRanges(double *min, double *max)=0;
 
     /** Set new pid value on multiple axes.
      * @param pids pointer to a vector of pids
@@ -2033,6 +2063,8 @@ public:
 #define VOCAB_TORQUE_MODE VOCAB4('t','r','q','d')
 #define VOCAB_TRQS VOCAB4('t','r','q','s')
 #define VOCAB_TRQ  VOCAB3('t','r','q')
+#define VOCAB_RANGES VOCAB4('r','n','g','s')
+#define VOCAB_RANGE  VOCAB3('r','n','g')
 #define VOCAB_IMP_PARAM   VOCAB3('i','p','r')
 #define VOCAB_IMP_OFFSET  VOCAB3('i','o','f')
 

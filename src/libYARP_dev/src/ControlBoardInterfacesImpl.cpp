@@ -143,6 +143,7 @@ ImplementTorqueControl::ImplementTorqueControl(ITorqueControlRaw *tq)
     iTorqueRaw = tq;
     helper=0;
     temp=0;
+	temp2=0;
     tmpPids=0;
 }
 
@@ -160,7 +161,8 @@ bool ImplementTorqueControl::initialize(int size, const int *amap, const double 
     _YARP_ASSERT (helper != 0);
     temp=new double [size];
     _YARP_ASSERT (temp != 0);
-
+    temp2=new double [size];
+    _YARP_ASSERT (temp2 != 0);
     tmpPids=new Pid[size];
     _YARP_ASSERT (tmpPids!=0);
 
@@ -175,6 +177,7 @@ bool ImplementTorqueControl::uninitialize ()
         helper=0;
     }
     checkAndDestroy(temp);
+	checkAndDestroy(temp2);
     checkAndDestroy(tmpPids);
 
     return true;
@@ -235,6 +238,21 @@ bool ImplementTorqueControl::getTorque(int j, double *t)
     int k;
     k=castToMapper(helper)->toHw(j);
     return iTorqueRaw->getTorqueRaw(k, t);
+}
+
+bool ImplementTorqueControl::getTorqueRanges(double *min, double *max)
+{
+    bool ret = iTorqueRaw->getTorqueRangesRaw(temp,temp2);
+    castToMapper(helper)->toUser(temp, min);
+	castToMapper(helper)->toUser(temp2, max);
+    return ret;
+}
+
+bool ImplementTorqueControl::getTorqueRange(int j, double *min, double *max)
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iTorqueRaw->getTorqueRangeRaw(k, min, max);
 }
 
 bool ImplementTorqueControl::setTorquePid(int j, const Pid &pid)

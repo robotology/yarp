@@ -689,6 +689,7 @@ protected:
     yarp::dev::ITorqueControlRaw *iTorqueRaw;
     void *helper;
     double *temp;
+	double *temp2;
     Pid *tmpPids;
 
     /**
@@ -727,6 +728,8 @@ public:
     virtual bool setRefTorque(int j, double t);
     virtual bool getTorques(double *t);
     virtual bool getTorque(int j, double *t);
+    virtual bool getTorqueRange(int j, double *min, double *max);
+    virtual bool getTorqueRanges(double *min, double *max);
     virtual bool setTorquePid(int j, const Pid &pid);
     virtual bool setTorquePids(const Pid *pids);
     virtual bool setTorqueErrorLimit(int j, double limit);

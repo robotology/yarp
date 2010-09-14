@@ -455,7 +455,7 @@ protected:
         return CHECK_FAIL(ok, response);
     }
 
-    bool set2VDA(int v1, int v2, const double *val) {
+    bool set2V1DA(int v1, int v2, const double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
@@ -464,6 +464,22 @@ protected:
         int i;
         for (i = 0; i < nj; i++)
             l.addDouble(val[i]);
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+    bool set2V2DA(int v1, int v2, const double *val1, const double *val2) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(v1);
+        cmd.addVocab(v2);
+		int i;
+        Bottle& l1 = cmd.addList();
+        for (i = 0; i < nj; i++)
+            l1.addDouble(val1[i]);
+        Bottle& l2 = cmd.addList();
+        for (i = 0; i < nj; i++)
+            l2.addDouble(val2[i]);
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);
     }
@@ -546,6 +562,24 @@ protected:
         if (CHECK_FAIL(ok, response)) {
             // ok
             *val = response.get(2).asDouble();
+
+            getTimeStamp(response, lastStamp);
+            return true;
+        }
+        return false;
+    }
+
+    bool get2V1I2D(int v1, int v2, int j, double *val1, double *val2) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v1);
+        cmd.addVocab(v2);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            // ok
+            *val1 = response.get(2).asDouble();
+			*val2 = response.get(3).asDouble();
 
             getTimeStamp(response, lastStamp);
             return true;
@@ -668,7 +702,7 @@ protected:
     * @param val is the array of double
     * @return true/false on success/failure
     */
-    bool get2VDA(int v1, int v2, double *val) {
+    bool get2V1DA(int v1, int v2, double *val) {
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
@@ -684,6 +718,38 @@ protected:
             YARP_ASSERT (nj == njs);
             for (i = 0; i < nj; i++)
                 val[i] = l.get(i).asDouble();
+
+            getTimeStamp(response, lastStamp);
+
+            return true;
+        }
+        return false;
+    }
+
+    bool get2V2DA(int v1, int v2, double *val1, double *val2) {
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(v1);
+        cmd.addVocab(v2);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            int i;
+            Bottle& l1 = *(response.get(2).asList());
+            if (&l1 == 0)
+                return false;
+            Bottle& l2 = *(response.get(3).asList());
+            if (&l2 == 0)
+                return false;
+
+            int nj1 = l1.size();
+			int nj2 = l2.size();
+           // ACE_ASSERT (nj == nj1);
+		   // ACE_ASSERT (nj == nj2);
+
+            for (i = 0; i < nj1; i++)
+                val1[i] = l1.get(i).asDouble();
+            for (i = 0; i < nj2; i++)
+                val2[i] = l2.get(i).asDouble();
 
             getTimeStamp(response, lastStamp);
 
@@ -1602,10 +1668,10 @@ public:
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, t); }
 
     bool getRefTorques(double *t)
-    { return get2VDA(VOCAB_TORQUE, VOCAB_REFS, t); }
+    { return get2V1DA(VOCAB_TORQUE, VOCAB_REFS, t); }
 
     bool setRefTorques(const double *t)
-    { return set2VDA(VOCAB_TORQUE, VOCAB_REFS, t); }
+    { return set2V1DA(VOCAB_TORQUE, VOCAB_REFS, t); }
 
     bool setRefTorque(int j, double v)
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_REF, j, v); }
@@ -1635,7 +1701,13 @@ public:
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_TRQ, j, t); }
 
     bool getTorques(double *t)
-    { return get2VDA(VOCAB_TORQUE, VOCAB_TRQS, t); }
+    { return get2V1DA(VOCAB_TORQUE, VOCAB_TRQS, t); }
+
+    bool getTorqueRange(int j, double *min, double* max)
+    { return get2V1I2D(VOCAB_TORQUE, VOCAB_RANGE, j, min, max); }
+
+    bool getTorqueRanges(double *min, double *max)
+    { return get2V2DA(VOCAB_TORQUE, VOCAB_RANGES, min, max); }
 
     bool setTorquePids(const Pid *pids)
     {
@@ -1651,19 +1723,19 @@ public:
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
 
     bool setTorqueErrorLimits(const double *limits)
-    { return set2VDA(VOCAB_TORQUE, VOCAB_LIM, limits); }
+    { return set2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
 
     bool getTorqueError(int j, double *err)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_ERR, j, err); }
 
     bool getTorqueErrors(double *errs)
-    { return get2VDA(VOCAB_TORQUE, VOCAB_ERRS, errs); }
+    { return get2V1DA(VOCAB_TORQUE, VOCAB_ERRS, errs); }
 
     bool getTorquePidOutput(int j, double *out)
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_OUTPUT, j, out); }
 
     bool getTorquePidOutputs(double *out)
-    { return get2VDA(VOCAB_TORQUE, VOCAB_OUTPUTS, out); }
+    { return get2V1DA(VOCAB_TORQUE, VOCAB_OUTPUTS, out); }
 
     bool getTorquePid(int j, Pid *pid)
     { 
@@ -1773,7 +1845,7 @@ public:
     { return get2V1I1D(VOCAB_TORQUE, VOCAB_LIM, j, limit); }
 
     bool getTorqueErrorLimits(double *limits)
-    { return get2VDA(VOCAB_TORQUE, VOCAB_LIM, limits); }
+    { return get2V1DA(VOCAB_TORQUE, VOCAB_LIM, limits); }
 
     bool resetTorquePid(int j)
     { return set2V1I(VOCAB_TORQUE, VOCAB_RESET, j); }
