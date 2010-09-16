@@ -1,3 +1,10 @@
+2010-09-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/FindACE.cmake: add a bit of paranoia, don't assume that
+	because the debug version of ACE was found, that the release
+	version is also available. [Thanks Ze Ji] and
+	[thanks Lorenzo Natale] for drawing attention to this.
+
 2010-09-14  Lorenzo Natale  <lorenzo.natale@iit.it>
    * src/libYARP_math/
    
