@@ -11,6 +11,8 @@
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
+if (NOT ACE_FOUND)
+
 IF (EXISTS ${CMAKE_BINARY_DIR}/ace4yarp)
   SET(BUILTIN_ACE TRUE CACHE BOOL "compile ACE with YARP" FORCE)
   SET(BUILTIN_ACE_SOURCE_DIR "${CMAKE_BINARY_DIR}/ace4yarp/src" CACHE STRING "compile ACE source with YARP" FORCE)
@@ -174,3 +176,5 @@ if (NOT BUILTIN_ACE)
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(ACE "ACE not found" ACE_LIBRARIES ACE_INCLUDE_DIRS)
 endif ()
+
+endif()
