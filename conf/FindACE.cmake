@@ -11,6 +11,8 @@
 # check for "built-in" ACE4YARP - an experimental feature,
 # only currently used for building YARP binary distributions.
 
+## script does not work if executed twice bc ACE_LIBRARY get appended
+# fix "optimized.lib" problem in windows (Lorenzo Natale)
 if (NOT ACE_FOUND)
 
 IF (EXISTS ${CMAKE_BINARY_DIR}/ace4yarp)
