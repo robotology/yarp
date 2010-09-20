@@ -4,9 +4,6 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 
-# replace "..." with the path to your YARP binaries if needed
-SET(YARP_DIR "${CMAKE_SOURCE_DIR}/../.." CACHE LOCATION "where is yarp?")
-
 SET(CREATE_JAVA FALSE CACHE BOOL "Do you want to create a Java interface")
 SET(CREATE_PYTHON FALSE CACHE BOOL "Do you want to create the Python interface")
 SET(CREATE_PERL FALSE CACHE BOOL "Do you want to create the Perl interface")
@@ -74,6 +71,17 @@ IF (CREATE_PYTHON)
                    OUTPUT_VARIABLE PYTHON_INSTDIR OUTPUT_STRIP_TRAILING_WHITESPACE )
    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yarp.py ${CMAKE_CURRENT_BINARY_DIR}/_yarp.so 
            DESTINATION ${PYTHON_INSTDIR} )
+
+   IF (WIN32)
+     # Check if we have a target called _yarp as SWIG_ADD_MODULE
+     # will currently give. If not, we're probably in the distant
+     # future, and we'd best not meddle.
+     GET_TARGET_PROPERTY(yarp_lib_location _yarp LOCATION)
+     IF (yarp_lib_location)
+       SET_TARGET_PROPERTIES(_yarp PROPERTIES SUFFIX ".pyd")
+     ENDIF ()
+   ENDIF (WIN32)
+
 ENDIF (CREATE_PYTHON)
 
 IF (CREATE_PERL)

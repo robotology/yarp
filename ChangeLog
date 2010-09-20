@@ -1,3 +1,8 @@
+2010-09-20  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* example/swig/CMakeLists.txt: force swig to use .pyd extension
+	for python on windows [thanks Ze Ji] [thanks Philipp Robbel]
+
 2010-09-16  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/FindACE.cmake: add a bit of paranoia, don't assume that
