@@ -1,3 +1,8 @@
+2010-09-21  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* conf/FindGSL.cmake: clean up license statement on this
+	file [thanks Jan Woetzel]!
+
 2010-09-20  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* example/swig/CMakeLists.txt: force swig to use .pyd extension

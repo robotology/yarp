@@ -1,3 +1,7 @@
+# Copyright: (C) 2010 Jan Woetzel
+# Small modifications by Lorenzo Natale and Francesco Nori
+# CopyPolicy: Use under LGPL or BSD license at your choice
+
 # 
 # Try to find GSL library
 # Once run this will define: 
