@@ -57,6 +57,18 @@ public:
      * @return number of channels (0 in case of errors).
      */
     virtual int getChannels()=0;
+
+    /* Calibrates the whole sensor.
+	 * @return status.
+     */
+	virtual int calibrateSensor()=0;
+
+    /* Calibrates one single channel.
+	 * @param ch: channel number.
+	 * @param v: calibration value.
+	 * @return status.
+     */
+	virtual int calibrateChannel(int ch, double v)=0;
 };
 
 #endif

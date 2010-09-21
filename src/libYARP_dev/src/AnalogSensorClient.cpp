@@ -203,6 +203,18 @@ public:
      */
     int getChannels();
 
+	/* Calibrates the whole sensor.
+	 * @return status.
+     */
+	int calibrateSensor();
+
+    /* Calibrates one single channel.
+	 * @param ch: channel number.
+	 * @param v: calibration value.
+	 * @return status.
+     */
+	int calibrateChannel(int ch, double v);
+
     /* IPreciselyTimed methods */
     /**
     * Get the time stamp for the last read data
@@ -269,6 +281,18 @@ int yarp::dev::AnalogSensorClient::getState(int ch)
 int yarp::dev::AnalogSensorClient::getChannels()
 {
     return inputPort.getChannels();
+}
+
+int yarp::dev::AnalogSensorClient::calibrateSensor()
+{
+	//not implemented yet
+    return AS_OK;
+}
+
+int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double v)
+{
+	//not implemented yet
+    return AS_OK;
 }
 
 Stamp yarp::dev::AnalogSensorClient::getLastInputStamp()

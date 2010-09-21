@@ -1,3 +1,10 @@
+2010-09-21  Marco Randazzo <marco.randazzo@iit.it>
+
+	* src/libYARP_dev/src/AnalogSensorClient.cpp
+	* src/libYARP_dev/include/yarp/dev/IAnalogSensor.h
+
+	IAnalogSensor: added the two methods calibrateSensor(), calibrateChannel()
+
 2010-09-21  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* conf/YarpVersion.cmake: bump version up to 2.3.1
