@@ -18,7 +18,11 @@ How to make a YARP release:
 
 * If license-statement.txt is correct, do:
     cp license-statement.txt COPYING
-  And commit.
+
+* Update version number in conf/YarpVersion.cmake and add a ChangeLog
+  entry saying "bump" on that file
+
+* Commit.
 
 * Look at this page to get the current YARP version, say 2.1.6:
 

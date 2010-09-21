@@ -1,5 +1,7 @@
 2010-09-21  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
+	* conf/YarpVersion.cmake: bump version up to 2.3.1
+
 	* conf/FindGSL.cmake: clean up license statement on this
 	file [thanks Jan Woetzel]!
 
