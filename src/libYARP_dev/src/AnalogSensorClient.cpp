@@ -97,10 +97,17 @@ public:
         Stamp newStamp;
         getEnvelope(newStamp);
 
+		//initialialization (first received data)
+		if (lastStamp.isValid()==false)
+		{
+			lastStamp = newStamp;
+		}
+
         //now compare timestamps
         if ((1000*(newStamp.getTime()-lastStamp.getTime()))<ANALOG_TIMEOUT)
         {
             state=IAnalogSensor::AS_OK;
+			lastStamp = newStamp;
         }
         else
         {
