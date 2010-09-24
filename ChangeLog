@@ -1,3 +1,8 @@
+2010-09-24  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
+
+	* conf/CMakeLists.txt: add some missing install files
+	[thanks Florent D'Halluin]
+
 2010-09-24  Marco Randazzo <marco.randazzo@iit.it>
 
 	* src/libYARP_dev/src/AnalogSensorClient.cpp

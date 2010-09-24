@@ -20,9 +20,16 @@ endforeach(conf)
 # users of YARP.
 
 foreach(conf YarpPlugin.cmake YarpDevice.cmake FindOpenCV.cmake FindGtkPlus.cmake FindGSL.cmake FindPortAudio.cmake FindGtkWin32.cmake FindFFMPEG.cmake FindBoost.cmake FindACE.cmake)
-  configure_file(${CMAKE_SOURCE_DIR}/conf/${conf}
-                 ${CMAKE_BINARY_DIR}/conf/${conf} COPYONLY IMMEDIATE)
-  install(FILES ${CMAKE_BINARY_DIR}/conf/${conf} COMPONENT scripts 
-	  DESTINATION share/yarp/cmake) # there is probably a better place
-endforeach(conf)
+  #configure_file(${CMAKE_SOURCE_DIR}/conf/${conf}
+  #               ${CMAKE_BINARY_DIR}/conf/${conf} COPYONLY IMMEDIATE)
+  install(FILES ${CMAKE_SOURCE_DIR}/conf/${conf} COMPONENT scripts 
+	  DESTINATION share/yarp/cmake)
+endforeach()
+
+foreach(templ yarp_plugin_carrier.cpp.in yarp_plugin_device.cpp.in yarpdev_lib.cpp.in yarpdev_lib.h.in yarpdev_lib_main.cpp.in)
+  #configure_file(${CMAKE_SOURCE_DIR}/conf/template/${conf}
+  #               ${CMAKE_BINARY_DIR}/conf/template/${conf} COPYONLY IMMEDIATE)
+  install(FILES ${CMAKE_SOURCE_DIR}/conf/template/${templ} COMPONENT scripts 
+	  DESTINATION share/yarp/cmake/template)
+endforeach()
 
