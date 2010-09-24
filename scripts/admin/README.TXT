@@ -24,6 +24,13 @@ How to make a YARP release:
 
 * Commit.
 
+* Do something like this:
+
+svn copy https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.3.1 -m "yarp release 2.3.1" and note revision number.
+
+./scripts/admin/make-source-package-svn yarp-2.3.1
+
+
 * Look at this page to get the current YARP version, say 2.1.6:
 
   http://eris.liralab.it/yarp/specs/dox/download.html
