@@ -12,6 +12,8 @@
 using namespace yarp::os::impl;
 using namespace yarp::os::impl;
 
+using namespace yarp::os;
+
 bool ShmemOutputStreamImpl::open(int port,int size)
 {
 	m_pAccessMutex=m_pWaitDataMutex=0;

@@ -21,6 +21,7 @@
 #include <yarp/os/impl/HttpCarrier.h>
 
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 static Logger carriersLog("Carriers", Logger::get());
 
