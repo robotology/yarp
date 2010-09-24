@@ -12,6 +12,10 @@
 // ffmpeg changes all the time.
 // time to start factoring out some of the things that change.
 
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+
 extern "C" {
 #include <avcodec.h>
 #include <avformat.h>

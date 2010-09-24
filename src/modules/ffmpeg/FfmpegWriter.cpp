@@ -35,7 +35,6 @@
  */
 
 
-
 #include "FfmpegWriter.h"
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>
@@ -344,14 +343,14 @@ static AVFrame *alloc_picture(int pix_fmt, int width, int height)
     picture = avcodec_alloc_frame();
     if (!picture)
         return NULL;
-    size = avpicture_get_size(pix_fmt, width, height);
+    size = avpicture_get_size((PixelFormat)pix_fmt, width, height);
     picture_buf = (uint8_t*)av_malloc(size);
     if (!picture_buf) {
         av_free(picture);
         return NULL;
     }
     avpicture_fill((AVPicture *)picture, picture_buf,
-                   pix_fmt, width, height);
+                   (PixelFormat)pix_fmt, width, height);
     return picture;
 }
 

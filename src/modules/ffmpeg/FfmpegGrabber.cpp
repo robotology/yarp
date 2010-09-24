@@ -6,7 +6,6 @@
  *
  */
 
-
 #include "FfmpegGrabber.h"
 #include <yarp/os/all.h>
 #include <yarp/sig/all.h>

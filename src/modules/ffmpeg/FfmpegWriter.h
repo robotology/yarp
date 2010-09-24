@@ -10,6 +10,10 @@
 #ifndef FfmpegWriter_INC
 #define FfmpegWriter_INC
 
+#ifndef __STDC_CONSTANT_MACROS
+#define __STDC_CONSTANT_MACROS
+#endif
+
 extern "C" {
 #include <avcodec.h>
 #include <avformat.h>
