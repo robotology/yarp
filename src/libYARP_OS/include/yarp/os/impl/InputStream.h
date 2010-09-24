@@ -9,7 +9,7 @@
 #ifndef _YARP2_INPUTSTREAM_
 #define _YARP2_INPUTSTREAM_
 
-#include <yarp/Bytes.h>
+#include <yarp/os/Bytes.h>
 
 namespace yarp {
     namespace os {
@@ -59,7 +59,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        int ct = read(Bytes((char*)&result,1));
+        int ct = read(yarp::os::Bytes((char*)&result,1));
         if (ct<1) {
             return -1;
         }
@@ -80,7 +80,7 @@ public:
      *
      */
     virtual int read(const Bytes& b, int offset, int len) { // throws
-        return read(Bytes(b.get()+offset,len));
+        return read(yarp::os::Bytes(b.get()+offset,len));
     }
 
     /**
@@ -93,7 +93,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual int read(const Bytes& b) = 0;
+    virtual int read(const yarp::os::Bytes& b) = 0;
 
 
     /**
@@ -101,7 +101,7 @@ public:
      * Like read, but solicit partial responses.
      *
      */
-    virtual int partialRead(const Bytes& b) {
+    virtual int partialRead(const yarp::os::Bytes& b) {
         return read(b);
     }
 

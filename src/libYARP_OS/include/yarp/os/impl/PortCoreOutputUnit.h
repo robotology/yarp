@@ -74,9 +74,9 @@ public:
 
     virtual Route getRoute();
 
-    virtual void *send(Writable& writer, 
-                       Readable *reader,
-                       Writable *callback,
+    virtual void *send(yarp::os::PortWriter& writer, 
+                       yarp::os::PortReader *reader,
+                       yarp::os::PortWriter *callback,
                        void *tracker,
                        const String& envelope,
                        bool waitAfter,
@@ -91,9 +91,9 @@ private:
     bool closing, finished, running, threaded, sending;
     String name;
     SemaphoreImpl phase, activate, trackerMutex;
-    Writable *cachedWriter;
-    Readable *cachedReader;
-    Writable *cachedCallback;
+    yarp::os::PortWriter *cachedWriter;
+    yarp::os::PortReader *cachedReader;
+    yarp::os::PortWriter *cachedCallback;
     void *cachedTracker;
     String cachedEnvelope;
 

@@ -118,13 +118,13 @@ bool PortCore::listen(const Address& address) {
 }
 
 
-void PortCore::setReadHandler(Readable& reader) {
+void PortCore::setReadHandler(PortReader& reader) {
     YARP_ASSERT(running==false);
     YARP_ASSERT(this->reader==NULL);
     this->reader = &reader;
 }
 
-void PortCore::setReadCreator(ReadableCreator& creator) {
+void PortCore::setReadCreator(PortReaderCreator& creator) {
     YARP_ASSERT(running==false);
     YARP_ASSERT(this->readableCreator==NULL);
     this->readableCreator = &creator;
@@ -1019,7 +1019,8 @@ bool PortCore::readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
 }
 
 
-bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
+bool PortCore::send(PortWriter& writer, PortReader *reader, 
+                    PortWriter *callback) {
     if (!logNeeded) {
         return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
     }
@@ -1031,8 +1032,8 @@ bool PortCore::send(Writable& writer, Readable *reader, Writable *callback) {
     return sendHelper(writer,PORTCORE_SEND_NORMAL,reader,callback);
 }
 
-bool PortCore::sendHelper(Writable& writer, 
-                          int mode, Readable *reader, Writable *callback) {
+bool PortCore::sendHelper(PortWriter& writer, 
+                          int mode, PortReader *reader, PortWriter *callback) {
 
     bool all_ok = true;
     int logCount = 0;
@@ -1174,7 +1175,7 @@ void PortCore::notifyCompletion(void *tracker) {
 }
 
 
-bool PortCore::setEnvelope(Writable& envelope) {
+bool PortCore::setEnvelope(PortWriter& envelope) {
     BufferedConnectionWriter buf(true);
     bool ok = envelope.write(buf);
     if (ok) {
@@ -1199,7 +1200,7 @@ String PortCore::getEnvelope() {
     return envelope;
 }
 
-bool PortCore::getEnvelope(Readable& envelope) {
+bool PortCore::getEnvelope(PortReader& envelope) {
     StringInputStream sis;
     sis.add(this->envelope.c_str());
     sis.add("\r\n");

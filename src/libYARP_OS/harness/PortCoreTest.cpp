@@ -9,7 +9,7 @@
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Carriers.h>
-#include <yarp/Readable.h>
+#include <yarp/os/PortReader.h>
 #include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Companion.h>

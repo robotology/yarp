@@ -15,7 +15,7 @@
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/Bytes.h>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/Contact.h>
@@ -67,7 +67,7 @@ public:
         this->protocol = protocol;
     }
 
-    virtual bool expectBlock(const Bytes& b) {
+    virtual bool expectBlock(const yarp::os::Bytes& b) {
         if (!isGood()) { 
             //throw IOException("read from invalid stream"); 
             return false;
@@ -92,7 +92,7 @@ public:
         //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return 0; }
         NetType::NetInt32 x = 0;
-        Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
         int r = in->read(b);
         if (r<b.length()) {
@@ -107,7 +107,7 @@ public:
         //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return 0; }
         NetType::NetFloat64 x = 0;
-        Bytes b((char*)(&x),sizeof(x));
+        yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
         int r = in->read(b);
         if (r<b.length()) {
@@ -122,7 +122,7 @@ public:
         //if (!isValid()) { throw IOException("read from invalid stream"); }
         if (!isGood()) { return ""; }
         char *buf = new char[len];
-        Bytes b(buf,len);
+        yarp::os::Bytes b(buf,len);
         YARP_ASSERT(in!=NULL);
         int r = in->read(b);
         if (r<b.length()) {
@@ -201,7 +201,7 @@ public:
 
 
     virtual bool expectBlock(const char *data, int len) {
-        return expectBlock(Bytes((char*)data,len));
+        return expectBlock(yarp::os::Bytes((char*)data,len));
     }
 
     virtual ::yarp::os::ConstString expectText(int terminatingChar) {
@@ -243,7 +243,7 @@ public:
         ref = obj;
     }
 
-    virtual Bytes readEnvelope();
+    virtual yarp::os::Bytes readEnvelope();
 
 private:
 

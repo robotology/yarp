@@ -62,9 +62,9 @@ public:
         doomed = flag;
     }
 
-    virtual void *send(Writable& writer, 
-                       Readable *reader,
-                       Writable *callback,
+    virtual void *send(yarp::os::PortWriter& writer, 
+                       yarp::os::PortReader *reader,
+                       yarp::os::PortWriter *callback,
                        void *tracker,
                        const String& envelope,                       
                        bool waitAfter = true,

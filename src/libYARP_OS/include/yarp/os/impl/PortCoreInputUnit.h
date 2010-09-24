@@ -40,7 +40,7 @@ public:
         finished = false;
         running = false;
         name = owner.getName();
-        ReadableCreator *creator = owner.getReadCreator();
+        yarp::os::PortReaderCreator *creator = owner.getReadCreator();
         localReader = NULL;
         if (creator!=NULL) {
             localReader = creator->create();
@@ -87,7 +87,7 @@ private:
     bool autoHandshake;
     bool closing, finished, running;
     String name;
-    Readable *localReader;
+    yarp::os::PortReader *localReader;
     Route officialRoute;
     bool reversed;
 

@@ -2,7 +2,7 @@
 
 /*
 * Author: Lorenzo Natale.
-* Copyright (C) 2009 The Robotcub consortium
+* Copyright (C) 2009 The RobotCub consortium
 * Based on code by Paul Fitzpatrick 2007.
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
@@ -10,7 +10,7 @@
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
-#include <yarp/String.h>
+#include <yarp/os/impl/String.h>
 #include <yarp/os/Network.h>
 
 //#include <ace/OS.h>
@@ -22,7 +22,7 @@
 #include <ace/High_Res_Timer.h>
 
 using namespace yarp::os;
-using namespace yarp;
+using namespace yarp::os::impl;
 
 
 

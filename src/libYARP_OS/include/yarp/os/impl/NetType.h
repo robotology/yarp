@@ -10,7 +10,7 @@
 #define _YARP2_NETTYPE_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/Bytes.h>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
@@ -34,7 +34,7 @@ namespace yarp {
 class yarp::os::impl::NetType {
 public:
 
-    static int netInt(const Bytes& code) {
+    static int netInt(const yarp::os::Bytes& code) {
         YARP_ASSERT(code.length()==sizeof(NetType::NetInt32));
         //// this does not work on Solaris with gcc 3.2
         //NetType::NetInt32& i = *((NetType::NetInt32*)(code.get()));
@@ -44,9 +44,9 @@ public:
         return tmp;
     }
 
-    static bool netInt(int data, const Bytes& code) {
+    static bool netInt(int data, const yarp::os::Bytes& code) {
         NetType::NetInt32 i = data;
-        Bytes b((char*)(&i),sizeof(i));
+        yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (code.length()!=sizeof(i)) {
             YARP_ERROR(Logger::get(),"not enough room for integer");
             return false;
@@ -58,7 +58,7 @@ public:
     static String readLine(InputStream& is, int terminal = '\n',
                            bool *success = NULL);
 
-    static int readFull(InputStream& is, const Bytes& b);
+    static int readFull(InputStream& is, const yarp::os::Bytes& b);
 
     static int readDiscard(InputStream& is, int len);
 

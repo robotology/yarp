@@ -12,7 +12,7 @@
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/FallbackNameServer.h>
 #include <yarp/os/impl/Companion.h>

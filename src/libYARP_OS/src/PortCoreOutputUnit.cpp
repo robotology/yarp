@@ -25,8 +25,6 @@
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
-using namespace yarp;
-
 
 bool PortCoreOutputUnit::start() {
 
@@ -313,9 +311,9 @@ void PortCoreOutputUnit::sendHelper() {
     }
 }
 
-void *PortCoreOutputUnit::send(Writable& writer, 
-                               Readable *reader,
-                               Writable *callback,
+void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer, 
+                               yarp::os::PortReader *reader,
+                               yarp::os::PortWriter *callback,
                                void *tracker,
                                const String& envelopeString,
                                bool waitAfter,

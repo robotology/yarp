@@ -10,7 +10,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Bottle.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 
 #include <ace/config.h>

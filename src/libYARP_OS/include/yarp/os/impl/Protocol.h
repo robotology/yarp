@@ -16,7 +16,7 @@
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/BufferedConnectionWriter.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/ShiftStream.h>
 #include <yarp/os/Portable.h>
@@ -98,7 +98,7 @@ public:
         if (len<1) len = 1;
         // expect a string -- these days null terminated, but not in YARP1
         yarp::os::ManagedBytes b(len+1);
-        r = NetType::readFull(is(),Bytes(b.get(),len));
+        r = NetType::readFull(is(),yarp::os::Bytes(b.get(),len));
         if (r!=len) {
             throw_IOException("did not get sender name");
             return false;
@@ -166,7 +166,7 @@ public:
             char *base = b.get();
             if (base[0]=='Y' && base[1]=='A' &&
                 base[6]=='R' && base[7]=='P') {
-                Bytes b2(b.get()+2,4);
+                yarp::os::Bytes b2(b.get()+2,4);
                 int x = NetType::netInt(b2);
                 return x;
             }

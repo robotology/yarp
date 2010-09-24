@@ -9,7 +9,7 @@
 #ifndef _YARP2_PORTCOREPACKET_
 #define _YARP2_PORTCOREPACKET_
 
-#include <yarp/Writable.h>
+#include <yarp/os/PortWriter.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 
@@ -34,8 +34,8 @@ namespace yarp {
 class yarp::os::impl::PortCorePacket {
 public:
     PortCorePacket *prev_, *next_;
-    Writable *content;
-    Writable *callback;
+    yarp::os::PortWriter *content;
+    yarp::os::PortWriter *callback;
     int ct;
     bool owned;
     bool ownedCallback;
@@ -67,16 +67,16 @@ public:
         ct--;
     }
 
-    Writable *getContent() {
+    yarp::os::PortWriter *getContent() {
         return content;
     }
 
-    Writable *getCallback() {
+    yarp::os::PortWriter *getCallback() {
         return (callback!=0/*NULL*/)?callback:content;
     }
 
-    void setContent(Writable *writable, bool owned = false,
-                    Writable *callback = NULL,
+    void setContent(yarp::os::PortWriter *writable, bool owned = false,
+                    yarp::os::PortWriter *callback = NULL,
                     bool ownedCallback = false) {
         content = writable;
         this->callback = callback;

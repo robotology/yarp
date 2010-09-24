@@ -560,7 +560,7 @@ int Companion::cmdVersion(int argc, char *argv[]) {
 }
 
 
-int Companion::sendMessage(const String& port, Writable& writable, 
+int Companion::sendMessage(const String& port, PortWriter& writable, 
                            String& output, bool quiet) {
     output = "";
     NameClient& nic = NameClient::getNameClient();

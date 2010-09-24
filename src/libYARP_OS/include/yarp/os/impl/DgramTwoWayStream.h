@@ -11,7 +11,7 @@
 
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/impl/IOException.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Semaphore.h>
 
 #include <ace/SOCK_Dgram.h>
@@ -96,9 +96,9 @@ public:
 
     virtual void closeMain();
 
-    virtual int read(const Bytes& b);
+    virtual int read(const yarp::os::Bytes& b);
 
-    virtual void write(const Bytes& b);
+    virtual void write(const yarp::os::Bytes& b);
 
     virtual void flush();
 
@@ -110,10 +110,10 @@ public:
 
     virtual void endPacket();
 
-    Bytes getMonitor();
+    yarp::os::Bytes getMonitor();
 
-    void setMonitor(const Bytes& data) {
-        monitor = ManagedBytes(data,false);
+    void setMonitor(const yarp::os::Bytes& data) {
+        monitor = yarp::os::ManagedBytes(data,false);
         monitor.copy();
     }
 
@@ -124,13 +124,13 @@ public:
     virtual void onMonitorOutput() {}
 
 private:
-    ManagedBytes monitor;
+    yarp::os::ManagedBytes monitor;
     bool closed, interrupting, reader, writer;
     ACE_SOCK_Dgram *dgram;
     ACE_SOCK_Dgram_Mcast *mgram;
     ACE_INET_Addr localHandle, remoteHandle;
     Address localAddress, remoteAddress, restrictInterfaceIp;
-    ManagedBytes readBuffer, writeBuffer;
+    yarp::os::ManagedBytes readBuffer, writeBuffer;
     yarp::os::Semaphore mutex;
     int readAt, readAvail, writeAvail, pct;
     bool happy;

@@ -9,7 +9,7 @@
 #ifndef _YARP2_OUTPUTSTREAM_
 #define _YARP2_OUTPUTSTREAM_
 
-#include <yarp/Bytes.h>
+#include <yarp/os/Bytes.h>
 #include <yarp/os/impl/String.h>
 
 namespace yarp {
@@ -43,7 +43,7 @@ public:
      *
      */
     virtual void write(char ch) {
-        write(Bytes(&ch,1));
+        write(yarp::os::Bytes(&ch,1));
     }
 
     /**
@@ -57,7 +57,7 @@ public:
      *
      */
     virtual void write(const Bytes& b, int offset, int len) {
-        write(Bytes(b.get()+offset,len));
+        write(yarp::os::Bytes(b.get()+offset,len));
     }
 
     /**
@@ -67,7 +67,7 @@ public:
      * @param b the bytes to write
      *
      */
-    virtual void write(const Bytes& b) = 0;
+    virtual void write(const yarp::os::Bytes& b) = 0;
 
     /**
      *
@@ -93,7 +93,7 @@ public:
      *
      */
     virtual void writeLine(const String& data) {
-        Bytes b((char*)(data.c_str()),data.length());
+        yarp::os::Bytes b((char*)(data.c_str()),data.length());
         write(b);
         write('\n');
     }

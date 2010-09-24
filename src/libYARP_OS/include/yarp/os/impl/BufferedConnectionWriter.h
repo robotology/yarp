@@ -12,7 +12,7 @@
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/impl/SizedWriter.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/StringOutputStream.h>
@@ -74,14 +74,14 @@ public:
         stopPool();
     }
 
-    bool addPool(const Bytes& data) {
+    bool addPool(const yarp::os::Bytes& data) {
         if (pool!=NULL) {
             if (data.length()+poolIndex>pool->length()) {
                 pool = NULL;
             }
         }
         if (pool==NULL && data.length()<poolLength) {
-            pool = new ManagedBytes(poolLength);
+            pool = new yarp::os::ManagedBytes(poolLength);
             if (pool==NULL) { return false; }
             poolCount++;
             poolIndex = 0;
@@ -107,40 +107,40 @@ public:
         poolCount = 0;
     }
 
-    virtual void appendBlock(const Bytes& data) {
+    virtual void appendBlock(const yarp::os::Bytes& data) {
         stopPool();
-        target->push_back(new ManagedBytes(data,false));
+        target->push_back(new yarp::os::ManagedBytes(data,false));
     }
 
     virtual void appendBlockCopy(const Bytes& data) {
         if (addPool(data)) return;
-        ManagedBytes *buf = new ManagedBytes(data,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(data,false);
         buf->copy();
         target->push_back(buf);
     }
 
     virtual void appendInt(int data) {
         NetType::NetInt32 i = data;
-        Bytes b((char*)(&i),sizeof(i));
+        yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
-        ManagedBytes *buf = new ManagedBytes(b,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
         buf->copy();
         target->push_back(buf);
     }
 
     virtual void appendDouble(double data) {
         NetType::NetFloat64 i = data;
-        Bytes b((char*)(&i),sizeof(i));
+        yarp::os::Bytes b((char*)(&i),sizeof(i));
         if (addPool(b)) return;
-        ManagedBytes *buf = new ManagedBytes(b,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
         buf->copy();
         target->push_back(buf);
     }
 
     virtual void appendStringBase(const String& data) {
-        Bytes b((char*)(data.c_str()),data.length()+1);
+        yarp::os::Bytes b((char*)(data.c_str()),data.length()+1);
         if (addPool(b)) return;
-        ManagedBytes *buf = new ManagedBytes(b,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
         buf->copy();
         target->push_back(buf);
     }
@@ -148,16 +148,16 @@ public:
     virtual void appendBlock(const String& data) {
         Bytes b((char*)(data.c_str()),data.length()+1);
         if (addPool(b)) return;
-        ManagedBytes *buf = new ManagedBytes(b,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
         target->push_back(buf);
     }
 
     virtual void appendLine(const String& data) {
         String copy = data;
         copy += "\r\n"; // for windows compatibility
-        Bytes b((char*)(copy.c_str()),copy.length());
+        yarp::os::Bytes b((char*)(copy.c_str()),copy.length());
         if (addPool(b)) return;
-        ManagedBytes *buf = new ManagedBytes(b,false);
+        yarp::os::ManagedBytes *buf = new yarp::os::ManagedBytes(b,false);
         buf->copy();
 
         target->push_back(buf);
@@ -170,11 +170,11 @@ public:
     bool write(ConnectionWriter& connection) {
 		unsigned int i;
         for (i=0; i<header.size(); i++) {
-            ManagedBytes& b = *(header[i]);
+            yarp::os::ManagedBytes& b = *(header[i]);
             connection.appendBlock(b.get(),b.used());
         }
         for (i=0; i<lst.size(); i++) {
-            ManagedBytes& b = *(lst[i]);
+            yarp::os::ManagedBytes& b = *(lst[i]);
             connection.appendBlock(b.get(),b.used());
         }
         return !connection.isError();
@@ -183,11 +183,11 @@ public:
     void write(OutputStream& os) {
 		unsigned int i;
         for (i=0; i<header.size(); i++) {
-            ManagedBytes& b = *(header[i]);
+            yarp::os::ManagedBytes& b = *(header[i]);
             os.write(b.usedBytes());
         }
         for (i=0; i<lst.size(); i++) {
-            ManagedBytes& b = *(lst[i]);
+            yarp::os::ManagedBytes& b = *(lst[i]);
             os.write(b.usedBytes());
         }    
     }
@@ -202,19 +202,19 @@ public:
 
     virtual int length(int index) {
         if (index<(int)header.size()) {
-            ManagedBytes& b = *(header[index]);
+            yarp::os::ManagedBytes& b = *(header[index]);
             return b.used();
         }
-        ManagedBytes& b = *(lst[index-header.size()]);
+        yarp::os::ManagedBytes& b = *(lst[index-header.size()]);
         return b.used();
     }
 
     virtual const char *data(int index) {
         if (index<(int)header.size()) {
-            ManagedBytes& b = *(header[index]);
+            yarp::os::ManagedBytes& b = *(header[index]);
             return (const char *)b.get();
         }
-        ManagedBytes& b = *(lst[index-header.size()]);
+        yarp::os::ManagedBytes& b = *(lst[index-header.size()]);
         return (const char *)b.get();
     }
 
@@ -229,7 +229,7 @@ public:
     // new interface
 
     virtual void appendBlock(const char *data, int len) {
-        appendBlockCopy(Bytes((char*)data,len));
+        appendBlockCopy(yarp::os::Bytes((char*)data,len));
     }
 
     virtual void appendString(const char *str, int terminate = '\n') {
@@ -240,12 +240,12 @@ public:
         } else {
             String s = str;
             str += terminate;
-            appendBlockCopy(Bytes((char*)(s.c_str()),s.length()));
+            appendBlockCopy(yarp::os::Bytes((char*)(s.c_str()),s.length()));
         }
     }
 
     virtual void appendExternalBlock(const char *data, int len) {
-        appendBlock(Bytes((char*)data,len));
+        appendBlock(yarp::os::Bytes((char*)data,len));
     }
 
     virtual void declareSizes(int argc, int *argv) {
@@ -290,14 +290,14 @@ public:
     }
 
 private:
-    ACE_Vector<ManagedBytes *> lst;
-    ACE_Vector<ManagedBytes *> header;
-    ACE_Vector<ManagedBytes *> *target;
-    ManagedBytes *pool;
+    ACE_Vector<yarp::os::ManagedBytes *> lst;
+    ACE_Vector<yarp::os::ManagedBytes *> header;
+    ACE_Vector<yarp::os::ManagedBytes *> *target;
+    yarp::os::ManagedBytes *pool;
     int poolIndex;
     int poolCount;
     int poolLength;
-    PortReader *reader;
+    yarp::os::PortReader *reader;
     bool textMode;
     yarp::os::Portable *ref;
 };

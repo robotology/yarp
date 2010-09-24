@@ -12,7 +12,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/String.h>
 
 namespace yarp {
@@ -53,7 +53,7 @@ public:
 public:
     char ch;
     String str;
-    ManagedBytes header;
+    yarp::os::ManagedBytes header;
 };
 
 #endif

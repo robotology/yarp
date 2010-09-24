@@ -11,6 +11,7 @@
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
+using namespace yarp::os;
 using namespace yarp::os::impl;
 
 class StringInputStreamTest : public UnitTest {

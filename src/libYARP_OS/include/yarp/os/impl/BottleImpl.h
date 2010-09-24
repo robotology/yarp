@@ -10,7 +10,7 @@
 #define _YARP2_BOTTLEIMPL_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/ManagedBytes.h>
+#include <yarp/os/ManagedBytes.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/Portable.h>
@@ -455,10 +455,10 @@ public:
 
     void copyRange(const BottleImpl& alt, int first = 0, int len = -1);
 
-    bool fromBytes(const Bytes& data);
-    void toBytes(const Bytes& data);
+    bool fromBytes(const yarp::os::Bytes& data);
+    void toBytes(const yarp::os::Bytes& data);
 
-    bool fromBytes(ConnectionReader& reader);
+    bool fromBytes(yarp::os::ConnectionReader& reader);
 
     void fromBinary(const char *text, int len);
 

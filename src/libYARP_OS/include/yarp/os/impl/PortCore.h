@@ -14,8 +14,9 @@
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/PortManager.h>
-#include <yarp/Readable.h>
-#include <yarp/Writable.h>
+#include <yarp/os/PortReader.h>
+#include <yarp/os/PortReaderCreator.h>
+#include <yarp/os/PortWriter.h>
 #include <yarp/os/impl/PortCorePacket.h>
 
 #include <yarp/os/PortReport.h>

@@ -10,7 +10,7 @@
 #define _YARP2_COMPANION_
 
 #include <yarp/os/impl/String.h>
-#include <yarp/Writable.h>
+#include <yarp/os/PortWriter.h>
 
 #include <ace/Hash_Map_Manager.h>
 #include <ace/Null_Mutex.h>
@@ -113,13 +113,13 @@ public:
     static String readString(bool *eof=NULL);
 
 
-    static int sendMessage(const String& port, Writable& writable, 
+    static int sendMessage(const String& port, yarp::os::PortWriter& writable, 
                            bool silent = false) {
         String output;
         return sendMessage(port,writable,output,silent);
     }
 
-    static int sendMessage(const String& port, Writable& writable, 
+    static int sendMessage(const String& port, yarp::os::PortWriter& writable, 
                            String& output,
                            bool silent);
 

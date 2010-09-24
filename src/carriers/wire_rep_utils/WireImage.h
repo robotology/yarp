@@ -79,8 +79,8 @@ public:
         buf.appendInt(image->getRawImageSize());
         buf.write(ss);
         yarp::os::impl::String hdr = ss.toString();
-        yarp::os::impl::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());
-        ros_const_header = yarp::os::impl::ManagedBytes(hdr_wrap);
+        yarp::os::Bytes hdr_wrap((char*)hdr.c_str(),hdr.length());
+        ros_const_header = yarp::os::ManagedBytes(hdr_wrap);
         ros_const_header.copy();
     }
 

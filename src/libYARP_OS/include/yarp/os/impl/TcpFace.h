@@ -9,7 +9,7 @@
 #ifndef _YARP2_TCPFACE_
 #define _YARP2_TCPFACE_
 
-#include  <yarp/Face.h>
+#include  <yarp/os/impl/Face.h>
 //#include  <yarp/Semaphore.h>
 
 #include <ace/config.h>
