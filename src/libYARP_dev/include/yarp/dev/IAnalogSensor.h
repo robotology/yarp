@@ -13,7 +13,8 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
-
+#define VOCAB_IANALOG VOCAB4('i','a','n','a')
+#define VOCAB_CALIBRATE_CHANNEL VOCAB4('c','a','l','c')
 
 /*! \file IAnalogSensor.h analog sensor interface */
 namespace yarp {
@@ -63,12 +64,24 @@ public:
      */
 	virtual int calibrateSensor()=0;
 
-    /* Calibrates one single channel.
-	 * @param ch: channel number.
-	 * @param v: calibration value.
+	/* Calibrates the whole sensor, using an array of calibration values.
+     * @param value: an array of calibration values.
 	 * @return status.
      */
-	virtual int calibrateChannel(int ch, double v)=0;
+	virtual int calibrateSensor(const double *value)=0;
+
+    /* Calibrates one single channel.
+	 * @param ch: channel number.
+	 * @return status.
+     */
+	virtual int calibrateChannel(int ch)=0;
+
+    /* Calibrates one single channel, using a calibration value.
+	 * @param ch: channel number.
+	 * @param value: calibration value.
+	 * @return status.
+     */
+	virtual int calibrateChannel(int ch, double value)=0;
 };
 
 #endif

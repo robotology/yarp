@@ -1,3 +1,12 @@
+2010-09-24  Marco Randazzo <marco.randazzo@iit.it>
+
+	* src/libYARP_dev/src/AnalogSensorClient.cpp
+	* src/libYARP_dev/include/yarp/dev/IAnalogSensor.h
+
+	IAnalogSensor: added the two more methods to the IAnalogSensor interface:
+	calibrateSensor(const double *value) and calibrateChannel(int ch).
+	The calibration methods are now implemented in the AnalogSensorClient.cpp
+	
 2010-09-21  Marco Randazzo <marco.randazzo@iit.it>
 
 	* src/libYARP_dev/src/AnalogSensorClient.cpp

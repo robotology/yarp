@@ -14,6 +14,8 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/dev/PreciselyTimed.h>
 #include <yarp/dev/IAnalogSensor.h>
+#include <yarp/dev/ControlBoardInterfaces.h>
+#include <yarp/dev/ControlBoardHelpers.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Time.h>
@@ -187,6 +189,7 @@ class yarp::dev::AnalogSensorClient: public DeviceDriver,
 {
 protected:
     InputPortProcessor inputPort;
+	Port rpcPort;
     ConstString local;
     ConstString remote;
     Stamp lastTs; //used by IPreciselyTimed
@@ -215,12 +218,24 @@ public:
      */
 	int calibrateSensor();
 
-    /* Calibrates one single channel.
-	 * @param ch: channel number.
-	 * @param v: calibration value.
+	/* Calibrates the whole sensor, using an array of calibration values.
+	 * @param value: an array of calibration values.
 	 * @return status.
      */
-	int calibrateChannel(int ch, double v);
+	int calibrateSensor(const double *value);
+
+    /* Calibrates one single channel.
+	 * @param ch: channel number.
+	 * @return status.
+     */
+	int calibrateChannel(int ch);
+
+    /* Calibrates one single channel.
+	 * @param ch: channel number.
+	 * @param value: calibration value.
+	 * @return status.
+     */
+	int calibrateChannel(int ch, double value);
 
     /* IPreciselyTimed methods */
     /**
@@ -250,26 +265,44 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
+	ConstString local_rpc = local;
+    local_rpc += "/rpc:o";
+	ConstString remote_rpc = remote;
+    remote_rpc += "/rpc:i";
+
     if (!inputPort.open(local.c_str()))
     {
-        fprintf(stderr,"AnalogSensorClient::open() error could not open port, check network\n");
+        fprintf(stderr,"AnalogSensorClient::open() error could not open port %s, check network\n",local.c_str());
         return false;
     }
     inputPort.useCallback();
-    
-    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());
-    
+
+    if (!rpcPort.open(local_rpc.c_str()))
+	{
+        fprintf(stderr,"AnalogSensorClient::open() error could not open rpc port %s, check network\n", local_rpc.c_str());
+        return false;
+	}
+
+    bool ok=Network::connect(remote.c_str(), local.c_str(), carrier.c_str());  
     if (!ok)
     {
         fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote.c_str());
         return false;
     }
 
+	ok=Network::connect(remote_rpc.c_str(), local_rpc.c_str());
+	if (!ok)
+	{
+		fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
+       return false;
+	}
+
     return true;
 }
 
 bool yarp::dev::AnalogSensorClient::close()
 {
+	rpcPort.close();
     inputPort.close();
     return true;
 }
@@ -292,14 +325,44 @@ int yarp::dev::AnalogSensorClient::getChannels()
 
 int yarp::dev::AnalogSensorClient::calibrateSensor()
 {
-	//not implemented yet
-    return AS_OK;
+	Bottle cmd, response;
+    cmd.addVocab(VOCAB_IANALOG);
+    cmd.addVocab(VOCAB_CALIBRATE);
+    bool ok = rpcPort.write(cmd, response);
+    return CHECK_FAIL(ok, response);
 }
 
-int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double v)
+int yarp::dev::AnalogSensorClient::calibrateSensor(const double *value)
 {
-	//not implemented yet
-    return AS_OK;
+	Bottle cmd, response;
+    cmd.addVocab(VOCAB_IANALOG);
+    cmd.addVocab(VOCAB_CALIBRATE);
+	Bottle& l = cmd.addList();
+    for (int i = 0; i < this->getChannels(); i++)
+         l.addDouble(value[i]);
+    bool ok = rpcPort.write(cmd, response);
+    return CHECK_FAIL(ok, response);
+}
+
+int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
+{
+	Bottle cmd, response;
+    cmd.addVocab(VOCAB_IANALOG);
+    cmd.addVocab(VOCAB_CALIBRATE);
+	cmd.addInt(ch);
+    bool ok = rpcPort.write(cmd, response);
+    return CHECK_FAIL(ok, response);
+}
+
+int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
+{
+	Bottle cmd, response;
+    cmd.addVocab(VOCAB_IANALOG);
+    cmd.addVocab(VOCAB_CALIBRATE);
+	cmd.addInt(ch);
+	cmd.addDouble(value);
+    bool ok = rpcPort.write(cmd, response);
+    return CHECK_FAIL(ok, response);
 }
 
 Stamp yarp::dev::AnalogSensorClient::getLastInputStamp()
