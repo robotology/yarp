@@ -218,11 +218,11 @@ public:
      */
 	int calibrateSensor();
 
-	/* Calibrates the whole sensor, using an array of calibration values.
-	 * @param value: an array of calibration values.
+	/* Calibrates the whole sensor, using a vector of calibration values.
+	 * @param value: a vector of calibration values.
 	 * @return status.
      */
-	int calibrateSensor(const double *value);
+	int calibrateSensor(const yarp::sig::Vector& value);
 
     /* Calibrates one single channel.
 	 * @param ch: channel number.
@@ -290,7 +290,7 @@ bool yarp::dev::AnalogSensorClient::open(yarp::os::Searchable &config)
         return false;
     }
 
-	ok=Network::connect(remote_rpc.c_str(), local_rpc.c_str());
+	ok=Network::connect(local_rpc.c_str(), remote_rpc.c_str());
 	if (!ok)
 	{
 		fprintf(stderr,"AnalogSensorClient::open() error could not connect to %s\n", remote_rpc.c_str());
@@ -332,7 +332,7 @@ int yarp::dev::AnalogSensorClient::calibrateSensor()
     return CHECK_FAIL(ok, response);
 }
 
-int yarp::dev::AnalogSensorClient::calibrateSensor(const double *value)
+int yarp::dev::AnalogSensorClient::calibrateSensor(const yarp::sig::Vector& value)
 {
 	Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
@@ -348,7 +348,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch)
 {
 	Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE);
+    cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
 	cmd.addInt(ch);
     bool ok = rpcPort.write(cmd, response);
     return CHECK_FAIL(ok, response);
@@ -358,7 +358,7 @@ int yarp::dev::AnalogSensorClient::calibrateChannel(int ch, double value)
 {
 	Bottle cmd, response;
     cmd.addVocab(VOCAB_IANALOG);
-    cmd.addVocab(VOCAB_CALIBRATE);
+    cmd.addVocab(VOCAB_CALIBRATE_CHANNEL);
 	cmd.addInt(ch);
 	cmd.addDouble(value);
     bool ok = rpcPort.write(cmd, response);
