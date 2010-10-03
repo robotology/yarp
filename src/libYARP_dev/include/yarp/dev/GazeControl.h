@@ -180,6 +180,14 @@ public:
     */
     virtual bool setEyesTrajTime(const double t)=0;
 
+    /** Bind the neck pitch within a specified range. [wait for
+    *   reply]
+    * @param min: the minimum value of the range (in degree). 
+    * @param max: the maximum value of the range (in degree). 
+    * @return true/false on success/failure. 
+    */
+    virtual bool bindNeckPitch(const double min, const double max)=0;
+
     /** Block the neck pitch at a specified angle. [wait for reply]
     * @param val: the angle value at which block the joint (in 
     *           degree).
@@ -197,6 +205,14 @@ public:
     *       order to move just the eyes. 
     */
     virtual bool blockNeckPitch()=0;
+
+    /** Bind the neck yaw within a specified range. [wait for
+    *   reply]
+    * @param min: the minimum value of the range (in degree). 
+    * @param max: the maximum value of the range (in degree). 
+    * @return true/false on success/failure. 
+    */
+    virtual bool bindNeckYaw(const double min, const double max)=0;
 
     /** Block the neck yaw at a specified angle. [wait for reply]
     * @param val: the angle value at which block the joint (in 
