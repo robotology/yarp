@@ -1,3 +1,9 @@
+2010-10-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Bottle.h: the
+	tail() of a null bottle should be the empty list
+	[thanks Ugo Pattacini]
+
 2010-09-24  Paul Fitzpatrick  <paulfitz@debian.humanoids.iit.it>
 
 	* conf/CMakeLists.txt: add some missing install files
@@ -477,7 +483,7 @@
 2010-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortWriterBuffer.cpp: correct counting
-	mistake when recycling unwritten objects.  [Thanks Ugo Pataccini]!
+	mistake when recycling unwritten objects.  [Thanks Ugo Pattacini]!
 
 2010-05-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

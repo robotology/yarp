@@ -274,7 +274,9 @@ public:
      */
     Bottle tail() const {
         Bottle b;
-        b.copy(*this,1,size()-1);
+        if (!isNull()) {
+            b.copy(*this,1,size()-1);
+        }
         return b;
     }
 
