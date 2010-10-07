@@ -143,6 +143,14 @@ public:
 
     /**
      *
+     * Return the path that the default context expands to, according to
+     * the policy.
+     *
+     */
+    yarp::os::ConstString getContextPath();
+
+    /**
+     *
      * Return the full stack of contexts used in searching
      * for configuration files.  
      *

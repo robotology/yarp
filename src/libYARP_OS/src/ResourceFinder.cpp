@@ -205,41 +205,49 @@ public:
         return true;
     }
 
+    yarp::os::ConstString getPath(const char *base1, 
+                                  const char *base2, 
+                                  const char *base3, 
+                                  const char *name) {
+        ConstString s = "";
+        if (base1!=NULL) {
+            s = base1;
+            if (ConstString(base1)!="") {
+                s = s + "/";
+            }
+        }
+        if (base2!=NULL) {
+            s = s + base2;
+            if (ConstString(base2)!="") {
+                s = s + "/";
+            }
+        }
+        if (base3!=NULL) {
+            s = s + base3;
+            if (ConstString(base3)!="") {
+                s = s + "/";
+            }
+        }
+
+        s = s + name;
+        
+        ConstString user = base3;
+        if (user.length()>=2) {
+            if (user[0]=='.'&&(user[1]=='/'||user[1]=='\\')) {
+                s = user + "/" + name;
+            }
+        } else if (user==".") {
+            s = user + "/" + name;
+        }
+        return s;
+    }
 
     yarp::os::ConstString check(const char *base1, 
                                 const char *base2, 
                                 const char *base3, 
                                 const char *name,
                                 bool isDir) {
-        String s = "";
-        if (base1!=NULL) {
-            s = base1;
-            if (String(base1)!="") {
-                s = s + "/";
-            }
-        }
-        if (base2!=NULL) {
-            s = s + base2;
-            if (String(base2)!="") {
-                s = s + "/";
-            }
-        }
-        if (base3!=NULL) {
-            s = s + base3;
-            if (String(base3)!="") {
-                s = s + "/";
-            }
-        }
-        s = s + name;
-
-        String user = base3;
-        if (user.length()>=2) {
-            if (user[0]=='.'&&(user[1]=='/'||user[1]=='\\')) {
-            s = user + "/" + name;
-            }
-        } else if (user==".") {
-            s = user + "/" + name;
-        }
+        ConstString s = getPath(base1,base2,base3,name);
 
         if (verbose) {
             fprintf(RTARGET,"||| checking %s\n", s.c_str());
@@ -352,6 +360,18 @@ public:
     Bottle getContexts() {
         return apps;
     }
+
+    ConstString context2path(const ConstString& context ) {
+        ConstString cap = 
+            config.check("capability_directory",Value("app")).asString();
+        ConstString path = getPath(root,cap,context,"");
+        if (path.length()>1) {
+            if (path[path.length()-1]=='/') {
+                path = path.substr(0,path.length()-1);
+            }
+        }
+        return path;
+    }
 };
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
@@ -434,6 +454,10 @@ ConstString ResourceFinder::toString() const {
 
 ConstString ResourceFinder::getContext() {
     return HELPER(implementation).getContext();
+}
+
+ConstString ResourceFinder::getContextPath() {
+    return HELPER(implementation).context2path(HELPER(implementation).getContext());
 }
 
 Bottle ResourceFinder::getContexts() {
