@@ -343,6 +343,15 @@ public:
         */
         return true;
 	}
+
+
+    ConstString getContext() {
+        return apps.get(0).asString();
+    }
+
+    Bottle getContexts() {
+        return apps;
+    }
 };
 
 #define HELPER(x) (*((ResourceFinderHelper*)(x)))
@@ -421,6 +430,14 @@ bool ResourceFinder::isNull() const {
 
 ConstString ResourceFinder::toString() const {
     return CONFIG(implementation).toString();
+}
+
+ConstString ResourceFinder::getContext() {
+    return HELPER(implementation).getContext();
+}
+
+Bottle ResourceFinder::getContexts() {
+    return HELPER(implementation).getContexts();
 }
 
 

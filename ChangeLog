@@ -1,3 +1,12 @@
+2010-10-07  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/harness/ResourceFinderTest.cpp: test 
+	for getContext method.
+
+	* src/libYARP_OS/include/yarp/os/ResourceFinder.h: add
+	getContext/getContexts methods to recover application
+	context [thanks Ugo Pattacini]
+	
 2010-10-04  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Bottle.h: the

@@ -131,9 +131,25 @@ public:
 
     }
 
+
+    void testContext() {
+        report(0,"test context setting");
+        ResourceFinder rf;
+        const char *argv[] = { "ignore", 
+                               "--policy", "_yarp_regression_test",
+                               "--_yarp_regression_test", ".",
+                               "--context", "zig", 
+                               "--verbose", "0",
+                               NULL };
+        int argc = 9;
+        rf.configure("",argc,(char **)argv);
+        checkEqual(rf.getContext().c_str(),"zig","recovered context");
+    }
+
     virtual void runTests() {
         testBasics();
         testCommandLineArgs();
+        testContext();
     }
 };
 

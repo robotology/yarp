@@ -12,6 +12,7 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Value.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
@@ -130,6 +131,23 @@ public:
      */
     yarp::os::ConstString findPath();
 
+
+    /**
+     *
+     * Return the default "context" or "application name" used in searching
+     * for configuration files.  The context is a keyword that is converted
+     * into a search path in a policy-specific way.
+     *
+     */
+    yarp::os::ConstString getContext();
+
+    /**
+     *
+     * Return the full stack of contexts used in searching
+     * for configuration files.  
+     *
+     */
+    yarp::os::Bottle getContexts();
 
     // Searchable interface
     virtual bool check(const char *key);
