@@ -56,7 +56,8 @@ public:
     virtual bool getTrackingMode(bool *f)=0;
 
     /**
-    * Get the current pose. [do not wait for reply]
+    * Get the current pose of the end-effector. [do not wait for 
+    * reply] 
     * @param x: a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
     * @param od: a 4-d vector which is filled with the actual orientation
@@ -67,7 +68,22 @@ public:
     virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
-    * Move the end effector to a specified pose (position
+    * Get the current pose of the jth link belonging to the 
+    * kinematic chain. [wait for reply] 
+    * @param axis: joint index (regardless if it is actuated or 
+    *            not). 
+    * @param x: a 3-d vector which is filled with the actual 
+    *         position x,y,z (meters) of the jth link reference
+    *         frame.
+    * @param od: a 4-d vector which is filled with the actual orientation
+    * of the jth link reference frame using axis-angle 
+    * representation xa, ya, za, theta (meters and radians). 
+    * @return true/false on success/failure.
+    */
+    virtual bool getPose(const int axis, yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Move the end-effector to a specified pose (position
     * and orientation) in cartesian space. [do not wait for reply]
     * @param xd: a 3-d vector which contains the desired position x,y,z
     * @param od: a 4-d vector which contains the desired orientation
@@ -82,8 +98,8 @@ public:
                           const double t=0.0)=0;
 
     /**
-    * Move the end effector to a specified position in cartesian space, 
-    * ignore the orientation. [do not wait for reply]
+    * Move the end-effector to a specified position in cartesian 
+    * space, ignore the orientation. [do not wait for reply] 
     * @param xd: a 3-d vector which contains the desired position 
     *          x,y,z (meters).
     * @param t: set the trajectory duration time (seconds). If t<=0 
@@ -95,7 +111,7 @@ public:
     virtual bool goToPosition(const yarp::sig::Vector &xd, const double t=0.0)=0;
 
     /**
-    * Move the end effector to a specified pose (position
+    * Move the end-effector to a specified pose (position
     * and orientation) in cartesian space. [wait for reply]
     * @param xd: a 3-d vector which contains the desired position 
     *          x,y,z (meters).
@@ -109,8 +125,8 @@ public:
                               const double t=0.0)=0;
 
     /**
-    * Move the end effector to a specified position in cartesian space, 
-    * ignore the orientation. [wait for reply]
+    * Move the end-effector to a specified position in cartesian 
+    * space, ignore the orientation. [wait for reply] 
     * @param xd: a 3-d vector which contains the desired position 
     *          x,y,z (meters).
     * @param t: set the trajectory duration time (seconds). If t<=0 
@@ -231,7 +247,7 @@ public:
     * @param max: where the maximum value is returned [deg].
     * @return true/false on success/failure. 
     */
-    virtual bool getLimits(int axis, double *min, double *max)=0;
+    virtual bool getLimits(const int axis, double *min, double *max)=0;
 
     /**
     * Set new range for the axis. Allowed range shall be a valid 
@@ -242,7 +258,7 @@ public:
     * @param max: the new maximum value [deg]. 
     * @return true/false on success/failure. 
     */
-    virtual bool setLimits(int axis, const double min, const double max)=0;
+    virtual bool setLimits(const int axis, const double min, const double max)=0;
 
     /**
     * Get the current trajectory duration. [wait for reply]
