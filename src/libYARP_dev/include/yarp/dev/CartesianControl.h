@@ -37,7 +37,7 @@ public:
     /**
     * Set the controller in tracking or non-tracking mode. [wait for
     * reply] 
-    * @param f: true for tracking mode, false otherwise. 
+    * @param f true for tracking mode, false otherwise. 
     * \note In tracking mode when the controller reachs the target, 
     *       it keeps on running in order to mantain the limb in the
     *       desired pose. In non-tracking mode the controller
@@ -49,7 +49,7 @@ public:
 
     /**
     * Get the current controller mode. [wait for reply]
-    * @param f: here is returned true if controller is in tracking 
+    * @param f here is returned true if controller is in tracking 
     *         mode, false otherwise.
     * @return true/false on success/failure. 
     */
@@ -58,11 +58,11 @@ public:
     /**
     * Get the current pose of the end-effector. [do not wait for 
     * reply] 
-    * @param x: a 3-d vector which is filled with the actual 
+    * @param x a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
-    * @param od: a 4-d vector which is filled with the actual orientation
-    * using axis-angle representation xa, ya, za, theta (meters and 
-    * radians). 
+    * @param od a 4-d vector which is filled with the actual 
+    * orientation using axis-angle representation xa, ya, za, theta 
+    * (meters and radians). 
     * @return true/false on success/failure.
     */
     virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
@@ -70,13 +70,12 @@ public:
     /**
     * Get the current pose of the jth link belonging to the 
     * kinematic chain. [wait for reply] 
-    * @param axis: joint index (regardless if it is actuated or 
+    * @param axis joint index (regardless if it is actuated or 
     *            not). 
-    * @param x: a 3-d vector which is filled with the actual 
-    *         position x,y,z (meters) of the jth link reference
-    *         frame.
-    * @param od: a 4-d vector which is filled with the actual orientation
-    * of the jth link reference frame using axis-angle 
+    * @param x a 3-d vector which is filled with the actual position
+    *         x,y,z (meters) of the jth link reference frame.
+    * @param od a 4-d vector which is filled with the actual 
+    * orientation of the jth link reference frame using axis-angle 
     * representation xa, ya, za, theta (meters and radians). 
     * @return true/false on success/failure.
     */
@@ -85,10 +84,11 @@ public:
     /**
     * Move the end-effector to a specified pose (position
     * and orientation) in cartesian space. [do not wait for reply]
-    * @param xd: a 3-d vector which contains the desired position x,y,z
-    * @param od: a 4-d vector which contains the desired orientation
+    * @param xd a 3-d vector which contains the desired position 
+    *           x,y,z
+    * @param od a 4-d vector which contains the desired orientation
     * using axis-angle representation (xa, ya, za, theta). 
-    * @param t: set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure. 
     *  
@@ -100,9 +100,9 @@ public:
     /**
     * Move the end-effector to a specified position in cartesian 
     * space, ignore the orientation. [do not wait for reply] 
-    * @param xd: a 3-d vector which contains the desired position 
+    * @param xd a 3-d vector which contains the desired position 
     *          x,y,z (meters).
-    * @param t: set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure. 
     *  
@@ -113,11 +113,11 @@ public:
     /**
     * Move the end-effector to a specified pose (position
     * and orientation) in cartesian space. [wait for reply]
-    * @param xd: a 3-d vector which contains the desired position 
+    * @param xd a 3-d vector which contains the desired position 
     *          x,y,z (meters).
-    * @param od: a 4-d vector which contains the desired orientation
+    * @param od a 4-d vector which contains the desired orientation
     * using axis-angle representation (xa, ya, za, theta). 
-    * @param t: set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure.
     */
@@ -127,9 +127,9 @@ public:
     /**
     * Move the end-effector to a specified position in cartesian 
     * space, ignore the orientation. [wait for reply] 
-    * @param xd: a 3-d vector which contains the desired position 
+    * @param xd a 3-d vector which contains the desired position 
     *          x,y,z (meters).
-    * @param t: set the trajectory duration time (seconds). If t<=0 
+    * @param t set the trajectory duration time (seconds). If t<=0 
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure.
     */
@@ -138,15 +138,15 @@ public:
     /**
     * Get the actual desired pose and joints configuration as result
     * of kinematic inversion. [wait for reply] 
-    * @param xdhat: a 3-d vector which is filled with the actual 
+    * @param xdhat a 3-d vector which is filled with the actual 
     *          desired position x,y,z (meters); it may differ from
     *          the commanded xd.
-    * @param odhat: a 4-d vector which is filled with the actual 
-    * desired orientation using axis-angle representation xa, ya, 
-    * za, theta (meters and radians); it may differ from the 
-    * commanded od. 
-    * @param qdhat: the joints configuration through which the
-    *             couple (xdcap,odcap) is achieved (degrees).
+    * @param odhat a 4-d vector which is filled with the actual 
+    *          desired orientation using axis-angle representation
+    *          xa, ya, za, theta (meters and radians); it may differ
+    *          from the commanded od. 
+    * @param qdhat the joints configuration through which the
+    *             couple (xdhat,odhat) is achieved (degrees).
     * @return true/false on success/failure.
     */
     virtual bool getDesired(yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
@@ -155,7 +155,7 @@ public:
     /**
     * Get the current DOF configuration of the limb. [wait for
     * reply] 
-    * @param curDof: a vector which is filled with the actual DOF 
+    * @param curDof a vector which is filled with the actual DOF 
     *           configuration.
     * \note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
@@ -167,9 +167,9 @@ public:
 
     /**
     * Set a new DOF configuration for the limb. [wait for reply]
-    * @param newDof: a vector which contains the new DOF 
+    * @param newDof a vector which contains the new DOF 
     *            configuration.
-    * @param curDof: a vector where the DOF configuration is 
+    * @param curDof a vector where the DOF configuration is 
     *              returned as it has been processed after the
     *              request (it may differ from newDof due to the
     *              presence of some internal limb's constraints).
@@ -183,7 +183,7 @@ public:
 
     /**
     * Get the current joints rest postion. [wait for reply]
-    * @param curRestPos: a vector which is filled with the current 
+    * @param curRestPos a vector which is filled with the current 
     *                  joints rest position components in degrees.
     * @return true/false on success/failure. 
     *  
@@ -196,9 +196,9 @@ public:
 
     /**
     * Set a new joints rest postion. [wait for reply] 
-    * @param newRestPos: a vector which contains the new joints rest
+    * @param newRestPos a vector which contains the new joints rest
     *                  position components in degrees.
-    * @param curRestPos: a vector which is filled with the current 
+    * @param curRestPos a vector which is filled with the current 
     *           joints rest position components in degrees as result
     *           from thresholding with joints bounds.
     * @return true/false on success/failure. 
@@ -212,7 +212,7 @@ public:
 
     /**
     * Get the current joints rest weights. [wait for reply]
-    * @param curRestWeights: a vector which is filled with the 
+    * @param curRestWeights a vector which is filled with the 
     *                  current joints rest weights.
     * @return true/false on success/failure. 
     *  
@@ -225,9 +225,9 @@ public:
 
     /**
     * Set a new joints rest postion. [wait for reply] 
-    * @param newRestWeights: a vector which contains the new joints 
+    * @param newRestWeights a vector which contains the new joints 
     *                  rest weights.
-    * @param curRestWeights: a vector which is filled with the 
+    * @param curRestWeights a vector which is filled with the 
     *           current joints rest weights as result from
     *           saturation (w>=0.0).
     * @return true/false on success/failure. 
@@ -241,10 +241,10 @@ public:
 
     /**
     * Get the current range for the axis. [wait for reply]
-    * @param axis: joint index (regardless if it is actuated or 
+    * @param axis joint index (regardless if it is actuated or 
     *            not).
-    * @param min: where the minimum value is returned [deg].
-    * @param max: where the maximum value is returned [deg].
+    * @param min where the minimum value is returned [deg].
+    * @param max where the maximum value is returned [deg].
     * @return true/false on success/failure. 
     */
     virtual bool getLimits(const int axis, double *min, double *max)=0;
@@ -252,24 +252,24 @@ public:
     /**
     * Set new range for the axis. Allowed range shall be a valid 
     * subset of the real control limits. [wait for reply]
-    * @param axis: joint index (regardless it it is actuated or 
+    * @param axis joint index (regardless it it is actuated or 
     *            not).
-    * @param min: the new minimum value [deg]. 
-    * @param max: the new maximum value [deg]. 
+    * @param min the new minimum value [deg]. 
+    * @param max the new maximum value [deg]. 
     * @return true/false on success/failure. 
     */
     virtual bool setLimits(const int axis, const double min, const double max)=0;
 
     /**
     * Get the current trajectory duration. [wait for reply]
-    * @param t: time (seconds).
+    * @param t time (seconds).
     * @return true/false on success/failure. 
     */
     virtual bool getTrajTime(double *t)=0;
 
     /**
     * Set the duration of the trajectory. [wait for reply]
-    * @param t: the memory location where the time is returned 
+    * @param t the memory location where the time is returned 
     *         (seconds).
     * @return true/false on success/failure. 
     */
@@ -279,7 +279,7 @@ public:
     * Return tolerance for in-target check. [wait for reply]
     * \note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
-    * @param tol: the memory location where tolerance is returned. 
+    * @param tol the memory location where tolerance is returned. 
     * @return true/false on success/failure.
     */
     virtual bool getInTargetTol(double *tol)=0;
@@ -288,14 +288,14 @@ public:
     * Set tolerance for in-target check. [wait for reply]
     * \note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
-    * @param tol: tolerance. 
+    * @param tol tolerance. 
     * @return true/false on success/failure. 
     */
     virtual bool setInTargetTol(const double tol)=0;
 
     /**
     * Return joints velocities. [wait for reply] 
-    * @param qdot: the vector containing the joints velocities 
+    * @param qdot the vector containing the joints velocities 
     *             [deg/s] sent to the robot by the controller.
     * @return true/false on success/failure.
     */
@@ -304,11 +304,11 @@ public:
     /**
     * Return velocities of the end-effector in the task space. [wait
     * for reply] 
-    * @param xdot: the 3-d vector containing the derivative of 
-    *             x,y,z position [m/s] of the end-effector while
-    *             moving in the task space as result of the
-    *             commanded joints velocities.
-    * @param odot: the 4-d vector containing the derivative of 
+    * @param xdot the 3-d vector containing the derivative of x,y,z 
+    *             position [m/s] of the end-effector while moving in
+    *             the task space as result of the commanded joints
+    *             velocities.
+    * @param odot the 4-d vector containing the derivative of 
     *             end-effector orientation [rad/s] while moving in
     *             the task space as result of the commanded joints
     *             velocities.
@@ -318,7 +318,7 @@ public:
 
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
-    * @param f: where the result is returned.
+    * @param f where the result is returned.
     * @return true/false on success/failure.
     */
     virtual bool checkMotionDone(bool *f)=0;
