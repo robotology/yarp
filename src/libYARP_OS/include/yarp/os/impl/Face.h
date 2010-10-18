@@ -13,6 +13,8 @@
 #include <yarp/os/impl/InputProtocol.h>
 #include <yarp/os/impl/OutputProtocol.h>
 
+#include <yarp/os/impl/AuthHMAC.h>
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -26,6 +28,11 @@ namespace yarp {
  */
 class yarp::os::impl::Face {
 public:
+    /**
+     * Constructor.
+     */
+    Face() : auth() {};
+
     /**
      * Destructor.
      */
@@ -69,7 +76,11 @@ public:
      * @return a protocol object to talk with, or NULL on failure.
      *
      */
-    virtual OutputProtocol *write(const Address& address) = 0; 
+    virtual OutputProtocol *write(const Address& address) = 0;
+
+protected:
+
+    yarp::os::impl::AuthHMAC auth;
 };
 
 #endif

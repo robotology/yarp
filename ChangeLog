@@ -1,3 +1,22 @@
+2010-10-18  Daniel Krieg  <krieg@fias.uni-frankfurt.de>
+
+    * src/libYARP_OS/include/hmac/sha2.h
+    * src/libYARP_OS/include/hmac/hmac_sha2.h
+    * src/libYARP_OS/src/hmac_sha2.c
+    * src/libYARP_OS/src/sha2.c
+    * src/libYARP_OS/include/yarp/os/impl/AuthHMAC.h
+    * src/libYARP_OS/src/AuthHMAC.cpp
+
+    added a 3-way port authentication mechansim using 
+    HMAC with SHA
+    
+    * src/libYARP_OS/include/yarp/os/impl/Face.h
+    * src/libYARP_OS/src/TcpFace.cpp
+    * src/libYARP_OS/CMakeLists.txt
+
+    implemented in TcpFace; enable with cmake switch
+    'USE_PORT_AUTHENTICATION'
+
 2010-10-07  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/harness/ResourceFinderTest.cpp: test 

@@ -4,10 +4,15 @@
 
 project(YARP_OS)
 
-file(GLOB folder_source src/*.cpp)
+file(GLOB folder_source src/*.cpp src/*.c)
 file(GLOB_RECURSE folder_header include/*.h)
 source_group("Source Files" FILES ${folder_source})
 source_group("Header Files" FILES ${folder_header})
+
+option(USE_PORT_AUTHENTICATION "Use a 3-way passphrase authentication for connections to ports" FALSE)
+if (USE_PORT_AUTHENTICATION)
+    ADD_DEFINITIONS( -DPORT_AUTH )
+endif (USE_PORT_AUTHENTICATION)
 
 IF (BUILTIN_ACE)
     MESSAGE(STATUS "Adding ACE material in YARP_OS library")
@@ -33,3 +38,5 @@ set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 install(DIRECTORY include/yarp/os COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
 
 # touch 1
+# touch 2
+

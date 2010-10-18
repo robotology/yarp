@@ -2,6 +2,7 @@
 
 /*
  * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2010 Daniel Krieg
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -28,7 +29,7 @@ bool TcpFace::open(const Address& address) {
     YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toString());
 
     this->address = address;
-    ACE_INET_Addr	serverAddr(address.getPort());
+    ACE_INET_Addr  serverAddr(address.getPort());
     int result = peerAcceptor.open(serverAddr,1);
     if (result==-1) {
         //throw IOException("cannot listen on specified tcp address");
@@ -63,11 +64,23 @@ InputProtocol *TcpFace::read() {
     }
 
     if (stream!=NULL) {
+        stream->setReadTimeout(2.0);
+        stream->setWriteTimeout(2.0);
+
+        bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
+        if (! success ) {
+            YARP_ERROR(tcpFaceLog,"authentication failed");
+            return NULL;
+        }
+        stream->setReadTimeout(0.);
+        stream->setWriteTimeout(0.);
+
         return new Protocol(stream);
     }
     return NULL;
-}
 
+
+}
 
 OutputProtocol *TcpFace::write(const Address& address) {
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
@@ -77,6 +90,22 @@ OutputProtocol *TcpFace::write(const Address& address) {
         delete stream;
         return NULL;
     }
-    return new Protocol(stream);
+
+    if (stream!=NULL) {
+        stream->setReadTimeout(2.0);
+        stream->setWriteTimeout(2.0);
+
+        bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
+        if (! success ) {
+            YARP_ERROR(tcpFaceLog,"authentication failed");
+            return NULL;
+        }
+        stream->setReadTimeout(0.);
+        stream->setWriteTimeout(0.);
+
+        return new Protocol(stream);
+    }
+    return NULL;
+
 }
 
