@@ -20,6 +20,7 @@ using namespace yarp::dev;
 
 SerialDeviceDriver::SerialDeviceDriver() {
     //system_resources = (SerialHandler*) new SerialHandler();
+	verbose=false;
 }
 
 SerialDeviceDriver::~SerialDeviceDriver() {
@@ -56,13 +57,15 @@ bool SerialDeviceDriver::open(SerialDeviceDriverSettings& config)
 bool SerialDeviceDriver::open(yarp::os::Searchable& config) {
     SerialDeviceDriverSettings config2;
     strcpy(config2.CommChannel, config.check("comport",Value("COM3"),"name of the serial channel").asString().c_str());
-    config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt();
+	this->verbose = (config.check("verbose",Value(1),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
+	config2.SerialParams.baudrate = config.check("baudrate",Value(9600),"Specifies the baudrate at which the communication port operates.").asInt();
     config2.SerialParams.xonlim = config.check("xonlim",Value(0),"Specifies the minimum number of bytes in input buffer before XON char is sent. Negative value indicates that default value should be used (Win32)").asInt();
     config2.SerialParams.xofflim = config.check("xofflim",Value(0),"Specifies the maximum number of bytes in input buffer before XOFF char is sent. Negative value indicates that default value should be used (Win32). ").asInt();
     config2.SerialParams.readmincharacters = config.check("readmincharacters",Value(1),"Specifies the minimum number of characters for non-canonical read (POSIX).").asInt();
     config2.SerialParams.readtimeoutmsec = config.check("readtimeoutmsec",Value(100),"Specifies the time to wait before returning from read. Negative value means infinite timeout.").asInt();
-    config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt();
-    config2.SerialParams.paritymode = config.check("paritymode",Value("EVEN"),"Specifies the parity mode. POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString().c_str();
+    // config2.SerialParams.parityenb = config.check("parityenb",Value(0),"Enable/disable parity checking.").asInt();
+	yarp::os::ConstString temp = config.check("paritymode",Value("EVEN"),"Specifies the parity mode. POSIX supports even and odd parity. Additionally Win32 supports mark and space parity modes.").asString();
+	config2.SerialParams.paritymode = temp.c_str();
     config2.SerialParams.ctsenb = config.check("ctsenb",Value(0),"Enable & set CTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).").asInt();
     config2.SerialParams.rtsenb = config.check("rtsenb",Value(0),"Enable & set RTS mode. Note that RTS & CTS are enabled/disabled together on some systems (RTS/CTS is enabled if either <code>ctsenb</code> or <code>rtsenb</code> is set).\n- 0 = Disable RTS.\n- 1 = Enable RTS.\n- 2 = Enable RTS flow-control handshaking (Win32).\n- 3 = Specifies that RTS line will be high if bytes are available for transmission.\nAfter transmission RTS will be low (Win32).").asInt();
     config2.SerialParams.xinenb = config.check("xinenb",Value(0),"Enable/disable software flow control on input.").asInt();
@@ -82,8 +85,9 @@ bool SerialDeviceDriver::close(void) {
 
 bool SerialDeviceDriver::send(const Bottle& msg)
 {
-    ACE_OS::printf("Received string: %s\n", msg.get(0).asString().c_str());
-    int message_size = msg.get(0).asString().length();
+	if (verbose) ACE_OS::printf("Received string: %s\n", msg.get(0).asString().c_str());
+    
+	int message_size = msg.get(0).asString().length();
     // Write message in the serial device
     ssize_t bytes_written = _serial_dev.send_n((void *)msg.get(0).asString().c_str(), message_size);
 
@@ -94,8 +98,9 @@ bool SerialDeviceDriver::send(const Bottle& msg)
 
 bool SerialDeviceDriver::send(char *msg, size_t size)
 {
-    ACE_OS::printf("Received string: %s\n", msg);
-    // Write message in the serial device
+    if (verbose) ACE_OS::printf("Received string: %s\n", msg);
+    
+	// Write message in the serial device
     ssize_t bytes_written = _serial_dev.send_n((void *)msg, size);
 
     if (bytes_written == -1)
@@ -118,7 +123,7 @@ bool SerialDeviceDriver::receive(Bottle& msg)
         
     message[bytes_read] = 0;
 
-    ACE_OS::printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
+    if (verbose) ACE_OS::printf("Datareceived in Serial DeviceDriver receive:#%s#\n",message);
 
     // Put message in the bottle
     msg.addString(message);

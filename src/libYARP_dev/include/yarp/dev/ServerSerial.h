@@ -176,7 +176,7 @@ public:
      */
     virtual bool open(Searchable& prop)
     {
-        verb = (prop.check("verbose","if present, give detailed output"));
+        verb = (prop.check("verbose",Value(0),"Specifies if the device is in verbose mode (0/1).").asInt())>0;
 		if (verb)
 			printf("running with verbose output\n");
 

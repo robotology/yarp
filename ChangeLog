@@ -1,3 +1,14 @@
+2010-10-18  Marco Randazzo <marco.randazzo@iit.it>
+
+	* src\modules\serial\SerialDeviceDriver.cpp
+	fixed a critical bug on serial port parity property 
+	(memory around variable config2.SerialParams.paritymode was corrupted)
+
+	* src\modules\serial\SerialDeviceDriver.h
+	* src\libYARP_dev\include\yarp\dev\ServerSerial.h
+	added an optional verbose property to SerialDeviceDriver.h
+	and fixed the already present verbose property in ServerSerial.h
+	
 2010-10-18  Daniel Krieg  <krieg@fias.uni-frankfurt.de>
 
     * src/libYARP_OS/include/hmac/sha2.h
