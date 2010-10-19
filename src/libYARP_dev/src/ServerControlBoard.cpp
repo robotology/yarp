@@ -1234,6 +1234,7 @@ bool yarp::dev::CommandsHelper::initialize() {
     addUsage("[set] [pos] $iAxisNumber $fPosition", "command the position of an axis");
     addUsage("[set] [rel] $iAxisNumber $fPosition", "command the relative position of an axis");
     addUsage("[set] [vmo] $iAxisNumber $fVelocity", "command the velocity of an axis");
+    addUsage("[get] [encs]", "get all encoder values");
     addUsage("[get] [enc] $iAxisNumber", "get the encoder value for an axis");
 
 

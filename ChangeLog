@@ -1,3 +1,8 @@
+2010-10-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ServerControlBoard.cpp: add missing 
+	"get encs" description to help on rpc port.
+
 2010-10-18  Marco Randazzo <marco.randazzo@iit.it>
 
 	* src\modules\serial\SerialDeviceDriver.cpp
