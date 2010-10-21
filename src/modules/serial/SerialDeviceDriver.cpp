@@ -108,6 +108,51 @@ bool SerialDeviceDriver::send(char *msg, size_t size)
     return true;
 }
 
+int SerialDeviceDriver::receiveChar(char& c)
+{
+	char chr;
+	
+	//this function call blocks
+    ssize_t bytes_read = _serial_dev.recv ((void *) &chr, 1);
+
+    if (bytes_read == -1)
+	{
+		ACE_ERROR((LM_ERROR, ACE_TEXT ("Error on SerialDeviceDriver : receive \n")));
+		return 0;
+	}
+
+    if (bytes_read == 0)
+	{
+        return 0;
+	}
+
+	c=chr;
+	return 1;
+}
+
+int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
+{
+	int i;
+	for (i = 0; i < MaxLineLength -1; ++i)
+	{
+		char recv_ch;
+		int n = receiveChar(recv_ch);
+		if (n <= 0)
+		{
+			return 0;
+		}
+		if ((recv_ch == '\r') || (recv_ch == '\n'))
+		{
+			buffer[i] = recv_ch;
+			i++;
+		    break;
+		}
+		buffer[i] = recv_ch;
+	 }
+	 buffer[i] = '\0';
+	 return i;
+}
+
 bool SerialDeviceDriver::receive(Bottle& msg)
 {
     char message[1001];

@@ -147,6 +147,24 @@ public:
             return false;
     }
 
+    virtual int receiveChar(char& c)
+    {
+        if(serial != NULL) {
+            return serial->receiveChar(c);
+        }
+        else
+            return -1;
+    }
+
+	virtual int receiveLine(char* line, const int MaxLineLength)
+    {
+        if(serial != NULL) {
+            return serial->receiveLine(line, MaxLineLength);
+        }
+        else
+            return -1;
+    }
+
     /**
     * Default open() method.
     * @return always false since initialization requires certain parameters.

@@ -44,6 +44,19 @@ public:
      * @return - true on success; false if no messages available
      */
     virtual bool receive(yarp::os::Bottle& msg) = 0;
+    /**
+     * Gets one single char from the receive queue.
+     * @param chr - the received char.
+     * @return - 0 if no chars are received; 1 if one char is received.
+     */
+	virtual int  receiveChar(char& chr) = 0;
+    /**
+     * Gets one line (a sequence of chars with a ending '\n' or '\r') from the receive queue. The ending '\n''\r' chars are not removed in the returned line.
+     * @param line - a previously allocated buffer where the received line is stored.
+     * @param MaxLineLength - the size of the 'line' parameter.
+	 * @return - the number of received characters (including the '\n''\r' chars, plus the buffer terminator '\0'). The function returns 0 if no chars are received.
+     */
+	virtual int  receiveLine(char* line, const int MaxLineLength) = 0;
 };
 
 #endif
