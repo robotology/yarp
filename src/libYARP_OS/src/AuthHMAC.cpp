@@ -10,6 +10,7 @@
 #include <yarp/os/impl/NameConfig.h>
 
 #include <cstdlib>
+#include <cstring> //needed by strcpy
 #include <time.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
