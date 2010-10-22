@@ -34,12 +34,14 @@ IF(UNIX)
  endif (PKG_CONFIG_FOUND)
  
  IF (APPLE)
-  ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
-  ### The following setup is relative to the official GTK package for mac os-x
-  SET( GTHREAD_INCLUDE_DIR "/Library/Frameworks/GLib.framework/Headers" )
-  SET( GTHREAD_LIBRARY_DIR " " )
-  SET( GTHREAD_LINK_FLAGS "-framework GLib" )
-  SET( GTHREAD_C_FLAGS " " )
+  IF (NOT GTHREAD_LINK_FLAGS)
+    ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
+    ### The following setup is relative to the official GTK package for mac os-x
+    SET( GTHREAD_INCLUDE_DIR "/Library/Frameworks/GLib.framework/Headers" )
+    SET( GTHREAD_LIBRARY_DIR " " )
+    SET( GTHREAD_LINK_FLAGS "-framework GLib" )
+    SET( GTHREAD_C_FLAGS " " )
+  ENDIF ()
  ENDIF (APPLE)
 
  SET(GTHREAD_LINK_FLAGS "${GTHREAD_LINK_FLAGS}" CACHE INTERNAL "gthread link flags")

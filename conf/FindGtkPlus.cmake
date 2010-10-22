@@ -35,13 +35,17 @@ IF(UNIX)
   endif (PKG_CONFIG_FOUND)
 
  IF (APPLE)
-   ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
-   ### The following setup is relative to the official GTK package for mac os-x
-   SET( GTKPLUS_INCLUDE_DIR "/Library/Frameworks/Gtk.framework/Headers;/Library/Frameworks/GLib.framework/Headers;/Library/Frameworks/Cairo.framework/Headers;" 
+   # Make the following hardcoded links conditional, since e.g. a "brew"
+   # installed version of gtk+ will already have been found.
+   IF (NOT GTKPLUS_LIBRARY_DIR)
+     ### THERE IS AN OFFICIAL GTK PACKAGE on www.gtk-osx.org
+     ### The following setup is relative to the official GTK package for mac os-x
+     SET( GTKPLUS_INCLUDE_DIR "/Library/Frameworks/Gtk.framework/Headers;/Library/Frameworks/GLib.framework/Headers;/Library/Frameworks/Cairo.framework/Headers;" 
 )
-   SET( GTKPLUS_LIBRARY_DIR " " )
-   SET( GTKPLUS_LINK_FLAGS "-framework Gtk -framework GLib" )
-   SET( GTKPLUS_C_FLAGS " " )
+     SET( GTKPLUS_LIBRARY_DIR " " )
+     SET( GTKPLUS_LINK_FLAGS "-framework Gtk -framework GLib" )
+     SET( GTKPLUS_C_FLAGS " " )
+   ENDIF ()
  ENDIF (APPLE)
 
 
