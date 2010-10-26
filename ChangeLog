@@ -1,3 +1,8 @@
+2010-10-26  Marco Randazzo <marco.randazzo@iit.it>
+
+	* src\modules\laserHokuyo\*.*
+	Added deviceDriver for Hokuyo UTM30LX laser range finder.
+	
 2010-10-21  Marco Randazzo <marco.randazzo@iit.it>
 
 	* src\modules\serial\SerialDeviceDriver.cpp
