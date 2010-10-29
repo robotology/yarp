@@ -42,6 +42,7 @@
     %csmethodmodifiers disableCallback "public virtual";
     %csmethodmodifiers acquire "public virtual";
     %csmethodmodifiers release "public virtual";
+    %csmethodmodifiers isNull "public virtual";
 #endif
 
 // Deal with abstract base class problems, where SWIG guesses
