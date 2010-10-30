@@ -153,6 +153,98 @@ public:
                             yarp::sig::Vector &qdhat)=0;
 
     /**
+    * Ask for inverting a given pose without actually moving there.
+    * [wait for reply] 
+    * @param xd a 3-d vector which contains the desired 
+    *          position x,y,z (meters).
+    * @param od a 4-d vector which contains the desired 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians).
+    * @param xdhat a 3-d vector which is filled with the final 
+    *          position x,y,z (meters); it may differ from the
+    *          commanded xd.
+    * @param odhat a 4-d vector which is filled with the final 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians); it may differ from
+    *          the commanded od.
+    * @param qdhat the joints configuration through which the
+    *             couple (xdhat,odhat) is achieved (degrees).
+    * @return true/false on success/failure.
+    */
+    virtual bool askForPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
+                            yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
+                            yarp::sig::Vector &qdhat)=0;
+
+    /**
+    * Ask for inverting a given pose without actually moving there.
+    * [wait for reply] 
+    * @param q0 a vector of DOF length which contains the starting 
+    *           joints configuration (degrees).
+    * @param xd a 3-d vector which contains with the desired 
+    *          position x,y,z (meters).
+    * @param od a 4-d vector which contains with the desired 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians).
+    * @param xdhat a 3-d vector which is filled with the final 
+    *          position x,y,z (meters); it may differ from the
+    *          commanded xd.
+    * @param odhat a 4-d vector which is filled with the final 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians); it may differ from
+    *          the commanded od.
+    * @param qdhat the joints configuration through which the
+    *             couple (xdhat,odhat) is achieved (degrees).
+    * @return true/false on success/failure.
+    */
+    virtual bool askForPose(const yarp::sig::Vector &q0,
+                            const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
+                            yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
+                            yarp::sig::Vector &qdhat)=0;
+
+    /**
+    * Ask for inverting a given position without actually moving 
+    * there. [wait for reply] 
+    * @param xd a 3-d vector which contains the desired 
+    *          position x,y,z (meters).
+    * @param xdhat a 3-d vector which is filled with the final 
+    *          position x,y,z (meters); it may differ from the
+    *          commanded xd.
+    * @param odhat a 4-d vector which is filled with the final 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians); it may differ from
+    *          the commanded od.
+    * @param qdhat the joints configuration through which the
+    *             couple (xdhat,odhat) is achieved (degrees).
+    * @return true/false on success/failure.
+    */
+    virtual bool askForPosition(const yarp::sig::Vector &xd,
+                                yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
+                                yarp::sig::Vector &qdhat)=0;
+
+    /**
+    * Ask for inverting a given position without actually moving 
+    * there. [wait for reply] 
+    * @param q0 a vector of DOF length which contains the starting 
+    *           joints configuration (degrees).
+    * @param xd a 3-d vector which contains with the desired 
+    *          position x,y,z (meters).
+    * @param xdhat a 3-d vector which is filled with the final 
+    *          position x,y,z (meters); it may differ from the
+    *          commanded xd.
+    * @param odhat a 4-d vector which is filled with the final 
+    *          orientation using axis-angle representation xa, ya,
+    *          za, theta (meters and radians); it may differ from
+    *          the commanded od.
+    * @param qdhat the joints configuration through which the
+    *             couple (xdhat,odhat) is achieved (degrees).
+    * @return true/false on success/failure.
+    */
+    virtual bool askForPosition(const yarp::sig::Vector &q0,
+                                const yarp::sig::Vector &xd,
+                                yarp::sig::Vector &xdhat, yarp::sig::Vector &odhat,
+                                yarp::sig::Vector &qdhat)=0;
+
+    /**
     * Get the current DOF configuration of the limb. [wait for
     * reply] 
     * @param curDof a vector which is filled with the actual DOF 

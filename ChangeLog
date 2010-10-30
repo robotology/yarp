@@ -1,3 +1,7 @@
+2010-10-30  Ugo Pattacini  <ugo.pattacini@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/CartesianControl.h: added 4 new methods
+
 2010-10-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* example/swig/yarp.i: update C# binding for Value::isNull. SWIG
