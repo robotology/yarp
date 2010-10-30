@@ -178,8 +178,9 @@ public:
     /**
     * Ask for inverting a given pose without actually moving there.
     * [wait for reply] 
-    * @param q0 a vector of DOF length which contains the starting 
-    *           joints configuration (degrees).
+    * @param q0 a vector of length DOF which contains the starting
+    *           joints configuration (degrees), made compatible with
+    *           the chain.
     * @param xd a 3-d vector which contains with the desired 
     *          position x,y,z (meters).
     * @param od a 4-d vector which contains with the desired 
@@ -224,8 +225,9 @@ public:
     /**
     * Ask for inverting a given position without actually moving 
     * there. [wait for reply] 
-    * @param q0 a vector of DOF length which contains the starting 
-    *           joints configuration (degrees).
+    * @param q0 a vector of length DOF which contains the starting 
+    *           joints configuration (degrees), made compatible with
+    *           the chain.
     * @param xd a 3-d vector which contains with the desired 
     *          position x,y,z (meters).
     * @param xdhat a 3-d vector which is filled with the final 
