@@ -276,7 +276,7 @@ public:
     virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
 
     /**
-    * Get the current joints rest postion. [wait for reply]
+    * Get the current joints rest position. [wait for reply]
     * @param curRestPos a vector which is filled with the current 
     *                  joints rest position components in degrees.
     * @return true/false on success/failure. 
@@ -289,7 +289,7 @@ public:
     virtual bool getRestPos(yarp::sig::Vector &curRestPos)=0;
 
     /**
-    * Set a new joints rest postion. [wait for reply] 
+    * Set a new joints rest position. [wait for reply] 
     * @param newRestPos a vector which contains the new joints rest
     *                  position components in degrees.
     * @param curRestPos a vector which is filled with the current 
@@ -318,7 +318,7 @@ public:
     virtual bool getRestWeights(yarp::sig::Vector &curRestWeights)=0;
 
     /**
-    * Set a new joints rest postion. [wait for reply] 
+    * Set a new joints rest position. [wait for reply] 
     * @param newRestWeights a vector which contains the new joints 
     *                  rest weights.
     * @param curRestWeights a vector which is filled with the 
