@@ -181,9 +181,9 @@ public:
     * @param q0 a vector of length DOF which contains the starting
     *           joints configuration (degrees), made compatible with
     *           the chain.
-    * @param xd a 3-d vector which contains with the desired 
+    * @param xd a 3-d vector which contains the desired 
     *          position x,y,z (meters).
-    * @param od a 4-d vector which contains with the desired 
+    * @param od a 4-d vector which contains the desired 
     *          orientation using axis-angle representation xa, ya,
     *          za, theta (meters and radians).
     * @param xdhat a 3-d vector which is filled with the final 
@@ -228,7 +228,7 @@ public:
     * @param q0 a vector of length DOF which contains the starting 
     *           joints configuration (degrees), made compatible with
     *           the chain.
-    * @param xd a 3-d vector which contains with the desired 
+    * @param xd a 3-d vector which contains the desired 
     *          position x,y,z (meters).
     * @param xdhat a 3-d vector which is filled with the final 
     *          position x,y,z (meters); it may differ from the
