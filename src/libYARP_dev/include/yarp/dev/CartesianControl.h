@@ -68,14 +68,14 @@ public:
     virtual bool getPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
-    * Get the current pose of the jth link belonging to the 
+    * Get the current pose of the specified link belonging to the 
     * kinematic chain. [wait for reply] 
     * @param axis joint index (regardless if it is actuated or 
     *            not). 
     * @param x a 3-d vector which is filled with the actual position
-    *         x,y,z (meters) of the jth link reference frame.
+    *         x,y,z (meters) of the given link reference frame.
     * @param od a 4-d vector which is filled with the actual 
-    * orientation of the jth link reference frame using axis-angle 
+    * orientation of the given link reference frame using axis-angle
     * representation xa, ya, za, theta (meters and radians). 
     * @return true/false on success/failure.
     */
