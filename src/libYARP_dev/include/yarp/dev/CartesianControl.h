@@ -417,6 +417,17 @@ public:
     */
     virtual bool checkMotionDone(bool *f)=0;
 
+    /** Wait until the current trajectory is terminated. [wait for
+    *   reply]
+    * @param period specify the check time period (seconds). 
+    * @param timeout specify the check expiration time (seconds). If
+    *         timeout<=0 (as by default) the check will be performed
+    *         without time limitation.
+    * @return true for success, false for failure and timeout 
+    *         expired.
+    */
+    virtual bool waitMotionDone(const double period=0.1, const double timeout=0.0)=0;
+
     /** Ask for an immediate stop motion. [wait for reply]
     * \note the control is completely released, i.e. a direct switch 
     *       to non-tracking mode is executed.     
