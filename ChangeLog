@@ -1,3 +1,8 @@
+2010-11-08  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/doc/persistent_connections.dox: add notes about using 
+	persistent connections from code [thanks Charles Lesire-Cabaniols]
+
 2010-10-30  Ugo Pattacini  <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/CartesianControl.h: added 4 new methods
