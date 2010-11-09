@@ -14,6 +14,7 @@
 
 
 %module(directors="1") yarpswig
+%feature("director") yarp::os::PortReader;
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
@@ -142,7 +143,7 @@
 %rename(isEqual) *::operator==;
 %rename(notEqual) *::operator!=;
 %rename(access) *::operator();
-%ignore yarp::os::PortReader::read;
+//%ignore yarp::os::PortReader::read;
 
 // Deal with some clash in perl involving the name "seed"
 %{
