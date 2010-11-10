@@ -21,6 +21,10 @@ int main(int argc, char *argv[]) {
     }
     for (int i=0; i<top; i++) {
         sprintf(buf,"/stress/%06d",i);
+        yarp.queryName(buf);
+    }
+    for (int i=0; i<top; i++) {
+        sprintf(buf,"/stress/%06d",i);
         yarp.unregisterName(buf);
     }
 

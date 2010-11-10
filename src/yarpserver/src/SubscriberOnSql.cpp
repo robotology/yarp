@@ -29,7 +29,6 @@
 using namespace yarp::os;
 
 bool SubscriberOnSql::open(const char *filename, bool fresh) {
-    //verbose = true;
     sqlite3 *db = NULL;
     if (fresh) {
         int result = access(filename,F_OK);

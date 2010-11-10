@@ -14,7 +14,6 @@
 #include <string>
 #include <list>
 
-
 /**
  *
  * Side information for controlling access to triples.
@@ -43,6 +42,7 @@ public:
 class TripleSource {
 public:
     TripleSource() {
+        verbose = 0;
         reset();
     }
 
@@ -50,7 +50,7 @@ public:
     }
 
     virtual void reset() {
-        verbose = 0;
+        //verbose = 0;
     }
 
     void setVerbose(int level) {

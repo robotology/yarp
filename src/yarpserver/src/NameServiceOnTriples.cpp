@@ -562,7 +562,6 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     TripleSource& mem = *db;
     //mem.begin();
     mem.reset();
-    //mem.setVerbose(1);
     reply.clear();
     NameTripleState act(cmd,reply,event,remote,mem);
 

@@ -23,6 +23,23 @@
 #include <string>
 using namespace std;
 
+
+static bool sql_enact(sqlite3 *db, const char *cmd) {
+    printf("ISSUE %s\n", cmd);
+    int result = sqlite3_exec(db, cmd, NULL, NULL, NULL);
+    if (result!=SQLITE_OK) {
+        const char *msg = sqlite3_errmsg(db);
+        if (msg!=NULL) {
+            fprintf(stderr,"Database error: %s\n", msg);
+        }
+        sqlite3_close(db);
+        fprintf(stderr,"Failed to set up database tables\n");
+        exit(1);
+    }
+    return true;
+}
+
+
 TripleSource *TripleSourceCreator::open(const char *filename, 
                                         bool cautious,
                                         bool fresh) {
@@ -55,9 +72,7 @@ TripleSource *TripleSourceCreator::open(const char *filename,
 	rid INTEGER,\n\
 	ns TEXT,\n\
 	name TEXT,\n\
-	value TEXT);\n\
-    PRAGMA synchronous=";
-    create_main_table = create_main_table + (cautious?"FULL":"OFF") + ";\n";
+	value TEXT);";
 
     result = sqlite3_exec(db, create_main_table.c_str(), NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
@@ -70,25 +85,10 @@ TripleSource *TripleSourceCreator::open(const char *filename,
         exit(1);
     }
 
-    /*
-    const char *create_subscribe_table = "CREATE TABLE IF NOT EXISTS subscribe (\n\
-	id INTEGER PRIMARY KEY,\n\
-	source TEXT,\n\
-	dest TEXT,\n\
-	carrier TEXT);";
+    string cmd_synch = string("PRAGMA synchronous=") + (cautious?"FULL":"OFF") + ";";
+    sql_enact(db,cmd_synch.c_str());
 
-    result = sqlite3_exec(db, create_subscribe_table, NULL, NULL, NULL);
-    if (result!=SQLITE_OK) {
-        sqlite3_close(db);
-        fprintf(stderr,"Failed to set up database tables\n");
-        exit(1);
-    }
-    */
-
-    // TODO: add indices, e.g.:
-    //CREATE INDEX tagsNs ON tags (ns);
-    //CREATE INDEX tagsNsName ON tags (ns,name);
-    //CREATE INDEX tagsName ON tags (name);
+    sql_enact(db,"CREATE INDEX IF NOT EXISTS tagsRidNameValue on tags(rid,name,value);");
 
     implementation = db;
     accessor = new SqliteTripleSource(db);

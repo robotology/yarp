@@ -1,3 +1,8 @@
+2010-11-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpserver/src/TripleSourceCreator.cpp: add an index
+	that testing shows boosts performance.
+
 2010-11-10  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/doc/cmd_yarp.dox: document timeout option.

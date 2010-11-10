@@ -49,6 +49,7 @@ int main(int argc, char *argv[]) {
     ConstString ip = options.check("ip",Value("...")).asString();
     int sock = options.check("socket",Value(10000)).asInt();
     bool cautious = options.check("cautious");
+    bool verbose = options.check("verbose");
 
     printf("Port database: %s (change with \"--portdb newports.db\")\n", 
            dbFilename.c_str());
@@ -74,11 +75,17 @@ int main(int argc, char *argv[]) {
         fprintf(stderr,"Aborting, ports database failed to open.\n");
         return 1;
     }
+    if (verbose) {
+        pmem->setVerbose(1);
+    }
 
     SubscriberOnSql subscriber;
     if (!subscriber.open(subdbFilename.c_str())) {
         fprintf(stderr,"Aborting, subscription database failed to open.\n");
         return 1;
+    }
+    if (verbose) {
+        subscriber.setVerbose(true);
     }
 
     Contact contact = 
