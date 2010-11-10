@@ -1096,18 +1096,34 @@ int Companion::cmdNamespace(int argc, char *argv[]) {
 
 
 int Companion::cmdClean(int argc, char *argv[]) {
+    Property options;
+    if (argc==0) {
+        printf("# If the cleaning process has long delays, you may wish to use a timeout,\n");
+        printf("# specifying how long to wait (in seconds) for a test connection to a port:\n");
+        printf("#   yarp clean --timeout 5.0\n");
+    } else {
+        options.fromCommand(argc,argv,false);
+    }
+
     NameClient& nic = NameClient::getNameClient();
     NameConfig nc;
     String name = nc.getNamespace();
     Bottle msg, reply;
     msg.addString("bot");
     msg.addString("list");
-    printf("Requesting list of ports from name server\n");
+    printf("Requesting list of ports from name server... ");
     NetworkBase::write(name.c_str(),
                        msg,
                        reply);
     int ct = reply.size()-1;
-    printf("Got %d port%s\n", ct, (ct!=1)?"s":"");
+    printf("got %d port%s\n", ct, (ct!=1)?"s":"");
+    double timeout = -1;
+    if (options.check("timeout")) {
+        timeout = options.find("timeout").asDouble();
+        printf("Using a timeout of %g seconds\n", timeout);
+    } else {
+        printf("No timeout; to specify one, do \"yarp clean --timeout NN.N\"\n");
+    }
     for (int i=1; i<reply.size(); i++) {
         Bottle *entry = reply.get(i).asList();
         if (entry!=NULL) {
@@ -1118,11 +1134,16 @@ int Companion::cmdClean(int argc, char *argv[]) {
                     printf("Skipping mcast port %s...\n", port.c_str());
                 } else {
                     Address addr = Address::fromContact(c);
-                    printf("Pinging port %s...\n", port.c_str());
+                    printf("Testing %s at %s\n", 
+                           port.c_str(),
+                           addr.toString().c_str());
                     if (addr.isValid()) {
+                        if (timeout>=0) {
+                            addr.setTimeout((float)timeout);
+                        }
                         OutputProtocol *out = Carriers::connect(addr);
                         if (out==NULL) {
-                            printf("No response, removing port %s\n", port.c_str());
+                            printf("* No response, removing port %s\n", port.c_str());
                             nic.unregisterName(port.c_str());
                         } else {
                             delete out;
@@ -1136,10 +1157,10 @@ int Companion::cmdClean(int argc, char *argv[]) {
             }
         }
     }
-    printf("Giving name server a chance to do garbage collection:\n");
+    printf("Giving name server a chance to do garbage collection.\n");
     String cmd = "NAME_SERVER gc";
     String result = nic.send(cmd);
-    ACE_OS::printf("%s",result.c_str());
+    printf("Name server says: %s",result.c_str());
 
     return 0;
 }

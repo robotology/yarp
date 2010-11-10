@@ -1,3 +1,10 @@
+2010-11-10  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/doc/cmd_yarp.dox: document timeout option.
+
+	* src/libYARP_OS/src/Companion.cpp: add timeout option to
+	"yarp clean" [thanks Stephane Lallee]
+
 2010-11-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: support PortReader::read callback

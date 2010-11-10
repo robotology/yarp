@@ -97,6 +97,7 @@ yarp: *** YARP seems okay!
 
 \verbatim
 yarp clean
+yarp clean --timeout 10
 \endverbatim
 
 This command gets a list of all registered ports from the name server,
@@ -106,9 +107,9 @@ they are unregistered (using \ref name_unregister).
 
 If you run into troubles with this command seeming to hang on a port
 name (in fact it is a very loooooong timeout), you may want to
-\ref name_unregister "unregister" that port name yourself.
-
-
+\ref name_unregister "unregister" that port name yourself.  Alternatively,
+you may specify a timeout in seconds after which YARP should give up on
+reaching a port.
 
 @section yarp_cmake yarp cmake
 
