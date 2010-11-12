@@ -125,6 +125,8 @@ public:
      */
     static Address extractAddress(const String& txt);
 
+    static Address extractAddress(const Bottle& bot);
+
     /** 
      * Send a text message to the nameserver, and return the result.
      * 

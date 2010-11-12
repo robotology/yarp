@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Address.h>
+#include <yarp/os/Bottle.h>
 
 namespace yarp {
     namespace os {
@@ -47,6 +48,8 @@ public:
     static String getHostName();
 
     static String getIps();
+
+    static yarp::os::Bottle getIpsAsBottle();
 
     static bool isLocalName(const String& name);
 

@@ -247,6 +247,20 @@ bool NameConfig::isLocalName(const String& name) {
     return result;
 }
 
+yarp::os::Bottle NameConfig::getIpsAsBottle() {
+    yarp::os::Bottle result;
+    ACE_INET_Addr *ips = NULL;
+    size_t count = 0;
+    if (ACE::get_ip_interfaces(count,ips)>=0) {
+        for (size_t i=0; i<count; i++) {
+            String ip = ips[i].get_host_addr();
+            result.addString(ip.c_str());
+        }
+        delete[] ips;
+    }
+    return result;
+}
+
 
 String NameConfig::getIps() {
     String result = "";

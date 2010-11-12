@@ -115,8 +115,23 @@ Address NameClient::extractAddress(const String& txt) {
     return result;
 }
 
+Address NameClient::extractAddress(const Bottle& bot) {
+    Address result;
+    if (bot.size()>=9) {
+        if (bot.get(0).asString()=="registration") {
+            result = Address(bot.get(4).asString().c_str(), // ip
+                             bot.get(6).asInt(),            // port number
+                             bot.get(8).asString().c_str(), // carrier
+                             bot.get(2).asString().c_str());// regname
+        }
+    }
+    return result;
+}
+
+
 
 String NameClient::send(const String& cmd, bool multi) {
+    //printf("*** OLD YARP command %s\n", cmd.c_str());
     setup();
     bool retried = false;
     bool retry = false;
@@ -211,7 +226,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
         return getServer().apply(cmd,reply,
                                  Address("127.0.0.1",10000,"tcp"));
     } else {
-        ConstString server = NetworkBase::getNameServerName();
+        Contact server = NetworkBase::getNameServerContact();
         return NetworkBase::write(server,cmd,reply);
     }
 }
@@ -247,32 +262,58 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     //if (isFakeMode()) {
     //return getServer().registerName(np,suggest);
     //}
-    String q("NAME_SERVER register ");
-    q += (np!="")?np:"...";
+    Bottle cmd;
+    cmd.addString("register");
+    if (np!="") {
+        cmd.addString(np.c_str());
+    } else {
+        cmd.addString("...");
+    }
     if (suggest.isValid()) {
-        q += " ";
-        q += (suggest.getCarrierName()!="")?suggest.getCarrierName():"...";
-        q += " ";
-        q += (suggest.getName()!="")?suggest.getName():"...";
-        q += " ";
-        if (suggest.getPort()==0) {
-            q += "...";
+        if (suggest.getCarrierName()!="") {
+            cmd.addString(suggest.getCarrierName().c_str());
         } else {
-            q += NetType::toString(suggest.getPort());
+            cmd.addString("...");
+        }
+        if (suggest.getName()!="") {
+            cmd.addString(suggest.getName().c_str());
+        } else {
+            cmd.addString("...");
+        }
+        if (suggest.getPort()!=0) {
+            cmd.addInt(suggest.getPort());
+        } else {
+            cmd.addString("...");
         }
     }
-    Address address = probe(q);
+    Bottle reply;
+    send(cmd,reply);
+
+    Address address = extractAddress(reply);
     if (address.isValid()) {
         String reg = address.getRegName();
-        send(String("NAME_SERVER set ") + reg + " offers tcp text text_ack udp mcast shmem name_ser",
-             false);
-        send(String("NAME_SERVER set ") + reg + " accepts tcp text text_ack udp mcast shmem name_ser",
-             false);
-        String ips = NameConfig::getIps();
-        send(String("NAME_SERVER set ") + reg + " ips " + ips,
-             false);
-        send(String("NAME_SERVER set ") + reg + " process " + process,
-             false);
+
+        cmd.fromString("set /port offers tcp text text_ack udp mcast shmem name_ser");
+        cmd.get(1) = Value(reg.c_str());
+        send(cmd,reply);
+
+        // accept the same set of carriers
+        cmd.get(2) = Value("accepts");
+        send(cmd,reply);
+
+        cmd.clear();
+        cmd.addString("set");
+        cmd.addString(reg.c_str());
+        cmd.addString("ips");
+        cmd.append(NameConfig::getIpsAsBottle());
+        send(cmd,reply);
+
+        cmd.clear();
+        cmd.addString("set");
+        cmd.addString(reg.c_str());
+        cmd.addString("process");
+        cmd.addInt(ACE_OS::getpid());
+        send(cmd,reply);
     }
     return address;
 }
