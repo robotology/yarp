@@ -113,6 +113,9 @@ public:
         gonePublic = true;
     }
 
+    void lock();
+
+    void unlock();
 };
 
 

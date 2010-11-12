@@ -25,7 +25,7 @@ using namespace std;
 
 
 static bool sql_enact(sqlite3 *db, const char *cmd) {
-    printf("ISSUE %s\n", cmd);
+    //printf("ISSUE %s\n", cmd);
     int result = sqlite3_exec(db, cmd, NULL, NULL, NULL);
     if (result!=SQLITE_OK) {
         const char *msg = sqlite3_errmsg(db);

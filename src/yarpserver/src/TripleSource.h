@@ -73,7 +73,6 @@ public:
 
     virtual void begin(TripleContext *context) = 0;
     virtual void end(TripleContext *context) = 0;
-
 protected:
     int verbose;
 };

@@ -26,7 +26,7 @@ Contact NameServiceOnTriples::query(const char *portName,
                                     const char *prefix,
                                     bool nested) {
     //printf("Local query %s (%d)\n", portName, nested);
-    if (!nested) mutex.wait();
+    if (!nested) lock();
     Triple t;
     t.setNameValue("port",portName);
     int result = act.mem.find(t,NULL);
@@ -68,12 +68,12 @@ Contact NameServiceOnTriples::query(const char *portName,
         if (lst.size()>0) {
             carrier = lst.begin()->value.c_str();
         }
-        if (!nested) mutex.post();
+        if (!nested) unlock();
         return Contact::byName(portName).addSocket(carrier.c_str(),
                                                    host.c_str(),
                                                    sock);
     }
-    if (!nested) mutex.post();
+    if (!nested) unlock();
     return Contact::invalid();
 }
 
@@ -167,11 +167,11 @@ bool NameServiceOnTriples::cmdQuery(NameTripleState& act, bool nested) {
 bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
     ConstString port = act.cmd.get(1).asString();
 
-    mutex.wait();
+    lock();
     Triple t;
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
-    mutex.post();
+    unlock();
     if (result!=-1) {
         // Hmm, we already have a registration.
         // This could be fine - maybe program crashed or was abruptly
@@ -251,7 +251,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
             sock = serverContact.getPort();
         }
     }
-    mutex.wait();
+    lock();
     if (port=="...") {
         Contact c = Contact::byName(port.c_str()).addSocket(carrier.c_str(),machine.c_str(),sock);
         c = alloc->completePortName(c);
@@ -286,7 +286,7 @@ bool NameServiceOnTriples::cmdRegister(NameTripleState& act) {
         event.addVocab(Vocab::encode("add"));
         event.addString(port.c_str());
     }
-    mutex.post();
+    unlock();
 
     return cmdQuery(act);
 }
@@ -304,7 +304,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     ConstString port = act.cmd.get(1).asString();
     //printf(" - unregister %s\n", port.c_str());
     announce(port.c_str(),-1);
-    mutex.wait();
+    lock();
     Contact contact = query(port.c_str(),act,"",true);
     alloc->freePortResources(contact);
     act.reply.addString("old");
@@ -316,14 +316,14 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     if (result!=-1) {
         t.setNameValue("owns","*");
         list<Triple> lst = act.mem.query(t,&context);
-        mutex.post();
+        unlock();
         for (list<Triple>::iterator it=lst.begin();it!=lst.end();it++) {
             act.cmd.clear();
             act.cmd.addString("unregister");
             act.cmd.addString(it->value.c_str());
             cmdUnregister(act);
         }
-        mutex.wait();
+        lock();
         t.setNsNameValue("*","*","*");
         act.mem.remove_query(t,&context);
 
@@ -339,7 +339,7 @@ bool NameServiceOnTriples::cmdUnregister(NameTripleState& act) {
     }
 
     act.mem.reset();
-    mutex.post();
+    unlock();
 
     return cmdQuery(act);
 }
@@ -351,7 +351,7 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
     } else {
         act.reply.addString("ports");
     }
-    mutex.wait();
+    lock();
     Triple t;
     t.setNameValue("port","*");
     string prefix = "";
@@ -381,13 +381,13 @@ bool NameServiceOnTriples::cmdList(NameTripleState& act) {
             }
         }
     }
-    mutex.post();
+    unlock();
     return true;
 }
 
 
 bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
-    mutex.wait();
+    lock();
     act.reply.addString("old");
     ConstString port = act.cmd.get(1).asString();
     ConstString key = act.cmd.get(2).toString();
@@ -397,7 +397,7 @@ bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
     if (result==-1) { 
-        mutex.post();
+        unlock();
         return false; 
     }
     TripleContext context;
@@ -414,13 +414,13 @@ bool NameServiceOnTriples::cmdSet(NameTripleState& act) {
     act.cmd.addString("get");
     act.cmd.addString(port.c_str());
     act.cmd.addString(key.c_str());
-    mutex.post();
+    unlock();
     return cmdGet(act);
 }
 
 
 bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
-    mutex.wait();
+    lock();
     if (act.reply.size()==0) {
         act.reply.addString("old");
     }
@@ -430,7 +430,7 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
     if (result==-1) { 
-        mutex.post();
+        unlock();
         return false; 
     }
     TripleContext context;
@@ -446,13 +446,13 @@ bool NameServiceOnTriples::cmdGet(NameTripleState& act) {
     for (list<Triple>::iterator it=lst.begin(); it!=lst.end(); it++) {
         q.addString(it->value.c_str());
     }
-    mutex.post();
+    unlock();
     return true;
 }
 
 
 bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
-    mutex.wait();
+    lock();
     if (act.reply.size()==0) {
         act.reply.addString("old");
     }
@@ -463,7 +463,7 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
     t.setNameValue("port",port.c_str());
     int result = act.mem.find(t,NULL);
     if (result==-1) { 
-        mutex.post();
+        unlock();
         return false; 
     }
     TripleContext context;
@@ -485,7 +485,7 @@ bool NameServiceOnTriples::cmdCheck(NameTripleState& act) {
         }
     }
     q.addString(present.c_str());
-    mutex.post();
+    unlock();
     return true;
 }
 
@@ -602,6 +602,18 @@ bool NameServiceOnTriples::apply(yarp::os::Bottle& cmd,
     //mem.end();
 
     return true;
+}
+
+
+
+void NameServiceOnTriples::lock() {
+    mutex.wait();
+    db->begin(NULL);
+}
+
+void NameServiceOnTriples::unlock() {
+    db->end(NULL);
+    mutex.post();
 }
 
 

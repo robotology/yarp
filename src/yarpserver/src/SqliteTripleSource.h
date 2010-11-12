@@ -189,6 +189,11 @@ public:
         if (result!=SQLITE_OK) {
             if (msg!=NULL) {
                 fprintf(stderr,"Error: %s\n", msg);
+                fprintf(stderr,"(Query was): %s\n", query);
+                fprintf(stderr,"(Location): %s:%d\n", __FILE__, __LINE__);
+                if (verbose) {
+                    exit(1);
+                }
                 sqlite3_free(msg);
             }
         }
@@ -229,13 +234,19 @@ public:
 
     virtual void begin(TripleContext *context) {
         int result = sqlite3_exec(db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
+        if (verbose) {
+            printf("Query: BEGIN TRANSACTION;\n");
+        }
         if (result!=SQLITE_OK) {
             printf("Error in BEGIN query\n");
         }
     }
 
     virtual void end(TripleContext *context) {
-        int result = sqlite3_exec(db, "COMMIT TRANSACTION;", NULL, NULL, NULL);
+        int result = sqlite3_exec(db, "END TRANSACTION;", NULL, NULL, NULL);
+        if (verbose) {
+            printf("Query: END TRANSACTION;\n");
+        }
         if (result!=SQLITE_OK) {
             printf("Error in END query\n");
         }
