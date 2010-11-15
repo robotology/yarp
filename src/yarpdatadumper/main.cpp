@@ -153,8 +153,6 @@ By pressing CTRL+C the acquisition is terminated.
 So, now, have a look inside the directory ./example 
 
 \author Ugo Pattacini
-
-This file can be edited at \in src/dataDumper/main.cpp.
 */ 
 
 #include <yarp/os/Network.h>
