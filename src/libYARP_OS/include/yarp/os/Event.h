@@ -54,10 +54,10 @@ public:
 
     /**
      * Put the event in a signaled state. A thread wait()ing for
-     * the event will will wake up.  If the event was created
-     * with autoResetAfterWait set, then at most one thread
-     * will wake up (and then automatically reset the event),
-     * otherwise all waiting threads will wake up.
+     * the event will wake up.  If the event was created with 
+     * autoResetAfterWait set, then at most one thread will wake up 
+     * (and then automatically reset the event), otherwise all 
+     * waiting threads will wake up. 
      *
      */
     void signal();
