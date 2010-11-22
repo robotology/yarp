@@ -38,7 +38,7 @@ public:
     * Set the controller in tracking or non-tracking mode. [wait for
     * reply] 
     * @param f true for tracking mode, false otherwise. 
-    * \note In tracking mode when the controller reachs the target, 
+    * @note In tracking mode when the controller reachs the target, 
     *       it keeps on running in order to mantain the gaze on
     *       target. In non-tracking mode the controller releases the
     *       control of the head as soon as the desired target is
@@ -163,6 +163,44 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool getEyesTrajTime(double *t)=0;
+
+    /**
+    * Get the current pose of the left eye frame. [wait for reply]
+    * @param x a 3-d vector which is filled with the actual 
+    *         position x,y,z (meters).
+    * @param od a 4-d vector which is filled with the actual 
+    * orientation using axis-angle representation xa, ya, za, theta 
+    * (meters and radians). 
+    * @return true/false on success/failure.
+    */
+    virtual bool getLeftEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Get the current pose of the right eye frame. [wait for reply]
+    * @param x a 3-d vector which is filled with the actual 
+    *         position x,y,z (meters).
+    * @param od a 4-d vector which is filled with the actual 
+    * orientation using axis-angle representation xa, ya, za, theta 
+    * (meters and radians). 
+    * @return true/false on success/failure.
+    */
+    virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Get the current pose of the cyclopic eye frame. [wait for 
+    * reply] 
+    * @param x a 3-d vector which is filled with the actual 
+    *         position x,y,z (meters).
+    * @param od a 4-d vector which is filled with the actual 
+    * orientation using axis-angle representation xa, ya, za, theta 
+    * (meters and radians). 
+    * @return true/false on success/failure. 
+    *  
+    * @note The cyclopic eye is located in the middle of the 
+    *       baseline that connects the two eyes. The orientation of
+    *       its frame matches the orientation of single eye.
+    */
+    virtual bool getCyclopicEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
     * Set the duration of the trajectory for the neck actuators. 

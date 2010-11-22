@@ -1,3 +1,8 @@
+2010-11-22  Ugo Pattacini <ugo.pattacini@iit.it>
+
+	* src/libYARP_dev/include/yarp/dev/GazeControl.h: added three new methods
+        to return the eyes poses.
+
 2010-11-12  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* src/libYARP_OS/src/NameClient.cpp: start migrating away
