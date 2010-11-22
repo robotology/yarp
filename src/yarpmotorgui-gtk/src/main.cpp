@@ -254,6 +254,7 @@ static void myMain2(GtkButton *button,	int *position)
     GtkWidget*  nb1 = gtk_notebook_new();
     gtk_container_add (GTK_CONTAINER (window), nb1);
     g_signal_connect (window, "destroy",G_CALLBACK (destroy_main), &window);
+	gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.3");
 
     char legsLabel[]= "Legs";
     GtkWidget *label;
@@ -638,7 +639,7 @@ int myMain( int   argc, char *argv[] )
     //////////////////////////////////////////////////////////////////////
     window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	
-    gtk_window_set_title (GTK_WINDOW (window), "CanControl GUI V1.2");
+    gtk_window_set_title (GTK_WINDOW (window), "Robot Motor GUI V1.3");
     g_signal_connect (window, "destroy",G_CALLBACK (destroy_main), &window);
 	
     gtk_container_set_border_width (GTK_CONTAINER (window), 8);

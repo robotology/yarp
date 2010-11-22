@@ -1,7 +1,6 @@
 #include "include/robotMotorGui.h"
 #include "include/partMover.h"
-#include "include/guiPid.h"
-#include "include/guiPidTrq.h"
+#include "include/guiPid2.h"
 #include "include/guiControl.h"
 #include <string.h>
 
@@ -119,8 +118,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
       GtkWidget *disableArray[MAX_NUMBER_OF_JOINTS];
       GtkWidget *calibrateArray[MAX_NUMBER_OF_JOINTS];
       GtkWidget *enableArray[MAX_NUMBER_OF_JOINTS];
-      GtkWidget *pidArray[MAX_NUMBER_OF_JOINTS];
-	  GtkWidget *pidTorqArray[MAX_NUMBER_OF_JOINTS];
+	  GtkWidget *pidArray[MAX_NUMBER_OF_JOINTS];
 
 
       GtkWidget *sw				 = NULL;
@@ -202,8 +200,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  homeArray[k]		= gtk_button_new_with_mnemonic ("Home");
 	  calibrateArray[k] = gtk_button_new_with_mnemonic ("Calib");
 	  enableArray[k]	= gtk_button_new_with_mnemonic ("Run!");
-	  pidArray[k]		= gtk_button_new_with_mnemonic ("PID");
-	  pidTorqArray[k]	= gtk_button_new_with_mnemonic ("PIDT");
+	  pidArray[k]    	= gtk_button_new_with_mnemonic ("PID");
 	  //fprintf(stderr, "Initializing frames %d \n", k);
 	  framesArray[k]	= gtk_frame_new (buffer);
 
@@ -232,8 +229,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), disableArray[k],   6, buttonDist + buttonOffset) ;
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), calibrateArray[k], 6, 2*buttonDist + buttonOffset);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), enableArray[k],    6, 3*buttonDist + buttonOffset);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), pidArray[k],       6, 4*buttonDist + buttonOffset);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), pidTorqArray[k],   6, 5*buttonDist + buttonOffset);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), pidArray[k],       6, int(4.5*buttonDist + buttonOffset));
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), framesArray[k],    0,  0);
 		
 	  //Dimensions
@@ -248,8 +244,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  gtk_widget_set_size_request 	(disableArray[k], 50, 25);
 	  gtk_widget_set_size_request 	(calibrateArray[k], 50, 25);
 	  gtk_widget_set_size_request 	(enableArray[k], 50, 25);
-	  gtk_widget_set_size_request 	(pidArray[k], 50, 25);
-  	  gtk_widget_set_size_request 	(pidTorqArray[k], 50, 25);
+  	  gtk_widget_set_size_request 	(pidArray[k], 50, 25);
 	  gtk_widget_set_size_request 	(frame_slider2[k], 110, 50);
 	  gtk_widget_set_size_request 	(sliderVelArray[k], 90, 40);
 	  gtk_widget_set_size_request 	(framesArray[k], width, height);
@@ -286,7 +281,6 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 	  g_signal_connect (calibrateArray[k], "clicked", G_CALLBACK (calib_click), myClassData1);
 	  g_signal_connect (enableArray[k], "clicked", G_CALLBACK (run_click), myClassData1);
 	  g_signal_connect (pidArray[k], "clicked", G_CALLBACK (pid_click), myClassData1);		
-	  g_signal_connect (pidTorqArray[k], "clicked", G_CALLBACK (pid_torque_click), myClassData1);		
 	  //control mode
 	  g_signal_connect(frameColorBack[k], "button-press-event", G_CALLBACK (control_mode_click), myClassData1);
 
@@ -358,12 +352,7 @@ void partMover::releaseDriver()
 
 void partMover::pid_click(GtkButton *button, gtkClassData* currentClassData)
 {
-	guiPid::guiPid(button, currentClassData);
-}
-
-void partMover::pid_torque_click(GtkButton *button, gtkClassData* currentClassData)
-{
-	guiPidTrq::guiPidTrq(button, currentClassData);
+	guiPid2::guiPid2(button, currentClassData);
 }
 
 void partMover::control_mode_click(GtkButton *button, GdkEventButton *event, gtkClassData* currentClassData)

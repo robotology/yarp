@@ -92,7 +92,6 @@ class partMover{
   static bool sequence_iterator_time(partMover* currentPart);
   static int get_index_selection(partMover* currentPart);
   static void pid_click(GtkButton *button, gtkClassData* currentClassData);
-  static void pid_torque_click(GtkButton *button, gtkClassData* currentClassData);
   static void control_mode_click(GtkButton *button, GdkEventButton *event, gtkClassData* currentClassData);
   static void table_open(GtkButton *button, gtkClassData* currentClassData);
 
