@@ -11,8 +11,4 @@ if (CREATE_DEVICE_LIBRARY_MODULES)
   target_link_libraries(yarpdev yarpmod)
 endif(CREATE_DEVICE_LIBRARY_MODULES)
 
-if (ENABLE_FORCE_RPATH)
-  set_target_properties( yarpdev PROPERTIES INSTALL_RPATH ${FORCE_RPATH} )
-endif ()
-
 install(TARGETS yarpdev COMPONENT utilities DESTINATION bin)

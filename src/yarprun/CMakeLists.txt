@@ -10,9 +10,4 @@ include_directories(${ACE_INCLUDE_DIRS})
 ADD_EXECUTABLE(yarprun yarprun.cpp)
 TARGET_LINK_LIBRARIES(yarprun YARP_init)
 
-if (ENABLE_FORCE_RPATH)
-  set_target_properties( yarprun PROPERTIES INSTALL_RPATH ${FORCE_RPATH} )
-endif ()
-
-
 INSTALL(TARGETS yarprun COMPONENT utilities DESTINATION bin)

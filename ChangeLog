@@ -1,5 +1,9 @@
 2010-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpOptions.cmake: support reasonable RPATH behavior
+	upon installation in non-system directories 
+	[thanks Lorenzo Natale] [thanks Lars Schillingmann]
+
 	* example/swig/yarp.i: add mono image support to the wrappers
 	[thanks Arnaud Degroote]
 

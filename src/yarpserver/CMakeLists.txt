@@ -26,10 +26,6 @@ if (CREATE_YARPSERVER3)
   target_link_libraries(yarpserver3 yarpserversql)
   target_link_libraries(yarpserver3 YARP_init)
 
-  if (ENABLE_FORCE_RPATH)
-    set_target_properties( yarpserver3 PROPERTIES INSTALL_RPATH ${FORCE_RPATH} )
-  endif ()
-
   install_targets(/lib yarpserversql)
   install_targets(/bin yarpserver3)
 
