@@ -142,6 +142,11 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
 }
 
 //*********************************************************************************
+void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
+{
+}
+
+//*********************************************************************************
 void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label)
 {
   char buffer[40];
@@ -238,11 +243,15 @@ void guiPid2::guiPid2(void *button, void* data)
   GtkWidget *button_Trq_Close;
   GtkWidget *button_Imp_Send;
   GtkWidget *button_Imp_Close;
+  GtkWidget *button_Dbg_Send;
+  GtkWidget *button_Dbg_Close;
   Pid myPosPid(0, 0, 0, 0, 0, 0);
   Pid myTrqPid(0, 0, 0, 0, 0, 0);
   double stiff_val=0;
   double damp_val=0;
   double offset_val=0;
+  int debug1 = 0;
+  int debug2 = 0;
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
@@ -282,6 +291,20 @@ void guiPid2::guiPid2(void *button, void* data)
   //inv = gtk_fixed_new ();
 
   gtk_container_add (GTK_CONTAINER (trq_winPid), note_book);
+
+  // ------ DEBUG CONTROL ------
+  //debug1
+  dbg_debug1Entry   =  gtk_entry_new();
+  displayPidValue((int) debug1, note_pag4, dbg_debug1Entry, 0, 0, "Current Debug1");
+  //debug1 desired
+  dbg_debug1Des   =  gtk_entry_new();
+  changePidValue((int) debug1, note_pag4, dbg_debug1Des, 110, 0, "Desired Debug1");
+  //debug2
+  dbg_debug2Entry   =  gtk_entry_new();
+  displayPidValue((int) debug2, note_pag4, dbg_debug2Entry, 0, 70, "Current Debug2");
+  //debug2 desired
+  dbg_debug2Des   =  gtk_entry_new();
+  changePidValue((int) debug2, note_pag4, dbg_debug2Des, 110, 70, "Desired Debug2");
 
   // ------ POSITION CONTROL ------
   //kp
@@ -399,29 +422,37 @@ void guiPid2::guiPid2(void *button, void* data)
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
   button_Trq_Send = gtk_button_new_with_mnemonic ("Send");
   button_Imp_Send = gtk_button_new_with_mnemonic ("Send");
+  button_Dbg_Send = gtk_button_new_with_mnemonic ("Send");
   gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Send, 0, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Send, 0, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Send, 0, 520);
+  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Send, 0, 520);
   g_signal_connect (button_Pos_Send, "clicked", G_CALLBACK (send_pos_pid), &myPosPid);
   g_signal_connect (button_Trq_Send, "clicked", G_CALLBACK (send_trq_pid), &myTrqPid);
   g_signal_connect (button_Imp_Send, "clicked", G_CALLBACK (send_imp_pid), NULL);
+  g_signal_connect (button_Dbg_Send, "clicked", G_CALLBACK (send_dbg_pid), NULL);
   gtk_widget_set_size_request     (button_Pos_Send, 120, 25);
   gtk_widget_set_size_request     (button_Trq_Send, 120, 25);
   gtk_widget_set_size_request     (button_Imp_Send, 120, 25);
+  gtk_widget_set_size_request     (button_Dbg_Send, 120, 25);
 
   //Close
   button_Pos_Close = gtk_button_new_with_mnemonic ("Close");
   button_Trq_Close = gtk_button_new_with_mnemonic ("Close");
   button_Imp_Close = gtk_button_new_with_mnemonic ("Close");
+  button_Dbg_Close = gtk_button_new_with_mnemonic ("Close");
   gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Close, 120, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Close, 120, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Close, 120, 520);
+  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Close, 120, 520);
   g_signal_connect (button_Pos_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Trq_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Imp_Close, "clicked", G_CALLBACK (destroy_win), NULL);
+  g_signal_connect (button_Dbg_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   gtk_widget_set_size_request     (button_Pos_Close, 120, 25);
   gtk_widget_set_size_request     (button_Trq_Close, 120, 25);
   gtk_widget_set_size_request     (button_Imp_Close, 120, 25);
+  gtk_widget_set_size_request     (button_Dbg_Close, 120, 25);
 
   //connection to the destroyer
   g_signal_connect (trq_winPid, "destroy",G_CALLBACK (destroy_win), NULL);

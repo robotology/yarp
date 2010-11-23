@@ -18,6 +18,11 @@ namespace guiPid2
 	static GtkWidget *note_pag3 = NULL;
 	static GtkWidget *note_pag4 = NULL;
 
+	static GtkWidget *dbg_debug1Des = NULL;
+	static GtkWidget *dbg_debug2Des = NULL;
+	static GtkWidget *dbg_debug1Entry = NULL;
+	static GtkWidget *dbg_debug2Entry = NULL;
+
 	static GtkWidget *trq_kpDes = NULL;
 	static GtkWidget *trq_kdDes = NULL;
 	static GtkWidget *trq_kiDes = NULL;
@@ -67,6 +72,7 @@ namespace guiPid2
 	void send_pos_pid (GtkButton *button, Pid *pid);
 	void send_trq_pid (GtkButton *button, Pid *pid);
 	void send_imp_pid (GtkButton *button, Pid *pid);
+	void send_dbg_pid (GtkButton *button, Pid *pid);
 	void displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
 	void changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label);
 	void displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
