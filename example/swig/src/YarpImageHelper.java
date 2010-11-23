@@ -1,3 +1,5 @@
+// -*- mode:Java; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
 /*
  * Copyright: (C) 2010 RobotCub Consortium
  * Author: Lorenzo Natale
@@ -7,6 +9,7 @@
 import yarp.PixelRgb;
 import yarp.ImageRgb;
 import yarp.ImageFloat;
+import yarp.charArray;
 
 /** 
  * Helper class to convert YARP image to Matlab matrices (images).
@@ -37,12 +40,12 @@ public class YarpImageHelper
 	}
 
 	/**
-	* Converts a YARP image to grayscale. 
-	* Returns a height by width two dimensional array. This array is 
-	* compatible with a Matlab matrix.
-	* @param img input image
-	* @return the two dimensional array which contains the image
-	*/
+     * Converts a YARP image to grayscale. 
+     * Returns a height by width two dimensional array. This array is 
+     * compatible with a Matlab matrix.
+     * @param img input image
+     * @return the two dimensional array which contains the image
+     */
 	public short [][] getMonoMatrix(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -60,13 +63,13 @@ public class YarpImageHelper
 	}
 
 	/**
-	* Converts a YARP image to a 3D array.
-	* This array is compatible with a [HxWx3] Matlab matrix. Note:
-	* passing 3d arrays from/to Matlab/Java is SLOW (at least on 
-	* Matlab 6.5); use getB/getR/getG or get2DMatrix.
-	* @param img input image
-	* @return the three dimensional array which contains the image
-	*/
+     * Converts a YARP image to a 3D array.
+     * This array is compatible with a [HxWx3] Matlab matrix. Note:
+     * passing 3d arrays from/to Matlab/Java is SLOW (at least on 
+     * Matlab 6.5); use getB/getR/getG or get2DMatrix.
+     * @param img input image
+     * @return the three dimensional array which contains the image
+     */
 	public short [][][] get3DMatrix(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -82,12 +85,12 @@ public class YarpImageHelper
 	}
 
 	/**
-	* Access a YARP image by planes.
-	* Returns a 2D array which contains the red plane, this is a
-	* [HxW] array compatible with Matlab.
-	* @param img input image
-	* @return the two dimensional array which contains the red plane
-	*/
+     * Access a YARP image by planes.
+     * Returns a 2D array which contains the red plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the red plane
+     */
 	public short [][] getR(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -100,12 +103,12 @@ public class YarpImageHelper
 	}
 
 	/**
-	* Access a YARP image by planes.
-	* Returns a 2D array which contains the green plane, this is a
-	* [HxW] array compatible with Matlab.
-	* @param img input image
-	* @return the two dimensional array which contains the green plane
-	*/
+     * Access a YARP image by planes.
+     * Returns a 2D array which contains the green plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the green plane
+     */
 	public short [][] getG(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -118,12 +121,12 @@ public class YarpImageHelper
 	}
 	
 	/**
-	* Access a YARP image by planes.
-	* Returns a 2D array which contains the blue plane, this is a
-	* [HxW] array compatible with Matlab.
-	* @param img input image
-	* @return the two dimensional array which contains the blue plane
-	*/
+     * Access a YARP image by planes.
+     * Returns a 2D array which contains the blue plane, this is a
+     * [HxW] array compatible with Matlab.
+     * @param img input image
+     * @return the two dimensional array which contains the blue plane
+     */
 	public short [][] getB(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -136,21 +139,21 @@ public class YarpImageHelper
 	}
 
 	/**
-	* Converts a color YARP image to a two dimensional array. 
-	* Returns a [Hx3*W] array which contains the 'justaposition' of the 
-	* three color planes of the image. This array can be copied into a 
-	* Matlab matrix:
-	* OUT=[R|G|B]
-	* where R, G, B are three [HxW] matrices formed by the color 
-	* planes. From OUT you can create a color image [HxWx3] by typing:
-	* IMG=uint8(H,W,3);
-	* IMG(:,:,1)=OUT(:,1:W);
-	* IMG(:,:,2)=OUT(:,W+1:2*W);
-	* IMG(:,:,3)=OUT(:,2*W+1:3*W);
-	*
-	* @param img input image
-	* @return output array
-	*/
+     * Converts a color YARP image to a two dimensional array. 
+     * Returns a [Hx3*W] array which contains the 'justaposition' of the 
+     * three color planes of the image. This array can be copied into a 
+     * Matlab matrix:
+     * OUT=[R|G|B]
+     * where R, G, B are three [HxW] matrices formed by the color 
+     * planes. From OUT you can create a color image [HxWx3] by typing:
+     * IMG=uint8(H,W,3);
+     * IMG(:,:,1)=OUT(:,1:W);
+     * IMG(:,:,2)=OUT(:,W+1:2*W);
+     * IMG(:,:,3)=OUT(:,2*W+1:3*W);
+     *
+     * @param img input image
+     * @return output array
+     */
 	public short [][] get2DMatrix(ImageRgb img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -166,10 +169,10 @@ public class YarpImageHelper
 	}
     
     /**
-         * Converts a floating point YARP image to a two dimensional array. 
-	* @param img input image
-	* @return output array
-	*/
+     * Converts a floating point YARP image to a two dimensional array. 
+     * @param img input image
+     * @return output array
+     */
 	public float [][] get2DMatrix(ImageFloat img)
 	{
 		for(int r=0; r<img.height(); r++)
@@ -180,4 +183,26 @@ public class YarpImageHelper
 
 		return arrFltFull;
 	}
+
+    
+    /**
+     * Fast conversion of a YARP image to a one dimensional array. 
+     * In MATLAB, USE: reshape(OUT, [height width pixelsize]);
+     * \author Leo Pape
+     * @param img input image
+     * @return output array
+     */
+    public static short[] getRawImg(ImageRgb img) {
+        int pixelsize = img.getPixelSize();
+        int width = img.width();
+        int height = img.height();
+        int imgsize = img.getRawImageSize();
+        short [] vec1ds = new short [imgsize];
+        charArray car = charArray.frompointer(img.getRawImage());
+        for(int r=0; r<height; r++)
+            for(int c=0; c<width; c++)
+                for(int p=0; p<pixelsize; p++)
+                    vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p);
+        return vec1ds;
+    }
 }

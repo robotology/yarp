@@ -3,6 +3,10 @@
 	* example/swig/yarp.i: add mono image support to the wrappers
 	[thanks Arnaud Degroote]
 
+	* example/swig/yarp.i: add chararray interface to help speed
+	up image acess in Java [thanks Leo Pape]
+
+
 2010-11-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: add an efficient Image::setExternal

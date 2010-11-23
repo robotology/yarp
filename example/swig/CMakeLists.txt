@@ -35,13 +35,32 @@ SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES CPLUSPLUS ON)
 # SET_SOURCE_FILES_PROPERTIES(yarp.i PROPERTIES SWIG_FLAGS "-includeall")
 
 IF (CREATE_JAVA)
-   MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/generated_src")
-   SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated_src")
+   OPTION(PREPARE_CLASS_FILES "Prepare class files" OFF)
+   SET(YARP_HELPERS LoadYarp.java YarpImageHelper.java)
+   IF (PREPARE_CLASS_FILES)
+     MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/yarp")
+     SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/yarp")
+     FOREACH(src ${YARP_HELPERS})
+       SET(target ${CMAKE_BINARY_DIR}/${src})
+       CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/src/${src}
+                      ${target} IMMEDIATE)
+       MESSAGE(STATUS "copied ${target}")
+     ENDFOREACH(src)
+   ELSE ()
+     MAKE_DIRECTORY("${CMAKE_CURRENT_BINARY_DIR}/generated_src")
+     SET(CMAKE_SWIG_OUTDIR "${CMAKE_CURRENT_BINARY_DIR}/generated_src")
+   ENDIF ()
    SET(CMAKE_SWIG_FLAGS "-package;yarp;-Wall;-module;yarp")
    FIND_PACKAGE(JNI REQUIRED)
    INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2} )
    SET(target_name jyarp)
    SWIG_ADD_MODULE(${target_name} java yarp.i)
+   IF (PREPARE_CLASS_FILES)
+     ADD_CUSTOM_COMMAND(TARGET ${target_name}
+       POST_BUILD
+       COMMAND javac -source 1.3 -target 1.3 ${YARP_HELPERS} "yarp/*.java"
+       WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+   ENDIF ()
 
    # issue on MINGW where C++ name-mangling prevents java finding methods
    IF (MINGW)

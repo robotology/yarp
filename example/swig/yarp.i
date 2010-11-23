@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -699,5 +699,57 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
       ::setExternal(self,mem,w,h);
     }
 }
+
+#endif
+
+
+#ifdef SWIGJAVA
+
+/*
+
+Contributed by Leo Pape
+
+Motivation: I found that the Java interface (with SWIG) to YARP is
+very slow for image transfer. This is because SWIG only allows for
+direct access to primitives, not arrays. The current solution is to
+treat an image as a collection of pixels, where each pixel is a Java
+object. Transferring a simple 320x240-pixel image from YARP through
+the Java Native Interface (JNI) to Java is very slow, and can take up
+to 1 second.
+
+*/
+
+%include "carrays.i"
+%array_class(unsigned char, charArray);
+
+/** 
+ * EXAMPLE JAVA METHOD:
+ *
+ * Converts color YARP image into a vector.
+ * Returns a [H*W*P] vector which contains the 'justaposition' of the 
+ * three color planes of the image. This array can be copied into a 
+ * Matlab matrix:
+ * From OUT you can create a Matlab image [HxWxP] by typing:
+ * IMG = reshape(uint8(OUT), [H W P]);
+ */
+
+/*
+public static short[] getRawImg(Image img) {
+  int pixelsize = img.getPixelSize();
+  int width = img.width();
+  int height = img.height();
+  int imgsize = img.getRawImageSize();
+  short [] vec1ds = new short [imgsize];
+  
+  charArray car = charArray.frompointer(img.getRawImage());
+  
+  // in MATLAB, USE: reshape(OUT, [height width pixelsize]);
+  for(int r=0; r<height; r++)
+    for(int c=0; c<width; c++)
+      for(int p=0; p<pixelsize; p++)
+	vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p);
+  return vec1ds;
+}
+*/
 
 #endif
