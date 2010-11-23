@@ -249,7 +249,11 @@ int RFModule::runModule() {
     }
     ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
     ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
-    
+
+#if defined(WIN32) || defined(WIN64)
+    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler);
+#endif
+
     //setting up main loop
     bool loop=true;
 
