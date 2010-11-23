@@ -1,3 +1,8 @@
+2010-11-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: add an efficient Image::setExternal
+	method for Python 3.x [thanks Arnaud Degroote]
+
 2010-11-22  Ugo Pattacini <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/GazeControl.h: added three new methods

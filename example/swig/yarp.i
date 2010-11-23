@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -175,6 +175,34 @@ using namespace yarp::sig;
 using namespace yarp::sig::file;
 using namespace yarp::dev;
 %}
+
+
+#ifdef SWIGPYTHON
+%{
+#include <Python.h>
+  
+void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
+#if PY_VERSION_HEX >= 0x03000000
+        Py_buffer img_buffer;
+        int reply;
+        reply = PyObject_GetBuffer(mem, &img_buffer, PyBUF_SIMPLE);
+        // exit if the buffer could not be read
+        if (reply != 0)
+        {
+            fprintf(stderr, "Could not read Python buffers: error %d\n", reply);
+            return;
+        }
+        img->setExternal((void*)img_buffer.buf, w, h);
+        // release the Python buffers
+        PyBuffer_Release(&img_buffer);
+#else
+	  fprintf(stderr, "Sorry, setExternal(PyObject *mem,...) requires Python3\n");
+	  return;
+#endif
+}
+
+%}
+#endif
 
 
 // Now we parse the original header files
@@ -652,3 +680,15 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
         self->setExternal((void*)mem, w, h);
         }
 }
+
+#ifdef SWIGPYTHON
+
+// Contributed by Arnaud Degroote for MORSE
+// Conversion of Python buffer type object into a pointer
+%extend yarp::sig::Image {
+    void setExternal(PyObject* mem, int w, int h) {
+      ::setExternal(self,mem,w,h);
+    }
+}
+
+#endif
