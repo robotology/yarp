@@ -331,9 +331,6 @@ MAKE_COMMS(Bottle)
 //   BufferedPortProperty = BufferedPort<Property>
 
 
-// Now we do ImageRgb - it is a little trickey
-//%template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
-
 %{
 typedef yarp::sig::ImageOf<yarp::sig::PixelRgb> ImageRgb;
 typedef yarp::os::TypedReader<ImageRgb> TypedReaderImageRgb;
@@ -348,6 +345,13 @@ typedef yarp::os::TypedReaderCallback<ImageRgba> TypedReaderCallbackImageRgba;
 typedef yarp::os::BufferedPort<ImageRgba> BufferedPortImageRgba;
 %}
 
+%{
+typedef yarp::sig::ImageOf<yarp::sig::PixelMono> ImageMono;
+typedef yarp::os::TypedReader<ImageMono> TypedReaderImageMono;
+typedef yarp::os::TypedReaderCallback<ImageMono> TypedReaderCallbackImageMono;
+typedef yarp::os::BufferedPort<ImageMono> BufferedPortImageMono;
+%}
+
 %feature("notabstract") ImageRgb;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgb>;
 %feature("notabstract") BufferedPortImageRgb;
@@ -355,6 +359,10 @@ typedef yarp::os::BufferedPort<ImageRgba> BufferedPortImageRgba;
 %feature("notabstract") ImageRgba;
 %feature("notabstract") yarp::os::BufferedPort<ImageRgba>;
 %feature("notabstract") BufferedPortImageRgba;
+
+%feature("notabstract") ImageMono;
+%feature("notabstract") yarp::os::BufferedPort<ImageMono>;
+%feature("notabstract") BufferedPortImageMono;
 
 %template(ImageRgb) yarp::sig::ImageOf<yarp::sig::PixelRgb>;
 %template(TypedReaderImageRgb) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelRgb> >;
@@ -367,9 +375,10 @@ typedef yarp::os::BufferedPort<ImageRgba> BufferedPortImageRgba;
 %template(TypedReaderCallbackImageRgba) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
 %template(BufferedPortImageRgba) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgba> >;
 
-
-// Now we do ImageFloat - it is a little trickey too..
-//%template(ImageFloat) yarp::sig::ImageOf<yarp::sig::PixelFloat>;
+%template(ImageMono) yarp::sig::ImageOf<yarp::sig::PixelMono>;
+%template(TypedReaderImageMono) yarp::os::TypedReader<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
+%template(TypedReaderCallbackImageMono) yarp::os::TypedReaderCallback<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
+%template(BufferedPortImageMono) yarp::os::BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelMono> >;
 
 // Add getPixel and setPixel methods to access float values
 %extend yarp::sig::ImageOf<yarp::sig::PixelFloat> {
