@@ -1,3 +1,9 @@
+2010-11-24  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: unregister port names
+	if process is interrupted (for "yarp read", "yarp write", and
+	"yarp readwrite")
+
 2010-11-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpOptions.cmake: support reasonable RPATH behavior

@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <signal.h>
 
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/NameClient.h>
@@ -51,6 +52,47 @@ using namespace yarp;
 
 Companion Companion::instance;
 
+static ConstString companion_unregister_name;
+static Port *companion_active_port = NULL;
+
+static void companion_sigint_handler(int sig) {
+    double now = Time::now();
+    static double firstCall = now;
+    static bool showedMessage = false;
+    static bool unregistered = false;
+    if (now-firstCall<2) {
+        Port *port = companion_active_port;
+        if (!showedMessage) {
+            showedMessage = true;
+            YARP_LOG_INFO("Interrupting...");
+        }
+        if (companion_unregister_name!="") {
+            if (!unregistered) {
+                unregistered = true;
+                NetworkBase::unregisterName(companion_unregister_name);
+                if (port!=NULL) {
+                    NetworkBase::unregisterName(port->getName());
+                }
+                exit(1);
+            }
+        } 
+        if (port!=NULL) {
+            port->interrupt();
+        }
+    } else {
+        fprintf(stderr,"Aborting...\n");
+        exit(1);
+    }
+}
+
+static void companion_sigint_handler2(int sig) {
+    companion_sigint_handler(sig);
+}
+
+static void companion_install_handler() {
+	signal(SIGINT,companion_sigint_handler);
+	signal(SIGTERM,companion_sigint_handler2);
+}
 
 static String getStdin() {
     bool done = false;
@@ -1424,29 +1466,20 @@ int Companion::disconnectInput(const char *src, const char *dest,
 // just a temporary implementation until real ports are available
 class BottleReader : public PortReader {
 private:
-    PortCore core;
+    Port core;
     SemaphoreImpl done;
     bool raw;
     bool env;
     Address address;
 public:
     BottleReader(const char *name, bool showEnvelope) : done(0) {
-        NameClient& nic = NameClient::getNameClient();
-        address = nic.registerName(name);
         raw = false;
         env = showEnvelope;
-        core.setReadHandler(*this);
-        if (address.isValid()) {
-            bool ok = core.listen(address);
-            if (!ok) {
-                printf("Address conflict!\n");
-                exit(1);
-            }
-            YARP_SPRINTF2(Logger::get(),info,
-                          "Port %s listening at %s", 
-                          address.getRegName().c_str(),
-                          address.toString().c_str());
-            core.start();
+        core.setReader(*this);
+        if (core.open(name)) {
+            companion_active_port = &core;
+            Contact contact = core.where();
+            address = Address::fromContact(contact);
         } else {
             YARP_ERROR(Logger::get(),"could not create port");
             done.post();
@@ -1455,6 +1488,7 @@ public:
 
     void wait() {
         done.wait();
+        companion_active_port = NULL;
     }
 
     void showEnvelope() {
@@ -1469,6 +1503,10 @@ public:
 
     virtual bool read(ConnectionReader& reader) {
         BottleImpl bot;
+        if (!reader.isValid()) {
+            done.post();
+            return false;
+        }
         if (bot.read(reader)) {
             if (bot.size()==2 && bot.isInt(0) && bot.isString(1) && !raw) {
                 int code = bot.getInt(0);
@@ -1493,7 +1531,6 @@ public:
   
     void close() {
         core.close();
-        core.join();
     }
 
     String getName() {
@@ -1516,6 +1553,7 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 	const char *read_port_name=argv[0];
 	const char *write_port_name=argv[1];
 
+    companion_install_handler();
     BottleReader reader(read_port_name,false);
     
     const char *verbatim[] = { "verbatim", NULL };
@@ -1593,6 +1631,7 @@ int Companion::cmdTopic(int argc, char *argv[]) {
 
 
 int Companion::read(const char *name, const char *src, bool showEnvelope) {
+    companion_install_handler();
     BottleReader reader(name,showEnvelope);
     if (src!=NULL) {
         NetworkBase::connect(src,reader.getName().c_str());
@@ -1607,6 +1646,10 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
 
 int Companion::write(const char *name, int ntargets, char *targets[]) {
     Port port;
+    if (companion_active_port==NULL) {
+        companion_install_handler();
+    }
+    companion_unregister_name = name;
     if (!port.open(name)) {
         return 1;
     }
@@ -1646,7 +1689,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
             port.write(bot);
         }
     }
-    
+
+    companion_active_port = NULL;
+        
     if (!raw) {
         BottleImpl bot;
         bot.addInt(1);
@@ -1658,7 +1703,7 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     //core.close();
     //core.join();
     port.close();
-    
+
     return 0;
 }
 
