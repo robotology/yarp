@@ -92,6 +92,10 @@ static void companion_sigint_handler2(int sig) {
 static void companion_install_handler() {
 	signal(SIGINT,companion_sigint_handler);
 	signal(SIGTERM,companion_sigint_handler2);
+
+    #if defined(WIN32) || defined(WIN64)
+    signal(SIGBREAK, (ACE_SignalHandler) companion_sigint_handler);
+    #endif
 }
 
 static String getStdin() {
