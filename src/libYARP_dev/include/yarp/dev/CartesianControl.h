@@ -435,21 +435,21 @@ public:
     */
     virtual bool stopControl()=0;
 
-    /** Save the cartesian controller's status. [wait for reply]
-    * @param id specify where to save the status id. 
-    * @note the status comprises the values of internal cartesian 
-    *       controller's variables, such as the tracking mode, the
-    *       active dofs, the trajectory time and so on.
+    /** Save the controller status. [wait for reply]
+    * @param id specify where to save the returned status id. 
+    * @note the status comprises the values of internal controller 
+    *       variables, such as the tracking mode, the active dofs,
+    *       the trajectory time and so on.
     * @return true/false on success/failure. 
     */
     virtual bool saveStatus(int *id)=0;
 
-    /** Restore the cartesian controller's status previously saved.
-    *   [wait for reply]
+    /** Restore the controller status previously saved. [wait for
+    *   reply]
     * @param id specify the status id to be restored
-    * @note the status comprises the values of internal cartesian 
-    *       controller's variables, such as the tracking mode, the
-    *       active dofs, the trajectory time and so on.
+    * @note the status comprises the values of internal controller
+    *       variables, such as the tracking mode, the active dofs,
+    *       the trajectory time and so on.
     * @return true/false on success/failure. 
     */
     virtual bool restoreStatus(const int id)=0;
