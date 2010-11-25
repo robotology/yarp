@@ -7,19 +7,25 @@
 #
 
 SET(ATLAS_POSSIBLE_INCLUDE_PATHS
-  /usr/local/include
   /usr/include
+  /usr/include/atlas
+  /usr/local/include
   $ENV{ATLAS_DIR}
   $ENV{ATLAS_DIR}/include
 )
 
+# Ubuntu's package management does not handle blas elegantly, causing
+# many possible locations here.
 SET(ATLAS_POSSIBLE_LIBRARY_PATHS
-  /usr/local/lib/sse2
+  /usr/lib/libatlas-corei7sse3
+  /usr/lib/atlas-amd64sse3
+  /usr/lib/atlas-base     
   /usr/lib/sse2
-  /usr/local/lib/sse
   /usr/lib/sse
-  /usr/local/lib
+  /usr/local/lib/sse2
+  /usr/local/lib/sse
   /usr/lib
+  /usr/local/lib
   $ENV{ATLAS_DIR}
   $ENV{ATLAS_DIR}/lib
 )
