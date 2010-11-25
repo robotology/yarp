@@ -474,6 +474,15 @@ public:
     */
     yarp::os::ConstString toString();
 
+
+    /**
+    * Creates and returns a new vector, being the portion of the original
+    * vector defined by the first and last indexes of the items to be included
+    * in the subvector. The indexes are checked: if wrong, a null vector is
+    * returned.
+    */
+    Vector subVector(unsigned int first, unsigned int last) const;
+
     /**
     * Set all elements of the vector to a scalar.
     */

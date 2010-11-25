@@ -254,6 +254,18 @@ ConstString Vector::toString()
     return ret;
 }
 
+Vector Vector::subVector(unsigned int first, unsigned int last) const
+{
+    Vector ret;
+    if((first<=last)&&(last<storage.size()))
+    {
+        ret.resize(last-first+1);
+        for(int k=first; k<=last; k++)
+            ret[k-first]=storage[k];
+    }
+    return ret;
+}
+
 const Vector &Vector::operator=(const Vector &r)
 {
     storage=r.storage;
