@@ -38,7 +38,7 @@ public:
     * Set the controller in tracking or non-tracking mode. [wait for
     * reply] 
     * @param f true for tracking mode, false otherwise. 
-    * \note In tracking mode when the controller reachs the target, 
+    * @note In tracking mode when the controller reachs the target, 
     *       it keeps on running in order to mantain the limb in the
     *       desired pose. In non-tracking mode the controller
     *       releases the limb as soon as the desired pose is
@@ -251,7 +251,7 @@ public:
     * reply] 
     * @param curDof a vector which is filled with the actual DOF 
     *           configuration.
-    * \note The vector lenght is equal to the number of limb's 
+    * @note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
     *       associated joint is controlled (i.e. it is an actuated
     *       DOF), 0 otherwise.
@@ -267,7 +267,7 @@ public:
     *              returned as it has been processed after the
     *              request (it may differ from newDof due to the
     *              presence of some internal limb's constraints).
-    * \note Eeach vector's position shall contain 1 if the 
+    * @note Eeach vector's position shall contain 1 if the 
     *       associated joint can be actuated, 0 otherwise. The
     *       special value 2 indicates that the joint status won't be
     *       modified (useful as a placeholder).
@@ -281,7 +281,7 @@ public:
     *                  joints rest position components in degrees.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, the user may 
+    * @note While solving the inverse kinematic, the user may 
     *       specify a secondary task that minimizes against a joints
     *       rest position; further, each rest component may be
     *       weighted differently providing the weights vector.
@@ -297,7 +297,7 @@ public:
     *           from thresholding with joints bounds.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, the user may 
+    * @note While solving the inverse kinematic, the user may 
     *       specify a secondary task that minimizes against a joints
     *       rest position; further, each rest component may be
     *       weighted differently providing the weights vector.
@@ -310,7 +310,7 @@ public:
     *                  current joints rest weights.
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, the user may 
+    * @note While solving the inverse kinematic, the user may 
     *       specify a secondary task that minimizes against a joints
     *       rest position; further, each rest component may be
     *       weighted differently providing the weights vector.
@@ -326,7 +326,7 @@ public:
     *           saturation (w>=0.0).
     * @return true/false on success/failure. 
     *  
-    * \note While solving the inverse kinematic, the user may 
+    * @note While solving the inverse kinematic, the user may 
     *       specify a secondary task that minimizes against a joints
     *       rest position; further, each rest component may be
     *       weighted differently providing the weights vector.
@@ -371,7 +371,7 @@ public:
 
     /**
     * Return tolerance for in-target check. [wait for reply]
-    * \note The trajectory is supposed to be completed as soon as 
+    * @note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
     * @param tol the memory location where tolerance is returned. 
     * @return true/false on success/failure.
@@ -380,7 +380,7 @@ public:
 
     /**
     * Set tolerance for in-target check. [wait for reply]
-    * \note The trajectory is supposed to be completed as soon as 
+    * @note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
     * @param tol tolerance. 
     * @return true/false on success/failure. 
@@ -429,11 +429,30 @@ public:
     virtual bool waitMotionDone(const double period=0.1, const double timeout=0.0)=0;
 
     /** Ask for an immediate stop motion. [wait for reply]
-    * \note the control is completely released, i.e. a direct switch 
+    * @note the control is completely released, i.e. a direct switch
     *       to non-tracking mode is executed.     
     * @return true/false on success/failure. 
     */
     virtual bool stopControl()=0;
+
+    /** Save the cartesian controller's status. [wait for reply]
+    * @param id specify where to save the status id. 
+    * @note the status comprises the values of internal cartesian 
+    *       controller's variables, such as the tracking mode, the
+    *       active dofs, the trajectory time and so on.
+    * @return true/false on success/failure. 
+    */
+    virtual bool saveStatus(int *id)=0;
+
+    /** Restore the cartesian controller's status previously saved.
+    *   [wait for reply]
+    * @param id specify the status id to be restored
+    * @note the status comprises the values of internal cartesian 
+    *       controller's variables, such as the tracking mode, the
+    *       active dofs, the trajectory time and so on.
+    * @return true/false on success/failure. 
+    */
+    virtual bool restoreStatus(const int id)=0;
 };
 
 #endif
