@@ -303,16 +303,16 @@ public:
     */
     virtual bool stopControl()=0;
 
-    /** Save the controller context. [wait for reply]
-    * @param id specify where to save the returned context id. 
+    /** Store the controller context. [wait for reply]
+    * @param id specify where to store the returned context id. 
     * @note the context comprises the values of internal controller 
     *       variables, such as the tracking mode, the trajectory
     *       time and so on.
     * @return true/false on success/failure. 
     */
-    virtual bool saveContext(int *id)=0;
+    virtual bool storeContext(int *id)=0;
 
-    /** Restore the controller context previously saved. [wait for
+    /** Restore the controller context previously stored. [wait for
     *   reply]
     * @param id specify the context id to be restored
     * @note the context comprises the values of internal controller
