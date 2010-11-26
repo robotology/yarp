@@ -115,19 +115,27 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         
     if (fgAv!=NULL) {
         if (separatePorts) {
-            printf("Grabber for images and sound (in separate ports)\n");
+            if (yarp_show_info()) {
+                printf("Grabber for images and sound (in separate ports)\n");
+            }
             YARP_ASSERT(p2!=NULL);
             thread.attach(new DataWriter2<yarp::sig::ImageOf<yarp::sig::PixelRgb>, yarp::sig::Sound>(p,*p2,*this,canDrop,addStamp));
         } else {
-            printf("Grabber for images and sound (in shared port)\n");
+            if (yarp_show_info()) {
+                printf("Grabber for images and sound (in shared port)\n");
+            }
             thread.attach(new DataWriter<ImageRgbSound>(p,*this,canDrop,
                                                         addStamp));
         }
     } else if (fgImage!=NULL) {
-        printf("Grabber for images\n");
+        if (yarp_show_debug()) {
+            printf("Grabber for images\n");
+        }
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgSound!=NULL) {
-        printf("Grabber for sound\n");
+        if (yarp_show_info()) {
+            printf("Grabber for sound\n");
+        }
         thread.attach(new DataWriter<yarp::sig::Sound>(p,*this,canDrop));
     } else {
         printf("subdevice <%s> doesn't look like a framegrabber\n",

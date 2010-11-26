@@ -1,3 +1,8 @@
+2010-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/ServerControlBoard.cpp: when YARP_QUIET
+	is set, suppress driver chatter [thanks Gianluca Massera]
+
 2010-11-25  Ugo Pattacini <ugo.pattacini@iit.it>
 
 	* GazeControl.h and CartesianControl.h: added methods to save/restore

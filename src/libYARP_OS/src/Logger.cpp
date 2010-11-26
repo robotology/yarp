@@ -100,3 +100,21 @@ void __yarp_info(const char *str) {
 void __yarp_debug(const char *str) {
     YARP_DEBUG(Logger::get(),str);
 }
+
+
+bool yarp_show_error() {
+    return Logger::get().shouldShowError();
+}
+
+bool yarp_show_warn() {
+    return Logger::get().shouldShowError();
+}
+
+bool yarp_show_info() {
+    return Logger::get().shouldShowInfo();
+}
+
+bool yarp_show_debug() {
+    return Logger::get().shouldShowDebug();
+}
+

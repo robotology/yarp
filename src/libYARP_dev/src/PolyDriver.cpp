@@ -277,9 +277,13 @@ bool PolyDriver::coreOpen(yarp::os::Searchable& prop) {
                 ConstString name = creator->getName();
                 ConstString wrapper = creator->getWrapper();
                 ConstString code = creator->getCode();
-                printf("yarpdev: created %s <%s>.  See C++ class %s for documentation.\n",
-                       (name==wrapper)?"wrapper":"device",
-                       name.c_str(), code.c_str());
+                if (yarp_show_info()) {
+                    ConstString msg = ConstString("created ") +
+                        ((name==wrapper)?"wrapper":"device") +
+                        " <" + name + ">. See C++ class " +
+                        code + " for documentation.";
+                    YARP_LOG_INFO(msg);
+                }
             }
         }
         dd = driver;

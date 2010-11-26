@@ -33,6 +33,11 @@ YARP_OS_API void __yarp_warn(const char *str);
 YARP_OS_API void __yarp_info(const char *str);
 YARP_OS_API void __yarp_debug(const char *str);
 
+YARP_OS_API bool yarp_show_error();
+YARP_OS_API bool yarp_show_warn();
+YARP_OS_API bool yarp_show_info();
+YARP_OS_API bool yarp_show_debug();
+
 #define YARP_LOG_ERROR(x) __yarp_error(x)
 #define YARP_LOG_WARN(x) __yarp_warn(x)
 #define YARP_LOG_INFO(x) __yarp_info(x)

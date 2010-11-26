@@ -16,6 +16,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/Log.h>
 
 #define VOCAB_LINE VOCAB4('l','i','n','e')
 
@@ -100,16 +101,15 @@ public:
                             yarp::os::Value(VOCAB_LINE, true),
                             "bouncy [ball], scrolly [line], grid [grid], random [rand]").asVocab();
 
-		if (freq!=-1)
-		{
-			printf("Test grabber period %g / freq %g , mode [%s]\n", period, freq,
-				yarp::os::Vocab::decode(mode).c_str());
-		}
-		else
-		{
-			printf("Test grabber period %g / freq [inf], mode [%s]\n", period,
-				yarp::os::Vocab::decode(mode).c_str());
-		}
+        if (yarp_show_info()) {
+            if (freq!=-1) {
+                printf("Test grabber period %g / freq %g , mode [%s]\n", period, freq,
+                       yarp::os::Vocab::decode(mode).c_str());
+            } else {
+                printf("Test grabber period %g / freq [inf], mode [%s]\n", period,
+                       yarp::os::Vocab::decode(mode).c_str());
+            }
+        }
        
 		bx = w/2;
         by = h/2;

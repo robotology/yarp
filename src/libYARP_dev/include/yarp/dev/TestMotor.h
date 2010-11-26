@@ -18,6 +18,7 @@
 #include <yarp/dev/PolyDriver.h>
 
 #include <yarp/os/Time.h>
+#include <yarp/os/Log.h>
 
 namespace yarp {
     namespace dev {
@@ -45,7 +46,9 @@ public:
 
     virtual bool getAxes(int *ax) {
         *ax = njoints;
-        printf("TestMotor reporting %d axes present\n", *ax);
+        if (yarp_show_info()) {
+            printf("TestMotor reporting %d axes present\n", *ax);
+        }
         return true;
     }
 

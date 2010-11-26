@@ -115,6 +115,18 @@ public:
         return pid;
     }
 
+    bool shouldShowInfo() {
+        return (verbose>=0);
+    }
+
+    bool shouldShowError() {
+        return true;
+    }
+
+    bool shouldShowDebug() {
+        return (verbose>0);
+    }
+
 private:
     void show(int level, const String& txt);
     void exit(int result);
