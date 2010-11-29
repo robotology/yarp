@@ -11,14 +11,15 @@ The list of authors for YARP (ordered by file count) is:
   Alexandre Bernardino
   Arjan Gijsberts
   Renaud Detry
+  Daniel Krieg
   Julio Gomes
   Ze Ji
   Mattia Castelnovi
   Francesco Nori
-  Daniel Krieg
   Carlos Beltran-Gonzalez
   Assif Mirza
   Ugo Pattacini
+  Marco Randazzo
   Jonas Ruesch
   Mike P. Blow
   Matteo Brunettini
@@ -31,18 +32,20 @@ The list of authors for YARP (ordered by file count) is:
 
 The list of people thanked in the ChangeLog (ordered by mention count) is:
   Philipp Robbel
-  Jonas Ruesch
-  Anne van Rossum
-  Gianluca Massera
   Ugo Pattacini
   Stephane Lallee
+  Jonas Ruesch
+  Gianluca Massera
+  Anne van Rossum
+  Lorenzo Natale
+  Arnaud Degroote
   Arjan Gijsberts
   Ze Ji
   Stefan Freyr Stefansson
   Severin Lemaignan
-  Lorenzo Natale
   Frank Forster
   David Vernon
+  Daniel Krieg
   Assif Mirza
   Alexis Maldonado
   Alejandro R. Mosteo
@@ -50,16 +53,15 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Tomassino Ferrauto
   Marco Barbosa
   Lorenz Mosenlechner
+  Lars Schillingmann
   Juan G Victores
   Giovanni Saponaro
-  Daniel Krieg
   Christian Wressnegger
   Breno Carneiro Pinheiro
   Baris Akgun
-  Arnaud Degroote
   Andrew Stout
+  Alexandre Bernardino
   Yianding
-  Ugo Pataccini
   Sergey Skachek
   Sebastien Gay
   Sebastian Wrede
@@ -68,7 +70,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Pablo Urcola
   Nelson Goncalves
   Marco Randazzo
-  Lars Schillingmann
+  Leo Pape
   Kyron Du Casse
   Jan Woetzel
   Giorgio Metta
@@ -77,15 +79,16 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Freyr Magnusson
   Francesco Rea
   Francesco Nori
+  Florent D'Halluin
+  Emanuel Sousa
   Dimitri Ognibene
+  Charles Lesire-Cabaniols
   Carlo Ciliberto
   Bruno Nery
   Boris Duran
   Anthony Truchet
   Andrew Dankers
   Andreu Corominas Murtra
-  Alex Bernardino
-  Alexandre Bernardino
   Alessandro Scalzo
 
 The list of copyright holders for YARP is:
@@ -97,14 +100,15 @@ The list of copyright holders for YARP is:
   Giorgio Metta
   Alexandre Bernardino
   Renaud Detry
+  Daniel Krieg
   Arjan Gijsberts
   Ze Ji
   Mattia Castelnovi
   Julio Gomes
-  Daniel Krieg
   Carlos Beltran-Gonzalez
   Assif Mirza
   Alessandro Scalzo
+  Marco Randazzo
   Jonas Ruesch
   Mike P. Blow
   Matteo Brunettini
@@ -116,15 +120,95 @@ Certain files are integrated in YARP from other sources with
 friendly licenses.  Here is a list of these files and a summary of
 their copyright.  See the individual files for more details.
 
+conf/YarpCheckStructHasMember.cmake
+  Copyright: 2007-2009 Kitware, Inc.
+  CopyPolicy: BSD
+
+conf/FindFFMPEG.cmake
+  Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
+  CopyPolicy: BSD
+
+conf/YarpCheckTypeSize.cmake
+  Copyright: 2007-2009 Kitware, Inc.
+  CopyPolicy: BSD
+
+conf/FindGSL.cmake
+  Copyright: (C) 2010 Jan Woetzel
+  CopyPolicy: Use under LGPL or BSD license at your choice
+
+conf/FindBoost.cmake
+  Copyright: (c) 2006 Andreas Schneider <mail@cynapses.org>
+  CopyPolicy: BSD
+
+conf/FindOpenCV.cmake
+  Copyright: 2009 Benoit Rat
+  CopyPolicy: LGPLv2.1
+
+src/yarpserver/sqlite/sqlite3.c
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/yarpserver/sqlite/sqlite3.h
+  Copyright: The author disclaims copyright to this source code
+  CopyPolicy: In place of a legal notice, a blessing is given.
+
+src/libYARP_OS/include/hmac/hmac_sha2.h
+  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/hmac/sha2.h
+  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/src/Random.cpp
+  Copyright: 1994, Everett F. Carter Jr.
+  CopyPolicy: Preserve copyright notice
+
+src/libYARP_OS/src/hmac_sha2.c
+  Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/src/sha2.c
+  Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
+  CopyPolicy: 3-clause BSD
+
 src/libYARP_sig/include/yarp/sig/IplImage.h
   Copyright: (C) 2000, Intel Corporation, all rights reserved.
   CopyPolicy: Intel License Agreement For Open Source Computer Vision Library
+
+src/modules/urbtc/kernel_module/urobotc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.c
+  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/README.TXT
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/kernel_module/urbtc.h
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/urbtc/README.TXT
+  Copyright: (C) 2007 iXs Research Corp
+  CopyPolicy: Released under the terms of the GNU GPL version 2
+
+src/modules/jrkerr/picservo.h
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
 
 src/modules/jrkerr/nmccom.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
 src/modules/jrkerr/sio_util.cpp
+  Copyright: (c) 2007 Jeffrey Kerr LLC
+  CopyPolicy: 3-clause BSD
+
+src/modules/jrkerr/picservo.cpp
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
@@ -136,50 +220,6 @@ src/modules/jrkerr/sio_util.h
   Copyright: (c) 2007 Jeffrey Kerr LLC
   CopyPolicy: 3-clause BSD
 
-src/modules/jrkerr/picservo.cpp
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/jrkerr/picservo.h
-  Copyright: (c) 2007 Jeffrey Kerr LLC
-  CopyPolicy: 3-clause BSD
-
-src/modules/dimax_u2c/I2c.cpp
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/I2c.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/i2cbridge.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/dimax_u2c/u2c_common_func.h
-  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
-  CopyPolicy: GPL
-
-src/modules/urbtc/README.TXT
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
-
-src/modules/urbtc/kernel_module/README.TXT
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
-
-src/modules/urbtc/kernel_module/urbtc.c
-  Copyright: (C) 2001-2004 Greg Kroah-Hartman (greg@kroah.com)
-  CopyPolicy: Released under the terms of the GNU GPL version 2
-
-src/modules/urbtc/kernel_module/urobotc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
-
-src/modules/urbtc/kernel_module/urbtc.h
-  Copyright: (C) 2007 iXs Research Corp
-  CopyPolicy: Released under the terms of the GNU GPL version 2
-
 src/modules/vfw/vfw_extra_from_australia.h
   Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
   CopyPolicy: Released under the terms of the GNU GPL v2. or later
@@ -188,11 +228,23 @@ src/modules/vfw/vfw_extra_from_wine.h
   Copyright: (C) 2007 the Wine project
   CopyPolicy: Released under the terms of the GNU GPL v2.1. or later
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+src/modules/dimax_u2c/i2cbridge.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.cpp
+src/modules/dimax_u2c/I2c.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/u2c_common_func.h
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/modules/dimax_u2c/I2c.cpp
+  Copyright: (C)2004 Dimax ( http://www.xdimax.com )
+  CopyPolicy: GPL
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -200,31 +252,15 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.cpp
   Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.cpp
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
-  Copyright: (c) 2002-2003 by Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -232,15 +268,27 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
-  Copyright: (c) 2002-2003 by Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcUtil.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcClient.h
+  Copyright: (c) 2002-2003 by Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpc.h
+  Copyright: (c) 2002-2003 by Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSocket.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -252,15 +300,7 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerConnection.h
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
 src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcException.h
-  Copyright: 2002, 2003 Chris Morley
-  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
-
-src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcValue.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
@@ -268,45 +308,21 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/libYARP_OS/src/Random.cpp
-  Copyright: 1994, Everett F. Carter Jr.
-  CopyPolicy: Preserve copyright notice
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcDispatch.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/yarpserver/sqlite/sqlite3.h
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.h
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-src/yarpserver/sqlite/sqlite3.c
-  Copyright: The author disclaims copyright to this source code
-  CopyPolicy: In place of a legal notice, a blessing is given.
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServer.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-conf/YarpCheckStructHasMember.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: BSD
-
-conf/FindBoost.cmake
-  Copyright: (c) 2006 Andreas Schneider <mail@cynapses.org>
-  CopyPolicy: BSD
-
-conf/FindGSL.cmake
-  Copyright: (C) 2010 Jan Woetzel
-  CopyPolicy: Use under LGPL or BSD license at your choice
-
-conf/FindFFMPEG.cmake
-  Copyright: 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen
-  CopyPolicy: BSD
-
-conf/FindOpenCV.cmake
-  Copyright: 2009 Benoit Rat
-  CopyPolicy: LGPLv2.1
-
-conf/YarpCheckTypeSize.cmake
-  Copyright: 2007-2009 Kitware, Inc.
-  CopyPolicy: BSD
-
-LGPL.TXT
-  Copyright: (C) 1991, 1999 Free Software Foundation, Inc.
-  CopyPolicy: copying and distributing verbatim copies allowed
+src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcServerMethod.cpp
+  Copyright: 2002, 2003 Chris Morley
+  CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 example/gtk/gtkdemo.cpp
   Copyright: 1995-1997 Peter Mattis, Spencer Kimball and Josh MacDonald
@@ -318,5 +334,9 @@ example/yayarpview/CImg.h
 
 GPL.TXT
   Copyright: (C) 1989, 1991 Free Software Foundation, Inc.,
+  CopyPolicy: copying and distributing verbatim copies allowed
+
+LGPL.TXT
+  Copyright: (C) 1991, 1999 Free Software Foundation, Inc.
   CopyPolicy: copying and distributing verbatim copies allowed
 

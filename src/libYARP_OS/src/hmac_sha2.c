@@ -31,6 +31,9 @@
  * SUCH DAMAGE.
  */
 
+// License summary for YARP
+// CopyPolicy: 3-clause BSD
+
 #include <string.h>
 
 #include <hmac/hmac_sha2.h>

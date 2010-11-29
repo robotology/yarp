@@ -1,3 +1,6 @@
+# Copyright (C) 2010 Marco Randazzo
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 IF (COMPILE_DEVICE_LIBRARY)
 	PREPARE_DEVICE(laserHokuyo TYPE laserHokuyo INCLUDE laserHokuyo.h)
 ENDIF (COMPILE_DEVICE_LIBRARY)

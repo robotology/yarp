@@ -31,6 +31,9 @@
  * SUCH DAMAGE.
  */
 
+// License summary for YARP
+// CopyPolicy: 3-clause BSD
+
 #ifndef SHA2_H
 #define SHA2_H
 

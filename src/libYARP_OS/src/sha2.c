@@ -31,6 +31,9 @@
  * SUCH DAMAGE.
  */
 
+// License summary for YARP
+// CopyPolicy: 3-clause BSD
+
 #if 0
 #define UNROLL_LOOPS /* Enable loops unrolling */
 #endif

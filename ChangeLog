@@ -1,3 +1,7 @@
+2010-11-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
+
+	* conf/YarpVersion.cmake: bump version to 2.3.2
+
 2010-11-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/src/ServerControlBoard.cpp: when YARP_QUIET
@@ -3429,7 +3433,7 @@
 	questions from someone evaluating YARP.
 
 	* src/libYARP_dev/src/opencv_grabber: Added --loop option for
-	opencv_grabber, [thanks Alex Bernardino] for suggestion.
+	opencv_grabber, [thanks Alexandre Bernardino] for suggestion.
 
 2006-12-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
