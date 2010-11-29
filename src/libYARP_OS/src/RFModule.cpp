@@ -214,7 +214,7 @@ bool RFModule::safeRespond(const Bottle& command, Bottle& reply) {
 
 
 static RFModule *module = 0;
-static void handler (int) {
+static void handler (int sig) {
     static int ct = 0;
     ct++;
     if (ct>3) {
@@ -234,6 +234,13 @@ static void handler (int) {
         //printf("sent %s, got %s\n", cmd.toString().c_str(),
         //     reply.toString().c_str());
    // }
+
+    #if defined(WIN32) || defined(WIN64)
+    if (sig==SIGBREAK)
+    {
+        yarp::os::Time::delay(20.0);
+    }
+    #endif
 }
 
 
