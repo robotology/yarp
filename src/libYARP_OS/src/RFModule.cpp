@@ -223,10 +223,12 @@ static void handler (int sig) {
     }
     ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
                    ct);
+
     if (module!=0)
     {
         module->stopModule(false);
     }
+
   //  if (module!=NULL) {
   //      Bottle cmd, reply;
   //      cmd.fromString("quit");
@@ -234,20 +236,19 @@ static void handler (int sig) {
         //printf("sent %s, got %s\n", cmd.toString().c_str(),
         //     reply.toString().c_str());
    // }
-
-	// Special case for windows. Do not return, wait for the the main thread to return.
-    // In any case windows will shut down the application after a timeout of 5 seconds.
-    // This wait is required otherwise windows shuts down the process after we return from
-	// the signal handler. We could not find better way to handle clean remote shutdown of 
-    // processes in windows.
-    #if defined(WIN32) || defined(WIN64)
-    if (sig==CTRL_CLOSE_EVENT) //other event types: CTRL_BREAK_EVENT CTRL_C_EVENT, CTRL_LOGOFF_EVENT, CTRL_SHUTDOWN_EVENT
-    {
-        yarp::os::Time::delay(20.0);
-    }
-    #endif
 }
 
+// Special case for windows. Do not return, wait for the the main thread to return.
+// In any case windows will shut down the application after a timeout of 5 seconds.
+// This wait is required otherwise windows shuts down the process after we return from
+// the signal handler. We could not find better way to handle clean remote shutdown of 
+// processes in windows.
+#if defined(WIN32) || defined(WIN64)
+static void handler_sigbreak(int sig)
+{
+	ACE_OS::raise(SIGINT);
+}
+#endif
 
 int RFModule::runModule() {
     stopFlag=false;
@@ -259,12 +260,13 @@ int RFModule::runModule() {
     else {
         ACE_OS::printf("Module::runModule() signal handling currently only good for one module\n");
     }
-    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
-    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 
 #if defined(WIN32) || defined(WIN64)
-    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) handler_sigbreak);
 #endif
+
+    ACE_OS::signal(SIGINT, (ACE_SignalHandler) handler);
+    ACE_OS::signal(SIGTERM, (ACE_SignalHandler) handler);
 
     //setting up main loop
     bool loop=true;

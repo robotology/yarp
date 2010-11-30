@@ -21,7 +21,7 @@ bool KILL(HANDLE handle,int signum=SIGTERM,bool wait=false)
 { 
     BOOL bRet=TerminateProcess(handle,0);
     CloseHandle(handle);
-    fprintf(stdout,"brutally terminated by CTRL_BREAK_EVENT\n");
+    fprintf(stdout,"brutally terminated by TerminateProcess\n");
     fflush(stdout);
     return bRet?true:false;
 }
