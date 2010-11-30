@@ -235,8 +235,13 @@ static void handler (int sig) {
         //     reply.toString().c_str());
    // }
 
+	// Special case for windows. Do not return, wait for the the main thread to return.
+    // In any case windows will shut down the application after a timeout of 5 seconds.
+    // This wait is required otherwise windows shuts down the process after we return from
+	// the signal handler. We could not find better way to handle clean remote shutdown of 
+    // processes in windows.
     #if defined(WIN32) || defined(WIN64)
-    if (sig==SIGBREAK)
+    if (sig==CTRL_CLOSE_EVENT) //other event types: CTRL_BREAK_EVENT CTRL_C_EVENT, CTRL_LOGOFF_EVENT, CTRL_SHUTDOWN_EVENT
     {
         yarp::os::Time::delay(20.0);
     }
