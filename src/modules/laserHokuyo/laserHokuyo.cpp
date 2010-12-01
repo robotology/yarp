@@ -15,8 +15,9 @@
 #include <yarp/os/Time.h>
 #include <iostream>
 #include <string.h>
+#include <stdlib.h>
 
-#define LASER_DEBUG 1
+//#define LASER_DEBUG 1
 
 using namespace std;
 
@@ -32,7 +33,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     period = config.check("Period",Value(50),"Period of the sampling thread").asInt();
 	start_position = config.check("Start_Position",Value(0),"Start position").asInt();
 	end_position = config.check("End_Position",Value(1080),"End Position").asInt();
-	string s = config.check("Laser_Mode",Value("GD"),"Laser Mode (GD/MD").asString();
+	yarp::os::ConstString s = config.check("Laser_Mode",Value("GD"),"Laser Mode (GD/MD").asString();
 	if (s=="GD")
 	{
 		laser_mode = GD_MODE;
@@ -54,7 +55,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 		fprintf(stderr, "Error: Cannot find configuration file for serial port communication!\n");
 		return false;
 	}
-	string serial_filename = config.find("Serial_Configuration").asString();
+	yarp::os::ConstString serial_filename = config.find("Serial_Configuration").asString();
 	
 	//string st = config.toString();
     setRate(period);
@@ -331,8 +332,8 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
 	if (current_line == 0) 
 		{
 			data_block[0]='\0'; //resets the datablock; 
-			if (laser_mode == MD_MODE && (text_data[0] != 'M' || text_data[1] != 'D') ||
-				laser_mode == GD_MODE && (text_data[0] != 'G' || text_data[1] != 'D'))
+			if ((laser_mode == MD_MODE && (text_data[0] != 'M' || text_data[1] != 'D')) ||
+				(laser_mode == GD_MODE && (text_data[0] != 'G' || text_data[1] != 'D')))
 			{
 				#if LASER_DEBUG
 					fprintf(stderr, "Invalid answer to a MD command: %s\n", text_data);
