@@ -153,7 +153,11 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
 //*********************************************************************************
 void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 {
-  if (iDbg==0) return;
+  if (iDbg==0) 
+  {
+	  fprintf(stderr, "WARN: Debug interface not enabled.\n");
+	  return;
+  }
   char buffer[40];
 
   double debug_param1 = 0;
@@ -303,6 +307,10 @@ void guiPid2::guiPid2(void *button, void* data)
 	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_2, &debug_param2);
 	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_3, &debug_param3);
 	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_4, &debug_param4);
+  }
+  else
+  {
+	fprintf(stderr, "WARN: Debug interface not enabled.\n");
   }
 
 #if 0
