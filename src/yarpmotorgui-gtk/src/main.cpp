@@ -232,6 +232,7 @@ static void myMain2(GtkButton *button,	int *position)
 {
     std::string robotName;
     std::string portLocalName;
+	std::string portLocalName2;
 
     GtkWidget *main_vbox1		 = NULL;
     GtkWidget *main_vbox2		 = NULL;
@@ -261,6 +262,7 @@ static void myMain2(GtkButton *button,	int *position)
     int n;
 
     PolyDriver *partsdd[MAX_NUMBER_ACTIVATED];
+	PolyDriver *debugdd[MAX_NUMBER_ACTIVATED];
     PolyDriver *cartesiandd[MAX_NUMBER_ACTIVATED];
     partMover *partMoverList[MAX_NUMBER_ACTIVATED];
     cartesianMover *cartesianMoverList[MAX_NUMBER_ACTIVATED];
@@ -279,6 +281,11 @@ static void myMain2(GtkButton *button,	int *position)
                     robotPartPort += robotName.c_str();
                     robotPartPort += "/";
                     robotPartPort += partsName[n];
+
+					std::string robotPartDebugPort= "/";
+                    robotPartDebugPort += robotName.c_str();
+                    robotPartDebugPort += "/debug/";
+                    robotPartDebugPort += partsName[n];
 
                     //checking existence of the port
                     int ind = 0;
@@ -314,7 +321,9 @@ static void myMain2(GtkButton *button,	int *position)
                             sprintf(tmp, "%d", ind);
                             portLocalName+=tmp;
                             portLocalName+="/";
+							portLocalName2=portLocalName+"debug/";
                             portLocalName+=partsName[n];
+							portLocalName2+=partsName[n];
 
                             // sprintf(&portLocalName[0], "/%s/gui%d/%s", robotName.c_str(), ind, partsName[n]);
                             nameToCheck = portLocalName;
@@ -327,9 +336,20 @@ static void myMain2(GtkButton *button,	int *position)
                     options.put("device", "remote_controlboard");
                     options.put("remote", robotPartPort.c_str());
                     options.put("carrier", "udp");
-
                     partsdd[n] = new PolyDriver(options);
-                    currentPartMover = new partMover(main_vbox4, partsdd[n], partsName[n], finder);
+
+                    options.put("local", portLocalName2.c_str());	//local port names
+                    options.put("device", "debugInterfaceClient");
+                    //options.put("remote", robotPartDebugPort.c_str());
+					options.put("remote", robotPartPort.c_str());
+                    options.put("carrier", "udp");
+					debugdd[n] = new PolyDriver(options);
+					if(debugdd[n]->isValid() == false)
+                      {
+						  fprintf(stderr, "Problem opening the debug client \n");
+					  }	
+
+                    currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder);
                     if(!(currentPartMover->interfaceError)) 
                         {
                             partMoverList[NUMBER_OF_ACTIVATED_PARTS] = currentPartMover;

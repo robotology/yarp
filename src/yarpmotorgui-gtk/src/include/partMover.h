@@ -6,6 +6,7 @@
 #include <yarp/os/BufferedPort.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/ControlBoardInterfaces.h>
+#include <iCub/DebugInterfaces.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Time.h>
@@ -27,6 +28,7 @@ class partMover{
   GtkWidget *vbox;
   GtkWidget *button;
   PolyDriver *partDd;
+  PolyDriver *debugDd;
 
   IPositionControl *pos;
   IEncoders *iencs;
@@ -34,6 +36,7 @@ class partMover{
   IPidControl *pid;
   ITorqueControl *trq;
   IImpedanceControl *imp;
+  IDebugInterface *idbg;
   IControlLimits *lim;
   IControlCalibration2 *cal;
   IControlMode *ctrlmode;
@@ -113,7 +116,7 @@ class partMover{
   GtkWidget *treeview;
   static void enable_entry_update(partMover* currentPartMover);
   static void disable_entry_update(partMover* currentPartMover);
-  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char * labelPart, ResourceFinder *fnd);
+  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char * labelPart, ResourceFinder *fnd);
   ~partMover();
   void releaseDriver();
 
@@ -139,6 +142,7 @@ class partMover{
   inline IPidControl* get_IPidControl () {return pid;}
   inline ITorqueControl* get_ITorqueControl () {return trq;}
   inline IImpedanceControl* get_IImpedanceControl () {return imp;}
+  inline IDebugInterface* get_IDebugControl () {return idbg;}
   inline IControlMode* get_IControlMode () {return ctrlmode;}
 };
 

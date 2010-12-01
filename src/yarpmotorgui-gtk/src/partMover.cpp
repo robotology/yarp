@@ -8,7 +8,7 @@
   GtkWidget *frame2;
 
 
-partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, ResourceFinder *fnd)
+partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char *partName, ResourceFinder *fnd)
 {
   first_time=true;
 
@@ -19,11 +19,25 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
 
   partLabel = partName;
   partDd = partDd_d;
+  debugDd = debugDd_d;
   vbox = vbox_d;
   interfaceError = false;
 
+  //default value for unopened interfaces
+  pos		= NULL;
+  iencs		= NULL;
+  amp		= NULL;
+  pid		= NULL;
+  trq		= NULL;
+  imp		= NULL;
+  idbg		= NULL;
+  lim		= NULL;
+  cal		= NULL;
+  ctrlmode	= NULL;
+
   fprintf(stderr, "Opening interfaces...");
-  bool ok;
+  bool ok=true;
+  bool ok2=true;
   ok  = partDd->view(pid);
   if (!ok)
     fprintf(stderr, "...pid was not ok...");
@@ -51,6 +65,11 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, char *partName, Re
   ok &= partDd->view(ctrlmode);
   if (!ok)
 	fprintf(stderr, "...ctrlmode was not ok.\n");
+  
+  //this interface is not mandatory
+  ok2 &= debugDd->view(idbg);
+  if (!ok2)
+    fprintf(stderr, "...dbg was not ok.\n");
 
   if (!partDd->isValid()) {
     fprintf(stderr, "Device driver was not valid! \n");

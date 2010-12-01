@@ -3,6 +3,15 @@
 #include <stdlib.h>
 
 
+#define CAN_SET_DEBUG_PARAM_1		46
+#define CAN_GET_DEBUG_PARAM_1		47
+#define CAN_SET_DEBUG_PARAM_2		48
+#define CAN_GET_DEBUG_PARAM_2		49
+#define CAN_SET_DEBUG_PARAM_3		14
+#define CAN_GET_DEBUG_PARAM_3		15
+#define CAN_SET_DEBUG_PARAM_4		16
+#define CAN_GET_DEBUG_PARAM_4		17
+
 //*********************************************************************************
 // This callback exits from the Pid dialog
 void guiPid2::destroy_win (GtkButton *dummy1, GtkWidget *dummy2)
@@ -144,6 +153,35 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
 //*********************************************************************************
 void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 {
+  if (iDbg==0) return;
+  char buffer[40];
+
+  double debug_param1 = 0;
+  double debug_param2 = 0;
+  double debug_param3 = 0;
+  double debug_param4 = 0;
+  debug_param1=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug1Des));
+  debug_param2=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug2Des));
+  debug_param3=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug3Des));
+  debug_param4=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug4Des));
+
+  iDbg->setParameter(*joint, CAN_SET_DEBUG_PARAM_1,  debug_param1); debug_param1 = 0;
+  iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_1, &debug_param1);
+  iDbg->setParameter(*joint, CAN_SET_DEBUG_PARAM_2,  debug_param2); debug_param2 = 0;
+  iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_2, &debug_param2);
+  iDbg->setParameter(*joint, CAN_SET_DEBUG_PARAM_3,  debug_param3); debug_param3 = 0;
+  iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_3, &debug_param3);
+  iDbg->setParameter(*joint, CAN_SET_DEBUG_PARAM_4,  debug_param4); debug_param4 = 0;
+  iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_4, &debug_param4);
+
+  sprintf(buffer, "%d", (int) debug_param1);
+  gtk_entry_set_text((GtkEntry*) dbg_debug1Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param2);
+  gtk_entry_set_text((GtkEntry*) dbg_debug2Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param3);
+  gtk_entry_set_text((GtkEntry*) dbg_debug3Entry,  buffer);
+  sprintf(buffer, "%d", (int) debug_param4);
+  gtk_entry_set_text((GtkEntry*) dbg_debug4Entry,  buffer);
 }
 
 //*********************************************************************************
@@ -234,6 +272,7 @@ void guiPid2::guiPid2(void *button, void* data)
   iPid  = currentPart->get_IPidControl();
   iTrq  = currentPart->get_ITorqueControl();
   iImp  = currentPart->get_IImpedanceControl();
+  iDbg  = currentPart->get_IDebugControl();
 
   //GtkWidget *winPid = NULL;
 
@@ -250,12 +289,21 @@ void guiPid2::guiPid2(void *button, void* data)
   double stiff_val=0;
   double damp_val=0;
   double offset_val=0;
-  int debug1 = 0;
-  int debug2 = 0;
+  double debug_param1 = 0;
+  double debug_param2 = 0;
+  double debug_param3 = 0;
+  double debug_param4 = 0;
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
   iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
+  if (iDbg != 0)
+  {
+	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_1, &debug_param1);
+	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_2, &debug_param2);
+	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_3, &debug_param3);
+	iDbg->getParameter(*joint, CAN_GET_DEBUG_PARAM_4, &debug_param4);
+  }
 
 #if 0
   //ImpedanceOffset test
@@ -293,18 +341,30 @@ void guiPid2::guiPid2(void *button, void* data)
   gtk_container_add (GTK_CONTAINER (trq_winPid), note_book);
 
   // ------ DEBUG CONTROL ------
-  //debug1
+  //debug_param1
   dbg_debug1Entry   =  gtk_entry_new();
-  displayPidValue((int) debug1, note_pag4, dbg_debug1Entry, 0, 0, "Current Debug1");
-  //debug1 desired
+  displayPidValue((int) debug_param1, note_pag4, dbg_debug1Entry, 0, 0, "Current Debug1");
+  //debug_param1 desired
   dbg_debug1Des   =  gtk_entry_new();
-  changePidValue((int) debug1, note_pag4, dbg_debug1Des, 110, 0, "Desired Debug1");
-  //debug2
+  changePidValue((int) debug_param1, note_pag4, dbg_debug1Des, 110, 0, "Desired Debug1");
+  //debug_param2
   dbg_debug2Entry   =  gtk_entry_new();
-  displayPidValue((int) debug2, note_pag4, dbg_debug2Entry, 0, 70, "Current Debug2");
-  //debug2 desired
+  displayPidValue((int) debug_param2, note_pag4, dbg_debug2Entry, 0, 70, "Current Debug2");
+  //debug_param2 desired
   dbg_debug2Des   =  gtk_entry_new();
-  changePidValue((int) debug2, note_pag4, dbg_debug2Des, 110, 70, "Desired Debug2");
+  changePidValue((int) debug_param2, note_pag4, dbg_debug2Des, 110, 70, "Desired Debug2");
+  //debug_param1
+  dbg_debug3Entry   =  gtk_entry_new();
+  displayPidValue((int) debug_param3, note_pag4, dbg_debug3Entry, 0, 140, "Current debug3");
+  //debug_param1 desired
+  dbg_debug3Des   =  gtk_entry_new();
+  changePidValue((int) debug_param3, note_pag4, dbg_debug3Des, 110, 140, "Desired debug3");
+  //debug_param2
+  dbg_debug4Entry   =  gtk_entry_new();
+  displayPidValue((int) debug_param4, note_pag4, dbg_debug4Entry, 0, 210, "Current debug4");
+  //debug_param2 desired
+  dbg_debug4Des   =  gtk_entry_new();
+  changePidValue((int) debug_param4, note_pag4, dbg_debug4Des, 110, 210, "Desired debug4");
 
   // ------ POSITION CONTROL ------
   //kp

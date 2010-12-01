@@ -3,6 +3,8 @@
 
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
+//#include <CanBusInterface.h>
+#include <iCub/DebugInterfaces.h>
 #include "partMover.h"
 
 namespace guiPid2
@@ -20,8 +22,12 @@ namespace guiPid2
 
 	static GtkWidget *dbg_debug1Des = NULL;
 	static GtkWidget *dbg_debug2Des = NULL;
+	static GtkWidget *dbg_debug3Des = NULL;
+	static GtkWidget *dbg_debug4Des = NULL;
 	static GtkWidget *dbg_debug1Entry = NULL;
 	static GtkWidget *dbg_debug2Entry = NULL;
+	static GtkWidget *dbg_debug3Entry = NULL;
+	static GtkWidget *dbg_debug4Entry = NULL;
 
 	static GtkWidget *trq_kpDes = NULL;
 	static GtkWidget *trq_kdDes = NULL;
@@ -60,11 +66,14 @@ namespace guiPid2
 	static GtkWidget *imp_dampEntry = NULL;
 	static GtkWidget *imp_offEntry = NULL;
 
-	static int *       joint = NULL;
-	static partMover * currentPart = NULL;
-	static IPidControl *iPid = NULL;
-	static ITorqueControl *iTrq = NULL;
+	static int				 *joint = NULL;
+	static partMover		 *currentPart = NULL;
+	static IPidControl		 *iPid = NULL;
+	static ITorqueControl    *iTrq = NULL;
 	static IImpedanceControl *iImp = NULL;
+	static IDebugInterface   *iDbg = NULL;
+	//static ICanBus		     *iCan = NULL;
+
 
 	void guiPid2(void *button, void* data);
 	void destroy_win (GtkButton *button, GtkWidget *window);
