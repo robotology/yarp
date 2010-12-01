@@ -15,9 +15,8 @@
 #if defined(WIN32) || defined(WIN64)
 typedef DWORD PID;
 typedef HANDLE FDESC;
-typedef HANDLE STDIO;
 #define SIGKILL 9
-bool KILL(HANDLE handle,int signum=SIGTERM,bool wait=false) 
+bool KILL(HANDLE handle)
 { 
     BOOL bRet=TerminateProcess(handle,0);
     CloseHandle(handle);
@@ -40,9 +39,9 @@ DWORD WINAPI ZombieHunter(LPVOID lpParameter);
 typedef int PID;
 typedef int FDESC;
 typedef void* HANDLE;
-typedef PID STDIO;
+//typedef PID STDIO;
 int CLOSE(int h){ return close(h)==0; }
-int KILL(int pid,int signum=SIGTERM,bool wait=false)
+int SIGNAL(int pid,int signum,bool wait=false)
 { 
     int ret=!kill(pid,signum);
     if (wait) waitpid(pid,0,0);
@@ -67,16 +66,16 @@ public:
 		m_bHold=hold;
 	}
 
-	virtual ~YarpRunProcInfo(){ /*Kill(SIGKILL);*/ }
+	virtual ~YarpRunProcInfo(){}
 
 	virtual bool Match(yarp::os::ConstString& alias){ return m_alias==alias; }
 
-	virtual bool Kill(int signum=SIGTERM)
+	virtual bool Signal(int signum)
 	{	
         #if defined(WIN32) || defined(WIN64)
         if (signum==SIGKILL)
         {
-            if (m_handle_cmd) return KILL(m_handle_cmd,signum);
+            if (m_handle_cmd) return KILL(m_handle_cmd);
         }
         else
         {
@@ -85,7 +84,7 @@ public:
         #else
         if (m_pid_cmd && !m_bHold)
 	    {
-		    return KILL(m_pid_cmd,signum);
+		    return SIGNAL(m_pid_cmd,signum);
 		}
         #endif
 		       
@@ -173,7 +172,7 @@ public:
 		return true;
 	}
 
-	int Kill(yarp::os::ConstString& alias,int signum=SIGTERM)
+	int Signal(yarp::os::ConstString& alias,int signum)
 	{
 		mutex.wait();
 
@@ -195,8 +194,8 @@ public:
 
 		for (int k=0; k<nKill; ++k)
 		{
-		    fprintf(stderr,"KILLING  %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
-		    aKill[k]->Kill(signum);
+		    fprintf(stderr,"SIGNAL  %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
+		    aKill[k]->Signal(signum);
 		}
         
         delete [] aKill;
@@ -204,7 +203,7 @@ public:
 		return nKill;
 	}
 
-	int Killall(int signum=SIGTERM)
+	int Killall(int signum)
 	{
 	    mutex.wait();
 		    
@@ -226,8 +225,8 @@ public:
 		
 		for (int k=0; k<nKill; ++k)
 		{
-		    fprintf(stderr,"KILLING %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
-		    aKill[k]->Kill(signum);
+		    fprintf(stderr,"SIGNAL %s (%d)\n",m_apList[k]->m_alias.c_str(),m_apList[k]->m_pid_cmd);
+		    aKill[k]->Signal(signum);
 		}
 		
 		delete [] aKill;
@@ -403,8 +402,8 @@ public:
                             PID pid_cmd,
                             yarp::os::ConstString& stdio_server,
                             YarpRunInfoVector* pStdioVector,
-                            STDIO pid_stdin,
-                            STDIO pid_stdout,
+                            PID pid_stdin,
+                            PID pid_stdout,
                             FDESC read_from_pipe_stdin_to_cmd,
                             FDESC write_to_pipe_stdin_to_cmd,
                             FDESC read_from_pipe_cmd_to_stdout,
@@ -425,7 +424,7 @@ public:
 		m_write_to_pipe_cmd_to_stdout=write_to_pipe_cmd_to_stdout;
 	}
 
-	virtual ~YarpRunCmdWithStdioInfo(){ /*Kill(SIGKILL);*/ }
+	virtual ~YarpRunCmdWithStdioInfo(){}
 	
 	virtual void Clean()
 	{
@@ -446,14 +445,22 @@ public:
 	
 		if (m_pid_stdin)
 		{  
-		    KILL(m_pid_stdin,SIGTERM,true);
-		    fprintf(stderr,"KILLING stdin (%d)\n",m_pid_stdin);
+            #if defined(WIN32) || defined(WIN64)
+            TERMINATE(m_pid_stdin);
+            #else
+            SIGNAL(m_pid_stdin,SIGTERM,true);
+            #endif
+		    fprintf(stderr,"TERMINATING stdin (%d)\n",m_pid_stdin);
 		    m_pid_stdin=0;
 		}
 		if (m_pid_stdout)
 	    {
-	        KILL(m_pid_stdout,SIGTERM,true);
-	        fprintf(stderr,"KILLING stdout (%d)\n",m_pid_stdout);
+            #if defined(WIN32) || defined(WIN64)
+            TERMINATE(m_pid_stdout);
+            #else
+            SIGNAL(m_pid_stdout,SIGTERM,true);
+            #endif
+	        fprintf(stderr,"TERMINATING stdout (%d)\n",m_pid_stdout);
 	        m_pid_stdout=0;
 	    }
 
@@ -464,7 +471,7 @@ public:
 	{
 		if (m_on==m_stdio)
 		{
-			m_pStdioVector->Kill(m_alias);
+			m_pStdioVector->Signal(m_alias,SIGTERM);
 		}
 		else
 		{
@@ -485,8 +492,8 @@ public:
 	}
 
 protected:
-	STDIO m_pid_stdin;
-    STDIO m_pid_stdout;
+	PID m_pid_stdin;
+    PID m_pid_stdout;
 	yarp::os::ConstString m_stdio;
 	FDESC m_write_to_pipe_stdin_to_cmd;
     FDESC m_read_from_pipe_stdin_to_cmd;
@@ -696,7 +703,7 @@ int yarp::os::Run::Server()
 		{
 			yarp::os::ConstString alias(msg.findGroup("kill").get(1).asString());
 			int sig=msg.findGroup("kill").get(2).asInt();
-			output.addString(m_ProcessVector.Kill(alias,sig)?"kill OK":"kill FAILED");
+			output.addString(m_ProcessVector.Signal(alias,sig)?"kill OK":"kill FAILED");
 			port.reply(output);
 			continue;
 		}
@@ -704,14 +711,14 @@ int yarp::os::Run::Server()
 	    if (msg.check("sigterm"))
 		{
 		    yarp::os::ConstString alias(msg.find("sigterm").asString());
-			output.addString(m_ProcessVector.Kill(alias)?"sigterm OK":"sigterm FAILED");
+			output.addString(m_ProcessVector.Signal(alias,SIGTERM)?"sigterm OK":"sigterm FAILED");
 			port.reply(output);
 			continue;
 		}
 
 		if (msg.check("sigtermall"))
 		{
-			m_ProcessVector.Killall();
+			m_ProcessVector.Killall(SIGTERM);
 			output.addString("sigtermall OK");
 			port.reply(output);
 			continue;
@@ -736,7 +743,7 @@ int yarp::os::Run::Server()
 		{		    
 		    fprintf(stderr,"Run::Server() killstdio(%s)\n",msg.find("killstdio").asString().c_str());
 		    yarp::os::ConstString alias(msg.find("killstdio").asString());
-			m_StdioVector.Kill(alias);
+			m_StdioVector.Signal(alias,SIGTERM);
 			continue;
 		}
 
@@ -750,8 +757,8 @@ int yarp::os::Run::Server()
 		}
 	}
 
-	Run::m_StdioVector.Killall();
-	Run::m_ProcessVector.Killall();
+	Run::m_StdioVector.Killall(SIGTERM);
+	Run::m_ProcessVector.Killall(SIGTERM);
 	
 	#if defined(WIN32) || defined(WIN64)
 	Run::m_ProcessVector.mutex.wait();
@@ -1211,8 +1218,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 						                            cmd_process_info.dwProcessId,
                                                     stdio,
                                                     &m_StdioVector,
-                                                    stdin_process_info.hProcess,
-                                                    stdout_process_info.hProcess,
+                                                    stdin_process_info.dwProcessId,
+                                                    stdout_process_info.dwProcessId,
 						                            read_from_pipe_stdin_to_cmd,
                                                     write_to_pipe_stdin_to_cmd,
 						                            read_from_pipe_cmd_to_stdout,
@@ -1528,7 +1535,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	        fprintf(stderr,"%s",out.c_str());
 		    fflush(stderr);
 		    
-		    KILL(pid_stdout);
+		    SIGNAL(pid_stdout,SIGTERM);
 			CLOSE(pipe_stdin_to_cmd[0]);
 			CLOSE(pipe_stdin_to_cmd[1]);
 			CLOSE(pipe_cmd_to_stdout[0]);
@@ -1598,8 +1605,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            fprintf(stderr,"%s",out.c_str());
 	            fflush(stderr); 
 	             
-	            KILL(pid_stdout);
-				KILL(pid_stdin);
+	            SIGNAL(pid_stdout,SIGTERM);
+				SIGNAL(pid_stdin,SIGTERM);
 				CLOSE(pipe_stdin_to_cmd[0]);
 				CLOSE(pipe_stdin_to_cmd[1]);
 				CLOSE(pipe_cmd_to_stdout[0]);
@@ -1631,8 +1638,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
 		        NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 
-				KILL(pid_stdout);
-				KILL(pid_stdin);
+				SIGNAL(pid_stdout,SIGTERM);
+				SIGNAL(pid_stdin,SIGTERM);
 				CLOSE(pipe_stdin_to_cmd[0]);
 				CLOSE(pipe_stdin_to_cmd[1]);
 				CLOSE(pipe_cmd_to_stdout[0]);
@@ -2246,21 +2253,10 @@ Shut down a 32-Bit Process
 Parameters:
 dwPID
 Process ID of the process to shut down.
-
-dwTimeout
-Wait time in milliseconds before shutting down the process.
-
-Return Value:
-TA_FAILED - If the shutdown failed.
-TA_SUCCESS_CLEAN - If the process was shutdown using WM_CLOSE.
-TA_SUCCESS_KILL - if the process was shut down with TerminateProcess().
 ----------------------------------------------------------------*/ 
 bool TERMINATE(PID dwPID) 
 {
-    static const DWORD dwTimeout=6000;
-
 	HANDLE hProc;
-	DWORD dwRet;
 
 	// If we can't open the process with PROCESS_TERMINATE rights,
 	// then we give up immediately.
@@ -2280,22 +2276,19 @@ bool TERMINATE(PID dwPID)
 
     if (params.nWin)
     {
-		dwRet=TA_SUCCESS_CLEAN;
         fprintf(stdout,"%d terminated by WM_CLOSE\n",dwPID);
-        fflush(stdout);
     }
     else
     {
         GenerateConsoleCtrlEvent(CTRL_BREAK_EVENT,dwPID);
-
-        dwRet=TA_SUCCESS_KILL;
-        fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);
-        fflush(stdout);
+        fprintf(stdout,"%d terminated by CTRL_BREAK_EVENT\n",dwPID);    
     }
+
+    fflush(stdout);
 
 	CloseHandle(hProc);
 
-    return dwRet?true:false;
+    return true;
 }
 
 #endif
