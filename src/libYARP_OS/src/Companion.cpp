@@ -85,16 +85,30 @@ static void companion_sigint_handler(int sig) {
     }
 }
 
-static void companion_sigint_handler2(int sig) {
+static void companion_sigterm_handler(int sig) {
     companion_sigint_handler(sig);
 }
 
+#if defined(WIN32) || defined(WIN64)
+static void companion_sigbreak_handler()
+{
+    ACE_OS::raise(SIGINT);
+}
+#else
+static void companion_sighup_handler()
+{
+    ACE_OS::raise(SIGINT);
+}
+#endif
+
 static void companion_install_handler() {
 	signal(SIGINT,companion_sigint_handler);
-	signal(SIGTERM,companion_sigint_handler2);
+	signal(SIGTERM,companion_sigterm_handler);
 
     #if defined(WIN32) || defined(WIN64)
-    signal(SIGBREAK, (ACE_SignalHandler) companion_sigint_handler);
+    signal(SIGBREAK, (ACE_SignalHandler) companion_sigbreak_handler);
+    #else
+    signal(SIGHUP, (ACE_SignalHandler) companion_sighup_handler);
     #endif
 }
 
