@@ -92,12 +92,12 @@ static void companion_sigterm_handler(int sig) {
 #if defined(WIN32) || defined(WIN64)
 static void companion_sigbreak_handler()
 {
-    ACE_OS::raise(SIGINT);
+    raise(SIGINT);
 }
 #else
 static void companion_sighup_handler()
 {
-    ACE_OS::raise(SIGINT);
+    raise(SIGINT);
 }
 #endif
 

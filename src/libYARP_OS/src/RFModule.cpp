@@ -246,7 +246,7 @@ static void handler (int sig) {
 #if defined(WIN32) || defined(WIN64)
 static void handler_sigbreak(int sig)
 {
-	ACE_OS::raise(SIGINT);
+	raise(SIGINT);
 }
 #endif
 
