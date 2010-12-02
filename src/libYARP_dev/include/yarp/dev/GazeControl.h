@@ -208,8 +208,8 @@ public:
     * @param t time (seconds).
     * @return true/false on success/failure. 
     *  
-    * @note The neck movements time cannot be set equal or less than 
-    *       the eyes movements time.
+    * @note The neck movements time cannot be set equal or lower 
+    *       than the eyes movements time.
     */
     virtual bool setNeckTrajTime(const double t)=0;
 
