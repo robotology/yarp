@@ -180,6 +180,28 @@ public:
             }
         }
         checkEqual(mismatch,0,"delta check");
+
+        report(0, "testing various padding + alignments...");
+        for (int ww=1; ww<=17; ww++) {
+            for (int hh=1; hh<=17; hh++) {
+                for (int pad1=1; pad1<=9; pad1++) {
+                    for (int pad2=1; pad2<=9; pad2++) {
+                        int wwp1 = (ww%pad1)?(ww+pad1-(ww%pad1)):ww;
+                        FlexImage img;
+                        char *data = new char[wwp1*hh*3];
+                        YARP_ASSERT(data);
+                        img.setQuantum(pad1);
+                        img.setPixelCode(VOCAB_PIXEL_RGB);
+                        img.setPixelSize(3);
+                        img.setExternal(data,ww,hh);
+                        ImageOf<PixelRgb> target;
+                        target.setQuantum(pad2);
+                        target.copy(img);
+                        delete[] data;
+                    }
+                }
+            }
+        }
     }
 
 

@@ -1,7 +1,12 @@
+2010-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/kinect/CMakeLists.txt: add Philipp Robbel's
+	wrapper around libfreenect for kinect [thanks Philipp Robbel]
+
 2010-12-01  Marco Randazzo <marco.randazzo@iit.it>
 
     * src/modules/laserHokuyo.cpp: fixed const strings under linux
-	
+
 2010-11-29  Paul Fitzpatrick  <paulfitz@nominal.csail.mit.edu>
 
 	* conf/YarpVersion.cmake: bump version to 2.3.2

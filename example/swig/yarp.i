@@ -12,6 +12,7 @@
 //  + use of names that clash with special names in Java/Python/Perl/...
 //  + use of templates
 
+%include "/tmp/bob.i"
 
 %module(directors="1") yarpswig
 %feature("director") yarp::os::PortReader;
@@ -753,3 +754,4 @@ public static short[] getRawImg(Image img) {
 */
 
 #endif
+
