@@ -9,6 +9,7 @@
 #ifndef __YARPGAZECONTROLINTERFACES__
 #define __YARPGAZECONTROLINTERFACES__
 
+#include <yarp/os/Bottle.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/Vector.h>
 
@@ -198,9 +199,23 @@ public:
     *  
     * @note The cyclopic eye is located in the middle of the 
     *       baseline that connects the two eyes. The orientation of
-    *       its frame matches the orientation of single eye.
+    *       its frame is fixed with respect to the head with z-axis
+    *       pointing forward, x-axis pointing rightward and y-axis
+    *       pointing downward.
     */
     virtual bool getCyclopicEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Returns the current options used by the stereo approach.
+    * @param options is a property-like bottle containing the 
+    *                current configuration employed by the internal
+    *                pid.
+    *  
+    * @note The returned bottle looks like as follows: 
+    * (Kp (1 2 ...)) (Ti (1 2 ...)) (Kd (1 2 ...)) (N (...)) ... 
+    * @note the satLim property is returned ordered by rows.
+    */
+    virtual bool getStereoOptions(yarp::os::Bottle &options)=0;
 
     /**
     * Set the duration of the trajectory for the neck actuators. 
@@ -220,6 +235,21 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool setEyesTrajTime(const double t)=0;
+
+    /**
+    * Update the options used by the stereo approach.
+    * @param options is a property-like bottle containing the new 
+    *                configuration employed by the internal pid.
+    *  
+    * @note The property parameter should look like as follows: 
+    * (Kp (1 2 ...)) (Ti (1 2 ...)) (Kd (1 2 ...)) (N (...)) ... 
+    * @note The vectors dimension at pid creation time is always 
+    *       retained.
+    * @note The sampling time Ts is obviously the only option user 
+    *       cannot change.
+    * @note the satLim property must be given ordered by rows. 
+    */
+    virtual bool setStereoOptions(const yarp::os::Bottle &options)=0;
 
     /** Bind the neck pitch within a specified range. [wait for
     *   reply]
