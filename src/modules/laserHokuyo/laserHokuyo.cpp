@@ -63,7 +63,12 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     Property prop;
 
 	prop.put("device", "serialport");
-	prop.fromConfigFile(serial_filename.c_str(),false);
+	ok = prop.fromConfigFile(serial_filename.c_str(),config,false);
+	if (!ok)
+	{
+        fprintf(stderr, "Unable to read from serial port configuration file\n");
+        return false;
+	}
 
     pSerial=0;
 

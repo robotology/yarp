@@ -1,3 +1,7 @@
+2010-12-07  Marco Randazzo <marco.randazzo@iit.it>
+
+    * src/modules/laserHokuyo.cpp: fixed configuration parameters
+	
 2010-12-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/kinect/CMakeLists.txt: add Philipp Robbel's
