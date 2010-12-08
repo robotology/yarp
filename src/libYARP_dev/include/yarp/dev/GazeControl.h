@@ -39,12 +39,13 @@ public:
     * Set the controller in tracking or non-tracking mode. [wait for
     * reply] 
     * @param f true for tracking mode, false otherwise. 
+    * @return true/false on success/failure. 
+    *  
     * @note In tracking mode when the controller reachs the target, 
     *       it keeps on running in order to mantain the gaze on
     *       target. In non-tracking mode the controller releases the
     *       control of the head as soon as the desired target is
     *       reached.
-    * @return true/false on success/failure.
     */
     virtual bool setTrackingMode(const bool f)=0;
 
@@ -143,8 +144,11 @@ public:
     *           of the pixel within the right image plane.
     * @return true/false on success/failure. 
     *  
-    * @note To achieve the target it is required to provide the 
-    *       visual feedback continuously.
+    * @note This strategy employs the monocular approach coupled 
+    *       with a pid that varies the distance z incrementally
+    *       according to the actual error: to achieve the target it
+    *       is thus required to provide the visual feedback
+    *       continuously.
     */
     virtual bool lookAtStereoPixels(const yarp::sig::Vector &pxl,
                                     const yarp::sig::Vector &pxr)=0;
@@ -210,9 +214,10 @@ public:
     * @param options is a property-like bottle containing the 
     *                current configuration employed by the internal
     *                pid.
+    * @return true/false on success/failure. 
     *  
     * @note The returned bottle looks like as follows: 
-    * (Kp (1 2 ...)) (Ti (1 2 ...)) (Kd (1 2 ...)) (N (...)) ... 
+    * (Kp (1 2 ...)) (Ki (1 2 ...)) (Kd (1 2 ...)) (Wp (...)) ... 
     * @note the satLim property is returned ordered by rows.
     */
     virtual bool getStereoOptions(yarp::os::Bottle &options)=0;
@@ -240,14 +245,17 @@ public:
     * Update the options used by the stereo approach.
     * @param options is a property-like bottle containing the new 
     *                configuration employed by the internal pid.
+    * @return true/false on success/failure. 
     *  
     * @note The property parameter should look like as follows: 
-    * (Kp (1 2 ...)) (Ti (1 2 ...)) (Kd (1 2 ...)) (N (...)) ... 
+    * (Kp (1 2 ...)) (Ki (1 2 ...)) (Kd (1 2 ...)) (Wp (...)) ... 
     * @note The vectors dimension at pid creation time is always 
     *       retained.
-    * @note The sampling time Ts is obviously the only option user 
-    *       cannot change.
-    * @note the satLim property must be given ordered by rows. 
+    * @note The satLim property must be given ordered by rows. 
+    * @note The sample time Ts should match the rate with which the 
+    *       method @see lookAtStereoPixels is called by the user.
+    * @note The special option "dominantEye" allows to select the 
+    *       eye used for the monocular approach.
     */
     virtual bool setStereoOptions(const yarp::os::Bottle &options)=0;
 
@@ -338,20 +346,22 @@ public:
 
     /** Store the controller context. [wait for reply]
     * @param id specify where to store the returned context id. 
-    * @note the context comprises the values of internal controller 
+    * @return true/false on success/failure. 
+    *  
+    * @note The context comprises the values of internal controller 
     *       variables, such as the tracking mode, the trajectory
     *       time and so on.
-    * @return true/false on success/failure. 
     */
     virtual bool storeContext(int *id)=0;
 
     /** Restore the controller context previously stored. [wait for
     *   reply]
     * @param id specify the context id to be restored
-    * @note the context comprises the values of internal controller
+    * @return true/false on success/failure. 
+    *  
+    * @note The context comprises the values of internal controller
     *       variables, such as the tracking mode, the trajectory
     *       time and so on.
-    * @return true/false on success/failure. 
     */
     virtual bool restoreContext(const int id)=0;
 };

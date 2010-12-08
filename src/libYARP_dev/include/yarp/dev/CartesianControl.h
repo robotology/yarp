@@ -38,12 +38,13 @@ public:
     * Set the controller in tracking or non-tracking mode. [wait for
     * reply] 
     * @param f true for tracking mode, false otherwise. 
+    * @return true/false on success/failure. 
+    *  
     * @note In tracking mode when the controller reachs the target, 
     *       it keeps on running in order to mantain the limb in the
     *       desired pose. In non-tracking mode the controller
     *       releases the limb as soon as the desired pose is
     *       reached.
-    * @return true/false on success/failure.
     */
     virtual bool setTrackingMode(const bool f)=0;
 
@@ -92,7 +93,7 @@ public:
     *         (as by default) the current execution time is kept.
     * @return true/false on success/failure. 
     *  
-    * @note intended for streaming mode. 
+    * @note Intended for streaming mode. 
     */
     virtual bool goToPose(const yarp::sig::Vector &xd, const yarp::sig::Vector &od,
                           const double t=0.0)=0;
@@ -106,7 +107,7 @@ public:
     *         (as by default) the current execution time is kept. 
     * @return true/false on success/failure. 
     *  
-    * @note intended for streaming mode. 
+    * @note Intended for streaming mode. 
     */
     virtual bool goToPosition(const yarp::sig::Vector &xd, const double t=0.0)=0;
 
@@ -251,11 +252,12 @@ public:
     * reply] 
     * @param curDof a vector which is filled with the actual DOF 
     *           configuration.
+    * @return true/false on success/failure. 
+    *  
     * @note The vector lenght is equal to the number of limb's 
     *       joints; each vector's position is filled with 1 if the
     *       associated joint is controlled (i.e. it is an actuated
     *       DOF), 0 otherwise.
-    * @return true/false on success/failure. 
     */
     virtual bool getDOF(yarp::sig::Vector &curDof)=0;
 
@@ -267,11 +269,12 @@ public:
     *              returned as it has been processed after the
     *              request (it may differ from newDof due to the
     *              presence of some internal limb's constraints).
+    * @return true/false on success/failure. 
+    *  
     * @note Eeach vector's position shall contain 1 if the 
     *       associated joint can be actuated, 0 otherwise. The
     *       special value 2 indicates that the joint status won't be
     *       modified (useful as a placeholder).
-    * @return true/false on success/failure. 
     */
     virtual bool setDOF(const yarp::sig::Vector &newDof, yarp::sig::Vector &curDof)=0;
 
@@ -371,19 +374,21 @@ public:
 
     /**
     * Return tolerance for in-target check. [wait for reply]
+    * @param tol the memory location where tolerance is returned. 
+    * @return true/false on success/failure. 
+    *  
     * @note The trajectory is supposed to be completed as soon as 
     *       norm(xd-end_effector)<tol.
-    * @param tol the memory location where tolerance is returned. 
-    * @return true/false on success/failure.
     */
     virtual bool getInTargetTol(double *tol)=0;
 
     /**
     * Set tolerance for in-target check. [wait for reply]
-    * @note The trajectory is supposed to be completed as soon as 
-    *       norm(xd-end_effector)<tol.
     * @param tol tolerance. 
     * @return true/false on success/failure. 
+    *  
+    * @note The trajectory is supposed to be completed as soon as 
+    *       norm(xd-end_effector)<tol.
     */
     virtual bool setInTargetTol(const double tol)=0;
 
@@ -429,28 +434,31 @@ public:
     virtual bool waitMotionDone(const double period=0.1, const double timeout=0.0)=0;
 
     /** Ask for an immediate stop motion. [wait for reply]
-    * @note the control is completely released, i.e. a direct switch
-    *       to non-tracking mode is executed.     
     * @return true/false on success/failure. 
+    *  
+    * @note The control is completely released, i.e. a direct switch
+    *       to non-tracking mode is executed.     
     */
     virtual bool stopControl()=0;
 
     /** Store the controller context. [wait for reply]
     * @param id specify where to store the returned context id. 
-    * @note the context comprises the values of internal controller 
+    * @return true/false on success/failure. 
+    *  
+    * @note The context comprises the values of internal controller 
     *       variables, such as the tracking mode, the active dofs,
     *       the trajectory time and so on.
-    * @return true/false on success/failure. 
     */
     virtual bool storeContext(int *id)=0;
 
     /** Restore the controller context previously stored. [wait for
     *   reply]
     * @param id specify the context id to be restored
-    * @note the context comprises the values of internal controller
+    * @return true/false on success/failure. 
+    *  
+    * @note The context comprises the values of internal controller
     *       variables, such as the tracking mode, the active dofs,
     *       the trajectory time and so on.
-    * @return true/false on success/failure. 
     */
     virtual bool restoreContext(const int id)=0;
 };
