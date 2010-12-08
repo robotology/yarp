@@ -266,6 +266,11 @@ public:
      */
     static bool setLocalMode(bool flag);
 
+	 /**
+     * Get current value of flag "localMode", see setLocalMode function.
+     * @return state of the flag.
+     */
+	static bool getLocalMode();
 
     /**
      * Read a line of arbitrary length from standard input.

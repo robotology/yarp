@@ -570,6 +570,11 @@ bool NetworkBase::setLocalMode(bool flag) {
     return state;
 }
 
+bool NetworkBase::getLocalMode() {
+    NameClient& nic = NameClient::getNameClient();
+    bool state = nic.isFakeMode();
+    return state;
+}
 
 void NetworkBase::assertion(bool shouldBeTrue) {
     // could replace with ACE assertions, except should not 

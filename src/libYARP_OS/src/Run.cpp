@@ -516,11 +516,12 @@ int yarp::os::Run::main(int argc, char *argv[])
 {
 	m_PortName="";
 
-    if (!NetworkBase::checkNetwork())
-    {
-		fprintf(stderr,"ERROR: no yarp network found.\n");
-        return YARPRUN_ERROR;
-    }
+	if (!NetworkBase::getLocalMode())
+		if (!NetworkBase::checkNetwork())
+		{
+			fprintf(stderr,"ERROR: no yarp network found.\n");
+			return YARPRUN_ERROR;
+		}
 
     Property config;
     config.fromCommand(argc,argv,false);
@@ -604,7 +605,7 @@ yarp::os::Bottle yarp::os::Run::SendMsg(Bottle& msg,yarp::os::ConstString target
     NetworkBase::disconnect(port.getName().c_str(),target.c_str());
     port.close();
 	
-    int size=response.size();
+	int size=response.size();
 	fprintf(stderr,"RESPONSE:\n=========\n");
     for (int s=0; s<size; ++s)
     {

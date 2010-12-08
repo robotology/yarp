@@ -53,12 +53,13 @@ extern yarp::os::impl::UnitTest& getResourceFinderTest();
 extern yarp::os::impl::UnitTest& getDgramTwoWayStreamTest();
 extern yarp::os::impl::UnitTest& getSemaphoreTest();
 extern yarp::os::impl::UnitTest& getEventTest();
+extern yarp::os::impl::UnitTest& getRunTest();
 
 class yarp::os::impl::TestList {
 public:
     static void collectTests() {
         UnitTest& root = UnitTest::getRoot();
-        root.add(getBottleTest());
+		root.add(getBottleTest());
         root.add(getStringTest());
         root.add(getAddressTest());
         root.add(getStringInputStreamTest());
@@ -90,6 +91,11 @@ public:
         root.add(getDgramTwoWayStreamTest());
         root.add(getSemaphoreTest());
         root.add(getEventTest());
+
+#ifdef YARPRUN_TEST
+		root.add(getRunTest());
+#endif
+
     }
 };
 

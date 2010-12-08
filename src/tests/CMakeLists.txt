@@ -6,6 +6,15 @@ option(YARP_COMPILE_TESTS "Compile YARP tests" TRUE)
 
 if (YARP_COMPILE_TESTS)
 
+  add_executable(testModule ../libYARP_OS/harness/testModule/module.cpp)
+  target_link_libraries(testModule YARP_init YARP_OS)
+  
+  #### temporary variable for debug
+  set(ENABLE_YARPRUNTESTS FALSE CACHE BOOL "Enable yarprun tests")
+  if (ENABLE_YARPRUNTESTS)
+	add_definitions(-DYARPRUN_TEST)
+  endif()
+  
   set(targets OS sig dev)
   get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
   if (YARP_HAS_MATH_LIB)
