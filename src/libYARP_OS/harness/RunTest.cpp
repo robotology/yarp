@@ -90,11 +90,14 @@ public:
 		Time::delay(3);
 		Property par;
 		par.put("name", "testModule");
-		yarp::os::Run::start("/run", par, ConstString("test_module"));
+
+      
+        ConstString moduleTag="test_module";
+        yarp::os::Run::start("/run", par, moduleTag);
 
     	Time::delay(1);
 	
-		bool isRunning=yarp::os::Run::isRunning("/run", ConstString("test_module"));
+        bool isRunning=yarp::os::Run::isRunning("/run", moduleTag);
 		checkTrue(isRunning,"isRunning");
 
 	//	terminate("/prova");
