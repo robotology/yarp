@@ -710,6 +710,25 @@ public:
         report(0,"wait for input...");
         p2.read(true);
         report(0,"... got it");
+
+        report(0,"fast loop on temporary port");
+        for (int i=0; i<20; i++) {
+            Port p;
+            p.open("...");
+            p.close();
+        }
+        Port pa;
+        pa.open("...");
+        for (int i=0; i<20; i++) {
+            Port p;
+            p.enableBackgroundWrite(true);
+            p.open("...");
+            NetworkBase::connect(p.getName(),pa.getName());
+            Bottle b("10 20 30");
+            p.write(b);
+            pa.read(b);
+            p.close();
+        }
     }
 
 
@@ -921,8 +940,7 @@ public:
 
         testUnbufferedClose(); //TODO
 
-
-        //testCloseOpenRepeats(); //bring this back soon
+        testCloseOpenRepeats(); //bring this back soon
 
         //testCounts(); // bring this back soon
 
