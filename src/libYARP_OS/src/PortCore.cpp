@@ -363,13 +363,6 @@ void PortCore::closeMain() {
         closing = false;
         running = false;
         stateMutex.post();
-
-        String name = getName();
-        if (name!=String("")) {
-            if (controlRegistration) {
-                NameClient::getNameClient().unregisterName(name);
-            }
-        }
     }
 
     // there should be no other threads at this point
@@ -391,6 +384,16 @@ void PortCore::closeMain() {
         reader->read(sbr);
         reader = NULL;
     }
+
+    if (stopRunning) {
+        String name = getName();
+        if (name!=String("")) {
+            if (controlRegistration) {
+                NameClient::getNameClient().unregisterName(name);
+            }
+        }
+    }
+
     finishing = false;
 
     // fresh as a daisy

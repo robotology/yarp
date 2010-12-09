@@ -43,7 +43,22 @@ void TcpFace::close() {
 }
 
 void TcpFace::closeFace() {
-    peerAcceptor.close();
+    if (address.isValid()) {
+        peerAcceptor.close();
+
+        /*
+          // a test for an arcane yarprun issue
+
+        ACE_INET_Addr  serverAddr(address.getPort());
+        ACE_SOCK_Acceptor peerAcceptor2;
+        result = peerAcceptor2.open(serverAddr,1);
+        printf("TcpFace close %s %d, %s, %d\n", __FILE__, __LINE__,
+               address.toString().c_str(), result);
+        peerAcceptor2.close();
+        */
+
+        address = Address();
+    }
 }
 
 

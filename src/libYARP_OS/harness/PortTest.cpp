@@ -714,7 +714,9 @@ public:
         report(0,"fast loop on temporary port");
         for (int i=0; i<20; i++) {
             Port p;
+            Port p2;
             p.open("...");
+            p2.open("...");
             p.close();
         }
         Port pa;
