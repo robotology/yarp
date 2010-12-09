@@ -36,6 +36,7 @@
  * \code
  * --name: name of the robot (used to form port names)
  * --parts: a list of parts to be added.
+ * --debug: opens the debugInterfaceClient (for firmware debugging). 
  * \endcode
  * Example:
  * \code
@@ -166,6 +167,7 @@ int NUMBER_OF_ACTIVATED_PARTS = 0;
 int NUMBER_OF_ACTIVATED_CARTESIAN = 0;
 int NUMBER_OF_AVAILABLE_PARTS = 0;
 int PART;
+bool debug_enabled = false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -338,16 +340,19 @@ static void myMain2(GtkButton *button,	int *position)
                     options.put("carrier", "udp");
                     partsdd[n] = new PolyDriver(options);
 
-                    options.put("local", portLocalName2.c_str());	//local port names
-                    options.put("device", "debugInterfaceClient");
-                    //options.put("remote", robotPartDebugPort.c_str());
-					options.put("remote", robotPartPort.c_str());
-                    options.put("carrier", "udp");
-					debugdd[n] = new PolyDriver(options);
-					if(debugdd[n]->isValid() == false)
-                      {
-						  fprintf(stderr, "Problem opening the debug client \n");
-					  }	
+					if (debug_enabled)
+					{
+						options.put("local", portLocalName2.c_str());	//local port names
+						options.put("device", "debugInterfaceClient");
+						//options.put("remote", robotPartDebugPort.c_str());
+						options.put("remote", robotPartPort.c_str());
+						options.put("carrier", "udp");
+						debugdd[n] = new PolyDriver(options);
+						if(debugdd[n]->isValid() == false)
+						  {
+							  fprintf(stderr, "Problems opening the debug client \n");
+						  }	
+					}
 
                     currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder);
                     if(!(currentPartMover->interfaceError)) 
@@ -682,6 +687,11 @@ int myMain( int   argc, char *argv[] )
     finder->setDefault("name", "icub");
     finder->configure("ICUB_ROOT",argc,argv);
     //fprintf(stderr, "Retrieved finder: %p \n", finder);
+	if (finder->check("debug"))
+	{
+		printf("Debug interface requested.\n");
+		debug_enabled = true;
+	}
 
     std::string robotName=finder->find("name").asString().c_str();
     Bottle *pParts=finder->find("parts").asList();
