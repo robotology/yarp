@@ -67,9 +67,12 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	fprintf(stderr, "...ctrlmode was not ok.\n");
   
   //this interface is not mandatory
-  ok2 &= debugDd->view(idbg);
-  if (!ok2)
-    fprintf(stderr, "...dbg was not ok.\n");
+  if (debugDd)
+  {
+	  ok2 &= debugDd->view(idbg);
+	  if (!ok2)
+		fprintf(stderr, "...dbg was not ok.\n");
+  }
 
   if (!partDd->isValid()) {
     fprintf(stderr, "Device driver was not valid! \n");

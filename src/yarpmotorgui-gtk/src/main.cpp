@@ -353,6 +353,10 @@ static void myMain2(GtkButton *button,	int *position)
 							  fprintf(stderr, "Problems opening the debug client \n");
 						  }	
 					}
+					else
+					{
+						debugdd[n]=0;
+					}
 
                     currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder);
                     if(!(currentPartMover->interfaceError)) 
