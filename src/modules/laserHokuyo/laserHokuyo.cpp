@@ -24,6 +24,7 @@ using namespace std;
 bool laserHokuyo::open(yarp::os::Searchable& config)
 {
     bool correct=true;
+    internal_status = STATUS_NOT_READY;
 #if LASER_DEBUG
     fprintf(stderr, "%s\n", config.toString().c_str());
 #endif
@@ -203,6 +204,17 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 		b.clear();
 		b_ans.clear();
 	}
+
+	else if (laser_mode==GD_MODE)
+	{
+        // *** Starts one single acquisition ***
+		char message [255];
+		sprintf (message,"GD%04d%04d%02d\n",start_position,end_position,1);
+		b.addString(message);
+		pSerial->send(b);
+		b.clear();
+		b_ans.clear();
+	}
 	
 	Time::turboBoost();
 	RateThread::start();
@@ -232,14 +244,18 @@ bool laserHokuyo::close()
 
 int laserHokuyo::read(yarp::sig::Vector &out) 
 {
-    mutex.wait();
-#if LASER_DEBUG
-	//fprintf(stderr, "data: %s\n", laser_data.toString().c_str());
-#endif
-    out=laser_data;
-    mutex.post();
-
-    return yarp::dev::IAnalogSensor::AS_OK;
+    if (internal_status!=STATUS_NOT_READY)
+    {
+        mutex.wait();
+    #if LASER_DEBUG
+	    //fprintf(stderr, "data: %s\n", laser_data.toString().c_str());
+    #endif
+        out=laser_data;
+        mutex.post();
+        return yarp::dev::IAnalogSensor::AS_OK;
+    }
+    else
+        return yarp::dev::IAnalogSensor::AS_TIMEOUT;
 }
 
 int laserHokuyo::getState(int ch)
@@ -418,16 +434,16 @@ void laserHokuyo::run()
 	bool rx_completed = false;
 	bool error = false;
 	int current_line =0;
-	int res = 0;
 	double maxtime=1;
 	do 
 	{
+        //fprintf (stderr,"1status: %d!\n",internal_status);
 		int answer_len = pSerial->receiveLine(answer, buffer_size);
-		res = readData(laser_mode, answer,answer_len,current_line,data_vector);
-		if (res <  0 && res != STATUS_ERROR_NOTHING_RECEIVED) 
+		internal_status = readData(laser_mode, answer,answer_len,current_line,data_vector);
+		if (internal_status <  0 && internal_status != STATUS_ERROR_NOTHING_RECEIVED) 
 			error = true;
-		if (res == STATUS_OK) current_line ++;
-		if (res == STATUS_ACQUISITION_COMPLETE) rx_completed = true;
+		if (internal_status == STATUS_OK) current_line ++;
+		if (internal_status == STATUS_ACQUISITION_COMPLETE) rx_completed = true;
 		t2 = yarp::os::Time::now();
 		if (t2-t1>maxtime) timeout = true;
 	}

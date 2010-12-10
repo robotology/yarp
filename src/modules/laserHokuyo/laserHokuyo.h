@@ -40,6 +40,7 @@ protected:
     int sensorsNum;
 	int start_position;
 	int end_position;
+    int internal_status;
 	enum laser_mode_type {GD_MODE=1, MD_MODE=0};
 	enum error_code
 	{
@@ -48,7 +49,8 @@ protected:
 		STATUS_ERROR_BUSY = -1,
 		STATUS_ERROR_INVALID_COMMAND = -2,
 		STATUS_ERROR_INVALID_CHECKSUM = -3,
-		STATUS_ERROR_NOTHING_RECEIVED = -4
+		STATUS_ERROR_NOTHING_RECEIVED = -4,
+        STATUS_NOT_READY = -5
 	};
 
 	laser_mode_type laser_mode;
