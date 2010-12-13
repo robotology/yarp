@@ -95,6 +95,15 @@ public:
     DeviceDriver *take();
 
     /**
+     * Take on management of a device.
+     * The PolyDriver may be responsible for destroying it.
+     * @param dd the device to manage.
+     * @param own true if PolyDriver should destroy device when done.
+     * @return true on success.
+     */
+    bool give(DeviceDriver *dd, bool own);
+
+    /**
      * Destructor.
      */
     virtual ~PolyDriver();

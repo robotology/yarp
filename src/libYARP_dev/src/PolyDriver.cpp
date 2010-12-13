@@ -301,4 +301,20 @@ DeviceDriver *PolyDriver::take() {
     return result;
 }
 
+bool PolyDriver::give(DeviceDriver *dd, bool own) {
+    close();
+    this->dd = dd;
+    if (dd!=NULL) {
+        if (system_resource==NULL) {
+            system_resource = new YarpDevMonitor;
+        }
+        YARP_ASSERT(system_resource!=NULL);
+        if (!own) {
+            HELPER(system_resource).addRef();
+        }
+    }
+    return true;
+}
+
+
 

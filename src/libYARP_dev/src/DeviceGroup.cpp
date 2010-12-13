@@ -11,6 +11,7 @@
 #include <yarp/os/Log.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/Drivers.h>
+#include <yarp/dev/DriverLinkCreator.h>
 #include <yarp/dev/DeviceGroup.h>
 
 #include <yarp/dev/AudioVisualInterfaces.h>
@@ -23,52 +24,6 @@ using namespace yarp::dev;
 
 
 #define HELPER(x) (*((DeviceGroupHelper*)(x)))
-
-
-class LinkCreator : public DriverCreator {
-private:
-    ConstString name;
-    PolyDriver holding;
-public:
-    LinkCreator(const char *name, PolyDriver& source) {
-        this->name = name;
-        holding.link(source);
-    }
-
-    virtual ~LinkCreator() {
-        holding.close();
-    }
-
-    virtual yarp::os::ConstString toString() {
-        return name;
-    }
-
-    virtual DeviceDriver *create() {
-        DeviceDriver *internal;
-        holding.view(internal);
-        return internal;
-    }
-    
-    virtual yarp::os::ConstString getName() {
-        return name;
-    }
-    
-    virtual yarp::os::ConstString getWrapper() {
-        return "(link)";
-    }
-
-    virtual yarp::os::ConstString getCode() {
-        return "LinkCreator";
-    }
-
-    virtual PolyDriver *owner() {
-        return &holding;
-    }
-
-    void close() {
-        holding.close();
-    }
-};
 
 
 class DeviceGroupHelper {
@@ -150,7 +105,7 @@ public:
         }
         needDrive.push_back(!backgrounded);
         needDriveSummary = needDriveSummary || (!backgrounded);
-        Drivers::factory().add(new LinkCreator(name,*pd));
+        Drivers::factory().add(new DriverLinkCreator(name,*pd));
         return true;
     }
 

@@ -79,7 +79,6 @@ public:
     }
 };
 
-
 /**
  * A factory for creating driver objects of a particular type.
  */
