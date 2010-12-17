@@ -1,3 +1,7 @@
+2010-12-17  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: bump to version 2.3.3
+
 2010-12-07  Marco Randazzo <marco.randazzo@iit.it>
 
     * src/modules/laserHokuyo.cpp: fixed configuration parameters

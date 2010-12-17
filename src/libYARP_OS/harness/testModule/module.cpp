@@ -1,4 +1,13 @@
-#include <iostream>
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2010 RobotCub Consortium
+ * Author: Lorenzo Natale
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+#include <stdio.h>
 #include <yarp/os/RFModule.h>
 #include <yarp/os/Module.h>
 #include <yarp/os/Network.h>
@@ -23,8 +32,7 @@ public:
     bool updateModule()
     {
         count++;
-        //printf("[%d] updateModule\n", count);
-        cout<<"["<<count<<"]"<< " updateModule... "<<endl;
+        printf("[%d] updateModule\n", count);
 
         return true;
     }
@@ -34,7 +42,7 @@ public:
     */
     bool respond(const Bottle& command, Bottle& reply) 
     {
-        cout<<"Got something, echo is on"<<endl;
+        printf("Got something, echo is on\n");
         if (command.get(0).asString()=="quit")
             return false;     
         else
@@ -61,7 +69,7 @@ public:
     */
     bool interruptModule()
     {
-        cout<<"Interrupting your module, for port cleanup"<<endl;
+        printf("Interrupting your module, for port cleanup\n");
         return true;
     }
 
@@ -70,7 +78,7 @@ public:
     */
     bool close()
     {
-        cout<<"Calling close function\n";
+        printf("Calling close function\n");
         handlerPort.close();
         return true;
     }
@@ -81,17 +89,17 @@ int main(int argc, char * argv[])
     Network yarp;
     MyModule module;
 
-	yarp::os::ResourceFinder rf; //dummy resource finder, empty
+    yarp::os::ResourceFinder rf; //dummy resource finder, empty
+    
+    //open a file
 
-	//open a file
-
-    cout<<"Configure module..."<<endl;
+    printf("Configure module...\n");
     module.configure(rf);
-    cout<<"Start module..."<<endl;
+    printf("Start module...\n");
     module.runModule();
-
-	//remove file 
-    cout<<"Main returning..."<<endl;
+    
+    //remove file 
+    printf("Main returning...\n");
     return 0;
 }
 
