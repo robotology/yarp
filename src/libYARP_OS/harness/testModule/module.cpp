@@ -12,7 +12,6 @@
 #include <yarp/os/Module.h>
 #include <yarp/os/Network.h>
 
-using namespace std;
 using namespace yarp::os;
 
 class MyModule:public RFModule
