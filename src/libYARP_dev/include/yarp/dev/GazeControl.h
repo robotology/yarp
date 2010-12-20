@@ -112,10 +112,9 @@ public:
     * @return true/false on success/failure. 
     *  
     * @note The relative reference frame for the azimuth/elevation 
-    *       couple is head-centered and refers to the current
-    *       configuration of the cyclopic eye (i.e. the ideal eye
-    *       located at the middle point between the two cameras
-    *       owning the same set of three axes).
+    *       couple is head-centered; the center of this frame is
+    *       located in the middle of the baseline that connects the
+    *       two eyes.
     */
     virtual bool lookAtRelAngles(const yarp::sig::Vector &ang)=0;
 
@@ -192,8 +191,7 @@ public:
     virtual bool getRightEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
-    * Get the current pose of the cyclopic eye frame. [wait for 
-    * reply] 
+    * Get the current pose of the head frame. [wait for reply]
     * @param x a 3-d vector which is filled with the actual 
     *         position x,y,z (meters).
     * @param od a 4-d vector which is filled with the actual 
@@ -201,13 +199,31 @@ public:
     * (meters and radians). 
     * @return true/false on success/failure. 
     *  
-    * @note The cyclopic eye is located in the middle of the 
-    *       baseline that connects the two eyes. The orientation of
-    *       its frame is fixed with respect to the head with z-axis
-    *       pointing forward, x-axis pointing rightward and y-axis
-    *       pointing downward.
+    * @note The center of the head frame is located in the middle of
+    *       the baseline that connects the two eyes. The orientation
+    *       of its frame is fixed with respect to the head with
+    *       z-axis pointing forward, x-axis pointing rightward and
+    *       y-axis pointing downward.
     */
-    virtual bool getCyclopicEyePose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+    virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
+
+    /**
+    * Get the joints target values where the controller is moving 
+    * the system. [wait for reply] 
+    * @param qdes a vector which is filled with the desired joints 
+    *         values (degrees).
+    * @return true/false on success/failure. 
+    */
+    virtual bool getJointsDesired(yarp::sig::Vector &qdes)=0;
+
+    /**
+    * Get the joints velocities commanded by the controller. [wait
+    * for reply] 
+    * @param qdot a vector which is filled with the joints 
+    *         velocities (deg/s).
+    * @return true/false on success/failure. 
+    */
+    virtual bool getJointsVelocities(yarp::sig::Vector &qdot)=0;
 
     /**
     * Returns the current options used by the stereo approach.
