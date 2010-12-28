@@ -104,7 +104,7 @@ void BottleImpl::smartAdd(const String& str) {
                     numberLike = false;
                 }
             }
-            if (ch2=='e'||ch2=='E') {
+            if (!hexActive && (ch2=='e'||ch2=='E')) {
                 hasPeriodOrE = true;
             }
             if (preamble) {

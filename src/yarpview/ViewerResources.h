@@ -24,6 +24,8 @@ private:
  
     FpsStats  *fpsData;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> yimage;
+    double lastImageTime;
+    int streamLike;
 
     bool freezed;
 
@@ -49,6 +51,8 @@ public:
         freezed=false;
         windowH=0;
         windowW=0;
+        lastImageTime = 0;
+        streamLike = 0;
     }
 
     ~ViewerResources()
@@ -117,7 +121,14 @@ public:
         bool force=false)
     {
 
+        double now = yarp::os::Time::now();
+        bool ignore = false;
         lock();
+        if (!(freezed)) {
+            if (now-lastImageTime>5 && streamLike>=5) {
+                ignore = true;
+            }
+        }
         if (origSize)
             resizeWindow();
         unlock();
@@ -135,7 +146,7 @@ public:
         unsigned int imageH=yimage.height();
         unsigned int imageW=yimage.width();
 
-        if ((imageH==0) || (imageW==0))
+        if ((imageH==0) || (imageW==0) || ignore)
         {
             //nothing to draw
             unlock();
@@ -190,6 +201,11 @@ public:
 
         lock();
         yimage.copy(n);
+        double now = yarp::os::Time::now();
+        if (now-lastImageTime<1) {
+            if (streamLike<100) streamLike++;
+        }
+        lastImageTime = now;
         //fprintf(stderr, "%d %d\n", yimage.height(), yimage.width());
         unlock();
     }

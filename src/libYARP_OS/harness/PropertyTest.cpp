@@ -135,6 +135,40 @@ public:
         checkEqual(p.findGroup("x").get(1).asString().c_str(),"toy","splice ok");
     }
 
+    void checkHex() {
+        report(0,"checking hex");
+        Property p;
+        p.fromString("(CanAddress 0x0C)");
+        checkEqual(p.find("CanAddress").asInt(),12,"0x0C");
+        p.fromString("(CanAddress 0x0E)");
+        checkEqual(p.find("CanAddress").asInt(),14,"0x0E");
+        p.fromString("(CanAddress 0x0c)");
+        checkEqual(p.find("CanAddress").asInt(),12,"0x0c");
+        p.fromString("(CanAddress 0x0e)");
+        checkEqual(p.find("CanAddress").asInt(),14,"0x0e");
+        p.fromString("(CanAddress 0xff)");
+        checkEqual(p.find("CanAddress").asInt(),255,"0xff");
+        p.fromConfig("\
+CanAddress1 0x0C\n\
+CanAddress2 0x0E\n\
+");
+        checkEqual(p.find("CanAddress1").asInt(),12,"config text 0x0C");
+        checkEqual(p.find("CanAddress2").asInt(),14,"config text 0x0E");
+
+        const char *fname1 = "_yarp_regression_test1.txt";
+
+        FILE *fout = fopen(fname1,"w");
+        YARP_ASSERT(fout!=NULL);
+        fprintf(fout,"CanAddress1 0x0E\n");
+        fprintf(fout,"CanAddress2 0x0C\n");
+        fclose(fout);
+        fout = NULL;
+
+        p.fromConfigFile(fname1);
+        checkEqual(p.find("CanAddress1").asInt(),14,"config text 0x0E");
+        checkEqual(p.find("CanAddress2").asInt(),12,"config text 0x0C");
+    }
+
     virtual void checkCopy() {
         report(0,"checking copy");
         Property p0;
@@ -416,6 +450,7 @@ check $x $y\n\
         checkComment();
         checkLineBreak();
         checkMonitor();
+        checkHex();
     }
 };
 

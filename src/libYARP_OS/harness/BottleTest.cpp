@@ -93,6 +93,23 @@ public:
 
     }
 
+    void testHex() {
+        report(0,"testing hexadecimal...");
+        Bottle b;
+        b.fromString("0x0C");
+        checkTrue(b.get(0).isInt(),"0x0C is an integer");
+        checkEqual(b.get(0).asInt(),12,"0x0C");
+        b.fromString("0x0E");
+        checkTrue(b.get(0).isInt(),"0x0E is an integer");
+        checkEqual(b.get(0).asInt(),14,"0x0E");
+        b.fromString("0x0c");
+        checkEqual(b.get(0).asInt(),12,"0x0c");
+        b.fromString("0x0e");
+        checkEqual(b.get(0).asInt(),14,"0x0e");
+        b.fromString("0xff");
+        checkEqual(b.get(0).asInt(),255,"0xff");
+    }
+
     void testStreaming() {
         report(0,"testing streaming (just text mode)...");
 
@@ -460,7 +477,6 @@ public:
         checkEqual(b2.size(),0,"have an empty bottle");
         b3 = b2;
         checkFalse(b3.isNull(),"copied a non-null bottle");
-        printf("B3 is %s\n", b3.toString().c_str());
         checkEqual(b3.size(),0,"copied an empty bottle");
         Bottle& nullBot = b.findGroup("zig");
         checkTrue(nullBot.isNull(),"have a null bottle");
@@ -494,6 +510,7 @@ public:
         testScientific();
         testContinuation();
         testAssignment();
+        testHex();
     }
 
     virtual String getName() {
