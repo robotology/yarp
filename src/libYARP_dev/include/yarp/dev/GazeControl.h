@@ -301,6 +301,32 @@ public:
     */
     virtual bool blockNeckPitch()=0;
 
+    /** Bind the neck roll within a specified range. [wait for
+    *   reply]
+    * @param min the minimum value of the range (in degree). 
+    * @param max the maximum value of the range (in degree). 
+    * @return true/false on success/failure. 
+    */
+    virtual bool bindNeckRoll(const double min, const double max)=0;
+
+    /** Block the neck roll at a specified angle. [wait for reply]
+    * @param val the angle value at which block the joint (in 
+    *           degree).
+    * @return true/false on success/failure. 
+    *  
+    * @note The possibility to block the neck joints is given in 
+    *       order to move just the eyes.
+    */
+    virtual bool blockNeckRoll(const double val)=0;
+
+    /** Block the neck roll at the current angle. [wait for reply]
+    * @return true/false on success/failure. 
+    *  
+    * @note The possibility to block the neck joints is given in 
+    *       order to move just the eyes. 
+    */
+    virtual bool blockNeckRoll()=0;
+
     /** Bind the neck yaw within a specified range. [wait for
     *   reply]
     * @param min the minimum value of the range (in degree). 
@@ -331,6 +357,11 @@ public:
     * @return true/false on success/failure. 
     */
     virtual bool clearNeckPitch()=0;
+
+    /** Unblock the neck roll. [wait for reply]
+    * @return true/false on success/failure. 
+    */
+    virtual bool clearNeckRoll()=0;
 
     /** Unblock the neck yaw. [wait for reply]
     * @return true/false on success/failure. 
