@@ -353,6 +353,33 @@ public:
     */
     virtual bool blockNeckYaw()=0;
 
+    /** Return the current neck pitch range. [wait for reply]
+    * @param min the location where to store the minimum of the 
+    *            range [deg].
+    * @param max the location where to store the maximum of the 
+    *            range [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool getNeckPitchRange(double *min, double *max)=0;
+
+    /** Return the current neck roll range. [wait for reply]
+    * @param min the location where to store the minimum of the 
+    *            range [deg].
+    * @param max the location where to store the maximum of the 
+    *            range [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool getNeckRollRange(double *min, double *max)=0;
+
+    /** Return the current neck yaw range. [wait for reply]
+    * @param min the location where to store the minimum of the 
+    *            range [deg].
+    * @param max the location where to store the maximum of the 
+    *            range [deg].
+    * @return true/false on success/failure. 
+    */
+    virtual bool getNeckYawRange(double *min, double *max)=0;
+
     /** Unblock the neck pitch. [wait for reply]
     * @return true/false on success/failure. 
     */
