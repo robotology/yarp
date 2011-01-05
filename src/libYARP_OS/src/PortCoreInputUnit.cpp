@@ -119,7 +119,7 @@ void PortCoreInputUnit::run() {
             info.portName = info.targetName;
             info.carrierName = route.getCarrierName().c_str();
             
-            if (info.sourceName!="admin") {
+            if (info.sourceName!="admin"&&info.sourceName!="null") {
                 getOwner().report(info);
                 wasNoticed = true;
             }

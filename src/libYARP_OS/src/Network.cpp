@@ -597,7 +597,7 @@ bool NetworkBase::write(const Contact& contact,
     // This is a little complicated because we make the connection
     // without using a port ourselves.  With a port it is easy.
 
-    const char *connectionName = "anon";
+    const char *connectionName = "admin";
     ConstString name = contact.getName();
     const char *targetName = name.c_str();  // use carefully!
     Address address = Address::fromContact(contact);

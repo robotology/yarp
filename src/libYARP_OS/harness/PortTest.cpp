@@ -153,16 +153,24 @@ class MyReport : public PortReport {
 public:
     int ct;
     int oct;
+    int ict;
 
     MyReport() {
-        oct = ct = 0;
+        ict = oct = ct = 0;
     }
 
     virtual void report(const PortInfo& info) {
-        //printf("GOT REPORT %s\n", info.message.c_str());
+        /*
+        printf("GOT REPORT %s (%s,%s,%s)\n", info.message.c_str(),
+               (info.tag==PortInfo::PORTINFO_CONNECTION)?"conn":"misc",
+               (info.incoming?"incoming":"outgoing"),
+               (info.created?"created":"destroyed"));
+        */
         if (info.tag == PortInfo::PORTINFO_CONNECTION) {
             if (info.incoming == false) {
                 oct++;
+            } else {
+                ict++;
             }
         }
         ct++;
@@ -818,15 +826,20 @@ public:
         {
             Port p1;
             Port p2;
-            MyReport report;
-            p1.setReporter(report);
+            MyReport report1, report2;
+            p1.setReporter(report1);
+            p2.setReporter(report2);
             p1.open("/foo");
             p2.open("/bar");
             Network::connect("/foo","/bar");
             Network::sync("/foo");
             Network::sync("/bar");
-            checkTrue(report.ct>0,"got some report callback");
-            checkEqual(report.oct,1,"exactly one output callback");
+            checkTrue(report1.ct>0,"sender got report callback");
+            checkEqual(report1.oct,1,"exactly one output callback");
+            checkEqual(report1.ict,0,"exactly zero input callbacks");
+            checkTrue(report2.ct>0,"receiver got report callback");
+            checkEqual(report2.oct,0,"exactly zero output callbacks");
+            checkEqual(report2.ict,1,"exactly one input callback");
             p1.close();
             p2.close();
         }
@@ -947,11 +960,11 @@ public:
         //testCounts(); // bring this back soon
 
         testReadNoReply();
-        testReports();
         testAdmin();
         testAcquire();
 
         testTimeout();
+        testReports();
 
         nic.setFakeMode(false);
     }
