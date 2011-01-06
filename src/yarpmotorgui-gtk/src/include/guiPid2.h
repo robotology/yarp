@@ -20,14 +20,22 @@ namespace guiPid2
 	static GtkWidget *note_pag3 = NULL;
 	static GtkWidget *note_pag4 = NULL;
 
+	static GtkWidget *dbg_debug0Des = NULL;
 	static GtkWidget *dbg_debug1Des = NULL;
 	static GtkWidget *dbg_debug2Des = NULL;
 	static GtkWidget *dbg_debug3Des = NULL;
 	static GtkWidget *dbg_debug4Des = NULL;
+	static GtkWidget *dbg_debug5Des = NULL;
+	static GtkWidget *dbg_debug6Des = NULL;
+	static GtkWidget *dbg_debug7Des = NULL;
+	static GtkWidget *dbg_debug0Entry = NULL;
 	static GtkWidget *dbg_debug1Entry = NULL;
 	static GtkWidget *dbg_debug2Entry = NULL;
 	static GtkWidget *dbg_debug3Entry = NULL;
 	static GtkWidget *dbg_debug4Entry = NULL;
+	static GtkWidget *dbg_debug5Entry = NULL;
+	static GtkWidget *dbg_debug6Entry = NULL;
+	static GtkWidget *dbg_debug7Entry = NULL;
 
 	static GtkWidget *trq_kpDes = NULL;
 	static GtkWidget *trq_kdDes = NULL;
