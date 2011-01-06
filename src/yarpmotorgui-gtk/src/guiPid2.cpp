@@ -541,7 +541,7 @@ void guiPid2::guiPid2(void *button, void* data)
   gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Send, 0, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Send, 0, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Send, 0, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Send, 0, 520);
+  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Send, 0, 590);
   g_signal_connect (button_Pos_Send, "clicked", G_CALLBACK (send_pos_pid), &myPosPid);
   g_signal_connect (button_Trq_Send, "clicked", G_CALLBACK (send_trq_pid), &myTrqPid);
   g_signal_connect (button_Imp_Send, "clicked", G_CALLBACK (send_imp_pid), NULL);
@@ -559,7 +559,7 @@ void guiPid2::guiPid2(void *button, void* data)
   gtk_fixed_put	(GTK_FIXED(note_pag1), button_Pos_Close, 120, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag2), button_Trq_Close, 120, 520);
   gtk_fixed_put	(GTK_FIXED(note_pag3), button_Imp_Close, 120, 520);
-  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Close, 120, 520);
+  gtk_fixed_put	(GTK_FIXED(note_pag4), button_Dbg_Close, 120, 590);
   g_signal_connect (button_Pos_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Trq_Close, "clicked", G_CALLBACK (destroy_win), NULL);
   g_signal_connect (button_Imp_Close, "clicked", G_CALLBACK (destroy_win), NULL);
