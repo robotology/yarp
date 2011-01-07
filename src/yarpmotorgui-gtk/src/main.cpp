@@ -323,18 +323,15 @@ static void myMain2(GtkButton *button,	int *position)
                             sprintf(tmp, "%d", ind);
                             portLocalName+=tmp;
                             portLocalName+="/";
-							portLocalName2=portLocalName+"debug/";
                             portLocalName+=partsName[n];
-							portLocalName2+=partsName[n];
-
                             // sprintf(&portLocalName[0], "/%s/gui%d/%s", robotName.c_str(), ind, partsName[n]);
                             nameToCheck = portLocalName;
                             nameToCheck += "/rpc:o";
-                            //                         adr=nic.queryName(nameToCheck.c_str());
+                            // adr=nic.queryName(nameToCheck.c_str());
                             adr=Network::queryName(nameToCheck.c_str());
                         }
 
-                    options.put("local", portLocalName.c_str());	//local port names
+                    options.put("local", portLocalName.c_str());	
                     options.put("device", "remote_controlboard");
                     options.put("remote", robotPartPort.c_str());
                     options.put("carrier", "udp");
@@ -342,12 +339,16 @@ static void myMain2(GtkButton *button,	int *position)
 
 					if (debug_enabled)
 					{
-						options.put("local", portLocalName2.c_str());	//local port names
-						options.put("device", "debugInterfaceClient");
-						//options.put("remote", robotPartDebugPort.c_str());
-						options.put("remote", robotPartPort.c_str());
-						options.put("carrier", "udp");
-						debugdd[n] = new PolyDriver(options);
+						Property debugOptions;
+						portLocalName2=portLocalName;
+						// the following complex line of code performs a substring substitution (see example below)
+						// "/icub/robotMotorGui2/right_arm" -> "/icub/robotMotorGui2/debug/right_arm"
+						portLocalName2.replace(portLocalName2.find(partsName[n]),strlen(partsName[n]),std::string("debug/")+std::string(partsName[n]));
+						debugOptions.put("local", portLocalName2.c_str());	
+						debugOptions.put("device", "debugInterfaceClient");
+						debugOptions.put("remote", robotPartPort.c_str());
+						debugOptions.put("carrier", "udp");
+						debugdd[n] = new PolyDriver(debugOptions);
 						if(debugdd[n]->isValid() == false)
 						  {
 							  fprintf(stderr, "Problems opening the debug client \n");
