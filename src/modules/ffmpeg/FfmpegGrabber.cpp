@@ -391,7 +391,7 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
         formatParams.height = config.check("height",Value(480),"height of image").asInt();
     }
 
-    ConstString videoDevice = (config.check("v4l")?"video4linux":"video4linux2");
+    ConstString videoDevice = (config.check("v4l1")?"video4linux":"video4linux2");
     iformat = av_find_input_format(audio?"audio_device":videoDevice.c_str());
 
     int result = av_open_input_file(audio?ppFormatCtx2:ppFormatCtx,
@@ -493,7 +493,7 @@ bool FfmpegGrabber::open(yarp::os::Searchable & config) {
 #endif
 
     // Open video file
-    if (config.check("v4l","if present, read from video4linux") || config.check("v4l2","if present, read from video4linux2")) {
+    if (config.check("v4l","if present, read from video4linux") || config.check("v4l1","if present, read from video4linux") || config.check("v4l2","if present, read from video4linux2")) {
         needRateControl = false; // reading from live media
         if (!openV4L(config,&pFormatCtx,&pFormatCtx2)) {
             printf("Could not open Video4Linux input\n");
