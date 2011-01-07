@@ -1,3 +1,7 @@
+2011-01-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/ffmpeg/FfmpegGrabber.cpp: freshen v4l2 support.
+
 2010-12-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/BottleImpl.cpp: fix hexadecimal

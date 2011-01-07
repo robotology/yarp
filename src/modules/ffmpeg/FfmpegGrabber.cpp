@@ -281,9 +281,9 @@ public:
                 img_convert_ctx = sws_getContext(w,h,
                                                  pCodecCtx->pix_fmt, 
                                                  w, h, PIX_FMT_RGB24, 
-                                                 0,
+                                                 //0,
                                                  //SWS_BILINEAR,
-                                                 //SWS_BICUBIC, 
+                                                 SWS_BICUBIC, 
                                                  NULL, NULL, NULL);
             }
             if (img_convert_ctx!=NULL) {
@@ -332,6 +332,10 @@ public:
 #define HELPER(x) (*((FfmpegHelper*)x))
 
 
+const char *xstrdup(const char *str) {
+    if (str[0]=='-') return NULL;
+    return strdup(str);
+}
 
 bool FfmpegGrabber::openV4L(yarp::os::Searchable & config, 
                             AVFormatContext **ppFormatCtx,
@@ -380,9 +384,9 @@ bool FfmpegGrabber::openV4L(yarp::os::Searchable & config,
                                                   "numerator of basic time unit").asInt();
         formatParams.channel = config.check("channel",Value(0),
                                             "channel identifier").asInt();
-        formatParams.standard = strdup(config.check("standard",
-                                                    Value("ntsc"),
-                                                    "pal versus ntsc").asString().c_str());
+        formatParams.standard = xstrdup(config.check("standard",
+                                                     Value("-"),
+                                                     "pal versus ntsc").asString().c_str());
         formatParams.width = config.check("width",Value(640),"width of image").asInt();
         formatParams.height = config.check("height",Value(480),"height of image").asInt();
     }
