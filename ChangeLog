@@ -1,3 +1,7 @@
+2011-01-09  Arjan Gijsberts  <arjan@liralab.it>
+
+	* example/swig/yarp.i: removal of temporary test line.
+
 2011-01-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/ffmpeg/FfmpegGrabber.cpp: freshen v4l2 support.
