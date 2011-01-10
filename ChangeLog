@@ -1,3 +1,8 @@
+2011-01-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindACE.cmake: integrate paths to old ACE4YARP, support
+	dropped accidentally [thanks Jonas Ruesch]
+
 2011-01-09  Arjan Gijsberts  <arjan@liralab.it>
 
 	* example/swig/yarp.i: removal of temporary test line.
