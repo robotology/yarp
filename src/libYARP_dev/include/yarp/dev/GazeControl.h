@@ -128,6 +128,10 @@ public:
     * @param z the z-component of the point in the eye's reference 
     *         frame (meters). A default value of 1.0 is assumed.
     * @return true/false on success/failure. 
+    *  
+    * @note The component z can be seen also as the distance [m] 
+    *       from the proper image plane once thought to extend
+    *       towards infinity.
     */
     virtual bool lookAtMonoPixel(const int camSel,
                                  const yarp::sig::Vector &px,
