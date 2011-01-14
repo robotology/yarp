@@ -17,7 +17,7 @@
 
 using namespace yarp::os;
 
-#if WIN32
+#ifdef _MSC_VER
 #define safe_printf sprintf_s
 #else
 #define safe_printf snprintf
