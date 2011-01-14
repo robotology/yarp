@@ -125,8 +125,8 @@ public:
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
     *           the pixel within the image plane.
-    * @param z the distance of the point from the proper eye 
-    *         (meters). A default value of 1.0 is assumed.
+    * @param z the z-component of the point in the eye's reference 
+    *         frame (meters). A default value of 1.0 is assumed.
     * @return true/false on success/failure. 
     */
     virtual bool lookAtMonoPixel(const int camSel,
