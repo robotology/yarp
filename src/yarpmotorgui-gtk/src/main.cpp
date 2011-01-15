@@ -37,6 +37,7 @@
  * --name: name of the robot (used to form port names)
  * --parts: a list of parts to be added.
  * --debug: opens the debugInterfaceClient (for firmware debugging). 
+ * --speed: enables the speed visualisation.
  * \endcode
  * Example:
  * \code
@@ -167,7 +168,8 @@ int NUMBER_OF_ACTIVATED_PARTS = 0;
 int NUMBER_OF_ACTIVATED_CARTESIAN = 0;
 int NUMBER_OF_AVAILABLE_PARTS = 0;
 int PART;
-bool debug_enabled = false;
+bool debug_param_enabled = false;
+bool speedview_param_enabled =false;
 
 ResourceFinder *finder;
 ////////////////////////
@@ -337,7 +339,7 @@ static void myMain2(GtkButton *button,	int *position)
                     options.put("carrier", "udp");
                     partsdd[n] = new PolyDriver(options);
 
-					if (debug_enabled)
+					if (debug_param_enabled)
 					{
 						Property debugOptions;
 						portLocalName2=portLocalName;
@@ -359,7 +361,7 @@ static void myMain2(GtkButton *button,	int *position)
 						debugdd[n]=0;
 					}
 
-                    currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder);
+                    currentPartMover = new partMover(main_vbox4, partsdd[n], debugdd[n], partsName[n], finder,speedview_param_enabled);
                     if(!(currentPartMover->interfaceError)) 
                         {
                             partMoverList[NUMBER_OF_ACTIVATED_PARTS] = currentPartMover;
@@ -695,7 +697,12 @@ int myMain( int   argc, char *argv[] )
 	if (finder->check("debug"))
 	{
 		printf("Debug interface requested.\n");
-		debug_enabled = true;
+		debug_param_enabled = true;
+	}
+	if (finder->check("speed"))
+	{
+		printf("Speed view requested.\n");
+		speedview_param_enabled = true;
 	}
 
     std::string robotName=finder->find("name").asString().c_str();

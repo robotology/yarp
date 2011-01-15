@@ -215,7 +215,7 @@ void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, 
   GtkWidget *frame = gtk_frame_new (label);
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+20);
+  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
   gtk_widget_set_size_request 	(frame, 130, 60);
   gtk_widget_set_size_request 	(entry, 60, 20);
 
@@ -232,7 +232,7 @@ void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int pos
   GtkWidget *frame = gtk_frame_new (label);
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+20);
+  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
   gtk_widget_set_size_request 	(frame, 130, 60);
   gtk_widget_set_size_request 	(entry, 60, 20);
 
@@ -249,7 +249,7 @@ void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, i
   GtkWidget *frame = gtk_frame_new (label);
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+20);
+  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+30);
   gtk_widget_set_size_request 	(frame, 130, 60);
   gtk_widget_set_size_request 	(entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
@@ -265,7 +265,7 @@ void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX
   GtkWidget *frame = gtk_frame_new (label);
 
   gtk_fixed_put	(GTK_FIXED(inv), frame, posX+20, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+20);
+  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+50, posY+30);
   gtk_widget_set_size_request 	(frame, 130, 60);
   gtk_widget_set_size_request 	(entry, 60, 20);
   gtk_editable_set_editable ((GtkEditable*) entry, TRUE);
@@ -392,16 +392,16 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) debug_param[2], note_pag4, dbg_debug2Des, 110, 140, "Desired debug2");
   //debug_param3
   dbg_debug3Entry   =  gtk_entry_new();
-  displayPidValue((int) debug_param[3], note_pag4, dbg_debug3Entry, 0, 210, "Current debug3");
+  displayPidValue((int) debug_param[3], note_pag4, dbg_debug3Entry, 0, 210, "Current debug3\nbEMF shift factor");
   //debug_param3 desired
   dbg_debug3Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[3], note_pag4, dbg_debug3Des, 110, 210, "Desired debug3");
+  changePidValue((int) debug_param[3], note_pag4, dbg_debug3Des, 110, 210, "Desired debug3\nbEMF shift factor");
   //debug_param4
   dbg_debug4Entry   =  gtk_entry_new();
-  displayPidValue((int) debug_param[4], note_pag4, dbg_debug4Entry, 0, 280, "Current Debug4");
+  displayPidValue((int) debug_param[4], note_pag4, dbg_debug4Entry, 0, 280, "Current Debug4\nbEMF gain");
   //debug_param4 desired
   dbg_debug4Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[4], note_pag4, dbg_debug4Des, 110, 280, "Desired Debug4");
+  changePidValue((int) debug_param[4], note_pag4, dbg_debug4Des, 110, 280, "Desired Debug4\nbEMF gain");
   //debug_param5
   dbg_debug5Entry   =  gtk_entry_new();
   displayPidValue((int) debug_param[5], note_pag4, dbg_debug5Entry, 0, 350, "Current Debug5");

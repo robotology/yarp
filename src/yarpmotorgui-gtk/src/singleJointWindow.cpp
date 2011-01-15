@@ -231,10 +231,11 @@ bool partMover::entry_update(partMover *currentPart)
   ITorqueControl    *itrq = currentPart->trq;
   IAmplifierControl *iamp = currentPart->amp;
 
-  GtkEntry * *pos_entry = (GtkEntry **)  currentPart->currPosArray;
-  GtkEntry  **trq_entry = (GtkEntry **)  currentPart->currTrqArray;
-  GtkEntry    **inEntry = (GtkEntry **)  currentPart->inPosArray;
-  GtkWidget **colorback = (GtkWidget **) currentPart->frameColorBack;
+  GtkEntry * *pos_entry   = (GtkEntry **)  currentPart->currPosArray;
+  GtkEntry  **trq_entry   = (GtkEntry **)  currentPart->currTrqArray;
+  GtkEntry  **speed_entry = (GtkEntry **)  currentPart->currSpeedArray;
+  GtkEntry    **inEntry   = (GtkEntry **)  currentPart->inPosArray;
+  GtkWidget **colorback   = (GtkWidget **) currentPart->frameColorBack;
 
   GtkWidget **sliderAry = currentPart->sliderArray;
   bool *POS_UPDATE = currentPart->CURRENT_POS_UPDATE;
@@ -244,6 +245,7 @@ bool partMover::entry_update(partMover *currentPart)
 
   double positions[MAX_NUMBER_OF_JOINTS];
   double torques[MAX_NUMBER_OF_JOINTS];
+  double speeds[MAX_NUMBER_OF_JOINTS];
   double max_torques[MAX_NUMBER_OF_JOINTS];
   double min_torques[MAX_NUMBER_OF_JOINTS];
   static int controlModes[MAX_NUMBER_OF_JOINTS];
@@ -272,6 +274,7 @@ bool partMover::entry_update(partMover *currentPart)
   if (!iiencs->getEncoders(positions)) 
 	  return true;
   itrq->getTorques(torques);
+  iiencs->getEncoderSpeeds(speeds);
 #if DEBUG_GUI
   itrq->getTorqueRanges(min_torques,max_torques);
 #endif
@@ -283,6 +286,8 @@ bool partMover::entry_update(partMover *currentPart)
       gtk_entry_set_text((GtkEntry*) pos_entry[k],  buffer);
       sprintf(buffer, "%.3f", torques[k]);  
 	  gtk_entry_set_text((GtkEntry*) trq_entry[k],  buffer);
+      sprintf(buffer, "%.1f", speeds[k]);  
+	  gtk_entry_set_text((GtkEntry*) speed_entry[k],  buffer);
     }
   //update all joint sliders
   for (k = 0; k < NUMBER_OF_JOINTS; k++) 

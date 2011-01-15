@@ -54,8 +54,10 @@ class partMover{
   GtkWidget **sliderArray;
   GtkWidget **currPosArray;
   GtkWidget **currTrqArray;
+  GtkWidget **currSpeedArray;
   GtkWidget **currPosArrayLbl;
   GtkWidget **currTrqArrayLbl;
+  GtkWidget **currSpeedArrayLbl;
   GtkWidget **inPosArray;
   GtkWidget **frameColorBack;
   GtkWidget **frame_slider1;
@@ -109,6 +111,7 @@ class partMover{
   GtkWidget *button8;
   ResourceFinder *finder;
   bool      first_time;
+  bool      speed_view_enable;
 
   char *partLabel;
   bool interfaceError;
@@ -116,7 +119,7 @@ class partMover{
   GtkWidget *treeview;
   static void enable_entry_update(partMover* currentPartMover);
   static void disable_entry_update(partMover* currentPartMover);
-  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char * labelPart, ResourceFinder *fnd);
+  partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char * labelPart, ResourceFinder *fnd, bool speed_view_ena);
   ~partMover();
   void releaseDriver();
 

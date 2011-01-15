@@ -8,9 +8,10 @@
   GtkWidget *frame2;
 
 
-partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char *partName, ResourceFinder *fnd)
+partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugDd_d, char *partName, ResourceFinder *fnd, bool speed_view_ena)
 {
   first_time=true;
+  speed_view_enable=speed_view_ena;
 
   finder = fnd;
 
@@ -114,8 +115,10 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       sliderVelArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
       currPosArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  currTrqArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
+	  currSpeedArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  currPosArrayLbl = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  currTrqArrayLbl = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
+	  currSpeedArrayLbl = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
       inPosArray = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  frameColorBack = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
 	  frame_slider1 = new GtkWidget* [MAX_NUMBER_OF_JOINTS];
@@ -178,7 +181,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       pos->getAxes(&NUMBER_OF_JOINTS);
 		
       int height, width;
-      height = 160;
+      height = 180;
       width = 180;
 
       for (k = 0; k<NUMBER_OF_JOINTS; k++)
@@ -211,8 +214,10 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	    sliderArray[k]    =  gtk_hscale_new_with_range(1, 2, 1);
 	  currPosArray[k]   =  gtk_entry_new();
 	  currTrqArray[k]   =  gtk_entry_new();
+	  currSpeedArray[k]   =  gtk_entry_new();
   	  currPosArrayLbl[k]  =  gtk_label_new("deg");
 	  currTrqArrayLbl[k]  =  gtk_label_new("Nm");
+	  currSpeedArrayLbl[k]  =  gtk_label_new("deg/s");
 	  inPosArray[k]     = gtk_entry_new();
 
 	  sliderVelArray[k] =  gtk_hscale_new_with_range(1, 100, 1);
@@ -240,10 +245,16 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderVelArray[k], 65, 20+50 );
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95, 15+100);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   95, 35+100);
-  	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145, 15+103);
+	   gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145, 15+103);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   145, 35+103);
+
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65, 15+100);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider2[k],  60, 60    );
+	  if (speed_view_enable)
+	  {
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArray[k], 95, 55+100);
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArrayLbl[k],   145, 55+103);
+	  }
 
 	  int buttonDist= 24;
 	  int buttonOffset = 13;
@@ -261,6 +272,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	  gtk_widget_set_size_request 	(sliderArray[k], 90, 40);
 	  gtk_widget_set_size_request 	(currPosArray[k], 50, 20);
 	  gtk_widget_set_size_request 	(currTrqArray[k], 50, 20);
+	  gtk_widget_set_size_request 	(currSpeedArray[k], 50, 20);
 	  gtk_widget_set_size_request 	(inPosArray[k], 20, 20);
 	  gtk_widget_set_size_request 	(homeArray[k], 50, 25);
 	  gtk_widget_set_size_request 	(disableArray[k], 50, 25);
@@ -291,6 +303,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 
 	  gtk_editable_set_editable ((GtkEditable*) currPosArray[k], FALSE);
 	  gtk_editable_set_editable ((GtkEditable*) currTrqArray[k], FALSE);
+	  gtk_editable_set_editable ((GtkEditable*) currSpeedArray[k], FALSE);
 	  gtk_editable_set_editable ((GtkEditable*) inPosArray[k], FALSE);
 
 	  //Velocity commands update
@@ -318,7 +331,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 
       frame1 = gtk_frame_new ("Commands:");
       gtk_fixed_put	(GTK_FIXED(inv1), frame1,       (NUMBER_OF_JOINTS%numberOfRows)*width,         (NUMBER_OF_JOINTS/numberOfRows)*height);
-      gtk_widget_set_size_request 	(frame1, 180, 150);
+      gtk_widget_set_size_request 	(frame1, width, height);
 		      
       button1 = NULL;
       button2 = NULL;
