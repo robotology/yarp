@@ -416,10 +416,10 @@ void guiPid2::guiPid2(void *button, void* data)
   changePidValue((int) debug_param[6], note_pag4, dbg_debug6Des, 110, 420, "Desired debug6");
   //debug_param7
   dbg_debug7Entry   =  gtk_entry_new();
-  displayPidValue((int) debug_param[7], note_pag4, dbg_debug7Entry, 0, 490, "Current debug7");
+  displayPidValue((int) debug_param[7], note_pag4, dbg_debug7Entry, 0, 490, "Current debug7\nspeed damping (torque)");
   //debug_param7 desired
   dbg_debug7Des   =  gtk_entry_new();
-  changePidValue((int) debug_param[7], note_pag4, dbg_debug7Des, 110, 490, "Desired debug7");
+  changePidValue((int) debug_param[7], note_pag4, dbg_debug7Des, 110, 490, "Desired debug7\nspeed damping (torque)");
 
   // ------ POSITION CONTROL ------
   //kp
