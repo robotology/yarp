@@ -14,6 +14,8 @@
 #define CAN_GET_DEBUG_PARAM_4		17
 */
 
+const int debug_base = 0;
+
 //*********************************************************************************
 // This callback exits from the Pid dialog
 void guiPid2::destroy_win (GtkButton *dummy1, GtkWidget *dummy2)
@@ -173,22 +175,22 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
   debug_param[6]=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug6Des));
   debug_param[7]=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug7Des));
 
-  iDbg->setDebugParameter(*joint, 0,  debug_param[0]); debug_param[0] = 0;
-  iDbg->getDebugParameter(*joint, 0, &debug_param[0]);
-  iDbg->setDebugParameter(*joint, 1,  debug_param[1]); debug_param[1] = 0;
-  iDbg->getDebugParameter(*joint, 1, &debug_param[1]);
-  iDbg->setDebugParameter(*joint, 2,  debug_param[2]); debug_param[2] = 0;
-  iDbg->getDebugParameter(*joint, 2, &debug_param[2]);
-  iDbg->setDebugParameter(*joint, 3,  debug_param[3]); debug_param[3] = 0;
-  iDbg->getDebugParameter(*joint, 3, &debug_param[3]);
-  iDbg->setDebugParameter(*joint, 4,  debug_param[4]); debug_param[4] = 0;
-  iDbg->getDebugParameter(*joint, 4, &debug_param[4]);
-  iDbg->setDebugParameter(*joint, 5,  debug_param[5]); debug_param[5] = 0;
-  iDbg->getDebugParameter(*joint, 5, &debug_param[5]);
-  iDbg->setDebugParameter(*joint, 6,  debug_param[6]); debug_param[6] = 0;
-  iDbg->getDebugParameter(*joint, 6, &debug_param[6]);
-  iDbg->setDebugParameter(*joint, 7,  debug_param[7]); debug_param[7] = 0;
-  iDbg->getDebugParameter(*joint, 7, &debug_param[7]);
+  iDbg->setDebugParameter(*joint, debug_base+0,  debug_param[0]); debug_param[0] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
+  iDbg->setDebugParameter(*joint, debug_base+1,  debug_param[1]); debug_param[1] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+1, &debug_param[1]);
+  iDbg->setDebugParameter(*joint, debug_base+2,  debug_param[2]); debug_param[2] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
+  iDbg->setDebugParameter(*joint, debug_base+3,  debug_param[3]); debug_param[3] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
+  iDbg->setDebugParameter(*joint, debug_base+4,  debug_param[4]); debug_param[4] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
+  iDbg->setDebugParameter(*joint, debug_base+5,  debug_param[5]); debug_param[5] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]);
+  iDbg->setDebugParameter(*joint, debug_base+6,  debug_param[6]); debug_param[6] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
+  iDbg->setDebugParameter(*joint, debug_base+7,  debug_param[7]); debug_param[7] = 0;
+  iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
 
   sprintf(buffer, "%d", (int) debug_param[0]);
   gtk_entry_set_text((GtkEntry*) dbg_debug0Entry,  buffer);
@@ -322,14 +324,14 @@ void guiPid2::guiPid2(void *button, void* data)
   iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
   if (iDbg != 0)
   {
-	iDbg->getDebugParameter(*joint, 0, &debug_param[0]);
-	iDbg->getDebugParameter(*joint, 1, &debug_param[1]);
-	iDbg->getDebugParameter(*joint, 2, &debug_param[2]);
-	iDbg->getDebugParameter(*joint, 3, &debug_param[3]);
-	iDbg->getDebugParameter(*joint, 4, &debug_param[4]);
-	iDbg->getDebugParameter(*joint, 5, &debug_param[5]);
-	iDbg->getDebugParameter(*joint, 6, &debug_param[6]);
-	iDbg->getDebugParameter(*joint, 7, &debug_param[7]);
+	iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
+	iDbg->getDebugParameter(*joint, debug_base+1, &debug_param[1]);
+	iDbg->getDebugParameter(*joint, debug_base+2, &debug_param[2]);
+	iDbg->getDebugParameter(*joint, debug_base+3, &debug_param[3]);
+	iDbg->getDebugParameter(*joint, debug_base+4, &debug_param[4]);
+	iDbg->getDebugParameter(*joint, debug_base+5, &debug_param[5]);
+	iDbg->getDebugParameter(*joint, debug_base+6, &debug_param[6]);
+	iDbg->getDebugParameter(*joint, debug_base+7, &debug_param[7]);
   }
   else
   {
