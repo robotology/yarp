@@ -181,8 +181,8 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       pos->getAxes(&NUMBER_OF_JOINTS);
 		
       int height, width;
-      height = 180;
-      width = 180;
+      height = 200;
+      width = 200;
 
       for (k = 0; k<NUMBER_OF_JOINTS; k++)
 	{
@@ -239,25 +239,26 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 	
 	  gtk_container_add (GTK_CONTAINER (frameColorBack[k]), invArray[k]);
 
-	 
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider1[k],  60, 10    );
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderArray[k],    65, 20    );
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderVelArray[k], 65, 20+50 );
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95, 15+100);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   95, 35+100);
-	   gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145, 15+103);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   145, 35+103);
+	  int sliderOffsetY = 16;
+	  int sliderOffsetX = 10;
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider1[k],  60+sliderOffsetX, 10+sliderOffsetY    );
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderArray[k],    65+sliderOffsetX, 20+sliderOffsetY   );
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), sliderVelArray[k], 65+sliderOffsetX, 20+50+sliderOffsetY );
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArray[k],   95+sliderOffsetX, 15+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArray[k],   95+sliderOffsetX, 35+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currPosArrayLbl[k],   145+sliderOffsetX, 15+103+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), currTrqArrayLbl[k],   145+sliderOffsetX, 35+103+sliderOffsetY);
 
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65, 15+100);
-	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider2[k],  60, 60    );
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), inPosArray[k],     65+sliderOffsetX, 15+100+sliderOffsetY);
+	  gtk_fixed_put	(GTK_FIXED(invArray[k]), frame_slider2[k],  60+sliderOffsetX, 60+sliderOffsetY    );
 	  if (speed_view_enable)
 	  {
-		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArray[k], 95, 55+100);
-		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArrayLbl[k],   145, 55+103);
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArray[k], 95+sliderOffsetX, 55+100+sliderOffsetY);
+		  gtk_fixed_put	(GTK_FIXED(invArray[k]), currSpeedArrayLbl[k],   145+sliderOffsetX, 55+103+sliderOffsetY);
 	  }
 
-	  int buttonDist= 24;
-	  int buttonOffset = 13;
+	  int buttonDist= 26;
+	  int buttonOffset = 26;
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), homeArray[k],      6, buttonOffset);
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), disableArray[k],   6, buttonDist + buttonOffset) ;
 	  gtk_fixed_put	(GTK_FIXED(invArray[k]), calibrateArray[k], 6, 2*buttonDist + buttonOffset);
@@ -346,28 +347,28 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       GtkWidget *button14 = gtk_button_new_with_mnemonic ("Open sequence tab");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button1);
       g_signal_connect (button14, "clicked", G_CALLBACK (table_open), myClassData3);
-      gtk_fixed_put (GTK_FIXED (inv1), button14, 15+(NUMBER_OF_JOINTS%numberOfRows)*width,         20+(NUMBER_OF_JOINTS/numberOfRows)*height);
+      gtk_fixed_put (GTK_FIXED (inv1), button14, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,         20+(NUMBER_OF_JOINTS/numberOfRows)*height);
       gtk_widget_set_size_request     (button14, 150, 30);
 
       //Button13 in the panel
       GtkWidget *button13 = gtk_button_new_with_mnemonic ("RunAll");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button0);
       g_signal_connect (button13, "clicked", G_CALLBACK (run_all), this);
-      gtk_fixed_put (GTK_FIXED (inv1), button13, 15+(NUMBER_OF_JOINTS%numberOfRows)*width,         50+(NUMBER_OF_JOINTS/numberOfRows)*height);
+      gtk_fixed_put (GTK_FIXED (inv1), button13, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,         50+(NUMBER_OF_JOINTS/numberOfRows)*height);
       gtk_widget_set_size_request 	(button13, 150, 30);
 
       //Button11 in the panel
       GtkWidget *button11 = gtk_button_new_with_mnemonic ("CalibAll");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button0);
       g_signal_connect (button11, "clicked", G_CALLBACK (calib_all), this);
-      gtk_fixed_put (GTK_FIXED (inv1), button11, 15+(NUMBER_OF_JOINTS%numberOfRows)*width,         80+(NUMBER_OF_JOINTS/numberOfRows)*height);
+      gtk_fixed_put (GTK_FIXED (inv1), button11, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,         80+(NUMBER_OF_JOINTS/numberOfRows)*height);
       gtk_widget_set_size_request 	(button11, 150, 30);
 
       //Button12 in the panel
       GtkWidget *button12 = gtk_button_new_with_mnemonic ("HomeAll");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button0);
       g_signal_connect (button12, "clicked", G_CALLBACK (home_all), this);
-      gtk_fixed_put (GTK_FIXED (inv1), button12, 15+(NUMBER_OF_JOINTS%numberOfRows)*width,         110+(NUMBER_OF_JOINTS/numberOfRows)*height);
+      gtk_fixed_put (GTK_FIXED (inv1), button12, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,         110+(NUMBER_OF_JOINTS/numberOfRows)*height);
       gtk_widget_set_size_request 	(button12, 150, 30);
      
     }
