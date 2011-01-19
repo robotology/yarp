@@ -132,25 +132,25 @@ only with OpenCV version 2.0 and above.
 By launching the following command: 
  
 \code 
-dataDumper --name /example --type image --downsample 2 
+dataDumper --name /log --type image --downsample 2 
 \endcode 
  
-the service will create the listening port /example capable of 
-storing images in ppm format within the subdirectory ./example 
-at a halved rate with respect to the rate of the sender. 
+the service will create the listening port /log capable of 
+storing images in ppm format within the subdirectory ./log at a 
+halved rate with respect to the rate of the sender. 
  
 Then, by connecting the port to the sender with the usual yarp 
 command
  
 \code 
-yarp connect /grabber /example 
+yarp connect /grabber /log 
 \endcode 
  
 the acquisition will start. 
  
 By pressing CTRL+C the acquisition is terminated.
  
-So, now, have a look inside the directory ./example 
+So, now, have a look inside the directory ./log 
 
 \author Ugo Pattacini
 */ 
