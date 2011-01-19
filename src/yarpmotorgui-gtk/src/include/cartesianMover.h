@@ -12,7 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/ResourceFinder.h>
 ///////////ICUB///////////
-#include <iCub/ctrl/ctrlMath.h>
+#include <iCub/ctrl/math.h>
 ///////////GTK///////////
 #include <gtk/gtk.h>
 #include <gtk/gtkmain.h>
