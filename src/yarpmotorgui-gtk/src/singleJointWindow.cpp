@@ -371,7 +371,7 @@ bool partMover::entry_update(partMover *currentPart)
 		  default:
 		  case VOCAB_CM_UNKNOWN:
 			  pColor=&color_grey;
-			  strcat(frame_title," (UNKNOWN)");
+			  //strcat(frame_title," (UNKNOWN)");
 			  gtk_frame_set_label   (GTK_FRAME(currentPart->framesArray[k]),frame_title);
 			  gtk_widget_modify_bg (colorback[k], GTK_STATE_NORMAL, pColor);
 		  break;
