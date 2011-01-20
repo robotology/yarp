@@ -102,19 +102,16 @@ endif (ENABLE_DASHBOARD_SUBMIT)
 
 #########################################################################
 # Control setting an rpath
-
-option(INSTALL_WITH_RPATH "When installing YARP, give executables a full RPATH" FALSE)
-
-option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
-mark_as_advanced(ENABLE_FORCE_RPATH)
+if (NOT MSVC)
+  option(INSTALL_WITH_RPATH "When installing YARP, give executables a full RPATH" FALSE)
+  option(ENABLE_FORCE_RPATH "Set an rpath after installing the executables (deprecated, please use INSTALL_WITH_RPATH" FALSE)
+  mark_as_advanced(ENABLE_FORCE_RPATH)
+endif (NOT MSVC)
 
 if (INSTALL_WITH_RPATH OR ENABLE_FORCE_RPATH)
   set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
   set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 endif ()
-
-
-
 
 #########################################################################
 # Defunct options to be removed
