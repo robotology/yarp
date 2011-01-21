@@ -356,17 +356,24 @@ void guiPid2::guiPid2(void *button, void* data)
   note_lbl1 = gtk_label_new("Position PID");
   note_lbl2 = gtk_label_new("Torque PID");
   note_lbl3 = gtk_label_new("Stiffness params");
-  note_lbl4 = gtk_label_new("Other");
+  note_lbl4 = gtk_label_new("Debug1");
+  note_lbl5 = gtk_label_new("Debug2");
 
   note_pag1 = gtk_fixed_new ();
   note_pag2 = gtk_fixed_new ();
   note_pag3 = gtk_fixed_new ();
   note_pag4 = gtk_fixed_new ();
+  note_pag5 = gtk_fixed_new ();
 
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag1, note_lbl1);
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag2, note_lbl2);
   gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag3, note_lbl3);
-  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag4, note_lbl4);
+
+  if (iDbg != 0)
+  {
+	  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag4, note_lbl4);
+	  gtk_notebook_append_page   (GTK_NOTEBOOK(note_book), note_pag5, note_lbl5);
+  }
 
   //adding a set of display
   //inv = gtk_fixed_new ();

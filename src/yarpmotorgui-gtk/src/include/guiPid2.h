@@ -15,10 +15,12 @@ namespace guiPid2
 	static GtkWidget *note_lbl2 = NULL;
 	static GtkWidget *note_lbl3 = NULL;
 	static GtkWidget *note_lbl4 = NULL;
+	static GtkWidget *note_lbl5 = NULL;
 	static GtkWidget *note_pag1 = NULL;
 	static GtkWidget *note_pag2 = NULL;
 	static GtkWidget *note_pag3 = NULL;
 	static GtkWidget *note_pag4 = NULL;
+	static GtkWidget *note_pag5 = NULL;
 
 	static GtkWidget *dbg_debug0Des = NULL;
 	static GtkWidget *dbg_debug1Des = NULL;
