@@ -1,3 +1,9 @@
+2011-01-22  U-sigmund\paulfitz  <paulfitz@sigmund>
+
+	* conf/YarpWdk.cmake: experiment - set up build files for 
+	using Windows Driver Kit to compile YARP library and
+	executable.
+
 2011-01-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindACE.cmake: integrate paths to old ACE4YARP, support

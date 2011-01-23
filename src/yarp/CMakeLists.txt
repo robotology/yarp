@@ -6,7 +6,8 @@
 GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 include_directories(${ACE_INCLUDE_DIRS})
-ADD_EXECUTABLE(yarp yarp.cpp)
+get_filename_component(YARP_CPP yarp.cpp ABSOLUTE) # make absolute for later reference
+ADD_EXECUTABLE(yarp ${YARP_CPP})
 TARGET_LINK_LIBRARIES(yarp YARP_init)
 ADD_EXECUTABLE(yarpserver yarpserver.cpp)
 TARGET_LINK_LIBRARIES(yarpserver YARP_init)

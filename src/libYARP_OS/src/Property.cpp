@@ -526,7 +526,7 @@ public:
     ConstString expand(const char *txt, Searchable& env, Searchable& env2) {
         //printf("expanding %s\n", txt);
         String input = txt;
-        if (YARP_STRSTR(input,"$")<0) {
+        if (YARP_STRSTR(input,"$")==String::npos) {
             // no variables present for sure
             return txt;
         }
