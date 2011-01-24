@@ -144,6 +144,13 @@
 %rename(access) *::operator();
 //%ignore yarp::os::PortReader::read;
 
+// Deal with some shadowing in python
+#ifdef SWIGPYTHON
+%ignore yarp::os::Property::fromCommand(int, char const *[]);
+%ignore yarp::os::Property::fromCommand(int, char const *[], bool);
+%ignore yarp::os::Property::fromCommand(int, char const *[], bool, bool);
+#endif
+
 // Deal with some clash in perl involving the name "seed"
 %{
 #define _SEARCH_H // strange perl clash
@@ -292,6 +299,7 @@ MAKE_COMMS(Bottle)
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
+  %template(BVector) std::vector<bool>;
   #if defined(SWIGCSHARP)
   	SWIG_STD_VECTOR_SPECIALIZE_MINIMUM(Pid,yarp::dev::Pid)
   #endif
@@ -529,6 +537,26 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
 	
 	bool getRefAccelerations(std::vector<double>& data) {
 		return self->getRefAccelerations(&data[0]);
+	}
+
+	bool checkMotionDone(std::vector<bool>& flag) {
+	  // complication: vector<bool> is packed in C++
+	  // and isn't a regular container.
+	  std::vector<char> data(flag.size());
+	  bool result = self->checkMotionDone((bool*)(&data[0]));
+	  for (size_t i=0; i<data.size(); i++) {
+	    flag[i] = data[i]!=0;
+	  }
+	  return result;
+	}
+
+	bool checkMotionDone(int i, std::vector<bool>& flag) {
+	  std::vector<char> data(flag.size());
+	  bool result = self->checkMotionDone(i,(bool*)(&data[0]));
+	  for (size_t i=0; i<data.size(); i++) {
+	    flag[i] = data[i]!=0;
+	  }
+	  return result;
 	}
 }
 

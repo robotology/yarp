@@ -1,4 +1,10 @@
-2011-01-22  U-sigmund\paulfitz  <paulfitz@sigmund>
+2011-01-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: add a wrapper for 
+	IPositionControl::checkMotionDone, and define a "BVector"
+	class to wrap the C "bool *" types.  [thanks Varun Kompella]
+
+2011-01-22  Paul Fitzpatrick  <paulfitz@sigmund>
 
 	* conf/YarpWdk.cmake: experiment - set up build files for 
 	using Windows Driver Kit to compile YARP library and
