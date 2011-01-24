@@ -17,16 +17,21 @@ message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
+configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfigVersion.cmake.in
+               ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake @ONLY IMMEDIATE)
 export(TARGETS ${YARP_LIBRARIES} FILE ${YARP_DEPENDENCY_FILE})
 
+set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_GENERIC_VERSION})
+
 # Set up a configuration file for installed use of YARP
-set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/lib${LIB_SUFFIX}/YARP/YARP.cmake)
+set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake @ONLY IMMEDIATE)
-install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)
-install(EXPORT YARP COMPONENT configuration DESTINATION lib${LIB_SUFFIX}/YARP)
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigForInstall.cmake RENAME YARPConfig.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
+install(FILES ${CMAKE_BINARY_DIR}/YARPConfigVersion.cmake COMPONENT configuration DESTINATION ${VERSIONED_LIB})
+install(EXPORT YARP COMPONENT configuration DESTINATION ${VERSIONED_LIB})
 
 foreach(lib ${YARP_LIBRARIES})
   set_target_properties(${lib} PROPERTIES VERSION ${YARP_GENERIC_VERSION}

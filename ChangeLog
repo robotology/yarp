@@ -1,5 +1,11 @@
 2011-01-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/template/YARPConfigVersion.cmake.in: add version 
+	information for side-by-side YARP installs.
+
+	* conf/YarpDescribe.cmake: add version information to
+	YARPConfig.cmake [thanks Lorenzo Natale]
+
 	* example/swig/yarp.i: add a wrapper for 
 	IPositionControl::checkMotionDone, and define a "BVector"
 	class to wrap the C "bool *" types.  [thanks Varun Kompella]
