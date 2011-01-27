@@ -45,7 +45,7 @@ public:
     *
     * You can override this to control the approximate periodicity at which
     * updateModule() is called by runModule().  By default, it returns
-    * 0 (no delay). Time here is in seconds.
+    * 1.0. Time here is in seconds.
     * @return the desired period between successive calls to updateModule()
     * 
     */
