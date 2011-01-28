@@ -1,3 +1,8 @@
+2011-01-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpDoc.cmake: fix generation of verbose documentation
+	[thanks Giorgio Metta]
+
 2011-01-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/CMakeLists.txt: install missing .inl
