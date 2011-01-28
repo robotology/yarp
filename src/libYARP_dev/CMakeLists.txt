@@ -23,3 +23,4 @@ set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_dev)
 set_property(TARGET YARP_dev PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(DIRECTORY include/yarp/dev COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
+install(DIRECTORY include/yarp/dev COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.inl" PATTERN ".*" EXCLUDE)
