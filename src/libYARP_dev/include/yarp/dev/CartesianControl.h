@@ -415,6 +415,17 @@ public:
     */
     virtual bool getTaskVelocities(yarp::sig::Vector &xdot, yarp::sig::Vector &odot)=0;
 
+    /**
+    * Set the reference velocities of the end-effector in the task 
+    * space.
+    * @param xdot the 3-d vector containing the x,y,z reference 
+    *             velocities [m/s] of the end-effector.
+    * @param odot the 4-d vector containing the orientation 
+    *             reference velocity [rad/s] of the end-effector
+    * @return true/false on success/failure.
+    */
+    virtual bool setTaskVelocities(const yarp::sig::Vector &xdot, const yarp::sig::Vector &odot)=0;
+
     /** Check once if the current trajectory is terminated. [wait for
     *   reply]
     * @param f where the result is returned.
