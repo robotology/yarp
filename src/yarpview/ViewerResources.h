@@ -154,7 +154,7 @@ public:
         }
 
         if (fpsData!=0)
-            fpsData->update(yarp::os::Time::now());
+            fpsData->update();
 
         if (!frame)
             frame=gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, imageW, imageH);

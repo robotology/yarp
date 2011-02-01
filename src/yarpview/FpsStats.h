@@ -11,6 +11,8 @@
 #ifndef __FPSSTATS__
 #define __FPSSTATS__
 
+#include <yarp/os/Time.h>
+
 class FpsStats
 {
 public:
@@ -18,9 +20,8 @@ public:
     double max;
     double min;
     unsigned int iterations;
-    double now;
+    double t0;
     double prev;
-    double accDt;
     
     FpsStats()
     {
@@ -33,51 +34,47 @@ public:
         max=0;
         min=1e20;
         iterations=0;
-        prev=0;
-        now=0;
-        accDt=0;
+        prev=t0=yarp::os::Time::now();
     }
 
-    void update(double nt)
+    void update()
     {
-        now=nt;
         if (iterations>0)
         {
-            double tmp=now-prev;
-            accDt+=tmp;
-            if (tmp>max)
-                max=tmp;
-            if (tmp<min)
-                min=tmp;
+            double dt=yarp::os::Time::now()-prev;
+
+            if (dt>max)
+                max=dt;
+            if (dt<min)
+                min=dt;
         }
 
-        prev=nt;
-
+        prev=yarp::os::Time::now();
         iterations++;
     }
 
     void getStats(double &av, double &m, double &M)
     {
-        if (iterations<2)
+        if (iterations>0)
+        {
+            av=(yarp::os::Time::now()-t0)/iterations;
+            m=min;
+            M=max;
+        }
+        else
         {
             av=0;
             m=0;
             M=0;
         }
-        else
-        {
-            av=accDt/(iterations-1);
-            m=min;
-            M=max;
-        }
     }
     
     void getStats(double &av)
     {
-        if (iterations<2)
-            av=0;
+        if (iterations>0)
+            av=(yarp::os::Time::now()-t0)/iterations;
         else
-            av=accDt/(iterations-1);
+            av=0;
     }
 };
 

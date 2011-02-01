@@ -1,3 +1,7 @@
+2011-02-01  Ugo Pattacini - Carlo Ciliberto <ugo.pattacini@iit.it>, <carlo.ciliberto@iit.it>
+
+	* yarpview: fixed timing statistics
+
 2011-01-28  Ugo Pattacini <ugo.pattacini@iit.it>
 
 	* src/libYARP_dev/include/yarp/dev/CartesianControl.h: added setTaskVelocities(.) method

@@ -37,7 +37,7 @@ void InputCallback::onRead(yarp::sig::FlexImage &img)
 {
    if (fpsData!=0)
    {
-       fpsData->update(Time::now());
+       fpsData->update();
    }
 
     if (viewer!=0)
