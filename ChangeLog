@@ -1,3 +1,9 @@
+2011-02-01  Paul Fitzpatrick  <paul@robotrebuilt.com>
+
+	* conf/YarpDoc.cmake: YARP documentation should now always 
+	be verbose, rather than sometimes filtered as it has
+	been for legacy reasons [thanks Lorenzo Natale]
+
 2011-02-01  Ugo Pattacini - Carlo Ciliberto <ugo.pattacini@iit.it>, <carlo.ciliberto@iit.it>
 
 	* yarpview: fixed timing statistics
