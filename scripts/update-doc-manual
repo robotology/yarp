@@ -19,6 +19,8 @@ for manual in min; do
 
     cd $base/doc/$manual/latex
 
+    if false; then
+
     # find the entities referred to in "manual.tex"
     perl -pe "s/\\\\doxyref\\{[^\\}]*\\}\\{p\\.\\}\\{([^\\}]*)\\}/\\\\hyperlink\\{\$1\\}/g" < manual.tex > canonical.tmp
     perl -n -e "@b = (\$_ =~ /hyperlink\\{([^\\}]*)\\}/g ); print join(' ',@b), \"\\n\";" < canonical.tmp > order.txt
@@ -51,20 +53,20 @@ for manual in min; do
     sed "/YARP Page/,/END/! { /YARP File/,/YARP Page/ s/^/%%/ }" -i refman.tex
     sed "s/.*section.YARP Page.*/%%\\0/" -i refman.tex
     sed "s/.*section.Welcome to YARP.*/%%\\0/" -i refman.tex
-    sed "s/\\\\chapter.*/%%\\0/" -i refman.tex
+    #sed "s/\\\\chapter.*/%%\\0/" -i refman.tex
     sed "s/.*pspicture.*/%%\\0/" -i refman.tex
     sed "s/.*input.index.*/%%\\0/" -i refman.tex
     sed "s/^.include.*/%%\\0/" -i refman.tex
-    sed "s/^.input.*/%%\\0/" -i refman.tex
-    sed "s/.*YARP Module Documentation.*/\\\\input\\{order\\}/" -i refman.tex
+    ##sed "s/^.input.*/%%\\0/" -i refman.tex
+    ##sed "s/.*YARP Module Documentation.*/\\\\input\\{order\\}/" -i refman.tex
     perl -pi -e "s/%%(.*-example.*)/\\1/" refman.tex
     sed "/documentclass/,/pagenumbering/ { s/^.*manual_title.*/\\\\input\\{manual_title\\}/ }" -i refman.tex
     perl -pe "s/(\\{tocdepth\\})\\{1\\}/\\{tocdepth\\}\\{2\\}/" < refman.tex > junk.tex
     mv junk.tex refman.tex
-    for f in `ls *.tex`; do
-	perl -pe "s/\\\\section/\\\\chapter/g" < $f > junk.tex
-	perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
-    done
+    ##for f in `ls *.tex`; do
+    ##perl -pe "s/\\\\section/\\\\chapter/g" < $f > junk.tex
+    ##	perl -pe "s/(\\\\(sub)*)subsection/\${1}section/g" < junk.tex > $f
+    ##done
 
     # certain lists are generated automatically, but have clumsy
     # formatting.  Here we patch that up.
@@ -81,6 +83,7 @@ for manual in min; do
     done
 
     sed "s/.*chapter.*//" -i manual_title.tex
+    fi
     
     make pdf
 done

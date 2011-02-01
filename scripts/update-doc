@@ -4,23 +4,32 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-# run as "./scripts/update-doc"
+# End users: just do "make dox" in build directory.
+# Maintainers: run this as "./scripts/update-doc" 
 
-# doxygen for man pages
-doxygen conf/doxygen/Doxyfile.man
+BASE=$PWD
+mv CMakeCache.txt CMakeCache.txt.save || echo "No problem"
+mkdir -p docbuild
+cd docbuild
+rm -rf dox
+cmake ..
+make dox
+cd $BASE
+mv CMakeCache.txt.save CMakeCache.txt || echo "No problem"
 
-# doxygen for normal user - omits some junk
-rm -f doc/yarpdoc.zip
-doxygen conf/doxygen/Doxyfile.part > /dev/null
-rm -rf tmpdoc
+cd $BASE
 mkdir tmpdoc
-cp -R doc/user/html tmpdoc/yarpdoc
+cp -R docbuild/dox/html tmpdoc/yarpdoc
 cd tmpdoc
 zip -r ../doc/yarpdoc.zip yarpdoc
-cd ..
+cd $BASE
 rm -rf tmpdoc
 
-# doxygen with everything included
-doxygen conf/doxygen/Doxyfile > /dev/null
+cd $BASE
+rm -rf doc/user
+mv docbuild/dox doc/user
+
+# # doxygen for man pages
+# doxygen conf/doxygen/Doxyfile.man
 
 ./scripts/update-doc-manual
