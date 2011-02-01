@@ -34,14 +34,16 @@ public:
         max=0;
         min=1e20;
         iterations=0;
-        prev=t0=yarp::os::Time::now();
+        t0=prev=yarp::os::Time::now();
     }
 
     void update()
     {
+        double now=yarp::os::Time::now();
+
         if (iterations>0)
         {
-            double dt=yarp::os::Time::now()-prev;
+            double dt=now-prev;
 
             if (dt>max)
                 max=dt;
@@ -49,7 +51,7 @@ public:
                 min=dt;
         }
 
-        prev=yarp::os::Time::now();
+        prev=now;
         iterations++;
     }
 
