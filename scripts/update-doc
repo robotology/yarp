@@ -27,6 +27,7 @@ rm -rf tmpdoc
 
 cd $BASE
 rm -rf doc/user
+rm -rf doc/dev
 mv docbuild/dox doc/user
 
 # # doxygen for man pages
