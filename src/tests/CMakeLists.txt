@@ -14,6 +14,7 @@ if (YARP_COMPILE_TESTS)
   if (ENABLE_YARPRUNTESTS)
 	add_definitions(-DYARPRUN_TEST)
   endif()
+  mark_as_advanced(ENABLE_YARPRUNTESTS)
   
   set(targets OS sig dev)
   get_property(YARP_HAS_MATH_LIB GLOBAL PROPERTY YARP_HAS_MATH_LIB)
