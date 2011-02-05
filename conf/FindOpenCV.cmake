@@ -57,13 +57,18 @@
 # let's skip module mode, and see if a OpenCVConfig.cmake file is around
 # this searches in system directories and ${OpenCV_DIR}
 find_package(OpenCV QUIET NO_MODULE)
+if (OpenCV_FOUND)
+  set(OpenCV_CONFIG_MODE true)
+  
+  ## OpenCVConfig.cmake sets OpenCV_LIBS OpenCV_INCLUDE_DIRS
+  ## but we need OpenCV_LIBRARIES
+  set(OpenCV_LIBRARIES ${OpenCV_LIBS})
+endif()
 
-### continues with traditional search method
+### If the above failed continues with traditional search method
 ## To keep backward compatibility we keep the whole script
 ## intact, however there is probably a lot of redundancy now
-
-if (NOT OpenCV_FOUND)
-
+if (NOT OpenCV_CONFIG_MODE)
   find_path(OpenCV_DIR "OpenCVConfig.cmake" DOC "Root directory of OpenCV")
 
 ##====================================================
@@ -143,11 +148,8 @@ if(EXISTS "${OpenCV_DIR}")
 else(EXISTS "${OpenCV_DIR}")
         set(ERR_MSG "Please specify OpenCV directory using OpenCV_DIR env. variable")
 endif(EXISTS "${OpenCV_DIR}")
+
 ##====================================================
-endif(NOT OpenCV_FOUND)
-
-
-
 if (NOT OpenCV_FOUND)
 # 
 # Try another method to find OpenCV library
@@ -529,13 +531,13 @@ endif(OpenCV_BACKWARD_COMPA)
 endif(OpenCV_FOUND)
 ##====================================================
 
-
-
 SET(OpenCV_LIBRARIES ${OpenCV_LIBS})
 SET(OpenCV_INCLUDE_DIRS ${OpenCV_INCLUDE_DIR})
 # support old variable names
 SET(OPENCV_LIBRARIES ${OpenCV_LIBS})
 SET(OPENCV_INCLUDE_DIR ${OpenCV_INCLUDE_DIR})
+
+endif(NOT OpenCV_CONFIG_MODE)
 
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
