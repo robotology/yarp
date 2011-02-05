@@ -51,8 +51,20 @@
 # 
 #----------------------------------------------------------
 
+# Lorenzo Natale -- Feb 2011
+# Improve compatibility with OpenCV package in Ubuntu 10.10
 
-find_path(OpenCV_DIR "OpenCVConfig.cmake" DOC "Root directory of OpenCV")
+# let's skip module mode, and see if a OpenCVConfig.cmake file is around
+# this searches in system directories and ${OpenCV_DIR}
+find_package(OpenCV QUIET NO_MODULE)
+
+### continues with traditional search method
+## To keep backward compatibility we keep the whole script
+## intact, however there is probably a lot of redundancy now
+
+if (NOT OpenCV_FOUND)
+
+  find_path(OpenCV_DIR "OpenCVConfig.cmake" DOC "Root directory of OpenCV")
 
 ##====================================================
 ## Find OpenCV libraries
@@ -132,6 +144,7 @@ else(EXISTS "${OpenCV_DIR}")
         set(ERR_MSG "Please specify OpenCV directory using OpenCV_DIR env. variable")
 endif(EXISTS "${OpenCV_DIR}")
 ##====================================================
+endif(NOT OpenCV_FOUND)
 
 
 
@@ -525,6 +538,6 @@ SET(OPENCV_LIBRARIES ${OpenCV_LIBS})
 SET(OPENCV_INCLUDE_DIR ${OpenCV_INCLUDE_DIR})
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
 
 
