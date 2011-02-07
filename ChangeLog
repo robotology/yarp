@@ -1,3 +1,11 @@
+2011-02-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/dll/: example of loading from a shared
+	library or DLL (thin wrapper around ACE_DLL).
+
+	* src/libYARP_OS/include/yarp/os/SharedLibrary.h: prep
+	work for loading carriers/devices dynamically.
+
 2011-02-01  Paul Fitzpatrick  <paul@robotrebuilt.com>
 
 	* conf/YarpDoc.cmake: YARP documentation should now always 
