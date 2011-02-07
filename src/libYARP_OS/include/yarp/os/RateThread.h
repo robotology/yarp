@@ -40,19 +40,26 @@ public:
 
     virtual ~RateThread();
 
-    /**
-     * Initialization method. This function is executed once when
-     * the thread starts and before "run". Note: the function
-     * is executed by the thread itself.
+	/**
+     * Initialization method. The thread executes this function
+	 * when it starts and before "run". This is a good place to 
+	 * perform initialization tasks that need to be done by the 
+	 * thread itself (device drivers initialization, memory 
+	 * allocation etc). If the function returns false the thread 
+	 * quits and never calls "run". The return value of threadInit()
+	 * is notified to the class and passed as a parameter 
+	 * to afterStart(). Note that afterStart() is called by the 
+	 * same thread that is executing the "start" method.
      */
     virtual bool threadInit();
     
-    /**
-     * Release method. This function is executed once when
-     * the thread exits and after the last run. Note: the function
-     * is executed by the thread itself.
+  	/**
+     * Release method. The thread executes this function once when
+     * it exits, after the last "run". This is a good place to release
+	 * resources that were initialized in threadInit() (release memory, 
+	 * and device driver resources).
      */
-    virtual void threadRelease();
+	 virtual void threadRelease();
 
     /**
      * Loop function. This is the thread itself.
@@ -149,13 +156,15 @@ public:
     void getEstUsed(double &av, double &std);
 
     /**
-     * Called just before a new thread starts.
+     * Called just before a new thread starts. This method is executed
+	 * by the same thread that calls start().
      */
     virtual void beforeStart();
 
     /**
-     * Called just after a new thread starts (or fails to start).
-     * @param success true iff the new thread started successfully
+     * Called just after a new thread starts (or fails to start), this 
+	 * is executed by the same thread that calls start().
+     * @param success true iff the new thread started successfully. 
      */
     virtual void afterStart(bool success);
 

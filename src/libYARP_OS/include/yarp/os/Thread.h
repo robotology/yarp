@@ -54,8 +54,8 @@ public:
 
     /**
      * Call-back, called while halting the thread (before
-     * join).
-     * Should not be called directly.
+     * join). This callback is executed by the same thread 
+	 * that calls stop(). It should not be called directly.
      * Override this method to do the right thing for
      * your particular Thread::run.
      */
@@ -82,13 +82,15 @@ public:
     bool stop();
 
     /**
-     * Called just before a new thread starts.
+     * Called just before a new thread starts. This method is executed
+	 * by the same thread that calls start().
      */
     virtual void beforeStart();
 
     /**
-     * Called just after a new thread starts (or fails to start).
-     * @param success true iff the new thread started successfully
+     * Called just after a new thread starts (or fails to start), this 
+	 * is executed by the same thread that calls start().
+     * @param success true iff the new thread started successfully. 
      */
     virtual void afterStart(bool success);
 
