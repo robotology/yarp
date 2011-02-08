@@ -126,6 +126,7 @@ MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
     # Set some properties to an empty state
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
 
     # One glitch is that if plugins are used within YARP, rather
@@ -341,6 +342,21 @@ ENDMACRO(ADD_LIBRARY LIBNAME)
 
 
 #########################################################################
+# Lightly redefine LINK_DIRECTORIES to track link path changes.  Rarely
+# needed.
+#
+MACRO(LINK_DIRECTORIES)
+  _LINK_DIRECTORIES(${ARGN})
+  IF (YARP_PLUGIN_MODE)
+    # Add to the list of linked directories.
+    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LINKS ${ARGN})
+    set_property_fix(GLOBAL APPEND PROPERTY YARP_TREE_LINK_DIRS ${ARGN})
+  ENDIF (YARP_PLUGIN_MODE)
+ENDMACRO(LINK_DIRECTORIES)
+
+
+
+#########################################################################
 # Lightly redefine FIND_PACKAGE to skip calls to FIND_PACKAGE(YARP).
 # YARP dependencies are guaranteed to have already been satisfied.
 # And if we are compiling YARP, the use of FIND_PACKAGE(YARP) will lead
@@ -386,10 +402,14 @@ macro(END_PLUGIN_LIBRARY bundle_name)
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
     get_property_fix(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
     include_directories(${YARP_INCLUDE_DIRS})
+    get_property_fix(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
+    get_property_fix(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
+    if (links)
+      _link_directories(${links})
+    endif ()
     # add the library initializer code
     _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
-    get_property_fix(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
     # give user access to a list of all the plugin libraries
     set(${YARP_PLUGIN_MASTER}_LIBRARIES ${libs})

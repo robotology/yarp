@@ -1,3 +1,8 @@
+2011-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpPlugin.cmake: propagate LINK_DIRECTORIES information, 
+	needed by current OpenCVConfig.cmake [thanks Lorenzo Natale]
+
 2011-02-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/dll/: example of loading from a shared
