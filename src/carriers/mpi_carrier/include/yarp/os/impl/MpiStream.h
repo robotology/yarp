@@ -7,6 +7,10 @@
  *
  */
 
+
+#ifndef _YARP_MPISTREAM_
+#define _YARP_MPISTREAM_
+
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/TwoWayStream.h>
@@ -15,6 +19,7 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/Protocol.h>
+#include <yarp/os/Semaphore.h>
 
 #include <string>
 #include <iostream>
@@ -25,9 +30,51 @@ namespace yarp {
     namespace os {
         namespace impl {
             class MpiStream;
+            class MpiComm;
         }
     }
 }
+
+/**
+ * Wrapper for MPI_Comm communicator.
+ */
+class yarp::os::impl::MpiComm {
+    String name;
+    static bool isInit;
+    static bool isThreadSafe;
+public:
+    char port_name[MPI_MAX_PORT_NAME];
+    char unique_id[10+MPI_MAX_PROCESSOR_NAME];
+    MPI_Comm comm;
+    yarp::os::Semaphore sema;
+
+
+    MpiComm(String name);
+    ~MpiComm() {
+        MPI_Comm_disconnect(&comm);
+    }
+    bool connect(String port);
+    bool accept();
+    bool notLocal(String other);
+    void initialize();
+
+    static bool usable() {
+        return MpiComm::isInit && MpiComm::isThreadSafe;
+    }
+
+    void openPort() {
+        MPI_Open_port(MPI_INFO_NULL, port_name);
+    }
+    void closePort() {
+        MPI_Close_port(port_name);
+    }
+    int rank() {
+        int rank;
+        MPI_Comm_rank(comm, &rank);
+        return rank;
+    }
+};
+
 
 /**
  * Send data via MPI.
@@ -39,33 +86,24 @@ namespace yarp {
  * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiStream : public TwoWayStream, public InputStream, public OutputStream {
-private:
-    MPI_Comm intercomm, initial_comm;
-    // MPI_Comm Port;
-    int rank;
-    char port_name[MPI_MAX_PORT_NAME];
-    char unique_id[10+MPI_MAX_PROCESSOR_NAME];
+protected:
     int readAvail, readAt;
     char* readBuffer;
-    static int stream_counter;
     bool terminate;
     String name;
+    yarp::os::impl::MpiComm* comm;
+
+    Address local, remote;
 public:
-    MpiStream(String name, bool server=false);
-    ~MpiStream();
-    bool connect(String port);
-    bool accept();
-    /**
-     * Check if both ports are within the same process.
-     */
-    void checkLocal(String other);
-    String getUID() { return String(unique_id);}
-    char* getPortName();
+
+
+    MpiStream(String name, MpiComm* comm);
+    virtual ~MpiStream();
     virtual void close();
     virtual bool isOk();
     virtual void interrupt();
-    virtual int read(const Bytes& b);
-    virtual void write(const Bytes& b);
+    virtual int read(const Bytes& b) = 0;
+    virtual void write(const Bytes& b) = 0;
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();
     virtual const Address& getLocalAddress();
@@ -74,11 +112,9 @@ public:
     virtual void beginPacket();
     virtual void endPacket();
 
-    void increase_counter();
-    void decrease_counter();
 
-private:
-    Address local, remote;
 };
 
+
+#endif // _YARP_MPISTREAM_
 

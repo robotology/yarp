@@ -1,3 +1,9 @@
+2011-02-08 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+
+    * src/carriers/mpi_carrier/: added a carrier for broadcasting
+    using MPI (called bcast); fixed fatal typo in thread safety detection,
+    which was relevant for e.g. openmpi
+
 2011-02-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpPlugin.cmake: propagate LINK_DIRECTORIES information, 
@@ -10,6 +16,12 @@
 
 	* src/libYARP_OS/include/yarp/os/SharedLibrary.h: prep
 	work for loading carriers/devices dynamically.
+
+2011-02-04 Daniel Krieg <krieg@fias.uni-frankfurt.de>
+
+    * src/doc/yarp_port_auth.dox: Included a tutorial about
+    the port authentication mechanism (added to svn on 2010-10-18)
+    in the YARP documentation
 
 2011-02-01  Paul Fitzpatrick  <paul@robotrebuilt.com>
 

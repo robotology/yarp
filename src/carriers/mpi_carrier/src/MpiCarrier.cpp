@@ -13,19 +13,21 @@
 #include <sys/types.h>
 
 using namespace yarp::os::impl;
-MpiCarrier::MpiCarrier() : stream(NULL) {    
+
+
+
+MpiCarrier::MpiCarrier() : stream(NULL), comm(NULL) {
 }
 
 MpiCarrier::~MpiCarrier() {
-#ifdef MPI_DEBUG
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Destructor called \n", name.c_str() );
-#endif
+    #endif
 }
 
 void  MpiCarrier::getHeader(const Bytes& header) {
-    const char *target = "MPI_____";
     for (int i=0; i<8 && i<header.length(); i++) {
-        header.get()[i] = target[i];
+        header.get()[i] = target.c_str()[i];
     }
 }
 
@@ -33,9 +35,8 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     if (header.length()!=8) {
         return false;
     }
-    const char *target = "MPI_____";
     for (int i=0; i<8; i++) {
-        if (header.get()[i] != target[i]) {
+        if (header.get()[i] != target.c_str()[i]) {
             return false;
         }
     }
@@ -48,7 +49,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     getHeader(header.bytes());
     proto.os().write(header.bytes());
     if (!proto.os().isOk()) return false;
-    
+
     // Now we can do whatever we want, as long as somehow
     // we also send the name of the originating port
 
@@ -57,15 +58,20 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.os().write(b2);
     proto.os().write('\r');
     proto.os().write('\n');
-    
-    stream = new MpiStream(name, true);
-    char* port = stream->getPortName();
-#ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] setting up MpiPort '%s'\n", name.c_str(), port);
-#endif
 
-    String uid = stream->getUID();
-    Bytes b4((char*)uid.c_str(),uid.length());
+    createStream(name);
+
+    if (! MpiComm::usable())
+        return false;
+    comm->openPort();
+    char* port = comm->port_name;
+    char* uid = comm->unique_id;
+
+    #ifdef MPI_DEBUG
+    printf("[MpiCarrier @ %s] setting up MpiPort '%s'\n", name.c_str(), port);
+    #endif
+
+    Bytes b4(uid,strlen(uid));
     proto.os().write(b4);
     proto.os().write('\r');
     proto.os().write('\n');
@@ -75,9 +81,11 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.os().write('\r');
     proto.os().write('\n');
     proto.os().flush();
-#ifdef MPI_DEBUG
+
+
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Header sent\n", name.c_str());
-#endif
+    #endif
 
     return proto.os().isOk();
 }
@@ -87,43 +95,59 @@ void  MpiCarrier::getHeader(const Bytes& header) {
  bool MpiCarrier::expectSenderSpecifier(Protocol& proto) {
     // interpret everything that sendHeader wrote
     name = proto.getRoute().getToName();
-    stream = new MpiStream(name);
-#ifdef MPI_DEBUG
+    createStream(name);
+
+    if (! MpiComm::usable())
+        return false;
+
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Waiting for header\n", name.c_str());
-#endif
+    #endif
+
     proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
     String other_id = NetType::readLine(proto.is());
-    stream->checkLocal(other_id);
+    bool notLocal = comm->notLocal(other_id);
     port = NetType::readLine(proto.is());
-#ifdef MPI_DEBUG
+
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] Header received\n", name.c_str());
-#endif
-    return proto.is().isOk();
+    #endif
+
+    return notLocal && proto.is().isOk();
 }
 
  bool MpiCarrier::respondToHeader(Protocol& proto) {
     // SWITCH TO NEW STREAM TYPE
-#ifdef MPI_DEBUG
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", name.c_str(), port.c_str());
-#endif
-    if (!stream->connect(port))
+    #endif
+
+    if (!comm->connect(port)) {
+        delete stream;
         return false;
+    }
     proto.takeStreams(stream);
-#ifdef MPI_DEBUG
+
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] MpiStream successfully setup \n", name.c_str() );
-#endif
-    return true;
+    #endif
+
+    return proto.is().isOk();
 }
 
  bool MpiCarrier::expectReplyToHeader(Protocol& proto) {
     // SWITCH TO NEW STREAM TYPE
-    if (!stream->accept())
+    if (!comm->accept()) {
+        delete stream;
         return false;
+    }
     proto.takeStreams(stream);
-#ifdef MPI_DEBUG
+
+    #ifdef MPI_DEBUG
     printf("[MpiCarrier @ %s] MpiStream successfully setup \n", name.c_str() );
-#endif
-    return true;
+    #endif
+
+    return proto.os().isOk();
 }
 
 

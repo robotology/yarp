@@ -7,6 +7,9 @@
  *
  */
 
+#ifndef _YARP_MPICARRIER_
+#define _YARP_MPICARRIER_
+
 #include <yarp/os/all.h>
 
 #include <yarp/os/impl/AbstractCarrier.h>
@@ -26,31 +29,32 @@ namespace yarp {
 }
 
 /**
- * Communicating between two ports via MPI.
+ * Communicating between ports via MPI.
  *
  * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiCarrier : public AbstractCarrier {
-private:
+protected:
     MpiStream* stream;
+    MpiComm* comm;
     String port;
     String name;
+    String target;
 public:
-    MpiCarrier();
-    ~MpiCarrier();
-    virtual Carrier *create() {
-        return new MpiCarrier();
-    }
-    virtual String getName() {
-        return "mpi";}
+    MpiCarrier() ;
+    virtual ~MpiCarrier();
+    virtual Carrier *create() = 0;
+    virtual String getName() = 0;
+
+    virtual void createStream(String name) = 0;
+
     virtual bool isConnectionless() {
         return false;}
-        
+
     virtual bool canEscape() {
         return true;}
-    virtual bool supportReply() {
-        return false;}
-        
+    virtual bool supportReply() = 0;
+
 
     virtual void getHeader(const Bytes& header);
     virtual bool checkHeader(const Bytes& header);
@@ -63,14 +67,14 @@ public:
     virtual bool expectReplyToHeader(Protocol& proto);
 
 
-
     /////////////////////////////////////////////////
     // Payload time!
 
-    virtual bool write(Protocol& proto, SizedWriter& writer) {
+    bool write(Protocol& proto, SizedWriter& writer) {
         writer.write(proto.os());
         return proto.os().isOk();
     }
+
     virtual bool sendIndex(Protocol& proto) {
         return true; }
     virtual bool expectIndex(Protocol& proto) {
@@ -86,4 +90,5 @@ public:
 
 };
 
+#endif //_YARP_MPICARRIER_
 
