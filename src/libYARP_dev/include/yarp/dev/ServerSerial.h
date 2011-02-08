@@ -156,6 +156,15 @@ public:
             return -1;
     }
 
+	virtual int flush ()
+	{
+        if(serial != NULL) {
+            return serial->flush();
+        }
+        else
+            return -1;
+	}
+
 	virtual int receiveLine(char* line, const int MaxLineLength)
     {
         if(serial != NULL) {

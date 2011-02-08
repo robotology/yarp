@@ -130,6 +130,20 @@ int SerialDeviceDriver::receiveChar(char& c)
 	return 1;
 }
 
+int  SerialDeviceDriver::flush()
+{
+	char chr;
+	int count=0;
+	ssize_t bytes_read=0;
+	do
+	{
+		bytes_read = _serial_dev.recv ((void *) &chr, 1);
+		count+=bytes_read;
+	}
+	while (bytes_read>0);
+	return count;
+}
+
 int SerialDeviceDriver::receiveLine(char* buffer, const int MaxLineLength)
 {
 	int i;

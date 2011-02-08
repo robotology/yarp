@@ -1,3 +1,11 @@
+2011-02-08  Marco Randazzo <marco.randazzo@iit.it>
+
+	* src\modules\serial\SerialDeviceDriver.cpp
+	* src\modules\serial\SerialDeviceDriver.h
+	* src\libYARP_dev\include\yarp\dev\SerialInterfaces.h
+	* src\libYARP_dev\include\yarp\dev\ServerSerial.h
+	Added new method flush() to the serial device driver
+	
 2011-02-08 Daniel Krieg <krieg@fias.uni-frankfurt.de>
 
     * src/carriers/mpi_carrier/: added a carrier for broadcasting
