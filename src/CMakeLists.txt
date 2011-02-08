@@ -8,11 +8,12 @@ add_subdirectory(libYARP_sig)
 add_subdirectory(libYARP_math)
 add_subdirectory(libYARP_dev)
 add_subdirectory(modules)
-add_subdirectory(carriers)
 
 # We may have picked up some link directories - apply them here.
 get_property(YARP_TREE_LINK_DIRS GLOBAL PROPERTY YARP_TREE_LINK_DIRS)
 link_directories(${YARP_TREE_LINK_DIRS})
+
+add_subdirectory(carriers)
 
 add_subdirectory(libYARP_name)
 add_subdirectory(libYARP_init)
