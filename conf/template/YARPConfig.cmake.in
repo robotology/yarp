@@ -21,6 +21,11 @@ IF (NOT YARP_FOUND)
   # Pull in any dependencies that YARP libraries may have.
   INCLUDE("@YARP_DEPENDENCY_FILE@")
 
+  # Link directories are rare, so most user scripts don't
+  # account for them.  On balance, better to pull them
+  # in automatically.  The only current use is for OpenCV.
+  LINK_DIRECTORIES(${YARP_LINK_DIRS})
+
   #######################################################################
   # BACKWARDS-COMPATIBILITY SECTION
   #
@@ -34,7 +39,6 @@ IF (NOT YARP_FOUND)
     MESSAGE(STATUS "  LINK_LIBRARIES(\${YARP_LIBRARIES})")
     MESSAGE(STATUS "  INCLUDE_DIRECTORIES(\${YARP_INCLUDE_DIRS})")
     LINK_LIBRARIES(${YARP_LIBRARIES})
-    LINK_DIRECTORIES(${YARP_LINK_DIRS})
     INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
     ADD_DEFINITIONS(${YARP_DEFINES})
     SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH};${YARP_MODULE_PATH})
