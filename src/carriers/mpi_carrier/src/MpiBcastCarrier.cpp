@@ -15,7 +15,9 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-MpiBcastCarrier::~MpiBcastCarrier() {
+MpiBcastCarrier::~MpiBcastCarrier() {}
+
+void MpiBcastCarrier::close() {
 #ifdef MPI_DEBUG
     printf("[MpiBcastCarrier @ %s] Destructor called \n", name.c_str() );
 #endif

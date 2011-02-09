@@ -23,13 +23,8 @@ namespace yarp {
 }
 
 /**
- * Send data via MPI.
+ * Implements communication via MPI broadcast.
  *
- * Uses the dynamic process management from the MPI-2 standard to
- * set up a communicator between the two processes.
- *
- * @bug No proper disconnection.
- * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiBcastStream : public MpiStream {
 

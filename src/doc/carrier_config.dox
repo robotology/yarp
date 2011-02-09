@@ -37,6 +37,9 @@ carriers.
 - \ref carrier_config_fast_tcp
 \endif
 
+Experimental carriers:
+\li \ref carrier_config_mpi
+
 \section carrier_config_tcp tcp carrier
 
 This is the default carrier for YARP connections.  It doesn't

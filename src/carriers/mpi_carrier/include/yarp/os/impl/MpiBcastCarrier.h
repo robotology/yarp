@@ -25,9 +25,13 @@ namespace yarp {
 }
 
 /**
- * Communicating between ports via MPI: Point-to-Point version
- * Supports replies.
+ * Carrier for port communicating via MPI broadcast.
  *
+ * Effective collective operations in the one-sender-multiple-receiver scenario.
+ * Allows only one-way communication (no replies).
+ *
+ * @warning Probably all processes terminate
+ * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiBcastCarrier : public MpiCarrier {
@@ -42,6 +46,7 @@ public:
         target = "MPIBCAST";
     }
     ~MpiBcastCarrier();
+    void close();
     Carrier *create() {
         return new MpiBcastCarrier();
     }

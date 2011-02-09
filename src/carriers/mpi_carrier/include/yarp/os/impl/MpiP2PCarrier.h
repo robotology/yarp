@@ -22,9 +22,12 @@ namespace yarp {
 }
 
 /**
- * Communicating between ports via MPI: Point-to-Point version
- * Supports replies.
+ * Carrier for port communicating via MPI point-to-point send/receive.
  *
+ * Generic communication for arbitrary topology. Allows replies.
+ *
+ * @warning Probably all processes terminate
+ * if one terminates without proper disconnect.
  * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiP2PCarrier : public MpiCarrier {
@@ -33,6 +36,8 @@ public:
         target = "MPI_____";
     }
     virtual ~MpiP2PCarrier() {
+    }
+    void close() {
         delete comm;
     }
     Carrier *create() {

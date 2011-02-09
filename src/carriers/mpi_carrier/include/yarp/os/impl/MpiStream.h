@@ -37,6 +37,11 @@ namespace yarp {
 
 /**
  * Wrapper for MPI_Comm communicator.
+ *
+ * Uses the dynamic process management from the MPI-2 standard to
+ * set up a communicator between two seperate processes.
+ *
+ * @note Needs an MPI implementation with THREAD_MULTIPLE support.
  */
 class yarp::os::impl::MpiComm {
     String name;
@@ -77,13 +82,7 @@ public:
 
 
 /**
- * Send data via MPI.
- *
- * Uses the dynamic process management from the MPI-2 standard to
- * set up a communicator between the two processes.
- *
- * @bug No proper disconnection.
- * @warning Seems to work, but still experimental.
+ * Abstract base class for port communication via MPI.
  */
 class yarp::os::impl::MpiStream : public TwoWayStream, public InputStream, public OutputStream {
 protected:

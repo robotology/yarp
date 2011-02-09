@@ -29,9 +29,8 @@ namespace yarp {
 }
 
 /**
- * Communicating between ports via MPI.
+ * Abstract base carrier for managing port communication via MPI.
  *
- * @warning Seems to work, but still experimental.
  */
 class yarp::os::impl::MpiCarrier : public AbstractCarrier {
 protected:
@@ -43,6 +42,7 @@ protected:
 public:
     MpiCarrier() ;
     virtual ~MpiCarrier();
+    virtual void close() = 0;
     virtual Carrier *create() = 0;
     virtual String getName() = 0;
 

@@ -121,6 +121,7 @@ void MpiComm::initialize() {
         int provided;
         // We need full multithread support for MPI
         int requested = MPI_THREAD_MULTIPLE;
+        // Passing NULL for argc/argv pointers is fine for MPI-2
         int err = MPI_Init_thread(NULL, NULL, requested , &provided);
         if (err == MPI_SUCCESS )
             MpiComm::isInit = true;
