@@ -6,8 +6,17 @@
 % Example code to show how to read an image from a YARP source, convert it
 % to matlab matix image using a fast method convertion (Leo Pape) and back
 % to a yarp image in order to send it to some ports
+%
+% run the example
+% connect images to input - e.g. yarp connect /icub/camcalib/left/out /matlab/img:i
+% connect images to output to yarpview - e.g. yarp connect /matlab/img:o /viewOut
+% connect write port to start and quit - e.g. yarp write ... /matlab/read
+%
+% use any type of message to start eg. "go"
+% when convertion is finished type "quit" to close ports nicely
 
-%initialize YARP
+
+% initialize YARP
 LoadYarp;
 import yarp.BufferedPortImageRgb
 import yarp.BufferedPortBottle
