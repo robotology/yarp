@@ -6,9 +6,12 @@
  */
 
 #include "Hello.h"
-#include "ShareHello.h"
 
+#include <yarp/os/SharedLibraryClass.h>
+
+// just for testing, we make two distinct copies of factory function
 YARP_DEFINE_SHARED_CLASS(hello_there,HelloImpl);
+YARP_DEFINE_DEFAULT_SHARED_CLASS(HelloImpl);
 
 void HelloImpl::write(int v) {
     x = v+1;

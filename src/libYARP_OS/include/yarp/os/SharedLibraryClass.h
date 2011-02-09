@@ -9,6 +9,8 @@
 #ifndef _YARP2_SHAREDLIBRARYCLASS_
 #define _YARP2_SHAREDLIBRARYCLASS_
 
+#include <yarp/os/SharedLibrary.h>
+
 namespace yarp {
     namespace os {
         template <class T>
@@ -47,19 +49,14 @@ extern "C" {
 }
 #include <yarp/os/end_pack_for_net.h>
 
-#define YARP_DECLARE_SHARED_CLASS(factoryname)                          \
-    extern "C" void * factoryname ## _create ();                        \
-    extern "C" void factoryname ## _destroy (void *obj);                \
-    extern "C" int factoryname ## _getVersion (char *ver, int len);     \
-    extern "C" int factoryname ## _getAbi (char *abi, int len);         \
-    extern "C" int factoryname(void *api);
-    
+#define YARP_SHARED_CLASS_FN extern "C" __declspec(dllexport)
+
 #define YARP_DEFINE_SHARED_CLASS(factoryname,classname)                 \
-    void *factoryname ## _create () { return new classname; }           \
-    void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
-    int factoryname ## _getVersion (char *ver, int len) { return 0; }   \
-    int factoryname ## _getAbi (char *abi, int len) { return 0; }       \
-    int factoryname(void *api) { \
+    YARP_SHARED_CLASS_FN void *factoryname ## _create () { return new classname; }           \
+    YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
+    YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; }   \
+    YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; }       \
+    YARP_SHARED_CLASS_FN void factoryname(void *api) { \
     struct yarp::os::SharedLibraryClassApi *sapi = (struct yarp::os::SharedLibraryClassApi *) api; \
     sapi->startCheck = VOCAB4('Y','A','R','P'); \
     sapi->create = factoryname ## _create; \
@@ -70,7 +67,103 @@ extern "C" {
     sapi->endCheck = VOCAB4('P','R','A','Y'); \
     }
     
+#define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"
+#define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_CLASS(yarp_default_factory,classname)
 
+
+
+template <class T>
+class yarp::os::SharedLibraryClassFactory {
+private:
+    SharedLibraryClassApi api;
+	SharedLibrary lib;
+	int status;
+public:
+	enum {
+		STATUS_NONE,
+		STATUS_OK = VOCAB2('o','k'),
+		STATUS_LIBRARY_NOT_LOADED = VOCAB4('l','o','a','d'),
+		STATUS_FACTORY_NOT_FOUND = VOCAB4('f','a','c','t'),
+		STATUS_FACTORY_NOT_FUNCTIONAL = VOCAB3('r','u','n'),
+	};
+
+    SharedLibraryClassFactory() {
+        api.startCheck = 0;
+		status = STATUS_NONE;
+	}
+
+	SharedLibraryClassFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+		open(dll_name,fn_name);
+	}
+
+	bool open(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+		api.startCheck = 0;
+		if (!lib.open(dll_name)) {
+			//fprintf(stderr,"Failed to open library %s\n", dll_name);
+			status = STATUS_LIBRARY_NOT_LOADED;
+			return false;
+		}
+		void *fn = lib.getSymbol((fn_name!=0/*NULL*/)?fn_name:YARP_DEFAULT_FACTORY_NAME);
+		if (fn==0/*NULL*/) {
+			//fprintf(stderr,"Failed to find factory in library %s\n", dll_name);
+			lib.close();
+			status = STATUS_FACTORY_NOT_FOUND;
+			return false;
+		}
+		useFactoryFunction(fn);
+		if (!isValid()) {
+			//fprintf(stderr,"Failed to load factory in library %s\n", dll_name);
+			status = STATUS_FACTORY_NOT_FUNCTIONAL;
+			return false;
+		}
+		status = STATUS_OK;
+		return true;
+    }
+
+	bool useFactoryFunction(void *factory) {
+        api.startCheck = 0;
+		if (factory==0/*NULL*/) return false;
+        SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
+        fn(&api);
+		return isValid();
+    }
+
+	bool isValid() {
+	    if (api.startCheck!=VOCAB4('Y','A','R','P')) return false;
+        if (api.endCheck!=VOCAB4('P','R','A','Y')) return false;
+		return true;
+ 	}
+
+	int getStatus() {
+		return status;
+	}
+
+    T *create() {
+        if (!isValid()) return 0/*NULL*/;
+        return (T *)api.create();
+    }
+
+    void destroy(T *obj) {
+        if (!isValid()) return 0/*NULL*/;
+        api.destroy(obj);
+    }
+
+	void *getDestroyFn() {
+        if (!isValid()) return 0/*NULL*/;
+		return (void *)api.destroy;
+	}
+};
+
+
+	/**
+     *
+     * Container for objects created in a DLL.
+	 * With DLLs compiled against different runtimes, it may be important
+     * to match creation and destruction methods.  The easiest way
+     * to do this is to isolate creation and destruction of a 
+     * particular class to a particular DLL.
+     *
+     */
 template <class T>
 class yarp::os::SharedLibraryClass {
 private:
@@ -78,9 +171,10 @@ private:
     T *content;
 public:
 
-    SharedLibraryClass(T *content, void *deleter ) : content(content),
-                                                   deleter(deleter) {
-    }
+	SharedLibraryClass(SharedLibraryClassFactory<T>& factory) {
+		content = factory.create();
+		deleter = factory.getDestroyFn();
+	}
 
     ~SharedLibraryClass() {
         if (deleter!=0/*NULL*/) {
@@ -96,45 +190,19 @@ public:
     T& getContent() {
         return *content;
     }
+
+	bool isValid() const {
+		return content!=0/*NULL*/;
+	}
+
+	T& operator*() {
+		return (*content);
+	}
+
+	T *operator->() {
+		return (content);
+	}
 };
-
-
-template <class T>
-class yarp::os::SharedLibraryClassFactory {
-private:
-    SharedLibraryClassApi api;
-public:
-    SharedLibraryClassFactory(void *factory) {
-        api.startCheck = 0;
-        SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
-        fn(&api);
-    }
-
-    T *create() {
-        if (api.startCheck!=VOCAB4('Y','A','R','P')) return 0/*NULL*/;
-        if (api.endCheck!=VOCAB4('P','R','A','Y')) return 0/*NULL*/;
-        return (T *)api.create();
-    }
-
-    void destroy(T *obj) {
-        api.destroy(obj);
-    }
-
-    /**
-     *
-     * With DLLs compiled against different runtimes, it is important
-     * to match creation and destruction methods.  The easiest way
-     * to do this is to isolate creation and destruction of a 
-     * particular class to a particular DLL.
-     *
-     */
-    SharedLibraryClass<T> *wrap() {
-        T *t = create();
-        if (t==0/*NULL*/) return 0/*NULL*/;
-        return new SharedLibraryClass<T>(t,(void*)api.destroy);
-    }
-};
-
 
 
 #endif

@@ -22,7 +22,7 @@ bool SharedLibrary::open(const char *filename) {
     YARP_ASSERT(implementation);
     int result = HELPER(implementation).open(filename);
     if (result!=0) {
-        HELPER(implementation).close();
+        close();
         return false;
     }
     return true;
