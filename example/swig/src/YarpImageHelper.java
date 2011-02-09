@@ -205,4 +205,25 @@ public class YarpImageHelper
                     vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p);
         return vec1ds;
     }
+
+    /**
+	*Fast conversion from matlab image format (based on leo's structure) to a YARP image format
+	* in MATLAB, the reshape function to modify the matrix to  be a 1d vector IN = reshape(label, [h*w*pixelSize 1]); 
+	* and, if not previously done cast it to int16 eg: tempImg = cast(IN,'int16');
+	*					
+	* \author Vadim Tikhanoff
+	* @param input array height int width int pixelSize int
+	* @return output yarp image
+	*/
+	public ImageRgb setRawImg(short [] vec1ds, int height, int width, int pixelSize){
+		ImageRgb img = new ImageRgb();
+		img.resize(width, height);
+		img.zero();
+		charArray tempImg = charArray.frompointer(img.getRawImage());
+		for(int r=0; r<height; r++)
+            for(int c=0; c<width; c++)
+                for(int p=0; p<pixelSize; p++)
+					tempImg.setitem( (r * width * pixelSize) + (c * pixelSize) + p,  vec1ds[(c * height) + r + (p * width * height)] );		
+		return img;
+	}
 }
