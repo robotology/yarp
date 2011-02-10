@@ -56,6 +56,10 @@ public:
     bool supportReply() {
         return false;}
 
+    virtual bool isBroadcast() {
+        return true;
+    }
+
     bool expectReplyToHeader(Protocol&  proto) {
         bool ok = MpiCarrier::expectReplyToHeader(proto);
         dynamic_cast<MpiBcastStream*> (stream)->stopJoin();

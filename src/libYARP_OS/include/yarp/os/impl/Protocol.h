@@ -400,6 +400,11 @@ public:
         return delegate->isConnectionless();
     }
 
+    virtual bool isBroadcast() {
+        YARP_ASSERT(delegate!=NULL);
+        return delegate->isBroadcast();
+    }
+
     virtual void write(SizedWriter& writer) {
         this->writer = &writer;
         if (isActive()) {

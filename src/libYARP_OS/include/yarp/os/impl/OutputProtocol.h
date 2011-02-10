@@ -40,6 +40,7 @@ public:
     virtual bool isOk() = 0;
     virtual bool isTextMode() = 0;
     virtual bool isConnectionless() = 0;
+    virtual bool isBroadcast() = 0;
     virtual bool canEscape() = 0;
     virtual bool supportReply() = 0;
     virtual bool isLocal() = 0;

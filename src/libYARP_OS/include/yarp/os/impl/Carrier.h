@@ -117,6 +117,21 @@ public:
 
     /**
      *
+     * Check if this carrier uses a broadcast mechansim.  This flag 
+     * is used to determine whether it is appropriate to send "kill"
+     * messages using a carrier or whether they should be sent
+     * "out-of-band"
+     *
+     * @return true if carrier uses a broadcast mechanism.
+     *
+     */
+    virtual bool isBroadcast() {
+        return false;
+    }
+
+
+    /**
+     *
      * Check if reading is implemented for this carrier.
      *
      * @return true if carrier can read messages

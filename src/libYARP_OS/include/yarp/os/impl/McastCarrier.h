@@ -246,6 +246,9 @@ public:
         return isElect();
     }
 
+    virtual bool isBroadcast() {
+        return true;
+    }
 };
 
 #endif

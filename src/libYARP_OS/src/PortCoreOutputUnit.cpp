@@ -131,10 +131,10 @@ void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
     if (op!=NULL) {
         Route route = op->getRoute();
-        if (op->isConnectionless()) {
+        if (op->isConnectionless()||op->isBroadcast()) {
             YARP_SPRINTF1(Logger::get(),
                          debug,
-                         "output for route %s asking other side to close, since it is connectionless",
+                         "output for route %s asking other side to close by out-of-band means",
                          route.toString().c_str());
             Companion::disconnectInput(route.getToName().c_str(),
                                        route.getFromName().c_str(),true);

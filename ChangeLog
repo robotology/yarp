@@ -1,3 +1,13 @@
+2011-02-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/Carrier.h: add tag
+	for carriers that use a broadcast mechanism [thanks Daniel Krieg]
+
+	* src/libYARP_OS/src/PortCoreOutputUnit.cpp: use out-of-band
+	kill messages on carriers tagged as using a broadcast mechanism.
+	Previously, out-of-band kills were used only for carriers 
+	tagged as connectionless. [thanks Daniel Krieg]
+
 2011-02-08  Marco Randazzo <marco.randazzo@iit.it>
 
 	* src\modules\serial\SerialDeviceDriver.cpp
