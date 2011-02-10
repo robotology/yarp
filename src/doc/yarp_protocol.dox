@@ -456,7 +456,7 @@ create an entry for this listener, and tag it as accepting text:
 \verbatim
 yarp name register /nc tcp ... 9000
 yarp name set /nc accepts text
-\endveratim
+\endverbatim
 Now lets write some data to that port.
 \verbatim
 yarp write /write text://nc
