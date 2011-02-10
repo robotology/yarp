@@ -180,6 +180,7 @@ public:
     }
 
     virtual T *read(bool shouldWait=true) {
+        if (interrupted) return 0 /* NULL */;
         T *result = reader.read(shouldWait);
         // in some circs PortReaderBuffer::read(true) may return false
         while (result==0 /*NULL*/ && shouldWait && !reader.isClosed() &&
