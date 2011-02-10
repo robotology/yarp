@@ -461,7 +461,7 @@ Now lets write some data to that port.
 \verbatim
 yarp write /write text://nc
 \endverbatim
-%
+
 Type something in, such as ``hello world'', and hit return.
 On the terminal running netcat you should see:
 \verbatim
