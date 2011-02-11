@@ -16,6 +16,8 @@ namespace yarp {
         template <class T>
         class SharedLibraryClass;
 
+        class SharedLibraryFactory;
+
         template <class T>
         class SharedLibraryClassFactory;
 
@@ -75,13 +77,11 @@ extern "C" {
 #define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_CLASS(yarp_default_factory,classname)
 
 
-
-template <class T>
-class yarp::os::SharedLibraryClassFactory {
+class yarp::os::SharedLibraryFactory {
 private:
-    SharedLibraryClassApi api;
 	SharedLibrary lib;
 	int status;
+    SharedLibraryClassApi api;
 public:
 	enum {
 		STATUS_NONE,
@@ -91,12 +91,12 @@ public:
 		STATUS_FACTORY_NOT_FUNCTIONAL = VOCAB3('r','u','n'),
 	};
 
-    SharedLibraryClassFactory() {
+    SharedLibraryFactory() {
         api.startCheck = 0;
 		status = STATUS_NONE;
 	}
 
-	SharedLibraryClassFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+	SharedLibraryFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
 		open(dll_name,fn_name);
 	}
 
@@ -128,6 +128,7 @@ public:
         api.startCheck = 0;
 		if (factory==0/*NULL*/) return false;
         SharedClassFactoryFunction fn = (SharedClassFactoryFunction)factory;
+        isValid();
         fn(&api);
 		return isValid();
     }
@@ -142,20 +143,35 @@ public:
 		return status;
 	}
 
-    T *create() {
-        if (!isValid()) return 0/*NULL*/;
-        return (T *)api.create();
-    }
-
-    void destroy(T *obj) {
-        if (!isValid()) return 0/*NULL*/;
-        api.destroy(obj);
-    }
-
 	void *getDestroyFn() {
         if (!isValid()) return 0/*NULL*/;
 		return (void *)api.destroy;
 	}
+
+    const SharedLibraryClassApi& getApi() const {
+        return api;
+    }
+};
+
+
+template <class T>
+class yarp::os::SharedLibraryClassFactory : public SharedLibraryFactory {
+public:
+    SharedLibraryClassFactory() {
+	}
+
+	SharedLibraryClassFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) : SharedLibraryFactory(dll_name,fn_name) {
+	}
+
+    T *create() {
+        if (!isValid()) return 0/*NULL*/;
+        return (T *)getApi().create();
+    }
+
+    void destroy(T *obj) {
+        if (!isValid()) return 0/*NULL*/;
+        getApi().destroy(obj);
+    }
 };
 
 

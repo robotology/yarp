@@ -6,7 +6,7 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#define ENABLE_@YARPDEV_NAME@ (@ENABLE_YARPDEV_NAME@)
+#cmakedefine RUNTIME_YARPDEV
 
 #include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
@@ -16,13 +16,16 @@
 using namespace yarp::os;
 using namespace yarp::dev;
 
+#ifdef RUNTIME_YARPDEV
+#include <yarp/os/SharedLibraryClass.h>
+YARP_DEFINE_DEFAULT_SHARED_CLASS(@YARPDEV_TYPE@)
+#endif
+
 void add_@YARPDEV_NAME@() {
-#if ENABLE_@YARPDEV_NAME@
     DriverCreator *factory = 
         new DriverCreatorOf<@YARPDEV_TYPE@>("@YARPDEV_NAME@",
                                            "@YARPDEV_WRAPPER@",
                                            "@YARPDEV_TYPE@");
     Drivers::factory().add(factory); // hand factory over to YARP
-#endif
 }
 

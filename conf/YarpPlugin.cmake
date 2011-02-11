@@ -125,9 +125,11 @@ MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
     # Set some properties to an empty state
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)# sublist of plugins
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME) # is library lazy?
 
     # One glitch is that if plugins are used within YARP, rather
     # than in an external library, then "find_package(YARP)" will
@@ -181,19 +183,20 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
   SET(YARPDEV_INCLUDE "${include}")
   SET(YARPDEV_WRAPPER "${wrapper}")
   SET(YARPDEV_CATEGORY "${category}")
-  SET(ENABLE_YARPDEV_NAME "1")
+  #SET(ENABLE_YARPDEV_NAME "1")
 
-  # Go ahead and prepare some code to wrap this plugin.  
-  SET(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
-  CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
-    ${fname} @ONLY  IMMEDIATE)
- 
   # Set up a flag to enable/disable compilation of this plugin.
   SET(MYNAME "${YARP_PLUGIN_PREFIX}${plugin_name}")
   IF (NOT COMPILE_BY_DEFAULT)
     SET (COMPILE_BY_DEFAULT FALSE)
   ENDIF (NOT COMPILE_BY_DEFAULT)
   SET(ENABLE_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable compilation of ${MYNAME}")
+  IF (ENABLE_${MYNAME})
+    SET(RUNTIME_${MYNAME} ${COMPILE_BY_DEFAULT} CACHE BOOL "Enable/disable loading of ${MYNAME} at runtime upon need")
+    MARK_AS_ADVANCED(CLEAR RUNTIME_${MYNAME})
+  ELSE (ENABLE_${MYNAME})
+    MARK_AS_ADVANCED(FORCE RUNTIME_${MYNAME})
+  ENDIF (ENABLE_${MYNAME})
 
   # Set some convenience variables based on whether the plugin
   # is enabled or disabled.
@@ -209,7 +212,16 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
   # If the plugin is enabled, add the appropriate source code into
   # the library source list.
   IF (ENABLE_${MYNAME})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
+    # Go ahead and prepare some code to wrap this plugin.
+    SET(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+    SET(RUNTIME_YARPDEV ${RUNTIME_${MYNAME}})
+    CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
+      ${fname} @ONLY  IMMEDIATE)
+ 
+    IF (RUNTIME_${MYNAME})
+      set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
+    ENDIF (RUNTIME_${MYNAME})
+    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS0 ${plugin_name})
     set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
     SET(YARP_PLUGIN_ACTIVE TRUE)
     MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
@@ -326,9 +338,16 @@ MACRO(ADD_LIBRARY LIBNAME)
       get_property_fix(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
       _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
       # Reset the list of generated source code to empty.
+      get_property_fix(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
+      if (NOT YARP_BUNDLE_RUNTIME)
+	get_property_fix(YARP_BUNDLE_PLUGINS0 GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)
+	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${YARP_BUNDLE_PLUGINS0})
+	# Add the library to the list of plugin libraries.
+	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+      endif()
       set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-      # Add the library to the list of plugin libraries.
-      set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
+      set_property(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)
+      set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
       if (YARP_TREE_INCLUDE_DIRS)
         # If compiling YARP, we go ahead and set up installing this
         # target.  It isn't safe to do this outside of YARP though.

@@ -34,6 +34,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Ping.h>
+#include <yarp/os/SharedLibraryClass.h>
 
 //#include <ace/OS.h>
 
@@ -173,6 +174,8 @@ Companion::Companion() {
         "set or query the name of the yarp name server (default is /root)");
     add("ping",  &Companion::cmdPing,
         "get live information about a port");
+    add("plugin", &Companion::cmdPlugin,
+        "check properties of a YARP plugin (device/carrier)");
     add("read",       &Companion::cmdRead,
         "read from the network and print to standard output");
     // needed by yarprun --stdio
@@ -1880,4 +1883,34 @@ String Companion::version() {
     return "2";
 #endif
 }
+
+
+int Companion::cmdPlugin(int argc, char *argv[]) {
+    if (argc!=1) {
+        fprintf(stderr,"please provide filename for shared library\n");
+        return 1;
+    }
+    SharedLibraryFactory lib(argv[0]);
+    if (!lib.isValid()) {
+        int problem = lib.getStatus();
+        switch (problem) {
+        case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
+            fprintf(stderr,"cannot load shared library\n");
+            break;
+        case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
+            fprintf(stderr,"cannot find YARP hook in shared library\n");
+            break;
+        case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
+            fprintf(stderr,"YARP hook in shared library misbehaved\n");
+            break;
+        default:
+            fprintf(stderr,"Unknown error\n");
+            break;
+        }
+        return 1;
+    }
+    printf("Yes, this is a YARP plugin/carrier\n");
+    return 0;
+}
+
 
