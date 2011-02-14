@@ -57,8 +57,8 @@ extern "C" {
 #define YARP_SHARED_CLASS_FN extern "C"
 #endif
 
-#define YARP_DEFINE_SHARED_CLASS(factoryname,classname)                 \
-    YARP_SHARED_CLASS_FN void *factoryname ## _create () { return new classname; }           \
+#define YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,basename)       \
+    YARP_SHARED_CLASS_FN void *factoryname ## _create () { return (basename *)new classname; } \
     YARP_SHARED_CLASS_FN void factoryname ## _destroy (void *obj) { delete (classname *)obj; } \
     YARP_SHARED_CLASS_FN int factoryname ## _getVersion (char *ver, int len) { return 0; }   \
     YARP_SHARED_CLASS_FN int factoryname ## _getAbi (char *abi, int len) { return 0; }       \
@@ -74,7 +74,8 @@ extern "C" {
     }
     
 #define YARP_DEFAULT_FACTORY_NAME "yarp_default_factory"
-#define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_CLASS(yarp_default_factory,classname)
+#define YARP_DEFINE_DEFAULT_SHARED_CLASS(classname) YARP_DEFINE_SHARED_SUBCLASS(yarp_default_factory,classname,classname)
+#define YARP_DEFINE_SHARED_CLASS(factoryname,classname) YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,classname)
 
 
 class yarp::os::SharedLibraryFactory {
@@ -191,9 +192,19 @@ private:
     T *content;
 public:
 
-	SharedLibraryClass(SharedLibraryClassFactory<T>& factory) {
+	SharedLibraryClass() {
+        content = 0/*NULL*/;
+    }
+
+    SharedLibraryClass(SharedLibraryClassFactory<T>& factory) {
+        content = 0/*NULL*/;
+        open(factory);
+    }
+
+    bool open(SharedLibraryClassFactory<T>& factory) {
 		content = factory.create();
 		deleter = factory.getDestroyFn();
+        return content!=0/*NULL*/;
 	}
 
     ~SharedLibraryClass() {

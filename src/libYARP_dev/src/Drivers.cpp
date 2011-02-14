@@ -12,6 +12,7 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Terminator.h>
+#include <yarp/os/SharedLibraryClass.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/ServiceInterfaces.h>
 
@@ -99,6 +100,61 @@ public:
         return false;
     }
 };
+
+
+class StubDriver : public ChainedDriver {
+private:
+    SharedLibraryClassFactory<DeviceDriver> factory;
+    SharedLibraryClass<DeviceDriver> dev;
+public:
+    StubDriver(const char *dll_name, const char *fn_name) {
+        if (!factory.open(dll_name, fn_name)) {
+
+            int problem = factory.getStatus();
+            switch (problem) {
+            case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
+                fprintf(stderr,"cannot load shared library\n");
+                break;
+            case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
+                fprintf(stderr,"cannot find YARP hook in shared library\n");
+                break;
+            case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
+                fprintf(stderr,"YARP hook in shared library misbehaved\n");
+                break;
+            default:
+                fprintf(stderr,"Unknown error\n");
+                break;
+            }
+            return;
+        }
+        if (!dev.open(factory)) {
+            fprintf(stderr,"Failed to create %s from shared library %s\n",
+                    fn_name, dll_name);
+        }
+    }
+
+    virtual ~StubDriver() {
+    }
+
+    bool isValid() {
+        return dev.isValid();
+    }
+
+    virtual bool open(yarp::os::Searchable& config) { 
+        if (!isValid()) return false;
+        return dev->open(config); 
+    }
+
+    virtual bool close() { 
+        if (!isValid()) return false;
+        return dev->close(); 
+    }
+
+    virtual DeviceDriver *getTail() {
+        return &dev.getContent();
+    }
+};
+
 
 #define HELPER(x) (*(((DriversHelper*)(x))))
 
@@ -397,6 +453,20 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     }
 
     return 0;
+}
+
+
+DeviceDriver *StubDriverCreator::create() {
+    //printf("Creating %s from %s\n", desc.c_str(), libname.c_str());
+    StubDriver *result = new StubDriver(libname.c_str(),desc.c_str());
+    if (result==NULL) return result;
+    if (!result->isValid()) {
+        delete result;
+        result = NULL;
+        return NULL;
+    }
+    //printf("Created %s from %s\n", desc.c_str(), libname.c_str());
+    return result;
 }
 
 

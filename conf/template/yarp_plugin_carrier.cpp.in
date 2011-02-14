@@ -15,10 +15,14 @@ using namespace yarp::os::impl;
 
 #ifdef RUNTIME_YARPDEV
 #include <yarp/os/SharedLibraryClass.h>
-YARP_DEFINE_DEFAULT_SHARED_CLASS(@YARPDEV_TYPE@)
+YARP_DEFINE_SHARED_SUBCLASS(@YARPDEV_NAME@,@YARPDEV_TYPE@,Carrier)
 #endif
 
-void add_@YARPDEV_NAME@() {
+void add_owned_@YARPDEV_NAME@(const char *owner) {
     Carriers::addCarrierPrototype(new @YARPDEV_TYPE@);
 }
 
+
+void add_@YARPDEV_NAME@() {
+    add_owned_@YARPDEV_NAME@(NULL);
+}

@@ -18,6 +18,7 @@ namespace yarp {
         class DriverCreator;
         class Drivers;
         class PolyDriver;
+        class StubDriverCreator;
     }
 }
 
@@ -124,6 +125,40 @@ public:
     virtual DeviceDriver *create() {
         return new T;
     }
+};
+
+
+
+/**
+ * A factory for creating driver objects from DLLs / shared libraries.
+ */
+class YARP_dev_API yarp::dev::StubDriverCreator : public DriverCreator {
+private:
+    yarp::os::ConstString desc, wrap, code, libname;
+public:
+    StubDriverCreator(const char *name, const char *wrap, const char *code,
+                      const char *libname) : 
+        desc(name), wrap(wrap), code(code), libname(libname)
+    {
+    }
+
+    virtual yarp::os::ConstString toString() {
+        return desc;
+    }
+
+    virtual yarp::os::ConstString getName() {
+        return desc;
+    }
+
+    virtual yarp::os::ConstString getWrapper() {
+        return wrap;
+    }
+
+    virtual yarp::os::ConstString getCode() {
+        return code;
+    }
+
+    virtual DeviceDriver *create();
 };
 
 

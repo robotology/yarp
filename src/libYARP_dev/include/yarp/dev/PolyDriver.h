@@ -14,7 +14,13 @@
 namespace yarp {
     namespace dev {
         class PolyDriver;
+        class ChainedDriver;
     }
+};
+
+class YARP_dev_API yarp::dev::ChainedDriver : public DeviceDriver {
+public:
+    virtual DeviceDriver *getTail() = 0;
 };
 
 
@@ -136,6 +142,18 @@ public:
             x = v;
             result = true;
         }
+
+        if (v==0) {
+            ChainedDriver *v0 = dynamic_cast<ChainedDriver *>(dd);
+            if (v0!=0) {
+                v = dynamic_cast<T *>(v0->getTail());
+                if (v!=0 /*NULL*/) {
+                    x = v;
+                    result = true;
+                }
+            }
+        }
+
         return result;
     }
 

@@ -60,7 +60,6 @@ public:
      * @return true/false on success/failure.
      */
     virtual bool close(){ return true; }
-
 };
 
 

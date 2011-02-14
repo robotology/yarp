@@ -125,7 +125,9 @@ MACRO(BEGIN_PLUGIN_LIBRARY bundle_name)
 
     # Set some properties to an empty state
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS) # list of plugins
-    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)# sublist of plugins
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_STUBS)   # list of stubs
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE) # initializers
+    SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_OWNERS)   # owner library
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LIBS)    # list of library targets
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_LINKS)   # list of link directories
     SET_PROPERTY(GLOBAL PROPERTY YARP_BUNDLE_CODE)    # list of generated code
@@ -214,14 +216,19 @@ MACRO(ADD_PLUGIN_NORMALIZED plugin_name type include wrapper category)
   IF (ENABLE_${MYNAME})
     # Go ahead and prepare some code to wrap this plugin.
     SET(fname ${fdir}/yarpdev_add_${plugin_name}.cpp)
+    SET(fname_stub ${fdir}/yarpdev_stub_${plugin_name}.cpp)
     SET(RUNTIME_YARPDEV ${RUNTIME_${MYNAME}})
     CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_plugin_${category}.cpp.in
       ${fname} @ONLY  IMMEDIATE)
  
     IF (RUNTIME_${MYNAME})
       set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME TRUE)
+      CONFIGURE_FILE(${YARP_MODULE_PATH}/template/yarp_stub_${category}.cpp.in
+	${fname_stub} @ONLY IMMEDIATE)
+      set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUBS ${plugin_name})
+      set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_STUB_CODE ${fname_stub})
     ENDIF (RUNTIME_${MYNAME})
-    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS0 ${plugin_name})
+    set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${plugin_name})
     set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_CODE ${fname})
     SET(YARP_PLUGIN_ACTIVE TRUE)
     MESSAGE(STATUS " +++ plugin ${plugin_name}, ENABLE_${plugin_name} is set")
@@ -336,17 +343,17 @@ MACRO(ADD_LIBRARY LIBNAME)
       # The user is adding a bone-fide plugin library.  We add it,
       # while inserting any generated source code needed for initialization.
       get_property_fix(srcs GLOBAL PROPERTY YARP_BUNDLE_CODE)
+      foreach(s ${srcs})
+	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_OWNERS ${LIBNAME})
+      endforeach()
       _ADD_LIBRARY(${LIBNAME} ${srcs} ${ARGN})
       # Reset the list of generated source code to empty.
       get_property_fix(YARP_BUNDLE_RUNTIME GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
       if (NOT YARP_BUNDLE_RUNTIME)
-	get_property_fix(YARP_BUNDLE_PLUGINS0 GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)
-	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_PLUGINS ${YARP_BUNDLE_PLUGINS0})
 	# Add the library to the list of plugin libraries.
 	set_property_fix(GLOBAL APPEND PROPERTY YARP_BUNDLE_LIBS ${LIBNAME})
       endif()
       set_property(GLOBAL PROPERTY YARP_BUNDLE_CODE)
-      set_property(GLOBAL PROPERTY YARP_BUNDLE_PLUGINS0)
       set_property(GLOBAL PROPERTY YARP_BUNDLE_RUNTIME)
       if (YARP_TREE_INCLUDE_DIRS)
         # If compiling YARP, we go ahead and set up installing this
@@ -409,17 +416,22 @@ macro(END_PLUGIN_LIBRARY bundle_name)
     # generate code to call all plugin initializers
     set(YARP_LIB_NAME ${YARP_PLUGIN_MASTER})
     get_property_fix(devs GLOBAL PROPERTY YARP_BUNDLE_PLUGINS)
+    get_property_fix(owners GLOBAL PROPERTY YARP_BUNDLE_OWNERS)
     set(YARP_CODE_PRE)
     set(YARP_CODE_POST)
     foreach(dev ${devs})
-      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_${dev}();")
-      set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_${dev}();")
+      list(GET owners 0 owner)
+      message(STATUS "OWNERS ${owners} : ${owner}")
+      list(REMOVE_AT owners 0)
+      set(YARP_CODE_PRE "${YARP_CODE_PRE}\nextern void add_owned_${dev}(const char *str);")
+      set(YARP_CODE_POST "${YARP_CODE_POST}\n    add_owned_${dev}(\"${owner}\");")
     endforeach()
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.cpp.in
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp @ONLY IMMEDIATE)
     configure_file(${YARP_MODULE_PATH}/template/yarpdev_lib.h.in
       ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.h @ONLY  IMMEDIATE)
     get_property_fix(code GLOBAL PROPERTY YARP_BUNDLE_CODE)
+    get_property_fix(code_stub GLOBAL PROPERTY YARP_BUNDLE_STUB_CODE)
     include_directories(${YARP_INCLUDE_DIRS})
     get_property_fix(libs GLOBAL PROPERTY YARP_BUNDLE_LIBS)
     get_property_fix(links GLOBAL PROPERTY YARP_BUNDLE_LINKS)
@@ -427,7 +439,7 @@ macro(END_PLUGIN_LIBRARY bundle_name)
       _link_directories(${links})
     endif ()
     # add the library initializer code
-    _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
+    _ADD_LIBRARY(${YARP_PLUGIN_MASTER} ${code} ${code_stub} ${YARP_PLUGIN_GEN}/add_${YARP_PLUGIN_MASTER}_plugins.cpp)
     target_link_libraries(${YARP_PLUGIN_MASTER} ${YARP_LIBRARIES})
     target_link_libraries(${YARP_PLUGIN_MASTER} ${libs})
     # give user access to a list of all the plugin libraries

@@ -1,3 +1,8 @@
+2011-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/Drivers.cpp: first pass at runtime
+	loading of devices.
+
 2011-02-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/Carrier.h: add tag
