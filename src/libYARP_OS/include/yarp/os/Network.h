@@ -398,6 +398,17 @@ public:
     static ConstString getEnvironment(const char *key,
                                       bool *found = 0/*NULL*/);
 
+
+    /**
+     *
+     * Register a carrier to make available at runtime.
+     * @param name name of carrier
+     * @param dll name of shared library carrier is implemented in
+     * @return true if carrier was registered
+     *
+     */
+    static bool registerCarrier(const char *name,const char *dll);
+
     /**
      * Call wait() on a global mutual-exclusion semaphore allocated by YARP.
      */

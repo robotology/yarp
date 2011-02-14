@@ -8,12 +8,17 @@
 // STUB FOR CARRIER
 
 #include <stdio.h>
+#include <yarp/os/Network.h>
+
+using namespace yarp::os;
+
 void add_owned_@YARPDEV_NAME@(const char *owner) {
     if (owner==NULL) {
         fprintf(stderr,"Cannot add stub for device @YARPDEV_NAME@\n");
         return;
     }
-    printf("Should add stub for carrier @YARPDEV_NAME@\n");
+
+    NetworkBase::registerCarrier("@YARPDEV_NAME@",owner);
 }
 
 void add_@YARPDEV_NAME@() {

@@ -20,6 +20,7 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/SharedLibraryClass.h>
 
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
@@ -758,3 +759,250 @@ void NetworkBase::lock() {
 void NetworkBase::unlock() {
     ThreadImpl::threadMutex.post();
 }
+
+
+class ForwardingCarrier : public Carrier {
+public:
+    SharedLibraryClassFactory<Carrier> *factory;
+    SharedLibraryClass<Carrier> car;
+    Carrier *owner;
+
+    ForwardingCarrier() {
+        owner = NULL;
+        factory = NULL;
+    }
+
+    ForwardingCarrier(SharedLibraryClassFactory<Carrier> *factory,
+                      Carrier *owner) :
+        factory(factory),
+        owner(owner)
+    {
+        factory->addRef();
+        car.open(*factory);
+    }
+
+    virtual ~ForwardingCarrier() {
+        car.close();
+        factory->removeRef();
+        if (factory->getReferenceCount()<=0) {
+            delete factory;
+        }
+        factory = NULL;
+    }
+
+    bool isValid() {
+        return car.isValid();
+    }
+
+    virtual Carrier& getContent() {
+        return car.getContent();
+    }
+
+    virtual Carrier *create() {
+        printf("CREATE 2\n");
+        return owner->create();
+    }
+
+    virtual String getName() {
+        return getContent().getName();
+    }
+
+    virtual bool checkHeader(const yarp::os::Bytes& header) {
+        return getContent().checkHeader(header);
+    }
+
+    virtual void setParameters(const yarp::os::Bytes& header) {
+        getContent().setParameters(header);
+    }
+
+    virtual void getHeader(const yarp::os::Bytes& header) {
+        getContent().getHeader(header);
+    }
+
+
+    virtual bool isConnectionless() {
+        return getContent().isConnectionless();
+    }
+
+
+    virtual bool canAccept() {
+        return getContent().canAccept();
+    }
+
+
+    virtual bool canOffer() {
+        return getContent().canOffer();
+    }
+
+
+    virtual bool isTextMode() {
+        return getContent().isTextMode();
+    }
+
+
+    virtual bool canEscape() {
+        return getContent().canEscape();
+    }
+
+    virtual bool requireAck() {
+        return getContent().requireAck();
+    }
+
+
+    virtual bool supportReply() {
+        return getContent().supportReply();
+    }
+
+
+    virtual bool isLocal() {
+        return getContent().isLocal();
+    }
+
+
+    virtual bool isPush() {
+        return getContent().isPush();
+    }
+
+    virtual bool prepareSend(Protocol& proto) {
+        return getContent().prepareSend(proto);
+    }
+
+    virtual bool sendHeader(Protocol& proto) {
+        return getContent().sendHeader(proto);
+    }
+
+    virtual bool expectReplyToHeader(Protocol& proto) {
+        return getContent().expectReplyToHeader(proto);
+    }
+
+    virtual bool sendIndex(Protocol& proto) {
+        return getContent().sendIndex(proto);
+    }
+
+    virtual bool write(Protocol& proto, SizedWriter& writer) {
+        return getContent().write(proto,writer);
+    }
+
+    virtual bool reply(Protocol& proto, SizedWriter& writer) {
+        return getContent().reply(proto,writer);
+    }
+
+    virtual bool expectExtraHeader(Protocol& proto) {
+        return getContent().expectExtraHeader(proto);
+    }
+
+    virtual bool respondToHeader(Protocol& proto){
+        return getContent().respondToHeader(proto);
+    }
+
+    virtual bool expectIndex(Protocol& proto) {
+        return getContent().expectIndex(proto);
+    }
+
+    virtual bool expectSenderSpecifier(Protocol& proto) {
+        return getContent().expectSenderSpecifier(proto);
+    }
+
+    virtual bool sendAck(Protocol& proto) {
+        return getContent().sendAck(proto);
+    }
+
+    virtual bool expectAck(Protocol& proto) {
+        return getContent().expectAck(proto);
+    }
+
+    virtual bool isActive() {
+        return getContent().isActive();
+    }
+
+    virtual String toString() {
+        return getContent().toString();
+    }
+
+    virtual void close() {
+        return getContent().close();
+    }
+
+    virtual String getBootstrapCarrierName() { 
+        return getContent().getBootstrapCarrierName();
+    }
+
+    virtual int connect(const yarp::os::Contact& src,
+                        const yarp::os::Contact& dest,
+                        const yarp::os::ContactStyle& style,
+                        int mode,
+                        bool reversed) {
+        return getContent().connect(src,dest,style,mode,reversed);
+    }
+};
+
+
+class StubCarrier : public ForwardingCarrier {
+public:
+    StubCarrier(const char *dll_name, const char *fn_name) {
+        factory = new SharedLibraryClassFactory<Carrier>();
+        if (factory==NULL) return;
+        factory->addRef();
+        if (!factory->open(dll_name, fn_name)) {
+
+            int problem = factory->getStatus();
+            switch (problem) {
+            case SharedLibraryFactory::STATUS_LIBRARY_NOT_LOADED:
+                fprintf(stderr,"cannot load shared library\n");
+                break;
+            case SharedLibraryFactory::STATUS_FACTORY_NOT_FOUND:
+                fprintf(stderr,"cannot find YARP hook in shared library\n");
+                break;
+            case SharedLibraryFactory::STATUS_FACTORY_NOT_FUNCTIONAL:
+                fprintf(stderr,"YARP hook in shared library misbehaved\n");
+                break;
+            default:
+                fprintf(stderr,"Unknown error\n");
+                break;
+            }
+            return;
+        }
+        if (!car.open(*factory)) {
+            fprintf(stderr,"Failed to create %s from shared library %s\n",
+                    fn_name, dll_name);
+        }
+    }
+
+    Carrier& getContent() {
+        return car.getContent();
+    }
+
+    virtual Carrier *create() {
+        ForwardingCarrier *ncar = new ForwardingCarrier(factory,this);
+        if (ncar==NULL) {
+            return NULL;
+        }
+        if (!ncar->isValid()) {
+            delete ncar;
+            ncar = NULL;
+            return NULL;
+        }
+        return ncar;
+    }
+};
+
+
+
+bool NetworkBase::registerCarrier(const char *name,const char *dll) {
+    //printf("Registering carrier %s from %s\n", name, dll);
+    StubCarrier *factory = new StubCarrier(dll,name);
+    if (factory==NULL) {
+        YARP_ERROR(Logger::get(),"Failed to create carrier");
+        return false;
+    }
+    if (!factory->isValid()) {
+        YARP_ERROR(Logger::get(),"Failed to create valid carrier");
+        delete factory;
+        factory = NULL;
+        return false;
+    }
+    Carriers::addCarrierPrototype(factory);
+    return true;
+}
+
+

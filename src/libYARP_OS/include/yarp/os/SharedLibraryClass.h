@@ -83,6 +83,7 @@ private:
 	SharedLibrary lib;
 	int status;
     SharedLibraryClassApi api;
+    int rct;
 public:
 	enum {
 		STATUS_NONE,
@@ -95,9 +96,11 @@ public:
     SharedLibraryFactory() {
         api.startCheck = 0;
 		status = STATUS_NONE;
+        rct = 0;
 	}
 
 	SharedLibraryFactory(const char *dll_name, const char *fn_name = 0/*NULL*/) {
+        rct = 0;
 		open(dll_name,fn_name);
 	}
 
@@ -151,6 +154,20 @@ public:
 
     const SharedLibraryClassApi& getApi() const {
         return api;
+    }
+
+    int getReferenceCount() const {
+        return rct;
+    }
+
+    int addRef() {
+        rct++;
+        return rct;
+    }
+
+    int removeRef() {
+        rct--;
+        return rct;
     }
 };
 
@@ -207,15 +224,22 @@ public:
         return content!=0/*NULL*/;
 	}
 
-    ~SharedLibraryClass() {
-        if (deleter!=0/*NULL*/) {
-            SharedClassDeleterFunction del = 
-                (SharedClassDeleterFunction)deleter;
-            del(content);
-        } else {
-            delete content;
+    bool close() {
+        if (content!=0/*NULL*/) {
+            if (deleter!=0/*NULL*/) {
+                SharedClassDeleterFunction del = 
+                    (SharedClassDeleterFunction)deleter;
+                del(content);
+            } else {
+                delete content;
+            }
         }
         content = 0/*NULL*/;
+        return true;
+    }
+
+    ~SharedLibraryClass() {
+        close();
     }
 
     T& getContent() {

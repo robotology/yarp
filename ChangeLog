@@ -1,7 +1,10 @@
 2011-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Network.cpp: first pass at runtime
+	loading of carriers.  Still experimental.
+
 	* src/libYARP_dev/src/Drivers.cpp: first pass at runtime
-	loading of devices.
+	loading of devices.  Still experimental.
 
 2011-02-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

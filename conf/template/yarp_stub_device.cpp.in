@@ -8,7 +8,6 @@
 // STUB FOR DEVICE
 
 #include <stdio.h>
-#include <yarp/os/Network.h>
 #include <yarp/dev/Drivers.h>
 
 using namespace yarp::os;
