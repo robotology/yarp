@@ -17,6 +17,7 @@
 
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
+#include <yarp/os/DummyConnector.h>
 
 //#include "TestList.h"
 
@@ -484,6 +485,33 @@ public:
         checkFalse(b.isNull(),"failed, as expected");
     }
 
+    void testEmptyList() {
+        // based on a case submitted by Stephane Lallee; doesn't appear to
+        // fail here as he sees going from TCL to C++
+        report(0,"test empty list");
+        Bottle b;
+        b.fromString("appp plan-clean (\"<Plan>\" \"<Names>\" cover \"</Names>\" \"<isAtomic>\" 1 \"</isAtomic>\" \"<motorCommand>\" () \"</motorCommand>\" \"<Primitive>\" (cover 28988.470168 \"<args>\" \"7106\" \"7103\" \"</args>\" \"<argsRole>\" object1 arg2 object2 arg1 subject \"7107\" \"</argsRole>\" \"<preReqRelations>\" \"</preReqRelations>\" \"<preForRelations>\" \"</preForRelations>\" \"<postAddRelations>\" \"</postAddRelations>\" \"<postRemRelations>\" \"</postRemRelations>\" \"<addRelations>\" \"</addRelations>\" \"<remRelations>\" visible null arg2 \"</remRelations>\") \"</Primitive>\" \"<SubPlans>\" \"</SubPlans>\" \"</Plan>\")");
+        Bottle b2 = b;
+        checkEqual(b2.size(),3,"copy ok level 1");
+        Bottle *sub = b2.get(2).asList();
+        checkTrue(sub!=NULL,"list where list expected");
+        if (sub!=NULL) {
+            checkEqual(sub->size(),16,"copy ok level 2");
+        }
+
+        DummyConnector con;
+        con.setTextMode(false);
+        b.write(con.getWriter());
+        Bottle b3;
+        b3.read(con.getReader());
+        checkEqual(b3.size(),b.size(),"binary read/write ok");
+        sub = b3.get(2).asList();
+        checkTrue(sub!=NULL,"list where list expected");
+        if (sub!=NULL) {
+            checkEqual(sub->size(),16,"copy ok level 2");
+        }
+    }
+
     virtual void runTests() {
         testClear();
         testSize();
@@ -511,6 +539,7 @@ public:
         testContinuation();
         testAssignment();
         testHex();
+        testEmptyList();
     }
 
     virtual String getName() {
