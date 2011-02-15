@@ -43,7 +43,7 @@ public:
     /**
      * This becomes owner of shiftstream
      */
-    Protocol(TwoWayStream *stream) : 
+    Protocol(TwoWayStream *stream) :
         log(Logger::get()), header(8), number(4), indexHeader(10) {
         shift.takeStream(stream);
         active = true;
@@ -284,7 +284,7 @@ public:
         }
         //} catch (IOException e) {
         //  YARP_DEBUG(Logger::get(),
-        //             String("Protocol::interrupt exception: ") + 
+        //             String("Protocol::interrupt exception: ") +
         //             e.toString());
     }
 
@@ -347,7 +347,7 @@ public:
         //throw IOException("getRemoteAddress failed");
         return nullAddress;
     }
-    
+
 
 
     ///////////////////////////////////////////////////////////////////////
@@ -380,7 +380,7 @@ public:
         YARP_ASSERT(delegate!=NULL);
         return delegate->isActive();
     }
-    
+
     virtual bool isOk() {
         return checkStreams();
     }
@@ -404,6 +404,12 @@ public:
         YARP_ASSERT(delegate!=NULL);
         return delegate->isBroadcast();
     }
+
+    virtual void prepareDisconnect() {
+        YARP_ASSERT(delegate!=NULL);
+        delegate->prepareDisconnect();
+    }
+
 
     virtual void write(SizedWriter& writer) {
         this->writer = &writer;
@@ -430,7 +436,7 @@ public:
         delegate->reply(*this,writer);
     }
 
-    
+
     bool defaultReply(SizedWriter& writer) {
         writer.write(os());
         return os().isOk();
@@ -581,7 +587,7 @@ private:
         //ACE_DEBUG((LM_DEBUG,"Sender name is %s",getRoute().getFromName().c_str()));
     }
 
-    bool canEscape() { 
+    bool canEscape() {
         if (delegate==NULL) { return true; }
         return delegate->canEscape();
     }

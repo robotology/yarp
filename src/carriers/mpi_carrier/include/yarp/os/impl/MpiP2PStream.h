@@ -29,6 +29,12 @@ public:
     MpiP2PStream(String name, MpiComm* comm) : MpiStream(name,comm) {};
     int read(const Bytes& b);
     void write(const Bytes& b);
+    void close() {
+        #ifdef MPI_DEBUG
+        printf("[MpiP2PStream @ %s] Closing stream\n", name.c_str());
+        #endif
+        terminate = true;
+    }
 };
 
 

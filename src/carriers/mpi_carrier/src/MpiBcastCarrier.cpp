@@ -15,12 +15,16 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-MpiBcastCarrier::~MpiBcastCarrier() {}
+MpiBcastCarrier::~MpiBcastCarrier() {
+    #ifdef MPI_DEBUG
+    printf("[MpiBcastCarrier @ %s] Destructor\n", name.c_str());
+    #endif
+}
 
 void MpiBcastCarrier::close() {
-#ifdef MPI_DEBUG
-    printf("[MpiBcastCarrier @ %s] Destructor called \n", name.c_str() );
-#endif
+    #ifdef MPI_DEBUG
+    printf("[MpiBcastCarrier @ %s] Closing carrier \n", name.c_str() );
+    #endif
     if (electionMember) {
         getCaster().remove(name, this);
         MpiBcastCarrier* elect = getCaster().getElect(name);

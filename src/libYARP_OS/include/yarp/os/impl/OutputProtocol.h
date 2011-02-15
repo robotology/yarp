@@ -45,6 +45,7 @@ public:
     virtual bool supportReply() = 0;
     virtual bool isLocal() = 0;
     virtual bool isPush() = 0;
+    virtual void prepareDisconnect() = 0;
 
     virtual bool checkStreams() = 0;
 
@@ -54,7 +55,7 @@ public:
 
     // some connections are capable of ping-ponging
     virtual InputProtocol& getInput() = 0;
-  
+
     // direct access
     virtual OutputStream& getOutputStream() = 0;
     virtual InputStream& getInputStream() = 0;

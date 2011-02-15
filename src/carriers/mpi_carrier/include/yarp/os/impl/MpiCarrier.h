@@ -37,7 +37,7 @@ protected:
     MpiStream* stream;
     MpiComm* comm;
     String port;
-    String name;
+    String name, other;
     String target;
 public:
     MpiCarrier() ;

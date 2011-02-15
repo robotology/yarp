@@ -43,7 +43,7 @@ namespace yarp {
  * receiving side of a connection.
  *
  * To understand the protocol phases involved, see see \ref yarp_protocol.
- * 
+ *
  *
  */
 class yarp::os::impl::Carrier {
@@ -84,7 +84,7 @@ public:
 
     /**
      *
-     * Configure this carrier based on the first 8 bytes of the 
+     * Configure this carrier based on the first 8 bytes of the
      * connection.  This will only be called if checkHeader passed.
      * @param header a buffer holding the first 8 bytes received on the connection
      *
@@ -93,7 +93,7 @@ public:
 
     /**
      *
-     * Provide 8 bytes describing this connection sufficiently to 
+     * Provide 8 bytes describing this connection sufficiently to
      * allow the other side of a connection to select it.
      * @param header a buffer to hold the first 8 bytes to send on a connection
      *
@@ -117,7 +117,7 @@ public:
 
     /**
      *
-     * Check if this carrier uses a broadcast mechansim.  This flag 
+     * Check if this carrier uses a broadcast mechansim.  This flag
      * is used to determine whether it is appropriate to send "kill"
      * messages using a carrier or whether they should be sent
      * "out-of-band"
@@ -128,7 +128,6 @@ public:
     virtual bool isBroadcast() {
         return false;
     }
-
 
     /**
      *
@@ -190,7 +189,7 @@ public:
 
     /**
      *
-     * Check if carrier operates within a single process.  In such a 
+     * Check if carrier operates within a single process.  In such a
      * case, YARP connections may get completely reorganized in order
      * to optimize them.
      *
@@ -203,7 +202,7 @@ public:
     /**
      *
      * Check if carrier is "push" or "pull" style.  Push means that
-     * the side that initiates a connection is also the one that will 
+     * the side that initiates a connection is also the one that will
      * sending of data or commands.  All native YARP connections are
      * like this.  A "pull" style is equivalent to automatically sending
      * a "reverse connection" port command at the start of the connection.
@@ -327,6 +326,15 @@ public:
      *
      */
     virtual bool isActive() = 0;
+
+    /**
+     *
+     * Do cleanup and preparation for the coming
+     * disconnect, if necessary.
+     *
+     */
+    virtual void prepareDisconnect() {}
+
 
     /**
      *

@@ -28,7 +28,7 @@ int MpiP2PStream::read(const Bytes& b) {
         MPI_Status status;
         while (true) {
             if (terminate)
-                return 0;
+                return -1;
             // Check for a message
             MPI_Iprobe(!rank, tag, comm->comm, &available, &status);
             if (available)

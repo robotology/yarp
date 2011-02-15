@@ -101,7 +101,7 @@ void PortCoreOutputUnit::runSimulation() {
         setMode();
         getOwner().reportUnit(this,true);
 
-        String msg = String("Sending output from ") + 
+        String msg = String("Sending output from ") +
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
@@ -119,7 +119,7 @@ void PortCoreOutputUnit::runSimulation() {
         info.portName = info.sourceName;
         info.carrierName = route.getCarrierName().c_str();
         getOwner().report(info);
-    } 
+    }
 
     // no thread component
     running = false;
@@ -130,6 +130,7 @@ void PortCoreOutputUnit::runSimulation() {
 void PortCoreOutputUnit::closeBasic() {
     bool waitForOther = false;
     if (op!=NULL) {
+	op->prepareDisconnect();
         Route route = op->getRoute();
         if (op->isConnectionless()||op->isBroadcast()) {
             YARP_SPRINTF1(Logger::get(),
@@ -150,7 +151,7 @@ void PortCoreOutputUnit::closeBasic() {
             }
         }
 
-        String msg = String("Removing output from ") + 
+        String msg = String("Removing output from ") +
             route.getFromName() + " to " + route.getToName();
 
         if (Name(route.getToName()).isRooted()) {
@@ -229,41 +230,41 @@ Route PortCoreOutputUnit::getRoute() {
 void PortCoreOutputUnit::sendHelper() {
     bool done = false;
     if (op!=NULL) {
-        
+
         BufferedConnectionWriter buf(op->isTextMode());
         if (cachedReader!=NULL) {
             buf.setReplyHandler(*cachedReader);
         }
-        
-        
+
+
         if (op->isLocal()) {
             //buf.setReference((yarp::os::Portable *)cachedWriter);
-            buf.setReference(dynamic_cast<yarp::os::Portable *> 
+            buf.setReference(dynamic_cast<yarp::os::Portable *>
                              (cachedWriter));
-            
+
             //printf("REF %ld\n", (long int)buf.getReference());
             //op->write(buf); // done later
         } else {
-        
-        
+
+
             YARP_ASSERT(cachedWriter!=NULL);
             bool ok = cachedWriter->write(buf);
             if (!ok) {
                 done = true;
-            } 
-        
+            }
+
             bool suppressReply = (buf.getReplyHandler()==NULL);
-        
+
             if (op->canEscape()&&!done) {
                 buf.addToHeader();
-            
+
                 if (cachedEnvelope!="") {
                     // this will be the new way to signal that replies
                     // are not expected
                     //PortCommand pc('\0', String(suppressReply?"D ":"d ") +
                     //             cachedEnvelope);
                     //pc.writeBlock(buf);
-                
+
                     // This is the backwards-compatible method.
                     // To be used until YARP 2.1.2 is a "long time ago".
                     if (cachedEnvelope=="__ADMIN") {
@@ -274,13 +275,13 @@ void PortCoreOutputUnit::sendHelper() {
                                        cachedEnvelope);
                         pc.write(buf);
                     }
-                
+
                 } else {
                     // this will be the new way to signal that replies
                     // are not expected
                     //PortCommand pc(suppressReply?'D':'d',"");
                     //pc.writeBlock(buf);
-                
+
                     // This is the backwards-compatible method.
                     // To be used until YARP 2.1.2 is a "long time ago".
                     if (suppressReply) {
@@ -296,7 +297,7 @@ void PortCoreOutputUnit::sendHelper() {
         if (!done) {
             if (op->isActive()) {
                 op->write(buf);
-            } 
+            }
             if (!op->isOk()) {
                 done = true;
             }
@@ -311,7 +312,7 @@ void PortCoreOutputUnit::sendHelper() {
     }
 }
 
-void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer, 
+void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
                                yarp::os::PortReader *reader,
                                yarp::os::PortWriter *callback,
                                void *tracker,
@@ -350,7 +351,7 @@ void *PortCoreOutputUnit::send(yarp::os::PortWriter& writer,
             trackerMutex.post();
         }
     } else {
-        YARP_DEBUG(Logger::get(), 
+        YARP_DEBUG(Logger::get(),
                    "skipping connection tagged as sending something");
     }
 

@@ -111,6 +111,18 @@ bool MpiComm::accept() {
 }
 
 
+void MpiComm::disconnect(bool disconn) {
+    #ifdef MPI_DEBUG
+    printf("[MpiComm @ %s] disconnect color : %d \n", name.c_str(), disconn);
+    #endif
+    MPI_Comm new_comm;
+    MPI_Comm_split(comm, disconn, rank(), &new_comm);
+    comm = new_comm;
+}
+
+
+
+
 void MpiComm::initialize() {
     // We need to initialize MPI
     if (! MpiComm::isInit) {
@@ -150,7 +162,7 @@ void MpiComm::initialize() {
 MpiStream::MpiStream(String n, MpiComm* c)
     : terminate(false), name(n), comm(c) {
     readBuffer = NULL;
-    reset();
+    resetBuffer();
 
 }
 MpiStream::~MpiStream() {
@@ -159,21 +171,12 @@ MpiStream::~MpiStream() {
     #endif
 }
 
-void MpiStream::reset() {
+void MpiStream::resetBuffer() {
     // reset buffer
     readAt = 0;
     readAvail = 0;
     delete [] readBuffer;
     readBuffer = NULL;
-}
-
-void MpiStream::close() {
-    // nothing to do
-    #ifdef MPI_DEBUG
-    printf("[MpiStream @ %s] Closing stream\n", name.c_str());
-    #endif
-    // to be protected by mutex???
-    terminate = true;
 }
 
 bool MpiStream::isOk() {
@@ -185,7 +188,7 @@ bool MpiStream::isOk() {
     #ifdef MPI_DEBUG
     printf("[MpiStream @ %s] Trying to interrupt\n", name.c_str());
     #endif
-    close();
+    terminate = true;
 }
 
 /* --------------------------------------- */

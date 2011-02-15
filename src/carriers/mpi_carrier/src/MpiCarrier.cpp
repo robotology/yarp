@@ -17,6 +17,9 @@ using namespace yarp::os::impl;
 
 
 MpiCarrier::MpiCarrier() : stream(NULL), comm(NULL) {
+    #ifdef MPI_DEBUG
+    Logger::get().setVerbosity(1);
+    #endif
 }
 
 MpiCarrier::~MpiCarrier() {
@@ -54,6 +57,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     // we also send the name of the originating port
 
     name = proto.getRoute().getFromName();
+    other = proto.getRoute().getToName();
     Bytes b2((char*)name.c_str(),name.length());
     proto.os().write(b2);
     proto.os().write('\r');
@@ -104,9 +108,12 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     printf("[MpiCarrier @ %s] Waiting for header\n", name.c_str());
     #endif
 
-    proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
+    other = NetType::readLine(proto.is());
+    proto.setRoute(proto.getRoute().addFromName(other));
+
     String other_id = NetType::readLine(proto.is());
     bool notLocal = comm->notLocal(other_id);
+
     port = NetType::readLine(proto.is());
 
     #ifdef MPI_DEBUG

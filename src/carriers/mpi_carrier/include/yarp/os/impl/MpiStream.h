@@ -60,6 +60,7 @@ public:
     }
     bool connect(String port);
     bool accept();
+    void disconnect(bool disconn);
     bool notLocal(String other);
     void initialize();
 
@@ -98,7 +99,7 @@ public:
 
     MpiStream(String name, MpiComm* comm);
     virtual ~MpiStream();
-    virtual void close();
+    virtual void close() = 0;
     virtual bool isOk();
     virtual void interrupt();
     virtual int read(const Bytes& b) = 0;
@@ -107,7 +108,8 @@ public:
     virtual OutputStream& getOutputStream();
     virtual const Address& getLocalAddress();
     virtual const Address& getRemoteAddress();
-    virtual void reset();
+    void resetBuffer();
+    virtual void reset() { resetBuffer();}
     virtual void beginPacket();
     virtual void endPacket();
 

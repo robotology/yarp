@@ -38,6 +38,9 @@ public:
     virtual ~MpiP2PCarrier() {
     }
     void close() {
+        #ifdef MPI_DEBUG
+        printf("[MpiP2PCarrier @ %s] Closing carrier \n", name.c_str() );
+        #endif
         delete comm;
     }
     Carrier *create() {

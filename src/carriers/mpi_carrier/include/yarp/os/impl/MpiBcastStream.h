@@ -11,6 +11,7 @@
 #define _YARP_MPIBCASTSTREAM_
 
 #include <yarp/os/impl/MpiStream.h>
+#include <string.h>
 
 
 
@@ -30,16 +31,23 @@ class yarp::os::impl::MpiBcastStream : public MpiStream {
 
 public:
     MpiBcastStream(String name, MpiComm* comm) : MpiStream(name, comm) {};
+    ~MpiBcastStream() {
+        #ifdef MPI_DEBUG
+        printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());
+        #endif
+    }
     int read(const Bytes& b);
     void write(const Bytes& b);
-    void startJoin() {
-        comm->sema.wait();
-        int cmd = -1;
-        MPI_Bcast(&cmd, 1, MPI_INT, 0,comm->comm);
-    }
-    void stopJoin() {
+    void startJoin();
+    void post() {
         comm->sema.post();
     }
+    void close() {
+        #ifdef MPI_DEBUG
+        printf("[MpiBcastStream @ %s] Closing stream\n", name.c_str());
+        #endif
+    }
+
 };
 
 
