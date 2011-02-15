@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2006 Francesco Nori
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
 #ifndef GUIPIDTRQ_H
 #define GUIPIDTRQ_H
 

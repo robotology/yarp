@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2006 Francesco Nori
+ * CopyPolicy: Released under the terms of the GNU GPL v2.0.
+ *
+ */
 #include "partMover.h"
 #include "cartesianMover.h"
 #include "robotMotorGui.h"

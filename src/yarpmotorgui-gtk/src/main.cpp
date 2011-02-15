@@ -1,9 +1,9 @@
-// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 /*
- * Copyright (C) 2007 Francesco Nori (iron@liralab.it)
+ * Copyright (C) 2006 Francesco Nori
  * CopyPolicy: Released under the terms of the GNU GPL v2.0.
- *  
+ *
  */
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /**
  *
