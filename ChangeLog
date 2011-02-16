@@ -1,3 +1,8 @@
+2011-02-16  Paul Fitzpatrick  <paulfitz@farmMac1.local>
+
+	* src/libYARP_OS/src/Network.cpp: shuffle header file to 
+	avoid Mac OSX problem [thanks Lorenzo Natale]
+
 2011-02-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Network.cpp: first pass at runtime

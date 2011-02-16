@@ -20,7 +20,6 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Vocab.h>
-#include <yarp/os/SharedLibraryClass.h>
 
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/OutputProtocol.h>
@@ -760,6 +759,8 @@ void NetworkBase::unlock() {
     ThreadImpl::threadMutex.post();
 }
 
+
+#include <yarp/os/SharedLibraryClass.h>
 
 class ForwardingCarrier : public Carrier {
 public:
