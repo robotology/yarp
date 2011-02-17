@@ -123,7 +123,8 @@ if (MSVC)
   add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
   
   # disable: warning C4355: 'this' : used ...
-  add_definitions(/wd4355)
+  ## this never worked, giving up.
+  #add_definitions(/wd4355)
 	
   # Traditionally, we add "d" postfix to debug libraries
   set(CMAKE_DEBUG_POSTFIX "d")
