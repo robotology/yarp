@@ -22,6 +22,7 @@
 #include "include/robotMotorGui.h"
 #include "include/partMover.h"
 #include <string.h>
+#include <locale.h>
 
 
 /*
@@ -110,6 +111,10 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
   int NUMBER_OF_JOINTS;
   ipos->getAxes(&NUMBER_OF_JOINTS);
 
+  //be sure that "." will be used in place of "," for decimals
+  char* loc = setlocale(LC_NUMERIC, NULL); 
+  setlocale(LC_NUMERIC, "C"); 
+
   fprintf(stderr, "Start saving file\n");
   strcpy(filename, filenameIn);
   strcat(filename, ".pos");
@@ -151,6 +156,8 @@ void partMover::save_to_file(char* filenameIn, partMover* currentPart)
       break;
   fclose(outputFile);
   fprintf(stderr, "File saved and closed\n");
+  //restore local "."/"," policy
+  setlocale(LC_NUMERIC, loc); 
 }
 
 /*

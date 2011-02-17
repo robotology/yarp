@@ -39,7 +39,11 @@ void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
   int j, k;
   char buffer[800];
   int invSequence[NUMBER_OF_STORED];
-	
+
+  //be sure that "." will be used in place of "," for decimals
+  char* loc = setlocale(LC_NUMERIC, NULL); 
+  setlocale(LC_NUMERIC, "C"); 
+
   fprintf(stderr, "Start saving file\n");
   strcpy(filename, filenameIn);
   strcat(filename, ".crt");
@@ -76,6 +80,9 @@ void cartesianMover::save_to_file(char* filenameIn, cartesianMover* cm)
       break;
   fclose(outputFile);
   fprintf(stderr, "File saved and closed\n");
+
+  //restore local "."/"," policy
+  setlocale(LC_NUMERIC, loc); 
 }
 
 /*
