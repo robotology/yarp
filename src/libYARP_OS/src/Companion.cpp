@@ -79,6 +79,7 @@ static void companion_sigint_handler(int sig) {
         } 
         if (port!=NULL) {
             port->interrupt();
+            port->close();
         }
     } else {
         fprintf(stderr,"Aborting...\n");
