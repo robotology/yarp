@@ -21,7 +21,7 @@ using namespace yarp::os::impl;
 
 
 bool MpiComm::isInit = false;
-bool MpiComm::isThreadSafe = true;
+bool MpiComm::isThreadSafe = false;
 
 MpiComm::MpiComm(String name) : name(name) {
     initialize();
