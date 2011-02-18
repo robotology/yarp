@@ -18,7 +18,7 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;
 
-#define dbg_printf if (1) printf
+#define dbg_printf if (0) printf
 
 int TcpRosStream::read(const Bytes& b) {
     if (phase==-1) return -1;

@@ -23,7 +23,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
 
-#define dbg_printf if (1) printf
+#define dbg_printf if (0) printf
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
