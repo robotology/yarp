@@ -23,7 +23,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
 
-#define dbg_printf if (0) printf
+#define dbg_printf if (1) printf
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -196,6 +196,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     // through, and prepare an appropriate byte-rejiggering if
     // needed.
     if (translate==TCPROS_TRANSLATE_UNKNOWN) {
+        dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
         FlexImage *img = wi.checkForImage(writer);
         if (img) {
             translate = TCPROS_TRANSLATE_IMAGE;
@@ -214,6 +215,7 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     switch (translate) {
     case TCPROS_TRANSLATE_IMAGE:
         {
+            dbg_printf("* TCPROS_TRANSLATE_IMAGE\n");
             FlexImage *img = wi.checkForImage(writer);
             if (img==NULL) {
                 fprintf(stderr, "TCPROS Expected an image, but did not get one.\n");
@@ -226,12 +228,19 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         break;
     case TCPROS_TRANSLATE_BOTTLE_BLOB:
         {
+            dbg_printf("* TCPROS_TRANSLATE_BOTTLE_BLOB\n");
             if (!WireBottle::extractBlobFromBottle(writer,wt)) {
                 fprintf(stderr, "TCPROS Expected a bottle blob, but did not get one.\n");
                 return false;
             }
             flex_writer = &wt;
         }
+        break;
+    case TCPROS_TRANSLATE_INHIBIT:
+        dbg_printf("* TCPROS_TRANSLATE_INHIBIT\n");
+        break;
+    default:
+        dbg_printf("* TCPROS_TRANSLATE_OTHER\n");
         break;
     }
 
@@ -240,7 +249,19 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
         return false;
     }
     
-
+    int len = 0;
+    for (int i=0; i<flex_writer->length(); i++) {
+        len += flex_writer->length(i);
+    }
+    dbg_printf("Prepping to write %d blocks (%d bytes)\n", 
+               flex_writer->length(),
+               len);
+    
+    string header_len(4,'\0');
+    char *at = (char*)header_len.c_str();
+    RosHeader::appendInt(at,len);
+    Bytes b1((char*)header_len.c_str(),header_len.length());
+    proto.os().write(b1);
     flex_writer->write(proto.os());
 
     /*

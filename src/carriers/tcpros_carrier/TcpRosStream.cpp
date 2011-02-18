@@ -18,6 +18,8 @@ using namespace yarp::os;
 using namespace yarp::os::impl;
 using namespace std;
 
+#define dbg_printf if (1) printf
+
 int TcpRosStream::read(const Bytes& b) {
     if (phase==-1) return -1;
     if (remaining==0) {
@@ -48,28 +50,29 @@ int TcpRosStream::read(const Bytes& b) {
         Bytes mlen_buf(mlen,4);
         int res = NetType::readFull(delegate->getInputStream(),mlen_buf);
         if (res<4) {
-            //printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
+            dbg_printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
             phase = -1;
             return -1;
         }
         int len = NetType::netInt(mlen_buf);
-        //printf("Unit length %d\n", len);
+        dbg_printf("Unit length %d\n", len);
 
         if (raw==-1) {
             scan.allocate(len);
             int res = NetType::readFull(delegate->getInputStream(),
                                         scan.bytes());
+            dbg_printf("Read %d bytes with raw==-1\n", res);
             if (res<0) {
-                //printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
+                dbg_printf("tcpros_carrier failed, %s %d\n", __FILE__, __LINE__);
                 phase = -1;
                 return -1;
             }
             int len_scan = scan.length();
             if (WireBottle::checkBottle(scan.get(),len_scan)) {
-                //printf("Looks YARP-compatible\n");
+                dbg_printf("Looks YARP-compatible\n");
                 raw = 1;
             } else {
-                //printf("Looks strange, blobbing...\n");
+                dbg_printf("Looks strange, blobbing...\n");
                 raw = 0;
             }
         }
@@ -99,13 +102,14 @@ int TcpRosStream::read(const Bytes& b) {
             memcpy(b.get(),cursor,allow);
             cursor+=allow;
             remaining-=allow;
-            //printf("%d bytes of header\n", allow);
+            dbg_printf("%d bytes of header\n", allow);
             return allow;
         } else {
             int result = delegate->getInputStream().read(b);
+            dbg_printf("Read %d bytes\n", result);
             if (result>0) {
                 remaining-=result;
-                //printf("%d bytes of meat\n", result);
+                dbg_printf("%d bytes of meat\n", result);
                 return result;
             }
         }
