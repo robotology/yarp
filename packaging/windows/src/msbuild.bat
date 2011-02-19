@@ -5,9 +5,8 @@
  call %1
 
  echo cygpath --unix --path "%PATH%" > msbuild_path.sh
- rem echo %INCLUDE%
- rem echo %LIB%
- 
+ echo echo "%INCLUDE%" > msbuild_include.sh
+ echo echo "%LIB%" > msbuild_lib.sh
  goto :eof
 
  :missing

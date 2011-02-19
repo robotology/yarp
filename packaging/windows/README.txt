@@ -7,7 +7,7 @@ You don't need anything in here.
 
 Preparation:
  * Install cygwin
- *   You need: bash, wget, tar, grep, sed
+ *   You need: bash, wget, tar, grep, sed, subversion
  * Install Visual Studio compilers, as many as you can
  * Update conf/compilers.sh to describe your compilers
 

@@ -17,10 +17,12 @@ if [ ! -e msbuild_path.sh ] ; then
 fi
 
 NEW_PATH=`bash ./msbuild_path.sh | grep "."`
+NEW_INCLUDE=`bash ./msbuild_include.sh | grep "."`
+NEW_LIB=`bash ./msbuild_lib.sh | grep "."`
 (
 	echo "export PATH='$NEW_PATH'"
-	echo '# echo PATH is "$PATH" - checking for msbuild:'
-	echo "# which msbuild.exe"
+	echo "export INCLUDE='$NEW_INCLUDE'"
+	echo "export LIB='$NEW_LIB'"
 ) > compiler_config_${3}_${2}.sh
 
 # clean up

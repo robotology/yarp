@@ -66,4 +66,12 @@ if [ ! -e $pname ]; then
 	echo "Could not find $pname"
 	exit 1
 fi
-msbuild.exe $pname $CONFIGURATION $PLATFORM
+
+echo msbuild.exe $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND
+msbuild.exe $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
+
+(
+	ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
+	echo "export ACE_DIR='$ACE_DIR'"
+	echo "export ACE_ROOT='$ACE_DIR'"
+) > $BUILD_DIR/ace_${compiler}_${variant}_${build}.sh
