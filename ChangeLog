@@ -1,3 +1,10 @@
+2011-02-23  Marco Randazzo <marco.randazzo@iit.it>
+
+    * src/modules/laserHokuyo.cpp
+	* src/modules/laserHokuyo.h
+	Added a new option to convert invalid measurements to out-of-range measurements.
+	Previously invalid measurements were interpreted as near obstacles.
+	
 2011-02-16  Paul Fitzpatrick  <paulfitz@farmMac1.local>
 
 	* src/libYARP_OS/src/Network.cpp: shuffle header file to 

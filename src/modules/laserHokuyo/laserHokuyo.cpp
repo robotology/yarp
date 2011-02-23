@@ -34,16 +34,21 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
     period = config.check("Period",Value(50),"Period of the sampling thread").asInt();
 	start_position = config.check("Start_Position",Value(0),"Start position").asInt();
 	end_position = config.check("End_Position",Value(1080),"End Position").asInt();
+	error_codes = config.check("Convert_Error_Codes",Value(0),"Substitute error codes with legal measurments").asInt();
 	yarp::os::ConstString s = config.check("Laser_Mode",Value("GD"),"Laser Mode (GD/MD").asString();
+	if (error_codes==1)
+	{
+		printf("'error_codes' option enabled. Invalid samples will be substituded with out-of-range measurements.\n");
+	}
 	if (s=="GD")
 	{
 		laser_mode = GD_MODE;
-		fprintf(stderr, "Using GD mode (single acquisition)\n");
+		printf("Using GD mode (single acquisition)\n");
 	}
 	else if (s=="MD")
 	{
 		laser_mode = MD_MODE;
-		fprintf(stderr, "Using MD mode (continuous acquisition).\n");
+		printf("Using MD mode (continuous acquisition).\n");
 	}
 	else
 	{
@@ -99,8 +104,8 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 	pSerial->receive(b_ans);
 	if (b_ans.size()>0)
 	{
-		fprintf(stderr, "URG device successfully initialized.\n");
-		fprintf(stderr,"%s\n",b_ans.get(0).asString().c_str());
+		printf("URG device successfully initialized.\n");
+		printf("%s\n",b_ans.get(0).asString().c_str());
 	}
 	else
     {
@@ -126,7 +131,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 	yarp::os::Time::delay(0.040);
 	pSerial->receive(b_ans);
 	ans = b_ans.get(0).asString();
-	fprintf(stderr,"%s\n",ans.c_str());
+	printf("%s\n",ans.c_str());
 	b.clear();
 	b_ans.clear();
 
@@ -136,7 +141,7 @@ bool laserHokuyo::open(yarp::os::Searchable& config)
 	yarp::os::Time::delay(0.040);
 	pSerial->receive(b_ans);
 	ans = b_ans.get(0).asString();
-	fprintf(stderr,"%s\n",ans.c_str());
+	printf("%s\n",ans.c_str());
 	b.clear();
 	b_ans.clear();
 
@@ -344,6 +349,10 @@ int laserHokuyo::readData(const laser_mode_type laser_mode, const char* text_dat
 			for (int value_counter =0; value_counter < len; value_counter+=3)
 			{
 				int value = decodeDataValue(data_block+value_counter, 3);
+				if (value<sensor_properties.DMIN && error_codes==1)
+				{
+					value=sensor_properties.DMAX;
+				}
 				data.push_back(value);
 			}
 			return STATUS_ACQUISITION_COMPLETE; 

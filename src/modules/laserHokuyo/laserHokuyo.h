@@ -40,6 +40,7 @@ protected:
     int sensorsNum;
 	int start_position;
 	int end_position;
+	int error_codes;
     int internal_status;
 	enum laser_mode_type {GD_MODE=1, MD_MODE=0};
 	enum error_code
