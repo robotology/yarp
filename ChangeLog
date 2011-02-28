@@ -1,3 +1,8 @@
+2011-02-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: commit patch for Cartesian interface
+	support [thanks Juan G Victores]
+
 2011-02-23  Marco Randazzo <marco.randazzo@iit.it>
 
     * src/modules/laserHokuyo.cpp

@@ -1,5 +1,5 @@
 // Copyright: (C) 2010 RobotCub Consortium
-// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape
+// Author: Paul Fitzpatrick, Stephane Lallee, Arnaud Degroote, Leo Pape, Juan G Victores
 // CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 //////////////////////////////////////////////////////////////////////////
@@ -105,6 +105,7 @@
 #ifdef SWIGJAVA
 	%rename(wait_c) *::wait();
 	%rename(clone_c) *::clone() const;
+    %rename(toString_c) *::toString();
 #endif
 
 #ifdef SWIGCHICKEN
@@ -289,6 +290,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/sig/Image.h>
 %include <yarp/sig/ImageFile.h>
 %include <yarp/sig/Sound.h>
+%include <yarp/sig/Vector.h>
 %include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
@@ -296,6 +298,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
+%include <yarp/dev/CartesianControl.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
@@ -491,6 +494,12 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
 
 	yarp::dev::IControlLimits *viewIControlLimits() {
 		yarp::dev::IControlLimits *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::ICartesianControl *viewICartesianControl() {
+		yarp::dev::ICartesianControl *result;
 		self->view(result);
 		return result;
 	}
@@ -715,6 +724,23 @@ typedef yarp::os::BufferedPort<ImageFloat> BufferedPortImageFloat;
     void setExternal(long long mem, int w, int h) {
         self->setExternal((void*)mem, w, h);
         }
+}
+
+%extend yarp::sig::Vector {
+	double get(int j) {
+		return self->operator [](j);
+	}
+}
+
+%extend yarp::dev::ICartesianControl {
+	bool checkMotionDone(std::vector<bool>& flag) {
+	  std::vector<char> data(flag.size());
+	  bool result = self->checkMotionDone((bool*)(&data[0]));
+	  for (size_t i=0; i<data.size(); i++) {
+	    flag[i] = data[i]!=0;
+	  }
+	  return result;
+	}
 }
 
 #ifdef SWIGPYTHON
