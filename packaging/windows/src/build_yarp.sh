@@ -66,5 +66,5 @@ if [ "k$generator" = "k" ] ; then
 fi
 
 echo "Using ACE from $ACE_ROOT"
-"$CMAKE_EXEC" -G "$generator" ../$fname || exit 1
+"$CMAKE_EXEC" -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
 msbuild.exe YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
