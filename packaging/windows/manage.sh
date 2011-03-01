@@ -62,9 +62,10 @@ for c in $compilers; do
 	variants=compiler_${c}_variants
 	for v in ${!variants}; do
 		for b in Release Debug; do
-			echo "Build ACE for $c $v $b"
+			echo "Build ACE, YARP, ICUB for $c $v $b"
 			$SOURCE_DIR/src/build_ace.sh $c $v $b || exit 1
 			$SOURCE_DIR/src/build_yarp.sh $c $v $b || exit 1
+			$SOURCE_DIR/src/build_icub.sh $c $v $b || exit 1
 		done
 	done
 done

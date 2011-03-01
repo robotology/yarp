@@ -24,10 +24,15 @@ source ace_${compiler}_${variant}_${build}.sh || {
 	exit 1
 }
 
+source yarp_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding YARP build"
+	exit 1
+}
+
 if [ "k$compiler" = "kv10" ] ; then
 	platform=v100
 else 
-	echo "Please set platform for compiler $compiler in build_yarp.sh"
+	echo "Please set platform for compiler $compiler in build_icub.sh"
 	exit 1
 fi
 
@@ -37,19 +42,21 @@ BUILD_DIR=$PWD
 PLATFORM_COMMAND="/p:PlatformToolset=$platform"
 CONFIGURATION_COMMAND="/p:Configuration=$build"
 
-fname=yarp-$YARP_VERSION
+if [ "k$ICUB_VERSION" = "k" ]; then
+	ICUB_VERSION=trunk
+fi
+
+fname=icub-$ICUB_VERSION
 
 if [ ! -e $fname ]; then
-	if [ "k$YARP_VERSION" = "ktrunk" ]; then
-		svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 $fname || {
-			echo "Cannot fetch YARP"
+	if [ "k$ICUB_VERSION" = "ktrunk" ]; then
+		svn co https://robotcub.svn.sourceforge.net/svnroot/robotcub/trunk/iCub/main $fname || {
+			echo "Cannot fetch ICUB"
 			exit 1
 		}
 	else
-		svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
-			echo "Cannot fetch YARP"
-			exit 1
-		}
+		echo "ICUB versioned check-out not set up yet"
+		exit 1
 	fi
 fi
 
@@ -68,17 +75,11 @@ if [ "k$compiler" = "kv10" ] ; then
 	fi
 fi
 if [ "k$generator" = "k" ] ; then 
-	echo "Please set generator for compiler $compiler variant $variant in build_yarp.sh"
+	echo "Please set generator for compiler $compiler variant $variant in build_icub.sh"
 	exit 1
 fi
 
 echo "Using ACE from $ACE_ROOT"
-"$CMAKE_EXEC" -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
-msbuild.exe YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
-
-(
-	YARP_DIR=`cygpath --mixed "$PWD"`
-	YARP_ROOT=`cygpath --mixed "$PWD/../$fname"`
-	echo "export YARP_DIR='$YARP_DIR'"
-	echo "export YARP_ROOT='$YARP_ROOT'"
-) > $BUILD_DIR/yarp_${compiler}_${variant}_${build}.sh
+echo "Using YARP from $YARP_DIR"
+"$CMAKE_EXEC" -G "$generator" ../$fname || exit 1
+msbuild.exe ICUB.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
