@@ -29,7 +29,7 @@ namespace yarp {
  * name server these days - it is now a regular port, that can read
  * and respond to messages in the bottle format.
  */
-class yarp::os::impl::NameClient {
+class YARP_OS_impl_API yarp::os::impl::NameClient {
 public:
   
     /**

@@ -26,7 +26,7 @@ namespace yarp {
  * Multi-cast server, for last resort information sharing about
  * name information -- when config files are missing or wrong
  */
-class yarp::os::impl::FallbackNameServer : public ThreadImpl {
+class YARP_OS_impl_API yarp::os::impl::FallbackNameServer : public ThreadImpl {
 public:
     FallbackNameServer(NameServerStub& owner) : owner(owner) {
         closed = false;

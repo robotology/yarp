@@ -42,7 +42,7 @@ namespace yarp {
 /**
  * Stub for a YARP2-conforming name server.
  */
-class yarp::os::impl::NameServerStub {
+class YARP_OS_impl_API yarp::os::impl::NameServerStub {
 public:
     virtual ~NameServerStub() {}
     virtual String apply(const String& txt, const Address& remote) = 0;
@@ -51,7 +51,7 @@ public:
 /**
  * Implementation of a YARP2-conforming name server.
  */
-class yarp::os::impl::NameServer : public NameServerStub {
+class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub {
 public:
 
     NameServer() : nameMap(17), hostMap(17), mutex(1) {

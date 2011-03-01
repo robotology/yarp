@@ -35,7 +35,7 @@ namespace yarp {
  * Connection Communication choreographer.  Handles a single YARP connection,
  * and insulates ports from the details of the particular Carrier in use.
  */
-class yarp::os::impl::Protocol : public OutputProtocol, public InputProtocol {
+class YARP_OS_impl_API yarp::os::impl::Protocol : public OutputProtocol, public InputProtocol {
 public:
 
     // everything could throw IOException

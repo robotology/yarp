@@ -35,7 +35,7 @@ namespace yarp {
 /**
  * Implementation of a standard set of YARP utilities.
  */
-class yarp::os::impl::Companion {
+class YARP_OS_impl_API yarp::os::impl::Companion {
 public:
 
     static String version();

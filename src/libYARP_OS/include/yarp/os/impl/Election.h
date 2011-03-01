@@ -30,7 +30,7 @@ namespace yarp {
  * where a manager is required for some resource used by several
  * peers, but it doesn't matter which peer plays that role.
  */
-class yarp::os::impl::Election {
+class YARP_OS_impl_API yarp::os::impl::Election {
 private:
     typedef void *voidPtr;
 

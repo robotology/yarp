@@ -29,7 +29,7 @@ namespace yarp {
 /**
  * Specification of minimal operations a port must support.
  */
-class yarp::os::impl::PortManager {
+class YARP_OS_impl_API yarp::os::impl::PortManager {
 public:
     PortManager() {
         os = NULL;

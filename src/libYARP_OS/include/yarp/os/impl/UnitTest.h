@@ -25,7 +25,7 @@ namespace yarp {
  * Simple unit testing framework.  There are libraries out there for
  * this, but we don't want to add another dependency to YARP.
  */
-class yarp::os::impl::UnitTest {
+class YARP_OS_impl_API yarp::os::impl::UnitTest {
 public:
     UnitTest();
 

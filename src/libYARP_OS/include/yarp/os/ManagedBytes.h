@@ -102,6 +102,8 @@ public:
         use = -1;
     }
 
+	bool allocateOnNeed(int neededLen, int allocateLen);
+	
     /**
      * Makes sure data block is owned, making a copy if necessary.
      */

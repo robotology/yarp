@@ -59,7 +59,7 @@ namespace yarp {
  * result in data being sent to all the outgoing connections.
  * This class is used to construct yarp::os::Port and yarp::os::BufferedPort.
  */
-class yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
+class YARP_OS_impl_API yarp::os::impl::PortCore : public ThreadImpl, public PortManager, public yarp::os::PortReader {
 public:
 
     /**

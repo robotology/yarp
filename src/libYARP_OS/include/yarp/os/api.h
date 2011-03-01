@@ -26,4 +26,8 @@
 #  endif
 #endif
 
+#ifndef YARP_OS_impl_API
+#define YARP_OS_impl_API YARP_OS_API
+#endif
+
 #endif

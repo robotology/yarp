@@ -27,7 +27,7 @@ namespace yarp {
  * an optimized stream type with user-preferred properties and
  * trade-offs.
  */
-class yarp::os::impl::ShiftStream : public TwoWayStream {
+class YARP_OS_impl_API yarp::os::impl::ShiftStream : public TwoWayStream {
 public:
     /**
      * Constructor.

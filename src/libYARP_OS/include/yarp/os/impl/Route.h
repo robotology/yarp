@@ -24,7 +24,7 @@ namespace yarp {
  * Contains the names of the endpoints, and the name of 
  * the carrier in use between them.
  */
-class yarp::os::impl::Route {
+class YARP_OS_impl_API yarp::os::impl::Route {
 public:
     /**
      *

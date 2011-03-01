@@ -23,7 +23,7 @@ namespace yarp {
  * Simple specification of the minimum functions needed from input streams.
  * The streams could be TCP, UDP, MCAST, ...
  */
-class yarp::os::impl::InputStream {
+class YARP_OS_impl_API yarp::os::impl::InputStream {
 public:
     /**
      *

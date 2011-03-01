@@ -14,36 +14,13 @@
 
 namespace yarp {
     namespace os {
+		class PortablePairBase;
         template <class HEAD, class BODY> class PortablePair;
     }
 }
 
-/**
- * Group a pair of objects to be sent and received together.
- * Handy for adding general-purpose headers, for example.
- */
-template <class HEAD, class BODY>
-class YARP_OS_API yarp::os::PortablePair : public Portable {
+class YARP_OS_API yarp::os::PortablePairBase : public Portable {
 public:
-    /**
-     * An object of the first type (HEAD).
-     */
-    HEAD head;
-
-    /**
-     * An object of the second type (BODY).
-     */
-    BODY body;
-
-    /**
-     * Reads this object pair from a network connection.
-     * @param connection an interface to the network connection for reading
-     * @return true iff the object pair was successfully read
-     */
-    virtual bool read(ConnectionReader& connection) {
-        return readPair(connection,head,body);
-    }  
-
     /**
      * Reads an object pair from a network connection.
      * @param connection an interface to the network connection for reading
@@ -71,15 +48,6 @@ public:
     }
 
     /**
-     * Writes this object pair to a network connection.  
-     * @param connection an interface to the network connection for writing
-     * @return true iff the object pair was successfully written
-     */
-    virtual bool write(ConnectionWriter& connection) {
-        return writePair(connection,head,body);
-    }
-
-    /**
      * Writes an object pair to a network connection.  
      * @param connection an interface to the network connection for writing
      * @param head the first object
@@ -103,6 +71,42 @@ public:
         }
 
         return ok;
+    }
+};
+
+/**
+ * Group a pair of objects to be sent and received together.
+ * Handy for adding general-purpose headers, for example.
+ */
+template <class HEAD, class BODY>
+class yarp::os::PortablePair : public PortablePairBase {
+public:
+    /**
+     * An object of the first type (HEAD).
+     */
+    HEAD head;
+
+    /**
+     * An object of the second type (BODY).
+     */
+    BODY body;
+
+    /**
+     * Reads this object pair from a network connection.
+     * @param connection an interface to the network connection for reading
+     * @return true iff the object pair was successfully read
+     */
+    virtual bool read(ConnectionReader& connection) {
+        return readPair(connection,head,body);
+    }  
+
+    /**
+     * Writes this object pair to a network connection.  
+     * @param connection an interface to the network connection for writing
+     * @return true iff the object pair was successfully written
+     */
+    virtual bool write(ConnectionWriter& connection) {
+        return writePair(connection,head,body);
     }
 
     /**

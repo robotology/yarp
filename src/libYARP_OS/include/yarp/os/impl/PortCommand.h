@@ -26,7 +26,7 @@ namespace yarp {
 /**
  * Simple Readable and Writable object representing a command to a YARP port.
  */
-class yarp::os::impl::PortCommand : public yarp::os::Portable {
+class YARP_OS_impl_API yarp::os::impl::PortCommand : public yarp::os::Portable {
 public:
 
     PortCommand() : header(8) {

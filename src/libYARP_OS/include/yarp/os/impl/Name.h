@@ -23,7 +23,7 @@ namespace yarp {
 /**
  * Simple abstraction for a YARP port name.
  */
-class yarp::os::impl::Name {
+class YARP_OS_impl_API yarp::os::impl::Name {
 public:
 
     /** 

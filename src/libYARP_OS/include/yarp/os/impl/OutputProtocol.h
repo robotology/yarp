@@ -25,7 +25,7 @@ namespace yarp {
 /**
  * The output side of an active connection between two ports.
  */
-class yarp::os::impl::OutputProtocol {
+class YARP_OS_impl_API yarp::os::impl::OutputProtocol {
 public:
     // all can throw IOException
 

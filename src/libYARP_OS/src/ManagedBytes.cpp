@@ -23,3 +23,19 @@ void ManagedBytes::copy() {
         owned = true;
     }
 }
+
+bool ManagedBytes::allocateOnNeed(int neededLen, int allocateLen) {
+	if (length()<neededLen && allocateLen>=neededLen) {
+		char *buf = new char[allocateLen];
+		yarp::os::NetworkBase::assertion(buf!=NULL);
+		ACE_OS::memcpy(buf,get(),length());
+		if (owned) {
+			delete[] get();
+			owned = false;
+		}
+		b = Bytes(buf,allocateLen);
+        owned = true;
+		return true;
+	}
+	return false;
+}

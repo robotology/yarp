@@ -22,7 +22,7 @@ namespace yarp {
 #undef main
 #endif
 
-class YarpRunInfoVector;
+class YARP_OS_API YarpRunInfoVector;
 
 /*
  * Typical Yarp applications consist of several intercommunicating modules distributed on different machines.

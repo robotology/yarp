@@ -30,7 +30,7 @@ namespace yarp {
  * This may need to be extended for other systems, e.g. QNX.
  *
  */
-class yarp::os::impl::Address {
+class YARP_OS_impl_API yarp::os::impl::Address {
 private:
     String name, carrier, regName;
     int port;
