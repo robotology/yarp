@@ -34,7 +34,7 @@ namespace yarp{
  *
  * Common interface to a FrameGrabber.
  */
-class yarp::dev::IFrameGrabber
+class YARP_dev_API yarp::dev::IFrameGrabber
 {
 public:
     virtual ~IFrameGrabber(){}
@@ -75,7 +75,7 @@ public:
  *
  * RGB Interface to a FrameGrabber device.
  */
-class yarp::dev::IFrameGrabberRgb
+class YARP_dev_API yarp::dev::IFrameGrabberRgb
 {
 public:
     virtual ~IFrameGrabberRgb(){}
@@ -106,7 +106,7 @@ public:
  *
  * Read a YARP-format image from a device.
  */
-class yarp::dev::IFrameGrabberImage
+class YARP_dev_API yarp::dev::IFrameGrabberImage
 {
 public:
     /**
@@ -140,7 +140,7 @@ public:
  *
  * Read a YARP-format image to a device.
  */
-class yarp::dev::IFrameWriterImage
+class YARP_dev_API yarp::dev::IFrameWriterImage
 {
 public:
     /**
@@ -162,7 +162,7 @@ public:
  *
  * Control interface for frame grabber devices.
  */
-class yarp::dev::IFrameGrabberControls
+class YARP_dev_API yarp::dev::IFrameGrabberControls
 {
 public:
     /**
@@ -300,7 +300,7 @@ public:
     //virtual double getCaptureQuality() const=0;
 };
 
-class yarp::dev::IFrameGrabberControlsDC1394 : public yarp::dev::IFrameGrabberControls
+class YARP_dev_API yarp::dev::IFrameGrabberControlsDC1394 : public yarp::dev::IFrameGrabberControls
 {
 public:	
 	// 00 01 02
