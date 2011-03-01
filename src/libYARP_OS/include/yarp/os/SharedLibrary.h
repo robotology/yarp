@@ -9,6 +9,8 @@
 #ifndef _YARP2_SHAREDLIBRARY_
 #define _YARP2_SHAREDLIBRARY_
 
+#include <yarp/os/api.h>
+
 namespace yarp {
     namespace os {
         class SharedLibrary;
@@ -21,7 +23,7 @@ namespace yarp {
  * currently based on ACE_DLL.
  *
  */
-class yarp::os::SharedLibrary {
+class YARP_OS_API yarp::os::SharedLibrary {
 public:
     /**
      *

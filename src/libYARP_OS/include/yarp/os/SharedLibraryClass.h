@@ -78,7 +78,7 @@ extern "C" {
 #define YARP_DEFINE_SHARED_CLASS(factoryname,classname) YARP_DEFINE_SHARED_SUBCLASS(factoryname,classname,classname)
 
 
-class yarp::os::SharedLibraryFactory {
+class YARP_OS_API yarp::os::SharedLibraryFactory {
 private:
 	SharedLibrary lib;
 	int status;

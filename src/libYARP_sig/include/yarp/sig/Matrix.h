@@ -27,7 +27,7 @@ namespace yarp {
 
 namespace yarp {
     namespace sig {
-        bool submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
+        bool YARP_sig_API submatrix(const Matrix &in, Matrix &out, int r1, int r2, int c1, int c2);
     }
 }
 
@@ -39,7 +39,7 @@ namespace yarp {
 * The function returns a pointer so [][] access the r,c element
 * in the matrix.
 */
-class yarp::sig::Matrix: public yarp::os::Portable
+class YARP_sig_API yarp::sig::Matrix: public yarp::os::Portable
 {
 private:
     VectorOf<double> storage;
