@@ -25,7 +25,7 @@ namespace yarp {
  * A client for the FallbackNameServer class.  Provides a last-resort
  * means of searching for the name server.
  */
-class yarp::os::impl::FallbackNameClient : public ThreadImpl {
+class YARP_OS_impl_API yarp::os::impl::FallbackNameClient : public ThreadImpl {
 public:
     FallbackNameClient() {
         closed = false;

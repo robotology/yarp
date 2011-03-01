@@ -30,7 +30,7 @@ namespace yarp {
  * SizedWriter class is referenced by the library instead of
  * BufferedConnectionWriter specifically to leave that possibility open.
  */
-class yarp::os::impl::SizedWriter {
+class YARP_OS_impl_API yarp::os::impl::SizedWriter {
 public:
     virtual ~SizedWriter() {}
 

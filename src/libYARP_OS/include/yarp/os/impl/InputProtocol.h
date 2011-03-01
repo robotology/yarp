@@ -28,7 +28,7 @@ namespace yarp {
 /**
  * The input side of an active connection between two ports.
  */
-class yarp::os::impl::InputProtocol {
+class YARP_OS_impl_API yarp::os::impl::InputProtocol {
 public:
     virtual ~InputProtocol() {}
 

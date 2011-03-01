@@ -28,7 +28,7 @@ namespace yarp {
 /**
  * An abstraction for a thread of execution.
  */
-class yarp::os::impl::ThreadImpl : public Runnable {
+class YARP_OS_impl_API yarp::os::impl::ThreadImpl : public Runnable {
 public:
     ThreadImpl();
     ThreadImpl(Runnable *target);

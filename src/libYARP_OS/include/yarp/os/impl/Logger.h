@@ -32,7 +32,7 @@ namespace yarp {
  * and ACE.
  *
  */
-class yarp::os::impl::Logger : public ACE_Log_Msg_Callback {
+class YARP_OS_impl_API yarp::os::impl::Logger : public ACE_Log_Msg_Callback {
 public:
     enum Level {
         DEBUG = LM_DEBUG,

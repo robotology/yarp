@@ -35,7 +35,7 @@ namespace yarp {
  * Lets Readable objects read from the underlying InputStream
  * associated with the connection between two ports.
  */
-class yarp::os::impl::StreamConnectionReader : public ConnectionReader {
+class YARP_OS_impl_API yarp::os::impl::StreamConnectionReader : public ConnectionReader {
 public:
     StreamConnectionReader() {
         in = NULL;

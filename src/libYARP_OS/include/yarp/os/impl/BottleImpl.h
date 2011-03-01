@@ -387,7 +387,7 @@ public:
  * Handy to use until you work out how to make your own more 
  * efficient formats for transmission.
  */
-class yarp::os::impl::BottleImpl : public yarp::os::Portable {
+class YARP_OS_impl_API yarp::os::impl::BottleImpl : public yarp::os::Portable {
 public:
 
     BottleImpl();

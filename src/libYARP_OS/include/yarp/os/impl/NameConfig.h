@@ -28,7 +28,7 @@ namespace yarp {
  * Small helper class to help deal with legacy YARP configuration files. 
  *
  */
-class yarp::os::impl::NameConfig {
+class YARP_OS_impl_API yarp::os::impl::NameConfig {
 public:
 
     String getConfigFileName(const char *stem = NULL);

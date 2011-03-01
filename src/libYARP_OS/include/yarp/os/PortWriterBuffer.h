@@ -102,7 +102,7 @@ private:
  * attach().  "T" should be a PortWriter class, such as Bottle.
  */
 template <class T>
-class YARP_OS_API yarp::os::PortWriterBuffer : public PortWriterBufferBase {
+class yarp::os::PortWriterBuffer : public PortWriterBufferBase {
 public:
 
     //typedef T Type;

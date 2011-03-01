@@ -46,7 +46,7 @@ namespace yarp {
  * 
  *
  */
-class yarp::os::impl::Carrier {
+class YARP_OS_impl_API yarp::os::impl::Carrier {
 public:
 
 

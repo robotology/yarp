@@ -28,7 +28,7 @@ namespace yarp {
  * languages, operating systems, or processor architectures.
  */
 template <class T>
-class YARP_OS_API yarp::os::BinPortable : public Portable {
+class yarp::os::BinPortable : public Portable {
 private:
     T t;
 

@@ -32,7 +32,7 @@ namespace yarp {
  * (see BufferedPort::read and BufferedPort::write).
  */
 template <class T>
-class YARP_OS_API yarp::os::BufferedPort : public Contactable, 
+class yarp::os::BufferedPort : public Contactable, 
                         public TypedReader<T>, public TypedReaderCallback<T>
 {
 public:

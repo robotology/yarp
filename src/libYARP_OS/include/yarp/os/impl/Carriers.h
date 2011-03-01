@@ -31,7 +31,7 @@ namespace yarp {
  * This is the starting point for creating connections
  * between ports.
  */
-class yarp::os::impl::Carriers {
+class YARP_OS_impl_API yarp::os::impl::Carriers {
 public:
 
     /**

@@ -31,7 +31,7 @@ namespace yarp {
 /**
  * Various utilities related to types and formats.
  */
-class yarp::os::impl::NetType {
+class YARP_OS_impl_API yarp::os::impl::NetType {
 public:
 
     static int netInt(const yarp::os::Bytes& code) {

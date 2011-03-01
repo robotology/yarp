@@ -9,6 +9,8 @@
 #ifndef _YARP2_STRING_
 #define _YARP2_STRING_
 
+#include <yarp/os/api.h>
+
 #if YARP_USE_STL_STRING
 
 #include <string>

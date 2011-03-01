@@ -47,7 +47,7 @@ YARP_OS_API void typedReaderMissingCallback();
  *
  */
 template <class T> 
-class YARP_OS_API yarp::os::TypedReaderCallback {
+class yarp::os::TypedReaderCallback {
 public:
     /**
      * Destructor.
@@ -79,7 +79,7 @@ public:
  * BufferedPort or a PortReaderBuffer.
  */
 template <class T> 
-class YARP_OS_API yarp::os::TypedReader {
+class yarp::os::TypedReader {
 public:
     /**
      * Call this to strictly keep all messages, or allow old ones
@@ -290,7 +290,7 @@ protected:
 
 
 template <class T>
-class YARP_OS_API yarp::os::TypedReaderThread : public Thread {
+class yarp::os::TypedReaderThread : public Thread {
 public:
     TypedReader<T> *reader;
     TypedReaderCallback<T> *callback;
@@ -335,7 +335,7 @@ public:
  * class, such as Bottle.
  */
 template <class T>
-class YARP_OS_API yarp::os::PortReaderBuffer : 
+class yarp::os::PortReaderBuffer : 
     public yarp::os::TypedReader<T>,
             public yarp::os::LocalReader<T>,
             public yarp::os::impl::PortReaderBufferBaseCreator {

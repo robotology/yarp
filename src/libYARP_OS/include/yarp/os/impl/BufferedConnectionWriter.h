@@ -39,7 +39,7 @@ namespace yarp {
 /**
  * A helper for creating cached object descriptions.
  */
-class yarp::os::impl::BufferedConnectionWriter : public ConnectionWriter, public SizedWriter {
+class YARP_OS_impl_API yarp::os::impl::BufferedConnectionWriter : public ConnectionWriter, public SizedWriter {
 public:
 
     BufferedConnectionWriter(bool textMode = false) : textMode(textMode) {
