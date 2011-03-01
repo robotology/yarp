@@ -43,15 +43,21 @@ recommended usage of this header within YARP is:
 #  define YARP_HELPER_DLL_IMPORT __declspec(dllimport)
 #  define YARP_HELPER_DLL_EXPORT __declspec(dllexport)
 #  define YARP_HELPER_DLL_LOCAL
+#  define YARP_HELPER_DLL_IMPORT_EXTERN extern
+#  define YARP_HELPER_DLL_EXPORT_EXTERN
 #else
 #  if __GNUC__ >= 4
 #    define YARP_HELPER_DLL_IMPORT __attribute__ ((visibility("default")))
 #    define YARP_HELPER_DLL_EXPORT __attribute__ ((visibility("default")))
 #    define YARP_HELPER_DLL_LOCAL  __attribute__ ((visibility("hidden")))
+#    define YARP_HELPER_DLL_IMPORT_EXTERN
+#    define YARP_HELPER_DLL_EXPORT_EXTERN
 #  else
 #     define YARP_HELPER_DLL_IMPORT
 #     define YARP_HELPER_DLL_EXPORT
 #     define YARP_HELPER_DLL_LOCAL
+#     define YARP_HELPER_DLL_IMPORT_EXTERN
+#     define YARP_HELPER_DLL_EXPORT_EXTERN
 #  endif
 #endif
 
@@ -59,10 +65,14 @@ recommended usage of this header within YARP is:
 #  define YARP_EXPORT YARP_HELPER_DLL_EXPORT
 #  define YARP_IMPORT YARP_HELPER_DLL_IMPORT
 #  define YARP_LOCAL YARP_HELPER_DLL_LOCAL
+#  define YARP_EXPORT_EXTERN YARP_HELPER_DLL_EXPORT_EXTERN
+#  define YARP_IMPORT_EXTERN YARP_HELPER_DLL_IMPORT_EXTERN
 #else
 #  define YARP_EXPORT
 #  define YARP_IMPORT
 #  define YARP_LOCAL
+#  define YARP_EXPORT_EXTERN
+#  define YARP_IMPORT_EXTERN
 #endif
 
 #endif
