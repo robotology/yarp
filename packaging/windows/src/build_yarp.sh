@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILD_DIR=$PWD
+
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
@@ -10,12 +12,8 @@ source $BUNDLE_FILENAME || {
 	exit 1
 }
 
-compiler=$1
-variant=$2
-build=$3
-
-source compiler_config_${compiler}_${variant}.sh || {
-	echo "Compiler settings not found"
+source $SOURCE_DIR/src/process_options.sh $* || {
+	echo "Cannot process options"
 	exit 1
 }
 
@@ -24,18 +22,10 @@ source ace_${compiler}_${variant}_${build}.sh || {
 	exit 1
 }
 
-if [ "k$compiler" = "kv10" ] ; then
-	platform=v100
-else 
-	echo "Please set platform for compiler $compiler in build_yarp.sh"
+source gsl_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding GSL build"
 	exit 1
-fi
-
-
-BUILD_DIR=$PWD
-
-PLATFORM_COMMAND="/p:PlatformToolset=$platform"
-CONFIGURATION_COMMAND="/p:Configuration=$build"
+}
 
 fname=yarp-$YARP_VERSION
 
@@ -55,26 +45,13 @@ fi
 
 fname2=$fname-$variant-$build
 
-if [ ! -e $fname2 ]; then
-	mkdir -p $fname2
-fi
-
+mkdir -p $fname2
 cd $fname2 || exit 1
 
-generator=""
-if [ "k$compiler" = "kv10" ] ; then
-	if [ "k$variant" = "kx86" ] ; then
-		generator="Visual Studio 10"
-	fi
-fi
-if [ "k$generator" = "k" ] ; then 
-	echo "Please set generator for compiler $compiler variant $variant in build_yarp.sh"
-	exit 1
-fi
-
 echo "Using ACE from $ACE_ROOT"
-"$CMAKE_EXEC" -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
-msbuild.exe YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
+echo "Using GSL from $GSL_DIR"
+"$CMAKE_EXEC" -DCREATE_LIB_MATH=TRUE -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
+$BUILDER YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
 
 (
 	YARP_DIR=`cygpath --mixed "$PWD"`

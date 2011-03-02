@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILD_DIR=$PWD
+
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
@@ -10,34 +12,16 @@ source $BUNDLE_FILENAME || {
 	exit 1
 }
 
-compiler=$1
-variant=$2
-build=$3
-
-source compiler_config_${compiler}_${variant}.sh || {
-	echo "Compiler settings not found"
+source $SOURCE_DIR/src/process_options.sh $* || {
+	echo "Cannot process options"
 	exit 1
 }
-
-if [ "k$compiler" = "kv10" ] ; then
-	platform=v100
-else 
-	echo "Please set platform for compiler $compiler in build_gsl.sh"
-	exit 1
-fi
-
-
-BUILD_DIR=$PWD
-
-PLATFORM_COMMAND="/p:PlatformToolset=$platform"
-CONFIGURATION_COMMAND="/p:Configuration=$build"
 
 if [ "k$GSL_VERSION" = "k" ]; then
 	GSL_VERSION=1.14
 fi
 
 fname=gsl-$GSL_VERSION
-
 if [ ! -e $fname ]; then
 	if [ ! -e $fname.tar.gz ]; then
 		wget ftp://gnu.mirrors.pair.com/gnu/gnu/gsl/$fname.tar.gz || {
@@ -56,7 +40,7 @@ cd $fname/cmake || exit 1
 if [ ! -e Headers.cmake ] ; then
   # generate list of parts as Parts.cmake
   find .. -mindepth 2 -iname "Makefile.am" -exec grep -H "_la_SOURCES" {} \; | sed "s|.*/\([-a-z]*\)/Makefile.am|\1 |" | sed "s|:.*=||" | sed "s|^|ADD_PART(|" | sed "s|$|)|" | tee Parts.cmake
-  # generate list of headers ad Headers.cmake
+  # generate list of headers as Headers.cmake
   (
 	echo "set(GSL_HEADERS"
 	echo -n "  "
@@ -70,23 +54,18 @@ cd $BUILD_DIR
 
 fname2=$fname-$variant-$build
 
-if [ ! -e $fname2 ]; then
-	mkdir -p $fname2
-fi
-
+mkdir -p $fname2
 cd $fname2 || exit 1
 
-generator=""
-if [ "k$compiler" = "kv10" ] ; then
-	if [ "k$variant" = "kx86" ] ; then
-		generator="Visual Studio 10"
-	fi
-fi
-if [ "k$generator" = "k" ] ; then 
-	echo "Please set generator for compiler $compiler variant $variant in build_gsl.sh"
-	exit 1
-fi
-
 "$CMAKE_EXEC" -DGSL_VERSION=$GSL_VERSION -G "$generator" ../$fname/cmake || exit 1
-msbuild.exe Project.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
+$BUILDER gsl.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
 
+(
+	GSL_DIR=`cygpath --mixed "$PWD"`
+	GSL_ROOT=`cygpath --mixed "$PWD/../$fname"`
+	echo "export GSL_DIR='$GSL_DIR'"
+	echo "export GSL_ROOT='$GSL_ROOT'"
+	echo "export GSL_LIBRARY='$GSL_DIR/$build/gsl.lib'"
+	echo "export GSLCBLAS_LIBRARY='$GSL_DIR/$build/gslcblas.lib'"
+	echo "export GSL_INCLUDE_DIR='$GSL_DIR/include/'"
+) > $BUILD_DIR/gsl_${compiler}_${variant}_${build}.sh

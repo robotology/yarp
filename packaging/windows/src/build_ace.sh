@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BUILD_DIR=$PWD
+
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
@@ -10,29 +12,19 @@ source $BUNDLE_FILENAME || {
 	exit 1
 }
 
-compiler=$1
-variant=$2
-build=$3
-
-source compiler_config_${compiler}_${variant}.sh || {
-	echo "Compiler settings not found"
+source $SOURCE_DIR/src/process_options.sh $* || {
+	echo "Cannot process options"
 	exit 1
 }
 
-BUILD_DIR=$PWD
-
-fname=ACE-$ACE_VERSION
-
 if [ "k$compiler" = "kv10" ] ; then
 	pname=ACE_vc10.vcxproj
-	platform=v100
 else 
 	echo "Please set project name for compiler $compiler in build_ace.sh"
 	exit 1
 fi
 
-PLATFORM_COMMAND="/p:PlatformToolset=$platform"
-CONFIGURATION_COMMAND="/p:Configuration=$build"
+fname=ACE-$ACE_VERSION
 
 if [ ! -e $fname.tar.gz ]; then
 	wget http://download.dre.vanderbilt.edu/previous_versions/$fname.tar.gz || (
@@ -67,8 +59,7 @@ if [ ! -e $pname ]; then
 	exit 1
 fi
 
-echo msbuild.exe $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND
-msbuild.exe $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
+$BUILDER $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
 
 (
 	ACE_DIR=`cygpath --mixed "$ACE_ROOT"`

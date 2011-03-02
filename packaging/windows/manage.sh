@@ -65,7 +65,7 @@ for c in $compilers; do
 			echo "Build ACE, YARP, ICUB for $c $v $b"
 			$SOURCE_DIR/src/build_ace.sh $c $v $b || exit 1
 			$SOURCE_DIR/src/build_yarp.sh $c $v $b || exit 1
-			$SOURCE_DIR/src/build_icub.sh $c $v $b || exit 1
+			#$SOURCE_DIR/src/build_icub.sh $c $v $b || exit 1
 		done
 	done
 done
