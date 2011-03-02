@@ -41,11 +41,11 @@ public:
     * @param f true for tracking mode, false otherwise. 
     * @return true/false on success/failure. 
     *  
-    * @note In tracking mode when the controller reachs the target, 
-    *       it keeps on running in order to mantain the gaze on
-    *       target. In non-tracking mode the controller releases the
-    *       control of the head as soon as the desired target is
-    *       reached.
+    * @note In tracking mode when the controller reaches the target,
+    *       it keeps on running in order to maintain the gaze on
+    *       target in the presence of external disturbances. In
+    *       non-tracking mode the controller releases the control of
+    *       the head as soon as the desired target is reached.
     */
     virtual bool setTrackingMode(const bool f)=0;
 

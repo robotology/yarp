@@ -40,11 +40,11 @@ public:
     * @param f true for tracking mode, false otherwise. 
     * @return true/false on success/failure. 
     *  
-    * @note In tracking mode when the controller reachs the target, 
-    *       it keeps on running in order to mantain the limb in the
-    *       desired pose. In non-tracking mode the controller
-    *       releases the limb as soon as the desired pose is
-    *       reached.
+    * @note In tracking mode when the controller reaches the target,
+    *       it keeps on running in order to maintain the limb in the
+    *       desired pose in the presence of external disturbances.
+    *       In non-tracking mode the controller releases the limb as
+    *       soon as the desired pose is reached.
     */
     virtual bool setTrackingMode(const bool f)=0;
 
