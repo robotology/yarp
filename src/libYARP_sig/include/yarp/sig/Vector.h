@@ -163,7 +163,7 @@ public:
 
     inline void pop_back (void)
     {
-		if (bytes.used()>sizeof(T)) {
+		if (bytes.used()>(int)sizeof(T)) {
 			bytes.setUsed(bytes.used()-sizeof(T));
 			len--;
 		}
