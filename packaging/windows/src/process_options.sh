@@ -15,9 +15,14 @@ source compiler_config_${compiler}_${variant}.sh || {
 	exit 1
 }
 
+platform=""
 if [ "k$compiler" = "kv10" ] ; then
 	platform=v100
-else 
+fi
+if [ "k$compiler" = "kv9" ] ; then
+	platform=v90
+fi
+if [ "k$platform" = "k" ]; then
 	echo "Please set platform for compiler $compiler in process_options.sh"
 	exit 1
 fi
@@ -29,6 +34,11 @@ generator=""
 if [ "k$compiler" = "kv10" ] ; then
 	if [ "k$variant" = "kx86" ] ; then
 		generator="Visual Studio 10"
+	fi
+fi
+if [ "k$compiler" = "kv9" ] ; then
+	if [ "k$variant" = "kx86" ] ; then
+		generator="Visual Studio 9"
 	fi
 fi
 if [ "k$generator" = "k" ] ; then 

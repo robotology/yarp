@@ -19,7 +19,11 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 
 if [ "k$compiler" = "kv10" ] ; then
 	pname=ACE_vc10.vcxproj
-else 
+fi
+if [ "k$compiler" = "kv9" ] ; then
+	pname=ACE_vc9.vcproj
+fi
+if [ "k$pname" = "k" ] ; then 
 	echo "Please set project name for compiler $compiler in build_ace.sh"
 	exit 1
 fi
