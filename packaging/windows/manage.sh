@@ -28,7 +28,7 @@ source $BUNDLE_FILENAME
 # remember command
 (
 	echo "default:"
-	echo -e "\t$0 $1"
+	echo -e "\t$0 $1\n"
 ) > $BUILD_DIR/Makefile
 
 # load compiler settings
@@ -50,23 +50,44 @@ cd $BUILD_DIR
 
 for c in $compilers; do
 	variants=compiler_${c}_variants
+	loader=compiler_${c}_loader
 	for v in ${!variants}; do
 		echo "Adding compiler $c variant $v"
 		if [ ! -e compiler_config_${c}_${v}.sh ]; then
-			$SOURCE_DIR/src/msbuild.sh "$compiler_v10_loader" $v $c || exit 1
+			$SOURCE_DIR/src/msbuild.sh "${!loader}" $v $c || exit 1
 		fi
 	done
 done
 
-for c in $compilers; do
-	variants=compiler_${c}_variants
-	for v in ${!variants}; do
-		for b in Release Debug; do
-			echo "Build ACE, YARP, ICUB for $c $v $b"
-			$SOURCE_DIR/src/build_ace.sh $c $v $b || exit 1
-			$SOURCE_DIR/src/build_yarp.sh $c $v $b || exit 1
-			#$SOURCE_DIR/src/build_icub.sh $c $v $b || exit 1
+(
+depend_ace=
+depend_gsl=
+depend_yarp="ace gsl"
+depend_icub="yarp ace gsl"
+for t in ace gsl yarp icub; do
+	depend_t=depend_$t
+	deps=${!depend_t}
+	targs=""
+	for c in $compilers; do
+		variants=compiler_${c}_variants
+		for v in ${!variants}; do
+			for b in Release Debug; do
+				name="build_${t}_${c}_${v}_${b}.txt"
+				fast_name="fast_${t}_${c}_${v}_${b}"
+				targs="$targs $name"
+				name_deps=""
+				for d in $deps; do
+					name_deps="$name_deps build_${d}_${c}_${v}_${b}.txt"
+				done
+				echo "$name:$name_deps"
+				echo -e "\t$SOURCE_DIR/src/build_${t}.sh $c $v $b && touch $name\n"
+				echo "$fast_name:"
+				echo -e "\t$SOURCE_DIR/src/build_${t}.sh $c $v $b\n"
+			done
 		done
 	done
+	echo "$t.txt:$targs"
+	echo -e "\ttouch $t.txt\n"
 done
+) >> $BUILD_DIR/Makefile
 
