@@ -15,6 +15,7 @@
 #include <stddef.h> //defines size_t
 #include <yarp/os/Portable.h>
 #include <yarp/os/ConstString.h>
+#include <yarp/os/ManagedBytes.h>
 
 #include <yarp/sig/api.h>
 
@@ -24,22 +25,12 @@
 namespace yarp {
 
     namespace sig {
-        /**
-         *
-         * Some helpers for internal use by yarp::sig classes.
-         *
-         */
-        namespace impl {
-            class VectorBase;
-            template<class T> class VectorImpl;
-            template<class T> class IteratorOf;
-        }
-
-        //class Vector
+		class VectorBase;
         class Vector;
         template<class T> class VectorOf;
     }
 }
+
 
 /**
 * \ingroup sig_class
@@ -48,13 +39,13 @@ namespace yarp {
 * read/write methods. Warning: the current implementation assumes the same 
 * representation for data type (endianess).
 */
-class YARP_sig_API yarp::sig::impl::VectorBase : public yarp::os::Portable
+class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
-    virtual int getElementSize() const =0;
-    virtual int getListSize() const =0;
-    virtual const char *getMemoryBlock() const =0;
-    virtual void resize(size_t size)=0;
+    virtual int getElementSize() const = 0;
+    virtual int getListSize() const = 0;
+    virtual const char *getMemoryBlock() const = 0;
+    virtual void resize(size_t size) = 0;
 
     /*
     * Read vector from a connection.
@@ -69,182 +60,72 @@ public:
     virtual bool write(yarp::os::ConnectionWriter& connection);
 };
 
+
 /**
 * \ingroup sig_class
 *
-* A simple Vector class derived from ACE and with Portable functionality.
-* Things you can do on Vector:
+* Provides:
 * - push_back(), pop_back() to add/remove an element at the end of the vector
 * - resize(), to create an array of elements
 * - clear(), to clean the array (remove all elements)
 * - use [] to access single elements without range checking
-* - use set()/get() to access single elements with range checking
 * - use size() to get the current size of the Vector
 * - use operator= to copy Vectors
-*/
-template<class T> 
-class YARP_sig_API yarp::sig::impl::VectorImpl
-{
-public:
-    /**
-    * Default constructor.
-    */
-    VectorImpl();
-
-    /**
-    * Destructor.
-    */
-    ~VectorImpl();
-
-    /**
-    * Create a Vector object of a given size and fill the content.
-    * @param size is the number of elements of the vector.
-    */
-    VectorImpl(size_t size);
-
-    VectorImpl(const VectorImpl &l);
-
-    /**
-    * Copies a Vector object into the current one.
-    * @param l is a reference to an object of type Vector.
-    * @return a reference to the current object.
-    */
-    const VectorImpl &operator=(const VectorImpl &l);
-
-    const T& operator=(const T&v);
-
-    /**
-    * Resize a Vector placing def at each index.
-    * @param size is the size of the vector.
-    * @param def is the initial value of the vector.
-    */
-    void resize(size_t size, const T &def);
-
-    /**
-    * Access the el-th element of the vector, no range check.
-    * @param el index of the element to be accessed.
-    * @return a reference to the requested element.
-    */
-    T &operator[](int el);
-
-    /**
-    * Access the el-th element of the vector, const version, 
-    * no range check.
-    * @param el index of the element to be accessed.
-    * @return a reference to the requested element.
-    */
-    const T &operator[](int el) const;
-
-    /**
-    * Return the size of the array (number of elements).
-    * @return the current size of the array.
-    */
-    int size() const;
-
-    /**
-    * Push an element at the back of the array.
-    * @param elem a reference to the object to be added.
-    */
-    void push_back (const T& elem);
-
-    /**
-    * Remove an element at the end of the vector.
-    */
-    void pop_back (void);
-
-    /**
-    * Set the value of the "slot" element, range check.
-    * @param new_item a reference of the new element to set
-    * @param slot the position in which the new element should be set
-    * @return true/false on success/failure.
-    */
-    int set (T const &new_item, size_t slot);
-
-    /**
-    * Get the value of the "slot" element, range check.
-    * @param item return value
-    * @param slot the position of the element to get
-    * @return true/false on success/failure.
-    */
-    int get (T &item, size_t slot) const;
-
-    /**
-    * Clears out the vector, it does not reallocate
-    * the buffer, but just sets the dynamic size to 0.
-    */
-    void clear ();
-
-    /**
-    * Be friendly with your iterator.
-    */
-    friend class yarp::sig::impl::IteratorOf<T>;
-
-private:
-    void *aceVector;
-};
-
-/**
-* \ingroup sig_class
-*
-* Derive from VectorImpl<T> to provide:
-* - inline, efficient access to elements (operator [])
-* - read/write network methods (see VectorBase)
+* - read/write network methods
 * Warning: the class is designed to work with simple types (i.e. types
 * that do not allocate internal memory). Template instantiation needs to 
 * be checked to avoid unresolved externals. Network communication assumes
 * same data representation (endianess) between machines.
 */
 template<class T>
-class yarp::sig::VectorOf : public yarp::sig::impl::VectorImpl<T>, 
-            public yarp::sig::impl::VectorBase
+class yarp::sig::VectorOf : public VectorBase
 {
+private:
+	yarp::os::ManagedBytes bytes;
     T *first;
-    T *last;
+	int len;
 
-    inline void _updatePointers()
-    {
-        int lastIndex=yarp::sig::impl::VectorImpl<T>::size()-1;
-        if (lastIndex<0)
-            lastIndex=0;
-
-        first=&yarp::sig::impl::VectorImpl<T>::operator[](0);
-        last=&yarp::sig::impl::VectorImpl<T>::operator[](lastIndex);
+    inline void _updatePointers() {
+        first = (T *) bytes.get();
+		len = bytes.used()/sizeof(T);
     }
 
 public:
-    VectorOf():yarp::sig::impl::VectorImpl<T>()
-    {}
+    VectorOf() {
+		bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
+		bytes.setUsed(0);
+		first = 0/*NULL*/;
+		len = 0;
+	}
 
-    VectorOf(size_t size):yarp::sig::impl::VectorImpl<T>(size)
-    {
+    VectorOf(size_t size) : bytes(size*sizeof(T)) {
+		bytes.setUsed(size*sizeof(T));
         _updatePointers();
     }
 
-    VectorOf(const VectorOf &r):yarp::sig::impl::VectorImpl<T>(r)
-    {
+    VectorOf(const VectorOf &r) {
+		bytes = r.bytes;
         _updatePointers();
     }
 
-    const VectorOf<T> &operator=(const VectorOf<T> &r)
-    {
-        yarp::sig::impl::VectorImpl<T>::operator =(r);
+    const VectorOf<T> &operator=(const VectorOf<T> &r) {
+		bytes = r.bytes;
         _updatePointers();
         return *this;
     }
 
-    virtual int getElementSize() const
-    {
+    virtual int getElementSize() const {
         return sizeof(T);
     }
 
     virtual int getListSize() const
     {
-        return yarp::sig::impl::VectorImpl<T>::size();
+        return len;
     }
 
     virtual const char *getMemoryBlock() const
     {
-        return (char *) first;
+        return (char *) bytes.get();
     }
 
     inline const T *getFirst() const
@@ -260,26 +141,32 @@ public:
     virtual void resize(size_t size)
     {
         T def;
-        yarp::sig::impl::VectorImpl<T>::resize(size, def);
-        _updatePointers();
+        resize(size, def);
     }
 
     void resize(size_t size, const T&def)
     {
-        yarp::sig::impl::VectorImpl<T>::resize(size, def);
-        _updatePointers();
-    }
+		bytes.allocateOnNeed((int)size*sizeof(T),(int)size*sizeof(T));
+		bytes.setUsed((int)size*sizeof(T));
+		_updatePointers();
+		for (int i=0; i<(int)size; i++) { (*this)[i] = def; }
+	}
 
     inline void push_back (const T &elem)
     {
-        yarp::sig::impl::VectorImpl<T>::push_back(elem);
-        _updatePointers();
+		bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
+		_updatePointers();
+		first[len] = elem;
+		bytes.setUsed(bytes.used()+sizeof(T));
+		len++;
     }
 
     inline void pop_back (void)
     {
-        yarp::sig::impl::VectorImpl<T>::pop_back();
-        _updatePointers();
+		if (bytes.used()>sizeof(T)) {
+			bytes.setUsed(bytes.used()-sizeof(T));
+			len--;
+		}
     }
 
     /**
@@ -321,48 +208,21 @@ public:
     {
         return first[i];
     }
+	
+	inline int size() const {
+		return len;
+	}
+	
+	void clear() {
+		bytes.clear();
+		bytes.setUsed(0);
+		len = 0;
+		first = 0 /*NULL*/;
+	}
 };
 
-/**
-* \ingroup sig_class
-* Implement an iterator over a VectorImpl<T>.
-* @param i the index of the element to access.
-* @return a reference to the requested element.
-*/
-template<class T>
-class yarp::sig::impl::IteratorOf
-{
-private:
-    void *aceVectorIterator;
 
-public:
-    /**
-    * Constructor.
-    */
-    IteratorOf(const VectorImpl<T> &l);
-
-    /**
-    * Destructor.
-    */
-    ~IteratorOf();
-
-    /**
-    * Get a pointer to the next item that has not been read 
-    * in the Array, returns 0 when all items have been seen, else 1.
-    */
-    int next(T *&);
-
-    /**
-    * Move forward by one element in the vector, returns 0 
-    * when all the items in the vector have been seen, else 1.
-    */
-    int advance();
-
-    /**
-    * Returns 1 when all items have been seen, else 0.
-    */
-    int done();
-};
+/*YARP_sig_EXTERN*/ template class YARP_sig_API yarp::sig::VectorOf<double>;
 
 /**
 * \ingroup sig_class

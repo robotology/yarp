@@ -18,7 +18,6 @@
 
 using namespace yarp::sig;
 using namespace yarp::os;
-using namespace yarp::sig::impl;
 
 #define RES(v) ((ACE_Vector<T> *)v)
 #define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
@@ -39,141 +38,6 @@ public:
 } PACKED_FOR_NET;
 
 #include <yarp/os/end_pack_for_net.h>
-
-template<class T> 
-VectorImpl<T>::VectorImpl()
-{
-    aceVector=(void *) new ACE_Vector<T>;
-}
-
-template<class T>
-VectorImpl<T>::VectorImpl(size_t size)
-{
-    ACE_ASSERT (size>0);
-    aceVector=(void *)new ACE_Vector<T>(size);
-    RES(aceVector)->resize(size, T(0));
-}
-
-template<class T>
-VectorImpl<T>::~VectorImpl()
-{
-    delete RES(aceVector);
-}
-
-template<class T>
-VectorImpl<T>::VectorImpl(const VectorImpl &l)
-{
-    aceVector=new ACE_Vector<T>;
-    *RES(aceVector)=*RES(l.aceVector);
-}
-
-template<class T>
-const VectorImpl<T> &VectorImpl<T>::operator=(const VectorImpl &l)
-{
-    *RES(aceVector)=*RES(l.aceVector);
-    return *this;
-}
-
-template<class T>
-const T &VectorImpl<T>::operator=(const T&l)
-{
-    int k=0;
-    int s=size();
-
-    for(k=0;k<s;k++)
-        (*RES(aceVector))[k]=l;
-
-    return l;
-}
-
-template<class T>
-void VectorImpl<T>::resize(size_t size, const T& def)
-{
-    ACE_ASSERT (size>0);
-    RES(aceVector)->resize(size,def);
-}
-
-template<class T>
-int VectorImpl<T>::size() const
-{
-    return RES(aceVector)->size();
-}
-
-template<class T>
-T &VectorImpl<T>::operator[](int el)
-{
-    return (*RES(aceVector))[el];
-}
-
-template<class T>
-const T& VectorImpl<T>::operator[](int el) const
-{
-    return (*RES(aceVector))[el];
-}
-
-template<class T>
-void VectorImpl<T>::pop_back()
-{
-   RES(aceVector)->pop_back();
-}
-
-template<class T>
-void VectorImpl<T>::push_back(const T&e)
-{
-   RES(aceVector)->push_back(e);
-}
-
-template<class T>
-void VectorImpl<T>::clear()
-{
-    RES(aceVector)->clear();
-}
-
-
-template<class T>
-int VectorImpl<T>::set (T const &new_item, size_t slot)
-{
-    return RES(aceVector)->set(new_item, slot);
-}
-
-template<class T>
-int VectorImpl<T>::get (T &item, size_t slot) const
-{
-    return RES(aceVector)->get(item, slot);
-}
-
-//////////////////////////////////
-// iterator
-//
-template<class T>
-IteratorOf<T>::IteratorOf(const VectorImpl<T> &v)
-{
-    aceVectorIterator=new ACE_Vector_Iterator<T>((*RES(v.aceVector)));
-}
-
-template<class T>
-IteratorOf<T>::~IteratorOf()
-{
-    delete RES_ITERATOR(aceVectorIterator);
-}
-
-template<class T>
-int IteratorOf<T>::advance()
-{
-    return RES_ITERATOR(aceVectorIterator)->advance();
-}
-
-template<class T>
-int IteratorOf<T>::next(T *& n)
-{
-    return RES_ITERATOR(aceVectorIterator)->next(n);
-}
-
-template<class T>
-int IteratorOf<T>::done()
-{
-    return RES_ITERATOR(aceVectorIterator)->done();
-}
 
 bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     // auto-convert text mode interaction
@@ -218,18 +82,6 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     return !connection.isError();
 }
 
-namespace yarp {
-    namespace sig {
-        namespace impl {
-            template class VectorImpl<double>;
-            template class VectorImpl<int>;
-            template class VectorImpl<char>;
-            template class VectorImpl<float>;
-            template class IteratorOf<double>;
-        }
-    template class VectorOf<double>;
-    }
-}
 
 /**
 * Quick implementation, space for improvement.
@@ -406,3 +258,4 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
 
     return !connection.isError();
 }
+
