@@ -11,6 +11,7 @@
 #define __YARP_MATH_RANDNSCALAR__
 
 #include <yarp/math/RandScalar.h>
+#include <yarp/math/api.h>
 
 namespace yarp {
     namespace math { 
@@ -22,7 +23,7 @@ namespace yarp {
 * A random number generator, normal distribution.
 * Uses the RandScalar class and the Box-Muller algorithm.
 */
-class yarp::math::RandnScalar
+class YARP_math_API yarp::math::RandnScalar
 {
     void *impl;
     long seed;

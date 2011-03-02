@@ -12,6 +12,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/math/RandnScalar.h>
+#include <yarp/math/api.h>
 
 namespace yarp {
     namespace math { 
@@ -25,7 +26,7 @@ namespace yarp {
 * A class to generate random vectors, normal distribution.
 * Internally uses the RandnScalar class.
 */
-class yarp::math::impl::RandnVector
+class YARP_math_API yarp::math::impl::RandnVector
 {
     yarp::sig::Vector data;
     RandnScalar rnd;

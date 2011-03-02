@@ -11,6 +11,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
+#include <yarp/math/api.h>
 
 namespace yarp
 {
@@ -22,27 +23,27 @@ namespace yarp
         /**
         * Addition operator between vectors, returns a+b.
         */
-        yarp::sig::Vector operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        yarp::sig::Vector YARP_math_API operator+(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
         * Addition operator between matrices, returns a+b.
         */
-        yarp::sig::Matrix operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+        yarp::sig::Matrix YARP_math_API operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
         
         /**
         * Subtraction operator between vectors, returns a-b.
         */
-        yarp::sig::Vector operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        yarp::sig::Vector YARP_math_API operator-(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
         * Addition operator between matrices, returns a+b.
         */
-        yarp::sig::Matrix operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+        yarp::sig::Matrix YARP_math_API operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
         
         /**
         * Scalar product between vectors, returns a.*b.
         */
-        double dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        double YARP_math_API dot(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
         
         /**
         * Scalar-vector product operator. 
@@ -50,7 +51,7 @@ namespace yarp
         * @param b vector
         * @return k*b
         */
-        yarp::sig::Vector operator*(double k, const yarp::sig::Vector &b);
+        yarp::sig::Vector YARP_math_API operator*(double k, const yarp::sig::Vector &b);
 
         /**
         * Vector-scalar product operator. 
@@ -58,7 +59,7 @@ namespace yarp
         * @param k a scalar
         * @return b*k
         */
-        yarp::sig::Vector operator*(const yarp::sig::Vector &b, double k);
+        yarp::sig::Vector YARP_math_API operator*(const yarp::sig::Vector &b, double k);
         
         /**
         * Vector-matrix product operator. 
@@ -66,7 +67,7 @@ namespace yarp
         * @param m is a matrix
         * @return a*m
         */
-         yarp::sig::Vector operator*(const yarp::sig::Vector &a, 
+         yarp::sig::Vector YARP_math_API operator*(const yarp::sig::Vector &a, 
             const yarp::sig::Matrix &m);
         
         /**
@@ -75,7 +76,7 @@ namespace yarp
         * @param m is a matrix
         * @return m*a
         */
-         yarp::sig::Vector operator*(const yarp::sig::Matrix &m, 
+         yarp::sig::Vector YARP_math_API operator*(const yarp::sig::Matrix &m, 
             const yarp::sig::Vector &a);
         
          /**
@@ -84,7 +85,7 @@ namespace yarp
         * @param b a matrix
         * @return a*b
         */
-        yarp::sig::Matrix operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
+        yarp::sig::Matrix YARP_math_API operator*(const yarp::sig::Matrix &a, const yarp::sig::Matrix &b);
 
         /**
        * Scalar-matrix product operator. 
@@ -92,7 +93,7 @@ namespace yarp
        * @param M a matrix
        * @return k*M
        */
-        yarp::sig::Matrix operator*(const double k, const yarp::sig::Matrix &M);
+        yarp::sig::Matrix YARP_math_API operator*(const double k, const yarp::sig::Matrix &M);
                
         /**
        * Matrix-scalar product operator. 
@@ -100,7 +101,7 @@ namespace yarp
        * @param k a scalar
        * @return M*k
        */
-        yarp::sig::Matrix operator*(const yarp::sig::Matrix &M, const double k);
+        yarp::sig::Matrix YARP_math_API operator*(const yarp::sig::Matrix &M, const double k);
         
         /**
        * Vector-vector element-wise product operator. 
@@ -108,7 +109,7 @@ namespace yarp
        * @param b a vector
        * @return a.*b (matlab notation)
        */
-        yarp::sig::Vector operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        yarp::sig::Vector YARP_math_API operator*(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
                 
         /**
        * Vector-vector element-wise division operator. 
@@ -116,14 +117,14 @@ namespace yarp
        * @param b a vector
        * @return a./b (matlab notation)
        */
-        yarp::sig::Vector operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+        yarp::sig::Vector YARP_math_API operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
 
         /**
         * Creates a vector of zeros.
         * @param s the size of the new vector
         * @return a copy of the new vector
         */
-        yarp::sig::Vector zeros(int s);
+        yarp::sig::Vector YARP_math_API zeros(int s);
 
         /**
         * Build an identity matrix.
@@ -131,27 +132,27 @@ namespace yarp
         * @param c number of columns
         * @return the new matrix
         */
-        yarp::sig::Matrix eye(int r, int c);
+        yarp::sig::Matrix YARP_math_API eye(int r, int c);
 
         /**
         * Build a matrix of zeros.
         * @param r number of rows
         * @param c number of columns
         */
-        yarp::sig::Matrix zeros(int r, int c);
+        yarp::sig::Matrix YARP_math_API zeros(int r, int c);
         
         /**
         * Computes the determinant of a matrix.
         * @param in the matrix
         */
-        double det(const yarp::sig::Matrix& in);
+        double YARP_math_API det(const yarp::sig::Matrix& in);
 
         /**
         * Invert a square matrix using LU-decomposition.
         * @param in square matrix
         * @return the inverse of the matrix
         */
-        yarp::sig::Matrix luinv(const yarp::sig::Matrix& in);
+        yarp::sig::Matrix YARP_math_API luinv(const yarp::sig::Matrix& in);
 
         /**
         * Invert a symmetric and positive definite matrix using Cholesky 
@@ -159,7 +160,7 @@ namespace yarp
         * @param in symmetric and positive definite matrix
         * @return the inverse of the matrix
         */
-        //yarp::sig::Matrix chinv(const yarp::sig::Matrix& in);
+        //yarp::sig::Matrix YARP_math_API chinv(const yarp::sig::Matrix& in);
     }
 }
 

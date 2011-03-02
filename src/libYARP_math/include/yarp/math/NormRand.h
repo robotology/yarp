@@ -13,6 +13,7 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/Rand.h>
+#include <yarp/math/api.h>
 
 namespace yarp
 {
@@ -34,7 +35,7 @@ namespace yarp
 * Methods inside this class provides access to a global instance 
 * of a RandNScalar object that generates random numbers.
 */
-class yarp::math::NormRand
+class YARP_math_API yarp::math::NormRand
 {
 public:
     static double scalar(double u=0.0, double sigma=1.0);

@@ -17,6 +17,7 @@
 #include <yarp/math/RandVector.h>
 #include <yarp/math/RandnScalar.h>
 #include <yarp/math/RandnVector.h>
+#include <yarp/math/api.h>
 
 namespace yarp
 {
@@ -37,7 +38,7 @@ namespace yarp
 * Methods inside this class provides access to a global instance 
 * of a RandScalar object that generates random numbers.
 */
-class yarp::math::Rand
+class YARP_math_API yarp::math::Rand
 {
 public:
     /**

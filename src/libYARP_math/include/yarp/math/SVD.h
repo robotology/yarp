@@ -11,6 +11,7 @@
 
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
+#include <yarp/math/api.h>
 
 namespace yarp
 {
@@ -19,7 +20,7 @@ namespace yarp
         /**
         * Perform SVD decomposition on a NxM matrix. Golub Reinsch method.
         */
-        void SVD(const yarp::sig::Matrix &in, 
+        void YARP_math_API SVD(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
             yarp::sig::Vector &S,
             yarp::sig::Matrix &V);
@@ -28,7 +29,7 @@ namespace yarp
         * Perform SVD decomposition on a NxM matrix. 
         * Modified Golub Reinsch method, fast for M>>N.
         */
-        void SVDMod(const yarp::sig::Matrix &in, 
+        void YARP_math_API SVDMod(const yarp::sig::Matrix &in, 
             yarp::sig::Matrix &U,
             yarp::sig::Vector &S,
             yarp::sig::Matrix &V);
@@ -48,7 +49,7 @@ namespace yarp
         * @param in the matrix to be processed
         * @param tol tolerance on singular values to be considered as zero
         */
-        yarp::sig::Matrix pinv(const yarp::sig::Matrix &in, double tol=0);
+        yarp::sig::Matrix YARP_math_API pinv(const yarp::sig::Matrix &in, double tol=0);
     }
 }
 

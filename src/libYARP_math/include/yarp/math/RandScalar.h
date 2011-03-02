@@ -10,6 +10,8 @@
 #ifndef __YARP_MATH_RANDSCALAR__
 #define __YARP_MATH_RANDSCALAR__
 
+#include <yarp/math/api.h>
+
 namespace yarp {
     namespace math { 
             class RandScalar;
@@ -42,7 +44,7 @@ namespace yarp {
 * for more information.
 * 
 */
-class yarp::math::RandScalar
+class YARP_math_API yarp::math::RandScalar
 {
     void *impl;
     int seed;
