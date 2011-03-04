@@ -96,10 +96,12 @@ public:
         m_pid_cmd=0;     
     }
     
+    #if !defined(WIN32) && !defined(WIN64)
     virtual bool waitPid()
     {
         return waitpid(m_pid_cmd,0,WNOHANG)==m_pid_cmd;
     }
+    #endif
 
 	virtual bool IsActive()
 	{
@@ -477,6 +479,7 @@ public:
 		TerminateStdio();
 	}
 	
+    #if !defined(WIN32) && !defined(WIN64)
 	virtual bool waitPid()
     {
         bool r0=waitpid(m_pid_cmd,0,WNOHANG)==m_pid_cmd;
@@ -485,6 +488,7 @@ public:
         
         return r0 || r1 || r2;
     }
+    #endif
 
 	void TerminateStdio()
 	{
