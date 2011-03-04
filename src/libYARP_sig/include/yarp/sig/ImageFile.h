@@ -37,24 +37,24 @@ namespace yarp {
                 };
 
             // PPM/PGM format
-            bool read(ImageOf<PixelRgb>& dest, const char *src);
-            bool read(ImageOf<PixelBgr>& dest, const char *src);
-            bool read(ImageOf<PixelRgba>& dest, const char *src);
-            bool read(ImageOf<PixelMono>& dest, const char *src);
+            bool YARP_sig_API read(ImageOf<PixelRgb>& dest, const char *src);
+            bool YARP_sig_API read(ImageOf<PixelBgr>& dest, const char *src);
+            bool YARP_sig_API read(ImageOf<PixelRgba>& dest, const char *src);
+            bool YARP_sig_API read(ImageOf<PixelMono>& dest, const char *src);
 
             // plain text format
-            bool read(ImageOf<PixelFloat>& dest, const char *src);
+            bool YARP_sig_API read(ImageOf<PixelFloat>& dest, const char *src);
 
             // PPM/PGM format
-            bool write(const ImageOf<PixelRgb>& src, const char *dest);
-            bool write(const ImageOf<PixelBgr>& src, const char *dest);
-            bool write(const ImageOf<PixelRgba>& src, const char *dest);
-            bool write(const ImageOf<PixelMono>& src, const char *dest);
+            bool YARP_sig_API write(const ImageOf<PixelRgb>& src, const char *dest);
+            bool YARP_sig_API write(const ImageOf<PixelBgr>& src, const char *dest);
+            bool YARP_sig_API write(const ImageOf<PixelRgba>& src, const char *dest);
+            bool YARP_sig_API write(const ImageOf<PixelMono>& src, const char *dest);
 
             // plain text format
-            bool write(const ImageOf<PixelFloat>& src, const char *dest);
+            bool YARP_sig_API write(const ImageOf<PixelFloat>& src, const char *dest);
 
-            bool write(const Image& src, const char *dest);
+            bool YARP_sig_API write(const Image& src, const char *dest);
         }
     }
 };
