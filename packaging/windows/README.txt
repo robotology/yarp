@@ -8,6 +8,8 @@ You don't need anything in here.
 Preparation:
  * Install cygwin
  *   You need: bash, wget, tar, grep, sed, subversion, find, gmake
+ *   Also: unzip [to unpack cmake]
+ *   Also: p7zip [to unpack gtkmm]
  * Install Visual Studio compilers, as many as you can
  * Copy conf/compilers.sh to conf/compilers_local.sh and modify
    it to describe your compilers

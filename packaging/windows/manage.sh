@@ -60,11 +60,13 @@ for c in $compilers; do
 done
 
 (
+depend_cmake=
 depend_ace=
 depend_gsl=
-depend_yarp="ace gsl"
-depend_icub="yarp ace gsl"
-for t in ace gsl yarp icub; do
+depend_gtkmm=
+depend_yarp="cmake ace gsl gtkmm"
+depend_icub="cmake yarp ace gsl gtkmm"
+for t in cmake ace gsl gtkmm yarp icub; do
 	depend_t=depend_$t
 	deps=${!depend_t}
 	targs=""

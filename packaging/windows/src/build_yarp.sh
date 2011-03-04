@@ -17,6 +17,11 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
+source cmake_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding CMAKE build"
+	exit 1
+}
+
 source ace_${compiler}_${variant}_${build}.sh || {
 	echo "Cannot find corresponding ACE build"
 	exit 1
@@ -24,6 +29,11 @@ source ace_${compiler}_${variant}_${build}.sh || {
 
 source gsl_${compiler}_${variant}_${build}.sh || {
 	echo "Cannot find corresponding GSL build"
+	exit 1
+}
+
+source gtkmm_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding GTKMM build"
 	exit 1
 }
 
@@ -50,7 +60,7 @@ cd $fname2 || exit 1
 
 echo "Using ACE from $ACE_ROOT"
 echo "Using GSL from $GSL_DIR"
-"$CMAKE_EXEC" -DCREATE_LIB_MATH=TRUE -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
+"$CMAKE_BIN" -DCREATE_LIB_MATH=TRUE -DCMAKE_LIBRARY_PATH="$GTKMM_BASEPATH/include" -DCMAKE_INCLUDE_PATH="$GTKMM_BASEPATH/include/include" -DFREETYPE_INCLUDE_DIRS="." -DFREETYPE_LIBRARIES="" -DFREETYPE_LIBRARY="" -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -DCREATE_GUIS=TRUE -DYARP_USE_GTK2=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
 $BUILDER YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
 
 (
