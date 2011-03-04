@@ -53,6 +53,10 @@
 
 # Lorenzo Natale -- Feb 2011
 # Improve compatibility with OpenCV package in Ubuntu 10.10
+# Lorenzo Natale -- March 2011
+# Removing OpenCV_INCLUDE_DIRS from required arguments
+# Since not all version of OpenCV set OpenCV_INCLUDE_DIRS. Problem detected with OpenCV 2.0 OpenCVConfig.cmake 
+# directly calls INCLUDE_DIRECTORIES() and does not propagate any OpenCV_INCLUDE_ variable
 
 # let's skip module mode, and see if a OpenCVConfig.cmake file is around
 # this searches in system directories and ${OpenCV_DIR}
@@ -540,6 +544,9 @@ SET(OPENCV_INCLUDE_DIR ${OpenCV_INCLUDE_DIR})
 endif(NOT OpenCV_CONFIG_MODE)
 
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
+# Not all version of OpenCV set OpenCV_INCLUDE_DIRS, removing it from required arguments
+# Lorenzo Natale March 2011. See notes on top of file.
+# FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES OpenCV_INCLUDE_DIRS)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(OpenCV "OpenCV not found" OpenCV_LIBRARIES)
 
 
