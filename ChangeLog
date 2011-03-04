@@ -1,3 +1,9 @@
+2011-03-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpview/CMakeLists.txt: test use of official cmake GTK2
+	scripts, now that they exist.  May allow our homegrown scripts to
+	be retired.
+
 2011-02-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: commit patch for Cartesian interface
