@@ -41,7 +41,7 @@ typedef int FDESC;
 typedef void* HANDLE;
 //typedef PID STDIO;
 int CLOSE(int h){ return close(h)==0; }
-int SIGNAL(int pid,int signum,bool wait=false)
+int SIGNAL(int pid,int signum,bool wait)
 { 
     int ret=!kill(pid,signum);
     if (wait) waitpid(pid,0,0);
@@ -84,7 +84,7 @@ public:
         #else
         if (m_pid_cmd && !m_bHold)
 	    {
-		    return SIGNAL(m_pid_cmd,signum);
+		    return SIGNAL(m_pid_cmd,signum,false);
 		}
         #endif
 		       
@@ -93,7 +93,12 @@ public:
 
     virtual void Clean()
     { 
-        m_pid_cmd=0; 
+        m_pid_cmd=0;     
+    }
+    
+    virtual bool waitPid()
+    {
+        return waitpid(m_pid_cmd,0,WNOHANG)==m_pid_cmd;
     }
 
 	virtual bool IsActive()
@@ -244,6 +249,8 @@ public:
 			if (!m_apList[i]->IsActive())
 			{
 				fprintf(stderr,"CLEAN-UP %s (%d)\n",m_apList[i]->m_alias.c_str(),m_apList[i]->m_pid_cmd);
+				fflush(stderr);
+				
 				m_apList[i]->Clean();
 				delete m_apList[i];
 				m_apList[i]=0;
@@ -273,7 +280,8 @@ public:
 
 		for (int i=0; i<m_nProcesses; ++i)
 		{
-            if (m_apList[i] && waitpid(m_apList[i]->m_pid_cmd,0,WNOHANG)==m_apList[i]->m_pid_cmd)
+            //if (m_apList[i] && waitpid(m_apList[i]->m_pid_cmd,0,WNOHANG)==m_apList[i]->m_pid_cmd)
+            if (m_apList[i] && m_apList[i]->waitPid())
             {	            
 	            apZombie[nZombies++]=m_apList[i];
 	            m_apList[i]=NULL;
@@ -440,7 +448,7 @@ public:
 	
         yarp::os::NetworkBase::disconnect((yarp::os::ConstString("/")+m_alias+"/stdout").c_str(),(yarp::os::ConstString("/")+m_alias+"/user/stdout").c_str());
         yarp::os::NetworkBase::disconnect((yarp::os::ConstString("/")+m_alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+m_alias+"/stdin").c_str());
-	
+		
 	    m_pid_cmd=0;
 	
 		if (m_pid_stdin)
@@ -452,6 +460,7 @@ public:
             #endif
 		    fprintf(stderr,"TERMINATING stdin (%d)\n",m_pid_stdin);
 		    m_pid_stdin=0;
+		    fflush(stderr);
 		}
 		if (m_pid_stdout)
 	    {
@@ -462,10 +471,20 @@ public:
             #endif
 	        fprintf(stderr,"TERMINATING stdout (%d)\n",m_pid_stdout);
 	        m_pid_stdout=0;
+	        fflush(stderr);
 	    }
 
 		TerminateStdio();
 	}
+	
+	virtual bool waitPid()
+    {
+        bool r0=waitpid(m_pid_cmd,0,WNOHANG)==m_pid_cmd;
+        bool r1=waitpid(m_pid_stdin,0,WNOHANG)==m_pid_stdin;
+        bool r2=waitpid(m_pid_stdout,0,WNOHANG)==m_pid_stdout;
+        
+        return r0 || r1 || r2;
+    }
 
 	void TerminateStdio()
 	{
@@ -1080,7 +1099,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	// connect yarp read and write
 	bool bConnR=false,bConnW=false;
-	for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
+	for (int i=0; i<4 && !(bConnR&&bConnW); ++i)
 	{ 	    
 	    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 	        bConnW=true;
@@ -1520,6 +1539,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	if (IS_PARENT_OF(pid_stdout))
 	{
 	    fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdout pid=%d\n",m_PortName.c_str(),alias.c_str(),pid_stdout);
+	    fflush(stderr);
 	
 		int pid_stdin=fork();
 
@@ -1536,7 +1556,10 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	        fprintf(stderr,"%s",out.c_str());
 		    fflush(stderr);
 		    
-		    SIGNAL(pid_stdout,SIGTERM);
+		    SIGNAL(pid_stdout,SIGTERM,true);
+			fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
+			fflush(stderr);
+		    
 			CLOSE(pipe_stdin_to_cmd[0]);
 			CLOSE(pipe_stdin_to_cmd[1]);
 			CLOSE(pipe_cmd_to_stdout[0]);
@@ -1574,10 +1597,14 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			// connect yarp read and write
 			
 			fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdin pid=%d\n",m_PortName.c_str(),alias.c_str(),pid_stdin);
+			fflush(stderr);
 			
 			bool bConnR=false,bConnW=false;
-		    for (int i=0; i<20 && !(bConnR&&bConnW); ++i)
+		    for (int i=0; i<4 && !(bConnR&&bConnW); ++i)
 		    { 
+		        fprintf(stderr,"%d\n",i);
+		        fflush(stdout);
+		        
 			    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 			    {
 			        bConnW=true;
@@ -1589,9 +1616,6 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		        
 		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
 		    }
-		    
-		    //bool bConnW=NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());       
-		    //bool bConnR=NetworkBase::connect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 		    
 		    if (!(bConnR&&bConnW))
 		    {				
@@ -1606,13 +1630,17 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            fprintf(stderr,"%s",out.c_str());
 	            fflush(stderr); 
 	             
-	            SIGNAL(pid_stdout,SIGTERM);
-				SIGNAL(pid_stdin,SIGTERM);
+	            SIGNAL(pid_stdout,SIGTERM,true);
+			    fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
+				SIGNAL(pid_stdin,SIGTERM,true);
+				fprintf(stderr,"TERMINATING stdin (%d)\n",pid_stdin);
+				fflush(stderr);
+				
 				CLOSE(pipe_stdin_to_cmd[0]);
 				CLOSE(pipe_stdin_to_cmd[1]);
 				CLOSE(pipe_cmd_to_stdout[0]);
 				CLOSE(pipe_cmd_to_stdout[1]);
-	            
+				
 				return result;
 		    }
 
@@ -1638,9 +1666,13 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            
 	            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
 		        NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
-
-				SIGNAL(pid_stdout,SIGTERM);
-				SIGNAL(pid_stdin,SIGTERM);
+		
+			    SIGNAL(pid_stdout,SIGTERM,true);
+			    fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
+				SIGNAL(pid_stdin,SIGTERM,true);
+				fprintf(stderr,"TERMINATING stdin (%d)\n",pid_stdin);
+				fflush(stderr);
+				
 				CLOSE(pipe_stdin_to_cmd[0]);
 				CLOSE(pipe_stdin_to_cmd[1]);
 				CLOSE(pipe_cmd_to_stdout[0]);
@@ -1740,20 +1772,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		            NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
 	            }
 	            else
-	            {
-	                /*
-	                m_ProcessVector.Add(
-				        new YarpRunCmdWithStdioInfo(
-				            cmd_str,alias,m_PortName,
-					        pid_cmd,stdio_str,&m_StdioVector,
-					        pid_stdin,pid_stdout,
-					        pipe_stdin_to_cmd[READ_FROM_PIPE],pipe_stdin_to_cmd[WRITE_TO_PIPE],
-					        pipe_cmd_to_stdout[READ_FROM_PIPE],pipe_cmd_to_stdout[WRITE_TO_PIPE],
-					        pid_cmd
-					    )
-				    );
-				    */
-	                
+	            {	                
 	                result.addInt(pid_cmd);
 	                out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()
 	                   +" alias="+alias.c_str()+" cmd="+commandString.c_str()+" pid="
