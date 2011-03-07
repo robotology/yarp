@@ -3,7 +3,10 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)
-cmake_policy(SET CMP0011 NEW)
+
+if(POLICY CMP0011)
+    cmake_policy(SET CMP0011 NEW)
+endif(POLICY CMP0011)
 
 project(YARP)
 
