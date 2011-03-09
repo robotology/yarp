@@ -20,6 +20,10 @@
 #include <yarp/sig/Image.h>
 #include <yarp/sig/ImageNetworkHeader.h>
 
+#include "BlobNetworkHeader.h"
+
+#include "MjpegDecompression.h"
+
 namespace yarp {
     namespace os {
         namespace impl {
@@ -38,14 +42,19 @@ private:
     StringOutputStream sos;
     yarp::sig::ImageOf<yarp::sig::PixelRgb> img;
     yarp::sig::ImageNetworkHeader imgHeader;
+    BlobNetworkHeader blobHeader;
     yarp::os::ManagedBytes cimg;
+    yarp::mjpeg::MjpegDecompression decompression;
     int phase;
     char *cursor;
     int remaining;
     bool sender;
     bool firstRound;
+    bool autocompress;
 public:
-    MjpegStream(TwoWayStream *delegate, bool sender) : sender(sender) {
+    MjpegStream(TwoWayStream *delegate, bool sender,
+                bool autocompress) : sender(sender), 
+                                     autocompress(autocompress) {
         this->delegate = delegate;
         firstRound = true;
         phase = 0;

@@ -13,7 +13,7 @@
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/impl/TwoWayStream.h>
 #include <yarp/os/ManagedBytes.h>
-#include "BlobHeader.h"
+#include "BlobNetworkHeader.h"
 
 namespace yarp {
     namespace os {

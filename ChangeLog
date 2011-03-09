@@ -1,5 +1,8 @@
 2011-03-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/carriers/mjpeg_carrier/CMakeLists.txt: add option to 
+	pass mjpeg images through uncompressed [thanks Philipp Robbel]
+
 	* src/libYARP_dev/src/PolyDriver.cpp: disconnect from Property
 	monitoring object after PolyDriver::open, instead of letting
 	the connection linger to cause trouble [thanks Martin Peniak]

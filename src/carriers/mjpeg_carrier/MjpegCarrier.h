@@ -20,6 +20,7 @@ namespace yarp {
     namespace os {
         namespace impl {
             class MjpegCarrier;
+            class MjpegCarrierRaw;
         }
     }
 }
@@ -177,7 +178,8 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
         } while (txt!="");
 
         sender = false;
-        MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender);
+        MjpegStream *stream = new MjpegStream(proto.giveStreams(),sender,
+                                              autoCompression());
         if (stream==NULL) { return false; }
         proto.takeStreams(stream);
         return true;
@@ -211,6 +213,8 @@ Content-Type: multipart/x-mixed-replace;boundary=boundarydonotcross\r\n\
     }
 
     virtual String getBootstrapCarrierName() { return ""; }
+
+    virtual bool autoCompression() const;
 };
 
 #endif

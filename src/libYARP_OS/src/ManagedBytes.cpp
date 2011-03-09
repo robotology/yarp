@@ -10,6 +10,7 @@
 #include <ace/OS_NS_string.h>
 
 #include <yarp/os/ManagedBytes.h>
+#include <yarp/os/Bottle.h>
 
 using namespace yarp::os;
 
@@ -38,4 +39,35 @@ bool ManagedBytes::allocateOnNeed(int neededLen, int allocateLen) {
 		return true;
 	}
 	return false;
+}
+
+
+bool ManagedBytes::read(ConnectionReader& reader) {
+    reader.convertTextMode();
+    int listTag;
+    int listLen;
+    int blobLen;
+    listTag = reader.expectInt();
+    listLen = reader.expectInt();
+    blobLen = reader.expectInt();
+    if (listTag!=BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
+        return false;
+    }
+    if (listLen!=1) {
+        return false;
+    }
+    allocate(blobLen);
+    if (get()==NULL) {
+        return false;
+    }
+    return reader.expectBlock(get(),length());
+}
+
+bool ManagedBytes::write(ConnectionWriter& writer) {
+    writer.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
+    writer.appendInt(1);
+    writer.appendInt(length());
+    writer.appendExternalBlock(get(),length());
+    writer.convertTextMode();
+    return !writer.isError();
 }

@@ -6,6 +6,10 @@ if (COMPILE_PLUGIN_LIBRARY)
 endif (COMPILE_PLUGIN_LIBRARY)
 
 if (NOT SKIP_mjpeg_carrier)
+  option(MJPEG_AUTOCOMPRESS "Automatically compress/decompress images on mjpeg stream" TRUE)
+  if (MJPEG_AUTOCOMPRESS) 
+    add_definitions(-DMJPEG_AUTOCOMPRESS)
+  endif ()
   find_package(YARP REQUIRED)
   find_package(JPEG REQUIRED)
   # on windows, a handy place to get libjpeg in compiled form is:
@@ -17,7 +21,14 @@ if (NOT SKIP_mjpeg_carrier)
   get_property(WIRE_INCLUDE_DIRS TARGET wire_rep_utils PROPERTY INCLUDE_DIRS)
   include_directories(${WIRE_INCLUDE_DIRS})
   add_library(mjpeg_carrier MjpegCarrier.h MjpegCarrier.cpp
-			    MjpegStream.h MjpegStream.cpp ${JPEG_SOURCES})
+			    MjpegStream.h MjpegStream.cpp 
+			    MjpegDecompression.h MjpegDecompression.cpp
+			    ${JPEG_SOURCES})
   target_link_libraries(mjpeg_carrier ${YARP_LIBRARIES} ${JPEG_LIBRARY})
   target_link_libraries(mjpeg_carrier wire_rep_utils)
+
+
+  add_executable(test_mjpeg test_mjpeg.cpp)
+  target_link_libraries(test_mjpeg mjpeg_carrier YARP_init)
+
 endif (NOT SKIP_mjpeg_carrier)

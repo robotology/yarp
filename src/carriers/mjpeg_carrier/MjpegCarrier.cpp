@@ -190,3 +190,12 @@ bool MjpegCarrier::sendHeader(Protocol& proto) {
     proto.os().write(b);
     return true;
 }
+
+bool MjpegCarrier::autoCompression() const {
+#ifdef MJPEG_AUTOCOMPRESS
+    return true;
+#else
+    return false;
+#endif
+}
+

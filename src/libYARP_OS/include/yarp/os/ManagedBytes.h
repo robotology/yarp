@@ -11,6 +11,7 @@
 
 #include <yarp/os/Bytes.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Portable.h>
 
 namespace yarp {
     namespace os {
@@ -22,7 +23,7 @@ namespace yarp {
  * An abstraction for a block of bytes, with optional
  * responsibility for allocating/destroying that block.
  */
-class YARP_OS_API yarp::os::ManagedBytes {
+class YARP_OS_API yarp::os::ManagedBytes : public Portable {
 public:
     /**
      * Constructor.  No data present.
@@ -182,7 +183,10 @@ public:
         use = used;
         return this->used();
     }
-    
+
+    bool read(ConnectionReader& reader);
+
+    bool write(ConnectionWriter& writer);
 
 private:
     Bytes b;
