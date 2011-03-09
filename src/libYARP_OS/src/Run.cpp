@@ -530,6 +530,12 @@ protected:
 // OS INDEPENDENT FUNCTIONS
 ///////////////////////////
 
+void dontexit(int sig)
+{
+    signal(SIGINT,dontexit);
+	signal(SIGTERM,dontexit);
+}
+
 YarpRunInfoVector yarp::os::Run::m_ProcessVector;
 YarpRunInfoVector yarp::os::Run::m_StdioVector;
 yarp::os::ConstString yarp::os::Run::m_PortName;
@@ -549,6 +555,19 @@ int yarp::os::Run::main(int argc, char *argv[])
     Property config;
     config.fromCommand(argc,argv,false);
 
+    if (config.check("block"))
+    {
+        signal(SIGINT,dontexit);
+	    signal(SIGTERM,dontexit);
+	    
+	    for (unsigned int i=0; i<0xFFFFFFFF; ++i)
+	    {
+	        fprintf(stdout,"%d\n",i);
+	        fflush(stdout);
+	        yarp::os::Time::delay(1.0);
+	    }
+    }
+    
 	if (config.check("echo"))
 	{
 		char line[1024];
@@ -566,6 +585,7 @@ int yarp::os::Run::main(int argc, char *argv[])
 	if (config.check("segfault"))
 	{
 	    fprintf(stderr,"writing to forbidden location\n");
+	    fflush(stderr);
 	
 	    int *zero=NULL;
 	    
@@ -579,6 +599,7 @@ int yarp::os::Run::main(int argc, char *argv[])
 	    yarp::os::Time::delay(config.find("wait").asDouble());
 	
 	    fprintf(stderr,"Done.\n");
+	    fflush(stderr);
 	    
 	    return 0;
 	}
@@ -1606,9 +1627,6 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<4 && !(bConnR&&bConnW); ++i)
 		    { 
-		        fprintf(stderr,"%d\n",i);
-		        fflush(stdout);
-		        
 			    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 			    {
 			        bConnW=true;
@@ -1805,7 +1823,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 {
 	yarp::os::ConstString alias(msg.find("as").asString());
 
-	int  pipe_child_to_parent[2];
+	int pipe_child_to_parent[2];
 	pipe(pipe_child_to_parent);
 
 	int pid_cmd=fork();
@@ -1834,6 +1852,9 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);
+        
+        //REDIRECT_TO(STDOUT_FILENO,pipe_child_to_parent[WRITE_TO_PIPE]);
+        REDIRECT_TO(STDERR_FILENO,pipe_child_to_parent[WRITE_TO_PIPE]);
 
 		if (msg.check("geometry"))
 		{
@@ -1859,11 +1880,13 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
                            +yarp::os::ConstString("Can't execute command because ")+strerror(error)+"\n";
 	     
 	        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
+	        
 	        fprintf(out_to_parent,"%s",out.c_str());
 	        fflush(out_to_parent);
 	        fclose(out_to_parent);
-	        fprintf(stderr,"%s",out.c_str());
-            fflush(stderr);
+	        
+	        fprintf(stdout,"%s",out.c_str());
+            fflush(stdout);
 		}
 		
 		exit(ret);
@@ -1880,6 +1903,8 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	    Bottle result;
 	    yarp::os::impl::String out;
 	    
+	    yarp::os::Time::delay(0.5);
+	    
 	    FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
 	    fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_SETFL,flags|O_NONBLOCK); 
@@ -1889,7 +1914,8 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	    }
 	    fclose(in_from_child);
 	    
-	    if (out.length()>0)
+	    //if (out.length()>0)
+	    if (out.substr(0,14)=="xterm Xt error" || out.substr(0,7)=="ABORTED")
 	    {
 	        result.addInt(YARPRUN_ERROR);
 	    }
@@ -1899,9 +1925,10 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	        //m_StdioVector.Add(new YarpRunProcInfo(rwCmd,alias,m_PortName,pid_cmd,msg.check("hold")));
 	        result.addInt(pid_cmd);
 	        out=yarp::os::impl::String("STARTED: server=")+m_PortName.c_str()+" alias="+alias.c_str()+" cmd=xterm pid="+pidstr+"\n";
-	        fprintf(stderr,"%s",out.c_str());
-            fflush(stderr);
 	    }
+	    
+	    fprintf(stderr,"%s",out.c_str());
+        fflush(stderr);
 	    
 	    result.addString(out.c_str());
  
