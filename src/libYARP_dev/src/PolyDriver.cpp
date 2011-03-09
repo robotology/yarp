@@ -113,8 +113,10 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
         system_resource = new YarpDevMonitor;
     }
     YARP_ASSERT(system_resource!=NULL);
+    bool removeMonitorAfterwards = false;
     if (config.getMonitor()==NULL) {
         config.setMonitor(&HELPER(system_resource));
+        removeMonitorAfterwards = true;
     }
 
     YARP_LOG_DEBUG("PolyDriver calling factory...");
@@ -122,6 +124,9 @@ bool PolyDriver::open(yarp::os::Searchable& config) {
     coreOpen(config);
     HELPER(system_resource).info.fromString(config.toString());
     YARP_LOG_DEBUG("PolyDriver opened.");
+    if (removeMonitorAfterwards) {
+        config.setMonitor(NULL);        
+    }
     return isValid();
 }
 

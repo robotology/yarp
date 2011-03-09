@@ -54,10 +54,27 @@ public:
         dd.close();
     }
 
+    void testPropertyBug() {
+        // guard against a bug reported by Martin Peniak
+        report(0,"test Property bug reported by Martin Peniak");
+        Property p;
+        p.put("device","grabber");
+        p.put("subdevice","test_grabber");
+        p.put("verbose",1);
+        p.put("wrapped",1);
+        for (int i=0; i<5; i++) {
+            PolyDriver *dd = new PolyDriver(p);
+            delete dd;
+            // bug may cause crash due to Monitor reporting to deallocated
+            // driver
+        }
+    }
+
     virtual void runTests() {
         Network::setLocalMode(true);
         testBasic();
         testMonitor();
+        testPropertyBug();
         Network::setLocalMode(false);
     }
 };

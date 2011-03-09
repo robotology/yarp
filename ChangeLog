@@ -1,3 +1,13 @@
+2011-03-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/src/PolyDriver.cpp: disconnect from Property
+	monitoring object after PolyDriver::open, instead of letting
+	the connection linger to cause trouble [thanks Martin Peniak]
+
+	* src/libYARP_dev/harness/PolyDriverTest.cpp: regression test
+	for Property+PolyDriver bug reported by Martin on the
+	robotcub-hackers list [thanks Martin Peniak]
+
 2011-03-04  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpview/CMakeLists.txt: test use of official cmake GTK2
