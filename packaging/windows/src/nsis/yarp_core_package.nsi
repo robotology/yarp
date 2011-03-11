@@ -84,6 +84,19 @@ SectionGroup "Math library"
   SectionEnd
 SectionGroupEnd
 
+SectionGroup "ACE library"
+  Section "ACE libraries for compiling" SecAceLibraries
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\lib"
+    !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
+  SectionEnd
+
+  Section "ACE runtime library(DLL)" SecAceDLLs
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
+  SectionEnd
+SectionGroupEnd
+
 Section "yarpview" SecGuis
   ;CreateDirectory "$INSTDIR\yarpview"
   SetOutPath "$INSTDIR"
@@ -118,12 +131,17 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
 
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
   Delete "$INSTDIR\bin\yarpview.lnk"
   
   Delete "$INSTDIR\Uninstall.exe"
 
+  RMDir "$INSTDIR\bin"
+  RMDir "$INSTDIR\lib"
+  RMDir "$INSTDIR\yarpview"
   RMDir "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "Software\YARP"

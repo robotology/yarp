@@ -69,12 +69,21 @@ function nsis_add {
 }
 
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
+# missing - need to package header files
 nsis_setup yarp_libraries
 nsis_setup yarp_dlls
 nsis_setup yarp_programs
 nsis_setup yarp_math_libraries
 nsis_setup yarp_math_dlls
 nsis_setup yarp_guis
+nsis_setup yarp_ace_libraries
+nsis_setup yarp_ace_dlls
+
+# Hmm, GSL is currently compiled statically with yarp_math
+# nsis_setup yarp_gsl_libraries
+# nsis_setup yarp_gsl_dlls
+
+# Add YARP material
 cd $YARP_DIR_UNIX || exit 1
 cd install/lib || exit 1
 for f in `ls -1 *.lib | grep -v YARP_math`; do
@@ -96,6 +105,16 @@ done
 for f in `ls -1 *.exe | grep yarpview`; do
 	nsis_add yarp_guis $f yarpview/$f
 done
+
+# Add ACE material
+cd $ACE_DIR || exit 1
+cd lib || exit 1
+if [ ! -e $ACE_LIBNAME.dll ]; then
+	echo "Cannot find $ACE_LIBNAME.dll in $PWD"
+	exit 1
+fi
+nsis_add yarp_ace_libraries $ACE_LIBNAME.lib lib/$ACE_LIBNAME.lib
+nsis_add yarp_ace_dlls $ACE_LIBNAME.dll bin/$ACE_LIBNAME.dll
 
 cd $OUT_DIR
 

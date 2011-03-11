@@ -65,8 +65,14 @@ fi
 
 $BUILDER $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
 
+libname=ACE
+if [ "k$build" = "kDebug" ]; then
+	libname=ACEd
+fi
+
 (
 	ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
 	echo "export ACE_DIR='$ACE_DIR'"
 	echo "export ACE_ROOT='$ACE_DIR'"
+	echo "export ACE_LIBNAME='$libname'"
 ) > $BUILD_DIR/ace_${compiler}_${variant}_${build}.sh
