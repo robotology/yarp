@@ -1,8 +1,6 @@
 #!/bin/bash
 
-# Actually, we just download a precompiled gtkmm.
-# We could compile it, but it doesn't seem like we need to do better distributing it
-# than what already exists.
+# Actually, we just download a precompiled cmake.
 
 BUILD_DIR=$PWD
 
