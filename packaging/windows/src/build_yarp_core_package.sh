@@ -39,7 +39,7 @@ source nsis_${compiler}_${variant}_${build}.sh || {
 
 fname=yarp_core_package-$YARP_VERSION
 
-fname2=$fname-$variant-$build
+fname2=$fname-$compiler-$variant-$build
 
 mkdir -p $fname2
 cd $fname2 || exit 1

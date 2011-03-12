@@ -53,7 +53,7 @@ if [ ! -e $fname ]; then
 	fi
 fi
 
-fname2=$fname-$variant-$build
+fname2=$fname-$compiler-$variant-$build
 
 mkdir -p $fname2
 cd $fname2 || exit 1

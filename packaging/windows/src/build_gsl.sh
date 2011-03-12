@@ -17,6 +17,11 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
+source cmake_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding CMAKE build"
+	exit 1
+}
+
 if [ "k$GSL_VERSION" = "k" ]; then
 	GSL_VERSION=1.14
 fi
@@ -52,12 +57,12 @@ cp "$SOURCE_DIR/src/gsl/CMakeLists.txt" "$PWD"
 cp "$SOURCE_DIR/src/gsl/config.h.in" "$PWD"
 cd $BUILD_DIR
 
-fname2=$fname-$variant-$build
+fname2=$fname-$compiler-$variant-$build
 
 mkdir -p $fname2
 cd $fname2 || exit 1
 
-"$CMAKE_EXEC" -DGSL_VERSION=$GSL_VERSION -G "$generator" ../$fname/cmake || exit 1
+"$CMAKE_BIN" -DGSL_VERSION=$GSL_VERSION -G "$generator" ../$fname/cmake || exit 1
 $BUILDER gsl.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
 
 (

@@ -22,6 +22,9 @@ fi
 if [ "k$compiler" = "kv9" ] ; then
 	platform=v90
 fi
+if [ "k$compiler" = "kv8" ] ; then
+	platform=v80
+fi
 if [ "k$platform" = "k" ]; then
 	echo "Please set platform for compiler $compiler in process_options.sh"
 	exit 1
@@ -38,7 +41,12 @@ if [ "k$compiler" = "kv10" ] ; then
 fi
 if [ "k$compiler" = "kv9" ] ; then
 	if [ "k$variant" = "kx86" ] ; then
-		generator="Visual Studio 9"
+		generator="Visual Studio 9 2008"
+	fi
+fi
+if [ "k$compiler" = "kv8" ] ; then
+	if [ "k$variant" = "kx86" ] ; then
+		generator="Visual Studio 8 2005"
 	fi
 fi
 if [ "k$generator" = "k" ] ; then 
@@ -47,3 +55,7 @@ if [ "k$generator" = "k" ] ; then
 fi
 
 BUILDER="msbuild.exe"
+BUILDER_VCBUILD="vcbuild.exe /useenv"
+PLATFORM_COMMAND_VCBUILD=""
+# this will need updating for non-x86
+CONFIGURATION_COMMAND_VCBUILD="$build"

@@ -37,7 +37,7 @@ if [ -e $SOURCE_DIR/conf/compilers_local.sh ]; then
 	source $SOURCE_DIR/conf/compilers_local.sh || exit 1
 fi
 
-export cmake_path=`cygpath --unix "$cmake_path"`
+# export cmake_path=`cygpath --unix "$cmake_path"`
 
 cd $BUILD_DIR
 (
@@ -66,7 +66,9 @@ depend_gsl=
 depend_gtkmm=
 depend_yarp="cmake ace gsl gtkmm"
 depend_icub="cmake yarp ace gsl gtkmm"
-for t in cmake ace gsl gtkmm yarp icub; do
+depend_nsis=
+depend_yarp_core_package="yarp nsis"
+for t in cmake ace gsl gtkmm yarp icub nsis yarp_core_package; do
 	depend_t=depend_$t
 	deps=${!depend_t}
 	targs=""

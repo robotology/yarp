@@ -22,6 +22,15 @@ if [ "k$compiler" = "kv10" ] ; then
 fi
 if [ "k$compiler" = "kv9" ] ; then
 	pname=ACE_vc9.vcproj
+	BUILDER=$BUILDER_VCBUILD
+	PLATFORM_COMMAND=$PLATFORM_COMMAND_VCBUILD
+	CONFIGURATION_COMMAND=$CONFIGURATION_COMMAND_VCBUILD
+fi
+if [ "k$compiler" = "kv8" ] ; then
+	pname=ACE_vc8.vcproj
+	BUILDER=$BUILDER_VCBUILD
+	PLATFORM_COMMAND=$PLATFORM_COMMAND_VCBUILD
+	CONFIGURATION_COMMAND=$CONFIGURATION_COMMAND_VCBUILD
 fi
 if [ "k$pname" = "k" ] ; then 
 	echo "Please set project name for compiler $compiler in build_ace.sh"
@@ -38,7 +47,7 @@ if [ ! -e $fname.tar.gz ]; then
 fi
 
 # msbuild does not have out-of-source builds, so we duplicate source as needed
-fname2=$fname-$variant
+fname2=$fname-$compiler-$variant
 
 if [ ! -e $fname2 ]; then
 	tar xzvf $fname.tar.gz || (
