@@ -50,11 +50,12 @@ function nsis_setup {
 }
 
 CYG_BASE=`cygpath -w /`
-function nsis_add {
-	prefix=$1
-	src=$2
-	dest=$3
-	dir=$4 #optional
+function nsis_add_base {
+	mode=$1
+	prefix=$2
+	src=$3
+	dest=$4
+	dir=$5 #optional
 	#src=`cygpath -w $PWD/$src` -- too slow!
 	#dest=`cygpath -w $3`       -- too slow!
 	osrc="$src"
@@ -71,17 +72,34 @@ function nsis_add {
 	fi
 	dest=${dest//\//\\} # flip to windows convention
 	#echo add "[$prefix]" "[$src]" "$dest"
-	echo "File /oname=$dest $src" >> $OUT_DIR/${prefix}_add.nsi
-	echo "Delete \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
 	zodest="zip/$prefix/$zip_name/$odest"
-	echo "mkdir -p `dirname $zodest`" >> $OUT_DIR/${prefix}_zip.sh
-	echo "cp '$osrc' $zodest" >> $OUT_DIR/${prefix}_zip.sh
+	if [ "$mode" = "single" ]; then
+		echo "File /oname=$dest $src" >> $OUT_DIR/${prefix}_add.nsi
+		echo "Delete \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
+		echo "mkdir -p `dirname $zodest`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp '$osrc' $zodest" >> $OUT_DIR/${prefix}_zip.sh
+	else
+		# recursive
+		echo "SetOutPath \"\$INSTDIR\\$dest\..\"" >> $OUT_DIR/${prefix}_add.nsi
+		echo "File /r $src" >> $OUT_DIR/${prefix}_add.nsi
+		echo "RmDir /r \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
+		echo "mkdir -p `dirname $zodest`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp -r '$osrc' $zodest" >> $OUT_DIR/${prefix}_zip.sh
+	fi
+}
+function nsis_add {
+	nsis_add_base single "$@"
+}
+
+function nsis_add_recurse {
+	nsis_add_base recurse "$@"
 }
 
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
 # missing - need to package header files
 nsis_setup yarp_libraries
 nsis_setup yarp_dlls
+nsis_setup yarp_headers
 nsis_setup yarp_programs
 nsis_setup yarp_math_libraries
 nsis_setup yarp_math_dlls
@@ -117,6 +135,11 @@ done
 for f in `ls -1 *.exe | grep yarpview`; do
 	nsis_add yarp_guis $f yarpview/$f
 done
+cd $YARP_DIR_UNIX/install/include/yarp
+for f in conf os sig dev ; do
+	nsis_add_recurse yarp_headers $f include/yarp/$f
+done
+
 
 # Add ACE material
 cd $ACE_DIR || exit 1

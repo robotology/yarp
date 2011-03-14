@@ -6,7 +6,7 @@ OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
 InstallDir "$PROGRAMFILES\yarp\yarp-${YARP_VERSION}"
 InstallDirRegKey HKCU "Software\YARP" ""
 RequestExecutionLevel admin
-  
+
 !define MUI_ABORTWARNING
 
 ;--------------------------------
@@ -42,25 +42,33 @@ SectionEnd
 
 Section "Libraries for compiling" SecLibraries
   SetOutPath "$INSTDIR"
-    ;CreateDirectory "$INSTDIR\lib"
+  CreateDirectory "$INSTDIR\lib"
   !include ${NSIS_OUTPUT_PATH}\yarp_libraries_add.nsi
 SectionEnd
 
 Section "Runtime libraries (DLLs)" SecDLLs
   SetOutPath "$INSTDIR"
-    ;CreateDirectory "$INSTDIR\bin"
+  CreateDirectory "$INSTDIR\bin"
   !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
-SectionEnd
-
-Section "Visual Studio redistributable runtime (DLLs)" SecVcDlls
-  SetOutPath "$INSTDIR"
-  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
 SectionEnd
 
 Section "Programs" SecPrograms
   SetOutPath "$INSTDIR"
-    ;CreateDirectory "$INSTDIR\bin"
+  CreateDirectory "$INSTDIR\bin"
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_add.nsi
+SectionEnd
+
+Section "Header files" SecHeaders
+  SetOutPath "$INSTDIR"
+  CreateDirectory "$INSTDIR\include"
+  !include ${NSIS_OUTPUT_PATH}\yarp_headers_add.nsi
+SectionEnd
+
+Section "Visual Studio redistributable runtime (DLLs)" SecVcDlls
+  SetOutPath "$INSTDIR"
+  CreateDirectory "$INSTDIR\bin"
+  CreateDirectory "$INSTDIR\yarpview"
+  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
 SectionEnd
 
 SectionGroup "Math library"
@@ -72,7 +80,7 @@ SectionGroup "Math library"
 
   Section "Math runtime libraries(DLLs)" SecMathDLLs
     SetOutPath "$INSTDIR"
-    ;CreateDirectory "$INSTDIR\bin"
+    CreateDirectory "$INSTDIR\bin"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
 SectionGroupEnd
@@ -91,7 +99,7 @@ SectionGroup "ACE library"
 SectionGroupEnd
 
 Section "yarpview" SecGuis
-  ;CreateDirectory "$INSTDIR\yarpview"
+  CreateDirectory "$INSTDIR\yarpview"
   SetOutPath "$INSTDIR"
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
   CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
@@ -122,6 +130,7 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_headers_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
@@ -136,6 +145,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\bin"
   RMDir "$INSTDIR\lib"
   RMDir "$INSTDIR\yarpview"
+  RMDir /r "$INSTDIR\include"
   RMDir "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "Software\YARP"
