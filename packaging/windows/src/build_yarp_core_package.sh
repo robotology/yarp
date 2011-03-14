@@ -27,6 +27,11 @@ source yarp_${compiler}_${variant}_${build}.sh || {
 	exit 1
 }
 
+source gtkmm_${compiler}_${variant}_${build}.sh || {
+	echo "Cannot find corresponding GTKMM build"
+	exit 1
+}
+
 source nsis_${compiler}_${variant}_${build}.sh || {
 	echo "Cannot find corresponding NSIS build"
 	exit 1
@@ -56,6 +61,7 @@ function nsis_add_base {
 	src=$3
 	dest=$4
 	dir=$5 #optional
+	echo "Add " "$@"
 	#src=`cygpath -w $PWD/$src` -- too slow!
 	#dest=`cygpath -w $3`       -- too slow!
 	osrc="$src"
@@ -72,19 +78,24 @@ function nsis_add_base {
 	fi
 	dest=${dest//\//\\} # flip to windows convention
 	#echo add "[$prefix]" "[$src]" "$dest"
-	zodest="zip/$prefix/$zip_name/$odest"
+	zodest1="zip/$prefix/$zip_name/$odest"
+	zodest2="zip_all/$zip_name/$odest"
 	if [ "$mode" = "single" ]; then
 		echo "File /oname=$dest $src" >> $OUT_DIR/${prefix}_add.nsi
 		echo "Delete \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
-		echo "mkdir -p `dirname $zodest`" >> $OUT_DIR/${prefix}_zip.sh
-		echo "cp '$osrc' $zodest" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p `dirname $zodest1`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p `dirname $zodest2`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp '$osrc' $zodest1" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp '$osrc' $zodest2" >> $OUT_DIR/${prefix}_zip.sh
 	else
 		# recursive
 		echo "SetOutPath \"\$INSTDIR\\$dest\..\"" >> $OUT_DIR/${prefix}_add.nsi
 		echo "File /r $src" >> $OUT_DIR/${prefix}_add.nsi
 		echo "RmDir /r \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
-		echo "mkdir -p `dirname $zodest`" >> $OUT_DIR/${prefix}_zip.sh
-		echo "cp -r '$osrc' $zodest" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p `dirname $zodest1`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p `dirname $zodest2`" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp -r '$osrc' $zodest1" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp -r '$osrc' $zodest2" >> $OUT_DIR/${prefix}_zip.sh
 	fi
 }
 function nsis_add {
@@ -133,7 +144,17 @@ for f in `ls -1 *.exe | grep -v yarpview`; do
 	nsis_add yarp_programs $f bin/$f
 done
 for f in `ls -1 *.exe | grep yarpview`; do
-	nsis_add yarp_guis $f yarpview/$f
+	nsis_add yarp_guis $f bin/$f
+done
+cd $GTKMM_DIR/redist || exit 1
+for f in `ls *.dll`; do
+	chmod u+x $f
+	nsis_add yarp_guis $f bin/$f
+done
+cd $GTKMM_DIR/bin || exit 1
+for f in zlib1.dll freetype6.dll intl.dll; do
+	chmod u+x $f
+	nsis_add yarp_guis $f bin/$f
 done
 cd $YARP_DIR_UNIX/install/include/yarp
 for f in conf os sig dev ; do
@@ -156,7 +177,6 @@ if [ -e "$VC_REDIST_CRT" ] ; then
 	cd "$VC_REDIST_CRT" || exit 1
 	for f in `ls *.dll *.manifest`; do
 		nsis_add yarp_vc_dlls $f bin/$f "$VC_REDIST_CRT"
-		nsis_add yarp_vc_dlls $f yarpview/$f "$VC_REDIST_CRT"
 	done
 fi
 
@@ -167,6 +187,7 @@ $NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${
 if [ "k$SKIP_ZIP" = "k" ] ; then
 	# flush zips
 	rm -rf "$OUT_DIR/zip"
+	rm -rf "$OUT_DIR/zip_all"
 
 	for f in `ls *_zip.sh`; do
 		echo "Processing $f"
@@ -178,6 +199,10 @@ if [ "k$SKIP_ZIP" = "k" ] ; then
 		zip -r ${zip_name}-$f $zip_name || exit 1
 		mv *.zip $OUT_DIR || exit 1
 	done
+	echo "Big zip"
+	cd $OUT_DIR/zip_all || exit 1
+	zip -r ${zip_name} ${zip_name} || exit 1
+	mv *.zip $OUT_DIR || exit 1
 fi
 
 cd $OUT_DIR

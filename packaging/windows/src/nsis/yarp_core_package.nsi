@@ -102,7 +102,7 @@ Section "yarpview" SecGuis
   CreateDirectory "$INSTDIR\yarpview"
   SetOutPath "$INSTDIR"
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
-  CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
+  #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
 SectionEnd
 
 ;--------------------------------
@@ -138,13 +138,13 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
 
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
-  Delete "$INSTDIR\bin\yarpview.lnk"
+  #Delete "$INSTDIR\bin\yarpview.lnk"
   
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir "$INSTDIR\bin"
   RMDir "$INSTDIR\lib"
-  RMDir "$INSTDIR\yarpview"
+  #RMDir "$INSTDIR\yarpview"
   RMDir /r "$INSTDIR\include"
   RMDir "$INSTDIR"
 
