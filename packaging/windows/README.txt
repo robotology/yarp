@@ -11,6 +11,7 @@ Preparation:
  *   Also: unzip [to unpack cmake]
  *   Also: p7zip [to unpack gtkmm]
  *   Also: binutils [for objdump, to examine DLLs]
+ *   Also: zip [to generate .zip packages]
  * Install Visual Studio compilers, as many as you can
  * Copy conf/compilers.sh to conf/compilers_local.sh and modify
    it to describe your compilers

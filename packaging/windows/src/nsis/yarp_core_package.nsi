@@ -1,35 +1,23 @@
 
-;--------------------------------
-;Include Modern UI
+!include "MUI2.nsh"
 
-  !include "MUI2.nsh"
-
-;--------------------------------
-;General
-
-  ;Name and file
-  Name "YARP core ${YARP_VERSION}"
+Name "YARP ${YARP_VERSION}"
+OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
+InstallDir "$PROGRAMFILES\yarp\yarp-${YARP_VERSION}"
+InstallDirRegKey HKCU "Software\YARP" ""
+RequestExecutionLevel admin
   
-  OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
-
-  ;Default installation folder
-  InstallDir "$PROGRAMFILES\yarp\yarp-${YARP_VERSION}"
-  
-  ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\YARP" ""
-
-  ;Request application privileges for Windows Vista
-  RequestExecutionLevel admin
-  
-;--------------------------------
-;Interface Settings
-
-  !define MUI_ABORTWARNING
+!define MUI_ABORTWARNING
 
 ;--------------------------------
 ;Pages
 
-  !insertmacro MUI_PAGE_LICENSE "${NSISDIR}\Docs\Modern UI\License.txt"
+  !define MUI_PAGE_HEADER_TEXT "Welcome to YARP, Yet Another Robot Platform"
+  !define MUI_PAGE_HEADER_SUBTEXT "YARP is free software"
+  !define MUI_LICENSEPAGE_TEXT_TOP "We grant you lots of freedoms under this Free Software license."
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM "You are free to use YARP personally without agreeing to this license. Follow the terms of the license if you wish to take advantage of the extra rights it grants."
+  !define MUI_LICENSEPAGE_BUTTON "Next >"
+  !insertmacro MUI_PAGE_LICENSE "${YARP_LICENSE}"
   !insertmacro MUI_PAGE_COMPONENTS
   !insertmacro MUI_PAGE_DIRECTORY
   !insertmacro MUI_PAGE_INSTFILES
@@ -62,6 +50,11 @@ Section "Runtime libraries (DLLs)" SecDLLs
   SetOutPath "$INSTDIR"
     ;CreateDirectory "$INSTDIR\bin"
   !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
+SectionEnd
+
+Section "Visual Studio redistributable runtime (DLLs)" SecVcDlls
+  SetOutPath "$INSTDIR"
+  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
 SectionEnd
 
 Section "Programs" SecPrograms
@@ -133,6 +126,7 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
 
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
   Delete "$INSTDIR\bin\yarpview.lnk"
