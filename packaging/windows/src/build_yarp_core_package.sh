@@ -108,6 +108,7 @@ function nsis_add_recurse {
 
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
 # missing - need to package header files
+nsis_setup yarp_base
 nsis_setup yarp_libraries
 nsis_setup yarp_dlls
 nsis_setup yarp_headers
@@ -126,7 +127,10 @@ nsis_setup yarp_vc_dlls
 # Add YARP material
 cd $YARP_DIR_UNIX || exit 1
 YARP_LICENSE="$YARP_ROOT/LGPL.txt"
-cd install/lib || exit 1
+nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
+cd $YARP_DIR_UNIX/install || exit 1
+nsis_add_recurse yarp_base share share
+cd $YARP_DIR_UNIX/install/lib || exit 1
 for f in `ls -1 *.lib | grep -v YARP_math`; do
 	nsis_add yarp_libraries $f lib/$f
 done
@@ -146,16 +150,18 @@ done
 for f in `ls -1 *.exe | grep yarpview`; do
 	nsis_add yarp_guis $f bin/$f
 done
-cd $GTKMM_DIR/redist || exit 1
-for f in `ls *.dll`; do
-	chmod u+x $f
-	nsis_add yarp_guis $f bin/$f
-done
-cd $GTKMM_DIR/bin || exit 1
-for f in zlib1.dll freetype6.dll intl.dll; do
-	chmod u+x $f
-	nsis_add yarp_guis $f bin/$f
-done
+if [ "k$SKIP_GTK" = "k" ]; then
+	cd $GTKMM_DIR/redist || exit 1
+    for f in `ls *.dll`; do
+		chmod u+x $f
+		nsis_add yarp_guis $f bin/$f
+	done
+	cd $GTKMM_DIR/bin || exit 1
+	for f in zlib1.dll freetype6.dll intl.dll; do
+		chmod u+x $f
+		nsis_add yarp_guis $f bin/$f
+	done
+fi
 cd $YARP_DIR_UNIX/install/include/yarp
 for f in conf os sig dev ; do
 	nsis_add_recurse yarp_headers $f include/yarp/$f
@@ -182,7 +188,7 @@ fi
 
 cd $OUT_DIR
 
-$NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi`
+$NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi`
 
 if [ "k$SKIP_ZIP" = "k" ] ; then
 	# flush zips
