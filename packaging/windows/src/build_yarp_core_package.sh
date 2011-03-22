@@ -131,6 +131,12 @@ nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
 cd $YARP_DIR_UNIX/install || exit 1
 nsis_add_recurse yarp_base share share
 cd $YARP_DIR_UNIX/install/lib || exit 1
+for d in `ls -1 -d --group-directories-first YARP-* | head`; do
+	nsis_add_recurse yarp_base $d lib/$d
+	YARP_LIB_DIR="$d"
+	YARP_LIB_FILE=`cd $d; ls YARP-*.cmake`
+done
+cd $YARP_DIR_UNIX/install/lib || exit 1
 for f in `ls -1 *.lib | grep -v YARP_math`; do
 	nsis_add yarp_libraries $f lib/$f
 done
@@ -188,7 +194,7 @@ fi
 
 cd $OUT_DIR
 
-$NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi`
+$NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi`
 
 if [ "k$SKIP_ZIP" = "k" ] ; then
 	# flush zips
