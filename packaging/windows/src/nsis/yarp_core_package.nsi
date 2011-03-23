@@ -1,5 +1,10 @@
 
 !include "MUI2.nsh"
+!include "LogicLib.nsh"
+!include "EnvVarUpdate.nsh"
+
+!define MULTIUSER_EXECUTIONLEVEL Highest
+!include MultiUser.nsh
 
 Name "YARP ${YARP_VERSION}"
 OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
@@ -12,21 +17,21 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Utilities
 
-!define StrRep "!insertmacro StrRep"
-!macro StrRep output string old new
+!define StrRepLocal "!insertmacro StrRepLocal"
+!macro StrRepLocal output string old new
     Push "${string}"
     Push "${old}"
     Push "${new}"
     !ifdef __UNINSTALL__
-        Call un.StrRep
+        Call un.StrRepLocal
     !else
-        Call StrRep
+        Call StrRepLocal
     !endif
     Pop ${output}
 !macroend
  
-!macro Func_StrRep un
-    Function ${un}StrRep
+!macro Func_StrRepLocal un
+    Function ${un}StrRepLocal
         Exch $R2 ;new
         Exch 1
         Exch $R1 ;old
@@ -76,7 +81,7 @@ RequestExecutionLevel admin
         Exch $R1
     FunctionEnd
 !macroend
-!insertmacro Func_StrRep ""
+!insertmacro Func_StrRepLocal ""
 
 Function ReplaceInFileFunction
  
@@ -106,7 +111,7 @@ Function ReplaceInFileFunction
       Push "$R3"
       Push "$1"
       Push "$0"
-      Call StrRep
+      Call StrRepLocal
       StrCpy $R4 "$R3"
       Pop $R3
       #StrCmp "$R3" "$R4" +1 RIF_sar
@@ -150,8 +155,8 @@ FunctionEnd
 ;Pages
 
   !define MUI_PAGE_HEADER_TEXT "Welcome to YARP, Yet Another Robot Platform"
-  !define MUI_PAGE_HEADER_SUBTEXT "YARP is free software"
-  !define MUI_LICENSEPAGE_TEXT_TOP "We grant you lots of freedoms under this Free Software license."
+  !define MUI_PAGE_HEADER_SUBTEXT "YARP.  Free software for free robots."
+  !define MUI_LICENSEPAGE_TEXT_TOP "YARP is distributed under the LGPL Free Software license."
   !define MUI_LICENSEPAGE_TEXT_BOTTOM "You are free to use YARP personally without agreeing to this license. Follow the terms of the license if you wish to take advantage of the extra rights it grants."
   !define MUI_LICENSEPAGE_BUTTON "Next >"
   !insertmacro MUI_PAGE_LICENSE "${YARP_LICENSE}"
@@ -177,74 +182,113 @@ Section "-first"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
   !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "CopyPolicy" "HelloHello"
-  ${StrRep} $0 "$INSTDIR" "\" "/"
+  ${StrRepLocal} $0 "$INSTDIR" "\" "/"
   !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "${YARP_ORG_DIR}/install" "$0"
   !insertmacro ReplaceInFile "$INSTDIR\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
   !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "CopyPolicy" "HelloHello"
 SectionEnd
 
-Section "Libraries for compiling" SecLibraries
-  SetOutPath "$INSTDIR"
-  CreateDirectory "$INSTDIR\lib"
-  !include ${NSIS_OUTPUT_PATH}\yarp_libraries_add.nsi
-SectionEnd
-
-Section "Runtime libraries (DLLs)" SecDLLs
-  SetOutPath "$INSTDIR"
-  CreateDirectory "$INSTDIR\bin"
-  !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
-SectionEnd
-	
-Section "Programs" SecPrograms
+Section "Command-line utilities" SecPrograms
   SetOutPath "$INSTDIR"
   CreateDirectory "$INSTDIR\bin"
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_add.nsi
 SectionEnd
 
-Section "Header files" SecHeaders
-  SetOutPath "$INSTDIR"
-  CreateDirectory "$INSTDIR\include"
-  !include ${NSIS_OUTPUT_PATH}\yarp_headers_add.nsi
-SectionEnd
+SectionGroup "Compile environment" SecDevelopment
 
-Section "Visual Studio redistributable runtime (DLLs)" SecVcDlls
-  SetOutPath "$INSTDIR"
-  CreateDirectory "$INSTDIR\bin"
-  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
-SectionEnd
+  Section "Libraries" SecLibraries
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\lib"
+    !include ${NSIS_OUTPUT_PATH}\yarp_libraries_add.nsi
+  SectionEnd
 
-SectionGroup "Math library" SecMath
-  Section "Math libraries for compiling" SecMathLibraries
+  Section "Header files" SecHeaders
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\include"
+    !include ${NSIS_OUTPUT_PATH}\yarp_headers_add.nsi
+  SectionEnd
+
+  Section "Examples" SecExamples
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\example"
+    !include ${NSIS_OUTPUT_PATH}\yarp_examples_add.nsi
+  SectionEnd
+
+SectionGroupEnd
+
+SectionGroup "YARP Runtime" SecRuntime
+
+  Section "YARP DLLs" SecDLLs
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\bin"
+    !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
+  SectionEnd
+	
+  Section "Visual Studio DLLs (nonfree)" SecVcDlls
+    SetOutPath "$INSTDIR"
+    CreateDirectory "$INSTDIR\bin"
+    !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
+  SectionEnd
+
+  SectionGroup "ACE library" SecAce
+    Section "ACE library" SecAceLibraries
+      SetOutPath "$INSTDIR"
+      CreateDirectory "$INSTDIR\lib"
+      !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
+    SectionEnd
+
+    Section "ACE DLL" SecAceDLLs
+      SetOutPath "$INSTDIR"
+      !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
+    SectionEnd
+  SectionGroupEnd
+  
+SectionGroupEnd
+
+SectionGroup "Math library (GPL)" SecMath
+  Section "Math libraries" SecMathLibraries
     SetOutPath "$INSTDIR"
     CreateDirectory "$INSTDIR\lib"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_add.nsi
   SectionEnd
 
-  Section "Math runtime libraries(DLLs)" SecMathDLLs
+  Section "Math DLLs" SecMathDLLs
     SetOutPath "$INSTDIR"
     CreateDirectory "$INSTDIR\bin"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
-SectionGroupEnd
 
-SectionGroup "ACE library"
-  Section "ACE libraries for compiling" SecAceLibraries
+  Section "Math headers" SecMathHeaders
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\lib"
-    !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
-  SectionEnd
-
-  Section "ACE runtime library(DLL)" SecAceDLLs
-    SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
+    CreateDirectory "$INSTDIR\include"
+    !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_add.nsi
   SectionEnd
 SectionGroupEnd
 
-Section "yarpview" SecGuis
+Section "yarpview utility" SecGuis
   #CreateDirectory "$INSTDIR\yarpview"
   SetOutPath "$INSTDIR"
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
   #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
+SectionEnd
+
+!ifndef WriteEnvStr_Base
+  !ifdef ALL_USERS
+    !define WriteEnvStr_Base "HKLM"
+    !define WriteEnvStr_RegKey \
+       'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
+  !else
+    !define WriteEnvStr_Base "HKCU"
+    !define WriteEnvStr_RegKey 'HKCU "Environment"'
+  !endif
+!endif
+
+Section "Environment variables" SecPath
+  ${EnvVarUpdate} $0 "PATH" "A" "${WriteEnvStr_Base}" "$INSTDIR\bin"
+  ${EnvVarUpdate} $0 "LIB" "A" "${WriteEnvStr_Base}" "$INSTDIR\lib"
+  ${EnvVarUpdate} $0 "INCLUDE" "A" "${WriteEnvStr_Base}" "$INSTDIR\include"
+  WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR"
+  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 SectionEnd
 
 Section "-last"
@@ -261,30 +305,72 @@ SectionEnd
 ;Descriptions
 
 ;Language strings
-LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking."
-LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries for running."
-LangString DESC_SecPrograms ${LANG_ENGLISH} "Utility programs."
+LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP tools, including the standard YARP companion, and the standard YARP name server."
+LangString DESC_SecDevelopment ${LANG_ENGLISH} "Files needed for compiling against YARP."
+LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
+LangString DESC_SecHeaders ${LANG_ENGLISH} "Core YARP header files."
+LangString DESC_SecExamples ${LANG_ENGLISH} "Some basic examples of using YARP.  See online documentation, and many more examples in source code package."
+LangString DESC_SecRuntime ${LANG_ENGLISH} "Files needed for running YARP programs."
+LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries needed for YARP programs to run."
+LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable files.  Not free software.  If you already have Visual Studio installed, you may want to skip this."
+LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment, used by this version of YARP."
+LangString DESC_SecAceLibraries ${LANG_ENGLISH} "ACE library files."
+LangString DESC_SecAceDLLs ${LANG_ENGLISH} "ACE library run-time."
+LangString DESC_SecMath ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
+LangString DESC_SecMathLibraries ${LANG_ENGLISH} "Math library files."
+LangString DESC_SecMathDLLs ${LANG_ENGLISH} "Math library run-time."
+LangString DESC_SecMathHeaders ${LANG_ENGLISH} "Math library header files."
+LangString DESC_SecGuis ${LANG_ENGLISH} "Utility for viewing image streams.  Uses GTK+."
+LangString DESC_SecPath ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   ; !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDLLs} $(DESC_SecDLLs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDevelopment} $(DESC_SecDevelopment)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecHeaders} $(DESC_SecHeaders)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecRuntime} $(DESC_SecRuntime)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDLLs} $(DESC_SecDLLs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecVcDlls} $(DESC_SecVcDlls)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAceLibraries} $(DESC_SecAceLibraries)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMath} $(DESC_SecMath)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathLibraries} $(DESC_SecMathLibraries)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathDLLs} $(DESC_SecMathDLLs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathHeaders} $(DESC_SecMathHeaders)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGuis} $(DESC_SecGuis)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPath} $(DESC_SecPath)
+  #!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
 ;Uninstaller Section
 
 Section "Uninstall"
+  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\bin"
+  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\lib"
+  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\include"
+
+  #Push "$INSTDIR\bin"
+  #Call un.RemoveFromPath
+  #Push "LIB"
+  #Push "$INSTDIR\lib"
+  #Call un.RemoveFromEnvVar
+  DeleteRegValue ${WriteEnvStr_RegKey} YARP_DIR
+  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 
   !include ${NSIS_OUTPUT_PATH}\yarp_base_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_headers_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_examples_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
@@ -303,3 +389,11 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\YARP"
 
 SectionEnd
+
+Function .onInit
+  !insertmacro MULTIUSER_INIT
+FunctionEnd
+
+Function un.onInit
+  !insertmacro MULTIUSER_UNINIT
+FunctionEnd

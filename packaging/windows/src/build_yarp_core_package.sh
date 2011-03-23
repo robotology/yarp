@@ -115,10 +115,13 @@ nsis_setup yarp_headers
 nsis_setup yarp_programs
 nsis_setup yarp_math_libraries
 nsis_setup yarp_math_dlls
+nsis_setup yarp_math_headers
 nsis_setup yarp_guis
 nsis_setup yarp_ace_libraries
 nsis_setup yarp_ace_dlls
+# nsis_setup yarp_ace_headers
 nsis_setup yarp_vc_dlls
+nsis_setup yarp_examples
 
 # Hmm, GSL is currently compiled statically with yarp_math
 # nsis_setup yarp_gsl_libraries
@@ -153,6 +156,11 @@ cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep -v yarpview`; do
 	nsis_add yarp_programs $f bin/$f
 done
+cd $YARP_ROOT/example/hello
+for f in `ls *.cpp CMakeLists.txt`; do
+	nsis_add yarp_examples $f example/$f
+done
+cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep yarpview`; do
 	nsis_add yarp_guis $f bin/$f
 done
@@ -172,7 +180,7 @@ cd $YARP_DIR_UNIX/install/include/yarp
 for f in conf os sig dev ; do
 	nsis_add_recurse yarp_headers $f include/yarp/$f
 done
-
+nsis_add_recurse yarp_math_headers math include/yarp/math
 
 # Add ACE material
 cd $ACE_DIR || exit 1
@@ -194,6 +202,7 @@ fi
 
 cd $OUT_DIR
 
+cp $SOURCE_DIR/src/nsis/*.nsh .
 $NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi`
 
 if [ "k$SKIP_ZIP" = "k" ] ; then
