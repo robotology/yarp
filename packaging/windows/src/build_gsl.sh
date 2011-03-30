@@ -23,7 +23,9 @@ source cmake_${compiler}_${variant}_${build}.sh || {
 }
 
 if [ "k$GSL_VERSION" = "k" ]; then
-	GSL_VERSION=1.14
+	#GSL_VERSION=1.14
+	echo "Set GSL_VERSION"
+	exit 1
 fi
 
 fname=gsl-$GSL_VERSION

@@ -181,11 +181,9 @@ Section "-first"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
-  !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "CopyPolicy" "HelloHello"
   ${StrRepLocal} $0 "$INSTDIR" "\" "/"
   !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "${YARP_ORG_DIR}/install" "$0"
   !insertmacro ReplaceInFile "$INSTDIR\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
-  !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "CopyPolicy" "HelloHello"
 SectionEnd
 
 Section "Command-line utilities" SecPrograms
@@ -272,6 +270,13 @@ Section "yarpview utility" SecGuis
   #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
 SectionEnd
 
+Section "${DBG_HIDE}Debug versions" SecDebug
+  SetOutPath "$INSTDIR"
+  !include ${NSIS_OUTPUT_PATH}\yarp_debug_add.nsi
+  ${StrRepLocal} $0 "$INSTDIR" "\" "/"
+  !insertmacro ReplaceInFile "$INSTDIR\lib\${YARP_LIB_DIR_DBG}\${YARP_LIB_FILE_DBG}" "${ACE_ORG_DIR_DBG}" "$0"
+SectionEnd
+
 !ifndef WriteEnvStr_Base
   !ifdef ALL_USERS
     !define WriteEnvStr_Base "HKLM"
@@ -322,6 +327,7 @@ LangString DESC_SecMathDLLs ${LANG_ENGLISH} "Math library run-time."
 LangString DESC_SecMathHeaders ${LANG_ENGLISH} "Math library header files."
 LangString DESC_SecGuis ${LANG_ENGLISH} "Utility for viewing image streams.  Uses GTK+."
 LangString DESC_SecPath ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
+LangString DESC_SecDebug ${LANG_ENGLISH} "Debug versions of the YARP and ACE libraries."
 
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -343,6 +349,7 @@ LangString DESC_SecPath ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE vari
   !insertmacro MUI_DESCRIPTION_TEXT ${SecMathHeaders} $(DESC_SecMathHeaders)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGuis} $(DESC_SecGuis)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPath} $(DESC_SecPath)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecDebug} $(DESC_SecDebug)
   #!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -374,8 +381,8 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
-
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
+  !include ${NSIS_OUTPUT_PATH}\yarp_debug_remove.nsi
   #Delete "$INSTDIR\bin\yarpview.lnk"
   
   Delete "$INSTDIR\Uninstall.exe"
@@ -384,6 +391,7 @@ Section "Uninstall"
   RMDir "$INSTDIR\lib"
   #RMDir "$INSTDIR\yarpview"
   RMDir /r "$INSTDIR\include"
+  RMDir "$INSTDIR\example"
   RMDir "$INSTDIR"
 
   DeleteRegKey /ifempty HKCU "Software\YARP"

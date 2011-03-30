@@ -20,7 +20,9 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 }
 
 if [ "k$NSIS_VERSION" = "k" ]; then
-	NSIS_VERSION=2.46
+	#NSIS_VERSION=2.46
+	echo "Set NSIS_VERSION"
+	exit 1
 fi
 
 fname=nsis-$NSIS_VERSION

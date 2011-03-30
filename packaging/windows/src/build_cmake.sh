@@ -20,7 +20,9 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 }
 
 if [ "k$CMAKE_VERSION" = "k" ]; then
-	CMAKE_VERSION=2.8.4
+	# CMAKE_VERSION=2.8.4
+	echo "set CMAKE_VERSION"
+	exit 1
 fi
 
 fname=cmake-$CMAKE_VERSION

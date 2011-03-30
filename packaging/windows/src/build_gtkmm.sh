@@ -22,7 +22,9 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 }
 
 if [ "k$GTKMM_VERSION" = "k" ]; then
-	GTKMM_VERSION=2.22.0-2
+	#GTKMM_VERSION=2.22.0-2
+	echo "Set GTKMM version"
+	exit 1
 fi
 
 fname=gtkmm-$GTKMM_VERSION
