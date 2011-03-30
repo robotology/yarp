@@ -17,7 +17,7 @@ source $SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
-source cmake_${compiler}_${variant}_${build}.sh || {
+source cmake_any_any_any.sh || {
 	echo "Cannot find corresponding CMAKE build"
 	exit 1
 }

@@ -67,7 +67,7 @@ done
 (
 
 # All basic targets to make available
-full_target_list="cmake ace gsl gtkmm yarp icub nsis yarp_core_package"
+full_target_list="cmake ace gsl gtkmm yarp nsis yarp_core_package"
 
 # Coarse-grain dependencies between targets
 depend_cmake=
@@ -108,23 +108,23 @@ function dep_target_list {
 	local c=$2
 	local v=$3
 	local b=$4
-	local build_out_t=build_out_$t
-	build_out="${!build_out_t}"
-	local compilers_out_t=compilers_out_$t
-	compilers_out="${!compilers_out_t}"
-	if [ "k$compilers_out" = "kany" ]; then
+	local _build_out_t=build_out_$t
+	_build_out="${!_build_out_t}"
+	local _compilers_out_t=compilers_out_$t
+	_compilers_out="${!_compilers_out_t}"
+	if [ "k$_compilers_out" = "kany" ]; then
 		c=any
 		v=any
 	else
 		if [ "k$c" = "kany" ]; then
-			c="$compilers_out"
+			c="$_compilers_out"
 		fi
 	fi
-	if [ "k$build_out" = "kany" ]; then
+	if [ "k$_build_out" = "kany" ]; then
 		b=any
 	else
 		if [ "k$b" = "kany" ]; then
-			b="$build_out"
+			b="$_build_out"
 		fi
 	fi
 	for c1 in $c; do
@@ -167,7 +167,7 @@ for t in $full_target_list; do
 	done
 	#echo "build_${t}_any_any_any.txt: ${!TARGETS[*]}"
 	#echo -e "\ttouch build_${t}_any_any_any.txt\n"
-	echo "$t.txt: build_${t}_any_any_any.txt"
+	echo "$t.txt: ${!TARGETS[*]}"
 	echo -e "\ttouch $t.txt\n"
 done
 ) >> $BUILD_DIR/Makefile
