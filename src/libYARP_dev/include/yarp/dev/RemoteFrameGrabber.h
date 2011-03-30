@@ -29,7 +29,7 @@ namespace yarp{
  * the network protocol used.
  *
  */
-class YARP_dev_API yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
+class yarp::dev::RemoteFrameGrabber : public IFrameGrabberImage, 
             public IFrameGrabberControls,
             public DeviceDriver {
 
@@ -219,8 +219,8 @@ public:
     */
 
 protected:
-    yarp::os::Port port;
     yarp::os::PortReaderBuffer<yarp::sig::ImageOf<yarp::sig::PixelRgb> > reader;
+    yarp::os::Port port;
     yarp::os::ConstString remote;
     yarp::os::ConstString local;
     yarp::os::Semaphore mutex;

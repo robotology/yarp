@@ -112,6 +112,18 @@ IF (WIN32 AND NOT CYGWIN)
 	FIND_LIBRARY(ACE_DEBUG_LIBRARY NAMES ACE${CMAKE_DEBUG_POSTFIX} ace${CMAKE_DEBUG_POSTFIX} PATHS $ENV{ACE_ROOT}/lib $ENV{ACE_ROOT} ${CMAKE_SOURCE_DIR}/../ACE_wrappers/lib/ /usr/lib /usr/local/lib DOC "ACE library file (debug version)")
 ENDIF (WIN32 AND NOT CYGWIN)
 
+IF (ACE_DEBUG_LIBRARY)
+	SET(ACE_DEBUG_FOUND TRUE)
+ENDIF (ACE_DEBUG_LIBRARY)
+
+if (ACE_DEBUG_FOUND)
+  if (ACE_LIBRARY)
+    set(ACE_LIBRARY optimized ${ACE_LIBRARY} debug ${ACE_DEBUG_LIBRARY})
+  else (ACE_LIBRARY)
+    set(ACE_LIBRARY debug ${ACE_DEBUG_LIBRARY})
+  endif (ACE_LIBRARY)
+endif (ACE_DEBUG_FOUND)
+
 
 ########################################################################
 ## OS-specific extra linkage
@@ -120,7 +132,7 @@ ENDIF (WIN32 AND NOT CYGWIN)
 IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
   MESSAGE(STATUS "need to link solaris-specific libraries")
   #  LINK_LIBRARIES(socket rt)
-  SET(ACE_LIBRARY ${ACE_LIBRARY} socket rt nsl)
+  SET(ACE_LIBRARY socket rt nsl ${ACE_LIBRARY})
 ENDIF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
 
 # ACE package doesn't specify that pthread and rt are needed, which is 
@@ -134,14 +146,14 @@ IF (WIN32 AND NOT CYGWIN)
   MESSAGE(STATUS "need to link windows-specific libraries")
   # if ACE found, add winmm dependency
   IF(ACE_LIBRARY)
-    SET(ACE_LIBRARY ${ACE_LIBRARY} winmm)
+    SET(ACE_LIBRARY winmm ${ACE_LIBRARY})
   ENDIF(ACE_LIBRARY)
 ENDIF (WIN32 AND NOT CYGWIN)
 
 IF (MINGW)
   MESSAGE(STATUS "need to link windows-specific libraries")
   #LINK_LIBRARIES(winmm wsock32)
-  SET(ACE_LIBRARY ${ACE_LIBRARY} winmm wsock32)
+  SET(ACE_LIBRARY winmm wsock32 ${ACE_LIBRARY})
 ENDIF(MINGW)
 
 
@@ -153,10 +165,6 @@ IF (ACE_INCLUDE_DIR AND ACE_LIBRARY)
 ELSE (ACE_INCLUDE_DIR AND ACE_LIBRARY)
 	SET(ACE_FOUND FALSE)
 ENDIF (ACE_INCLUDE_DIR AND ACE_LIBRARY)
-
-IF (ACE_DEBUG_LIBRARY)
-	SET(ACE_DEBUG_FOUND TRUE)
-ENDIF (ACE_DEBUG_LIBRARY)
 
 IF (ACE_FOUND)
 	IF (NOT ACE_FIND_QUIETLY)
@@ -170,12 +178,6 @@ ELSE (ACE_FOUND)
 ENDIF (ACE_FOUND)
 
 ENDIF (BUILTIN_ACE)
-
-if (ACE_DEBUG_FOUND)
-  if (ACE_LIBRARY)
-    set(ACE_LIBRARY optimized ${ACE_LIBRARY} debug ${ACE_DEBUG_LIBRARY})
-  endif (ACE_LIBRARY)
-endif (ACE_DEBUG_FOUND)
 
 SET(ACE_LIBRARIES ${ACE_LIBRARY})
 
