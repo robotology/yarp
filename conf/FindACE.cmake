@@ -153,7 +153,7 @@ ENDIF (WIN32 AND NOT CYGWIN)
 IF (MINGW)
   MESSAGE(STATUS "need to link windows-specific libraries")
   #LINK_LIBRARIES(winmm wsock32)
-  SET(ACE_LIBRARY winmm wsock32 ${ACE_LIBRARY})
+  SET(ACE_LIBRARY winmm ws2_32 wsock32 ${ACE_LIBRARY})
 ENDIF(MINGW)
 
 
