@@ -16,7 +16,7 @@ if (CREATE_YARPSERVER3)
   include_directories(${YARP_TREE_INCLUDE_DIRS})
   include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-  add_library(yarpserversql src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
+  add_library(yarpserversql STATIC src/TripleSourceCreator.cpp src/TripleSourceCreator.h src/Triple.h src/TripleSource.h src/SqliteTripleSource.h sqlite/sqlite3.c sqlite/sqlite3.h)
 
   if (NOT WIN32)
     target_link_libraries(yarpserversql pthread dl)
