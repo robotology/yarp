@@ -32,6 +32,15 @@ if [ "k$compiler" = "kv8" ] ; then
 	PLATFORM_COMMAND=$PLATFORM_COMMAND_VCBUILD
 	CONFIGURATION_COMMAND=$CONFIGURATION_COMMAND_VCBUILD
 fi
+if [ "k$compiler" = "kmingw" ] ; then
+	pname=" "
+	BUILDER="make ACE"
+	PLATFORM_COMMAND=
+	CONFIGURATION_COMMAND=
+	if [ "k$build" = "kDebug" ]; then
+		CONFIGURATION_COMMAND="debug=1"
+	fi
+fi
 if [ "k$pname" = "k" ] ; then 
 	echo "Please set project name for compiler $compiler in build_ace.sh"
 	exit 1
@@ -48,8 +57,13 @@ fi
 
 # msbuild does not have out-of-source builds, so we duplicate source as needed
 fname2=$fname-$compiler-$variant
+# for mingw debug builds, seem to need different dirs
+if [ "$COMPILER_FAMILY" = "mingw" ] ;then 
+	name2=$fname-$compiler-$variant-$build
+fi
 
 if [ ! -e $fname2 ]; then
+	echo "PATH is $PATH"
 	tar xzvf $fname.tar.gz || (
 		echo "Cannot unpack ACE"
 		exit 1
@@ -64,6 +78,14 @@ if [ ! -e $ACE_ROOT/ace/config.h ] ; then
 	cd $ACE_ROOT/ace
 	echo '#include "ace/config-win32.h"' > config.h
 fi
+if [ "k$COMPILER_FAMILY" = "kmingw" ]; then
+	cd $ACE_ROOT
+	if [ ! -e include/makeinclude/platform_macros.GNU ]; then
+		echo "Creating $ACE_ROOT/include/makeinclude/platform_macros.GNU"	
+		cd $ACE_ROOT/include/makeinclude
+		echo 'include $(ACE_ROOT)/include/makeinclude/platform_mingw32.GNU' > platform_macros.GNU
+	fi
+fi
 
 cd $ACE_ROOT/ace
 echo $PWD
@@ -72,7 +94,15 @@ if [ ! -e $pname ]; then
 	exit 1
 fi
 
+(
+if [ ! "kRESTRICTED_PATH" = "k" ]; then
+	ACE_ROOT=`cygpath -m $ACE_ROOT`
+	PATH="$RESTRICTED_PATH"
+	echo "ACE_ROOT set to $ACE_ROOT"
+	echo "PATH set to $PATH"
+fi
 $BUILDER $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
+)
 
 libname=ACE
 if [ "k$build" = "kDebug" ]; then

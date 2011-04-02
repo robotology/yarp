@@ -55,11 +55,14 @@ cd $BUILD_DIR
 
 for c in $compilers; do
 	variants=compiler_${c}_variants
-	loader=compiler_${c}_loader
+	loader_t=compiler_${c}_loader
+	family_t=compiler_${c}_family
+	loader="${!loader_t}"
+	family="${!family_t}"
 	for v in ${!variants}; do
-		echo "Adding compiler $c variant $v"
+		echo "Adding compiler $c variant $v family $family"
 		if [ ! -e compiler_config_${c}_${v}.sh ]; then
-			$SOURCE_DIR/src/msbuild.sh "${!loader}" $v $c || exit 1
+			$SOURCE_DIR/src/load_$family.sh "$loader" $v $c || exit 1
 		fi
 	done
 done

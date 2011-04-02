@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-export YARP_VERSION=trunk #just for testing
-# export YARP_VERSION=2.3.3
+export YARP_VERSION=2.3.3
+export YARP_REVISION=8536  # just for testing
 
 export ACE_VERSION=6.0.1
 export CMAKE_VERSION=2.8.4

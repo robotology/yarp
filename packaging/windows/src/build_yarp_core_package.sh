@@ -278,12 +278,12 @@ if [ "k$SKIP_ZIP" = "k" ] ; then
 	for f in `cd zip; ls`; do
 		cd $OUT_DIR/zip/$f || exit 1
 		echo "  Zipping $f"
-		zip -r ${zip_name}-$f $zip_name || exit 1
+		zip -r ${zip_name}-$f.zip $zip_name || exit 1
 		mv *.zip $OUT_DIR || exit 1
 	done
 	echo "Big zip"
 	cd $OUT_DIR/zip_all || exit 1
-	zip -r ${zip_name} ${zip_name} || exit 1
+	zip -r ${zip_name}.zip ${zip_name} || exit 1
 	mv *.zip $OUT_DIR || exit 1
 fi
 

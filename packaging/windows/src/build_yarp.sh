@@ -46,10 +46,17 @@ if [ ! -e $fname ]; then
 			exit 1
 		}
 	else
-		svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
-			echo "Cannot fetch YARP"
-			exit 1
-		}
+		if [ "k$YARP_REVISION" = "k" ]; then
+			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
+				echo "Cannot fetch YARP"
+				exit 1
+			}
+		else
+			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 -r $YARP_REVISION $fname || {
+				echo "Cannot fetch YARP"
+				exit 1
+			}
+		fi
 	fi
 fi
 
@@ -63,11 +70,29 @@ YARP_ROOT=`cygpath --mixed "$PWD/../$fname"`
 
 echo "Using ACE from $ACE_ROOT"
 echo "Using GSL from $GSL_DIR"
-"$CMAKE_BIN" -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DCREATE_LIB_MATH=TRUE -DCMAKE_LIBRARY_PATH="$GTKMM_BASEPATH/include" -DCMAKE_INCLUDE_PATH="$GTKMM_BASEPATH/include/include" -DFREETYPE_INCLUDE_DIRS="." -DFREETYPE_LIBRARIES="" -DFREETYPE_LIBRARY="" -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -DCREATE_GUIS=TRUE -DYARP_USE_GTK2=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
-$BUILDER YARP.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
-if [ ! -e install ]; then
-	"$CMAKE_BIN" --build . --target install --config ${build} || exit 1
-fi
+
+# set up configure and build steps
+(
+cat << XXX
+	source $SOURCE_DIR/src/restrict_path.sh
+	"$CMAKE_BIN" $CMAKE_OPTION -DCMAKE_INSTALL_PREFIX=$YARP_DIR/install -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE -DCMAKE_LIBRARY_PATH="$GTKMM_BASEPATH/include" -DCMAKE_INCLUDE_PATH="$GTKMM_BASEPATH/include/include" -DFREETYPE_INCLUDE_DIRS="." -DFREETYPE_LIBRARIES="" -DFREETYPE_LIBRARY="" -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -DCREATE_GUIS=TRUE -DYARP_USE_GTK2=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DYARP_COMPILE_TESTS=TRUE -DYARP_FILTER_API=TRUE -G "$generator" ../$fname || exit 1
+	target_name "YARP"
+	$BUILDER  \$user_target \$TARGET $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
+	if [ ! -e install ]; then
+		"$CMAKE_BIN" --build . --target install --config ${build} || exit 1
+	fi
+XXX
+) > compile_base.sh
+# make a small compile script for user testing
+(
+	set
+	echo 'user_target="$1"'
+	echo "source compile_base.sh"
+) > compile.sh
+# configure and build
+(
+	source compile_base.sh
+)
 
 (
 	echo "export YARP_DIR='$YARP_DIR'"

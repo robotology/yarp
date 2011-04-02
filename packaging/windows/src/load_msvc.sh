@@ -32,6 +32,7 @@ NEW_LIB=`bash ./msbuild_lib.sh | grep "."`
 	if [ ! "k$REDIST_PATH" = "k" ]; then
 		echo "export REDIST_PATH='$REDIST_PATH'"
 	fi
+	echo "export COMPILER_FAMILY=msvc"
 ) > compiler_config_${3}_${2}.sh
 
 # clean up

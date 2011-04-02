@@ -4,6 +4,22 @@ compiler=$1
 variant=$2
 build=$3
 
+function target_name {
+	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+		TARGET=""
+	else
+		TARGET="$1.sln"
+	fi
+}
+
+function target_lib_name {
+	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+		TARGET_LIB="lib$2.a"
+	else
+		TARGET_LIB="$1/$2.lib"
+	fi
+}
+
 if [ ! "k$compiler" = "kany" ]; then
 
 	if [ "k$build" = "k" ]; then
@@ -31,6 +47,9 @@ if [ ! "k$compiler" = "kany" ]; then
 		platform=v80
 		VCNNN="VC80"
 	fi
+	if [ "k$compiler" = "kmingw" ] ; then
+		platform=mingw
+	fi
 	if [ "k$platform" = "k" ]; then
 		echo "Please set platform for compiler $compiler in process_options.sh"
 		exit 1
@@ -55,6 +74,9 @@ if [ ! "k$compiler" = "kany" ]; then
 			generator="Visual Studio 8 2005"
 		fi
 	fi
+	if [ "k$compiler" = "kmingw" ] ; then
+		generator="MSYS Makefiles"
+	fi
 	if [ "k$generator" = "k" ] ; then 
 		echo "Please set generator for compiler $compiler variant $variant in process_options.sh"
 		exit 1
@@ -74,4 +96,11 @@ if [ ! "k$compiler" = "kany" ]; then
 	# this will need updating for non-x86
 	CONFIGURATION_COMMAND_VCBUILD="$build"
 
+	if [ "k$compiler" = "kmingw" ] ; then
+		BUILDER="make"
+		PLATFORM_COMMAND=""
+		CONFIGURATION_COMMAND=""
+		CMAKE_OPTION="-DCMAKE_BUILD_TYPE=$build"
+	fi
 fi
+
