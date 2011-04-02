@@ -169,10 +169,10 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	YARP_LIB_FILE=`cd $d; ls YARP-*.cmake`
 done
 cd $YARP_DIR_UNIX/install/lib || exit 1
-for f in `ls -1 *.lib | grep -v YARP_math`; do
+for f in `ls -1 *.$LIBEXT | grep -v YARP_math`; do
 	nsis_add yarp_libraries $f lib/$f
 done
-for f in `ls -1 *.lib | grep YARP_math`; do
+for f in `ls -1 *.$LIBEXT | grep YARP_math`; do
 	nsis_add yarp_math_libraries $f lib/$f
 done
 for f in `ls -1 *.dll | grep -v YARP_math`; do
@@ -219,7 +219,7 @@ if [ ! -e $ACE_LIBNAME.dll ]; then
 	echo "Cannot find $ACE_LIBNAME.dll in $PWD"
 	exit 1
 fi
-nsis_add yarp_ace_libraries $ACE_LIBNAME.lib lib/$ACE_LIBNAME.lib
+nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT lib/$ACE_LIBNAME.$LIBEXT
 nsis_add yarp_ace_dlls $ACE_LIBNAME.dll bin/$ACE_LIBNAME.dll
 
 # Add VC material
@@ -248,7 +248,7 @@ if $add_debug; then
 		echo "Cannot find $ACE_LIBNAME_DBG.dll in $PWD"
 		exit 1
 	fi
-	nsis_add yarp_debug $ACE_LIBNAME_DBG.lib lib/$ACE_LIBNAME_DBG.lib
+	nsis_add yarp_debug $ACE_LIBNAME_DBG.$LIBEXT lib/$ACE_LIBNAME_DBG.$LIBEXT
 	nsis_add yarp_debug $ACE_LIBNAME_DBG.dll bin/$ACE_LIBNAME_DBG.dll
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	for d in `ls -1 -d --group-directories-first YARP-* | head`; do

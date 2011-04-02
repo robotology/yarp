@@ -32,7 +32,9 @@ if [ "k$compiler" = "kv8" ] ; then
 	PLATFORM_COMMAND=$PLATFORM_COMMAND_VCBUILD
 	CONFIGURATION_COMMAND=$CONFIGURATION_COMMAND_VCBUILD
 fi
+LIBPRE=""
 if [ "k$compiler" = "kmingw" ] ; then
+	LIBPRE="lib"
 	pname=" "
 	BUILDER="make ACE"
 	PLATFORM_COMMAND=
@@ -109,9 +111,14 @@ if [ "k$build" = "kDebug" ]; then
 	libname=ACEd
 fi
 
+cd $ACE_ROOT
+for f in `cd ace; ls *.dll.a`; do
+	cp ace/$f lib/$f
+done
+
 (
 	ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
 	echo "export ACE_DIR='$ACE_DIR'"
 	echo "export ACE_ROOT='$ACE_DIR'"
-	echo "export ACE_LIBNAME='$libname'"
+	echo "export ACE_LIBNAME='$LIBPRE$libname'"
 ) > $BUILD_DIR/ace_${compiler}_${variant}_${build}.sh

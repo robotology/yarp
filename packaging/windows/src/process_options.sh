@@ -33,6 +33,12 @@ if [ ! "k$compiler" = "kany" ]; then
 		exit 1
 	}
 
+	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+		LIBEXT="dll.a"
+	else
+		LIBEXT="lib"
+	fi
+
 	platform=""
 	VCNNN=""
 	if [ "k$compiler" = "kv10" ] ; then
