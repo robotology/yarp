@@ -28,7 +28,7 @@ namespace yarp {
  *
  */
 class yarp::name::NameServerManager : public NameService, 
-                                      public yarp::os::PortReaderCreator {
+									  public yarp::os::PortReaderCreator {
 private:
     NameService& ns;
     yarp::os::Port *port;

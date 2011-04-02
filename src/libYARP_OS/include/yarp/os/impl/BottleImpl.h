@@ -45,7 +45,7 @@ namespace yarp {
  * interface with some implementation-specific details.
  *
  */
-class yarp::os::impl::Storable : public yarp::os::Value {
+class YARP_OS_impl_API yarp::os::impl::Storable : public yarp::os::Value {
 public:
     virtual bool isInt() const     { return false; }
     virtual bool isString() const { return false; }
@@ -182,7 +182,7 @@ public:
  * An empty item.
  *
  */
-class yarp::os::impl::StoreNull : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreNull : public Storable {
 public:
     StoreNull() { }
     virtual yarp::os::ConstString toString() const { return ""; }
@@ -202,7 +202,7 @@ public:
  * An integer item.
  *
  */
-class yarp::os::impl::StoreInt : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreInt : public Storable {
 private:
     int x;
 public:
@@ -227,7 +227,7 @@ public:
  * A vocabulary item.
  *
  */
-class yarp::os::impl::StoreVocab : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreVocab : public Storable {
 private:
     int x;
 public:
@@ -254,7 +254,7 @@ public:
  * A string item.
  *
  */
-class yarp::os::impl::StoreString : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreString : public Storable {
 private:
     String x;
 public:
@@ -282,7 +282,7 @@ public:
  * A binary blob item.
  *
  */
-class yarp::os::impl::StoreBlob : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreBlob : public Storable {
 private:
     String x;
 public:
@@ -318,7 +318,7 @@ public:
  * A floating point number item.
  *
  */
-class yarp::os::impl::StoreDouble : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreDouble : public Storable {
 private:
     double x;
 public:
@@ -345,7 +345,7 @@ public:
  * A nested list of items.
  *
  */
-class yarp::os::impl::StoreList : public Storable {
+class YARP_OS_impl_API yarp::os::impl::StoreList : public Storable {
 private:
     yarp::os::Bottle content;
 public:

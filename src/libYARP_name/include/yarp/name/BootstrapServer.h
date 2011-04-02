@@ -9,8 +9,8 @@
 #ifndef YARPDB_BROADCASTSERVER_INC
 #define YARPDB_BROADCASTSERVER_INC
 
+#include <yarp/name/api.h>
 #include <yarp/os/Contact.h>
-
 #include <yarp/name/NameService.h>
 
 namespace yarp {
@@ -24,7 +24,7 @@ namespace yarp {
  * Multicast and file-based mechanisms for finding the name server.
  *
  */
-class yarp::name::BootstrapServer {
+class YARP_name_API yarp::name::BootstrapServer {
 private:
     void *implementation;
 public:

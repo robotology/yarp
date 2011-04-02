@@ -9,6 +9,7 @@
 #ifndef YARPDB_NAMESERVICE_INC
 #define YARPDB_NAMESERVICE_INC
 
+#include <yarp/name/api.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Contact.h>
 
@@ -33,7 +34,7 @@ namespace yarp {
  * Abstract interface for a name server operator.
  *
  */
-class yarp::name::NameService {
+class YARP_name_API yarp::name::NameService {
 public:
     virtual ~NameService() {}
 

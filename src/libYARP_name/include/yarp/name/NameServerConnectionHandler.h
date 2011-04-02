@@ -9,6 +9,7 @@
 #ifndef YARPDB_NAMESERVERCONNECTIONHANDLER_INC
 #define YARPDB_NAMESERVERCONNECTIONHANDLER_INC
 
+#include <yarp/name/api.h>
 #include <yarp/os/PortReader.h>
 #include <yarp/os/ConnectionReader.h>
 #include <yarp/os/ConnectionWriter.h>
