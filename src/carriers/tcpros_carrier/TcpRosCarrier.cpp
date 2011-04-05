@@ -23,7 +23,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
 
-#define dbg_printf if (0) printf
+#define dbg_printf if (1) printf
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -138,6 +138,12 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
                                             isService,raw);
 
     if (stream==NULL) { return false; }
+
+    printf("Getting ready to hand off streams...\n");
+    printf("Let's check for some type information? for ...\n");
+
+    
+
     proto.takeStreams(stream);
     
     return proto.is().isOk();
@@ -166,6 +172,15 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     } else {
         proto.setRoute(proto.getRoute().addFromName("tcpros"));
     }
+
+    /*
+    printf("Hello, I received a header.\n");
+    printf("Here it is:\n");
+    for (map<string,string>::iterator it=header.data.begin();
+         it!=header.data.end(); it++) {
+        printf("  %s -> %s\n", it->first.c_str(), it->second.c_str());
+    }
+    */
 
     // let's just ignore everything that is sane and holy, and
     // send the same header right back

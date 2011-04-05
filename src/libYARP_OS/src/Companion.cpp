@@ -1628,7 +1628,9 @@ int Companion::cmdTopic(int argc, char *argv[]) {
     ConstString act = (mode==1)?"create":"delete";
     cmd.addString((mode==1)?"topic":"untopic");
     if (ConstString(argv[0])!="--list") {
-        cmd.addString(argv[0]);
+        for (int i=0; i<argc; i++) {
+            cmd.addString(argv[i]);
+        }
     }
     bool ok = NetworkBase::write(NetworkBase::getNameServerContact(),
                                  cmd,

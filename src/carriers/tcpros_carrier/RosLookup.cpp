@@ -8,6 +8,8 @@
 
 #include "RosLookup.h"
 
+#include <stdlib.h>
+
 using namespace yarp::os;
 
 static bool rpc(const Contact& c,
@@ -123,6 +125,10 @@ yarp::os::Contact RosLookup::getRosCoreAddress() {
     }
     if (!addr.isValid()) {
         addr = NetworkBase::queryName("/roscore");
+    }
+    if (!addr.isValid()) {
+        fprintf(stderr,"cannot find roscore, is ROS_MASTER_URI set?\n");
+        exit(1);
     }
     return addr;
 }

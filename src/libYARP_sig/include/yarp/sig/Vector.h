@@ -222,7 +222,7 @@ public:
 };
 
 
-#ifdef MSC_VER
+#ifdef _MSC_VER
 /*YARP_sig_EXTERN*/ template class YARP_sig_API yarp::sig::VectorOf<double>;
 #endif
 

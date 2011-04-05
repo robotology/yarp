@@ -50,7 +50,8 @@ public:
 
     bool breakdown(const char *port);
 
-    virtual bool setTopic(const char *port, bool active);
+    virtual bool setTopic(const char *port, 
+                          const char *structure, bool active);
 
     virtual bool listTopics(yarp::os::Bottle& topics);
 
@@ -64,6 +65,14 @@ public:
     bool breakSubscription(const char *dropper,
                            const char *src, const char *dest,
                            const char *srcFull, const char *destFull);
+
+    virtual bool setType(const char *family,
+                         const char *structure,
+                         const char *value);
+
+    virtual yarp::os::ConstString getType(const char *family,
+                                          const char *structure);
+
 
     void setVerbose(bool verbose) {
         this->verbose = verbose;

@@ -60,9 +60,17 @@ public:
 
     virtual bool welcome(const char *port, int activity) = 0;
 
-    virtual bool setTopic(const char *port, bool active) = 0;
+    virtual bool setTopic(const char *port, 
+                          const char *structure, bool active) = 0;
 
     virtual bool listTopics(yarp::os::Bottle& topics) = 0;
+
+    virtual bool setType(const char *family,
+                         const char *structure,
+                         const char *value) = 0;
+
+    virtual yarp::os::ConstString getType(const char *family,
+                                          const char *structure) = 0;
 
     virtual bool apply(yarp::os::Bottle& cmd, 
                        yarp::os::Bottle& reply, 
@@ -71,7 +79,7 @@ public:
         yarp::os::ConstString tag = cmd.get(0).asString();
         bool ok = false;
         if (tag=="subscribe"||tag=="unsubscribe"||tag=="announce"||
-            tag=="topic"||tag=="untopic") {
+            tag=="topic"||tag=="untopic"||tag=="type") {
             printf("-> %s\n", cmd.toString().c_str());
         }
         if (tag=="subscribe") {
@@ -108,7 +116,8 @@ public:
         }
         if (tag=="topic") {
             if (cmd.size()>=2) {
-                bool result = setTopic(cmd.get(1).asString().c_str(),true);
+                bool result = setTopic(cmd.get(1).asString().c_str(),
+                                       cmd.get(2).asString().c_str(),true);
                 reply.clear();
                 reply.addVocab(replyCode(result));
                 return true;
@@ -118,8 +127,36 @@ public:
                 return true;
             }
         }
+        if (tag=="type") {
+            if (cmd.size()==4) {
+                bool result = setType(cmd.get(1).asString().c_str(),
+                                      cmd.get(2).asString().c_str(),
+                                      cmd.get(3).asString().c_str());
+                reply.clear();
+                reply.addVocab(replyCode(result));
+                return true;
+            } else if (cmd.size()==3) {
+                yarp::os::ConstString result = 
+                    getType(cmd.get(1).asString().c_str(),
+                            cmd.get(2).asString().c_str());
+                reply.clear();
+                if (result=="") {
+                    reply.addVocab(replyCode(false));
+                } else {
+                    reply.addString(cmd.get(0).asString());
+                    reply.addString(cmd.get(1).asString());
+                    reply.addString(cmd.get(2).asString());
+                    reply.addString(result);
+                }
+                return true;
+            } else {
+                reply.clear();
+                reply.addVocab(replyCode(false));
+                return true;
+            }
+        }
         if (tag=="untopic") {
-            bool result = setTopic(cmd.get(1).asString().c_str(),false);
+            bool result = setTopic(cmd.get(1).asString().c_str(),NULL,false);
             reply.clear();
             reply.addVocab(replyCode(result));
             return true;
