@@ -12,6 +12,7 @@ dir=$2
 
 if [ "k$dir" = "k" ]; then
     echo "Call as: build_chroot.sh <platform> <dir>"
+    exit 1
 fi
 
 if [ ! -e $dir ]; then

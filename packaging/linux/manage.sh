@@ -65,9 +65,28 @@ for platform in $PLATFORMS; do
     fi
     echo "Preparing $platform"
     (
-	echo "chroot_$platform:"
-	echo -e "\t$SOURCE_DIR/src/build_chroot.sh $platform chroot_$platform\n"
+	echo "chroot_$platform.txt:"
+	echo -e "\t$SOURCE_DIR/src/build_chroot.sh $platform chroot_$platform && touch chroot_$platform.txt\n"
+	echo "yarp_$platform.txt:"
+	echo -e "\t$SOURCE_DIR/src/build_yarp.sh $platform yarp_$platform && touch yarp_$platform.txt\n"
+	echo "test_$platform.txt:"
+	echo -e "\t$SOURCE_DIR/src/test_yarp.sh $platform && touch test_$platform.txt\n"
     ) >> $BUILD_DIR/Makefile
     #  --components=main,universe
     # http://ubuntu.media.mit.edu/ubuntu/
 done
+
+(
+    echo -n "all:"
+    for platform in $PLATFORMS; do
+	echo -n " chroot_$platform.txt"
+    done
+    for platform in $PLATFORMS; do
+	echo -n " yarp_$platform.txt"
+    done
+    for platform in $PLATFORMS; do
+	echo -n " test_$platform.txt"
+    done
+    echo -e "\n"
+) >> $BUILD_DIR/Makefile
+
