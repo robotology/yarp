@@ -223,7 +223,7 @@ public:
      * operations to complete (negative to wait forever).
      *
      */
-    void setTimeout(float timeout);
+    bool setTimeout(float timeout);
 
     /**
      *

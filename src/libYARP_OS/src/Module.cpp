@@ -7,11 +7,8 @@
  */
 
 
-#include <ace/config.h>
-//#include <ace/OS.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h> 
-#include <ace/OS_NS_signal.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>

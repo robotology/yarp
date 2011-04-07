@@ -16,7 +16,7 @@
 
 #include <yarp/dev/AudioVisualInterfaces.h>
 
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 using namespace yarp::os;
 using namespace yarp::sig;
@@ -28,9 +28,9 @@ using namespace yarp::dev;
 
 class DeviceGroupHelper {
 private:
-    ACE_Vector<PolyDriver *> drivers;
-    ACE_Vector<ConstString> names;
-    ACE_Vector<bool> needDrive;
+    PlatformVector<PolyDriver *> drivers;
+    PlatformVector<ConstString> names;
+    PlatformVector<bool> needDrive;
     Semaphore mutex;
 public:
     bool needDriveSummary;
@@ -41,7 +41,7 @@ public:
 
     void clear() {
         mutex.wait();
-        ACE_Vector<PolyDriver *>& lst = drivers;
+        PlatformVector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             printf("*** Removing %s\n",names[i].c_str());
             Drivers::factory().remove(names[i].c_str());
@@ -56,7 +56,7 @@ public:
 
     void update() {
         mutex.wait();
-        ACE_Vector<PolyDriver *>& lst = drivers;
+        PlatformVector<PolyDriver *>& lst = drivers;
         for (unsigned int i=0; i<lst.size(); i++) {
             if (needDrive[i]) {
                 IService *service;

@@ -13,7 +13,7 @@
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/Protocol.h>
 
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 using namespace yarp::os::impl;
 
@@ -29,8 +29,12 @@ bool TcpFace::open(const Address& address) {
     YARP_DEBUG(tcpFaceLog,String("opening for address ") + address.toString());
 
     this->address = address;
+#ifdef YARP_HAS_ACE
     ACE_INET_Addr  serverAddr(address.getPort());
     int result = peerAcceptor.open(serverAddr,1);
+#else
+    int result = peerAcceptor.open(address);
+#endif
     if (result==-1) {
         //throw IOException("cannot listen on specified tcp address");
         return false;
@@ -79,16 +83,20 @@ InputProtocol *TcpFace::read() {
     }
 
     if (stream!=NULL) {
+#ifdef YARP_HAS_ACE
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
+#endif
 
         bool success = auth.authSource(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             YARP_ERROR(tcpFaceLog,"authentication failed");
             return NULL;
         }
+#ifdef YARP_HAS_ACE
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
+#endif
 
         return new Protocol(stream);
     }
@@ -107,16 +115,20 @@ OutputProtocol *TcpFace::write(const Address& address) {
     }
 
     if (stream!=NULL) {
+#ifdef YARP_HAS_ACE
         stream->setReadTimeout(2.0);
         stream->setWriteTimeout(2.0);
+#endif
 
         bool success = auth.authDest(&(stream->getInputStream()), &(stream->getOutputStream()));
         if (! success ) {
             YARP_ERROR(tcpFaceLog,"authentication failed");
             return NULL;
         }
+#ifdef YARP_HAS_ACE
         stream->setReadTimeout(0.);
         stream->setWriteTimeout(0.);
+#endif
 
         return new Protocol(stream);
     }

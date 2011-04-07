@@ -16,8 +16,8 @@
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/impl/StreamConnectionReader.h>
 
-#include <ace/Vector_T.h>
-#include <ace/Containers_T.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformList.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -81,7 +81,8 @@ public:
     }
 
     void setEnvelope(const Bytes& bytes) {
-        envelope.set(bytes.get(),bytes.length(),1);
+        YARP_STRSET(envelope,bytes.get(),bytes.length(),1);
+        //envelope.set(bytes.get(),bytes.length(),1);
     }
 
     void resetExternal() {
@@ -96,7 +97,7 @@ public:
 
 class PortReaderPool {
 private:
-    ACE_Double_Linked_List<PortReaderPacket> inactive, active;
+    PLATFORM_LIST(PortReaderPacket) inactive, active;
 
 public:
 
@@ -109,17 +110,21 @@ public:
     }
 
     PortReaderPacket *getInactivePacket() {
-        if (inactive.is_empty()) {
-            size_t obj_size = sizeof (PortReaderPacket);
+        if (PLATFORM_LIST_EMPTY(inactive)) {
             PortReaderPacket *obj = NULL;
+#ifdef YARP_HAS_ACE
+            size_t obj_size = sizeof (PortReaderPacket);
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortReaderPacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
                                    PortReaderPacket(), 0);
-            inactive.insert_tail(obj);
+#else
+            obj = new PortReaderPacket();
+#endif
+            PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
         PortReaderPacket *next = NULL;
-        inactive.get(next);
+        PLATFORM_LIST_GET_BACK(inactive,next);
         YARP_ASSERT(next!=NULL);
         inactive.remove(next);
         //active.insert_tail(next);
@@ -129,7 +134,8 @@ public:
     PortReaderPacket *getActivePacket() {
         PortReaderPacket *next = NULL;
         if (getCount()>=1) {
-            active.get(next);
+            PLATFORM_LIST_GET_BACK(active,next);
+            //active.get(next);
             YARP_ASSERT(next!=NULL);
             active.remove(next);
         }
@@ -138,19 +144,23 @@ public:
 
     void addActivePacket(PortReaderPacket *packet) {
         if (packet!=NULL) {
-            active.insert_tail(packet);
+            PLATFORM_LIST_PUSH_BACK(active,packet);
+            //active.insert_tail(packet);
         }
     }
 
     void addInactivePacket(PortReaderPacket *packet) {
         if (packet!=NULL) {
-            inactive.insert_tail(packet);
+            PLATFORM_LIST_PUSH_BACK(inactive,packet);
+            //inactive.insert_tail(packet);
         }
     }
 
     void reset() {
-        active.reset();
-        inactive.reset();
+        PLATFORM_LIST_CLEAR(active);
+        PLATFORM_LIST_CLEAR(inactive);
+        //active.reset();
+        //inactive.reset();
     }
 };
 

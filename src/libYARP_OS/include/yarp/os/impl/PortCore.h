@@ -21,7 +21,7 @@
 
 #include <yarp/os/PortReport.h>
 
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 namespace yarp {
     namespace os {
@@ -327,7 +327,7 @@ private:
 
     // internal maintenance of sub units
 
-    ACE_Vector<PortCoreUnit *> units;
+    PlatformVector<PortCoreUnit *> units;
 
     // only called in "finished" phase
     void closeUnits();

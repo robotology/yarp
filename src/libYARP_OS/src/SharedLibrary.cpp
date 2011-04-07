@@ -6,6 +6,9 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+
 #include <ace/ACE.h>
 #include <ace/DLL.h>
 
@@ -41,5 +44,5 @@ void *SharedLibrary::getSymbol(const char *symbolName) {
     return HELPER(implementation).symbol(symbolName);
 }
 
-
+#endif
 

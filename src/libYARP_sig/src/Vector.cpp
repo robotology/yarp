@@ -13,14 +13,15 @@
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/NetFloat64.h>
 
-#include <ace/config.h>
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
 
-#define RES(v) ((ACE_Vector<T> *)v)
-#define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
+#define RES(v) ((PlatformVector<T> *)v)
+#define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
 
 /// network stuff
 #include <yarp/os/NetInt32.h>
@@ -50,7 +51,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
         if (getListSize() != (int)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
-        ACE_ASSERT (ptr != 0);
+        YARP_ASSERT (ptr != 0);
         int elemSize=getElementSize();
         ok = connection.expectBlock(ptr, elemSize*header.listLen);
         if (!ok) return false;
@@ -71,7 +72,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
     int elemSize=getElementSize();
-    ACE_ASSERT (ptr != NULL);
+    YARP_ASSERT (ptr != NULL);
 
     connection.appendExternalBlock(ptr, elemSize*header.listLen);
 

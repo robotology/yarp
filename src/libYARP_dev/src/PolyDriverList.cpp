@@ -7,17 +7,16 @@
 
 #include <yarp/dev/PolyDriverList.h>
 
-#include <ace/config.h>
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 
-#define RES(v) ((ACE_Vector<PolyDriverDescriptor> *)v)
+#define RES(v) ((PlatformVector<PolyDriverDescriptor> *)v)
 
 using namespace yarp::dev;
 
 PolyDriverList::PolyDriverList()
 {
-    aceVector=new ACE_Vector<PolyDriverDescriptor>;
+    aceVector=new PlatformVector<PolyDriverDescriptor>;
 }
 
 PolyDriverList::~PolyDriverList()

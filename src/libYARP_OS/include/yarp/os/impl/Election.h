@@ -10,11 +10,8 @@
 #define _YARP2_ELECTION_
 
 #include <yarp/os/impl/String.h>
-
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Null_Mutex.h>
-
 #include <yarp/os/Semaphore.h>
+#include <yarp/os/impl/PlatformMap.h>
 
 namespace yarp {
     namespace os {
@@ -38,7 +35,7 @@ private:
 
     class PeerRecord {
     public:
-        ACE_Hash_Map_Manager<void *,bool,ACE_Null_Mutex> peerSet;
+        PLATFORM_MAP(void *,bool) peerSet;
 
         PeerRecord() {
         }
@@ -47,23 +44,26 @@ private:
         }
 
         void add(void *entity) {
-            peerSet.bind(entity,true);
+            PLATFORM_MAP_SET(peerSet,entity,true);
+            //peerSet.bind(entity,true);
         }
 
         void remove(void *entity) {
-            peerSet.unbind(entity);
+            PLATFORM_MAP_UNSET(peerSet,entity);
+            //peerSet.unbind(entity);
         }
 
         void *getFirst() {
             if (peerSet.begin()!=peerSet.end()) {
-                return (*(peerSet.begin())).ext_id_;
+                return PLATFORM_MAP_ITERATOR_FIRST(peerSet.begin());
+                //return (*(peerSet.begin())).ext_id_;
             }
             return NULL;
         }
     };
 
 
-    ACE_Hash_Map_Manager<YARP_KEYED_STRING,PeerRecord,ACE_Null_Mutex> nameMap;
+    PLATFORM_MAP(YARP_KEYED_STRING,PeerRecord) nameMap;
     long ct;
 
     PeerRecord *getRecord(const String& key, bool create = false);

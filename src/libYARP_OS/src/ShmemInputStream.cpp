@@ -7,6 +7,9 @@
 *
 */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+
 #include <yarp/os/impl/ShmemInputStream.h>
 
 using namespace yarp::os::impl;
@@ -236,3 +239,6 @@ void ShmemInputStreamImpl::close()
 	delete m_pMap;
 	m_pMap=0;
 }
+
+
+#endif

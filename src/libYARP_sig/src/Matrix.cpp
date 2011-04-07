@@ -15,14 +15,15 @@
 
 #include <yarp/gsl_compatibility.h>
 
-#include <ace/config.h>
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/Logger.h>
 
 using namespace yarp::sig;
 using namespace yarp::os;
 
-#define RES(v) ((ACE_Vector<T> *)v)
-#define RES_ITERATOR(v) ((ACE_Vector_Iterator<double> *)v)
+#define RES(v) ((PlatformVector<T> *)v)
+#define RES_ITERATOR(v) ((PLATFORM_VECTOR_ITERATOR(double) *)v)
 
 #include <yarp/os/begin_pack_for_net.h>
 

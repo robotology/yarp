@@ -6,6 +6,9 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+
 #include <stdlib.h>
 #include <yarp/os/impl/McastCarrier.h>
 #include <yarp/os/impl/Logger.h>
@@ -32,6 +35,11 @@ ElectionOf<McastCarrier>& McastCarrier::getCaster() {
 }
 
 
+#else
+
+int McastCarrierDummySymbol = 42;
+
+#endif
 
 
 

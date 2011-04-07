@@ -12,11 +12,17 @@
 #include  <yarp/os/impl/Face.h>
 //#include  <yarp/Semaphore.h>
 
-#include <ace/config.h>
-#include <ace/SOCK_Acceptor.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/Log_Msg.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/config.h>
+#  include <ace/SOCK_Acceptor.h>
+#  include <ace/SOCK_Connector.h>
+#  include <ace/SOCK_Stream.h>
+#  include <ace/Log_Msg.h>
+#  define PlatformTcpAcceptor ACE_SOCK_Acceptor
+#else
+#  include <yarp/os/impl/TcpAcceptor.h>
+#  define PlatformTcpAcceptor TcpAcceptor
+#endif
 
 
 namespace yarp {
@@ -50,7 +56,7 @@ public:
 private:
     void closeFace();
     Address address;
-    ACE_SOCK_Acceptor peerAcceptor;
+    PlatformTcpAcceptor peerAcceptor;
 };
 
 

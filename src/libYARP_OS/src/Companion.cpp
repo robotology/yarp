@@ -36,7 +36,8 @@
 #include <yarp/os/Ping.h>
 #include <yarp/os/SharedLibraryClass.h>
 
-//#include <ace/OS.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 #include <yarp/conf/system.h>
 #ifdef YARP_CMAKE_CONFIG
@@ -212,11 +213,13 @@ int Companion::dispatch(const char *name, int argc, char *argv[]) {
     //ACE_OS::printf("Dispatching %s\n", name);
     String sname(name);
     Entry e;
-    int result = action.find(sname,e);
+    int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
     if (result!=-1) {
         return (this->*(e.fn))(argc,argv);
     } else {
-        ACE_DEBUG((LM_ERROR,"Could not find command \"%s\"",name));
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "Could not find command \"%s\"",name);
     }
     return -1;
 }
@@ -242,19 +245,20 @@ int Companion::main(int argc, char *argv[]) {
     bool more = true;
     while (more && argc>0) {
         more = false;
-        if (String(argv[0]) == String("verbose")) {
+        String s = String(argv[0]);
+        if (s == String("verbose")) {
             verbose++;
             argc--;
             argv++;
             more = true;
         }
-        if (String(argv[0]) == String("quiet")) {
+        if (s == String("quiet")) {
             verbose--;
             argc--;
             argv++;
             more = true;
         }
-        if (String(argv[0]) == String("admin")) {
+        if (s == String("admin")) {
             adminMode = true;
             argc--;
             argv++;
@@ -1889,6 +1893,7 @@ String Companion::version() {
 
 
 int Companion::cmdPlugin(int argc, char *argv[]) {
+#ifdef YARP_HAS_ACE
     if (argc!=1) {
         fprintf(stderr,"please provide filename for shared library\n");
         return 1;
@@ -1914,6 +1919,9 @@ int Companion::cmdPlugin(int argc, char *argv[]) {
     }
     printf("Yes, this is a YARP plugin/carrier\n");
     return 0;
+#endif
+    fprintf(stderr,"Command not available without ACE\n");
+    return 1;
 }
 
 

@@ -19,12 +19,20 @@
 #include <yarp/dev/Drivers.h>
 
 //#include <ace/OS.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/Logger.h>
+
+/*
 #include <ace/OS_NS_stdio.h>
 #include <ace/OS_NS_unistd.h> 
 #include <ace/OS_NS_signal.h>
 #include <ace/Vector_T.h>
 #include <stdio.h>
 #include <stdlib.h>
+*/
 
 using namespace yarp::os;
 using namespace yarp::dev;
@@ -34,7 +42,7 @@ Drivers Drivers::instance;
 
 class DriversHelper {
 public:
-    ACE_Vector<DriverCreator *> delegates;
+    PlatformVector<DriverCreator *> delegates;
 
     ~DriversHelper() {
         for (unsigned int i=0; i<delegates.size(); i++) {
@@ -102,6 +110,7 @@ public:
 };
 
 
+#ifdef YARP_HAS_ACE
 class StubDriver : public ChainedDriver {
 private:
     SharedLibraryClassFactory<DeviceDriver> factory;
@@ -154,7 +163,7 @@ public:
         return &dev.getContent();
     }
 };
-
+#endif
 
 #define HELPER(x) (*(((DriversHelper*)(x))))
 
@@ -455,8 +464,8 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     return 0;
 }
 
-
 DeviceDriver *StubDriverCreator::create() {
+#ifdef YARP_HAS_ACE
     //printf("Creating %s from %s\n", desc.c_str(), libname.c_str());
     StubDriver *result = new StubDriver(libname.c_str(),desc.c_str());
     if (result==NULL) return result;
@@ -467,6 +476,10 @@ DeviceDriver *StubDriverCreator::create() {
     }
     //printf("Created %s from %s\n", desc.c_str(), libname.c_str());
     return result;
+#else
+    fprintf(stderr,"Cannot fill stub drivers without ACE\n");
+    return NULL;
+#endif
 }
 
 

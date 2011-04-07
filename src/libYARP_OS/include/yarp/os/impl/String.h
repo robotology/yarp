@@ -10,6 +10,14 @@
 #define _YARP2_STRING_
 
 #include <yarp/os/api.h>
+#include <yarp/conf/system.h>
+
+#ifndef YARP_HAS_ACE
+#  ifdef YARP_USE_STL_STRING
+#    undef YARP_USE_STL_STRING
+#  endif
+#  define YARP_USE_STL_STRING 1
+#endif
 
 #if YARP_USE_STL_STRING
 
@@ -27,6 +35,7 @@ namespace yarp {
 #define YARP_STRSET(str,cstr,len,owned) str = std::string(cstr,len)
 typedef size_t YARP_STRING_INDEX;
 
+/*
 class __KeyedString : public yarp::os::impl::String {
 public:
     unsigned long int hash() const {
@@ -46,6 +55,8 @@ public:
     }
 };
 typedef __KeyedString YARP_KEYED_STRING;
+*/
+typedef std::string YARP_KEYED_STRING;
 
 #else
 

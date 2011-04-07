@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2011 Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -14,7 +14,14 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/Value.h>
 
-#include <ace/INET_Addr.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/INET_Addr.h>
+#else
+#  include <sys/types.h>
+#  include <sys/socket.h>
+#  include <netdb.h>
+#  include <arpa/inet.h>
+#endif
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -236,13 +243,48 @@ Contact Contact::byConfig(Searchable& config) {
 
 
 ConstString Contact::convertHostToIp(const char *name) {
+#ifdef YARP_HAS_ACE
     ACE_INET_Addr addr((u_short)0,name);
-    char buf[256];
-    addr.get_host_addr(buf,sizeof(buf));
-    if (NameConfig::isLocalName(buf)) {
+    char ipstr[256];
+    addr.get_host_addr(ipstr,sizeof(ipstr));
+
+#else
+	char ipstr[INET6_ADDRSTRLEN];
+	int status;
+	struct addrinfo hints, *res, *p;
+
+	memset(&hints, 0, sizeof hints); // make sure the struct is empty
+	hints.ai_family = AF_UNSPEC;     // don't care IPv4 or IPv6
+	hints.ai_socktype = SOCK_STREAM; // TCP stream sockets
+	hints.ai_flags = AI_PASSIVE;     // fill in my IP for me
+
+	if ((status = getaddrinfo(name, "http", &hints, &res)) != 0) {
+	    fprintf(stderr, "getaddrinfo error: %s\n", gai_strerror(status));
+	    exit(1);
+	}
+
+    for(p = res;p != NULL; p = p->ai_next) {
+        void *addr;
+
+        if (p->ai_family == AF_INET) { // IPv4
+            struct sockaddr_in *ipv4 = (struct sockaddr_in *)p->ai_addr;
+            addr = &(ipv4->sin_addr);
+        } else { // IPv6
+            struct sockaddr_in6 *ipv6 = (struct sockaddr_in6 *)p->ai_addr;
+            addr = &(ipv6->sin6_addr);
+        }
+
+        // convert the IP to a string and print it:
+        inet_ntop(p->ai_family, addr, ipstr, sizeof ipstr);
+
+        //printf("DEBUG: Host %s becomes ip address %s", name, ipstr);
+    }
+#endif
+
+    if (NameConfig::isLocalName(ipstr)) {
         return NameConfig::getHostName().c_str();
     }
-    return buf;
+    return ipstr;
 }
 
 

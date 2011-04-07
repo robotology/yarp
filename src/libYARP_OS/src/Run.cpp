@@ -10,6 +10,13 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Run.h>
 
+#ifndef YARP_HAS_ACE
+#include <wait.h>
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#endif
+
 #define YARPRUN_ERROR -1
 
 #if defined(WIN32) || defined(WIN64)

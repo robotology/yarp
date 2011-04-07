@@ -18,8 +18,8 @@
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/Vocab.h>
 
-#include <ace/Vector_T.h>
-#include <ace/OS_NS_stdlib.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 namespace yarp {
     namespace os {
@@ -290,9 +290,9 @@ public:
     }
 
 private:
-    ACE_Vector<yarp::os::ManagedBytes *> lst;
-    ACE_Vector<yarp::os::ManagedBytes *> header;
-    ACE_Vector<yarp::os::ManagedBytes *> *target;
+    PlatformVector<yarp::os::ManagedBytes *> lst;
+    PlatformVector<yarp::os::ManagedBytes *> header;
+    PlatformVector<yarp::os::ManagedBytes *> *target;
     yarp::os::ManagedBytes *pool;
     int poolIndex;
     int poolCount;

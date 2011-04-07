@@ -12,6 +12,7 @@
 #include <yarp/os/Thread.h>
 
 #include <string>
+#include <string.h>
 
 #include <yarp/os/impl/UnitTest.h>
 

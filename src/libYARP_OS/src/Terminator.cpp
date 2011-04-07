@@ -7,9 +7,7 @@
  */
 
 
-#include <ace/config.h>
-#include <ace/Log_Msg.h>
-
+#include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/NameClient.h>

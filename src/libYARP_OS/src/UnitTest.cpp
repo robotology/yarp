@@ -11,7 +11,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/IOException.h>
 
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdio.h>
 #include <math.h>
 
 using namespace yarp::os::impl;

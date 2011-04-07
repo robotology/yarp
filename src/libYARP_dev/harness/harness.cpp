@@ -75,7 +75,6 @@ int harness_main(int argc, char *argv[]) {
     if (!done) {
         Companion::main(argc,argv);
     }
-    ACE::fini();
 
     return result;
 }

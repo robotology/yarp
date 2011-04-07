@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Author: Lorenzo Natale and Paul Fitzpatrick.
+* Author: Lorenzo Natale, Paul Fitzpatrick, Anne van Rossum
 * Copyright (C) 2006 The Robotcub consortium
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 */
@@ -13,7 +13,8 @@
 #include <yarp/os/impl/SemaphoreImpl.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/IOException.h>
+#include <yarp/os/impl/PlatformThread.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 using namespace yarp::os::impl;
 
@@ -25,7 +26,7 @@ SemaphoreImpl ThreadImpl::threadMutex(1);
 #ifdef __WIN32__
 static unsigned __stdcall theExecutiveBranch (void *args)
 #else
-    unsigned theExecutiveBranch (void *args)
+    PLATFORM_THREAD_RETURN theExecutiveBranch (void *args)
 #endif
 {
     // just for now -- rather deal with broken pipes through normal procedures
@@ -101,7 +102,7 @@ int ThreadImpl::join(double seconds) {
     closing = true;
     if (needJoin) {
         //printf("trying to join...\n");
-        int result = ACE_Thread::join(hid);
+        int result = PLATFORM_THREAD_JOIN(hid);
         //printf("join result %d...\n", result);
         needJoin = false;
         active = false;
@@ -157,6 +158,7 @@ bool ThreadImpl::start() {
 
 	closing = false;
     beforeStart();
+#ifdef YARP_HAS_ACE
     size_t s = stackSize;
     if (s==0) {
         s = (size_t)defaultStackSize;
@@ -169,6 +171,20 @@ bool ThreadImpl::start() {
                                    ACE_DEFAULT_THREAD_PRIORITY,
                                    0,
                                    s);
+#else
+    pthread_attr_t attr;
+    int s = pthread_attr_init(&attr);
+    if (s != 0)
+    	perror("pthread_attr_init");
+
+    if (stackSize > 0) {
+    	s = pthread_attr_setstacksize(&attr, stackSize);
+    	if (s != 0)
+    		perror("pthread_attr_setstacksize");
+    }
+
+    int result = pthread_create(&hid, &attr, theExecutiveBranch, (void*)this);
+#endif
 
 	if (result==0)
 	{
@@ -194,8 +210,14 @@ bool ThreadImpl::start() {
 	}
 	//the thread did not start, call afterStart() to warn the user
 	YARP_ERROR(Logger::get(),
-               String("Child thread did not start: ") +
-               ACE_OS::strerror(ACE_OS::last_error()));
+               String("Child thread did not start: ")
+               +
+#ifdef YARP_HAS_ACE
+               ACE_OS::strerror(ACE_OS::last_error())
+#else
+               "sorry!"
+#endif
+               );
 	afterStart(false);
 	return false;
 }
@@ -240,7 +262,11 @@ int ThreadImpl::setPriority(int priority) {
         defaultPriority = priority;
     }
     if (active && priority!=-1) {
+#ifdef YARP_HAS_ACE
         return ACE_Thread::setprio(hid, priority);
+#else
+        YARP_ERROR(Logger::get(),"Cannot set priority without ACE");
+#endif
     }
     return -1;
 }
@@ -248,7 +274,11 @@ int ThreadImpl::setPriority(int priority) {
 int ThreadImpl::getPriority() {
     int prio = -1;
     if (active) {
+#ifdef YARP_HAS_ACE
         ACE_Thread::getprio(hid, prio);
+#else
+        YARP_ERROR(Logger::get(),"Cannot read priority without ACE");
+#endif
     }
 	return prio;
 }

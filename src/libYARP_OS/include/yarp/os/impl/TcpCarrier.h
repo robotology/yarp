@@ -11,8 +11,6 @@
 
 #include <yarp/os/impl/AbstractCarrier.h>
 
-#include <ace/OS_NS_stdio.h>
-
 namespace yarp {
     namespace os {
         namespace impl {

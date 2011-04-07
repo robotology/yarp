@@ -11,10 +11,17 @@
 
 #include <yarp/os/impl/String.h>
 
-#include <ace/Log_Msg.h>
-#include <ace/Log_Record.h>
-#include <ace/Log_Msg_Callback.h>
-#include <ace/OS_NS_stdio.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/Log_Msg.h>
+#  include <ace/Log_Record.h>
+#  include <ace/Log_Msg_Callback.h>
+#else
+#  define LM_DEBUG -1
+#  define LM_WARNING 1
+#  define LM_INFO 2
+#  define LM_ERROR 3
+#endif
+#include <yarp/os/impl/PlatformStdio.h>
 
 #include <yarp/os/Log.h>
 
@@ -32,7 +39,11 @@ namespace yarp {
  * and ACE.
  *
  */
-class YARP_OS_impl_API yarp::os::impl::Logger : public ACE_Log_Msg_Callback {
+class YARP_OS_impl_API yarp::os::impl::Logger
+#ifdef YARP_HAS_ACE
+    : public ACE_Log_Msg_Callback 
+#endif
+{
 public:
     enum Level {
         DEBUG = LM_DEBUG,
@@ -49,12 +60,14 @@ public:
         this->parent = parent;
         verbose = 0;
         low = DEFAULT_WARN;
+#ifdef YARP_HAS_ACE
         if (this==&root) {
             ACE_Log_Msg *acer = ACE_Log_Msg::instance();
             acer->set_flags(8);
             acer->clr_flags(1);
             acer->msg_callback(this);
         }
+#endif
     }
 
     Logger(const char *prefix, Logger& parent) {
@@ -66,9 +79,11 @@ public:
 
     static Logger& get();
 
+#ifdef YARP_HAS_ACE
     virtual void log(ACE_Log_Record& log_record) {
         show(log_record.type(),log_record.msg_data());
     }
+#endif
 
     void debug(const String& txt) {
         show(LM_DEBUG,txt);

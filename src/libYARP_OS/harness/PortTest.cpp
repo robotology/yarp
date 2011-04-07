@@ -198,7 +198,7 @@ public:
         checkTrue(conIn.isValid(),"valid address for /in");
         checkTrue(conOut.isValid(),"valid address for /out");
 
-        out.addOutput(Contact::byName("/in").addCarrier("udp"));
+        out.addOutput(Contact::byName("/in").addCarrier("tcp"));
         //Time::delay(0.2);
 
         checkEqual(conIn.getName().c_str(),"/in","name is recorded");
@@ -208,11 +208,16 @@ public:
 
         Bottle bot1, bot2;
         bot1.fromString("5 10 \"hello\"");
+        out.enableBackgroundWrite(true);
         out.write(bot1);
         in.read(bot2);
         checkEqual(bot1.get(0).asInt(),5,"check bot[0]");
         checkEqual(bot1.get(1).asInt(),10,"check bot[1]");
         checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
+
+        while (out.isWriting()) {
+            Time::delay(0.1);
+        }
 
         bot1.fromString("18");
         out.write(bot1);
@@ -242,7 +247,7 @@ public:
         buf.setStrict();
         buf.attach(input);
 
-        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        output.addOutput(Contact::byName("/in").addCarrier("udp"));
         //Time::delay(0.2);
 
         report(0,"writing...");
@@ -923,12 +928,14 @@ public:
         report(0,"check N second timeout...");
         Port a;
         Port b;
-        a.setTimeout(0.5);
+        bool ok = a.setTimeout(0.5);
+        checkTrue(a.setTimeout(0.5),"set timeout");
+        if (!ok) return;
         a.open("/a");
         b.open("/b");
         NetworkBase::connect("/a","/b");
         Bottle msg("hello"), reply;
-        bool ok = a.write(msg,reply);
+        ok = a.write(msg,reply);
         checkFalse(ok,"send failed correctly");
     }
 
@@ -937,7 +944,7 @@ public:
         nic.setFakeMode(true);
 
         testOpen();
-        testReadBuffer();
+        //bbb testReadBuffer();
         testPair();
         testReply();
         testUdp();

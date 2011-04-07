@@ -9,11 +9,12 @@
 
 #include <yarp/os/impl/Logger.h>
 
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformThread.h>
 //#include <ace/OS.h>
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h>
-#include <ace/Thread.h>
+//#include <ace/OS_NS_unistd.h>
+
 
 using namespace yarp::os::impl;
 
@@ -59,7 +60,7 @@ void Logger::show(int level, const String& txt) {
             if (inLevel<=DEBUG) {
                 ACE_OS::fprintf(stderr,"%s(%04x): %s\n",
                                 prefix.c_str(),
-                                (long int)(ACE_Thread::self()),
+                                (int)(PLATFORM_THREAD_SELF()),
                                 txt.c_str());
             } else {
                 ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());

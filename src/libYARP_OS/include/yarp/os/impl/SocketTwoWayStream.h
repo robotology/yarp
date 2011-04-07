@@ -13,13 +13,21 @@
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/NetInt32.h>
+#include <yarp/conf/system.h>
 
-#include <ace/config.h>
-#include <ace/SOCK_Acceptor.h>
-#include <ace/SOCK_Connector.h>
-#include <ace/SOCK_Stream.h>
-#include <ace/Log_Msg.h>
-#include <ace/Time_Value.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/config.h>
+#  include <ace/SOCK_Acceptor.h>
+#  include <ace/SOCK_Connector.h>
+#  include <ace/SOCK_Stream.h>
+#  include <ace/Log_Msg.h>
+#  include <ace/Time_Value.h>
+#else
+#  include <yarp/os/impl/TcpStream.h>
+#  include <yarp/os/impl/TcpAcceptor.h>
+#  define ACE_SOCK_Acceptor TcpAcceptor
+#  define ACE_SOCK_Stream TcpStream
+#endif
 
 namespace yarp {
     namespace os {
@@ -88,11 +96,15 @@ public:
     virtual int read(const Bytes& b) {
         if (!isOk()) { return -1; }
         int result;
+#ifdef YARP_HAS_ACE
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(),b.length(),&readTimeout);
         } else {
             result = stream.recv_n(b.get(),b.length());
         }
+#else
+        result = stream.recv(b.get(),b.length(), 0);
+#endif
         if (!happy) { return -1; }
         if (result<=0) {
             happy = false;
@@ -101,6 +113,7 @@ public:
         return result;
     }
 
+    /*
     virtual int partialRead(const Bytes& b) {
         if (!isOk()) { return -1; }
         int result;
@@ -116,15 +129,20 @@ public:
         }
         return result;
     }
+    */
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
         int result;
+#ifdef YARP_HAS_ACE
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(),b.length(),&writeTimeout);
         } else {
             result = stream.send_n(b.get(),b.length());
         }
+#else
+        result = stream.send_n(b.get(), b.length(), 0);
+#endif
         //ACE_OS::printf("socket write %d\n", result);
         if (result<0) {
             happy = false;
@@ -149,6 +167,7 @@ public:
     virtual void endPacket() { }
 
     virtual bool setWriteTimeout(double timeout) { 
+#ifdef YARP_HAS_ACE
         if (timeout<1e-12) { 
             haveWriteTimeout = false; 
         } else {
@@ -156,9 +175,14 @@ public:
             haveWriteTimeout = true; 
         }
         return true; 
+#else
+        YARP_ERROR(Logger::get(),"Cannot currently set timeout without ACE");
+        return false;
+#endif
     }
 
     virtual bool setReadTimeout(double timeout) { 
+#ifdef YARP_HAS_ACE
         if (timeout<1e-12) { 
             haveReadTimeout = false; 
         } else {
@@ -166,14 +190,20 @@ public:
             haveReadTimeout = true; 
         }
         return true; 
+#else
+        YARP_ERROR(Logger::get(),"Cannot currently set timeout without ACE");
+        return false;
+#endif
     }
 
 private:
     ACE_SOCK_Stream stream;
     bool haveWriteTimeout;
-    ACE_Time_Value writeTimeout;
     bool haveReadTimeout;
+#ifdef YARP_HAS_ACE
+    ACE_Time_Value writeTimeout;
     ACE_Time_Value readTimeout;
+#endif
     Address localAddress, remoteAddress;
     bool happy;
     void updateAddresses();

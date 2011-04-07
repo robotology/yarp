@@ -13,9 +13,13 @@
 #include <yarp/os/impl/FakeFace.h>
 #include <yarp/os/impl/TcpCarrier.h>
 #include <yarp/os/impl/TextCarrier.h>
-#include <yarp/os/impl/UdpCarrier.h>
-#include <yarp/os/impl/McastCarrier.h>
-#include <yarp/os/impl/ShmemCarrier.h>
+
+#ifdef YARP_HAS_ACE
+#  include <yarp/os/impl/UdpCarrier.h>
+#  include <yarp/os/impl/McastCarrier.h>
+#  include <yarp/os/impl/ShmemCarrier.h>
+#endif
+
 #include <yarp/os/impl/LocalCarrier.h>
 #include <yarp/os/impl/NameserCarrier.h>
 #include <yarp/os/impl/HttpCarrier.h>
@@ -31,12 +35,16 @@ Carriers::Carriers() {
     delegates.push_back(new HttpCarrier());
     delegates.push_back(new NameserCarrier());
     delegates.push_back(new LocalCarrier());
+#ifdef YARP_HAS_ACE
     //delegates.push_back(new ShmemCarrier(1));
     delegates.push_back(new ShmemCarrier(2)); // new Alessandro version
+#endif
     delegates.push_back(new TcpCarrier());
     delegates.push_back(new TcpCarrier(false));
+#ifdef YARP_HAS_ACE
     delegates.push_back(new McastCarrier());
     delegates.push_back(new UdpCarrier());
+#endif
     delegates.push_back(new TextCarrier());
     delegates.push_back(new TextCarrier(true));
 }
@@ -46,7 +54,7 @@ Carriers::~Carriers() {
 }
 
 void Carriers::clear() {
-    ACE_Vector<Carrier *>& lst = delegates;
+    PlatformVector<Carrier *>& lst = delegates;
     for (unsigned int i=0; i<lst.size(); i++) {
         delete lst[i];
     }
@@ -81,7 +89,10 @@ Carrier *Carriers::chooseCarrier(const String *name, const Bytes *header) {
             return c.create();
         }
     }
-    ACE_DEBUG((LM_ERROR,"Could not find carrier \"%s\"", (name!=NULL)?name->c_str():"[bytes]"));
+    YARP_SPRINTF1(Logger::get(),
+                  error,
+                  "Could not find carrier \"%s\"", 
+                  (name!=NULL)?name->c_str():"[bytes]");;
     //throw IOException("Could not find carrier");
     return NULL;
 }

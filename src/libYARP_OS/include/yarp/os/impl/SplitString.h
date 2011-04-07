@@ -9,8 +9,7 @@
 #ifndef _YARP2_SPLITSTRING_
 #define _YARP2_SPLITSTRING_
 
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_string.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 namespace yarp {
     namespace os {

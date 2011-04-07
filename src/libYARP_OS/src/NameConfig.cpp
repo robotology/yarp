@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
+ * Copyright (C) 2006, 2011 Paul Fitzpatrick, Anne van Rossum
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -11,12 +11,22 @@
 #include <yarp/os/impl/SplitString.h>
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Os.h>
 
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_sys_stat.h>
-#include <ace/OS_NS_netdb.h>
-#include <ace/INET_Addr.h>
-#include <ace/Sock_Connect.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+
+#ifdef YARP_HAS_ACE
+#  include <ace/OS_NS_sys_stat.h>
+#  include <ace/OS_NS_netdb.h>
+#  include <ace/INET_Addr.h>
+#  include <ace/Sock_Connect.h>
+#else
+#  include <cstring>
+#  include <arpa/inet.h>
+#  include <sys/socket.h>
+#  include <netdb.h>
+#  include <ifaddrs.h>
+#endif
 
 #include <stdio.h>
 #include <yarp/conf/system.h>
@@ -108,7 +118,7 @@ bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
     }
     if (ignoreLevel<=0) {
         if (ACE_OS::stat(fileName.c_str(),&sb)<0) {
-            if (ACE_OS::mkdir(fileName.c_str())>=0) {
+            if (yarp::os::mkdir(fileName.c_str())>=0) {
                 return true;
             }
             return false;
@@ -185,6 +195,7 @@ String NameConfig::getHostName() {
     String result = "127.0.0.1";
     bool loopback = true;
 
+#ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
     // Pick an IP address.
@@ -221,6 +232,52 @@ String NameConfig::getHostName() {
         }
         delete[] ips;
     }
+#else
+
+    int family, s;
+    char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
+    std::string ip;
+    struct ifaddrs *ifaddr, *ifa;
+    if (getifaddrs(&ifaddr) == -1) {
+    	perror("getifaddrs in getIps");
+    	exit(EXIT_FAILURE);
+    }
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    	if (ifa->ifa_addr == NULL) continue;
+    	family = ifa->ifa_addr->sa_family;
+    	if (family == AF_INET || family == AF_INET6) {
+    		s = getnameinfo(ifa->ifa_addr,
+    				(family == AF_INET) ? sizeof(struct sockaddr_in) :
+    						sizeof(struct sockaddr_in6),
+    						hostname, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+    		if (s != 0) {
+    			printf("getnameinfo() failed: %s\n", gai_strerror(s));
+    			exit(EXIT_FAILURE);
+    		}
+    		ip = String(hostname);
+            bool take = false;
+            if (ip[0]!=':') {
+                if (result=="localhost") {
+                    take = true; // can't be worse
+                }
+                if (loopback) {
+                    take = true; // can't be worse
+                } else if (ip.length()<result.length()) {
+                    take = true;
+                }
+            }
+            if (take) {
+                result = ip;
+                loopback = false;
+                if (ip == "127.0.0.1" || ip == "127.1.0.1" ||
+                		ip == "127.0.1.1") {
+                	loopback = true;
+                }
+            }
+    	}
+    }
+
+#endif
 
     return result;
 }
@@ -228,6 +285,8 @@ String NameConfig::getHostName() {
 
 bool NameConfig::isLocalName(const String& name) {
     bool result = false;
+
+#ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
@@ -240,6 +299,15 @@ bool NameConfig::isLocalName(const String& name) {
         }
         delete[] ips;
     }
+#else
+    /**
+     * If this does not work properly, use a more sophisticated way
+     * instead of just gethostname.
+     */
+    char hostname[NI_MAXHOST]; hostname[NI_MAXHOST-1] = '\0';
+    gethostname(hostname, NI_MAXHOST);
+    if (strcmp(hostname, name.c_str()) == 0) result = true;
+#endif
 
     // just in case
     if (name=="localhost"||name=="127.0.0.1") { result = true; }
@@ -249,6 +317,8 @@ bool NameConfig::isLocalName(const String& name) {
 
 yarp::os::Bottle NameConfig::getIpsAsBottle() {
     yarp::os::Bottle result;
+
+#ifdef YARP_HAS_ACE
     ACE_INET_Addr *ips = NULL;
     size_t count = 0;
     if (ACE::get_ip_interfaces(count,ips)>=0) {
@@ -258,25 +328,46 @@ yarp::os::Bottle NameConfig::getIpsAsBottle() {
         }
         delete[] ips;
     }
+#else
+   int family, s;
+    char host[NI_MAXHOST];
+    struct ifaddrs *ifaddr, *ifa;
+    if (getifaddrs(&ifaddr) == -1) {
+    	perror("getifaddrs in getIpsAsBottle");
+    	exit(EXIT_FAILURE);
+    }
+    for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next) {
+    	if (ifa->ifa_addr == NULL) continue;
+    	family = ifa->ifa_addr->sa_family;
+    	if (family == AF_INET || family == AF_INET6) {
+    		s = getnameinfo(ifa->ifa_addr,
+    				(family == AF_INET) ? sizeof(struct sockaddr_in) :
+    						sizeof(struct sockaddr_in6),
+    						host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);
+    		if (s != 0) {
+    			printf("getnameinfo() failed: %s\n", gai_strerror(s));
+    			exit(EXIT_FAILURE);
+    		}
+    		result.addString(host);
+    	}
+    }
+#endif
+
     return result;
 }
 
 
 String NameConfig::getIps() {
-    String result = "";
-    ACE_INET_Addr *ips = NULL;
-    size_t count = 0;
-    if (ACE::get_ip_interfaces(count,ips)>=0) {
-        for (size_t i=0; i<count; i++) {
-            String ip = ips[i].get_host_addr();
-            if (i>0) {
-                result += " ";
-            }
-            result += ip;
+    yarp::os::Bottle bot = getIpsAsBottle();
+    ConstString result = "";
+    for (int i=0; i<bot.size(); i++) {
+        ConstString ip = bot.get(i).asString();
+        if (i>0) {
+            result += " ";
         }
-        delete[] ips;
+        result += ip;
     }
-    return result;
+    return result.c_str();
 }
 
 

@@ -15,7 +15,7 @@
 #include <yarp/os/PortReport.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 namespace yarp {
     namespace os {
@@ -45,22 +45,27 @@ public:
 
     virtual void addOutput(const String& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded = false) {
-        ACE_OS::printf("ADDOUTPUT\n");
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to addOutput [%s]\n",
-                   getName().c_str(),
-                   dest.c_str()));
+        YARP_SPRINTF2(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to addOutput [%s]\n",
+                      getName().c_str(),
+                      dest.c_str());
     }
 
     virtual void removeInput(const String& src, void *id, OutputStream *os) {
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to removeInput [%s]\n",
-                   getName().c_str(),
-                   src.c_str()));
+        YARP_SPRINTF2(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to removeInput [%s]\n",
+                      getName().c_str(),
+                      src.c_str());
     }
 
     virtual void removeOutput(const String& dest, void *id, OutputStream *os) {
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to removeOutput [%s]\n",
-                   getName().c_str(),
-                   dest.c_str()));
+        YARP_SPRINTF2(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to removeOutput [%s]\n",
+                      getName().c_str(),
+                      dest.c_str());
     }
 
     virtual bool removeIO(const Route& route, bool synch = false) {
@@ -68,19 +73,25 @@ public:
     }
   
     virtual void describe(void *id, OutputStream *os) {
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to describe itself\n",
-                   getName().c_str()));
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to describe itself\n",
+                      getName().c_str());
     }
 
     virtual bool readBlock(ConnectionReader& reader, void *id, OutputStream *os) {
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to deal with data\n",
-                   getName().c_str()));
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to deal with data\n",
+                      getName().c_str());
         return false;
     }
 
     virtual bool adminBlock(ConnectionReader& reader, void *id, OutputStream *os) {
-        ACE_DEBUG((LM_ERROR,"PortManager for [%s] asked to deal with admin\n",
-                   getName().c_str()));
+        YARP_SPRINTF1(Logger::get(),
+                      error,
+                      "PortManager for [%s] asked to deal with admin\n",
+                      getName().c_str());
         return false;
     }
 

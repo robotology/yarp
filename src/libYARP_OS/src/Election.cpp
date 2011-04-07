@@ -6,7 +6,6 @@
  *
  */
 
-
 #include <yarp/os/impl/Election.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -24,31 +23,17 @@ Election::~Election() {
 
 
 Election::PeerRecord *Election::getRecord(const String& key, bool create) {
-    ACE_Hash_Map_Entry<YARP_KEYED_STRING,Election::PeerRecord> *entry = NULL;
+    PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,Election::PeerRecord,entry);
 
-    /*
-    // debug code - remove after september 2010
-    static int code = 0;
-    printf("[");
-    int c = 0;
-    int d = code;
-    code = (code+1)%10;
-    for (ACE_Hash_Map_Manager<YARP_KEYED_STRING,PeerRecord,ACE_Null_Mutex>::iterator it=nameMap.begin(); it!=nameMap.end(); it++) {
-        printf("%d.%d.%s ", c, d, (*it).ext_id_.c_str());
-        c++;
-    }
-    printf("]");
-    */
-
-    int result = nameMap.find(key,entry);
+    int result = PLATFORM_MAP_FIND(nameMap,key,entry);
     if (result==-1 && create) {
-        nameMap.bind(key,Election::PeerRecord());
-        result = nameMap.find(key,entry);
+        PLATFORM_MAP_SET(nameMap,key,Election::PeerRecord());
+        result = PLATFORM_MAP_FIND(nameMap,key,entry);
     }
     if (result==-1) {
         return NULL;
     }
-    return &(entry->int_id_);
+    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
 void Election::add(const String& key, void *entity) {

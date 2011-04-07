@@ -49,7 +49,10 @@ bool Protocol::defaultSendIndex() {
 
 bool Protocol::defaultExpectIndex() {
     YARP_DEBUG(Logger::get(),"expecting an index");
-    ACE_DEBUG((LM_DEBUG,"Protocol::expectIndex for %s", getRoute().toString().c_str()));
+    YARP_SPRINTF1(Logger::get(),
+                  debug,
+                  "Protocol::expectIndex for %s", 
+                  getRoute().toString().c_str());
     // expect index header
     int r = NetType::readFull(is(),header.bytes());
     if (r!=header.length()) {
@@ -97,7 +100,10 @@ bool Protocol::defaultExpectIndex() {
         total += x;
     }
     messageLen = total;
-    ACE_DEBUG((LM_DEBUG,"Total message length: %d\n",messageLen));
+    YARP_SPRINTF1(Logger::get(),
+                  debug,
+                  "Total message length: %d\n",
+                  messageLen);
     YARP_DEBUG(Logger::get(),"got an index");
     return true;
 }

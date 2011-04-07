@@ -16,6 +16,8 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/PortReport.h>
 
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 //#define YMSG(x) ACE_OS::printf x;
 //#define YTRACE(x) YMSG(("at %s\n",x))

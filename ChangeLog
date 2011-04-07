@@ -1,3 +1,12 @@
+2011-04-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpSystemCheck.cmake: add experimental SKIP_ACE option
+	to compile YARP without using ACE.  Support for some features
+	is dropped, and only Linux is targeted.  This draws on
+	Anne van Rossum's yarp-lightweight fork at 
+	https://dev.almende.com/svn/yarp-lightweight
+	[thanks Anne van Rossum].
+
 2011-03-09  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/carriers/mjpeg_carrier/CMakeLists.txt: add option to 

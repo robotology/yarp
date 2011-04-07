@@ -16,10 +16,14 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/SplitString.h>
 
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Null_Mutex.h>
-//#include <ace/OS.h>
-#include <ace/OS_NS_ctype.h>
+#include <yarp/os/impl/PlatformMap.h>
+
+#ifdef YARP_HAS_ACE
+#  include <ace/OS_NS_ctype.h>
+#else
+#  include <ctype.h>
+#  define ace_isalnum isalnum
+#endif
 
 #include <stdio.h>
 
@@ -42,39 +46,41 @@ public:
 
 class PropertyHelper {
 public:
-    ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyItem,ACE_Null_Mutex> data;
+    PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) data;
     Property& owner;
 
     PropertyHelper(Property& owner, int hash_size) : 
+#ifdef YARP_HAS_ACE
         data((hash_size==0)?ACE_DEFAULT_MAP_SIZE:hash_size),
+#endif
         owner(owner) {}
 
     PropertyItem *getPropNoCreate(const char *key) const {
         String n(key);
-        ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyItem> *entry = NULL;
-        int result = data.find(n,entry);
+        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
+        int result = PLATFORM_MAP_FIND((*((PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem) *)&data)),n,entry);
         if (result==-1) {
             return NULL;
         }
         YARP_ASSERT(result!=-1);
-        YARP_ASSERT(entry!=NULL);
-        return &(entry->int_id_);
+        //YARP_ASSERT(entry!=NULL);
+        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
     
     PropertyItem *getProp(const char *key, bool create = true) {
         String n(key);
-        ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyItem> *entry = NULL;
-        int result = data.find(n,entry);
+        PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyItem,entry);
+        int result = PLATFORM_MAP_FIND(data,n,entry);
         if (result==-1) {
             if (!create) {
                 return NULL;
             }
-            data.bind(n,PropertyItem());
-            result = data.find(n,entry);
+            PLATFORM_MAP_SET(data,n,PropertyItem());
+            result = PLATFORM_MAP_FIND(data,n,entry);
         }
         YARP_ASSERT(result!=-1);
-        YARP_ASSERT(entry!=NULL);
-        return &(entry->int_id_);
+        //YARP_ASSERT(entry!=NULL);
+        return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
     }
     
     void put(const char *key, const char *val) {
@@ -108,7 +114,7 @@ public:
     }
 
     void unput(const char *key) {
-        data.unbind(String(key));
+        PLATFORM_MAP_UNSET(data,String(key));
     }
 
     bool check(const char *key) const {
@@ -179,7 +185,7 @@ public:
     }
     
     void clear() {
-        data.unbind_all();
+        PLATFORM_MAP_CLEAR(data);
     }
 
     void fromString(const char *txt,bool wipe=true) {
@@ -513,9 +519,9 @@ public:
 
     ConstString toString() {
         Bottle bot;
-        for (ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyItem,ACE_Null_Mutex>::iterator
+        for (PLATFORM_MAP(YARP_KEYED_STRING,PropertyItem)::iterator
                  it = data.begin(); it!=data.end(); it++) {
-            PropertyItem& rec = (*it).int_id_;
+            PropertyItem& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
             Bottle& sub = bot.addList();
             sub.copy(rec.bot);
         }

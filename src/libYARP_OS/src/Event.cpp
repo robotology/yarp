@@ -6,6 +6,9 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+
 #include <yarp/os/Event.h>
 #include <yarp/os/impl/Logger.h>
 
@@ -43,3 +46,10 @@ void yarp::os::Event::signal() {
 void yarp::os::Event::reset() {
     EVENT_IMPL(implementation)->reset();
 }
+
+#else
+
+
+int EventDummySymbol = 42;
+
+#endif // YARP_HAS_ACE

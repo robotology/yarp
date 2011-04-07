@@ -12,7 +12,8 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Contact.h>
 
-#include <ace/OS_NS_stdlib.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 namespace yarp {
     namespace os {
@@ -157,7 +158,12 @@ public:
      */
     String toString() const {
         char buf[100];
+#ifdef YARP_HAS_ACE
         ACE_OS::itoa(port,buf,10);
+#else
+        snprintf(buf,sizeof(buf),"%d",port);
+        buf[sizeof(buf)-1] = '\0';
+#endif
         return carrier + "://" + name + ":" + buf;
     }
 

@@ -10,9 +10,10 @@
 #include <yarp/os/impl/ThreadImpl.h>
 #include <yarp/os/RateThread.h>
 #include <yarp/os/impl/Logger.h>
-#include <ace/Synch.h>
-#include <ace/Time_Value.h>
-#include <ace/High_Res_Timer.h>
+#include <yarp/os/impl/PlatformTime.h>
+//#include <ace/Synch.h>
+//#include <ace/Time_Value.h>
+//#include <ace/High_Res_Timer.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
@@ -24,7 +25,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the release (20 sec)
+//const ACE_Time_Value _timeout_value(20,0);	// (20 sec) timeout value for the release (20 sec)
 
 class RateThreadCallbackAdapter: public ThreadImpl 
 {
@@ -38,7 +39,7 @@ private:
     ACE_Time_Value previousRunTV;
     ACE_Time_Value sleep;
     ACE_Time_Value sleepPeriodTV;
-    ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
+    //ACE_High_Res_Timer	thread_timer;	// timer to estimate thread time
     double    	        sleep_period;	// thread sleep
 
     bool suspended;
@@ -63,6 +64,7 @@ private:
         scheduleReset=false;
     }
 
+    /*
     inline ACE_Time_Value getTime()
     {
 #ifdef ACE_WIN32
@@ -84,6 +86,7 @@ private:
     {
         return double(v.sec()) + v.usec() * 1e-6; 
     }
+    */
 
 public:
 
@@ -179,7 +182,7 @@ public:
     void singleStep()
     {
         lock();
-        currentRunTV=getTime();
+        getTime(currentRunTV);
         currentRun=toDouble(currentRunTV);
         
         if (scheduleReset)
@@ -211,7 +214,8 @@ public:
         count++;
         lock();
 
-        ACE_Time_Value elapsedTV=getTime();
+        ACE_Time_Value elapsedTV;
+        getTime(elapsedTV);
         double elapsed=toDouble(elapsedTV)-currentRun;
 
         //save last
@@ -220,9 +224,9 @@ public:
         unlock();
 
         //compute sleep time
-        sleepPeriodTV.msec(static_cast<int>(adaptedPeriod+0.5));
-        sleepPeriodTV+=currentRunTV;
-        sleepPeriodTV-=elapsedTV;
+        fromDouble(sleepPeriodTV,adaptedPeriod,1000);
+        addTime(sleepPeriodTV,currentRunTV);
+        subtractTime(sleepPeriodTV,elapsedTV);
         // Time::delay(sleep_period/1000.0);
         sleepThread(sleepPeriodTV);
     }

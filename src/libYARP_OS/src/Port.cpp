@@ -7,6 +7,7 @@
  */
 
 
+#include <yarp/conf/system.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Port.h>
 #include <yarp/os/impl/PortCore.h>
@@ -520,8 +521,13 @@ void Port::setRpcMode(bool expectRpc) {
     SET_FLAG(implementation,PORTCORE_IS_RPC,expectRpc);
 }
 
-void Port::setTimeout(float timeout) {
+bool Port::setTimeout(float timeout) {
     HELPER(implementation).setTimeout(timeout);
+#ifdef YARP_HAS_ACE
+    return true;
+#else
+    return false;
+#endif
 }
 
 void Port::setVerbosity(int level) {

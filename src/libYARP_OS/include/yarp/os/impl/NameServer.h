@@ -19,9 +19,8 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/Bottle.h>
 
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Vector_T.h>
-#include <ace/Null_Mutex.h>
+#include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 // ACE headers may fiddle with main
 #ifdef main
@@ -54,7 +53,11 @@ public:
 class YARP_OS_impl_API yarp::os::impl::NameServer : public NameServerStub {
 public:
 
-    NameServer() : nameMap(17), hostMap(17), mutex(1) {
+    NameServer() : 
+#ifdef YARP_HAS_ACE
+        nameMap(17), hostMap(17),
+#endif
+        mutex(1) {
         setup();
     }
 
@@ -99,7 +102,7 @@ private:
     template <class T>
     class ReusableRecord {
     private:
-        ACE_Vector<T> reuse;
+        PlatformVector<T> reuse;
     public:
         virtual ~ReusableRecord() {}
 
@@ -225,7 +228,7 @@ private:
 
     class PropertyRecord {
     private:
-        ACE_Vector<String> prop;
+        PlatformVector<String> prop;
     public:
         PropertyRecord() {
         }
@@ -274,17 +277,27 @@ private:
 
     class NameRecord {
     private:
-        Address address;
         bool reusablePort;
         bool reusableIp;
-        ACE_Hash_Map_Manager<YARP_KEYED_STRING,PropertyRecord,ACE_Null_Mutex> propMap;
+        PLATFORM_MAP(YARP_KEYED_STRING,PropertyRecord) propMap;
+        Address address;
     public:
-        NameRecord() : propMap(5) {
+        NameRecord() : 
+#ifdef YARP_HAS_ACE
+            propMap(5),
+#endif
+            address()
+        {
             reusableIp = false;
             reusablePort = false;
         }
 
-        NameRecord(const NameRecord& alt) : propMap(5) {
+        NameRecord(const NameRecord& alt) : 
+#ifdef YARP_HAS_ACE
+            propMap(5),
+#endif
+            address()
+        {
             reusableIp = false;
             reusablePort = false;
         }
@@ -298,7 +311,7 @@ private:
         }
 
         void clear() {
-            propMap.unbind_all();
+            PLATFORM_MAP_CLEAR(propMap);
             address = Address();
             reusableIp = false;
             reusablePort = false;
@@ -318,18 +331,18 @@ private:
 
 
         PropertyRecord *getPR(const String& key, bool create = true) {
-            ACE_Hash_Map_Entry<YARP_KEYED_STRING,PropertyRecord> *entry = NULL;
-            int result = propMap.find(key,entry);
+            PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,PropertyRecord,entry);
+            int result = PLATFORM_MAP_FIND(propMap,key,entry);
             if (result==-1 && create) {
                 PropertyRecord blank;
-                propMap.bind(key,blank);
-                result = propMap.find(key,entry);
+                PLATFORM_MAP_SET(propMap,key,blank);
+                result = PLATFORM_MAP_FIND(propMap,key,entry);
                 YARP_ASSERT(result!=-1);
             }
             if (result==-1) {
                 return NULL;
             }
-            return &(entry->int_id_);
+            return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
         }
 
         void clearProp(const String& key) {
@@ -392,10 +405,14 @@ private:
     yarp::os::Bottle ncmdSet(int argc, char *argv[]);
     yarp::os::Bottle ncmdGet(int argc, char *argv[]);
 
-    typedef ACE_Hash_Map_Manager<YARP_KEYED_STRING,NameRecord,ACE_Null_Mutex> NameMapHash;
+    //typedef ACE_Hash_Map_Manager<YARP_KEYED_STRING,NameRecord,ACE_Null_Mutex> NameMapHash;
 
-    NameMapHash nameMap;
-    ACE_Hash_Map_Manager<YARP_KEYED_STRING,HostRecord,ACE_Null_Mutex> hostMap;
+    //NameMapHash nameMap;
+    //ACE_Hash_Map_Manager<YARP_KEYED_STRING,HostRecord,ACE_Null_Mutex> hostMap;
+
+    PLATFORM_MAP(YARP_KEYED_STRING,NameRecord) nameMap;
+    PLATFORM_MAP(YARP_KEYED_STRING,HostRecord) hostMap;
+
     McastRecord mcastRecord;
     DisposableNameRecord tmpNames;
   

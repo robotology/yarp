@@ -17,10 +17,9 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/Semaphore.h>
 
-#include <ace/Vector_T.h>
-
 #include <yarp/os/Bottle.h>
 #include <yarp/os/impl/Logger.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 namespace yarp {
     namespace os {
@@ -504,8 +503,8 @@ public:
 private:
     static StoreNull storeNull;
 
-    ACE_Vector<Storable*> content;
-    ACE_Vector<char> data;
+    PlatformVector<Storable*> content;
+    PlatformVector<char> data;
     int speciality;
     bool nested;
     bool dirty;

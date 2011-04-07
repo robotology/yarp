@@ -15,7 +15,7 @@
 #include <yarp/os/impl/IOException.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <ace/OS_NS_stdlib.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>

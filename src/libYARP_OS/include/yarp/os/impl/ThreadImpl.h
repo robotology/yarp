@@ -14,7 +14,7 @@
 #include <yarp/os/impl/Runnable.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 
-#include <ace/Thread.h>
+#include <yarp/os/impl/PlatformThread.h>
 
 
 namespace yarp {
@@ -81,8 +81,8 @@ public:
 private:
     int defaultPriority;
     int stackSize;
-    ACE_hthread_t hid;
-    ACE_thread_t id;
+    Platform_hthread_t hid;
+    Platform_thread_t id;
     bool active;
     bool opened;
     bool closing;

@@ -12,8 +12,11 @@
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/NameServer.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/FallbackNameClient.h>
+#ifdef YARP_HAS_ACE
+#  include <yarp/os/impl/FallbackNameClient.h>
+#endif
 #include <yarp/os/Network.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -167,7 +170,11 @@ String NameClient::send(const String& cmd, bool multi) {
                 if (allowScan) {
                     YARP_INFO(Logger::get(),"no connection to nameserver, scanning mcast");
                     reportScan = true;
+#ifdef YARP_HAS_ACE
                     alt = FallbackNameClient::seek();
+#else
+                    return ""; // nothing to do, nowhere to turn
+#endif
                 }
             }
             if (alt.isValid()) {
@@ -212,7 +219,9 @@ String NameClient::send(const String& cmd, bool multi) {
         }
         ip->close();
         delete ip;
-        ACE_DEBUG((LM_DEBUG,"<<< received from nameserver: %s",result.c_str()));
+        YARP_SPRINTF1(Logger::get(),
+                      debug,
+                      "<<< received from nameserver: %s",result.c_str());
     } while (retry&&!retried);
 
     return result;

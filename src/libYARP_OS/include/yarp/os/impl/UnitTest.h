@@ -11,7 +11,7 @@
 
 #include <yarp/os/impl/String.h>
 
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 namespace yarp {
     namespace os {
@@ -81,7 +81,7 @@ public:
 
 private:
     UnitTest *parent;
-    ACE_Vector<UnitTest *> subTests;
+    PlatformVector<UnitTest *> subTests;
     bool hasProblem;
     static UnitTest *theRoot;
 

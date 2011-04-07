@@ -6,7 +6,10 @@
  *
  */
 
-#include <yarp/os/impl/DgramTwoWayStream.h>
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+#  include <yarp/os/impl/DgramTwoWayStream.h>
+#endif
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/NetType.h>
@@ -15,6 +18,8 @@ using namespace yarp::os::impl;
 using namespace yarp::os;
 
 #define MAX_PACKET 100
+
+#ifdef YARP_HAS_ACE
 
 class DgramTest : public DgramTwoWayStream {
 public:
@@ -110,10 +115,13 @@ public:
     }
 };
 
+#endif
+
 class DgramTwoWayStreamTest : public UnitTest {
 public:
     virtual String getName() { return "DgramTwoWayStreamTest"; }
 
+#ifdef YARP_HAS_ACE
     void checkNormal() {
         report(0, "checking that dgrams are output sensibly");
 
@@ -257,6 +265,11 @@ public:
     virtual void runTests() {
         checkNormal();
     }
+#else
+    virtual void runTests() {
+        report(1,"Implementation of udp messages currently requires ACE");
+    }
+#endif
 };
 
 static DgramTwoWayStreamTest theDgramTwoWayStreamTest;

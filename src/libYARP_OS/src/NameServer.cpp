@@ -14,7 +14,9 @@
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/impl/NameConfig.h>
-#include <yarp/os/impl/FallbackNameServer.h>
+#ifdef YARP_HAS_ACE
+#  include <yarp/os/impl/FallbackNameServer.h>
+#endif
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Value.h>
@@ -23,7 +25,9 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 
-#include <ace/Containers_T.h>
+#include <yarp/os/impl/PlatformList.h>
+#include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformSet.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -179,37 +183,37 @@ Address NameServer::queryName(const String& name) {
 
 NameServer::NameRecord *NameServer::getNameRecord(const String& name, 
                                                   bool create) {
-    ACE_Hash_Map_Entry<YARP_KEYED_STRING,NameRecord> *entry = NULL;
-    int result = nameMap.find(name,entry);
+    PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,NameRecord,entry);
+    int result = PLATFORM_MAP_FIND(nameMap,name,entry);
     if (result==-1) {
         if (!create) {
             return NULL;
         }
-        nameMap.bind(name,NameRecord());
-        result = nameMap.find(name,entry);
+        PLATFORM_MAP_SET(nameMap,name,NameRecord());
+        result = PLATFORM_MAP_FIND(nameMap,name,entry);
     }
     YARP_ASSERT(result!=-1);
-    YARP_ASSERT(entry!=NULL);
-    return &(entry->int_id_);
+    //YARP_ASSERT(entry!=NULL);
+    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
 
 NameServer::HostRecord *NameServer::getHostRecord(const String& name,
                                                   bool create) {
-    ACE_Hash_Map_Entry<YARP_KEYED_STRING,HostRecord> *entry = NULL;
-    int result = hostMap.find(name,entry);
+    PLATFORM_MAP_ITERATOR(YARP_KEYED_STRING,HostRecord,entry);
+    int result = PLATFORM_MAP_FIND(hostMap,name,entry);
     if (result==-1) {
         if (!create) {
             return NULL;
         }
-        hostMap.bind(name,HostRecord());
-        result = hostMap.find(name,entry);
-        YARP_ASSERT(entry!=NULL);
-        entry->int_id_.setBase(basePort);
+        PLATFORM_MAP_SET(hostMap,name,HostRecord());
+        result = PLATFORM_MAP_FIND(hostMap,name,entry);
+        //YARP_ASSERT(entry!=NULL);
+        PLATFORM_MAP_ITERATOR_SECOND(entry).setBase(basePort);
     }
     YARP_ASSERT(result!=-1);
-    YARP_ASSERT(entry!=NULL);
-    return &(entry->int_id_);
+    //YARP_ASSERT(entry!=NULL);
+    return &(PLATFORM_MAP_ITERATOR_SECOND(entry));
 }
 
 
@@ -501,19 +505,26 @@ String NameServer::cmdCheck(int argc, char *argv[]) {
 String NameServer::cmdList(int argc, char *argv[]) {
     String response = "";
 
-    ACE_Ordered_MultiSet<String> lines;
-    for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = (*it).int_id_;
+    PlatformMultiSet<String> lines;
+    for (PLATFORM_MAP(YARP_KEYED_STRING,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         lines.insert(textify(rec.getAddress()));
     }
 
     // return result in alphabetical order
-    ACE_Ordered_MultiSet_Iterator<String> iter(lines);
+#ifdef YARP_HAS_ACE
+    PLATFORM_MULTISET_ITERATOR(String) iter(lines);
     iter.first();
     while (!iter.done()) {
         response += *iter;
         iter.advance();
     }
+#else
+    PLATFORM_MULTISET_ITERATOR(String) iter;
+    for (iter=lines.begin(); iter!=lines.end(); iter++) {
+        response += *iter;
+    }
+#endif
 
     return terminate(response);
 }
@@ -544,8 +555,8 @@ Bottle NameServer::ncmdList(int argc, char *argv[]) {
     }
     
     response.addString("ports");
-    for (NameMapHash::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
-        NameRecord& rec = (*it).int_id_;
+    for (PLATFORM_MAP(YARP_KEYED_STRING,NameRecord)::iterator it = nameMap.begin(); it!=nameMap.end(); it++) {
+        NameRecord& rec = PLATFORM_MAP_ITERATOR_SECOND(it);
         String iname = rec.getAddress().getRegName();
         if (iname.find(prefix)==0) {
             if (iname==prefix || iname[prefix.length()]=='/' || 
@@ -928,6 +939,7 @@ int NameServer::main(int argc, char *argv[]) {
                       "Name server can be browsed at http://%s:%d/",
                       suggest.getName().c_str(), suggest.getPort());
         
+#ifdef YARP_HAS_ACE
         FallbackNameServer fallback(name);
         fallback.start();
         
@@ -935,14 +947,17 @@ int NameServer::main(int argc, char *argv[]) {
         name.registerName("fallback",FallbackNameServer::getAddress());
         YARP_INFO(Logger::get(), String("Bootstrap server listening at ") + 
                   FallbackNameServer::getAddress().toString());
+#endif
         
         while (true) {
             YARP_DEBUG(Logger::get(),"name server running happily");
             Time::delay(60);
         }
         server.close();
+#ifdef YARP_HAS_ACE
         fallback.close();
         fallback.join();
+#endif
     }
 
     if (!ok) {

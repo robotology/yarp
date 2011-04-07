@@ -20,6 +20,8 @@
 #include <yarp/os/impl/NetType.h>
 #include <yarp/os/impl/ShiftStream.h>
 #include <yarp/os/Portable.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #define throw_IOException(e) YARP_DEBUG(Logger::get(),e)
 
@@ -343,7 +345,9 @@ public:
     }
 
     const Address& getRemoteAddress() {
-        ACE_DEBUG((LM_ERROR,"Protocol::getRemoteAddress not yet implemented"));
+        YARP_SPRINTF0(Logger::get(),
+                      error,
+                      "Protocol::getRemoteAddress not yet implemented");
         //throw IOException("getRemoteAddress failed");
         return nullAddress;
     }

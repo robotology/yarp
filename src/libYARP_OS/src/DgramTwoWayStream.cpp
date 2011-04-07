@@ -6,6 +6,8 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
 
 #include <yarp/os/impl/DgramTwoWayStream.h>
 
@@ -733,4 +735,10 @@ void DgramTwoWayStream::removeMonitor() {
     monitor.clear();
 }
 
+
+#else
+
+int DgramTwoWayStreamDummySymbol = 42;
+
+#endif // YARP_HAS_ACE
 

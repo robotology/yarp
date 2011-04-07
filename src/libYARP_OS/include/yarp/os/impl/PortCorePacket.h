@@ -13,7 +13,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
 
-#include <ace/Containers_T.h>
+#include <yarp/os/impl/PlatformList.h>
 
 #include <stdio.h>
 
@@ -119,7 +119,7 @@ public:
  */
 class yarp::os::impl::PortCorePackets {
 private:
-    ACE_Double_Linked_List<PortCorePacket> inactive, active;
+    PLATFORM_LIST(PortCorePacket) inactive, active;
 public:
 
     int getCount() {
@@ -131,18 +131,22 @@ public:
         //     NetType::toString(inactive.size()));
         //YARP_INFO(Logger::get(),String("active count is ") + 
         //     NetType::toString(active.size()));
-        if (inactive.is_empty()) {
-            size_t obj_size = sizeof (PortCorePacket);
+        if (PLATFORM_LIST_EMPTY(inactive)) {
             PortCorePacket *obj = NULL;
+#ifdef YARP_HAS_ACE
+            size_t obj_size = sizeof (PortCorePacket);
             ACE_NEW_MALLOC_RETURN (obj,
                                    (PortCorePacket *)
                                    ACE_Allocator::instance()->malloc(obj_size),
                                    PortCorePacket(), 0);
+#else
+            obj = new PortCorePacket();
+#endif
             YARP_ASSERT(obj!=NULL);
-            inactive.insert_tail(obj);
+            PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
         PortCorePacket *next = NULL;
-        inactive.get(next);
+        PLATFORM_LIST_GET_BACK(inactive,next);
         if (next==NULL) {
             fprintf(stderr,"*** YARP consistency check failed.\n");
             fprintf(stderr,"*** There has been a low-level failure in \"PortCorePackets\".\n");
@@ -182,7 +186,7 @@ public:
         }
         YARP_ASSERT(next!=NULL);
         inactive.remove(next);
-        active.insert_tail(next);
+        PLATFORM_LIST_PUSH_BACK(active,next);
         return next;
     }
 
@@ -193,7 +197,7 @@ public:
             }
             packet->completed = true;
             active.remove(packet);
-            inactive.insert_tail(packet);
+            PLATFORM_LIST_PUSH_BACK(inactive,packet);
         }
     }
 

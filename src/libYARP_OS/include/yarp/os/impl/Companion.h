@@ -12,17 +12,14 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/PortWriter.h>
 
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Null_Mutex.h>
-#include <ace/Vector_T.h>
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 // ACE headers may fiddle with main 
 #ifdef main
 #undef main
 #endif
-
-
 
 namespace yarp {
     namespace os {
@@ -215,15 +212,15 @@ private:
         }
     };
 
-    ACE_Hash_Map_Manager<YARP_KEYED_STRING,Entry,ACE_Null_Mutex> action;
-    ACE_Vector<String> names;
-    ACE_Vector<String> tips;
+    PLATFORM_MAP(YARP_KEYED_STRING,Entry) action;
+    PlatformVector<String> names;
+    PlatformVector<String> tips;
     bool adminMode;
 
     void add(const char *name, int (Companion::*fn)(int argc, char *argv[]),
              const char *tip = NULL) {
         Entry e(name,fn);
-        action.bind(YARP_KEYED_STRING(name),e);
+        PLATFORM_MAP_SET(action,YARP_KEYED_STRING(name),e);
         // maintain a record of order of keys
         names.push_back(String(name));
         if (tip!=NULL) {

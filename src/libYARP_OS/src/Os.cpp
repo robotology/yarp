@@ -9,12 +9,16 @@
 
 #include <yarp/os/Os.h>
 
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h> 
-#include <ace/OS_NS_signal.h>
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_sys_stat.h>
-
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/OS_NS_stdio.h>
+#  include <ace/OS_NS_unistd.h> 
+#  include <ace/OS_NS_signal.h>
+#  include <ace/OS_NS_stdlib.h>
+#  include <ace/OS_NS_sys_stat.h>
+#endif
 
 yarp::os::YarpSignalHandler yarp::os::signal(int signum, yarp::os::YarpSignalHandler sighandler)
 {
@@ -41,7 +45,11 @@ const char *yarp::os::getenv(const char *var)
 
 int yarp::os::mkdir(const char *p)
 {
+#ifdef YARP_HAS_ACE
 	return ACE_OS::mkdir(p);
+#else
+	return ::mkdir(p,0777);
+#endif
 }
 
 int yarp::os::stat(const char *path)

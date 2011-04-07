@@ -16,8 +16,8 @@
 #include <yarp/os/Vocab.h>
 #include <yarp/os/NetFloat64.h>
 
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

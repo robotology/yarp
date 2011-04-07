@@ -105,7 +105,7 @@ public:
     }
 
     bool expectSenderSpecifier(Protocol& proto) {
-        ACE_DEBUG((LM_DEBUG,"TextCarrier::expectSenderSpecifier"));
+        YARP_SPRINTF0(Logger::get(),debug,"TextCarrier::expectSenderSpecifier");
         proto.setRoute(proto.getRoute().addFromName(NetType::readLine(proto.is())));
         return true;
     }

@@ -7,6 +7,9 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+
 #include <yarp/os/impl/ShmemHybridStream.h>
 
 using namespace yarp::os::impl;
@@ -151,3 +154,6 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 
 	return 0;
 }
+
+
+#endif

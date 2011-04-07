@@ -21,7 +21,7 @@
 #include <yarp/os/Bottle.h>
 #include <yarp/os/Time.h>
 
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformStdio.h>
 
 
 //#define YMSG(x) ACE_OS::printf x;

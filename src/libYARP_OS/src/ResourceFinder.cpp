@@ -6,7 +6,6 @@
  *
  */
 
-#include <ace/config.h>
 #include <stdio.h>
 
 #include <yarp/os/ResourceFinder.h>
@@ -16,8 +15,10 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/String.h>
 
-#include <ace/OS_NS_stdlib.h>
-#include <ace/OS_NS_sys_stat.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/Os.h>
+
+//#include <ace/OS_NS_sys_stat.h>
 //#include <ace/OS_NS_dirent.h>
 
 using namespace yarp::os;
@@ -70,7 +71,7 @@ public:
         }
         String rootVar = policyName;
         const char *result = 
-            ACE_OS::getenv(rootVar.c_str());
+            yarp::os::getenv(rootVar.c_str());
         bool needEnv = false;
 #ifdef YARP2_WINDOWS
         needEnv = true;

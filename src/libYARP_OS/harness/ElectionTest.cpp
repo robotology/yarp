@@ -7,7 +7,6 @@
  */
 
 #include <yarp/os/impl/Election.h>
-
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
@@ -45,7 +44,6 @@ public:
             checkTrue(*e1==c1,"elected entity is accurate (1)");
         }
     }
-
 
     virtual void runTests() {
         testBasics();

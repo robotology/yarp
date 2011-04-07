@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Author: Lorenzo Natale.
+* Author: Lorenzo Natale, Anne van Rossum, Paul Fitzpatick
 * Copyright (C) 2009 The RobotCub consortium
 * Based on code by Paul Fitzpatrick 2007.
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -12,14 +12,13 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/String.h>
 #include <yarp/os/Network.h>
+#include <yarp/os/Os.h>
 
 //#include <ace/OS.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_unistd.h> 
-#include <ace/OS_NS_signal.h>
-
-#include <ace/Time_Value.h>
-#include <ace/High_Res_Timer.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformSignal.h>
+#include <yarp/os/impl/PlatformTime.h>
 
 using namespace yarp::os;
 using namespace yarp::os::impl;
@@ -28,27 +27,79 @@ using namespace yarp::os::impl;
 
 //time helper functions
 
-inline ACE_Time_Value getTime()
-{
-    ACE_Time_Value now;
-#ifdef ACE_WIN32
+void yarp::os::impl::getTime(ACE_Time_Value& now) {
+#ifdef YARP_HAS_ACE
+#  ifdef ACE_WIN32
     now = ACE_High_Res_Timer::gettimeofday_hr();
-#else
+#  else
     now = ACE_OS::gettimeofday ();
+#  endif
+#else
+    struct timezone *tz = NULL;
+    gettimeofday(&now, tz);
 #endif
-    return now;
 }
 
-inline void sleepThread(ACE_Time_Value sleep_period)
+void yarp::os::impl::sleepThread(ACE_Time_Value& sleep_period)
 {
+#ifdef YARP_HAS_ACE
     if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
         sleep_period.set(0,0);
     ACE_OS::sleep(sleep_period);
+#else
+    if (sleep_period.tv_usec < 0 || sleep_period.tv_sec < 0) {
+        sleep_period.tv_usec = 0;
+        sleep_period.tv_sec = 0;
+    }
+    usleep(sleep_period.tv_sec * 1000000 + sleep_period.tv_usec );
+#endif
 }
 
-inline double toDouble(const ACE_Time_Value &v)
-{
+void yarp::os::impl::addTime(ACE_Time_Value& val, const ACE_Time_Value & add) {
+#ifdef YARP_HAS_ACE
+    val += add;
+#else
+    val.tv_usec += add.tv_usec;
+    int over = val.tv_usec % 1000000;
+    if (over != val.tv_usec) {
+    	val.tv_usec = over;
+    	val.tv_sec++;
+    }
+    val.tv_sec += add.tv_sec;
+#endif
+}
+
+void yarp::os::impl::subtractTime(ACE_Time_Value & val, const ACE_Time_Value & subtract) {
+#ifdef YARP_HAS_ACE
+    val -= subtract;
+#else
+	if (val.tv_usec > subtract.tv_usec) {
+		val.tv_usec -= subtract.tv_usec;
+		val.tv_sec -= subtract.tv_sec;
+		return;
+	}
+	int over = 1000000 + val.tv_usec - subtract.tv_usec;
+    val.tv_usec = over;
+    val.tv_sec--;
+    val.tv_sec -= subtract.tv_sec;
+#endif
+}
+
+double yarp::os::impl::toDouble(const ACE_Time_Value &v) {
+#ifdef YARP_HAS_ACE
     return double(v.sec()) + v.usec() * 1e-6; 
+#else
+    return double(v.tv_sec) + v.tv_usec * 1e-6;
+#endif
+}
+
+void yarp::os::impl::fromDouble(ACE_Time_Value &v, double x,int unit) {
+#ifdef YARP_HAS_ACE
+        v.msec(static_cast<int>(x*1000/unit+0.5));
+#else
+        v.tv_usec = static_cast<int>(x*1000000/unit+0.5) % 1000000;
+        v.tv_sec = static_cast<int>(x/unit);
+#endif
 }
 
 
@@ -219,7 +270,7 @@ static void handler (int sig) {
     ct++;
     if (ct>3) {
         ACE_OS::printf("Aborting (calling exit())...\n");
-        ACE_OS::exit(1);
+        yarp::os::exit(1);
     }
     ACE_OS::printf("[try %d of 3] Trying to shut down\n", 
                    ct);
@@ -276,16 +327,16 @@ int RFModule::runModule() {
     ACE_Time_Value sleepPeriodTV;
 
     while (loop) {
-        currentRunTV=getTime();
+        getTime(currentRunTV);
         loop=updateModule();
-        elapsedTV=getTime();
+        getTime(elapsedTV);
 
         if (isStopping())
             loop=false;
 
-        sleepPeriodTV.msec(static_cast<int>(getPeriod()*1000+0.5));
-        sleepPeriodTV+=currentRunTV;
-        sleepPeriodTV-=elapsedTV;
+        fromDouble(sleepPeriodTV,getPeriod());
+        addTime(sleepPeriodTV, currentRunTV);
+        subtractTime(sleepPeriodTV, elapsedTV);
         sleepThread(sleepPeriodTV);
     }
 

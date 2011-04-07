@@ -16,7 +16,7 @@
 #include <yarp/os/impl/OutputProtocol.h>
 #include <yarp/os/impl/Carrier.h>
 
-#include <ace/Vector_T.h>
+#include <yarp/os/impl/PlatformVector.h>
 
 namespace yarp {
     namespace os {
@@ -117,7 +117,7 @@ public:
     static void removeInstance();
 
 private:
-    ACE_Vector<Carrier *> delegates;
+    PlatformVector<Carrier *> delegates;
 
     Carriers();
   

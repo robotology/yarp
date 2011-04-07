@@ -6,6 +6,8 @@
  *
  */
 
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
 
 #include <yarp/os/impl/FallbackNameClient.h>
 #include <yarp/os/impl/Logger.h>
@@ -99,4 +101,9 @@ Address FallbackNameClient::seek() {
     return Address();
 }
 
+#else
+
+int FallbackNameClientDummySymbol = 42;
+
+#endif // YARP_HAS_ACE
 

@@ -20,11 +20,14 @@
 #include <semaphore.h>
 #endif
 
-#include <ace/Synch.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/Synch.h>
+#endif
 
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/NetType.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 namespace yarp {
     namespace os {

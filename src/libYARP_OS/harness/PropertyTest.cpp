@@ -11,7 +11,7 @@
 #include <yarp/os/impl/UnitTest.h>
 #include <yarp/os/impl/Logger.h>
 
-#include <ace/OS_NS_stdlib.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <stdio.h>
 

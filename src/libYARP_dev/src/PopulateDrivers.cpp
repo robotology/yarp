@@ -17,8 +17,8 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Bottle.h>
-#include <ace/OS_NS_stdio.h>
-#include <ace/OS_NS_stdlib.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;

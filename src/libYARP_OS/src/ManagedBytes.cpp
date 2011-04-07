@@ -6,8 +6,7 @@
  *
  */
 
-#include <ace/config.h>
-#include <ace/OS_NS_string.h>
+#include <yarp/os/impl/PlatformStdlib.h>
 
 #include <yarp/os/ManagedBytes.h>
 #include <yarp/os/Bottle.h>

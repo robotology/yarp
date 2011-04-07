@@ -6,7 +6,8 @@
  *
  */
 
-
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
 
 #include <yarp/os/impl/FallbackNameServer.h>
 #include <yarp/os/impl/DgramTwoWayStream.h>
@@ -55,6 +56,13 @@ void FallbackNameServer::close() {
     listen.interrupt();
 }
 
+
+
+#else
+
+int FallbackNameServerDummySymbol = 42;
+
+#endif // YARP_HAS_ACE
 
 
 

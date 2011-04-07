@@ -6,9 +6,6 @@
  *
  */
 
-#include <ace/ACE.h>
-
-
 #include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
@@ -31,6 +28,8 @@
 #include <yarp/os/impl/PortCommand.h>
 #include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/ThreadImpl.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/PlatformSignal.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os;
@@ -457,8 +456,10 @@ void NetworkBase::initMinimum() {
    if (__yarp_is_initialized==0) {
        // Broken pipes need to be dealt with through other means
        ACE_OS::signal(SIGPIPE, SIG_IGN);
-       
+
+#ifdef YARP_HAS_ACE       
        ACE::init();
+#endif
        String quiet = NameConfig::getEnv("YARP_QUIET");
        Bottle b2(quiet.c_str());
        if (b2.get(0).asInt()>0) {
@@ -493,7 +494,9 @@ void NetworkBase::finiMinimum() {
     if (__yarp_is_initialized==1) {
         Carriers::removeInstance();
         NameClient::removeNameClient();
+#ifdef YARP_HAS_ACE       
         ACE::fini();
+#endif
     }
     if (__yarp_is_initialized>0) __yarp_is_initialized--;
 }
@@ -760,6 +763,8 @@ void NetworkBase::unlock() {
 }
 
 
+#ifdef YARP_HAS_ACE
+
 #include <yarp/os/SharedLibraryClass.h>
 
 class ForwardingCarrier : public Carrier {
@@ -987,9 +992,10 @@ public:
     }
 };
 
-
+#endif
 
 bool NetworkBase::registerCarrier(const char *name,const char *dll) {
+#ifdef YARP_HAS_ACE
     //printf("Registering carrier %s from %s\n", name, dll);
     StubCarrier *factory = new StubCarrier(dll,name);
     if (factory==NULL) {
@@ -1004,6 +1010,10 @@ bool NetworkBase::registerCarrier(const char *name,const char *dll) {
     }
     Carriers::addCarrierPrototype(factory);
     return true;
+#else
+    YARP_ERROR(Logger::get(),"Cannot creat stub carriers without ACE");
+    return false;
+#endif
 }
 
 

@@ -11,10 +11,10 @@
 
 #include <yarp/os/impl/String.h>
 
-#include <ace/Hash_Map_Manager.h>
-#include <ace/Null_Mutex.h>
-#include <ace/Vector_T.h>
-#include <ace/OS_NS_stdio.h>
+#include <yarp/os/impl/PlatformMap.h>
+#include <yarp/os/impl/PlatformVector.h>
+#include <yarp/os/impl/PlatformStdio.h>
+#include <yarp/os/impl/Logger.h>
 
 
 namespace yarp {
@@ -45,13 +45,13 @@ private:
         }
     };
 
-    ACE_Hash_Map_Manager<YARP_KEYED_STRING,Entry,ACE_Null_Mutex> action;
-    ACE_Vector<String> names;
+    PLATFORM_MAP(YARP_KEYED_STRING,Entry) action;
+    PlatformVector<String> names;
 
 public:
     void add(const char *name, RET (T::*fn)(int argc, char *argv[])) {
         Entry e(name,fn);
-        action.bind(String(name),e);
+        PLATFORM_MAP_SET(action,String(name),e);
         // maintain a record of order of keys
         names.push_back(String(name));
     }
@@ -59,16 +59,16 @@ public:
     RET dispatch(T *owner, const char *name, int argc, char *argv[]) {
         String sname(name);
         Entry e;
-        int result = action.find(sname,e);
+        int result = PLATFORM_MAP_FIND_RAW(action,sname,e);
         if (result!=-1) {
             return (owner->*(e.fn))(argc,argv);
         } else {
-            ACE_DEBUG((LM_ERROR,"Could not find command \"%s\"",name));
+            YARP_SPRINTF1(Logger::get(),error,"Could not find command \"%s\"",name);
         }
         return RET();
     }
 
-    ACE_Vector<String> getNames() {
+    PlatformVector<String> getNames() {
         return names;
     }
 };
