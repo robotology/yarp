@@ -1,0 +1,2 @@
+
+PLATFORMS="lenny"
