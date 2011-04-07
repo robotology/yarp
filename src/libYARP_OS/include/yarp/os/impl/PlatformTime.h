@@ -15,10 +15,12 @@
 #  include <ace/OS_NS_unistd.h>
 #  include <ace/Time_Value.h>
 #  include <ace/High_Res_Timer.h>
+#  define PLATFORM_TIME_SET(x,y) x.set(y)
 #else
 #  include <sys/time.h>
 #  include <unistd.h>
 #  define ACE_Time_Value struct timeval
+#  define PLATFORM_TIME_SET(x,y) fromDouble(x,y)
 #endif
 
 namespace yarp {

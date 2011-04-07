@@ -523,11 +523,7 @@ void Port::setRpcMode(bool expectRpc) {
 
 bool Port::setTimeout(float timeout) {
     HELPER(implementation).setTimeout(timeout);
-#ifdef YARP_HAS_ACE
     return true;
-#else
-    return false;
-#endif
 }
 
 void Port::setVerbosity(int level) {

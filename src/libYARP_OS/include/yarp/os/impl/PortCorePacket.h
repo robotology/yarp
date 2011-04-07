@@ -146,7 +146,7 @@ public:
             PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
         PortCorePacket *next = NULL;
-        PLATFORM_LIST_GET_BACK(inactive,next);
+        PLATFORM_LIST_GET(inactive,next);
         if (next==NULL) {
             fprintf(stderr,"*** YARP consistency check failed.\n");
             fprintf(stderr,"*** There has been a low-level failure in \"PortCorePackets\".\n");

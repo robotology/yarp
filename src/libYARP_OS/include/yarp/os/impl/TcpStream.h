@@ -60,12 +60,22 @@ public:
 	 */
 	virtual ~TcpStream();
 
-	inline ssize_t recv (void *buf, size_t n, int flags) {
-		return ::recv(sd, buf, n, flags);
+	inline ssize_t recv_n (void *buf, size_t n) {
+	  return ::recv(sd, buf, n, 0);
 	}
 
-	inline ssize_t send_n (const void *buf, size_t n, int flags) {
-		return ::send(sd, buf, n, flags);
+	inline ssize_t recv_n (void *buf, size_t n, struct timeval *tv) {
+	  setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+	  return ::recv(sd, buf, n, 0);
+	}
+
+	inline ssize_t send_n (const void *buf, size_t n) {
+		return ::send(sd, buf, n, 0);
+	}
+
+        inline ssize_t send_n (const void *buf, size_t n, struct timeval *tv) {
+	  setsockopt(sd, SOL_SOCKET, SO_SNDTIMEO, (char *)tv, sizeof (*tv));
+	  return ::send(sd, buf, n, 0);
 	}
 
 	// No idea what this should do...

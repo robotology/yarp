@@ -124,7 +124,7 @@ public:
             PLATFORM_LIST_PUSH_BACK(inactive,obj);
         }
         PortReaderPacket *next = NULL;
-        PLATFORM_LIST_GET_BACK(inactive,next);
+        PLATFORM_LIST_GET(inactive,next);
         YARP_ASSERT(next!=NULL);
         inactive.remove(next);
         //active.insert_tail(next);
@@ -134,7 +134,7 @@ public:
     PortReaderPacket *getActivePacket() {
         PortReaderPacket *next = NULL;
         if (getCount()>=1) {
-            PLATFORM_LIST_GET_BACK(active,next);
+            PLATFORM_LIST_GET(active,next);
             //active.get(next);
             YARP_ASSERT(next!=NULL);
             active.remove(next);
