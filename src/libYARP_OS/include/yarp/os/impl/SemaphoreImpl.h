@@ -20,6 +20,7 @@
 #include <semaphore.h>
 #endif
 
+#include <yarp/conf/system.h>
 #ifdef YARP_HAS_ACE
 #  include <ace/Synch.h>
 #endif

@@ -60,7 +60,7 @@ void Logger::show(int level, const String& txt) {
             if (inLevel<=DEBUG) {
                 ACE_OS::fprintf(stderr,"%s(%04x): %s\n",
                                 prefix.c_str(),
-                                (int)(PLATFORM_THREAD_SELF()),
+                                (int)(long int)(PLATFORM_THREAD_SELF()),
                                 txt.c_str());
             } else {
                 ACE_OS::fprintf(stderr,"%s: %s\n",prefix.c_str(),txt.c_str());
