@@ -48,21 +48,16 @@ IF(UNIX)
    ENDIF ()
  ENDIF (APPLE)
 
-
-
  SET(GTKPLUS_LINK_FLAGS "${GTKPLUS_LINK_FLAGS}" CACHE INTERNAL "gtk+ link flags")
  SET(GTKPLUS_C_FLAGS "${GTKPLUS_C_FLAGS}" CACHE INTERNAL "gtk+ include flags")
  SET(GTKPLUS_INCLUDE_DIR "${GTKPLUS_INCLUDE_DIR}" CACHE INTERNAL "gtk+ include directory")
  SET(GTKPLUS_LIBRARY_DIR "${GTKPLUS_LIBRARY_DIR}" CACHE INTERNAL "gtk+ library directory")
 
- SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE INTERNAL "gtk+ link flags")
- SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE INTERNAL "gtk+ include directory")
-
  #message(STATUS "Libraries --> ${GtkPlus_LIBRARIES}")
  #message(STATUS "IncludeDirs --> ${GtkPlus_INCLUDE_DIRS}")
  #message(STATUS "LinkFlags --> ${GTKPLUS_LINK_DIR}")
  #message(STATUS "CFlags --> ${GTKPLUS_C_FLAGS}")
- 
+
  SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
  SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
 
@@ -75,7 +70,7 @@ ELSE (UNIX)
  	FIND_PACKAGE(GtkWin32) 
  	
  	SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
-   SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
+    SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
 
 	if (GTK_FOUND)
 		set(GtkPlus_FOUND TRUE)

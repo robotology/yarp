@@ -12,9 +12,11 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformThread.h>
-//#include <ace/OS.h>
-//#include <ace/OS_NS_unistd.h>
 
+
+#ifdef YARP_HAS_ACE
+	#include <ace/OS_NS_unistd.h>
+#endif
 
 using namespace yarp::os::impl;
 

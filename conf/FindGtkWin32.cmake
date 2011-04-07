@@ -24,6 +24,7 @@ FIND_PATH(GTK_pango_INCLUDE_PATH pango/pango.h $ENV{GTK_BASEPATH}/include/pango-
 FIND_PATH(GTK_atk_INCLUDE_PATH atk/atk.h $ENV{GTK_BASEPATH}/include/atk-1.0/)
 FIND_PATH(GTK_glib-config_INCLUDE_PATH glibconfig.h $ENV{GTK_BASEPATH}/lib/glib-2.0/include)
 FIND_PATH(GTK_gdk-config_INCLUDE_PATH gdkconfig.h $ENV{GTK_BASEPATH}/lib/gtk-2.0/include)
+FIND_PATH(GTK_gdk-pixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h $ENV{GTK_BASEPATH}/include/gdk-pixbuf-2.0)
 
 # libraries
 FIND_LIBRARY( GTK_gtk_LIBRARY
@@ -59,7 +60,7 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
 	AND GTK_gdk_LIBRARY AND GTK_glib_LIBRARY
 	AND GTK_gdk-pixbuf_LIBRARY AND GTK_gobject_LIBRARY)
     SET(GtkPlus_FOUND TRUE)
-    SET( GTKPLUS_INCLUDE_DIR ${GTK_gtk_INCLUDE_PATH} 
+    SET(GTKPLUS_INCLUDE_DIR ${GTK_gtk_INCLUDE_PATH} 
 	  ${GTK_cairo_INCLUDE_PATH}
 	  ${GTK_glib_INCLUDE_PATH}
 	  ${GTK_pango_INCLUDE_PATH}
@@ -71,9 +72,8 @@ IF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
 	  ${GTK_glib_LIBRARY}
 	  ${GTK_gdk-pixbuf_LIBRARY}
 	  ${GTK_gobject_LIBRARY})
-ENDIF(GTK_gtk_INCLUDE_PATH AND GTK_cairo_INCLUDE_PATH
-	AND GTK_glib_INCLUDE_PATH AND GTK_pango_INCLUDE_PATH
-	AND GTK_atk_INCLUDE_PATH AND GTK_glib-config_INCLUDE_PATH
-	AND GTK_gdk-config_INCLUDE_PATH AND GTK_gtk_LIBRARY
-	AND GTK_gdk_LIBRARY AND GTK_glib_LIBRARY
-	AND GTK_gdk-pixbuf_LIBRARY AND GTK_gobject_LIBRARY)
+ENDIF()
+
+if (GTK_gdk-pixbuf_INCLUDE_PATH)
+    set(GTKPLUS_INCLUDE_DIR ${GTKPLUS_INCLUDE_DIR} ${GTK_gdk-pixbuf_INCLUDE_PATH})
+endif()

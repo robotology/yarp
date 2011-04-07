@@ -18,7 +18,9 @@
 #include <yarp/os/impl/PlatformStdlib.h>
 #include <yarp/os/Os.h>
 
-//#include <ace/OS_NS_sys_stat.h>
+#ifdef YARP_HAS_ACE
+	#include <ace/OS_NS_sys_stat.h>
+#endif
 //#include <ace/OS_NS_dirent.h>
 
 using namespace yarp::os;
