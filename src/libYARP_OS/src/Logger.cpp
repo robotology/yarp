@@ -13,11 +13,6 @@
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformThread.h>
 
-
-#ifdef YARP_HAS_ACE
-	#include <ace/OS_NS_unistd.h>
-#endif
-
 using namespace yarp::os::impl;
 
 Logger Logger::root("yarp");
