@@ -15,6 +15,7 @@
 #  include <ace/OS_NS_string.h>
 #  include <ace/OS_NS_sys_stat.h>
 #  include <ace/OS_NS_dirent.h>
+#  include <ace/OS_NS_unistd.h>
 #else
 #  include <cstring>
 #  include <stdlib.h>
