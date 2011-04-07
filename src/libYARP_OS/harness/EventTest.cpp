@@ -17,8 +17,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-#ifdef YARP_HAS_ACE
-
 class EventTestHelper : public Thread {
 public:
     Semaphore done;
@@ -59,13 +57,9 @@ public:
     }
 };
 
-#endif
-
 class EventTest : public UnitTest {
 public:
     virtual String getName() { return "EventTest"; }
-
-#ifdef YARP_HAS_ACE
 
     void checkBasic() {
         report(0, "basic event sanity check...");
@@ -124,14 +118,6 @@ public:
         checkSingleWakeup();
         checkMultipleWakeup();
     }
-
-#else
-
-    virtual void runTests() {
-        report(1,"implementation of Event currently depends on ACE");
-    }
-
-#endif
 };
 
 static EventTest theEventTest;

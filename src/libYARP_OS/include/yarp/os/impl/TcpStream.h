@@ -13,7 +13,7 @@
  * Declaration of Human Rights.
  *
  * Copyright © 2010 Anne van Rossum <anne@almende.com>
- *
+ * 
  * @author 	Anne C. van Rossum
  * @date	Feb 17, 2011
  * @project	Replicator FP7
@@ -82,15 +82,21 @@ public:
 	void flush() { ; }
 
 	void close_reader() { 
-	  
+	  if (sd!=-1) {
+	    ::shutdown(sd,SHUT_RD);
+	  }
 	}
 
 	void close_writer() {
+	  if (sd!=-1) {
+	    ::shutdown(sd,SHUT_WR);
+	  }
 	}
 
 	void close() {
 	  if (sd!=-1) {
 	    ::close(sd);
+	    sd = -1;
 	  }
 	}
 
