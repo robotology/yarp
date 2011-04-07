@@ -11,7 +11,11 @@
 #include <yarp/os/Run.h>
 
 #ifndef YARP_HAS_ACE
-#include <wait.h>
+#ifndef __APPLE__
+#  include <wait.h>
+#else
+#  include <sys/wait.h>
+#endif
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>

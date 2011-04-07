@@ -15,7 +15,11 @@
 #  include <ace/OS_NS_signal.h>
 #else
 #  include <signal.h>
-#  define ACE_SignalHandler sighandler_t
+#  ifndef __APPLE__
+#    define ACE_SignalHandler sighandler_t
+#  else
+#    define ACE_SignalHandler sig_t
+#  endif
 #endif
 
 #endif

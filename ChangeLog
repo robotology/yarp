@@ -1,3 +1,8 @@
+2011-04-07  Paul Fitzpatrick  <paulfitz@farmMac1.local>
+
+	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h: make
+	YARP-without-ACE work on OSX.
+
 2011-04-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpSystemCheck.cmake: add experimental SKIP_ACE option

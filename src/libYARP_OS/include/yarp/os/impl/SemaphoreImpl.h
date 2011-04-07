@@ -13,11 +13,28 @@
 // where semaphores fail to work correctly.
 // A hack to fix this problem is to uncomment the three lines below --paulfitz
 #ifdef __linux__
-#define YARP_USE_NATIVE_POSIX_SEMA
+#define YARP_USE_NATIVE_POSIX_SEMA 1
+#else
+#define YARP_USE_NATIVE_POSIX_SEMA 0
+#endif
+
+#include <yarp/conf/system.h>
+#ifndef YARP_HAS_ACE
+#  ifdef __APPLE__
+#    define YARP_USE_MACH_SEMA 1
+#  endif
 #endif
 
 #ifdef YARP_USE_NATIVE_POSIX_SEMA
-#include <semaphore.h>
+#  include <semaphore.h>
+#endif
+
+#ifdef YARP_USE_MACH_SEMA
+#  include <mach/mach_init.h>
+#  include <mach/semaphore.h>
+#  include <mach/task.h>
+#else
+#  define YARP_USE_MACH_SEMA 0
 #endif
 
 #include <yarp/conf/system.h>
@@ -44,25 +61,32 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::SemaphoreImpl {
 public:
     SemaphoreImpl(int initialCount = 1) 
-#ifndef YARP_USE_NATIVE_POSIX_SEMA
+#if !(YARP_USE_NATIVE_POSIX_SEMA)
         : sema(initialCount) 
 #endif
     {
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
         sem_init(&sema,0,initialCount);
+#elif YARP_USE_MACH_SEMA
+        int result = semaphore_create(mach_task_self(), &sema, SYNC_POLICY_FIFO, initialCount);
+	YARP_ASSERT(result==KERN_SUCCESS);
 #endif
     }
 
     virtual ~SemaphoreImpl() {
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
         sem_destroy(&sema);
+#elif YARP_USE_MACH_SEMA
+        semaphore_destroy(mach_task_self(),sema);
 #endif
     }
 
     // blocking wait
     void wait() {
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
         sem_wait(&sema);
+#elif YARP_USE_MACH_SEMA
+        semaphore_wait(sema);
 #else
         int result = sema.acquire();
         if (result!=-1) return;
@@ -82,8 +106,11 @@ public:
 
     // polling wait
     bool check() {
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
         return sem_trywait(&sema)==0;
+#elif YARP_USE_MACH_SEMA
+        mach_timespec_t timeout = { 0, 0 };
+        return semaphore_timedwait(sema,timeout) == KERN_SUCCESS;
 #else
         return (sema.tryacquire()<0)?0:1;
 #endif
@@ -91,16 +118,20 @@ public:
 
     // increment
     void post() {
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
         sem_post(&sema);
+#elif YARP_USE_MACH_SEMA
+        semaphore_signal(sema);
 #else
         sema.release();
 #endif
     }
 
 private:
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
     sem_t sema;
+#elif YARP_USE_MACH_SEMA
+    semaphore_t sema;
 #else
     ACE_Semaphore sema;
 #endif
