@@ -23,5 +23,6 @@ if [ ! -e $dir ]; then
 fi
 
 (
-echo "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion"
-) | sudo chroot $dir
+	echo "export CHROOT_NAME='$platform'"
+	echo "export CHROOT_DIR='$PWD/$dir'"
+) > $BUILD_DIR/chroot_${platform}.sh
