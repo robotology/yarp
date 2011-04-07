@@ -13,6 +13,8 @@
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_stdlib.h>
 #  include <ace/OS_NS_string.h>
+#  include <ace/OS_NS_sys_stat.h>
+#  include <ace/OS_NS_dirent.h>
 #else
 #  include <cstring>
 #  include <stdlib.h>
