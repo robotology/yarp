@@ -25,7 +25,7 @@
 #  endif
 #endif
 
-#ifdef YARP_USE_NATIVE_POSIX_SEMA
+#if YARP_USE_NATIVE_POSIX_SEMA
 #  include <semaphore.h>
 #endif
 
