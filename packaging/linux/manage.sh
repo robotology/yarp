@@ -50,20 +50,32 @@ cd $BUILD_DIR
 ) > settings.sh
 
 if sudo which debootstrap; then
-    echo "Good, have debootstrap"
+    echo "Good, debootstrap is available"
 else
     sudo apt-get install debootstrap
 fi
 
 PLATFORM_SCRIPTS=/usr/share/debootstrap/scripts
+echo " "
+echo "debootstrap scripts are available on this machine for:"
 ls $PLATFORM_SCRIPTS
+echo " "
 
 for platform in $PLATFORMS; do
-    if [ ! -e "$PLATFORM_SCRIPTS/$platform" ]; then
+    PLATFORM_FILE="$PLATFORM_SCRIPTS/$platform"
+    if [ ! -e "$PLATFORM_FILE" ]; then
 	echo "Do not know how to make $platform"
 	exit 1
     fi
-    echo "Preparing $platform"
+    echo "Adding targets for: $platform"
+    {
+	PLATFORM_MIRROR_t=${platform}_MIRROR
+	PLATFORM_MIRROR=${!PLATFORM_MIRROR_t}
+	echo "PLATFORM_KEY=$platform"
+	echo "PLATFORM_MIRROR=$PLATFORM_MIRROR"
+	grep -q "ubuntu\.com" $PLATFORM_FILE && echo "PLATFORM_IS_UBUNTU=true"
+	grep -q "ubuntu\.com" $PLATFORM_FILE || echo "PLATFORM_IS_DEBIAN=true"
+    } > config_$platform.sh
     (
 	echo "chroot_$platform.txt:"
 	echo -e "\t$SOURCE_DIR/src/build_chroot.sh $platform chroot_$platform && touch chroot_$platform.txt\n"
@@ -90,3 +102,5 @@ done
     echo -e "\n"
 ) >> $BUILD_DIR/Makefile
 
+echo " "
+echo "Makefile prepared."
