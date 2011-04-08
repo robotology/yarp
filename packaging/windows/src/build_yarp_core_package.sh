@@ -25,6 +25,10 @@ else
 	add_debug=false
 fi
 
+if [ "k$compiler" = "kmingw" ]; then
+	add_debug=false
+fi
+
 if $add_debug; then
 	source ace_${compiler}_${variant}_Debug.sh || {
 		echo "Cannot find corresponding ACE debug build"

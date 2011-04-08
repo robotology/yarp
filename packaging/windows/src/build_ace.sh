@@ -96,15 +96,17 @@ if [ ! -e $pname ]; then
 	exit 1
 fi
 
-(
-if [ ! "kRESTRICTED_PATH" = "k" ]; then
+ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
+
+{
+if [ ! "k$RESTRICTED_PATH" = "k" ]; then
 	ACE_ROOT=`cygpath -m $ACE_ROOT`
 	PATH="$RESTRICTED_PATH"
 	echo "ACE_ROOT set to $ACE_ROOT"
 	echo "PATH set to $PATH"
 fi
 $BUILDER $pname $CONFIGURATION_COMMAND $PLATFORM_COMMAND || exit 1
-)
+}
 
 libname=ACE
 if [ "k$build" = "kDebug" ]; then
@@ -117,7 +119,6 @@ for f in `cd ace; ls *.dll.a`; do
 done
 
 (
-	ACE_DIR=`cygpath --mixed "$ACE_ROOT"`
 	echo "export ACE_DIR='$ACE_DIR'"
 	echo "export ACE_ROOT='$ACE_DIR'"
 	echo "export ACE_LIBNAME='$LIBPRE$libname'"

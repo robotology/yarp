@@ -90,9 +90,9 @@ XXX
 	echo "source compile_base.sh"
 ) > compile.sh
 # configure and build
-(
-	source compile_base.sh
-)
+{
+	source compile_base.sh || exit 1
+}
 
 (
 	echo "export YARP_DIR='$YARP_DIR'"

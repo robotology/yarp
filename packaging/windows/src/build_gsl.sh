@@ -85,14 +85,16 @@ XXX
 	echo 'user_target="$1"'
 	echo "source compile_base.sh"
 ) > compile.sh
+
+GSL_DIR=`cygpath --mixed "$PWD"`
+GSL_ROOT=`cygpath --mixed "$PWD/../$fname"`
+
 # configure and build
-(
-	source compile_base.sh
-)
+{
+	source compile_base.sh || exit 1
+}
 
 (
-	GSL_DIR=`cygpath --mixed "$PWD"`
-	GSL_ROOT=`cygpath --mixed "$PWD/../$fname"`
 	echo "export GSL_DIR='$GSL_DIR'"
 	echo "export GSL_ROOT='$GSL_ROOT'"
 	target_lib_name $build "gsl" # sets $TARGET_LIB

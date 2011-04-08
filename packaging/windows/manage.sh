@@ -70,7 +70,7 @@ done
 (
 
 # All basic targets to make available
-full_target_list="cmake ace gsl gtkmm yarp nsis yarp_core_package"
+full_target_list="cmake ace gsl gtkmm yarp nsis yarp_core_package transfer"
 
 # Coarse-grain dependencies between targets
 depend_cmake=
@@ -81,11 +81,13 @@ depend_yarp="cmake ace gsl gtkmm"
 depend_icub="cmake yarp ace gsl gtkmm"
 depend_nsis=
 depend_yarp_core_package="yarp nsis"
+depend_transfer="yarp_core_package"
 
 # mark packages that don't have separate debug/release builds
 build_out_cmake="any"
 build_out_nsis="any"
 build_out_yarp_core_package="any"
+build_out_transfer="any"
 
 # mark packages that don't care about compiler
 compilers_out_cmake="any"
