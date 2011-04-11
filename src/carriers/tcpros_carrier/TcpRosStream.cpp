@@ -21,6 +21,10 @@ using namespace std;
 #define dbg_printf if (0) printf
 
 int TcpRosStream::read(const Bytes& b) {
+    if (kind!="") {
+      return twiddlerReader.read(b);
+    }
+
     if (phase==-1) return -1;
     if (remaining==0) {
         if (phase==1) {
@@ -122,3 +126,22 @@ int TcpRosStream::read(const Bytes& b) {
 void TcpRosStream::write(const Bytes& b) {
     delegate->getOutputStream().write(b);
 }
+
+
+void TcpRosStream::updateKind(const char *kind) {
+    string t = kind;
+    string code = "";
+    if (t=="std_msgs/String") {
+        code = "skip int32 * list 1 string *";
+    } else if (t == "std_msgs/Int32") {
+        code = "skip int32 * list 1 int32 *";
+    }
+    if (code!="") {
+        twiddler.configure(code.c_str());
+        this->kind = code.c_str();
+    } else {
+        this->kind = "";
+    }
+}
+
+

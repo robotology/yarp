@@ -88,3 +88,20 @@ bool RosHeader::readHeader(const string& bin) {
     return true;
 }
 
+
+std::string RosHeader::toString() const {
+    string result = "";
+    for (map<string,string>::const_iterator it = data.begin();
+         it!=data.end(); it++) {
+        string key = it->first;
+        string val = it->second;
+        result += key;
+        result += "->";
+        result += val;
+        result += " ";
+    }
+    return result;
+}
+
+
+

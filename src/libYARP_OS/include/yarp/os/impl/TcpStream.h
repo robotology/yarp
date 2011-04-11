@@ -69,6 +69,15 @@ public:
 	  return ::recv(sd, buf, n, 0);
 	}
 
+	inline ssize_t recv (void *buf, size_t n) {
+	  return ::recv(sd, buf, n, 0);
+	}
+
+	inline ssize_t recv (void *buf, size_t n, struct timeval *tv) {
+	  setsockopt(sd, SOL_SOCKET, SO_RCVTIMEO, (char *)tv, sizeof (*tv));
+	  return ::recv(sd, buf, n, 0);
+	}
+
 	inline ssize_t send_n (const void *buf, size_t n) {
 		return ::send(sd, buf, n, 0);
 	}

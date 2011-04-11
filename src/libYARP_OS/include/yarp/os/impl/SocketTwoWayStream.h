@@ -111,7 +111,6 @@ public:
         return result;
     }
 
-    /*
     virtual int partialRead(const Bytes& b) {
         if (!isOk()) { return -1; }
         int result;
@@ -127,7 +126,6 @@ public:
         }
         return result;
     }
-    */
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }

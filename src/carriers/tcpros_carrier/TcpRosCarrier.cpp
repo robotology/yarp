@@ -128,6 +128,12 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
         return false;
     }
     header.readHeader(string(m.get(),m.length()));
+    //printf("Message header: %s\n", header.toString().c_str());
+    ConstString kind = "";
+    if (header.data.find("type")!=header.data.end()) {
+        kind = header.data["type"].c_str();
+    }
+    printf("Type of data is %s\n", kind.c_str());
 
     isService = (header.data.find("request_type")!=header.data.end());
     dbg_printf("tcpros %s mode\n", isService?"service":"topic");
@@ -135,14 +141,11 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     // we may be a pull stream
     sender = isService;
     TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                            isService,raw);
+                                            isService,raw,kind);
 
     if (stream==NULL) { return false; }
 
     printf("Getting ready to hand off streams...\n");
-    printf("Let's check for some type information? for ...\n");
-
-    
 
     proto.takeStreams(stream);
     

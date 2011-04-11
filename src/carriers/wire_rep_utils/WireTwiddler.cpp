@@ -26,13 +26,20 @@ using namespace yarp::os::impl;
 #define dbg_flag 0
 #define dbg_printf if (dbg_flag) printf
 
-int WireTwiddler::configure(Bottle& desc, int offset) {
+int WireTwiddler::configure(Bottle& desc, int offset, bool& ignored) {
     int start = offset;
     // example: list 4 int32 * float64 * vector int32 * vector int32 3 *
     bool is_vector = false;
     bool is_list = false;
+    bool ignore = false;
     ConstString kind = desc.get(offset).asString();
     offset++;
+    if (kind=="skip") {
+        ignore = true;
+        kind = desc.get(offset).asString();
+        offset++;
+    }
+
     is_vector = (kind=="vector");
     is_list = (kind=="list");
     if (is_vector) {
@@ -82,41 +89,54 @@ int WireTwiddler::configure(Bottle& desc, int offset) {
     } else if (kind=="string") {
         tag = BOTTLE_TAG_STRING;
         unit_length = -1;
-        len = -1;
+        //len = -1;
     }
 
-    dbg_printf("Type %s (%s) len %d\n", 
+    dbg_printf("Type %s (%s) len %d %s\n", 
                kind.c_str(),
-               is_list?"LIST":(is_vector?"VECTOR":"PRIMITIVE"), len);
+               is_list?"LIST":(is_vector?"VECTOR":"PRIMITIVE"), len,
+               ignore?"SKIP":"");
 
-    if (is_list) {
-        buffer.push_back(BOTTLE_TAG_LIST);
-        buffer.push_back(len);
-    } else if (is_vector) {
-        buffer.push_back(BOTTLE_TAG_LIST+tag);
-        if (len!=-1) {
+    if (!ignore) {
+        if (is_list) {
+            buffer.push_back(BOTTLE_TAG_LIST);
             buffer.push_back(len);
+        } else if (is_vector) {
+            buffer.push_back(BOTTLE_TAG_LIST+tag);
+            if (len!=-1) {
+                buffer.push_back(len);
+            }
+        } else {
+            buffer.push_back(tag);
         }
-    } else {
-        buffer.push_back(tag);
     }
 
     if (data) {
         WireTwiddlerGap gap;
-        gap.buffer_start = buffer_start;
-        gap.buffer_length = (int)buffer.size()-buffer_start;
-        buffer_start = (int)buffer.size();
+        if (!ignore) {
+            gap.buffer_start = buffer_start;
+            gap.buffer_length = (int)buffer.size()-buffer_start;
+            buffer_start = (int)buffer.size();
+        } else {
+            gap.buffer_start = 0;
+            gap.buffer_length = 0;
+        }
         gap.unit_length = unit_length;
         gap.length = len;
+        gap.ignore_external = ignore;
         Bottle tmp;
         tmp.copy(desc,start,offset-start-1);
         gap.origin = tmp.toString();
         gaps.push_back(gap);
     }
+    ignored = ignore;
 
     if (is_list) {
-        for (int i=0; i<len; i++) {
-            offset = configure(desc,offset);
+        int i=0;
+        while (i<len) {
+            bool ign = false;
+            offset = configure(desc,offset,ign);
+            if (!ign) i++;
         }
     }
     return offset;
@@ -136,7 +156,14 @@ bool WireTwiddler::configure(const char *txt) {
 
     buffer_start = 0;
     buffer.clear();
-    int at = configure(desc,0);
+    int at = 0;
+    int next = 0;
+    do {
+        bool ign = false;
+        at = next;
+        dbg_printf("Configuring, length %d, at %d\n", desc.size(), at);
+        next = configure(desc,at,ign);
+    } while (next>at&&next<desc.size());
     if (buffer_start!=(int)buffer.size()) {
         WireTwiddlerGap gap;
         gap.buffer_start = buffer_start;
@@ -171,6 +198,9 @@ void WireTwiddler::show() {
         }
         if (gap.unit_length!=0) {
             printf("  Expect %d x %d\n", gap.length, gap.unit_length);
+        }
+        if (gap.ignore_external) {
+            printf("  External data will be ignored\n");
         }
     }
 }
@@ -275,21 +305,26 @@ int WireTwiddlerReader::read(const Bytes& b) {
             dbg_printf("WireTwidderReader sending %d boilerplate bytes\n",len);
             return len;
         }
-        if (gap.length==-1 && override_length==-1) {
+        if ((gap.length==-1||gap.unit_length==-1) && override_length==-1) {
             dbg_printf("LOOKING TO EXTERNAL\n");
             int r = NetType::readFull(is,Bytes((char*)&lengthBuffer,
                                                sizeof(NetInt32)));
             if (r!=sizeof(NetInt32)) return -1;
             dbg_printf("Read length %d\n", lengthBuffer);
-            dbg_printf("Expect 4 + %d x %d\n", lengthBuffer, gap.unit_length);
             pending_length = sizeof(lengthBuffer);
-            if (gap.unit_length<0) {
-                pending_strings = lengthBuffer;
-                pending_string_length = 0;
-                pending_string_data = 0;
-                override_length = 0;
+            if (gap.length==-1) {
+                dbg_printf("Expect 4 + %d x %d\n", lengthBuffer, gap.unit_length);
+                if (gap.unit_length<0) {
+                    pending_strings = lengthBuffer;
+                    pending_string_length = 0;
+                    pending_string_data = 0;
+                    override_length = 0;
+                } else {
+                    override_length = lengthBuffer*gap.unit_length;
+                }
             } else {
-                override_length = lengthBuffer*gap.unit_length;
+                override_length = lengthBuffer;
+                dbg_printf("Expect 1 x %d\n", lengthBuffer);
             }
         }
         if (pending_length) {
@@ -351,22 +386,39 @@ int WireTwiddlerReader::read(const Bytes& b) {
         }
         int extern_length = gap.length * gap.unit_length;
         if (gap.unit_length<0||gap.length<0) extern_length = override_length;
+        dbg_printf("extern_length %d\n", extern_length);
+
         if (extern_length>sent-consumed) {
             int len = b.length();
             if (len>extern_length) {
                 len = extern_length;
             }
             Bytes b2(b.get(),len);
-            int r = is.read(b2);
-            if (r<0) {
-                fprintf(stderr,"No payload bytes available\n");
+            int r = 0;
+            if (!gap.shouldIgnoreExternal()) {
+                r = is.read(b2);
+                NetInt32 *nn = (NetInt32 *)b.get();
+                dbg_printf("[[[%d]]]\n", (int)(*nn));
+                dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
+                if (r>0) {
+                    sent += r;
+                }
+                if (r<0) {
+                    fprintf(stderr,"No payload bytes available\n");
+                    return r;
+                }
                 return r;
+            } else {
+                dump.allocateOnNeed(b2.length(),b2.length());
+                r = NetType::readFull(is,dump.bytes());
+                NetInt32 *nn = (NetInt32 *)dump.get();
+                dbg_printf("[[[%d]]]\n", (int)(*nn));
+                dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
+                dbg_printf("  (ignoring %d payload bytes)\n",r);
+                if (r>0) {
+                    sent += r;
+                }
             }
-            sent += r;
-            NetInt32 *nn = (NetInt32 *)b.get();
-            dbg_printf("[[[%d]]]\n", (int)(*nn));
-            dbg_printf("WireTwidderReader sending %d payload bytes\n",r);
-            return r;
         }
         if (index<ct-1) {
             index++;

@@ -11,9 +11,18 @@
 
 #include "WireTwiddler.h"
 
+#include <yarp/os/impl/StringInputStream.h>
+#include <yarp/os/impl/Route.h>
+#include <yarp/os/impl/InputStream.h>
+#include <yarp/os/impl/StreamConnectionReader.h>
+
 using namespace yarp::os;
+using namespace yarp::os::impl;
 
 bool testSequence(char *seq, int len, const char *fmt, Bottle ref) {
+    printf("\n");
+    printf("================================================\n");
+    printf(" %s\n", fmt);
     Bytes b1(seq,len);
     WireTwiddler tt;
     tt.configure(fmt);
@@ -31,54 +40,110 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref) {
         exit(1);
         return false;
     }
-    printf("%s: read %s as expected\n", fmt, bot.toString().c_str());
+    printf("[1] %s: read %s as expected\n", fmt, bot.toString().c_str());
+
+
+    StringInputStream sis;
+    sis.add(b1);
+    sis.add(b1);
+    WireTwiddlerReader twiddled_input(sis,tt);
+    Route route;
+    StreamConnectionReader reader2;
+    reader2.reset(twiddled_input,NULL,route,0,false);
+    bot.clear();
+    twiddled_input.reset();
+    bot.read(reader2);
+
+    if (bot!=ref) {
+        printf("%s: read %s, expected %s\n", fmt, 
+               bot.toString().c_str(),
+               ref.toString().c_str());
+        printf("MISMATCH\n");
+        exit(1);
+        return false;
+    }
+    printf("[2] %s: read %s as expected\n", fmt, bot.toString().c_str());
+
+
+    StreamConnectionReader reader3;
+    reader3.reset(twiddled_input,NULL,route,0,false);
+    bot.clear();
+    twiddled_input.reset();
+    bot.read(reader3);
+
+    if (bot!=ref) {
+        printf("%s: read %s, expected %s\n", fmt, 
+               bot.toString().c_str(),
+               ref.toString().c_str());
+        printf("MISMATCH\n");
+        exit(1);
+        return false;
+    }
+    printf("[3] %s: read %s as expected\n", fmt, bot.toString().c_str());
+
     return true;
 }
 
 int main(int argc, char *argv[]) {
-    if (argc!=2) {
-        fprintf(stderr,"Specify a bottle\n");
-        return 1;
-    }
-    WireTwiddler tt;
-    tt.configure(argv[1]);
-    printf(">>> %s\n", tt.toString().c_str());
 
-    {
-        char seq[] = {42,0,0,0};
-        testSequence(seq,sizeof(seq),"list 1 int32 *",Bottle("42"));
+    if (argc==1) {
+        {
+            char seq[] = {42,0,0,0};
+            testSequence(seq,sizeof(seq),"list 1 int32 *",Bottle("42"));
+        }
+        {
+            char seq[] = {6,0,0,0,'h','e','l','l','o','\0'};
+            testSequence(seq,sizeof(seq),"list 1 string *",Bottle("hello"));
+        }
+        {
+            char seq[] = {42,0,0,0,55,0,0,0};
+            testSequence(seq,sizeof(seq),"list 2 int32 * int32 *",Bottle("42 55"));
+        }
+        {
+            char seq[] = {2,0,0,0,42,0,0,0,55,0,0,0};
+            testSequence(seq,sizeof(seq),"vector int32 *",Bottle("42 55"));
+        }
+        {
+            char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0'};
+            testSequence(seq,sizeof(seq),"vector string *",Bottle("foo bar"));
+        }
+        {
+            char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0',12,0,0,0};
+            testSequence(seq,sizeof(seq),"list 2 vector string * int32 *",Bottle("(foo bar) 12"));
+        }
+        {
+            char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0',12,0,0,0,2,0,0,0,42,0,0,0,24,0,0,0};
+            testSequence(seq,sizeof(seq),"list 3 vector string * int32 * vector int32 *",Bottle("(foo bar) 12 (42 24)"));
+        }
+        {
+            char seq[] = {42,0,0,0,24,0,0,0};
+            testSequence(seq,sizeof(seq),"vector int32 2 *",Bottle("42 24"));
+        }
+        {
+            char seq[] = {6,0,0,0,'h','e','l','l','o','\0',12,0,0,0};
+            testSequence(seq,sizeof(seq),"list 2 string * int32 *",Bottle("hello 12"));
+        }
+        {
+            char seq[] = {6,0,0,0,'h','e','l','l','o','\0',12,0,0,0,42,0,0,0};
+            testSequence(seq,sizeof(seq),"list 3 string * int32 * int32 *",Bottle("hello 12 42"));
+        }
+        {
+            char seq[] = {6,0,0,0,'h','e','l','l','o','\0',12,0,0,0,42,0,0,0};
+            testSequence(seq,sizeof(seq),"list 2 string * skip int32 * int32 *",Bottle("hello 42"));
+        }
+        {
+            char seq[] = {33,0,0,0,42,0,0,0};
+            testSequence(seq,sizeof(seq),"list 1 skip int32 * int32 *",Bottle("42"));
+        }
+        {
+            char seq[] = {99,0,0,0,42,0,0,0};
+            testSequence(seq,sizeof(seq),"skip int32 * list 1 int32 *",Bottle("42"));
+        }
     }
-    {
-        char seq[] = {42,0,0,0,55,0,0,0};
-        testSequence(seq,sizeof(seq),"list 2 int32 * int32 *",Bottle("42 55"));
-    }
-    {
-        char seq[] = {2,0,0,0,42,0,0,0,55,0,0,0};
-        testSequence(seq,sizeof(seq),"vector int32 *",Bottle("42 55"));
-    }
-    {
-        char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0'};
-        testSequence(seq,sizeof(seq),"vector string *",Bottle("foo bar"));
-    }
-    {
-        char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0',12,0,0,0};
-        testSequence(seq,sizeof(seq),"list 2 vector string * int32 *",Bottle("(foo bar) 12"));
-    }
-    {
-        char seq[] = {2,0,0,0,4,0,0,0,'f','o','o','\0',4,0,0,0,'b','a','r','\0',12,0,0,0,2,0,0,0,42,0,0,0,24,0,0,0};
-        testSequence(seq,sizeof(seq),"list 3 vector string * int32 * vector int32 *",Bottle("(foo bar) 12 (42 24)"));
-    }
-    {
-        char seq[] = {42,0,0,0,24,0,0,0};
-        testSequence(seq,sizeof(seq),"vector int32 2 *",Bottle("42 24"));
-    }
-
-    {
-        printf("Try a write...\n");
-        ManagedBytes seq;
-        tt.configure("vector int32 2 *");
-        Bottle b("42,24");
-        tt.write(b,seq);
+    if (argc==2) {
+        WireTwiddler tt;
+        tt.configure(argv[1]);
+        printf(">>> %s\n", tt.toString().c_str());
     }
 
     return 0;

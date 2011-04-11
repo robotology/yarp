@@ -79,11 +79,13 @@ Value toValue(XmlRpcValue& v, bool outer) {
 }
 
 int XmlRpcStream::read(const Bytes& b) {
+    //printf("XMLRPC READ\n");
     int result = sis.read(b);
     if (result>0) {
         //printf("RETURNING %d bytes\n", result);
         return result;
     }
+    //printf("No string\n");
     if (result==0) {
         //printf("Reading...\n");
         bool ok = false;

@@ -27,6 +27,7 @@ public:
     int unit_length;
     char *byte_start;
     int byte_length;
+    bool ignore_external;
     yarp::os::ConstString origin;
     WireTwiddlerGap() {
         buffer_start = 0;
@@ -35,12 +36,14 @@ public:
         unit_length = 0;
         byte_start = 0/*NULL*/;
         byte_length = 0;
+        ignore_external = false;
     }
 
     char *getStart() const { return byte_start; }
     int getLength() const { return byte_length; }
     int getUnitLength() const { return unit_length; }
     int getExternalLength() const { return unit_length; }
+    bool shouldIgnoreExternal() const { return ignore_external; }
     const yarp::os::ConstString& getOrigin() const { return origin; }
 };
 
@@ -61,7 +64,7 @@ private:
 
 public:
     void show();
-    int configure(yarp::os::Bottle& desc, int offset);
+    int configure(yarp::os::Bottle& desc, int offset, bool& ignored);
 
     int getGapCount() {
         return (int)gaps.size();
@@ -107,6 +110,7 @@ private:
     int pending_strings;
     int pending_string_length;
     int pending_string_data;
+    yarp::os::ManagedBytes dump;
 public:
     WireTwiddlerReader(yarp::os::impl::InputStream& is, 
                        WireTwiddler& twiddler) : is(is),

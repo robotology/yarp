@@ -20,6 +20,8 @@ public:
 
     bool readHeader(const std::string& bin);
 
+    std::string toString() const;
+
     static void appendInt(char *&buf,int x);
 
     static void appendString(char *&buf,const std::string& str);

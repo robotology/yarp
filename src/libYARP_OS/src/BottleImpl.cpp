@@ -335,7 +335,7 @@ bool BottleImpl::fromBytes(ConnectionReader& reader) {
         break;
     }
     if (storable==NULL) {
-        YARP_ERROR(Logger::get(), "BottleImpl reader failed");
+        YARP_SPRINTF1(Logger::get(),error,"BottleImpl reader failed, unrecognized object code %d",id);
         //throw IOException((String("BottleImpl reader failed - unrecognized format? ") + NetType::toString(id)).c_str());
         return false;
     }
