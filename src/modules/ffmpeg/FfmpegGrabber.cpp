@@ -15,9 +15,6 @@
 
 #include <stdio.h>
 
-#include <ace/OS.h>
-
-
 #define ERROR_PROBLEM
 
 using namespace yarp::os::impl;

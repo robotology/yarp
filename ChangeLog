@@ -1,3 +1,8 @@
+2011-04-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/FindFFMPEG.cmake: apply patch from Gianluca to build
+	on his OSX setup [thanks Gianluca Massera]
+
 2011-04-07  Paul Fitzpatrick  <paulfitz@farmMac1.local>
 
 	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h: make

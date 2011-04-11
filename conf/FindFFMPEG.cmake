@@ -19,6 +19,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR1 avformat.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavformat
+  $ENV{FFMPEG_DIR}/include/libavformat
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -31,6 +32,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR2 avutil.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavutil
+  $ENV{FFMPEG_DIR}/include/libavutil
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -43,6 +45,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR3 avcodec.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavcodec
+  $ENV{FFMPEG_DIR}/include/libavcodec
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -55,6 +58,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR4 swscale.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libswscale
+  $ENV{FFMPEG_DIR}/include/libswscale
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
@@ -67,6 +71,7 @@ FIND_PATH(FFMPEG_INCLUDE_DIR5 avdevice.h
   $ENV{FFMPEG_DIR}
   $ENV{FFMPEG_DIR}/ffmpeg
   $ENV{FFMPEG_DIR}/libavdevice
+  $ENV{FFMPEG_DIR}/include/libavdevice
   $ENV{FFMPEG_DIR}/include/ffmpeg
   /usr/local/include/ffmpeg
   /usr/include/ffmpeg
