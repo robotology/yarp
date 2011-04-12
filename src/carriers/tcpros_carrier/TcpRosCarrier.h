@@ -15,6 +15,7 @@
 #include "TcpRosStream.h"
 #include "WireImage.h"
 #include "WireBottle.h"
+#include "WireTwiddler.h"
 
 namespace yarp {
     namespace os {
@@ -29,6 +30,7 @@ namespace yarp {
 #define TCPROS_TRANSLATE_UNKNOWN (0)
 #define TCPROS_TRANSLATE_IMAGE (1)
 #define TCPROS_TRANSLATE_BOTTLE_BLOB (2)
+#define TCPROS_TRANSLATE_TWIDDLER (3)
 
 class yarp::os::impl::TcpRosCarrier : public Carrier {
 private:
@@ -42,6 +44,9 @@ private:
     RosWireImage ri;
     SizedWriterTail wt;
     int seq;
+    WireTwiddler twiddler;
+    WireTwiddlerWriter twiddler_output;
+    yarp::os::ConstString kind;
 protected:
     bool isService;
 public:

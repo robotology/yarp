@@ -129,14 +129,9 @@ void TcpRosStream::write(const Bytes& b) {
 
 
 void TcpRosStream::updateKind(const char *kind) {
-    string t = kind;
-    string code = "";
-    if (t=="std_msgs/String") {
-        code = "skip int32 * list 1 string *";
-    } else if (t == "std_msgs/Int32") {
-        code = "skip int32 * list 1 int32 *";
-    }
+    string code = rosToKind(kind);
     if (code!="") {
+        code = string("skip int32 * ") + code;
         twiddler.configure(code.c_str());
         this->kind = code.c_str();
     } else {
@@ -144,4 +139,17 @@ void TcpRosStream::updateKind(const char *kind) {
     }
 }
 
+
+std::string TcpRosStream::rosToKind(const char *rosname) {
+    // stub for testing
+
+    string t = rosname;
+    string code = "";
+    if (t=="std_msgs/String") {
+        code = "vector string 1 *";
+    } else if (t == "std_msgs/Int32") {
+        code = "vector int32 1 *";
+    }
+    return code;
+}
 

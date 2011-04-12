@@ -23,7 +23,7 @@ using namespace yarp::os;
 using namespace yarp::sig;
 using namespace std;
 
-#define dbg_printf if (1) printf
+#define dbg_printf if (0) printf
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -129,11 +129,11 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     }
     header.readHeader(string(m.get(),m.length()));
     //printf("Message header: %s\n", header.toString().c_str());
-    ConstString kind = "";
+    ConstString rosname = "";
     if (header.data.find("type")!=header.data.end()) {
-        kind = header.data["type"].c_str();
+        rosname = header.data["type"].c_str();
     }
-    printf("Type of data is %s\n", kind.c_str());
+    printf("Type of data is [%s]s\n", rosname.c_str());
 
     isService = (header.data.find("request_type")!=header.data.end());
     dbg_printf("tcpros %s mode\n", isService?"service":"topic");
@@ -141,7 +141,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
     // we may be a pull stream
     sender = isService;
     TcpRosStream *stream = new TcpRosStream(proto.giveStreams(),sender,
-                                            isService,raw,kind);
+                                            isService,raw,rosname);
 
     if (stream==NULL) { return false; }
 
@@ -169,21 +169,25 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     }
     RosHeader header;
     header.readHeader(string(m.get(),m.length()));
+    dbg_printf("Got header %s\n", header.toString().c_str());
+
+    ConstString rosname = "";
+    if (header.data.find("type")!=header.data.end()) {
+        rosname = header.data["type"].c_str();
+    }
+    dbg_printf("Type of data is %s\n", rosname.c_str());
+    kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
+    dbg_printf("Loose translation [%s]\n", kind.c_str());
+    if (kind!="") {
+        twiddler.configure(kind.c_str());
+        translate = TCPROS_TRANSLATE_TWIDDLER;
+    }
 
     if (header.data.find("callerid")!=header.data.end()) {
         proto.setRoute(proto.getRoute().addFromName(header.data["callerid"].c_str()));
     } else {
         proto.setRoute(proto.getRoute().addFromName("tcpros"));
     }
-
-    /*
-    printf("Hello, I received a header.\n");
-    printf("Here it is:\n");
-    for (map<string,string>::iterator it=header.data.begin();
-         it!=header.data.end(); it++) {
-        printf("  %s -> %s\n", it->first.c_str(), it->second.c_str());
-    }
-    */
 
     // let's just ignore everything that is sane and holy, and
     // send the same header right back
@@ -254,12 +258,28 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
             flex_writer = &wt;
         }
         break;
+    case TCPROS_TRANSLATE_TWIDDLER:
+        {
+            dbg_printf("* TCPROS_TRANSLATE_TWIDDLER\n");
+            twiddler_output.attach(writer,twiddler);
+            if (twiddler_output.update()) {
+                flex_writer = &twiddler_output;
+            } else {
+                flex_writer = NULL;
+            }
+        }
+        break;
     case TCPROS_TRANSLATE_INHIBIT:
         dbg_printf("* TCPROS_TRANSLATE_INHIBIT\n");
         break;
     default:
         dbg_printf("* TCPROS_TRANSLATE_OTHER\n");
         break;
+    }
+
+    if (flex_writer == NULL) {
+        fprintf(stderr,"tcpros_carrier skipped sending message\n");
+        return false;
     }
 
     if (flex_writer->length()<1) {

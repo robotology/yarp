@@ -56,6 +56,15 @@ public:
 
     bool configure(const char *txt);
 
+
+    std::string fromTemplate(const yarp::os::Bottle& msg);
+
+    /*
+    bool setHeaderFormat(const char *txt) {
+        headerFormat = txt;
+    }
+    */
+
 private:
 
     int buffer_start;
@@ -143,17 +152,41 @@ public:
 
 class WireTwiddlerWriter : public yarp::os::impl::SizedWriter {
 private:
-    yarp::os::impl::SizedWriter& parent;
-    WireTwiddler& twiddler;
+    yarp::os::impl::SizedWriter *parent;
+    WireTwiddler *twiddler;
     std::vector<yarp::os::Bytes> srcs;
+    int block;
+    int lastBlock;
+    int offset;
+    const char *blockPtr;
+    int blockLen;
+    yarp::os::NetInt32 lengthBuffer;
+    yarp::os::Bytes lengthBytes;
+    int accumOffset;
+    const char *activeEmit;
+    int activeEmitLength;
+    const char *activeCheck;
+    bool errorState;
 public:
     WireTwiddlerWriter(yarp::os::impl::SizedWriter& parent,
-                       WireTwiddler& twiddler) : parent(parent),
-                                                 twiddler(twiddler) {
+                       WireTwiddler& twiddler) : parent(&parent),
+                                                 twiddler(&twiddler) {
         update();
     }
 
-    void update();
+    WireTwiddlerWriter() {
+        parent = NULL;
+        twiddler = NULL;
+    }
+
+    void attach(yarp::os::impl::SizedWriter& parent,
+                WireTwiddler& twiddler) {
+        this->parent = &parent;
+        this->twiddler = &twiddler;
+        update();
+    }
+
+    bool update();
 
     virtual ~WireTwiddlerWriter() {}
 
@@ -162,7 +195,7 @@ public:
     }
 
     virtual int headerLength() {
-        return parent.headerLength();
+        return 0;
     }
 
     virtual int length(int index)  { 
@@ -174,17 +207,27 @@ public:
     }
 
     virtual yarp::os::PortReader *getReplyHandler() {
-        return parent.getReplyHandler();
+        return parent->getReplyHandler();
     }
     
     virtual yarp::os::Portable *getReference() {
-        return parent.getReference();
+        return parent->getReference();
     }
+
+    bool skip(const char *start, int len);
 
     bool pass(int len);
 
-    bool skip(int len);
+    bool readLengthAndPass(int unitLength);
 
+    bool advance(int length, bool shouldEmit, bool shouldAccum=false,
+                 bool shouldCheck=false);
+
+    bool emit(const char *src, int len);
+
+    int readLength();
+
+    //virtual void write(OutputStream& os);
 };
 
 #endif

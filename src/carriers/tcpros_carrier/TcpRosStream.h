@@ -106,6 +106,8 @@ public:
     }
 
     void updateKind(const char *kind);
+
+    static std::string rosToKind(const char *rosname);
 };
 
 #endif

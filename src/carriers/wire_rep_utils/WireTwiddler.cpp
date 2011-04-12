@@ -187,6 +187,64 @@ bool WireTwiddler::configure(const char *txt) {
     return at == desc.size();
 }
 
+std::string nameThatCode(int code) {
+    switch (code) {
+    case BOTTLE_TAG_INT:
+    case BOTTLE_TAG_VOCAB:
+        return "int32";
+        break;
+    case BOTTLE_TAG_DOUBLE:
+        return "float64";
+        break;
+    case BOTTLE_TAG_STRING:
+        return "string";
+        break;
+    case BOTTLE_TAG_LIST:
+        return "list";
+        break;
+    }
+    return "unsupported";
+}
+
+std::string WireTwiddler::fromTemplate(const yarp::os::Bottle& msg) {
+    string result = "";
+
+    // assume we want to remove any meta-information
+
+    int len = msg.size();
+
+    int code = -1;
+    for (int i=0; i<len; i++) {
+        Value&v = msg.get(i);
+        int icode = v.getCode();
+        if (i==0) code = icode;
+        if (icode!=code) code = -1;
+    }
+    string codeName = nameThatCode(code);
+    if (code == -1) {
+        result += "list ";
+    } else {
+        result += "vector ";
+        result += codeName;
+        result += " ";
+    }
+    result += NetType::toString(len).c_str();
+    result += " ";
+    for (int i=0; i<len; i++) {
+        Value&v = msg.get(i);
+        if (!v.isList()) {
+            if (code == -1) {
+                result += nameThatCode(v.getCode());
+                result += " ";
+            }
+            result += "* ";
+        } else {
+            result += fromTemplate(*v.asList());
+        }
+    }
+    return result;
+}
+
 
 void WireTwiddler::show() {
     for (int i=0; i<(int)gaps.size(); i++) {
@@ -435,44 +493,182 @@ int WireTwiddlerReader::read(const Bytes& b) {
 }
 
 
-void WireTwiddlerWriter::update() {
+bool WireTwiddlerWriter::update() {
+    errorState = false;
     srcs.clear();
-    int hdr = parent.headerLength();
-    for (int i=0; i<hdr; i++) {
-        srcs.push_back(Bytes((char*)parent.data(i),parent.length(i)));
-    }
+    //int hdr = parent.length();
+    //for (int i=0; i<parent.length(); i++) {
+    //srcs.push_back(Bytes((char*)parent.data(i),parent.length(i)));
+    //}
+
+    lengthBytes = Bytes((char*)(&lengthBuffer),sizeof(yarp::os::NetInt32));
+    offset = 0;
+    blockPtr = NULL;
+    blockLen = 0;
+    block = parent->headerLength();
+    lastBlock = parent->length()-block-1;
+    activeEmit = NULL;
+    activeEmitLength = 0;
 
 
-    for (int i=0; i<twiddler.getGapCount(); i++) {
+    dbg_printf("Parent headers %d blocks %d\n", parent->headerLength(), 
+               parent->length());
+
+    for (int i=0; i<twiddler->getGapCount(); i++) {
         ConstString item = "";
-        const WireTwiddlerGap& gap = twiddler.getGap(i);
+        const WireTwiddlerGap& gap = twiddler->getGap(i);
         if (gap.buffer_length!=0) {
-            printf("Skip %d bytes\n", gap.buffer_length*4);
-            skip(gap.buffer_length*4);
+            dbg_printf("Skip %d bytes\n", gap.byte_length);
+            skip(gap.byte_start,gap.byte_length);
             if (gap.unit_length!=0) {
+                dbg_printf("Length %d unit_length %d\n", gap.length, 
+                           gap.unit_length);
                 if (gap.length==-1 && gap.unit_length==-1) {
-                    printf("Pass [4-byte length] [<length> instances of 4-byte-length bytes followed by specified number of bytes]\n");
-                } else if (gap.length==-1) {
-                    printf("Pass [4-byte length] [<length>*%d bytes]", gap.unit_length);
-                } else if (gap.length==1) {
-                    printf("Pass [%d bytes]\n", gap.unit_length);
+                    dbg_printf("Pass [4-byte length] [<length> instances of 4-byte-length bytes followed by specified number of bytes]\n");
+                    readLengthAndPass(-1);
+                } else if (gap.length==1&&gap.unit_length==1) {
+                    dbg_printf("Pass [%d bytes]\n", gap.unit_length);
                     pass(gap.unit_length);
+                } else if (gap.length==1&&gap.unit_length==-1) {
+                    dbg_printf("Pass [4-byte length] [<length> bytes]\n");
+                    readLengthAndPass(1);
+                } else if (gap.length==-1) {
+                    dbg_printf("Pass [4-byte length] [<length>*%d bytes]", gap.unit_length);
+                    readLengthAndPass(gap.unit_length);
                 } else {
-                    printf("Pass [%d*%d bytes]\n", gap.length, gap.unit_length);
+                    dbg_printf("Pass [%d*%d bytes]\n", gap.length, gap.unit_length);
                     pass(gap.length*gap.unit_length);
                 }
             }
         }
     }
+    emit(NULL,0);
+    dbg_printf("%d write blocks\n", (int)srcs.size());
+    return !errorState;
 }
 
+
+bool WireTwiddlerWriter::skip(const char *start, int len) {
+    activeCheck = start;
+    return advance(len,false,false,true);
+}
 
 bool WireTwiddlerWriter::pass(int len) {
-    return false;
+    return advance(len,true);
 }
 
-bool WireTwiddlerWriter::skip(int len) {
-    return false;
+bool WireTwiddlerWriter::readLengthAndPass(int unitLength) {
+    int len = readLength();
+    if (len==0) return false;
+    if (unitLength!=-1) {
+        advance(unitLength*len,true);
+    } else {
+        for (int i=0; i<len; i++) {
+            bool ok = readLengthAndPass(1);
+            if (!ok) return false;
+        }
+    }
+    return true;
 }
+
+int WireTwiddlerWriter::readLength() {
+    advance(4,true,true);
+    if (accumOffset==4) return lengthBuffer;
+    return 0;
+}
+
+bool WireTwiddlerWriter::advance(int length, bool shouldEmit, 
+                                 bool shouldAccum, bool shouldCheck) {
+    accumOffset = 0;
+    if (length==0) return true;
+    if (length<0) return false;
+    bool more = true;
+    while (length>0) {
+        more = false;
+        if (blockPtr==NULL) {
+            blockPtr = parent->data(block);
+            blockLen = parent->length(block);
+            dbg_printf("  block %d is at %ld, length %d\n",block, 
+                       (long int)blockPtr, blockLen);
+            offset = 0;
+        }
+        int rem = blockLen-offset;
+        if (rem==0) {
+            block++;
+            blockPtr = NULL;
+            if (block>lastBlock) {
+                return false;
+            }
+            dbg_printf("  moved on to block %d\n",block);
+            continue;
+        }
+        if (rem>length) rem = length;
+        if (shouldCheck) {
+            dbg_printf("Type check against %ld\n", (long int)activeCheck);
+            int result = memcmp(activeCheck,blockPtr+offset,rem);
+            activeCheck += rem;
+            if (result!=0) {
+                dbg_printf("Type check failed! >>>\n");
+                for (int i=0; i<rem; i++) {
+                    dbg_printf(" %03d <--> %03d\n", 
+                            activeCheck[i], blockPtr[i+offset]);
+                }
+                YARP_SPRINTF0(Logger::get(),error,"Structure of message is unexpected");
+                errorState = true;
+                return false;
+            }
+        }
+        if (shouldEmit) {
+            dbg_printf("  emitting block %d with offset %d, length %d\n",
+                       block, offset, rem);
+            emit(blockPtr+offset, rem);
+        } else {
+            dbg_printf("  skipping block %d with offset %d, length %d\n",
+                       block, offset, rem);
+        }
+        if (shouldAccum) {
+            if (accumOffset+rem>4) {
+                fprintf(stderr,"ACCUMULATION GONE WRONG %d %d\n",
+                        accumOffset, rem);
+                exit(1);
+            }
+            memcpy(lengthBytes.get()+accumOffset,blockPtr+offset,rem);
+            accumOffset += rem;
+        }
+        offset += rem;
+        length -= rem;
+    }
+    return true;
+}
+
+bool WireTwiddlerWriter::emit(const char *src, int len) {
+    if (src!=NULL) {
+        dbg_printf("  cache %ld %d [%d]\n", (long int)src, len, *src);
+    }
+    if (activeEmit!=NULL) {
+        dbg_printf("  activeEmit is currently %ld, len %d\n",
+                   (long int)activeEmit, 
+                   activeEmitLength);
+        if (activeEmit+activeEmitLength!=src) {
+            dbg_printf("  emit %ld %d [%d]\n", (long int)activeEmit, 
+                       activeEmitLength, *activeEmit);
+            srcs.push_back(Bytes((char*)activeEmit,activeEmitLength));
+            activeEmit = NULL;
+        } else {
+            activeEmitLength += len;
+            return true;
+        }
+    }
+    if (src!=NULL) {
+        activeEmit = src;
+        activeEmitLength = len;
+    }
+    return true;
+}
+
+
+//void write(OutputStream& os) {
+//}
+
 
 
