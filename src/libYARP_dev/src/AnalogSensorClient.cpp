@@ -109,12 +109,12 @@ public:
         if ((1000*(newStamp.getTime()-lastStamp.getTime()))<ANALOG_TIMEOUT)
         {
             state=IAnalogSensor::AS_OK;
-			lastStamp = newStamp;
         }
         else
-        {
+        {         
             state=IAnalogSensor::AS_TIMEOUT;
         }
+        lastStamp = newStamp;
             
         mutex.post();
     }
