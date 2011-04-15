@@ -21,8 +21,21 @@
 # GTKPLUS_INCLUDE_DIR
 #
 
+# first check if we are using msvc
+if (WIN32)
+    FIND_PACKAGE(GtkWin32) 
+    
+    SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
+    SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
 
-IF(UNIX)
+    if (GTK_FOUND)
+        set(GtkPlus_FOUND TRUE)
+        set(GtkPlus_LIBRARIES "${GTK_LIBRARIES}" CACHE STRING "gtk+ link flags")
+        set(GtkPlus_INCLUDE_DIRS "${GTK_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
+    endif (GTK_FOUND)
+endif()
+
+IF(UNIX )
   INCLUDE(FindPkgConfig)
   if (PKG_CONFIG_FOUND)
     pkg_check_modules(GTKPLUS "gtk+-2.0")
@@ -66,18 +79,6 @@ IF(UNIX)
  ELSE (GTKPLUS_C_FLAGS)
 	SET(GtkPlus_FOUND FALSE)
  ENDIF (GTKPLUS_C_FLAGS)
-ELSE (UNIX)
- 	FIND_PACKAGE(GtkWin32) 
- 	
- 	SET(GtkPlus_LIBRARIES "${GTKPLUS_LINK_FLAGS}" CACHE STRING "gtk+ link flags")
-    SET(GtkPlus_INCLUDE_DIRS "${GTKPLUS_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
-
-	if (GTK_FOUND)
-		set(GtkPlus_FOUND TRUE)
-		set(GtkPlus_LIBRARIES "${GTK_LIBRARIES}" CACHE STRING "gtk+ link flags")
-   	set(GtkPlus_INCLUDE_DIRS "${GTK_INCLUDE_DIR}" CACHE STRING "gtk+ include directory")
-	endif (GTK_FOUND)
-	
 ENDIF (UNIX)
 
 INCLUDE(FindPackageHandleStandardArgs)
