@@ -1,35 +1,44 @@
 #!/bin/bash
 
-# Actually, we just download a precompiled cmake.
+##############################################################################
+#
+# Copyright: (C) 2011 RobotCub Consortium
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+# Download a precompiled version of cmake.
+# 
 
 BUILD_DIR=$PWD
 
+# Get SETTINGS_* variables (paths) from cache
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+# Get BUNDLE_* variables (software versions) from the bundle file
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+# GET OPT_* variables (build options) by processing our command-line options
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
 
-if [ "k$CMAKE_VERSION" = "k" ]; then
-	# CMAKE_VERSION=2.8.4
-	echo "set CMAKE_VERSION"
+if [ "k$BUNDLE_CMAKE_VERSION" = "k" ]; then
+	echo "set BUNDLE_CMAKE_VERSION"
 	exit 1
 fi
 
-fname=cmake-$CMAKE_VERSION
-
+# Go ahead and download
+fname=cmake-$BUNDLE_CMAKE_VERSION
 if [ ! -e $fname.zip ]; then
-	CMAKE_DIR=`echo $CMAKE_VERSION | sed "s/\.[-0-9]*$//"`
-	zipname="http://www.cmake.org/files/v$CMAKE_DIR/cmake-$CMAKE_VERSION-win32-x86.zip"
+	CMAKE_DIR=`echo $BUNDLE_CMAKE_VERSION | sed "s/\.[-0-9]*$//"`
+	zipname="http://www.cmake.org/files/v$CMAKE_DIR/cmake-$BUNDLE_CMAKE_VERSION-win32-x86.zip"
 	wget -O $fname.zip $zipname || (
 		echo "Cannot fetch CMAKE"
 		rm -f $fname.zip
@@ -37,6 +46,7 @@ if [ ! -e $fname.zip ]; then
 	)
 fi
 
+# Unpack if needed
 if [ ! -d $fname ]; then
 	mkdir -p $fname
 	cd $fname
@@ -48,8 +58,9 @@ if [ ! -d $fname ]; then
 	}
 fi
 
-cd $BUILD_DIR
 
+# Cache CMake-related paths and variables, for dependent packages to read
+cd $BUILD_DIR
 (
 	CMAKE_DIR=`cygpath --mixed $PWD/$fname/cmake-*`
 	echo "export CMAKE_DIR='$CMAKE_DIR'"

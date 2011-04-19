@@ -1,34 +1,48 @@
 #!/bin/bash
 
+##############################################################################
+#
+# Copyright: (C) 2011 RobotCub Consortium
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+# Amalgamate builds into an NSIS package
+# 
+
 BUILD_DIR=$PWD
 
+# Get SETTINGS_* variables (paths) from cache
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+# Get BUNDLE_* variables (software versions) from the bundle file
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+# GET OPT_* variables (build options) by processing our command-line options
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
 
-if [ "k$build" = "kany" ]; then
+# Figure out whether package will compile debug and release builds in one
+if [ "k$OPT_BUILD" = "kany" ]; then
 	base_build="Release"
 	add_debug=true
 else
-	base_build="$build"
+	base_build="$OPT_BUILD"
+	add_debug=false
+fi
+if $OPT_GCCLIKE; then
 	add_debug=false
 fi
 
-if [ "k$compiler" = "kmingw" ]; then
-	add_debug=false
-fi
-
+# If we are combining debug build with release, we need to load and
+# rename ACE and YARP paths for those builds
 if $add_debug; then
 	source ace_${compiler}_${variant}_Debug.sh || {
 		echo "Cannot find corresponding ACE debug build"
@@ -46,36 +60,43 @@ if $add_debug; then
 	YARP_ROOT_DBG="$YARP_ROOT"
 fi
 
+# Pick up ACE paths
 source ace_${compiler}_${variant}_${base_build}.sh || {
 	echo "Cannot find corresponding ACE build"
 	exit 1
 }
 
+# Pick up YARP paths
 source yarp_${compiler}_${variant}_${base_build}.sh || {
 	echo "Cannot find corresponding YARP build"
 	exit 1
 }
 
+# Pick up GTKMM paths
 source gtkmm_${compiler}_${variant}_${base_build}.sh || {
 	echo "Cannot find corresponding GTKMM build"
 	exit 1
 }
 
+# Pick up NSIS paths
 source nsis_any_any_any.sh || {
 	echo "Cannot find corresponding NSIS build"
 	exit 1
 }
 
-fname=yarp_core_package-$YARP_VERSION
-
-fname2=$fname-$compiler-$variant-$build
-zip_name="$fname2"
-
+# Make build directory
+fname=yarp_core_package-$BUNDLE_YARP_VERSION
+fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 mkdir -p $fname2
 cd $fname2 || exit 1
 OUT_DIR=$PWD
 
+# Clear any zip-related material
+zip_name="$fname2"
 rm -rf "$OUT_DIR/*_zip.sh"
+
+# Function to prepare stub files for adding/removing files for an NSIS
+# section, and for building the corresponding zip file
 function nsis_setup {
 	prefix=$1
 	echo -n > ${OUT_DIR}/${prefix}_add.nsi
@@ -83,6 +104,10 @@ function nsis_setup {
 	echo -n > ${OUT_DIR}/${prefix}_zip.sh
 }
 
+# Add a file or files into list to be added/removed from NSIS section,
+# and to be placed into the corresponding zip file.  Implementation is
+# complicated by the need to avoid calling the super-slow cygpath
+# command too often.
 CYG_BASE=`cygpath -w /`
 function nsis_add_base {
 	mode=$1
@@ -91,8 +116,6 @@ function nsis_add_base {
 	dest=$4
 	dir=$5 #optional
 	echo "Add " "$@"
-	#src=`cygpath -w $PWD/$src` -- too slow!
-	#dest=`cygpath -w $3`       -- too slow!
 	osrc="$src"
 	odest="$dest"
 	if [ "k$dir" = "k" ] ; then
@@ -106,7 +129,6 @@ function nsis_add_base {
 		src=${src//\//\\}
 	fi
 	dest=${dest//\//\\} # flip to windows convention
-	#echo add "[$prefix]" "[$src]" "$dest"
 	zodest1="zip/$prefix/$zip_name/$odest"
 	zodest2="zip_all/$zip_name/$odest"
 	if [ "$mode" = "single" ]; then
@@ -127,19 +149,26 @@ function nsis_add_base {
 		echo "cp -r '$osrc' $zodest2" >> $OUT_DIR/${prefix}_zip.sh
 	fi
 }
+
+
+# Add a single file into list to be added/removed from NSIS section,
+# and to be placed into the corresponding zip file.
 function nsis_add {
 	nsis_add_base single "$@"
 }
 
+# Add a directory to be added/removed from NSIS section.
 function nsis_add_recurse {
 	nsis_add_base recurse "$@"
 }
 
+# Get base YARP path in unix format
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
 if $add_debug; then
 	YARP_DIR_DBG_UNIX=`cygpath -u $YARP_DIR_DBG`
 fi
-# missing - need to package header files
+
+# Set up stubs for all NSIS sections
 nsis_setup yarp_base
 nsis_setup yarp_libraries
 nsis_setup yarp_dlls
@@ -151,16 +180,15 @@ nsis_setup yarp_math_headers
 nsis_setup yarp_guis
 nsis_setup yarp_ace_libraries
 nsis_setup yarp_ace_dlls
-# nsis_setup yarp_ace_headers
 nsis_setup yarp_vc_dlls
 nsis_setup yarp_examples
 nsis_setup yarp_debug
 
-# Hmm, GSL is currently compiled statically with yarp_math
+# GSL is currently compiled statically with yarp_math, so don't need:
 # nsis_setup yarp_gsl_libraries
 # nsis_setup yarp_gsl_dlls
 
-# Add YARP material
+# Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
 YARP_LICENSE="$YARP_ROOT/LGPL.txt"
 nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
@@ -197,6 +225,13 @@ cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep yarpview`; do
 	nsis_add yarp_guis $f bin/$f
 done
+cd $YARP_DIR_UNIX/install/include/yarp
+for f in conf os sig dev ; do
+	nsis_add_recurse yarp_headers $f include/yarp/$f
+done
+nsis_add_recurse yarp_math_headers math include/yarp/math
+
+# Add GTKMM material to NSIS
 if [ "k$SKIP_GTK" = "k" ]; then
 	cd $GTKMM_DIR/redist || exit 1
     for f in `ls *.dll`; do
@@ -209,14 +244,8 @@ if [ "k$SKIP_GTK" = "k" ]; then
 		nsis_add yarp_guis $f bin/$f
 	done
 fi
-cd $YARP_DIR_UNIX/install/include/yarp
-for f in conf os sig dev ; do
-	nsis_add_recurse yarp_headers $f include/yarp/$f
-done
-nsis_add_recurse yarp_math_headers math include/yarp/math
 
-
-# Add ACE material
+# Add ACE material to NSIS
 cd $ACE_DIR || exit 1
 cd lib || exit 1
 if [ ! -e $ACE_LIBNAME.dll ]; then
@@ -226,16 +255,15 @@ fi
 nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT lib/$ACE_LIBNAME.$LIBEXT
 nsis_add yarp_ace_dlls $ACE_LIBNAME.dll bin/$ACE_LIBNAME.dll
 
-# Add VC material
-if [ -e "$VC_REDIST_CRT" ] ; then
-	cd "$VC_REDIST_CRT" || exit 1
+# Add Visual Studio redistributable material to NSIS
+if [ -e "$OPT_VC_REDIST_CRT" ] ; then
+	cd "$OPT_VC_REDIST_CRT" || exit 1
 	for f in `ls *.dll *.manifest`; do
-		nsis_add yarp_vc_dlls $f bin/$f "$VC_REDIST_CRT"
+		nsis_add yarp_vc_dlls $f bin/$f "$OPT_VC_REDIST_CRT"
 	done
 fi
 
-
-# Add debug version material
+# Add debug material to NSIS
 DBG_HIDE="-"
 if $add_debug; then
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
@@ -264,12 +292,12 @@ if $add_debug; then
 fi
 
 
-
+# Run NSIS
 cd $OUT_DIR
+cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
+$NSIS_BIN -DBUNDLE_YARP_VERSION=$BUNDLE_YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
-cp $SOURCE_DIR/src/nsis/*.nsh .
-$NSIS_BIN -DYARP_VERSION=$YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
-
+# Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
 	# flush zips
 	rm -rf "$OUT_DIR/zip"
@@ -291,8 +319,8 @@ if [ "k$SKIP_ZIP" = "k" ] ; then
 	mv *.zip $OUT_DIR || exit 1
 fi
 
+# Cache paths and variables, for dependent packages to read
 cd $OUT_DIR
-
 (
 	echo "export YARP_CORE_PACKAGE_DIR='$PWD'"
 ) > $BUILD_DIR/yarp_core_package_${compiler}_${variant}_${build}.sh

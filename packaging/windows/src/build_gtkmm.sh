@@ -11,27 +11,27 @@ source ./settings.sh || {
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
 
-if [ "k$GTKMM_VERSION" = "k" ]; then
-	#GTKMM_VERSION=2.22.0-2
+if [ "k$BUNDLE_GTKMM_VERSION" = "k" ]; then
+	#BUNDLE_GTKMM_VERSION=2.22.0-2
 	echo "Set GTKMM version"
 	exit 1
 fi
 
-fname=gtkmm-$GTKMM_VERSION
+fname=gtkmm-$BUNDLE_GTKMM_VERSION
 
 if [ ! -e $fname.exe ]; then
-	GTKMM_DIR=`echo $GTKMM_VERSION | sed "s/\.[-0-9]*$//"`
-	wget -O $fname.exe http://ftp.gnome.org/pub/GNOME/binaries/win32/gtkmm/$GTKMM_DIR/gtkmm-win32-devel-$GTKMM_VERSION.exe || (
+	GTKMM_DIR=`echo $BUNDLE_GTKMM_VERSION | sed "s/\.[-0-9]*$//"`
+	wget -O $fname.exe http://ftp.gnome.org/pub/GNOME/binaries/win32/gtkmm/$GTKMM_DIR/gtkmm-win32-devel-$BUNDLE_GTKMM_VERSION.exe || (
 		echo "Cannot fetch GTKMM"
 		rm -f $fname.exe
 		exit 1

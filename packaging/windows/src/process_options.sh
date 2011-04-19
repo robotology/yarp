@@ -1,11 +1,13 @@
 #!/bin/bash
 
-compiler=$1
-variant=$2
-build=$3
+OPT_COMPILER=$1
+OPT_VARIANT=$2
+OPT_BUILD=$3
+
+OPT_GCCLIKE=false
 
 function target_name {
-	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+	if $gcc_like ; then
 		TARGET=""
 	else
 		TARGET="$1.sln"
@@ -13,16 +15,16 @@ function target_name {
 }
 
 function target_lib_name {
-	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+	if $gcc_like ; then
 		TARGET_LIB="lib$2.a"
 	else
 		TARGET_LIB="$1/$2.lib"
 	fi
 }
 
-if [ ! "k$compiler" = "kany" ]; then
+if [ ! "k$OPT_COMPILER" = "kany" ]; then
 
-	if [ "k$build" = "k" ]; then
+	if [ "k$OPT_BUILD" = "k" ]; then
 		echo "Provide options: compiler variant build"
 		echo "For example: v10 x86 Release"
 		exit 1
@@ -34,79 +36,95 @@ if [ ! "k$compiler" = "kany" ]; then
 	}
 
 	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
+	    OPT_GCCLIKE=true
+	elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
+	    OPT_GCCLIKE=true
+	else
+	    OPT_GCCLIKE=false
+	fi
+
+	if [ "k$COMPILER_FAMILY" = "kmingw" ] ; then
 		LIBEXT="dll.a"
+	elif [ "k$COMPILER_FAMILY" = "kgcc" ] ; then
+		LIBEXT="so"
 	else
 		LIBEXT="lib"
 	fi
 
-	platform=""
-	VCNNN=""
-	if [ "k$compiler" = "kv10" ] ; then
-		platform=v100
-		VCNNN="VC100"
+	OPT_PLATFORM=""
+	OPT_VCNNN=""
+	if [ "k$OPT_COMPILER" = "kv10" ] ; then
+		OPT_PLATFORM=v100
+		OPT_VCNNN="VC100"
 	fi
-	if [ "k$compiler" = "kv9" ] ; then
-		platform=v90
-		VCNNN="VC90"
+	if [ "k$OPT_COMPILER" = "kv9" ] ; then
+		OPT_PLATFORM=v90
+		OPT_VCNNN="VC90"
 	fi
-	if [ "k$compiler" = "kv8" ] ; then
-		platform=v80
-		VCNNN="VC80"
+	if [ "k$OPT_COMPILER" = "kv8" ] ; then
+		OPT_PLATFORM=v80
+		OPT_VCNNN="VC80"
 	fi
-	if [ "k$compiler" = "kmingw" ] ; then
-		platform=mingw
+	if [ "k$OPT_COMPILER" = "kmingw" ] ; then
+		OPT_PLATFORM=mingw
 	fi
-	if [ "k$platform" = "k" ]; then
-		echo "Please set platform for compiler $compiler in process_options.sh"
+	if [ "k$OPT_COMPILER" = "kgcc" ] ; then
+		OPT_PLATFORM=gcc
+	fi
+	if [ "k$OPT_PLATFORM" = "k" ]; then
+		echo "Please set platform for compiler $OPT_COMPILER in process_options.sh"
 		exit 1
 	fi
 
-	PLATFORM_COMMAND="/p:PlatformToolset=$platform"
-	CONFIGURATION_COMMAND="/p:Configuration=$build"
+	OPT_PLATFORM_COMMAND="/p:PlatformToolset=$OPT_PLATFORM"
+	OPT_CONFIGURATION_COMMAND="/p:Configuration=$OPT_BUILD"
 
-	generator=""
-	if [ "k$compiler" = "kv10" ] ; then
-		if [ "k$variant" = "kx86" ] ; then
-			generator="Visual Studio 10"
+	OPT_GENERATOR=""
+	if [ "k$OPT_COMPILER" = "kv10" ] ; then
+		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+			OPT_GENERATOR="Visual Studio 10"
 		fi
 	fi
-	if [ "k$compiler" = "kv9" ] ; then
-		if [ "k$variant" = "kx86" ] ; then
-			generator="Visual Studio 9 2008"
+	if [ "k$OPT_COMPILER" = "kv9" ] ; then
+		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+			OPT_GENERATOR="Visual Studio 9 2008"
 		fi
 	fi
-	if [ "k$compiler" = "kv8" ] ; then
-		if [ "k$variant" = "kx86" ] ; then
-			generator="Visual Studio 8 2005"
+	if [ "k$OPT_COMPILER" = "kv8" ] ; then
+		if [ "k$OPT_VARIANT" = "kx86" ] ; then
+			OPT_GENERATOR="Visual Studio 8 2005"
 		fi
 	fi
-	if [ "k$compiler" = "kmingw" ] ; then
-		generator="MSYS Makefiles"
+	if [ "k$OPT_COMPILER" = "kmingw" ] ; then
+		OPT_GENERATOR="MSYS Makefiles"
 	fi
-	if [ "k$generator" = "k" ] ; then 
-		echo "Please set generator for compiler $compiler variant $variant in process_options.sh"
+	if [ "k$OPT_COMPILER" = "kgcc" ] ; then
+		OPT_GENERATOR="Unix Makefiles"
+	fi
+	if [ "k$OPT_GENERATOR" = "k" ] ; then 
+		echo "Please set generator for compiler $OPT_COMPILER variant $OPT_VARIANT in process_options.sh"
 		exit 1
 	fi
 
-	VC_REDIST_CRT=""
+	OPT_VC_REDIST_CRT=""
 	if [ ! "k$REDIST_PATH" = "k" ] ; then
-		VC_REDIST_CRT="$REDIST_PATH/$variant/Microsoft.$VCNNN.CRT"
-		if [ ! -e "$VC_REDIST_CRT" ] ; then
-			VC_REDIST_CRT=""
+		OPT_VC_REDIST_CRT="$REDIST_PATH/$OPT_VARIANT/Microsoft.$OPT_VCNNN.CRT"
+		if [ ! -e "$OPT_VC_REDIST_CRT" ] ; then
+			OPT_VC_REDIST_CRT=""
 		fi
 	fi
 
-	BUILDER="msbuild.exe"
-	BUILDER_VCBUILD="vcbuild.exe /useenv"
-	PLATFORM_COMMAND_VCBUILD=""
+	OPT_BUILDER="msbuild.exe"
+	OPT_BUILDER_VCBUILD="vcbuild.exe /useenv"
+	OPT_PLATFORM_COMMAND_VCBUILD=""
 	# this will need updating for non-x86
-	CONFIGURATION_COMMAND_VCBUILD="$build"
+	OPT_CONFIGURATION_COMMAND_VCBUILD="$OPT_BUILD"
 
-	if [ "k$compiler" = "kmingw" ] ; then
-		BUILDER="make"
-		PLATFORM_COMMAND=""
-		CONFIGURATION_COMMAND=""
-		CMAKE_OPTION="-DCMAKE_BUILD_TYPE=$build"
+	if $OPT_GCCLIKE ; then
+		OPT_BUILDER="make"
+		OPT_PLATFORM_COMMAND=""
+		OPT_CONFIGURATION_COMMAND=""
+		OPT_CMAKE_OPTION="-DCMAKE_BUILD_TYPE=$OPT_BUILD"
 	fi
 fi
 

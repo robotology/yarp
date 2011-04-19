@@ -7,27 +7,27 @@ source ./settings.sh || {
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
 
-source $SOURCE_DIR/conf/site.sh || {
+source $SETTINGS_SOURCE_DIR/conf/site.sh || {
 	echo "Cannot find conf/site.sh"
 	exit 1
 }
 
-if [ -e "$SOURCE_DIR/conf/site_local.sh" ]; then
-	source $SOURCE_DIR/conf/site_local.sh
+if [ -e "$SETTINGS_SOURCE_DIR/conf/site_local.sh" ]; then
+	source $SETTINGS_SOURCE_DIR/conf/site_local.sh
 fi
 
 if [ "k$site_dir" = "k" ]; then
-	echo "Please read $SOURCE_DIR/conf/site.sh"
+	echo "Please read $SETTINGS_SOURCE_DIR/conf/site.sh"
 	exit 1
 fi
 
@@ -36,9 +36,9 @@ source yarp_core_package_${compiler}_${variant}_${build}.sh || {
 	exit 1
 }
 
-fname=transfer-$YARP_VERSION
+fname=transfer-$BUNDLE_YARP_VERSION
 
-fname2=$fname-$compiler-$variant-$build
+fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 
 mkdir -p $fname2
 cd $fname2 || exit 1

@@ -7,12 +7,12 @@ source ./settings.sh || {
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
@@ -32,14 +32,14 @@ source yarp_${compiler}_${variant}_${build}.sh || {
 	exit 1
 }
 
-if [ "k$ICUB_VERSION" = "k" ]; then
-	ICUB_VERSION=trunk
+if [ "k$BUNDLE_ICUB_VERSION" = "k" ]; then
+	BUNDLE_ICUB_VERSION=trunk
 fi
 
-fname=icub-$ICUB_VERSION
+fname=icub-$BUNDLE_ICUB_VERSION
 
 if [ ! -e $fname ]; then
-	if [ "k$ICUB_VERSION" = "ktrunk" ]; then
+	if [ "k$BUNDLE_ICUB_VERSION" = "ktrunk" ]; then
 		svn co https://robotcub.svn.sourceforge.net/svnroot/robotcub/trunk/iCub/main $fname || {
 			echo "Cannot fetch ICUB"
 			exit 1
@@ -50,12 +50,12 @@ if [ ! -e $fname ]; then
 	fi
 fi
 
-fname2=$fname-$compiler-$variant-$build
+fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 
 mkdir -p $fname2
 cd $fname2 || exit 1
 
 echo "Using ACE from $ACE_ROOT"
 echo "Using YARP from $YARP_DIR"
-"$CMAKE_EXEC" -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -G "$generator" ../$fname || exit 1
-$BUILDER ICUB.sln $CONFIGURATION_COMMAND $PLATFORM_COMMAND
+"$CMAKE_EXEC" -DGSL_LIBRARY="$GSL_LIBRARY" -DGSLCBLAS_LIBRARY="$GSLCBLAS_LIBRARY" -DGSL_DIR="$GSL_DIR" -G "$OPT_GENERATOR" ../$fname || exit 1
+$OPT_BUILDER ICUB.sln $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND

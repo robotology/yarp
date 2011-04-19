@@ -1,35 +1,44 @@
 #!/bin/bash
 
-# Actually, we just download a precompiled nsis.
+##############################################################################
+#
+# Copyright: (C) 2011 RobotCub Consortium
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+# Download a precompiled version of nsis.
+# 
 
 BUILD_DIR=$PWD
 
+# Get SETTINGS_* variables (paths) from cache
 source ./settings.sh || {
 	echo "No settings.sh found, are we in the build directory?"
 	exit 1
 }
 
-source $BUNDLE_FILENAME || {
+# Get BUNDLE_* variables (software versions) from the bundle file
+source $SETTINGS_BUNDLE_FILENAME || {
 	echo "Bundle settings not found"
 	exit 1
 }
 
-source $SOURCE_DIR/src/process_options.sh $* || {
+# GET OPT_* variables (build options) by processing our command-line options
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
 
-if [ "k$NSIS_VERSION" = "k" ]; then
-	#NSIS_VERSION=2.46
-	echo "Set NSIS_VERSION"
+if [ "k$BUNDLE_NSIS_VERSION" = "k" ]; then
+	echo "Set BUNDLE_NSIS_VERSION"
 	exit 1
 fi
 
-fname=nsis-$NSIS_VERSION
-fname_patch=nsis-patch-$NSIS_VERSION
-
+# Go ahead and download
+fname=nsis-$BUNDLE_NSIS_VERSION
+fname_patch=nsis-patch-$BUNDLE_NSIS_VERSION
 if [ ! -e $fname.zip ]; then
-	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$NSIS_VERSION/nsis-$NSIS_VERSION.zip"
+	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION.zip"
 
 	wget -O $fname.zip $zipname || (
 		echo "Cannot fetch NSIS"
@@ -38,8 +47,9 @@ if [ ! -e $fname.zip ]; then
 	)
 fi
 
+# Also fetch a patched NSIS that can deal with longer strings
 if [ ! -e $fname_patch.zip ]; then
-	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$NSIS_VERSION/nsis-$NSIS_VERSION-strlen_8192.zip"
+	zipname="http://downloads.sourceforge.net/project/nsis/NSIS%202/$BUNDLE_NSIS_VERSION/nsis-$BUNDLE_NSIS_VERSION-strlen_8192.zip"
 
 	wget -O $fname_patch.zip $zipname || (
 		echo "Cannot fetch NSIS patch"
@@ -48,6 +58,7 @@ if [ ! -e $fname_patch.zip ]; then
 	)
 fi
 
+# Unpack if needed, folding in patched executable
 if [ ! -d $fname ]; then
 	unzip $fname.zip || {
 		echo "Cannot unpack NSIS"
@@ -70,8 +81,8 @@ if [ ! -d $fname ]; then
 	}
 fi
 
+# Cache NSIS-related paths and variables, for dependent packages to read
 cd $BUILD_DIR
-
 (
 	NSIS_DIR=`cygpath --mixed $PWD/$fname`
 	echo "export NSIS_DIR='$NSIS_DIR'"
