@@ -10,6 +10,7 @@
 #include <yarp/os/all.h>
 #include "RosSlave.h"
 #include "RosLookup.h"
+#include "RosType.h"
 
 #include <string>
 
@@ -221,6 +222,18 @@ int main(int argc, char *argv[]) {
                       reply);
         printf("%s\n", reply.toString().c_str());
         return ok?0:1;
+    } else if (tag=="type") {
+        RosTypeSearch env;
+        RosType t;
+        if (cmd.size()!=2) {
+            fprintf(stderr,"This command is not ready to be used.\n");
+            fprintf(stderr,"It reads a ROS .msg file, and then... does nothing with it.\n");
+            return 1;
+        }
+        ConstString tname = cmd.get(1).asString();
+        t.read(tname,env);
+        t.show();
+        printf("\n");
     } else {
         fprintf(stderr,"unknown command, run with no arguments for help\n");
         return 1;
