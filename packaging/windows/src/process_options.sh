@@ -7,7 +7,7 @@ OPT_BUILD=$3
 OPT_GCCLIKE=false
 
 function target_name {
-	if $gcc_like ; then
+	if $OPT_GCCLIKE ; then
 		TARGET=""
 	else
 		TARGET="$1.sln"
@@ -15,7 +15,7 @@ function target_name {
 }
 
 function target_lib_name {
-	if $gcc_like ; then
+	if $OPT_GCCLIKE ; then
 		TARGET_LIB="lib$2.a"
 	else
 		TARGET_LIB="$1/$2.lib"
@@ -30,7 +30,7 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 		exit 1
 	fi
 
-	source compiler_config_${compiler}_${variant}.sh || {
+	source compiler_config_${OPT_COMPILER}_${OPT_VARIANT}.sh || {
 		echo "Compiler settings not found"
 		exit 1
 	}

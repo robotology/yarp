@@ -44,7 +44,7 @@ fi
 # If we are combining debug build with release, we need to load and
 # rename ACE and YARP paths for those builds
 if $add_debug; then
-	source ace_${compiler}_${variant}_Debug.sh || {
+	source ace_${OPT_COMPILER}_${OPT_VARIANT}_Debug.sh || {
 		echo "Cannot find corresponding ACE debug build"
 		exit 1
 	}
@@ -52,7 +52,7 @@ if $add_debug; then
 	ACE_ROOT_DBG="$ACE_ROOT"
 	ACE_LIBNAME_DBG="$ACE_LIBNAME"
 
-	source yarp_${compiler}_${variant}_Debug.sh || {
+	source yarp_${OPT_COMPILER}_${OPT_VARIANT}_Debug.sh || {
 		echo "Cannot find corresponding YARP debug build"
 		exit 1
 	}
@@ -61,19 +61,19 @@ if $add_debug; then
 fi
 
 # Pick up ACE paths
-source ace_${compiler}_${variant}_${base_build}.sh || {
+source ace_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 	echo "Cannot find corresponding ACE build"
 	exit 1
 }
 
 # Pick up YARP paths
-source yarp_${compiler}_${variant}_${base_build}.sh || {
+source yarp_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 	echo "Cannot find corresponding YARP build"
 	exit 1
 }
 
 # Pick up GTKMM paths
-source gtkmm_${compiler}_${variant}_${base_build}.sh || {
+source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 	echo "Cannot find corresponding GTKMM build"
 	exit 1
 }
@@ -295,7 +295,7 @@ fi
 # Run NSIS
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
-$NSIS_BIN -DBUNDLE_YARP_VERSION=$BUNDLE_YARP_VERSION -DBUILD_VERSION=${compiler}_${variant}_${build} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+$NSIS_BIN -DBUNDLE_YARP_VERSION=$BUNDLE_YARP_VERSION -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
@@ -323,5 +323,5 @@ fi
 cd $OUT_DIR
 (
 	echo "export YARP_CORE_PACKAGE_DIR='$PWD'"
-) > $BUILD_DIR/yarp_core_package_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/yarp_core_package_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 

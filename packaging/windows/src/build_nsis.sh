@@ -87,4 +87,4 @@ cd $BUILD_DIR
 	NSIS_DIR=`cygpath --mixed $PWD/$fname`
 	echo "export NSIS_DIR='$NSIS_DIR'"
 	echo "export NSIS_BIN='$NSIS_DIR/makensis.exe'"
-) > $BUILD_DIR/nsis_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/nsis_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

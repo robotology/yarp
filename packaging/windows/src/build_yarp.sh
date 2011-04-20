@@ -36,19 +36,19 @@ source cmake_any_any_any.sh || {
 }
 
 # Pick up ACE paths
-source ace_${compiler}_${variant}_${build}.sh || {
+source ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding ACE build"
 	exit 1
 }
 
 # Pick up GSL paths
-source gsl_${compiler}_${variant}_${build}.sh || {
+source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding GSL build"
 	exit 1
 }
 
 # Pick up GTKMM paths
-source gtkmm_${compiler}_${variant}_${build}.sh || {
+source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding GTKMM build"
 	exit 1
 }
@@ -62,13 +62,13 @@ if [ ! -e $fname ]; then
 			exit 1
 		}
 	else
-		if [ "k$YARP_REVISION" = "k" ]; then
+		if [ "k$BUNDLE_YARP_REVISION" = "k" ]; then
 			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/$fname $fname || {
 				echo "Cannot fetch YARP"
 				exit 1
 			}
 		else
-			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 -r $YARP_REVISION $fname || {
+			svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 -r $BUNDLE_YARP_REVISION $fname || {
 				echo "Cannot fetch YARP"
 				exit 1
 			}
@@ -95,7 +95,7 @@ cat << XXX
 	target_name "YARP"
 	$OPT_BUILDER  \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND || exit 1
 	if [ ! -e install ]; then
-		"$CMAKE_BIN" --build . --target install --config ${build} || exit 1
+		"$CMAKE_BIN" --build . --target install --config ${OPT_BUILD} || exit 1
 	fi
 XXX
 ) > compile_base.sh
@@ -115,4 +115,4 @@ XXX
 (
 	echo "export YARP_DIR='$YARP_DIR'"
 	echo "export YARP_ROOT='$YARP_ROOT'"
-) > $BUILD_DIR/yarp_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/yarp_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

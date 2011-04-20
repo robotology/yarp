@@ -68,4 +68,4 @@ cd $BUILD_DIR
 	echo "export GTKMM_DIR='$GTKMM_DIR'"
 	echo "export GTK_BASEPATH='$GTKMM_DIR'"
 	echo "export GTKMM_BASEPATH='$GTKMM_DIR'"
-) > $BUILD_DIR/gtkmm_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

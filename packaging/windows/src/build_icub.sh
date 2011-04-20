@@ -17,17 +17,17 @@ source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	exit 1
 }
 
-source ace_${compiler}_${variant}_${build}.sh || {
+source ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding ACE build"
 	exit 1
 }
 
-source gsl_${compiler}_${variant}_${build}.sh || {
+source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding GSL build"
 	exit 1
 }
 
-source yarp_${compiler}_${variant}_${build}.sh || {
+source yarp_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding YARP build"
 	exit 1
 }

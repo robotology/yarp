@@ -98,6 +98,7 @@ fi
 
 # Cache important variables in $BUILD_DIR/settings.sh
 (
+	echo "export nodosfilewarning=1 # inhibit cygwin warning about f:/foo/bar"
 	echo "export SETTINGS_SOURCE_DIR='$SOURCE_DIR'"
 	echo "export SETTINGS_BUNDLE_NAME='$BUNDLE_NAME'"
 	echo "export SETTINGS_BUNDLE_FILENAME='$BUNDLE_FILENAME'"

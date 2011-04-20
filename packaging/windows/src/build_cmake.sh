@@ -65,4 +65,4 @@ cd $BUILD_DIR
 	CMAKE_DIR=`cygpath --mixed $PWD/$fname/cmake-*`
 	echo "export CMAKE_DIR='$CMAKE_DIR'"
 	echo "export CMAKE_BIN='$CMAKE_DIR/bin/cmake.exe'"
-) > $BUILD_DIR/cmake_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/cmake_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

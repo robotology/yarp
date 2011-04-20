@@ -31,7 +31,7 @@ if [ "k$site_dir" = "k" ]; then
 	exit 1
 fi
 
-source yarp_core_package_${compiler}_${variant}_${build}.sh || {
+source yarp_core_package_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 	echo "Cannot find corresponding YARP package"
 	exit 1
 }
@@ -58,5 +58,5 @@ done
 (
 	echo "export TRANSFER_PACKAGE_DIR='$YARP_CORE_PACKAGE_DIR'"
 	echo "export TRANSFER_PACKAGE_NAME='$YARP_CORE_PACKAGE_NAME'"
-) > $BUILD_DIR/transfer_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/transfer_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
 

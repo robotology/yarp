@@ -24,7 +24,7 @@ source $SETTINGS_BUNDLE_FILENAME || {
 }
 
 # GET OPT_* variables (build options) by processing our command-line options
-source $SETTINGS_SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
+source $SETTINGS_SOURCE_DIR/src/process_options.sh $* || {
 	echo "Cannot process options"
 	exit 1
 }
@@ -133,13 +133,15 @@ if [ "k$OPT_BUILD" = "kDebug" ]; then
 	libname=ACEd
 fi
 cd $ACE_ROOT
-for f in `cd ace; ls *.dll.a`; do
-	cp ace/$f lib/$f
-done
+if [ "k$COMPILER_FAMILY" = "kmingw" ]; then
+	for f in `cd ace; ls *.dll.a`; do
+		cp ace/$f lib/$f
+	done
+fi
 
 # Cache ACE-related paths and variables, for dependent packages to read
 (
 	echo "export ACE_DIR='$ACE_DIR'"
 	echo "export ACE_ROOT='$ACE_DIR'"
 	echo "export ACE_LIBNAME='$LIBPRE$libname'"
-) > $BUILD_DIR/ace_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

@@ -89,7 +89,7 @@ cd $fname2 || exit 1
 (
 cat << XXX
 	source $SETTINGS_SOURCE_DIR/src/restrict_path.sh
-	"$CMAKE_BIN" -DBUNDLE_GSL_VERSION=$BUNDLE_GSL_VERSION -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION ../$fname1/cmake || exit 1
+	"$CMAKE_BIN" -DGSL_VERSION=$BUNDLE_GSL_VERSION -G "$OPT_GENERATOR" $OPT_CMAKE_OPTION ../$fname1/cmake || exit 1
 	target_name "gsl"
 	$OPT_BUILDER \$user_target \$TARGET $OPT_CONFIGURATION_COMMAND $OPT_PLATFORM_COMMAND
 XXX
@@ -118,4 +118,4 @@ GSL_ROOT=`cygpath --mixed "$PWD/../$fname"`
 	target_lib_name $OPT_BUILD "gslcblas" # sets $TARGET_LIB
 	echo "export GSLCBLAS_LIBRARY='$GSL_DIR/$TARGET_LIB'"
 	echo "export GSL_INCLUDE_DIR='$GSL_DIR/include/'"
-) > $BUILD_DIR/gsl_${compiler}_${variant}_${build}.sh
+) > $BUILD_DIR/gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

@@ -2,7 +2,7 @@
 
 
 export BUNDLE_YARP_VERSION=2.3.3
-export BUNDLE_YARP_REVISION=8559  # just for testing
+export BUNDLE_YARP_REVISION=8565  # just for testing
 
 export BUNDLE_ACE_VERSION=6.0.1
 export BUNDLE_CMAKE_VERSION=2.8.4
