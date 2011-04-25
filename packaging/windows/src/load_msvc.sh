@@ -29,7 +29,7 @@ if [ ! -e msbuild_path.sh ] ; then
 fi
 
 # check for redistributable material
-dir=`dirname $1`
+dir=`dirname "$1"`
 dir="$dir/redist"
 if [ -e "$dir" ]; then
 	REDIST_PATH="$dir"

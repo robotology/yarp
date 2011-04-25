@@ -109,13 +109,31 @@ GSL_ROOT=`cygpath --mixed "$PWD/../$fname"`
 	source compile_base.sh || exit 1
 }
 
+
+# Request from Lorenzo:
+#   Place gsl.lib and gslcblas.lib inside a "lid" directory in the root of the package
+#   (i.e. gsl-1.14-v10-x86-Release/lib)
+
+cd $GSL_DIR
+mkdir -p lib || exit 1
+
+target_lib_name $OPT_BUILD "gsl" # sets $TARGET_LIB
+GSL_LIBRARY="$GSL_DIR/$TARGET_LIB"
+cp $GSL_LIBRARY $GSL_DIR/lib || exit 1
+GSL_LIBRARY="$GSL_DIR/lib/$TARGET_LIB"
+
+target_lib_name $OPT_BUILD "gslcblas" # sets $TARGET_LIB
+GSLCBLAS_LIBRARY="$GSL_DIR/$TARGET_LIB"
+cp $GSLCBLAS_LIBRARY $GSL_DIR/lib || exit 1
+GSLCBLAS_LIBRARY="$GSL_DIR/lib/$TARGET_LIB"
+
+
+
 # Cache GSL-related paths and variables, for dependent packages to read
 (
 	echo "export GSL_DIR='$GSL_DIR'"
 	echo "export GSL_ROOT='$GSL_ROOT'"
-	target_lib_name $OPT_BUILD "gsl" # sets $TARGET_LIB
-	echo "export GSL_LIBRARY='$GSL_DIR/$TARGET_LIB'"
-	target_lib_name $OPT_BUILD "gslcblas" # sets $TARGET_LIB
-	echo "export GSLCBLAS_LIBRARY='$GSL_DIR/$TARGET_LIB'"
+	echo "export GSL_LIBRARY='$GSL_LIBRARY'"
+	echo "export GSLCBLAS_LIBRARY='$GSLCBLAS_LIBRARY'"
 	echo "export GSL_INCLUDE_DIR='$GSL_DIR/include/'"
 ) > $BUILD_DIR/gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
