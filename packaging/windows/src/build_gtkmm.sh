@@ -49,22 +49,26 @@ if [ ! -d $fname ]; then
 	}
 fi
 
-cd $BUILD_DIR
-if [ ! -e $fname/include ]; then
-	# important rename
-	cd $fname
-	mv *_OUTDIR include || {
-		echo "Failed to rename include directory"
-		#cd $BUILD_DIR
-		#rm -rf $fname
-		exit 1
-	} 
+if [ ! -e $BUILD_DIR/$fname/include ]; then
+	# rejigger files for Lorenzo
+	cd $BUILD_DIR/$fname
+	mkdir -p include || exit 1
+	cd include || exit 1
+	ALT=../*_OUTDIR
+	for d in gtk-2.0 cairo glib-2.0 pango-1.0 atk-1.0 glib-2.0 gtk-2.0 gdk-pixbuf-2.0; do
+		echo "Copying $d to include"
+		if [ ! -e $d ]; then
+			cp -R $ALT/$d $d || exit 1
+		fi
+	done
+	mkdir -p ../lib/glib-2.0/include
+	cp $ALT/include/glibconfig.h ../lib/glib-2.0/include || exit 1
+	mkdir -p ../lib/gtk-2.0/include
+	cp $ALT/include/gdkconfig.h ../lib/gtk-2.0/include || exit 1
 fi
 
-cd $BUILD_DIR
-
 (
-	GTKMM_DIR=`cygpath --mixed "$PWD/$fname"`
+	GTKMM_DIR=`cygpath --mixed "$BUILD_DIR/$fname"`
 	echo "export GTKMM_DIR='$GTKMM_DIR'"
 	echo "export GTK_BASEPATH='$GTKMM_DIR'"
 	echo "export GTKMM_BASEPATH='$GTKMM_DIR'"
