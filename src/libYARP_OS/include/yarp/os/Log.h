@@ -26,7 +26,7 @@ YARP_OS_API void yarp_print_trace(FILE *out, const char *file, int line);
  * Very basic assertion macro.
  *
  */
-#define YARP_ASSERT(x) if (!(x)) { printf("Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); yarp_print_trace(stdout,__FILE__,__LINE__); exit(1); }
+#define YARP_ASSERT(x) if (!(x)) { fprintf(stderr,"Assertion failure %s:%d  !(%s)\n",__FILE__,__LINE__, #x ); yarp_print_trace(stderr,__FILE__,__LINE__); exit(1); }
 
 YARP_OS_API void __yarp_error(const char *str);
 YARP_OS_API void __yarp_warn(const char *str);
