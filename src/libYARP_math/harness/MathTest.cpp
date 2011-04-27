@@ -31,16 +31,16 @@ public:
     virtual String getName() { return "MathTest"; }
 
     void checkMiscOperations() {
-	    report(0,"check matrix misc operations...");
+        report(0,"check matrix misc operations...");
         Matrix m(4,4);
 
-		m.zero();
+        m.zero();
         m=eye(5,5);
         m=eye(2,5);
         m=eye(5,2);
 
-		Matrix mt=m.transposed();
-	}
+        Matrix mt=m.transposed();
+    }
 
     void vectorOps()
     {
@@ -73,9 +73,16 @@ public:
         Vector m2=3*a;
 
         acc=m1[0]+m1[1]+m1[2];
-        checkTrue(acc==9, "operator*");
+        checkTrue(acc==9, "element wise operator*");
         acc=m2[0]+m2[1]+m2[2];
-        checkTrue(acc==9, "operator*");
+        checkTrue(acc==9, "element wise operator*");
+
+        //scalar division
+        a=9.0;
+        m1=a/3.0;
+
+        acc=m1[0]+m1[1]+m1[2];
+        checkTrue(acc==9, "element wise operator/");
     }
 
     void vectMatrix()
@@ -119,6 +126,33 @@ public:
         
         bool ret=(exp==C);
         checkTrue(ret, "Matrix::operator*");
+
+        A=9;  //initialize all with 9
+        Matrix res;
+        res=A/3.0;  //divide all by 3
+        //sum elements
+        double acc=0.0;
+        for(int r=0; r<res.rows(); r++)
+            for(int c=0; c<res.cols(); c++)
+                    acc+=res[r][c];
+        
+        double expected=res.rows()*res.cols()*3.0;
+
+        checkTrue((acc==expected), "Matrix element wise division");
+
+        A=3.0; //initialize all with 3
+        res=A*3.0;   // multiply all by 3
+        acc=0.0;
+        for(int r=0; r<res.rows(); r++)
+            for(int c=0; c<res.cols(); c++)
+            {
+                fprintf(stderr, "%lf\n", res[r][c]);
+                acc+=res[r][c];
+            }
+
+        expected=res.rows()*res.cols()*9;
+
+        checkTrue((acc==expected), "Matrix element wise multiplication");
     }
 
     void svd()

@@ -60,6 +60,7 @@ namespace yarp
         * @return b*k
         */
         yarp::sig::Vector YARP_math_API operator*(const yarp::sig::Vector &b, double k);
+
         
         /**
         * Vector-matrix product operator. 
@@ -118,6 +119,22 @@ namespace yarp
        * @return a./b (matlab notation)
        */
         yarp::sig::Vector YARP_math_API operator/(const yarp::sig::Vector &a, const yarp::sig::Vector &b);
+
+        /**
+        * Vector-scalar division operator. 
+        * @param b a vector
+        * @param k a scalar
+        * @return b/k
+        */
+        yarp::sig::Vector YARP_math_API operator/(const yarp::sig::Vector &b, double k);
+
+       /**
+       * Matrix-scalar division operator. 
+       * @param M a matrix
+       * @param k a scalar
+       * @return M./k (matlab notation)
+       */
+        yarp::sig::Matrix YARP_math_API operator/(const yarp::sig::Matrix &M, double k);
 
         /**
         * Creates a vector of zeros.

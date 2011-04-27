@@ -248,7 +248,7 @@ public:
         allocGslData();
     }
 
-    Vector(size_t s):storage(s)
+    explicit Vector(size_t s):storage(s)
     {
         allocGslData();
         updateGslData();

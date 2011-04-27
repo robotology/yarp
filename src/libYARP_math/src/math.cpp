@@ -7,6 +7,7 @@
 */
 
 #include <yarp/math/Math.h>
+#include <yarp/os/Log.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_matrix_double.h>
 
@@ -148,6 +149,36 @@ Vector yarp::math::operator/(const Vector &a, const Vector &b)
 
     for (int i=0; i<n; i++)
         res[i]=a[i]/b[i];
+
+    return res;
+}
+
+Vector yarp::math::operator/(const yarp::sig::Vector &b, double k)
+{
+    int n=b.length();
+    
+    YARP_ASSERT(k!=0.0);
+
+    Vector res(n);
+
+    for (int i=0;i<n;i++)
+        res[i]=b[i]/k;
+
+    return res;
+}
+
+Matrix yarp::math::operator/(const yarp::sig::Matrix &M, const double k)
+{
+    int rows=M.rows();
+    int cols=M.cols();
+
+    Matrix res(rows,cols);
+
+    YARP_ASSERT(k!=0.0);
+
+    for (int r=0; r<rows; r++)
+        for (int c=0; c<cols; c++)
+            res(r,c)=M(r,c)/k;
 
     return res;
 }

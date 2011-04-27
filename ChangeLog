@@ -1,3 +1,19 @@
+2011-04-27  Lorenzo Natale  <lorenzo.natale@iit.it>
+
+    * src/libYARP_sig/include/yarp/sig/Vector.h
+    * src/libYARP_math/include/yarp/math/Math.h
+    * src/libYARP_math/src/math.cpp 
+    * src/libYARP_math/harness/MathTest.cpp:
+    
+    A bunch of changes to improve error checking on Arjan Gijsberts 
+    test case involving Vector/Matrix division by scalar (thanks Arjan Gijsberts) 
+
+    made Vector(size_t c) explicit
+    implemented operator/ by scalar for Vector and Matrix
+    added missing operator * by scalar for Matrix
+    regression tests
+
+    
 2011-04-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/FindFFMPEG.cmake: apply patch from Gianluca to build
