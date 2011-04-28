@@ -7,7 +7,37 @@
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 #
 # Download and build YARP from source
-# 
+#
+# Command line arguments: 
+#   build_yarp.sh ${OPT_COMPILER} ${OPT_VARIANT} ${OPT_BUILD}
+# Example:
+#   build_yarp.sh v10 x86 Release
+#
+# Inputs:
+#   settings.sh (general configuration)
+#      see process_options.sh for files read based on settings.sh
+#   cmake_any_any_any.sh
+#      cmake paths
+#   ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      ace paths
+#   gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gsl paths
+#   gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gtkmm paths
+#
+# Outputs:
+#   yarp_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      yarp paths   
+#   yarp-$BUNDLE_YARP_VERSION
+#      directory containing a checked out version of yarp.
+#      this directory is shared by a build_yarp.sh calls, regardless
+#      of arguments supplied.
+#   yarp-$BUNDLE_YARP_VERSION-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
+#      build directory
+#   [build directory]/compile_base.sh
+#      saves the full environment needed to replicate this build
+#   [build directory]/compile.sh
+#      tiny script to rerun the build - useful for testing
 
 BUILD_DIR=$PWD
 
