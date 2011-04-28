@@ -6,6 +6,8 @@
  *
  */
 
+#include <yarp/dev/api.h>
+
 #ifndef __YARPCONTROLBOARDPID__
 #define __YARPCONTROLBOARDPID__
 
@@ -20,7 +22,7 @@ namespace yarp{
 /**
  * Contains the parameters for a PID
  */
-class yarp::dev::Pid
+class YARP_dev_API yarp::dev::Pid
 {
 public:
     double kp;     /**< proportional gain */
