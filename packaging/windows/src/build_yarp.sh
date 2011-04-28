@@ -16,6 +16,8 @@
 # Inputs:
 #   settings.sh (general configuration)
 #      see process_options.sh for files read based on settings.sh
+#   $SETTINGS_BUNDLE_FILENAME
+#      read versions of software from file specified in settings.sh
 #   cmake_any_any_any.sh
 #      cmake paths
 #   ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh

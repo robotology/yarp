@@ -8,6 +8,52 @@
 #
 # Amalgamate builds into an NSIS package
 # 
+# Command line arguments: 
+#   build_yarp_core_package.sh ${OPT_COMPILER} ${OPT_VARIANT} ${OPT_BUILD}
+# Example:
+#   build_yarp_core_package.sh v10 x86 Release
+#   build_yarp_core_package.sh v10 x86 any
+#     (if OPT_BUILD is specified as any, Debug and Release are merged
+#      in a single package)
+#
+# Inputs:
+#   settings.sh (general configuration)
+#      see process_options.sh for files read based on settings.sh
+#   $SETTINGS_BUNDLE_FILENAME
+#      read versions of software from file specified in settings.sh
+#   ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      ace paths - if OPT_BUILD is "any", both "Debug" and "Release" checked
+#   yarp_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      yarp paths - if OPT_BUILD is "any", both "Debug" and "Release" checked
+#   nsis_any_any_any.sh
+#      nsis paths
+#   gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gtkmm paths - an OPT_BUILD value of "any" is replaced with "Release"
+#
+# Related code:
+#   src/nsis/yarp_core_package.nsi
+#      This is the NSIS code for the installer.  It refers to generated
+#      files for installing and uninstalling individual components
+#      (see Outputs).
+#
+# Outputs:
+#   yarp_core_package_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      path to the installer and zip files produced
+#   yarp_core_package-$BUNDLE_YARP_VERSION-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
+#      build directory
+#   [build directory]/*_remove.nsi
+#      NSIS code fragment for installing each individual NSIS component
+#   [build directory]/*_add.nsi
+#      NSIS code fragment for uninstalling each individual NSIS component
+#   [build directory]/*_zip.sh
+#      scripts for generating zip files for each individual component
+#      (this is not NSIS-related, but is convenient to do together
+#      with NSIS since we have build lists of all the needed files)
+#   [build directory]/*.exe
+#      The generated installer
+#   [build directory]/*.zip
+#      Zip files for the individual components, plus everything combined.
+
 
 BUILD_DIR=$PWD
 
