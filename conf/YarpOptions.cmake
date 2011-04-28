@@ -61,6 +61,7 @@ endif (EXISTS ${STATLIB})
 option(CREATE_SHARED_LIBRARY "Compile shared libraries rather than linking statically" FALSE)
 if (WIN32)
   mark_as_advanced(CREATE_SHARED_LIBRARY)
+  set(YARP_FILTER_API TRUE)
 endif (WIN32)
 
 if (CREATE_SHARED_LIBRARY)
