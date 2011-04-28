@@ -17,6 +17,8 @@
 #include "BlobNetworkHeader.h"
 #include "WireTwiddler.h"
 
+#include <string>
+
 namespace yarp {
     namespace os {
         namespace impl {

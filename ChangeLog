@@ -1,3 +1,8 @@
+2011-04-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/carriers/tcpros_carrier/TcpRosStream.h: add missing
+	header file [thanks Giorgio Metta]
+
 2011-04-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Log.h: stack trace to
