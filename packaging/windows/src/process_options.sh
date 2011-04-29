@@ -1,5 +1,45 @@
 #!/bin/bash
 
+##############################################################################
+#
+# Copyright: (C) 2011 RobotCub Consortium
+# Authors: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+# Common utility to set compiler options.  Not intended to be called
+# directly by the user, but rather to be sourced by build_*.sh scripts.
+#
+# Command line arguments: 
+#   process_options.sh ${OPT_COMPILER} ${OPT_VARIANT} ${OPT_BUILD}
+# Example:
+#   process_options.sh v10 x86 Release
+#
+# Input variables:
+#   settings.sh and $SETTINGS_BUNDLE_FILENAME are assumed to have been
+#   sourced.
+#
+# Input files:
+#   compiler_config_${OPT_COMPILER}_${OPT_VARIANT}.sh
+#     cached variables needed by the given compiler version, generated
+#     by packages/windows/manage.sh
+#
+# Output variables:
+#   OPT_GCCLIKE     True for gcc or mingw compilers
+#   OPT_PLATFORM    MSVC name for platform, if appropriate (v100, v90, v80).
+#   OPT_VCNNN       Another variant of MSVC name for platform (VC100, VC90,...)
+#   LIBEXT          Extension used for libraries (."lib", ."dll.a")
+#   OPT_BUILDER     Program to use for building (msbuild.exe, make)
+#   OPT_PLATFORM_COMMAND       Option for selecting platform
+#   OPT_CONFIGURATION_COMMAND  Option for selecting build type during build
+#   OPT_CMAKE_OPTION           Option for selecting build type during cmake
+#   OPT_VC_REDIST_CRT          Patch to MSVC redistributables, if available
+#   OPT_GENERATOR   CMake generator to use
+#
+# Output functions:
+#   target_name     Convert argument to target name (e.g. add .sln for MSVC)
+#   target_lib_name Add appropriate library prefix and extension
+
+
 OPT_COMPILER=$1
 OPT_VARIANT=$2
 OPT_BUILD=$3
