@@ -8,6 +8,42 @@
 #
 # Download and compile GSL from source.
 # 
+# Command line arguments: 
+#   build_gsl.sh ${OPT_COMPILER} ${OPT_VARIANT} ${OPT_BUILD}
+# Example:
+#   build_gsl.sh v10 x86 Release
+#
+# Inputs:
+#   settings.sh (general configuration)
+#      see process_options.sh for files read based on settings.sh
+#   $SETTINGS_BUNDLE_FILENAME
+#      read versions of software from file specified in settings.sh
+#   cmake_any_any_any.sh
+#      cmake paths
+#   ace_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      ace paths
+#   gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gsl paths
+#   gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gtkmm paths
+#
+# Outputs:
+#   gsl_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh
+#      gsl paths   
+#   gsl-$BUNDLE_GSL_VERSION-$COMPILER_FAMILY
+#      directory containing a downloaded version of GSL.
+#      this directory is shared by build_gsl.sh calls of the
+#      same compiler family (msvc, mingw).  A "cmake" subdirectory 
+#      is added to configure GSL for a particular compiler family.
+#   gsl-$BUNDLE_GSL_VERSION-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
+#      build directory
+#   [build directory]/compile_base.sh
+#      saves the full environment needed to replicate this build
+#   [build directory]/compile.sh
+#      tiny script to rerun the build - useful for testing
+#   gsl-$BUNDLE_GSL_VERSION-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD.zip
+#      zip file of build
+
 
 BUILD_DIR=$PWD
 
@@ -43,9 +79,10 @@ fi
 
 # Go ahead and download GSL source code
 fname=gsl-$BUNDLE_GSL_VERSION
+link=ftp://gnu.mirrors.pair.com/gnu/gnu/gsl/$fname.tar.gz
 if [ ! -e $fname ]; then
 	if [ ! -e $fname.tar.gz ]; then
-		wget ftp://gnu.mirrors.pair.com/gnu/gnu/gsl/$fname.tar.gz || {
+		wget $link || {
 			echo "Cannot fetch GSL"
 			exit 1
 		}
@@ -127,7 +164,19 @@ GSLCBLAS_LIBRARY="$GSL_DIR/$TARGET_LIB"
 cp $GSLCBLAS_LIBRARY $GSL_DIR/lib || exit 1
 GSLCBLAS_LIBRARY="$GSL_DIR/lib/$TARGET_LIB"
 
-
+# Make a GSL ZIP file for Lorenzo
+cd $GSL_DIR
+(
+	echo "GSL version $BUNDLE_GSL_VERSION"
+	echo "Downloaded from $link"
+	date
+	echo " "
+	echo "Compiler family: $COMPILER_FAMILY"
+	echo "Compiler version: $OPT_COMPILER $OPT_VARIANT $OPT_BUILD"
+) > BUILD_INFO.TXT
+cd ..
+rm -f $fname2.zip
+zip -r $fname2.zip $fname2/BUILD_INFO.TXT $fname2/include $fname2/lib || exit 1
 
 # Cache GSL-related paths and variables, for dependent packages to read
 (
