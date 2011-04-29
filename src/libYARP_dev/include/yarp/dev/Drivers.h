@@ -84,7 +84,7 @@ public:
  * A factory for creating driver objects of a particular type.
  */
 template <class T>
-class YARP_dev_API yarp::dev::DriverCreatorOf : public DriverCreator {
+class yarp::dev::DriverCreatorOf : public DriverCreator {
 private:
     yarp::os::ConstString desc, wrap, code;
 public:
