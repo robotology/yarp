@@ -64,7 +64,7 @@ class YARP_dev_API yarp::dev::CanMessage
     virtual void setBuffer(unsigned char *)=0;
 };
 
-class YARP_dev_API yarp::dev::CanBuffer
+class yarp::dev::CanBuffer
 {
     yarp::dev::CanMessage **data;
     int size;
@@ -72,18 +72,18 @@ class YARP_dev_API yarp::dev::CanBuffer
     CanBuffer()
         { data=0; }
 
-    void resize(CanMessage **d, int s)
+    inline void resize(CanMessage **d, int s)
         {
             size=s;
             data=d;
         }
 
-    CanMessage **getPointer()
+    inline CanMessage **getPointer()
         {
             return data;
         }
 
-    CanMessage &operator[](int k)
+    inline CanMessage &operator[](int k)
         {
             return *data[k];
         }
