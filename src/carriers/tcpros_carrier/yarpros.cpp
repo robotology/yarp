@@ -11,6 +11,7 @@
 #include "RosSlave.h"
 #include "RosLookup.h"
 #include "RosType.h"
+#include "RosTypeCodeGenYarp.h"
 
 #include <string>
 
@@ -233,6 +234,9 @@ int main(int argc, char *argv[]) {
         ConstString tname = cmd.get(1).asString();
         t.read(tname,env);
         t.show();
+        RosTypeCodeGenYarp gen;
+        RosTypeCodeGenState state;
+        t.emitType(gen,state);
         printf("\n");
     } else {
         fprintf(stderr,"unknown command, run with no arguments for help\n");

@@ -156,3 +156,76 @@ void RosType::show() {
     printf("[]");
   }
 }
+
+
+
+bool RosTypeCodeGenTest::beginType(const std::string& tname,
+                                   RosTypeCodeGenState& state) {
+    printf("Begin %s\n", tname.c_str());
+    return true;
+}
+
+bool RosTypeCodeGenTest::declareField(const RosField& field) {
+    printf("Field %s\n", field.rosName.c_str());
+    return true;
+}
+
+bool RosTypeCodeGenTest::readField(const RosField& field) {
+    printf("READ Field %s\n", field.rosName.c_str());
+    return true;
+}
+
+bool RosTypeCodeGenTest::writeField(const RosField& field) {
+    printf("WRITE Field %s\n", field.rosName.c_str());
+    return true;
+}
+
+bool RosTypeCodeGenTest::endType() {
+    printf("End\n");
+    return true;
+}
+
+
+bool RosType::emitType(RosTypeCodeGen& gen,
+                       RosTypeCodeGenState& state) {
+    if (isPrimitive) return true;
+    if (state.generated.find(rosType)!=state.generated.end()) {
+        return true;
+    }
+    if (subRosType.size()>0) {
+        for (int i=0; i<(int)subRosType.size(); i++) {
+            if (!subRosType[i].emitType(gen,state)) return false;
+        }
+    }
+
+    state.usedVariables.clear();
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        state.useVariable(subRosType[i].rosName);
+    }
+
+    if (!gen.beginType(rosType,state)) return false;
+
+    if (!gen.beginDeclare()) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.declareField(subRosType[i])) return false;
+    }
+    if (!gen.endDeclare()) return false;
+
+    if (!gen.beginRead()) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.readField(subRosType[i])) return false;
+    }
+    if (!gen.endRead()) return false;
+
+    if (!gen.beginWrite()) return false;
+    for (int i=0; i<(int)subRosType.size(); i++) {
+        if (!gen.writeField(subRosType[i])) return false;
+    }
+    if (!gen.endWrite()) return false;
+
+    if (!gen.endType()) return false;
+
+    state.generated[rosType] = true;
+    return true;
+}
+
