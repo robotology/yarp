@@ -1554,7 +1554,7 @@ public:
  *
  * Interface for control devices, calibration commands.
  */
-class yarp::dev::IControlCalibration
+class YARP_dev_API yarp::dev::IControlCalibration
 {
 private:
     ICalibrator *calibrator;
@@ -1600,7 +1600,7 @@ public:
  *
  * Interface for control devices, calibration commands.
  */
-class yarp::dev::IControlCalibration2
+class YARP_dev_API yarp::dev::IControlCalibration2
 {
 private:
     ICalibrator *calibrator;

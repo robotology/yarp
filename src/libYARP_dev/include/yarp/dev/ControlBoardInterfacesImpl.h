@@ -11,6 +11,8 @@
 
 #include <yarp/dev/ControlBoardInterfaces.h>
 
+#include <yarp/dev/api.h>
+
 namespace yarp{
     namespace dev {
         template <class DERIVED, class IMPLEMENT> class ImplementPositionControl;
