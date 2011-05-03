@@ -33,7 +33,6 @@ namespace yarp {
     }
 }
 
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 YARP_OS_API void typedReaderMissingCallback();
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
@@ -73,6 +72,10 @@ public:
         onRead(datum);
     }
 };
+
+#ifdef __EXPCLICIT_TEMPLATE_IMPORT
+template class YARP_OS_API yarp::os::TypedReaderCallback<yarp::os::Bottle>;
+#endif
 
 /**
  * A base class for sources of typed data.  This could be a 
