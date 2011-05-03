@@ -232,9 +232,9 @@ int main(int argc, char *argv[]) {
             return 1;
         }
         ConstString tname = cmd.get(1).asString();
-        t.read(tname,env);
-        t.show();
         RosTypeCodeGenYarp gen;
+        t.read(tname,env,gen);
+        t.show();
         RosTypeCodeGenState state;
         t.emitType(gen,state);
         printf("\n");

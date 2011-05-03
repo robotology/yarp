@@ -10,12 +10,32 @@
 #define YARP2_ROSTYPECODEGENYARP_INC
 
 #include <RosType.h>
+#include <stdio.h>
+
+class RosYarpType {
+public:
+    std::string rosType;
+    std::string yarpType;
+    std::string writer;
+    std::string reader;
+    int len;
+
+    RosYarpType() {
+        len = 0;
+    }
+};
 
 class RosTypeCodeGenYarp : public RosTypeCodeGen {
 public:
     std::string counter;
     std::string len;
+    std::string len2;
     bool usedLen;
+    bool usedLen2;
+    bool first;
+    FILE *out;
+
+    RosYarpType mapPrimitive(const RosField& field);
 
     virtual bool beginType(const std::string& tname,
                            RosTypeCodeGenState& state);
@@ -33,6 +53,10 @@ public:
     virtual bool endWrite();
 
     virtual bool endType();
+
+    virtual bool hasNativeTimeClass() const {
+        return false;
+    }
 };
 
 #endif

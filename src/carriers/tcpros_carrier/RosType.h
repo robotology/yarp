@@ -41,7 +41,7 @@ public:
         isPrimitive = false;
     }
 
-    bool read(const char *tname, RosTypeSearch& env);
+    bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen);
     void show();
 
     bool emitType(RosTypeCodeGen& gen, 
@@ -55,6 +55,7 @@ public:
     std::string directory;
     std::map<std::string, bool> generated;
     std::map<std::string, bool> usedVariables;
+    std::vector<std::string> dependencies;
 
     std::string useVariable(const std::string& name) {
         usedVariables[name] = true;
@@ -87,6 +88,10 @@ public:
     virtual bool endWrite() { return true; }
 
     virtual bool endType() = 0;
+
+    virtual bool hasNativeTimeClass() const {
+        return false;
+    }
 };
 
 class RosTypeCodeGenTest : public RosTypeCodeGen {

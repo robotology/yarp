@@ -9,6 +9,7 @@
 #include <RosTypeCodeGenYarp.h>
 
 #include <stdio.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -16,32 +17,52 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
                                    RosTypeCodeGenState& state) {
     counter = state.getFreeVariable("i");
     len = state.getFreeVariable("len");
-    printf("class %s : public yarp::os::Portable {\n", tname.c_str());
+    len2 = state.getFreeVariable("len2");
+    string fname = tname + ".h";
+    out = fopen(fname.c_str(),"w");
+    if (!out) {
+        fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
+    }
+    printf("Generating %s\n", fname.c_str());
+    fprintf(out,"#ifndef YARPROS_TYPE_%s\n", tname.c_str());
+    fprintf(out,"#define YARPROS_TYPE_%s\n\n", tname.c_str());
+    fprintf(out,"#include <string>\n");
+    fprintf(out,"#include <vector>\n");
+    fprintf(out,"#include <yarp/os/Portable.h>\n");
+    for (int i=0; i<(int)state.dependencies.size(); i++) {
+        fprintf(out,"#include <%s.h>\n",state.dependencies[i].c_str());
+    }
+    fprintf(out,"\n");
+    fprintf(out,"class %s : public yarp::os::Portable {\n", tname.c_str());
     return true;
 }
 
 bool RosTypeCodeGenYarp::beginDeclare() {
-    printf("public:\n");
+    fprintf(out,"public:\n");
     return true;
 }           
 
 bool RosTypeCodeGenYarp::declareField(const RosField& field) {
+    RosYarpType t = mapPrimitive(field);
     if (!field.isArray) {
-        printf("  %s %s;\n", field.rosType.c_str(), field.rosName.c_str());
+        fprintf(out,"  %s %s;\n", t.yarpType.c_str(), field.rosName.c_str());
     } else {
-        printf("  std::vector<%s> %s;\n", field.rosType.c_str(), field.rosName.c_str());
+        fprintf(out,"  std::vector<%s> %s;\n", t.yarpType.c_str(), 
+               field.rosName.c_str());
     }
     return true;
 }
 
 bool RosTypeCodeGenYarp::endDeclare() {
-    printf("\n");
+    fprintf(out,"\n");
     return true;
 }
 
 bool RosTypeCodeGenYarp::beginRead() {
-    printf("  bool read(yarp::os::ConnectionReader& connection) {\n");
+    fprintf(out,"  bool read(yarp::os::ConnectionReader& connection) {\n");
     usedLen = false;
+    usedLen2 = false;
+    first = true;
     return true;
 }           
 
@@ -50,47 +71,97 @@ bool RosTypeCodeGenYarp::beginRead() {
 // * deal with strings, which are a variable-sized primitive
 
 bool RosTypeCodeGenYarp::readField(const RosField& field) {
-    //printf("    // read %s\n", field.rosName.c_str());
+    RosYarpType t = mapPrimitive(field);
+    if (!first) {
+        fprintf(out,"\n");
+    }
+    first = false;
+    fprintf(out,"    // *** %s ***\n", field.rosName.c_str());
     if (field.rosType=="string") {
         // strings are special; variable length primitive
-        printf("// String not dealt with correctly yet for reading\n");
-    }
-    if (field.isPrimitive) {
         if (field.isArray) {
-            printf("    %s%s = connection.expectInt();\n",
+            fprintf(out,"    %s%s = connection.expectInt();\n",
                    usedLen?"":"int ",
                    len.c_str());
             usedLen = true;
-            printf("    fields.resize(%s);\n", len.c_str());
-            printf("    if (!connection.readBlock(&%s[0],sizeof(%s)*%s) return false;\n",
-                   field.rosName.c_str(),
-                   field.rosType.c_str(),
-                   len.c_str());
-        } else {
-            printf("    if (!connection.readPrimitive_%s(%s)) return false;\n",
-                   field.rosType.c_str(),
-                   field.rosName.c_str());
-        }
-    } else {
-        if (field.isArray) {
-            printf("    %s%s = connection.expectInt();\n",
-                   usedLen?"":"int ",
-                   len.c_str());
-            usedLen = true;
-            printf("    %s.resize(%s);\n", 
+            fprintf(out,"    %s.resize(%s);\n", 
                    field.rosName.c_str(),
                    len.c_str());
-            printf("    for (int %s=0; %s<%s; %s++) {\n", 
+            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n", 
                    counter.c_str(),
                    counter.c_str(),
                    len.c_str(),
                    counter.c_str());
-            printf("      if (!%s[%s].read(connection)) return false;\n",
+
+
+            fprintf(out,"      %s%s = connection.expectInt();\n",
+                   usedLen2?"":"int ",
+                   len2.c_str());
+            usedLen2 = true;
+            fprintf(out,"      %s.resize(%s);\n", 
+                   field.rosName.c_str(),
+                   len2.c_str());
+            fprintf(out,"      if (!connection.expectBlock((char*)%s[%s].c_str(),%s)) return false;\n",
+                   field.rosName.c_str(),
+                   counter.c_str(),
+                   len2.c_str());
+            fprintf(out,"    }\n");                  
+        } else {
+            fprintf(out,"    %s%s = connection.expectInt();\n",
+                   usedLen?"":"int ",
+                   len.c_str());
+            usedLen = true;
+            fprintf(out,"    %s.resize(%s);\n", 
+                   field.rosName.c_str(),
+                   len.c_str());
+            fprintf(out,"    if (!connection.expectBlock((char*)%s.c_str(),%s)) return false;\n",
+                   field.rosName.c_str(),
+                   len.c_str());
+        }
+    } else if (field.isPrimitive) {
+        if (field.isArray) {
+            fprintf(out,"    %s%s = connection.expectInt();\n",
+                   usedLen?"":"int ",
+                   len.c_str());
+            usedLen = true;
+            fprintf(out,"    %s.resize(%s);\n", 
+                   field.rosName.c_str(),
+                   len.c_str());
+            fprintf(out,"    if (!connection.expectBlock((char*)&%s[0],sizeof(%s)*%s)) return false;\n",
+                   field.rosName.c_str(),
+                   t.yarpType.c_str(),
+                   len.c_str());
+        } else {
+            if (t.len!=0) {
+                fprintf(out,"    if (!connection.expectBlock((char*)&%s,%d)) return false;\n",
+                       field.rosName.c_str(),
+                       t.len);
+            } else {
+                fprintf(out,"    %s = connection.%s();\n",
+                       field.rosName.c_str(),
+                       t.reader.c_str());
+            }
+        }
+    } else {
+        if (field.isArray) {
+            fprintf(out,"    %s%s = connection.expectInt();\n",
+                   usedLen?"":"int ",
+                   len.c_str());
+            usedLen = true;
+            fprintf(out,"    %s.resize(%s);\n", 
+                   field.rosName.c_str(),
+                   len.c_str());
+            fprintf(out,"    for (int %s=0; %s<%s; %s++) {\n", 
+                   counter.c_str(),
+                   counter.c_str(),
+                   len.c_str(),
+                   counter.c_str());
+            fprintf(out,"      if (!%s[%s].read(connection)) return false;\n",
                    field.rosName.c_str(),
                    counter.c_str());
-            printf("    }\n");                  
+            fprintf(out,"    }\n");                  
         } else {
-            printf("    if (!%s.read(connection)) return false;\n",
+            fprintf(out,"    if (!%s.read(connection)) return false;\n",
                    field.rosName.c_str());
         }
     }
@@ -98,68 +169,86 @@ bool RosTypeCodeGenYarp::readField(const RosField& field) {
 }
 
 bool RosTypeCodeGenYarp::endRead() {
-    printf("    return true;\n");
-    printf("  }\n\n");
+    fprintf(out,"    return true;\n");
+    fprintf(out,"  }\n\n");
     return true;
 }
 
 bool RosTypeCodeGenYarp::beginWrite() {
-    printf("  bool write(yarp::os::ConnectionWriter& connection) {\n");
+    fprintf(out,"  bool write(yarp::os::ConnectionWriter& connection) {\n");
+    usedLen = false;
+    usedLen2 = false;
+    first = true;
     return true;
 }
 
 bool RosTypeCodeGenYarp::writeField(const RosField& field) {
+    RosYarpType t = mapPrimitive(field);
+    if (!first) {
+        fprintf(out,"\n");
+    }
+    first = false;
+    fprintf(out,"    // *** %s ***\n", field.rosName.c_str());
     if (field.rosType=="string") {
         // strings are special; variable length primitive
         if (field.isArray) {
-            printf("    if (!connection.appendInt(%s.size()) return false;\n",
+            fprintf(out,"    connection.appendInt(%s.size());\n",
                    field.rosName.c_str());
-            printf("    for (int %s=0; %s<%s.size(); %s++) {\n", 
+            fprintf(out,"    for (int %s=0; %s<%s.size(); %s++) {\n", 
                    counter.c_str(),
                    counter.c_str(),
                    field.rosName.c_str(),
                    counter.c_str());
-            printf("      if (!connection.appendInt(%s.length())) return false;\n",
-                   field.rosName.c_str());
-            printf("      if (!connection.appendExternalBlock(%s.c_str(),%s.length())) return false;\n",
+            fprintf(out,"      connection.appendInt(%s[%s].length());\n",
                    field.rosName.c_str(),
-                   field.rosName.c_str());
-            printf("    }\n");                  
+                   counter.c_str());
+            fprintf(out,"      connection.appendExternalBlock((char*)%s[%s].c_str(),%s[%s].length());\n",
+                    field.rosName.c_str(),
+                    counter.c_str(),
+                    field.rosName.c_str(),
+                    counter.c_str());
+            fprintf(out,"    }\n");                  
         } else {
-            printf("    if (!connection.appendInt(%s.length())) return false;\n",
+            fprintf(out,"    connection.appendInt(%s.length());\n",
                    field.rosName.c_str());
-            printf("    if (!connection.appendExternalBlock(%s.c_str(),%s.length())) return false;\n",
+            fprintf(out,"    connection.appendExternalBlock((char*)%s.c_str(),%s.length());\n",
                    field.rosName.c_str(),
                    field.rosName.c_str());
         }
     } else if (field.isPrimitive) {
         if (field.isArray) {
-            printf("    if (!connection.appendInt(%s.size()) return false;\n",
+            fprintf(out,"    connection.appendInt(%s.size());\n",
                    field.rosName.c_str());
-            printf("    if (!connection.appendExternalBlock(&%s[0],sizeof(%s)*%s.size()) return false;\n",
+            fprintf(out,"    connection.appendExternalBlock((char*)&%s[0],sizeof(%s)*%s.size());\n",
                    field.rosName.c_str(),
-                   field.rosType.c_str(),
+                   t.yarpType.c_str(),
                    field.rosName.c_str());
         } else {
-            printf("    if (!connection.writePrimitive_%s(%s)) return false;\n",
-                   field.rosType.c_str(),
-                   field.rosName.c_str());
+            if (t.len!=0) {
+                fprintf(out,"    connection.appendBlock(&%s,%d);\n",
+                       field.rosName.c_str(),
+                       t.len);
+            } else {
+                fprintf(out,"    connection.%s(%s);\n",
+                       t.writer.c_str(),
+                       field.rosName.c_str());
+            }
         }
     } else {
         if (field.isArray) {
-            printf("    if (!connection.appendInt(%s.size()) return false;\n",
+            fprintf(out,"    connection.appendInt(%s.size());\n",
                    field.rosName.c_str());
-            printf("    for (int %s=0; %s<%s.size(); %s++) {\n", 
+            fprintf(out,"    for (int %s=0; %s<%s.size(); %s++) {\n", 
                    counter.c_str(),
                    counter.c_str(),
                    field.rosName.c_str(),
                    counter.c_str());
-            printf("      if (!%s[%s].write(connection)) return false;\n",
+            fprintf(out,"      if (!%s[%s].write(connection)) return false;\n",
                    field.rosName.c_str(),
                    counter.c_str());
-            printf("    }\n");                  
+            fprintf(out,"    }\n");                  
         } else {
-            printf("    if (!%s.write(connection)) return false;\n",
+            fprintf(out,"    if (!%s.write(connection)) return false;\n",
                    field.rosName.c_str());
         }
     }
@@ -167,14 +256,58 @@ bool RosTypeCodeGenYarp::writeField(const RosField& field) {
 }
 
 bool RosTypeCodeGenYarp::endWrite() {
-    printf("    return true;\n");
-    printf("  }\n");
+    fprintf(out,"    return !connection.isError();\n");
+    fprintf(out,"  }\n");
     return true;
 }
 
 
 bool RosTypeCodeGenYarp::endType() {
-    printf("};\n\n");
+    fprintf(out,"};\n\n");
+    fprintf(out,"#endif\n");
+    fclose(out);
+    out = NULL;
     return true;
 }
+
+
+RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
+    RosYarpType ry;
+    ry.rosType = field.rosType;
+    ry.yarpType = field.rosType;
+    if (field.rosType=="string") {
+        ry.yarpType = "std::string";
+    }
+    if (!field.isPrimitive) {
+        return ry;
+    }
+    string name = field.rosType;
+    if (name=="int8"||name=="uint8"||(name=="bool"&&field.isArray)) {
+        ry.yarpType = "char";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 1;
+    } else if (name=="bool") {
+        ry.yarpType = "bool";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 1;
+    } else if (name=="int32"||name=="uint32") {
+        ry.yarpType = "int";
+        ry.writer = "appendInt";
+        ry.reader = "expectInt";
+    } else if (name=="float64") {
+        ry.yarpType = "double";
+        ry.writer = "appendDouble";
+        ry.reader = "expectDouble";
+    } else if (name=="string") {
+        // ignore
+    } else {
+        fprintf(stderr, "Please translate %s in RosTypeCodeGenYarp.cpp\n",
+                name.c_str());
+        exit(1);
+    }
+    return ry;
+}
+
 

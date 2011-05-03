@@ -91,12 +91,17 @@ int TcpRosStream::read(const Bytes& b) {
                 cursor = NULL;
                 remaining = header.blobLen;
             }
+        } else if (raw==2) {
+            cursor = NULL;
+            remaining = header.blobLen;
+            phase = 2;
         } else {
             phase = 1;
             cursor = (char*) &header;
             remaining = sizeof(header);
         }
     }
+    dbg_printf("phase %d remaining %d\n", phase, remaining);
     if (remaining>0) {
         if (cursor!=NULL) {
             int allow = remaining;

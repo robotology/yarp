@@ -54,7 +54,7 @@ vector<string> normalizedMessage(const string& line) {
 }
 
 
-bool RosType::read(const char *tname, RosTypeSearch& env) {
+bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen) {
   isValid = false;
   isArray = false;
   isPrimitive = false;
@@ -80,9 +80,30 @@ bool RosType::read(const char *tname, RosTypeSearch& env) {
   }
 
   if (base[0]>='a'&&base[0]<='z') {
-    isPrimitive = true;
-    isValid = true;
-    return true;
+      if (base=="time") {
+          if (gen.hasNativeTimeClass()) {
+              isPrimitive = true;
+          } else {
+              rosType = "TickTime";
+              isPrimitive = false;
+              RosType t1;
+              t1.rosType = "uint32";
+              t1.rosName = "sec";
+              t1.isPrimitive = true;
+              t1.isValid = true;
+              subRosType.push_back(t1);
+              RosType t2;
+              t2.rosType = "uint32";
+              t2.rosName = "nsec";
+              t2.isPrimitive = true;
+              t2.isValid = true;
+              subRosType.push_back(t2);
+          }
+      } else {
+          isPrimitive = true;
+      }
+      isValid = true;
+      return true;
   }
 
   bool ok = true;
@@ -121,7 +142,7 @@ bool RosType::read(const char *tname, RosTypeSearch& env) {
     string n = msg[1];
     printf("TYPE %s NAME %s\n", t.c_str(), n.c_str());
     RosType sub;
-    if (!sub.read(t.c_str(),env)) {
+    if (!sub.read(t.c_str(),env,gen)) {
       printf("Type not complete: %s\n", row.c_str());
       ok = false;
     }
@@ -192,6 +213,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     if (state.generated.find(rosType)!=state.generated.end()) {
         return true;
     }
+
     if (subRosType.size()>0) {
         for (int i=0; i<(int)subRosType.size(); i++) {
             if (!subRosType[i].emitType(gen,state)) return false;
@@ -226,6 +248,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     if (!gen.endType()) return false;
 
     state.generated[rosType] = true;
+    state.dependencies.push_back(rosType);
     return true;
 }
 

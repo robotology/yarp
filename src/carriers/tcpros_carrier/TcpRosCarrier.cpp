@@ -25,6 +25,8 @@ using namespace std;
 
 #define dbg_printf if (0) printf
 
+#define FORCE_ROS_NATIVE
+
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
         return;
@@ -68,7 +70,13 @@ bool TcpRosCarrier::sendHeader(Protocol& proto) {
         isService = false;
     }
     String rawValue = n.getCarrierModifier("raw");
-    if (rawValue=="1") {
+#ifdef FORCE_ROS_NATIVE
+    raw = 2;
+#endif
+    if (rawValue=="2") {
+        raw = 2;
+        dbg_printf("ROS-native mode requested\n");
+    } else if (rawValue=="1") {
         raw = 1;
         dbg_printf("Raw mode requested\n");
     } else if (rawValue=="0") {
@@ -134,6 +142,9 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
         rosname = header.data["type"].c_str();
     }
     printf("Type of data is [%s]s\n", rosname.c_str());
+#ifdef FORCE_ROS_NATIVE
+    rosname = ""; // forget
+#endif
 
     isService = (header.data.find("request_type")!=header.data.end());
     dbg_printf("tcpros %s mode\n", isService?"service":"topic");
@@ -178,6 +189,9 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     dbg_printf("Type of data is %s\n", rosname.c_str());
     kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
     dbg_printf("Loose translation [%s]\n", kind.c_str());
+#ifdef FORCE_ROS_NATIVE
+    kind = "";
+#endif
     if (kind!="") {
         twiddler.configure(kind.c_str());
         translate = TCPROS_TRANSLATE_TWIDDLER;
@@ -214,23 +228,28 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
 bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     SizedWriter *flex_writer = &writer;
 
-    // At startup, we check for what kind of messages are going
-    // through, and prepare an appropriate byte-rejiggering if
-    // needed.
-    if (translate==TCPROS_TRANSLATE_UNKNOWN) {
-        dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
-        FlexImage *img = wi.checkForImage(writer);
-        if (img) {
-            translate = TCPROS_TRANSLATE_IMAGE;
-            ConstString frame = "/frame";
-            ri.init(*img,frame);
-        } else { 
-            if (WireBottle::extractBlobFromBottle(writer,wt)) {
-                translate = TCPROS_TRANSLATE_BOTTLE_BLOB;
-            } else {
-                translate = TCPROS_TRANSLATE_INHIBIT;
+
+    if (raw!=2) {
+        // At startup, we check for what kind of messages are going
+        // through, and prepare an appropriate byte-rejiggering if
+        // needed.
+        if (translate==TCPROS_TRANSLATE_UNKNOWN) {
+            dbg_printf("* TCPROS_TRANSLATE_UNKNOWN\n");
+            FlexImage *img = wi.checkForImage(writer);
+            if (img) {
+                translate = TCPROS_TRANSLATE_IMAGE;
+                ConstString frame = "/frame";
+                ri.init(*img,frame);
+            } else { 
+                if (WireBottle::extractBlobFromBottle(writer,wt)) {
+                    translate = TCPROS_TRANSLATE_BOTTLE_BLOB;
+                } else {
+                    translate = TCPROS_TRANSLATE_INHIBIT;
+                }
             }
         }
+    } else {
+        translate = TCPROS_TRANSLATE_INHIBIT;
     }
 
     // Apply byte-rejiggering if needed.
