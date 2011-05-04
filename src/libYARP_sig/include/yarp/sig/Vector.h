@@ -81,35 +81,35 @@ template<class T>
 class yarp::sig::VectorOf : public VectorBase
 {
 private:
-	yarp::os::ManagedBytes bytes;
+    yarp::os::ManagedBytes bytes;
     T *first;
-	int len;
+    int len;
 
     inline void _updatePointers() {
         first = (T *) bytes.get();
-		len = bytes.used()/sizeof(T);
+        len = bytes.used()/sizeof(T);
     }
 
 public:
     VectorOf() {
-		bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
-		bytes.setUsed(0);
-		first = 0/*NULL*/;
-		len = 0;
-	}
+        bytes.allocate(16*sizeof(T)); // preallocate space for 16 elements
+        bytes.setUsed(0);
+        first = 0/*NULL*/;
+        len = 0;
+    }
 
     VectorOf(size_t size) : bytes(size*sizeof(T)) {
-		bytes.setUsed(size*sizeof(T));
+        bytes.setUsed(size*sizeof(T));
         _updatePointers();
     }
 
     VectorOf(const VectorOf &r) {
-		bytes = r.bytes;
+        bytes = r.bytes;
         _updatePointers();
     }
 
     const VectorOf<T> &operator=(const VectorOf<T> &r) {
-		bytes = r.bytes;
+        bytes = r.bytes;
         _updatePointers();
         return *this;
     }
@@ -146,27 +146,27 @@ public:
 
     void resize(size_t size, const T&def)
     {
-		bytes.allocateOnNeed((int)size*sizeof(T),(int)size*sizeof(T));
-		bytes.setUsed((int)size*sizeof(T));
-		_updatePointers();
-		for (int i=0; i<(int)size; i++) { (*this)[i] = def; }
-	}
+        bytes.allocateOnNeed((int)size*sizeof(T),(int)size*sizeof(T));
+        bytes.setUsed((int)size*sizeof(T));
+        _updatePointers();
+        for (int i=0; i<(int)size; i++) { (*this)[i] = def; }
+    }
 
     inline void push_back (const T &elem)
     {
-		bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
-		_updatePointers();
-		first[len] = elem;
-		bytes.setUsed(bytes.used()+sizeof(T));
-		len++;
+        bytes.allocateOnNeed(bytes.used()+sizeof(T),bytes.length()*2+sizeof(T));
+        _updatePointers();
+        first[len] = elem;
+        bytes.setUsed(bytes.used()+sizeof(T));
+        len++;
     }
 
     inline void pop_back (void)
     {
-		if (bytes.used()>(int)sizeof(T)) {
-			bytes.setUsed(bytes.used()-sizeof(T));
-			len--;
-		}
+        if (bytes.used()>(int)sizeof(T)) {
+            bytes.setUsed(bytes.used()-sizeof(T));
+            len--;
+        }
     }
 
     /**
@@ -208,17 +208,17 @@ public:
     {
         return first[i];
     }
-	
-	inline int size() const {
-		return len;
-	}
-	
-	void clear() {
-		bytes.clear();
-		bytes.setUsed(0);
-		len = 0;
-		first = 0 /*NULL*/;
-	}
+
+    inline int size() const {
+        return len;
+    }
+
+    void clear() {
+        bytes.clear();
+        bytes.setUsed(0);
+        len = 0;
+        first = 0 /*NULL*/;
+    }
 };
 
 
