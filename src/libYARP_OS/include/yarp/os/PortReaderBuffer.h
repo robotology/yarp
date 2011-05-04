@@ -73,7 +73,7 @@ public:
     }
 };
 
-#ifdef __EXPCLICIT_TEMPLATE_IMPORT
+#ifdef _MSC_VER
 template class YARP_OS_API yarp::os::TypedReaderCallback<yarp::os::Bottle>;
 #endif
 
