@@ -127,7 +127,7 @@ public:
      * @param num_processes return the number of running processes.
      * @return 0=success -1=failed.
      */
-    static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
+   // static int ps(const ConstString &node,ConstString** &processes,int &num_processes);
     /**
      * Report if an application is still running on a yarprun server.
      * @param node is the yarprun server port name. It must be unique in the network.

@@ -64,6 +64,12 @@ void sigchild_handler(int sig)
 }
 #endif
 
+const double TIMEOUT=2;
+inline bool attemptConnect(const yarp::os::ConstString &from, const yarp::os::ConstString &to, double timeout=TIMEOUT)
+{
+    return yarp::os::NetworkBase::connect(from.c_str(), to.c_str());
+}
+
 class YarpRunProcInfo
 {
 public:
@@ -514,14 +520,13 @@ public:
 
             yarp::os::Port port;
 			port.open("...");
-			for (int i=0; i<20; ++i)
-			{
-                if (yarp::os::NetworkBase::connect(port.getName().c_str(),m_stdio.c_str())) break;
-			    yarp::os::Time::delay(1.0);
-			}
-			port.write(msg);
-            yarp::os::NetworkBase::disconnect(port.getName().c_str(),m_stdio.c_str());
-			port.close();
+            bool connected=attemptConnect(port.getName(), m_stdio);
+            if (connected)
+            {
+			    port.write(msg);
+                yarp::os::NetworkBase::disconnect(port.getName().c_str(),m_stdio.c_str());
+            }
+            port.close();
 		}
 	}
 
@@ -650,11 +655,19 @@ yarp::os::Bottle yarp::os::Run::SendMsg(Bottle& msg,yarp::os::ConstString target
 {
 	Port port;
     port.open("...");
-    for (int i=0; i<20; ++i)
-	{
-	    if (NetworkBase::connect(port.getName().c_str(),target.c_str())) break;
-	    yarp::os::Time::delay(1.0);
-	}
+
+    bool connected=attemptConnect(port.getName(), target);
+    
+    if (!connected)
+    {
+        Bottle response;
+        response.addString("RESPONSE:\n=========\n");
+        response.addString("Cannot connect to remote server, aborting...\n");
+        fprintf(stderr,"%s\n",response.toString().c_str());
+        port.close();
+        return response;
+    }
+
 	Bottle response;
     port.write(msg,response);
     NetworkBase::disconnect(port.getName().c_str(),target.c_str());
@@ -2196,6 +2209,7 @@ int yarp::os::Run::kill(const yarp::os::ConstString &node, const yarp::os::Const
 	return response.get(0).asString()=="kill OK"?0:YARPRUN_ERROR;
 }
 
+#if 0
 int yarp::os::Run::ps(const yarp::os::ConstString &node,yarp::os::ConstString** &processes,int &num_processes)
 {
 	yarp::os::Bottle msg,grp,response;
@@ -2213,13 +2227,16 @@ int yarp::os::Run::ps(const yarp::os::ConstString &node,yarp::os::ConstString** 
 
 	Port port;
     port.open("...");
-    for (int i=0; i<20; ++i)
-	{
-	    if (NetworkBase::connect(port.getName().c_str(),node.c_str())) break;
-	    yarp::os::Time::delay(1.0);
-	}
+    bool connected=attemptConnect(port.getName(), node);
+    if (!connected)
+    {
+        port.close();
+        return 0;
+    }
+
     port.write(msg,response);
     NetworkBase::disconnect(port.getName().c_str(),node.c_str());
+
     port.close();
 
     num_processes=response.size();
@@ -2235,6 +2252,7 @@ int yarp::os::Run::ps(const yarp::os::ConstString &node,yarp::os::ConstString** 
 
 	return 0;
 }
+#endif
 
 bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::ConstString &keyv)
 {
@@ -2254,11 +2272,14 @@ bool yarp::os::Run::isRunning(const yarp::os::ConstString &node, yarp::os::Const
 
 	Port port;
     port.open("...");
-    for (int i=0; i<20; ++i)
-	{
-	    if (NetworkBase::connect(port.getName().c_str(),node.c_str())) break;
-	    yarp::os::Time::delay(1.0);
-	}
+
+    bool connected=attemptConnect(port.getName(), node);
+    if (!connected)
+    {
+        port.close();
+        return 0;
+    }
+
     port.write(msg,response);
     NetworkBase::disconnect(port.getName().c_str(),node.c_str());
     port.close();
