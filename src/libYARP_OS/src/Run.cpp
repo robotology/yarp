@@ -290,7 +290,7 @@ public:
 	#else
 	void CleanZombies()
 	{	
-	    yarp::os::Time::delay(1.0); 
+	    //yarp::os::Time::delay(1.0); 
 	
 		mutex.wait();
 
@@ -591,9 +591,9 @@ int yarp::os::Run::main(int argc, char *argv[])
         fflush(stderr);
 		while(true)
 		{
-			scanf("%s",line);
-			fprintf(stderr,"%s\n",line);
-            fflush(stderr);
+			int ret=scanf("%s",line);
+            if (ret!=0)
+                fprintf(stderr,"%s\n",line);
 		}
 		return 0;
 	}
@@ -1148,7 +1148,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	// connect yarp read and write
 	bool bConnR=false,bConnW=false;
-	for (int i=0; i<4 && !(bConnR&&bConnW); ++i)
+	for (int i=0; i<8 && !(bConnR&&bConnW); ++i)
 	{ 	    
 	    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 	        bConnW=true;
@@ -1156,7 +1156,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	    if (!bConnR && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str()))
 	        bConnR=true;
 	        
-	    if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
+	    if (!bConnW || !bConnR) yarp::os::Time::delay(0.05);
 	}        
 		    
     if (!(bConnR&&bConnW))
@@ -1532,12 +1532,30 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
     yarp::os::ConstString stdio_str(msg.find("stdio").asString());
 
 	int  pipe_stdin_to_cmd[2];
-	pipe(pipe_stdin_to_cmd);
+    int ret_stdin_to_cmd=0;
+	ret_stdin_to_cmd=pipe(pipe_stdin_to_cmd);
+    
 	int  pipe_cmd_to_stdout[2];
-	pipe(pipe_cmd_to_stdout);
+	int  ret_cmd_to_stdout=pipe(pipe_cmd_to_stdout);
 	
     int  pipe_child_to_parent[2];
-	pipe(pipe_child_to_parent);
+	int  ret_child_to_parent=pipe(pipe_child_to_parent);
+    
+    if (ret_child_to_parent!=0 || ret_cmd_to_stdout!=0 || ret_stdin_to_cmd!=0)
+    {
+        int error=errno;
+        
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdout\n"
+                       +yarp::os::ConstString("Can't create pipes ")+strerror(error)+"\n";
+        
+        Bottle result;
+        result.addInt(YARPRUN_ERROR);       
+        result.addString(out.c_str());
+        fprintf(stderr,"%s",out.c_str());
+        fflush(stderr);
+        
+        return result;        
+    }
 
 	int pid_stdout=fork();
 
@@ -1649,7 +1667,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			fflush(stderr);
 			
 			bool bConnR=false,bConnW=false;
-		    for (int i=0; i<4 && !(bConnR&&bConnW); ++i)
+		    for (int i=0; i<8 && !(bConnR&&bConnW); ++i)
 		    { 
 			    if (!bConnW && NetworkBase::connect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str()))
 			    {
@@ -1660,7 +1678,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		            bConnR=true;
 		        }
 		        
-		        if (!bConnW || !bConnR) yarp::os::Time::delay(1.0);
+		        if (!bConnW || !bConnR) yarp::os::Time::delay(0.05);
 		    }
 		    
 		    if (!(bConnR&&bConnW))
@@ -1744,8 +1762,28 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	           
 				if (msg.check("workdir"))
 			    {
-			        chdir(msg.find("workdir").asString().c_str());
-			    }
+			        int ret=chdir(msg.find("workdir").asString().c_str());
+                    if (ret!=0)
+                    {
+                        int error=errno;
+                                            
+                        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                                   +yarp::os::ConstString("Can't execute command, cannot set working directory")+strerror(error)+"\n";
+                    
+                        FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
+                        fprintf(out_to_parent,"%s",out.c_str());
+                        fflush(out_to_parent);
+                        fclose(out_to_parent);
+                        fprintf(stderr,"%s",out.c_str());
+                        fflush(stderr);
+                        
+                        NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/stdout").c_str(),(yarp::os::ConstString("/")+alias+"/user/stdout").c_str());
+                        NetworkBase::disconnect((yarp::os::ConstString("/")+alias+"/user/stdin").c_str(),(yarp::os::ConstString("/")+alias+"/stdin").c_str());
+                        
+                        exit(ret);
+                    }
+
+                }
 
 				int ret=execvp(arg_str[0],arg_str);   
 
@@ -1848,7 +1886,25 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	yarp::os::ConstString alias(msg.find("as").asString());
 
 	int pipe_child_to_parent[2];
-	pipe(pipe_child_to_parent);
+    int ret_pipe_child_to_parent;
+	ret_pipe_child_to_parent=pipe(pipe_child_to_parent);
+    
+    if (ret_pipe_child_to_parent!=0)
+    {
+        int error=errno;
+        
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n"
+                       +yarp::os::ConstString("Can't fork stdout cannot create pipe ")+strerror(error)+"\n";
+        
+        Bottle result;
+        result.addInt(YARPRUN_ERROR);       
+        result.addString(out.c_str());
+        fprintf(stderr,"%s",out.c_str());
+        fflush(stderr);
+    
+        return result;
+        
+    }
 
 	int pid_cmd=fork();
 
@@ -1927,7 +1983,7 @@ yarp::os::Bottle yarp::os::Run::UserStdio(yarp::os::Bottle& msg)
 	    Bottle result;
 	    yarp::os::impl::String out;
 	    
-	    yarp::os::Time::delay(0.5);
+	    //yarp::os::Time::delay(0.5);
 	    
 	    FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
 	    int flags=fcntl(pipe_child_to_parent[READ_FROM_PIPE],F_GETFL,0);
@@ -1973,7 +2029,25 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 	yarp::os::ConstString commandString(msg.find("cmd").toString());
 
 	int  pipe_child_to_parent[2];
-	pipe(pipe_child_to_parent);
+	int ret_pipe_child_to_parent=pipe(pipe_child_to_parent);
+    
+    if (ret_pipe_child_to_parent!=0)
+    {
+        int error=errno;
+        
+        yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd=stdio\n"
+                       +yarp::os::ConstString("Can't create pipe ")+strerror(error)+"\n";
+        
+        Bottle result;
+        result.addInt(YARPRUN_ERROR);       
+        result.addString(out.c_str());
+        fprintf(stderr,"%s",out.c_str());
+        fflush(stderr);
+    
+        return result;
+    }
+    
+    
 
 	int pid_cmd=fork();
 
@@ -2010,8 +2084,25 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
         
         if (msg.check("workdir"))
 		{
-		    chdir(msg.find("workdir").asString().c_str());
-		}
+            int ret=chdir(msg.find("workdir").asString().c_str());
+            if (ret!=0)
+            {
+                int error=errno;
+                                            
+                yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+m_PortName+" alias="+alias+" cmd="+commandString+"\n"
+                                        +yarp::os::ConstString("Can't execute command, cannot set working directory")+strerror(error)+"\n";
+                    
+
+                FILE* out_to_parent=fdopen(pipe_child_to_parent[WRITE_TO_PIPE],"w");
+                fprintf(out_to_parent,"%s",out.c_str());
+                fflush(out_to_parent);
+                fclose(out_to_parent);
+
+                REDIRECT_TO(STDERR_FILENO,saved_stderr);
+                fprintf(stderr,"%s",out.c_str());
+                fflush(stderr);
+            }
+        }
         
 		int ret=execvp(arg_str[0],arg_str);
 
@@ -2103,7 +2194,7 @@ int yarp::os::Run::start(const yarp::os::ConstString &node,Property &command,yar
 	{
 		dest_srv=yarp::os::ConstString(command.find("stdio").asString());
 
-		grp.clear();
+		grp.clear(); 
 		grp.addString("stdio");
 		grp.addString(dest_srv.c_str());
 		msg.addList()=grp;
