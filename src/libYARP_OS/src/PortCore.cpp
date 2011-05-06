@@ -47,7 +47,7 @@ PortCore::~PortCore() {
 }
 
 
-bool PortCore::listen(const Address& address) {
+bool PortCore::listen(const Address& address, bool shouldAnnounce) {
     bool success = false;
 
     if (!NetworkBase::initialized()) {
@@ -87,7 +87,7 @@ bool PortCore::listen(const Address& address) {
     if (face!=NULL) {
         listening = true;
         success = true;
-        announce = true;
+        announce = shouldAnnounce;
     }
 
     if (success) {
@@ -234,6 +234,14 @@ bool PortCore::start() {
 }
 
 
+bool PortCore::manualStart(const char *sourceName) {
+    interruptible = false;
+    manual = true;
+    setName(sourceName);
+    return true;
+}
+
+
 
 void PortCore::interrupt() {
     if (interruptible) {
@@ -251,6 +259,20 @@ void PortCore::interrupt() {
 
 
 void PortCore::closeMain() {
+    /*
+    if (manual) {
+        for (unsigned int i=0; i<units.size(); i++) {
+            PortCoreUnit *unit = units[i];
+            if (unit!=NULL) {
+                unit->setDoomed();
+            }
+        }
+        cleanUnits();
+        manual = false;
+        return;
+    }
+    */
+
     stateMutex.wait();
     if (finishing||!running) {
         stateMutex.post();
@@ -683,8 +705,10 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
 //
 
 
-void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
+bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                          bool onlyIfNeeded) {
+    bool result = false;
+
     YARP_DEBUG(log,String("asked to add output to ")+
                dest);
 
@@ -704,7 +728,7 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                 YARP_DEBUG(log,String("output already present to ")+
                            dest);
                 bw.appendLine(String("Desired connection already present from ") + getName() + " to " + dest);
-                return;
+                return true;
             }
         } else {
             removeUnit(Route(getName(),address.getRegName(),"*"),true);
@@ -775,6 +799,7 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                     stateMutex.post();
                 }
                 bw.appendLine(String("Added connection from ") + getName() + " to " + dest);
+                result = true;
             } else {
                 bw.appendLine(String("Cannot connect to ") + dest);
             }
@@ -787,6 +812,7 @@ void PortCore::addOutput(const String& dest, void *id, OutputStream *os,
         bw.write(*os);
     }
     cleanUnits();
+    return result;
 }
 
 void PortCore::removeOutput(const String& dest, void *id, OutputStream *os) {

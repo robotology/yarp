@@ -191,6 +191,12 @@ static int metaConnect(const char *csrc,
     } else {
         staticSrc = dynamicSrc;
     }
+    if (staticSrc.getCarrier()=="") {
+        staticSrc = staticSrc.addCarrier("tcp");
+    }
+    if (staticDest.getCarrier()=="") {
+        staticDest = staticDest.addCarrier("tcp");
+    }
     if (needsLookup(dynamicDest)&&!topical) {
         staticDest = NetworkBase::queryName(dynamicDest.getName());
         if (!staticDest.isValid()) {
@@ -381,7 +387,7 @@ static int metaConnect(const char *csrc,
         return result;
     }
 
-    fprintf(stderr,"Failure: no method known for this connection type\n");
+    fprintf(stderr,"Failure: no method known for this connection type: [%s]->[%s]\n", csrc, cdest);
 
     return 1;
 }

@@ -108,7 +108,7 @@ InputProtocol *TcpFace::read() {
 OutputProtocol *TcpFace::write(const Address& address) {
     SocketTwoWayStream *stream  = new SocketTwoWayStream();
     int result = stream->open(address);
-    if (result==-1) {
+    if (result<0) {
         stream->close();
         delete stream;
         return NULL;

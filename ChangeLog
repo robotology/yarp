@@ -9,6 +9,16 @@
       removed subsequent attempts to connect to server, handle
       cases in which the server is not available
 
+2011-05-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: rewrite rpc utility
+	to use a port (without a management thread).  Add message
+	resending when rpc server dies and is restarted.
+
+	* src/libYARP_OS/src/Network.cpp: revive ability to use
+	YARP without nameserver, by providing port names along
+	the lines of "tcp://127.0.0.1:8888" rather than "/read".
+
 2011-04-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/carriers/tcpros_carrier/TcpRosStream.h: add missing

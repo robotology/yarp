@@ -216,6 +216,7 @@ public:
         checkEqual(bot1.get(2).asString().c_str(),"hello","check bot[2]");
 
         while (out.isWriting()) {
+            printf("Waiting...\n");
             Time::delay(0.1);
         }
 

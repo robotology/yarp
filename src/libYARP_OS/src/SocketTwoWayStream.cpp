@@ -41,6 +41,12 @@ int SocketTwoWayStream::open(const Address& address) {
 #endif
     if (result>=0) {
         happy = true;
+    } else {
+        YARP_SPRINTF2(Logger::get(),
+                      error,
+                      "Failed to contact tcp://%s:%d\n",
+                      address.getName().c_str(),
+                      address.getPort());
     }
     updateAddresses();
     return result;

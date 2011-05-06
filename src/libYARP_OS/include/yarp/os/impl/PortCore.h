@@ -74,6 +74,7 @@ public:
         closing = false;
         finished = false;
         finishing = false;
+        manual = false;
         autoHandshake = true;
         waitBeforeSend = waitAfterSend = true;
         connectionListeners = 0;
@@ -114,7 +115,7 @@ public:
     /**
      * Begin service at a given address.
      */
-    bool listen(const Address& address);
+    bool listen(const Address& address, bool shouldAnnounce = true);
 
     /**
      * Check if a message is currently being sent.
@@ -178,6 +179,12 @@ public:
      * Begin main thread.
      */
     virtual bool start();
+
+
+    /**
+     * Start up the port, but without a main thread.
+     */
+    bool manualStart(const char *sourceName);
 
     /**
      * Send a normal message.
@@ -282,11 +289,19 @@ public:
                     OutputStream *os);
 
 
+    bool isListening() const {
+        return listening;
+    }
+
+    bool isManual() const {
+        return manual;
+    }
+
 public:
 
     // PortManager interface, exposed to inputs
 
-    virtual void addOutput(const String& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const String& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded);
     virtual void removeOutput(const String& dest, void *id, OutputStream *os);
     virtual void removeInput(const String& dest, void *id, OutputStream *os);
@@ -361,6 +376,7 @@ private:
     bool waitBeforeSend, waitAfterSend;
     bool controlRegistration;
     bool interruptible;
+    bool manual;
     int events;
     int connectionListeners;
     int inputCount, outputCount, dataOutputCount;

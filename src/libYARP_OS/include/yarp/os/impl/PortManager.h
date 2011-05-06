@@ -43,13 +43,14 @@ public:
         this->name = name;
     }
 
-    virtual void addOutput(const String& dest, void *id, OutputStream *os,
+    virtual bool addOutput(const String& dest, void *id, OutputStream *os,
                            bool onlyIfNeeded = false) {
         YARP_SPRINTF2(Logger::get(),
                       error,
                       "PortManager for [%s] asked to addOutput [%s]\n",
                       getName().c_str(),
                       dest.c_str());
+        return false;
     }
 
     virtual void removeInput(const String& src, void *id, OutputStream *os) {

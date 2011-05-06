@@ -887,15 +887,10 @@ int Companion::cmdRpc(int argc, char *argv[]) {
         NameClient& nic = NameClient::getNameClient();
         address = nic.queryName(dest);
     }
-    if (address.getCarrierName()==""||
-        address.getCarrierName()=="tcp") {
-        // no need for a port
-        src = "anon_rpc";
-        if (argc>1) { src = argv[1]; }
-        return rpc(src,dest);
-    }
-    return cmdRpc2(argc,argv);
-
+    // no need for a port
+    src = "anon_rpc";
+    if (argc>1) { src = argv[1]; }
+    return rpc(src,dest);
 }
 
 
@@ -912,10 +907,16 @@ int Companion::cmdRpc2(int argc, char *argv[]) {
     }
 
     Port p;
-    bool ok = p.open(src);
+    bool ok;
+    if (argc>1) {
+        ok = p.open(src);
+    } else {
+        ok = p.open();
+    }
     if (ok) {
         if (String(dest)!="--client") {
-            NetworkBase::connect(p.getName().c_str(),dest);
+            //NetworkBase::connect(p.getName().c_str(),dest);
+            ok = p.addOutput(dest);
         }
     }
     while(ok) {
@@ -1492,12 +1493,13 @@ int Companion::disconnectInput(const char *src, const char *dest,
 // just a temporary implementation until real ports are available
 class BottleReader : public PortReader {
 private:
-    Port core;
     SemaphoreImpl done;
     bool raw;
     bool env;
     Address address;
 public:
+    Port core;
+
     BottleReader(const char *name, bool showEnvelope) : done(0) {
         raw = false;
         env = showEnvelope;
@@ -1662,7 +1664,8 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     companion_install_handler();
     BottleReader reader(name,showEnvelope);
     if (src!=NULL) {
-        NetworkBase::connect(src,reader.getName().c_str());
+        //NetworkBase::connect(src,reader.getName().c_str());
+        reader.core.addOutput(reader.getName().c_str());
     }
     reader.wait();
     reader.close();
@@ -1753,41 +1756,41 @@ int Companion::forward(const char *localName, const char *targetName) {
 
 
 int Companion::rpc(const char *connectionName, const char *targetName) {
+    Bottle resendContent;
+    bool resendFlag = false;
+    int resendCount = 0;
 
     bool firstTimeRound = true;
 
     while (!feof(stdin)) {
-        NameClient& nic = NameClient::getNameClient();
-        Address address = nic.queryName(targetName);
-        if (!address.isValid()) {
-            YARP_ERROR(Logger::get(),"Could not connect to port.");
-            YARP_ERROR(Logger::get(),"If you want to *make* a port, precede port name with --client");
-            return 1;
-        }
-        
-        OutputProtocol *out = Carriers::connect(address);
-        if (out==NULL) {
+        Port port;
+        port.openFake(connectionName);
+        if (!port.addOutput(targetName)) {
             ACE_OS::fprintf(stderr, "Cannot make connection\n");
-            YARP_ERROR(Logger::get(),"If you want to *make* a port, precede port name with --client");
+            YARP_ERROR(Logger::get(),"Alternative method: precede port name with --client");
             return 1;
         }
+        if (adminMode) {
+            port.setAdminMode();
+        }
+
         if (!firstTimeRound) {
             printf("Target disappeared, reconnecting...\n");
         }
         firstTimeRound = false;
-        printf("RPC connection to %s at %s (connection name %s)\n", targetName, 
-               address.toString().c_str(),
-               connectionName);
-        String carrier = address.getCarrierName();
-        Route r(connectionName,targetName,"text_ack");
-        out->open(r);
-        OutputStream& os = out->getOutputStream();
-        InputStream& is = out->getInputStream();
-        StreamConnectionReader reader;
 
-        bool err = false;
-        while (!err&&!feof(stdin)) {
-            String txt = getStdin();
+        if (resendFlag) {
+            if (resendCount==3) {
+                resendFlag = false;
+                resendCount = 0;
+            }
+        }
+
+        while (port.getOutputCount()==1&&!feof(stdin)) {
+            String txt;
+            if (!resendFlag) {
+                txt = getStdin();
+            }
             
             if (!feof(stdin)) {
                 if (txt[0]<32 && txt[0]!='\n' && 
@@ -1795,62 +1798,24 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                     break;  // for example, horrible windows ^D
                 }
                 Bottle bot;
-                bot.fromString(txt.c_str());
-                
-                PortCommand pc(0,adminMode?"a":"d");
-                BufferedConnectionWriter bw(out->isTextMode());
-                bool ok = pc.write(bw);
+                if (!resendFlag) {
+                    bot.fromString(txt.c_str());
+                } else {
+                    bot = resendContent;
+                    resendFlag = false;
+                }
+
+                Bottle reply;
+                bool ok = port.write(bot,reply);
                 if (!ok) {
-                    ACE_OS::fprintf(stderr, "Cannot write on connection\n");
-                    if (out!=NULL) delete out;
-                    return 1;
+                    resendContent = bot;
+                    resendFlag = true;
+                    resendCount++;
+                    break;
                 }
-                ok = bot.write(bw);
-                if (!ok) {
-                    ACE_OS::fprintf(stderr, "Cannot write on connection\n");
-                    if (out!=NULL) delete out;
-                    return 1;
-                }
-                bw.write(os);
-                Bottle resp;
-                TextReader formattedResp;
-                reader.reset(is,NULL,r,0,true);
-                bool done = false;
-                bool first = true;
-                while (!done) {
-                    if (reader.isError()) {
-                        err = true;
-                        done = true;
-                        break;
-                    }
-                    if (reader.isTextMode()) {
-                        formattedResp.read(reader);
-                        resp.fromString(formattedResp.str.c_str());
-                    } else {
-                        resp.read(reader);
-                    }
-                    if (String(resp.get(0).asString())=="<ACK>") {
-                        if (first) {
-                            printf("Acknowledged\n");
-                        }
-                        done = true;
-                    } else {
-                        ConstString txt;
-                        if (reader.isTextMode()) {
-                            txt = formattedResp.str;
-                        } else {
-                            txt = resp.toString().c_str();
-                        }
-                        printf("Response: %s\n", txt.c_str());
-                    }
-                    first = false;
-                }
+                printf("Response: %s\n", reply.toString().c_str());
+                resendCount = 0;
             }
-        }
-        
-        if (out!=NULL) {
-            delete out;
-            out = NULL;
         }
     }
     

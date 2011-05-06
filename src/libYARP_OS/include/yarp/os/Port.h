@@ -59,6 +59,19 @@ public:
     // documentation provided in Contactable
     bool open(const Contact& contact, bool registerName = true);
 
+    /**
+     *
+     * Start port without making it accessible from the network.  
+     * The port is unusable for many purposes, other than sending
+     * out data to specific outputs added with addOutput().
+     *
+     * @param name an arbitrary name that connections from this
+     * port will claim to be from.
+     * @return true on success
+     *
+     */
+    bool openFake(const char *name);
+
     // documentation provided in Contactable
     bool addOutput(const char *name) {
         return addOutput(Contact::byName(name));
@@ -242,6 +255,9 @@ public:
 
 private:
     void *implementation;
+
+    bool open(const Contact& contact, bool registerName,
+              const char *fakeName);
 
 };
 

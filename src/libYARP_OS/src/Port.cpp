@@ -213,6 +213,10 @@ public:
     }
 
     void configWaitAfterSend(bool waitAfterSend) {
+        if (waitAfterSend&&isManual()) {
+            YARP_ERROR(Logger::get(),
+                       "Cannot use background-mode writes on a fake port");
+        }
         recWaitAfterSend = waitAfterSend?1:0;
         setWaitAfterSend(waitAfterSend);
     }
@@ -249,12 +253,20 @@ Port::Port() {
 }
 
 
-bool Port::open(const char *name) {
-    return open(Contact::byName(name));
+bool Port::openFake(const char *name) {
+    return open(Contact(),false,name);
 }
 
+bool Port::open(const char *name) {
+    return open(Contact::fromString(name));
+}
 
 bool Port::open(const Contact& contact, bool registerName) {
+    return open(contact,registerName,NULL);
+}
+
+bool Port::open(const Contact& contact, bool registerName, 
+                const char *fakeName) {
 
     if (!NetworkBase::initialized()) {
         YARP_ERROR(Logger::get(), "YARP not initialized; create a yarp::os::Network object before using ports");
@@ -292,18 +304,20 @@ bool Port::open(const Contact& contact, bool registerName) {
                      contact.getName().c_str());
     Address address = caddress;
 
-
     core.setReadHandler(core);
     NameClient& nic = NameClient::getNameClient();
-    core.setControlRegistration(registerName);
+    if (contact.getPort()>0 && contact.getHost()!="") {
+        registerName = false;
+    }
     if (registerName) {
         address = nic.registerName(contact.getName().c_str(),caddress);
     }
+    core.setControlRegistration(registerName);
     success = address.isValid();
 
     ConstString blame = "invalid address";
     if (success) {
-        success = core.listen(address);
+        success = core.listen(address,registerName);
         blame = "address conflict";
         if (success) {
             success = core.start();
@@ -318,7 +332,14 @@ bool Port::open(const Contact& contact, bool registerName) {
                       " active at " +
                       address.toString());
         }
-    } else {
+    }
+
+    if (fakeName!=NULL) {
+        success = core.manualStart(fakeName);
+        blame = "unmanaged port failed to start";
+    }
+
+    if (!success) {
         YARP_ERROR(Logger::get(),
                    String("Port ") +
                    (address.isValid()?(address.getRegName().c_str()):(contact.getName().c_str())) +
@@ -368,6 +389,10 @@ Contact Port::where() const {
 
 
 bool Port::addOutput(const Contact& contact) {
+    PortCoreAdapter& core = HELPER(implementation);
+    if (!core.isListening()) {
+        return core.addOutput(contact.toString().c_str(),NULL,NULL,true);
+    }
     Contact me = where();
     return NetworkBase::connect(me.getName().c_str(),
                                 contact.toString().c_str());
