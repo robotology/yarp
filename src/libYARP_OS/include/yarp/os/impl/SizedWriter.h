@@ -52,6 +52,8 @@ public:
             os.write(b);
         }
     }
+
+    virtual bool dropRequested() = 0;
 };
 
 #endif

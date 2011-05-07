@@ -32,6 +32,7 @@ private:
     //PortReaderCreator *readCreatorDelegate;
     bool readResult, readActive, readBackground, willReply, closed, opened;
     bool replyDue;
+    bool dropDue;
     bool autoSet;
     SemaphoreImpl produce, consume, readBlock;
     PortReaderCreator *recReadCreator;
@@ -46,6 +47,7 @@ public:
         closed(false),
         opened(false),
         replyDue(false),
+        dropDue(false),
         produce(0), consume(0), readBlock(1),
         recReadCreator(NULL),
         recWaitAfterSend(-1)
@@ -144,6 +146,9 @@ public:
                 result = readResult = writeDelegate->write(*writer);
             }
             stateMutex.post();
+            if (dropDue) {
+                reader.requestDrop();
+            }
             produce.post();
         }
         readBlock.post();
@@ -157,8 +162,9 @@ public:
         // decided not to.
         if (replyDue) {
             Bottle emptyMessage;
-            reply(emptyMessage);
+            reply(emptyMessage,false);
             replyDue = false;
+            dropDue = false;
         }
         if (willReply) {
             replyDue = true;
@@ -182,9 +188,10 @@ public:
         return result;
     }
 
-    bool reply(PortWriter& writer) {
+    bool reply(PortWriter& writer, bool drop) {
 
         replyDue = false;
+        dropDue = drop;
 
         writeDelegate = &writer;
         consume.post();
@@ -452,7 +459,12 @@ bool Port::read(PortReader& reader, bool willReply) {
 
 bool Port::reply(PortWriter& writer) {
     PortCoreAdapter& core = HELPER(implementation);
-    return core.reply(writer);
+    return core.reply(writer,false);
+}
+
+bool Port::replyAndDrop(PortWriter& writer) {
+    PortCoreAdapter& core = HELPER(implementation);
+    return core.reply(writer,true);
 }
 
 /**

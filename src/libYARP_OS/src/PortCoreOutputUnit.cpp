@@ -294,6 +294,7 @@ void PortCoreOutputUnit::sendHelper() {
                 }
             }
         }
+
         if (!done) {
             if (op->isActive()) {
                 op->write(buf);
@@ -301,6 +302,10 @@ void PortCoreOutputUnit::sendHelper() {
             if (!op->isOk()) {
                 done = true;
             }
+        }
+        
+        if (buf.dropRequested()) {
+            done = true;
         }
     }
     if (done) {

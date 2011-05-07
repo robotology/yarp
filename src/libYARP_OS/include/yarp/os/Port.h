@@ -139,6 +139,17 @@ public:
     bool reply(PortWriter& writer);
 
     /**
+     * Same as reply(), but closes connection after reply.
+     * This is useful for interoperation with XML/RPC clients
+     * that do not expect to reuse a connection.
+     *
+     * @param writer any object that knows how to write itself to a
+     * network connection - see for example Bottle
+     * @return true iff the object is successfully written
+     */
+    bool replyAndDrop(PortWriter& writer);
+
+    /**
      * Set an external reader for port data.
      * @param reader the external reader to use
      */

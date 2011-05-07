@@ -848,6 +848,12 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         ACE_OS::fprintf(stderr, "Please supply port name\n");
         return 1;
     }
+    bool drop = false;
+    if (String(argv[0])=="--single") {
+        drop = true;
+        argv++;
+        argc--;
+    }
 
     const char *name = argv[0];
 
@@ -863,7 +869,11 @@ int Companion::cmdRpcServer(int argc, char *argv[]) {
         printf("Reply: ");
         String txt = getStdin();
         response.fromString(txt.c_str());
-        port.reply(response);
+        if (drop) {
+            port.replyAndDrop(response);
+        } else {
+            port.reply(response);
+        }
     }
 }
 
@@ -1509,7 +1519,7 @@ public:
             Contact contact = core.where();
             address = Address::fromContact(contact);
         } else {
-            YARP_ERROR(Logger::get(),"could not create port");
+            //YARP_ERROR(Logger::get(),"Could not create port");
             done.post();
         }
     }

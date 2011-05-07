@@ -153,6 +153,13 @@ public:
      * this error flag will be reset for the next incoming message.
      */
     virtual bool isError() = 0;
+
+    /**
+     *
+     * Tag the connection to be dropped after the current message.
+     *
+     */
+    virtual void requestDrop() = 0;
 };
 
 #endif

@@ -47,6 +47,7 @@ public:
         target = &lst;
         ref = NULL;
         stopPool();
+        shouldDrop = false;
     }
 
     virtual ~BufferedConnectionWriter() {
@@ -289,6 +290,14 @@ public:
         return false;  // output errors are of no significance at user level
     }
 
+   virtual void requestDrop() {
+        shouldDrop = true;
+    }
+
+    bool dropRequested() {
+        return shouldDrop;
+    }
+
 private:
     PlatformVector<yarp::os::ManagedBytes *> lst;
     PlatformVector<yarp::os::ManagedBytes *> header;
@@ -300,6 +309,7 @@ private:
     yarp::os::PortReader *reader;
     bool textMode;
     yarp::os::Portable *ref;
+    bool shouldDrop;
 };
 
 
@@ -483,6 +493,9 @@ public:
         } else {
             return readerStore.write(connection);
         }
+    }
+
+    virtual void requestDrop() {
     }
 
     BufferedConnectionWriter& getMessage() { return readerStore; }

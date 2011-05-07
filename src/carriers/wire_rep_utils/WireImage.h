@@ -132,6 +132,8 @@ public:
     virtual yarp::os::PortReader *getReplyHandler() { return NULL; }
     
     virtual yarp::os::Portable *getReference() { return NULL; }
+
+    virtual bool dropRequested() { return false; }
 };
 
 class WireImage {

@@ -47,6 +47,7 @@ public:
         ref = NULL;
         err = false;
         protocol = NULL;
+        shouldDrop = false;
     }
 
     virtual ~StreamConnectionReader();
@@ -226,6 +227,7 @@ public:
     }
 
     virtual bool isActive() {
+        if (shouldDrop) return false;
         if (!isValid()) return false;
         if (in!=NULL) {
             if (in->isOk()) {
@@ -245,6 +247,14 @@ public:
 
     virtual yarp::os::Bytes readEnvelope();
 
+    virtual void requestDrop() {
+        shouldDrop = true;
+    }
+
+    bool dropRequested() {
+        return shouldDrop;
+    }
+
 private:
 
     bool isGood() {
@@ -260,6 +270,7 @@ private:
     bool textMode;
     bool valid;
     bool err;
+    bool shouldDrop;
     Route route;
     yarp::os::Portable *ref;
 };

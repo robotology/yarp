@@ -141,6 +141,13 @@ public:
      */
     virtual bool isError() = 0;
 
+
+    /**
+     *
+     * Tag the connection to be dropped after the current message.
+     *
+     */
+    virtual void requestDrop() = 0;
 };
 
 #endif

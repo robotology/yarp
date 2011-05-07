@@ -630,7 +630,7 @@ bool NetworkBase::write(const Contact& contact,
     if (out==NULL) {
         if (!style.quiet) {
             YARP_SPRINTF1(Logger::get(),error,
-                          "cannot connect to port %s",
+                          "Cannot connect to port %s",
                           targetName);
         }
         return false;

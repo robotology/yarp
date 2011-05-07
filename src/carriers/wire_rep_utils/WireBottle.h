@@ -50,6 +50,8 @@ public:
     virtual yarp::os::Portable *getReference() {
         return delegate->getReference();
     }
+
+    virtual bool dropRequested() { return false; }
 };
 
 class WireBottle {
