@@ -18,6 +18,7 @@
 #include <yarp/os/Bytes.h>
 
 #include <vector>
+#include <string>
 
 class WireTwiddlerGap {
 public:
@@ -228,6 +229,9 @@ public:
     int readLength();
 
     //virtual void write(OutputStream& os);
+    virtual bool dropRequested() {
+        return false;
+    }
 };
 
 #endif
