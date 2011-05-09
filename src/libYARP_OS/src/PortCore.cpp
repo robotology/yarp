@@ -1241,13 +1241,41 @@ bool PortCore::getEnvelope(PortReader& envelope) {
 
 #define STANZA(name,tag,val) Bottle name; name.addString(tag); name.addString(val.c_str());
 
+
+static bool __pc_rpc(const Contact& c,
+                     const char *carrier,
+                     Bottle& writer,
+                     Bottle& reader,
+                     bool verbose) {
+    ContactStyle style;
+    style.quiet = false;
+    style.timeout = 4;
+    style.carrier = carrier;
+    if (verbose) {
+        printf("  > sending to [%s] %s\n", c.toString().c_str(),
+               writer.toString().c_str());
+    }
+    bool ok = Network::write(c,writer,reader,style);
+    return ok;
+}
+
+
 bool PortCore::adminBlock(ConnectionReader& reader, void *id, 
                           OutputStream *os) {
+    bool needReap = false;
     Bottle cmd, result;
     cmd.read(reader);
 
     StringOutputStream cache;
-    switch (cmd.get(0).asVocab()) {
+    
+    int vocab = cmd.get(0).asVocab();
+
+    // ROS support
+    if (cmd.get(0).asString()=="publisherUpdate") {
+        vocab = VOCAB4('r','p','u','p');
+    }
+
+    switch (vocab) {
     case VOCAB4('h','e','l','p'):
         result.addString("[help] # give this help");
         result.addString("[add] $targetPort # add an output connection");
@@ -1356,6 +1384,113 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                 }
                 stateMutex.post();
             }
+        }
+        break;
+    case VOCAB4('r','p','u','p'):
+        {
+            printf("publisherUpdate! --> %s\n", cmd.toString().c_str());
+            ConstString topic = cmd.get(2).asString();
+            Bottle *pubs = cmd.get(3).asList();
+            if (pubs!=NULL) {
+                Property listed;
+                for (int i=0; i<pubs->size(); i++) {
+                    ConstString pub = pubs->get(i).asString();
+                    printf("Deal with %s\n", pub.c_str());
+                    listed.put(pub,1);
+                }
+                Property present;
+                stateMutex.wait();
+                for (unsigned int i=0; i<units.size(); i++) {
+                    PortCoreUnit *unit = units[i];
+                    if (unit!=NULL) {
+                        if (unit->isPupped()) {
+                            ConstString me = unit->getPupString();
+                            present.put(me,1);
+                            if (!listed.check(me)) {
+                                printf("BYE %s\n", me.c_str());
+                                unit->setDoomed(true);
+                                needReap = true;
+                            }
+                        }
+                    }
+                }
+                for (int i=0; i<pubs->size(); i++) {
+                    ConstString pub = pubs->get(i).asString();
+                    if (!present.check(pub)) {
+                        printf("ADD %s\n", pub.c_str());
+                        /*
+                        Contact c = Contact::fromString(pub);
+                        Address addr = Address::fromContact(c);
+                        // ROS protocol is in opposite direction to YARP
+                        printf("CONTACT is %s\n", c.toString().c_str());
+                        printf("ADDRESS is %s\n", addr.toString().c_str());
+                        */
+
+                        bool verbose = true;
+                        Bottle req, reply;
+                        req.addString("requestTopic");
+                        req.addString("dummy_id");
+                        req.addString(topic);
+                        Bottle& lst = req.addList();
+                        Bottle& sublst = lst.addList();
+                        sublst.addString("TCPROS");
+                        printf("Sending [%s] to %s\n", req.toString().c_str(),
+                               pub.c_str());
+                        Contact c = Contact::fromString(pub.c_str());
+                        __pc_rpc(c,"xmlrpc",req,reply, verbose);
+                        Bottle *pref = reply.get(2).asList();
+                        ConstString hostname = "";
+                        ConstString carrier = "";
+                        int portnum = 0;
+                        if (reply.get(0).asInt()!=1) {
+                            fprintf(stderr,"Failure looking up topic %s: %s\n", topic.c_str(), reply.toString().c_str());
+                        } else if (pref==NULL) {
+                            fprintf(stderr,"Failure looking up topic %s: expected list of protocols\n", topic.c_str());
+                        } else if (pref->get(0).asString()!="TCPROS") {
+                            fprintf(stderr,"Failure looking up topic %s: unsupported protocol %s\n", topic.c_str(),
+                                    pref->get(0).asString().c_str());
+                        } else {
+                            Value hostname2 = pref->get(1);
+                            Value portnum2 = pref->get(2);
+                            hostname = hostname2.asString().c_str();
+                            portnum = portnum2.asInt();
+                            carrier = "tcpros+role.pub+topic.";
+                            carrier += topic;
+                            if (verbose) {
+                                printf("topic %s available at %s:%d\n", topic.c_str(), hostname.c_str(), portnum);
+                            }
+                        }
+                        if (portnum!=0) {
+                            Address addr(hostname.c_str(),portnum);
+                            OutputProtocol *op = NULL;
+                            Route r = Route(getName(),
+                                            pub.c_str(),
+                                            carrier.c_str());
+                            op = Carriers::connect(addr);
+                            if (op==NULL) {
+                                printf("NO CONNECTION\n");
+                                exit(1);
+                            } else {
+                                op->open(r);
+                            }
+                            op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
+                            InputProtocol *ip =  &(op->getInput());
+                            PortCoreUnit *unit = new PortCoreInputUnit(*this,
+                                                                       ip,
+                                                                       true,
+                                                                       true);
+                            YARP_ASSERT(unit!=NULL);
+                            unit->setPupped(true,pub);
+                            unit->start();
+                            units.push_back(unit);
+                        }
+                    }
+                }
+                stateMutex.post();
+            }
+            result.addInt(0);
+            result.addString("ok");
+            reader.requestDrop(); // ROS needs us to close down.
         }
         break;
     default:

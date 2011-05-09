@@ -165,10 +165,30 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
         NameClient& nc = NameClient::getNameClient();
         host = nc.queryName(proto.getRoute().getToName());
     }
+    String rospass = n.getCarrierModifier("ros");
+    if (rospass=="") {
+        interpretRos = true;
+    }
     target += " HTTP/1.1\n";
     http = target;
     Bytes b((char*)target.c_str(),target.length());
     //printf("SENDING HEADER [%s]\n", target.c_str());
     proto.os().write(b);
+    return true;
+}
+
+
+bool XmlRpcCarrier::respondToHeader(Protocol& proto) {
+    Name n(proto.getRoute().getCarrierName() + "://test");
+    String rospass = n.getCarrierModifier("ros");
+    if (rospass=="") {
+        interpretRos = true;
+    }
+    sender = false;
+    XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),
+                                            sender,
+                                            interpretRos);
+    if (stream==NULL) { return false; }
+    proto.takeStreams(stream);
     return true;
 }

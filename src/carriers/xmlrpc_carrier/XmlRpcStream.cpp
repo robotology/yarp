@@ -120,11 +120,19 @@ int XmlRpcStream::read(const Bytes& b) {
                 //printf("got a block!\n");
                 XmlRpcValue xresult;
                 std::string prefix = "";
+                std::string cprefix = "";
                 if (sender) {
                     client.parseResponse(xresult);
                 } else {
-                    prefix = "d\n";
-                    prefix += server.parseRequest(xresult);
+                    cprefix = server.parseRequest(xresult);
+                    bool isAdmin = false;
+                    if (interpretRos) {
+                        if (cprefix=="publisherUpdate") {
+                            isAdmin = true;
+                        }
+                    }
+                    prefix = isAdmin?"a\n":"d\n";
+                    prefix += cprefix;
                     prefix += " ";
                 }
                 //printf("xmlrpc block is %s\n", xresult.toXml().c_str());

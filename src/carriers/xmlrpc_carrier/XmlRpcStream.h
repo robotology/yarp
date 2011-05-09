@@ -38,10 +38,13 @@ private:
     StringOutputStream sos;
     bool sender;
     bool firstRound;
+    bool interpretRos;
 public:
-    XmlRpcStream(TwoWayStream *delegate, bool sender) : client("notset",0), 
-                                                        server(0,0/*NULL*/),
-                                                        sender(sender) {
+    XmlRpcStream(TwoWayStream *delegate, bool sender, bool interpretRos) : 
+        client("notset",0), 
+        server(0,0/*NULL*/),
+        sender(sender),
+        interpretRos(interpretRos) {
         this->delegate = delegate;
         client.reset();
         server.reset();

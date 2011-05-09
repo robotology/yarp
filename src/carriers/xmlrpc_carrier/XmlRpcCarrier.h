@@ -51,10 +51,12 @@ private:
     bool sender;
     Address host;
     String http;
+    bool interpretRos;
 public:
     XmlRpcCarrier() {
         firstRound = true;
         sender = false;
+        interpretRos = false;
     }
 
     virtual Carrier *create() {
@@ -142,17 +144,12 @@ public:
         return true;
     }
 
-    bool respondToHeader(Protocol& proto) {
-        sender = false;
-        XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender);
-        if (stream==NULL) { return false; }
-        proto.takeStreams(stream);
-        return true;
-    }
+    bool respondToHeader(Protocol& proto);
 
     virtual bool expectReplyToHeader(Protocol& proto) {
         sender = true;
-        XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender);
+        XmlRpcStream *stream = new XmlRpcStream(proto.giveStreams(),sender,
+                                                interpretRos);
         if (stream==NULL) { return false; }
         proto.takeStreams(stream);
         return true;

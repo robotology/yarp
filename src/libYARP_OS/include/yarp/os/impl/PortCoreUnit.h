@@ -33,6 +33,7 @@ public:
     PortCoreUnit(PortCore& owner) : owner(owner) {
         doomed = false;
         hasMode = false;
+        pupped = false;
     }
 
     virtual ~PortCoreUnit() {
@@ -93,6 +94,19 @@ public:
         return (this->hasMode)?mode:"";
     }
 
+    bool isPupped() const {
+        return pupped;
+    }
+
+    yarp::os::ConstString getPupString() const {
+        return pupString;
+    }
+
+    void setPupped(bool flag, const yarp::os::ConstString& pupString) {
+        pupped = flag;
+        this->pupString = pupString;
+    }
+
 protected:
     PortCore& getOwner() { return owner; }
 
@@ -101,6 +115,8 @@ private:
     bool doomed;
     String mode;
     bool hasMode;
+    bool pupped;
+    yarp::os::ConstString pupString;
 };
 
 #endif
