@@ -177,6 +177,29 @@ public:
     }
 };
 
+class WriteReader : public Thread {
+public:
+    Port p;
+    bool done;
+
+    WriteReader() {
+        done = false;
+        p.open("/write");
+    }
+
+    void finish() {
+        done = true;
+        stop();
+    }
+
+    virtual void run() {
+        while (!done) {
+            Bottle msg("1 \"end of terminal\"");
+            p.write(msg);
+            Time::delay(0.25);
+        }
+    }
+};
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 
@@ -940,6 +963,17 @@ public:
         checkFalse(ok,"send failed correctly");
     }
 
+    // regression test for bug reported by Andrea Del Prete and Ugo Pattacini
+    virtual void testYarpRead() {
+        report(0,"check yarp ... /write works ...");
+        WriteReader writer;
+        writer.start();
+        int argc = 2;
+        const char *argv[] = {"...","/write"};
+        Companion::getInstance().cmdRead(argc,(char**)argv);
+        writer.finish();
+    }
+
     virtual void runTests() {
         NameClient& nic = NameClient::getNameClient();
         nic.setFakeMode(true);
@@ -973,6 +1007,8 @@ public:
 
         testTimeout();
         testReports();
+
+        testYarpRead();
 
         nic.setFakeMode(false);
     }

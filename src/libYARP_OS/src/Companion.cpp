@@ -1674,8 +1674,8 @@ int Companion::read(const char *name, const char *src, bool showEnvelope) {
     companion_install_handler();
     BottleReader reader(name,showEnvelope);
     if (src!=NULL) {
-        //NetworkBase::connect(src,reader.getName().c_str());
-        reader.core.addOutput(reader.getName().c_str());
+        NetworkBase::connect(src,reader.getName().c_str());
+        //reader.core.addOutput(reader.getName().c_str());
     }
     reader.wait();
     reader.close();
