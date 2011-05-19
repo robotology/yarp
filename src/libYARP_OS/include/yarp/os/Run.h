@@ -155,13 +155,10 @@ public:
 
     static int main(int argc, char *argv[]);
 	static Port *pServerPort;
-	static YarpRunInfoVector m_ProcessVector;
-    static YarpRunInfoVector m_StdioVector;
+	static YarpRunInfoVector mProcessVector;
+    static YarpRunInfoVector mStdioVector;
 
-#if defined(WIN32) || defined(WIN64)
-	//static HANDLE hZombieHunter;
-	//static HANDLE *aHandlesVector;
-#else
+#if !defined(WIN32) && !defined(WIN64)
     static void CleanZombies();   
 #endif
 
@@ -171,13 +168,14 @@ protected:
 	static Bottle SendMsg(Bottle& msg,ConstString target);
 	static Bottle ExecuteCmdAndStdio(Bottle& msg);
 	static Bottle ExecuteCmd(Bottle& msg);
-	static Bottle UserStdio(Bottle& msg);
+    static int UserStdio(Bottle& msg,Bottle& result,yarp::os::ConstString& stdioUUID);
 
 	static inline bool IS_PARENT_OF(int pid){ return pid>0; }
 	static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
 	static inline bool IS_INVALID(int pid){ return pid<0; }
 
-	static ConstString m_PortName;
+	static ConstString mPortName;
+    static int mProcCNT;
 
 #endif /*DOXYGEN_SHOULD_SKIP_THIS*/
 };
