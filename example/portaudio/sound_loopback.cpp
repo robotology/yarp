@@ -7,15 +7,25 @@
 #include <stdio.h>
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/AudioGrabberInterfaces.h>
+#include <yarp/os/Property.h>
  
+#include <yarp/os/Network.h>
+#include <yarp/os/Port.h>
+
+
 using namespace yarp::os;
 using namespace yarp::sig;
 using namespace yarp::dev;
   
 int main(int argc, char *argv[]) {
 
+    // Open the network
+    Network yarp;
+
     // Get an audio device.
-    PolyDriver poly("portaudio");
+    Property conf;
+    conf.put("device","portaudio");
+    PolyDriver poly(conf);
     IAudioGrabberSound *get;
     IAudioRender *put;
 

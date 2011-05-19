@@ -27,8 +27,8 @@ int main(int argc, char *argv[]) {
     Property conf;
     conf.put("device","portaudio");
     conf.put("read", "");
-    conf.put("samples", 4096);
-    conf.put("rate", 16000);
+    //conf.put("samples", 4096);
+    //conf.put("rate", 16000);
     PolyDriver poly(conf);
     IAudioGrabberSound *get;
 
