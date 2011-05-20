@@ -34,6 +34,7 @@
 #define CAN_GET_DEBUG_PARAM_4		17
 */
 
+//const int debug_base = 10;
 const int debug_base = 0;
 
 //*********************************************************************************
