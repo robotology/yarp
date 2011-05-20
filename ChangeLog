@@ -1,3 +1,8 @@
+2011-05-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: patch from Stephane to implement
+	ImageOfPixelRgbFloat [thanks Stephane Lallee]
+
 2011-05-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/harness/PortTest.cpp: fix broken "yarp read ... /test"
