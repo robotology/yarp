@@ -236,7 +236,9 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
                                  Address("127.0.0.1",10000,"tcp"));
     } else {
         Contact server = NetworkBase::getNameServerContact();
-        return NetworkBase::write(server,cmd,reply);
+        ContactStyle style;
+        style.carrier = "name_ser";
+        return NetworkBase::write(server,cmd,reply,style);
     }
 }
 

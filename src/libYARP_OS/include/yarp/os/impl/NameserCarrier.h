@@ -162,7 +162,7 @@ public:
     }
 
     virtual bool supportReply() {
-        return false;
+        return true;
     }
 
     virtual bool canEscape() {
@@ -180,15 +180,6 @@ public:
     bool expectSenderSpecifier(Protocol& proto) {
         proto.setRoute(proto.getRoute().addFromName("anon"));
         return true;
-    }
-
-    bool sendIndex(Protocol& proto) {
-        String target = firstSend?"VER ":"NAME_SERVER ";
-        Bytes b((char*)target.c_str(),target.length());
-        proto.os().write(b);
-        proto.os().flush();
-        firstSend = false;
-        return proto.os().isOk();
     }
 
     bool expectIndex(Protocol& proto) {
@@ -213,10 +204,28 @@ public:
 
     virtual bool expectReplyToHeader(Protocol& proto) {
         // I am the sender
-        //NameserTwoWayStream *stream = 
-        //  new NameserTwoWayStream(proto.giveStreams(),true);
-        //proto.takeStreams(stream);
         return true;
+    }
+
+    virtual bool write(Protocol& proto, SizedWriter& writer) {
+        String target = firstSend?"VER ":"NAME_SERVER ";
+        Bytes b((char*)target.c_str(),target.length());
+        proto.os().write(b);
+        String txt;
+        // ancient nameserver can't deal with quotes
+        for (int i=0; i<writer.length(); i++) {
+            for (int j=0; j<writer.length(i); j++) {
+                char ch = writer.data(i)[j];
+                if (ch!='\"') {
+                    txt += ch;
+                }
+            }
+        }
+        Bytes b2((char*)txt.c_str(),txt.length());
+        proto.os().write(b2);
+        proto.os().flush();
+        firstSend = false;
+        return proto.os().isOk();
     }
 };
 

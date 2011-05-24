@@ -645,7 +645,10 @@ bool NetworkBase::write(const Contact& contact,
 
     PortCommand pc(0,style.admin?"a":"d");
     BufferedConnectionWriter bw(out->isTextMode());
-    bool ok = pc.write(bw);
+    bool ok = true;
+    if (out->canEscape()) {
+        ok = pc.write(bw);
+    }
     if (!ok) {
         if (!style.quiet) {
             YARP_ERROR(Logger::get(),"could not write to connection");

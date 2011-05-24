@@ -1,3 +1,11 @@
+2011-05-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/NameserCarrier.h:
+	strip quotation marks in content sent using classic
+	"name_ser" protocol.  There are YARP name servers still
+	in service that don't understand quotation marks.
+	[thanks Valerio Sperati]
+
 2011-05-19 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/Run.cpp
 	* src/libYARP_OS/include/yarp/os/Run.h
