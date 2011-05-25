@@ -1841,7 +1841,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 					)
 				);
 				
-	            yarp::os::impl::String out;
+	            yarp::os::ConstString out;
 	            Bottle result;
 	            
 	            FILE* in_from_child=fdopen(pipe_child_to_parent[READ_FROM_PIPE],"r");
@@ -1862,9 +1862,12 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            else
 	            {	                
 	                result.addInt(pid_cmd);
+
 	                out=yarp::os::ConstString("STARTED: server=")+mPortName
-	                   +" alias="+strAlias.c_str()+" cmd="+strCmd.c_str()+" pid="
-	                   +int2String(pid_cmd)+"\n";
+                       +yarp::os::ConstString(" alias=")+strAlias
+                       +yarp::os::ConstString(" cmd=")+strCmd
+                       +yarp::os::ConstString(" pid=")+int2String(pid_cmd)
+                       +yarp::os::ConstString("\n");
 	            }
 	            
 	            result.addString(out.c_str());
@@ -1976,7 +1979,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 		mStdioVector.Add(new YarpRunProcInfo(strAlias,mPortName,pid_cmd,NULL,msg.check("hold")));
 	    
 	    result.clear();
-	    yarp::os::impl::String out;
+	    yarp::os::ConstString out;
 	    
 	    //yarp::os::Time::delay(0.5);
 	    
