@@ -30,9 +30,9 @@ class yarp::os::impl::PortCoreInputUnit : public PortCoreUnit {
 public:
     // specifically for managing input connections
 
-    PortCoreInputUnit(PortCore& owner, InputProtocol *ip, 
+    PortCoreInputUnit(PortCore& owner, int index, InputProtocol *ip, 
                       bool autoHandshake, bool reversed) : 
-        PortCoreUnit(owner), ip(ip), phase(1), access(1),
+        PortCoreUnit(owner,index), ip(ip), phase(1), access(1),
         autoHandshake(autoHandshake), reversed(reversed) {
 
         YARP_ASSERT(ip!=NULL);

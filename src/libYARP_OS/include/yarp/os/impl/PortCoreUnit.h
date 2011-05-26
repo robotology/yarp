@@ -30,7 +30,7 @@ namespace yarp {
 
 class yarp::os::impl::PortCoreUnit : public ThreadImpl {
 public:
-    PortCoreUnit(PortCore& owner) : owner(owner) {
+    PortCoreUnit(PortCore& owner, int index) : owner(owner), index(index) {
         doomed = false;
         hasMode = false;
         pupped = false;
@@ -86,6 +86,10 @@ public:
         Name name(getRoute().getCarrierName() + String("://test"));
         mode = name.getCarrierModifier("log",&hasMode);
     }
+    
+    int getIndex() {
+        return index;
+    }
 
     String getMode(bool *hasMode = NULL) {
         if (hasMode!=NULL) {
@@ -116,6 +120,7 @@ private:
     String mode;
     bool hasMode;
     bool pupped;
+    int index;
     yarp::os::ConstString pupString;
 };
 

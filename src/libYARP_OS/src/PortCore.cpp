@@ -549,7 +549,9 @@ void PortCore::cleanUnits() {
 void PortCore::addInput(InputProtocol *ip) {
     YARP_ASSERT(ip!=NULL);
     stateMutex.wait();
-    PortCoreUnit *unit = new PortCoreInputUnit(*this,ip,autoHandshake,false);
+    PortCoreUnit *unit = new PortCoreInputUnit(*this,
+                                               getNextIndex(),
+                                               ip,autoHandshake,false);
     YARP_ASSERT(unit!=NULL);
     unit->start();
   
@@ -564,7 +566,7 @@ void PortCore::addOutput(OutputProtocol *op) {
 
     stateMutex.wait();
     if (!finished) {
-        PortCoreUnit *unit = new PortCoreOutputUnit(*this,op);
+        PortCoreUnit *unit = new PortCoreOutputUnit(*this,getNextIndex(),op);
         YARP_ASSERT(unit!=NULL);
     
         unit->start();
@@ -576,7 +578,7 @@ void PortCore::addOutput(OutputProtocol *op) {
 }
 
 
-bool PortCore::isUnit(const Route& route) {
+bool PortCore::isUnit(const Route& route, int index) {
     // not mutexed
     bool needReap = false;
     if (!finished) {
@@ -586,14 +588,19 @@ bool PortCore::isUnit(const Route& route) {
                 Route alt = unit->getRoute();
                 String wild = "*";
                 bool ok = true;
-                if (route.getFromName()!=wild) {
-                    ok = ok && (route.getFromName()==alt.getFromName());
+                if (index>=0) {
+                    ok = ok && (unit->getIndex()==index);
                 }
-                if (route.getToName()!=wild) {
-                    ok = ok && (route.getToName()==alt.getToName());
-                }
-                if (route.getCarrierName()!=wild) {
-                    ok = ok && (route.getCarrierName()==alt.getCarrierName());
+                if (ok) {
+                    if (route.getFromName()!=wild) {
+                        ok = ok && (route.getFromName()==alt.getFromName());
+                    }
+                    if (route.getToName()!=wild) {
+                        ok = ok && (route.getToName()==alt.getToName());
+                    }
+                    if (route.getCarrierName()!=wild) {
+                        ok = ok && (route.getCarrierName()==alt.getCarrierName());
+                    }
                 }
 	
                 if (ok) {
@@ -619,6 +626,8 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
     } else {
         YARP_DEBUG(log,String("asked to remove connection ") + route.toString());
     }
+
+    PlatformVector<int> removals;
 
     // how about waking up the manager to do this?
     stateMutex.wait();
@@ -650,6 +659,7 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
                 if (ok) {
                     YARP_DEBUG(log, 
                                String("removing connection ") + alt.toString());
+                    removals.push_back(unit->getIndex());
 					unit->setDoomed();
                     needReap = true;
                     if (route.getToName()!="*") {
@@ -681,7 +691,11 @@ bool PortCore::removeUnit(const Route& route, bool synch, bool *except) {
             bool cont = false;
             do {
                 stateMutex.wait();
-                cont = isUnit(route);
+                //cont = isUnit(route);
+                for (int i=0; i<(int)removals.size(); i++) {
+                    cont = isUnit(route,removals[i]);
+                    if (cont) break;
+                }
                 if (cont) {
                     connectionListeners++;
                 }
@@ -789,7 +803,9 @@ bool PortCore::addOutput(const String& dest, void *id, OutputStream *os,
                     InputProtocol *ip =  &(op->getInput());
                     stateMutex.wait();
                     if (!finished) {
-                        PortCoreUnit *unit = new PortCoreInputUnit(*this,ip,
+                        PortCoreUnit *unit = new PortCoreInputUnit(*this,
+                                                                   getNextIndex(),
+                                                                   ip,
                                                                    true,
                                                                    true);
                         YARP_ASSERT(unit!=NULL);
@@ -1476,6 +1492,8 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             op->rename(Route().addFromName(r.getToName()).addToName(r.getFromName()).addCarrierName(r.getCarrierName()));
                             InputProtocol *ip =  &(op->getInput());
                             PortCoreUnit *unit = new PortCoreInputUnit(*this,
+                                                                       getNextIndex(),
+                                                                       
                                                                        ip,
                                                                        true,
                                                                        true);

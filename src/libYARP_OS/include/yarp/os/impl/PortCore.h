@@ -91,6 +91,7 @@ public:
         flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
         timeout = -1;
         verbosity = 1;
+        counter = 1;
     }
 
     /**
@@ -359,6 +360,12 @@ private:
     bool removeUnit(const Route& route, bool synch = false, 
                     bool *except = NULL);
 
+    int getNextIndex() {
+        int result = counter;
+        counter++;
+        if (counter<0) counter = 1;
+        return result;
+    }
 
 private:
 
@@ -386,10 +393,11 @@ private:
     PortCorePackets packets;
     String envelope;
     float timeout;
+    int counter;
 
     void closeMain();
 
-    bool isUnit(const Route& route);
+    bool isUnit(const Route& route, int index);
 };
 
 #endif
