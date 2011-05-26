@@ -1761,6 +1761,7 @@ public:
         return false;
     }
 
+	//DEPRECATED
 	bool getImpedance(int j, double *stiffness, double *damping, double *offset)
     { 
         Bottle cmd, response;
@@ -1776,6 +1777,25 @@ public:
             *stiffness = l.get(0).asDouble();
             *damping   = l.get(1).asDouble();
             *offset    = l.get(2).asDouble();
+            return true;
+        }
+        return false;
+    }
+
+	bool getImpedance(int j, double *stiffness, double *damping)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_IMP_PARAM);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            *stiffness = l.get(0).asDouble();
+            *damping   = l.get(1).asDouble();
             return true;
         }
         return false;
@@ -1799,6 +1819,7 @@ public:
         return false;
     }
 
+	//DEPRECATED
 	bool setImpedance(int j, double stiffness, double damping, double offset)
     { 
         Bottle cmd, response;
@@ -1810,7 +1831,22 @@ public:
         Bottle& b = cmd.addList();
         b.addDouble(stiffness);
         b.addDouble(damping);
-        b.addDouble(offset);
+
+        bool ok = rpc_p.write(cmd, response);
+        return CHECK_FAIL(ok, response);
+    }
+
+	bool setImpedance(int j, double stiffness, double damping)
+    { 
+        Bottle cmd, response;
+        cmd.addVocab(VOCAB_SET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_IMP_PARAM);
+        cmd.addInt(j);
+
+        Bottle& b = cmd.addList();
+        b.addDouble(stiffness);
+        b.addDouble(damping);
 
         bool ok = rpc_p.write(cmd, response);
         return CHECK_FAIL(ok, response);

@@ -1161,12 +1161,12 @@ public:
 	/** Get current impedance parameters (stiffness,damping,offset) for a specific joint.
      * @return success/failure
      */
-	virtual bool getImpedanceRaw(int j, double *stiffness, double *damping, double *offset)=0;
+	virtual bool getImpedanceRaw(int j, double *stiffness, double *damping)=0;
 
-	/** Set current impedance parameters (stiffness,damping,offset) for a specific joint.
+	/** Set current impedance parameters (stiffness,damping) for a specific joint.
      * @return success/failure
      */
-	virtual bool setImpedanceRaw(int j, double stiffness, double damping, double offset)=0;
+	virtual bool setImpedanceRaw(int j, double stiffness, double damping)=0;
 
 	/** Set current force Offset for a specific joint.
     * @return success/failure
@@ -1945,22 +1945,30 @@ public:
      */
     virtual ~IImpedanceControl() {}
 
-    /**
+      /**
      * Get the number of controlled axes. This command asks the number of controlled
      * axes for the current physical interface.
      * @return the number of controlled axes.
      */
     virtual bool getAxes(int *ax) = 0;
 
-	/** Get current impedance gains (stiffness,damping,offset) for a specific joint.
-     * @return success/failure
+	/** DEPRECATED. Use getImpedance(int j, double *stiffness, double *damping) instead.
      */
 	virtual bool getImpedance(int j, double *stiffness, double *damping, double *offset)=0;
 
-	/** Set current impedance gains (stiffness,damping,offset) for a specific joint.
+	/** Get current impedance gains (stiffness,damping,offset) for a specific joint.
      * @return success/failure
      */
+	virtual bool getImpedance(int j, double *stiffness, double *damping)=0;
+
+	/** DEPRECATED. Use setImpedance(int j, double stiffness, double damping) instead.
+    */
 	virtual bool setImpedance(int j, double stiffness, double damping, double offset)=0;
+
+	/** Set current impedance gains (stiffness,damping) for a specific joint.
+     * @return success/failure
+     */
+	virtual bool setImpedance(int j, double stiffness, double damping)=0;
 
 	/** Set current force Offset for a specific joint.
     * @return success/failure

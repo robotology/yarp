@@ -1,3 +1,16 @@
+2011-05-26  Marco Randazzo    <marco.randazzo@iit.it>
+	
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
+	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfacesImpl.h
+	* src/libYARP_dev/src/ControlBoardInterfacesImpl.cpp
+	* src/libYARP_dev/src/RemoteControlBoard.cpp
+	The following methods of yarp::dev::IImpedanceControl have been deprecated:
+	bool getImpedance(int j, double *stiffness, double *damping, double *offset)
+	bool setImpedance(int j, double stiffness,  double damping,  double offset)
+	Instead, use the new methods:
+	bool getImpedance(int j, double *stiffness, double *damping)
+	bool setImpedance(int j, double stiffness,  double damping)
+	
 2011-05-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/PortCore.cpp: fix race condition
