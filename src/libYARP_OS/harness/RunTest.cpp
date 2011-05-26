@@ -81,12 +81,12 @@ public:
         report(0,"checking yarprun");
 
 		const int argc=3;
-		char *argv[argc];
+		const char *argv[argc];
 		argv[0]="dummy-name";
 		argv[1]="--server";
 		argv[2]="/run";
 
-     	runner.start(argc, argv);
+     	runner.start(argc, (char**)argv);
 
 		Time::delay(3);
 		Property par;
