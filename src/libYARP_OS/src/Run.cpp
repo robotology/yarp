@@ -2085,7 +2085,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
         int error=errno;
         
         yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+mPortName
-                                 +yarp::os::ConstString(" alias=")+alias
+                                 +yarp::os::ConstString(" alias=")+strAlias
                                  +yarp::os::ConstString(" cmd=stdio\nCan't create pipe ")+strerror(error)
                                  +yarp::os::ConstString("\n");
         
@@ -2105,8 +2105,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 	    int error=errno;
 	    	     	
 	    yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+mPortName
-                                 +yarp::os::ConstString(" alias=")+alias
-                                 +yarp::os::ConstString(" cmd=")+commandString
+                                 +yarp::os::ConstString(" alias=")+strAlias
+                                 +yarp::os::ConstString(" cmd=")+strCmd
                                  +yarp::os::ConstString("\nCan't fork command process because ")+strerror(error)
                                  +yarp::os::ConstString("\n");
 	            
@@ -2165,7 +2165,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 	        int error=errno;
             yarp::os::ConstString out=yarp::os::ConstString("ABORTED: server=")+mPortName
                                      +yarp::os::ConstString(" alias=")+strAlias
-                                     +yarp::os::ConstString(" cmd=")+cmdStr
+                                     +yarp::os::ConstString(" cmd=")+strCmd
                                      +yarp::os::ConstString("\nCan't execute command because ")+strerror(error)
                                      +yarp::os::ConstString("\n");
 	     
@@ -2213,7 +2213,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 	        result.addInt(pid_cmd);
 	        out=yarp::os::ConstString("STARTED: server=")+mPortName
                +yarp::os::ConstString(" alias=")+strAlias
-               +yarp::os::ConstString(" cmd=")+cmdStr
+               +yarp::os::ConstString(" cmd=")+strCmd
                +yarp::os::ConstString(" pid=")+int2String(pid_cmd)
                +yarp::os::ConstString("\n");
 
