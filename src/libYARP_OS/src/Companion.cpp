@@ -1588,14 +1588,20 @@ int Companion::cmdReadWrite(int argc, char *argv[])
         return 1;
     }
 
+    companion_install_handler();
+
 	const char *read_port_name=argv[0];
 	const char *write_port_name=argv[1];
-
-    companion_install_handler();
-    BottleReader reader(read_port_name,false);
-    
     const char *verbatim[] = { "verbatim", NULL };
+
+    BottleReader reader(read_port_name,false);
+
 	int ret = write(write_port_name,1,(char**)&verbatim);
+    
+    #if !defined(WIN32) && !defined(WIN64)
+    while (getppid()!=1) yarp::os::Time::delay(1.0);
+    raise(SIGINT);
+    #endif
 
     reader.wait();
     reader.close();
