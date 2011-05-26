@@ -78,7 +78,7 @@ void guiPid2::change_page (GtkNotebook *notebook, GtkWidget   *page,  guint page
 	if (iTrq)
 		iTrq->getTorquePid(*joint, &myTrqPid);
 	if (iImp)
-		iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
+		iImp->getImpedance(*joint, &stiff_val, &damp_val);
 */
 }
 
@@ -164,8 +164,10 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   double stiff_val=atof(gtk_entry_get_text((GtkEntry*) imp_stiffDes));
   double damp_val=atof(gtk_entry_get_text((GtkEntry*) imp_dampDes));
   double offset_val=atof(gtk_entry_get_text((GtkEntry*) imp_offDes));
-  iImp->setImpedance(*joint,  stiff_val,  damp_val,  offset_val);
-  iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
+  iImp->setImpedance(*joint,  stiff_val,  damp_val);
+  //iImp->setImpedanceOffset(*joint, &offset_val); //DANGEROUS,DO NOT USE! WRONG USER VALUES MAY BREAK THE ROBOT!
+  iImp->getImpedance(*joint, &stiff_val, &damp_val);
+  iImp->getImpedanceOffset(*joint, &offset_val);
 
   sprintf(buffer, "%3.3f", stiff_val);
   gtk_entry_set_text((GtkEntry*) imp_stiffEntry,  buffer);
@@ -342,7 +344,8 @@ void guiPid2::guiPid2(void *button, void* data)
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
-  iImp->getImpedance(*joint, &stiff_val, &damp_val, &offset_val);
+  iImp->getImpedance(*joint, &stiff_val, &damp_val);
+  iImp->getImpedanceOffset(*joint, &offset_val);
   if (iDbg != 0)
   {
 	iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
