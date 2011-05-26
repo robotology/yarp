@@ -174,6 +174,7 @@ protected:
 	static inline bool IS_NEW_PROCESS(int pid){ return !pid; }
 	static inline bool IS_INVALID(int pid){ return pid<0; }
 
+    static yarp::os::Semaphore serializer;
 	static ConstString mPortName;
     static int mProcCNT;
 

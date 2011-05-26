@@ -570,6 +570,7 @@ YarpRunInfoVector yarp::os::Run::mStdioVector;
 yarp::os::ConstString yarp::os::Run::mPortName;
 yarp::os::Port* yarp::os::Run::pServerPort=0;
 int yarp::os::Run::mProcCNT=0;
+yarp::os::Semaphore yarp::os::Run::serializer(1);
 
 int yarp::os::Run::main(int argc, char *argv[]) 
 {
@@ -754,7 +755,10 @@ int yarp::os::Run::Server()
 			{
 			    Bottle botStdioResult;
                 yarp::os::ConstString strStdioUUID;
+                
+                serializer.wait();
                 int pidStdio=UserStdio(msg,botStdioResult,strStdioUUID);
+                serializer.post();
 
                 Bottle botStdioUUID;
                 botStdioUUID.addString("stdiouuid");
@@ -767,7 +771,9 @@ int yarp::os::Run::Server()
 				    if (mPortName==strOnPort)
 				    {
                         // execute command here
+                        serializer.wait();
 					    cmdResult=ExecuteCmdAndStdio(msg);
+					    serializer.post();
 				    }
 				    else
 				    {
@@ -786,7 +792,10 @@ int yarp::os::Run::Server()
 			}
 			else if (mPortName==yarp::os::ConstString(strOnPort)) // cmd
 			{
+			    serializer.wait();
 				Bottle cmdResult=ExecuteCmdAndStdio(msg);
+				serializer.post();
+				
                 port.reply(cmdResult);
 			}
 			else // some error (should never happen)
@@ -800,8 +809,11 @@ int yarp::os::Run::Server()
 
 		// without stdio
 		if (msg.check("cmd"))
-		{			
+		{
+		    serializer.wait();			
             Bottle cmdResult=ExecuteCmd(msg);
+            serializer.post();
+            
             port.reply(cmdResult);
 			continue;
 		}
