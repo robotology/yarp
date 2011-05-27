@@ -1,3 +1,7 @@
+# Copyright: (C) 2011 RobotCub Consortium
+# Author: Paul Fitzpatrick
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 Steps for generating binary packages.
 
 For personal work, it suffices just to do "make package" in YARP.

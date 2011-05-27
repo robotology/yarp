@@ -43,6 +43,11 @@ if ($txt=~/academic free/i || $quiet) {
     }
 }
 
+if ($txt=~/GNU Lesser General Public license/) {
+    if ($txt=~/we personally strongly object/) {
+	$policy = "LGPL; non-binding note discouraging certain uses";
+    }
+}
 
 if ($txt =~ /license/i || $txt =~ /copyright/i) {
 }
@@ -89,6 +94,7 @@ if ($copyright =~ /RobotCub/i) {
 
 $copyright =~ s/\s+$//g;
 $copyright =~ s/^\s+//g;
+$copyright =~ s/©/\(C\)/g;
 $copyright =~ s/\xa9/\(C\)/g;
 $policy =~ s/\s+$//g;
 $policy =~ s/^\s+//g;

@@ -50,7 +50,7 @@ grep -i -o "\[thanks [^]]*\]" ChangeLog | sed "s/^.thanks //i" | sed "s/\]//" > 
 
 cat<<EOF
 Unless otherwise stated, files in YARP are:
-  Copyright: 2010 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
+  Copyright: 2011 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 The list of authors for YARP (ordered by file count) is:
@@ -78,6 +78,9 @@ cat<<EOF
 Certain files are integrated in YARP from other sources with
 friendly licenses.  Here is a list of these files and a summary of
 their copyright.  See the individual files for more details.
+All files used in the default YARP build are compatible with the 
+LGPL.  Optional modules may require use of YARP under the GPL, 
+rather than the LGPL.
 
 EOF
 

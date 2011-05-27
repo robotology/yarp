@@ -1,5 +1,5 @@
 Unless otherwise stated, files in YARP are:
-  Copyright: 2010 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
+  Copyright: 2011 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 The list of authors for YARP (ordered by file count) is:
@@ -8,10 +8,11 @@ The list of authors for YARP (ordered by file count) is:
   Giorgio Metta
   Giacomo Spigler
   Alessandro Scalzo
+  Anne van Rossum
+  Daniel Krieg
   Alexandre Bernardino
   Arjan Gijsberts
   Renaud Detry
-  Daniel Krieg
   Julio Gomes
   Ze Ji
   Mattia Castelnovi
@@ -27,41 +28,48 @@ The list of authors for YARP (ordered by file count) is:
   Gianluca Massera
   Freyr Magnusson
   Eric Mislivec
+  Paul Fitzpatick
   Hatice Kose-Bagci
   Claudio Castellini
 
 The list of people thanked in the ChangeLog (ordered by mention count) is:
+  Lorenzo Natale
   Philipp Robbel
   Ugo Pattacini
   Stephane Lallee
   Jonas Ruesch
   Gianluca Massera
   Anne van Rossum
-  Lorenzo Natale
-  Arnaud Degroote
+  Daniel Krieg
   Arjan Gijsberts
+  Giorgio Metta
+  Arnaud Degroote
   Ze Ji
   Stefan Freyr Stefansson
   Severin Lemaignan
+  Juan G Victores
+  Giovanni Saponaro
   Frank Forster
   David Vernon
-  Daniel Krieg
   Assif Mirza
   Alexis Maldonado
+  Alessandro Scalzo
   Alejandro R. Mosteo
   Vadim Tikhanoff
   Tomassino Ferrauto
+  Martin Peniak
   Marco Barbosa
   Lorenz Mosenlechner
   Lars Schillingmann
-  Juan G Victores
-  Giovanni Saponaro
   Christian Wressnegger
   Breno Carneiro Pinheiro
   Baris Akgun
   Andrew Stout
+  Andrea Del Prete
   Alexandre Bernardino
   Yianding
+  Varun Kompella
+  Valerio Sperati
   Sergey Skachek
   Sebastien Gay
   Sebastian Wrede
@@ -73,7 +81,6 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Leo Pape
   Kyron Du Casse
   Jan Woetzel
-  Giorgio Metta
   Gilberto Echeverria
   Giacomo Spigler
   Freyr Magnusson
@@ -89,18 +96,18 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Anthony Truchet
   Andrew Dankers
   Andreu Corominas Murtra
-  Alessandro Scalzo
 
 The list of copyright holders for YARP is:
-  Copyright 2003 2005 2006 2007 2008 2009 2010
+  Copyright 2003 2005 2006 2007 2008 2009 2010 2011
   Paul Fitzpatrick
   RobotCub Consortium
   Giacomo Spigler
   Lorenzo Natale
   Giorgio Metta
+  Daniel Krieg
+  Anne van Rossum
   Alexandre Bernardino
   Renaud Detry
-  Daniel Krieg
   Arjan Gijsberts
   Ze Ji
   Mattia Castelnovi
@@ -119,6 +126,9 @@ The list of copyright holders for YARP is:
 Certain files are integrated in YARP from other sources with
 friendly licenses.  Here is a list of these files and a summary of
 their copyright.  See the individual files for more details.
+All files used in the default YARP build are compatible with the 
+LGPL.  Optional modules may require use of YARP under the GPL, 
+rather than the LGPL.
 
 src/libYARP_sig/include/yarp/sig/IplImage.h
   Copyright: (C) 2000, Intel Corporation, all rights reserved.
@@ -296,9 +306,21 @@ src/carriers/xmlrpc_carrier/xmlrpc/XmlRpcSource.cpp
   Copyright: 2002, 2003 Chris Morley
   CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
+src/libYARP_OS/src/TcpStream.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/src/TcpConnector.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
 src/libYARP_OS/src/hmac_sha2.c
   Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
   CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/src/TcpAcceptor.cpp
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
 
 src/libYARP_OS/src/sha2.c
   Copyright: (C) 2005, 2007 Olivier Gay <olivier.gay@a3.epfl.ch>
@@ -315,6 +337,18 @@ src/libYARP_OS/include/hmac/sha2.h
 src/libYARP_OS/include/hmac/hmac_sha2.h
   Copyright: (C) 2005 Olivier Gay <olivier.gay@a3.epfl.ch>
   CopyPolicy: 3-clause BSD
+
+src/libYARP_OS/include/yarp/os/impl/TcpConnector.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/TcpAcceptor.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
+
+src/libYARP_OS/include/yarp/os/impl/TcpStream.h
+  Copyright: (C) 2010 Anne van Rossum <anne@almende.com>
+  CopyPolicy: LGPL; non-binding note discouraging certain uses
 
 src/yarpserver/sqlite/sqlite3.h
   Copyright: The author disclaims copyright to this source code
