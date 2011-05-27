@@ -292,6 +292,7 @@ int BottleImpl::size() const {
 
 
 bool BottleImpl::fromBytes(ConnectionReader& reader) {
+    if (reader.isError()) return false;
     int id = speciality;
     YMSG(("READING, nest flag is %d\n", nested));
     if (id==0) {
