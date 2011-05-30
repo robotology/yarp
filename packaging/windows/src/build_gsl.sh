@@ -122,6 +122,9 @@ fname2=$fname-$OPT_COMPILER-$OPT_VARIANT-$OPT_BUILD
 mkdir -p $fname2
 cd $fname2 || exit 1
 
+# remember where zip is, as we may lose the path when compiling.
+zipper=`which zip`
+
 # Set up configure and build steps.  We have to be careful for MINGW.
 (
 cat << XXX
@@ -176,7 +179,7 @@ cd $GSL_DIR
 ) > BUILD_INFO.TXT
 cd ..
 rm -f $fname2.zip
-zip -r $fname2.zip $fname2/BUILD_INFO.TXT $fname2/include $fname2/lib || exit 1
+$zipper -r $fname2.zip $fname2/BUILD_INFO.TXT $fname2/include $fname2/lib || exit 1
 
 # Cache GSL-related paths and variables, for dependent packages to read
 (

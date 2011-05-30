@@ -86,7 +86,13 @@ source gtkmm_${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD}.sh || {
 }
 
 # Go ahead and download YARP
-fname=yarp-$BUNDLE_YARP_VERSION
+echo "BUNDLE_YARP_VERSION: $BUNDLE_YARP_VERSION"
+if [ "$BUNDLE_YARP_VERSION" ]; then 
+	fname=yarp-$BUNDLE_YARP_VERSION
+else
+	fname=yarp
+fi
+	
 if [ ! -e $fname ]; then
 	if [ "k$BUNDLE_YARP_VERSION" = "ktrunk" ]; then
 		svn co https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 $fname || {
