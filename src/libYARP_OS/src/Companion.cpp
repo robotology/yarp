@@ -34,6 +34,7 @@
 #include <yarp/os/ResourceFinder.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/Ping.h>
+#include <yarp/os/NetInt32.h>
 #include <yarp/os/SharedLibraryClass.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
@@ -80,7 +81,9 @@ static void companion_sigint_handler(int sig) {
         } 
         if (port!=NULL) {
             port->interrupt();
+#ifndef YARP2_WINDOWS
             port->close();
+#endif
         }
     } else {
         fprintf(stderr,"Aborting...\n");
@@ -1696,7 +1699,9 @@ int Companion::write(const char *name, int ntargets, char *targets[]) {
     if (companion_active_port==NULL) {
         companion_install_handler();
     }
+#ifndef YARP2_WINDOWS
     companion_unregister_name = name;
+#endif
     if (!port.open(name)) {
         return 1;
     }
