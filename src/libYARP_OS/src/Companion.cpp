@@ -1591,8 +1591,6 @@ int Companion::cmdReadWrite(int argc, char *argv[])
         return 1;
     }
 
-    companion_install_handler();
-
 	const char *read_port_name=argv[0];
 	const char *write_port_name=argv[1];
     const char *verbatim[] = { "verbatim", NULL };
@@ -1601,12 +1599,6 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 
 	int ret = write(write_port_name,1,(char**)&verbatim);
     
-    #if !defined(WIN32) && !defined(WIN64)
-    while (getppid()!=1) yarp::os::Time::delay(1.0);
-    raise(SIGINT);
-    #endif
-
-    reader.wait();
     reader.close();
 
 	return ret;
