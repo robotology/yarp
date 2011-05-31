@@ -10,18 +10,24 @@
 #define _YARP2_SEMAPHOREIMPL_
 
 // There is a problem with YARP+ACE semaphores on some Linux distributions,
-// where semaphores fail to work correctly.
-// A hack to fix this problem is to uncomment the three lines below --paulfitz
+// where semaphores fail to work correctly.  Workaround.
 #ifdef __linux__
 #define YARP_USE_NATIVE_POSIX_SEMA 1
 #else
 #define YARP_USE_NATIVE_POSIX_SEMA 0
 #endif
 
+// On Mac, POSIX semaphores are just too burdensome
+#ifdef __APPLE__
+#  define YARP_USE_MACH_SEMA 1
+#endif
+
 #include <yarp/conf/system.h>
 #ifndef YARP_HAS_ACE
 #  ifdef __APPLE__
-#    define YARP_USE_MACH_SEMA 1
+#    ifndef YARP_USE_MACH_SEMA
+#      define YARP_USE_MACH_SEMA 1
+#    endif
 #  endif
 #endif
 
