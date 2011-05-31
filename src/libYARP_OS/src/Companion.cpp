@@ -1595,6 +1595,7 @@ int Companion::cmdReadWrite(int argc, char *argv[])
 	const char *write_port_name=argv[1];
     const char *verbatim[] = { "verbatim", NULL };
 
+    companion_install_handler();
     BottleReader reader(read_port_name,false);
 
 	int ret = write(write_port_name,1,(char**)&verbatim);
