@@ -8,8 +8,11 @@
 
 Name "YARP ${YARP_VERSION}"
 OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
-InstallDir "$PROGRAMFILES\yarp\yarp-${YARP_VERSION}"
-InstallDirRegKey HKCU "Software\YARP" ""
+
+InstallDir "$PROGRAMFILES\robology"
+# this part no longer included in install path "\yarp-${YARP_VERSION}"
+
+InstallDirRegKey HKCU "Software\YARP\Common" "LastInstallLocation"
 RequestExecutionLevel admin
 
 !define MUI_ABORTWARNING
@@ -177,18 +180,20 @@ FunctionEnd
 
 Section "-first"
   SetOutPath "$INSTDIR"
-  WriteRegStr HKCU "Software\YARP" "" $INSTDIR
-  WriteUninstaller "$INSTDIR\Uninstall.exe"
+  # WriteRegStr HKCU "Software\YARP" "" $INSTDIR
+  WriteRegStr HKCU "Software\YARP\${INST2}" "" "$INSTDIR\${INST2}"
+  WriteRegStr HKCU "Software\YARP\Common" "LastInstallLocation" $INSTDIR
+  WriteRegStr HKCU "Software\YARP\Common" "LastInstallVersion" "${INST2}"
+  WriteUninstaller "$INSTDIR\${INST2}\Uninstall.exe"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
-  ${StrRepLocal} $0 "$INSTDIR" "\" "/"
-  !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "${YARP_ORG_DIR}/install" "$0"
-  !insertmacro ReplaceInFile "$INSTDIR\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
+  # ${StrRepLocal} $0 "$INSTDIR" "\" "/"
+  # !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "${YARP_ORG_DIR}/install" "$0"
+  # !insertmacro ReplaceInFile "$INSTDIR\${INST2}\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
 SectionEnd
 
 Section "Command-line utilities" SecPrograms
   SetOutPath "$INSTDIR"
-  CreateDirectory "$INSTDIR\bin"
   !include ${NSIS_OUTPUT_PATH}\yarp_programs_add.nsi
 SectionEnd
 
@@ -196,19 +201,16 @@ SectionGroup "Compile environment" SecDevelopment
 
   Section "Libraries" SecLibraries
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\lib"
     !include ${NSIS_OUTPUT_PATH}\yarp_libraries_add.nsi
   SectionEnd
 
   Section "Header files" SecHeaders
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\include"
     !include ${NSIS_OUTPUT_PATH}\yarp_headers_add.nsi
   SectionEnd
 
   Section "Examples" SecExamples
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\example"
     !include ${NSIS_OUTPUT_PATH}\yarp_examples_add.nsi
   SectionEnd
 
@@ -218,20 +220,17 @@ SectionGroup "YARP Runtime" SecRuntime
 
   Section "YARP DLLs" SecDLLs
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\bin"
     !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
   SectionEnd
 	
   Section "Visual Studio DLLs (nonfree)" SecVcDlls
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\bin"
     !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
   SectionEnd
 
   SectionGroup "ACE library" SecAce
     Section "ACE library" SecAceLibraries
       SetOutPath "$INSTDIR"
-      CreateDirectory "$INSTDIR\lib"
       !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
     SectionEnd
 
@@ -246,13 +245,11 @@ SectionGroupEnd
 SectionGroup "Math library (GPL)" SecMath
   Section "Math libraries" SecMathLibraries
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\lib"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_add.nsi
   SectionEnd
 
   Section "Math DLLs" SecMathDLLs
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\bin"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
 
@@ -273,8 +270,8 @@ SectionEnd
 Section "${DBG_HIDE}Debug versions" SecDebug
   SetOutPath "$INSTDIR"
   !include ${NSIS_OUTPUT_PATH}\yarp_debug_add.nsi
-  ${StrRepLocal} $0 "$INSTDIR" "\" "/"
-  !insertmacro ReplaceInFile "$INSTDIR\lib\${YARP_LIB_DIR_DBG}\${YARP_LIB_FILE_DBG}" "${ACE_ORG_DIR_DBG}" "$0"
+  # ${StrRepLocal} $0 "$INSTDIR" "\" "/"
+  # !insertmacro ReplaceInFile "$INSTDIR\${INST2}\lib\${YARP_LIB_DIR_DBG}\${YARP_LIB_FILE_DBG}" "${ACE_ORG_DIR_DBG}" "$0"
 SectionEnd
 
 !ifndef WriteEnvStr_Base
@@ -289,10 +286,10 @@ SectionEnd
 !endif
 
 Section "Environment variables" SecPath
-  ${EnvVarUpdate} $0 "PATH" "A" "${WriteEnvStr_Base}" "$INSTDIR\bin"
-  ${EnvVarUpdate} $0 "LIB" "A" "${WriteEnvStr_Base}" "$INSTDIR\lib"
-  ${EnvVarUpdate} $0 "INCLUDE" "A" "${WriteEnvStr_Base}" "$INSTDIR\include"
-  WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR"
+  ${EnvVarUpdate} $0 "PATH" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\bin"
+  ${EnvVarUpdate} $0 "LIB" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\lib"
+  ${EnvVarUpdate} $0 "INCLUDE" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\include"
+  WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR\${INST2}"
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
 SectionEnd
 
@@ -301,8 +298,8 @@ Section "-last"
    chkAll:
      !insertmacro SectionFlagIsSet ${SecMath} ${SF_SELECTED} isSel notSel
    notSel:
-     !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "YARP_math;" ""
-	 !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
+     !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_math;" ""
+	 !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
    isSel:
 SectionEnd
 
@@ -357,9 +354,9 @@ LangString DESC_SecDebug ${LANG_ENGLISH} "Debug versions of the YARP and ACE lib
 ;Uninstaller Section
 
 Section "Uninstall"
-  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\bin"
-  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\lib"
-  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\include"
+  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\bin"
+  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\lib"
+  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\include"
 
   #Push "$INSTDIR\bin"
   #Call un.RemoveFromPath
@@ -385,15 +382,19 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_debug_remove.nsi
   #Delete "$INSTDIR\bin\yarpview.lnk"
   
-  Delete "$INSTDIR\Uninstall.exe"
+  Delete "$INSTDIR\${INST2}\Uninstall.exe"
 
-  RMDir "$INSTDIR\bin"
-  RMDir "$INSTDIR\lib"
+  RMDir /r "$INSTDIR\${INST2}\bin"
+  RMDir /r "$INSTDIR\${INST2}\lib"
   #RMDir "$INSTDIR\yarpview"
-  RMDir /r "$INSTDIR\include"
-  RMDir "$INSTDIR\example"
-  RMDir "$INSTDIR"
+  RMDir /r "$INSTDIR\${INST2}\include"
+  RMDir "$INSTDIR\${INST2}\example"
+  RMDir /r "$INSTDIR\${INST2}"
 
+  DeleteRegKey HKCU "Software\YARP\Common\LastInstallLocation"
+  DeleteRegKey HKCU "Software\YARP\Common\LastInstallVersion"
+  DeleteRegKey /ifempty HKCU "Software\YARP\Common"
+  DeleteRegKey /ifempty HKCU "Software\YARP\${INST2}"
   DeleteRegKey /ifempty HKCU "Software\YARP"
 
 SectionEnd

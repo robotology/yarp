@@ -104,6 +104,13 @@ if $add_debug; then
 	}
 	YARP_DIR_DBG="$YARP_DIR"
 	YARP_ROOT_DBG="$YARP_ROOT"
+
+	source gsl_${OPT_COMPILER}_${OPT_VARIANT}_Debug.sh || {
+		echo "Cannot find corresponding GSL debug build"
+		exit 1
+	}
+	GSL_DIR_DBG="$GSL_DIR"
+	GSL_ROOT_DBG="$GSL_ROOT"
 fi
 
 # Pick up ACE paths
@@ -115,6 +122,12 @@ source ace_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 # Pick up YARP paths
 source yarp_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
 	echo "Cannot find corresponding YARP build"
+	exit 1
+}
+
+# Pick up GSL paths
+source gsl_${OPT_COMPILER}_${OPT_VARIANT}_${base_build}.sh || {
+	echo "Cannot find corresponding GSL build"
 	exit 1
 }
 
@@ -178,6 +191,9 @@ function nsis_add_base {
 	zodest1="zip/$prefix/$zip_name/$odest"
 	zodest2="zip_all/$zip_name/$odest"
 	if [ "$mode" = "single" ]; then
+		dir=`echo $dest | sed 's/\\\\[^\\\\]*$//'`
+		echo "CreateDirectory \"\$INSTDIR\\$dir\"" >> $OUT_DIR/${prefix}_add.nsi
+		echo "SetOutPath \"\$INSTDIR\"" >> $OUT_DIR/${prefix}_add.nsi
 		echo "File /oname=$dest $src" >> $OUT_DIR/${prefix}_add.nsi
 		echo "Delete \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
 		echo "mkdir -p `dirname $zodest1`" >> $OUT_DIR/${prefix}_zip.sh
@@ -186,13 +202,15 @@ function nsis_add_base {
 		echo "cp '$osrc' $zodest2" >> $OUT_DIR/${prefix}_zip.sh
 	else
 		# recursive
-		echo "SetOutPath \"\$INSTDIR\\$dest\..\"" >> $OUT_DIR/${prefix}_add.nsi
+		dir=`echo $dest | sed 's/\\\\[^\\\\]*$//'`
+		echo "CreateDirectory \"\$INSTDIR\\$dir\"" >> $OUT_DIR/${prefix}_add.nsi
+		echo "SetOutPath \"\$INSTDIR\\$dir\"" >> $OUT_DIR/${prefix}_add.nsi
 		echo "File /r $src" >> $OUT_DIR/${prefix}_add.nsi
 		echo "RmDir /r \"\$INSTDIR\\$dest\"" >> $OUT_DIR/${prefix}_remove.nsi
-		echo "mkdir -p `dirname $zodest1`" >> $OUT_DIR/${prefix}_zip.sh
-		echo "mkdir -p `dirname $zodest2`" >> $OUT_DIR/${prefix}_zip.sh
-		echo "cp -r '$osrc' $zodest1" >> $OUT_DIR/${prefix}_zip.sh
-		echo "cp -r '$osrc' $zodest2" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p $zodest1" >> $OUT_DIR/${prefix}_zip.sh
+		echo "mkdir -p $zodest2" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp -r $osrc/* $zodest1" >> $OUT_DIR/${prefix}_zip.sh
+		echo "cp -r $osrc/* $zodest2" >> $OUT_DIR/${prefix}_zip.sh
 	fi
 }
 
@@ -212,6 +230,10 @@ function nsis_add_recurse {
 YARP_DIR_UNIX=`cygpath -u $YARP_DIR`
 if $add_debug; then
 	YARP_DIR_DBG_UNIX=`cygpath -u $YARP_DIR_DBG`
+fi
+GSL_DIR_UNIX=`cygpath -u $GSL_DIR`
+if $add_debug; then
+	GSL_DIR_DBG_UNIX=`cygpath -u $GSL_DIR_DBG`
 fi
 
 # Set up stubs for all NSIS sections
@@ -234,60 +256,102 @@ nsis_setup yarp_debug
 # nsis_setup yarp_gsl_libraries
 # nsis_setup yarp_gsl_dlls
 
+YARP_SUB="yarp-$BUNDLE_YARP_VERSION"
+YARP_UROOT="yarp-$BUNDLE_YARP_VERSION/"
+GSL_UROOT="gsl-$BUNDLE_GSL_VERSION/"
+
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
 YARP_LICENSE="$YARP_ROOT/LGPL.txt"
-nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
+# nsis_add yarp_base YARPConfigForInstall.cmake YARPConfig.cmake
 cd $YARP_DIR_UNIX/install || exit 1
-nsis_add_recurse yarp_base share share
+nsis_add_recurse yarp_base share ${YARP_UROOT}share
 cd $YARP_DIR_UNIX/install/lib || exit 1
 for d in `ls -1 -d --group-directories-first YARP-* | head`; do
-	nsis_add_recurse yarp_base $d lib/$d
+	mkdir -p $d/fix_release
+	mkdir -p $d/fix_debug/$d
+	cd $d/fix_release
+	mkdir -p $d
+	cp ../*.cmake $d
+	mv $d/YARPConfig.cmake .
+	if $add_debug; then
+		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
+	fi
+	sed -i '/SET.YARP_LIBRARIES/ i \
+  get_filename_component(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)' YARPConfig.cmake
+	sed -i "s|[^\"]*YARP.cmake|\${YARP_CMAKE}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
+	sed -i 's|[^"]*/install|${YARP_CMAKE}/..|g' YARPConfig.cmake
+	for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
+		sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/lib/$f|g" $d/YARP-*.cmake
+	done
+	addition=""
+	for k in release debug; do
+		if [ -e $d/YARP-$k.cmake ] ; then
+			for f in gsl.lib libgsl.a gslcblas.lib libgslcblas.a; do
+				sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${GSL_UROOT}lib/$addition$f|g" $d/YARP-$k.cmake
+			done
+		fi
+		addition="debug/"
+	done
+	if $add_debug; then
+		mv $d/YARP-debug.cmake ../fix_debug/$d/
+	fi
+	cd ../..
+	nsis_add_recurse yarp_base $d/fix_release/$d ${YARP_UROOT}lib/$d
+	nsis_add yarp_base $d/fix_release/YARPConfig.cmake ${YARP_UROOT}cmake/YARPConfig.cmake
+	if $add_debug; then
+		nsis_add_recurse yarp_debug $d/fix_debug/$d ${YARP_UROOT}lib/$d
+	fi
 	YARP_LIB_DIR="$d"
 	YARP_LIB_FILE=`cd $d; ls YARP-*.cmake`
 done
 cd $YARP_DIR_UNIX/install/lib || exit 1
 for f in `ls -1 *.$LIBEXT | grep -v YARP_math`; do
-	nsis_add yarp_libraries $f lib/$f
+	nsis_add yarp_libraries $f ${YARP_UROOT}lib/$f
 done
 for f in `ls -1 *.$LIBEXT | grep YARP_math`; do
-	nsis_add yarp_math_libraries $f lib/$f
+	nsis_add yarp_math_libraries $f ${YARP_UROOT}lib/$f
 done
 for f in `ls -1 *.dll | grep -v YARP_math`; do
-	nsis_add yarp_dlls $f bin/$f
+	nsis_add yarp_dlls $f ${YARP_UROOT}bin/$f
 done
 for f in `ls -1 *.dll | grep YARP_math`; do
-	nsis_add yarp_math_dlls $f bin/$f
+	nsis_add yarp_math_dlls $f ${YARP_UROOT}bin/$f
 done
 cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep -v yarpview`; do
-	nsis_add yarp_programs $f bin/$f
+	nsis_add yarp_programs $f ${YARP_UROOT}bin/$f
 done
 cd $YARP_ROOT/example/hello
 for f in `ls *.cpp CMakeLists.txt`; do
-	nsis_add yarp_examples $f example/$f
+	nsis_add yarp_examples $f ${YARP_UROOT}example/$f
 done
 cd $YARP_DIR_UNIX/install/bin
 for f in `ls -1 *.exe | grep yarpview`; do
-	nsis_add yarp_guis $f bin/$f
+	nsis_add yarp_guis $f ${YARP_UROOT}bin/$f
 done
 cd $YARP_DIR_UNIX/install/include/yarp
 for f in conf os sig dev ; do
-	nsis_add_recurse yarp_headers $f include/yarp/$f
+	nsis_add_recurse yarp_headers $f ${YARP_UROOT}include/yarp/$f
 done
-nsis_add_recurse yarp_math_headers math include/yarp/math
+nsis_add_recurse yarp_math_headers math ${YARP_UROOT}include/yarp/math
+
+# add GSL material
+cd $GSL_DIR_UNIX
+nsis_add_recurse yarp_math_headers include/gsl ${GSL_UROOT}include/gsl
+nsis_add_recurse yarp_math_libraries lib ${GSL_UROOT}lib
 
 # Add GTKMM material to NSIS
 if [ "k$SKIP_GTK" = "k" ]; then
 	cd $GTKMM_DIR/redist || exit 1
     for f in `ls *.dll`; do
 		chmod u+x $f
-		nsis_add yarp_guis $f bin/$f
+		nsis_add yarp_guis $f ${YARP_UROOT}bin/$f
 	done
 	cd $GTKMM_DIR/bin || exit 1
 	for f in zlib1.dll freetype6.dll intl.dll; do
 		chmod u+x $f
-		nsis_add yarp_guis $f bin/$f
+		nsis_add yarp_guis $f ${YARP_UROOT}bin/$f
 	done
 fi
 
@@ -298,14 +362,14 @@ if [ ! -e $ACE_LIBNAME.dll ]; then
 	echo "Cannot find $ACE_LIBNAME.dll in $PWD"
 	exit 1
 fi
-nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT lib/$ACE_LIBNAME.$LIBEXT
-nsis_add yarp_ace_dlls $ACE_LIBNAME.dll bin/$ACE_LIBNAME.dll
+nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${YARP_UROOT}lib/$ACE_LIBNAME.$LIBEXT
+nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${YARP_UROOT}bin/$ACE_LIBNAME.dll
 
 # Add Visual Studio redistributable material to NSIS
 if [ -e "$OPT_VC_REDIST_CRT" ] ; then
 	cd "$OPT_VC_REDIST_CRT" || exit 1
 	for f in `ls *.dll *.manifest`; do
-		nsis_add yarp_vc_dlls $f bin/$f "$OPT_VC_REDIST_CRT"
+		nsis_add yarp_vc_dlls $f ${YARP_UROOT}bin/$f "$OPT_VC_REDIST_CRT"
 	done
 fi
 
@@ -314,11 +378,11 @@ DBG_HIDE="-"
 if $add_debug; then
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	for f in `ls -1 *.lib`; do
-		nsis_add yarp_debug $f lib/$f
+		nsis_add yarp_debug $f ${YARP_UROOT}lib/$f
 	done
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	for f in `ls -1 *.dll`; do
-		nsis_add yarp_debug $f bin/$f
+		nsis_add yarp_debug $f ${YARP_UROOT}bin/$f
 	done
 	cd $ACE_DIR_DBG || exit 1
 	cd lib || exit 1
@@ -326,14 +390,16 @@ if $add_debug; then
 		echo "Cannot find $ACE_LIBNAME_DBG.dll in $PWD"
 		exit 1
 	fi
-	nsis_add yarp_debug $ACE_LIBNAME_DBG.$LIBEXT lib/$ACE_LIBNAME_DBG.$LIBEXT
-	nsis_add yarp_debug $ACE_LIBNAME_DBG.dll bin/$ACE_LIBNAME_DBG.dll
+	nsis_add yarp_debug $ACE_LIBNAME_DBG.$LIBEXT ${YARP_UROOT}lib/$ACE_LIBNAME_DBG.$LIBEXT
+	nsis_add yarp_debug $ACE_LIBNAME_DBG.dll ${YARP_UROOT}bin/$ACE_LIBNAME_DBG.dll
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
-	for d in `ls -1 -d --group-directories-first YARP-* | head`; do
-		YARP_LIB_DIR_DBG="$d"
-		YARP_LIB_FILE_DBG=`cd $d; ls YARP-*.cmake`
-		nsis_add yarp_debug $YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG lib/$YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG
-	done
+	#for d in `ls -1 -d --group-directories-first YARP-* | head`; do
+	#	YARP_LIB_DIR_DBG="$d"
+	#	YARP_LIB_FILE_DBG=`cd $d; ls YARP-*.cmake`
+	#	nsis_add yarp_debug $YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG ${YARP_UROOT}lib/$YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG
+	#done
+	cd $GSL_DIR_DBG_UNIX
+	nsis_add_recurse yarp_debug lib ${GSL_UROOT}lib/debug
 	DBG_HIDE=""
 fi
 
@@ -341,7 +407,7 @@ fi
 # Run NSIS
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
-$NSIS_BIN -DYARP_VERSION=$BUNDLE_YARP_VERSION -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+$NSIS_BIN -DYARP_VERSION=$BUNDLE_YARP_VERSION -DINST2=$YARP_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
