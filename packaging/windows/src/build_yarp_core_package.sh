@@ -399,7 +399,10 @@ if $add_debug; then
 	#	nsis_add yarp_debug $YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG ${YARP_UROOT}lib/$YARP_LIB_DIR_DBG/$YARP_LIB_FILE_DBG
 	#done
 	cd $GSL_DIR_DBG_UNIX
-	nsis_add_recurse yarp_debug lib ${GSL_UROOT}lib/debug
+	rm -rf tmp_debug
+	mkdir -p tmp_debug
+	cp -R lib tmp_debug/debug
+	nsis_add_recurse yarp_debug tmp_debug/debug ${GSL_UROOT}lib/debug
 	DBG_HIDE=""
 fi
 
