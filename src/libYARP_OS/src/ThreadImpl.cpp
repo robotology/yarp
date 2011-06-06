@@ -32,6 +32,20 @@ static unsigned __stdcall theExecutiveBranch (void *args)
     // just for now -- rather deal with broken pipes through normal procedures
     ACE_OS::signal(SIGPIPE, SIG_IGN);
 
+
+    /*
+    sigset_t set;
+    sigemptyset(&set);
+    sigaddset(&set, SIGHUP);
+    sigaddset(&set, SIGINT);
+    sigaddset(&set, SIGQUIT);
+    sigaddset(&set, SIGTERM);
+    sigaddset(&set, SIGUSR1);
+    sigaddset(&set, SIGCHLD);
+    ACE_OS::thr_sigsetmask(SIG_BLOCK, &set, NULL);
+    fprintf(stderr, "Blocking signals\n");
+    */
+
     ThreadImpl *thread = (ThreadImpl *)args;
 
     YARP_DEBUG(Logger::get(),"Thread starting up");

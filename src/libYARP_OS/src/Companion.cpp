@@ -1827,7 +1827,19 @@ int Companion::rpc(const char *connectionName, const char *targetName) {
                     resendCount++;
                     break;
                 }
-                printf("Response: %s\n", reply.toString().c_str());
+                if (reply.get(0).isVocab() && reply.get(0).asVocab()==VOCAB4('m','a','n','y')) {
+                    printf("Responses:\n");
+                    for (int i=1; i<reply.size(); i++) {
+                        Value& v = reply.get(i);
+                        if (v.isString()) {
+                            printf("  %s\n", v.asString().c_str());
+                        } else {
+                            printf("  %s\n", v.toString().c_str());
+                        }
+                    }
+                } else {
+                    printf("Response: %s\n", reply.toString().c_str());
+                }
                 resendCount = 0;
             }
         }

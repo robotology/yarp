@@ -1,3 +1,11 @@
+2011-06-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Companion.cpp: render "[help]" responses
+	in traditional form, for easy reading.
+
+	* src/libYARP_dev/src/DeviceDriver.cpp: send "[help]" responses
+	correctly on binary connections [thanks Juan G Victores]
+
 2011-05-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/YarpVersion.cmake: bump to version 2.3.4
