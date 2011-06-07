@@ -9,7 +9,7 @@
 Name "YARP ${YARP_VERSION}"
 OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
 
-InstallDir "$PROGRAMFILES\robology"
+InstallDir "$PROGRAMFILES\robotology"
 # this part no longer included in install path "\yarp-${YARP_VERSION}"
 
 InstallDirRegKey HKCU "Software\YARP\Common" "LastInstallLocation"
