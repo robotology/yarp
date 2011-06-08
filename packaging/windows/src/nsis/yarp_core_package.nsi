@@ -184,7 +184,7 @@ Section "-first"
   WriteRegStr HKCU "Software\YARP\${INST2}" "" "$INSTDIR\${INST2}"
   WriteRegStr HKCU "Software\YARP\Common" "LastInstallLocation" $INSTDIR
   WriteRegStr HKCU "Software\YARP\Common" "LastInstallVersion" "${INST2}"
-  WriteUninstaller "$INSTDIR\${INST2}\Uninstall.exe"
+  WriteUninstaller "$INSTDIR\Uninstall_YARP.exe"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
   # ${StrRepLocal} $0 "$INSTDIR" "\" "/"
@@ -255,7 +255,7 @@ SectionGroup "Math library (GPL)" SecMath
 
   Section "Math headers" SecMathHeaders
     SetOutPath "$INSTDIR"
-    CreateDirectory "$INSTDIR\include"
+    #CreateDirectory "$INSTDIR\include"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_add.nsi
   SectionEnd
 SectionGroupEnd
@@ -382,7 +382,7 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_debug_remove.nsi
   #Delete "$INSTDIR\bin\yarpview.lnk"
   
-  Delete "$INSTDIR\${INST2}\Uninstall.exe"
+  Delete "$INSTDIR\Uninstall_YARP.exe"
 
   RMDir /r "$INSTDIR\${INST2}\bin"
   RMDir /r "$INSTDIR\${INST2}\lib"
@@ -390,6 +390,7 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\${INST2}\include"
   RMDir "$INSTDIR\${INST2}\example"
   RMDir /r "$INSTDIR\${INST2}"
+  RMDir /r "$INSTDIR\${GSL_INST2}"
 
   DeleteRegKey HKCU "Software\YARP\Common\LastInstallLocation"
   DeleteRegKey HKCU "Software\YARP\Common\LastInstallVersion"
