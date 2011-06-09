@@ -45,7 +45,7 @@ else
     run_in_chroot build_chroot "cd $CHROOT_BUILD && cmake --version | grep ' 2\.4' && ( wget http://www.cmake.org/files/v2.6/cmake-2.6.4-Linux-i386.tar.gz && tar xzvf cmake-2.6.4-Linux-i386.tar.gz && touch local_cmake )" || exit 1
 fi
 if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
-    run_in_choot build_chroot "yes | sudo apt-get install ia32-libs"
+    run_in_chroot build_chroot "yes | apt-get install ia32-libs"
     CMAKE=$CHROOT_BUILD/`cd build_chroot/$CHROOT_BUILD/; echo cmake-*/bin/cmake`
 fi
 run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE $CHROOT_SRC" || exit 1
@@ -62,5 +62,7 @@ fname=`ls *.deb`
 	echo "export YARP_PACKAGE='$fname'"
 ) > $BUILD_DIR/yarp_${platform}.sh
 
-echo "To enter chroot, run"
+echo ".deb prepared, here:"
+echo "  $PWD/$fname"
+echo "To enter chroot used to build this .deb, run:"
 echo "  sudo chroot $PWD/build_chroot"
