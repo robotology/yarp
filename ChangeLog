@@ -1,3 +1,11 @@
+2011-14-06  Lorenzo Natale  <lorenzo.natale@iit.it>
+    * ChangeLog
+    * CMakeLists.txt
+    * conf/template/YARPConfigUninstall.cmake.in
+    * conf/YARPUninstall.cmake
+    Added Uninstall target
+    
+
 2011-06-06  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Companion.cpp: render "[help]" responses

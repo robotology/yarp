@@ -42,6 +42,10 @@ add_subdirectory(conf)
 # Set up the main libraries and utilities.
 add_subdirectory(src)
 
+# add rule for uninstalling YARP
+# see conf/YARPUninstall.cmake
+include(YARPUninstall)
+
 # Output configuration files describing how YARP was built, and how
 # its libraries may be linked against and used.  This uses
 # information accumulated in the global property variables set up earlier.
