@@ -7,7 +7,10 @@
 
 #include <stdio.h>
 #include <signal.h>
+#include <string>
 #include <yarp/os/impl/String.h>
+#include <yarp/os/impl/Logger.h>
+#include <yarp/os/Semaphore.h>
 #include <yarp/os/Run.h>
 
 #ifndef YARP_HAS_ACE
@@ -555,6 +558,448 @@ protected:
 	YarpRunInfoVector *mStdioVector;
 };
 
+////////////////////////////////////
+////////////////////////////////////
+////////////////////////////////////
+
+#if defined(WIN32) || defined(WIN64)
+static void sigbreakHandler(int sig)
+{
+    raise(SIGINT);
+}
+#endif
+
+/////////////////////////////////////
+
+static void wSigintHandler(int sig);
+
+class RunWrite
+{
+public:
+    RunWrite(){}
+    ~RunWrite(){}
+
+    int loop(const char* wPortName)
+    {
+        yarp::os::impl::Logger::get().setVerbosity(-1);
+
+        signal(SIGINT,wSigintHandler);
+        signal(SIGTERM,wSigintHandler);
+
+        #if defined(WIN32) || defined(WIN64)
+        signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
+        #else
+        signal(SIGHUP,SIG_IGN);
+        #endif
+
+        if (!mWPort.open(wPortName))
+        {
+            return 1;
+        }
+
+        mWPortName=wPortName;
+
+        while (!feof(stdin)) 
+        {
+            std::string txt=getStdin();
+        
+            if (!feof(stdin)) 
+            {
+                if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\t' || txt[0]=='\0') 
+                {
+                    yarp::os::Bottle bot;
+                    bot.fromString(txt.c_str());
+                    mWPort.write(bot);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        mWPort.interrupt();
+        mWPort.close();
+        yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+
+        return 0;
+    }
+
+    static void close()
+    {
+        mWPort.interrupt();
+        mWPort.close();
+        yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+        
+        exit(0);
+    }
+
+protected:
+    std::string getStdin() 
+    {
+        bool done=false;
+        std::string txt="";
+        char buf[2048];
+
+        while (!done) 
+        {
+            char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+            if (result!=NULL) 
+            {
+                for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
+
+                {
+                    if (buf[i]=='\n') 
+                    {
+                        buf[i]='\0';
+                        done=true;
+                        break;
+                    }
+                }
+                txt+=buf;
+            } 
+            else 
+            {
+                done=true;
+            }
+        }
+        return txt;
+    }
+
+    static yarp::os::Port mWPort;
+    static yarp::os::ConstString mWPortName;
+};
+
+yarp::os::Port RunWrite::mWPort;
+yarp::os::ConstString RunWrite::mWPortName;
+
+static void wSigintHandler(int sig)
+{
+    RunWrite::close();
+}
+
+///////////////////////////////////////////
+
+static void rSigintHandler(int sig);
+
+class RunRead : public yarp::os::PortReader
+{
+public:
+    RunRead(){}
+    ~RunRead(){}
+
+    int loop(const char* rPortName)
+    {
+        yarp::os::impl::Logger::get().setVerbosity(-1);
+
+        signal(SIGINT,rSigintHandler);
+        signal(SIGTERM,rSigintHandler);
+
+        #if defined(WIN32) || defined(WIN64)
+        signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
+        #else
+        signal(SIGHUP,SIG_IGN);
+        #endif
+
+        mRPort.setReader(*this);
+
+        if (!mRPort.open(rPortName))
+        {
+            return 1;
+        }
+
+        mRPortName=rPortName;
+
+        mDone.wait();
+
+        mRPort.interrupt();
+        mRPort.close();
+        yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
+
+        return 0;
+    }
+
+    static void close()
+    {
+        //mRPort.interrupt();
+        //mRPort.close();
+        //yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
+        
+        //exit(0);
+
+        mDone.post();
+    }
+
+    virtual bool read(yarp::os::ConnectionReader& reader) 
+    {
+        if (!reader.isValid()) return false;
+
+        yarp::os::Bottle bot;
+
+        if (bot.read(reader))
+        {
+            if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
+            {
+                if (bot.get(0).asInt()!=1) 
+                {
+                    ACE_OS::printf("%s\n",bot.get(1).asString().c_str());
+                    ACE_OS::fflush(stdout);
+                }
+            } 
+            else
+            {
+                ACE_OS::printf("%s\n", bot.toString().c_str());
+                ACE_OS::fflush(stdout);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+protected:
+    std::string getStdin() 
+    {
+        bool done=false;
+        std::string txt="";
+        char buf[2048];
+
+        while (!done) 
+        {
+            char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+            if (result!=NULL) 
+            {
+                for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
+
+                {
+                    if (buf[i]=='\n') 
+                    {
+                        buf[i]='\0';
+                        done=true;
+                        break;
+                    }
+                }
+                txt+=buf;
+            } 
+            else 
+            {
+                done=true;
+            }
+        }
+        return txt;
+    }
+
+    static yarp::os::Semaphore mDone;
+    static yarp::os::Port mRPort;
+    static yarp::os::ConstString mRPortName;
+};
+
+yarp::os::Semaphore RunRead::mDone(0);
+yarp::os::Port RunRead::mRPort;
+yarp::os::ConstString RunRead::mRPortName;
+
+static void rSigintHandler(int sig)
+{
+    RunRead::close();
+}
+
+///////////////////////////////////////////
+
+static void rwSigintHandler(int sig);
+
+#if !defined(WIN32) && !defined(WIN64)
+static void sighupHandler(int sig);
+#endif
+
+class RunReadWrite : public yarp::os::PortReader
+{
+public:
+    RunReadWrite(){}
+    ~RunReadWrite(){}
+
+    int loop(const char* rPortName,const char* wPortName)
+    {
+        yarp::os::impl::Logger::get().setVerbosity(-1);
+
+        signal(SIGINT,rwSigintHandler);
+        signal(SIGTERM,rwSigintHandler);
+
+        #if defined(WIN32) || defined(WIN64)
+        signal(SIGBREAK,(ACE_SignalHandler)sigbreakHandler);
+        #else
+        signal(SIGHUP,sighupHandler);
+        #endif
+
+        mRPort.setReader(*this);
+
+        if (!mRPort.open(rPortName))
+        {
+            return 1;
+        }
+
+        if (!mWPort.open(wPortName))
+        {
+            mRPort.close();
+            return 1;
+        }
+
+        mRPortName=rPortName;
+        mWPortName=wPortName;
+
+        while (!feof(stdin)) 
+        {
+            std::string txt=getStdin();
+        
+            if (!feof(stdin)) 
+            {
+                if (txt[0]>=32 || txt[0]=='\n' || txt[0]=='\r' || txt[0]=='\0' || txt[0]=='\t') 
+                {
+                    yarp::os::Bottle bot;
+                    bot.fromString(txt.c_str());
+                    mWPort.write(bot);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        #if !defined(WIN32) && !defined(WIN64)
+        mDone.wait();        
+        if (!mClosed) 
+        {
+            mClosed=true;
+        #endif            
+
+            mRPort.interrupt();
+            mRPort.close();
+            yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
+
+            mWPort.interrupt();
+            mWPort.close();
+            yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+
+        #if !defined(WIN32) && !defined(WIN64)
+        }
+        mDone.post();
+        #endif
+
+        return 0;
+    }
+
+    static void close()
+    {
+        #if !defined(WIN32) && !defined(WIN64)
+        mDone.wait();        
+        if (!mClosed) 
+        {
+            mClosed=true;
+        #endif  
+
+            mRPort.interrupt();
+            mRPort.close();
+            yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
+
+            mWPort.interrupt();
+            mWPort.close();
+            yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+        
+        #if !defined(WIN32) && !defined(WIN64)
+        }
+        mDone.post();
+        #endif
+
+        exit(0);
+    }
+
+    virtual bool read(yarp::os::ConnectionReader& reader) 
+    {
+        if (!reader.isValid()) return false;
+
+        yarp::os::Bottle bot;
+
+        if (bot.read(reader))
+        {
+            if (bot.size()==2 && bot.get(0).isInt() && bot.get(1).isString()) 
+            {
+                if (bot.get(0).asInt()!=1) 
+                {
+                    ACE_OS::printf("%s\n",bot.get(1).asString().c_str());
+                    ACE_OS::fflush(stdout);
+                }
+            } 
+            else
+            {
+                ACE_OS::printf("%s\n", bot.toString().c_str());
+                ACE_OS::fflush(stdout);
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+protected:
+    std::string getStdin() 
+    {
+        bool done=false;
+        std::string txt="";
+        char buf[2048];
+
+        while (!done) 
+        {
+            char *result=ACE_OS::fgets(buf,sizeof(buf),stdin);
+            if (result!=NULL) 
+            {
+                for (unsigned int i=0; i<ACE_OS::strlen(buf); i++) 
+
+                {
+                    if (buf[i]=='\n') 
+                    {
+                        buf[i]='\0';
+                        done=true;
+                        break;
+                    }
+                }
+                txt+=buf;
+            } 
+            else 
+            {
+                done=true;
+            }
+        }
+        return txt;
+    }
+
+    static bool mClosed;
+    static yarp::os::Semaphore mDone;
+    static yarp::os::Port mRPort;
+    static yarp::os::Port mWPort;
+    static yarp::os::ConstString mRPortName;
+    static yarp::os::ConstString mWPortName;
+};
+
+bool RunReadWrite::mClosed=false;
+yarp::os::Semaphore RunReadWrite::mDone(1);
+yarp::os::Port RunReadWrite::mRPort;
+yarp::os::Port RunReadWrite::mWPort;
+yarp::os::ConstString RunReadWrite::mRPortName;
+yarp::os::ConstString RunReadWrite::mWPortName;
+
+static void rwSigintHandler(int sig)
+{
+    RunReadWrite::close();
+}
+
+#if !defined(WIN32) && !defined(WIN64)
+static void sighupHandler(int sig)
+{
+    RunReadWrite::close();
+}
+#endif
+
+
 ///////////////////////////
 // OS INDEPENDENT FUNCTIONS
 ///////////////////////////
@@ -667,6 +1112,28 @@ int yarp::os::Run::main(int argc, char *argv[])
 	 || config.check("ps"))
 	{ 
         return sendToServer(config);
+    }
+
+    if (config.check("readwrite"))
+    {
+        yarp::os::ConstString rPortName=config.findGroup("readwrite").get(1).asString();
+        yarp::os::ConstString wPortName=config.findGroup("readwrite").get(2).asString();
+        RunReadWrite rw;
+        return rw.loop(rPortName,wPortName);
+    }
+
+    if (config.check("write"))
+    {
+        yarp::os::ConstString wPortName=config.findGroup("write").get(1).asString();
+        RunWrite w;
+        return w.loop(wPortName);
+    }
+
+    if (config.check("read"))
+    {
+        yarp::os::ConstString rPortName=config.findGroup("read").get(1).asString();
+        RunRead r;
+        return r.loop(rPortName);
     }
 
 	Help();
@@ -1113,7 +1580,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(yarp::os::ConstString("yarp quiet write ")+strCmdUUID+"/stdout verbatim").c_str(), // command line 
+								(char*)(yarp::os::ConstString("yarprun --write ")+strCmdUUID+"/stdout").c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -1158,7 +1625,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	bSuccess=CreateProcess(NULL,	// command name
-                           (char*)(yarp::os::ConstString("yarp quiet read ")+strCmdUUID+yarp::os::ConstString("/stdin")).c_str(), // command line 
+                           (char*)(yarp::os::ConstString("yarprun --read ")+strCmdUUID+yarp::os::ConstString("/stdin")).c_str(), // command line 
                            NULL,          // process security attributes 
                            NULL,          // primary thread security attributes 
                            TRUE,          // handles are inherited 
@@ -1267,6 +1734,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 								&cmd_startup_info,   // STARTUPINFO pointer 
 								&cmd_process_info);  // receives PROCESS_INFORMATION 
 
+
 	if (!bSuccess && bWorkdir)
 	{
 			bSuccess=CreateProcess(NULL,	// command name
@@ -1277,6 +1745,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 									CREATE_NEW_PROCESS_GROUP, // creation flags 
 									NULL,          // use parent's environment 
 									strWorkdir.c_str(), // working directory 
+
 									&cmd_startup_info,   // STARTUPINFO pointer 
 									&cmd_process_info);  // receives PROCESS_INFORMATION 
 	}
@@ -1454,7 +1923,8 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 
     yarp::os::ConstString strAlias=msg.find("as").asString();
     strStdioPortUUID=mPortName+"/"+int2String(GetCurrentProcessId())+"/"+strAlias+"-"+int2String(mProcCNT++);
-    yarp::os::ConstString strCmd=yarp::os::ConstString("yarp quiet readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o";
+    //yarp::os::ConstString strCmd=yarp::os::ConstString("yarp quiet readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o";
+    yarp::os::ConstString strCmd=yarp::os::ConstString("yarprun --readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o";
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
 								(char*)strCmd.c_str(), // command line 
@@ -1629,7 +2099,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{        
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarp","yarp","quiet","write",(strCmdUUID+"/stdout").c_str(),"verbatim",NULL);
+		int ret=execlp("yarprun","yarprun","--write",(strCmdUUID+"/stdout").c_str(),NULL);
 	    
 	    if (ret==YARPRUN_ERROR)
 	    {
@@ -1691,7 +2161,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		{            
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarp","yarp","quiet","read",(strCmdUUID+"/stdin").c_str(),NULL);
+			int ret=execlp("yarprun","yarprun","--read",(strCmdUUID+"/stdin").c_str(),NULL);
 			
 		    if (ret==YARPRUN_ERROR)
 	        {
@@ -1875,6 +2345,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 				exit(ret);
 			}
 
+
 			if (IS_PARENT_OF(pid_cmd))
 			{
 				mProcessVector.Add(
@@ -1902,6 +2373,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                 
                 yarp::os::ConstString out;
                 for (char buff[1024]; fgets(buff,1024,in_from_child);)
+
 	            {
 	                out+=yarp::os::ConstString(buff);
 	            }
@@ -1986,12 +2458,13 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
         fflush(stderr);
 	
 		return YARPRUN_ERROR;
+
 	}
 
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{        
 		int ret;
-        yarp::os::ConstString strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarp quiet readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o\"";
+        yarp::os::ConstString strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);
