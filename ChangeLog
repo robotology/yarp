@@ -1,3 +1,9 @@
+2011-06-14 Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/Run.cpp
+	yarprun stdio termination bug fixed.
+	Dependendence by Companion removed,
+	stdio implemented in Run.
+
 2011-14-06  Lorenzo Natale  <lorenzo.natale@iit.it>
     * ChangeLog
     * CMakeLists.txt
