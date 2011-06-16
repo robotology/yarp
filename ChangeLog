@@ -1,3 +1,12 @@
+2011-06-16 Alessandro Scalzo <alessandro.scalzo@iit.it>
+	* src/libYARP_OS/src/Run.cpp
+	* src/libYARP_OS/src/RunReadWrite.cpp
+	* src/libYARP_OS/src/RunProcManager.cpp
+	* src/libYARP_OS/include/os/Run.h
+	* src/libYARP_OS/include/os/impl/RunReadWrite.h
+	* src/libYARP_OS//include/os/impl/RunProcManager.h
+	yarprun splitted in more files.
+
 2011-06-14 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/Run.cpp
 	yarprun stdio termination bug fixed.
