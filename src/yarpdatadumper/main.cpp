@@ -181,7 +181,6 @@ So, now, have a look inside the directory ./log
 #include <deque>
 
 using namespace std;
-using namespace yarp;
 using namespace yarp::os;
 using namespace yarp::sig;
 
