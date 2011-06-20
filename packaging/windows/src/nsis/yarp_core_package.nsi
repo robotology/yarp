@@ -9,7 +9,7 @@
 Name "YARP ${YARP_VERSION}"
 OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
 
-InstallDir "$PROGRAMFILES\robotology"
+InstallDir "$PROGRAMFILES\${VENDOR}"
 # this part no longer included in install path "\yarp-${YARP_VERSION}"
 
 InstallDirRegKey HKCU "Software\YARP\Common" "LastInstallLocation"
@@ -181,9 +181,14 @@ FunctionEnd
 Section "-first"
   SetOutPath "$INSTDIR"
   # WriteRegStr HKCU "Software\YARP" "" $INSTDIR
-  WriteRegStr HKCU "Software\YARP\${INST2}" "" "$INSTDIR\${INST2}"
-  WriteRegStr HKCU "Software\YARP\Common" "LastInstallLocation" $INSTDIR
-  WriteRegStr HKCU "Software\YARP\Common" "LastInstallVersion" "${INST2}"
+  # WriteRegStr HKCU "Software\${VENDOR}" ""
+  WriteRegStr HKCU "Software\${VENDOR}\YARP\${INST2}" "" "$INSTDIR\${INST2}"
+  WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallLocation" $INSTDIR
+  WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${INST2}
+  WriteRegStr HKCU "Software\${VENDOR}\GSL\${GSL_INST2}" "" "$INSTDIR\${GSL_INST2}"
+  WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
+  WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_INST2}
+  
   WriteUninstaller "$INSTDIR\Uninstall_YARP.exe"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
@@ -392,12 +397,23 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\${INST2}"
   RMDir /r "$INSTDIR\${GSL_INST2}"
 
-  DeleteRegKey HKCU "Software\YARP\Common\LastInstallLocation"
-  DeleteRegKey HKCU "Software\YARP\Common\LastInstallVersion"
-  DeleteRegKey /ifempty HKCU "Software\YARP\Common"
-  DeleteRegKey /ifempty HKCU "Software\YARP\${INST2}"
-  DeleteRegKey /ifempty HKCU "Software\YARP"
+  # cleanup YARP registry entries
+  DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallLocation"
+  DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallVersion"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${INST2}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP"
+  
+  # cleanup GSL registry entries
+  DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallLocation"
+  DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallVersion"  
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_INST2}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
 
+  # cleanup vendor entry if empty
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}"
+  
 SectionEnd
 
 Function .onInit
