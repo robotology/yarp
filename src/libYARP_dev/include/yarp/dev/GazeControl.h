@@ -27,7 +27,7 @@ namespace yarp {
  *
  * Interface for a gaze controller.
  */
-class YARP_dev_API yarp::dev::IGazeControl
+class yarp::dev::IGazeControl
 {
 public:
     /**
