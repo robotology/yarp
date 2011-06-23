@@ -1,5 +1,9 @@
 2011-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* YarpSystemCheck.cmake: check for __ACE_INLINE__ being needed, it
+	got dropped from ACE config file for linux from ACE 6.0.2 and
+	later.
+
 	* src/libYARP_OS/include/yarp/os/impl/PlatformTime.h,
 	src/libYARP_OS/src/ShmemInputStream.cpp: gettimeofday
 	moved in ACE 6.0.2 and later.
