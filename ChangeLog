@@ -1,3 +1,8 @@
+2011-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Run.cpp: make gcc 4 happy with
+	type of NULL sentinel value
+
 2011-06-16 Alessandro Scalzo <alessandro.scalzo@iit.it>
 	* src/libYARP_OS/src/Run.cpp
 	* src/libYARP_OS/src/RunReadWrite.cpp

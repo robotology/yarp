@@ -1102,7 +1102,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{        
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarprun","yarprun","--write",(strCmdUUID+"/stdout").c_str(),NULL);
+		int ret=execlp("yarprun","yarprun","--write",(strCmdUUID+"/stdout").c_str(),(char*)NULL);
 	    
 	    if (ret==YARPRUN_ERROR)
 	    {
@@ -1164,7 +1164,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		{            
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarprun","yarprun","--read",(strCmdUUID+"/stdin").c_str(),NULL);
+			int ret=execlp("yarprun","yarprun","--read",(strCmdUUID+"/stdin").c_str(),(char*)NULL);
 			
 		    if (ret==YARPRUN_ERROR)
 	        {
@@ -1478,11 +1478,11 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 		if (msg.check("geometry"))
 		{
 	        yarp::os::ConstString geometry(msg.find("geometry").asString());
-			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",strAlias.c_str(),"-e",strCmd.c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-geometry",geometry.c_str(),"-title",strAlias.c_str(),"-e",strCmd.c_str(),(char*)NULL);
 		}
 		else
 		{
-			ret=execlp("xterm","xterm",hold,"-title",strAlias.c_str(),"-e",strCmd.c_str(),NULL);
+			ret=execlp("xterm","xterm",hold,"-title",strAlias.c_str(),"-e",strCmd.c_str(),(char*)NULL);
 		}
 		
 		fflush(stdout);
