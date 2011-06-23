@@ -13,6 +13,7 @@
 
 #ifdef YARP_HAS_ACE
 #  include <ace/OS_NS_unistd.h>
+#  include <ace/OS_NS_sys_time.h>
 #  include <ace/Time_Value.h>
 #  include <ace/High_Res_Timer.h>
 #  define PLATFORM_TIME_SET(x,y) x.set(y)

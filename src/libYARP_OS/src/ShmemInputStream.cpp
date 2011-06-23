@@ -11,6 +11,7 @@
 #ifdef YARP_HAS_ACE
 
 #include <yarp/os/impl/ShmemInputStream.h>
+#include <yarp/os/impl/PlatformTime.h>
 
 using namespace yarp::os::impl;
 using namespace yarp::os::impl;

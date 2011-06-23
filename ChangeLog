@@ -1,5 +1,9 @@
 2011-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/include/yarp/os/impl/PlatformTime.h,
+	src/libYARP_OS/src/ShmemInputStream.cpp: gettimeofday
+	moved in ACE 6.0.2 and later.
+
 	* src/libYARP_OS/src/Run.cpp: make gcc 4 happy with
 	type of NULL sentinel value
 
