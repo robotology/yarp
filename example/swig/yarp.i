@@ -830,5 +830,22 @@ public static short[] getRawImg(Image img) {
 }
 */
 
+
+// From Leo Pape
+
+%extend yarp::os::NetworkBase {
+	static bool write(const char* port_name, Bottle& cmd, Bottle& reply) {
+		return yarp::os::NetworkBase::write(port_name, *((PortWriter*)(&cmd)), *((PortReader*)(&reply)));
+	}
+
+	static bool write(const Contact& contact, Bottle& cmd, Bottle& reply, const ContactStyle& style) {
+		return yarp::os::NetworkBase::write(contact, *((PortWriter*)(&cmd)), *((PortReader*)(&reply)), style);
+	}
+
+	static bool write(const Contact& contact, Bottle& cmd, Bottle& reply, bool admin, bool quiet, double timeout) {
+		return yarp::os::NetworkBase::write(contact, *((PortWriter*)(&cmd)), *((PortReader*)(&reply)), admin, quiet, timeout);
+	}
+}
+
 #endif
 

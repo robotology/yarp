@@ -1,3 +1,8 @@
+2011-06-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: patch for using NetworkBase::write via
+	SWIG [thanks Leo Pape]
+
 2011-06-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* YarpSystemCheck.cmake: check for __ACE_INLINE__ being needed, it
@@ -6,7 +11,8 @@
 
 	* src/libYARP_OS/include/yarp/os/impl/PlatformTime.h,
 	src/libYARP_OS/src/ShmemInputStream.cpp: gettimeofday
-	moved in ACE 6.0.2 and later.
+	moved in ACE 6.0.2 and later [thanks Serena Ivaldi]
+	[thanks Fabien Benureau]
 
 	* src/libYARP_OS/src/Run.cpp: make gcc 4 happy with
 	type of NULL sentinel value
