@@ -1,5 +1,7 @@
 2011-06-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpVersion.cmake: bump version number to 2.3.5
+
 	* example/swig/yarp.i: patch for using NetworkBase::write via
 	SWIG [thanks Leo Pape]
 
