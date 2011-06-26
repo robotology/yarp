@@ -587,13 +587,13 @@ public:
 
         // look for a proper directory
         for (int i=0; proceed; i++)
-        {		
+        {
             if (i)
                 sprintf(dirName,"./%s_%.5d",portName,i);
             else
                 sprintf(dirName,"./%s",portName);
 
-			proceed=!yarp::os::stat(dirName);
+            proceed=!yarp::os::stat(dirName);
         }
 
         createFullPath(dirName);
@@ -668,7 +668,7 @@ public:
 
 void createFullPath(const char* path)
 {
-	if (yarp::os::stat(path))
+    if (yarp::os::stat(path))
     {
         string strPath=string(path);
         size_t found=strPath.find_last_of("/");
@@ -677,7 +677,7 @@ void createFullPath(const char* path)
             found--;
 
         createFullPath(strPath.substr(0,found+1).c_str());
-		yarp::os::mkdir(strPath.c_str());
+        yarp::os::mkdir(strPath.c_str());
     }
 }
 
