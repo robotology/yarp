@@ -22,6 +22,15 @@
 #endif
 
 #if defined(SWIGCSHARP)
+    // Get .NET pointers instead of swig generated types (usefull when dealing with images)
+    %typemap(ctype)  unsigned char * "unsigned char *"
+    %typemap(imtype) unsigned char * "IntPtr"
+    %typemap(cstype) unsigned char * "IntPtr"
+    %typemap(csin)   unsigned char * "$csinput"
+    %typemap(in)     unsigned char * %{ $1 = $input; %}
+    %typemap(out)    unsigned char * %{ $result = $1; %}
+    %typemap(csout)  unsigned char * { return $imcall; }
+
     // there's a big CSHARP virtual/override muddle
     // we just bypass the issue for now
     %csmethodmodifiers write "public new";
