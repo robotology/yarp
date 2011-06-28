@@ -9,6 +9,10 @@
 #ifndef _YARP2_RPCSERVER_
 #define _YARP2_RPCSERVER_
 
+#include <yarp/os/Contactable.h>
+#include <yarp/os/Port.h>
+
+
 namespace yarp {
     namespace os {
         class RpcServer;
