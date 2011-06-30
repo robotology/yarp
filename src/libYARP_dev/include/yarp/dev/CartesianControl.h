@@ -359,15 +359,15 @@ public:
 
     /**
     * Get the current trajectory duration. [wait for reply]
-    * @param t time (seconds).
+    * @param t the memory location where the time is returned 
+    *         (seconds).
     * @return true/false on success/failure. 
     */
     virtual bool getTrajTime(double *t)=0;
 
     /**
     * Set the duration of the trajectory. [wait for reply]
-    * @param t the memory location where the time is returned 
-    *         (seconds).
+    * @param t time (seconds).
     * @return true/false on success/failure. 
     */
     virtual bool setTrajTime(const double t)=0;
