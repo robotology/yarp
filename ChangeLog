@@ -1,3 +1,9 @@
+2011-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/template/YARPConfig.cmake.in: remove auto-linking 
+	option, which was there to ease a transition to more
+	normal behavior of FIND_PACKAGE(YARP) last year.
+
 2011-06-28  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: fix C# types for Image::getRawImage()
