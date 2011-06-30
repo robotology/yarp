@@ -30,13 +30,15 @@ NullBottle NullBottle::bottleNull;
 
 Bottle::Bottle() {
     implementation = new BottleImpl;
+    invalid = false;
     YARP_ASSERT(implementation!=NULL);
 }
 
 Bottle::Bottle(const Bottle& bottle) {
     implementation = new BottleImpl;
+    invalid = false;
     YARP_ASSERT(implementation!=NULL);
-    fromString(bottle.toString().c_str());
+    copy(bottle);
 }
 
 const Bottle& Bottle::operator = (const Bottle& bottle) {
@@ -47,6 +49,7 @@ const Bottle& Bottle::operator = (const Bottle& bottle) {
 
 Bottle::Bottle(const char *text) {
     implementation = new BottleImpl;
+    invalid = false;
     YARP_ASSERT(implementation!=NULL);
     fromString(text);
 }
@@ -59,6 +62,7 @@ Bottle::~Bottle() {
 }
 
 void Bottle::clear() {
+    invalid = false;
     HELPER(implementation).clear();
 }
 
@@ -128,6 +132,7 @@ bool Bottle::isList(int index) {
 }
 
 void Bottle::fromString(const char *text) {
+    invalid = false;
     HELPER(implementation).fromString(text);
 }
 
@@ -188,7 +193,9 @@ void Bottle::setNested(bool nested) {
 
 void Bottle::copy(const Bottle& alt, int first, int len) {
     if (alt.isNull()) {
-        YARP_LOG_ERROR("Tried to copy a null Bottle - do not do this");
+        clear();
+        invalid = true;
+        return;
     }
     HELPER(implementation).copyRange(HELPER(alt.implementation),
                                      first,

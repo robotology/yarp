@@ -207,7 +207,7 @@ public:
 
     Bottle& findGroup(const char *key);
 
-
+    virtual bool isNull() const  { return invalid; }
 
     /**
      * Assignment operator.
@@ -314,6 +314,7 @@ private:
 
     //Value& find(const char *key);
     void *implementation;
+    bool invalid;
 
 
     ///////////////////////////////////////////////////////////////////

@@ -477,12 +477,17 @@ public:
         checkFalse(b2.isNull(),"have a non-null bottle");
         checkEqual(b2.size(),0,"have an empty bottle");
         b3 = b2;
+        
         checkFalse(b3.isNull(),"copied a non-null bottle");
+
         checkEqual(b3.size(),0,"copied an empty bottle");
         Bottle& nullBot = b.findGroup("zig");
         checkTrue(nullBot.isNull(),"have a null bottle");
         b = nullBot;
-        checkFalse(b.isNull(),"failed, as expected");
+
+        // The expected result has flipped, due to popular demand [Massera :-)]
+        //checkFalse(b.isNull(),"failed, as expected");
+        checkTrue(b.isNull(),"isNull() preserved correctly");
     }
 
     void testEmptyList() {
@@ -510,6 +515,15 @@ public:
         if (sub!=NULL) {
             checkEqual(sub->size(),16,"copy ok level 2");
         }
+    }
+
+    void testNull() {
+        report(0,"test null bottle");
+        Bottle bAll("(x 1) (y 2)");
+        Bottle& b1 = bAll.findGroup("groupToFind");
+        checkTrue(b1.isNull(), "bottle null referenced correctly");
+        Bottle b2 = bAll.findGroup("groupToFind");
+        checkTrue(b2.isNull(), "bottle null copied correctly");
     }
 
     virtual void runTests() {
@@ -540,6 +554,7 @@ public:
         testAssignment();
         testHex();
         testEmptyList();
+        testNull();
     }
 
     virtual String getName() {

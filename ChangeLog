@@ -1,5 +1,11 @@
 2011-06-30  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/harness/BottleTest.cpp: test "null bottle"
+	copying, and modify existing tests for new expected behavior
+
+	* src/libYARP_OS/include/yarp/os/Bottle.cpp: copy "null bottles"
+	without fuss, to meet user expectations [thanks Gianluca Massera]
+
 	* conf/template/YARPConfig.cmake.in: remove auto-linking 
 	option, which was there to ease a transition to more
 	normal behavior of FIND_PACKAGE(YARP) last year.
