@@ -273,7 +273,7 @@ public:
     *       retained.
     * @note The satLim property must be given ordered by rows. 
     * @note The sample time Ts should match the rate with which the 
-    *       method @see lookAtStereoPixels is called by the user.
+    *       method lookAtStereoPixels is called by the user.
     * @note The special option "dominantEye" allows to select the 
     *       eye used for the monocular approach.
     */
