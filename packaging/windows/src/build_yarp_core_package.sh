@@ -259,9 +259,13 @@ nsis_setup yarp_debug
 # nsis_setup yarp_gsl_dlls
 
 YARP_SUB="yarp-$BUNDLE_YARP_VERSION"
-YARP_UROOT="yarp-$BUNDLE_YARP_VERSION/"
 GSL_SUB="gsl-$BUNDLE_GSL_VERSION"
-GSL_UROOT="gsl-$BUNDLE_GSL_VERSION/"
+GTKMM_SUB="gtkmm-$BUNDLE_GTKMM_VERSION"
+ACE_SUB="ace-$BUNDLE_ACE_VERSION"
+YARP_UROOT="$YARP_SUB/"
+GSL_UROOT="$GSL_SUB/"
+GTKMM_UROOT="$GTKMM_SUB/"
+ACE_UROOT="$ACE_SUB/"
 
 # Add YARP material to NSIS
 cd $YARP_DIR_UNIX || exit 1
@@ -277,6 +281,7 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	mkdir -p $d
 	cp ../*.cmake $d
 	mv $d/YARPConfig.cmake .
+	mv $d/YARPConfigVersion.cmake .
 	if $add_debug; then
 		cp $YARP_DIR_DBG_UNIX/install/lib/$d/YARP-*.cmake $d
 	fi
@@ -285,7 +290,7 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	sed -i "s|[^\"]*YARP.cmake|\${YARP_CMAKE}/../lib/${d}/YARP.cmake|" YARPConfig.cmake
 	sed -i 's|[^"]*/install|${YARP_CMAKE}/..|g' YARPConfig.cmake
 	for f in ACE.lib libACE.dll ACEd.lib libACEd.dll; do
-		sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/lib/$f|g" $d/YARP-*.cmake
+		sed -i "s|[^;]*/$f|\${_IMPORT_PREFIX}/../${ACE_UROOT}lib/$f|g" $d/YARP-*.cmake
 	done
 	addition=""
 	for k in release debug; do
@@ -302,6 +307,7 @@ for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	cd ../..
 	nsis_add_recurse yarp_base $d/fix_release/$d ${YARP_UROOT}lib/$d
 	nsis_add yarp_base $d/fix_release/YARPConfig.cmake ${YARP_UROOT}cmake/YARPConfig.cmake
+	nsis_add yarp_base $d/fix_release/YARPConfigVersion.cmake ${YARP_UROOT}cmake/YARPConfigVersion.cmake
 	if $add_debug; then
 		nsis_add_recurse yarp_debug $d/fix_debug/$d ${YARP_UROOT}lib/$d
 	fi
@@ -349,12 +355,12 @@ if [ "k$SKIP_GTK" = "k" ]; then
 	cd $GTKMM_DIR/redist || exit 1
     for f in `ls *.dll`; do
 		chmod u+x $f
-		nsis_add yarp_guis $f ${YARP_UROOT}bin/$f
+		nsis_add yarp_guis $f ${GTKMM_UROOT}bin/$f
 	done
 	cd $GTKMM_DIR/bin || exit 1
 	for f in zlib1.dll freetype6.dll intl.dll; do
 		chmod u+x $f
-		nsis_add yarp_guis $f ${YARP_UROOT}bin/$f
+		nsis_add yarp_guis $f ${GTKMM_UROOT}bin/$f
 	done
 fi
 
@@ -365,8 +371,10 @@ if [ ! -e $ACE_LIBNAME.dll ]; then
 	echo "Cannot find $ACE_LIBNAME.dll in $PWD"
 	exit 1
 fi
-nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${YARP_UROOT}lib/$ACE_LIBNAME.$LIBEXT
-nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${YARP_UROOT}bin/$ACE_LIBNAME.dll
+#nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${YARP_UROOT}lib/$ACE_LIBNAME.$LIBEXT
+#nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${YARP_UROOT}bin/$ACE_LIBNAME.dll
+nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${ACE_UROOT}lib/$ACE_LIBNAME.$LIBEXT
+nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${ACE_UROOT}bin/$ACE_LIBNAME.dll
 
 # Add Visual Studio redistributable material to NSIS
 if [ -e "$OPT_VC_REDIST_CRT" ] ; then
@@ -393,8 +401,8 @@ if $add_debug; then
 		echo "Cannot find $ACE_LIBNAME_DBG.dll in $PWD"
 		exit 1
 	fi
-	nsis_add yarp_debug $ACE_LIBNAME_DBG.$LIBEXT ${YARP_UROOT}lib/$ACE_LIBNAME_DBG.$LIBEXT
-	nsis_add yarp_debug $ACE_LIBNAME_DBG.dll ${YARP_UROOT}bin/$ACE_LIBNAME_DBG.dll
+	nsis_add yarp_debug $ACE_LIBNAME_DBG.$LIBEXT ${ACE_UROOT}lib/$ACE_LIBNAME_DBG.$LIBEXT
+	nsis_add yarp_debug $ACE_LIBNAME_DBG.dll ${ACE_UROOT}bin/$ACE_LIBNAME_DBG.dll
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	#for d in `ls -1 -d --group-directories-first YARP-* | head`; do
 	#	YARP_LIB_DIR_DBG="$d"
