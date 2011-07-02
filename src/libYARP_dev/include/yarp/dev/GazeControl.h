@@ -212,6 +212,44 @@ public:
     virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
+    * Get the 3-d point whose pixel projections and z-component in 
+    * the camera frame are known. [wait for reply] 
+    * @param camSel selects the image plane: 0 for the left, 1 for 
+    *              the right.
+    * @param px a 2-d vector which contains the (u,v) coordinates of
+    *           the pixel within the image plane.
+    * @param z the z-component of the point in the eye's reference 
+    *         frame (meters).
+    * @param x the returned 3-d point given wrt the root reference 
+    *          frame (meters).
+    * @return true/false on success/failure. 
+    */
+    virtual bool get3DPoint(const int camSel,
+                            const yarp::sig::Vector &px,
+                            const double z,
+                            yarp::sig::Vector &x)=0;
+
+    /**
+    * Get the 3-d point whose pixel projections are known as the 
+    * intersection in the space with a given plane. [wait for reply]
+    * @param camSel selects the image plane: 0 for the left, 1 for 
+    *              the right.
+    * @param px a 2-d vector which contains the (u,v) coordinates of
+    *           the pixel within the image plane.
+    * @param plane the 4-d vector containing the components 
+    *              (a,b,c,d) of the plane expressed wrt the root
+    *              reference frame in its implicit form as:
+    *              ax+by+cz+d=0.
+    * @param x the returned 3-d point given wrt the root reference 
+    *          frame (meters).
+    * @return true/false on success/failure. 
+    */
+    virtual bool get3DPointOnPlane(const int camSel,
+                                   const yarp::sig::Vector &px,
+                                   const yarp::sig::Vector &plane,
+                                   yarp::sig::Vector &x)=0;
+
+    /**
     * Get the joints target values where the controller is moving 
     * the system. [wait for reply] 
     * @param qdes a vector which is filled with the desired joints 
