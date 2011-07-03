@@ -229,7 +229,7 @@ public:
 
     /**
     * Get the 3-d point whose pixel projection and z-component in 
-    * the camera frame are known. [wait for reply] 
+    * the camera frame are given. [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
@@ -246,7 +246,7 @@ public:
                             yarp::sig::Vector &x)=0;
 
     /**
-    * Get the 3-d point - whose pixel projection is known - that 
+    * Get the 3-d point - whose pixel projection is given - that 
     * results from the intersection in the space with a given plane.
     * [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
