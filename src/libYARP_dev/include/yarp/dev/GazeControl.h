@@ -212,9 +212,9 @@ public:
     virtual bool getHeadPose(yarp::sig::Vector &x, yarp::sig::Vector &o)=0;
 
     /**
-    * Get the 2-d pixel point whose cartesian coordinates are given 
-    * wrt the root reference frame as result of its projection into 
-    * the image plane. [wait for reply] 
+    * Get the 2-d pixel point - whose cartesian coordinates are 
+    * given wrt the root reference frame - that results from the 
+    * projection into the image plane. [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param x the 3-d point given wrt the root reference frame
@@ -228,7 +228,7 @@ public:
                             yarp::sig::Vector &px)=0;
 
     /**
-    * Get the 3-d point whose pixel projections and z-component in 
+    * Get the 3-d point whose pixel projection and z-component in 
     * the camera frame are known. [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
@@ -246,8 +246,9 @@ public:
                             yarp::sig::Vector &x)=0;
 
     /**
-    * Get the 3-d point whose pixel projections are known as the 
-    * intersection in the space with a given plane. [wait for reply]
+    * Get the 3-d point - whose pixel projection is known - that 
+    * results from the intersection in the space with a given plane.
+    * [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
