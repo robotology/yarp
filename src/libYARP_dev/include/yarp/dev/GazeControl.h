@@ -247,8 +247,8 @@ public:
 
     /**
     * Get the 3-d point - whose pixel projection is given - that 
-    * results from the intersection in the space with a given plane.
-    * [wait for reply] 
+    * results from the intersection in the space with a specified 
+    * plane. [wait for reply] 
     * @param camSel selects the image plane: 0 for the left, 1 for 
     *              the right.
     * @param px a 2-d vector which contains the (u,v) coordinates of
