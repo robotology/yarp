@@ -267,6 +267,24 @@ public:
                                    yarp::sig::Vector &x)=0;
 
     /**
+    * Triangulate two points given in the image planes to find the 
+    * corresponding 3-d point in the space. [wait for reply] 
+    * @param pxl a 2-d vector which contains the (u,v) coordinates 
+    *           of the pixel within the left image plane.
+    * @param pxr a 2-d vector which contains the (u,v) coordinates 
+    *           of the pixel within the right image plane.
+    * @param x the returned 3-d point given wrt the root reference 
+    *          frame (meters).
+    * @return true/false on success/failure. 
+    *  
+    * @note The triangulation is deeply affected by uncertainties in
+    * the cameras extrinsic parameters and cameras alignment. 
+    */
+    virtual bool triangulate3DPoint(const yarp::sig::Vector &pxl,
+                                    const yarp::sig::Vector &pxr,
+                                    yarp::sig::Vector &x)=0;
+
+    /**
     * Get the joints target values where the controller is moving 
     * the system. [wait for reply] 
     * @param qdes a vector which is filled with the desired joints 
