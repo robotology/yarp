@@ -197,12 +197,12 @@ Section "-first"
   # !insertmacro ReplaceInFile "$INSTDIR\${INST2}\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
 SectionEnd
 
-Section "Command-line utilities" SecPrograms
-  SetOutPath "$INSTDIR"
-  !include ${NSIS_OUTPUT_PATH}\yarp_programs_add.nsi
-SectionEnd
+SectionGroup "YARP core" SecYarp
 
-SectionGroup "Compile environment" SecDevelopment
+  Section "Command-line utilities" SecPrograms
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_programs_add.nsi
+  SectionEnd
 
   Section "Libraries" SecLibraries
     SetOutPath "$INSTDIR"
@@ -214,6 +214,11 @@ SectionGroup "Compile environment" SecDevelopment
     !include ${NSIS_OUTPUT_PATH}\yarp_headers_add.nsi
   SectionEnd
 
+  Section "Runtime DLLs" SecDLLs
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
+  SectionEnd
+	
   Section "Examples" SecExamples
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_examples_add.nsi
@@ -221,63 +226,67 @@ SectionGroup "Compile environment" SecDevelopment
 
 SectionGroupEnd
 
-SectionGroup "YARP Runtime" SecRuntime
-
-  Section "YARP DLLs" SecDLLs
+SectionGroup "ACE (Adaptive Communication Environment)" SecAce
+  Section "ACE headers" SecAceHeaders
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_dlls_add.nsi
-  SectionEnd
-	
-  Section "Visual Studio DLLs (nonfree)" SecVcDlls
-    SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
+    !include ${NSIS_OUTPUT_PATH}\yarp_ace_headers_add.nsi
   SectionEnd
 
-  SectionGroup "ACE library" SecAce
-    Section "ACE library" SecAceLibraries
-      SetOutPath "$INSTDIR"
-      !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
-    SectionEnd
+  Section "ACE library" SecAceLibraries
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
+  SectionEnd
 
-    Section "ACE DLL" SecAceDLLs
-      SetOutPath "$INSTDIR"
-      !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
-    SectionEnd
-  SectionGroupEnd
-  
+  Section "ACE runtime DLL" SecAceDLLs
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
+  SectionEnd
+
 SectionGroupEnd
+  
+SectionGroup "GSL (GNU Scientific Library)" SecGsl
+  Section "GSL headers" SecGslHeaders
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\gsl_headers_add.nsi
+  SectionEnd
 
-SectionGroup "Math library (GPL)" SecMath
-  Section "Math libraries" SecMathLibraries
+  Section "GSL libraries" SecGslLibraries
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\gsl_libraries_add.nsi
+  SectionEnd
+
+  Section "YARP math headers" SecYarpMathHeaders
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_add.nsi
+  SectionEnd
+
+  Section "YARP math library" SecYarpMathLibraries
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_add.nsi
   SectionEnd
-
-  Section "Math DLLs" SecMathDLLs
+  
+  Section "YARP math runtime DLL" SecYarpMathDLLs
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
-
-  Section "Math headers" SecMathHeaders
-    SetOutPath "$INSTDIR"
-    #CreateDirectory "$INSTDIR\include"
-    !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_add.nsi
-  SectionEnd
 SectionGroupEnd
 
-Section "yarpview utility" SecGuis
-  #CreateDirectory "$INSTDIR\yarpview"
+SectionGroup "GTKMM" SecGtkmm
+
+  Section "yarpview utility" SecGuis
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
+    #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
+  SectionEnd
+
+SectionGroupEnd
+
+Section "Visual Studio Runtime (nonfree)" SecVcDlls
   SetOutPath "$INSTDIR"
-  !include ${NSIS_OUTPUT_PATH}\yarp_guis_add.nsi
-  #CreateShortCut "$INSTDIR\bin\yarpview.lnk" "$INSTDIR\yarpview\yarpview.exe"
+  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
 SectionEnd
 
-Section "${DBG_HIDE}Debug versions" SecDebug
-  SetOutPath "$INSTDIR"
-  !include ${NSIS_OUTPUT_PATH}\yarp_debug_add.nsi
-  # ${StrRepLocal} $0 "$INSTDIR" "\" "/"
-  # !insertmacro ReplaceInFile "$INSTDIR\${INST2}\lib\${YARP_LIB_DIR_DBG}\${YARP_LIB_FILE_DBG}" "${ACE_ORG_DIR_DBG}" "$0"
-SectionEnd
+
 
 !ifndef WriteEnvStr_Base
   !ifdef ALL_USERS
@@ -299,9 +308,9 @@ Section "Environment variables" SecPath
 SectionEnd
 
 Section "-last"
-  !insertmacro SectionFlagIsSet ${SecMath} ${SF_PSELECTED} isSel chkAll
+  !insertmacro SectionFlagIsSet ${SecGsl} ${SF_PSELECTED} isSel chkAll
    chkAll:
-     !insertmacro SectionFlagIsSet ${SecMath} ${SF_SELECTED} isSel notSel
+     !insertmacro SectionFlagIsSet ${SecGsl} ${SF_SELECTED} isSel notSel
    notSel:
      !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_math;" ""
 	 !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
@@ -312,28 +321,35 @@ SectionEnd
 ;Descriptions
 
 ;Language strings
-LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP tools, including the standard YARP companion, and the standard YARP name server."
+LangString DESC_SecYarp ${LANG_ENGLISH} "YARP libraries and tools. Unselect this if you intend to compile YARP yourself and just want YARP's dependencies."
+LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment, used by this version of YARP."
+LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
+LangString DESC_SecGtkmm ${LANG_ENGLISH} "User interface library.  Not needed to use the YARP library.  Used by the yarpview program."
+
+LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP programs, including the standard YARP companion, and the standard YARP name server."
 LangString DESC_SecDevelopment ${LANG_ENGLISH} "Files needed for compiling against YARP."
 LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
-LangString DESC_SecHeaders ${LANG_ENGLISH} "Core YARP header files."
-LangString DESC_SecExamples ${LANG_ENGLISH} "Some basic examples of using YARP.  See online documentation, and many more examples in source code package."
+LangString DESC_SecHeaders ${LANG_ENGLISH} "YARP header files."
+LangString DESC_SecExamples ${LANG_ENGLISH} "A basic example of using YARP.  See online documentation, and many more examples in source code package."
 LangString DESC_SecRuntime ${LANG_ENGLISH} "Files needed for running YARP programs."
 LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries needed for YARP programs to run."
-LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable files.  Not free software.  If you already have Visual Studio installed, you may want to skip this."
-LangString DESC_SecAce ${LANG_ENGLISH} "The Adaptive Communications Environment, used by this version of YARP."
+
 LangString DESC_SecAceLibraries ${LANG_ENGLISH} "ACE library files."
 LangString DESC_SecAceDLLs ${LANG_ENGLISH} "ACE library run-time."
-LangString DESC_SecMath ${LANG_ENGLISH} "The YARP math library.  Based on the GNU Scientific Library.  This is therefore GPL software, not the LGPL like YARP."
-LangString DESC_SecMathLibraries ${LANG_ENGLISH} "Math library files."
-LangString DESC_SecMathDLLs ${LANG_ENGLISH} "Math library run-time."
-LangString DESC_SecMathHeaders ${LANG_ENGLISH} "Math library header files."
+
+LangString DESC_SecGslLibraries ${LANG_ENGLISH} "Math library files."
+LangString DESC_SecGslDLLs ${LANG_ENGLISH} "Math library run-time."
+LangString DESC_SecGslHeaders ${LANG_ENGLISH} "Math library header files."
 LangString DESC_SecGuis ${LANG_ENGLISH} "Utility for viewing image streams.  Uses GTK+."
 LangString DESC_SecPath ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
 LangString DESC_SecDebug ${LANG_ENGLISH} "Debug versions of the YARP and ACE libraries."
 
+LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable files.  Not free software.  If you already have Visual Studio installed, you may want to skip this."
+
 ;Assign language strings to sections
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  ; !insertmacro MUI_DESCRIPTION_TEXT ${SecBase} $(DESC_SecBase)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarp} $(DESC_SecYarp)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkmm} $(DESC_SecGtkmm)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDevelopment} $(DESC_SecDevelopment)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
@@ -345,10 +361,10 @@ LangString DESC_SecDebug ${LANG_ENGLISH} "Debug versions of the YARP and ACE lib
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAceLibraries} $(DESC_SecAceLibraries)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMath} $(DESC_SecMath)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathLibraries} $(DESC_SecMathLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathDLLs} $(DESC_SecMathDLLs)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMathHeaders} $(DESC_SecMathHeaders)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslDLLs} $(DESC_SecGslDLLs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGuis} $(DESC_SecGuis)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPath} $(DESC_SecPath)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDebug} $(DESC_SecDebug)
@@ -384,7 +400,6 @@ Section "Uninstall"
   !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
   !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_debug_remove.nsi
   #Delete "$INSTDIR\bin\yarpview.lnk"
   
   Delete "$INSTDIR\Uninstall_YARP.exe"
