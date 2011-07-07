@@ -1,7 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
-* Copyright (C) 2006 Giorgio Metta
+* Copyright (C) 2006 RobotCub Consortium
+* Authors: Giorgio Metta, Lorenzo Natale
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 *
 */
@@ -856,6 +857,11 @@ public:
         }
 
         if (connectionProblem) {
+
+            rpc_p.close();
+            command_p.close();
+            state_p.close();
+
             return false;
         }
 
@@ -870,6 +876,11 @@ public:
 
         if (!ok) {
             printf("Problems with obtaining the number of controlled axes\n");
+            
+            rpc_p.close();
+            command_p.close();
+            state_p.close();
+
             return false;
         }
 
