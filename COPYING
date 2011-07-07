@@ -1,5 +1,5 @@
 Unless otherwise stated, files in YARP are:
-  Copyright: 2011 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
+  Copyright: 2011 Paul Fitzpatrick, Lorenzo Natale, Giorgio Metta
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 The list of authors for YARP (ordered by file count) is:
@@ -37,13 +37,13 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Philipp Robbel
   Ugo Pattacini
   Stephane Lallee
-  Jonas Ruesch
   Gianluca Massera
+  Jonas Ruesch
   Anne van Rossum
+  Giorgio Metta
   Daniel Krieg
   Arjan Gijsberts
   Juan G Victores
-  Giorgio Metta
   Arnaud Degroote
   Ze Ji
   Stefan Freyr Stefansson
@@ -124,6 +124,32 @@ The list of copyright holders for YARP is:
   Lars Olsson
   Freyr Magnusson
   Eric Mislivec
+
+The identifier "RobotCub Consortium" used in some copyright statements is 
+equivalent to the following list of institutions:
+  * Ecole Polytechnique Federale de Lausanne - Biologically-Inspired
+    Robotics Group (BIRG) and Learning Algorithms and Systems Lab (LASA),
+    Switzerland
+  * Imperial College London - Departments of Computing and 
+    Electronic/Electrical Engineering - United Kingdom
+  * IST Lisbon - Computer Vision and Robotics Lab Lisbon - Portugal
+  * Italian Institute of Technology - Dept. of Robotics, Brain and
+    Cognitive Sciences - Genova, Italy
+  * Sant'Anna School of Advanced Studies - ARTS Lab - Pisa - Italy
+  * Telerobot S.r.l. - Genova - Italy
+  * University of Ferrara - Department of Biomedical Science - Human
+    Physiology - Ferrara - Italy
+  * University of Genova - LIRA-Lab, Dipartimento di Informatica,
+    Sistemistica e Telematica - Genova - Italy
+  * University of Hertfordshire - School of Computer Science - United
+    Kingdom
+  * University of Uppsala - Department of Psychology - Uppsala - Sweden
+  * University of Zurich - Artificial Intelligence Lab, Department of
+    Information Technology - Zurich - Switzerland
+  * [2005-2008] University of Salford - Centre for Robotics and 
+    Automation - Salford - United Kingdom
+  * [2009-2010] The University of Sheffield, Dept. of Automatic Control & 
+    Systems Engineering, Sheffield, UK 
 
 Certain files are integrated in YARP from other sources with
 friendly licenses.  Here is a list of these files and a summary of
