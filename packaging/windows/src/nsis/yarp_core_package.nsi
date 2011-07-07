@@ -2,6 +2,7 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "EnvVarUpdate.nsh"
+!include "YarpNsisUtils.nsh"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
 !include MultiUser.nsh
@@ -17,141 +18,9 @@ RequestExecutionLevel admin
 
 !define MUI_ABORTWARNING
 
-;--------------------------------
-;Utilities
-
-!define StrRepLocal "!insertmacro StrRepLocal"
-!macro StrRepLocal output string old new
-    Push "${string}"
-    Push "${old}"
-    Push "${new}"
-    !ifdef __UNINSTALL__
-        Call un.StrRepLocal
-    !else
-        Call StrRepLocal
-    !endif
-    Pop ${output}
-!macroend
- 
-!macro Func_StrRepLocal un
-    Function ${un}StrRepLocal
-        Exch $R2 ;new
-        Exch 1
-        Exch $R1 ;old
-        Exch 2
-        Exch $R0 ;string
-        Push $R3
-        Push $R4
-        Push $R5
-        Push $R6
-        Push $R7
-        Push $R8
-        Push $R9
- 
-        StrCpy $R3 0
-        StrLen $R4 $R1
-        StrLen $R6 $R0
-        StrLen $R9 $R2
-        loop:
-            StrCpy $R5 $R0 $R4 $R3
-            StrCmp $R5 $R1 found
-            StrCmp $R3 $R6 done
-            IntOp $R3 $R3 + 1
-            Goto loop
-        found:
-            StrCpy $R5 $R0 $R3
-            IntOp $R8 $R3 + $R4
-            StrCpy $R7 $R0 "" $R8
-            StrCpy $R0 $R5$R2$R7
-            StrLen $R6 $R0
-            IntOp $R3 $R3 + $R9
-            Goto loop
-        done:
- 
-        Pop $R9
-        Pop $R8
-        Pop $R7
-        Pop $R6
-        Pop $R5
-        Pop $R4
-        Pop $R3
-        Push $R0
-        Push $R1
-        Pop $R0
-        Pop $R1
-        Pop $R0
-        Pop $R2
-        Exch $R1
-    FunctionEnd
-!macroend
-!insertmacro Func_StrRepLocal ""
-
-Function ReplaceInFileFunction
- 
-  ClearErrors
-  Exch $0      ; REPLACEMENT
-  Exch
-  Exch $1      ; SEARCH_TEXT
-  Exch 2
-  Exch $2      ; SOURCE_FILE
- 
-  Push $R0
-  Push $R1
-  Push $R2
-  Push $R3
-  Push $R4
- 
-  IfFileExists $2 +1 RIF_error
-  FileOpen $R0 $2 "r"
- 
-  GetTempFileName $R2
-  FileOpen $R1 $R2 "w"
- 
-  RIF_loop:
-    FileRead $R0 $R3
-    IfErrors RIF_leaveloop
-    #RIF_sar:
-      Push "$R3"
-      Push "$1"
-      Push "$0"
-      Call StrRepLocal
-      StrCpy $R4 "$R3"
-      Pop $R3
-      #StrCmp "$R3" "$R4" +1 RIF_sar
-    FileWrite $R1 "$R3"
-  Goto RIF_loop
- 
-  RIF_leaveloop:
-    FileClose $R1
-    FileClose $R0
- 
-    Delete "$2" 
-    Rename "$R2" "$2"
- 
-    ClearErrors
-    Goto RIF_out
- 
-  RIF_error:
-    SetErrors
- 
-  RIF_out:
-  Pop $R4
-  Pop $R3
-  Pop $R2
-  Pop $R1
-  Pop $R0
-  Pop $2
-  Pop $0
-  Pop $1
- 
-FunctionEnd
-
-
-!macro ReplaceInFile SOURCE_FILE SEARCH_TEXT REPLACEMENT
-  Push "${SOURCE_FILE}"
-  Push "${SEARCH_TEXT}"
-  Push "${REPLACEMENT}"
-  Call ReplaceInFileFunction
+!macro AddEnv Key Val
+   ${EnvVarUpdate} $0 "${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
+   ${EnvVarUpdate} $0 "${VENDOR}_yarp_${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
 !macroend
 
 ;--------------------------------
@@ -182,22 +51,52 @@ Section "-first"
   SetOutPath "$INSTDIR"
   # WriteRegStr HKCU "Software\YARP" "" $INSTDIR
   # WriteRegStr HKCU "Software\${VENDOR}" ""
-  WriteRegStr HKCU "Software\${VENDOR}\YARP\${INST2}" "" "$INSTDIR\${INST2}"
-  WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallLocation" $INSTDIR
-  WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${INST2}
-  WriteRegStr HKCU "Software\${VENDOR}\GSL\${GSL_INST2}" "" "$INSTDIR\${GSL_INST2}"
-  WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
-  WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_INST2}
-  
+
+  # All robotology_yarp material should be removed, to avoid
+  # environment variables getting too long over time  
+   #!insertmacro AddEnv "PATH" "R" "${WriteEnvStr_Base}" "$%robotology_PATH%"
+
+  Push $R0
+  ReadEnvStr $R0 "robotology_yarp_PATH" 
+  DetailPrint "robotology_yarp_PATH: [$R0]"
+  Exch $R0
+  Push "PATH"
+  Push $0
+  Call RemoveOldEnv
+  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_PATH" ""
+ 
+  Push $R0
+  ReadEnvStr $R0 "robotology_yarp_INCLUDE" 
+  DetailPrint "robotology_yarp_INCLUDE: [$R0]"
+  Exch $R0
+  Push "INCLUDE"
+  Push $0
+  Call RemoveOldEnv
+  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_INCLUDE" ""
+ 
+  Push $R0
+  ReadEnvStr $R0 "robotology_yarp_LIB" 
+  DetailPrint "robotology_yarp_LIB: [$R0]"
+  Exch $R0
+  Push "LIB"
+  Push $0
+  Call RemoveOldEnv
+  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_LIB" ""
+ 
+  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+   
   WriteUninstaller "$INSTDIR\Uninstall_YARP.exe"
   SectionIn RO
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
-  # ${StrRepLocal} $0 "$INSTDIR" "\" "/"
-  # !insertmacro ReplaceInFile "$INSTDIR\YARPConfig.cmake" "${YARP_ORG_DIR}/install" "$0"
-  # !insertmacro ReplaceInFile "$INSTDIR\${INST2}\lib\${YARP_LIB_DIR}\${YARP_LIB_FILE}" "${ACE_ORG_DIR}" "$0"
 SectionEnd
 
 SectionGroup "YARP core" SecYarp
+
+  Section "-yarp_first"
+    SetOutPath "$INSTDIR"
+    SectionIn RO
+    !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
+  SectionEnd
 
   Section "Command-line utilities" SecPrograms
     SetOutPath "$INSTDIR"
@@ -224,27 +123,49 @@ SectionGroup "YARP core" SecYarp
     !include ${NSIS_OUTPUT_PATH}\yarp_examples_add.nsi
   SectionEnd
 
+  Section "Set environment variables and registry keys" SecYarpEnv
+    WriteRegStr HKCU "Software\${VENDOR}\YARP\${YARP_SUB}" "" "$INSTDIR\${YARP_SUB}"
+    WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallLocation" $INSTDIR
+    WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${YARP_SUB}
+    !insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\bin"
+    !insertmacro AddEnv "LIB" "$INSTDIR\${YARP_SUB}\lib"
+    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${YARP_SUB}\include"
+    WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR\${YARP_SUB}"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+  SectionEnd
+
 SectionGroupEnd
 
 SectionGroup "ACE (Adaptive Communication Environment)" SecAce
   Section "ACE headers" SecAceHeaders
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_ace_headers_add.nsi
+    !include ${NSIS_OUTPUT_PATH}\ace_headers_add.nsi
   SectionEnd
 
   Section "ACE library" SecAceLibraries
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_add.nsi
+    !include ${NSIS_OUTPUT_PATH}\ace_libraries_add.nsi
   SectionEnd
 
   Section "ACE runtime DLL" SecAceDLLs
     SetOutPath "$INSTDIR"
-    !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_add.nsi
+    !include ${NSIS_OUTPUT_PATH}\ace_dlls_add.nsi
+  SectionEnd
+
+  Section "Set environment variables and registry keys" SecAceEnv
+    WriteRegStr HKCU "Software\${VENDOR}\ACE\${ACE_SUB}" "" "$INSTDIR\${ACE_SUB}"
+    WriteRegStr HKCU "Software\${VENDOR}\ACE\Common" "LastInstallLocation" $INSTDIR
+    WriteRegStr HKCU "Software\${VENDOR}\ACE\Common" "LastInstallVersion" ${YARP_SUB}
+    !insertmacro AddEnv "PATH" "$INSTDIR\${ACE_SUB}\bin"
+    !insertmacro AddEnv "LIB" "$INSTDIR\${ACE_SUB}\lib"
+    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${ACE_SUB}"
+    WriteRegExpandStr ${WriteEnvStr_RegKey} ACE_ROOT "$INSTDIR\${ACE_SUB}"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
 SectionGroupEnd
   
-SectionGroup "GSL (GNU Scientific Library)" SecGsl
+SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
   Section "GSL headers" SecGslHeaders
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\gsl_headers_add.nsi
@@ -255,23 +176,62 @@ SectionGroup "GSL (GNU Scientific Library)" SecGsl
     !include ${NSIS_OUTPUT_PATH}\gsl_libraries_add.nsi
   SectionEnd
 
-  Section "YARP math headers" SecYarpMathHeaders
+  Section "YARP headers for math" SecYarpMathHeaders
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_add.nsi
   SectionEnd
 
-  Section "YARP math library" SecYarpMathLibraries
+  Section "YARP library for math" SecYarpMathLibraries
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_add.nsi
   SectionEnd
   
-  Section "YARP math runtime DLL" SecYarpMathDLLs
+  Section "YARP runtime DLL for math" SecYarpMathDLLs
     SetOutPath "$INSTDIR"
     !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_add.nsi
   SectionEnd
+
+  Section "Set environment variables and registry keys" SecGslEnv
+    WriteRegStr HKCU "Software\${VENDOR}\GSL\${GSL_SUB}" "" "$INSTDIR\${GSL_SUB}"
+    WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
+    WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_SUB}
+    # !insertmacro AddEnv "PATH" "$INSTDIR\${GSL_SUB}\bin"
+    !insertmacro AddEnv "LIB" "$INSTDIR\${GSL_SUB}\lib"
+    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GSL_SUB}\include"
+    WriteRegExpandStr ${WriteEnvStr_RegKey} GSL_DIR "$INSTDIR\${GSL_SUB}"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+  SectionEnd
+
 SectionGroupEnd
 
 SectionGroup "GTKMM" SecGtkmm
+
+  Section "GTKMM headers" SecGtkmmHeaders
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\gtkmm_headers_add.nsi
+  SectionEnd
+
+  Section "GTKMM library" SecGtkmmLibraries
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\gtkmm_libraries_add.nsi
+  SectionEnd
+
+  Section "GTKMM runtime DLL" SecGtkmmDLLs
+    SetOutPath "$INSTDIR"
+    !include ${NSIS_OUTPUT_PATH}\gtkmm_dlls_add.nsi
+  SectionEnd
+
+  Section "Set environment variables and registry keys" SecGtkmmEnv
+    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\${GSL_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
+    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
+    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
+    !insertmacro AddEnv "PATH" "$INSTDIR\${GTKMM_SUB}\bin"
+    !insertmacro AddEnv "LIB" "$INSTDIR\${GTKMM_SUB}\lib"
+    !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GTKMM_SUB}\include"
+    WriteRegExpandStr ${WriteEnvStr_RegKey} GTKMM_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+    WriteRegExpandStr ${WriteEnvStr_RegKey} GTK_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+    SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+  SectionEnd
 
   Section "yarpview utility" SecGuis
     SetOutPath "$INSTDIR"
@@ -286,34 +246,13 @@ Section "Visual Studio Runtime (nonfree)" SecVcDlls
   !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_add.nsi
 SectionEnd
 
-
-
-!ifndef WriteEnvStr_Base
-  !ifdef ALL_USERS
-    !define WriteEnvStr_Base "HKLM"
-    !define WriteEnvStr_RegKey \
-       'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
-  !else
-    !define WriteEnvStr_Base "HKCU"
-    !define WriteEnvStr_RegKey 'HKCU "Environment"'
-  !endif
-!endif
-
-Section "Environment variables" SecPath
-  ${EnvVarUpdate} $0 "PATH" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\bin"
-  ${EnvVarUpdate} $0 "LIB" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\lib"
-  ${EnvVarUpdate} $0 "INCLUDE" "A" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\include"
-  WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR\${INST2}"
-  SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
-SectionEnd
-
 Section "-last"
   !insertmacro SectionFlagIsSet ${SecGsl} ${SF_PSELECTED} isSel chkAll
    chkAll:
      !insertmacro SectionFlagIsSet ${SecGsl} ${SF_SELECTED} isSel notSel
    notSel:
-     !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_math;" ""
-	 !insertmacro ReplaceInFile "$INSTDIR\${INST2}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
+     !insertmacro ReplaceInFile "$INSTDIR\${YARP_SUB}\cmake\YARPConfig.cmake" "YARP_math;" ""
+	 !insertmacro ReplaceInFile "$INSTDIR\${YARP_SUB}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
    isSel:
 SectionEnd
 
@@ -375,59 +314,34 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
 ;Uninstaller Section
 
 Section "Uninstall"
-  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\bin"
-  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\lib"
-  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${INST2}\include"
+  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\bin"
+  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\lib"
+  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\include"
 
-  #Push "$INSTDIR\bin"
-  #Call un.RemoveFromPath
-  #Push "LIB"
-  #Push "$INSTDIR\lib"
-  #Call un.RemoveFromEnvVar
   DeleteRegValue ${WriteEnvStr_RegKey} YARP_DIR
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
-
-  !include ${NSIS_OUTPUT_PATH}\yarp_base_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_libraries_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_dlls_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_programs_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_headers_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_examples_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_math_libraries_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_math_dlls_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_math_headers_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_ace_libraries_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_ace_dlls_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_vc_dlls_remove.nsi
-  !include ${NSIS_OUTPUT_PATH}\yarp_guis_remove.nsi
-  #Delete "$INSTDIR\bin\yarpview.lnk"
   
-  Delete "$INSTDIR\Uninstall_YARP.exe"
-
-  RMDir /r "$INSTDIR\${INST2}\bin"
-  RMDir /r "$INSTDIR\${INST2}\lib"
-  #RMDir "$INSTDIR\yarpview"
-  RMDir /r "$INSTDIR\${INST2}\include"
-  RMDir "$INSTDIR\${INST2}\example"
-  RMDir /r "$INSTDIR\${INST2}"
-  RMDir /r "$INSTDIR\${GSL_INST2}"
+  RMDir /r "$INSTDIR\${YARP_SUB}"
+  RMDir /r "$INSTDIR\${GSL_SUB}"
 
   # cleanup YARP registry entries
   DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallLocation"
   DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallVersion"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${INST2}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${YARP_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP"
   
   # cleanup GSL registry entries
   DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallLocation"
   DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallVersion"  
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
-  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_INST2}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
 
   # cleanup vendor entry if empty
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}"
+
+  Delete "$INSTDIR\Uninstall_YARP.exe"
   
 SectionEnd
 

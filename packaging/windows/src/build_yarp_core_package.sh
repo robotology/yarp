@@ -239,12 +239,16 @@ if $add_debug; then
 fi
 
 # Set up stubs for all NSIS sections
-nsis_setup yarp_ace_headers
-nsis_setup yarp_ace_libraries
-nsis_setup yarp_ace_dlls
+nsis_setup ace_headers
+nsis_setup ace_libraries
+nsis_setup ace_dlls
 
 nsis_setup gsl_headers
 nsis_setup gsl_libraries
+
+nsis_setup gtkmm_headers
+nsis_setup gtkmm_libraries
+nsis_setup gtkmm_dlls
 
 nsis_setup yarp_base
 nsis_setup yarp_libraries
@@ -352,13 +356,16 @@ if [ "k$SKIP_GTK" = "k" ]; then
 	cd $GTKMM_DIR/redist || exit 1
     for f in `ls *.dll`; do
 		chmod u+x $f
-		nsis_add yarp_guis $f ${GTKMM_SUB}/bin/$f
+		nsis_add gtkmm_dlls $f ${GTKMM_SUB}/bin/$f
 	done
 	cd $GTKMM_DIR/bin || exit 1
 	for f in zlib1.dll freetype6.dll intl.dll; do
 		chmod u+x $f
-		nsis_add yarp_guis $f ${GTKMM_SUB}/bin/$f
+		nsis_add gtkmm_dlls $f ${GTKMM_SUB}/bin/$f
 	done
+	cd $GTKMM_DIR || exit 1
+    nsis_add_recurse gtkmm_headers include ${GTKMM_SUB}/include
+    nsis_add_recurse gtkmm_libraries lib ${GTKMM_SUB}/lib
 fi
 
 # Add ACE material to NSIS
@@ -367,15 +374,13 @@ if [ ! -e $ACE_LIBNAME.dll ]; then
 	echo "Cannot find $ACE_LIBNAME.dll in $PWD"
 	exit 1
 fi
-#nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${YARP_SUB}/lib/$ACE_LIBNAME.$LIBEXT
-#nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${YARP_SUB}/bin/$ACE_LIBNAME.dll
-nsis_add yarp_ace_libraries $ACE_LIBNAME.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME.$LIBEXT
-nsis_add yarp_ace_dlls $ACE_LIBNAME.dll ${ACE_SUB}/bin/$ACE_LIBNAME.dll
+nsis_add ace_libraries $ACE_LIBNAME.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME.$LIBEXT
+nsis_add ace_dlls $ACE_LIBNAME.dll ${ACE_SUB}/bin/$ACE_LIBNAME.dll
 cd $ACE_DIR/ace || exit 1
 rm -rf tmp/ace
 mkdir -p tmp/ace || exit 1
 cp -r -v *.h *.inl *.cpp os_include tmp/ace || exit 1
-nsis_add_recurse yarp_ace_headers tmp/ace ${ACE_SUB}/include/ace
+nsis_add_recurse ace_headers tmp/ace ${ACE_SUB}/ace
 
 # Add Visual Studio redistributable material to NSIS
 if [ -e "$OPT_VC_REDIST_CRT" ] ; then
@@ -402,8 +407,8 @@ if $add_debug; then
 		echo "Cannot find $ACE_LIBNAME_DBG.dll in $PWD"
 		exit 1
 	fi
-	nsis_add yarp_ace_libraries $ACE_LIBNAME_DBG.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME_DBG.$LIBEXT
-	nsis_add yarp_ace_dlls $ACE_LIBNAME_DBG.dll ${ACE_SUB}/bin/$ACE_LIBNAME_DBG.dll
+	nsis_add ace_libraries $ACE_LIBNAME_DBG.$LIBEXT ${ACE_SUB}/lib/$ACE_LIBNAME_DBG.$LIBEXT
+	nsis_add ace_dlls $ACE_LIBNAME_DBG.dll ${ACE_SUB}/bin/$ACE_LIBNAME_DBG.dll
 	cd $YARP_DIR_DBG_UNIX/install/lib || exit 1
 	cd $GSL_DIR_DBG_UNIX
 	rm -rf tmp_debug
@@ -417,7 +422,7 @@ fi
 # Run NSIS
 cd $OUT_DIR
 cp $SETTINGS_SOURCE_DIR/src/nsis/*.nsh .
-$NSIS_BIN -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DINST2=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DGSL_INST2=$GSL_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
+$NSIS_BIN -DVENDOR=$BUNDLE_VENDOR -DYARP_VERSION=$BUNDLE_YARP_VERSION -DYARP_SUB=$YARP_SUB -DGSL_VERSION=$BUNDLE_GSL_VERSION -DACE_SUB=$ACE_SUB -DGSL_SUB=$GSL_SUB -DGTKMM_SUB=$GTKMM_SUB -DBUILD_VERSION=${OPT_COMPILER}_${OPT_VARIANT}_${OPT_BUILD} -DYARP_LICENSE=$YARP_LICENSE -DYARP_ORG_DIR=$YARP_DIR -DACE_ORG_DIR=$ACE_DIR -DYARP_LIB_DIR=$YARP_LIB_DIR -DYARP_LIB_FILE=$YARP_LIB_FILE -DDBG_HIDE=$DBG_HIDE -DYARP_ORG_DIR_DBG=$YARP_DIR_DBG -DACE_ORG_DIR_DBG=$ACE_DIR_DBG -DYARP_LIB_DIR_DBG=$YARP_LIB_DIR_DBG -DYARP_LIB_FILE_DBG=$YARP_LIB_FILE_DBG -DNSIS_OUTPUT_PATH=`cygpath -w $PWD` `cygpath -m $SETTINGS_SOURCE_DIR/src/nsis/yarp_core_package.nsi` || exit 1
 
 # Generate zip files
 if [ "k$SKIP_ZIP" = "k" ] ; then
