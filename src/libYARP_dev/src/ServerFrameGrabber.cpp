@@ -198,7 +198,7 @@ bool ServerFrameGrabber::respond(const yarp::os::Bottle& cmd,
 
 	IFrameGrabberControlsDC1394* fgCtrlDC1394=dynamic_cast<IFrameGrabberControlsDC1394*>(fgCtrl);
 
-    printf("%s\n",cmd.toString().c_str());
+    //printf("%s\n",cmd.toString().c_str());
 
 	switch (code) 
 	{
