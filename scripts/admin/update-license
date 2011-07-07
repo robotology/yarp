@@ -50,7 +50,7 @@ grep -i -o "\[thanks [^]]*\]" ChangeLog | sed "s/^.thanks //i" | sed "s/\]//" > 
 
 cat<<EOF
 Unless otherwise stated, files in YARP are:
-  Copyright: 2011 Paul Fitzpatrick, Lorenzo, Natale, Giorgio Metta
+  Copyright: 2011 Paul Fitzpatrick, Lorenzo Natale, Giorgio Metta
   Released under the GNU LGPLv2.1 or later - see LGPL.TXT for details.
 
 The list of authors for YARP (ordered by file count) is:
@@ -75,6 +75,32 @@ echo ""
 echo ""
 
 cat<<EOF
+The identifier "RobotCub Consortium" used in some copyright statements is 
+equivalent to the following list of institutions:
+  * Ecole Polytechnique Federale de Lausanne - Biologically-Inspired
+    Robotics Group (BIRG) and Learning Algorithms and Systems Lab (LASA),
+    Switzerland
+  * Imperial College London - Departments of Computing and 
+    Electronic/Electrical Engineering - United Kingdom
+  * IST Lisbon - Computer Vision and Robotics Lab Lisbon - Portugal
+  * Italian Institute of Technology - Dept. of Robotics, Brain and
+    Cognitive Sciences - Genova, Italy
+  * Sant'Anna School of Advanced Studies - ARTS Lab - Pisa - Italy
+  * Telerobot S.r.l. - Genova - Italy
+  * University of Ferrara - Department of Biomedical Science - Human
+    Physiology - Ferrara - Italy
+  * University of Genova - LIRA-Lab, Dipartimento di Informatica,
+    Sistemistica e Telematica - Genova - Italy
+  * University of Hertfordshire - School of Computer Science - United
+    Kingdom
+  * University of Salford - Centre for Robotics and Automation - 
+    Salford - United Kingdom
+  * University of Uppsala - Department of Psychology - Uppsala - Sweden
+  * University of Zurich - Artificial Intelligence Lab, Department of
+    Information Technology - Zurich - Switzerland
+  * The University of Sheffield, Dept. of Automatic Control & Systems
+    Engineering, Sheffield, UK 
+
 Certain files are integrated in YARP from other sources with
 friendly licenses.  Here is a list of these files and a summary of
 their copyright.  See the individual files for more details.
