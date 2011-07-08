@@ -230,7 +230,7 @@ static bool ReadHeader(FILE *fp, int *height, int *width, int *color)
 
 static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 {
-   	int width, height, color, num, size;
+   	int width, height, color, num;
     FILE *fp=0;
 	fp = fopen(filename, "rb");
 
@@ -259,7 +259,6 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 	const int h = img.height();
 	const int pad = img.getRowSize();
 	unsigned char *dst = img.getRawImage ();
-	size = w * h;
 
 	num = 0;
 	for (int i = 0; i < h; i++)
@@ -275,7 +274,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 
 static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 {
-   	int width, height, color, num, size;
+   	int width, height, color, num;
     FILE *fp=0;
 	fp = fopen(filename, "rb");
 
@@ -305,7 +304,6 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 	const int h = tmpImg.height();
 	const int pad = tmpImg.getRowSize();
 	unsigned char *dst = tmpImg.getRawImage ();
-	size = w * h;
 
 	num = 0;
 	for (int i = 0; i < h; i++)
@@ -321,7 +319,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 
 static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 {
-   	int width, height, color, num, size;
+   	int width, height, color, num;
     FILE *fp=0;
 	fp = fopen(filename, "rb");
 
@@ -350,7 +348,6 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 	const int h = img.height();
 	const int pad = img.getRowSize();
 	unsigned char *dst = img.getRawImage ();
-	size = w * h;
 
 	num = 0;
 	for (int i = 0; i < h; i++)

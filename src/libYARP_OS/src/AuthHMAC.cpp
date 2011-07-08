@@ -191,9 +191,8 @@ bool AuthHMAC::send_hmac(OutputStream * stream, unsigned char* nonce, unsigned c
 bool AuthHMAC::receive_hmac(InputStream * stream, unsigned char * nonce, unsigned char * mac) {
     Bytes nonce_bytes((char*) nonce, NONCE_LEN);
     Bytes mac_bytes((char*) mac, DIGEST_SIZE);
-    int n;
-    n = stream->read(nonce_bytes);
-    n = stream->read(mac_bytes);
+    stream->read(nonce_bytes);
+    stream->read(mac_bytes);
 
 #ifdef DEBUG_HMAC
     show_hmac_debug(nonce, NONCE_LEN, "got nonce ");

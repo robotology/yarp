@@ -1278,7 +1278,6 @@ static bool __pc_rpc(const Contact& c,
 
 bool PortCore::adminBlock(ConnectionReader& reader, void *id, 
                           OutputStream *os) {
-    bool needReap = false;
     Bottle cmd, result;
     cmd.read(reader);
 
@@ -1425,7 +1424,6 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                             if (!listed.check(me)) {
                                 printf("BYE %s\n", me.c_str());
                                 unit->setDoomed(true);
-                                needReap = true;
                             }
                         }
                     }

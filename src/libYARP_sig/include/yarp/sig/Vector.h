@@ -140,7 +140,7 @@ public:
 
     virtual void resize(size_t size)
     {
-        T def;
+        T def = (T)0;
         resize(size, def);
     }
 

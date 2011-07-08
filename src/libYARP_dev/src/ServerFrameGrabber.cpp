@@ -96,11 +96,13 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     p.open(config.check("name",Value("/grabber"),
                         "name of port to send data on").asString());
 
+    /*
     double framerate=0;
     if (config.check("framerate", name, 
                      "maximum rate in Hz to read from subdevice")) {
         framerate=name->asDouble();
     }
+    */
 
     if (fgAv&&
         !config.check("shared-ports",
@@ -146,7 +148,8 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
     singleThreaded = 
         config.check("single_threaded",
                      "if present, operate in single threaded mode")!=0;
-    thread.open(config.check("framerate",Value("0")).asDouble(),
+    thread.open(config.check("framerate",Value("0"),
+                             "maximum rate in Hz to read from subdevice").asDouble(),
                 singleThreaded);
     active = true;
 

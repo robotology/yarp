@@ -271,7 +271,7 @@ public:
             ok = delegate->sendAck(*this);
         }
         getStreams().endPacket();
-        return true;
+        return ok;
     }
 
     bool defaultSendAck();

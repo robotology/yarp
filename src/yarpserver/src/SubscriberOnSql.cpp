@@ -439,6 +439,7 @@ bool SubscriberOnSql::setTopic(const char *port, const char *structure,
             ok = false;
         }
         sqlite3_free(query);
+        if (!ok) return false;
         if (!active) return true;
     }
 

@@ -442,6 +442,7 @@ public:
                         dummy=v2;
                         dummy=*row++;
                         acc-=v1;
+                        printf("Dummy value is %d (just to keep latest g++ happy)\n", dummy);
                     }
             }
 
