@@ -214,3 +214,45 @@ Function RemoveOldEnv
   Exch
   Exch $R0
 FunctionEnd
+
+!macro SPLIT_STRING INPUT PART
+  Push $R0
+  Push $R1
+  Push $R2
+ 
+  StrCpy 	$R0 -1
+  IntOp  	$R1 ${PART} * 2
+  IntOp  	$R1 $R1 - 1
+ 
+findStart_loop_${PART}:						
+ 
+  IntOp  	$R0 $R0 + 1
+  StrCpy	$R2 ${INPUT} 1 $R0
+  StrCmp 	$R2 "" error_${PART}
+  StrCmp 	$R2 '"' 0 findStart_loop_${PART}
+ 
+  IntOp 	$R1 $R1 - 1
+  IntCmp 	$R1 0 0 0 findStart_loop_${PART}		
+ 
+  IntOp 	$R1 $R0 + 1
+ 
+findEnd_loop_${PART}:						
+  IntOp  	$R0 $R0 + 1
+  StrCpy	$R2 ${INPUT} 1 $R0
+  StrCmp 	$R2 "" error_${PART}
+  StrCmp 	$R2 '"' 0 findEnd_loop_${PART}
+ 
+  IntOp 	$R0 $R0 - $R1					
+  StrCpy 	$R0 ${INPUT} $R0 $R1
+  Goto 		done_${PART}
+ 
+ 
+error_${PART}:
+  StrCpy 	$R0 error
+ 
+ 
+done_${PART}:
+  Pop 		$R2
+  Pop 		$R1
+  Exch 		$R0
+!macroend

@@ -18,9 +18,16 @@ RequestExecutionLevel admin
 
 !define MUI_ABORTWARNING
 
+!define UninstLog "uninstall_YARP.log"
+Var UninstLog
+LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
+
+
 !macro AddEnv Key Val
    ${EnvVarUpdate} $0 "${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
    ${EnvVarUpdate} $0 "${VENDOR}_yarp_${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
+	FileWrite $UninstLog '"ENVADD" "${Key}" "${Val}"$\r$\n'
+	FileWrite $UninstLog '"ENVADD" "${VENDOR}_yarp_${Key}" "${Val}"$\r$\n'
 !macroend
 
 ;--------------------------------
@@ -47,6 +54,16 @@ RequestExecutionLevel admin
 ;--------------------------------
 ;Installer Sections
 
+Section -openlogfile
+    CreateDirectory "$INSTDIR"
+    IfFileExists "$INSTDIR\${UninstLog}" +3
+      FileOpen $UninstLog "$INSTDIR\${UninstLog}" w
+    Goto +4
+      SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
+      FileOpen $UninstLog "$INSTDIR\${UninstLog}" a
+      FileSeek $UninstLog 0 END
+SectionEnd
+  
 Section "-first"
   SetOutPath "$INSTDIR"
   # WriteRegStr HKCU "Software\YARP" "" $INSTDIR
@@ -266,22 +283,19 @@ LangString DESC_SecGsl ${LANG_ENGLISH} "The YARP math library.  Based on the GNU
 LangString DESC_SecGtkmm ${LANG_ENGLISH} "User interface library.  Not needed to use the YARP library.  Used by the yarpview program."
 
 LangString DESC_SecPrograms ${LANG_ENGLISH} "YARP programs, including the standard YARP companion, and the standard YARP name server."
-LangString DESC_SecDevelopment ${LANG_ENGLISH} "Files needed for compiling against YARP."
 LangString DESC_SecLibraries ${LANG_ENGLISH} "Libraries for linking against YARP."
 LangString DESC_SecHeaders ${LANG_ENGLISH} "YARP header files."
 LangString DESC_SecExamples ${LANG_ENGLISH} "A basic example of using YARP.  See online documentation, and many more examples in source code package."
-LangString DESC_SecRuntime ${LANG_ENGLISH} "Files needed for running YARP programs."
 LangString DESC_SecDLLs ${LANG_ENGLISH} "Libraries needed for YARP programs to run."
 
 LangString DESC_SecAceLibraries ${LANG_ENGLISH} "ACE library files."
 LangString DESC_SecAceDLLs ${LANG_ENGLISH} "ACE library run-time."
 
 LangString DESC_SecGslLibraries ${LANG_ENGLISH} "Math library files."
-LangString DESC_SecGslDLLs ${LANG_ENGLISH} "Math library run-time."
+LangString DESC_SecYarpMathDLLs ${LANG_ENGLISH} "Math library run-time."
 LangString DESC_SecGslHeaders ${LANG_ENGLISH} "Math library header files."
 LangString DESC_SecGuis ${LANG_ENGLISH} "Utility for viewing image streams.  Uses GTK+."
-LangString DESC_SecPath ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
-LangString DESC_SecDebug ${LANG_ENGLISH} "Debug versions of the YARP and ACE libraries."
+LangString DESC_SecYarpEnv ${LANG_ENGLISH} "Add YARP to PATH, LIB, and INCLUDE variables, and set YARP_DIR variable."
 
 LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable files.  Not free software.  If you already have Visual Studio installed, you may want to skip this."
 
@@ -290,11 +304,9 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
   !insertmacro MUI_DESCRIPTION_TEXT ${SecYarp} $(DESC_SecYarp)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkmm} $(DESC_SecGtkmm)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPrograms} $(DESC_SecPrograms)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDevelopment} $(DESC_SecDevelopment)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecLibraries} $(DESC_SecLibraries)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecHeaders} $(DESC_SecHeaders)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecExamples} $(DESC_SecExamples)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecRuntime} $(DESC_SecRuntime)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDLLs} $(DESC_SecDLLs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecVcDlls} $(DESC_SecVcDlls)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAce} $(DESC_SecAce)
@@ -302,11 +314,10 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
   !insertmacro MUI_DESCRIPTION_TEXT ${SecAceDLLs} $(DESC_SecAceDLLs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGsl} $(DESC_SecGsl)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGslLibraries} $(DESC_SecGslLibraries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGslDLLs} $(DESC_SecGslDLLs)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpMathDLLs} $(DESC_SecYarpMathDLLs)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGslHeaders} $(DESC_SecGslHeaders)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGuis} $(DESC_SecGuis)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecPath} $(DESC_SecPath)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecDebug} $(DESC_SecDebug)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecYarpEnv} $(DESC_SecYarpEnv)
   #!insertmacro MUI_DESCRIPTION_TEXT ${Sec} $(DESC_Sec)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
@@ -314,6 +325,48 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
 ;Uninstaller Section
 
 Section "Uninstall"
+   IfFileExists "$INSTDIR\${UninstLog}" +3
+    MessageBox MB_OK|MB_ICONSTOP "$(UninstLogMissing)"
+      Abort
+ 
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+  Push $R4
+  SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
+  FileOpen $UninstLog "$INSTDIR\${UninstLog}" r
+  StrCpy $R1 -1
+ 
+  GetLineCount:
+    ClearErrors
+    FileRead $UninstLog $R0
+    IntOp $R1 $R1 + 1
+    StrCpy $R0 $R0 -2
+    Push $R0   
+    IfErrors 0 GetLineCount
+ 
+  Pop $R0
+ 
+  LoopRead:
+    StrCmp $R1 0 LoopDone
+    Pop $R0
+	!insertmacro SPLIT_STRING $R0 1
+	Pop $R3
+	!insertmacro SPLIT_STRING $R0 2
+	Pop $R4
+	DetailPrint "Uninstall |$R3|$R4|"
+    IntOp $R1 $R1 - 1
+    Goto LoopRead
+  LoopDone:
+  FileClose $UninstLog
+  Delete "$INSTDIR\${UninstLog}"
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
+
   ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\bin"
   ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\lib"
   ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\include"
