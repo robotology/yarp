@@ -38,7 +38,7 @@ Here is an example server:
 \include example/os/rpc_server.cpp
 
 And here is a client to go with it:
-\include example/os/rpc_server.cpp
+\include example/os/rpc_client.cpp
 
 The server and client communicate with yarp::os::Bottle objects
 here, but as usual anything that implements yarp::os::Portable

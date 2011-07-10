@@ -1,3 +1,8 @@
+2011-07-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/doc/rpc_ports.dox: fix documentation to show rpc client
+	instead of duplicating rpc server [thanks Ugo Pattacini]
+
 2011-07-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* COPYING: clarify years of participation of member
