@@ -140,13 +140,17 @@ FunctionEnd
     !define WriteEnvStr_Base "HKLM"
     !define WriteEnvStr_RegKey \
        'HKLM "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"'
+    !define WriteEnvStr_KeyOnly \
+       "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
   !else
     !define WriteEnvStr_Base "HKCU"
     !define WriteEnvStr_RegKey 'HKCU "Environment"'
+    !define WriteEnvStr_KeyOnly "Environment"
   !endif
 !endif
 
-Function SplitFirstStrPart
+!macro SplitFirstStrPart un
+Function ${un}SplitFirstStrPart
   Exch $R0
   Exch
   Exch $R1
@@ -179,6 +183,10 @@ Function SplitFirstStrPart
   Exch
   Exch $R0 ;first
 FunctionEnd
+!macroend
+!insertmacro SplitFirstStrPart ""
+!insertmacro SplitFirstStrPart "un."
+
 
 Function RemoveOldEnv
   Exch $R0 ; $0
@@ -256,3 +264,111 @@ done_${PART}:
   Pop 		$R1
   Exch 		$R0
 !macroend
+
+
+!macro RemoveInventory un
+Function ${un}RemoveInventory
+  Exch $R8 ; $PATH
+  Exch
+  Exch $R9 ; $0
+
+  IfFileExists "$R8" +2
+    Goto RemoveInventoryDone
+
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+  Push $R4
+  Push $R5
+  Push $R6
+  SetFileAttributes "$R8" NORMAL
+  FileOpen $UninstLog "$R8" r
+  StrCpy $R1 -1
+ 
+  GetLineCount:
+    ClearErrors
+    FileRead $UninstLog $R0
+    IntOp $R1 $R1 + 1
+    StrCpy $R0 $R0 -2
+	DetailPrint "Push |$R0|"
+    Push $R0   
+    IfErrors 0 GetLineCount
+ 
+  Pop $R0
+ 
+  LoopRead:
+    StrCmp $R1 0 LoopDone
+    Pop $R0
+	Push "|"
+	Push $R0
+    Call ${un}SplitFirstStrPart
+    Pop $R3 ;1st part
+    Pop $R0 ;rest
+	Push "|"
+	Push $R0
+    Call ${un}SplitFirstStrPart
+    Pop $R4 ;2st part
+    Pop $R0 ;rest
+	Push "|"
+	Push $R0
+    Call ${un}SplitFirstStrPart
+    Pop $R5 ;3rd part
+    Pop $R0 ;rest
+	Push "|"
+	Push $R0
+    Call ${un}SplitFirstStrPart
+    Pop $R6 ;4th part
+    Pop $R0 ;rest
+	Push "|"
+	Push $R0
+    Call ${un}SplitFirstStrPart
+    Pop $R7 ;5th part
+    Pop $R0 ;rest
+	# $R3|$R4|$R5|$R6|$R7
+	# ENVADD|$R4=base|$R5=key|$R6=val
+	# KEYSET|$R4=base|$R5=key|$R6=subkey|$R7=val
+    StrCmp $R3 "ENVADD" EnvAdd
+    StrCmp $R3 "KEYSET" KeySet
+	Goto UnknownOp
+	EnvAdd:
+	  DetailPrint "Remove $R6 from $R5 in $R4"
+	  ${${un}EnvVarUpdate} $R9 $R5 "R" "$R4" "$R6"
+	KeySet:
+	  Push $R0
+	  DetailPrint "Delete key $R4 $R5 $R6 if it is $R7"
+	  ; wow, NSIS is messed up
+	  ${If} $R4 == HKLM
+        ReadRegStr $R0 HKLM "$R5" "$R6"
+      ${Else}
+        ReadRegStr $R0 HKCU "$R5" "$R6"
+	  ${Endif}
+	  StrCmp $R0 $R7 0 SkipDel
+	    ${If} $R4 == HKLM
+          DeleteRegValue HKLM "$R5" "$R6"
+        ${Else}
+          DeleteRegValue HKCU "$R5" "$R6"
+  	    ${Endif}
+	  SkipDel:
+	    Pop $R0
+	UnknownOp:
+    IntOp $R1 $R1 - 1
+    Goto LoopRead
+  LoopDone:
+  FileClose $UninstLog
+  Pop $R6
+  Pop $R5
+  Pop $R4
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
+
+RemoveInventoryDone:
+  Exch $R8 ; PATH
+  Exch
+  Exch $R9 ; $0
+FunctionEnd
+!macroend
+!insertmacro RemoveInventory ""
+!insertmacro RemoveInventory "un."

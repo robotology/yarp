@@ -2,6 +2,11 @@
 !include "MUI2.nsh"
 !include "LogicLib.nsh"
 !include "EnvVarUpdate.nsh"
+
+!define UninstLog "uninstall_YARP.log"
+Var UninstLog
+LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
+
 !include "YarpNsisUtils.nsh"
 
 !define MULTIUSER_EXECUTIONLEVEL Highest
@@ -18,16 +23,22 @@ RequestExecutionLevel admin
 
 !define MUI_ABORTWARNING
 
-!define UninstLog "uninstall_YARP.log"
-Var UninstLog
-LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninstallation cannot proceed!"
-
 
 !macro AddEnv Key Val
+   Push $0
    ${EnvVarUpdate} $0 "${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
-   ${EnvVarUpdate} $0 "${VENDOR}_yarp_${Key}" "A" "${WriteEnvStr_Base}" "${Val}"
-	FileWrite $UninstLog '"ENVADD" "${Key}" "${Val}"$\r$\n'
-	FileWrite $UninstLog '"ENVADD" "${VENDOR}_yarp_${Key}" "${Val}"$\r$\n'
+   Pop $0
+   FileWrite $UninstLog "ENVADD|${WriteEnvStr_Base}|${Key}|${Val}$\r$\n"
+!macroend
+
+!macro AddEnv1 Key Val
+   WriteRegExpandStr ${WriteEnvStr_RegKey} "${Key}" "${Val}"
+   FileWrite $UninstLog "KEYSET|${WriteEnvStr_Base}|${WriteEnvStr_KeyOnly}|${Key}|${Val}$\r$\n"
+!macroend
+
+!macro AddKey Key Subkey Val
+   WriteRegStr "${WriteEnvStr_Base}" "${Key}" "${Subkey}" "${Val}"
+   FileWrite $UninstLog "KEYSET|${WriteEnvStr_Base}|${Key}|${Subkey}|${Val}$\r$\n"
 !macroend
 
 ;--------------------------------
@@ -54,51 +65,18 @@ LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninst
 ;--------------------------------
 ;Installer Sections
 
-Section -openlogfile
-    CreateDirectory "$INSTDIR"
-    IfFileExists "$INSTDIR\${UninstLog}" +3
-      FileOpen $UninstLog "$INSTDIR\${UninstLog}" w
-    Goto +4
-      SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
-      FileOpen $UninstLog "$INSTDIR\${UninstLog}" a
-      FileSeek $UninstLog 0 END
-SectionEnd
-  
 Section "-first"
   SetOutPath "$INSTDIR"
-  # WriteRegStr HKCU "Software\YARP" "" $INSTDIR
-  # WriteRegStr HKCU "Software\${VENDOR}" ""
-
-  # All robotology_yarp material should be removed, to avoid
-  # environment variables getting too long over time  
-   #!insertmacro AddEnv "PATH" "R" "${WriteEnvStr_Base}" "$%robotology_PATH%"
-
-  Push $R0
-  ReadEnvStr $R0 "robotology_yarp_PATH" 
-  DetailPrint "robotology_yarp_PATH: [$R0]"
-  Exch $R0
-  Push "PATH"
   Push $0
-  Call RemoveOldEnv
-  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_PATH" ""
- 
-  Push $R0
-  ReadEnvStr $R0 "robotology_yarp_INCLUDE" 
-  DetailPrint "robotology_yarp_INCLUDE: [$R0]"
-  Exch $R0
-  Push "INCLUDE"
-  Push $0
-  Call RemoveOldEnv
-  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_INCLUDE" ""
- 
-  Push $R0
-  ReadEnvStr $R0 "robotology_yarp_LIB" 
-  DetailPrint "robotology_yarp_LIB: [$R0]"
-  Exch $R0
-  Push "LIB"
-  Push $0
-  Call RemoveOldEnv
-  WriteRegExpandStr ${WriteEnvStr_RegKey} "robotology_yarp_LIB" ""
+  ReadRegStr $0 HKCU "Software\${VENDOR}\installer\YARPInventory" ""
+  IfErrors Skip 0
+	Push $0
+	Push $0
+	Call RemoveInventory
+	Delete $0
+  Skip:
+    ClearErrors
+  Pop $0
  
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
    
@@ -107,6 +85,18 @@ Section "-first"
   !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
 SectionEnd
 
+Section -openlogfile
+    CreateDirectory "$INSTDIR"
+    IfFileExists "$INSTDIR\${UninstLog}" +3
+      FileOpen $UninstLog "$INSTDIR\${UninstLog}" w
+    Goto +4
+      SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
+      FileOpen $UninstLog "$INSTDIR\${UninstLog}" a
+      FileSeek $UninstLog 0 END
+    !insertmacro AddKey "Software\${VENDOR}\installer\YARPInventory" "" "$INSTDIR\${UninstLog}"
+
+SectionEnd
+  
 SectionGroup "YARP core" SecYarp
 
   Section "-yarp_first"
@@ -141,13 +131,16 @@ SectionGroup "YARP core" SecYarp
   SectionEnd
 
   Section "Set environment variables and registry keys" SecYarpEnv
-    WriteRegStr HKCU "Software\${VENDOR}\YARP\${YARP_SUB}" "" "$INSTDIR\${YARP_SUB}"
-    WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallLocation" $INSTDIR
-    WriteRegStr HKCU "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${YARP_SUB}
+    !insertmacro AddKey "Software\${VENDOR}\YARP\${YARP_SUB}" "" "$INSTDIR\${YARP_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\YARP\Common" "LastInstallLocation" $INSTDIR
+    !insertmacro AddKey "Software\${VENDOR}\YARP\Common" "LastInstallVersion" ${YARP_SUB}
+
     !insertmacro AddEnv "PATH" "$INSTDIR\${YARP_SUB}\bin"
     !insertmacro AddEnv "LIB" "$INSTDIR\${YARP_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${YARP_SUB}\include"
-    WriteRegExpandStr ${WriteEnvStr_RegKey} YARP_DIR "$INSTDIR\${YARP_SUB}"
+
+	!insertmacro AddEnv1 "YARP_DIR" "$INSTDIR\${YARP_SUB}"
+
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
@@ -170,13 +163,13 @@ SectionGroup "ACE (Adaptive Communication Environment)" SecAce
   SectionEnd
 
   Section "Set environment variables and registry keys" SecAceEnv
-    WriteRegStr HKCU "Software\${VENDOR}\ACE\${ACE_SUB}" "" "$INSTDIR\${ACE_SUB}"
-    WriteRegStr HKCU "Software\${VENDOR}\ACE\Common" "LastInstallLocation" $INSTDIR
-    WriteRegStr HKCU "Software\${VENDOR}\ACE\Common" "LastInstallVersion" ${YARP_SUB}
+    !insertmacro AddKey "Software\${VENDOR}\ACE\${ACE_SUB}" "" "$INSTDIR\${ACE_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\ACE\Common" "LastInstallLocation" $INSTDIR
+    !insertmacro AddKey "Software\${VENDOR}\ACE\Common" "LastInstallVersion" ${YARP_SUB}
     !insertmacro AddEnv "PATH" "$INSTDIR\${ACE_SUB}\bin"
     !insertmacro AddEnv "LIB" "$INSTDIR\${ACE_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${ACE_SUB}"
-    WriteRegExpandStr ${WriteEnvStr_RegKey} ACE_ROOT "$INSTDIR\${ACE_SUB}"
+    !insertmacro AddEnv1 "ACE_ROOT" "$INSTDIR\${ACE_SUB}"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
@@ -209,13 +202,13 @@ SectionGroup "GSL (GNU Scientific Library) (GPL license)" SecGsl
   SectionEnd
 
   Section "Set environment variables and registry keys" SecGslEnv
-    WriteRegStr HKCU "Software\${VENDOR}\GSL\${GSL_SUB}" "" "$INSTDIR\${GSL_SUB}"
-    WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
-    WriteRegStr HKCU "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_SUB}
+    !insertmacro AddKey "Software\${VENDOR}\GSL\${GSL_SUB}" "" "$INSTDIR\${GSL_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\GSL\Common" "LastInstallLocation" $INSTDIR
+    !insertmacro AddKey "Software\${VENDOR}\GSL\Common" "LastInstallVersion" ${GSL_SUB}
     # !insertmacro AddEnv "PATH" "$INSTDIR\${GSL_SUB}\bin"
     !insertmacro AddEnv "LIB" "$INSTDIR\${GSL_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GSL_SUB}\include"
-    WriteRegExpandStr ${WriteEnvStr_RegKey} GSL_DIR "$INSTDIR\${GSL_SUB}"
+    !insertmacro AddEnv1 GSL_DIR "$INSTDIR\${GSL_SUB}"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
@@ -239,14 +232,14 @@ SectionGroup "GTKMM" SecGtkmm
   SectionEnd
 
   Section "Set environment variables and registry keys" SecGtkmmEnv
-    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\${GSL_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
-    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
-    WriteRegStr HKCU "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
+    !insertmacro AddKey "Software\${VENDOR}\GTKMM\${GSL_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
+    !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
     !insertmacro AddEnv "PATH" "$INSTDIR\${GTKMM_SUB}\bin"
     !insertmacro AddEnv "LIB" "$INSTDIR\${GTKMM_SUB}\lib"
     !insertmacro AddEnv "INCLUDE" "$INSTDIR\${GTKMM_SUB}\include"
-    WriteRegExpandStr ${WriteEnvStr_RegKey} GTKMM_BASEPATH "$INSTDIR\${GTKMM_SUB}"
-    WriteRegExpandStr ${WriteEnvStr_RegKey} GTK_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+    !insertmacro AddEnv1 GTKMM_BASEPATH "$INSTDIR\${GTKMM_SUB}"
+    !insertmacro AddEnv1 GTK_BASEPATH "$INSTDIR\${GTKMM_SUB}"
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   SectionEnd
 
@@ -325,68 +318,33 @@ LangString DESC_SecVcDlls ${LANG_ENGLISH} "Visual Studio runtime redistributable
 ;Uninstaller Section
 
 Section "Uninstall"
-   IfFileExists "$INSTDIR\${UninstLog}" +3
+
+  IfFileExists "$INSTDIR\${UninstLog}" +3
     MessageBox MB_OK|MB_ICONSTOP "$(UninstLogMissing)"
       Abort
  
-  Push $R0
-  Push $R1
-  Push $R2
-  Push $R3
-  Push $R4
-  SetFileAttributes "$INSTDIR\${UninstLog}" NORMAL
-  FileOpen $UninstLog "$INSTDIR\${UninstLog}" r
-  StrCpy $R1 -1
+  Push $0
+  Push "$INSTDIR\${UninstLog}"
+  Call un.RemoveInventory
  
-  GetLineCount:
-    ClearErrors
-    FileRead $UninstLog $R0
-    IntOp $R1 $R1 + 1
-    StrCpy $R0 $R0 -2
-    Push $R0   
-    IfErrors 0 GetLineCount
- 
-  Pop $R0
- 
-  LoopRead:
-    StrCmp $R1 0 LoopDone
-    Pop $R0
-	!insertmacro SPLIT_STRING $R0 1
-	Pop $R3
-	!insertmacro SPLIT_STRING $R0 2
-	Pop $R4
-	DetailPrint "Uninstall |$R3|$R4|"
-    IntOp $R1 $R1 - 1
-    Goto LoopRead
-  LoopDone:
-  FileClose $UninstLog
   Delete "$INSTDIR\${UninstLog}"
-  Pop $R4
-  Pop $R3
-  Pop $R2
-  Pop $R1
-  Pop $R0
 
-  ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\bin"
-  ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\lib"
-  ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\include"
+  # ${un.EnvVarUpdate} $0 "PATH" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\bin"
+  # ${un.EnvVarUpdate} $0 "LIB" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\lib"
+  # ${un.EnvVarUpdate} $0 "INCLUDE" "R" "${WriteEnvStr_Base}" "$INSTDIR\${YARP_SUB}\include"
 
-  DeleteRegValue ${WriteEnvStr_RegKey} YARP_DIR
+  # DeleteRegValue ${WriteEnvStr_RegKey} YARP_DIR
   SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
   
   RMDir /r "$INSTDIR\${YARP_SUB}"
   RMDir /r "$INSTDIR\${GSL_SUB}"
 
   # cleanup YARP registry entries
-  DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallLocation"
-  DeleteRegKey HKCU "Software\${VENDOR}\YARP\Common\LastInstallVersion"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\${YARP_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP"
   
   # cleanup GSL registry entries
-  DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallLocation"
-  DeleteRegKey HKCU "Software\${VENDOR}\GSL\Common\LastInstallVersion"  
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
