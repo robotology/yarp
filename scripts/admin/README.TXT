@@ -8,7 +8,7 @@ How to make a YARP release:
 * Use a linux machine
 
 * Look at:
-    http://dashboard.icub.org/YARP
+    http://dashboard.icub.org/index.php?project=YARP
   If there are any issues, resolve them and delay release a few days.
 
 * Check that copyright holder and licensing information is up to date.
