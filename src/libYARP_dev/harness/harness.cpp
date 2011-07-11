@@ -10,7 +10,6 @@
 #include <yarp/os/impl/String.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/UnitTest.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetInt32.h>
@@ -69,7 +68,6 @@ int harness_main(int argc, char *argv[]) {
                 result = UnitTest::getRoot().run();
             }
             UnitTest::stopTestSystem();
-            NameClient::removeNameClient();
         }
     } 
     if (!done) {

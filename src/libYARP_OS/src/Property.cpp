@@ -13,7 +13,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/StringInputStream.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/NameConfig.h>
 #include <yarp/os/impl/SplitString.h>
 
 #include <yarp/os/impl/PlatformMap.h>
@@ -581,7 +580,7 @@ public:
                     }
                     inVar = false;
                     //printf("VARIABLE %s\n", var.c_str());
-                    String add = NameConfig::getEnv(var);
+                    String add = NetworkBase::getEnvironment(var.c_str()).c_str();
                     if (add=="") {
                         add = env.find(var.c_str()).toString().c_str();
                     }

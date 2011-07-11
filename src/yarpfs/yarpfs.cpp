@@ -16,7 +16,6 @@
 //#include <fcntl.h>
 
 #include <yarp/os/all.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/NameConfig.h>
 
 #include <string>
