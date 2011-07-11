@@ -42,7 +42,7 @@
 namespace yarp {
     namespace os {
         /**
-         * Definition of the NetFloa64 type
+         * Definition of the NetFloat64 type
          */
 
 #ifdef YARP_LITTLE_ENDIAN

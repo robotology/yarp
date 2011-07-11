@@ -1,5 +1,8 @@
 2011-07-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/YarpSystemCheck.cmake: add tests for constructing NetInt64
+	and NetFloat32 types.
+
 	* conf/YarpVersion.cmake: bump version number to 2.3.6
 
 2011-07-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
