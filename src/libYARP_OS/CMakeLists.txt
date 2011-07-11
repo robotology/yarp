@@ -40,7 +40,4 @@ set_property(TARGET YARP_OS PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 
 install(DIRECTORY include/yarp/os COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
 
-# touch 1
-# touch 2
-# touch 3
-
+# touch 1 2 3 4 5
