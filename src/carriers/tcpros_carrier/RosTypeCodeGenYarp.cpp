@@ -19,6 +19,11 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
     string fname = tname + ".h";
+    for (int i=0; i<(int)fname.length(); i++) {
+        if (fname[i]=='/') {
+            fname[i] = '_';
+        }
+    }
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
@@ -29,6 +34,10 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     fprintf(out,"#include <string>\n");
     fprintf(out,"#include <vector>\n");
     fprintf(out,"#include <yarp/os/Portable.h>\n");
+    fprintf(out,"#include <yarp/os/NetInt32.h>\n");
+    fprintf(out,"#include <yarp/os/NetInt64.h>\n");
+    fprintf(out,"#include <yarp/os/NetFloat32.h>\n");
+    fprintf(out,"#include <yarp/os/NetFloat64.h>\n");
     for (int i=0; i<(int)state.dependencies.size(); i++) {
         fprintf(out,"#include <%s.h>\n",state.dependencies[i].c_str());
     }
@@ -225,7 +234,7 @@ bool RosTypeCodeGenYarp::writeField(const RosField& field) {
                    field.rosName.c_str());
         } else {
             if (t.len!=0) {
-                fprintf(out,"    connection.appendBlock(&%s,%d);\n",
+                fprintf(out,"    connection.appendBlock((char*)&%s,%d);\n",
                        field.rosName.c_str(),
                        t.len);
             } else {
@@ -292,12 +301,27 @@ RosYarpType RosTypeCodeGenYarp::mapPrimitive(const RosField& field) {
         ry.writer = "appendBlock";
         ry.reader = "expectBlock";
         ry.len = 1;
+    } else if (name=="int16"||name=="uint16") {
+        ry.yarpType = "yarp::os::NetInt16";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 2;
     } else if (name=="int32"||name=="uint32") {
-        ry.yarpType = "int";
+        ry.yarpType = "yarp::os::NetInt32";
         ry.writer = "appendInt";
         ry.reader = "expectInt";
+    } else if (name=="int64"||name=="uint64") {
+        ry.yarpType = "yarp::os::NetInt64";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 8;
+    } else if (name=="float32") {
+        ry.yarpType = "yarp::os::NetFloat32";
+        ry.writer = "appendBlock";
+        ry.reader = "expectBlock";
+        ry.len = 4;
     } else if (name=="float64") {
-        ry.yarpType = "double";
+        ry.yarpType = "yarp::os::NetFloat64";
         ry.writer = "appendDouble";
         ry.reader = "expectDouble";
     } else if (name=="string") {

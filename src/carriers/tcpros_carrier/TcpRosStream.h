@@ -18,6 +18,7 @@
 #include "WireTwiddler.h"
 
 #include <string>
+#include <map>
 
 namespace yarp {
     namespace os {
@@ -109,6 +110,7 @@ public:
 
     void updateKind(const char *kind);
 
+    static std::map<std::string, std::string> rosToKind();
     static std::string rosToKind(const char *rosname);
 };
 

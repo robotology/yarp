@@ -9,7 +9,6 @@
 #include "XmlRpcCarrier.h"
 #include <yarp/os/impl/StringOutputStream.h>
 #include <yarp/os/impl/Name.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Bottle.h>
 
 #include "XmlRpc.h"
@@ -162,8 +161,8 @@ bool XmlRpcCarrier::sendHeader(Protocol& proto) {
         target = "POST /";
         target += pathValue;
         // on the wider web, we should provide real host names
-        NameClient& nc = NameClient::getNameClient();
-        host = nc.queryName(proto.getRoute().getToName());
+        Contact contact = NetworkBase::queryName(proto.getRoute().getToName().c_str());
+        host = Address::fromContact(contact);
     }
     String rospass = n.getCarrierModifier("ros");
     if (rospass=="") {

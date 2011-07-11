@@ -452,7 +452,7 @@ namespace XmlRpc {
   {
     printf("binaryToXml disabled until license of base64.h determined\n");
     exit(1);
-    return false;
+    return "";
     /*
     // convert to base64
     std::vector<char> base64data;
@@ -577,7 +577,7 @@ namespace XmlRpc {
         }
       case TypeBase64:
         {
-          int iostatus = 0;
+          //int iostatus = 0;
           std::ostreambuf_iterator<char> out(os);
 	  /*
           base64<char> encoder;

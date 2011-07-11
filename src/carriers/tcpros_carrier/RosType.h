@@ -17,10 +17,7 @@ class RosTypeSearch {
 public:
     void addDirectory(const char *physical, const char *logical);
 
-    std::string findFile(const char *tname) {
-        // stub
-        return std::string(tname) + ".msg";
-    }
+    std::string findFile(const char *tname);
 };
 
 class RosTypeCodeGen;

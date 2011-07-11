@@ -130,6 +130,9 @@ int XmlRpcStream::read(const Bytes& b) {
                         if (cprefix=="publisherUpdate") {
                             isAdmin = true;
                         }
+                        if (cprefix=="requestTopic") {
+                            isAdmin = true;
+                        }
                     }
                     prefix = isAdmin?"a\n":"d\n";
                     prefix += cprefix;

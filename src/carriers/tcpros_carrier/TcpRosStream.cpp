@@ -145,16 +145,20 @@ void TcpRosStream::updateKind(const char *kind) {
 }
 
 
-std::string TcpRosStream::rosToKind(const char *rosname) {
-    // stub for testing
+std::map<std::string, std::string> TcpRosStream::rosToKind() {
+    std::map<std::string, std::string> kinds;
+    kinds["std_msgs/String"] = "vector string 1 *";
+    kinds["std_msgs/Int32"] = "vector int32 1 *";
+    kinds["std_msgs/Float64"] = "vector float64 1 *";
+    return kinds;
+}
 
-    string t = rosname;
-    string code = "";
-    if (t=="std_msgs/String") {
-        code = "vector string 1 *";
-    } else if (t == "std_msgs/Int32") {
-        code = "vector int32 1 *";
+std::string TcpRosStream::rosToKind(const char *rosname) {
+    std::map<std::string, std::string> kinds = rosToKind();
+
+    if (kinds.find(rosname)!=kinds.end()) {
+        return kinds[rosname];
     }
-    return code;
+    return "";
 }
 

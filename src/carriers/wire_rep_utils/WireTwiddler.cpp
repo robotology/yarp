@@ -582,9 +582,7 @@ bool WireTwiddlerWriter::advance(int length, bool shouldEmit,
     accumOffset = 0;
     if (length==0) return true;
     if (length<0) return false;
-    bool more = true;
     while (length>0) {
-        more = false;
         if (blockPtr==NULL) {
             blockPtr = parent->data(block);
             blockLen = parent->length(block);

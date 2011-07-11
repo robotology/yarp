@@ -12,14 +12,145 @@
 #include "RosLookup.h"
 #include "RosType.h"
 #include "RosTypeCodeGenYarp.h"
+#include "TcpRosStream.h"
 
 #include <string>
 
 
 using namespace yarp::os;
+using namespace yarp::os::impl;
 using namespace std;
 
 bool verbose = false;
+
+string addPart(string t, string name, int code, string orig, string mode="") {
+    char buf[5000];
+    if (mode=="length") {
+        sprintf(buf,"%s %s # suggested length: %d", t.c_str(), name.c_str(), code);
+    } else if (mode=="string") {
+        sprintf(buf,"%s %s # value seen: \"%s\"", t.c_str(), name.c_str(), orig.c_str());
+    } else if (mode=="vocab") {
+        char char4 = (code>>24)%256;
+        char char3 = (code>>16)%256;
+        char char2 = (code>>8)%256;
+        char char1 = code%256;
+        string r;
+        if (char1!=0) {
+            r += '\''; r += char1; r += "\'*256^3";
+        }
+        if (char2!=0) {
+            if (r!="") r += "+";
+            r += '\''; r += char2; r += "\'*256^2";
+        }
+        if (char3!=0) {
+            if (r!="") r += "+";
+            r += '\''; r += char3; r += "\'*256";
+        }
+        if (char4!=0) {
+            if (r!="") r += "+";
+            r += '\''; r += char4; r += '\'';
+        }
+        if (r.length()==0) {
+            r = "0";
+        }
+        sprintf(buf,"%s %s # set to %d (=%s=%s)", t.c_str(), name.c_str(), code, r.c_str(), orig.c_str());
+    } else {
+        sprintf(buf,"%s %s # set to %d (%s)", t.c_str(), name.c_str(), code, orig.c_str());
+    }
+    return buf;
+}
+
+string showFormat(Bottle& b, string root) {
+    string r;
+    int code = b.getSpecialization();
+    r += addPart("int32",root + "_tag",BOTTLE_TAG_LIST+code,"BOTTLE_TAG_LIST+code");
+    r += "\n";
+    bool specialized = (code>0);
+    if (code==BOTTLE_TAG_INT) {
+        r += addPart("int32[]",root,b.size(),"length","length");
+        r += "\n";
+        if (b.size()<50) {
+            r += " # integers seen: ";
+            for (int i=0; i<b.size(); i++) {
+                char buf[1000];
+                sprintf(buf," %d",b.get(i).asInt());
+                r += buf;
+            }
+            r += "\n";
+        }
+        return r;
+    }
+    if (code==BOTTLE_TAG_DOUBLE) {
+        r += addPart("float64[]",root,b.size(),"length","length");
+        r += "\n";
+        if (b.size()<50) {
+            r += " # floats seen: ";
+            for (int i=0; i<b.size(); i++) {
+                char buf[1000];
+                sprintf(buf," %g",b.get(i).asDouble());
+                r += buf;
+            }
+            r += "\n";
+        }
+        return r;
+    }
+    r += addPart("int32",root + "_len",b.size(),"elements in list");
+    r += "\n";
+    for (int i=0; i<b.size(); i++) {
+        Value& v = b.get(i);
+        char tag_name[1000];
+        char val_name[1000];
+        sprintf(tag_name,"%s%d_tag", root.c_str(), i);
+        sprintf(val_name,"%s%d", root.c_str(), i);
+        if (v.isVocab()) {
+            if (!specialized) {
+                r += addPart("int32",tag_name,BOTTLE_TAG_VOCAB,
+                             "BOTTLE_TAG_VOCAB");
+                r += "\n";
+            }
+            r += addPart("int32",val_name,v.asInt(),v.toString().c_str(),"vocab");
+            r += "\n";
+        } else if (v.isInt()) {
+            if (!specialized) {
+                r += addPart("int32",tag_name,BOTTLE_TAG_INT,
+                             "BOTTLE_TAG_INT");
+                r += "\n";
+            }
+            r += addPart("int32",val_name,v.asInt(),v.toString().c_str());
+            r += "\n";
+        } else if (v.isDouble()) {
+            if (!specialized) {
+                r += addPart("int32",tag_name,BOTTLE_TAG_DOUBLE,
+                             "BOTTLE_TAG_DOUBLE");
+                r += "\n";
+            }
+            r += addPart("float64",val_name,v.asDouble(),v.toString().c_str());
+            r += "\n";
+        } else if (v.isList()) {
+            r += showFormat(*v.asList(), val_name);
+        } else if (v.isBlob()) {
+            if (!specialized) {
+                r += addPart("int32",tag_name,BOTTLE_TAG_BLOB,
+                             "BOTTLE_TAG_BLOB");
+                r += "\n";
+            }
+            r += addPart("int8[]",val_name,v.asBlobLength(),"length","length");
+        } else if (v.isString()) {
+            if (!specialized) {
+                r += addPart("int32",tag_name,BOTTLE_TAG_STRING,
+                             "BOTTLE_TAG_STRING");
+                r += "\n";
+            }
+            r += addPart("string",val_name,0,v.asString().c_str(),"string");
+            r += "\n";
+        } else {
+            r += "IGNORED ";
+            r += v.toString().c_str();
+            r += "\n";
+        }
+    }
+    return r;
+}
 
 void usage(const char *action,
            const char *msg,
@@ -45,6 +176,9 @@ void show_usage() {
     usage("sub[scriber] <yarp> <node> <topic>","register a ROS subscriber <node>/<topic> pair as a port called <port>","subscriber /listener /listener /chatter");
     usage("service <yarp> <node> <service>","register a ROS service <node>/<service> pair as a port called <port>","service /adder /add_two_ints_server /add_two_ints");
     usage("node <name>","register a ROS node name with YARP","node /talker");
+    usage("type <name>","generate YARP header files from <name>.msg","type PointCloud2");
+    usage("sniff out <port>","suggest .msg for output from <port> ","sniff out /grabber");
+    usage("sniff in <port>","suggest .msg for input to <port> ","sniff in /grabber");
 
     printf("Here are some general options:\n");
     usage("--verbose","give verbose output for debugging",NULL);
@@ -227,8 +361,13 @@ int main(int argc, char *argv[]) {
         RosTypeSearch env;
         RosType t;
         if (cmd.size()!=2) {
-            fprintf(stderr,"This command is not ready to be used.\n");
-            fprintf(stderr,"It reads a ROS .msg file, and then... does nothing with it.\n");
+            printf("This command reads a ROS .msg file, and outputs .h files for reading/writing.\n");
+            printf("Alternatively: Bottles can be translated to/from the following formats:\n");
+            map<string,string> kinds = TcpRosStream::rosToKind();
+            for (map<string,string>::iterator it = kinds.begin();
+                 it != kinds.end(); it++) {
+                printf("  %s\n", it->first.c_str());
+            }
             return 1;
         }
         ConstString tname = cmd.get(1).asString();
@@ -238,6 +377,38 @@ int main(int argc, char *argv[]) {
         RosTypeCodeGenState state;
         t.emitType(gen,state);
         printf("\n");
+    } else if (tag=="sniff") {
+        if (cmd.size()<2) {
+            fprintf(stderr,"Show the format of a YARP bottle-compatible message in ROS syntax.\n");
+            return 1;
+        }
+        ConstString dir = cmd.get(1).asString();
+        bool in = false;
+        if (dir=="in") in = true;
+        else if (dir=="out") in = false;
+        else {
+            fprintf(stderr,"Please specify one of 'in' or 'out'.\n");
+            return 1;
+        }
+        ConstString pname = cmd.get(2).asString();
+        Port p;
+        if (!p.open("...")) return 1;
+        if (in) {
+            if (!Network::connect(pname,p.getName(),"tcp+log.in")) return 1;
+        } else {
+            if (!Network::connect(pname,p.getName())) return 1;
+        }
+        Bottle b;
+        p.read(b);
+        string r;
+        if (in&&b.get(0).asVocab()==VOCAB3('r','p','c')&&b.get(1).isList()) {
+            
+            r = showFormat(*b.get(1).asList(),"v");
+        } else {
+            r = showFormat(b,"v");            
+        }
+        printf("Got message:\n%s\n",r.c_str());
+        return 0;
     } else {
         fprintf(stderr,"unknown command, run with no arguments for help\n");
         return 1;

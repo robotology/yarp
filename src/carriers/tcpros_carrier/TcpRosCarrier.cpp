@@ -25,7 +25,7 @@ using namespace std;
 
 #define dbg_printf if (0) printf
 
-#define FORCE_ROS_NATIVE
+//#define FORCE_ROS_NATIVE
 
 void TcpRosCarrier::setParameters(const Bytes& header) {
     if (header.length()!=8) {
@@ -136,12 +136,20 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
         return false;
     }
     header.readHeader(string(m.get(),m.length()));
-    //printf("Message header: %s\n", header.toString().c_str());
+    dbg_printf("Message header: %s\n", header.toString().c_str());
     ConstString rosname = "";
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
-    printf("Type of data is [%s]s\n", rosname.c_str());
+    dbg_printf("<incoming> Type of data is [%s]s\n", rosname.c_str());
+    if (header.data.find("callerid")!=header.data.end()) {
+        string name = header.data["callerid"];
+        dbg_printf("<incoming> callerid is %s\n", name.c_str());
+        dbg_printf("Route was %s\n", proto.getRoute().toString().c_str());
+        proto.setRoute(proto.getRoute().addToName(name.c_str()));
+        dbg_printf("Route is now %s\n", proto.getRoute().toString().c_str());
+    }
+
 #ifdef FORCE_ROS_NATIVE
     rosname = ""; // forget
 #endif
@@ -156,7 +164,7 @@ bool TcpRosCarrier::expectReplyToHeader(Protocol& proto) {
 
     if (stream==NULL) { return false; }
 
-    printf("Getting ready to hand off streams...\n");
+    dbg_printf("Getting ready to hand off streams...\n");
 
     proto.takeStreams(stream);
     
@@ -186,7 +194,7 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     if (header.data.find("type")!=header.data.end()) {
         rosname = header.data["type"].c_str();
     }
-    dbg_printf("Type of data is %s\n", rosname.c_str());
+    dbg_printf("<outgoing> Type of data is %s\n", rosname.c_str());
     kind = TcpRosStream::rosToKind(rosname.c_str()).c_str();
     dbg_printf("Loose translation [%s]\n", kind.c_str());
 #ifdef FORCE_ROS_NATIVE
@@ -203,8 +211,10 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
         proto.setRoute(proto.getRoute().addFromName("tcpros"));
     }
 
-    // let's just ignore everything that is sane and holy, and
-    // send the same header right back
+    // Let's just ignore everything that is sane and holy, and
+    // send the same header right back.
+    // Oh, ok, let's modify the callerid.  Begrudgingly.
+    header.data["callerid"] = proto.getRoute().getToName().c_str();
 
     string header_serial = header.writeHeader();
     string header_len(4,'\0');
