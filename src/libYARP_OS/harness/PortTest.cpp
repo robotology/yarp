@@ -7,7 +7,6 @@
  */
 
 #include <yarp/os/Port.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Thread.h>
@@ -975,8 +974,7 @@ public:
     }
 
     virtual void runTests() {
-        NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
+        NetworkBase::setLocalMode(true);
 
         testOpen();
         //bbb testReadBuffer();
@@ -1010,7 +1008,7 @@ public:
 
         testYarpRead();
 
-        nic.setFakeMode(false);
+        NetworkBase::setLocalMode(false);
     }
 };
 

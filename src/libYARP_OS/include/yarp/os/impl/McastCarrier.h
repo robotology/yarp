@@ -16,8 +16,6 @@
 
 #include <yarp/os/impl/Election.h>
 #include <yarp/os/impl/SplitString.h>
-#include <yarp/os/impl/NameClient.h>
-#include <yarp/os/impl/NameConfig.h>
 
 #include <stdio.h>
 
@@ -56,8 +54,8 @@ public:
                 McastCarrier *peer = getCaster().getElect(key);
                 if (peer==NULL) {
                     // time to remove registration
-                    NameClient& nic = NameClient::getNameClient();
-                    nic.unregisterName(mcastName);
+                    //NameClient& nic = NameClient::getNameClient();
+                    NetworkBase::unregisterName(mcastName.c_str());
                 }
             }
         }
@@ -83,7 +81,6 @@ public:
 
         YARP_DEBUG(Logger::get(),"Adding extra mcast header");
 
-        NameClient& nic = NameClient::getNameClient();
         Address addr;
 
         Address alt = proto.getStreams().getLocalAddress();
@@ -99,13 +96,16 @@ public:
         } else {
         
             // fetch an mcast address
-            addr = nic.registerName("...",
-                                    Address("...",0,"mcast","..."));
+            Address target("...",0,"mcast","...");
+            addr = Address::fromContact(NetworkBase::registerContact(target.toContact()));
+                                    
             mcastName = addr.getRegName();
             if (addr.isValid()) {
                 // mark owner of mcast address
-                nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owns " + mcastName);
-                //nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owned_by " + mcastName);
+                NetworkBase::setProperty(proto.getRoute().getFromName().c_str(),
+                                         "owns",
+                                         Value(mcastName.c_str()));
+                // nic.send(String("NAME_SERVER set ") + proto.getRoute().getFromName() + " owns " + mcastName);
             }
         }
          

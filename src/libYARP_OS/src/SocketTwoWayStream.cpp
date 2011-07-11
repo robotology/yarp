@@ -43,7 +43,7 @@ int SocketTwoWayStream::open(const Address& address) {
         happy = true;
     } else {
         YARP_SPRINTF2(Logger::get(),
-                      error,
+                      debug,
                       "TCP connection to tcp://%s:%d failed to open",
                       address.getName().c_str(),
                       address.getPort());

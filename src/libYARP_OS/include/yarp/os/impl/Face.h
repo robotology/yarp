@@ -78,6 +78,19 @@ public:
      */
     virtual OutputProtocol *write(const Address& address) = 0;
 
+
+    /**
+     *
+     * Get address after open(), if more specific that the address provided
+     * to open() - otherwise an invalid address is returned.
+     *
+     * @return an address
+     *
+     */
+    virtual Address getLocalAddress() {
+        return Address();
+    }
+
 protected:
 
     yarp::os::impl::AuthHMAC auth;

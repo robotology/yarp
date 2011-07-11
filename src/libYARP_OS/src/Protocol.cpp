@@ -102,14 +102,14 @@ bool Protocol::defaultExpectIndex() {
     messageLen = total;
     YARP_SPRINTF1(Logger::get(),
                   debug,
-                  "Total message length: %d\n",
+                  "Total message length: %d",
                   messageLen);
-    YARP_DEBUG(Logger::get(),"got an index");
+    //YARP_DEBUG(Logger::get(),"got an index");
     return true;
 }
 
 bool Protocol::defaultSendAck() {
-    YARP_DEBUG(Logger::get(),"sending an ack");
+    YARP_DEBUG(Logger::get(),"sending an acknowledgment");
     if (delegate->requireAck()) {
         writeYarpInt(0);
     }
