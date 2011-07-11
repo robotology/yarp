@@ -320,6 +320,6 @@ bool MultiNameSpace::writeToNameServer(PortWriter& cmd,
                                        PortReader& reply,
                                        const ContactStyle& style) {
     NameSpace *ns = HELPER(this).getOne();
-    if (!ns) return NULL;
+    if (!ns) return false;
     return ns->writeToNameServer(cmd,reply,style);
 }

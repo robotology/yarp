@@ -105,7 +105,9 @@ void PortCoreOutputUnit::runSimulation() {
             route.getFromName() + " to " + route.getToName() + " using " +
             route.getCarrierName();
         if (Name(route.getToName()).isRooted()) {
-            YARP_INFO(Logger::get(),msg);
+            if (Name(route.getFromName()).isRooted()) {
+                YARP_INFO(Logger::get(),msg);
+            }
         }
 
         // Report the new connection

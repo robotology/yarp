@@ -1,7 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2007, 2008, 2009, 2010 Paul Fitzpatrick
+ * Copyright (C) 2006, 2007, 2008, 2009, 2010, 2011 Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -360,49 +360,55 @@ int Companion::ping(const char *port, bool quiet) {
     const char *connectionName = "<ping>";
     OutputProtocol *out = NULL;
     
-    NameClient& nic = NameClient::getNameClient();
-    Address address = nic.queryName(port);
+    Contact address = NetworkBase::queryName(port);
     if (!address.isValid()) {
         if (!quiet) {
             YARP_ERROR(Logger::get(),"could not find port");
         }
         return 1;
     }
-            
-    out = Carriers::connect(address);
-    if (out==NULL) {
-        YARP_ERROR(Logger::get(),"port found, but cannot connect");
-        return 1;
-    }
-    Route r(connectionName,port,"text_ack");
-    bool ok = out->open(r);
-    if (!ok) {
-        YARP_ERROR(Logger::get(),"could not connect to port");
-        return 1;
-    }
-    OutputStream& os = out->getOutputStream();
-    InputStream& is = out->getInputStream();
-    StreamConnectionReader reader;
-    
-    PortCommand pc(0,"*");
-    BufferedConnectionWriter bw(out->isTextMode());
-    pc.write(bw);
-    bw.write(os);
-    Bottle resp;
-    reader.reset(is,NULL,r,0,true);
-    bool done = false;
-    while (!done) {
-        resp.read(reader);
-        String str = resp.toString().c_str();
-        if (resp.get(0).asString()!="<ACK>") {
-            printf("%s\n", str.c_str());
-        } else {
-            done = true;
+
+    if (address.getCarrier()=="tcp") {
+        out = Carriers::connect(Address::fromContact(address));
+        if (out==NULL) {
+            YARP_ERROR(Logger::get(),"port found, but cannot connect");
+            return 1;
         }
+        Route r(connectionName,port,"text_ack");
+        bool ok = out->open(r);
+        if (!ok) {
+            YARP_ERROR(Logger::get(),"could not connect to port");
+            return 1;
+        }
+        OutputStream& os = out->getOutputStream();
+        InputStream& is = out->getInputStream();
+        StreamConnectionReader reader;
+        
+        PortCommand pc(0,"*");
+        BufferedConnectionWriter bw(out->isTextMode());
+        pc.write(bw);
+        bw.write(os);
+        Bottle resp;
+        reader.reset(is,NULL,r,0,true);
+        bool done = false;
+        while (!done) {
+            resp.read(reader);
+            String str = resp.toString().c_str();
+            if (resp.get(0).asString()!="<ACK>") {
+                printf("%s\n", str.c_str());
+            } else {
+                done = true;
+            }
+        }
+        if (out!=NULL) {
+            delete out;
+        }
+    } else {
+        int e = exists(port,quiet);
+        printf("%s %s.\n", port, (e==0)?"exists":"is not responding");
+        return e;
     }
-    if (out!=NULL) {
-        delete out;
-    }
+
     return 0;
 }
 
@@ -423,15 +429,14 @@ int Companion::cmdExists(int argc, char *argv[]) {
 
 
 int Companion::exists(const char *target, bool silent) {
-    NameClient& nic = NameClient::getNameClient();
-    Address address = nic.queryName(target);
+    Contact address = NetworkBase::queryName(target);
     if (!address.isValid()) {
         if (!silent) {
             printf("Address of port %s is not valid\n", target);
         }
         return 2;
     }
-    OutputProtocol *out = Carriers::connect(address);
+    OutputProtocol *out = Carriers::connect(Address::fromContact(address));
     if (out==NULL) {
         if (!silent) {
             printf("Cannot connect to port %s\n", target);
@@ -481,14 +486,77 @@ int Companion::wait(const char *target, bool silent) {
 
 
 int Companion::cmdName(int argc, char *argv[]) {
-    String cmd = "NAME_SERVER";
+    ContactStyle style;
+    style.quiet = true;
+    Bottle cmd, reply;
     for (int i=0; i<argc; i++) {
-        cmd += " ";
-        cmd += argv[i];
+        cmd.addString(argv[i]);
     }
-    NameClient& nic = NameClient::getNameClient();
-    String result = nic.send(cmd);
-    printf("%s",result.c_str());
+
+    ConstString key = cmd.get(0).asString();
+    if (key=="query") {
+        Contact result = NetworkBase::queryName(cmd.get(1).asString());
+        if (!result.isValid()) {
+            fprintf(stderr, "%s not known.\n", cmd.get(1).asString().c_str());
+            return 1;
+        }
+        ConstString txt = NameServer::textify(Address::fromContact(result)).c_str();
+        printf("%s", txt.c_str());
+        return 0;
+    }
+    if (key=="register") {
+        ConstString portName = cmd.get(1).asString();
+        ConstString machine = "...";
+        ConstString carrier = "...";
+        int port = 0;
+        bool spec = false;
+        if (cmd.size()>2) {
+            carrier = cmd.get(2).asString();
+            spec = true;
+        }
+        if (cmd.size()>3) {
+            machine = cmd.get(3).asString();
+        }
+        if (cmd.size()>4) {
+            if (!cmd.get(4).isInt()) {
+                port = 0;
+            } else {
+                port = cmd.get(4).asInt();
+            }
+        }
+        Contact result;
+        if (spec) {
+            Contact c = 
+                Contact::bySocket(carrier,machine,port).addName(portName);
+            result = NetworkBase::registerContact(c);
+        } else {
+            result = NetworkBase::registerName(portName);
+        }
+        ConstString txt = NameServer::textify(Address::fromContact(result)).c_str();
+        printf("%s", txt.c_str());
+        return 0;
+    }
+    if (key=="unregister") {
+        ConstString portName = cmd.get(1).asString();
+        Contact result;
+        result = NetworkBase::unregisterName(portName);
+        printf("Unregistered name.\n");
+        return 0;
+    }
+
+
+    bool ok = NetworkBase::writeToNameServer(cmd,
+                                             reply,
+                                             style);
+    if (!ok) {
+        ACE_OS::fprintf(stderr, "Failed to reach name server\n");
+        return 1;
+    }
+    if (reply.size()==1&&reply.get(0).isString()) {
+        printf("%s", reply.get(0).asString().c_str());
+    } else {
+        printf("%s\n", reply.toString().c_str());
+    }
     return 0;
 }
 
@@ -498,29 +566,41 @@ int Companion::cmdConf(int argc, char *argv[]) {
         ACE_OS::printf("%s\n",nc.getConfigFileName().c_str());
         return 0;
     }
-    if (argc==2) {
+    if (argc>=2) {
         nc.fromFile();
         Address prev = nc.getAddress();
+        String prevMode = nc.getMode();
         Address next(String(argv[0]),atoi(argv[1]));
         nc.setAddress(next);
+        if (argc>=3) {
+            nc.setMode(argv[2]);
+        } else {
+            nc.setMode("yarp");
+        }
         nc.toFile();
         nc.fromFile();
         Address current = nc.getAddress();
+        String currentMode = nc.getMode();
         printf("Configuration file:\n");
         printf("  %s\n",nc.getConfigFileName().c_str());
         if (prev.isValid()) {
             printf("Stored:\n");
-            printf("  host %s port number %d\n",prev.getName().c_str(),
-                   prev.getPort());
+            printf("  host %s port number %d (%s name server)\n",
+                   prev.getName().c_str(),
+                   prev.getPort(),
+                   prevMode.c_str());
         }
         if (current.isValid()) {
             printf("Now stores:\n");
-            printf("  host %s port number %d\n",current.getName().c_str(),
-                   current.getPort());
+            printf("  host %s port number %d (%s name server)\n",
+                   current.getName().c_str(),
+                   current.getPort(),
+                   currentMode.c_str());
         } else {
             printf("is not valid!\n");
             printf("Expected:\n");
             printf("  yarp conf [ip address] [port number]\n");
+            printf("  yarp conf [ip address] [port number] [yarp|ros]\n");
             printf("For example:\n");
             printf("  yarp conf 192.168.0.1 10000\n");
             return 1;
@@ -542,7 +622,6 @@ int Companion::cmdConf(int argc, char *argv[]) {
 
 int Companion::cmdWhere(int argc, char *argv[]) {
     NameConfig nc;
-    NameClient& nic = NameClient::getNameClient();
     nc.fromFile();
     if (nc.getAddress().isValid()) {
         printf("Looking for name server on %s, port number %d\n",
@@ -551,29 +630,48 @@ int Companion::cmdWhere(int argc, char *argv[]) {
         printf("If there is a long delay, try:\n");
         printf("  yarp conf --clean\n");
     }
-    Address address = nic.queryName(nc.getNamespace());
+    Contact address = NetworkBase::getNameServerContact();
+
+    bool reachable = false;
     if (address.isValid()) {
-        ACE_OS::printf("Name server %s is available at ip %s port %d\n",
+        OutputProtocol *out = Carriers::connect(Address::fromContact(address));
+        if (out!=NULL) {
+            reachable = true;
+            out->close();
+            delete out;
+            out = NULL;
+        }
+    }
+
+    if (address.isValid()&&reachable) {
+        ACE_OS::printf("%sName server %s is available at ip %s port %d\n",
+                       nc.getMode()=="ros"?"ROS ":"",
                        nc.getNamespace().c_str(),
-                       address.getName().c_str(), address.getPort());
-        ACE_OS::printf("Name server %s can be browsed at http://%s:%d/\n",
-                       nc.getNamespace().c_str(),
-                       address.getName().c_str(), address.getPort());
+                       address.getHost().c_str(), address.getPort());
+        if (address.getCarrier()=="tcp") {
+            ACE_OS::printf("Name server %s can be browsed at http://%s:%d/\n",
+                           nc.getNamespace().c_str(),
+                           address.getHost().c_str(), address.getPort());
+        }
     } else {
         NameConfig conf;
         bool haveFile = conf.fromFile();
         Address address = conf.getAddress();
 
         printf("\n");
-        printf("=========================================================\n");
+        printf("=======================================================================\n");
         printf("==\n");
         printf("== PROBLEM\n");
         if (haveFile) {
-            printf("== No valid address for a YARP name server is available.\n");
-            printf("== The following is the configured address:\n");
-            printf("==   host %s port number %d\n", address.getName().c_str(),
+            printf("== No valid YARP name server is available.\n");
+            printf("== Here is the expected configuration:\n");
+            printf("==   host: %s port number: %d\n", address.getName().c_str(),
                    address.getPort());
-            printf("== But a name server was not found at this address.\n");
+            printf("==   namespace: %s\n", nc.getNamespace().c_str());
+            if (conf.getMode()!="" && conf.getMode()!="//") {
+                printf("==   type of name server: %s\n", conf.getMode().c_str());
+            }
+            printf("== But such a name server was not found.\n");
         } else {
             printf("== No address for a YARP name server is available.\n");
             printf("== A configuration file giving the location of the \n");
@@ -581,8 +679,11 @@ int Companion::cmdWhere(int argc, char *argv[]) {
         }
         printf("==\n");
         printf("== SHORT SOLUTION\n");
-        printf("== Do:\n");
+        printf("== If you are fairly confident there is a name server running, try:\n");
         printf("== $ yarp detect --write\n");
+        printf("== If you just want to make a quick test, start your own name server:\n");
+        printf("== $ yarp namespace /your/name\n");
+        printf("== $ yarp server\n");
         printf("==\n");
         printf("== DETAILED SOLUTION\n");
         printf("== To try to fix this problem automatically, do:\n");
@@ -600,7 +701,7 @@ int Companion::cmdWhere(int argc, char *argv[]) {
         printf("== configuration file for manual viewing/editing, do:\n");
         printf("== $ yarp conf\n");
         printf("==\n");
-        printf("=========================================================\n");
+        printf("=======================================================================\n");
 
         return 1;
     }
@@ -634,15 +735,14 @@ int Companion::cmdVersion(int argc, char *argv[]) {
 int Companion::sendMessage(const String& port, PortWriter& writable, 
                            String& output, bool quiet) {
     output = "";
-    NameClient& nic = NameClient::getNameClient();
-    Address srcAddress = nic.queryName(port);
+    Contact srcAddress = NetworkBase::queryName(port.c_str());
     if (!srcAddress.isValid()) {
         if (!quiet) {
             ACE_OS::fprintf(stderr, "Cannot find port named %s\n", port.c_str());
         }
         return 1;
     } 
-    OutputProtocol *out = Carriers::connect(srcAddress);
+    OutputProtocol *out = Carriers::connect(Address::fromContact(srcAddress));
     if (out==NULL) {
         if (!quiet) {
             ACE_OS::fprintf(stderr, "Cannot connect to port named %s at %s\n", 
@@ -698,43 +798,6 @@ int Companion::sendMessage(const String& port, PortWriter& writable,
     return 0;
 }
 
-
-/*
-static int metaConnect(int argc, char *argv[], bool disconnect) {
-    // parse arguments
-    Property p;
-    p.fromCommand(argc,argv,false);
-    if (!(p.check("src")&&p.check("dest"))) {
-        if (argc>=2) {
-            ConstString carrier = "";
-            if (argc>=3) {
-                if (argv[argc-1][0]!='/') {
-                    carrier = argv[argc-1];
-                    Contact c = Contact::fromString(carrier);
-                    if (c.getCarrier()=="") {
-                        argc--;
-                    } else {
-                        carrier = "";
-                    }
-                }
-            }
-            p.fromCommand(argc-2,argv,false);
-            p.put("src",argv[argc-2]);
-            p.put("dest",argv[argc-1]);
-            if (carrier!="") {
-                p.put("carrier",carrier.c_str());
-            }
-        }
-    }
-    if (disconnect) {
-        p.put("disconnect",1);
-    }
-
-    // okay, we have our arguments.
-    // now, to work
-    return metaConnect(p);
-}
-*/
 
 int Companion::cmdConnect(int argc, char *argv[]) {
     //int argc_org = argc;
@@ -897,8 +960,8 @@ int Companion::cmdRpc(int argc, char *argv[]) {
     }
     Address address = Name(dest).toAddress();
     if (address.getCarrierName()=="") {
-        NameClient& nic = NameClient::getNameClient();
-        address = nic.queryName(dest);
+        Contact contact = NetworkBase::queryName(dest);
+        address = Address::fromContact(contact);
     }
     // no need for a port
     src = "anon_rpc";
@@ -1005,7 +1068,6 @@ public:
 
 int Companion::cmdCheck(int argc, char *argv[]) {
     Logger& log = Logger::get();
-    NameClient& nic = NameClient::getNameClient();
 
     YARP_INFO(log,"==================================================================");
     YARP_INFO(log,"=== This is \"yarp check\"");
@@ -1017,22 +1079,17 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     YARP_INFO(log,"=== Trying to register some ports");
 
     CompanionCheckHelper check;
-    PortCore in;
-    Address address = nic.registerName("...");
+    Port in;
     bool faking = false;
-    if (!address.isValid()) {
+    if (!NetworkBase::exists(NetworkBase::getNameServerName())) {
         YARP_INFO(log,"=== NO NAME SERVER!  Switching to local, fake mode");
         NetworkBase::setLocalMode(true);
-        address = nic.registerName("...");
         faking = true;
     }
-    in.listen(address);
-    in.setReadHandler(check);
-    in.start();
-    PortCore out;
-    Address address2 = nic.registerName("...");
-    out.listen(address2);
-    out.start();
+    in.setReader(check);
+    in.open("...");
+    Port out;
+    out.open("...");
 
     Time::delay(1);
 
@@ -1046,9 +1103,9 @@ int Companion::cmdCheck(int argc, char *argv[]) {
     YARP_INFO(log,"==================================================================");
     YARP_INFO(log,"=== Trying to write some data");
 
-    BottleImpl bot;
+    Bottle bot;
     bot.addInt(42);
-    out.send(bot);
+    out.write(bot);
 
     Time::delay(1);
 
@@ -1157,22 +1214,29 @@ int Companion::cmdRun(int argc, char *argv[]) {
 
 int Companion::cmdNamespace(int argc, char *argv[]) {
     NameConfig nc;
-    String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
     if (argc!=0) {
+        String fname = nc.getConfigFileName(YARP_CONFIG_NAMESPACE_FILENAME);
         ACE_OS::printf("Setting namespace in: %s\n",fname.c_str());
         ACE_OS::printf("Remove this file to revert to the default namespace (/root)\n");
-        String space = argv[0];
-        argc--;
-        argv++;
-        nc.writeConfig(fname,space);
+        Bottle cmd;
+        for (int i=0; i<argc; i++) {
+            cmd.addString(argv[i]);
+        }
+        nc.writeConfig(fname,cmd.toString().c_str());
     }
-    Bottle bot(nc.readConfig(fname).c_str());
-    String space = bot.get(0).asString().c_str();
-    if (space=="") {
-        ACE_OS::printf("No namespace specified, using default\n");
-        space = "/root";
+
+    Bottle ns = nc.getNamespaces();    
+
+    //Bottle bot(nc.readConfig(fname).c_str());
+    //String space = bot.get(0).asString().c_str();
+    if (ns.size()==0) {
+        ACE_OS::printf("No namespace specified\n");
     }
-    ACE_OS::printf("YARP namespace: %s\n",space.c_str());
+    if (ns.size()==1) {
+        ACE_OS::printf("YARP namespace: %s\n", ns.get(0).asString().c_str());
+    } else {
+        ACE_OS::printf("YARP namespaces: %s\n", ns.toString().c_str());
+    }
     return 0;
 }
 
@@ -1187,7 +1251,6 @@ int Companion::cmdClean(int argc, char *argv[]) {
         options.fromCommand(argc,argv,false);
     }
 
-    NameClient& nic = NameClient::getNameClient();
     NameConfig nc;
     String name = nc.getNamespace();
     Bottle msg, reply;
@@ -1226,7 +1289,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
                         OutputProtocol *out = Carriers::connect(addr);
                         if (out==NULL) {
                             printf("* No response, removing port %s\n", port.c_str());
-                            nic.unregisterName(port.c_str());
+                            NetworkBase::unregisterName(port.c_str());
                         } else {
                             delete out;
                         }
@@ -1240,9 +1303,10 @@ int Companion::cmdClean(int argc, char *argv[]) {
         }
     }
     printf("Giving name server a chance to do garbage collection.\n");
-    String cmd = "NAME_SERVER gc";
-    String result = nic.send(cmd);
-    printf("Name server says: %s",result.c_str());
+    ConstString serverName = NetworkBase::getNameServerName();
+    Bottle cmd2("gc"), reply2;
+    NetworkBase::write(serverName,cmd2,reply2);
+    printf("Name server says: %s",reply2.toString().c_str());
 
     return 0;
 }
@@ -1296,40 +1360,100 @@ int Companion::cmdResource(int argc, char *argv[]) {
 }
 
 
+int Companion::cmdDetectRos(bool write) {
+    bool have_xmlrpc = false;
+    bool have_tcpros = false;
+    Carrier *xmlrpc = Carriers::chooseCarrier("xmlrpc");
+    if (xmlrpc!=NULL) {
+        have_xmlrpc = true;
+        delete xmlrpc;
+    }
+    Carrier *tcpros = Carriers::chooseCarrier("tcpros");
+    if (tcpros!=NULL) {
+        have_tcpros = true;
+        delete tcpros;
+    }
+    if (!(have_xmlrpc&&have_tcpros)) {
+        fprintf(stderr,"ROS support requires enabling some optional carriers\n");
+        fprintf(stderr,"   xmlrpc %s\n", have_xmlrpc?"(already enabled)":"");
+        fprintf(stderr,"   tcpros %s\n", have_tcpros?"(already enabled)":"");
+        return 1;
+    }
+
+    ConstString uri = NetworkBase::getEnvironment("ROS_MASTER_URI");
+    if (uri=="") {
+        fprintf(stderr,"ROS_MASTER_URI environment variable not set.\n");
+        uri = "http://127.0.0.1:11311/";
+    }
+    Contact root = Contact::fromString(uri).addCarrier("xmlrpc");
+    fprintf(stderr,"Trying ROS_MASTER_URI=%s...\n", uri.c_str());
+    OutputProtocol *out = Carriers::connect(Address::fromContact(root));
+    bool ok = (out!=NULL);
+    if (ok) delete out;
+    if (!ok) {
+        fprintf(stderr,"Could not reach server.\n");
+        return 1;
+    } else {
+        fprintf(stderr,"Reachable.  Writing.\n");
+    }
+    NameConfig nc;
+    nc.fromFile();
+    nc.setAddress(Address::fromContact(root));
+    nc.setMode("ros");
+    nc.toFile();
+    fprintf(stderr,"Configuration stored.  Testing.\n");
+    return cmdWhere(0,NULL);
+}
+
 
 int Companion::cmdDetect(int argc, char *argv[]) {
-    NameConfig nc;
-    NameClient& nic = NameClient::getNameClient();
-    nc.fromFile();
-    nic.setScan();
+    //NameConfig nc;
+    //NameClient& nic = NameClient::getNameClient2();
+    //nc.fromFile();
+    //nic.setScan();
+    bool shouldUseServer = false;
+    bool ros = false;
     if (argc>0) {
         if (String(argv[0])=="--write") {
-            nic.setSave();
+            //nic.setSave();
+            shouldUseServer = true;
+        } else if (String(argv[0])=="--ros") {
+            ros = true;
         } else {
             YARP_ERROR(Logger::get(), "Argument not understood");
             return 1;
         }
     }
-    if (nc.getAddress().isValid()) {
+    if (ros) {
+        return cmdDetectRos(shouldUseServer);
+    }
+    bool didScan = false;
+    bool didUse = false;
+    Contact addr = NetworkBase::detectNameServer(shouldUseServer,
+                                                 didScan,
+                                                 didUse);
+    if (addr.isValid()) {
         printf("Checking for name server at ip %s port %d\n",
-               nc.getAddress().getName().c_str(),
-               nc.getAddress().getPort());
+               addr.getHost().c_str(),
+               addr.getPort());
         printf("If there is a long delay, try:\n");
         printf("  yarp conf --clean\n");
     }
-    Address address = nic.queryName(nc.getNamespace());
-    if (address.isValid()) {
+    OutputProtocol *out = Carriers::connect(Address::fromContact(addr));
+    bool ok = (out!=NULL);
+    if (ok) delete out;
+    if (ok) {
         printf("\n");
         printf("=========================================================\n");
         printf("==\n");
         printf("== FOUND\n");
         printf("== %s is available at ip %s port %d\n",
-               nc.getNamespace().c_str(),
-               address.getName().c_str(), address.getPort());
+               addr.getName().c_str(),
+               addr.getHost().c_str(), addr.getPort());
         printf("== %s can be browsed at http://%s:%d/\n",
-               nc.getNamespace().c_str(),
-               address.getName().c_str(), address.getPort());
-        if (nic.didScan()&&!nic.didSave()) {
+               addr.getName().c_str(),
+               addr.getHost().c_str(), addr.getPort());
+        if (didScan&&!didUse) {
             printf("== \n");
             printf("== WARNING\n");
             printf("== This address was found by scanning the network, but\n");
@@ -1338,7 +1462,7 @@ int Companion::cmdDetect(int argc, char *argv[]) {
             printf("== name server until this address is saved.  To do so:\n");
             printf("==   yarp detect --write\n");
         }
-        if (nic.didSave()) {
+        if (didUse) {
             printf("== \n");
             printf("== Address saved.\n");
             printf("== YARP programs will now be able to use the name server.\n");
@@ -1359,7 +1483,7 @@ int Companion::cmdDetect(int argc, char *argv[]) {
         printf("==\n");
         printf("== #2 Make sure the YARP name server is running in the\n");
         printf("== same namespace as you.  Your namespace is set as:\n");
-        printf("==   %s\n", nc.getNamespace().c_str());
+        printf("==   %s\n", NetworkBase::getNameServerName().c_str());
         printf("== You can change your namespace to /EXAMPLE by doing:\n");
         printf("==   yarp namespace /EXAMPLE\n");
         printf("== You can check your namespace by doing:\n");

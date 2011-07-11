@@ -12,10 +12,10 @@
 #include <yarp/os/Port.h>
 #include <yarp/os/impl/PortCore.h>
 #include <yarp/os/impl/Logger.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/Contact.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/SemaphoreImpl.h>
 
@@ -261,7 +261,7 @@ Port::Port() {
 
 
 bool Port::openFake(const char *name) {
-    return open(Contact(),false,name);
+    return open(Contact::byName(name),false,name);
 }
 
 bool Port::open(const char *name) {
@@ -274,6 +274,7 @@ bool Port::open(const Contact& contact, bool registerName) {
 
 bool Port::open(const Contact& contact, bool registerName, 
                 const char *fakeName) {
+    Contact contact2 = contact;
 
     if (!NetworkBase::initialized()) {
         YARP_ERROR(Logger::get(), "YARP not initialized; create a yarp::os::Network object before using ports");
@@ -304,23 +305,29 @@ bool Port::open(const Contact& contact, bool registerName,
 
     core.openable();
 
+    bool local = false;
+    if (NetworkBase::localNetworkAllocation()&&contact.getPort()<=0) {
+        YARP_DEBUG(Logger::get(),"local network allocation needed");
+        local = true;
+    }
+
     bool success = true;
-    Address caddress(contact.getHost().c_str(),
-                     contact.getPort(),
-                     contact.getCarrier().c_str(),
-                     contact.getName().c_str());
+    Address caddress(contact2.getHost().c_str(),
+                     contact2.getPort(),
+                     contact2.getCarrier().c_str(),
+                     contact2.getName().c_str());
     Address address = caddress;
 
     core.setReadHandler(core);
-    NameClient& nic = NameClient::getNameClient();
     if (contact.getPort()>0 && contact.getHost()!="") {
         registerName = false;
     }
-    if (registerName) {
-        address = nic.registerName(contact.getName().c_str(),caddress);
+    if (registerName&&!local) {
+        Contact contactFull = NetworkBase::registerContact(contact2);
+        address = Address::fromContact(contactFull);
     }
     core.setControlRegistration(registerName);
-    success = address.isValid();
+    success = (address.isValid()||local)&&(fakeName==NULL);
 
     ConstString blame = "invalid address";
     if (success) {
@@ -332,6 +339,14 @@ bool Port::open(const Contact& contact, bool registerName,
         }
     }
     if (success) {
+        address = core.getAddress();
+        if (registerName&&local) {
+            contact2 = contact2.addSocket(address.getCarrierName().c_str(),
+                                          address.getName().c_str(),
+                                          address.getPort());
+            contact2 = contact2.addName(address.getRegName().c_str());
+            NetworkBase::registerContact(contact2);
+        }
         if (core.getVerbosity()>=1) {
             YARP_INFO(Logger::get(),
                       String("Port ") +

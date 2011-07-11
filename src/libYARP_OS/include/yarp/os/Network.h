@@ -335,6 +335,19 @@ public:
                       const ContactStyle& style);
 
     /**
+     * Variant write method specialized to name server.
+     *
+     * @param cmd the message to send
+     * @param reply the response if any is read here
+     * @param style options for the connection
+     *
+     * @return true on success
+     */
+    static bool writeToNameServer(PortWriter& cmd,
+                                  PortReader& reply,
+                                  const ContactStyle& style);
+
+    /**
      *
      * Variant write method with port name specified directly.
      *
@@ -349,6 +362,7 @@ public:
                       PortReader& reply) {
         return write(Contact::byName(port_name),cmd,reply);
     }
+
 
     /**
      *
@@ -418,6 +432,31 @@ public:
      * Call post() on a global mutual-exclusion semaphore allocated by YARP.
      */
     static void unlock();
+
+    /**
+     *
+     * Check where the name server in use expects processes to allocate
+     * their own network resources.
+     *
+     * @return true if local network resource allocation is expected.
+     *
+     */
+    static bool localNetworkAllocation();
+
+    /**
+     *
+     * Scan for an available name server.
+     *
+     * @param useDetectedServer If a name server is found, use it.
+     * @param scanNeeded True if a network scan was done to find server.
+     * @param serverUsed True if a server was found and configured for use.
+     *
+     * @result address of name server.
+     *
+     */
+    static Contact detectNameServer(bool useDetectedServer,
+                                    bool& scanNeeded,
+                                    bool& serverUsed);
 };
 
 /**

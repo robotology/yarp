@@ -1,5 +1,15 @@
 2011-07-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Companion.cpp: support "yarp detect --ros"
+	to run yarp on a ros name server.  Experimental.
+
+	* src/libYARP_OS/src/Network.cpp et al: activate multiple name
+	server support.
+
+	* src/libYARP_OS/src/Port.cpp: support local allocation of 
+	socket port numbers, for use with name servers that don't
+	allocate them.
+
 	* src/libYARP_OS/src/MultiNameSpace.cpp et al: apply patch
 	supporting multiple namespaces.  Not yet activated.
 

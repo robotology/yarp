@@ -181,6 +181,8 @@ public:
 
     int cmdDetect(int argc, char *argv[]);
 
+    int cmdDetectRos(bool write);
+
     int cmdTopic(int argc, char *argv[]);
 
     int cmdPlugin(int argc, char *argv[]);
