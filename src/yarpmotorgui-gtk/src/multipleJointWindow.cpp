@@ -277,6 +277,29 @@ void partMover::run_all(GtkButton *button, partMover* currentPart)
   return;
 }
 
+void partMover::idle_all(GtkButton *button, partMover* currentPart)
+{
+  IPositionControl *ipos = currentPart->pos;
+  IEncoders *iiencs = currentPart->iencs;
+  IAmplifierControl *iamp = currentPart->amp;
+  IPidControl *ipid = currentPart->pid;
+  GtkWidget **sliderAry = currentPart->sliderArray;
+	 
+  double posJoint;
+  int joint;
+  int NUMBER_OF_JOINTS;
+  ipos->getAxes(&NUMBER_OF_JOINTS);
+  
+  for (joint=0; joint < NUMBER_OF_JOINTS; joint++)
+  {
+    iiencs->getEncoder(joint, &posJoint);
+    iamp->disableAmp(joint);
+    ipid->disablePid(joint);
+    gtk_range_set_value ((GtkRange *) (sliderAry[joint]), posJoint);
+  }
+  return;
+}
+
 void partMover::home_all(GtkButton *button, partMover* currentPart)
 {
   IPositionControl *ipos = currentPart->pos;

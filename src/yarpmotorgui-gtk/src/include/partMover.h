@@ -157,6 +157,7 @@ class partMover{
   static void sequence_stop(GtkButton *button,  partMover* currentPart);
   //static void sequence_stop_time(GtkButton *button,  partMover* currentPart);
   static void run_all(GtkButton *button, partMover* currentPart);
+  static void idle_all(GtkButton *button, partMover* currentPart);
   static void calib_all(GtkButton *button, partMover* currentPart);
   static void home_all(GtkButton *button, partMover* currentPart);
 

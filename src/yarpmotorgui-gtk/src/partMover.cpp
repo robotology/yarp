@@ -364,6 +364,13 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       button7 = NULL;
       button8 = NULL;
 
+	  //Button15 in the panel
+      GtkWidget *button15 = gtk_button_new_with_mnemonic ("IdleAll");
+      //gtk_container_add (GTK_CONTAINER (panel_hbox), button0);
+      g_signal_connect (button15, "clicked", G_CALLBACK (idle_all), this);
+      gtk_fixed_put (GTK_FIXED (inv1), button15, 25+(NUMBER_OF_JOINTS%numberOfRows)*width,        160+(NUMBER_OF_JOINTS/numberOfRows)*height);
+      gtk_widget_set_size_request 	(button15, 150, 30);
+
       //Button 14 in the panel
       GtkWidget *button14 = gtk_button_new_with_mnemonic ("Open sequence tab");
       //gtk_container_add (GTK_CONTAINER (panel_hbox), button1);
