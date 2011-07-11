@@ -362,7 +362,7 @@ int Drivers::yarpdev(int argc, char *argv[]) {
     bool ret=Network::checkNetwork();
     if (!ret)
     {
-        fprintf(stderr, "YARP network not available, chech if yarp server is reachable\n");
+        fprintf(stderr, "YARP network not available, check if yarp server is reachable\n");
         return -1;
     }
 
