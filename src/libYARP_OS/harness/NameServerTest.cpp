@@ -7,13 +7,15 @@
  */
 
 #include <yarp/os/impl/NameServer.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/Companion.h>
 
 #include <yarp/os/impl/UnitTest.h>
 //#include "TestList.h"
 
+#include <yarp/os/Network.h>
+
 using namespace yarp::os::impl;
+using namespace yarp::os;
 
 class NameServerTest : public UnitTest {
 public:
@@ -32,33 +34,33 @@ public:
     }
 
     void checkClientInterface() {
-        report(0,"checking client interface...");
-        NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
-        Address address("127.0.0.1",9999,"tcp");
-        nic.registerName("/foo2",address);
-        Address a1 = nic.queryName("/foo2");
+        report(0,"checking client intrface...");
+        NetworkBase::setLocalMode(true);
+        Contact address = Contact::bySocket("tcp","127.0.0.1",9999);
+        address = address.addName("/foo2");
+        NetworkBase::registerContact(address);
+        Contact a1 = NetworkBase::queryName("/foo2");
         checkEqual(a1.isValid(),true,"recover address");
-        checkEqual(a1.getName(),"127.0.0.1","machine name matches");
-        Address a2 = nic.queryName("/bar2");
+        checkEqual(a1.getHost().c_str(),"127.0.0.1","machine name matches");
+        Contact a2 = NetworkBase::queryName("/bar2");
         checkEqual(a2.isValid(),false,"non-existent address");
-        nic.setFakeMode(false);
+        NetworkBase::setLocalMode(false);
     }
 
     void checkCompanion(bool fake) {
         report(0,"checking dud connections don't affect memory...");
-        NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(fake);
-        Address address("127.0.0.1",9999,"tcp");
-        nic.registerName("/foo2",address);
-        Companion::connect("/junk","/junk2",true);
-        Companion::connect("/foo2","/junk2",true);
+        NetworkBase::setLocalMode(fake);
+        Contact address = Contact::bySocket("tcp","127.0.0.1",9999);
+        address = address.addName("/foo2");
+        NetworkBase::registerContact(address);
+        NetworkBase::connect("/junk","/junk2",NULL,true);
+        NetworkBase::connect("/foo2","/junk2",NULL,true);
         for (int i=0; i<5; i++) {
             char buf[100];
             sprintf(buf,"/many/foo/%d", i);
-            Companion::connect(buf,"/junk2",true);
+            NetworkBase::connect(buf,"/junk2",NULL,true);
         }
-        nic.setFakeMode(false);
+        NetworkBase::setLocalMode(false);
     }
 
     virtual void runTests() {

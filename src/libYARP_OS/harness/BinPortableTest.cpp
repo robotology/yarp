@@ -9,7 +9,7 @@
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/PortReaderBuffer.h>
 #include <yarp/os/Port.h>
-#include <yarp/os/impl/NameClient.h>
+#include <yarp/os/Network.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/DummyConnector.h>
@@ -86,11 +86,10 @@ public:
     }
 
     virtual void runTests() {
-        NameClient& nic = NameClient::getNameClient();
-        nic.setFakeMode(true);
+        NetworkBase::setLocalMode(true);
         testInt();
         testText();
-        nic.setFakeMode(false);
+        NetworkBase::setLocalMode(false);
     }
 };
 

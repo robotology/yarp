@@ -9,10 +9,6 @@
 
 #include <yarp/os/impl/UnitTest.h>
 
-//#include <yarp/os/impl/Logger.h>
-//#include <yarp/os/impl/NameClient.h>
-//#include <yarp/os/impl/Companion.h>
-
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/Network.h>
 

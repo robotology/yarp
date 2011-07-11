@@ -10,10 +10,10 @@
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/Carriers.h>
 #include <yarp/os/PortReader.h>
-#include <yarp/os/impl/NameClient.h>
 #include <yarp/os/impl/BottleImpl.h>
 #include <yarp/os/impl/Companion.h>
 #include <yarp/os/impl/UnitTest.h>
+#include <yarp/os/Network.h>
 //#include "TestList.h"
 
 using namespace yarp::os::impl;
@@ -81,21 +81,19 @@ public:
         expectation = "";
         receives = 0;
 
-        NameClient& nic = NameClient::getNameClient();
+        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9999).addName("/write"));
+        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9998).addName("/read"));
+        Contact fake = Contact::bySocket("tcp","127.0.0.1",9997);
 
-        Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
-        Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
-        Address fake = Address("127.0.0.1",9997,"tcp");
-
-        checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
-        checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
+        checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
+        checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");
 
 
         PortCore sender;
         PortCore receiver;
         receiver.setReadHandler(*this);
-        sender.listen(write);
-        receiver.listen(read);
+        sender.listen(Address::fromContact(write));
+        receiver.listen(Address::fromContact(read));
         sender.start();
         receiver.start();
         //Time::delay(1);
@@ -126,15 +124,12 @@ public:
         expectation = "";
         receives = 0;
 
-        NameClient& nic = NameClient::getNameClient();
+        Contact write = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9999).addName("/write"));
+        Contact read = NetworkBase::registerContact(Contact::bySocket("tcp","127.0.0.1",9998).addName("/read"));
+        Contact fake = Contact::bySocket("tcp","127.0.0.1",9997);
 
-        Address write = nic.registerName("/write",Address("127.0.0.1",9999,"tcp"));
-        Address read = nic.registerName("/read",Address("127.0.0.1",9998,"tcp"));
-        Address fake = Address("127.0.0.1",9997,"tcp");
-
-        checkEqual(nic.queryName("/write").isValid(),true,"name server sanity");
-        checkEqual(nic.queryName("/read").isValid(),true,"name server sanity");
-
+        checkEqual(NetworkBase::queryName("/write").isValid(),true,"name server sanity");
+        checkEqual(NetworkBase::queryName("/read").isValid(),true,"name server sanity");
 
         PortCore sender;
 
@@ -143,8 +138,8 @@ public:
 
         PortCore receiver;
         receiver.setReadHandler(*this);
-        sender.listen(write);
-        receiver.listen(read);
+        sender.listen(Address::fromContact(write));
+        receiver.listen(Address::fromContact(read));
         sender.start();
         receiver.start();
         //Time::delay(1);

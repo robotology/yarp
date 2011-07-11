@@ -235,7 +235,7 @@ bool NameClient::send(Bottle& cmd, Bottle& reply) {
         return getServer().apply(cmd,reply,
                                  Address("127.0.0.1",10000,"tcp"));
     } else {
-        Contact server = NetworkBase::getNameServerContact();
+        Contact server = getAddress().toContact();
         ContactStyle style;
         style.carrier = "name_ser";
         return NetworkBase::write(server,cmd,reply,style);
@@ -269,6 +269,7 @@ Address NameClient::registerName(const String& name) {
 }
 
 Address NameClient::registerName(const String& name, const Address& suggest) {
+    //printf("registering name to %s\n", getAddress().toString().c_str());
     String np = getNamePart(name);
     //if (isFakeMode()) {
     //return getServer().registerName(np,suggest);
@@ -304,6 +305,10 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     if (address.isValid()) {
         String reg = address.getRegName();
 
+        /*
+
+          // this never really got used
+
         cmd.fromString("set /port offers tcp text text_ack udp mcast shmem name_ser");
         cmd.get(1) = Value(reg.c_str());
         send(cmd,reply);
@@ -311,6 +316,7 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
         // accept the same set of carriers
         cmd.get(2) = Value("accepts");
         send(cmd,reply);
+        */
 
         cmd.clear();
         cmd.addString("set");
@@ -359,12 +365,25 @@ NameServer& NameClient::getServer() {
 bool NameClient::updateAddress() {
     NameConfig conf;
     address = Address();
+    mode = "yarp";
     if (conf.fromFile()) {
         address = conf.getAddress();
+        mode = conf.getMode();
         return true;
     }
     return false;
 }
+
+bool NameClient::setContact(const yarp::os::Contact& contact) {
+    if (!contact.isValid()) {
+        fake = true;
+    }
+    address = Address::fromContact(contact);
+    mode = "yarp";
+    isSetup = true;
+    return true;
+}
+
 
 
 NameClient::NameClient() {

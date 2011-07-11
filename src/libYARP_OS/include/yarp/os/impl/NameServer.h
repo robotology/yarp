@@ -95,6 +95,10 @@ public:
 
     virtual void onEvent(yarp::os::Bottle& event) {
     }
+
+    static String textify(const Address& addr);
+    static yarp::os::Bottle botify(const Address& address);
+
 private:
 
     void setup();
@@ -436,9 +440,6 @@ private:
     Dispatcher<NameServer,yarp::os::Bottle> ndispatcher;
 
 protected:
-
-    String textify(const Address& addr);
-    yarp::os::Bottle botify(const Address& address);
 
     String terminate(const String& str);
 

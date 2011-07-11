@@ -19,6 +19,7 @@
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
+#include <yarp/os/ConstString.h>
 
 namespace yarp {
     namespace os {

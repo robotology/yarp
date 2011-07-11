@@ -652,11 +652,19 @@ String NameServer::cmdGarbageCollect(int argc, char *argv[]) {
 String NameServer::textify(const Address& address) {
     String result = "";
     if (address.isValid()) {
-        result = "registration name ";
-        result = result + address.getRegName() + 
-            " ip " + address.getName() + " port " + 
-            NetType::toString(address.getPort()) + " type " + 
-            address.getCarrierName() + "\n";
+        if (address.getPort()>=0) {
+            result = "registration name ";
+            result = result + address.getRegName() + 
+                " ip " + address.getName() + " port " + 
+                NetType::toString(address.getPort()) + " type " + 
+                address.getCarrierName() + "\n";
+        } else {
+            result = "registration name ";
+            result = result + address.getRegName() + 
+                " ip " + "none" + " port " + 
+                "none" + " type " + 
+                address.getCarrierName() + "\n";
+        }
     }
     return result;
 }
@@ -863,10 +871,18 @@ int NameServer::main(int argc, char *argv[]) {
     // pick an address
     Address suggest("...",0); // suggestion is initially empty
 
+    ConstString nameSpace = "";
+
     if (argc>=1) {
+        if (argv[0][0]=='/') {
+            nameSpace = argv[0];
+            // BUT: not used yet
+            argv++;
+            argc--;
+        }
         if (argc>=2) {
             suggest = Address(argv[0],NetType::toInt(argv[1]));
-        } else {
+        } else if (argc>=1) {
             suggest = Address("...",NetType::toInt(argv[0]));
         }
     }
@@ -879,6 +895,9 @@ int NameServer::main(int argc, char *argv[]) {
     // see what address is lying around
     Address prev;
     NameConfig conf;
+    if (nameSpace!="") {
+        conf.setNamespace(nameSpace.c_str());
+    }
     if (conf.fromFile()) {
         prev = conf.getAddress();
     }

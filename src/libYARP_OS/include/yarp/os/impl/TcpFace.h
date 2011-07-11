@@ -47,6 +47,8 @@ public:
     virtual InputProtocol *read(); // throws IOException
     virtual OutputProtocol *write(const Address& address); // throws IOException
 
+    virtual Address getLocalAddress();
+
     /**
      * This class like all classes except the port objects does
      * not have any notion of running in a multi-threaded environment.

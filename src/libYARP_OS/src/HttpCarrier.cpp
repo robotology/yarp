@@ -13,7 +13,6 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-
 static String quoteFree(const String& src) {
     String result = "";
     for (unsigned int i=0; i<src.length(); i++) {
@@ -261,7 +260,8 @@ bool HttpCarrier::expectSenderSpecifier(Protocol& proto) {
     String from = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<html><body bgcolor='#ffffcc'><h1>yarp port ";
     from += proto.getRoute().getToName();
     from += "</h1>\n";
-    Address home = NameClient::getNameClient().getAddress();
+    Contact chome = NetworkBase::getNameServerContact();
+    Address home = Address::fromContact(chome);
     Address me = proto.getStreams().getLocalAddress();
 
     from += "<p>(<a href=\"http://";

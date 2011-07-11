@@ -1,8 +1,7 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Paul Fitzpatrick
- * Copyright (C) 2010 Daniel Krieg
+ * Copyright (C) 2006, 2010 Paul Fitzpatrick, Daniel Krieg
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -12,6 +11,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/SocketTwoWayStream.h>
 #include <yarp/os/impl/Protocol.h>
+#include <yarp/os/impl/NameConfig.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
 
@@ -30,8 +30,15 @@ bool TcpFace::open(const Address& address) {
 
     this->address = address;
 #ifdef YARP_HAS_ACE
-    ACE_INET_Addr  serverAddr(address.getPort());
+    ACE_INET_Addr serverAddr((address.getPort()>0)?address.getPort():0);
     int result = peerAcceptor.open(serverAddr,1);
+    if (address.getPort()<=0) {
+        ACE_INET_Addr localAddr;
+        peerAcceptor.get_local_addr(localAddr);
+        this->address = address.addSocket("tcp",
+                                          NameConfig::getHostName(),
+                                          localAddr.get_port_number());
+    }
 #else
     int result = peerAcceptor.open(address);
 #endif
@@ -39,6 +46,7 @@ bool TcpFace::open(const Address& address) {
         //throw IOException("cannot listen on specified tcp address");
         return false;
     }
+
     return true;
 }
 
@@ -49,17 +57,6 @@ void TcpFace::close() {
 void TcpFace::closeFace() {
     if (address.isValid()) {
         peerAcceptor.close();
-
-        /*
-          // a test for an arcane yarprun issue
-
-        ACE_INET_Addr  serverAddr(address.getPort());
-        ACE_SOCK_Acceptor peerAcceptor2;
-        result = peerAcceptor2.open(serverAddr,1);
-        printf("TcpFace close %s %d, %s, %d\n", __FILE__, __LINE__,
-               address.toString().c_str(), result);
-        peerAcceptor2.close();
-        */
 
         address = Address();
     }
@@ -135,4 +132,10 @@ OutputProtocol *TcpFace::write(const Address& address) {
     return NULL;
 
 }
+
+
+Address TcpFace::getLocalAddress() {
+    return address;
+}
+
 

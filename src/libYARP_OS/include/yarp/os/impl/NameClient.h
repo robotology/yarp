@@ -11,6 +11,7 @@
 
 #include <yarp/os/impl/Address.h>
 #include <yarp/os/Bottle.h>
+#include <yarp/os/Contact.h>
 #include <yarp/os/NameStore.h>
 
 namespace yarp {
@@ -55,6 +56,9 @@ public:
         }
     }
 
+    static NameClient *create() {
+        return new NameClient();
+    }
 
     /**
      * The address of the name server.
@@ -216,6 +220,8 @@ public:
      */    
     bool updateAddress();
 
+    bool setContact(const yarp::os::Contact& contact);
+
     virtual ~NameClient();
 
     void queryBypass(NameStore *store) {
@@ -224,6 +230,10 @@ public:
 
     NameStore *getQueryBypass() {
         return altStore;
+    }
+
+    yarp::os::ConstString getMode() {
+        return mode.c_str();
     }
 
 private:
@@ -238,6 +248,7 @@ private:
 
     Address address;
     String host;
+    String mode;
     String process;
     bool fake;
     NameServer *fakeServer;
