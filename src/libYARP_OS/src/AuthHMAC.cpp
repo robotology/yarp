@@ -34,7 +34,7 @@ AuthHMAC::AuthHMAC() {
 #ifdef PORT_AUTH
     ConstString key;
     bool found = false;
-    String fname = String(NetworkBase::getEnv("HOME", &found).c_str()) + 
+    String fname = String(NetworkBase::getEnvironment("HOME", &found).c_str()) + 
         "/.yarp/conf/user.conf";
     if (found) {
         found = false;
