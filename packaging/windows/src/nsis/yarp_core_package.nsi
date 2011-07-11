@@ -13,7 +13,7 @@ LangString UninstLogMissing ${LANG_ENGLISH} "${UninstLog} not found!$\r$\nUninst
 !include MultiUser.nsh
 
 Name "YARP ${YARP_VERSION}"
-OutFile "${NSIS_OUTPUT_PATH}\yarp_core_${YARP_VERSION}_${BUILD_VERSION}.exe"
+OutFile "${NSIS_OUTPUT_PATH}\yarp_${YARP_VERSION}_${BUILD_VERSION}.exe"
 
 InstallDir "$PROGRAMFILES\${VENDOR}"
 # this part no longer included in install path "\yarp-${YARP_VERSION}"
@@ -338,6 +338,8 @@ Section "Uninstall"
   
   RMDir /r "$INSTDIR\${YARP_SUB}"
   RMDir /r "$INSTDIR\${GSL_SUB}"
+  RMDir /r "$INSTDIR\${ACE_SUB}"
+  RMDir /r "$INSTDIR\${GTKMM_SUB}"
 
   # cleanup YARP registry entries
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\YARP\Common"
@@ -348,6 +350,16 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL\${GSL_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GSL"
+  
+  # cleanup GTKMM registry entries
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\Common"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GTKMM_SUB}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM"
+  
+  # cleanup ACE registry entries
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\ACE\Common"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\ACE\${ACE_SUB}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\ACE"
 
   # cleanup vendor entry if empty
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}"
