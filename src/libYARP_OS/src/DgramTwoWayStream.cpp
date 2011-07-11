@@ -14,7 +14,6 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/impl/NetType.h>
-#include <yarp/os/impl/NameConfig.h>
 
 #include <ace/SOCK_Dgram_Mcast.h>
 
@@ -127,12 +126,12 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
     int _read_size = READ_SIZE+CRC_SIZE;
     int _write_size = WRITE_SIZE+CRC_SIZE;
 
-    String _env_dgram = NameConfig::getEnv("YARP_DGRAM_SIZE");
-    String _env_mode = "";
+    ConstString _env_dgram = NetworkBase::getEnvironment("YARP_DGRAM_SIZE");
+    ConstString _env_mode = "";
     if (multiMode) {
-        _env_mode = NameConfig::getEnv("YARP_MCAST_SIZE");
+        _env_mode = NetworkBase::getEnvironment("YARP_MCAST_SIZE");
     } else {
-        _env_mode = NameConfig::getEnv("YARP_UDP_SIZE");
+        _env_mode = NetworkBase::getEnvironment("YARP_UDP_SIZE");
     }
     if ( _env_mode!="") {
         _env_dgram = _env_mode;

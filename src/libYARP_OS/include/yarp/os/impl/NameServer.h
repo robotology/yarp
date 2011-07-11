@@ -146,7 +146,7 @@ private:
         bool release(const String& name) {
             if (YARP_STRSTR(name,prefix)==0) {
                 String num = name.substr(prefix.length());
-                int x = NetType::toInt(num);
+                int x = NetType::toInt(num.c_str());
                 ReusableRecord<int>::release(x);
                 return true;
             }

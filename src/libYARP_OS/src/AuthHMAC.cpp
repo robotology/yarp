@@ -7,13 +7,13 @@
  */
 
 #include <yarp/os/impl/AuthHMAC.h>
-#include <yarp/os/impl/NameConfig.h>
 
 #include <cstdlib>
 #include <cstring> //needed by strcpy
 #include <time.h>
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Property.h>
+#include <yarp/os/Network.h>
 
 #ifdef DEBUG_HMAC
   void show_hmac_debug(unsigned char* hex, unsigned int length, std::string context) {
@@ -32,10 +32,10 @@ using namespace yarp::os::impl;
 
 AuthHMAC::AuthHMAC() {
 #ifdef PORT_AUTH
-    NameConfig nc;
     ConstString key;
     bool found = false;
-    String fname = nc.getEnv("HOME", &found) + "/.yarp/conf/user.conf";
+    String fname = String(NetworkBase::getEnv("HOME", &found).c_str()) + 
+        "/.yarp/conf/user.conf";
     if (found) {
         found = false;
         Property config;

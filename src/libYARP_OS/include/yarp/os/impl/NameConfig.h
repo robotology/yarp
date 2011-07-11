@@ -31,7 +31,8 @@ namespace yarp {
 class YARP_OS_impl_API yarp::os::impl::NameConfig {
 public:
 
-    String getConfigFileName(const char *stem = NULL);
+    String getConfigFileName(const char *stem = NULL,
+                             const char *ns = NULL);
 
     static bool createPath(const String& fileName, int ignoreLevel = 1);
 
@@ -39,7 +40,7 @@ public:
 
     bool writeConfig(const String& fileName, const String& text);
 
-    bool fromFile();
+    bool fromFile(const char *ns = 0 /*NULL*/);
 
     bool toFile(bool clean = false);
 
@@ -55,13 +56,25 @@ public:
 
     Address getAddress();
 
+    String getMode() {
+        return mode;
+    }
+
+    void setMode(const String& mode) {
+        this->mode = mode;
+    }
+
     String getNamespace(bool refresh = false);
 
-    static String getEnv(const String& key, bool *found = 0/*NULL*/);
+    yarp::os::Bottle getNamespaces(bool refresh = false);
+
+    void setNamespace(const String& ns);
 
 private:
     Address address;
     String space;
+    yarp::os::Bottle spaces;
+    String mode;
 
     bool fromString(const String& txt);
 };

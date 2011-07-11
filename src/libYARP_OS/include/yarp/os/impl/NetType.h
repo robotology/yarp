@@ -68,7 +68,7 @@ public:
 
     static String toString(unsigned int x);
 
-    static int toInt(String x);
+    static int toInt(const char *x);
 
     static unsigned long int getCrc(char *buf, int len);
 

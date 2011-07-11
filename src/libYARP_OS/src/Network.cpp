@@ -466,12 +466,12 @@ void NetworkBase::initMinimum() {
 #ifdef YARP_HAS_ACE       
        ACE::init();
 #endif
-       String quiet = NameConfig::getEnv("YARP_QUIET");
+       ConstString quiet = getEnvironment("YARP_QUIET");
        Bottle b2(quiet.c_str());
        if (b2.get(0).asInt()>0) {
            Logger::get().setVerbosity(-b2.get(0).asInt());
        } else {
-           String verbose = NameConfig::getEnv("YARP_VERBOSE");
+           ConstString verbose = getEnvironment("YARP_VERBOSE");
            Bottle b(verbose.c_str());
            if (b.get(0).asInt()>0) {
                YARP_INFO(Logger::get(), 
@@ -479,7 +479,7 @@ void NetworkBase::initMinimum() {
                Logger::get().setVerbosity(b.get(0).asInt());
            }
        }
-       String stack = NameConfig::getEnv("YARP_STACK_SIZE");
+       ConstString stack = getEnvironment("YARP_STACK_SIZE");
        if (stack!="") {
            int sz = atoi(stack.c_str());
            Thread::setDefaultStackSize(sz);
@@ -760,7 +760,14 @@ void NetworkBase::queryBypass(NameStore *store) {
 
 ConstString NetworkBase::getEnvironment(const char *key,
                                         bool *found) {
-    return NameConfig::getEnv(key,found).c_str();
+    const char *result = ACE_OS::getenv(key);
+    if (found != NULL) {
+        *found = (result!=NULL);
+    }
+    if (result == NULL) {
+        return "";
+    }
+    return result;
 }
 
 void NetworkBase::lock() {
