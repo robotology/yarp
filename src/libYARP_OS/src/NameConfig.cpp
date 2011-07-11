@@ -54,7 +54,7 @@ bool NameConfig::fromString(const String& txt) {
             }
             address = Address(b.find("host").asString().c_str(),
                               b.find("port").asInt());
-            mode = b.check("mode",Value("yarp")).asString();
+            mode = b.check("mode",Value("yarp")).asString().c_str();
             return (address.getPort()!=0);
         }
     }
