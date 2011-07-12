@@ -1,0 +1,272 @@
+
+/*
+ * Copyright (C) 2011 RobotCub Consortium
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+/** 
+ * @page yarp_with_ros Using YARP with ROS
+
+\author Paul Fitzpatrick
+
+Programs that use YARP ports may interoperate with the ROS
+"Robot Operating System" in several ways.  The methods 
+described here are available in part from YARP version 2.3.4 on,
+and in full from YARP version 2.3.7.
+
+We call the ROS middleware "ROSCORE" to distinguish it from
+the broader set of packages that make up the ROS ensemble.
+
+\section yarp_with_ros_requirements Requirements
+
+Make sure YARP is compiled with the following carriers enabled:
+\li xmlrpc_carrier, needed for name server communication
+\li tcpros_carrier, needed for peer-to-peer communication
+
+To achieve this, run CMake for YARP, and turn on the
+"CREATE_OPTIONAL_CARRIERS" option, then configure, then
+turn on the "ENABLE_yarpcar_tcpros_carrier" and 
+"ENABLE_yarpcar_xmlrpc_carrier" option.
+
+YARP does not link to any parts of the ROS codebase, so don't
+worry about how to tell YARP where to find the ROS libraries,
+it doesn't need them.
+
+\section yarp_with_ros_name_server Sharing a name server
+
+Both YARP and ROSCORE assume that a specialized name server is
+available for their use (but see also \ref yarp_without_nameserver).
+It seems a little goofy to need two name servers, so
+if instructed, YARP will use ROSCORE's name server (the "roscore" program).
+Here's how.  First, make sure you have started roscore:
+\verbatim
+roscore
+\endverbatim
+Make sure that the ROS_MASTER_URI environment variable is set as roscore
+proposes.
+Now, place YARP in a new namespace, called for example "/ros"
+itself
+\verbatim
+yarp namespace /ros
+\endverbatim
+Then ask YARP to detect a nameserver and save its address:
+\verbatim
+yarp detect --ros --write
+\endverbatim
+This should report something along the lines of:
+\verbatim
+Trying ROS_MASTER_URI=http://127.0.0.1:11311...
+Reachable.  Writing.
+Configuration stored.  Testing.
+Looking for name server on 127.0.0.1, port number 11311
+If there is a long delay, try:
+  yarp conf --clean
+ROS Name server /rossy is available at ip 127.0.0.1 port 11311
+\endverbatim
+
+An alternative procedure is to manually configure YARP to use a ROS 
+name server with a particular host name or ip address and port number:
+\verbatim
+yarp conf icubsrv 11311 ros
+\endverbatim
+
+YARP ports should be usable at the point.  To test this, you could run:
+\verbatim
+yarp check
+\endverbatim
+Or try some of the exercises in \ref note_ports.
+
+YARP ports should behave as normal.
+One caveat: the <i>multicast</i> protocol requires some support from the name server
+that ROSCORE does not currently provide.  
+So don't use multicast if you want to work also
+with ROS (or use multiple name servers).
+
+\section yarp_with_ros_connecting Connecting ports with publishers/subscribers
+
+YARP ports can publish or subscribe to ROS topics.  For example, suppose
+a ROS node called "/talker" is publishing strings to a ROS topic
+called "/chatter".  To listen in using "yarp read", we could do:
+\verbatim
+yarp read /read-#/chatter
+\endverbatim
+
+For YARP, "/read-#/chatter" is just another port name.  For ROS, it means:
+ \li Treat this port as belonging to a virtual ROS node called "/read".
+ \li Make this port a subscriber to the /chatter topic (for twitter users,
+read as "pull messages out of hash-tag /chatter").
+
+Alternatively, this works as well:
+\verbatim
+yarp read topic://chatter /read
+\endverbatim
+In general, connections to topics can be made and broken using 
+"yarp connect" and "yarp disconnect" (or, from code, Network::connect
+and Network::disconnect) as usual, with the names of topics 
+preceded by "topic://".  There's a mismatch between the lifetimes 
+of topics in YARP and ROS that makes this a bit messy right now.
+
+Suppose a ROS node called "/listener" is listening for strings on the 
+ROS topic "/chatter".  We can send it strings by doing:
+\verbatim
+yarp write /write+#/chatter
+\endverbatim
+Be sure to type strings only, for example:
+\verbatim
+"hello there"
+bye
+\endverbatim
+Otherwise you'll get a warning that your input is not of the expected
+type.
+
+This works as well:
+\verbatim
+yarp write /write topic://chatter
+\endverbatim
+But with the same caveat as for "yarp read topic://chatter /read".
+
+When sending or receiving "real" datatypes (not just strings), it
+is necessary to work with ros types: see \ref yarp_with_ros_types.
+
+\section yarp_with_ros_types Using ROS types
+
+The biggest difference between YARP and ROSCORE is that YARP
+doesn't really care what data you send between ports, while ROSCORE
+cares deeply.
+
+So in general, connections to or from ROS need to be typed.
+ROS types are defined in ".msg" files which are compiled into
+ROS C++ code during ROS builds.  As of YARP 2.3.4, those .msg files can 
+also be converted into YARP C++ code, or read at runtime, using the
+"yarpros" tool.  Consider the following .msg file, "PointCloud2.msg":
+\verbatim
+#This message holds a collection of nD points, as a binary blob.
+Header header
+
+# 2D structure of the point cloud. If the cloud is unordered,
+# height is 1 and width is the length of the point cloud.
+uint32 height
+uint32 width
+
+# Describes the channels and their layout in the binary data blob.
+PointField[] fields
+
+bool    is_bigendian # Is this data bigendian?
+uint32  point_step   # Length of a point in bytes
+uint32  row_step     # Length of a row in bytes
+uint8[] data         # Actual point data, size is (row_step*height)
+
+bool is_dense        # True if the data is dense (i.e., image-like organized)
+\endverbatim
+This refers in turn to "Header" and "PointField".  If those are
+also available, running "yarpros type PointCloud2" will generate 
+the needed header files for YARP, including PointCloud2.h:
+\code
+#ifndef YARPROS_TYPE_PointCloud2
+#define YARPROS_TYPE_PointCloud2
+
+#include <string>
+#include <vector>
+#include <yarp/os/Portable.h>
+#include <TickTime.h>
+#include <Header.h>
+#include <PointField.h>
+
+class PointCloud2 : public yarp::os::Portable {
+public:
+  Header header;
+  int height;
+  int width;
+  std::vector<PointField> fields;
+  bool is_bigendian;
+  int point_step;
+  int row_step;
+  std::vector<char> data;
+  bool is_dense;
+
+  bool read(yarp::os::ConnectionReader& connection) {
+    // *** header ***
+    if (!header.read(connection)) return false;
+
+    // *** height ***
+    height = connection.expectInt();
+
+    // *** width ***
+    width = connection.expectInt();
+
+    // *** fields ***
+    int len = connection.expectInt();
+    fields.resize(len);
+    for (int i=0; i<len; i++) {
+      if (!fields[i].read(connection)) return false;
+    }
+
+    // *** is_bigendian ***
+    if (!connection.expectBlock((char*)&is_bigendian,1)) return false;
+
+    // *** point_step ***
+    point_step = connection.expectInt();
+
+    // *** row_step ***
+    row_step = connection.expectInt();
+
+    // *** data ***
+    len = connection.expectInt();
+    data.resize(len);
+    if (!connection.expectBlock((char*)&data[0],sizeof(char)*len)) return false;
+
+    // *** is_dense ***
+    if (!connection.expectBlock((char*)&is_dense,1)) return false;
+    return true;
+  }
+
+  bool write(yarp::os::ConnectionWriter& connection) {
+    // *** header ***
+    if (!header.write(connection)) return false;
+
+    // *** height ***
+    connection.appendInt(height);
+
+    // *** width ***
+    connection.appendInt(width);
+
+    // *** fields ***
+    connection.appendInt(fields.size());
+    for (int i=0; i<fields.size(); i++) {
+      if (!fields[i].write(connection)) return false;
+    }
+
+    // *** is_bigendian ***
+    connection.appendBlock(&is_bigendian,1);
+
+    // *** point_step ***
+    connection.appendInt(point_step);
+
+    // *** row_step ***
+    connection.appendInt(row_step);
+
+    // *** data ***
+    connection.appendInt(data.size());
+    connection.appendExternalBlock((char*)&data[0],sizeof(char)*data.size());
+
+    // *** is_dense ***
+    connection.appendBlock(&is_dense,1);
+    return !connection.isError();
+  }
+};
+
+#endif
+\endcode
+The PointCloud2 datatype can then be used to communicate with 
+a ROS topic of that type (see \ref port_expert for background).
+
+ *
+ */
+
+\section yarp_with_ros_faking_types Reading existing YARP ports from ROS
+
+To read existing YARP ports from ROS, we need to define their
+type for ROS's benefit.  This is doable, see example/yarpros_examples in
+the source code.
+

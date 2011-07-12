@@ -111,15 +111,23 @@ public:
          
         int ip[] = { 224, 3, 1, 1 };
         int port = 11000;
-        if (!addr.isValid()) {
-            YARP_ERROR(Logger::get(), "name server not responding helpfully, setting mcast name arbitrarily");
-        } else {
+        if (addr.isValid()) {
             SplitString ss(addr.getName().c_str(),'.');
-            YARP_ASSERT(ss.size()==4);
-            for (int i=0; i<4; i++) {
-                ip[i] = NetType::toInt(ss.get(i));
+            if (ss.size()!=4) {
+                addr = Address();
+            } else {
+                YARP_ASSERT(ss.size()==4);
+                for (int i=0; i<4; i++) {
+                    ip[i] = NetType::toInt(ss.get(i));
+                }
+                port = addr.getPort();
             }
-            port = addr.getPort();
+        }
+
+        if (!addr.isValid()) {
+            YARP_ERROR(Logger::get(), "Name server not responding helpfully, setting mcast name arbitrarily.");
+            YARP_ERROR(Logger::get(), "Only a single mcast address supported in this mode.");
+            addr = Address("224.3.1.1",11000,"mcast","/tmp/mcast");
         }
 
         ManagedBytes block(6);

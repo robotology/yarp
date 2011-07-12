@@ -66,18 +66,18 @@ Contact RosNameSpace::registerContact(const Contact& contact) {
     if (pub_idx!=ConstString::npos) {
         node = name.substr(0,pub_idx);
         pub = name.substr(pub_idx+2,name.length());
-        printf("Publish to %s\n",pub.c_str());
+        YARP_SPRINTF1(Logger::get(),debug,"Publish to %s",pub.c_str());
     }
     if (sub_idx!=ConstString::npos) {
         node = name.substr(0,sub_idx);
         sub = name.substr(sub_idx+2,name.length());
-        printf("Subscribe to %s\n",sub.c_str());
+        YARP_SPRINTF1(Logger::get(),debug,"Subscribe to %s",sub.c_str());
     }
     if (node=="") {
         node = name;
     }
-    printf("Name [%s] sub [%s] pub [%s]\n",
-           name.c_str(), sub.c_str(), pub.c_str());
+    YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]",
+                  name.c_str(), sub.c_str(), pub.c_str());
 
     {
         Bottle cmd, reply;
@@ -211,18 +211,18 @@ Contact RosNameSpace::unregisterName(const char *rname) {
     if (pub_idx!=ConstString::npos) {
         node = name.substr(0,pub_idx);
         pub = name.substr(pub_idx+2,name.length());
-        printf("Publish to %s\n",pub.c_str());
+        //printf("Publish to %s\n",pub.c_str());
     }
     if (sub_idx!=ConstString::npos) {
         node = name.substr(0,sub_idx);
         sub = name.substr(sub_idx+2,name.length());
-        printf("Subscribe to %s\n",sub.c_str());
+        //printf("Subscribe to %s\n",sub.c_str());
     }
     if (node=="") {
         node = name;
     }
-    printf("Name [%s] sub [%s] pub [%s]\n",
-           name.c_str(), sub.c_str(), pub.c_str());
+    YARP_SPRINTF3(Logger::get(),debug,"Name [%s] sub [%s] pub [%s]\n",
+                  name.c_str(), sub.c_str(), pub.c_str());
 
     if (pub!="") {
         NetworkBase::disconnect(full,ConstString("topic:/") + pub);

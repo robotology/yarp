@@ -231,6 +231,7 @@ static int metaConnect(const char *csrc,
     if (staticDest.getCarrier()=="") {
         staticDest = staticDest.addCarrier("tcp");
     }
+
     if (needsLookup(dynamicDest)&&(topicalNeedsLookup||!topical)) {
         staticDest = NetworkBase::queryName(dynamicDest.getName());
         if (!staticDest.isValid()) {
@@ -242,6 +243,15 @@ static int metaConnect(const char *csrc,
         }
     } else {
         staticDest = dynamicDest;
+    }
+
+    if (staticSrc.getCarrier()=="xmlrpc" && 
+        staticDest.getCarrier()=="xmlrpc"&&
+        mode==YARP_ENACT_CONNECT) {
+        // Unconnectable in general
+        // Let's assume the first part is a YARP port, and use "tcp" instead
+        staticSrc = staticSrc.addCarrier("tcp");
+        staticDest = staticDest.addCarrier("tcp");
     }
 
     ConstString carrierConstraint = "";
@@ -404,7 +414,7 @@ static int metaConnect(const char *csrc,
     }
 
     if (mode!=YARP_ENACT_DISCONNECT) {
-        fprintf(stderr,"Failure: no method known for this connection type: [%s]->[%s]\n", csrc, cdest);
+        fprintf(stderr,"Failure: no method known for this connection type: [%s]->[%s]\n", staticSrc.toString().c_str(), staticDest.toString().c_str());
     }
 
     return 1;

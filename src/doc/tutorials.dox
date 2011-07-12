@@ -23,6 +23,8 @@ Using YARP ports for communication:
 \li \ref persistent_connections
 \li \ref port_admin
 \li \ref yarp_port_auth
+\li \ref yarp_without_nameserver
+\li \ref yarp_with_ros
 
 Using YARP devices:
 \li \ref note_devices
