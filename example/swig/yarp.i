@@ -231,23 +231,18 @@ void setExternal(yarp::sig::Image *img, PyObject* mem, int w, int h) {
 %enddef
 %define YARP_init_API
 %enddef
+
 %define _YARP2_NETINT32_
 %enddef
-typedef int yarp::os::NetInt32;
-%define _YARP2_VOCAB_ 1
-%enddef
+namespace yarp {
+  namespace os {
+    typedef int NetInt32;
+  }
+ }
+
 %define PACKED_FOR_NET 
 %enddef
-%define VOCAB(a,b,c,d) 0
-%enddef
-%define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
-%enddef
-%define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
-%enddef
-%define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
-%enddef
-%define VOCAB1(a) VOCAB((a),(0),(0),(0))
-%enddef
+
 #if defined( SWIGALLEGROCL )
   %include "compat.h"
 #endif

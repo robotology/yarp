@@ -1,3 +1,9 @@
+2011-07-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: wrap yarp/os/Vocab.h correctly, using
+	a different workaround for a SWIG bug - macros with
+	character arguments seem to get messed up [thanks Juan G Victores]
+
 2011-07-11  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/doc/yarp_with_ros.dox: first pass at documenting use of 

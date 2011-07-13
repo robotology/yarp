@@ -364,10 +364,10 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_MONO16 = VOCAB4('m','o','1','6'),
         VOCAB_PIXEL_RGB = VOCAB3('r','g','b'),
         VOCAB_PIXEL_RGBA = VOCAB4('r','g','b','a'),
-        VOCAB_PIXEL_BGRA = VOCAB4('b','g','r','a'),
+        VOCAB_PIXEL_BGRA = VOCAB4(98/*'b'*/,'g','r','a'), /* SWIG BUG */
         VOCAB_PIXEL_INT = VOCAB3('i','n','t'),
         VOCAB_PIXEL_HSV = VOCAB3('h','s','v'),
-        VOCAB_PIXEL_BGR = VOCAB3('b','g','r'),
+        VOCAB_PIXEL_BGR = VOCAB3(98/*'b'*/,'g','r'), /* SWIG BUG */
         VOCAB_PIXEL_MONO_SIGNED = VOCAB4('s','i','g','n'),
         VOCAB_PIXEL_RGB_SIGNED = VOCAB4('r','g','b','-'),
         VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),

@@ -43,7 +43,8 @@ public:
         PORTINFO_NULL = 0,
 
         /// Information about an incoming or outgoing connection.
-        PORTINFO_CONNECTION = VOCAB4('c','o','n','n'),
+        /// SWIG currently has bug if 'c' used in this macro!
+        PORTINFO_CONNECTION = VOCAB4(99/*c*/, 'o', 'n', 'n'),
 
         /// Unspecified information.
         PORTINFO_MISC = VOCAB4('m','i','s','c'),
