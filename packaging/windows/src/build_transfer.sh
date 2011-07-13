@@ -46,7 +46,7 @@ OUT_DIR=$PWD
 
 for f in `cd $YARP_CORE_PACKAGE_DIR; ls *.exe`; do
 	YARP_CORE_PACKAGE_NAME="$f"
-	target="$site_user@$site:$site_dir"
+	target="$site_user@$site:$site_dir/$OPT_HUMAN_PLATFORM_NAME/"
 	echo "Getting package"
 	echo "  Directory: $YARP_CORE_PACKAGE_DIR"
 	echo "  File: $YARP_CORE_PACKAGE_NAME"

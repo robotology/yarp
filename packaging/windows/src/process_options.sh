@@ -96,17 +96,21 @@ if [ ! "k$OPT_COMPILER" = "kany" ]; then
 	if [ "k$OPT_COMPILER" = "kv10" ] ; then
 		OPT_PLATFORM=v100
 		OPT_VCNNN="VC100"
+		OPT_HUMAN_PLATFORM_NAME="msvc10"
 	fi
 	if [ "k$OPT_COMPILER" = "kv9" ] ; then
 		OPT_PLATFORM=v90
 		OPT_VCNNN="VC90"
+		OPT_HUMAN_PLATFORM_NAME="msvc9"
 	fi
 	if [ "k$OPT_COMPILER" = "kv8" ] ; then
 		OPT_PLATFORM=v80
 		OPT_VCNNN="VC80"
+		OPT_HUMAN_PLATFORM_NAME="msvc8"
 	fi
 	if [ "k$OPT_COMPILER" = "kmingw" ] ; then
 		OPT_PLATFORM=mingw
+		OPT_HUMAN_PLATFORM_NAME="mingw"
 	fi
 	if [ "k$OPT_COMPILER" = "kgcc" ] ; then
 		OPT_PLATFORM=gcc
