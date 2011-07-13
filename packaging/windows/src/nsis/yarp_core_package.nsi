@@ -232,7 +232,7 @@ SectionGroup "GTKMM" SecGtkmm
   SectionEnd
 
   Section "Set environment variables and registry keys" SecGtkmmEnv
-    !insertmacro AddKey "Software\${VENDOR}\GTKMM\${GSL_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
+    !insertmacro AddKey "Software\${VENDOR}\GTKMM\${GTKMM_SUB}" "" "$INSTDIR\${GTKMM_SUB}"
     !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallLocation" $INSTDIR
     !insertmacro AddKey "Software\${VENDOR}\GTKMM\Common" "LastInstallVersion" ${GTKMM_SUB}
     !insertmacro AddEnv "PATH" "$INSTDIR\${GTKMM_SUB}\bin"
@@ -382,6 +382,7 @@ Section "Uninstall"
   # cleanup GTKMM registry entries
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\Common"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GTKMM_SUB}"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM\${GSL_SUB}" # clean up a mistake in an earlier installer 
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\GTKMM"
   
   # cleanup ACE registry entries
@@ -389,6 +390,10 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\ACE\${ACE_SUB}"
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}\ACE"
 
+  # cleanup installation inventory file link
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\installer\YARPInventory"
+  DeleteRegKey /ifempty HKCU "Software\${VENDOR}\installer"
+  
   # cleanup vendor entry if empty
   DeleteRegKey /ifempty HKCU "Software\${VENDOR}"
 
