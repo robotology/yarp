@@ -1,7 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006, 2008 Paul Fitzpatrick, Arjan Gijsberts
+ * Copyright (C) 2006, 2008 RobotCub Consortium, Arjan Gijsberts
+ * Authors: Paul Fitzpatrick, Arjan Gijsberts
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */

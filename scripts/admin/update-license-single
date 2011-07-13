@@ -25,6 +25,8 @@ while (<FIN>) {
 }
 close(FIN);
 
+$txt =~ s/Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia/IITRBCS/;
+ 
 my $report = "skipped";
 
 my $policy = "unknown";
@@ -85,7 +87,7 @@ if ($policy =~ /unknown/) {
     }
 }
 
-if ($copyright =~ /RobotCub/i) {
+if ($copyright =~ /RobotCub/i || $copyright =~ /IITRBCS/i) {
     if ($txt =~ /authors?: *([^ \n\r].*[^ \n\r])/i) {
 	$authors = $1;
 	$authors =~ s/[^ \n\r]*\@[^ \n\r]*//g;

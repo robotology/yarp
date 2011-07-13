@@ -1,4 +1,5 @@
-# Copyright (C) 2010 Paul Fitzpatrick
+# Copyright (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 Most of the knowledge in this README is now encapsulated in the "yarpros"

@@ -1,4 +1,5 @@
-# Copyright: (C) 2010 Paul Fitzpatrick
+# Copyright: (C) 2010 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+# Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 cmake_minimum_required(VERSION 2.6)

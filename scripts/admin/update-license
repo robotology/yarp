@@ -55,7 +55,7 @@ Unless otherwise stated, files in YARP are:
 
 The list of authors for YARP (ordered by file count) is:
 EOF
-( cat license-gpl-author.txt license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" | grep -v "RobotCub Consortium" ) | sed "s/^/  /"
+( cat license-gpl-author.txt license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" | grep -v "RobotCub Consortium" ) | grep -v "IITRBCS" | sed "s/^/  /"
 
 cat<<EOF
 
@@ -71,7 +71,7 @@ EOF
 echo -n "  Copyright "
 echo -n `cat license-gpl-years.txt`
 echo ""
-( cat license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/.*[0-9] //" ) | sed "s/^/  /"
+( cat license-gpl-people.txt | sort | uniq -c | sort -n -r | sed "s/ *\([0-9]*\) /(\1 files) /" ) | sed "s/^/  /" | sed "s/(1 files)/(1 file)/" | sed "s/\(.*\)\((.*)\) \(.*\)/\1\3 \2/"
 echo ""
 
 cat<<EOF
@@ -113,6 +113,8 @@ EOF
 cat license-odd.txt | sed "s|^\./||"
 
 ) > license-statement.txt
+
+sed -i "s/IITRBCS/Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia/" license-statement.txt
 
 echo "License statement in license-statement.txt"
 

@@ -7,28 +7,27 @@ The list of authors for YARP (ordered by file count) is:
   Lorenzo Natale
   Giorgio Metta
   Giacomo Spigler
-  Alessandro Scalzo
   Anne van Rossum
+  Alessandro Scalzo
   Daniel Krieg
-  Alexandre Bernardino
   Arjan Gijsberts
+  Alexandre Bernardino
   Renaud Detry
   Julio Gomes
   Ze Ji
   Mattia Castelnovi
+  Jonas Ruesch
   Francesco Nori
+  Eric Mislivec
   Carlos Beltran-Gonzalez
   Assif Mirza
   Ugo Pattacini
   Marco Randazzo
-  Jonas Ruesch
+  Freyr Magnusson
   Mike P. Blow
   Matteo Brunettini
   Lars Olsson
   Gianluca Massera
-  Freyr Magnusson
-  Eric Mislivec
-  Paul Fitzpatick
   Hatice Kose-Bagci
   Claudio Castellini
 
@@ -102,29 +101,29 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 
 The list of copyright holders for YARP is:
   Copyright 2003 2005 2006 2007 2008 2009 2010 2011
-  Paul Fitzpatrick
-  RobotCub Consortium
-  Giacomo Spigler
-  Lorenzo Natale
-  Giorgio Metta
-  Daniel Krieg
-  Anne van Rossum
-  Alexandre Bernardino
-  Renaud Detry
-  Arjan Gijsberts
-  Ze Ji
-  Mattia Castelnovi
-  Julio Gomes
-  Carlos Beltran-Gonzalez
-  Assif Mirza
-  Alessandro Scalzo
-  Marco Randazzo
-  Jonas Ruesch
-  Mike P. Blow
-  Matteo Brunettini
-  Lars Olsson
-  Freyr Magnusson
-  Eric Mislivec
+  RobotCub Consortium (708 files)
+  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (45 files)
+  Giacomo Spigler (22 files)
+  Lorenzo Natale (21 files)
+  Daniel Krieg (14 files)
+  Giorgio Metta (13 files)
+  Anne van Rossum (13 files)
+  Alexandre Bernardino (7 files)
+  Renaud Detry (6 files)
+  Arjan Gijsberts (6 files)
+  Ze Ji (4 files)
+  Mattia Castelnovi (4 files)
+  Julio Gomes (4 files)
+  Carlos Beltran-Gonzalez (4 files)
+  Assif Mirza (4 files)
+  Alessandro Scalzo (4 files)
+  Marco Randazzo (3 files)
+  Jonas Ruesch (3 files)
+  Mike P. Blow (2 files)
+  Matteo Brunettini (2 files)
+  Lars Olsson (2 files)
+  Freyr Magnusson (2 files)
+  Eric Mislivec (2 files)
 
 The identifier "RobotCub Consortium" used in some copyright statements is 
 equivalent to the following list of institutions:
@@ -224,7 +223,8 @@ src/modules/urbtc/kernel_module/urbtc.h
   CopyPolicy: Released under the terms of the GNU GPL version 2
 
 src/modules/kinect/README.txt
-  Copyright: (C) 2010 Paul Fitzpatrick
+  Copyright: (C) 2010 RobotCub Consortium
+  Authors: Paul Fitzpatrick
   CopyPolicy: Released under the terms of the GNU GPL 2.0
 
 src/modules/kinect/KinectDeviceDriver.h

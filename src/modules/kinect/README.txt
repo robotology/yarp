@@ -1,5 +1,6 @@
 
-# Copyright (C) 2010 Paul Fitzpatrick
+# Copyright (C) 2010 RobotCub Consortium
+# Authors: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the GNU GPL 2.0
 
 Compilation tips.  Note, freenect is changing rapidly, so you may

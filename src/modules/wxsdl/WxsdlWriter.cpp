@@ -1,7 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2007 Paul Fitzpatrick
+ * Copyright (C) 2007 RobotCub Consortium
+ * Author: Paul Fitzpatrick
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  * Originally based on "wx-sdl tutorial v1.1", copyright follows
@@ -9,6 +10,7 @@
  */
 
 /*******************************************************************************
+ * Based on:
  * wx-sdl tutorial v1.1
  * Copyright (C) 2005,2007 John David Ratliff
  *
