@@ -61,7 +61,7 @@ RequestExecutionLevel admin
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
-
+  
 ;--------------------------------
 ;Installer Sections
 
@@ -82,7 +82,7 @@ Section "-first"
    
   WriteUninstaller "$INSTDIR\Uninstall_YARP.exe"
   SectionIn RO
-  !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
+  # !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
 SectionEnd
 
 Section -openlogfile
@@ -98,12 +98,6 @@ Section -openlogfile
 SectionEnd
   
 SectionGroup "YARP core" SecYarp
-
-  Section "-yarp_first"
-    SetOutPath "$INSTDIR"
-    SectionIn RO
-    !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
-  SectionEnd
 
   Section "Command-line utilities" SecPrograms
     SetOutPath "$INSTDIR"
@@ -142,6 +136,12 @@ SectionGroup "YARP core" SecYarp
 	!insertmacro AddEnv1 "YARP_DIR" "$INSTDIR\${YARP_SUB}"
 
     SendMessage ${HWND_BROADCAST} ${WM_WININICHANGE} 0 "STR:Environment" /TIMEOUT=5000
+  SectionEnd
+
+  Section "CMake files"
+    SetOutPath "$INSTDIR"
+    ; SectionIn RO
+    !include ${NSIS_OUTPUT_PATH}\yarp_base_add.nsi
   SectionEnd
 
 SectionGroupEnd
@@ -265,6 +265,34 @@ Section "-last"
 	 !insertmacro ReplaceInFile "$INSTDIR\${YARP_SUB}\cmake\YARPConfig.cmake" "YARP_HAS_MATH_LIB TRUE" "YARP_HAS_MATH_LIB FALSE"
    isSel:
 SectionEnd
+
+!macro Unselect RR
+  Push $R0
+  Push $R1
+  SectionGetFlags ${${RR}} $R0
+  IntOp $R1 $R0 & ${SF_SELECTED}
+  StrCmp $R1 ${SF_SELECTED} 0 +3
+  IntOp $R0 $R0 ^ ${SF_SELECTED}
+  SectionSetFlags ${${RR}} $R0
+  Pop $R1
+  Pop $R0
+!macroend
+
+Function .onSelChange
+  Push $R0
+  Push $R1
+  SectionGetFlags ${SecYarp} $R0
+  IntOp $R0 $R0 & ${SF_SELECTED}
+  StrCmp $R0 ${SF_SELECTED} Skip 0
+  !insertmacro Unselect "SecYarpMathLibraries"
+  !insertmacro Unselect "SecYarpMathDLLs"
+  !insertmacro Unselect "SecYarpMathHeaders"
+  !insertmacro Unselect "SecGuis"
+  !insertmacro Unselect "SecVcDlls"
+  Skip:
+  Pop $R1
+  Pop $R0
+FunctionEnd
 
 ;--------------------------------
 ;Descriptions
