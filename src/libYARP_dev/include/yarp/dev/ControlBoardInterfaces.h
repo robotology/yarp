@@ -1,7 +1,8 @@
 // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
- * Copyright (C) 2006 Lorenzo Natale, Giorgio Metta
+ * Copyright (C) 2006 RobotCub Consortium
+ * Authors: Lorenzo Natale, Giorgio Metta
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
