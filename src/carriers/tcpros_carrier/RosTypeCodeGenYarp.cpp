@@ -19,22 +19,30 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
     counter = state.getFreeVariable("i");
     len = state.getFreeVariable("len");
     len2 = state.getFreeVariable("len2");
-    string fname = tname + ".h";
-    for (int i=0; i<(int)fname.length(); i++) {
-        if (fname[i]=='/') {
-            fname[i] = '_';
+    string safe_tname = tname;
+    for (int i=0; i<(int)safe_tname.length(); i++) {
+        if (safe_tname[i]=='/') {
+            safe_tname[i] = '_';
         }
     }
+    string fname = safe_tname + ".h";
     out = fopen(fname.c_str(),"w");
     if (!out) {
         fprintf(stderr,"Failed to open %s for writing\n", fname.c_str());
     }
     printf("Generating %s\n", fname.c_str());
-    fprintf(out,"#ifndef YARPROS_TYPE_%s\n", tname.c_str());
-    fprintf(out,"#define YARPROS_TYPE_%s\n\n", tname.c_str());
+    fprintf(out,"// This is an automatically generated file.\n");
+    fprintf(out,"// Generated from this %s.msg definition:\n", safe_tname.c_str());
+    fprintf(out,"%s", state.txt.c_str());
+    fprintf(out,"// Instances of this class can be read and written with YARP ports,\n");
+    fprintf(out,"// using a ROS-compatible format.\n");
+    fprintf(out,"\n");
+    fprintf(out,"#ifndef YARPMSG_TYPE_%s\n", safe_tname.c_str());
+    fprintf(out,"#define YARPMSG_TYPE_%s\n\n", safe_tname.c_str());
     fprintf(out,"#include <string>\n");
     fprintf(out,"#include <vector>\n");
     fprintf(out,"#include <yarp/os/Portable.h>\n");
+    fprintf(out,"#include <yarp/os/ConstString.h>\n");
     fprintf(out,"#include <yarp/os/NetInt32.h>\n");
     fprintf(out,"#include <yarp/os/NetInt64.h>\n");
     fprintf(out,"#include <yarp/os/NetFloat32.h>\n");
@@ -43,12 +51,15 @@ bool RosTypeCodeGenYarp::beginType(const std::string& tname,
         fprintf(out,"#include <%s.h>\n",state.dependencies[i].c_str());
     }
     fprintf(out,"\n");
-    fprintf(out,"class %s : public yarp::os::Portable {\n", tname.c_str());
+    fprintf(out,"class %s : public yarp::os::Portable {\n", safe_tname.c_str());
+    fprintf(out,"public:\n");
+    fprintf(out,"  yarp::os::ConstString getTypeName() const {\n");
+    fprintf(out,"    return \"%s\";\n", tname.c_str());
+    fprintf(out,"  }\n\n");
     return true;
 }
 
 bool RosTypeCodeGenYarp::beginDeclare() {
-    fprintf(out,"public:\n");
     return true;
 }           
 
@@ -179,7 +190,7 @@ bool RosTypeCodeGenYarp::readField(const RosField& field) {
 }
 
 bool RosTypeCodeGenYarp::endRead() {
-    fprintf(out,"    return true;\n");
+    fprintf(out,"    return !connection.isError();\n");
     fprintf(out,"  }\n\n");
     return true;
 }

@@ -56,8 +56,13 @@ vector<string> normalizedMessage(const string& line) {
 }
 
 
-bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen) {
-    printf("Checking %s\n", tname);
+bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
+                   int nesting) {
+    string indent = "";
+    for (int i=0; i<nesting; i++) {
+        indent += "  ";
+    }
+    //printf("Checking %s\n", tname);
     isValid = false;
     isArray = false;
     isPrimitive = false;
@@ -113,14 +118,20 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen) {
     string path = env.findFile(base.c_str());
   
     FILE *fin = fopen(path.c_str(),"r");
-    if (!fin) return false;
+    if (!fin) {
+        fprintf(stderr, "[type] FAILED to open %s\n", path.c_str());
+        return false;
+    }
 
-    printf("BEGIN SCAN %s\n", path.c_str());
+    fprintf(stderr,"[type]%s BEGIN %s\n", indent.c_str(), path.c_str());
     char *result = NULL;
+    txt = "";
     do {
         char buf[2048];
         result = fgets(buf,sizeof(buf),fin);
         if (result==NULL) break;
+        txt += "//   ";
+        txt += result;
         for (int i=0; i<(int)strlen(result); i++) {
             if (result[i]=='\n') {
                 result[i] = '\0';
@@ -137,22 +148,29 @@ bool RosType::read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen) {
             }
         }
         if (msg.size()!=2) {
-            printf("Line skipped: %s\n", row.c_str());
-            ok = false;
+            if (msg.size()>0) {
+                if (msg[0][0]!='[') {
+                    fprintf(stderr,"[type] skip %s\n", row.c_str());
+                    ok = false;
+                }
+            }
             continue;
         }
         string t = msg[0];
         string n = msg[1];
-        printf("TYPE %s NAME %s\n", t.c_str(), n.c_str());
+        fprintf(stderr,"[type]%s   %s %s\n", indent.c_str(), t.c_str(), 
+                n.c_str());
         RosType sub;
-        if (!sub.read(t.c_str(),env,gen)) {
-            printf("Type not complete: %s\n", row.c_str());
+        if (!sub.read(t.c_str(),env,gen,nesting+1)) {
+            fprintf(stderr, "[type]%s Type not complete: %s\n", 
+                    indent.c_str(), 
+                    row.c_str());
             ok = false;
         }
         sub.rosName = n;
         subRosType.push_back(sub);
     } while (result!=NULL);
-    printf("END SCAN %s\n", path.c_str());
+    fprintf(stderr,"[type]%s END %s\n", indent.c_str(), path.c_str());
 
     isValid = ok;
     return isValid;
@@ -224,6 +242,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
     }
 
     state.usedVariables.clear();
+    state.txt = txt;
     for (int i=0; i<(int)subRosType.size(); i++) {
         state.useVariable(subRosType[i].rosName);
     }
@@ -257,7 +276,7 @@ bool RosType::emitType(RosTypeCodeGen& gen,
 
 
 std::string RosTypeSearch::findFile(const char *tname) {
-    printf("Looking for %s\n", tname);
+    //fprintf(stderr, "[type] Looking for definition of %s\n", tname);
     string target = string(tname) + ".msg";
     for (int i=0; i<(int)target.length(); i++) {
         if (target[i]=='/') {
@@ -268,8 +287,8 @@ std::string RosTypeSearch::findFile(const char *tname) {
 	if (stat(target.c_str(), &dummy)==0) {
         return target;
     }
-    string cmd = string("rosmsg show -r ")+tname+" > " + target;
-    printf("About to run [%s]\n", cmd.c_str());
+    string cmd = string("rosmsg show -r ")+tname+" > " + target + " || rm -f " + target;
+    fprintf(stderr,"[ros]  %s\n", cmd.c_str());
     pid_t p = fork();
     if (p==0) {
         execlp("sh","sh","-c",cmd.c_str(),
@@ -278,7 +297,7 @@ std::string RosTypeSearch::findFile(const char *tname) {
     } else {
         wait(NULL);
     }
-    printf("Ran [%s]\n", cmd.c_str());
+    //printf("Ran [%s]\n", cmd.c_str());
     return target;
 }
 

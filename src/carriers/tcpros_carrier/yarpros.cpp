@@ -373,11 +373,11 @@ int main(int argc, char *argv[]) {
         }
         ConstString tname = cmd.get(1).asString();
         RosTypeCodeGenYarp gen;
-        t.read(tname,env,gen);
-        t.show();
-        RosTypeCodeGenState state;
-        t.emitType(gen,state);
-        printf("\n");
+        if (t.read(tname,env,gen)) {
+            //t.show();
+            RosTypeCodeGenState state;
+            t.emitType(gen,state);
+        }
     } else if (tag=="sniff") {
         if (cmd.size()<2) {
             fprintf(stderr,"Show the format of a YARP bottle-compatible message in ROS syntax.\n");

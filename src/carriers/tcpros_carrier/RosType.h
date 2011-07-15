@@ -32,14 +32,17 @@ public:
     std::string rosType;
     std::string rosName;
     std::vector<RosType> subRosType;
+    std::string txt;
 
     RosType() {
         isValid = false;
         isArray = false;
         isPrimitive = false;
+        txt = "";
     }
 
-    bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen);
+    bool read(const char *tname, RosTypeSearch& env, RosTypeCodeGen& gen,
+              int nesting = 0);
     void show();
 
     bool emitType(RosTypeCodeGen& gen, 
@@ -54,6 +57,7 @@ public:
     std::map<std::string, bool> generated;
     std::map<std::string, bool> usedVariables;
     std::vector<std::string> dependencies;
+    std::string txt;
 
     std::string useVariable(const std::string& name) {
         usedVariables[name] = true;
