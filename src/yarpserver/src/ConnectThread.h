@@ -126,6 +126,7 @@ public:
                                (*it)->ct);
                         */
                         if ((*it)->needed) {
+                            (*it)->positive = positive;
                             (*it)->ct++;
                             already = true;
                         }

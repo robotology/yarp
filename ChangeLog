@@ -1,3 +1,8 @@
+2011-07-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpserver/src/ConnectThread.h: fix persistent connections
+	for ports that weren't shut down correctly.
+
 2011-07-13  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: wrap yarp/os/Vocab.h correctly, using
