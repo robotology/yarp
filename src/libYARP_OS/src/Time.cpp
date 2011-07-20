@@ -35,7 +35,11 @@ void Time::delay(double seconds) {
 double Time::now() {
 #ifdef ACE_WIN32
     // only uses high res on Microsoft Windows
-	ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
+    // This caused problems; maybe only with new ACE versions or Windows 7, can't tell.
+    // Lorenzo
+	// ACE_Time_Value timev = ACE_High_Res_Timer::gettimeofday_hr();
+    ACE_Time_Value timev=ACE_OS::gettimeofday ();
+    //ACE_Time_Value timev = ACE_OS::gettimeofday ();
     return double(timev.sec()) + timev.usec() * 1e-6; 
 #else
     // on other operating systems, high res seems dysfunctional

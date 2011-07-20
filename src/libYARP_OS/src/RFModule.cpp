@@ -30,7 +30,9 @@ using namespace yarp::os::impl;
 void yarp::os::impl::getTime(ACE_Time_Value& now) {
 #ifdef YARP_HAS_ACE
 #  ifdef ACE_WIN32
-    now = ACE_High_Res_Timer::gettimeofday_hr();
+    // now = ACE_High_Res_Timer::gettimeofday_hr();
+    // Fixing, caused problems with new ACE versions and/or Windows 7.
+    now = ACE_OS::gettimeofday();
 #  else
     now = ACE_OS::gettimeofday ();
 #  endif
