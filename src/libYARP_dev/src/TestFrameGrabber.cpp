@@ -26,6 +26,11 @@ using namespace yarp::sig::draw;
 
 void TestFrameGrabber::createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>&
                                        image) {
+    // to test IPreciselyTimed, make timestamps be mysteriously NNN.NNN42
+    double t = Time::now();
+    t -= ((t*1000)-(int)t)/1000;
+    t+= 0.00042;
+    stamp.update(t);
     image.resize(w,h);
     image.zero();
     switch (mode) {

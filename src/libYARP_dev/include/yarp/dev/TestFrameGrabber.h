@@ -14,6 +14,7 @@
 #include <stdio.h>
 
 #include <yarp/dev/FrameGrabberInterfaces.h>
+#include <yarp/dev/PreciselyTimed.h>
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Time.h>
 #include <yarp/os/Vocab.h>
@@ -35,7 +36,10 @@ namespace yarp {
  * interfaces.
  */
 class YARP_dev_API yarp::dev::TestFrameGrabber : public DeviceDriver, 
-            public IFrameGrabberImage, public IFrameGrabberControls {
+                                                 public IFrameGrabberImage, 
+                                                 public IFrameGrabberControls,
+                                                 public IPreciselyTimed
+{
 private:
     int ct;
     int bx, by;
@@ -213,8 +217,12 @@ public:
         return 0.0;
     }
     
+    virtual yarp::os::Stamp getLastInputStamp() {
+        return stamp;
+    }
 
 private:
+    yarp::os::Stamp stamp;
     void createTestImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image);
 };
 
