@@ -68,6 +68,7 @@ class yarp::dev::CommandsHelper : public DeviceResponder {
 protected:
     yarp::dev::ServerControlBoard   *caller;
     yarp::dev::IPidControl          *pid;
+	yarp::dev::ITorqueControl       *trq;
     yarp::dev::IPositionControl     *pos;
     yarp::dev::IVelocityControl     *vel;
     yarp::dev::IEncoders            *enc;
@@ -105,7 +106,7 @@ public:
 * - control_p receiving a stream of control commands (e.g. position)
 * 
 * Missing: 
-*          torque control, NOT IMPLEMENTED
+*          torque control, ONLY PARTIALLY IMPLEMENTED
 *
 */
 class yarp::dev::ServerControlBoard : 
@@ -114,6 +115,7 @@ class yarp::dev::ServerControlBoard :
     public IPidControl,
     public IPositionControl,
     public IVelocityControl,
+	public ITorqueControl,
     public IEncoders,
     public IAmplifierControl,
     public IControlLimits,
@@ -147,6 +149,7 @@ private:
     IPidControl       *pid;
     IPositionControl  *pos;
     IVelocityControl  *vel;
+	ITorqueControl    *trq;
     IEncoders         *enc;
     IAmplifierControl *amp;
     IControlLimits    *lim;
@@ -180,6 +183,7 @@ public:
     */
     ServerControlBoard() : callback_impl(this), command_reader(this)
     {
+		trq = NULL;
         pid = NULL;
         pos = NULL;
         vel = NULL;
@@ -305,6 +309,7 @@ public:
             poly.view(calib);
             poly.view(calib2);
             poly.view(info);
+			poly.view(trq);
         }
 
 
@@ -1112,6 +1117,269 @@ public:
         return false;
     }
 
+	/* ITorqueControl */
+
+	/**
+     * Set torque control mode. This command
+     * is required by control boards implementing different
+     * control methods (e.g. velocity/torque), in some cases
+     * it can be left empty.
+     * @return true/false on success failure
+     */
+    virtual bool setTorqueMode()
+	{
+		if (trq)
+			return trq->setTorqueMode();
+		return false;
+	}
+
+   /** Get the reference value of the torque for all joints.
+     * This is NOT the feedback (see getTorques instead).
+     * @param t pointer to the array of torque values
+     * @return true/false
+     */
+    virtual bool getRefTorques(double *t)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Set the reference value of the torque for a given joint.
+     * This is NOT the feedback (see getTorque instead).
+     * @param j joint number
+     * @param t new value
+     */
+    virtual bool getRefTorque(int j, double *t)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Set the reference value of the torque for all joints.
+     * @param t pointer to the array of torque values
+     * @return true/false
+     */
+    virtual bool setRefTorques(const double *t)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Set the reference value of the torque for a given joint.
+     * @param j joint number
+     * @param t new value
+     */
+    virtual bool setRefTorque(int j, double t)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+     /** Set new pid value for a joint axis.
+     * @param j joint number
+     * @param pid new pid value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorquePid(int j, const Pid &pid)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the value of the torque on a given joint (this is the
+     * feedback if you have a torque sensor).
+     * @param j joint number
+     * @return true/false on success/failure
+     */
+    virtual bool getTorque(int j, double *t)
+	{
+		if (trq)
+            return trq->getTorque(j, t);
+        *t = 0.0;
+		return false;
+	}
+
+    /** Get the value of the torque for all joints (this is 
+     * the feedback if you have torque sensors).
+     * @param t pointer to the array that will store the output
+     */
+    virtual bool getTorques(double *t)
+	{
+        if (trq)
+            return trq->getTorques(t);
+        memset(t, 0, sizeof(double)*nj);
+		return false;
+	}
+
+    /** Get the full scale of the torque sensor of a given joint
+     * @param j joint number
+     * @param min minimum torque of the joint j
+     * @param max maximum torque of the joint j
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRange(int j, double *min, double *max)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the full scale of the torque sensors of all joints
+     * @param min pointer to the array that will store minimum torques of the joints
+     * @param max pointer to the array that will store maximum torques of the joints
+     * @return true/false on success/failure
+     */
+    virtual bool getTorqueRanges(double *min, double *max)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Set new pid value on multiple axes.
+     * @param pids pointer to a vector of pids
+     * @return true/false upon success/failure
+     */
+    virtual bool setTorquePids(const Pid *pids)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Set the torque error limit for the controller on a specific joint
+     * @param j joint number
+     * @param limit limit value
+     * @return true/false on success/failure
+     */
+    virtual bool setTorqueErrorLimit(int j, double limit)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the torque error limit for the controller on all joints.
+     * @param limits pointer to the vector with the new limits
+     * @return true/false on success/failure
+     */
+    virtual bool setTorqueErrorLimits(const double *limits)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the current torque error for a joint.
+     * @param j joint number
+     * @param err pointer to the storage for the return value
+     * @return true/false on success failure
+     */
+    virtual bool getTorqueError(int j, double *err)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the torque error of all joints.
+     * @param errs pointer to the vector that will store the errors
+     */
+    virtual bool getTorqueErrors(double *errs)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the output of the controller (e.g. pwm value)
+     * @param j joint number
+     * @param out pointer to storage for return value
+     * @return success/failure
+     */
+    virtual bool getTorquePidOutput(int j, double *out)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the output of the controllers (e.g. pwm value)
+     * @param outs pinter to the vector that will store the output values
+     */
+    virtual bool getTorquePidOutputs(double *outs)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get current pid value for a specific joint.
+     * @param j joint number
+     * @param pid pointer to storage for the return value.
+     * @return success/failure
+     */
+    virtual bool getTorquePid(int j, Pid *pid)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get current pid value for a specific joint.
+     * @param pids vector that will store the values of the pids.
+     * @return success/failure
+     */
+    virtual bool getTorquePids(Pid *pids)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the torque error limit for the controller on a specific joint
+     * @param j joint number
+     * @param limit pointer to storage
+     * @return success/failure
+     */
+    virtual bool getTorqueErrorLimit(int j, double *limit)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Get the torque error limit for all controllers
+     * @param limits pointer to the array that will store the output
+     * @return success or failure
+     */
+    virtual bool getTorqueErrorLimits(double *limits)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Reset the controller of a given joint, usually sets the 
+     * current position of the joint as the reference value for the PID, and resets
+     * the integrator.
+     * @param j joint number
+     * @return true on success, false on failure.
+     */
+    virtual bool resetTorquePid(int j)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Disable the pid computation for a joint*/
+    virtual bool disableTorquePid(int j)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+    /** Enable the pid computation for a joint*/
+    virtual bool enableTorquePid(int j)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
+	/** Set offset value for a given pid*/
+    virtual bool setTorqueOffset(int j, double v)
+	{
+		// @@@ NOT YET IMPLEMENTED
+		return false;
+	}
+
     /* IControlCalibration */
 
     /**
@@ -1222,6 +1490,7 @@ inline void yarp::dev::ImplementCallbackHelper::onRead(CommandMessage& v) {
 yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) { 
     YARP_ASSERT (x != NULL);
     caller = x; 
+	trq = dynamic_cast<yarp::dev::ITorqueControl *> (caller);
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
     pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (caller);
@@ -1652,6 +1921,33 @@ case VOCAB_GET:
         response.addVocab(VOCAB_IS);
         response.add(cmd.get(1));
         switch(cmd.get(1).asVocab()) {
+
+case VOCAB_TORQUE:
+	{
+		switch(cmd.get(2).asVocab()) {
+			case VOCAB_TRQ:
+				{
+					ok= trq->getTorque(cmd.get(3).asInt(),&dtmp);
+					response.addDouble(dtmp); 
+				}
+				break;
+			case VOCAB_TRQS:
+				{
+					double *p = new double[nj];
+					YARP_ASSERT(p!=NULL);
+					ok= trq->getTorques(p);
+				    Bottle& b = response.addList(); 
+					response.addDouble(dtmp);       
+					int i;
+					for (i = 0; i < nj; i++)
+						b.addDouble(p[i]);			
+					delete[] p;
+				}
+				break;
+		}
+	}
+	break;
+
 case VOCAB_ERR: 
     {
         ok = pid->getError(cmd.get(2).asInt(), &dtmp);
