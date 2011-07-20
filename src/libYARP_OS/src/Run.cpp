@@ -1316,7 +1316,32 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                     }
                 }
 
-				int ret=execvp(arg_str[0],arg_str);   
+                int ret=YARPRUN_ERROR;
+
+                char currWorkDirBuff[1024];
+                char *currWorkDir=getcwd(currWorkDirBuff,1024);
+
+                if (currWorkDir)
+                {
+                    char **cwd_arg_str=new char*[nargs+1];
+                    for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
+                    cwd_arg_str[nargs]=0;
+                    cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
+
+                    strcpy(cwd_arg_str[0],currWorkDir);
+                    strcat(cwd_arg_str[0],"/");
+                    strcat(cwd_arg_str[0],arg_str[0]);
+
+                    ret=execvp(cwd_arg_str[0],cwd_arg_str);  
+
+                    delete [] cwd_arg_str[0];
+                    delete [] cwd_arg_str;
+                }
+
+                if (ret==YARPRUN_ERROR)
+                {
+				    ret=execvp(arg_str[0],arg_str);
+                }
 
                 fflush(stdout);
                 fflush(stderr);
@@ -1646,7 +1671,32 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
             }
         }
         
-		int ret=execvp(arg_str[0],arg_str);
+        int ret=YARPRUN_ERROR;
+
+        char currWorkDirBuff[1024];
+        char *currWorkDir=getcwd(currWorkDirBuff,1024);
+
+        if (currWorkDir)
+        {
+            char **cwd_arg_str=new char*[nargs+1];
+            for (int i=1; i<nargs; ++i) cwd_arg_str[i]=arg_str[i];
+            cwd_arg_str[nargs]=0;
+            cwd_arg_str[0]=new char[strlen(currWorkDir)+strlen(arg_str[0])+16];
+
+            strcpy(cwd_arg_str[0],currWorkDir);
+            strcat(cwd_arg_str[0],"/");
+            strcat(cwd_arg_str[0],arg_str[0]);
+
+            ret=execvp(cwd_arg_str[0],cwd_arg_str);  
+
+            delete [] cwd_arg_str[0];
+            delete [] cwd_arg_str;
+        }
+
+        if (ret==YARPRUN_ERROR)
+        {
+		    ret=execvp(arg_str[0],arg_str);
+        }
 
         if (ret==YARPRUN_ERROR)
 	    {
