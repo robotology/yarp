@@ -423,12 +423,13 @@ public:
         img1.zero();
 
         int r,c;
-        int acc=0;
+        int acc1=0;
+        int acc2=0;
         for(r=0; r<img1.height(); r++)
             for(c=0;c<img1.width(); c++)
                 {
                     img1(c,r)=(unsigned char) r;
-                    acc+=r;
+                    acc1+=r;
                 }
   
         const ImageOf<PixelMono> &constImg=img1;
@@ -439,15 +440,13 @@ public:
                     {
                         const unsigned char &v1=constImg.pixel(c,r);
                         const unsigned char &v2=constImg(c,r);
-                        unsigned char dummy=v1; //avoid unused var warnings
-                        dummy=v2;
-                        dummy=*row++;
-                        acc-=v1;
-                        printf("Dummy value is %d (just to keep latest g++ happy)\n", dummy);
+                        acc1-=v1;
+                        acc2+=v2;
+                        row++;
                     }
             }
 
-        checkEqual(acc,0,"const methods");
+        checkEqual(acc1,0,"const methods");
     }
 
 

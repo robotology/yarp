@@ -182,6 +182,7 @@ public:
 
     void checkSendReceive()
     {
+        report(0,"check matrix send/receive");
         Port portIn;
         Port portOut;
 
@@ -231,10 +232,14 @@ public:
                 ok=ok && ((m[r])[c]==(m2[r])[c]);
 
         checkTrue(ok,"elements match");
+
+        report(0,"check matrix construction from empty matrix");
+        Matrix empty1;
+        Matrix empty2(empty1);
     }
 
     void checkCopy() {
-        report(0,"check matrix copy constructor works...");
+        report(0,"check matrix copy operator works...");
         Matrix m(4,4);
         int r=0;
         int c=0;
@@ -242,7 +247,8 @@ public:
             for (c=0; c<4; c++)
                 m[r][c]=99;
 
-        Matrix m2(m);
+        Matrix m2;
+        m2=m;
         checkEqual(m.rows(),m2.rows(),"rows matches");
         checkEqual(m.cols(),m2.cols(),"cols matches");
 

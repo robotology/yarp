@@ -188,6 +188,8 @@ public:
 
     void checkSendReceive()
     {
+        report(0, "check Vector send receive");
+
         Port portIn;
         Port portOut;
 
@@ -239,6 +241,10 @@ public:
             ok=ok&&(v2[k]==v[k]);
 
         checkTrue(ok,"elements match");
+
+        report(0, "check construction from empty vector");
+        Vector empty1;
+        Vector empty2(empty1);
     }
 
 
@@ -263,6 +269,11 @@ public:
         report(0,"check bug #1601862...");
         Vector v3(10);
         Vector v4 = v3;
+
+        report(0, "check copy of uninitialized vector");
+        Vector empty1;
+        Vector empty2;
+        empty2=empty1;
     }
 
     void checkOperators()
