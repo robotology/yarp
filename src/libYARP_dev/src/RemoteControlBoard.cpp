@@ -1772,27 +1772,6 @@ public:
         return false;
     }
 
-	//DEPRECATED
-	bool getImpedance(int j, double *stiffness, double *damping, double *offset)
-    { 
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_GET);
-        cmd.addVocab(VOCAB_IMPEDANCE);
-        cmd.addVocab(VOCAB_IMP_PARAM);
-        cmd.addInt(j);
-        bool ok = rpc_p.write(cmd, response);
-        if (CHECK_FAIL(ok, response)) {
-            Bottle& l = *(response.get(2).asList());
-            if (&l == 0)
-                return false;
-            *stiffness = l.get(0).asDouble();
-            *damping   = l.get(1).asDouble();
-            *offset    = l.get(2).asDouble();
-            return true;
-        }
-        return false;
-    }
-
 	bool getImpedance(int j, double *stiffness, double *damping)
     { 
         Bottle cmd, response;
@@ -1828,23 +1807,6 @@ public:
             return true;
         }
         return false;
-    }
-
-	//DEPRECATED
-	bool setImpedance(int j, double stiffness, double damping, double offset)
-    { 
-        Bottle cmd, response;
-        cmd.addVocab(VOCAB_SET);
-        cmd.addVocab(VOCAB_IMPEDANCE);
-        cmd.addVocab(VOCAB_IMP_PARAM);
-        cmd.addInt(j);
-
-        Bottle& b = cmd.addList();
-        b.addDouble(stiffness);
-        b.addDouble(damping);
-
-        bool ok = rpc_p.write(cmd, response);
-        return CHECK_FAIL(ok, response);
     }
 
 	bool setImpedance(int j, double stiffness, double damping)
@@ -1907,66 +1869,63 @@ public:
     { return set2V1I1D(VOCAB_TORQUE, VOCAB_ENABLE, j, o); }
 
     bool setPositionMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_POSITION, j); }
+    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_POSITION, j); }
 
     bool setVelocityMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_VELOCITY, j); }
+    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_VELOCITY, j); }
 
     bool setTorqueMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_TORQUE, j); }
+    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_TORQUE, j); }
 
 	bool setImpedancePositionMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE_POS, j); }
+    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_POS, j); }
 
 	bool setImpedanceVelocityMode(int j)
-    { return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_IMPEDANCE_VEL, j); }
+    { return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_IMPEDANCE_VEL, j); }
 
     bool setOpenLoopMode()
     { return set1V(VOCAB_OPENLOOP_MODE); }
 
     bool setOpenLoopMode(int j)
-    {  return send3V1I(VOCAB_ICONTROLMODE, VOCAB_SET, VOCAB_CM_OPENLOOP, j); }
+    {  return send3V1I(VOCAB_SET, VOCAB_ICONTROLMODE, VOCAB_CM_OPENLOOP, j); }
 
     bool getControlMode(int j, int *mode)
     { 
         Bottle cmd, resp;
+		cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
-        cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_CM_CONTROL_MODE);
         cmd.addInt(j);
 
         bool ok = rpc_p.write(cmd, resp);
-
-        if ( (resp.get(0).asVocab()==VOCAB_IS)
-            &&(resp.get(1).asInt()==j)
-            &&(resp.get(2).asVocab()==VOCAB_CM_CONTROL_MODE))
-        {
-            ok=ok&&true;
-            *mode=resp.get(3).asVocab();
+        if (CHECK_FAIL(ok, resp)) {
+            Bottle& l = *(resp.get(2).asList());
+            if (&l == 0)
+                return false;
+            *mode    = l.get(0).asInt();
+            return true;
         }
+
         return ok;
     }
 
     bool getControlModes(int *modes)
     { 
         Bottle cmd, resp;
+		cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
-        cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_CM_CONTROL_MODES);
 
         bool ok = rpc_p.write(cmd, resp);
-
-        if ( (resp.get(0).asVocab()==VOCAB_IS) &&(resp.get(1).asVocab()==VOCAB_CM_CONTROL_MODES))
-        {
-            ok=ok&&true;
-			Bottle& l = *(resp.get(2).asList());
+        if (CHECK_FAIL(ok, resp)) {
+            Bottle& l = *(resp.get(2).asList());
             if (&l == 0)
                 return false;
-
             int njs = l.size();
             YARP_ASSERT (nj == njs);
             for (int i = 0; i < nj; i++)
-                modes[i] = l.get(i).asVocab();
+                modes[i] = l.get(i).asInt();
+            return true;
         }
 
         return ok;

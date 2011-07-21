@@ -420,17 +420,6 @@ bool ImplementImpedanceControl::getAxes(int *axes)
     return iImpedanceRaw->getAxes(axes);
 }
 
-//DEPRECATED
-bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping, double offset)
-{
-    int k;
-	double stiff;
-	double damp;
-	castToMapper(helper)->impN2S(stiffness,j,stiff,k);
-	castToMapper(helper)->impN2S(damping,j,damp,k);
-    return iImpedanceRaw->setImpedanceRaw(k, stiff, damp);
-}
-
 bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double damping)
 {
     int k;
@@ -439,20 +428,6 @@ bool ImplementImpedanceControl::setImpedance(int j, double stiffness, double dam
 	castToMapper(helper)->impN2S(stiffness,j,stiff,k);
 	castToMapper(helper)->impN2S(damping,j,damp,k);
     return iImpedanceRaw->setImpedanceRaw(k, stiff, damp);
-}
-
-//DEPRECATED
-bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping, double *offset)
-{
-	int k;
-    k=castToMapper(helper)->toHw(j);
-    bool ret=iImpedanceRaw->getImpedanceRaw(k, stiffness, damping);
-	*stiffness = (castToMapper(helper)->impS2N(*stiffness, k));
-	*damping   = (castToMapper(helper)->impS2N(*damping, k));
-	//prevent negative stiffness
-	*stiffness = fabs (*stiffness);
-	*damping   = fabs (*damping);
-	return ret;
 }
 
 bool ImplementImpedanceControl::getImpedance(int j, double *stiffness, double *damping)

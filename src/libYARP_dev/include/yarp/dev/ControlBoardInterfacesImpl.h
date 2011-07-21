@@ -786,8 +786,6 @@ public:
     virtual bool getAxes(int *ax);
 	virtual bool getImpedance(int j, double *stiffness, double *damping);
     virtual bool setImpedance(int j, double  stiffness, double  damping);
-    virtual bool getImpedance(int j, double *stiffness, double *damping, double *offset);
-    virtual bool setImpedance(int j, double  stiffness, double  damping, double  offset);
 	virtual bool setImpedanceOffset(int j, double offset);
 	virtual bool getImpedanceOffset(int j, double* offset);
 };

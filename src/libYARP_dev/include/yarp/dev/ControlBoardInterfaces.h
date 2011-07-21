@@ -1953,18 +1953,10 @@ public:
      */
     virtual bool getAxes(int *ax) = 0;
 
-	/** DEPRECATED. Use getImpedance(int j, double *stiffness, double *damping) instead.
-     */
-	virtual bool getImpedance(int j, double *stiffness, double *damping, double *offset)=0;
-
 	/** Get current impedance gains (stiffness,damping,offset) for a specific joint.
      * @return success/failure
      */
 	virtual bool getImpedance(int j, double *stiffness, double *damping)=0;
-
-	/** DEPRECATED. Use setImpedance(int j, double stiffness, double damping) instead.
-    */
-	virtual bool setImpedance(int j, double stiffness, double damping, double offset)=0;
 
 	/** Set current impedance gains (stiffness,damping) for a specific joint.
      * @return success/failure

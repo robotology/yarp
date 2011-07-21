@@ -69,6 +69,7 @@ protected:
     yarp::dev::ServerControlBoard   *caller;
     yarp::dev::IPidControl          *pid;
 	yarp::dev::ITorqueControl       *trq;
+	yarp::dev::IControlMode         *mod;
     yarp::dev::IPositionControl     *pos;
     yarp::dev::IVelocityControl     *vel;
     yarp::dev::IEncoders            *enc;
@@ -116,6 +117,7 @@ class yarp::dev::ServerControlBoard :
     public IPositionControl,
     public IVelocityControl,
 	public ITorqueControl,
+	public IControlMode,
     public IEncoders,
     public IAmplifierControl,
     public IControlLimits,
@@ -150,6 +152,7 @@ private:
     IPositionControl  *pos;
     IVelocityControl  *vel;
 	ITorqueControl    *trq;
+	IControlMode	  *mod;
     IEncoders         *enc;
     IAmplifierControl *amp;
     IControlLimits    *lim;
@@ -184,6 +187,7 @@ public:
     ServerControlBoard() : callback_impl(this), command_reader(this)
     {
 		trq = NULL;
+		mod = NULL;
         pid = NULL;
         pos = NULL;
         vel = NULL;
@@ -310,6 +314,7 @@ public:
             poly.view(calib2);
             poly.view(info);
 			poly.view(trq);
+			poly.view(mod);
         }
 
 
@@ -1380,6 +1385,57 @@ public:
 		return false;
 	}
 
+	virtual bool setPositionMode(int j)
+	{
+	    if (mod)
+			return mod->setPositionMode(j);
+		return false;
+	}
+    virtual bool setVelocityMode(int j)
+	{
+		if (mod)
+			return mod->setVelocityMode(j);
+		return false;
+	}
+    virtual bool setTorqueMode(int j)
+	{
+		if (mod)
+			return mod->setTorqueMode(j);
+		return false;
+	}
+	virtual bool setImpedancePositionMode(int j)
+	{
+		if (mod)
+			return mod->setImpedancePositionMode(j);
+		return false;
+	}
+	virtual bool setImpedanceVelocityMode(int j)
+	{
+		if (mod)
+			return mod->setImpedanceVelocityMode(j);
+		return false;
+	}
+    virtual bool setOpenLoopMode(int j)
+	{
+		if (mod)
+			return mod->setOpenLoopMode(j);
+		return false;
+	}
+    virtual bool getControlMode(int j, int *mode)
+	{
+		if (mod)
+            return mod->getControlMode(j, mode);
+        *mode = 0;
+		return false;
+	}
+	virtual bool getControlModes(int* modes)
+	{
+		if (mod)
+			return mod->getControlModes(modes);
+        memset(modes, 0, sizeof(double)*nj);
+		return false;
+	}
+
     /* IControlCalibration */
 
     /**
@@ -1491,6 +1547,7 @@ yarp::dev::CommandsHelper::CommandsHelper(yarp::dev::ServerControlBoard *x) {
     YARP_ASSERT (x != NULL);
     caller = x; 
 	trq = dynamic_cast<yarp::dev::ITorqueControl *> (caller);
+	mod = dynamic_cast<yarp::dev::IControlMode *> (caller);
     pid = dynamic_cast<yarp::dev::IPidControl *> (caller);
     pos = dynamic_cast<yarp::dev::IPositionControl *> (caller);
     vel = dynamic_cast<yarp::dev::IVelocityControl *> (caller);
@@ -1602,6 +1659,35 @@ case VOCAB_SET:
     {
         switch(cmd.get(1).asVocab()) 
         {
+		case VOCAB_IMPEDANCE:
+			//TO BE IMPLEMENTED
+		break;
+
+		case VOCAB_ICONTROLMODE:
+			{
+				int axis = cmd.get(3).asInt();
+				switch(cmd.get(2).asVocab()) {
+                   case VOCAB_CM_POSITION:
+                        ok = mod->setPositionMode(axis);
+						break;
+                    case VOCAB_CM_VELOCITY:
+                        ok = mod->setVelocityMode(axis);
+						break;
+                    case VOCAB_CM_TORQUE:
+                        ok = mod->setTorqueMode(axis);
+						break;
+					case VOCAB_CM_IMPEDANCE_POS:
+                        ok = mod->setImpedancePositionMode(axis);
+						break;
+					case VOCAB_CM_IMPEDANCE_VEL:
+                        ok = mod->setImpedanceVelocityMode(axis);
+						break;
+                    case VOCAB_CM_OPENLOOP:
+                        ok = mod->setOpenLoopMode(axis);
+						break;
+				}
+			}
+			break;
         case VOCAB_OFFSET:
             {
                 double v;
@@ -1948,6 +2034,37 @@ case VOCAB_TORQUE:
 	}
 	break;
 
+case VOCAB_IMPEDANCE:
+	//TO BE IMPLEMENTED
+break;
+
+case VOCAB_ICONTROLMODE:
+	{
+		switch(cmd.get(2).asVocab()) {
+			case VOCAB_CM_CONTROL_MODES:
+			{
+	
+					int *p = new int[nj];
+					YARP_ASSERT(p!=NULL);
+					ok = mod->getControlModes(p);
+					Bottle& b = response.addList();
+					int i;
+					for (i = 0; i < nj; i++)
+						b.addVocab(p[i]);
+					delete[] p;				
+			}
+			break;
+
+	        case VOCAB_CM_CONTROL_MODE:
+	        {
+				ok= mod->getControlMode(cmd.get(3).asInt(),&tmp);
+				response.addDouble(tmp); 
+	        }
+			break;
+		}
+	}
+	break;
+ 
 case VOCAB_ERR: 
     {
         ok = pid->getError(cmd.get(2).asInt(), &dtmp);
