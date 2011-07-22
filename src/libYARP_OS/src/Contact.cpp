@@ -162,10 +162,12 @@ Contact Contact::fromString(const char *txt) {
         base = str.find(":/");
         offset = 1;
     }
+    /*
     if (base==ConstString::npos) {
         base = str.find("/");
         offset = 0;
     }
+    */
     if (base!=ConstString::npos) {
         c = Contact::byCarrier(str.substr(0,base));
         start = base+offset;

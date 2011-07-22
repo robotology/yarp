@@ -1,5 +1,11 @@
 2011-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Port.cpp: report error for port
+	names without a leading "/"
+
+	* src/libYARP_OS/harness/PortTest.cpp: check that port
+	names without a leading "/" are rejected with an error
+
 	* src/libYARP_dev/src/RemoteControlBoard.cpp: make sure 
 	remote_controlboard fails with error if it cannot open
 	local ports [thanks Nikolas Hemion]

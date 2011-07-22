@@ -974,6 +974,14 @@ public:
         writer.finish();
     }
 
+    virtual void testMissingSlash() {
+        report(0,"check behavior on missing slash...");
+        Port p;
+        const char *name = "something/without/slash";
+        bool opened = p.open(name);
+        checkFalse(opened,"correctly rejected port");
+    }
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1008,6 +1016,8 @@ public:
         testReports();
 
         testYarpRead();
+
+        testMissingSlash();
 
         NetworkBase::setLocalMode(false);
     }
