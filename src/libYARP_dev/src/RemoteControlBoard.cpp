@@ -1899,10 +1899,7 @@ public:
 
         bool ok = rpc_p.write(cmd, resp);
         if (CHECK_FAIL(ok, resp)) {
-            Bottle& l = *(resp.get(2).asList());
-            if (&l == 0)
-                return false;
-            *mode    = l.get(0).asInt();
+			*mode=resp.get(2).asVocab();
             return true;
         }
 
