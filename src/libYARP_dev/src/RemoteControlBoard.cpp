@@ -2,7 +2,7 @@
 
 /*
 * Copyright (C) 2006 RobotCub Consortium
-* Authors: Giorgio Metta, Lorenzo Natale
+* Authors: Giorgio Metta, Lorenzo Natale, Paul Fitzpatrick
 * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 *
 */
@@ -245,6 +245,19 @@ protected:
     mutable Stamp lastStamp;
     Semaphore mutex;
     int nj;
+    bool njIsKnown;
+
+    // Check for number of joints, if needed.
+    // This is to allow for delayed connection to the remote control board.
+    bool isLive() {
+        if (!njIsKnown) {
+            bool ok = get1V1I(VOCAB_AXES, nj);
+            if (nj!=0 && ok) {
+                njIsKnown = true;
+            }
+        }
+        return njIsKnown;
+    }
 
     bool send1V(int v)
     {
@@ -445,6 +458,7 @@ protected:
     * @return true/false on success/failure
     */
     bool set1VDA(int v, const double *val) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v);
@@ -457,6 +471,7 @@ protected:
     }
 
     bool set2V1DA(int v1, int v2, const double *val) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
@@ -470,6 +485,7 @@ protected:
     }
 
     bool set2V2DA(int v1, int v2, const double *val1, const double *val2) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(v1);
@@ -646,6 +662,7 @@ protected:
     * @return true/false on success/failure
     */
     bool get1VIA(int v, int *val) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
@@ -675,6 +692,7 @@ protected:
     * @return true/false on success/failure
     */
     bool get1VDA(int v, double *val) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v);
@@ -704,6 +722,7 @@ protected:
     * @return true/false on success/failure
     */
     bool get2V1DA(int v1, int v2, double *val) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
@@ -728,6 +747,7 @@ protected:
     }
 
     bool get2V2DA(int v1, int v2, double *val1, double *val2) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(v1);
@@ -780,6 +800,7 @@ public:
     */
     RemoteControlBoard() { 
         nj = 0;
+        njIsKnown = false;
     }
 
     /**
@@ -877,19 +898,14 @@ public:
         state_buffer.setStrict(false);
         command_buffer.attach(command_p);
 
-        bool ok = get1V1I(VOCAB_AXES, nj);
-        if (nj==0) {
-            ok = false;
-        }
-
-        if (!ok) {
-            printf("Problems with obtaining the number of controlled axes\n");
-            
-            rpc_p.close();
-            command_p.close();
-            state_p.close();
-
-            return false;
+        if (!isLive()) {
+            if (remote!="") {
+                printf("Problems with obtaining the number of controlled axes\n");
+                rpc_p.close();
+                command_p.close();
+                state_p.close();
+                return false;
+            }
         }
 
         if (config.check("diagnostic"))
@@ -952,6 +968,7 @@ public:
     * @return true/false upon success/failure
     */
     virtual bool setPids(const Pid *pids) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_SET);
         cmd.addVocab(VOCAB_PIDS);
@@ -1091,6 +1108,7 @@ public:
     * @return success/failure
     */
     virtual bool getPids(Pid *pids) {
+        if (!isLive()) return false;
         Bottle cmd, response;
         cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_PIDS);
@@ -1238,6 +1256,7 @@ public:
     * @return true/false on success/failure
     */
     virtual bool getEncoders(double *encs) {
+        if (!isLive()) return false;
         // particular case, does not use RPC
         Vector tmp(nj);
         double localArrivalTime=0.0;
@@ -1355,6 +1374,7 @@ public:
     * @return true/false on success/failure
     */
     virtual bool positionMove(const double *refs) { 
+        if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_POSITION_MOVES);
@@ -1522,6 +1542,7 @@ public:
     * @return true/false on success/failure.
     */
     virtual bool velocityMove(const double *v) {
+        if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_VELOCITY_MOVES);
@@ -1730,6 +1751,7 @@ public:
 
     bool setTorquePids(const Pid *pids)
     {
+        if (!isLive()) return false;
         bool ret=true;
         for (int j=0;j<nj;j++)
         {
@@ -1850,6 +1872,7 @@ public:
 
     bool getTorquePids(Pid *pids)
     {
+        if (!isLive()) return false;
         bool ret=true;
         for(int j=0; j<nj; j++)
         {
@@ -1916,6 +1939,7 @@ public:
 
     bool getControlModes(int *modes)
     { 
+        if (!isLive()) return false;
         Bottle cmd, resp;
 		cmd.addVocab(VOCAB_GET);
         cmd.addVocab(VOCAB_ICONTROLMODE);
@@ -1941,6 +1965,7 @@ public:
 
     bool setOutputs(const double *v)
     {
+        if (!isLive()) return false;
         CommandMessage& c = command_buffer.get();
         c.head.clear();
         c.head.addVocab(VOCAB_OUTPUTS);
