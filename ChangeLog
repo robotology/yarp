@@ -1,5 +1,9 @@
 2011-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/src/RemoteControlBoard.cpp: make sure 
+	remote_controlboard fails with error if it cannot open
+	local ports [thanks Nikolas Hemion]
+
 	* conf/YarpVersion.cmake: bump version number to 2.3.7
 
 2011-07-21 Marco Randazzo    <marco.randazzo@iit.it>

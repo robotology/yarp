@@ -801,28 +801,36 @@ public:
         remote = config.find("remote").asString().c_str();
         local = config.find("local").asString().c_str();
 
+        if (local=="") {
+            fprintf(stderr,"Problem connecting to remote controlboard, 'local' port prefix not given\n");
+            return false;
+        }
+
         ConstString carrier = 
             config.check("carrier",
             Value("udp"),
             "default carrier for streaming robot state").asString().c_str();
 
+        bool portProblem = false;
         if (local != "") {
             ConstString s1 = local;
             s1 += "/rpc:o";
-            rpc_p.open(s1.c_str());
+            if (!rpc_p.open(s1.c_str())) { portProblem = true; }
             s1 = local;
             s1 += "/command:o";
-            command_p.open(s1.c_str());
+            if (!command_p.open(s1.c_str())) { portProblem = true; }
             s1 = local;
             s1 += "/state:i";
-            state_p.open(s1.c_str());
+            if (!state_p.open(s1.c_str())) { portProblem = true; }
 
             //new code
-            state_p.useCallback();
+            if (!portProblem) {
+                state_p.useCallback();
+            }
         }
 
         bool connectionProblem = false;
-        if (remote != "") {
+        if (remote != "" && !portProblem) {
             ConstString s1 = remote;
             s1 += "/rpc:i";
             ConstString s2 = local;
@@ -856,7 +864,7 @@ public:
             }
         }
 
-        if (connectionProblem) {
+        if (connectionProblem||portProblem) {
 
             rpc_p.close();
             command_p.close();
