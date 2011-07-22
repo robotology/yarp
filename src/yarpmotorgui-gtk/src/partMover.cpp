@@ -196,7 +196,8 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       double max = 100;
       char buffer[40] = {'i', 'n', 'i', 't'};
 		
-      int numberOfRows = 5;
+	  //Here you can set the number of boxes for each row of the GUI
+      int numberOfRows = 6;
 		
       int NUMBER_OF_JOINTS;
       pos->getAxes(&NUMBER_OF_JOINTS);
