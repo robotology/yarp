@@ -34,7 +34,7 @@ namespace yarp {
 		class IKinectDeviceDriver;
 	}
 }
-
+///ola
 class yarp::dev::IKinectDeviceDriver {
 public:
 	virtual bool getSkeletonOrientation(yarp::sig::Matrix *matrixArray, double *confidence, int userID) = 0;//returns false if the user skeleton is not being tracked
