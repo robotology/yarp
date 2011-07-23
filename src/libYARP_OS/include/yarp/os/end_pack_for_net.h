@@ -45,6 +45,11 @@
 #define YARP_UNPACKING_CONSIDERED
 #endif
 
+#ifdef __APPLE__
+#pragma pack()
+#define YARP_UNPACKING_CONSIDERED
+#endif
+
 #ifdef __QNX4__
 #pragma  pack (pop) ;
 #define YARP_UNPACKING_CONSIDERED
@@ -58,6 +63,6 @@
 
 #ifndef YARP_UNPACKING_CONSIDERED
 //#warning "Platform not known, guessing, please update end_pack_for_net.h"
-#pragma pack(4)
+#pragma pack()
 #define YARP_UNPACKING_CONSIDERED
 #endif

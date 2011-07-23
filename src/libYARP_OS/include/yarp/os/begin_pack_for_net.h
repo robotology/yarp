@@ -87,6 +87,11 @@
 #define YARP_PACKING_CONSIDERED
 #endif
 
+#ifdef __APPLE__
+#pragma pack(1)
+#define YARP_PACKING_CONSIDERED
+#endif
+
 #ifdef __QNX4__
 #pragma  pack (push) ;
 #pragma  pack (1) ;

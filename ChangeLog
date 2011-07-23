@@ -1,3 +1,10 @@
+2011-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/begin_pack_for_net.h
+	* src/libYARP_OS/include/yarp/os/end_pack_for_net.h:
+	fix for OSX (__DARWIN__ define is ancient?)
+	[thanks Ingo Keller]
+
 2011-07-23 Lorenzo Natale <lorenzo.natale@iit.it>
    * src/libYARP_OS/harness/RateThreadTest.cpp
    * src/libYARP_OS/harness/ThreadTest.cpp
