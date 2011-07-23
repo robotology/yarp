@@ -34,7 +34,11 @@ public:
      * Initiate the service, whatever it is.  The service should
      * then run by itself, without any further interaction with
      * its creator until stopService() is called.
-     * @return true iff the service initiated ok.
+     * @return true if the service started and needs no help running.
+     * If false is returned, the service expects updateService() to
+     * be called repeatedly until that function too returns false.
+     * This is useful for devices that don't want to manage their
+     * own service threads.
      */
     virtual bool startService() {
         return false;
