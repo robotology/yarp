@@ -28,8 +28,8 @@ public:
 	virtual bool updateInterface() = 0;
 	virtual bool shellRespond(const Bottle& command, Bottle& reply) = 0;
 	virtual bool close() = 0;
+	void setupPorts(string receivingPortName, string sendingPortName);
 protected:
 	BufferedPort<Bottle> *_sendingPort;
 	BufferedPort<Bottle> *_receivingPort;
-	void setupPorts(string receivingPortName, string sendingPortName);
 };
