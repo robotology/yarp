@@ -1,3 +1,13 @@
+2011-07-23 Lorenzo Natale <lorenzo.natale@iit.it>
+   * src/libYARP_OS/harness/RateThreadTest.cpp
+   * src/libYARP_OS/harness/ThreadTest.cpp
+   * src/libYARP_OS/include/yarp/os/impl/ThreadImpl.h
+   * src/libYARP_OS/include/yarp/os/RateThread.h
+   * src/libYARP_OS/src/RateThread.cpp
+   * src/libYARP_OS/src/ThreadImpl.cpp
+   
+   added non waiting stop request function to RateThread class (askToStop).
+   
 2011-07-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Port.cpp: report error for port
