@@ -728,17 +728,17 @@ void setOptions(yarp::os::Searchable& options) {
     // switch to subsections if available
     yarp::os::Value *val;
     if (options.check("PortName",val)||options.check("name",val)) {
-        ACE_OS::sprintf(_options.portName, val->asString().c_str());
+        ACE_OS::sprintf(_options.portName, "%s", val->asString().c_str());
         fprintf(stderr, "testing name: %s\n", val->asString().c_str());
     }
     if (options.check("NetName",val)||options.check("n",val)) {
-        ACE_OS::sprintf(_options.networkName, val->asString().c_str());
+        ACE_OS::sprintf(_options.networkName, "%s", val->asString().c_str());
     }
     if (options.check("OutPortName",val)||options.check("out",val)) {
-        ACE_OS::sprintf(_options.outPortName, val->asString().c_str());
+        ACE_OS::sprintf(_options.outPortName, "%s", val->asString().c_str());
     }
     if (options.check("OutNetName",val)||options.check("neto",val)) {
-        ACE_OS::sprintf(_options.outNetworkName, val->asString().c_str());
+        ACE_OS::sprintf(_options.outNetworkName, "%s", val->asString().c_str());
     }
     if (options.check("RefreshTime",val)||options.check("p",val)) {
         _options.refreshTime = val->asInt();
@@ -820,16 +820,16 @@ void setOptionsToDefault()
 {
 	// Options defaults
 	_options.refreshTime = 100;
-    ACE_OS::sprintf(_options.portName,"/yarpview/img:i");
-	ACE_OS::sprintf(_options.networkName, "default");
-	ACE_OS::sprintf(_options.outPortName,"/yarpview/o:point");
-	ACE_OS::sprintf(_options.outNetworkName, "default");
+    ACE_OS::sprintf(_options.portName, "%s","/yarpview/img:i");
+	ACE_OS::sprintf(_options.networkName, "%s", "default");
+	ACE_OS::sprintf(_options.outPortName, "%s","/yarpview/o:point");
+	ACE_OS::sprintf(_options.outNetworkName, "%s", "default");
 	_options.outputEnabled = 0;
 	_options.windWidth = 300;
 	_options.windHeight = 300;
 	_options.posX = 100;
 	_options.posY = 100;
-	ACE_OS::sprintf(_options.fileName,"yarpview.conf");
+	ACE_OS::sprintf(_options.fileName, "%s","yarpview.conf");
 	_options.saveOnExit = 0;
 }
 
