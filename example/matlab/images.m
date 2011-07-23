@@ -7,7 +7,7 @@
 
 %initialize YARP (it seems ok to call this more than once...)
 LoadYarp;
-
+import yarp.BufferedPortImageRgb
 port=BufferedPortImageRgb;
 
 disp('Registering port /matlab/sink');

@@ -8,7 +8,7 @@
 % -nat
 
 LoadYarp;
-
+import yarp.Port;
 done=0;
 
 port=Port;

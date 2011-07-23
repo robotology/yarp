@@ -187,7 +187,7 @@ public class YarpImageHelper
     
     /**
      * Fast conversion of a YARP image to a one dimensional array. 
-     * In MATLAB, USE: reshape(OUT, [height width pixelsize]);
+     * In MATLAB, USE: reshape(OUT, [height width pixelsize]); Extended function to work with padding (Vadim Tikhanoff)
      * \author Leo Pape
      * @param img input image
      * @return output array
@@ -197,13 +197,27 @@ public class YarpImageHelper
         int width = img.width();
         int height = img.height();
         int imgsize = img.getRawImageSize();
-        short [] vec1ds = new short [imgsize];
+		int imgPixels = width * height * pixelsize;
+		int pad = img.getPadding();
+        //short [] vec1ds = new short [imgsize];
+		short [] vec1ds = new short [imgPixels];
         charArray car = charArray.frompointer(img.getRawImage());
+		int index = 0;
         for(int r=0; r<height; r++)
+		{
             for(int c=0; c<width; c++)
+			{
                 for(int p=0; p<pixelsize; p++)
-                    vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p);
-        return vec1ds;
+				{
+                    //vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem((r * width * pixelsize) + (c * pixelsize) + p); 
+					vec1ds[(c * height) + r + (p * width * height)] = (short) car.getitem(index);
+					index ++;
+					
+				}
+			}
+			index += pad; 
+		}
+		return vec1ds;
     }
 
     /**
