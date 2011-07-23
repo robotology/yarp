@@ -45,7 +45,7 @@ public:
 	* Gets kinect skeleton joints orientation 3x3 matrix
 	*
 	* @param matrixArray Array of matrices that is filled with the new orientation matrices
-	* @param matrixArray Array of doubles that is filled with the confidence level of each matrice
+	* @param confidence Array of doubles that is filled with the confidence level of each matrice
 	* @param userID id of the user skeleton to be retrieved
 	* @return false if the user skeleton is not being tracked
 	*/
@@ -54,7 +54,7 @@ public:
 	* Gets kinect skeleton joints position 3D vector (in millimeters)
 	*
 	* @param matrixArray Array of vectors that is filled with the new position vector
-	* @param matrixArray Array of doubles that is filled with the confidence level of each vector
+	* @param confidence Array of doubles that is filled with the confidence level of each vector
 	* @param userID id of the user skeleton to be retrieved
 	* @return false if the user skeleton is not being tracked
 	*/
