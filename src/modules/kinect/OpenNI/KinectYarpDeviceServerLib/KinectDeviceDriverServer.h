@@ -14,8 +14,10 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/all.h>
+#include <yarp/dev/ServiceInterfaces.h>
 
 #include "../lib/GenericYarpDriver.h"
+//this include could not be done here do to yarp compilation error :)
 //#include "KinectSkeletonTracker.h"
 class KinectSkeletonTracker;
 
@@ -44,28 +46,59 @@ namespace yarp {
 	}
 }
 
-class yarp::dev::KinectDeviceDriverServer: public GenericYarpDriver, public yarp::dev::IKinectDeviceDriver, 
+/**
+* @ingroup dev_impl_media
+*
+* A kinect device implementation to get the kinect data from a kinect conected locally.
+* This implementation opens 4 ports:
+*	- [portPrefix]:i - input port (does nothing)
+*	- [portPrefix]/userSkeleton:o - userSkeleton detection port (only opened if user detection is on)
+*	- [portPrefix]/depthMap:o - depth map image port
+*	- [portPrefix]/imageMap:o - rgb camera image port
+*/
+class yarp::dev::KinectDeviceDriverServer: public IService, public GenericYarpDriver, public yarp::dev::IKinectDeviceDriver, 
 	public yarp::dev::DeviceDriver{
 public:
 	KinectDeviceDriverServer(bool openPorts = false, bool userDetection = false);
 	KinectDeviceDriverServer(string portPrefix, bool userDetection = false);
 	~KinectDeviceDriverServer(void);
-	bool open(yarp::os::Searchable& config);
-	void onRead(Bottle &bot);
-	bool updateInterface();
-	bool shellRespond(const Bottle& command, Bottle& reply);
-	bool close();
+	//GenericYarpDriver
+	virtual bool open(yarp::os::Searchable& config);
+	virtual void onRead(Bottle &bot);
+	virtual bool updateInterface();
+	virtual bool shellRespond(const Bottle& command, Bottle& reply);
+	virtual bool close();
+	//IService
+	virtual bool startService();
+	virtual bool updateService();
+	virtual bool stopService();
 	//IKinectDeviceDriver
-	bool getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID);
-	bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
-	int getSkeletonState(int userID);
-	ImageOf<PixelRgb> getImageMap();
-	ImageOf<PixelInt> getDepthMap();
+	virtual bool getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID);
+	virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
+	virtual int getSkeletonState(int userID);
+	virtual ImageOf<PixelRgb> getImageMap();
+	virtual ImageOf<PixelInt> getDepthMap();
 private:
 	KinectSkeletonTracker *_skeleton;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
 	bool _openPorts, _userDetection;
+	/**
+	* Opens the depth map a rgb camera image ports
+	*/
 	void openPorts(string portPrefix);
-	void sendKinectData(BufferedPort<Bottle> *mainBottle);
+	/**
+	* Sends the kinect data to the rgb and depth map ports. Also sends the userSkeleton data to the mainBottle port.
+	*
+	* @param mainBottle BufferedPort for the userSkeleton data (only needed if user detection is on)
+	*/
+	void sendKinectData(BufferedPort<Bottle> *mainBottle = NULL);
 };
+
+/**
+* @ingroup dev_runtime
+* \defgroup cmd_device_kinect_device_server kinect_device_server
+
+Local Kinect device interface implementation
+
+*/
