@@ -63,8 +63,8 @@ public:
 	ImageOf<PixelInt> getDepthMap();
 private:
 	KinectSkeletonTracker *_skeleton;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt>> *_depthMapPort;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> *_imgMapPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
 	bool _openPorts, _userDetection;
 	void openPorts(string portPrefix);
 	void sendKinectData(BufferedPort<Bottle> *mainBottle);
