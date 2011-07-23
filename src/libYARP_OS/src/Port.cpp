@@ -284,10 +284,12 @@ bool Port::open(const Contact& contact, bool registerName,
 
     ConstString n = contact.getName();
     if (n!="..." && n!="" && n[0]!='/') {
-        YARP_SPRINTF1(Logger::get(),error,
-                      "Port name '%s' needs to start with a '/' character",
-                      n.c_str());
-        return false;
+        if (fakeName==NULL) {
+            YARP_SPRINTF1(Logger::get(),error,
+                          "Port name '%s' needs to start with a '/' character",
+                          n.c_str());
+            return false;
+        }
     }
 
     // Allow for open() to be called safely many times on the same Port
