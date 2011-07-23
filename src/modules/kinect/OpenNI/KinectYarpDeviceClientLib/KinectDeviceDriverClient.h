@@ -33,32 +33,57 @@ namespace yarp {
 	}
 }
 
+/**
+* @ingroup dev_impl_media
+*
+* A kinect device implementation to get the kinect data from a kinect conected on another computer running the KinectDeviceDriverServer device.
+* This implementation opens 4 ports to connect to yarp device KinectDeviceDriverServer ports:
+*	- [localPortPrefix]:o - input port (does nothing)
+*	- [localPortPrefix]/userSkeleton:i - userSkeleton detection port (only opened if user detection is on)
+*	- [localPortPrefix]/depthMap:i - depth map image port
+*	- [localPortPrefix]/imageMap:i - rgb camera image port
+*/
 class yarp::dev::KinectDeviceDriverClient : public GenericYarpDriver, public TypedReaderCallback<ImageOf<PixelRgb> >, 
 									  public TypedReaderCallback<ImageOf<PixelInt> >, public yarp::dev::IKinectDeviceDriver, 
 									  public yarp::dev::DeviceDriver {
 public:
 	KinectDeviceDriverClient();
 	//GenericYarp
-	bool open(yarp::os::Searchable& config);
-	bool interruptModule();
-	bool close();
-	bool updateInterface();
-	bool shellRespond(const Bottle& command, Bottle& reply);
-	void onRead(Bottle& b);
-	void onRead(ImageOf<PixelRgb>& img);
-	void onRead(ImageOf<PixelInt>& img);
+	virtual bool open(yarp::os::Searchable& config);
+	virtual bool interruptModule();
+	virtual bool close();
+	virtual bool updateInterface();
+	virtual bool shellRespond(const Bottle& command, Bottle& reply);
+	virtual void onRead(Bottle& b);
+	virtual void onRead(ImageOf<PixelRgb>& img);
+	virtual void onRead(ImageOf<PixelInt>& img);
 	//IKinectDeviceDriver
-	bool getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID);
-	bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
-	int getSkeletonState(int userID);
-	ImageOf<PixelRgb> getImageMap();
-	ImageOf<PixelInt> getDepthMap();
+	virtual bool getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID);
+	virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
+	virtual int getSkeletonState(int userID);
+	virtual ImageOf<PixelRgb> getImageMap();
+	virtual ImageOf<PixelInt> getDepthMap();
 private:
 	BufferedPort<Bottle> *_outPort;
 	BufferedPort<Bottle> *_inUserSkeletonPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_inDepthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_inImageMapPort;
-	bool connectPorts(string remotePortPrefix, string localPortPrefix);
 	PortCtrlMod *_portMod;
 	KinectSkeletonData *_skeletonData;
+	/**
+	* Connect the KinectDeviceDriverClient ports with the KinectDeviceDriverServer ports.
+	*
+	* @param remotePortPrefix remote ports prefix
+	* @param localPortPrefix local ports prefix
+	* @return true/false on sucess/failure to connect
+	*/
+	bool connectPorts(string remotePortPrefix, string localPortPrefix);
 };
+
+/**
+* @ingroup dev_runtime
+* \defgroup cmd_device_kinect_device_client kinect_device_client
+
+Client Kinect device interface implementation
+
+*/

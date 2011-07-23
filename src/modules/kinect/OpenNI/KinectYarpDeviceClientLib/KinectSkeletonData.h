@@ -40,15 +40,70 @@ class KinectSkeletonData
 public:
 	KinectSkeletonData(void);
 	~KinectSkeletonData(void);
+	/**
+	* This should be called each time the user skeleton data is updated
+	*
+	* @param b Bottle with the user/skeleton data
+	*/
 	void storeData(Bottle& b);
+	/**
+	* This should be called each time the kinect rgb camera data is updated
+	*
+	* @param img rgb camera image
+	*/
 	void storeData(ImageOf<PixelRgb>& img);
+	/**
+	* This should be called each time the kinect depth camera data is updated
+	*
+	* @param img depth camera image (in millimeters)
+	*/
 	void storeData(ImageOf<PixelInt>& img);
+	/**
+	* Get a users orientation matrices array
+	*
+	* @param userID  detected user id
+	* @return matrices array with the orientation matrices (3x3)
+	*/
 	Matrix* getOrientation(int userID);
+	/**
+	* Get a users position vector array
+	*
+	* @param userID  detected user id
+	* @return vectors array with the 3D position (in millimeters)
+	*/
 	Vector* getPosition(int userID);
+	/**
+	* Get a users orientation confidence array
+	*
+	* @param userID  detected user id
+	* @return doubles array with confidence values per each orientation matrix
+	*/
 	double* getOrientationConf(int userID);
+	/**
+	* Get a users position confidence array
+	*
+	* @param userID  detected user id
+	* @return doubles array with confidence values per each 3D position vector
+	*/
 	double* getPositionConf(int userID);
+	/**
+	* Get a single user status
+	*
+	* @param userID  detected user id
+	* @return int of status
+	*/
 	int getSkeletonState(int userID);
+	/**
+	* Get depth map image
+	*
+	* @return image with the depth values in (millimeters)
+	*/
 	ImageOf<PixelInt> getDepthMap();
+	/**
+	* Get rgb map image
+	*
+	* @return image with the rgb values
+	*/
 	ImageOf<PixelRgb> getImageMap();
 private:
 	typedef struct USER_SKELETON {

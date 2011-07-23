@@ -14,24 +14,29 @@
 
 #include <yarp/os/all.h>
 
-//#include "KinectDeviceDriverServer.h"
 #include "GenericYarpDriver.h"
 
 using namespace std;
 
 using namespace yarp::os;
 
+/**
+* This class is used to initialize the GenericYarpDriver
+*/
 class PortCtrlMod: public RFModule, public TypedReaderCallback<Bottle>
 {
 public:
 	PortCtrlMod(bool useCallback = true);
-	double getPeriod();
-	bool updateModule();
-	bool respond(const Bottle& command, Bottle& reply);
-	bool configure(ResourceFinder &rf);
-	bool interruptModule();
-	bool close();
+	virtual double getPeriod();
+	virtual bool updateModule();
+	virtual bool respond(const Bottle& command, Bottle& reply);
+	virtual bool configure(ResourceFinder &rf);
+	virtual bool interruptModule();
+	virtual bool close();
 	virtual void onRead(Bottle &b);
+	/**
+	* Initializes the GenericYarpDriver
+	*/
 	void setInterfaceDriver(GenericYarpDriver *interfaceDriver);
 private:
 	BufferedPort<Bottle> *_sendingPort;
