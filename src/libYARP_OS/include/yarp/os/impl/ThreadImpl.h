@@ -40,6 +40,9 @@ public:
     virtual void run();
     virtual void close();
 
+    // similar to close, but it does not call join (does not wait for thread termination)
+    void askToClose();
+
     // should throw if no success
     virtual bool start();
 

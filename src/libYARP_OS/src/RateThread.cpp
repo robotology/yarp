@@ -11,9 +11,6 @@
 #include <yarp/os/RateThread.h>
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/PlatformTime.h>
-//#include <ace/Synch.h>
-//#include <ace/Time_Value.h>
-//#include <ace/High_Res_Timer.h>
 #include <yarp/os/Semaphore.h>
 
 #include <yarp/os/Time.h>
@@ -63,30 +60,6 @@ private:
         sumTSq=0;
         scheduleReset=false;
     }
-
-    /*
-    inline ACE_Time_Value getTime()
-    {
-#ifdef ACE_WIN32
-        now = ACE_High_Res_Timer::gettimeofday_hr();
-#else
-        now = ACE_OS::gettimeofday ();
-#endif
-        return now;
-    }
-    
-    inline void sleepThread(ACE_Time_Value sleep_period)
-    {
-        if (sleep_period.usec() < 0 || sleep_period.sec() < 0)
-            sleep_period.set(0,0);
-        ACE_OS::sleep(sleep_period);
-    }
-    
-    inline double toDouble(const ACE_Time_Value &v)
-    {
-        return double(v.sec()) + v.usec() * 1e-6; 
-    }
-    */
 
 public:
 
@@ -315,7 +288,11 @@ bool RateThread::join(double seconds) {
 
 void RateThread::stop() {
     ((ThreadImpl*)implementation)->close();
-    //return true;
+
+}
+
+void RateThread::askToStop() {
+    ((ThreadImpl*)implementation)->askToClose();
 }
 
 bool RateThread::step() {

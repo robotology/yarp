@@ -103,7 +103,6 @@ private:
 		}
 	};
 	
-	
 	class RateThread3: public RateThread
 	{
 	public:
@@ -143,8 +142,25 @@ private:
 			state++;
 		}
 	};
+    
+    class RateThread4: public RateThread
+	{
+        int count;
+	public:
+		RateThread4(int r): RateThread(r),count(10){}
 
-	class Runnable1:public Runnable
+		virtual void run()
+		{
+                count--;
+                
+               //terminate when count is zero
+               if (count==0)
+                   RateThread::askToStop();
+        }
+	
+	};
+	
+    class Runnable1:public Runnable
 	{
 	public:
 		bool initCalled;
@@ -263,6 +279,23 @@ public:
         report(0, message);
 
         report(0, "successful");
+
+        report(0, "Testing askToStop() function");
+        RateThread4 thread(10);
+        thread.start();
+
+        bool running=true;
+        int count=10;
+        while((running)&&(count>0))
+        {
+            running=thread.isRunning();
+            Time::delay(0.1);
+            count--;
+        }
+
+        checkTrue(!thread.isRunning(), "thread terminated correctly");
+        //join thread
+        thread.stop();
     }
 
 	void testRunnable()

@@ -76,11 +76,6 @@ bool Thread::stop() {
     return true;
 }
 
-
-//void Thread::run() {
-//}
-
-
 void Thread::onStop()
 {
     // by default this does nothing

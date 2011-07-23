@@ -83,9 +83,16 @@ public:
     /** 
      * Call this to stop the thread, this call blocks until the 
      * thread is terminated (and releaseThread() called). Actually 
-     * calls join.
+     * calls join. This will deadlock if called from run(), use
+     * askToStop() instead.
      */
     void stop();
+
+     /**
+     * Stop the thread. Like stop but it does not call join, safe
+     * to be called from run().
+     */
+    void askToStop();
 
     /**
      * Returns true when the thread is started, false otherwise.

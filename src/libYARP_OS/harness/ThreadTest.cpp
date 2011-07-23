@@ -206,6 +206,7 @@ private:
         }
     };
 
+
     class Runnable1: public Runnable {
     public:
         Runnable1():initCalled(false), 
@@ -390,8 +391,7 @@ public:
         checkFalse(t0.isRunning(),"not running after thread exits");
     }
 
-
-    virtual void runTests() {
+     virtual void runTests() {
         testMin();
         testSync();
         testIsRunning();

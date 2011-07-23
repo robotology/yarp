@@ -139,6 +139,14 @@ void ThreadImpl::close() {
     join(-1);
 }
 
+// similar to close(), but does not join (does not block)
+void ThreadImpl::askToClose() {
+    closing = true;
+    if (delegate!=NULL) {
+        delegate->close();
+    }
+}
+
 void ThreadImpl::beforeStart() {
     if (delegate!=NULL) {
         delegate->beforeStart();
