@@ -50,7 +50,7 @@ void KinectSkeletonData::storeData(Bottle& b){
 	UserSkeleton *userSkeleton;
 	if(b.get(0).isString()){
 		userID = b.get(1).asInt();
-		string vocab = b.get(0).asString();
+		string vocab = b.get(0).asString().c_str();
 		if(vocab.compare(USER_CALIBRATING_MSG) == 0){
 			_userSkeleton[userID].skeletonState = CALIBRATING;
 		}else if(vocab.compare(USER_DETECTED_MSG) == 0){

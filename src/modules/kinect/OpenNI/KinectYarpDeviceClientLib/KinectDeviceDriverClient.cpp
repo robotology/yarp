@@ -76,9 +76,9 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 	string outImageMapPort =	remotePortPrefix+PORTNAME_IMAGEMAP+":o";
 
 	//this ports were added later but work in the same way
-	_inImageMapPort = new BufferedPort<ImageOf<PixelRgb>>();
+	_inImageMapPort = new BufferedPort<ImageOf<PixelRgb> >();
 	_inImageMapPort->open(inImageMapPort.c_str());
-	_inDepthMapPort = new BufferedPort<ImageOf<PixelInt>>();
+	_inDepthMapPort = new BufferedPort<ImageOf<PixelInt> >();
 	_inDepthMapPort->open(inDepthMapPort.c_str());
 	//server ports
 	setupPorts(inUserSkeletonPort,outLocalPort);
@@ -86,10 +86,10 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 	_inUserSkeletonPort = _receivingPort;
 
 
-	if(!Network::connect(outLocalPort.c_str(),inRemotePort.c_str(),false) ||
-		!Network::connect(outUserSkeletonPort.c_str(),inUserSkeletonPort.c_str(),false) ||
-		!Network::connect(outDepthMapPort.c_str(),inDepthMapPort.c_str(),false) ||
-		!Network::connect(outImageMapPort.c_str(),inImageMapPort.c_str(),false)) {
+	if(!Network::connect(outLocalPort.c_str(),inRemotePort.c_str(),NULL,false) ||
+       !Network::connect(outUserSkeletonPort.c_str(),inUserSkeletonPort.c_str(),NULL,false) ||
+       !Network::connect(outDepthMapPort.c_str(),inDepthMapPort.c_str(),NULL,false) ||
+       !Network::connect(outImageMapPort.c_str(),inImageMapPort.c_str(),NULL,false)) {
 			close();
 			return false;
 	}

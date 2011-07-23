@@ -33,8 +33,8 @@ namespace yarp {
 	}
 }
 
-class yarp::dev::KinectDeviceDriverClient : public GenericYarpDriver, public TypedReaderCallback<ImageOf<PixelRgb>>, 
-									  public TypedReaderCallback<ImageOf<PixelInt>>, public yarp::dev::IKinectDeviceDriver, 
+class yarp::dev::KinectDeviceDriverClient : public GenericYarpDriver, public TypedReaderCallback<ImageOf<PixelRgb> >, 
+									  public TypedReaderCallback<ImageOf<PixelInt> >, public yarp::dev::IKinectDeviceDriver, 
 									  public yarp::dev::DeviceDriver {
 public:
 	KinectDeviceDriverClient();
@@ -56,8 +56,8 @@ public:
 private:
 	BufferedPort<Bottle> *_outPort;
 	BufferedPort<Bottle> *_inUserSkeletonPort;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt>> *_inDepthMapPort;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>> *_inImageMapPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_inDepthMapPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_inImageMapPort;
 	bool connectPorts(string remotePortPrefix, string localPortPrefix);
 	PortCtrlMod *_portMod;
 	KinectSkeletonData *_skeletonData;
