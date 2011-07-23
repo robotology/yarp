@@ -251,12 +251,23 @@ public:
 
     void testFind() {
         report(0,"testing find...");
-        Bottle bot("(hello friend) (say 12 13) green");
+        Bottle bot("(hello friend) (say 12 13) green 255 blue 19");
+        checkTrue(bot.check("hello"), "group check succeeds ok");
+        checkFalse(bot.check("goodbye"), "group check fails ok");
+
+        // shortcut find, some people use it
+        checkEqual(bot.find("green").asInt(), 255, "shortcut find succeeds ok");
+        checkTrue(bot.find("red").isNull(), "shortcut find fails ok");
+
+        // shortcut check?
+        checkTrue(bot.check("green"), "shortcut check succeeds ok");
+        checkFalse(bot.check("red"), "shortcut check fails ok");
+
         checkEqual(bot.findGroup("say").toString().c_str(),
                    "say 12 13","seek key");
         checkEqual(bot.find("hello").toString().c_str(),
                    "friend","seek key");
-        checkTrue(bot.find("blue").isNull(),"seek absent key");
+        checkTrue(bot.find("purple").isNull(),"seek absent key");
     }
 
     void testVocab() {

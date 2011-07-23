@@ -256,6 +256,14 @@ Value& Bottle::findBit(const char *key) {
 }
 
 
+bool Bottle::check(const char *key) {
+    Bottle& val = findGroup(key);
+    if (!val.isNull()) return true;
+    Value& val2 = find(key);
+    return !val2.isNull();
+}
+
+
 Value& Bottle::find(const char *key) {
     Value& val = findBit(key);
     

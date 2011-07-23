@@ -389,7 +389,6 @@ public:
  */
 class YARP_OS_impl_API yarp::os::impl::BottleImpl : public yarp::os::Portable {
 public:
-
     BottleImpl();
     virtual ~BottleImpl();
 

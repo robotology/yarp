@@ -1089,7 +1089,9 @@ Bottle& Storable::findGroup(const char *txt) {
 
 bool Storable::check(const char *key) {
     Bottle& val = findGroup(key);
-    return !val.isNull();
+    if (!val.isNull()) return true;
+    Value& val2 = find(key);
+    return !val2.isNull();
 }
 
 

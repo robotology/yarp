@@ -1,5 +1,12 @@
 2011-07-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Bottle.cpp: modify Bottle::check
+	to accurately predict whether Bottle::find would succeed.
+
+	* src/libYARP_OS/harness/BottleTest.cpp: test whether
+	Bottle::check accurately predicts whether Bottle::find will
+	succeed.
+
 	* src/libYARP_OS/src/Port.cpp: Don't complain about names
 	of ports that don't require a network-reachable address.
 

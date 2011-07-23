@@ -199,10 +199,7 @@ public:
 
     void onCommencement();
 
-    virtual bool check(const char *key) {
-        Bottle& val = findGroup(key);
-        return !val.isNull();
-    }
+    virtual bool check(const char *key);
 
     virtual Value& find(const char *key);
 
