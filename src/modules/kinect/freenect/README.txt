@@ -1,6 +1,7 @@
 
-# Copyright (C) 2010 Paul Fitzpatrick
-# CopyPolicy: Released under the terms of the GNU GPL 2.0
+# Copyright (C) 2010 RobotCub Consortium
+# CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+
 
 Compilation tips.  Note, freenect is changing rapidly, so you may
 need to make fixes on any given day.
@@ -15,4 +16,4 @@ need to make fixes on any given day.
 
  Now go to YARP, turn on device module compilation, turn on kinect and
  primesensecamera, and recompile.
-x
+
