@@ -27,47 +27,8 @@ yarp::dev::KinectDeviceDriverServer::~KinectDeviceDriverServer(void)
 {
 }
 
-bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
-	//this function is used in case of the Yarp Device being used as local
-	std::cout << "Starting Kinect Yarp Device please wait..." << endl;
-	string portPrefix;
-	if(config.check("portPrefix")) portPrefix = config.find("portPrefix").asString();
-	else {
-		std::cout << "ERROR: portPrefix not specified!" << endl;
-		return false;
-	}
-	if(config.check("openPorts")) _openPorts = true;
-	if(config.check("userDetection")) _userDetection = true;
-	if(_openPorts) openPorts(portPrefix);
-	_skeleton = new KinectSkeletonTracker(_userDetection);
-	std::cout << "Kinect Yarp Device started. Enjoy!" << endl;
-	return true;
-}
-
-void yarp::dev::KinectDeviceDriverServer::onRead(Bottle &bot){
-}
-
-bool yarp::dev::KinectDeviceDriverServer::updateInterface(){
-	//std::cout << "updateInterface()" << endl;
-	//update kinect data
-	_skeleton->updateKinect();
-	//send kinect data to ports
-	if(_openPorts) 
-		sendKinectData(_sendingPort);
-	return true;
-}
-
-bool yarp::dev::KinectDeviceDriverServer::shellRespond(const Bottle& command, Bottle& reply){
-	printf("echo: %s",command.toString().c_str());
-	return true;
-}
-
-bool yarp::dev::KinectDeviceDriverServer::close(){
-	_skeleton->close();
-	return true;
-}
-
 void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix){
+	//std::cout << "openPorts()" << endl;
 	_openPorts = true;
 	_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt>>();
 	string strTemp = portPrefix+PORTNAME_DEPTHMAP+":o";
@@ -147,6 +108,84 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(BufferedPort<Bottle> *m
 		}
 }
 
+/*************************************************************************************************************
+**************************************************************************************************************
+******DeviceDriver*****DeviceDriver*****DeviceDriver******DeviceDriver*****DeviceDriver*****DeviceDriver******
+**************************************************************************************************************
+*************************************************************************************************************/
+
+bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
+	//this function is used in case of the Yarp Device being used as local
+	std::cout << "Starting Kinect Yarp Device please wait..." << endl;
+	string portPrefix;
+	if(config.check("portPrefix")){
+		portPrefix = config.find("portPrefix").asString();
+		_openPorts = true;
+	}else {
+		std::cout << "ERROR: portPrefix not specified!" << endl;
+		return false;
+	}
+	if(config.check("userDetection")) _userDetection = true;
+	if(_openPorts) {
+		setupPorts(portPrefix+":i", portPrefix+PORTNAME_SKELETON+":o");
+		openPorts(portPrefix);
+	}
+	_skeleton = new KinectSkeletonTracker(_userDetection);
+	std::cout << "Kinect Yarp Device started. Enjoy!" << endl;
+	return true;
+}
+
+/*************************************************************************************************************
+**************************************************************************************************************
+****GenericYarpDriver****GenericYarpDriver****GenericYarpDriver****GenericYarpDriver****GenericYarpDriver*****
+**************************************************************************************************************
+*************************************************************************************************************/
+
+void yarp::dev::KinectDeviceDriverServer::onRead(Bottle &bot){
+}
+
+bool yarp::dev::KinectDeviceDriverServer::updateInterface(){
+	//std::cout << "updateInterface()" << endl;
+	//update kinect data
+	_skeleton->updateKinect();
+	//send kinect data to ports
+	if(_openPorts) 
+		sendKinectData(_sendingPort);
+	return true;
+}
+
+bool yarp::dev::KinectDeviceDriverServer::shellRespond(const Bottle& command, Bottle& reply){
+	printf("echo: %s",command.toString().c_str());
+	return true;
+}
+
+bool yarp::dev::KinectDeviceDriverServer::close(){
+	_skeleton->close();
+	return true;
+}
+
+/*************************************************************************************************************
+**************************************************************************************************************
+***IService****IService****IService****IService****IService****IService****IService****IService****IService***
+**************************************************************************************************************
+*************************************************************************************************************/
+
+bool yarp::dev::KinectDeviceDriverServer::startService(){
+	//std::cout << "startService()" << endl;
+	//returns false so that the updateService is started
+	return false;
+}
+
+bool yarp::dev::KinectDeviceDriverServer::updateService(){
+	//std::cout << "updateService()" << endl;
+	updateInterface();
+	return true;
+}
+
+bool yarp::dev::KinectDeviceDriverServer::stopService(){
+	//std::cout << "stopService()" << endl;
+	return close();
+}
 
 /*************************************************************************************************************
 **************************************************************************************************************
