@@ -60,12 +60,12 @@ public:
 	*/
 	virtual bool getSkeletonPosition(yarp::sig::Vector *vectorArray, double *confidence, int userID) = 0;
 	/**
-	* Gets the user sekelton state
-	* 0 - NO_USER 
-	* 1 - USER_LOST 
-	* 2 - USER_DETECTED 
-	* 3 - CALIBRATING 
-	* 4 - SKELETON_TRACKING
+	* Gets the user skeleton state
+	*	0 - NO_USER 
+	*	1 - USER_LOST 
+	*	2 - USER_DETECTED 
+	*	3 - CALIBRATING 
+	*	4 - SKELETON_TRACKING
 	*
 	* @param userID id of the user skeleton state to be retrieved
 	* @return int value of the user skeleton state
