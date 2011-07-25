@@ -8,6 +8,7 @@ The list of authors for YARP (ordered by file count) is:
   Giorgio Metta
   Giacomo Spigler
   Anne van Rossum
+  Duarte Aragao
   Alessandro Scalzo
   Daniel Krieg
   Arjan Gijsberts
@@ -39,10 +40,10 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Gianluca Massera
   Jonas Ruesch
   Anne van Rossum
+  Juan G Victores
   Giorgio Metta
   Daniel Krieg
   Arjan Gijsberts
-  Juan G Victores
   Arnaud Degroote
   Ze Ji
   Stefan Freyr Stefansson
@@ -77,11 +78,13 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Renaud Detry
   Radu Bogdan Rusu
   Pablo Urcola
+  Nikolas Hemion
   Nelson Goncalves
   Marco Randazzo
   Lorenzo DeMichieli
   Kyron Du Casse
   Jan Woetzel
+  Ingo Keller
   Gilberto Echeverria
   Giacomo Spigler
   Freyr Magnusson
@@ -101,8 +104,9 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 
 The list of copyright holders for YARP is:
   Copyright 2003 2005 2006 2007 2008 2009 2010 2011
-  RobotCub Consortium (731 files)
+  RobotCub Consortium (733 files)
   Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (45 files)
+  Duarte Aragao (23 files)
   Giacomo Spigler (22 files)
   Daniel Krieg (14 files)
   Anne van Rossum (13 files)
@@ -220,30 +224,29 @@ src/modules/urbtc/kernel_module/urbtc.h
   Copyright: (C) 2007 iXs Research Corp
   CopyPolicy: Released under the terms of the GNU GPL version 2
 
-src/modules/kinect/README.txt
-  Copyright: (C) 2010 RobotCub Consortium
-  Authors: Paul Fitzpatrick
+src/modules/kinect/freenect/KinectDeviceDriver.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/CMakeLists.txt
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/ServerKinect.h
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/KinectDeviceDriver.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/freenect/KinectExample.cpp
+  Copyright: (C) 2010 Philipp Robbel
+  CopyPolicy: Released under the terms of the GNU GPL v2.0.
+
+src/modules/kinect/OpenNI/README.txt
+  Copyright: (C) 2011 Duarte Aragao
   CopyPolicy: Released under the terms of the GNU GPL 2.0
-
-src/modules/kinect/KinectDeviceDriver.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/CMakeLists.txt
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/ServerKinect.h
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/KinectDeviceDriver.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
-
-src/modules/kinect/KinectExample.cpp
-  Copyright: (C) 2010 Philipp Robbel
-  CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 src/modules/vfw/vfw_extra_from_australia.h
   Copyright: (C) 2006 The University of Queensland, Australia <www.uq.edu.au>
