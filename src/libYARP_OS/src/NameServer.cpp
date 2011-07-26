@@ -116,6 +116,7 @@ Address NameServer::registerName(const String& name,
     }
 
     String machine = suggestion.getName();
+    int overridePort = 0;
     if (machine == "...") {
         if (carrier!="mcast") {
             if (remote=="...") {
@@ -126,14 +127,19 @@ Address NameServer::registerName(const String& name,
             }
         } else {
             machine = mcastRecord.get();
+            overridePort = mcastRecord.lastPortNumber();
             reusableIp = true;
         }
     }
 
     int port = suggestion.getPort();
     if (port == 0) {
-        port = getHostRecord(machine).get();
-        reusablePort = true;
+        if (overridePort) {
+            port = overridePort;
+        } else {
+            port = getHostRecord(machine).get();
+            reusablePort = true;
+        }
     }
 
     suggestion = Address(machine,port,carrier,portName);
@@ -843,7 +849,7 @@ private:
     Port *port;
 public:
     MainNameServer(int basePort, Port *port = NULL) : port(port) {
-        this->basePort = basePort;
+        setBasePort(basePort);
     }
 
     void setPort(Port& port) {

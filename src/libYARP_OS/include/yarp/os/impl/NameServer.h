@@ -100,6 +100,12 @@ public:
     static String textify(const Address& addr);
     static yarp::os::Bottle botify(const Address& address);
 
+    void setBasePort(int basePort) {
+        this->basePort = basePort;
+        mcastRecord.setBasePort(basePort);
+    }
+
+
 private:
 
     void setup();
@@ -194,10 +200,19 @@ private:
     class McastRecord : public ReusableRecord<int> {
     private:
         int base;
+        int last;
+        int basePort;
     public:
+
         McastRecord() {
             //YARP_DEBUG(Logger::get(),"FIXME: mcast records are never reused");
             base = 0;
+            basePort = 0;
+            last = 0;
+        }
+
+        void setBasePort(int basePort) {
+            this->basePort = basePort;
         }
 
         virtual int fresh() {
@@ -208,11 +223,16 @@ private:
 
         String get() {
             int x = getFree();
+            last = x;
             int v1 = x%255;
             int v2 = x/255;
             YARP_ASSERT(v2<255);
             return String("224.1.") + NetType::toString(v2+1) + "." + 
                 NetType::toString(v1+1);
+        }
+
+        int lastPortNumber() {
+            return basePort+last;
         }
 
         void releaseAddress(const char *addr) {
