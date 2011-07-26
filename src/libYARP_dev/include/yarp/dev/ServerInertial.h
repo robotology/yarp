@@ -90,7 +90,7 @@ public:
     {
         p.setReader(*this);
 
-		period = config.check("period",Value(0.005),"maximum period").asDouble();
+		period = config.check("period",yarp::os::Value(0.005),"maximum period").asDouble();
         //Look for the device name (serial Port). Usually /dev/ttyUSB0
         yarp::os::Value *name;
         if (config.check("subdevice",name))
