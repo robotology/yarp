@@ -79,6 +79,7 @@ IF (CREATE_PYTHON)
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp;-threads")
    FIND_PACKAGE(PythonLibs)
    INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
+   LINK_LIBRARIES(${PYTHON_LIBRARY})
    SWIG_ADD_MODULE(yarp python yarp.i)
    # uncomment if we want a debug version of the library
    #ADD_DEFINITIONS(-DPy_DEBUG)
