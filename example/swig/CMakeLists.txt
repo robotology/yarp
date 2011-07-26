@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale
+# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
