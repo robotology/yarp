@@ -1,5 +1,8 @@
 2011-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_dev/include/yarp/dev/ServerInertial.h: add 
+	--period option rather than hardcoded 5ms [thanks Gabriel Baud-Bovy]
+
 	* src/libYARP_OS/src/NameServer.cpp: always allocate separate
 	port numbers for separate multicast addresses, some NICs seem
 	to want this.  This was already yarpserver3's behavior, now

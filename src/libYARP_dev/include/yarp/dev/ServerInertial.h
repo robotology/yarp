@@ -2,7 +2,7 @@
 
 /*
  * Copyright (C) 2006 RobotCub Consortium
- * Authors: Paul Fitzpatrick
+ * Authors: Alexis Maldonado, Radu Bogdan Rusu
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  *
  */
@@ -57,6 +57,7 @@ private:
     PolyDriver poly;
     IGenericSensor *IMU; //The inertial device
     IPreciselyTimed *iTimed;
+	double period;
     yarp::os::Port p;
     yarp::os::PortWriterBuffer<yarp::os::Bottle> writer;
 public:
@@ -68,6 +69,7 @@ public:
         IMU = NULL;
         spoke = false;
         iTimed=0;
+		period = 0.005;
     }
 
     virtual ~ServerInertial() {
@@ -88,6 +90,7 @@ public:
     {
         p.setReader(*this);
 
+		period = config.check("period",Value(0.005),"maximum period").asDouble();
         //Look for the device name (serial Port). Usually /dev/ttyUSB0
         yarp::os::Value *name;
         if (config.check("subdevice",name))
@@ -212,8 +215,8 @@ public:
 
 				/// wait 5 ms.
 				now = yarp::os::Time::now();
-				if ((now - before)*1000 < 5) {
-					double k = 0.005-(now-before);
+				if ((now - before) < period) {
+					double k = period-(now-before);
 					yarp::os::Time::delay(k);
 				}
 			}
