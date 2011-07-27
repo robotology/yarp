@@ -94,17 +94,32 @@ int find_name_server(int verbose) {
         }
         fgets(current_namespace,sizeof(current_namespace),fin);
         fclose(fin);
+        if (current_namespace[0]=='\"') {
+            int len = strlen(current_namespace)+1;
+            int at = 0;
+            int i = 0;
+            for (i=0; i<len; i++) {
+                if (current_namespace[i]!='\"') {
+                    if (at!=i) {
+                        current_namespace[at] = current_namespace[i];
+                    }
+                    at++;
+                }
+            }
+        }
         if (verbose) {
             fprintf(stderr,"Namespace set to %s\n", current_namespace);
         }
-        for (i=0; i<strlen(current_namespace)+1; i++) {
-            char ch = current_namespace[i];
-            if (ch<32) {
-                ch = '\0';
+        if (strcmp(current_namespace,"/root")!=0) {
+            for (i=0; i<strlen(current_namespace)+1; i++) {
+                char ch = current_namespace[i];
+                if (ch<32) {
+                    ch = '\0';
+                }
+                server_filename[i] = (ch=='/')?'_':ch;
             }
-            server_filename[i] = (ch=='/')?'_':ch;
+            strncat(server_filename,".conf",sizeof(server_filename));
         }
-        strncat(server_filename,".conf",sizeof(server_filename));
     } else {
         if (verbose) {
             fprintf(stderr,"Using default namespace %s\n", current_namespace);
