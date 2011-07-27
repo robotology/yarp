@@ -29,9 +29,12 @@ The list of authors for YARP (ordered by file count) is:
   Matteo Brunettini
   Lars Olsson
   Gianluca Massera
+  Stephane Lallee
+  Radu Bogdan Rusu
   Hatice Kose-Bagci
   Fabien Benureau
   Claudio Castellini
+  Alexis Maldonado
 
 The list of people thanked in the ChangeLog (ordered by mention count) is:
   Lorenzo Natale
@@ -90,6 +93,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Gilberto Echeverria
   Giacomo Spigler
   Gauss Lee
+  Gabriel Baud-Bovy
   Freyr Magnusson
   Francesco Rea
   Florent D'Halluin
@@ -106,7 +110,7 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 
 The list of copyright holders for YARP is:
   Copyright 2003 2005 2006 2007 2008 2009 2010 2011
-  RobotCub Consortium (733 files)
+  RobotCub Consortium (734 files)
   Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (45 files)
   Duarte Aragao (23 files)
   Giacomo Spigler (22 files)
