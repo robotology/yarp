@@ -11,3 +11,5 @@ ADD_EXECUTABLE(yarpread yarpread.c yarpmin.c yarpmin.h)
 ADD_EXECUTABLE(yarprpc yarprpc.c yarpmin.c yarpmin.h)
 
 ADD_EXECUTABLE(yarpreadimage yarpreadimage.c yarpmin.c yarpmin.h)
+
+ADD_EXECUTABLE(yarpreadsound yarpreadsound.c yarpmin.c yarpmin.h)
