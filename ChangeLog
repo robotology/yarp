@@ -1,3 +1,8 @@
+2011-07-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: commit C# fix from Stephane Lallee; SWIG
+	doesn't translate VOCAB4 correctly in C# [thanks Stephane Lallee]
+
 2011-07-26  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_dev/include/yarp/dev/ServerInertial.h: add 

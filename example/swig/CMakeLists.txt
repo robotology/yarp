@@ -1,5 +1,5 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau
+# Authors: Paul Fitzpatrick, Arjan Gijsberts, Lorenzo Natale, Fabien Benureau, Stephane Lallee
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
@@ -158,10 +158,24 @@ ENDIF (CREATE_TCL)
 
 
 IF (CREATE_CSHARP)
+
    # outdir does not seem to work?
+   SET(target_name yarp)
    SET(CMAKE_SWIG_FLAGS "-Wall;-module;yarp")
    IF (WIN32 AND NOT CYGWIN)
-      SWIG_ADD_MODULE(yarp csharp yarp.i)
+	  OPTION(PREPARE_CLASS_FILES "Prepare NET library" ON)
+      SWIG_ADD_MODULE(${target_name} csharp yarp.i)
+		IF (PREPARE_CLASS_FILES)
+			ADD_CUSTOM_COMMAND(TARGET ${target_name}
+			POST_BUILD
+			COMMAND IF NOT EXIST .\\generated_src mkdir generated_src
+			WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+			
+			ADD_CUSTOM_COMMAND(TARGET ${target_name}
+			POST_BUILD
+			COMMAND move *.cs .\\generated_src
+			WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+		ENDIF ()
    ELSE(WIN32 AND NOT CYGWIN)
       SWIG_ADD_MODULE(yarp csharp yarp.i)
    ENDIF (WIN32 AND NOT CYGWIN)

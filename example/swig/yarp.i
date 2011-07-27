@@ -14,6 +14,7 @@
 
 %module(directors="1") yarpswig
 %feature("director") yarp::os::PortReader;
+%feature("director") yarp::os::RFModule;
 
 // Try to translate std::string and std::vector to native equivalents
 %include "std_string.i"
@@ -240,12 +241,28 @@ namespace yarp {
   }
  }
 
+#if defined(SWIGCSHARP)
+    %define _YARP2_VOCAB_ 1
+    %enddef
+    %define VOCAB(a,b,c,d) 0
+	%enddef
+	%define VOCAB4(a,b,c,d) VOCAB((a),(b),(c),(d))
+	%enddef
+	%define VOCAB3(a,b,c) VOCAB((a),(b),(c),(0))
+	%enddef
+	%define VOCAB2(a,b) VOCAB((a),(b),(0),(0))
+	%enddef
+	%define VOCAB1(a) VOCAB((a),(0),(0),(0))
+	%enddef
+	#endif
+
 %define PACKED_FOR_NET 
 %enddef
 
 #if defined( SWIGALLEGROCL )
   %include "compat.h"
 #endif
+
 %include <yarp/os/ConstString.h>
 %include <yarp/os/PortReport.h>
 %include <yarp/os/Contact.h>
@@ -275,6 +292,7 @@ namespace yarp {
 %include <yarp/os/Semaphore.h>
 %include <yarp/os/Thread.h>
 %include <yarp/os/Time.h>
+%include <yarp/os/RFModule.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
