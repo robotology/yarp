@@ -1,3 +1,9 @@
+2011-07-27  Daniel Krieg  <krieg@fias.uni-frankfurt.de>
+
+    * src/carriers/mpi_carrier/src/MpiStream.cpp: fixed problems
+    with disconnect on MPI bcast carrier
+
+
 2011-07-27  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: commit C# fix from Stephane Lallee; SWIG
