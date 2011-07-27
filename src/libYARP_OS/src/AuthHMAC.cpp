@@ -20,7 +20,7 @@
         char *buf;
         int off = context.length();
         buf = new char[length*3+off+2];
-        std::strcpy(buf, context.c_str());
+        strcpy(buf, context.c_str());
         for (unsigned int i=0; i < length; i++)
             sprintf(&(buf[off+i*3]), "%X ", hex[i]);
         printf("%s\n", buf);
@@ -55,7 +55,7 @@ AuthHMAC::AuthHMAC() {
     }
     int key_len = key.length();
     unsigned char * tmp = new unsigned char[key_len];
-    std::strcpy((char*) tmp, key.c_str());
+    strcpy((char*) tmp, key.c_str());
     HMAC_INIT(&context, tmp, key_len);
     srand((unsigned)time(NULL));
 #endif   //PORT_AUTH

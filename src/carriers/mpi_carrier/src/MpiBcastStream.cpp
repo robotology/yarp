@@ -22,13 +22,46 @@ void MpiBcastStream::startJoin() {
 
 
 
+// Connection commands
+
+void MpiBcastStream::execCmd(int cmd) {
+  switch (cmd) {
+    case -1:
+      // Connect:
+      // Let a new port join the broadcast group
+      comm->accept();
+      break;
+    case -2:
+      // Disconnect:
+      // Let a port leave the broadcast group
+      #ifdef MPI_DEBUG
+      printf("[MpiBcastStream @ %s] Got disconnect\n", name.c_str());
+      #endif
+      int length;
+      MPI_Bcast(&length, 1, MPI_INT, 0,comm->comm);
+      char* remote = new char[length];
+      MPI_Bcast(remote, length, MPI_CHAR, 0,comm->comm);
+      #ifdef MPI_DEBUG
+      printf("[MpiBcastStream @ %s] Got disconnect : %s\n", name.c_str(), remote);
+      #endif
+      terminate = !strcmp(remote, name.c_str());
+      #ifdef MPI_DEBUG
+      printf("[MpiBcastStream @ %s] should disconnect : %d\n", name.c_str(), terminate);
+      #endif
+      delete [] remote;
+      comm->disconnect(terminate);
+      break;
+  }
+}
+
+
 
 /////////////////////////////////////////////////
 // InputStream
 
 int MpiBcastStream::read(const Bytes& b) {
     if (terminate) {
-	return -1;
+      return -1;
     }
     if (readAvail == 0) {
         // get new data
@@ -42,32 +75,7 @@ int MpiBcastStream::read(const Bytes& b) {
                 printf("[MpiBcastStream @ %s] got size %d\n", name.c_str(), size);
                 #endif
         if (size < 0) {
-            // Commands
-            if (size == -1) {
-		// Connect:
-		// Let a new port join the broadcast group
-                comm->accept();
-            }
-            else if (size == -2) {
-		// Disconnect:
-		// Let a port leave the broadcast group
-                #ifdef MPI_DEBUG
-                printf("[MpiBcastStream @ %s] Got disconnect\n", name.c_str());
-                #endif
-                int length;
-                MPI_Bcast(&length, 1, MPI_INT, 0,comm->comm);
-                char* remote = new char[length];
-                MPI_Bcast(remote, length, MPI_CHAR, 0,comm->comm);
-                #ifdef MPI_DEBUG
-                printf("[MpiBcastStream @ %s] Got disconnect : %s\n", name.c_str(), remote);
-                #endif
-                terminate = !strcmp(remote, name.c_str());
-                #ifdef MPI_DEBUG
-                printf("[MpiBcastStream @ %s] should disconnect : %d\n", name.c_str(), terminate);
-                #endif
-                delete [] remote;
-                comm->disconnect(terminate);
-            }
+            execCmd(size);
             return 0;
         }
         if (size == b.length()) {

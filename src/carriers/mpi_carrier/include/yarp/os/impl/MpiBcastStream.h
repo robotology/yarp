@@ -47,6 +47,7 @@ public:
         printf("[MpiBcastStream @ %s] Closing stream\n", name.c_str());
         #endif
     }
+    void execCmd(int cmd);
 
 };
 

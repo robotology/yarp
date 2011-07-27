@@ -117,7 +117,11 @@ void MpiComm::disconnect(bool disconn) {
     #endif
     MPI_Comm new_comm;
     MPI_Comm_split(comm, disconn, rank(), &new_comm);
+    MPI_Comm_disconnect(&comm);
     comm = new_comm;
+    #ifdef MPI_DEBUG
+    printf("[MpiComm @ %s] new rank : %d \n", name.c_str(), rank());
+    #endif
 }
 
 
@@ -180,8 +184,7 @@ void MpiStream::resetBuffer() {
 }
 
 bool MpiStream::isOk() {
-    // no diagnostics for MPI; works or terminates???
-    return true;
+    return !terminate;
 }
 
  void MpiStream::interrupt() {
