@@ -46,9 +46,9 @@ public:
     Carrier *create() {
         return new MpiP2PCarrier();
     }
-    void createStream(String name) {
-        comm = new MpiComm(name);
-        stream = new MpiP2PStream(name, comm);
+    void createStream(bool sender) {
+        comm = new MpiComm(route);
+        stream = new MpiP2PStream(route, comm);
     }
     String getName() {
         return "mpi";}

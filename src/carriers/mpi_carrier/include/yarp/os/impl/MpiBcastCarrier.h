@@ -50,7 +50,7 @@ public:
     Carrier *create() {
         return new MpiBcastCarrier();
     }
-    void createStream(String name);
+    void createStream(bool sender);
     String getName() {
         return "bcast";}
     bool supportReply() {
@@ -58,24 +58,7 @@ public:
     bool isBroadcast() {
         return true;
     }
-    void prepareDisconnect() {
-	comm->sema.wait();
-	#ifdef MPI_DEBUG
-	printf("[MpiBcastCarrier @ %s] Disconnect : %s\n", name.c_str(), other.c_str());
-	#endif
-	int cmd = -2;
-	MPI_Bcast(&cmd, 1, MPI_INT, 0,comm->comm);
-	int length = other.length() + 1;
-	char* remote_c = new char[length];
-	strcpy(remote_c, other.c_str());
-	MPI_Bcast(&length, 1, MPI_INT, 0,comm->comm);
-	MPI_Bcast(remote_c, length, MPI_CHAR, 0,comm->comm);
-	delete [] remote_c;
-	comm->disconnect(false);
-	comm->sema.post();
-
-        //dynamic_cast<MpiBcastStream*> (stream)->disconnect(other);
-    }
+    void prepareDisconnect();
 
     bool expectReplyToHeader(Protocol&  proto) {
         bool ok = MpiCarrier::expectReplyToHeader(proto);

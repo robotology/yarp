@@ -37,7 +37,7 @@ protected:
     MpiStream* stream;
     MpiComm* comm;
     String port;
-    String name, other;
+    String name, other, route;
     String target;
 public:
     MpiCarrier() ;
@@ -46,7 +46,7 @@ public:
     virtual Carrier *create() = 0;
     virtual String getName() = 0;
 
-    virtual void createStream(String name) = 0;
+    virtual void createStream(bool sender) = 0;
 
     virtual bool isConnectionless() {
         return false;}

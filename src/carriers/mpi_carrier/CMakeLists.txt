@@ -1,5 +1,5 @@
 # Copyright (C) 2010 RobotCub Consortium
-# Authors: Paul Fitzpatrick
+# Authors: Paul Fitzpatrick, Daniel Krieg
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
 IF (COMPILE_PLUGIN_LIBRARY)
@@ -24,9 +24,11 @@ IF (NOT SKIP_mpi_carrier)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
   ADD_LIBRARY(mpi_carrier
     src/MpiCarrier.cpp
+    src/MpiComm.cpp
     src/MpiStream.cpp src/MpiP2PStream.cpp
     include/yarp/os/impl/MpiCarrier.h include/yarp/os/impl/MpiP2PCarrier.h
     include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiP2PStream.h
+    include/yarp/os/impl/MpiComm.h
   )
   TARGET_LINK_LIBRARIES(mpi_carrier ${MPI_LIBRARIES} ${YARP_LIBRARIES})
 
@@ -49,9 +51,11 @@ IF (NOT SKIP_mpibcast_carrier)
   INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/include)
   ADD_LIBRARY(mpibcast_carrier
     src/MpiCarrier.cpp src/MpiBcastCarrier.cpp
+    src/MpiComm.cpp
     src/MpiStream.cpp src/MpiBcastStream.cpp
     include/yarp/os/impl/MpiCarrier.h include/yarp/os/impl/MpiBcastCarrier.h
     include/yarp/os/impl/MpiStream.h include/yarp/os/impl/MpiBcastStream.h
+    include/yarp/os/impl/MpiComm.h
   )
   TARGET_LINK_LIBRARIES(mpibcast_carrier ${MPI_LIBRARIES} ${YARP_LIBRARIES})
 

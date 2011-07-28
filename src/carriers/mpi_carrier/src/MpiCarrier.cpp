@@ -24,7 +24,7 @@ MpiCarrier::MpiCarrier() : stream(NULL), comm(NULL) {
 
 MpiCarrier::~MpiCarrier() {
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Destructor called \n", name.c_str() );
+    printf("[MpiCarrier @ %s] Destructor called \n", route.c_str() );
     #endif
 }
 
@@ -63,16 +63,19 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.os().write('\r');
     proto.os().write('\n');
 
-    createStream(name);
+    // Sender
+    route = name + "->" + other;
 
-    if (! MpiComm::usable())
+    createStream(true);
+
+    if (! MpiControl.isRunning())
         return false;
     comm->openPort();
     char* port = comm->port_name;
     char* uid = comm->unique_id;
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] setting up MpiPort '%s'\n", name.c_str(), port);
+    printf("[MpiCarrier @ %s] setting up MpiPort '%s'\n", route.c_str(), port);
     #endif
 
     Bytes b4(uid,strlen(uid));
@@ -88,7 +91,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
 
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Header sent\n", name.c_str());
+    printf("[MpiCarrier @ %s] Header sent\n", route.c_str());
     #endif
 
     return proto.os().isOk();
@@ -99,17 +102,19 @@ void  MpiCarrier::getHeader(const Bytes& header) {
  bool MpiCarrier::expectSenderSpecifier(Protocol& proto) {
     // interpret everything that sendHeader wrote
     name = proto.getRoute().getToName();
-    createStream(name);
-
-    if (! MpiComm::usable())
-        return false;
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Waiting for header\n", name.c_str());
+    printf("[MpiCarrier @ %s] Waiting for header\n", route.c_str());
     #endif
 
     other = NetType::readLine(proto.is());
     proto.setRoute(proto.getRoute().addFromName(other));
+    // Receiver
+    route = name + "<-" + other;
+
+    createStream(false);
+    if (! MpiControl.isRunning())
+        return false;
 
     String other_id = NetType::readLine(proto.is());
     bool notLocal = comm->notLocal(other_id);
@@ -117,7 +122,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     port = NetType::readLine(proto.is());
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] Header received\n", name.c_str());
+    printf("[MpiCarrier @ %s] Header received\n", route.c_str());
     #endif
 
     return notLocal && proto.is().isOk();
@@ -126,7 +131,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
  bool MpiCarrier::respondToHeader(Protocol& proto) {
     // SWITCH TO NEW STREAM TYPE
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", name.c_str(), port.c_str());
+    printf("[MpiCarrier @ %s] trying to connect to MpiPort '%s'\n", route.c_str(), port.c_str());
     #endif
 
     if (!comm->connect(port)) {
@@ -136,7 +141,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.takeStreams(stream);
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", name.c_str() );
+    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", route.c_str() );
     #endif
 
     return proto.is().isOk();
@@ -151,7 +156,7 @@ void  MpiCarrier::getHeader(const Bytes& header) {
     proto.takeStreams(stream);
 
     #ifdef MPI_DEBUG
-    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", name.c_str() );
+    printf("[MpiCarrier @ %s] MpiStream successfully setup \n", route.c_str() );
     #endif
 
     return proto.os().isOk();

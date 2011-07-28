@@ -13,7 +13,8 @@
 #include <yarp/os/impl/MpiStream.h>
 #include <string.h>
 
-
+#define CMD_JOIN -1
+#define CMD_DISCONNECT -2
 
 namespace yarp {
     namespace os {
