@@ -17,8 +17,7 @@ ENDIF()
 
 IF (ENABLE_KinectDeviceLocal)
   add_subdirectory (KinectYarpDeviceServerLib)
-  SET(CORELIBS ${YARP_LIBRARIES} YarpInterfaceLib KinectYarpDeviceServerLib)
-  add_subdirectory (KinectDeviceDriverServer) 
+  SET(CORELIBS ${YARP_LIBRARIES} YarpInterfaceLib)
 ENDIF()
 
 IF (ENABLE_KinectDeviceClient)  
