@@ -30,10 +30,10 @@ yarp::dev::KinectDeviceDriverServer::~KinectDeviceDriverServer(void)
 void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix){
 	//std::cout << "openPorts()" << endl;
 	_openPorts = true;
-	_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt>>();
+	_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >();
 	string strTemp = portPrefix+PORTNAME_DEPTHMAP+":o";
 	_depthMapPort->open(strTemp.c_str());
-	_imgMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb>>();
+	_imgMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
 	strTemp = portPrefix+PORTNAME_IMAGEMAP+":o";
 	_imgMapPort->open(strTemp.c_str());
 }
