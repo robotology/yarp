@@ -9,16 +9,22 @@
 
 
 #include <yarp/dev/PolyDriver.h>
+#include <yarp/dev/all.h>
+#include "../IKinectDevice/IKinectDeviceDriver.h"
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
-#include "../KinectYarpDeviceServerLib/KinectDeviceDriverServer.h"
-#include "../KinectYarpDeviceClientLib/KinectDeviceDriverClient.h"
+#include <yarp/os/RFModule.h>
+#include <yarp/sig/all.h>
+//#include "../KinectYarpDeviceServerLib/KinectDeviceDriverServer.h"
+//#include "../KinectYarpDeviceClientLib/KinectDeviceDriverClient.h"
 #include "GLWindow.h"
 #include <string>
 
 using namespace std;
 using namespace yarp::dev;
 using namespace yarp::os;
+using namespace yarp::sig;
+using namespace yarp::sig::draw;
 
 class KinectThread : public Thread, public RFModule{
 	IKinectDeviceDriver *_kinect;
@@ -71,15 +77,15 @@ int main(int argc, char *argv[]){
 		return -1;
 	}
 
-	DriverCreator *kinect_factoryClient = new DriverCreatorOf<yarp::dev::KinectDeviceDriverClient>("KinectDeviceClient","","");
+	/*DriverCreator *kinect_factoryClient = new DriverCreatorOf<yarp::dev::KinectDeviceDriverClient>("KinectDeviceClient","","");
 	DriverCreator *kinect_factoryServer = new DriverCreatorOf<yarp::dev::KinectDeviceDriverServer>("KinectDeviceServer","","");
 	Drivers::factory().add(kinect_factoryClient);
-	Drivers::factory().add(kinect_factoryServer);
+	Drivers::factory().add(kinect_factoryServer);*/
 
-	//Property config("(device KinectDeviceClient) (remotePortPrefix /kinectSkeletonServer) (localPortPrefix /kinectSkeletonClient) (userDetection)");
-	//Property config("(device KinectDeviceServer) (portPrefix /kinectSkeletonServer) (openPorts)");
-	Property config("(device KinectDeviceServer) (portPrefix /kinectSkeletonServer) (userDetection)");
-	//Property config("(device KinectDeviceServer) (portPrefix /kinectSkeletonServer)");
+	Property config("(device KinectDeviceClient) (remotePortPrefix /kinect) (localPortPrefix /kinectSkeletonClient) (userDetection)");
+	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer) (openPorts)");
+	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer) (userDetection)");
+	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer)");
 	PolyDriver dd(config);
 	IKinectDeviceDriver *grabber;
 	dd.view(grabber);

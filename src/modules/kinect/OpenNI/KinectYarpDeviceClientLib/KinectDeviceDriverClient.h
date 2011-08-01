@@ -18,7 +18,7 @@
 #include <yarp/os/Network.h>
 #include "IKinectDeviceDriver.h"
 #include "KinectSkeletonData.h"
-#include "../lib/GenericYarpDriver.h"
+//#include "../lib/GenericYarpDriver.h"
 #include "../lib/PortCtrlMod.h"
 #include <yarp/sig/all.h>
 
@@ -43,17 +43,15 @@ namespace yarp {
 *	- [localPortPrefix]/depthMap:i - depth map image port
 *	- [localPortPrefix]/imageMap:i - rgb camera image port
 */
-class yarp::dev::KinectDeviceDriverClient : public GenericYarpDriver, public TypedReaderCallback<ImageOf<PixelRgb> >, 
-									  public TypedReaderCallback<ImageOf<PixelInt> >, public yarp::dev::IKinectDeviceDriver, 
+class yarp::dev::KinectDeviceDriverClient : /*public GenericYarpDriver,*/ public TypedReaderCallback<ImageOf<PixelRgb> >, 
+									  public TypedReaderCallback<ImageOf<PixelInt> >, public TypedReaderCallback<Bottle>, public yarp::dev::IKinectDeviceDriver, 
 									  public yarp::dev::DeviceDriver {
 public:
 	KinectDeviceDriverClient();
-	//GenericYarp
+	//DeviceDriver
 	virtual bool open(yarp::os::Searchable& config);
-	virtual bool interruptModule();
 	virtual bool close();
-	virtual bool updateInterface();
-	virtual bool shellRespond(const Bottle& command, Bottle& reply);
+	//TypedReaderCallback
 	virtual void onRead(Bottle& b);
 	virtual void onRead(ImageOf<PixelRgb>& img);
 	virtual void onRead(ImageOf<PixelInt>& img);
@@ -68,7 +66,7 @@ private:
 	BufferedPort<Bottle> *_inUserSkeletonPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_inDepthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_inImageMapPort;
-	PortCtrlMod *_portMod;
+	//PortCtrlMod *_portMod;
 	KinectSkeletonData *_skeletonData;
 	/**
 	* Connect the KinectDeviceDriverClient ports with the KinectDeviceDriverServer ports.

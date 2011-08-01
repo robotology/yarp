@@ -17,12 +17,6 @@ yarp::dev::KinectDeviceDriverServer::KinectDeviceDriverServer(bool openPorts, bo
 	_userDetection = userDetection;
 }
 
-yarp::dev::KinectDeviceDriverServer::KinectDeviceDriverServer(string portPrefix, bool userDetection):GenericYarpDriver(portPrefix+":i", portPrefix+PORTNAME_SKELETON+":o")
-{
-	openPorts(portPrefix);
-	_skeleton = new KinectSkeletonTracker(userDetection);
-}
-
 yarp::dev::KinectDeviceDriverServer::~KinectDeviceDriverServer(void)
 {
 }
@@ -30,6 +24,13 @@ yarp::dev::KinectDeviceDriverServer::~KinectDeviceDriverServer(void)
 void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix){
 	//std::cout << "openPorts()" << endl;
 	_openPorts = true;
+	string sendingPortName = portPrefix+PORTNAME_SKELETON+":o";
+	string receivingPortName = portPrefix+":i";
+	_skeletonPort = new BufferedPort<Bottle>();
+	_skeletonPort->open(sendingPortName.c_str());
+	_receivingPort = new BufferedPort<Bottle>();
+	_receivingPort->open(receivingPortName.c_str());
+
 	_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >();
 	string strTemp = portPrefix+PORTNAME_DEPTHMAP+":o";
 	_depthMapPort->open(strTemp.c_str());
@@ -38,7 +39,7 @@ void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix){
 	_imgMapPort->open(strTemp.c_str());
 }
 
-void yarp::dev::KinectDeviceDriverServer::sendKinectData(BufferedPort<Bottle> *mainBottle){
+void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 	KinectSkeletonTracker::UserSkeleton *userSkeleton = KinectSkeletonTracker::getKinect()->userSkeleton;
 	double *joint;
 	int index = 0;
@@ -54,7 +55,7 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(BufferedPort<Bottle> *m
 	if(_userDetection)
 		for(int i = 0; i < MAX_USERS; i++){
 			if(userSkeleton[i].skeletonState == SKELETON_TRACKING){
-				Bottle &botSkeleton = mainBottle->prepare();
+				Bottle &botSkeleton = _skeletonPort->prepare();
 				botSkeleton.clear();
 				//user number
 				Bottle &userBot = botSkeleton.addList();
@@ -84,26 +85,26 @@ void yarp::dev::KinectDeviceDriverServer::sendKinectData(BufferedPort<Bottle> *m
 					botList2.addDouble(joint[8]);
 					botSkeleton.addDouble(userSkeleton[i].skeletonOriConfidence[jointIndex]);
 				}
-				mainBottle->write();
+				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == USER_DETECTED){
-				Bottle &botDetected = mainBottle->prepare();
+				Bottle &botDetected = _skeletonPort->prepare();
 				botDetected.clear();
 				botDetected.addString(USER_DETECTED_MSG);
 				botDetected.addInt(i);
-				mainBottle->write();
+				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == CALIBRATING){
-				Bottle &botCalib = mainBottle->prepare();
+				Bottle &botCalib = _skeletonPort->prepare();
 				botCalib.clear();
 				botCalib.addString(USER_CALIBRATING_MSG);
 				botCalib.addInt(i);
-				mainBottle->write();
+				_skeletonPort->write();
 			}else if(userSkeleton[i].skeletonState == USER_LOST){
 				userSkeleton[i].skeletonState = NO_USER;
-				Bottle &botCalib = mainBottle->prepare();
+				Bottle &botCalib = _skeletonPort->prepare();
 				botCalib.clear();
 				botCalib.addString(USER_LOST_MSG);
 				botCalib.addInt(i);
-				mainBottle->write();
+				_skeletonPort->write();
 			}
 		}
 }
@@ -127,11 +128,16 @@ bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
 	}
 	if(config.check("userDetection")) _userDetection = true;
 	if(_openPorts) {
-		setupPorts(portPrefix+":i", portPrefix+PORTNAME_SKELETON+":o");
+//		setupPorts(portPrefix+":i", portPrefix+PORTNAME_SKELETON+":o");
 		openPorts(portPrefix);
 	}
 	_skeleton = new KinectSkeletonTracker(_userDetection);
 	std::cout << "Kinect Yarp Device started. Enjoy!" << endl;
+	return true;
+}
+
+bool yarp::dev::KinectDeviceDriverServer::close(){
+	_skeleton->close();
 	return true;
 }
 
@@ -141,26 +147,13 @@ bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
 **************************************************************************************************************
 *************************************************************************************************************/
 
-void yarp::dev::KinectDeviceDriverServer::onRead(Bottle &bot){
-}
-
 bool yarp::dev::KinectDeviceDriverServer::updateInterface(){
 	//std::cout << "updateInterface()" << endl;
 	//update kinect data
 	_skeleton->updateKinect();
 	//send kinect data to ports
 	if(_openPorts) 
-		sendKinectData(_sendingPort);
-	return true;
-}
-
-bool yarp::dev::KinectDeviceDriverServer::shellRespond(const Bottle& command, Bottle& reply){
-	printf("echo: %s",command.toString().c_str());
-	return true;
-}
-
-bool yarp::dev::KinectDeviceDriverServer::close(){
-	_skeleton->close();
+		sendKinectData();
 	return true;
 }
 

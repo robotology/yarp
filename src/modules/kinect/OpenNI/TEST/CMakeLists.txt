@@ -1,6 +1,11 @@
 # Copyright (C) 2011 Duarte Aragao
 # Author: Duarte Aragao
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+cmake_minimum_required(VERSION 2.8)
+
+  FIND_PACKAGE(YARP REQUIRED)
+  LINK_LIBRARIES(${YARP_LIBRARIES})
+    INCLUDE_DIRECTORIES(${YARP_INCLUDE_DIRS})
 
 FIND_PACKAGE(GLUT)
 FIND_PACKAGE(OpenGL)
@@ -38,4 +43,4 @@ ELSE (folder_source)
 ENDIF (folder_source)
 
 
-TARGET_LINK_LIBRARIES(DeviceTest ${CORELIBS} ${OPENGL_LIBRARY} ${GLUT_LIBRARY} ${LINK_LIBRARIES})
+TARGET_LINK_LIBRARIES(DeviceTest ${CORELIBS} ${OPENGL_LIBRARY} ${GLUT_LIBRARY} ${LINK_LIBRARIES} ${YARP_LIBRARIES})

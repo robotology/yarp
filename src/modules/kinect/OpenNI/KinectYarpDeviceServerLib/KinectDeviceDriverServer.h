@@ -16,7 +16,6 @@
 #include <yarp/sig/all.h>
 #include <yarp/dev/ServiceInterfaces.h>
 
-#include "../lib/GenericYarpDriver.h"
 //this include could not be done here do to yarp compilation error :)
 //#include "KinectSkeletonTracker.h"
 class KinectSkeletonTracker;
@@ -56,17 +55,15 @@ namespace yarp {
 *	- [portPrefix]/depthMap:o - depth map image port
 *	- [portPrefix]/imageMap:o - rgb camera image port
 */
-class yarp::dev::KinectDeviceDriverServer: public IService, public GenericYarpDriver, public yarp::dev::IKinectDeviceDriver, 
+class yarp::dev::KinectDeviceDriverServer: public IService, public yarp::dev::IKinectDeviceDriver, 
 	public yarp::dev::DeviceDriver{
 public:
 	KinectDeviceDriverServer(bool openPorts = false, bool userDetection = false);
-	KinectDeviceDriverServer(string portPrefix, bool userDetection = false);
 	~KinectDeviceDriverServer(void);
 	//GenericYarpDriver
-	virtual bool open(yarp::os::Searchable& config);
-	virtual void onRead(Bottle &bot);
 	virtual bool updateInterface();
-	virtual bool shellRespond(const Bottle& command, Bottle& reply);
+	//DeviceDriver
+	virtual bool open(yarp::os::Searchable& config);
 	virtual bool close();
 	//IService
 	virtual bool startService();
@@ -82,6 +79,8 @@ private:
 	KinectSkeletonTracker *_skeleton;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
+	BufferedPort<Bottle> *_skeletonPort;
+	BufferedPort<Bottle> *_receivingPort;
 	bool _openPorts, _userDetection;
 	/**
 	* Opens the depth map a rgb camera image ports
@@ -92,7 +91,7 @@ private:
 	*
 	* @param mainBottle BufferedPort for the userSkeleton data (only needed if user detection is on)
 	*/
-	void sendKinectData(BufferedPort<Bottle> *mainBottle = NULL);
+	void sendKinectData();
 };
 
 /**

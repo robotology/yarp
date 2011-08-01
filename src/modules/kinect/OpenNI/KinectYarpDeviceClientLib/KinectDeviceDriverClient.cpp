@@ -10,7 +10,8 @@
 
 #include "KinectDeviceDriverClient.h"
 
-yarp::dev::KinectDeviceDriverClient::KinectDeviceDriverClient():GenericYarpDriver(){}
+//yarp::dev::KinectDeviceDriverClient::KinectDeviceDriverClient():GenericYarpDriver(){}
+yarp::dev::KinectDeviceDriverClient::KinectDeviceDriverClient(){}
 
 /*******************************************************************************************
 ********************************************************************************************
@@ -37,7 +38,7 @@ bool yarp::dev::KinectDeviceDriverClient::open(yarp::os::Searchable& config){
 	Network yarp;
 	string remotePortIn = remotePortPrefix+":i";
 	if(!yarp.exists(remotePortIn.c_str())){
-		printf("\t- Error: remotePortPrefix port not found.\n\t  Check if KinectDeviceDriverServer is running.\n");
+		printf("\t- Error: remote port not found. (%s)\n\t  Check if KinectDeviceDriverServer is running.\n",remotePortIn.c_str());
 		return false;
 	}
 
@@ -46,22 +47,20 @@ bool yarp::dev::KinectDeviceDriverClient::open(yarp::os::Searchable& config){
 		return false;
 	}
 
-	_portMod = new PortCtrlMod();
-	_portMod->setInterfaceDriver(this);
+	//_portMod = new PortCtrlMod();
+	//_portMod->setInterfaceDriver(this);
+	_inUserSkeletonPort->useCallback(*this);
 	_inDepthMapPort->useCallback(*this);
 	_inImageMapPort->useCallback(*this);
 
 	return true;
 }
 
-bool yarp::dev::KinectDeviceDriverClient::interruptModule(){
-	return close();
-}
-
 bool yarp::dev::KinectDeviceDriverClient::close(){
-	if(_portMod!=NULL)
-		return _portMod->close();
-	else return false;
+//	if(_portMod!=NULL)
+//		return _portMod->close();
+//	else 
+	return true;
 }
 
 bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, string localPortPrefix){
@@ -80,10 +79,15 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 	_inImageMapPort->open(inImageMapPort.c_str());
 	_inDepthMapPort = new BufferedPort<ImageOf<PixelInt> >();
 	_inDepthMapPort->open(inDepthMapPort.c_str());
+	
+	_outPort = new BufferedPort<Bottle>();
+	_outPort->open(outLocalPort.c_str());
+	_inUserSkeletonPort = new BufferedPort<Bottle>();
+	_inUserSkeletonPort->open(inUserSkeletonPort.c_str());
 	//server ports
-	setupPorts(inUserSkeletonPort,outLocalPort);
-	_outPort = _sendingPort;
-	_inUserSkeletonPort = _receivingPort;
+	//setupPorts(inUserSkeletonPort,outLocalPort);
+	//_outPort = _sendingPort;
+	//_inUserSkeletonPort = _receivingPort;
 
 
 	if(!Network::connect(outLocalPort.c_str(),inRemotePort.c_str(),NULL,false) ||
@@ -100,14 +104,6 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 void yarp::dev::KinectDeviceDriverClient::onRead(Bottle& b){_skeletonData->storeData(b);}
 void yarp::dev::KinectDeviceDriverClient::onRead(ImageOf<PixelRgb>& img){_skeletonData->storeData(img);}
 void yarp::dev::KinectDeviceDriverClient::onRead(ImageOf<PixelInt>& img){_skeletonData->storeData(img);}
-
-bool yarp::dev::KinectDeviceDriverClient::updateInterface(){
-	return true;
-}
-
-bool yarp::dev::KinectDeviceDriverClient::shellRespond(const Bottle& command, Bottle& reply){
-	return true;
-}
 
 /*************************************************************************************************************
 **************************************************************************************************************
