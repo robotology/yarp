@@ -23,7 +23,7 @@ class KinectSkeletonTracker;
 #include "../lib/PortCtrlMod.h"
 
 //The interface is taken from the client
-#include "IKinectDeviceDriver.h"
+#include <yarp/dev/IKinectDeviceDriver.h>
 
 #define PORTNAME_SKELETON "/userSkeleton"
 #define PORTNAME_DEPTHMAP "/depthMap"

@@ -18,7 +18,7 @@
 #include <iostream>
 
 //included so that the enumeration can be accessed
-#include "IKinectDeviceDriver.h"
+#include <yarp/dev/IKinectDeviceDriver.h>
 
 #define USER_DETECTED_MSG "[USER_DETECTED]"
 #define USER_CALIBRATING_MSG "[USER_CALIBRATING]"

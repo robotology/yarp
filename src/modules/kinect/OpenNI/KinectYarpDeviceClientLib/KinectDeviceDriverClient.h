@@ -16,7 +16,7 @@
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
-#include "IKinectDeviceDriver.h"
+#include <yarp/dev/IKinectDeviceDriver.h>
 #include "KinectSkeletonData.h"
 //#include "../lib/GenericYarpDriver.h"
 #include "../lib/PortCtrlMod.h"

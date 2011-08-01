@@ -25,7 +25,7 @@
 #include <yarp/sig/Image.h>
 
 //included so that the enumeration can be accessed
-#include "IKinectDeviceDriver.h"
+#include <yarp/dev/IKinectDeviceDriver.h>
 
 #define KINECT_VENDOR "PrimeSense"
 #define KINECT_LICKEY "0KOIk2JeIBYClPWVnMoRKn5cdY4="
