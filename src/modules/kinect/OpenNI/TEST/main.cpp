@@ -10,7 +10,8 @@
 
 #include <yarp/dev/PolyDriver.h>
 #include <yarp/dev/all.h>
-#include "../IKinectDevice/IKinectDeviceDriver.h"
+//#include "../IKinectDevice/IKinectDeviceDriver.h"
+#include <yarp/dev/IKinectDeviceDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/os/Thread.h>
 #include <yarp/os/RFModule.h>
