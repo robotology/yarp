@@ -36,4 +36,6 @@
 #include<yarp/dev/GPUInterface.h>
 #include<yarp/dev/DriverLinkCreator.h>
 
+#include<yarp/dev/IKinectDeviceDriver.h>
+
 #endif
