@@ -11,16 +11,16 @@
 #pragma once
 
 #include <iostream>
+#include <string>
 
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/sig/all.h>
 #include <yarp/dev/ServiceInterfaces.h>
+#include <yarp/os/all.h>
 
 //this include could not be done here do to yarp compilation error :)
 //#include "KinectSkeletonTracker.h"
 class KinectSkeletonTracker;
-
-#include "../lib/PortCtrlMod.h"
 
 //The interface is taken from the client
 #include <yarp/dev/IKinectDeviceDriver.h>
@@ -37,7 +37,9 @@ class KinectSkeletonTracker;
 #define POSITION_VOCAB VOCAB3('P','O','S')
 #define ORIENTATION_VOCAB VOCAB3('O','R','I')
 
+using namespace std;
 using namespace yarp::sig;
+using namespace yarp::os;
 
 namespace yarp {
 	namespace dev {
@@ -76,11 +78,11 @@ public:
 	virtual ImageOf<PixelRgb> getImageMap();
 	virtual ImageOf<PixelInt> getDepthMap();
 private:
-	KinectSkeletonTracker *_skeleton;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
-	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
 	BufferedPort<Bottle> *_skeletonPort;
 	BufferedPort<Bottle> *_receivingPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
+	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
+	KinectSkeletonTracker *_skeleton;
 	bool _openPorts, _userDetection;
 	/**
 	* Opens the depth map a rgb camera image ports

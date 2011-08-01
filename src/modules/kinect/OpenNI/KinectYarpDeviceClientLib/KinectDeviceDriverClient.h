@@ -17,10 +17,9 @@
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/os/Network.h>
 #include <yarp/dev/IKinectDeviceDriver.h>
-#include "KinectSkeletonData.h"
-//#include "../lib/GenericYarpDriver.h"
-#include "../lib/PortCtrlMod.h"
 #include <yarp/sig/all.h>
+#include <yarp/os/BufferedPort.h>
+#include "KinectSkeletonData.h"
 
 
 using namespace yarp::os;
