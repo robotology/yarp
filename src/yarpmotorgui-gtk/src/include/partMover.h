@@ -52,6 +52,7 @@ class partMover{
   PolyDriver *debugDd;
 
   IPositionControl *pos;
+  IVelocityControl *iVel;
   IEncoders *iencs;
   IAmplifierControl *amp;
   IPidControl *pid;
@@ -168,6 +169,7 @@ class partMover{
   inline ITorqueControl* get_ITorqueControl () {return trq;}
   inline IImpedanceControl* get_IImpedanceControl () {return imp;}
   inline IDebugInterface* get_IDebugControl () {return idbg;}
+  inline IVelocityControl* get_IVelocityControl () {return iVel;}
   inline IControlMode* get_IControlMode () {return ctrlmode;}
 };
 

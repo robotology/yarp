@@ -103,6 +103,7 @@ namespace guiPid2
 	static ITorqueControl    *iTrq = NULL;
 	static IImpedanceControl *iImp = NULL;
 	static IDebugInterface   *iDbg = NULL;
+	static IVelocityControl  *iVel = NULL;
 	//static ICanBus		     *iCan = NULL;
 
 

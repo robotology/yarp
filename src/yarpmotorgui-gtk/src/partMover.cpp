@@ -47,6 +47,7 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
 
   //default value for unopened interfaces
   pos		= NULL;
+  iVel      = NULL;
   iencs		= NULL;
   amp		= NULL;
   pid		= NULL;
@@ -69,6 +70,9 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
   ok &= partDd->view(pos);
   if (!ok)
     fprintf(stderr, "...pos was not ok...");
+  ok &= partDd->view(iVel);
+  if (!ok)
+    fprintf(stderr, "...vel was not ok...");
   ok &= partDd->view(lim);
   if (!ok)
     fprintf(stderr, "...lim was not ok...");

@@ -322,6 +322,7 @@ void guiPid2::guiPid2(void *button, void* data)
   iTrq  = currentPart->get_ITorqueControl();
   iImp  = currentPart->get_IImpedanceControl();
   iDbg  = currentPart->get_IDebugControl();
+  iVel  = currentPart->get_IVelocityControl();
 
   //GtkWidget *winPid = NULL;
 
