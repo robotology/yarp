@@ -35,19 +35,8 @@ yarp disconnect /port1 /port2
 \par bcast
 \li The 'bcast' carrier is using collective broadcasting (similar to mcast but reliable ), i.e. the data is only send once by the sender and passed on by the receivers as needed. This leads to a decreased transmission time, roughly O(log_2(n)).
 \li It does not support replies.
-\li At the moment, the disconnect does not works as usual: it is not possible to disconnect only one receiver. And in order to disconnect all at once you need to disconnect the connection which was created first:
-\code
-yarp connect /out /in_1 bcast
-yarp connect /out /in_2 bcast
-//...
-yarp connect /out /in_n bcast
-
-yarp disconnect /out /in_2
-// no disconnect will happen (even though yarp will print a message saying so)
-
-yarp disconnect /out /in_1
-// will also disconnect /in_2,...,/in_n
-\endcode
+\li As of SVN rev. 8752, the disconnect (should) works as usual.
+\li Older versions: the disconnect does not works proberly: it is not possible to disconnect only one receiver. And in order to disconnect all at once you need to disconnect the connection which was created first.
 
 \section carrier_config_mpi_intro What is MPI?
 
@@ -81,7 +70,7 @@ If you have MPI installed in a standard location, cmake-configure should find al
 \code
 MPIEXEC   => /path/to/mpi_binaries/mpiexec
 \endcode
-and the rest should be deduced.
+and the other cmake-variables should be deduced. BUT in this case, you probably will either need to start your program explicitly with mpi (i.e. mpiexec _your_program_) or change the $PATH variable such that your custom mpiexec will be the first one to be found!!
 
 Finally, configure and recompile.
 
