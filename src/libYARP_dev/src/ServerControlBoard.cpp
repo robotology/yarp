@@ -2058,7 +2058,7 @@ case VOCAB_ICONTROLMODE:
 	        case VOCAB_CM_CONTROL_MODE:
 	        {
 				ok= mod->getControlMode(cmd.get(3).asInt(),&tmp);
-				response.addDouble(tmp); 
+				response.addVocab(tmp); 
 	        }
 			break;
 		}
