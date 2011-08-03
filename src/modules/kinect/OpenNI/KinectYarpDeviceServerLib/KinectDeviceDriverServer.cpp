@@ -188,7 +188,6 @@ bool yarp::dev::KinectDeviceDriverServer::stopService(){
 
 //returns false if the user skeleton is not being tracked
 bool yarp::dev::KinectDeviceDriverServer::getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID){
-	updateInterface();
 	if(KinectSkeletonTracker::getKinect()->userSkeleton[userID].skeletonState != SKELETON_TRACKING)
 		return false;
 	for(int i = 0; i < TOTAL_JOINTS; i++){
@@ -202,7 +201,6 @@ bool yarp::dev::KinectDeviceDriverServer::getSkeletonOrientation(Matrix *matrixA
 
 //returns false if the user skeleton is not being tracked
 bool yarp::dev::KinectDeviceDriverServer::getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID){
-	updateInterface();
 	if(KinectSkeletonTracker::getKinect()->userSkeleton[userID].skeletonState != SKELETON_TRACKING)
 		return false;
 	for(int i = 0; i < TOTAL_JOINTS; i++){
@@ -214,17 +212,22 @@ bool yarp::dev::KinectDeviceDriverServer::getSkeletonPosition(Vector *vectorArra
 	return true;
 }
 
+int *yarp::dev::KinectDeviceDriverServer::getSkeletonState(){
+	int *userState = new int[MAX_USERS];
+	for(int i = 0; i < MAX_USERS; i++){
+		userState[i] = getSkeletonState(i);
+	}
+	return userState;
+}
+
 int yarp::dev::KinectDeviceDriverServer::getSkeletonState(int userID){
-	updateInterface();
 	return KinectSkeletonTracker::getKinect()->userSkeleton[userID].skeletonState;
 }
 
 ImageOf<PixelRgb> yarp::dev::KinectDeviceDriverServer::getImageMap(){
-	updateInterface();
 	return KinectSkeletonTracker::getKinect()->imgMap;
 }
 
 ImageOf<PixelInt> yarp::dev::KinectDeviceDriverServer::getDepthMap(){
-	updateInterface();
 	return KinectSkeletonTracker::getKinect()->depthMap;
 }

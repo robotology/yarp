@@ -137,6 +137,14 @@ bool yarp::dev::KinectDeviceDriverClient::getSkeletonPosition(Vector *vectorArra
 	return true;
 }
 
+int *yarp::dev::KinectDeviceDriverClient::getSkeletonState(){
+	int *userState = new int[MAX_USERS];
+	for(int i = 0; i < MAX_USERS; i++){
+		userState[i] = getSkeletonState(i);
+	}
+	return userState;
+}
+
 int yarp::dev::KinectDeviceDriverClient::getSkeletonState(int userID){
 	return _skeletonData->getSkeletonState(userID);
 }

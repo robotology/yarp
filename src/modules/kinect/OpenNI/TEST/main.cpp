@@ -83,9 +83,9 @@ int main(int argc, char *argv[]){
 	Drivers::factory().add(kinect_factoryClient);
 	Drivers::factory().add(kinect_factoryServer);*/
 
-	Property config("(device KinectDeviceClient) (remotePortPrefix /kinect) (localPortPrefix /kinectSkeletonClient) (userDetection)");
+	//Property config("(device KinectDeviceClient) (remotePortPrefix /kinect) (localPortPrefix /kinectSkeletonClient) (userDetection)");
 	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer) (openPorts)");
-	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer) (userDetection)");
+	Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer) (userDetection)");
 	//Property config("(device KinectDeviceLocal) (portPrefix /kinectSkeletonServer)");
 	PolyDriver dd(config);
 	IKinectDeviceDriver *grabber;

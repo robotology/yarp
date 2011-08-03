@@ -57,6 +57,7 @@ public:
 	//IKinectDeviceDriver
 	virtual bool getSkeletonOrientation(Matrix *matrixArray, double *confidence,  int userID);
 	virtual bool getSkeletonPosition(Vector *vectorArray, double *confidence,  int userID);
+	virtual int *getSkeletonState();
 	virtual int getSkeletonState(int userID);
 	virtual ImageOf<PixelRgb> getImageMap();
 	virtual ImageOf<PixelInt> getDepthMap();
