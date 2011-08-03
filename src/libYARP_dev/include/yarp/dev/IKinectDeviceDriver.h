@@ -84,3 +84,4 @@ public:
 	*/
 	virtual yarp::sig::ImageOf<yarp::sig::PixelInt> getDepthMap() = 0;
 };
+
