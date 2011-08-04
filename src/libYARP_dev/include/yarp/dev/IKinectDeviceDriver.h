@@ -29,6 +29,41 @@ typedef enum
 	SKELETON_TRACKING
 } SKELETON_STATE;
 
+/**
+* A full list of available joints.
+*/
+typedef enum SkeletonJoint
+{
+	SKEL_HEAD			= 0,
+	SKEL_NECK			= 1,
+	SKEL_TORSO			= 2,
+	SKEL_WAIST			= 3,
+
+	SKEL_LEFT_COLLAR	= 4,
+	SKEL_LEFT_SHOULDER	= 5,
+	SKEL_LEFT_ELBOW		= 6,
+	SKEL_LEFT_WRIST		= 7,
+	SKEL_LEFT_HAND		= 8,
+	SKEL_LEFT_FINGERTIP	= 9,
+
+	SKEL_RIGHT_COLLAR	=10,
+	SKEL_RIGHT_SHOULDER	=11,
+	SKEL_RIGHT_ELBOW	=12,
+	SKEL_RIGHT_WRIST	=13,
+	SKEL_RIGHT_HAND		=14,
+	SKEL_RIGHT_FINGERTIP=15,
+
+	SKEL_LEFT_HIP		=16,
+	SKEL_LEFT_KNEE		=17,
+	SKEL_LEFT_ANKLE		=18,
+	SKEL_LEFT_FOOT		=19,
+
+	SKEL_RIGHT_HIP		=20,
+	SKEL_RIGHT_KNEE		=21,
+	SKEL_RIGHT_ANKLE	=22,
+	SKEL_RIGHT_FOOT		=23	
+} SkeletonJoint;
+
 namespace yarp {
 	namespace dev {
 		class IKinectDeviceDriver;
