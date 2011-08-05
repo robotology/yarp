@@ -11,45 +11,59 @@
 #include "KinectSkeletonTracker.h"
 #include "KinectDeviceDriverServer.h"
 
-yarp::dev::KinectDeviceDriverServer::KinectDeviceDriverServer(bool openPorts, bool userDetection){
-	//when this is used as a local Yarp Device the ports are only opened later
-	_openPorts = openPorts;
-	_userDetection = userDetection;
+/*yarp::dev::KinectDeviceDriverServer::KinectDeviceDriverServer(bool openPorts, bool userDetection){
+//when this is used as a local Yarp Device the ports are only opened later
+_openPorts = openPorts;
+_userDetection = userDetection;
+}*/
+
+yarp::dev::KinectDeviceDriverServer::KinectDeviceDriverServer(void)
+{
 }
 
 yarp::dev::KinectDeviceDriverServer::~KinectDeviceDriverServer(void)
 {
 }
 
-void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix){
+void yarp::dev::KinectDeviceDriverServer::openPorts(string portPrefix, bool userDetection, bool camerasON){
 	//std::cout << "openPorts()" << endl;
 	_openPorts = true;
-	string sendingPortName = portPrefix+PORTNAME_SKELETON+":o";
+
 	string receivingPortName = portPrefix+":i";
-	_skeletonPort = new BufferedPort<Bottle>();
-	_skeletonPort->open(sendingPortName.c_str());
 	_receivingPort = new BufferedPort<Bottle>();
 	_receivingPort->open(receivingPortName.c_str());
 
-	_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >();
-	string strTemp = portPrefix+PORTNAME_DEPTHMAP+":o";
-	_depthMapPort->open(strTemp.c_str());
-	_imgMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
-	strTemp = portPrefix+PORTNAME_IMAGEMAP+":o";
-	_imgMapPort->open(strTemp.c_str());
+	if(userDetection){
+		string skeletonPortName = portPrefix+PORTNAME_SKELETON+":o";
+		_skeletonPort = new BufferedPort<Bottle>();
+		_skeletonPort->open(skeletonPortName.c_str());
+	}
+
+	if(camerasON){
+		_depthMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> >();
+		string strTemp = portPrefix+PORTNAME_DEPTHMAP+":o";
+		_depthMapPort->open(strTemp.c_str());
+		_imgMapPort = new BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> >();
+		strTemp = portPrefix+PORTNAME_IMAGEMAP+":o";
+		_imgMapPort->open(strTemp.c_str());
+	}
 }
 
 void yarp::dev::KinectDeviceDriverServer::sendKinectData(){
 	KinectSkeletonTracker::UserSkeleton *userSkeleton = KinectSkeletonTracker::getKinect()->userSkeleton;
 	double *joint;
 	int index = 0;
-	//image map data
-	_imgMapPort->prepare() = KinectSkeletonTracker::getKinect()->imgMap;
-	_imgMapPort->write();
 
-	//image depth map data
-	_depthMapPort->prepare() = KinectSkeletonTracker::getKinect()->depthMap;
-	_depthMapPort->write();
+	//cameras data
+	if(_camerasON){
+		//image map data
+		_imgMapPort->prepare() = KinectSkeletonTracker::getKinect()->imgMap;
+		_imgMapPort->write();
+
+		//image depth map data
+		_depthMapPort->prepare() = KinectSkeletonTracker::getKinect()->depthMap;
+		_depthMapPort->write();
+	}
 
 	//skeleton data
 	if(_userDetection)
@@ -119,25 +133,34 @@ bool yarp::dev::KinectDeviceDriverServer::open(yarp::os::Searchable& config){
 	//this function is used in case of the Yarp Device being used as local
 	std::cout << "Starting Kinect Yarp Device please wait..." << endl;
 	string portPrefix;
+
+	if(config.check("noCameras")) _camerasON = false;
+	else _camerasON = true;
+
+	if(config.check("userDetection")) _userDetection = true;
+	else _userDetection = false;
+
 	if(config.check("portPrefix")){
 		portPrefix = config.find("portPrefix").asString();
 		_openPorts = true;
-	}else {
-		std::cout << "ERROR: portPrefix not specified!" << endl;
-		return false;
-	}
-	if(config.check("userDetection")) _userDetection = true;
-	if(_openPorts) {
-//		setupPorts(portPrefix+":i", portPrefix+PORTNAME_SKELETON+":o");
-		openPorts(portPrefix);
-	}
-	_skeleton = new KinectSkeletonTracker(_userDetection);
+		openPorts(portPrefix, _userDetection,_camerasON);
+	}else _openPorts  = false;
+
+	_skeleton = new KinectSkeletonTracker(_userDetection,_camerasON);
 	std::cout << "Kinect Yarp Device started. Enjoy!" << endl;
 	return true;
 }
 
 bool yarp::dev::KinectDeviceDriverServer::close(){
 	_skeleton->close();
+	if(_openPorts){
+		if(_userDetection) _skeletonPort->close();
+		if(_camerasON){
+			_depthMapPort->close();
+			_imgMapPort->close();
+		}
+		_openPorts = false;
+	}
 	return true;
 }
 

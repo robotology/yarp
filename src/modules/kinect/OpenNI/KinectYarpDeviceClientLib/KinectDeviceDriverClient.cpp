@@ -43,7 +43,7 @@ bool yarp::dev::KinectDeviceDriverClient::open(yarp::os::Searchable& config){
 	}
 
 	if(!connectPorts(remotePortPrefix,localPortPrefix)) {
-		printf("\t- Error: Could not connect ports.\n");
+		printf("\t- Error: Could not connect or create ports.\n");
 		return false;
 	}
 
@@ -74,31 +74,28 @@ bool yarp::dev::KinectDeviceDriverClient::connectPorts(string remotePortPrefix, 
 	string outDepthMapPort =	remotePortPrefix+PORTNAME_DEPTHMAP+":o";
 	string outImageMapPort =	remotePortPrefix+PORTNAME_IMAGEMAP+":o";
 
+	bool portsOK = true;
+
 	//this ports were added later but work in the same way
 	_inImageMapPort = new BufferedPort<ImageOf<PixelRgb> >();
-	_inImageMapPort->open(inImageMapPort.c_str());
+	portsOK = portsOK && _inImageMapPort->open(inImageMapPort.c_str());
 	_inDepthMapPort = new BufferedPort<ImageOf<PixelInt> >();
-	_inDepthMapPort->open(inDepthMapPort.c_str());
+	portsOK = portsOK && _inDepthMapPort->open(inDepthMapPort.c_str());
 	
 	_outPort = new BufferedPort<Bottle>();
-	_outPort->open(outLocalPort.c_str());
+	portsOK = portsOK && _outPort->open(outLocalPort.c_str());
 	_inUserSkeletonPort = new BufferedPort<Bottle>();
-	_inUserSkeletonPort->open(inUserSkeletonPort.c_str());
-	//server ports
-	//setupPorts(inUserSkeletonPort,outLocalPort);
-	//_outPort = _sendingPort;
-	//_inUserSkeletonPort = _receivingPort;
+	portsOK = portsOK && _inUserSkeletonPort->open(inUserSkeletonPort.c_str());
 
+	bool anyPort = false;
+	if(Network::connect(outLocalPort.c_str(),inRemotePort.c_str(),NULL,false)) anyPort = true;
+    if(Network::connect(outUserSkeletonPort.c_str(),inUserSkeletonPort.c_str(),NULL,false)) anyPort = true;
+    if(Network::connect(outDepthMapPort.c_str(),inDepthMapPort.c_str(),NULL,false)) anyPort = true;
+    if(Network::connect(outImageMapPort.c_str(),inImageMapPort.c_str(),NULL,false)) anyPort = true;
 
-	if(!Network::connect(outLocalPort.c_str(),inRemotePort.c_str(),NULL,false) ||
-       !Network::connect(outUserSkeletonPort.c_str(),inUserSkeletonPort.c_str(),NULL,false) ||
-       !Network::connect(outDepthMapPort.c_str(),inDepthMapPort.c_str(),NULL,false) ||
-       !Network::connect(outImageMapPort.c_str(),inImageMapPort.c_str(),NULL,false)) {
-			close();
-			return false;
-	}
+	if(!anyPort || !portsOK) close();
 
-	return true;
+	return anyPort && portsOK;
 }
 
 void yarp::dev::KinectDeviceDriverClient::onRead(Bottle& b){_skeletonData->storeData(b);}

@@ -34,6 +34,7 @@ The [OPTIONS] should be one of the following:
  User/Skeleton data port [STRING]/userSkeleton:o</td>
 													<td></td></tr>
 <tr><td>userDetection</td><td>If this property exists the user/skeleton will be detected</td><td>false</td></tr>
+<tr><td>noCameras</td><td>If this property exists the image from the camera will be retrieved (if not the images will be blank)</td><td>true</td></tr>
 </table>
 
 For the user/skeleton detection to work the user must stand in front of the camera in the Psi pose. This may take a while depending on several conditions.

@@ -60,7 +60,8 @@ namespace yarp {
 class yarp::dev::KinectDeviceDriverServer: public IService, public yarp::dev::IKinectDeviceDriver, 
 	public yarp::dev::DeviceDriver{
 public:
-	KinectDeviceDriverServer(bool openPorts = false, bool userDetection = false);
+	//KinectDeviceDriverServer(bool openPorts = false, bool userDetection = false);
+	KinectDeviceDriverServer(void);
 	~KinectDeviceDriverServer(void);
 	//GenericYarpDriver
 	virtual bool updateInterface();
@@ -84,11 +85,11 @@ private:
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelInt> > *_depthMapPort;
 	BufferedPort<yarp::sig::ImageOf<yarp::sig::PixelRgb> > *_imgMapPort;
 	KinectSkeletonTracker *_skeleton;
-	bool _openPorts, _userDetection;
+	bool _openPorts, _userDetection, _camerasON;
 	/**
 	* Opens the depth map a rgb camera image ports
 	*/
-	void openPorts(string portPrefix);
+	void openPorts(string portPrefix, bool userDetection, bool camerasON);
 	/**
 	* Sends the kinect data to the rgb and depth map ports. Also sends the userSkeleton data to the mainBottle port.
 	*

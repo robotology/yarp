@@ -28,9 +28,10 @@ KinectSkeletonTracker::KinectStatus *KinectSkeletonTracker::_kinectStatus;
 	return (rc);						\
 }
 
-KinectSkeletonTracker::KinectSkeletonTracker(bool userDetection)
+KinectSkeletonTracker::KinectSkeletonTracker(bool userDetection, bool camerasON)
 {
 	_userDetection = userDetection;
+	_camerasON = camerasON;
 	initVars();
 	init();
 }
@@ -88,21 +89,22 @@ int KinectSkeletonTracker::init(){
 	xnOSStrCopy(lic->strKey, KINECT_LICKEY,XN_MAX_LICENSE_LENGTH);
 	_context->AddLicense(*lic);
 
-	//depth generator setup
-	_depthGenerator = new DepthGenerator();
-	_depthGenerator->Create(*_context);
-	_depthGenerator->SetMapOutputMode(mapMode);
-	rc = _context->FindExistingNode(XN_NODE_TYPE_DEPTH, *_depthGenerator);
-	CHECK_RC(rc, "Find depth generator");
+	if(_camerasON){
+		//depth generator setup
+		_depthGenerator = new DepthGenerator();
+		_depthGenerator->Create(*_context);
+		_depthGenerator->SetMapOutputMode(mapMode);
+		rc = _context->FindExistingNode(XN_NODE_TYPE_DEPTH, *_depthGenerator);
+		CHECK_RC(rc, "Find depth generator");
+		//image generator setup
+		_imgGenerator = new ImageGenerator();
+		_imgGenerator->Create(*_context);
+		_imgGenerator->SetMapOutputMode(mapMode);
+		rc = _context->FindExistingNode(XN_NODE_TYPE_IMAGE, *_imgGenerator);
+		CHECK_RC(rc, "Find image generator");
 
-	//image generator setup
-	_imgGenerator = new ImageGenerator();
-	_imgGenerator->Create(*_context);
-	_imgGenerator->SetMapOutputMode(mapMode);
-	rc = _context->FindExistingNode(XN_NODE_TYPE_IMAGE, *_imgGenerator);
-	CHECK_RC(rc, "Find image generator");
-
-	_context->SetGlobalMirror(true);
+		_context->SetGlobalMirror(true);
+	}
 
 	//user generator setup
 	if(_userDetection){
@@ -129,17 +131,16 @@ void KinectSkeletonTracker::updateKinect(){
 	_context->WaitNoneUpdateAll();
 
 	//get camera image
-	if(_imgGenerator->IsDataNew()){
+	if(_camerasON && _imgGenerator->IsDataNew()){
 		ImageMetaData imgMD;
 		_imgGenerator->GetMetaData(imgMD);
 		unsigned char* pImg = (unsigned char*)_imgGenerator->GetImageMap();
 		memcpy(getKinect()->imgMap.getRawImage(), pImg, getKinect()->imgMap.getRawImageSize());
 	}
 
-
 	//get depth image (in milimeters)
 	// Get information about the depth image
-	if(_depthGenerator->IsDataNew()){
+	if(_camerasON && _depthGenerator->IsDataNew()){
 		DepthMetaData depthMD;
 		_depthGenerator->GetMetaData(depthMD);
 		const XnDepthPixel* pDepth = _depthGenerator->GetDepthMap();

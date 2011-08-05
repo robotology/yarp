@@ -26,7 +26,9 @@ void KinectSkeletonData::initUserSkeletons(){
 		userSkeleton = &(_userSkeleton[i]);
 		for(int j = 0; j < TOTAL_JOINTS; j++){
 			userSkeleton->skeletonPointsOri[j].resize(3,3);
+			userSkeleton->skeletonPointsOri[j].zero();
 			userSkeleton->skeletonPointsPos[j].resize(3);
+			userSkeleton->skeletonPointsPos[j].zero();
 			userSkeleton->skeletonPosConf[j] = -1;
 			userSkeleton->skeletonOriConf[j] = -1;
 			userSkeleton->skeletonState = NO_USER;
