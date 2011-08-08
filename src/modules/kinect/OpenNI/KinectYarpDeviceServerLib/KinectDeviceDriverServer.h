@@ -64,7 +64,7 @@ public:
 	KinectDeviceDriverServer(void);
 	~KinectDeviceDriverServer(void);
 	//GenericYarpDriver
-	virtual bool updateInterface();
+	virtual bool updateInterface(bool wait);
 	//DeviceDriver
 	virtual bool open(yarp::os::Searchable& config);
 	virtual bool close();

@@ -78,7 +78,7 @@ public:
 	/**
 	* Kinect data update function. This function updates the data structs with the latest kinect data.
 	*/
-	void updateKinect();
+	void updateKinect(bool wait);
 	/**
 	* get the static KinectStatus object
 	*/

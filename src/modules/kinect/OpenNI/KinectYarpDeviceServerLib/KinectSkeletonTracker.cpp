@@ -126,9 +126,10 @@ int KinectSkeletonTracker::init(){
 	return rc;
 }
 
-void KinectSkeletonTracker::updateKinect(){
+void KinectSkeletonTracker::updateKinect(bool wait){
 	// Read next available data
-	_context->WaitAnyUpdateAll();
+	if(wait) _context->WaitAnyUpdateAll();
+	else _context->WaitNoneUpdateAll();
 
 	//get camera image
 	if(_camerasON && _imgGenerator->IsDataNew()){
