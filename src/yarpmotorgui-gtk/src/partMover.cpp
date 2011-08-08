@@ -184,13 +184,14 @@ partMover::partMover(GtkWidget *vbox_d, PolyDriver *partDd_d, PolyDriver *debugD
       double positions[MAX_NUMBER_OF_JOINTS];
 	
 	  bool ret=false;
+      Time::delay(0.050);
 	  do 
 	  {
 		ret=iencs->getEncoders(positions);
 		if (!ret)
 		{
 		  fprintf(stderr, "%s iencs->getEncoders() failed, retrying...\n", partName);
-		  Time::delay(1);
+		  Time::delay(0.050);
 		}
 	  }
       while (!ret);
