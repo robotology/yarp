@@ -600,7 +600,7 @@ static void myMain2(GtkButton *button,	int *position)
         }
 
     gtk_main ();		
-    fprintf(stderr, "Closing the partMovers. Number of acitvated parts was %d. \n", NUMBER_OF_ACTIVATED_PARTS);
+    fprintf(stderr, "Closing the partMovers. Number of activated parts was %d. \n", NUMBER_OF_ACTIVATED_PARTS);
     for (int i = 0; i < NUMBER_OF_ACTIVATED_PARTS; i++)
         {
             fprintf(stderr, "Closing part number %d \n", i);
@@ -610,7 +610,7 @@ static void myMain2(GtkButton *button,	int *position)
             Time::delay(0.1);
         }
 
-    fprintf(stderr, "Closing the cartesianMovers. Number of acitvated parts was %d. \n", NUMBER_OF_ACTIVATED_CARTESIAN);
+    fprintf(stderr, "Closing the cartesianMovers. Number of activated parts was %d. \n", NUMBER_OF_ACTIVATED_CARTESIAN);
     for (int i = 0; i < NUMBER_OF_ACTIVATED_CARTESIAN; i++)
         {
             fprintf(stderr, "Closing part number %d \n", i);
