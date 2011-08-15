@@ -98,7 +98,7 @@ cd $BUILD_DIR
 (
 	echo "export SOURCE_DIR='$SOURCE_DIR'"
 	echo "export BUNDLE_NAME='$BUNDLE_NAME'"
-	echo "export BUNDLE_FILENAME='$SOURCE_DIR/$BUNDLE_FILENAME'"
+	echo "export BUNDLE_FILENAME='$BUNDLE_FILENAME'"
 ) > $BUILD_DIR/settings.sh
 creation_list="$creation_list, settings.sh"
 

@@ -33,6 +33,11 @@ source ./settings.sh || {
 	exit 1
 }
 
+source $BUNDLE_FILENAME || {
+	echo "No bundle settings found: Tried '$BUNDLE_FILENAME'"
+	exit 1
+}
+
 platform=$1
 dir=$2
 
@@ -65,7 +70,8 @@ function run_in_chroot {
 run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake wget" || exit 1
 
 # Fetch yarp from SVN
-run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2" || exit 1
+# run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2" || exit 1
+run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-$YARP_VERSION yarp2" || exit 1
 CHROOT_SRC=/tmp/yarp2
 run_in_chroot build_chroot "cd $CHROOT_SRC && svn up" || exit 1
 
@@ -88,7 +94,7 @@ if [ -e build_chroot/$CHROOT_BUILD/local_cmake ]; then
 fi
 
 # Go ahead and configure
-run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE $CHROOT_SRC" || exit 1
+run_in_chroot build_chroot "mkdir -p $CHROOT_BUILD && cd $CHROOT_BUILD && $CMAKE -DCREATE_GUIS=TRUE -DCMAKE_INSTALL_PREFIX=/usr -DCREATE_SHARED_LIBRARY=TRUE -DCREATE_YARPSERVER3=TRUE -DCREATE_LIB_MATH=TRUE $CHROOT_SRC" || exit 1
 
 # Go ahead and make
 run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
