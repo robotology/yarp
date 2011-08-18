@@ -1,3 +1,7 @@
+2011-08-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: version bump to 2.3.9
+
 2011-08-03  Marco Randazzo    <marco.randazzo@iit.it>
 
 	* src/libYARP_dev/src/ServerControlBoard.cpp
