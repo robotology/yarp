@@ -1,3 +1,8 @@
+2011-08-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/YarpVersion.cmake: version bump to 2.3.10 to incorporate
+	Lorenzo's Dll fixes
+
 2011-08-19  Lorenzo Natale <lorenzo.natale@iit.it>
 
     * src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h
