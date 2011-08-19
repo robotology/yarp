@@ -88,7 +88,7 @@ public:
  *
  * Interface for controlling the output of a motor control device.
  */
-class yarp::dev::IOpenLoopControl
+class YARP_dev_API yarp::dev::IOpenLoopControl
 {
 public:
     virtual ~IOpenLoopControl(){}
@@ -163,7 +163,7 @@ public:
  *
  * Interface for setting control mode in control board.
  */
-class yarp::dev::IControlMode
+class YARP_dev_API yarp::dev::IControlMode
 {
 public:
     virtual ~IControlMode(){}
@@ -653,7 +653,7 @@ public:
  *
  * Interface for a generic control board device implementing position control.
  */
-class yarp::dev::IPositionControl
+class YARP_dev_API yarp::dev::IPositionControl
 {
 public:
     /**
@@ -1278,7 +1278,7 @@ public:
  *
  * Control board, encoder interface.
  */
-class yarp::dev::IEncoders
+class YARP_dev_API yarp::dev::IEncoders
 {
 public:
     /**
@@ -1761,7 +1761,7 @@ public:
  *
  * Interface for control boards implementing torque control.
  */
-class yarp::dev::ITorqueControl
+class YARP_dev_API yarp::dev::ITorqueControl
 {
 public:
     /**
@@ -1938,7 +1938,7 @@ public:
  *
  * Interface for control boards implementing impedance control.
  */
-class yarp::dev::IImpedanceControl
+class YARP_dev_API yarp::dev::IImpedanceControl
 {
 public:
     /**

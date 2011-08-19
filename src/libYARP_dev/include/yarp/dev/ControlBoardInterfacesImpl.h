@@ -667,7 +667,7 @@ public:
     virtual bool done(int j);
 };
 
-class yarp::dev::ImplementControlMode: public IControlMode
+class YARP_dev_API yarp::dev::ImplementControlMode: public IControlMode
 {
     void *helper;
     yarp::dev::IControlModeRaw *raw;
@@ -686,7 +686,7 @@ public:
 	bool getControlModes(int *modes);
 };
 
-class yarp::dev::ImplementTorqueControl: public ITorqueControl 
+class YARP_dev_API yarp::dev::ImplementTorqueControl: public ITorqueControl 
 {
 protected:
     yarp::dev::ITorqueControlRaw *iTorqueRaw;
@@ -751,7 +751,7 @@ public:
     virtual bool setTorqueOffset(int j, double v);
 };
 
-class yarp::dev::ImplementImpedanceControl: public IImpedanceControl 
+class YARP_dev_API yarp::dev::ImplementImpedanceControl: public IImpedanceControl 
 {
 protected:
     yarp::dev::IImpedanceControlRaw *iImpedanceRaw;
@@ -790,7 +790,7 @@ public:
 	virtual bool getImpedanceOffset(int j, double* offset);
 };
 
-class yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
+class YARP_dev_API yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl
 {
     void *helper;
     yarp::dev::IOpenLoopControlRaw *raw;
