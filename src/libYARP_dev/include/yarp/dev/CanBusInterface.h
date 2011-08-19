@@ -26,7 +26,7 @@ namespace yarp {
     }
 }
 
-class YARP_dev_API yarp::dev::CanErrors
+class yarp::dev::CanErrors
 {
 public:
     CanErrors()
@@ -49,7 +49,7 @@ public:
     unsigned int rxBufferOvr;    // rx buffer overflow
 };
 
-class YARP_dev_API yarp::dev::CanMessage
+class yarp::dev::CanMessage
 {
  public:
     virtual ~CanMessage(){}
@@ -90,7 +90,7 @@ class yarp::dev::CanBuffer
         }
 };
 
-class YARP_dev_API yarp::dev::ICanBufferFactory
+class yarp::dev::ICanBufferFactory
 {
 public:
     virtual ~ICanBufferFactory(){}
@@ -104,7 +104,7 @@ public:
  * IMPL is the internal representation of the can message.
  */
 template<class M, class IMPL> 
-class YARP_dev_API yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
+class yarp::dev::ImplementCanBufferFactory: public ICanBufferFactory
 {
 public:
     virtual ~ImplementCanBufferFactory(){}
@@ -158,7 +158,7 @@ public:
 /**
  * Interface for a can bus device
  */
-class YARP_dev_API yarp::dev::ICanBus
+class yarp::dev::ICanBus
 {
  public:
     virtual ~ICanBus(){}
