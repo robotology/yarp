@@ -282,13 +282,22 @@ bool Port::open(const Contact& contact, bool registerName,
         return false;
     }
 
-    ConstString n = contact.getName();
+    ConstString n = contact2.getName();
     if (n!="..." && n!="" && n[0]!='/') {
         if (fakeName==NULL) {
             YARP_SPRINTF1(Logger::get(),error,
                           "Port name '%s' needs to start with a '/' character",
                           n.c_str());
             return false;
+        }
+    }
+    if (n!="..." && n!="") {
+        if (fakeName==NULL) {
+            ConstString prefix = NetworkBase::getEnvironment("YARP_PORT_PREFIX");
+            if (prefix!="") {
+                n = prefix + n;
+                contact2 = contact2.addName(n);
+            }
         }
     }
 
@@ -317,7 +326,7 @@ bool Port::open(const Contact& contact, bool registerName,
     core.openable();
 
     bool local = false;
-    if (NetworkBase::localNetworkAllocation()&&contact.getPort()<=0) {
+    if (NetworkBase::localNetworkAllocation()&&contact2.getPort()<=0) {
         YARP_DEBUG(Logger::get(),"local network allocation needed");
         local = true;
     }
@@ -330,7 +339,7 @@ bool Port::open(const Contact& contact, bool registerName,
     Address address = caddress;
 
     core.setReadHandler(core);
-    if (contact.getPort()>0 && contact.getHost()!="") {
+    if (contact2.getPort()>0 && contact2.getHost()!="") {
         registerName = false;
     }
     if (registerName&&!local) {
@@ -375,7 +384,7 @@ bool Port::open(const Contact& contact, bool registerName,
     if (!success) {
         YARP_ERROR(Logger::get(),
                    String("Port ") +
-                   (address.isValid()?(address.getRegName().c_str()):(contact.getName().c_str())) +
+                   (address.isValid()?(address.getRegName().c_str()):(contact2.getName().c_str())) +
                    " failed to activate" +
                    (address.isValid()?" at ":"") +
                    (address.isValid()?address.toString():String("")) +
