@@ -92,6 +92,10 @@ namespace guiPid2
 
 	static GtkWidget *imp_stiffDes = NULL;
 	static GtkWidget *imp_dampDes = NULL;
+	static GtkWidget *imp_stiffMax = NULL;
+	static GtkWidget *imp_dampMax = NULL;
+	static GtkWidget *imp_stiffMin = NULL;
+	static GtkWidget *imp_dampMin = NULL;
 	static GtkWidget *imp_offDes = NULL;
 	static GtkWidget *imp_stiffEntry = NULL;
 	static GtkWidget *imp_dampEntry = NULL;
@@ -114,10 +118,10 @@ namespace guiPid2
 	void send_trq_pid (GtkButton *button, Pid *pid);
 	void send_imp_pid (GtkButton *button, Pid *pid);
 	void send_dbg_pid (GtkButton *button, Pid *pid);
-	void displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
-	void changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label);
-	void displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label);
-	void changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label);
+	void displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small = false);
+	void changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small = false);
+	void displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small = false);
+	void changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small = false);
 };
 
 #endif

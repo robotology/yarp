@@ -169,12 +169,28 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   iImp->getImpedance(*joint, &stiff_val, &damp_val);
   iImp->getImpedanceOffset(*joint, &offset_val);
 
+  //update the impedance params
   sprintf(buffer, "%3.3f", stiff_val);
   gtk_entry_set_text((GtkEntry*) imp_stiffEntry,  buffer);
   sprintf(buffer, "%3.3f", damp_val);
   gtk_entry_set_text((GtkEntry*) imp_dampEntry,  buffer);
   sprintf(buffer, "%3.3f", offset_val);
   gtk_entry_set_text((GtkEntry*) imp_offEntry,  buffer);
+
+  //update the impedance limits
+  double stiff_max=0.0;
+  double stiff_min=0.0;
+  double damp_max=0.0;
+  double damp_min=0.0;
+  iImp->getCurrentImpedanceLimit(*joint, &stiff_min, &stiff_max, &damp_min, &damp_max);
+  sprintf(buffer, "%3.3f", stiff_min);
+  gtk_entry_set_text((GtkEntry*) imp_stiffMin,  buffer);
+  sprintf(buffer, "%3.3f", stiff_max);
+  gtk_entry_set_text((GtkEntry*) imp_stiffMax,  buffer);
+  sprintf(buffer, "%3.3f", damp_min);
+  gtk_entry_set_text((GtkEntry*) imp_dampMin,  buffer);
+  sprintf(buffer, "%3.3f", damp_max);
+  gtk_entry_set_text((GtkEntry*) imp_dampMax,  buffer);
 }
 
 //*********************************************************************************
@@ -198,6 +214,9 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
   debug_param[6]=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug6Des));
   debug_param[7]=atoi(gtk_entry_get_text((GtkEntry*) dbg_debug7Des));
 
+  //double t;
+  //iDbg->setDebugReferencePosition(0,123);
+  //iDbg->getDebugReferencePosition(0,&t);
   iDbg->setDebugParameter(*joint, debug_base+0,  debug_param[0]); debug_param[0] = 0;
   iDbg->getDebugParameter(*joint, debug_base+0, &debug_param[0]);
   iDbg->setDebugParameter(*joint, debug_base+1,  debug_param[1]); debug_param[1] = 0;
@@ -234,15 +253,25 @@ void guiPid2::send_dbg_pid (GtkButton *button, Pid *pid)
 }
 
 //*********************************************************************************
-void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label)
+void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small)
 {
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
-  gtk_widget_set_size_request 	(frame, 130, 60);
-  gtk_widget_set_size_request 	(entry, 60, 20);
+  if (!small)
+  {
+	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
+	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
+	gtk_widget_set_size_request 	(frame, 130, 60);
+	gtk_widget_set_size_request 	(entry, 60, 20);
+  }
+  else
+  {
+	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
+	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+10, posY+30);
+	gtk_widget_set_size_request 	(frame, 60, 60);
+	gtk_widget_set_size_request 	(entry, 40, 20);
+  }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
   sprintf(buffer, "%d", k);
@@ -251,15 +280,25 @@ void guiPid2::displayPidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, 
 }
 
 //*********************************************************************************
-void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label)
+void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char *label, bool small)
 {
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
 
-  gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
-  gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
-  gtk_widget_set_size_request 	(frame, 130, 60);
-  gtk_widget_set_size_request 	(entry, 60, 20);
+  if (!small)
+  {
+	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
+	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+30, posY+30);
+	gtk_widget_set_size_request 	(frame, 130, 60);
+	gtk_widget_set_size_request 	(entry, 60, 20);
+  }
+  else
+  {
+	gtk_fixed_put	(GTK_FIXED(inv), frame, posX+0, posY);
+	gtk_fixed_put	(GTK_FIXED(inv), entry, posX+10, posY+30);
+	gtk_widget_set_size_request 	(frame, 60, 60);
+	gtk_widget_set_size_request 	(entry, 40, 20);
+  }
 
   gtk_editable_set_editable ((GtkEditable*) entry, FALSE);
   sprintf(buffer, "%3.3f", k);
@@ -268,7 +307,7 @@ void guiPid2::displayPidValue(double k, GtkWidget *inv,GtkWidget *entry, int pos
 }
 
 //*********************************************************************************
-void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label)
+void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small)
 {
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
@@ -284,7 +323,7 @@ void guiPid2::changePidValue(int k, GtkWidget *inv,GtkWidget *entry, int posX, i
 }
 
 //*********************************************************************************
-void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label)
+void guiPid2::changePidValue(double k, GtkWidget *inv,GtkWidget *entry, int posX, int posY, const char * label, bool small)
 {
   char buffer[40];
   GtkWidget *frame = gtk_frame_new (label);
@@ -338,10 +377,15 @@ void guiPid2::guiPid2(void *button, void* data)
   Pid myTrqPid(0, 0, 0, 0, 0, 0);
   double stiff_val=0;
   double damp_val=0;
+  double stiff_max=0;
+  double damp_max=0;
+  double stiff_min=0;
+  double damp_min=0;
   double offset_val=0;
   double debug_param [8];
   for (int i=0; i<8; i++) debug_param[i] =0;
 
+  iImp->getCurrentImpedanceLimit(*joint, &stiff_min, &stiff_max, &damp_min, &damp_max);
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
@@ -551,21 +595,31 @@ void guiPid2::guiPid2(void *button, void* data)
   displayPidValue(stiff_val, note_pag3, imp_stiffEntry, 0, 0, "Current Joint stiffness");
   //stiffness desired
   imp_stiffDes   =  gtk_entry_new();
-  changePidValue(stiff_val, note_pag3, imp_stiffDes, 110, 0, "Desired Joint stiffness");
+  changePidValue(stiff_val, note_pag3, imp_stiffDes, 180, 0, "Desired Joint stiffness");
+  //stiffness limits
+  imp_stiffMax   =  gtk_entry_new();
+  displayPidValue(stiff_max, note_pag3, imp_stiffMax, 330, 0, "Max", true);
+  imp_stiffMin   =  gtk_entry_new();
+  displayPidValue(stiff_min, note_pag3, imp_stiffMin, 140, 0, "Min", true);
 
   //damping
   imp_dampEntry = gtk_entry_new();
   displayPidValue(damp_val, note_pag3, imp_dampEntry, 0, 70, "Current Joint damping");
   //damping desired
   imp_dampDes   =  gtk_entry_new();
-  changePidValue(damp_val, note_pag3, imp_dampDes, 110, 70, "Desired Joint damping");
+  changePidValue(damp_val, note_pag3, imp_dampDes, 180, 70, "Desired Joint damping");
+  //damping limits
+  imp_dampMax   =  gtk_entry_new();
+  displayPidValue(damp_max, note_pag3, imp_dampMax, 330, 70, "Max", true);
+  imp_dampMin   =  gtk_entry_new();
+  displayPidValue(damp_min, note_pag3, imp_dampMin, 140, 70, "Min", true);
 
   //offset
   imp_offEntry = gtk_entry_new();
   displayPidValue(offset_val, note_pag3, imp_offEntry, 0, 140, "Current Joint Force off");
   //offset desired
   imp_offDes   =  gtk_entry_new();
-  changePidValue(offset_val, note_pag3, imp_offDes, 110, 140, "Desired Joint Force off");
+  changePidValue(offset_val, note_pag3, imp_offDes, 180, 140, "Desired Joint Force off");
 
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");
