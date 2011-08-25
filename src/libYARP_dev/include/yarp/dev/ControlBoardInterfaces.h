@@ -1174,10 +1174,15 @@ public:
     */
 	virtual bool setImpedanceOffsetRaw(int j, double offset)=0;
 
-	/** Set current force Offset for a specific joint.
+	/** Get current force Offset for a specific joint.
     * @return success/failure
     */
 	virtual bool getImpedanceOffsetRaw(int j, double* offset)=0;
+
+	/** Get the current impedandance limits for a specific joint.
+    * @return success/failure
+    */
+	virtual bool getCurrentImpedanceLimitRaw(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)=0;
 };
 
 /**
@@ -1968,10 +1973,16 @@ public:
     */
 	virtual bool setImpedanceOffset(int j, double offset)=0;
 
-	/** Set current force Offset for a specific joint.
+	/** Get current force Offset for a specific joint.
     * @return success/failure
     */
 	virtual bool getImpedanceOffset(int j, double* offset)=0;
+
+	/** Get the current impedandance limits for a specific joint.
+    * @return success/failure
+    */
+	virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)=0;
+
 };
 
 /* Vocabs representing the above interfaces */

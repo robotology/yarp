@@ -1870,6 +1870,27 @@ public:
         return CHECK_FAIL(ok, response);
     }
 
+	bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+	{
+		Bottle cmd, response;
+        cmd.addVocab(VOCAB_GET);
+        cmd.addVocab(VOCAB_IMPEDANCE);
+        cmd.addVocab(VOCAB_LIMITS);
+        cmd.addInt(j);
+        bool ok = rpc_p.write(cmd, response);
+        if (CHECK_FAIL(ok, response)) {
+            Bottle& l = *(response.get(2).asList());
+            if (&l == 0)
+                return false;
+            *min_stiff    = l.get(0).asDouble();
+			*max_stiff    = l.get(1).asDouble();
+			*min_damp     = l.get(2).asDouble();
+			*max_damp     = l.get(3).asDouble();
+            return true;
+        }
+        return false;
+	}
+
     bool getTorquePids(Pid *pids)
     {
         if (!isLive()) return false;

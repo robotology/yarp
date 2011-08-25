@@ -788,6 +788,8 @@ public:
     virtual bool setImpedance(int j, double  stiffness, double  damping);
 	virtual bool setImpedanceOffset(int j, double offset);
 	virtual bool getImpedanceOffset(int j, double* offset);
+	virtual bool getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp);
+
 };
 
 class YARP_dev_API yarp::dev::ImplementOpenLoopControl: public IOpenLoopControl

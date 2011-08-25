@@ -459,6 +459,15 @@ bool ImplementImpedanceControl::getImpedanceOffset(int j, double *offset)
 	*offset    = (castToMapper(helper)->trqS2N(*offset,k));
 	return ret;
 }
+
+bool ImplementImpedanceControl::getCurrentImpedanceLimit(int j, double *min_stiff, double *max_stiff, double *min_damp, double *max_damp)
+{
+    int k;
+    k=castToMapper(helper)->toHw(j);
+    return iImpedanceRaw->getCurrentImpedanceLimitRaw(k, min_stiff, max_stiff, min_damp, max_damp);
+}
+
+
 /////////////// implement ImplementOpenLoopControl
 ImplementOpenLoopControl::ImplementOpenLoopControl(IOpenLoopControlRaw *r)
 {
