@@ -46,6 +46,13 @@ if [ "k$dir" = "k" ]; then
     exit 1
 fi
 
+
+# Load the configuration of the desired platform
+source ./config_$platform.sh || {
+	echo "No platform configuration file found"
+	exit 1
+}
+
 # Load the configuration of a clean chroot
 source chroot_${platform}.sh || {
 	echo "Cannot find corresponding chroot"
@@ -104,8 +111,8 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || exit 1
 
 # Copy .deb to somewhere easier to find
-rm -f *.deb
-cp build_chroot/$CHROOT_BUILD/yarp-*.deb . || exit 1
+rm -f *.deb 2> /dev/null
+cp build_chroot/$CHROOT_BUILD/yarp-*.deb yarp-${YARP_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}.deb || exit 1
 fname=`ls *.deb`
 
 # Record settings

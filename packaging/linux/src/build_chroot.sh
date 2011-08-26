@@ -54,7 +54,9 @@ fi
 
 # Create chroot if it does not already exist
 if [ ! -e $dir ]; then
-    sudo debootstrap --variant=buildd $PLATFORM_COMPONENTS $platform $dir $PLATFORM_MIRROR || {
+    cmd="debootstrap --variant=buildd --arch=$PLATFORM_HARDWARE $PLATFORM_COMPONENTS $PLATFORM_KEY $dir $PLATFORM_MIRROR"
+    echo "Building chroot: $cmd"
+    sudo $cmd || {
 	sudo rm -rf chroot_$platform.fail; 
 	sudo mv chroot_$platform chroot_$platform.fail 
 	exit 1

@@ -119,52 +119,63 @@ echo " "
 
 # Add build targets to Makefile
 all_targets=""
+VARIANTS=""
 for platform in $PLATFORMS; do
     # Pick up correct script for platform
-    PLATFORM_FILE="$PLATFORM_SCRIPTS/$platform"
+	    PLATFORM_FILE="$PLATFORM_SCRIPTS/$platform"
     if [ ! -e "$PLATFORM_FILE" ]; then
 	echo "Do not know how to make $platform"
 	exit 1
     fi
     echo "Adding targets for: $platform"
-    # Figure out mirror in use: Debian or Ubuntu?
-    # Will need to know because Ubuntu keeps ACE in Universe rather than main 
-    # repository
-    {
-	PLATFORM_MIRROR_t=${platform}_MIRROR
-	PLATFORM_MIRROR=${!PLATFORM_MIRROR_t}
-	echo "PLATFORM_KEY=$platform"
-	echo "PLATFORM_MIRROR=$PLATFORM_MIRROR"
-	grep -q "ubuntu\.com" $PLATFORM_FILE && echo "PLATFORM_IS_UBUNTU=true"
-	grep -q "ubuntu\.com" $PLATFORM_FILE || echo "PLATFORM_IS_DEBIAN=true"
-    } > config_$platform.sh
-    creation_list="$creation_list, config_$platform.sh"
-
-    # Update Makefile with useful targets
-    all_targets="$all_targets yarp_$platform.txt"
-    (
-	echo "chroot_$platform.txt:"
-	echo -e "\t$SOURCE_DIR/src/build_chroot.sh $platform chroot_$platform && touch chroot_$platform.txt\n"
-	echo "yarp_$platform.txt: chroot_$platform.txt"
-	echo -e "\t$SOURCE_DIR/src/build_yarp.sh $platform yarp_$platform && touch yarp_$platform.txt\n"
-	echo "test_$platform.txt:"
-	echo -e "\t$SOURCE_DIR/src/test_yarp.sh $platform && touch test_$platform.txt\n"
-	targets=""
-    ) >> $BUILD_DIR/Makefile
+    for hardware in $HARDWARE; do
+	variant="${platform}_${hardware}"
+	skip_t=SKIP_${variant}
+	skip=${!skip_t}
+	if [ -n "$skip" ]; then
+	    continue
+	fi
+	VARIANTS="$VARIANTS $variant"
+        # Figure out mirror in use: Debian or Ubuntu?
+        # Will need to know because Ubuntu keeps ACE in Universe rather 
+	# than main repository
+	{
+	    PLATFORM_MIRROR_t=${platform}_MIRROR
+	    PLATFORM_MIRROR=${!PLATFORM_MIRROR_t}
+	    echo "PLATFORM_KEY=$platform"
+	    echo "PLATFORM_HARDWARE=$hardware"
+	    echo "PLATFORM_MIRROR=$PLATFORM_MIRROR"
+	    grep -q "ubuntu\.com" $PLATFORM_FILE && echo "PLATFORM_IS_UBUNTU=true"
+	    grep -q "ubuntu\.com" $PLATFORM_FILE || echo "PLATFORM_IS_DEBIAN=true"
+	} > config_$variant.sh
+	creation_list="$creation_list, config_$variant.sh"
+    
+        # Update Makefile with useful targets
+	all_targets="$all_targets yarp_$variant.txt"
+	(
+	    echo "chroot_$variant.txt:"
+	    echo -e "\t$SOURCE_DIR/src/build_chroot.sh $variant chroot_$variant && touch chroot_$variant.txt\n"
+	    echo "yarp_$variant.txt: chroot_$variant.txt"
+	    echo -e "\t$SOURCE_DIR/src/build_yarp.sh $variant yarp_$variant && touch yarp_$variant.txt\n"
+	    echo "test_$variant.txt: yarp_$variant.txt"
+	    echo -e "\t$SOURCE_DIR/src/test_yarp.sh $variant && touch test_$variant.txt\n"
+	    targets=""
+	) >> $BUILD_DIR/Makefile
+    done
 done
 
 # Catch-all targets
-    all_targets="$all_targets all"
+all_targets="$all_targets all"
 (
     echo -n "all:"
-    for platform in $PLATFORMS; do
-	echo -n " chroot_$platform.txt"
+    for variant in $VARIANTS; do
+	echo -n " chroot_$variant.txt"
     done
-    for platform in $PLATFORMS; do
-	echo -n " yarp_$platform.txt"
+    for variant in $VARIANTS; do
+	echo -n " yarp_$variant.txt"
     done
-    for platform in $PLATFORMS; do
-	echo -n " test_$platform.txt"
+    for variant in $VARIANTS; do
+	echo -n " test_$variant.txt"
     done
     echo -e "\n"
 ) >> $BUILD_DIR/Makefile
