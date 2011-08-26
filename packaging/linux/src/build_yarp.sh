@@ -74,7 +74,7 @@ function run_in_chroot {
 }
 
 # Install basic dependencies
-run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake wget" || exit 1
+run_in_chroot build_chroot "yes | apt-get install libgsl0-dev libgtkmm-2.4-dev libace-dev subversion cmake dpkg wget" || exit 1
 
 # Fetch yarp from SVN
 # run_in_chroot build_chroot "cd /tmp; test -e yarp2 || svn co http://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2 yarp2" || exit 1
@@ -109,6 +109,16 @@ run_in_chroot build_chroot "cd $CHROOT_BUILD && make" || exit 1
 # Go ahead and generate .deb
 run_in_chroot build_chroot "cd $CHROOT_BUILD && $CMAKE -DCPACK_GENERATOR='DEB' -DCPACK_PACKAGE_CONTACT='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_MAINTAINER='paul@robotrebuilt.com' -DCPACK_DEBIAN_PACKAGE_DEPENDS:STRING='libace-dev (>= 5.6), libgsl0-dev (>= 1.11), libgtkmm-2.4-dev (>= 2.14.1)' ." || exit 1
 run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -f *.deb && make package" || exit 1
+
+# Rebuild .deb, because cmake 2.8.2 is broken, sigh
+#   http://public.kitware.com/Bug/view.php?id=11020
+run_in_chroot build_chroot "cd $CHROOT_BUILD && rm -rf deb *.deb" || exit 1
+PACK="deb/yarp-${YARP_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}"
+run_in_chroot build_chroot "cd $CHROOT_BUILD && mkdir -p $PACK/DEBIAN" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/control $PACK/DEBIAN" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp _CPack_Packages/Linux/DEB/yarp-*-Linux/md5sums $PACK/DEBIAN" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && cp -R _CPack_Packages/Linux/DEB/yarp-*-Linux/usr $PACK/usr" || exit 1
+run_in_chroot build_chroot "cd $CHROOT_BUILD && dpkg -b $PACK yarp-${YARP_VERSION}-${PLATFORM_KEY}-${PLATFORM_HARDWARE}.deb" || exit 1
 
 # Copy .deb to somewhere easier to find
 rm -f *.deb 2> /dev/null
