@@ -1,3 +1,9 @@
+2011-08-26  Lorenzo Natale <lorenzo.natale@iit.it>
+
+	* src/libYARP_OS/src/DgramTwoWayStream.cpp:
+	now check YARP_DGRAM_BUFFER_SIZE to set socket buffer size,
+	added debugging messages
+	
 2011-08-25  Marco Randazzo    <marco.randazzo@iit.it>
 	
 	* src/libYARP_dev/include/yarp/dev/ControlBoardInterfaces.h

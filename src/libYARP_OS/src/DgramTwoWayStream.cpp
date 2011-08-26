@@ -167,7 +167,14 @@ void DgramTwoWayStream::allocate(int readSize, int writeSize) {
 
 void DgramTwoWayStream::configureSystemBuffers() {
     // ask for more buffer space for udp/mcast
-    int window_size_desired = 600000;
+
+    ConstString _dgram_buffer_size = NetworkBase::getEnvironment("YARP_DGRAM_BUFFER_SIZE");
+
+     int window_size_desired = 600000;
+
+    if (_dgram_buffer_size!="")
+        window_size_desired = NetType::toInt(_dgram_buffer_size);
+
     int window_size = window_size_desired;
     int result = dgram->set_option(SOL_SOCKET, SO_RCVBUF,
                                    (char *) &window_size, sizeof(window_size));
@@ -180,6 +187,8 @@ void DgramTwoWayStream::configureSystemBuffers() {
         bufferAlertNeeded = true;
         bufferAlerted = false;
     }
+    YARP_INFO(Logger::get(),
+              String("Warning: set buffer size to ")+ NetType::toString(window_size) + String(", you requested ") + NetType::toString(window_size_desired));
 }
 
 
