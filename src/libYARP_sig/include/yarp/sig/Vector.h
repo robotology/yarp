@@ -330,12 +330,14 @@ public:
     void zero();
 
     /**
-    * Creates a string object containing a text 
-    * representation of the object. Useful for printing.
+    * Creates a string object containing a text representation of the object. Useful for printing.
+    * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
+    * @param precision the number of digits to be printed after the decimal point.
+    * @param width minimum number of characters to be printed. If the value to be printed is shorter than this number, the result is padded with blank spaces. The value is never truncated.
     * Warning: the string format might change in the future. This method
     * is here to ease debugging.
     */
-    yarp::os::ConstString toString();
+    yarp::os::ConstString toString(int precision=-1, int width=-1) const;
 
 
     /**

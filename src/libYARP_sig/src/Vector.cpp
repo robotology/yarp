@@ -7,7 +7,6 @@
 */
 
 // $Id: Vector.cpp,v 1.28 2009-06-15 17:47:37 eshuy Exp $
-
 #include <yarp/sig/Vector.h>
 #include <yarp/os/Bottle.h>
 #include <yarp/os/ManagedBytes.h>
@@ -87,23 +86,35 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Vector::toString()
+ConstString Vector::toString(int precision, int width) const
 {
     ConstString ret = "";
-    char tmp[512];
-    int c=0;
-    for(c=0;c<length()-1;c++)
-    {
-        sprintf(tmp, "%lf\t", (*this)[c]);
-        //ret.append(tmp, strlen(tmp));
-        ret+=tmp;
-    }
+    int c;
+    char tmp[350];
+    if(precision<0 && width<0){         // do not use precision and width
+        for(c=0;c<length();c++){
+            sprintf(tmp, "% lf\t", (*this)[c]);
+            ret+=tmp;
+        }
+    }else if(precision>=0 && width<0){  // use precision but not width
+        for(c=0;c<length();c++){
+            sprintf(tmp, "% .*lf\t", precision, (*this)[c]);
+            ret+=tmp;
+        }
+    }else if(precision<0 && width>=0){  // use width but not precision
+        for(c=0;c<length();c++){
+            sprintf(tmp, "% *lf ", width, (*this)[c]);
+            ret+=tmp;
+        }
+    }else{                              // use both precision and width
+        for(c=0;c<length();c++){
+            sprintf(tmp, "% *.*lf ", width, precision, (*this)[c]);
+            ret+=tmp;
+        }
+    }       
 
-    if (length()>=1) {
-        sprintf(tmp, "%lf", (*this)[c]);
-        //ret.append(tmp, strlen(tmp));
-        ret+=tmp;
-    }
+    if(length()>=1)
+        return ret.substr(0, ret.length()-1);
     return ret;
 }
 
