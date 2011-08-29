@@ -243,11 +243,16 @@ public:
 
       /**
       * Print matrix to a string. Useful for display, writing to text.
+      * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
+      * @param precision the number of digits to be printed after the decimal point.
+      * @param width minimum number of characters to be printed. If the value to be printed is shorter than this number, the result is padded with blank spaces. The value is never truncated.
+      * @param endRowStr string appended at the end of every row, except for the last one.
+      * If width is specified the inter-value separator is a blank space, otherwise it is a tab.
       * Warning: the string format might change in the future. This method
       * is here to ease debugging.
       * @return a const string which contain the matrix in text form.
       */
-      yarp::os::ConstString toString() const;
+      yarp::os::ConstString toString(int precision=-1, int width=-1, const char* endRowStr=";\n") const;
 
       /**
       * Return a pointer to the first element

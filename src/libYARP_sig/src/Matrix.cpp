@@ -122,37 +122,39 @@ bool Matrix::write(yarp::os::ConnectionWriter& connection) {
 /**
 * Quick implementation, space for improvement.
 */
-ConstString Matrix::toString() const
+ConstString Matrix::toString(int precision, int width, const char* endRowStr) const
 {
     ConstString ret;
-    char tmp[512];
-    int c=0;
-    int r=0;
-    for(r=0;r<rows()-1;r++)
+    char tmp[350];
+    int c, r;
+    if(width>0) // if width is specified use a space as separator
     {
-        for(c=0;c<cols()-1;c++)
-        {
-            sprintf(tmp, "%lf\t", (*this)[r][c]);
-            //ret.append(tmp, strlen(tmp));
-            ret+=tmp;
+        for(r=0;r<rows();r++)
+        {        
+            for(c=0;c<cols();c++)
+            {
+                sprintf(tmp, "% *.*lf ", width, precision, (*this)[r][c]);
+                ret+=tmp;
+            }
+            ret = ret.substr(0,ret.length()-1);     // remove the last character (space)
+            if(r<rows()-1)                          // if it is not the last row
+                ret+= endRowStr;
         }
-
-        sprintf(tmp, "%lf;", (*this)[r][c]);
-        //ret.append(tmp, strlen(tmp));
-        ret+=tmp;
     }
-
-    // last row
-    for(c=0;c<cols()-1;c++)
+    else    // if width is not specified use tab as separator
     {
-        sprintf(tmp, "%lf\t", (*this)[r][c]);
-        //ret.append(tmp, strlen(tmp));
-        ret+=tmp;
+        for(r=0;r<rows();r++)
+        {
+            for(c=0;c<cols();c++)
+            {
+                sprintf(tmp, "% .*lf\t", precision, (*this)[r][c]);
+                ret+=tmp;
+            }
+            ret = ret.substr(0,ret.length()-1);     // remove the last character (tab)
+            if(r<rows()-1)                          // if it is not the last row
+                ret+= endRowStr;
+        }
     }
-    // last element
-    sprintf(tmp, "%lf", (*this)[r][c]);
-    //ret.append(tmp, strlen(tmp));
-    ret+=tmp;
 
     return ret;
 }

@@ -334,6 +334,7 @@ public:
     * To get a nice format the optional parameters precision and width may be used (same meaning as in printf and cout).
     * @param precision the number of digits to be printed after the decimal point.
     * @param width minimum number of characters to be printed. If the value to be printed is shorter than this number, the result is padded with blank spaces. The value is never truncated.
+    * If width is specified the inter-value separator is a blank space, otherwise it is a tab.
     * Warning: the string format might change in the future. This method
     * is here to ease debugging.
     */

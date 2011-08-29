@@ -91,22 +91,12 @@ ConstString Vector::toString(int precision, int width) const
     ConstString ret = "";
     int c;
     char tmp[350];
-    if(precision<0 && width<0){         // do not use precision and width
-        for(c=0;c<length();c++){
-            sprintf(tmp, "% lf\t", (*this)[c]);
-            ret+=tmp;
-        }
-    }else if(precision>=0 && width<0){  // use precision but not width
+    if(width<0){  
         for(c=0;c<length();c++){
             sprintf(tmp, "% .*lf\t", precision, (*this)[c]);
             ret+=tmp;
         }
-    }else if(precision<0 && width>=0){  // use width but not precision
-        for(c=0;c<length();c++){
-            sprintf(tmp, "% *lf ", width, (*this)[c]);
-            ret+=tmp;
-        }
-    }else{                              // use both precision and width
+    }else{
         for(c=0;c<length();c++){
             sprintf(tmp, "% *.*lf ", width, precision, (*this)[c]);
             ret+=tmp;
