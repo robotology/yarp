@@ -15,8 +15,18 @@
 #include <vector>
 
 #include <sys/stat.h>
-#include <sys/wait.h>
-#include <unistd.h>
+
+#include <yarp/conf/system.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/OS_NS_unistd.h>
+#  include <ace/OS_NS_sys_wait.h>
+#else
+#  include <unistd.h>
+#  include <sys/wait.h>
+#  ifndef ACE_OS
+#    define ACE_OS
+#  endif
+#endif
 #include <stdlib.h>
 
 using namespace std;
@@ -289,13 +299,12 @@ std::string RosTypeSearch::findFile(const char *tname) {
     }
     string cmd = string("rosmsg show -r ")+tname+" > " + target + " || rm -f " + target;
     fprintf(stderr,"[ros]  %s\n", cmd.c_str());
-    pid_t p = fork();
+    pid_t p = ACE_OS::fork();
     if (p==0) {
-        execlp("sh","sh","-c",cmd.c_str(),
-               (char*)NULL);
+        ACE_OS::execlp("sh","sh","-c",cmd.c_str(),(char*)NULL);
         exit(0);
     } else {
-        wait(NULL);
+        ACE_OS::wait(NULL);
     }
     //printf("Ran [%s]\n", cmd.c_str());
     return target;
