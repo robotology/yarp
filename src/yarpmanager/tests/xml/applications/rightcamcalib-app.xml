@@ -1,0 +1,40 @@
+<!--
+The following constraints are imposed for a module description: 
+-->
+
+<application>
+	<name>RightCamCalib</name>
+	<description>Right Camera Calibration</description>
+	<version>1.0</version>
+	<authors>
+		<author email="ali.paikan@iit.it"> Ali Paikan </author>
+	</authors>
+
+	<!-- Required modules -->
+	<module>
+		<name>yarpview</name>
+		<node>local</node>
+		<parameter>--x 0 --y 0 --synch</parameter>
+	</module>
+
+	<module>
+		<name>camCalibConf</name>
+		<parameter>--context cameraCalibration/conf --from icubEyes.ini --name /camCalibConf --group CAMERA_CALIBRATION_CONFIGURATION_RIGHT</parameter>
+		<node>local</node>
+	</module>
+
+	<!-- Required connections -->
+	<connection>
+		<from>/camCalibConf/image</from>
+		<to>/yarpview/img:i</to>
+		<protocol>tcp</protocol>
+	</connection>
+	<connection>
+		<from external="true">/icubSim/cam/right</from>
+		<to>/camCalibConf/image</to>
+		<protocol>tcp</protocol>
+	</connection>
+
+</application>
+
+

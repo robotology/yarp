@@ -150,7 +150,8 @@ int yarp::os::Run::main(int argc, char *argv[])
 	 || config.check("sigtermall") 
 	 || config.check("exit") 
 	 || config.check("isrunning")
-	 || config.check("ps"))
+	 || config.check("ps")
+	 || config.check("env"))
 	{ 
         return sendToServer(config);
     }
@@ -426,6 +427,8 @@ int yarp::os::Run::sendToServer(yarp::os::Property& config)
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
 		if (config.check("geometry")) msg.addList()=config.findGroup("geometry");
 		if (config.check("hold")) msg.addList()=config.findGroup("hold");
+		if (config.check("env")) msg.addList()=config.findGroup("env");
+
 
 		Bottle response=SendMsg(msg,config.find("stdio").asString());
 		if (!response.size()) return YARPRUN_ERROR;
@@ -446,6 +449,7 @@ int yarp::os::Run::sendToServer(yarp::os::Property& config)
 		msg.addList()=config.findGroup("as");
 
 		if (config.check("workdir")) msg.addList()=config.findGroup("workdir");
+		if (config.check("env")) msg.addList()=config.findGroup("env");
 
 		Bottle response=SendMsg(msg,config.find("on").asString());
 		if (!response.size()) return YARPRUN_ERROR;
@@ -533,8 +537,8 @@ void yarp::os::Run::Help(const char *msg)
 	fprintf(stderr,"%s",msg);
     fprintf(stderr,"\nUSAGE:\n\n");
     fprintf(stderr,"yarp run --server SERVERPORT\nrun a server on the local machine\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\nrun a command on SERVERPORT server\n\n");
-    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--hold] [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR]\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --cmd COMMAND [ARGLIST] [--workdir WORKDIR] [--env ENVIRONMENT]\nrun a command on SERVERPORT server\n\n");
+    fprintf(stderr,"yarp run --on SERVERPORT --as TAG --stdio STDIOSERVERPORT [--hold] [--geometry WxH+X+Y] --cmd COMMAND [ARGLIST] [--workdir WORKDIR] [--env ENVIRONMENT]\n");
     fprintf(stderr,"run a command on SERVERPORT server sending I/O to STDIOSERVERPORT server\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --kill TAG SIGNUM\nsend SIGNUM signal to TAG command\n\n");
     fprintf(stderr,"yarp run --on SERVERPORT --sigterm TAG\nterminate TAG command\n\n");
@@ -723,6 +727,22 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
         strCmd+=botCmd.get(s).toString()+yarp::os::ConstString(" ");
     }
 
+	/*
+	if(msg.check("env"))
+	{ 
+		int pos = msg.find("env").asString().find("=");
+		if(pos)
+		{
+			yarp::os::ConstString cstrName = msg.find("env").asString().substr(0,pos);
+			int nValue = msg.find("env").asString().length() - 
+						 cstrName.length() - 1;
+			yarp::os::ConstString cstrValue = msg.find("env").asString().substr(pos+1,nValue);
+
+			SetEnvironmentVariable(cstrName.c_str(), cstrValue.c_str());
+		}
+	}
+	*/
+
 	bool bWorkdir=msg.check("workdir");
 	yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
 
@@ -844,6 +864,24 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
     {
         strCmd+=botCmd.get(s).toString()+yarp::os::ConstString(" ");
     }
+
+	/*
+	if(msg.check("env"))
+	{
+		
+		int pos = msg.find("env").asString().find("=");
+		if(pos)
+		{
+			yarp::os::ConstString cstrName = msg.find("env").asString().substr(0,pos);
+			int nValue = msg.find("env").asString().length() - 
+						 cstrName.length() - 1;
+			yarp::os::ConstString cstrValue = msg.find("env").asString().substr(pos+1,nValue);
+
+			SetEnvironmentVariable(cstrName.c_str(), cstrValue.c_str());
+		}
+		
+	}
+	*/
 
 	bool bWorkdir=msg.check("workdir");
 	yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
@@ -1288,7 +1326,15 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 				REDIRECT_TO(STDIN_FILENO, pipe_stdin_to_cmd[READ_FROM_PIPE]);
 				REDIRECT_TO(STDOUT_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
 				REDIRECT_TO(STDERR_FILENO,pipe_cmd_to_stdout[WRITE_TO_PIPE]);
-	           
+				
+				if(msg.check("env"))
+				{
+					char* szenv = new char[msg.find("env").asString().length()+1];
+					strcpy(szenv,msg.find("env").asString().c_str()); 
+					putenv(szenv);
+					//delete szenv;
+				}
+           
 				if (msg.check("workdir"))
 			    {
 			        int ret=chdir(msg.find("workdir").asString().c_str());
@@ -1587,6 +1633,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 
 yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 {
+
 	yarp::os::ConstString strAlias(msg.find("as").asString());
 	yarp::os::ConstString strCmd(msg.find("cmd").toString());
 
@@ -1611,6 +1658,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
         return result;
     }
     
+
 	int pid_cmd=fork();
 
 	if (IS_INVALID(pid_cmd))
@@ -1634,7 +1682,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{
-        int saved_stderr=dup(STDERR_FILENO);
+
+		int saved_stderr=dup(STDERR_FILENO);
 		int null_file=open("/dev/null",O_WRONLY); 
         REDIRECT_TO(STDOUT_FILENO,null_file);
 		REDIRECT_TO(STDERR_FILENO,null_file);
@@ -1646,8 +1695,16 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
         char **arg_str=new char*[nargs+1];
         ParseCmd(cmd_str,arg_str);
         arg_str[nargs]=0;
-        
-        if (msg.check("workdir"))
+       
+		if(msg.check("env"))
+		{
+			char* szenv = new char[msg.find("env").asString().length()+1];
+			strcpy(szenv,msg.find("env").asString().c_str()); 
+            putenv(szenv);
+			//delete szenv;
+		}
+
+		if (msg.check("workdir"))
 		{
             int ret=chdir(msg.find("workdir").asString().c_str());
             if (ret!=0)
@@ -1686,7 +1743,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
             strcpy(cwd_arg_str[0],currWorkDir);
             strcat(cwd_arg_str[0],"/");
             strcat(cwd_arg_str[0],arg_str[0]);
-
+        	
             ret=execvp(cwd_arg_str[0],cwd_arg_str);  
 
             delete [] cwd_arg_str[0];
@@ -1722,7 +1779,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 
 		exit(ret);
 	}
-
+	
 	if (IS_PARENT_OF(pid_cmd))
 	{
 		mProcessVector.Add(new YarpRunProcInfo(strAlias,mPortName,pid_cmd,NULL,false));

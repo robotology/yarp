@@ -1,0 +1,38 @@
+<!--
+The following constraints are imposed for a module description: 
+-->
+
+<application>
+	<name>LeftCamCalib</name>
+	<description>Left Camera Calibration</description>
+	<version>1.0</version>
+	<authors>
+		<author email="ali.paikan@iit.it"> Ali Paikan </author>
+	</authors>
+
+	<!-- Required modules -->
+	<module>
+		<name>yarpview</name>
+		<node>local</node>
+	</module>
+
+	<module>
+		<name>camCalibConf</name>
+		<parameter>--context cameraCalibration/conf --from icubEyes.ini --name /camCalibConf --group CAMERA_CALIBRATION_CONFIGURATION_LEFT</parameter>
+		<node>local</node>
+	</module>
+
+	<!-- Required connections -->
+	<connection>
+		<from>/camCalibConf/image</from>
+		<to>/yarpview/img:i</to>
+		<protocol>udp</protocol>
+	</connection>
+
+	<connection>
+		<from external="true"> /icubSim/cam/left</from>
+		<to>/camCalibConf/image</to>
+	</connection>
+</application>
+
+

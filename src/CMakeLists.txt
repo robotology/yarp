@@ -27,6 +27,7 @@ add_subdirectory(yarprun)
 add_subdirectory(yarpview)
 add_subdirectory(yarphear)
 add_subdirectory(yarpdev)
+add_subdirectory(yarpmanager)
 
 #tests
 add_subdirectory(tests)

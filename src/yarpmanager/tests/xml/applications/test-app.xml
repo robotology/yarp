@@ -1,0 +1,70 @@
+<!--
+The following constraints are imposed for a module description: 
+
+Extra properties: 
+- Automatic failure recovery. 
+- Process failures signal omitted by each modules to manager 
+- liveness monitor
+- 
+-->
+
+<application>
+	<!-- Generic information-->
+	<name>BigApp</name>
+	<description> My test application</description>
+	<version>1.0</version>
+	
+	<authors>
+		<author email="ali.paikan@iit.it"> Ali Paikan </author>
+	</authors>
+	
+	<!-- ports prefix (will be added to all modules and applications)-->
+	<!--<prefix>/TestApp</prefix> -->
+	
+	<!-- Required modules -->
+		
+	<module>
+		<name>yarpview</name>
+		<node>local</node>
+		<prefix>/RightView</prefix>
+	</module>
+
+	<module>
+		<name>yarpview</name>
+		<node>local</node>
+		<prefix>/LeftView</prefix>
+	</module>
+
+	<module>
+		<name> gnome-system-monitor </name>
+		<node>local</node>
+		<parameters> -s </parameters>
+		<broker>yarprun</broker>
+	</module>
+
+	<!-- Required applications -->
+
+	<application> 
+		<name>LeftCamCalib</name>
+		<prefix>/Left</prefix>
+	 </application>
+
+	<application> 
+		<name>RightCamCalib</name>
+		<prefix>/Right </prefix>
+	</application>
+
+	<!-- Required connections -->
+	<connection>
+		<from>/icubSim/cam/left</from>
+		<to>/LeftView/yarpview/img:i</to>
+		<protocol>udp</protocol>
+	</connection>
+
+	<connection>
+		<from>/icubSim/cam/right</from>
+		<to>/RightView/yarpview/img:i</to>
+		<protocol>udp</protocol>
+	</connection>
+
+</application>

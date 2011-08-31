@@ -1,0 +1,72 @@
+<!--
+The following constraints are imposed for a module description: 
+
+ - Module descriptor starts with <module> and ends with </module>. It 
+is not allowed to have more than one module in the description file.
+ 
+ - Name of the module must agree the name of executable binary file. 
+  
+ - The type of data and the related port where the data is accessible must
+be indicated for both <inputdata> and <outputdata>  
+
+A module can have no output or input. Thus <outputs> or <inputs> 
+can be empty. In this case we suggest to not remove it and leave it empty. 
+If there is any preferable communication carrier for a data, it can be 
+implied in <communication> tag. If any input data is required for module 
+execution, it can be implied by setting "required" property to true. 
+Similarly if module input data must be provided prior to module execution, 
+"withprio" property should be filled by true. Module's <rank> should be specified 
+by an integer number. It represents user's preference for using the module 
+when it is subjected to having more than one modules which provide the 
+same data. The preferences can be given in term of better quality of data,
+lower computational overhead, network performance and etc. If there is no 
+preference for using a module, the <rank> filed can be left empty.    
+
+Note: Type of data is just a nominal name for data and should be consistent
+among all the modules where it refers to the same data type. Later a complete 
+list of all required data as different entities can be provided.  
+-->
+<module>
+	<name>yarpview</name>
+	<description> Yarp image viewer</description>
+	<version>1.0</version>
+	<rank>1</rank>
+	
+	<arguments>
+	</arguments>
+			
+	<authors>
+		<author email=""> Paul Fitzpatrick </author>
+	</authors>
+	
+	<platforms>
+		<os dist="all"> LINUX </os>
+		<os dist="all"> WINDOWS </os>
+		<os dist="all"> MAC </os>
+	</platforms>
+		
+	<data> 
+		<input>
+			<type>YARP</type>
+			<port carrier="TCP">/root</port>
+			<required>yes</required>
+			<priority>yes</priority>
+			<description>needs /root port from yarpserver</description>
+		</input>	
+
+		<input>
+			<type>cartesian-image</type>
+			<port carrier="TCP">/yarpview/img:i</port>
+			<required>no</required>
+			<priority>no</priority>
+			<description></description>
+		</input>	
+	</data>		
+	
+	<development>
+		<include></include>
+		<library></library>
+	</development>
+	
+</module>
+

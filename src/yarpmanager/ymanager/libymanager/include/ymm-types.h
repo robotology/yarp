@@ -1,0 +1,70 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ *  Yarp Modules Manager
+ *  Copyright: Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Authors: Ali Paikan <ali.paikan@iit.it>
+ * 
+ *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
+
+#ifndef __YMMTYPES__
+#define __YMMTYPES__
+
+//namespace ymm {
+
+
+typedef enum __NodeType {
+	MODULE,
+	INPUTD,
+	OUTPUTD,
+	APPLICATION,
+	RESOURCE
+} NodeType;
+
+typedef enum __OS {
+	LINUX,
+	WINDOWS,
+	MAC,
+	OTHER
+} OS;
+
+typedef enum __Carrier {
+	TCP,
+	UDP,
+	MCAST,
+	SHMEM,
+	TEXT,
+	UNKNOWN
+} Carrier;
+
+
+
+
+/*
+*  declaring debugging macros
+*/
+#ifdef YMM_DEBUG
+	 #include <iostream>
+	 #include <assert.h>
+	 #define __ASSERT( _cond ) assert(_cond)
+	 #define __CHECK_NULLPTR(_ptr) \
+			 assert(_ptr); \
+			 if( !_ptr ) return false;
+
+	 #define __DEBUG_MSG(msg) std::cout<<"YMM: "<<msg<<endl;
+
+#else
+	 #define __ASSERT( _cond )
+	 #define __CHECK_NULLPTR(_ptr) \
+			 if( !_ptr ) return false;
+
+	 #define __DEBUG_MSG(msg)
+
+#endif //YMM_DEBUG
+
+//} 
+
+#endif //__YMMTYPES__
