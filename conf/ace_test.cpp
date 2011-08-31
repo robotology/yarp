@@ -6,7 +6,8 @@
  * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
  */
 
-#include <ace/OS.h>
+#include <ace/OS_NS_unistd.h>
+#include <ace/Time_Value.h>
 
 void time_delay(double seconds) {
     ACE_Time_Value tv;
