@@ -1,0 +1,20 @@
+
+<application>
+	<!-- Generic information-->
+	<name>FakeEyes</name>
+	<description> A fake robot eye creator based on test_grabber </description>
+	<version>1.0</version>
+	
+	<authors>
+		<author email="ali.paikan@iit.it"> Ali Paikan </author>
+	</authors>
+		
+	<!-- Required modules -->	
+	<module>
+		<name>yarpdev</name>
+		<parameters> --device test_grabber --name /eye</parameters>
+		<node>local</node>
+		<broker>yarprun</broker>
+	</module>
+
+</application>

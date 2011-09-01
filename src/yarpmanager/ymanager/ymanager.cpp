@@ -1,6 +1,6 @@
 /*
  *  Yarp Modules Manager
- *  Copyright: Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -15,9 +15,9 @@
 using namespace yarp::os;
 
 
-#define __LINUX__
+#define UNIX
 
-#ifdef __LINUX__
+#ifdef UNIX
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/wait.h>
@@ -25,6 +25,7 @@ using namespace yarp::os;
 	#include <string.h>
 	#include <sys/types.h>
 	#include <dirent.h>
+	#include <signal.h>
 
 	string HEADER = "";
 	string OKBLUE = "";
@@ -59,7 +60,7 @@ using namespace yarp::os;
 	vector<string> appnames;	
 #endif
 
-#define DEF_CONFIG_FILE		"ymanager.ini"
+#define DEF_CONFIG_FILE		"./ymanager.ini"
 
 #define WELCOME_MESSAGE		"\
 Yarp module manager 0.9 (BETA)\n\
@@ -101,7 +102,8 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 		if(!config.fromConfigFile(cmdline.find("config").asString().c_str()))
 			cout<<WARNING<<"WARNING: "<<INFO<<cmdline.find("config").asString().c_str()<<" cannot be loaded."<<ENDC<<endl;
 	}
-	//else if(!config.fromConfigFile(DEF_CONFIG_FILE))
+	else 
+		config.fromConfigFile(DEF_CONFIG_FILE);
 	//		cout<<WARNING<<"WARNING: "<<INFO<<DEF_CONFIG_FILE<<" cannot be loaded. configuration is set to default."<<ENDC<<endl;
 
 	/**
@@ -178,11 +180,40 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 	updateAppNames(&appnames);
 #endif
 
+#ifdef UNIX
+	struct sigaction new_action, old_action;
+     
+	/* Set up the structure to specify the new action. */
+	new_action.sa_handler = YConsoleManager::onSignal;
+	sigemptyset (&new_action.sa_mask);
+	new_action.sa_flags = 0;
+
+	sigaction (SIGINT, NULL, &old_action);
+	if (old_action.sa_handler != SIG_IGN)
+		sigaction (SIGINT, &new_action, NULL);
+	sigaction (SIGHUP, NULL, &old_action);
+	if (old_action.sa_handler != SIG_IGN)
+		sigaction (SIGHUP, &new_action, NULL);
+	sigaction (SIGTERM, NULL, &old_action);
+	if (old_action.sa_handler != SIG_IGN)
+		sigaction (SIGTERM, &new_action, NULL);
+
+//	signal(SIGTERM, YConsoleManager::onExit());
+//    signal(SIGINT, YConsoleManager::onExit());
+#endif
+
 	YConsoleManager::main();	
 }
 
 YConsoleManager::~YConsoleManager()
 {
+}
+
+
+
+void YConsoleManager::onSignal(int signum)
+{
+	cout<<endl<<INFO<<"use"<<OKGREEN<<" 'exit' "<<INFO<<"to quit!"<<ENDC<<endl;
 }
 
 
@@ -225,12 +256,16 @@ void YConsoleManager::main(void)
 		string s;
 		while (foo >> s)
 		{
-			//if (s[0]=='~') s = getenv("HOME") + s.substr(1);
+			if (s[0]=='~') s = getenv("HOME") + s.substr(1);
 			cmdList.push_back(s);
 		}
 		if(!process(cmdList))
 		{
-			if(cmdList[0] == "exit") break;	
+			if(cmdList[0] == "exit")
+			{
+				if(YConsoleManager::exit())
+					break;
+			}
 			else
 			{
 				cout<<"'"<<cmdList[0]<<"'"<<INFO<<" is not correct. ";
@@ -238,8 +273,27 @@ void YConsoleManager::main(void)
 			}
 		}
 	}
-	
-	YConsoleManager::exit();
+	cout<<"bye."<<endl;
+
+}
+
+bool YConsoleManager::exit(void)
+{
+	if(!bShouldRun)
+		return true;
+
+	string ans;
+	cout<<WARNING<<"WARNING: ";
+	cout<<INFO<<"yarpmanager will terminate all of the running modules on exit. Are you sure? [No/yes] ";
+	getline(cin, ans);
+	if(compareString(ans.c_str(),"yes"))
+	{
+		bShouldRun = false; 
+		kill();
+		reportErrors();
+		return true;
+	}
+	return false;
 }
 
 
@@ -726,6 +780,16 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 			else
 				disableAutoConnect();
 		}
+	
+		if(cmdList[1] == string("color_theme"))
+		{
+			if(cmdList[2] == string("dark"))
+				setColorTheme(THEME_DARK);
+			else if(cmdList[2] == string("light"))
+				setColorTheme(THEME_LIGHT);
+			else
+				setColorTheme(THEME_NONE);
+		}
 
 		return true;
 	 }
@@ -779,11 +843,6 @@ void YConsoleManager::help(void)
 	cout<<OKGREEN<<"show mod <modname>"<<INFO<<"      : display module information (description, input, output,...)."<<ENDC<<endl;
 	
 	cout<<endl;
-}
-
-void YConsoleManager::exit(void)
-{
-	cout<<"bye."<<endl;
 }
 
 
@@ -845,7 +904,7 @@ void YConsoleManager::reportErrors(void)
 void YConsoleManager::editXmlFile( const char* filename)
 {
 
-#ifdef __LINUX__	
+#ifdef UNIX	
 
 	pid_t kidpid;
 	if((kidpid = fork()))
@@ -864,7 +923,7 @@ void YConsoleManager::editXmlFile( const char* filename)
 	cout<<"Failed to run editor "<<config.find("xmleditor").asString()<<". ";
 	cout<<strerror(errno)<<endl; 
 	::exit(0);  
-#endif //__LINUX__	
+#endif //UNIX	
 
 }
 
@@ -918,7 +977,7 @@ void YConsoleManager::onCnnFailed(void* which)
 
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
-#ifdef __LINUX__
+#ifdef UNIX
 
 	string strPath = szPath;
 	if((strPath.rfind("/")==string::npos) || 
@@ -961,7 +1020,7 @@ void YConsoleManager::updateAppNames(vector<string>* names)
 
 void YConsoleManager::setColorTheme(ColorTheme theme)
 {
-#ifdef __LINUX__
+#ifdef UNIX
 	switch(theme) {
 		case THEME_DARK : { 
 			HEADER = "\033[01;95m";

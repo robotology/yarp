@@ -2,7 +2,7 @@
 
 /*
  *  Yarp Modules Manager
- *  Copyright: Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+ *  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
  *  Authors: Ali Paikan <ali.paikan@iit.it>
  * 
  *  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
@@ -56,14 +56,14 @@ private:
 	void help(void);
 	void main(void);
 	bool process(const vector<string> &cmdList);
-	void exit(void);
+	bool exit(void);
 	void reportErrors(void);
 	void editXmlFile( const char* filename);
 	void which(void);
 	bool loadRecursiveApplications(const char* szPath);
 	void updateAppNames(vector<string>* apps);
 	void setColorTheme(ColorTheme theme);
-
+	static void onSignal(int signum);
 };
 
 
