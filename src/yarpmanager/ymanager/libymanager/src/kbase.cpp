@@ -82,8 +82,9 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 		Application* application;
 		while((application = apploader->getNextApplication()))
 		{
-			application->setLabel(application->getName());
-			application = (Application*) kbGraph.addNode(application);
+            addApplication(application);  
+			//application->setLabel(application->getName());
+			//application = (Application*) kbGraph.addNode(application);
 		}
 
 	}
@@ -100,15 +101,19 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 bool KnowledgeBase::addApplication(Application* app)
 {
 	__CHECK_NULLPTR(app);
-
 	ErrorLogger* logger  = ErrorLogger::Instance();
+    static unsigned int appID = 0;
 	app->setLabel(app->getName());
 	if(kbGraph.hasNode(app))
 	{
-		ostringstream msg;
-		msg<<"Application "<<app->getName()<<" already exists.";
+        ostringstream newlable;
+        newlable<<app->getLabel()<<"_"<<appID++; 		
+        ostringstream msg;
+		msg<<app->getName()<<" from "<<app->getXmlFile()<<" already exists.";
 		logger->addWarning(msg);
-		return false; 
+        app->setName(newlable.str().c_str());
+        app->setLabel(newlable.str().c_str());
+		//return false; 
 	}
 	
 	if(!kbGraph.addNode(app))
