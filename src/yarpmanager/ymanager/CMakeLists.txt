@@ -41,7 +41,7 @@ ELSE (NOT UNIX)
 			MESSAGE(STATUS "Found GNU readline: ${READLINE_LIBRARY}")
 		ENDIF (NOT Readline_FIND_QUIETLY)
 	ELSE (READLINE_FOUND)
-		MESSAGE("Could not find GNU readline. yarpmanager will use basic shell mode.")
+		MESSAGE(STATUS "Could not find GNU readline. yarpmanager will use basic shell mode.")
 	ENDIF (READLINE_FOUND)
 
 	ADD_EXECUTABLE(yarpmanager ${folder_source} ${folder_header} )
