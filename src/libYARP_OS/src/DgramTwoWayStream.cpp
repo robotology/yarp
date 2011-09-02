@@ -187,8 +187,8 @@ void DgramTwoWayStream::configureSystemBuffers() {
         bufferAlertNeeded = true;
         bufferAlerted = false;
     }
-    YARP_INFO(Logger::get(),
-              String("Warning: set buffer size to ")+ NetType::toString(window_size) + String(", you requested ") + NetType::toString(window_size_desired));
+    YARP_DEBUG(Logger::get(),
+               String("Warning: buffer size set to ")+ NetType::toString(window_size) + String(", you requested ") + NetType::toString(window_size_desired));
 }
 
 
