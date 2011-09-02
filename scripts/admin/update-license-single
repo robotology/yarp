@@ -26,7 +26,16 @@ while (<FIN>) {
 close(FIN);
 
 $txt =~ s/Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia/IITRBCS/;
+$txt =~ s/Robotics, Brain and Cognitive Sciences - Italian Institute of Technology .IIT./IITRBCS/;
+
+$txt =~ s/Copy Policy/CopyPolicy/;
+
+# Ali-style
+$txt =~ s/2011 \(C\)/(C) 2011/;
+
+$txt =~ s/Original code by Lee Thomason.*/Copyright: Lee Thomason/;
  
+
 my $report = "skipped";
 
 my $policy = "unknown";
@@ -65,6 +74,7 @@ if ($txt=~/CopyPolicy\:\s*(.*)/i) {
     $policy = $1;
 }
 
+
 if ($copyright eq "unknown") {
     if ($txt=~/copyright\:\s*([^\"\'\*\r\n]+)\s*[\n\r\*]/i) {
 	$copyright = $1;
@@ -82,6 +92,9 @@ if ($txt =~ /here is a blessing/) {
 }
 
 if ($policy =~ /unknown/) {
+    if ($txt =~ /Permission is granted to anyone to use this software for any/) {
+	$policy = "BSD";
+    }
     if ($txt =~ /Everyone is permitted to copy and distribute verbatim copies/) {
 	$policy = "copying and distributing verbatim copies allowed";
     }
