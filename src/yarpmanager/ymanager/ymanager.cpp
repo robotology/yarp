@@ -52,7 +52,7 @@ using namespace yarp::os;
 	const char* commands[21] = {"help", "exit","list mod", "list app", "add mod",
 				  "add app", "load app", "run", "stop", "kill", 
 				  "connect", "disconnect", "which", "check state",
-				  "check cnn", "check dep", "set", "get", "export",
+				  "check con", "check dep", "set", "get", "export",
 				  "show mod", " "};
 	char* command_generator (const char* text, int state);
 	char* appname_generator (const char* text, int state);
@@ -386,12 +386,14 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		 reportErrors();
 		 return true;
 	 }
-	 if((cmdList.size() == 2) && 
+	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "run"))
 	 {
-		 bShouldRun = run(atoi(cmdList[1].c_str()));
-		 reportErrors();
-		 return true;
+	 	bShouldRun = false;
+	 	for(unsigned int i=1; i<cmdList.size(); i++)
+			bShouldRun |= run(atoi(cmdList[i].c_str()));
+		reportErrors();
+		return true;
 	 }
 
 	/**
@@ -405,11 +407,12 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		 reportErrors();
 		 return true;
 	 }
-	 if((cmdList.size() == 2) && 
+	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "stop"))
 	 {
 		 bShouldRun = false;
-		 stop(atoi(cmdList[1].c_str()));
+		for(unsigned int i=1; i<cmdList.size(); i++) 
+		 	stop(atoi(cmdList[i].c_str()));
 		 reportErrors();
 		 return true;
 	 }
@@ -425,11 +428,12 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		 reportErrors();
 		 return true;
 	 }
-	 if((cmdList.size() == 2) && 
+	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "kill"))
 	 {
 		 bShouldRun = false;
-		 kill(atoi(cmdList[1].c_str()));
+		 for(unsigned int i=1; i<cmdList.size(); i++) 
+		 	kill(atoi(cmdList[i].c_str()));
 		 reportErrors();
 		 return true;
 	 }
@@ -444,12 +448,13 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		 reportErrors();
 		 return true;
 	 }
-	 if((cmdList.size() == 2) && 
+	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "connect"))
 	 {
-		 connect(atoi(cmdList[1].c_str()));
-		 reportErrors();
-		 return true;
+	 	for(unsigned int i=1; i<cmdList.size(); i++) 
+			connect(atoi(cmdList[i].c_str()));
+		reportErrors();
+		return true;
 	 }
 
 
@@ -463,12 +468,13 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		 reportErrors();
 		 return true;
 	 }
-	 if((cmdList.size() == 2) && 
+	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "disconnect"))
 	 {
-		 disconnect(atoi(cmdList[1].c_str()));
-		 reportErrors();
-		 return true;
+		for(unsigned int i=1; i<cmdList.size(); i++) 
+		 	disconnect(atoi(cmdList[i].c_str()));
+		reportErrors();
+		return true;
 	 }
 
 
@@ -547,7 +553,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 	 * check for connection state
 	 */
 	if((cmdList.size() == 3) && 
-		(cmdList[0] == "check") && (cmdList[1] == "cnn"))
+		(cmdList[0] == "check") && (cmdList[1] == "con"))
 	{
 
 		CnnContainer connections  = getConnections();
@@ -570,7 +576,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		return true;
 	}
 	if((cmdList.size() == 2) && 
-		(cmdList[0] == "check") && (cmdList[1] == "cnn"))
+		(cmdList[0] == "check") && (cmdList[1] == "con"))
 	{
 		CnnContainer connections  = getConnections();
 		CnnIterator cnnitr;
@@ -826,15 +832,15 @@ void YConsoleManager::help(void)
 	cout<<OKGREEN<<"add app <filename>"<<INFO<<"      : add an application from its description file."<<ENDC<<endl;
 	cout<<OKGREEN<<"load app <application>"<<INFO<<"  : load an application to run."<<endl;
 //	cout<<"load mod <module> <host>: load a module to run on an optional host."<<endl;
-	cout<<OKGREEN<<"run [id]"<<INFO<<"                : run application or a module indicated by id."<<ENDC<<endl;
-	cout<<OKGREEN<<"stop [id]"<<INFO<<"               : stop running application or module indicated by id."<<ENDC<<endl;
-	cout<<OKGREEN<<"kill [id]"<<INFO<<"               : kill running application or module indicated by id."<<ENDC<<endl;
-	cout<<OKGREEN<<"connect [id]"<<INFO<<"            : stablish all connections or just one connection indicated by id."<<ENDC<<endl;
-	cout<<OKGREEN<<"disconnect [id]"<<INFO<<"         : remove all connections or just one connection indicated by id."<<ENDC<<endl;
+	cout<<OKGREEN<<"run [IDs]"<<INFO<<"               : run application or a modules indicated by IDs."<<ENDC<<endl;
+	cout<<OKGREEN<<"stop [IDs]"<<INFO<<"              : stop running application or modules indicated by IDs."<<ENDC<<endl;
+	cout<<OKGREEN<<"kill [IDs]"<<INFO<<"              : kill running application or modules indicated by IDs."<<ENDC<<endl;
+	cout<<OKGREEN<<"connect [IDs]"<<INFO<<"           : stablish all connections or just one connection indicated by IDs."<<ENDC<<endl;
+	cout<<OKGREEN<<"disconnect [IDs]"<<INFO<<"        : remove all connections or just one connection indicated by IDs."<<ENDC<<endl;
 	cout<<OKGREEN<<"which"<<INFO<<"                   : list loaded modules, connections and resource dependencies."<<ENDC<<endl;	
 	cout<<OKGREEN<<"check dep"<<INFO<<"               : check for all resource dependencies."<<ENDC<<endl;
 	cout<<OKGREEN<<"check state [id]"<<INFO<<"        : check for running state of application or a module indicated by id."<<ENDC<<endl;
-	cout<<OKGREEN<<"check cnn [id]"<<INFO<<"          : check for all connections state or just one connection indicated by id."<<ENDC<<endl;
+	cout<<OKGREEN<<"check con [id]"<<INFO<<"          : check for all connections state or just one connection indicated by id."<<ENDC<<endl;
 	cout<<OKGREEN<<"set <option> <value>"<<INFO<<"    : set value to an option."<<ENDC<<endl;
 	cout<<OKGREEN<<"get <option>"<<INFO<<"            : show value of an option."<<ENDC<<endl;	
 	cout<<OKGREEN<<"export <filename>"<<INFO<<"       : export application's graph as Graphviz dot format."<<ENDC<<endl;

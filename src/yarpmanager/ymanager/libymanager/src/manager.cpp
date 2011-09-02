@@ -29,6 +29,7 @@ Manager::Manager(bool withWatchDog) : MEvent()
 	bWithWatchDog = withWatchDog;
 	bAutoDependancy = false;
 	bAutoDependancy = true;
+	bRestricted = false;
 	strDefBroker = BROKER_YARPRUN;	
 	knowledge.createFrom(NULL, NULL);
 }
@@ -40,6 +41,7 @@ Manager::Manager(const char* szModPath,
 	bWithWatchDog = withWatchDog;
 	bAutoDependancy = false;
 	bAutoDependancy = true;
+	bRestricted = false;
 	strDefBroker = BROKER_YARPRUN;	
 
 	XmlModLoader modload(szModPath, NULL);
@@ -115,7 +117,7 @@ bool Manager::loadApplication(const char* szAppName)
 {
 	__CHECK_NULLPTR(szAppName);
 	
-	if(allRunning())
+	if(!allStopped())
 	{
 		logger->addError("Please stop current running application first.");
 		return false;
@@ -232,7 +234,6 @@ bool Manager::checkDependency(void)
 	return ret;
 }
 
-
 bool Manager::run(unsigned int id)
 {
 	if(runnables.empty())
@@ -270,7 +271,7 @@ bool Manager::run(unsigned int id)
 
 }
 
-bool Manager::run()
+bool Manager::run(void)
 {
 	if(runnables.empty())
 	{
@@ -280,8 +281,13 @@ bool Manager::run()
 
 	if(!checkDependency())
 	{
-		logger->addError("Some of external ports dependency are not satisfied.");
-		return false;
+		if(bRestricted)
+		{
+			logger->addError("Some of external ports dependency are not satisfied.");
+			return false;
+		}
+		else
+			logger->addWarning("Some of external ports dependency are not satisfied.");
 	}
 
 	ExecutablePIterator itr;
@@ -312,8 +318,12 @@ bool Manager::run()
 				msg<<", paramete: "<<(*itr)->getParam()<<")";
 				logger->addError(msg);
 			}
-		kill();
-		return false;
+		
+		if(bRestricted)
+		{
+			kill();
+			return false;
+		}
 	}
 
 	/* connecting extra ports*/
@@ -321,7 +331,8 @@ bool Manager::run()
 		if(!connectExtraPorts())
 		{
 			logger->addError("Failed to stablish some of connections.");
-			return false;
+			if(bRestricted)
+				return false;
 		}
 
 	return true;
@@ -364,7 +375,7 @@ bool Manager::stop(unsigned int id)
 }
 
 
-bool Manager::stop()
+bool Manager::stop(void)
 {
 	if(runnables.empty())
 		return true;
@@ -373,7 +384,7 @@ bool Manager::stop()
 	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
 		(*itr)->stop();
 
-	/* waiting for stoping */
+	/* wait to stop */
 	int retry = 0;
 	while(!allStopped() && (retry++ < (RSK_TIMEOUT*10)) ) 
 		yarp::os::Time::delay(0.1);
@@ -434,7 +445,7 @@ bool Manager::kill(unsigned int id)
 }
 
 
-bool Manager::kill()
+bool Manager::kill(void)
 {
 	if(runnables.empty())
 		return true;
@@ -515,7 +526,8 @@ bool Manager::connect(void)
 			{
 				logger->addError(connector.error());
 				//cout<<connector.error()<<endl;
-				return false;
+				if(bRestricted)
+					return false;
 			}	
 	return true;
 }

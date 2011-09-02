@@ -66,6 +66,8 @@ public:
 
 	//const char* getDataPort(const char* szDataType);
 
+	void enableRestrictedMode(void) { bRestricted = true; }
+	void disableRestrictedMode(void) { bRestricted = false; }
 	void enableAutoConnect(void) { bAutoConnect = true; }
 	void disableAutoConnect(void) { bAutoConnect = false; }
 	void enableAutoDependency(void) { bAutoDependancy = true; }
@@ -90,6 +92,7 @@ private:
 	bool bWithWatchDog;
 	bool bAutoDependancy;
 	bool bAutoConnect;
+	bool bRestricted;
 	ErrorLogger* logger;
 	string strAppName;
 	string strDefBroker;
@@ -105,6 +108,7 @@ private:
 	bool isServer(Module* module);
 	bool connectExtraPorts(void);
 	bool allRunning(void);
+	bool oneRunning(void);
 	bool allStopped(void);
 	bool prepare();
 };
