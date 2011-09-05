@@ -643,6 +643,21 @@ bool Manager::allRunning(void)
 }
 
 
+bool Manager::suspended(unsigned int id)
+{
+	if(id>=runnables.size())
+	{
+		logger->addError("Module id is out of range.");
+		return false;
+	}
+
+	if((runnables[id]->state() == SUSPENDED) || 
+	  (runnables[id]->state() == DEAD))
+			return true;
+	return false;
+}
+
+
 bool Manager::allStopped(void)
 {
 	if(!runnables.size())

@@ -53,6 +53,8 @@ public:
 	bool disconnect(unsigned int id);
 	bool running(void) { return allRunning(); }
 	bool running(unsigned int id);
+	bool suspended(void) { return allStopped(); }
+	bool suspended(unsigned int id);
 	bool connected(void);
 	bool connected(unsigned int id);
 	bool checkDependency(void);

@@ -410,9 +410,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "stop"))
 	 {
-		 bShouldRun = false;
+		 //bShouldRun = false;
 		for(unsigned int i=1; i<cmdList.size(); i++) 
 		 	stop(atoi(cmdList[i].c_str()));
+		 bShouldRun = !suspended();
 		 reportErrors();
 		 return true;
 	 }
@@ -431,9 +432,10 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 	 if((cmdList.size() >= 2) && 
 		(cmdList[0] == "kill"))
 	 {
-		 bShouldRun = false;
+		 //bShouldRun = false;
 		 for(unsigned int i=1; i<cmdList.size(); i++) 
 		 	kill(atoi(cmdList[i].c_str()));
+		 bShouldRun = !suspended();	
 		 reportErrors();
 		 return true;
 	 }
