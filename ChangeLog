@@ -1,5 +1,12 @@
 2011-09-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* conf/template/YARPConfig.cmake.in: another patch from
+	Miguel, to record whether YARP was compiled as a shared
+	library in a YARP_IS_SHARED_LIBRARY variable available
+	when FIND_PACKAGE(YARP) succeeds [thanks Miguel Sarabia].
+	These patches are a result of Miguel's work on his HAMMER
+	library: https://bitbucket.org/miguelsdc/hammer
+
 	* src/libYARP_dev/include/yarp/dev/PolyDriver.h,
 	src/libYARP_OS/include/yarp/os/IConfig.h,
 	src/libYARP_OS/include/yarp/os/PortReport.h,
