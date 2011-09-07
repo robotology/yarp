@@ -373,7 +373,7 @@ enum YarpVocabPixelTypesEnum
         VOCAB_PIXEL_RGB_INT = VOCAB4('r','g','b','i'),
         VOCAB_PIXEL_MONO_FLOAT = VOCAB3('d','e','c'),
         VOCAB_PIXEL_RGB_FLOAT = VOCAB4('r','g','b','.'),
-        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.'),
+        VOCAB_PIXEL_HSV_FLOAT = VOCAB4('h','s','v','.')
     };
 
 

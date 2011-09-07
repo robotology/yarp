@@ -17,7 +17,7 @@ namespace yarp {
         class PolyDriver;
         class ChainedDriver;
     }
-};
+}
 
 class YARP_dev_API yarp::dev::ChainedDriver : public DeviceDriver {
 public:

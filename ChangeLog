@@ -1,3 +1,12 @@
+2011-09-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_dev/include/yarp/dev/PolyDriver.h,
+	src/libYARP_OS/include/yarp/os/IConfig.h,
+	src/libYARP_OS/include/yarp/os/PortReport.h,
+	src/libYARP_sig/include/yarp/sig/Image.h: apply patch
+	from Miguel Sarabia to remove warnings that show up
+	under -Wall -pedantic [thanks Miguel Sarabia]
+
 2011-08-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/ace_test.cpp: fix test for ACE change in inline

@@ -18,7 +18,7 @@ namespace yarp {
     namespace os {
         class IConfig;
     }
-};
+}
 
 /**
  *
