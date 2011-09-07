@@ -669,7 +669,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	// connect yarp read and write
 	bool bConnR=false,bConnW=false;
-	for (int i=0; i<8 && !(bConnR&&bConnW); ++i)
+	for (int i=0; i<100 && !(bConnR&&bConnW); ++i)
 	{ 	
         if (!bConnW && NetworkBase::connect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str())) bConnW=true;
 
@@ -1233,7 +1233,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			fflush(stderr);
 			
 			bool bConnR=false,bConnW=false;
-		    for (int i=0; i<8 && !(bConnR&&bConnW); ++i)
+		    for (int i=0; i<100 && !(bConnR&&bConnW); ++i)
 		    { 
                 if (!bConnW && NetworkBase::connect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str())) bConnW=true;
 			  
