@@ -59,7 +59,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     printf("Subscription database: %s (change with \"--subdb newsubs.db\")\n", 
            subdbFilename.c_str());
     printf("*** Make sure these database files are not on a shared file system ***\n");
-    printf("To clear the name server state, simply stop it, delete these files, and restart.\n");
+    printf("To clear the name server state, simply stop it, delete these files, and restart.\n\n");
     printf("IP address: %s (change with \"--ip N.N.N.N\")\n", 
            (ip=="...")?"default":ip.c_str());
     printf("Port number: %d (change with \"--socket NNNNN\")\n", sock);
@@ -122,11 +122,15 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
 
     // Repeat registrations for the server and fallback server -
     // these registrations are more complete.
+    printf("Registering name server with itself:\n");
     Network::registerContact(contact);
     subscriber.welcome(contact.getName().c_str(),1);
     Network::registerContact(fallback.where());
     subscriber.welcome(fallback.where().getName().c_str(),1);
     ns.goPublic();
+    printf("Name server can be browsed at http://%s:%d/\n",
+           contact.getHost().c_str(), contact.getPort());
+    printf("\nOk.  Ready!\n");
     
     while (true) {
         Time::delay(600);
