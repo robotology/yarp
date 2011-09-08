@@ -28,7 +28,7 @@ using namespace yarp::os;
 using namespace yarp::name;
 using namespace std;
 
-int yarpserver3_main(int argc, char *argv[]) {
+yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     // check if YARP version is sufficiently up to date - there was
     // an important bug fix
     Bottle b("ip 10.0.0.10");

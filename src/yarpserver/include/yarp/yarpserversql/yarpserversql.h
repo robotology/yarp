@@ -11,14 +11,14 @@
 #define YARP_INC_YARPSERVERSQL
 
 #include <yarp/conf/api.h>
-#ifndef YARP_yarpserversql_API
-#  ifdef YARP_yarpserversql_EXPORTS
-#    define YARP_yarpserversql_API YARP_EXPORT
+#ifndef yarpserversql_API
+#  ifdef yarpserversql_EXPORTS
+#    define yarpserversql_API YARP_EXPORT
 #  else
-#     define YARP_yarpserversql_API YARP_IMPORT
+#     define yarpserversql_API YARP_IMPORT
 #  endif
 #endif
 
-YARP_yarpserversql_API int yarpserver3_main(int argc, char *argv[]);
+yarpserversql_API int yarpserver3_main(int argc, char *argv[]);
 
 #endif
