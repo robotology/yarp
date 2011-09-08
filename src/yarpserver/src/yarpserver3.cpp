@@ -15,6 +15,8 @@
 #include <yarp/name/NameServerManager.h>
 #include <yarp/name/BootstrapServer.h>
 
+#include <yarp/yarpserversql/yarpserversql.h>
+
 #include "TripleSourceCreator.h"
 #include "NameServiceOnTriples.h"
 #include "AllocatorOnTriples.h"
@@ -26,7 +28,7 @@ using namespace yarp::os;
 using namespace yarp::name;
 using namespace std;
 
-int main(int argc, char *argv[]) {
+int yarpserver3_main(int argc, char *argv[]) {
     // check if YARP version is sufficiently up to date - there was
     // an important bug fix
     Bottle b("ip 10.0.0.10");

@@ -1031,6 +1031,9 @@ int Companion::cmdRegression(int argc, char *argv[]) {
 
 
 int Companion::cmdServer(int argc, char *argv[]) {
+    // Note: if YARP is compiled with a "persistent name server",
+    // then the command "yarp server" will be intercepted here:
+    //   [YARP root]/src/yarp/yarp.cpp
     return NameServer::main(argc,argv);
 }
 

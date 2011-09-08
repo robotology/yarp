@@ -2,9 +2,9 @@
 # Author: Paul Fitzpatrick
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
 
-if (CREATE_YARPSERVER3)
+if (YARP_USE_PERSISTENT_NAMESERVER)
  
-project(YARP_name)
+  project(YARP_name)
 
   file(GLOB folder_source src/*.cpp)
   file(GLOB_RECURSE folder_header include/*.h)

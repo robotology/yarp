@@ -1,3 +1,12 @@
+2011-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpserver/CMakeLists.txt: make yarpserver3 the 
+	default name server.  It will now run when "yarpserver"
+	or "yarp server" is called [thanks Lorenzo Natale].
+	The CMake CREATE_YARPSERVER3 option with default FALSE is
+	now retired in favor of a YARP_USE_PERSISTENT_NAMESERVER
+	option with default TRUE.
+
 2011-09-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* conf/template/YARPConfig.cmake.in: another patch from
