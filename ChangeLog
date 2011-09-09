@@ -1,3 +1,28 @@
+2011-09-09  Andrea Del Prete    <andrea.delprete@iit.it>
+	
+	* src/libYARP_math/src/math.cpp
+	* src/libYARP_math/include/yarp/math/Math.h	
+	These methods have been moved from iCub::ctrlLib to yarp::math:
+	norm(Vector), norm2(Vector), findMax(Vector), findMin(Vector), cross(Vector, Vector)
+	The reason is that these are really basic operations, so 
+	yarp::math is the best place for them.
+	Since the namespace has changed, every call to these methods 
+	using explicit namespace has been modified accordingly. For instance:
+	iCub::ctrl::norm(x)  =>  yarp::math::norm(x)
+	As far as the icub main build is concerned, we have checked that everything compiles.
+	We are also going to check the most used modules in the "contrib" directory.
+	New methods have been added to yarp::math, to ease linear algebra operations:
+	- pile: vertical matrix-vector concatenation
+	- cat: horizontal matrix-vector concatenation
+	New checks of matrix and vector sizes in operators +, -, *, /.
+	
+	* src/libYARP_sig/include/yarp/sig/Matrix.h
+	* src/libYARP_sig/include/yarp/sig/Vector.h
+	* src/libYARP_sig/src/Matrix.cpp
+	* src/libYARP_sig/src/Vector.cpp
+	New methods have been added to the classes Matrix and Vector:
+	Matrix::setSubmatrixm Matrix::setSubrow, Matrix::setSubcol, Vector::setSubvector
+
 2011-09-08  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpserver/CMakeLists.txt: make yarpserver3 the 
