@@ -367,12 +367,12 @@ Vector yarp::math::cross(const Vector &a, const Vector &b)
     return v;
 }
 
-inline double yarp::math::norm(const Vector &v)
+double yarp::math::norm(const Vector &v)
 {
 	return sqrt(dot(v,v));
 }
 
-inline double yarp::math::norm2(const Vector &v)
+double yarp::math::norm2(const Vector &v)
 {
     return dot(v,v);
 }
