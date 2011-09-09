@@ -47,7 +47,8 @@ Matrix yarp::math::operator+(const yarp::sig::Matrix &a, const yarp::sig::Matrix
 {
     int n=a.cols();
 	int m=a.rows();
-    YARP_ASSERT(n==b.rows());
+    YARP_ASSERT(m==b.rows());
+    YARP_ASSERT(n==b.cols());
     yarp::sig::Matrix ret(m,n);
     for (int r=0; r<m;r++)
 		for (int c=0; c<n;c++)
@@ -69,7 +70,8 @@ Matrix yarp::math::operator-(const yarp::sig::Matrix &a, const yarp::sig::Matrix
 {
     int n=a.cols();
 	int m=a.rows();
-    YARP_ASSERT(n==b.rows());
+    YARP_ASSERT(m==b.rows());
+    YARP_ASSERT(n==b.cols());
     yarp::sig::Matrix ret(m,n);
     for (int r=0; r<m;r++)
 		for (int c=0; c<n;c++)
