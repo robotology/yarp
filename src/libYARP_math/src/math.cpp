@@ -8,6 +8,7 @@
 
 #include <yarp/math/Math.h>
 #include <yarp/os/Log.h>
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_matrix_double.h>
 
@@ -366,7 +367,17 @@ Vector yarp::math::cross(const Vector &a, const Vector &b)
     return v;
 }
 
-double yarp::math::max(const Vector &v)
+inline double yarp::math::norm(const Vector &v)
+{
+	return sqrt(dot(v,v));
+}
+
+inline double yarp::math::norm2(const Vector &v)
+{
+    return dot(v,v);
+}
+
+double yarp::math::findMax(const Vector &v)
 {
     if (v.length()<=0)
         return 0.0;
@@ -377,7 +388,7 @@ double yarp::math::max(const Vector &v)
     return ret;
 }
 
-double yarp::math::min(const Vector &v)
+double yarp::math::findMin(const Vector &v)
 {
     if (v.length()<=0)
         return 0.0;    

@@ -13,7 +13,6 @@
 #include <yarp/sig/Vector.h>
 #include <yarp/sig/Matrix.h>
 #include <yarp/math/api.h>
-#include <math.h>
 
 namespace yarp
 {
@@ -241,35 +240,28 @@ namespace yarp
         * @param v is the input vector. 
         * @return ||v||. 
         */
-        inline double YARP_math_API norm(const yarp::sig::Vector &v)
-        {
-            return sqrt(dot(v,v));
-        }
+        double YARP_math_API norm(const yarp::sig::Vector &v);
 
         /**
         * Returns the Euclidean squared norm of the vector. 
         * @param v is the input vector. 
         * @return ||v||^2. 
         */
-        inline double YARP_math_API norm2(const yarp::sig::Vector &v)
-        {
-            return dot(v,v);
-        }
+        double YARP_math_API norm2(const yarp::sig::Vector &v);
 
         /**
         * Returns the maximum of the elements of a real vector.
         * @param v is the input vector. 
         * @return max(v). 
         */
-        double YARP_math_API max(const yarp::sig::Vector &v);
-
+        double YARP_math_API findMax(const yarp::sig::Vector &v);
 
         /**
         * Returns the minimum of the elements of a real vector.
         * @param v is the input vector. 
         * @return min(v). 
         */
-        double YARP_math_API min(const yarp::sig::Vector &v);
+        double YARP_math_API findMin(const yarp::sig::Vector &v);
 
         /**
         * Creates a vector of zeros.
