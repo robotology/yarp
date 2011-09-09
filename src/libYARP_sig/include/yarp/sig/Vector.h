@@ -350,6 +350,17 @@ public:
     Vector subVector(unsigned int first, unsigned int last) const;
 
     /**
+     * Set a portion of this vector with the values of the specified vector.
+     * If the specified vector v is to big the method does not resize the vector,
+     * but return false.
+     * 
+     * @param position index of the first value to set
+     * @param v vector containing the values to set
+     * @return true if the operation succeeded, false otherwise
+     */
+    bool setSubvector(int position, const Vector &v);
+
+    /**
     * Set all elements of the vector to a scalar.
     */
     const Vector &operator=(double v);

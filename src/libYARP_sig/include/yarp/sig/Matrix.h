@@ -228,6 +228,40 @@ public:
       }
 
       /**
+       * Set a portion of this matrix with the values of the specified matrix m.
+       * The portion to be set is from row r to row r+m.rows()-1 and from column c 
+       * to column c+m.cols()-1.
+       *
+       * @param m matrix containing the values to set
+       * @param r start row
+       * @param c start columbn
+       * @return true if the operation succeeded, false otherwise
+       */
+      bool setSubmatrix(const Matrix &m, int r, int c);
+
+      /**
+       * Set a portion of a row of this matrix with the values of the specified vector v.
+       * The portion to be set is from column c to column c+v.size()-1.
+       *
+       * @param v vector containing the values to set
+       * @param r index of the row to set
+       * @param c start column
+       * @return true if the operation succeeded, false otherwise
+       */
+      bool setSubrow(const Vector &v, int r, int c);
+
+      /**
+       * Set a portion of a column of this matrix with the values of the specified vector v.
+       * The portion to be set is from row r to row r+v.size()-1.
+       *
+       * @param v vector containing the values to set
+       * @param r start row index
+       * @param c index of the column to set
+       * @return true if the operation succeeded, false otherwise
+       */
+      bool setSubcol(const Vector &v, int r, int c);
+
+      /**
       * Get a row of the matrix as a vector.
       * @param r the row number
       * @return a vector which contains the requested row

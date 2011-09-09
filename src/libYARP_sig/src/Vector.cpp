@@ -120,6 +120,15 @@ Vector Vector::subVector(unsigned int first, unsigned int last) const
     return ret;
 }
 
+bool Vector::setSubvector(int position, const Vector &v)
+{    
+    if(position+v.size() > storage.size())
+        return false;
+    for(int i=0;i<v.size();i++)
+        storage[position+i] = v(i);
+    return true;
+}
+
 const Vector &Vector::operator=(const Vector &r)
 {
     storage=r.storage;
