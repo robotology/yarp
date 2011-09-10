@@ -551,6 +551,24 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		return result;
 	}
 
+	yarp::dev::IImpedanceControl *viewIImpedanceControl() {
+		yarp::dev::IImpedanceControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::ITorqueControl *viewITorqueControl() {
+		yarp::dev::ITorqueControl *result;
+		self->view(result);
+		return result;
+	}
+
+	yarp::dev::IControlMode *viewIControlMode() {
+		yarp::dev::IControlMode *result;
+		self->view(result);
+		return result;
+	}
+
 	// you'll need to add an entry for every interface you wish
 	// to use
 }

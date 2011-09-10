@@ -1,5 +1,9 @@
+2011-09-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: apply patch to add interfaces for impedance
+	and torque control [thanks Stephane Lallee]
+
 2011-09-09  Andrea Del Prete    <andrea.delprete@iit.it>
-	
 	* src/libYARP_math/src/math.cpp
 	* src/libYARP_math/include/yarp/math/Math.h	
 	These methods have been moved from iCub::ctrlLib to yarp::math:
