@@ -236,22 +236,22 @@ public:
 	/**
      * Get normalized shutter time [0.0 : 1.0].
      */
-    virtual double getShutter() const;
+    virtual double getShutter();
 
     /**
      * Get normalized gain [0.0 : 1.0].
      */
-    virtual double getGain() const;
+    virtual double getGain();
 
     /**
      * Get normalized image brightness [0.0 : 1.0].
      */
-    virtual double getBrightness() const;
+    virtual double getBrightness();
 
     /**
      * Get normalized image white balance [0.0 : 1.0].
      */
-	virtual bool getWhiteBalance(double &red, double &blue) const;
+	virtual bool getWhiteBalance(double &red, double &blue);
 
 
 
@@ -266,6 +266,48 @@ public:
 	virtual bool setAuto(bool bAuto=true);
 
 	virtual void PrintSettings();
+
+
+
+    virtual bool setExposure(double v) {
+        return false;
+    }
+    virtual bool setSharpness(double v) {
+        return false;
+    }    
+    virtual bool setHue(double v) {
+        return false;
+    }
+    virtual bool setSaturation(double v) {
+        return false;
+    }    
+     virtual bool setGamma(double v) {
+        return false;
+    }    
+    virtual bool setIris(double v) {
+        return false;
+    }
+
+    virtual double getExposure() {
+        return 0.0;
+    }
+    virtual double getSharpness() {
+        return 0.0;
+    }
+    virtual double getHue() {
+        return 0.0;
+    }
+    virtual double getSaturation() {
+        return 0.0;
+    }
+    virtual double getGamma() {
+        return 0.0;
+    }        
+    virtual double getIris() {
+        return 0.0;
+    }
+    
+
 
 protected:
 	void *system_resources;

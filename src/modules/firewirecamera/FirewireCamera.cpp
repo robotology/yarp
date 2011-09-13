@@ -12,8 +12,6 @@
 #include <yarp/os/Semaphore.h>
 #include <yarp/dev/DeviceDriver.h>
 #include <yarp/dev/FrameGrabberInterfaces.h>
-#include <ace/Log_Msg.h>
-#include <ace/OS.h>
 
 #include "FirewireCameraSet.h"
 
