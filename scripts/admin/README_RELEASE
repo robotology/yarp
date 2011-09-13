@@ -33,7 +33,7 @@
 
 ** Upload:
   scp source-package/unix/yarp-src-2.2.6.tar.gz USERNAME,yarp0sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2/yarp-2.2.6/yarp-2.2.6.tar.gz
-  scp source-package/win/yarp-src-2.2.6.zip USERNAME,yarp0sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2/yarp-2.2.6/yarp-2.2.6.zip
+  scp source-package/windows/yarp-src-2.2.6.zip USERNAME,yarp0sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2/yarp-2.2.6/yarp-2.2.6.zip
 
 * Update src/doc/download.dox
 
