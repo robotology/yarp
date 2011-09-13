@@ -1,3 +1,7 @@
+2011-09-12 Lorenzo Natale <lorenzo.natale@iit.it>
+        * conf/YarpVersion.cmake
+        tagging 2.3.12
+     
 2011-09-10  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: apply patch to add interfaces for impedance
