@@ -1,0 +1,43 @@
+=== Following steps for building a relead ==
+
+* Look at this page to get the current YARP version, say 2.1.6:
+
+  http://eris.liralab.it/yarp/specs/dox/download.html
+
+* Check regression tests
+
+* Make sure that conf/YarpVersion.cmake is different to the latest
+  public version, bumping up the version number if needed.
+
+* Prepare licenses
+
+  rm -rf license_check
+  ./scripts/update-license
+  # check license-statement.txt for sanity
+  cp license-statement.txt COPYING
+
+* Commit current version:
+  svn commit -m "tagging ..." 
+
+* Write down revision svn revision number (REVISION)
+
+* Tag:
+  svn copy -r REVISION  https://yarp0.svn.sourceforge.net/svnroot/yarp0/trunk/yarp2  https://yarp0.svn.sourceforge.net/svnroot/yarp0/tags/yarp-2.2.6
+
+* Build source packages:
+  ./scripts/make-source-package-svn yarp-2.2.6
+
+* Upload to sourceforge
+
+** Go to sourceforge, make folder yarp-2.2.6
+
+** Upload:
+  scp source-package/unix/yarp-src-2.2.6.tar.gz USERNAME,yarp0sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2/yarp-2.2.6/yarp-2.2.6.tar.gz
+  scp source-package/win/yarp-src-2.2.6.zip USERNAME,yarp0sourceforge.net:/home/frs/project/y/ya/yarp0/yarp2/yarp-2.2.6/yarp-2.2.6.zip
+
+* Update src/doc/download.dox
+
+  
+
+
+
