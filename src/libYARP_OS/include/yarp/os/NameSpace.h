@@ -24,10 +24,7 @@ class yarp::os::NameSpace {
 public:
     virtual ~NameSpace() {}
 
-    virtual bool checkNetwork() {
-        Contact c = queryName(getNameServerName());
-        return c.isValid();
-    }
+    virtual bool checkNetwork();
     
     virtual Contact getNameServerContact() const = 0;
 

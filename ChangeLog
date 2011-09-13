@@ -1,3 +1,8 @@
+2011-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/NameSpace.cpp: fix regression in behavior
+	of yarp::os::Network::checkNetwork [thanks Martin Peniak]
+
 2011-09-12 Lorenzo Natale <lorenzo.natale@iit.it>
         * conf/YarpVersion.cmake
         tagging 2.3.12

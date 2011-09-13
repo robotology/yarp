@@ -11,6 +11,7 @@
 #define _YARP2_OUTPUTPROTOCOL_
 
 #include <yarp/os/impl/Route.h>
+#include <yarp/os/impl/InputStream.h>
 #include <yarp/os/ConnectionWriter.h>
 #include <yarp/os/impl/SizedWriter.h>
 
