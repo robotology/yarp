@@ -46,8 +46,45 @@ public:
         checkTrue(vnull2.isNull(), "null check 2 ok");
     }
 
+    void checkMixedCopy() {
+        {
+            Value a(0);
+            Value b("zero");
+            
+            a = b;
+            
+            checkEqual(a.asString().c_str(),"zero","string asString ok");
+            checkEqual(a.toString().c_str(),"zero","string toString ok");
+        }
+
+
+        {
+            Value a("zero");
+            Value b(0);
+
+            a = b;
+
+            checkEqual(a.asString().c_str(),"","int asString ok");
+            checkEqual(a.toString().c_str(),"0","int toString ok");
+            checkEqual(a.asInt(),0,"int asInt ok");
+        }
+
+
+        {
+            Value a("zero");
+            Value b(5);
+
+            a = b;
+
+            checkEqual(a.asString().c_str(),"","int asString ok");
+            checkEqual(a.toString().c_str(),"5","int toString ok");
+            checkEqual(a.asInt(),5,"int asInt ok");
+        }
+    }
+
     virtual void runTests() {
         checkCopy();
+        checkMixedCopy();
     }
 };
 

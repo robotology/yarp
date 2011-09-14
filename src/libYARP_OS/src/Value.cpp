@@ -111,10 +111,17 @@ const Value& Value::operator = (const Value& alt) {
         }
     } else {
         if (alt.proxy) {
-            // proxies are guaranteed to be Storable
-            ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
+            if (getCode()==alt.getCode()) {
+                // proxies are guaranteed to be Storable
+                ((Storable*)proxy)->copy(*((Storable*)alt.proxy));
+            } else {
+                setProxy(alt.clone());
+            }
         } else {
-            setProxy(NULL);
+            if (proxy) { 
+                delete proxy;
+                proxy = NULL;
+            }
         }
     }
     return *this;

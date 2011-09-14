@@ -1,5 +1,13 @@
 2011-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Value.cpp: make copy behavior between Values
+	specialized for different types more intuitive
+	[thanks Alessandro Scalzo]
+
+	* src/libYARP_OS/harness/ValueTest.cpp: add regression
+	test for unintuitive copy behavior between Values specialized
+	for different types [thanks Alessandro Scalzo]
+
 	* src/libYARP_OS/src/NameSpace.cpp: fix regression in behavior
 	of yarp::os::Network::checkNetwork [thanks Martin Peniak]
 
