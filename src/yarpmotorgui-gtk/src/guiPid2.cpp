@@ -182,7 +182,10 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   double stiff_min=0.0;
   double damp_max=0.0;
   double damp_min=0.0;
+  double off_max=0.0;
+  double off_min=0.0;
   iImp->getCurrentImpedanceLimit(*joint, &stiff_min, &stiff_max, &damp_min, &damp_max);
+  iTrq->getTorqueRange(*joint, &off_min, &off_max);
   sprintf(buffer, "%3.3f", stiff_min);
   gtk_entry_set_text((GtkEntry*) imp_stiffMin,  buffer);
   sprintf(buffer, "%3.3f", stiff_max);
@@ -191,6 +194,11 @@ void guiPid2::send_imp_pid (GtkButton *button, Pid *pid)
   gtk_entry_set_text((GtkEntry*) imp_dampMin,  buffer);
   sprintf(buffer, "%3.3f", damp_max);
   gtk_entry_set_text((GtkEntry*) imp_dampMax,  buffer);
+
+  sprintf(buffer, "%3.3f", off_min);
+  gtk_entry_set_text((GtkEntry*) imp_offMin,  buffer);
+  sprintf(buffer, "%3.3f", off_max);
+  gtk_entry_set_text((GtkEntry*) imp_offMax,  buffer);
 }
 
 //*********************************************************************************
@@ -379,13 +387,16 @@ void guiPid2::guiPid2(void *button, void* data)
   double damp_val=0;
   double stiff_max=0;
   double damp_max=0;
+  double off_max=0;
   double stiff_min=0;
   double damp_min=0;
+  double off_min=0;
   double offset_val=0;
   double debug_param [8];
   for (int i=0; i<8; i++) debug_param[i] =0;
 
   iImp->getCurrentImpedanceLimit(*joint, &stiff_min, &stiff_max, &damp_min, &damp_max);
+  iTrq->getTorqueRange(*joint, &off_min, &off_max);
 
   iPid->getPid(*joint, &myPosPid);
   iTrq->getTorquePid(*joint, &myTrqPid);
@@ -620,6 +631,11 @@ void guiPid2::guiPid2(void *button, void* data)
   //offset desired
   imp_offDes   =  gtk_entry_new();
   changePidValue(offset_val, note_pag3, imp_offDes, 180, 140, "Desired Joint Force off");
+  //offset limits
+  imp_offMax   =  gtk_entry_new();
+  displayPidValue(off_max, note_pag3, imp_offMax, 330, 140, "Max", true);
+  imp_offMin   =  gtk_entry_new();
+  displayPidValue(off_min, note_pag3, imp_offMin, 140, 140, "Min", true);
 
   //Send buttons
   button_Pos_Send = gtk_button_new_with_mnemonic ("Send");

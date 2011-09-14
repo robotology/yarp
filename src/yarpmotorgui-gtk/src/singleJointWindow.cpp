@@ -296,9 +296,6 @@ bool partMover::entry_update(partMover *currentPart)
 	  return true;
   itrq->getTorques(torques);
   iiencs->getEncoderSpeeds(speeds);
-#if DEBUG_GUI
-  itrq->getTorqueRanges(min_torques,max_torques);
-#endif
   
   //update all joints positions
   for (k = 0; k < NUMBER_OF_JOINTS; k++)

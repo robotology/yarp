@@ -92,11 +92,14 @@ namespace guiPid2
 
 	static GtkWidget *imp_stiffDes = NULL;
 	static GtkWidget *imp_dampDes = NULL;
+	static GtkWidget *imp_offDes = NULL;
 	static GtkWidget *imp_stiffMax = NULL;
 	static GtkWidget *imp_dampMax = NULL;
 	static GtkWidget *imp_stiffMin = NULL;
 	static GtkWidget *imp_dampMin = NULL;
-	static GtkWidget *imp_offDes = NULL;
+	static GtkWidget *imp_offMax = NULL;
+	static GtkWidget *imp_offMin = NULL;
+
 	static GtkWidget *imp_stiffEntry = NULL;
 	static GtkWidget *imp_dampEntry = NULL;
 	static GtkWidget *imp_offEntry = NULL;
