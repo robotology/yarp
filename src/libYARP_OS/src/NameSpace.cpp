@@ -1,17 +1,31 @@
+// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+
+/*
+ * Copyright (C) 2011 Department of Robotics Brain and Cognitive Sciences - Istituto Italiano di Tecnologia
+ * Authors: Paul Fitzpatrick
+ * CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+ *
+ */
+
 #include <yarp/os/NameSpace.h>
-#include <yarp/os/Network.h>
-#include <yarp/os/Bottle.h>
-#include <yarp/os/Contact.h>
+#include <yarp/os/impl/OutputProtocol.h>
+#include <yarp/os/impl/Carriers.h>
 
 using namespace yarp::os;
-
-// holding action while traveling to make yarp build work again
-// pardon the poor formatting
-// may not be exactly right, no compiler to test...
+using namespace yarp::os::impl;
 
 bool NameSpace::checkNetwork() {
-  Contact c = getNameServerContact();
-  if (!c.isValid()) return false;
-  Bottle cmd("[ping]"), reply;
-  return NetworkBase::write(c,cmd,reply,true,false,5);
+    Contact c = queryName(getNameServerName());
+    if (!c.isValid()) return false;
+
+    OutputProtocol *out = Carriers::connect(Address::fromContact(c));
+    if (out==NULL) {
+        return false;
+    }
+
+    out->close();
+    delete out;
+    out = NULL;
+
+    return true;
 }
