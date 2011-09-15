@@ -136,6 +136,13 @@ void MainWindow::createWidgets(void)
 	    "    <separator/>"
 		"    <toolitem action='HelpOnline'/>"
 		" </toolbar>"
+		" <popup name='PopupManageModules'>"
+        "      <menuitem action='ManageRun'/>"
+        "      <menuitem action='ManageStop'/>"
+        "      <menuitem action='ManageKill'/>"
+        "      <separator/>"
+        "      <menuitem action='ManageRefresh'/>"
+		" </popup>"
 		"</ui>";
 
 

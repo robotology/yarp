@@ -135,6 +135,17 @@ protected:
 	void selectedModuleCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedConnectionCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedResourceCallback(const Gtk::TreeModel::iterator& iter);
+	virtual void onModuleTreeButtonPressed(GdkEventButton* event);
+	virtual void onConnectionTreeButtonPressed(GdkEventButton* event);
+	virtual void onResourceTreeButtonPressed(GdkEventButton* event);
+
+	virtual void onPMenuRun() { onRun(); }
+	virtual void onPMenuStop() { onStop(); }
+	virtual void onPMenuKill() { onKill(); }
+	virtual void onPMenuConnect() { onConnect(); }
+	virtual void onPMenuDisconnect() { onDisconnect(); }
+	virtual void onPMenuRefresh() { onRefresh(); }
+//	virtual void onPMenuSelectAll()
 
 	Gtk::VPaned m_VPaned;
 	Gtk::HPaned m_HPaned;
@@ -147,6 +158,8 @@ protected:
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeModSelection;
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeConSelection;
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeResSelection;
+	Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+	Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
 private:
 	bool m_bShouldRun;
@@ -157,6 +170,8 @@ private:
 	std::vector<int> m_ConnectionIDs;
 	std::vector<int> m_ResourceIDs;
 
+	void createWidgets(void);
+	void setupSignals(void);
 	void (ApplicationWindow::*m_pAction)(void);
 	
 	bool getModRowByID(int id, Gtk::TreeModel::Row* row );

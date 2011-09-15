@@ -25,6 +25,33 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
 	m_pParent = parent;
 	m_pAction = NULL;
 
+	createWidgets();
+	setupSignals();
+	show_all_children();
+	prepareManagerFrom(lazy, szAppName);
+}
+
+
+ApplicationWindow::~ApplicationWindow()
+{
+}
+
+bool ApplicationWindow::threadInit() { return true; }
+
+
+void ApplicationWindow::afterStart(bool s) {}
+
+void ApplicationWindow::threadRelease() {}
+
+void ApplicationWindow::run()
+{
+	if(m_pAction)
+		(this->*m_pAction)();
+	RateThread::stop();
+}
+
+void ApplicationWindow::createWidgets(void)
+{
 	/* Create a new scrolled window, with scrollbars only if needed */
 	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	add(m_VPaned);
@@ -141,30 +168,80 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
 	m_refTreeConSelection->set_mode(Gtk::SELECTION_MULTIPLE);
 	m_refTreeResSelection->set_mode(Gtk::SELECTION_MULTIPLE);
 
-	show_all_children();
 
-	prepareManagerFrom(lazy, szAppName);
+
+	// adding popup menubar
+	m_refActionGroup = Gtk::ActionGroup::create();
+//	m_refActionGroup->add(Gtk::Action::create("PopupModules", "PopupModules"));
+	m_refActionGroup->add( Gtk::Action::create("PManageRun", Gtk::Stock::EXECUTE, "_Run", "Run Application"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuRun) );
+	m_refActionGroup->add( Gtk::Action::create("PManageStop", Gtk::Stock::CLOSE ,"_Stop", "Stop Application"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuStop) );
+	m_refActionGroup->add( Gtk::Action::create("PManageKill", Gtk::Stock::STOP,"_Kill", "Kill Application"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuKill) );
+	m_refActionGroup->add( Gtk::Action::create("PManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuConnect) );
+	m_refActionGroup->add( Gtk::Action::create("PManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
+	m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
+
+	m_refUIManager = Gtk::UIManager::create();
+	m_refUIManager->insert_action_group(m_refActionGroup);
+	//::add_accel_group(m_refUIManager->get_accel_group());
+	Glib::ustring ui_info =
+		"<ui>"
+		" <popup name='PopupModules'>"
+        "      <menuitem action='PManageRun'/>"
+        "      <menuitem action='PManageStop'/>"
+        "      <menuitem action='PManageKill'/>"
+        "      <separator/>"
+        "      <menuitem action='PManageRefresh'/>"
+		" </popup>"
+		" <popup name='PopupConnections'>"
+        "      <menuitem action='PManageConnect'/>"
+        "      <menuitem action='PManageDisconnect'/>"
+        "      <separator/>"
+        "      <menuitem action='PManageRefresh'/>"
+		" </popup>"
+		" <popup name='PopupResources'>"
+        "      <menuitem action='PManageRefresh'/>"
+		" </popup>"
+		"</ui>";
+
+
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+	try
+	{
+		m_refUIManager->add_ui_from_string(ui_info);
+	}
+	catch(const Glib::Error& ex)
+	{
+		std::cerr << "building popup menus failed: " << ex.what();
+	}
+#else
+	std::auto_ptr<Glib::Error> ex;
+	m_refUIManager->add_ui_from_string(ui_info, ex);
+	if(ex.get())
+	{
+  		std::cerr << "building popu menus failed: " << ex->what();
+	}	
+#endif //GLIBMM_EXCEPTIONS_ENABLED
+
 }
 
-
-ApplicationWindow::~ApplicationWindow()
+void ApplicationWindow::setupSignals(void)
 {
+	m_TreeModView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+            &ApplicationWindow::onModuleTreeButtonPressed) );
+
+	m_TreeConView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+            &ApplicationWindow::onConnectionTreeButtonPressed) );
+
+	m_TreeResView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+            &ApplicationWindow::onResourceTreeButtonPressed) );
+
 }
-
-bool ApplicationWindow::threadInit() { return true; }
-
-
-void ApplicationWindow::afterStart(bool s) {}
-
-void ApplicationWindow::threadRelease() {}
-
-void ApplicationWindow::run()
-{
-	if(m_pAction)
-		(this->*m_pAction)();
-	RateThread::stop();
-}
-
 
 void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 {
@@ -261,6 +338,42 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 												nores_ico.bytes_per_pixel*nores_ico.width);
 		m_resRow[m_resColumns.m_col_res] = (*itrS)->getPort();
 		m_resRow[m_resColumns.m_col_status] = "---";
+	}
+}
+
+
+
+void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
+{
+	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	{
+		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+        			m_refUIManager->get_widget("/PopupModules"));
+		if(pMenu)
+	  	pMenu->popup(event->button, event->time);
+	}
+}
+
+void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
+{
+	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	{
+		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+        			m_refUIManager->get_widget("/PopupConnections"));
+		if(pMenu)
+	  		pMenu->popup(event->button, event->time);
+	}
+}
+
+
+void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
+{
+	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	{
+		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+        			m_refUIManager->get_widget("/PopupResources"));
+		if(pMenu)
+	  		pMenu->popup(event->button, event->time);
 	}
 }
 
