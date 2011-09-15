@@ -7,11 +7,13 @@
  *
  */
 
-
-#include "application_list.h"
 #include <sstream>
 #include <string>
 #include <iostream>
+
+#include "application_list.h"
+#include "icon_res.h"
+
 using namespace std;
 
 ApplicationList::ApplicationList()
@@ -25,6 +27,7 @@ ApplicationList::ApplicationList()
 	m_TreeView.set_model(m_refTreeModel);
 
 	m_appRow = *(m_refTreeModel->append());
+	m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
 	m_appRow[m_appColumns.m_col_name] = "Applications";
 	m_appRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", 16);
 	//Gtk::IconTheme::get_default()->load_icon("folder", Gtk::ICON_SIZE_MENU)->save("test.jpg", "jpeg");
@@ -52,10 +55,11 @@ ApplicationList::ApplicationList()
 
 ApplicationList::~ApplicationList()
 {
+
 }
 
 
-bool ApplicationList::addApplication(const char* szName)
+bool ApplicationList::addApplication(Application* app)
 {
 	typedef Gtk::TreeModel::Children type_children;
 
@@ -69,16 +73,43 @@ bool ApplicationList::addApplication(const char* szName)
 		for(type_children::iterator itrapp = appchild.begin(); itrapp!= appchild.end(); ++itrapp)
 		{
 			Gtk::TreeModel::Row childrow = *itrapp;
-		 	if(childrow[m_appColumns.m_col_name] == Glib::ustring(szName))
+		 	if(childrow[m_appColumns.m_col_name] == Glib::ustring(app->getName()))
 	  			return false;
 		}
 	  }
 	}
 
 	Gtk::TreeModel::Row childrow = *(m_refTreeModel->append(m_appRow.children()));
-	childrow[m_appColumns.m_col_name] = szName;
-	childrow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("document", 16);
-	m_TreeView.expand_all();
+	childrow[m_appColumns.m_col_type] = APPLICATION;
+	childrow[m_appColumns.m_col_name] = app->getName();
+	childrow[m_appColumns.m_col_refPix] = 
+			 Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
+											Gdk::COLORSPACE_RGB,
+											90,
+											8,
+											application_ico.height,
+											application_ico.width,
+											application_ico.bytes_per_pixel*application_ico.width);
+	string fname;
+	string fpath = app->getXmlFile();
+
+#ifdef __WINDOWS__
+	size_t pos = fpath.rfind("\\");
+#else
+	size_t pos = fpath.rfind("/");
+#endif
+	if(pos!=string::npos)
+		fname = fpath.substr(pos);
+	else
+		fname = fpath;
+	 fname = "..." + fname; 
+
+	Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
+	descrow[m_appColumns.m_col_type] = NODE_FILENAME;
+	descrow[m_appColumns.m_col_name] = fname;
+	descrow[m_appColumns.m_col_refPix] = 
+	Gtk::IconTheme::get_default()->load_icon("document", 16);
+	//m_TreeView.expand_all();
 	return true;
 }
 

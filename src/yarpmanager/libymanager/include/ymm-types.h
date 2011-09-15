@@ -21,7 +21,9 @@ typedef enum __NodeType {
 	INPUTD,
 	OUTPUTD,
 	APPLICATION,
-	RESOURCE
+	RESOURCE,
+	NODE_FILENAME,
+	NODE_OTHER
 } NodeType;
 
 typedef enum __OS {

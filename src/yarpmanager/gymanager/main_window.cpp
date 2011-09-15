@@ -346,7 +346,8 @@ void MainWindow::syncApplicationList(void)
 	for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
 	{
 		cnt++;
-		m_applicationList.addApplication((*itr)->getName());
+		//m_applicationList.addApplication((*itr)->getName());
+		m_applicationList.addApplication((*itr));
 	}
 	
 	if(cnt)
@@ -588,16 +589,16 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 			Gtk::TreeViewColumn* column)
 {
 	Gtk::TreeModel::iterator iter = m_applicationList.m_refTreeModel->get_iter(path);
-	if(iter)
+	
+	if(iter && ((*iter)[m_applicationList.m_appColumns.m_col_type] == APPLICATION)) 
   	{
-    	Gtk::TreeModel::Row row = *iter;
+		Gtk::TreeModel::Row row = *iter;
 		Glib::ustring name = row[m_applicationList.m_appColumns.m_col_name];
 		
 		int page_num = -1;
 		for(int i=0; i<m_mainTab.get_n_pages(); i++)
 		{
 			Glib::ustring pageName = m_mainTab.get_tab_label_text(*m_mainTab.get_nth_page(i));
-			//Glib::ustring pageName = m_mainTab.get_tab_label_text(*(m_mainTab.pages()[i].get_child()));
 			if(pageName == name)
 			{
 				page_num = i;
@@ -614,6 +615,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 			m_mainTab.append_page(*pAppWnd, name);
 			m_mainTab.set_tab_reorderable(*pAppWnd);
 			m_mainTab.show_all_children();
+			m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
 		}
 		
 		m_refActionGroup->get_action("FileClose")->set_sensitive(true);
@@ -625,6 +627,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 		m_refActionGroup->get_action("ManageRefresh")->set_sensitive(true);
 
 	}
+	
 
 }
 

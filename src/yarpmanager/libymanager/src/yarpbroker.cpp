@@ -10,6 +10,7 @@
 #include "yarpbroker.h"
 
 #include <signal.h>
+#include <string.h>
 
 #define YARPRUN_ERROR 		-1
 #define RUN_TIMEOUT 		3 		//times of 100ms + running() delay = 3s
@@ -84,13 +85,20 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
 	}
 	
 	strCmd = szcmd;	
-	if(szparam)
+	if(strlen(szparam))
 		strParam = szparam;
-	if(szworkdir)
+	if(strlen(szworkdir))
 		strWorkdir = szworkdir;
-	if(szstdio)
-		strStdio = szstdio;
-	if(szenv)
+
+	if(strlen(szstdio))
+	{
+		if(szstdio[0] != '/')
+			strStdio = string("/") + string(szstdio);
+		else
+			strStdio = szstdio;
+	}
+
+	if(strlen(szenv))
 		strEnv = szenv;
 	
 	ostringstream sstrID;
