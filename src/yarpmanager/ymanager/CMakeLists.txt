@@ -15,16 +15,15 @@ IF (NOT UNIX)
 
 ELSE (NOT UNIX)
 
-	FILE(GLOB folder_source *.cpp ./libymanager/src/*.cpp  ./libymanager/tinyxml/*.cpp)
-    FILE(GLOB folder_header *.h ./libymanager/include/*.h  ./libymanager/tinyxml/*.h)
+	FILE(GLOB folder_source *.cpp)
+    FILE(GLOB folder_header *.h)
 	source_group("Source Files" FILES ${folder_source})
 	source_group("Header Files" FILES ${folder_header})
 
 	INCLUDE_DIRECTORIES(${YARP_TREE_INCLUDE_DIRS})
 	INCLUDE_DIRECTORIES(${ACE_INCLUDE_DIRS})
-	INCLUDE_DIRECTORIES(./)
-	INCLUDE_DIRECTORIES(./libymanager/include)
-	INCLUDE_DIRECTORIES(./libymanager/tinyxml)
+	INCLUDE_DIRECTORIES(../libymanager/include)
+	INCLUDE_DIRECTORIES(../libymanager/tinyxml)
 
 
 	FIND_PATH(READLINE_INCLUDE_DIR readline/readline.h)
@@ -46,9 +45,9 @@ ELSE (NOT UNIX)
 
 	ADD_EXECUTABLE(yarpmanager ${folder_source} ${folder_header} )
 	IF (READLINE_FOUND)
-		TARGET_LINK_LIBRARIES(yarpmanager YARP_init YARP_OS ${READLINE_LIBRARY})
+		TARGET_LINK_LIBRARIES(yarpmanager YARP_init YARP_OS YARP_manager ${READLINE_LIBRARY})
 	ELSE (READLINE_FOUND)
-		TARGET_LINK_LIBRARIES(yarpmanager YARP_init YARP_OS)
+		TARGET_LINK_LIBRARIES(yarpmanager YARP_init YARP_OS YARP_manager)
 	ENDIF (READLINE_FOUND)
 
 	INSTALL(TARGETS yarpmanager COMPONENT utilities DESTINATION bin)

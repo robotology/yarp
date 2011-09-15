@@ -6,6 +6,14 @@
 #
 
 # yarpmanager 
+add_subdirectory(libymanager)
 add_subdirectory(ymanager)
+
+if (CREATE_GUIS)
+	option(CREATE_YMANAGER_GUI "Do you want to compile GUI for Yarp module manager?" OFF)
+	if(CREATE_YMANAGER_GUI)
+		add_subdirectory(gymanager)
+	endif(CREATE_YMANAGER_GUI)
+endif (CREATE_GUIS)
 
 

@@ -67,7 +67,8 @@ public:
 	const char* getLastError(void) { 
 		if(errors.empty())
 			return NULL;
-		string msg = errors.back();
+		static string msg;
+		msg = errors.back();
 		errors.pop_back();
 		return msg.c_str(); 		
 	}
@@ -75,7 +76,8 @@ public:
 	const char* getLastWarning(void) {
 		if(warnings.empty())
 			return NULL;
-		string msg = warnings.back();
+		static string msg;
+		msg = warnings.back();
 		warnings.pop_back();
 		return msg.c_str(); 
 	}
@@ -97,5 +99,6 @@ private:
  
 
 //}
+
 
 #endif //__UTILITY__

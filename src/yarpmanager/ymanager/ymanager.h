@@ -45,6 +45,7 @@ protected:
 	virtual void onExecutableStart(void* which);
 	virtual void onExecutableStop(void* which);
 	virtual void onExecutableDied(void* which);
+	virtual void onExecutableFailed(void* which);
 	virtual void onCnnStablished(void* which);
 	virtual void onCnnFailed(void* which);
 

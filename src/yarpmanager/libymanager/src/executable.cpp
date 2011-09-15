@@ -45,6 +45,7 @@ bool Executable::threadInit()
 			msg<<broker->error();
 		logger->addError(msg);
 		setState(DEAD);
+		event->onExecutableDied(this);
 		return false;
 	}
 	return true;
@@ -58,7 +59,7 @@ void Executable::afterStart(bool s)
 
 void Executable::run()
 {
-	switch(getState()) {
+	switch(getState(false)) {
 
 		case SUSPENDED:
 		{
@@ -129,6 +130,8 @@ void Executable::run()
 			break;
 		}		
 	};
+
+	getState(true);
 }
 
 
@@ -140,11 +143,15 @@ void Executable::threadRelease()
 
 bool Executable::start(void)
 {
-	if((getState() == RUNNING))	
+	RSTATE state = getState();
+	if((state == RUNNING))	
+	{
+		event->onExecutableStart(this);
 		return true;
+	}
 		
-	if((getState() != SUSPENDED) &&
-	   (getState() != DEAD))
+	if((state != SUSPENDED) &&
+	   (state != DEAD))
 	{
 		ostringstream msg;
 		msg<<strCommand<<" can be executed only from suspended or dead.";
@@ -161,17 +168,19 @@ bool Executable::start(void)
 
 void Executable::stop(void)
 {
-	if((getState() == SUSPENDED) ||
-	   (getState() == DEAD) ||
-	   (getState() == DYING))
+	RSTATE state = getState();
+	if((state == SUSPENDED) ||
+	   (state == DEAD) ||
+	   (state == DYING))
 	{
+		event->onExecutableStop(this);
 		ostringstream msg;
 		msg<<strCommand<<" is dying or already suspended.";
 		logger->addWarning(msg);		
 		return;
 	}
 	
-	if((getState() == RUNNING))
+	if((state == RUNNING))
 	{
 		setState(DYING);
 		if(!RateThread::isRunning())
@@ -207,11 +216,11 @@ void Executable::setState(RSTATE st)
 }
 
 
-RSTATE Executable::getState(void)
+RSTATE Executable::getState(bool update)
 {
 	RSTATE currentState;
 	safeState.wait();
-	if((status == RUNNING) && !broker->running())
+	if(update && (status == RUNNING) && !broker->running())
 		currentState = DEAD;
 	else
 		currentState = status;
@@ -311,13 +320,13 @@ bool Executable::stopModule(void)
 
 void Executable::watchModule(void)
 {
-	if(!broker->running())
+	if(getState() != RUNNING)
 	{
-		setState(DEAD);
-		return;
+		//setState(DEAD);
+		Executable::kill();
+		event->onExecutableFailed(this);
 	}
-
-	if(bAutoConnect)
+	else if(bAutoConnect)
 	{
 		CnnIterator itr;
 		for(itr=connections.begin(); itr!=connections.end(); itr++)

@@ -939,28 +939,27 @@ void YConsoleManager::onExecutableStart(void* which) { }
 
 void YConsoleManager::onExecutableStop(void* which) { }
 
-void YConsoleManager::onExecutableDied(void* which) 
+void YConsoleManager::onExecutableDied(void* which) { }
+
+void YConsoleManager::onExecutableFailed(void* which)
 {
 	Executable* exe = (Executable*) which;
-	if(config.check("module_failure") &&
-	 config.find("module_failure").asString() == "prompt")
-		cout<<exe->getCommand()<<" from "<<exe->getHost()<<" is dead!"<<endl;	
-
-	if(bShouldRun && config.check("module_failure") &&
-	 config.find("module_failure").asString() == "recover")
-	 {
-	 	cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is dead! (restarting...)"<<endl;
+	if(config.find("module_failure").asString() == "prompt")
+		cout<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed!"<<endl;
+	
+	if(config.find("module_failure").asString() == "recover")
+	{
+	 	cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (restarting...)"<<endl;
 	 	exe->start();
-	 }
+	}
 
-	if(bShouldRun && config.check("module_failure") &&
-	 config.find("module_failure").asString() == "terminate")
-	 {
-	 	cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is dead! (terminating application...)"<<endl;	
+	if(config.find("module_failure").asString() == "terminate")
+	{
+		cout<<endl<<exe->getCommand()<<" from "<<exe->getHost()<<" is failed! (terminating application...)"<<endl;	
 		bShouldRun = false;
-	 	stop();
+		stop();
 		reportErrors();
-	 }
+	}
 }
 
 void YConsoleManager::onCnnStablished(void* which) { }

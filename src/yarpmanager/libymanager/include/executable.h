@@ -29,8 +29,8 @@ using namespace std;
 //namespace ymm {
 
 
-#define DEF_PERIOD		100
-#define WDOG_PERIOD		1000
+#define DEF_PERIOD		100  //ms
+#define WDOG_PERIOD		1000 //ms
 
 typedef enum __RSTATE {
 	SUSPENDED,
@@ -50,6 +50,7 @@ public:
 	virtual void onExecutableStart(void* which) {};
 	virtual void onExecutableStop(void* which) {};
 	virtual void onExecutableDied(void* which) {};
+	virtual void onExecutableFailed(void* which) {};
 	virtual void onCnnStablished(void* which) {};
 	virtual void onCnnFailed(void* which) {};
 protected:
@@ -76,7 +77,8 @@ public:
 	bool start(void);
 	void stop(void);
 	void kill(void);
-	
+
+	void setID(int id) { theID = id;}
 	void setCommand(const char* val) { if(val) strCommand = val; }
 	void setParam(const char* val) { if(val) strParam = val; }
 	void setHost(const char* val) { if(val) strHost = val; }
@@ -94,6 +96,7 @@ public:
 	const char* getStdio(void) { return strStdio.c_str(); }
 	const char* getWorkDir(void) { return strWorkdir.c_str(); }
 	const char* getEnv(void) { return strEnv.c_str(); }
+	int getID(void) { return theID; }
 
 	void enableAutoConnect(void) { bAutoConnect = true; }
 	void disableAutoConnect(void) { bAutoConnect = false; }
@@ -106,6 +109,7 @@ private:
 	string strStdio;
 	string strWorkdir;	
 	string strEnv;
+	int theID;
 	
 	RSTATE status; 
 	bool bWatchDog;
@@ -117,7 +121,7 @@ private:
 	yarp::os::Semaphore safeState;
 	
 	void setState(RSTATE st);
-	RSTATE getState(void);
+	RSTATE getState(bool update=true);
 	bool runModule(void);
 	bool stopModule(void);
 	void watchModule(void);

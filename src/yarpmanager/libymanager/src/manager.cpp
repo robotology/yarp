@@ -150,6 +150,7 @@ bool Manager::prepare(void)
 	 *  all of them will be handled by manager. 
 	 */ 
 	ModulePIterator itr;
+	int id = 0;
 	for(itr=modules.begin(); itr!=modules.end(); itr++)
 	{
 
@@ -179,6 +180,7 @@ bool Manager::prepare(void)
 
 		Executable* exe = new Executable(broker, (MEvent*)this, 
 										bWithWatchDog);
+		exe->setID(id++);
 		exe->setCommand((*itr)->getName());
 		exe->setParam((*itr)->getParam());
 		exe->setHost((*itr)->getHost());
@@ -208,6 +210,19 @@ bool Manager::prepare(void)
 	return true;
 }
 
+bool Manager::exist(unsigned int id)
+{
+	if(id>=resources.size())
+	{
+		logger->addError("Resource id is out of range.");
+		return false;
+	}
+
+	YarpBroker connector; 
+	connector.init();
+	return connector.exists(resources[id]->getPort());
+}
+
 
 bool Manager::checkDependency(void)
 {
@@ -234,7 +249,9 @@ bool Manager::checkDependency(void)
 	return ret;
 }
 
-bool Manager::run(unsigned int id)
+
+
+bool Manager::run(unsigned int id, bool async) 
 {
 	if(runnables.empty())
 	{
@@ -250,6 +267,9 @@ bool Manager::run(unsigned int id)
 
 	runnables[id]->disableAutoConnect();
 	runnables[id]->start(); 
+
+	if(async)
+		return true;
 
 	/* waiting for running */
 	int retry = 0;
@@ -338,7 +358,7 @@ bool Manager::run(void)
 	return true;
 }
 
-bool Manager::stop(unsigned int id)
+bool Manager::stop(unsigned int id, bool async)
 {
 	if(runnables.empty())
 	{
@@ -353,6 +373,9 @@ bool Manager::stop(unsigned int id)
 	}
 
 	runnables[id]->stop(); 
+
+	if(async)
+		return true;
 
 	/* waiting for stopping */
 	int retry = 0;
@@ -409,7 +432,7 @@ bool Manager::stop(void)
 	return true;
 }
 
-bool Manager::kill(unsigned int id)
+bool Manager::kill(unsigned int id, bool async)
 {
 	if(runnables.empty())
 	{
@@ -424,6 +447,9 @@ bool Manager::kill(unsigned int id)
 	}
 
 	runnables[id]->kill(); 
+	
+	if(async)
+		return true;
 
 	/* waiting for killing */
 	int retry = 0;
@@ -675,6 +701,7 @@ void Manager::onExecutableStart(void* which) {}
 void Manager::onExecutableStop(void* which)  {}
 void Manager::onCnnStablished(void* which) {}
 void Manager::onExecutableDied(void* which) {}
+void Manager::onExecutableFailed(void* which) {}
 void Manager::onCnnFailed(void* which) {}
 
 

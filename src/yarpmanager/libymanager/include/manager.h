@@ -42,11 +42,11 @@ public:
 
 	bool loadApplication(const char* szAppName);
 	bool run(void);
-	bool run(unsigned int id);
+	bool run(unsigned int id, bool async=false);
 	bool stop(void);
-	bool stop(unsigned int id);
+	bool stop(unsigned int id, bool async=false);
 	bool kill(void);
-	bool kill(unsigned int id);
+	bool kill(unsigned int id, bool async=false);
 	bool connect(void);
 	bool connect(unsigned int id);
 	bool disconnect(void);
@@ -58,6 +58,7 @@ public:
 	bool connected(void);
 	bool connected(unsigned int id);
 	bool checkDependency(void);
+	bool exist(unsigned int id);
 
 	void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
 	const char* defaultBroker(void) { return strDefBroker.c_str(); }
@@ -87,6 +88,7 @@ protected:
 	virtual void onExecutableStart(void* which);
 	virtual void onExecutableStop(void* which);
 	virtual void onExecutableDied(void* which);
+	virtual void onExecutableFailed(void* which);
 	virtual void onCnnStablished(void* which);
 	virtual void onCnnFailed(void* which);
 
