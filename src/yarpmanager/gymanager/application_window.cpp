@@ -85,9 +85,22 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeModView.get_column(1)->set_sort_column(m_modColumns.m_col_id);
 	m_TreeModView.get_column(1)->set_resizable(true);
 
+/*
 	m_TreeModView.append_column("Status", m_modColumns.m_col_status);
 	m_TreeModView.get_column(2)->set_sort_column(m_modColumns.m_col_status);
 	m_TreeModView.get_column(2)->set_resizable(true);
+*/
+
+	Gtk::CellRendererText* statusRenderer = manage(new Gtk::CellRendererText());
+	statusRenderer->property_editable() = false;
+	Gtk::TreeViewColumn *statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
+
+	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_modColumns.m_col_color);
+	statusCol->add_attribute(*statusRenderer, "text", m_modColumns.m_col_status);
+	statusCol->set_sort_column(m_modColumns.m_col_status);
+	statusCol->set_resizable(true);
+	m_TreeModView.append_column(*statusCol);
+
 
 	m_TreeModView.append_column("Host", m_modColumns.m_col_host);
 	m_TreeModView.get_column(3)->set_sort_column(m_modColumns.m_col_host);
@@ -127,7 +140,19 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeConView.append_column("ID", m_conColumns.m_col_id);
 	m_TreeConView.append_column("To", m_conColumns.m_col_to);
 	m_TreeConView.append_column("Carrier", m_conColumns.m_col_carrier);
-	m_TreeConView.append_column("Status", m_conColumns.m_col_status);
+
+	//m_TreeConView.append_column("Status", m_conColumns.m_col_status);
+
+	statusRenderer = manage(new Gtk::CellRendererText());
+	statusRenderer->property_editable() = false;
+	statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
+
+	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_conColumns.m_col_color);
+	statusCol->add_attribute(*statusRenderer, "text", m_conColumns.m_col_status);
+	statusCol->set_sort_column(m_conColumns.m_col_status);
+	statusCol->set_resizable(true);
+	m_TreeConView.append_column(*statusCol);
+
 
 	m_TreeConView.get_column(0)->set_sort_column(m_conColumns.m_col_from);
 	m_TreeConView.get_column(0)->set_resizable(true);
@@ -137,8 +162,8 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeConView.get_column(2)->set_resizable(true);
 	m_TreeConView.get_column(3)->set_sort_column(m_conColumns.m_col_carrier);
 	m_TreeConView.get_column(3)->set_resizable(true);
-	m_TreeConView.get_column(4)->set_sort_column(m_conColumns.m_col_status);
-	m_TreeConView.get_column(4)->set_resizable(true);
+	//m_TreeConView.get_column(4)->set_sort_column(m_conColumns.m_col_status);
+	//m_TreeConView.get_column(4)->set_resizable(true);
 
 	//Add the Model’s column to the resource View’s columns:	
 	Gtk::TreeViewColumn rcol("Resource");
@@ -151,14 +176,23 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeResView.append_column(rcol);
 
 	m_TreeResView.append_column("ID", m_resColumns.m_col_id);
-	m_TreeResView.append_column("Status", m_resColumns.m_col_status);
+	//m_TreeResView.append_column("Status", m_resColumns.m_col_status);
+	statusRenderer = manage(new Gtk::CellRendererText());
+	statusRenderer->property_editable() = false;
+	statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
+
+	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_resColumns.m_col_color);
+	statusCol->add_attribute(*statusRenderer, "text", m_resColumns.m_col_status);
+	statusCol->set_sort_column(m_resColumns.m_col_status);
+	statusCol->set_resizable(true);
+	m_TreeResView.append_column(*statusCol);
 
 	m_TreeResView.get_column(0)->set_sort_column(m_resColumns.m_col_res);
 	m_TreeResView.get_column(0)->set_resizable(true);
 	m_TreeResView.get_column(1)->set_sort_column(m_resColumns.m_col_id);
 	m_TreeResView.get_column(1)->set_resizable(true);
-	m_TreeResView.get_column(2)->set_sort_column(m_resColumns.m_col_status);
-	m_TreeResView.get_column(2)->set_resizable(true);
+	//m_TreeResView.get_column(2)->set_sort_column(m_resColumns.m_col_status);
+	//m_TreeResView.get_column(2)->set_resizable(true);
 
 	// enable multiple selections
 	m_refTreeModSelection = m_TreeModView.get_selection();
@@ -292,6 +326,7 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 												suspended_ico.width,
 												suspended_ico.bytes_per_pixel*suspended_ico.width);
 		m_modRow[m_modColumns.m_col_status] = "suspended";
+		m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 		m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
 		m_modRow[m_modColumns.m_col_param] = (*moditr)->getParam();
 		m_modRow[m_modColumns.m_col_stdio] = (*moditr)->getStdio();
@@ -317,10 +352,12 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 		m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
 		m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
 		m_conRow[m_conColumns.m_col_status] = "disconnected";
+		m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
 	}
 
 	reportErrors();
 
+	
 	id = 0;
 	ResourcePIterator itrS;
 	for(itrS=getResources().begin(); itrS!=getResources().end(); itrS++)
@@ -337,8 +374,10 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 												nores_ico.width,
 												nores_ico.bytes_per_pixel*nores_ico.width);
 		m_resRow[m_resColumns.m_col_res] = (*itrS)->getPort();
-		m_resRow[m_resColumns.m_col_status] = "---";
+		m_resRow[m_resColumns.m_col_status] = "unknown";
+		m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
 	}
+
 }
 
 
@@ -468,6 +507,7 @@ void ApplicationWindow::doRun(void)
 		if(getModRowByID(m_ModuleIDs[i], &row))
 		{
 			row[m_modColumns.m_col_status] = "waiting";
+			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
 			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -507,6 +547,7 @@ void ApplicationWindow::doStop(void)
 		if(getModRowByID(m_ModuleIDs[i], &row))
 		{
 			row[m_modColumns.m_col_status] = "waiting";
+			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
 			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -547,6 +588,7 @@ void ApplicationWindow::doKill(void)
 		if(getModRowByID(m_ModuleIDs[i], &row))
 		{
 			row[m_modColumns.m_col_status] = "waiting";
+			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
 			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -586,6 +628,7 @@ void ApplicationWindow::doConnect(void)
 			if(connect(m_ConnectionIDs[i]))
 			{
 				row[m_conColumns.m_col_status] = "connected";
+				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
 				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -626,6 +669,7 @@ void ApplicationWindow::doDisconnect(void)
 			if(disconnect(m_ConnectionIDs[i]))
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
+				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
 				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -666,6 +710,7 @@ void ApplicationWindow::doRefresh(void)
 		if(getModRowByID(m_ModuleIDs[i], &row))
 		{
 			row[m_modColumns.m_col_status] = "waiting";
+			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
 			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -684,6 +729,7 @@ void ApplicationWindow::doRefresh(void)
 			if (Manager::running(m_ModuleIDs[i]))
 			{
 				row[m_modColumns.m_col_status] = "running";
+				row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
 				row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
 												Gdk::COLORSPACE_RGB,
 												90,
@@ -695,6 +741,7 @@ void ApplicationWindow::doRefresh(void)
 			else
 			{
 				row[m_modColumns.m_col_status] = "suspended";
+				row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 				row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
 											Gdk::COLORSPACE_RGB,
 											90,
@@ -722,6 +769,7 @@ void ApplicationWindow::doRefresh(void)
 			if(!connected(m_ConnectionIDs[i]))
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
+				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
 				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -733,6 +781,7 @@ void ApplicationWindow::doRefresh(void)
 			else
 			{
 				row[m_conColumns.m_col_status] = "connected";
+				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
 				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -762,6 +811,7 @@ void ApplicationWindow::doRefresh(void)
 			if(exist(m_ResourceIDs[i]))
 			{
 				row[m_resColumns.m_col_status] = "available";
+				row[m_resColumns.m_col_color] = Gdk::Color("#008C00");
 				row[m_resColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -773,6 +823,7 @@ void ApplicationWindow::doRefresh(void)
 			else
 			{
 				row[m_resColumns.m_col_status] = "not available";
+				row[m_resColumns.m_col_color] = Gdk::Color("#BF0303");
 				row[m_resColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
 				 								Gdk::COLORSPACE_RGB,
 												90,
@@ -837,6 +888,7 @@ void ApplicationWindow::onExecutableStart(void* which)
 	if(getModRowByID(exe->getID(), &row))
 	{
 		row[m_modColumns.m_col_status] = "running";
+		row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
 		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
 											Gdk::COLORSPACE_RGB,
 											90,
@@ -855,6 +907,7 @@ void ApplicationWindow::onExecutableStop(void* which)
 	if(getModRowByID(exe->getID(), &row))
 	{
 		row[m_modColumns.m_col_status] = "suspended";
+		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
 											Gdk::COLORSPACE_RGB,
 											90,
@@ -875,6 +928,7 @@ void ApplicationWindow::onExecutableDied(void* which)
 	if(getModRowByID(exe->getID(), &row))
 	{
 		row[m_modColumns.m_col_status] = "suspended";
+		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
 											Gdk::COLORSPACE_RGB,
 											90,

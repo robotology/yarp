@@ -38,6 +38,7 @@ public:
 		add(m_col_stdio); 
 		add(m_col_wdir); 
 		add(m_col_env); 
+		add(m_col_color);
 		}
 	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
 	Gtk::TreeModelColumn<int> m_col_id;
@@ -48,6 +49,8 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_stdio;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_wdir;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_env;
+	Gtk::TreeModelColumn<Gdk::Color> m_col_color;
+
 };
 
 
@@ -63,6 +66,7 @@ public:
 		add(m_col_to); 
 		add(m_col_carrier); 
 		add(m_col_status);
+		add(m_col_color);
 		}
 	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
 	Gtk::TreeModelColumn<int> m_col_id;
@@ -70,6 +74,7 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_to;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_carrier;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_status;
+	Gtk::TreeModelColumn<Gdk::Color> m_col_color;
 
 };
 
@@ -83,12 +88,14 @@ public:
 		add(m_col_res); 
 		add(m_col_id); 
 		add(m_col_status);
+		add(m_col_color);
 	}
 
 	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
 	Gtk::TreeModelColumn<int> m_col_id;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_res;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_status;
+	Gtk::TreeModelColumn<Gdk::Color> m_col_color;
 };
 
 

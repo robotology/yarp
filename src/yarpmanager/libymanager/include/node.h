@@ -79,7 +79,10 @@ public:
 	bool isSatisfied(void) { return bSatisfied; }
 	void setVisited(bool vis) { bVisited = vis; }
 	bool isVisited(void) { return bVisited; }
-	bool isLeaf(void) { return !((bool)sucCount()); }
+	bool isLeaf(void) { 
+		return ((sucCount()==0) ? true : false);
+	}
+
 	NodeType getType(void) { return type; }
 	void setLabel(const char* szLabel) { if(szLabel) label = szLabel; }
 	const char* getLabel(void) { return label.c_str(); } 
