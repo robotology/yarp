@@ -1,3 +1,9 @@
+2011-09-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* example/swig/yarp.i: patch from Stephane, with tweaks to Vector
+	translation for C#; less confusing isMotionDone method
+	[thanks Stephane Lallee]
+
 2011-09-14  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Value.cpp: make copy behavior between Values

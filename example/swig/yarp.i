@@ -181,6 +181,7 @@
 #include <yarp/sig/all.h>
 #include <yarp/dev/all.h>
 
+
 // Sometimes ACE redefines main() - we don't want that
 #ifdef main
 #undef main
@@ -556,19 +557,18 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		self->view(result);
 		return result;
 	}
-
+	
 	yarp::dev::ITorqueControl *viewITorqueControl() {
 		yarp::dev::ITorqueControl *result;
 		self->view(result);
 		return result;
 	}
-
+	
 	yarp::dev::IControlMode *viewIControlMode() {
 		yarp::dev::IControlMode *result;
 		self->view(result);
 		return result;
 	}
-
 	// you'll need to add an entry for every interface you wish
 	// to use
 }
@@ -632,6 +632,25 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	  }
 	  return result;
 	}
+	
+	bool isMotionDone(int i) {
+		bool buffer;
+		self->checkMotionDone(i,&buffer);
+		return buffer;
+	}
+	
+	bool isMotionDone() {
+		int buffer;
+		self->getAxes(&buffer);
+		bool data = true;
+		for (int i=0; i<buffer; i++) {
+			bool buffer2;
+			self->checkMotionDone(i,&buffer2);
+			data = data && buffer2;
+			}
+		return data;
+	}
+
 }
 
 %extend yarp::dev::IVelocityControl {
@@ -792,8 +811,15 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 }
 
 %extend yarp::sig::Vector {
-	double get(int j) {
+
+	double get(int j)
+	{
 		return self->operator [](j);
+	}
+
+	void set(int j, double v)
+	{
+		self->operator [](j) = v;
 	}
 }
 
@@ -805,6 +831,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 	    flag[i] = data[i]!=0;
 	  }
 	  return result;
+	}
+	
+	bool isMotionDone() {
+		bool data = true;
+		self->checkMotionDone(&data);
+		return data;
 	}
 }
 
