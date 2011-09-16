@@ -34,7 +34,7 @@ static void sigbreakHandler(int sig)
 
 static void wSigintHandler(int sig);
 
-int RunWrite::loop(const char* wPortName)
+int RunWrite::loop(yarp::os::ConstString& uuid)
 {
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -47,12 +47,15 @@ int RunWrite::loop(const char* wPortName)
     signal(SIGHUP,SIG_IGN);
 #endif
 
-    if (!mWPort.open(wPortName))
+    mWPortName=uuid+"/stdout";
+
+    if (!mWPort.open(mWPortName.c_str()))
     {
         return 1;
     }
 
-    mWPortName=wPortName;
+    static const yarp::os::ConstString TOPIC("topic:/");
+    yarp::os::Network::connect(mWPortName.c_str(),(TOPIC+uuid+"/topic_i").c_str());
 
     while (!feof(stdin)) 
     {
@@ -132,7 +135,7 @@ static void wSigintHandler(int sig)
 
 static void rSigintHandler(int sig);
 
-int RunRead::loop(const char* rPortName)
+int RunRead::loop(yarp::os::ConstString& uuid)
 {
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -145,14 +148,16 @@ int RunRead::loop(const char* rPortName)
     signal(SIGHUP,SIG_IGN);
 #endif
 
+    mRPortName=uuid+"/stdin";
     mRPort.setReader(*this);
 
-    if (!mRPort.open(rPortName))
+    if (!mRPort.open(mRPortName.c_str()))
     {
         return 1;
     }
 
-    mRPortName=rPortName;
+    static const yarp::os::ConstString TOPIC("topic:/");
+    yarp::os::Network::connect((TOPIC+uuid+"/topic_o").c_str(),mRPortName.c_str());
 
     mDone.wait();
 
@@ -238,7 +243,7 @@ static void rwSigintHandler(int sig);
 static void sighupHandler(int sig);
 #endif
 
-int RunReadWrite::loop(const char* rPortName,const char* wPortName)
+int RunReadWrite::loop(yarp::os::ConstString &uuid)
 {
     yarp::os::impl::Logger::get().setVerbosity(-1);
 
@@ -251,21 +256,27 @@ int RunReadWrite::loop(const char* rPortName,const char* wPortName)
     signal(SIGHUP,sighupHandler);
 #endif
 
+    mUUID=uuid;
+    mWPortName=uuid+"/stdio:o";
+    mRPortName=uuid+"/stdio:i";
+
     mRPort.setReader(*this);
 
-    if (!mRPort.open(rPortName))
+    if (!mRPort.open(mRPortName.c_str()))
     {
         return 1;
     }
 
-    if (!mWPort.open(wPortName))
+    if (!mWPort.open(mWPortName.c_str()))
     {
         mRPort.close();
+        yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
         return 1;
     }
 
-    mRPortName=rPortName;
-    mWPortName=wPortName;
+    static const yarp::os::ConstString TOPIC("topic:/");
+    yarp::os::Network::connect(mWPortName.c_str(),(TOPIC+uuid+"/topic_o").c_str());
+    yarp::os::Network::connect((TOPIC+uuid+"/topic_i").c_str(),mRPortName.c_str());
 
     while (!feof(stdin)) 
     {
@@ -286,6 +297,7 @@ int RunReadWrite::loop(const char* rPortName,const char* wPortName)
         }
     }
 
+/*
 #if !defined(WIN32) && !defined(WIN64)
     mDone.wait();        
     if (!mClosed) 
@@ -305,6 +317,8 @@ int RunReadWrite::loop(const char* rPortName,const char* wPortName)
     }
     mDone.post();
 #endif
+*/
+    close();
 
     return 0;
 }
@@ -318,6 +332,12 @@ void RunReadWrite::close()
         mClosed=true;
 #endif  
 
+        static const yarp::os::ConstString TOPIC("topic:/");
+        yarp::os::Network::disconnect((mUUID+"/stdout").c_str(),(TOPIC+mUUID+"/topic_i").c_str());
+        yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_i").c_str(),(mUUID+"/stdio:i").c_str());
+        yarp::os::Network::disconnect((mUUID+"/stdio:o").c_str(),(TOPIC+mUUID+"/topic_o").c_str());
+        yarp::os::Network::disconnect((TOPIC+mUUID+"/topic_o").c_str(),(mUUID+"/stdin").c_str());
+
         mRPort.interrupt();
         mRPort.close();
         yarp::os::NetworkBase::unregisterName(mRPortName.c_str());
@@ -325,6 +345,9 @@ void RunReadWrite::close()
         mWPort.interrupt();
         mWPort.close();
         yarp::os::NetworkBase::unregisterName(mWPortName.c_str());
+
+        system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_i").c_str());
+        system((yarp::os::ConstString("yarp topic --remove ")+mUUID+"/topic_o").c_str());
 
 #if !defined(WIN32) && !defined(WIN64)
     }
@@ -398,6 +421,7 @@ yarp::os::Port RunReadWrite::mRPort;
 yarp::os::Port RunReadWrite::mWPort;
 yarp::os::ConstString RunReadWrite::mRPortName;
 yarp::os::ConstString RunReadWrite::mWPortName;
+yarp::os::ConstString RunReadWrite::mUUID;
 
 static void rwSigintHandler(int sig)
 {

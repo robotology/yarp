@@ -158,24 +158,23 @@ int yarp::os::Run::main(int argc, char *argv[])
 
     if (config.check("readwrite"))
     {
-        yarp::os::ConstString rPortName=config.findGroup("readwrite").get(1).asString();
-        yarp::os::ConstString wPortName=config.findGroup("readwrite").get(2).asString();
+        yarp::os::ConstString uuid=config.findGroup("readwrite").get(1).asString();
         RunReadWrite rw;
-        return rw.loop(rPortName,wPortName);
+        return rw.loop(uuid);
     }
 
     if (config.check("write"))
     {
-        yarp::os::ConstString wPortName=config.findGroup("write").get(1).asString();
+        yarp::os::ConstString uuid=config.findGroup("write").get(1).asString();
         RunWrite w;
-        return w.loop(wPortName);
+        return w.loop(uuid);
     }
 
     if (config.check("read"))
     {
-        yarp::os::ConstString rPortName=config.findGroup("read").get(1).asString();
+        yarp::os::ConstString uuid=config.findGroup("read").get(1).asString();
         RunRead r;
-        return r.loop(rPortName);
+        return r.loop(uuid);
     }
 
 	Help();
@@ -562,7 +561,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
     yarp::os::ConstString strAlias=msg.find("as").asString();
     yarp::os::ConstString strStdio=msg.find("stdio").asString();
     yarp::os::ConstString strStdioUUID=msg.find("stdiouuid").asString();
-    yarp::os::ConstString strCmdUUID=mPortName+"/"+int2String(GetCurrentProcessId())+"/"+strAlias+"-"+int2String(mProcCNT++);
+    //yarp::os::ConstString strCmdUUID=mPortName+"/"+int2String(GetCurrentProcessId())+"/"+strAlias+"-"+int2String(mProcCNT++);
 
 	// PIPES
 	SECURITY_ATTRIBUTES pipe_sec_attr; 
@@ -587,7 +586,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdout_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
-								(char*)(yarp::os::ConstString("yarprun --write ")+strCmdUUID+"/stdout").c_str(), // command line 
+								(char*)(yarp::os::ConstString("yarprun --write ")+strStdioUUID).c_str(), // command line 
 								NULL,          // process security attributes 
 								NULL,          // primary thread security attributes 
 								TRUE,          // handles are inherited 
@@ -632,7 +631,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	stdin_startup_info.dwFlags|=STARTF_USESTDHANDLES;
 
 	bSuccess=CreateProcess(NULL,	// command name
-                           (char*)(yarp::os::ConstString("yarprun --read ")+strCmdUUID+yarp::os::ConstString("/stdin")).c_str(), // command line 
+                           (char*)(yarp::os::ConstString("yarprun --read ")+strStdioUUID).c_str(), // command line 
                            NULL,          // process security attributes 
                            NULL,          // primary thread security attributes 
                            TRUE,          // handles are inherited 
@@ -667,6 +666,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 	    return result;
 	}
 
+    /*
 	// connect yarp read and write
 	bool bConnR=false,bConnW=false;
 	for (int i=0; i<100 && !(bConnR&&bConnW); ++i)
@@ -706,6 +706,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 
 	    return result;
 	}
+    */
 
 	// RUN COMMAND
 	PROCESS_INFORMATION cmd_process_info;
@@ -796,8 +797,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
         fprintf(stderr,"%s",out.c_str());
         fflush(stderr);
 
-        if (bConnW) NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());
-		if (bConnR) NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
+        //if (bConnW) NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());
+		//if (bConnR) NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
 
         CloseHandle(write_to_pipe_stdin_to_cmd);
 		CloseHandle(read_from_pipe_stdin_to_cmd);
@@ -964,8 +965,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 
     yarp::os::ConstString strAlias=msg.find("as").asString();
     strStdioPortUUID=mPortName+"/"+int2String(GetCurrentProcessId())+"/"+strAlias+"-"+int2String(mProcCNT++);
-    //yarp::os::ConstString strCmd=yarp::os::ConstString("yarp quiet readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o";
-    yarp::os::ConstString strCmd=yarp::os::ConstString("yarprun --readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o";
+    yarp::os::ConstString strCmd=yarp::os::ConstString("yarprun --readwrite ")+strStdioPortUUID;
 
 	BOOL bSuccess=CreateProcess(NULL,	// command name
 								(char*)strCmd.c_str(), // command line 
@@ -1080,7 +1080,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
     yarp::os::ConstString strCmd=msg.find("cmd").asString();
     yarp::os::ConstString strStdio=msg.find("stdio").asString();
     yarp::os::ConstString strStdioUUID=msg.find("stdiouuid").asString();
-    yarp::os::ConstString strCmdUUID=mPortName+"/"+int2String(getpid())+"/"+strAlias+"-"+int2String(mProcCNT++);
+    //yarp::os::ConstString strCmdUUID=mPortName+"/"+int2String(getpid())+"/"+strAlias+"-"+int2String(mProcCNT++);
 
 	int  pipe_stdin_to_cmd[2];
     int ret_stdin_to_cmd=0;
@@ -1140,7 +1140,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	if (IS_NEW_PROCESS(pid_stdout)) // STDOUT IMPLEMENTED HERE
 	{        
 		REDIRECT_TO(STDIN_FILENO,pipe_cmd_to_stdout[READ_FROM_PIPE]);
-		int ret=execlp("yarprun","yarprun","--write",(strCmdUUID+"/stdout").c_str(),(char*)NULL);
+		int ret=execlp("yarprun","yarprun","--write",strStdioUUID.c_str(),(char*)NULL);
 	    
 	    if (ret==YARPRUN_ERROR)
 	    {
@@ -1202,7 +1202,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		{            
 			REDIRECT_TO(STDOUT_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
 			REDIRECT_TO(STDERR_FILENO,pipe_stdin_to_cmd[WRITE_TO_PIPE]);
-			int ret=execlp("yarprun","yarprun","--read",(strCmdUUID+"/stdin").c_str(),(char*)NULL);
+			int ret=execlp("yarprun","yarprun","--read",strStdioUUID.c_str(),(char*)NULL);
 			
 		    if (ret==YARPRUN_ERROR)
 	        {
@@ -1232,6 +1232,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 			fprintf(stderr,"STARTED: server=%s alias=%s cmd=stdin pid=%d\n",mPortName.c_str(),strAlias.c_str(),pid_stdin);
 			fflush(stderr);
 			
+            /*
 			bool bConnR=false,bConnW=false;
 		    for (int i=0; i<100 && !(bConnR&&bConnW); ++i)
 		    { 
@@ -1241,7 +1242,9 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 		        
 		        if (!bConnW || !bConnR) yarp::os::Time::delay(0.05);
 		    }
-		    
+		    */
+
+            /*
 		    if (!(bConnR&&bConnW))
 		    {
                 if (bConnW) NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());
@@ -1271,6 +1274,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 				
 				return result;
 		    }
+            */
 
 			int pid_cmd=fork();
 
@@ -1295,8 +1299,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            fflush(to_yarp_stdout);
 	            fclose(to_yarp_stdout);
 
-                NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
-                NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
+                //NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
+                //NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
 
 			    SIGNAL(pid_stdout,SIGTERM,true);
 			    fprintf(stderr,"TERMINATING stdout (%d)\n",pid_stdout);
@@ -1355,8 +1359,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                         fprintf(stderr,"%s",out.c_str());
                         fflush(stderr);
                         
-                        NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
-                        NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
+                        //NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
+                        //NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
  
                         exit(ret);
                     }
@@ -1409,8 +1413,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	                fprintf(stderr,"%s",out.c_str());
                     fflush(stderr);
                     
-                    NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
-                    NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
+                    //NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
+                    //NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
 	            }
 
         		delete [] cmd_str;
@@ -1457,8 +1461,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
                 if (out.length()>0)
 	            {
 	                result.addInt(YARPRUN_ERROR);
-	                NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
-                    NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
+	                //NetworkBase::disconnect((strCmdUUID+"/stdout").c_str(),(strStdioUUID+"/stdio:i").c_str());    
+                    //NetworkBase::disconnect((strStdioUUID+"/stdio:o").c_str(),(strCmdUUID+"/stdin").c_str());
 	            }
 	            else
 	            {	                
@@ -1538,7 +1542,7 @@ int yarp::os::Run::UserStdio(yarp::os::Bottle& msg,yarp::os::Bottle& result,yarp
 	if (IS_NEW_PROCESS(pid_cmd)) // RUN COMMAND HERE
 	{        
 		int ret;
-        yarp::os::ConstString strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strStdioPortUUID+"/stdio:i "+strStdioPortUUID+"/stdio:o\"";
+        yarp::os::ConstString strCmd=yarp::os::ConstString("/bin/bash -l -c \"yarprun --readwrite ")+strStdioPortUUID+"\"";
         const char *hold=msg.check("hold")?"-hold":"+hold";
 
         setvbuf(stdout,NULL,_IONBF,0);

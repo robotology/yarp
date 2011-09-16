@@ -22,7 +22,7 @@ public:
     RunWrite(){}
     ~RunWrite(){}
 
-    int loop(const char* wPortName);
+    int loop(yarp::os::ConstString& uuid);
     static void close();
 
 protected:
@@ -40,7 +40,7 @@ public:
     RunRead(){}
     ~RunRead(){}
 
-    int loop(const char* rPortName);
+    int loop(yarp::os::ConstString& uuid);
     static void close(){ mDone.post(); }
     virtual bool read(yarp::os::ConnectionReader& reader);
 
@@ -60,7 +60,7 @@ public:
     RunReadWrite(){}
     ~RunReadWrite(){}
 
-    int loop(const char* rPortName,const char* wPortName);
+    int loop(yarp::os::ConstString& uuid);
     static void close();
     virtual bool read(yarp::os::ConnectionReader& reader);
 
@@ -73,6 +73,7 @@ protected:
     static yarp::os::Port mWPort;
     static yarp::os::ConstString mRPortName;
     static yarp::os::ConstString mWPortName;
+    static yarp::os::ConstString mUUID;
 };
 
 #endif
