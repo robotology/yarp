@@ -34,7 +34,7 @@ public:
 		if(szOld) strOld = szOld;
 		if(szNew) strNew = szNew;
 	}		
-	~Portmap(){}
+	virtual ~Portmap(){}
 	const char* oldPort(void) { return strOld.c_str(); }
 	const char* newPort(void) { return strNew.c_str(); }
 	bool operator==(const Portmap& alt) {		
@@ -67,7 +67,7 @@ public:
 		bExternalFrom = false;
 		bExternalTo = false;
 	}
-	~Connection(){}
+	virtual ~Connection(){}
 	const char* from(void) { return strFrom.c_str();}
 	const char* to(void) { return strTo.c_str();}
 	void setFrom(const char* szFrom) { if(szFrom) strFrom = szFrom; }
@@ -113,7 +113,7 @@ public:
 		iRank = -1;
 	}
 	
-	~ModuleInterface(){}
+	virtual ~ModuleInterface(){}
 		
 	void setHost(const char* szHost) { if(szHost) strHost = szHost; }
 	void setParam(const char* szParam) { if(szParam) strParam = szParam; }
@@ -170,7 +170,7 @@ public:
 	ApplicationInterface(const char* szName) {
 		if(szName) strName = szName;
 	}		
-	~ApplicationInterface(){}
+	virtual ~ApplicationInterface(){}
 	void setPrefix(const char* szPrefix) { if(szPrefix) strPrefix = szPrefix; } 
 	const char* getName(void) { return strName.c_str(); }
 	const char* getPrefix(void) { return strPrefix.c_str(); }
@@ -201,7 +201,7 @@ public:
 	Application(void);
 	Application(const char* szName);
 	Application(const Application &app);
-	~Application();
+	virtual ~Application();
 	void setName(const char* szName) { 
 		if(szName){
 			strName = szName; 

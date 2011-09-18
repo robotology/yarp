@@ -30,7 +30,7 @@ class ModuleLoader {
 
 public: 
 	ModuleLoader(void) {}
-	~ModuleLoader() {}
+	virtual ~ModuleLoader() {}
 	virtual bool init(void) = 0; 
 	virtual void reset(void) = 0;
 	virtual void fini(void) = 0;

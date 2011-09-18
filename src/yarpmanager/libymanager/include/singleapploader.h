@@ -25,7 +25,7 @@ class SingleAppLoader : public AppLoader {
 
 public: 
 	SingleAppLoader(const char* szModule, const char* strHost);
-	~SingleAppLoader();
+	virtual ~SingleAppLoader();
 	virtual bool init(void);
 	virtual void fini(void);
 	virtual Application* getNextApplication(void);

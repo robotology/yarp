@@ -27,7 +27,7 @@ class XmlAppLoader : public AppLoader {
 public:
 	XmlAppLoader(const char* szFileName);
 	XmlAppLoader(const char* szPath, const char* szAppName);
-	~XmlAppLoader();
+	virtual ~XmlAppLoader();
 	virtual bool init(void);
 	virtual void fini(void);
 	virtual Application* getNextApplication(void);

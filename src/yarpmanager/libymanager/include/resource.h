@@ -27,7 +27,7 @@ public:
 	ResYarpPort(void);
 	ResYarpPort(const char* szName);
 	ResYarpPort(const ResYarpPort &res);
-	~ResYarpPort();
+	virtual ~ResYarpPort();
 	virtual Node* clone(void);
 	void setName(const char* szName) { if(szName) strName = szName; }	
 	const char* getName(void) { return strName.c_str(); }

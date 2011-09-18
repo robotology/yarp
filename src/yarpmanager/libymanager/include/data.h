@@ -30,7 +30,7 @@ public:
 	InputData(void);
 	InputData(const char* szName);
 	InputData(const InputData &input);
-	~InputData();
+	virtual ~InputData();
 	virtual Node* clone(void);
 	void setName(const char* szName) { 
 		if(szName){
@@ -71,7 +71,7 @@ public:
 	OutputData(void);
 	OutputData(const char* szName);
 	OutputData(const OutputData &input);
-	~OutputData();
+	virtual ~OutputData();
 	virtual Node* clone(void);
 	void setName(const char* szName) { 
 		if(szName){

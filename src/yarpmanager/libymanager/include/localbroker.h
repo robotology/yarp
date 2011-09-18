@@ -37,7 +37,7 @@ class LocalBroker: public Broker{
 
 public: 
 	LocalBroker();
-	~LocalBroker();
+	virtual ~LocalBroker();
 	virtual bool init();
 	virtual bool init(const char* szcmd, const char* szparam,
 	        const char* szhost, const char* szstdio,

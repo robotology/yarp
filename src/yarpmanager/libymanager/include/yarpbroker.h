@@ -37,7 +37,7 @@ class YarpBroker: public Broker{
 
 public: 
 	YarpBroker();
-	~YarpBroker();
+	virtual ~YarpBroker();
 	virtual bool init();
 	virtual bool init(const char* szcmd, const char* szparam,
 	        const char* szhost, const char* szstdio,

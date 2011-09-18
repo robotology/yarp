@@ -39,7 +39,7 @@ class Graph {
 
 public: 
 	Graph(void);
-	~Graph();
+	virtual ~Graph();
 
 	int getSize(void) { return nodes.size(); }
 	Node* getNodeAt(int index);
@@ -82,7 +82,7 @@ class GraphIterator: public iterator<input_iterator_tag, Node*>
 {
 public:
 	GraphIterator(void){}
-	~GraphIterator(){}
+	virtual ~GraphIterator(){}
 	GraphIterator(const GraphIterator& mit) : itr(mit.itr) {}
 	GraphIterator& operator++() {++itr;return *this;}
 	GraphIterator operator++(int) {GraphIterator tmp(*this); operator++(); return tmp;}

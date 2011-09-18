@@ -53,12 +53,11 @@ bool Graph::removeNode(const char* szLabel)
 	return true;
 }
 
-
 void Graph::clear(void)
 {
 	NodePIterator itr;
 	for(itr=nodes.begin(); itr!=nodes.end(); itr++) 	
-		delete (*itr).second;
+		delete ((*itr).second);
 	nodes.clear();
 }
 

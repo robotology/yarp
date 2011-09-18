@@ -422,6 +422,7 @@ bool KnowledgeBase::reasolveDependency(Application* app, bool bAutoDependancy)
 bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 {
 	ErrorLogger* logger  = ErrorLogger::Instance();
+
 	selnodes.clear();
 	selconnections.clear();
 	selmodules.clear();	

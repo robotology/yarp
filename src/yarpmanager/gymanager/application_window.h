@@ -177,6 +177,14 @@ private:
 	std::vector<int> m_ConnectionIDs;
 	std::vector<int> m_ResourceIDs;
 
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixSuspended;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixRunning;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixWaiting;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixConnected;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixDisconnected;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixAvailable;
+	Glib::RefPtr<Gdk::Pixbuf> m_refPixUnAvailable;
+
 	void createWidgets(void);
 	void setupSignals(void);
 	void (ApplicationWindow::*m_pAction)(void);

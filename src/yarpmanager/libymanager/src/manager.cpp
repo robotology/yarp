@@ -511,8 +511,11 @@ void Manager::clearExecutables(void)
 	ExecutablePIterator itr;
 	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
 	{
-		if((*itr)->getBroker())
-			delete (*itr)->getBroker();
+		//if((*itr)->getBroker())
+		//	delete (*itr)->getBroker();
+		/**
+		 * broker will be delated by Executable
+		 */
 		delete (*itr);
 	}
 	runnables.clear();

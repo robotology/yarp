@@ -29,7 +29,7 @@ class Broker {
 
 public: 
 	Broker(void);
-	~Broker();
+	virtual ~Broker();
 	virtual bool init(void) = 0; //only connector 
 	virtual bool init(const char* szcmd, const char* szparam,
 	        const char* szhost, const char* szstdio,

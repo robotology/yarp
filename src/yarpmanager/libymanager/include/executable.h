@@ -46,7 +46,7 @@ class MEvent{
 
 public: 
 	MEvent() {}
-	~MEvent() {}
+	virtual ~MEvent() {}
 	virtual void onExecutableStart(void* which) {};
 	virtual void onExecutableStop(void* which) {};
 	virtual void onExecutableDied(void* which) {};

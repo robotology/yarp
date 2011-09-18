@@ -48,7 +48,7 @@ class KnowledgeBase{
 
 public:
 	KnowledgeBase(void){};
-	~KnowledgeBase() { 
+	virtual ~KnowledgeBase() { 
 		kbGraph.clear(); 
 		tmpGraph.clear();
 	};

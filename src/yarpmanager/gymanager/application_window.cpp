@@ -68,6 +68,63 @@ void ApplicationWindow::createWidgets(void)
 	m_refTreeResModel = Gtk::TreeStore::create(m_resColumns);
 	m_TreeResView.set_model(m_refTreeResModel);
 
+
+	 m_refPixSuspended =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								suspended_ico.height,
+								suspended_ico.width,
+								suspended_ico.bytes_per_pixel*suspended_ico.width);
+
+	m_refPixRunning = Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								runnin_ico.height,
+								runnin_ico.width,
+								runnin_ico.bytes_per_pixel*runnin_ico.width);
+	
+	m_refPixWaiting = Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								progress_ico.height,
+								progress_ico.width,
+								progress_ico.bytes_per_pixel*progress_ico.width);
+
+	m_refPixConnected = Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								connected_ico.height,
+								connected_ico.width,
+								connected_ico.bytes_per_pixel*connected_ico.width);
+
+	m_refPixDisconnected = Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								disconnected_ico.height,
+								disconnected_ico.width,
+								disconnected_ico.bytes_per_pixel*disconnected_ico.width);
+
+	m_refPixAvailable = Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								yesres_ico.height,
+								yesres_ico.width,
+								yesres_ico.bytes_per_pixel*yesres_ico.width);
+
+	m_refPixUnAvailable = Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
+								Gdk::COLORSPACE_RGB,
+								90,
+								8,
+								nores_ico.height,
+								nores_ico.width,
+								nores_ico.bytes_per_pixel*nores_ico.width);
+
 	//Add the Model’s column to the Module View’s columns:	
 	Gtk::TreeViewColumn col("Module");
 	Gtk::CellRendererText cellText;
@@ -317,14 +374,7 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 		m_modRow[m_modColumns.m_col_id] = (*moditr)->getID();
 		m_modRow[m_modColumns.m_col_name] = (*moditr)->getCommand();
 		//m_modRow[m_modColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("process-working", 16);			
-		m_modRow[m_modColumns.m_col_refPix]	= 
-				 Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												suspended_ico.height,
-												suspended_ico.width,
-												suspended_ico.bytes_per_pixel*suspended_ico.width);
+		m_modRow[m_modColumns.m_col_refPix]	= m_refPixSuspended;
 		m_modRow[m_modColumns.m_col_status] = "suspended";
 		m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 		m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
@@ -340,14 +390,7 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 		m_conRow = *(m_refTreeConModel->append());
 		m_conRow[m_conColumns.m_col_id] = id++;
 		//m_conRow[m_conColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("document-properties", 16);	
-		m_conRow[m_conColumns.m_col_refPix]	= 
-				 Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												disconnected_ico.height,
-												disconnected_ico.width,
-												disconnected_ico.bytes_per_pixel*disconnected_ico.width);
+		m_conRow[m_conColumns.m_col_refPix]	= m_refPixDisconnected;
 		m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
 		m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
 		m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
@@ -365,14 +408,7 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 		m_resRow = *(m_refTreeResModel->append());
 		m_resRow[m_resColumns.m_col_id] = id++;
 		//m_conRow[m_conColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("document-properties", 16);	
-		m_resRow[m_resColumns.m_col_refPix]	= 
-				 Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												nores_ico.height,
-												nores_ico.width,
-												nores_ico.bytes_per_pixel*nores_ico.width);
+		m_resRow[m_resColumns.m_col_refPix]	= m_refPixUnAvailable;
 		m_resRow[m_resColumns.m_col_res] = (*itrS)->getPort();
 		m_resRow[m_resColumns.m_col_status] = "unknown";
 		m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
@@ -508,14 +544,7 @@ void ApplicationWindow::doRun(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												progress_ico.height,
-												progress_ico.width,
-												progress_ico.bytes_per_pixel*progress_ico.width);
-
+			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
 		}
 	}
 
@@ -548,13 +577,7 @@ void ApplicationWindow::doStop(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												progress_ico.height,
-												progress_ico.width,
-												progress_ico.bytes_per_pixel*progress_ico.width);
+			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
 		}
 	}
 
@@ -589,13 +612,7 @@ void ApplicationWindow::doKill(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												progress_ico.height,
-												progress_ico.width,
-												progress_ico.bytes_per_pixel*progress_ico.width);
+			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
 		}
 	}
 	
@@ -629,13 +646,7 @@ void ApplicationWindow::doConnect(void)
 			{
 				row[m_conColumns.m_col_status] = "connected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												connected_ico.height,
-												connected_ico.width,
-												connected_ico.bytes_per_pixel*connected_ico.width);
+				row[m_conColumns.m_col_refPix] =  m_refPixConnected;
 			}
 		}
 
@@ -670,13 +681,7 @@ void ApplicationWindow::doDisconnect(void)
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												disconnected_ico.height,
-												disconnected_ico.width,
-												disconnected_ico.bytes_per_pixel*disconnected_ico.width);
+				row[m_conColumns.m_col_refPix] =  m_refPixDisconnected;
 			}
 		}
 
@@ -711,13 +716,7 @@ void ApplicationWindow::doRefresh(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												progress_ico.height,
-												progress_ico.width,
-												progress_ico.bytes_per_pixel*progress_ico.width);
+			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
 		}
 	}
 
@@ -730,25 +729,13 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_modColumns.m_col_status] = "running";
 				row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
-												Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												runnin_ico.height,
-												runnin_ico.width,
-												runnin_ico.bytes_per_pixel*runnin_ico.width);
+				row[m_modColumns.m_col_refPix] = m_refPixRunning;
 			}
 			else
 			{
 				row[m_modColumns.m_col_status] = "suspended";
 				row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
-											Gdk::COLORSPACE_RGB,
-											90,
-											8,
-											suspended_ico.height,
-											suspended_ico.width,
-											suspended_ico.bytes_per_pixel*suspended_ico.width);
+				row[m_modColumns.m_col_refPix] = m_refPixSuspended; 
 			}
 		}
 	}
@@ -770,25 +757,13 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												disconnected_ico.height,
-												disconnected_ico.width,
-												disconnected_ico.bytes_per_pixel*disconnected_ico.width);
+				row[m_conColumns.m_col_refPix] = m_refPixDisconnected; 
 			}
 			else
 			{
 				row[m_conColumns.m_col_status] = "connected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_conColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												connected_ico.height,
-												connected_ico.width,
-												connected_ico.bytes_per_pixel*connected_ico.width);
+				row[m_conColumns.m_col_refPix] = m_refPixConnected;
 			}
 
 		}
@@ -812,25 +787,13 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_resColumns.m_col_status] = "available";
 				row[m_resColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_resColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												yesres_ico.height,
-												yesres_ico.width,
-												yesres_ico.bytes_per_pixel*yesres_ico.width);
+				row[m_resColumns.m_col_refPix] = m_refPixAvailable;
 			}
 			else
 			{
 				row[m_resColumns.m_col_status] = "not available";
 				row[m_resColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_resColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
-				 								Gdk::COLORSPACE_RGB,
-												90,
-												8,
-												nores_ico.height,
-												nores_ico.width,
-												nores_ico.bytes_per_pixel*nores_ico.width);
+				row[m_resColumns.m_col_refPix] = m_refPixUnAvailable;
 			}
 		}
 	}
@@ -889,13 +852,7 @@ void ApplicationWindow::onExecutableStart(void* which)
 	{
 		row[m_modColumns.m_col_status] = "running";
 		row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
-		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
-											Gdk::COLORSPACE_RGB,
-											90,
-											8,
-											runnin_ico.height,
-											runnin_ico.width,
-											runnin_ico.bytes_per_pixel*runnin_ico.width);
+		row[m_modColumns.m_col_refPix] = m_refPixRunning;
 	}
 	reportErrors();
 }
@@ -908,13 +865,7 @@ void ApplicationWindow::onExecutableStop(void* which)
 	{
 		row[m_modColumns.m_col_status] = "suspended";
 		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
-											Gdk::COLORSPACE_RGB,
-											90,
-											8,
-											suspended_ico.height,
-											suspended_ico.width,
-											suspended_ico.bytes_per_pixel*suspended_ico.width);
+		row[m_modColumns.m_col_refPix] = m_refPixSuspended;
 	}
 
 	reportErrors();
@@ -929,13 +880,7 @@ void ApplicationWindow::onExecutableDied(void* which)
 	{
 		row[m_modColumns.m_col_status] = "suspended";
 		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-		row[m_modColumns.m_col_refPix] =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
-											Gdk::COLORSPACE_RGB,
-											90,
-											8,
-											suspended_ico.height,
-											suspended_ico.width,
-											suspended_ico.bytes_per_pixel*suspended_ico.width);
+		row[m_modColumns.m_col_refPix] = m_refPixSuspended;
 	}
 	reportErrors();
 }

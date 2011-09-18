@@ -33,7 +33,7 @@ public:
 	Manager( bool withWatchDog=false);
 	Manager(const char* szModPath,
 			const char* szAppPath, bool withWatchDog=false);
-	~Manager();
+	virtual ~Manager();
 
 	bool addApplication(const char* szFileName);
 	bool addApplications(const char* szPath);

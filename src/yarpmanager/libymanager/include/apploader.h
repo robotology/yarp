@@ -25,7 +25,7 @@ class AppLoader {
 
 public: 
 	AppLoader(void) {}
-	~AppLoader() {}
+	virtual ~AppLoader() {}
 	virtual bool init(void) = 0; 
 	virtual void fini(void) = 0;
 	virtual Application* getNextApplication(void) = 0;

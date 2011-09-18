@@ -24,7 +24,9 @@ Executable::Executable(Broker* _broker,
 
 Executable::~Executable()
 {
-	
+	//RateThread::stop();
+	if(broker)
+		delete broker;
 }
 
 bool Executable::threadInit()
@@ -63,7 +65,7 @@ void Executable::run()
 
 		case SUSPENDED:
 		{
-			RateThread::stop();
+			RateThread::askToStop();
 			break;
 		}
 		
@@ -105,7 +107,7 @@ void Executable::run()
 				watchModule();
 			}
 			else
-				RateThread::stop();
+				RateThread::askToStop();
 			break;
 		}
 
@@ -116,7 +118,7 @@ void Executable::run()
 			{
 				event->onExecutableStop(this);
 				setState(SUSPENDED);
-				RateThread::stop();
+				RateThread::askToStop();
 			}
 			else
 				setState(DEAD);
@@ -126,7 +128,11 @@ void Executable::run()
 		default: //DEAD case
 		{
 			//cout<<strCommand<<": DEAD"<<endl;
-			Executable::kill();
+			//Executable::kill();
+			broker->kill();
+			setState(DEAD);
+			event->onExecutableDied(this);
+			RateThread::askToStop();
 			break;
 		}		
 	};

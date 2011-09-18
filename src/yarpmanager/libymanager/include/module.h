@@ -40,7 +40,7 @@ public:
 		os = strToOS(szOS);
 	}
 
-	~Platform(){}
+	virtual ~Platform(){}
 	
 	OS getOS(void) { return os; }
 	const char* getDistribution(void) { return strDist.c_str(); } 
@@ -69,7 +69,7 @@ public:
 		if(szDesc) strDesc = szDesc; 
 		bRequired = required;
 	}	
-	~Argument(){}	
+	virtual ~Argument(){}	
 	const char* getParam(void) { return strParam.c_str(); }
 	const char* getDescription(void) { return strDesc.c_str(); } 	
 	bool operator==(const Argument& alt) {		
@@ -106,7 +106,7 @@ public:
 	Module(void);
 	Module(const char* szName);
 	Module(const Module &mod);
-	~Module();
+	virtual ~Module();
 	virtual Node* clone(void);
 	void setName(const char* szName) { 
 		if(szName){

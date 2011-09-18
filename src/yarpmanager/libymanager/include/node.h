@@ -40,7 +40,7 @@ public:
 		 connectTo = to;
 		 bVirtual = virtualLink;
 		 }
-	~Link(){}
+	virtual ~Link(){}
 	Node* to() { return connectTo; }
 	float weight(void) { return fWeight; }
 	void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
@@ -73,7 +73,7 @@ public:
 		if(szLabel) label = szLabel;
 	}	
 	Node(const Node &node);
-	~Node() {}
+	virtual ~Node() {}
 	
 	void setSatisfied(bool sat) { bSatisfied = sat; }
 	bool isSatisfied(void) { return bSatisfied; }
