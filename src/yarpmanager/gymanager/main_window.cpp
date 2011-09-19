@@ -209,7 +209,8 @@ void MainWindow::createWidgets(void)
 void MainWindow::setupSignals(void)
 {
 	//Connect signal:
-  	m_applicationList.getTreeView().signal_row_activated().connect(sigc::mem_fun(*this,
+	
+  	m_applicationList.getTreeView()->signal_row_activated().connect(sigc::mem_fun(*this,
               			&MainWindow::onAppListRowActivated) );
 
 	m_mainTab.signal_switch_page().connect(sigc::mem_fun(*this,

@@ -32,9 +32,8 @@ ELSE (NOT UNIX)
 	target_link_libraries(YARP_manager YARP_sig YARP_OS)
 
 	#install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
-	set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
-	set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
-
+	#set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
+	#set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
 	#install(DIRECTORY include/yarp/manager COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
 
 ENDIF (NOT UNIX)

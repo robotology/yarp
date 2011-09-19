@@ -29,12 +29,13 @@ ApplicationList::ApplicationList()
 	m_appRow = *(m_refTreeModel->append());
 	m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
 	m_appRow[m_appColumns.m_col_name] = "Applications";
-	m_appRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", 16);
-	//Gtk::IconTheme::get_default()->load_icon("folder", Gtk::ICON_SIZE_MENU)->save("test.jpg", "jpeg");
+	m_appRow[m_appColumns.m_col_refPix] = 
+			Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE);
+	//Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_SIZE_MENU)->save("test.jpg", "jpeg");
 
 //	m_modRow = *(m_refTreeModel->append());
 //	m_modRow[m_appColumns.m_col_name] = "Module";
-//	m_modRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", 16);
+//	m_modRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", Gtk::ICON_LOOKUP_USE_BUILTIN);
 
 	//Add the Model’s column to the View’s columns:	
 	Gtk::TreeViewColumn col("Entities");
@@ -47,9 +48,10 @@ ApplicationList::ApplicationList()
 	m_TreeView.append_column(col);
 	m_TreeView.expand_all();
 
-  	//m_TreeView.signal_row_activated().connect(sigc::mem_fun(*this,
-    //          			&ApplicationList::onAppListRowActivated) );
-
+/*
+  	m_TreeView.signal_row_activated().connect(sigc::mem_fun(*this,
+              			&ApplicationList::onAppListRowActivated) );
+*/
 	show_all_children();
 }
 
@@ -108,22 +110,22 @@ bool ApplicationList::addApplication(Application* app)
 	descrow[m_appColumns.m_col_type] = NODE_FILENAME;
 	descrow[m_appColumns.m_col_name] = fname;
 	descrow[m_appColumns.m_col_refPix] = 
-	Gtk::IconTheme::get_default()->load_icon("document", 16);
+	Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN);
 	//m_TreeView.expand_all();
 	return true;
 }
 
+/*
 void ApplicationList::onAppListRowActivated(const Gtk::TreeModel::Path& path, 
 			Gtk::TreeViewColumn* column)
 {
-	/*
 	Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
 	if(iter)
   	{
     	Gtk::TreeModel::Row row = *iter;
     	cout<<"Row activated: name="<< row[m_appColumns.m_col_name]<<endl;
   	}
-	*/
+	
 }
-
+*/
 
