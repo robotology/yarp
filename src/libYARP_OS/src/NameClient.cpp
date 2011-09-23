@@ -282,7 +282,8 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
     } else {
         cmd.addString("...");
     }
-    if (suggest.isValid()) {
+    ConstString prefix = NetworkBase::getEnvironment("YARP_IP");
+    if (suggest.isValid()||prefix!="") {
         if (suggest.getCarrierName()!="") {
             cmd.addString(suggest.getCarrierName().c_str());
         } else {
@@ -291,7 +292,17 @@ Address NameClient::registerName(const String& name, const Address& suggest) {
         if (suggest.getName()!="") {
             cmd.addString(suggest.getName().c_str());
         } else {
-            cmd.addString("...");
+            if (prefix!="") {
+                Bottle ips = NameConfig::getIpsAsBottle();
+                for (int i=0; i<ips.size(); i++) {
+                    String ip = ips.get(i).asString().c_str();
+                    if (YARP_STRSTR(ip,prefix.c_str())==0) {
+                        prefix = ip.c_str();
+                        break;
+                    }
+                }
+            }
+            cmd.addString((prefix!="")?prefix:"...");
         }
         if (suggest.getPort()!=0) {
             cmd.addInt(suggest.getPort());
