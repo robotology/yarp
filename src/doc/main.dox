@@ -30,10 +30,11 @@ package management (we like the package managers we have).  We're not
 out for world domination.  It is easy to interoperate with YARP-using
 programs without yourself necessarily having to use YARP -- see the
 \ref yarp_without_yarp "YARP without YARP" tutorial. YARP is written
-in C++, and can be compiled without external libraries on Linux
-and Mac OSX.
-A small portion of the <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> library is used for Windows builds, and to support extra
-protocols (this portion can easily be embedded).  
+in C++.  The <a href="http://www.cs.wustl.edu/~schmidt/ACE.html">ACE</a> 
+library is used for Windows builds, and to support extra
+protocols.  On Linux and Mac OSX, ACE can optionally be omitted,
+giving a very light footprint (with the trade-off being the
+loss of support for some non-TCP-based protocols).
 YARP is free and open, under the LGPL (*).
 
 Getting set up:
