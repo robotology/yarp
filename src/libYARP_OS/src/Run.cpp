@@ -728,7 +728,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
         strCmd+=botCmd.get(s).toString()+yarp::os::ConstString(" ");
     }
 
-	/*
+	
 	if(msg.check("env"))
 	{ 
 		int pos = msg.find("env").asString().find("=");
@@ -742,7 +742,6 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(Bottle& msg)
 			SetEnvironmentVariable(cstrName.c_str(), cstrValue.c_str());
 		}
 	}
-	*/
 
 	bool bWorkdir=msg.check("workdir");
 	yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
@@ -866,7 +865,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
         strCmd+=botCmd.get(s).toString()+yarp::os::ConstString(" ");
     }
 
-	/*
+	
 	if(msg.check("env"))
 	{
 		
@@ -882,7 +881,7 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmd(yarp::os::Bottle& msg)
 		}
 		
 	}
-	*/
+	
 
 	bool bWorkdir=msg.check("workdir");
 	yarp::os::ConstString strWorkdir=bWorkdir?msg.find("workdir").asString()+"\\":"";
