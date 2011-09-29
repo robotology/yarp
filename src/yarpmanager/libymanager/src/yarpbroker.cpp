@@ -17,6 +17,10 @@
 #define STOP_TIMEOUT 		10
 #define KILL_TIMEOUT 		3
 
+#if defined(WIN32) || defined(WIN64)
+    #define SIGKILL 9
+#endif 
+
 using namespace yarp::os;
 
 

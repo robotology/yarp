@@ -7,14 +7,23 @@
  *
  */
 
+#if defined(WIN32) || defined(WIN64)
+	#pragma warning (disable : 4250)
+	#pragma warning (disable : 4520)
+#endif
+
+
+
 #include <sstream>
 #include <string>
 #include <iostream>
 
 #include "application_list.h"
 #include "icon_res.h"
+#include "ymm-dir.h"
 
 using namespace std;
+
 
 ApplicationList::ApplicationList()
 {
@@ -29,13 +38,17 @@ ApplicationList::ApplicationList()
 	m_appRow = *(m_refTreeModel->append());
 	m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
 	m_appRow[m_appColumns.m_col_name] = "Applications";
-	m_appRow[m_appColumns.m_col_refPix] = 
-			Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE);
-	//Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_SIZE_MENU)->save("test.jpg", "jpeg");
+
+	//Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE)->save("test.jpg", "jpeg");
+
+	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
+	//m_appRow[m_appColumns.m_col_refPix] = 
+	//		Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE);
 
 //	m_modRow = *(m_refTreeModel->append());
 //	m_modRow[m_appColumns.m_col_name] = "Module";
 //	m_modRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", Gtk::ICON_LOOKUP_USE_BUILTIN);
+//	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
 
 	//Add the Model’s column to the View’s columns:	
 	Gtk::TreeViewColumn col("Entities");
@@ -48,16 +61,12 @@ ApplicationList::ApplicationList()
 	m_TreeView.append_column(col);
 	m_TreeView.expand_all();
 
-/*
-  	m_TreeView.signal_row_activated().connect(sigc::mem_fun(*this,
-              			&ApplicationList::onAppListRowActivated) );
-*/
 	show_all_children();
 }
 
+
 ApplicationList::~ApplicationList()
 {
-
 }
 
 
@@ -84,22 +93,28 @@ bool ApplicationList::addApplication(Application* app)
 	Gtk::TreeModel::Row childrow = *(m_refTreeModel->append(m_appRow.children()));
 	childrow[m_appColumns.m_col_type] = APPLICATION;
 	childrow[m_appColumns.m_col_name] = app->getName();
+	
+	/*
 	childrow[m_appColumns.m_col_refPix] = 
 			 Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
 											Gdk::COLORSPACE_RGB,
-											90,
+											true,
 											8,
-											application_ico.height,
 											application_ico.width,
+											application_ico.height,
 											application_ico.bytes_per_pixel*application_ico.width);
+	*/
+	childrow.set_value(0, Gdk::Pixbuf::create_from_data(application_ico.pixel_data, 
+											Gdk::COLORSPACE_RGB,
+											true,
+											8,
+											application_ico.width,
+											application_ico.height,
+											application_ico.bytes_per_pixel*application_ico.width));
+
 	string fname;
 	string fpath = app->getXmlFile();
-
-#ifdef __WINDOWS__
-	size_t pos = fpath.rfind("\\");
-#else
-	size_t pos = fpath.rfind("/");
-#endif
+	size_t pos = fpath.rfind(PATH_SEPERATOR);
 	if(pos!=string::npos)
 		fname = fpath.substr(pos);
 	else
@@ -109,23 +124,9 @@ bool ApplicationList::addApplication(Application* app)
 	Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
 	descrow[m_appColumns.m_col_type] = NODE_FILENAME;
 	descrow[m_appColumns.m_col_name] = fname;
-	descrow[m_appColumns.m_col_refPix] = 
-	Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-	//m_TreeView.expand_all();
+	
+	//descrow[m_appColumns.m_col_refPix] = 
+	//		Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN);
+	//descrow.set_value(0, Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN));
 	return true;
 }
-
-/*
-void ApplicationList::onAppListRowActivated(const Gtk::TreeModel::Path& path, 
-			Gtk::TreeViewColumn* column)
-{
-	Gtk::TreeModel::iterator iter = m_refTreeModel->get_iter(path);
-	if(iter)
-  	{
-    	Gtk::TreeModel::Row row = *iter;
-    	cout<<"Row activated: name="<< row[m_appColumns.m_col_name]<<endl;
-  	}
-	
-}
-*/
-

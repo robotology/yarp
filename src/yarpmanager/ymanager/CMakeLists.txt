@@ -9,11 +9,11 @@
 
 GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
-IF (NOT UNIX)
+# IF (NOT UNIX)
 
-	MESSAGE(STATUS "yarpmanager is currently available only for linux distributions.")
+#	MESSAGE(STATUS "yarpmanager is currently available only for linux distributions.")
 
-ELSE (NOT UNIX)
+# ELSE (NOT UNIX)
 
 	FILE(GLOB folder_source *.cpp)
     FILE(GLOB folder_header *.h)
@@ -52,6 +52,6 @@ ELSE (NOT UNIX)
 
 	INSTALL(TARGETS yarpmanager COMPONENT utilities DESTINATION bin)
 
-ENDIF (NOT UNIX)
+# ENDIF (NOT UNIX)
 
 

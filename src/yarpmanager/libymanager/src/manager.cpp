@@ -10,7 +10,6 @@
 
 #include "manager.h"
 #include "yarpbroker.h"
-#include "localbroker.h"
 #include "xmlapploader.h"
 #include "singleapploader.h"
 

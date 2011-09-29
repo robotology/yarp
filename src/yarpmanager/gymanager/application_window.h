@@ -122,6 +122,7 @@ public:
 	bool onDisconnect(void);
 	bool onRefresh(void);
 	bool onSelectAll(void);
+	void releaseApplication(void);
 
 	Glib::RefPtr<Gtk::TreeStore> m_refTreeModModel;
 	Glib::RefPtr<Gtk::TreeStore> m_refTreeConModel;
@@ -176,6 +177,7 @@ private:
 	std::vector<int> m_ModuleIDs;
 	std::vector<int> m_ConnectionIDs;
 	std::vector<int> m_ResourceIDs;
+	yarp::os::Semaphore safeManage;
 
 	Glib::RefPtr<Gdk::Pixbuf> m_refPixSuspended;
 	Glib::RefPtr<Gdk::Pixbuf> m_refPixRunning;

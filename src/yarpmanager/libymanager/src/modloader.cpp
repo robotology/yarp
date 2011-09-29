@@ -7,6 +7,7 @@
  *
  */
 
+
 #include <algorithm>
 #include <cctype>
 #include <string>
@@ -15,6 +16,7 @@
 #include "modloader.h"
 #include "tinyxml.h"
 #include "utility.h"
+#include "ymm-dir.h"
 
 using namespace std;
 
@@ -25,9 +27,9 @@ XmlModLoader::XmlModLoader(const char* szPath, const char* szName)
 	if(strlen(szPath))
 	{
 		strPath = szPath;
-		if((strPath.rfind("/")==string::npos) || 
-			(strPath.rfind("/")!=strPath.size()-1))
-			strPath = strPath + string("/");
+		if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+			(strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+			strPath = strPath + string(PATH_SEPERATOR);
 	}
 	
 	if(szName)
@@ -393,7 +395,6 @@ Module* XmlModLoader::parsXml(const char* szFile)
 		}
 		
 	return &module;
-
 }
 
 

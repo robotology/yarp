@@ -12,11 +12,11 @@
 #include <cctype>
 #include <string>
 #include <fstream>
-#include <dirent.h>
 
 #include "xmlapploader.h"
 #include "tinyxml.h"
 #include "utility.h"
+#include "ymm-dir.h"
 
 using namespace std;
 
@@ -34,9 +34,9 @@ XmlAppLoader::XmlAppLoader(const char* szPath, const char* szAppName)
 	if(strlen(szPath))
 	{
 		strPath = szPath;
-		if((strPath.rfind("/")==string::npos) || 
-			(strPath.rfind("/")!=strPath.size()-1))
-			strPath = strPath + string("/");
+		if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+			(strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+			strPath = strPath + string(PATH_SEPERATOR);
 	}	
 }
 

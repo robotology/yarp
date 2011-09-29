@@ -50,10 +50,6 @@ public:
 	Gtk::TreeView* getTreeView(void) { return &m_TreeView;}
 
 protected:
-	/*
-	virtual void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
-				Gtk::TreeViewColumn* column);
-	*/
 	Gtk::TreeView m_TreeView; //The Tree View.
 	Gtk::TreeModel::Row m_appRow;
 	Gtk::TreeModel::Row m_modRow;

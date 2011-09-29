@@ -7,6 +7,10 @@
  *
  */
 
+#if defined(WIN32) || defined(WIN64)
+	#pragma warning (disable : 4250)
+	#pragma warning (disable : 4520)
+#endif
 
 #include <iostream>
 #include <gtkmm/main.h>
@@ -14,17 +18,8 @@
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
-
-#define UNIX
-
-#ifdef UNIX
-	#include <errno.h>
-	#include <sys/types.h>
-	#include <signal.h>
-#endif
-
-
 #include "main_window.h"
+
 
 using namespace std;
 
@@ -38,23 +33,37 @@ Options:\n\
 #define DEF_CONFIG_FILE		"./ymanager.ini"
 
 
-void onSignal(int signum)
-{
-	cout<<"Use <quit> menu to exit!"<<endl;
-}
+void onSignal(int signum);
 
 
-int main(int argc, char *argv[])
-{
+#if defined(WIN32) || defined(WIN64)
+#include <yarp/os/impl/PlatformSignal.h>
+#include <windows.h>
+
+int WINAPI WinMain(HINSTANCE hInstance,
+                   HINSTANCE hPrevInstance,
+                   LPSTR lpCmdLine,
+                   int nCmdShow) {
+#else
+#include <errno.h>
+#include <sys/types.h>
+#include <signal.h>
+
+int main(int argc, char *argv[]) {
+#endif
 
 	yarp::os::Network yarp;
 	yarp.setVerbosity(-1);
 
 	yarp::os::Property cmdline;
 	yarp::os::Property config;
-	
+
+#if defined(WIN32) || defined(WIN64)
+	cmdline.fromCommand(__argc, __argv);
+#else
 	cmdline.fromCommand(argc, argv);
-	
+#endif 
+
 	if(cmdline.check("help"))
 	{
 		cout<<HELP_MESSAGE<<endl;
@@ -101,7 +110,16 @@ int main(int argc, char *argv[])
 	if(!config.check("auto_dependency"))
 		config.put("auto_dependency", "no");
 
-#ifdef UNIX
+
+#if defined(WIN32) || defined(WIN64)
+	Gtk::Main kit(__argc, __argv);
+	//setup signal handler for windows
+	ACE_OS::signal(SIGINT, (ACE_SignalHandler) onSignal);
+	ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) onSignal);
+	ACE_OS::signal(SIGTERM, (ACE_SignalHandler) onSignal);
+
+#else
+	Gtk::Main kit(argc, argv);
 	struct sigaction new_action, old_action;
      
 	/* Set up the structure to specify the new action. */
@@ -118,18 +136,16 @@ int main(int argc, char *argv[])
 	sigaction (SIGTERM, NULL, &old_action);
 	if (old_action.sa_handler != SIG_IGN)
 		sigaction (SIGTERM, &new_action, NULL);
-
-//	signal(SIGTERM, YConsoleManager::onExit());
-//    signal(SIGINT, YConsoleManager::onExit());
 #endif
 
-
-	Gtk::Main kit(argc, argv);
 	MainWindow window(config);
-
 	//Shows the window and returns when it is closed.
 	Gtk::Main::run(window);
 	return 0;
 }
 
+void onSignal(int signum)
+{
+	cout<<"Use <quit> menu to exit!"<<endl;
+}
 

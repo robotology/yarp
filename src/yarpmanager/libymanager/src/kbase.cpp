@@ -743,7 +743,6 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
 		InputData* input = &(module->getInputAt(i));		
 		input->setLabel(createDataLabel(module->getLabel(), 
 										input->getPort(), ":I")); 
-		
 		if((input=(InputData*)graph.addNode(input)))
 			graph.addLink(module, input, 0,
 						!(input->isRequired()));
@@ -784,7 +783,6 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
 			
 	return module;
 }
-
 
 
 bool KnowledgeBase::moduleCompleteness(Module* module)
@@ -1079,18 +1077,20 @@ const char* KnowledgeBase::createDataLabel(const char* modlabel,
 										   const char* port,
 										   const char* postfix)
 {
-	ostringstream name;
-	name<<modlabel<<":"<<port;
+	static string name;
+	name.clear();
+	name = string(modlabel) + string(port);
 	if(postfix)
-		name<<postfix;
-	return name.str().c_str(); 
+		name += string(postfix);
+	return name.c_str();
 }
 
 
 /*
 const char* KnowledgeBase::createOutputLabel(Module* module, OutputData* output)
 {
-	ostringstream name;
+	static ostringstream name;
+	name.clear();
 	name<<module->getLabel()<<":";
 	name<<output->getPort()<<":";
 	name<<output->getName()<<":O";	

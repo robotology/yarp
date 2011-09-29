@@ -7,6 +7,10 @@
  *
  */
 
+#if defined(WIN32) || defined(WIN64)
+	#pragma warning (disable : 4250)
+	#pragma warning (disable : 4520)
+#endif
 
 #include "application_window.h"
 #include "main_window.h"
@@ -36,18 +40,20 @@ ApplicationWindow::~ApplicationWindow()
 {
 }
 
+
 bool ApplicationWindow::threadInit() { return true; }
 
+void ApplicationWindow::afterStart(bool s) { }
 
-void ApplicationWindow::afterStart(bool s) {}
-
-void ApplicationWindow::threadRelease() {}
+void ApplicationWindow::threadRelease() { }
 
 void ApplicationWindow::run()
-{
+{	
+	safeManage.wait();
 	if(m_pAction)
 		(this->*m_pAction)();
-	RateThread::stop();
+	RateThread::askToStop();
+	safeManage.post();
 }
 
 void ApplicationWindow::createWidgets(void)
@@ -71,58 +77,58 @@ void ApplicationWindow::createWidgets(void)
 
 	 m_refPixSuspended =  Gdk::Pixbuf::create_from_data(suspended_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								suspended_ico.height,
 								suspended_ico.width,
+								suspended_ico.height,
 								suspended_ico.bytes_per_pixel*suspended_ico.width);
 
 	m_refPixRunning = Gdk::Pixbuf::create_from_data(runnin_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								runnin_ico.height,
 								runnin_ico.width,
+								runnin_ico.height,
 								runnin_ico.bytes_per_pixel*runnin_ico.width);
 	
 	m_refPixWaiting = Gdk::Pixbuf::create_from_data(progress_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								progress_ico.height,
 								progress_ico.width,
+								progress_ico.height,
 								progress_ico.bytes_per_pixel*progress_ico.width);
 
 	m_refPixConnected = Gdk::Pixbuf::create_from_data(connected_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								connected_ico.height,
 								connected_ico.width,
+								connected_ico.height,
 								connected_ico.bytes_per_pixel*connected_ico.width);
 
 	m_refPixDisconnected = Gdk::Pixbuf::create_from_data(disconnected_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								disconnected_ico.height,
 								disconnected_ico.width,
+								disconnected_ico.height,
 								disconnected_ico.bytes_per_pixel*disconnected_ico.width);
 
 	m_refPixAvailable = Gdk::Pixbuf::create_from_data(yesres_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								yesres_ico.height,
 								yesres_ico.width,
+								yesres_ico.height,
 								yesres_ico.bytes_per_pixel*yesres_ico.width);
 
 	m_refPixUnAvailable = Gdk::Pixbuf::create_from_data(nores_ico.pixel_data, 
 								Gdk::COLORSPACE_RGB,
-								90,
+								true,
 								8,
-								nores_ico.height,
 								nores_ico.width,
+								nores_ico.height,
 								nores_ico.bytes_per_pixel*nores_ico.width);
 
 	//Add the Model’s column to the Module View’s columns:	
@@ -142,21 +148,14 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeModView.get_column(1)->set_sort_column(m_modColumns.m_col_id);
 	m_TreeModView.get_column(1)->set_resizable(true);
 
-/*
-	m_TreeModView.append_column("Status", m_modColumns.m_col_status);
-	m_TreeModView.get_column(2)->set_sort_column(m_modColumns.m_col_status);
-	m_TreeModView.get_column(2)->set_resizable(true);
-*/
-
-	Gtk::CellRendererText* statusRenderer = manage(new Gtk::CellRendererText());
-	statusRenderer->property_editable() = false;
-	Gtk::TreeViewColumn *statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
-
-	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_modColumns.m_col_color);
-	statusCol->add_attribute(*statusRenderer, "text", m_modColumns.m_col_status);
-	statusCol->set_sort_column(m_modColumns.m_col_status);
-	statusCol->set_resizable(true);
-	m_TreeModView.append_column(*statusCol);
+	Gtk::CellRendererText statusRenderer;
+	statusRenderer.property_editable() = false;
+	Gtk::TreeViewColumn statusCol("Status", statusRenderer);
+	statusCol.add_attribute(statusRenderer, "foreground-gdk", m_modColumns.m_col_color);
+	statusCol.add_attribute(statusRenderer, "text", m_modColumns.m_col_status);
+	statusCol.set_sort_column(m_modColumns.m_col_status);
+	statusCol.set_resizable(true);
+	m_TreeModView.append_column(statusCol);
 
 
 	m_TreeModView.append_column("Host", m_modColumns.m_col_host);
@@ -179,10 +178,6 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeModView.get_column(7)->set_sort_column(m_modColumns.m_col_env);
 	m_TreeModView.get_column(7)->set_resizable(true);
 
-	/*
-*/
-
-
 	//Add the Model’s column to the connection View’s columns:	
 	Gtk::TreeViewColumn ccol("Connection");
 	Gtk::CellRendererText ccellText;
@@ -193,23 +188,18 @@ void ApplicationWindow::createWidgets(void)
 	ccol.add_attribute(ccellPix, "pixbuf", 0);
 	m_TreeConView.append_column(ccol);
 
-
 	m_TreeConView.append_column("ID", m_conColumns.m_col_id);
 	m_TreeConView.append_column("To", m_conColumns.m_col_to);
 	m_TreeConView.append_column("Carrier", m_conColumns.m_col_carrier);
 
-	//m_TreeConView.append_column("Status", m_conColumns.m_col_status);
-
-	statusRenderer = manage(new Gtk::CellRendererText());
-	statusRenderer->property_editable() = false;
-	statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
-
-	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_conColumns.m_col_color);
-	statusCol->add_attribute(*statusRenderer, "text", m_conColumns.m_col_status);
-	statusCol->set_sort_column(m_conColumns.m_col_status);
-	statusCol->set_resizable(true);
-	m_TreeConView.append_column(*statusCol);
-
+	Gtk::CellRendererText statusRenderer2;
+	statusRenderer2.property_editable() = false;
+	Gtk::TreeViewColumn statusCol2("Status", statusRenderer2);
+	statusCol2.add_attribute(statusRenderer2, "foreground-gdk", m_conColumns.m_col_color);
+	statusCol2.add_attribute(statusRenderer2, "text", m_conColumns.m_col_status);
+	statusCol2.set_sort_column(m_conColumns.m_col_status);
+	statusCol2.set_resizable(true);
+	m_TreeConView.append_column(statusCol2);
 
 	m_TreeConView.get_column(0)->set_sort_column(m_conColumns.m_col_from);
 	m_TreeConView.get_column(0)->set_resizable(true);
@@ -233,16 +223,15 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeResView.append_column(rcol);
 
 	m_TreeResView.append_column("ID", m_resColumns.m_col_id);
-	//m_TreeResView.append_column("Status", m_resColumns.m_col_status);
-	statusRenderer = manage(new Gtk::CellRendererText());
-	statusRenderer->property_editable() = false;
-	statusCol = manage(new Gtk::TreeViewColumn("Status", *statusRenderer));
-
-	statusCol->add_attribute(*statusRenderer, "foreground-gdk", m_resColumns.m_col_color);
-	statusCol->add_attribute(*statusRenderer, "text", m_resColumns.m_col_status);
-	statusCol->set_sort_column(m_resColumns.m_col_status);
-	statusCol->set_resizable(true);
-	m_TreeResView.append_column(*statusCol);
+	
+	Gtk::CellRendererText statusRenderer3;
+	statusRenderer3.property_editable() = false;
+	Gtk::TreeViewColumn statusCol3("Status", statusRenderer3);
+	statusCol3.add_attribute(statusRenderer3, "foreground-gdk", m_resColumns.m_col_color);
+	statusCol3.add_attribute(statusRenderer3, "text", m_resColumns.m_col_status);
+	statusCol3.set_sort_column(m_resColumns.m_col_status);
+	statusCol3.set_resizable(true);
+	m_TreeResView.append_column(statusCol3);
 
 	m_TreeResView.get_column(0)->set_sort_column(m_resColumns.m_col_res);
 	m_TreeResView.get_column(0)->set_resizable(true);
@@ -266,9 +255,9 @@ void ApplicationWindow::createWidgets(void)
 //	m_refActionGroup->add(Gtk::Action::create("PopupModules", "PopupModules"));
 	m_refActionGroup->add( Gtk::Action::create("PManageRun", Gtk::Stock::EXECUTE, "_Run", "Run Application"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuRun) );
-	m_refActionGroup->add( Gtk::Action::create("PManageStop", Gtk::Stock::CLOSE ,"_Stop", "Stop Application"),
+	m_refActionGroup->add( Gtk::Action::create("PManageStop", Gtk::Stock::STOP ,"_Stop", "Stop Application"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuStop) );
-	m_refActionGroup->add( Gtk::Action::create("PManageKill", Gtk::Stock::STOP,"_Kill", "Kill Application"),
+	m_refActionGroup->add( Gtk::Action::create("PManageKill", Gtk::Stock::CLOSE,"_Kill", "Kill Application"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuKill) );
 	m_refActionGroup->add( Gtk::Action::create("PManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuConnect) );
@@ -373,9 +362,9 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 		m_modRow = *(m_refTreeModModel->append());
 		m_modRow[m_modColumns.m_col_id] = (*moditr)->getID();
 		m_modRow[m_modColumns.m_col_name] = (*moditr)->getCommand();
-		//m_modRow[m_modColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("process-working", 16);			
-		m_modRow[m_modColumns.m_col_refPix]	= m_refPixSuspended;
-		m_modRow[m_modColumns.m_col_status] = "suspended";
+		//m_modRow[m_modColumns.m_col_refPix]	= m_refPixSuspended;
+		m_modRow.set_value(0, m_refPixSuspended);
+		m_modRow[m_modColumns.m_col_status] = "stopped";
 		m_modRow[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
 		m_modRow[m_modColumns.m_col_host] = (*moditr)->getHost();
 		m_modRow[m_modColumns.m_col_param] = (*moditr)->getParam();
@@ -389,8 +378,8 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 	{
 		m_conRow = *(m_refTreeConModel->append());
 		m_conRow[m_conColumns.m_col_id] = id++;
-		//m_conRow[m_conColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("document-properties", 16);	
-		m_conRow[m_conColumns.m_col_refPix]	= m_refPixDisconnected;
+		//m_conRow[m_conColumns.m_col_refPix] = m_refPixDisconnected;
+		m_conRow.set_value(0, m_refPixDisconnected);
 		m_conRow[m_conColumns.m_col_from] = (*cnnitr).from();
 		m_conRow[m_conColumns.m_col_to] = (*cnnitr).to();
 		m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
@@ -407,8 +396,8 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 	{
 		m_resRow = *(m_refTreeResModel->append());
 		m_resRow[m_resColumns.m_col_id] = id++;
-		//m_conRow[m_conColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("document-properties", 16);	
-		m_resRow[m_resColumns.m_col_refPix]	= m_refPixUnAvailable;
+		//m_resRow[m_resColumns.m_col_refPix]	= m_refPixUnAvailable;
+		m_resRow.set_value(0, m_refPixUnAvailable);
 		m_resRow[m_resColumns.m_col_res] = (*itrS)->getPort();
 		m_resRow[m_resColumns.m_col_status] = "unknown";
 		m_resRow[m_resColumns.m_col_color] = Gdk::Color("#00000");
@@ -520,22 +509,28 @@ bool ApplicationWindow::getResRowByID(int id, Gtk::TreeModel::Row* row )
 }
 
 
-
 bool ApplicationWindow::onRun(void)
 {
-	m_pAction = &ApplicationWindow::doRun;
-	RateThread::start();
+	if(safeManage.check())
+	{	
+		m_ModuleIDs.clear();
+		m_refTreeModSelection = m_TreeModView.get_selection();
+		m_refTreeModSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
+		m_pAction = &ApplicationWindow::doRun;		
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doRun();		
+#else
+		RateThread::start();	
+#endif
+	}
 	return true;	
 }
 
 
 void ApplicationWindow::doRun(void) 
 {
-	m_ModuleIDs.clear();
-	m_refTreeModSelection = m_TreeModView.get_selection();
-	m_refTreeModSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-
 	// changing icons 
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 	{
@@ -544,7 +539,8 @@ void ApplicationWindow::doRun(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			//row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			row.set_value(0, m_refPixWaiting);
 		}
 	}
 
@@ -557,18 +553,26 @@ void ApplicationWindow::doRun(void)
 
 bool ApplicationWindow::onStop(void)
 {
-	m_pAction = &ApplicationWindow::doStop;
-	RateThread::start();
+	if(safeManage.check())
+	{	
+		m_ModuleIDs.clear();
+		m_refTreeModSelection = m_TreeModView.get_selection();
+		m_refTreeModSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
+		m_pAction = &ApplicationWindow::doStop;
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doStop();
+#else
+		RateThread::start();	
+#endif
+	}
 	return true;	
 }
 
 
 void ApplicationWindow::doStop(void) 
 {
-	m_ModuleIDs.clear();
-	m_refTreeModSelection = m_TreeModView.get_selection();
-	m_refTreeModSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
 	
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 	{
@@ -577,34 +581,40 @@ void ApplicationWindow::doStop(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			//row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			row.set_value(0, m_refPixWaiting);
 		}
 	}
-
+	
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 		Manager::stop(m_ModuleIDs[i], true);
-
 	reportErrors();
-
 }
 
 
 
 bool ApplicationWindow::onKill(void)
 {
-	m_pAction = &ApplicationWindow::doKill;
-	RateThread::start();
+	if(safeManage.check())
+	{
+		m_ModuleIDs.clear();
+		m_refTreeModSelection = m_TreeModView.get_selection();
+		m_refTreeModSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
+		m_pAction = &ApplicationWindow::doKill;
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doKill();
+#else
+		RateThread::start();
+#endif
+	}
 	return true;	
 }
 
 
 void ApplicationWindow::doKill(void) 
 {
-	m_ModuleIDs.clear();
-	m_refTreeModSelection = m_TreeModView.get_selection();
-	m_refTreeModSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-	
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -612,7 +622,8 @@ void ApplicationWindow::doKill(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			//row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			row.set_value(0, m_refPixWaiting);
 		}
 	}
 	
@@ -625,18 +636,25 @@ void ApplicationWindow::doKill(void)
 
 bool ApplicationWindow::onConnect(void) 
 { 
-	m_pAction = &ApplicationWindow::doConnect;
-	RateThread::start();
+	if(safeManage.check())
+	{
+		m_ConnectionIDs.clear();
+		m_refTreeConSelection= m_TreeConView.get_selection();
+		m_refTreeConSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+		m_pAction = &ApplicationWindow::doConnect;
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doConnect();
+#else
+		RateThread::start();
+#endif
+	}
 	return true;	
 }
 
 void ApplicationWindow::doConnect(void) 
-{
-	m_ConnectionIDs.clear();
-	m_refTreeConSelection= m_TreeConView.get_selection();
-	m_refTreeConSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
-	
+{	
 	for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -646,12 +664,12 @@ void ApplicationWindow::doConnect(void)
 			{
 				row[m_conColumns.m_col_status] = "connected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_conColumns.m_col_refPix] =  m_refPixConnected;
+				//row[m_conColumns.m_col_refPix] =  m_refPixConnected;
+				row.set_value(0, m_refPixConnected);
+
 			}
 		}
-
 	}
-	
 	reportErrors();
 }
 
@@ -659,19 +677,26 @@ void ApplicationWindow::doConnect(void)
 
 bool ApplicationWindow::onDisconnect(void) 
 {
-	m_pAction = &ApplicationWindow::doDisconnect;
-	RateThread::start();
+	if(safeManage.check())
+	{
+		m_ConnectionIDs.clear();
+		m_refTreeConSelection= m_TreeConView.get_selection();
+		m_refTreeConSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+		m_pAction = &ApplicationWindow::doDisconnect;
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doDisconnect();
+#else	
+		RateThread::start();
+#endif
+	}
 	return true;	
 
 }
 
 void ApplicationWindow::doDisconnect(void) 
-{
-	m_ConnectionIDs.clear();
-	m_refTreeConSelection= m_TreeConView.get_selection();
-	m_refTreeConSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
-	
+{	
 	for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -681,20 +706,41 @@ void ApplicationWindow::doDisconnect(void)
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_conColumns.m_col_refPix] =  m_refPixDisconnected;
+				//row[m_conColumns.m_col_refPix] =  m_refPixDisconnected;
+				row.set_value(0, m_refPixDisconnected);
 			}
 		}
-
-	}
-	
+	}	
 	reportErrors();
 }
 
 
+
+
 bool ApplicationWindow::onRefresh(void)
 {
-	m_pAction = &ApplicationWindow::doRefresh;
-	RateThread::start();
+	if(safeManage.check())
+	{		
+		m_ModuleIDs.clear();
+		m_refTreeModSelection = m_TreeModView.get_selection();
+		m_refTreeModSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
+		m_ConnectionIDs.clear();
+		m_refTreeConSelection= m_TreeConView.get_selection();
+		m_refTreeConSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
+		m_ResourceIDs.clear();
+		m_refTreeResSelection= m_TreeResView.get_selection();
+		m_refTreeResSelection->selected_foreach_iter(
+    		sigc::mem_fun(*this, &ApplicationWindow::selectedResourceCallback) );
+		m_pAction = &ApplicationWindow::doRefresh;
+		safeManage.post();
+#if defined(WIN32) || defined(WIN64)
+		doRefresh();
+#else
+		RateThread::start();
+#endif
+	}
 	return true;	
 }
 
@@ -704,11 +750,6 @@ void ApplicationWindow::doRefresh(void)
 	/**
 	 * Refreshing modules status 
 	 */ 
-	m_ModuleIDs.clear();
-	m_refTreeModSelection = m_TreeModView.get_selection();
-	m_refTreeModSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedModuleCallback) );
-
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -716,10 +757,10 @@ void ApplicationWindow::doRefresh(void)
 		{
 			row[m_modColumns.m_col_status] = "waiting";
 			row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-			row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			//row[m_modColumns.m_col_refPix] =  m_refPixWaiting;
+			row.set_value(0, m_refPixWaiting);
 		}
 	}
-
 	for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -729,25 +770,22 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_modColumns.m_col_status] = "running";
 				row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_modColumns.m_col_refPix] = m_refPixRunning;
+				//row[m_modColumns.m_col_refPix] = m_refPixRunning;
+				row.set_value(0, m_refPixRunning);
 			}
 			else
 			{
-				row[m_modColumns.m_col_status] = "suspended";
+				row[m_modColumns.m_col_status] = "stopped";
 				row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_modColumns.m_col_refPix] = m_refPixSuspended; 
+				//row[m_modColumns.m_col_refPix] = m_refPixSuspended; 
+				row.set_value(0, m_refPixSuspended);
 			}
 		}
 	}
 	
 	/*
 	 * Refreshing connection status
-	 */
-	m_ConnectionIDs.clear();
-	m_refTreeConSelection= m_TreeConView.get_selection();
-	m_refTreeConSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedConnectionCallback) );
-	
+	 */	
 	for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -757,27 +795,22 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_conColumns.m_col_status] = "disconnected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_conColumns.m_col_refPix] = m_refPixDisconnected; 
+				//row[m_conColumns.m_col_refPix] = m_refPixDisconnected; 
+				row.set_value(0, m_refPixDisconnected);
 			}
 			else
 			{
 				row[m_conColumns.m_col_status] = "connected";
 				row[m_conColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_conColumns.m_col_refPix] = m_refPixConnected;
+				//row[m_conColumns.m_col_refPix] = m_refPixConnected;
+				row.set_value(0, m_refPixConnected);
 			}
-
 		}
 	}
 
-
 	/*
 	 * Refreshing resources status
-	 */
-	m_ResourceIDs.clear();
-	m_refTreeResSelection= m_TreeResView.get_selection();
-	m_refTreeResSelection->selected_foreach_iter(
-    	sigc::mem_fun(*this, &ApplicationWindow::selectedResourceCallback) );
-	
+	 */	
 	for(unsigned int i=0; i<m_ResourceIDs.size(); i++)
 	{
 		Gtk::TreeModel::Row row;
@@ -787,13 +820,15 @@ void ApplicationWindow::doRefresh(void)
 			{
 				row[m_resColumns.m_col_status] = "available";
 				row[m_resColumns.m_col_color] = Gdk::Color("#008C00");
-				row[m_resColumns.m_col_refPix] = m_refPixAvailable;
+				//row[m_resColumns.m_col_refPix] = m_refPixAvailable;
+				row.set_value(0, m_refPixAvailable);
 			}
 			else
 			{
 				row[m_resColumns.m_col_status] = "not available";
 				row[m_resColumns.m_col_color] = Gdk::Color("#BF0303");
-				row[m_resColumns.m_col_refPix] = m_refPixUnAvailable;
+				//row[m_resColumns.m_col_refPix] = m_refPixUnAvailable;
+				row.set_value(0, m_refPixUnAvailable);
 			}
 		}
 	}
@@ -809,7 +844,7 @@ bool ApplicationWindow::onClose(void)
 	type_children children = m_refTreeModModel->children();
 	for(type_children::iterator iter = children.begin(); iter!=children.end(); ++iter)
 	{
-		if((*iter)[m_modColumns.m_col_status] !=  Glib::ustring("suspended"))
+		if((*iter)[m_modColumns.m_col_status] !=  Glib::ustring("stopped"))
 		{
 			bAllStoped = false;
 			break;
@@ -819,6 +854,7 @@ bool ApplicationWindow::onClose(void)
 	if(bAllStoped)
 	{
 		RateThread::stop();
+		releaseApplication();
 		return true;
 	}
 
@@ -832,6 +868,8 @@ bool ApplicationWindow::onClose(void)
 
 	// killing all application
 	Manager::kill();
+	RateThread::stop();
+	releaseApplication();
 	return true;
 } 
 
@@ -852,7 +890,8 @@ void ApplicationWindow::onExecutableStart(void* which)
 	{
 		row[m_modColumns.m_col_status] = "running";
 		row[m_modColumns.m_col_color] = Gdk::Color("#008C00");
-		row[m_modColumns.m_col_refPix] = m_refPixRunning;
+		//row[m_modColumns.m_col_refPix] = m_refPixRunning;
+		row.set_value(0, m_refPixRunning);
 	}
 	reportErrors();
 }
@@ -863,9 +902,10 @@ void ApplicationWindow::onExecutableStop(void* which)
 	Gtk::TreeModel::Row row;
 	if(getModRowByID(exe->getID(), &row))
 	{
-		row[m_modColumns.m_col_status] = "suspended";
+		row[m_modColumns.m_col_status] = "stopped";
 		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-		row[m_modColumns.m_col_refPix] = m_refPixSuspended;
+		//row[m_modColumns.m_col_refPix] = m_refPixSuspended;
+		row.set_value(0, m_refPixSuspended);
 	}
 
 	reportErrors();
@@ -878,9 +918,10 @@ void ApplicationWindow::onExecutableDied(void* which)
 	Gtk::TreeModel::Row row;
 	if(getModRowByID(exe->getID(), &row))
 	{
-		row[m_modColumns.m_col_status] = "suspended";
+		row[m_modColumns.m_col_status] = "stopped";
 		row[m_modColumns.m_col_color] = Gdk::Color("#BF0303");
-		row[m_modColumns.m_col_refPix] = m_refPixSuspended;
+		//row[m_modColumns.m_col_refPix] = m_refPixSuspended;
+		row.set_value(0, m_refPixSuspended);
 	}
 	reportErrors();
 }
@@ -944,6 +985,17 @@ void ApplicationWindow::onCnnFailed(void* which)
 	}
 
 	reportErrors();
+}
+
+void ApplicationWindow::releaseApplication(void)
+{
+	m_refPixSuspended.reset();
+	m_refPixRunning.reset();
+	m_refPixWaiting.reset();
+	m_refPixConnected.reset();
+	m_refPixDisconnected.reset();
+	m_refPixAvailable.reset();
+	m_refPixUnAvailable.reset();
 }
 
 

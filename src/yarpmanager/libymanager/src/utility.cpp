@@ -84,3 +84,6 @@ bool compareString(const char* szFirst, const char* szSecond)
 		return true; 
 	return false;
 }
+
+
+

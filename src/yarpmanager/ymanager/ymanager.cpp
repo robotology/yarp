@@ -8,23 +8,30 @@
  */
 
 
+#include <string.h>
 #include "ymanager.h"
 #include "xmlapploader.h"
 #include "application.h"
+#include "ymm-dir.h"
 
 using namespace yarp::os;
 
 
-#define UNIX
-
-#ifdef UNIX
+#if defined(WIN32) || defined(WIN64)
+	#include <yarp/os/impl/PlatformSignal.h>
+	#define HEADER		""
+	#define OKBLUE		""
+	#define OKGREEN		""
+	#define WARNING		""
+	#define FAIL		""
+	#define INFO		""
+	#define ENDC		""
+#else
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/wait.h>
 	#include <errno.h>
-	#include <string.h>
 	#include <sys/types.h>
-	#include <dirent.h>
 	#include <signal.h>
 
 	string HEADER = "";
@@ -34,15 +41,6 @@ using namespace yarp::os;
 	string FAIL = "";
 	string INFO = "";
 	string ENDC = "";
-
-#else
-	#define HEADER		""
-	#define OKBLUE		""
-	#define OKGREEN		""
-	#define WARNING		""
-	#define FAIL		""
-	#define INFO		""
-	#define ENDC		""
 #endif
 
 
@@ -75,12 +73,22 @@ Options:\n\
   --config                Configuration file name\n"
 
 
+
+#if defined(WIN32) || defined(WIN64)
+static Manager* __pManager = NULL;
+#endif
+
 /**
  * Class YConsoleManager
  */
 
 YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 {
+
+#if defined(WIN32) || defined(WIN64)
+	__pManager = (Manager*) this;
+#endif
+
 	bShouldRun = false;
 	cmdline.fromCommand(argc, argv);
 
@@ -180,7 +188,12 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 	updateAppNames(&appnames);
 #endif
 
-#ifdef UNIX
+
+#if defined(WIN32) || defined(WIN64)
+	ACE_OS::signal(SIGINT, (ACE_SignalHandler) YConsoleManager::onSignal);
+	ACE_OS::signal(SIGBREAK, (ACE_SignalHandler) YConsoleManager::onSignal);
+	ACE_OS::signal(SIGTERM, (ACE_SignalHandler) YConsoleManager::onSignal);
+#else
 	struct sigaction new_action, old_action;
      
 	/* Set up the structure to specify the new action. */
@@ -197,12 +210,9 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 	sigaction (SIGTERM, NULL, &old_action);
 	if (old_action.sa_handler != SIG_IGN)
 		sigaction (SIGTERM, &new_action, NULL);
-
-//	signal(SIGTERM, YConsoleManager::onExit());
-//    signal(SIGINT, YConsoleManager::onExit());
 #endif
 
-	YConsoleManager::main();	
+	YConsoleManager::myMain();	
 }
 
 YConsoleManager::~YConsoleManager()
@@ -213,11 +223,17 @@ YConsoleManager::~YConsoleManager()
 
 void YConsoleManager::onSignal(int signum)
 {
+#if defined(WIN32) || defined(WIN64)
+	cout<<INFO<<"[force exit] yarpmanager will terminate all of the running modules on exit.";
+	if( __pManager)
+		__pManager->kill();
+#else
 	cout<<endl<<INFO<<"use"<<OKGREEN<<" 'exit' "<<INFO<<"to quit!"<<ENDC<<endl;
+#endif
 }
 
 
-void YConsoleManager::main(void)
+void YConsoleManager::myMain(void)
 {
 
 		
@@ -273,6 +289,14 @@ void YConsoleManager::main(void)
 			}
 		}
 	}
+
+#if defined(WIN32) || defined(WIN64)
+	if(bShouldRun)
+	{
+		kill();
+		reportErrors();
+	}
+#endif
 	cout<<"bye."<<endl;
 
 }
@@ -614,11 +638,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 			string fname;
 			string fpath = (*itr)->getXmlFile();
 
-#ifdef __WINDOWS__
-			size_t pos = fpath.rfind("\\");
-#else
-			size_t pos = fpath.rfind("/");
-#endif
+			size_t pos = fpath.rfind(PATH_SEPERATOR);
 			if(pos!=string::npos)
 				fname = fpath.substr(pos);
 			else
@@ -645,11 +665,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 			string fname;
 			string fpath = (*itr)->getXmlFile();
 
-#ifdef __WINDOWS__
-			size_t pos = fpath.rfind("\\");
-#else
-			size_t pos = fpath.rfind("/");
-#endif
+			size_t pos = fpath.rfind(PATH_SEPERATOR);
 			if(pos!=string::npos)
 				fname = fpath.substr(pos);
 			else
@@ -672,38 +688,6 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		return true;
 	}	
 	
-	/**
-	 * edit module xml file 
-	 */
-	/*
-	if((cmdList.size() == 3) && 
-		(cmdList[0] == "edit") && (cmdList[1] == "mod"))
-	{
-		if(!config.check("xmleditor"))
-		{
-			cout<<"please set 'xmleditro' first."<<endl;
-			return true; 
-		}
-		
-		XmlModLoader modloader(config.find("modpath").asString().c_str() ,
-							   cmdList[2].c_str());
-		if(!modloader.init())
-		{
-			reportErrors();
-			return true;	
-		}
-	
-		Module* module;
-		if(!(module=modloader.getNextModule()))
-		{
-			cout<<"cannot find module "<<cmdList[2]<<"."<<endl;
-			reportErrors();
-			return true;
-		}
-		editXmlFile(module->getXmlFile());
-		return true;
-	}	
-	*/
 
 	/**
 	 * show module's insformation 
@@ -722,39 +706,6 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 		cout<<ENDC;
 		return true;
 	}	
-
-	/**
-	 * edit application xml file 
-	 */
-	/*
-	if((cmdList.size() == 3) && 
-		(cmdList[0] == "edit") && (cmdList[1] == "app"))
-	{
-		if(!config.check("xmleditor"))
-		{
-			cout<<"please set 'xmleditor' first."<<endl;
-			return true; 
-		}
-		
-		XmlAppLoader apploader(config.find("apppath").asString().c_str() ,
-							   cmdList[2].c_str());
-		if(!apploader.init())
-		{
-			reportErrors();
-			return true;	
-		}
-	
-		Application* app;
-		if(!(app=apploader.getNextApplication()))
-		{
-			cout<<"cannot find application "<<cmdList[2]<<"."<<endl;
-			reportErrors();
-			return true;
-		}
-		editXmlFile(app->getXmlFile());
-		return true;
-	}	
-	*/
 
 	/**
 	 * set an option  
@@ -908,32 +859,6 @@ void YConsoleManager::reportErrors(void)
 	}	
 }
 	
-	
-void YConsoleManager::editXmlFile( const char* filename)
-{
-
-#ifdef UNIX	
-
-	pid_t kidpid;
-	if((kidpid = fork()))
-	{
-		//Parent
-		int status = 0;
-		waitpid(kidpid, &status, 0);
-		return;
-	}
-	//Child - execute the command
-	execlp(config.find("xmleditor").asString().c_str(), 
-		   config.find("xmleditor").asString().c_str(),
-		   filename, (char*)NULL);
-
-	//Program will never reach here unless execvp failed
-	cout<<"Failed to run editor "<<config.find("xmleditor").asString()<<". ";
-	cout<<strerror(errno)<<endl; 
-	::exit(0);  
-#endif //UNIX	
-
-}
 
 void YConsoleManager::onExecutableStart(void* which) { }
 
@@ -984,12 +909,10 @@ void YConsoleManager::onCnnFailed(void* which)
 
 bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 {
-#ifdef UNIX
-
 	string strPath = szPath;
-	if((strPath.rfind("/")==string::npos) || 
-			(strPath.rfind("/")!=strPath.size()-1))
-			strPath = strPath + string("/");
+	if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+			(strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+			strPath = strPath + string(PATH_SEPERATOR);
 
 	DIR *dir;
 	struct dirent *entry;
@@ -1008,7 +931,6 @@ bool YConsoleManager::loadRecursiveApplications(const char* szPath)
 		}
 	}
 	closedir(dir);
-#endif
 	return true;
 }
 
@@ -1027,7 +949,10 @@ void YConsoleManager::updateAppNames(vector<string>* names)
 
 void YConsoleManager::setColorTheme(ColorTheme theme)
 {
-#ifdef UNIX
+
+#if defined(WIN32) || defined(WIN64)
+	// do nothing here
+#else
 	switch(theme) {
 		case THEME_DARK : { 
 			HEADER = "\033[01;95m";
@@ -1150,7 +1075,5 @@ char* appname_generator (const char* text, int state)
   
   return ((char *)NULL);
 }
-
-
 
 #endif 

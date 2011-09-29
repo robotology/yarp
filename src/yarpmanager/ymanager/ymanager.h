@@ -55,11 +55,10 @@ private:
 	yarp::os::Property config;
 	
 	void help(void);
-	void main(void);
+	void myMain(void);
 	bool process(const vector<string> &cmdList);
 	bool exit(void);
 	void reportErrors(void);
-	void editXmlFile( const char* filename);
 	void which(void);
 	bool loadRecursiveApplications(const char* szPath);
 	void updateAppNames(vector<string>* apps);

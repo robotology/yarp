@@ -7,27 +7,29 @@
  *
  */
 
-#include <gtkmm/stock.h>
 
-#include <iostream>
-#include <string>
-
-#include "main_window.h"
-#include "application_window.h"
-#include "icon_res.h"
-
-#define UNIX
-
-#ifdef UNIX
+#if defined(WIN32) || defined(WIN64)
+	#pragma warning (disable : 4250) 
+	#pragma warning (disable : 4520)
+#else
 	#include <unistd.h>
 	#include <sys/types.h>
 	#include <sys/wait.h>
 	#include <errno.h>
-	#include <string.h>
 	#include <sys/types.h>
-	#include <dirent.h>
 	#include <signal.h>
 #endif
+
+
+#include <gtkmm/stock.h>
+
+#include <iostream>
+#include <string>
+#include "ymm-dir.h"
+
+#include "main_window.h"
+#include "application_window.h"
+#include "icon_res.h"
 
 
 using namespace std;
@@ -47,6 +49,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
 	setupActions();
 	setupSignals();
+	
 	createWidgets();
 
 	if(config.check("apppath"))
@@ -63,9 +66,9 @@ MainWindow::MainWindow( yarp::os::Property &config)
 }
 
 
+
 MainWindow::~MainWindow()
 {
-
 }
 
 
@@ -74,10 +77,10 @@ void MainWindow::createWidgets(void)
 
 	 set_icon(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data, 
 						Gdk::COLORSPACE_RGB,
-						90,
+						true,
 						8,
-						ymanager_ico.height,
 						ymanager_ico.width,
+						ymanager_ico.height,
 						ymanager_ico.bytes_per_pixel*ymanager_ico.width));
 
 	add(m_VBox);
@@ -265,9 +268,9 @@ void MainWindow::setupActions(void)
 	m_refActionGroup->add( Gtk::Action::create("ManageMenu", "Manage") );
 	m_refActionGroup->add( Gtk::Action::create("ManageRun", Gtk::Stock::EXECUTE, "_Run", "Run Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageRun) );
-	m_refActionGroup->add( Gtk::Action::create("ManageStop", Gtk::Stock::CLOSE ,"_Stop", "Stop Application"),
+	m_refActionGroup->add( Gtk::Action::create("ManageStop", Gtk::Stock::STOP ,"_Stop", "Stop Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageStop) );
-	m_refActionGroup->add( Gtk::Action::create("ManageKill", Gtk::Stock::STOP,"_Kill", "Kill Application"),
+	m_refActionGroup->add( Gtk::Action::create("ManageKill", Gtk::Stock::CLOSE,"_Kill", "Kill Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageKill) );
 	m_refActionGroup->add( Gtk::Action::create("ManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageConnect) );
@@ -316,12 +319,10 @@ void MainWindow::reportErrors(void)
 
 bool MainWindow::loadRecursiveApplications(const char* szPath)
 {
-#ifdef UNIX
-
 	string strPath = szPath;
-	if((strPath.rfind("/")==string::npos) || 
-			(strPath.rfind("/")!=strPath.size()-1))
-			strPath = strPath + string("/");
+	if((strPath.rfind(PATH_SEPERATOR)==string::npos) || 
+			(strPath.rfind(PATH_SEPERATOR)!=strPath.size()-1))
+			strPath = strPath + string(PATH_SEPERATOR);
 
 	DIR *dir;
 	struct dirent *entry;
@@ -340,7 +341,6 @@ bool MainWindow::loadRecursiveApplications(const char* szPath)
 		}
 	}
 	closedir(dir);
-#endif
 	return true;
 }
 
@@ -354,7 +354,6 @@ void MainWindow::syncApplicationList(void)
 	for(ApplicationPIterator itr=apps.begin(); itr!=apps.end(); itr++)
 	{
 		cnt++;
-		//m_applicationList.addApplication((*itr)->getName());
 		m_applicationList.addApplication((*itr));
 	}
 	
@@ -406,7 +405,9 @@ void MainWindow::onMenuFileClose()
 	if(appWnd)
 	{
 		if(appWnd->onClose())
+		{
 			m_mainTab.remove_page(page_num);
+		}
 	}
 
 	if(!m_mainTab.get_n_pages())
@@ -525,10 +526,10 @@ void MainWindow::onMenuHelpAbout()
 	dialog.set_authors(authors);
 	dialog.set_logo(Gdk::Pixbuf::create_from_data(ymanager_ico.pixel_data, 
 						Gdk::COLORSPACE_RGB,
-						90,
+						true,
 						8,
-						ymanager_ico.height,
 						ymanager_ico.width,
+						ymanager_ico.height,
 						ymanager_ico.bytes_per_pixel*ymanager_ico.width));
 
 	dialog.run();
@@ -618,8 +619,11 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 			m_mainTab.set_current_page(page_num);
 		else
 		{
+			/*
 			ApplicationWindow* pAppWnd = Gtk::manage(new ApplicationWindow(name.c_str(), 
 											&lazyManager, &m_config, this));
+											*/
+			ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), &lazyManager, &m_config, this);
 			m_mainTab.append_page(*pAppWnd, name);
 			m_mainTab.set_tab_reorderable(*pAppWnd);
 			m_mainTab.show_all_children();

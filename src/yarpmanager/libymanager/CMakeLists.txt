@@ -7,34 +7,26 @@
 
 GET_PROPERTY(YARP_TREE_INCLUDE_DIRS TARGET YARP_OS PROPERTY INCLUDE_DIRS)
 
-IF (NOT UNIX)
+project(YARP_manager)
 
-	MESSAGE(STATUS "libYARP_manager is currently available only for linux distributions.")
+file(GLOB folder_source src/*.cpp tinyxml/*.cpp)
+file(GLOB_RECURSE folder_header include/*.h tinyxml/*.h)
+source_group("Source Files" FILES ${folder_source})
+source_group("Header Files" FILES ${folder_header})
 
-ELSE (NOT UNIX)
+set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
+  ${PROJECT_SOURCE_DIR}/include)
+get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
 
-	project(YARP_manager)
+include_directories(${YARP_TREE_INCLUDE_DIRS})
+include_directories(${PROJECT_SOURCE_DIR}/tinyxml)
+include_directories(${ACE_INCLUDE_DIRS})
 
-	file(GLOB folder_source src/*.cpp tinyxml/*.cpp)
-	file(GLOB_RECURSE folder_header include/*.h tinyxml/*.h)
-	source_group("Source Files" FILES ${folder_source})
-	source_group("Header Files" FILES ${folder_header})
+add_library(YARP_manager ${folder_source} ${folder_header})
+target_link_libraries(YARP_manager YARP_sig YARP_OS)
 
-	set_property(GLOBAL APPEND PROPERTY YARP_TREE_INCLUDE_DIRS 
-	  ${PROJECT_SOURCE_DIR}/include)
-	get_property(YARP_TREE_INCLUDE_DIRS GLOBAL PROPERTY YARP_TREE_INCLUDE_DIRS)
-
-	include_directories(${YARP_TREE_INCLUDE_DIRS})
-	include_directories(${PROJECT_SOURCE_DIR}/tinyxml)
-	include_directories(${ACE_INCLUDE_DIRS})
-
-	add_library(YARP_manager ${folder_source} ${folder_header})
-	target_link_libraries(YARP_manager YARP_sig YARP_OS)
-
-	#install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
-	#set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
-	#set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
-	#install(DIRECTORY include/yarp/manager COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
-
-ENDIF (NOT UNIX)
+#install(TARGETS YARP_manager EXPORT YARP COMPONENT runtime DESTINATION lib${LIB_SUFFIX})
+#set_property(GLOBAL APPEND PROPERTY YARP_LIBS YARP_manager)
+#set_property(TARGET YARP_manager PROPERTY INCLUDE_DIRS ${YARP_TREE_INCLUDE_DIRS})
+#install(DIRECTORY include/yarp/manager COMPONENT development DESTINATION include/yarp FILES_MATCHING PATTERN "*.h" PATTERN ".*" EXCLUDE)
 
