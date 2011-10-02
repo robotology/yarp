@@ -47,7 +47,6 @@ MainWindow::MainWindow( yarp::os::Property &config)
 	//set_border_width(3);
 	set_default_size(WND_DEF_WIDTH, WND_DEF_HEIGHT);
 
-
 	setupStocks();
 	setupActions();
 	setupSignals();
@@ -474,8 +473,10 @@ void MainWindow::closeTab(int page_num)
 		if(appWnd->onClose())
 		{
 			m_mainTab.remove_page(page_num);
+
 #if defined(WIN32) || defined(WIN64)
-			//check delete
+			//check what's wrong with delete on windows
+			appWnd->releaseApplication();
 #else
 			delete appWnd;
 #endif
@@ -705,9 +706,8 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 											&lazyManager, &m_config, this);
 			
 #if defined(WIN32) || defined(WIN64)
-				// check it 
+				// check it why Gtk::manage crashes on windows 
 			m_mainTab.append_page(*pAppWnd, name);
-
 #else
 			Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
 			Gtk::Label* lb = Gtk::manage(new Gtk::Label(name));

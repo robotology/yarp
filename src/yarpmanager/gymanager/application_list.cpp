@@ -123,8 +123,13 @@ bool ApplicationList::addApplication(Application* app)
 
 	Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
 	descrow[m_appColumns.m_col_type] = NODE_FILENAME;
-	descrow[m_appColumns.m_col_name] = fname;	
+	descrow[m_appColumns.m_col_name] = fname;
+
+#if defined(WIN32) || defined(WIN64)
+		//check it
+#else
 	descrow.set_value(0,Gtk::IconTheme::get_default()->load_icon("document", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
+#endif
 
 	return true;
 }
