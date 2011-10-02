@@ -47,6 +47,8 @@ MainWindow::MainWindow( yarp::os::Property &config)
 	//set_border_width(3);
 	set_default_size(WND_DEF_WIDTH, WND_DEF_HEIGHT);
 
+
+	setupStocks();
 	setupActions();
 	setupSignals();
 	
@@ -69,6 +71,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
 MainWindow::~MainWindow()
 {
+	m_factory.reset();
 }
 
 
@@ -129,13 +132,15 @@ void MainWindow::createWidgets(void)
 		" <toolbar name='ToolBar'>"
 		"    <toolitem action='FileNew'/>"
 		"    <toolitem action='FileOpen'/>"
-        "    <separator/>"
+		"    <separator/>"
+		"    <toolitem action='EditSelAll'/>"
+		"    <toolitem action='ManageRefresh'/>"
+		"    <separator/>"
 		"    <toolitem action='ManageRun'/>"
 		"    <toolitem action='ManageStop'/>"
 		"    <toolitem action='ManageKill'/>"
 		"    <toolitem action='ManageConnect'/>"
 		"    <toolitem action='ManageDisconnect'/>"
-		"    <toolitem action='ManageRefresh'/>"
 	    "    <separator/>"
 		"    <toolitem action='HelpOnline'/>"
 		" </toolbar>"
@@ -192,6 +197,7 @@ void MainWindow::createWidgets(void)
 
 
 	m_mainTab.set_border_width(0);
+	m_mainTab.set_show_border(false);
 	m_mainTab.set_scrollable(true);
 	m_applicationList.set_border_width(3);	
 	m_HPaned.add1(m_applicationList);
@@ -207,7 +213,6 @@ void MainWindow::createWidgets(void)
 	
 
 }
-
 
 void MainWindow::setupSignals(void)
 {
@@ -226,6 +231,57 @@ void MainWindow::setupSignals(void)
 //	signal_expose_event().connect(sigc::mem_fun(*this,
 //            &MainWindow::onExposeEvent) );	
 }
+
+void MainWindow::setupStocks(void)
+{
+	m_factory = Gtk::IconFactory::create();
+	m_factory->add_default();
+
+	Gtk::StockID killID = Gtk::StockID("YKILL");
+	Gtk::StockID stopID = Gtk::StockID("YSTOP");
+	Gtk::StockID runID = Gtk::StockID("YRUN");
+
+	Gtk::StockItem killStock(killID, "YKILL");
+	Gtk::StockItem stopStock(killID, "YSTOP");
+	Gtk::StockItem runStock(runID, "YRUN");
+
+
+	Gtk::Stock::add(killStock);
+	Gtk::Stock::add(stopStock);
+	Gtk::Stock::add(runStock);
+
+
+	Gtk::IconSet killIcon(Gdk::Pixbuf::create_from_data(kill_ico.pixel_data, 
+						Gdk::COLORSPACE_RGB,
+						true,
+						8,
+						kill_ico.width,
+						kill_ico.height,
+						kill_ico.bytes_per_pixel*kill_ico.width));
+
+	Gtk::IconSet stopIcon(Gdk::Pixbuf::create_from_data(stop_ico.pixel_data, 
+						Gdk::COLORSPACE_RGB,
+						true,
+						8,
+						stop_ico.width,
+						stop_ico.height,
+						stop_ico.bytes_per_pixel*stop_ico.width));
+
+	Gtk::IconSet runIcon(Gdk::Pixbuf::create_from_data(run_ico.pixel_data, 
+						Gdk::COLORSPACE_RGB,
+						true,
+						8,
+						run_ico.width,
+						run_ico.height,
+						run_ico.bytes_per_pixel*run_ico.width));
+
+	m_factory->add(killID, killIcon);
+	m_factory->add(stopID, stopIcon);
+	m_factory->add(runID, runIcon);
+
+}
+
+
 
 void MainWindow::setupActions(void)
 {
@@ -261,16 +317,14 @@ void MainWindow::setupActions(void)
 	m_refActionGroup->add( Gtk::Action::create("EditMenu", "Edit") );
 	m_refActionGroup->add( Gtk::Action::create("EditSelAll", Gtk::Stock::SELECT_ALL, "Select All", "Select all"),
 						sigc::mem_fun(*this, &MainWindow::onMenuEditSellAll) );
-//	m_refActionGroup->add( Gtk::Action::create("EditSelCon", Gtk::Stock::SELECT_ALL, "_Select All Mod", "Select all Modules"),
-//						sigc::mem_fun(*this, &MainWindow::onMenuEditSellAllMod) );
 
 	//Manage menu:
 	m_refActionGroup->add( Gtk::Action::create("ManageMenu", "Manage") );
-	m_refActionGroup->add( Gtk::Action::create("ManageRun", Gtk::Stock::EXECUTE, "_Run", "Run Application"),
+	m_refActionGroup->add( Gtk::Action::create("ManageRun", Gtk::StockID("YRUN"), "_Run", "Run Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageRun) );
-	m_refActionGroup->add( Gtk::Action::create("ManageStop", Gtk::Stock::STOP ,"_Stop", "Stop Application"),
+	m_refActionGroup->add( Gtk::Action::create("ManageStop", Gtk::StockID("YSTOP") ,"_Stop", "Stop Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageStop) );
-	m_refActionGroup->add( Gtk::Action::create("ManageKill", Gtk::Stock::CLOSE,"_Kill", "Kill Application"),
+	m_refActionGroup->add( Gtk::Action::create("ManageKill", Gtk::StockID("YKILL"),"_Kill", "Kill Application"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageKill) );
 	m_refActionGroup->add( Gtk::Action::create("ManageConnect", Gtk::Stock::CONNECT, "_Connect", "Connect links"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageConnect) );
@@ -291,13 +345,13 @@ void MainWindow::setupActions(void)
 	m_refActionGroup->get_action("FileClose")->set_sensitive(false);
 	m_refActionGroup->get_action("FileSave")->set_sensitive(false);
 	m_refActionGroup->get_action("FileSaveAs")->set_sensitive(false);
-	m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
 
 	m_refActionGroup->get_action("ManageRun")->set_sensitive(false);
 	m_refActionGroup->get_action("ManageStop")->set_sensitive(false);
 	m_refActionGroup->get_action("ManageKill")->set_sensitive(false);
 	m_refActionGroup->get_action("ManageConnect")->set_sensitive(false);
 	m_refActionGroup->get_action("ManageDisconnect")->set_sensitive(false);
+	m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
 	m_refActionGroup->get_action("ManageRefresh")->set_sensitive(false);
 
 }
@@ -398,15 +452,33 @@ bool MainWindow::safeExit(void)
 void MainWindow::onMenuFileNewApp() { }
 void MainWindow::onMenuFileNewMod() { }
 
+
+void MainWindow::onTabCloseRequest(Widget* wdg)
+{
+	closeTab(m_mainTab.page_num(*wdg));
+}
+
+
 void MainWindow::onMenuFileClose()
 {
-	int page_num = m_mainTab.get_current_page();
-	ApplicationWindow* appWnd = (ApplicationWindow*) m_mainTab.get_nth_page(page_num);
+	closeTab(m_mainTab.get_current_page());
+}
+
+
+void MainWindow::closeTab(int page_num)
+{
+	ApplicationWindow* appWnd = 
+			dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
 	if(appWnd)
 	{
 		if(appWnd->onClose())
 		{
 			m_mainTab.remove_page(page_num);
+#if defined(WIN32) || defined(WIN64)
+			//check delete
+#else
+			delete appWnd;
+#endif
 		}
 	}
 
@@ -420,6 +492,7 @@ void MainWindow::onMenuFileClose()
 		m_refActionGroup->get_action("ManageConnect")->set_sensitive(false);
 		m_refActionGroup->get_action("ManageDisconnect")->set_sensitive(false);
 		m_refActionGroup->get_action("ManageRefresh")->set_sensitive(false);
+		m_refActionGroup->get_action("EditSelAll")->set_sensitive(false);
 	}
 }
 
@@ -588,7 +661,8 @@ void MainWindow::onMenuManageRefresh()
 void MainWindow::onMenuEditSellAll() 
 {
 	int page_num = m_mainTab.get_current_page();
-	ApplicationWindow* appWnd = (ApplicationWindow*) m_mainTab.get_nth_page(page_num);
+	ApplicationWindow* appWnd = 
+			dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
 	if(appWnd)
 		appWnd->onSelectAll();
 }
@@ -607,7 +681,11 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 		int page_num = -1;
 		for(int i=0; i<m_mainTab.get_n_pages(); i++)
 		{
-			Glib::ustring pageName = m_mainTab.get_tab_label_text(*m_mainTab.get_nth_page(i));
+			Glib::ustring pageName;
+			ApplicationWindow* pAppWnd = 
+					dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(i));
+			if(pAppWnd)
+				pageName = pAppWnd->getApplicationName();			
 			if(pageName == name)
 			{
 				page_num = i;
@@ -623,11 +701,48 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 			ApplicationWindow* pAppWnd = Gtk::manage(new ApplicationWindow(name.c_str(), 
 											&lazyManager, &m_config, this));
 											*/
-			ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), &lazyManager, &m_config, this);
+			ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), 
+											&lazyManager, &m_config, this);
+			
+#if defined(WIN32) || defined(WIN64)
+				// check it 
 			m_mainTab.append_page(*pAppWnd, name);
+
+#else
+			Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
+			Gtk::Label* lb = Gtk::manage(new Gtk::Label(name));
+			lb->set_text(name);
+			//Gtk::EventBox* ev = Gtk::manage(new Gtk::EventBox);
+     		//ev->add(*lb);
+		    hb->pack_start(*lb);
+			Gtk::Button* bt = Gtk::manage(new Gtk::Button());
+			//Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE,
+			//									Gtk::ICON_SIZE_SMALL_TOOLBAR));
+			Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
+						Gdk::COLORSPACE_RGB,
+						true,
+						8,
+						close_ico.width,
+						close_ico.height,
+						close_ico.bytes_per_pixel*close_ico.width)));
+     		bt->add(*ico);
+			bt->set_size_request(24,24);
+			bt->set_relief(Gtk::RELIEF_NONE);
+			bt->signal_clicked().connect(sigc::mem_fun(*pAppWnd, 
+										&ApplicationWindow::onTabCloseRequest));
+			hb->set_spacing(1);
+			hb->set_border_width(0);
+			hb->pack_start(*bt, Gtk::PACK_SHRINK);
+			Gtk::Label* ml = Gtk::manage(new Gtk::Label);
+     		ml->set_text(name);
+			m_mainTab.append_page(*pAppWnd, *hb, *ml);
+			hb->show_all_children();
+#endif
+
 			m_mainTab.set_tab_reorderable(*pAppWnd);
 			m_mainTab.show_all_children();
 			m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
+
 		}
 		
 		m_refActionGroup->get_action("FileClose")->set_sensitive(true);
@@ -637,7 +752,7 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 		m_refActionGroup->get_action("ManageConnect")->set_sensitive(true);
 		m_refActionGroup->get_action("ManageDisconnect")->set_sensitive(true);
 		m_refActionGroup->get_action("ManageRefresh")->set_sensitive(true);
-
+		m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
 	}
 	
 
@@ -645,11 +760,14 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 
 void MainWindow::onNotebookSwitchPage(GtkNotebookPage* page, guint page_num)
 {
-	//ApplicationWindow* appWnd = (ApplicationWindow*) m_mainTab.get_nth_page(page_num);
-	Glib::ustring name = m_mainTab.get_tab_label_text(*m_mainTab.get_nth_page(page_num));
-	ostringstream msg;
-	msg<<"Current application: "<<name.c_str();
-	m_Statusbar.push(msg.str());
+	ApplicationWindow* pAppWnd = 
+			dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(page_num));
+	if(pAppWnd)
+	{
+		ostringstream msg;
+		msg<<"Current application: "<<pAppWnd->getApplicationName();
+		m_Statusbar.push(msg.str());
+	}
 }
 
 

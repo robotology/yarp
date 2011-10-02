@@ -28,6 +28,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
 	m_pConfig = config;
 	m_pParent = parent;
 	m_pAction = NULL;
+	m_strAppName = szAppName;
 
 	createWidgets();
 	setupSignals();
@@ -38,6 +39,7 @@ ApplicationWindow::ApplicationWindow(const char* szAppName, Manager* lazy,
 
 ApplicationWindow::~ApplicationWindow()
 {
+	releaseApplication();
 }
 
 
@@ -48,7 +50,7 @@ void ApplicationWindow::afterStart(bool s) { }
 void ApplicationWindow::threadRelease() { }
 
 void ApplicationWindow::run()
-{	
+{
 	safeManage.wait();
 	if(m_pAction)
 		(this->*m_pAction)();
@@ -247,7 +249,6 @@ void ApplicationWindow::createWidgets(void)
 	m_refTreeModSelection->set_mode(Gtk::SELECTION_MULTIPLE);
 	m_refTreeConSelection->set_mode(Gtk::SELECTION_MULTIPLE);
 	m_refTreeResSelection->set_mode(Gtk::SELECTION_MULTIPLE);
-
 
 
 	// adding popup menubar
@@ -512,7 +513,7 @@ bool ApplicationWindow::getResRowByID(int id, Gtk::TreeModel::Row* row )
 bool ApplicationWindow::onRun(void)
 {
 	if(safeManage.check())
-	{	
+	{
 		m_ModuleIDs.clear();
 		m_refTreeModSelection = m_TreeModView.get_selection();
 		m_refTreeModSelection->selected_foreach_iter(
@@ -653,6 +654,7 @@ bool ApplicationWindow::onConnect(void)
 	return true;	
 }
 
+
 void ApplicationWindow::doConnect(void) 
 {	
 	for(unsigned int i=0; i<m_ConnectionIDs.size(); i++)
@@ -713,8 +715,6 @@ void ApplicationWindow::doDisconnect(void)
 	}	
 	reportErrors();
 }
-
-
 
 
 bool ApplicationWindow::onRefresh(void)
@@ -837,6 +837,12 @@ void ApplicationWindow::doRefresh(void)
 } 
 
 
+void ApplicationWindow::onTabCloseRequest() 
+{ 
+	m_pParent->onTabCloseRequest(this);	
+}
+
+
 bool ApplicationWindow::onClose(void) 
 {
 	bool bAllStoped = true;	
@@ -877,6 +883,9 @@ bool ApplicationWindow::onClose(void)
 
 bool ApplicationWindow::onSelectAll(void)
 {
+	m_refTreeModSelection->select_all();
+	m_refTreeConSelection->select_all();
+	m_refTreeResSelection->select_all();
 	return true;
 }
 

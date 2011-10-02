@@ -28,6 +28,7 @@ public:
 	MainWindow( yarp::os::Property &config);
 	virtual ~MainWindow();
 
+	void onTabCloseRequest(Widget* wdg); 
 	MessagesList m_messageList;
 
 protected:
@@ -73,9 +74,12 @@ private:
 	ApplicationList m_applicationList;
 	Gtk::TextView m_commandView;
 	Glib::RefPtr<Gtk::TextBuffer> m_refCommandBuffer;
+	Glib::RefPtr<Gtk::IconFactory> m_factory;
 
 	bool safeExit(void);
+	void closeTab(int page_num);
 	void createWidgets(void);
+	void setupStocks(void);
 	void setupActions(void);
 	void setupSignals(void);
 	bool loadRecursiveApplications(const char* szPath);

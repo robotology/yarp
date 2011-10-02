@@ -51,9 +51,9 @@ ApplicationList::ApplicationList()
 //	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
 
 	//Add the Model’s column to the View’s columns:	
-	Gtk::TreeViewColumn col("Entities");
 	Gtk::CellRendererText cellText;
 	Gtk::CellRendererPixbuf cellPix;
+	Gtk::TreeViewColumn col("Entities");
 	col.pack_start(cellPix, false);
 	col.pack_start(cellText, true);
 	col.add_attribute(cellText, "text", 1);
@@ -119,14 +119,12 @@ bool ApplicationList::addApplication(Application* app)
 		fname = fpath.substr(pos);
 	else
 		fname = fpath;
-	 fname = "..." + fname; 
+	 //fname = "..." + fname; 
 
 	Gtk::TreeModel::Row descrow = *(m_refTreeModel->append(childrow.children()));
 	descrow[m_appColumns.m_col_type] = NODE_FILENAME;
-	descrow[m_appColumns.m_col_name] = fname;
-	
-	//descrow[m_appColumns.m_col_refPix] = 
-	//		Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN);
-	//descrow.set_value(0, Gtk::IconTheme::get_default()->load_icon("document",16, Gtk::ICON_LOOKUP_USE_BUILTIN));
+	descrow[m_appColumns.m_col_name] = fname;	
+	descrow.set_value(0,Gtk::IconTheme::get_default()->load_icon("document", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
+
 	return true;
 }

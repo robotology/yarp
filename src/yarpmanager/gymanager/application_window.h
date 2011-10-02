@@ -10,7 +10,6 @@
 #ifndef _APPLICATION_WINDOW_H_
 #define _APPLICATION_WINDOW_H_
 
-
 #include <gtkmm.h>
 #include "manager.h"
 #include <vector>
@@ -108,6 +107,7 @@ public:
 	ApplicationWindow(const char* szAppName, Manager* lazy, 
 		yarp::os::Property* config, MainWindow* parent);
 	virtual ~ApplicationWindow();
+	const char* getApplicationName(void) { return m_strAppName.c_str(); }
 
 	virtual bool threadInit();
 	virtual void afterStart(bool s);
@@ -122,7 +122,10 @@ public:
 	bool onDisconnect(void);
 	bool onRefresh(void);
 	bool onSelectAll(void);
+	
+	void onTabCloseRequest();
 	void releaseApplication(void);
+
 
 	Glib::RefPtr<Gtk::TreeStore> m_refTreeModModel;
 	Glib::RefPtr<Gtk::TreeStore> m_refTreeConModel;
@@ -130,6 +133,7 @@ public:
 	ModuleModelColumns m_modColumns;
 	ConnectionModelColumns m_conColumns;
 	ResourceModelColumns m_resColumns;
+
 
 protected:
 	
@@ -154,7 +158,7 @@ protected:
 	virtual void onPMenuDisconnect() { onDisconnect(); }
 	virtual void onPMenuRefresh() { onRefresh(); }
 //	virtual void onPMenuSelectAll()
-
+	
 	Gtk::VPaned m_VPaned;
 	Gtk::HPaned m_HPaned;
 	Gtk::TreeView m_TreeModView;
@@ -173,6 +177,7 @@ private:
 	bool m_bShouldRun;
 	Manager manager;
 	MainWindow* m_pParent;
+	string m_strAppName;
 	yarp::os::Property* m_pConfig;
 	std::vector<int> m_ModuleIDs;
 	std::vector<int> m_ConnectionIDs;
