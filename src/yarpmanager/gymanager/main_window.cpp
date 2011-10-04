@@ -473,13 +473,7 @@ void MainWindow::closeTab(int page_num)
 		if(appWnd->onClose())
 		{
 			m_mainTab.remove_page(page_num);
-
-#if defined(WIN32) || defined(WIN64)
-			//check what's wrong with delete on windows
-			appWnd->releaseApplication();
-#else
 			delete appWnd;
-#endif
 		}
 	}
 
@@ -698,17 +692,9 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
 			m_mainTab.set_current_page(page_num);
 		else
 		{
-			/*
-			ApplicationWindow* pAppWnd = Gtk::manage(new ApplicationWindow(name.c_str(), 
-											&lazyManager, &m_config, this));
-											*/
 			ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), 
 											&lazyManager, &m_config, this);
-			
-#if defined(WIN32) || defined(WIN64)
-				// check it why Gtk::manage crashes on windows 
-			m_mainTab.append_page(*pAppWnd, name);
-#else
+//			m_mainTab.append_page(*pAppWnd, name);
 			Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
 			Gtk::Label* lb = Gtk::manage(new Gtk::Label(name));
 			lb->set_text(name);
@@ -716,8 +702,6 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
      		//ev->add(*lb);
 		    hb->pack_start(*lb);
 			Gtk::Button* bt = Gtk::manage(new Gtk::Button());
-			//Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gtk::Stock::CLOSE,
-			//									Gtk::ICON_SIZE_SMALL_TOOLBAR));
 			Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
 						Gdk::COLORSPACE_RGB,
 						true,
@@ -737,7 +721,6 @@ void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path,
      		ml->set_text(name);
 			m_mainTab.append_page(*pAppWnd, *hb, *ml);
 			hb->show_all_children();
-#endif
 
 			m_mainTab.set_tab_reorderable(*pAppWnd);
 			m_mainTab.show_all_children();
