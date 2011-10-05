@@ -1056,3 +1056,8 @@ bool NetworkBase::writeToNameServer(PortWriter& cmd,
 }
 
 
+ConstString NetworkBase::getConfigFile(const char *fname) {
+    return NameConfig::expandFilename(fname).c_str();
+}
+
+

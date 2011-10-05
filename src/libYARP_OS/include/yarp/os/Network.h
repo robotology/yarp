@@ -407,7 +407,7 @@ public:
      *
      * @param key the variable to read
      * @param found an optional variable to set to true iff variable is found
-     * @result the value of the environment variable, or "" if not found
+     * @return the value of the environment variable, or "" if not found
      *
      */
     static ConstString getEnvironment(const char *key,
@@ -452,12 +452,23 @@ public:
      * @param scanNeeded True if a network scan was done to find server.
      * @param serverUsed True if a server was found and configured for use.
      *
-     * @result address of name server.
+     * @return address of name server.
      *
      */
     static Contact detectNameServer(bool useDetectedServer,
                                     bool& scanNeeded,
                                     bool& serverUsed);
+
+    /**
+     *
+     * Search for a configuration file in YARP's standard config
+     * file path.  Return full name of file including path.
+     * File not guaranteed to exist.
+     *
+     * @return full name of file including path
+     *
+     */
+    static ConstString getConfigFile(const char *fname);
 };
 
 /**

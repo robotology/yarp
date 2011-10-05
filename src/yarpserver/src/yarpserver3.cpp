@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include <yarp/os/all.h>
+#include <yarp/os/Os.h>
 
 #include <yarp/name/NameServerManager.h>
 #include <yarp/name/BootstrapServer.h>
@@ -34,7 +35,7 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
     Bottle b("ip 10.0.0.10");
     if (b.get(1).asString()!="10.0.0.10") {
         fprintf(stderr, "Sorry, please update YARP version");
-        exit(1);
+        ::exit(1);
     }
 
     printf("__   __ _    ____  ____  \n\
@@ -45,6 +46,19 @@ yarpserversql_API int yarpserver3_main(int argc, char *argv[]) {
 
     Property options;
     options.fromCommand(argc,argv);
+
+    ConstString configFilename = options.check("config",
+                                               Value("yarpserver.conf")).asString();
+    if (!options.check("config")) {
+        configFilename = Network::getConfigFile(configFilename.c_str());
+    }
+    if (yarp::os::stat(configFilename.c_str())==0) {
+        printf("Reading options from %s\n", configFilename.c_str());
+        options.fromConfigFile(configFilename.c_str(),false);
+    } else {
+        printf("Options can be set on command line or in %s\n", configFilename.c_str());
+    }
+
     ConstString dbFilename = options.check("portdb",
                                            Value("ports.db")).asString();
     ConstString subdbFilename = options.check("subdb",

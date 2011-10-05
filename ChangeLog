@@ -1,3 +1,8 @@
+2011-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/yarpserver/src/yarpserver3.cpp: read settings from
+	a config file if available [thanks Juan G Victores]
+
 2011-09-23  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/NameClient.cpp: support a YARP_IP environment

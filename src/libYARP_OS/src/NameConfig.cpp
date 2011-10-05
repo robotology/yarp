@@ -75,12 +75,30 @@ bool NameConfig::fromString(const String& txt) {
     return false;
 }
 
-
-String NameConfig::getConfigFileName(const char *stem, const char *ns) {
+String NameConfig::expandFilename(const char *fname) {
     String root = NetworkBase::getEnvironment("YARP_CONF").c_str();
     String home = NetworkBase::getEnvironment("HOME").c_str();
     String homepath = NetworkBase::getEnvironment("HOMEPATH").c_str();
     String conf = "";
+    if (root!="") {
+        //conf = new File(new File(root,"conf"),"namer.conf");
+        //conf = root + "/conf/" + fname;
+        // users of YARP_CONF want /conf postfix removed
+        conf = root + "/" + fname;
+    } else if (homepath!="") {
+        conf = String(NetworkBase::getEnvironment("HOMEDRIVE").c_str()) + homepath + "\\yarp\\conf\\" + fname;
+    } else if (home!="") {
+        conf = home + "/.yarp/conf/" + fname;
+    } else {
+        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
+        ACE_OS::exit(1);
+    }
+    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);
+    return conf;
+}
+
+
+String NameConfig::getConfigFileName(const char *stem, const char *ns) {
     String fname = (stem!=NULL)?stem:CONF_FILENAME;
     if (stem==NULL) {
         String space;
@@ -103,21 +121,7 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
             fname = base;
         }
     }
-    if (root!="") {
-        //conf = new File(new File(root,"conf"),"namer.conf");
-        //conf = root + "/conf/" + fname;
-        // users of YARP_CONF want /conf postfix removed
-        conf = root + "/" + fname;
-    } else if (homepath!="") {
-        conf = String(NetworkBase::getEnvironment("HOMEDRIVE").c_str()) + homepath + "\\yarp\\conf\\" + fname;
-    } else if (home!="") {
-        conf = home + "/.yarp/conf/" + fname;
-    } else {
-        YARP_ERROR(Logger::get(),"Cannot read configuration - please set YARP_CONF or HOME or HOMEPATH");
-        ACE_OS::exit(1);
-    }
-    YARP_DEBUG(Logger::get(),String("Configuration file: ") + conf);
-    return conf;
+    return expandFilename(fname.c_str());
 }
 
 
