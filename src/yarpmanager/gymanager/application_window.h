@@ -11,14 +11,13 @@
 #define _APPLICATION_WINDOW_H_
 
 #include <gtkmm.h>
-#include "manager.h"
+#include "safe_manager.h"
 #include <vector>
 
 #include <yarp/os/Network.h>
 #include <yarp/os/Property.h>
 #include <yarp/os/ConstString.h>
-#include <yarp/os/RateThread.h>
-#include <yarp/os/Semaphore.h>
+#include <yarp/os/Time.h>
 
 class MainWindow;
 
@@ -60,19 +59,21 @@ public:
 
 	ConnectionModelColumns() { 
 		add(m_col_refPix); 
-		add(m_col_from); 
+		add(m_col_type);
 		add(m_col_id); 
+		add(m_col_status);
+		add(m_col_from); 
 		add(m_col_to); 
 		add(m_col_carrier); 
-		add(m_col_status);
 		add(m_col_color);
 		}
 	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
 	Gtk::TreeModelColumn<int> m_col_id;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_type;
+	Gtk::TreeModelColumn<Glib::ustring> m_col_status;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_from;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_to;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_carrier;
-	Gtk::TreeModelColumn<Glib::ustring> m_col_status;
 	Gtk::TreeModelColumn<Gdk::Color> m_col_color;
 
 };
@@ -100,19 +101,13 @@ public:
 
 
 
-class ApplicationWindow: public Gtk::ScrolledWindow, Manager, 
-								yarp::os::RateThread
+class ApplicationWindow: public Gtk::ScrolledWindow, ApplicationEvent
 {
 public:
 	ApplicationWindow(const char* szAppName, Manager* lazy, 
 		yarp::os::Property* config, MainWindow* parent);
 	virtual ~ApplicationWindow();
 	const char* getApplicationName(void) { return m_strAppName.c_str(); }
-
-	virtual bool threadInit();
-	virtual void afterStart(bool s);
-	virtual void run();
-	virtual void threadRelease();
 
 	bool onClose(void);
 	bool onRun(void);
@@ -134,23 +129,24 @@ public:
 	ConnectionModelColumns m_conColumns;
 	ResourceModelColumns m_resColumns;
 
+	virtual void onModStart(int which);
+	virtual void onModStop(int which);
+	virtual void onConConnect(int which);
+	virtual void onConDisconnect(int which);
+	virtual void onResAvailable(int which);
+	virtual void onResUnAvailable(int which);
+	virtual void onError(void);
+
 
 protected:
-	
-	virtual void onExecutableStart(void* which);
-	virtual void onExecutableStop(void* which);
-	virtual void onCnnStablished(void* which);
-	virtual void onExecutableDied(void* which);
-	virtual void onExecutableFailed(void* which);
-	virtual void onCnnFailed(void* which);
-
+		
 	void selectedModuleCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedConnectionCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedResourceCallback(const Gtk::TreeModel::iterator& iter);
 	virtual void onModuleTreeButtonPressed(GdkEventButton* event);
 	virtual void onConnectionTreeButtonPressed(GdkEventButton* event);
 	virtual void onResourceTreeButtonPressed(GdkEventButton* event);
-
+	
 	virtual void onPMenuRun() { onRun(); }
 	virtual void onPMenuStop() { onStop(); }
 	virtual void onPMenuKill() { onKill(); }
@@ -158,7 +154,7 @@ protected:
 	virtual void onPMenuDisconnect() { onDisconnect(); }
 	virtual void onPMenuRefresh() { onRefresh(); }
 //	virtual void onPMenuSelectAll()
-	
+
 	Gtk::VPaned m_VPaned;
 	Gtk::HPaned m_HPaned;
 	Gtk::TreeView m_TreeModView;
@@ -175,14 +171,13 @@ protected:
 
 private:
 	bool m_bShouldRun;
-	Manager manager;
+	SafeManager manager;
 	MainWindow* m_pParent;
 	string m_strAppName;
 	yarp::os::Property* m_pConfig;
 	std::vector<int> m_ModuleIDs;
 	std::vector<int> m_ConnectionIDs;
 	std::vector<int> m_ResourceIDs;
-	yarp::os::Semaphore safeManage;
 
 	Glib::RefPtr<Gdk::Pixbuf> m_refPixSuspended;
 	Glib::RefPtr<Gdk::Pixbuf> m_refPixRunning;
@@ -194,11 +189,11 @@ private:
 
 	void createWidgets(void);
 	void setupSignals(void);
-	void (ApplicationWindow::*m_pAction)(void);
-	
+		
 	bool getModRowByID(int id, Gtk::TreeModel::Row* row );
 	bool getConRowByID(int id, Gtk::TreeModel::Row* row );
 	bool getResRowByID(int id, Gtk::TreeModel::Row* row );
+	void setCellsEditable(void);
 
 	void prepareManagerFrom(Manager* lazy, const char* szName);
 	void reportErrors(void);
@@ -212,9 +207,6 @@ private:
 	void doRefresh(void);
 
 };
-
-
-
 
 #endif //_APPLICATION_WINDOW_H_
 

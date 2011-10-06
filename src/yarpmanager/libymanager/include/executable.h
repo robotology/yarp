@@ -97,6 +97,7 @@ public:
 	const char* getWorkDir(void) { return strWorkdir.c_str(); }
 	const char* getEnv(void) { return strEnv.c_str(); }
 	int getID(void) { return theID; }
+	CnnContainer& getConnections(void) { return connections;}
 
 	void enableAutoConnect(void) { bAutoConnect = true; }
 	void disableAutoConnect(void) { bAutoConnect = false; }

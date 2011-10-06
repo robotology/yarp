@@ -386,6 +386,18 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 				if(to->Attribute("external") && 
 					compareString(to->Attribute("external"), "true"))
 					connection.setToExternal(true);
+
+				//Connections wich have the same port name in Port Resources 
+				// should also be set as external
+				for(int i=0; i<app.resourcesCount(); i++)
+				{
+					ResYarpPort res = app.getResourceAt(i);
+					if(compareString(res.getPort(), connection.from()))
+						connection.setFromExternal(true);
+					if(compareString(res.getPort(), connection.to()))
+						connection.setToExternal(true);
+				}
+
 				app.addConnection(connection);
 			}
 			else

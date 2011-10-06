@@ -27,6 +27,7 @@ using namespace yarp::os;
 YarpBroker::YarpBroker()
 {
 	bOnlyConnector = bInitialized = false;	
+	ID = generateID();
 	//yarp.setVerbosity(-1);
 }
 
@@ -38,8 +39,8 @@ YarpBroker::~YarpBroker()
 
 bool YarpBroker::init(void)
 {
-	if(bInitialized)
-		return true; 
+	//if(bInitialized)
+	//	return true; 
 
 	if(!NetworkBase::checkNetwork())
 	{
@@ -55,8 +56,16 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
 			const char* szhost, const char* szstdio,
 			const char* szworkdir, const char* szenv )
 {
-	if(bInitialized)
-		return true; 
+	//if(bInitialized)
+	//	return true;
+
+	strCmd.clear();
+	strParam.clear();
+	strHost.clear();
+	strStdio.clear();
+	strWorkdir.clear();
+	strTag.clear();
+	strEnv.clear();
 
 	if(!NetworkBase::checkNetwork())
 	{
@@ -101,12 +110,12 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
 		else
 			strStdio = szstdio;
 	}
-
+		
 	if(strlen(szenv))
 		strEnv = szenv;
 	
 	ostringstream sstrID;
-	sstrID<<generateID();
+	sstrID<<ID;
 	strTag = strHost + strCmd + sstrID.str();
 
 	//cout<<strCmd<<" has tag "<<strTag<<endl;

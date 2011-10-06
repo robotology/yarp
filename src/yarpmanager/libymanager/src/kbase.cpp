@@ -480,7 +480,8 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 			res.setLabel(cnn.from());
 			res.setPort(cnn.from());
 			ResYarpPort* newres = (ResYarpPort*) tmpGraph.addNode(&res);
-			selresources.push_back(newres);
+			if(newres)
+				selresources.push_back(newres);
 		}
 		if(cnn.isExternalTo() 
 			/*|| isExternalResource(tmpGraph, cnn.to())*/ ) 
@@ -489,7 +490,8 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 			res.setLabel(cnn.to());
 			res.setPort(cnn.to());
 			ResYarpPort* newres = (ResYarpPort*) tmpGraph.addNode(&res);
-			selresources.push_back(newres);
+			if(newres)
+				selresources.push_back(newres);
 		}
 	}
 
@@ -563,31 +565,7 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 		}
 	}
 
-	/*	
-	ModulePIterator itrM;
-	cout<<"Selected tasks:"<<endl;
-	for(itrM=selmodules.begin(); itrM!=selmodules.end(); itrM++)
-		cout<<(*itrM)->getName()<<" ("<<(*itrM)->getPrefix()<<")"<<endl;
-	cout<<endl;
-	
-	//CnnIterator itrC;
-	cout<<"Selected connections:"<<endl;
-	for(itrC=selconnections.begin(); itrC!=selconnections.end(); itrC++)
-		if((*itrC).owner())
-			cout<<(*itrC).owner()->getLabel()<<": { "<<(*itrC).from()<<" -> "<<(*itrC).to()<<" }"<<endl;
-		else
-			cout<<"Extra: { "<<(*itrC).from()<<" -> "<<(*itrC).to()<<" }"<<endl;
-	cout<<endl;
-
-	cout<<"Required resources:"<<endl;
-	ResourcePIterator itrS;
-	for(itrS=selresources.begin(); itrS!=selresources.end(); itrS++)
-		cout<<(*itrS)->getName()<<" ("<<(*itrS)->getPort()<<")"<<endl;
-	cout<<endl;
-	*/
-
-	return true;
-		
+	return true;		
 }
 
 
@@ -1084,28 +1062,6 @@ const char* KnowledgeBase::createDataLabel(const char* modlabel,
 		name += string(postfix);
 	return name.c_str();
 }
-
-
-/*
-const char* KnowledgeBase::createOutputLabel(Module* module, OutputData* output)
-{
-	static ostringstream name;
-	name.clear();
-	name<<module->getLabel()<<":";
-	name<<output->getPort()<<":";
-	name<<output->getName()<<":O";	
-	return name.str().c_str(); 
-}
-*/
-
-/*
-const char* KnowledgeBase::createAppLabel(Application* app)
-{
-	ostringstream name;
-	name<<app->getName()<<":APP";
-	return name.str().c_str(); 
-}
-*/
 
 
 bool KnowledgeBase::exportDotGraph(Graph& graph, const char* szFileName)

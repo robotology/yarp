@@ -830,7 +830,10 @@ void YConsoleManager::which(void)
 	{
 		cout<<INFO<<"("<<id++<<") ";
 		cout<<OKBLUE<<(*cnnitr).from()<<" - "<<(*cnnitr).to()<<INFO;
-			cout<<" ["<<carrierToStr((*cnnitr).carrier())<<"]"<<ENDC<<endl;
+			cout<<" ["<<carrierToStr((*cnnitr).carrier())<<"]";
+		if((*cnnitr).owner())
+			cout<<" ["<<(*cnnitr).owner()->getName()<<"]";	
+		cout<<ENDC<<endl;
 	}		
 	
 	cout<<endl<<HEADER<<"Resources:"<<ENDC<<endl;

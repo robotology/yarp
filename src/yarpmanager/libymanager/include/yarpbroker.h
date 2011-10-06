@@ -64,7 +64,7 @@ private:
 	string strWorkdir;
 	string strTag;
 	string strEnv;
-
+	unsigned int ID;
 	yarp::os::Property command;
 	string strError;	
 	bool bOnlyConnector;

@@ -41,6 +41,12 @@ public:
 	bool addModules(const char* szPath); 
 
 	bool loadApplication(const char* szAppName);
+	bool updateExecutable(unsigned int id, const char* szparam,
+	        	const char* szhost, const char* szstdio,
+	        	const char* szworkdir, const char* szenv );
+	bool updateConnection(unsigned int id, const char* from,
+				const char* to, const char* carrier); 
+
 	bool run(void);
 	bool run(unsigned int id, bool async=false);
 	bool stop(void);

@@ -209,6 +209,60 @@ bool Manager::prepare(void)
 	return true;
 }
 
+
+bool Manager::updateExecutable(unsigned int id, const char* szparam,
+	        	const char* szhost, const char* szstdio,
+	        	const char* szworkdir, const char* szenv )
+{
+	if(runnables.empty())
+	{
+		logger->addError("Application is not loaded.");
+		return false;
+	}
+	
+	if(id>=runnables.size())
+	{
+		logger->addError("Module id is out of range.");
+		return false;
+	}
+		
+	Executable* exe = runnables[id];
+	exe->setParam(szparam);
+	exe->setHost(szhost);
+	exe->setStdio(szstdio);
+	exe->setWorkDir(szworkdir);
+	exe->setEnv(szenv);
+	return true;
+}
+
+
+bool Manager::updateConnection(unsigned int id, const char* from,
+								const char* to, const char* carrier)
+{
+	if(id>=connections.size())
+	{
+		logger->addError("Connection id is out of range.");
+		return false;
+	}
+
+	if(connections[id].owner())
+	{
+		ostringstream msg;
+		msg<<"Connection ["<<connections[id].from()<<" -> ";
+		msg<<connections[id].to()<<"] cannot be updated.";
+		logger->addWarning(msg);
+		return false;
+	}
+		
+	connections[id].setFrom(from);
+	connections[id].setTo(to);
+	connections[id].setCarrier( strToCarrier(carrier));
+		
+	return true;
+}
+
+
+
 bool Manager::exist(unsigned int id)
 {
 	if(id>=resources.size())
@@ -519,6 +573,7 @@ void Manager::clearExecutables(void)
 	}
 	runnables.clear();
 }
+
 
 bool Manager::connect(unsigned int id)
 {

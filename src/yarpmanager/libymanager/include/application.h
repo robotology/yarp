@@ -72,6 +72,7 @@ public:
 	const char* to(void) { return strTo.c_str();}
 	void setFrom(const char* szFrom) { if(szFrom) strFrom = szFrom; }
 	void setTo(const char* szTo) { if(szTo) strTo = szTo; }
+	void setCarrier(Carrier cr) { cCarrier = cr; }
 	void setFromExternal(bool ext) { bExternalFrom = ext;}
 	void setToExternal(bool ext) { bExternalTo = ext; }
 	bool isExternalFrom(void) { return bExternalFrom; }
