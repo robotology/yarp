@@ -10,6 +10,9 @@
 
 // everything for the yarp::os namespace
 
+#ifndef __YARP2_OS_ALL__
+#define __YARP2_OS_ALL__
+
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/BinPortable.h>
 #include <yarp/os/Bottle.h>
@@ -44,4 +47,7 @@
 #include <yarp/os/DummyConnector.h>
 #include <yarp/os/RpcClient.h>
 #include <yarp/os/RpcServer.h>
+
+#endif
+
 
