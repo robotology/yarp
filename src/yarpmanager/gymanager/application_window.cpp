@@ -571,6 +571,7 @@ bool ApplicationWindow::onRun(void)
 		manager.postSemaphore();
 		manager.safeRun(m_ModuleIDs);
 	}
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 
@@ -598,7 +599,7 @@ bool ApplicationWindow::onStop(void)
 		manager.postSemaphore();
 		manager.safeStop(m_ModuleIDs);
 	}
-
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 
@@ -626,6 +627,7 @@ bool ApplicationWindow::onKill(void)
 		manager.postSemaphore();
 		manager.safeKill(m_ModuleIDs);
 	}
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 
@@ -660,6 +662,7 @@ bool ApplicationWindow::onConnect(void)
 		manager.postSemaphore();
 		manager.safeConnect(m_ConnectionIDs);
 	}
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 
@@ -686,6 +689,7 @@ bool ApplicationWindow::onDisconnect(void)
 		manager.postSemaphore();
 		manager.safeDisconnect(m_ConnectionIDs);
 	}
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 
@@ -745,6 +749,8 @@ bool ApplicationWindow::onRefresh(void)
 							m_ConnectionIDs, 
 							m_ResourceIDs);
 	}
+
+	yarp::os::Time::delay(0.1);
 	return true;	
 }
 

@@ -27,6 +27,7 @@ using namespace std;
 
 ApplicationList::ApplicationList()
 {
+
 	/* Create a new scrolled window, with scrollbars only if needed */
 	set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
 	add(m_TreeView);
@@ -35,31 +36,30 @@ ApplicationList::ApplicationList()
 	m_refTreeModel = Gtk::TreeStore::create(m_appColumns);
 	m_TreeView.set_model(m_refTreeModel);
 
-	m_appRow = *(m_refTreeModel->append());
-	m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
-	m_appRow[m_appColumns.m_col_name] = "Applications";
 
-	//Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE)->save("test.jpg", "jpeg");
+	//Add the Model’s column to the View’s columns:	
+	Gtk::CellRendererText cellText;
+	Gtk::CellRendererPixbuf cellPix;
+	Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Entities"));
+	col->pack_start(cellPix, false);
+	col->pack_start(cellText, true);
+	col->add_attribute(cellText, "text", 1);
+	col->add_attribute(cellPix, "pixbuf", 0);
+	m_TreeView.append_column(*col);
+	//m_TreeView.expand_all();
 
-	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
-	//m_appRow[m_appColumns.m_col_refPix] = 
-	//		Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE);
 
 //	m_modRow = *(m_refTreeModel->append());
 //	m_modRow[m_appColumns.m_col_name] = "Module";
 //	m_modRow[m_appColumns.m_col_refPix] = Gtk::IconTheme::get_default()->load_icon("folder", Gtk::ICON_LOOKUP_USE_BUILTIN);
 //	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, Gtk::ICON_LOOKUP_FORCE_SIZE));
 
-	//Add the Model’s column to the View’s columns:	
-	Gtk::CellRendererText cellText;
-	Gtk::CellRendererPixbuf cellPix;
-	Gtk::TreeViewColumn col("Entities");
-	col.pack_start(cellPix, false);
-	col.pack_start(cellText, true);
-	col.add_attribute(cellText, "text", 1);
-	col.add_attribute(cellPix, "pixbuf", 0);
-	m_TreeView.append_column(col);
-	m_TreeView.expand_all();
+
+	m_appRow = *(m_refTreeModel->append());
+	m_appRow[m_appColumns.m_col_type] = NODE_OTHER;
+	m_appRow[m_appColumns.m_col_name] = "Applications";
+	m_appRow.set_value(0,Gtk::IconTheme::get_default()->load_icon("folder", 16, 
+																Gtk::ICON_LOOKUP_FORCE_SIZE));
 
 	show_all_children();
 }
