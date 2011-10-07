@@ -317,6 +317,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/os/IConfig.h>
 %include <yarp/dev/DeviceDriver.h>
 %include <yarp/dev/PolyDriver.h>
+%include <yarp/dev/Drivers.h>
 %include <yarp/dev/FrameGrabberInterfaces.h>
 %include <yarp/dev/AudioVisualInterfaces.h>
 %include <yarp/dev/ControlBoardInterfaces.h>
