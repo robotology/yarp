@@ -323,6 +323,7 @@ MAKE_COMMS(Bottle)
 %include <yarp/dev/ControlBoardInterfaces.h>
 %include <yarp/dev/ControlBoardPid.h>
 %include <yarp/dev/CartesianControl.h>
+%include <yarp/dev/GazeControl.h>
 
 #if !defined(SWIGCHICKEN) && !defined(SWIGALLEGROCL)
   %template(DVector) std::vector<double>;
