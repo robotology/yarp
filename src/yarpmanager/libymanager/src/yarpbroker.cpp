@@ -13,9 +13,10 @@
 #include <string.h>
 
 #define YARPRUN_ERROR 		-1
-#define RUN_TIMEOUT 		3 		//times of 100ms + running() delay = 3s
-#define STOP_TIMEOUT 		10
-#define KILL_TIMEOUT 		3
+#define RUN_TIMEOUT 		10.0 		//second
+#define STOP_TIMEOUT 		60.0
+#define KILL_TIMEOUT 		10.0
+
 
 #if defined(WIN32) || defined(WIN64)
     #define SIGKILL 9
@@ -140,15 +141,23 @@ bool YarpBroker::run()
 		strError += strCmd;
 		return false;
 	}
-	
+
+	/*
 	int w = 0;
 	while(w++ < RUN_TIMEOUT)
 	{
 		if(running())
 			return true;
 		Time::delay(0.1); 
-	}
+	}*/
 
+	double base = Time::now();
+	while(!timeout(base, RUN_TIMEOUT))
+	{
+		if(running())
+			return true;
+	}
+		
 	strError = "cannot run ";
 	strError += strCmd;
 	strError += " on ";
@@ -183,13 +192,21 @@ bool YarpBroker::stop()
 		strError += strCmd;
 		return false;
 	}
-	
+
+	/*
 	int w = 0;
 	while(w++ < STOP_TIMEOUT)
 	{
 		if(!running())
 			return true;
 		Time::delay(0.1); 
+	}*/
+
+	double base = Time::now();
+	while(!timeout(base, STOP_TIMEOUT))
+	{
+		if(!running())
+			return true;
 	}
 
 	strError = "Timeout! cannot stop ";
@@ -226,13 +243,21 @@ bool YarpBroker::kill()
 		strError += strCmd;
 		return false;
 	}
-	
+
+	/*
 	int w = 0;
 	while(w++ < KILL_TIMEOUT)
 	{
 		if(!running())
 			return true;
 		Time::delay(0.1); 
+	}*/
+
+	double base = Time::now();
+	while(!timeout(base, KILL_TIMEOUT))
+	{
+		if(!running())
+			return true;
 	}
 
 	strError = "cannot kill ";
@@ -391,6 +416,15 @@ const char* YarpBroker::error(void)
 }
 
 
+bool YarpBroker::timeout(double base, double timeout)
+{
+	Time::delay(0.1);
+	if((Time::now()-base) > timeout)
+		return true;
+	return false; 
+}
+
+
 /**
  * 
  *  mimicing yarprun
@@ -399,11 +433,12 @@ Bottle YarpBroker::SendMsg(Bottle& msg,ConstString target)
 {
 	Port port;
     port.open("...");
-    for (int i=0; i<20; ++i)
+    for (int i=0; i<10; ++i)
 	{
 	    if (NetworkBase::connect(port.getName().c_str(),target.c_str())) break;
 	    Time::delay(1.0);
 	}
+
 	Bottle response;
     port.write(msg,response);
     NetworkBase::disconnect(port.getName().c_str(),target.c_str());

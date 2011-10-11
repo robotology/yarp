@@ -70,6 +70,33 @@ ApplicationList::~ApplicationList()
 }
 
 
+bool ApplicationList::removeApplication(const char* szAppName)
+{
+	typedef Gtk::TreeModel::Children type_children;
+
+	type_children children = m_refTreeModel->children();
+	for(type_children::iterator iter = children.begin(); iter != children.end(); ++iter)
+	{
+	  Gtk::TreeModel::Row row = *iter;
+	  if(row[m_appColumns.m_col_name] == Glib::ustring("Applications"))
+	  {
+	  	type_children appchild = row->children();
+		for(type_children::iterator itrapp = appchild.begin(); itrapp!= appchild.end(); ++itrapp)
+		{
+			Gtk::TreeModel::Row childrow = *itrapp;
+		 	if(childrow[m_appColumns.m_col_name] == Glib::ustring(szAppName))
+			{
+				m_refTreeModel->erase(childrow);	
+	  			return true;
+			}
+		}
+	  }
+	}
+	return false;
+}
+
+
+
 bool ApplicationList::addApplication(Application* app)
 {
 	typedef Gtk::TreeModel::Children type_children;

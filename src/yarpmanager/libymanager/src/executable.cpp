@@ -198,9 +198,9 @@ void Executable::stop(void)
 	}
 
 	ostringstream msg;
-	msg<<strCommand<<" is not in running state. trying to kill it.";
-	logger->addWarning(msg);		
-	Executable::kill();
+	msg<<strCommand<<" is not in running state. try to kill it.";
+	logger->addWarning(msg);
+	//Executable::kill();
 }
 
 

@@ -111,6 +111,23 @@ bool Manager::addModules(const char* szPath)
 }
 
 
+bool Manager::removeApplication(const char* szAppName)
+{
+	//Note: use it with care. it is better we first check that no application
+	//is loaded. 
+	if(!runnables.empty())
+	{
+		logger->addError("Application cannot be removed if there is a loaded application");
+		return false;
+	}
+
+	Application* app = knowledge.getApplication(szAppName);
+	if(!app)
+		return false;
+
+	return knowledge.removeApplication(app);
+}
+
 
 bool Manager::loadApplication(const char* szAppName)
 {

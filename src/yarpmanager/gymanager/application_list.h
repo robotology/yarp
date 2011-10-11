@@ -44,6 +44,7 @@ public:
 	ApplicationList();
 	virtual ~ApplicationList();
 	bool addApplication(Application* app);
+	bool removeApplication(const char* szAppName);
 
 	Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
 	AppModelColumns m_appColumns;

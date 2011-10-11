@@ -70,6 +70,7 @@ private:
 	bool bOnlyConnector;
 	bool bInitialized;
 	
+	bool timeout(double base, double timeout);
 	yarp::os::Property& runProperty(void);		
 	int requestServer(yarp::os::Property& config);
 	yarp::os::Bottle SendMsg(yarp::os::Bottle& msg, yarp::os::ConstString target);

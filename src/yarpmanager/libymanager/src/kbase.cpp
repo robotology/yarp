@@ -152,6 +152,12 @@ bool KnowledgeBase::addModule(Module* mod)
 }
 
 
+bool KnowledgeBase::removeApplication(Application* app)
+{
+	return kbGraph.removeNode(app);
+}
+
+
 const ApplicaitonPContainer& KnowledgeBase::getApplications(void)
 {
 	static ApplicaitonPContainer applications; 

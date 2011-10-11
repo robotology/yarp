@@ -54,8 +54,14 @@ protected:
 	virtual void onMenuEditSellAll();
 	virtual void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
 				Gtk::TreeViewColumn* column);
+	virtual void onAppListButtonPressed(GdkEventButton* event);
+
 	virtual void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);	
 	virtual bool onDeleteEvent(GdkEventAny* event);
+
+	virtual void onPAppMenuLoad();
+	virtual void onPAppMenuRemove();
+
 
 private:
 	Manager lazyManager;
@@ -76,6 +82,7 @@ private:
 	Glib::RefPtr<Gtk::TextBuffer> m_refCommandBuffer;
 	Glib::RefPtr<Gtk::IconFactory> m_factory;
 
+	void manageApplication(const char* szName);
 	bool safeExit(void);
 	void closeTab(int page_num);
 	void createWidgets(void);

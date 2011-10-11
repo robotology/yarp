@@ -39,7 +39,8 @@ public:
 	bool addApplications(const char* szPath);
 	bool addModule(const char* szFileName);
 	bool addModules(const char* szPath); 
-
+	
+	bool removeApplication(const char* szAppName);
 	bool loadApplication(const char* szAppName);
 	bool updateExecutable(unsigned int id, const char* szparam,
 	        	const char* szhost, const char* szstdio,

@@ -150,6 +150,13 @@ void MainWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='ManageRefresh'/>"
 		" </popup>"
+		" <popup name='PopupApplication'>"
+		"      <menuitem action='FileOpen'/>"
+		"      <menuitem action='FileImport'/>"
+		"      <menuitem action='PAppRemove'/>"
+		"      <separator/>"
+	    "      <menuitem action='PAppLoad'/>"	
+		" </popup>"
 		"</ui>";
 
 
@@ -219,6 +226,9 @@ void MainWindow::setupSignals(void)
 	
   	m_applicationList.getTreeView()->signal_row_activated().connect(sigc::mem_fun(*this,
               			&MainWindow::onAppListRowActivated) );
+	
+	m_applicationList.getTreeView()->signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+            &MainWindow::onAppListButtonPressed) );
 
 	m_mainTab.signal_switch_page().connect(sigc::mem_fun(*this,
             &MainWindow::onNotebookSwitchPage) );
@@ -226,6 +236,7 @@ void MainWindow::setupSignals(void)
 	signal_delete_event().connect(sigc::mem_fun(*this, 
 			&MainWindow::onDeleteEvent));
 
+	
 	
 //	signal_expose_event().connect(sigc::mem_fun(*this,
 //            &MainWindow::onExposeEvent) );	
@@ -339,6 +350,12 @@ void MainWindow::setupActions(void)
 	m_refActionGroup->add( Gtk::Action::create("HelpAbout", Gtk::Stock::ABOUT),
 							sigc::mem_fun(*this, &MainWindow::onMenuHelpAbout) );
 	
+	//Popup Application
+	m_refActionGroup->add( Gtk::Action::create("PAppRemove", Gtk::Stock::REMOVE, "_Remove", "Remove"),
+							sigc::mem_fun(*this, &MainWindow::onPAppMenuRemove) );
+	m_refActionGroup->add( Gtk::Action::create("PAppLoad", Gtk::Stock::APPLY, "_Load Application", "Load Application"),
+							sigc::mem_fun(*this, &MainWindow::onPAppMenuLoad) );
+
 	// initial sensitivity
 	m_refActionGroup->get_action("FileNew")->set_sensitive(false);
 	m_refActionGroup->get_action("FileClose")->set_sensitive(false);
@@ -573,6 +590,41 @@ void MainWindow::onMenuFileImport()
 
 }
 
+void MainWindow::onPAppMenuLoad()
+{
+	Gtk::TreeModel::iterator iter = 
+		m_applicationList.getTreeView()->get_selection()->get_selected();
+	if(iter) //If anything is selected
+	{
+		Gtk::TreeModel::Row row = *iter;
+		//Do something with the row.
+		if(row[m_applicationList.m_appColumns.m_col_type] == APPLICATION)
+		{
+			Glib::ustring strName = row[m_applicationList.m_appColumns.m_col_name];
+			manageApplication(strName.c_str());
+		}
+	}
+}
+
+
+void MainWindow::onPAppMenuRemove()
+{
+	Gtk::TreeModel::iterator iter = 
+		m_applicationList.getTreeView()->get_selection()->get_selected();
+	if(iter) //If anything is selected
+	{
+		Gtk::TreeModel::Row row = *iter;
+		//Do something with the row.
+		if(row[m_applicationList.m_appColumns.m_col_type] == APPLICATION)
+		{
+			Glib::ustring strName = row[m_applicationList.m_appColumns.m_col_name];
+			if(lazyManager.removeApplication(strName.c_str()))
+				m_applicationList.removeApplication(strName.c_str());
+		}
+	}
+}
+
+
 void MainWindow::onMenuHelpOnlineHelp() 
 {
 	onMenuHelpAbout();
@@ -663,81 +715,120 @@ void MainWindow::onMenuEditSellAll()
 }
 
 
+void MainWindow::onAppListButtonPressed(GdkEventButton* event)
+{
+	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	{
+		Gtk::TreeModel::iterator iter = 
+			m_applicationList.getTreeView()->get_selection()->get_selected();
+		if(iter) //If anything is selected
+		{
+			Gtk::TreeModel::Row row = *iter;
+			//Do something with the row.
+			if(row[m_applicationList.m_appColumns.m_col_type] == APPLICATION)
+			{
+				m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
+				m_refActionGroup->get_action("PAppLoad")->set_sensitive(true);		
+			}
+			else
+			{
+				m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
+				m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
+			}
+		}
+		else
+		{
+			m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
+			m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
+		}
+
+		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+        			m_refUIManager->get_widget("/PopupApplication"));
+		if(pMenu)
+	  		pMenu->popup(event->button, event->time);
+	}
+}
+
 void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path, 
 			Gtk::TreeViewColumn* column)
 {
 	Gtk::TreeModel::iterator iter = m_applicationList.m_refTreeModel->get_iter(path);
-	
 	if(iter && ((*iter)[m_applicationList.m_appColumns.m_col_type] == APPLICATION)) 
   	{
 		Gtk::TreeModel::Row row = *iter;
 		Glib::ustring name = row[m_applicationList.m_appColumns.m_col_name];
-		
-		int page_num = -1;
-		for(int i=0; i<m_mainTab.get_n_pages(); i++)
-		{
-			Glib::ustring pageName;
-			ApplicationWindow* pAppWnd = 
-					dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(i));
-			if(pAppWnd)
-				pageName = pAppWnd->getApplicationName();			
-			if(pageName == name)
-			{
-				page_num = i;
-				break;
-			}
-		}
+		manageApplication(name.c_str());
+	}
+}
 
-		if(page_num>=0)
-			m_mainTab.set_current_page(page_num);
-		else
+
+void MainWindow::manageApplication(const char* szName)
+{
+	Glib::ustring name = szName;
+
+	int page_num = -1;
+	for(int i=0; i<m_mainTab.get_n_pages(); i++)
+	{
+		Glib::ustring pageName;
+		ApplicationWindow* pAppWnd = 
+				dynamic_cast<ApplicationWindow*>(m_mainTab.get_nth_page(i));
+		if(pAppWnd)
+			pageName = pAppWnd->getApplicationName();			
+		if(pageName == name)
 		{
-			ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), 
-											&lazyManager, &m_config, this);
+			page_num = i;
+			break;
+		}
+	}
+
+	if(page_num>=0)
+		m_mainTab.set_current_page(page_num);
+	else
+	{
+		ApplicationWindow* pAppWnd = new ApplicationWindow(name.c_str(), 
+										&lazyManager, &m_config, this);
 //			m_mainTab.append_page(*pAppWnd, name);
-			Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
-			Gtk::Label* lb = Gtk::manage(new Gtk::Label(name));
-			lb->set_text(name);
-			//Gtk::EventBox* ev = Gtk::manage(new Gtk::EventBox);
-     		//ev->add(*lb);
-		    hb->pack_start(*lb);
-			Gtk::Button* bt = Gtk::manage(new Gtk::Button());
-			Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
-						Gdk::COLORSPACE_RGB,
-						true,
-						8,
-						close_ico.width,
-						close_ico.height,
-						close_ico.bytes_per_pixel*close_ico.width)));
-     		bt->add(*ico);
-			bt->set_size_request(24,24);
-			bt->set_relief(Gtk::RELIEF_NONE);
-			bt->signal_clicked().connect(sigc::mem_fun(*pAppWnd, 
-										&ApplicationWindow::onTabCloseRequest));
-			hb->set_spacing(1);
-			hb->set_border_width(0);
-			hb->pack_start(*bt, Gtk::PACK_SHRINK);
-			Gtk::Label* ml = Gtk::manage(new Gtk::Label);
-     		ml->set_text(name);
-			m_mainTab.append_page(*pAppWnd, *hb, *ml);
-			hb->show_all_children();
+		Gtk::HBox* hb = Gtk::manage( new Gtk::HBox());
+		Gtk::Label* lb = Gtk::manage(new Gtk::Label(name));
+		lb->set_text(name);
+		//Gtk::EventBox* ev = Gtk::manage(new Gtk::EventBox);
+		//ev->add(*lb);
+		hb->pack_start(*lb);
+		Gtk::Button* bt = Gtk::manage(new Gtk::Button());
+		Gtk::Image* ico = Gtk::manage(new Gtk::Image(Gdk::Pixbuf::create_from_data(close_ico.pixel_data, 
+					Gdk::COLORSPACE_RGB,
+					true,
+					8,
+					close_ico.width,
+					close_ico.height,
+					close_ico.bytes_per_pixel*close_ico.width)));
+		bt->add(*ico);
+		bt->set_size_request(24,24);
+		bt->set_relief(Gtk::RELIEF_NONE);
+		bt->signal_clicked().connect(sigc::mem_fun(*pAppWnd, 
+									&ApplicationWindow::onTabCloseRequest));
+		hb->set_spacing(1);
+		hb->set_border_width(0);
+		hb->pack_start(*bt, Gtk::PACK_SHRINK);
+		Gtk::Label* ml = Gtk::manage(new Gtk::Label);
+		ml->set_text(name);
+		m_mainTab.append_page(*pAppWnd, *hb, *ml);
+		hb->show_all_children();
 
-			m_mainTab.set_tab_reorderable(*pAppWnd);
-			m_mainTab.show_all_children();
-			m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
+		m_mainTab.set_tab_reorderable(*pAppWnd);
+		m_mainTab.show_all_children();
+		m_mainTab.set_current_page(m_mainTab.get_n_pages()-1);
 
-		}
-		
-		m_refActionGroup->get_action("FileClose")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageRun")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageStop")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageKill")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageConnect")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageDisconnect")->set_sensitive(true);
-		m_refActionGroup->get_action("ManageRefresh")->set_sensitive(true);
-		m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
 	}
 	
+	m_refActionGroup->get_action("FileClose")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageRun")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageStop")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageKill")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageConnect")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageDisconnect")->set_sensitive(true);
+	m_refActionGroup->get_action("ManageRefresh")->set_sensitive(true);
+	m_refActionGroup->get_action("EditSelAll")->set_sensitive(true);
 
 }
 

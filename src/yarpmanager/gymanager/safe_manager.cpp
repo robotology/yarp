@@ -83,14 +83,32 @@ void SafeManager::run()
 		}
 	case MCONNECT:{
 			for(unsigned int i=0; i<conIds.size(); i++)
-				if(Manager::connect(conIds[i]) && eventReceiver)
-					eventReceiver->onConConnect(conIds[i]);
+			{
+				Manager::connect(conIds[i]);
+				if(Manager::connected(conIds[i]))
+				{
+					if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+				}
+				else
+				{
+					if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+				}
+			}
 			break;
 		}
 	case MDISCONNECT:{
 			for(unsigned int i=0; i<conIds.size(); i++)
-				if(Manager::disconnect(conIds[i]) && eventReceiver)
-					eventReceiver->onConDisconnect(conIds[i]);
+			{
+				Manager::disconnect(conIds[i]);
+				if(Manager::connected(conIds[i]))
+				{
+					if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+				}
+				else
+				{
+					if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+				}
+			}
 			break;
 		}
 

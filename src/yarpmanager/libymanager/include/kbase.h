@@ -56,7 +56,8 @@ public:
 	bool createFrom(ModuleLoader* _mloader, AppLoader* _apploader);
 	bool addApplication(Application* app);
 	bool addModule(Module* mod);
-	
+	bool removeApplication(Application* app);
+
 	bool reasolveDependency(const char* szName, bool bAutoDependancy=false);
 	bool reasolveDependency(Application* app, bool bAutoDependancy=false);
 	//bool reasolveDependency(Module* mod, bool bAutoDependancy=false);
