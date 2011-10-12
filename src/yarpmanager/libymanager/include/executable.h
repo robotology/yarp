@@ -30,7 +30,7 @@ using namespace std;
 
 
 #define DEF_PERIOD		100  //ms
-#define WDOG_PERIOD		1000 //ms
+#define WDOG_PERIOD		5000 //ms
 
 typedef enum __RSTATE {
 	SUSPENDED,
