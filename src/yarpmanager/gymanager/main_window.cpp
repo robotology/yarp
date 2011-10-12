@@ -47,6 +47,9 @@ MainWindow::MainWindow( yarp::os::Property &config)
 	//set_border_width(3);
 	set_default_size(WND_DEF_WIDTH, WND_DEF_HEIGHT);
 
+	m_refMessageList = new MessagesList(this);
+	m_refMessageList->enableTimeStamp();
+
 	setupStocks();
 	setupActions();
 	setupSignals();
@@ -70,6 +73,7 @@ MainWindow::MainWindow( yarp::os::Property &config)
 
 MainWindow::~MainWindow()
 {
+	delete m_refMessageList;
 	m_factory.reset();
 }
 
@@ -195,7 +199,7 @@ void MainWindow::createWidgets(void)
 
 	m_bottomTab.set_tab_pos(Gtk::POS_BOTTOM);
 	m_bottomTab.set_border_width(0);
-	m_bottomTab.append_page(m_messageList, "Messages");
+	m_bottomTab.append_page(*m_refMessageList, "Messages");
 	m_bottomTab.append_page(m_commandView, "Notes");
 
 	//m_Notebook.signal_switch_page().connect(sigc::mem_fun(*this,
@@ -380,10 +384,10 @@ void MainWindow::reportErrors(void)
 	{
 		const char* err;
 		while((err=logger->getLastError()))
-			m_messageList.addError(err);
+			m_refMessageList->addError(err);
 
 		while((err=logger->getLastWarning()))
-			m_messageList.addWarning(err);
+			m_refMessageList->addWarning(err);
 	}	
 }
 

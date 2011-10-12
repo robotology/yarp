@@ -258,7 +258,7 @@ void ApplicationWindow::createWidgets(void)
 
 	m_refUIManager = Gtk::UIManager::create();
 	m_refUIManager->insert_action_group(m_refActionGroup);
-	//::add_accel_group(m_refUIManager->get_accel_group());
+	m_pParent->add_accel_group(m_refUIManager->get_accel_group());
 	Glib::ustring ui_info =
 		"<ui>"
 		" <popup name='PopupModules'>"
@@ -914,14 +914,14 @@ void ApplicationWindow::reportErrors(void)
 		{
 			ostringstream msg;
 			msg<<"("<<getApplicationName()<<") "<<err; 
-			m_pParent->m_messageList.addError(msg.str().c_str());
+			m_pParent->m_refMessageList->addError(msg.str().c_str());
 		}
 
 		while((err=logger->getLastWarning()))
 		{
 			ostringstream msg;
 			msg<<"("<<getApplicationName()<<") "<<err; 
-			m_pParent->m_messageList.addWarning(msg.str().c_str());
+			m_pParent->m_refMessageList->addWarning(msg.str().c_str());
 		}
 	}	
 }

@@ -12,6 +12,8 @@
 
 #include <gtkmm.h>
 
+class MainWindow;
+
 class MsgModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
@@ -25,16 +27,29 @@ public:
 class MessagesList: public Gtk::ScrolledWindow
 {
 public:
-	MessagesList();
+	MessagesList(MainWindow* pParent=NULL);
 	virtual ~MessagesList();
 	void addWarning(const char* warning);
 	void addError(const char* error);
+	void enableTimeStamp(void) { bTimeStamp = true; } 
+	void disableTimeStamp(void) { bTimeStamp = false; } 
 
 	MsgModelColumns m_Columns;	
 	Glib::RefPtr<Gtk::ListStore> m_refListStore; //The Tree Model.
 
 protected:
+	void onTreeButtonPressed(GdkEventButton* event);
+	virtual void onPMenuClear();
+	virtual void onPMenuSave();
+
 	Gtk::TreeView m_TreeView; //The Tree View.
+	Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+	Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
+
+private:
+	bool bTimeStamp; 
+	MainWindow* m_pParent;
+
 };
 
 

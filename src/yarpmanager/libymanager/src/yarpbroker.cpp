@@ -375,20 +375,20 @@ bool YarpBroker::disconnect(const char* from, const char* to)
 	{
 		strError = from;
 		strError += " does not exist.";
-		return false;
+		return true;
 	}
 
 	if(!exists(to))
 	{
 		strError = to;
 		strError += " does not exist.";
-		return false;
+		return true;
 	}
 	
 	if(!connected(from, to))
 		return true;
 
-	if( !NetworkBase::disconnect(from, to))
+	if(!NetworkBase::disconnect(from, to))
 	{
 		strError = "cannot disconnect ";
 		strError +=from;

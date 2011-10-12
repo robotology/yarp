@@ -29,7 +29,8 @@ public:
 	virtual ~MainWindow();
 
 	void onTabCloseRequest(Widget* wdg); 
-	MessagesList m_messageList;
+	//Glib::RefPtr<MessagesList> m_refMessageList;
+	MessagesList* m_refMessageList;
 
 protected:
 
