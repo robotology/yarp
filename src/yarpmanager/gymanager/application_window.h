@@ -129,13 +129,13 @@ public:
 	ConnectionModelColumns m_conColumns;
 	ResourceModelColumns m_resColumns;
 
-	virtual void onModStart(int which);
-	virtual void onModStop(int which);
-	virtual void onConConnect(int which);
-	virtual void onConDisconnect(int which);
-	virtual void onResAvailable(int which);
-	virtual void onResUnAvailable(int which);
-	virtual void onError(void);
+	void onModStart(int which);
+	void onModStop(int which);
+	void onConConnect(int which);
+	void onConDisconnect(int which);
+	void onResAvailable(int which);
+	void onResUnAvailable(int which);
+	void onError(void);
 
 
 protected:
@@ -143,17 +143,17 @@ protected:
 	void selectedModuleCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedConnectionCallback(const Gtk::TreeModel::iterator& iter);
 	void selectedResourceCallback(const Gtk::TreeModel::iterator& iter);
-	virtual void onModuleTreeButtonPressed(GdkEventButton* event);
-	virtual void onConnectionTreeButtonPressed(GdkEventButton* event);
-	virtual void onResourceTreeButtonPressed(GdkEventButton* event);
+	void onModuleTreeButtonPressed(GdkEventButton* event);
+	void onConnectionTreeButtonPressed(GdkEventButton* event);
+	void onResourceTreeButtonPressed(GdkEventButton* event);
 	
-	virtual void onPMenuRun() { onRun(); }
-	virtual void onPMenuStop() { onStop(); }
-	virtual void onPMenuKill() { onKill(); }
-	virtual void onPMenuConnect() { onConnect(); }
-	virtual void onPMenuDisconnect() { onDisconnect(); }
-	virtual void onPMenuRefresh() { onRefresh(); }
-//	virtual void onPMenuSelectAll()
+	void onPMenuRun() { onRun(); }
+	void onPMenuStop() { onStop(); }
+	void onPMenuKill() { onKill(); }
+	void onPMenuConnect() { onConnect(); }
+	void onPMenuDisconnect() { onDisconnect(); }
+	void onPMenuRefresh() { onRefresh(); }
+	void onPMenuSelectAll() { onSelectAll(); }
 
 	Gtk::VPaned m_VPaned;
 	Gtk::HPaned m_HPaned;

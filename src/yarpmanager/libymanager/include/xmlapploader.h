@@ -28,9 +28,9 @@ public:
 	XmlAppLoader(const char* szFileName);
 	XmlAppLoader(const char* szPath, const char* szAppName);
 	virtual ~XmlAppLoader();
-	virtual bool init(void);
-	virtual void fini(void);
-	virtual Application* getNextApplication(void);
+	bool init(void);
+	void fini(void);
+	Application* getNextApplication(void);
 	
 protected:
 

@@ -255,6 +255,8 @@ void ApplicationWindow::createWidgets(void)
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
 	m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
+	m_refActionGroup->add( Gtk::Action::create("PManageSelAll", Gtk::Stock::SELECT_ALL, "_Select All", "Select all"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPMenuSelectAll) );
 
 	m_refUIManager = Gtk::UIManager::create();
 	m_refUIManager->insert_action_group(m_refActionGroup);
@@ -267,15 +269,18 @@ void ApplicationWindow::createWidgets(void)
         "      <menuitem action='PManageKill'/>"
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
+		"      <menuitem action='PManageSelAll'/>"
 		" </popup>"
 		" <popup name='PopupConnections'>"
         "      <menuitem action='PManageConnect'/>"
         "      <menuitem action='PManageDisconnect'/>"
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
+		"      <menuitem action='PManageSelAll'/>"
 		" </popup>"
 		" <popup name='PopupResources'>"
         "      <menuitem action='PManageRefresh'/>"
+		"      <menuitem action='PManageSelAll'/>"
 		" </popup>"
 		"</ui>";
 

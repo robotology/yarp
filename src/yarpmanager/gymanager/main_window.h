@@ -35,33 +35,33 @@ public:
 protected:
 
 	//Signal handlers:
-	virtual bool onExposeEvent(GdkEventExpose* event);
-	virtual void onMenuFileQuit();
-	virtual void onMenuFileNewApp();
-	virtual void onMenuFileNewMod();
-	virtual void onMenuFileOpen();
-	virtual void onMenuFileClose();
-	virtual void onMenuFileSave();
-	virtual void onMenuFileSaveAs();
-	virtual void onMenuFileImport();
-	virtual void onMenuHelpAbout();
-	virtual void onMenuHelpOnlineHelp();
-	virtual void onMenuManageRun();
-	virtual void onMenuManageStop();
-	virtual void onMenuManageKill();
-	virtual void onMenuManageConnect();
-	virtual void onMenuManageDisconnect();
-	virtual void onMenuManageRefresh();
-	virtual void onMenuEditSellAll();
-	virtual void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
+	bool onExposeEvent(GdkEventExpose* event);
+	void onMenuFileQuit();
+	void onMenuFileNewApp();
+	void onMenuFileNewMod();
+	void onMenuFileOpen();
+	void onMenuFileClose();
+	void onMenuFileSave();
+	void onMenuFileSaveAs();
+	void onMenuFileImport();
+	void onMenuHelpAbout();
+	void onMenuHelpOnlineHelp();
+	void onMenuManageRun();
+	void onMenuManageStop();
+	void onMenuManageKill();
+	void onMenuManageConnect();
+	void onMenuManageDisconnect();
+	void onMenuManageRefresh();
+	void onMenuEditSellAll();
+	void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
 				Gtk::TreeViewColumn* column);
-	virtual void onAppListButtonPressed(GdkEventButton* event);
+	void onAppListButtonPressed(GdkEventButton* event);
 
-	virtual void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);	
-	virtual bool onDeleteEvent(GdkEventAny* event);
+	void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);	
+	bool onDeleteEvent(GdkEventAny* event);
 
-	virtual void onPAppMenuLoad();
-	virtual void onPAppMenuRemove();
+	void onPAppMenuLoad();
+	void onPAppMenuRemove();
 
 
 private:

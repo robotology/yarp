@@ -37,22 +37,21 @@ class YarpBroker: public Broker{
 
 public: 
 	YarpBroker();
-	virtual ~YarpBroker();
-	virtual bool init();
-	virtual bool init(const char* szcmd, const char* szparam,
+	 virtual ~YarpBroker();
+	 bool init();
+	 bool init(const char* szcmd, const char* szparam,
 	        const char* szhost, const char* szstdio,
 	        const char* szworkdir, const char* szenv );
-	virtual bool run();
-	virtual bool stop();
-	virtual bool kill();
-	virtual bool connect(const char* from, const char* to, 
+	 bool run();
+	 bool stop();
+	 bool kill();
+	 bool connect(const char* from, const char* to, 
 						const char* carrier);
-	virtual bool disconnect(const char* from, const char* to);
-	virtual bool running(void);
-	virtual bool exists(const char* port);
-	virtual bool connected(const char* from, const char* to);
-	virtual const char* error(void);
-	
+	 bool disconnect(const char* from, const char* to);
+	 bool running(void);
+	 bool exists(const char* port);
+	 bool connected(const char* from, const char* to);
+	 const char* error(void);
 	
 protected:
 

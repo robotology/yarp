@@ -49,11 +49,11 @@ class XmlModLoader : public ModuleLoader {
 public:
 	XmlModLoader(const char* szFileName);
 	XmlModLoader(const char* szPath, const char* szModuleName);
-	~XmlModLoader();
-	virtual bool init(void);
-	virtual void reset(void);
-	virtual void fini(void);
-	virtual Module* getNextModule(void);
+	virtual ~XmlModLoader();
+	bool init(void);
+	void reset(void);
+	void fini(void);
+ 	Module* getNextModule(void);
 	
 protected:
 

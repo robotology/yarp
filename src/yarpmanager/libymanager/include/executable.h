@@ -69,10 +69,10 @@ class Executable : public yarp::os::RateThread{
 public: 
 	Executable(Broker* _broker, MEvent* _event, bool bWatchDog=true);
 	virtual ~Executable();
-	virtual bool threadInit();
-	virtual void afterStart(bool s);
-	virtual void run();
-	virtual void threadRelease();
+	bool threadInit();
+	void afterStart(bool s);
+	void run();
+	void threadRelease();
 
 	bool start(void);
 	void stop(void);

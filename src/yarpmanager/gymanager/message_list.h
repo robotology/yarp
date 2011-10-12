@@ -39,8 +39,8 @@ public:
 
 protected:
 	void onTreeButtonPressed(GdkEventButton* event);
-	virtual void onPMenuClear();
-	virtual void onPMenuSave();
+	void onPMenuClear();
+	void onPMenuSave();
 
 	Gtk::TreeView m_TreeView; //The Tree View.
 	Glib::RefPtr<Gtk::UIManager> m_refUIManager;

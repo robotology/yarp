@@ -54,9 +54,9 @@ public:
 	virtual ~SafeManager();
 	bool prepare(Manager* lazy, yarp::os::Property* config, ApplicationEvent* event=NULL); 
 	
-	virtual bool threadInit();
-	virtual void run();
-	virtual void threadRelease();
+	bool threadInit();
+	void run();
+	void threadRelease();
 	
 	void safeRun(std::vector<int>& MIDs);
 	void safeStop(std::vector<int>& MIDs);
@@ -72,12 +72,12 @@ public:
 	void waitSemaphore(void) { semManage.wait(); }
 
 protected:
-	virtual void onExecutableStart(void* which);
-	virtual void onExecutableStop(void* which);
-	virtual void onCnnStablished(void* which);
-	virtual void onExecutableDied(void* which);
-	virtual void onExecutableFailed(void* which);
-	virtual void onCnnFailed(void* which);
+	void onExecutableStart(void* which);
+	void onExecutableStop(void* which);
+	void onCnnStablished(void* which);
+	void onExecutableDied(void* which);
+	void onExecutableFailed(void* which);
+	void onCnnFailed(void* which);
 
 private:
 	yarp::os::Property* m_pConfig;
