@@ -12,7 +12,7 @@
 //  + use of names that clash with special names in Java/Python/Perl/...
 //  + use of templates
 
-%module(directors="1") yarpswig
+%module(directors="1") yarp
 %feature("director") yarp::os::PortReader;
 %feature("director") yarp::os::RFModule;
 
@@ -23,7 +23,7 @@
 #endif
 
 #if defined(SWIGCSHARP)
-    // Get .NET pointers instead of swig generated types (usefull when dealing with images)
+    // Get .NET pointers instead of swig generated types (useful when dealing with images)
     %typemap(ctype)  unsigned char * "unsigned char *"
     %typemap(imtype) unsigned char * "IntPtr"
     %typemap(cstype) unsigned char * "IntPtr"
@@ -294,6 +294,7 @@ namespace yarp {
 %include <yarp/os/Thread.h>
 %include <yarp/os/Time.h>
 %include <yarp/os/RFModule.h>
+%include <yarp/os/Stamp.h>
 
 %define MAKE_COMMS(name)
 %feature("notabstract") yarp::os::BufferedPort<name>;
