@@ -1310,7 +1310,7 @@ int Companion::cmdClean(int argc, char *argv[]) {
     ConstString serverName = NetworkBase::getNameServerName();
     Bottle cmd2("gc"), reply2;
     NetworkBase::write(serverName,cmd2,reply2);
-    printf("Name server says: %s",reply2.toString().c_str());
+    printf("Name server says: %s\n",reply2.toString().c_str());
 
     return 0;
 }
