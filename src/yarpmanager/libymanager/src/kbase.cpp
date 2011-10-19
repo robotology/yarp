@@ -286,9 +286,9 @@ bool KnowledgeBase::makeupApplication(Application* application,
 			Module newmod(mod.getName());
 			newmod.setLabel(newname.str().c_str());
 			module = addModuleToGraph(tmpGraph, &newmod);
-			ostringstream msg;
-			msg<<"Module "<<mod.getName()<<" does not exist.";
-			logger->addWarning(msg);
+			//ostringstream msg;
+			//msg<<"Module "<<mod.getName()<<" does not exist.";
+			//logger->addWarning(msg);
 		}
 
 		modList[mod.getName()] = modList[mod.getName()] + 1;

@@ -100,6 +100,57 @@ public:
 
 
 
+class ApplicationWindow; 
+
+
+class MyTreeView: public Gtk::TreeView 
+{
+public:
+	MyTreeView() { 
+		__pMouseEventCallback = NULL; 
+		__pParent = NULL;
+	}
+
+	virtual ~MyTreeView() {}
+
+	void setMouseEventCallback(ApplicationWindow* _parent,
+							  void (ApplicationWindow::*__pCallback)(GdkEventButton*)) 
+	{
+		__pParent = _parent;
+		__pMouseEventCallback = __pCallback;
+	}
+
+protected:
+	virtual bool on_button_press_event(GdkEventButton* event )
+	{
+		if(event->type == GDK_BUTTON_PRESS)
+		{	
+			Gtk::TreeModel::Path path;
+			bool bOnItem = get_path_at_pos(event->x, event->y, path);
+			// if it's not a free click
+			if(!bOnItem)
+				get_selection()->unselect_all();	
+
+			if(event->button == 3)
+			{
+				if(__pMouseEventCallback && __pParent)
+				{
+					(__pParent->*__pMouseEventCallback)(event);
+					return true;
+				}
+			}
+		}
+
+		return Gtk::TreeView::on_button_press_event(event);
+	}
+
+private:
+	ApplicationWindow* __pParent;
+	void (ApplicationWindow::*__pMouseEventCallback)(GdkEventButton*);  
+};
+
+
+
 
 class ApplicationWindow: public Gtk::ScrolledWindow, ApplicationEvent
 {
@@ -128,6 +179,8 @@ public:
 	ModuleModelColumns m_modColumns;
 	ConnectionModelColumns m_conColumns;
 	ResourceModelColumns m_resColumns;
+	Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+	Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
 	void onModStart(int which);
 	void onModStop(int which);
@@ -136,7 +189,6 @@ public:
 	void onResAvailable(int which);
 	void onResUnAvailable(int which);
 	void onError(void);
-
 
 protected:
 		
@@ -153,21 +205,23 @@ protected:
 	void onPMenuConnect() { onConnect(); }
 	void onPMenuDisconnect() { onDisconnect(); }
 	void onPMenuRefresh() { onRefresh(); }
-	void onPMenuSelectAll() { onSelectAll(); }
+	//void onPMenuSelectAll() { onSelectAll(); }
+	void onPModuleSelectAll() { m_refTreeModSelection->select_all(); }
+	void onPConnectionSelectAll() { m_refTreeConSelection->select_all(); }
+	void onPResourceSelectAll() { m_refTreeResSelection->select_all(); }
 
 	Gtk::VPaned m_VPaned;
 	Gtk::HPaned m_HPaned;
-	Gtk::TreeView m_TreeModView;
-	Gtk::TreeView m_TreeConView;
-	Gtk::TreeView m_TreeResView;
+	//Gtk::TreeView m_TreeModView;
+	MyTreeView m_TreeModView;
+	MyTreeView m_TreeConView;
+	MyTreeView m_TreeResView;
 	Gtk::TreeModel::Row m_modRow;
 	Gtk::TreeModel::Row m_conRow;
 	Gtk::TreeModel::Row m_resRow;
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeModSelection;
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeConSelection;
 	Glib::RefPtr<Gtk::TreeSelection> m_refTreeResSelection;
-	Glib::RefPtr<Gtk::UIManager> m_refUIManager;
-	Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
 
 private:
 	bool m_bShouldRun;

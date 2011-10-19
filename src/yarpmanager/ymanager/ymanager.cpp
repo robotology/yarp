@@ -60,18 +60,24 @@ using namespace yarp::os;
 
 #define DEF_CONFIG_FILE		"./ymanager.ini"
 
-#define WELCOME_MESSAGE		"\
-Yarp module manager 0.9 (BETA)\n\
-==============================\n\n\
-type \"help\" for more information."
+#define LOGO_MESSAGE "\
+__   __\n\
+\\ \\ / / __ ___   __ _ _ __   __ _  __ _  ___ _ __ \n\
+ \\ V / '_ ` _ \\ / _` | '_ \\ / _` |/ _` |/ _ \\ '__|\n\
+  | || | | | | | (_| | | | | (_| | (_| |  __/ |\n\
+  |_||_| |_| |_|\\__,_|_| |_|\\__,_|\\__, |\\___|_|\n\
+                                  |___/"
+
+#define WELCOME_MESSAGE		"type \"help\" for more information."
+#define VERSION_MESSAGE		"Version 1.0"
 
 #define HELP_MESSAGE		"\
 Usage:\n\
       ymanager [option...]\n\n\
 Options:\n\
   --help                  Show help\n\
-  --config                Configuration file name\n"
-
+  --config                Configuration file name\n\
+  --version               Show current version\n"
 
 
 #if defined(WIN32) || defined(WIN64)
@@ -97,8 +103,12 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 		cout<<HELP_MESSAGE<<endl;
 		return;
 	}
-	
-	cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
+
+	if(cmdline.check("version"))
+	{
+		cout<<VERSION_MESSAGE<<endl;
+		return;
+	}
 	
 	if(cmdline.check("config"))
 	{
@@ -170,6 +180,9 @@ YConsoleManager::YConsoleManager(int argc, char* argv[]) : Manager()
 		enableAutoConnect();
 	else
 		disableAutoConnect();
+
+	cout<<endl<<OKGREEN<<LOGO_MESSAGE<<ENDC<<endl;
+	cout<<endl<<WELCOME_MESSAGE<<endl<<endl;
 
 	if(config.check("modpath"))
 		addModules(config.find("modpath").asString().c_str());
@@ -308,7 +321,7 @@ bool YConsoleManager::exit(void)
 
 	string ans;
 	cout<<WARNING<<"WARNING: ";
-	cout<<INFO<<"yarpmanager will terminate all of the running modules on exit. Are you sure? [No/yes] ";
+	cout<<INFO<<"yarpmanager will terminate all of the running modules on exit. Are you sure? [No/yes] "<<ENDC;
 	getline(cin, ans);
 	if(compareString(ans.c_str(),"yes"))
 	{

@@ -255,8 +255,12 @@ void ApplicationWindow::createWidgets(void)
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuDisconnect) );
 	m_refActionGroup->add( Gtk::Action::create("PManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
 							sigc::mem_fun(*this, &ApplicationWindow::onPMenuRefresh) );
-	m_refActionGroup->add( Gtk::Action::create("PManageSelAll", Gtk::Stock::SELECT_ALL, "_Select All", "Select all"),
-							sigc::mem_fun(*this, &ApplicationWindow::onPMenuSelectAll) );
+	m_refActionGroup->add( Gtk::Action::create("PModuleSelAll", Gtk::Stock::SELECT_ALL, "_Select all modules", "Select all modules"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPModuleSelectAll) );
+	m_refActionGroup->add( Gtk::Action::create("PConenctionSelAll", Gtk::Stock::SELECT_ALL, "_Select all connections", "Select all connections"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPConnectionSelectAll) );
+	m_refActionGroup->add( Gtk::Action::create("PReseourceSelAll", Gtk::Stock::SELECT_ALL, "_Select all resources", "Select all resources"),
+							sigc::mem_fun(*this, &ApplicationWindow::onPResourceSelectAll) );
 
 	m_refUIManager = Gtk::UIManager::create();
 	m_refUIManager->insert_action_group(m_refActionGroup);
@@ -269,18 +273,18 @@ void ApplicationWindow::createWidgets(void)
         "      <menuitem action='PManageKill'/>"
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
-		"      <menuitem action='PManageSelAll'/>"
+		"      <menuitem action='PModuleSelAll'/>"
 		" </popup>"
 		" <popup name='PopupConnections'>"
         "      <menuitem action='PManageConnect'/>"
         "      <menuitem action='PManageDisconnect'/>"
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
-		"      <menuitem action='PManageSelAll'/>"
+		"      <menuitem action='PConenctionSelAll'/>"
 		" </popup>"
 		" <popup name='PopupResources'>"
         "      <menuitem action='PManageRefresh'/>"
-		"      <menuitem action='PManageSelAll'/>"
+		"      <menuitem action='PReseourceSelAll'/>"
 		" </popup>"
 		"</ui>";
 
@@ -299,22 +303,29 @@ void ApplicationWindow::createWidgets(void)
 	m_refUIManager->add_ui_from_string(ui_info, ex);
 	if(ex.get())
 	{
-  		std::cerr << "building popu menus failed: " << ex->what();
+  		std::cerr << "building popup menus failed: " << ex->what();
 	}	
 #endif //GLIBMM_EXCEPTIONS_ENABLED
+
+	m_TreeModView.setMouseEventCallback(this, 
+				&ApplicationWindow::onModuleTreeButtonPressed);
+	m_TreeConView.setMouseEventCallback(this, 
+				&ApplicationWindow::onConnectionTreeButtonPressed);
+	m_TreeResView.setMouseEventCallback(this, 
+				&ApplicationWindow::onResourceTreeButtonPressed);
 
 }
 
 void ApplicationWindow::setupSignals(void)
 {
-	m_TreeModView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
-            &ApplicationWindow::onModuleTreeButtonPressed) );
+//	m_TreeModView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+//            &ApplicationWindow::onModuleTreeButtonPressed) );
 
-	m_TreeConView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
-            &ApplicationWindow::onConnectionTreeButtonPressed) );
+//	m_TreeConView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+//            &ApplicationWindow::onConnectionTreeButtonPressed) );
 
-	m_TreeResView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
-            &ApplicationWindow::onResourceTreeButtonPressed) );
+//	m_TreeResView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
+//            &ApplicationWindow::onResourceTreeButtonPressed) );
 
 }
 
@@ -388,35 +399,102 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 
 void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
 {
-	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
-	{
-		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-        			m_refUIManager->get_widget("/PopupModules"));
-		if(pMenu)
-	  	pMenu->popup(event->button, event->time);
+	//if it's a mouse click 
+	if(event->type == GDK_BUTTON_PRESS)
+	{	
+		Gtk::TreeModel::Path path;
+		bool bOnItem = m_TreeModView.get_path_at_pos(event->x, 
+													 event->y, path);
+		// if it's not a free click
+		if(bOnItem)
+		{
+			m_refActionGroup->get_action("PManageRun")->set_sensitive(true);
+			m_refActionGroup->get_action("PManageStop")->set_sensitive(true);
+			m_refActionGroup->get_action("PManageKill")->set_sensitive(true);
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(true);
+		}
+		else
+		{
+			m_refTreeModSelection->unselect_all();
+			m_refActionGroup->get_action("PManageRun")->set_sensitive(false);
+			m_refActionGroup->get_action("PManageStop")->set_sensitive(false);
+			m_refActionGroup->get_action("PManageKill")->set_sensitive(false);
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
+		}
+		
+		// if it's a right click 
+		if(event->button == 3)
+		{
+			Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+						m_refUIManager->get_widget("/PopupModules"));
+			if(pMenu)
+				pMenu->popup(event->button, event->time);
+		}
 	}
 }
 
 void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 {
-	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	//if it's a mouse click 
+	if(event->type == GDK_BUTTON_PRESS)
 	{
-		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-        			m_refUIManager->get_widget("/PopupConnections"));
-		if(pMenu)
-	  		pMenu->popup(event->button, event->time);
+		Gtk::TreeModel::Path path;
+		bool bOnItem = m_TreeConView.get_path_at_pos(event->x, 
+													 event->y, path);
+		// if it's not a free click
+		if(bOnItem)
+		{
+			m_refActionGroup->get_action("PManageConnect")->set_sensitive(true);
+			m_refActionGroup->get_action("PManageDisconnect")->set_sensitive(true);
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(true);
+		}
+		else
+		{
+			m_refTreeConSelection->unselect_all();
+			m_refActionGroup->get_action("PManageConnect")->set_sensitive(false);
+			m_refActionGroup->get_action("PManageDisconnect")->set_sensitive(false);
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
+		}
+		
+		// if it's a right click 
+		if(event->button == 3)
+		{
+			Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+						m_refUIManager->get_widget("/PopupConnections"));
+			if(pMenu)
+				pMenu->popup(event->button, event->time);
+		}
 	}
 }
 
 
 void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
 {
-	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
+	//if it's a mouse click 
+	if(event->type == GDK_BUTTON_PRESS)
 	{
-		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-        			m_refUIManager->get_widget("/PopupResources"));
-		if(pMenu)
-	  		pMenu->popup(event->button, event->time);
+		Gtk::TreeModel::Path path;
+		bool bOnItem = m_TreeResView.get_path_at_pos(event->x, 
+													 event->y, path);
+		// if it's not a free click
+		if(bOnItem)
+		{
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(true);
+		}
+		else
+		{
+			m_refTreeResSelection->unselect_all();
+			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
+		}
+		
+		// if it's a right click 
+		if(event->button == 3)
+		{
+			Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+						m_refUIManager->get_widget("/PopupResources"));
+			if(pMenu)
+				pMenu->popup(event->button, event->time);
+		}
 	}
 }
 

@@ -344,7 +344,7 @@ void MainWindow::setupActions(void)
 							sigc::mem_fun(*this, &MainWindow::onMenuManageConnect) );
 	m_refActionGroup->add( Gtk::Action::create("ManageDisconnect", Gtk::Stock::DISCONNECT, "_Disconnect", "Disconnect links"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageDisconnect) );
-	m_refActionGroup->add( Gtk::Action::create("ManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Modules/connections Status"),
+	m_refActionGroup->add( Gtk::Action::create("ManageRefresh", Gtk::Stock::REFRESH, "Re_fresh Status", "Refresh Status"),
 							sigc::mem_fun(*this, &MainWindow::onMenuManageRefresh) );
 
 	//Help menu:
@@ -721,6 +721,46 @@ void MainWindow::onMenuEditSellAll()
 
 void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 {
+	//if it's a mouse click 
+	if(event->type == GDK_BUTTON_PRESS)
+	{
+		Gtk::TreeModel::Path path;
+		bool bOnItem = m_applicationList.getTreeView()->get_path_at_pos(
+													event->x, 
+													event->y, path);
+		bool bOnAppItem = false;
+		if(path)
+		{
+			Gtk::TreeModel::iterator iter = 
+					m_applicationList.m_refTreeModel->get_iter(path);
+			if((*iter)[m_applicationList.m_appColumns.m_col_type] == APPLICATION)
+				bOnAppItem = true;
+		}
+			//Do something with the row.
+			
+		// if it's not a free click
+		if(bOnItem && bOnAppItem)
+		{	
+			m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
+			m_refActionGroup->get_action("PAppLoad")->set_sensitive(true);		
+		}
+		else
+		{
+			m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
+			m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
+		}
+		
+		// if it's a right click 
+		if(event->button == 3)
+		{
+			Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
+						m_refUIManager->get_widget("/PopupApplication"));
+			if(pMenu)
+			pMenu->popup(event->button, event->time);
+		}
+	}
+
+/*
 	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
 	{
 		Gtk::TreeModel::iterator iter = 
@@ -751,6 +791,7 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 		if(pMenu)
 	  		pMenu->popup(event->button, event->time);
 	}
+	*/
 }
 
 void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path, 
