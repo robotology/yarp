@@ -60,7 +60,8 @@ YARP libraries and OpenCV 2.0 (if found)
 --name \e portname 
 - The parameter \e portname identifies the name of the listening
   port open by the service; if not specified \e /dump is
-  assumed.
+  assumed. The leading forward slash will be added if not
+  provided.
  
 --type \e datatype 
 - The parameter \e datatype selects the type of items to be 
@@ -173,7 +174,6 @@ So, now, have a look inside the directory ./log
 #endif
 
 #include <stdio.h>
-#include <string.h>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
