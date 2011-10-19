@@ -128,17 +128,17 @@ public:
 
     // documented in Contactable
     virtual void getReport(PortReport& reporter) {
-        getReport(reporter);
+        port.getReport(reporter);
     }
 
     // documented in Contactable
     virtual void setReporter(PortReport& reporter) {
-        setReporter(reporter);
+        port.setReporter(reporter);
     }
 
     // documented in Contactable
     virtual bool isWriting() {
-        return isWriting();
+        return port.isWriting();
     }
     
 private:

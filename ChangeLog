@@ -1,3 +1,15 @@
+2011-10-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/RpcServer.h: fix incorrect
+	forwarding in getReport/setReporter/isWriting methods.
+
+	* src/libYARP_OS/include/yarp/os/RpcClient.h: fix incorrect
+	forwarding in getReport/setReporter/isWriting methods.
+
+	* src/libYARP_OS/harness/PortTest.cpp (PortReport): add test
+	for RpcServer/RpcClient problem with setReporter 
+	[thanks Ugo Pattacini] [thanks Vadim Tikhanoff]
+
 2011-10-05  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/yarpserver/src/yarpserver3.cpp: read settings from

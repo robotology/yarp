@@ -876,6 +876,54 @@ public:
     }
 
 
+    virtual void testReportsWithRpcClient() {
+        report(0,"check port status report with rpc client...");
+
+        {
+            RpcClient p1;
+            RpcServer p2;
+            p1.open("/foo");
+            p2.open("/bar");
+            printf("%s %d\n", __FILE__, __LINE__);
+            Network::connect("/foo","/bar");
+            printf("%s %d\n", __FILE__, __LINE__);
+            Network::sync("/foo");
+            printf("%s %d\n", __FILE__, __LINE__);
+            Network::sync("/bar");
+            printf("%s %d\n", __FILE__, __LINE__);
+            MyReport report;
+            p1.getReport(report);
+            printf("%s %d\n", __FILE__, __LINE__);
+            checkTrue(report.ct>0,"got some report");
+            checkEqual(report.oct,1,"exactly one output");
+            p1.close();
+            p2.close();
+        }
+
+        {
+            RpcClient p1;
+            RpcServer p2;
+            MyReport report1, report2;
+            p1.setReporter(report1);
+            p2.setReporter(report2);
+            p1.open("/foo");
+            p2.open("/bar");
+            Network::connect("/foo","/bar");
+            Network::sync("/foo");
+            Network::sync("/bar");
+            checkTrue(report1.ct>0,"sender got report callback");
+            checkEqual(report1.oct,1,"exactly one output callback");
+            checkEqual(report1.ict,0,"exactly zero input callbacks");
+            checkTrue(report2.ct>0,"receiver got report callback");
+            checkEqual(report2.oct,0,"exactly zero output callbacks");
+            checkEqual(report2.ict,1,"exactly one input callback");
+            p1.close();
+            p2.close();
+        }
+
+    }
+
+
     virtual void testAdmin() {
         report(0,"check port admin interface...");
 
@@ -1013,11 +1061,13 @@ public:
         testAcquire();
 
         testTimeout();
-        testReports();
 
         testYarpRead();
 
         testMissingSlash();
+
+        testReports();
+        testReportsWithRpcClient();
 
         NetworkBase::setLocalMode(false);
     }
