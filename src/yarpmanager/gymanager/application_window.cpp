@@ -117,14 +117,14 @@ void ApplicationWindow::createWidgets(void)
 								nores_ico.bytes_per_pixel*nores_ico.width);
 
 	//Add the Model’s column to the Module View’s columns:	
-	Gtk::TreeViewColumn col("Module");
+	Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Module"));
 	Gtk::CellRendererText cellText;
 	Gtk::CellRendererPixbuf cellPix;
-	col.pack_start(cellPix, false);
-	col.pack_start(cellText, true);
-	col.add_attribute(cellText, "text", 1);
-	col.add_attribute(cellPix, "pixbuf", 0);
-	m_TreeModView.append_column(col);
+	col->pack_start(cellPix, false);
+	col->pack_start(cellText, true);
+	col->add_attribute(cellText, "text", 1);
+	col->add_attribute(cellPix, "pixbuf", 0);
+	m_TreeModView.append_column(*col);
 
 	m_TreeModView.get_column(0)->set_sort_column(m_modColumns.m_col_name);
 	m_TreeModView.get_column(0)->set_resizable(true);
@@ -135,12 +135,12 @@ void ApplicationWindow::createWidgets(void)
 
 	Gtk::CellRendererText statusRenderer;
 	statusRenderer.property_editable() = false;
-	Gtk::TreeViewColumn statusCol("Status", statusRenderer);
-	statusCol.add_attribute(statusRenderer, "foreground-gdk", m_modColumns.m_col_color);
-	statusCol.add_attribute(statusRenderer, "text", m_modColumns.m_col_status);
-	statusCol.set_sort_column(m_modColumns.m_col_status);
-	statusCol.set_resizable(true);
-	m_TreeModView.append_column(statusCol);
+	Gtk::TreeViewColumn* statusCol = Gtk::manage(new Gtk::TreeViewColumn("Status", statusRenderer));
+	statusCol->add_attribute(statusRenderer, "foreground-gdk", m_modColumns.m_col_color);
+	statusCol->add_attribute(statusRenderer, "text", m_modColumns.m_col_status);
+	statusCol->set_sort_column(m_modColumns.m_col_status);
+	statusCol->set_resizable(true);
+	m_TreeModView.append_column(*statusCol);
 
 
 	m_TreeModView.append_column_editable("Host", m_modColumns.m_col_host);
@@ -164,26 +164,26 @@ void ApplicationWindow::createWidgets(void)
 
 
 	//Add the Model’s column to the connection View’s columns:	
-	Gtk::TreeViewColumn ccol("Connection");
+	Gtk::TreeViewColumn* ccol = Gtk::manage(new Gtk::TreeViewColumn("Connection"));
 	Gtk::CellRendererText ccellText;
 
 	Gtk::CellRendererPixbuf ccellPix;
-	ccol.pack_start(ccellPix, false);
-	ccol.pack_start(ccellText, true);
-	ccol.add_attribute(ccellText, "text", 1);
-	ccol.add_attribute(ccellPix, "pixbuf", 0);
-	m_TreeConView.append_column(ccol);
+	ccol->pack_start(ccellPix, false);
+	ccol->pack_start(ccellText, true);
+	ccol->add_attribute(ccellText, "text", 1);
+	ccol->add_attribute(ccellPix, "pixbuf", 0);
+	m_TreeConView.append_column(*ccol);
 	
 	m_TreeConView.append_column("ID", m_conColumns.m_col_id);
 
 	Gtk::CellRendererText statusRenderer2;
 	statusRenderer2.property_editable() = false;
-	Gtk::TreeViewColumn statusCol2("Status", statusRenderer2);
-	statusCol2.add_attribute(statusRenderer2, "foreground-gdk", m_conColumns.m_col_color);
-	statusCol2.add_attribute(statusRenderer2, "text", m_conColumns.m_col_status);
-	statusCol2.set_sort_column(m_conColumns.m_col_status);
-	statusCol2.set_resizable(true);
-	m_TreeConView.append_column(statusCol2);
+	Gtk::TreeViewColumn* statusCol2 = Gtk::manage(new Gtk::TreeViewColumn("Status", statusRenderer2));
+	statusCol2->add_attribute(statusRenderer2, "foreground-gdk", m_conColumns.m_col_color);
+	statusCol2->add_attribute(statusRenderer2, "text", m_conColumns.m_col_status);
+	statusCol2->set_sort_column(m_conColumns.m_col_status);
+	statusCol2->set_resizable(true);
+	m_TreeConView.append_column(*statusCol2);
 
 	m_TreeConView.append_column_editable("From", m_conColumns.m_col_from);
 	m_TreeConView.append_column_editable("To", m_conColumns.m_col_to);
@@ -204,25 +204,25 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeConView.get_column(5)->set_resizable(true);
 
 	//Add the Model’s column to the resource View’s columns:	
-	Gtk::TreeViewColumn rcol("Resource");
+	Gtk::TreeViewColumn* rcol = Gtk::manage(new Gtk::TreeViewColumn("Resource"));
 	Gtk::CellRendererText rcellText;
 	Gtk::CellRendererPixbuf rcellPix;
-	rcol.pack_start(rcellPix, false);
-	rcol.pack_start(rcellText, true);
-	rcol.add_attribute(rcellText, "text", 1);
-	rcol.add_attribute(rcellPix, "pixbuf", 0);
-	m_TreeResView.append_column(rcol);
+	rcol->pack_start(rcellPix, false);
+	rcol->pack_start(rcellText, true);
+	rcol->add_attribute(rcellText, "text", 1);
+	rcol->add_attribute(rcellPix, "pixbuf", 0);
+	m_TreeResView.append_column(*rcol);
 
 	m_TreeResView.append_column("ID", m_resColumns.m_col_id);
 	
 	Gtk::CellRendererText statusRenderer3;
 	statusRenderer3.property_editable() = false;
-	Gtk::TreeViewColumn statusCol3("Status", statusRenderer3);
-	statusCol3.add_attribute(statusRenderer3, "foreground-gdk", m_resColumns.m_col_color);
-	statusCol3.add_attribute(statusRenderer3, "text", m_resColumns.m_col_status);
-	statusCol3.set_sort_column(m_resColumns.m_col_status);
-	statusCol3.set_resizable(true);
-	m_TreeResView.append_column(statusCol3);
+	Gtk::TreeViewColumn* statusCol3 = Gtk::manage(new Gtk::TreeViewColumn("Status", statusRenderer3));
+	statusCol3->add_attribute(statusRenderer3, "foreground-gdk", m_resColumns.m_col_color);
+	statusCol3->add_attribute(statusRenderer3, "text", m_resColumns.m_col_status);
+	statusCol3->set_sort_column(m_resColumns.m_col_status);
+	statusCol3->set_resizable(true);
+	m_TreeResView.append_column(*statusCol3);
 
 	m_TreeResView.get_column(0)->set_sort_column(m_resColumns.m_col_res);
 	m_TreeResView.get_column(0)->set_resizable(true);
