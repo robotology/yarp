@@ -136,6 +136,10 @@ public:
     virtual bool localOnly() const {
         return true;
     }
-};
+
+    virtual Contact getNameServerContact() const {
+        return Contact::byName("/root");
+    }
+ };
 
 #endif
