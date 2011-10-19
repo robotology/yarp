@@ -117,7 +117,7 @@ void SafeManager::run()
 				{
 					if(eventReceiver) eventReceiver->onModStart(modIds[i]);
 				}
-				else
+				else if(Manager::suspended(modIds[i]))
 				{
 					if(eventReceiver) eventReceiver->onModStop(modIds[i]);
 				}
@@ -151,6 +151,9 @@ void SafeManager::run()
 	default:
 		break;
 	};
+
+	if(eventReceiver)
+		eventReceiver->onError();
 
 	postSemaphore();
 

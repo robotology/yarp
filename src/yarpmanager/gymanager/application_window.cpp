@@ -402,6 +402,7 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
 	//if it's a mouse click 
 	if(event->type == GDK_BUTTON_PRESS)
 	{	
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
 		Gtk::TreeModel::Path path;
 		bool bOnItem = m_TreeModView.get_path_at_pos(event->x, 
 													 event->y, path);
@@ -421,7 +422,7 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
 			m_refActionGroup->get_action("PManageKill")->set_sensitive(false);
 			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
 		}
-		
+#endif 
 		// if it's a right click 
 		if(event->button == 3)
 		{
@@ -438,6 +439,8 @@ void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 	//if it's a mouse click 
 	if(event->type == GDK_BUTTON_PRESS)
 	{
+
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
 		Gtk::TreeModel::Path path;
 		bool bOnItem = m_TreeConView.get_path_at_pos(event->x, 
 													 event->y, path);
@@ -455,7 +458,7 @@ void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 			m_refActionGroup->get_action("PManageDisconnect")->set_sensitive(false);
 			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
 		}
-		
+#endif		
 		// if it's a right click 
 		if(event->button == 3)
 		{
@@ -473,6 +476,8 @@ void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
 	//if it's a mouse click 
 	if(event->type == GDK_BUTTON_PRESS)
 	{
+
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
 		Gtk::TreeModel::Path path;
 		bool bOnItem = m_TreeResView.get_path_at_pos(event->x, 
 													 event->y, path);
@@ -486,7 +491,7 @@ void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
 			m_refTreeResSelection->unselect_all();
 			m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
 		}
-		
+#endif		
 		// if it's a right click 
 		if(event->button == 3)
 		{

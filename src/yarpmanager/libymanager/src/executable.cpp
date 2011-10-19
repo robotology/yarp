@@ -176,8 +176,7 @@ void Executable::stop(void)
 {
 	RSTATE state = getState();
 	if((state == SUSPENDED) ||
-	   (state == DEAD) ||
-	   (state == DYING))
+	   (state == DEAD))
 	{
 		event->onExecutableStop(this);
 		ostringstream msg;
@@ -206,9 +205,9 @@ void Executable::stop(void)
 
 void Executable::kill(void)
 {
+	broker->kill();
 	if(RateThread::isRunning())
 		RateThread::stop();
-	broker->kill();
 	setState(DEAD);
 	event->onExecutableDied(this);	
 }

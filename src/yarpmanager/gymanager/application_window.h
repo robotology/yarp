@@ -124,13 +124,15 @@ protected:
 	virtual bool on_button_press_event(GdkEventButton* event )
 	{
 		if(event->type == GDK_BUTTON_PRESS)
-		{	
+		{
+
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
 			Gtk::TreeModel::Path path;
 			bool bOnItem = get_path_at_pos(event->x, event->y, path);
 			// if it's not a free click
 			if(!bOnItem)
 				get_selection()->unselect_all();	
-
+#endif 
 			if(event->button == 3)
 			{
 				if(__pMouseEventCallback && __pParent)

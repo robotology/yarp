@@ -87,7 +87,7 @@ public:
 	void setEnv(const char* val) {if(val) strEnv = val; }
 
 	void addConnection(Connection &cnn) { connections.push_back(cnn); }
-	RSTATE state(void) { return getState();}
+	RSTATE state(void) { return getState(true);}
 	Broker* getBroker(void) { return broker; }
 	MEvent* getEvent(void) { return event; }
 	const char* getCommand(void) { return strCommand.c_str(); }

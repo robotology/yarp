@@ -724,6 +724,8 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 	//if it's a mouse click 
 	if(event->type == GDK_BUTTON_PRESS)
 	{
+
+#if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
 		Gtk::TreeModel::Path path;
 		bool bOnItem = m_applicationList.getTreeView()->get_path_at_pos(
 													event->x, 
@@ -749,7 +751,7 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 			m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
 			m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
 		}
-		
+#endif 	
 		// if it's a right click 
 		if(event->button == 3)
 		{
@@ -759,39 +761,6 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 			pMenu->popup(event->button, event->time);
 		}
 	}
-
-/*
-	if((event->type == GDK_BUTTON_PRESS) && (event->button == 3))
-	{
-		Gtk::TreeModel::iterator iter = 
-			m_applicationList.getTreeView()->get_selection()->get_selected();
-		if(iter) //If anything is selected
-		{
-			Gtk::TreeModel::Row row = *iter;
-			//Do something with the row.
-			if(row[m_applicationList.m_appColumns.m_col_type] == APPLICATION)
-			{
-				m_refActionGroup->get_action("PAppRemove")->set_sensitive(true);
-				m_refActionGroup->get_action("PAppLoad")->set_sensitive(true);		
-			}
-			else
-			{
-				m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
-				m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
-			}
-		}
-		else
-		{
-			m_refActionGroup->get_action("PAppRemove")->set_sensitive(false);
-			m_refActionGroup->get_action("PAppLoad")->set_sensitive(false);
-		}
-
-		Gtk::Menu* pMenu = dynamic_cast<Gtk::Menu*>(
-        			m_refUIManager->get_widget("/PopupApplication"));
-		if(pMenu)
-	  		pMenu->popup(event->button, event->time);
-	}
-	*/
 }
 
 void MainWindow::onAppListRowActivated(const Gtk::TreeModel::Path& path, 

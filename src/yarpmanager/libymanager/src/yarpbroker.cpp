@@ -13,8 +13,8 @@
 #include <string.h>
 
 #define YARPRUN_ERROR 		-1
-#define RUN_TIMEOUT 		10.0 		//second
-#define STOP_TIMEOUT 		60.0
+#define RUN_TIMEOUT 		10.0 		//seconds
+#define STOP_TIMEOUT 		30.0
 #define KILL_TIMEOUT 		10.0
 
 
@@ -142,14 +142,6 @@ bool YarpBroker::run()
 		return false;
 	}
 
-	/*
-	int w = 0;
-	while(w++ < RUN_TIMEOUT)
-	{
-		if(running())
-			return true;
-		Time::delay(0.1); 
-	}*/
 
 	double base = Time::now();
 	while(!timeout(base, RUN_TIMEOUT))
@@ -193,15 +185,6 @@ bool YarpBroker::stop()
 		return false;
 	}
 
-	/*
-	int w = 0;
-	while(w++ < STOP_TIMEOUT)
-	{
-		if(!running())
-			return true;
-		Time::delay(0.1); 
-	}*/
-
 	double base = Time::now();
 	while(!timeout(base, STOP_TIMEOUT))
 	{
@@ -243,15 +226,6 @@ bool YarpBroker::kill()
 		strError += strCmd;
 		return false;
 	}
-
-	/*
-	int w = 0;
-	while(w++ < KILL_TIMEOUT)
-	{
-		if(!running())
-			return true;
-		Time::delay(0.1); 
-	}*/
 
 	double base = Time::now();
 	while(!timeout(base, KILL_TIMEOUT))
@@ -418,7 +392,7 @@ const char* YarpBroker::error(void)
 
 bool YarpBroker::timeout(double base, double timeout)
 {
-	Time::delay(0.1);
+	Time::delay(1.0);
 	if((Time::now()-base) > timeout)
 		return true;
 	return false; 
