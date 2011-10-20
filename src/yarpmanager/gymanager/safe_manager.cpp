@@ -92,6 +92,7 @@ void SafeManager::run()
 				{
 					if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
 				}
+				refreshPortStatus(conIds[i]);
 			}
 			break;
 		}
@@ -106,6 +107,7 @@ void SafeManager::run()
 				{
 					if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
 				}
+				refreshPortStatus(conIds[i]);
 			}
 			break;
 		}
@@ -133,7 +135,9 @@ void SafeManager::run()
 				{
 					if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
 				}
+				refreshPortStatus(conIds[i]);
 			}
+
 			for(unsigned int i=0; i<resIds.size(); i++)
 			{
 				if(Manager::exist(resIds[i]))
@@ -301,4 +305,25 @@ void SafeManager::onCnnFailed(void* which)
 		eventReceiver->onError();
 }
 
+void SafeManager::refreshPortStatus(int id)
+{
+	// refreshing ports status 
+	if(Manager::existPortFrom(id))
+	{
+		if(eventReceiver) eventReceiver->onConAvailable(id, -1);
+	}
+	else
+	{
+		if(eventReceiver) eventReceiver->onConUnAvailable(id, -1);
+	}
+
+	if(Manager::existPortTo(id))
+	{
+		if(eventReceiver) eventReceiver->onConAvailable(-1, id);
+	}
+	else
+	{
+		if(eventReceiver) eventReceiver->onConUnAvailable(-1, id);
+	}
+}
 

@@ -66,6 +66,8 @@ public:
 		add(m_col_to); 
 		add(m_col_carrier); 
 		add(m_col_color);
+		add(m_col_from_color);
+		add(m_col_to_color);
 		}
 	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
 	Gtk::TreeModelColumn<int> m_col_id;
@@ -75,7 +77,8 @@ public:
 	Gtk::TreeModelColumn<Glib::ustring> m_col_to;
 	Gtk::TreeModelColumn<Glib::ustring> m_col_carrier;
 	Gtk::TreeModelColumn<Gdk::Color> m_col_color;
-
+	Gtk::TreeModelColumn<Gdk::Color> m_col_from_color;
+	Gtk::TreeModelColumn<Gdk::Color> m_col_to_color;
 };
 
 
@@ -190,6 +193,8 @@ public:
 	void onConDisconnect(int which);
 	void onResAvailable(int which);
 	void onResUnAvailable(int which);
+	void onConAvailable(int from, int to);
+	void onConUnAvailable(int from, int to);
 	void onError(void);
 
 protected:

@@ -293,6 +293,33 @@ bool Manager::exist(unsigned int id)
 	return connector.exists(resources[id]->getPort());
 }
 
+bool Manager::existPortFrom(unsigned int id)
+{
+	if(id>=connections.size())
+	{
+		logger->addError("Connection id is out of range.");
+		return false;
+	}
+
+	YarpBroker connector; 
+	connector.init();
+	return connector.exists(connections[id].from());
+}
+
+
+bool Manager::existPortTo(unsigned int id)
+{
+	if(id>=connections.size())
+	{
+		logger->addError("Connection id is out of range.");
+		return false;
+	}
+
+	YarpBroker connector; 
+	connector.init();
+	return connector.exists(connections[id].to());
+}
+
 
 bool Manager::checkDependency(void)
 {

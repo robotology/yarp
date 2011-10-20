@@ -36,13 +36,15 @@ class ApplicationEvent{
 public: 
 	ApplicationEvent() {}
 	virtual ~ApplicationEvent() {}
-	virtual void onModStart(int which) {};
-	virtual void onModStop(int which) {};
-	virtual void onConConnect(int which) {};
-	virtual void onConDisconnect(int which) {};
-	virtual void onResAvailable(int which) {};
-	virtual void onResUnAvailable(int which) {};
-	virtual void onError(void) {};
+	virtual void onModStart(int which) {}
+	virtual void onModStop(int which) {}
+	virtual void onConConnect(int which) {}
+	virtual void onConDisconnect(int which) {}
+	virtual void onResAvailable(int which) {}
+	virtual void onResUnAvailable(int which) {}
+	virtual void onConAvailable(int from, int to) {}
+	virtual void onConUnAvailable(int from, int to) {}
+	virtual void onError(void) {}
 };
 
 
@@ -87,6 +89,7 @@ private:
 	std::vector<int> modIds;
 	std::vector<int> conIds;
 	std::vector<int> resIds;
+	void refreshPortStatus(int id);
 
 };
 

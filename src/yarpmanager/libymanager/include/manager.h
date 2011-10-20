@@ -66,6 +66,8 @@ public:
 	bool connected(unsigned int id);
 	bool checkDependency(void);
 	bool exist(unsigned int id);
+	bool existPortFrom(unsigned int id);
+	bool existPortTo(unsigned int id);
 
 	void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
 	const char* defaultBroker(void) { return strDefBroker.c_str(); }

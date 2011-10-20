@@ -185,8 +185,36 @@ void ApplicationWindow::createWidgets(void)
 	statusCol2->set_resizable(true);
 	m_TreeConView.append_column(*statusCol2);
 
-	m_TreeConView.append_column_editable("From", m_conColumns.m_col_from);
-	m_TreeConView.append_column_editable("To", m_conColumns.m_col_to);
+	int idx = m_TreeConView.append_column_editable("From", m_conColumns.m_col_from) - 1;
+	Gtk::CellRendererText* fromRenderer = 
+			dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(idx));
+	if(fromRenderer)
+	{
+		m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
+													 "foreground-gdk", 
+													 m_conColumns.m_col_from_color);
+		m_TreeConView.get_column(idx)->add_attribute(*fromRenderer, 
+													 "text", 
+													 m_conColumns.m_col_from);
+		m_TreeConView.get_column(idx)->set_sort_column(m_conColumns.m_col_from);
+		m_TreeConView.get_column(idx)->set_resizable(true);
+	}
+
+	idx = m_TreeConView.append_column_editable("To", m_conColumns.m_col_to) - 1 ;
+	Gtk::CellRendererText* toRenderer = 
+			dynamic_cast<Gtk::CellRendererText*>(m_TreeConView.get_column_cell_renderer(idx));
+	if(toRenderer)
+	{
+		m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
+													 "foreground-gdk", 
+													 m_conColumns.m_col_to_color);
+		m_TreeConView.get_column(idx)->add_attribute(*toRenderer, 
+													 "text", 
+													 m_conColumns.m_col_to);
+		m_TreeConView.get_column(idx)->set_sort_column(m_conColumns.m_col_to);
+		m_TreeConView.get_column(idx)->set_resizable(true);
+	}
+
 	m_TreeConView.append_column_editable("Carrier", m_conColumns.m_col_carrier);
 
 
@@ -196,8 +224,8 @@ void ApplicationWindow::createWidgets(void)
 	m_TreeConView.get_column(1)->set_resizable(true);
 	m_TreeConView.get_column(2)->set_sort_column(m_conColumns.m_col_status);
 	m_TreeConView.get_column(2)->set_resizable(true);
-	m_TreeConView.get_column(3)->set_sort_column(m_conColumns.m_col_from);
-	m_TreeConView.get_column(3)->set_resizable(true);
+	//m_TreeConView.get_column(3)->set_sort_column(m_conColumns.m_col_from);
+	//m_TreeConView.get_column(3)->set_resizable(true);
 	m_TreeConView.get_column(4)->set_sort_column(m_conColumns.m_col_to);
 	m_TreeConView.get_column(4)->set_resizable(true);
 	m_TreeConView.get_column(5)->set_sort_column(m_conColumns.m_col_carrier);
@@ -377,6 +405,7 @@ void ApplicationWindow::prepareManagerFrom(Manager* lazy, const char* szAppName)
 			m_conRow[m_conColumns.m_col_carrier] = carrierToStr((*cnnitr).carrier());
 			m_conRow[m_conColumns.m_col_status] = "disconnected";
 			m_conRow[m_conColumns.m_col_color] = Gdk::Color("#BF0303");
+			//m_conRow[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
 		}
 
 		
@@ -944,6 +973,42 @@ void ApplicationWindow::onConDisconnect(int which)
 		row.set_value(0, m_refPixDisconnected);
 	}
 	setCellsEditable();
+	reportErrors();
+}
+
+
+void ApplicationWindow::onConAvailable(int from, int to)
+{
+	Gtk::TreeModel::Row row;
+	if(from >= 0)
+	{
+		if(getConRowByID(from, &row))
+			row[m_conColumns.m_col_from_color] = Gdk::Color("#008C00");
+	}
+
+	if(to >= 0)
+	{
+		if(getConRowByID(to, &row))
+			row[m_conColumns.m_col_to_color] = Gdk::Color("#008C00");
+	}
+	reportErrors();
+}
+
+
+void ApplicationWindow::onConUnAvailable(int from, int to)
+{
+	Gtk::TreeModel::Row row;
+	if(from >= 0)
+	{
+		if(getConRowByID(from, &row))
+			row[m_conColumns.m_col_from_color] = Gdk::Color("#BF0303");
+	}
+
+	if(to >= 0)
+	{
+		if(getConRowByID(to, &row))
+			row[m_conColumns.m_col_to_color] = Gdk::Color("#BF0303");
+	}
 	reportErrors();
 }
 
