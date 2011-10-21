@@ -174,6 +174,7 @@ So, now, have a look inside the directory ./log
 #endif
 
 #include <stdio.h>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <iomanip>
