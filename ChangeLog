@@ -1,3 +1,9 @@
+2011-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/PortReport.h: document
+	limitations on yarp::os::PortReport::report
+	[thanks Ugo Pattacini]
+
 2011-10-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/RpcServer.h: fix incorrect
@@ -6,7 +12,7 @@
 	* src/libYARP_OS/include/yarp/os/RpcClient.h: fix incorrect
 	forwarding in getReport/setReporter/isWriting methods.
 
-	* src/libYARP_OS/harness/PortTest.cpp (PortReport): add test
+	* src/libYARP_OS/harness/PortTest.cpp: add test
 	for RpcServer/RpcClient problem with setReporter 
 	[thanks Ugo Pattacini] [thanks Vadim Tikhanoff]
 
