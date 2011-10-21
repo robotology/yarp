@@ -317,8 +317,8 @@ bool YarpBroker::connect(const char* from, const char* to,
 		return false;
 	}
 		
-	if(connected(from, to))
-		return true;
+	//if(connected(from, to))
+	//	return true;
 		
 	if(!NetworkBase::connect(from, to, carrier))
 	{
@@ -380,6 +380,8 @@ bool YarpBroker::exists(const char* port)
 
 bool YarpBroker::connected(const char* from, const char* to)
 {
+	if(!exists(from) || !exists(to))
+		return false;
 	return NetworkBase::isConnected(from, to);
 }
 

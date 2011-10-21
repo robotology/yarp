@@ -152,6 +152,21 @@ void SafeManager::run()
 			break;
 		}
 
+	case MREFRESH_CNN:{
+			for(unsigned int i=0; i<conIds.size(); i++)
+			{
+				if(Manager::connected(conIds[i]))
+				{
+					if(eventReceiver) eventReceiver->onConConnect(conIds[i]);
+				}
+				else
+				{
+					if(eventReceiver) eventReceiver->onConDisconnect(conIds[i]);
+				}
+				refreshPortStatus(conIds[i]);
+			}
+		}
+
 	default:
 		break;
 	};
@@ -226,6 +241,22 @@ void SafeManager::onExecutableStop(void* which)
 	if(eventReceiver && exe)
 		eventReceiver->onModStop(exe->getID());
 
+	// Experimental:  
+	//  do auto refresh on connections whenever a module stops
+	/*
+	if(checkSemaphore())
+	{
+		if(!isRunning())
+		{
+			conIds.clear();
+			for(int i=0; i<getConnections().size(); i++)
+				conIds.push_back(i);
+			action = MREFRESH_CNN;
+			yarp::os::Thread::start();
+		}
+		postSemaphore();
+	}
+	*/
 }
 
 void SafeManager::onExecutableDied(void* which)

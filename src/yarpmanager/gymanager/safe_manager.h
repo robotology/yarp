@@ -28,6 +28,7 @@ typedef enum __ThreadAction {
 	MCONNECT,
 	MDISCONNECT,
 	MREFRESH,
+	MREFRESH_CNN,
 	MNOTHING
 } ThreadAction;
 
