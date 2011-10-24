@@ -1,3 +1,9 @@
+2011-10-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* conf/template/YARPConfig.cmake.in: use CMAKE_CURRENT_LIST_FILE
+	instead of hard-coded path [thanks Traveler Hauptman]
+	[thanks Lorenzo Natale]
+
 2011-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/PortReport.h: document

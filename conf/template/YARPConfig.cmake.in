@@ -19,7 +19,8 @@ IF (NOT YARP_FOUND)
   SET(YARP_VERSION "${YARP_VERSION_MAJOR}.${YARP_VERSION_MINOR}.${YARP_VERSION_PATCH}${YARP_VERSION_MODIFIER}")
 
   # Pull in any dependencies that YARP libraries may have.
-  INCLUDE("@YARP_DEPENDENCY_FILE@")
+  GET_FILENAME_COMPONENT(YARP_CMAKE ${CMAKE_CURRENT_LIST_FILE} PATH)
+  INCLUDE("${YARP_CMAKE}/@YARP_DEPENDENCY_FILENAME@")
 
   # Link directories are rare, so most user scripts don't
   # account for them.  On balance, better to pull them

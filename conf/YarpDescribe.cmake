@@ -16,6 +16,7 @@ message(STATUS "In-tree includes: ${YARP_INCLUDE_DIRS}")
 message(STATUS "YARP libraries: ${YARP_LIBRARIES}")
 
 set(YARP_DEPENDENCY_FILE ${CMAKE_BINARY_DIR}/YARPDependencies.cmake)
+set(YARP_DEPENDENCY_FILENAME YARPDependencies.cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
                ${CMAKE_BINARY_DIR}/YARPConfig.cmake @ONLY IMMEDIATE)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfigVersion.cmake.in
@@ -26,6 +27,7 @@ set(VERSIONED_LIB lib${LIB_SUFFIX}/YARP-${YARP_GENERIC_VERSION})
 
 # Set up a configuration file for installed use of YARP
 set(YARP_DEPENDENCY_FILE ${CMAKE_INSTALL_PREFIX}/${VERSIONED_LIB}/YARP.cmake)
+set(YARP_DEPENDENCY_FILENAME YARP.cmake)
 set(YARP_INCLUDE_DIRS ${CMAKE_INSTALL_PREFIX}/include)
 set(YARP_MODULE_PATH ${CMAKE_INSTALL_PREFIX}/share/yarp/cmake)
 configure_file(${CMAKE_SOURCE_DIR}/conf/template/YARPConfig.cmake.in
