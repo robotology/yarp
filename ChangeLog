@@ -4,6 +4,13 @@
 	instead of hard-coded path [thanks Traveler Hauptman]
 	[thanks Lorenzo Natale]
 
+2011-10-28 Alessandro Scalzo <alessandro.scalzo@iit.it>
+
+        * src/libYARP_dev/include/yarp/dev/FrameGrabberInterfaces.h
+        * src/libYARP_dev/include/yarp/dev/ServerFrameGrabber.h
+	* src/libYARP_dev/src/ServerFrameGrabber.cpp
+	Added support to dragonfly2raw raw image framegrabber driver.
+
 2011-10-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/PortReport.h: document

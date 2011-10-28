@@ -22,6 +22,7 @@ using namespace yarp::sig;
 
 ServerFrameGrabber::ServerFrameGrabber() {
     fgImage = NULL;
+    fgImageRaw = NULL;
     fgSound = NULL;
     fgAv = NULL;
     fgCtrl = NULL;
@@ -80,6 +81,7 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         } 
         if (v) {
             poly.view(fgImage);
+            poly.view(fgImageRaw);
         }
         if (a) {
             poly.view(fgSound);
@@ -132,9 +134,14 @@ bool ServerFrameGrabber::open(yarp::os::Searchable& config) {
         }
     } else if (fgImage!=NULL) {
         if (yarp_show_debug()) {
-            printf("Grabber for images\n");
+            printf("Grabber for rgb images\n");
         }
         thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelRgb> >(p,*this,canDrop,addStamp,fgTimed));
+    } else if (fgImageRaw!=NULL) {
+        if (yarp_show_debug()) {
+            printf("Grabber for raw images\n");
+        }
+        thread.attach(new DataWriter<yarp::sig::ImageOf<yarp::sig::PixelMono> >(p,*this,canDrop,addStamp,fgTimed));
     } else if (fgSound!=NULL) {
         if (yarp_show_info()) {
             printf("Grabber for sound\n");

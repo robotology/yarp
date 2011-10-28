@@ -18,17 +18,17 @@
 
 namespace yarp{
     namespace dev {
+        class IFrameGrabberImageSize;
+        class IFrameGrabber;
         class IFrameGrabberRgb;
         class IFrameGrabberImage;
-        class IFrameGrabber;
+        class IFrameGrabberImageRaw;
         class IFrameGrabberControls;
 		class IFrameGrabberControlsDC1394;
         class FrameGrabberOpenParameters;
         class IFrameWriterImage;
     }
 }
-
-
 
 /** 
  * @ingroup dev_iface_media
@@ -122,7 +122,40 @@ public:
      * @return true/false upon success/failure
      */
     virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelRgb>& image) = 0;
-    
+
+    /** 
+     * Return the height of each frame.
+     * @return image height
+     */
+    virtual int height() const =0;
+
+    /** 
+     * Return the width of each frame.
+     * @return image width
+     */
+    virtual int width() const =0;
+};
+
+/**
+ * @ingroup dev_iface_media
+ *
+ * Read a YARP-format image from a device.
+ */
+class YARP_dev_API yarp::dev::IFrameGrabberImageRaw
+{
+public:
+    /**
+     * Destructor.
+     */
+    virtual ~IFrameGrabberImageRaw(){}
+    /**
+     * Get a raw image from the frame grabber
+     * 
+     * @param image the image to be filled
+     * @return true/false upon success/failure
+     */
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) = 0;
+
     /** 
      * Return the height of each frame.
      * @return image height

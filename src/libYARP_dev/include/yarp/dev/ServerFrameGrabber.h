@@ -158,6 +158,7 @@ class YARP_dev_API yarp::dev::ServerFrameGrabber : public DeviceDriver,
             public IFrameGrabberControls,
             public IService,
             public DataSource<yarp::sig::ImageOf<yarp::sig::PixelRgb> >,
+            public DataSource<yarp::sig::ImageOf<yarp::sig::PixelMono> >,
             public DataSource<yarp::sig::Sound>,
             public DataSource<ImageRgbSound>,
             public DataSource2<yarp::sig::ImageOf<yarp::sig::PixelRgb>,yarp::sig::Sound>
@@ -168,6 +169,7 @@ private:
     yarp::os::RateThreadWrapper thread;
     PolyDriver poly;
     IFrameGrabberImage *fgImage;
+    IFrameGrabberImageRaw *fgImageRaw;
     IAudioGrabberSound *fgSound;
     IAudioVisualGrabber *fgAv;
     IFrameGrabberControls *fgCtrl;
@@ -218,6 +220,10 @@ public:
         return getImage(image);
     }
     
+    bool getDatum(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+        return getImage(image);
+    }
+
     virtual bool getDatum(yarp::sig::Sound& sound) {
         return getSound(sound);
     }
@@ -235,6 +241,11 @@ public:
         if (fgImage==NULL) { return false; }
         return fgImage->getImage(image);
     }
+
+    virtual bool getImage(yarp::sig::ImageOf<yarp::sig::PixelMono>& image) {
+        if (fgImageRaw==NULL) { return false; }
+        return fgImageRaw->getImage(image);
+    }
     
     virtual bool getSound(yarp::sig::Sound& sound) {
         if (fgSound==NULL) { return false; }
@@ -248,13 +259,15 @@ public:
     }
 
     virtual int height() const {
-        if (fgImage==NULL) { return 0; }
-        return fgImage->height();
+        if (fgImage) { return fgImage->height(); }
+        if (fgImageRaw) { return fgImageRaw->height(); }
+        return 0;
     }
 
     virtual int width() const {
-        if (fgImage==NULL) { return 0; }
-        return fgImage->width();
+        if (fgImage) { return fgImage->width(); }
+        if (fgImageRaw) { return fgImageRaw->width(); }
+        return 0;
     }
 
 // set
