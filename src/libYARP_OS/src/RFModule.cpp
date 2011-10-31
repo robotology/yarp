@@ -193,7 +193,7 @@ bool RFModuleHelper::read(ConnectionReader& connection) {
     if (response.size()>=1) {
         ConnectionWriter *writer = connection.getWriter();
         if (writer!=0) {
-            if (response.get(0).toString()=="many") {
+            if (response.get(0).toString()=="many" && writer->isTextMode()) {
                 for (int i=1; i<response.size(); i++) {
                     Value& v = response.get(i);
                     if (v.isList()) {
