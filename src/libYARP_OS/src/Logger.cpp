@@ -55,7 +55,7 @@ void Logger::show(int level, const String& txt) {
     }
     if (parent == NULL) {
         if (level>=low) {
-            if (inLevel<=DEBUG) {
+            if (inLevel<=LM_DEBUG) {
                 ACE_OS::fprintf(stderr,"%s(%04x): %s\n",
                                 prefix.c_str(),
                                 (int)(long int)(PLATFORM_THREAD_SELF()),

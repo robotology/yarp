@@ -47,13 +47,8 @@ class YARP_OS_impl_API yarp::os::impl::Logger
 {
 public:
     enum Level {
-        DEBUG = LM_DEBUG,
-        MAJOR_DEBUG = LM_INFO,
-        WARNING = LM_WARNING,
-        INFO = LM_INFO,
-        SEVERE = LM_ERROR,
-
-        DEFAULT_WARN=INFO,
+        MAJOR_DEBUG=LM_INFO,
+        DEFAULT_WARN=LM_INFO,
     };
 
     Logger(const char *prefix, Logger *parent = NULL) {
