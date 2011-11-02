@@ -1,6 +1,7 @@
 # Copyright: (C) 2009 RobotCub Consortium
 # Authors: Paul Fitzpatrick, Giorgio Metta, Giacomo Spigler
 # CopyPolicy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+# Thanks to Rui Silva for a sugggested improvement to external module support
 
 option(CREATE_DEVICE_LIBRARY_MODULES "Compile device modules" FALSE)
 if (CREATE_DEVICE_LIBRARY_MODULES)
@@ -60,7 +61,7 @@ BEGIN_PLUGIN_LIBRARY(yarpmod)
 	  message(FATAL_ERROR "${EXTDIR}_DIR=${${EXTDIR}_DIR} from ${EXTFILE} does not contain a CMakeLists.txt")
 	endif (NOT EXISTS "${safe_path}/CMakeLists.txt")
         add_subdirectory(${safe_path}
-                       ${CMAKE_CURRENT_BINARY_DIR}/externals)
+                       ${CMAKE_CURRENT_BINARY_DIR}/externals/${EXTDIR})
       endforeach(EXTDIR ${EXTERNAL_MODULES})
     endif (EXISTS ${EXTFILE})
   endforeach(EXTFILE)

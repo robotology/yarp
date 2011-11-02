@@ -1,8 +1,13 @@
+2011-11-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/modules/CMakeLists.txt: avoid path conflicts when compiling
+	multiple external modules [thanks Rui Silva] [bug tracker #3432174]
+
 2011-10-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/impl/Logger.h: remove DEBUG
 	from enum, since it may be defined as a macro on some version
-	of MSVC [thanks Rui Silva]
+	of MSVC [thanks Rui Silva] [bug tracker #3431122]
 
 2011-10-24  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
