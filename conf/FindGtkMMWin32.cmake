@@ -1,12 +1,15 @@
 # Copyright: (C) 2009 RobotCub Consortium
-# Authors: Giorgio Metta, Lorenzo Natale
+# Authors: Giorgio Metta, Alessandro Scalzo and Lorenzo Natale
 # CopyPolicy: Released under the terms of the GNU GPL v2.0.
 
 #
-# Searches and hopefully finds gtkmm on windows -- by alessandro and giorgio.
+# Searches gtkmm on windows.
 # Assumes that the environment variable GTKMM_BASEPATH is set to the place
 # where GTKMM libs have been unpacked/installed. Users that want to install 
 # gtkmm manually must define GTKMM_BASEPATH accordingly.
+# 
+# Added: 03/11/2011, Lorenzo
+# Support gtkmm x64, search also using GTKMM64_BASEPATH (this variable is set by the installer).
 #
 # Creates:
 # GtkMM_INCLUDE_DIRS   - Directories to include to use GTKMM
@@ -17,7 +20,10 @@
 # GtkMM_MAJOR_VERSION  - major version
 # GtkMM_MINOR_VERSION  - minor version
 
-## Added version info -- for now fake 14/04/11 Lorenzo Natale
+# 14/04/11, Lorenzo Natale: Added version info -- for now fake
+# 03/11/11, Lorenzo Natale: Specifically handle Visual Studio 10 (see branch MSVC_VERSION EQUAL 1600) to avoid runtime error 
+#           when running gyarpmanager. Previous version was linking vs9 lib/dlls. If VS 10 dlls/libs are not available with the
+#           version of GTKMM you use, update to newer version (e.g. 2.22).
 
 # prerequisite
 FIND_PACKAGE(GtkPlus REQUIRED)
@@ -40,8 +46,13 @@ IF(PKG_CONFIG_FOUND AND NOT WIN32)
     ENDIF (GtkMM_FOUND)
 
 else(PKG_CONFIG_FOUND AND NOT WIN32)
-    SET(GTKMM_DIR $ENV{GTKMM_BASEPATH})
-
+	# first check GTKMM64
+	set(GTKMM_DIR  $ENV{GTKMM64_BASEPATH})
+	# if that failed check GTKMM_BASEPATH
+	if (NOT GTKMM_DIR )
+		set(GTKMM_DIR  $ENV{GTKMM_BASEPATH})
+	endif()
+	
     # new vs. old style libraries detection (sort of fuzzy, temporary).
     # still uses a strict "find" which tests for a list of header files to 
     # be present and available. We might be able to relax this and just
@@ -137,12 +148,17 @@ else(PKG_CONFIG_FOUND AND NOT WIN32)
     IF (MSVC_VERSION EQUAL 1400)
         SET(REGEX_GTKMM "[-](vc80[-])?")
     ELSE (MSVC_VERSION EQUAL 1400)
-        IF (MSVC_VERSION EQUAL 1500 OR MSVC_VERSION EQUAL 1600)
+        IF (MSVC_VERSION EQUAL 1500)
+		    MESSAGE("MSVC_VERSION: ${MSVC_VERSION}")
             SET(REGEX_GTKMM "[-](vc90[-])?")
-        ELSE (MSVC_VERSION EQUAL 1500 OR MSVC_VERSION EQUAL 1600)
-            MESSAGE("Sorry, this version of FindGtkMMWin32.cmake does not yet support your version of Visual Studio")
-            SET(GtkMM_FOUND FALSE)
-        ENDIF (MSVC_VERSION EQUAL 1500 OR MSVC_VERSION EQUAL 1600)
+        ELSE (MSVC_VERSION EQUAL 1500)
+		    IF (MSVC_VERSION EQUAL 1600)
+			    SET(REGEX_GTKMM "[-](vc100[-])?")
+	        ELSEIF(MSVC_VERSION EQUAL 1600)
+                MESSAGE("Sorry, this version of FindGtkMMWin32.cmake does not yet support your version of Visual Studio")
+                SET(GtkMM_FOUND FALSE)
+            ENDIF (MSVC_VERSION EQUAL 1600)
+		ENDIF (MSVC_VERSION EQUAL 1500)
     ENDIF (MSVC_VERSION EQUAL 1400)
 
     # I'd like to search for an unspecified version and pattern of library name (new format vs. old format)

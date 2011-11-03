@@ -18,6 +18,9 @@
 # GTHREAD_LINK_FLAGS
 # GTHREAD_INCLUDE_DIR
 #
+# Added: 03/11/2011, Lorenzo
+# Windows: support gtkmm x64, search also using GTKMM64_BASEPATH (this variable is set by the installer).
+#
 
 INCLUDE(FindPackageHandleStandardArgs)
 
@@ -48,11 +51,9 @@ IF(UNIX)
  SET(GTHREAD_C_FLAGS "${GTHREAD_C_FLAGS}" CACHE INTERNAL "gthread include flags")
  SET(GTHREAD_INCLUDE_DIR "${GTHREAD_INCLUDE_DIR}" CACHE INTERNAL "gthread include directory")
 
- 
  SET(Gthread_LIBRARIES "${GTHREAD_LINK_FLAGS}" CACHE INTERNAL "gthread link flags")
  SET(Gthread_C_FLAGS "${GTHREAD_C_FLAGS}" CACHE INTERNAL "gthread include flags")
  SET(Gthread_INCLUDE_DIRS "${GTHREAD_INCLUDE_DIR}" CACHE INTERNAL "gthread include directory")
-
 
  IF (GTHREAD_C_FLAGS)
  	SET(Gthread_FOUND TRUE)
@@ -60,13 +61,23 @@ IF(UNIX)
 	SET(Gthread_FOUND FALSE)
  ENDIF (GTHREAD_C_FLAGS)
  
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
-
-
+ FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES Gthread_INCLUDE_DIRS)
 ELSE (UNIX)
+
+  # search GTKMM_BASEPATH to support gthread shipped and installed from gtkmm
+  # priority to GTKMM64_BASEPATH (x64 build)
+  set(GTK_BASEPATH $ENV{GTKMM64_BASEPATH})
+  if (NOT GTK_BASEPATH)
+      set(GTK_BASEPATH $ENV{GTKMM_BASEPATH})
+  endif()
+  
+  if (NOT GTK_BASEPATH)
+      set(GTK_BASEPATH $ENV{GTK_BASEPATH})
+  endif()
+	  
   FIND_LIBRARY(GTK_thread_lib
 	NAMES gthread-2.0
-	PATHS $ENV{GTK_BASEPATH}/lib)
+	PATHS ${GTK_BASEPATH}/lib)
   
   SET(Gthread_INCLUDE_DIRS "")
   
@@ -75,9 +86,8 @@ ELSE (UNIX)
     SET(Gthread_LIBRARIES
 	  ${GTK_thread_lib})
   ENDIF(GTK_thread_lib)
-
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES)
-
+  
+  FIND_PACKAGE_HANDLE_STANDARD_ARGS(Gthread "GTHREAD not found" Gthread_LIBRARIES)
 ENDIF (UNIX)
 
 
