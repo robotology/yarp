@@ -555,6 +555,12 @@ typedef yarp::os::BufferedPort<ImageRgbFloat> BufferedPortImageRgbFloat;
 		return result;
 	}
 
+	yarp::dev::IGazeControl *viewIGazeControl() {
+	  yarp::dev::IGazeControl *result;
+	  self->view(result);
+	  return result;
+	}
+
 	yarp::dev::IImpedanceControl *viewIImpedanceControl() {
 		yarp::dev::IImpedanceControl *result;
 		self->view(result);
