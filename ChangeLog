@@ -1,3 +1,14 @@
+2011-11-03 Lorenzo Natale <lorenzo.natale@iit.it>
+    * conf/FindGTKMMWin32.cmake
+	* conf/FindGtkWin32.cmake
+	* conf/FindGthread.cmake
+	added support for gtkmm x64 (default windows installer set GTKMM64_BASEPATH)
+	
+	* conf/FindGTKMMWin32.cmake
+	specifically handles Visual Studio 10, previous version was using VS9 dlls with 
+	VS10 and caused mysterious crash of gyarpmanager. May need VS 10 users to install 
+	newer versions of gtkmm that contains VS 10 dlls (i.e. 2.22).
+	
 2011-11-02  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/modules/CMakeLists.txt: avoid path conflicts when compiling
