@@ -1,3 +1,8 @@
+2011-11-07  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/src/Contact.cpp: fix rusty support for YARP 
+	without nameserver [thanks Traveler Hauptman]
+
 2011-11-03  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* example/swig/yarp.i: add IGazeControl view 

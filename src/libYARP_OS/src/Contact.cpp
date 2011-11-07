@@ -162,12 +162,12 @@ Contact Contact::fromString(const char *txt) {
         base = str.find(":/");
         offset = 1;
     }
-    /*
     if (base==ConstString::npos) {
-        base = str.find("/");
-        offset = 0;
+        if (str[0] == '/') {
+            base = 0;
+            offset = 0;
+        }
     }
-    */
     if (base!=ConstString::npos) {
         c = Contact::byCarrier(str.substr(0,base));
         start = base+offset;
@@ -206,7 +206,7 @@ Contact Contact::fromString(const char *txt) {
             // yes, machine:nnn
             ConstString machine = str.substr(start+1,colon-start-1);
             ConstString portnum = str.substr(colon+1, nums);
-            c = c.addSocket(c.getCarrier().c_str(),
+            c = c.addSocket(c.getCarrier()==""?"tcp":c.getCarrier().c_str(),
                             machine,
                             atoi(portnum.c_str()));
             start = i;
