@@ -99,15 +99,19 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 
 
 bool KnowledgeBase::addApplication(Application* app)
-{
+{	
 	__CHECK_NULLPTR(app);
 	ErrorLogger* logger  = ErrorLogger::Instance();
-    static unsigned int appID = 0;
+	static map<string, int> mapId;
 	app->setLabel(app->getName());
 	if(kbGraph.hasNode(app))
 	{
+		if(mapId.find(string(app->getName()))==mapId.end())
+			mapId[app->getName()] = 1;
+		else
+			mapId[app->getName()] = mapId[app->getName()] + 1;
         ostringstream newlable;
-        newlable<<app->getLabel()<<"_"<<appID++; 		
+        newlable<<app->getLabel()<<"("<<mapId[app->getName()]<<")"; 		
         ostringstream msg;
 		msg<<app->getName()<<" from "<<app->getXmlFile()<<" already exists.";
 		logger->addWarning(msg);
@@ -115,7 +119,7 @@ bool KnowledgeBase::addApplication(Application* app)
         app->setLabel(newlable.str().c_str());
 		//return false; 
 	}
-	
+		
 	if(!kbGraph.addNode(app))
 	{		
 		ostringstream msg;
@@ -278,7 +282,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 		ostringstream newname;
 		newname<<application->getLabel()<<":"<<mod.getName()<<":"<<modList[mod.getName()];
 		
-		Module* repmod = (Module*)kbGraph.getNode(mod.getName());
+		Module* repmod = dynamic_cast<Module*>(kbGraph.getNode(mod.getName()));
 		if(repmod)
 			module = replicateModule(tmpGraph, repmod, newname.str().c_str());
 		else
