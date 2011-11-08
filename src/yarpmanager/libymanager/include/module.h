@@ -138,17 +138,17 @@ public:
 	const char* getBroker(void) { return strBroker.c_str(); }	
 	const char* getPrefix(void) { return strPrefix.c_str(); }	
 
-	int argumentCount(void) { return arguments.size(); }
+	size_t argumentCount(void) { return arguments.size(); }
 	Argument& getArgumentAt(int index){ return arguments[index]; }
-	int platformCount(void) { return platforms.size(); }
+	size_t platformCount(void) { return platforms.size(); }
 	Platform& getPlatformAt(int index){ return platforms[index]; }
-	int outputCount(void) { return outputs.size(); }
+	size_t outputCount(void) { return outputs.size(); }
 	OutputData& getOutputAt(int index) { return outputs[index]; }
-	int inputCount(void) { return inputs.size(); }
+	size_t inputCount(void) { return inputs.size(); }
 	InputData& getInputAt(int index) { return inputs[index]; } 
 
 	void addAuthor(const char* szAuthor) { authors.push_back(szAuthor); }
-	int authorCount(void) { return authors.size(); }
+	size_t authorCount(void) { return authors.size(); }
 	const char* getAuthorAt(int index) { return authors[index].c_str(); }
 	
 	bool addArgument(Argument& arg);

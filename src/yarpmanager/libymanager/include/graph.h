@@ -41,7 +41,7 @@ public:
 	Graph(void);
 	virtual ~Graph();
 
-	int getSize(void) { return nodes.size(); }
+	size_t getSize(void) { return nodes.size(); }
 	Node* getNodeAt(int index);
 	
 	Node* addNode(Node* node);

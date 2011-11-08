@@ -82,8 +82,8 @@ public:
 		return msg.c_str(); 
 	}
 	void clear(void) { errors.clear(); warnings.clear(); }
-	int errorCount(void){ return errors.size();}
-	int warningCount(void){ return warnings.size();}
+	size_t errorCount(void){ return errors.size();}
+	size_t warningCount(void){ return warnings.size();}
  
 private:
 	ErrorLogger(){};  

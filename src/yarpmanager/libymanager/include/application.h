@@ -137,7 +137,7 @@ public:
 		return (strName == modint.strName); 
 	}
 	
-	int portmapCount(void) { return portmaps.size(); }
+	size_t portmapCount(void) { return portmaps.size(); }
 	Portmap& getPortmapAt(int index){ return portmaps[index]; }
 	bool addPortmap(Portmap &portmap);
 	bool removePortmap(Portmap& portmap);
@@ -216,20 +216,20 @@ public:
 	virtual Node* clone(void);
 
 	void addAuthor(const char* szAuthor) { authors.push_back(szAuthor); }
-	int authorCount(void) { return authors.size(); }
+	size_t authorCount(void) { return authors.size(); }
 	const char* getAuthorAt(int index) { return authors[index].c_str(); }	
 
-	int imoduleCount(void) { return Imodules.size(); }
+	size_t imoduleCount(void) { return Imodules.size(); }
 	ModuleInterface& getImoduleAt(int index){ return Imodules[index]; }
 	bool addImodule(ModuleInterface &imod);
 	bool removeImodule(ModuleInterface& imod);
 
-	int iapplicationCount(void) { return Iapplications.size(); }
+	size_t iapplicationCount(void) { return Iapplications.size(); }
 	ApplicationInterface& getIapplicationAt(int index){ return Iapplications[index]; }
 	bool addIapplication(ApplicationInterface &iapp);
 	bool removeIapplication(ApplicationInterface& iapp);
 	
-	int resourcesCount(void) { return resources.size(); }
+	size_t resourcesCount(void) { return resources.size(); }
 	ResYarpPort& getResourceAt(int index){ return resources[index]; }
 	bool addResource(ResYarpPort &res);
 	bool removeResource(ResYarpPort& res);
@@ -240,7 +240,7 @@ public:
 	void setXmlFile(const char* szFilename) { if(szFilename) strXmlFile = szFilename;}
 	const char* getXmlFile(void) { return strXmlFile.c_str(); }
 
-	int connectionCount(void) { return connections.size(); }
+	size_t connectionCount(void) { return connections.size(); }
 	Connection& getConnectionAt(int index){ return connections[index]; }
 	bool addConnection(Connection &cnn);
 	bool removeConnecrion(Connection& cnn);
