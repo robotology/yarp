@@ -22,8 +22,8 @@
 using namespace std; 
 
 
-#define YARP_NAME		"YARP"
-#define YARP_PORT		"/root"
+#define YARP_NAME   	"YARP"
+#define YARP_PORT   	"/root"
 
 bool KnowledgeBase::createFrom(ModuleLoader* _mloader, 
 							   AppLoader* _apploader)
@@ -42,13 +42,13 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 	tmpGraph.clear();
 	selnodes.clear();
 	selconnections.clear();
-	selmodules.clear();	
+	selmodules.clear(); 
 	selresources.clear();
 
 	/**
 	 * Adding YARP root resource to the graph
 	 * TODO: notice that later it should be loaded automatically 
-	 *		 from a resource xml file.
+	 *  	 from a resource xml file.
 	 */
 	ResYarpPort yroot(YARP_NAME);
 	yroot.setPort(YARP_PORT);
@@ -82,7 +82,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 		Application* application;
 		while((application = apploader->getNextApplication()))
 		{
-            addApplication(application);  
+			addApplication(application);  
 			//application->setLabel(application->getName());
 			//application = (Application*) kbGraph.addNode(application);
 		}
@@ -99,7 +99,7 @@ bool KnowledgeBase::createFrom(ModuleLoader* _mloader,
 
 
 bool KnowledgeBase::addApplication(Application* app)
-{	
+{   
 	__CHECK_NULLPTR(app);
 	ErrorLogger* logger  = ErrorLogger::Instance();
 	static map<string, int> mapId;
@@ -110,18 +110,18 @@ bool KnowledgeBase::addApplication(Application* app)
 			mapId[app->getName()] = 1;
 		else
 			mapId[app->getName()] = mapId[app->getName()] + 1;
-        ostringstream newlable;
-        newlable<<app->getLabel()<<"("<<mapId[app->getName()]<<")"; 		
-        ostringstream msg;
+		ostringstream newlable;
+		newlable<<app->getLabel()<<"("<<mapId[app->getName()]<<")"; 		
+		ostringstream msg;
 		msg<<app->getName()<<" from "<<app->getXmlFile()<<" already exists.";
 		logger->addWarning(msg);
-        app->setName(newlable.str().c_str());
-        app->setLabel(newlable.str().c_str());
+		app->setName(newlable.str().c_str());
+		app->setLabel(newlable.str().c_str());
 		//return false; 
 	}
 		
 	if(!kbGraph.addNode(app))
-	{		
+	{   	
 		ostringstream msg;
 		msg<<"Application "<<app->getName()<<" cannot be added to the graph.";
 		logger->addError(msg);
@@ -136,7 +136,7 @@ bool KnowledgeBase::addModule(Module* mod)
 	__CHECK_NULLPTR(mod);
 
 	ErrorLogger* logger  = ErrorLogger::Instance();
-	mod->setLabel(mod->getName());		
+	mod->setLabel(mod->getName());  	
 	if(kbGraph.hasNode(mod))
 	{
 		ostringstream msg;
@@ -166,7 +166,7 @@ const ApplicaitonPContainer& KnowledgeBase::getApplications(void)
 {
 	static ApplicaitonPContainer applications; 
 	applications.clear();
-	for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)	
+	for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)   
 		if((*itr)->getType() == APPLICATION &&
 			compareString(((Application*)(*itr))->getName(),
 						  ((Application*)(*itr))->getLabel()) )
@@ -180,7 +180,7 @@ const ModulePContainer& KnowledgeBase::getModules(void)
 {
 	static ModulePContainer modules; 
 	modules.clear();
-	for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)	
+	for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)   
 		if((*itr)->getType() == MODULE)
 		if((*itr)->getType() == MODULE&&
 			compareString(((Module*)(*itr))->getName(),
@@ -224,7 +224,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 	 * we need to load all embedded applications first
 	 */
 	map<string, int> appList;
-	for(int i=0; i<application->iapplicationCount(); i++)
+	for(unsigned int i=0; i<application->iapplicationCount(); i++)
 	{
 		ApplicationInterface app = application->getIapplicationAt(i);
 		if(string(app.getName()) == string(application->getName()))
@@ -248,7 +248,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 				if( strlen(application->getPrefix()) )
 				{
 					string strPrefix = string(application->getPrefix()) + 
-									   string(app.getPrefix());		
+									   string(app.getPrefix()); 	
 					app.setPrefix(strPrefix.c_str());
 				}
 				updateApplication(tmpGraph, repapp, &app);
@@ -262,7 +262,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 				ostringstream msg;
 				msg<<"Application "<<app.getName()<<" does not exist.";
 				logger->addWarning(msg);
-			}	
+			}   
 		}
 	}
 
@@ -271,7 +271,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 	 * loading modules
 	 */
 	map<string, int> modList;
-	for(int i=0; i<application->imoduleCount(); i++)
+	for(unsigned int i=0; i<application->imoduleCount(); i++)
 	{
 		Module* module;
 		ModuleInterface mod = application->getImoduleAt(i);
@@ -300,7 +300,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 		if( strlen(application->getPrefix()) )
 		{
 			string strPrefix = string(application->getPrefix()) + 
-							   string(mod.getPrefix());		
+							   string(mod.getPrefix()); 	
 			mod.setPrefix(strPrefix.c_str());
 		}
 		updateModule(tmpGraph, module, &mod);
@@ -314,7 +314,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 	/**
 	 * adding resouces dependencies to tmpGraph and resources list
 	 */
-	for(int i=0; i<application->resourcesCount(); i++)
+	for(unsigned int i=0; i<application->resourcesCount(); i++)
 	{
 		
 		ResYarpPort res = application->getResourceAt(i);
@@ -332,7 +332,7 @@ bool KnowledgeBase::makeupApplication(Application* application,
 	 * updating internal connections with application prefix and 
 	 * adding them to connections list
 	 */
-	for(int i=0; i<application->connectionCount(); i++)
+	for(unsigned int i=0; i<application->connectionCount(); i++)
 	{
 		Connection cnn = application->getConnectionAt(i);
 		if(!cnn.isExternalFrom() /*&&
@@ -381,7 +381,7 @@ InputData* KnowledgeBase::findInputByPort(Graph& graph, const char* szPort)
 	{
 		if((*itr)->getType() == INPUTD )
 		{
-			InputData* input = (InputData*)(*itr);		
+			InputData* input = (InputData*)(*itr);  	
 			if(compareString(input->getPort(), szPort) /*&&
 			   !compareString(input->getName(), input->getLabel())*/ )
 				return input;
@@ -397,7 +397,7 @@ OutputData* KnowledgeBase::findOutputByPort(Graph& graph, const char* szPort)
 	{
 		if((*itr)->getType() == OUTPUTD)
 		{
-			OutputData* output = (OutputData*)(*itr);		
+			OutputData* output = (OutputData*)(*itr);   	
 			if(compareString(output->getPort(), szPort))
 				return output;
 		}
@@ -435,7 +435,7 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 
 	selnodes.clear();
 	selconnections.clear();
-	selmodules.clear();	
+	selmodules.clear(); 
 	selresources.clear();
 	tmpGraph.clear();
 
@@ -468,7 +468,7 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 	/**
 	 * Adding all resources to tmpGraph
 	 * TODO: resources which are not connected to any input or 
-	 *		 output should not be added to tmpGraph. 
+	 *  	 output should not be added to tmpGraph. 
 	 */
 	for(GraphIterator itr=kbGraph.begin(); itr!=kbGraph.end(); itr++)
 		if((*itr)->getType() == RESOURCE)
@@ -527,7 +527,7 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 	if(!bestDependancyPath(init, &selnodes, bAutoDependancy))
 	{
 		logger->addError("No solution found.");
-		return false; 		
+		return false;   	
 	}
 
 	NodePVIterator itr;
@@ -555,7 +555,7 @@ bool KnowledgeBase::reasolveDependency(const char* szName, bool bAutoDependancy)
 							from->getCarrier());
 			if(find(selconnections.begin(), selconnections.end(),
 					cnn) == selconnections.end())
-			{					
+			{   				
 				cnn.setPriority(to->withPriority());			
 				cnn.setOwner(findOwner(tmpGraph, to));
 				selconnections.push_back(cnn);
@@ -605,7 +605,7 @@ bool KnowledgeBase::updateModule(Graph& graph,
 	if(strlen(imod->getParam()))
 		module->setParam(imod->getParam());
 	if(imod->getRank()>0)
-		module->setRank(imod->getRank());	
+		module->setRank(imod->getRank());   
 	if(strlen(imod->getBroker()))
 		module->setBroker(imod->getBroker());
 	if(strlen(imod->getStdio()))
@@ -624,7 +624,7 @@ bool KnowledgeBase::updateModule(Graph& graph,
 			input->setPort(strPort.c_str());
 		}
 
-		for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)	
+		for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
 			if((*itr)->getType() == OUTPUTD)
 			{
 				OutputData* output = (OutputData*)(*itr);
@@ -641,7 +641,7 @@ bool KnowledgeBase::updateModule(Graph& graph,
 	// updating port names
 	for(int i=0; i<imod->portmapCount(); i++)
 	{
-		Portmap port = imod->getPortmapAt(i);		
+		Portmap port = imod->getPortmapAt(i);   	
 		Node* node;
 		if(node = graph.getNode(createDataLabel(module->getLabel(), 
 			port.oldPort(), ":I")))
@@ -656,7 +656,7 @@ bool KnowledgeBase::updateModule(Graph& graph,
 			logger->addWarning(msg);			
 		}
 	}
-*/	
+*/  
 	return true; 
 }
 
@@ -726,7 +726,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
 		return NULL;
 
 	/* Adding inputs nodes to the graph*/
-	for(int i=0; i<module->inputCount(); i++)
+	for(unsigned int i=0; i<module->inputCount(); i++)
 	{
 		InputData* input = &(module->getInputAt(i));		
 		input->setLabel(createDataLabel(module->getLabel(), 
@@ -748,7 +748,7 @@ Module* KnowledgeBase::addModuleToGraph(Graph& graph, Module* module)
 	}
 	
 	/* Adding output nodes to the graph*/
-	for(int i=0; i<module->outputCount(); i++)
+	for(unsigned int i=0; i<module->outputCount(); i++)
 	{
 		OutputData* output = &(module->getOutputAt(i));
 		output->setLabel(createDataLabel(module->getLabel(),
@@ -780,12 +780,12 @@ bool KnowledgeBase::moduleCompleteness(Module* module)
 	/* Checking module name */
 	if(strlen(module->getName()) == 0)
 	{
-		logger->addWarning("Module has no name.");	
+		logger->addWarning("Module has no name.");  
 		return false;
 	}
 		
 	/* Checking inputs name and port */
-	for(int i=0; i<module->inputCount(); i++)
+	for(unsigned int i=0; i<module->inputCount(); i++)
 	{
 		const char* szName = module->getInputAt(i).getName();
 		const char* szPort = module->getInputAt(i).getPort();
@@ -794,13 +794,13 @@ bool KnowledgeBase::moduleCompleteness(Module* module)
 	}
 	
 	/* Checking outputs name and port */
-	for(int i=0; i<module->outputCount(); i++)
+	for(unsigned int i=0; i<module->outputCount(); i++)
 	{
 		const char* szName = module->getOutputAt(i).getName();
 		const char* szPort = module->getOutputAt(i).getPort();
 		if(!strlen(szName) || !strlen(szPort))
 			return false;
-	}	
+	}   
 	return true;
 }
 
@@ -811,7 +811,7 @@ Module* KnowledgeBase::findOwner(Graph& graph, InputData* input)
 	{
 		if((*itr)->getType() == MODULE)
 		{
-			Module* module = (Module*)(*itr);		
+			Module* module = (Module*)(*itr);   	
 			for(int i=0; i<module->sucCount(); i++)
 			{
 				Link l = module->getLinkAt(i);
@@ -845,11 +845,11 @@ void KnowledgeBase::updateExtraLink(Graph& graph, CnnContainer* connections)
 		else if(output && input)
 		{
 			(*itrC).setOwner(findOwner(graph, input));
-			input->addSuc(output, 0.0);	
+			input->addSuc(output, 0.0); 
 		}
-	/*	
+	/*  
 		res = findResByPort(graph, cnn.to());
-		output = findOutputByPort(graph, cnn.from());	
+		output = findOutputByPort(graph, cnn.from());   
 		if(res && output)
 			res->addSuc(output, 0.0);
 	*/
@@ -861,7 +861,7 @@ void KnowledgeBase::updateNodesLink(Graph& graph, int level)
 	/**
 	 * link inputs to relevant outputs and resources
 	 */
-	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)	
+	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
 	{
 		if((*itr)->getType() == INPUTD)
 		{
@@ -894,12 +894,12 @@ void KnowledgeBase::updateNodesLink(Graph& graph, int level)
 
 void KnowledgeBase::linkToOutputs(Graph& graph, InputData* input)
 {
-	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)	
+	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
 	{
 		if((*itr)->getType() == OUTPUTD)
 		{
 			OutputData* output = (OutputData*)(*itr);
-			Module* producer = (Module*)output->getLinkAt(0).to();			
+			Module* producer = (Module*)output->getLinkAt(0).to();  		
 			if(compareString(output->getName(), input->getName())
 			   &&(producer != findOwner(graph, input)))
 				graph.addLink(input, output, 
@@ -1044,14 +1044,14 @@ bool KnowledgeBase::bestDependancyPath(Node* initial,  NodePVector* path,
 		}
 	}
 	
-	if(!bPathFound)	
+	if(!bPathFound) 
 	{
 		initial->setVisited(false);
 		return false;
 	}
 		
-//	if((initial->getType() == INPUTD) && !bestRankedPath.empty())
-//		cout<<initial->getLabel()<<" -> "<<bestRankedPath.back()->getLabel()<<endl;
+//  if((initial->getType() == INPUTD) && !bestRankedPath.empty())
+//  	cout<<initial->getLabel()<<" -> "<<bestRankedPath.back()->getLabel()<<endl;
 	
 	*path = bestRankedPath;
 	//if(find(path->begin(), path->end(), initial) == path->end())
@@ -1084,7 +1084,7 @@ bool KnowledgeBase::exportDotGraph(Graph& graph, const char* szFileName)
 	dot<<"digraph G {"<<endl;
 	dot<<"rankdir=LR;"<<endl;
 	
-	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)	
+	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
 	{
 		switch((*itr)->getType()) {
 			case MODULE: {
@@ -1133,7 +1133,7 @@ bool KnowledgeBase::exportDotGraph(Graph& graph, const char* szFileName)
 					}
 					
 					break;
-				}				
+				}   			
 			case OUTPUTD:{
 					OutputData* out = (OutputData*)(*itr);
 					dot<<"\""<<out->getLabel()<<"\"";
@@ -1195,7 +1195,7 @@ OutputData* KnowledgeBase::selectBestOutput(const char* szDataName)
 {
 	OutputData* best = NULL;
 	int iMaxRank = 0;
-	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)	
+	for(GraphIterator itr=graph.begin(); itr!=graph.end(); itr++)   
 		if((*itr)->getType() == OUTPUTD)
 		{
 			OutputData* output = (OutputData*)(*itr);

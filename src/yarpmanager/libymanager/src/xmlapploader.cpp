@@ -389,7 +389,7 @@ Application* XmlAppLoader::parsXml(const char* szFile)
 
 				//Connections wich have the same port name in Port Resources 
 				// should also be set as external
-				for(int i=0; i<app.resourcesCount(); i++)
+				for(unsigned int i=0; i<app.resourcesCount(); i++)
 				{
 					ResYarpPort res = app.getResourceAt(i);
 					if(compareString(res.getPort(), connection.from()))

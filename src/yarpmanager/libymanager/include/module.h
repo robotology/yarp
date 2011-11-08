@@ -218,20 +218,20 @@ private:
 		cout<<"Version  : "<<m->getVersion()<<endl;\
 		cout<<"Rank     : "<<m->getRank()<<endl;\
 		cout<<"Param    : "<<endl;\
-		for(int i=0; i<m->argumentCount(); i++)\
+		for(unsigned int i=0; i<m->argumentCount(); i++)\
 		{\
 			cout<<"           "<<m->getArgumentAt(i).getParam()<<" (";\
 			cout<<m->getArgumentAt(i).getDescription()<<")"<<endl;\
 		}\
 		cout<<"Authors  : "<<endl;\
-		for(int i=0; i<m->authorCount(); i++)\
+		for(unsigned int i=0; i<m->authorCount(); i++)\
 			cout<<"           "<<m->getAuthorAt(i)<<endl;\
 		cout<<"Platforms: "<<endl;\
-		for(int i=0; i<m->platformCount(); i++)\
+		for(unsigned int i=0; i<m->platformCount(); i++)\
 			cout<<"           "<<m->getPlatformAt(i).getOS()\
 			<<", "<<m->getPlatformAt(i).getDistribution()<<endl;\
 		cout<<"Inputs   : "<<endl;\
-		for(int i=0; i<m->inputCount(); i++)\
+		for(unsigned int i=0; i<m->inputCount(); i++)\
 		{\
 			cout<<"           "<<m->getInputAt(i).getName()\
 			<<", "<<m->getInputAt(i).getPort();\
@@ -242,7 +242,7 @@ private:
 			cout<<endl;\
 		}\
 		cout<<"Outputs  : "<<endl;\
-		for(int i=0; i<m->outputCount(); i++)\
+		for(unsigned int i=0; i<m->outputCount(); i++)\
 			cout<<"           "<<m->getOutputAt(i).getName()\
 			<<", "<<m->getOutputAt(i).getPort()<<endl;\
 		cout<<endl;\

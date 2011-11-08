@@ -703,7 +703,7 @@ bool YConsoleManager::process(const vector<string> &cmdList)
 	
 
 	/**
-	 * show module's insformation 
+	 * show module's information 
 	 */
 	if((cmdList.size() == 3) && 
 		(cmdList[0] == "show") && (cmdList[1] == "mod"))
