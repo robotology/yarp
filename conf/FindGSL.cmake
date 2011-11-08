@@ -22,10 +22,9 @@
 # Modified by macl
 #
 
-
 # Included in yarp by nat March 07.
 # Some changes to account for different include dirs.
-# TODO: check if it works on linux.
+# 08/11/2011, Lorenzo Natale: added <prefix>/Release to library search path
 
 ##### check GSL_ROOT
 IF (EXISTS "$ENV{GSL_ROOT}")
@@ -34,7 +33,9 @@ IF (EXISTS "$ENV{GSL_ROOT}")
 	"$ENV{GSL_ROOT}")
   
   SET(GSL_POSSIBLE_LIBRARY_PATHS
+	"$ENV{GSL_ROOT}/Release"
 	"$ENV{GSL_ROOT}/lib")
+	
 ENDIF (EXISTS "$ENV{GSL_ROOT}")
 
 ##### check GSL_DIR
@@ -44,7 +45,8 @@ IF (EXISTS "$ENV{GSL_DIR}")
 	"$ENV{GSL_DIR}")
   
   SET(GSL_POSSIBLE_LIBRARY_PATHS
-	"$ENV{GSL_DIR}/lib")
+	"$ENV{GSL_DIR}/lib"
+	"$ENV{GSL_DIR}/Release")
 ENDIF (EXISTS "$ENV{GSL_DIR}")
 
 IF (GSL_DIR)
@@ -53,7 +55,8 @@ IF (GSL_DIR)
 	"${GSL_DIR}")
   
   SET(GSL_POSSIBLE_LIBRARY_PATHS
-	"${GSL_DIR}/lib")
+	"${GSL_DIR}/lib"
+	"${GSL_DIR}/Release")
 ENDIF (GSL_DIR)
 
 FIND_PATH(GSL_BLAS_HEADER gsl/gsl_blas.h  
