@@ -608,7 +608,8 @@ bool NetworkBase::write(const Contact& contact,
         }
         if (!port.addOutput(ec.toString().c_str())) {
             if (!style.quiet) {
-                ACE_OS::fprintf(stderr, "Cannot make connection\n");
+                ACE_OS::fprintf(stderr, "Cannot make connection to '%s'\n",
+                                ec.toString().c_str());
             }
             return false;
         }

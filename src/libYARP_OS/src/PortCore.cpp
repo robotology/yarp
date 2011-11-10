@@ -22,6 +22,9 @@
 #include <yarp/os/Time.h>
 
 #include <yarp/os/impl/PlatformStdio.h>
+#ifdef YARP_HAS_ACE
+#  include <ace/INET_Addr.h>
+#endif
 
 
 //#define YMSG(x) ACE_OS::printf x;
@@ -1281,12 +1284,31 @@ static bool __pc_rpc(const Contact& c,
     style.quiet = !verbose;
     style.timeout = 4;
     style.carrier = carrier;
-    //printf("  > sending to [%s] %s\n", c.toString().c_str(),writer.toString().c_str());
     bool ok  = Network::write(c,writer,reader,style);
-    //printf("  > got [%s] [%d]\n", reader.toString().c_str(), r);
     return ok;
 }
 
+static bool __tcp_check(const Contact& c) {
+#ifdef YARP_HAS_ACE
+    ACE_INET_Addr addr;
+    int result = addr.set(c.getPort(),c.getHost().c_str());
+    if (result!=0) {
+        fprintf(stderr, "ACE choked on %s:%d\n", c.getHost().c_str(),
+                c.getPort());
+    }
+    result = addr.set(c.getPort(),"127.0.0.1");
+    if (result!=0) {
+        fprintf(stderr, "ACE choked on 127.0.0.1:%d\n", 
+                c.getPort());
+    }
+    result = addr.set(c.getPort(),"127.0.1.1");
+    if (result!=0) {
+        fprintf(stderr, "ACE choked on 127.0.1.1:%d\n", 
+                c.getPort());
+    }
+#endif    
+    return true;
+}
 
 bool PortCore::adminBlock(ConnectionReader& reader, void *id, 
                           OutputStream *os) {
@@ -1462,6 +1484,9 @@ bool PortCore::adminBlock(ConnectionReader& reader, void *id,
                         if (!__pc_rpc(c,"xmlrpc",req,reply, false)) {
                             fprintf(stderr,"Cannot connect to ROS subscriber %s\n", 
                                     pub.c_str());
+                            // show diagnosics
+                            __pc_rpc(c,"xmlrpc",req,reply,true);
+                            __tcp_check(c);
                         } else {
                             Bottle *pref = reply.get(2).asList();
                             ConstString hostname = "";
