@@ -442,10 +442,10 @@ gint menuImageFramerate_CB(GtkWidget *widget, gpointer data)
             if (!_options.synch)
                 setTimedMode(_options.refreshTime);
 
-            gchar *msg;
-            msg = g_strdup_printf ("%s",_options.portName);
-            updateStatusbar(statusbar,msg);
-            g_free(msg);
+//            gchar *msg;
+//            msg = g_strdup_printf ("%s",_options.portName);
+//            updateStatusbar(statusbar,msg);
+//            g_free(msg);
         }
 
 	gtk_widget_destroy (dialog);
@@ -710,7 +710,7 @@ GtkWidget* createMainWindow(void)
 	gtk_box_pack_start (GTK_BOX (box), statusbar, FALSE, TRUE, 0);
 	gtk_widget_size_request(statusbar, &actualSize);
     gchar *msg;
-    msg=g_strdup_printf("%s", _options.portName);
+    msg=g_strdup_printf("%s", ptr_inputPort->getName().c_str());
     updateStatusbar(statusbar, msg);
     g_free(msg);
 
