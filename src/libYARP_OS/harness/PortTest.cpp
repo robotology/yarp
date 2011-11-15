@@ -410,6 +410,8 @@ public:
 
         report(0,"writing...");
         output.write(bot1);
+        bool ok = output.write(bot1);
+        checkTrue(ok,"output proceeding");
         report(0,"reading...");
         PortablePair<Bottle,Bottle> *result = buf.read();
 
@@ -884,16 +886,11 @@ public:
             RpcServer p2;
             p1.open("/foo");
             p2.open("/bar");
-            printf("%s %d\n", __FILE__, __LINE__);
             Network::connect("/foo","/bar");
-            printf("%s %d\n", __FILE__, __LINE__);
             Network::sync("/foo");
-            printf("%s %d\n", __FILE__, __LINE__);
             Network::sync("/bar");
-            printf("%s %d\n", __FILE__, __LINE__);
             MyReport report;
             p1.getReport(report);
-            printf("%s %d\n", __FILE__, __LINE__);
             checkTrue(report.ct>0,"got some report");
             checkEqual(report.oct,1,"exactly one output");
             p1.close();
@@ -1030,6 +1027,36 @@ public:
         checkFalse(opened,"correctly rejected port");
     }
 
+    void testInterrupt() {
+        report(0,"checking interrupt...");
+        PortReaderBuffer<PortablePair<Bottle,Bottle> > buf;
+
+        Port input, output;
+        input.open("/in");
+        output.open("/out");
+
+        buf.setStrict();
+        buf.attach(input);
+
+        output.addOutput(Contact::byName("/in").addCarrier("tcp"));
+        //Time::delay(0.2);
+
+
+        PortablePair<Bottle,Bottle> bot1;
+        bot1.head.fromString("1 2 3");
+        bot1.body.fromString("4 5 6 7");
+
+        report(0,"interrupting...");
+        output.interrupt();
+        report(0,"writing...");
+        bool ok = output.write(bot1);
+        checkFalse(ok,"output rejected correctly");
+
+        output.close();
+        input.close();
+    }
+
+
     virtual void runTests() {
         NetworkBase::setLocalMode(true);
 
@@ -1068,6 +1095,8 @@ public:
 
         testReports();
         testReportsWithRpcClient();
+
+        testInterrupt();
 
         NetworkBase::setLocalMode(false);
     }
