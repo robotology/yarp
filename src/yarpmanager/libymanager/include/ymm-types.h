@@ -17,29 +17,29 @@
 
 
 typedef enum __NodeType {
-	MODULE,
-	INPUTD,
-	OUTPUTD,
-	APPLICATION,
-	RESOURCE,
-	NODE_FILENAME,
-	NODE_OTHER
+    MODULE,
+    INPUTD,
+    OUTPUTD,
+    APPLICATION,
+    RESOURCE,
+    NODE_FILENAME,
+    NODE_OTHER
 } NodeType;
 
 typedef enum __OS {
-	LINUX,
-	WINDOWS,
-	MAC,
-	OTHER
+    LINUX,
+    WINDOWS,
+    MAC,
+    OTHER
 } OS;
 
 typedef enum __Carrier {
-	TCP,
-	UDP,
-	MCAST,
-	SHMEM,
-	TEXT,
-	UNKNOWN
+    TCP,
+    UDP,
+    MCAST,
+    SHMEM,
+    TEXT,
+    UNKNOWN
 } Carrier;
 
 
@@ -49,21 +49,21 @@ typedef enum __Carrier {
 *  declaring debugging macros
 */
 #ifdef YMM_DEBUG
-	 #include <iostream>
-	 #include <assert.h>
-	 #define __ASSERT( _cond ) assert(_cond)
-	 #define __CHECK_NULLPTR(_ptr) \
-			 assert(_ptr); \
-			 if( !_ptr ) return false;
+     #include <iostream>
+     #include <assert.h>
+     #define __ASSERT( _cond ) assert(_cond)
+     #define __CHECK_NULLPTR(_ptr) \
+             assert(_ptr); \
+             if( !_ptr ) return false;
 
-	 #define __DEBUG_MSG(msg) std::cout<<"YMM: "<<msg<<endl;
+     #define __DEBUG_MSG(msg) std::cout<<"YMM: "<<msg<<endl;
 
 #else
-	 #define __ASSERT( _cond )
-	 #define __CHECK_NULLPTR(_ptr) \
-			 if( !_ptr ) return false;
+     #define __ASSERT( _cond )
+     #define __CHECK_NULLPTR(_ptr) \
+             if( !_ptr ) return false;
 
-	 #define __DEBUG_MSG(msg)
+     #define __DEBUG_MSG(msg)
 
 #endif //YMM_DEBUG
 

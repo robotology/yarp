@@ -15,22 +15,22 @@
  */
 ResYarpPort::ResYarpPort(void) : Node(RESOURCE) 
 {
-	modOwner = NULL;
+    modOwner = NULL;
 }
 
 
 ResYarpPort::ResYarpPort(const char* szName) : Node(RESOURCE) 
 {
-	setName(szName);
+    setName(szName);
 }
 
 
 ResYarpPort::ResYarpPort(const ResYarpPort &resource) : Node(resource)
 {
-	strName = resource.strName;
-	strPort = resource.strPort; 
-	strDescription = resource.strDescription;
-	modOwner = resource.modOwner;
+    strName = resource.strName;
+    strPort = resource.strPort; 
+    strDescription = resource.strDescription;
+    modOwner = resource.modOwner;
 }
 
 
@@ -39,7 +39,7 @@ ResYarpPort::~ResYarpPort() { }
 
 Node* ResYarpPort::clone(void)
 {
-	ResYarpPort* resource = new ResYarpPort(*this);
-	return resource; 
+    ResYarpPort* resource = new ResYarpPort(*this);
+    return resource; 
 }
 

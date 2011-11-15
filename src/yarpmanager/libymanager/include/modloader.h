@@ -1,4 +1,4 @@
-	// -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
+    // -*- mode:C++; tab-width:4; c-basic-offset:4; indent-tabs-mode:nil -*-
 
 /*
  *  Yarp Modules Manager
@@ -27,13 +27,13 @@
 class ModuleLoader {
 
 public: 
-	ModuleLoader(void) {}
-	virtual ~ModuleLoader() {}
-	virtual bool init(void) = 0; 
-	virtual void reset(void) = 0;
-	virtual void fini(void) = 0;
-	virtual Module* getNextModule(void) = 0;
-	
+    ModuleLoader(void) {}
+    virtual ~ModuleLoader() {}
+    virtual bool init(void) = 0; 
+    virtual void reset(void) = 0;
+    virtual void fini(void) = 0;
+    virtual Module* getNextModule(void) = 0;
+    
 protected:
 
 private:
@@ -47,23 +47,23 @@ private:
 class XmlModLoader : public ModuleLoader {
 
 public:
-	XmlModLoader(const char* szFileName);
-	XmlModLoader(const char* szPath, const char* szModuleName);
-	virtual ~XmlModLoader();
-	bool init(void);
-	void reset(void);
-	void fini(void);
- 	Module* getNextModule(void);
-	
+    XmlModLoader(const char* szFileName);
+    XmlModLoader(const char* szPath, const char* szModuleName);
+    virtual ~XmlModLoader();
+    bool init(void);
+    void reset(void);
+    void fini(void);
+    Module* getNextModule(void);
+    
 protected:
 
 private:
-	string strName;
-	string strPath;
-	string strFileName;
-	vector<string> fileNames;
-	Module module;
-	Module* parsXml(const char* szFile);
+    string strName;
+    string strPath;
+    string strFileName;
+    vector<string> fileNames;
+    Module module;
+    Module* parsXml(const char* szFile);
 };
 
 

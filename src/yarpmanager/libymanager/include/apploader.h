@@ -24,12 +24,12 @@
 class AppLoader {
 
 public: 
-	AppLoader(void) {}
-	virtual ~AppLoader() {}
-	virtual bool init(void) = 0; 
-	virtual void fini(void) = 0;
-	virtual Application* getNextApplication(void) = 0;
-	
+    AppLoader(void) {}
+    virtual ~AppLoader() {}
+    virtual bool init(void) = 0; 
+    virtual void fini(void) = 0;
+    virtual Application* getNextApplication(void) = 0;
+    
 protected:
 
 private:

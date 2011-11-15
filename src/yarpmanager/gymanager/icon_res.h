@@ -14,10 +14,10 @@
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; // 3:RGB, 4:RGBA 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; // 3:RGB, 4:RGBA 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } runnin_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\257\257\257\245\255\255\255\363"
@@ -69,10 +69,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } suspended_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\257\257\257\245\255\255\255\363"
@@ -125,10 +125,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } connected_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0k\2267yg\22469\0\0\0\0\0\0\0\0\0"
@@ -173,10 +173,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } disconnected_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\302GGh\277FFL\0\0\0\0\0\0\0\0\0"
@@ -220,10 +220,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } nores_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -279,10 +279,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } yesres_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -334,10 +334,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } progress_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -383,10 +383,10 @@ static const struct {
 };
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } application_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\251\251\251>\253\253\253U\252\252\252!\0"
@@ -436,10 +436,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[64 * 64 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[64 * 64 * 4 + 1];
 } ymanager_ico = {
   64, 64, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"
@@ -1024,10 +1024,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[12 * 12 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[12 * 12 * 4 + 1];
 } close_ico = {
   12, 12, 4,
   "\0\0\0\\\0\0\0\250\0\0\0\255\0\0\0\255\14\14\14\244\23\23\23\236\23\23\23"
@@ -1053,10 +1053,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } stop_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\3339$1\335>+\225\335@,\343\334>*\365\335"
@@ -1104,10 +1104,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[16 * 16 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[16 * 16 * 4 + 1];
 } kill_ico = {
   16, 16, 4,
   "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\3339$1\335>+\225\335@,\343\334>*\365\335"
@@ -1157,10 +1157,10 @@ static const struct {
 
 
 static const struct {
-  guint  	 width;
-  guint  	 height;
-  guint  	 bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
-  guint8 	 pixel_data[24 * 24 * 4 + 1];
+  guint      width;
+  guint      height;
+  guint      bytes_per_pixel; /* 3:RGB, 4:RGBA */ 
+  guint8     pixel_data[24 * 24 * 4 + 1];
 } run_ico = {
   24, 24, 4,
   "U\207\37BX\213\40\206Q\206\33\23\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"

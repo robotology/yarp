@@ -1475,6 +1475,8 @@ yarp::os::Bottle yarp::os::Run::ExecuteCmdAndStdio(yarp::os::Bottle& msg)
 	            }
 	            
 	            result.addString(out.c_str());
+                result.addString(strStdioUUID.c_str());
+
 	            fprintf(stderr,"%s",out.c_str());
                 fflush(stderr);
   

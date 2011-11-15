@@ -24,18 +24,18 @@
 class SingleAppLoader : public AppLoader {
 
 public: 
-	SingleAppLoader(const char* szModule, const char* strHost);
-	virtual ~SingleAppLoader();
-	virtual bool init(void);
-	virtual void fini(void);
-	virtual Application* getNextApplication(void);
-	
+    SingleAppLoader(const char* szModule, const char* strHost);
+    virtual ~SingleAppLoader();
+    virtual bool init(void);
+    virtual void fini(void);
+    virtual Application* getNextApplication(void);
+    
 protected:
 
 private:
-	Application app;
-	string strModule;
-	string strHost;
+    Application app;
+    string strModule;
+    string strHost;
 };
 
 

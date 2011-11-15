@@ -21,6 +21,13 @@ using namespace std;
 
 //namespace ymm {
 
+class BrokerEventSink
+{
+public:
+    virtual void onBrokerStdout(const char* msg) {}
+    virtual void onBrokerModuleFailed(void) {}
+};
+
 
 /**
  * Class Broker  
@@ -28,26 +35,35 @@ using namespace std;
 class Broker {
 
 public: 
-	Broker(void);
-	virtual ~Broker();
-	virtual bool init(void) = 0; //only connector 
-	virtual bool init(const char* szcmd, const char* szparam,
-	        const char* szhost, const char* szstdio,
-	        const char* szworkdir, const char* szenv ) = 0;
-	virtual bool run() = 0;
-	virtual bool stop() = 0;
-	virtual bool kill() = 0;
-	virtual bool connect(const char* from, const char* to, 
-						const char* carrier) = 0;
-	virtual bool disconnect(const char* from, const char* to) = 0;
-	virtual bool running(void) = 0;
-	virtual bool exists(const char* port) = 0;
-	virtual bool connected(const char* from, const char* to) = 0;
-	virtual const char* error(void) = 0;
-	unsigned int generateID(void);
-	
+    Broker(void);
+    virtual ~Broker();
+    void setEventSink(BrokerEventSink* pEventSink);
+    virtual bool init(void) = 0; //only connector 
+    virtual bool init(const char* szcmd, const char* szparam,
+            const char* szhost, const char* szstdio,
+            const char* szworkdir, const char* szenv ) = 0;
+    virtual bool start() = 0;
+    virtual bool stop() = 0;
+    virtual bool kill() = 0;
+    virtual bool connect(const char* from, const char* to, 
+                        const char* carrier) = 0;
+    virtual bool disconnect(const char* from, const char* to) = 0;
+    virtual bool running(void) = 0;
+    virtual bool exists(const char* port) = 0;
+    virtual bool connected(const char* from, const char* to) = 0;
+    virtual const char* error(void) = 0;
+    virtual bool initialized(void) = 0;
+    unsigned int generateID(void);
+
+    void enableWatchDog(void) { bWithWatchDog = true; }
+    void disableWatchDog(void) { bWithWatchDog = false; }
+    bool hasWatchDog(void) { return bWithWatchDog; }
+
 protected:
-	static unsigned int UNIQUEID; 
+    static unsigned int UNIQUEID; 
+    BrokerEventSink* eventSink;
+    bool bWithWatchDog;
+    
 private:
 
 };

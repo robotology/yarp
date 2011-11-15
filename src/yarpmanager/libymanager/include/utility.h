@@ -36,62 +36,62 @@ OS strToOS(const char* szOS);
 class ErrorLogger
 {
 public:
-	static ErrorLogger* Instance(void);
-	
-	void addWarning(const char* szWarning) { 
-		if(szWarning) 
-			warnings.push_back(string(szWarning));
-	}
-	
-	void addWarning(const string &str) { 
-		warnings.push_back(str);
-	}
-	
-	void addWarning(const ostringstream &stream) { 
-		addWarning(stream.str());	
-	}
+    static ErrorLogger* Instance(void);
+    
+    void addWarning(const char* szWarning) { 
+        if(szWarning) 
+            warnings.push_back(string(szWarning));
+    }
+    
+    void addWarning(const string &str) { 
+        warnings.push_back(str);
+    }
+    
+    void addWarning(const ostringstream &stream) { 
+        addWarning(stream.str());   
+    }
 
-	void addError(const char* szError) {
-		if(szError) 
-			errors.push_back(string(szError));
-	}
+    void addError(const char* szError) {
+        if(szError) 
+            errors.push_back(string(szError));
+    }
 
-	void addError(const string &str) {
-		errors.push_back(str);
-	}
+    void addError(const string &str) {
+        errors.push_back(str);
+    }
 
-	void addError(const ostringstream &stream) {
-		addError(stream.str());
-	}
-	
-	const char* getLastError(void) { 
-		if(errors.empty())
-			return NULL;
-		static string msg;
-		msg = errors.back();
-		errors.pop_back();
-		return msg.c_str(); 		
-	}
-	
-	const char* getLastWarning(void) {
-		if(warnings.empty())
-			return NULL;
-		static string msg;
-		msg = warnings.back();
-		warnings.pop_back();
-		return msg.c_str(); 
-	}
-	void clear(void) { errors.clear(); warnings.clear(); }
-	size_t errorCount(void){ return errors.size();}
-	size_t warningCount(void){ return warnings.size();}
+    void addError(const ostringstream &stream) {
+        addError(stream.str());
+    }
+    
+    const char* getLastError(void) { 
+        if(errors.empty())
+            return NULL;
+        static string msg;
+        msg = errors.back();
+        errors.pop_back();
+        return msg.c_str();         
+    }
+    
+    const char* getLastWarning(void) {
+        if(warnings.empty())
+            return NULL;
+        static string msg;
+        msg = warnings.back();
+        warnings.pop_back();
+        return msg.c_str(); 
+    }
+    void clear(void) { errors.clear(); warnings.clear(); }
+    int errorCount(void){ return errors.size();}
+    int warningCount(void){ return warnings.size();}
  
 private:
-	ErrorLogger(){};  
-	ErrorLogger(ErrorLogger const&){};
-	//ErrorLogger& operator=(ErrorLogger const&){};
-	static ErrorLogger* pInstance;
-	vector<string> errors;
-	vector<string> warnings;
+    ErrorLogger(){};  
+    ErrorLogger(ErrorLogger const&){};
+    //ErrorLogger& operator=(ErrorLogger const&){};
+    static ErrorLogger* pInstance;
+    vector<string> errors;
+    vector<string> warnings;
 };
  
  

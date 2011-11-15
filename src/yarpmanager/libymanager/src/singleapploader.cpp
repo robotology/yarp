@@ -16,42 +16,42 @@ using namespace std;
 
 SingleAppLoader::SingleAppLoader(const char* szModule, const char* szHost)
 {
-	if(szModule) strModule = szModule;
-	if(szHost) strHost = szHost;
+    if(szModule) strModule = szModule;
+    if(szHost) strHost = szHost;
 }
 
 
 SingleAppLoader::~SingleAppLoader()
-{	
+{   
 }
 
 
 bool SingleAppLoader::init(void)
 {
-	ErrorLogger* logger  = ErrorLogger::Instance();
-	app.clear();
-	if(strModule.empty())
-	{
-		logger->addError("Empty module name.");
-		return false;
-	}
-	
-	app.setName(strModule.c_str());
-	ModuleInterface module(strModule.c_str());
-	module.setHost(strHost.c_str());
-	app.addImodule(module);
-	return true;
+    ErrorLogger* logger  = ErrorLogger::Instance();
+    app.clear();
+    if(strModule.empty())
+    {
+        logger->addError("Empty module name.");
+        return false;
+    }
+    
+    app.setName(strModule.c_str());
+    ModuleInterface module(strModule.c_str());
+    module.setHost(strHost.c_str());
+    app.addImodule(module);
+    return true;
 }
 
 
 void SingleAppLoader::fini(void)
 {
-	app.clear();
+    app.clear();
 }
 
 
 Application* SingleAppLoader::getNextApplication(void)
-{	
-	return &app;
+{   
+    return &app;
 }
 

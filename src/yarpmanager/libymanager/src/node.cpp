@@ -18,61 +18,61 @@
  
 Node::Node(const Node &node)
 {
-	bVisited = node.bVisited;
-	bSatisfied = node.bSatisfied; 
-	type = node.type;	
-	label = node.label;
-	sucessors = node.sucessors;	
+    bVisited = node.bVisited;
+    bSatisfied = node.bSatisfied; 
+    type = node.type;   
+    label = node.label;
+    sucessors = node.sucessors; 
 } 
 
 bool Node::addSuc(Node* node, float weight, bool _virtual) 
 {
-	__CHECK_NULLPTR(node);
+    __CHECK_NULLPTR(node);
 
-	if(!hasSuc(node))
-	{
-		Link ln(node, weight, _virtual); 
-		sucessors.push_back(ln);
-	}
-	return true; 
+    if(!hasSuc(node))
+    {
+        Link ln(node, weight, _virtual); 
+        sucessors.push_back(ln);
+    }
+    return true; 
 }
 
 
 bool Node::removeSuc(Node* node) 
 {
-	__CHECK_NULLPTR(node);
+    __CHECK_NULLPTR(node);
 
-	LinkIterator it = findSuc(node);
-	if(it != sucessors.end()) 
-		sucessors.erase(it);
-	return true;
+    LinkIterator it = findSuc(node);
+    if(it != sucessors.end()) 
+        sucessors.erase(it);
+    return true;
 } 
 
 
 void Node::removeAllSuc(void) 
 {
-	sucessors.clear();
+    sucessors.clear();
 }
 
 
 
 bool Node::hasSuc(Node* node)
 {
-	LinkIterator it = findSuc(node);
-	if(it == sucessors.end()) 
-		return false;
-	return true;	
+    LinkIterator it = findSuc(node);
+    if(it == sucessors.end()) 
+        return false;
+    return true;    
 }
 
 
 
 LinkIterator Node::findSuc(Node* node) 
 {
-	LinkIterator itr;
-	for(itr=sucessors.begin(); itr<sucessors.end(); itr++) 
-		if ((*itr).to() == node)
-			return itr;			
-    return sucessors.end();	
+    LinkIterator itr;
+    for(itr=sucessors.begin(); itr<sucessors.end(); itr++) 
+        if ((*itr).to() == node)
+            return itr;         
+    return sucessors.end(); 
 }
 
 

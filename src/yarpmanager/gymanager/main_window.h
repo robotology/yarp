@@ -25,74 +25,77 @@ class MainWindow : public Gtk::Window
 {
 
 public:
-	MainWindow( yarp::os::Property &config);
-	virtual ~MainWindow();
+    MainWindow( yarp::os::Property &config);
+    virtual ~MainWindow();
 
-	void onTabCloseRequest(Widget* wdg); 
-	//Glib::RefPtr<MessagesList> m_refMessageList;
-	MessagesList* m_refMessageList;
+    void onTabCloseRequest(Widget* wdg); 
+    //Glib::RefPtr<MessagesList> m_refMessageList;
+    MessagesList* m_refMessageList;
 
 protected:
 
-	//Signal handlers:
-	bool onExposeEvent(GdkEventExpose* event);
-	void onMenuFileQuit();
-	void onMenuFileNewApp();
-	void onMenuFileNewMod();
-	void onMenuFileOpen();
-	void onMenuFileClose();
-	void onMenuFileSave();
-	void onMenuFileSaveAs();
-	void onMenuFileImport();
-	void onMenuHelpAbout();
-	void onMenuHelpOnlineHelp();
-	void onMenuManageRun();
-	void onMenuManageStop();
-	void onMenuManageKill();
-	void onMenuManageConnect();
-	void onMenuManageDisconnect();
-	void onMenuManageRefresh();
-	void onMenuEditSellAll();
-	void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
-				Gtk::TreeViewColumn* column);
-	void onAppListButtonPressed(GdkEventButton* event);
+    //Signal handlers:
+    bool onExposeEvent(GdkEventExpose* event);
+    void onMenuFileQuit();
+    void onMenuFileNewApp();
+    void onMenuFileNewMod();
+    void onMenuFileOpen();
+    void onMenuFileClose();
+    void onMenuFileSave();
+    void onMenuFileSaveAs();
+    void onMenuFileImport();
+    void onMenuHelpAbout();
+    void onMenuHelpOnlineHelp();
+    void onMenuManageRun();
+    void onMenuManageStop();
+    void onMenuManageKill();
+    void onMenuManageConnect();
+    void onMenuManageDisconnect();
+    void onMenuManageRefresh();
+    void onMenuEditSellAll();
+    void onAppListRowActivated(const Gtk::TreeModel::Path& path, 
+                Gtk::TreeViewColumn* column);
+    void onAppListButtonPressed(GdkEventButton* event);
 
-	void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);	
-	bool onDeleteEvent(GdkEventAny* event);
+    void onNotebookSwitchPage(GtkNotebookPage* page, guint page_num);   
+    bool onDeleteEvent(GdkEventAny* event);
 
-	void onPAppMenuLoad();
-	void onPAppMenuRemove();
+    void onPAppMenuLoad();
+    void onPAppMenuRemove();
 
+    void on_size_allocate(Gtk::Allocation& allocation);
 
 private:
-	Manager lazyManager;
-	yarp::os::Property m_config;
+    Manager lazyManager;
+    yarp::os::Property m_config;
 
-	//Child widgets:
- 	Gtk::VBox m_VBox;
-	Gtk::VPaned m_VPaned;
-	Gtk::HPaned m_HPaned;
-	Gtk::Statusbar m_Statusbar;
-	Glib::RefPtr<Gtk::UIManager> m_refUIManager;
-	Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
-	Gtk::Notebook m_bottomTab;	
-	Gtk::Notebook m_mainTab;	
-	Gtk::Frame frame1;
-	ApplicationList m_applicationList;
-	Gtk::TextView m_commandView;
-	Glib::RefPtr<Gtk::TextBuffer> m_refCommandBuffer;
-	Glib::RefPtr<Gtk::IconFactory> m_factory;
+    //Child widgets:
+    int dummy_w;
+    int dummy_h;
+    Gtk::VBox m_VBox;
+    Gtk::VPaned m_VPaned;
+    Gtk::HPaned m_HPaned;
+    Gtk::Statusbar m_Statusbar;
+    Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+    Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
+    Gtk::Notebook m_bottomTab;  
+    Gtk::Notebook m_mainTab;    
+    Gtk::Frame frame1;
+    ApplicationList m_applicationList;
+    Gtk::TextView m_commandView;
+    Glib::RefPtr<Gtk::TextBuffer> m_refCommandBuffer;
+    Glib::RefPtr<Gtk::IconFactory> m_factory;
 
-	void manageApplication(const char* szName);
-	bool safeExit(void);
-	void closeTab(int page_num);
-	void createWidgets(void);
-	void setupStocks(void);
-	void setupActions(void);
-	void setupSignals(void);
-	bool loadRecursiveApplications(const char* szPath);
-	void reportErrors(void);
-	void syncApplicationList(void);
+    void manageApplication(const char* szName);
+    bool safeExit(void);
+    void closeTab(int page_num);
+    void createWidgets(void);
+    void setupStocks(void);
+    void setupActions(void);
+    void setupSignals(void);
+    bool loadRecursiveApplications(const char* szPath);
+    void reportErrors(void);
+    void syncApplicationList(void);
 };
 
 

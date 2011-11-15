@@ -27,76 +27,76 @@ using namespace std;
 class InputData : public Node{
 
 public: 
-	InputData(void);
-	InputData(const char* szName);
-	InputData(const InputData &input);
-	virtual ~InputData();
-	virtual Node* clone(void);
-	void setName(const char* szName) { 
-		if(szName){
-			strName = szName; 
-		}
-	}	
-	const char* getName(void) { return strName.c_str(); }
-	void setPort(const char* szPort) { if(szPort) strPort = szPort; }
-	const char* getPort(void) { return strPort.c_str(); }
-	void setCarrier(Carrier cr) { carrier = cr; }
-	Carrier getCarrier(void) { return carrier; }
-	void setPriority(bool prio) { bWithPriority = prio; }
-	void setRequired(bool req) { bRequired = req; }
-	bool isRequired(void) { return bRequired; }
-	bool withPriority(void) { return bWithPriority; }
-	void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-	const char* getDescription(void) { return strDescription.c_str(); }
-	
-	bool operator==(const InputData& input) {		
-		return (strName == input.strName); 
-	}
-	
+    InputData(void);
+    InputData(const char* szName);
+    InputData(const InputData &input);
+    virtual ~InputData();
+    virtual Node* clone(void);
+    void setName(const char* szName) { 
+        if(szName){
+            strName = szName; 
+        }
+    }   
+    const char* getName(void) { return strName.c_str(); }
+    void setPort(const char* szPort) { if(szPort) strPort = szPort; }
+    const char* getPort(void) { return strPort.c_str(); }
+    void setCarrier(Carrier cr) { carrier = cr; }
+    Carrier getCarrier(void) { return carrier; }
+    void setPriority(bool prio) { bWithPriority = prio; }
+    void setRequired(bool req) { bRequired = req; }
+    bool isRequired(void) { return bRequired; }
+    bool withPriority(void) { return bWithPriority; }
+    void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
+    const char* getDescription(void) { return strDescription.c_str(); }
+    
+    bool operator==(const InputData& input) {       
+        return (strName == input.strName); 
+    }
+    
 protected:
 
 private:
-	string strName;
-	string strPort; 
-	Carrier carrier;
-	string strDescription;
-	bool bWithPriority;
-	bool bRequired;		
+    string strName;
+    string strPort; 
+    Carrier carrier;
+    string strDescription;
+    bool bWithPriority;
+    bool bRequired;     
 };
 
 
 class OutputData : public Node{
 
 public: 
-	OutputData(void);
-	OutputData(const char* szName);
-	OutputData(const OutputData &input);
-	virtual ~OutputData();
-	virtual Node* clone(void);
-	void setName(const char* szName) { 
-		if(szName){
-			strName = szName; 
-		}
-	}	
-	const char* getName(void) { return strName.c_str(); }
-	void setPort(const char* szPort) { if(szPort) strPort = szPort; }
-	const char* getPort(void) { return strPort.c_str(); }
-	void setCarrier(Carrier cr) { carrier = cr; }
-	Carrier getCarrier(void) { return carrier; }
-	void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
-	const char* getDescription(void) { return strDescription.c_str(); }
-	
-	bool operator==(const OutputData& output) {		
-		return (strName == output.strName); 
-	}
-	
+    OutputData(void);
+    OutputData(const char* szName);
+    OutputData(const OutputData &input);
+    virtual ~OutputData();
+    virtual Node* clone(void);
+    void setName(const char* szName) { 
+        if(szName){
+            strName = szName; 
+        }
+    }   
+    const char* getName(void) { return strName.c_str(); }
+    void setPort(const char* szPort) { if(szPort) strPort = szPort; }
+    const char* getPort(void) { return strPort.c_str(); }
+    void setCarrier(Carrier cr) { carrier = cr; }
+    Carrier getCarrier(void) { return carrier; }
+    void setDescription(const char* szDesc) { if(szDesc) strDescription = szDesc; }
+    const char* getDescription(void) { return strDescription.c_str(); }
+    
+    bool operator==(const OutputData& output) {     
+        return (strName == output.strName); 
+    }
+    
 protected:
 
 private:
-	string strName;
-	string strPort; 
-	Carrier carrier;
-	string strDescription;
+    string strName;
+    string strPort; 
+    Carrier carrier;
+    string strDescription;
 };
  
  

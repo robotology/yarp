@@ -14,14 +14,21 @@ unsigned int Broker::UNIQUEID = 0;
 
 Broker::Broker()
 {
+    eventSink = NULL;
+    bWithWatchDog = false;
 }
 
 Broker::~Broker()
 {
 }
 
+void Broker::setEventSink(BrokerEventSink* pEventSink)
+{
+    eventSink = pEventSink;
+}
+
 unsigned int Broker::generateID(void) 
 { 
-	return Broker::UNIQUEID++; 
+    return Broker::UNIQUEID++; 
 }
 

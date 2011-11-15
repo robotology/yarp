@@ -25,9 +25,9 @@ using namespace std;
 //namespace ymm {
 
 typedef enum _ColorTheme {
-	THEME_DARK,
-	THEME_LIGHT,
-	THEME_NONE
+    THEME_DARK,
+    THEME_LIGHT,
+    THEME_NONE
 } ColorTheme;
 
 
@@ -37,33 +37,33 @@ typedef enum _ColorTheme {
 class YConsoleManager : public Manager {
 
 public: 
-	YConsoleManager(int argc, char* argv[]);
-	~YConsoleManager();
+    YConsoleManager(int argc, char* argv[]);
+    ~YConsoleManager();
 
 
 protected:
-	virtual void onExecutableStart(void* which);
-	virtual void onExecutableStop(void* which);
-	virtual void onExecutableDied(void* which);
-	virtual void onExecutableFailed(void* which);
-	virtual void onCnnStablished(void* which);
-	virtual void onCnnFailed(void* which);
+    virtual void onExecutableStart(void* which);
+    virtual void onExecutableStop(void* which);
+    virtual void onExecutableDied(void* which);
+    virtual void onExecutableFailed(void* which);
+    virtual void onCnnStablished(void* which);
+    virtual void onCnnFailed(void* which);
 
 private:
-	bool bShouldRun;
-	yarp::os::Property cmdline;
-	yarp::os::Property config;
-	
-	void help(void);
-	void myMain(void);
-	bool process(const vector<string> &cmdList);
-	bool exit(void);
-	void reportErrors(void);
-	void which(void);
-	bool loadRecursiveApplications(const char* szPath);
-	void updateAppNames(vector<string>* apps);
-	void setColorTheme(ColorTheme theme);
-	static void onSignal(int signum);
+    bool bShouldRun;
+    yarp::os::Property cmdline;
+    yarp::os::Property config;
+    
+    void help(void);
+    void myMain(void);
+    bool process(const vector<string> &cmdList);
+    bool exit(void);
+    void reportErrors(void);
+    void which(void);
+    bool loadRecursiveApplications(const char* szPath);
+    void updateAppNames(vector<string>* apps);
+    void setColorTheme(ColorTheme theme);
+    static void onSignal(int signum);
 };
 
 

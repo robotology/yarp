@@ -13,11 +13,11 @@
 
 int main(int argc, char* argv[])
 {
-	yarp::os::Network yarp;
-	yarp.setVerbosity(-1);
+    yarp::os::Network yarp;
+    yarp.setVerbosity(-1);
 
-	YConsoleManager ymanager(argc, argv);
+    YConsoleManager ymanager(argc, argv);
 
-	return 0;
+    return 0;
 }
 

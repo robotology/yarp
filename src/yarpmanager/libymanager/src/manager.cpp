@@ -14,8 +14,11 @@
 #include "singleapploader.h"
 
 
-#define RSK_TIMEOUT			5		// Run, Stop and kill timeout in seconds
-#define BROKER_YARPRUN		"yarprun"
+#define RUN_TIMEOUT             10      // Run timeout in seconds
+#define STOP_TIMEOUT            30      // Stop timeout in seconds
+#define KILL_TIMEOUT            10      // kill timeout in seconds
+
+#define BROKER_YARPRUN      "yarprun"
 
 
 /**
@@ -24,777 +27,770 @@
 
 Manager::Manager(bool withWatchDog) : MEvent() 
 {
-	logger  = ErrorLogger::Instance();
-	bWithWatchDog = withWatchDog;
-	bAutoDependancy = false;
-	bAutoDependancy = true;
-	bRestricted = false;
-	strDefBroker = BROKER_YARPRUN;	
-	knowledge.createFrom(NULL, NULL);
+    logger  = ErrorLogger::Instance();
+    bWithWatchDog = withWatchDog;
+    bAutoDependancy = false;
+    bAutoDependancy = true;
+    bRestricted = false;
+    strDefBroker = BROKER_YARPRUN;  
+    knowledge.createFrom(NULL, NULL);
 }
 
 Manager::Manager(const char* szModPath,
-			const char* szAppPath, bool withWatchDog)
+            const char* szAppPath, bool withWatchDog)
 {
-	logger  = ErrorLogger::Instance();
-	bWithWatchDog = withWatchDog;
-	bAutoDependancy = false;
-	bAutoDependancy = true;
-	bRestricted = false;
-	strDefBroker = BROKER_YARPRUN;	
+    logger  = ErrorLogger::Instance();
+    bWithWatchDog = withWatchDog;
+    bAutoDependancy = false;
+    bAutoDependancy = true;
+    bRestricted = false;
+    strDefBroker = BROKER_YARPRUN;  
 
-	XmlModLoader modload(szModPath, NULL);
-	XmlModLoader* pModLoad = &modload;
-	if(!modload.init())
-		pModLoad = NULL;
+    XmlModLoader modload(szModPath, NULL);
+    XmlModLoader* pModLoad = &modload;
+    if(!modload.init())
+        pModLoad = NULL;
 
-	XmlAppLoader appload(szAppPath, NULL);
-	XmlAppLoader* pAppLoad = &appload;
-	if(!appload.init())
-		pAppLoad = NULL;
-	
-	knowledge.createFrom(pModLoad, pAppLoad);
+    XmlAppLoader appload(szAppPath, NULL);
+    XmlAppLoader* pAppLoad = &appload;
+    if(!appload.init())
+        pAppLoad = NULL;
+    
+    knowledge.createFrom(pModLoad, pAppLoad);
 }
 
 
 Manager::~Manager()
 {
-	clearExecutables();	
+    clearExecutables(); 
 }
 
 
 bool Manager::addApplication(const char* szFileName)
 {
-	XmlAppLoader appload(szFileName);
-	if(!appload.init())
-		return false; 
-	Application* application = appload.getNextApplication();
-	if(!application)
-		return false;
-	return knowledge.addApplication(application);
+    XmlAppLoader appload(szFileName);
+    if(!appload.init())
+        return false; 
+    Application* application = appload.getNextApplication();
+    if(!application)
+        return false;
+    return knowledge.addApplication(application);
 }
 
 
 bool Manager::addApplications(const char* szPath)
 {
-	XmlAppLoader appload(szPath, NULL);
-	if(!appload.init())
-		return false; 
-	Application* application;
-	while((application = appload.getNextApplication()))
-		knowledge.addApplication(application);
-	return true;
+    XmlAppLoader appload(szPath, NULL);
+    if(!appload.init())
+        return false; 
+    Application* application;
+    while((application = appload.getNextApplication()))
+        knowledge.addApplication(application);
+    return true;
 }
 
 
 bool Manager::addModule(const char* szFileName)
 {
-	XmlModLoader modload(szFileName);
-	if(!modload.init())
-		return false; 
-	Module* module = modload.getNextModule();
-	if(!module)
-		return false;
-	return knowledge.addModule(module);
+    XmlModLoader modload(szFileName);
+    if(!modload.init())
+        return false; 
+    Module* module = modload.getNextModule();
+    if(!module)
+        return false;
+    return knowledge.addModule(module);
 }
 
 
 bool Manager::addModules(const char* szPath)
 {
-	XmlModLoader modload(szPath, NULL);
-	if(!modload.init())
-		return false; 
-	Module* module;
-	while((module = modload.getNextModule()))
-		knowledge.addModule(module);
-	return true;
+    XmlModLoader modload(szPath, NULL);
+    if(!modload.init())
+        return false; 
+    Module* module;
+    while((module = modload.getNextModule()))
+        knowledge.addModule(module);
+    return true;
 }
 
 
 bool Manager::removeApplication(const char* szAppName)
 {
-	//Note: use it with care. it is better we first check that no application
-	//is loaded. 
-	if(!runnables.empty())
-	{
-		logger->addError("Application cannot be removed if there is a loaded application");
-		return false;
-	}
+    //Note: use it with care. it is better we first check that no application
+    //is loaded. 
+    if(!runnables.empty())
+    {
+        logger->addError("Application cannot be removed if there is a loaded application");
+        return false;
+    }
 
-	Application* app = knowledge.getApplication(szAppName);
-	if(!app)
-		return false;
+    Application* app = knowledge.getApplication(szAppName);
+    if(!app)
+        return false;
 
-	return knowledge.removeApplication(app);
+    return knowledge.removeApplication(app);
 }
 
 
 bool Manager::loadApplication(const char* szAppName)
 {
-	__CHECK_NULLPTR(szAppName);
-	
-	if(!allStopped())
-	{
-		logger->addError("Please stop current running application first.");
-		return false;
-	}
-	strAppName = szAppName;
-	if(!knowledge.reasolveDependency(szAppName, bAutoDependancy))
-		return false;
-	
-	return prepare();
+    __CHECK_NULLPTR(szAppName);
+    
+    if(!allStopped())
+    {
+        logger->addError("Please stop current running application first.");
+        return false;
+    }
+    strAppName = szAppName;
+    if(!knowledge.reasolveDependency(szAppName, bAutoDependancy))
+        return false;
+    
+    return prepare();
 }
 
 bool Manager::prepare(void)
 {
-	clearExecutables();
-	connections.clear();
-	modules.clear();
-	resources.clear();
+    clearExecutables();
+    connections.clear();
+    modules.clear();
+    resources.clear();
 
-	connections = knowledge.getSelConnection();
-	modules = knowledge.getSelModules();
-	resources = knowledge.getSelResources();
-	
-	/**
-	 *  TODO: we need to initialize a module with a local broker if the
-	 *  host property is empty. 
-	 *  Thus we can use specified broker for remote execution and a local 
-	 *  broker for local execution.
-	 *
-	 *  Resources should also be added to the relevant executable. up to now
-	 *  all of them will be handled by manager. 
-	 */ 
-	ModulePIterator itr;
-	int id = 0;
-	for(itr=modules.begin(); itr!=modules.end(); itr++)
-	{
+    connections = knowledge.getSelConnection();
+    modules = knowledge.getSelModules();
+    resources = knowledge.getSelResources();
+    
+    /**
+     *  TODO: we need to initialize a module with a local broker if the
+     *  host property is empty. 
+     *  Thus we can use specific broker for remote execution and a local 
+     *  broker for local execution.
+     *
+     *  Resources should also be added to the relevant executable. up to now
+     *  all of them will be handled by manager. 
+     */ 
+    ModulePIterator itr;
+    int id = 0;
+    for(itr=modules.begin(); itr!=modules.end(); itr++)
+    {
 
-		string strCurrentBroker;		 
-		if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
-			strCurrentBroker = BROKER_YARPRUN;
-		else
-			strCurrentBroker = strDefBroker;
+        string strCurrentBroker;         
+        if(compareString((*itr)->getBroker(), BROKER_YARPRUN))
+            strCurrentBroker = BROKER_YARPRUN;
+        else
+            strCurrentBroker = strDefBroker;
 
-		Broker* broker = NULL;
-		if(strCurrentBroker == string(BROKER_YARPRUN))
-			broker = new YarpBroker;
-		//else if( for other brokers )
-		//...
+        Broker* broker = NULL;
+        if(strCurrentBroker == string(BROKER_YARPRUN))
+            broker = new YarpBroker;
+        //else if( for other brokers )
+        //...
 
-		/**
-		 * using default broker if it is still NULL
-		 */
-		if(!broker)
-		{
-			ostringstream war;
-			war<<"Broker "<<strCurrentBroker<<" does not exist! (using default broker)";
-			logger->addWarning(war);
-			broker = new YarpBroker;
-			strCurrentBroker = BROKER_YARPRUN;
-		}
+        /**
+         * using default broker if it is still NULL
+         */
+        if(!broker)
+        {
+            ostringstream war;
+            war<<"Broker "<<strCurrentBroker<<" does not exist! (using default broker)";
+            logger->addWarning(war);
+            broker = new YarpBroker;
+            strCurrentBroker = BROKER_YARPRUN;
+        }
 
-		Executable* exe = new Executable(broker, (MEvent*)this, 
-										bWithWatchDog);
-		exe->setID(id++);
-		exe->setCommand((*itr)->getName());
-		exe->setParam((*itr)->getParam());
-		exe->setHost((*itr)->getHost());
-		exe->setStdio((*itr)->getStdio());
-		exe->setWorkDir((*itr)->getWorkDir());
-		if(strCurrentBroker == string(BROKER_YARPRUN))
-		{
-			string env = string("YARP_PORT_PREFIX=") + 
-							string((*itr)->getPrefix());
-			exe->setEnv(env.c_str());
-		}
-		
-		/**
-		 * Adding connections to their owners 
-		 */
-		CnnIterator cnn;
-		for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-			if((*cnn).owner() == (*itr))
-			{
-				exe->addConnection(*cnn);
-				//connections.erase(cnn);
-			}
+        Executable* exe = new Executable(broker, (MEvent*)this, 
+                                        bWithWatchDog);
+        exe->setID(id++);
+        exe->setCommand((*itr)->getName());
+        exe->setParam((*itr)->getParam());
+        exe->setHost((*itr)->getHost());
+        exe->setStdio((*itr)->getStdio());
+        exe->setWorkDir((*itr)->getWorkDir());
+        if(strCurrentBroker == string(BROKER_YARPRUN))
+        {
+            string env = string("YARP_PORT_PREFIX=") + 
+                            string((*itr)->getPrefix());
+            exe->setEnv(env.c_str());
+        }
+        
+        /**
+         * Adding connections to their owners 
+         */
+        CnnIterator cnn;
+        for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+            if((*cnn).owner() == (*itr))
+            {
+                exe->addConnection(*cnn);
+                //connections.erase(cnn);
+            }
 
-		runnables.push_back(exe);
-	}
+        runnables.push_back(exe);
+    }
 
-	return true;
+    return true;
 }
 
 
 bool Manager::updateExecutable(unsigned int id, const char* szparam,
-	        	const char* szhost, const char* szstdio,
-	        	const char* szworkdir, const char* szenv )
+                const char* szhost, const char* szstdio,
+                const char* szworkdir, const char* szenv )
 {
-	if(runnables.empty())
-	{
-		logger->addError("Application is not loaded.");
-		return false;
-	}
-	
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
-		
-	Executable* exe = runnables[id];
-	exe->setParam(szparam);
-	exe->setHost(szhost);
-	exe->setStdio(szstdio);
-	exe->setWorkDir(szworkdir);
-	exe->setEnv(szenv);
-	return true;
+    if(runnables.empty())
+    {
+        logger->addError("Application is not loaded.");
+        return false;
+    }
+    
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
+        
+    Executable* exe = runnables[id];
+    exe->setParam(szparam);
+    exe->setHost(szhost);
+    exe->setStdio(szstdio);
+    exe->setWorkDir(szworkdir);
+    exe->setEnv(szenv);
+    return true;
 }
 
 
 bool Manager::updateConnection(unsigned int id, const char* from,
-								const char* to, const char* carrier)
+                                const char* to, const char* carrier)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	if(connections[id].owner())
-	{
-		ostringstream msg;
-		msg<<"Connection ["<<connections[id].from()<<" -> ";
-		msg<<connections[id].to()<<"] cannot be updated.";
-		logger->addWarning(msg);
-		return false;
-	}
-		
-	connections[id].setFrom(from);
-	connections[id].setTo(to);
-	connections[id].setCarrier( strToCarrier(carrier));
-		
-	return true;
+    if(connections[id].owner())
+    {
+        ostringstream msg;
+        msg<<"Connection ["<<connections[id].from()<<" -> ";
+        msg<<connections[id].to()<<"] cannot be updated.";
+        logger->addWarning(msg);
+        return false;
+    }
+        
+    connections[id].setFrom(from);
+    connections[id].setTo(to);
+    connections[id].setCarrier( strToCarrier(carrier));
+        
+    return true;
 }
 
 
 
 bool Manager::exist(unsigned int id)
 {
-	if(id>=resources.size())
-	{
-		logger->addError("Resource id is out of range.");
-		return false;
-	}
+    if(id>=resources.size())
+    {
+        logger->addError("Resource id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
-	return connector.exists(resources[id]->getPort());
+    YarpBroker connector; 
+    connector.init();
+    return connector.exists(resources[id]->getPort());
 }
 
 bool Manager::existPortFrom(unsigned int id)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
-	return connector.exists(connections[id].from());
+    YarpBroker connector; 
+    connector.init();
+    return connector.exists(connections[id].from());
 }
 
 
 bool Manager::existPortTo(unsigned int id)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
-	return connector.exists(connections[id].to());
+    YarpBroker connector; 
+    connector.init();
+    return connector.exists(connections[id].to());
 }
 
 
 bool Manager::checkDependency(void)
 {
-	/**
-	 * checking for port resources availability
-	 * TODO:later it should change to use proper broker for resource cheking.
-	 * 		up to now, we use only yraprun for checking port resources		
-	 */
-	bool ret = true;
-	ResourcePIterator itrRes; 
-	YarpBroker resChecker; 
-	for(itrRes=resources.begin(); itrRes!=resources.end(); itrRes++)
-	{
-		ResYarpPort* res = (*itrRes); 
-		if(!resChecker.exists(res->getPort()))
-		{
-			ret = false;
-			ostringstream err;
-			err<<"Port "<<res->getPort()<<" is not available!";
-			logger->addError(err);
-		}
-	}
+    /**
+     * checking for port resources availability
+     * TODO:later it should change to use proper broker for resource cheking.
+     *      up to now, we use only yraprun for checking port resources      
+     */
+    bool ret = true;
+    ResourcePIterator itrRes; 
+    YarpBroker resChecker; 
+    for(itrRes=resources.begin(); itrRes!=resources.end(); itrRes++)
+    {
+        ResYarpPort* res = (*itrRes); 
+        if(!resChecker.exists(res->getPort()))
+        {
+            ret = false;
+            ostringstream err;
+            err<<"Port "<<res->getPort()<<" is not available!";
+            logger->addError(err);
+        }
+    }
 
-	return ret;
+    return ret;
 }
 
 
 
 bool Manager::run(unsigned int id, bool async) 
 {
-	if(runnables.empty())
-	{
-		logger->addError("Application is not loaded.");
-		return false;
-	}
-	
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
+    if(runnables.empty())
+    {
+        logger->addError("Application is not loaded.");
+        return false;
+    }
+    
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
 
-	runnables[id]->disableAutoConnect();
-	runnables[id]->start(); 
+    runnables[id]->disableAutoConnect();
+    runnables[id]->start(); 
 
-	if(async)
-		return true;
+    if(async)
+        return true;
+    
+    // waiting for running
+    double base = yarp::os::Time::now();
+    while(!timeout(base, RUN_TIMEOUT))
+        if(running(id)) return true;
 
-	/* waiting for running */
-	int retry = 0;
-	while(!running(id) && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
-	
-	if(!running(id))
-	{
-		ostringstream msg;
-		msg<<"Failed to run "<<runnables[id]->getCommand();
-		msg<<" on "<<runnables[id]->getHost();
-		msg<<". (State: "<<runnables[id]->state();
-		msg<<", paramete: "<<runnables[id]->getParam()<<")";
-		logger->addError(msg);
-		return false;
-	}
-
-	return true;
-
+    ostringstream msg;
+    msg<<"Failed to run "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
 }
 
 bool Manager::run(void)
 {
-	if(runnables.empty())
-	{
-		logger->addError("Application is not loaded.");
-		return false;
-	}
+    if(runnables.empty())
+    {
+        logger->addError("Application is not loaded.");
+        return false;
+    }
 
-	if(!checkDependency())
-	{
-		if(bRestricted)
-		{
-			logger->addError("Some of external ports dependency are not satisfied.");
-			return false;
-		}
-		else
-			logger->addWarning("Some of external ports dependency are not satisfied.");
-	}
+    if(!checkDependency())
+    {
+        if(bRestricted)
+        {
+            logger->addError("Some of external ports dependency are not satisfied.");
+            return false;
+        }
+        else
+            logger->addWarning("Some of external ports dependency are not satisfied.");
+    }
 
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-	{
-		if(bAutoConnect)
-			(*itr)->enableAutoConnect();
-		else
-			(*itr)->disableAutoConnect();
-		(*itr)->start();
-	}
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {
+        if(bAutoConnect)
+            (*itr)->enableAutoConnect();
+        else
+            (*itr)->disableAutoConnect();
+        (*itr)->start();
+    }
 
-	/* waiting for running */
-	int retry = 0;
-	while(!allRunning() && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
-	
-	if(!allRunning())
-	{
-		ExecutablePIterator itr;
-		for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-			if((*itr)->state() != RUNNING)
-			{
-				ostringstream msg;
-				msg<<"Failed to run "<<(*itr)->getCommand();
-				msg<<" on "<<(*itr)->getHost();
-				msg<<". (State: "<<(*itr)->state();
-				msg<<", paramete: "<<(*itr)->getParam()<<")";
-				logger->addError(msg);
-			}
-		
-		if(bRestricted)
-		{
-			kill();
-			return false;
-		}
-	}
+    // waiting for running
+    double base = yarp::os::Time::now();
+    while(!timeout(base, RUN_TIMEOUT))
+        if(allRunning()) break; 
 
-	/* connecting extra ports*/
-	if(bAutoConnect)
-		if(!connectExtraPorts())
-		{
-			logger->addError("Failed to stablish some of connections.");
-			if(bRestricted)
-				return false;
-		}
+    if(!allRunning())
+    {
+        ExecutablePIterator itr;
+        for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+            if((*itr)->state() != RUNNING)
+            {
+                ostringstream msg;
+                msg<<"Failed to run "<<(*itr)->getCommand();
+                msg<<" on "<<(*itr)->getHost();
+                msg<<". (State: "<<(*itr)->state();
+                msg<<", paramete: "<<(*itr)->getParam()<<")";
+                logger->addError(msg);
+            }
+        
+        if(bRestricted)
+        {
+            kill();
+            return false;
+        }
+    }
 
-	return true;
+    /* connecting extra ports*/
+    if(bAutoConnect)
+        if(!connectExtraPorts())
+        {
+            logger->addError("Failed to stablish some of connections.");
+            if(bRestricted)
+                return false;
+        }
+
+    return true;
 }
 
 bool Manager::stop(unsigned int id, bool async)
 {
-	if(runnables.empty())
-	{
-		logger->addError("Application is not loaded.");
-		return false;
-	}
-	
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
+    if(runnables.empty())
+    {
+        logger->addError("Application is not loaded.");
+        return false;
+    }
+    
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
 
-	runnables[id]->stop(); 
+    runnables[id]->stop(); 
 
-	if(async)
-		return true;
+    if(async)
+        return true;
+    
+    // waiting for stop
+    double base = yarp::os::Time::now();
+    while(!timeout(base, STOP_TIMEOUT))
+        if(!running(id)) return true; 
 
-	/* waiting for stopping */
-	int retry = 0;
-	while(running(id) && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
-	
-	if(running(id))
-	{
-		ostringstream msg;
-		msg<<"Failed to stop "<<runnables[id]->getCommand();
-		msg<<" on "<<runnables[id]->getHost();
-		msg<<". (State: "<<runnables[id]->state();
-		msg<<", paramete: "<<runnables[id]->getParam()<<")";
-		logger->addError(msg);
-		return false;
-	}
-
-	return true;
-
+    ostringstream msg;
+    msg<<"Failed to stop "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
 }
 
 
 bool Manager::stop(void)
 {
-	if(runnables.empty())
-		return true;
+    if(runnables.empty())
+        return true;
 
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-		(*itr)->stop();
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+        (*itr)->stop();
 
-	/* wait to stop */
-	int retry = 0;
-	while(!allStopped() && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
-	
-	if(!allStopped())
-	{
-		ExecutablePIterator itr;
-		for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-			if( ((*itr)->state() != SUSPENDED) && 
-				((*itr)->state() != DEAD))
-			{
-				ostringstream msg;
-				msg<<"Failed to stop "<<(*itr)->getCommand();
-				msg<<" on "<<(*itr)->getHost();
-				msg<<". (State: "<<(*itr)->state();
-				msg<<", paramete: "<<(*itr)->getParam()<<")";
-				logger->addError(msg);
-			}
-		return false;
-	}
-	
-	return true;
+    double base = yarp::os::Time::now();
+    while(!timeout(base, STOP_TIMEOUT))
+        if(allStopped()) break; 
+
+    if(!allStopped())
+    {
+        ExecutablePIterator itr;
+        for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+            if( ((*itr)->state() != SUSPENDED) && 
+                ((*itr)->state() != DEAD))
+            {
+                ostringstream msg;
+                msg<<"Failed to stop "<<(*itr)->getCommand();
+                msg<<" on "<<(*itr)->getHost();
+                msg<<". (State: "<<(*itr)->state();
+                msg<<", paramete: "<<(*itr)->getParam()<<")";
+                logger->addError(msg);
+            }
+        return false;
+    }
+    
+    return true;
 }
 
 bool Manager::kill(unsigned int id, bool async)
 {
-	if(runnables.empty())
-	{
-		logger->addError("Application is not loaded.");
-		return false;
-	}
-	
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
+    if(runnables.empty())
+    {
+        logger->addError("Application is not loaded.");
+        return false;
+    }
+    
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
 
-	runnables[id]->kill(); 
-	
-	if(async)
-		return true;
+    runnables[id]->kill(); 
+    
+    if(async)
+        return true;
+            
+    double base = yarp::os::Time::now();
+    while(!timeout(base, KILL_TIMEOUT))
+        if(!running(id)) return true; 
 
-	/* waiting for killing */
-	int retry = 0;
-	while(running(id) && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
-	
-	if(running(id))
-	{
-		ostringstream msg;
-		msg<<"Failed to kill "<<runnables[id]->getCommand();
-		msg<<" on "<<runnables[id]->getHost();
-		msg<<". (State: "<<runnables[id]->state();
-		msg<<", paramete: "<<runnables[id]->getParam()<<")";
-		logger->addError(msg);
-		return false;
-	}
-
-	return true;
+    ostringstream msg;
+    msg<<"Failed to kill "<<runnables[id]->getCommand();
+    msg<<" on "<<runnables[id]->getHost();
+    msg<<". (State: "<<runnables[id]->state();
+    msg<<", paramete: "<<runnables[id]->getParam()<<")";
+    logger->addError(msg);
+    return false;
 }
 
 
 bool Manager::kill(void)
 {
-	if(runnables.empty())
-		return true;
+    if(runnables.empty())
+        return true;
 
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-		(*itr)->kill();
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+        (*itr)->kill();
 
-	/* waiting for stoping */
-	int retry = 0;
-	while(!allStopped() && (retry++ < (RSK_TIMEOUT*10)) ) 
-		yarp::os::Time::delay(0.1);
+    double base = yarp::os::Time::now();
+    while(!timeout(base, KILL_TIMEOUT))
+        if(allStopped()) break; 
 
-	if(!allStopped())
-	{
-		ExecutablePIterator itr;
-		for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-			if( ((*itr)->state() != SUSPENDED) && 
-				((*itr)->state() != DEAD))
-			{
-				ostringstream msg;
-				msg<<"Failed to kill "<<(*itr)->getCommand();
-				msg<<" on "<<(*itr)->getHost();
-				msg<<". (State: "<<(*itr)->state();
-				msg<<", paramete: "<<(*itr)->getParam()<<")";
-				logger->addError(msg);
-			}
-		return false;
-	}
+    if(!allStopped())
+    {
+        ExecutablePIterator itr;
+        for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+            if( ((*itr)->state() != SUSPENDED) && 
+                ((*itr)->state() != DEAD))
+            {
+                ostringstream msg;
+                msg<<"Failed to kill "<<(*itr)->getCommand();
+                msg<<" on "<<(*itr)->getHost();
+                msg<<". (State: "<<(*itr)->state();
+                msg<<", paramete: "<<(*itr)->getParam()<<")";
+                logger->addError(msg);
+            }
+        return false;
+    }
 
-	return true;
+    return true;
 }
 
 
 void Manager::clearExecutables(void)
 {
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-	{
-		//if((*itr)->getBroker())
-		//	delete (*itr)->getBroker();
-		/**
-		 * broker will be delated by Executable
-		 */
-		delete (*itr);
-	}
-	runnables.clear();
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {
+        //if((*itr)->getBroker())
+        //  delete (*itr)->getBroker();
+        /**
+         * broker will be delated by Executable
+         */
+        delete (*itr);
+    }
+    runnables.clear();
 }
 
 
 bool Manager::connect(unsigned int id)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
+    YarpBroker connector; 
+    connector.init();
 
-	if( !connector.connect(connections[id].from(), 
-							connections[id].to(),
-					carrierToStr(connections[id].carrier())) )
-	{
-		logger->addError(connector.error());
-		//cout<<connector.error()<<endl;
-		return false;
-	}	
-	
-	return true;
+    if( !connector.connect(connections[id].from(), 
+                            connections[id].to(),
+                    carrierToStr(connections[id].carrier())) )
+    {
+        logger->addError(connector.error());
+        //cout<<connector.error()<<endl;
+        return false;
+    }   
+    
+    return true;
 }
 
 bool Manager::connect(void)
 {
-	YarpBroker connector; 
-	connector.init();
-	CnnIterator cnn;
-	for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-		if( !connector.connect((*cnn).from(), (*cnn).to(),
-						carrierToStr((*cnn).carrier())) )
-			{
-				logger->addError(connector.error());
-				//cout<<connector.error()<<endl;
-				if(bRestricted)
-					return false;
-			}	
-	return true;
+    YarpBroker connector; 
+    connector.init();
+    CnnIterator cnn;
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        if( !connector.connect((*cnn).from(), (*cnn).to(),
+                        carrierToStr((*cnn).carrier())) )
+            {
+                logger->addError(connector.error());
+                //cout<<connector.error()<<endl;
+                if(bRestricted)
+                    return false;
+            }   
+    return true;
 }
 
 bool Manager::disconnect(unsigned int id)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
+    YarpBroker connector; 
+    connector.init();
 
-	if( !connector.disconnect(connections[id].from(), 
-							connections[id].to()) )
-	{
-		logger->addError(connector.error());
-		//cout<<connector.error()<<endl;
-		return false;
-	}	
-	
-	return true;
+    if( !connector.disconnect(connections[id].from(), 
+                            connections[id].to()) )
+    {
+        logger->addError(connector.error());
+        //cout<<connector.error()<<endl;
+        return false;
+    }   
+    
+    return true;
 }
 
 bool Manager::disconnect(void)
 {
-	YarpBroker connector; 
-	connector.init();
-	CnnIterator cnn;
-	for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-		if( !connector.disconnect((*cnn).from(), (*cnn).to()) )
-			{
-				logger->addError(connector.error());
-				//cout<<connector.error()<<endl;
-				return false;
-			}	
-	return true;
+    YarpBroker connector; 
+    connector.init();
+    CnnIterator cnn;
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        if( !connector.disconnect((*cnn).from(), (*cnn).to()) )
+            {
+                logger->addError(connector.error());
+                //cout<<connector.error()<<endl;
+                return false;
+            }   
+    return true;
 }
 
 
 bool Manager::connected(unsigned int id)
 {
-	if(id>=connections.size())
-	{
-		logger->addError("Connection id is out of range.");
-		return false;
-	}
+    if(id>=connections.size())
+    {
+        logger->addError("Connection id is out of range.");
+        return false;
+    }
 
-	YarpBroker connector; 
-	connector.init();
-	return connector.connected(connections[id].from(), 
-							connections[id].to());
+    YarpBroker connector; 
+    connector.init();
+    return connector.connected(connections[id].from(), 
+                            connections[id].to());
 }
 
 
 bool Manager::connected(void)
 {
-	YarpBroker connector; 
-	connector.init();
-	CnnIterator cnn;
-	bool bConnected = true;
-	for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-		if( !connector.connected((*cnn).from(), (*cnn).to()) )
-			bConnected = false;
-	return bConnected;
+    YarpBroker connector; 
+    connector.init();
+    CnnIterator cnn;
+    bool bConnected = true;
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        if( !connector.connected((*cnn).from(), (*cnn).to()) )
+            bConnected = false;
+    return bConnected;
 }
 
 
 bool Manager::connectExtraPorts(void)
 {
-	YarpBroker connector; 
-	connector.init();
-	CnnIterator cnn;
-	for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
-		if(!(*cnn).owner() )
-		{
-			if( !connector.connect((*cnn).from(), (*cnn).to(),
-						carrierToStr((*cnn).carrier())) )
-			{
-				logger->addError(connector.error());
-				//cout<<connector.error()<<endl;
-				return false;
-			}	
-		}
-	return true;
+    YarpBroker connector; 
+    connector.init();
+    CnnIterator cnn;
+    for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
+        if(!(*cnn).owner() )
+        {
+            if( !connector.connect((*cnn).from(), (*cnn).to(),
+                        carrierToStr((*cnn).carrier())) )
+            {
+                logger->addError(connector.error());
+                //cout<<connector.error()<<endl;
+                return false;
+            }   
+        }
+    return true;
 }
 
 bool Manager::running(unsigned int id)
 {
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
 
-	if(runnables[id]->state() != RUNNING)
-			return false;
-	return true;
+    RSTATE st = runnables[id]->state(); 
+    if((st == RUNNING) || (st == CONNECTING) || (st == DYING))
+            return true;
+    return false;
 }
 
 
 bool Manager::allRunning(void)
 {
-	if(!runnables.size())
-		return false;
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-		if((*itr)->state() != RUNNING)
-			return false;
-	return true;
+    if(!runnables.size())
+        return false;
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {
+        RSTATE st = (*itr)->state();
+        if((st == RUNNING) || (st == CONNECTING) || (st==DYING))
+            return true;
+    }
+    return false;
 }
 
 
 bool Manager::suspended(unsigned int id)
 {
-	if(id>=runnables.size())
-	{
-		logger->addError("Module id is out of range.");
-		return false;
-	}
-
-	if((runnables[id]->state() == SUSPENDED) || 
-	  (runnables[id]->state() == DEAD))
-			return true;
-	return false;
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
+    RSTATE st = runnables[id]->state(); 
+    if((st == SUSPENDED) || (st == DEAD))
+            return true;
+    return false;
 }
 
 
 bool Manager::allStopped(void)
 {
-	if(!runnables.size())
-		return true; 
-	ExecutablePIterator itr;
-	for(itr=runnables.begin(); itr!=runnables.end(); itr++)
-		if( ((*itr)->state() != SUSPENDED) && 
-			((*itr)->state() != DEAD))
-			return false;
-	return true;
+    if(!runnables.size())
+        return true; 
+    ExecutablePIterator itr;
+    for(itr=runnables.begin(); itr!=runnables.end(); itr++)
+    {
+        RSTATE st = (*itr)->state();
+        if( (st != SUSPENDED) && (st != DEAD))
+            return false;
+    }
+    return true;
+}
+
+bool Manager::timeout(double base, double timeout)
+{
+    yarp::os::Time::delay(1.0);
+    if((yarp::os::Time::now()-base) > timeout)
+        return true;
+    return false; 
 }
 
 
@@ -803,29 +799,31 @@ void Manager::onExecutableStop(void* which)  {}
 void Manager::onCnnStablished(void* which) {}
 void Manager::onExecutableDied(void* which) {}
 void Manager::onExecutableFailed(void* which) {}
+void Manager::onExecutableStdout(void* which, const char* msg) {}
 void Manager::onCnnFailed(void* which) {}
+void Manager::onError(void* which) {}
 
 
 /*
 bool Manager::loadModule(const char* szModule, const char* szHost)
 {
-	__CHECK_NULLPTR(szModule);
-	strAppName = szModule;
+    __CHECK_NULLPTR(szModule);
+    strAppName = szModule;
 
-	SingleAppLoader appLoader(szModule, szHost);
-	if(!appLoader.init())
-	{
-		logger->addError("Error initializing SingleAppLoader.");
-		return false;
-	}
-	
-	if(!createKnowledgeBase(appLoader))
-	{
-		logger->addError("Cannot create knowledge base");
-		return false;
-	}
-	
-	return prepare();
+    SingleAppLoader appLoader(szModule, szHost);
+    if(!appLoader.init())
+    {
+        logger->addError("Error initializing SingleAppLoader.");
+        return false;
+    }
+    
+    if(!createKnowledgeBase(appLoader))
+    {
+        logger->addError("Cannot create knowledge base");
+        return false;
+    }
+    
+    return prepare();
 
 }
 */

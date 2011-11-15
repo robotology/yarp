@@ -19,20 +19,20 @@ class AppModelColumns : public Gtk::TreeModel::ColumnRecord
 {
 public:
 
-	AppModelColumns() { 
-		add(m_col_refPix); 
-		add(m_col_name); 
-		add(m_col_type);
-		}
+    AppModelColumns() { 
+        add(m_col_refPix); 
+        add(m_col_name); 
+        add(m_col_type);
+        }
 /*
-	~AppModelColumns(){
+    ~AppModelColumns(){
 
-	}
+    }
 */
-	//Gtk::TreeModelColumn<int> m_col_id;
-	Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
-	Gtk::TreeModelColumn<Glib::ustring> m_col_name;
-	Gtk::TreeModelColumn<NodeType> m_col_type;
+    //Gtk::TreeModelColumn<int> m_col_id;
+    Gtk::TreeModelColumn< Glib::RefPtr<Gdk::Pixbuf> > m_col_refPix;
+    Gtk::TreeModelColumn<Glib::ustring> m_col_name;
+    Gtk::TreeModelColumn<NodeType> m_col_type;
 
 };
 
@@ -41,19 +41,19 @@ class ApplicationList: public Gtk::ScrolledWindow
 {
 
 public:
-	ApplicationList();
-	virtual ~ApplicationList();
-	bool addApplication(Application* app);
-	bool removeApplication(const char* szAppName);
+    ApplicationList();
+    virtual ~ApplicationList();
+    bool addApplication(Application* app);
+    bool removeApplication(const char* szAppName);
 
-	Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
-	AppModelColumns m_appColumns;
-	Gtk::TreeView* getTreeView(void) { return &m_TreeView;}
+    Glib::RefPtr<Gtk::TreeStore> m_refTreeModel;
+    AppModelColumns m_appColumns;
+    Gtk::TreeView* getTreeView(void) { return &m_TreeView;}
 
 protected:
-	Gtk::TreeView m_TreeView; //The Tree View.
-	Gtk::TreeModel::Row m_appRow;
-	Gtk::TreeModel::Row m_modRow;
+    Gtk::TreeView m_TreeView; //The Tree View.
+    Gtk::TreeModel::Row m_appRow;
+    Gtk::TreeModel::Row m_modRow;
 };
 
 

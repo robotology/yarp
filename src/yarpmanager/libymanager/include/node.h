@@ -35,22 +35,22 @@ typedef vector<Link>::iterator LinkIterator;
 class Link {
 
 public: 
-	Link(Node* to, float weight, bool virtualLink=false) {
-		 fWeight = weight; 
-		 connectTo = to;
-		 bVirtual = virtualLink;
-		 }
-	virtual ~Link(){}
-	Node* to() { return connectTo; }
-	float weight(void) { return fWeight; }
-	void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
-	bool isVirtual(void){ return bVirtual; }
+    Link(Node* to, float weight, bool virtualLink=false) {
+         fWeight = weight; 
+         connectTo = to;
+         bVirtual = virtualLink;
+         }
+    virtual ~Link(){}
+    Node* to() { return connectTo; }
+    float weight(void) { return fWeight; }
+    void setVirtual(bool virtualLink) { bVirtual = virtualLink;}
+    bool isVirtual(void){ return bVirtual; }
 protected:
 
 private:
-	bool bVirtual;
-	float fWeight;
-	Node* connectTo;
+    bool bVirtual;
+    float fWeight;
+    Node* connectTo;
 };
 
  
@@ -61,49 +61,49 @@ private:
 class Node {
 
 public: 
-	Node(NodeType _type){ 
-		type = _type; 
-		bSatisfied = false;
-		bVisited = false;
-	}
-	Node(NodeType _type, const char* szLabel ){ 
-		type = _type; 
-		bSatisfied = false;
-		bVisited = false;
-		if(szLabel) label = szLabel;
-	}	
-	Node(const Node &node);
-	virtual ~Node() {}
-	
-	void setSatisfied(bool sat) { bSatisfied = sat; }
-	bool isSatisfied(void) { return bSatisfied; }
-	void setVisited(bool vis) { bVisited = vis; }
-	bool isVisited(void) { return bVisited; }
-	bool isLeaf(void) { 
-		return ((sucCount()==0) ? true : false);
-	}
+    Node(NodeType _type){ 
+        type = _type; 
+        bSatisfied = false;
+        bVisited = false;
+    }
+    Node(NodeType _type, const char* szLabel ){ 
+        type = _type; 
+        bSatisfied = false;
+        bVisited = false;
+        if(szLabel) label = szLabel;
+    }   
+    Node(const Node &node);
+    virtual ~Node() {}
+    
+    void setSatisfied(bool sat) { bSatisfied = sat; }
+    bool isSatisfied(void) { return bSatisfied; }
+    void setVisited(bool vis) { bVisited = vis; }
+    bool isVisited(void) { return bVisited; }
+    bool isLeaf(void) { 
+        return ((sucCount()==0) ? true : false);
+    }
 
-	NodeType getType(void) { return type; }
-	void setLabel(const char* szLabel) { if(szLabel) label = szLabel; }
-	const char* getLabel(void) { return label.c_str(); } 
-	int sucCount(void) { return (int)sucessors.size(); }	
-	Link &getLinkAt(int index) { return sucessors[index]; }
-	
-	
-	bool addSuc(Node* node, float weight, bool _virtual=false);
-	bool removeSuc(Node* node); 
-	void removeAllSuc(void);
-	bool hasSuc(Node* node);
-	virtual Node* clone() = 0;
+    NodeType getType(void) { return type; }
+    void setLabel(const char* szLabel) { if(szLabel) label = szLabel; }
+    const char* getLabel(void) { return label.c_str(); } 
+    int sucCount(void) { return (int)sucessors.size(); }    
+    Link &getLinkAt(int index) { return sucessors[index]; }
+    
+    
+    bool addSuc(Node* node, float weight, bool _virtual=false);
+    bool removeSuc(Node* node); 
+    void removeAllSuc(void);
+    bool hasSuc(Node* node);
+    virtual Node* clone() = 0;
 protected:
 
 private:
-	LinkIterator findSuc(Node* node);
-	LinkContainer sucessors;
-	bool bSatisfied;
-	bool bVisited; 
-	NodeType type;	
-	string label;
+    LinkIterator findSuc(Node* node);
+    LinkContainer sucessors;
+    bool bSatisfied;
+    bool bVisited; 
+    NodeType type;  
+    string label;
 };
 
 //}

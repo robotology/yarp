@@ -25,22 +25,22 @@
 class XmlAppLoader : public AppLoader {
 
 public:
-	XmlAppLoader(const char* szFileName);
-	XmlAppLoader(const char* szPath, const char* szAppName);
-	virtual ~XmlAppLoader();
-	bool init(void);
-	void fini(void);
-	Application* getNextApplication(void);
-	
+    XmlAppLoader(const char* szFileName);
+    XmlAppLoader(const char* szPath, const char* szAppName);
+    virtual ~XmlAppLoader();
+    bool init(void);
+    void fini(void);
+    Application* getNextApplication(void);
+    
 protected:
 
 private:
-	string strAppName;
-	string strPath;
-	string strFileName;
-	vector<string> fileNames;
-	Application app;
-	Application* parsXml(const char* szFile);
+    string strAppName;
+    string strPath;
+    string strFileName;
+    vector<string> fileNames;
+    Application app;
+    Application* parsXml(const char* szFile);
 };
 
 
