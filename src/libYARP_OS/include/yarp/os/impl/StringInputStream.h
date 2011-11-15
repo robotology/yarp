@@ -57,10 +57,10 @@ public:
         }
     }
 
-    virtual int read(const Bytes& b) {
+    virtual ssize_t read(const Bytes& b) {
         char *base = b.get();
         size_t space = b.length();
-        int ct = 0;
+        ssize_t ct = 0;
         for (size_t i=0; i<space; i++) {
             if (at<data.length()) {
                 base[i] = data[at];

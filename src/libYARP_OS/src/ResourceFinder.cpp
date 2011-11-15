@@ -51,11 +51,11 @@ public:
 
     static ConstString extractPath(const char *fname) {
         String s = fname;
-        int n = s.rfind('/');
-        if (n == -1) {
+        YARP_STRING_INDEX n = s.rfind('/');
+        if (n == String::npos) {
             n = s.rfind('\\');
         }
-        if (n != -1) {
+        if (n != String::npos) {
             s[n] = '\0';
             return ConstString(s.c_str());
         }

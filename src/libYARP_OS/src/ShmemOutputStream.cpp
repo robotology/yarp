@@ -184,8 +184,8 @@ bool ShmemOutputStreamImpl::write(const Bytes& b)
 
 	if ((int)m_pHeader->size-(int)m_pHeader->avail<(int)b.length())
 	{
-		int required=m_pHeader->size+2*b.length();
-		Resize(required);
+		ssize_t required=m_pHeader->size+2*b.length();
+		Resize((int)required);
 	}
 
 	if ((int)m_pHeader->head+(int)b.length()<=(int)m_pHeader->size)
@@ -199,8 +199,8 @@ bool ShmemOutputStreamImpl::write(const Bytes& b)
 		memcpy(m_pData,b.get()+first_block_size,b.length()-first_block_size);
 	}
 
-	m_pHeader->avail+=b.length();
-	m_pHeader->head+=b.length();
+	m_pHeader->avail+=(int)b.length();
+	m_pHeader->head+=(int)b.length();
 	m_pHeader->head%=m_pHeader->size;
 
 	while (m_pHeader->waiting>0)

@@ -30,6 +30,7 @@
 
 #include <yarp/os/impl/InputStream.h>
 #include <yarp/os/impl/ShmemTypes.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 namespace yarp {
     namespace os {
@@ -59,7 +60,7 @@ public:
 
 	bool isOk() { return m_bOpen; }
 	bool open(int port,ACE_SOCK_Stream *pSock,int size=SHMEM_DEFAULT_SIZE);
-	int read(const Bytes& b);
+	ssize_t read(const Bytes& b);
 	void close();
 
 protected:

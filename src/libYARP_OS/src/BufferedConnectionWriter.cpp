@@ -19,7 +19,7 @@ bool BufferedConnectionWriter::convertTextMode() {
     if (isTextMode()) {
         String s = toString();
         Bottle b;
-        b.fromBinary(s.c_str(),s.length());
+        b.fromBinary(s.c_str(),(int)s.length());
         clear();
         b.write(*this);
     }

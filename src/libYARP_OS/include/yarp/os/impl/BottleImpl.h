@@ -63,7 +63,7 @@ public:
     }
     virtual yarp::os::Bottle *asList() const { return NULL; }
     virtual const char *asBlob() const   { return (const char*)0; }
-    virtual int asBlobLength() const     { return 0; }
+    virtual size_t asBlobLength() const     { return 0; }
 
     virtual bool read(ConnectionReader& connection) = 0;
     virtual bool write(ConnectionWriter& connection) = 0;
@@ -300,7 +300,7 @@ public:
     }
     virtual bool isBlob() const { return true; }
     virtual const char *asBlob() const         { return x.c_str(); }
-    virtual int asBlobLength() const     { return x.length(); }
+    virtual size_t asBlobLength() const     { return x.length(); }
     static const int code;
     virtual void copy(const Storable& alt) { 
         if (alt.isBlob()) {
@@ -430,7 +430,7 @@ public:
 
     void fromString(const String& line);
     String toString();
-    int size() const;
+    size_t size() const;
 
     virtual bool read(ConnectionReader& connection);
     virtual bool write(ConnectionWriter& connection);
@@ -480,11 +480,11 @@ public:
     }
 
     yarp::os::Value& addBit(const char *str) {
-        int len = size();
+        size_t len = size();
         String x(str);
         smartAdd(x);
         if (size()>len) {
-            return get(size()-1);
+            return get((int)size()-1);
         }
         return get(-1);
     }

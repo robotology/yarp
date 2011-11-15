@@ -256,7 +256,7 @@ public:
                 throw_IOException("acknowledgement header is bad");
                 return false;
             }
-            int len2 = NetType::readDiscard(is(),len);
+            size_t len2 = NetType::readDiscard(is(),len);
             if (len!=len2) {
                 throw_IOException("did not get an acknowledgement of the promised length");
                 return false;
@@ -579,7 +579,7 @@ private:
     bool sendSenderSpecifier() {
         const String senderName = getSenderSpecifier();
         //const String& senderName = getRoute().getFromName();
-        NetType::netInt(senderName.length()+1,number.bytes());
+        NetType::netInt((int)senderName.length()+1,number.bytes());
         os().write(number.bytes());
         yarp::os::Bytes b((char*)senderName.c_str(),senderName.length()+1);
         os().write(b);

@@ -42,10 +42,10 @@ void HttpTwoWayStream::apply(char ch) {
                 proc += "\">";
                 proc += addr.getRegName();
                 proc += "</A> "; 
-                unsigned int len = addr.getRegName().length();
-                unsigned int target = 30;
+                size_t len = addr.getRegName().length();
+                size_t target = 30;
                 if (len<target) {
-                    for (unsigned int i=0; i<target-len; i++) {
+                    for (size_t i=0; i<target-len; i++) {
                         proc += " ";
                     }
                 }
@@ -64,7 +64,7 @@ void HttpTwoWayStream::apply(char ch) {
                 if (part[0]=='+') { part[0] = ' '; }
                 String org = part;
                 part = "<p><form method=post action='/form'>";
-				unsigned int i=0;
+				size_t i=0;
                 for (i=0; i<org.length(); i++) {
                     if (org[i]=='"') {
                         org[i] = ' ';

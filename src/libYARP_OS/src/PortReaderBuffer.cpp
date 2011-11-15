@@ -103,11 +103,11 @@ private:
 public:
 
     int getCount() {
-        return active.size();
+        return (int)active.size();
     }
 
     int getFree() {
-        return inactive.size();
+        return (int)inactive.size();
     }
 
     PortReaderPacket *getInactivePacket() {

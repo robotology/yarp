@@ -79,7 +79,7 @@ public:
         delegate->endPacket();
     }
 
-    virtual int read(const Bytes& b) {
+    virtual ssize_t read(const Bytes& b) {
         // assume it is ok for name_ser to go byte-by-byte
         // since this protocol will be phased out
         if (b.length()<=0) {
@@ -87,7 +87,7 @@ public:
         }
         Bytes tmp(b.get(),1);
         while (swallowRead.length()>0) {
-            int r = delegate->getInputStream().read(tmp);
+            ssize_t r = delegate->getInputStream().read(tmp);
             if (r<=0) { return r; }
             swallowRead = swallowRead.substr(1,swallowRead.length()-1);
         }
@@ -96,7 +96,7 @@ public:
             pendingRead = pendingRead.substr(1,pendingRead.length()-1);
             return 1;
         }
-        int r = delegate->getInputStream().read(tmp);
+        ssize_t r = delegate->getInputStream().read(tmp);
         if (r<=0) { return r; }
         if (tmp.get()[0]=='\n') {
             pendingRead = "";

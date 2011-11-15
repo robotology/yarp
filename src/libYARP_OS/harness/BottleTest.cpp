@@ -40,13 +40,13 @@ public:
     void testSize() {
         report(0,"testing sizes...");
         BottleImpl bot;
-        checkEqual(0,bot.size(),"empty bottle");
+        checkEqual(0,(int)bot.size(),"empty bottle");
         bot.addInt(1);
-        checkEqual(1,bot.size(),"add int");
+        checkEqual(1,(int)bot.size(),"add int");
         bot.addString("hello");
-        checkEqual(2,bot.size(),"add string");
+        checkEqual(2,(int)bot.size(),"add string");
         bot.clear();
-        checkEqual(0,bot.size(),"clear");
+        checkEqual(0,(int)bot.size(),"clear");
     }
 
 
@@ -61,7 +61,7 @@ public:
         checkEqual(txt,expect,"string rep");
         BottleImpl bot2;
         bot2.fromString(txt);
-        checkEqual(2,bot2.size(),"return from string rep");
+        checkEqual(2,(int)bot2.size(),"return from string rep");
     }
 
     void testBinary() {
@@ -75,7 +75,7 @@ public:
         bot.toBytes(store.bytes());
         BottleImpl bot2;
         bot2.fromBytes(store.bytes());
-        checkEqual(bot2.size(),2,"recovery binary, length");
+        checkEqual((int)bot2.size(),2,"recovery binary, length");
         checkEqual(bot2.isInt(0),bot.isInt(0),"recovery binary, integer");
         checkEqual(bot2.isString(1),bot.isString(1),"recovery binary, integer");
         BottleImpl bot3;
@@ -87,7 +87,7 @@ public:
         checkEqual(bot.get(1).isList(),true,"type check");
 
         Bottle bot4("0 1 2.2 3");
-        int hsize;
+        size_t hsize;
         const char *hbuf = bot4.toBinary(&hsize);
         Bottle bot5;
         bot5.fromBinary(hbuf,hsize);
@@ -182,15 +182,15 @@ public:
         report(0,"testing lists...");
         BottleImpl bot, bot2, bot3;
         bot.fromString("(1 (2 3 7) 3) (0.0 \"b\" 1)");
-        checkEqual(bot.size(),2,"list test 1");
+        checkEqual((int)bot.size(),2,"list test 1");
         bot2.fromString(bot.toString());
-        checkEqual(bot2.size(),2,"list test 2");
+        checkEqual((int)bot2.size(),2,"list test 2");
 
         bot.fromString("(1 2) 4");
         ManagedBytes store(bot.byteCount());
         bot.toBytes(store.bytes());
         bot3.fromBytes(store.bytes());
-        checkEqual(bot3.size(),2,"list test 3");
+        checkEqual((int)bot3.size(),2,"list test 3");
         report(0,String("bot3 is ") + bot3.toString());
 
         Bottle bot10;
@@ -284,19 +284,19 @@ public:
         Bottle bot("{4 42 255} 10 20");
         checkEqual(bot.size(),3,"plausible parse");
         checkTrue(bot.get(0).isBlob(),"blob present");
-        checkEqual(bot.get(0).asBlobLength(),3,"blob length");
+        checkEqual((int)bot.get(0).asBlobLength(),3,"blob length");
         checkEqual(bot.get(0).asBlob()[1],42, "blob match");
 
         report(0,"testing blob with internal null...");
         char blob[12]="hello\0world";
         const Value v ((void*)blob, sizeof(blob));
-        checkEqual(12,v.asBlobLength(),"value length");
+        checkEqual(12,(int)v.asBlobLength(),"value length");
         checkFalse(v.isNull(),"value non-null");
         Bottle b;
         b.add(v);
         checkEqual(b.size(),1,"insertion happened");
         checkTrue(b.get(0).isBlob(),"insertion is right type");
-        checkEqual(12,b.get(0).asBlobLength(),"length within bottle");
+        checkEqual(12,(int)b.get(0).asBlobLength(),"length within bottle");
     }
 
     void testStandard() {
@@ -311,7 +311,7 @@ public:
         BufferedConnectionWriter writer;
         bot.write(writer);
         String s = writer.toString();
-        checkEqual(s.length(),sizeof(NetInt32)*(1+1+bot.size()),
+        checkEqual((int)s.length(),sizeof(NetInt32)*(1+1+(int)bot.size()),
                    "exact number of integers, plus type/count");
 
         Bottle bot2("[go] (10 20 30 40)");
@@ -325,7 +325,7 @@ public:
         // 1 for (inner) list code
         // 1 for (inner) list length
         // 4 for integers in list
-        checkEqual(s.length(),sizeof(NetInt32)*(10),
+        checkEqual((int)s.length(),sizeof(NetInt32)*(10),
                    "nested example");
     }
 

@@ -146,7 +146,7 @@ void Bottle::fromBinary(const char *text, int len) {
 }
 
 
-const char *Bottle::toBinary(int *size) {
+const char *Bottle::toBinary(size_t *size) {
     if (size!=NULL) {
         *size = HELPER(implementation).byteCount();
     }
@@ -169,7 +169,7 @@ bool Bottle::read(ConnectionReader& reader) {
 }
 
 int Bottle::size() const {
-    return HELPER(implementation).size();
+    return (int)HELPER(implementation).size();
 }
 
 void Bottle::hasChanged() {

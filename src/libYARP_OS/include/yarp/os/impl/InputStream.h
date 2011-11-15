@@ -11,6 +11,7 @@
 #define _YARP2_INPUTSTREAM_
 
 #include <yarp/os/Bytes.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 namespace yarp {
     namespace os {
@@ -60,7 +61,7 @@ public:
      */
     virtual int read() {
         unsigned char result;
-        int ct = read(yarp::os::Bytes((char*)&result,1));
+        ssize_t ct = read(yarp::os::Bytes((char*)&result,1));
         if (ct<1) {
             return -1;
         }
@@ -80,7 +81,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual int read(const Bytes& b, int offset, int len) { // throws
+    virtual ssize_t read(const Bytes& b, size_t offset, ssize_t len) { // throws
         return read(yarp::os::Bytes(b.get()+offset,len));
     }
 
@@ -94,7 +95,7 @@ public:
      * @return the number of bytes read, or -1 upon error
      *
      */
-    virtual int read(const yarp::os::Bytes& b) = 0;
+    virtual ssize_t read(const yarp::os::Bytes& b) = 0;
 
 
     /**
@@ -102,7 +103,7 @@ public:
      * Like read, but solicit partial responses.
      *
      */
-    virtual int partialRead(const yarp::os::Bytes& b) {
+    virtual ssize_t partialRead(const yarp::os::Bytes& b) {
         return read(b);
     }
 

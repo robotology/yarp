@@ -124,7 +124,7 @@ private:
 public:
 
     int getCount() {
-        return active.size();
+        return (int)active.size();
     }
 
     PortCorePacket *getFreePacket() {

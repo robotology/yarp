@@ -14,6 +14,7 @@
 #include <yarp/os/Searchable.h>
 #include <yarp/os/Portable.h>
 #include <yarp/os/Bottle.h>
+#include <stddef.h> // defines size_t
 
 namespace yarp {
     namespace os {
@@ -215,7 +216,7 @@ public:
      * @return length of binary data if value is indeed binary data.
      * Otherwise returns 0
      */
-    virtual int asBlobLength() const    { ok(); return proxy->asBlobLength(); }
+    virtual size_t asBlobLength() const    { ok(); return proxy->asBlobLength(); }
 
     // documented in Portable
     virtual bool read(ConnectionReader& connection) { 

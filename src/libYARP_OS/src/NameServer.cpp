@@ -164,8 +164,8 @@ Address NameServer::queryName(const String& name) {
     String pat = "";
     if (YARP_STRSTR(name,"/net=") == 0) {
         int patStart = 5;
-        int patEnd = name.find('/',patStart);
-        if (patEnd>=patStart) {
+        YARP_STRING_INDEX patEnd = name.find('/',patStart);
+        if (patEnd>=patStart && patEnd!=String::npos) {
             pat = name.substr(patStart,patEnd-patStart);
             base = name.substr(patEnd);
             YARP_DEBUG(Logger::get(),String("Special query form ") +
@@ -790,7 +790,7 @@ public:
         }
         if (reader.isActive()&&haveMessage) {
             YARP_DEBUG(Logger::get(),String("name server got message ") + msg);
-            int index = msg.find("NAME_SERVER");
+            YARP_STRING_INDEX index = msg.find("NAME_SERVER");
             if (index==0) {
                 Address remote;
                 remote = Address::fromContact(reader.getRemoteContact());
@@ -820,8 +820,8 @@ public:
                     YARP_DEBUG(Logger::get(),
                                String("name server reply is ") + result);
                     String resultSparse = result;
-                    int end = resultSparse.find("\n*** end of message");
-                    if (end>=0) {
+                    YARP_STRING_INDEX end = resultSparse.find("\n*** end of message");
+                    if (end!=String::npos) {
                         resultSparse[end] = '\0';
                     }
                     YARP_INFO(Logger::get(),resultSparse);

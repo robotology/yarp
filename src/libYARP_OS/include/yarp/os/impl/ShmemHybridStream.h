@@ -59,9 +59,9 @@ public:
 		if (!out.write(b)) close();
 	}
 
-	virtual int read(const Bytes& b)
+	virtual ssize_t read(const Bytes& b)
 	{
-		int ret=in.read(b);
+		ssize_t ret=in.read(b);
 		if (ret==-1) close();
 		return ret;
 	}

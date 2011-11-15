@@ -272,11 +272,11 @@ public:
 
         String path("");
         String sfname = fname;
-        int index = sfname.rfind('/');
-        if (index==-1) {
+        YARP_STRING_INDEX index = sfname.rfind('/');
+        if (index==String::npos) {
             index = sfname.rfind('\\');
         }
-        if (index!=-1) {
+        if (index!=String::npos) {
             path = sfname.substr(0,index);
         }
 
@@ -361,11 +361,11 @@ public:
                 buf = expand(buf.c_str(),env,owner).c_str();
 
                 if (buf[0]=='[') {
-                    int stop = YARP_STRSTR(buf,"]");
-                    if (stop>=0) {
+                    YARP_STRING_INDEX stop = YARP_STRSTR(buf,"]");
+                    if (stop!=String::npos) {
                         buf = buf.substr(1,stop-1);
-                        int space = YARP_STRSTR(buf," ");
-                        if (space>=0) {
+                        YARP_STRING_INDEX space = YARP_STRSTR(buf," ");
+                        if (space!=String::npos) {
                             Bottle bot(buf.c_str());
                             if (bot.size()>1) {
                                 if (bot.get(0).toString() == "include") {

@@ -173,7 +173,7 @@ public:
      * @return pointer to a buffer holding the binary representation of the
      * bottle.
      */
-    const char *toBinary(int *size = 0/*NULL*/);
+    const char *toBinary(size_t *size = 0/*NULL*/);
 
 
     /**

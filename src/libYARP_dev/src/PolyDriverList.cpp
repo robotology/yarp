@@ -36,7 +36,7 @@ const PolyDriverDescriptor *PolyDriverList::operator[] (int k) const
 
 int PolyDriverList::size() const
 {
-    return RES(aceVector)->size();
+    return (int)RES(aceVector)->size();
 }
 
 void PolyDriverList::push(PolyDriver *p, const char *k)

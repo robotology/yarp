@@ -287,7 +287,7 @@ String BottleImpl::toString() {
     return result;
 }
 
-int BottleImpl::size() const {
+size_t BottleImpl::size() const {
     return content.size();
 }
 
@@ -547,7 +547,7 @@ void BottleImpl::synch() {
             YMSG(("wrote bottle code %d\n",StoreList::code + speciality));
         }
         YMSG(("bottle length %d\n",size()));
-        writer.appendInt(size());
+        writer.appendInt((int)size());
         for (unsigned int i=0; i<content.size(); i++) {
             Storable *s = content[i];
             if (speciality==0) {
@@ -671,14 +671,14 @@ String StoreDouble::toStringFlex() const {
 #endif
 
     int ct = 0;
-    for (int i=str.length()-1; i>=0; i--) {
-        if (str[i]!='0') {
-            if (str[i]=='.') {
+    for (size_t i=str.length(); i>=1; i--) {
+        if (str[i-1]!='0') {
+            if (str[i-1]=='.') {
                 ct--;
                 i++;
             }
             if (ct>=1) {
-                str = str.substr(0,i+1);
+                str = str.substr(0,i);
             }
             break;
         }
@@ -784,14 +784,14 @@ void StoreString::fromStringNested(const String& src) {
     // unquoting code: very inefficient, but portable
     String result = "";
     x = "";
-    int len = src.length();
+    size_t len = src.length();
     if (len>0) {
         bool skip = false;
         bool back = false;
         if (src[0]=='\"') {
             skip = true;
         }
-        for (int i=0; i<len; i++) {
+        for (size_t i=0; i<len; i++) {
             if (skip&&(i==0||i==len-1)) {
                 // omit
             } else {
@@ -833,7 +833,7 @@ bool StoreString::read(ConnectionReader& reader) {
 }
 
 bool StoreString::write(ConnectionWriter& writer) {
-    writer.appendInt(x.length()+1);
+    writer.appendInt((int)x.length()+1);
     writer.appendString(x.c_str(),'\0');
     return true;
 }
@@ -891,7 +891,7 @@ bool StoreBlob::read(ConnectionReader& reader) {
 }
 
 bool StoreBlob::write(ConnectionWriter& writer) {
-    writer.appendInt(x.length());
+    writer.appendInt((int)x.length());
     writer.appendBlock(x.c_str(),x.length());
     return true;
 }
@@ -1062,9 +1062,9 @@ void BottleImpl::copyRange(const BottleImpl& alt, int first, int len) {
     }
 
     clear();
-    if (len==-1) { len = src->size(); }
+    if (len==-1) { len = (int)src->size(); }
     int last = first + len - 1;
-    int top = src->size()-1;
+    int top = (int)src->size()-1;
     if (first<0) { first = 0; }
     if (last<0) { last = 0; }
     if (first>top) { first = top; }

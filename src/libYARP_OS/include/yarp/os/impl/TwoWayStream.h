@@ -135,7 +135,7 @@ public:
     virtual void beginPacket() {}
     virtual void endPacket()   {}
 
-    virtual int read(const Bytes& b)  { return -1; }
+    virtual ssize_t read(const Bytes& b)  { return -1; }
     virtual void write(const Bytes& b) { }
 
 };

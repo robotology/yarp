@@ -16,7 +16,7 @@ using namespace yarp::os;
 
 void ManagedBytes::copy() {
     if (!owned) {
-        int len = length();
+        ssize_t len = length();
         char *buf = new char[len];
         yarp::os::NetworkBase::assertion(buf!=NULL);
         ACE_OS::memcpy(buf,get(),len);
@@ -66,7 +66,7 @@ bool ManagedBytes::read(ConnectionReader& reader) {
 bool ManagedBytes::write(ConnectionWriter& writer) {
     writer.appendInt(BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB);
     writer.appendInt(1);
-    writer.appendInt(length());
+    writer.appendInt((int)length());
     writer.appendExternalBlock(get(),length());
     writer.convertTextMode();
     return !writer.isError();

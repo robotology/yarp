@@ -83,7 +83,7 @@ bool ConstString::operator !=(const char *str) const {
 }
 
 int ConstString::length() const {
-    return HELPER(implementation).length();
+    return (int)HELPER(implementation).length();
 }
 
 ConstString ConstString::operator + (char ch) const {

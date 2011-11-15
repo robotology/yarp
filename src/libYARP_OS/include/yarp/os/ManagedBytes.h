@@ -187,13 +187,13 @@ public:
      * @return a confirmation of the number of bytes declared to be in use.
      *
      */
-    int setUsed(size_t used) {
+    size_t setUsed(size_t used) {
         use_set = true;
         use = used;
         return this->used();
     }
 
-    int resetUsed() {
+    size_t resetUsed() {
         use = 0;
         use_set = false;
         return this->used();

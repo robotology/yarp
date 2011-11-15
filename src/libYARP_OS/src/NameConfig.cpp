@@ -126,10 +126,10 @@ String NameConfig::getConfigFileName(const char *stem, const char *ns) {
 
 
 bool NameConfig::createPath(const String& fileName, int ignoreLevel) {
-    int index = fileName.rfind('/');
-    if (index==-1) {
+    YARP_STRING_INDEX index = fileName.rfind('/');
+    if (index==String::npos) {
 		index = fileName.rfind('\\');
-	    if (index==-1) {
+	    if (index==String::npos) {
 		    return false;
 		}
     }

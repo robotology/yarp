@@ -174,7 +174,7 @@ int ShmemInputStreamImpl::read(char *data,int len)
 	return len;
 }
 
-int ShmemInputStreamImpl::read(const Bytes& b)
+ssize_t ShmemInputStreamImpl::read(const Bytes& b)
 {
 	m_ReadSerializerMutex.wait();
 	
@@ -185,9 +185,10 @@ int ShmemInputStreamImpl::read(const Bytes& b)
 	}
 
 	char *data=b.get(),buf;
-	int len=b.length(),ret;
+	size_t len=b.length();
+	ssize_t ret;
 
-	while (!(ret=read(data,len)))
+	while (!(ret=read(data,(int)len)))
 	{
 	    #ifdef _ACE_USE_SV_SEM
 		ACE_Time_Value tv=ACE_OS::gettimeofday();

@@ -97,7 +97,7 @@ public:
 
     virtual void closeMain();
 
-    virtual int read(const yarp::os::Bytes& b);
+    virtual ssize_t read(const yarp::os::Bytes& b);
 
     virtual void write(const yarp::os::Bytes& b);
 
@@ -133,7 +133,8 @@ private:
     Address localAddress, remoteAddress, restrictInterfaceIp;
     yarp::os::ManagedBytes readBuffer, writeBuffer;
     yarp::os::Semaphore mutex;
-    int readAt, readAvail, writeAvail, pct;
+    ssize_t readAt, readAvail, writeAvail;
+	int pct;
     bool happy;
     bool bufferAlertNeeded;
     bool bufferAlerted;

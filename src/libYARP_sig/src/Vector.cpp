@@ -66,7 +66,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 
     //header.totalLen = sizeof(header)+sizeof(double)*this->size();
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
-    header.listLen = getListSize();
+    header.listLen = (int)getListSize();
 
     connection.appendBlock((char*)&header, sizeof(header));
     const char *ptr = getMemoryBlock();
@@ -172,7 +172,7 @@ bool Vector::operator==(const yarp::sig::Vector &r) const
     if (size()!=r.size())
         return false;
 
-    int c=size();
+    size_t c=size();
     while(c--)
     {
         if (*tmp1++!=*tmp2++)
@@ -255,7 +255,7 @@ bool Vector::write(yarp::os::ConnectionWriter& connection) {
     VectorPortContentHeader header;
 
     header.listTag = BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE;
-    header.listLen = size();
+    header.listLen = (int)size();
 
     connection.appendBlock((char*)&header, sizeof(header));
 

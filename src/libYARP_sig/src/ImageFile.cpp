@@ -263,7 +263,7 @@ static bool ImageReadRGB(ImageOf<PixelRgb> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += fread((void *) dst, 1, (size_t) w, fp);
+            num += (int)fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
     
@@ -308,7 +308,7 @@ static bool ImageReadBGR(ImageOf<PixelBgr> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += fread((void *) dst, 1, (size_t) w, fp);
+            num += (int)fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
 
@@ -352,7 +352,7 @@ static bool ImageReadMono(ImageOf<PixelMono> &img, const char *filename)
 	num = 0;
 	for (int i = 0; i < h; i++)
         {
-            num += fread((void *) dst, 1, (size_t) w, fp);
+            num += (int)fread((void *) dst, 1, (size_t) w, fp);
             dst += pad;
         }
 

@@ -55,7 +55,7 @@ public:
     virtual ~StreamConnectionReader();
 
     void reset(InputStream& in, TwoWayStream *str, const Route& route,
-               int len, bool textMode) {
+               size_t len, bool textMode) {
         this->in = &in;
         this->str = str;    
         this->route = route;

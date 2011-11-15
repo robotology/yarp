@@ -44,7 +44,7 @@ class YARP_sig_API yarp::sig::VectorBase : public yarp::os::Portable
 {
 public:
     virtual int getElementSize() const = 0;
-    virtual int getListSize() const = 0;
+    virtual size_t getListSize() const = 0;
     virtual const char *getMemoryBlock() const = 0;
     virtual void resize(size_t size) = 0;
 
@@ -84,7 +84,7 @@ class yarp::sig::VectorOf : public VectorBase
 private:
     yarp::os::ManagedBytes bytes;
     T *first;
-    int len;
+    size_t len;
 
     inline void _updatePointers() {
         first = (T *) bytes.get();
@@ -119,7 +119,7 @@ public:
         return sizeof(T);
     }
 
-    virtual int getListSize() const
+    virtual size_t getListSize() const
     {
         return len;
     }
@@ -210,7 +210,7 @@ public:
         return first[i];
     }
 
-    inline int size() const {
+    inline size_t size() const {
         return len;
     }
 
@@ -314,14 +314,14 @@ public:
         updateGslData();
     }
 
-    inline int size() const
+    inline size_t size() const
     { return storage.size();}
 
     /**
     * Get the length of the vector.
     * @return the length of the vector.
     */
-    inline int length() const
+    inline size_t length() const
     { return storage.size();}
 
     /**

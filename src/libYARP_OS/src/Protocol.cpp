@@ -32,14 +32,14 @@ bool Protocol::open(const Route& route) {
 bool Protocol::defaultSendIndex() {
     YARP_ASSERT(writer!=NULL);
     writeYarpInt(10);
-    int len = writer->length();
+    int len = (int)writer->length();
     char lens[] = { len, 1, 
                     -1, -1, -1, -1,
                     -1, -1, -1, -1 };
     Bytes b(lens,10);
     os().write(b);
     for (int i=0; i<len; i++) {
-        NetType::netInt(writer->length(i),number.bytes());
+        NetType::netInt((int)writer->length(i),number.bytes());
         os().write(number.bytes());
     }
     NetType::netInt(0,number.bytes());

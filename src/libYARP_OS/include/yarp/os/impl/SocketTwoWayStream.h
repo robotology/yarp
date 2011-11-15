@@ -96,9 +96,9 @@ public:
         happy = false;
     }
 
-    virtual int read(const Bytes& b) {
+    virtual ssize_t read(const Bytes& b) {
         if (!isOk()) { return -1; }
-        int result;
+        ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv_n(b.get(),b.length(),&readTimeout);
         } else {
@@ -112,9 +112,9 @@ public:
         return result;
     }
 
-    virtual int partialRead(const Bytes& b) {
+    virtual ssize_t partialRead(const Bytes& b) {
         if (!isOk()) { return -1; }
-        int result;
+        ssize_t result;
         if (haveReadTimeout) {
             result = stream.recv(b.get(),b.length(),&readTimeout);
         } else {
@@ -130,7 +130,7 @@ public:
 
     virtual void write(const Bytes& b) {
         if (!isOk()) { return; }
-        int result;
+        ssize_t result;
         if (haveWriteTimeout) {
             result = stream.send_n(b.get(),b.length(),&writeTimeout);
         } else {

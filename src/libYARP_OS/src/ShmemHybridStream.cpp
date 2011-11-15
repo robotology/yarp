@@ -51,11 +51,11 @@ int ShmemHybridStream::accept()
 {
 	if (m_bLinked) return -1;
 
-	int result=m_Acceptor.accept(m_SockStream);
+	ssize_t result=m_Acceptor.accept(m_SockStream);
 
 	if (result<0)
 	{
-		YARP_ERROR(Logger::get(),String("ShmemHybridStream server returned ")+NetType::toString(result));
+		YARP_ERROR(Logger::get(),String("ShmemHybridStream server returned ")+NetType::toString((int)result));
 		close();
 		return -1;
 	}
@@ -70,7 +70,7 @@ int ShmemHybridStream::accept()
 	result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
 	if (result<=0)
 	{
-		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString(result));
+		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
 		close();
 		return -1;
 	}
@@ -110,10 +110,10 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	if (m_bLinked) return -1;
 
 	ACE_SOCK_Connector connector;
-	int result=connector.connect(m_SockStream,ace_address);
+	ssize_t result=connector.connect(m_SockStream,ace_address);
 	if (result<0)
 	{
-		YARP_ERROR(Logger::get(),String("ShmemHybridStream client returned ")+NetType::toString(result));
+		YARP_ERROR(Logger::get(),String("ShmemHybridStream client returned ")+NetType::toString((int)result));
 		close();
 		return -1;
 	}
@@ -132,7 +132,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	result=m_SockStream.send_n(&send_conn_data,sizeof send_conn_data);
 	if (result<=0)
 	{
-		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString(result));
+		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
 		close();
 		return -1;
 	}
@@ -141,7 +141,7 @@ int ShmemHybridStream::connect(const ACE_INET_Addr& ace_address)
 	result=m_SockStream.recv_n(&recv_conn_data,sizeof recv_conn_data);
 	if (result<=0)
 	{
-		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString(result));
+		YARP_ERROR(Logger::get(),String("Socket returned ")+NetType::toString((int)result));
 		close();
 		return -1;
 	}

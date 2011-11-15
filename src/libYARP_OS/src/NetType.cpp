@@ -60,10 +60,10 @@ String NetType::readLine(InputStream& is, int terminal, bool *success) {
 }    
 
 ssize_t NetType::readFull(InputStream& is, const Bytes& b) {
-    int off = 0;
-    int fullLen = b.length();
-    int remLen = fullLen;
-    int result = 1;
+    ssize_t off = 0;
+    ssize_t fullLen = b.length();
+    ssize_t remLen = fullLen;
+    ssize_t result = 1;
     while (result>0&&remLen>0) {
         result = is.read(b,off,remLen);
         //printf("read result is %d\n",result);

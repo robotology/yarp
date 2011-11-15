@@ -54,7 +54,7 @@ bool PortCommand::write(ConnectionWriter& writer) {
     if (!writer.isTextMode()) {
         int len = 0;
         if (ch=='\0') {
-            len = str.length()+1;
+            len = (int)str.length()+1;
         }
         YARP_ASSERT(header.length()==8);
         char *base = header.get();

@@ -170,7 +170,7 @@ public:
             return 0;
         }
         else
-            return lastVector.size();
+            return (int)lastVector.size();
     }
 
 };
