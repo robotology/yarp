@@ -1267,10 +1267,10 @@ public:
 
         if (ret)
         {
-            if (tmp.size() != nj)
-                fprintf(stderr, "tmp.size: %d  nj %d\n", tmp.size(), nj);
+            if (tmp.size() != (size_t)nj)
+                fprintf(stderr, "tmp.size: %d  nj %d\n", (int)tmp.size(), nj);
 
-            YARP_ASSERT (tmp.size() == nj);
+            YARP_ASSERT (tmp.size() == (size_t)nj);
             memcpy (encs, &(tmp.operator [](0)), sizeof(double)*nj);
 
             ////////////////////////// HANDLE TIMEOUT

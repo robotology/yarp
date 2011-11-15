@@ -38,7 +38,7 @@ void RandVector::init(int seed)
 
 const Vector &RandVector::get()
 {
-    for (int k=0;k<data.size(); k++)
+    for (size_t k=0;k<data.size(); k++)
     {
         data[k]=rnd.get();
     }
@@ -48,7 +48,7 @@ const Vector &RandVector::get()
 
 const Vector &RandVector::get(const Vector &min, const Vector &max)
 {
-    for (int k=0;k<data.size(); k++)
+    for (size_t k=0;k<data.size(); k++)
     {
         data[k]=rnd.get(min[k], max[k]);
     }

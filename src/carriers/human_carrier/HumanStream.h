@@ -59,7 +59,7 @@ public:
 
     // InputStream
 
-    virtual int read(const Bytes& b);
+    virtual ssize_t read(const Bytes& b);
 
     // OutputStream
 

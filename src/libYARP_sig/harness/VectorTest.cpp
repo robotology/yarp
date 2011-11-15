@@ -129,7 +129,7 @@ class VectorTest : public UnitTest {
         gsl_vector *tmp;
         tmp=(gsl_vector *)(a.getGslVector());
         bool ret=true;
-        if ((int)tmp->size!=a.size())
+        if ((int)tmp->size!=(int)a.size())
             ret=false;
 
         if (tmp->data!=a.data())
@@ -168,7 +168,7 @@ public:
 
         report(0,"check vector format conforms to network standard...");
         {
-            for (int i=0; i<v.size(); i++ ){
+            for (size_t i=0; i<v.size(); i++ ){
                 v[i] = i;
             }
         }

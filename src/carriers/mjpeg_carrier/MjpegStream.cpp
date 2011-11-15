@@ -23,7 +23,7 @@ using namespace yarp::mjpeg;
 using namespace std;
 
 
-int MjpegStream::read(const Bytes& b) {
+ssize_t MjpegStream::read(const Bytes& b) {
 	bool debug = false;
     if (remaining==0) {
         if (phase==1) {

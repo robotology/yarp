@@ -37,7 +37,7 @@ public:
         printf("[MpiBcastStream @ %s] Destructor\n", name.c_str());
         #endif
     }
-    int read(const Bytes& b);
+    ssize_t read(const Bytes& b);
     void write(const Bytes& b);
     void startJoin();
     void post() {

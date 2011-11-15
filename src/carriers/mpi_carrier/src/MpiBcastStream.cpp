@@ -53,7 +53,7 @@ void MpiBcastStream::execCmd(int cmd) {
 /////////////////////////////////////////////////
 // InputStream
 
-int MpiBcastStream::read(const Bytes& b) {
+ssize_t MpiBcastStream::read(const Bytes& b) {
     if (terminate) {
       return -1;
     }

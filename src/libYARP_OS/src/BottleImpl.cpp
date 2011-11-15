@@ -942,7 +942,7 @@ template <class T>
 int subCoder(T& content) {
     int c = -1;
     bool ok = false;
-    for (int i=0; i<content.size(); i++) {
+    for (int i=0; i<(int)content.size(); i++) {
         int sc = content.get(i).getCode();
         if (c==-1) {
             c = sc;
@@ -971,7 +971,7 @@ int BottleImpl::subCode() {
 }
 
 bool BottleImpl::isInt(int index) {
-    if (index>=0 && index<size()) {
+    if (index>=0 && index<(int)size()) {
         return content[index]->getCode() == StoreInt::code;
     }
     return false;
@@ -979,14 +979,14 @@ bool BottleImpl::isInt(int index) {
 
 
 bool BottleImpl::isString(int index) {
-    if (index>=0 && index<size()) {
+    if (index>=0 && index<(int)size()) {
         return content[index]->getCode() == StoreString::code;
     }
     return false;
 }
 
 bool BottleImpl::isDouble(int index) {
-    if (index>=0 && index<size()) {
+    if (index>=0 && index<(int)size()) {
         return content[index]->getCode() == StoreDouble::code;
     }
     return false;
@@ -994,7 +994,7 @@ bool BottleImpl::isDouble(int index) {
 
 
 bool BottleImpl::isList(int index) {
-    if (index>=0 && index<size()) {
+    if (index>=0 && index<(int)size()) {
         return content[index]->isList();
     }
     return false;
@@ -1014,7 +1014,7 @@ Storable *BottleImpl::pop() {
 }
 
 Storable& BottleImpl::get(int index) const {
-    if (index>=0 && index<size()) {
+    if (index>=0 && index<(int)size()) {
         return *(content[index]);
     }
     return storeNull;

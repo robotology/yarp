@@ -27,7 +27,7 @@ namespace yarp {
 class yarp::os::impl::MpiP2PStream : public MpiStream {
 public:
     MpiP2PStream(String name, MpiComm* comm) : MpiStream(name,comm) {};
-    int read(const Bytes& b);
+    ssize_t read(const Bytes& b);
     void write(const Bytes& b);
     void close() {
         #ifdef MPI_DEBUG

@@ -79,9 +79,9 @@ Value toValue(XmlRpcValue& v, bool outer) {
     return Value("(type not supported yet out of laziness)");
 }
 
-int XmlRpcStream::read(const Bytes& b) {
+ssize_t XmlRpcStream::read(const Bytes& b) {
     //printf("XMLRPC READ\n");
-    int result = sis.read(b);
+    ssize_t result = sis.read(b);
     if (result>0) {
         //printf("RETURNING %d bytes\n", result);
         return result;

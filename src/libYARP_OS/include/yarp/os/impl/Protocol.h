@@ -257,7 +257,7 @@ public:
                 return false;
             }
             size_t len2 = NetType::readDiscard(is(),len);
-            if (len!=len2) {
+            if ((size_t)len!=len2) {
                 throw_IOException("did not get an acknowledgement of the promised length");
                 return false;
             }

@@ -38,7 +38,7 @@ void RandnVector::init(int seed)
 
 const Vector &RandnVector::get(double u, double sigma)
 {
-    for (int k=0;k<data.size(); k++)
+    for (size_t k=0;k<data.size(); k++)
     {
         data[k]=rnd.get(u, sigma);
     }
@@ -48,7 +48,7 @@ const Vector &RandnVector::get(double u, double sigma)
 
 const Vector &RandnVector::get(const Vector &u, const Vector &sigma)
 {
-    for (int k=0;k<data.size(); k++)
+    for (size_t k=0;k<data.size(); k++)
     {
         data[k]=rnd.get(u[k], sigma[k]);
     }

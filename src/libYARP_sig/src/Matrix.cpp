@@ -341,7 +341,7 @@ void Matrix::updateGslData()
 
 bool Matrix::setRow(int row, const Vector &r)
 {
-    if((row<0) || (row>=nrows) || (r.length() != ncols))
+    if((row<0) || (row>=nrows) || (r.length() != (size_t)ncols))
 		 return false;
 
     for(int c=0;c<ncols;c++)
@@ -352,7 +352,7 @@ bool Matrix::setRow(int row, const Vector &r)
 
 bool Matrix::setCol(int col, const Vector &c)
 {
-	if((col<0) || (col>=ncols) || (c.length() != nrows))
+	if((col<0) || (col>=ncols) || (c.length() != (size_t)nrows))
 		 return false; 
 
     for(int r=0;r<nrows;r++)
@@ -374,20 +374,20 @@ bool Matrix::setSubmatrix(const yarp::sig::Matrix &m, int r, int c)
 
 bool Matrix::setSubrow(const Vector &v, int r, int c)
 {
-    if(r<0 || r>=nrows || c<0 || c+v.size()>=ncols)
+    if(r<0 || r>=nrows || c<0 || c+v.size()>=(size_t)ncols)
         return false;
 
-    for(int i=0;i<v.size();i++)
+    for(size_t i=0;i<v.size();i++)
         (*this)[r][i+c] = v[i];
     return true;
 }
 
 bool Matrix::setSubcol(const Vector &v, int r, int c)
 {
-    if(r<0 || r+v.size()>=nrows || c<0 || c>=ncols)
+    if(r<0 || r+v.size()>=(size_t)nrows || c<0 || c>=ncols)
         return false;
 
-    for(int i=0;i<v.size();i++)
+    for(size_t i=0;i<v.size();i++)
         (*this)[r+i][c] = v[i];
     return true;
 }

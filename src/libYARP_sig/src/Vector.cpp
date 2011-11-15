@@ -47,7 +47,7 @@ bool VectorBase::read(yarp::os::ConnectionReader& connection) {
     if (!ok) return false;
     if (header.listLen > 0 && 
         header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
-        if (getListSize() != (int)(header.listLen))
+        if ((size_t)getListSize() != (size_t)(header.listLen))
             resize(header.listLen);
         const char *ptr = getMemoryBlock();
         YARP_ASSERT (ptr != 0);
@@ -89,7 +89,7 @@ bool VectorBase::write(yarp::os::ConnectionWriter& connection) {
 ConstString Vector::toString(int precision, int width) const
 {
     ConstString ret = "";
-    int c;
+    size_t c;
     char tmp[350];
     if(width<0){  
         for(c=0;c<length();c++){
@@ -124,7 +124,7 @@ bool Vector::setSubvector(int position, const Vector &v)
 {    
     if(position+v.size() > storage.size())
         return false;
-    for(int i=0;i<v.size();i++)
+    for(size_t i=0;i<v.size();i++)
         storage[position+i] = v(i);
     return true;
 }
@@ -140,7 +140,7 @@ Vector::Vector(size_t s, const double *p)
 {
     storage.resize(s);
 
-    for(int k=0; k<storage.size(); k++)
+    for(size_t k=0; k<storage.size(); k++)
         storage[k]=p[k];
 
     allocGslData();
@@ -149,7 +149,7 @@ Vector::Vector(size_t s, const double *p)
 
 void Vector::zero()
 {
-    for(int k=0; k<storage.size(); k++)
+    for(size_t k=0; k<storage.size(); k++)
         storage[k]=0;
 }
 
@@ -157,7 +157,7 @@ const Vector &Vector::operator=(double v)
 {
     double *tmp=storage.getFirst();
 
-    for(int k=0; k<length(); k++)
+    for(size_t k=0; k<length(); k++)
         tmp[k]=v;
 
     return *this;
@@ -238,7 +238,7 @@ bool Vector::read(yarp::os::ConnectionReader& connection) {
     if (!ok) return false;
     if (header.listLen > 0 && 
         header.listTag == BOTTLE_TAG_LIST + BOTTLE_TAG_DOUBLE) {
-        if (size() != (int)(header.listLen))
+        if (size() != (size_t)(header.listLen))
             resize(header.listLen);
         
         int k=0;

@@ -34,7 +34,7 @@ yarp::sig::Vector NormRand::vector(int s, double u, double sigma)
 yarp::sig::Vector NormRand::vector(const yarp::sig::Vector &u, const yarp::sig::Vector &sigma)
 {
     yarp::sig::Vector ret(u.length());
-    for(int k=0;k<u.length();k++)
+    for(size_t k=0;k<u.length();k++)
     {
         ret[k]=theRandnScalar.get(u[k], sigma[k]);
     }

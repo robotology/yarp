@@ -21,7 +21,7 @@ using namespace std;
 
 #define dbg_printf if (0) printf
 
-int TcpRosStream::read(const Bytes& b) {
+ssize_t TcpRosStream::read(const Bytes& b) {
     if (kind!="") {
       return twiddlerReader.read(b);
     }

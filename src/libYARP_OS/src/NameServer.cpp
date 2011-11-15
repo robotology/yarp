@@ -163,7 +163,7 @@ Address NameServer::queryName(const String& name) {
     String base = name;
     String pat = "";
     if (YARP_STRSTR(name,"/net=") == 0) {
-        int patStart = 5;
+        YARP_STRING_INDEX patStart = 5;
         YARP_STRING_INDEX patEnd = name.find('/',patStart);
         if (patEnd>=patStart && patEnd!=String::npos) {
             pat = name.substr(patStart,patEnd-patStart);

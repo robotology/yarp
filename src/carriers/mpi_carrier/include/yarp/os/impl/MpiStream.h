@@ -54,7 +54,7 @@ public:
     virtual void close() = 0;
     virtual bool isOk();
     virtual void interrupt();
-    virtual int read(const Bytes& b) = 0;
+    virtual ssize_t read(const Bytes& b) = 0;
     virtual void write(const Bytes& b) = 0;
     virtual InputStream& getInputStream();
     virtual OutputStream& getOutputStream();

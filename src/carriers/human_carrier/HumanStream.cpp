@@ -9,7 +9,7 @@
 
 #include "HumanStream.h"
 
-int HumanStream::read(const Bytes& b) {
+ssize_t HumanStream::read(const Bytes& b) {
     if (interrupting) { return -1; }
     while (inputCache.size() < (unsigned int)b.length()) {
         cout << "*** CHECK OTHER TERMINAL FOR SOMETHING TO TYPE:"
