@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+#include <signal.h>
 #endif
 
 #if defined(WIN32) || defined(WIN64)
