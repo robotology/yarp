@@ -175,7 +175,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline T &operator[](int i)
+    inline T &operator[](size_t i)
     {
         return first[i];
     }
@@ -185,7 +185,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const T &operator[](int i) const
+    inline const T &operator[](size_t i) const
     {
         return first[i];
     }
@@ -195,7 +195,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline T &operator()(int i)
+    inline T &operator()(size_t i)
     {
         return first[i];
     }
@@ -205,7 +205,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const T &operator()(int i) const
+    inline const T &operator()(size_t i) const
     {
         return first[i];
     }
@@ -420,7 +420,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline double &operator[](int i)
+    inline double &operator[](size_t i)
     {return storage[i];}
 
     /**
@@ -428,7 +428,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const double &operator[](int i) const
+    inline const double &operator[](size_t i) const
     {return storage[i];}
 
     /**
@@ -436,7 +436,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline double &operator()(int i)
+    inline double &operator()(size_t i)
     {return storage(i);}
 
     /**
@@ -444,7 +444,7 @@ public:
     * @param i the index of the element to access.
     * @return a reference to the requested element.
     */
-    inline const double &operator()(int i) const
+    inline const double &operator()(size_t i) const
     {return storage(i);}
 
     /**

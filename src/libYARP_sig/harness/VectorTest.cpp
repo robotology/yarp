@@ -94,7 +94,7 @@ public:
             //check if I received 42 42s
 
             int k;
-            int s=v.size();
+            int s=(int)v.size();
             if (s!=10)
                 ok=false;
             for(k=0;k<s;k++)
@@ -104,7 +104,7 @@ public:
             }
 
             portIn->read(v);
-            s=v.size();
+            s=(int)v.size();
             if (s!=5)
                 ok=false;
             for(k=0;k<s;k++)
@@ -169,15 +169,15 @@ public:
         report(0,"check vector format conforms to network standard...");
         {
             for (size_t i=0; i<v.size(); i++ ){
-                v[i] = i;
+                v[i] = (double)i;
             }
         }
         BufferedConnectionWriter writer;
         v.write(writer);
         String s = writer.toString();
         Bottle bot;
-        bot.fromBinary(s.c_str(),s.length());
-        checkEqual(bot.size(),v.size(),"size matches");
+        bot.fromBinary(s.c_str(),(int)s.length());
+        checkEqual((int)bot.size(),(int)v.size(),"size matches");
         {
             for (int i=0; i<bot.size(); i++) {
                 checkTrue(bot.get(i).asDouble()>i-0.25,"bounded below");
@@ -222,7 +222,7 @@ public:
         report(0, "check creation from double*");
         double dV[5]={0,1,2,3,4};
         Vector v1(5,dV);
-        checkEqual(v1.size(),5,"ok");
+        checkEqual((int)v1.size(),5,"ok");
 
         report(0,"check vectors copy constructor works...");
         Vector v(4);
@@ -231,10 +231,10 @@ public:
         v[2]=99;
         v[3]=99;
 
-        checkEqual(v.size(),4,"size set ok");
+        checkEqual((int)v.size(),4,"size set ok");
 
         Vector v2(v);
-        checkEqual(v.size(),v2.size(),"size matches");
+        checkEqual((int)v.size(),(int)v2.size(),"size matches");
 
         bool ok=true;
         for (int k=0; k<4; k++)
@@ -258,7 +258,7 @@ public:
 
         Vector v2;
         v2 = v;
-        checkEqual(v.size(),v2.size(),"size matches");
+        checkEqual((int)v.size(),(int)v2.size(),"size matches");
 
         bool ok=true;
         for (int k=0; k<4; k++)
