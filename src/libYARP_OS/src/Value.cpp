@@ -95,7 +95,7 @@ void Value::ok() const {
 }
 
 
-Value::Value(const Value& alt) {
+Value::Value(const Value& alt) : Portable(), Searchable() {
     proxy = 0;
     setProxy(alt.clone());
 }

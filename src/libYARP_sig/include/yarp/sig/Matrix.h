@@ -86,7 +86,7 @@ public:
       /**
       * Copy constructor.
       */
-      Matrix(const Matrix &m):
+      Matrix(const Matrix &m): yarp::os::Portable(),
       storage(m.storage),
           first(0),
           matrix(0)

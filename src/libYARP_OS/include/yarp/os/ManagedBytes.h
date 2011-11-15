@@ -53,7 +53,7 @@ public:
      * @param alt the data to copy.  If it is "owned" an independent copy
      * is made.
      */
-    ManagedBytes(const ManagedBytes& alt) {
+    ManagedBytes(const ManagedBytes& alt) : Portable() {
         b = alt.b;
         use = alt.use;
         use_set = alt.use_set;

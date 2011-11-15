@@ -649,7 +649,7 @@ Property::Property(const char *str) {
 }
 
 
-Property::Property(const Property& prop) {
+Property::Property(const Property& prop) : Searchable(), Portable() {
     implementation = new PropertyHelper(*this,0);
     YARP_ASSERT(implementation!=NULL);
     fromString(prop.toString());

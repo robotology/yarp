@@ -111,7 +111,7 @@ ConstString Vector::toString(int precision, int width) const
 Vector Vector::subVector(unsigned int first, unsigned int last) const
 {
     Vector ret;
-    if((first<=last)&&((int)last<storage.size()))
+    if((first<=last)&&((int)last<(int)storage.size()))
     {
         ret.resize(last-first+1);
         for(unsigned int k=first; k<=last; k++)

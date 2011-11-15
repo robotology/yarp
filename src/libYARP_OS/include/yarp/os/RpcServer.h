@@ -189,7 +189,7 @@ private:
     Port port;
 
     // forbid copy constructor by making it private
-    RpcServer(const RpcServer& alt) {
+    RpcServer(const RpcServer& alt) : Contactable() {
     }
 
     // forbid assignment operator by making it private

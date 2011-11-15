@@ -24,7 +24,7 @@ Sound::Sound(int bytesPerSample) {
     frequency = 0;
 }
 
-Sound::Sound(const Sound& alt) {
+Sound::Sound(const Sound& alt) : yarp::os::Portable() {
     init(alt.getBytesPerSample());
     FlexImage& img1 = HELPER(implementation);
     FlexImage& img2 = HELPER(alt.implementation);

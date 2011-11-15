@@ -207,7 +207,7 @@ private:
     bool coreOpen(yarp::os::Searchable& config);
 
     // private in order to disable copy
-    PolyDriver(const PolyDriver& alt) {
+    PolyDriver(const PolyDriver& alt) : DeviceDriver() {
     }
 
     // private in order to disable copy

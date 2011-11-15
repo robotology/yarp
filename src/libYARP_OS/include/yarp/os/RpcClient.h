@@ -147,7 +147,7 @@ private:
     Port port;
 
     // forbid copy constructor by making it private
-    RpcClient(const RpcClient& alt) {
+    RpcClient(const RpcClient& alt) : Contactable() {
     }
 
     // forbid assignment operator by making it private

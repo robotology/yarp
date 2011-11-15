@@ -35,7 +35,7 @@ Bottle::Bottle() {
     YARP_ASSERT(implementation!=NULL);
 }
 
-Bottle::Bottle(const Bottle& bottle) {
+Bottle::Bottle(const Bottle& bottle) : Portable(), Searchable() {
     implementation = new BottleImpl;
     invalid = false;
     YARP_ASSERT(implementation!=NULL);

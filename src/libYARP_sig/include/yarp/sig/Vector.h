@@ -104,7 +104,7 @@ public:
         _updatePointers();
     }
 
-    VectorOf(const VectorOf &r) {
+    VectorOf(const VectorOf &r) : VectorBase() {
         bytes = r.bytes;
         _updatePointers();
     }
@@ -269,7 +269,7 @@ public:
     /**
     * Copy constructor.
     */
-    Vector(const Vector &r): storage(r.storage)
+    Vector(const Vector &r): yarp::os::Portable(), storage(r.storage)
     {
         allocGslData();
         updateGslData();
