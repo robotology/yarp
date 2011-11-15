@@ -11,6 +11,7 @@
 #define _YARP2_BYTES_
 
 #include <yarp/os/api.h>
+#include <stddef.h> //defines size_t
 
 namespace yarp {
     namespace os {
@@ -39,7 +40,7 @@ public:
      * @param data address of data block
      * @param len length of data block
      */
-    Bytes(char *data, int len) {
+    Bytes(char *data, size_t len) {
         this->data = data;
         this->len = len;
     }
@@ -47,7 +48,7 @@ public:
     /**
      * @return length of data block
      */
-    int length() const {
+    size_t length() const {
         return len;
     }
 
@@ -60,7 +61,7 @@ public:
 
 private:
     char *data;
-    int len;
+    size_t len;
 };
 
 #endif

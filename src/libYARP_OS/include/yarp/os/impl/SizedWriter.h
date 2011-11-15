@@ -12,6 +12,7 @@
 
 #include <yarp/os/impl/OutputStream.h>
 #include <yarp/os/PortReader.h>
+#include <stddef.h> // defines size_t
 
 namespace yarp {
     namespace os {
@@ -35,20 +36,20 @@ class YARP_OS_impl_API yarp::os::impl::SizedWriter {
 public:
     virtual ~SizedWriter() {}
 
-    virtual int length() = 0;
+    virtual size_t length() = 0;
 
-    virtual int headerLength() = 0;
+    virtual size_t headerLength() = 0;
 
-    virtual int length(int index) = 0;
+    virtual size_t length(size_t index) = 0;
 
-    virtual const char *data(int index) = 0;
+    virtual const char *data(size_t index) = 0;
 
     virtual PortReader *getReplyHandler() = 0;
     
     virtual yarp::os::Portable *getReference() = 0;
 
     virtual void write(OutputStream& os) {
-        for (int i=0; i<length(); i++) {
+        for (size_t i=0; i<length(); i++) {
             Bytes b((char*)data(i),length(i));
             os.write(b);
         }

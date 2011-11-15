@@ -20,6 +20,7 @@
 #include <yarp/os/impl/Logger.h>
 #include <yarp/os/impl/Route.h>
 #include <yarp/os/Contact.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 namespace yarp {
     namespace os {
@@ -75,11 +76,11 @@ public:
             return false;
         }
         YARP_ASSERT(in!=NULL);
-        int len = b.length();
+        size_t len = b.length();
         if (len==0) return true;
-        if (len<0) { len = messageLen; }
+        //if (len<0) len = messageLen; 
         if (len>0) {
-            int rlen = NetType::readFull(*in,b);
+            ssize_t rlen = NetType::readFull(*in,b);
             if (rlen>=0) {
                 messageLen -= len;
                 return true;
@@ -96,8 +97,8 @@ public:
         NetType::NetInt32 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        int r = in->read(b);
-        if (r<b.length()) {
+        ssize_t r = in->read(b);
+        if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
         }
@@ -111,8 +112,8 @@ public:
         NetType::NetFloat64 x = 0;
         yarp::os::Bytes b((char*)(&x),sizeof(x));
         YARP_ASSERT(in!=NULL);
-        int r = in->read(b);
-        if (r<b.length()) {
+        ssize_t r = in->read(b);
+        if (r<0 || (size_t)r<b.length()) {
             err = true;
             return 0;
         }
@@ -126,8 +127,8 @@ public:
         char *buf = new char[len];
         yarp::os::Bytes b(buf,len);
         YARP_ASSERT(in!=NULL);
-        int r = in->read(b);
-        if (r<b.length()) {
+        ssize_t r = in->read(b);
+        if (r<0 || (size_t)r<b.length()) {
             err = true;
             delete[] buf;
             return "";
@@ -159,7 +160,7 @@ public:
 
     virtual bool convertTextMode();
 
-    virtual int getSize() {
+    virtual size_t getSize() {
         return messageLen;
     }
 
@@ -202,7 +203,7 @@ public:
 
 
 
-    virtual bool expectBlock(const char *data, int len) {
+    virtual bool expectBlock(const char *data, size_t len) {
         return expectBlock(yarp::os::Bytes((char*)data,len));
     }
 
@@ -267,7 +268,7 @@ private:
     InputStream *in;
     TwoWayStream *str;
     Protocol *protocol;
-    int messageLen;
+    size_t messageLen;
     bool textMode;
     bool valid;
     bool err;

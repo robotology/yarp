@@ -64,7 +64,7 @@ public:
 
     void clear() {
         target = &lst;
-		unsigned int i;
+		size_t i;
         for (i=0; i<lst.size(); i++) {
             delete lst[i];
         }
@@ -170,7 +170,7 @@ public:
     }
 
     bool write(ConnectionWriter& connection) {
-		unsigned int i;
+		size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
             connection.appendBlock(b.get(),b.used());
@@ -183,7 +183,7 @@ public:
     }
 
     void write(OutputStream& os) {
-		unsigned int i;
+		size_t i;
         for (i=0; i<header.size(); i++) {
             yarp::os::ManagedBytes& b = *(header[i]);
             os.write(b.usedBytes());
@@ -194,16 +194,16 @@ public:
         }    
     }
 
-    virtual int length() {
+    virtual size_t length() {
         return header.size()+lst.size();
     }
 
-    virtual int headerLength() {
+    virtual size_t headerLength() {
         return header.size();
     }
 
-    virtual int length(int index) {
-        if (index<(int)header.size()) {
+    virtual size_t length(size_t index) {
+        if (index<header.size()) {
             yarp::os::ManagedBytes& b = *(header[index]);
             return b.used();
         }
@@ -211,8 +211,8 @@ public:
         return b.used();
     }
 
-    virtual const char *data(int index) {
-        if (index<(int)header.size()) {
+    virtual const char *data(size_t index) {
+        if (index<header.size()) {
             yarp::os::ManagedBytes& b = *(header[index]);
             return (const char *)b.get();
         }
@@ -230,7 +230,7 @@ public:
 
     // new interface
 
-    virtual void appendBlock(const char *data, int len) {
+    virtual void appendBlock(const char *data, size_t len) {
         appendBlockCopy(yarp::os::Bytes((char*)data,len));
     }
 
@@ -246,7 +246,7 @@ public:
         }
     }
 
-    virtual void appendExternalBlock(const char *data, int len) {
+    virtual void appendExternalBlock(const char *data, size_t len) {
         appendBlock(yarp::os::Bytes((char*)data,len));
     }
 
@@ -304,9 +304,9 @@ private:
     PlatformVector<yarp::os::ManagedBytes *> header;
     PlatformVector<yarp::os::ManagedBytes *> *target;
     yarp::os::ManagedBytes *pool;
-    int poolIndex;
-    int poolCount;
-    int poolLength;
+    size_t poolIndex;
+    size_t poolCount;
+    size_t poolLength;
     yarp::os::PortReader *reader;
     bool textMode;
     yarp::os::Portable *ref;
@@ -360,7 +360,7 @@ public:
         }
     }
 
-    virtual bool expectBlock(const char *data, int len) {
+    virtual bool expectBlock(const char *data, size_t len) {
         bool ok = reader->expectBlock(data,len);
         if (ok) {
             readerStore.appendBlock(data,len);
@@ -394,7 +394,7 @@ public:
         return false;
     }
 
-    virtual int getSize() {
+    virtual size_t getSize() {
         return reader->getSize();
     }
 
@@ -443,7 +443,7 @@ public:
     }
 
 
-    virtual void appendBlock(const char *data, int len) {
+    virtual void appendBlock(const char *data, size_t len) {
         writer->appendBlock(data,len);
         writerStore.appendBlock(data,len);
     }
@@ -463,7 +463,7 @@ public:
         writerStore.appendString(str,terminate);
     }
 
-    virtual void appendExternalBlock(const char *data, int len) {
+    virtual void appendExternalBlock(const char *data, size_t len) {
         writer->appendExternalBlock(data,len);
         writerStore.appendExternalBlock(data,len);
     }

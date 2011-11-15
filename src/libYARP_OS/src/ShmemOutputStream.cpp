@@ -182,13 +182,13 @@ bool ShmemOutputStreamImpl::write(const Bytes& b)
 		return false;
 	}
 
-	if (m_pHeader->size-m_pHeader->avail<b.length())
+	if ((int)m_pHeader->size-(int)m_pHeader->avail<(int)b.length())
 	{
 		int required=m_pHeader->size+2*b.length();
 		Resize(required);
 	}
 
-	if (m_pHeader->head+b.length()<=m_pHeader->size)
+	if ((int)m_pHeader->head+(int)b.length()<=(int)m_pHeader->size)
 	{
 		memcpy(m_pData+m_pHeader->head,b.get(),b.length());
 	}

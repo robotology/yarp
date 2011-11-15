@@ -17,6 +17,7 @@
 
 #include <yarp/os/impl/Election.h>
 #include <yarp/os/impl/SplitString.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 #include <stdio.h>
 
@@ -145,8 +146,8 @@ public:
     virtual bool expectExtraHeader(Protocol& proto) {
         YARP_DEBUG(Logger::get(),"Expecting extra mcast header");
         ManagedBytes block(6);
-        int len = NetType::readFull(proto.is(),block.bytes());
-        if (len!=block.length()) {
+        ssize_t len = NetType::readFull(proto.is(),block.bytes());
+        if ((size_t)len!=block.length()) {
             //throw new IOException("problem with MCAST header");
             YARP_ERROR(Logger::get(),"problem with MCAST header");
             return false;

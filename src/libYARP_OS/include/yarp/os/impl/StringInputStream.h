@@ -52,16 +52,16 @@ public:
     }
 
     void add(const Bytes& b) {
-        for (int i=0; i<b.length(); i++) {
+        for (size_t i=0; i<b.length(); i++) {
             data += b.get()[i];
         }
     }
 
     virtual int read(const Bytes& b) {
         char *base = b.get();
-        int space = b.length();
+        size_t space = b.length();
         int ct = 0;
-        for (int i=0; i<space; i++) {
+        for (size_t i=0; i<space; i++) {
             if (at<data.length()) {
                 base[i] = data[at];
                 at++;

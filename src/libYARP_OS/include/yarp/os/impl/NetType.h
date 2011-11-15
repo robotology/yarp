@@ -17,6 +17,7 @@
 #include <yarp/os/impl/Logger.h>
 
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 #include <yarp/os/NetInt32.h>
 #include <yarp/os/NetFloat64.h>
@@ -60,9 +61,9 @@ public:
     static String readLine(InputStream& is, int terminal = '\n',
                            bool *success = NULL);
 
-    static int readFull(InputStream& is, const yarp::os::Bytes& b);
+    static ssize_t readFull(InputStream& is, const yarp::os::Bytes& b);
 
-    static int readDiscard(InputStream& is, int len);
+    static ssize_t readDiscard(InputStream& is, size_t len);
 
     static String toString(int x);
 
@@ -72,7 +73,7 @@ public:
 
     static int toInt(const char *x);
 
-    static unsigned long int getCrc(char *buf, int len);
+    static unsigned long int getCrc(char *buf, size_t len);
 
     typedef yarp::os::NetInt32 NetInt32;
     typedef yarp::os::NetFloat64 NetFloat64;

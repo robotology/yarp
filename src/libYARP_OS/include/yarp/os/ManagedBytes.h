@@ -32,7 +32,8 @@ public:
     ManagedBytes() {
         b = Bytes(0/*NULL*/,0);
         owned = false;
-        use = -1;
+        use = 0;
+        use_set = false;
     }
 
     /**
@@ -43,7 +44,8 @@ public:
     ManagedBytes(const Bytes& ext, bool owned = false) {
         b = ext;
         this->owned = owned;
-        use = -1;
+        use = 0;
+        use_set = false;
     }
 
     /**
@@ -54,6 +56,7 @@ public:
     ManagedBytes(const ManagedBytes& alt) {
         b = alt.b;
         use = alt.use;
+        use_set = alt.use_set;
         owned = false;
         if (alt.owned) {
             copy();
@@ -70,6 +73,7 @@ public:
         clear();
         b = alt.b;
         use = alt.use;
+        use_set = alt.use_set;
         owned = false;
         if (alt.owned) {
             copy();
@@ -83,12 +87,13 @@ public:
      * be deleted if this object is destroyed.
      * @param len length of data block
      */
-    ManagedBytes(int len) {
+    ManagedBytes(size_t len) {
         char *buf = new char[len];
         NetworkBase::assertion(buf!=0/*NULL*/);
         b = Bytes(buf,len);
         owned = true;
-        use = -1;
+        use = 0;
+        use_set = false;
     }
 
     /**
@@ -96,15 +101,16 @@ public:
      * be deleted if this object is destroyed.
      * @param len length of data block
      */
-    void allocate(int len) {
+    void allocate(size_t len) {
         clear();
         char *buf = new char[len];
         b = Bytes(buf,len);
         owned = true;
-        use = -1;
+        use = 0;
+        use_set = false;
     }
 
-	bool allocateOnNeed(int neededLen, int allocateLen);
+	bool allocateOnNeed(size_t neededLen, size_t allocateLen);
 	
     /**
      * Makes sure data block is owned, making a copy if necessary.
@@ -114,7 +120,7 @@ public:
     /**
      * @return length of data block
      */
-    int length() const {
+    size_t length() const {
         return b.length();
     }
 
@@ -122,8 +128,8 @@ public:
      * @return length of used portion of data block - by default, this
      * is the same as length(), unless setUsed() is called
      */
-    int used() const {
-        return (use==-1)?length():use;
+    size_t used() const {
+        return use_set?use:length();
     }
 
     /**
@@ -151,7 +157,8 @@ public:
             owned = 0;
         }
         b = Bytes(0/*NULL*/,0);
-        use = -1;
+        use = 0;
+        use_set = false;
     }
 
     /**
@@ -175,13 +182,20 @@ public:
      *
      * explicitly declare how many of the bytes are in use.
      *
-     * @param used byte count (-1 to set to full length of data block)
+     * @param used byte count
      *
      * @return a confirmation of the number of bytes declared to be in use.
      *
      */
-    int setUsed(int used = -1) {
+    int setUsed(size_t used) {
+        use_set = true;
         use = used;
+        return this->used();
+    }
+
+    int resetUsed() {
+        use = 0;
+        use_set = false;
         return this->used();
     }
 
@@ -192,7 +206,8 @@ public:
 private:
     Bytes b;
     bool owned;
-    int use;
+    size_t use;
+    bool use_set;
 };
 
 #endif

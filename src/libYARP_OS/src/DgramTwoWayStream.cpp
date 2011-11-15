@@ -41,7 +41,7 @@ using namespace yarp::os;
 static bool checkCrc(char *buf, int length, int crcLength, int pct,
                      int *store_altPct = NULL) {
     NetType::NetInt32 alt = 
-        (NetType::NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
+        (NetType::NetInt32)NetType::getCrc(buf+crcLength,(length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
     NetType::NetInt32 curr = NetType::netInt(b);
@@ -69,7 +69,8 @@ static bool checkCrc(char *buf, int length, int crcLength, int pct,
 
 static void addCrc(char *buf, int length, int crcLength, int pct) {
     NetType::NetInt32 alt = 
-        (NetType::NetInt32)NetType::getCrc(buf+crcLength,length-crcLength);
+        (NetType::NetInt32)NetType::getCrc(buf+crcLength,
+                                           (length>crcLength)?(length-crcLength):0);
     Bytes b(buf,4);
     Bytes b2(buf+4,4);
     NetType::netInt((NetType::NetInt32)alt,b);
@@ -397,7 +398,7 @@ void DgramTwoWayStream::interrupt() {
                            NetType::toString(closed) + " " +
                            NetType::toString(happy) + " ");
                 ManagedBytes empty(10);
-                for (int i=0; i<empty.length(); i++) {
+                for (size_t i=0; i<empty.length(); i++) {
                     empty.get()[i] = 0;
                 }
                 
@@ -582,7 +583,7 @@ int DgramTwoWayStream::read(const Bytes& b) {
 
         // if stuff is available, take it
         if (readAvail>0) {
-            int take = readAvail;
+            size_t take = readAvail;
             if (take>b.length()) {
                 take = b.length();
             }

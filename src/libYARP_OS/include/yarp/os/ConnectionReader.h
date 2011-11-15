@@ -48,7 +48,7 @@ public:
      *
      * @return true on success
      */
-    virtual bool expectBlock(const char *data, int len) = 0;
+    virtual bool expectBlock(const char *data, size_t len) = 0;
 
     /**
      * Read some text from the network connection.
@@ -91,7 +91,7 @@ public:
      * Checks how much data is available.
      * @return the number of bytes left on the connection.
      */
-    virtual int getSize() = 0;
+    virtual size_t getSize() = 0;
 
 
     /**

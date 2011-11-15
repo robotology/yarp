@@ -23,6 +23,7 @@
 #include <yarp/os/Portable.h>
 #include <yarp/os/impl/PlatformStdio.h>
 #include <yarp/os/impl/PlatformStdlib.h>
+#include <yarp/os/impl/PlatformSize.h>
 
 #define throw_IOException(e) YARP_DEBUG(Logger::get(),e)
 
@@ -91,8 +92,8 @@ public:
 
     bool defaultExpectSenderSpecifier() {
         int len = 0;
-        int r = NetType::readFull(is(),number.bytes());
-        if (r!=number.length()) {
+        ssize_t r = NetType::readFull(is(),number.bytes());
+        if ((size_t)r!=number.length()) {
             throw_IOException("did not get sender name length");
             return false;
         }
@@ -102,7 +103,7 @@ public:
         // expect a string -- these days null terminated, but not in YARP1
         yarp::os::ManagedBytes b(len+1);
         r = NetType::readFull(is(),yarp::os::Bytes(b.get(),len));
-        if (r!=len) {
+        if ((int)r!=len) {
             throw_IOException("did not get sender name");
             return false;
         }
@@ -150,9 +151,9 @@ public:
     }
 
     int readYarpInt() {
-        int len = NetType::readFull(is(),header.bytes());
+        ssize_t len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
-        if (len!=header.length()) {
+        if ((size_t)len!=header.length()) {
             throw_IOException("data stream died");
             return -1;
         }
@@ -245,8 +246,8 @@ public:
     bool defaultExpectAck() {
         YARP_ASSERT(delegate!=NULL);
         if (delegate->requireAck()) {
-            int hdr = NetType::readFull(is(),header.bytes());
-            if (hdr!=header.length()) {
+            ssize_t hdr = NetType::readFull(is(),header.bytes());
+            if ((size_t)hdr!=header.length()) {
                 throw_IOException("did not get acknowledgement header");
                 return false;
             }
@@ -536,14 +537,14 @@ private:
     }
 
     bool expectProtocolSpecifier() {
-        int len = NetType::readFull(is(),header.bytes());
+        ssize_t len = NetType::readFull(is(),header.bytes());
         ACE_UNUSED_ARG(len);
         //ACE_OS::printf("len is %d but header is %d\n", len, header.length());
         if (len==-1) {
             throw_IOException("no connection");
             return false;
         }
-        if(len!=header.length()) {
+        if((size_t)len!=header.length()) {
             throw_IOException("data stream died");
             return false;
         }

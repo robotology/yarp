@@ -450,7 +450,7 @@ public:
     */
 
     const char *getBytes();
-    int byteCount();
+    size_t byteCount();
 
     void copyRange(const BottleImpl& alt, int first = 0, int len = -1);
 

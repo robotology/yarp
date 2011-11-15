@@ -100,6 +100,10 @@ if (WIN32 AND NOT CYGWIN)
   add_definitions(-DWIN32 -D_WINDOWS)
 else (WIN32 AND NOT CYGWIN)
   add_definitions(-Wall)
+  option(YARP_EXTRA_WARNINGS "-Wall not enough? Turn on -Wextra for extra warnings." FALSE)
+  if (YARP_EXTRA_WARNINGS)
+    add_definitions(-Wextra -Wno-unused-parameter -Werror)
+  endif()
 endif (WIN32 AND NOT CYGWIN)
 
 ## check if we are on cygwin

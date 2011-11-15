@@ -25,7 +25,7 @@ void ManagedBytes::copy() {
     }
 }
 
-bool ManagedBytes::allocateOnNeed(int neededLen, int allocateLen) {
+bool ManagedBytes::allocateOnNeed(size_t neededLen, size_t allocateLen) {
 	if (length()<neededLen && allocateLen>=neededLen) {
 		char *buf = new char[allocateLen];
 		yarp::os::NetworkBase::assertion(buf!=NULL);

@@ -414,7 +414,7 @@ const char *BottleImpl::getBytes() {
     return &data[0];
 }
 
-int BottleImpl::byteCount() {
+size_t BottleImpl::byteCount() {
     synch();
     return data.size();
 }

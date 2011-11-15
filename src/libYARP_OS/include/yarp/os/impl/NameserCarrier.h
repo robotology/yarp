@@ -214,8 +214,8 @@ public:
         proto.os().write(b);
         String txt;
         // ancient nameserver can't deal with quotes
-        for (int i=0; i<writer.length(); i++) {
-            for (int j=0; j<writer.length(i); j++) {
+        for (size_t i=0; i<writer.length(); i++) {
+            for (size_t j=0; j<writer.length(i); j++) {
                 char ch = writer.data(i)[j];
                 if (ch!='\"') {
                     txt += ch;

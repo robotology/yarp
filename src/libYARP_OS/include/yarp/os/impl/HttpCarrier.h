@@ -87,7 +87,7 @@ public:
     }
 
     virtual void write(const Bytes& b) { // throws
-        for (int i=0; i<b.length(); i++) {
+        for (size_t i=0; i<b.length(); i++) {
             apply(b.get()[i]);
         }
     }

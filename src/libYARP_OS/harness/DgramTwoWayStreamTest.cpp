@@ -80,7 +80,7 @@ public:
 
     void corrupt(int index, int offset = 0) {
         if (index<MAX_PACKET) {
-            if (offset<store[index].length()) {
+            if (offset<(int)store[index].length()) {
                 store[index].get()[offset] ^= 255;
             } else {
                 printf("cannot corrupt nonexistent byte\n");
@@ -132,7 +132,7 @@ public:
         out.openMonitor(sz,sz);
 
         ManagedBytes msg(200);
-        for (int i=0; i<msg.length(); i++) {
+        for (size_t i=0; i<msg.length(); i++) {
             msg.get()[i] = i%128;
         }
         out.beginPacket();
@@ -150,7 +150,7 @@ public:
         DgramTest in;
         in.openMonitor(sz,sz);
         ManagedBytes recv(200);
-        for (int i=0; i<recv.length(); i++) {
+        for (size_t i=0; i<recv.length(); i++) {
             recv.get()[i] = 0;
         }
         in.copyMonitor(out);
@@ -158,9 +158,9 @@ public:
         NetType::readFull(in,recv.bytes());
         in.endPacket();
         bool mismatch = false;
-        for (int i=0; i<recv.length(); i++) {
+        for (size_t i=0; i<recv.length(); i++) {
             if (recv.get()[i]!=msg.get()[i]) {
-                printf("Mismatch, at least as early as byte %d\n", i);
+                printf("Mismatch, at least as early as byte %d\n", (int)i);
                 mismatch = true;
                 break;
             }
@@ -179,15 +179,15 @@ public:
         in.copyMonitor(out);
         mismatch = false;
         for (int k=0; k<3; k++) {
-            for (int i=0; i<recv.length(); i++) {
+            for (size_t i=0; i<recv.length(); i++) {
                 recv.get()[i] = 0;
             }
             in.beginPacket();
             NetType::readFull(in,recv.bytes());
             in.endPacket();
-            for (int i=0; i<recv.length(); i++) {
+            for (size_t i=0; i<recv.length(); i++) {
                 if (recv.get()[i]!=msg.get()[i]) {
-                    printf("Mismatch, at least as early as byte %d\n", i);
+                    printf("Mismatch, at least as early as byte %d\n", (int)i);
                     mismatch = true;
                     break;
                 }
@@ -228,14 +228,14 @@ public:
             int length[4];
             for (int k=0; k<4; k++) {
                 //printf("Iteration %d\n", k);
-                for (int i=0; i<recv.length(); i++) {
+                for (size_t i=0; i<recv.length(); i++) {
                     recv.get()[i] = 0;
                 }
                 in.beginPacket();
                 int len = NetType::readFull(in,recv.bytes());
                 in.endPacket();
                 mismatch = false;
-                for (int i=0; i<recv.length(); i++) {
+                for (size_t i=0; i<recv.length(); i++) {
                     if (recv.get()[i]!=msg.get()[i]) {
                         //printf("Mismatch, at least as early as byte %d\n", i);
                         mismatch = true;

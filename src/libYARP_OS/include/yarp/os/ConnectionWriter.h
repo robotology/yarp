@@ -11,6 +11,7 @@
 #define _YARP2_CONNECTIONWRITER_
 
 #include <yarp/os/api.h>
+#include <stddef.h> // defines size_t
 
 namespace yarp {
     namespace os {
@@ -45,7 +46,7 @@ public:
      * @param data the start of the data block
      * @param len  the length of the data block
      */
-    virtual void appendBlock(const char *data, int len) = 0;
+    virtual void appendBlock(const char *data, size_t len) = 0;
 
     /**
      * Send a representation of an integer to the network connection.
@@ -76,7 +77,7 @@ public:
      * @param data the start of the data block
      * @param len  the length of the data block
      */
-    virtual void appendExternalBlock(const char *data, int len) = 0;
+    virtual void appendExternalBlock(const char *data, size_t len) = 0;
 
     /**
      * Check if the connection is text mode.  If it is, you are

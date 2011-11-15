@@ -59,7 +59,7 @@ String NetType::readLine(InputStream& is, int terminal, bool *success) {
     return buf;
 }    
 
-int NetType::readFull(InputStream& is, const Bytes& b) {
+ssize_t NetType::readFull(InputStream& is, const Bytes& b) {
     int off = 0;
     int fullLen = b.length();
     int remLen = fullLen;
@@ -75,7 +75,7 @@ int NetType::readFull(InputStream& is, const Bytes& b) {
     return (result<=0)?-1:fullLen;
 }
 
-int NetType::readDiscard(InputStream& is, int len) {
+ssize_t NetType::readDiscard(InputStream& is, size_t len) {
     if (len<100) {
         char buf[100];
         Bytes b(buf,len);
@@ -146,9 +146,10 @@ static void make_crc_table(void) {
    crc() routine below)). */
 
 static unsigned long update_crc(unsigned long crc, unsigned char *buf,
-                                int len) {
+                                size_t len) {
+
     unsigned long c = crc;
-    int n;
+    size_t n;
   
     if (!crc_table_computed)
         make_crc_table();
@@ -159,6 +160,6 @@ static unsigned long update_crc(unsigned long crc, unsigned char *buf,
 }
 
 /* Return the CRC of the bytes buf[0..len-1]. */
-unsigned long NetType::getCrc(char *buf, int len) {
+unsigned long NetType::getCrc(char *buf, size_t len) {
     return update_crc(0xffffffffL, (unsigned char *)buf, len) ^ 0xffffffffL;
 }
