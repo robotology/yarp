@@ -106,7 +106,7 @@ int TcpRosStream::read(const Bytes& b) {
     if (remaining>0) {
         if (cursor!=NULL) {
             int allow = remaining;
-            if (b.length()<allow) {
+            if ((int)b.length()<allow) {
                 allow = b.length();
             }
             memcpy(b.get(),cursor,allow);

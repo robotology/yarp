@@ -106,7 +106,7 @@ public:
 
     virtual void getHeader(const Bytes& header) {
         const char *target = "POST /RP";
-        for (int i=0; i<8 && i<header.length(); i++) {
+        for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }

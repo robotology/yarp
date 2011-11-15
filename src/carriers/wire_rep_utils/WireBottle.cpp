@@ -94,8 +94,8 @@ bool WireBottle::checkBottle(void *cursor, int len) {
 
 bool WireBottle::extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
                                        SizedWriterTail& dest) {
-    int total_len = 0;
-    for (int i=0; i<src.length(); i++) {
+    size_t total_len = 0;
+    for (size_t i=0; i<src.length(); i++) {
         total_len += src.length(i);
     }
     bool has_header = false;
@@ -114,7 +114,7 @@ bool WireBottle::extractBlobFromBottle(yarp::os::impl::SizedWriter& src,
         //dbg_printf(">>> %d %d %d\n", i1, i2, i3);
         if (i1==BOTTLE_TAG_LIST+BOTTLE_TAG_BLOB) {
             if (i2==1) {
-                if (i3==total_len - 12) {
+                if ((size_t)i3==total_len - 12) {
                     // good enough
                     //dbg_printf("Header detected\n");
                     has_header = true;

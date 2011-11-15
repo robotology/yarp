@@ -17,13 +17,13 @@ using namespace yarp::sig;
 FlexImage *WireImage::checkForImage(SizedWriter& writer) {
     ImageNetworkHeader hdr;
     char *header_buf = (char*)(&hdr);
-    int header_len = sizeof(hdr);
+    size_t header_len = sizeof(hdr);
     const char *img_buf = NULL;
     int img_len = 0;
     hdr.imgSize = -1;
-    for (int i=0; i<writer.length(); i++) {
+    for (size_t i=0; i<writer.length(); i++) {
         const char *data = writer.data(i);
-        int len = writer.length(i);
+        size_t len = writer.length(i);
         //printf("block %d length %d\n", i, len);
         if (header_len<len) {
             len = header_len;

@@ -323,7 +323,7 @@ bool WireTwiddler::write(yarp::os::Bottle& bot,
 
 
 int WireTwiddlerReader::read(const Bytes& b) {
-    dbg_printf("Want %d bytes\n", b.length());
+    dbg_printf("Want %d bytes\n", (int)b.length());
     if (index==-1) {
         dbg_printf("WireTwidderReader::read getting started\n");
     }
@@ -512,8 +512,8 @@ bool WireTwiddlerWriter::update() {
     activeEmitLength = 0;
 
 
-    dbg_printf("Parent headers %d blocks %d\n", parent->headerLength(), 
-               parent->length());
+    dbg_printf("Parent headers %d blocks %d\n", (int)parent->headerLength(), 
+               (int)parent->length());
 
     for (int i=0; i<twiddler->getGapCount(); i++) {
         ConstString item = "";

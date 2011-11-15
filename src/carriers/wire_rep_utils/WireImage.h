@@ -92,12 +92,12 @@ public:
         ros_seq_stamp.nsec = (int)((t-(int)t)*1e9);
     }
 
-    virtual int length() { return 3; }
+    virtual size_t length() { return 3; }
 
-    virtual int headerLength() { return 0; }
+    virtual size_t headerLength() { return 0; }
 
-    virtual int length(int index) {
-        int result = 0;
+    virtual size_t length(size_t index) {
+        size_t result = 0;
         switch (index) {
         case 0:
             result = sizeof(ros_seq_stamp);
@@ -114,7 +114,7 @@ public:
         return result;
     }
 
-    virtual const char *data(int index) {
+    virtual const char *data(size_t index) {
         const char *result = 0 /*NULL*/;
         switch (index) {
         case 0:

@@ -180,10 +180,10 @@ bool TcpRosCarrier::expectSenderSpecifier(Protocol& proto) {
     Bytes mrem(m.get()+4,m.length()-4);
     NetInt32 ni = headerLen2;
     memcpy(m.get(),(char*)(&ni), 4);
-    dbg_printf("reading %d bytes\n", mrem.length());
+    dbg_printf("reading %d bytes\n", (int)mrem.length());
     int res = NetType::readFull(proto.is(),mrem);
     dbg_printf("read %d bytes\n", res);
-    if (res!=mrem.length()) {
+    if (res!=(int)mrem.length()) {
         printf("Fail %s %d\n", __FILE__, __LINE__);
         return false;
     }
@@ -318,11 +318,11 @@ bool TcpRosCarrier::write(Protocol& proto, SizedWriter& writer) {
     }
     
     int len = 0;
-    for (int i=0; i<flex_writer->length(); i++) {
-        len += flex_writer->length(i);
+    for (size_t i=0; i<flex_writer->length(); i++) {
+        len += (int)flex_writer->length(i);
     }
     dbg_printf("Prepping to write %d blocks (%d bytes)\n", 
-               flex_writer->length(),
+               (int)flex_writer->length(),
                len);
     
     string header_len(4,'\0');

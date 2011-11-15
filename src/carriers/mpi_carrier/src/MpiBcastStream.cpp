@@ -73,7 +73,7 @@ int MpiBcastStream::read(const Bytes& b) {
             execCmd(size);
             return 0;
         }
-        if (size == b.length()) {
+        if ((size_t)size == b.length()) {
             // size of received data matches expected data
             // do not use buffer, but write directly
             MPI_Bcast(b.get(), size, MPI_BYTE, 0, comm->comm);
@@ -91,7 +91,7 @@ int MpiBcastStream::read(const Bytes& b) {
     if (readAvail>0) {
         // copy data from buffer to destination object
         int take = readAvail;
-        if (take>b.length()) {
+        if (take>(int)b.length()) {
             take = b.length();
         }
         memcpy(b.get(),readBuffer+readAt,take);

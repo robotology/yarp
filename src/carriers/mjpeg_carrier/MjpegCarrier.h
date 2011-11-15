@@ -106,7 +106,7 @@ public:
     virtual void getHeader(const Bytes& header) {
         // GET /?action=stream HTTP/1.1
         const char *target = "GET /?ac";
-        for (int i=0; i<8 && i<header.length(); i++) {
+        for (size_t i=0; i<8 && i<header.length(); i++) {
             header.get()[i] = target[i];
         }
     }

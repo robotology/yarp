@@ -94,7 +94,7 @@ int MjpegStream::read(const Bytes& b) {
 
     if (remaining>0) {
         int allow = remaining;
-        if (b.length()<allow) {
+        if ((int)b.length()<allow) {
             allow = b.length();
         }
         if (cursor!=NULL) {

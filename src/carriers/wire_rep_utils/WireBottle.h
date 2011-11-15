@@ -15,7 +15,7 @@
 class SizedWriterTail : public yarp::os::impl::SizedWriter {
 private:
     yarp::os::impl::SizedWriter *delegate;
-    int payload_index, payload_offset;
+    size_t payload_index, payload_offset;
 public:
     void setDelegate(yarp::os::impl::SizedWriter *delegate, int index,
                      int offset) {
@@ -24,21 +24,21 @@ public:
         payload_offset = offset;
     }
     
-    virtual int length() {
+    virtual size_t length() {
         return delegate->length()-payload_index;
     }
 
-    virtual int headerLength() {
+    virtual size_t headerLength() {
         return 0; // not supported
     }
 
-    virtual int length(int index) {
+    virtual size_t length(size_t index) {
         index += payload_index;
         if (index==payload_index) return delegate->length(index)-payload_offset;
         return delegate->length(index);
     }
 
-    virtual const char *data(int index) {
+    virtual const char *data(size_t index) {
         index += payload_index;
         if (index==payload_index) return delegate->data(index)+payload_offset;
         return delegate->data(index);

@@ -90,16 +90,16 @@ bool testSequence(char *seq, int len, const char *fmt, Bottle ref,
         printf(" WRITE %s\n", fmt);
         ManagedBytes output;
         tt.write(ref,output);
-        if (output.length()!=len) {
+        if (output.length()!=(size_t)len) {
             fprintf(stderr,"WRITE MISMATCH, length %d, expected %d\n",
-                    output.length(), len);
+                    (int)output.length(), len);
             exit(1);
             return false;
         }
-        for (int i=0; i<output.length(); i++) {
+        for (size_t i=0; i<output.length(); i++) {
             if (output.get()[i] != seq[i]) {
                 fprintf(stderr,"WRITE MISMATCH, at %d, have [%d:%c] expected [%d:%c]\n",
-                        i, output.get()[i], output.get()[i], seq[i], seq[i]);
+                        (int)i, output.get()[i], output.get()[i], seq[i], seq[i]);
                 exit(1);
                 return false;
             }

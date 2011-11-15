@@ -38,7 +38,7 @@ int MpiP2PStream::read(const Bytes& b) {
             Time::yield();
         }
         MPI_Get_count(&status, MPI_BYTE, &size);
-        if (size == b.length()) {
+        if (size == (int)b.length()) {
             // size of received data matches expected data
             // do not use buffer, but write directly
             MPI_Recv(b.get(), size, MPI_BYTE, !rank, tag, comm->comm, &status);
@@ -56,8 +56,8 @@ int MpiP2PStream::read(const Bytes& b) {
     if (readAvail>0) {
         // copy data from buffer to destination object
         int take = readAvail;
-        if (take>b.length()) {
-            take = b.length();
+        if (take>(int)b.length()) {
+            take = (int)b.length();
         }
         memcpy(b.get(),readBuffer+readAt,take);
         //printf("read %d of %d \n", take, readAvail);

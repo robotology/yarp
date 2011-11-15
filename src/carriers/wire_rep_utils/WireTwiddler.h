@@ -192,19 +192,19 @@ public:
 
     virtual ~WireTwiddlerWriter() {}
 
-    virtual int length() { 
-        return (int)srcs.size(); 
+    virtual size_t length() { 
+        return srcs.size(); 
     }
 
-    virtual int headerLength() {
+    virtual size_t headerLength() {
         return 0;
     }
 
-    virtual int length(int index)  { 
+    virtual size_t length(size_t index)  { 
         return srcs[index].length(); 
     }
 
-    virtual const char *data(int index) {
+    virtual const char *data(size_t index) {
         return srcs[index].get(); 
     }
 
