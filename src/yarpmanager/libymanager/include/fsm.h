@@ -125,9 +125,8 @@ public:
             typeid(*state);
             return state;
         }
-        catch (std::exception& typevar)
+        catch (std::exception& )
         {
-			typevar;
             std::cerr<<"Exception in currentState(): Initial state is not set!"<<std::endl;
             std::terminate();   
         }
