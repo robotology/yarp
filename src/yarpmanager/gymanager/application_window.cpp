@@ -311,7 +311,7 @@ void ApplicationWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
         "      <menuitem action='PModuleSelAll'/>"
-        "      <menuitem action='PManageStdout'/>"
+     /* "      <menuitem action='PManageStdout'/>" */
         " </popup>"
         " <popup name='PopupConnections'>"
         "      <menuitem action='PManageConnect'/>"
@@ -443,15 +443,15 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
     {   
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeModView.get_path_at_pos(event->x, 
-                                                     event->y, path);
+        bool bOnItem = m_TreeModView.get_path_at_pos((int)event->x, 
+                                                     (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
         {
             m_refActionGroup->get_action("PManageRun")->set_sensitive(true);
             m_refActionGroup->get_action("PManageStop")->set_sensitive(true);
             m_refActionGroup->get_action("PManageKill")->set_sensitive(true);
-            m_refActionGroup->get_action("PManageStdout")->set_sensitive(true);
+            //m_refActionGroup->get_action("PManageStdout")->set_sensitive(true);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(true);
         }
         else
@@ -460,7 +460,7 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
             m_refActionGroup->get_action("PManageRun")->set_sensitive(false);
             m_refActionGroup->get_action("PManageStop")->set_sensitive(false);
             m_refActionGroup->get_action("PManageKill")->set_sensitive(false);
-            m_refActionGroup->get_action("PManageStdout")->set_sensitive(false);
+            //m_refActionGroup->get_action("PManageStdout")->set_sensitive(false);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
         }
 #endif 
@@ -483,8 +483,8 @@ void ApplicationWindow::onConnectionTreeButtonPressed(GdkEventButton* event)
 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeConView.get_path_at_pos(event->x, 
-                                                     event->y, path);
+        bool bOnItem = m_TreeConView.get_path_at_pos((int)event->x, 
+                                                     (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
         {
@@ -520,8 +520,8 @@ void ApplicationWindow::onResourceTreeButtonPressed(GdkEventButton* event)
 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
-        bool bOnItem = m_TreeResView.get_path_at_pos(event->x, 
-                                                     event->y, path);
+        bool bOnItem = m_TreeResView.get_path_at_pos((int)event->x, 
+                                                     (int)event->y, path);
         // if it's not a free click
         if(bOnItem)
         {

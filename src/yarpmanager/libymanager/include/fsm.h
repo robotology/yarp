@@ -127,6 +127,7 @@ public:
         }
         catch (std::exception& typevar)
         {
+			typevar;
             std::cerr<<"Exception in currentState(): Initial state is not set!"<<std::endl;
             std::terminate();   
         }

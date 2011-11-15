@@ -134,7 +134,7 @@ protected:
 
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
             Gtk::TreeModel::Path path;
-            bool bOnItem = get_path_at_pos(event->x, event->y, path);
+            bool bOnItem = get_path_at_pos((int)event->x, (int)event->y, path);
             // if it's not a free click
             if(!bOnItem)
                 get_selection()->unselect_all();    
@@ -248,8 +248,8 @@ protected:
         {
             dummy_h = allocation.get_height();
             dummy_w = allocation.get_width();
-            m_VPaned.set_position(allocation.get_height()/2.0);
-            m_HPaned.set_position(allocation.get_width()/2.0);
+            m_VPaned.set_position((int)(allocation.get_height()/2.0));
+            m_HPaned.set_position((int)(allocation.get_width()/2.0));
         }
 
         Gtk::Frame::on_size_allocate(allocation);

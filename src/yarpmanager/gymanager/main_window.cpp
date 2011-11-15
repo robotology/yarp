@@ -82,7 +82,7 @@ void MainWindow::on_size_allocate(Gtk::Allocation& allocation)
     if(allocation.get_height() != dummy_h)
     {
         dummy_h = allocation.get_height();
-        m_VPaned.set_position(allocation.get_height()-allocation.get_height()/3.0);
+        m_VPaned.set_position((int)(allocation.get_height()-allocation.get_height()/3.0));
     }
     
     if(m_VPaned.get_position()<50)
@@ -762,8 +762,8 @@ void MainWindow::onAppListButtonPressed(GdkEventButton* event)
 #if (GTKMM_MAJOR_VERSION == 2 && GTKMM_MINOR_VERSION >= 16)
         Gtk::TreeModel::Path path;
         bool bOnItem = m_applicationList.getTreeView()->get_path_at_pos(
-                                                    event->x, 
-                                                    event->y, path);
+                                                    (int)event->x, 
+                                                    (int)event->y, path);
         bool bOnAppItem = false;
         if(path)
         {

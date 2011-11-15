@@ -20,7 +20,7 @@ using namespace std;
 
 StdoutWindow::StdoutWindow(Gtk::Window* parent, int ID, const char* title)
 {
-    m_MessageList = manage(new MessagesList(this));
+	m_MessageList = Gtk::manage(new MessagesList(this));
     m_ID = ID;
     if(title)
         set_title(title);

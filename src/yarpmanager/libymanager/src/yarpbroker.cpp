@@ -37,7 +37,7 @@ YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
 
 YarpBroker::~YarpBroker()
 {
-    RateThread::stop();
+    //RateThread::stop();
 }
 
 
@@ -156,7 +156,7 @@ bool YarpBroker::start()
     {
         if(running())
         {
-            RateThread::start();
+            //RateThread::start();
             return true;
         }
     }
@@ -201,7 +201,7 @@ bool YarpBroker::stop()
     {
         if(!running())
         {
-            RateThread::stop();
+            //RateThread::stop();
             return true;
         }
     }
@@ -246,7 +246,7 @@ bool YarpBroker::kill()
     {
         if(!running())
         {
-            RateThread::stop();
+            //RateThread::stop();
             return true;
         }
     }
