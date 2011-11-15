@@ -258,6 +258,7 @@ bool PortCore::manualStart(const char *sourceName) {
 
 
 void PortCore::interrupt() {
+    interrupted = true;
     if (interruptible) {
         stateMutex.wait();
         // Check if someone is waiting for input.  If so, wake them up

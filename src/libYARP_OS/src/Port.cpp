@@ -432,6 +432,7 @@ Contact Port::where() const {
 
 bool Port::addOutput(const Contact& contact) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     if (!core.isListening()) {
         return core.addOutput(contact.toString().c_str(),NULL,NULL,true);
     }
@@ -446,6 +447,7 @@ bool Port::addOutput(const Contact& contact) {
  */
 bool Port::write(PortWriter& writer, PortWriter *callback) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     bool result = false;
     //WritableAdapter adapter(writer);
     result = core.send(writer,NULL,callback);
@@ -468,6 +470,7 @@ bool Port::write(PortWriter& writer, PortWriter *callback) {
 bool Port::write(PortWriter& writer, PortReader& reader, 
                  PortWriter *callback) const {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     bool result = false;
     result = core.send(writer,&reader,callback);
     if (!result) {
@@ -487,6 +490,7 @@ bool Port::write(PortWriter& writer, PortReader& reader,
  */
 bool Port::read(PortReader& reader, bool willReply) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     return core.read(reader,willReply);
 }
 
@@ -494,11 +498,13 @@ bool Port::read(PortReader& reader, bool willReply) {
 
 bool Port::reply(PortWriter& writer) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     return core.reply(writer,false);
 }
 
 bool Port::replyAndDrop(PortWriter& writer) {
     PortCoreAdapter& core = HELPER(implementation);
+    if (core.isInterrupted()) return false;
     return core.reply(writer,true);
 }
 

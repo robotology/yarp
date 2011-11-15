@@ -87,6 +87,7 @@ public:
         dataOutputCount = 0;
         controlRegistration = true;
         interruptible = true;
+        interrupted = false;
         eventReporter = NULL;
         logNeeded = false;
         flags = PORTCORE_IS_INPUT|PORTCORE_IS_OUTPUT;
@@ -299,6 +300,10 @@ public:
         return manual;
     }
 
+    bool isInterrupted() const {
+        return interrupted;
+    }
+
 public:
 
     // PortManager interface, exposed to inputs
@@ -384,6 +389,7 @@ private:
     bool waitBeforeSend, waitAfterSend;
     bool controlRegistration;
     bool interruptible;
+    bool interrupted;
     bool manual;
     int events;
     int connectionListeners;

@@ -1,5 +1,9 @@
 2011-11-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
+	* src/libYARP_OS/src/Port.cpp: guarantee that all read/writes
+	on a port will fail after call to Port::interrupt
+	[thanks Ugo Pattacini]
+
 	* src/libYARP_OS/include/yarp/os/Bytes.h
 	* src/libYARP_OS/include/yarp/os/ManagedBytes.h
 	* src/libYARP_OS/include/yarp/os/ConnectionReader.h
