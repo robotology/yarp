@@ -412,6 +412,11 @@ void Port::interrupt() {
     core.interrupt();
 }
 
+void Port::resume() {
+    PortCoreAdapter& core = HELPER(implementation);
+    core.resume();
+}
+
 
 
 Port::~Port() {

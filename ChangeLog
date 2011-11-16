@@ -1,3 +1,9 @@
+2011-11-16  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/Port.h: add resume() method
+	to undo an interrupt [thanks Carlo Ciliberto]
+	[thanks Ugo Pattacini]
+
 2011-11-15  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/src/Port.cpp: guarantee that all read/writes

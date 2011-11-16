@@ -1051,6 +1051,9 @@ public:
         report(0,"writing...");
         bool ok = output.write(bot1);
         checkFalse(ok,"output rejected correctly");
+        output.resume();
+        ok = output.write(bot1);
+        checkTrue(ok,"output goes through after resume");
 
         output.close();
         input.close();

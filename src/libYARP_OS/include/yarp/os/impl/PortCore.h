@@ -275,6 +275,11 @@ public:
     void interrupt();
 
     /**
+     * Undo an interrupt()
+     */
+    void resume();
+
+    /**
      * Generate a description of the connections associated with the
      * port.
      */

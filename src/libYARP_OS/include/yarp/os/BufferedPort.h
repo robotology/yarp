@@ -98,6 +98,11 @@ public:
         port.interrupt();
     }
 
+    virtual void resume() {
+        port.resume();
+        interrupted = false;
+    }
+
     /**
      * Get the number of objects ready to be read.
      */

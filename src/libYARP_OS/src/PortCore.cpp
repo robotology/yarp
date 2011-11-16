@@ -256,6 +256,9 @@ bool PortCore::manualStart(const char *sourceName) {
 }
 
 
+void PortCore::resume() {
+    interrupted = false;
+}
 
 void PortCore::interrupt() {
     interrupted = true;

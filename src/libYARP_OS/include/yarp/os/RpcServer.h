@@ -87,6 +87,11 @@ public:
     }
 
     // documentation provided in Contactable
+    virtual void resume() {
+        port.resume();
+    }
+
+    // documentation provided in Contactable
     virtual Contact where() const {
         return port.where();
     }

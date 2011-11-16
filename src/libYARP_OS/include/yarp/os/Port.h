@@ -92,6 +92,8 @@ public:
     // documentation provided in Contactable
     virtual void interrupt();
 
+    // documentation provided in Contactable
+    virtual void resume();
 
     // documentation provided in Contactable
     Contact where() const;

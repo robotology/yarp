@@ -105,10 +105,18 @@ public:
     /**
      * Interrupt any current reads or writes attached to the port.
      * This is useful prior to calling close(), if there are multiple
-     * threads operating on the port.  The port should not be used
-     * again after a call to interrupt().
+     * threads operating on the port.  Any reads or writes
+     * after the call to interrupt() will fail - unless resume() is called.
      */
     virtual void interrupt() = 0;
+
+    /**
+     *
+     * Put the port back in an operative state after interrupt() has
+     * been called.
+     *
+     */
+    virtual void resume() = 0;
 
     /**
      * Returns information about how this port can be reached.
