@@ -45,6 +45,7 @@ public:
      bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv );
+     void fini(void);
      bool start();
      bool stop();
      bool kill();

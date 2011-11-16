@@ -311,7 +311,7 @@ void ApplicationWindow::createWidgets(void)
         "      <separator/>"
         "      <menuitem action='PManageRefresh'/>"
         "      <menuitem action='PModuleSelAll'/>"
-     /* "      <menuitem action='PManageStdout'/>" */
+        "      <menuitem action='PManageStdout'/>"
         " </popup>"
         " <popup name='PopupConnections'>"
         "      <menuitem action='PManageConnect'/>"
@@ -451,7 +451,7 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
             m_refActionGroup->get_action("PManageRun")->set_sensitive(true);
             m_refActionGroup->get_action("PManageStop")->set_sensitive(true);
             m_refActionGroup->get_action("PManageKill")->set_sensitive(true);
-            //m_refActionGroup->get_action("PManageStdout")->set_sensitive(true);
+            m_refActionGroup->get_action("PManageStdout")->set_sensitive(true);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(true);
         }
         else
@@ -460,7 +460,7 @@ void ApplicationWindow::onModuleTreeButtonPressed(GdkEventButton* event)
             m_refActionGroup->get_action("PManageRun")->set_sensitive(false);
             m_refActionGroup->get_action("PManageStop")->set_sensitive(false);
             m_refActionGroup->get_action("PManageKill")->set_sensitive(false);
-            //m_refActionGroup->get_action("PManageStdout")->set_sensitive(false);
+            m_refActionGroup->get_action("PManageStdout")->set_sensitive(false);
             m_refActionGroup->get_action("PManageRefresh")->set_sensitive(false);
         }
 #endif 
@@ -691,9 +691,13 @@ bool ApplicationWindow::onRun(void)
                     Glib::ustring(row[m_modColumns.m_col_wdir]).c_str(), 
                     Glib::ustring(row[m_modColumns.m_col_env]).c_str() );
 
-                row[m_modColumns.m_col_status] = "waiting";
-                row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-                row.set_value(0, m_refPixWaiting);
+                if(semGui.check())
+                {
+                    row[m_modColumns.m_col_status] = "waiting";
+                    row[m_modColumns.m_col_color] = Gdk::Color("#000000");
+                    row.set_value(0, m_refPixWaiting);
+                    semGui.post();
+                }
             }
         }
         setCellsEditable(); 
@@ -719,9 +723,13 @@ bool ApplicationWindow::onStop(void)
             Gtk::TreeModel::Row row;
             if(getModRowByID(m_ModuleIDs[i], &row))
             {
-                row[m_modColumns.m_col_status] = "waiting";
-                row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-                row.set_value(0, m_refPixWaiting);
+                if(semGui.check())
+                {
+                    row[m_modColumns.m_col_status] = "waiting";
+                    row[m_modColumns.m_col_color] = Gdk::Color("#000000");
+                    row.set_value(0, m_refPixWaiting);
+                    semGui.post();
+                }
             }
         }
 
@@ -748,9 +756,13 @@ bool ApplicationWindow::onKill(void)
             Gtk::TreeModel::Row row;
             if(getModRowByID(m_ModuleIDs[i], &row))
             {
-                row[m_modColumns.m_col_status] = "waiting";
-                row[m_modColumns.m_col_color] = Gdk::Color("#000000");
-                row.set_value(0, m_refPixWaiting);
+                if(semGui.check())
+                {
+                    row[m_modColumns.m_col_status] = "waiting";
+                    row[m_modColumns.m_col_color] = Gdk::Color("#000000");
+                    row.set_value(0, m_refPixWaiting);
+                    semGui.post();
+                }
             }
         }
         manager.postSemaphore();
@@ -781,10 +793,14 @@ bool ApplicationWindow::onConnect(void)
                     Glib::ustring(row[m_conColumns.m_col_from]).c_str(), 
                     Glib::ustring(row[m_conColumns.m_col_to]).c_str(), 
                     Glib::ustring(row[m_conColumns.m_col_carrier]).c_str() );
-
-                row[m_conColumns.m_col_status] = "waiting";
-                row[m_conColumns.m_col_color] = Gdk::Color("#000000");
-                row.set_value(0, m_refPixWaiting);
+                
+                if(semGui.check())
+                {
+                    row[m_conColumns.m_col_status] = "waiting";
+                    row[m_conColumns.m_col_color] = Gdk::Color("#000000");
+                    row.set_value(0, m_refPixWaiting);
+                    semGui.post();
+                }
             }
         }
         setCellsEditable();
@@ -810,9 +826,13 @@ bool ApplicationWindow::onDisconnect(void)
             Gtk::TreeModel::Row row;
             if(getConRowByID(m_ConnectionIDs[i], &row))
             {
-                row[m_conColumns.m_col_status] = "waiting";
-                row[m_conColumns.m_col_color] = Gdk::Color("#000000");
-                row.set_value(0, m_refPixWaiting);
+                if(semGui.check())
+                {
+                    row[m_conColumns.m_col_status] = "waiting";
+                    row[m_conColumns.m_col_color] = Gdk::Color("#000000");
+                    row.set_value(0, m_refPixWaiting);
+                    semGui.post();
+                }
             }
         }
         manager.postSemaphore();
@@ -840,6 +860,7 @@ bool ApplicationWindow::onRefresh(void)
         m_refTreeResSelection->selected_foreach_iter(
             sigc::mem_fun(*this, &ApplicationWindow::selectedResourceCallback) );
 
+        semGui.wait();
         for(unsigned int i=0; i<m_ModuleIDs.size(); i++)
         {
             Gtk::TreeModel::Row row;
@@ -872,7 +893,7 @@ bool ApplicationWindow::onRefresh(void)
                 row.set_value(0, m_refPixWaiting);
             }
         }
-        
+        semGui.post();
         manager.postSemaphore();
         manager.safeRefresh(m_ModuleIDs, 
                             m_ConnectionIDs, 
@@ -966,6 +987,7 @@ bool ApplicationWindow::onSelectAll(void)
 
 void ApplicationWindow::onModStart(int which) 
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -974,11 +996,13 @@ void ApplicationWindow::onModStart(int which)
         row.set_value(0, m_refPixRunning);
     }
     reportErrors();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onModStop(int which) 
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -988,10 +1012,12 @@ void ApplicationWindow::onModStop(int which)
     }
     setCellsEditable();
     reportErrors();
+    semGui.post();
 }
 
 void ApplicationWindow::onConConnect(int which) 
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1000,11 +1026,13 @@ void ApplicationWindow::onConConnect(int which)
         row.set_value(0, m_refPixConnected);
     }
     reportErrors();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConDisconnect(int which) 
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1014,11 +1042,13 @@ void ApplicationWindow::onConDisconnect(int which)
     }
     setCellsEditable();
     reportErrors();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConAvailable(int from, int to)
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1032,11 +1062,13 @@ void ApplicationWindow::onConAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#008C00");
     }
     reportErrors();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConUnAvailable(int from, int to)
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1050,11 +1082,13 @@ void ApplicationWindow::onConUnAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#BF0303");
     }
     reportErrors();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onResAvailable(int which)
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1064,10 +1098,12 @@ void ApplicationWindow::onResAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
+    semGui.post();
 }
 
 void ApplicationWindow::onResUnAvailable(int which) 
 {
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1077,11 +1113,14 @@ void ApplicationWindow::onResUnAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
+    semGui.post();
 }
 
 void ApplicationWindow::onError(void) 
 {
+    semGui.wait();
     reportErrors();
+    semGui.post();
 }
 
 void ApplicationWindow::onModStdout(int which, const char* msg)

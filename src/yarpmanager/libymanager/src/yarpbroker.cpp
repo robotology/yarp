@@ -30,16 +30,19 @@ YarpBroker::YarpBroker() : RateThread(EVENT_THREAD_PERIOD)
     bOnlyConnector = bInitialized = false;  
     ID = generateID();
     strStdioUUID.clear();
-
-    //yarp.setVerbosity(-1);
 }
 
 
 YarpBroker::~YarpBroker()
 {
-    //RateThread::stop();
+	fini();
 }
 
+void YarpBroker::fini(void)
+{
+	if(RateThread::isRunning())
+	    RateThread::stop();
+}
 
 bool YarpBroker::init(void)
 {
@@ -156,7 +159,12 @@ bool YarpBroker::start()
     {
         if(running())
         {
-            //RateThread::start();
+            if(strStdioUUID.size())
+            {
+			    if(RateThread::isRunning())
+				    RateThread::stop();
+                RateThread::start();
+            }
             return true;
         }
     }
@@ -201,7 +209,7 @@ bool YarpBroker::stop()
     {
         if(!running())
         {
-            //RateThread::stop();
+            RateThread::stop();
             return true;
         }
     }
@@ -210,6 +218,7 @@ bool YarpBroker::stop()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
+	RateThread::stop();
     return false;
 }
 
@@ -246,7 +255,7 @@ bool YarpBroker::kill()
     {
         if(!running())
         {
-            //RateThread::stop();
+            RateThread::stop();
             return true;
         }
     }
@@ -255,6 +264,7 @@ bool YarpBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
+	RateThread::stop();
     return false;   
 }
 
@@ -422,18 +432,18 @@ bool YarpBroker::threadInit()
     if(!strStdioUUID.size())
         return false;
 
-    strStdioUUID += "/stdout";
+    string strStdioPort = strStdioUUID + "/stdout";
     stdioPort.open("...");
-    
-    double base = Time::now();
+
+	double base = Time::now();
     while(!timeout(base, 5.0))
     {
-        if(NetworkBase::connect(strStdioUUID.c_str(), stdioPort.getName())) 
+        if(NetworkBase::connect(strStdioPort.c_str(), stdioPort.getName())) 
             return true;
     }
 
     strError = "Cannot connect to stdio port ";
-    strError += strStdioUUID;
+    strError += strStdioPort;
     stdioPort.close();
     return false; 
 }

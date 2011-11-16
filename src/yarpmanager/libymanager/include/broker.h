@@ -42,6 +42,7 @@ public:
     virtual bool init(const char* szcmd, const char* szparam,
             const char* szhost, const char* szstdio,
             const char* szworkdir, const char* szenv ) = 0;
+	virtual void fini(void) = 0;
     virtual bool start() = 0;
     virtual bool stop() = 0;
     virtual bool kill() = 0;
