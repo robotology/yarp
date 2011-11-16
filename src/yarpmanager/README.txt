@@ -1,3 +1,7 @@
+#  Copyright: 2011 (C) Robotics, Brain and Cognitive Sciences - Italian Institute of Technology (IIT)
+#  Copy Policy: Released under the terms of the LGPLv2.1 or later, see LGPL.TXT
+#
+
 Some quick unofficial notes on usage.
 
 yarpmanager (v0.9)
