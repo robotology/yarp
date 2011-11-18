@@ -550,6 +550,11 @@ public:
         if (!isPixel(x,y)) { return nullPixel; }
         return *((T *)(getPixelAddress(x,y)));
     }
+
+    inline const T& safePixel(int x, int y) const {
+        if (!isPixel(x,y)) { return nullPixel; }
+        return *((T *)(getPixelAddress(x,y)));
+    }
 };
 
 namespace yarp {
@@ -588,6 +593,11 @@ public: \
   } \
 \
   inline T& safePixel(int x, int y) { \
+    if (!isPixel(x,y)) { return nullPixel; } \
+    return *((T *)(getPixelAddress(x,y))); \
+  } \
+\
+  inline const T& safePixel(int x, int y) const { \
     if (!isPixel(x,y)) { return nullPixel; } \
     return *((T *)(getPixelAddress(x,y))); \
   } \
