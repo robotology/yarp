@@ -208,7 +208,7 @@ public:
      * away the actual content of the image.
      * @param alt the image whose size we should match.
      */
-    void resize(Image& alt) {
+    void resize(const Image& alt) {
         resize(alt.width(),alt.height());
     }
 

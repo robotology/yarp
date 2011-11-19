@@ -1,3 +1,8 @@
+2011-11-19  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/include/yarp/sig/Image.h: correctly declare 
+	const argument for resize method
+
 2011-11-18  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_sig/include/yarp/sig/Image.h: add const version
