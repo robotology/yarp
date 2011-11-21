@@ -29,3 +29,21 @@ bool NameSpace::checkNetwork() {
 
     return true;
 }
+
+bool NameSpace::checkNetwork(double timeout) {
+    Contact c = queryName(getNameServerName());
+    if (!c.isValid()) return false;
+
+    Address addr = Address::fromContact(c);
+    addr.setTimeout((float)timeout);
+    OutputProtocol *out = Carriers::connect(addr);
+    if (out==NULL) {
+        return false;
+    }
+
+    out->close();
+    delete out;
+    out = NULL;
+
+    return true;
+}

@@ -375,6 +375,19 @@ public:
      */
     static bool checkNetwork();
 
+
+    /**
+     *
+     * Check if a name server is running and responding.
+     *
+     * @param timeout time in seconds to wait for a response from a
+     * name server.
+     *
+     * @return true if the name server responds within the given time.
+     *
+     */
+    static bool checkNetwork(double timeout);
+
     /**
      *
      * Returns true if YARP has been fully initialized.

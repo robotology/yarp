@@ -747,6 +747,11 @@ bool NetworkBase::checkNetwork() {
 }
 
 
+bool NetworkBase::checkNetwork(double timeout) {
+    return getNameSpace().checkNetwork(timeout);
+}
+
+
 bool NetworkBase::initialized() {
     return __yarp_is_initialized>0;
 }

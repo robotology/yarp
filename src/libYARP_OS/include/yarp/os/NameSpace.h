@@ -26,6 +26,8 @@ public:
 
     virtual bool checkNetwork();
     
+    virtual bool checkNetwork(double timeout);
+    
     virtual Contact getNameServerContact() const = 0;
 
     virtual ConstString getNameServerName() const {
