@@ -1,3 +1,9 @@
+2011-11-22  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_sig/include/yarp/sig/Vector.h: eliminate out-of-date
+	size_t-to-int casts, causing trouble on debian squeeze/etch 
+	[thanks Lorenzo Natale]
+
 2011-11-21  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 
 	* src/libYARP_OS/include/yarp/os/Network.h: add checkNetwork

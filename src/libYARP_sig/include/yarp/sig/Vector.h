@@ -147,10 +147,10 @@ public:
 
     void resize(size_t size, const T&def)
     {
-        bytes.allocateOnNeed((int)size*sizeof(T),(int)size*sizeof(T));
-        bytes.setUsed((int)size*sizeof(T));
+        bytes.allocateOnNeed(size*sizeof(T),size*sizeof(T));
+        bytes.setUsed(size*sizeof(T));
         _updatePointers();
-        for (int i=0; i<(int)size; i++) { (*this)[i] = def; }
+        for (size_t i=0; i<size; i++) { (*this)[i] = def; }
     }
 
     inline void push_back (const T &elem)
@@ -164,7 +164,7 @@ public:
 
     inline void pop_back (void)
     {
-        if (bytes.used()>(int)sizeof(T)) {
+        if (bytes.used()>sizeof(T)) {
             bytes.setUsed(bytes.used()-sizeof(T));
             len--;
         }
