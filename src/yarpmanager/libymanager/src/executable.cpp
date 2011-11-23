@@ -73,7 +73,14 @@ bool Executable::initialize(void)
 
 bool Executable::start(void)
 {
-    if(initialize() && !startWrapper->isRunning())
+
+    if(!initialize())
+    {
+      event->onExecutableDied(this);
+      return false;
+    }
+        
+    if(!startWrapper->isRunning())
     {
         startWrapper->start();
         if(watchdogWrapper && !watchdogWrapper->isRunning())

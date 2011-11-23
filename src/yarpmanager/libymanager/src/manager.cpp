@@ -10,6 +10,7 @@
 
 #include "manager.h"
 #include "yarpbroker.h"
+#include "localbroker.h"
 #include "xmlapploader.h"
 #include "singleapploader.h"
 
@@ -180,7 +181,9 @@ bool Manager::prepare(void)
             strCurrentBroker = strDefBroker;
 
         Broker* broker = NULL;
-        if(strCurrentBroker == string(BROKER_YARPRUN))
+        if(!strlen((*itr)->getHost()))
+            broker = new LocalBroker;
+        else if(strCurrentBroker == string(BROKER_YARPRUN))
             broker = new YarpBroker;
         //else if( for other brokers )
         //...
