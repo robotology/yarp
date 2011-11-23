@@ -167,6 +167,9 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
 
 #if defined(WIN32) || defined(WIN64)
     // do nothing
+    strError = "Local broker is currently supported only on Unix.";
+    bInitialized = false;
+    return false;
 #else   
     /* avoiding zombie */
     struct sigaction new_action; 
@@ -174,10 +177,10 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     sigemptyset (&new_action.sa_mask);
     new_action.sa_flags = 0;
     sigaction (SIGCHLD, &new_action, NULL);
-#endif
-
     bInitialized = true;
     return true;
+#endif
+
 }
 
 
