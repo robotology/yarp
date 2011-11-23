@@ -38,13 +38,13 @@ ApplicationList::ApplicationList()
 
 
     //Add the Model’s column to the View’s columns: 
-    Gtk::CellRendererText cellText;
-    Gtk::CellRendererPixbuf cellPix;
+    Gtk::CellRendererText* cellText = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::CellRendererPixbuf* cellPix = Gtk::manage(new Gtk::CellRendererPixbuf()); 
     Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Entities"));
-    col->pack_start(cellPix, false);
-    col->pack_start(cellText, true);
-    col->add_attribute(cellText, "text", 1);
-    col->add_attribute(cellPix, "pixbuf", 0);
+    col->pack_start(*cellPix, false);
+    col->pack_start(*cellText, true);
+    col->add_attribute(*cellText, "text", 1);
+    col->add_attribute(*cellPix, "pixbuf", 0);
     m_TreeView.append_column(*col);
     //m_TreeView.expand_all();
 

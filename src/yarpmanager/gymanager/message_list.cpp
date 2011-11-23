@@ -35,14 +35,13 @@ MessagesList::MessagesList(Gtk::Window* pParent) : bTimeStamp(false)
     m_TreeView.set_model(m_refListStore);
 
     //Add the Model’s column to the View’s columns:
-    
-    Gtk::TreeViewColumn col("Messages");
-    Gtk::CellRendererText textRenderer;
-    textRenderer.property_editable() = false;
-    col.pack_start(textRenderer, true);
-    col.add_attribute(textRenderer, "text", 0);
-    col.add_attribute(textRenderer, "background-gdk", 1);
-    m_TreeView.append_column(col);
+    Gtk::CellRendererText* textRenderer = Gtk::manage(new Gtk::CellRendererText());
+    Gtk::TreeViewColumn* col = Gtk::manage(new Gtk::TreeViewColumn("Messages")); 
+    textRenderer->property_editable() = false;
+    col->pack_start(*textRenderer, true);
+    col->add_attribute(*textRenderer, "text", 0);
+    col->add_attribute(*textRenderer, "background-gdk", 1);
+    m_TreeView.append_column(*col);
     m_TreeView.set_headers_visible(false);
 
 
