@@ -49,7 +49,6 @@ void partMover::fixed_time_move(const double *cmdPositions, double cmdTime, part
   double *cmdVelocities = new double[NUM_JOINTS];
   double *startPositions = new double[NUM_JOINTS];
 
-
   while (!iiencs->getEncoders(startPositions))
     Time::delay(0.001);
     //fprintf(stderr, "getEncoders is returning false\n");
