@@ -16,7 +16,6 @@
 #define RUN_TIMEOUT             10.0        //seconds
 #define STOP_TIMEOUT            30.0
 #define KILL_TIMEOUT            10.0
-#define EVENT_THREAD_PERIOD     500 
 
 #define WRITE_TO_PIPE           1
 #define READ_FROM_PIPE          0
@@ -29,6 +28,10 @@
     #include <sys/stat.h>
     #include <fcntl.h>
     #include <errno.h>
+
+    #define PIPE_TIMEOUT    0
+    #define PIPE_EVENT      1
+    #define PIPE_SIGNALED   2
 #endif 
 
 using namespace yarp::os;
@@ -329,25 +332,28 @@ bool LocalBroker::timeout(double base, double timeout)
 
 bool LocalBroker::threadInit() 
 {
-    return true;
+   return true;
 }
 
 
 void LocalBroker::run() 
 {
-   while(!Thread::isStopping())
-   {
-      waitPipeSignal(pipe_to_stdout[READ_FROM_PIPE]);
-      if(fd_stdout)
-       {
-            string strmsg;
-            char buff[1024];
-            while(fgets(buff, 1024, fd_stdout))
-                strmsg += string(buff);
-            if(eventSink && strmsg.size())           
-                eventSink->onBrokerStdout(strmsg.c_str());
-       }
-   }
+    while(!Thread::isStopping())
+    {
+        if(waitPipeSignal(pipe_to_stdout[READ_FROM_PIPE]) == PIPE_EVENT)
+        {
+           if(fd_stdout)
+           {
+                string strmsg;
+                char buff[1024];
+                while(fgets(buff, 1024, fd_stdout))
+                    strmsg += string(buff);
+                if(eventSink && strmsg.size())           
+                    eventSink->onBrokerStdout(strmsg.c_str());
+                yarp::os::Time::delay(0.5); // this prevents event flooding
+           }
+        }
+    }
 }
 
 
@@ -476,16 +482,31 @@ int LocalBroker::waitPipe(int pipe_fd)
 int LocalBroker::waitPipeSignal(int pipe_fd)
 {
     struct timespec timeout;
-    int rc;
     fd_set fd;
 
-    timeout.tv_sec = 3;
+    timeout.tv_sec = 2;
     timeout.tv_nsec = 0;
-
     FD_ZERO(&fd);
     FD_SET(pipe_fd, &fd);
-    rc = pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, NULL);
-    return rc;
+
+    /*
+#if (_POSIX_C_SOURCE >= 200112L) || (_XOPEN_SOURCE >= 600) 
+    struct sigaction new_action; 
+    new_action.sa_handler = SIG_IGN;
+    sigemptyset (&new_action.sa_mask);
+    new_action.sa_flags = 0;
+    sigaction (SIGUSR1, &new_action, NULL);
+    sigset_t sset, orgmask;
+    sigemptyset(&sset);
+    sigaddset(&sset, SIGUSR1);
+    pthread_sigmask(SIG_BLOCK, &sset, &orgmask); 
+    if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, &orgmask))
+        return PIPE_EVENT;
+#endif 
+*/
+    if(pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, NULL))
+        return PIPE_EVENT;
+    return PIPE_TIMEOUT;
 }
 
 
