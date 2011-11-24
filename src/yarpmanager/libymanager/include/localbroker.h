@@ -27,35 +27,16 @@
 #include <yarp/os/ConstString.h>
 #include <yarp/os/Semaphore.h>
 #include <yarp/os/RateThread.h>
+#include <yarp/os/Thread.h>
 
 #include "broker.h" 
 
 //namespace ymm {
 
-class LocalBroker;
-
-class LocalStdout {
-
-public:
-    static LocalStdout& Instance(void)
-    {
-        static LocalStdout singleton;
-        return singleton;
-    }
-
-    void registerBroker(LocalBroker*);
-    void unregisterBroker(LocalBroker*);
-
-private:
-    LocalStdout();
-    static void onIOSignal(int signum);  
-    static vector<LocalBroker*> stdBrokers;
-};
-
 /**
- * Class Broker  
+ * Class LocalBroker  
  */
-class LocalBroker: public Broker, public yarp::os::RateThread {
+class LocalBroker: public Broker, public yarp::os::Thread {
 
 public: 
     LocalBroker();
@@ -76,9 +57,7 @@ public:
      bool connected(const char* from, const char* to);
      const char* error(void);
      bool initialized(void) { return bInitialized;}
-
-     void onSignal(int signum);
-
+ 
 public: // for rate thread
     void run();
     bool threadInit();
@@ -108,7 +87,12 @@ private:
     bool psCmd(int pid);
     bool killCmd(int pid);
     bool stopCmd(int pid);
+#if defined(WIN32) || defined(WIN64)
+    // for windows
+#else    
     int waitPipe(int pipe_fd);
+    int waitPipeSignal(int pipe_fd);
+#endif
     bool startStdout(void);
     void stopStdout(void);
 

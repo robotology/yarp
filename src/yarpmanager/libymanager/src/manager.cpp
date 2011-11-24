@@ -710,11 +710,32 @@ bool Manager::connected(void)
     return bConnected;
 }
 
+bool Manager::checkPortsAvailable(Broker* broker)
+{
+    CnnIterator itr;
+    for(itr=connections.begin(); itr!=connections.end(); itr++)
+    {
+        if(!(*itr).owner() )
+        {
+            if(!broker->exists((*itr).to()) || 
+                !broker->exists((*itr).from()))
+                    return false;
+        }
+    }
+    return true;
+}
+
 
 bool Manager::connectExtraPorts(void)
 {
     YarpBroker connector; 
     connector.init();
+    
+    double base = yarp::os::Time::now();
+    while(!timeout(base, 5.0))
+        if(checkPortsAvailable(&connector)) 
+            break;
+
     CnnIterator cnn;
     for(cnn=connections.begin(); cnn!=connections.end(); cnn++)
         if(!(*cnn).owner() )

@@ -123,6 +123,7 @@ private:
     void clearExecutables(void);
     bool isServer(Module* module);
     bool connectExtraPorts(void);
+    bool checkPortsAvailable(Broker* broker);
     bool allRunning(void);
     bool oneRunning(void);
     bool allStopped(void);

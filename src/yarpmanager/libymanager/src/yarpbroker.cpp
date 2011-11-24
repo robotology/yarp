@@ -49,7 +49,7 @@ bool YarpBroker::init(void)
     //if(bInitialized)
     //  return true; 
 
-    if(!NetworkBase::checkNetwork())
+    if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
         return false;
@@ -116,7 +116,7 @@ bool YarpBroker::init(const char* szcmd, const char* szparam,
     sstrID<<ID;
     strTag = strHost + strCmd + sstrID.str();
 
-    if(!NetworkBase::checkNetwork())
+    if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
         semParam.post();
@@ -344,10 +344,8 @@ bool YarpBroker::connect(const char* from, const char* to,
         return false;
     }
         
-    //if(connected(from, to))
-    //  return true;
-        
-    if(!NetworkBase::connect(from, to, carrier))
+    NetworkBase::connect(from, to, carrier);
+    if(!connected(from, to))
     {
         strError = "cannot connect ";
         strError +=from;

@@ -23,7 +23,6 @@
 
 #if defined(WIN32) || defined(WIN64)
     #define SIGKILL 9
-    #define SIGIO   29
 #else
     #include <stdlib.h>
     #include <sys/types.h>
@@ -34,54 +33,7 @@
 
 using namespace yarp::os;
 
-
-vector<LocalBroker*> LocalStdout::stdBrokers;
-
-LocalStdout::LocalStdout()
-{
-
-#if defined(WIN32) || defined(WIN64)
-    //should be implemented for windows
-#else
-    struct sigaction new_action;
-    /* Set up the structure to specify the new action. */
-    new_action.sa_handler = onIOSignal;
-    sigemptyset(&new_action.sa_mask);
-    new_action.sa_flags = 0;
-    sigaction (SIGIO, &new_action, NULL);
-#endif
-
-}
-
-void LocalStdout::onIOSignal(int signum)
-{
-    if(signum == SIGIO)
-    {
-        vector<LocalBroker*>::iterator itr;
-        for(itr=stdBrokers.begin(); itr!=stdBrokers.end(); itr++)
-            (*itr)->onSignal(signum);
-    }
-}
-
-void LocalStdout::registerBroker(LocalBroker* broker)
-{
-    stdBrokers.push_back(broker);
-}
-
-
-void LocalStdout::unregisterBroker(LocalBroker* broker)
-{
-    vector<LocalBroker*>::iterator itr;
-    for(itr=stdBrokers.begin(); itr!=stdBrokers.end(); itr++)
-        if((*itr) == broker)
-        {
-            stdBrokers.erase(itr);
-            break;
-        }
-}
-
-
-LocalBroker::LocalBroker() : RateThread(EVENT_THREAD_PERIOD)
+LocalBroker::LocalBroker()
 {
     bOnlyConnector = bInitialized = false;  
     ID = 0;
@@ -96,14 +48,14 @@ LocalBroker::~LocalBroker()
 
 void LocalBroker::fini(void)
 {
-	if(RateThread::isRunning())
-	    RateThread::stop();
+	if(Thread::isRunning())
+	    Thread::stop();
 }
 
 bool LocalBroker::init(void)
 {
     /*
-    if(!NetworkBase::checkNetwork())
+    if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
         return false;
@@ -157,7 +109,7 @@ bool LocalBroker::init(const char* szcmd, const char* szparam,
     sstrID<<ID;
     strTag = strHost + strCmd + sstrID.str();
 
-    if(!NetworkBase::checkNetwork())
+    if(!NetworkBase::checkNetwork(5.0))
     {
         strError = "Yarp network server is not up.";
         semParam.post();
@@ -211,7 +163,6 @@ bool LocalBroker::stop()
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
 
-    RateThread::stop();
     stopStdout();
 
     strError.clear();
@@ -227,7 +178,6 @@ bool LocalBroker::stop()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-	RateThread::stop();
     return false;
 }
 
@@ -236,7 +186,6 @@ bool LocalBroker::kill()
     if(!bInitialized) return true;
     if(bOnlyConnector) return false;
     
-    RateThread::stop();
     stopStdout();
 
     strError.clear();
@@ -252,8 +201,6 @@ bool LocalBroker::kill()
     strError += strCmd;
     strError += " on ";
     strError += strHost;
-	RateThread::stop();
-   
     return false;   
 }
 
@@ -298,15 +245,16 @@ bool LocalBroker::connect(const char* from, const char* to,
         strError += " does not exist.";
         return false;
     }
-        
-    if(!NetworkBase::connect(from, to, carrier))
+    
+    NetworkBase::connect(from, to, carrier);
+    if(!connected(from, to))
     {
         strError = "cannot connect ";
         strError +=from;
         strError += " to " + string(to);
         return false;
     }
-    return true;
+    return true;     
 }
 
 bool LocalBroker::disconnect(const char* from, const char* to)
@@ -381,12 +329,25 @@ bool LocalBroker::timeout(double base, double timeout)
 
 bool LocalBroker::threadInit() 
 {
-    return false;
+    return true;
 }
 
 
 void LocalBroker::run() 
 {
+   while(!Thread::isStopping())
+   {
+      waitPipeSignal(pipe_to_stdout[READ_FROM_PIPE]);
+      if(fd_stdout)
+       {
+            string strmsg;
+            char buff[1024];
+            while(fgets(buff, 1024, fd_stdout))
+                strmsg += string(buff);
+            if(eventSink && strmsg.size())           
+                eventSink->onBrokerStdout(strmsg.c_str());
+       }
+   }
 }
 
 
@@ -440,10 +401,6 @@ int LocalBroker::CountArgs(char *str)
 
 
 #if defined(WIN32) || defined(WIN64)
-void LocalBroker::onSignal(int signum) 
-{
-}
-
 bool LocalBroker::startStdout(void)
 {
     //LocalStdout::Instance().registerBroker(this);
@@ -515,18 +472,22 @@ int LocalBroker::waitPipe(int pipe_fd)
     return rc;
 }
 
-void LocalBroker::onSignal(int signum) 
+
+int LocalBroker::waitPipeSignal(int pipe_fd)
 {
-   if(fd_stdout)
-   {
-        string strmsg;
-        char buff[1024];
-        while(fgets(buff, 1024, fd_stdout))
-            strmsg += string(buff);
-        if(eventSink && strmsg.size())           
-            eventSink->onBrokerStdout(strmsg.c_str());
-   }
+    struct timespec timeout;
+    int rc;
+    fd_set fd;
+
+    timeout.tv_sec = 3;
+    timeout.tv_nsec = 0;
+
+    FD_ZERO(&fd);
+    FD_SET(pipe_fd, &fd);
+    rc = pselect(pipe_fd + 1, &fd, NULL, NULL, &timeout, NULL);
+    return rc;
 }
+
 
 bool LocalBroker::startStdout(void)
 {
@@ -537,21 +498,20 @@ bool LocalBroker::startStdout(void)
         return false;
     }
 
-    fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETOWN, getpid());
     int oflags = fcntl(pipe_to_stdout[READ_FROM_PIPE], F_GETFL);
-    fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|FASYNC|O_NONBLOCK);
+    fcntl(pipe_to_stdout[READ_FROM_PIPE], F_SETFL, oflags|O_NONBLOCK);
     
-    LocalStdout::Instance().registerBroker(this);
+    Thread::start();
     return true;
 }
 
 void LocalBroker::stopStdout(void)
 { 
-    LocalStdout::Instance().unregisterBroker(this);
+    //LocalStdout::Instance().unregisterBroker(this);
+    Thread::stop();
     if(fd_stdout)
         fclose(fd_stdout);
     fd_stdout = NULL;
-    //close(pipe_to_stdout[READ_FROM_PIPE]);  
 }
 
 

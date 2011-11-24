@@ -65,6 +65,7 @@ bool Executable::initialize(void)
         if(broker->error())
             msg<<broker->error();
         logger->addError(msg);
+        event->onExecutableDied(this);
         return false;
     }
     return true;

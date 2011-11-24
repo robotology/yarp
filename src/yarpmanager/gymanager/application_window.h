@@ -275,7 +275,7 @@ private:
 
     std::map<int, StdoutWindow*> m_MapstdWnds;
     yarp::os::Semaphore semStdout;
-    yarp::os::Semaphore semGui;
+    //yarp::os::Semaphore semGui;
 
 
     void createWidgets(void);
