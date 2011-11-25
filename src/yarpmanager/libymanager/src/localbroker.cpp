@@ -353,6 +353,10 @@ bool LocalBroker::threadInit()
 
 void LocalBroker::run() 
 {
+
+#if defined(WIN32) || defined(WIN64)
+    //windows implementaion
+#else
     while(!Thread::isStopping())
     {
         if(waitPipeSignal(pipe_to_stdout[READ_FROM_PIPE]) == PIPE_EVENT)
@@ -369,6 +373,7 @@ void LocalBroker::run()
            }
         }
     }
+#endif
 }
 
 
@@ -453,7 +458,7 @@ bool LocalBroker::stopCmd(int pid)
     return false;
 }
 
-#else
+#else   //for UNIX
 
 bool LocalBroker::psCmd(int pid)
 {
