@@ -673,7 +673,7 @@ bool ApplicationWindow::onRun(void)
     if(!manager.checkSemaphore())
         return false;
    
-    //semGui.wait();    
+    semGui.wait();    
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -698,7 +698,7 @@ bool ApplicationWindow::onRun(void)
         }
     }
     setCellsEditable(); 
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeRun(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -711,7 +711,7 @@ bool ApplicationWindow::onStop(void)
     if(!manager.checkSemaphore())
         return false;
 
-    //semGui.wait();   
+    semGui.wait();   
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -727,7 +727,7 @@ bool ApplicationWindow::onStop(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeStop(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -741,7 +741,7 @@ bool ApplicationWindow::onKill(void)
     if(!manager.checkSemaphore())
         return false;
     
-    //semGui.wait();
+    semGui.wait();
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -757,7 +757,7 @@ bool ApplicationWindow::onKill(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeKill(m_ModuleIDs);
     yarp::os::Time::delay(0.1);
@@ -771,7 +771,7 @@ bool ApplicationWindow::onConnect(void)
     if(!manager.checkSemaphore())
         return false;
    
-    //semGui.wait();
+    semGui.wait();
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -795,7 +795,7 @@ bool ApplicationWindow::onConnect(void)
     }
 
     setCellsEditable();
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeConnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
@@ -808,7 +808,7 @@ bool ApplicationWindow::onDisconnect(void)
     if(!manager.checkSemaphore())
         return false;
 
-    //semGui.wait();
+    semGui.wait();
     m_ConnectionIDs.clear();
     m_refTreeConSelection= m_TreeConView.get_selection();
     m_refTreeConSelection->selected_foreach_iter(
@@ -824,7 +824,7 @@ bool ApplicationWindow::onDisconnect(void)
             row.set_value(0, m_refPixWaiting);
         }
     }
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeDisconnect(m_ConnectionIDs);
     yarp::os::Time::delay(0.1);
@@ -837,7 +837,7 @@ bool ApplicationWindow::onRefresh(void)
     if(!manager.checkSemaphore())
         return false;
     
-    //semGui.wait();
+    semGui.wait();
     m_ModuleIDs.clear();
     m_refTreeModSelection = m_TreeModView.get_selection();
     m_refTreeModSelection->selected_foreach_iter(
@@ -884,7 +884,7 @@ bool ApplicationWindow::onRefresh(void)
         }
     }
     
-    //semGui.post();
+    semGui.post();
     manager.postSemaphore();
     manager.safeRefresh(m_ModuleIDs, 
                         m_ConnectionIDs, 
@@ -896,8 +896,8 @@ bool ApplicationWindow::onRefresh(void)
 
 
 bool ApplicationWindow::onAttachStdout()
-{
-    if(!semStdout.check())
+{ 
+    if(!semStdout.check() || !manager.checkSemaphore())
         return false;
 
     m_ModuleIDs.clear();
@@ -921,6 +921,9 @@ bool ApplicationWindow::onAttachStdout()
         m_MapstdWnds[id]->raise();
     }
     semStdout.post();
+    manager.postSemaphore();
+    manager.safeAttachStdout(m_ModuleIDs);
+
     return true;
 }
 
@@ -979,7 +982,7 @@ bool ApplicationWindow::onSelectAll(void)
 
 void ApplicationWindow::onModStart(int which) 
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -988,13 +991,13 @@ void ApplicationWindow::onModStart(int which)
         row.set_value(0, m_refPixRunning);
     }
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onModStop(int which) 
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getModRowByID(which, &row))
     {
@@ -1004,12 +1007,12 @@ void ApplicationWindow::onModStop(int which)
     }
     setCellsEditable();
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 void ApplicationWindow::onConConnect(int which) 
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1018,13 +1021,13 @@ void ApplicationWindow::onConConnect(int which)
         row.set_value(0, m_refPixConnected);
     }
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConDisconnect(int which) 
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getConRowByID(which, &row))
     {
@@ -1034,13 +1037,13 @@ void ApplicationWindow::onConDisconnect(int which)
     }
     setCellsEditable();
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConAvailable(int from, int to)
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1054,13 +1057,13 @@ void ApplicationWindow::onConAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#008C00");
     }
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onConUnAvailable(int from, int to)
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(from >= 0)
     {
@@ -1074,13 +1077,13 @@ void ApplicationWindow::onConUnAvailable(int from, int to)
             row[m_conColumns.m_col_to_color] = Gdk::Color("#BF0303");
     }
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 
 void ApplicationWindow::onResAvailable(int which)
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1090,12 +1093,12 @@ void ApplicationWindow::onResAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 void ApplicationWindow::onResUnAvailable(int which) 
 {
-    //semGui.wait();
+    semGui.wait();
     Gtk::TreeModel::Row row;
     if(getResRowByID(which, &row))
     {
@@ -1105,14 +1108,14 @@ void ApplicationWindow::onResUnAvailable(int which)
     }
     setCellsEditable();
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 void ApplicationWindow::onError(void) 
 {
-    //semGui.wait();
+    semGui.wait();
     reportErrors();
-    //semGui.post();
+    semGui.post();
 }
 
 void ApplicationWindow::onModStdout(int which, const char* msg)
@@ -1125,6 +1128,7 @@ void ApplicationWindow::onModStdout(int which, const char* msg)
             StdoutWindow* wnd = (*itr).second;
             wnd->getMessageList()->addMessage(msg);
         }
+        yarp::os::Time::delay(0.1);
         semStdout.post();
     }
 }

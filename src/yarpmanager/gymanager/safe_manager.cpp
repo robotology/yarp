@@ -166,6 +166,18 @@ void SafeManager::run()
                 refreshPortStatus(conIds[i]);
             }
         }
+ 
+    case MATTACHSTDOUT:{
+            for(unsigned int i=0; i<modIds.size(); i++)
+                Manager::attachStdout(modIds[i]);
+            break;
+        }
+
+    case MDETACHSTDOUT:{
+            for(unsigned int i=0; i<modIds.size(); i++)
+                Manager::detachStdout(modIds[i]);
+            break;
+        }
 
     default:
         break;
@@ -225,6 +237,21 @@ void SafeManager::safeRefresh(std::vector<int>& MIDs,
     conIds = CIDs;
     resIds = RIDs;
     action = MREFRESH;
+    yarp::os::Thread::start();
+}
+
+
+void SafeManager::safeAttachStdout(std::vector<int>& MIDs)
+{
+    modIds = MIDs;
+    action = MATTACHSTDOUT;
+    yarp::os::Thread::start();
+}
+
+void SafeManager::safeDetachStdout(std::vector<int>& MIDs)
+{
+    modIds = MIDs;
+    action = MDETACHSTDOUT;
     yarp::os::Thread::start();
 }
 

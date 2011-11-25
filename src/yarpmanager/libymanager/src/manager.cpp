@@ -809,6 +809,40 @@ bool Manager::allStopped(void)
     return true;
 }
 
+bool Manager::attachStdout(unsigned int id)
+{
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
+
+    if(!runnables[id]->getBroker()->attachStdout())
+    {
+        ostringstream msg;
+        msg<<"Cannot attach to stdout of "<<runnables[id]->getCommand();
+        msg<<" on "<<runnables[id]->getHost();
+        msg<<". (State: "<<runnables[id]->state();
+        msg<<", paramete: "<<runnables[id]->getParam()<<") ";
+        msg<<"because "<<runnables[id]->getBroker()->error();
+        logger->addError(msg);
+        return false;
+    }
+    return true;
+}
+
+bool Manager::detachStdout(unsigned int id)
+{
+    if(id>=runnables.size())
+    {
+        logger->addError("Module id is out of range.");
+        return false;
+    }
+    
+    runnables[id]->getBroker()->detachStdout();
+    return true;
+}
+
 bool Manager::timeout(double base, double timeout)
 {
     yarp::os::Time::delay(1.0);

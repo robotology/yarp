@@ -293,6 +293,15 @@ bool YarpBroker::running(void)
     return response.get(0).asString()=="running";
 }
 
+bool YarpBroker::attachStdout(void)
+{
+    return true;
+}
+
+void YarpBroker::detachStdout(void)
+{
+}
+
 
 Property& YarpBroker::runProperty(void)
 {

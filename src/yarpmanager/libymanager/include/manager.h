@@ -68,6 +68,8 @@ public:
     bool exist(unsigned int id);
     bool existPortFrom(unsigned int id);
     bool existPortTo(unsigned int id);
+    bool attachStdout(unsigned int id);
+    bool detachStdout(unsigned int id);
 
     void setDefaultBroker(const char* szBroker) { if(szBroker) strDefBroker = szBroker; }
     const char* defaultBroker(void) { return strDefBroker.c_str(); }

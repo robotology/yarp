@@ -29,6 +29,8 @@ typedef enum __ThreadAction {
     MDISCONNECT,
     MREFRESH,
     MREFRESH_CNN,
+    MATTACHSTDOUT,
+    MDETACHSTDOUT,
     MNOTHING
 } ThreadAction;
 
@@ -70,6 +72,9 @@ public:
     void safeRefresh(std::vector<int>& MIDs, 
                      std::vector<int>& CIDs, 
                      std::vector<int>& RIDs);
+    void safeAttachStdout(std::vector<int>& MIDs);
+    void safeDetachStdout(std::vector<int>& MIDs);
+
 
     bool checkSemaphore(void){ return semManage.check(); }
     void postSemaphore(void) { semManage.post(); }

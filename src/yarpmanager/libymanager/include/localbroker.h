@@ -57,7 +57,9 @@ public:
      bool connected(const char* from, const char* to);
      const char* error(void);
      bool initialized(void) { return bInitialized;}
- 
+     bool attachStdout(void);
+     void detachStdout(void);
+
 public: // for rate thread
     void run();
     bool threadInit();

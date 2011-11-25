@@ -54,12 +54,15 @@ public:
     virtual bool connected(const char* from, const char* to) = 0;
     virtual const char* error(void) = 0;
     virtual bool initialized(void) = 0;
+    virtual bool attachStdout(void) = 0;
+    virtual void detachStdout(void) = 0;
+
     unsigned int generateID(void);
 
     void enableWatchDog(void) { bWithWatchDog = true; }
     void disableWatchDog(void) { bWithWatchDog = false; }
     bool hasWatchDog(void) { return bWithWatchDog; }
-
+  
 protected:
     static unsigned int UNIQUEID; 
     BrokerEventSink* eventSink;

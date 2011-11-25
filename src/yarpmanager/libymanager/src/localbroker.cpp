@@ -154,8 +154,6 @@ bool LocalBroker::start()
 
    if(running())
    {
-        if(!startStdout())
-            strError = "Cannot setup stdout";
         return true;
    }    
    return false;
@@ -321,6 +319,23 @@ const char* LocalBroker::error(void)
     return strError.c_str();
 }
 
+bool LocalBroker::attachStdout(void)
+{
+    if(Thread::isRunning())
+        return true;
+    if(!running())
+    {
+        strError = "Module is not running";
+        return false;
+    }
+    return startStdout();
+}
+
+void LocalBroker::detachStdout(void)
+{
+   stopStdout();
+}
+
 
 bool LocalBroker::timeout(double base, double timeout)
 {
@@ -350,7 +365,7 @@ void LocalBroker::run()
                     strmsg += string(buff);
                 if(eventSink && strmsg.size())           
                     eventSink->onBrokerStdout(strmsg.c_str());
-                yarp::os::Time::delay(0.5); // this prevents event flooding
+                yarp::os::Time::delay(1.0); // this prevents event flooding
            }
         }
     }
