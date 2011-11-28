@@ -7,35 +7,40 @@
  *
  */
 
-
-#ifndef _STDOUT_WINDOW_
-#define _STDOUT_WINDOW_
+#ifndef _STDOUTWINDOW_H_
+#define _STDOUTWINDOW_H__H_
 
 #include <gtkmm.h>
-#include "message_list.h"
 
-class StdoutWindow : public Gtk::Window
+//class StdoutWindow;
+class StdoutWindow: public Gtk::Window
+
 {
-
 public:
     StdoutWindow(Gtk::Window* parent, int ID, const char* title=NULL);
-    virtual ~StdoutWindow();
 
-    MessagesList* getMessageList(void){
-        return m_MessageList;
-    }
+    virtual ~StdoutWindow();
+    void addMessage(const char* msg);
+    void enableTimeStamp(void) { bTimeStamp = true; } 
+    void disableTimeStamp(void) { bTimeStamp = false; } 
 
 protected:
+    void onPMenuClear();
+    void onPMenuSave();
 
 private:
-    //Child widgets:
     int m_ID;
+    bool bTimeStamp; 
+    Gtk::Window* m_pParent;
+    Glib::RefPtr<Gtk::TextBuffer> m_refTextBuff;
+    Glib::RefPtr<Gtk::UIManager> m_refUIManager;
+    Glib::RefPtr<Gtk::ActionGroup> m_refActionGroup;
     Gtk::VBox m_VBox;
-    Gtk::VPaned m_VPaned;
-    MessagesList* m_MessageList;
+    Gtk::ScrolledWindow m_ScrollModView;
+    Gtk::TextView m_textView;
+
 };
 
 
-
-#endif //_STDOUT_WINDOW_
+#endif //_STDOUTWINDOW_H_
 

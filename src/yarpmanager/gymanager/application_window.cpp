@@ -1126,7 +1126,8 @@ void ApplicationWindow::onModStdout(int which, const char* msg)
         if(itr != m_MapstdWnds.end())
         {
             StdoutWindow* wnd = (*itr).second;
-            wnd->getMessageList()->addMessage(msg);
+            //wnd->getMessageList()->addMessage(msg);
+            wnd->addMessage(msg);
         }
         yarp::os::Time::delay(0.1);
         semStdout.post();
