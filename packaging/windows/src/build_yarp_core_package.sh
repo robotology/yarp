@@ -352,9 +352,12 @@ nsis_add_recurse gsl_headers include/gsl ${GSL_SUB}/include/gsl
 nsis_add_recurse gsl_libraries lib ${GSL_SUB}/lib
 
 # Add GTKMM material to NSIS
+
+## 11/11/11: Lorenzo Natale. Added missing Visual Studio dlls from ${GTKMM_SUB}/bin
 if [ "k$SKIP_GTK" = "k" ]; then
-	cd $GTKMM_DIR/redist || exit 1
-    for f in `ls *.dll`; do
+	##cd $GTKMM_DIR/redist || exit 1
+    cd $GTKMM_DIR/bin || exit 1
+	for f in `ls *.dll`; do
 		chmod u+x $f
 		nsis_add gtkmm_dlls $f ${GTKMM_SUB}/bin/$f
 	done
