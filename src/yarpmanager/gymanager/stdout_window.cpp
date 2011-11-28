@@ -37,18 +37,15 @@ StdoutWindow::StdoutWindow(Gtk::Window* parent, int ID, const char* title) : bTi
    
     m_ScrollModView.set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
     m_ScrollModView.add(m_textView);
-    add(m_ScrollModView);
-    m_VBox.pack_start(m_textView);
-    m_textView.set_property("editable", false);
+    m_VBox.pack_start(m_ScrollModView);
+    add(m_VBox);
 
-    
-    //set_policy(Gtk::POLICY_AUTOMATIC, Gtk::POLICY_AUTOMATIC);
-    //add(m_textView);
+    m_textView.set_property("editable", false);
 
     m_refTextBuff = Gtk::TextBuffer::create();
     m_textView.set_buffer(m_refTextBuff);
 
-    
+    /*   
     // adding popup menubar
     m_refActionGroup = Gtk::ActionGroup::create();
     m_refActionGroup->add( Gtk::Action::create("PMenuClear", Gtk::Stock::CLEAR, "_Clear log", "Clear log"),
@@ -91,7 +88,7 @@ StdoutWindow::StdoutWindow(Gtk::Window* parent, int ID, const char* title) : bTi
    // m_TreeView.signal_button_press_event().connect_notify(sigc::mem_fun(*this,
    //         &StdoutWindow::onTreeButtonPressed) );
    
-
+    */
     show_all_children();
 }
 
@@ -103,11 +100,6 @@ StdoutWindow::~StdoutWindow()
 
 void StdoutWindow::addMessage(const char* text)
 {
-    /*
-    ostringstream msg;
-    msg<<text<<endl;
-    m_refTextBuff->insert_at_cursor(msg.str());
-    */
     m_refTextBuff->insert(m_refTextBuff->end(), Glib::ustring(text));   
 }
 
