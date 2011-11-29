@@ -15,7 +15,7 @@
 using namespace yarp::os::impl;
 using namespace yarp::os;
 
-Semaphore::Semaphore(int initialCount) {
+Semaphore::Semaphore(unsigned int initialCount) {
     implementation = new SemaphoreImpl(initialCount);
     YARP_ASSERT(implementation!=NULL);
 }

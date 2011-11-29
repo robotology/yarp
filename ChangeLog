@@ -1,3 +1,12 @@
+2011-11-29  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
+
+	* src/libYARP_OS/include/yarp/os/impl/SemaphoreImpl.h,
+	 src/libYARP_OS/include/yarp/os/impl/ACESemaphoreImpl.h,
+	 src/libYARP_OS/include/yarp/os/impl/POSIXSemaphoreImpl.h,
+	 src/libYARP_OS/include/yarp/os/impl/MachSemaphoreImpl.h: break
+	up implementation to make it more readable, patch from Miguel
+	[thanks Miguel Sarabia del Castillo]
+
 2011-11-28 Lorenzo Natale <lorenzo.natale@iit.it>
     * bump version 2.3.13
 
@@ -193,7 +202,8 @@
 	* conf/template/YARPConfig.cmake.in: another patch from
 	Miguel, to record whether YARP was compiled as a shared
 	library in a YARP_IS_SHARED_LIBRARY variable available
-	when FIND_PACKAGE(YARP) succeeds [thanks Miguel Sarabia].
+	when FIND_PACKAGE(YARP) succeeds.
+	[thanks Miguel Sarabia del Castillo]
 	These patches are a result of Miguel's work on his HAMMER
 	library: https://bitbucket.org/miguelsdc/hammer
 
@@ -202,7 +212,7 @@
 	src/libYARP_OS/include/yarp/os/PortReport.h,
 	src/libYARP_sig/include/yarp/sig/Image.h: apply patch
 	from Miguel Sarabia to remove warnings that show up
-	under -Wall -pedantic [thanks Miguel Sarabia]
+	under -Wall -pedantic [thanks Miguel Sarabia del Castillo]
 
 2011-08-31  Paul Fitzpatrick  <paulfitz@alum.mit.edu>
 

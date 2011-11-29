@@ -17,6 +17,7 @@ The list of authors for YARP (ordered by file count) is:
   Renaud Detry
   Julio Gomes
   Ze Ji
+  Miguel Sarabia del Castillo
   Mattia Castelnovi
   Jonas Ruesch
   Francesco Nori
@@ -50,12 +51,13 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Daniel Krieg
   Arjan Gijsberts
   Alessandro Scalzo
+  Martin Peniak
   Arnaud Degroote
   Ze Ji
   Vadim Tikhanoff
   Stefan Freyr Stefansson
   Severin Lemaignan
-  Martin Peniak
+  Miguel Sarabia del Castillo
   Giovanni Saponaro
   Frank Forster
   David Vernon
@@ -65,7 +67,6 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
   Traveler Hauptman
   Tomassino Ferrauto
   Rui Silva
-  Miguel Sarabia
   Marco Barbosa
   Lorenz Mosenlechner
   Leo Pape
@@ -117,8 +118,8 @@ The list of people thanked in the ChangeLog (ordered by mention count) is:
 
 The list of copyright holders for YARP is:
   Copyright 2003 2005 2006 2007 2008 2009 2010 2011
-  RobotCub Consortium (734 files)
-  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (107 files)
+  RobotCub Consortium (737 files)
+  Dept. Robotics, Brain and Cognitive Sciences, Istituto Italiano di Tecnologia (109 files)
   Giacomo Spigler (22 files)
   Duarte Aragao (16 files)
   Daniel Krieg (16 files)

@@ -35,7 +35,7 @@ public:
      * Constructor.  Sets the initial value of the counter.
      * @param initialCount initial value of the counter
      */
-    Semaphore(int initialCount = 1);
+    Semaphore(unsigned int initialCount = 1);
 
     /**
      * Destructor.
